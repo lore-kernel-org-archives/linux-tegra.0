@@ -1,101 +1,51 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 03/10] clk: tegra: cclk: Add helpers for handling PLLX rate changes
-Date: Thu, 31 Oct 2019 00:33:53 +0300
-Message-ID: <20191030213400.29434-4-digetx@gmail.com>
-References: <20191030213400.29434-1-digetx@gmail.com>
+Subject: [PATCH v1] clk: tegra20/30: Don't pre-initialize displays parent clock
+Date: Thu, 31 Oct 2019 00:49:10 +0300
+Message-ID: <20191030214910.14120-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191030213400.29434-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-CCLK should be re-parented away from PLLX if PLLX's rate is changing.
-The PLLP parent is a common safe CPU parent for all Tegra SoCs, thus
-CCLK will be re-parented to PLLP before PLLX rate-change begins and then
-switched back to PLLX after the rate-change completion. This patch adds
-helper functions which perform CCLK re-parenting, these helpers will be
-utilized by further patches.
+Both Tegra20 and Tegra30 are initializing display's parent clock
+incorrectly because PLLP is running at 216/408MHz while display rate is
+set to 600MHz, but pre-setting the parent isn't needed at all because
+display driver selects proper parent anyways.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra-super-cclk.c | 34 ++++++++++++++++++++++++
- drivers/clk/tegra/clk.h                  |  2 ++
- 2 files changed, 36 insertions(+)
+ drivers/clk/tegra/clk-tegra20.c | 2 --
+ drivers/clk/tegra/clk-tegra30.c | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/clk-tegra-super-cclk.c
-index 5cff8363c978..c7e4be0efc59 100644
---- a/drivers/clk/tegra/clk-tegra-super-cclk.c
-+++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
-@@ -25,6 +25,9 @@
- 
- #define SUPER_CDIV_ENB		BIT(31)
- 
-+static struct tegra_clk_super_mux *cclk_super;
-+static bool cclk_on_pllx;
-+
- static u8 cclk_super_get_parent(struct clk_hw *hw)
- {
- 	return tegra_clk_super_ops.get_parent(hw);
-@@ -115,6 +118,9 @@ struct clk *tegra_clk_register_super_cclk(const char *name,
- 	struct clk_init_data init;
- 	u32 val;
- 
-+	if (WARN_ON(cclk_super))
-+		return ERR_PTR(-EBUSY);
-+
- 	super = kzalloc(sizeof(*super), GFP_KERNEL);
- 	if (!super)
- 		return ERR_PTR(-ENOMEM);
-@@ -171,6 +177,34 @@ struct clk *tegra_clk_register_super_cclk(const char *name,
- 	clk = clk_register(NULL, &super->hw);
- 	if (IS_ERR(clk))
- 		kfree(super);
-+	else
-+		cclk_super = super;
- 
- 	return clk;
- }
-+
-+int tegra_cclk_pre_pllx_rate_change(void)
-+{
-+	if (IS_ERR_OR_NULL(cclk_super))
-+		return -EINVAL;
-+
-+	if (cclk_super_get_parent(&cclk_super->hw) == PLLX_INDEX)
-+		cclk_on_pllx = true;
-+	else
-+		cclk_on_pllx = false;
-+
-+	/*
-+	 * CPU needs to be temporarily re-parented away from PLLX if PLLX
-+	 * changes its rate. PLLP is a safe parent for CPU on all Tegra SoCs.
-+	 */
-+	if (cclk_on_pllx)
-+		cclk_super_set_parent(&cclk_super->hw, PLLP_INDEX);
-+
-+	return 0;
-+}
-+
-+void tegra_cclk_post_pllx_rate_change(void)
-+{
-+	if (cclk_on_pllx)
-+		cclk_super_set_parent(&cclk_super->hw, PLLX_INDEX);
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index fa18bef914af..0afe28f4372b 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -771,6 +771,8 @@ struct clk *tegra_clk_register_super_cclk(const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		spinlock_t *lock);
-+int tegra_cclk_pre_pllx_rate_change(void);
-+void tegra_cclk_post_pllx_rate_change(void);
- 
- /**
-  * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index eb821666ca61..0d6441621989 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1049,8 +1049,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA20_CLK_SBC4, TEGRA20_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA20_CLK_HOST1X, TEGRA20_CLK_PLL_C, 150000000, 0 },
+-	{ TEGRA20_CLK_DISP1, TEGRA20_CLK_PLL_P, 600000000, 0 },
+-	{ TEGRA20_CLK_DISP2, TEGRA20_CLK_PLL_P, 600000000, 0 },
+ 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 0fe03d69fe1a..8146cc49ca3b 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1253,8 +1253,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_SBC6, TEGRA30_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA30_CLK_PLL_C, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
+ 	{ TEGRA30_CLK_HOST1X, TEGRA30_CLK_PLL_C, 150000000, 0 },
+-	{ TEGRA30_CLK_DISP1, TEGRA30_CLK_PLL_P, 600000000, 0 },
+-	{ TEGRA30_CLK_DISP2, TEGRA30_CLK_PLL_P, 600000000, 0 },
+ 	{ TEGRA30_CLK_TWD, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_GR2D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
 -- 
 2.23.0
