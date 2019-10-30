@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 10/10] ARM: dts: tegra30: beaver: Add CPU Operating Performance Points
-Date: Thu, 31 Oct 2019 00:34:00 +0300
-Message-ID: <20191030213400.29434-11-digetx@gmail.com>
+Subject: [PATCH v3 05/10] clk: tegra30: Use custom CCLK implementation
+Date: Thu, 31 Oct 2019 00:33:55 +0300
+Message-ID: <20191030213400.29434-6-digetx@gmail.com>
 References: <20191030213400.29434-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,52 +12,42 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on beaver.
+We're going to use the generic cpufreq-dt driver on Tegra30 and thus CCLK
+intermediate re-parenting will be performed by the clock driver. There is
+now special CCLK implementation that supports all CCLK quirks, this patch
+makes Tegra30 SoCs to use that implementation.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-beaver.dts | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/clk/tegra/clk-tegra30.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 6ebb3105af9e..86556622be25 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -2,6 +2,8 @@
- /dts-v1/;
- 
- #include "tegra30.dtsi"
-+#include "tegra30-cpu-opp.dtsi"
-+#include "tegra30-cpu-opp-microvolt.dtsi"
- 
- / {
- 	model = "NVIDIA Tegra30 Beaver evaluation board";
-@@ -2124,4 +2126,26 @@
- 			 <&tegra_car TEGRA30_CLK_EXTERN1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
-+
-+	cpus {
-+		cpu0: cpu@0 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@1 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@2 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@3 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+	};
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index c8bc18e4d7e5..0fe03d69fe1a 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -499,6 +499,8 @@ static struct tegra_clk_pll_params pll_x_params __ro_after_init = {
+ 	.freq_table = pll_x_freq_table,
+ 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_DCCON |
+ 		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.pre_rate_change = tegra_cclk_pre_pllx_rate_change,
++	.post_rate_change = tegra_cclk_post_pllx_rate_change,
  };
+ 
+ static struct tegra_clk_pll_params pll_e_params __ro_after_init = {
+@@ -932,11 +934,11 @@ static void __init tegra30_super_clk_init(void)
+ 	clk_register_clkdev(clk, "pll_p_out4_cclkg", NULL);
+ 
+ 	/* CCLKG */
+-	clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
++	clk = tegra_clk_register_super_cclk("cclk_g", cclk_g_parents,
+ 				  ARRAY_SIZE(cclk_g_parents),
+ 				  CLK_SET_RATE_PARENT,
+ 				  clk_base + CCLKG_BURST_POLICY,
+-				  0, 4, 0, 0, NULL);
++				  0, NULL);
+ 	clks[TEGRA30_CLK_CCLK_G] = clk;
+ 
+ 	/*
 -- 
 2.23.0
