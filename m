@@ -1,110 +1,65 @@
-From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH v4 5/6] arm64: tegra: Add DT node for T194 SMMU
-Date: Wed, 30 Oct 2019 17:07:16 -0700
-Message-ID: <1572480437-28449-6-git-send-email-vdumpa@nvidia.com>
+From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v4 4/6] arm64: tegra: Add Memory controller DT node on T194
+Date: Wed, 30 Oct 2019 17:07:15 -0700
+Message-ID: <1572480437-28449-5-git-send-email-vdumpa@nvidia.com>
 References: <1572480437-28449-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1572480437-28449-1-git-send-email-vdumpa@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, avanbrunt@nvidia.com, bbiswas@nvidia.com, olof@lixom.net, jtukkinen@nvidia.com, mperttunen@nvidia.com, nicolinc@nvidia.com, Krishna Reddy <vdumpa@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1572480437-28449-1-git-send-email-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Cc: snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, avanbrunt-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add DT node for T194 SMMU to enable SMMU support.
+Add Memory controller DT node on T194 and enable it.
+This patch is a prerequisite for SMMU enable on T194.
 
-Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
+Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 77 ++++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 4 ++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 6 ++++++
+ 2 files changed, 10 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+index 4c38426..82a02490 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+@@ -47,6 +47,10 @@
+ 			};
+ 		};
+ 
++		memory-controller@2c00000 {
++			status = "okay";
++		};
++
+ 		serial@3110000 {
+ 			status = "okay";
+ 		};
 diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 1e0b54b..6f81e90 100644
+index 3c0cf54..1e0b54b 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1436,6 +1436,83 @@
- 			  0x82000000 0x0  0x40000000 0x1f 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
- 	};
+@@ -163,6 +163,12 @@
+ 			};
+ 		};
  
-+	smmu: iommu@12000000 {
-+		compatible = "arm,mmu-500","nvidia,tegra194-smmu";
-+		reg = <0 0x12000000 0 0x800000>,
-+		      <0 0x11000000 0 0x800000>,
-+		      <0 0x10000000 0 0x800000>;
-+		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
-+		stream-match-mask = <0x7f80>;
-+		#global-interrupts = <3>;
-+		#iommu-cells = <1>;
-+	};
++		memory-controller@2c00000 {
++			compatible = "nvidia,tegra186-mc";
++			reg = <0x02c00000 0xb0000>;
++			status = "disabled";
++		};
 +
- 	sysram@40000000 {
- 		compatible = "nvidia,tegra194-sysram", "mmio-sram";
- 		reg = <0x0 0x40000000 0x0 0x50000>;
+ 		uarta: serial@3100000 {
+ 			compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
+ 			reg = <0x03100000 0x40>;
 -- 
 2.7.4
