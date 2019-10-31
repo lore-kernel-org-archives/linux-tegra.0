@@ -1,65 +1,66 @@
-From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 4/6] arm64: tegra: Add Memory controller DT node on T194
-Date: Wed, 30 Oct 2019 17:07:15 -0700
-Message-ID: <1572480437-28449-5-git-send-email-vdumpa@nvidia.com>
+From: Krishna Reddy <vdumpa@nvidia.com>
+Subject: [PATCH v4 6/6] arm64: tegra: enable SMMU for SDHCI and EQOS on T194
+Date: Wed, 30 Oct 2019 17:07:17 -0700
+Message-ID: <1572480437-28449-7-git-send-email-vdumpa@nvidia.com>
 References: <1572480437-28449-1-git-send-email-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1572480437-28449-1-git-send-email-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, avanbrunt-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1572480437-28449-1-git-send-email-vdumpa@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, avanbrunt@nvidia.com, bbiswas@nvidia.com, olof@lixom.net, jtukkinen@nvidia.com, mperttunen@nvidia.com, nicolinc@nvidia.com, Krishna Reddy <vdumpa@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add Memory controller DT node on T194 and enable it.
-This patch is a prerequisite for SMMU enable on T194.
+Enable SMMU translations for SDHCI and EQOS transactions on T194.
 
-Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 4 ++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 6 ++++++
- 2 files changed, 10 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-index 4c38426..82a02490 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -47,6 +47,10 @@
- 			};
- 		};
- 
-+		memory-controller@2c00000 {
-+			status = "okay";
-+		};
-+
- 		serial@3110000 {
- 			status = "okay";
- 		};
 diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 3c0cf54..1e0b54b 100644
+index 6f81e90..bf8ed7a 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -163,6 +163,12 @@
- 			};
- 		};
+@@ -3,6 +3,7 @@
+ #include <dt-bindings/gpio/tegra194-gpio.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/mailbox/tegra186-hsp.h>
++#include <dt-bindings/memory/tegra186-mc.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/power/tegra194-powergate.h>
+ #include <dt-bindings/reset/tegra194-reset.h>
+@@ -51,6 +52,7 @@
+ 			clock-names = "master_bus", "slave_bus", "rx", "tx", "ptp_ref";
+ 			resets = <&bpmp TEGRA194_RESET_EQOS>;
+ 			reset-names = "eqos";
++			iommus = <&smmu TEGRA186_SID_EQOS>;
+ 			status = "disabled";
  
-+		memory-controller@2c00000 {
-+			compatible = "nvidia,tegra186-mc";
-+			reg = <0x02c00000 0xb0000>;
-+			status = "disabled";
-+		};
-+
- 		uarta: serial@3100000 {
- 			compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
- 			reg = <0x03100000 0x40>;
+ 			snps,write-requests = <1>;
+@@ -413,6 +415,7 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC1>;
+ 			reset-names = "sdhci";
++			iommus = <&smmu TEGRA186_SID_SDMMC1>;
+ 			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
+ 									<0x07>;
+ 			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
+@@ -435,6 +438,7 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC3>;
+ 			reset-names = "sdhci";
++			iommus = <&smmu TEGRA186_SID_SDMMC3>;
+ 			nvidia,pad-autocal-pull-up-offset-1v8 = <0x00>;
+ 			nvidia,pad-autocal-pull-down-offset-1v8 = <0x7a>;
+ 			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x07>;
+@@ -462,6 +466,7 @@
+ 					  <&bpmp TEGRA194_CLK_PLLC4>;
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
++			iommus = <&smmu TEGRA186_SID_SDMMC4>;
+ 			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
+ 			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
+ 			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
 -- 
 2.7.4
