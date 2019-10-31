@@ -1,70 +1,63 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 01/12] memory: tegra: Add gr2d and gr3d to DRM IOMMU group
-Date: Wed, 30 Oct 2019 18:05:48 +0300
-Message-ID: <ecafd917-bcf7-0f3e-2423-6b79793d56a2@gmail.com>
-References: <20191028123718.3890217-1-thierry.reding@gmail.com>
- <20191028123718.3890217-2-thierry.reding@gmail.com>
+From: Yuehaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] gpu: host1x: Fix compile test failure
+Date: Thu, 31 Oct 2019 21:33:38 +0800
+Message-ID: <cb0a976a-0148-d554-15ff-5f4059eccd37@huawei.com>
+References: <20191030135458.27960-1-yuehaibing@huawei.com>
+ <283304d6-bf23-8107-29b6-9f3e7dda943c@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191028123718.3890217-2-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Sachin Nikam <snikam@nvidia.com>, Puneet Saxena <puneets@nvidia.com>, dri-devel@lists.freedesktop.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <283304d6-bf23-8107-29b6-9f3e7dda943c@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, mperttunen@nvidia.com, arnd@arndb.de, seanpaul@chromium.org
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MjguMTAuMjAxOSAxNTozNywgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
-cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IEFsbCBvZiB0aGUgZGV2aWNlcyBt
-YWtpbmcgdXAgdGhlIFRlZ3JhIERSTSBkZXZpY2Ugd2FudCB0byBzaGFyZSBhIHNpbmdsZQo+IElP
-TU1VIGRvbWFpbi4gUHV0IHRoZW0gaW50byBhIHNpbmdsZSBncm91cCB0byBhbGxvdyB0aGVtIHRv
-IGRvIHRoYXQuCj4gCj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZp
-ZGlhLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmExMTQuYyB8IDEwICsr
-KysrKy0tLS0KPiAgZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmExMjQuYyB8ICA4ICsrKysrLS0t
-Cj4gIGRyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMzAuYyAgfCAxMSArKysrKysrLS0tLQo+ICAz
-IGZpbGVzIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKyksIDExIGRlbGV0aW9ucygtKQo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTExNC5jIGIvZHJpdmVycy9tZW1v
-cnkvdGVncmEvdGVncmExMTQuYwo+IGluZGV4IGFjODM1MWI1YmVlYi4uNDhlZjAxYzNmZjkwIDEw
-MDY0NAo+IC0tLSBhL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTE0LmMKPiArKysgYi9kcml2
-ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTExNC5jCj4gQEAgLTkwOSwxNiArOTA5LDE4IEBAIHN0YXRp
-YyBjb25zdCBzdHJ1Y3QgdGVncmFfc21tdV9zd2dyb3VwIHRlZ3JhMTE0X3N3Z3JvdXBzW10gPSB7
-Cj4gIAl7IC5uYW1lID0gInRzZWMiLCAgICAgIC5zd2dyb3VwID0gVEVHUkFfU1dHUk9VUF9UU0VD
-LCAgICAgIC5yZWcgPSAweDI5NCB9LAo+ICB9Owo+ICAKPiAtc3RhdGljIGNvbnN0IHVuc2lnbmVk
-IGludCB0ZWdyYTExNF9ncm91cF9kaXNwbGF5W10gPSB7Cj4gK3N0YXRpYyBjb25zdCB1bnNpZ25l
-ZCBpbnQgdGVncmExMTRfZ3JvdXBfZHJtW10gPSB7Cj4gIAlURUdSQV9TV0dST1VQX0RDLAo+ICAJ
-VEVHUkFfU1dHUk9VUF9EQ0IsCj4gKwlURUdSQV9TV0dST1VQX0cyLAo+ICsJVEVHUkFfU1dHUk9V
-UF9OViwKPiAgfTsKPiAgCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgdGVncmFfc21tdV9ncm91cF9z
-b2MgdGVncmExMTRfZ3JvdXBzW10gPSB7Cj4gIAl7Cj4gLQkJLm5hbWUgPSAiZGlzcGxheSIsCj4g
-LQkJLnN3Z3JvdXBzID0gdGVncmExMTRfZ3JvdXBfZGlzcGxheSwKPiAtCQkubnVtX3N3Z3JvdXBz
-ID0gQVJSQVlfU0laRSh0ZWdyYTExNF9ncm91cF9kaXNwbGF5KSwKPiArCQkubmFtZSA9ICJkcm0i
-LAo+ICsJCS5zd2dyb3VwcyA9IHRlZ3JhMTE0X2dyb3VwX2RybSwKPiArCQkubnVtX3N3Z3JvdXBz
-ID0gQVJSQVlfU0laRSh0ZWdyYTExNF9ncm91cF9kcm0pLAo+ICAJfSwKPiAgfTsKPiAgCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTI0LmMgYi9kcml2ZXJzL21lbW9y
-eS90ZWdyYS90ZWdyYTEyNC5jCj4gaW5kZXggNWQwY2NiMmJlMjA2Li42MmIzMGIxYjk2NzcgMTAw
-NjQ0Cj4gLS0tIGEvZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmExMjQuYwo+ICsrKyBiL2RyaXZl
-cnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTI0LmMKPiBAQCAtOTc0LDE2ICs5NzQsMTggQEAgc3RhdGlj
-IGNvbnN0IHN0cnVjdCB0ZWdyYV9zbW11X3N3Z3JvdXAgdGVncmExMjRfc3dncm91cHNbXSA9IHsK
-PiAgCXsgLm5hbWUgPSAidmkiLCAgICAgICAgLnN3Z3JvdXAgPSBURUdSQV9TV0dST1VQX1ZJLCAg
-ICAgICAgLnJlZyA9IDB4MjgwIH0sCj4gIH07Cj4gIAo+IC1zdGF0aWMgY29uc3QgdW5zaWduZWQg
-aW50IHRlZ3JhMTI0X2dyb3VwX2Rpc3BsYXlbXSA9IHsKPiArc3RhdGljIGNvbnN0IHVuc2lnbmVk
-IGludCB0ZWdyYTEyNF9ncm91cF9kcm1bXSA9IHsKPiAgCVRFR1JBX1NXR1JPVVBfREMsCj4gIAlU
-RUdSQV9TV0dST1VQX0RDQiwKPiArCVRFR1JBX1NXR1JPVVBfR1BVLAo+ICsJVEVHUkFfU1dHUk9V
-UF9WSUMsCj4gIH07Cj4gIAo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHRlZ3JhX3NtbXVfZ3JvdXBf
-c29jIHRlZ3JhMTI0X2dyb3Vwc1tdID0gewo+ICAJewo+ICAJCS5uYW1lID0gImRpc3BsYXkiLAo+
-IC0JCS5zd2dyb3VwcyA9IHRlZ3JhMTI0X2dyb3VwX2Rpc3BsYXksCj4gLQkJLm51bV9zd2dyb3Vw
-cyA9IEFSUkFZX1NJWkUodGVncmExMjRfZ3JvdXBfZGlzcGxheSksCj4gKwkJLnN3Z3JvdXBzID0g
-dGVncmExMjRfZ3JvdXBfZHJtLAo+ICsJCS5udW1fc3dncm91cHMgPSBBUlJBWV9TSVpFKHRlZ3Jh
-MTI0X2dyb3VwX2RybSksCj4gIAl9LAoKVGhlICJkaXNwbGF5IiAtPiAiZHJtIiBncm91cCdzIHJl
-bmFtaW5nIGlzIG1pc3NlZCBmb3IgVDEyNC4KCltzbmlwXQpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+On 2019/10/31 6:26, Dmitry Osipenko wrote:
+> 30.10.2019 16:54, YueHaibing пишет:
+>> If IOMMU_SUPPORT is not set, but IOMMU_IOVA is m and
+>> COMPILE_TEST is y, building fails:
+>>
+>> drivers/gpu/host1x/dev.o: In function `host1x_remove':
+>> dev.c:(.text+0x624): undefined reference to `put_iova_domain'
+>> dev.c:(.text+0x624): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `put_iova_domain'
+>> dev.c:(.text+0x62c): undefined reference to `iova_cache_put'
+>> dev.c:(.text+0x62c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iova_cache_put'
+>>
+>> Select IOMMU_IOVA while COMPILE_TEST is set to fix this.
+>>
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Fixes: 52499a6ad2ae ("gpu: host1x: select IOMMU_IOVA")
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/gpu/host1x/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+>> index cf987a3..354232d 100644
+>> --- a/drivers/gpu/host1x/Kconfig
+>> +++ b/drivers/gpu/host1x/Kconfig
+>> @@ -2,7 +2,7 @@
+>>  config TEGRA_HOST1X
+>>  	tristate "NVIDIA Tegra host1x driver"
+>>  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
+>> -	select IOMMU_IOVA if IOMMU_SUPPORT
+>> +	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+>>  	help
+>>  	  Driver for the NVIDIA Tegra host1x hardware.
+>>  
+>>
+> 
+> It should be better to unconditionally select IOMMU_IOVA here.
+> 
+> The same could be done for drivers/staging/media/tegra-vde/ and
+> drivers/gpu/host1x/, please see [1].
+
+Yep, I will repost, thanks!
+
+> 
+> [1] https://lore.kernel.org/linux-iommu/20190829154902.GC19842@ulmo/
+> 
+> .
+> 
