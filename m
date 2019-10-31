@@ -1,130 +1,66 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 1/3] memory: Introduce memory controller mini-framework
-Date: Thu, 31 Oct 2019 18:11:33 +0300
-Message-ID: <0888ea6f-2092-001e-5663-3a1d3f305ba4@gmail.com>
-References: <20191015162945.1203736-1-thierry.reding@gmail.com>
-	<20191015162945.1203736-2-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH -next] gpu: host1x: Fix compile test failure
+Date: Thu, 31 Oct 2019 18:41:50 +0300
+Message-ID: <fe9c774b-7fec-e423-9cdb-e742fefbd4eb@gmail.com>
+References: <20191030135458.27960-1-yuehaibing@huawei.com>
+ <283304d6-bf23-8107-29b6-9f3e7dda943c@gmail.com>
+ <cb0a976a-0148-d554-15ff-5f4059eccd37@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20191015162945.1203736-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cb0a976a-0148-d554-15ff-5f4059eccd37@huawei.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yuehaibing <yuehaibing@huawei.com>, thierry.reding@gmail.com, mperttunen@nvidia.com, arnd@arndb.de, seanpaul@chromium.org
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MTUuMTAuMjAxOSAxOToyOSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
-cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFRoaXMgbmV3IGZyYW1ld29yayBp
-cyBjdXJyZW50bHkgbm90aGluZyBtb3JlIHRoYW4gYSByZWdpc3RyeSBvZiBtZW1vcnkKPiBjb250
-cm9sbGVycywgd2l0aCB0aGUgZ29hbCBiZWluZyB0byBvcmRlciBkZXZpY2UgcHJvYmluZy4gT25l
-IHVzZS1jYXNlCj4gd2hlcmUgdGhpcyBpcyB1c2VmdWwsIGZvciBleGFtcGxlLCBpcyBhIG1lbW9y
-eSBjb250cm9sbGVyIGRldmljZSB3aGljaAo+IG5lZWRzIHRvIHByb2dyYW0gc29tZSByZWdpc3Rl
-cnMgYmVmb3JlIHRoZSBzeXN0ZW0gTU1VIGNhbiBiZSBlbmFibGVkLgo+IEFzc29jaWF0aW5nIHRo
-ZSBtZW1vcnkgY29udHJvbGxlciB3aXRoIHRoZSBTTU1VIGFsbG93cyB0aGUgU01NVSBkcml2ZXIK
-PiB0byBkZWZlciB0aGUgcHJvYmUgdW50aWwgdGhlIG1lbW9yeSBjb250cm9sbGVyIGhhcyBiZWVu
-IHJlZ2lzdGVyZWQuCj4gCj4gT25lIHN1Y2ggZXhhbXBsZSBpcyBUZWdyYTE4NiB3aGVyZSB0aGUg
-bWVtb3J5IGNvbnRyb2xsZXIgY29udGFpbnMgc29tZQo+IHJlZ2lzdGVycyB0aGF0IGFyZSB1c2Vk
-IHRvIHByb2dyYW0gc3RyZWFtIElEcyBmb3IgdGhlIHZhcmlvdXMgbWVtb3J5Cj4gY2xpZW50cyAo
-ZGlzcGxheSwgVVNCLCBQQ0ksIC4uLikgaW4gdGhlIHN5c3RlbS4gUHJvZ3JhbW1pbmcgdGhlc2Ug
-U0lEcwo+IGlzIHJlcXVpcmVkIGZvciB0aGUgbWVtb3J5IGNsaWVudHMgdG8gZW1pdCB0aGUgcHJv
-cGVyIFNJRHMgYXMgcGFydCBvZgo+IHRoZWlyIG1lbW9yeSByZXF1ZXN0cy4gVGhlIG1lbW9yeSBj
-b250cm9sbGVyIGRyaXZlciB0aGVyZWZvcmUgbmVlZHMgdG8KPiBiZSBwcm9ncmFtbWVkIHByaW9y
-IHRvIHRoZSBTTU1VIGRyaXZlci4gVG8gYWNoaWV2ZSB0aGF0LCB0aGUgbWVtb3J5Cj4gY29udHJv
-bGxlciB3aWxsIGJlIHJlZmVyZW5jZWQgdmlhIHBoYW5kbGUgZnJvbSB0aGUgU01NVSBkZXZpY2Ug
-dHJlZQo+IG5vZGUsIHRoZSBTTU1VIGRyaXZlciBjYW4gdGhlbiB1c2UgdGhlIG1lbW9yeSBjb250
-cm9sbGVyIGZyYW1ld29yayB0bwo+IGZpbmQgaXQgYW5kIGRlZmVyIHByb2JlIHVudGlsIGl0IGhh
-cyBiZWVuIHJlZ2lzdGVyZWQuCj4gCj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRy
-ZWRpbmdAbnZpZGlhLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9tZW1vcnkvTWFrZWZpbGUgICAgICAg
-ICAgIHwgIDEgKwo+ICBkcml2ZXJzL21lbW9yeS9jb3JlLmMgICAgICAgICAgICAgfCA5OSArKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gIGluY2x1ZGUvbGludXgvbWVtb3J5LWNvbnRy
-b2xsZXIuaCB8IDI1ICsrKysrKysrCj4gIDMgZmlsZXMgY2hhbmdlZCwgMTI1IGluc2VydGlvbnMo
-KykKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbWVtb3J5L2NvcmUuYwo+ICBjcmVhdGUg
-bW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9tZW1vcnktY29udHJvbGxlci5oCgpIZWxsbyBUaGll
-cnJ5LAoKVGhpcyBsb29rcyBsaWtlIGEgdmVyeSBnb29kIGVuZGVhdm91ciEgSSBoYXZlIGNvdXBs
-ZSBjb21tZW50cywgcGxlYXNlCnNlZSB0aGVtIGJlbG93LgoKPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9tZW1vcnkvTWFrZWZpbGUgYi9kcml2ZXJzL21lbW9yeS9NYWtlZmlsZQo+IGluZGV4IDI3YjQ5
-MzQzNWU2MS4uZDE2ZTdkY2E4ZWY5IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvbWVtb3J5L01ha2Vm
-aWxlCj4gKysrIGIvZHJpdmVycy9tZW1vcnkvTWFrZWZpbGUKPiBAQCAtMyw2ICszLDcgQEAKPiAg
-IyBNYWtlZmlsZSBmb3IgbWVtb3J5IGRldmljZXMKPiAgIwo+ICAKPiArb2JqLXkJCQkJKz0gY29y
-ZS5vCj4gIG9iai0kKENPTkZJR19ERFIpCQkrPSBqZWRlY19kZHJfZGF0YS5vCj4gIGlmZXEgKCQo
-Q09ORklHX0REUikseSkKPiAgb2JqLSQoQ09ORklHX09GKQkJKz0gb2ZfbWVtb3J5Lm8KPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9tZW1vcnkvY29yZS5jIGIvZHJpdmVycy9tZW1vcnkvY29yZS5jCj4g
-bmV3IGZpbGUgbW9kZSAxMDA2NDQKPiBpbmRleCAwMDAwMDAwMDAwMDAuLjE3NzJlODM5MzA1YQo+
-IC0tLSAvZGV2L251bGwKPiArKysgYi9kcml2ZXJzL21lbW9yeS9jb3JlLmMKPiBAQCAtMCwwICsx
-LDk5IEBACj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wCj4gKy8qCj4gKyAq
-IENvcHlyaWdodCAoQykgMjAxOSBOVklESUEgQ29ycG9yYXRpb24uCj4gKyAqLwo+ICsKPiArI2lu
-Y2x1ZGUgPGxpbnV4L21lbW9yeS1jb250cm9sbGVyLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9vZi5o
-Pgo+ICsKPiArc3RhdGljIERFRklORV9NVVRFWChjb250cm9sbGVyc19sb2NrKTsKPiArc3RhdGlj
-IExJU1RfSEVBRChjb250cm9sbGVycyk7Cj4gKwo+ICtzdGF0aWMgdm9pZCBtZW1vcnlfY29udHJv
-bGxlcl9yZWxlYXNlKHN0cnVjdCBrcmVmICpyZWYpCj4gK3sKPiArCXN0cnVjdCBtZW1vcnlfY29u
-dHJvbGxlciAqbWMgPSBjb250YWluZXJfb2YocmVmLCBzdHJ1Y3QgbWVtb3J5X2NvbnRyb2xsZXIs
-IHJlZik7Cj4gKwo+ICsJV0FSTl9PTighbGlzdF9lbXB0eSgmbWMtPmxpc3QpKTsKPiArfQo+ICsK
-PiAraW50IG1lbW9yeV9jb250cm9sbGVyX3JlZ2lzdGVyKHN0cnVjdCBtZW1vcnlfY29udHJvbGxl
-ciAqbWMpCj4gK3sKPiArCWtyZWZfaW5pdCgmbWMtPnJlZik7Cj4gKwo+ICsJbXV0ZXhfbG9jaygm
-Y29udHJvbGxlcnNfbG9jayk7Cj4gKwlsaXN0X2FkZF90YWlsKCZtYy0+bGlzdCwgJmNvbnRyb2xs
-ZXJzKTsKPiArCW11dGV4X3VubG9jaygmY29udHJvbGxlcnNfbG9jayk7Cj4gKwo+ICsJcmV0dXJu
-IDA7Cj4gK30KPiArRVhQT1JUX1NZTUJPTF9HUEwobWVtb3J5X2NvbnRyb2xsZXJfcmVnaXN0ZXIp
-Owo+ICsKPiArdm9pZCBtZW1vcnlfY29udHJvbGxlcl91bnJlZ2lzdGVyKHN0cnVjdCBtZW1vcnlf
-Y29udHJvbGxlciAqbWMpCj4gK3sKPiArCW11dGV4X2xvY2soJmNvbnRyb2xsZXJzX2xvY2spOwo+
-ICsJbGlzdF9kZWxfaW5pdCgmbWMtPmxpc3QpOwo+ICsJbXV0ZXhfdW5sb2NrKCZjb250cm9sbGVy
-c19sb2NrKTsKPiArCj4gKwlrcmVmX3B1dCgmbWMtPnJlZiwgbWVtb3J5X2NvbnRyb2xsZXJfcmVs
-ZWFzZSk7Cj4gK30KPiArRVhQT1JUX1NZTUJPTF9HUEwobWVtb3J5X2NvbnRyb2xsZXJfdW5yZWdp
-c3Rlcik7Cj4gKwo+ICtzdGF0aWMgc3RydWN0IG1lbW9yeV9jb250cm9sbGVyICoKPiArb2ZfbWVt
-b3J5X2NvbnRyb2xsZXJfZ2V0KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZV9ub2Rl
-ICpucCwKPiArCQkJIGNvbnN0IGNoYXIgKmNvbl9pZCkKPiArewo+ICsJY29uc3QgY2hhciAqY2Vs
-bHMgPSAiI21lbW9yeS1jb250cm9sbGVyLWNlbGxzIjsKPiArCWNvbnN0IGNoYXIgKm5hbWVzID0g
-Im1lbW9yeS1jb250cm9sbGVyLW5hbWVzIjsKPiArCWNvbnN0IGNoYXIgKnByb3AgPSAibWVtb3J5
-LWNvbnRyb2xsZXJzIjsKPiArCXN0cnVjdCBtZW1vcnlfY29udHJvbGxlciAqbWM7Cj4gKwlzdHJ1
-Y3Qgb2ZfcGhhbmRsZV9hcmdzIGFyZ3M7Cj4gKwlpbnQgaW5kZXggPSAwLCBlcnI7Cj4gKwo+ICsJ
-aWYgKGNvbl9pZCkgewo+ICsJCWluZGV4ID0gb2ZfcHJvcGVydHlfbWF0Y2hfc3RyaW5nKG5wLCBu
-YW1lcywgY29uX2lkKTsKPiArCQlpZiAoaW5kZXggPCAwKQo+ICsJCQlyZXR1cm4gRVJSX1BUUihp
-bmRleCk7Cj4gKwl9Cj4gKwo+ICsJZXJyID0gb2ZfcGFyc2VfcGhhbmRsZV93aXRoX2FyZ3MobnAs
-IHByb3AsIGNlbGxzLCBpbmRleCwgJmFyZ3MpOwo+ICsJaWYgKGVycikgewo+ICsJCWlmIChlcnIg
-PT0gLUVOT0VOVCkKPiArCQkJZXJyID0gLUVOT0RFVjsKPiArCj4gKwkJcmV0dXJuIEVSUl9QVFIo
-ZXJyKTsKPiArCX0KPiArCj4gKwltdXRleF9sb2NrKCZjb250cm9sbGVyc19sb2NrKTsKPiArCj4g
-KwlsaXN0X2Zvcl9lYWNoX2VudHJ5KG1jLCAmY29udHJvbGxlcnMsIGxpc3QpIHsKPiArCQlpZiAo
-bWMtPmRldiAmJiBtYy0+ZGV2LT5vZl9ub2RlID09IGFyZ3MubnApIHsKPiArCQkJa3JlZl9nZXQo
-Jm1jLT5yZWYpOwoKVGhpcyBpcyBub3QgZW5vdWdoIGJlY2F1c2UgbWVtb3J5IGNvbnRyb2xsZXIg
-ZHJpdmVyIGNvdWxkIGJlIGEgbG9hZGFibGUKbW9kdWxlLCB0aHVzIHNvbWV0aGluZyBsaWtlIHRo
-aXMgaXMgbmVlZGVkIGhlcmU6CgoJX19tb2R1bGVfZ2V0KG1jLT5kZXYtPmRyaXZlci0+b3duZXIp
-OwoKVGhpcyB3b24ndCBhbGxvdyBNQyBkcml2ZXIgdG8gYmUgdW5sb2FkZWQgd2hpbGUgaXQgaGFz
-IGFjdGl2ZSB1c2Vycy4KCj4gKwkJCW11dGV4X3VubG9jaygmY29udHJvbGxlcnNfbG9jayk7Cj4g
-KwkJCWdvdG8gdW5sb2NrOwo+ICsJCX0KPiArCX0KPiArCj4gKwltYyA9IEVSUl9QVFIoLUVQUk9C
-RV9ERUZFUik7Cj4gKwo+ICt1bmxvY2s6Cj4gKwltdXRleF91bmxvY2soJmNvbnRyb2xsZXJzX2xv
-Y2spOwo+ICsJb2Zfbm9kZV9wdXQoYXJncy5ucCk7Cj4gKwlyZXR1cm4gbWM7Cj4gK30KPiArCj4g
-K3N0cnVjdCBtZW1vcnlfY29udHJvbGxlciAqCj4gK21lbW9yeV9jb250cm9sbGVyX2dldChzdHJ1
-Y3QgZGV2aWNlICpkZXYsIGNvbnN0IGNoYXIgKmNvbl9pZCkKPiArewo+ICsJaWYgKElTX0VOQUJM
-RUQoQ09ORklHX09GKSAmJiBkZXYgJiYgZGV2LT5vZl9ub2RlKQo+ICsJCXJldHVybiBvZl9tZW1v
-cnlfY29udHJvbGxlcl9nZXQoZGV2LCBkZXYtPm9mX25vZGUsIGNvbl9pZCk7Cj4gKwo+ICsJcmV0
-dXJuIEVSUl9QVFIoLUVOT0RFVik7Cj4gK30KPiArRVhQT1JUX1NZTUJPTF9HUEwobWVtb3J5X2Nv
-bnRyb2xsZXJfZ2V0KTsKCkluIG1vc3QgY2FzZXMgbWVtb3J5IGNvbnRyb2xsZXJzIGFyZSB1bmlx
-dWUgaW4gYSBzeXN0ZW0sIHNvIGl0IGxvb2tzIHRvCm1lIHRoYXQgaXQgd2lsbCBiZSBtb3JlIHVu
-aXZlcnNhbCB0byBoYXZlIGFiaWxpdHkgdG8gZ2V0IE1DIGJ5IGl0cwpkZXZpY2UtdHJlZSBjb21w
-YXRpYmxlIG5hbWUuIExpa2UgdGhpczoKCglvZl9tZW1vcnlfY29udHJvbGxlcl9nZXRfYnlfY29t
-cGF0aWJsZShjb25zdCBjaGFyICpjb21wYXRpYmxlKTsKClRoaXMgd2lsbCBhbGxvdyBjdXJyZW50
-IGRyaXZlcnMgKGxpa2UgVGVncmEyMCBkZXZmcmVxIGRyaXZlciBmb3IKZXhhbXBsZSkgdG8gdXRp
-bGl6ZSB0aGlzIG5ldyBBUEkgd2l0aG91dCBoYXZpbmcgdHJvdWJsZSBvZiBtYWludGFpbmluZwpi
-YWNrd2FyZHMgY29tcGF0aWJpbGl0eSB3aXRoIG9sZGVyIGRldmljZS10cmVlcyB0aGF0IGRvIG5v
-dCBoYXZlIGEKcGhhbmRsZSB0byBNQy4KCmh0dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4
-L3Y1LjQtcmM1L3NvdXJjZS9kcml2ZXJzL2RldmZyZXEvdGVncmEyMC1kZXZmcmVxLmMjTDEwMAoK
-T2YgY291cnNlIHRoZXJlIGNvdWxkIGJlIGNhc2VzIHdoZXJlIHRoZXJlIGFyZSBtdWx0aXBsZSBj
-b250cm9sbGVycyB3aXRoCnRoZSBzYW1lIGNvbXBhdGlibGUsIGJ1dCB0aGF0IGNhc2UgY291bGQg
-YmUgc3VwcG9ydGVkIGxhdGVyIG9uIGJ5IHRob3NlCndobyByZWFsbHkgbmVlZCBpdC4gSSBkb24n
-dCB0aGluayB0aGF0IGFueSBvZiBOVklESUEgVGVncmEgU29DcyBmYWxsCmludG8gdGhhdCBjYXRl
-Z29yeS4KCj4gK3ZvaWQgbWVtb3J5X2NvbnRyb2xsZXJfcHV0KHN0cnVjdCBtZW1vcnlfY29udHJv
-bGxlciAqbWMpCj4gK3sKPiArCWlmIChtYykKPiArCQlrcmVmX3B1dCgmbWMtPnJlZiwgbWVtb3J5
-X2NvbnRyb2xsZXJfcmVsZWFzZSk7CgkJbW9kdWxlX3B1dChtYy0+ZGV2LT5kcml2ZXItPm93bmVy
-KTsKCj4gK30KPiArRVhQT1JUX1NZTUJPTF9HUEwobWVtb3J5X2NvbnRyb2xsZXJfcHV0KTsKCgpb
-c25pcF0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KaW9t
-bXUgbWFpbGluZyBsaXN0CmlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8v
-bGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11
+31.10.2019 16:33, Yuehaibing пишет:
+> On 2019/10/31 6:26, Dmitry Osipenko wrote:
+>> 30.10.2019 16:54, YueHaibing пишет:
+>>> If IOMMU_SUPPORT is not set, but IOMMU_IOVA is m and
+>>> COMPILE_TEST is y, building fails:
+>>>
+>>> drivers/gpu/host1x/dev.o: In function `host1x_remove':
+>>> dev.c:(.text+0x624): undefined reference to `put_iova_domain'
+>>> dev.c:(.text+0x624): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `put_iova_domain'
+>>> dev.c:(.text+0x62c): undefined reference to `iova_cache_put'
+>>> dev.c:(.text+0x62c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iova_cache_put'
+>>>
+>>> Select IOMMU_IOVA while COMPILE_TEST is set to fix this.
+>>>
+>>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>>> Fixes: 52499a6ad2ae ("gpu: host1x: select IOMMU_IOVA")
+>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>>> ---
+>>>  drivers/gpu/host1x/Kconfig | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+>>> index cf987a3..354232d 100644
+>>> --- a/drivers/gpu/host1x/Kconfig
+>>> +++ b/drivers/gpu/host1x/Kconfig
+>>> @@ -2,7 +2,7 @@
+>>>  config TEGRA_HOST1X
+>>>  	tristate "NVIDIA Tegra host1x driver"
+>>>  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
+>>> -	select IOMMU_IOVA if IOMMU_SUPPORT
+>>> +	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+>>>  	help
+>>>  	  Driver for the NVIDIA Tegra host1x hardware.
+>>>  
+>>>
+>>
+>> It should be better to unconditionally select IOMMU_IOVA here.
+>>
+>> The same could be done for drivers/staging/media/tegra-vde/ and
+>> drivers/gpu/host1x/, please see [1].
+> 
+> Yep, I will repost, thanks!
+
+Oh, I missed that you made a patch for host1x and not for drm. Thus
+drivers/gpu/drm/tegra/ also needs the same change.
+
+>>
+>> [1] https://lore.kernel.org/linux-iommu/20190829154902.GC19842@ulmo/
