@@ -1,16 +1,16 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v7 14/19] PM / devfreq: tegra30: Don't enable already
- enabled consecutive interrupts
-Date: Fri, 1 Nov 2019 16:00:59 +0900
-Message-ID: <6b98cb58-7487-3e0d-705a-fa1d8e4e43bd@samsung.com>
+Subject: Re: [PATCH v7 15/19] PM / devfreq: tegra30: Disable consecutive
+ interrupts when appropriate
+Date: Fri, 1 Nov 2019 16:01:05 +0900
+Message-ID: <1e363539-c9fb-0b1c-8cf7-b1cf320a2d28@samsung.com>
 References: <20191029220019.26773-1-digetx@gmail.com>
-        <CGME20191029220705epcas5p2ea4d8a7c244b4ba35f98fba05cfab646@epcas5p2.samsung.com>
-        <20191029220019.26773-15-digetx@gmail.com>
+        <CGME20191029220657epcas3p42c1eccf4499f36a57cdbd89a750fb60b@epcas3p4.samsung.com>
+        <20191029220019.26773-16-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191029220019.26773-15-digetx@gmail.com>
+In-Reply-To: <20191029220019.26773-16-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>
@@ -18,37 +18,58 @@ Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.ker
 List-Id: linux-tegra@vger.kernel.org
 
 On 19. 10. 30. 오전 7:00, Dmitry Osipenko wrote:
-> Consecutive up/down interrupt-bit is set in the interrupt status register
-> only if that interrupt was previously enabled. Thus enabling the already
-> enabled interrupt doesn't do much for us.
+> Consecutive interrupts should be disabled when boosting is completed.
+> 
+> Currently the disabling of "lower" interrupt happens only for MCCPU
+> monitor that uses dependency threshold, but even in a case of MCCPU the
+> interrupt isn't getting disabled if CPU's activity is above the threshold.
+> This results in a lot of dummy interrupt requests. The boosting feature is
+> used by both MCCPU and MCALL, boosting should be stopped once it reaches 0
+> for both of the monitors and regardless of the activity level.
+> 
+> The boosting stops to grow once the maximum limit is hit and thus the
+> "upper" interrupt needs to be disabled when the limit is reached.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/devfreq/tegra30-devfreq.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  drivers/devfreq/tegra30-devfreq.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
 > 
 > diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 9cbee82880ff..a9336cf4b37a 100644
+> index a9336cf4b37a..b745a973c35a 100644
 > --- a/drivers/devfreq/tegra30-devfreq.c
 > +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -261,8 +261,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+> @@ -259,8 +259,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
 >  
->  		if (dev->boost_freq >= tegra->max_freq)
+>  		dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+>  
+> -		if (dev->boost_freq >= tegra->max_freq)
+> +		if (dev->boost_freq >= tegra->max_freq) {
+> +			dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
 >  			dev->boost_freq = tegra->max_freq;
-> -		else
-> -			dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+> +		}
 >  	} else if (intr_status & ACTMON_DEV_INTR_CONSECUTIVE_LOWER) {
 >  		/*
 >  		 * new_boost = old_boost * down_coef
-> @@ -275,8 +273,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+> @@ -271,15 +273,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
 >  
->  		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1))
->  			dev->boost_freq = 0;
-> -		else
+>  		dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+>  
+> -		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1))
+> -			dev->boost_freq = 0;
+> -	}
+> -
+> -	if (dev->config->avg_dependency_threshold) {
+> -		if (dev->avg_count >= dev->config->avg_dependency_threshold)
 > -			dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+> -		else if (dev->boost_freq == 0)
+> +		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1)) {
+>  			dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+> +			dev->boost_freq = 0;
+> +		}
 >  	}
 >  
->  	if (dev->config->avg_dependency_threshold) {
+>  	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
 > 
 
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
