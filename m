@@ -1,68 +1,168 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v7 18/19] PM / devfreq: tegra30: Tune up MCCPU boost-down
- coefficient
-Date: Fri, 1 Nov 2019 17:14:57 +0300
-Message-ID: <110096a4-9f77-3912-a911-76d9c2c5c277@gmail.com>
-References: <20191029220019.26773-1-digetx@gmail.com>
- <CGME20191029220656epcas2p4b19cb854054ebce6132c7111f52cada4@epcas2p4.samsung.com>
- <20191029220019.26773-19-digetx@gmail.com>
- <99a90972-2170-ebcb-7bff-cd9ba8b0b0d1@samsung.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 1/3] memory: Introduce memory controller mini-framework
+Date: Fri, 1 Nov 2019 22:56:47 +0300
+Message-ID: <b9736f34-53cd-4261-6a8c-4b6ab4d21eeb@gmail.com>
+References: <20191015162945.1203736-1-thierry.reding@gmail.com>
+	<20191015162945.1203736-2-thierry.reding@gmail.com>
+	<0888ea6f-2092-001e-5663-3a1d3f305ba4@gmail.com>
+	<20191101101804.GD1167505@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <99a90972-2170-ebcb-7bff-cd9ba8b0b0d1@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20191101101804.GD1167505@ulmo>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-01.11.2019 10:45, Chanwoo Choi пишет:
-> On 19. 10. 30. 오전 7:00, Dmitry Osipenko wrote:
->> MCCPU boosts up very aggressively by 800% and boosts down very mildly by
->> 10%. This doesn't work well when system is idling because the very slow
->> de-boosting results in lots of consecutive-down interrupts, in result
->> memory stays clocked high and CPU doesn't enter deepest idling state
->> instead of keeping memory at lowest freq and having CPU cluster turned
->> off. A more faster de-boosting fixes the case of idling system and doesn't
->> affect the case of an active system.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index d0dd42856e5b..9a21a29198ee 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -123,7 +123,7 @@ static const struct tegra_devfreq_device_config actmon_device_configs[] = {
->>  		.offset = 0x200,
->>  		.irq_mask = 1 << 25,
->>  		.boost_up_coeff = 800,
->> -		.boost_down_coeff = 90,
->> +		.boost_down_coeff = 40,
->>  		.boost_up_threshold = 27,
->>  		.boost_down_threshold = 10,
->>  		.avg_dependency_threshold = 50000,
->>
-> 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> 
-> IMO, I think that it is not good to change the threshold value
-> on device driver directly when some requirement happen.
-> Instead, better to get the threshold value from device-tree file.
-
-I think in worst case these values could be tuned for a hardware
-generation. The current hardcoded values should be good enough for everyone.
-
-If we'll find that some differentiation is needed, then we could
-consider making the pre-defined config per hardware generation by
-specifying "data" fields of the of_device_id table.
-
-It also should be possible add sysfs interface for userpace to change
-the boosting values. Or make these values a driver's module parameters.
-
-There are different variants of what could be done in order to
-differentiate the configuration. But again, this is not needed for.
+MDEuMTEuMjAxOSAxMzoxOCwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBPbiBUaHUsIE9j
+dCAzMSwgMjAxOSBhdCAwNjoxMTozM1BNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+
+IDE1LjEwLjIwMTkgMTk6MjksIFRoaWVycnkgUmVkaW5nINC/0LjRiNC10YI6Cj4+PiBGcm9tOiBU
+aGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+Pj4KPj4+IFRoaXMgbmV3IGZyYW1l
+d29yayBpcyBjdXJyZW50bHkgbm90aGluZyBtb3JlIHRoYW4gYSByZWdpc3RyeSBvZiBtZW1vcnkK
+Pj4+IGNvbnRyb2xsZXJzLCB3aXRoIHRoZSBnb2FsIGJlaW5nIHRvIG9yZGVyIGRldmljZSBwcm9i
+aW5nLiBPbmUgdXNlLWNhc2UKPj4+IHdoZXJlIHRoaXMgaXMgdXNlZnVsLCBmb3IgZXhhbXBsZSwg
+aXMgYSBtZW1vcnkgY29udHJvbGxlciBkZXZpY2Ugd2hpY2gKPj4+IG5lZWRzIHRvIHByb2dyYW0g
+c29tZSByZWdpc3RlcnMgYmVmb3JlIHRoZSBzeXN0ZW0gTU1VIGNhbiBiZSBlbmFibGVkLgo+Pj4g
+QXNzb2NpYXRpbmcgdGhlIG1lbW9yeSBjb250cm9sbGVyIHdpdGggdGhlIFNNTVUgYWxsb3dzIHRo
+ZSBTTU1VIGRyaXZlcgo+Pj4gdG8gZGVmZXIgdGhlIHByb2JlIHVudGlsIHRoZSBtZW1vcnkgY29u
+dHJvbGxlciBoYXMgYmVlbiByZWdpc3RlcmVkLgo+Pj4KPj4+IE9uZSBzdWNoIGV4YW1wbGUgaXMg
+VGVncmExODYgd2hlcmUgdGhlIG1lbW9yeSBjb250cm9sbGVyIGNvbnRhaW5zIHNvbWUKPj4+IHJl
+Z2lzdGVycyB0aGF0IGFyZSB1c2VkIHRvIHByb2dyYW0gc3RyZWFtIElEcyBmb3IgdGhlIHZhcmlv
+dXMgbWVtb3J5Cj4+PiBjbGllbnRzIChkaXNwbGF5LCBVU0IsIFBDSSwgLi4uKSBpbiB0aGUgc3lz
+dGVtLiBQcm9ncmFtbWluZyB0aGVzZSBTSURzCj4+PiBpcyByZXF1aXJlZCBmb3IgdGhlIG1lbW9y
+eSBjbGllbnRzIHRvIGVtaXQgdGhlIHByb3BlciBTSURzIGFzIHBhcnQgb2YKPj4+IHRoZWlyIG1l
+bW9yeSByZXF1ZXN0cy4gVGhlIG1lbW9yeSBjb250cm9sbGVyIGRyaXZlciB0aGVyZWZvcmUgbmVl
+ZHMgdG8KPj4+IGJlIHByb2dyYW1tZWQgcHJpb3IgdG8gdGhlIFNNTVUgZHJpdmVyLiBUbyBhY2hp
+ZXZlIHRoYXQsIHRoZSBtZW1vcnkKPj4+IGNvbnRyb2xsZXIgd2lsbCBiZSByZWZlcmVuY2VkIHZp
+YSBwaGFuZGxlIGZyb20gdGhlIFNNTVUgZGV2aWNlIHRyZWUKPj4+IG5vZGUsIHRoZSBTTU1VIGRy
+aXZlciBjYW4gdGhlbiB1c2UgdGhlIG1lbW9yeSBjb250cm9sbGVyIGZyYW1ld29yayB0bwo+Pj4g
+ZmluZCBpdCBhbmQgZGVmZXIgcHJvYmUgdW50aWwgaXQgaGFzIGJlZW4gcmVnaXN0ZXJlZC4KPj4+
+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+
+Pj4gLS0tCj4+PiAgZHJpdmVycy9tZW1vcnkvTWFrZWZpbGUgICAgICAgICAgIHwgIDEgKwo+Pj4g
+IGRyaXZlcnMvbWVtb3J5L2NvcmUuYyAgICAgICAgICAgICB8IDk5ICsrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysKPj4+ICBpbmNsdWRlL2xpbnV4L21lbW9yeS1jb250cm9sbGVyLmggfCAy
+NSArKysrKysrKwo+Pj4gIDMgZmlsZXMgY2hhbmdlZCwgMTI1IGluc2VydGlvbnMoKykKPj4+ICBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZW1vcnkvY29yZS5jCj4+PiAgY3JlYXRlIG1vZGUg
+MTAwNjQ0IGluY2x1ZGUvbGludXgvbWVtb3J5LWNvbnRyb2xsZXIuaAo+Pgo+PiBIZWxsbyBUaGll
+cnJ5LAo+Pgo+PiBUaGlzIGxvb2tzIGxpa2UgYSB2ZXJ5IGdvb2QgZW5kZWF2b3VyISBJIGhhdmUg
+Y291cGxlIGNvbW1lbnRzLCBwbGVhc2UKPj4gc2VlIHRoZW0gYmVsb3cuCj4+Cj4+PiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9tZW1vcnkvTWFrZWZpbGUgYi9kcml2ZXJzL21lbW9yeS9NYWtlZmlsZQo+
+Pj4gaW5kZXggMjdiNDkzNDM1ZTYxLi5kMTZlN2RjYThlZjkgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2
+ZXJzL21lbW9yeS9NYWtlZmlsZQo+Pj4gKysrIGIvZHJpdmVycy9tZW1vcnkvTWFrZWZpbGUKPj4+
+IEBAIC0zLDYgKzMsNyBAQAo+Pj4gICMgTWFrZWZpbGUgZm9yIG1lbW9yeSBkZXZpY2VzCj4+PiAg
+Iwo+Pj4gIAo+Pj4gK29iai15CQkJCSs9IGNvcmUubwo+Pj4gIG9iai0kKENPTkZJR19ERFIpCQkr
+PSBqZWRlY19kZHJfZGF0YS5vCj4+PiAgaWZlcSAoJChDT05GSUdfRERSKSx5KQo+Pj4gIG9iai0k
+KENPTkZJR19PRikJCSs9IG9mX21lbW9yeS5vCj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZW1v
+cnkvY29yZS5jIGIvZHJpdmVycy9tZW1vcnkvY29yZS5jCj4+PiBuZXcgZmlsZSBtb2RlIDEwMDY0
+NAo+Pj4gaW5kZXggMDAwMDAwMDAwMDAwLi4xNzcyZTgzOTMwNWEKPj4+IC0tLSAvZGV2L251bGwK
+Pj4+ICsrKyBiL2RyaXZlcnMvbWVtb3J5L2NvcmUuYwo+Pj4gQEAgLTAsMCArMSw5OSBAQAo+Pj4g
+Ky8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wCj4+PiArLyoKPj4+ICsgKiBDb3B5
+cmlnaHQgKEMpIDIwMTkgTlZJRElBIENvcnBvcmF0aW9uLgo+Pj4gKyAqLwo+Pj4gKwo+Pj4gKyNp
+bmNsdWRlIDxsaW51eC9tZW1vcnktY29udHJvbGxlci5oPgo+Pj4gKyNpbmNsdWRlIDxsaW51eC9v
+Zi5oPgo+Pj4gKwo+Pj4gK3N0YXRpYyBERUZJTkVfTVVURVgoY29udHJvbGxlcnNfbG9jayk7Cj4+
+PiArc3RhdGljIExJU1RfSEVBRChjb250cm9sbGVycyk7Cj4+PiArCj4+PiArc3RhdGljIHZvaWQg
+bWVtb3J5X2NvbnRyb2xsZXJfcmVsZWFzZShzdHJ1Y3Qga3JlZiAqcmVmKQo+Pj4gK3sKPj4+ICsJ
+c3RydWN0IG1lbW9yeV9jb250cm9sbGVyICptYyA9IGNvbnRhaW5lcl9vZihyZWYsIHN0cnVjdCBt
+ZW1vcnlfY29udHJvbGxlciwgcmVmKTsKPj4+ICsKPj4+ICsJV0FSTl9PTighbGlzdF9lbXB0eSgm
+bWMtPmxpc3QpKTsKPj4+ICt9Cj4+PiArCj4+PiAraW50IG1lbW9yeV9jb250cm9sbGVyX3JlZ2lz
+dGVyKHN0cnVjdCBtZW1vcnlfY29udHJvbGxlciAqbWMpCj4+PiArewo+Pj4gKwlrcmVmX2luaXQo
+Jm1jLT5yZWYpOwo+Pj4gKwo+Pj4gKwltdXRleF9sb2NrKCZjb250cm9sbGVyc19sb2NrKTsKPj4+
+ICsJbGlzdF9hZGRfdGFpbCgmbWMtPmxpc3QsICZjb250cm9sbGVycyk7Cj4+PiArCW11dGV4X3Vu
+bG9jaygmY29udHJvbGxlcnNfbG9jayk7Cj4+PiArCj4+PiArCXJldHVybiAwOwo+Pj4gK30KPj4+
+ICtFWFBPUlRfU1lNQk9MX0dQTChtZW1vcnlfY29udHJvbGxlcl9yZWdpc3Rlcik7Cj4+PiArCj4+
+PiArdm9pZCBtZW1vcnlfY29udHJvbGxlcl91bnJlZ2lzdGVyKHN0cnVjdCBtZW1vcnlfY29udHJv
+bGxlciAqbWMpCj4+PiArewo+Pj4gKwltdXRleF9sb2NrKCZjb250cm9sbGVyc19sb2NrKTsKPj4+
+ICsJbGlzdF9kZWxfaW5pdCgmbWMtPmxpc3QpOwo+Pj4gKwltdXRleF91bmxvY2soJmNvbnRyb2xs
+ZXJzX2xvY2spOwo+Pj4gKwo+Pj4gKwlrcmVmX3B1dCgmbWMtPnJlZiwgbWVtb3J5X2NvbnRyb2xs
+ZXJfcmVsZWFzZSk7Cj4+PiArfQo+Pj4gK0VYUE9SVF9TWU1CT0xfR1BMKG1lbW9yeV9jb250cm9s
+bGVyX3VucmVnaXN0ZXIpOwo+Pj4gKwo+Pj4gK3N0YXRpYyBzdHJ1Y3QgbWVtb3J5X2NvbnRyb2xs
+ZXIgKgo+Pj4gK29mX21lbW9yeV9jb250cm9sbGVyX2dldChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0
+cnVjdCBkZXZpY2Vfbm9kZSAqbnAsCj4+PiArCQkJIGNvbnN0IGNoYXIgKmNvbl9pZCkKPj4+ICt7
+Cj4+PiArCWNvbnN0IGNoYXIgKmNlbGxzID0gIiNtZW1vcnktY29udHJvbGxlci1jZWxscyI7Cj4+
+PiArCWNvbnN0IGNoYXIgKm5hbWVzID0gIm1lbW9yeS1jb250cm9sbGVyLW5hbWVzIjsKPj4+ICsJ
+Y29uc3QgY2hhciAqcHJvcCA9ICJtZW1vcnktY29udHJvbGxlcnMiOwo+Pj4gKwlzdHJ1Y3QgbWVt
+b3J5X2NvbnRyb2xsZXIgKm1jOwo+Pj4gKwlzdHJ1Y3Qgb2ZfcGhhbmRsZV9hcmdzIGFyZ3M7Cj4+
+PiArCWludCBpbmRleCA9IDAsIGVycjsKPj4+ICsKPj4+ICsJaWYgKGNvbl9pZCkgewo+Pj4gKwkJ
+aW5kZXggPSBvZl9wcm9wZXJ0eV9tYXRjaF9zdHJpbmcobnAsIG5hbWVzLCBjb25faWQpOwo+Pj4g
+KwkJaWYgKGluZGV4IDwgMCkKPj4+ICsJCQlyZXR1cm4gRVJSX1BUUihpbmRleCk7Cj4+PiArCX0K
+Pj4+ICsKPj4+ICsJZXJyID0gb2ZfcGFyc2VfcGhhbmRsZV93aXRoX2FyZ3MobnAsIHByb3AsIGNl
+bGxzLCBpbmRleCwgJmFyZ3MpOwo+Pj4gKwlpZiAoZXJyKSB7Cj4+PiArCQlpZiAoZXJyID09IC1F
+Tk9FTlQpCj4+PiArCQkJZXJyID0gLUVOT0RFVjsKPj4+ICsKPj4+ICsJCXJldHVybiBFUlJfUFRS
+KGVycik7Cj4+PiArCX0KPj4+ICsKPj4+ICsJbXV0ZXhfbG9jaygmY29udHJvbGxlcnNfbG9jayk7
+Cj4+PiArCj4+PiArCWxpc3RfZm9yX2VhY2hfZW50cnkobWMsICZjb250cm9sbGVycywgbGlzdCkg
+ewo+Pj4gKwkJaWYgKG1jLT5kZXYgJiYgbWMtPmRldi0+b2Zfbm9kZSA9PSBhcmdzLm5wKSB7Cj4+
+PiArCQkJa3JlZl9nZXQoJm1jLT5yZWYpOwo+Pgo+PiBUaGlzIGlzIG5vdCBlbm91Z2ggYmVjYXVz
+ZSBtZW1vcnkgY29udHJvbGxlciBkcml2ZXIgY291bGQgYmUgYSBsb2FkYWJsZQo+PiBtb2R1bGUs
+IHRodXMgc29tZXRoaW5nIGxpa2UgdGhpcyBpcyBuZWVkZWQgaGVyZToKPj4KPj4gCV9fbW9kdWxl
+X2dldChtYy0+ZGV2LT5kcml2ZXItPm93bmVyKTsKPj4KPj4gVGhpcyB3b24ndCBhbGxvdyBNQyBk
+cml2ZXIgdG8gYmUgdW5sb2FkZWQgd2hpbGUgaXQgaGFzIGFjdGl2ZSB1c2Vycy4KPiAKPiBHb29k
+IGNhdGNoLiBJJ3ZlIGFkZGVkIHRoYXQgKGFuZCB0aGUgbW9kdWxlX3B1dCgpIGZyb20gYmVsb3cp
+IHRvIHRoZQo+IHBhdGNoLgo+IAo+Pj4gKwkJCW11dGV4X3VubG9jaygmY29udHJvbGxlcnNfbG9j
+ayk7Cj4+PiArCQkJZ290byB1bmxvY2s7Cj4+PiArCQl9Cj4+PiArCX0KPj4+ICsKPj4+ICsJbWMg
+PSBFUlJfUFRSKC1FUFJPQkVfREVGRVIpOwo+Pj4gKwo+Pj4gK3VubG9jazoKPj4+ICsJbXV0ZXhf
+dW5sb2NrKCZjb250cm9sbGVyc19sb2NrKTsKPj4+ICsJb2Zfbm9kZV9wdXQoYXJncy5ucCk7Cj4+
+PiArCXJldHVybiBtYzsKPj4+ICt9Cj4+PiArCj4+PiArc3RydWN0IG1lbW9yeV9jb250cm9sbGVy
+ICoKPj4+ICttZW1vcnlfY29udHJvbGxlcl9nZXQoc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBj
+aGFyICpjb25faWQpCj4+PiArewo+Pj4gKwlpZiAoSVNfRU5BQkxFRChDT05GSUdfT0YpICYmIGRl
+diAmJiBkZXYtPm9mX25vZGUpCj4+PiArCQlyZXR1cm4gb2ZfbWVtb3J5X2NvbnRyb2xsZXJfZ2V0
+KGRldiwgZGV2LT5vZl9ub2RlLCBjb25faWQpOwo+Pj4gKwo+Pj4gKwlyZXR1cm4gRVJSX1BUUigt
+RU5PREVWKTsKPj4+ICt9Cj4+PiArRVhQT1JUX1NZTUJPTF9HUEwobWVtb3J5X2NvbnRyb2xsZXJf
+Z2V0KTsKPj4KPj4gSW4gbW9zdCBjYXNlcyBtZW1vcnkgY29udHJvbGxlcnMgYXJlIHVuaXF1ZSBp
+biBhIHN5c3RlbSwgc28gaXQgbG9va3MgdG8KPj4gbWUgdGhhdCBpdCB3aWxsIGJlIG1vcmUgdW5p
+dmVyc2FsIHRvIGhhdmUgYWJpbGl0eSB0byBnZXQgTUMgYnkgaXRzCj4+IGRldmljZS10cmVlIGNv
+bXBhdGlibGUgbmFtZS4gTGlrZSB0aGlzOgo+Pgo+PiAJb2ZfbWVtb3J5X2NvbnRyb2xsZXJfZ2V0
+X2J5X2NvbXBhdGlibGUoY29uc3QgY2hhciAqY29tcGF0aWJsZSk7Cj4+Cj4+IFRoaXMgd2lsbCBh
+bGxvdyBjdXJyZW50IGRyaXZlcnMgKGxpa2UgVGVncmEyMCBkZXZmcmVxIGRyaXZlciBmb3IKPj4g
+ZXhhbXBsZSkgdG8gdXRpbGl6ZSB0aGlzIG5ldyBBUEkgd2l0aG91dCBoYXZpbmcgdHJvdWJsZSBv
+ZiBtYWludGFpbmluZwo+PiBiYWNrd2FyZHMgY29tcGF0aWJpbGl0eSB3aXRoIG9sZGVyIGRldmlj
+ZS10cmVlcyB0aGF0IGRvIG5vdCBoYXZlIGEKPj4gcGhhbmRsZSB0byBNQy4KPj4KPj4gaHR0cHM6
+Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjUuNC1yYzUvc291cmNlL2RyaXZlcnMvZGV2ZnJl
+cS90ZWdyYTIwLWRldmZyZXEuYyNMMTAwCj4+Cj4+IE9mIGNvdXJzZSB0aGVyZSBjb3VsZCBiZSBj
+YXNlcyB3aGVyZSB0aGVyZSBhcmUgbXVsdGlwbGUgY29udHJvbGxlcnMgd2l0aAo+PiB0aGUgc2Ft
+ZSBjb21wYXRpYmxlLCBidXQgdGhhdCBjYXNlIGNvdWxkIGJlIHN1cHBvcnRlZCBsYXRlciBvbiBi
+eSB0aG9zZQo+PiB3aG8gcmVhbGx5IG5lZWQgaXQuIEkgZG9uJ3QgdGhpbmsgdGhhdCBhbnkgb2Yg
+TlZJRElBIFRlZ3JhIFNvQ3MgZmFsbAo+PiBpbnRvIHRoYXQgY2F0ZWdvcnkuCj4gCj4gVGhpcyBo
+YXMgdGhlIHNsaWdodCBkaXNhZHZhbnRhZ2UgdGhhdCB3ZSB3b3VsZCBoYXZlIHRvIGl0ZXJhdGUg
+b3ZlciBhCj4gbnVtYmVyIG9mIGNvbXBhdGlibGUgc3RyaW5ncyBpbiBjYXNlIHdlIHdhbnQgdG8g
+dHJhbnNwYXJlbnRseSBzdXBwb3J0Cj4gbW9yZSB0aGFuIGEgc2luZ2xlIHZlcnNpb24gb2YgdGhl
+IG1lbW9yeSBjb250cm9sbGVyLgoKR29vZCBwb2ludC4KCj4gQW4gYWx0ZXJuYXRpdmUsIHdoaWNo
+IGlzIHVzZWQgYnkgYSBudW1iZXIgb2Ygb3RoZXIgcmVzb3VyY2UgcmVnaXN0cnkKPiBBUElzLCB3
+b3VsZCBiZSB0byB3b3JrIHdpdGggbG9va3VwIHRhYmxlcy4gQmFzaWNhbGx5IHRob3NlIHdvdWxk
+IG1ha2UKPiBhIG1hcHBpbmcgYmV0d2VlbiBhIHByb3ZpZGVyIGFuZCBhIGRldmljZS9jb25zdW1l
+ciBwYWlyLiBUaGUgcmVzdWx0Cj4gd291bGQgbG9vayBzb21ldGhpbmcgbGlrZSB0aGlzOgo+IAo+
+IAlzdHJ1Y3QgbWVtb3J5X2NvbnRyb2xsZXJfbG9va3VwIHsKPiAJCWNvbnN0IGNoYXIgKnByb3Zp
+ZGVyOwo+IAkJY29uc3QgY2hhciAqZGV2X2lkOwo+IAkJY29uc3QgY2hhciAqY29uX2lkOwo+IAl9
+Owo+IAo+IAlzdGF0aWMgY29uc3Qgc3RydWN0IG1lbW9yeV9jb250cm9sbGVyX2xvb2t1cCAqdGVn
+cmExMjRfbWNfbG9va3VwW10gPSB7Cj4gCQl7ICI3MDAxOTAwMC5tZW1vcnktY29udHJvbGxlciIs
+ICI2MDAwYzgwMC5hY3Rtb24iLCBOVUxMIH0sCj4gCX07Cj4gCj4gbWVtb3J5X2NvbnRyb2xsZXJf
+Z2V0KCkgY291bGQgdGhlbiB1c2UgdGhhdCBhcyBhIGxhc3QtcmVzb3J0IHRvIGZpbmQgYQo+IHJl
+ZmVyZW5jZSB0byBhIG1lbW9yeSBjb250cm9sbGVyIGlmIGEgZGV2aWNlIHRyZWUgcGhhbmRsZSBp
+c24ndAo+IGF2YWlsYWJsZS4KClRoZSBleHBsaWNpdCBsb29rdXAgdGFibGUgc291bmRzIGxpa2Ug
+YSBnb29kIGlkZWEgYmVjYXVzZSBpdCBzaG91bGQgYmUKdXNhYmxlIGluIGEgY2FzZSBvZiBhIG5v
+bi1PRiBkZXZpY2VzIGFzIHdlbGwuCgo+IE9uIHRoZSBvdGhlciBoYW5kIGl0IHNob3VsZCBiZSBm
+YWlybHkgZWFzeSB0byBjb25kaXRpb25hbGl6ZSBhbGwgdGhlCj4gY29kZSBiYXNlZCBwdXJlbHkg
+b24gdGhlIGF2YWlsYWJpbGl0eSBvZiBhIHBoYW5kbGU6Cj4gCj4gCW1jID0gbWVtb3J5X2NvbnRy
+b2xsZXJfZ2V0KGRldiwgTlVMTCk7Cj4gCWlmIChJU19FUlIobWMpKSB7Cj4gCQlpZiAobWMgIT0g
+RVJSX1BUUigtRU5PREVWKSkKPiAJCQlyZXR1cm4gUFRSX0VSUihtYyk7Cj4gCj4gCQltYyA9IE5V
+TEw7Cj4gCX0KPiAKPiAJLi4uCj4gCj4gCWlmIChtYykgewo+IAkJLi4uCj4gCX0KPiAKPiBUaGUg
+YWJvdmUgY291bGQgYmUgc2ltcGxpZmllZCBieSB3cmFwcGluZyB0aGUgbG9naWMgaW4gYSBoZWxw
+ZXIgdGhhdCBjYW4KPiBiZSB1c2VkIGlmIGNvbnN1bWVycyBjYW4gd29yayB3aXRob3V0OiBtZW1v
+cnlfY29udHJvbGxlcl9nZXRfb3B0aW9uYWwoKS4KCk9wdGlvbmFsIHJldHJpZXZhbCBoZWxwZXJz
+IGFyZSBhIGNvbW1vbiB0aGluZyBhbW9uZyBzdWJzeXN0ZW0gQVBJcy4KQWx0aG91Z2ggaXQgcHJv
+YmFibHkgc2hvdWxkbid0IGJlIG5lY2Vzc2FyeSBmb3IgdGhlIHN0YXJ0IG9mIHRoZSBNQyBBUEkK
+YW5kIGNvdWxkIGJlIGFkZGVkIGxhdGVyIG9uLCBvbmNlIHRoZXJlIHdpbGwgYmUgYSByZWFsIG5l
+ZWQgaW4gaXQuCkFGQUlLLCBub25lIG9mIHRoZSBUZWdyYSBkcml2ZXJzIGhhdmUgc3VjaCBhIG5l
+ZWQgcmlnaHQgbm93LgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwppb21tdSBtYWlsaW5nIGxpc3QKaW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmcK
+aHR0cHM6Ly9saXN0cy5saW51eGZvdW5kYXRpb24ub3JnL21haWxtYW4vbGlzdGluZm8vaW9tbXU=
