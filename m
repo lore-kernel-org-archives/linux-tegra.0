@@ -1,78 +1,146 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v7 15/19] PM / devfreq: tegra30: Disable consecutive
- interrupts when appropriate
-Date: Fri, 1 Nov 2019 16:01:05 +0900
-Message-ID: <1e363539-c9fb-0b1c-8cf7-b1cf320a2d28@samsung.com>
+Subject: Re: [PATCH v7 16/19] PM / devfreq: Add new interrupt_driven flag
+ for governors
+Date: Fri, 1 Nov 2019 16:32:10 +0900
+Message-ID: <a4caf25c-5907-6347-f4d7-37800a077f29@samsung.com>
 References: <20191029220019.26773-1-digetx@gmail.com>
-        <CGME20191029220657epcas3p42c1eccf4499f36a57cdbd89a750fb60b@epcas3p4.samsung.com>
-        <20191029220019.26773-16-digetx@gmail.com>
+        <CGME20191029220705epcas5p1dc9787952bd19cefe9e0bff592642142@epcas5p1.samsung.com>
+        <20191029220019.26773-17-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191029220019.26773-16-digetx@gmail.com>
+In-Reply-To: <20191029220019.26773-17-digetx@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
+
 On 19. 10. 30. 오전 7:00, Dmitry Osipenko wrote:
-> Consecutive interrupts should be disabled when boosting is completed.
+> Currently interrupt-driven governors (like NVIDIA Tegra30 ACTMON governor)
+> are used to set polling_ms=0 in order to avoid periodic polling of device
+> status by devfreq core. This means that polling interval can't be changed
+> by userspace for such governors.
 > 
-> Currently the disabling of "lower" interrupt happens only for MCCPU
-> monitor that uses dependency threshold, but even in a case of MCCPU the
-> interrupt isn't getting disabled if CPU's activity is above the threshold.
-> This results in a lot of dummy interrupt requests. The boosting feature is
-> used by both MCCPU and MCALL, boosting should be stopped once it reaches 0
-> for both of the monitors and regardless of the activity level.
-> 
-> The boosting stops to grow once the maximum limit is hit and thus the
-> "upper" interrupt needs to be disabled when the limit is reached.
+> The new governor flag allows interrupt-driven governors to convey that
+> devfreq core shouldn't perform polling of device status and thus generic
+> devfreq polling interval could be supported by these governors now.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/devfreq/tegra30-devfreq.c | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
+>  drivers/devfreq/devfreq.c  | 14 +++++++++-----
+>  drivers/devfreq/governor.h |  3 +++
+>  2 files changed, 12 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index a9336cf4b37a..b745a973c35a 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -259,8 +259,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index b905963cea7d..0ef972264841 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -410,7 +410,8 @@ static void devfreq_monitor(struct work_struct *work)
+>  void devfreq_monitor_start(struct devfreq *devfreq)
+>  {
+>  	INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
+> -	if (devfreq->profile->polling_ms)
+> +	if (devfreq->profile->polling_ms &&
+> +	    !devfreq->governor->interrupt_driven)
+>  		queue_delayed_work(devfreq_wq, &devfreq->work,
+>  			msecs_to_jiffies(devfreq->profile->polling_ms));
+>  }
+> @@ -474,7 +475,8 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+>  		goto out;
 >  
->  		dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+>  	if (!delayed_work_pending(&devfreq->work) &&
+> -			devfreq->profile->polling_ms)
+> +			devfreq->profile->polling_ms &&
+> +				!devfreq->governor->interrupt_driven)
+
+Better to edit it as following for the indentation.
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index cea05b43225f..60c5540b2a55 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -477,7 +477,7 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+ 
+        if (!delayed_work_pending(&devfreq->work) &&
+                        devfreq->profile->polling_ms &&
+-                               !devfreq->governor->interrupt_driven)
++                       !devfreq->governor->interrupt_driven)
+
+
+
+>  		queue_delayed_work(devfreq_wq, &devfreq->work,
+>  			msecs_to_jiffies(devfreq->profile->polling_ms));
 >  
-> -		if (dev->boost_freq >= tegra->max_freq)
-> +		if (dev->boost_freq >= tegra->max_freq) {
-> +			dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
->  			dev->boost_freq = tegra->max_freq;
-> +		}
->  	} else if (intr_status & ACTMON_DEV_INTR_CONSECUTIVE_LOWER) {
->  		/*
->  		 * new_boost = old_boost * down_coef
-> @@ -271,15 +273,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+> @@ -518,8 +520,9 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
 >  
->  		dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
->  
-> -		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1))
-> -			dev->boost_freq = 0;
-> -	}
-> -
-> -	if (dev->config->avg_dependency_threshold) {
-> -		if (dev->avg_count >= dev->config->avg_dependency_threshold)
-> -			dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
-> -		else if (dev->boost_freq == 0)
-> +		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1)) {
->  			dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
-> +			dev->boost_freq = 0;
-> +		}
+>  	/* if current delay is zero, start polling with new delay */
+>  	if (!cur_delay) {
+> -		queue_delayed_work(devfreq_wq, &devfreq->work,
+> -			msecs_to_jiffies(devfreq->profile->polling_ms));
+> +		if (!devfreq->governor->interrupt_driven)
+> +			queue_delayed_work(devfreq_wq, &devfreq->work,
+> +				msecs_to_jiffies(devfreq->profile->polling_ms));
+>  		goto out;
 >  	}
 >  
->  	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
+> @@ -528,7 +531,8 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
+>  		mutex_unlock(&devfreq->lock);
+>  		cancel_delayed_work_sync(&devfreq->work);
+>  		mutex_lock(&devfreq->lock);
+> -		if (!devfreq->stop_polling)
+> +		if (!devfreq->stop_polling &&
+> +		    !devfreq->governor->interrupt_driven)
+>  			queue_delayed_work(devfreq_wq, &devfreq->work,
+>  				msecs_to_jiffies(devfreq->profile->polling_ms));
+>  	}
+
+In the devfreq_interval_update(), you better to modify this function as following:
+It is more simple.
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index d3d12ed0ed29..80acb55d1686 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -510,6 +510,9 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
+        if (devfreq->stop_polling)
+                goto out;
+ 
++       if (!devfreq->governor->interrupt_driven)
++               goto out;
++
+        /* if new delay is zero, stop polling */
+        if (!new_delay) {
+                mutex_unlock(&devfreq->lock);
+
+
+
+> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+> index bbe5ff9fcecf..dc7533ccc3db 100644
+> --- a/drivers/devfreq/governor.h
+> +++ b/drivers/devfreq/governor.h
+> @@ -31,6 +31,8 @@
+>   * @name:		Governor's name
+>   * @immutable:		Immutable flag for governor. If the value is 1,
+>   *			this govenror is never changeable to other governor.
+> + * @interrupt_driven:	Devfreq core won't schedule polling work for this
+> + *			governor if value is set to 1.
+>   * @get_target_freq:	Returns desired operating frequency for the device.
+>   *			Basically, get_target_freq will run
+>   *			devfreq_dev_profile.get_dev_status() to get the
+> @@ -49,6 +51,7 @@ struct devfreq_governor {
+>  
+>  	const char name[DEVFREQ_NAME_LEN];
+>  	const unsigned int immutable;
+> +	const unsigned int interrupt_driven;
+>  	int (*get_target_freq)(struct devfreq *this, unsigned long *freq);
+>  	int (*event_handler)(struct devfreq *devfreq,
+>  				unsigned int event, void *data);
 > 
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
 Best Regards,
