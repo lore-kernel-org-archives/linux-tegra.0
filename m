@@ -1,109 +1,145 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v6 00/18] Consolidate and improve NVIDIA Tegra CPUIDLE
- driver(s)
-Date: Fri, 1 Nov 2019 16:22:17 +0300
-Message-ID: <a72463cd-cc16-691c-3c82-54ebb618ec32@gmail.com>
-References: <20191015170015.1135-1-digetx@gmail.com>
- <20191016192133.GB26038@pdeschrijver-desktop.Nvidia.com>
- <72636eb3-5354-eea3-3a51-4975a04186b2@gmail.com>
- <53ee8bd3-5c53-f0aa-175c-7fa3024d0af5@gmail.com>
- <20191028140443.GA27141@pdeschrijver-desktop.Nvidia.com>
- <40de641f-c38e-51ee-ae27-c5db468c45b5@gmail.com>
- <20191101123359.GG27141@pdeschrijver-desktop.Nvidia.com>
+Subject: Re: [PATCH v7 17/19] PM / devfreq: tegra30: Support variable polling
+ interval
+Date: Fri, 1 Nov 2019 16:55:12 +0300
+Message-ID: <a60d5949-a980-306a-e65a-6017b40a7321@gmail.com>
+References: <20191029220019.26773-1-digetx@gmail.com>
+ <CGME20191029220636epcas2p279bee6ee40d9253cdfbcf5d6da6b3a14@epcas2p2.samsung.com>
+ <20191029220019.26773-18-digetx@gmail.com>
+ <00ddcbd5-262b-2130-6242-b1ec364825f3@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191101123359.GG27141@pdeschrijver-desktop.Nvidia.com>
+In-Reply-To: <00ddcbd5-262b-2130-6242-b1ec364825f3@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-01.11.2019 15:33, Peter De Schrijver пишет:
-> On Tue, Oct 29, 2019 at 03:47:56AM +0300, Dmitry Osipenko wrote:
-> ..
-> 
->>>>>> It would be useful to switch the power state terminology to the one used
->>>>>> for later chips:
->>>>>>
->>>>>> LP0 becomes SC7
->>>>>> LP1 becomes C1
->>>>>> LP2 becomes CC7
->>>>>>
->>>>>> Meaning of these states is as follows
->>>>>>
->>>>>> C is a core state:
->>>>>>
->>>>>> C1 clock gating
->>>>>> C2 not defined
->>>>>> C3 not defined
->>>>>> C4 not defined
->>>>>> C5 not defined
->>>>>> C6 not defined for ARM cores
->>>>>> C7 power-gating
->>>>>>
->>>>>> CC is a CPU cluster C state:
->>>>>>
->>>>>> CC1 cluster clock gated
->>>>>> CC2 not defined
->>>>>> CC3 fmax@Vmin: not used prior to Tegra186
->>>>>> CC4: cluster retention: no longer supported
->>>>>> CC5: not defined
->>>>>> CC6: cluster power gating
->>>>>> CC7: cluster rail gating
->>>>>>
->>>>>> SC is a System C state:
->>>>>>
->>>>>> SC1: not defined
->>>>>> SC2: not defined
->>>>>> SC3: not defined
->>>>>> SC4: not defined
->>>>>> SC5: not defined
->>>>>> SC6: not defined
->>>>>> SC7: VDD_SOC off
->>>>>
->>>>> Hello Peter,
->>>>>
->>>>> But new "drivers/cpuidle/cpuidle-tegra.c" uses exactly that terminology,
->>>>> please see "cpuidle: Refactor and move NVIDIA Tegra20 driver into
->>>>> drivers/cpuidle/" and further patches. Am I missing something? Or do you
->>>>> want the renaming to be a separate patch?
->>>>>
->>>>
->>>> Or maybe you're suggesting to change the names everywhere and not only
->>>> in the cpuidle driver? Please clarify :)
->>>
->>> At least some of the variable and function names still say lp2?
+01.11.2019 10:41, Chanwoo Choi пишет:
+> On 19. 10. 30. 오전 7:00, Dmitry Osipenko wrote:
+>> The ACTMON governor is interrupt-driven and currently hardware's polling
+>> interval is fixed to 16ms in the driver. Devfreq supports variable polling
+>> interval by the generic governors, let's re-use the generic interface for
+>> changing of the polling interval. Now the polling interval can be changed
+>> dynamically via /sys/class/devfreq/devfreq0/polling_interval.
 >>
->> The cpuidle driver uses LP2 terminology for everything that comes from
->> the external arch / firmware includes. But it says CC6 for everything
->> that is internal to the driver. So yes, there is a bit of new/old
->> terminology mixing in the code.
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/devfreq/tegra30-devfreq.c | 35 ++++++++++++++++++++++++-------
+>>  1 file changed, 28 insertions(+), 7 deletions(-)
 >>
->> The arch code / PMC driver / TF firmware are all saying LP2. The LP2
->> naming is also a part of the device-tree binding.
->>
->> It will be a lot of mess to rename the mach-tegra/pm.c code. I guess
->> eventually it could be moved to drivers/soc/, so maybe it will be better
->> to postpone the renaming until then?
+>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>> index b745a973c35a..d0dd42856e5b 100644
+>> --- a/drivers/devfreq/tegra30-devfreq.c
+>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>> @@ -218,7 +218,7 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
+>>  {
+>>  	u32 avg = dev->avg_count;
+>>  	u32 avg_band_freq = tegra->max_freq * ACTMON_DEFAULT_AVG_BAND / KHZ;
+>> -	u32 band = avg_band_freq * ACTMON_SAMPLING_PERIOD;
+>> +	u32 band = avg_band_freq * tegra->devfreq->profile->polling_ms;
+>>  
+>>  	device_writel(dev, avg + band, ACTMON_DEV_AVG_UPPER_WMARK);
+>>  
+>> @@ -229,7 +229,7 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
+>>  static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
+>>  				       struct tegra_devfreq_device *dev)
+>>  {
+>> -	u32 val = tegra->cur_freq * ACTMON_SAMPLING_PERIOD;
+>> +	u32 val = tegra->cur_freq * tegra->devfreq->profile->polling_ms;
+>>  
+>>  	device_writel(dev, do_percent(val, dev->config->boost_up_threshold),
+>>  		      ACTMON_DEV_UPPER_WMARK);
+>> @@ -308,7 +308,7 @@ static unsigned long actmon_device_target_freq(struct tegra_devfreq *tegra,
+>>  	unsigned int avg_sustain_coef;
+>>  	unsigned long target_freq;
+>>  
+>> -	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
+>> +	target_freq = dev->avg_count / tegra->devfreq->profile->polling_ms;
+>>  	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
+>>  	target_freq = do_percent(target_freq, avg_sustain_coef);
+>>  	target_freq += dev->boost_freq;
+>> @@ -465,7 +465,7 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+>>  
+>>  	dev->target_freq = tegra->cur_freq;
+>>  
+>> -	dev->avg_count = tegra->cur_freq * ACTMON_SAMPLING_PERIOD;
+>> +	dev->avg_count = tegra->cur_freq * tegra->devfreq->profile->polling_ms;
+>>  	device_writel(dev, dev->avg_count, ACTMON_DEV_INIT_AVG);
+>>  
+>>  	tegra_devfreq_update_avg_wmark(tegra, dev);
+>> @@ -506,7 +506,11 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
+>>  	unsigned int i;
+>>  	int err;
+>>  
+>> -	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+>> +	if (!tegra->devfreq->profile->polling_ms ||
+>> +	    tegra->devfreq->stop_polling)
 > 
-> Or maybe add a comment somewhere indicating:
+> I think that the access of 'devfreq->stop_polling' is not good
+> on governor. It is possible to alter with DEVFREQ_GOV_START/STOP/SUSPEND/RESUME
+> notification.
+
+Could you please clarify what you're meaning by "alter with notification"?
+
+Do you mean to have the start/stop state tracking done by the
+tegra30-devfreq driver itself?
+
+>> +		return 0;> +
+>> +	actmon_writel(tegra, tegra->devfreq->profile->polling_ms - 1,
+>>  		      ACTMON_GLB_PERIOD_CTRL);
+>>  
+>>  	/*
+>> @@ -554,6 +558,10 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
+>>  
+>>  static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+>>  {
+>> +	if (!tegra->devfreq->profile->polling_ms ||
+>> +	    tegra->devfreq->stop_polling)
 > 
-> LP2 = CC6
-> LP1 = C1
-> LP0 = SC7
+> ditto.
 > 
-> TF predates the new naming, so that may make some sense.
+>> +		return;
+>> +
+>>  	disable_irq(tegra->irq);
+>>  
+>>  	cpufreq_unregister_notifier(&tegra->cpu_rate_change_nb,
+>> @@ -623,7 +631,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>>  	stat->busy_time *= 100 / BUS_SATURATION_RATIO;
+>>  
+>>  	/* Number of cycles in a sampling period */
+>> -	stat->total_time = ACTMON_SAMPLING_PERIOD * cur_freq;
+>> +	stat->total_time = tegra->devfreq->profile->polling_ms * cur_freq;
+>>  
+>>  	stat->busy_time = min(stat->busy_time, stat->total_time);
+>>  
+>> @@ -631,7 +639,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>>  }
+>>  
+>>  static struct devfreq_dev_profile tegra_devfreq_profile = {
+>> -	.polling_ms	= 0,
+>> +	.polling_ms	= ACTMON_SAMPLING_PERIOD,
+>>  	.target		= tegra_devfreq_target,
+>>  	.get_dev_status	= tegra_devfreq_get_dev_status,
+>>  };
+>> @@ -671,6 +679,7 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+>>  					unsigned int event, void *data)
+>>  {
+>>  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
+>> +	unsigned int *new_delay = data;
+>>  	int ret = 0;
+>>  
+>>  	/*
+>> @@ -690,6 +699,17 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+>>  		devfreq_monitor_stop(devfreq);
+>>  		break;
+>>  
+>> +	case DEVFREQ_GOV_INTERVAL:
+>> +		if (*new_delay > 256) {
+> 
+> Need to add the comment why the maximum delay is under 256 ms.
 
-Today it should make more sense just to add an explicit comment to the
-cpuidle driver that clarifies the new naming (IMHO). I'll prepare v7
-with that change.
-
-Maybe later on, once more code will be consolidated in
-drivers/soc/tegra/, it will become useful to duplicate the clarification
-there as well.
-
-Please let me know if you disagree or think that something better could
-be done.
+Okay, will add comment in v8. The 256ms max is the hardware's capability.
