@@ -1,101 +1,72 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 8/8] arm64: tegra: Device tree changes for v5.5-rc1
-Date: Sat,  2 Nov 2019 15:45:21 +0100
-Message-ID: <20191102144521.3863321-8-thierry.reding@gmail.com>
-References: <20191102144521.3863321-1-thierry.reding@gmail.com>
+Subject: [PATCH v2 0/9] drm/nouveau: Various fixes for GP10B
+Date: Sat,  2 Nov 2019 18:56:28 +0100
+Message-ID: <20191102175637.3065-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191102144521.3863321-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: arm@kernel.org
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ben Skeggs <bskeggs@redhat.com>, Joerg Roedel <joro@8bytes.org>
+Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, Ben Dooks <ben.dooks@codethink.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
-
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
-
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-arm64-dt
-
-for you to fetch changes up to 47b4e129155fd1e721462fa23d128940c93b5b7b:
-
-  arm64: tegra: Add Jetson Nano SC7 timings (2019-10-29 20:30:09 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-arm64: tegra: Device tree changes for v5.5-rc1
-
-Adds support for DP and XUSB on various boards, enables SMMU support for
-more devices and fixes a couple of DTC warnings and inconsistencies that
-are reported at runtime.
-
-These changes along with some of the driver changes in other branches
-allow suspend/resume support on Tegra210 devices (e.g. Jetson TX1 and
-Jetson Nano).
-
-----------------------------------------------------------------
-Jon Hunter (2):
-      arm64: tegra: Fix 'active-low' warning for Jetson TX1 regulator
-      arm64: tegra: Fix 'active-low' warning for Jetson Xavier regulator
-
-Nagarjuna Kristam (3):
-      arm64: tegra: Enable XUSB pad controller on Jetson TX2
-      arm64: tegra: Enable SMMU for XUSB host on Tegra186
-      arm64: tegra: Enable XUSB host controller on Jetson TX2
-
-Sowjanya Komatineni (3):
-      arm64: tegra: Enable wake from deep sleep on RTC alarm
-      arm64: tegra: Add Jetson TX1 SC7 timings
-      arm64: tegra: Add Jetson Nano SC7 timings
-
-Thierry Reding (18):
-      dt-bindings: clock: tegra: Rename SOR0_LVDS to SOR0_OUT
-      Merge branch 'for-5.5/dt-bindings'
-      arm64: tegra: Add CPU and cache topology for Tegra194
-      arm64: tegra: Add unit-address for CBB on Tegra194
-      arm64: tegra: Add unit-address for ACONNECT on Tegra194
-      arm64: tegra: Fix base address for SOR1 on Tegra194
-      arm64: tegra: Hook up edp interrupt on Tegra210 SOCTHERM
-      arm64: tegra: Fix compatible string for EQOS on Tegra194
-      arm64: tegra: Add ethernet alias on Jetson AGX Xavier
-      arm64: tegra: Enable SMMU for VIC on Tegra186
-      arm64: tegra: Add SOR0_OUT clock on Tegra210
-      arm64: tegra: Enable DP support on Jetson Nano
-      arm64: tegra: Fix compatible for SOR1
-      arm64: tegra: Enable DP support on Jetson TX2
-      arm64: tegra: p2888: Rename regulators for consistency
-      arm64: tegra: Enable DisplayPort on Jetson AGX Xavier
-      arm64: tegra: Add blank lines for better readability
-      arm64: tegra: Add PMU on Tegra210
-
-Vidya Sagar (1):
-      arm64: tegra: Assume no CLKREQ presence by default
-
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  12 +-
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   4 +-
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |  36 ++---
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |  33 +++-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 171 ++++++++++++++++++---
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |   7 +
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   2 +-
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  35 +++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  25 ++-
- include/dt-bindings/clock/tegra124-car-common.h    |   3 +-
- include/dt-bindings/clock/tegra210-car.h           |   3 +-
- 11 files changed, 278 insertions(+), 53 deletions(-)
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkhpIEJlbiwKCmhlcmUn
+cyBhIHJldmlzZWQgc3Vic2V0IG9mIHRoZSBwYXRjaGVzIEkgaGFkIHNlbnQgb3V0IGEgY291cGxl
+IG9mIHdlZWtzCmFnby4gSSd2ZSByZXdvcmtlZCB0aGUgQkFSMiBhY2Nlc3NlcyBpbiB0aGUgd2F5
+IHRoYXQgeW91IGhhZCBzdWdnZXN0ZWQsCndoaWNoIGF0IGxlYXN0IGZvciBHUDEwQiB0dXJuZWQg
+b3V0IHRvIGJlIGZhaXJseSB0cml2aWFsIHRvIGRvLiBJIGhhdmUKbm90IGxvb2tlZCBpbiBkZXRh
+aWwgYXQgdGhpcyBmb3IgR1YxMUIgeWV0LCBidXQgYSBjdXJzb3J5IGxvb2sgc2hvd2VkCnRoYXQg
+QkFSMiBpcyBhY2Nlc3NlZCBpbiBtb3JlIHBsYWNlcywgc28gdGhlIGVxdWl2YWxlbnQgZm9yIEdW
+MTFCIG1pZ2h0CmJlIGEgYml0IG1vcmUgaW52b2x2ZWQuCgpPdGhlciB0aGFuIHRoYXQsIG5vdCBh
+IGxvdCBoYXMgY2hhbmdlZCBzaW5jZSB0aGVuLiBJJ3ZlIGFkZGVkIGEgY291cGxlCm9mIHByZWN1
+cnNvcnkgcGF0Y2hlcyB0byBhZGQgSU9NTVUgaGVscGVyIGR1bW1pZXMgZm9yIHRoZSBjYXNlIHdo
+ZXJlCklPTU1VIGlzIGRpc2FibGVkIChhcyBzdWdnZXN0ZWQgYnkgQmVuIERvb2tzKS4KCkpvZXJn
+LCBpdCdkIGJlIGdyZWF0IGlmIHlvdSBjb3VsZCBnaXZlIGFuIEFja2VkLWJ5IG9uIHRob3NlIHR3
+byBwYXRjaGVzCnNvIHRoYXQgQmVuIGNhbiBwaWNrIHRoZW0gYm90aCB1cCBpbnRvIHRoZSBOb3V2
+ZWF1IHRyZWUuIEFsdGVybmF0aXZlbHkgSQpjYW4gcHV0IHRoZW0gYm90aCBpbnRvIGEgc3RhYmxl
+IGJyYW5jaCBhbmQgc2VuZCBhIHB1bGwgcmVxdWVzdCB0byBib3RoCm9mIHlvdS4gT3IgeWV0IGFu
+b3RoZXIgYWx0ZXJuYXRpdmUgd291bGQgYmUgZm9yIEpvZXJnIHRvIGFwcGx5IHRoZW0gbm93CmFu
+ZCBCZW4gdG8gd2FpdCBmb3IgdjUuNS1yYzEgdW50aWwgaGUgcGlja3MgdXAgdGhlIHJlc3QuIEFs
+bCBvZiB0aG9zZQp3b3JrIGZvciBtZS4KClRoaWVycnkKClRoaWVycnkgUmVkaW5nICg5KToKICBp
+b21tdTogRG9jdW1lbnQgaW9tbXVfZndzcGVjOjpmbGFncyBmaWVsZAogIGlvbW11OiBBZGQgZHVt
+bXkgZGV2X2lvbW11X2Z3c3BlY19nZXQoKSBoZWxwZXIKICBkcm0vbm91dmVhdTogZmF1bHQ6IEFk
+ZCBzdXBwb3J0IGZvciBHUDEwQgogIGRybS9ub3V2ZWF1OiB0ZWdyYTogRG8gbm90IHRyeSB0byBk
+aXNhYmxlIFBDSSBkZXZpY2UKICBkcm0vbm91dmVhdTogdGVncmE6IEF2b2lkIHB1bHNpbmcgcmVz
+ZXQgdHdpY2UKICBkcm0vbm91dmVhdTogdGVncmE6IFNldCBjbG9jayByYXRlIGlmIG5vdCBzZXQK
+ICBkcm0vbm91dmVhdTogc2VjYm9vdDogUmVhZCBXUFIgY29uZmlndXJhdGlvbiBmcm9tIEdQVSBy
+ZWdpc3RlcnMKICBkcm0vbm91dmVhdTogZ3AxMGI6IEFkZCBjdXN0b20gTDIgY2FjaGUgaW1wbGVt
+ZW50YXRpb24KICBkcm0vbm91dmVhdTogZ3AxMGI6IFVzZSBjb3JyZWN0IGNvcHkgZW5naW5lCgog
+Li4uL2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZrbS9zdWJkZXYvZmF1bHQuaCAgIHwgIDEgKwogLi4u
+L2dwdS9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vc3ViZGV2L2x0Yy5oIHwgIDEgKwogZHJpdmVy
+cy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0uYyAgICAgICAgIHwgIDMgKy0KIC4uLi9ncHUv
+ZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL2Jhc2UuYyB8ICA2ICstCiAuLi4vZHJtL25v
+dXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMgICAgfCAyNCArKysrLS0KIC4uLi9ncHUv
+ZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvZmF1bHQvS2J1aWxkICB8ICAxICsKIC4uLi9ncHUvZHJt
+L25vdXZlYXUvbnZrbS9zdWJkZXYvZmF1bHQvYmFzZS5jICB8ICAyICstCiAuLi4vZ3B1L2RybS9u
+b3V2ZWF1L252a20vc3ViZGV2L2ZhdWx0L2dwMTAwLmMgfCAxNyArKy0tCiAuLi4vZ3B1L2RybS9u
+b3V2ZWF1L252a20vc3ViZGV2L2ZhdWx0L2dwMTBiLmMgfCA1MyArKysrKysrKysrKysKIC4uLi9n
+cHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvZmF1bHQvZ3YxMDAuYyB8ICAxICsKIC4uLi9ncHUv
+ZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvZmF1bHQvcHJpdi5oICB8IDEwICsrKwogLi4uL2dwdS9k
+cm0vbm91dmVhdS9udmttL3N1YmRldi9sdGMvS2J1aWxkICAgIHwgIDEgKwogLi4uL2dwdS9kcm0v
+bm91dmVhdS9udmttL3N1YmRldi9sdGMvZ3AxMGIuYyAgIHwgNjUgKysrKysrKysrKysrKysrCiAu
+Li4vZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9wcml2LmggICAgfCAgMiArCiAuLi4v
+ZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvc2VjYm9vdC9nbTIwMC5oICAgfCAgMiArLQogLi4uL2Ry
+bS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ20yMGIuYyAgIHwgODEgKysrKysrKysrKysr
+LS0tLS0tLQogLi4uL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L3NlY2Jvb3QvZ3AxMGIuYyAgIHwg
+IDQgKy0KIGluY2x1ZGUvbGludXgvaW9tbXUuaCAgICAgICAgICAgICAgICAgICAgICAgICB8IDQ2
+ICsrKysrKy0tLS0tCiAxOCBmaWxlcyBjaGFuZ2VkLCAyNDkgaW5zZXJ0aW9ucygrKSwgNzEgZGVs
+ZXRpb25zKC0pCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZr
+bS9zdWJkZXYvZmF1bHQvZ3AxMGIuYwogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2Ry
+bS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9ncDEwYi5jCgotLSAKMi4yMy4wCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
