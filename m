@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 3/8] memory: tegra: Changes for v5.5-rc1
-Date: Sat,  2 Nov 2019 15:45:16 +0100
-Message-ID: <20191102144521.3863321-3-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/8] soc/tegra: Changes for v5.5-rc1
+Date: Sat,  2 Nov 2019 15:45:17 +0100
+Message-ID: <20191102144521.3863321-4-thierry.reding@gmail.com>
 References: <20191102144521.3863321-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,61 +29,53 @@ The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-memory
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-soc
 
-for you to fetch changes up to 8b04225c4464422f185e62c2cedfb9e234423814:
+for you to fetch changes up to 69dfb3d4a89afccca1d8f282e49ad1362100cc43:
 
-  memory: tegra: Consolidate registers definition into common header (2019-11-01 10:57:37 +0100)
+  soc/tegra: pmc: Remove unnecessary memory barrier (2019-10-29 14:36:24 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-memory: tegra: Changes for v5.5-rc1
+soc/tegra: Changes for v5.5-rc1
 
-This contains a couple of fixes and adds support for EMC frequency
-scaling on Tegra30.
+Adds wake event support on Tegra210, implements the NVMEM API for the
+Tegra FUSE block and adds coupled regulators support for Tegra20 and
+Tegra30.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (11):
-      clk: tegra: Add Tegra20/30 EMC clock implementation
-      memory: tegra: Don't set EMC rate to maximum on probe for Tegra20
-      memory: tegra: Adapt for Tegra20 clock driver changes
-      memory: tegra: Include io.h instead of iopoll.h
-      memory: tegra: Pre-configure debug register on Tegra20
-      memory: tegra: Print a brief info message about EMC timings
-      memory: tegra: Increase handshake timeout on Tegra20
-      memory: tegra: Do not handle error from wait_for_completion_timeout()
-      memory: tegra: Introduce Tegra30 EMC driver
-      memory: tegra: Ensure timing control debug features are disabled
-      memory: tegra: Consolidate registers definition into common header
+Dmitry Osipenko (4):
+      soc/tegra: regulators: Add regulators coupler for Tegra20
+      soc/tegra: regulators: Add regulators coupler for Tegra30
+      soc/tegra: pmc: Query PCLK clock rate at probe time
+      soc/tegra: pmc: Remove unnecessary memory barrier
 
-Sowjanya Komatineni (1):
-      clk: Add API to get index of the clock parent
+Nagarjuna Kristam (1):
+      soc/tegra: fuse: Add FUSE clock check in tegra_fuse_readl()
 
-Thierry Reding (3):
-      Merge branch 'for-5.5/clk'
-      memory: tegra: Set DMA mask based on supported address bits
-      memory: tegra: Add gr2d and gr3d to DRM IOMMU group
+Sowjanya Komatineni (4):
+      soc/tegra: pmc: Support wake events on more Tegra SoCs
+      soc/tegra: pmc: Add wake event support on Tegra210
+      soc/tegra: pmc: Configure core power request polarity
+      soc/tegra: pmc: Configure deep sleep control settings
 
- drivers/clk/clk.c                   |   17 +
- drivers/clk/tegra/Makefile          |    2 +
- drivers/clk/tegra/clk-tegra20-emc.c |  293 +++++++++
- drivers/clk/tegra/clk-tegra20.c     |   55 +-
- drivers/clk/tegra/clk-tegra30.c     |   38 +-
- drivers/clk/tegra/clk.h             |    3 +
- drivers/memory/tegra/Kconfig        |   10 +
- drivers/memory/tegra/Makefile       |    1 +
- drivers/memory/tegra/mc.c           |   52 +-
- drivers/memory/tegra/mc.h           |   74 ++-
- drivers/memory/tegra/tegra114.c     |   10 +-
- drivers/memory/tegra/tegra124.c     |   30 +-
- drivers/memory/tegra/tegra20-emc.c  |  134 ++--
- drivers/memory/tegra/tegra30-emc.c  | 1232 +++++++++++++++++++++++++++++++++++
- drivers/memory/tegra/tegra30.c      |   34 +-
- include/linux/clk-provider.h        |    1 +
- include/linux/clk/tegra.h           |   11 +
- include/soc/tegra/mc.h              |    2 +-
- 18 files changed, 1797 insertions(+), 202 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
- create mode 100644 drivers/memory/tegra/tegra30-emc.c
+Thierry Reding (5):
+      soc/tegra: pmc: Fix crashes for hierarchical interrupts
+      soc/tegra: fuse: Restore base on sysfs failure
+      soc/tegra: fuse: Implement nvmem device
+      soc/tegra: fuse: Add cell information
+      soc/tegra: fuse: Register cell lookups for compatibility
+
+ drivers/soc/tegra/Kconfig              |  10 +
+ drivers/soc/tegra/Makefile             |   2 +
+ drivers/soc/tegra/fuse/fuse-tegra.c    | 198 +++++++++++++-----
+ drivers/soc/tegra/fuse/fuse-tegra30.c  | 154 ++++++++++++++
+ drivers/soc/tegra/fuse/fuse.h          |   8 +
+ drivers/soc/tegra/pmc.c                | 232 +++++++++++++++++++--
+ drivers/soc/tegra/regulators-tegra20.c | 365 +++++++++++++++++++++++++++++++++
+ drivers/soc/tegra/regulators-tegra30.c | 317 ++++++++++++++++++++++++++++
+ 8 files changed, 1212 insertions(+), 74 deletions(-)
+ create mode 100644 drivers/soc/tegra/regulators-tegra20.c
+ create mode 100644 drivers/soc/tegra/regulators-tegra30.c
