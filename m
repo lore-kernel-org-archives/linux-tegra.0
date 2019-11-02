@@ -1,11 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 1/8] dt-bindings: Changes for v5.5-rc1
-Date: Sat,  2 Nov 2019 15:45:14 +0100
-Message-ID: <20191102144521.3863321-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/8] memory: tegra: Changes for v5.5-rc1
+Date: Sat,  2 Nov 2019 15:45:16 +0100
+Message-ID: <20191102144521.3863321-3-thierry.reding@gmail.com>
+References: <20191102144521.3863321-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191102144521.3863321-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -27,41 +29,61 @@ The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-memory
 
-for you to fetch changes up to 641262f5e1ed5c96799e17595893fa1a703616ac:
+for you to fetch changes up to 8b04225c4464422f185e62c2cedfb9e234423814:
 
-  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory Controller (2019-10-29 20:22:34 +0100)
+  memory: tegra: Consolidate registers definition into common header (2019-11-01 10:57:37 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Changes for v5.5-rc1
+memory: tegra: Changes for v5.5-rc1
 
-This contains various updates to device tree bindings and includes that
-are related to driver changes in other Tegra branches.
+This contains a couple of fixes and adds support for EMC frequency
+scaling on Tegra30.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (4):
-      dt-bindings: regulator: Document regulators coupling of NVIDIA Tegra20/30 SoCs
-      dt-bindings: memory: tegra30: Convert to Tegra124 YAML
-      dt-bindings: memory: Add binding for NVIDIA Tegra30 Memory Controller
-      dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory Controller
+Dmitry Osipenko (11):
+      clk: tegra: Add Tegra20/30 EMC clock implementation
+      memory: tegra: Don't set EMC rate to maximum on probe for Tegra20
+      memory: tegra: Adapt for Tegra20 clock driver changes
+      memory: tegra: Include io.h instead of iopoll.h
+      memory: tegra: Pre-configure debug register on Tegra20
+      memory: tegra: Print a brief info message about EMC timings
+      memory: tegra: Increase handshake timeout on Tegra20
+      memory: tegra: Do not handle error from wait_for_completion_timeout()
+      memory: tegra: Introduce Tegra30 EMC driver
+      memory: tegra: Ensure timing control debug features are disabled
+      memory: tegra: Consolidate registers definition into common header
 
-Thierry Reding (1):
-      dt-bindings: clock: tegra: Rename SOR0_LVDS to SOR0_OUT
+Sowjanya Komatineni (1):
+      clk: Add API to get index of the clock parent
 
- .../memory-controllers/nvidia,tegra124-mc.yaml     | 152 ++++++++++
- .../memory-controllers/nvidia,tegra30-emc.yaml     | 336 +++++++++++++++++++++
- .../memory-controllers/nvidia,tegra30-mc.txt       | 123 --------
- .../memory-controllers/nvidia,tegra30-mc.yaml      | 167 ++++++++++
- .../regulator/nvidia,tegra-regulators-coupling.txt |  65 ++++
- include/dt-bindings/clock/tegra124-car-common.h    |   3 +-
- include/dt-bindings/clock/tegra210-car.h           |   3 +-
- 7 files changed, 724 insertions(+), 125 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
- delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
+Thierry Reding (3):
+      Merge branch 'for-5.5/clk'
+      memory: tegra: Set DMA mask based on supported address bits
+      memory: tegra: Add gr2d and gr3d to DRM IOMMU group
+
+ drivers/clk/clk.c                   |   17 +
+ drivers/clk/tegra/Makefile          |    2 +
+ drivers/clk/tegra/clk-tegra20-emc.c |  293 +++++++++
+ drivers/clk/tegra/clk-tegra20.c     |   55 +-
+ drivers/clk/tegra/clk-tegra30.c     |   38 +-
+ drivers/clk/tegra/clk.h             |    3 +
+ drivers/memory/tegra/Kconfig        |   10 +
+ drivers/memory/tegra/Makefile       |    1 +
+ drivers/memory/tegra/mc.c           |   52 +-
+ drivers/memory/tegra/mc.h           |   74 ++-
+ drivers/memory/tegra/tegra114.c     |   10 +-
+ drivers/memory/tegra/tegra124.c     |   30 +-
+ drivers/memory/tegra/tegra20-emc.c  |  134 ++--
+ drivers/memory/tegra/tegra30-emc.c  | 1232 +++++++++++++++++++++++++++++++++++
+ drivers/memory/tegra/tegra30.c      |   34 +-
+ include/linux/clk-provider.h        |    1 +
+ include/linux/clk/tegra.h           |   11 +
+ include/soc/tegra/mc.h              |    2 +-
+ 18 files changed, 1797 insertions(+), 202 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
+ create mode 100644 drivers/memory/tegra/tegra30-emc.c
