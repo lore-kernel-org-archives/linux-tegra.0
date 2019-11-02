@@ -1,13 +1,11 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 2/8] firmware: tegra: Changes for v5.5-rc1
-Date: Sat,  2 Nov 2019 15:45:15 +0100
-Message-ID: <20191102144521.3863321-2-thierry.reding@gmail.com>
-References: <20191102144521.3863321-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 1/8] dt-bindings: Changes for v5.5-rc1
+Date: Sat,  2 Nov 2019 15:45:14 +0100
+Message-ID: <20191102144521.3863321-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191102144521.3863321-1-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -29,23 +27,41 @@ The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-firmware
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-dt-bindings
 
-for you to fetch changes up to befc1bab91171d25de22dbcbf41309582a63ecd7:
+for you to fetch changes up to 641262f5e1ed5c96799e17595893fa1a703616ac:
 
-  firmware: tegra: Move BPMP resume to noirq phase (2019-10-01 16:38:45 +0200)
+  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory Controller (2019-10-29 20:22:34 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-firmware: tegra: Changes for v5.5-rc1
+dt-bindings: Changes for v5.5-rc1
 
-This contains a single fix for suspend/resume on Tegra194.
+This contains various updates to device tree bindings and includes that
+are related to driver changes in other Tegra branches.
 
 ----------------------------------------------------------------
-Vidya Sagar (1):
-      firmware: tegra: Move BPMP resume to noirq phase
+Dmitry Osipenko (4):
+      dt-bindings: regulator: Document regulators coupling of NVIDIA Tegra20/30 SoCs
+      dt-bindings: memory: tegra30: Convert to Tegra124 YAML
+      dt-bindings: memory: Add binding for NVIDIA Tegra30 Memory Controller
+      dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory Controller
 
- drivers/firmware/tegra/bpmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thierry Reding (1):
+      dt-bindings: clock: tegra: Rename SOR0_LVDS to SOR0_OUT
+
+ .../memory-controllers/nvidia,tegra124-mc.yaml     | 152 ++++++++++
+ .../memory-controllers/nvidia,tegra30-emc.yaml     | 336 +++++++++++++++++++++
+ .../memory-controllers/nvidia,tegra30-mc.txt       | 123 --------
+ .../memory-controllers/nvidia,tegra30-mc.yaml      | 167 ++++++++++
+ .../regulator/nvidia,tegra-regulators-coupling.txt |  65 ++++
+ include/dt-bindings/clock/tegra124-car-common.h    |   3 +-
+ include/dt-bindings/clock/tegra210-car.h           |   3 +-
+ 7 files changed, 724 insertions(+), 125 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
