@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 17/18] PM / devfreq: tegra30: Tune up MCCPU boost-down coefficient
-Date: Sun,  3 Nov 2019 23:41:29 +0300
-Message-ID: <20191103204130.2172-18-digetx@gmail.com>
+Subject: [PATCH v8 18/18] PM / devfreq: tegra20/30: Add Dmitry as a maintainer
+Date: Sun,  3 Nov 2019 23:41:30 +0300
+Message-ID: <20191103204130.2172-19-digetx@gmail.com>
 References: <20191103204130.2172-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,32 +12,34 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MCCPU boosts up very aggressively by 800% and boosts down very mildly by
-10%. This doesn't work well when system is idling because the very slow
-de-boosting results in lots of consecutive-down interrupts, in result
-memory stays clocked high and CPU doesn't enter deepest idling state
-instead of keeping memory at lowest freq and having CPU cluster turned
-off. A more faster de-boosting fixes the case of idling system and doesn't
-affect the case of an active system.
+I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
+want to help keep them working and evolving in the future.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 9c645e83ef8b..732cacb54c3b 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -124,7 +124,7 @@ static const struct tegra_devfreq_device_config actmon_device_configs[] = {
- 		.offset = 0x200,
- 		.irq_mask = 1 << 25,
- 		.boost_up_coeff = 800,
--		.boost_down_coeff = 90,
-+		.boost_down_coeff = 40,
- 		.boost_up_threshold = 27,
- 		.boost_down_threshold = 10,
- 		.avg_dependency_threshold = 5 * KHZ,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9f69d01da3a6..4b9679988514 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10632,6 +10632,15 @@ F:	include/linux/memblock.h
+ F:	mm/memblock.c
+ F:	Documentation/core-api/boot-time-mm.rst
+ 
++MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
++M:	Dmitry Osipenko <digetx@gmail.com>
++L:	linux-pm@vger.kernel.org
++L:	linux-tegra@vger.kernel.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
++S:	Maintained
++F:	drivers/devfreq/tegra20-devfreq.c
++F:	drivers/devfreq/tegra30-devfreq.c
++
+ MEMORY MANAGEMENT
+ L:	linux-mm@kvack.org
+ W:	http://www.linux-mm.org
 -- 
 2.23.0
