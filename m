@@ -1,170 +1,70 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 00/18] More improvements for Tegra30 devfreq driver
-Date: Sun,  3 Nov 2019 23:41:12 +0300
-Message-ID: <20191103204130.2172-1-digetx@gmail.com>
+Subject: [PATCH v8 03/18] PM / devfreq: tegra30: Handle possible round-rate error
+Date: Sun,  3 Nov 2019 23:41:15 +0300
+Message-ID: <20191103204130.2172-4-digetx@gmail.com>
+References: <20191103204130.2172-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191103204130.2172-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+The EMC clock rate rounding technically could fail, hence let's handle
+the error cases properly.
 
-This series addresses some additional review comments that were made by
-Thierry Reding to [1], makes several important changes to the driver,
-reducing interrupts activity, and adds new features. In the end I'm
-proposing myself as a maintainer for the Tegra devfreq drivers.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/devfreq/tegra30-devfreq.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-[1] https://lore.kernel.org/lkml/0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com/T/
-
-Changelog:
-
-v8:  Addressed review comments that were made by Chanwoo Choi to v7 by:
-
-     1. Taking into account suggestions that were made for the "Add new
-        interrupt_driven flag for governors".
-
-     2. Patch "Support variable polling interval" now doesn't use
-        devfreq->stop_polling and uses tegra->cur_freq instead. There is
-        now a comment for the 256ms max polling interval limitation as well.
-
-     The patch "Increase sampling period to 16ms" is dropped from the series
-     for now since we found out that it doesn't bring much benefit.
-
-     The cur_freq value is now refreshed after clk-notifier registration in
-     the "Move clk-notifier's registration to governor's start" patch, for
-     consistency. This also becomes useful for the "Support variable polling
-     interval" patch since it now uses the cur_freq for tracking of the
-     governor's enable-state.
-
-     The patch "Support variable polling interval" now has a proper scaling
-     of the dependency threshold value, which I missed to backport into
-     v7 after dropping some of the v6 patches. The do_percent() function
-     now doesn't suffer from integer overflow bug when freq, boosting and
-     polling interval values are too large.
-
-v7:  Addressed review comments that were made by Chanwoo Choi to v6 by:
-
-     1. Dropping patch "Ensure that target freq won't overflow".
-     2. Making "Use kHz units uniformly in the code" patch more easier
-        for review and improving its commit's message.
-     3. The "Support variable polling interval" patch is reworked, now it
-        doesn't touch things that should stay internal to devfreq core, like
-        devfreq->stop_polling and etc. In a result a new generic
-        interrupt_driven flag is available for devfreq governors (added in a
-        new patch "Add new interrupt_driven flag for governors").
-
-     Patch "Set up watermarks properly" and related to it patches are dropped
-     because I found a case where it doesn't work well. These patches need
-     some more thought and not ready for now, I'll continue working on them.
-     I extracted useful changes from the dropped patches and then tuned up
-     MCCPU boost-down coefficient to keep ACTMON silent when system is idling,
-     in a result there are these new patches:
-
-       1. Don't enable already enabled consecutive interrupts
-       2. Disable consecutive interrupts when appropriate
-       3. Tune up MCCPU boost-down coefficient
-
-v6:  Addressed review comment that was made by Chanwoo Choi to v5 by
-     squashing "Define ACTMON_DEV_CTRL_STOP" patch into the "Use CPUFreq
-     notifier" patch.
-
-v5:  Addressed review comments that were made by Chanwoo Choi to v4 by
-     squashing few patches, dropping some questionable patches, rewording
-     comments to the code, restructuring the code and etc.
-
-     These patches are now dropped from the series:
-
-       PM / devfreq: tegra30: Use tracepoints for debugging
-       PM / devfreq: tegra30: Inline all one-line functions
-
-     The interrupt-optimization patches are squashed into a single patch:
-
-       PM / devfreq: tegra30: Reduce unnecessary interrupts activity
-
-     because it's better to keep the optimizations as a separate change and
-     this also helps to reduce code churning, since the code changes depend
-     on a previous patch in order to stay cleaner.
-
-     Fixed a lockup bug that I spotted recently, which is caused by a
-     clk-notifier->cpufreq_get()->clk_set_rate() sequence. Now a non-blocking
-     variant of CPU's frequency retrieving is used, i.e. cpufreq_quick_get().
-
-     Further optimized the CPUFreq notifier by postponing the delayed
-     updating in accordance to the polling interval, this actually uncovered
-     the above lockup bug.
-
-     Implemented new minor driver feature in the new patch:
-
-       PM / devfreq: tegra30: Support variable polling interval
-
-v4:  Added two new patches to the series:
-
-       PM / devfreq: tegra30: Synchronize average count on target's update
-       PM / devfreq: tegra30: Increase sampling period to 16ms
-
-     The first patch addresses problem where governor could get stuck due
-     to outdated "average count" value which is snapshoted by ISR and there
-     are cases where manual update of the value is required.
-
-     The second patch is just a minor optimization.
-
-v3:  Added support for tracepoints, replacing the debug messages.
-     Fixed few more bugs with the help of tracepoints.
-
-     New patches in this version:
-
-       PM / devfreq: tegra30: Use tracepoints for debugging
-       PM / devfreq: tegra30: Optimize CPUFreq notifier
-       PM / devfreq: tegra30: Optimize upper consecutive watermark selection
-       PM / devfreq: tegra30: Optimize upper average watermark selection
-       PM / devfreq: tegra30: Include appropriate header
-
-     Some of older patches of this series also got some extra minor polish.
-
-v2:  Added more patches that are cleaning driver's code further and
-     squashing another kHz conversion bug.
-
-     The patch "Rework frequency management logic" of the v1 series is now
-     converted to "Set up watermarks properly" because I found some problems
-     in the original patch and then realized that there is no need to change
-     the logic much. So the logic mostly preserved and only got improvements.
-
-     The series is based on the today's linux-next (25 Jun) and takes into
-     account minor changes that MyungJoo Ham made to the already queued
-     patches from the first batch [1].
-
-Dmitry Osipenko (18):
-  PM / devfreq: tegra30: Change irq type to unsigned int
-  PM / devfreq: tegra30: Keep interrupt disabled while governor is
-    stopped
-  PM / devfreq: tegra30: Handle possible round-rate error
-  PM / devfreq: tegra30: Drop write-barrier
-  PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
-  PM / devfreq: tegra30: Use kHz units uniformly in the code
-  PM / devfreq: tegra30: Use CPUFreq notifier
-  PM / devfreq: tegra30: Move clk-notifier's registration to governor's
-    start
-  PM / devfreq: tegra30: Reset boosting on startup
-  PM / devfreq: tegra30: Don't enable consecutive-down interrupt on
-    startup
-  PM / devfreq: tegra30: Constify structs
-  PM / devfreq: tegra30: Include appropriate header
-  PM / devfreq: tegra30: Don't enable already enabled consecutive
-    interrupts
-  PM / devfreq: tegra30: Disable consecutive interrupts when appropriate
-  PM / devfreq: Add new interrupt_driven flag for governors
-  PM / devfreq: tegra30: Support variable polling interval
-  PM / devfreq: tegra30: Tune up MCCPU boost-down coefficient
-  PM / devfreq: tegra20/30: Add Dmitry as a maintainer
-
- MAINTAINERS                       |   9 +
- drivers/devfreq/devfreq.c         |   9 +-
- drivers/devfreq/governor.h        |   3 +
- drivers/devfreq/tegra30-devfreq.c | 394 +++++++++++++++++++++---------
- 4 files changed, 303 insertions(+), 112 deletions(-)
-
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index a0a5f3f7b789..66dfa98d8c6b 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -592,8 +592,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	struct tegra_devfreq_device *dev;
+ 	struct tegra_devfreq *tegra;
+ 	struct devfreq *devfreq;
+-	unsigned long rate;
+ 	unsigned int i;
++	long rate;
+ 	int err;
+ 
+ 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+@@ -650,8 +650,14 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 
+ 	reset_control_deassert(tegra->reset);
+ 
+-	tegra->max_freq = clk_round_rate(tegra->emc_clock, ULONG_MAX) / KHZ;
++	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
++	if (rate < 0) {
++		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
++		return rate;
++	}
++
+ 	tegra->cur_freq = clk_get_rate(tegra->emc_clock) / KHZ;
++	tegra->max_freq = rate / KHZ;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(actmon_device_configs); i++) {
+ 		dev = tegra->devices + i;
+@@ -662,6 +668,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
+ 		rate = clk_round_rate(tegra->emc_clock, rate);
+ 
++		if (rate < 0) {
++			dev_err(&pdev->dev,
++				"Failed to round clock rate: %ld\n", rate);
++			err = rate;
++			goto remove_opps;
++		}
++
+ 		err = dev_pm_opp_add(&pdev->dev, rate, 0);
+ 		if (err) {
+ 			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
 -- 
 2.23.0
