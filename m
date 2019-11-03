@@ -1,53 +1,170 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v7 17/19] PM / devfreq: tegra30: Support variable polling
- interval
-Date: Sun, 3 Nov 2019 18:25:19 +0300
-Message-ID: <71a16d74-5908-ea97-ae98-4b7d0e99a765@gmail.com>
-References: <20191029220019.26773-1-digetx@gmail.com>
- <20191029220019.26773-18-digetx@gmail.com>
- <20191101215816.GB8724@qmqm.qmqm.pl>
- <590f47a4-c75a-e8c9-88b8-b3cd98578969@gmail.com>
+Subject: [PATCH v8 00/18] More improvements for Tegra30 devfreq driver
+Date: Sun,  3 Nov 2019 23:41:12 +0300
+Message-ID: <20191103204130.2172-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <590f47a4-c75a-e8c9-88b8-b3cd98578969@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-02.11.2019 01:23, Dmitry Osipenko пишет:
-> 02.11.2019 00:58, Michał Mirosław пишет:
->> On Wed, Oct 30, 2019 at 01:00:17AM +0300, Dmitry Osipenko wrote:
->>> The ACTMON governor is interrupt-driven and currently hardware's polling
->>> interval is fixed to 16ms in the driver. Devfreq supports variable polling
->>> interval by the generic governors, let's re-use the generic interface for
->>> changing of the polling interval. Now the polling interval can be changed
->>> dynamically via /sys/class/devfreq/devfreq0/polling_interval.
->> [...]
->>> @@ -308,7 +308,7 @@ static unsigned long actmon_device_target_freq(struct tegra_devfreq *tegra,
->>>  	unsigned int avg_sustain_coef;
->>>  	unsigned long target_freq;
->>>  
->>> -	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
->>> +	target_freq = dev->avg_count / tegra->devfreq->profile->polling_ms;
->>>  	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
->>>  	target_freq = do_percent(target_freq, avg_sustain_coef);
->>>  	target_freq += dev->boost_freq;
->>
->> Noting a comment in patch 13, if this is hot path you could try reciprocal_divide().
-> 
-> Hello Michał,
-> 
-> This not really a hot path, I just wanted to optimize that case to keep
-> things a bit nicer.
-> 
-> Please take a look at the arch/arm/boot/compressed/lib1funcs.S, firstly
-> it checks whether divisor is a power of 2 value and then takes optimized
-> code path that uses a single shift. Hence the patch 13 still applies here.
+Hello,
 
-On the other hand, there is now only a single case of the division by
-polling_ms in the driver which won't bring much benefit, so it indeed
-makes sense to skip the patch 13 for now.
+This series addresses some additional review comments that were made by
+Thierry Reding to [1], makes several important changes to the driver,
+reducing interrupts activity, and adds new features. In the end I'm
+proposing myself as a maintainer for the Tegra devfreq drivers.
+
+[1] https://lore.kernel.org/lkml/0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com/T/
+
+Changelog:
+
+v8:  Addressed review comments that were made by Chanwoo Choi to v7 by:
+
+     1. Taking into account suggestions that were made for the "Add new
+        interrupt_driven flag for governors".
+
+     2. Patch "Support variable polling interval" now doesn't use
+        devfreq->stop_polling and uses tegra->cur_freq instead. There is
+        now a comment for the 256ms max polling interval limitation as well.
+
+     The patch "Increase sampling period to 16ms" is dropped from the series
+     for now since we found out that it doesn't bring much benefit.
+
+     The cur_freq value is now refreshed after clk-notifier registration in
+     the "Move clk-notifier's registration to governor's start" patch, for
+     consistency. This also becomes useful for the "Support variable polling
+     interval" patch since it now uses the cur_freq for tracking of the
+     governor's enable-state.
+
+     The patch "Support variable polling interval" now has a proper scaling
+     of the dependency threshold value, which I missed to backport into
+     v7 after dropping some of the v6 patches. The do_percent() function
+     now doesn't suffer from integer overflow bug when freq, boosting and
+     polling interval values are too large.
+
+v7:  Addressed review comments that were made by Chanwoo Choi to v6 by:
+
+     1. Dropping patch "Ensure that target freq won't overflow".
+     2. Making "Use kHz units uniformly in the code" patch more easier
+        for review and improving its commit's message.
+     3. The "Support variable polling interval" patch is reworked, now it
+        doesn't touch things that should stay internal to devfreq core, like
+        devfreq->stop_polling and etc. In a result a new generic
+        interrupt_driven flag is available for devfreq governors (added in a
+        new patch "Add new interrupt_driven flag for governors").
+
+     Patch "Set up watermarks properly" and related to it patches are dropped
+     because I found a case where it doesn't work well. These patches need
+     some more thought and not ready for now, I'll continue working on them.
+     I extracted useful changes from the dropped patches and then tuned up
+     MCCPU boost-down coefficient to keep ACTMON silent when system is idling,
+     in a result there are these new patches:
+
+       1. Don't enable already enabled consecutive interrupts
+       2. Disable consecutive interrupts when appropriate
+       3. Tune up MCCPU boost-down coefficient
+
+v6:  Addressed review comment that was made by Chanwoo Choi to v5 by
+     squashing "Define ACTMON_DEV_CTRL_STOP" patch into the "Use CPUFreq
+     notifier" patch.
+
+v5:  Addressed review comments that were made by Chanwoo Choi to v4 by
+     squashing few patches, dropping some questionable patches, rewording
+     comments to the code, restructuring the code and etc.
+
+     These patches are now dropped from the series:
+
+       PM / devfreq: tegra30: Use tracepoints for debugging
+       PM / devfreq: tegra30: Inline all one-line functions
+
+     The interrupt-optimization patches are squashed into a single patch:
+
+       PM / devfreq: tegra30: Reduce unnecessary interrupts activity
+
+     because it's better to keep the optimizations as a separate change and
+     this also helps to reduce code churning, since the code changes depend
+     on a previous patch in order to stay cleaner.
+
+     Fixed a lockup bug that I spotted recently, which is caused by a
+     clk-notifier->cpufreq_get()->clk_set_rate() sequence. Now a non-blocking
+     variant of CPU's frequency retrieving is used, i.e. cpufreq_quick_get().
+
+     Further optimized the CPUFreq notifier by postponing the delayed
+     updating in accordance to the polling interval, this actually uncovered
+     the above lockup bug.
+
+     Implemented new minor driver feature in the new patch:
+
+       PM / devfreq: tegra30: Support variable polling interval
+
+v4:  Added two new patches to the series:
+
+       PM / devfreq: tegra30: Synchronize average count on target's update
+       PM / devfreq: tegra30: Increase sampling period to 16ms
+
+     The first patch addresses problem where governor could get stuck due
+     to outdated "average count" value which is snapshoted by ISR and there
+     are cases where manual update of the value is required.
+
+     The second patch is just a minor optimization.
+
+v3:  Added support for tracepoints, replacing the debug messages.
+     Fixed few more bugs with the help of tracepoints.
+
+     New patches in this version:
+
+       PM / devfreq: tegra30: Use tracepoints for debugging
+       PM / devfreq: tegra30: Optimize CPUFreq notifier
+       PM / devfreq: tegra30: Optimize upper consecutive watermark selection
+       PM / devfreq: tegra30: Optimize upper average watermark selection
+       PM / devfreq: tegra30: Include appropriate header
+
+     Some of older patches of this series also got some extra minor polish.
+
+v2:  Added more patches that are cleaning driver's code further and
+     squashing another kHz conversion bug.
+
+     The patch "Rework frequency management logic" of the v1 series is now
+     converted to "Set up watermarks properly" because I found some problems
+     in the original patch and then realized that there is no need to change
+     the logic much. So the logic mostly preserved and only got improvements.
+
+     The series is based on the today's linux-next (25 Jun) and takes into
+     account minor changes that MyungJoo Ham made to the already queued
+     patches from the first batch [1].
+
+Dmitry Osipenko (18):
+  PM / devfreq: tegra30: Change irq type to unsigned int
+  PM / devfreq: tegra30: Keep interrupt disabled while governor is
+    stopped
+  PM / devfreq: tegra30: Handle possible round-rate error
+  PM / devfreq: tegra30: Drop write-barrier
+  PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
+  PM / devfreq: tegra30: Use kHz units uniformly in the code
+  PM / devfreq: tegra30: Use CPUFreq notifier
+  PM / devfreq: tegra30: Move clk-notifier's registration to governor's
+    start
+  PM / devfreq: tegra30: Reset boosting on startup
+  PM / devfreq: tegra30: Don't enable consecutive-down interrupt on
+    startup
+  PM / devfreq: tegra30: Constify structs
+  PM / devfreq: tegra30: Include appropriate header
+  PM / devfreq: tegra30: Don't enable already enabled consecutive
+    interrupts
+  PM / devfreq: tegra30: Disable consecutive interrupts when appropriate
+  PM / devfreq: Add new interrupt_driven flag for governors
+  PM / devfreq: tegra30: Support variable polling interval
+  PM / devfreq: tegra30: Tune up MCCPU boost-down coefficient
+  PM / devfreq: tegra20/30: Add Dmitry as a maintainer
+
+ MAINTAINERS                       |   9 +
+ drivers/devfreq/devfreq.c         |   9 +-
+ drivers/devfreq/governor.h        |   3 +
+ drivers/devfreq/tegra30-devfreq.c | 394 +++++++++++++++++++++---------
+ 4 files changed, 303 insertions(+), 112 deletions(-)
+
+-- 
+2.23.0
