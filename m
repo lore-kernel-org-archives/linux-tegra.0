@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 10/18] PM / devfreq: tegra30: Don't enable consecutive-down interrupt on startup
-Date: Sun,  3 Nov 2019 23:41:22 +0300
-Message-ID: <20191103204130.2172-11-digetx@gmail.com>
+Subject: [PATCH v8 13/18] PM / devfreq: tegra30: Don't enable already enabled consecutive interrupts
+Date: Sun,  3 Nov 2019 23:41:25 +0300
+Message-ID: <20191103204130.2172-14-digetx@gmail.com>
 References: <20191103204130.2172-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,29 +12,37 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The consecutive-down event tells that we should perform frequency
-de-boosting, but boosting is in a reset state on start and hence the
-event won't do anything useful for us and it will be just a dummy
-interrupt request.
+Consecutive up/down interrupt-bit is set in the interrupt status register
+only if that interrupt was previously enabled. Thus enabling the already
+enabled interrupt doesn't do much for us.
 
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 9cb2d6468175..bc46af155b99 100644
+index 7c8126e74750..4a5d513904a2 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -490,7 +490,6 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
- 		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
- 	val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
--	val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_ENB;
+@@ -261,8 +261,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
  
+ 		if (dev->boost_freq >= tegra->max_freq)
+ 			dev->boost_freq = tegra->max_freq;
+-		else
+-			dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
+ 	} else if (intr_status & ACTMON_DEV_INTR_CONSECUTIVE_LOWER) {
+ 		/*
+ 		 * new_boost = old_boost * down_coef
+@@ -275,8 +273,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+ 
+ 		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1))
+ 			dev->boost_freq = 0;
+-		else
+-			dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
+ 	}
+ 
+ 	if (dev->config->avg_dependency_threshold) {
 -- 
 2.23.0
