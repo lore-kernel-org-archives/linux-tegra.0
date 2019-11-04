@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 10/19] PM / devfreq: tegra30: Don't enable consecutive-down interrupt on startup
-Date: Tue,  5 Nov 2019 00:56:08 +0300
-Message-ID: <20191104215617.25544-11-digetx@gmail.com>
+Subject: [PATCH v9 15/19] PM / devfreq: tegra30: Use kHz units for dependency threshold
+Date: Tue,  5 Nov 2019 00:56:13 +0300
+Message-ID: <20191104215617.25544-16-digetx@gmail.com>
 References: <20191104215617.25544-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,29 +12,102 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The consecutive-down event tells that we should perform frequency
-de-boosting, but boosting is in a reset state on start and hence the
-event won't do anything useful for us and it will be just a dummy
-interrupt request.
+The dependency threshold designates a memory activity level below which
+CPU's frequency isn't accounted. Currently the threshold is given in
+"memory cycle" units and that value depends on the polling interval which
+is fixed to 12ms in the driver. Later on we'd want to add support for a
+variable polling interval and thus the threshold value either needs to be
+scaled in accordance to the polling interval or it needs to be represented
+in a units that do not depend on the polling interval.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Peter Geis <pgwipeout@gmail.com>
+It is nicer to have threshold value being defined independently of the
+polling interval, thus this patch converts the dependency threshold units
+from "cycle" to "kHz". Having this change as a separate-preparatory patch
+will make easier to follow further patches.
+
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/devfreq/tegra30-devfreq.c | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 9cb2d6468175..bc46af155b99 100644
+index 852bde6249c7..3bd920829bfd 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -490,7 +490,6 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
- 		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
- 	val |= ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
--	val |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
- 	val |= ACTMON_DEV_CTRL_ENB;
+@@ -96,9 +96,10 @@ struct tegra_devfreq_device_config {
+ 	unsigned int	boost_down_threshold;
  
+ 	/*
+-	 * Threshold of activity (cycles) below which the CPU frequency isn't
+-	 * to be taken into account. This is to avoid increasing the EMC
+-	 * frequency when the CPU is very busy but not accessing the bus often.
++	 * Threshold of activity (cycles translated to kHz) below which the
++	 * CPU frequency isn't to be taken into account. This is to avoid
++	 * increasing the EMC frequency when the CPU is very busy but not
++	 * accessing the bus often.
+ 	 */
+ 	u32		avg_dependency_threshold;
+ };
+@@ -126,7 +127,7 @@ static const struct tegra_devfreq_device_config actmon_device_configs[] = {
+ 		.boost_down_coeff = 90,
+ 		.boost_up_threshold = 27,
+ 		.boost_down_threshold = 10,
+-		.avg_dependency_threshold = 50000,
++		.avg_dependency_threshold = 16000, /* 16MHz in kHz units */
+ 	},
+ };
+ 
+@@ -311,7 +312,6 @@ static unsigned long actmon_device_target_freq(struct tegra_devfreq *tegra,
+ 	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
+ 	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
+ 	target_freq = do_percent(target_freq, avg_sustain_coef);
+-	target_freq += dev->boost_freq;
+ 
+ 	return target_freq;
+ }
+@@ -322,15 +322,18 @@ static void actmon_update_target(struct tegra_devfreq *tegra,
+ 	unsigned long cpu_freq = 0;
+ 	unsigned long static_cpu_emc_freq = 0;
+ 
+-	if (dev->config->avg_dependency_threshold) {
++	dev->target_freq = actmon_device_target_freq(tegra, dev);
++
++	if (dev->config->avg_dependency_threshold &&
++	    dev->config->avg_dependency_threshold <= dev->target_freq) {
+ 		cpu_freq = cpufreq_quick_get(0);
+ 		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
+-	}
+ 
+-	dev->target_freq = actmon_device_target_freq(tegra, dev);
+-
+-	if (dev->avg_count >= dev->config->avg_dependency_threshold)
++		dev->target_freq += dev->boost_freq;
+ 		dev->target_freq = max(dev->target_freq, static_cpu_emc_freq);
++	} else {
++		dev->target_freq += dev->boost_freq;
++	}
+ }
+ 
+ static irqreturn_t actmon_thread_isr(int irq, void *data)
+@@ -396,15 +399,16 @@ static unsigned long
+ tegra_actmon_cpufreq_contribution(struct tegra_devfreq *tegra,
+ 				  unsigned int cpu_freq)
+ {
++	struct tegra_devfreq_device *actmon_dev = &tegra->devices[MCCPU];
+ 	unsigned long static_cpu_emc_freq, dev_freq;
+ 
++	dev_freq = actmon_device_target_freq(tegra, actmon_dev);
++
+ 	/* check whether CPU's freq is taken into account at all */
+-	if (tegra->devices[MCCPU].avg_count <
+-	    tegra->devices[MCCPU].config->avg_dependency_threshold)
++	if (dev_freq < actmon_dev->config->avg_dependency_threshold)
+ 		return 0;
+ 
+ 	static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
+-	dev_freq = actmon_device_target_freq(tegra, &tegra->devices[MCCPU]);
+ 
+ 	if (dev_freq >= static_cpu_emc_freq)
+ 		return 0;
 -- 
 2.23.0
