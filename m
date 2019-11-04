@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 15/19] PM / devfreq: tegra30: Use kHz units for dependency threshold
-Date: Tue,  5 Nov 2019 00:56:13 +0300
-Message-ID: <20191104215617.25544-16-digetx@gmail.com>
+Subject: [PATCH v9 16/19] PM / devfreq: Add new interrupt_driven flag for governors
+Date: Tue,  5 Nov 2019 00:56:14 +0300
+Message-ID: <20191104215617.25544-17-digetx@gmail.com>
 References: <20191104215617.25544-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,102 +12,102 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The dependency threshold designates a memory activity level below which
-CPU's frequency isn't accounted. Currently the threshold is given in
-"memory cycle" units and that value depends on the polling interval which
-is fixed to 12ms in the driver. Later on we'd want to add support for a
-variable polling interval and thus the threshold value either needs to be
-scaled in accordance to the polling interval or it needs to be represented
-in a units that do not depend on the polling interval.
+Currently interrupt-driven governors (like NVIDIA Tegra30 ACTMON governor)
+are used to set polling_ms=0 in order to avoid periodic polling of device
+status by devfreq core. This means that polling interval can't be changed
+by userspace for such governors.
 
-It is nicer to have threshold value being defined independently of the
-polling interval, thus this patch converts the dependency threshold units
-from "cycle" to "kHz". Having this change as a separate-preparatory patch
-will make easier to follow further patches.
+The new governor flag allows interrupt-driven governors to convey that
+devfreq core shouldn't perform polling of device status and thus generic
+devfreq polling interval could be supported by these governors now.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 30 +++++++++++++++++-------------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+ drivers/devfreq/devfreq.c  | 17 +++++++++++++++++
+ drivers/devfreq/governor.h |  3 +++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 852bde6249c7..3bd920829bfd 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -96,9 +96,10 @@ struct tegra_devfreq_device_config {
- 	unsigned int	boost_down_threshold;
- 
- 	/*
--	 * Threshold of activity (cycles) below which the CPU frequency isn't
--	 * to be taken into account. This is to avoid increasing the EMC
--	 * frequency when the CPU is very busy but not accessing the bus often.
-+	 * Threshold of activity (cycles translated to kHz) below which the
-+	 * CPU frequency isn't to be taken into account. This is to avoid
-+	 * increasing the EMC frequency when the CPU is very busy but not
-+	 * accessing the bus often.
- 	 */
- 	u32		avg_dependency_threshold;
- };
-@@ -126,7 +127,7 @@ static const struct tegra_devfreq_device_config actmon_device_configs[] = {
- 		.boost_down_coeff = 90,
- 		.boost_up_threshold = 27,
- 		.boost_down_threshold = 10,
--		.avg_dependency_threshold = 50000,
-+		.avg_dependency_threshold = 16000, /* 16MHz in kHz units */
- 	},
- };
- 
-@@ -311,7 +312,6 @@ static unsigned long actmon_device_target_freq(struct tegra_devfreq *tegra,
- 	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
- 	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
- 	target_freq = do_percent(target_freq, avg_sustain_coef);
--	target_freq += dev->boost_freq;
- 
- 	return target_freq;
- }
-@@ -322,15 +322,18 @@ static void actmon_update_target(struct tegra_devfreq *tegra,
- 	unsigned long cpu_freq = 0;
- 	unsigned long static_cpu_emc_freq = 0;
- 
--	if (dev->config->avg_dependency_threshold) {
-+	dev->target_freq = actmon_device_target_freq(tegra, dev);
-+
-+	if (dev->config->avg_dependency_threshold &&
-+	    dev->config->avg_dependency_threshold <= dev->target_freq) {
- 		cpu_freq = cpufreq_quick_get(0);
- 		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
--	}
- 
--	dev->target_freq = actmon_device_target_freq(tegra, dev);
--
--	if (dev->avg_count >= dev->config->avg_dependency_threshold)
-+		dev->target_freq += dev->boost_freq;
- 		dev->target_freq = max(dev->target_freq, static_cpu_emc_freq);
-+	} else {
-+		dev->target_freq += dev->boost_freq;
-+	}
- }
- 
- static irqreturn_t actmon_thread_isr(int irq, void *data)
-@@ -396,15 +399,16 @@ static unsigned long
- tegra_actmon_cpufreq_contribution(struct tegra_devfreq *tegra,
- 				  unsigned int cpu_freq)
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index b905963cea7d..4eff37e8bb07 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -409,6 +409,9 @@ static void devfreq_monitor(struct work_struct *work)
+  */
+ void devfreq_monitor_start(struct devfreq *devfreq)
  {
-+	struct tegra_devfreq_device *actmon_dev = &tegra->devices[MCCPU];
- 	unsigned long static_cpu_emc_freq, dev_freq;
- 
-+	dev_freq = actmon_device_target_freq(tegra, actmon_dev);
++	if (devfreq->governor->interrupt_driven)
++		return;
 +
- 	/* check whether CPU's freq is taken into account at all */
--	if (tegra->devices[MCCPU].avg_count <
--	    tegra->devices[MCCPU].config->avg_dependency_threshold)
-+	if (dev_freq < actmon_dev->config->avg_dependency_threshold)
- 		return 0;
+ 	INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
+ 	if (devfreq->profile->polling_ms)
+ 		queue_delayed_work(devfreq_wq, &devfreq->work,
+@@ -426,6 +429,9 @@ EXPORT_SYMBOL(devfreq_monitor_start);
+  */
+ void devfreq_monitor_stop(struct devfreq *devfreq)
+ {
++	if (devfreq->governor->interrupt_driven)
++		return;
++
+ 	cancel_delayed_work_sync(&devfreq->work);
+ }
+ EXPORT_SYMBOL(devfreq_monitor_stop);
+@@ -453,6 +459,10 @@ void devfreq_monitor_suspend(struct devfreq *devfreq)
+ 	devfreq_update_status(devfreq, devfreq->previous_freq);
+ 	devfreq->stop_polling = true;
+ 	mutex_unlock(&devfreq->lock);
++
++	if (devfreq->governor->interrupt_driven)
++		return;
++
+ 	cancel_delayed_work_sync(&devfreq->work);
+ }
+ EXPORT_SYMBOL(devfreq_monitor_suspend);
+@@ -473,11 +483,15 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+ 	if (!devfreq->stop_polling)
+ 		goto out;
  
- 	static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
--	dev_freq = actmon_device_target_freq(tegra, &tegra->devices[MCCPU]);
++	if (devfreq->governor->interrupt_driven)
++		goto out_update;
++
+ 	if (!delayed_work_pending(&devfreq->work) &&
+ 			devfreq->profile->polling_ms)
+ 		queue_delayed_work(devfreq_wq, &devfreq->work,
+ 			msecs_to_jiffies(devfreq->profile->polling_ms));
  
- 	if (dev_freq >= static_cpu_emc_freq)
- 		return 0;
++out_update:
+ 	devfreq->last_stat_updated = jiffies;
+ 	devfreq->stop_polling = false;
+ 
+@@ -509,6 +523,9 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
+ 	if (devfreq->stop_polling)
+ 		goto out;
+ 
++	if (devfreq->governor->interrupt_driven)
++		goto out;
++
+ 	/* if new delay is zero, stop polling */
+ 	if (!new_delay) {
+ 		mutex_unlock(&devfreq->lock);
+diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+index bbe5ff9fcecf..dc7533ccc3db 100644
+--- a/drivers/devfreq/governor.h
++++ b/drivers/devfreq/governor.h
+@@ -31,6 +31,8 @@
+  * @name:		Governor's name
+  * @immutable:		Immutable flag for governor. If the value is 1,
+  *			this govenror is never changeable to other governor.
++ * @interrupt_driven:	Devfreq core won't schedule polling work for this
++ *			governor if value is set to 1.
+  * @get_target_freq:	Returns desired operating frequency for the device.
+  *			Basically, get_target_freq will run
+  *			devfreq_dev_profile.get_dev_status() to get the
+@@ -49,6 +51,7 @@ struct devfreq_governor {
+ 
+ 	const char name[DEVFREQ_NAME_LEN];
+ 	const unsigned int immutable;
++	const unsigned int interrupt_driven;
+ 	int (*get_target_freq)(struct devfreq *this, unsigned long *freq);
+ 	int (*event_handler)(struct devfreq *devfreq,
+ 				unsigned int event, void *data);
 -- 
 2.23.0
