@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 06/19] PM / devfreq: tegra30: Use kHz units uniformly in the code
-Date: Tue,  5 Nov 2019 00:56:04 +0300
-Message-ID: <20191104215617.25544-7-digetx@gmail.com>
+Subject: [PATCH v9 05/19] PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
+Date: Tue,  5 Nov 2019 00:56:03 +0300
+Message-ID: <20191104215617.25544-6-digetx@gmail.com>
 References: <20191104215617.25544-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,67 +12,38 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Part of the code uses Hz units and the other kHz, let's switch to kHz
-everywhere for consistency. A small benefit from this change (besides
-code's cleanup) is that now powertop utility correctly displays devfreq's
-stats, for some reason it expects them to be in kHz.
+There is another kHz-conversion bug in the code, resulting in integer
+overflow. Although, this time the resulting value is 4294966296 and it's
+close to ULONG_MAX, which is okay in this case.
 
-Tested-by: Peter Geis <pgwipeout@gmail.com>
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 7d7b7eecc19c..9ccde64be0a0 100644
+index b50bd1615010..7d7b7eecc19c 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -448,7 +448,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
- 	rate = dev_pm_opp_get_freq(opp);
- 	dev_pm_opp_put(opp);
+@@ -69,6 +69,8 @@
  
--	err = clk_set_min_rate(tegra->emc_clock, rate);
-+	err = clk_set_min_rate(tegra->emc_clock, rate * KHZ);
- 	if (err)
- 		return err;
+ #define KHZ							1000
  
-@@ -477,7 +477,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
- 	stat->private_data = tegra;
- 
- 	/* The below are to be used by the other governors */
--	stat->current_frequency = cur_freq * KHZ;
-+	stat->current_frequency = cur_freq;
- 
- 	actmon_dev = &tegra->devices[MCALL];
- 
-@@ -527,7 +527,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
- 		target_freq = max(target_freq, dev->target_freq);
- 	}
- 
--	*freq = target_freq * KHZ;
-+	*freq = target_freq;
- 
- 	return 0;
- }
-@@ -663,7 +663,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 			goto remove_opps;
- 		}
- 
--		err = dev_pm_opp_add(&pdev->dev, rate, 0);
-+		err = dev_pm_opp_add(&pdev->dev, rate / KHZ, 0);
- 		if (err) {
- 			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
- 			goto remove_opps;
-@@ -686,7 +686,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 		goto unreg_notifier;
- 	}
- 
--	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
-+	tegra_devfreq_profile.initial_freq = tegra->cur_freq;
++#define KHZ_MAX						(ULONG_MAX / KHZ)
 +
- 	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
- 				     "tegra_actmon", NULL);
- 	if (IS_ERR(devfreq)) {
+ /* Assume that the bus is saturated if the utilization is 25% */
+ #define BUS_SATURATION_RATIO					25
+ 
+@@ -170,7 +172,7 @@ struct tegra_actmon_emc_ratio {
+ };
+ 
+ static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
+-	{ 1400000, ULONG_MAX },
++	{ 1400000,    KHZ_MAX },
+ 	{ 1200000,    750000 },
+ 	{ 1100000,    600000 },
+ 	{ 1000000,    500000 },
 -- 
 2.23.0
