@@ -1,218 +1,145 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v3] drm/tegra: Do not use ->load() and ->unload() callbacks
-Date: Mon, 4 Nov 2019 11:26:36 +0100
-Message-ID: <20191104102636.GF10326@phenom.ffwll.local>
-References: <20191028121610.3889207-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v8 15/18] PM / devfreq: Add new interrupt_driven flag for
+ governors
+Date: Mon, 4 Nov 2019 17:15:26 +0300
+Message-ID: <b5195266-8f92-f2b6-6dd1-9d706146e729@gmail.com>
+References: <20191103204130.2172-1-digetx@gmail.com>
+ <CGME20191103204257epcas1p4ce6f9ae729ed6cf6df1816237c80ee45@epcas1p4.samsung.com>
+ <20191103204130.2172-16-digetx@gmail.com>
+ <f86d35dc-1749-ad29-2023-7d69366bd0d1@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20191028121610.3889207-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f86d35dc-1749-ad29-2023-7d69366bd0d1@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBPY3QgMjgsIDIwMTkgYXQgMDE6MTY6MTBQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
-d3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBU
-aGUgLT5sb2FkKCkgYW5kIC0+dW5sb2FkKCkgZHJpdmVycyBhcmUgbWlkbGF5ZXJzIGFuZCBzaG91
-bGQgYmUgYXZvaWRlZAo+IGluIG1vZGVybiBkcml2ZXJzLiBGaXggdGhpcyBieSBtb3ZpbmcgdGhl
-IGNvZGUgaW50byB0aGUgZHJpdmVyIC0+cHJvYmUoKQo+IGFuZCAtPnJlbW92ZSgpIGltcGxlbWVu
-dGF0aW9ucywgcmVzcGVjdGl2ZWx5Lgo+IAo+IHYyOiBraWNrIG91dCBjb25mbGljdGluZyBmcmFt
-ZWJ1ZmZlcnMgYmVmb3JlIGluaXRpYWxpemluZyBmYmRldgo+IHYzOiByZWJhc2Ugb250byBkcm0v
-dGVncmEvZm9yLW5leHQKPiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGlu
-Z0BudmlkaWEuY29tPgoKTXkgZm9yIHYyIHNlZW1zIHRvIGhhdmUgYmVlbiBsb3N0LCBzbzoKClJl
-dmlld2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGZmd2xsLmNoPgoKPiAtLS0K
-PiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgMzIxICsrKysrKysrKysrKysrKysrLS0t
-LS0tLS0tLS0tLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMTU0IGluc2VydGlvbnMoKyksIDE2
-NyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
-bS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4gaW5kZXggYjc0MzYyY2I2M2ViLi43
-NDgwZjU3NTE4OGQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4g
-KysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4gQEAgLTg2LDE2OCArODYsNiBAQCB0
-ZWdyYV9kcm1fbW9kZV9jb25maWdfaGVscGVycyA9IHsKPiAgCS5hdG9taWNfY29tbWl0X3RhaWwg
-PSB0ZWdyYV9hdG9taWNfY29tbWl0X3RhaWwsCj4gIH07Cj4gIAo+IC1zdGF0aWMgaW50IHRlZ3Jh
-X2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCj4g
-LXsKPiAtCXN0cnVjdCBob3N0MXhfZGV2aWNlICpkZXZpY2UgPSB0b19ob3N0MXhfZGV2aWNlKGRy
-bS0+ZGV2KTsKPiAtCXN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhOwo+IC0JaW50IGVycjsKPiAtCj4g
-LQl0ZWdyYSA9IGt6YWxsb2Moc2l6ZW9mKCp0ZWdyYSksIEdGUF9LRVJORUwpOwo+IC0JaWYgKCF0
-ZWdyYSkKPiAtCQlyZXR1cm4gLUVOT01FTTsKPiAtCj4gLQlpZiAoaW9tbXVfcHJlc2VudCgmcGxh
-dGZvcm1fYnVzX3R5cGUpKSB7Cj4gLQkJdGVncmEtPmRvbWFpbiA9IGlvbW11X2RvbWFpbl9hbGxv
-YygmcGxhdGZvcm1fYnVzX3R5cGUpOwo+IC0JCWlmICghdGVncmEtPmRvbWFpbikgewo+IC0JCQll
-cnIgPSAtRU5PTUVNOwo+IC0JCQlnb3RvIGZyZWU7Cj4gLQkJfQo+IC0KPiAtCQllcnIgPSBpb3Zh
-X2NhY2hlX2dldCgpOwo+IC0JCWlmIChlcnIgPCAwKQo+IC0JCQlnb3RvIGRvbWFpbjsKPiAtCX0K
-PiAtCj4gLQltdXRleF9pbml0KCZ0ZWdyYS0+Y2xpZW50c19sb2NrKTsKPiAtCUlOSVRfTElTVF9I
-RUFEKCZ0ZWdyYS0+Y2xpZW50cyk7Cj4gLQo+IC0JZHJtLT5kZXZfcHJpdmF0ZSA9IHRlZ3JhOwo+
-IC0JdGVncmEtPmRybSA9IGRybTsKPiAtCj4gLQlkcm1fbW9kZV9jb25maWdfaW5pdChkcm0pOwo+
-IC0KPiAtCWRybS0+bW9kZV9jb25maWcubWluX3dpZHRoID0gMDsKPiAtCWRybS0+bW9kZV9jb25m
-aWcubWluX2hlaWdodCA9IDA7Cj4gLQo+IC0JZHJtLT5tb2RlX2NvbmZpZy5tYXhfd2lkdGggPSA0
-MDk2Owo+IC0JZHJtLT5tb2RlX2NvbmZpZy5tYXhfaGVpZ2h0ID0gNDA5NjsKPiAtCj4gLQlkcm0t
-Pm1vZGVfY29uZmlnLmFsbG93X2ZiX21vZGlmaWVycyA9IHRydWU7Cj4gLQo+IC0JZHJtLT5tb2Rl
-X2NvbmZpZy5ub3JtYWxpemVfenBvcyA9IHRydWU7Cj4gLQo+IC0JZHJtLT5tb2RlX2NvbmZpZy5m
-dW5jcyA9ICZ0ZWdyYV9kcm1fbW9kZV9jb25maWdfZnVuY3M7Cj4gLQlkcm0tPm1vZGVfY29uZmln
-LmhlbHBlcl9wcml2YXRlID0gJnRlZ3JhX2RybV9tb2RlX2NvbmZpZ19oZWxwZXJzOwo+IC0KPiAt
-CWVyciA9IHRlZ3JhX2RybV9mYl9wcmVwYXJlKGRybSk7Cj4gLQlpZiAoZXJyIDwgMCkKPiAtCQln
-b3RvIGNvbmZpZzsKPiAtCj4gLQlkcm1fa21zX2hlbHBlcl9wb2xsX2luaXQoZHJtKTsKPiAtCj4g
-LQllcnIgPSBob3N0MXhfZGV2aWNlX2luaXQoZGV2aWNlKTsKPiAtCWlmIChlcnIgPCAwKQo+IC0J
-CWdvdG8gZmJkZXY7Cj4gLQo+IC0JaWYgKHRlZ3JhLT5kb21haW4pIHsKPiAtCQl1NjQgY2FydmVv
-dXRfc3RhcnQsIGNhcnZlb3V0X2VuZCwgZ2VtX3N0YXJ0LCBnZW1fZW5kOwo+IC0JCXU2NCBkbWFf
-bWFzayA9IGRtYV9nZXRfbWFzaygmZGV2aWNlLT5kZXYpOwo+IC0JCWRtYV9hZGRyX3Qgc3RhcnQs
-IGVuZDsKPiAtCQl1bnNpZ25lZCBsb25nIG9yZGVyOwo+IC0KPiAtCQlzdGFydCA9IHRlZ3JhLT5k
-b21haW4tPmdlb21ldHJ5LmFwZXJ0dXJlX3N0YXJ0ICYgZG1hX21hc2s7Cj4gLQkJZW5kID0gdGVn
-cmEtPmRvbWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfZW5kICYgZG1hX21hc2s7Cj4gLQo+IC0JCWdl
-bV9zdGFydCA9IHN0YXJ0Owo+IC0JCWdlbV9lbmQgPSBlbmQgLSBDQVJWRU9VVF9TWjsKPiAtCQlj
-YXJ2ZW91dF9zdGFydCA9IGdlbV9lbmQgKyAxOwo+IC0JCWNhcnZlb3V0X2VuZCA9IGVuZDsKPiAt
-Cj4gLQkJb3JkZXIgPSBfX2Zmcyh0ZWdyYS0+ZG9tYWluLT5wZ3NpemVfYml0bWFwKTsKPiAtCQlp
-bml0X2lvdmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCAxVUwgPDwgb3JkZXIsCj4g
-LQkJCQkgY2FydmVvdXRfc3RhcnQgPj4gb3JkZXIpOwo+IC0KPiAtCQl0ZWdyYS0+Y2FydmVvdXQu
-c2hpZnQgPSBpb3ZhX3NoaWZ0KCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKPiAtCQl0ZWdyYS0+
-Y2FydmVvdXQubGltaXQgPSBjYXJ2ZW91dF9lbmQgPj4gdGVncmEtPmNhcnZlb3V0LnNoaWZ0Owo+
-IC0KPiAtCQlkcm1fbW1faW5pdCgmdGVncmEtPm1tLCBnZW1fc3RhcnQsIGdlbV9lbmQgLSBnZW1f
-c3RhcnQgKyAxKTsKPiAtCQltdXRleF9pbml0KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gLQo+IC0JCURS
-TV9ERUJVR19EUklWRVIoIklPTU1VIGFwZXJ0dXJlczpcbiIpOwo+IC0JCURSTV9ERUJVR19EUklW
-RVIoIiAgR0VNOiAlI2xseC0lI2xseFxuIiwgZ2VtX3N0YXJ0LCBnZW1fZW5kKTsKPiAtCQlEUk1f
-REVCVUdfRFJJVkVSKCIgIENhcnZlb3V0OiAlI2xseC0lI2xseFxuIiwgY2FydmVvdXRfc3RhcnQs
-Cj4gLQkJCQkgY2FydmVvdXRfZW5kKTsKPiAtCX0KPiAtCj4gLQlpZiAodGVncmEtPmh1Yikgewo+
-IC0JCWVyciA9IHRlZ3JhX2Rpc3BsYXlfaHViX3ByZXBhcmUodGVncmEtPmh1Yik7Cj4gLQkJaWYg
-KGVyciA8IDApCj4gLQkJCWdvdG8gZGV2aWNlOwo+IC0JfQo+IC0KPiAtCS8qCj4gLQkgKiBXZSBk
-b24ndCB1c2UgdGhlIGRybV9pcnFfaW5zdGFsbCgpIGhlbHBlcnMgcHJvdmlkZWQgYnkgdGhlIERS
-TQo+IC0JICogY29yZSwgc28gd2UgbmVlZCB0byBzZXQgdGhpcyBtYW51YWxseSBpbiBvcmRlciB0
-byBhbGxvdyB0aGUKPiAtCSAqIERSTV9JT0NUTF9XQUlUX1ZCTEFOSyB0byBvcGVyYXRlIGNvcnJl
-Y3RseS4KPiAtCSAqLwo+IC0JZHJtLT5pcnFfZW5hYmxlZCA9IHRydWU7Cj4gLQo+IC0JLyogc3lu
-Y3BvaW50cyBhcmUgdXNlZCBmb3IgZnVsbCAzMi1iaXQgaGFyZHdhcmUgVkJMQU5LIGNvdW50ZXJz
-ICovCj4gLQlkcm0tPm1heF92YmxhbmtfY291bnQgPSAweGZmZmZmZmZmOwo+IC0KPiAtCWVyciA9
-IGRybV92YmxhbmtfaW5pdChkcm0sIGRybS0+bW9kZV9jb25maWcubnVtX2NydGMpOwo+IC0JaWYg
-KGVyciA8IDApCj4gLQkJZ290byBodWI7Cj4gLQo+IC0JZHJtX21vZGVfY29uZmlnX3Jlc2V0KGRy
-bSk7Cj4gLQo+IC0JZXJyID0gdGVncmFfZHJtX2ZiX2luaXQoZHJtKTsKPiAtCWlmIChlcnIgPCAw
-KQo+IC0JCWdvdG8gaHViOwo+IC0KPiAtCXJldHVybiAwOwo+IC0KPiAtaHViOgo+IC0JaWYgKHRl
-Z3JhLT5odWIpCj4gLQkJdGVncmFfZGlzcGxheV9odWJfY2xlYW51cCh0ZWdyYS0+aHViKTsKPiAt
-ZGV2aWNlOgo+IC0JaWYgKHRlZ3JhLT5kb21haW4pIHsKPiAtCQltdXRleF9kZXN0cm95KCZ0ZWdy
-YS0+bW1fbG9jayk7Cj4gLQkJZHJtX21tX3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwo+IC0JCXB1dF9p
-b3ZhX2RvbWFpbigmdGVncmEtPmNhcnZlb3V0LmRvbWFpbik7Cj4gLQkJaW92YV9jYWNoZV9wdXQo
-KTsKPiAtCX0KPiAtCj4gLQlob3N0MXhfZGV2aWNlX2V4aXQoZGV2aWNlKTsKPiAtZmJkZXY6Cj4g
-LQlkcm1fa21zX2hlbHBlcl9wb2xsX2ZpbmkoZHJtKTsKPiAtCXRlZ3JhX2RybV9mYl9mcmVlKGRy
-bSk7Cj4gLWNvbmZpZzoKPiAtCWRybV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7Cj4gLWRvbWFp
-bjoKPiAtCWlmICh0ZWdyYS0+ZG9tYWluKQo+IC0JCWlvbW11X2RvbWFpbl9mcmVlKHRlZ3JhLT5k
-b21haW4pOwo+IC1mcmVlOgo+IC0Ja2ZyZWUodGVncmEpOwo+IC0JcmV0dXJuIGVycjsKPiAtfQo+
-IC0KPiAtc3RhdGljIHZvaWQgdGVncmFfZHJtX3VubG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZHJt
-KQo+IC17Cj4gLQlzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2aWNlID0gdG9faG9zdDF4X2Rldmlj
-ZShkcm0tPmRldik7Cj4gLQlzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSA9IGRybS0+ZGV2X3ByaXZh
-dGU7Cj4gLQlpbnQgZXJyOwo+IC0KPiAtCWRybV9rbXNfaGVscGVyX3BvbGxfZmluaShkcm0pOwo+
-IC0JdGVncmFfZHJtX2ZiX2V4aXQoZHJtKTsKPiAtCWRybV9hdG9taWNfaGVscGVyX3NodXRkb3du
-KGRybSk7Cj4gLQlkcm1fbW9kZV9jb25maWdfY2xlYW51cChkcm0pOwo+IC0KPiAtCWVyciA9IGhv
-c3QxeF9kZXZpY2VfZXhpdChkZXZpY2UpOwo+IC0JaWYgKGVyciA8IDApCj4gLQkJcmV0dXJuOwo+
-IC0KPiAtCWlmICh0ZWdyYS0+ZG9tYWluKSB7Cj4gLQkJbXV0ZXhfZGVzdHJveSgmdGVncmEtPm1t
-X2xvY2spOwo+IC0JCWRybV9tbV90YWtlZG93bigmdGVncmEtPm1tKTsKPiAtCQlwdXRfaW92YV9k
-b21haW4oJnRlZ3JhLT5jYXJ2ZW91dC5kb21haW4pOwo+IC0JCWlvdmFfY2FjaGVfcHV0KCk7Cj4g
-LQkJaW9tbXVfZG9tYWluX2ZyZWUodGVncmEtPmRvbWFpbik7Cj4gLQl9Cj4gLQo+IC0Ja2ZyZWUo
-dGVncmEpOwo+IC19Cj4gLQo+ICBzdGF0aWMgaW50IHRlZ3JhX2RybV9vcGVuKHN0cnVjdCBkcm1f
-ZGV2aWNlICpkcm0sIHN0cnVjdCBkcm1fZmlsZSAqZmlscCkKPiAgewo+ICAJc3RydWN0IHRlZ3Jh
-X2RybV9maWxlICpmcHJpdjsKPiBAQCAtMTAxNCw4ICs4NTIsNiBAQCBzdGF0aWMgaW50IHRlZ3Jh
-X2RlYnVnZnNfaW5pdChzdHJ1Y3QgZHJtX21pbm9yICptaW5vcikKPiAgc3RhdGljIHN0cnVjdCBk
-cm1fZHJpdmVyIHRlZ3JhX2RybV9kcml2ZXIgPSB7Cj4gIAkuZHJpdmVyX2ZlYXR1cmVzID0gRFJJ
-VkVSX01PREVTRVQgfCBEUklWRVJfR0VNIHwKPiAgCQkJICAgRFJJVkVSX0FUT01JQyB8IERSSVZF
-Ul9SRU5ERVIsCj4gLQkubG9hZCA9IHRlZ3JhX2RybV9sb2FkLAo+IC0JLnVubG9hZCA9IHRlZ3Jh
-X2RybV91bmxvYWQsCj4gIAkub3BlbiA9IHRlZ3JhX2RybV9vcGVuLAo+ICAJLnBvc3RjbG9zZSA9
-IHRlZ3JhX2RybV9wb3N0Y2xvc2UsCj4gIAkubGFzdGNsb3NlID0gZHJtX2ZiX2hlbHBlcl9sYXN0
-Y2xvc2UsCj4gQEAgLTEyMDIsNiArMTAzOCw3IEBAIHZvaWQgdGVncmFfZHJtX2ZyZWUoc3RydWN0
-IHRlZ3JhX2RybSAqdGVncmEsIHNpemVfdCBzaXplLCB2b2lkICp2aXJ0LAo+ICBzdGF0aWMgaW50
-IGhvc3QxeF9kcm1fcHJvYmUoc3RydWN0IGhvc3QxeF9kZXZpY2UgKmRldikKPiAgewo+ICAJc3Ry
-dWN0IGRybV9kcml2ZXIgKmRyaXZlciA9ICZ0ZWdyYV9kcm1fZHJpdmVyOwo+ICsJc3RydWN0IHRl
-Z3JhX2RybSAqdGVncmE7Cj4gIAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtOwo+ICAJaW50IGVycjsK
-PiAgCj4gQEAgLTEyMDksMTggKzEwNDYsMTQ3IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9i
-ZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2KQo+ICAJaWYgKElTX0VSUihkcm0pKQo+ICAJCXJl
-dHVybiBQVFJfRVJSKGRybSk7Cj4gIAo+ICsJdGVncmEgPSBremFsbG9jKHNpemVvZigqdGVncmEp
-LCBHRlBfS0VSTkVMKTsKPiArCWlmICghdGVncmEpIHsKPiArCQllcnIgPSAtRU5PTUVNOwo+ICsJ
-CWdvdG8gcHV0Owo+ICsJfQo+ICsKPiArCWlmIChpb21tdV9wcmVzZW50KCZwbGF0Zm9ybV9idXNf
-dHlwZSkpIHsKPiArCQl0ZWdyYS0+ZG9tYWluID0gaW9tbXVfZG9tYWluX2FsbG9jKCZwbGF0Zm9y
-bV9idXNfdHlwZSk7Cj4gKwkJaWYgKCF0ZWdyYS0+ZG9tYWluKSB7Cj4gKwkJCWVyciA9IC1FTk9N
-RU07Cj4gKwkJCWdvdG8gZnJlZTsKPiArCQl9Cj4gKwo+ICsJCWVyciA9IGlvdmFfY2FjaGVfZ2V0
-KCk7Cj4gKwkJaWYgKGVyciA8IDApCj4gKwkJCWdvdG8gZG9tYWluOwo+ICsJfQo+ICsKPiArCW11
-dGV4X2luaXQoJnRlZ3JhLT5jbGllbnRzX2xvY2spOwo+ICsJSU5JVF9MSVNUX0hFQUQoJnRlZ3Jh
-LT5jbGllbnRzKTsKPiArCj4gIAlkZXZfc2V0X2RydmRhdGEoJmRldi0+ZGV2LCBkcm0pOwo+ICsJ
-ZHJtLT5kZXZfcHJpdmF0ZSA9IHRlZ3JhOwo+ICsJdGVncmEtPmRybSA9IGRybTsKPiArCj4gKwlk
-cm1fbW9kZV9jb25maWdfaW5pdChkcm0pOwo+ICsKPiArCWRybS0+bW9kZV9jb25maWcubWluX3dp
-ZHRoID0gMDsKPiArCWRybS0+bW9kZV9jb25maWcubWluX2hlaWdodCA9IDA7Cj4gKwo+ICsJZHJt
-LT5tb2RlX2NvbmZpZy5tYXhfd2lkdGggPSA0MDk2Owo+ICsJZHJtLT5tb2RlX2NvbmZpZy5tYXhf
-aGVpZ2h0ID0gNDA5NjsKPiArCj4gKwlkcm0tPm1vZGVfY29uZmlnLmFsbG93X2ZiX21vZGlmaWVy
-cyA9IHRydWU7Cj4gKwo+ICsJZHJtLT5tb2RlX2NvbmZpZy5ub3JtYWxpemVfenBvcyA9IHRydWU7
-Cj4gIAo+IC0JZXJyID0gZHJtX2ZiX2hlbHBlcl9yZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZm
-ZXJzKE5VTEwsICJ0ZWdyYWRybWZiIiwgZmFsc2UpOwo+ICsJZHJtLT5tb2RlX2NvbmZpZy5mdW5j
-cyA9ICZ0ZWdyYV9kcm1fbW9kZV9jb25maWdfZnVuY3M7Cj4gKwlkcm0tPm1vZGVfY29uZmlnLmhl
-bHBlcl9wcml2YXRlID0gJnRlZ3JhX2RybV9tb2RlX2NvbmZpZ19oZWxwZXJzOwo+ICsKPiArCWVy
-ciA9IHRlZ3JhX2RybV9mYl9wcmVwYXJlKGRybSk7Cj4gIAlpZiAoZXJyIDwgMCkKPiAtCQlnb3Rv
-IHB1dDsKPiArCQlnb3RvIGNvbmZpZzsKPiArCj4gKwlkcm1fa21zX2hlbHBlcl9wb2xsX2luaXQo
-ZHJtKTsKPiArCj4gKwllcnIgPSBob3N0MXhfZGV2aWNlX2luaXQoZGV2KTsKPiArCWlmIChlcnIg
-PCAwKQo+ICsJCWdvdG8gZmJkZXY7Cj4gKwo+ICsJaWYgKHRlZ3JhLT5kb21haW4pIHsKPiArCQl1
-NjQgY2FydmVvdXRfc3RhcnQsIGNhcnZlb3V0X2VuZCwgZ2VtX3N0YXJ0LCBnZW1fZW5kOwo+ICsJ
-CXU2NCBkbWFfbWFzayA9IGRtYV9nZXRfbWFzaygmZGV2LT5kZXYpOwo+ICsJCWRtYV9hZGRyX3Qg
-c3RhcnQsIGVuZDsKPiArCQl1bnNpZ25lZCBsb25nIG9yZGVyOwo+ICsKPiArCQlzdGFydCA9IHRl
-Z3JhLT5kb21haW4tPmdlb21ldHJ5LmFwZXJ0dXJlX3N0YXJ0ICYgZG1hX21hc2s7Cj4gKwkJZW5k
-ID0gdGVncmEtPmRvbWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfZW5kICYgZG1hX21hc2s7Cj4gKwo+
-ICsJCWdlbV9zdGFydCA9IHN0YXJ0Owo+ICsJCWdlbV9lbmQgPSBlbmQgLSBDQVJWRU9VVF9TWjsK
-PiArCQljYXJ2ZW91dF9zdGFydCA9IGdlbV9lbmQgKyAxOwo+ICsJCWNhcnZlb3V0X2VuZCA9IGVu
-ZDsKPiArCj4gKwkJb3JkZXIgPSBfX2Zmcyh0ZWdyYS0+ZG9tYWluLT5wZ3NpemVfYml0bWFwKTsK
-PiArCQlpbml0X2lvdmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCAxVUwgPDwgb3Jk
-ZXIsCj4gKwkJCQkgY2FydmVvdXRfc3RhcnQgPj4gb3JkZXIpOwo+ICsKPiArCQl0ZWdyYS0+Y2Fy
-dmVvdXQuc2hpZnQgPSBpb3ZhX3NoaWZ0KCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKPiArCQl0
-ZWdyYS0+Y2FydmVvdXQubGltaXQgPSBjYXJ2ZW91dF9lbmQgPj4gdGVncmEtPmNhcnZlb3V0LnNo
-aWZ0Owo+ICsKPiArCQlkcm1fbW1faW5pdCgmdGVncmEtPm1tLCBnZW1fc3RhcnQsIGdlbV9lbmQg
-LSBnZW1fc3RhcnQgKyAxKTsKPiArCQltdXRleF9pbml0KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gKwo+
-ICsJCURSTV9ERUJVR19EUklWRVIoIklPTU1VIGFwZXJ0dXJlczpcbiIpOwo+ICsJCURSTV9ERUJV
-R19EUklWRVIoIiAgR0VNOiAlI2xseC0lI2xseFxuIiwgZ2VtX3N0YXJ0LCBnZW1fZW5kKTsKPiAr
-CQlEUk1fREVCVUdfRFJJVkVSKCIgIENhcnZlb3V0OiAlI2xseC0lI2xseFxuIiwgY2FydmVvdXRf
-c3RhcnQsCj4gKwkJCQkgY2FydmVvdXRfZW5kKTsKPiArCX0KPiArCj4gKwlpZiAodGVncmEtPmh1
-Yikgewo+ICsJCWVyciA9IHRlZ3JhX2Rpc3BsYXlfaHViX3ByZXBhcmUodGVncmEtPmh1Yik7Cj4g
-KwkJaWYgKGVyciA8IDApCj4gKwkJCWdvdG8gZGV2aWNlOwo+ICsJfQo+ICsKPiArCS8qCj4gKwkg
-KiBXZSBkb24ndCB1c2UgdGhlIGRybV9pcnFfaW5zdGFsbCgpIGhlbHBlcnMgcHJvdmlkZWQgYnkg
-dGhlIERSTQo+ICsJICogY29yZSwgc28gd2UgbmVlZCB0byBzZXQgdGhpcyBtYW51YWxseSBpbiBv
-cmRlciB0byBhbGxvdyB0aGUKPiArCSAqIERSTV9JT0NUTF9XQUlUX1ZCTEFOSyB0byBvcGVyYXRl
-IGNvcnJlY3RseS4KPiArCSAqLwo+ICsJZHJtLT5pcnFfZW5hYmxlZCA9IHRydWU7Cj4gKwo+ICsJ
-Lyogc3luY3BvaW50cyBhcmUgdXNlZCBmb3IgZnVsbCAzMi1iaXQgaGFyZHdhcmUgVkJMQU5LIGNv
-dW50ZXJzICovCj4gKwlkcm0tPm1heF92YmxhbmtfY291bnQgPSAweGZmZmZmZmZmOwo+ICsKPiAr
-CWVyciA9IGRybV92YmxhbmtfaW5pdChkcm0sIGRybS0+bW9kZV9jb25maWcubnVtX2NydGMpOwo+
-ICsJaWYgKGVyciA8IDApCj4gKwkJZ290byBodWI7Cj4gKwo+ICsJZHJtX21vZGVfY29uZmlnX3Jl
-c2V0KGRybSk7Cj4gKwo+ICsJZXJyID0gZHJtX2ZiX2hlbHBlcl9yZW1vdmVfY29uZmxpY3Rpbmdf
-ZnJhbWVidWZmZXJzKE5VTEwsICJ0ZWdyYWRybWZiIiwKPiArCQkJCQkJCSAgICBmYWxzZSk7Cj4g
-KwlpZiAoZXJyIDwgMCkKPiArCQlnb3RvIGh1YjsKPiArCj4gKwllcnIgPSB0ZWdyYV9kcm1fZmJf
-aW5pdChkcm0pOwo+ICsJaWYgKGVyciA8IDApCj4gKwkJZ290byBodWI7Cj4gIAo+ICAJZXJyID0g
-ZHJtX2Rldl9yZWdpc3Rlcihkcm0sIDApOwo+ICAJaWYgKGVyciA8IDApCj4gLQkJZ290byBwdXQ7
-Cj4gKwkJZ290byBmYjsKPiAgCj4gIAlyZXR1cm4gMDsKPiAgCj4gK2ZiOgo+ICsJdGVncmFfZHJt
-X2ZiX2V4aXQoZHJtKTsKPiAraHViOgo+ICsJaWYgKHRlZ3JhLT5odWIpCj4gKwkJdGVncmFfZGlz
-cGxheV9odWJfY2xlYW51cCh0ZWdyYS0+aHViKTsKPiArZGV2aWNlOgo+ICsJaWYgKHRlZ3JhLT5k
-b21haW4pIHsKPiArCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gKwkJZHJtX21t
-X3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwo+ICsJCXB1dF9pb3ZhX2RvbWFpbigmdGVncmEtPmNhcnZl
-b3V0LmRvbWFpbik7Cj4gKwkJaW92YV9jYWNoZV9wdXQoKTsKPiArCX0KPiArCj4gKwlob3N0MXhf
-ZGV2aWNlX2V4aXQoZGV2KTsKPiArZmJkZXY6Cj4gKwlkcm1fa21zX2hlbHBlcl9wb2xsX2Zpbmko
-ZHJtKTsKPiArCXRlZ3JhX2RybV9mYl9mcmVlKGRybSk7Cj4gK2NvbmZpZzoKPiArCWRybV9tb2Rl
-X2NvbmZpZ19jbGVhbnVwKGRybSk7Cj4gK2RvbWFpbjoKPiArCWlmICh0ZWdyYS0+ZG9tYWluKQo+
-ICsJCWlvbW11X2RvbWFpbl9mcmVlKHRlZ3JhLT5kb21haW4pOwo+ICtmcmVlOgo+ICsJa2ZyZWUo
-dGVncmEpOwo+ICBwdXQ6Cj4gIAlkcm1fZGV2X3B1dChkcm0pOwo+ICAJcmV0dXJuIGVycjsKPiBA
-QCAtMTIyOSw4ICsxMTk1LDI5IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1Y3Qg
-aG9zdDF4X2RldmljZSAqZGV2KQo+ICBzdGF0aWMgaW50IGhvc3QxeF9kcm1fcmVtb3ZlKHN0cnVj
-dCBob3N0MXhfZGV2aWNlICpkZXYpCj4gIHsKPiAgCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBk
-ZXZfZ2V0X2RydmRhdGEoJmRldi0+ZGV2KTsKPiArCXN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhID0g
-ZHJtLT5kZXZfcHJpdmF0ZTsKPiArCWludCBlcnI7Cj4gIAo+ICAJZHJtX2Rldl91bnJlZ2lzdGVy
-KGRybSk7Cj4gKwo+ICsJZHJtX2ttc19oZWxwZXJfcG9sbF9maW5pKGRybSk7Cj4gKwl0ZWdyYV9k
-cm1fZmJfZXhpdChkcm0pOwo+ICsJZHJtX2F0b21pY19oZWxwZXJfc2h1dGRvd24oZHJtKTsKPiAr
-CWRybV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7Cj4gKwo+ICsJZXJyID0gaG9zdDF4X2Rldmlj
-ZV9leGl0KGRldik7Cj4gKwlpZiAoZXJyIDwgMCkKPiArCQlkZXZfZXJyKCZkZXYtPmRldiwgImhv
-c3QxeCBkZXZpY2UgY2xlYW51cCBmYWlsZWQ6ICVkXG4iLCBlcnIpOwo+ICsKPiArCWlmICh0ZWdy
-YS0+ZG9tYWluKSB7Cj4gKwkJbXV0ZXhfZGVzdHJveSgmdGVncmEtPm1tX2xvY2spOwo+ICsJCWRy
-bV9tbV90YWtlZG93bigmdGVncmEtPm1tKTsKPiArCQlwdXRfaW92YV9kb21haW4oJnRlZ3JhLT5j
-YXJ2ZW91dC5kb21haW4pOwo+ICsJCWlvdmFfY2FjaGVfcHV0KCk7Cj4gKwkJaW9tbXVfZG9tYWlu
-X2ZyZWUodGVncmEtPmRvbWFpbik7Cj4gKwl9Cj4gKwo+ICsJa2ZyZWUodGVncmEpOwo+ICAJZHJt
-X2Rldl9wdXQoZHJtKTsKPiAgCj4gIAlyZXR1cm4gMDsKPiAtLSAKPiAyLjIzLjAKPiAKCi0tIApE
-YW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8v
-YmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWw=
+04.11.2019 05:48, Chanwoo Choi пишет:
+> Hi Dmitry,
+> 
+> Sorry for the additional comment of this patch.
+> I think that you better to change the 'interrupt_driven' checking
+> style as following in order to keep the consistency of governor
+> flag checking style.
+
+Hello Chanwoo,
+
+Okay, I'll update this patch.
+
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 27de8ddeaaa8..fe409fc1bcc4 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -410,9 +410,11 @@ static void devfreq_monitor(struct work_struct *work)
+>   */
+>  void devfreq_monitor_start(struct devfreq *devfreq)
+>  {
+> +       if (devfreq->governor->interrupt_driven)
+> +               return;
+> +
+>         INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
+>         if (devfreq->profile->polling_ms &&
+> -           !devfreq->governor->interrupt_driven)
+>                 queue_delayed_work(devfreq_wq, &devfreq->work,
+>                         msecs_to_jiffies(devfreq->profile->polling_ms));
+>  }
+> @@ -475,12 +477,15 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+>         if (!devfreq->stop_polling)
+>                 goto out;
+>  
+> +       if (devfreq->governor->interrupt_driven)
+> +               goto out_update;
+> +
+>         if (!delayed_work_pending(&devfreq->work) &&
+>                         devfreq->profile->polling_ms &&
+> -                       !devfreq->governor->interrupt_driven)
+>                 queue_delayed_work(devfreq_wq, &devfreq->work,
+>                         msecs_to_jiffies(devfreq->profile->polling_ms));
+>  
+> +out_update:
+>         devfreq->last_stat_updated = jiffies;
+>         devfreq->stop_polling = false;
+> 
+> 
+> If you edit it as following, feel free to add my reviewed-by tag:
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+> 
+> On 19. 11. 4. 오전 5:41, Dmitry Osipenko wrote:
+>> Currently interrupt-driven governors (like NVIDIA Tegra30 ACTMON governor)
+>> are used to set polling_ms=0 in order to avoid periodic polling of device
+>> status by devfreq core. This means that polling interval can't be changed
+>> by userspace for such governors.
+>>
+>> The new governor flag allows interrupt-driven governors to convey that
+>> devfreq core shouldn't perform polling of device status and thus generic
+>> devfreq polling interval could be supported by these governors now.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/devfreq/devfreq.c  | 9 +++++++--
+>>  drivers/devfreq/governor.h | 3 +++
+>>  2 files changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>> index b905963cea7d..a711a76d386e 100644
+>> --- a/drivers/devfreq/devfreq.c
+>> +++ b/drivers/devfreq/devfreq.c
+>> @@ -410,7 +410,8 @@ static void devfreq_monitor(struct work_struct *work)
+>>  void devfreq_monitor_start(struct devfreq *devfreq)
+>>  {
+>>  	INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
+>> -	if (devfreq->profile->polling_ms)
+>> +	if (devfreq->profile->polling_ms &&
+>> +	    !devfreq->governor->interrupt_driven)
+>>  		queue_delayed_work(devfreq_wq, &devfreq->work,
+>>  			msecs_to_jiffies(devfreq->profile->polling_ms));
+>>  }
+>> @@ -474,7 +475,8 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+>>  		goto out;
+>>  
+>>  	if (!delayed_work_pending(&devfreq->work) &&
+>> -			devfreq->profile->polling_ms)
+>> +			devfreq->profile->polling_ms &&
+>> +			!devfreq->governor->interrupt_driven)
+>>  		queue_delayed_work(devfreq_wq, &devfreq->work,
+>>  			msecs_to_jiffies(devfreq->profile->polling_ms));
+>>  
+>> @@ -509,6 +511,9 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
+>>  	if (devfreq->stop_polling)
+>>  		goto out;
+>>  
+>> +	if (devfreq->governor->interrupt_driven)
+>> +		goto out;
+>> +
+>>  	/* if new delay is zero, stop polling */
+>>  	if (!new_delay) {
+>>  		mutex_unlock(&devfreq->lock);
+>> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+>> index bbe5ff9fcecf..dc7533ccc3db 100644
+>> --- a/drivers/devfreq/governor.h
+>> +++ b/drivers/devfreq/governor.h
+>> @@ -31,6 +31,8 @@
+>>   * @name:		Governor's name
+>>   * @immutable:		Immutable flag for governor. If the value is 1,
+>>   *			this govenror is never changeable to other governor.
+>> + * @interrupt_driven:	Devfreq core won't schedule polling work for this
+>> + *			governor if value is set to 1.
+>>   * @get_target_freq:	Returns desired operating frequency for the device.
+>>   *			Basically, get_target_freq will run
+>>   *			devfreq_dev_profile.get_dev_status() to get the
+>> @@ -49,6 +51,7 @@ struct devfreq_governor {
+>>  
+>>  	const char name[DEVFREQ_NAME_LEN];
+>>  	const unsigned int immutable;
+>> +	const unsigned int interrupt_driven;
+>>  	int (*get_target_freq)(struct devfreq *this, unsigned long *freq);
+>>  	int (*event_handler)(struct devfreq *devfreq,
+>>  				unsigned int event, void *data);
+>>
+> 
+> 
