@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 03/19] PM / devfreq: tegra30: Handle possible round-rate error
-Date: Tue,  5 Nov 2019 00:56:01 +0300
-Message-ID: <20191104215617.25544-4-digetx@gmail.com>
+Subject: [PATCH v9 02/19] PM / devfreq: tegra30: Keep interrupt disabled while governor is stopped
+Date: Tue,  5 Nov 2019 00:56:00 +0300
+Message-ID: <20191104215617.25544-3-digetx@gmail.com>
 References: <20191104215617.25544-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,59 +12,123 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The EMC clock rate rounding technically could fail, hence let's handle
-the error cases properly.
+There is no real need to keep interrupt always-enabled, will be nicer
+to keep it disabled while governor is inactive.
 
+Suggested-by: Thierry Reding <thierry.reding@gmail.com>
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 Tested-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 47 ++++++++++++++++---------------
+ 1 file changed, 24 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index a0a5f3f7b789..66dfa98d8c6b 100644
+index a27300f40b0b..a0a5f3f7b789 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -592,8 +592,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 	struct tegra_devfreq_device *dev;
- 	struct tegra_devfreq *tegra;
- 	struct devfreq *devfreq;
--	unsigned long rate;
+@@ -11,6 +11,7 @@
+ #include <linux/devfreq.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/irq.h>
+ #include <linux/module.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+@@ -416,8 +417,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
+ {
  	unsigned int i;
-+	long rate;
+ 
+-	disable_irq(tegra->irq);
+-
+ 	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+ 		      ACTMON_GLB_PERIOD_CTRL);
+ 
+@@ -442,8 +441,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+ 	}
+ 
+ 	actmon_write_barrier(tegra);
+-
+-	enable_irq(tegra->irq);
+ }
+ 
+ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+@@ -552,6 +549,12 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
+ {
+ 	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
+ 
++	/*
++	 * Couple devfreq-device with the governor early because it is
++	 * needed at the moment of governor's start (used by ISR).
++	 */
++	tegra->devfreq = devfreq;
++
+ 	switch (event) {
+ 	case DEVFREQ_GOV_START:
+ 		devfreq_monitor_start(devfreq);
+@@ -586,10 +589,11 @@ static struct devfreq_governor tegra_devfreq_governor = {
+ 
+ static int tegra_devfreq_probe(struct platform_device *pdev)
+ {
+-	struct tegra_devfreq *tegra;
+ 	struct tegra_devfreq_device *dev;
+-	unsigned int i;
++	struct tegra_devfreq *tegra;
++	struct devfreq *devfreq;
+ 	unsigned long rate;
++	unsigned int i;
  	int err;
  
  	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-@@ -650,8 +650,14 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+@@ -625,6 +629,16 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	}
+ 	tegra->irq = err;
  
- 	reset_control_deassert(tegra->reset);
- 
--	tegra->max_freq = clk_round_rate(tegra->emc_clock, ULONG_MAX) / KHZ;
-+	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
-+	if (rate < 0) {
-+		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
-+		return rate;
++	irq_set_status_flags(tegra->irq, IRQ_NOAUTOEN);
++
++	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
++					actmon_thread_isr, IRQF_ONESHOT,
++					"tegra-devfreq", tegra);
++	if (err) {
++		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
++		return err;
 +	}
 +
- 	tegra->cur_freq = clk_get_rate(tegra->emc_clock) / KHZ;
-+	tegra->max_freq = rate / KHZ;
+ 	reset_control_assert(tegra->reset);
  
- 	for (i = 0; i < ARRAY_SIZE(actmon_device_configs); i++) {
- 		dev = tegra->devices + i;
-@@ -662,6 +668,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 	for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
- 		rate = clk_round_rate(tegra->emc_clock, rate);
+ 	err = clk_prepare_enable(tegra->clock);
+@@ -672,28 +686,15 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	}
  
-+		if (rate < 0) {
-+			dev_err(&pdev->dev,
-+				"Failed to round clock rate: %ld\n", rate);
-+			err = rate;
-+			goto remove_opps;
-+		}
-+
- 		err = dev_pm_opp_add(&pdev->dev, rate, 0);
- 		if (err) {
- 			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
+ 	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
+-	tegra->devfreq = devfreq_add_device(&pdev->dev,
+-					    &tegra_devfreq_profile,
+-					    "tegra_actmon",
+-					    NULL);
+-	if (IS_ERR(tegra->devfreq)) {
+-		err = PTR_ERR(tegra->devfreq);
++	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
++				     "tegra_actmon", NULL);
++	if (IS_ERR(devfreq)) {
++		err = PTR_ERR(devfreq);
+ 		goto remove_governor;
+ 	}
+ 
+-	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
+-					actmon_thread_isr, IRQF_ONESHOT,
+-					"tegra-devfreq", tegra);
+-	if (err) {
+-		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
+-		goto remove_devfreq;
+-	}
+-
+ 	return 0;
+ 
+-remove_devfreq:
+-	devfreq_remove_device(tegra->devfreq);
+-
+ remove_governor:
+ 	devfreq_remove_governor(&tegra_devfreq_governor);
+ 
 -- 
 2.23.0
