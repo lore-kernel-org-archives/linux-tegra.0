@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 13/19] PM / devfreq: tegra30: Don't enable already enabled consecutive interrupts
-Date: Tue,  5 Nov 2019 00:56:11 +0300
-Message-ID: <20191104215617.25544-14-digetx@gmail.com>
+Subject: [PATCH v9 11/19] PM / devfreq: tegra30: Constify structs
+Date: Tue,  5 Nov 2019 00:56:09 +0300
+Message-ID: <20191104215617.25544-12-digetx@gmail.com>
 References: <20191104215617.25544-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,37 +12,45 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Consecutive up/down interrupt-bit is set in the interrupt status register
-only if that interrupt was previously enabled. Thus enabling the already
-enabled interrupt doesn't do much for us.
+Constify unmodifiable structs, for consistency.
 
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 7c8126e74750..4a5d513904a2 100644
+index bc46af155b99..9bd4dd982927 100644
 --- a/drivers/devfreq/tegra30-devfreq.c
 +++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -261,8 +261,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+@@ -108,7 +108,7 @@ enum tegra_actmon_device {
+ 	MCCPU,
+ };
  
- 		if (dev->boost_freq >= tegra->max_freq)
- 			dev->boost_freq = tegra->max_freq;
--		else
--			dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
- 	} else if (intr_status & ACTMON_DEV_INTR_CONSECUTIVE_LOWER) {
- 		/*
- 		 * new_boost = old_boost * down_coef
-@@ -275,8 +273,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+-static struct tegra_devfreq_device_config actmon_device_configs[] = {
++static const struct tegra_devfreq_device_config actmon_device_configs[] = {
+ 	{
+ 		/* MCALL: All memory accesses (including from the CPUs) */
+ 		.offset = 0x1c0,
+@@ -177,7 +177,7 @@ struct tegra_actmon_emc_ratio {
+ 	unsigned long emc_freq;
+ };
  
- 		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1))
- 			dev->boost_freq = 0;
--		else
--			dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
- 	}
+-static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
++static const struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
+ 	{ 1400000,    KHZ_MAX },
+ 	{ 1200000,    750000 },
+ 	{ 1100000,    600000 },
+@@ -295,7 +295,7 @@ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
+ 					    unsigned long cpu_freq)
+ {
+ 	unsigned int i;
+-	struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
++	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
  
- 	if (dev->config->avg_dependency_threshold) {
+ 	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++) {
+ 		if (cpu_freq >= ratio->cpu_freq) {
 -- 
 2.23.0
