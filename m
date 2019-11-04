@@ -1,87 +1,82 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [GIT PULL 3/8] memory: tegra: Changes for v5.5-rc1
-Date: Mon, 4 Nov 2019 18:34:47 +0300
-Message-ID: <2f1c8899-ffda-51f0-64f4-48aa23dc1823@gmail.com>
-References: <20191102144521.3863321-1-thierry.reding@gmail.com>
- <20191102144521.3863321-3-thierry.reding@gmail.com>
+Subject: [PATCH v9 04/19] PM / devfreq: tegra30: Drop write-barrier
+Date: Tue,  5 Nov 2019 00:56:02 +0300
+Message-ID: <20191104215617.25544-5-digetx@gmail.com>
+References: <20191104215617.25544-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191102144521.3863321-3-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, arm@kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191104215617.25544-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-MDIuMTEuMjAxOSAxNzo0NSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBIaSBBUk0gU29D
-IG1haW50YWluZXJzLAo+IAo+IFRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNTRl
-Y2I4ZjcwMjhjNWViM2Q3NDBiYjgyYjBmMWQ5MGYyZGY2M2M1YzoKPiAKPiAgIExpbnV4IDUuNC1y
-YzEgKDIwMTktMDktMzAgMTA6MzU6NDAgLTA3MDApCj4gCj4gYXJlIGF2YWlsYWJsZSBpbiB0aGUg
-R2l0IHJlcG9zaXRvcnkgYXQ6Cj4gCj4gICBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xp
-bnV4L2tlcm5lbC9naXQvdGVncmEvbGludXguZ2l0IHRhZ3MvdGVncmEtZm9yLTUuNS1tZW1vcnkK
-PiAKPiBmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gOGIwNDIyNWM0NDY0NDIyZjE4NWU2
-MmMyY2VkZmI5ZTIzNDQyMzgxNDoKPiAKPiAgIG1lbW9yeTogdGVncmE6IENvbnNvbGlkYXRlIHJl
-Z2lzdGVycyBkZWZpbml0aW9uIGludG8gY29tbW9uIGhlYWRlciAoMjAxOS0xMS0wMSAxMDo1Nzoz
-NyArMDEwMCkKPiAKPiBUaGFua3MsCj4gVGhpZXJyeQo+IAo+IC0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBtZW1vcnk6IHRl
-Z3JhOiBDaGFuZ2VzIGZvciB2NS41LXJjMQo+IAo+IFRoaXMgY29udGFpbnMgYSBjb3VwbGUgb2Yg
-Zml4ZXMgYW5kIGFkZHMgc3VwcG9ydCBmb3IgRU1DIGZyZXF1ZW5jeQo+IHNjYWxpbmcgb24gVGVn
-cmEzMC4KPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tCj4gRG1pdHJ5IE9zaXBlbmtvICgxMSk6Cj4gICAgICAgY2xrOiB0
-ZWdyYTogQWRkIFRlZ3JhMjAvMzAgRU1DIGNsb2NrIGltcGxlbWVudGF0aW9uCj4gICAgICAgbWVt
-b3J5OiB0ZWdyYTogRG9uJ3Qgc2V0IEVNQyByYXRlIHRvIG1heGltdW0gb24gcHJvYmUgZm9yIFRl
-Z3JhMjAKPiAgICAgICBtZW1vcnk6IHRlZ3JhOiBBZGFwdCBmb3IgVGVncmEyMCBjbG9jayBkcml2
-ZXIgY2hhbmdlcwo+ICAgICAgIG1lbW9yeTogdGVncmE6IEluY2x1ZGUgaW8uaCBpbnN0ZWFkIG9m
-IGlvcG9sbC5oCj4gICAgICAgbWVtb3J5OiB0ZWdyYTogUHJlLWNvbmZpZ3VyZSBkZWJ1ZyByZWdp
-c3RlciBvbiBUZWdyYTIwCj4gICAgICAgbWVtb3J5OiB0ZWdyYTogUHJpbnQgYSBicmllZiBpbmZv
-IG1lc3NhZ2UgYWJvdXQgRU1DIHRpbWluZ3MKPiAgICAgICBtZW1vcnk6IHRlZ3JhOiBJbmNyZWFz
-ZSBoYW5kc2hha2UgdGltZW91dCBvbiBUZWdyYTIwCj4gICAgICAgbWVtb3J5OiB0ZWdyYTogRG8g
-bm90IGhhbmRsZSBlcnJvciBmcm9tIHdhaXRfZm9yX2NvbXBsZXRpb25fdGltZW91dCgpCj4gICAg
-ICAgbWVtb3J5OiB0ZWdyYTogSW50cm9kdWNlIFRlZ3JhMzAgRU1DIGRyaXZlcgo+ICAgICAgIG1l
-bW9yeTogdGVncmE6IEVuc3VyZSB0aW1pbmcgY29udHJvbCBkZWJ1ZyBmZWF0dXJlcyBhcmUgZGlz
-YWJsZWQKPiAgICAgICBtZW1vcnk6IHRlZ3JhOiBDb25zb2xpZGF0ZSByZWdpc3RlcnMgZGVmaW5p
-dGlvbiBpbnRvIGNvbW1vbiBoZWFkZXIKPiAKPiBTb3dqYW55YSBLb21hdGluZW5pICgxKToKPiAg
-ICAgICBjbGs6IEFkZCBBUEkgdG8gZ2V0IGluZGV4IG9mIHRoZSBjbG9jayBwYXJlbnQKCkhlbGxv
-IFRoaWVycnksCgpJIHdhbnQgdG8gcG9pbnQgb3V0IHRoYXQgaXQgbG9va3MgbGlrZSB0aGlzIHBh
-dGNoIGZyb20gU293amFueWEKc2hvdWxkbid0IGJlbG9uZyB0byB0aGlzIHB1bGwgcmVxdWVzdCBi
-ZWNhdXNlIGl0IGlzIHVucmVsYXRlZCB0byB0aGUKbWVtb3J5IHBhdGNoZXMuCgpBbHNvLCB0aGlz
-IHBhdGNoIGhhdmVuJ3QgZ290IGFuIGFjayBmcm9tIHRoZSBjbGsgbWFpbnRhaW5lcnMgeWV0IGFu
-ZCBJCmFzc3VtZSB0aGF0IGl0IG5lZWRzIGFuIGFjay4KCkknbSBqdXN0IHdhbnRpbmcgdG8gZ2V0
-IHlvdXJzIGF0dGVudGlvbiBpbiBhIGNhc2UgaWYgdGhpcyBwYXRjaCB3YXMKYWRkZWQgYnkgbWlz
-dGFrZS4gSWYgaXQgd2FzIGludGVudGlvbmFsLCB0aGVuIHBlcmhhcHMgaXQgc2hvdWxkIGJlIG9r
-YXkuCgo+IFRoaWVycnkgUmVkaW5nICgzKToKPiAgICAgICBNZXJnZSBicmFuY2ggJ2Zvci01LjUv
-Y2xrJwo+ICAgICAgIG1lbW9yeTogdGVncmE6IFNldCBETUEgbWFzayBiYXNlZCBvbiBzdXBwb3J0
-ZWQgYWRkcmVzcyBiaXRzCj4gICAgICAgbWVtb3J5OiB0ZWdyYTogQWRkIGdyMmQgYW5kIGdyM2Qg
-dG8gRFJNIElPTU1VIGdyb3VwCj4gCj4gIGRyaXZlcnMvY2xrL2Nsay5jICAgICAgICAgICAgICAg
-ICAgIHwgICAxNyArCj4gIGRyaXZlcnMvY2xrL3RlZ3JhL01ha2VmaWxlICAgICAgICAgIHwgICAg
-MiArCj4gIGRyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTIwLWVtYy5jIHwgIDI5MyArKysrKysr
-KysKPiAgZHJpdmVycy9jbGsvdGVncmEvY2xrLXRlZ3JhMjAuYyAgICAgfCAgIDU1ICstCj4gIGRy
-aXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTMwLmMgICAgIHwgICAzOCArLQo+ICBkcml2ZXJzL2Ns
-ay90ZWdyYS9jbGsuaCAgICAgICAgICAgICB8ICAgIDMgKwo+ICBkcml2ZXJzL21lbW9yeS90ZWdy
-YS9LY29uZmlnICAgICAgICB8ICAgMTAgKwo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS9NYWtlZmls
-ZSAgICAgICB8ICAgIDEgKwo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS9tYy5jICAgICAgICAgICB8
-ICAgNTIgKy0KPiAgZHJpdmVycy9tZW1vcnkvdGVncmEvbWMuaCAgICAgICAgICAgfCAgIDc0ICsr
-LQo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTExNC5jICAgICB8ICAgMTAgKy0KPiAgZHJp
-dmVycy9tZW1vcnkvdGVncmEvdGVncmExMjQuYyAgICAgfCAgIDMwICstCj4gIGRyaXZlcnMvbWVt
-b3J5L3RlZ3JhL3RlZ3JhMjAtZW1jLmMgIHwgIDEzNCArKy0tCj4gIGRyaXZlcnMvbWVtb3J5L3Rl
-Z3JhL3RlZ3JhMzAtZW1jLmMgIHwgMTIzMiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKwo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTMwLmMgICAgICB8ICAgMzQgKy0KPiAg
-aW5jbHVkZS9saW51eC9jbGstcHJvdmlkZXIuaCAgICAgICAgfCAgICAxICsKPiAgaW5jbHVkZS9s
-aW51eC9jbGsvdGVncmEuaCAgICAgICAgICAgfCAgIDExICsKPiAgaW5jbHVkZS9zb2MvdGVncmEv
-bWMuaCAgICAgICAgICAgICAgfCAgICAyICstCj4gIDE4IGZpbGVzIGNoYW5nZWQsIDE3OTcgaW5z
-ZXJ0aW9ucygrKSwgMjAyIGRlbGV0aW9ucygtKQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
-cy9jbGsvdGVncmEvY2xrLXRlZ3JhMjAtZW1jLmMKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
-cnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMzAtZW1jLmMKPiAKCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
-ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+There is no need in a write-barrier now, given that interrupt masking is
+handled by CPU's GIC now. Hence we know exactly that interrupt won't fire
+after stopping the devfreq's governor. In other cases we don't care about
+potential buffering of the writes to hardware and thus there is no need to
+stall CPU.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/devfreq/tegra30-devfreq.c | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 66dfa98d8c6b..b50bd1615010 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -230,12 +230,6 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
+ 		      ACTMON_DEV_LOWER_WMARK);
+ }
+ 
+-static void actmon_write_barrier(struct tegra_devfreq *tegra)
+-{
+-	/* ensure the update has reached the ACTMON */
+-	readl(tegra->regs + ACTMON_GLB_STATUS);
+-}
+-
+ static void actmon_isr_device(struct tegra_devfreq *tegra,
+ 			      struct tegra_devfreq_device *dev)
+ {
+@@ -287,8 +281,6 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+ 	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
+ 
+ 	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
+-
+-	actmon_write_barrier(tegra);
+ }
+ 
+ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
+@@ -376,8 +368,6 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
+ 		tegra_devfreq_update_wmark(tegra, dev);
+ 	}
+ 
+-	actmon_write_barrier(tegra);
+-
+ 	return NOTIFY_OK;
+ }
+ 
+@@ -423,8 +413,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
+ 	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
+ 		tegra_actmon_configure_device(tegra, &tegra->devices[i]);
+ 
+-	actmon_write_barrier(tegra);
+-
+ 	enable_irq(tegra->irq);
+ }
+ 
+@@ -439,8 +427,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+ 		device_writel(&tegra->devices[i], ACTMON_INTR_STATUS_CLEAR,
+ 			      ACTMON_DEV_INTR_STATUS);
+ 	}
+-
+-	actmon_write_barrier(tegra);
+ }
+ 
+ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+-- 
+2.23.0
