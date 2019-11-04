@@ -1,45 +1,143 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 3/8] memory: tegra: Changes for v5.5-rc1
-Date: Sun, 3 Nov 2019 17:33:15 -0800
-Message-ID: <20191104013315.isc5ktgxgnnqlvrg@localhost>
-References: <20191102144521.3863321-1-thierry.reding@gmail.com>
- <20191102144521.3863321-3-thierry.reding@gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v8 15/18] PM / devfreq: Add new interrupt_driven flag
+ for governors
+Date: Mon, 4 Nov 2019 11:48:06 +0900
+Message-ID: <f86d35dc-1749-ad29-2023-7d69366bd0d1@samsung.com>
+References: <20191103204130.2172-1-digetx@gmail.com>
+        <CGME20191103204257epcas1p4ce6f9ae729ed6cf6df1816237c80ee45@epcas1p4.samsung.com>
+        <20191103204130.2172-16-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20191102144521.3863321-3-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191103204130.2172-16-digetx@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Nov 02, 2019 at 03:45:16PM +0100, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
-> 
-> The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
-> 
->   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-memory
-> 
-> for you to fetch changes up to 8b04225c4464422f185e62c2cedfb9e234423814:
-> 
->   memory: tegra: Consolidate registers definition into common header (2019-11-01 10:57:37 +0100)
+Hi Dmitry,
 
-Hi, sitting on this one for a few days to make sure the shared contents lands
-in the clk tree unmodified.
+Sorry for the additional comment of this patch.
+I think that you better to change the 'interrupt_driven' checking
+style as following in order to keep the consistency of governor
+flag checking style.
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 27de8ddeaaa8..fe409fc1bcc4 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -410,9 +410,11 @@ static void devfreq_monitor(struct work_struct *work)
+  */
+ void devfreq_monitor_start(struct devfreq *devfreq)
+ {
++       if (devfreq->governor->interrupt_driven)
++               return;
++
+        INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
+        if (devfreq->profile->polling_ms &&
+-           !devfreq->governor->interrupt_driven)
+                queue_delayed_work(devfreq_wq, &devfreq->work,
+                        msecs_to_jiffies(devfreq->profile->polling_ms));
+ }
+@@ -475,12 +477,15 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+        if (!devfreq->stop_polling)
+                goto out;
+ 
++       if (devfreq->governor->interrupt_driven)
++               goto out_update;
++
+        if (!delayed_work_pending(&devfreq->work) &&
+                        devfreq->profile->polling_ms &&
+-                       !devfreq->governor->interrupt_driven)
+                queue_delayed_work(devfreq_wq, &devfreq->work,
+                        msecs_to_jiffies(devfreq->profile->polling_ms));
+ 
++out_update:
+        devfreq->last_stat_updated = jiffies;
+        devfreq->stop_polling = false;
 
 
--Olof
+If you edit it as following, feel free to add my reviewed-by tag:
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+
+On 19. 11. 4. 오전 5:41, Dmitry Osipenko wrote:
+> Currently interrupt-driven governors (like NVIDIA Tegra30 ACTMON governor)
+> are used to set polling_ms=0 in order to avoid periodic polling of device
+> status by devfreq core. This means that polling interval can't be changed
+> by userspace for such governors.
+> 
+> The new governor flag allows interrupt-driven governors to convey that
+> devfreq core shouldn't perform polling of device status and thus generic
+> devfreq polling interval could be supported by these governors now.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/devfreq/devfreq.c  | 9 +++++++--
+>  drivers/devfreq/governor.h | 3 +++
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index b905963cea7d..a711a76d386e 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -410,7 +410,8 @@ static void devfreq_monitor(struct work_struct *work)
+>  void devfreq_monitor_start(struct devfreq *devfreq)
+>  {
+>  	INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
+> -	if (devfreq->profile->polling_ms)
+> +	if (devfreq->profile->polling_ms &&
+> +	    !devfreq->governor->interrupt_driven)
+>  		queue_delayed_work(devfreq_wq, &devfreq->work,
+>  			msecs_to_jiffies(devfreq->profile->polling_ms));
+>  }
+> @@ -474,7 +475,8 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+>  		goto out;
+>  
+>  	if (!delayed_work_pending(&devfreq->work) &&
+> -			devfreq->profile->polling_ms)
+> +			devfreq->profile->polling_ms &&
+> +			!devfreq->governor->interrupt_driven)
+>  		queue_delayed_work(devfreq_wq, &devfreq->work,
+>  			msecs_to_jiffies(devfreq->profile->polling_ms));
+>  
+> @@ -509,6 +511,9 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
+>  	if (devfreq->stop_polling)
+>  		goto out;
+>  
+> +	if (devfreq->governor->interrupt_driven)
+> +		goto out;
+> +
+>  	/* if new delay is zero, stop polling */
+>  	if (!new_delay) {
+>  		mutex_unlock(&devfreq->lock);
+> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+> index bbe5ff9fcecf..dc7533ccc3db 100644
+> --- a/drivers/devfreq/governor.h
+> +++ b/drivers/devfreq/governor.h
+> @@ -31,6 +31,8 @@
+>   * @name:		Governor's name
+>   * @immutable:		Immutable flag for governor. If the value is 1,
+>   *			this govenror is never changeable to other governor.
+> + * @interrupt_driven:	Devfreq core won't schedule polling work for this
+> + *			governor if value is set to 1.
+>   * @get_target_freq:	Returns desired operating frequency for the device.
+>   *			Basically, get_target_freq will run
+>   *			devfreq_dev_profile.get_dev_status() to get the
+> @@ -49,6 +51,7 @@ struct devfreq_governor {
+>  
+>  	const char name[DEVFREQ_NAME_LEN];
+>  	const unsigned int immutable;
+> +	const unsigned int interrupt_driven;
+>  	int (*get_target_freq)(struct devfreq *this, unsigned long *freq);
+>  	int (*event_handler)(struct devfreq *devfreq,
+>  				unsigned int event, void *data);
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
