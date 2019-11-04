@@ -1,292 +1,87 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v8 16/18] PM / devfreq: tegra30: Support variable polling
- interval
-Date: Mon, 4 Nov 2019 17:36:07 +0300
-Message-ID: <a7c3215d-e663-1382-440a-4e37a27bf22f@gmail.com>
-References: <20191103204130.2172-1-digetx@gmail.com>
- <CGME20191103204245epcas4p48f5ab2a36b3728439799adb41fed6a24@epcas4p4.samsung.com>
- <20191103204130.2172-17-digetx@gmail.com>
- <e3967b07-b53f-0d9c-8f1b-bad238c4ef68@samsung.com>
+Subject: Re: [GIT PULL 3/8] memory: tegra: Changes for v5.5-rc1
+Date: Mon, 4 Nov 2019 18:34:47 +0300
+Message-ID: <2f1c8899-ffda-51f0-64f4-48aa23dc1823@gmail.com>
+References: <20191102144521.3863321-1-thierry.reding@gmail.com>
+ <20191102144521.3863321-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e3967b07-b53f-0d9c-8f1b-bad238c4ef68@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191102144521.3863321-3-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-04.11.2019 05:53, Chanwoo Choi пишет:
-> On 19. 11. 4. 오전 5:41, Dmitry Osipenko wrote:
->> The ACTMON governor is interrupt-driven and currently hardware's polling
->> interval is fixed to 16ms in the driver. Devfreq supports variable polling
->> interval by the generic governors, let's re-use the generic interface for
->> changing of the polling interval. Now the polling interval can be changed
->> dynamically via /sys/class/devfreq/devfreq0/polling_interval.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 83 +++++++++++++++++++++++--------
->>  1 file changed, 61 insertions(+), 22 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index 852bde6249c7..9c645e83ef8b 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -96,9 +96,10 @@ struct tegra_devfreq_device_config {
->>  	unsigned int	boost_down_threshold;
->>  
->>  	/*
->> -	 * Threshold of activity (cycles) below which the CPU frequency isn't
->> -	 * to be taken into account. This is to avoid increasing the EMC
->> -	 * frequency when the CPU is very busy but not accessing the bus often.
->> +	 * Threshold of activity (cycles translated to kHz) below which the
->> +	 * CPU frequency isn't to be taken into account. This is to avoid
->> +	 * increasing the EMC frequency when the CPU is very busy but not
->> +	 * accessing the bus often.
->>  	 */
->>  	u32		avg_dependency_threshold;
->>  };
->> @@ -126,7 +127,7 @@ static const struct tegra_devfreq_device_config actmon_device_configs[] = {
->>  		.boost_down_coeff = 90,
->>  		.boost_up_threshold = 27,
->>  		.boost_down_threshold = 10,
->> -		.avg_dependency_threshold = 50000,
->> +		.avg_dependency_threshold = 5 * KHZ,
-> 
-> nitpick.
-> Actually, this change is not related to this patch.
-> Even if it is trivial, it is not proper.
-
-As I wrote in the cover letter, this change is directly related to this
-patch. It was missed in v7 by accident. Please see more comments below.
-
->>  	},
->>  };
->>  
->> @@ -208,9 +209,16 @@ static void device_writel(struct tegra_devfreq_device *dev, u32 val,
->>  	writel_relaxed(val, dev->regs + offset);
->>  }
->>  
->> -static unsigned long do_percent(unsigned long val, unsigned int pct)
->> +static unsigned long do_percent(unsigned long long val, unsigned int pct)
->>  {
->> -	return val * pct / 100;
->> +	val = val * pct;
->> +	do_div(val, 100);
->> +
->> +	/*
->> +	 * High freq + high boosting percent + large polling interval are
->> +	 * resulting in integer overflow when watermarks are calculated.
->> +	 */
->> +	return min_t(u64, val, U32_MAX);
->>  }
->>  
->>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->> @@ -218,8 +226,9 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->>  {
->>  	u32 avg = dev->avg_count;
->>  	u32 avg_band_freq = tegra->max_freq * ACTMON_DEFAULT_AVG_BAND / KHZ;
->> -	u32 band = avg_band_freq * ACTMON_SAMPLING_PERIOD;
->> +	u32 band = avg_band_freq * tegra->devfreq->profile->polling_ms;
->>  
->> +	avg = min(dev->avg_count, U32_MAX - band);
->>  	device_writel(dev, avg + band, ACTMON_DEV_AVG_UPPER_WMARK);
->>  
->>  	avg = max(dev->avg_count, band);
->> @@ -229,7 +238,7 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->>  static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
->>  				       struct tegra_devfreq_device *dev)
->>  {
->> -	u32 val = tegra->cur_freq * ACTMON_SAMPLING_PERIOD;
->> +	u32 val = tegra->cur_freq * tegra->devfreq->profile->polling_ms;
->>  
->>  	device_writel(dev, do_percent(val, dev->config->boost_up_threshold),
->>  		      ACTMON_DEV_UPPER_WMARK);
->> @@ -308,10 +317,9 @@ static unsigned long actmon_device_target_freq(struct tegra_devfreq *tegra,
->>  	unsigned int avg_sustain_coef;
->>  	unsigned long target_freq;
->>  
->> -	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
->> +	target_freq = dev->avg_count / tegra->devfreq->profile->polling_ms;
->>  	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
->>  	target_freq = do_percent(target_freq, avg_sustain_coef);
->> -	target_freq += dev->boost_freq;
->>  
->>  	return target_freq;
->>  }
->> @@ -322,15 +330,18 @@ static void actmon_update_target(struct tegra_devfreq *tegra,
->>  	unsigned long cpu_freq = 0;
->>  	unsigned long static_cpu_emc_freq = 0;
->>  
->> -	if (dev->config->avg_dependency_threshold) {
->> +	dev->target_freq = actmon_device_target_freq(tegra, dev);
->> +
->> +	if (dev->config->avg_dependency_threshold &&
->> +	    dev->config->avg_dependency_threshold <= dev->target_freq) {
-> 
-> This changes are related to polling interval change at the run time?
-> This patch touched the 'avg_dependency_threshold'. It is related to the 
-> dynamic change of polling interval?
-Before this patch the avg_dependency_threshold was defined in "cycle"
-units and the the predefined value was fixed for the polling interval of
-12ms.
-
-After this patch the avg_dependency_threshold is redefined to use "kHz"
-units which are independent of the polling interval.
-
-So yes, this change is related to the dynamic changing of the polling
-interval at run time.
-
->>  		cpu_freq = cpufreq_quick_get(0);
->>  		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
->> -	}
->>  
->> -	dev->target_freq = actmon_device_target_freq(tegra, dev);
->> -
->> -	if (dev->avg_count >= dev->config->avg_dependency_threshold)
->> +		dev->target_freq += dev->boost_freq;
->>  		dev->target_freq = max(dev->target_freq, static_cpu_emc_freq);
->> +	} else {
->> +		dev->target_freq += dev->boost_freq;
->> +	}
-> 
-> ditto. This changes are related to polling interval change at the run time?
-
-It is possible to derive these changes into a separate patch. This
-should help a tad with the following of the code changes. I'll do it in v9
-
->>  }
->>  
->>  static irqreturn_t actmon_thread_isr(int irq, void *data)
->> @@ -396,15 +407,16 @@ static unsigned long
->>  tegra_actmon_cpufreq_contribution(struct tegra_devfreq *tegra,
->>  				  unsigned int cpu_freq)
->>  {
->> +	struct tegra_devfreq_device *dev = &tegra->devices[MCCPU];
->>  	unsigned long static_cpu_emc_freq, dev_freq;
->>  
->> +	dev_freq = actmon_device_target_freq(tegra, dev);
->> +
->>  	/* check whether CPU's freq is taken into account at all */
->> -	if (tegra->devices[MCCPU].avg_count <
->> -	    tegra->devices[MCCPU].config->avg_dependency_threshold)
->> +	if (dev_freq < dev->config->avg_dependency_threshold)
-> 
-> ditto.
-> 
->>  		return 0;
->>  
->>  	static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
->> -	dev_freq = actmon_device_target_freq(tegra, &tegra->devices[MCCPU]);
->>  
->>  	if (dev_freq >= static_cpu_emc_freq)
->>  		return 0;
->> @@ -465,7 +477,7 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->>  
->>  	dev->target_freq = tegra->cur_freq;
->>  
->> -	dev->avg_count = tegra->cur_freq * ACTMON_SAMPLING_PERIOD;
->> +	dev->avg_count = tegra->cur_freq * tegra->devfreq->profile->polling_ms;
->>  	device_writel(dev, dev->avg_count, ACTMON_DEV_INIT_AVG);
->>  
->>  	tegra_devfreq_update_avg_wmark(tegra, dev);
->> @@ -506,7 +518,10 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
->>  	unsigned int i;
->>  	int err;
->>  
->> -	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
->> +	if (!tegra->devfreq->profile->polling_ms || tegra->cur_freq)
->> +		return 0;
->> +
->> +	actmon_writel(tegra, tegra->devfreq->profile->polling_ms - 1,
->>  		      ACTMON_GLB_PERIOD_CTRL);
->>  
->>  	/*
->> @@ -551,11 +566,16 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
->>  
->>  	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
->>  
->> +	tegra->cur_freq = 0;
->> +
->>  	return err;
->>  }
->>  
->>  static void tegra_actmon_stop(struct tegra_devfreq *tegra)
->>  {
->> +	if (!tegra->devfreq->profile->polling_ms || !tegra->cur_freq)
->> +		return;
->> +
->>  	disable_irq(tegra->irq);
->>  
->>  	cpufreq_unregister_notifier(&tegra->cpu_rate_change_nb,
->> @@ -566,6 +586,8 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
->>  	tegra_actmon_stop_devices(tegra);
->>  
->>  	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
->> +
->> +	tegra->cur_freq = 0;
->>  }
->>  
->>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->> @@ -625,7 +647,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
->>  	stat->busy_time *= 100 / BUS_SATURATION_RATIO;
->>  
->>  	/* Number of cycles in a sampling period */
->> -	stat->total_time = ACTMON_SAMPLING_PERIOD * cur_freq;
->> +	stat->total_time = tegra->devfreq->profile->polling_ms * cur_freq;
->>  
->>  	stat->busy_time = min(stat->busy_time, stat->total_time);
->>  
->> @@ -633,7 +655,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
->>  }
->>  
->>  static struct devfreq_dev_profile tegra_devfreq_profile = {
->> -	.polling_ms	= 0,
->> +	.polling_ms	= ACTMON_SAMPLING_PERIOD,
->>  	.target		= tegra_devfreq_target,
->>  	.get_dev_status	= tegra_devfreq_get_dev_status,
->>  };
->> @@ -673,6 +695,7 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->>  					unsigned int event, void *data)
->>  {
->>  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
->> +	unsigned int *new_delay = data;
->>  	int ret = 0;
->>  
->>  	/*
->> @@ -692,6 +715,21 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->>  		devfreq_monitor_stop(devfreq);
->>  		break;
->>  
->> +	case DEVFREQ_GOV_INTERVAL:
->> +		/*
->> +		 * ACTMON hardware supports up to 256 milliseconds for the
->> +		 * sampling period.
->> +		 */
->> +		if (*new_delay > 256) {
->> +			ret = -EINVAL;
->> +			break;
->> +		}
->> +
->> +		tegra_actmon_stop(tegra);
->> +		devfreq_interval_update(devfreq, new_delay);
->> +		ret = tegra_actmon_start(tegra);
->> +		break;
->> +
->>  	case DEVFREQ_GOV_SUSPEND:
->>  		tegra_actmon_stop(tegra);
->>  		devfreq_monitor_suspend(devfreq);
->> @@ -711,6 +749,7 @@ static struct devfreq_governor tegra_devfreq_governor = {
->>  	.get_target_freq = tegra_governor_get_target,
->>  	.event_handler = tegra_governor_event_handler,
->>  	.immutable = true,
->> +	.interrupt_driven = true,
->>  };
->>  
->>  static int tegra_devfreq_probe(struct platform_device *pdev)
->>
-> 
-> 
+MDIuMTEuMjAxOSAxNzo0NSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBIaSBBUk0gU29D
+IG1haW50YWluZXJzLAo+IAo+IFRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNTRl
+Y2I4ZjcwMjhjNWViM2Q3NDBiYjgyYjBmMWQ5MGYyZGY2M2M1YzoKPiAKPiAgIExpbnV4IDUuNC1y
+YzEgKDIwMTktMDktMzAgMTA6MzU6NDAgLTA3MDApCj4gCj4gYXJlIGF2YWlsYWJsZSBpbiB0aGUg
+R2l0IHJlcG9zaXRvcnkgYXQ6Cj4gCj4gICBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xp
+bnV4L2tlcm5lbC9naXQvdGVncmEvbGludXguZ2l0IHRhZ3MvdGVncmEtZm9yLTUuNS1tZW1vcnkK
+PiAKPiBmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gOGIwNDIyNWM0NDY0NDIyZjE4NWU2
+MmMyY2VkZmI5ZTIzNDQyMzgxNDoKPiAKPiAgIG1lbW9yeTogdGVncmE6IENvbnNvbGlkYXRlIHJl
+Z2lzdGVycyBkZWZpbml0aW9uIGludG8gY29tbW9uIGhlYWRlciAoMjAxOS0xMS0wMSAxMDo1Nzoz
+NyArMDEwMCkKPiAKPiBUaGFua3MsCj4gVGhpZXJyeQo+IAo+IC0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBtZW1vcnk6IHRl
+Z3JhOiBDaGFuZ2VzIGZvciB2NS41LXJjMQo+IAo+IFRoaXMgY29udGFpbnMgYSBjb3VwbGUgb2Yg
+Zml4ZXMgYW5kIGFkZHMgc3VwcG9ydCBmb3IgRU1DIGZyZXF1ZW5jeQo+IHNjYWxpbmcgb24gVGVn
+cmEzMC4KPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tCj4gRG1pdHJ5IE9zaXBlbmtvICgxMSk6Cj4gICAgICAgY2xrOiB0
+ZWdyYTogQWRkIFRlZ3JhMjAvMzAgRU1DIGNsb2NrIGltcGxlbWVudGF0aW9uCj4gICAgICAgbWVt
+b3J5OiB0ZWdyYTogRG9uJ3Qgc2V0IEVNQyByYXRlIHRvIG1heGltdW0gb24gcHJvYmUgZm9yIFRl
+Z3JhMjAKPiAgICAgICBtZW1vcnk6IHRlZ3JhOiBBZGFwdCBmb3IgVGVncmEyMCBjbG9jayBkcml2
+ZXIgY2hhbmdlcwo+ICAgICAgIG1lbW9yeTogdGVncmE6IEluY2x1ZGUgaW8uaCBpbnN0ZWFkIG9m
+IGlvcG9sbC5oCj4gICAgICAgbWVtb3J5OiB0ZWdyYTogUHJlLWNvbmZpZ3VyZSBkZWJ1ZyByZWdp
+c3RlciBvbiBUZWdyYTIwCj4gICAgICAgbWVtb3J5OiB0ZWdyYTogUHJpbnQgYSBicmllZiBpbmZv
+IG1lc3NhZ2UgYWJvdXQgRU1DIHRpbWluZ3MKPiAgICAgICBtZW1vcnk6IHRlZ3JhOiBJbmNyZWFz
+ZSBoYW5kc2hha2UgdGltZW91dCBvbiBUZWdyYTIwCj4gICAgICAgbWVtb3J5OiB0ZWdyYTogRG8g
+bm90IGhhbmRsZSBlcnJvciBmcm9tIHdhaXRfZm9yX2NvbXBsZXRpb25fdGltZW91dCgpCj4gICAg
+ICAgbWVtb3J5OiB0ZWdyYTogSW50cm9kdWNlIFRlZ3JhMzAgRU1DIGRyaXZlcgo+ICAgICAgIG1l
+bW9yeTogdGVncmE6IEVuc3VyZSB0aW1pbmcgY29udHJvbCBkZWJ1ZyBmZWF0dXJlcyBhcmUgZGlz
+YWJsZWQKPiAgICAgICBtZW1vcnk6IHRlZ3JhOiBDb25zb2xpZGF0ZSByZWdpc3RlcnMgZGVmaW5p
+dGlvbiBpbnRvIGNvbW1vbiBoZWFkZXIKPiAKPiBTb3dqYW55YSBLb21hdGluZW5pICgxKToKPiAg
+ICAgICBjbGs6IEFkZCBBUEkgdG8gZ2V0IGluZGV4IG9mIHRoZSBjbG9jayBwYXJlbnQKCkhlbGxv
+IFRoaWVycnksCgpJIHdhbnQgdG8gcG9pbnQgb3V0IHRoYXQgaXQgbG9va3MgbGlrZSB0aGlzIHBh
+dGNoIGZyb20gU293amFueWEKc2hvdWxkbid0IGJlbG9uZyB0byB0aGlzIHB1bGwgcmVxdWVzdCBi
+ZWNhdXNlIGl0IGlzIHVucmVsYXRlZCB0byB0aGUKbWVtb3J5IHBhdGNoZXMuCgpBbHNvLCB0aGlz
+IHBhdGNoIGhhdmVuJ3QgZ290IGFuIGFjayBmcm9tIHRoZSBjbGsgbWFpbnRhaW5lcnMgeWV0IGFu
+ZCBJCmFzc3VtZSB0aGF0IGl0IG5lZWRzIGFuIGFjay4KCkknbSBqdXN0IHdhbnRpbmcgdG8gZ2V0
+IHlvdXJzIGF0dGVudGlvbiBpbiBhIGNhc2UgaWYgdGhpcyBwYXRjaCB3YXMKYWRkZWQgYnkgbWlz
+dGFrZS4gSWYgaXQgd2FzIGludGVudGlvbmFsLCB0aGVuIHBlcmhhcHMgaXQgc2hvdWxkIGJlIG9r
+YXkuCgo+IFRoaWVycnkgUmVkaW5nICgzKToKPiAgICAgICBNZXJnZSBicmFuY2ggJ2Zvci01LjUv
+Y2xrJwo+ICAgICAgIG1lbW9yeTogdGVncmE6IFNldCBETUEgbWFzayBiYXNlZCBvbiBzdXBwb3J0
+ZWQgYWRkcmVzcyBiaXRzCj4gICAgICAgbWVtb3J5OiB0ZWdyYTogQWRkIGdyMmQgYW5kIGdyM2Qg
+dG8gRFJNIElPTU1VIGdyb3VwCj4gCj4gIGRyaXZlcnMvY2xrL2Nsay5jICAgICAgICAgICAgICAg
+ICAgIHwgICAxNyArCj4gIGRyaXZlcnMvY2xrL3RlZ3JhL01ha2VmaWxlICAgICAgICAgIHwgICAg
+MiArCj4gIGRyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTIwLWVtYy5jIHwgIDI5MyArKysrKysr
+KysKPiAgZHJpdmVycy9jbGsvdGVncmEvY2xrLXRlZ3JhMjAuYyAgICAgfCAgIDU1ICstCj4gIGRy
+aXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTMwLmMgICAgIHwgICAzOCArLQo+ICBkcml2ZXJzL2Ns
+ay90ZWdyYS9jbGsuaCAgICAgICAgICAgICB8ICAgIDMgKwo+ICBkcml2ZXJzL21lbW9yeS90ZWdy
+YS9LY29uZmlnICAgICAgICB8ICAgMTAgKwo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS9NYWtlZmls
+ZSAgICAgICB8ICAgIDEgKwo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS9tYy5jICAgICAgICAgICB8
+ICAgNTIgKy0KPiAgZHJpdmVycy9tZW1vcnkvdGVncmEvbWMuaCAgICAgICAgICAgfCAgIDc0ICsr
+LQo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTExNC5jICAgICB8ICAgMTAgKy0KPiAgZHJp
+dmVycy9tZW1vcnkvdGVncmEvdGVncmExMjQuYyAgICAgfCAgIDMwICstCj4gIGRyaXZlcnMvbWVt
+b3J5L3RlZ3JhL3RlZ3JhMjAtZW1jLmMgIHwgIDEzNCArKy0tCj4gIGRyaXZlcnMvbWVtb3J5L3Rl
+Z3JhL3RlZ3JhMzAtZW1jLmMgIHwgMTIzMiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKwo+ICBkcml2ZXJzL21lbW9yeS90ZWdyYS90ZWdyYTMwLmMgICAgICB8ICAgMzQgKy0KPiAg
+aW5jbHVkZS9saW51eC9jbGstcHJvdmlkZXIuaCAgICAgICAgfCAgICAxICsKPiAgaW5jbHVkZS9s
+aW51eC9jbGsvdGVncmEuaCAgICAgICAgICAgfCAgIDExICsKPiAgaW5jbHVkZS9zb2MvdGVncmEv
+bWMuaCAgICAgICAgICAgICAgfCAgICAyICstCj4gIDE4IGZpbGVzIGNoYW5nZWQsIDE3OTcgaW5z
+ZXJ0aW9ucygrKSwgMjAyIGRlbGV0aW9ucygtKQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
+cy9jbGsvdGVncmEvY2xrLXRlZ3JhMjAtZW1jLmMKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMzAtZW1jLmMKPiAKCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
+ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
