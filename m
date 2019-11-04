@@ -1,279 +1,218 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v8 16/18] PM / devfreq: tegra30: Support variable
- polling interval
-Date: Mon, 4 Nov 2019 11:53:23 +0900
-Message-ID: <e3967b07-b53f-0d9c-8f1b-bad238c4ef68@samsung.com>
-References: <20191103204130.2172-1-digetx@gmail.com>
-        <CGME20191103204245epcas4p48f5ab2a36b3728439799adb41fed6a24@epcas4p4.samsung.com>
-        <20191103204130.2172-17-digetx@gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v3] drm/tegra: Do not use ->load() and ->unload() callbacks
+Date: Mon, 4 Nov 2019 11:26:36 +0100
+Message-ID: <20191104102636.GF10326@phenom.ffwll.local>
+References: <20191028121610.3889207-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191103204130.2172-17-digetx@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20191028121610.3889207-1-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 List-Id: linux-tegra@vger.kernel.org
 
-On 19. 11. 4. 오전 5:41, Dmitry Osipenko wrote:
-> The ACTMON governor is interrupt-driven and currently hardware's polling
-> interval is fixed to 16ms in the driver. Devfreq supports variable polling
-> interval by the generic governors, let's re-use the generic interface for
-> changing of the polling interval. Now the polling interval can be changed
-> dynamically via /sys/class/devfreq/devfreq0/polling_interval.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 83 +++++++++++++++++++++++--------
->  1 file changed, 61 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 852bde6249c7..9c645e83ef8b 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -96,9 +96,10 @@ struct tegra_devfreq_device_config {
->  	unsigned int	boost_down_threshold;
->  
->  	/*
-> -	 * Threshold of activity (cycles) below which the CPU frequency isn't
-> -	 * to be taken into account. This is to avoid increasing the EMC
-> -	 * frequency when the CPU is very busy but not accessing the bus often.
-> +	 * Threshold of activity (cycles translated to kHz) below which the
-> +	 * CPU frequency isn't to be taken into account. This is to avoid
-> +	 * increasing the EMC frequency when the CPU is very busy but not
-> +	 * accessing the bus often.
->  	 */
->  	u32		avg_dependency_threshold;
->  };
-> @@ -126,7 +127,7 @@ static const struct tegra_devfreq_device_config actmon_device_configs[] = {
->  		.boost_down_coeff = 90,
->  		.boost_up_threshold = 27,
->  		.boost_down_threshold = 10,
-> -		.avg_dependency_threshold = 50000,
-> +		.avg_dependency_threshold = 5 * KHZ,
-
-nitpick.
-Actually, this change is not related to this patch.
-Even if it is trivial, it is not proper.
-
->  	},
->  };
->  
-> @@ -208,9 +209,16 @@ static void device_writel(struct tegra_devfreq_device *dev, u32 val,
->  	writel_relaxed(val, dev->regs + offset);
->  }
->  
-> -static unsigned long do_percent(unsigned long val, unsigned int pct)
-> +static unsigned long do_percent(unsigned long long val, unsigned int pct)
->  {
-> -	return val * pct / 100;
-> +	val = val * pct;
-> +	do_div(val, 100);
-> +
-> +	/*
-> +	 * High freq + high boosting percent + large polling interval are
-> +	 * resulting in integer overflow when watermarks are calculated.
-> +	 */
-> +	return min_t(u64, val, U32_MAX);
->  }
->  
->  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
-> @@ -218,8 +226,9 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->  {
->  	u32 avg = dev->avg_count;
->  	u32 avg_band_freq = tegra->max_freq * ACTMON_DEFAULT_AVG_BAND / KHZ;
-> -	u32 band = avg_band_freq * ACTMON_SAMPLING_PERIOD;
-> +	u32 band = avg_band_freq * tegra->devfreq->profile->polling_ms;
->  
-> +	avg = min(dev->avg_count, U32_MAX - band);
->  	device_writel(dev, avg + band, ACTMON_DEV_AVG_UPPER_WMARK);
->  
->  	avg = max(dev->avg_count, band);
-> @@ -229,7 +238,7 @@ static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
->  static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
->  				       struct tegra_devfreq_device *dev)
->  {
-> -	u32 val = tegra->cur_freq * ACTMON_SAMPLING_PERIOD;
-> +	u32 val = tegra->cur_freq * tegra->devfreq->profile->polling_ms;
->  
->  	device_writel(dev, do_percent(val, dev->config->boost_up_threshold),
->  		      ACTMON_DEV_UPPER_WMARK);
-> @@ -308,10 +317,9 @@ static unsigned long actmon_device_target_freq(struct tegra_devfreq *tegra,
->  	unsigned int avg_sustain_coef;
->  	unsigned long target_freq;
->  
-> -	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
-> +	target_freq = dev->avg_count / tegra->devfreq->profile->polling_ms;
->  	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
->  	target_freq = do_percent(target_freq, avg_sustain_coef);
-> -	target_freq += dev->boost_freq;
->  
->  	return target_freq;
->  }
-> @@ -322,15 +330,18 @@ static void actmon_update_target(struct tegra_devfreq *tegra,
->  	unsigned long cpu_freq = 0;
->  	unsigned long static_cpu_emc_freq = 0;
->  
-> -	if (dev->config->avg_dependency_threshold) {
-> +	dev->target_freq = actmon_device_target_freq(tegra, dev);
-> +
-> +	if (dev->config->avg_dependency_threshold &&
-> +	    dev->config->avg_dependency_threshold <= dev->target_freq) {
-
-This changes are related to polling interval change at the run time?
-This patch touched the 'avg_dependency_threshold'. It is related to the 
-dynamic change of polling interval?
-
->  		cpu_freq = cpufreq_quick_get(0);
->  		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
-> -	}
->  
-> -	dev->target_freq = actmon_device_target_freq(tegra, dev);
-> -
-> -	if (dev->avg_count >= dev->config->avg_dependency_threshold)
-> +		dev->target_freq += dev->boost_freq;
->  		dev->target_freq = max(dev->target_freq, static_cpu_emc_freq);
-> +	} else {
-> +		dev->target_freq += dev->boost_freq;
-> +	}
-
-ditto. This changes are related to polling interval change at the run time?
-
->  }
->  
->  static irqreturn_t actmon_thread_isr(int irq, void *data)
-> @@ -396,15 +407,16 @@ static unsigned long
->  tegra_actmon_cpufreq_contribution(struct tegra_devfreq *tegra,
->  				  unsigned int cpu_freq)
->  {
-> +	struct tegra_devfreq_device *dev = &tegra->devices[MCCPU];
->  	unsigned long static_cpu_emc_freq, dev_freq;
->  
-> +	dev_freq = actmon_device_target_freq(tegra, dev);
-> +
->  	/* check whether CPU's freq is taken into account at all */
-> -	if (tegra->devices[MCCPU].avg_count <
-> -	    tegra->devices[MCCPU].config->avg_dependency_threshold)
-> +	if (dev_freq < dev->config->avg_dependency_threshold)
-
-ditto.
-
->  		return 0;
->  
->  	static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
-> -	dev_freq = actmon_device_target_freq(tegra, &tegra->devices[MCCPU]);
->  
->  	if (dev_freq >= static_cpu_emc_freq)
->  		return 0;
-> @@ -465,7 +477,7 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->  
->  	dev->target_freq = tegra->cur_freq;
->  
-> -	dev->avg_count = tegra->cur_freq * ACTMON_SAMPLING_PERIOD;
-> +	dev->avg_count = tegra->cur_freq * tegra->devfreq->profile->polling_ms;
->  	device_writel(dev, dev->avg_count, ACTMON_DEV_INIT_AVG);
->  
->  	tegra_devfreq_update_avg_wmark(tegra, dev);
-> @@ -506,7 +518,10 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
->  	unsigned int i;
->  	int err;
->  
-> -	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
-> +	if (!tegra->devfreq->profile->polling_ms || tegra->cur_freq)
-> +		return 0;
-> +
-> +	actmon_writel(tegra, tegra->devfreq->profile->polling_ms - 1,
->  		      ACTMON_GLB_PERIOD_CTRL);
->  
->  	/*
-> @@ -551,11 +566,16 @@ static int tegra_actmon_start(struct tegra_devfreq *tegra)
->  
->  	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
->  
-> +	tegra->cur_freq = 0;
-> +
->  	return err;
->  }
->  
->  static void tegra_actmon_stop(struct tegra_devfreq *tegra)
->  {
-> +	if (!tegra->devfreq->profile->polling_ms || !tegra->cur_freq)
-> +		return;
-> +
->  	disable_irq(tegra->irq);
->  
->  	cpufreq_unregister_notifier(&tegra->cpu_rate_change_nb,
-> @@ -566,6 +586,8 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
->  	tegra_actmon_stop_devices(tegra);
->  
->  	clk_notifier_unregister(tegra->emc_clock, &tegra->clk_rate_change_nb);
-> +
-> +	tegra->cur_freq = 0;
->  }
->  
->  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
-> @@ -625,7 +647,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
->  	stat->busy_time *= 100 / BUS_SATURATION_RATIO;
->  
->  	/* Number of cycles in a sampling period */
-> -	stat->total_time = ACTMON_SAMPLING_PERIOD * cur_freq;
-> +	stat->total_time = tegra->devfreq->profile->polling_ms * cur_freq;
->  
->  	stat->busy_time = min(stat->busy_time, stat->total_time);
->  
-> @@ -633,7 +655,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
->  }
->  
->  static struct devfreq_dev_profile tegra_devfreq_profile = {
-> -	.polling_ms	= 0,
-> +	.polling_ms	= ACTMON_SAMPLING_PERIOD,
->  	.target		= tegra_devfreq_target,
->  	.get_dev_status	= tegra_devfreq_get_dev_status,
->  };
-> @@ -673,6 +695,7 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->  					unsigned int event, void *data)
->  {
->  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
-> +	unsigned int *new_delay = data;
->  	int ret = 0;
->  
->  	/*
-> @@ -692,6 +715,21 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->  		devfreq_monitor_stop(devfreq);
->  		break;
->  
-> +	case DEVFREQ_GOV_INTERVAL:
-> +		/*
-> +		 * ACTMON hardware supports up to 256 milliseconds for the
-> +		 * sampling period.
-> +		 */
-> +		if (*new_delay > 256) {
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		tegra_actmon_stop(tegra);
-> +		devfreq_interval_update(devfreq, new_delay);
-> +		ret = tegra_actmon_start(tegra);
-> +		break;
-> +
->  	case DEVFREQ_GOV_SUSPEND:
->  		tegra_actmon_stop(tegra);
->  		devfreq_monitor_suspend(devfreq);
-> @@ -711,6 +749,7 @@ static struct devfreq_governor tegra_devfreq_governor = {
->  	.get_target_freq = tegra_governor_get_target,
->  	.event_handler = tegra_governor_event_handler,
->  	.immutable = true,
-> +	.interrupt_driven = true,
->  };
->  
->  static int tegra_devfreq_probe(struct platform_device *pdev)
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+T24gTW9uLCBPY3QgMjgsIDIwMTkgYXQgMDE6MTY6MTBQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
+d3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBU
+aGUgLT5sb2FkKCkgYW5kIC0+dW5sb2FkKCkgZHJpdmVycyBhcmUgbWlkbGF5ZXJzIGFuZCBzaG91
+bGQgYmUgYXZvaWRlZAo+IGluIG1vZGVybiBkcml2ZXJzLiBGaXggdGhpcyBieSBtb3ZpbmcgdGhl
+IGNvZGUgaW50byB0aGUgZHJpdmVyIC0+cHJvYmUoKQo+IGFuZCAtPnJlbW92ZSgpIGltcGxlbWVu
+dGF0aW9ucywgcmVzcGVjdGl2ZWx5Lgo+IAo+IHYyOiBraWNrIG91dCBjb25mbGljdGluZyBmcmFt
+ZWJ1ZmZlcnMgYmVmb3JlIGluaXRpYWxpemluZyBmYmRldgo+IHYzOiByZWJhc2Ugb250byBkcm0v
+dGVncmEvZm9yLW5leHQKPiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGlu
+Z0BudmlkaWEuY29tPgoKTXkgZm9yIHYyIHNlZW1zIHRvIGhhdmUgYmVlbiBsb3N0LCBzbzoKClJl
+dmlld2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGZmd2xsLmNoPgoKPiAtLS0K
+PiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgMzIxICsrKysrKysrKysrKysrKysrLS0t
+LS0tLS0tLS0tLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMTU0IGluc2VydGlvbnMoKyksIDE2
+NyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
+bS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4gaW5kZXggYjc0MzYyY2I2M2ViLi43
+NDgwZjU3NTE4OGQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4g
+KysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4gQEAgLTg2LDE2OCArODYsNiBAQCB0
+ZWdyYV9kcm1fbW9kZV9jb25maWdfaGVscGVycyA9IHsKPiAgCS5hdG9taWNfY29tbWl0X3RhaWwg
+PSB0ZWdyYV9hdG9taWNfY29tbWl0X3RhaWwsCj4gIH07Cj4gIAo+IC1zdGF0aWMgaW50IHRlZ3Jh
+X2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCj4g
+LXsKPiAtCXN0cnVjdCBob3N0MXhfZGV2aWNlICpkZXZpY2UgPSB0b19ob3N0MXhfZGV2aWNlKGRy
+bS0+ZGV2KTsKPiAtCXN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhOwo+IC0JaW50IGVycjsKPiAtCj4g
+LQl0ZWdyYSA9IGt6YWxsb2Moc2l6ZW9mKCp0ZWdyYSksIEdGUF9LRVJORUwpOwo+IC0JaWYgKCF0
+ZWdyYSkKPiAtCQlyZXR1cm4gLUVOT01FTTsKPiAtCj4gLQlpZiAoaW9tbXVfcHJlc2VudCgmcGxh
+dGZvcm1fYnVzX3R5cGUpKSB7Cj4gLQkJdGVncmEtPmRvbWFpbiA9IGlvbW11X2RvbWFpbl9hbGxv
+YygmcGxhdGZvcm1fYnVzX3R5cGUpOwo+IC0JCWlmICghdGVncmEtPmRvbWFpbikgewo+IC0JCQll
+cnIgPSAtRU5PTUVNOwo+IC0JCQlnb3RvIGZyZWU7Cj4gLQkJfQo+IC0KPiAtCQllcnIgPSBpb3Zh
+X2NhY2hlX2dldCgpOwo+IC0JCWlmIChlcnIgPCAwKQo+IC0JCQlnb3RvIGRvbWFpbjsKPiAtCX0K
+PiAtCj4gLQltdXRleF9pbml0KCZ0ZWdyYS0+Y2xpZW50c19sb2NrKTsKPiAtCUlOSVRfTElTVF9I
+RUFEKCZ0ZWdyYS0+Y2xpZW50cyk7Cj4gLQo+IC0JZHJtLT5kZXZfcHJpdmF0ZSA9IHRlZ3JhOwo+
+IC0JdGVncmEtPmRybSA9IGRybTsKPiAtCj4gLQlkcm1fbW9kZV9jb25maWdfaW5pdChkcm0pOwo+
+IC0KPiAtCWRybS0+bW9kZV9jb25maWcubWluX3dpZHRoID0gMDsKPiAtCWRybS0+bW9kZV9jb25m
+aWcubWluX2hlaWdodCA9IDA7Cj4gLQo+IC0JZHJtLT5tb2RlX2NvbmZpZy5tYXhfd2lkdGggPSA0
+MDk2Owo+IC0JZHJtLT5tb2RlX2NvbmZpZy5tYXhfaGVpZ2h0ID0gNDA5NjsKPiAtCj4gLQlkcm0t
+Pm1vZGVfY29uZmlnLmFsbG93X2ZiX21vZGlmaWVycyA9IHRydWU7Cj4gLQo+IC0JZHJtLT5tb2Rl
+X2NvbmZpZy5ub3JtYWxpemVfenBvcyA9IHRydWU7Cj4gLQo+IC0JZHJtLT5tb2RlX2NvbmZpZy5m
+dW5jcyA9ICZ0ZWdyYV9kcm1fbW9kZV9jb25maWdfZnVuY3M7Cj4gLQlkcm0tPm1vZGVfY29uZmln
+LmhlbHBlcl9wcml2YXRlID0gJnRlZ3JhX2RybV9tb2RlX2NvbmZpZ19oZWxwZXJzOwo+IC0KPiAt
+CWVyciA9IHRlZ3JhX2RybV9mYl9wcmVwYXJlKGRybSk7Cj4gLQlpZiAoZXJyIDwgMCkKPiAtCQln
+b3RvIGNvbmZpZzsKPiAtCj4gLQlkcm1fa21zX2hlbHBlcl9wb2xsX2luaXQoZHJtKTsKPiAtCj4g
+LQllcnIgPSBob3N0MXhfZGV2aWNlX2luaXQoZGV2aWNlKTsKPiAtCWlmIChlcnIgPCAwKQo+IC0J
+CWdvdG8gZmJkZXY7Cj4gLQo+IC0JaWYgKHRlZ3JhLT5kb21haW4pIHsKPiAtCQl1NjQgY2FydmVv
+dXRfc3RhcnQsIGNhcnZlb3V0X2VuZCwgZ2VtX3N0YXJ0LCBnZW1fZW5kOwo+IC0JCXU2NCBkbWFf
+bWFzayA9IGRtYV9nZXRfbWFzaygmZGV2aWNlLT5kZXYpOwo+IC0JCWRtYV9hZGRyX3Qgc3RhcnQs
+IGVuZDsKPiAtCQl1bnNpZ25lZCBsb25nIG9yZGVyOwo+IC0KPiAtCQlzdGFydCA9IHRlZ3JhLT5k
+b21haW4tPmdlb21ldHJ5LmFwZXJ0dXJlX3N0YXJ0ICYgZG1hX21hc2s7Cj4gLQkJZW5kID0gdGVn
+cmEtPmRvbWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfZW5kICYgZG1hX21hc2s7Cj4gLQo+IC0JCWdl
+bV9zdGFydCA9IHN0YXJ0Owo+IC0JCWdlbV9lbmQgPSBlbmQgLSBDQVJWRU9VVF9TWjsKPiAtCQlj
+YXJ2ZW91dF9zdGFydCA9IGdlbV9lbmQgKyAxOwo+IC0JCWNhcnZlb3V0X2VuZCA9IGVuZDsKPiAt
+Cj4gLQkJb3JkZXIgPSBfX2Zmcyh0ZWdyYS0+ZG9tYWluLT5wZ3NpemVfYml0bWFwKTsKPiAtCQlp
+bml0X2lvdmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCAxVUwgPDwgb3JkZXIsCj4g
+LQkJCQkgY2FydmVvdXRfc3RhcnQgPj4gb3JkZXIpOwo+IC0KPiAtCQl0ZWdyYS0+Y2FydmVvdXQu
+c2hpZnQgPSBpb3ZhX3NoaWZ0KCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKPiAtCQl0ZWdyYS0+
+Y2FydmVvdXQubGltaXQgPSBjYXJ2ZW91dF9lbmQgPj4gdGVncmEtPmNhcnZlb3V0LnNoaWZ0Owo+
+IC0KPiAtCQlkcm1fbW1faW5pdCgmdGVncmEtPm1tLCBnZW1fc3RhcnQsIGdlbV9lbmQgLSBnZW1f
+c3RhcnQgKyAxKTsKPiAtCQltdXRleF9pbml0KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gLQo+IC0JCURS
+TV9ERUJVR19EUklWRVIoIklPTU1VIGFwZXJ0dXJlczpcbiIpOwo+IC0JCURSTV9ERUJVR19EUklW
+RVIoIiAgR0VNOiAlI2xseC0lI2xseFxuIiwgZ2VtX3N0YXJ0LCBnZW1fZW5kKTsKPiAtCQlEUk1f
+REVCVUdfRFJJVkVSKCIgIENhcnZlb3V0OiAlI2xseC0lI2xseFxuIiwgY2FydmVvdXRfc3RhcnQs
+Cj4gLQkJCQkgY2FydmVvdXRfZW5kKTsKPiAtCX0KPiAtCj4gLQlpZiAodGVncmEtPmh1Yikgewo+
+IC0JCWVyciA9IHRlZ3JhX2Rpc3BsYXlfaHViX3ByZXBhcmUodGVncmEtPmh1Yik7Cj4gLQkJaWYg
+KGVyciA8IDApCj4gLQkJCWdvdG8gZGV2aWNlOwo+IC0JfQo+IC0KPiAtCS8qCj4gLQkgKiBXZSBk
+b24ndCB1c2UgdGhlIGRybV9pcnFfaW5zdGFsbCgpIGhlbHBlcnMgcHJvdmlkZWQgYnkgdGhlIERS
+TQo+IC0JICogY29yZSwgc28gd2UgbmVlZCB0byBzZXQgdGhpcyBtYW51YWxseSBpbiBvcmRlciB0
+byBhbGxvdyB0aGUKPiAtCSAqIERSTV9JT0NUTF9XQUlUX1ZCTEFOSyB0byBvcGVyYXRlIGNvcnJl
+Y3RseS4KPiAtCSAqLwo+IC0JZHJtLT5pcnFfZW5hYmxlZCA9IHRydWU7Cj4gLQo+IC0JLyogc3lu
+Y3BvaW50cyBhcmUgdXNlZCBmb3IgZnVsbCAzMi1iaXQgaGFyZHdhcmUgVkJMQU5LIGNvdW50ZXJz
+ICovCj4gLQlkcm0tPm1heF92YmxhbmtfY291bnQgPSAweGZmZmZmZmZmOwo+IC0KPiAtCWVyciA9
+IGRybV92YmxhbmtfaW5pdChkcm0sIGRybS0+bW9kZV9jb25maWcubnVtX2NydGMpOwo+IC0JaWYg
+KGVyciA8IDApCj4gLQkJZ290byBodWI7Cj4gLQo+IC0JZHJtX21vZGVfY29uZmlnX3Jlc2V0KGRy
+bSk7Cj4gLQo+IC0JZXJyID0gdGVncmFfZHJtX2ZiX2luaXQoZHJtKTsKPiAtCWlmIChlcnIgPCAw
+KQo+IC0JCWdvdG8gaHViOwo+IC0KPiAtCXJldHVybiAwOwo+IC0KPiAtaHViOgo+IC0JaWYgKHRl
+Z3JhLT5odWIpCj4gLQkJdGVncmFfZGlzcGxheV9odWJfY2xlYW51cCh0ZWdyYS0+aHViKTsKPiAt
+ZGV2aWNlOgo+IC0JaWYgKHRlZ3JhLT5kb21haW4pIHsKPiAtCQltdXRleF9kZXN0cm95KCZ0ZWdy
+YS0+bW1fbG9jayk7Cj4gLQkJZHJtX21tX3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwo+IC0JCXB1dF9p
+b3ZhX2RvbWFpbigmdGVncmEtPmNhcnZlb3V0LmRvbWFpbik7Cj4gLQkJaW92YV9jYWNoZV9wdXQo
+KTsKPiAtCX0KPiAtCj4gLQlob3N0MXhfZGV2aWNlX2V4aXQoZGV2aWNlKTsKPiAtZmJkZXY6Cj4g
+LQlkcm1fa21zX2hlbHBlcl9wb2xsX2ZpbmkoZHJtKTsKPiAtCXRlZ3JhX2RybV9mYl9mcmVlKGRy
+bSk7Cj4gLWNvbmZpZzoKPiAtCWRybV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7Cj4gLWRvbWFp
+bjoKPiAtCWlmICh0ZWdyYS0+ZG9tYWluKQo+IC0JCWlvbW11X2RvbWFpbl9mcmVlKHRlZ3JhLT5k
+b21haW4pOwo+IC1mcmVlOgo+IC0Ja2ZyZWUodGVncmEpOwo+IC0JcmV0dXJuIGVycjsKPiAtfQo+
+IC0KPiAtc3RhdGljIHZvaWQgdGVncmFfZHJtX3VubG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZHJt
+KQo+IC17Cj4gLQlzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2aWNlID0gdG9faG9zdDF4X2Rldmlj
+ZShkcm0tPmRldik7Cj4gLQlzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSA9IGRybS0+ZGV2X3ByaXZh
+dGU7Cj4gLQlpbnQgZXJyOwo+IC0KPiAtCWRybV9rbXNfaGVscGVyX3BvbGxfZmluaShkcm0pOwo+
+IC0JdGVncmFfZHJtX2ZiX2V4aXQoZHJtKTsKPiAtCWRybV9hdG9taWNfaGVscGVyX3NodXRkb3du
+KGRybSk7Cj4gLQlkcm1fbW9kZV9jb25maWdfY2xlYW51cChkcm0pOwo+IC0KPiAtCWVyciA9IGhv
+c3QxeF9kZXZpY2VfZXhpdChkZXZpY2UpOwo+IC0JaWYgKGVyciA8IDApCj4gLQkJcmV0dXJuOwo+
+IC0KPiAtCWlmICh0ZWdyYS0+ZG9tYWluKSB7Cj4gLQkJbXV0ZXhfZGVzdHJveSgmdGVncmEtPm1t
+X2xvY2spOwo+IC0JCWRybV9tbV90YWtlZG93bigmdGVncmEtPm1tKTsKPiAtCQlwdXRfaW92YV9k
+b21haW4oJnRlZ3JhLT5jYXJ2ZW91dC5kb21haW4pOwo+IC0JCWlvdmFfY2FjaGVfcHV0KCk7Cj4g
+LQkJaW9tbXVfZG9tYWluX2ZyZWUodGVncmEtPmRvbWFpbik7Cj4gLQl9Cj4gLQo+IC0Ja2ZyZWUo
+dGVncmEpOwo+IC19Cj4gLQo+ICBzdGF0aWMgaW50IHRlZ3JhX2RybV9vcGVuKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkcm0sIHN0cnVjdCBkcm1fZmlsZSAqZmlscCkKPiAgewo+ICAJc3RydWN0IHRlZ3Jh
+X2RybV9maWxlICpmcHJpdjsKPiBAQCAtMTAxNCw4ICs4NTIsNiBAQCBzdGF0aWMgaW50IHRlZ3Jh
+X2RlYnVnZnNfaW5pdChzdHJ1Y3QgZHJtX21pbm9yICptaW5vcikKPiAgc3RhdGljIHN0cnVjdCBk
+cm1fZHJpdmVyIHRlZ3JhX2RybV9kcml2ZXIgPSB7Cj4gIAkuZHJpdmVyX2ZlYXR1cmVzID0gRFJJ
+VkVSX01PREVTRVQgfCBEUklWRVJfR0VNIHwKPiAgCQkJICAgRFJJVkVSX0FUT01JQyB8IERSSVZF
+Ul9SRU5ERVIsCj4gLQkubG9hZCA9IHRlZ3JhX2RybV9sb2FkLAo+IC0JLnVubG9hZCA9IHRlZ3Jh
+X2RybV91bmxvYWQsCj4gIAkub3BlbiA9IHRlZ3JhX2RybV9vcGVuLAo+ICAJLnBvc3RjbG9zZSA9
+IHRlZ3JhX2RybV9wb3N0Y2xvc2UsCj4gIAkubGFzdGNsb3NlID0gZHJtX2ZiX2hlbHBlcl9sYXN0
+Y2xvc2UsCj4gQEAgLTEyMDIsNiArMTAzOCw3IEBAIHZvaWQgdGVncmFfZHJtX2ZyZWUoc3RydWN0
+IHRlZ3JhX2RybSAqdGVncmEsIHNpemVfdCBzaXplLCB2b2lkICp2aXJ0LAo+ICBzdGF0aWMgaW50
+IGhvc3QxeF9kcm1fcHJvYmUoc3RydWN0IGhvc3QxeF9kZXZpY2UgKmRldikKPiAgewo+ICAJc3Ry
+dWN0IGRybV9kcml2ZXIgKmRyaXZlciA9ICZ0ZWdyYV9kcm1fZHJpdmVyOwo+ICsJc3RydWN0IHRl
+Z3JhX2RybSAqdGVncmE7Cj4gIAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtOwo+ICAJaW50IGVycjsK
+PiAgCj4gQEAgLTEyMDksMTggKzEwNDYsMTQ3IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9i
+ZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2KQo+ICAJaWYgKElTX0VSUihkcm0pKQo+ICAJCXJl
+dHVybiBQVFJfRVJSKGRybSk7Cj4gIAo+ICsJdGVncmEgPSBremFsbG9jKHNpemVvZigqdGVncmEp
+LCBHRlBfS0VSTkVMKTsKPiArCWlmICghdGVncmEpIHsKPiArCQllcnIgPSAtRU5PTUVNOwo+ICsJ
+CWdvdG8gcHV0Owo+ICsJfQo+ICsKPiArCWlmIChpb21tdV9wcmVzZW50KCZwbGF0Zm9ybV9idXNf
+dHlwZSkpIHsKPiArCQl0ZWdyYS0+ZG9tYWluID0gaW9tbXVfZG9tYWluX2FsbG9jKCZwbGF0Zm9y
+bV9idXNfdHlwZSk7Cj4gKwkJaWYgKCF0ZWdyYS0+ZG9tYWluKSB7Cj4gKwkJCWVyciA9IC1FTk9N
+RU07Cj4gKwkJCWdvdG8gZnJlZTsKPiArCQl9Cj4gKwo+ICsJCWVyciA9IGlvdmFfY2FjaGVfZ2V0
+KCk7Cj4gKwkJaWYgKGVyciA8IDApCj4gKwkJCWdvdG8gZG9tYWluOwo+ICsJfQo+ICsKPiArCW11
+dGV4X2luaXQoJnRlZ3JhLT5jbGllbnRzX2xvY2spOwo+ICsJSU5JVF9MSVNUX0hFQUQoJnRlZ3Jh
+LT5jbGllbnRzKTsKPiArCj4gIAlkZXZfc2V0X2RydmRhdGEoJmRldi0+ZGV2LCBkcm0pOwo+ICsJ
+ZHJtLT5kZXZfcHJpdmF0ZSA9IHRlZ3JhOwo+ICsJdGVncmEtPmRybSA9IGRybTsKPiArCj4gKwlk
+cm1fbW9kZV9jb25maWdfaW5pdChkcm0pOwo+ICsKPiArCWRybS0+bW9kZV9jb25maWcubWluX3dp
+ZHRoID0gMDsKPiArCWRybS0+bW9kZV9jb25maWcubWluX2hlaWdodCA9IDA7Cj4gKwo+ICsJZHJt
+LT5tb2RlX2NvbmZpZy5tYXhfd2lkdGggPSA0MDk2Owo+ICsJZHJtLT5tb2RlX2NvbmZpZy5tYXhf
+aGVpZ2h0ID0gNDA5NjsKPiArCj4gKwlkcm0tPm1vZGVfY29uZmlnLmFsbG93X2ZiX21vZGlmaWVy
+cyA9IHRydWU7Cj4gKwo+ICsJZHJtLT5tb2RlX2NvbmZpZy5ub3JtYWxpemVfenBvcyA9IHRydWU7
+Cj4gIAo+IC0JZXJyID0gZHJtX2ZiX2hlbHBlcl9yZW1vdmVfY29uZmxpY3RpbmdfZnJhbWVidWZm
+ZXJzKE5VTEwsICJ0ZWdyYWRybWZiIiwgZmFsc2UpOwo+ICsJZHJtLT5tb2RlX2NvbmZpZy5mdW5j
+cyA9ICZ0ZWdyYV9kcm1fbW9kZV9jb25maWdfZnVuY3M7Cj4gKwlkcm0tPm1vZGVfY29uZmlnLmhl
+bHBlcl9wcml2YXRlID0gJnRlZ3JhX2RybV9tb2RlX2NvbmZpZ19oZWxwZXJzOwo+ICsKPiArCWVy
+ciA9IHRlZ3JhX2RybV9mYl9wcmVwYXJlKGRybSk7Cj4gIAlpZiAoZXJyIDwgMCkKPiAtCQlnb3Rv
+IHB1dDsKPiArCQlnb3RvIGNvbmZpZzsKPiArCj4gKwlkcm1fa21zX2hlbHBlcl9wb2xsX2luaXQo
+ZHJtKTsKPiArCj4gKwllcnIgPSBob3N0MXhfZGV2aWNlX2luaXQoZGV2KTsKPiArCWlmIChlcnIg
+PCAwKQo+ICsJCWdvdG8gZmJkZXY7Cj4gKwo+ICsJaWYgKHRlZ3JhLT5kb21haW4pIHsKPiArCQl1
+NjQgY2FydmVvdXRfc3RhcnQsIGNhcnZlb3V0X2VuZCwgZ2VtX3N0YXJ0LCBnZW1fZW5kOwo+ICsJ
+CXU2NCBkbWFfbWFzayA9IGRtYV9nZXRfbWFzaygmZGV2LT5kZXYpOwo+ICsJCWRtYV9hZGRyX3Qg
+c3RhcnQsIGVuZDsKPiArCQl1bnNpZ25lZCBsb25nIG9yZGVyOwo+ICsKPiArCQlzdGFydCA9IHRl
+Z3JhLT5kb21haW4tPmdlb21ldHJ5LmFwZXJ0dXJlX3N0YXJ0ICYgZG1hX21hc2s7Cj4gKwkJZW5k
+ID0gdGVncmEtPmRvbWFpbi0+Z2VvbWV0cnkuYXBlcnR1cmVfZW5kICYgZG1hX21hc2s7Cj4gKwo+
+ICsJCWdlbV9zdGFydCA9IHN0YXJ0Owo+ICsJCWdlbV9lbmQgPSBlbmQgLSBDQVJWRU9VVF9TWjsK
+PiArCQljYXJ2ZW91dF9zdGFydCA9IGdlbV9lbmQgKyAxOwo+ICsJCWNhcnZlb3V0X2VuZCA9IGVu
+ZDsKPiArCj4gKwkJb3JkZXIgPSBfX2Zmcyh0ZWdyYS0+ZG9tYWluLT5wZ3NpemVfYml0bWFwKTsK
+PiArCQlpbml0X2lvdmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCAxVUwgPDwgb3Jk
+ZXIsCj4gKwkJCQkgY2FydmVvdXRfc3RhcnQgPj4gb3JkZXIpOwo+ICsKPiArCQl0ZWdyYS0+Y2Fy
+dmVvdXQuc2hpZnQgPSBpb3ZhX3NoaWZ0KCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKPiArCQl0
+ZWdyYS0+Y2FydmVvdXQubGltaXQgPSBjYXJ2ZW91dF9lbmQgPj4gdGVncmEtPmNhcnZlb3V0LnNo
+aWZ0Owo+ICsKPiArCQlkcm1fbW1faW5pdCgmdGVncmEtPm1tLCBnZW1fc3RhcnQsIGdlbV9lbmQg
+LSBnZW1fc3RhcnQgKyAxKTsKPiArCQltdXRleF9pbml0KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gKwo+
+ICsJCURSTV9ERUJVR19EUklWRVIoIklPTU1VIGFwZXJ0dXJlczpcbiIpOwo+ICsJCURSTV9ERUJV
+R19EUklWRVIoIiAgR0VNOiAlI2xseC0lI2xseFxuIiwgZ2VtX3N0YXJ0LCBnZW1fZW5kKTsKPiAr
+CQlEUk1fREVCVUdfRFJJVkVSKCIgIENhcnZlb3V0OiAlI2xseC0lI2xseFxuIiwgY2FydmVvdXRf
+c3RhcnQsCj4gKwkJCQkgY2FydmVvdXRfZW5kKTsKPiArCX0KPiArCj4gKwlpZiAodGVncmEtPmh1
+Yikgewo+ICsJCWVyciA9IHRlZ3JhX2Rpc3BsYXlfaHViX3ByZXBhcmUodGVncmEtPmh1Yik7Cj4g
+KwkJaWYgKGVyciA8IDApCj4gKwkJCWdvdG8gZGV2aWNlOwo+ICsJfQo+ICsKPiArCS8qCj4gKwkg
+KiBXZSBkb24ndCB1c2UgdGhlIGRybV9pcnFfaW5zdGFsbCgpIGhlbHBlcnMgcHJvdmlkZWQgYnkg
+dGhlIERSTQo+ICsJICogY29yZSwgc28gd2UgbmVlZCB0byBzZXQgdGhpcyBtYW51YWxseSBpbiBv
+cmRlciB0byBhbGxvdyB0aGUKPiArCSAqIERSTV9JT0NUTF9XQUlUX1ZCTEFOSyB0byBvcGVyYXRl
+IGNvcnJlY3RseS4KPiArCSAqLwo+ICsJZHJtLT5pcnFfZW5hYmxlZCA9IHRydWU7Cj4gKwo+ICsJ
+Lyogc3luY3BvaW50cyBhcmUgdXNlZCBmb3IgZnVsbCAzMi1iaXQgaGFyZHdhcmUgVkJMQU5LIGNv
+dW50ZXJzICovCj4gKwlkcm0tPm1heF92YmxhbmtfY291bnQgPSAweGZmZmZmZmZmOwo+ICsKPiAr
+CWVyciA9IGRybV92YmxhbmtfaW5pdChkcm0sIGRybS0+bW9kZV9jb25maWcubnVtX2NydGMpOwo+
+ICsJaWYgKGVyciA8IDApCj4gKwkJZ290byBodWI7Cj4gKwo+ICsJZHJtX21vZGVfY29uZmlnX3Jl
+c2V0KGRybSk7Cj4gKwo+ICsJZXJyID0gZHJtX2ZiX2hlbHBlcl9yZW1vdmVfY29uZmxpY3Rpbmdf
+ZnJhbWVidWZmZXJzKE5VTEwsICJ0ZWdyYWRybWZiIiwKPiArCQkJCQkJCSAgICBmYWxzZSk7Cj4g
+KwlpZiAoZXJyIDwgMCkKPiArCQlnb3RvIGh1YjsKPiArCj4gKwllcnIgPSB0ZWdyYV9kcm1fZmJf
+aW5pdChkcm0pOwo+ICsJaWYgKGVyciA8IDApCj4gKwkJZ290byBodWI7Cj4gIAo+ICAJZXJyID0g
+ZHJtX2Rldl9yZWdpc3Rlcihkcm0sIDApOwo+ICAJaWYgKGVyciA8IDApCj4gLQkJZ290byBwdXQ7
+Cj4gKwkJZ290byBmYjsKPiAgCj4gIAlyZXR1cm4gMDsKPiAgCj4gK2ZiOgo+ICsJdGVncmFfZHJt
+X2ZiX2V4aXQoZHJtKTsKPiAraHViOgo+ICsJaWYgKHRlZ3JhLT5odWIpCj4gKwkJdGVncmFfZGlz
+cGxheV9odWJfY2xlYW51cCh0ZWdyYS0+aHViKTsKPiArZGV2aWNlOgo+ICsJaWYgKHRlZ3JhLT5k
+b21haW4pIHsKPiArCQltdXRleF9kZXN0cm95KCZ0ZWdyYS0+bW1fbG9jayk7Cj4gKwkJZHJtX21t
+X3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwo+ICsJCXB1dF9pb3ZhX2RvbWFpbigmdGVncmEtPmNhcnZl
+b3V0LmRvbWFpbik7Cj4gKwkJaW92YV9jYWNoZV9wdXQoKTsKPiArCX0KPiArCj4gKwlob3N0MXhf
+ZGV2aWNlX2V4aXQoZGV2KTsKPiArZmJkZXY6Cj4gKwlkcm1fa21zX2hlbHBlcl9wb2xsX2Zpbmko
+ZHJtKTsKPiArCXRlZ3JhX2RybV9mYl9mcmVlKGRybSk7Cj4gK2NvbmZpZzoKPiArCWRybV9tb2Rl
+X2NvbmZpZ19jbGVhbnVwKGRybSk7Cj4gK2RvbWFpbjoKPiArCWlmICh0ZWdyYS0+ZG9tYWluKQo+
+ICsJCWlvbW11X2RvbWFpbl9mcmVlKHRlZ3JhLT5kb21haW4pOwo+ICtmcmVlOgo+ICsJa2ZyZWUo
+dGVncmEpOwo+ICBwdXQ6Cj4gIAlkcm1fZGV2X3B1dChkcm0pOwo+ICAJcmV0dXJuIGVycjsKPiBA
+QCAtMTIyOSw4ICsxMTk1LDI5IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1Y3Qg
+aG9zdDF4X2RldmljZSAqZGV2KQo+ICBzdGF0aWMgaW50IGhvc3QxeF9kcm1fcmVtb3ZlKHN0cnVj
+dCBob3N0MXhfZGV2aWNlICpkZXYpCj4gIHsKPiAgCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSBk
+ZXZfZ2V0X2RydmRhdGEoJmRldi0+ZGV2KTsKPiArCXN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhID0g
+ZHJtLT5kZXZfcHJpdmF0ZTsKPiArCWludCBlcnI7Cj4gIAo+ICAJZHJtX2Rldl91bnJlZ2lzdGVy
+KGRybSk7Cj4gKwo+ICsJZHJtX2ttc19oZWxwZXJfcG9sbF9maW5pKGRybSk7Cj4gKwl0ZWdyYV9k
+cm1fZmJfZXhpdChkcm0pOwo+ICsJZHJtX2F0b21pY19oZWxwZXJfc2h1dGRvd24oZHJtKTsKPiAr
+CWRybV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7Cj4gKwo+ICsJZXJyID0gaG9zdDF4X2Rldmlj
+ZV9leGl0KGRldik7Cj4gKwlpZiAoZXJyIDwgMCkKPiArCQlkZXZfZXJyKCZkZXYtPmRldiwgImhv
+c3QxeCBkZXZpY2UgY2xlYW51cCBmYWlsZWQ6ICVkXG4iLCBlcnIpOwo+ICsKPiArCWlmICh0ZWdy
+YS0+ZG9tYWluKSB7Cj4gKwkJbXV0ZXhfZGVzdHJveSgmdGVncmEtPm1tX2xvY2spOwo+ICsJCWRy
+bV9tbV90YWtlZG93bigmdGVncmEtPm1tKTsKPiArCQlwdXRfaW92YV9kb21haW4oJnRlZ3JhLT5j
+YXJ2ZW91dC5kb21haW4pOwo+ICsJCWlvdmFfY2FjaGVfcHV0KCk7Cj4gKwkJaW9tbXVfZG9tYWlu
+X2ZyZWUodGVncmEtPmRvbWFpbik7Cj4gKwl9Cj4gKwo+ICsJa2ZyZWUodGVncmEpOwo+ICAJZHJt
+X2Rldl9wdXQoZHJtKTsKPiAgCj4gIAlyZXR1cm4gMDsKPiAtLSAKPiAyLjIzLjAKPiAKCi0tIApE
+YW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8v
+YmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWw=
