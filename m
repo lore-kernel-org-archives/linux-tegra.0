@@ -1,96 +1,64 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [REGRESSION v5.3] SUNRPC: Replace the queue timer with a delayed
- work function (7e0a0e38fcfe)
-Date: Tue, 5 Nov 2019 12:03:49 +0000
-Message-ID: <329228f8-e194-a021-9226-69a9b6a403ce@nvidia.com>
-References: <271ff39f-1f44-b201-6274-85f1085bfc16@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] drm/tegra: Fix regulator_get_optional() misuse
+Date: Tue,  5 Nov 2019 12:59:42 +0000
+Message-ID: <20191105125943.34729-1-broonie@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <271ff39f-1f44-b201-6274-85f1085bfc16@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <trondmy@hammerspace.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Trond,
-
-Any feedback on this?
-
-Jon
-
-On 25/10/2019 08:28, Jon Hunter wrote:
-> Hi Trond,
-> 
-> Similar to the change 431235818bc3 ("SUNRPC: Declare RPC timers as
-> TIMER_DEFERRABLE") I have been tracking down another suspend/NFS related
-> issue where again I am seeing random delays exiting suspend. The delays
-> can be up to a couple minutes in the worst case and this is causing a
-> suspend test we have to fail. For example, with this change I see ...
-> 
-> [  130.599520] PM: suspend entry (deep)
-> 
-> [  130.607267] Filesystems sync: 0.000 seconds
-> 
-> [  130.615800] Freezing user space processes ... (elapsed 0.001 seconds) done.
-> 
-> [  130.628247] OOM killer disabled.
-> 
-> [  130.635382] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-> 
-> [  130.648052] printk: Suspending console(s) (use no_console_suspend to debug)
-> 
-> [  130.686015] Disabling non-boot CPUs ...
-> 
-> [  130.689568] IRQ 17: no longer affine to CPU2
-> 
-> [  130.693435] Entering suspend state LP1
-> 
-> [  130.693489] Enabling non-boot CPUs ...
-> 
-> [  130.697108] CPU1 is up
-> 
-> [  130.700602] CPU2 is up
-> 
-> [  130.704338] CPU3 is up
-> 
-> [  130.781259] mmc1: queuing unknown CIS tuple 0x80 (50 bytes)
-> 
-> [  130.789742] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
-> 
-> [  130.792793] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
-> 
-> [  130.820913] mmc1: queuing unknown CIS tuple 0x02 (1 bytes)
-> 
-> [  131.345569] OOM killer enabled.
-> 
-> [  131.352643] Restarting tasks ... done.
-> 
-> [  131.365480] PM: suspend exit
-> 
-> [  134.524261] asix 1-1:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0xCDE1
-> 
-> [  243.745788] nfs: server 192.168.99.1 not responding, still trying
-> 
-> [  243.745811] nfs: server 192.168.99.1 not responding, still trying
-> 
-> [  243.767939] nfs: server 192.168.99.1 not responding, still trying
-> 
-> [  243.778233] nfs: server 192.168.99.1 OK
-> 
-> [  243.787058] nfs: server 192.168.99.1 OK
-> 
-> [  243.787542] nfs: server 192.168.99.1 OK
-> 
-> 
-> Running a git bisect I was able to track it down to the commit referenced
-> in the $subject. Reverting this on top of the current mainline fixes the
-> problem and I no longer see these long delays.
-> 
-> Cheers
-> Jon
-> 
-
--- 
-nvpublic
+VGhlIHRlZ3JhIGRyaXZlciByZXF1ZXN0cyBhIHN1cHBseSB1c2luZyByZWd1bGF0b3JfZ2V0X29w
+dGlvbmFsKCkKYnV0IGJvdGggdGhlIG5hbWUgb2YgdGhlIHN1cHBseSBhbmQgdGhlIHVzYWdlIHBh
+dHRlcm4gc3VnZ2VzdCB0aGF0IGl0IGlzCmJlaW5nIHVzZWQgZm9yIHRoZSBtYWluIHBvd2VyIGZv
+ciB0aGUgZGV2aWNlIGFuZCBpcyBub3QgYXQgYWxsIG9wdGlvbmFsCmZvciB0aGUgZGV2aWNlIGZv
+ciBmdW5jdGlvbiwgdGhlcmUgaXMgbm8gbWVhbmluZ2Z1bCBoYW5kbGluZyBmb3IgYWJzZW50CnN1
+cHBsaWVzLiAgU3VjaCByZWd1bGF0b3JzIHNob3VsZCB1c2UgdGhlIHZhbmlsbGEgcmVndWxhdG9y
+X2dldCgpCmludGVyZmFjZSwgaXQgd2lsbCBlbnN1cmUgdGhhdCBldmVuIGlmIGEgc3VwcGx5IGlz
+IG5vdCBkZXNjcmliZWQgaW4gdGhlCnN5c3RlbSBpbnRlZ3JhdGlvbiBvbmUgd2lsbCBiZSBwcm92
+aWRlZCBpbiBzb2Z0d2FyZS4KClNpZ25lZC1vZmYtYnk6IE1hcmsgQnJvd24gPGJyb29uaWVAa2Vy
+bmVsLm9yZz4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYyB8IDMyICsrKysrKysr
+KysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygr
+KSwgMjAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rw
+YXV4LmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYwppbmRleCA2MjJjZGYxYWQyNDYu
+LjM4Njg2ZjU2ZWEyZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMK
+KysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMKQEAgLTUwNSwxOCArNTA1LDE0IEBA
+IHN0YXRpYyBpbnQgdGVncmFfZHBhdXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRl
+dikKIAkJcmV0dXJuIGVycjsKIAl9CiAKLQlkcGF1eC0+dmRkID0gZGV2bV9yZWd1bGF0b3JfZ2V0
+X29wdGlvbmFsKCZwZGV2LT5kZXYsICJ2ZGQiKTsKKwlkcGF1eC0+dmRkID0gZGV2bV9yZWd1bGF0
+b3JfZ2V0KCZwZGV2LT5kZXYsICJ2ZGQiKTsKIAlpZiAoSVNfRVJSKGRwYXV4LT52ZGQpKSB7Ci0J
+CWlmIChQVFJfRVJSKGRwYXV4LT52ZGQpICE9IC1FTk9ERVYpIHsKLQkJCWlmIChQVFJfRVJSKGRw
+YXV4LT52ZGQpICE9IC1FUFJPQkVfREVGRVIpCi0JCQkJZGV2X2VycigmcGRldi0+ZGV2LAotCQkJ
+CQkiZmFpbGVkIHRvIGdldCBWREQgc3VwcGx5OiAlbGRcbiIsCi0JCQkJCVBUUl9FUlIoZHBhdXgt
+PnZkZCkpOwotCi0JCQlyZXR1cm4gUFRSX0VSUihkcGF1eC0+dmRkKTsKLQkJfQorCQlpZiAoUFRS
+X0VSUihkcGF1eC0+dmRkKSAhPSAtRVBST0JFX0RFRkVSKQorCQkJZGV2X2VycigmcGRldi0+ZGV2
+LAorCQkJCSJmYWlsZWQgdG8gZ2V0IFZERCBzdXBwbHk6ICVsZFxuIiwKKwkJCQlQVFJfRVJSKGRw
+YXV4LT52ZGQpKTsKIAotCQlkcGF1eC0+dmRkID0gTlVMTDsKKwkJcmV0dXJuIFBUUl9FUlIoZHBh
+dXgtPnZkZCk7CiAJfQogCiAJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgZHBhdXgpOwpAQCAt
+NzMxLDExICs3MjcsOSBAQCBpbnQgZHJtX2RwX2F1eF9hdHRhY2goc3RydWN0IGRybV9kcF9hdXgg
+KmF1eCwgc3RydWN0IHRlZ3JhX291dHB1dCAqb3V0cHV0KQogCWlmIChvdXRwdXQtPnBhbmVsKSB7
+CiAJCWVudW0gZHJtX2Nvbm5lY3Rvcl9zdGF0dXMgc3RhdHVzOwogCi0JCWlmIChkcGF1eC0+dmRk
+KSB7Ci0JCQllcnIgPSByZWd1bGF0b3JfZW5hYmxlKGRwYXV4LT52ZGQpOwotCQkJaWYgKGVyciA8
+IDApCi0JCQkJcmV0dXJuIGVycjsKLQkJfQorCQllcnIgPSByZWd1bGF0b3JfZW5hYmxlKGRwYXV4
+LT52ZGQpOworCQlpZiAoZXJyIDwgMCkKKwkJCXJldHVybiBlcnI7CiAKIAkJdGltZW91dCA9IGpp
+ZmZpZXMgKyBtc2Vjc190b19qaWZmaWVzKDI1MCk7CiAKQEAgLTc2NywxMSArNzYxLDkgQEAgaW50
+IGRybV9kcF9hdXhfZGV0YWNoKHN0cnVjdCBkcm1fZHBfYXV4ICphdXgpCiAJaWYgKGRwYXV4LT5v
+dXRwdXQtPnBhbmVsKSB7CiAJCWVudW0gZHJtX2Nvbm5lY3Rvcl9zdGF0dXMgc3RhdHVzOwogCi0J
+CWlmIChkcGF1eC0+dmRkKSB7Ci0JCQllcnIgPSByZWd1bGF0b3JfZGlzYWJsZShkcGF1eC0+dmRk
+KTsKLQkJCWlmIChlcnIgPCAwKQotCQkJCXJldHVybiBlcnI7Ci0JCX0KKwkJZXJyID0gcmVndWxh
+dG9yX2Rpc2FibGUoZHBhdXgtPnZkZCk7CisJCWlmIChlcnIgPCAwKQorCQkJcmV0dXJuIGVycjsK
+IAogCQl0aW1lb3V0ID0gamlmZmllcyArIG1zZWNzX3RvX2ppZmZpZXMoMjUwKTsKIAotLSAKMi4y
+MC4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
