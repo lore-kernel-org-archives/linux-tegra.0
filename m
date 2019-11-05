@@ -1,23 +1,23 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.9 00/62] 4.9.199-stable review
-Date: Tue, 5 Nov 2019 23:37:03 +0000
-Message-ID: <a6e1d805-9fa1-d91e-a926-b622ce9522d7@nvidia.com>
-References: <20191104211901.387893698@linuxfoundation.org>
+Subject: Re: [PATCH 5.3 000/163] 5.3.9-stable review
+Date: Tue, 5 Nov 2019 23:41:15 +0000
+Message-ID: <a9c51735-86c7-9e77-707b-74628a99f76b@nvidia.com>
+References: <20191104212140.046021995@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
 Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 04/11/2019 21:44, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.199 release.
-> There are 62 patches in this series, all will be posted as a response
+On 04/11/2019 21:43, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.3.9 release.
+> There are 163 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 04/11/2019 21:44, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.199-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.9-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,13 +36,14 @@ On 04/11/2019 21:44, Greg Kroah-Hartman wrote:
 
 All tests for Tegra are passing ...
 
-Test results for stable-v4.9:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    24 tests:	24 pass, 0 fail
+Test results for stable-v5.3:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	38 pass, 0 fail
 
-Linux version:	4.9.199-rc1-g4e59c9878a95
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+Linux version:	5.3.9-rc1-g75c9913bbf6e
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
 
 Cheers
