@@ -1,7 +1,7 @@
 From: Jamal Shareef <jamal.k.shareef@gmail.com>
-Subject: [PATCH 2/3] drm/tegra: dsi: Remove space in open parenthesis
-Date: Mon,  4 Nov 2019 18:23:21 -0800
-Message-ID: <4357d243bdb0ac22a36f3edb0f08820fbc31348b.1572920482.git.jamal.k.shareef@gmail.com>
+Subject: [PATCH 3/3] drm/tegra: gr3d: Remove space after parenthesis
+Date: Mon,  4 Nov 2019 18:23:22 -0800
+Message-ID: <54df25088b18fb99e44cfa3fb28d65ef8a0d3e40.1572920482.git.jamal.k.shareef@gmail.com>
 References: <cover.1572920482.git.jamal.k.shareef@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1572920482.git.jamal.k.shareef@gmail.com>
@@ -12,123 +12,176 @@ To: outreachy-kernel@googlegroups.com
 Cc: thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jamal Shareef <jamal.k.shareef@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Removes space after open left parenthesis. Issue found by checkpatch.
+Removes spaces after open parenthesis. Issue found by checkpatch.
 
 Signed-off-by: Jamal Shareef <jamal.k.shareef@gmail.com>
 ---
- drivers/gpu/drm/tegra/dsi.c | 60 ++++++++++++++++++-------------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+ drivers/gpu/drm/tegra/gr3d.c | 120 +++++++++++++++++------------------
+ 1 file changed, 60 insertions(+), 60 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index a5d47e301c5f..5966d33831e4 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -283,32 +283,32 @@ static void tegra_dsi_early_unregister(struct drm_connector *connector)
-  * non-burst mode with sync pulses
-  */
- static const u32 pkt_seq_video_non_burst_sync_pulses[NUM_PKT_SEQ] = {
--	[ 0] = PKT_ID0(MIPI_DSI_V_SYNC_START) | PKT_LEN0(0) |
-+	[0] = PKT_ID0(MIPI_DSI_V_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_BLANKING_PACKET) | PKT_LEN1(1) |
- 	       PKT_ID2(MIPI_DSI_H_SYNC_END) | PKT_LEN2(0) |
- 	       PKT_LP,
--	[ 1] = 0,
--	[ 2] = PKT_ID0(MIPI_DSI_V_SYNC_END) | PKT_LEN0(0) |
-+	[1] = 0,
-+	[2] = PKT_ID0(MIPI_DSI_V_SYNC_END) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_BLANKING_PACKET) | PKT_LEN1(1) |
- 	       PKT_ID2(MIPI_DSI_H_SYNC_END) | PKT_LEN2(0) |
- 	       PKT_LP,
--	[ 3] = 0,
--	[ 4] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
-+	[3] = 0,
-+	[4] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_BLANKING_PACKET) | PKT_LEN1(1) |
- 	       PKT_ID2(MIPI_DSI_H_SYNC_END) | PKT_LEN2(0) |
- 	       PKT_LP,
--	[ 5] = 0,
--	[ 6] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
-+	[5] = 0,
-+	[6] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_BLANKING_PACKET) | PKT_LEN1(1) |
- 	       PKT_ID2(MIPI_DSI_H_SYNC_END) | PKT_LEN2(0),
--	[ 7] = PKT_ID0(MIPI_DSI_BLANKING_PACKET) | PKT_LEN0(2) |
-+	[7] = PKT_ID0(MIPI_DSI_BLANKING_PACKET) | PKT_LEN0(2) |
- 	       PKT_ID1(MIPI_DSI_PACKED_PIXEL_STREAM_24) | PKT_LEN1(3) |
- 	       PKT_ID2(MIPI_DSI_BLANKING_PACKET) | PKT_LEN2(4),
--	[ 8] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
-+	[8] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_BLANKING_PACKET) | PKT_LEN1(1) |
- 	       PKT_ID2(MIPI_DSI_H_SYNC_END) | PKT_LEN2(0) |
- 	       PKT_LP,
--	[ 9] = 0,
-+	[9] = 0,
- 	[10] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_BLANKING_PACKET) | PKT_LEN1(1) |
- 	       PKT_ID2(MIPI_DSI_H_SYNC_END) | PKT_LEN2(0),
-@@ -321,26 +321,26 @@ static const u32 pkt_seq_video_non_burst_sync_pulses[NUM_PKT_SEQ] = {
-  * non-burst mode with sync events
-  */
- static const u32 pkt_seq_video_non_burst_sync_events[NUM_PKT_SEQ] = {
--	[ 0] = PKT_ID0(MIPI_DSI_V_SYNC_START) | PKT_LEN0(0) |
-+	[0] = PKT_ID0(MIPI_DSI_V_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_END_OF_TRANSMISSION) | PKT_LEN1(7) |
- 	       PKT_LP,
--	[ 1] = 0,
--	[ 2] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
-+	[1] = 0,
-+	[2] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_END_OF_TRANSMISSION) | PKT_LEN1(7) |
- 	       PKT_LP,
--	[ 3] = 0,
--	[ 4] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
-+	[3] = 0,
-+	[4] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_END_OF_TRANSMISSION) | PKT_LEN1(7) |
- 	       PKT_LP,
--	[ 5] = 0,
--	[ 6] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
-+	[5] = 0,
-+	[6] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_BLANKING_PACKET) | PKT_LEN1(2) |
- 	       PKT_ID2(MIPI_DSI_PACKED_PIXEL_STREAM_24) | PKT_LEN2(3),
--	[ 7] = PKT_ID0(MIPI_DSI_BLANKING_PACKET) | PKT_LEN0(4),
--	[ 8] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
-+	[7] = PKT_ID0(MIPI_DSI_BLANKING_PACKET) | PKT_LEN0(4),
-+	[8] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_END_OF_TRANSMISSION) | PKT_LEN1(7) |
- 	       PKT_LP,
--	[ 9] = 0,
-+	[9] = 0,
- 	[10] = PKT_ID0(MIPI_DSI_H_SYNC_START) | PKT_LEN0(0) |
- 	       PKT_ID1(MIPI_DSI_BLANKING_PACKET) | PKT_LEN1(2) |
- 	       PKT_ID2(MIPI_DSI_PACKED_PIXEL_STREAM_24) | PKT_LEN2(3),
-@@ -348,16 +348,16 @@ static const u32 pkt_seq_video_non_burst_sync_events[NUM_PKT_SEQ] = {
- };
+diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
+index 8b9a35b1cbb3..35d1dff067b7 100644
+--- a/drivers/gpu/drm/tegra/gr3d.c
++++ b/drivers/gpu/drm/tegra/gr3d.c
+@@ -176,16 +176,16 @@ static const struct of_device_id tegra_gr3d_match[] = {
+ MODULE_DEVICE_TABLE(of, tegra_gr3d_match);
  
- static const u32 pkt_seq_command_mode[NUM_PKT_SEQ] = {
--	[ 0] = 0,
--	[ 1] = 0,
--	[ 2] = 0,
--	[ 3] = 0,
--	[ 4] = 0,
--	[ 5] = 0,
--	[ 6] = PKT_ID0(MIPI_DSI_DCS_LONG_WRITE) | PKT_LEN0(3) | PKT_LP,
--	[ 7] = 0,
--	[ 8] = 0,
--	[ 9] = 0,
-+	[0] = 0,
-+	[1] = 0,
-+	[2] = 0,
-+	[3] = 0,
-+	[4] = 0,
-+	[5] = 0,
-+	[6] = PKT_ID0(MIPI_DSI_DCS_LONG_WRITE) | PKT_LEN0(3) | PKT_LP,
-+	[7] = 0,
-+	[8] = 0,
-+	[9] = 0,
- 	[10] = PKT_ID0(MIPI_DSI_DCS_LONG_WRITE) | PKT_LEN0(5) | PKT_LP,
- 	[11] = 0,
- };
+ static const u32 gr3d_addr_regs[] = {
+-	GR3D_IDX_ATTRIBUTE( 0),
+-	GR3D_IDX_ATTRIBUTE( 1),
+-	GR3D_IDX_ATTRIBUTE( 2),
+-	GR3D_IDX_ATTRIBUTE( 3),
+-	GR3D_IDX_ATTRIBUTE( 4),
+-	GR3D_IDX_ATTRIBUTE( 5),
+-	GR3D_IDX_ATTRIBUTE( 6),
+-	GR3D_IDX_ATTRIBUTE( 7),
+-	GR3D_IDX_ATTRIBUTE( 8),
+-	GR3D_IDX_ATTRIBUTE( 9),
++	GR3D_IDX_ATTRIBUTE(0),
++	GR3D_IDX_ATTRIBUTE(1),
++	GR3D_IDX_ATTRIBUTE(2),
++	GR3D_IDX_ATTRIBUTE(3),
++	GR3D_IDX_ATTRIBUTE(4),
++	GR3D_IDX_ATTRIBUTE(5),
++	GR3D_IDX_ATTRIBUTE(6),
++	GR3D_IDX_ATTRIBUTE(7),
++	GR3D_IDX_ATTRIBUTE(8),
++	GR3D_IDX_ATTRIBUTE(9),
+ 	GR3D_IDX_ATTRIBUTE(10),
+ 	GR3D_IDX_ATTRIBUTE(11),
+ 	GR3D_IDX_ATTRIBUTE(12),
+@@ -196,16 +196,16 @@ static const u32 gr3d_addr_regs[] = {
+ 	GR3D_QR_ZTAG_ADDR,
+ 	GR3D_QR_CTAG_ADDR,
+ 	GR3D_QR_CZ_ADDR,
+-	GR3D_TEX_TEX_ADDR( 0),
+-	GR3D_TEX_TEX_ADDR( 1),
+-	GR3D_TEX_TEX_ADDR( 2),
+-	GR3D_TEX_TEX_ADDR( 3),
+-	GR3D_TEX_TEX_ADDR( 4),
+-	GR3D_TEX_TEX_ADDR( 5),
+-	GR3D_TEX_TEX_ADDR( 6),
+-	GR3D_TEX_TEX_ADDR( 7),
+-	GR3D_TEX_TEX_ADDR( 8),
+-	GR3D_TEX_TEX_ADDR( 9),
++	GR3D_TEX_TEX_ADDR(0),
++	GR3D_TEX_TEX_ADDR(1),
++	GR3D_TEX_TEX_ADDR(2),
++	GR3D_TEX_TEX_ADDR(3),
++	GR3D_TEX_TEX_ADDR(4),
++	GR3D_TEX_TEX_ADDR(5),
++	GR3D_TEX_TEX_ADDR(6),
++	GR3D_TEX_TEX_ADDR(7),
++	GR3D_TEX_TEX_ADDR(8),
++	GR3D_TEX_TEX_ADDR(9),
+ 	GR3D_TEX_TEX_ADDR(10),
+ 	GR3D_TEX_TEX_ADDR(11),
+ 	GR3D_TEX_TEX_ADDR(12),
+@@ -213,16 +213,16 @@ static const u32 gr3d_addr_regs[] = {
+ 	GR3D_TEX_TEX_ADDR(14),
+ 	GR3D_TEX_TEX_ADDR(15),
+ 	GR3D_DW_MEMORY_OUTPUT_ADDRESS,
+-	GR3D_GLOBAL_SURFADDR( 0),
+-	GR3D_GLOBAL_SURFADDR( 1),
+-	GR3D_GLOBAL_SURFADDR( 2),
+-	GR3D_GLOBAL_SURFADDR( 3),
+-	GR3D_GLOBAL_SURFADDR( 4),
+-	GR3D_GLOBAL_SURFADDR( 5),
+-	GR3D_GLOBAL_SURFADDR( 6),
+-	GR3D_GLOBAL_SURFADDR( 7),
+-	GR3D_GLOBAL_SURFADDR( 8),
+-	GR3D_GLOBAL_SURFADDR( 9),
++	GR3D_GLOBAL_SURFADDR(0),
++	GR3D_GLOBAL_SURFADDR(1),
++	GR3D_GLOBAL_SURFADDR(2),
++	GR3D_GLOBAL_SURFADDR(3),
++	GR3D_GLOBAL_SURFADDR(4),
++	GR3D_GLOBAL_SURFADDR(5),
++	GR3D_GLOBAL_SURFADDR(6),
++	GR3D_GLOBAL_SURFADDR(7),
++	GR3D_GLOBAL_SURFADDR(8),
++	GR3D_GLOBAL_SURFADDR(9),
+ 	GR3D_GLOBAL_SURFADDR(10),
+ 	GR3D_GLOBAL_SURFADDR(11),
+ 	GR3D_GLOBAL_SURFADDR(12),
+@@ -230,48 +230,48 @@ static const u32 gr3d_addr_regs[] = {
+ 	GR3D_GLOBAL_SURFADDR(14),
+ 	GR3D_GLOBAL_SURFADDR(15),
+ 	GR3D_GLOBAL_SPILLSURFADDR,
+-	GR3D_GLOBAL_SURFOVERADDR( 0),
+-	GR3D_GLOBAL_SURFOVERADDR( 1),
+-	GR3D_GLOBAL_SURFOVERADDR( 2),
+-	GR3D_GLOBAL_SURFOVERADDR( 3),
+-	GR3D_GLOBAL_SURFOVERADDR( 4),
+-	GR3D_GLOBAL_SURFOVERADDR( 5),
+-	GR3D_GLOBAL_SURFOVERADDR( 6),
+-	GR3D_GLOBAL_SURFOVERADDR( 7),
+-	GR3D_GLOBAL_SURFOVERADDR( 8),
+-	GR3D_GLOBAL_SURFOVERADDR( 9),
++	GR3D_GLOBAL_SURFOVERADDR(0),
++	GR3D_GLOBAL_SURFOVERADDR(1),
++	GR3D_GLOBAL_SURFOVERADDR(2),
++	GR3D_GLOBAL_SURFOVERADDR(3),
++	GR3D_GLOBAL_SURFOVERADDR(4),
++	GR3D_GLOBAL_SURFOVERADDR(5),
++	GR3D_GLOBAL_SURFOVERADDR(6),
++	GR3D_GLOBAL_SURFOVERADDR(7),
++	GR3D_GLOBAL_SURFOVERADDR(8),
++	GR3D_GLOBAL_SURFOVERADDR(9),
+ 	GR3D_GLOBAL_SURFOVERADDR(10),
+ 	GR3D_GLOBAL_SURFOVERADDR(11),
+ 	GR3D_GLOBAL_SURFOVERADDR(12),
+ 	GR3D_GLOBAL_SURFOVERADDR(13),
+ 	GR3D_GLOBAL_SURFOVERADDR(14),
+ 	GR3D_GLOBAL_SURFOVERADDR(15),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 0),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 1),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 2),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 3),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 4),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 5),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 6),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 7),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 8),
+-	GR3D_GLOBAL_SAMP01SURFADDR( 9),
++	GR3D_GLOBAL_SAMP01SURFADDR(0),
++	GR3D_GLOBAL_SAMP01SURFADDR(1),
++	GR3D_GLOBAL_SAMP01SURFADDR(2),
++	GR3D_GLOBAL_SAMP01SURFADDR(3),
++	GR3D_GLOBAL_SAMP01SURFADDR(4),
++	GR3D_GLOBAL_SAMP01SURFADDR(5),
++	GR3D_GLOBAL_SAMP01SURFADDR(6),
++	GR3D_GLOBAL_SAMP01SURFADDR(7),
++	GR3D_GLOBAL_SAMP01SURFADDR(8),
++	GR3D_GLOBAL_SAMP01SURFADDR(9),
+ 	GR3D_GLOBAL_SAMP01SURFADDR(10),
+ 	GR3D_GLOBAL_SAMP01SURFADDR(11),
+ 	GR3D_GLOBAL_SAMP01SURFADDR(12),
+ 	GR3D_GLOBAL_SAMP01SURFADDR(13),
+ 	GR3D_GLOBAL_SAMP01SURFADDR(14),
+ 	GR3D_GLOBAL_SAMP01SURFADDR(15),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 0),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 1),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 2),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 3),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 4),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 5),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 6),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 7),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 8),
+-	GR3D_GLOBAL_SAMP23SURFADDR( 9),
++	GR3D_GLOBAL_SAMP23SURFADDR(0),
++	GR3D_GLOBAL_SAMP23SURFADDR(1),
++	GR3D_GLOBAL_SAMP23SURFADDR(2),
++	GR3D_GLOBAL_SAMP23SURFADDR(3),
++	GR3D_GLOBAL_SAMP23SURFADDR(4),
++	GR3D_GLOBAL_SAMP23SURFADDR(5),
++	GR3D_GLOBAL_SAMP23SURFADDR(6),
++	GR3D_GLOBAL_SAMP23SURFADDR(7),
++	GR3D_GLOBAL_SAMP23SURFADDR(8),
++	GR3D_GLOBAL_SAMP23SURFADDR(9),
+ 	GR3D_GLOBAL_SAMP23SURFADDR(10),
+ 	GR3D_GLOBAL_SAMP23SURFADDR(11),
+ 	GR3D_GLOBAL_SAMP23SURFADDR(12),
 -- 
 2.17.1
