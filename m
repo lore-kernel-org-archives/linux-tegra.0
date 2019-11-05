@@ -1,50 +1,96 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v4 3/7] ASoC: tegra: i2s: Add support for
- more than 2 channels
-Date: Tue, 5 Nov 2019 11:58:06 +0000
-Message-ID: <5d069991-f5c3-ae14-da9c-9b20555be4f6@codethink.co.uk>
-References: <20191007153136.4920-1-ben.dooks@codethink.co.uk>
- <20191007153136.4920-4-ben.dooks@codethink.co.uk>
- <cfd308bd-290a-f72f-6876-d94151c09843@gmail.com>
- <16910e8d-4745-4e55-0436-9b3200876037@codethink.co.uk>
- <1e43701b-3627-ba6d-ee19-020e25af3ef1@gmail.com>
- <d03a8fa0-3c62-1e32-9ca6-06d1996da11b@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [REGRESSION v5.3] SUNRPC: Replace the queue timer with a delayed
+ work function (7e0a0e38fcfe)
+Date: Tue, 5 Nov 2019 12:03:49 +0000
+Message-ID: <329228f8-e194-a021-9226-69a9b6a403ce@nvidia.com>
+References: <271ff39f-1f44-b201-6274-85f1085bfc16@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <d03a8fa0-3c62-1e32-9ca6-06d1996da11b@nvidia.com>
-Content-Language: en-GB
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <271ff39f-1f44-b201-6274-85f1085bfc16@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Trond Myklebust <trondmy@hammerspace.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjQvMTAvMjAxOSAxNzoxMSwgSm9uIEh1bnRlciB3cm90ZToKPiAKPiBPbiAxNy8xMC8yMDE5
-IDE4OjM4LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+IDE3LjEwLjIwMTkgMTk6MjMsIEJlbiBE
-b29rcyDQv9C40YjQtdGCOgo+Pj4gT24gMDgvMTAvMjAxOSAxNjoyOSwgRG1pdHJ5IE9zaXBlbmtv
-IHdyb3RlOgo+Pj4+IEhlbGxvIEJlbiwKPj4gVGFrZSBhIGxvb2sgaGVyZSBmb3IgZXhhbXBsZToK
-Pj4KPj4gaHR0cHM6Ly9udi10ZWdyYS5udmlkaWEuY29tL2dpdHdlYi8/cD1saW51eC0zLjEwLmdp
-dDthPWNvbW1pdDtoPTQ5ODM0ZWVmOWQ1MWE2ZWZmOTUwZTBmNTJkZGM1MzQzZDk2MDY1MmUKPiAK
-PiBUaGF0IHZlcnNpb24gb2YgdGhlIGRyaXZlciBpcyBrbm93biB0byBiZSBidWdneS9pbmNvcnJl
-Y3QuIEkgZG9uJ3QgdGhpbmsKPiB3ZSB3YW50IHRvIGRvIHRoYXQuIFdlIHdhbnQgdG8gc2V0IHRo
-ZSBwb2xhcml0eSBiYXNlZCB1cG9uIHRoZSBmb3JtYXQKPiBwYXNzZWQgYW5kIG5vdCB0aGUgbW9k
-ZSAuLi4KPiAKPiBodHRwczovL252LXRlZ3JhLm52aWRpYS5jb20vZ2l0d2ViLz9wPWxpbnV4LW52
-aWRpYS5naXQ7YT1ibG9iO2Y9c291bmQvc29jL3RlZ3JhLWFsdC90ZWdyYTIxMF9pMnNfYWx0LmM7
-aD0yNGNmM2I1NTMyNmY2ODdhZGVkMjJiOTExODJkZjQxYzVhZTE4OGFjO2hiPTcwM2FhOTQ4ZDJj
-OTJiODdmZDg0ZjM2N2Y0M2EwNzc3OGVkMDk4YjUjbDMzMwoKT2ssIHRoYW5rcy4KClBTIHRoZSBz
-ZWN1cml0eSBjZXJ0aWZpY2F0ZSBvbiB0aGF0IHNpdGUgaXMgc3RpbGwgaW52YWxpZCA6LwoKCi0t
-IApCZW4gRG9va3MJCQkJaHR0cDovL3d3dy5jb2RldGhpbmsuY28udWsvClNlbmlvciBFbmdpbmVl
-cgkJCQlDb2RldGhpbmsgLSBQcm92aWRpbmcgR2VuaXVzCgpodHRwczovL3d3dy5jb2RldGhpbmsu
-Y28udWsvcHJpdmFjeS5odG1sCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0
-Lm9yZwpodHRwczovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fs
-c2EtZGV2ZWwK
+Hi Trond,
+
+Any feedback on this?
+
+Jon
+
+On 25/10/2019 08:28, Jon Hunter wrote:
+> Hi Trond,
+> 
+> Similar to the change 431235818bc3 ("SUNRPC: Declare RPC timers as
+> TIMER_DEFERRABLE") I have been tracking down another suspend/NFS related
+> issue where again I am seeing random delays exiting suspend. The delays
+> can be up to a couple minutes in the worst case and this is causing a
+> suspend test we have to fail. For example, with this change I see ...
+> 
+> [  130.599520] PM: suspend entry (deep)
+> 
+> [  130.607267] Filesystems sync: 0.000 seconds
+> 
+> [  130.615800] Freezing user space processes ... (elapsed 0.001 seconds) done.
+> 
+> [  130.628247] OOM killer disabled.
+> 
+> [  130.635382] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+> 
+> [  130.648052] printk: Suspending console(s) (use no_console_suspend to debug)
+> 
+> [  130.686015] Disabling non-boot CPUs ...
+> 
+> [  130.689568] IRQ 17: no longer affine to CPU2
+> 
+> [  130.693435] Entering suspend state LP1
+> 
+> [  130.693489] Enabling non-boot CPUs ...
+> 
+> [  130.697108] CPU1 is up
+> 
+> [  130.700602] CPU2 is up
+> 
+> [  130.704338] CPU3 is up
+> 
+> [  130.781259] mmc1: queuing unknown CIS tuple 0x80 (50 bytes)
+> 
+> [  130.789742] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
+> 
+> [  130.792793] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
+> 
+> [  130.820913] mmc1: queuing unknown CIS tuple 0x02 (1 bytes)
+> 
+> [  131.345569] OOM killer enabled.
+> 
+> [  131.352643] Restarting tasks ... done.
+> 
+> [  131.365480] PM: suspend exit
+> 
+> [  134.524261] asix 1-1:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0xCDE1
+> 
+> [  243.745788] nfs: server 192.168.99.1 not responding, still trying
+> 
+> [  243.745811] nfs: server 192.168.99.1 not responding, still trying
+> 
+> [  243.767939] nfs: server 192.168.99.1 not responding, still trying
+> 
+> [  243.778233] nfs: server 192.168.99.1 OK
+> 
+> [  243.787058] nfs: server 192.168.99.1 OK
+> 
+> [  243.787542] nfs: server 192.168.99.1 OK
+> 
+> 
+> Running a git bisect I was able to track it down to the commit referenced
+> in the $subject. Reverting this on top of the current mainline fixes the
+> problem and I no longer see these long delays.
+> 
+> Cheers
+> Jon
+> 
+
+-- 
+nvpublic
