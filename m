@@ -1,11 +1,12 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] drm/tegra: Fix regulator_get_optional() misuse
-Date: Tue,  5 Nov 2019 12:59:42 +0000
-Message-ID: <20191105125943.34729-1-broonie@kernel.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: Fix regulator_get_optional() misuse
+Date: Tue, 5 Nov 2019 14:15:11 +0100
+Message-ID: <20191105131511.GA1609273@ulmo>
+References: <20191105125943.34729-1-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1322003151=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191105125943.34729-1-broonie@kernel.org>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -15,50 +16,93 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org
+To: Mark Brown <broonie@kernel.org>
+Cc: David Airlie <airlied@linux.ie>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIHRlZ3JhIGRyaXZlciByZXF1ZXN0cyBhIHN1cHBseSB1c2luZyByZWd1bGF0b3JfZ2V0X29w
-dGlvbmFsKCkKYnV0IGJvdGggdGhlIG5hbWUgb2YgdGhlIHN1cHBseSBhbmQgdGhlIHVzYWdlIHBh
-dHRlcm4gc3VnZ2VzdCB0aGF0IGl0IGlzCmJlaW5nIHVzZWQgZm9yIHRoZSBtYWluIHBvd2VyIGZv
-ciB0aGUgZGV2aWNlIGFuZCBpcyBub3QgYXQgYWxsIG9wdGlvbmFsCmZvciB0aGUgZGV2aWNlIGZv
-ciBmdW5jdGlvbiwgdGhlcmUgaXMgbm8gbWVhbmluZ2Z1bCBoYW5kbGluZyBmb3IgYWJzZW50CnN1
-cHBsaWVzLiAgU3VjaCByZWd1bGF0b3JzIHNob3VsZCB1c2UgdGhlIHZhbmlsbGEgcmVndWxhdG9y
-X2dldCgpCmludGVyZmFjZSwgaXQgd2lsbCBlbnN1cmUgdGhhdCBldmVuIGlmIGEgc3VwcGx5IGlz
-IG5vdCBkZXNjcmliZWQgaW4gdGhlCnN5c3RlbSBpbnRlZ3JhdGlvbiBvbmUgd2lsbCBiZSBwcm92
-aWRlZCBpbiBzb2Z0d2FyZS4KClNpZ25lZC1vZmYtYnk6IE1hcmsgQnJvd24gPGJyb29uaWVAa2Vy
-bmVsLm9yZz4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYyB8IDMyICsrKysrKysr
-KysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygr
-KSwgMjAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rw
-YXV4LmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYwppbmRleCA2MjJjZGYxYWQyNDYu
-LjM4Njg2ZjU2ZWEyZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMK
-KysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMKQEAgLTUwNSwxOCArNTA1LDE0IEBA
-IHN0YXRpYyBpbnQgdGVncmFfZHBhdXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRl
-dikKIAkJcmV0dXJuIGVycjsKIAl9CiAKLQlkcGF1eC0+dmRkID0gZGV2bV9yZWd1bGF0b3JfZ2V0
-X29wdGlvbmFsKCZwZGV2LT5kZXYsICJ2ZGQiKTsKKwlkcGF1eC0+dmRkID0gZGV2bV9yZWd1bGF0
-b3JfZ2V0KCZwZGV2LT5kZXYsICJ2ZGQiKTsKIAlpZiAoSVNfRVJSKGRwYXV4LT52ZGQpKSB7Ci0J
-CWlmIChQVFJfRVJSKGRwYXV4LT52ZGQpICE9IC1FTk9ERVYpIHsKLQkJCWlmIChQVFJfRVJSKGRw
-YXV4LT52ZGQpICE9IC1FUFJPQkVfREVGRVIpCi0JCQkJZGV2X2VycigmcGRldi0+ZGV2LAotCQkJ
-CQkiZmFpbGVkIHRvIGdldCBWREQgc3VwcGx5OiAlbGRcbiIsCi0JCQkJCVBUUl9FUlIoZHBhdXgt
-PnZkZCkpOwotCi0JCQlyZXR1cm4gUFRSX0VSUihkcGF1eC0+dmRkKTsKLQkJfQorCQlpZiAoUFRS
-X0VSUihkcGF1eC0+dmRkKSAhPSAtRVBST0JFX0RFRkVSKQorCQkJZGV2X2VycigmcGRldi0+ZGV2
-LAorCQkJCSJmYWlsZWQgdG8gZ2V0IFZERCBzdXBwbHk6ICVsZFxuIiwKKwkJCQlQVFJfRVJSKGRw
-YXV4LT52ZGQpKTsKIAotCQlkcGF1eC0+dmRkID0gTlVMTDsKKwkJcmV0dXJuIFBUUl9FUlIoZHBh
-dXgtPnZkZCk7CiAJfQogCiAJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgZHBhdXgpOwpAQCAt
-NzMxLDExICs3MjcsOSBAQCBpbnQgZHJtX2RwX2F1eF9hdHRhY2goc3RydWN0IGRybV9kcF9hdXgg
-KmF1eCwgc3RydWN0IHRlZ3JhX291dHB1dCAqb3V0cHV0KQogCWlmIChvdXRwdXQtPnBhbmVsKSB7
-CiAJCWVudW0gZHJtX2Nvbm5lY3Rvcl9zdGF0dXMgc3RhdHVzOwogCi0JCWlmIChkcGF1eC0+dmRk
-KSB7Ci0JCQllcnIgPSByZWd1bGF0b3JfZW5hYmxlKGRwYXV4LT52ZGQpOwotCQkJaWYgKGVyciA8
-IDApCi0JCQkJcmV0dXJuIGVycjsKLQkJfQorCQllcnIgPSByZWd1bGF0b3JfZW5hYmxlKGRwYXV4
-LT52ZGQpOworCQlpZiAoZXJyIDwgMCkKKwkJCXJldHVybiBlcnI7CiAKIAkJdGltZW91dCA9IGpp
-ZmZpZXMgKyBtc2Vjc190b19qaWZmaWVzKDI1MCk7CiAKQEAgLTc2NywxMSArNzYxLDkgQEAgaW50
-IGRybV9kcF9hdXhfZGV0YWNoKHN0cnVjdCBkcm1fZHBfYXV4ICphdXgpCiAJaWYgKGRwYXV4LT5v
-dXRwdXQtPnBhbmVsKSB7CiAJCWVudW0gZHJtX2Nvbm5lY3Rvcl9zdGF0dXMgc3RhdHVzOwogCi0J
-CWlmIChkcGF1eC0+dmRkKSB7Ci0JCQllcnIgPSByZWd1bGF0b3JfZGlzYWJsZShkcGF1eC0+dmRk
-KTsKLQkJCWlmIChlcnIgPCAwKQotCQkJCXJldHVybiBlcnI7Ci0JCX0KKwkJZXJyID0gcmVndWxh
-dG9yX2Rpc2FibGUoZHBhdXgtPnZkZCk7CisJCWlmIChlcnIgPCAwKQorCQkJcmV0dXJuIGVycjsK
-IAogCQl0aW1lb3V0ID0gamlmZmllcyArIG1zZWNzX3RvX2ppZmZpZXMoMjUwKTsKIAotLSAKMi4y
-MC4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+
+--===============1322003151==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Disposition: inline
+
+
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Nov 05, 2019 at 12:59:42PM +0000, Mark Brown wrote:
+> The tegra driver requests a supply using regulator_get_optional()
+> but both the name of the supply and the usage pattern suggest that it is
+> being used for the main power for the device and is not at all optional
+> for the device for function, there is no meaningful handling for absent
+> supplies.  Such regulators should use the vanilla regulator_get()
+> interface, it will ensure that even if a supply is not described in the
+> system integration one will be provided in software.
+>=20
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  drivers/gpu/drm/tegra/dpaux.c | 32 ++++++++++++--------------------
+>  1 file changed, 12 insertions(+), 20 deletions(-)
+
+It is in fact optional in this case. This code remains solely for
+backwards compatibility with old DTBs because back at the time the VDD
+supply was associated with the DPAUX block where it should've really
+been associated with the eDP panel.
+
+See also this commit for some background:
+
+commit f3b0d8793c1619074d0ece2e1a7f64ea37eaf394
+Author: Thierry Reding <treding@nvidia.com>
+Date:   Wed Jun 5 10:48:01 2019 +0200
+
+    drm/tegra: dpaux: Make VDD supply optional
+
+    The VDD supply is only needed to supply power to eDP panels connected to
+    DPAUX. Technically that supply should be dealt with in the panel driver,
+    but for backwards-compatibility we need to keep this around anyway.
+
+    Also as a bit of background: the reason for why this supply is attached
+    to DPAUX is to make sure the panel is properly powered early on so that
+    it can generate a hotplug pulse at the appropriate time. This may no
+    longer be required given the support for deferred fbdev setup that was
+    "recently" introduced in DRM/KMS.
+
+    Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+Thierry
+
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3BddwACgkQ3SOs138+
+s6FUYw/6A4qTc2lnGKnnGBghLO1g8imKr3xO4NSPlJV6WU6BoIR0dwzNa4ES3K/o
+NYIN2ouYz+h0eQ9M4rzo2jXX9I1f1pRwsDWH4e9slUPRFrf8ZqhzKTnBLmJ1WGo+
+87xooPAZTQsXkcu/B5xr4N0mU5pkHOLZ2/IRCw8HwH6ifLc5N1Um6ULd6a9Sr5Tk
+4n2gahFIPpXpm6IByzs5fAc4aZMBb1SNibjx0Ja5gXLlcy4JmbJv1shFO+6JC4zo
+YpY9UaPsM7LjoEyfG7DfgZ8grk3nK/FRh9+foMp5HcYPa/vASHfzcjwUZ8oIC3Q9
+OyhtI7L/Yiz2uaAzIIJRtHvltRWeiHX546GszfrHD54GuxNCu5JI3tjXGvCTwKyq
+SmCBMrllB1+Yt8d4XKCgwvCTlg29zL6hhIQdQGasMubNQUciBtsTObBMrFK+DHSl
+q8AKZIB4MjtCyKjL5JbBpcsRj7Z4gvxiSrvqCrVR/x/OqAa/dbqeTsZMMrMRn3IX
+suTkJSC2i5fpnNE+n0JfDiLPwx5W9mPlWKB779JGBXcMH2UP9Me5Q6cm7yKLIXSz
+2slwXf+7SeTFdPFXDWypSAnoWAi6SUqqeovh1wbJRZN7S/ZdJ04EyQurH2mu4f68
+VcXcvBAeBC32PHPGIXyhHd+l1GM8PAMvQ7nJ2u3HuR7s1VFtuGc=
+=qSyt
+-----END PGP SIGNATURE-----
+
+--3MwIy2ne0vdjdPXF--
+
+--===============1322003151==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============1322003151==--
