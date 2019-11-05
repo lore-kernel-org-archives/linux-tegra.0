@@ -1,74 +1,64 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] drm/tegra: Fix regulator_get_optional() misuse
-Date: Tue, 5 Nov 2019 13:24:24 +0000
-Message-ID: <20191105132424.GC4500@sirena.co.uk>
-References: <20191105125943.34729-1-broonie@kernel.org>
- <20191105131511.GA1609273@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v9 19/19] PM / devfreq: tegra20/30: Add Dmitry as a
+ maintainer
+Date: Tue, 5 Nov 2019 16:29:31 +0300
+Message-ID: <9bd7bfc0-508f-e7fb-d985-d32f2d9a88d8@gmail.com>
+References: <20191104215617.25544-1-digetx@gmail.com>
+ <CGME20191104221855epcas4p3761ca7e09ffa66b686be8b5a840ea383@epcas4p3.samsung.com>
+ <20191104215617.25544-20-digetx@gmail.com>
+ <0e7db72b-37ff-a36e-11fe-727ed43c26a6@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0865554082=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191105131511.GA1609273@ulmo>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0e7db72b-37ff-a36e-11fe-727ed43c26a6@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+05.11.2019 07:07, Chanwoo Choi пишет:
+> On 19. 11. 5. 오전 6:56, Dmitry Osipenko wrote:
+>> I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
+>> want to help keep them working and evolving in the future.
+>>
+>> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  MAINTAINERS | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 9f69d01da3a6..4b9679988514 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -10632,6 +10632,15 @@ F:	include/linux/memblock.h
+>>  F:	mm/memblock.c
+>>  F:	Documentation/core-api/boot-time-mm.rst
+>>  
+>> +MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
+>> +M:	Dmitry Osipenko <digetx@gmail.com>
+>> +L:	linux-pm@vger.kernel.org
+>> +L:	linux-tegra@vger.kernel.org
+>> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+>> +S:	Maintained
+>> +F:	drivers/devfreq/tegra20-devfreq.c
+>> +F:	drivers/devfreq/tegra30-devfreq.c
+>> +
+>>  MEMORY MANAGEMENT
+>>  L:	linux-mm@kvack.org
+>>  W:	https://protect2.fireeye.com/url?k=9d0ba644-c09508de-9d0a2d0b-0cc47a336fae-300ed90f1ba3077c&u=http://www.linux-mm.org/
+>>
+> 
+> Looks good to me. 
+> 
+> But, the merge conflict might be occurred.
+> After getting the review from Myungjoo,
+> you better to send this patch separately
+> based on the latest MAINTAINERS file.
+> 
+> Thanks for your all efforts.
 
---===============0865554082==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ALfTUftag+2gvp1h"
-Content-Disposition: inline
-
-
---ALfTUftag+2gvp1h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Nov 05, 2019 at 02:15:11PM +0100, Thierry Reding wrote:
-
-> It is in fact optional in this case. This code remains solely for
-> backwards compatibility with old DTBs because back at the time the VDD
-> supply was associated with the DPAUX block where it should've really
-> been associated with the eDP panel.
-
-That should really have some documentation, and in any case would be
-better implemented by using the supply_alias feature to remap the supply
-to the panel device so that we're using the same code path when actually
-managing the regulator either way.
-
---ALfTUftag+2gvp1h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3BeAcACgkQJNaLcl1U
-h9DFjwf/RAQXnf6UefNspZqwTvn7CnHYgUtYc+g2j5Kqjfn3g/FDBqWQD13gmWHF
-9+AfIWIUlHoWBrvfui7ntXOuaCTGh9s2Y4l1eGvdDob6DivSG8r10hm/jdBmcQTJ
-RKfsnDp2+av42ywyLzRQe8rKAv2a/gtLTASRW9jZvkGoXgt58GGQAkjA5KZ/JvRx
-wbZxOotjlzahabP8crRinylwFaPrDwlymRWGawY4BlemKyAD1FVpn6KRhvIgtLyd
-OFezRot1Z8W2pLZpkC1MfcJlp8Zx0LJvxeUW098KPnqDi4a/TR4IcrEVSVw+uUqM
-+HuQhTMXG8LfrVgi+hwGu8fldMXadQ==
-=qReC
------END PGP SIGNATURE-----
-
---ALfTUftag+2gvp1h--
-
---===============0865554082==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============0865554082==--
+Okay, I'll wait for the rest of patches to land and then re-send this
+patch separately. Thank you very much for the reviews.
