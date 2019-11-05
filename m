@@ -1,64 +1,70 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v9 19/19] PM / devfreq: tegra20/30: Add Dmitry as a
- maintainer
-Date: Tue, 5 Nov 2019 16:29:31 +0300
-Message-ID: <9bd7bfc0-508f-e7fb-d985-d32f2d9a88d8@gmail.com>
-References: <20191104215617.25544-1-digetx@gmail.com>
- <CGME20191104221855epcas4p3761ca7e09ffa66b686be8b5a840ea383@epcas4p3.samsung.com>
- <20191104215617.25544-20-digetx@gmail.com>
- <0e7db72b-37ff-a36e-11fe-727ed43c26a6@samsung.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 00/62] Add definition for GPIO direction
+Date: Tue, 5 Nov 2019 14:20:42 +0200
+Message-ID: <20191105122042.GO32742@smile.fi.intel.com>
+References: <cover.1572875541.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0e7db72b-37ff-a36e-11fe-727ed43c26a6@samsung.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1572875541.git.matti.vaittinen@fi.rohmeurope.com>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Semi Malinen <semi.malinen@ge.com>, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, linux-aspeed@lists.ozlabs.org, David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>, alsa-devel@alsa-project.org, Peter Tyser <ptyser@xes-inc.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jonathan Hunter <jonathanh@nvidia.com>, Fabio Estevam <festevam@gmail.com>, linux-stm32@st-md-mailman.stormreply.com, Marek Vasut <marek.vasut+renesas@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Marek Behun <marek.behun@nic.cz>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Ludovic Desroches <ludovic.desroches@microchip.com>, bcm-kernel-feedback-list@broadcom.com, Joel Stanley <joel@jms.id.au>, Uwe
 List-Id: linux-tegra@vger.kernel.org
 
-05.11.2019 07:07, Chanwoo Choi пишет:
-> On 19. 11. 5. 오전 6:56, Dmitry Osipenko wrote:
->> I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
->> want to help keep them working and evolving in the future.
->>
->> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  MAINTAINERS | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 9f69d01da3a6..4b9679988514 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -10632,6 +10632,15 @@ F:	include/linux/memblock.h
->>  F:	mm/memblock.c
->>  F:	Documentation/core-api/boot-time-mm.rst
->>  
->> +MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
->> +M:	Dmitry Osipenko <digetx@gmail.com>
->> +L:	linux-pm@vger.kernel.org
->> +L:	linux-tegra@vger.kernel.org
->> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
->> +S:	Maintained
->> +F:	drivers/devfreq/tegra20-devfreq.c
->> +F:	drivers/devfreq/tegra30-devfreq.c
->> +
->>  MEMORY MANAGEMENT
->>  L:	linux-mm@kvack.org
->>  W:	https://protect2.fireeye.com/url?k=9d0ba644-c09508de-9d0a2d0b-0cc47a336fae-300ed90f1ba3077c&u=http://www.linux-mm.org/
->>
+On Tue, Nov 05, 2019 at 12:09:10PM +0200, Matti Vaittinen wrote:
+> The patch series adds definitions for GPIO line directions.
 > 
-> Looks good to me. 
+> For occasional GPIO contributor like me it is always a pain to remember
+> whether 1 or 0 was used for GPIO direction INPUT/OUTPUT. Judging the
+> fact that I removed few comments like:
 > 
-> But, the merge conflict might be occurred.
-> After getting the review from Myungjoo,
-> you better to send this patch separately
-> based on the latest MAINTAINERS file.
+> /* Return 0 if output, 1 if input */
+> /* This means "out" */
+> return 1; /* input */
+> return 0; /* output */
 > 
-> Thanks for your all efforts.
+> it seems at least some others may find it hard to remember too. Adding
+> defines for these values helps us who really have good - but short
+> duration - memory :]
+> 
+> Please also see the last patch. It adds warning prints to be emitted
+> from gpiolib if other than defined values are used. This patch can be
+> dropped out if there is a reason for that to still be allowed.
+> 
+> This idea comes from RFC series for ROHM BD71828 PMIC and was initially
+> discussed with Linus Walleij here:
+> https://lore.kernel.org/lkml/c06725c3dd34118a324907137758d8b85b3d4043.camel@fi.rohmeurope.com/
+> but as this has no dependencies to BD71828 work (which probably takes a
+> while) I decided to make it independent series.
+> 
+> Patches are compile-tested only. I have no HW to really test them. Thus I'd
+> appreciate carefull review. This work is mainly about converting zeros
+> and ones to the new defines but it wouldn't be first time I get it wrong
+> in one of the patches :)
 
-Okay, I'll wait for the rest of patches to land and then re-send this
-patch separately. Thank you very much for the reviews.
+For all patches I have been Cc'ed to, NAK.
+
+I don't see the advantages now since all known hardware uses the single bit to
+describe direction (even for Intel where we have separate gating for in and out
+buffers the direction we basically rely on the bit that enables out buffer).
+
+So, that said the direction is always 1 bit and basically 0/1 value. Which one
+is in and which one is out just a matter of an agreement we did.
+
+I would also like to see bloat-o-meter statistics before and after your patch.
+My guts tell me that the result will be not in the favour of yours solution.
+
+-- 
+With Best Regards,
+Andy Shevchenko
