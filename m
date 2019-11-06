@@ -1,77 +1,50 @@
-From: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Subject: Re: [PATCH v2 0/2] Add definition for GPIO direction
-Date: Wed, 6 Nov 2019 12:25:18 +0000
-Message-ID: <ddcd02cc6c709837a28cae2cbfa672c506927659.camel@fi.rohmeurope.com>
-References: <cover.1573029228.git.matti.vaittinen@fi.rohmeurope.com>
- <20191106120846.5bunrqj3uz4khih5@earth.universe>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191106120846.5bunrqj3uz4khih5@earth.universe>
-Content-Language: de-DE
-Content-ID: <FD03FC67CBBBB149AC58086B204B0910@de.rohmeurope.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "sre@kernel.org" <sre@kernel.org>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, "david.daney@cavium.com" <david.daney@cavium.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "sathyanarayanan.kuppuswamy@linux.intel.com" <sathyanarayanan.kuppuswamy@linux.intel.com>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "marek.behun@nic.cz" <marek.behun@nic.cz>, "festevam@gmail.com" <festevam@gmail.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "marek.vasut+renesas@gmail.com" <marek.vasut+renesas@gmail.com>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>, "khilman@kernel.org" <khilman@kernel.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>"bgolaszewski@baylibre.com" <b>
+From: Amit Kucheria <amit.kucheria@linaro.org>
+Subject: [PATCH 00/11] thermal: clean up output of make W=1
+Date: Wed,  6 Nov 2019 18:58:16 +0530
+Message-ID: <cover.1573046440.git.amit.kucheria@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, edubezval@gmail.com, Amit Daniel Kachhap <amit.kachhap@gmail.com>, Amit Kucheria <amit.kucheria@verdurent.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Guillaume La Roque <glaroque@baylibre.com>, Heiko Stuebner <heiko@sntech.de>, Javi Merino <javi.merino@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Jun Nie <jun.nie@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>
+Cc: linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Cleanup output of make W=1 inside drivers/thermal. This should allow us to
+focus on real issues that tend to get lost in the noise much better.
 
-On Wed, 2019-11-06 at 13:08 +0100, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Wed, Nov 06, 2019 at 10:51:06AM +0200, Matti Vaittinen wrote:
-> > The patch series adds definitions for GPIO line directions.
-> > 
-> > For occasional GPIO contributor like me it is always a pain to
-> > remember
-> > whether 1 or 0 was used for GPIO direction INPUT/OUTPUT.
-> 
-> Maybe also update the GPIO drivers in pinctrl?
-> 
-> $ git grep -l gpio_get_direction drivers/pinctrl
-> drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-> drivers/pinctrl/intel/pinctrl-baytrail.c
-> drivers/pinctrl/intel/pinctrl-cherryview.c
-> drivers/pinctrl/intel/pinctrl-intel.c
-> drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> drivers/pinctrl/mediatek/pinctrl-paris.c
-> drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-> drivers/pinctrl/pinctrl-amd.c
-> drivers/pinctrl/pinctrl-at91.c
-> drivers/pinctrl/pinctrl-axp209.c
-> drivers/pinctrl/pinctrl-ingenic.c
-> drivers/pinctrl/pinctrl-ocelot.c
-> drivers/pinctrl/pinctrl-oxnas.c
-> drivers/pinctrl/pinctrl-pic32.c
-> drivers/pinctrl/pinctrl-pistachio.c
-> drivers/pinctrl/pinctrl-rk805.c
-> drivers/pinctrl/pinctrl-rockchip.c
-> drivers/pinctrl/pinctrl-rza1.c
-> drivers/pinctrl/pinctrl-st.c
-> drivers/pinctrl/pinctrl-stmfx.c
-> drivers/pinctrl/pinctrl-sx150x.c
-> drivers/pinctrl/qcom/pinctrl-msm.c
-> drivers/pinctrl/stm32/pinctrl-stm32.c
-> drivers/pinctrl/vt8500/pinctrl-wmt.c
+There is no functional change. This series was generate on top of
+linux-next from 20191105.
 
-Ouch. I didn't check from pinctrl but I see those should be converted
-as well. I'm a bit short on time right now so if anyone else is
-interested I won't mind :)
+Regards,
+Amit
 
-Luckily the value for IN and OUT is not changed - only the defines were
-added - so all of the drivers do not need to be done at once. If no one
-else will take the pinctrl part then I can probably do pinctrl patches
-for v5.6 cycle.
+Amit Kucheria (11):
+  thermal: of-thermal: Appease the kernel-doc deity
+  thermal: cpu_cooling: Appease the kernel-doc deity
+  thermal: step_wise: Appease the kernel-doc deity
+  thermal: devfreq_cooling: Appease the kernel-doc deity
+  thermal: max77620: Appease the kernel-doc deity
+  thermal: mediatek: Appease the kernel-doc deity
+  thermal: rockchip: Appease the kernel-doc deity
+  thermal: samsung: Appease the kernel-doc deity
+  thermal: tegra: Appease the kernel-doc deity
+  thermal: amlogic: Appease the kernel-doc deity
+  thermal: zx2967: Appease the kernel-doc deity
 
-Br,
-	Matti Vaittinen
+ drivers/thermal/amlogic_thermal.c    |  6 +++++-
+ drivers/thermal/cpu_cooling.c        |  1 +
+ drivers/thermal/devfreq_cooling.c    |  3 ++-
+ drivers/thermal/fair_share.c         |  4 ++--
+ drivers/thermal/gov_bang_bang.c      |  4 ++--
+ drivers/thermal/max77620_thermal.c   |  2 +-
+ drivers/thermal/mtk_thermal.c        | 12 ++++++------
+ drivers/thermal/of-thermal.c         |  2 +-
+ drivers/thermal/rockchip_thermal.c   | 22 ++++++++++++++++------
+ drivers/thermal/samsung/exynos_tmu.c |  5 ++++-
+ drivers/thermal/step_wise.c          |  4 ++--
+ drivers/thermal/tegra/soctherm.c     | 15 +++++++++++++--
+ drivers/thermal/user_space.c         |  4 ++--
+ drivers/thermal/zx2967_thermal.c     |  1 +
+ 14 files changed, 58 insertions(+), 27 deletions(-)
+
+-- 
+2.17.1
