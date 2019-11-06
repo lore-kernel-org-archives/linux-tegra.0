@@ -1,24 +1,24 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 000/149] 4.19.82-stable review
-Date: Wed, 6 Nov 2019 11:49:21 +0100
-Message-ID: <20191106104921.GC2982490@kroah.com>
-References: <20191104212126.090054740@linuxfoundation.org>
- <6e8b6e19-0d66-beb0-8e16-7975aa1d462a@nvidia.com>
+Subject: Re: [PATCH 5.3 000/163] 5.3.9-stable review
+Date: Wed, 6 Nov 2019 11:49:32 +0100
+Message-ID: <20191106104932.GD2982490@kroah.com>
+References: <20191104212140.046021995@linuxfoundation.org>
+ <a9c51735-86c7-9e77-707b-74628a99f76b@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6e8b6e19-0d66-beb0-8e16-7975aa1d462a@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <a9c51735-86c7-9e77-707b-74628a99f76b@nvidia.com>
+Sender: stable-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 11:46:05PM +0000, Jon Hunter wrote:
+On Tue, Nov 05, 2019 at 11:41:15PM +0000, Jon Hunter wrote:
 > 
 > On 04/11/2019 21:43, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.19.82 release.
-> > There are 149 patches in this series, all will be posted as a response
+> > This is the start of the stable review cycle for the 5.3.9 release.
+> > There are 163 patches in this series, all will be posted as a response
 > > to this one.  If anyone has any issues with these being applied, please
 > > let me know.
 > > 
@@ -26,27 +26,27 @@ On Tue, Nov 05, 2019 at 11:46:05PM +0000, Jon Hunter wrote:
 > > Anything received after that time might be too late.
 > > 
 > > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.82-rc1.gz
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.9-rc1.gz
 > > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
 > > and the diffstat can be found below.
 > > 
 > > thanks,
 > > 
 > > greg k-h
-> > 
-> > -------------
-> > Pseudo-Shortlog of commits:
 > 
-> ...
+> All tests for Tegra are passing ...
 > 
-> > Jose Abreu <jose.abreu@synopsys.com>
-> >     net: stmmac: Fix NAPI poll in TX path when in multi-queue
+> Test results for stable-v5.3:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     38 tests:	38 pass, 0 fail
 > 
-> The above commit is causing a boot regression on Tegra186. Bisect points
-> to this commit and reverting fixes the issue.
+> Linux version:	5.3.9-rc1-g75c9913bbf6e
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-Thanks for testing this.  I've dropped this patch now, so all shoudl be
-good.
+Thanks for testing all of these and letting me know.
 
 greg k-h
