@@ -1,62 +1,59 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v9 19/19] PM / devfreq: tegra20/30: Add Dmitry as a
- maintainer
-Date: Wed, 6 Nov 2019 19:14:16 +0300
-Message-ID: <698d5cf8-7c73-edee-e963-581bdf8ca088@gmail.com>
-References: <20191104215617.25544-1-digetx@gmail.com>
- <CGME20191104221855epcas4p3761ca7e09ffa66b686be8b5a840ea383@epcas4p3.samsung.com>
- <20191104215617.25544-20-digetx@gmail.com>
- <0e7db72b-37ff-a36e-11fe-727ed43c26a6@samsung.com>
- <9bd7bfc0-508f-e7fb-d985-d32f2d9a88d8@gmail.com>
- <da10a370-de1d-67c9-a916-cdc1a31c0a96@samsung.com>
+From: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v2 0/2] Add definition for GPIO direction
+Date: Wed, 6 Nov 2019 17:28:51 +0000
+Message-ID: <c333eb18eec9adf333e1b3cca2ff7ccacb2a863b.camel@fi.rohmeurope.com>
+References: <cover.1573029228.git.matti.vaittinen@fi.rohmeurope.com>
+ <20191106143938.GA3176@icarus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <da10a370-de1d-67c9-a916-cdc1a31c0a96@samsung.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter Geis <pgwipeout@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191106143938.GA3176@icarus>
+Content-Language: de-DE
+Content-ID: <18FFF0DF279DD94B9327FC374E716AF8@de.rohmeurope.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "vilhelm.gray@gmail.com" <vilhelm.gray@gmail.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, "david.daney@cavium.com" <david.daney@cavium.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "sathyanarayanan.kuppuswamy@linux.intel.com" <sathyanarayanan.kuppuswamy@linux.intel.com>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "marek.behun@nic.cz" <marek.behun@nic.cz>, "festevam@gmail.com" <festevam@gmail.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "marek.vasut+renesas@gmail.com" <marek.vasut+renesas@gmail.com>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>, "khilman@kernel.org" <khilman@kernel.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>"bgolaszewski@baylibre.com" <b>
 List-Id: linux-tegra@vger.kernel.org
 
-06.11.2019 04:24, Chanwoo Choi пишет:
-> Hi Dmitry,
-> 
-> On 19. 11. 5. 오후 10:29, Dmitry Osipenko wrote:
->> 05.11.2019 07:07, Chanwoo Choi пишет:
->>> On 19. 11. 5. 오전 6:56, Dmitry Osipenko wrote:
->>>> I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
->>>> want to help keep them working and evolving in the future.
->>>>
->>>> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  MAINTAINERS | 9 +++++++++
->>>>  1 file changed, 9 insertions(+)
->>>>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index 9f69d01da3a6..4b9679988514 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -10632,6 +10632,15 @@ F:	include/linux/memblock.h
->>>>  F:	mm/memblock.c
->>>>  F:	Documentation/core-api/boot-time-mm.rst
->>>>  
->>>> +MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
->>>> +M:	Dmitry Osipenko <digetx@gmail.com>
->>>> +L:	linux-pm@vger.kernel.org
->>>> +L:	linux-tegra@vger.kernel.org
->>>> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-> 
-> From now, I'll help and review the devfreq patches as maintainer
-> and the devfreq git information is changed[1]. You should change 
-> the git info as following:
-> [1] https://lkml.org/lkml/2019/11/5/39
-> 
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
-> 
-> Also, I add my acked-by tag.
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thanks, I'll update this patch.
+On Wed, 2019-11-06 at 09:39 -0500, William Breathitt Gray wrote:
+> On Wed, Nov 06, 2019 at 10:51:06AM +0200, Matti Vaittinen wrote:
+> > The patch series adds definitions for GPIO line directions.
+
+...snip...
+
+> > This patch series is based on GPIO tree devel branch.
+> 
+> Just a tip for future patchsets in case you didn't know, you case
+> specify the base of your patchset by using the "--base" option:
+> https://git-scm.com/docs/git-format-patch#_base_tree_information
+> 
+> This will append a "base-commit" line with the commit hash at the end
+> of
+> the first message so that it's unabiguous which base you're using
+> (useful in case the branch changes before your patch is reviewed).
+
+Tanks William! I didn't know about the --base. It's nice to learn
+something new every day :]
+
+> > -- 
+> > Matti Vaittinen, Linux device drivers
+> > ROHM Semiconductors, Finland SWDC
+> > Kiviharjunlenkki 1E
+> > 90220 OULU
+> > FINLAND
+> > 
+> > ~~~ "I don't think so," said Rene Descartes. Just then he vanished
+> > ~~~
+> > Simon says - in Latin please.
+> > ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+> > Thanks to Simon Glass for the translation =] 
