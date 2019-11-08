@@ -1,188 +1,135 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 012/205] soc/tegra: pmc: Fix pad voltage configuration for Tegra186
-Date: Fri,  8 Nov 2019 06:34:39 -0500
-Message-ID: <20191108113752.12502-12-sashal@kernel.org>
-References: <20191108113752.12502-1-sashal@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v9 07/22] clk: Add API to get index of the clock parent
+Date: Fri, 08 Nov 2019 10:12:49 -0800
+Message-ID: <20191108181249.E284E214DB@mail.kernel.org>
+References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com> <1565984527-5272-8-git-send-email-skomatineni@nvidia.com> <20191106231005.F2CD820869@mail.kernel.org> <fcc43ccb-8c6e-d518-4c70-503501706ffd@gmail.com> <20191107152115.GA2580600@ulmo> <20191107191933.0B18021D6C@mail.kernel.org> <20191108101116.GA2583136@ulmo>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
+In-Reply-To: <20191108101116.GA2583136@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Aapo Vienamo <avienamo@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net, jonathanh@nvidia.com, linus.walleij@linaro.org, marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch, tglx@linutronix.de, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Aapo Vienamo <avienamo@nvidia.com>
+Quoting Thierry Reding (2019-11-08 02:11:16)
+> On Thu, Nov 07, 2019 at 11:19:32AM -0800, Stephen Boyd wrote:
+> > Quoting Thierry Reding (2019-11-07 07:21:15)
+> > > On Thu, Nov 07, 2019 at 03:54:03AM +0300, Dmitry Osipenko wrote:
+> > > > 07.11.2019 02:10, Stephen Boyd =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > > > Quoting Sowjanya Komatineni (2019-08-16 12:41:52)
+> > > > >> This patch adds an API clk_hw_get_parent_index to get index of t=
+he
+> > > > >> clock parent to use during the clock restore operations on system
+> > > > >> resume.
+> > > > > =20
+> > > > > Is there a reason we can't save the clk hw index at suspend time =
+by
+> > > > > reading the hardware to understand the current parent? The parent=
+ index
+> > > > > typically doesn't matter unless we're trying to communicate somet=
+hing
+> > > > > from the framework to the provider driver. Put another way, I wou=
+ld
+> > > > > think the provider driver can figure out the index itself without=
+ having
+> > > > > to go through the framework to do so.
+> > > >=20
+> > > > Isn't it a bit wasteful to duplicate information about the parent w=
+ithin
+> > > > a provider if framework already has that info? The whole point of t=
+his
+> > > > new API is to allow providers to avoid that unnecessary duplication.
+> > > >=20
+> > > > Please note that clk_hw_get_parent_index is getting used only at the
+> > > > resume time and not at suspend.
+> > >=20
+> > > I agree with this. All of the information that we need is already cac=
+hed
+> > > in the framework. Doing this in the driver would mean essentially add=
+ing
+> > > a "saved parent" field along with code to read the value at suspend t=
+ime
+> > > to the three types of clocks that currently use this core helper.
+> >=20
+> > Don't we already have a "saved parent" field by storing the pointer to
+> > the clk_hw?
+> >=20
+> > >=20
+> > > That's certainly something that we *can* do, but it doesn't sound lik=
+e a
+> > > better option than simply querying the framework for the value that we
+> > > need.
+> > >=20
+> >=20
+> > Let me say this another way. Why does this driver want to know the index
+> > that the framework uses for some clk_hw pointer? Perhaps it happens to
+> > align with the same value that hardware uses, but I still don't
+> > understand why the driver wants to know what the framework has decided
+> > is the index for some clk_hw pointer.
+> >=20
+> > Or is this something like "give me the index for the parent that the
+> > framework thinks I currently have but in reality don't have anymore
+> > because the register contents were wiped and we need to reparent it"?
+>=20
+> Yeah, that's exactly what this is being used for. It's used to restore
+> the parent/child relationship during resume after the registers have
+> been wiped during supend.
 
-[ Upstream commit 13136a47a061c01c91df78b37f7708dd5ce7035f ]
+Ok cool. Our whole suspend/resume and save/restore story hasn't really
+been well thought out so we may want to pull all this logic into the
+core one day. For now it's OK to do the heavy lifting from provider
+drivers until someone gets a better grasp on how this should all work.
 
-Implement support for the PMC_IMPL_E_33V_PWR register which replaces
-PMC_PWR_DET register interface of the SoC generations preceding
-Tegra186. Also add the voltage bit offsets to the tegra186_io_pads[]
-table and the AO_HV pad.
+>=20
+> > A generic API to get any index for this question is overkill and we sho=
+uld
+> > consider adding some sort of API like clk_hw_get_current_parent_index(),
+> > or a framework flag that tells the framework this parent is incorrect
+> > and we need to call the .set_parent() op again to reconfigure it.
+>=20
+> Okay, I think I see what you're saying. The current implementation does
+> carry a bit of a risk because users could be calling this function with
+> any arbitrary pair of struct clk_hw *, even completely unrelated ones.
+>=20
+> How about we turn it into this instead:
+>=20
+>         /**
+>          * clk_hw_get_parent_index - return the index of the parent clock
+>          * @hw: clk_hw associated with the clk being consumed
+>          *
+>          * Fetches and returns the index of parent clock. Returns -EINVAL=
+ if the given
+>          * clock does not have a current parent.
+>          */
+>         int clk_hw_get_parent_index(struct clk_hw *hw)
+>         {
+>                 struct clk_hw *parent =3D clk_hw_get_parent(hw);
+>=20
+>                 if (!parent)
+>                         return -EINVAL;
+>=20
+>                 return clk_fetch_parent_index(hw->core, parent->core);
+>         }
+>         EXPORT_SYMBOL_GPL(clk_hw_get_parent_index);
+>=20
+> I think that has the advantage that we can't pass it a parent that's not
+> really a parent. There's still the slightly weird case where the clock
+> doesn't have a current parent, but hopefully that's something we are not
+> going to encounter much. After all this only makes sense to be called on
+> mux clocks and they always do have a parent by definition.
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/soc/tegra/pmc.c | 55 +++++++++++++++++++++++++++++------------
- include/soc/tegra/pmc.h |  1 +
- 2 files changed, 40 insertions(+), 16 deletions(-)
+Right.
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 4b452f36f0547..f17a678154047 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -65,6 +65,8 @@
- 
- #define PWRGATE_STATUS			0x38
- 
-+#define PMC_IMPL_E_33V_PWR		0x40
-+
- #define PMC_PWR_DET			0x48
- 
- #define PMC_SCRATCH0_MODE_RECOVERY	BIT(31)
-@@ -154,6 +156,7 @@ struct tegra_pmc_soc {
- 	bool has_tsense_reset;
- 	bool has_gpu_clamps;
- 	bool needs_mbist_war;
-+	bool has_impl_33v_pwr;
- 
- 	const struct tegra_io_pad_soc *io_pads;
- 	unsigned int num_io_pads;
-@@ -1067,20 +1070,31 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
- 
- 	mutex_lock(&pmc->powergates_lock);
- 
--	/* write-enable PMC_PWR_DET_VALUE[pad->voltage] */
--	value = tegra_pmc_readl(PMC_PWR_DET);
--	value |= BIT(pad->voltage);
--	tegra_pmc_writel(value, PMC_PWR_DET);
-+	if (pmc->soc->has_impl_33v_pwr) {
-+		value = tegra_pmc_readl(PMC_IMPL_E_33V_PWR);
- 
--	/* update I/O voltage */
--	value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
-+		if (voltage == TEGRA_IO_PAD_1800000UV)
-+			value &= ~BIT(pad->voltage);
-+		else
-+			value |= BIT(pad->voltage);
- 
--	if (voltage == TEGRA_IO_PAD_1800000UV)
--		value &= ~BIT(pad->voltage);
--	else
-+		tegra_pmc_writel(value, PMC_IMPL_E_33V_PWR);
-+	} else {
-+		/* write-enable PMC_PWR_DET_VALUE[pad->voltage] */
-+		value = tegra_pmc_readl(PMC_PWR_DET);
- 		value |= BIT(pad->voltage);
-+		tegra_pmc_writel(value, PMC_PWR_DET);
-+
-+		/* update I/O voltage */
-+		value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
- 
--	tegra_pmc_writel(value, PMC_PWR_DET_VALUE);
-+		if (voltage == TEGRA_IO_PAD_1800000UV)
-+			value &= ~BIT(pad->voltage);
-+		else
-+			value |= BIT(pad->voltage);
-+
-+		tegra_pmc_writel(value, PMC_PWR_DET_VALUE);
-+	}
- 
- 	mutex_unlock(&pmc->powergates_lock);
- 
-@@ -1102,7 +1116,10 @@ int tegra_io_pad_get_voltage(enum tegra_io_pad id)
- 	if (pad->voltage == UINT_MAX)
- 		return -ENOTSUPP;
- 
--	value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
-+	if (pmc->soc->has_impl_33v_pwr)
-+		value = tegra_pmc_readl(PMC_IMPL_E_33V_PWR);
-+	else
-+		value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
- 
- 	if ((value & BIT(pad->voltage)) == 0)
- 		return TEGRA_IO_PAD_1800000UV;
-@@ -1561,6 +1578,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.cpu_powergates = tegra30_cpu_powergates,
- 	.has_tsense_reset = true,
- 	.has_gpu_clamps = false,
-+	.has_impl_33v_pwr = false,
- 	.num_io_pads = 0,
- 	.io_pads = NULL,
- 	.regs = &tegra20_pmc_regs,
-@@ -1603,6 +1621,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.cpu_powergates = tegra114_cpu_powergates,
- 	.has_tsense_reset = true,
- 	.has_gpu_clamps = false,
-+	.has_impl_33v_pwr = false,
- 	.num_io_pads = 0,
- 	.io_pads = NULL,
- 	.regs = &tegra20_pmc_regs,
-@@ -1683,6 +1702,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.cpu_powergates = tegra124_cpu_powergates,
- 	.has_tsense_reset = true,
- 	.has_gpu_clamps = true,
-+	.has_impl_33v_pwr = false,
- 	.num_io_pads = ARRAY_SIZE(tegra124_io_pads),
- 	.io_pads = tegra124_io_pads,
- 	.regs = &tegra20_pmc_regs,
-@@ -1772,6 +1792,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.cpu_powergates = tegra210_cpu_powergates,
- 	.has_tsense_reset = true,
- 	.has_gpu_clamps = true,
-+	.has_impl_33v_pwr = false,
- 	.needs_mbist_war = true,
- 	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
- 	.io_pads = tegra210_io_pads,
-@@ -1800,7 +1821,7 @@ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
- 	{ .id = TEGRA_IO_PAD_HDMI_DP0, .dpd = 28, .voltage = UINT_MAX },
- 	{ .id = TEGRA_IO_PAD_HDMI_DP1, .dpd = 29, .voltage = UINT_MAX },
- 	{ .id = TEGRA_IO_PAD_PEX_CNTRL, .dpd = 32, .voltage = UINT_MAX },
--	{ .id = TEGRA_IO_PAD_SDMMC2_HV, .dpd = 34, .voltage = UINT_MAX },
-+	{ .id = TEGRA_IO_PAD_SDMMC2_HV, .dpd = 34, .voltage = 5 },
- 	{ .id = TEGRA_IO_PAD_SDMMC4, .dpd = 36, .voltage = UINT_MAX },
- 	{ .id = TEGRA_IO_PAD_CAM, .dpd = 38, .voltage = UINT_MAX },
- 	{ .id = TEGRA_IO_PAD_DSIB, .dpd = 40, .voltage = UINT_MAX },
-@@ -1812,12 +1833,13 @@ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
- 	{ .id = TEGRA_IO_PAD_CSIF, .dpd = 46, .voltage = UINT_MAX },
- 	{ .id = TEGRA_IO_PAD_SPI, .dpd = 47, .voltage = UINT_MAX },
- 	{ .id = TEGRA_IO_PAD_UFS, .dpd = 49, .voltage = UINT_MAX },
--	{ .id = TEGRA_IO_PAD_DMIC_HV, .dpd = 52, .voltage = UINT_MAX },
-+	{ .id = TEGRA_IO_PAD_DMIC_HV, .dpd = 52, .voltage = 2 },
- 	{ .id = TEGRA_IO_PAD_EDP, .dpd = 53, .voltage = UINT_MAX },
--	{ .id = TEGRA_IO_PAD_SDMMC1_HV, .dpd = 55, .voltage = UINT_MAX },
--	{ .id = TEGRA_IO_PAD_SDMMC3_HV, .dpd = 56, .voltage = UINT_MAX },
-+	{ .id = TEGRA_IO_PAD_SDMMC1_HV, .dpd = 55, .voltage = 4 },
-+	{ .id = TEGRA_IO_PAD_SDMMC3_HV, .dpd = 56, .voltage = 6 },
- 	{ .id = TEGRA_IO_PAD_CONN, .dpd = 60, .voltage = UINT_MAX },
--	{ .id = TEGRA_IO_PAD_AUDIO_HV, .dpd = 61, .voltage = UINT_MAX },
-+	{ .id = TEGRA_IO_PAD_AUDIO_HV, .dpd = 61, .voltage = 1 },
-+	{ .id = TEGRA_IO_PAD_AO_HV, .dpd = UINT_MAX, .voltage = 0 },
- };
- 
- static const struct tegra_pmc_regs tegra186_pmc_regs = {
-@@ -1870,6 +1892,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.cpu_powergates = NULL,
- 	.has_tsense_reset = false,
- 	.has_gpu_clamps = false,
-+	.has_impl_33v_pwr = true,
- 	.num_io_pads = ARRAY_SIZE(tegra186_io_pads),
- 	.io_pads = tegra186_io_pads,
- 	.regs = &tegra186_pmc_regs,
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index c32bf91c23e6f..445aa66514e90 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -134,6 +134,7 @@ enum tegra_io_pad {
- 	TEGRA_IO_PAD_USB2,
- 	TEGRA_IO_PAD_USB3,
- 	TEGRA_IO_PAD_USB_BIAS,
-+	TEGRA_IO_PAD_AO_HV,
- };
- 
- /* deprecated, use TEGRA_IO_PAD_{HDMI,LVDS} instead */
--- 
-2.20.1
+>=20
+> Perhaps we should be more explicit and wrap that !parent conditional in
+> a WARN_ON()? In my local patches I do that at the call sites because
+> they are all functions returning void, so we'd be silently ignoring the
+> cases, but I think it may make sense to have it in the core.
+>=20
+
+Sure a WARN_ON() sounds fair. That will not take the whole task down
+and makes sure that drivers aren't doing something incorrect. Otherwise,
+this looks good and we can optimize by caching the parent index later if
+we really need to.
