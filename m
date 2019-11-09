@@ -1,35 +1,51 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 5/5] clk: tegra: Reimplement SOR clocks on Tegra210
-Date: Fri, 08 Nov 2019 16:39:46 -0800
-Message-ID: <20191109003947.11D492084D@mail.kernel.org>
-References: <20191016125919.1773898-1-thierry.reding@gmail.com>
- <20191016125919.1773898-6-thierry.reding@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] clk: tegra: Use match_string() helper to simplify the code
+Date: Sat, 9 Nov 2019 11:42:26 +0800
+Message-ID: <20191109034226.21044-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191016125919.1773898-6-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Thierry Reding (2019-10-16 05:59:19)
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> In order to allow the display driver to deal uniformly with all SOR
-> generations, implement the SOR clocks in a way that is compatible with
-> Tegra186 and later.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
+match_string() returns the array index of a matching string.
+Use it instead of the open-coded implementation.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/tegra/clk-emc.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+index ea39caf..745f9fa 100644
+--- a/drivers/clk/tegra/clk-emc.c
++++ b/drivers/clk/tegra/clk-emc.c
+@@ -403,20 +403,16 @@ static int load_one_timing_from_dt(struct tegra_clk_emc *tegra,
+ 	}
+ 
+ 	timing->parent_index = 0xff;
+-	for (i = 0; i < ARRAY_SIZE(emc_parent_clk_names); i++) {
+-		if (!strcmp(emc_parent_clk_names[i],
+-			    __clk_get_name(timing->parent))) {
+-			timing->parent_index = i;
+-			break;
+-		}
+-	}
+-	if (timing->parent_index == 0xff) {
++	i = match_string(emc_parent_clk_names, ARRAY_SIZE(emc_parent_clk_names),
++			 __clk_get_name(timing->parent));
++	if (i < 0) {
+ 		pr_err("timing %pOF: %s is not a valid parent\n",
+ 		       node, __clk_get_name(timing->parent));
+ 		clk_put(timing->parent);
+ 		return -EINVAL;
+ 	}
+ 
++	timing->parent_index = i;
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
