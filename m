@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 142/191] ARM: dts: paz00: fix wakeup gpio keycode
-Date: Sat,  9 Nov 2019 21:39:24 -0500
-Message-ID: <20191110024013.29782-142-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 140/191] ARM: tegra: apalis_t30: fix mcp2515 can controller interrupt polarity
+Date: Sat,  9 Nov 2019 21:39:22 -0500
+Message-ID: <20191110024013.29782-140-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,41 +9,43 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Marc Dietrich <marvin24@gmx.de>, Nicolas Chauvet <kwizart@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marc Dietrich <marvin24@gmx.de>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-[ Upstream commit ebea2a43fdafdbce918bd7e200b709d6c33b9f3b ]
+[ Upstream commit b38f6aa4b60a1fcc41f5c469981f8f62d6070ee3 ]
 
-The power key is controlled solely by the EC, which only tiggeres this
-gpio after wakeup.
-Fixes immediately return to suspend after wake from LP1.
+Fix the MCP2515 SPI CAN controller interrupt polarity which according
+to its datasheet defaults to low-active aka falling edge.
 
-Signed-off-by: Marc Dietrich <marvin24@gmx.de>
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/tegra20-paz00.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index ef245291924f0..4f9b4a889febe 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -524,10 +524,10 @@
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
--		power {
--			label = "Power";
-+		wakeup {
-+			label = "Wakeup";
- 			gpios = <&gpio TEGRA_GPIO(J, 7) GPIO_ACTIVE_LOW>;
--			linux,code = <KEY_POWER>;
-+			linux,code = <KEY_WAKEUP>;
- 			wakeup-source;
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index e749e047db7ab..f810bbf8212bd 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -659,7 +659,7 @@
+ 			reg = <1>;
+ 			clocks = <&clk16m>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_EDGE_RISING>;
++			interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_EDGE_FALLING>;
+ 			spi-max-frequency = <10000000>;
+ 		};
+ 	};
+@@ -674,7 +674,7 @@
+ 			reg = <0>;
+ 			clocks = <&clk16m>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(W, 2) IRQ_TYPE_EDGE_RISING>;
++			interrupts = <TEGRA_GPIO(W, 2) IRQ_TYPE_EDGE_FALLING>;
+ 			spi-max-frequency = <10000000>;
  		};
  	};
 -- 
