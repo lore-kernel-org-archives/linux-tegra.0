@@ -1,60 +1,52 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 34/40] ARM: dts: tegra30: fix xcvr-setup-use-fuses
-Date: Sat,  9 Nov 2019 21:50:26 -0500
-Message-ID: <20191110025032.827-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 35/40] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
+Date: Sat,  9 Nov 2019 21:50:27 -0500
+Message-ID: <20191110025032.827-35-sashal@kernel.org>
 References: <20191110025032.827-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191110025032.827-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-[ Upstream commit 564706f65cda3de52b09e51feb423a43940fe661 ]
+[ Upstream commit 1c997fe4becdc6fcbc06e23982ceb65621e6572a ]
 
-There was a dot instead of a comma. Fix this.
+Fix MMC1 cmd pin pull-up causing issues on carrier boards without
+external pull-up.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/tegra30.dtsi | 6 +++---
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 313e260529a31..e8f5a55c4b954 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -823,7 +823,7 @@
- 		nvidia,elastic-limit = <16>;
- 		nvidia,term-range-adj = <6>;
- 		nvidia,xcvr-setup = <51>;
--		nvidia.xcvr-setup-use-fuses;
-+		nvidia,xcvr-setup-use-fuses;
- 		nvidia,xcvr-lsfslew = <1>;
- 		nvidia,xcvr-lsrslew = <1>;
- 		nvidia,xcvr-hsslew = <32>;
-@@ -860,7 +860,7 @@
- 		nvidia,elastic-limit = <16>;
- 		nvidia,term-range-adj = <6>;
- 		nvidia,xcvr-setup = <51>;
--		nvidia.xcvr-setup-use-fuses;
-+		nvidia,xcvr-setup-use-fuses;
- 		nvidia,xcvr-lsfslew = <2>;
- 		nvidia,xcvr-lsrslew = <2>;
- 		nvidia,xcvr-hsslew = <32>;
-@@ -896,7 +896,7 @@
- 		nvidia,elastic-limit = <16>;
- 		nvidia,term-range-adj = <6>;
- 		nvidia,xcvr-setup = <51>;
--		nvidia.xcvr-setup-use-fuses;
-+		nvidia,xcvr-setup-use-fuses;
- 		nvidia,xcvr-lsfslew = <2>;
- 		nvidia,xcvr-lsrslew = <2>;
- 		nvidia,xcvr-hsslew = <32>;
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index bf361277fe105..9a8c20cd06885 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -147,14 +147,14 @@
+ 
+ 			/* Apalis MMC1 */
+ 			sdmmc3_clk_pa6 {
+-				nvidia,pins = "sdmmc3_clk_pa6",
+-					      "sdmmc3_cmd_pa7";
++				nvidia,pins = "sdmmc3_clk_pa6";
+ 				nvidia,function = "sdmmc3";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_dat0_pb7 {
+-				nvidia,pins = "sdmmc3_dat0_pb7",
++				nvidia,pins = "sdmmc3_cmd_pa7",
++					      "sdmmc3_dat0_pb7",
+ 					      "sdmmc3_dat1_pb6",
+ 					      "sdmmc3_dat2_pb5",
+ 					      "sdmmc3_dat3_pb4",
 -- 
 2.20.1
