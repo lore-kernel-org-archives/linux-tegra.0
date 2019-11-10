@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 136/191] arm64: tegra: I2C on Tegra194 is not compatible with Tegra114
-Date: Sat,  9 Nov 2019 21:39:18 -0500
-Message-ID: <20191110024013.29782-136-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 139/191] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
+Date: Sat,  9 Nov 2019 21:39:21 -0500
+Message-ID: <20191110024013.29782-139-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,97 +9,44 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-[ Upstream commit d9fd22447ba59a9b53a202fade977e82bfba8d8d ]
+[ Upstream commit 1c997fe4becdc6fcbc06e23982ceb65621e6572a ]
 
-Tegra194 contains a version of the I2C controller that is no longer
-compatible with the version found in Tegra114.
+Fix MMC1 cmd pin pull-up causing issues on carrier boards without
+external pull-up.
 
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index a4dfcd19b9e88..9fc14bb9a0aff 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -118,7 +118,7 @@
- 		};
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 2f807d40c1b79..e749e047db7ab 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -171,14 +171,14 @@
  
- 		gen1_i2c: i2c@3160000 {
--			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
-+			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x03160000 0x10000>;
- 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -143,7 +143,7 @@
- 		};
- 
- 		cam_i2c: i2c@3180000 {
--			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
-+			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x03180000 0x10000>;
- 			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -157,7 +157,7 @@
- 
- 		/* shares pads with dpaux1 */
- 		dp_aux_ch1_i2c: i2c@3190000 {
--			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
-+			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x03190000 0x10000>;
- 			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -171,7 +171,7 @@
- 
- 		/* shares pads with dpaux0 */
- 		dp_aux_ch0_i2c: i2c@31b0000 {
--			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
-+			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x031b0000 0x10000>;
- 			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -184,7 +184,7 @@
- 		};
- 
- 		gen7_i2c: i2c@31c0000 {
--			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
-+			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x031c0000 0x10000>;
- 			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -197,7 +197,7 @@
- 		};
- 
- 		gen9_i2c: i2c@31e0000 {
--			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
-+			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x031e0000 0x10000>;
- 			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -264,7 +264,7 @@
- 		};
- 
- 		gen2_i2c: i2c@c240000 {
--			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
-+			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x0c240000 0x10000>;
- 			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
-@@ -277,7 +277,7 @@
- 		};
- 
- 		gen8_i2c: i2c@c250000 {
--			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
-+			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x0c250000 0x10000>;
- 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 			#address-cells = <1>;
+ 			/* Apalis MMC1 */
+ 			sdmmc3_clk_pa6 {
+-				nvidia,pins = "sdmmc3_clk_pa6",
+-					      "sdmmc3_cmd_pa7";
++				nvidia,pins = "sdmmc3_clk_pa6";
+ 				nvidia,function = "sdmmc3";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_dat0_pb7 {
+-				nvidia,pins = "sdmmc3_dat0_pb7",
++				nvidia,pins = "sdmmc3_cmd_pa7",
++					      "sdmmc3_dat0_pb7",
+ 					      "sdmmc3_dat1_pb6",
+ 					      "sdmmc3_dat2_pb5",
+ 					      "sdmmc3_dat3_pb4",
 -- 
 2.20.1
