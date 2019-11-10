@@ -1,76 +1,105 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 138/191] ARM: dts: tegra20: restore address order
-Date: Sat,  9 Nov 2019 21:39:20 -0500
-Message-ID: <20191110024013.29782-138-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 136/191] arm64: tegra: I2C on Tegra194 is not compatible with Tegra114
+Date: Sat,  9 Nov 2019 21:39:18 -0500
+Message-ID: <20191110024013.29782-136-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 8188391c127ea34d66f37eda6755d0acb51dc600 ]
+[ Upstream commit d9fd22447ba59a9b53a202fade977e82bfba8d8d ]
 
-Commit 6c468f109884 ("ARM: dts: tegra: add Tegra20 NAND flash
-controller node") introduced the nand-controller node. However, it got
-added at the wrong spot not honoring the address order. Fix this.
+Tegra194 contains a version of the I2C controller that is no longer
+compatible with the version found in Tegra114.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Reviewed-by: Stefan Agner <stefan@agner.ch>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 15b73bd377f04..80854f7de765c 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -419,19 +419,6 @@
- 		status = "disabled";
- 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index a4dfcd19b9e88..9fc14bb9a0aff 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -118,7 +118,7 @@
+ 		};
  
--	gmi@70009000 {
--		compatible = "nvidia,tegra20-gmi";
--		reg = <0x70009000 0x1000>;
--		#address-cells = <2>;
--		#size-cells = <1>;
--		ranges = <0 0 0xd0000000 0xfffffff>;
--		clocks = <&tegra_car TEGRA20_CLK_NOR>;
--		clock-names = "gmi";
--		resets = <&tegra_car 42>;
--		reset-names = "gmi";
--		status = "disabled";
--	};
--
- 	nand-controller@70008000 {
- 		compatible = "nvidia,tegra20-nand";
- 		reg = <0x70008000 0x100>;
-@@ -447,6 +434,19 @@
- 		status = "disabled";
- 	};
+ 		gen1_i2c: i2c@3160000 {
+-			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
++			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0x03160000 0x10000>;
+ 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+@@ -143,7 +143,7 @@
+ 		};
  
-+	gmi@70009000 {
-+		compatible = "nvidia,tegra20-gmi";
-+		reg = <0x70009000 0x1000>;
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0xd0000000 0xfffffff>;
-+		clocks = <&tegra_car TEGRA20_CLK_NOR>;
-+		clock-names = "gmi";
-+		resets = <&tegra_car 42>;
-+		reset-names = "gmi";
-+		status = "disabled";
-+	};
-+
- 	pwm: pwm@7000a000 {
- 		compatible = "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
+ 		cam_i2c: i2c@3180000 {
+-			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
++			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0x03180000 0x10000>;
+ 			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+@@ -157,7 +157,7 @@
+ 
+ 		/* shares pads with dpaux1 */
+ 		dp_aux_ch1_i2c: i2c@3190000 {
+-			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
++			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0x03190000 0x10000>;
+ 			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+@@ -171,7 +171,7 @@
+ 
+ 		/* shares pads with dpaux0 */
+ 		dp_aux_ch0_i2c: i2c@31b0000 {
+-			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
++			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0x031b0000 0x10000>;
+ 			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+@@ -184,7 +184,7 @@
+ 		};
+ 
+ 		gen7_i2c: i2c@31c0000 {
+-			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
++			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0x031c0000 0x10000>;
+ 			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+@@ -197,7 +197,7 @@
+ 		};
+ 
+ 		gen9_i2c: i2c@31e0000 {
+-			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
++			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0x031e0000 0x10000>;
+ 			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+@@ -264,7 +264,7 @@
+ 		};
+ 
+ 		gen2_i2c: i2c@c240000 {
+-			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
++			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0x0c240000 0x10000>;
+ 			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+@@ -277,7 +277,7 @@
+ 		};
+ 
+ 		gen8_i2c: i2c@c250000 {
+-			compatible = "nvidia,tegra194-i2c", "nvidia,tegra114-i2c";
++			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0x0c250000 0x10000>;
+ 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
 -- 
 2.20.1
