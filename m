@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 139/191] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
-Date: Sat,  9 Nov 2019 21:39:21 -0500
-Message-ID: <20191110024013.29782-139-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 141/191] ARM: tegra: colibri_t30: fix mcp2515 can controller interrupt polarity
+Date: Sat,  9 Nov 2019 21:39:23 -0500
+Message-ID: <20191110024013.29782-141-sashal@kernel.org>
 References: <20191110024013.29782-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,39 +14,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-[ Upstream commit 1c997fe4becdc6fcbc06e23982ceb65621e6572a ]
+[ Upstream commit 503fcd8464fb6cd18073e97dec59b933930655d6 ]
 
-Fix MMC1 cmd pin pull-up causing issues on carrier boards without
-external pull-up.
+Fix the MCP2515 SPI CAN controller interrupt polarity which according
+to its datasheet defaults to low-active aka falling edge.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/tegra30-apalis.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 2f807d40c1b79..e749e047db7ab 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -171,14 +171,14 @@
- 
- 			/* Apalis MMC1 */
- 			sdmmc3_clk_pa6 {
--				nvidia,pins = "sdmmc3_clk_pa6",
--					      "sdmmc3_cmd_pa7";
-+				nvidia,pins = "sdmmc3_clk_pa6";
- 				nvidia,function = "sdmmc3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 			sdmmc3_dat0_pb7 {
--				nvidia,pins = "sdmmc3_dat0_pb7",
-+				nvidia,pins = "sdmmc3_cmd_pa7",
-+					      "sdmmc3_dat0_pb7",
- 					      "sdmmc3_dat1_pb6",
- 					      "sdmmc3_dat2_pb5",
- 					      "sdmmc3_dat3_pb4",
+diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+index 16e1f387aa6db..a0c550e26738f 100644
+--- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
++++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+@@ -79,7 +79,8 @@
+ 			reg = <0>;
+ 			clocks = <&clk16m>;
+ 			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(S, 0) IRQ_TYPE_EDGE_RISING>;
++			/* CAN_INT */
++			interrupts = <TEGRA_GPIO(S, 0) IRQ_TYPE_EDGE_FALLING>;
+ 			spi-max-frequency = <10000000>;
+ 		};
+ 		spidev0: spi@1 {
 -- 
 2.20.1
