@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 08/17] ARM: tegra: Make outer_disable() open-coded
-Date: Tue, 12 Nov 2019 00:15:47 +0300
-Message-ID: <20191111211556.20723-9-digetx@gmail.com>
+Subject: [PATCH v7 09/17] arm: tegra20: cpuidle: Handle case where secondary CPU hangs on entering LP2
+Date: Tue, 12 Nov 2019 00:15:48 +0300
+Message-ID: <20191111211556.20723-10-digetx@gmail.com>
 References: <20191111211556.20723-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,50 +12,77 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The outer_disable() of Tegra's suspend code is open-coded now since
-that helper produces spurious warning message about secondary CPUs being
-online when CPU enters into LP2 from cpuidle. The secondaries are actually
-halted by the cpuidle driver on entering into LP2 idle-state, but the
-online status is not touched by the cpuidle. This fixes a storm of
-warnings once LP2 idling state is enabled on Tegra30. The outer_disable()
-helper has sanity checks for interrupts and secondary CPUs being disabled
-and we are pretty confident about the interrupts state during of CPU
-idling / system suspend. The rail-off status check is added in this patch
-as equivalent for the "num_online_cpus() > 1".
+It is possible that something may go wrong with the secondary CPU, in that
+case it is much nicer to get a dump of the flow-controller state before
+hanging machine.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/pm.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/arm/mach-tegra/cpuidle-tegra20.c | 46 +++++++++++++++++++++++++--
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 7d9ef26e52a7..d1e1a61b12cf 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -138,6 +138,10 @@ void tegra_pm_set_cpu_in_lp2(void)
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+index 77702dd42479..bc5873e92af5 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra20.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+@@ -83,14 +83,56 @@ static inline void tegra20_wake_cpu1_from_reset(void)
+ }
+ #endif
  
- static int tegra_sleep_cpu(unsigned long v2p)
- {
-+	if (tegra_cpu_car_ops->rail_off_ready &&
-+	    WARN_ON(!tegra_cpu_rail_off_ready()))
-+		return -EBUSY;
++static void tegra20_report_cpus_state(void)
++{
++	unsigned int cpu, lcpu;
 +
- 	/*
- 	 * L2 cache disabling using kernel API only allowed when all
- 	 * secondary CPU's are offline. Cache have to be disabled with
-@@ -146,9 +150,10 @@ static int tegra_sleep_cpu(unsigned long v2p)
- 	 * if any of secondary CPU's is online and this is the LP2-idle
- 	 * code-path only for Tegra20/30.
- 	 */
--	if (trusted_foundations_registered())
--		outer_disable();
--
-+#ifdef CONFIG_OUTER_CACHE
-+	if (trusted_foundations_registered() && outer_cache.disable)
-+		outer_cache.disable();
-+#endif
- 	/*
- 	 * Note that besides of setting up CPU reset vector this firmware
- 	 * call may also do the following, depending on the FW version:
++	pr_err("secondary CPU taking too long to park\n");
++
++	for_each_cpu(lcpu, cpu_possible_mask) {
++		cpu = cpu_logical_map(lcpu);
++
++		pr_err("cpu%u: online=%d flowctrl_csr=0x%08x\n",
++		       cpu, cpu_online(lcpu), flowctrl_read_cpu_csr(cpu));
++	}
++}
++
++static int tegra20_wait_for_secondary_cpu_parking(void)
++{
++	unsigned int retries = 3;
++
++	while (retries--) {
++		ktime_t timeout = ktime_add_ms(ktime_get(), 500);
++
++		/*
++		 * The primary CPU0 core shall wait for the secondaries
++		 * shutdown in order to power-off CPU's cluster safely.
++		 * The timeout value depends on the current CPU frequency,
++		 * it takes about 40-150us  in average and over 1000us in
++		 * a worst case scenario.
++		 */
++		do {
++			if (tegra_cpu_rail_off_ready())
++				return 0;
++
++		} while (ktime_before(ktime_get(), timeout));
++
++		tegra20_report_cpus_state();
++	}
++
++	pr_err("timed out waiting secondaries to park\n");
++
++	return -ETIMEDOUT;
++}
++
+ static bool tegra20_cpu_cluster_power_down(struct cpuidle_device *dev,
+ 					   struct cpuidle_driver *drv,
+ 					   int index)
+ {
+ 	bool ret;
+ 
+-	while (!tegra_cpu_rail_off_ready())
+-		cpu_relax();
++	if (tegra20_wait_for_secondary_cpu_parking())
++		return false;
+ 
+ 	ret = !tegra_pm_enter_lp2();
+ 
 -- 
 2.23.0
