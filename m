@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 10/17] arm: tegra20: cpuidle: Make abort_flag atomic
-Date: Tue, 12 Nov 2019 00:15:49 +0300
-Message-ID: <20191111211556.20723-11-digetx@gmail.com>
+Subject: [PATCH v7 16/17] ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
+Date: Tue, 12 Nov 2019 00:15:55 +0300
+Message-ID: <20191111211556.20723-17-digetx@gmail.com>
 References: <20191111211556.20723-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,47 +12,25 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Replace memory accessors with atomic API just to make code consistent
-with the abort_barrier. The new variant may be even more correct now since
-atomic_read() will prevent compiler from generating wrong things like
-carrying abort_flag value in a register instead of re-fetching it from
-memory.
+The Tegra CPU Idle driver was moved out into driver/cpuidle/ directory and
+it is now a proper platform driver.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/cpuidle-tegra20.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-index bc5873e92af5..fe80f1988120 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-@@ -32,7 +32,7 @@
- #include "sleep.h"
- 
- #ifdef CONFIG_PM_SLEEP
--static bool abort_flag;
-+static atomic_t abort_flag;
- static atomic_t abort_barrier;
- static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
- 				    struct cpuidle_driver *drv,
-@@ -167,13 +167,14 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
- 	bool entered_lp2 = false;
- 
- 	if (tegra_pending_sgi())
--		WRITE_ONCE(abort_flag, true);
-+		atomic_set(&abort_flag, 1);
- 
- 	cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
- 
--	if (abort_flag) {
-+	if (atomic_read(&abort_flag)) {
- 		cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
--		abort_flag = false;	/* clean flag for next coming */
-+		/* clean flag for next coming */
-+		atomic_set(&abort_flag, 0);
- 		return -EINTR;
- 	}
- 
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 86b37af38952..a341259160c9 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -113,6 +113,7 @@ CONFIG_CPU_IDLE=y
+ CONFIG_ARM_CPUIDLE=y
+ CONFIG_ARM_ZYNQ_CPUIDLE=y
+ CONFIG_ARM_EXYNOS_CPUIDLE=y
++CONFIG_ARM_TEGRA_CPUIDLE=y
+ CONFIG_KERNEL_MODE_NEON=y
+ CONFIG_RASPBERRYPI_FIRMWARE=y
+ CONFIG_TRUSTED_FOUNDATIONS=y
 -- 
 2.23.0
