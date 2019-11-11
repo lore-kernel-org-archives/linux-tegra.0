@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 04/10] clk: tegra20: Use custom CCLK implementation
-Date: Mon, 11 Nov 2019 23:54:13 +0300
-Message-ID: <20191111205419.16768-5-digetx@gmail.com>
+Subject: [PATCH v4 02/10] clk: tegra: pll: Add pre/post rate-change hooks
+Date: Mon, 11 Nov 2019 23:54:11 +0300
+Message-ID: <20191111205419.16768-3-digetx@gmail.com>
 References: <20191111205419.16768-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,41 +12,75 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-We're going to use the generic cpufreq-dt driver on Tegra20 and thus CCLK
-intermediate re-parenting will be performed by the clock driver. There is
-now special CCLK implementation that supports all CCLK quirks, this patch
-makes Tegra20 SoCs to use that implementation.
+There is a need to temporarily re-parent CCLK away from PLLX if PLLX's
+rate is about to change. The newly introduced PLL pre/post rate-change
+hooks allow to handle such case.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-pll.c | 12 +++++++++++-
+ drivers/clk/tegra/clk.h     |  6 ++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 4d8222f5c638..eb821666ca61 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -391,6 +391,8 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.lock_delay = 300,
- 	.freq_table = pll_x_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.pre_rate_change = tegra_cclk_pre_pllx_rate_change,
-+	.post_rate_change = tegra_cclk_post_pllx_rate_change,
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 531c2b3d814e..0b212cf2e794 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -744,13 +744,19 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 
+ 	state = clk_pll_is_enabled(hw);
+ 
++	if (state && pll->params->pre_rate_change) {
++		ret = pll->params->pre_rate_change();
++		if (WARN_ON(ret))
++			return ret;
++	}
++
+ 	_get_pll_mnp(pll, &old_cfg);
+ 
+ 	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
+ 			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
+ 		ret = pll->params->dyn_ramp(pll, cfg);
+ 		if (!ret)
+-			return 0;
++			goto done;
+ 	}
+ 
+ 	if (state) {
+@@ -772,6 +778,10 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 		pll_clk_start_ss(pll);
+ 	}
+ 
++done:
++	if (state && pll->params->post_rate_change)
++		pll->params->post_rate_change();
++
+ 	return ret;
+ }
+ 
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index ee35a847df08..fa18bef914af 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -266,6 +266,10 @@ struct tegra_clk_pll;
+  *				disabled.
+  * @dyn_ramp:			Callback which can be used to define a custom
+  *				dynamic ramp function for a given PLL.
++ * @pre_rate_change:		Callback which is invoked just before changing
++ *				PLL's rate.
++ * @post_rate_change:		Callback which is invoked right after changing
++ *				PLL's rate.
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+@@ -342,6 +346,8 @@ struct tegra_clk_pll_params {
+ 	void	(*set_defaults)(struct tegra_clk_pll *pll);
+ 	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
+ 			struct tegra_clk_pll_freq_table *cfg);
++	int	(*pre_rate_change)(void);
++	void	(*post_rate_change)(void);
  };
  
- static struct tegra_clk_pll_params pll_e_params = {
-@@ -704,9 +706,10 @@ static void tegra20_super_clk_init(void)
- 	struct clk *clk;
- 
- 	/* CCLK */
--	clk = tegra_clk_register_super_mux("cclk", cclk_parents,
-+	clk = tegra_clk_register_super_cclk("cclk", cclk_parents,
- 			      ARRAY_SIZE(cclk_parents), CLK_SET_RATE_PARENT,
--			      clk_base + CCLK_BURST_POLICY, 0, 4, 0, 0, NULL);
-+			      clk_base + CCLK_BURST_POLICY, TEGRA20_SUPER_CLK,
-+			      NULL);
- 	clks[TEGRA20_CLK_CCLK] = clk;
- 
- 	/* SCLK */
+ #define TEGRA_PLL_USE_LOCK BIT(0)
 -- 
 2.23.0
