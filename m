@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 06/10] dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
-Date: Mon, 11 Nov 2019 23:54:15 +0300
-Message-ID: <20191111205419.16768-7-digetx@gmail.com>
+Subject: [PATCH v4 05/10] clk: tegra30: Use custom CCLK implementation
+Date: Mon, 11 Nov 2019 23:54:14 +0300
+Message-ID: <20191111205419.16768-6-digetx@gmail.com>
 References: <20191111205419.16768-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,78 +12,42 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add device-tree binding that describes CPU frequency-scaling hardware
-found on NVIDIA Tegra20/30 SoCs.
+We're going to use the generic cpufreq-dt driver on Tegra30 and thus CCLK
+intermediate re-parenting will be performed by the clock driver. There is
+now special CCLK implementation that supports all CCLK quirks, this patch
+makes Tegra30 SoCs to use that implementation.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../cpufreq/nvidia,tegra20-cpufreq.txt        | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+ drivers/clk/tegra/clk-tegra30.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-new file mode 100644
-index 000000000000..daeca6ae6b76
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-@@ -0,0 +1,56 @@
-+Binding for NVIDIA Tegra20 CPUFreq
-+==================================
-+
-+Required properties:
-+- clocks: Must contain an entry for the CPU clock.
-+  See ../clocks/clock-bindings.txt for details.
-+- operating-points-v2: See ../bindings/opp/opp.txt for details.
-+- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
-+
-+For each opp entry in 'operating-points-v2' table:
-+- opp-supported-hw: Two bitfields indicating:
-+	On Tegra20:
-+	1. CPU process ID mask
-+	2. SoC speedo ID mask
-+
-+	On Tegra30:
-+	1. CPU process ID mask
-+	2. CPU speedo ID mask
-+
-+	A bitwise AND is performed against these values and if any bit
-+	matches, the OPP gets enabled.
-+
-+- opp-microvolt: CPU voltage triplet.
-+
-+Optional properties:
-+- cpu-supply: Phandle to the CPU power supply.
-+
-+Example:
-+	regulators {
-+		cpu_reg: regulator0 {
-+			regulator-name = "vdd_cpu";
-+		};
-+	};
-+
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+
-+		opp@456000000 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <825000 825000 1125000>;
-+			opp-supported-hw = <0x03 0x0001>;
-+			opp-hz = /bits/ 64 <456000000>;
-+		};
-+
-+		...
-+	};
-+
-+	cpus {
-+		cpu@0 {
-+			compatible = "arm,cortex-a9";
-+			clocks = <&tegra_car TEGRA20_CLK_CCLK>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			cpu-supply = <&cpu_reg>;
-+			#cooling-cells = <2>;
-+		};
-+	};
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index c8bc18e4d7e5..0fe03d69fe1a 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -499,6 +499,8 @@ static struct tegra_clk_pll_params pll_x_params __ro_after_init = {
+ 	.freq_table = pll_x_freq_table,
+ 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_DCCON |
+ 		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.pre_rate_change = tegra_cclk_pre_pllx_rate_change,
++	.post_rate_change = tegra_cclk_post_pllx_rate_change,
+ };
+ 
+ static struct tegra_clk_pll_params pll_e_params __ro_after_init = {
+@@ -932,11 +934,11 @@ static void __init tegra30_super_clk_init(void)
+ 	clk_register_clkdev(clk, "pll_p_out4_cclkg", NULL);
+ 
+ 	/* CCLKG */
+-	clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
++	clk = tegra_clk_register_super_cclk("cclk_g", cclk_g_parents,
+ 				  ARRAY_SIZE(cclk_g_parents),
+ 				  CLK_SET_RATE_PARENT,
+ 				  clk_base + CCLKG_BURST_POLICY,
+-				  0, 4, 0, 0, NULL);
++				  0, NULL);
+ 	clks[TEGRA30_CLK_CCLK_G] = clk;
+ 
+ 	/*
 -- 
 2.23.0
