@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 05/10] clk: tegra30: Use custom CCLK implementation
-Date: Mon, 11 Nov 2019 23:54:14 +0300
-Message-ID: <20191111205419.16768-6-digetx@gmail.com>
+Subject: [PATCH v4 08/10] ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
+Date: Mon, 11 Nov 2019 23:54:17 +0300
+Message-ID: <20191111205419.16768-9-digetx@gmail.com>
 References: <20191111205419.16768-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,42 +12,28 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-We're going to use the generic cpufreq-dt driver on Tegra30 and thus CCLK
-intermediate re-parenting will be performed by the clock driver. There is
-now special CCLK implementation that supports all CCLK quirks, this patch
-makes Tegra30 SoCs to use that implementation.
+The tegra20-cpufreq now instantiates cpufreq-dt and Tegra30 is fully
+supported by that driver.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra30.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/mach-tegra/tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index c8bc18e4d7e5..0fe03d69fe1a 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -499,6 +499,8 @@ static struct tegra_clk_pll_params pll_x_params __ro_after_init = {
- 	.freq_table = pll_x_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_DCCON |
- 		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.pre_rate_change = tegra_cclk_pre_pllx_rate_change,
-+	.post_rate_change = tegra_cclk_post_pllx_rate_change,
- };
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index e512e606eabd..1e3b85923ca3 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -95,6 +95,10 @@ static void __init tegra_dt_init_late(void)
+ 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
+ 	    of_machine_is_compatible("nvidia,tegra20"))
+ 		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
++
++	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) &&
++	    of_machine_is_compatible("nvidia,tegra30"))
++		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
+ }
  
- static struct tegra_clk_pll_params pll_e_params __ro_after_init = {
-@@ -932,11 +934,11 @@ static void __init tegra30_super_clk_init(void)
- 	clk_register_clkdev(clk, "pll_p_out4_cclkg", NULL);
- 
- 	/* CCLKG */
--	clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
-+	clk = tegra_clk_register_super_cclk("cclk_g", cclk_g_parents,
- 				  ARRAY_SIZE(cclk_g_parents),
- 				  CLK_SET_RATE_PARENT,
- 				  clk_base + CCLKG_BURST_POLICY,
--				  0, 4, 0, 0, NULL);
-+				  0, NULL);
- 	clks[TEGRA30_CLK_CCLK_G] = clk;
- 
- 	/*
+ static const char * const tegra_dt_board_compat[] = {
 -- 
 2.23.0
