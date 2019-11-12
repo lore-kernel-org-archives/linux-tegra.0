@@ -1,51 +1,64 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 000/105] 4.14.154-stable review
-Date: Tue, 12 Nov 2019 14:52:22 +0100
-Message-ID: <20191112135222.GA1331422@kroah.com>
-References: <20191111181421.390326245@linuxfoundation.org>
- <20191112052822.GC1208865@kroah.com>
- <3f16154f-018f-1472-1c91-008f1199af7f@nvidia.com>
+Subject: Re: [PATCH] mailbox: tegra: Fix superfluous IRQ error message
+Date: Tue, 12 Nov 2019 15:07:46 +0100
+Message-ID: <20191112140746.GA1333127@kroah.com>
+References: <20191011083459.11551-1-jonathanh@nvidia.com>
+ <20191014132458.GG422231@ulmo>
+ <f5cd4647-4349-f20c-bc16-da9291fc9329@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <3f16154f-018f-1472-1c91-008f1199af7f@nvidia.com>
+In-Reply-To: <f5cd4647-4349-f20c-bc16-da9291fc9329@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 12:01:03PM +0000, Jon Hunter wrote:
+On Tue, Nov 12, 2019 at 12:02:02PM +0000, Jon Hunter wrote:
+> Hi Greg,
 > 
-> On 12/11/2019 05:28, Greg Kroah-Hartman wrote:
-> > On Mon, Nov 11, 2019 at 07:27:30PM +0100, Greg Kroah-Hartman wrote:
-> >> This is the start of the stable review cycle for the 4.14.154 release.
-> >> There are 105 patches in this series, all will be posted as a response
-> >> to this one.  If anyone has any issues with these being applied, please
-> >> let me know.
+> On 14/10/2019 14:24, Thierry Reding wrote:
+> > On Fri, Oct 11, 2019 at 09:34:59AM +0100, Jon Hunter wrote:
+> >> Commit 7723f4c5ecdb ("driver core: platform: Add an error message to
+> >> platform_get_irq*()") added an error message to avoid drivers having
+> >> to print an error message when IRQ lookup fails. However, there are
+> >> some cases where IRQs are optional and so new optional versions of
+> >> the platform_get_irq*() APIs have been added for these cases.
 > >>
-> >> Responses should be made by Wed, 13 Nov 2019 18:08:44 +0000.
-> >> Anything received after that time might be too late.
+> >> The IRQs for Tegra HSP module are optional because not all instances
+> >> of the module have the doorbell and all of the shared interrupts.
+> >> Hence, since the above commit was applied the following error messages
+> >> are now seen on Tegra194 ...
 > >>
-> >> The whole patch series can be found in one patch at:
-> >> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.154-rc1.gz
+> >>  ERR KERN tegra-hsp c150000.hsp: IRQ doorbell not found
+> >>  ERR KERN tegra-hsp c150000.hsp: IRQ shared0 not found
+> >>
+> >> The Tegra HSP driver deliberately does not fail if these are not found
+> >> and so fix the above errors by updating the Tegra HSP driver to use
+> >> the platform_get_irq_byname_optional() API.
+> >>
+> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >> ---
+> >>  drivers/mailbox/tegra-hsp.c | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
 > > 
-> > There is now a -rc2 out:
-> >  	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.154-rc2.gz
+> > Perhaps Greg should pick up this patch because he's carrying the patch
+> > that adds the platform_get_irq_byname_optional() patch for v5.5.
 > > 
+> > Greg, would you prefer a copy of this in your mailbox, or does the
+> > following patchwork link suffice:
+> > 
+> > 	http://patchwork.ozlabs.org/patch/1175012/
+> > 
+> > Either way, this patch:
+> > 
+> > Acked-by: Thierry Reding <treding@nvidia.com>
+> > 
+> > Thierry
 > 
-> All tests for Tegra are passing ...
-> 
-> Test results for stable-v4.14:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     24 tests:	24 pass, 0 fail
-> 
-> Linux version:	4.14.154-rc2-gfc7e45ae100f
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+> Are you OK to pick this up? Do you need Jassi's ACK as well?
 
-Oh good, thanks for testing all of these and letting me know.
+Sorry, I'll take it as-is, it should be fine.
 
 greg k-h
