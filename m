@@ -1,70 +1,49 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 02/19] ASoC: soc-core: tidyup
- soc_init_dai_link()
-Date: Tue, 12 Nov 2019 10:51:48 +0000
-Message-ID: <fe4baf43-a06c-f2ac-9b1c-6f0ec5a25cb2@nvidia.com>
-References: <87ftj23jph.wl-kuninori.morimoto.gx@renesas.com>
- <87d0e63joh.wl-kuninori.morimoto.gx@renesas.com>
- <c976b330-f635-e818-1feb-f25db42a6ae4@nvidia.com>
- <87sgmu7xhz.wl-kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH 4.4 00/43] 4.4.201-stable review
+Date: Tue, 12 Nov 2019 12:00:09 +0000
+Message-ID: <4171f826-d86d-6874-928d-c9367453a1fc@nvidia.com>
+References: <20191111181246.772983347@linuxfoundation.org>
+ <20191112052741.GA1208865@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <87sgmu7xhz.wl-kuninori.morimoto.gx@renesas.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20191112052741.GA1208865@kroah.com>
 Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-tegra <linux-tegra@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 12/11/2019 00:24, Kuninori Morimoto wrote:
+On 12/11/2019 05:27, Greg Kroah-Hartman wrote:
+> On Mon, Nov 11, 2019 at 07:28:14PM +0100, Greg Kroah-Hartman wrote:
+>> This is the start of the stable review cycle for the 4.4.201 release.
+>> There are 43 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
+>>
+>> Responses should be made by Wed, 13 Nov 2019 18:08:44 +0000.
+>> Anything received after that time might be too late.
+>>
+>> The whole patch series can be found in one patch at:
+>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.201-rc1.gz
 > 
-> Hi Jon
+> -rc2 is out:
+>  	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.201-rc2.gz
 > 
-> Thank you for reporting.
-> 
->> I am seeing an audio regression on -next and bisect is pointing to
->> this commit. I am seeing the following crash on boot during probe
->> deferral of the soundcard ...
-> 
-> It seems timing bug.
-> I have a plan to post below patch if my current posting patch are accepted,
-> but it seems it is necessary immediately.
-> I believe your issue will be solved by this patch,
-> but can you please test it ?
-> I will formally post it with your tested-by if it was OK.
-> 
-> # It will be more cleanuped in the future,
-> # but it needs more other cleanup patches...
-> 
-> --------------------
-> Subject: [PATCH] ASoC: soc-core: care card_probed at soc_cleanup_card_resources()
-> 
-> soc_cleanup_card_resources() will call card->remove(), but it should be
-> called if card->probe() or card->late_probe() are called.
-> snd_soc_bind_card() might be error before calling
-> card->probe() / card->late_probe().
-> In that time, card->remove() will be called.
-> This patch adds card_probed parameter to judge it.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->  sound/soc/soc-core.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
 
-Thanks! I can confirm that this works, so ...
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+All tests for Tegra are passing ...
+
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
+
+Linux version:	4.4.201-rc2-gca1d1b5f0f2a
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
 
 Cheers
 Jon
