@@ -1,52 +1,64 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.3 000/193] 5.3.11-stable review
-Date: Tue, 12 Nov 2019 12:01:42 +0000
-Message-ID: <8a481f9b-251c-5848-bc76-c2d5de635072@nvidia.com>
-References: <20191111181459.850623879@linuxfoundation.org>
+Subject: Re: [PATCH] mailbox: tegra: Fix superfluous IRQ error message
+Date: Tue, 12 Nov 2019 12:02:02 +0000
+Message-ID: <f5cd4647-4349-f20c-bc16-da9291fc9329@nvidia.com>
+References: <20191011083459.11551-1-jonathanh@nvidia.com>
+ <20191014132458.GG422231@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20191111181459.850623879@linuxfoundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191014132458.GG422231@ulmo>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Greg,
 
-On 11/11/2019 18:26, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.3.11 release.
-> There are 193 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 14/10/2019 14:24, Thierry Reding wrote:
+> On Fri, Oct 11, 2019 at 09:34:59AM +0100, Jon Hunter wrote:
+>> Commit 7723f4c5ecdb ("driver core: platform: Add an error message to
+>> platform_get_irq*()") added an error message to avoid drivers having
+>> to print an error message when IRQ lookup fails. However, there are
+>> some cases where IRQs are optional and so new optional versions of
+>> the platform_get_irq*() APIs have been added for these cases.
+>>
+>> The IRQs for Tegra HSP module are optional because not all instances
+>> of the module have the doorbell and all of the shared interrupts.
+>> Hence, since the above commit was applied the following error messages
+>> are now seen on Tegra194 ...
+>>
+>>  ERR KERN tegra-hsp c150000.hsp: IRQ doorbell not found
+>>  ERR KERN tegra-hsp c150000.hsp: IRQ shared0 not found
+>>
+>> The Tegra HSP driver deliberately does not fail if these are not found
+>> and so fix the above errors by updating the Tegra HSP driver to use
+>> the platform_get_irq_byname_optional() API.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/mailbox/tegra-hsp.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Responses should be made by Wed, 13 Nov 2019 18:08:44 +0000.
-> Anything received after that time might be too late.
+> Perhaps Greg should pick up this patch because he's carrying the patch
+> that adds the platform_get_irq_byname_optional() patch for v5.5.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> and the diffstat can be found below.
+> Greg, would you prefer a copy of this in your mailbox, or does the
+> following patchwork link suffice:
 > 
-> thanks,
+> 	http://patchwork.ozlabs.org/patch/1175012/
 > 
-> greg k-h
+> Either way, this patch:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+> Thierry
 
-All tests for Tegra are passing ...
+Are you OK to pick this up? Do you need Jassi's ACK as well?
 
-Test results for stable-v5.3:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.3.11-rc1-gfeeefcbdbfc1
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
+Thanks!
 Jon
 
 -- 
