@@ -1,108 +1,73 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] base: soc: Export soc_device_to_device() helper
-Date: Tue, 12 Nov 2019 10:48:56 +0000
-Message-ID: <20191112104856.GQ3218@dell>
-References: <20191103013645.9856-3-afaerber@suse.de>
- <20191111045609.7026-1-afaerber@suse.de>
- <20191111052741.GB3176397@kroah.com>
- <586fa37c-6292-aca4-fa7c-73064858afaf@suse.de>
- <20191111064040.GA3502217@kroah.com>
- <a88442df-dc6b-07e5-8dee-9e308bdda450@suse.de>
- <20191112052347.GA1197504@kroah.com>
- <20191112072926.isjxfa4ci6akhx56@pengutronix.de>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 02/19] ASoC: soc-core: tidyup
+ soc_init_dai_link()
+Date: Tue, 12 Nov 2019 10:51:48 +0000
+Message-ID: <fe4baf43-a06c-f2ac-9b1c-6f0ec5a25cb2@nvidia.com>
+References: <87ftj23jph.wl-kuninori.morimoto.gx@renesas.com>
+ <87d0e63joh.wl-kuninori.morimoto.gx@renesas.com>
+ <c976b330-f635-e818-1feb-f25db42a6ae4@nvidia.com>
+ <87sgmu7xhz.wl-kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191112072926.isjxfa4ci6akhx56@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-realtek-soc@lists.infradead.org, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Fabio Estevam <festevam@gmail.com>, Kevin Hilman <khilman@baylibre.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org, Alexander
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <87sgmu7xhz.wl-kuninori.morimoto.gx@renesas.com>
+Content-Language: en-US
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-tegra <linux-tegra@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 12 Nov 2019, Uwe Kleine-König wrote:
 
-> On Tue, Nov 12, 2019 at 06:23:47AM +0100, Greg Kroah-Hartman wrote:
-> > On Mon, Nov 11, 2019 at 09:10:41PM +0100, Andreas Färber wrote:
-> > > Am 11.11.19 um 07:40 schrieb Greg Kroah-Hartman:
-> > > > On Mon, Nov 11, 2019 at 06:42:05AM +0100, Andreas Färber wrote:
-> > > >> Hi Greg,
-> > > >>
-> > > >> Am 11.11.19 um 06:27 schrieb Greg Kroah-Hartman:
-> > > >>> On Mon, Nov 11, 2019 at 05:56:09AM +0100, Andreas Färber wrote:
-> > > >>>> Use of soc_device_to_device() in driver modules causes a build failure.
-> > > >>>> Given that the helper is nicely documented in include/linux/sys_soc.h,
-> > > >>>> let's export it as GPL symbol.
-> > > >>>
-> > > >>> I thought we were fixing the soc drivers to not need this.  What
-> > > >>> happened to that effort?  I thought I had patches in my tree (or
-> > > >>> someone's tree) that did some of this work already, such that this
-> > > >>> symbol isn't needed anymore.
-> > > >>
-> > > >> I do still see this function used in next-20191108 in drivers/soc/.
-> > > >>
-> > > >> I'll be happy to adjust my RFC driver if someone points me to how!
-> > > > 
-> > > > Look at c31e73121f4c ("base: soc: Handle custom soc information sysfs
-> > > > entries") for how you can just use the default attributes for the soc to
-> > > > create the needed sysfs files, instead of having to do it "by hand"
-> > > > which is racy and incorrect.
-> > > 
-> > > Unrelated.
-> > > 
-> > > >> Given the current struct layout, a type cast might work (but ugly).
-> > > >> Or if we stay with my current RFC driver design, we could use the
-> > > >> platform_device instead of the soc_device (which would clutter the
-> > > >> screen more than "soc soc0:") or resort to pr_info() w/o device.
-> > > > 
-> > > > Ick, no, don't cast blindly.  What do you need the pointer for?  Is this
-> > > > for in-tree code?
-> > > 
-> > > No, an RFC patchset: https://patchwork.kernel.org/cover/11224261/
-> > > 
-> > > As I indicated above, I used it for a dev_info(), which I can easily
-> > > avoid by using pr_info() instead:
-> > > 
-> > > diff --git a/drivers/soc/realtek/chip.c b/drivers/soc/realtek/chip.c
-> > > index e5078c6731fd..f9380e831659 100644
-> > > --- a/drivers/soc/realtek/chip.c
-> > > +++ b/drivers/soc/realtek/chip.c
-> > > @@ -178,8 +178,7 @@ static int rtd_soc_probe(struct platform_device *pdev)
-> > > 
-> > >         platform_set_drvdata(pdev, soc_dev);
-> > > 
-> > > -       dev_info(soc_device_to_device(soc_dev),
-> > > -               "%s %s (0x%08x) rev %s (0x%08x) detected\n",
-> > > +       pr_info("%s %s (0x%08x) rev %s (0x%08x) detected\n",
-> > >                 soc_dev_attr->family, soc_dev_attr->soc_id, chip_id,
-> > >                 soc_dev_attr->revision, chip_rev);
-> > 
-> > First off, the driver should not be spitting out noise for when all goes
-> > well like this :)
+On 12/11/2019 00:24, Kuninori Morimoto wrote:
 > 
-> I didn't follow the discussion closely, but I think I want to object
-> here a bit. While I agree that each driver emitting some stuff to the
-> log buffer is hardly helpful, seeing the exact SoC details is indeed
-> useful at times. With my Debian kernel team member hat on, I'd say
-> keep this information. This way the SoC details make it into kernel bug
-> reports without effort on our side.
+> Hi Jon
+> 
+> Thank you for reporting.
+> 
+>> I am seeing an audio regression on -next and bisect is pointing to
+>> this commit. I am seeing the following crash on boot during probe
+>> deferral of the soundcard ...
+> 
+> It seems timing bug.
+> I have a plan to post below patch if my current posting patch are accepted,
+> but it seems it is necessary immediately.
+> I believe your issue will be solved by this patch,
+> but can you please test it ?
+> I will formally post it with your tested-by if it was OK.
+> 
+> # It will be more cleanuped in the future,
+> # but it needs more other cleanup patches...
+> 
+> --------------------
+> Subject: [PATCH] ASoC: soc-core: care card_probed at soc_cleanup_card_resources()
+> 
+> soc_cleanup_card_resources() will call card->remove(), but it should be
+> called if card->probe() or card->late_probe() are called.
+> snd_soc_bind_card() might be error before calling
+> card->probe() / card->late_probe().
+> In that time, card->remove() will be called.
+> This patch adds card_probed parameter to judge it.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>  sound/soc/soc-core.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
 
-Right. From my angle we are starting to be way too aggressive with the
-point about not printing information to the kernel log. In only a
-small set of cases does this actually cause an issue i.e. with
-platforms containing so many devices that printing information from
-each of them does significantly increase boot times. In my world of
-small electronics I've been greatly hindered by the lack of
-information, such that it has cost days of engineering trying to track
-down fictitious bugs and the like.
+Thanks! I can confirm that this works, so ...
 
-For platforms where printing useful information culminates in negative
-effects, perhaps simply lower their log level, rather than suffocate
-all platforms.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+nvpublic
