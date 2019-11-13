@@ -1,7 +1,7 @@
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH 3/3] tty: serial: tegra: Use dma_request_chan() directly for channel request
-Date: Wed, 13 Nov 2019 11:46:18 +0200
-Message-ID: <20191113094618.1725-4-peter.ujfalusi@ti.com>
+Subject: [PATCH 1/3] tty: serial: amba-pl011: Use dma_request_chan() directly for channel request
+Date: Wed, 13 Nov 2019 11:46:16 +0200
+Message-ID: <20191113094618.1725-2-peter.ujfalusi@ti.com>
 References: <20191113094618.1725-1-peter.ujfalusi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -19,23 +19,22 @@ dma_request_slave_channel_reason() is:
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- drivers/tty/serial/serial-tegra.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/serial/amba-pl011.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index 2f599515c133..b6ace6290e23 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -1122,8 +1122,7 @@ static int tegra_uart_dma_channel_allocate(struct tegra_uart_port *tup,
- 	int ret;
- 	struct dma_slave_config dma_sconfig;
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index ae63266e181f..38e2d25f7e23 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -414,7 +414,7 @@ static void pl011_dma_probe(struct uart_amba_port *uap)
+ 	dma_cap_mask_t mask;
  
--	dma_chan = dma_request_slave_channel_reason(tup->uport.dev,
--						dma_to_memory ? "rx" : "tx");
-+	dma_chan = dma_request_chan(tup->uport.dev, dma_to_memory ? "rx" : "tx");
- 	if (IS_ERR(dma_chan)) {
- 		ret = PTR_ERR(dma_chan);
- 		dev_err(tup->uport.dev,
+ 	uap->dma_probed = true;
+-	chan = dma_request_slave_channel_reason(dev, "tx");
++	chan = dma_request_chan(dev, "tx");
+ 	if (IS_ERR(chan)) {
+ 		if (PTR_ERR(chan) == -EPROBE_DEFER) {
+ 			uap->dma_probed = false;
 -- 
 Peter
 
