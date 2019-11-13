@@ -1,49 +1,57 @@
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH 4/4] i2c: tegra: Use dma_request_chan() directly for channel request
-Date: Wed, 13 Nov 2019 11:22:35 +0200
-Message-ID: <20191113092235.30440-5-peter.ujfalusi@ti.com>
-References: <20191113092235.30440-1-peter.ujfalusi@ti.com>
+Subject: [PATCH 0/9] spi: Use dma_request_chan() directly for channel request
+Date: Wed, 13 Nov 2019 11:42:47 +0200
+Message-ID: <20191113094256.1108-1-peter.ujfalusi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191113092235.30440-1-peter.ujfalusi@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: ludovic.desroches@microchip.com, agross@kernel.org, wsa+renesas@sang-engineering.com, ldewangan@nvidia.com
-Cc: vkoul@kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, digetx@gmail.com, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, bjorn.andersson@linaro.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: broonie@kernel.org, radu_nicolae.pirea@upb.ro, shawnguo@kernel.org, s.hauer@pengutronix.de, linus.walleij@linaro.org, agross@kernel.org, bjorn.andersson@linaro.org, andi@etezian.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: alexandre.belloni@bootlin.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, linux-spi@vger.kernel.org, vkoul@kernel.org, kgene@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-dma_request_slave_channel_reason() is:
+Hi,
+
+I'm going through the tree to remove dma_request_slave_channel_reason() as it
+is just:
 #define dma_request_slave_channel_reason(dev, name) \
 	dma_request_chan(dev, name)
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Regards,
+Peter
 ---
- drivers/i2c/busses/i2c-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Peter Ujfalusi (9):
+  spi: at91-usart: Use dma_request_chan() directly for channel request
+  spi: atmel: Use dma_request_chan() directly for channel request
+  spi: fsl-lpspi: Use dma_request_chan() directly for channel request
+  spi: imx: Use dma_request_chan() directly for channel request
+  spi: pl022: Use dma_request_chan() directly for channel request
+  spi: qup: Use dma_request_chan() directly for channel request
+  spi: s3c64xx: Use dma_request_chan() directly for channel request
+  spi: tegra114: Use dma_request_chan() directly for channel request
+  spi: tegra20-slink: Use dma_request_chan() directly for channel
+    request
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index c1683f9338b4..a98bf31d0e5c 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -413,7 +413,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 		return 0;
- 	}
- 
--	chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
-+	chan = dma_request_chan(i2c_dev->dev, "rx");
- 	if (IS_ERR(chan)) {
- 		err = PTR_ERR(chan);
- 		goto err_out;
-@@ -421,7 +421,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 
- 	i2c_dev->rx_dma_chan = chan;
- 
--	chan = dma_request_slave_channel_reason(i2c_dev->dev, "tx");
-+	chan = dma_request_chan(i2c_dev->dev, "tx");
- 	if (IS_ERR(chan)) {
- 		err = PTR_ERR(chan);
- 		goto err_out;
+ drivers/spi/spi-at91-usart.c    | 4 ++--
+ drivers/spi/spi-atmel.c         | 2 +-
+ drivers/spi/spi-fsl-lpspi.c     | 4 ++--
+ drivers/spi/spi-imx.c           | 4 ++--
+ drivers/spi/spi-pl022.c         | 4 ++--
+ drivers/spi/spi-qup.c           | 4 ++--
+ drivers/spi/spi-s3c64xx.c       | 6 ++----
+ drivers/spi/spi-tegra114.c      | 3 +--
+ drivers/spi/spi-tegra20-slink.c | 3 +--
+ 9 files changed, 15 insertions(+), 19 deletions(-)
+
 -- 
 Peter
 
