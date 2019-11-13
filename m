@@ -1,7 +1,7 @@
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH 3/4] i2c: sh_mobile: Use dma_request_chan() directly for channel request
-Date: Wed, 13 Nov 2019 11:22:34 +0200
-Message-ID: <20191113092235.30440-4-peter.ujfalusi@ti.com>
+Subject: [PATCH 4/4] i2c: tegra: Use dma_request_chan() directly for channel request
+Date: Wed, 13 Nov 2019 11:22:35 +0200
+Message-ID: <20191113092235.30440-5-peter.ujfalusi@ti.com>
 References: <20191113092235.30440-1-peter.ujfalusi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -19,22 +19,31 @@ dma_request_slave_channel_reason() is:
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 8777af4c695e..82b3b795e0bd 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -486,7 +486,7 @@ static struct dma_chan *sh_mobile_i2c_request_dma_chan(struct device *dev,
- 	char *chan_name = dir == DMA_MEM_TO_DEV ? "tx" : "rx";
- 	int ret;
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c1683f9338b4..a98bf31d0e5c 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -413,7 +413,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+ 		return 0;
+ 	}
  
--	chan = dma_request_slave_channel_reason(dev, chan_name);
-+	chan = dma_request_chan(dev, chan_name);
+-	chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
++	chan = dma_request_chan(i2c_dev->dev, "rx");
  	if (IS_ERR(chan)) {
- 		dev_dbg(dev, "request_channel failed for %s (%ld)\n", chan_name,
- 			PTR_ERR(chan));
+ 		err = PTR_ERR(chan);
+ 		goto err_out;
+@@ -421,7 +421,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+ 
+ 	i2c_dev->rx_dma_chan = chan;
+ 
+-	chan = dma_request_slave_channel_reason(i2c_dev->dev, "tx");
++	chan = dma_request_chan(i2c_dev->dev, "tx");
+ 	if (IS_ERR(chan)) {
+ 		err = PTR_ERR(chan);
+ 		goto err_out;
 -- 
 Peter
 
