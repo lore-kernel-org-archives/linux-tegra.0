@@ -1,64 +1,66 @@
-From: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH 1/9] spi: at91-usart: Use dma_request_chan() directly for
- channel request
-Date: Wed, 13 Nov 2019 14:18:51 +0000
-Message-ID: <05f47be4-f58a-d61f-92e1-c4985c4c3680@microchip.com>
-References: <20191113094256.1108-1-peter.ujfalusi@ti.com>
- <20191113094256.1108-2-peter.ujfalusi@ti.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] clk: tegra: clk-dfll: Fix to remove
+ pm_runtime_irq_safe
+Date: Wed, 13 Nov 2019 19:22:39 +0300
+Message-ID: <353b9aef-3bcc-65d2-a942-91d6710b89ca@gmail.com>
+References: <1573575426-31314-1-git-send-email-skomatineni@nvidia.com>
+ <1573575426-31314-2-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191113094256.1108-2-peter.ujfalusi@ti.com>
+In-Reply-To: <1573575426-31314-2-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
-Content-ID: <E9B225392312DD4A83975A3892B8473A@namprd11.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: peter.ujfalusi@ti.com, broonie@kernel.org, radu_nicolae.pirea@upb.ro, shawnguo@kernel.org, s.hauer@pengutronix.de, linus.walleij@linaro.org, agross@kernel.org, bjorn.andersson@linaro.org, andi@etezian.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: alexandre.belloni@bootlin.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, linux-spi@vger.kernel.org, vkoul@kernel.org, kgene@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, sboyd@kernel.org, mturquette@baylibre.com, pgaikwad@nvidia.com
+Cc: pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 13/11/2019 at 10:42, Peter Ujfalusi wrote:
-> External E-Mail
->=20
->=20
-> dma_request_slave_channel_reason() is:
-> #define dma_request_slave_channel_reason(dev, name) \
-> 	dma_request_chan(dev, name)
->=20
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-
+12.11.2019 19:17, Sowjanya Komatineni пишет:
+> pm_runtime_irq_safe is not needed as interrupts are allowed during
+> suspend and resume. This was added mistakenly during dfll suspend
+> and resume support patch.
+> 
+> This patch includes fix to remove pm_runtime_irq_safe.
+> 
+> Also updated description of dfll_suspend argument.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->   drivers/spi/spi-at91-usart.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
-> index a40bb2ef89dc..88033422a42a 100644
-> --- a/drivers/spi/spi-at91-usart.c
-> +++ b/drivers/spi/spi-at91-usart.c
-> @@ -132,7 +132,7 @@ static int at91_usart_spi_configure_dma(struct spi_co=
-ntroller *ctlr,
->   	dma_cap_zero(mask);
->   	dma_cap_set(DMA_SLAVE, mask);
->  =20
-> -	ctlr->dma_tx =3D dma_request_slave_channel_reason(dev, "tx");
-> +	ctlr->dma_tx =3D dma_request_chan(dev, "tx");
->   	if (IS_ERR_OR_NULL(ctlr->dma_tx)) {
->   		if (IS_ERR(ctlr->dma_tx)) {
->   			err =3D PTR_ERR(ctlr->dma_tx);
-> @@ -145,7 +145,7 @@ static int at91_usart_spi_configure_dma(struct spi_co=
-ntroller *ctlr,
->   		goto at91_usart_spi_error_clear;
->   	}
->  =20
-> -	ctlr->dma_rx =3D dma_request_slave_channel_reason(dev, "rx");
-> +	ctlr->dma_rx =3D dma_request_chan(dev, "rx");
->   	if (IS_ERR_OR_NULL(ctlr->dma_rx)) {
->   		if (IS_ERR(ctlr->dma_rx)) {
->   			err =3D PTR_ERR(ctlr->dma_rx);
->=20
+>  drivers/clk/tegra/clk-dfll.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index c051d92c2bbf..cfbaa90c7adb 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -1487,7 +1487,6 @@ static int dfll_init(struct tegra_dfll *td)
+>  	td->last_unrounded_rate = 0;
+>  
+>  	pm_runtime_enable(td->dev);
+> -	pm_runtime_irq_safe(td->dev);
+>  	pm_runtime_get_sync(td->dev);
+>  
+>  	dfll_set_mode(td, DFLL_DISABLED);
+> @@ -1516,7 +1515,7 @@ static int dfll_init(struct tegra_dfll *td)
+>  
+>  /**
+>   * tegra_dfll_suspend - check DFLL is disabled
+> - * @dev: DFLL device *
+> + * @dev: DFLL instance
+>   *
+>   * DFLL clock should be disabled by the CPUFreq driver. So, make
+>   * sure it is disabled and disable all clocks needed by the DFLL.
+> 
 
+Hello Sowjanya,
 
---=20
-Nicolas Ferre
+It should be better to have the commit's title saying something more
+generic like "Clean up code" or to have two separate patches because
+this patch does two things that are unrelated to each other in
+accordance to the title and this is a bit confusing at first glance.
+Although, that's not a big deal for a trivial patch like this and it
+should be fine as is (IMO). Please take into account in the future
+patches that both commit's title and description should be accurate.
+
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
