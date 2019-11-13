@@ -1,27 +1,26 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/9] spi: pl022: Use dma_request_chan() directly for
- channel request
-Date: Wed, 13 Nov 2019 18:16:37 +0100
-Message-ID: <CACRpkdZ=xM2GYTDDLKoFwwdqp09-UDOyqogDW5pLvg4QaZXR6Q@mail.gmail.com>
-References: <20191113094256.1108-1-peter.ujfalusi@ti.com> <20191113094256.1108-6-peter.ujfalusi@ti.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v2] clk: tegra: divider: Check UART's divider enable-bit state on rate's recalculation
+Date: Wed, 13 Nov 2019 15:03:01 -0800
+Message-ID: <20191113230303.726AE206E3@mail.kernel.org>
+References: <20191030004813.9187-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191113094256.1108-6-peter.ujfalusi@ti.com>
+In-Reply-To: <20191030004813.9187-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Mark Brown <broonie@kernel.org>, radu_nicolae.pirea@upb.ro, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andi Shyti <andi@etezian.org>, Laxman Dewangan <ldewangan@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, linux-spi <linux-spi@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, MSM <linux-arm-msm@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-tegra@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 10:42 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+Quoting Dmitry Osipenko (2019-10-29 17:48:13)
+> UART clock is divided using divisor values from DLM/DLL registers when
+> enable-bit is unset in clk register and clk's divider configuration isn't
+> taken onto account in this case. This doesn't cause any problems, but
+> let's add a check for the divider's enable-bit state, for consistency.
+>=20
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-> dma_request_slave_channel_reason() is:
-> #define dma_request_slave_channel_reason(dev, name) \
->         dma_request_chan(dev, name)
->
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+Is this going to be picked up or should I just apply atop the tegra PR?
