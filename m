@@ -1,7 +1,7 @@
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH 1/4] i2c: at91: Use dma_request_chan() directly for channel request
-Date: Wed, 13 Nov 2019 11:22:32 +0200
-Message-ID: <20191113092235.30440-2-peter.ujfalusi@ti.com>
+Subject: [PATCH 2/4] i2c: qup: Use dma_request_chan() directly for channel request
+Date: Wed, 13 Nov 2019 11:22:33 +0200
+Message-ID: <20191113092235.30440-3-peter.ujfalusi@ti.com>
 References: <20191113092235.30440-1-peter.ujfalusi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -19,30 +19,31 @@ dma_request_slave_channel_reason() is:
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- drivers/i2c/busses/i2c-at91-master.c | 4 ++--
+ drivers/i2c/busses/i2c-qup.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-at91-master.c b/drivers/i2c/busses/i2c-at91-master.c
-index 6e0b554dcd4e..7a862e00b475 100644
---- a/drivers/i2c/busses/i2c-at91-master.c
-+++ b/drivers/i2c/busses/i2c-at91-master.c
-@@ -758,14 +758,14 @@ static int at91_twi_configure_dma(struct at91_twi_dev *dev, u32 phy_addr)
- 	slave_config.dst_maxburst = 1;
- 	slave_config.device_fc = false;
+diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+index e09cd0775ae9..2d7dabe12723 100644
+--- a/drivers/i2c/busses/i2c-qup.c
++++ b/drivers/i2c/busses/i2c-qup.c
+@@ -628,7 +628,7 @@ static int qup_i2c_req_dma(struct qup_i2c_dev *qup)
+ 	int err;
  
--	dma->chan_tx = dma_request_slave_channel_reason(dev->dev, "tx");
-+	dma->chan_tx = dma_request_chan(dev->dev, "tx");
- 	if (IS_ERR(dma->chan_tx)) {
- 		ret = PTR_ERR(dma->chan_tx);
- 		dma->chan_tx = NULL;
- 		goto error;
+ 	if (!qup->btx.dma) {
+-		qup->btx.dma = dma_request_slave_channel_reason(qup->dev, "tx");
++		qup->btx.dma = dma_request_chan(qup->dev, "tx");
+ 		if (IS_ERR(qup->btx.dma)) {
+ 			err = PTR_ERR(qup->btx.dma);
+ 			qup->btx.dma = NULL;
+@@ -638,7 +638,7 @@ static int qup_i2c_req_dma(struct qup_i2c_dev *qup)
  	}
  
--	dma->chan_rx = dma_request_slave_channel_reason(dev->dev, "rx");
-+	dma->chan_rx = dma_request_chan(dev->dev, "rx");
- 	if (IS_ERR(dma->chan_rx)) {
- 		ret = PTR_ERR(dma->chan_rx);
- 		dma->chan_rx = NULL;
+ 	if (!qup->brx.dma) {
+-		qup->brx.dma = dma_request_slave_channel_reason(qup->dev, "rx");
++		qup->brx.dma = dma_request_chan(qup->dev, "rx");
+ 		if (IS_ERR(qup->brx.dma)) {
+ 			dev_err(qup->dev, "\n rx channel not available");
+ 			err = PTR_ERR(qup->brx.dma);
 -- 
 Peter
 
