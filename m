@@ -1,16 +1,16 @@
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH 8/9] spi: tegra114: Use dma_request_chan() directly for channel request
-Date: Wed, 13 Nov 2019 11:42:55 +0200
-Message-ID: <20191113094256.1108-9-peter.ujfalusi@ti.com>
-References: <20191113094256.1108-1-peter.ujfalusi@ti.com>
+Subject: [PATCH 2/3] tty: serial: msm_serial: Use dma_request_chan() directly for channel request
+Date: Wed, 13 Nov 2019 11:46:17 +0200
+Message-ID: <20191113094618.1725-3-peter.ujfalusi@ti.com>
+References: <20191113094618.1725-1-peter.ujfalusi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191113094256.1108-1-peter.ujfalusi@ti.com>
+In-Reply-To: <20191113094618.1725-1-peter.ujfalusi@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, radu_nicolae.pirea@upb.ro, shawnguo@kernel.org, s.hauer@pengutronix.de, linus.walleij@linaro.org, agross@kernel.org, bjorn.andersson@linaro.org, andi@etezian.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: vkoul@kernel.org, linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com, linux-arm-msm@vger.kernel.org, kgene@kernel.org, krzk@kernel.org, linux-tegra@vger.kernel.org
+To: gregkh@linuxfoundation.org, linux@armlinux.org.uk, agross@kernel.org, bjorn.andersson@linaro.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: vkoul@kernel.org, jslaby@suse.com, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 dma_request_slave_channel_reason() is:
@@ -19,23 +19,31 @@ dma_request_slave_channel_reason() is:
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- drivers/spi/spi-tegra114.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/serial/msm_serial.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index e6a450d9b4f0..fc40ab146c86 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -666,8 +666,7 @@ static int tegra_spi_init_dma_param(struct tegra_spi_data *tspi,
- 	dma_addr_t dma_phys;
- 	int ret;
+diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
+index 00964b6e4ac1..1cbae0768b1f 100644
+--- a/drivers/tty/serial/msm_serial.c
++++ b/drivers/tty/serial/msm_serial.c
+@@ -301,7 +301,7 @@ static void msm_request_tx_dma(struct msm_port *msm_port, resource_size_t base)
+ 	dma = &msm_port->tx_dma;
  
--	dma_chan = dma_request_slave_channel_reason(tspi->dev,
--					dma_to_memory ? "rx" : "tx");
-+	dma_chan = dma_request_chan(tspi->dev, dma_to_memory ? "rx" : "tx");
- 	if (IS_ERR(dma_chan)) {
- 		ret = PTR_ERR(dma_chan);
- 		if (ret != -EPROBE_DEFER)
+ 	/* allocate DMA resources, if available */
+-	dma->chan = dma_request_slave_channel_reason(dev, "tx");
++	dma->chan = dma_request_chan(dev, "tx");
+ 	if (IS_ERR(dma->chan))
+ 		goto no_tx;
+ 
+@@ -344,7 +344,7 @@ static void msm_request_rx_dma(struct msm_port *msm_port, resource_size_t base)
+ 	dma = &msm_port->rx_dma;
+ 
+ 	/* allocate DMA resources, if available */
+-	dma->chan = dma_request_slave_channel_reason(dev, "rx");
++	dma->chan = dma_request_chan(dev, "rx");
+ 	if (IS_ERR(dma->chan))
+ 		goto no_rx;
+ 
 -- 
 Peter
 
