@@ -1,188 +1,184 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: clk/clk-next boot bisection: v5.4-rc1-201-ga228ae437aa5 on
- tegra124-nyan-big
-Date: Thu, 14 Nov 2019 15:30:34 +0300
-Message-ID: <3ec9c0c6-7a52-4c5e-7784-c56e416e3721@gmail.com>
-References: <5dccdf20.1c69fb81.418aa.a71c@mx.google.com>
- <2696747d-3a82-4244-84dc-bb351364e53e@gmail.com>
- <20191114121529.GD5690@aiwendil>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] drm/tegra: Turn off and reset hardware across
+ suspend-resume
+Date: Thu, 14 Nov 2019 21:31:17 +0100
+Message-ID: <20191114203117.GA761559@ulmo>
+References: <20190811183932.15850-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191114121529.GD5690@aiwendil>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190811183932.15850-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "kernelci.org bot" <bot@kernelci.org>, tomeu.vizoso@collabora.com, Stephen Boyd <sboyd@kernel.org>, guillaume.tucker@collabora.com, mgalka@collabora.com, Thierry Reding <treding@nvidia.com>, broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com, enric.balletbo@collabora.com, Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-14.11.2019 15:15, Thierry Reding пишет:
-> On Thu, Nov 14, 2019 at 02:56:20PM +0300, Dmitry Osipenko wrote:
->> 14.11.2019 07:59, kernelci.org bot пишет:
->>> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
->>> * This automated bisection report was sent to you on the basis  *
->>> * that you may be involved with the breaking commit it has      *
->>> * found.  No manual investigation has been done to verify it,   *
->>> * and the root cause of the problem may be somewhere else.      *
->>> *                                                               *
->>> * If you do send a fix, please include this trailer:            *
->>> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
->>> *                                                               *
->>> * Hope this helps!                                              *
->>> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
->>>
->>> clk/clk-next boot bisection: v5.4-rc1-201-ga228ae437aa5 on tegra124-nyan-big
->>>
->>> Summary:
->>>   Start:      a228ae437aa5 Merge branch 'clk-unused' into clk-next
->>>   Details:    https://kernelci.org/boot/id/5dcc99e959b514100f138e14
->>>   Plain log:  https://storage.kernelci.org//clk/clk-next/v5.4-rc1-201-ga228ae437aa5/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.txt
->>>   HTML log:   https://storage.kernelci.org//clk/clk-next/v5.4-rc1-201-ga228ae437aa5/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.html
->>>   Result:     25175c806a68 clk: tegra: Reimplement SOR clock on Tegra124
->>>
->>> Checks:
->>>   revert:     PASS
->>>   verify:     PASS
->>>
->>> Parameters:
->>>   Tree:       clk
->>>   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
->>>   Branch:     clk-next
->>>   Target:     tegra124-nyan-big
->>>   CPU arch:   arm
->>>   Lab:        lab-collabora
->>>   Compiler:   gcc-8
->>>   Config:     tegra_defconfig
->>>   Test suite: boot
->>>
->>> Breaking commit found:
->>>
->>> -------------------------------------------------------------------------------
->>> commit 25175c806a6841149abe46168e0af12593141612
->>> Author: Thierry Reding <treding@nvidia.com>
->>> Date:   Thu Jul 25 18:19:00 2019 +0200
->>>
->>>     clk: tegra: Reimplement SOR clock on Tegra124
->>>     
->>>     In order to allow the display driver to deal uniformly with all SOR
->>>     generations, implement the SOR clocks in a way that is compatible with
->>>     Tegra186 and later.
->>>     
->>>     Acked-by: Stephen Boyd <sboyd@kernel.org>
->>>     Signed-off-by: Thierry Reding <treding@nvidia.com>
->>>
->>> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
->>> index 7d231529c3a5..b3110d5b5a6c 100644
->>> --- a/drivers/clk/tegra/clk-tegra124.c
->>> +++ b/drivers/clk/tegra/clk-tegra124.c
->>> @@ -1005,20 +1005,24 @@ static struct tegra_devclk devclks[] __initdata = {
->>>  	{ .con_id = "hda2hdmi", .dt_id = TEGRA124_CLK_HDA2HDMI },
->>>  };
->>>  
->>> -static const char *mux_pllp_pllm_plld_plla_pllc_plld2_clkm[] = {
->>> -	"pll_p", "pll_m", "pll_d_out0", "pll_a_out0", "pll_c",
->>> -	"pll_d2_out0", "clk_m"
->>> +static const char * const sor0_parents[] = {
->>> +	"pll_p_out0", "pll_m_out0", "pll_d_out0", "pll_a_out0", "pll_c_out0",
->>> +	"pll_d2_out0", "clk_m",
->>>  };
->>
->> I'm not sure how it supposed to work because looks like some of these
->> "_out0" parent clocks just do not exists in the upstream clk driver.
->>
->> Either some other patch that adds "_out0" aliases is missed or this
->> patch was based on top of a different codebase (downstream kernel?).
-> 
-> The pll_d{,2}_out0 clocks are registered as fixed-factor clocks. The
-> others I'm not exactly sure, but I think I ended up taking these
-> directly from the register tables in the TRM (the clock mux fields).
-> Looks like we ended up naming these differently in the kernel driver
-> when it was merged initially.
-> 
-> The reason why this works is because the common clock framework will not
-> flag these clocks as missing since they may appear at some later point
-> (perhaps by some different provider).
 
-Right.
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> In this case it doesn't really matter because the only parents that are
-> ever used or the clk_m, pll_d_out0 and pll_d2_out0.
+On Sun, Aug 11, 2019 at 09:39:32PM +0300, Dmitry Osipenko wrote:
+> The drivers core bumps runtime PM refcount during of entering into
+> suspend to workaround some problem where parent device may become turned
+> off before its children. In order to disable and reset CRTCs/HDMI/etc
+> hardware, the runtime PM needs to be "forced" into suspend mode.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>=20
+> Changelog:
+>=20
+> v2: The SYSTEM_SLEEP_PM_OPS are now set for all of the relevant drivers a=
+nd
+>     not only for the DC because turned out that they all should enforce t=
+he
+>     suspending.
+>=20
+>  drivers/gpu/drm/tegra/dc.c    | 2 ++
+>  drivers/gpu/drm/tegra/dpaux.c | 2 ++
+>  drivers/gpu/drm/tegra/dsi.c   | 2 ++
+>  drivers/gpu/drm/tegra/hdmi.c  | 2 ++
+>  drivers/gpu/drm/tegra/hub.c   | 2 ++
+>  drivers/gpu/drm/tegra/sor.c   | 2 ++
+>  drivers/gpu/drm/tegra/vic.c   | 2 ++
+>  7 files changed, 14 insertions(+)
 
-Okay.
+I'm not exactly sure I understand why this is necessary. Runtime PM is
+controlled by the drivers themselves so that when an output (say SOR) is
+disabled, it drops the runtime PM reference. The idea is that since the
+disabled output is no longer needed it can just go into a low power mode
+which on Tegra usually means clocks off and reset asserted (and in some
+cases also power domain off).
 
-> It might be a good idea to clean some of this up at some point, though.
+DRM/KMS has system-level suspend support, which we use to disable all
+outputs when entering suspend. I see that, unfortunately, this doesn't
+seem to actually cause the devices to runtime suspend. I'm pretty sure
+that this used to work at some point, so I don't know what changed. I'd
+have to look into this a little more. The core doing something like this
+behind the driver's back seems wrong and having to force the device into
+suspend mode seems like it's just piling up on the workarounds.
 
-Indeed.
+Thierry
 
->> What's also a bit odd is that commit says Tegra186.. but AFAIK there is
->> no driver for Tegra186 clocks in upstream.
-> 
-> Clocks on Tegra186 are provided by the clk-bpmp driver. Basically those
-> are mostly the same clocks but the implementation is provided by the
-> BPMP and the clk-bpmp driver talks to it via an IPC mechanism.
+>=20
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index 4a75d149e368..6c8f5222d558 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -2572,6 +2572,8 @@ static int tegra_dc_resume(struct device *dev)
+> =20
+>  static const struct dev_pm_ops tegra_dc_pm_ops =3D {
+>  	SET_RUNTIME_PM_OPS(tegra_dc_suspend, tegra_dc_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				pm_runtime_force_resume)
+>  };
+> =20
+>  struct platform_driver tegra_dc_driver =3D {
+> diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+> index 2d94da225e51..22f80f69ffb8 100644
+> --- a/drivers/gpu/drm/tegra/dpaux.c
+> +++ b/drivers/gpu/drm/tegra/dpaux.c
+> @@ -638,6 +638,8 @@ static int tegra_dpaux_resume(struct device *dev)
+> =20
+>  static const struct dev_pm_ops tegra_dpaux_pm_ops =3D {
+>  	SET_RUNTIME_PM_OPS(tegra_dpaux_suspend, tegra_dpaux_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				pm_runtime_force_resume)
+>  };
+> =20
+>  static const struct of_device_id tegra_dpaux_of_match[] =3D {
+> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+> index 2fbfefe9cb42..fd0f8cec8c7e 100644
+> --- a/drivers/gpu/drm/tegra/dsi.c
+> +++ b/drivers/gpu/drm/tegra/dsi.c
+> @@ -1665,6 +1665,8 @@ static int tegra_dsi_resume(struct device *dev)
+> =20
+>  static const struct dev_pm_ops tegra_dsi_pm_ops =3D {
+>  	SET_RUNTIME_PM_OPS(tegra_dsi_suspend, tegra_dsi_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				pm_runtime_force_resume)
+>  };
+> =20
+>  static const struct of_device_id tegra_dsi_of_match[] =3D {
+> diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+> index 334c4d7d238b..ef66defac767 100644
+> --- a/drivers/gpu/drm/tegra/hdmi.c
+> +++ b/drivers/gpu/drm/tegra/hdmi.c
+> @@ -1739,6 +1739,8 @@ static int tegra_hdmi_resume(struct device *dev)
+> =20
+>  static const struct dev_pm_ops tegra_hdmi_pm_ops =3D {
+>  	SET_RUNTIME_PM_OPS(tegra_hdmi_suspend, tegra_hdmi_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				pm_runtime_force_resume)
+>  };
+> =20
+>  struct platform_driver tegra_hdmi_driver =3D {
+> diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+> index 92f202ec0577..3d33d0360169 100644
+> --- a/drivers/gpu/drm/tegra/hub.c
+> +++ b/drivers/gpu/drm/tegra/hub.c
+> @@ -931,6 +931,8 @@ static int __maybe_unused tegra_display_hub_resume(st=
+ruct device *dev)
+>  static const struct dev_pm_ops tegra_display_hub_pm_ops =3D {
+>  	SET_RUNTIME_PM_OPS(tegra_display_hub_suspend,
+>  			   tegra_display_hub_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				pm_runtime_force_resume)
+>  };
+> =20
+>  static const struct tegra_display_hub_soc tegra186_display_hub =3D {
+> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+> index 4ffe3794e6d3..b743193bf0b1 100644
+> --- a/drivers/gpu/drm/tegra/sor.c
+> +++ b/drivers/gpu/drm/tegra/sor.c
+> @@ -3572,6 +3572,8 @@ static int tegra_sor_resume(struct device *dev)
+> =20
+>  static const struct dev_pm_ops tegra_sor_pm_ops =3D {
+>  	SET_RUNTIME_PM_OPS(tegra_sor_suspend, tegra_sor_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				pm_runtime_force_resume)
+>  };
+> =20
+>  struct platform_driver tegra_sor_driver =3D {
+> diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+> index 958548ef69e7..880304a65c5c 100644
+> --- a/drivers/gpu/drm/tegra/vic.c
+> +++ b/drivers/gpu/drm/tegra/vic.c
+> @@ -476,6 +476,8 @@ static int vic_remove(struct platform_device *pdev)
+> =20
+>  static const struct dev_pm_ops vic_pm_ops =3D {
+>  	SET_RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				pm_runtime_force_resume)
+>  };
+> =20
+>  struct platform_driver tegra_vic_driver =3D {
+> --=20
+> 2.22.0
+>=20
 
-I see how it works now, thanks for the clarification.
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> So basically the bottom line here is that the SOR clocks were not
-> correctly implemented on chips prior to Tegra186 which leads to obscure
-> bugs with HDMI and DP outputs.
+-----BEGIN PGP SIGNATURE-----
 
-Thank you for the explanation.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3NuYwACgkQ3SOs138+
+s6G+7Q/+P+mkojE+rHRI4ZMc+b9mOvTUZBtwAj53oa4TdGYuTCZdSb3SxsOHtkCV
+ILcEuY1Wjbw1JEAWclTVaFXJy3eWlJHcG+tDZf3NKZefuAQ+HJbPUJ2Z1YBwfy7n
+DqcXdpTY5lfFWbuZCaU35bPlL7Bfd2MEZD7SxLdC+Tfcv8I7jfFZjBPZJN3GdGfk
+KEPwXFBfQ2XeQmUHcidkEjJFADGwKGApU6MORS1UnV6epF3d5mLLF5CUqajIPZh7
+Nd4mseykcmfoARHRLAmlK3dV9zHE5JGgFLpbWCF/NKvS7eP7Ke4qMetp3qhPOUto
+ZNSMloJiSbEimHsZbG9YlyCvYulkDz4u2ECK13iE13rnROjSt06qhqR91G20ibFJ
+axYyZHlV1UGg0DvGliyHlkgBKWnjiXuc4mPYlzJxutmo7B+uRkiQ0wqLo8vlf72o
+4NBizcSzfmy+TYPL2jkMqePvJJyrGz+0xhFyxb6Ft7zR+x1vQFYpSw5TPksZ/O0k
+doGZrJRDZPvGCiCr8iJnI1qjTo2Y/WZS5kRmheFDO2Q6qdNfxLKEtlOtJDA2l3lU
+vwphL1XBC8oa/OKCHBqTW5G5iCR28/9+YIb4mq5OorBUdY+bVl1hgyiNFYvjsVHW
+GN4sSS9gy0l50Znta4ecJ9k1eYTuPBvBWTenJ3+T4ealVDNm2R4=
+=XCS8
+-----END PGP SIGNATURE-----
 
->> BTW, seems T114 clk driver also uses a non-existent pll_m/p/c_out0 for
->> the emc_mux.
->>
->> Thierry / Peter, could you please explain what's going on with this
->> patch and why clocks are missed on T114? Maybe I'm missing something?
->>
->>> -#define mux_pllp_pllm_plld_plla_pllc_plld2_clkm_idx NULL
->>>  
->>> -static const char *mux_clkm_plldp_sor0out[] = {
->>> -	"clk_m", "pll_dp", "sor0_out",
->>> +static const char * const sor0_out_parents[] = {
->>> +	"clk_m", "sor0_pad_clkout",
->>>  };
->>> -#define mux_clkm_plldp_sor0out_idx NULL
->>>  
->>>  static struct tegra_periph_init_data tegra124_periph[] = {
->>> -	MUX8_NOGATE_LOCK("sor0_out", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK_SOURCE_SOR0, tegra_clk_sor0_out, &sor0_lock),
->>> -	NODIV("sor0", mux_clkm_plldp_sor0out, CLK_SOURCE_SOR0, 14, 3, 182, 0, tegra_clk_sor0, &sor0_lock),
->>> +	TEGRA_INIT_DATA_TABLE("sor0", NULL, NULL, sor0_parents,
->>> +			      CLK_SOURCE_SOR0, 29, 0x7, 0, 0, 0, 0,
->>> +			      0, 182, 0, tegra_clk_sor0, NULL, 0,
->>> +			      &sor0_lock),
->>> +	TEGRA_INIT_DATA_TABLE("sor0_out", NULL, NULL, sor0_out_parents,
->>> +			      CLK_SOURCE_SOR0, 14, 0x1, 0, 0, 0, 0,
->>> +			      0, 0, TEGRA_PERIPH_NO_GATE, tegra_clk_sor0_out,
->>> +			      NULL, 0, &sor0_lock),
->>>  };
->>>  
->>>  static struct clk **clks;
->>> -------------------------------------------------------------------------------
->>>
->>>
->>> Git bisection log:
->>>
->>> -------------------------------------------------------------------------------
->>> git bisect start
->>> # good: [dafbb1e6473788cb3068eaeddc58f9d88e9c7a62] Merge branch 'clk-ti' into clk-next
->>> git bisect good dafbb1e6473788cb3068eaeddc58f9d88e9c7a62
->>> # bad: [a228ae437aa553736058cbbd58d2d0e191635cdc] Merge branch 'clk-unused' into clk-next
->>> git bisect bad a228ae437aa553736058cbbd58d2d0e191635cdc
->>> # bad: [3214be6cb1e487b0f8c3bb2eac9b06df07a07e06] clk: tegra: Share clk and rst register defines with Tegra clock driver
->>> git bisect bad 3214be6cb1e487b0f8c3bb2eac9b06df07a07e06
->>> # bad: [05308d7e7bbc932025f1dafc401c73ce83c6f414] clk: tegra: Reimplement SOR clocks on Tegra210
->>> git bisect bad 05308d7e7bbc932025f1dafc401c73ce83c6f414
->>> # good: [d1ee3173a139ed2eb8d87e06216f0426b16084d8] Merge branch 'for-5.5/dt-bindings' into for-5.5/clk
->>> git bisect good d1ee3173a139ed2eb8d87e06216f0426b16084d8
->>> # good: [e5f8a107d92db30a7ad7d8d95aee59f5ad76206a] clk: tegra: Move SOR0 implementation to Tegra124
->>> git bisect good e5f8a107d92db30a7ad7d8d95aee59f5ad76206a
->>> # bad: [25175c806a6841149abe46168e0af12593141612] clk: tegra: Reimplement SOR clock on Tegra124
->>> git bisect bad 25175c806a6841149abe46168e0af12593141612
->>> # good: [da8d1a3555406275650b366460c6235f1696bf8b] clk: tegra: Rename sor0_lvds to sor0_out
->>> git bisect good da8d1a3555406275650b366460c6235f1696bf8b
->>> # first bad commit: [25175c806a6841149abe46168e0af12593141612] clk: tegra: Reimplement SOR clock on Tegra124
->>> -------------------------------------------------------------------------------
->>>
->>
+--EVF5PPMfhYS0aIcm--
