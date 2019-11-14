@@ -1,54 +1,38 @@
-From: Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH 7/9] spi: s3c64xx: Use dma_request_chan() directly for
- channel request
-Date: Thu, 14 Nov 2019 11:12:30 +0200
-Message-ID: <20191114091230.GB1249@jack.zhora.eu>
-References: <20191113094256.1108-1-peter.ujfalusi@ti.com>
- <20191113094256.1108-8-peter.ujfalusi@ti.com>
- <20191113234049.GA1249@jack.zhora.eu>
- <e453c716-7658-a9fd-324d-4d95ff1aa29c@ti.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2] clk: tegra: divider: Check UART's divider enable-bit
+ state on rate's recalculation
+Date: Thu, 14 Nov 2019 14:29:51 +0300
+Message-ID: <02df00b3-5e23-441f-b2d5-b84fdb411e98@gmail.com>
+References: <20191030004813.9187-1-digetx@gmail.com>
+ <20191113230303.726AE206E3@mail.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <e453c716-7658-a9fd-324d-4d95ff1aa29c@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: jonathanh@nvidia.com, alexandre.belloni@bootlin.com, s.hauer@pengutronix.de, linux-arm-msm@vger.kernel.org, radu_nicolae.pirea@upb.ro, broonie@kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, linux-spi@vger.kernel.org, vkoul@kernel.org, kgene@kernel.org, ldewangan@nvidia.com, agross@kernel.org, Andi Shyti <andi@etezian.org>, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, bjorn.andersson@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191113230303.726AE206E3@mail.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
-
-> >>  	if (!is_polling(sdd)) {
-> >>  		/* Acquire DMA channels */
-> >> -		sdd->rx_dma.ch = dma_request_slave_channel_reason(&pdev->dev,
-> >> -								  "rx");
-> >> +		sdd->rx_dma.ch = dma_request_chan(&pdev->dev, "rx");
-> > 
-> > I have a little concern here. We have two funcions
-> > 'dma_request_chan' and  'dma_request_channel' don't we end up
-> > making some confusion here?
-> > 
-> > Wouldn't it make more sense renaming 'dma_request_chan' to
-> > 'dma_request_slave_channel_reason'?
+14.11.2019 02:03, Stephen Boyd пишет:
+> Quoting Dmitry Osipenko (2019-10-29 17:48:13)
+>> UART clock is divided using divisor values from DLM/DLL registers when
+>> enable-bit is unset in clk register and clk's divider configuration isn't
+>> taken onto account in this case. This doesn't cause any problems, but
+>> let's add a check for the divider's enable-bit state, for consistency.
+>>
+>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
 > 
-> The dma_request_channel() should go away. It was the old API before we
-> got the dma_slave_map for non DT (and non ACPI) platforms so we can get
-> rid of the filter function exports from DMA drivers to clients all over
-> the place.
+> Is this going to be picked up or should I just apply atop the tegra PR?
 
-Yes, I agree... thanks!
+Looks like this patch missed the Tegra's PR by accident.
 
-Acked-by: Andi Shyti <andi@etezian.org>
+Stephen, I assume it will be easier if you could apply this patch atop.
+The patch doesn't have any dependencies on any other patches, so it's
+fine to apply it separately. Thanks in advance!
 
-Thanks,
-Andi
+Thierry, please let us know if you have any objections.
