@@ -1,94 +1,150 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] clk: tegra: divider: Check UART's divider enable-bit
- state on rate's recalculation
-Date: Thu, 14 Nov 2019 12:54:24 +0100
-Message-ID: <20191114115424.GB5690@aiwendil>
-References: <20191030004813.9187-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: clk/clk-next boot bisection: v5.4-rc1-201-ga228ae437aa5 on
+ tegra124-nyan-big
+Date: Thu, 14 Nov 2019 14:56:20 +0300
+Message-ID: <2696747d-3a82-4244-84dc-bb351364e53e@gmail.com>
+References: <5dccdf20.1c69fb81.418aa.a71c@mx.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yNb1oOkm5a9FJOVX"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191030004813.9187-1-digetx@gmail.com>
+In-Reply-To: <5dccdf20.1c69fb81.418aa.a71c@mx.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "kernelci.org bot" <bot@kernelci.org>, tomeu.vizoso@collabora.com, Stephen Boyd <sboyd@kernel.org>, guillaume.tucker@collabora.com, mgalka@collabora.com, Thierry Reding <treding@nvidia.com>, broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com, enric.balletbo@collabora.com, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+14.11.2019 07:59, kernelci.org bot пишет:
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> * This automated bisection report was sent to you on the basis  *
+> * that you may be involved with the breaking commit it has      *
+> * found.  No manual investigation has been done to verify it,   *
+> * and the root cause of the problem may be somewhere else.      *
+> *                                                               *
+> * If you do send a fix, please include this trailer:            *
+> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+> *                                                               *
+> * Hope this helps!                                              *
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> 
+> clk/clk-next boot bisection: v5.4-rc1-201-ga228ae437aa5 on tegra124-nyan-big
+> 
+> Summary:
+>   Start:      a228ae437aa5 Merge branch 'clk-unused' into clk-next
+>   Details:    https://kernelci.org/boot/id/5dcc99e959b514100f138e14
+>   Plain log:  https://storage.kernelci.org//clk/clk-next/v5.4-rc1-201-ga228ae437aa5/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.txt
+>   HTML log:   https://storage.kernelci.org//clk/clk-next/v5.4-rc1-201-ga228ae437aa5/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.html
+>   Result:     25175c806a68 clk: tegra: Reimplement SOR clock on Tegra124
+> 
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+> 
+> Parameters:
+>   Tree:       clk
+>   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+>   Branch:     clk-next
+>   Target:     tegra124-nyan-big
+>   CPU arch:   arm
+>   Lab:        lab-collabora
+>   Compiler:   gcc-8
+>   Config:     tegra_defconfig
+>   Test suite: boot
+> 
+> Breaking commit found:
+> 
+> -------------------------------------------------------------------------------
+> commit 25175c806a6841149abe46168e0af12593141612
+> Author: Thierry Reding <treding@nvidia.com>
+> Date:   Thu Jul 25 18:19:00 2019 +0200
+> 
+>     clk: tegra: Reimplement SOR clock on Tegra124
+>     
+>     In order to allow the display driver to deal uniformly with all SOR
+>     generations, implement the SOR clocks in a way that is compatible with
+>     Tegra186 and later.
+>     
+>     Acked-by: Stephen Boyd <sboyd@kernel.org>
+>     Signed-off-by: Thierry Reding <treding@nvidia.com>
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+> index 7d231529c3a5..b3110d5b5a6c 100644
+> --- a/drivers/clk/tegra/clk-tegra124.c
+> +++ b/drivers/clk/tegra/clk-tegra124.c
+> @@ -1005,20 +1005,24 @@ static struct tegra_devclk devclks[] __initdata = {
+>  	{ .con_id = "hda2hdmi", .dt_id = TEGRA124_CLK_HDA2HDMI },
+>  };
+>  
+> -static const char *mux_pllp_pllm_plld_plla_pllc_plld2_clkm[] = {
+> -	"pll_p", "pll_m", "pll_d_out0", "pll_a_out0", "pll_c",
+> -	"pll_d2_out0", "clk_m"
+> +static const char * const sor0_parents[] = {
+> +	"pll_p_out0", "pll_m_out0", "pll_d_out0", "pll_a_out0", "pll_c_out0",
+> +	"pll_d2_out0", "clk_m",
+>  };
 
---yNb1oOkm5a9FJOVX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm not sure how it supposed to work because looks like some of these
+"_out0" parent clocks just do not exists in the upstream clk driver.
 
-On Wed, Oct 30, 2019 at 03:48:13AM +0300, Dmitry Osipenko wrote:
-> UART clock is divided using divisor values from DLM/DLL registers when
-> enable-bit is unset in clk register and clk's divider configuration isn't
-> taken onto account in this case. This doesn't cause any problems, but
-> let's add a check for the divider's enable-bit state, for consistency.
->=20
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->=20
-> Changelog:
->=20
-> v2: In the comment to v1 Peter De Schrijver pointed out that UART's DLM/D=
-LL
->     registers configuration is used when enable bit is unset, thus the
->     commit's title and message are changed accordingly.
->=20
->  drivers/clk/tegra/clk-divider.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+Either some other patch that adds "_out0" aliases is missed or this
+patch was based on top of a different codebase (downstream kernel?).
 
-Stephen, feel free to apply this on top of the Tegra pull requests:
+What's also a bit odd is that commit says Tegra186.. but AFAIK there is
+no driver for Tegra186 clocks in upstream.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+BTW, seems T114 clk driver also uses a non-existent pll_m/p/c_out0 for
+the emc_mux.
 
-> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divi=
-der.c
-> index e76731fb7d69..f33c19045386 100644
-> --- a/drivers/clk/tegra/clk-divider.c
-> +++ b/drivers/clk/tegra/clk-divider.c
-> @@ -40,8 +40,13 @@ static unsigned long clk_frac_div_recalc_rate(struct c=
-lk_hw *hw,
->  	int div, mul;
->  	u64 rate =3D parent_rate;
-> =20
-> -	reg =3D readl_relaxed(divider->reg) >> divider->shift;
-> -	div =3D reg & div_mask(divider);
-> +	reg =3D readl_relaxed(divider->reg);
-> +
-> +	if ((divider->flags & TEGRA_DIVIDER_UART) &&
-> +	    !(reg & PERIPH_CLK_UART_DIV_ENB))
-> +		return rate;
-> +
-> +	div =3D (reg >> divider->shift) & div_mask(divider);
-> =20
->  	mul =3D get_mul(divider);
->  	div +=3D mul;
-> --=20
-> 2.23.0
->=20
+Thierry / Peter, could you please explain what's going on with this
+patch and why clocks are missed on T114? Maybe I'm missing something?
 
---yNb1oOkm5a9FJOVX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3NQHAACgkQ3SOs138+
-s6HdixAAl5ejIwhvheyL/qCf0ZUiB15Q+IG8wHI93w7Rw9zWlCXitzl7ST4MQSwS
-n3rUZWw3wymfL0Oybfoz1Yv7B1Ei7hoQBRPtIP2r6yMqgLQv+0wCOtjlZr3jWKKI
-k3Ik4MHg3VN9WDEukbd1E8VCFEzUaWwFVVuX4XJzDuuPAWIrtHmLq/zg4y7mWyt3
-qKnS/JFhJJWWPotHklgj8yYlNrWpgkWRwlyIHmrMtB+mpFyLJKPvN8v8skIBfA5F
-Dkp7kTxrff3cOdoHLze/MmlMOqJMKC0aIKhKFdU00cMi/g0BTHOFd446ydj1u46V
-3d7H9PdM4MV9tdJNLOjZ7fooZMw8vB2dvEshow5O57Ko88yK0ogl9P7uVCPVb6Dx
-sBVMCmiO6owglBtxWfh7SukaiJCc5S9czdaiPKmi3DRo0YOwP1rRqdQXVCOSsFDV
-4CIESHrk2/2d6eNf87xvuDsFiiGvKrKjBgPDCKVj73/4clgmDA44r66U8JyFgoOn
-HthcN5IJvyAh5+5Q7vn+ovAnR/yT6NWR9h+21sXA+rpaM/yeyoUZJRhFoQWvyj19
-QMTiZuKBtfbYUuL0/w4u0At66kud3TzMuGw2bIamY3CdOzDrEUS66XjuM9urpn2B
-lBWDc32/JLzi8lhfHIv8D0EesNsHGQLHgRUUDMQBojqPEMECj30=
-=2lWh
------END PGP SIGNATURE-----
-
---yNb1oOkm5a9FJOVX--
+> -#define mux_pllp_pllm_plld_plla_pllc_plld2_clkm_idx NULL
+>  
+> -static const char *mux_clkm_plldp_sor0out[] = {
+> -	"clk_m", "pll_dp", "sor0_out",
+> +static const char * const sor0_out_parents[] = {
+> +	"clk_m", "sor0_pad_clkout",
+>  };
+> -#define mux_clkm_plldp_sor0out_idx NULL
+>  
+>  static struct tegra_periph_init_data tegra124_periph[] = {
+> -	MUX8_NOGATE_LOCK("sor0_out", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK_SOURCE_SOR0, tegra_clk_sor0_out, &sor0_lock),
+> -	NODIV("sor0", mux_clkm_plldp_sor0out, CLK_SOURCE_SOR0, 14, 3, 182, 0, tegra_clk_sor0, &sor0_lock),
+> +	TEGRA_INIT_DATA_TABLE("sor0", NULL, NULL, sor0_parents,
+> +			      CLK_SOURCE_SOR0, 29, 0x7, 0, 0, 0, 0,
+> +			      0, 182, 0, tegra_clk_sor0, NULL, 0,
+> +			      &sor0_lock),
+> +	TEGRA_INIT_DATA_TABLE("sor0_out", NULL, NULL, sor0_out_parents,
+> +			      CLK_SOURCE_SOR0, 14, 0x1, 0, 0, 0, 0,
+> +			      0, 0, TEGRA_PERIPH_NO_GATE, tegra_clk_sor0_out,
+> +			      NULL, 0, &sor0_lock),
+>  };
+>  
+>  static struct clk **clks;
+> -------------------------------------------------------------------------------
+> 
+> 
+> Git bisection log:
+> 
+> -------------------------------------------------------------------------------
+> git bisect start
+> # good: [dafbb1e6473788cb3068eaeddc58f9d88e9c7a62] Merge branch 'clk-ti' into clk-next
+> git bisect good dafbb1e6473788cb3068eaeddc58f9d88e9c7a62
+> # bad: [a228ae437aa553736058cbbd58d2d0e191635cdc] Merge branch 'clk-unused' into clk-next
+> git bisect bad a228ae437aa553736058cbbd58d2d0e191635cdc
+> # bad: [3214be6cb1e487b0f8c3bb2eac9b06df07a07e06] clk: tegra: Share clk and rst register defines with Tegra clock driver
+> git bisect bad 3214be6cb1e487b0f8c3bb2eac9b06df07a07e06
+> # bad: [05308d7e7bbc932025f1dafc401c73ce83c6f414] clk: tegra: Reimplement SOR clocks on Tegra210
+> git bisect bad 05308d7e7bbc932025f1dafc401c73ce83c6f414
+> # good: [d1ee3173a139ed2eb8d87e06216f0426b16084d8] Merge branch 'for-5.5/dt-bindings' into for-5.5/clk
+> git bisect good d1ee3173a139ed2eb8d87e06216f0426b16084d8
+> # good: [e5f8a107d92db30a7ad7d8d95aee59f5ad76206a] clk: tegra: Move SOR0 implementation to Tegra124
+> git bisect good e5f8a107d92db30a7ad7d8d95aee59f5ad76206a
+> # bad: [25175c806a6841149abe46168e0af12593141612] clk: tegra: Reimplement SOR clock on Tegra124
+> git bisect bad 25175c806a6841149abe46168e0af12593141612
+> # good: [da8d1a3555406275650b366460c6235f1696bf8b] clk: tegra: Rename sor0_lvds to sor0_out
+> git bisect good da8d1a3555406275650b366460c6235f1696bf8b
+> # first bad commit: [25175c806a6841149abe46168e0af12593141612] clk: tegra: Reimplement SOR clock on Tegra124
+> -------------------------------------------------------------------------------
+> 
