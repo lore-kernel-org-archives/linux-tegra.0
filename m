@@ -1,66 +1,173 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: Sense of soc bus? (was: [PATCH] base: soc: Export
- soc_device_to_device() helper)
-Date: Fri, 15 Nov 2019 13:34:55 +0100
-Message-ID: <CAMuHMdU7EYHWRAR+s3ee4Wy6+6_MZON5xARszO7TDXZGyw8d5w@mail.gmail.com>
-References: <20191103013645.9856-3-afaerber@suse.de> <20191111045609.7026-1-afaerber@suse.de>
- <20191111052741.GB3176397@kroah.com> <586fa37c-6292-aca4-fa7c-73064858afaf@suse.de>
- <20191111064040.GA3502217@kroah.com> <a88442df-dc6b-07e5-8dee-9e308bdda450@suse.de>
- <20191112052347.GA1197504@kroah.com> <20191112072926.isjxfa4ci6akhx56@pengutronix.de>
- <aff81b8e-f041-73a5-6a95-d308fa07842c@suse.de> <c8572f70-5550-8cee-4381-fd7de7ae5af0@baylibre.com>
- <CAMuHMdWOWWQoJh5=07VMRhtrFR_Gc_qNhjTV4tCsvwvMn0kYfA@mail.gmail.com> <a0a6d71f-4fb7-51ce-fe33-74f9e588b791@suse.de>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 17/17] ARM: dts: tegra30: cardhu-a04: Add CPU Operating
+ Performance Points
+Date: Fri, 15 Nov 2019 12:52:07 +0000
+Message-ID: <ef22b044-2bc1-1fdc-97cb-f9b036d3d5a9@nvidia.com>
+References: <20191024221416.14197-1-digetx@gmail.com>
+ <20191024221416.14197-18-digetx@gmail.com>
+ <be6deeff-4294-c945-1539-57ec28b4c895@nvidia.com>
+ <8974f1a8-72bb-4413-d2b5-057853696fb4@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a0a6d71f-4fb7-51ce-fe33-74f9e588b791@suse.de>
+In-Reply-To: <8974f1a8-72bb-4413-d2b5-057853696fb4@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-realtek-soc@lists.infradead.org, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh@kernel.org>, Kevin Hilman <khilman@baylibre.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, NXP Linux Team <linux-imx@nxp.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, boot-architecture@lists.linaro.org, Sascha Hauer <s.hauer@pengutronix.de>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Andreas,
 
-On Fri, Nov 15, 2019 at 1:01 PM Andreas Färber <afaerber@suse.de> wrote:
-> Am 15.11.19 um 09:58 schrieb Geert Uytterhoeven:
-> > On Fri, Nov 15, 2019 at 9:52 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
-> >> On 12/11/2019 11:47, Andreas Färber wrote:
-> >>> For example, RTD1295 will support LSADC only from revision B00
-> >>> on (and it's not the first time I'm seeing such things in the industry).
-> >>> So if a user complains, it will be helpful to see that information.
-> >>>
-> >>> Referencing your Amlogic review, with all due respect for its authors,
-> >>> the common framework here just lets that information evaporate into the
-> >>> deeps of sysfs.
-> >>
-> >> Hopefully we never had the case where needed to use the soc info in drivers,
-> >> but now we have one and having such infrastructure already in-place will help.
-> >>
-> >> Renesas platforms makes a extensive usage of the soc info infrastructure to
-> >> figure out plenty of HW parameters at runtime and lower their DT changes.
-> >
-> > We do our best to use it solely for detecting quirks in early SoC revisions.
->
-> Got a pointer? I fail to immediately understand how sysfs would help
-> drivers (as opposed to userspace) detect quirks: Parsing strings back
-> doesn't sound efficient, and I don't see you exporting any custom APIs
-> in drivers/soc/renesas/renesas-soc.c?
+On 13/11/2019 13:57, Dmitry Osipenko wrote:
+> Hello Jon,
+>=20
+> 13.11.2019 09:52, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>> On 24/10/2019 23:14, Dmitry Osipenko wrote:
+>>> Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on
+>>> cardhu-a04.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  arch/arm/boot/dts/tegra30-cardhu-a04.dts | 24 ++++++++++++++++++++++++
+>>>  1 file changed, 24 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/d=
+ts/tegra30-cardhu-a04.dts
+>>> index 0d71925d4f0b..9234988624ec 100644
+>>> --- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+>>> +++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+>>> @@ -2,6 +2,8 @@
+>>>  /dts-v1/;
+>>> =20
+>>>  #include "tegra30-cardhu.dtsi"
+>>> +#include "tegra30-cpu-opp.dtsi"
+>>> +#include "tegra30-cpu-opp-microvolt.dtsi"
+>>> =20
+>>>  /* This dts file support the cardhu A04 and later versions of board */
+>>> =20
+>>> @@ -127,4 +129,26 @@
+>>>  			nvidia,tegra-core-regulator;
+>>>  		};
+>>>  	};
+>>> +
+>>> +	cpus {
+>>> +		cpu0: cpu@0 {
+>>> +			cpu-supply =3D <&vddctrl_reg>;
+>>> +			operating-points-v2 =3D <&cpu0_opp_table>;
+>>> +		};
+>>> +
+>>> +		cpu@1 {
+>>> +			cpu-supply =3D <&vddctrl_reg>;
+>>> +			operating-points-v2 =3D <&cpu0_opp_table>;
+>>> +		};
+>>> +
+>>> +		cpu@2 {
+>>> +			cpu-supply =3D <&vddctrl_reg>;
+>>> +			operating-points-v2 =3D <&cpu0_opp_table>;
+>>> +		};
+>>> +
+>>> +		cpu@3 {
+>>> +			cpu-supply =3D <&vddctrl_reg>;
+>>> +			operating-points-v2 =3D <&cpu0_opp_table>;
+>>> +		};
+>>> +	};
+>>>  };
+>>
+>> Sorry for not testing this sooner, but this is generating the
+>> following WARNING on boot ...
+>>
+>> [    2.916019] ------------[ cut here ]------------
+>> [    2.920669] WARNING: CPU: 2 PID: 1 at /dvs/git/dirty/git-master_l4t-u=
+pstream/kernel/drivers/opp/of.c:688 _of_add_opp_table_v2.part.2+0x45c/0x4d4
+>> [    2.933713] Modules linked in:
+>> [    2.936785] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc7-next-=
+20191112-gfc6d6db1df2c #1
+>> [    2.945403] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>> [    2.951706] [<c0112924>] (unwind_backtrace) from [<c010c9d0>] (show_s=
+tack+0x10/0x14)
+>> [    2.959467] [<c010c9d0>] (show_stack) from [<c0aa4494>] (dump_stack+0=
+xc0/0xd4)
+>> [    2.966707] [<c0aa4494>] (dump_stack) from [<c0124750>] (__warn+0xe0/=
+0xf8)
+>> [    2.973593] [<c0124750>] (__warn) from [<c0124818>] (warn_slowpath_fm=
+t+0xb0/0xb8)
+>> [    2.981090] [<c0124818>] (warn_slowpath_fmt) from [<c0754be0>] (_of_a=
+dd_opp_table_v2.part.2+0x45c/0x4d4)
+>> [    2.990583] [<c0754be0>] (_of_add_opp_table_v2.part.2) from [<c0754c9=
+8>] (dev_pm_opp_of_add_table+0x40/0x15c)
+>> [    3.000508] [<c0754c98>] (dev_pm_opp_of_add_table) from [<c0754de8>] =
+(dev_pm_opp_of_cpumask_add_table+0x34/0xb4)
+>> [    3.010704] [<c0754de8>] (dev_pm_opp_of_cpumask_add_table) from [<c07=
+5b058>] (cpufreq_init+0xf8/0x2cc)
+>> [    3.020024] [<c075b058>] (cpufreq_init) from [<c0758758>] (cpufreq_on=
+line+0x260/0x824)
+>> [    3.027953] [<c0758758>] (cpufreq_online) from [<c0758d98>] (cpufreq_=
+add_dev+0x6c/0x78)
+>> [    3.035976] [<c0758d98>] (cpufreq_add_dev) from [<c05b3188>] (subsys_=
+interface_register+0xa0/0xec)
+>> [    3.044951] [<c05b3188>] (subsys_interface_register) from [<c07574d4>=
+] (cpufreq_register_driver+0x14c/0x20c)
+>> [    3.054792] [<c07574d4>] (cpufreq_register_driver) from [<c075aee0>] =
+(dt_cpufreq_probe+0x94/0x114)
+>> [    3.063771] [<c075aee0>] (dt_cpufreq_probe) from [<c05b6a88>] (platfo=
+rm_drv_probe+0x48/0x98)
+>> [    3.072225] [<c05b6a88>] (platform_drv_probe) from [<c05b4a38>] (real=
+ly_probe+0x234/0x34c)
+>> [    3.080502] [<c05b4a38>] (really_probe) from [<c05b4cc8>] (driver_pro=
+be_device+0x60/0x168)
+>> [    3.088780] [<c05b4cc8>] (driver_probe_device) from [<c05b4f78>] (dev=
+ice_driver_attach+0x58/0x60)
+>> [    3.097664] [<c05b4f78>] (device_driver_attach) from [<c05b5000>] (__=
+driver_attach+0x80/0xbc)
+>> [    3.106200] [<c05b5000>] (__driver_attach) from [<c05b2db0>] (bus_for=
+_each_dev+0x74/0xb4)
+>> [    3.114389] [<c05b2db0>] (bus_for_each_dev) from [<c05b3da4>] (bus_ad=
+d_driver+0x164/0x1e8)
+>> [    3.122666] [<c05b3da4>] (bus_add_driver) from [<c05b5b54>] (driver_r=
+egister+0x7c/0x114)
+>> [    3.130774] [<c05b5b54>] (driver_register) from [<c010306c>] (do_one_=
+initcall+0x54/0x2a8)
+>> [    3.138974] [<c010306c>] (do_one_initcall) from [<c0f01040>] (kernel_=
+init_freeable+0x14c/0x1e8)
+>> [    3.147695] [<c0f01040>] (kernel_init_freeable) from [<c0abbe88>] (ke=
+rnel_init+0x8/0x10c)
+>> [    3.155887] [<c0abbe88>] (kernel_init) from [<c01010e8>] (ret_from_fo=
+rk+0x14/0x2c)
+>> [    3.163462] Exception stack(0xef0c9fb0 to 0xef0c9ff8)
+>> [    3.168519] 9fa0:                                     00000000 000000=
+00 00000000 00000000
+>> [    3.176706] 9fc0: 00000000 00000000 00000000 00000000 00000000 000000=
+00 00000000 00000000
+>> [    3.184893] 9fe0: 00000000 00000000 00000000 00000000 00000013 000000=
+00
+>> [    3.191695] ---[ end trace a7dc36f7a4ddbdb2 ]---
+>> [    3.197855] ------------[ cut here ]------------
+>>
+>> Let me know if you can take a look at this.
+>=20
+> The warning happens because Cardhu now has CPU OPPs in the device-tree,
+> but supported_hw isn't set for the OPPs and thus the count of available
+> OPPs is 0.
+>=20
+> This is expected to happen because patch "cpufreq: tegra20: Use generic
+> cpufreq-dt driver (Tegra30 supported now)" isn't applied yet.
+>=20
+> It is possible to factor out the blacklisting of Tegra SoCs in
+> cpufreq_dt_platdev_init() into a separate patch and request backporting
+> of that change in order to avoid the warning noise for older kernel
+> versions + newer device-tree. Please let me know if you think that it's
+> worth to do the separation.
 
-We use soc_device_match(), inside kernel drivers.
-Exposure through sysfs is a side-effect of using soc_device_register(),
-and welcomed, as it allows the user to find out quickly which SoC and
-revision is being used.
+Unfortunately, I think we are going to need to drop this patch. Booting
+Tegra30-cardhu-a04 with Thierry's for-5.5/arm/dt branch does not even
+boot. There is no crash log but it hangs on boot. This patch appears to
+be the culprit. What is odd is that Tegra30-cardhu-a04 boots fine with
+Thierry's for-next branch which includes this. However, this is causing
+lots of bisect problems. Updating the DT shouldn't break the boot.
 
-FTR, lshw (Ubuntu 18.04 has v2.18, which does seem to be the latest
-upstream version) does not parse /sys/devices/soc0/.
+Jon
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=20
+nvpublic
