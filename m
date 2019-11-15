@@ -1,86 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: tegra20-slink: add missed clk_unprepare" to the spi tree
-Date: Fri, 15 Nov 2019 12:25:13 +0000 (GMT)
-Message-ID: <20191115122513.EF8D427415A7@ypsilon.sirena.org.uk>
-References: <20191115083122.12278-1-hslester96@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: Sense of soc bus? (was: [PATCH] base: soc: Export
+ soc_device_to_device() helper)
+Date: Fri, 15 Nov 2019 13:34:55 +0100
+Message-ID: <CAMuHMdU7EYHWRAR+s3ee4Wy6+6_MZON5xARszO7TDXZGyw8d5w@mail.gmail.com>
+References: <20191103013645.9856-3-afaerber@suse.de> <20191111045609.7026-1-afaerber@suse.de>
+ <20191111052741.GB3176397@kroah.com> <586fa37c-6292-aca4-fa7c-73064858afaf@suse.de>
+ <20191111064040.GA3502217@kroah.com> <a88442df-dc6b-07e5-8dee-9e308bdda450@suse.de>
+ <20191112052347.GA1197504@kroah.com> <20191112072926.isjxfa4ci6akhx56@pengutronix.de>
+ <aff81b8e-f041-73a5-6a95-d308fa07842c@suse.de> <c8572f70-5550-8cee-4381-fd7de7ae5af0@baylibre.com>
+ <CAMuHMdWOWWQoJh5=07VMRhtrFR_Gc_qNhjTV4tCsvwvMn0kYfA@mail.gmail.com> <a0a6d71f-4fb7-51ce-fe33-74f9e588b791@suse.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191115083122.12278-1-hslester96@gmail.com>
+In-Reply-To: <a0a6d71f-4fb7-51ce-fe33-74f9e588b791@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chuhong Yuan <hslester96@gmail.com>
-Cc: "Cc:"@sirena.co.uk"Cc:"@sirena.co.uk, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-realtek-soc@lists.infradead.org, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh@kernel.org>, Kevin Hilman <khilman@baylibre.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, NXP Linux Team <linux-imx@nxp.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, boot-architecture@lists.linaro.org, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
+Hi Andreas,
 
-   spi: tegra20-slink: add missed clk_unprepare
+On Fri, Nov 15, 2019 at 1:01 PM Andreas Färber <afaerber@suse.de> wrote:
+> Am 15.11.19 um 09:58 schrieb Geert Uytterhoeven:
+> > On Fri, Nov 15, 2019 at 9:52 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+> >> On 12/11/2019 11:47, Andreas Färber wrote:
+> >>> For example, RTD1295 will support LSADC only from revision B00
+> >>> on (and it's not the first time I'm seeing such things in the industry).
+> >>> So if a user complains, it will be helpful to see that information.
+> >>>
+> >>> Referencing your Amlogic review, with all due respect for its authors,
+> >>> the common framework here just lets that information evaporate into the
+> >>> deeps of sysfs.
+> >>
+> >> Hopefully we never had the case where needed to use the soc info in drivers,
+> >> but now we have one and having such infrastructure already in-place will help.
+> >>
+> >> Renesas platforms makes a extensive usage of the soc info infrastructure to
+> >> figure out plenty of HW parameters at runtime and lower their DT changes.
+> >
+> > We do our best to use it solely for detecting quirks in early SoC revisions.
+>
+> Got a pointer? I fail to immediately understand how sysfs would help
+> drivers (as opposed to userspace) detect quirks: Parsing strings back
+> doesn't sound efficient, and I don't see you exporting any custom APIs
+> in drivers/soc/renesas/renesas-soc.c?
 
-has been applied to the spi tree at
+We use soc_device_match(), inside kernel drivers.
+Exposure through sysfs is a side-effect of using soc_device_register(),
+and welcomed, as it allows the user to find out quickly which SoC and
+revision is being used.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
+FTR, lshw (Ubuntu 18.04 has v2.18, which does seem to be the latest
+upstream version) does not parse /sys/devices/soc0/.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Gr{oetje,eeting}s,
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+                        Geert
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 04358e40ba96d687c0811c21d9dede73f5244a98 Mon Sep 17 00:00:00 2001
-From: Chuhong Yuan <hslester96@gmail.com>
-Date: Fri, 15 Nov 2019 16:31:22 +0800
-Subject: [PATCH] spi: tegra20-slink: add missed clk_unprepare
-
-The driver misses calling clk_unprepare in probe failure and remove.
-Add the calls to fix it.
-
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Link: https://lore.kernel.org/r/20191115083122.12278-1-hslester96@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-tegra20-slink.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 51573f41ed12..7f4d932dade7 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1072,7 +1072,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	ret = clk_enable(tspi->clk);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
--		goto exit_free_master;
-+		goto exit_clk_unprepare;
- 	}
- 
- 	spi_irq = platform_get_irq(pdev, 0);
-@@ -1145,6 +1145,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	free_irq(spi_irq, tspi);
- exit_clk_disable:
- 	clk_disable(tspi->clk);
-+exit_clk_unprepare:
-+	clk_unprepare(tspi->clk);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
-@@ -1158,6 +1160,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
- 	free_irq(tspi->irq, tspi);
- 
- 	clk_disable(tspi->clk);
-+	clk_unprepare(tspi->clk);
- 
- 	if (tspi->tx_dma_chan)
- 		tegra_slink_deinit_dma_param(tspi, false);
 -- 
-2.20.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
