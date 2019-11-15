@@ -1,60 +1,73 @@
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Subject: Re: Sense of soc bus? (was: [PATCH] base: soc: Export
- soc_device_to_device() helper)
-Date: Fri, 15 Nov 2019 13:00:59 +0100
-Message-ID: <a0a6d71f-4fb7-51ce-fe33-74f9e588b791@suse.de>
-References: <20191103013645.9856-3-afaerber@suse.de>
- <20191111045609.7026-1-afaerber@suse.de> <20191111052741.GB3176397@kroah.com>
- <586fa37c-6292-aca4-fa7c-73064858afaf@suse.de>
- <20191111064040.GA3502217@kroah.com>
- <a88442df-dc6b-07e5-8dee-9e308bdda450@suse.de>
- <20191112052347.GA1197504@kroah.com>
- <20191112072926.isjxfa4ci6akhx56@pengutronix.de>
- <aff81b8e-f041-73a5-6a95-d308fa07842c@suse.de>
- <c8572f70-5550-8cee-4381-fd7de7ae5af0@baylibre.com>
- <CAMuHMdWOWWQoJh5=07VMRhtrFR_Gc_qNhjTV4tCsvwvMn0kYfA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: tegra20-slink: Use dma_request_chan() directly for channel request" to the spi tree
+Date: Fri, 15 Nov 2019 12:25:14 +0000 (GMT)
+Message-ID: <20191115122514.40CB92741609@ypsilon.sirena.org.uk>
+References: <20191113094256.1108-10-peter.ujfalusi@ti.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWOWWQoJh5=07VMRhtrFR_Gc_qNhjTV4tCsvwvMn0kYfA@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20191113094256.1108-10-peter.ujfalusi@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-realtek-soc@lists.infradead.org, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh@kernel.org>, Kevin Hilman <khilman@baylibre.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, NXP Linux Team <linux-imx@nxp.com>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, boot-architecture@lists.linaro.org, Sascha Hauer <s.hauer@pengutronix.de>, Fabio
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: agross@kernel.org, alexandre.belloni@bootlin.com, andi@etezian.org, bjorn.andersson@linaro.org, broonie@kernel.org, jonathanh@nvidia.comJon Hunter <jonathanh@nvidia.com>, kgene@kernel.org, krzk@kernel.org, ldewangan@nvidia.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.orgMark Brown <broonie@kernel.org>, radu_nicolae.pirea@upb.ro, s.hauer@pengutronix.de, shawnguo@kernel.org, thierry.reding@gmail.com, vkoul@kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Geert,
+The patch
 
-Am 15.11.19 um 09:58 schrieb Geert Uytterhoeven:
-> On Fri, Nov 15, 2019 at 9:52 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->> On 12/11/2019 11:47, Andreas Färber wrote:
->>> For example, RTD1295 will support LSADC only from revision B00
->>> on (and it's not the first time I'm seeing such things in the industry).
->>> So if a user complains, it will be helpful to see that information.
->>>
->>> Referencing your Amlogic review, with all due respect for its authors,
->>> the common framework here just lets that information evaporate into the
->>> deeps of sysfs.
->>
->> Hopefully we never had the case where needed to use the soc info in drivers,
->> but now we have one and having such infrastructure already in-place will help.
->>
->> Renesas platforms makes a extensive usage of the soc info infrastructure to
->> figure out plenty of HW parameters at runtime and lower their DT changes.
-> 
-> We do our best to use it solely for detecting quirks in early SoC revisions.
+   spi: tegra20-slink: Use dma_request_chan() directly for channel request
 
-Got a pointer? I fail to immediately understand how sysfs would help
-drivers (as opposed to userspace) detect quirks: Parsing strings back
-doesn't sound efficient, and I don't see you exporting any custom APIs
-in drivers/soc/renesas/renesas-soc.c?
+has been applied to the spi tree at
 
-Regards,
-Andreas
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 912a7df474d2cb22fc99a1fcf77997f2cea7d85e Mon Sep 17 00:00:00 2001
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Date: Wed, 13 Nov 2019 11:42:56 +0200
+Subject: [PATCH] spi: tegra20-slink: Use dma_request_chan() directly for
+ channel request
+
+dma_request_slave_channel_reason() is:
+#define dma_request_slave_channel_reason(dev, name) \
+	dma_request_chan(dev, name)
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Link: https://lore.kernel.org/r/20191113094256.1108-10-peter.ujfalusi@ti.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-tegra20-slink.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 111fffc91435..51573f41ed12 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -599,8 +599,7 @@ static int tegra_slink_init_dma_param(struct tegra_slink_data *tspi,
+ 	int ret;
+ 	struct dma_slave_config dma_sconfig;
+ 
+-	dma_chan = dma_request_slave_channel_reason(tspi->dev,
+-						dma_to_memory ? "rx" : "tx");
++	dma_chan = dma_request_chan(tspi->dev, dma_to_memory ? "rx" : "tx");
+ 	if (IS_ERR(dma_chan)) {
+ 		ret = PTR_ERR(dma_chan);
+ 		if (ret != -EPROBE_DEFER)
 -- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+2.20.1
