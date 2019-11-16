@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 038/150] ASoC: tegra_sgtl5000: fix device_node refcounting
-Date: Sat, 16 Nov 2019 10:45:36 -0500
-Message-ID: <20191116154729.9573-38-sashal@kernel.org>
-References: <20191116154729.9573-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 22/99] ASoC: tegra_sgtl5000: fix device_node refcounting
+Date: Sat, 16 Nov 2019 10:49:45 -0500
+Message-ID: <20191116155103.10971-22-sashal@kernel.org>
+References: <20191116155103.10971-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Jon Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
@@ -31,10 +31,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-index 45a4aa9d2a479..901457da25ec3 100644
+index 1e76869dd4880..863e04809a6b8 100644
 --- a/sound/soc/tegra/tegra_sgtl5000.c
 +++ b/sound/soc/tegra/tegra_sgtl5000.c
-@@ -149,14 +149,14 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+@@ -152,14 +152,14 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
  		dev_err(&pdev->dev,
  			"Property 'nvidia,i2s-controller' missing/invalid\n");
  		ret = -EINVAL;
@@ -51,7 +51,7 @@ index 45a4aa9d2a479..901457da25ec3 100644
  
  	ret = snd_soc_register_card(card);
  	if (ret) {
-@@ -169,6 +169,13 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+@@ -172,6 +172,13 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
  
  err_fini_utils:
  	tegra_asoc_utils_fini(&machine->util_data);
@@ -65,7 +65,7 @@ index 45a4aa9d2a479..901457da25ec3 100644
  err:
  	return ret;
  }
-@@ -183,6 +190,12 @@ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
+@@ -186,6 +193,12 @@ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
  
  	tegra_asoc_utils_fini(&machine->util_data);
  
