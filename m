@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 10/29] ARM: tegra: Add interconnect properties to Tegra30 device-tree
-Date: Mon, 18 Nov 2019 23:02:28 +0300
-Message-ID: <20191118200247.3567-11-digetx@gmail.com>
+Subject: [PATCH v1 11/29] ARM: tegra: Add interconnect properties to Tegra124 device-tree
+Date: Mon, 18 Nov 2019 23:02:29 +0300
+Message-ID: <20191118200247.3567-12-digetx@gmail.com>
 References: <20191118200247.3567-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -18,60 +18,57 @@ of these nodes.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30.dtsi | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra124.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 55ae050042ce..69a239f1a823 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 413bfb981de8..5069af3011cc 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
 @@ -3,6 +3,7 @@
  #include <dt-bindings/gpio/tegra-gpio.h>
- #include <dt-bindings/memory/tegra30-mc.h>
+ #include <dt-bindings/memory/tegra124-mc.h>
  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
 +#include <dt-bindings/interconnect/tegra-icc.h>
  #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
- / {
-@@ -207,6 +208,9 @@
+ #include <dt-bindings/reset/tegra124-car.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
+@@ -111,6 +112,9 @@
+ 			iommus = <&mc TEGRA_SWGROUP_DC>;
  
  			nvidia,head = <0>;
- 
++
 +			interconnects = <&mc TEGRA_ICC_MC_DC &emc TEGRA_ICC_EMEM>;
 +			interconnect-names = "dma-mem";
-+
- 			rgb {
- 				status = "disabled";
- 			};
-@@ -226,6 +230,9 @@
+ 		};
+ 
+ 		dc@54240000 {
+@@ -126,6 +130,9 @@
+ 			iommus = <&mc TEGRA_SWGROUP_DCB>;
  
  			nvidia,head = <1>;
- 
++
 +			interconnects = <&mc TEGRA_ICC_MC_DCB &emc TEGRA_ICC_EMEM>;
 +			interconnect-names = "dma-mem";
-+
- 			rgb {
- 				status = "disabled";
- 			};
-@@ -731,15 +738,18 @@
+ 		};
+ 
+ 		hdmi: hdmi@54280000 {
+@@ -620,6 +627,7 @@
+ 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
  
  		#iommu-cells = <1>;
- 		#reset-cells = <1>;
 +		#interconnect-cells = <1>;
  	};
  
--	memory-controller@7000f400 {
-+	emc: memory-controller@7000f400 {
- 		compatible = "nvidia,tegra30-emc";
- 		reg = <0x7000f400 0x400>;
- 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA30_CLK_EMC>;
+ 	emc: emc@7001b000 {
+@@ -627,6 +635,8 @@
+ 		reg = <0x0 0x7001b000 0x0 0x1000>;
  
  		nvidia,memory-controller = <&mc>;
 +
 +		#interconnect-cells = <1>;
  	};
  
- 	fuse@7000f800 {
+ 	sata@70020000 {
 -- 
 2.23.0
