@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 14/29] memory: tegra: Add interconnect nodes for Terga20 display controllers
-Date: Mon, 18 Nov 2019 23:02:32 +0300
-Message-ID: <20191118200247.3567-15-digetx@gmail.com>
+Subject: [PATCH v1 15/29] memory: tegra: Add interconnect nodes for Terga30 display controllers
+Date: Mon, 18 Nov 2019 23:02:33 +0300
+Message-ID: <20191118200247.3567-16-digetx@gmail.com>
 References: <20191118200247.3567-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -17,45 +17,45 @@ to perform memory bandwidth requests using interconnect API.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20.c | 14 ++++++++++++++
+ drivers/memory/tegra/tegra30.c | 14 ++++++++++++++
  1 file changed, 14 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
-index a8098bff91d9..dfcd9fdb7ce7 100644
---- a/drivers/memory/tegra/tegra20.c
-+++ b/drivers/memory/tegra/tegra20.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2012 NVIDIA CORPORATION.  All rights reserved.
-  */
+diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
+index fcdd812eed80..df0d550b07f8 100644
+--- a/drivers/memory/tegra/tegra30.c
++++ b/drivers/memory/tegra/tegra30.c
+@@ -6,6 +6,7 @@
+ #include <linux/of.h>
+ #include <linux/mm.h>
  
 +#include <dt-bindings/interconnect/tegra-icc.h>
- #include <dt-bindings/memory/tegra20-mc.h>
+ #include <dt-bindings/memory/tegra30-mc.h>
  
  #include "mc.h"
-@@ -280,6 +281,17 @@ static const struct tegra_mc_reset_ops tegra20_mc_reset_ops = {
- 	.reset_status = tegra20_mc_reset_status,
+@@ -1011,6 +1012,17 @@ static const struct tegra_mc_reset tegra30_mc_resets[] = {
+ 	TEGRA30_MC_RESET(VI,       0x200, 0x204, 17),
  };
  
-+#define TEGRA20_MC_ICC(_name)				\
++#define TEGRA30_MC_ICC(_name)				\
 +	{						\
 +		.name = #_name,				\
 +		.id = TEGRA_ICC_MC_##_name,		\
 +	}
 +
-+static const struct tegra_mc_icc_node tegra20_mc_icc_nodes[] = {
-+	TEGRA20_MC_ICC(DC),
-+	TEGRA20_MC_ICC(DCB),
++static const struct tegra_mc_icc_node tegra30_mc_icc_nodes[] = {
++	TEGRA30_MC_ICC(DC),
++	TEGRA30_MC_ICC(DCB),
 +};
 +
- const struct tegra_mc_soc tegra20_mc_soc = {
- 	.clients = tegra20_mc_clients,
- 	.num_clients = ARRAY_SIZE(tegra20_mc_clients),
-@@ -290,4 +302,6 @@ const struct tegra_mc_soc tegra20_mc_soc = {
- 	.reset_ops = &tegra20_mc_reset_ops,
- 	.resets = tegra20_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra20_mc_resets),
-+	.icc_nodes = tegra20_mc_icc_nodes,
-+	.num_icc_nodes = ARRAY_SIZE(tegra20_mc_icc_nodes),
+ const struct tegra_mc_soc tegra30_mc_soc = {
+ 	.clients = tegra30_mc_clients,
+ 	.num_clients = ARRAY_SIZE(tegra30_mc_clients),
+@@ -1025,4 +1037,6 @@ const struct tegra_mc_soc tegra30_mc_soc = {
+ 	.reset_ops = &tegra_mc_reset_ops_common,
+ 	.resets = tegra30_mc_resets,
+ 	.num_resets = ARRAY_SIZE(tegra30_mc_resets),
++	.icc_nodes = tegra30_mc_icc_nodes,
++	.num_icc_nodes = ARRAY_SIZE(tegra30_mc_icc_nodes),
  };
 -- 
 2.23.0
