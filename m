@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 16/29] memory: tegra: Add interconnect nodes for Terga124 display controllers
-Date: Mon, 18 Nov 2019 23:02:34 +0300
-Message-ID: <20191118200247.3567-17-digetx@gmail.com>
+Subject: [PATCH v1 20/29] memory: tegra30-emc: Continue probing if timings are missing in device-tree
+Date: Mon, 18 Nov 2019 23:02:38 +0300
+Message-ID: <20191118200247.3567-21-digetx@gmail.com>
 References: <20191118200247.3567-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,60 +12,85 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add initial interconnect nodes that allow display controller driver
-to perform memory bandwidth requests using interconnect API.
+EMC driver will become mandatory after making it interconnect provider
+because interconnect users like display controller driver will fail to
+probe using newer device-trees that have interconnect properties. Thus
+make driver to probe even if timings are missing in device-tree, the
+frequency scaling won't be available in this case because there will be
+only one frequency available, the frequency that is left from bootloader.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra124.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/memory/tegra/tegra30-emc.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
-index 493b5dc3a4b3..dae6b366281f 100644
---- a/drivers/memory/tegra/tegra124.c
-+++ b/drivers/memory/tegra/tegra124.c
-@@ -6,6 +6,7 @@
- #include <linux/of.h>
- #include <linux/mm.h>
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index 0b6a5e451ea3..ee194e8ed521 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -985,6 +985,11 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
+ 	u32 value, ram_code;
+ 	int err;
  
-+#include <dt-bindings/interconnect/tegra-icc.h>
- #include <dt-bindings/memory/tegra124-mc.h>
- 
- #include "mc.h"
-@@ -1028,6 +1029,17 @@ static const unsigned long tegra124_mc_emem_regs[] = {
- 	MC_EMEM_ARB_RING1_THROTTLE
- };
- 
-+#define TEGRA124_MC_ICC(_name)				\
-+	{						\
-+		.name = #_name,				\
-+		.id = TEGRA_ICC_MC_##_name,		\
++	if (of_get_child_count(dev->of_node) == 0) {
++		dev_info(dev, "device-tree doesn't have memory timings\n");
++		return NULL;
 +	}
 +
-+static const struct tegra_mc_icc_node tegra124_mc_icc_nodes[] = {
-+	TEGRA124_MC_ICC(DC),
-+	TEGRA124_MC_ICC(DCB),
-+};
-+
- static const struct tegra_smmu_soc tegra124_smmu_soc = {
- 	.clients = tegra124_mc_clients,
- 	.num_clients = ARRAY_SIZE(tegra124_mc_clients),
-@@ -1056,6 +1068,8 @@ const struct tegra_mc_soc tegra124_mc_soc = {
- 	.reset_ops = &tegra_mc_reset_ops_common,
- 	.resets = tegra124_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
-+	.icc_nodes = tegra124_mc_icc_nodes,
-+	.num_icc_nodes = ARRAY_SIZE(tegra124_mc_icc_nodes),
- };
- #endif /* CONFIG_ARCH_TEGRA_124_SOC */
+ 	ram_code = tegra_read_ram_code();
  
-@@ -1086,5 +1100,7 @@ const struct tegra_mc_soc tegra132_mc_soc = {
- 	.reset_ops = &tegra_mc_reset_ops_common,
- 	.resets = tegra124_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
-+	.icc_nodes = tegra124_mc_icc_nodes,
-+	.num_icc_nodes = ARRAY_SIZE(tegra124_mc_icc_nodes),
- };
- #endif /* CONFIG_ARCH_TEGRA_132_SOC */
+ 	for_each_child_of_node(dev->of_node, np) {
+@@ -1054,6 +1059,9 @@ static long emc_round_rate(unsigned long rate,
+ 	struct tegra_emc *emc = arg;
+ 	unsigned int i;
+ 
++	if (!emc->num_timings)
++		return clk_get_rate(emc->clk);
++
+ 	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
+ 
+ 	for (i = 0; i < emc->num_timings; i++) {
+@@ -1090,12 +1098,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	struct tegra_emc *emc;
+ 	int err;
+ 
+-	if (of_get_child_count(pdev->dev.of_node) == 0) {
+-		dev_info(&pdev->dev,
+-			 "device-tree node doesn't have memory timings\n");
+-		return -ENODEV;
+-	}
+-
+ 	np = of_parse_phandle(pdev->dev.of_node, "nvidia,memory-controller", 0);
+ 	if (!np) {
+ 		dev_err(&pdev->dev, "could not get memory controller node\n");
+@@ -1107,10 +1109,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	if (!mc)
+ 		return -ENOENT;
+ 
+-	np = emc_find_node_by_ram_code(&pdev->dev);
+-	if (!np)
+-		return -EINVAL;
+-
+ 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+ 	if (!emc) {
+ 		of_node_put(np);
+@@ -1125,10 +1123,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	emc->clk_nb.notifier_call = emc_clk_change_notify;
+ 	emc->dev = &pdev->dev;
+ 
+-	err = emc_load_timings_from_dt(emc, np);
+-	of_node_put(np);
+-	if (err)
+-		return err;
++	np = emc_find_node_by_ram_code(&pdev->dev);
++	if (np) {
++		err = emc_load_timings_from_dt(emc, np);
++		of_node_put(np);
++		if (err)
++			return err;
++	}
+ 
+ 	emc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(emc->regs))
 -- 
 2.23.0
