@@ -1,117 +1,48 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 3/3] soc/tegra: pmc: Add reset sources and levels on
- Tegra194
-Date: Mon, 18 Nov 2019 13:58:27 +0000
-Message-ID: <e456de2e-4ca4-b855-fd38-92518cca1021@nvidia.com>
-References: <20191118063348.1816857-3-thierry.reding@gmail.com>
- <20191118131058.2336829-1-thierry.reding@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: Sense of soc bus? (was: [PATCH] base: soc: Export
+ soc_device_to_device() helper)
+Date: Mon, 18 Nov 2019 07:55:39 -0800
+Message-ID: <20191118155539.GB35479@atomide.com>
+References: <586fa37c-6292-aca4-fa7c-73064858afaf@suse.de>
+ <20191111064040.GA3502217@kroah.com>
+ <a88442df-dc6b-07e5-8dee-9e308bdda450@suse.de>
+ <20191112052347.GA1197504@kroah.com>
+ <20191112072926.isjxfa4ci6akhx56@pengutronix.de>
+ <aff81b8e-f041-73a5-6a95-d308fa07842c@suse.de>
+ <c8572f70-5550-8cee-4381-fd7de7ae5af0@baylibre.com>
+ <CAMuHMdWOWWQoJh5=07VMRhtrFR_Gc_qNhjTV4tCsvwvMn0kYfA@mail.gmail.com>
+ <a0a6d71f-4fb7-51ce-fe33-74f9e588b791@suse.de>
+ <CAMuHMdU7EYHWRAR+s3ee4Wy6+6_MZON5xARszO7TDXZGyw8d5w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191118131058.2336829-1-thierry.reding@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>, linux-arm-kernel@lists.infradead.org, Vidya Sagar <vidyas@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU7EYHWRAR+s3ee4Wy6+6_MZON5xARszO7TDXZGyw8d5w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, Neil Armstrong <narmstrong@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-realtek-soc@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh@kernel.org>, Kevin Hilman <khilman@baylibre.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, NXP Linux Team <linux-imx@nxp.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, boot-architecture@lists.linaro.org, Sascha Hauer <s.hauer@pengutr>
 List-Id: linux-tegra@vger.kernel.org
 
+* Geert Uytterhoeven <geert@linux-m68k.org> [191115 15:51]:
+> On Fri, Nov 15, 2019 at 1:01 PM Andreas Färber <afaerber@suse.de> wrote:
+> > Am 15.11.19 um 09:58 schrieb Geert Uytterhoeven:
+> > > We do our best to use it solely for detecting quirks in early SoC revisions.
+> >
+> > Got a pointer? I fail to immediately understand how sysfs would help
+> > drivers (as opposed to userspace) detect quirks: Parsing strings back
+> > doesn't sound efficient, and I don't see you exporting any custom APIs
+> > in drivers/soc/renesas/renesas-soc.c?
+> 
+> We use soc_device_match(), inside kernel drivers.
+> Exposure through sysfs is a side-effect of using soc_device_register(),
+> and welcomed, as it allows the user to find out quickly which SoC and
+> revision is being used.
 
-On 18/11/2019 13:10, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Tegra194 supports the same reset levels as Tegra186 but extends the set
-> of reset sources. Provide custom PMC register definitions to account for
-> the larger field for the reset sources as well as the updated list of
-> reset sources.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v2:
-> - use the new Tegra194 register definitions
-> 
->  drivers/soc/tegra/pmc.c | 43 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 42 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 1916899d09a3..ea0e11a09c12 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -2926,6 +2926,43 @@ static const struct tegra_io_pad_soc tegra194_io_pads[] = {
->  	{ .id = TEGRA_IO_PAD_AUDIO_HV, .dpd = 61, .voltage = UINT_MAX },
->  };
->  
-> +static const struct tegra_pmc_regs tegra194_pmc_regs = {
-> +	.scratch0 = 0x2000,
-> +	.dpd_req = 0x74,
-> +	.dpd_status = 0x78,
-> +	.dpd2_req = 0x7c,
-> +	.dpd2_status = 0x80,
-> +	.rst_status = 0x70,
-> +	.rst_source_shift = 0x2,
-> +	.rst_source_mask = 0x7c,
-> +	.rst_level_shift = 0x0,
-> +	.rst_level_mask = 0x3,
-> +};
-> +
-> +static const char * const tegra194_reset_sources[] = {
-> +	"SYS_RESET_N",
-> +	"AOWDT",
-> +	"BCCPLEXWDT",
-> +	"BPMPWDT",
-> +	"SCEWDT",
-> +	"SPEWDT",
-> +	"APEWDT",
-> +	"LCCPLEXWDT",
-> +	"SENSOR",
-> +	"AOTAG",
-> +	"VFSENSOR",
-> +	"MAINSWRST",
-> +	"SC7",
-> +	"HSM",
-> +	"CSITE",
-> +	"RCEWDT",
-> +	"PVA0WDT",
-> +	"PVA1WDT",
-> +	"L1A_ASYNC",
-> +	"BPMPBOOT",
-> +	"FUSECRC",
-> +};
-> +
->  static const struct tegra_wake_event tegra194_wake_events[] = {
->  	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA194_AON_GPIO(EE, 4)),
->  	TEGRA_WAKE_IRQ("rtc", 73, 10),
-> @@ -2943,11 +2980,15 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
->  	.maybe_tz_only = false,
->  	.num_io_pads = ARRAY_SIZE(tegra194_io_pads),
->  	.io_pads = tegra194_io_pads,
-> -	.regs = &tegra186_pmc_regs,
-> +	.regs = &tegra194_pmc_regs,
->  	.init = NULL,
->  	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
->  	.irq_set_wake = tegra186_pmc_irq_set_wake,
->  	.irq_set_type = tegra186_pmc_irq_set_type,
-> +	.reset_sources = tegra194_reset_sources,
-> +	.num_reset_sources = ARRAY_SIZE(tegra194_reset_sources),
-> +	.reset_levels = tegra186_reset_levels,
-> +	.num_reset_levels = ARRAY_SIZE(tegra186_reset_levels),
->  	.num_wake_events = ARRAY_SIZE(tegra194_wake_events),
->  	.wake_events = tegra194_wake_events,
->  };
-> 
+For the omap variants too, we've so far gotten away with early SoC
+detection for platform code, and then use soc_device_match() in few
+cases for drivers at probe time if needed.
 
-Acked-by: Jon Hunter <jonthanh@nvidia.com>
+Regards,
 
-Cheers
-Jon
-
--- 
-nvpublic
+Tony
