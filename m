@@ -1,96 +1,58 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/3] soc/tegra: pmc: Add reset sources and levels on Tegra194
-Date: Mon, 18 Nov 2019 07:33:48 +0100
-Message-ID: <20191118063348.1816857-3-thierry.reding@gmail.com>
-References: <20191118063348.1816857-1-thierry.reding@gmail.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: stable request: PCI: tegra: Enable Relaxed Ordering only for
+ Tegra20 & Tegra30
+Date: Mon, 18 Nov 2019 12:05:38 +0530
+Message-ID: <cd787fce-3675-a2d1-90a7-5fa0c4b3f946@nvidia.com>
+References: <11251eb0-5675-9d3d-d15f-c346781e2bff@nvidia.com>
+ <20191111130908.GA448544@kroah.com>
+ <9d7871e7-f8aa-1ed5-dc2e-37ba6f218a2f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191118063348.1816857-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Vidya Sagar <vidyas@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <9d7871e7-f8aa-1ed5-dc2e-37ba6f218a2f@nvidia.com>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: ben@decadent.org.uk
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Krishna Thota <kthota@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 11/11/2019 8:52 PM, Vidya Sagar wrote:
+> On 11/11/2019 6:39 PM, Greg Kroah-Hartman wrote:
+>> On Mon, Nov 11, 2019 at 06:24:53PM +0530, Vidya Sagar wrote:
+>>> Hi Greg,
+>>> We noticed that the Tegra PCIe host controller driver enabled
+>>> "Relaxed Ordering" bit in the PCIe configuration space for "all"
+>>> devices erroneously. We pushed a fix for this through the
+>>> commit: 7be142caabc4780b13a522c485abc806de5c4114 and it has been
+>>> soaking in main line for the last four months.
+>>> Based on the discussion we had @ http://patchwork.ozlabs.org/patch/1127=
+604/
+>>> we would now like to push it to the following stable kernels
+>>> 4.19=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : Applies cleanly
+>>> 3.16, 4.4, 4.9 & 4.14 : Following equivalent patch needs to be used as =
+the
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ file was at drivers/pci/host/pci-tegra.c earlier
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ (and moved to drivers/pci/controller/pci-tegra.c starting 4.19)
+>>
+>> All now queued up (except for 3.16, that's Ben's tree, he will get to it
+>> soon.)
+>>
+Hi Ben,
+Could you please queue this up for 3.16 as well?
 
-Tegra194 supports the same reset levels as Tegra186 but extends the set
-of reset sources. Provide custom PMC register definitions to account for
-the larger field for the reset sources as well as the updated list of
-reset sources.
+- Vidya Sagar
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 32b3e8d9155f..63195281718d 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -2927,6 +2927,43 @@ static const struct tegra_io_pad_soc tegra194_io_pads[] = {
- 	{ .id = TEGRA_IO_PAD_AUDIO_HV, .dpd = 61, .voltage = UINT_MAX },
- };
- 
-+static const struct tegra_pmc_regs tegra194_pmc_regs = {
-+	.scratch0 = 0x2000,
-+	.dpd_req = 0x74,
-+	.dpd_status = 0x78,
-+	.dpd2_req = 0x7c,
-+	.dpd2_status = 0x80,
-+	.rst_status = 0x70,
-+	.rst_source_shift = 0x2,
-+	.rst_source_mask = 0x7c,
-+	.rst_level_shift = 0x0,
-+	.rst_level_mask = 0x3,
-+};
-+
-+static const char * const tegra194_reset_sources[] = {
-+	"SYS_RESET_N",
-+	"AOWDT",
-+	"BCCPLEXWDT",
-+	"BPMPWDT",
-+	"SCEWDT",
-+	"SPEWDT",
-+	"APEWDT",
-+	"LCCPLEXWDT",
-+	"SENSOR",
-+	"AOTAG",
-+	"VFSENSOR",
-+	"MAINSWRST",
-+	"SC7",
-+	"HSM",
-+	"CSITE",
-+	"RCEWDT",
-+	"PVA0WDT",
-+	"PVA1WDT",
-+	"L1A_ASYNC",
-+	"BPMPBOOT",
-+	"FUSECRC",
-+};
-+
- static const struct tegra_wake_event tegra194_wake_events[] = {
- 	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA194_AON_GPIO(EE, 4)),
- 	TEGRA_WAKE_IRQ("rtc", 73, 10),
-@@ -2949,6 +2986,10 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
- 	.irq_set_wake = tegra186_pmc_irq_set_wake,
- 	.irq_set_type = tegra186_pmc_irq_set_type,
-+	.reset_sources = tegra194_reset_sources,
-+	.num_reset_sources = ARRAY_SIZE(tegra194_reset_sources),
-+	.reset_levels = tegra186_reset_levels,
-+	.num_reset_levels = ARRAY_SIZE(tegra186_reset_levels),
- 	.num_wake_events = ARRAY_SIZE(tegra194_wake_events),
- 	.wake_events = tegra194_wake_events,
- };
--- 
-2.23.0
+>> thanks,
+>>
+>> greg k-h
+>>
+>=20
+> Thanks a lot Greg.
+>=20
+> - Vidya Sagar
