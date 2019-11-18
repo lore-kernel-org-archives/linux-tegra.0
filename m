@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 22/29] memory: tegra124-emc: Use devm_platform_ioremap_resource
-Date: Mon, 18 Nov 2019 23:02:40 +0300
-Message-ID: <20191118200247.3567-23-digetx@gmail.com>
+Subject: [PATCH v1 21/29] memory: tegra30-emc: Register as interconnect provider
+Date: Mon, 18 Nov 2019 23:02:39 +0300
+Message-ID: <20191118200247.3567-22-digetx@gmail.com>
 References: <20191118200247.3567-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,34 +12,28 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Utilize that relatively new helper which makes code a bit cleaner.
+EMC now provides MC with memory bandwidth using interconnect API.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra124-emc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/memory/tegra/tegra30-emc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 464f0ceaee63..2c73260654ba 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -1085,7 +1085,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	struct platform_device *mc;
- 	struct device_node *np;
- 	struct tegra_emc *emc;
--	struct resource *res;
- 	u32 ram_code;
- 	int err;
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index ee194e8ed521..7316ab50511b 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -1171,6 +1171,11 @@ static int tegra_emc_probe(struct platform_device *pdev)
  
-@@ -1095,8 +1094,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, emc);
  
- 	emc->dev = &pdev->dev;
++	/* Tegra30 has DRAM channel fixed at 32bit width */
++	err = tegra_icc_emc_setup_interconnect(&pdev->dev, 32 / 8);
++	if (err)
++		dev_err(&pdev->dev, "failed to initialize ICC: %d\n", err);
++
+ 	return 0;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	emc->regs = devm_ioremap_resource(&pdev->dev, res);
-+	emc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(emc->regs))
- 		return PTR_ERR(emc->regs);
- 
+ unset_cb:
 -- 
 2.23.0
