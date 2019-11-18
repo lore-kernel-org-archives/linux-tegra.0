@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20 and Tegra30 SoCs
-Date: Mon, 18 Nov 2019 19:45:08 +0300
-Message-ID: <20191118164512.8676-8-digetx@gmail.com>
+Subject: [PATCH v5 09/11] ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
+Date: Mon, 18 Nov 2019 19:45:10 +0300
+Message-ID: <20191118164512.8676-10-digetx@gmail.com>
 References: <20191118164512.8676-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,34 +12,28 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
-OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
-Currently cpufreq-dt driver produces a bit annoying warning splats
-during boot because valid OPPs are not found, this will be fixed once
-tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
-will also happen on older stable kernels using newer device-trees, thus
-this patch should be backported to stable kernels as well.
+The tegra20-cpufreq now instantiates cpufreq-dt and Tegra30 is fully
+supported by that driver.
 
-Cc: <stable@vger.kernel.org>
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/mach-tegra/tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index f1d170dcf4d3..aba591d57c67 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
- 	{ .compatible = "mediatek,mt8176", },
- 	{ .compatible = "mediatek,mt8183", },
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index e512e606eabd..1e3b85923ca3 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -95,6 +95,10 @@ static void __init tegra_dt_init_late(void)
+ 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
+ 	    of_machine_is_compatible("nvidia,tegra20"))
+ 		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
++
++	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) &&
++	    of_machine_is_compatible("nvidia,tegra30"))
++		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
+ }
  
-+	{ .compatible = "nvidia,tegra20", },
-+	{ .compatible = "nvidia,tegra30", },
- 	{ .compatible = "nvidia,tegra124", },
- 	{ .compatible = "nvidia,tegra210", },
- 
+ static const char * const tegra_dt_board_compat[] = {
 -- 
 2.23.0
