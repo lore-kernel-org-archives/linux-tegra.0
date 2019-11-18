@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 04/29] dt-bindings: memory: tegra30: emc: Document new interconnect property
-Date: Mon, 18 Nov 2019 23:02:22 +0300
-Message-ID: <20191118200247.3567-5-digetx@gmail.com>
+Subject: [PATCH v1 02/29] dt-bindings: memory: tegra20: emc: Document new interconnect property
+Date: Mon, 18 Nov 2019 23:02:20 +0300
+Message-ID: <20191118200247.3567-3-digetx@gmail.com>
 References: <20191118200247.3567-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -18,39 +18,30 @@ external memory controller as interconnect provider.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../bindings/memory-controllers/nvidia,tegra30-emc.yaml     | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../bindings/memory-controllers/nvidia,tegra20-emc.txt        | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
-index 7fe0ca14e324..ecdffbe691ce 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
-@@ -31,6 +31,9 @@ properties:
-   interrupts:
-     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+index add95367640b..7566d883f921 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+@@ -12,6 +12,9 @@ Properties:
+   irrespective of ram-code configuration.
+ - interrupts : Should contain EMC General interrupt.
+ - clocks : Should contain EMC clock.
++- #interconnect-cells : Should be 1. This cell represents external memory
++  interconnect. The assignments may be found in header file
++  <dt-bindings/interconnect/tegra-icc.h>.
  
-+  "#interconnect-cells":
-+    const: 1
-+
-   nvidia,memory-controller:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description:
-@@ -214,6 +217,7 @@ required:
-   - interrupts
-   - clocks
-   - nvidia,memory-controller
-+  - "#interconnect-cells"
+ Child device nodes describe the memory settings for different configurations and clock rates.
  
- additionalProperties: false
- 
-@@ -227,6 +231,8 @@ examples:
- 
-         nvidia,memory-controller = <&mc>;
- 
-+        #interconnect-cells = <1>;
-+
-         emc-timings-1 {
-             nvidia,ram-code = <1>;
- 
+@@ -20,6 +23,7 @@ Example:
+ 	memory-controller@7000f400 {
+ 		#address-cells = < 1 >;
+ 		#size-cells = < 0 >;
++		#interconnect-cells = < 1 >;
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f4000 0x200>;
+ 		interrupts = <0 78 0x04>;
 -- 
 2.23.0
