@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 25/29] drm/tegra: dc: Release PM and RGB output when client's registration fails
-Date: Mon, 18 Nov 2019 23:02:43 +0300
-Message-ID: <20191118200247.3567-26-digetx@gmail.com>
+Subject: [PATCH v1 28/29] ARM: multi_v7_defconfig: Enable NVIDIA Tegra interconnect providers
+Date: Mon, 18 Nov 2019 23:02:46 +0300
+Message-ID: <20191118200247.3567-29-digetx@gmail.com>
 References: <20191118200247.3567-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,35 +12,26 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Runtime PM and RGB output need to be released when host1x client
-registration fails.
+Tegra now has interconnect providers that are used for memory bandwidth
+allocation by display driver.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 14834cba5455..c2c61156cdcf 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2504,10 +2504,16 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to register host1x client: %d\n",
- 			err);
--		return err;
-+		goto disable_pm;
- 	}
- 
- 	return 0;
-+
-+disable_pm:
-+	pm_runtime_disable(&pdev->dev);
-+	tegra_dc_rgb_remove(dc);
-+
-+	return err;
- }
- 
- static int tegra_dc_remove(struct platform_device *pdev)
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 293f0cea076c..c131d7969aa3 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -1085,6 +1085,8 @@ CONFIG_FSI_MASTER_ASPEED=m
+ CONFIG_FSI_SCOM=m
+ CONFIG_FSI_SBEFIFO=m
+ CONFIG_FSI_OCC=m
++CONFIG_INTERCONNECT=y
++CONFIG_INTERCONNECT_TEGRA=y
+ CONFIG_EXT4_FS=y
+ CONFIG_AUTOFS4_FS=y
+ CONFIG_MSDOS_FS=y
 -- 
 2.23.0
