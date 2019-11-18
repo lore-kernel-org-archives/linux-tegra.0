@@ -1,82 +1,98 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 0/2] drm/tegra: Use PTR_ERR_OR_ZERO() to simplify code
-Date: Mon, 18 Nov 2019 14:23:57 +0100
-Message-ID: <20191118132357.GC2246533@ulmo>
-References: <1574077572-59152-1-git-send-email-zhengbin13@huawei.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 0/9] drm/nouveau: Various fixes for GP10B
+Date: Mon, 18 Nov 2019 14:44:49 +0100
+Message-ID: <20191118134449.GG2246533@ulmo>
+References: <20191102175637.3065-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0555400056=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1574077572-59152-1-git-send-email-zhengbin13@huawei.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: zhengbin <zhengbin13@huawei.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com
+Content-Type: multipart/mixed; boundary="===============1447320490=="
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20191102175637.3065-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0555400056==
+--===============1447320490==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zCKi3GIZzVBPywwA"
+	protocol="application/pgp-signature"; boundary="FwyhczKCDPOVeYh6"
 Content-Disposition: inline
 
 
---zCKi3GIZzVBPywwA
+--FwyhczKCDPOVeYh6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 18, 2019 at 07:46:10PM +0800, zhengbin wrote:
-> zhengbin (2):
->   drm/tegra: Use PTR_ERR_OR_ZERO() to simplify code in
->     tegra_bo_dumb_create
->   drm/tegra: Use PTR_ERR_OR_ZERO() to simplify code in tegra_gem_create
+On Sat, Nov 02, 2019 at 06:56:28PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
->  drivers/gpu/drm/tegra/drm.c | 5 +----
->  drivers/gpu/drm/tegra/gem.c | 5 +----
->  2 files changed, 2 insertions(+), 8 deletions(-)
+> Hi Ben,
+>=20
+> here's a revised subset of the patches I had sent out a couple of weeks
+> ago. I've reworked the BAR2 accesses in the way that you had suggested,
+> which at least for GP10B turned out to be fairly trivial to do. I have
+> not looked in detail at this for GV11B yet, but a cursory look showed
+> that BAR2 is accessed in more places, so the equivalent for GV11B might
+> be a bit more involved.
+>=20
+> Other than that, not a lot has changed since then. I've added a couple
+> of precursory patches to add IOMMU helper dummies for the case where
+> IOMMU is disabled (as suggested by Ben Dooks).
+>=20
+> Joerg, it'd be great if you could give an Acked-by on those two patches
+> so that Ben can pick them both up into the Nouveau tree. Alternatively I
+> can put them both into a stable branch and send a pull request to both
+> of you. Or yet another alternative would be for Joerg to apply them now
+> and Ben to wait for v5.5-rc1 until he picks up the rest. All of those
+> work for me.
 
-As I explained in response to the same patches sent for other drivers
-already, I don't think this has any merit.
+Hi Joerg, Ben,
+
+do you guys have any further comments on this series? I've got an
+updated patch to silence the warning that the kbuild robot flagged, so
+if there are no other comments I can send a final v3 of the series.
 
 Thierry
 
---zCKi3GIZzVBPywwA
+--FwyhczKCDPOVeYh6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3Sm20ACgkQ3SOs138+
-s6Evdg//QOlrbxFxraVGzdTmFWlFsmJ6OwQSOGxufr2gbH2Cpk9BOiAhspTui/RH
-GQYR2dUFFihpoXrC3PUVAASsg05R6cinxYDRps838ekBdHd3hSP/jtNpnYJ7+A0n
-7nf4+j43HPLQ1PfHGx4UQzyzuorNLy6q3JrUNDaumU6EO9yQYW1i6z6pbaEY74/I
-tcFm5eU2iSY9yeIMJcYdOHrzpiKF7w4Nq5sy5iY1t949VMj3dJv101gHSoK2cZ5D
-3iw2aYg5rhsOmflfWlktmwyT1eCYINB6NveSvWKRKo/0cHq2xg6jlJJMBnG4dioa
-nmksq2eQwXLrktKjvlQ2Bz8E5Sj4SDyHIFWERYqdWoPOPhuNiawrUgY67C6PDl9L
-Qm91wBibK+ih9hHvZ9NHmBJofU01p77PFN4MDF/j9im7hvfSYfqwN7f+C3hhnq2z
-NU0DYyRG1TLpHNLItF7LVEJ+1NYFsoafDKuogNaQV66CSMEZ33vZkLHTaoKcKZrE
-0XRGISUHCf5Uw6NKTbIml+l8/YlBoHU+MaOTuBOs1NPFKko3bN3ZIHyR6TNh2gg9
-Veb6pq1LRp/ZqcgqmcnC3AOmTIG5F37kNtE0f8YXdt5jrvdq8UrHlVsS4DD6rEtq
-MkT7umxMr/xTulGBLXPHiHCPQ836zY9oCUkbLNlDZdx1W93YTKk=
-=4hdT
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3SoFEACgkQ3SOs138+
+s6H1sw//TEml9ZrPUemKFYIMfOWf6dFC1MUTYzGiajNIxv4J/7FqdNnBqUm6RT1o
+uROgL3iqP7fAoEHg5hVhwzRzxAH/bC75nfn9PD+yiPpVOwhqfY3OTwYXyEj3wBld
+G+2TQb5RTHd1HAv14IKsw33fyTMM/P22GGkcRfOuzhu3Q6U1hJCBc7zG3VQWSSN6
+u8bWNlYl0VZ8KcDlQJpYgT6QYOFYmagQGNkCRgeAgDUUKRE7rQ8vVZ6BOjtYv+SY
+5nTKNujyFp1Yoagp3pv23OcyIVWPg6BKd48rb/uq+QqcsDwTXwqTUOlAfhZhyIwn
+CVBDmqpuQL5BJPopvAzVFP/UKZZ0ChE7kuhAPFIOkCO6RVKpKE+1Zvqgb3QXUU4q
+5U7U8hrmwPBRSEhAmTYApzDAx7rqSKIWTm5k82Nm1WfzgyqNb+NubwOwkyRr0u7Y
+RobfXOEjbUCV5F6IejMN/pnufJs6CDPRTlz09roZ32kn5u+ibJyV0Nsa9L1sIwFm
+yJESD3B8y1BA2NCllBwu6semP74zJ5h90Kp4/xvLX/poS+VcY3Owfs7GeO8bDijl
+IwV+qD3RYSlGJmxq2ILPa/fuxxMbIsXLudNeZAtC1zmO28x6aUwYvpyDdgvEEu+P
+G9k1PiUNR9g/gbTv78dAmw62CrEQoss84ESlY5A+pbjAgQh0bLg=
+=74Sg
 -----END PGP SIGNATURE-----
 
---zCKi3GIZzVBPywwA--
+--FwyhczKCDPOVeYh6--
 
---===============0555400056==
+--===============1447320490==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
 Content-Disposition: inline
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
+YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1
 
---===============0555400056==--
+--===============1447320490==--
