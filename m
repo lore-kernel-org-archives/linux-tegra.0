@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 24/29] drm/tegra: dc: Use devm_platform_ioremap_resource
-Date: Mon, 18 Nov 2019 23:02:42 +0300
-Message-ID: <20191118200247.3567-25-digetx@gmail.com>
+Subject: [PATCH v1 23/29] memory: tegra124-emc: Register as interconnect provider
+Date: Mon, 18 Nov 2019 23:02:41 +0300
+Message-ID: <20191118200247.3567-24-digetx@gmail.com>
 References: <20191118200247.3567-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,34 +12,66 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Utilize that relatively new helper which makes code a bit cleaner.
+EMC now provides MC with memory bandwidth using interconnect API.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/memory/tegra/tegra124-emc.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 5b1f9ff97576..14834cba5455 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2421,7 +2421,6 @@ static int tegra_dc_couple(struct tegra_dc *dc)
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index 2c73260654ba..c9478dcbeece 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -25,6 +25,7 @@
+ #define EMC_FBIO_CFG5				0x104
+ #define	EMC_FBIO_CFG5_DRAM_TYPE_MASK		0x3
+ #define	EMC_FBIO_CFG5_DRAM_TYPE_SHIFT		0
++#define EMC_FBIO_CFG5_DRAM_WIDTH_X64		BIT(4)
  
- static int tegra_dc_probe(struct platform_device *pdev)
+ #define EMC_INTSTATUS				0x0
+ #define EMC_INTSTATUS_CLKCHANGE_COMPLETE	BIT(4)
+@@ -1080,11 +1081,28 @@ static void emc_debugfs_init(struct device *dev, struct tegra_emc *emc)
+ 		dev_err(dev, "failed to create debugfs entry\n");
+ }
+ 
++static unsigned int emc_dram_data_bus_width_bytes(struct tegra_emc *emc)
++{
++	unsigned int bus_width;
++	u32 emc_cfg;
++
++	emc_cfg = readl_relaxed(emc->regs + EMC_FBIO_CFG5);
++	if (emc_cfg & EMC_FBIO_CFG5_DRAM_WIDTH_X64)
++		bus_width = 64;
++	else
++		bus_width = 32;
++
++	dev_info(emc->dev, "DRAM data-bus width: %ubit\n", bus_width);
++
++	return bus_width / 8;
++}
++
+ static int tegra_emc_probe(struct platform_device *pdev)
  {
--	struct resource *regs;
- 	struct tegra_dc *dc;
+ 	struct platform_device *mc;
+ 	struct device_node *np;
+ 	struct tegra_emc *emc;
++	unsigned int bus_width;
+ 	u32 ram_code;
  	int err;
  
-@@ -2478,8 +2477,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 		tegra_powergate_power_off(dc->powergate);
- 	}
+@@ -1146,6 +1164,12 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	if (IS_ENABLED(CONFIG_DEBUG_FS))
+ 		emc_debugfs_init(&pdev->dev, emc);
  
--	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	dc->regs = devm_ioremap_resource(&pdev->dev, regs);
-+	dc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(dc->regs))
- 		return PTR_ERR(dc->regs);
++	bus_width = emc_dram_data_bus_width_bytes(emc);
++
++	err = tegra_icc_emc_setup_interconnect(&pdev->dev, bus_width);
++	if (err)
++		dev_err(&pdev->dev, "failed to initialize ICC: %d\n", err);
++
+ 	return 0;
+ };
  
 -- 
 2.23.0
