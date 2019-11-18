@@ -1,49 +1,58 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 08/15] drm/tegra: Remove dma_buf->k(un)map
-Date: Mon, 18 Nov 2019 11:35:29 +0100
-Message-ID: <20191118103536.17675-9-daniel.vetter@ffwll.ch>
-References: <20191118103536.17675-1-daniel.vetter@ffwll.ch>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/3] soc/tegra: pmc: Use lower-case for hexadecimal
+ literals
+Date: Mon, 18 Nov 2019 11:50:34 +0000
+Message-ID: <823d83ea-43fe-ff95-dac4-13d0175cfc18@nvidia.com>
+References: <20191118063348.1816857-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20191118103536.17675-1-daniel.vetter@ffwll.ch>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: DRI Development <dri-devel@lists.freedesktop.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191118063348.1816857-1-thierry.reding@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>, linux-arm-kernel@lists.infradead.org, Vidya Sagar <vidyas@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tm8gaW4tdHJlZSB1c2VycyBsZWZ0LgoKU2lnbmVkLW9mZi1ieTogRGFuaWVsIFZldHRlciA8ZGFu
-aWVsLnZldHRlckBpbnRlbC5jb20+CkNjOiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdA
-Z21haWwuY29tPgpDYzogSm9uYXRoYW4gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4KQ2M6
-IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZwotLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9n
-ZW0uYyB8IDEyIC0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDEyIGRlbGV0aW9ucygtKQoK
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9nZW0uYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9nZW0uYwppbmRleCA2NjJjYjdjODdlZjUuLjg0YmIyOTA3MDUzNiAxMDA2NDQKLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9nZW0uYwpAQCAtNTg1LDE2ICs1ODUsNiBAQCBzdGF0aWMgaW50IHRlZ3JhX2dlbV9wcmltZV9l
-bmRfY3B1X2FjY2VzcyhzdHJ1Y3QgZG1hX2J1ZiAqYnVmLAogCXJldHVybiAwOwogfQogCi1zdGF0
-aWMgdm9pZCAqdGVncmFfZ2VtX3ByaW1lX2ttYXAoc3RydWN0IGRtYV9idWYgKmJ1ZiwgdW5zaWdu
-ZWQgbG9uZyBwYWdlKQotewotCXJldHVybiBOVUxMOwotfQotCi1zdGF0aWMgdm9pZCB0ZWdyYV9n
-ZW1fcHJpbWVfa3VubWFwKHN0cnVjdCBkbWFfYnVmICpidWYsIHVuc2lnbmVkIGxvbmcgcGFnZSwK
-LQkJCQkgICB2b2lkICphZGRyKQotewotfQotCiBzdGF0aWMgaW50IHRlZ3JhX2dlbV9wcmltZV9t
-bWFwKHN0cnVjdCBkbWFfYnVmICpidWYsIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKQogewog
-CXN0cnVjdCBkcm1fZ2VtX29iamVjdCAqZ2VtID0gYnVmLT5wcml2OwpAQCAtNjI1LDggKzYxNSw2
-IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZG1hX2J1Zl9vcHMgdGVncmFfZ2VtX3ByaW1lX2RtYWJ1
-Zl9vcHMgPSB7CiAJLnJlbGVhc2UgPSB0ZWdyYV9nZW1fcHJpbWVfcmVsZWFzZSwKIAkuYmVnaW5f
-Y3B1X2FjY2VzcyA9IHRlZ3JhX2dlbV9wcmltZV9iZWdpbl9jcHVfYWNjZXNzLAogCS5lbmRfY3B1
-X2FjY2VzcyA9IHRlZ3JhX2dlbV9wcmltZV9lbmRfY3B1X2FjY2VzcywKLQkubWFwID0gdGVncmFf
-Z2VtX3ByaW1lX2ttYXAsCi0JLnVubWFwID0gdGVncmFfZ2VtX3ByaW1lX2t1bm1hcCwKIAkubW1h
-cCA9IHRlZ3JhX2dlbV9wcmltZV9tbWFwLAogCS52bWFwID0gdGVncmFfZ2VtX3ByaW1lX3ZtYXAs
-CiAJLnZ1bm1hcCA9IHRlZ3JhX2dlbV9wcmltZV92dW5tYXAsCi0tIAoyLjI0LjAKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5n
-IGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeA==
+
+On 18/11/2019 06:33, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The remainder of the file uses lower-case for hexadecimal literals, so
+> change the only odd-one-out occurrence for consistency.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 4e51248634f8..927eeecd34e5 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -2805,7 +2805,7 @@ static const struct tegra_pmc_regs tegra186_pmc_regs = {
+>  	.dpd2_status = 0x80,
+>  	.rst_status = 0x70,
+>  	.rst_source_shift = 0x2,
+> -	.rst_source_mask = 0x3C,
+> +	.rst_source_mask = 0x3c,
+>  	.rst_level_shift = 0x0,
+>  	.rst_level_mask = 0x3,
+>  };
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers!
+Jon
+
+-- 
+nvpublic
