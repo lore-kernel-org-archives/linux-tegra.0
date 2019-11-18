@@ -1,98 +1,117 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 0/9] drm/nouveau: Various fixes for GP10B
-Date: Mon, 18 Nov 2019 14:44:49 +0100
-Message-ID: <20191118134449.GG2246533@ulmo>
-References: <20191102175637.3065-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 3/3] soc/tegra: pmc: Add reset sources and levels on
+ Tegra194
+Date: Mon, 18 Nov 2019 13:58:27 +0000
+Message-ID: <e456de2e-4ca4-b855-fd38-92518cca1021@nvidia.com>
+References: <20191118063348.1816857-3-thierry.reding@gmail.com>
+ <20191118131058.2336829-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1447320490=="
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20191102175637.3065-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191118131058.2336829-1-thierry.reding@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Sowjanya Komatineni <skomatineni@nvidia.com>, linux-arm-kernel@lists.infradead.org, Vidya Sagar <vidyas@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1447320490==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FwyhczKCDPOVeYh6"
-Content-Disposition: inline
+On 18/11/2019 13:10, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Tegra194 supports the same reset levels as Tegra186 but extends the set
+> of reset sources. Provide custom PMC register definitions to account for
+> the larger field for the reset sources as well as the updated list of
+> reset sources.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v2:
+> - use the new Tegra194 register definitions
+> 
+>  drivers/soc/tegra/pmc.c | 43 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 42 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 1916899d09a3..ea0e11a09c12 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -2926,6 +2926,43 @@ static const struct tegra_io_pad_soc tegra194_io_pads[] = {
+>  	{ .id = TEGRA_IO_PAD_AUDIO_HV, .dpd = 61, .voltage = UINT_MAX },
+>  };
+>  
+> +static const struct tegra_pmc_regs tegra194_pmc_regs = {
+> +	.scratch0 = 0x2000,
+> +	.dpd_req = 0x74,
+> +	.dpd_status = 0x78,
+> +	.dpd2_req = 0x7c,
+> +	.dpd2_status = 0x80,
+> +	.rst_status = 0x70,
+> +	.rst_source_shift = 0x2,
+> +	.rst_source_mask = 0x7c,
+> +	.rst_level_shift = 0x0,
+> +	.rst_level_mask = 0x3,
+> +};
+> +
+> +static const char * const tegra194_reset_sources[] = {
+> +	"SYS_RESET_N",
+> +	"AOWDT",
+> +	"BCCPLEXWDT",
+> +	"BPMPWDT",
+> +	"SCEWDT",
+> +	"SPEWDT",
+> +	"APEWDT",
+> +	"LCCPLEXWDT",
+> +	"SENSOR",
+> +	"AOTAG",
+> +	"VFSENSOR",
+> +	"MAINSWRST",
+> +	"SC7",
+> +	"HSM",
+> +	"CSITE",
+> +	"RCEWDT",
+> +	"PVA0WDT",
+> +	"PVA1WDT",
+> +	"L1A_ASYNC",
+> +	"BPMPBOOT",
+> +	"FUSECRC",
+> +};
+> +
+>  static const struct tegra_wake_event tegra194_wake_events[] = {
+>  	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA194_AON_GPIO(EE, 4)),
+>  	TEGRA_WAKE_IRQ("rtc", 73, 10),
+> @@ -2943,11 +2980,15 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
+>  	.maybe_tz_only = false,
+>  	.num_io_pads = ARRAY_SIZE(tegra194_io_pads),
+>  	.io_pads = tegra194_io_pads,
+> -	.regs = &tegra186_pmc_regs,
+> +	.regs = &tegra194_pmc_regs,
+>  	.init = NULL,
+>  	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
+>  	.irq_set_wake = tegra186_pmc_irq_set_wake,
+>  	.irq_set_type = tegra186_pmc_irq_set_type,
+> +	.reset_sources = tegra194_reset_sources,
+> +	.num_reset_sources = ARRAY_SIZE(tegra194_reset_sources),
+> +	.reset_levels = tegra186_reset_levels,
+> +	.num_reset_levels = ARRAY_SIZE(tegra186_reset_levels),
+>  	.num_wake_events = ARRAY_SIZE(tegra194_wake_events),
+>  	.wake_events = tegra194_wake_events,
+>  };
+> 
 
+Acked-by: Jon Hunter <jonthanh@nvidia.com>
 
---FwyhczKCDPOVeYh6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cheers
+Jon
 
-On Sat, Nov 02, 2019 at 06:56:28PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Hi Ben,
->=20
-> here's a revised subset of the patches I had sent out a couple of weeks
-> ago. I've reworked the BAR2 accesses in the way that you had suggested,
-> which at least for GP10B turned out to be fairly trivial to do. I have
-> not looked in detail at this for GV11B yet, but a cursory look showed
-> that BAR2 is accessed in more places, so the equivalent for GV11B might
-> be a bit more involved.
->=20
-> Other than that, not a lot has changed since then. I've added a couple
-> of precursory patches to add IOMMU helper dummies for the case where
-> IOMMU is disabled (as suggested by Ben Dooks).
->=20
-> Joerg, it'd be great if you could give an Acked-by on those two patches
-> so that Ben can pick them both up into the Nouveau tree. Alternatively I
-> can put them both into a stable branch and send a pull request to both
-> of you. Or yet another alternative would be for Joerg to apply them now
-> and Ben to wait for v5.5-rc1 until he picks up the rest. All of those
-> work for me.
-
-Hi Joerg, Ben,
-
-do you guys have any further comments on this series? I've got an
-updated patch to silence the warning that the kbuild robot flagged, so
-if there are no other comments I can send a final v3 of the series.
-
-Thierry
-
---FwyhczKCDPOVeYh6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3SoFEACgkQ3SOs138+
-s6H1sw//TEml9ZrPUemKFYIMfOWf6dFC1MUTYzGiajNIxv4J/7FqdNnBqUm6RT1o
-uROgL3iqP7fAoEHg5hVhwzRzxAH/bC75nfn9PD+yiPpVOwhqfY3OTwYXyEj3wBld
-G+2TQb5RTHd1HAv14IKsw33fyTMM/P22GGkcRfOuzhu3Q6U1hJCBc7zG3VQWSSN6
-u8bWNlYl0VZ8KcDlQJpYgT6QYOFYmagQGNkCRgeAgDUUKRE7rQ8vVZ6BOjtYv+SY
-5nTKNujyFp1Yoagp3pv23OcyIVWPg6BKd48rb/uq+QqcsDwTXwqTUOlAfhZhyIwn
-CVBDmqpuQL5BJPopvAzVFP/UKZZ0ChE7kuhAPFIOkCO6RVKpKE+1Zvqgb3QXUU4q
-5U7U8hrmwPBRSEhAmTYApzDAx7rqSKIWTm5k82Nm1WfzgyqNb+NubwOwkyRr0u7Y
-RobfXOEjbUCV5F6IejMN/pnufJs6CDPRTlz09roZ32kn5u+ibJyV0Nsa9L1sIwFm
-yJESD3B8y1BA2NCllBwu6semP74zJ5h90Kp4/xvLX/poS+VcY3Owfs7GeO8bDijl
-IwV+qD3RYSlGJmxq2ILPa/fuxxMbIsXLudNeZAtC1zmO28x6aUwYvpyDdgvEEu+P
-G9k1PiUNR9g/gbTv78dAmw62CrEQoss84ESlY5A+pbjAgQh0bLg=
-=74Sg
------END PGP SIGNATURE-----
-
---FwyhczKCDPOVeYh6--
-
---===============1447320490==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
-YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1
-
---===============1447320490==--
+-- 
+nvpublic
