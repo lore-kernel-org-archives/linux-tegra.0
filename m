@@ -1,85 +1,71 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 23/29] memory: tegra124-emc: Register as interconnect
- provider
-Date: Tue, 19 Nov 2019 19:57:50 +0300
-Message-ID: <4ad5dca2-12c9-8e96-c68c-0dcdb9860fd9@gmail.com>
+Subject: Re: [PATCH v1 12/29] interconnect: Add memory interconnection
+ providers for NVIDIA Tegra SoCs
+Date: Tue, 19 Nov 2019 19:58:49 +0300
+Message-ID: <a16b54bf-a881-84d0-4437-993dc275487c@gmail.com>
 References: <20191118200247.3567-1-digetx@gmail.com>
- <20191118200247.3567-24-digetx@gmail.com>
+ <20191118200247.3567-13-digetx@gmail.com> <20191119063002.GE2462695@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191118200247.3567-24-digetx@gmail.com>
+In-Reply-To: <20191119063002.GE2462695@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-18.11.2019 23:02, Dmitry Osipenko пишет:
-> EMC now provides MC with memory bandwidth using interconnect API.
+19.11.2019 09:30, Thierry Reding пишет:
+> On Mon, Nov 18, 2019 at 11:02:30PM +0300, Dmitry Osipenko wrote:
+>> All NVIDIA Tegra SoCs have identical topology in regards to memory
+>> interconnection between memory clients and memory controllers.
+>> The memory controller (MC) and external memory controller (EMC) are
+>> providing memory clients with required memory bandwidth. The memory
+>> controller performs arbitration between memory clients, while the
+>> external memory controller transfers data from/to DRAM and pipes that
+>> data from/to memory controller. Memory controller interconnect provider
+>> aggregates bandwidth requests from memory clients and sends the aggregated
+>> request to EMC provider that scales DRAM frequency in order to satisfy the
+>> bandwidth requirement. Memory controller provider could adjust hardware
+>> configuration for a more optimal arbitration depending on bandwidth
+>> requirements from memory clients, but this is unimplemented for now.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/interconnect/Kconfig               |   1 +
+>>  drivers/interconnect/Makefile              |   1 +
+>>  drivers/interconnect/tegra/Kconfig         |   6 +
+>>  drivers/interconnect/tegra/Makefile        |   4 +
+>>  drivers/interconnect/tegra/tegra-icc-emc.c | 138 +++++++++++++++++++++
+>>  drivers/interconnect/tegra/tegra-icc-mc.c  | 130 +++++++++++++++++++
+>>  include/soc/tegra/mc.h                     |  26 ++++
+>>  7 files changed, 306 insertions(+)
+>>  create mode 100644 drivers/interconnect/tegra/Kconfig
+>>  create mode 100644 drivers/interconnect/tegra/Makefile
+>>  create mode 100644 drivers/interconnect/tegra/tegra-icc-emc.c
+>>  create mode 100644 drivers/interconnect/tegra/tegra-icc-mc.c
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/memory/tegra/tegra124-emc.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-> index 2c73260654ba..c9478dcbeece 100644
-> --- a/drivers/memory/tegra/tegra124-emc.c
-> +++ b/drivers/memory/tegra/tegra124-emc.c
-> @@ -25,6 +25,7 @@
->  #define EMC_FBIO_CFG5				0x104
->  #define	EMC_FBIO_CFG5_DRAM_TYPE_MASK		0x3
->  #define	EMC_FBIO_CFG5_DRAM_TYPE_SHIFT		0
-> +#define EMC_FBIO_CFG5_DRAM_WIDTH_X64		BIT(4)
->  
->  #define EMC_INTSTATUS				0x0
->  #define EMC_INTSTATUS_CLKCHANGE_COMPLETE	BIT(4)
-> @@ -1080,11 +1081,28 @@ static void emc_debugfs_init(struct device *dev, struct tegra_emc *emc)
->  		dev_err(dev, "failed to create debugfs entry\n");
->  }
->  
-> +static unsigned int emc_dram_data_bus_width_bytes(struct tegra_emc *emc)
-> +{
-> +	unsigned int bus_width;
-> +	u32 emc_cfg;
-> +
-> +	emc_cfg = readl_relaxed(emc->regs + EMC_FBIO_CFG5);
-> +	if (emc_cfg & EMC_FBIO_CFG5_DRAM_WIDTH_X64)
-> +		bus_width = 64;
-> +	else
-> +		bus_width = 32;
+> Why does this have to be separate from the memory controller driver in
+> drivers/memory/tegra? It seems like this requires a bunch of boilerplate
+> just so that this code can live in the drivers/interconnect directory.
 
-Looks like I got a bit confused while was looking at TRMs before, seems
-this width is unrelated to the EMC channel at all. I'll try to revisit
-this again.
+It fits with the IOMMU separation. To me that it's a bit nicer to have
+the separation for the ICC as well, but having ICC within memory
+controller driver also will be fine.
 
-> +	dev_info(emc->dev, "DRAM data-bus width: %ubit\n", bus_width);
-> +
-> +	return bus_width / 8;
-> +}
-> +
->  static int tegra_emc_probe(struct platform_device *pdev)
->  {
->  	struct platform_device *mc;
->  	struct device_node *np;
->  	struct tegra_emc *emc;
-> +	unsigned int bus_width;
->  	u32 ram_code;
->  	int err;
->  
-> @@ -1146,6 +1164,12 @@ static int tegra_emc_probe(struct platform_device *pdev)
->  	if (IS_ENABLED(CONFIG_DEBUG_FS))
->  		emc_debugfs_init(&pdev->dev, emc);
->  
-> +	bus_width = emc_dram_data_bus_width_bytes(emc);
-> +
-> +	err = tegra_icc_emc_setup_interconnect(&pdev->dev, bus_width);
-> +	if (err)
-> +		dev_err(&pdev->dev, "failed to initialize ICC: %d\n", err);
-> +
->  	return 0;
->  };
->  
+Indeed it looks like there is not much in the MC's provider code right
+now, but maybe more stuff will be added later on.
+
+> If Georgi doesn't insist, I'd prefer if we carried this code directly in
+> the drivers/memory/tegra directory so that we don't have so many
+> indirections.
 > 
+> Also, and I already briefly mentioned this in another reply, I think we
+> don't need two providers here. The only one we're really interested in
+> is the memory-client to memory-controller paths. The MC to EMC path is
+> static.
+
+Perhaps it is fine to drop EMC path, I'll revisit it.
+
+[snip]
