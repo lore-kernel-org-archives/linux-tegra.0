@@ -1,55 +1,59 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.3 00/48] 5.3.12-stable review
-Date: Tue, 19 Nov 2019 13:32:05 +0100
-Message-ID: <20191119123205.GA1963992@kroah.com>
-References: <20191119050946.745015350@linuxfoundation.org>
- <a573d737-773b-1f94-d06f-b1d340b416ce@nvidia.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [PATCH 0/2] drm/tegra: Use PTR_ERR_OR_ZERO() to simplify code
+Date: Tue, 19 Nov 2019 13:40:06 +0100 (CET)
+Message-ID: <alpine.DEB.2.21.1911191339500.2818@hadrien>
+References: <1574077572-59152-1-git-send-email-zhengbin13@huawei.com>
+ <20191118132357.GC2246533@ulmo> <87wobwxf95.fsf@intel.com>
+ <87tv70xevg.fsf@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <a573d737-773b-1f94-d06f-b1d340b416ce@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <87tv70xevg.fsf@intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: airlied@linux.ie, Tomi Valkeinen <tomi.valkeinen@ti.com>, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, zhengbin <zhengbin13@huawei.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, treding@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 10:16:46AM +0000, Jon Hunter wrote:
-> 
-> On 19/11/2019 05:19, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.3.12 release.
-> > There are 48 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu, 21 Nov 2019 05:02:35 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.12-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.3:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.3.12-rc1-g9ebab9194d83
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
-
-Great, I got one right!  :)
-
-thanks for testing,
-
-greg k-h
+CgpPbiBUdWUsIDE5IE5vdiAyMDE5LCBKYW5pIE5pa3VsYSB3cm90ZToKCj4gT24gVHVlLCAxOSBO
+b3YgMjAxOSwgSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGxpbnV4LmludGVsLmNvbT4gd3JvdGU6
+Cj4gPiBPbiBNb24sIDE4IE5vdiAyMDE5LCBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdA
+Z21haWwuY29tPiB3cm90ZToKPiA+PiBPbiBNb24sIE5vdiAxOCwgMjAxOSBhdCAwNzo0NjoxMFBN
+ICswODAwLCB6aGVuZ2JpbiB3cm90ZToKPiA+Pj4gemhlbmdiaW4gKDIpOgo+ID4+PiAgIGRybS90
+ZWdyYTogVXNlIFBUUl9FUlJfT1JfWkVSTygpIHRvIHNpbXBsaWZ5IGNvZGUgaW4KPiA+Pj4gICAg
+IHRlZ3JhX2JvX2R1bWJfY3JlYXRlCj4gPj4+ICAgZHJtL3RlZ3JhOiBVc2UgUFRSX0VSUl9PUl9a
+RVJPKCkgdG8gc2ltcGxpZnkgY29kZSBpbiB0ZWdyYV9nZW1fY3JlYXRlCj4gPj4+Cj4gPj4+ICBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgfCA1ICstLS0tCj4gPj4+ICBkcml2ZXJzL2dwdS9k
+cm0vdGVncmEvZ2VtLmMgfCA1ICstLS0tCj4gPj4+ICAyIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0
+aW9ucygrKSwgOCBkZWxldGlvbnMoLSkKPiA+Pgo+ID4+IEFzIEkgZXhwbGFpbmVkIGluIHJlc3Bv
+bnNlIHRvIHRoZSBzYW1lIHBhdGNoZXMgc2VudCBmb3Igb3RoZXIgZHJpdmVycwo+ID4+IGFscmVh
+ZHksIEkgZG9uJ3QgdGhpbmsgdGhpcyBoYXMgYW55IG1lcml0Lgo+ID4KPiA+IEkgYWdyZWUgY29t
+cGxldGVseS4KPiA+Cj4gPiBBcHBhcmVudGx5IHRoZXJlJ3MgYSBjb2NjaWNoZWNrIGZsYWdnaW5n
+IGNvbnN0cnVjdHMgbGlrZSB0aGlzOyBwZXJoYXBzCj4gPiB0aGF0IHNob3VsZCBiZSBhZGRyZXNz
+ZWQuIEp1bGlhPwo+ID4KPiA+IFRoaW5ncyBsaWtlOgo+ID4KPiA+IGRyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9nZW0uYzo0NTc6MS0zOiBXQVJOSU5HOiBQVFJfRVJSX09SX1pFUk8gY2FuIGJlIHVzZWQK
+PiA+Cj4gPiBsZWFkaW5nIHRvOgo+ID4KPiA+ICAtCWlmIChJU19FUlIoYm8pKQo+ID4gIC0JCXJl
+dHVybiBQVFJfRVJSKGJvKTsKPiA+ICAtCj4gPiAgLQlyZXR1cm4gMDsKPiA+ICArCXJldHVybiBQ
+VFJfRVJSX09SX1pFUk8oYm8pOwo+ID4KPiA+IEkgdGhpbmsgd2UgaGF2ZSBjb25zZW5zdXMgdGhl
+IGVycm9yIHBhdGggYW5kIHRoZSBoYXBweSBkYXkgc2NlbmFyaW9zCj4gPiBzaG91bGQgcmVtYWlu
+IGRpc3RpbmN0LiBNb3Jlb3ZlciwgSSBmaW5kIFBUUl9FUlJfT1JfWkVSTygpIGNhdXNlcyBtZSB0
+bwo+ID4gcGF1c2UgZm9yIGEgbW9tZW50IHdoaWxlIHRoZSBvcmlnaW5hbCBpcyBhIGNyeXN0YWwg
+Y2xlYXIgaW1tZWRpYXRlbHkuCj4KPiBSZSBjb25zZW5zdXMsIFsxXVsyXSBhbmQgcHJvYmFibHkg
+bW9yZS4gUGVyIGFuIGVtYWlsIHNlYXJjaCwgdGhpcyBwb3BzCj4gdXAgZm9yIHRoZSBzYW1lIHN0
+dWZmIG92ZXIgYW5kIG92ZXIgYWdhaW4uIENhbiB3ZSBwbGVhc2UganVzdCByZW1vdmUgdGhlCj4g
+Y29jY2kgY2hlY2s/CgpPSy4KCmp1bGlhCgo+Cj4gQlIsCj4gSmFuaS4KPgo+Cj4gWzFdIGh0dHA6
+Ly9taWQubWFpbC1hcmNoaXZlLmNvbS9kYWFkZTUyZC0wZGZjLTkzNjUtYjE3Yy0wMmU3ZTc4NWFm
+YWRAdGkuY29tCj4gWzJdIGh0dHA6Ly9taWQubWFpbC1hcmNoaXZlLmNvbS8yMDE5MTExODEzMDAy
+Mi5HTTQzNDVAZ2lsbW91ci5sYW4KPgo+IC0tCj4gSmFuaSBOaWt1bGEsIEludGVsIE9wZW4gU291
+cmNlIEdyYXBoaWNzIENlbnRlcgo+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbA==
