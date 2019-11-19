@@ -1,55 +1,55 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH 0/2] drm/tegra: Use PTR_ERR_OR_ZERO() to simplify code
-Date: Tue, 19 Nov 2019 13:52:19 +0200
-Message-ID: <87tv70xevg.fsf@intel.com>
-References: <1574077572-59152-1-git-send-email-zhengbin13@huawei.com>
- <20191118132357.GC2246533@ulmo> <87wobwxf95.fsf@intel.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.3 00/48] 5.3.12-stable review
+Date: Tue, 19 Nov 2019 13:32:05 +0100
+Message-ID: <20191119123205.GA1963992@kroah.com>
+References: <20191119050946.745015350@linuxfoundation.org>
+ <a573d737-773b-1f94-d06f-b1d340b416ce@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <87wobwxf95.fsf@intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, zhengbin <zhengbin13@huawei.com>, Julia Lawall <julia.lawall@lip6.fr>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-tegra@vger.kernel.org, treding@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <a573d737-773b-1f94-d06f-b1d340b416ce@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAxOSBOb3YgMjAxOSwgSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGxpbnV4LmludGVs
-LmNvbT4gd3JvdGU6Cj4gT24gTW9uLCAxOCBOb3YgMjAxOSwgVGhpZXJyeSBSZWRpbmcgPHRoaWVy
-cnkucmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4+IE9uIE1vbiwgTm92IDE4LCAyMDE5IGF0IDA3
-OjQ2OjEwUE0gKzA4MDAsIHpoZW5nYmluIHdyb3RlOgo+Pj4gemhlbmdiaW4gKDIpOgo+Pj4gICBk
-cm0vdGVncmE6IFVzZSBQVFJfRVJSX09SX1pFUk8oKSB0byBzaW1wbGlmeSBjb2RlIGluCj4+PiAg
-ICAgdGVncmFfYm9fZHVtYl9jcmVhdGUKPj4+ICAgZHJtL3RlZ3JhOiBVc2UgUFRSX0VSUl9PUl9a
-RVJPKCkgdG8gc2ltcGxpZnkgY29kZSBpbiB0ZWdyYV9nZW1fY3JlYXRlCj4+PiAKPj4+ICBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgfCA1ICstLS0tCj4+PiAgZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL2dlbS5jIHwgNSArLS0tLQo+Pj4gIDIgZmlsZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
-LCA4IGRlbGV0aW9ucygtKQo+Pgo+PiBBcyBJIGV4cGxhaW5lZCBpbiByZXNwb25zZSB0byB0aGUg
-c2FtZSBwYXRjaGVzIHNlbnQgZm9yIG90aGVyIGRyaXZlcnMKPj4gYWxyZWFkeSwgSSBkb24ndCB0
-aGluayB0aGlzIGhhcyBhbnkgbWVyaXQuCj4KPiBJIGFncmVlIGNvbXBsZXRlbHkuCj4KPiBBcHBh
-cmVudGx5IHRoZXJlJ3MgYSBjb2NjaWNoZWNrIGZsYWdnaW5nIGNvbnN0cnVjdHMgbGlrZSB0aGlz
-OyBwZXJoYXBzCj4gdGhhdCBzaG91bGQgYmUgYWRkcmVzc2VkLiBKdWxpYT8KPgo+IFRoaW5ncyBs
-aWtlOgo+Cj4gZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jOjQ1NzoxLTM6IFdBUk5JTkc6IFBU
-Ul9FUlJfT1JfWkVSTyBjYW4gYmUgdXNlZAo+Cj4gbGVhZGluZyB0bzoKPgo+ICAtCWlmIChJU19F
-UlIoYm8pKQo+ICAtCQlyZXR1cm4gUFRSX0VSUihibyk7Cj4gIC0KPiAgLQlyZXR1cm4gMDsKPiAg
-KwlyZXR1cm4gUFRSX0VSUl9PUl9aRVJPKGJvKTsKPgo+IEkgdGhpbmsgd2UgaGF2ZSBjb25zZW5z
-dXMgdGhlIGVycm9yIHBhdGggYW5kIHRoZSBoYXBweSBkYXkgc2NlbmFyaW9zCj4gc2hvdWxkIHJl
-bWFpbiBkaXN0aW5jdC4gTW9yZW92ZXIsIEkgZmluZCBQVFJfRVJSX09SX1pFUk8oKSBjYXVzZXMg
-bWUgdG8KPiBwYXVzZSBmb3IgYSBtb21lbnQgd2hpbGUgdGhlIG9yaWdpbmFsIGlzIGEgY3J5c3Rh
-bCBjbGVhciBpbW1lZGlhdGVseS4KClJlIGNvbnNlbnN1cywgWzFdWzJdIGFuZCBwcm9iYWJseSBt
-b3JlLiBQZXIgYW4gZW1haWwgc2VhcmNoLCB0aGlzIHBvcHMKdXAgZm9yIHRoZSBzYW1lIHN0dWZm
-IG92ZXIgYW5kIG92ZXIgYWdhaW4uIENhbiB3ZSBwbGVhc2UganVzdCByZW1vdmUgdGhlCmNvY2Np
-IGNoZWNrPwoKQlIsCkphbmkuCgoKWzFdIGh0dHA6Ly9taWQubWFpbC1hcmNoaXZlLmNvbS9kYWFk
-ZTUyZC0wZGZjLTkzNjUtYjE3Yy0wMmU3ZTc4NWFmYWRAdGkuY29tClsyXSBodHRwOi8vbWlkLm1h
-aWwtYXJjaGl2ZS5jb20vMjAxOTExMTgxMzAwMjIuR000MzQ1QGdpbG1vdXIubGFuCgotLSAKSmFu
-aSBOaWt1bGEsIEludGVsIE9wZW4gU291cmNlIEdyYXBoaWNzIENlbnRlcgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+On Tue, Nov 19, 2019 at 10:16:46AM +0000, Jon Hunter wrote:
+> 
+> On 19/11/2019 05:19, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.3.12 release.
+> > There are 48 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 21 Nov 2019 05:02:35 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.12-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.3:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     38 tests:	38 pass, 0 fail
+> 
+> Linux version:	5.3.12-rc1-g9ebab9194d83
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
+
+Great, I got one right!  :)
+
+thanks for testing,
+
+greg k-h
