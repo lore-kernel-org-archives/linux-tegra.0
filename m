@@ -1,102 +1,90 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 14/29] memory: tegra: Add interconnect nodes for
- Terga20 display controllers
-Date: Tue, 19 Nov 2019 07:34:27 +0100
-Message-ID: <20191119063427.GG2462695@ulmo>
-References: <20191118200247.3567-1-digetx@gmail.com>
- <20191118200247.3567-15-digetx@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH v1 00/17] Remove direct Tegra PMC access in clock driver
+Date: Mon, 18 Nov 2019 22:50:17 -0800
+Message-ID: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="I3tAPq1Rm2pUxvsp"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191118200247.3567-15-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+are currently registered by Tegra clock driver using clk_regiser_mux and
+clk_register_gate which performs direct Tegra PMC register access.
 
---I3tAPq1Rm2pUxvsp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When Tegra PMC is in secure mode, any access from non-secure world will
+not go through.
 
-On Mon, Nov 18, 2019 at 11:02:32PM +0300, Dmitry Osipenko wrote:
-> Add initial interconnect nodes that allow display controller driver
-> to perform memory bandwidth requests using interconnect API.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/memory/tegra/tegra20.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->=20
-> diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra2=
-0.c
-> index a8098bff91d9..dfcd9fdb7ce7 100644
-> --- a/drivers/memory/tegra/tegra20.c
-> +++ b/drivers/memory/tegra/tegra20.c
-> @@ -3,6 +3,7 @@
->   * Copyright (C) 2012 NVIDIA CORPORATION.  All rights reserved.
->   */
-> =20
-> +#include <dt-bindings/interconnect/tegra-icc.h>
->  #include <dt-bindings/memory/tegra20-mc.h>
-> =20
->  #include "mc.h"
-> @@ -280,6 +281,17 @@ static const struct tegra_mc_reset_ops tegra20_mc_re=
-set_ops =3D {
->  	.reset_status =3D tegra20_mc_reset_status,
->  };
-> =20
-> +#define TEGRA20_MC_ICC(_name)				\
-> +	{						\
-> +		.name =3D #_name,				\
-> +		.id =3D TEGRA_ICC_MC_##_name,		\
-> +	}
-> +
-> +static const struct tegra_mc_icc_node tegra20_mc_icc_nodes[] =3D {
-> +	TEGRA20_MC_ICC(DC),
-> +	TEGRA20_MC_ICC(DCB),
-> +};
-> +
->  const struct tegra_mc_soc tegra20_mc_soc =3D {
->  	.clients =3D tegra20_mc_clients,
->  	.num_clients =3D ARRAY_SIZE(tegra20_mc_clients),
-> @@ -290,4 +302,6 @@ const struct tegra_mc_soc tegra20_mc_soc =3D {
->  	.reset_ops =3D &tegra20_mc_reset_ops,
->  	.resets =3D tegra20_mc_resets,
->  	.num_resets =3D ARRAY_SIZE(tegra20_mc_resets),
-> +	.icc_nodes =3D tegra20_mc_icc_nodes,
-> +	.num_icc_nodes =3D ARRAY_SIZE(tegra20_mc_icc_nodes),
->  };
+This patch series adds these Tegra PMC clocks and blink controls to Tegra
+PMC driver with PMC as clock provider and removed them from Tegra clock
+driver. This also adds PMC specific clock id's to use in device tree and
+removed clock ids of PMC clock from Tegra clock driver.
 
-As I mentioned, we already have most (if not all) of the information
-that we need for this in the various struct tegra_mc_client tables.
-Those tables also contain some definitions for latency allowance
-registers that we are eventually going to need to do more tweaking as
-you suggested in your cover letter.
+This series also includes patch to update clock provider from tegra_car
+to pmc in the device tree tegra210-smaug.dts that uses clk_out_2 from PMC.
 
-Thierry
+Tegra PMC also has WB0 PLLM overrides and PLLE pads IDDQ controls which
+are currently configured by Tegra clock driver using direct PMC access.
 
---I3tAPq1Rm2pUxvsp
-Content-Type: application/pgp-signature; name="signature.asc"
+This series also includes patches that adds helper functions in Tegra PMC
+driver to allow programming these from Tegra clock driver and removes
+direct PMC access from the clock driver.
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3TjPIACgkQ3SOs138+
-s6EdSBAAkJq6NUF8h85zOp4aN7BmEM9zr6aQU87PcpheYtxkxBSWJB3FL3ZbULKr
-uWUELJntyp3KXLEuosHFkUZTpvhzDhhyVi5pZ9r45M45uGgZqO1pMPunN9Ha1Uku
-8RzxboJvFEGLAok5/9XW9tsotQ/wjhRQKIQWgzGfxLz2jFEWF0nPc5akod1RHQTz
-dcmDT9D9gDXJqiAHJINlHxfA6O+pkTI3s7K2qr0O9C4ao+xgSOqcjWqr0yCOggw2
-GSerhri3lwwbEAQk8FMi10nIU0gD8DDOD3iVGNqnR6djOzkZMMEfG2i5RzWzHk7G
-ijkE6CnihiZwbDIUKdE9XBQGOp+fdEGnaznERMG1GWyi68u+nSmkGDnCtivJkL8j
-yur3Wdk2RoLyVii0RScej4aAndbyVNhRslgPEhu0hs1e6YNI44L1i6LcAZFck87N
-q/KQl6aiOpVajQ+7eiHgHOeYQYGXcz/GGRWToOmo9RHAu1gMqVdG03wgpAKDYkkQ
-ls3DMn/qSgfH6YeuKWPes9x4gQgXtAtx22hlXxXC3P5cSw4XWXpiQFv9YLN3I/zs
-SLrm0uaV8jsjyI0fF8dWO2RWQMlkyKj/kGQIL44ZRiYgO4iop1Rc3dIUPpn/NtYe
-bOPFW64ShM7Ex2qHSHhiHnv60kq1YqYAUo1mxFa7XE12ygIkn3s=
-=85iP
------END PGP SIGNATURE-----
+Sowjanya Komatineni (17):
+  soc: tegra: pmc: Add helper functions for PLLM overrides
+  soc: tegra: pmc: Add helper function for PLLE IDDQ override
+  dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
+  soc: tegra: Add Tegra PMC clock registrations into PMC driver
+  dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
+  soc: pmc: Add blink output clock registration to Tegra PMC
+  clk: tegra: Use Tegra PMC helper functions for PLLM overrides
+  clk: tegra: Use Tegra PMC helper function for PLLE IDDQ
+  clk: tegra: Remove PMC base references from clock registration
+  clk: tegra: Remove tegra_pmc_clk_init along with clk ids
+  dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
+  arm: tegra: Add clock-cells property to Tegra pmc
+  arm64: tegra: Add clock-cells property to Tegra pmc
+  dt-bindings: Add Tegra PMC clock configuration bindings
+  dt-bindings: tegra186-pmc: Add Tegra PMC clock bindings
+  arm64: tegra: smaug: Change clk_out_2 provider from tegra_car to pmc
+  ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
 
---I3tAPq1Rm2pUxvsp--
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  44 ++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  42 ++
+ .../devicetree/bindings/sound/nau8825.txt          |   2 +-
+ arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
+ arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   2 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   2 +
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   2 +
+ drivers/clk/tegra/Makefile                         |   1 -
+ drivers/clk/tegra/clk-id.h                         |   7 -
+ drivers/clk/tegra/clk-pll.c                        | 135 ++---
+ drivers/clk/tegra/clk-tegra-audio.c                |   4 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |   8 +-
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |  11 +-
+ drivers/clk/tegra/clk-tegra114.c                   |  75 +--
+ drivers/clk/tegra/clk-tegra124.c                   |  86 +--
+ drivers/clk/tegra/clk-tegra20.c                    |  30 +-
+ drivers/clk/tegra/clk-tegra210.c                   |  74 +--
+ drivers/clk/tegra/clk-tegra30.c                    |  59 +-
+ drivers/clk/tegra/clk.h                            |  48 +-
+ drivers/soc/tegra/pmc.c                            | 598 ++++++++++++++++++++-
+ include/dt-bindings/clock/tegra114-car.h           |  14 +-
+ include/dt-bindings/clock/tegra124-car-common.h    |  14 +-
+ include/dt-bindings/clock/tegra20-car.h            |   2 +-
+ include/dt-bindings/clock/tegra210-car.h           |  14 +-
+ include/dt-bindings/clock/tegra30-car.h            |  14 +-
+ include/dt-bindings/soc/tegra-pmc.h                |  17 +
+ include/soc/tegra/pmc.h                            |   6 +
+ 31 files changed, 879 insertions(+), 450 deletions(-)
+ create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+
+-- 
+2.7.4
