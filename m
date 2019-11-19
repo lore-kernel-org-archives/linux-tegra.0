@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v1 03/17] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
-Date: Mon, 18 Nov 2019 22:50:20 -0800
-Message-ID: <1574146234-3871-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v1 05/17] dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
+Date: Mon, 18 Nov 2019 22:50:22 -0800
+Message-ID: <1574146234-3871-6-git-send-email-skomatineni@nvidia.com>
 References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,39 +12,27 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dige
 Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
-these clocks has mux and a gate as a part of PMC controller.
+Tegra PMC has a blinking control to output 32 KHz clock to blink
+pin.
 
-This patch adds ids for each of these PMC clock mux and gates to
-use with the devicetree.
+This patch adds id for this blink control to use for enabling or
+disabling the blink output through devicetree.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- include/dt-bindings/soc/tegra-pmc.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+ include/dt-bindings/soc/tegra-pmc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
-new file mode 100644
-index 000000000000..fa1ccfc2514b
---- /dev/null
+index fa1ccfc2514b..bcb24e17981f 100644
+--- a/include/dt-bindings/soc/tegra-pmc.h
 +++ b/include/dt-bindings/soc/tegra-pmc.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
-+#define _DT_BINDINGS_SOC_TEGRA_PMC_H
-+
-+#define TEGRA_PMC_CLK_OUT_1_MUX		0
-+#define TEGRA_PMC_CLK_OUT_1		1
-+#define TEGRA_PMC_CLK_OUT_2_MUX		2
-+#define TEGRA_PMC_CLK_OUT_2		3
-+#define TEGRA_PMC_CLK_OUT_3_MUX		4
-+#define TEGRA_PMC_CLK_OUT_3		5
-+
-+#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+@@ -12,5 +12,6 @@
+ #define TEGRA_PMC_CLK_OUT_2		3
+ #define TEGRA_PMC_CLK_OUT_3_MUX		4
+ #define TEGRA_PMC_CLK_OUT_3		5
++#define TEGRA_PMC_CLK_BLINK		6
+ 
+ #endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
 -- 
 2.7.4
