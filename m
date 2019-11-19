@@ -1,90 +1,92 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v1 00/17] Remove direct Tegra PMC access in clock driver
-Date: Mon, 18 Nov 2019 22:50:17 -0800
-Message-ID: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v1 02/17] soc: tegra: pmc: Add helper function for PLLE IDDQ override
+Date: Mon, 18 Nov 2019 22:50:19 -0800
+Message-ID: <1574146234-3871-3-git-send-email-skomatineni@nvidia.com>
+References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
-are currently registered by Tegra clock driver using clk_regiser_mux and
-clk_register_gate which performs direct Tegra PMC register access.
+Tegra PMC has PLLE IDDQ mode override to allow software control
+of PLLE power up or down.
 
-When Tegra PMC is in secure mode, any access from non-secure world will
-not go through.
+PLLE is put in IDDQ mode by the hardware. Software can override
+the PLLE IDDQ control by setting the IDDQ override bit and IDDQ
+SWCTL bits in the PMC_SATA_PWRGT PMC register.
 
-This patch series adds these Tegra PMC clocks and blink controls to Tegra
-PMC driver with PMC as clock provider and removed them from Tegra clock
-driver. This also adds PMC specific clock id's to use in device tree and
-removed clock ids of PMC clock from Tegra clock driver.
+Currently Tegra clock driver overrides hardware IDDQ control and
+clears PLLE IDDQ during PLLE training by direct Tegra PMC register
+access. With this, when PMC is in secure mode any direct PMC register
+access from non-secure mode will not go through.
 
-This series also includes patch to update clock provider from tegra_car
-to pmc in the device tree tegra210-smaug.dts that uses clk_out_2 from PMC.
+This patch adds helper function for software control of PLLE IDDQ
+to use by Tegra clock driver.
 
-Tegra PMC also has WB0 PLLM overrides and PLLE pads IDDQ controls which
-are currently configured by Tegra clock driver using direct PMC access.
+Helper function uses tegra_pmc_readl and tegra_pmc_writel which
+handles both secure mode and non-secure mode PMC register access.
 
-This series also includes patches that adds helper functions in Tegra PMC
-driver to allow programming these from Tegra clock driver and removes
-direct PMC access from the clock driver.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 22 ++++++++++++++++++++++
+ include/soc/tegra/pmc.h |  1 +
+ 2 files changed, 23 insertions(+)
 
-
-Sowjanya Komatineni (17):
-  soc: tegra: pmc: Add helper functions for PLLM overrides
-  soc: tegra: pmc: Add helper function for PLLE IDDQ override
-  dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
-  soc: tegra: Add Tegra PMC clock registrations into PMC driver
-  dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
-  soc: pmc: Add blink output clock registration to Tegra PMC
-  clk: tegra: Use Tegra PMC helper functions for PLLM overrides
-  clk: tegra: Use Tegra PMC helper function for PLLE IDDQ
-  clk: tegra: Remove PMC base references from clock registration
-  clk: tegra: Remove tegra_pmc_clk_init along with clk ids
-  dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
-  arm: tegra: Add clock-cells property to Tegra pmc
-  arm64: tegra: Add clock-cells property to Tegra pmc
-  dt-bindings: Add Tegra PMC clock configuration bindings
-  dt-bindings: tegra186-pmc: Add Tegra PMC clock bindings
-  arm64: tegra: smaug: Change clk_out_2 provider from tegra_car to pmc
-  ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
-
- .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  44 ++
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  42 ++
- .../devicetree/bindings/sound/nau8825.txt          |   2 +-
- arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
- arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
- arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
- arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   2 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   2 +
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   2 +
- drivers/clk/tegra/Makefile                         |   1 -
- drivers/clk/tegra/clk-id.h                         |   7 -
- drivers/clk/tegra/clk-pll.c                        | 135 ++---
- drivers/clk/tegra/clk-tegra-audio.c                |   4 +-
- drivers/clk/tegra/clk-tegra-periph.c               |   8 +-
- drivers/clk/tegra/clk-tegra-super-gen4.c           |  11 +-
- drivers/clk/tegra/clk-tegra114.c                   |  75 +--
- drivers/clk/tegra/clk-tegra124.c                   |  86 +--
- drivers/clk/tegra/clk-tegra20.c                    |  30 +-
- drivers/clk/tegra/clk-tegra210.c                   |  74 +--
- drivers/clk/tegra/clk-tegra30.c                    |  59 +-
- drivers/clk/tegra/clk.h                            |  48 +-
- drivers/soc/tegra/pmc.c                            | 598 ++++++++++++++++++++-
- include/dt-bindings/clock/tegra114-car.h           |  14 +-
- include/dt-bindings/clock/tegra124-car-common.h    |  14 +-
- include/dt-bindings/clock/tegra20-car.h            |   2 +-
- include/dt-bindings/clock/tegra210-car.h           |  14 +-
- include/dt-bindings/clock/tegra30-car.h            |  14 +-
- include/dt-bindings/soc/tegra-pmc.h                |  17 +
- include/soc/tegra/pmc.h                            |   6 +
- 31 files changed, 879 insertions(+), 450 deletions(-)
- create mode 100644 include/dt-bindings/soc/tegra-pmc.h
-
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 224e7cf8dc00..7a5aab0b993b 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -108,6 +108,10 @@
+ #define PMC_WAKE2_STATUS		0x168
+ #define PMC_SW_WAKE2_STATUS		0x16c
+ 
++#define PMC_SATA_PWRGT			0x1ac
++#define PMC_SATA_PWRGT_PLLE_IDDQ_VALUE BIT(5)
++#define PMC_SATA_PWRGT_PLLE_IDDQ_SWCTL BIT(4)
++
+ #define PMC_SENSOR_CTRL			0x1b0
+ #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
+ #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+@@ -1177,6 +1181,24 @@ static void tegra_powergate_remove_all(struct device_node *parent)
+ 	of_node_put(np);
+ }
+ 
++void tegra_pmc_clear_plle_iddq(void)
++{
++	u32 val;
++
++	val = tegra_pmc_readl(pmc, PMC_SATA_PWRGT);
++	val |= PMC_SATA_PWRGT_PLLE_IDDQ_VALUE;
++	tegra_pmc_writel(pmc, val, PMC_SATA_PWRGT);
++
++	val = tegra_pmc_readl(pmc, PMC_SATA_PWRGT);
++	val |= PMC_SATA_PWRGT_PLLE_IDDQ_SWCTL;
++	tegra_pmc_writel(pmc, val, PMC_SATA_PWRGT);
++
++	val = tegra_pmc_readl(pmc, PMC_SATA_PWRGT);
++	val &= ~PMC_SATA_PWRGT_PLLE_IDDQ_VALUE;
++	tegra_pmc_writel(pmc, val, PMC_SATA_PWRGT);
++}
++EXPORT_SYMBOL(tegra_pmc_clear_plle_iddq);
++
+ bool tegra_pmc_is_pllm_wb0_override_enabled(void)
+ {
+ 	u32 val;
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index cbf23e0d3c55..2fdd60484765 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -25,6 +25,7 @@ bool tegra_pmc_is_pllm_wb0_enabled(void);
+ void tegra_pmc_set_pllm_wb0_enable(bool enable);
+ void tegra_pmc_get_pllm_wb0_mnp_overrides(u32 *divm, u32 *divn, u8 *divp);
+ void tegra_pmc_set_pllm_wb0_mnp_overrides(u32 divm, u32 divn, u8 divp);
++void tegra_pmc_clear_plle_iddq(void);
+ 
+ /*
+  * powergate and I/O rail APIs
 -- 
 2.7.4
