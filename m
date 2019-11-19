@@ -1,75 +1,61 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 12/29] interconnect: Add memory interconnection
- providers for NVIDIA Tegra SoCs
-Date: Tue, 19 Nov 2019 19:59:58 +0300
-Message-ID: <044b17a8-7186-fec0-e786-5ec5a13e5873@gmail.com>
-References: <20191118200247.3567-1-digetx@gmail.com>
- <20191118200247.3567-13-digetx@gmail.com> <20191119063139.GF2462695@ulmo>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: power: Fix path to power-domain.txt bindings
+Date: Tue, 19 Nov 2019 11:02:11 -0600
+Message-ID: <CAL_Jsq+1hHneSW5DzLNxU00AqQJ49chTyULJ0S3JR-CqfOfTgA@mail.gmail.com>
+References: <20191119144315.11261-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191119063139.GF2462695@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191119144315.11261-1-krzk@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, etnaviv@lists.freedesktop.org, Linux USB List <linux-usb@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, PCI <linux-pci@vger.kernel.org>, linux-tegra@vger.kernel.org, freedreno <freedreno@lists.freedesktop.org>, linux-clk <linux-clk@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-19.11.2019 09:31, Thierry Reding пишет:
-> On Mon, Nov 18, 2019 at 11:02:30PM +0300, Dmitry Osipenko wrote:
-> [...]
->> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
->> index 1238e35653d1..593954324259 100644
->> --- a/include/soc/tegra/mc.h
->> +++ b/include/soc/tegra/mc.h
->> @@ -141,6 +141,11 @@ struct tegra_mc_reset_ops {
->>  			    const struct tegra_mc_reset *rst);
->>  };
->>  
->> +struct tegra_mc_icc_node {
->> +	const char *name;
->> +	unsigned int id;
->> +};
->> +
->>  struct tegra_mc_soc {
->>  	const struct tegra_mc_client *clients;
->>  	unsigned int num_clients;
->> @@ -160,6 +165,9 @@ struct tegra_mc_soc {
->>  	const struct tegra_mc_reset_ops *reset_ops;
->>  	const struct tegra_mc_reset *resets;
->>  	unsigned int num_resets;
->> +
->> +	const struct tegra_mc_icc_node *icc_nodes;
->> +	unsigned int num_icc_nodes;
->>  };
->>  
->>  struct tegra_mc {
->> @@ -184,4 +192,22 @@ struct tegra_mc {
->>  int tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate);
->>  unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc);
->>  
->> +#ifdef CONFIG_INTERCONNECT_TEGRA
->> +int tegra_icc_mc_setup_interconnect(struct tegra_mc *mc);
->> +int tegra_icc_emc_setup_interconnect(struct device *emc_dev,
->> +				     unsigned int dram_data_bus_width_bytes);
->> +#else
->> +static inline int tegra_icc_mc_setup_interconnect(struct tegra_mc *mc);
->> +{
->> +	return 0;
->> +}
->> +
->> +static inline int
->> +tegra_icc_emc_setup_interconnect(struct device *emc_dev,
->> +				 unsigned int dram_data_bus_width_bytes)
->> +{
->> +	return 0;
->> +}
->> +#endif
-> 
-> Is there really any reason why we should make this support optional? It
-> seems to me like we would always want this enabled once it's tested and
-> known to work.
-
-There is always some room for bugs, should be better to have an option
-to disable ICC entirely (IMO).
+T24gVHVlLCBOb3YgMTksIDIwMTkgYXQgODo0MyBBTSBLcnp5c3p0b2YgS296bG93c2tpIDxrcnpr
+QGtlcm5lbC5vcmc+IHdyb3RlOgo+Cj4gV2l0aCBzcGxpdCBvZiBwb3dlciBkb21haW4gY29udHJv
+bGxlciBiaW5kaW5ncyB0byBwb3dlci1kb21haW4ueWFtbCwgdGhlCj4gY29uc3VtZXIgcGFydCB3
+YXMgcmVuYW1lZCB0byBwb3dlci1kb21haW4udHh0LiAgVXBkYXRlIHRoZSByZWZlcmVuY2VzIGlu
+Cj4gb3RoZXIgYmluZGluZ3MuCj4KPiBSZXBvcnRlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxn
+ZWVydEBsaW51eC1tNjhrLm9yZz4KPiBGaXhlczogYWJiNDgwNWUzNDNhICgiZHQtYmluZGluZ3M6
+IHBvd2VyOiBDb252ZXJ0IFNhbXN1bmcgRXh5bm9zIFBvd2VyIERvbWFpbiBiaW5kaW5ncyB0byBq
+c29uLXNjaGVtYSIpCj4gU2lnbmVkLW9mZi1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0Br
+ZXJuZWwub3JnPgo+IC0tLQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xv
+Y2svY2xrLWV4eW5vcy1hdWRzcy50eHQgIHwgMiArLQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvY2xvY2svZXh5bm9zNTQzMy1jbG9jay50eHQgIHwgMiArLQo+ICAuLi4vZGV2
+aWNldHJlZS9iaW5kaW5ncy9jbG9jay9yZW5lc2FzLHI4YTc3NzgtY3BnLWNsb2Nrcy50eHQgIHwg
+MiArLQo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9yZW5lc2FzLHI4YTc3NzktY3Bn
+LWNsb2Nrcy50eHQgIHwgMiArLQo+ICAuLi4vYmluZGluZ3MvY2xvY2svcmVuZXNhcyxyY2FyLWdl
+bjItY3BnLWNsb2Nrcy50eHQgICAgICAgICAgIHwgMiArLQo+ICAuLi4vZGV2aWNldHJlZS9iaW5k
+aW5ncy9jbG9jay9yZW5lc2FzLHJ6LWNwZy1jbG9ja3MudHh0ICAgICAgIHwgMiArLQo+ICAuLi4v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2V0bmF2aXYvZXRuYXZpdi1kcm0udHh0ICAgICAg
+IHwgMiArLQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tc20v
+ZHB1LnR4dCAgICAgICAgIHwgMiArLQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvZGlzcGxheS9tc20vbWRwNS50eHQgICAgICAgIHwgMiArLQo+ICBEb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvZHNwL2ZzbCxkc3AueWFtbCAgICAgICAgICAgIHwgMiArLQo+ICBE
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvaW14Ny1taXBpLWNzaTIudHh0
+ICAgIHwgMiArLQo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9tZWRpYXRlay1qcGVn
+LWRlY29kZXIudHh0ICAgICAgIHwgMiArLQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvbWVkaWEvbWVkaWF0ZWstbWRwLnR4dCAgICAgIHwgMiArLQo+ICBEb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3Mvb3BwL3Fjb20tbnZtZW0tY3B1ZnJlcS50eHQgIHwgMiArLQo+
+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGNpL3BjaS1rZXlzdG9uZS50eHQg
+ICAgICAgIHwgMiArLQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3Rp
+LHBoeS1hbTY1NC1zZXJkZXMudHh0IHwgMiArLQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvcG93ZXIvcWNvbSxycG1wZC50eHQgICAgICAgIHwgMiArLQo+ICBEb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcG93ZXIvcmVuZXNhcyxyY2FyLXN5c2MudHh0IHwgMiAr
+LQo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy91c2IvbnZpZGlhLHRlZ3JhMTI0LXh1c2IudHh0
+ICAgICAgICAgIHwgNCArKy0tCj4gIDE5IGZpbGVzIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyks
+IDIwIGRlbGV0aW9ucygtKQoKUGxlYXNlIG5vLiBDYW4geW91IGp1c3QgdW5kbyB0aGUgcmVuYW1p
+bmcgYmFjayB0byBwb3dlcl9kb21haW4udHh0CgpSb2IKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVs
