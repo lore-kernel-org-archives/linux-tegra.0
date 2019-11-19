@@ -1,53 +1,48 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.3 00/48] 5.3.12-stable review
-Date: Tue, 19 Nov 2019 10:16:46 +0000
-Message-ID: <a573d737-773b-1f94-d06f-b1d340b416ce@nvidia.com>
-References: <20191119050946.745015350@linuxfoundation.org>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH 0/2] drm/tegra: Use PTR_ERR_OR_ZERO() to simplify code
+Date: Tue, 19 Nov 2019 13:44:06 +0200
+Message-ID: <87wobwxf95.fsf@intel.com>
+References: <1574077572-59152-1-git-send-email-zhengbin13@huawei.com>
+ <20191118132357.GC2246533@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20191119050946.745015350@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191118132357.GC2246533@ulmo>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, zhengbin <zhengbin13@huawei.com>, Julia Lawall <julia.lawall@lip6.fr>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 19/11/2019 05:19, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.3.12 release.
-> There are 48 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 21 Nov 2019 05:02:35 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.12-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-
-All tests are passing for Tegra ...
-
-Test results for stable-v5.3:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.3.12-rc1-g9ebab9194d83
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+T24gTW9uLCAxOCBOb3YgMjAxOSwgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWls
+LmNvbT4gd3JvdGU6Cj4gT24gTW9uLCBOb3YgMTgsIDIwMTkgYXQgMDc6NDY6MTBQTSArMDgwMCwg
+emhlbmdiaW4gd3JvdGU6Cj4+IHpoZW5nYmluICgyKToKPj4gICBkcm0vdGVncmE6IFVzZSBQVFJf
+RVJSX09SX1pFUk8oKSB0byBzaW1wbGlmeSBjb2RlIGluCj4+ICAgICB0ZWdyYV9ib19kdW1iX2Ny
+ZWF0ZQo+PiAgIGRybS90ZWdyYTogVXNlIFBUUl9FUlJfT1JfWkVSTygpIHRvIHNpbXBsaWZ5IGNv
+ZGUgaW4gdGVncmFfZ2VtX2NyZWF0ZQo+PiAKPj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0u
+YyB8IDUgKy0tLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9nZW0uYyB8IDUgKy0tLS0KPj4g
+IDIgZmlsZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQo+Cj4gQXMg
+SSBleHBsYWluZWQgaW4gcmVzcG9uc2UgdG8gdGhlIHNhbWUgcGF0Y2hlcyBzZW50IGZvciBvdGhl
+ciBkcml2ZXJzCj4gYWxyZWFkeSwgSSBkb24ndCB0aGluayB0aGlzIGhhcyBhbnkgbWVyaXQuCgpJ
+IGFncmVlIGNvbXBsZXRlbHkuCgpBcHBhcmVudGx5IHRoZXJlJ3MgYSBjb2NjaWNoZWNrIGZsYWdn
+aW5nIGNvbnN0cnVjdHMgbGlrZSB0aGlzOyBwZXJoYXBzCnRoYXQgc2hvdWxkIGJlIGFkZHJlc3Nl
+ZC4gSnVsaWE/CgpUaGluZ3MgbGlrZToKCmRyaXZlcnMvZ3B1L2RybS90ZWdyYS9nZW0uYzo0NTc6
+MS0zOiBXQVJOSU5HOiBQVFJfRVJSX09SX1pFUk8gY2FuIGJlIHVzZWQKCmxlYWRpbmcgdG86Cgog
+LQlpZiAoSVNfRVJSKGJvKSkKIC0JCXJldHVybiBQVFJfRVJSKGJvKTsKIC0KIC0JcmV0dXJuIDA7
+CiArCXJldHVybiBQVFJfRVJSX09SX1pFUk8oYm8pOwoKSSB0aGluayB3ZSBoYXZlIGNvbnNlbnN1
+cyB0aGUgZXJyb3IgcGF0aCBhbmQgdGhlIGhhcHB5IGRheSBzY2VuYXJpb3MKc2hvdWxkIHJlbWFp
+biBkaXN0aW5jdC4gTW9yZW92ZXIsIEkgZmluZCBQVFJfRVJSX09SX1pFUk8oKSBjYXVzZXMgbWUg
+dG8KcGF1c2UgZm9yIGEgbW9tZW50IHdoaWxlIHRoZSBvcmlnaW5hbCBpcyBhIGNyeXN0YWwgY2xl
+YXIgaW1tZWRpYXRlbHkuCgoKQlIsCkphbmkuCgoKLS0gCkphbmkgTmlrdWxhLCBJbnRlbCBPcGVu
+IFNvdXJjZSBHcmFwaGljcyBDZW50ZXIKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVs
