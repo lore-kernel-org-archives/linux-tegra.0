@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v1 02/17] soc: tegra: pmc: Add helper function for PLLE IDDQ override
-Date: Mon, 18 Nov 2019 22:50:19 -0800
-Message-ID: <1574146234-3871-3-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v1 03/17] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
+Date: Mon, 18 Nov 2019 22:50:20 -0800
+Message-ID: <1574146234-3871-4-git-send-email-skomatineni@nvidia.com>
 References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,81 +12,39 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dige
 Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC has PLLE IDDQ mode override to allow software control
-of PLLE power up or down.
+Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
+these clocks has mux and a gate as a part of PMC controller.
 
-PLLE is put in IDDQ mode by the hardware. Software can override
-the PLLE IDDQ control by setting the IDDQ override bit and IDDQ
-SWCTL bits in the PMC_SATA_PWRGT PMC register.
-
-Currently Tegra clock driver overrides hardware IDDQ control and
-clears PLLE IDDQ during PLLE training by direct Tegra PMC register
-access. With this, when PMC is in secure mode any direct PMC register
-access from non-secure mode will not go through.
-
-This patch adds helper function for software control of PLLE IDDQ
-to use by Tegra clock driver.
-
-Helper function uses tegra_pmc_readl and tegra_pmc_writel which
-handles both secure mode and non-secure mode PMC register access.
+This patch adds ids for each of these PMC clock mux and gates to
+use with the devicetree.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 22 ++++++++++++++++++++++
- include/soc/tegra/pmc.h |  1 +
- 2 files changed, 23 insertions(+)
+ include/dt-bindings/soc/tegra-pmc.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 include/dt-bindings/soc/tegra-pmc.h
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 224e7cf8dc00..7a5aab0b993b 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -108,6 +108,10 @@
- #define PMC_WAKE2_STATUS		0x168
- #define PMC_SW_WAKE2_STATUS		0x16c
- 
-+#define PMC_SATA_PWRGT			0x1ac
-+#define PMC_SATA_PWRGT_PLLE_IDDQ_VALUE BIT(5)
-+#define PMC_SATA_PWRGT_PLLE_IDDQ_SWCTL BIT(4)
+diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
+new file mode 100644
+index 000000000000..fa1ccfc2514b
+--- /dev/null
++++ b/include/dt-bindings/soc/tegra-pmc.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
++ */
 +
- #define PMC_SENSOR_CTRL			0x1b0
- #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
- #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
-@@ -1177,6 +1181,24 @@ static void tegra_powergate_remove_all(struct device_node *parent)
- 	of_node_put(np);
- }
- 
-+void tegra_pmc_clear_plle_iddq(void)
-+{
-+	u32 val;
++#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
++#define _DT_BINDINGS_SOC_TEGRA_PMC_H
 +
-+	val = tegra_pmc_readl(pmc, PMC_SATA_PWRGT);
-+	val |= PMC_SATA_PWRGT_PLLE_IDDQ_VALUE;
-+	tegra_pmc_writel(pmc, val, PMC_SATA_PWRGT);
++#define TEGRA_PMC_CLK_OUT_1_MUX		0
++#define TEGRA_PMC_CLK_OUT_1		1
++#define TEGRA_PMC_CLK_OUT_2_MUX		2
++#define TEGRA_PMC_CLK_OUT_2		3
++#define TEGRA_PMC_CLK_OUT_3_MUX		4
++#define TEGRA_PMC_CLK_OUT_3		5
 +
-+	val = tegra_pmc_readl(pmc, PMC_SATA_PWRGT);
-+	val |= PMC_SATA_PWRGT_PLLE_IDDQ_SWCTL;
-+	tegra_pmc_writel(pmc, val, PMC_SATA_PWRGT);
-+
-+	val = tegra_pmc_readl(pmc, PMC_SATA_PWRGT);
-+	val &= ~PMC_SATA_PWRGT_PLLE_IDDQ_VALUE;
-+	tegra_pmc_writel(pmc, val, PMC_SATA_PWRGT);
-+}
-+EXPORT_SYMBOL(tegra_pmc_clear_plle_iddq);
-+
- bool tegra_pmc_is_pllm_wb0_override_enabled(void)
- {
- 	u32 val;
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index cbf23e0d3c55..2fdd60484765 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -25,6 +25,7 @@ bool tegra_pmc_is_pllm_wb0_enabled(void);
- void tegra_pmc_set_pllm_wb0_enable(bool enable);
- void tegra_pmc_get_pllm_wb0_mnp_overrides(u32 *divm, u32 *divn, u8 *divp);
- void tegra_pmc_set_pllm_wb0_mnp_overrides(u32 divm, u32 divn, u8 divp);
-+void tegra_pmc_clear_plle_iddq(void);
- 
- /*
-  * powergate and I/O rail APIs
++#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
 -- 
 2.7.4
