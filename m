@@ -1,59 +1,84 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH 0/2] drm/tegra: Use PTR_ERR_OR_ZERO() to simplify code
-Date: Tue, 19 Nov 2019 13:40:06 +0100 (CET)
-Message-ID: <alpine.DEB.2.21.1911191339500.2818@hadrien>
-References: <1574077572-59152-1-git-send-email-zhengbin13@huawei.com>
- <20191118132357.GC2246533@ulmo> <87wobwxf95.fsf@intel.com>
- <87tv70xevg.fsf@intel.com>
+From: Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: stable request: PCI: tegra: Enable Relaxed Ordering only for
+ Tegra20 & Tegra30
+Date: Tue, 19 Nov 2019 14:31:07 +0000
+Message-ID: <f63d4cd6578e297ebbfbaa81842f89410d495587.camel@decadent.org.uk>
+References: <11251eb0-5675-9d3d-d15f-c346781e2bff@nvidia.com>
+         <20191111130908.GA448544@kroah.com>
+         <9d7871e7-f8aa-1ed5-dc2e-37ba6f218a2f@nvidia.com>
+         <cd787fce-3675-a2d1-90a7-5fa0c4b3f946@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <87tv70xevg.fsf@intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: airlied@linux.ie, Tomi Valkeinen <tomi.valkeinen@ti.com>, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, zhengbin <zhengbin13@huawei.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, treding@nvidia.com
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-yOTlUY5S14af4uD5tUGl"
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <cd787fce-3675-a2d1-90a7-5fa0c4b3f946@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Krishna Thota <kthota@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-CgpPbiBUdWUsIDE5IE5vdiAyMDE5LCBKYW5pIE5pa3VsYSB3cm90ZToKCj4gT24gVHVlLCAxOSBO
-b3YgMjAxOSwgSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGxpbnV4LmludGVsLmNvbT4gd3JvdGU6
-Cj4gPiBPbiBNb24sIDE4IE5vdiAyMDE5LCBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdA
-Z21haWwuY29tPiB3cm90ZToKPiA+PiBPbiBNb24sIE5vdiAxOCwgMjAxOSBhdCAwNzo0NjoxMFBN
-ICswODAwLCB6aGVuZ2JpbiB3cm90ZToKPiA+Pj4gemhlbmdiaW4gKDIpOgo+ID4+PiAgIGRybS90
-ZWdyYTogVXNlIFBUUl9FUlJfT1JfWkVSTygpIHRvIHNpbXBsaWZ5IGNvZGUgaW4KPiA+Pj4gICAg
-IHRlZ3JhX2JvX2R1bWJfY3JlYXRlCj4gPj4+ICAgZHJtL3RlZ3JhOiBVc2UgUFRSX0VSUl9PUl9a
-RVJPKCkgdG8gc2ltcGxpZnkgY29kZSBpbiB0ZWdyYV9nZW1fY3JlYXRlCj4gPj4+Cj4gPj4+ICBk
-cml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgfCA1ICstLS0tCj4gPj4+ICBkcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZ2VtLmMgfCA1ICstLS0tCj4gPj4+ICAyIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0
-aW9ucygrKSwgOCBkZWxldGlvbnMoLSkKPiA+Pgo+ID4+IEFzIEkgZXhwbGFpbmVkIGluIHJlc3Bv
-bnNlIHRvIHRoZSBzYW1lIHBhdGNoZXMgc2VudCBmb3Igb3RoZXIgZHJpdmVycwo+ID4+IGFscmVh
-ZHksIEkgZG9uJ3QgdGhpbmsgdGhpcyBoYXMgYW55IG1lcml0Lgo+ID4KPiA+IEkgYWdyZWUgY29t
-cGxldGVseS4KPiA+Cj4gPiBBcHBhcmVudGx5IHRoZXJlJ3MgYSBjb2NjaWNoZWNrIGZsYWdnaW5n
-IGNvbnN0cnVjdHMgbGlrZSB0aGlzOyBwZXJoYXBzCj4gPiB0aGF0IHNob3VsZCBiZSBhZGRyZXNz
-ZWQuIEp1bGlhPwo+ID4KPiA+IFRoaW5ncyBsaWtlOgo+ID4KPiA+IGRyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9nZW0uYzo0NTc6MS0zOiBXQVJOSU5HOiBQVFJfRVJSX09SX1pFUk8gY2FuIGJlIHVzZWQK
-PiA+Cj4gPiBsZWFkaW5nIHRvOgo+ID4KPiA+ICAtCWlmIChJU19FUlIoYm8pKQo+ID4gIC0JCXJl
-dHVybiBQVFJfRVJSKGJvKTsKPiA+ICAtCj4gPiAgLQlyZXR1cm4gMDsKPiA+ICArCXJldHVybiBQ
-VFJfRVJSX09SX1pFUk8oYm8pOwo+ID4KPiA+IEkgdGhpbmsgd2UgaGF2ZSBjb25zZW5zdXMgdGhl
-IGVycm9yIHBhdGggYW5kIHRoZSBoYXBweSBkYXkgc2NlbmFyaW9zCj4gPiBzaG91bGQgcmVtYWlu
-IGRpc3RpbmN0LiBNb3Jlb3ZlciwgSSBmaW5kIFBUUl9FUlJfT1JfWkVSTygpIGNhdXNlcyBtZSB0
-bwo+ID4gcGF1c2UgZm9yIGEgbW9tZW50IHdoaWxlIHRoZSBvcmlnaW5hbCBpcyBhIGNyeXN0YWwg
-Y2xlYXIgaW1tZWRpYXRlbHkuCj4KPiBSZSBjb25zZW5zdXMsIFsxXVsyXSBhbmQgcHJvYmFibHkg
-bW9yZS4gUGVyIGFuIGVtYWlsIHNlYXJjaCwgdGhpcyBwb3BzCj4gdXAgZm9yIHRoZSBzYW1lIHN0
-dWZmIG92ZXIgYW5kIG92ZXIgYWdhaW4uIENhbiB3ZSBwbGVhc2UganVzdCByZW1vdmUgdGhlCj4g
-Y29jY2kgY2hlY2s/CgpPSy4KCmp1bGlhCgo+Cj4gQlIsCj4gSmFuaS4KPgo+Cj4gWzFdIGh0dHA6
-Ly9taWQubWFpbC1hcmNoaXZlLmNvbS9kYWFkZTUyZC0wZGZjLTkzNjUtYjE3Yy0wMmU3ZTc4NWFm
-YWRAdGkuY29tCj4gWzJdIGh0dHA6Ly9taWQubWFpbC1hcmNoaXZlLmNvbS8yMDE5MTExODEzMDAy
-Mi5HTTQzNDVAZ2lsbW91ci5sYW4KPgo+IC0tCj4gSmFuaSBOaWt1bGEsIEludGVsIE9wZW4gU291
-cmNlIEdyYXBoaWNzIENlbnRlcgo+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbA==
+
+--=-yOTlUY5S14af4uD5tUGl
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 2019-11-18 at 12:05 +0530, Vidya Sagar wrote:
+> On 11/11/2019 8:52 PM, Vidya Sagar wrote:
+> > On 11/11/2019 6:39 PM, Greg Kroah-Hartman wrote:
+> > > On Mon, Nov 11, 2019 at 06:24:53PM +0530, Vidya Sagar wrote:
+> > > > Hi Greg,
+> > > > We noticed that the Tegra PCIe host controller driver enabled
+> > > > "Relaxed Ordering" bit in the PCIe configuration space for "all"
+> > > > devices erroneously. We pushed a fix for this through the
+> > > > commit: 7be142caabc4780b13a522c485abc806de5c4114 and it has been
+> > > > soaking in main line for the last four months.
+> > > > Based on the discussion we had @ http://patchwork.ozlabs.org/patch/=
+1127604/
+> > > > we would now like to push it to the following stable kernels
+> > > > 4.19                  : Applies cleanly
+> > > > 3.16, 4.4, 4.9 & 4.14 : Following equivalent patch needs to be used=
+ as the
+> > > >                          file was at drivers/pci/host/pci-tegra.c e=
+arlier
+> > > >                          (and moved to drivers/pci/controller/pci-t=
+egra.c starting 4.19)
+> > >=20
+> > > All now queued up (except for 3.16, that's Ben's tree, he will get to=
+ it
+> > > soon.)
+> > >=20
+> Hi Ben,
+> Could you please queue this up for 3.16 as well?
+
+OK, I've added it to my queue.
+
+Ben.
+
+--=20
+Ben Hutchings
+Theory and practice are closer in theory than in practice - John Levine
+
+
+
+--=-yOTlUY5S14af4uD5tUGl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl3T/KsACgkQ57/I7JWG
+EQlzgA/9HSBWVRxCNVz6064NnclJbdt4zirsCIAgkuJ1Mu2LrlPeaXsoRgvnE09o
+VQOWeMfc+gwb7SdUWDv/SD3WlNUpf/D+7VTWfkgW9jQjXLvCjiJPnmKuJhRwESJm
+isLT2ZphyIynNXjzfRlIC4eU98DvPxjHjAx1XjhLg8+zOB45HsxJgAlLUjGVYgU8
+KUOMM4Fi4Ph/rEyPAPqIxmGyzoosoe0p90hkt1b0ZrgMsuNjF6JK3PJtmIxsWRNt
+gSh/1kNuAjsL3k5FpsGZNPFJzyHxp1Ha3lYtBm+cHljK3537tL9zDzywZ13Fe9WY
+2uz0rCi7shPz8PzXkHD8htJaNy2XHYyesm12gA3XNpGzg0PmS2ylvI1siwOdXRFD
+mxxrdMYmBnNnHZLL/omU8SMDXTW/nNgUTHY9t6Vy7cNpe43bNHAggu0kWMqHbLmD
+hVRClI7HVqUiZU1Jc9ByofJBiBFOULWvdssoCaYi6n7453jfPDKzoTTYoiqclzVI
+PgHUOxji33+tN+ZSxlrb+NBfbvg59C2rOBOOi2eG5QdtfFoTgDx1j6at3NWFdj0k
+S0iWHXvjiHbh3rmQ9AAAmsJPTyNs24Ro4TjhijXIomaDHvs/8B4gg4LpcoGWwEiA
+rYTkKNcODmJeiaVij5s6yLr+jTpMpJFG2Dp1dfFWGAcMdKR+pgA=
+=Vxdh
+-----END PGP SIGNATURE-----
+
+--=-yOTlUY5S14af4uD5tUGl--
