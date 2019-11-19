@@ -1,64 +1,80 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: stable request: PCI: tegra: Enable Relaxed Ordering only for
- Tegra20 & Tegra30
-Date: Tue, 19 Nov 2019 20:34:40 +0530
-Message-ID: <0cc0738a-d10f-4901-3f79-c36d50732a7d@nvidia.com>
-References: <11251eb0-5675-9d3d-d15f-c346781e2bff@nvidia.com>
- <20191111130908.GA448544@kroah.com>
- <9d7871e7-f8aa-1ed5-dc2e-37ba6f218a2f@nvidia.com>
- <cd787fce-3675-a2d1-90a7-5fa0c4b3f946@nvidia.com>
- <f63d4cd6578e297ebbfbaa81842f89410d495587.camel@decadent.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.19 000/422] 4.19.85-stable review
+Date: Tue, 19 Nov 2019 15:07:30 +0000
+Message-ID: <5598bd6b-c08e-d6e2-c5c3-70b53c95298e@nvidia.com>
+References: <20191119051400.261610025@linuxfoundation.org>
+ <20468dbc-5b88-f86e-9d5d-5edca4e4be2b@nvidia.com>
+ <20191119122417.GA1913916@kroah.com> <20191119123003.GA1948960@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <f63d4cd6578e297ebbfbaa81842f89410d495587.camel@decadent.org.uk>
+In-Reply-To: <20191119123003.GA1948960@kroah.com>
 Content-Language: en-US
 Sender: stable-owner@vger.kernel.org
-To: Ben Hutchings <ben@decadent.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Krishna Thota <kthota@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/19/2019 8:01 PM, Ben Hutchings wrote:
-> On Mon, 2019-11-18 at 12:05 +0530, Vidya Sagar wrote:
->> On 11/11/2019 8:52 PM, Vidya Sagar wrote:
->>> On 11/11/2019 6:39 PM, Greg Kroah-Hartman wrote:
->>>> On Mon, Nov 11, 2019 at 06:24:53PM +0530, Vidya Sagar wrote:
->>>>> Hi Greg,
->>>>> We noticed that the Tegra PCIe host controller driver enabled
->>>>> "Relaxed Ordering" bit in the PCIe configuration space for "all"
->>>>> devices erroneously. We pushed a fix for this through the
->>>>> commit: 7be142caabc4780b13a522c485abc806de5c4114 and it has been
->>>>> soaking in main line for the last four months.
->>>>> Based on the discussion we had @ http://patchwork.ozlabs.org/patch/1127604/
->>>>> we would now like to push it to the following stable kernels
->>>>> 4.19                  : Applies cleanly
->>>>> 3.16, 4.4, 4.9 & 4.14 : Following equivalent patch needs to be used as the
->>>>>                           file was at drivers/pci/host/pci-tegra.c earlier
->>>>>                           (and moved to drivers/pci/controller/pci-tegra.c starting 4.19)
->>>>
->>>> All now queued up (except for 3.16, that's Ben's tree, he will get to it
->>>> soon.)
->>>>
->> Hi Ben,
->> Could you please queue this up for 3.16 as well?
-> 
-> OK, I've added it to my queue.
-> 
-> Ben.
-Thanks Ben
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-	t=1574175887; bh=uXgYUHwtrZapitSGWf5JwJRJHk5Ptu14CGrFy5WPBBY=;
-	h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-	 Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-	 X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-	 Content-Transfer-Encoding;
-	b=BPvs5cLXDhhzLY5asc+jfjOrcDfSlyLorXJ5IgqoZzGwtoQ5I7z6XjucTqpIfjqvw
-	 vygAgc9INi1iMl3JQz19LURImeo9BxUh7BSosY61mt8KGlFI0vWOiCBtdKiWMy7avG
-	 V9pqAEnRT6/i4VNoqZdFLItXcW8UXe/JP8Pw5vFyQn4+XzGDefCFLqGLySYDcUH8E0
-	 djZWIOywbATPq1ULSYYChrKdqoRMTbhz2C1cA4f2LTMzoOB27bFwjRJxEGuMjIAYT+
-	 m1Q/FvH2fSse30bw3za+YkstE61vC8SyMV2/4sOT1vb4JNVsVI9/0GyguV2syIrmlR
-	 KjiT61+BAXAkg==
 
-- Vidya Sagar
+On 19/11/2019 12:30, Greg Kroah-Hartman wrote:
+> On Tue, Nov 19, 2019 at 01:24:17PM +0100, Greg Kroah-Hartman wrote:
+>> On Tue, Nov 19, 2019 at 09:18:03AM +0000, Jon Hunter wrote:
+>>>
+>>> On 19/11/2019 05:13, Greg Kroah-Hartman wrote:
+>>>> This is the start of the stable review cycle for the 4.19.85 release.
+>>>> There are 422 patches in this series, all will be posted as a response
+>>>> to this one.  If anyone has any issues with these being applied, please
+>>>> let me know.
+>>>>
+>>>> Responses should be made by Thu, 21 Nov 2019 05:02:35 +0000.
+>>>> Anything received after that time might be too late.
+>>>>
+>>>> The whole patch series can be found in one patch at:
+>>>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.85-rc1.gz
+>>>> or in the git tree and branch at:
+>>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+>>>> and the diffstat can be found below.
+>>>>
+>>>> thanks,
+>>>>
+>>>> greg k-h
+>>>>
+>>>> -------------
+>>>
+>>> ...
+>>>
+>>>> Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>>>     ARM: dts: meson8b: odroidc1: enable the SAR ADC
+>>>
+>>> This commit is generating the following compilation error for ARM ...
+>>>
+>>> arch/arm/boot/dts/meson8b-odroidc1.dtb: ERROR (phandle_references): /soc/cbus@c1100000/adc@8680: Reference to non-existent node or label "vcc_1v8"
+>>>
+>>> ERROR: Input tree has errors, aborting (use -f to force output)
+>>> scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/meson8b-odroidc1.dtb' failed
+>>> make[1]: *** [arch/arm/boot/dts/meson8b-odroidc1.dtb] Error 2
+>>> arch/arm/Makefile:348: recipe for target 'dtbs' failed
+>>> make: *** [dtbs] Error 2
+>>
+>> Thanks, will go remove that patch.
 > 
+> -rc2 is out with that patch removed.
+
+All tests for Tegra are passing ...
+
+Test results for stable-v4.19:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
+
+Linux version:	4.19.85-rc2-gaf1bb7db3102
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers!
+Jon
+
+-- 
+nvpublic
