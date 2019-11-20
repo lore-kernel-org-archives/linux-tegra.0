@@ -1,56 +1,81 @@
-From: Ben Skeggs <bskeggs@redhat.com>
-Subject: Re: [PATCH v2 0/9] drm/nouveau: Various fixes for GP10B
-Date: Wed, 20 Nov 2019 16:11:10 +1000
-Message-ID: <CABDvA==b3g0S1i1xG_Ycjs15LbGUAgKmrLm6pqf+QFdv_qQk9A@mail.gmail.com>
-References: <20191102175637.3065-1-thierry.reding@gmail.com>
- <20191118134449.GG2246533@ulmo>
+From: Guillaume Tucker <guillaume.tucker@collabora.com>
+Subject: Re: clk/clk-next bisection: boot on tegra124-nyan-big
+Date: Wed, 20 Nov 2019 08:17:28 +0000
+Message-ID: <53eda2aa-35d0-8776-e2cb-b6c4e8c1ff7f@collabora.com>
+References: <5dd4ce40.1c69fb81.548f8.e723@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191118134449.GG2246533@ulmo>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: nouveau <nouveau@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5dd4ce40.1c69fb81.548f8.e723@mx.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>, Thierry Reding <treding@nvidia.com>
+Cc: tomeu.vizoso@collabora.com, mgalka@collabora.com, broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com, enric.balletbo@collabora.com, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBOb3YgMTgsIDIwMTkgYXQgMTE6NDUgUE0gVGhpZXJyeSBSZWRpbmcKPHRoaWVycnku
-cmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4KPiBPbiBTYXQsIE5vdiAwMiwgMjAxOSBhdCAwNjo1
-NjoyOFBNICswMTAwLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiA+IEZyb206IFRoaWVycnkgUmVk
-aW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gPgo+ID4gSGkgQmVuLAo+ID4KPiA+IGhlcmUncyBh
-IHJldmlzZWQgc3Vic2V0IG9mIHRoZSBwYXRjaGVzIEkgaGFkIHNlbnQgb3V0IGEgY291cGxlIG9m
-IHdlZWtzCj4gPiBhZ28uIEkndmUgcmV3b3JrZWQgdGhlIEJBUjIgYWNjZXNzZXMgaW4gdGhlIHdh
-eSB0aGF0IHlvdSBoYWQgc3VnZ2VzdGVkLAo+ID4gd2hpY2ggYXQgbGVhc3QgZm9yIEdQMTBCIHR1
-cm5lZCBvdXQgdG8gYmUgZmFpcmx5IHRyaXZpYWwgdG8gZG8uIEkgaGF2ZQo+ID4gbm90IGxvb2tl
-ZCBpbiBkZXRhaWwgYXQgdGhpcyBmb3IgR1YxMUIgeWV0LCBidXQgYSBjdXJzb3J5IGxvb2sgc2hv
-d2VkCj4gPiB0aGF0IEJBUjIgaXMgYWNjZXNzZWQgaW4gbW9yZSBwbGFjZXMsIHNvIHRoZSBlcXVp
-dmFsZW50IGZvciBHVjExQiBtaWdodAo+ID4gYmUgYSBiaXQgbW9yZSBpbnZvbHZlZC4KPiA+Cj4g
-PiBPdGhlciB0aGFuIHRoYXQsIG5vdCBhIGxvdCBoYXMgY2hhbmdlZCBzaW5jZSB0aGVuLiBJJ3Zl
-IGFkZGVkIGEgY291cGxlCj4gPiBvZiBwcmVjdXJzb3J5IHBhdGNoZXMgdG8gYWRkIElPTU1VIGhl
-bHBlciBkdW1taWVzIGZvciB0aGUgY2FzZSB3aGVyZQo+ID4gSU9NTVUgaXMgZGlzYWJsZWQgKGFz
-IHN1Z2dlc3RlZCBieSBCZW4gRG9va3MpLgo+ID4KPiA+IEpvZXJnLCBpdCdkIGJlIGdyZWF0IGlm
-IHlvdSBjb3VsZCBnaXZlIGFuIEFja2VkLWJ5IG9uIHRob3NlIHR3byBwYXRjaGVzCj4gPiBzbyB0
-aGF0IEJlbiBjYW4gcGljayB0aGVtIGJvdGggdXAgaW50byB0aGUgTm91dmVhdSB0cmVlLiBBbHRl
-cm5hdGl2ZWx5IEkKPiA+IGNhbiBwdXQgdGhlbSBib3RoIGludG8gYSBzdGFibGUgYnJhbmNoIGFu
-ZCBzZW5kIGEgcHVsbCByZXF1ZXN0IHRvIGJvdGgKPiA+IG9mIHlvdS4gT3IgeWV0IGFub3RoZXIg
-YWx0ZXJuYXRpdmUgd291bGQgYmUgZm9yIEpvZXJnIHRvIGFwcGx5IHRoZW0gbm93Cj4gPiBhbmQg
-QmVuIHRvIHdhaXQgZm9yIHY1LjUtcmMxIHVudGlsIGhlIHBpY2tzIHVwIHRoZSByZXN0LiBBbGwg
-b2YgdGhvc2UKPiA+IHdvcmsgZm9yIG1lLgo+Cj4gSGkgSm9lcmcsIEJlbiwKPgo+IGRvIHlvdSBn
-dXlzIGhhdmUgYW55IGZ1cnRoZXIgY29tbWVudHMgb24gdGhpcyBzZXJpZXM/IEkndmUgZ290IGFu
-Cj4gdXBkYXRlZCBwYXRjaCB0byBzaWxlbmNlIHRoZSB3YXJuaW5nIHRoYXQgdGhlIGtidWlsZCBy
-b2JvdCBmbGFnZ2VkLCBzbwo+IGlmIHRoZXJlIGFyZSBubyBvdGhlciBjb21tZW50cyBJIGNhbiBz
-ZW5kIGEgZmluYWwgdjMgb2YgdGhlIHNlcmllcy4KSSdtIG9uIGxlYXZlIGF0IHRoZSBtb21lbnQu
-ICBCdXQgdGhlIG5vdXZlYXUgZml4ZXMgbG9vayBmaW5lIHRvIG1lIGFuZApJJ20gaGFwcHkgdG8g
-cGljayB0aGVtIHVwIG9uY2UgeW91IHNlbmQgYSB2MywgYW5kIGFsbG93IEplb3JnIHRvIGFwcGx5
-CnRoZSByZXN0IHRocm91Z2ggaGlzIHRyZWUuCgpUaGFua3MsCkJlbi4KCj4KPiBUaGllcnJ5Cgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+On 20/11/2019 05:25, kernelci.org bot wrote:
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> * This automated bisection report was sent to you on the basis  *
+> * that you may be involved with the breaking commit it has      *
+> * found.  No manual investigation has been done to verify it,   *
+> * and the root cause of the problem may be somewhere else.      *
+> *                                                               *
+> * If you do send a fix, please include this trailer:            *
+> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+> *                                                               *
+> * Hope this helps!                                              *
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> 
+> clk/clk-next bisection: boot on tegra124-nyan-big
+> 
+> Summary:
+>   Start:      cd89054e321a Merge branch 'clk-init-leak' into clk-next
+>   Details:    https://kernelci.org/boot/id/5dd486b059b514415acf54bd
+>   Plain log:  https://storage.kernelci.org//clk/clk-next/clk-fixes-for-linus-196-gcd89054e321a/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.txt
+>   HTML log:   https://storage.kernelci.org//clk/clk-next/clk-fixes-for-linus-196-gcd89054e321a/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.html
+>   Result:     25175c806a68 clk: tegra: Reimplement SOR clock on Tegra124
+> 
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+> 
+> Parameters:
+>   Tree:       clk
+>   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+>   Branch:     clk-next
+>   Target:     tegra124-nyan-big
+>   CPU arch:   arm
+>   Lab:        lab-collabora
+>   Compiler:   gcc-8
+>   Config:     tegra_defconfig
+>   Test suite: boot
+> 
+> Breaking commit found:
+> 
+> -------------------------------------------------------------------------------
+> commit 25175c806a6841149abe46168e0af12593141612
+> Author: Thierry Reding <treding@nvidia.com>
+> Date:   Thu Jul 25 18:19:00 2019 +0200
+> 
+>     clk: tegra: Reimplement SOR clock on Tegra124
+>     
+>     In order to allow the display driver to deal uniformly with all SOR
+>     generations, implement the SOR clocks in a way that is compatible with
+>     Tegra186 and later.
+>     
+>     Acked-by: Stephen Boyd <sboyd@kernel.org>
+>     Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+There was already a bisection last Thursday which found this
+commit, and Thierry explained that it works in linux-next thanks
+to other patches.  I guess those patches are not going to be
+cherry-picked onto the clk-next branch, so this will keep failing
+until it's rebased.  Is that right?
+
+If so, I can turn off bisections on clk-next for now.  We need to
+have a way in KernelCI to tell that a commit has been fixed to
+cope with this kind of situation in general.
+
+Thanks,
+Guillaume
