@@ -1,143 +1,157 @@
-From: Amit Kucheria <amit.kucheria@linaro.org>
-Subject: [PATCH v2 09/11] thermal: tegra: Appease the kernel-doc deity
-Date: Wed, 20 Nov 2019 21:15:18 +0530
-Message-ID: <db764f71253bb2ad569b0aeab4c91207a39317ce.1574242756.git.amit.kucheria@linaro.org>
-References: <cover.1574242756.git.amit.kucheria@linaro.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 04/17] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Wed, 20 Nov 2019 20:46:02 +0300
+Message-ID: <a87a08c1-5104-a534-89c4-73463c08abba@gmail.com>
+References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
+ <1574146234-3871-5-git-send-email-skomatineni@nvidia.com>
+ <d072bd37-9628-4eb2-1706-a1f640606b8d@gmail.com>
+ <d76f4689-5986-9239-9c67-9dd125f6547e@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1574242756.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1574242756.git.amit.kucheria@linaro.org>
-References: <cover.1574242756.git.amit.kucheria@linaro.org>
+In-Reply-To: <d76f4689-5986-9239-9c67-9dd125f6547e@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, edubezval@gmail.com, Amit Daniel Kachhap <amit.kachhap@gmail.com>, Amit Kucheria <amit.kucheria@verdurent.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Guillaume La Roque <glaroque@baylibre.com>, Heiko Stuebner <heiko@sntech.de>, Javi Merino <javi.merino@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Jun Nie <jun.nie@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix up the following warning when compiled with make W=1:
+19.11.2019 23:08, Sowjanya Komatineni пишет:
+> 
+> On 11/19/19 11:33 AM, Dmitry Osipenko wrote:
+>> 19.11.2019 09:50, Sowjanya Komatineni пишет:
+>>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 with mux and gate for
+>>> each of these clocks.
+>>>
+>>> Currently these PMC clocks are registered by Tegra clock driver using
+>>> clk_register_mux and clk_register_gate by passing PMC base address
+>>> and register offsets and PMC programming for these clocks happens
+>>> through direct PMC access by the clock driver.
+>>>
+>>> With this, when PMC is in secure mode any direct PMC access from the
+>>> non-secure world does not go through and these clocks will not be
+>>> functional.
+>>>
+>>> This patch adds these clocks registration with PMC as a clock provider
+>>> for these clocks. clk_ops callback implementations for these clocks
+>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC programming
+>>> in secure mode and non-secure mode.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/soc/tegra/pmc.c | 330
+>>> ++++++++++++++++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 330 insertions(+)
+>>>
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>> index 7a5aab0b993b..790a6619ba32 100644
+>>> --- a/drivers/soc/tegra/pmc.c
+>>> +++ b/drivers/soc/tegra/pmc.c
+>>> @@ -13,6 +13,9 @@
+>>>     #include <linux/arm-smccc.h>
+>>>   #include <linux/clk.h>
+>>> +#include <linux/clk-provider.h>
+>>> +#include <linux/clkdev.h>
+>>> +#include <linux/clk/clk-conf.h>
+>>>   #include <linux/clk/tegra.h>
+>>>   #include <linux/debugfs.h>
+>>>   #include <linux/delay.h>
+>>> @@ -48,6 +51,7 @@
+>>>   #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+>>>   #include <dt-bindings/gpio/tegra186-gpio.h>
+>>>   #include <dt-bindings/gpio/tegra194-gpio.h>
+>>> +#include <dt-bindings/soc/tegra-pmc.h>
+>>>     #define PMC_CNTRL            0x0
+>>>   #define  PMC_CNTRL_INTR_POLARITY    BIT(17) /* inverts INTR
+>>> polarity */
+>>> @@ -108,6 +112,7 @@
+>>>   #define PMC_WAKE2_STATUS        0x168
+>>>   #define PMC_SW_WAKE2_STATUS        0x16c
+>>>   +#define PMC_CLK_OUT_CNTRL        0x1a8
+>>>   #define PMC_SATA_PWRGT            0x1ac
+>>>   #define PMC_SATA_PWRGT_PLLE_IDDQ_VALUE BIT(5)
+>>>   #define PMC_SATA_PWRGT_PLLE_IDDQ_SWCTL BIT(4)
+>>> @@ -170,6 +175,78 @@
+>>>   #define  TEGRA_SMC_PMC_READ    0xaa
+>>>   #define  TEGRA_SMC_PMC_WRITE    0xbb
+>>>   +struct pmc_clk_mux {
+>>> +    struct clk_hw    hw;
+>>> +    unsigned long    offs;
+>>> +    u32        mask;
+>>> +    u32        shift;
+>>> +    /* register lock */
+>>> +    spinlock_t    *lock;
+>>> +};
+>>> +
+>>> +#define to_pmc_clk_mux(_hw) container_of(_hw, struct pmc_clk_mux, hw)
+>>> +
+>>> +struct pmc_clk_gate {
+>>> +    struct clk_hw    hw;
+>>> +    unsigned long    offs;
+>>> +    u32        shift;
+>>> +    /* register lock */
+>>> +    spinlock_t    *lock;
 
-linux.git/drivers/thermal/tegra/soctherm.c:369: warning: Function parameter or member 'value' not described in 'ccroc_writel'
-linux.git/drivers/thermal/tegra/soctherm.c:369: warning: Excess function parameter 'v' description in 'ccroc_writel'
-linux.git/drivers/thermal/tegra/soctherm.c:447: warning: Function parameter or member 'dev' not described in 'enforce_temp_range'
-linux.git/drivers/thermal/tegra/soctherm.c:772: warning: Function parameter or member 'sg' not described in 'tegra_soctherm_set_hwtrips'
-linux.git/drivers/thermal/tegra/soctherm.c:772: warning: Function parameter or member 'tz' not described in 'tegra_soctherm_set_hwtrips'
-linux.git/drivers/thermal/tegra/soctherm.c:944: warning: Function parameter or member 'ts' not described in 'soctherm_oc_intr_enable'
-linux.git/drivers/thermal/tegra/soctherm.c:1167: warning: Function parameter or member 'data' not described in 'soctherm_oc_irq_disable'
-linux.git/drivers/thermal/tegra/soctherm.c:1167: warning: Excess function parameter 'irq_data' description in 'soctherm_oc_irq_disable'
-linux.git/drivers/thermal/tegra/soctherm.c:1224: warning: Function parameter or member 'ctrlr' not described in 'soctherm_irq_domain_xlate_twocell'
-linux.git/drivers/thermal/tegra/soctherm.c:1686: warning: Function parameter or member 'pdev' not described in 'soctherm_init_hw_throt_cdev'
-linux.git/drivers/thermal/tegra/soctherm.c:1764: warning: Function parameter or member 'ts' not described in 'throttlectl_cpu_level_cfg'
-linux.git/drivers/thermal/tegra/soctherm.c:1812: warning: Function parameter or member 'ts' not described in 'throttlectl_cpu_level_select'
-linux.git/drivers/thermal/tegra/soctherm.c:1855: warning: Function parameter or member 'ts' not described in 'throttlectl_cpu_mn'
-linux.git/drivers/thermal/tegra/soctherm.c:1886: warning: Function parameter or member 'ts' not described in 'throttlectl_gpu_level_select'
-linux.git/drivers/thermal/tegra/soctherm.c:1928: warning: Function parameter or member 'ts' not described in 'soctherm_throttle_program'
+Why clk_out_lock is needed at all? CCLK framework already takes care of
+the clock's locking and then nothing else in PMC code uses that lock to
+avoid races, thus that spinlock doesn't do anything useful and should be
+removed from both mux and gate.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/thermal/tegra/soctherm.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+>>> +};
+>>> +
+>>> +#define to_pmc_clk_gate(_hw) container_of(_hw, struct pmc_clk_gate, hw)
+>>> +
+>>> +struct pmc_clk_init_data {
+>>> +    char *mux_name;
+>>> +    char *gate_name;
+>>> +    const char **parents;
+>>> +    int num_parents;
+>>> +    int mux_id;
+>>> +    int gate_id;
+>>> +    char *dev_name;
+>>> +    u8 mux_shift;
+>>> +    u8 gate_shift;
+>>> +    u8 init_parent;
+>>> +    int init_state;
+>>> +    struct pmc_clk_mux mux;
+>>> +    struct pmc_clk_gate gate;
+>>> +};
+>>> +
+>>> +#define PMC_CLK(_num, _mux_shift, _gate_shift, _init_parent,
+>>> _init_state)\
+>>> +    {\
+>>> +        .mux_name = "clk_out_" #_num "_mux",\
+>>> +        .gate_name = "clk_out_" #_num,\
+>>> +        .parents = clk_out ##_num ##_parents,\
+>>> +        .num_parents = ARRAY_SIZE(clk_out ##_num ##_parents),\
+>>> +        .mux_id = TEGRA_PMC_CLK_OUT_ ##_num ##_MUX,\
+>>> +        .gate_id = TEGRA_PMC_CLK_OUT_ ##_num,\
+>>> +        .dev_name = "extern" #_num,\
+>>> +        .mux_shift = _mux_shift,\
+>>> +        .gate_shift = _gate_shift,\
+>>> +        .init_parent = _init_parent,\
+>>> +        .init_state = _init_state,\
+>>> +    }
+>>> +
+>>> +static DEFINE_SPINLOCK(clk_out_lock);
+>>> +
+>>> +static const char *clk_out1_parents[] = { "clk_m", "clk_m_div2",
+>>> +    "clk_m_div4", "extern1",
+>>> +};
+>>> +
+>>> +static const char *clk_out2_parents[] = { "clk_m", "clk_m_div2",
+>>> +    "clk_m_div4", "extern2",
+>>> +};
+>>> +
+>>> +static const char *clk_out3_parents[] = { "clk_m", "clk_m_div2",
+>>> +    "clk_m_div4", "extern3",
+>>> +};
+>> Why these are unused?
+> They are used in PMC_CLK macro
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 5acaad3a594f..66e0639da4bf 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -360,7 +360,7 @@ static struct soctherm_oc_irq_chip_data soc_irq_cdata;
- /**
-  * ccroc_writel() - writes a value to a CCROC register
-  * @ts: pointer to a struct tegra_soctherm
-- * @v: the value to write
-+ * @value: the value to write
-  * @reg: the register offset
-  *
-  * Writes @v to @reg.  No return value.
-@@ -435,6 +435,7 @@ static int tegra_thermctl_get_temp(void *data, int *out_temp)
- 
- /**
-  * enforce_temp_range() - check and enforce temperature range [min, max]
-+ * @dev: struct device * of the SOC_THERM instance
-  * @trip_temp: the trip temperature to check
-  *
-  * Checks and enforces the permitted temperature range that SOC_THERM
-@@ -747,6 +748,8 @@ static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
- /**
-  * tegra_soctherm_set_hwtrips() - set HW trip point from DT data
-  * @dev: struct device * of the SOC_THERM instance
-+ * @sg: pointer to the sensor group to set the thermtrip temperature for
-+ * @tz: struct thermal_zone_device *
-  *
-  * Configure the SOC_THERM HW trip points, setting "THERMTRIP"
-  * "THROTTLE" trip points , using "thermtrips", "critical" or "hot"
-@@ -931,6 +934,7 @@ static irqreturn_t soctherm_thermal_isr_thread(int irq, void *dev_id)
- 
- /**
-  * soctherm_oc_intr_enable() - Enables the soctherm over-current interrupt
-+ * @ts:		pointer to a struct tegra_soctherm
-  * @alarm:		The soctherm throttle id
-  * @enable:		Flag indicating enable the soctherm over-current
-  *			interrupt or disable it
-@@ -1156,7 +1160,7 @@ static void soctherm_oc_irq_enable(struct irq_data *data)
- 
- /**
-  * soctherm_oc_irq_disable() - Disables overcurrent interrupt requests
-- * @irq_data:	The interrupt request information
-+ * @data:	The interrupt request information
-  *
-  * Clears the interrupt request enable bit of the overcurrent
-  * interrupt request chip data.
-@@ -1206,6 +1210,7 @@ static int soctherm_oc_irq_map(struct irq_domain *h, unsigned int virq,
- /**
-  * soctherm_irq_domain_xlate_twocell() - xlate for soctherm interrupts
-  * @d:      Interrupt request domain
-+ * @ctrlr:      Controller device tree node
-  * @intspec:    Array of u32s from DTs "interrupt" property
-  * @intsize:    Number of values inside the intspec array
-  * @out_hwirq:  HW IRQ value associated with this interrupt
-@@ -1681,6 +1686,7 @@ static int soctherm_throt_cfg_parse(struct device *dev,
- /**
-  * soctherm_init_hw_throt_cdev() - Parse the HW throttle configurations
-  * and register them as cooling devices.
-+ * @pdev: Pointer to platform_device struct
-  */
- static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
- {
-@@ -1751,6 +1757,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
- 
- /**
-  * throttlectl_cpu_level_cfg() - programs CCROC NV_THERM level config
-+ * @ts: pointer to a struct tegra_soctherm
-  * @level: describing the level LOW/MED/HIGH of throttling
-  *
-  * It's necessary to set up the CPU-local CCROC NV_THERM instance with
-@@ -1798,6 +1805,7 @@ static void throttlectl_cpu_level_cfg(struct tegra_soctherm *ts, int level)
- 
- /**
-  * throttlectl_cpu_level_select() - program CPU pulse skipper config
-+ * @ts: pointer to a struct tegra_soctherm
-  * @throt: the LIGHT/HEAVY of throttle event id
-  *
-  * Pulse skippers are used to throttle clock frequencies.  This
-@@ -1841,6 +1849,7 @@ static void throttlectl_cpu_level_select(struct tegra_soctherm *ts,
- 
- /**
-  * throttlectl_cpu_mn() - program CPU pulse skipper configuration
-+ * @ts: pointer to a struct tegra_soctherm
-  * @throt: the LIGHT/HEAVY of throttle event id
-  *
-  * Pulse skippers are used to throttle clock frequencies.  This
-@@ -1874,6 +1883,7 @@ static void throttlectl_cpu_mn(struct tegra_soctherm *ts,
- 
- /**
-  * throttlectl_gpu_level_select() - selects throttling level for GPU
-+ * @ts: pointer to a struct tegra_soctherm
-  * @throt: the LIGHT/HEAVY of throttle event id
-  *
-  * This function programs soctherm's interface to GK20a NV_THERM to select
-@@ -1918,6 +1928,7 @@ static int soctherm_oc_cfg_program(struct tegra_soctherm *ts,
- 
- /**
-  * soctherm_throttle_program() - programs pulse skippers' configuration
-+ * @ts: pointer to a struct tegra_soctherm
-  * @throt: the LIGHT/HEAVY of the throttle event id.
-  *
-  * Pulse skippers are used to throttle clock frequencies.
--- 
-2.20.1
+Looks like it will better to define those three structs directly,
+without the PMC_CLK macro.
+
+[snip]
