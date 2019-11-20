@@ -1,68 +1,188 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] dt-bindings: power: Fix path to
- power-domain.txt bindings
-Date: Wed, 20 Nov 2019 09:26:51 +0800
-Message-ID: <CAJKOXPep1ftnw0gGEtzmSZaZBaAiyDhCsVygRfNAQ4egiJK1tA@mail.gmail.com>
-References: <20191119144315.11261-1-krzk@kernel.org>
- <CAL_Jsq+1hHneSW5DzLNxU00AqQJ49chTyULJ0S3JR-CqfOfTgA@mail.gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v1 06/17] soc: pmc: Add blink output clock registration to
+ Tegra PMC
+Date: Tue, 19 Nov 2019 18:09:34 -0800
+Message-ID: <53c70a0a-edf0-b806-1320-215affba4c28@nvidia.com>
+References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
+ <1574146234-3871-7-git-send-email-skomatineni@nvidia.com>
+ <95f3e928-3e08-abbd-5617-d3570a592c06@gmail.com>
+ <87dca259-1f3f-6e74-db45-411ed84afba7@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAL_Jsq+1hHneSW5DzLNxU00AqQJ49chTyULJ0S3JR-CqfOfTgA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:THERMAL" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Linux USB List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, PCI <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, freedreno <freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux Media Mailing List <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <87dca259-1f3f-6e74-db45-411ed84afba7@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCAyMCBOb3YgMjAxOSBhdCAwMTowMiwgUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9y
-Zz4gd3JvdGU6Cj4KPiBPbiBUdWUsIE5vdiAxOSwgMjAxOSBhdCA4OjQzIEFNIEtyenlzenRvZiBL
-b3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4gd3JvdGU6Cj4gPgo+ID4gV2l0aCBzcGxpdCBvZiBw
-b3dlciBkb21haW4gY29udHJvbGxlciBiaW5kaW5ncyB0byBwb3dlci1kb21haW4ueWFtbCwgdGhl
-Cj4gPiBjb25zdW1lciBwYXJ0IHdhcyByZW5hbWVkIHRvIHBvd2VyLWRvbWFpbi50eHQuICBVcGRh
-dGUgdGhlIHJlZmVyZW5jZXMgaW4KPiA+IG90aGVyIGJpbmRpbmdzLgo+ID4KPiA+IFJlcG9ydGVk
-LWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0QGxpbnV4LW02OGsub3JnPgo+ID4gRml4ZXM6
-IGFiYjQ4MDVlMzQzYSAoImR0LWJpbmRpbmdzOiBwb3dlcjogQ29udmVydCBTYW1zdW5nIEV4eW5v
-cyBQb3dlciBEb21haW4gYmluZGluZ3MgdG8ganNvbi1zY2hlbWEiKQo+ID4gU2lnbmVkLW9mZi1i
-eTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgo+ID4gLS0tCj4gPiAgRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2Nsay1leHlub3MtYXVkc3MudHh0
-ICB8IDIgKy0KPiA+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svZXh5
-bm9zNTQzMy1jbG9jay50eHQgIHwgMiArLQo+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Ns
-b2NrL3JlbmVzYXMscjhhNzc3OC1jcGctY2xvY2tzLnR4dCAgfCAyICstCj4gPiAgLi4uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvY2xvY2svcmVuZXNhcyxyOGE3Nzc5LWNwZy1jbG9ja3MudHh0ICB8IDIg
-Ky0KPiA+ICAuLi4vYmluZGluZ3MvY2xvY2svcmVuZXNhcyxyY2FyLWdlbjItY3BnLWNsb2Nrcy50
-eHQgICAgICAgICAgIHwgMiArLQo+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3Jl
-bmVzYXMscnotY3BnLWNsb2Nrcy50eHQgICAgICAgfCAyICstCj4gPiAgLi4uL2RldmljZXRyZWUv
-YmluZGluZ3MvZGlzcGxheS9ldG5hdml2L2V0bmF2aXYtZHJtLnR4dCAgICAgICB8IDIgKy0KPiA+
-ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tc20vZHB1LnR4dCAg
-ICAgICAgIHwgMiArLQo+ID4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNw
-bGF5L21zbS9tZHA1LnR4dCAgICAgICAgfCAyICstCj4gPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2RzcC9mc2wsZHNwLnlhbWwgICAgICAgICAgICB8IDIgKy0KPiA+ICBEb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvaW14Ny1taXBpLWNzaTIudHh0ICAg
-IHwgMiArLQo+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL21lZGlhdGVrLWpwZWct
-ZGVjb2Rlci50eHQgICAgICAgfCAyICstCj4gPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL21lZGlhL21lZGlhdGVrLW1kcC50eHQgICAgICB8IDIgKy0KPiA+ICBEb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvb3BwL3Fjb20tbnZtZW0tY3B1ZnJlcS50eHQgIHwgMiAr
-LQo+ID4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wY2kvcGNpLWtleXN0b25l
-LnR4dCAgICAgICAgfCAyICstCj4gPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L3BoeS90aSxwaHktYW02NTQtc2VyZGVzLnR4dCB8IDIgKy0KPiA+ICBEb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvcG93ZXIvcWNvbSxycG1wZC50eHQgICAgICAgIHwgMiArLQo+ID4g
-IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wb3dlci9yZW5lc2FzLHJjYXItc3lz
-Yy50eHQgfCAyICstCj4gPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL252aWRpYSx0ZWdy
-YTEyNC14dXNiLnR4dCAgICAgICAgICB8IDQgKystLQo+ID4gIDE5IGZpbGVzIGNoYW5nZWQsIDIw
-IGluc2VydGlvbnMoKyksIDIwIGRlbGV0aW9ucygtKQo+Cj4gUGxlYXNlIG5vLiBDYW4geW91IGp1
-c3QgdW5kbyB0aGUgcmVuYW1pbmcgYmFjayB0byBwb3dlcl9kb21haW4udHh0CgpUaGUgcmVuYW1p
-bmcgd2FzIGRvbmUgdG8gbWFrZSBpdCBjb25zaXN0ZW50IHdpdGggeWFtbCBhbmQgb3RoZXIKYmlu
-ZGluZ3MgYnV0IGluZGVlZCBpdCBjcmVhdGVzIHNvbWUgY2h1cm4uLi4gSSdsbCBzZW5kIHJlbmFt
-ZS11bmRvCnRoZW4uCgpCZXN0IHJlZ2FyZHMsCktyenlzenRvZgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVk
-cmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8=
+
+On 11/19/19 2:13 PM, Sowjanya Komatineni wrote:
+>
+> On 11/19/19 11:34 AM, Dmitry Osipenko wrote:
+>> 19.11.2019 09:50, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> Tegra PMC has blink control to output 32 Khz clock out to Tegra
+>>> blink pin. Blink pad DPD state and enable controls are part of
+>>> Tegra PMC register space.
+>>>
+>>> Currently Tegra clock driver registers blink control by passing
+>>> PMC address and register offset to clk_register_gate which performs
+>>> direct PMC access during clk_ops and with this when PMC is in secure
+>>> mode, any access from non-secure world does not go through.
+>>>
+>>> This patch adds blink control registration to the Tegra PMC driver
+>>> using PMC specific clock gate operations that use tegra_pmc_readl
+>>> and tegra_pmc_writel to support both secure mode and non-secure
+>>> mode PMC register access.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>> =C2=A0 drivers/soc/tegra/pmc.c | 42=20
+>>> ++++++++++++++++++++++++++++++++++++++++++
+>>> =C2=A0 1 file changed, 42 insertions(+)
+>>>
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>> index 790a6619ba32..095e89c7fa3f 100644
+>>> --- a/drivers/soc/tegra/pmc.c
+>>> +++ b/drivers/soc/tegra/pmc.c
+>>> @@ -61,12 +61,15 @@
+>>> =C2=A0 #define=C2=A0 PMC_CNTRL_SYSCLK_OE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 BIT(11) /* system clock enable */
+>>> =C2=A0 #define=C2=A0 PMC_CNTRL_SYSCLK_POLARITY=C2=A0=C2=A0=C2=A0 BIT(10=
+) /* sys clk polarity */
+>>> =C2=A0 #define=C2=A0 PMC_CNTRL_PWRREQ_POLARITY=C2=A0=C2=A0=C2=A0 BIT(8)
+>>> +#define=C2=A0 PMC_CNTRL_BLINK_EN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 BIT(7)
+>>> =C2=A0 #define=C2=A0 PMC_CNTRL_MAIN_RST=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 BIT(4)
+>>> =C2=A0 =C2=A0 #define PMC_WAKE_MASK=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x0c
+>>> =C2=A0 #define PMC_WAKE_LEVEL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x10
+>>> =C2=A0 #define PMC_WAKE_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x14
+>>> =C2=A0 #define PMC_SW_WAKE_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 0x18
+>>> +#define PMC_DPD_PADS_ORIDE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=
+x1c
+>>> +#define=C2=A0 PMC_DPD_PADS_ORIDE_BLINK=C2=A0=C2=A0=C2=A0 BIT(20)
+>>> =C2=A0 =C2=A0 #define DPD_SAMPLE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x020
+>>> =C2=A0 #define=C2=A0 DPD_SAMPLE_ENABLE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 BIT(0)
+>>> @@ -79,6 +82,7 @@
+>>> =C2=A0 =C2=A0 #define PWRGATE_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x38
+>>> =C2=A0 +#define TEGRA210_PMC_BLINK_TIMER=C2=A0=C2=A0=C2=A0 0x40
+>>> =C2=A0 #define PMC_IMPL_E_33V_PWR=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 0x40
+>>> =C2=A0 =C2=A0 #define PMC_PWR_DET=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x48
+>>> @@ -247,6 +251,9 @@ static struct pmc_clk_init_data=20
+>>> tegra_pmc_clks_data[] =3D {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PMC_CLK(3, 22, 18, 0, 0),
+>>> =C2=A0 };
+>>> =C2=A0 +static struct pmc_clk_gate blink_override;
+>>> +static struct pmc_clk_gate blink;
+>>> +
+>>> =C2=A0 struct tegra_powergate {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct generic_pm_domain genpd;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_pmc *pmc;
+>>> @@ -359,6 +366,7 @@ struct tegra_pmc_soc {
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct pmc_clk_init_data *pmc_clk=
+s_data;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int num_pmc_clks;
+>>> +=C2=A0=C2=A0=C2=A0 bool has_blink_output;
+>>> =C2=A0 };
+>>> =C2=A0 =C2=A0 static const char * const tegra186_reset_sources[] =3D {
+>>> @@ -2530,6 +2538,9 @@ static void tegra_pmc_clock_register(struct=20
+>>> tegra_pmc *pmc,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* each pmc clock output has a mux and a=
+ gate */
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 num_clks =3D pmc->soc->num_pmc_clks * 2;
+>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 if (pmc->soc->has_blink_output)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 num_clks +=3D 1;
+>>> +
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!num_clks)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>>> =C2=A0 @@ -2604,6 +2615,30 @@ static void tegra_pmc_clock_register(stru=
+ct=20
+>>> tegra_pmc *pmc,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 if (pmc->soc->has_blink_output) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, 0x0, =
+TEGRA210_PMC_BLINK_TIMER);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clkgate =3D tegra_pmc_clk_g=
+ate_register("blink_override",
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "clk_32k",
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0, &blink_override,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 PMC_DPD_PADS_ORIDE,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PMC_DPD_PADS_ORIDE_BLINK,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(clkgate))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
+o free_clks;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clkgate =3D tegra_pmc_clk_g=
+ate_register("blink",
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "blink_override",
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0, &blink,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PMC_CNTRL,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PMC_CNTRL_BLINK_EN,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(clkgate))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
+o free_clks;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_data->clks[TEGRA_PMC_CL=
+K_BLINK] =3D clkgate;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_register_clkdev(clkgate=
+, "blink", NULL);
+>> Tegra20 has pmc->soc->num_pmc_clks =3D 0 and thus num_clks =3D 1, while
+>> TEGRA_PMC_CLK_BLINK =3D 6.
+>>
+>> BTW, Tegra30 doesn't boot. I'll try again v2.
+>>
+>> Please fix it all in v2. Compile-test all patches and make at least a
+>> boot-test where possible.
+>>
+>> [snip]
+>
+> looks like blink output should be enabled during boot for Tegra20 and=20
+> Tegra30 platforms.
+>
+> Will add init state for blink output in V2. Will compile for old=20
+> Tegra's as well and will try boot-test.
+>
+Hi Thierry,
+
+With implementation of PMC helper functions for PLLM overrides and PLLE=20
+IDDQ PMC programming to use in clock driver during registering PLLM,=20
+need tegra_pmc_early_init to happen prior to tegra_clk_init as all=20
+helper functions have to use tegra_pmc_soc for flags and pmc register=20
+offset.
+
+Any suggestion?
