@@ -1,71 +1,82 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 08/29] dt-bindings: interconnect: tegra: Add initial
- IDs
-Date: Thu, 21 Nov 2019 20:14:35 +0300
-Message-ID: <f0f36176-8070-08a6-a61f-77221d916f04@gmail.com>
+Subject: Re: [PATCH v1 12/29] interconnect: Add memory interconnection
+ providers for NVIDIA Tegra SoCs
+Date: Thu, 21 Nov 2019 20:33:58 +0300
+Message-ID: <a9bbe36e-8082-8cab-7377-f71f2489fb30@gmail.com>
 References: <20191118200247.3567-1-digetx@gmail.com>
- <20191118200247.3567-9-digetx@gmail.com> <20191119062535.GC2462695@ulmo>
- <8cff3af3-42c7-3312-5f98-cd5eb98b7b7a@gmail.com>
+ <20191118200247.3567-13-digetx@gmail.com> <20191119063002.GE2462695@ulmo>
+ <a16b54bf-a881-84d0-4437-993dc275487c@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8cff3af3-42c7-3312-5f98-cd5eb98b7b7a@gmail.com>
+In-Reply-To: <a16b54bf-a881-84d0-4437-993dc275487c@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.11.2019 19:56, Dmitry Osipenko пишет:
-> 19.11.2019 09:25, Thierry Reding пишет:
->> On Mon, Nov 18, 2019 at 11:02:26PM +0300, Dmitry Osipenko wrote:
->>> Define interconnect IDs for memory controller (MC), external memory
->>> controller (EMC), external memory (EMEM) and memory clients of display
->>> controllers (DC).
+19.11.2019 19:58, Dmitry Osipenko пишет:
+> 19.11.2019 09:30, Thierry Reding пишет:
+>> On Mon, Nov 18, 2019 at 11:02:30PM +0300, Dmitry Osipenko wrote:
+>>> All NVIDIA Tegra SoCs have identical topology in regards to memory
+>>> interconnection between memory clients and memory controllers.
+>>> The memory controller (MC) and external memory controller (EMC) are
+>>> providing memory clients with required memory bandwidth. The memory
+>>> controller performs arbitration between memory clients, while the
+>>> external memory controller transfers data from/to DRAM and pipes that
+>>> data from/to memory controller. Memory controller interconnect provider
+>>> aggregates bandwidth requests from memory clients and sends the aggregated
+>>> request to EMC provider that scales DRAM frequency in order to satisfy the
+>>> bandwidth requirement. Memory controller provider could adjust hardware
+>>> configuration for a more optimal arbitration depending on bandwidth
+>>> requirements from memory clients, but this is unimplemented for now.
 >>>
 >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >>> ---
->>>  include/dt-bindings/interconnect/tegra-icc.h | 11 +++++++++++
->>>  1 file changed, 11 insertions(+)
->>>  create mode 100644 include/dt-bindings/interconnect/tegra-icc.h
-> 
-> 
-> Hello Thierry,
-> 
->> There was a bit of discussion regarding this for a recent patch that I
->> was working on, see:
+>>>  drivers/interconnect/Kconfig               |   1 +
+>>>  drivers/interconnect/Makefile              |   1 +
+>>>  drivers/interconnect/tegra/Kconfig         |   6 +
+>>>  drivers/interconnect/tegra/Makefile        |   4 +
+>>>  drivers/interconnect/tegra/tegra-icc-emc.c | 138 +++++++++++++++++++++
+>>>  drivers/interconnect/tegra/tegra-icc-mc.c  | 130 +++++++++++++++++++
+>>>  include/soc/tegra/mc.h                     |  26 ++++
+>>>  7 files changed, 306 insertions(+)
+>>>  create mode 100644 drivers/interconnect/tegra/Kconfig
+>>>  create mode 100644 drivers/interconnect/tegra/Makefile
+>>>  create mode 100644 drivers/interconnect/tegra/tegra-icc-emc.c
+>>>  create mode 100644 drivers/interconnect/tegra/tegra-icc-mc.c
 >>
->> 	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=140318
+>> Why does this have to be separate from the memory controller driver in
+>> drivers/memory/tegra? It seems like this requires a bunch of boilerplate
+>> just so that this code can live in the drivers/interconnect directory.
 > 
-> Thank you very much for the link.
+> It fits with the IOMMU separation. To me that it's a bit nicer to have
+> the separation for the ICC as well, but having ICC within memory
+> controller driver also will be fine.
 > 
->> I'd rather not use an additional set of definitions for this. The memory
->> controller already has a set of native IDs for memory clients that I
->> think we can reuse for this.
+> Indeed it looks like there is not much in the MC's provider code right
+> now, but maybe more stuff will be added later on.
 > 
-> I missed that it's fine to have multiple ICC connections defined
-> per-path, at quick glance looks like indeed it should be fine to re-use
-> MC IDs.
-
-Well, it is not quite correct to have multiple connections per-path.
-
-Please take look at interconnect's binding and core.c:
-
-  1. there should be one src->dst connection per-path
-  2. each connection should comprise of one source and one destination nodes
-
->> I've only added these client IDs for Tegra194 because that's where we
->> need it to actually describe a specific hardware quirk, but I can come
->> up with the equivalent for older chips as well.
+>> If Georgi doesn't insist, I'd prefer if we carried this code directly in
+>> the drivers/memory/tegra directory so that we don't have so many
+>> indirections.
+>>
+>> Also, and I already briefly mentioned this in another reply, I think we
+>> don't need two providers here. The only one we're really interested in
+>> is the memory-client to memory-controller paths. The MC to EMC path is
+>> static.
 > 
-> Older Tegra SoCs have hardware units connected to MC through AHB bus,
-> like USB for example. These units do not have MC client IDs and there is
-> no MC ID defined for the AHB bus either, but probably it won't be a
-> problem to define IDs for them if will be necessary.
+> Perhaps it is fine to drop EMC path, I'll revisit it.
 > 
+> [snip]
 
-Since interconnect binding requires to define both source and
-destination nodes for the path, then MC IDs are not enough in order to
-define interconnect path because these IDs represent only the source
-nodes. Destination node should be either EMC or EMEM.
+One advantage of having both MC and EMC as ICC providers is that there
+won't be a need to mess with a custom coupling of MC-EMC drivers
+together because interconnect API naturally takes care of the coupling
+for us by telling ICC users to defer until both providers are registered.
+
+I'll take another look at this over the weekend, but for now my v1
+variant looks appropriate in terms of a better hardware description and
+implementation in the code.
