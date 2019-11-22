@@ -1,54 +1,56 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH 5/6] arm64: tegra: Enable GPIO controllers nodes for
- P2972-0000 platform
-Date: Fri, 22 Nov 2019 16:15:04 +0530
-Message-ID: <20191122104505.8986-6-vidyas@nvidia.com>
-References: <20191122104505.8986-1-vidyas@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
+Date: Fri, 22 Nov 2019 13:14:28 +0000
+Message-ID: <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
+References: <20191122100704.194776704@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191122104505.8986-1-vidyas@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com
-Cc: devicetree@vger.kernel.org, mmaddireddy@nvidia.com, kthota@nvidia.com, gustavo.pimentel@synopsys.com, linux-kernel@vger.kernel.org, kishon@ti.com, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, vidyas@nvidia.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191122100704.194776704@linuxfoundation.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable GPIO controllers nodes for P2972-0000 platform which are required
-by other controllers in the SoC for example when PCIe C5 controller
-operates in endpoint mode.
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 22/11/2019 10:26, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.203 release.
+> There are 159 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 24 Nov 2019 09:59:19 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.203-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 353a6a22196d..7eb64b816e08 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -37,6 +37,14 @@
- 			status = "okay";
- 		};
- 
-+		gpio@2200000 {
-+			status = "okay";
-+		};
-+
-+		gpio@c2f0000 {
-+			status = "okay";
-+		};
-+
- 		pwm@c340000 {
- 			status = "okay";
- 		};
+...
+
+> Marek Szyprowski <m.szyprowski@samsung.com>
+>     ARM: dts: exynos: Disable pull control for S5M8767 PMIC
+
+The above commit is causing the following build error for ARM ...
+
+Error: /dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/boot/dts/exynos5250-arndale.dts:560.22-23 syntax error
+FATAL ERROR: Unable to parse input tree
+scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/exynos5250-arndale.dtb' failed
+make[2]: *** [arch/arm/boot/dts/exynos5250-arndale.dtb] Error 1
+
+Cheers
+Jon
+
 -- 
-2.17.1
+nvpublic
