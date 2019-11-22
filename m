@@ -1,82 +1,73 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 12/29] interconnect: Add memory interconnection
- providers for NVIDIA Tegra SoCs
-Date: Thu, 21 Nov 2019 20:33:58 +0300
-Message-ID: <a9bbe36e-8082-8cab-7377-f71f2489fb30@gmail.com>
-References: <20191118200247.3567-1-digetx@gmail.com>
- <20191118200247.3567-13-digetx@gmail.com> <20191119063002.GE2462695@ulmo>
- <a16b54bf-a881-84d0-4437-993dc275487c@gmail.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH 1/6] soc/tegra: bpmp: Update ABI header
+Date: Fri, 22 Nov 2019 16:15:00 +0530
+Message-ID: <20191122104505.8986-2-vidyas@nvidia.com>
+References: <20191122104505.8986-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a16b54bf-a881-84d0-4437-993dc275487c@gmail.com>
-Content-Language: en-US
+In-Reply-To: <20191122104505.8986-1-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com
+Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-19.11.2019 19:58, Dmitry Osipenko пишет:
-> 19.11.2019 09:30, Thierry Reding пишет:
->> On Mon, Nov 18, 2019 at 11:02:30PM +0300, Dmitry Osipenko wrote:
->>> All NVIDIA Tegra SoCs have identical topology in regards to memory
->>> interconnection between memory clients and memory controllers.
->>> The memory controller (MC) and external memory controller (EMC) are
->>> providing memory clients with required memory bandwidth. The memory
->>> controller performs arbitration between memory clients, while the
->>> external memory controller transfers data from/to DRAM and pipes that
->>> data from/to memory controller. Memory controller interconnect provider
->>> aggregates bandwidth requests from memory clients and sends the aggregated
->>> request to EMC provider that scales DRAM frequency in order to satisfy the
->>> bandwidth requirement. Memory controller provider could adjust hardware
->>> configuration for a more optimal arbitration depending on bandwidth
->>> requirements from memory clients, but this is unimplemented for now.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/interconnect/Kconfig               |   1 +
->>>  drivers/interconnect/Makefile              |   1 +
->>>  drivers/interconnect/tegra/Kconfig         |   6 +
->>>  drivers/interconnect/tegra/Makefile        |   4 +
->>>  drivers/interconnect/tegra/tegra-icc-emc.c | 138 +++++++++++++++++++++
->>>  drivers/interconnect/tegra/tegra-icc-mc.c  | 130 +++++++++++++++++++
->>>  include/soc/tegra/mc.h                     |  26 ++++
->>>  7 files changed, 306 insertions(+)
->>>  create mode 100644 drivers/interconnect/tegra/Kconfig
->>>  create mode 100644 drivers/interconnect/tegra/Makefile
->>>  create mode 100644 drivers/interconnect/tegra/tegra-icc-emc.c
->>>  create mode 100644 drivers/interconnect/tegra/tegra-icc-mc.c
->>
->> Why does this have to be separate from the memory controller driver in
->> drivers/memory/tegra? It seems like this requires a bunch of boilerplate
->> just so that this code can live in the drivers/interconnect directory.
-> 
-> It fits with the IOMMU separation. To me that it's a bit nicer to have
-> the separation for the ICC as well, but having ICC within memory
-> controller driver also will be fine.
-> 
-> Indeed it looks like there is not much in the MC's provider code right
-> now, but maybe more stuff will be added later on.
-> 
->> If Georgi doesn't insist, I'd prefer if we carried this code directly in
->> the drivers/memory/tegra directory so that we don't have so many
->> indirections.
->>
->> Also, and I already briefly mentioned this in another reply, I think we
->> don't need two providers here. The only one we're really interested in
->> is the memory-client to memory-controller paths. The MC to EMC path is
->> static.
-> 
-> Perhaps it is fine to drop EMC path, I'll revisit it.
-> 
-> [snip]
+Update the firmware header to support uninitialization of UPHY PLL
+when the PCIe controller is operating in endpoint mode and host cuts
+the PCIe reference clock.
 
-One advantage of having both MC and EMC as ICC providers is that there
-won't be a need to mess with a custom coupling of MC-EMC drivers
-together because interconnect API naturally takes care of the coupling
-for us by telling ICC users to defer until both providers are registered.
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+---
+ include/soc/tegra/bpmp-abi.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-I'll take another look at this over the weekend, but for now my v1
-variant looks appropriate in terms of a better hardware description and
-implementation in the code.
+diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
+index cac6f610b3fe..322d06e21918 100644
+--- a/include/soc/tegra/bpmp-abi.h
++++ b/include/soc/tegra/bpmp-abi.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2014-2019, NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #ifndef _ABI_BPMP_ABI_H_
+@@ -2119,6 +2119,7 @@ enum {
+ 	CMD_UPHY_PCIE_LANE_MARGIN_STATUS = 2,
+ 	CMD_UPHY_PCIE_EP_CONTROLLER_PLL_INIT = 3,
+ 	CMD_UPHY_PCIE_CONTROLLER_STATE = 4,
++	CMD_UPHY_PCIE_EP_CONTROLLER_PLL_OFF = 5,
+ 	CMD_UPHY_MAX,
+ };
+ 
+@@ -2151,6 +2152,11 @@ struct cmd_uphy_pcie_controller_state_request {
+ 	uint8_t enable;
+ } __ABI_PACKED;
+ 
++struct cmd_uphy_ep_controller_pll_off_request {
++	/** @brief EP controller number, valid: 0, 4, 5 */
++	uint8_t ep_controller;
++} __ABI_PACKED;
++
+ /**
+  * @ingroup UPHY
+  * @brief Request with #MRQ_UPHY
+@@ -2165,6 +2171,7 @@ struct cmd_uphy_pcie_controller_state_request {
+  * |CMD_UPHY_PCIE_LANE_MARGIN_STATUS     |                                        |
+  * |CMD_UPHY_PCIE_EP_CONTROLLER_PLL_INIT |cmd_uphy_ep_controller_pll_init_request |
+  * |CMD_UPHY_PCIE_CONTROLLER_STATE       |cmd_uphy_pcie_controller_state_request  |
++ * |CMD_UPHY_PCIE_EP_CONTROLLER_PLL_OFF  |cmd_uphy_ep_controller_pll_off_request  |
+  *
+  */
+ 
+@@ -2178,6 +2185,7 @@ struct mrq_uphy_request {
+ 		struct cmd_uphy_margin_control_request uphy_set_margin_control;
+ 		struct cmd_uphy_ep_controller_pll_init_request ep_ctrlr_pll_init;
+ 		struct cmd_uphy_pcie_controller_state_request controller_state;
++		struct cmd_uphy_ep_controller_pll_off_request ep_ctrlr_pll_off;
+ 	} __UNION_ANON;
+ } __ABI_PACKED;
+ 
+-- 
+2.17.1
