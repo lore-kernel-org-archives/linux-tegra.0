@@ -1,53 +1,134 @@
 From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH 0/6] Add support for PCIe endpoint mode in Tegra194
-Date: Fri, 22 Nov 2019 16:14:59 +0530
-Message-ID: <20191122104505.8986-1-vidyas@nvidia.com>
+Subject: [PATCH 4/6] arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
+Date: Fri, 22 Nov 2019 16:15:03 +0530
+Message-ID: <20191122104505.8986-5-vidyas@nvidia.com>
+References: <20191122104505.8986-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191122104505.8986-1-vidyas@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com
-Cc: devicetree@vger.kernel.org, mmaddireddy@nvidia.com, kthota@nvidia.com, gustavo.pimentel@synopsys.com, linux-kernel@vger.kernel.org, kishon@ti.com, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, vidyas@nvidia.com, linux-arm-kernel@lists.infradead.org, sagar.tv@gmail.com
+Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that can operate
-either in root port mode or in end point mode but only in one mode at a time.
-Platform P2972-0000 supports enabling endpoint mode for C5 controller. This
-patch series adds support for PCIe endpoint mode in both the driver as well as
-in DT.
-This patch series depends on the changes made for Synopsys DesignWare endpoint
-mode subsystem that are currently under review
-@ https://patchwork.kernel.org/project/linux-pci/list/?series=202211
-which in turn depends on the patch made by Kishon
-@ https://patchwork.kernel.org/patch/10975123/
-which is also under review.
+Add endpoint mode controllers nodes for the dual mode PCIe controllers
+present in Tegra194 SoC.
 
-Vidya Sagar (6):
-  soc/tegra: bpmp: Update ABI header
-  dt-bindings: PCI: tegra: Add DT support for PCIe EP nodes in Tegra194
-  PCI: tegra: Add support for PCIe endpoint mode in Tegra194
-  arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
-  arm64: tegra: Enable GPIO controllers nodes for P2972-0000 platform
-  arm64: tegra: Add support for PCIe endpoint mode in P2972-0000
-    platform
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 99 ++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
- .../bindings/pci/nvidia,tegra194-pcie-ep.txt  | 138 ++++
- .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  37 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  99 +++
- drivers/pci/controller/dwc/Kconfig            |  30 +-
- drivers/pci/controller/dwc/pcie-tegra194.c    | 751 +++++++++++++++++-
- include/soc/tegra/bpmp-abi.h                  |  10 +-
- 6 files changed, 1048 insertions(+), 17 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.txt
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 11220d97adb8..2c8fae854a23 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1425,6 +1425,105 @@
+ 			  0x82000000 0x0  0x40000000 0x1f 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
+ 	};
+ 
++	pcie_ep@14160000 {
++		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
++		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX4A>;
++		reg = <0x00 0x14160000 0x0 0x00020000   /* appl registers (128K)      */
++		       0x00 0x36040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  */
++		       0x00 0x36080000 0x0 0x00040000   /* DBI reg space (256K)       */
++		       0x14 0x00000000 0x4 0x00000000>; /* Address Space (16G)        */
++		reg-names = "appl", "atu_dma", "dbi", "addr_space";
++
++		status = "disabled";
++
++		num-lanes = <4>;
++		num-ib-windows = <2>;
++		num-ob-windows = <8>;
++
++		clocks = <&bpmp TEGRA194_CLK_PEX0_CORE_4>;
++		clock-names = "core";
++
++		resets = <&bpmp TEGRA194_RESET_PEX0_CORE_4_APB>,
++			 <&bpmp TEGRA194_RESET_PEX0_CORE_4>;
++		reset-names = "apb", "core";
++
++		interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
++		interrupt-names = "intr";
++
++		nvidia,bpmp = <&bpmp 4>;
++
++		nvidia,aspm-cmrt-us = <60>;
++		nvidia,aspm-pwr-on-t-us = <20>;
++		nvidia,aspm-l0s-entrance-latency-us = <3>;
++	};
++
++	pcie_ep@14180000 {
++		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
++		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
++		reg = <0x00 0x14180000 0x0 0x00020000   /* appl registers (128K)      */
++		       0x00 0x38040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  */
++		       0x00 0x38080000 0x0 0x00040000   /* DBI reg space (256K)       */
++		       0x18 0x00000000 0x4 0x00000000>; /* Address Space (16G)        */
++		reg-names = "appl", "atu_dma", "dbi", "addr_space";
++
++		status = "disabled";
++
++		num-lanes = <8>;
++		num-ib-windows = <2>;
++		num-ob-windows = <8>;
++
++		clocks = <&bpmp TEGRA194_CLK_PEX0_CORE_0>;
++		clock-names = "core";
++
++		resets = <&bpmp TEGRA194_RESET_PEX0_CORE_0_APB>,
++			 <&bpmp TEGRA194_RESET_PEX0_CORE_0>;
++		reset-names = "apb", "core";
++
++		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
++		interrupt-names = "intr";
++
++		nvidia,bpmp = <&bpmp 0>;
++
++		nvidia,aspm-cmrt-us = <60>;
++		nvidia,aspm-pwr-on-t-us = <20>;
++		nvidia,aspm-l0s-entrance-latency-us = <3>;
++	};
++
++	pcie_ep@141a0000 {
++		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
++		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8A>;
++		reg = <0x00 0x141a0000 0x0 0x00020000   /* appl registers (128K)      */
++		       0x00 0x3a040000 0x0 0x00040000   /* iATU_DMA reg space (256K)  */
++		       0x00 0x3a080000 0x0 0x00040000   /* DBI reg space (256K)       */
++		       0x1c 0x00000000 0x4 0x00000000>; /* Address Space (16G)        */
++		reg-names = "appl", "atu_dma", "dbi", "addr_space";
++
++		status = "disabled";
++
++		num-lanes = <8>;
++		num-ib-windows = <2>;
++		num-ob-windows = <8>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&clkreq_c5_bi_dir_state>;
++
++		clocks = <&bpmp TEGRA194_CLK_PEX1_CORE_5>;
++		clock-names = "core";
++
++		resets = <&bpmp TEGRA194_RESET_PEX1_CORE_5_APB>,
++			 <&bpmp TEGRA194_RESET_PEX1_CORE_5>;
++		reset-names = "apb", "core";
++
++		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;	/* controller interrupt */
++		interrupt-names = "intr";
++
++		nvidia,bpmp = <&bpmp 5>;
++
++		nvidia,aspm-cmrt-us = <60>;
++		nvidia,aspm-pwr-on-t-us = <20>;
++		nvidia,aspm-l0s-entrance-latency-us = <3>;
++	};
++
+ 	sysram@40000000 {
+ 		compatible = "nvidia,tegra194-sysram", "mmio-sram";
+ 		reg = <0x0 0x40000000 0x0 0x50000>;
 -- 
 2.17.1
