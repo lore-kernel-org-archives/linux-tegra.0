@@ -1,50 +1,89 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
-Date: Sat, 23 Nov 2019 07:46:29 -0800
-Message-ID: <a5d68f07-5f9a-2809-404d-bcd8ca593d70@roeck-us.net>
-References: <20191122100704.194776704@linuxfoundation.org>
- <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
- <20191122133931.GA2033651@kroah.com> <20191122134131.GA2050590@kroah.com>
- <20191122134627.GB2050590@kroah.com>
- <9f976044-2dbc-6c19-11e7-210cd7ab35ea@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
+	samples
+Date: Sun, 24 Nov 2019 00:09:08 +0300
+Message-ID: <d2110a1f-c1de-e2c5-a1ff-5eb4c5d3e1da@gmail.com>
+References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
+ <20191018154833.7560-3-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <9f976044-2dbc-6c19-11e7-210cd7ab35ea@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20191018154833.7560-3-ben.dooks@codethink.co.uk>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/22/19 6:48 AM, Jon Hunter wrote:
-
-[ ... ]
-
-> Error: arch/arm/boot/dts/omap5-board-common.dtsi:636.1-6 Label or path dwc3 not found
-> FATAL ERROR: Syntax error parsing input tree
-> scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/omap5-igep0050.dtb' failed
-> make[1]: *** [arch/arm/boot/dts/omap5-igep0050.dtb] Error 1
-> arch/arm/Makefile:338: recipe for target 'dtbs' failed
-> make: *** [dtbs] Error 2
-> 
-> 
-> This is caused by the following commit ...
-> 
-> commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
-> Author: H. Nikolaus Schaller <hns@goldelico.com>
-> Date:   Fri Sep 28 17:54:00 2018 +0200
-> 
->      ARM: dts: omap5: enable OTG role for DWC3 controller
-> 
-
-On top of the breakage caused by this patch, I would also argue
-that it is not a bug fix and should not have been included
-in the first place.
-
-The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
-Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
-that patch, I highly doubt that a backport to 4.4 would work.
-
-Guenter
+MTguMTAuMjAxOSAxODo0OCwgQmVuIERvb2tzINC/0LjRiNC10YI6Cj4gRnJvbTogRWR3YXJkIENy
+YWdnIDxlZHdhcmQuY3JhZ2dAY29kZXRoaW5rLmNvLnVrPgo+IAo+IFRoZSB0ZWdyYTMgYXVkaW8g
+Y2FuIHN1cHBvcnQgMjQgYW5kIDMyIGJpdCBzYW1wbGUgc2l6ZXMgc28gYWRkIHRoZQo+IG9wdGlv
+biB0byB0aGUgdGVncmEzMF9pMnNfaHdfcGFyYW1zIHRvIGNvbmZpZ3VyZSB0aGUgUzI0X0xFIG9y
+IFMzMl9MRQo+IGZvcm1hdHMgd2hlbiByZXF1ZXN0ZWQuCj4gCj4gU2lnbmVkLW9mZi1ieTogRWR3
+YXJkIENyYWdnIDxlZHdhcmQuY3JhZ2dAY29kZXRoaW5rLmNvLnVrPgo+IFtiZW4uZG9va3NAY29k
+ZXRoaW5rLmNvLnVrOiBmaXh1cCBtZXJnZSBvZiAyNCBhbmQgMzJiaXRdCj4gW2Jlbi5kb29rc0Bj
+b2RldGhpbmsuY28udWs6IGFkZCBwbSBjYWxscyBhcm91bmQgeXRkbSBjb25maWddCj4gW2Jlbi5k
+b29rc0Bjb2RldGhpbmsuY28udWs6IGRyb3AgZGVidWcgcHJpbnRpbmcgdG8gZGV2X2RiZ10KPiBT
+aWduZWQtb2ZmLWJ5OiBCZW4gRG9va3MgPGJlbi5kb29rc0Bjb2RldGhpbmsuY28udWs+Cj4gLS0t
+Cj4gc3F1YXNoIDVhZWNhNWEwNTVmZCBBU29DOiB0ZWdyYTogaTJzOiBwbV9ydW50aW1lX2dldF9z
+eW5jKCkgaXMgbmVlZGVkIGluIHRkbSBjb2RlCj4gCj4gQVNvQzogdGVncmE6IGkyczogcG1fcnVu
+dGltZV9nZXRfc3luYygpIGlzIG5lZWRlZCBpbiB0ZG0gY29kZQo+IC0tLQo+ICBzb3VuZC9zb2Mv
+dGVncmEvdGVncmEzMF9pMnMuYyB8IDI1ICsrKysrKysrKysrKysrKysrKysrLS0tLS0KPiAgMSBm
+aWxlIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAt
+LWdpdCBhL3NvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jIGIvc291bmQvc29jL3RlZ3JhL3Rl
+Z3JhMzBfaTJzLmMKPiBpbmRleCA3M2YwZGRkZWFlZjMuLjA2M2YzNGM4ODJhZiAxMDA2NDQKPiAt
+LS0gYS9zb3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYwo+ICsrKyBiL3NvdW5kL3NvYy90ZWdy
+YS90ZWdyYTMwX2kycy5jCj4gQEAgLTEyNyw3ICsxMjcsNyBAQCBzdGF0aWMgaW50IHRlZ3JhMzBf
+aTJzX2h3X3BhcmFtcyhzdHJ1Y3Qgc25kX3BjbV9zdWJzdHJlYW0gKnN1YnN0cmVhbSwKPiAgCXN0
+cnVjdCBkZXZpY2UgKmRldiA9IGRhaS0+ZGV2Owo+ICAJc3RydWN0IHRlZ3JhMzBfaTJzICppMnMg
+PSBzbmRfc29jX2RhaV9nZXRfZHJ2ZGF0YShkYWkpOwo+ICAJdW5zaWduZWQgaW50IG1hc2ssIHZh
+bCwgcmVnOwo+IC0JaW50IHJldCwgc2FtcGxlX3NpemUsIHNyYXRlLCBpMnNjbG9jaywgYml0Y250
+Owo+ICsJaW50IHJldCwgc2FtcGxlX3NpemUsIHNyYXRlLCBpMnNjbG9jaywgYml0Y250LCBhdWRp
+b19iaXRzOwo+ICAJc3RydWN0IHRlZ3JhMzBfYWh1Yl9jaWZfY29uZiBjaWZfY29uZjsKPiAgCj4g
+IAlpZiAocGFyYW1zX2NoYW5uZWxzKHBhcmFtcykgIT0gMikKPiBAQCAtMTM3LDggKzEzNywxOSBA
+QCBzdGF0aWMgaW50IHRlZ3JhMzBfaTJzX2h3X3BhcmFtcyhzdHJ1Y3Qgc25kX3BjbV9zdWJzdHJl
+YW0gKnN1YnN0cmVhbSwKPiAgCXN3aXRjaCAocGFyYW1zX2Zvcm1hdChwYXJhbXMpKSB7Cj4gIAlj
+YXNlIFNORFJWX1BDTV9GT1JNQVRfUzE2X0xFOgo+ICAJCXZhbCA9IFRFR1JBMzBfSTJTX0NUUkxf
+QklUX1NJWkVfMTY7Cj4gKwkJYXVkaW9fYml0cyA9IFRFR1JBMzBfQVVESU9DSUZfQklUU18xNjsK
+PiAgCQlzYW1wbGVfc2l6ZSA9IDE2Owo+ICAJCWJyZWFrOwo+ICsJY2FzZSBTTkRSVl9QQ01fRk9S
+TUFUX1MyNF9MRToKPiArCQl2YWwgPSBURUdSQTMwX0kyU19DVFJMX0JJVF9TSVpFXzI0Owo+ICsJ
+CWF1ZGlvX2JpdHMgPSBURUdSQTMwX0FVRElPQ0lGX0JJVFNfMjQ7Cj4gKwkJc2FtcGxlX3NpemUg
+PSAyNDsKPiArCQlicmVhazsKPiArCWNhc2UgU05EUlZfUENNX0ZPUk1BVF9TMzJfTEU6Cj4gKwkJ
+dmFsID0gVEVHUkEzMF9JMlNfQ1RSTF9CSVRfU0laRV8zMjsKPiArCQlhdWRpb19iaXRzID0gVEVH
+UkEzMF9BVURJT0NJRl9CSVRTXzMyOwo+ICsJCXNhbXBsZV9zaXplID0gMzI7Cj4gKwkJYnJlYWs7
+Cj4gIAlkZWZhdWx0Ogo+ICAJCXJldHVybiAtRUlOVkFMOwo+ICAJfQo+IEBAIC0xNzAsOCArMTgx
+LDggQEAgc3RhdGljIGludCB0ZWdyYTMwX2kyc19od19wYXJhbXMoc3RydWN0IHNuZF9wY21fc3Vi
+c3RyZWFtICpzdWJzdHJlYW0sCj4gIAljaWZfY29uZi50aHJlc2hvbGQgPSAwOwo+ICAJY2lmX2Nv
+bmYuYXVkaW9fY2hhbm5lbHMgPSAyOwo+ICAJY2lmX2NvbmYuY2xpZW50X2NoYW5uZWxzID0gMjsK
+PiAtCWNpZl9jb25mLmF1ZGlvX2JpdHMgPSBURUdSQTMwX0FVRElPQ0lGX0JJVFNfMTY7Cj4gLQlj
+aWZfY29uZi5jbGllbnRfYml0cyA9IFRFR1JBMzBfQVVESU9DSUZfQklUU18xNjsKPiArCWNpZl9j
+b25mLmF1ZGlvX2JpdHMgPSBhdWRpb19iaXRzOwo+ICsJY2lmX2NvbmYuY2xpZW50X2JpdHMgPSBh
+dWRpb19iaXRzOwo+ICAJY2lmX2NvbmYuZXhwYW5kID0gMDsKPiAgCWNpZl9jb25mLnN0ZXJlb19j
+b252ID0gMDsKPiAgCWNpZl9jb25mLnJlcGxpY2F0ZSA9IDA7Cj4gQEAgLTMwNiwxNCArMzE3LDE4
+IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc25kX3NvY19kYWlfZHJpdmVyIHRlZ3JhMzBfaTJzX2Rh
+aV90ZW1wbGF0ZSA9IHsKPiAgCQkuY2hhbm5lbHNfbWluID0gMiwKPiAgCQkuY2hhbm5lbHNfbWF4
+ID0gMiwKPiAgCQkucmF0ZXMgPSBTTkRSVl9QQ01fUkFURV84MDAwXzk2MDAwLAo+IC0JCS5mb3Jt
+YXRzID0gU05EUlZfUENNX0ZNVEJJVF9TMTZfTEUsCj4gKwkJLmZvcm1hdHMgPSBTTkRSVl9QQ01f
+Rk1UQklUX1MzMl9MRSB8Cj4gKwkJCSAgIFNORFJWX1BDTV9GTVRCSVRfUzI0X0xFIHwKPiArCQkJ
+ICAgU05EUlZfUENNX0ZNVEJJVF9TMTZfTEUsCj4gIAl9LAo+ICAJLmNhcHR1cmUgPSB7Cj4gIAkJ
+LnN0cmVhbV9uYW1lID0gIkNhcHR1cmUiLAo+ICAJCS5jaGFubmVsc19taW4gPSAyLAo+ICAJCS5j
+aGFubmVsc19tYXggPSAyLAo+ICAJCS5yYXRlcyA9IFNORFJWX1BDTV9SQVRFXzgwMDBfOTYwMDAs
+Cj4gLQkJLmZvcm1hdHMgPSBTTkRSVl9QQ01fRk1UQklUX1MxNl9MRSwKPiArCQkuZm9ybWF0cyA9
+IFNORFJWX1BDTV9GTVRCSVRfUzMyX0xFIHwKPiArCQkJICAgU05EUlZfUENNX0ZNVEJJVF9TMjRf
+TEUgfAo+ICsJCQkgICBTTkRSVl9QQ01fRk1UQklUX1MxNl9MRSwKPiAgCX0sCj4gIAkub3BzID0g
+JnRlZ3JhMzBfaTJzX2RhaV9vcHMsCj4gIAkuc3ltbWV0cmljX3JhdGVzID0gMSwKPiAKCkhlbGxv
+LAoKVGhpcyBwYXRjaCBicmVha3MgYXVkaW8gb24gVGVncmEzMC4gSSBkb24ndCBzZWUgZXJyb3Jz
+IGFueXdoZXJlLCBidXQKdGhlcmUgaXMgbm8gYXVkaW8gYW5kIHJldmVydGluZyB0aGlzIHBhdGNo
+IGhlbHBzLiBQbGVhc2UgZml4IGl0LgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJv
+amVjdC5vcmcKaHR0cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9hbHNhLWRldmVsCg==
