@@ -1,98 +1,148 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
-	samples
-Date: Mon, 25 Nov 2019 10:37:25 +0000
-Message-ID: <b4e2ec44-bc89-b5ca-cfa7-a6d5c45a9c94@codethink.co.uk>
-References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
- <20191018154833.7560-3-ben.dooks@codethink.co.uk>
- <d2110a1f-c1de-e2c5-a1ff-5eb4c5d3e1da@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: vic: Export module device table
+Date: Mon, 25 Nov 2019 11:45:33 +0100
+Message-ID: <20191125104533.GF1409040@ulmo>
+References: <20191122133215.1317039-1-thierry.reding@gmail.com>
+ <20191125095629.GK29965@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <d2110a1f-c1de-e2c5-a1ff-5eb4c5d3e1da@gmail.com>
-Content-Language: en-GB
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Dmitry Osipenko <digetx@gmail.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Content-Type: multipart/mixed; boundary="===============1826229041=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191125095629.GK29965@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjMvMTEvMjAxOSAyMTowOSwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+IDE4LjEwLjIwMTkg
-MTg6NDgsIEJlbiBEb29rcyDQv9C40YjQtdGCOgo+PiBGcm9tOiBFZHdhcmQgQ3JhZ2cgPGVkd2Fy
-ZC5jcmFnZ0Bjb2RldGhpbmsuY28udWs+Cj4+Cj4+IFRoZSB0ZWdyYTMgYXVkaW8gY2FuIHN1cHBv
-cnQgMjQgYW5kIDMyIGJpdCBzYW1wbGUgc2l6ZXMgc28gYWRkIHRoZQo+PiBvcHRpb24gdG8gdGhl
-IHRlZ3JhMzBfaTJzX2h3X3BhcmFtcyB0byBjb25maWd1cmUgdGhlIFMyNF9MRSBvciBTMzJfTEUK
-Pj4gZm9ybWF0cyB3aGVuIHJlcXVlc3RlZC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogRWR3YXJkIENy
-YWdnIDxlZHdhcmQuY3JhZ2dAY29kZXRoaW5rLmNvLnVrPgo+PiBbYmVuLmRvb2tzQGNvZGV0aGlu
-ay5jby51azogZml4dXAgbWVyZ2Ugb2YgMjQgYW5kIDMyYml0XQo+PiBbYmVuLmRvb2tzQGNvZGV0
-aGluay5jby51azogYWRkIHBtIGNhbGxzIGFyb3VuZCB5dGRtIGNvbmZpZ10KPj4gW2Jlbi5kb29r
-c0Bjb2RldGhpbmsuY28udWs6IGRyb3AgZGVidWcgcHJpbnRpbmcgdG8gZGV2X2RiZ10KPj4gU2ln
-bmVkLW9mZi1ieTogQmVuIERvb2tzIDxiZW4uZG9va3NAY29kZXRoaW5rLmNvLnVrPgo+PiAtLS0K
-Pj4gc3F1YXNoIDVhZWNhNWEwNTVmZCBBU29DOiB0ZWdyYTogaTJzOiBwbV9ydW50aW1lX2dldF9z
-eW5jKCkgaXMgbmVlZGVkIGluIHRkbSBjb2RlCj4+Cj4+IEFTb0M6IHRlZ3JhOiBpMnM6IHBtX3J1
-bnRpbWVfZ2V0X3N5bmMoKSBpcyBuZWVkZWQgaW4gdGRtIGNvZGUKPj4gLS0tCj4+ICAgc291bmQv
-c29jL3RlZ3JhL3RlZ3JhMzBfaTJzLmMgfCAyNSArKysrKysrKysrKysrKysrKysrKy0tLS0tCj4+
-ICAgMSBmaWxlIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCj4+Cj4+
-IGRpZmYgLS1naXQgYS9zb3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYyBiL3NvdW5kL3NvYy90
-ZWdyYS90ZWdyYTMwX2kycy5jCj4+IGluZGV4IDczZjBkZGRlYWVmMy4uMDYzZjM0Yzg4MmFmIDEw
-MDY0NAo+PiAtLS0gYS9zb3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYwo+PiArKysgYi9zb3Vu
-ZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYwo+PiBAQCAtMTI3LDcgKzEyNyw3IEBAIHN0YXRpYyBp
-bnQgdGVncmEzMF9pMnNfaHdfcGFyYW1zKHN0cnVjdCBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vic3Ry
-ZWFtLAo+PiAgIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBkYWktPmRldjsKPj4gICAJc3RydWN0IHRl
-Z3JhMzBfaTJzICppMnMgPSBzbmRfc29jX2RhaV9nZXRfZHJ2ZGF0YShkYWkpOwo+PiAgIAl1bnNp
-Z25lZCBpbnQgbWFzaywgdmFsLCByZWc7Cj4+IC0JaW50IHJldCwgc2FtcGxlX3NpemUsIHNyYXRl
-LCBpMnNjbG9jaywgYml0Y250Owo+PiArCWludCByZXQsIHNhbXBsZV9zaXplLCBzcmF0ZSwgaTJz
-Y2xvY2ssIGJpdGNudCwgYXVkaW9fYml0czsKPj4gICAJc3RydWN0IHRlZ3JhMzBfYWh1Yl9jaWZf
-Y29uZiBjaWZfY29uZjsKPj4gICAKPj4gICAJaWYgKHBhcmFtc19jaGFubmVscyhwYXJhbXMpICE9
-IDIpCj4+IEBAIC0xMzcsOCArMTM3LDE5IEBAIHN0YXRpYyBpbnQgdGVncmEzMF9pMnNfaHdfcGFy
-YW1zKHN0cnVjdCBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFtLAo+PiAgIAlzd2l0Y2ggKHBh
-cmFtc19mb3JtYXQocGFyYW1zKSkgewo+PiAgIAljYXNlIFNORFJWX1BDTV9GT1JNQVRfUzE2X0xF
-Ogo+PiAgIAkJdmFsID0gVEVHUkEzMF9JMlNfQ1RSTF9CSVRfU0laRV8xNjsKPj4gKwkJYXVkaW9f
-Yml0cyA9IFRFR1JBMzBfQVVESU9DSUZfQklUU18xNjsKPj4gICAJCXNhbXBsZV9zaXplID0gMTY7
-Cj4+ICAgCQlicmVhazsKPj4gKwljYXNlIFNORFJWX1BDTV9GT1JNQVRfUzI0X0xFOgo+PiArCQl2
-YWwgPSBURUdSQTMwX0kyU19DVFJMX0JJVF9TSVpFXzI0Owo+PiArCQlhdWRpb19iaXRzID0gVEVH
-UkEzMF9BVURJT0NJRl9CSVRTXzI0Owo+PiArCQlzYW1wbGVfc2l6ZSA9IDI0Owo+PiArCQlicmVh
-azsKPj4gKwljYXNlIFNORFJWX1BDTV9GT1JNQVRfUzMyX0xFOgo+PiArCQl2YWwgPSBURUdSQTMw
-X0kyU19DVFJMX0JJVF9TSVpFXzMyOwo+PiArCQlhdWRpb19iaXRzID0gVEVHUkEzMF9BVURJT0NJ
-Rl9CSVRTXzMyOwo+PiArCQlzYW1wbGVfc2l6ZSA9IDMyOwo+PiArCQlicmVhazsKPj4gICAJZGVm
-YXVsdDoKPj4gICAJCXJldHVybiAtRUlOVkFMOwo+PiAgIAl9Cj4+IEBAIC0xNzAsOCArMTgxLDgg
-QEAgc3RhdGljIGludCB0ZWdyYTMwX2kyc19od19wYXJhbXMoc3RydWN0IHNuZF9wY21fc3Vic3Ry
-ZWFtICpzdWJzdHJlYW0sCj4+ICAgCWNpZl9jb25mLnRocmVzaG9sZCA9IDA7Cj4+ICAgCWNpZl9j
-b25mLmF1ZGlvX2NoYW5uZWxzID0gMjsKPj4gICAJY2lmX2NvbmYuY2xpZW50X2NoYW5uZWxzID0g
-MjsKPj4gLQljaWZfY29uZi5hdWRpb19iaXRzID0gVEVHUkEzMF9BVURJT0NJRl9CSVRTXzE2Owo+
-PiAtCWNpZl9jb25mLmNsaWVudF9iaXRzID0gVEVHUkEzMF9BVURJT0NJRl9CSVRTXzE2Owo+PiAr
-CWNpZl9jb25mLmF1ZGlvX2JpdHMgPSBhdWRpb19iaXRzOwo+PiArCWNpZl9jb25mLmNsaWVudF9i
-aXRzID0gYXVkaW9fYml0czsKPj4gICAJY2lmX2NvbmYuZXhwYW5kID0gMDsKPj4gICAJY2lmX2Nv
-bmYuc3RlcmVvX2NvbnYgPSAwOwo+PiAgIAljaWZfY29uZi5yZXBsaWNhdGUgPSAwOwo+PiBAQCAt
-MzA2LDE0ICszMTcsMTggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBzbmRfc29jX2RhaV9kcml2ZXIg
-dGVncmEzMF9pMnNfZGFpX3RlbXBsYXRlID0gewo+PiAgIAkJLmNoYW5uZWxzX21pbiA9IDIsCj4+
-ICAgCQkuY2hhbm5lbHNfbWF4ID0gMiwKPj4gICAJCS5yYXRlcyA9IFNORFJWX1BDTV9SQVRFXzgw
-MDBfOTYwMDAsCj4+IC0JCS5mb3JtYXRzID0gU05EUlZfUENNX0ZNVEJJVF9TMTZfTEUsCj4+ICsJ
-CS5mb3JtYXRzID0gU05EUlZfUENNX0ZNVEJJVF9TMzJfTEUgfAo+PiArCQkJICAgU05EUlZfUENN
-X0ZNVEJJVF9TMjRfTEUgfAo+PiArCQkJICAgU05EUlZfUENNX0ZNVEJJVF9TMTZfTEUsCj4+ICAg
-CX0sCj4+ICAgCS5jYXB0dXJlID0gewo+PiAgIAkJLnN0cmVhbV9uYW1lID0gIkNhcHR1cmUiLAo+
-PiAgIAkJLmNoYW5uZWxzX21pbiA9IDIsCj4+ICAgCQkuY2hhbm5lbHNfbWF4ID0gMiwKPj4gICAJ
-CS5yYXRlcyA9IFNORFJWX1BDTV9SQVRFXzgwMDBfOTYwMDAsCj4+IC0JCS5mb3JtYXRzID0gU05E
-UlZfUENNX0ZNVEJJVF9TMTZfTEUsCj4+ICsJCS5mb3JtYXRzID0gU05EUlZfUENNX0ZNVEJJVF9T
-MzJfTEUgfAo+PiArCQkJICAgU05EUlZfUENNX0ZNVEJJVF9TMjRfTEUgfAo+PiArCQkJICAgU05E
-UlZfUENNX0ZNVEJJVF9TMTZfTEUsCj4+ICAgCX0sCj4+ICAgCS5vcHMgPSAmdGVncmEzMF9pMnNf
-ZGFpX29wcywKPj4gICAJLnN5bW1ldHJpY19yYXRlcyA9IDEsCj4+Cj4gCj4gSGVsbG8sCj4gCj4g
-VGhpcyBwYXRjaCBicmVha3MgYXVkaW8gb24gVGVncmEzMC4gSSBkb24ndCBzZWUgZXJyb3JzIGFu
-eXdoZXJlLCBidXQKPiB0aGVyZSBpcyBubyBhdWRpbyBhbmQgcmV2ZXJ0aW5nIHRoaXMgcGF0Y2gg
-aGVscHMuIFBsZWFzZSBmaXggaXQuCgpXaGF0IGlzIHRoZSBmYWlsdXJlIG1vZGU/IEkgY2FuIHRy
-eSBhbmQgdGFrZSBhIGxvb2sgYXQgdGhpcyBzb21lIHRpbWUKdGhpcyB3ZWVrLCBidXQgSSBhbSBu
-b3Qgc3VyZSBpZiBJIGhhdmUgYW55IGJvYXJkcyB3aXRoIGFuIGFjdHVhbCB1c2VmdWwKYXVkaW8g
-b3V0cHV0PwoKLS0gCkJlbiBEb29rcwkJCQlodHRwOi8vd3d3LmNvZGV0aGluay5jby51ay8KU2Vu
-aW9yIEVuZ2luZWVyCQkJCUNvZGV0aGluayAtIFByb3ZpZGluZyBHZW5pdXMKCmh0dHBzOi8vd3d3
-LmNvZGV0aGluay5jby51ay9wcml2YWN5Lmh0bWwKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZlbEBh
-bHNhLXByb2plY3Qub3JnCmh0dHBzOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4v
-bGlzdGluZm8vYWxzYS1kZXZlbAo=
+
+--===============1826229041==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="FeAIMMcddNRN4P4/"
+Content-Disposition: inline
+
+
+--FeAIMMcddNRN4P4/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Nov 25, 2019 at 10:56:29AM +0100, Daniel Vetter wrote:
+> On Fri, Nov 22, 2019 at 02:32:15PM +0100, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Export the module device table to ensure the VIC compatible strings are
+> > listed in the module's aliases table. This in turn causes the driver to
+> > be automatically loaded on boot if VIC is the only enabled subdevice of
+> > the logical host1x DRM device.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>=20
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+>=20
+> I noticed that the drm subdev driver also lacks the matches. How does that
+> work? Just by getting loaded when any of the subdev drivers match?
+
+Yeah, basically the host1x DRM driver registration causes a logical
+device to be created. The driver will then finally bind to the device
+after all the subdevices have been registered. Since all the subdevice
+drivers are linked into a single module, all the module device tables
+end up in that kernel module and that's enough to trigger the whole
+process.
+
+I ran into this issue when I was trying to run the Tegra DRM driver in
+a "headless" configuration where all the display-related devices were
+disabled via DT. Without exporting the VIC module device table, there
+were no entries in the module's aliases list that would match the set
+of devices registered to the system and the driver wouldn't load.
+
+Thierry
+
+> -Daniel
+>=20
+> > ---
+> >  drivers/gpu/drm/tegra/vic.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+> > index 9444ba183990..c4d82b8b3065 100644
+> > --- a/drivers/gpu/drm/tegra/vic.c
+> > +++ b/drivers/gpu/drm/tegra/vic.c
+> > @@ -386,13 +386,14 @@ static const struct vic_config vic_t194_config =
+=3D {
+> >  	.supports_sid =3D true,
+> >  };
+> > =20
+> > -static const struct of_device_id vic_match[] =3D {
+> > +static const struct of_device_id tegra_vic_of_match[] =3D {
+> >  	{ .compatible =3D "nvidia,tegra124-vic", .data =3D &vic_t124_config },
+> >  	{ .compatible =3D "nvidia,tegra210-vic", .data =3D &vic_t210_config },
+> >  	{ .compatible =3D "nvidia,tegra186-vic", .data =3D &vic_t186_config },
+> >  	{ .compatible =3D "nvidia,tegra194-vic", .data =3D &vic_t194_config },
+> >  	{ },
+> >  };
+> > +MODULE_DEVICE_TABLE(of, tegra_vic_of_match);
+> > =20
+> >  static int vic_probe(struct platform_device *pdev)
+> >  {
+> > @@ -516,7 +517,7 @@ static const struct dev_pm_ops vic_pm_ops =3D {
+> >  struct platform_driver tegra_vic_driver =3D {
+> >  	.driver =3D {
+> >  		.name =3D "tegra-vic",
+> > -		.of_match_table =3D vic_match,
+> > +		.of_match_table =3D tegra_vic_of_match,
+> >  		.pm =3D &vic_pm_ops
+> >  	},
+> >  	.probe =3D vic_probe,
+> > --=20
+> > 2.23.0
+> >=20
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>=20
+> --=20
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+
+--FeAIMMcddNRN4P4/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3bsMoACgkQ3SOs138+
+s6FoThAAhUfcvm5SqZ+TIOqRgajhQnfgkHhwZDhfHicescpanDkDVBEOAdBTa73I
+ptkelRjZe2JADaQoOULcHA5Gy8e2cPXIXNMfmtvM3qvevYwnJu4Ts10fIWhUDgSq
+UFjD7Ki8qDF+aFxTpXwSdV2Igt7jVsG/6rjEvVRVnHQKwcPFfP9ubWGkwiVfUce9
+Y5N2vNI0neyeStrdkvpCOTowjTx4HxK8n3RS4IFpsoj0IEoAu6GgJoBMfzzEsf4+
+aenWXcczAVjXxbkdLFNJA5aqyL1fcG7YJF9+bEf9+sU6kSPQfaQYyymFPBCZe4mz
+gK/U9HX78ucvjtbzyfXKErzXIwCBUICdWQEi+K8uaqiNh3xrdaDbHZsRdvsyYcMw
+fNmIjGiXkU7FgpxZVYnSygLfW5I0jQwIJg1tIjb50AfUx6+AwLXQZlN13XaUoMOf
+yfXbdCYudBRB/9CcwYoUnmRUD0QNSaEOfdWs4yB1k9fitc4Dng+qQQc0N/HVRZ/o
+ZamHoPqHzRJurHlYQBFOXldBHuQOVqpMGqgmWPRUVq7D62Pp71Owbz1cKJyg68ri
+EEnRyQgf6AkIwh0hFvghJ0T02NE0uUl0xzMvDrbiv/F7hW4GWSLNii+q2LotEnKO
+25dPSMDIoZ8MtB8W7u16kx5KZtNDtcglNeMj60Vqeg4RaTmKkC4=
+=79xx
+-----END PGP SIGNATURE-----
+
+--FeAIMMcddNRN4P4/--
+
+--===============1826229041==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============1826229041==--
