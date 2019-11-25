@@ -1,7 +1,7 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
-Date: Mon, 25 Nov 2019 13:22:58 +0000
-Message-ID: <a6830303-ff96-f7df-b504-ab226aefddca@nvidia.com>
+Date: Mon, 25 Nov 2019 06:08:17 -0800
+Message-ID: <db428001-f6b5-3132-2d93-ef04f67078dc@roeck-us.net>
 References: <20191122100704.194776704@linuxfoundation.org>
  <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
  <20191122133931.GA2033651@kroah.com> <20191122134131.GA2050590@kroah.com>
@@ -11,18 +11,17 @@ References: <20191122100704.194776704@linuxfoundation.org>
  <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
  <20191125094116.GA2340170@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
 In-Reply-To: <20191125094116.GA2340170@kroah.com>
 Content-Language: en-US
 Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 25/11/2019 09:41, Greg Kroah-Hartman wrote:
+On 11/25/19 1:41 AM, Greg Kroah-Hartman wrote:
 > On Sun, Nov 24, 2019 at 08:31:46PM +0000, Jon Hunter wrote:
 >>
 >> On 23/11/2019 15:46, Guenter Roeck wrote:
@@ -44,10 +43,9 @@ On 25/11/2019 09:41, Greg Kroah-Hartman wrote:
 >>>>
 >>>> commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
 >>>> Author: H. Nikolaus Schaller <hns@goldelico.com>
->>>> Date:=C2=A0=C2=A0 Fri Sep 28 17:54:00 2018 +0200
+>>>> Date:   Fri Sep 28 17:54:00 2018 +0200
 >>>>
->>>> =C2=A0=C2=A0=C2=A0=C2=A0 ARM: dts: omap5: enable OTG role for DWC3 con=
-troller
+>>>>       ARM: dts: omap5: enable OTG role for DWC3 controller
 >>>>
 >>>
 >>> On top of the breakage caused by this patch, I would also argue
@@ -57,28 +55,20 @@ troller
 >>> The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
 >>> Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
 >>> that patch, I highly doubt that a backport to 4.4 would work.
->=20
+> 
 > Good catch, I have now dropped both of these patches and pushed out a
 > -rc3
->=20
+> 
 >> FYI ... I am still seeing a build failure because of this with -rc2 ...
->=20
+> 
 > Can you see if -rc3 is also giving you problems?
+> 
 
-Better, but I appear to be seeing some random suspend failures with this
-now on one board. I will try to bisect this.
+For v4.4.202-157-g2576206c30b5:
 
-Test results for stable-v4.4:
-    6 builds:	6 pass, 0 fail
-    12 boots:	12 pass, 0 fail
-    19 tests:	18 pass, 1 fail
+Build results:
+	total: 170 pass: 170 fail: 0
+Qemu test results:
+	total: 324 pass: 324 fail: 0
 
-Linux version:	4.4.203-rc3-g2576206c30b5
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra30-cardhu-a04
-
-Cheers
-Jon
-
---=20
-nvpublic
+Guenter
