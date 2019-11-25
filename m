@@ -1,71 +1,63 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
-Date: Sun, 24 Nov 2019 20:31:46 +0000
-Message-ID: <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
-References: <20191122100704.194776704@linuxfoundation.org>
- <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
- <20191122133931.GA2033651@kroah.com> <20191122134131.GA2050590@kroah.com>
- <20191122134627.GB2050590@kroah.com>
- <9f976044-2dbc-6c19-11e7-210cd7ab35ea@nvidia.com>
- <a5d68f07-5f9a-2809-404d-bcd8ca593d70@roeck-us.net>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH 5/6] arm64: tegra: Enable GPIO controllers nodes for
+ P2972-0000 platform
+Date: Mon, 25 Nov 2019 12:25:11 +0530
+Message-ID: <4a09729b-9a77-65a1-645a-a31e6e62ad1e@nvidia.com>
+References: <20191122104505.8986-1-vidyas@nvidia.com>
+ <20191122104505.8986-6-vidyas@nvidia.com> <20191122132007.GC1315704@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <a5d68f07-5f9a-2809-404d-bcd8ca593d70@roeck-us.net>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191122132007.GC1315704@ulmo>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 23/11/2019 15:46, Guenter Roeck wrote:
-> On 11/22/19 6:48 AM, Jon Hunter wrote:
->=20
-> [ ... ]
->=20
->> Error: arch/arm/boot/dts/omap5-board-common.dtsi:636.1-6 Label or path
->> dwc3 not found
->> FATAL ERROR: Syntax error parsing input tree
->> scripts/Makefile.lib:293: recipe for target
->> 'arch/arm/boot/dts/omap5-igep0050.dtb' failed
->> make[1]: *** [arch/arm/boot/dts/omap5-igep0050.dtb] Error 1
->> arch/arm/Makefile:338: recipe for target 'dtbs' failed
->> make: *** [dtbs] Error 2
+On 11/22/2019 6:50 PM, Thierry Reding wrote:
+> On Fri, Nov 22, 2019 at 04:15:04PM +0530, Vidya Sagar wrote:
+>> Enable GPIO controllers nodes for P2972-0000 platform which are required
+>> by other controllers in the SoC for example when PCIe C5 controller
+>> operates in endpoint mode.
 >>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+> 
+> The GPIO controllers are enabled by default, so there's no need to
+> explicitly enable them.
+Yup. I'll remove this patch.
+Since I didn't see 'status' entry in GPIO nodes in tegra194.dtsi file, I thought
+it means 'disabled'. But, contrary to my understanding, absence of 'status' entry
+seems to mean 'okay'.
+
+- Vidya Sagar
+> 
+> Thierry
+> 
 >>
->> This is caused by the following commit ...
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>> index 353a6a22196d..7eb64b816e08 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>> @@ -37,6 +37,14 @@
+>>   			status = "okay";
+>>   		};
+>>   
+>> +		gpio@2200000 {
+>> +			status = "okay";
+>> +		};
+>> +
+>> +		gpio@c2f0000 {
+>> +			status = "okay";
+>> +		};
+>> +
+>>   		pwm@c340000 {
+>>   			status = "okay";
+>>   		};
+>> -- 
+>> 2.17.1
 >>
->> commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
->> Author: H. Nikolaus Schaller <hns@goldelico.com>
->> Date:=C2=A0=C2=A0 Fri Sep 28 17:54:00 2018 +0200
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0 ARM: dts: omap5: enable OTG role for DWC3 contr=
-oller
->>
->=20
-> On top of the breakage caused by this patch, I would also argue
-> that it is not a bug fix and should not have been included
-> in the first place.
->=20
-> The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
-> Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
-> that patch, I highly doubt that a backport to 4.4 would work.
-
-FYI ... I am still seeing a build failure because of this with -rc2 ...
-
-Test results for stable-v4.4:
-    6 builds:	3 pass, 3 fail
-    6 boots:	6 pass, 0 fail
-    11 tests:	11 pass, 0 fail
-
-Linux version:	4.4.203-rc2-gdbaac4c54573
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra30-cardhu-a04
-
-Cheers
-Jon
-
---=20
-nvpublic
