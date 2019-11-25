@@ -1,122 +1,95 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
-	samples
-Date: Mon, 25 Nov 2019 20:28:53 +0300
-Message-ID: <621fa27d-9259-2949-9cf5-d2eda5cb0677@gmail.com>
-References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
- <20191018154833.7560-3-ben.dooks@codethink.co.uk>
- <d2110a1f-c1de-e2c5-a1ff-5eb4c5d3e1da@gmail.com>
- <b4e2ec44-bc89-b5ca-cfa7-a6d5c45a9c94@codethink.co.uk>
- <a11ba33e-5ffb-c5c6-04f5-0e031877c55f@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
+Date: Mon, 25 Nov 2019 22:45:20 +0000
+Message-ID: <013aa2b3-9a68-6227-36bc-093d03547fce@nvidia.com>
+References: <20191122100704.194776704@linuxfoundation.org>
+ <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
+ <20191122133931.GA2033651@kroah.com> <20191122134131.GA2050590@kroah.com>
+ <20191122134627.GB2050590@kroah.com>
+ <9f976044-2dbc-6c19-11e7-210cd7ab35ea@nvidia.com>
+ <a5d68f07-5f9a-2809-404d-bcd8ca593d70@roeck-us.net>
+ <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
+ <20191125094116.GA2340170@kroah.com>
+ <a6830303-ff96-f7df-b504-ab226aefddca@nvidia.com>
+ <20191125160305.GD2683321@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <a11ba33e-5ffb-c5c6-04f5-0e031877c55f@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20191125160305.GD2683321@kroah.com>
 Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-MjUuMTEuMjAxOSAyMDoyMiwgRG1pdHJ5IE9zaXBlbmtvINC/0LjRiNC10YI6Cj4gMjUuMTEuMjAx
-OSAxMzozNywgQmVuIERvb2tzINC/0LjRiNC10YI6Cj4+IE9uIDIzLzExLzIwMTkgMjE6MDksIERt
-aXRyeSBPc2lwZW5rbyB3cm90ZToKPj4+IDE4LjEwLjIwMTkgMTg6NDgsIEJlbiBEb29rcyDQv9C4
-0YjQtdGCOgo+Pj4+IEZyb206IEVkd2FyZCBDcmFnZyA8ZWR3YXJkLmNyYWdnQGNvZGV0aGluay5j
-by51az4KPj4+Pgo+Pj4+IFRoZSB0ZWdyYTMgYXVkaW8gY2FuIHN1cHBvcnQgMjQgYW5kIDMyIGJp
-dCBzYW1wbGUgc2l6ZXMgc28gYWRkIHRoZQo+Pj4+IG9wdGlvbiB0byB0aGUgdGVncmEzMF9pMnNf
-aHdfcGFyYW1zIHRvIGNvbmZpZ3VyZSB0aGUgUzI0X0xFIG9yIFMzMl9MRQo+Pj4+IGZvcm1hdHMg
-d2hlbiByZXF1ZXN0ZWQuCj4+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5OiBFZHdhcmQgQ3JhZ2cgPGVk
-d2FyZC5jcmFnZ0Bjb2RldGhpbmsuY28udWs+Cj4+Pj4gW2Jlbi5kb29rc0Bjb2RldGhpbmsuY28u
-dWs6IGZpeHVwIG1lcmdlIG9mIDI0IGFuZCAzMmJpdF0KPj4+PiBbYmVuLmRvb2tzQGNvZGV0aGlu
-ay5jby51azogYWRkIHBtIGNhbGxzIGFyb3VuZCB5dGRtIGNvbmZpZ10KPj4+PiBbYmVuLmRvb2tz
-QGNvZGV0aGluay5jby51azogZHJvcCBkZWJ1ZyBwcmludGluZyB0byBkZXZfZGJnXQo+Pj4+IFNp
-Z25lZC1vZmYtYnk6IEJlbiBEb29rcyA8YmVuLmRvb2tzQGNvZGV0aGluay5jby51az4KPj4+PiAt
-LS0KPj4+PiBzcXVhc2ggNWFlY2E1YTA1NWZkIEFTb0M6IHRlZ3JhOiBpMnM6IHBtX3J1bnRpbWVf
-Z2V0X3N5bmMoKSBpcyBuZWVkZWQKPj4+PiBpbiB0ZG0gY29kZQo+Pj4+Cj4+Pj4gQVNvQzogdGVn
-cmE6IGkyczogcG1fcnVudGltZV9nZXRfc3luYygpIGlzIG5lZWRlZCBpbiB0ZG0gY29kZQo+Pj4+
-IC0tLQo+Pj4+IMKgIHNvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jIHwgMjUgKysrKysrKysr
-KysrKysrKysrKystLS0tLQo+Pj4+IMKgIDEgZmlsZSBjaGFuZ2VkLCAyMCBpbnNlcnRpb25zKCsp
-LCA1IGRlbGV0aW9ucygtKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy90ZWdyYS90
-ZWdyYTMwX2kycy5jCj4+Pj4gYi9zb3VuZC9zb2MvdGVncmEvdGVncmEzMF9pMnMuYwo+Pj4+IGlu
-ZGV4IDczZjBkZGRlYWVmMy4uMDYzZjM0Yzg4MmFmIDEwMDY0NAo+Pj4+IC0tLSBhL3NvdW5kL3Nv
-Yy90ZWdyYS90ZWdyYTMwX2kycy5jCj4+Pj4gKysrIGIvc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBf
-aTJzLmMKPj4+PiBAQCAtMTI3LDcgKzEyNyw3IEBAIHN0YXRpYyBpbnQgdGVncmEzMF9pMnNfaHdf
-cGFyYW1zKHN0cnVjdAo+Pj4+IHNuZF9wY21fc3Vic3RyZWFtICpzdWJzdHJlYW0sCj4+Pj4gwqDC
-oMKgwqDCoCBzdHJ1Y3QgZGV2aWNlICpkZXYgPSBkYWktPmRldjsKPj4+PiDCoMKgwqDCoMKgIHN0
-cnVjdCB0ZWdyYTMwX2kycyAqaTJzID0gc25kX3NvY19kYWlfZ2V0X2RydmRhdGEoZGFpKTsKPj4+
-PiDCoMKgwqDCoMKgIHVuc2lnbmVkIGludCBtYXNrLCB2YWwsIHJlZzsKPj4+PiAtwqDCoMKgIGlu
-dCByZXQsIHNhbXBsZV9zaXplLCBzcmF0ZSwgaTJzY2xvY2ssIGJpdGNudDsKPj4+PiArwqDCoMKg
-IGludCByZXQsIHNhbXBsZV9zaXplLCBzcmF0ZSwgaTJzY2xvY2ssIGJpdGNudCwgYXVkaW9fYml0
-czsKPj4+PiDCoMKgwqDCoMKgIHN0cnVjdCB0ZWdyYTMwX2FodWJfY2lmX2NvbmYgY2lmX2NvbmY7
-Cj4+Pj4gwqAgwqDCoMKgwqDCoCBpZiAocGFyYW1zX2NoYW5uZWxzKHBhcmFtcykgIT0gMikKPj4+
-PiBAQCAtMTM3LDggKzEzNywxOSBAQCBzdGF0aWMgaW50IHRlZ3JhMzBfaTJzX2h3X3BhcmFtcyhz
-dHJ1Y3QKPj4+PiBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFtLAo+Pj4+IMKgwqDCoMKgwqAg
-c3dpdGNoIChwYXJhbXNfZm9ybWF0KHBhcmFtcykpIHsKPj4+PiDCoMKgwqDCoMKgIGNhc2UgU05E
-UlZfUENNX0ZPUk1BVF9TMTZfTEU6Cj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIHZhbCA9IFRFR1JB
-MzBfSTJTX0NUUkxfQklUX1NJWkVfMTY7Cj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGF1ZGlvX2JpdHMg
-PSBURUdSQTMwX0FVRElPQ0lGX0JJVFNfMTY7Cj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIHNhbXBs
-ZV9zaXplID0gMTY7Cj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOwo+Pj4+ICvCoMKgwqAg
-Y2FzZSBTTkRSVl9QQ01fRk9STUFUX1MyNF9MRToKPj4+PiArwqDCoMKgwqDCoMKgwqAgdmFsID0g
-VEVHUkEzMF9JMlNfQ1RSTF9CSVRfU0laRV8yNDsKPj4+PiArwqDCoMKgwqDCoMKgwqAgYXVkaW9f
-Yml0cyA9IFRFR1JBMzBfQVVESU9DSUZfQklUU18yNDsKPj4+PiArwqDCoMKgwqDCoMKgwqAgc2Ft
-cGxlX3NpemUgPSAyNDsKPj4+PiArwqDCoMKgwqDCoMKgwqAgYnJlYWs7Cj4+Pj4gK8KgwqDCoCBj
-YXNlIFNORFJWX1BDTV9GT1JNQVRfUzMyX0xFOgo+Pj4+ICvCoMKgwqDCoMKgwqDCoCB2YWwgPSBU
-RUdSQTMwX0kyU19DVFJMX0JJVF9TSVpFXzMyOwo+Pj4+ICvCoMKgwqDCoMKgwqDCoCBhdWRpb19i
-aXRzID0gVEVHUkEzMF9BVURJT0NJRl9CSVRTXzMyOwo+Pj4+ICvCoMKgwqDCoMKgwqDCoCBzYW1w
-bGVfc2l6ZSA9IDMyOwo+Pj4+ICvCoMKgwqDCoMKgwqDCoCBicmVhazsKPj4+PiDCoMKgwqDCoMKg
-IGRlZmF1bHQ6Cj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAtRUlOVkFMOwo+Pj4+IMKg
-wqDCoMKgwqAgfQo+Pj4+IEBAIC0xNzAsOCArMTgxLDggQEAgc3RhdGljIGludCB0ZWdyYTMwX2ky
-c19od19wYXJhbXMoc3RydWN0Cj4+Pj4gc25kX3BjbV9zdWJzdHJlYW0gKnN1YnN0cmVhbSwKPj4+
-PiDCoMKgwqDCoMKgIGNpZl9jb25mLnRocmVzaG9sZCA9IDA7Cj4+Pj4gwqDCoMKgwqDCoCBjaWZf
-Y29uZi5hdWRpb19jaGFubmVscyA9IDI7Cj4+Pj4gwqDCoMKgwqDCoCBjaWZfY29uZi5jbGllbnRf
-Y2hhbm5lbHMgPSAyOwo+Pj4+IC3CoMKgwqAgY2lmX2NvbmYuYXVkaW9fYml0cyA9IFRFR1JBMzBf
-QVVESU9DSUZfQklUU18xNjsKPj4+PiAtwqDCoMKgIGNpZl9jb25mLmNsaWVudF9iaXRzID0gVEVH
-UkEzMF9BVURJT0NJRl9CSVRTXzE2Owo+Pj4+ICvCoMKgwqAgY2lmX2NvbmYuYXVkaW9fYml0cyA9
-IGF1ZGlvX2JpdHM7Cj4+Pj4gK8KgwqDCoCBjaWZfY29uZi5jbGllbnRfYml0cyA9IGF1ZGlvX2Jp
-dHM7Cj4+Pj4gwqDCoMKgwqDCoCBjaWZfY29uZi5leHBhbmQgPSAwOwo+Pj4+IMKgwqDCoMKgwqAg
-Y2lmX2NvbmYuc3RlcmVvX2NvbnYgPSAwOwo+Pj4+IMKgwqDCoMKgwqAgY2lmX2NvbmYucmVwbGlj
-YXRlID0gMDsKPj4+PiBAQCAtMzA2LDE0ICszMTcsMTggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBz
-bmRfc29jX2RhaV9kcml2ZXIKPj4+PiB0ZWdyYTMwX2kyc19kYWlfdGVtcGxhdGUgPSB7Cj4+Pj4g
-wqDCoMKgwqDCoMKgwqDCoMKgIC5jaGFubmVsc19taW4gPSAyLAo+Pj4+IMKgwqDCoMKgwqDCoMKg
-wqDCoCAuY2hhbm5lbHNfbWF4ID0gMiwKPj4+PiDCoMKgwqDCoMKgwqDCoMKgwqAgLnJhdGVzID0g
-U05EUlZfUENNX1JBVEVfODAwMF85NjAwMCwKPj4+PiAtwqDCoMKgwqDCoMKgwqAgLmZvcm1hdHMg
-PSBTTkRSVl9QQ01fRk1UQklUX1MxNl9MRSwKPj4+PiArwqDCoMKgwqDCoMKgwqAgLmZvcm1hdHMg
-PSBTTkRSVl9QQ01fRk1UQklUX1MzMl9MRSB8Cj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgU05EUlZfUENNX0ZNVEJJVF9TMjRfTEUgfAo+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIFNORFJWX1BDTV9GTVRCSVRfUzE2X0xFLAo+Pj4+IMKgwqDCoMKgwqAgfSwKPj4+
-PiDCoMKgwqDCoMKgIC5jYXB0dXJlID0gewo+Pj4+IMKgwqDCoMKgwqDCoMKgwqDCoCAuc3RyZWFt
-X25hbWUgPSAiQ2FwdHVyZSIsCj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIC5jaGFubmVsc19taW4g
-PSAyLAo+Pj4+IMKgwqDCoMKgwqDCoMKgwqDCoCAuY2hhbm5lbHNfbWF4ID0gMiwKPj4+PiDCoMKg
-wqDCoMKgwqDCoMKgwqAgLnJhdGVzID0gU05EUlZfUENNX1JBVEVfODAwMF85NjAwMCwKPj4+PiAt
-wqDCoMKgwqDCoMKgwqAgLmZvcm1hdHMgPSBTTkRSVl9QQ01fRk1UQklUX1MxNl9MRSwKPj4+PiAr
-wqDCoMKgwqDCoMKgwqAgLmZvcm1hdHMgPSBTTkRSVl9QQ01fRk1UQklUX1MzMl9MRSB8Cj4+Pj4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgU05EUlZfUENNX0ZNVEJJVF9TMjRfTEUgfAo+
-Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFNORFJWX1BDTV9GTVRCSVRfUzE2X0xF
-LAo+Pj4+IMKgwqDCoMKgwqAgfSwKPj4+PiDCoMKgwqDCoMKgIC5vcHMgPSAmdGVncmEzMF9pMnNf
-ZGFpX29wcywKPj4+PiDCoMKgwqDCoMKgIC5zeW1tZXRyaWNfcmF0ZXMgPSAxLAo+Pj4+Cj4+Pgo+
-Pj4gSGVsbG8sCj4+Pgo+Pj4gVGhpcyBwYXRjaCBicmVha3MgYXVkaW8gb24gVGVncmEzMC4gSSBk
-b24ndCBzZWUgZXJyb3JzIGFueXdoZXJlLCBidXQKPj4+IHRoZXJlIGlzIG5vIGF1ZGlvIGFuZCBy
-ZXZlcnRpbmcgdGhpcyBwYXRjaCBoZWxwcy4gUGxlYXNlIGZpeCBpdC4KPj4KPj4gV2hhdCBpcyB0
-aGUgZmFpbHVyZSBtb2RlPyBJIGNhbiB0cnkgYW5kIHRha2UgYSBsb29rIGF0IHRoaXMgc29tZSB0
-aW1lCj4+IHRoaXMgd2VlaywgYnV0IEkgYW0gbm90IHN1cmUgaWYgSSBoYXZlIGFueSBib2FyZHMg
-d2l0aCBhbiBhY3R1YWwgdXNlZnVsCj4+IGF1ZGlvIG91dHB1dD8KPiAKPiBUaGUgZmFpbHVyZSBt
-b2RlIGlzIHRoYXQgdGhlcmUgbm8gc291bmQuIEkgYWxzbyBub3RpY2VkIHRoYXQgdmlkZW8KPiBw
-bGF5YmFjayBzdHV0dGVycyBhIGxvdCBpZiBtb3ZpZSBmaWxlIGhhcyBhdWRpbyB0cmFjaywgc2Vl
-bXMgc29tZXRoaW5nCj4gdGltZXMgb3V0IGR1cmluZyBvZiB0aGUgYXVkaW8gcGxheWJhY2suIEZv
-ciBub3cgSSBkb24ndCBoYXZlIGFueSBtb3JlIGluZm8uCj4gCgpPaCwgSSBkaWRuJ3Qgc2F5IGhv
-dyB0byByZXByb2R1Y2UgaXQuLiBmb3IgZXhhbXBsZSBzaW1wbHkgcGxheWluZwpiaWdfYnVja19i
-dW5ueV83MjBwX2gyNjQubW92IGluIE1QViBoYXMgdGhlIGF1ZGlvIHByb2JsZW0uCgpodHRwczov
-L2Rvd25sb2FkLmJsZW5kZXIub3JnL3BlYWNoL2JpZ2J1Y2tidW5ueV9tb3ZpZXMvYmlnX2J1Y2tf
-YnVubnlfNzIwcF9oMjY0Lm1vdgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVj
-dC5vcmcKaHR0cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9h
-bHNhLWRldmVsCg==
+
+On 25/11/2019 16:03, Greg Kroah-Hartman wrote:
+> On Mon, Nov 25, 2019 at 01:22:58PM +0000, Jon Hunter wrote:
+>>
+>> On 25/11/2019 09:41, Greg Kroah-Hartman wrote:
+>>> On Sun, Nov 24, 2019 at 08:31:46PM +0000, Jon Hunter wrote:
+>>>>
+>>>> On 23/11/2019 15:46, Guenter Roeck wrote:
+>>>>> On 11/22/19 6:48 AM, Jon Hunter wrote:
+>>>>>
+>>>>> [ ... ]
+>>>>>
+>>>>>> Error: arch/arm/boot/dts/omap5-board-common.dtsi:636.1-6 Label or pa=
+th
+>>>>>> dwc3 not found
+>>>>>> FATAL ERROR: Syntax error parsing input tree
+>>>>>> scripts/Makefile.lib:293: recipe for target
+>>>>>> 'arch/arm/boot/dts/omap5-igep0050.dtb' failed
+>>>>>> make[1]: *** [arch/arm/boot/dts/omap5-igep0050.dtb] Error 1
+>>>>>> arch/arm/Makefile:338: recipe for target 'dtbs' failed
+>>>>>> make: *** [dtbs] Error 2
+>>>>>>
+>>>>>>
+>>>>>> This is caused by the following commit ...
+>>>>>>
+>>>>>> commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
+>>>>>> Author: H. Nikolaus Schaller <hns@goldelico.com>
+>>>>>> Date:=C2=A0=C2=A0 Fri Sep 28 17:54:00 2018 +0200
+>>>>>>
+>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 ARM: dts: omap5: enable OTG role for DWC3 c=
+ontroller
+>>>>>>
+>>>>>
+>>>>> On top of the breakage caused by this patch, I would also argue
+>>>>> that it is not a bug fix and should not have been included
+>>>>> in the first place.
+>>>>>
+>>>>> The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
+>>>>> Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
+>>>>> that patch, I highly doubt that a backport to 4.4 would work.
+>>>
+>>> Good catch, I have now dropped both of these patches and pushed out a
+>>> -rc3
+>>>
+>>>> FYI ... I am still seeing a build failure because of this with -rc2 ..=
+.
+>>>
+>>> Can you see if -rc3 is also giving you problems?
+>>
+>> Better, but I appear to be seeing some random suspend failures with this
+>> now on one board. I will try to bisect this.
+>>
+>> Test results for stable-v4.4:
+>>     6 builds:	6 pass, 0 fail
+>>     12 boots:	12 pass, 0 fail
+>>     19 tests:	18 pass, 1 fail
+>>
+>> Linux version:	4.4.203-rc3-g2576206c30b5
+>> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>>                 tegra30-cardhu-a04
+>=20
+> Odd.  If you find anything interesting, please let me know.
+
+Yes will do. Bisect has not found anything yet, so will keeping looking
+to see if this is a false-positive or not.
+
+Cheers Jon
+
+--=20
+nvpublic
