@@ -1,7 +1,7 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
-Date: Mon, 25 Nov 2019 17:02:44 +0100
-Message-ID: <20191125160244.GC2683321@kroah.com>
+Date: Mon, 25 Nov 2019 17:03:05 +0100
+Message-ID: <20191125160305.GD2683321@kroah.com>
 References: <20191122100704.194776704@linuxfoundation.org>
  <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
  <20191122133931.GA2033651@kroah.com>
@@ -11,69 +11,76 @@ References: <20191122100704.194776704@linuxfoundation.org>
  <a5d68f07-5f9a-2809-404d-bcd8ca593d70@roeck-us.net>
  <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
  <20191125094116.GA2340170@kroah.com>
- <db428001-f6b5-3132-2d93-ef04f67078dc@roeck-us.net>
+ <a6830303-ff96-f7df-b504-ab226aefddca@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <db428001-f6b5-3132-2d93-ef04f67078dc@roeck-us.net>
-Sender: stable-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+In-Reply-To: <a6830303-ff96-f7df-b504-ab226aefddca@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 06:08:17AM -0800, Guenter Roeck wrote:
-> On 11/25/19 1:41 AM, Greg Kroah-Hartman wrote:
+On Mon, Nov 25, 2019 at 01:22:58PM +0000, Jon Hunter wrote:
+> 
+> On 25/11/2019 09:41, Greg Kroah-Hartman wrote:
 > > On Sun, Nov 24, 2019 at 08:31:46PM +0000, Jon Hunter wrote:
-> > > 
-> > > On 23/11/2019 15:46, Guenter Roeck wrote:
-> > > > On 11/22/19 6:48 AM, Jon Hunter wrote:
-> > > > 
-> > > > [ ... ]
-> > > > 
-> > > > > Error: arch/arm/boot/dts/omap5-board-common.dtsi:636.1-6 Label or path
-> > > > > dwc3 not found
-> > > > > FATAL ERROR: Syntax error parsing input tree
-> > > > > scripts/Makefile.lib:293: recipe for target
-> > > > > 'arch/arm/boot/dts/omap5-igep0050.dtb' failed
-> > > > > make[1]: *** [arch/arm/boot/dts/omap5-igep0050.dtb] Error 1
-> > > > > arch/arm/Makefile:338: recipe for target 'dtbs' failed
-> > > > > make: *** [dtbs] Error 2
-> > > > > 
-> > > > > 
-> > > > > This is caused by the following commit ...
-> > > > > 
-> > > > > commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
-> > > > > Author: H. Nikolaus Schaller <hns@goldelico.com>
-> > > > > Date:   Fri Sep 28 17:54:00 2018 +0200
-> > > > > 
-> > > > >       ARM: dts: omap5: enable OTG role for DWC3 controller
-> > > > > 
-> > > > 
-> > > > On top of the breakage caused by this patch, I would also argue
-> > > > that it is not a bug fix and should not have been included
-> > > > in the first place.
-> > > > 
-> > > > The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
-> > > > Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
-> > > > that patch, I highly doubt that a backport to 4.4 would work.
+> >>
+> >> On 23/11/2019 15:46, Guenter Roeck wrote:
+> >>> On 11/22/19 6:48 AM, Jon Hunter wrote:
+> >>>
+> >>> [ ... ]
+> >>>
+> >>>> Error: arch/arm/boot/dts/omap5-board-common.dtsi:636.1-6 Label or path
+> >>>> dwc3 not found
+> >>>> FATAL ERROR: Syntax error parsing input tree
+> >>>> scripts/Makefile.lib:293: recipe for target
+> >>>> 'arch/arm/boot/dts/omap5-igep0050.dtb' failed
+> >>>> make[1]: *** [arch/arm/boot/dts/omap5-igep0050.dtb] Error 1
+> >>>> arch/arm/Makefile:338: recipe for target 'dtbs' failed
+> >>>> make: *** [dtbs] Error 2
+> >>>>
+> >>>>
+> >>>> This is caused by the following commit ...
+> >>>>
+> >>>> commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
+> >>>> Author: H. Nikolaus Schaller <hns@goldelico.com>
+> >>>> Date:   Fri Sep 28 17:54:00 2018 +0200
+> >>>>
+> >>>>      ARM: dts: omap5: enable OTG role for DWC3 controller
+> >>>>
+> >>>
+> >>> On top of the breakage caused by this patch, I would also argue
+> >>> that it is not a bug fix and should not have been included
+> >>> in the first place.
+> >>>
+> >>> The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
+> >>> Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
+> >>> that patch, I highly doubt that a backport to 4.4 would work.
 > > 
 > > Good catch, I have now dropped both of these patches and pushed out a
 > > -rc3
 > > 
-> > > FYI ... I am still seeing a build failure because of this with -rc2 ...
+> >> FYI ... I am still seeing a build failure because of this with -rc2 ...
 > > 
 > > Can you see if -rc3 is also giving you problems?
-> > 
 > 
-> For v4.4.202-157-g2576206c30b5:
+> Better, but I appear to be seeing some random suspend failures with this
+> now on one board. I will try to bisect this.
 > 
-> Build results:
-> 	total: 170 pass: 170 fail: 0
-> Qemu test results:
-> 	total: 324 pass: 324 fail: 0
+> Test results for stable-v4.4:
+>     6 builds:	6 pass, 0 fail
+>     12 boots:	12 pass, 0 fail
+>     19 tests:	18 pass, 1 fail
+> 
+> Linux version:	4.4.203-rc3-g2576206c30b5
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra30-cardhu-a04
 
-Thanks for testing, I'll go with this tree now.
+Odd.  If you find anything interesting, please let me know.
+
+thanks for testing,
 
 greg k-h
