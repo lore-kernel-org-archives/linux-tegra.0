@@ -1,67 +1,64 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
-Date: Mon, 25 Nov 2019 10:41:16 +0100
-Message-ID: <20191125094116.GA2340170@kroah.com>
-References: <20191122100704.194776704@linuxfoundation.org>
- <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
- <20191122133931.GA2033651@kroah.com>
- <20191122134131.GA2050590@kroah.com>
- <20191122134627.GB2050590@kroah.com>
- <9f976044-2dbc-6c19-11e7-210cd7ab35ea@nvidia.com>
- <a5d68f07-5f9a-2809-404d-bcd8ca593d70@roeck-us.net>
- <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/tegra: vic: Export module device table
+Date: Mon, 25 Nov 2019 10:56:29 +0100
+Message-ID: <20191125095629.GK29965@phenom.ffwll.local>
+References: <20191122133215.1317039-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+In-Reply-To: <20191122133215.1317039-1-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Nov 24, 2019 at 08:31:46PM +0000, Jon Hunter wrote:
-> 
-> On 23/11/2019 15:46, Guenter Roeck wrote:
-> > On 11/22/19 6:48 AM, Jon Hunter wrote:
-> > 
-> > [ ... ]
-> > 
-> >> Error: arch/arm/boot/dts/omap5-board-common.dtsi:636.1-6 Label or path
-> >> dwc3 not found
-> >> FATAL ERROR: Syntax error parsing input tree
-> >> scripts/Makefile.lib:293: recipe for target
-> >> 'arch/arm/boot/dts/omap5-igep0050.dtb' failed
-> >> make[1]: *** [arch/arm/boot/dts/omap5-igep0050.dtb] Error 1
-> >> arch/arm/Makefile:338: recipe for target 'dtbs' failed
-> >> make: *** [dtbs] Error 2
-> >>
-> >>
-> >> This is caused by the following commit ...
-> >>
-> >> commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
-> >> Author: H. Nikolaus Schaller <hns@goldelico.com>
-> >> Date:   Fri Sep 28 17:54:00 2018 +0200
-> >>
-> >>      ARM: dts: omap5: enable OTG role for DWC3 controller
-> >>
-> > 
-> > On top of the breakage caused by this patch, I would also argue
-> > that it is not a bug fix and should not have been included
-> > in the first place.
-> > 
-> > The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
-> > Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
-> > that patch, I highly doubt that a backport to 4.4 would work.
-
-Good catch, I have now dropped both of these patches and pushed out a
--rc3
-
-> FYI ... I am still seeing a build failure because of this with -rc2 ...
-
-Can you see if -rc3 is also giving you problems?
-
-thanks,
-
-greg k-h
+T24gRnJpLCBOb3YgMjIsIDIwMTkgYXQgMDI6MzI6MTVQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
+d3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBF
+eHBvcnQgdGhlIG1vZHVsZSBkZXZpY2UgdGFibGUgdG8gZW5zdXJlIHRoZSBWSUMgY29tcGF0aWJs
+ZSBzdHJpbmdzIGFyZQo+IGxpc3RlZCBpbiB0aGUgbW9kdWxlJ3MgYWxpYXNlcyB0YWJsZS4gVGhp
+cyBpbiB0dXJuIGNhdXNlcyB0aGUgZHJpdmVyIHRvCj4gYmUgYXV0b21hdGljYWxseSBsb2FkZWQg
+b24gYm9vdCBpZiBWSUMgaXMgdGhlIG9ubHkgZW5hYmxlZCBzdWJkZXZpY2Ugb2YKPiB0aGUgbG9n
+aWNhbCBob3N0MXggRFJNIGRldmljZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGlu
+ZyA8dHJlZGluZ0BudmlkaWEuY29tPgoKUmV2aWV3ZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmll
+bC52ZXR0ZXJAZmZ3bGwuY2g+CgpJIG5vdGljZWQgdGhhdCB0aGUgZHJtIHN1YmRldiBkcml2ZXIg
+YWxzbyBsYWNrcyB0aGUgbWF0Y2hlcy4gSG93IGRvZXMgdGhhdAp3b3JrPyBKdXN0IGJ5IGdldHRp
+bmcgbG9hZGVkIHdoZW4gYW55IG9mIHRoZSBzdWJkZXYgZHJpdmVycyBtYXRjaD8KLURhbmllbAoK
+PiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jIHwgNSArKystLQo+ICAxIGZpbGUg
+Y2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmlj
+LmMKPiBpbmRleCA5NDQ0YmExODM5OTAuLmM0ZDgyYjhiMzA2NSAxMDA2NDQKPiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvdmlj
+LmMKPiBAQCAtMzg2LDEzICszODYsMTQgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCB2aWNfY29uZmln
+IHZpY190MTk0X2NvbmZpZyA9IHsKPiAgCS5zdXBwb3J0c19zaWQgPSB0cnVlLAo+ICB9Owo+ICAK
+PiAtc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgdmljX21hdGNoW10gPSB7Cj4gK3N0
+YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHRlZ3JhX3ZpY19vZl9tYXRjaFtdID0gewo+
+ICAJeyAuY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmExMjQtdmljIiwgLmRhdGEgPSAmdmljX3Qx
+MjRfY29uZmlnIH0sCj4gIAl7IC5jb21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTIxMC12aWMiLCAu
+ZGF0YSA9ICZ2aWNfdDIxMF9jb25maWcgfSwKPiAgCXsgLmNvbXBhdGlibGUgPSAibnZpZGlhLHRl
+Z3JhMTg2LXZpYyIsIC5kYXRhID0gJnZpY190MTg2X2NvbmZpZyB9LAo+ICAJeyAuY29tcGF0aWJs
+ZSA9ICJudmlkaWEsdGVncmExOTQtdmljIiwgLmRhdGEgPSAmdmljX3QxOTRfY29uZmlnIH0sCj4g
+IAl7IH0sCj4gIH07Cj4gK01PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIHRlZ3JhX3ZpY19vZl9tYXRj
+aCk7Cj4gIAo+ICBzdGF0aWMgaW50IHZpY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
+ZGV2KQo+ICB7Cj4gQEAgLTUxNiw3ICs1MTcsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9w
+bV9vcHMgdmljX3BtX29wcyA9IHsKPiAgc3RydWN0IHBsYXRmb3JtX2RyaXZlciB0ZWdyYV92aWNf
+ZHJpdmVyID0gewo+ICAJLmRyaXZlciA9IHsKPiAgCQkubmFtZSA9ICJ0ZWdyYS12aWMiLAo+IC0J
+CS5vZl9tYXRjaF90YWJsZSA9IHZpY19tYXRjaCwKPiArCQkub2ZfbWF0Y2hfdGFibGUgPSB0ZWdy
+YV92aWNfb2ZfbWF0Y2gsCj4gIAkJLnBtID0gJnZpY19wbV9vcHMKPiAgCX0sCj4gIAkucHJvYmUg
+PSB2aWNfcHJvYmUsCj4gLS0gCj4gMi4yMy4wCj4gCj4gX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBF
+bmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
