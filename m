@@ -1,148 +1,165 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: vic: Export module device table
-Date: Mon, 25 Nov 2019 11:45:33 +0100
-Message-ID: <20191125104533.GF1409040@ulmo>
-References: <20191122133215.1317039-1-thierry.reding@gmail.com>
- <20191125095629.GK29965@phenom.ffwll.local>
+Subject: Re: [PATCH 01/15] drm/tegra: Map cmdbuf once for reloc
+ processing
+Date: Mon, 25 Nov 2019 11:47:47 +0100
+Message-ID: <20191125104747.GG1409040@ulmo>
+References: <20191118103536.17675-1-daniel.vetter@ffwll.ch>
+ <20191118103536.17675-2-daniel.vetter@ffwll.ch>
+ <20191125095856.GL29965@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1826229041=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191125095629.GK29965@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/mixed; boundary="===============0631008427=="
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20191125095856.GL29965@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
 To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1826229041==
+--===============0631008427==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FeAIMMcddNRN4P4/"
+	protocol="application/pgp-signature"; boundary="Fnm8lRGFTVS/3GuM"
 Content-Disposition: inline
 
 
---FeAIMMcddNRN4P4/
+--Fnm8lRGFTVS/3GuM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2019 at 10:56:29AM +0100, Daniel Vetter wrote:
-> On Fri, Nov 22, 2019 at 02:32:15PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
+On Mon, Nov 25, 2019 at 10:58:56AM +0100, Daniel Vetter wrote:
+> On Mon, Nov 18, 2019 at 11:35:22AM +0100, Daniel Vetter wrote:
+> > A few reasons to drop kmap:
 > >=20
-> > Export the module device table to ensure the VIC compatible strings are
-> > listed in the module's aliases table. This in turn causes the driver to
-> > be automatically loaded on boot if VIC is the only enabled subdevice of
-> > the logical host1x DRM device.
+> > - For native objects all we do is look at obj->vaddr anyway, so might
+> >   as well not call functions for every page.
 > >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > - Reloc-processing on dma-buf is ... questionable.
+> >=20
+> > - Plus most dma-buf that bother kernel cpu mmaps give you at least
+> >   vmap, much less kmaps. And all the ones relevant for arm-soc are
+> >   again doing a obj->vaddr game anyway, there's no real kmap going on
+> >   on arm it seems.
+> >=20
+> > Plus this seems to be the only real in-tree user of dma_buf_kmap, and
+> > I'd like to get rid of that.
+> >=20
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > Cc: linux-tegra@vger.kernel.org
 >=20
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->=20
-> I noticed that the drm subdev driver also lacks the matches. How does that
-> work? Just by getting loaded when any of the subdev drivers match?
+> Ping for testing/review on these first 2 tegra patches. They're holding up
+> the entire series, and I got acks for all the other bits surprisingly
+> fast. So would like to land this rather sooner than later. I'm also
+> working on a lot more dma-buf patches ...
 
-Yeah, basically the host1x DRM driver registration causes a logical
-device to be created. The driver will then finally bind to the device
-after all the subdevices have been registered. Since all the subdevice
-drivers are linked into a single module, all the module device tables
-end up in that kernel module and that's enough to trigger the whole
-process.
-
-I ran into this issue when I was trying to run the Tegra DRM driver in
-a "headless" configuration where all the display-related devices were
-disabled via DT. Without exporting the VIC module device table, there
-were no entries in the module's aliases list that would match the set
-of devices registered to the system and the driver wouldn't load.
+Right, I had forgotten about this series. Let me go test it right away.
 
 Thierry
 
-> -Daniel
->=20
 > > ---
-> >  drivers/gpu/drm/tegra/vic.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >  drivers/gpu/host1x/job.c | 21 +++++++--------------
+> >  1 file changed, 7 insertions(+), 14 deletions(-)
 > >=20
-> > diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-> > index 9444ba183990..c4d82b8b3065 100644
-> > --- a/drivers/gpu/drm/tegra/vic.c
-> > +++ b/drivers/gpu/drm/tegra/vic.c
-> > @@ -386,13 +386,14 @@ static const struct vic_config vic_t194_config =
-=3D {
-> >  	.supports_sid =3D true,
-> >  };
+> > diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+> > index 25ca54de8fc5..60b2fedd0061 100644
+> > --- a/drivers/gpu/host1x/job.c
+> > +++ b/drivers/gpu/host1x/job.c
+> > @@ -244,8 +244,7 @@ static unsigned int pin_job(struct host1x *host, st=
+ruct host1x_job *job)
 > > =20
-> > -static const struct of_device_id vic_match[] =3D {
-> > +static const struct of_device_id tegra_vic_of_match[] =3D {
-> >  	{ .compatible =3D "nvidia,tegra124-vic", .data =3D &vic_t124_config },
-> >  	{ .compatible =3D "nvidia,tegra210-vic", .data =3D &vic_t210_config },
-> >  	{ .compatible =3D "nvidia,tegra186-vic", .data =3D &vic_t186_config },
-> >  	{ .compatible =3D "nvidia,tegra194-vic", .data =3D &vic_t194_config },
-> >  	{ },
-> >  };
-> > +MODULE_DEVICE_TABLE(of, tegra_vic_of_match);
-> > =20
-> >  static int vic_probe(struct platform_device *pdev)
+> >  static int do_relocs(struct host1x_job *job, struct host1x_job_gather =
+*g)
 > >  {
-> > @@ -516,7 +517,7 @@ static const struct dev_pm_ops vic_pm_ops =3D {
-> >  struct platform_driver tegra_vic_driver =3D {
-> >  	.driver =3D {
-> >  		.name =3D "tegra-vic",
-> > -		.of_match_table =3D vic_match,
-> > +		.of_match_table =3D tegra_vic_of_match,
-> >  		.pm =3D &vic_pm_ops
-> >  	},
-> >  	.probe =3D vic_probe,
+> > -	u32 last_page =3D ~0;
+> > -	void *cmdbuf_page_addr =3D NULL;
+> > +	void *cmdbuf_addr =3D NULL;
+> >  	struct host1x_bo *cmdbuf =3D g->bo;
+> >  	unsigned int i;
+> > =20
+> > @@ -267,28 +266,22 @@ static int do_relocs(struct host1x_job *job, stru=
+ct host1x_job_gather *g)
+> >  			goto patch_reloc;
+> >  		}
+> > =20
+> > -		if (last_page !=3D reloc->cmdbuf.offset >> PAGE_SHIFT) {
+> > -			if (cmdbuf_page_addr)
+> > -				host1x_bo_kunmap(cmdbuf, last_page,
+> > -						 cmdbuf_page_addr);
+> > +		if (!cmdbuf_addr) {
+> > +			cmdbuf_addr =3D host1x_bo_mmap(cmdbuf);
+> > =20
+> > -			cmdbuf_page_addr =3D host1x_bo_kmap(cmdbuf,
+> > -					reloc->cmdbuf.offset >> PAGE_SHIFT);
+> > -			last_page =3D reloc->cmdbuf.offset >> PAGE_SHIFT;
+> > -
+> > -			if (unlikely(!cmdbuf_page_addr)) {
+> > +			if (unlikely(!cmdbuf_addr)) {
+> >  				pr_err("Could not map cmdbuf for relocation\n");
+> >  				return -ENOMEM;
+> >  			}
+> >  		}
+> > =20
+> > -		target =3D cmdbuf_page_addr + (reloc->cmdbuf.offset & ~PAGE_MASK);
+> > +		target =3D cmdbuf_addr + reloc->cmdbuf.offset;
+> >  patch_reloc:
+> >  		*target =3D reloc_addr;
+> >  	}
+> > =20
+> > -	if (cmdbuf_page_addr)
+> > -		host1x_bo_kunmap(cmdbuf, last_page, cmdbuf_page_addr);
+> > +	if (cmdbuf_addr)
+> > +		host1x_bo_munmap(cmdbuf, cmdbuf_addr);
+> > =20
+> >  	return 0;
+> >  }
 > > --=20
-> > 2.23.0
+> > 2.24.0
 > >=20
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
 >=20
 > --=20
 > Daniel Vetter
 > Software Engineer, Intel Corporation
 > http://blog.ffwll.ch
 
---FeAIMMcddNRN4P4/
+--Fnm8lRGFTVS/3GuM
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3bsMoACgkQ3SOs138+
-s6FoThAAhUfcvm5SqZ+TIOqRgajhQnfgkHhwZDhfHicescpanDkDVBEOAdBTa73I
-ptkelRjZe2JADaQoOULcHA5Gy8e2cPXIXNMfmtvM3qvevYwnJu4Ts10fIWhUDgSq
-UFjD7Ki8qDF+aFxTpXwSdV2Igt7jVsG/6rjEvVRVnHQKwcPFfP9ubWGkwiVfUce9
-Y5N2vNI0neyeStrdkvpCOTowjTx4HxK8n3RS4IFpsoj0IEoAu6GgJoBMfzzEsf4+
-aenWXcczAVjXxbkdLFNJA5aqyL1fcG7YJF9+bEf9+sU6kSPQfaQYyymFPBCZe4mz
-gK/U9HX78ucvjtbzyfXKErzXIwCBUICdWQEi+K8uaqiNh3xrdaDbHZsRdvsyYcMw
-fNmIjGiXkU7FgpxZVYnSygLfW5I0jQwIJg1tIjb50AfUx6+AwLXQZlN13XaUoMOf
-yfXbdCYudBRB/9CcwYoUnmRUD0QNSaEOfdWs4yB1k9fitc4Dng+qQQc0N/HVRZ/o
-ZamHoPqHzRJurHlYQBFOXldBHuQOVqpMGqgmWPRUVq7D62Pp71Owbz1cKJyg68ri
-EEnRyQgf6AkIwh0hFvghJ0T02NE0uUl0xzMvDrbiv/F7hW4GWSLNii+q2LotEnKO
-25dPSMDIoZ8MtB8W7u16kx5KZtNDtcglNeMj60Vqeg4RaTmKkC4=
-=79xx
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3bsVMACgkQ3SOs138+
+s6HCZg/9FGm4sPPaTlmxdmeXe0jAJa+u6ysFQtoln955fM3lJMaa9uzCHFRYYxpl
+6123F+2BuuCYDoizz2LzlmSUYTXuyuYnWBxaGRUdHtAHBmvcndLrULELXAnWp4zg
+jWk8Xhf3aieUFgDfXBrb89E3NqFj4VXblnmdKXHzq4WA9nQKZROFy3ATSdYWS2D/
+WHQNYuD10jqVyGRScXePVD2PKTCJnbSDYIg67fWBxWBSuU8Go/nW8NhALCLysgXT
+A6p6Kysr7jA5FME8ZRu6lkrRQ063lvlNFzAG4e/iRFh74GhhLxsnwzvdV7YZQDWF
+h9t70vSLIO/9B5fTHEJ81XnfRus5yb2qkp2eYF9PWVf5tcobXykP/2OpQCR1ymr6
+iFm/QNmDgRwmKsu5/7aGOFUn198qPdmapYIGf6rTJ4mGOnJgLltXkTK+Kd4SKJ/T
+nDroWWc2oA/75/3yCxG/7jvQb/59p/F7YcOXp4DODRRSMOOj1aBNemNtpeoqyLVQ
++9j4S26wvcyRSlzrIjmnYmzMNOvvmHr7e3MUzm+ANEssvUZ6fiLpK69CnsUDc7y3
+YOxmfk2k22CECJYkL1rCSD2dKGQBWKC8XFg2cf2+NdHBoLI4DnQdyU/iWhEc3LI7
+cKcd9EJvtIK5Aw0dnZC3Smi24KokOnfR4gvNJs2cGj/HKDGMk1U=
+=7zGa
 -----END PGP SIGNATURE-----
 
---FeAIMMcddNRN4P4/--
+--Fnm8lRGFTVS/3GuM--
 
---===============1826229041==
+--===============0631008427==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
 Content-Disposition: inline
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
+IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4
 
---===============1826229041==--
+--===============0631008427==--
