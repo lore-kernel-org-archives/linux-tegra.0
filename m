@@ -1,53 +1,139 @@
-From: Guillaume Tucker <guillaume.tucker@collabora.com>
-Subject: Re: clk/clk-next bisection: boot on tegra124-nyan-big
-Date: Tue, 26 Nov 2019 19:55:54 +0000
-Message-ID: <2e734116-55da-c799-58b4-14e8c02deece@collabora.com>
-References: <5dd4ce40.1c69fb81.548f8.e723@mx.google.com>
- <53eda2aa-35d0-8776-e2cb-b6c4e8c1ff7f@collabora.com>
- <20191122170141.4B9BF2068F@mail.kernel.org>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH 3/6] PCI: tegra: Add support for PCIe endpoint mode in
+ Tegra194
+Date: Tue, 26 Nov 2019 15:37:18 -0600
+Message-ID: <20191126213718.GA185422@google.com>
+References: <20191122104505.8986-4-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191122170141.4B9BF2068F@mail.kernel.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20191122104505.8986-4-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>, Thierry Reding <treding@nvidia.com>
-Cc: tomeu.vizoso@collabora.com, mgalka@collabora.com, broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com, enric.balletbo@collabora.com, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: lorenzo.pieralisi@arm.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 22/11/2019 17:01, Stephen Boyd wrote:
-> Quoting Guillaume Tucker (2019-11-20 00:17:28)
->> On 20/11/2019 05:25, kernelci.org bot wrote:
->>> Author: Thierry Reding <treding@nvidia.com>
->>> Date:   Thu Jul 25 18:19:00 2019 +0200
->>>
->>>     clk: tegra: Reimplement SOR clock on Tegra124
->>>     
->>>     In order to allow the display driver to deal uniformly with all SOR
->>>     generations, implement the SOR clocks in a way that is compatible with
->>>     Tegra186 and later.
->>>     
->>>     Acked-by: Stephen Boyd <sboyd@kernel.org>
->>>     Signed-off-by: Thierry Reding <treding@nvidia.com>
->>
->> There was already a bisection last Thursday which found this
->> commit, and Thierry explained that it works in linux-next thanks
->> to other patches.  I guess those patches are not going to be
->> cherry-picked onto the clk-next branch, so this will keep failing
->> until it's rebased.  Is that right?
->>
->> If so, I can turn off bisections on clk-next for now.  We need to
->> have a way in KernelCI to tell that a commit has been fixed to
->> cope with this kind of situation in general.
->>
-> 
-> I guess so. It's disappointing that a bisection hole was introduced
-> though. I can possibly merge something onto clk-next from the Tegra tree
-> to make this go away but the bisection hole will always exist. Or we can
-> all wait a week and not care about this problem anymore.
+On Fri, Nov 22, 2019 at 04:15:02PM +0530, Vidya Sagar wrote:
+> Add support for the endpoint mode of Synopsys DesignWare core based
+> dual mode PCIe controllers present in Tegra194 SoC.
 
-Yes, let's just wait.  I'll check next week that the issue is
-gone in the test reports and re-enable bisection accordingly.
+> +static irqreturn_t tegra_pcie_ep_irq_handler(struct tegra_pcie_dw *pcie)
+> +{
+> +	struct dw_pcie_ep *ep = &pcie->pci.ep;
+> +	u32 val, tmp;
+> +
+> +	val = appl_readl(pcie, APPL_INTR_STATUS_L0);
+> +	if (val & APPL_INTR_STATUS_L0_LINK_STATE_INT) {
+> +		val = appl_readl(pcie, APPL_INTR_STATUS_L1_0_0);
+> +		appl_writel(pcie, val, APPL_INTR_STATUS_L1_0_0);
+> +		if (val & APPL_INTR_STATUS_L1_0_0_HOT_RESET_DONE) {
+> +			/* clear any stale PEX_RST interrupt */
+> +			if (!kfifo_put(&pcie->event_fifo, EP_HOT_RST_DONE)) {
+> +				dev_err(pcie->dev, "EVENT FIFO is full\n");
+> +				return IRQ_HANDLED;
+> +			}
+> +			wake_up(&pcie->wq);
+> +		}
+> +		if (val & APPL_INTR_STATUS_L1_0_0_RDLH_LINK_UP_CHGED) {
+> +			tmp = appl_readl(pcie, APPL_LINK_STATUS);
+> +			if (tmp & APPL_LINK_STATUS_RDLH_LINK_UP) {
+> +				dev_info(pcie->dev, "Link is up with Host\n");
+> +				dw_pcie_ep_linkup(ep);
+> +			}
+> +		}
+> +	} else if (val & APPL_INTR_STATUS_L0_PCI_CMD_EN_INT) {
 
-Guillaume
+Is it really the case that only one of
+APPL_INTR_STATUS_L0_LINK_STATE_INT and
+APPL_INTR_STATUS_L0_PCI_CMD_EN_INT can be set?
+
+If it's possible that both could be set, maybe this should be
+something like this?
+
+  int spurious = 1;
+
+  if (val & APPL_INTR_STATUS_L0_LINK_STATE_INT) {
+    ...
+    spurious = 0;
+  }
+  if (val & APPL_INTR_STATUS_L0_PCI_CMD_EN_INT) {
+    ...
+    spurious = 0;
+  }
+
+  if (spurious) {
+    dev_warn(...)
+  }
+
+> +		val = appl_readl(pcie, APPL_INTR_STATUS_L1_15);
+> +		appl_writel(pcie, val, APPL_INTR_STATUS_L1_15);
+> +		if (val & APPL_INTR_STATUS_L1_15_CFG_BME_CHGED) {
+> +			if (!kfifo_put(&pcie->event_fifo, EP_BME_CHANGE)) {
+> +				dev_err(pcie->dev, "EVENT FIFO is full\n");
+> +				return IRQ_HANDLED;
+> +			}
+> +			wake_up(&pcie->wq);
+> +		}
+> +	} else {
+> +		dev_warn(pcie->dev, "Random interrupt (STATUS = 0x%08X)\n",
+> +			 val);
+> +		appl_writel(pcie, val, APPL_INTR_STATUS_L0);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+> +static int tegra_pcie_ep_work_thread(void *p)
+> +{
+> +	struct tegra_pcie_dw *pcie = (struct tegra_pcie_dw *)p;
+> +	u32 event;
+> +
+> +	while (true) {
+> +		wait_event_interruptible(pcie->wq,
+> +					 !kfifo_is_empty(&pcie->event_fifo));
+> +
+> +		if (kthread_should_stop())
+> +			break;
+> +
+> +		if (!kfifo_get(&pcie->event_fifo, &event)) {
+> +			dev_warn(pcie->dev, "EVENT FIFO is empty\n");
+> +			continue;
+> +		}
+> +
+> +		switch (event) {
+> +		case EP_PEX_RST_DEASSERT:
+> +			dev_info(pcie->dev, "EVENT: EP_PEX_RST_DEASSERT\n");
+> +			pex_ep_event_pex_rst_deassert(pcie);
+> +			break;
+> +
+> +		case EP_PEX_RST_ASSERT:
+> +			dev_info(pcie->dev, "EVENT: EP_PEX_RST_ASSERT\n");
+> +			pex_ep_event_pex_rst_assert(pcie);
+> +			break;
+> +
+> +		case EP_HOT_RST_DONE:
+> +			dev_info(pcie->dev, "EVENT: EP_HOT_RST_DONE\n");
+> +			pex_ep_event_hot_rst_done(pcie);
+> +			break;
+> +
+> +		case EP_BME_CHANGE:
+> +			dev_info(pcie->dev, "EVENT: EP_BME_CHANGE\n");
+> +			pex_ep_event_bme_change(pcie);
+> +			break;
+> +
+> +		case EP_EVENT_EXIT:
+> +			dev_info(pcie->dev, "EVENT: EP_EVENT_EXIT\n");
+> +			return 0;
+> +
+> +		default:
+> +			dev_warn(pcie->dev, "Invalid PCIe EP event\n");
+
+Maybe include the invalid event value in the message?
+
+> +			break;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
