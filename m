@@ -1,95 +1,126 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
-Date: Mon, 25 Nov 2019 22:45:20 +0000
-Message-ID: <013aa2b3-9a68-6227-36bc-093d03547fce@nvidia.com>
-References: <20191122100704.194776704@linuxfoundation.org>
- <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
- <20191122133931.GA2033651@kroah.com> <20191122134131.GA2050590@kroah.com>
- <20191122134627.GB2050590@kroah.com>
- <9f976044-2dbc-6c19-11e7-210cd7ab35ea@nvidia.com>
- <a5d68f07-5f9a-2809-404d-bcd8ca593d70@roeck-us.net>
- <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
- <20191125094116.GA2340170@kroah.com>
- <a6830303-ff96-f7df-b504-ab226aefddca@nvidia.com>
- <20191125160305.GD2683321@kroah.com>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: Re: [PATCH v4 3/5] dt-bindings: phy: tegra: Add Tegra194 support
+Date: Tue, 26 Nov 2019 09:51:57 +0530
+Message-ID: <0fd1f30c-5155-e1df-69b9-a49271b7cbce@nvidia.com>
+References: <20191009024343.30218-1-jckuo@nvidia.com>
+ <20191009024343.30218-4-jckuo@nvidia.com> <20191009233900.GA9109@bogus>
+ <20191014131752.GF422231@ulmo>
+ <CAL_Jsq+aKxfAir3skanfqmM+nFFzXPFL4eMa-+pq1kH-90YTbg@mail.gmail.com>
+ <57692050-8284-a31f-71fd-7441823f3f2b@nvidia.com>
+ <20191017120128.GE3122066@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20191125160305.GD2683321@kroah.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191017120128.GE3122066@ulmo>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, JC Kuo <jckuo@nvidia.com>, Rob Herring <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>, linux-tegra@vger.kernel.org, Linux USB List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 25/11/2019 16:03, Greg Kroah-Hartman wrote:
-> On Mon, Nov 25, 2019 at 01:22:58PM +0000, Jon Hunter wrote:
+
+On 17-10-2019 17:31, Thierry Reding wrote:
+> On Thu, Oct 17, 2019 at 03:48:52PM +0800, JC Kuo wrote:
+>> Hi Thierry, Hi Rob, Hi Kishon,
+>> Please let me know your thoughts of the below implementation.
 >>
->> On 25/11/2019 09:41, Greg Kroah-Hartman wrote:
->>> On Sun, Nov 24, 2019 at 08:31:46PM +0000, Jon Hunter wrote:
+>> 1. Add a "bool disable_gen2" to "phy->attrs" structure.
+>> 2. In _of_phy_get() of phy-core.c to add the follow to parse a generic property.
+>>
+>> 	phy->attrs.disable_gen2 = of_property_read_bool(args.np,
+>> 							"usb-disable-gen2");
+> 
+> Regarding this, I'm not sure how Rob imagined the generic properties to
+> work. Perhaps he was thinking about something like the max-link-speed
+> property found in the PCI bindings.
+> 
+> We could have something like this:
+> 
+>   - max-link-speed:
+>       If present this property specifies the USB generation supported on
+>       the PHY/port. Must be:
+>         1: for USB 3.1 Gen 1 (a.k.a. USB 3.0)
+>         2: for USB 3.1 Gen 2
+> 
+> I'm not sure if we need to consider anything prior to USB 3.0. I suppose
+> we could do a similar mapping to what I proposed for the PHY ->set_mode
+> callback:
+> 
+>   - max-link-speed:
+>       If present this property specifies the USB generation supported on
+>       the PHY/port. Must be:
+>         0x0100: for USB 1.0 (Low-Speed)
+>         0x0101: for USB 1.1 (Full-Speed)
+>         0x0200: for USB 2.0 (Hi-Speed)
+>         0x0300: for USB 3.0 (SuperSpeed) (a.k.a. USB 3.1 Gen 1)
+>         0x0301: for USB 3.1 (SuperSpeed 10 Gbit/s) (a.k.a. USB 3.1 Gen 2)
+>         0x0302: for USB 3.2 (SuperSpeed 20 Gbit/s) (a.k.a. USB 3.2 Gen 2 x 2)
+>         ...
+> 
+> Or those could just be sequentially enumerated, like in the above
+> example.
+> 
+> Rob, any thoughts?
+> 
+> Thierry
+> 
+
+"Documentation/devicetree/bindings/usb/generic.txt" file already has dt-property named
+maximum-speed, which fulfills current requirement. So to disable gen2 feature simply
+add below entry to corresponding usb3 port entry.
+		padctl@3520000 {
+			status = "okay";
+
+			ports {
+				usb3-3 {
+					maximum-speed = "super-speed";
+				};
+		};
+
+Read the property using API usb_get_maximum_speed.
+
+Thanks,
+Nagarjuna
+>> 3. In individual phy driver, to add SOC/PHY specific programming accordingly.
+>>
+>> Thanks,
+>> JC
+>>
+>> On 10/14/19 9:40 PM, Rob Herring wrote:
+>>> On Mon, Oct 14, 2019 at 8:17 AM Thierry Reding <thierry.reding@gmail.com> wrote:
 >>>>
->>>> On 23/11/2019 15:46, Guenter Roeck wrote:
->>>>> On 11/22/19 6:48 AM, Jon Hunter wrote:
+>>>> On Wed, Oct 09, 2019 at 06:39:00PM -0500, Rob Herring wrote:
+>>>>> On Wed, Oct 09, 2019 at 10:43:41AM +0800, JC Kuo wrote:
+>>>>>> Extend the bindings to cover the set of features found in Tegra194.
+>>>>>> Note that, technically, there are four more supplies connected to the
+>>>>>> XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL)
+>>>>>> , but the power sequencing requirements of Tegra194 require these to be
+>>>>>> under the control of the PMIC.
+>>>>>>
+>>>>>> Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it is
+>>>>>> possible for some platforms have long signal trace that could not
+>>>>>> provide sufficient electrical environment for Gen 2 speed. To deal with
+>>>>>> this, a new device node property "nvidia,disable-gen2" was added to
+>>>>>> Tegra194 that be used to specifically disable Gen 2 speed for a
+>>>>>> particular USB 3.0 port so that the port can be limited to Gen 1 speed
+>>>>>> and avoid the instability.
 >>>>>
->>>>> [ ... ]
->>>>>
->>>>>> Error: arch/arm/boot/dts/omap5-board-common.dtsi:636.1-6 Label or pa=
-th
->>>>>> dwc3 not found
->>>>>> FATAL ERROR: Syntax error parsing input tree
->>>>>> scripts/Makefile.lib:293: recipe for target
->>>>>> 'arch/arm/boot/dts/omap5-igep0050.dtb' failed
->>>>>> make[1]: *** [arch/arm/boot/dts/omap5-igep0050.dtb] Error 1
->>>>>> arch/arm/Makefile:338: recipe for target 'dtbs' failed
->>>>>> make: *** [dtbs] Error 2
->>>>>>
->>>>>>
->>>>>> This is caused by the following commit ...
->>>>>>
->>>>>> commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
->>>>>> Author: H. Nikolaus Schaller <hns@goldelico.com>
->>>>>> Date:=C2=A0=C2=A0 Fri Sep 28 17:54:00 2018 +0200
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 ARM: dts: omap5: enable OTG role for DWC3 c=
-ontroller
->>>>>>
->>>>>
->>>>> On top of the breakage caused by this patch, I would also argue
->>>>> that it is not a bug fix and should not have been included
->>>>> in the first place.
->>>>>
->>>>> The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
->>>>> Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
->>>>> that patch, I highly doubt that a backport to 4.4 would work.
+>>>>> I suspect this may be a common issue and we should have a common
+>>>>> property. Typically, this kind of property is in the controller though
+>>>>> and supports multiple speed limits. See PCI bindings for inspiration.
+>>>>
+>>>> Given that support for gen 2 speeds is dependent on signal trace length,
+>>>> it doesn't really make sense to restrict the whole controller to a given
+>>>> speed if only the signal trace for a single port exceeds the limit for
+>>>> which gen 2 would work.
+>>>>
+>>>> Also, the USB PHYs are in a different hardware block than the USB
+>>>> controller, so this really is a property of the PHY block, not the USB
+>>>> controller.
 >>>
->>> Good catch, I have now dropped both of these patches and pushed out a
->>> -rc3
+>>> Okay, but still should be common for USB PHYs IMO.
 >>>
->>>> FYI ... I am still seeing a build failure because of this with -rc2 ..=
-.
+>>> Rob
 >>>
->>> Can you see if -rc3 is also giving you problems?
->>
->> Better, but I appear to be seeing some random suspend failures with this
->> now on one board. I will try to bisect this.
->>
->> Test results for stable-v4.4:
->>     6 builds:	6 pass, 0 fail
->>     12 boots:	12 pass, 0 fail
->>     19 tests:	18 pass, 1 fail
->>
->> Linux version:	4.4.203-rc3-g2576206c30b5
->> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->>                 tegra30-cardhu-a04
->=20
-> Odd.  If you find anything interesting, please let me know.
-
-Yes will do. Bisect has not found anything yet, so will keeping looking
-to see if this is a false-positive or not.
-
-Cheers Jon
-
---=20
-nvpublic
