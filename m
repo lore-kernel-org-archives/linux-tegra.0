@@ -1,86 +1,123 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 00/11] Move PMC clocks into Tegra PMC driver
-Date: Wed, 27 Nov 2019 17:31:34 +0300
-Message-ID: <79e7bd6a-f138-1e7d-6e0b-435adde3b3e5@gmail.com>
+Subject: Re: [PATCH v2 02/11] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Wed, 27 Nov 2019 17:32:11 +0300
+Message-ID: <64b6a780-d06c-9a10-490b-7285d2b0e207@gmail.com>
 References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+ <1574830773-14892-3-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1574830773-14892-3-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, sboyd@kernel.org
-Cc: gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 27.11.2019 07:59, Sowjanya Komatineni пишет:
-> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
-> are currently registered by Tegra clock driver using clk_regiser_mux and
-> clk_register_gate which performs direct Tegra PMC register access.
+> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out_3 with
+> mux and gate for each of these clocks.
 > 
-> When Tegra PMC is in secure mode, any access from non-secure world will
-> not go through.
+> Currently these PMC clocks are registered by Tegra clock driver using
+> clk_register_mux and clk_register_gate by passing PMC base address
+> and register offsets and PMC programming for these clocks happens
+> through direct PMC access by the clock driver.
 > 
-> This patch series adds these Tegra PMC clocks and blink controls to Tegra
-> PMC driver with PMC as clock provider and removed them from Tegra clock
-> driver. This also adds PMC specific clock id's to use in device tree and
-> removed clock ids of PMC clock from Tegra clock driver.
+> With this, when PMC is in secure mode any direct PMC access from the
+> non-secure world does not go through and these clocks will not be
+> functional.
 > 
-> This series also includes patch to update clock provider from tegra_car
-> to pmc in the device tree tegra210-smaug.dts that uses clk_out_2 from PMC.
+> This patch adds these clocks registration with PMC as a clock provider
+> for these clocks. clk_ops callback implementations for these clocks
+> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC programming
+> in secure mode and non-secure mode.
 > 
-> [v2]:	Changes between v1 and v2 are
-> 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
-> 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
-> 	- feedback related to pmc clocks in Tegra PMC driver from v1
-> 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
-> 	  by the clock driver using helper functions from Tegra PMC.
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 330 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 330 insertions(+)
 > 
->  	  Note:
-> 	  To use helper functions from PMC driver, PMC early init need to
-> 	  happen prior to using helper functions and these helper functions are
-> 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
-> 	  clock registration which happen in clock_init prior to Tegra PMC
-> 	  probe.
-> 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
-> 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
-> 	  tegra_mc_init.
-> 	  This implementation of configuring PMC registers thru helper
-> 	  functions in clock driver needs proper changes across PMC, Clock,
-> 	  EMC and MC inits to have it work across all Tegra platforms.
-> 
-> 	  Currently PLLM Override is not enabled in the bootloader so proper
-> 	  patches for this fix will be taken care separately.
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index ea0e11a09c12..a353f6d0a832 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -13,6 +13,9 @@
+>  
+>  #include <linux/arm-smccc.h>
+>  #include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk/clk-conf.h>
+>  #include <linux/clk/tegra.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/delay.h>
+> @@ -48,6 +51,7 @@
+>  #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+>  #include <dt-bindings/gpio/tegra186-gpio.h>
+>  #include <dt-bindings/gpio/tegra194-gpio.h>
+> +#include <dt-bindings/soc/tegra-pmc.h>
+>  
+>  #define PMC_CNTRL			0x0
+>  #define  PMC_CNTRL_INTR_POLARITY	BIT(17) /* inverts INTR polarity */
+> @@ -100,6 +104,7 @@
+>  #define PMC_WAKE2_STATUS		0x168
+>  #define PMC_SW_WAKE2_STATUS		0x16c
+>  
+> +#define PMC_CLK_OUT_CNTRL		0x1a8
+>  #define PMC_SENSOR_CTRL			0x1b0
+>  #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
+>  #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+> @@ -155,6 +160,91 @@
+>  #define  TEGRA_SMC_PMC_READ	0xaa
+>  #define  TEGRA_SMC_PMC_WRITE	0xbb
+>  
+> +struct pmc_clk_mux {
+> +	struct clk_hw	hw;
+> +	unsigned long	offs;
+> +	u32		mask;
+> +	u32		shift;
+> +};
+> +
+> +#define to_pmc_clk_mux(_hw) container_of(_hw, struct pmc_clk_mux, hw)
+> +
+> +struct pmc_clk_gate {
+> +	struct clk_hw	hw;
+> +	unsigned long	offs;
+> +	u32		shift;
+> +};
+> +
+> +#define to_pmc_clk_gate(_hw) container_of(_hw, struct pmc_clk_gate, hw)
+> +
+> +struct pmc_clk_init_data {
+> +	char *mux_name;
+> +	char *gate_name;
+> +	const char **parents;
+> +	int num_parents;
+> +	int mux_id;
+> +	int gate_id;
+> +	char *dev_name;
+> +	u8 mux_shift;
+> +	u8 gate_shift;
+> +	u8 init_parent_index;
+> +	int init_state;
+> +};
+> +
+> +static const char *clk_out1_parents[] = { "clk_m", "clk_m_div2",
+> +	"clk_m_div4", "extern1",
+> +};
+> +
+> +static const char *clk_out2_parents[] = { "clk_m", "clk_m_div2",
+> +	"clk_m_div4", "extern2",
+> +};
+> +
+> +static const char *clk_out3_parents[] = { "clk_m", "clk_m_div2",
+> +	"clk_m_div4", "extern3",
+> +};
+> +
+> +static struct pmc_clk_init_data tegra_pmc_clks_data[] = {
 
-Hello Sowjanya,
-
-Could you please clarify what do you mean by "PLLM Override not enabled
-in bootloader"?
-
-There is T124 Nyan Big Chromebook which is supported in upstream kernel,
-it has PLLM Override set by bootloader. I also have T30 Nexus 7 tablet
-which has the PLLM Override set by bootloader as well. It's not clear to
-me whether this patch series is supposed to break these devices. If the
-breakage is the case here, then I'm afraid you can't postpone supporting
-the PLLM Override and a full-featured implementation is needed.
-
-I briefly tried to test this series on T30 and this time it doesn't hang
-on boot, but somehow WiFi MMC card detection is broken. AFAIK, the WiFi
-chip uses the Blink clock source and the clock should be enabled by the
-MMC core because this is how DT part looks like:
-
-brcm_wifi_pwrseq: wifi-pwrseq {
-	compatible = "mmc-pwrseq-simple";
-	clocks = <&pmc TEGRA_PMC_CLK_BLINK>;
-	clock-names = "ext_clock";
-	reset-gpios =  <&gpio TEGRA_GPIO(D, 3) GPIO_ACTIVE_LOW>;
-	post-power-on-delay-ms = <300>;
-	power-off-delay-us = <300>;
-};
-
-BTW, I  tried this series on a T20 device which also uses the Blink
-clock for WiFi card and it works. So looks like this patchset has some
-problem in regards to the T30 PMC clocks implementation.
+const?
 
 [snip]
