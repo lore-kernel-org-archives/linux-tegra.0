@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v2 03/11] dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
-Date: Tue, 26 Nov 2019 20:59:25 -0800
-Message-ID: <1574830773-14892-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v2 10/11] arm64: tegra: smaug: Change clk_out_2 provider from tegra_car to pmc
+Date: Tue, 26 Nov 2019 20:59:32 -0800
+Message-ID: <1574830773-14892-11-git-send-email-skomatineni@nvidia.com>
 References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,30 +12,31 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dige
 Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC has a blinking control to output 32 KHz clock to blink
-pin.
+clk_out_2 is the clocks from Tegra PMC block with clock source and state
+control part of Tegra PMC.
 
-This patch adds id for this blink control to use for enabling or
-disabling the blink output through devicetree.
+Tegra pmc node is the provider for these clocks.
+
+This patch changes clk_out_2 provider to pmc and uses corresponding pmc
+clock id for clk_out_2.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- include/dt-bindings/soc/tegra-pmc.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
-index 705ee8083070..6fe28516017e 100644
---- a/include/dt-bindings/soc/tegra-pmc.h
-+++ b/include/dt-bindings/soc/tegra-pmc.h
-@@ -12,7 +12,8 @@
- #define TEGRA_PMC_CLK_OUT_2		3
- #define TEGRA_PMC_CLK_OUT_3_MUX		4
- #define TEGRA_PMC_CLK_OUT_3		5
-+#define TEGRA_PMC_CLK_BLINK		6
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 72c7a04ac1df..4376c38d78f4 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1592,7 +1592,7 @@
+ 			reg = <0x1a>;
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(E, 6) IRQ_TYPE_LEVEL_LOW>;
+-			clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
++			clocks = <&pmc TEGRA_PMC_CLK_OUT_2>;
+ 			clock-names = "mclk";
  
--#define TEGRA_PMC_CLK_MAX		6
-+#define TEGRA_PMC_CLK_MAX		7
- 
- #endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+ 			nuvoton,jkdet-enable;
 -- 
 2.7.4
