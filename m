@@ -1,139 +1,52 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 3/6] PCI: tegra: Add support for PCIe endpoint mode in
- Tegra194
-Date: Tue, 26 Nov 2019 15:37:18 -0600
-Message-ID: <20191126213718.GA185422@google.com>
-References: <20191122104505.8986-4-vidyas@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH v2 01/11] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
+Date: Tue, 26 Nov 2019 20:59:23 -0800
+Message-ID: <1574830773-14892-2-git-send-email-skomatineni@nvidia.com>
+References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191122104505.8986-4-vidyas@nvidia.com>
+In-Reply-To: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: lorenzo.pieralisi@arm.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 04:15:02PM +0530, Vidya Sagar wrote:
-> Add support for the endpoint mode of Synopsys DesignWare core based
-> dual mode PCIe controllers present in Tegra194 SoC.
+Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
+these clocks has mux and a gate as a part of PMC controller.
 
-> +static irqreturn_t tegra_pcie_ep_irq_handler(struct tegra_pcie_dw *pcie)
-> +{
-> +	struct dw_pcie_ep *ep = &pcie->pci.ep;
-> +	u32 val, tmp;
-> +
-> +	val = appl_readl(pcie, APPL_INTR_STATUS_L0);
-> +	if (val & APPL_INTR_STATUS_L0_LINK_STATE_INT) {
-> +		val = appl_readl(pcie, APPL_INTR_STATUS_L1_0_0);
-> +		appl_writel(pcie, val, APPL_INTR_STATUS_L1_0_0);
-> +		if (val & APPL_INTR_STATUS_L1_0_0_HOT_RESET_DONE) {
-> +			/* clear any stale PEX_RST interrupt */
-> +			if (!kfifo_put(&pcie->event_fifo, EP_HOT_RST_DONE)) {
-> +				dev_err(pcie->dev, "EVENT FIFO is full\n");
-> +				return IRQ_HANDLED;
-> +			}
-> +			wake_up(&pcie->wq);
-> +		}
-> +		if (val & APPL_INTR_STATUS_L1_0_0_RDLH_LINK_UP_CHGED) {
-> +			tmp = appl_readl(pcie, APPL_LINK_STATUS);
-> +			if (tmp & APPL_LINK_STATUS_RDLH_LINK_UP) {
-> +				dev_info(pcie->dev, "Link is up with Host\n");
-> +				dw_pcie_ep_linkup(ep);
-> +			}
-> +		}
-> +	} else if (val & APPL_INTR_STATUS_L0_PCI_CMD_EN_INT) {
+This patch adds ids for each of these PMC clock mux and gates to
+use with the devicetree.
 
-Is it really the case that only one of
-APPL_INTR_STATUS_L0_LINK_STATE_INT and
-APPL_INTR_STATUS_L0_PCI_CMD_EN_INT can be set?
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ include/dt-bindings/soc/tegra-pmc.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 include/dt-bindings/soc/tegra-pmc.h
 
-If it's possible that both could be set, maybe this should be
-something like this?
-
-  int spurious = 1;
-
-  if (val & APPL_INTR_STATUS_L0_LINK_STATE_INT) {
-    ...
-    spurious = 0;
-  }
-  if (val & APPL_INTR_STATUS_L0_PCI_CMD_EN_INT) {
-    ...
-    spurious = 0;
-  }
-
-  if (spurious) {
-    dev_warn(...)
-  }
-
-> +		val = appl_readl(pcie, APPL_INTR_STATUS_L1_15);
-> +		appl_writel(pcie, val, APPL_INTR_STATUS_L1_15);
-> +		if (val & APPL_INTR_STATUS_L1_15_CFG_BME_CHGED) {
-> +			if (!kfifo_put(&pcie->event_fifo, EP_BME_CHANGE)) {
-> +				dev_err(pcie->dev, "EVENT FIFO is full\n");
-> +				return IRQ_HANDLED;
-> +			}
-> +			wake_up(&pcie->wq);
-> +		}
-> +	} else {
-> +		dev_warn(pcie->dev, "Random interrupt (STATUS = 0x%08X)\n",
-> +			 val);
-> +		appl_writel(pcie, val, APPL_INTR_STATUS_L0);
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-> +static int tegra_pcie_ep_work_thread(void *p)
-> +{
-> +	struct tegra_pcie_dw *pcie = (struct tegra_pcie_dw *)p;
-> +	u32 event;
-> +
-> +	while (true) {
-> +		wait_event_interruptible(pcie->wq,
-> +					 !kfifo_is_empty(&pcie->event_fifo));
-> +
-> +		if (kthread_should_stop())
-> +			break;
-> +
-> +		if (!kfifo_get(&pcie->event_fifo, &event)) {
-> +			dev_warn(pcie->dev, "EVENT FIFO is empty\n");
-> +			continue;
-> +		}
-> +
-> +		switch (event) {
-> +		case EP_PEX_RST_DEASSERT:
-> +			dev_info(pcie->dev, "EVENT: EP_PEX_RST_DEASSERT\n");
-> +			pex_ep_event_pex_rst_deassert(pcie);
-> +			break;
-> +
-> +		case EP_PEX_RST_ASSERT:
-> +			dev_info(pcie->dev, "EVENT: EP_PEX_RST_ASSERT\n");
-> +			pex_ep_event_pex_rst_assert(pcie);
-> +			break;
-> +
-> +		case EP_HOT_RST_DONE:
-> +			dev_info(pcie->dev, "EVENT: EP_HOT_RST_DONE\n");
-> +			pex_ep_event_hot_rst_done(pcie);
-> +			break;
-> +
-> +		case EP_BME_CHANGE:
-> +			dev_info(pcie->dev, "EVENT: EP_BME_CHANGE\n");
-> +			pex_ep_event_bme_change(pcie);
-> +			break;
-> +
-> +		case EP_EVENT_EXIT:
-> +			dev_info(pcie->dev, "EVENT: EP_EVENT_EXIT\n");
-> +			return 0;
-> +
-> +		default:
-> +			dev_warn(pcie->dev, "Invalid PCIe EP event\n");
-
-Maybe include the invalid event value in the message?
-
-> +			break;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
+diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
+new file mode 100644
+index 000000000000..705ee8083070
+--- /dev/null
++++ b/include/dt-bindings/soc/tegra-pmc.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
++#define _DT_BINDINGS_SOC_TEGRA_PMC_H
++
++#define TEGRA_PMC_CLK_OUT_1_MUX		0
++#define TEGRA_PMC_CLK_OUT_1		1
++#define TEGRA_PMC_CLK_OUT_2_MUX		2
++#define TEGRA_PMC_CLK_OUT_2		3
++#define TEGRA_PMC_CLK_OUT_3_MUX		4
++#define TEGRA_PMC_CLK_OUT_3		5
++
++#define TEGRA_PMC_CLK_MAX		6
++
++#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+-- 
+2.7.4
