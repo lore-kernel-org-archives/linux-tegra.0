@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v2 09/11] dt-bindings: Add Tegra PMC clock configuration bindings
-Date: Tue, 26 Nov 2019 20:59:31 -0800
-Message-ID: <1574830773-14892-10-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v2 03/11] dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
+Date: Tue, 26 Nov 2019 20:59:25 -0800
+Message-ID: <1574830773-14892-4-git-send-email-skomatineni@nvidia.com>
 References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,99 +12,30 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dige
 Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Document clock bindings for pmc clocks clk_out_1, clk_out_2 and clk_out_3.
-These clocks are part of Tegra PMC block and pmc node is the provider for
-these clocks.
+Tegra PMC has a blinking control to output 32 KHz clock to blink
+pin.
+
+This patch adds id for this blink control to use for enabling or
+disabling the blink output through devicetree.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 45 +++++++++++++++++++++-
- 1 file changed, 44 insertions(+), 1 deletion(-)
+ include/dt-bindings/soc/tegra-pmc.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-index cb12f33a247f..7e0069b87bc2 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-@@ -21,6 +21,10 @@ Required properties:
- - clock-names : Must include the following entries:
-   "pclk" (The Tegra clock of that name),
-   "clk32k_in" (The 32KHz clock input to Tegra).
-+- #clock-cells : Should be 1 for Tegra30 and higher.
-+  In clock consumers, this cell represents the PMC clock ID.
-+  The assignments may be found in header file
-+  <dt-bindings/soc/tegra-pmc.h>.
+diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
+index 705ee8083070..6fe28516017e 100644
+--- a/include/dt-bindings/soc/tegra-pmc.h
++++ b/include/dt-bindings/soc/tegra-pmc.h
+@@ -12,7 +12,8 @@
+ #define TEGRA_PMC_CLK_OUT_2		3
+ #define TEGRA_PMC_CLK_OUT_3_MUX		4
+ #define TEGRA_PMC_CLK_OUT_3		5
++#define TEGRA_PMC_CLK_BLINK		6
  
- Optional properties:
- - nvidia,invert-interrupt : If present, inverts the PMU interrupt signal.
-@@ -80,11 +84,12 @@ Optional nodes:
- Example:
+-#define TEGRA_PMC_CLK_MAX		6
++#define TEGRA_PMC_CLK_MAX		7
  
- / SoC dts including file
--pmc@7000f400 {
-+pmc: pmc@7000f400 {
- 	compatible = "nvidia,tegra20-pmc";
- 	reg = <0x7000e400 0x400>;
- 	clocks = <&tegra_car 110>, <&clk32k_in>;
- 	clock-names = "pclk", "clk32k_in";
-+	#clock-cells = <1>;
- 	nvidia,invert-interrupt;
- 	nvidia,suspend-mode = <1>;
- 	nvidia,cpu-pwr-good-time = <2000>;
-@@ -171,6 +176,7 @@ Example:
- 		reg = <0x0 0x7000e400 0x0 0x400>;
- 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#clock-cells = <1>;
- 
- 		powergates {
- 			pd_audio: aud {
-@@ -260,6 +266,7 @@ Pad configuration state example:
- 		reg = <0x0 0x7000e400 0x0 0x400>;
- 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#clock-cells = <1>;
- 
- 		...
- 
-@@ -298,3 +305,39 @@ Pinctrl client example:
- 		pinctrl-1 = <&hdmi_on>;
- 		pinctrl-names = "hdmi-on", "hdmi-off";
- 	};
-+
-+== Clock Control ==
-+
-+Tegra PMC has 3 clocks clk_1, clk_2 and clk_3. Each of these clocks has
-+source selection and enable/disable gate.
-+Parent/source for these clocks can be either of clk_m, clk_m_div2, clk_m_div4,
-+or extern clock from Tegra CAR module.
-+
-+Clock configuration example:
-+	pmc: pmc@7000e400 {
-+		compatible = "nvidia,tegra210-pmc";
-+		reg = <0x0 0x7000e400 0x0 0x400>;
-+		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
-+		clock-names = "pclk", "clk32k_in";
-+		#clock-cells = <1>;
-+	};
-+
-+Clock consumer example:
-+	host1x@50000000 {
-+		...
-+		vi@54080000 {
-+		...
-+		assigned-clocks = <&pmc TEGRA_PMC_CLK_OUT_3_MUX>;
-+		assigned-clock-parents = <&tegra_car TEGRA210_CLK_EXTERN3>;
-+		};
-+		...
-+	};
-+	...
-+	i2c@7000c500 {
-+		cam_sensor {
-+		...
-+		clocks = <&pmc TEGRA_PMC_CLK_OUT_3>;
-+		clock-names = "mclk";
-+		...
-+		};
-+	};
+ #endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
 -- 
 2.7.4
