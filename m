@@ -1,14 +1,15 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 0/2] PM / runtime: Allow drivers to override runtime PM
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] PM / runtime: Allow drivers to override runtime PM
  behaviour on sleep
-Date: Thu, 28 Nov 2019 17:47:05 +0100
-Message-ID: <CAKMK7uFEwChTesKdWAOfi3evLO=d0MsPDdK8gizH-jLk4uBdFg@mail.gmail.com>
+Date: Thu, 28 Nov 2019 17:50:26 +0100
+Message-ID: <20191128163623.GA2382107@ulmo>
 References: <20191128160314.2381249-1-thierry.reding@gmail.com>
+ <20191128160314.2381249-2-thierry.reding@gmail.com>
+ <CAJZ5v0haOB1vc8aKk11RR-OnfLHChcqa+z7QkeKyN66s6xM3OA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0129945948=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191128160314.2381249-1-thierry.reding@gmail.com>
+In-Reply-To: <CAJZ5v0haOB1vc8aKk11RR-OnfLHChcqa+z7QkeKyN66s6xM3OA@mail.gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -18,62 +19,89 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Len Brown <len.brown@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, dri-devel <dri-devel@lists.freedesktop.org>, Pavel Machek <pavel@ucw.cz>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <len.brown@intel.com>, Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, dri-devel <dri-devel@lists.freedesktop.org>, Pavel Machek <pavel@ucw.cz>, linux-tegra <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBOb3YgMjgsIDIwMTkgYXQgNTowMyBQTSBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5y
-ZWRpbmdAZ21haWwuY29tPiB3cm90ZToKPgo+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5n
-QG52aWRpYS5jb20+Cj4KPiBUaGlzIGlzIGEgcmVzdWx0IG9mIGxvb2tpbmcgaW50byBhIG1vcmUg
-Zm9ybWFsIHdheSBvZiBkb2luZyB3aGF0IHdhcwo+IHByb3Bvc2VkIGhlcmU6Cj4KPiAgICAgICAg
-IGh0dHA6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC8xMTQ1MzYzLwo+Cj4gVGhlIFRlZ3Jh
-IERSTSBkcml2ZXIgaXMgd3JpdHRlbiBzdWNoIHRoYXQgcnVudGltZSBQTSBjb250cm9scyBhbGwK
-PiBhc3BlY3RzIG9mIGJyaW5naW5nIHVwIGFuZCBzaHV0dGluZyBkb3duIHRoZSBoYXJkd2FyZSBh
-c3NvY2lhdGVkIHdpdGggYQo+IGRpc3BsYXkgcGlwZWxpbmUuIFRoaXMgd29ya3MgdmVyeSBuaWNl
-bHkgd2l0aCB0aGUgRFJNL0tNUyBhdG9taWMgbW9kZS0KPiBzZXR0aW5nIGZyYW1ld29yayB0aGF0
-IGhhcyB2ZXJ5IHJpZ29yb3VzIGNhbGwgc2VxdWVuY2VzLiBUaGVyZSBhcmUgYWxzbwo+IHN1c3Bl
-bmQvcmVzdW1lIGhlbHBlcnMgZm9yIHN5c3RlbSBzbGVlcCB0aGF0IGFyZSBidWlsdCBvbiB0b3Ag
-b2YgdGhlc2UKPiBnZW5lcmljIGhlbHBlcnMgYW5kIHRoYXQgY2F1c2UgdGhlIHNhbWUgY29kZSBz
-ZXF1ZW5jZXMgdG8gYmUgcnVuIGFzIGlmCj4gdXNlcnMgaGFkIHNpbXBseSBjaG9zZW4gdG8gZGlz
-YWJsZSBhbGwgZGlzcGxheSBwaXBlbGluZXMgYXQgbm9ybWFsCj4gcnVudGltZS4KPgo+IFRoZSBj
-dXJyZW50IGJlaGF2aW91ciBvZiB0aGUgUE0gY29yZSB0byBkaXNhbGxvdyBydW50aW1lIHN1c3Bl
-bmQvcmVzdW1lCj4gZHVyaW5nIHN5c3RlbSBzbGVlcCBnZXRzIGluIHRoZSB3YXkgb2YgdGhpcyBi
-ZWNhdXNlIHRoZSBkZXZpY2VzIGRvIG5vdAo+IGluIGZhY3QgcnVudGltZSBzdXNwZW5kL3Jlc3Vt
-ZSBkdXJpbmcgdGhhdCB0aW1lLiBNb3N0IG9mIHRoZSB0aW1lIHRoaXMKPiBjYXVzZXMgZGlzcGxh
-eSBvdXRwdXRzIHRvIG1hbGZ1bmN0aW9uIHVwb24gcmVzdW1lLgo+Cj4gTm93LCB0aGVyZSBhcmUg
-Z29vZCByZWFzb25zIGZvciBwcmV2ZW50aW5nIHJ1bnRpbWUgc3VzcGVuZCBkdXJpbmcgc3lzdGVt
-Cj4gc2xlZXAsIGFzIGdpdmVuIGluIGNvbW1pdCBlZWEzZmMwMzU3ZWIgKCJQQ0kgLyBQTTogRGV0
-ZWN0IGVhcmx5IHdha2V1cAo+IGluIHBjaV9wbV9wcmVwYXJlKCkiKSB0aGF0IG9yaWdpbmFsbHkg
-aW50cm9kdWNlZCB0aGlzIG1lY2hhbmlzbS4gVGhlcmUKPiBjYW4sIGhvd2V2ZXIsIGFsc28gYmUg
-Y2FzZXMsIGxpa2UgdGhlIG9uZSBkZXNjcmliZWQgYWJvdmUsIHdoZXJlIGl0IGlzCj4gc2FmZSB0
-byBhbGxvdyB0aGlzLiBBZGQgYSBmbGFnIGFuZCBhIHNldCBvZiBoZWxwZXJzIHRvIHNldCBvciBj
-bGVhciB0aGF0Cj4gbmV3IGZsYWcgc28gdGhhdCBkcml2ZXJzIHRoYXQga25vdyBpdCB3aWxsIGJl
-IHNhZmUgdG8gcnVudGltZSBzdXNwZW5kIGEKPiBkZXZpY2UgYXQgc3lzdGVtIHNsZWVwIHRpbWUg
-Y2FuIG1hcmsgdGhlIGRldmljZSBhcyBzdWNoLgo+Cj4gSWYgYSBkZXZpY2UgaGFzIHRoZSBmbGFn
-IHNldCwgdGhlIFBNIGNvcmUgd2lsbCBubyBsb25nZXIgdGFrZSBhIHJ1bnRpbWUKPiBQTSByZWZl
-cmVuY2UgZm9yIGl0LCB0aHVzIGFsbG93aW5nIHRoZSBkZXZpY2UgdG8gcnVudGltZSBzdXNwZW5k
-IGF0IHRoZQo+IGV4cGVjdGVkIHRpbWUuCgpXaGF0IGFib3V0IHNwcmlua2xpbmcgdG9ucyBvZiBk
-ZXZpY2VfbGlua3MgYWxsIG92ZXIgdGhpcyB0byBtYWtlIHN1cmUKc3lzdGVtIHN1c3BlbmQvcmVz
-dW1lIGlzIGRvbmUgaW4gdGhlIHNhbWUgb3JkZXIgdG9vPyBTbGlnaHRseSBsZXNzCm5lYXQgZnJv
-bSBhIGRyaXZlciBwb3YsIGJ1dCBJIHRoaW5rIHRoYXQgc2hvdWxkIGdldCB0aGUgam9iIGRvbmUu
-Ck1heWJlIGNvdWxkIGV2ZW4gZG8gYSBjb252ZW5pZW5jZSBmdW5jdGlvbiB3aGljaCBjb252ZXJ0
-cyBhIGR0IHBoYW5kbGUKKG9yIHdoYXRldmVyIHRoYXQgd2FzIGNhbGxlZCBhZ2FpbikgaW50byBh
-IGRldmljZV9saW5rPwotRGFuaWVsCgo+IFRoaWVycnkKPgo+IFRoaWVycnkgUmVkaW5nICgyKToK
-PiAgIFBNIC8gcnVudGltZTogQWxsb3cgZHJpdmVycyB0byBvdmVycmlkZSBydW50aW1lIFBNIGJl
-aGF2aW91ciBvbiBzbGVlcAo+ICAgZHJtL3RlZ3JhOiBBbGxvdyBydW50aW1lIHN1c3BlbmQgb24g
-c3lzdGVtIHNsZWVwCj4KPiAgZHJpdmVycy9iYXNlL3Bvd2VyL21haW4uYyAgICB8ICA2ICsrKyst
-LQo+ICBkcml2ZXJzL2Jhc2UvcG93ZXIvcnVudGltZS5jIHwgMTYgKysrKysrKysrKysrKysrKwo+
-ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyAgIHwgIDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHNpLmMgIHwgIDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jIHwgIDEg
-Kwo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMgIHwgIDEgKwo+ICBkcml2ZXJzL2dwdS9k
-cm0vdGVncmEvc29yLmMgIHwgIDEgKwo+ICBpbmNsdWRlL2xpbnV4L3BtLmggICAgICAgICAgIHwg
-IDEgKwo+ICBpbmNsdWRlL2xpbnV4L3BtX3J1bnRpbWUuaCAgIHwgIDIgKysKPiAgOSBmaWxlcyBj
-aGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+Cj4gLS0KPiAyLjIzLjAK
-Pgo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJp
-LWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoK
-CgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24K
-KzQxICgwKSA3OSAzNjUgNTcgNDggLSBodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+
+--===============0129945948==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+Content-Disposition: inline
+
+
+--0F1p//8PRICkK4MW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Nov 28, 2019 at 05:14:51PM +0100, Rafael J. Wysocki wrote:
+> On Thu, Nov 28, 2019 at 5:03 PM Thierry Reding <thierry.reding@gmail.com>=
+ wrote:
+> >
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Currently the driver PM core will automatically acquire a runtime PM
+> > reference for devices before system sleep is entered. This is needed
+> > to avoid potential issues related to devices' parents getting put to
+> > runtime suspend at the wrong time and causing problems with their
+> > children.
+>=20
+> Not only for that.
+>=20
+> > In some cases drivers are carefully written to avoid such issues and
+> > the default behaviour can be changed to allow runtime PM to operate
+> > regularly during system sleep.
+>=20
+> But this change breaks quite a few assumptions in the core too, so no,
+> it can't be made.
+
+Anything in particular that I can look at? I'm not seeing any issues
+when I test this, which could of course mean that I'm just getting
+lucky.
+
+One thing that irritated me is that I think this used to work. I do
+recall testing suspend/resume a few years ago and devices would get
+properly runtime suspended/resumed. I did some digging but couldn't
+find anything that would have had an impact on this.
+
+Given that this is completely opt-in feature, why are you categorically
+NAK'ing this?
+
+Is there some other alternative that I can look into?
+
+Thierry
+
+--0F1p//8PRICkK4MW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3f+tAACgkQ3SOs138+
+s6F4mBAAqcwu+TStcK/qpZpkwObpVPR3H5IoPOrDpq8MN9UfrWpbf4uaAcUPdVMj
+7yMCZQT8etpz6ZSoyDATX4QqU5RYmAYcYQpVEzHNQ4WryTkba8Z6ElbOZMhlESfs
+rNIHFvtYsBwvjPCq4VV4gdjodlKiarKCsKogOwP4CmPGOph0j4bdwyxpuUMhB+bd
+nrxkDeDzHNGHqRgg9uGVt23icJnMqlWAl+NCkxvTCzpt3r0BwT2TW4xnZ6IEx9Rx
+rcimhfWk9WxMkAKeYK1q9CZBwSeaEMkZ9LtmH242j9rTQj7UiEKnWgm8ogzIsq2X
+/ZtPeZ95g5cNGzMJTrmxvteNvoIv2ROaKiOI12HrEAfFtFoHt9sotcNS0awSm5eG
+6Yfle+/XfnVyBk+3mPX43r6hULcicnLY281NZ0YP+Av8y40HD0I+ynrjtByj/c3M
+XZGsgVEPPNioiPPhKo3i+mbIGqfTiA1NeCb6EP+zHaMkqsswxSLlSckGXb3O3rdc
+W0C0KZByR7PkzohlsTSnuV5edDwXWM0lfsBWEtL4PJG7ukNYHCifM4B2IW6ANc40
+ACLA3rShB7oY9fuxtVDd4/Q/CK4r+4qLntQ9cF09g0NKUgs7HnIXKbMdcd0WYyWB
+5S3TBt8Bir2B64eaa5x/Sr12uLRm+kkzWQMopKNUpI3Dt4Q8D1k=
+=U0Wg
+-----END PGP SIGNATURE-----
+
+--0F1p//8PRICkK4MW--
+
+--===============0129945948==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============0129945948==--
