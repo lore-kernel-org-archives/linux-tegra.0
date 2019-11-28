@@ -1,102 +1,62 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
-Date: Thu, 28 Nov 2019 11:35:18 +0100
-Message-ID: <20191128103518.GA3399855@kroah.com>
-References: <20191122134131.GA2050590@kroah.com>
- <20191122134627.GB2050590@kroah.com>
- <9f976044-2dbc-6c19-11e7-210cd7ab35ea@nvidia.com>
- <a5d68f07-5f9a-2809-404d-bcd8ca593d70@roeck-us.net>
- <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
- <20191125094116.GA2340170@kroah.com>
- <a6830303-ff96-f7df-b504-ab226aefddca@nvidia.com>
- <20191125160305.GD2683321@kroah.com>
- <013aa2b3-9a68-6227-36bc-093d03547fce@nvidia.com>
- <b93b699e-35d9-1082-b46b-a2c7400b7b48@nvidia.com>
+Subject: Re: [PATCH 5.3 00/95] 5.3.14-stable review
+Date: Thu, 28 Nov 2019 11:36:04 +0100
+Message-ID: <20191128103604.GB3399855@kroah.com>
+References: <20191127202845.651587549@linuxfoundation.org>
+ <0c65f759-f22c-1b15-1f71-929def8ac43e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <b93b699e-35d9-1082-b46b-a2c7400b7b48@nvidia.com>
+In-Reply-To: <0c65f759-f22c-1b15-1f71-929def8ac43e@nvidia.com>
 Sender: stable-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 09:26:25AM +0000, Jon Hunter wrote:
+On Thu, Nov 28, 2019 at 09:15:45AM +0000, Jon Hunter wrote:
 > 
-> On 25/11/2019 22:45, Jon Hunter wrote:
+> On 27/11/2019 20:31, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.3.14 release.
+> > There are 95 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > On 25/11/2019 16:03, Greg Kroah-Hartman wrote:
-> >> On Mon, Nov 25, 2019 at 01:22:58PM +0000, Jon Hunter wrote:
-> >>>
-> >>> On 25/11/2019 09:41, Greg Kroah-Hartman wrote:
-> >>>> On Sun, Nov 24, 2019 at 08:31:46PM +0000, Jon Hunter wrote:
-> >>>>>
-> >>>>> On 23/11/2019 15:46, Guenter Roeck wrote:
-> >>>>>> On 11/22/19 6:48 AM, Jon Hunter wrote:
-> >>>>>>
-> >>>>>> [ ... ]
-> >>>>>>
-> >>>>>>> Error: arch/arm/boot/dts/omap5-board-common.dtsi:636.1-6 Label or path
-> >>>>>>> dwc3 not found
-> >>>>>>> FATAL ERROR: Syntax error parsing input tree
-> >>>>>>> scripts/Makefile.lib:293: recipe for target
-> >>>>>>> 'arch/arm/boot/dts/omap5-igep0050.dtb' failed
-> >>>>>>> make[1]: *** [arch/arm/boot/dts/omap5-igep0050.dtb] Error 1
-> >>>>>>> arch/arm/Makefile:338: recipe for target 'dtbs' failed
-> >>>>>>> make: *** [dtbs] Error 2
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> This is caused by the following commit ...
-> >>>>>>>
-> >>>>>>> commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
-> >>>>>>> Author: H. Nikolaus Schaller <hns@goldelico.com>
-> >>>>>>> Date:   Fri Sep 28 17:54:00 2018 +0200
-> >>>>>>>
-> >>>>>>>      ARM: dts: omap5: enable OTG role for DWC3 controller
-> >>>>>>>
-> >>>>>>
-> >>>>>> On top of the breakage caused by this patch, I would also argue
-> >>>>>> that it is not a bug fix and should not have been included
-> >>>>>> in the first place.
-> >>>>>>
-> >>>>>> The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
-> >>>>>> Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
-> >>>>>> that patch, I highly doubt that a backport to 4.4 would work.
-> >>>>
-> >>>> Good catch, I have now dropped both of these patches and pushed out a
-> >>>> -rc3
-> >>>>
-> >>>>> FYI ... I am still seeing a build failure because of this with -rc2 ...
-> >>>>
-> >>>> Can you see if -rc3 is also giving you problems?
-> >>>
-> >>> Better, but I appear to be seeing some random suspend failures with this
-> >>> now on one board. I will try to bisect this.
-> >>>
-> >>> Test results for stable-v4.4:
-> >>>     6 builds:	6 pass, 0 fail
-> >>>     12 boots:	12 pass, 0 fail
-> >>>     19 tests:	18 pass, 1 fail
-> >>>
-> >>> Linux version:	4.4.203-rc3-g2576206c30b5
-> >>> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-> >>>                 tegra30-cardhu-a04
-> >>
-> >> Odd.  If you find anything interesting, please let me know.
+> > Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
+> > Anything received after that time might be too late.
 > > 
-> > Yes will do. Bisect has not found anything yet, so will keeping looking
-> > to see if this is a false-positive or not.
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.14-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> I have been doing some more testing and it appears that I see
-> intermittent suspend failures on Tegra124 with linux-4.4.y. Apparently
-> this issue has always been there and appears to be fixed in v4.5. I am
-> still trying to find a way to fix this. The changes in v4.5 that appear
-> to resolve this are too complex for stable (several patches in Tegra clk
-> drivers). Anyway, ignore this for now, I will see how we can fix or
-> workaround for linux-4.4.y.
+> ...
+> 
+> > Jouni Hogander <jouni.hogander@unikie.com>
+> >     net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
+> 
+> The above commit is causing a boot regression (NULL pointer deference
+> crash) on Tegra210 for v5.3. Reverting this on top of 5.3.14-rc1 fixes
+> the problem. Complete results for Tegra are here ...
+> 
+> Test results for stable-v5.3:
+>     13 builds:	13 pass, 0 fail
+>     24 boots:	18 pass, 6 fail
+>     34 tests:	34 pass, 0 fail
+> 
+> Linux version:	5.3.14-rc1-g7173a2d18fa6
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-Ok, thanks for letting us know and good luck with it.
+I've pushed out a -rc2 that should resolve this now.  If not, please let
+me know.
+
+thansk,
 
 greg k-h
