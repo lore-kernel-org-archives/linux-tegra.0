@@ -1,231 +1,140 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 06/11] dt-bindings: clock: tegra: Remove pmc clock ids
- from clock dt-bindings
-Date: Thu, 28 Nov 2019 13:18:44 +0100
-Message-ID: <20191128121844.GA2300319@ulmo>
+Subject: Re: [PATCH v2 00/11] Move PMC clocks into Tegra PMC driver
+Date: Thu, 28 Nov 2019 13:26:19 +0100
+Message-ID: <20191128122619.GB2300319@ulmo>
 References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
- <1574830773-14892-7-git-send-email-skomatineni@nvidia.com>
- <22ab4e93-bf94-5c73-b4b9-6cf36d329b97@gmail.com>
+ <79e7bd6a-f138-1e7d-6e0b-435adde3b3e5@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NKoe5XOeduwbEQHU"
+        protocol="application/pgp-signature"; boundary="tNQTSEo8WG/FKZ8E"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <22ab4e93-bf94-5c73-b4b9-6cf36d329b97@gmail.com>
+In-Reply-To: <79e7bd6a-f138-1e7d-6e0b-435adde3b3e5@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com, mperttunen@nvidia.com, sboyd@kernel.org, gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---NKoe5XOeduwbEQHU
+--tNQTSEo8WG/FKZ8E
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 27, 2019 at 05:32:30PM +0300, Dmitry Osipenko wrote:
+On Wed, Nov 27, 2019 at 05:31:34PM +0300, Dmitry Osipenko wrote:
 > 27.11.2019 07:59, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > clk_out_1, clk_out_2, clk_out_3, blink are part of Tegra pmc clocks.
+> > Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+> > are currently registered by Tegra clock driver using clk_regiser_mux and
+> > clk_register_gate which performs direct Tegra PMC register access.
 > >=20
-> > This patch removes ids for these clocks from Tegra clock dt-bindings.
+> > When Tegra PMC is in secure mode, any access from non-secure world will
+> > not go through.
 > >=20
-> > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> > ---
-> >  include/dt-bindings/clock/tegra114-car.h        | 14 +++++++-------
-> >  include/dt-bindings/clock/tegra124-car-common.h | 14 +++++++-------
-> >  include/dt-bindings/clock/tegra20-car.h         |  2 +-
-> >  include/dt-bindings/clock/tegra210-car.h        | 14 +++++++-------
-> >  include/dt-bindings/clock/tegra30-car.h         | 14 +++++++-------
-> >  5 files changed, 29 insertions(+), 29 deletions(-)
+> > This patch series adds these Tegra PMC clocks and blink controls to Teg=
+ra
+> > PMC driver with PMC as clock provider and removed them from Tegra clock
+> > driver. This also adds PMC specific clock id's to use in device tree and
+> > removed clock ids of PMC clock from Tegra clock driver.
 > >=20
-> > diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bind=
-ings/clock/tegra114-car.h
-> > index bb5c2c999c05..9175cd0571b5 100644
-> > --- a/include/dt-bindings/clock/tegra114-car.h
-> > +++ b/include/dt-bindings/clock/tegra114-car.h
-> > @@ -270,10 +270,10 @@
-> >  #define TEGRA114_CLK_AUDIO3 242
-> >  #define TEGRA114_CLK_AUDIO4 243
-> >  #define TEGRA114_CLK_SPDIF 244
-> > -#define TEGRA114_CLK_CLK_OUT_1 245
-> > -#define TEGRA114_CLK_CLK_OUT_2 246
-> > -#define TEGRA114_CLK_CLK_OUT_3 247
-> > -#define TEGRA114_CLK_BLINK 248
-> > +/* 245 */
-> > +/* 246 */
-> > +/* 247 */
-> > +/* 248 */
-> >  /* 249 */
-> >  /* 250 */
-> >  /* 251 */
-> > @@ -333,9 +333,9 @@
-> >  #define TEGRA114_CLK_AUDIO3_MUX 303
-> >  #define TEGRA114_CLK_AUDIO4_MUX 304
-> >  #define TEGRA114_CLK_SPDIF_MUX 305
-> > -#define TEGRA114_CLK_CLK_OUT_1_MUX 306
-> > -#define TEGRA114_CLK_CLK_OUT_2_MUX 307
-> > -#define TEGRA114_CLK_CLK_OUT_3_MUX 308
-> > +/* 306 */
-> > +/* 307 */
-> > +/* 308 */
-> >  #define TEGRA114_CLK_DSIA_MUX 309
-> >  #define TEGRA114_CLK_DSIB_MUX 310
-> >  #define TEGRA114_CLK_XUSB_SS_DIV2 311
-> > diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/=
-dt-bindings/clock/tegra124-car-common.h
-> > index 0c4f5be0a742..90a0c5e7eb5f 100644
-> > --- a/include/dt-bindings/clock/tegra124-car-common.h
-> > +++ b/include/dt-bindings/clock/tegra124-car-common.h
-> > @@ -269,10 +269,10 @@
-> >  #define TEGRA124_CLK_AUDIO3 242
-> >  #define TEGRA124_CLK_AUDIO4 243
-> >  #define TEGRA124_CLK_SPDIF 244
-> > -#define TEGRA124_CLK_CLK_OUT_1 245
-> > -#define TEGRA124_CLK_CLK_OUT_2 246
-> > -#define TEGRA124_CLK_CLK_OUT_3 247
-> > -#define TEGRA124_CLK_BLINK 248
-> > +/* 245 */
-> > +/* 246 */
-> > +/* 247 */
-> > +/* 248 */
-> >  /* 249 */
-> >  /* 250 */
-> >  /* 251 */
-> > @@ -332,9 +332,9 @@
-> >  #define TEGRA124_CLK_AUDIO3_MUX 303
-> >  #define TEGRA124_CLK_AUDIO4_MUX 304
-> >  #define TEGRA124_CLK_SPDIF_MUX 305
-> > -#define TEGRA124_CLK_CLK_OUT_1_MUX 306
-> > -#define TEGRA124_CLK_CLK_OUT_2_MUX 307
-> > -#define TEGRA124_CLK_CLK_OUT_3_MUX 308
-> > +/* 306 */
-> > +/* 307 */
-> > +/* 308 */
-> >  /* 309 */
-> >  /* 310 */
-> >  #define TEGRA124_CLK_SOR0_LVDS 311 /* deprecated */
-> > diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindi=
-ngs/clock/tegra20-car.h
-> > index b21a0eb32921..fe541f627965 100644
-> > --- a/include/dt-bindings/clock/tegra20-car.h
-> > +++ b/include/dt-bindings/clock/tegra20-car.h
-> > @@ -131,7 +131,7 @@
-> >  #define TEGRA20_CLK_CCLK 108
-> >  #define TEGRA20_CLK_HCLK 109
-> >  #define TEGRA20_CLK_PCLK 110
-> > -#define TEGRA20_CLK_BLINK 111
-> > +/* 111 */
-> >  #define TEGRA20_CLK_PLL_A 112
-> >  #define TEGRA20_CLK_PLL_A_OUT0 113
-> >  #define TEGRA20_CLK_PLL_C 114
-> > diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bind=
-ings/clock/tegra210-car.h
-> > index 44f60623f99b..a3d8d3e75728 100644
-> > --- a/include/dt-bindings/clock/tegra210-car.h
-> > +++ b/include/dt-bindings/clock/tegra210-car.h
-> > @@ -304,10 +304,10 @@
-> >  #define TEGRA210_CLK_AUDIO3 274
-> >  #define TEGRA210_CLK_AUDIO4 275
-> >  #define TEGRA210_CLK_SPDIF 276
-> > -#define TEGRA210_CLK_CLK_OUT_1 277
-> > -#define TEGRA210_CLK_CLK_OUT_2 278
-> > -#define TEGRA210_CLK_CLK_OUT_3 279
-> > -#define TEGRA210_CLK_BLINK 280
-> > +/* 277 */
-> > +/* 278 */
-> > +/* 279 */
-> > +/* 280 */
-> >  #define TEGRA210_CLK_SOR0_LVDS 281 /* deprecated */
-> >  #define TEGRA210_CLK_SOR0_OUT 281
-> >  #define TEGRA210_CLK_SOR1_OUT 282
-> > @@ -386,9 +386,9 @@
-> >  #define TEGRA210_CLK_AUDIO3_MUX 353
-> >  #define TEGRA210_CLK_AUDIO4_MUX 354
-> >  #define TEGRA210_CLK_SPDIF_MUX 355
-> > -#define TEGRA210_CLK_CLK_OUT_1_MUX 356
-> > -#define TEGRA210_CLK_CLK_OUT_2_MUX 357
-> > -#define TEGRA210_CLK_CLK_OUT_3_MUX 358
-> > +/* 356 */
-> > +/* 357 */
-> > +/* 358 */
-> >  #define TEGRA210_CLK_DSIA_MUX 359
-> >  #define TEGRA210_CLK_DSIB_MUX 360
-> >  /* 361 */
-> > diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindi=
-ngs/clock/tegra30-car.h
-> > index 3c90f1535551..20ef2462d9e1 100644
-> > --- a/include/dt-bindings/clock/tegra30-car.h
-> > +++ b/include/dt-bindings/clock/tegra30-car.h
-> > @@ -230,11 +230,11 @@
-> >  #define TEGRA30_CLK_AUDIO3 204
-> >  #define TEGRA30_CLK_AUDIO4 205
-> >  #define TEGRA30_CLK_SPDIF 206
-> > -#define TEGRA30_CLK_CLK_OUT_1 207 /* (extern1) */
-> > -#define TEGRA30_CLK_CLK_OUT_2 208 /* (extern2) */
-> > -#define TEGRA30_CLK_CLK_OUT_3 209 /* (extern3) */
-> > +/* 207 */
-> > +/* 208 */
-> > +/* 209 */
-> >  #define TEGRA30_CLK_SCLK 210
-> > -#define TEGRA30_CLK_BLINK 211
-> > +/* 211 */
-> >  #define TEGRA30_CLK_CCLK_G 212
-> >  #define TEGRA30_CLK_CCLK_LP 213
-> >  #define TEGRA30_CLK_TWD 214
-> > @@ -260,9 +260,9 @@
-> >  /* 297 */
-> >  /* 298 */
-> >  /* 299 */
-> > -#define TEGRA30_CLK_CLK_OUT_1_MUX 300
-> > -#define TEGRA30_CLK_CLK_OUT_2_MUX 301
-> > -#define TEGRA30_CLK_CLK_OUT_3_MUX 302
-> > +/* 300 */
-> > +/* 301 */
-> > +/* 302 */
-> >  #define TEGRA30_CLK_AUDIO0_MUX 303
-> >  #define TEGRA30_CLK_AUDIO1_MUX 304
-> >  #define TEGRA30_CLK_AUDIO2_MUX 305
+> > This series also includes patch to update clock provider from tegra_car
+> > to pmc in the device tree tegra210-smaug.dts that uses clk_out_2 from P=
+MC.
 > >=20
+> > [v2]:	Changes between v1 and v2 are
+> > 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
+> > 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
+> > 	- feedback related to pmc clocks in Tegra PMC driver from v1
+> > 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
+> > 	  by the clock driver using helper functions from Tegra PMC.
+> >=20
+> >  	  Note:
+> > 	  To use helper functions from PMC driver, PMC early init need to
+> > 	  happen prior to using helper functions and these helper functions are
+> > 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
+> > 	  clock registration which happen in clock_init prior to Tegra PMC
+> > 	  probe.
+> > 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
+> > 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
+> > 	  tegra_mc_init.
+> > 	  This implementation of configuring PMC registers thru helper
+> > 	  functions in clock driver needs proper changes across PMC, Clock,
+> > 	  EMC and MC inits to have it work across all Tegra platforms.
+> >=20
+> > 	  Currently PLLM Override is not enabled in the bootloader so proper
+> > 	  patches for this fix will be taken care separately.
 >=20
-> This a device-tree ABI breakage and I'm not sure that it's okay to break
-> older device-trees (Pixel C Smaug board), maybe some kind of fallback is
-> needed.
+> Hello Sowjanya,
+>=20
+> Could you please clarify what do you mean by "PLLM Override not enabled
+> in bootloader"?
+>=20
+> There is T124 Nyan Big Chromebook which is supported in upstream kernel,
+> it has PLLM Override set by bootloader. I also have T30 Nexus 7 tablet
+> which has the PLLM Override set by bootloader as well. It's not clear to
+> me whether this patch series is supposed to break these devices. If the
+> breakage is the case here, then I'm afraid you can't postpone supporting
+> the PLLM Override and a full-featured implementation is needed.
 
-The Smaug support was never really official. I don't think anybody uses
-upstream on it "for real" because there's a very limited set of features
-that we do support. My understanding is that there is a community around
-Pixel C that runs their own forks with some more features and they have
-occasionally upstreamed bits and pieces of that.
+For some more background on why we chose to take this shortcut for now:
+Sowjanya was looking at the full-featured implementation and that ended
+up being a can of worms. The problem is that there are various inter-
+dependencies between the PLLM override and the MC/EMC clocks.
 
-So given how far behind we are with Smaug, I don't think breaking ABI
-stability is really a problem in this case.
+Unfortunately we depend a lot on the explicit ordering of driver probe,
+especially during early boot, so this started to get very complicated,
+very quickly.
 
-Jon, we used to have a Smaug system in our internal upstream testing,
-but that's no longer the case. If we ever were to reinstate that
-testing, updating the DTB shouldn't be a problem, right? My recollection
-is that updating the DTB was always done hand in hand with the kernel
-update.
+The bottom line was basically that we would need to move a whole bunch
+of clocks to register at a very late point in time and support deferred
+probe throughout in order to make it all work together nicely. Sowjanya
+had a crack at that, and while the system ended up booting, there were a
+number of errors from the MC and IOMMU drivers.
+
+At the end, we decided to take a look at that separately because, as was
+mentioned earlier, the PLLM override is not used on platforms where the
+PMC is locked down, so the existing PLLM override code is going to
+continue to work fine on the platforms where it's currently used.
 
 Thierry
 
---NKoe5XOeduwbEQHU
+> I briefly tried to test this series on T30 and this time it doesn't hang
+> on boot, but somehow WiFi MMC card detection is broken. AFAIK, the WiFi
+> chip uses the Blink clock source and the clock should be enabled by the
+> MMC core because this is how DT part looks like:
+>=20
+> brcm_wifi_pwrseq: wifi-pwrseq {
+> 	compatible =3D "mmc-pwrseq-simple";
+> 	clocks =3D <&pmc TEGRA_PMC_CLK_BLINK>;
+> 	clock-names =3D "ext_clock";
+> 	reset-gpios =3D  <&gpio TEGRA_GPIO(D, 3) GPIO_ACTIVE_LOW>;
+> 	post-power-on-delay-ms =3D <300>;
+> 	power-off-delay-us =3D <300>;
+> };
+>=20
+> BTW, I  tried this series on a T20 device which also uses the Blink
+> clock for WiFi card and it works. So looks like this patchset has some
+> problem in regards to the T30 PMC clocks implementation.
+>=20
+> [snip]
+
+--tNQTSEo8WG/FKZ8E
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3fuyEACgkQ3SOs138+
-s6Ghgw//bCb6lt837QID9Q1WO7BEgi2+4lnNZfmuP/5OjKBXMtmgG/9fv1nSbT6s
-GfJr6XUCbCTZXAiGF/STTPaa/1v+xlSklSVsSD38MXbqMueQqN09wfd/ho6r7FVH
-/93BPk34DUtFFTQRSB5a230XwkiI3FS+Dx4j+Etx3jrGhXyVi+wNAmewwRG5aFna
-O0XL3c2sghHtRXNwrBZFcqTe+Co27CAQQma5mwdW26SghRfmOkaPJ0FXZqBgAvr4
-lCtel65eFWrQ0a2p7ncBh7r83seRmTVlgB3oj3WLgjfD4K9bLEkrfFTXbD+r1RHa
-Qr9AQ4Xdd2rRbtRumYWGu9rMJxaJ0VkIVt2Xk6LTb5A2mbJSI3c/XPB0NYVRgr6m
-jKdsw08GqidOYCBCD4Qt+IsECH6xas8XMK1j4SCbJyZApREK9srnAiAlpWRbv6Me
-c03ulVk3uamy/ioBJeMxGQN3UJ/iM1YLL+XfKwowP3vcY8MYRD1n1dL4CmRUiQt/
-4HBZLyPjb1zTJLE5vBEJQY4S3RJ1AdXKUsa6QIn0jotSLgcaZcoQ+gmf0eTuEiKB
-CLHle2pcutTQfmhznmblf4Ak8Ic+PIfGQz7UYDU/WE4He6ErDV6bjwpxP1NnF6Vt
-c1jYgV9XRZIOherjhHEvOvfG/AojaxjzymLjuFJKR7N2gHy5Fxo=
-=6wWI
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3fvOoACgkQ3SOs138+
+s6HnKxAAiP/ptewNZPFdwkeIP6ryrTtGjqvq9RkOsabalTkoA3Q//UTWk0IUAQAj
+OVnDfKgHvg5ikCLUgWa6f9ZXnthJwpdpf+5mkbZECXQh8uFZnG8FxzxFsqOFK7SI
+zdwhq/1EM2pFsO2EJ6g8hmUIfpTODexjedQJ0KP/bxIy7VStg8gci6TyFq7gSuLi
+UxjW8XroG1hcYYVLABlc1JZ4/02o9mIYbDKCvA1aNzOLOww9jcKjlb5/lbR49vdf
+ZbDJk6KZ5zunsJ3x/mdsBz9o7DhoE78MC7UjQwMvFYTGFauRU6/+UMfVqvn129sE
+Yg1zd3rIvSvZdqK62z2iwiAm/VNHo0Ux+MK5I2IFxlwasEomH0hOK2H7z+YC/y+6
+EWdBCwC7F8jEIKb1ABe9e9S4FBd7TqZAzV6SGlh9b+DFD1jo+y2ad0omf/eYCxZt
+bDWafqOhoC2NZ9ogAMqxJreppRKPgYetlFxw12LKjJr2EY7axuRMT88v+kFETk+N
+QW7rMqLniHoqjDWXjKs8qlVALmUlOii8nvPujOskaV4R2UgYMGLRXF127WmGFQfE
+d8/PHdiOy2Of4g34epz8tH/uiUpZD799EWY1BxqEgNw/lseceVWseSMvLh48Hcg+
+uUIZaMpE+zxLtf+RBy/1IL21DPjtv48rKzYCTmd3SVmo5znr8hI=
+=S8i5
 -----END PGP SIGNATURE-----
 
---NKoe5XOeduwbEQHU--
+--tNQTSEo8WG/FKZ8E--
