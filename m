@@ -1,136 +1,84 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 08/29] dt-bindings: interconnect: tegra: Add initial
- IDs
-Date: Thu, 28 Nov 2019 23:06:05 +0300
-Message-ID: <a3c16696-8ecf-ac7f-4f8a-2dd3221e5334@gmail.com>
-References: <20191118200247.3567-1-digetx@gmail.com>
- <20191118200247.3567-9-digetx@gmail.com> <20191119062535.GC2462695@ulmo>
- <8cff3af3-42c7-3312-5f98-cd5eb98b7b7a@gmail.com>
- <f0f36176-8070-08a6-a61f-77221d916f04@gmail.com>
- <20191125113218.GK1409040@ulmo>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 1/2] PM / runtime: Allow drivers to override runtime PM
+ behaviour on sleep
+Date: Thu, 28 Nov 2019 23:03:57 +0100
+Message-ID: <2310325.iNVD75376c@kreacher>
+References: <20191128160314.2381249-1-thierry.reding@gmail.com>
+ <CAJZ5v0haOB1vc8aKk11RR-OnfLHChcqa+z7QkeKyN66s6xM3OA@mail.gmail.com>
+ <20191128163623.GA2382107@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191125113218.GK1409040@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191128163623.GA2382107@ulmo>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc: Len Brown <len.brown@intel.com>, Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Pavel Machek <pavel@ucw.cz>, linux-tegra <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-25.11.2019 14:32, Thierry Reding пишет:
-> On Thu, Nov 21, 2019 at 08:14:35PM +0300, Dmitry Osipenko wrote:
->> 19.11.2019 19:56, Dmitry Osipenko пишет:
->>> 19.11.2019 09:25, Thierry Reding пишет:
->>>> On Mon, Nov 18, 2019 at 11:02:26PM +0300, Dmitry Osipenko wrote:
->>>>> Define interconnect IDs for memory controller (MC), external memory
->>>>> controller (EMC), external memory (EMEM) and memory clients of display
->>>>> controllers (DC).
->>>>>
->>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>> ---
->>>>>  include/dt-bindings/interconnect/tegra-icc.h | 11 +++++++++++
->>>>>  1 file changed, 11 insertions(+)
->>>>>  create mode 100644 include/dt-bindings/interconnect/tegra-icc.h
->>>
->>>
->>> Hello Thierry,
->>>
->>>> There was a bit of discussion regarding this for a recent patch that I
->>>> was working on, see:
->>>>
->>>> 	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=140318
->>>
->>> Thank you very much for the link.
->>>
->>>> I'd rather not use an additional set of definitions for this. The memory
->>>> controller already has a set of native IDs for memory clients that I
->>>> think we can reuse for this.
->>>
->>> I missed that it's fine to have multiple ICC connections defined
->>> per-path, at quick glance looks like indeed it should be fine to re-use
->>> MC IDs.
->>
->> Well, it is not quite correct to have multiple connections per-path.
->>
->> Please take look at interconnect's binding and core.c:
->>
->>   1. there should be one src->dst connection per-path
->>   2. each connection should comprise of one source and one destination nodes
->>
->>>> I've only added these client IDs for Tegra194 because that's where we
->>>> need it to actually describe a specific hardware quirk, but I can come
->>>> up with the equivalent for older chips as well.
->>>
->>> Older Tegra SoCs have hardware units connected to MC through AHB bus,
->>> like USB for example. These units do not have MC client IDs and there is
->>> no MC ID defined for the AHB bus either, but probably it won't be a
->>> problem to define IDs for them if will be necessary.
->>>
->>
->> Since interconnect binding requires to define both source and
->> destination nodes for the path, then MC IDs are not enough in order to
->> define interconnect path because these IDs represent only the source
->> nodes. Destination node should be either EMC or EMEM.
-> 
-> This doesn't really map well to Tegra. The source of the path is always
-> the device and the destination is always the memory controller. We also
-> can have multiple paths between a device and the memory controller. The
-> typical case is to have at least a read and a write path, but there are
-> a number of devices that have multiple read and/or multiple write paths
-> to the memory controller.
-> 
-> Or perhaps I'm looking at this the wrong way, and what we really ought
-> to describe is the paths with MC sitting in the middle. So it'd be
-> something like:
-> 
-> 	MC ID --- source ---> MC --- destination ---> EMC
-
-Yes, this should be correct.
-
-> for write paths and:
-> 
-> 	EMC --- source ---> MC --- destination ---> MC ID
-
-Both write and read paths have the same direction in terms of
-interconnect API. The source node requests bandwidth from the
-destination node, where source is memory client and destination is EMC/EMEM.
-
-> for read paths. I have no idea what would be a good connection ID for
-> EMC, since I don't think MC really differentiates at that level. Perhaps
-> #interconnect-cells = <0> for EMC would be appropriate.
-
-It should be fine to define ICC ID for EMC that doesn't overlap with the
-memory client IDs, say #1000.
-
-> This would make the bindings look more like this, taking a random sample
-> from the above series:
-> 
-> 	ethernet@2490000 {
-> 		...
-> 		interconnects = <&emc &mc TEGRA194_MEMORY_CLIENT_EQOSR>,
-> 				<&mc TEGRA194_MEMORY_CLIENT_EQOSW &emc>;
-> 		interconnect-names = "dma-mem", "dma-mem";
-> 		...
-> 	};
-> 
-> In words, the above would mean that for the ethernet device there is one
-> path (a read slave interface) where data flows from the EMC through the
-> MC to the device with memory client ID TEGRA194_MEMORY_CLIENT_EQOSR. The
-> second path (a write slave interface) describes data flowing from the
-> device (with memory client ID TEGRA194_MEMORY_CLIENT_EQOSW) through the
-> MC and towards the EMC.
-> 
-> Irrespective of the above, I think we definitely need to keep separate
-> IDs for read and write paths because each of them have separate controls
-> for arbitration and latency allowance. So each of those may need to be
-> separately configurable.
-> 
-> Does that make sense?
-
-I'll try to update this series to use ICC-path per display plane and see
-how it goes.
-
-In general, looks like should be fine to have ICC paths defined per
-memory client.
+T24gVGh1cnNkYXksIE5vdmVtYmVyIDI4LCAyMDE5IDU6NTA6MjYgUE0gQ0VUIFRoaWVycnkgUmVk
+aW5nIHdyb3RlOgo+IAo+IC0tMEYxcC8vOFBSSUNrSzRNVwo+IENvbnRlbnQtVHlwZTogdGV4dC9w
+bGFpbjsgY2hhcnNldD11cy1hc2NpaQo+IENvbnRlbnQtRGlzcG9zaXRpb246IGlubGluZQo+IENv
+bnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IHF1b3RlZC1wcmludGFibGUKPiAKPiBPbiBUaHUsIE5v
+diAyOCwgMjAxOSBhdCAwNToxNDo1MVBNICswMTAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90ZToK
+PiA+IE9uIFRodSwgTm92IDI4LCAyMDE5IGF0IDU6MDMgUE0gVGhpZXJyeSBSZWRpbmcgPHRoaWVy
+cnkucmVkaW5nQGdtYWlsLmNvbT49Cj4gIHdyb3RlOgo+ID4gPgo+ID4gPiBGcm9tOiBUaGllcnJ5
+IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+ID4gPgo+ID4gPiBDdXJyZW50bHkgdGhlIGRy
+aXZlciBQTSBjb3JlIHdpbGwgYXV0b21hdGljYWxseSBhY3F1aXJlIGEgcnVudGltZSBQTQo+ID4g
+PiByZWZlcmVuY2UgZm9yIGRldmljZXMgYmVmb3JlIHN5c3RlbSBzbGVlcCBpcyBlbnRlcmVkLiBU
+aGlzIGlzIG5lZWRlZAo+ID4gPiB0byBhdm9pZCBwb3RlbnRpYWwgaXNzdWVzIHJlbGF0ZWQgdG8g
+ZGV2aWNlcycgcGFyZW50cyBnZXR0aW5nIHB1dCB0bwo+ID4gPiBydW50aW1lIHN1c3BlbmQgYXQg
+dGhlIHdyb25nIHRpbWUgYW5kIGNhdXNpbmcgcHJvYmxlbXMgd2l0aCB0aGVpcgo+ID4gPiBjaGls
+ZHJlbi4KPiA+PTIwCj4gPiBOb3Qgb25seSBmb3IgdGhhdC4KPiA+PTIwCj4gPiA+IEluIHNvbWUg
+Y2FzZXMgZHJpdmVycyBhcmUgY2FyZWZ1bGx5IHdyaXR0ZW4gdG8gYXZvaWQgc3VjaCBpc3N1ZXMg
+YW5kCj4gPiA+IHRoZSBkZWZhdWx0IGJlaGF2aW91ciBjYW4gYmUgY2hhbmdlZCB0byBhbGxvdyBy
+dW50aW1lIFBNIHRvIG9wZXJhdGUKPiA+ID4gcmVndWxhcmx5IGR1cmluZyBzeXN0ZW0gc2xlZXAu
+Cj4gPj0yMAo+ID4gQnV0IHRoaXMgY2hhbmdlIGJyZWFrcyBxdWl0ZSBhIGZldyBhc3N1bXB0aW9u
+cyBpbiB0aGUgY29yZSB0b28sIHNvIG5vLAo+ID4gaXQgY2FuJ3QgYmUgbWFkZS4KPiAKPiBBbnl0
+aGluZyBpbiBwYXJ0aWN1bGFyIHRoYXQgSSBjYW4gbG9vayBhdD8gSSdtIG5vdCBzZWVpbmcgYW55
+IGlzc3Vlcwo+IHdoZW4gSSB0ZXN0IHRoaXMsIHdoaWNoIGNvdWxkIG9mIGNvdXJzZSBtZWFuIHRo
+YXQgSSdtIGp1c3QgZ2V0dGluZwo+IGx1Y2t5LgoKVGhlcmUgYXJlIHJhY2VzIGFuZCBzdWNoIHRo
+YXQgeW91IG1heSBuZXZlciBoaXQgZHVyaW5nIGNhc3VhbCB0ZXN0aW5nLgoKPiBPbmUgdGhpbmcg
+dGhhdCBpcnJpdGF0ZWQgbWUgaXMgdGhhdCBJIHRoaW5rIHRoaXMgdXNlZCB0byB3b3JrLiBJIGRv
+Cj4gcmVjYWxsIHRlc3Rpbmcgc3VzcGVuZC9yZXN1bWUgYSBmZXcgeWVhcnMgYWdvIGFuZCBkZXZp
+Y2VzIHdvdWxkIGdldAo+IHByb3Blcmx5IHJ1bnRpbWUgc3VzcGVuZGVkL3Jlc3VtZWQuCgpOb3Qg
+dHJ1ZSBhdCBhbGwuCgpUaGUgUE0gY29yZSBoYXMgYWx3YXlzIHRha2VuIFBNLXJ1bnRpbWUgcmVm
+ZXJlbmNlcyBvbiBhbGwgZGV2aWNlcyBwcmV0dHkgbXVjaApzaW5jZSB3aGVuIFBNLXJ1bnRpbWUg
+d2FzIGludHJvZHVjZWQuCgo+IEkgZGlkIHNvbWUgZGlnZ2luZyBidXQgY291bGRuJ3QKPiBmaW5k
+IGFueXRoaW5nIHRoYXQgd291bGQgaGF2ZSBoYWQgYW4gaW1wYWN0IG9uIHRoaXMuCj4gCj4gR2l2
+ZW4gdGhhdCB0aGlzIGlzIGNvbXBsZXRlbHkgb3B0LWluIGZlYXR1cmUsIHdoeSBhcmUgeW91IGNh
+dGVnb3JpY2FsbHkKPiBOQUsnaW5nIHRoaXM/CgpUaGUgZ2VuZXJhbCBwcm9ibGVtIGlzIHRoYXQg
+aWYgYW55IGRldmljZSBoYXMgYmVlbiB0b3VjaGVkIGJ5IHN5c3RlbS13aWRlCnN1c3BlbmQgY29k
+ZSwgaXQgc2hvdWxkIG5vdCBiZSBzdWJqZWN0IHRvIFBNLXJ1bnRpbWUgYW55IG1vcmUgdW50aWwg
+dGhlCnN1YnNlcXVlbnQgc3lzdGVtLXdpZGUgcmVzdW1lIGlzIGFibGUgdG8gdW5kbyB3aGF0ZXZl
+ciB0aGUgc3VzcGVuZCBkaWQuCgpNb3Jlb3ZlciwgaWYgYSBkZXZpY2UgaXMgcnVudGltZS1zdXNw
+ZW5kZWQsIHRoZSBzeXN0ZW0td2lkZSBzdXNwZW5kIGNvZGUKbWF5IG1pc2hhbmRsZSBpdCwgaW4g
+Z2VuZXJhbC4gIFRoYXQncyB3aHkgUE0tcnVudGltZSBzdXNwZW5kIGlzIG5vdCBhbGxvd2VkCmR1
+cmluZyBzeXN0ZW0td2lkZSB0cmFuc2l0aW9ucyBhdCBhbGwuICBBbmQgaXQgaGFzIGFsd2F5cyBi
+ZWVuIGxpa2UgdGhhdC4KCkZvciBhIHNwZWNpZmljIHBsYXRmb3JtIHlvdSBtYXkgYmUgYWJsZSB0
+byBvdmVyY29tZSB0aGVzZSBsaW1pdGF0aW9ucyBpZgp5b3UgYXJlIGNhcmVmdWwgZW5vdWdoLCBi
+dXQgY2VydGFpbmx5IHRoZXkgYXJlIHRoZXJlIGluIGdlbmVyYWwgYW5kIHN1cmVseQp5b3UgY2Fu
+bm90IHByZXZlbnQgcGVvcGxlIGZyb20gdXNpbmcgeW91ciBvcHQtaW4ganVzdCBiZWNhdXNlIHRo
+ZXkgdGhpbmsKdGhhdCB0aGV5IGtub3cgd2hhdCB0aGV5IGFyZSBkb2luZy4KCj4gSXMgdGhlcmUg
+c29tZSBvdGhlciBhbHRlcm5hdGl2ZSB0aGF0IEkgY2FuIGxvb2sgaW50bz8KCkZpcnN0IG9mIGFs
+bCwgZW5zdXJlIHRoYXQgdGhlIGRwbV9saXN0IG9yZGVyaW5nIGlzIHdoYXQgaXQgc2hvdWxkIGJl
+IG9uIHRoZQpzeXN0ZW0vcGxhdGZvcm0gaW4gcXVlc3Rpb24uICBUaGF0IGNhbiBiZSBkb25lIHdp
+dGggdGhlIGhlbHAgb2YgZGV2aWNlIGxpbmtzLgoKSW4gYWRkaXRpb24sIG1ha2Ugc3VyZSB0aGF0
+IHRoZSBkZXZpY2VzIG5lZWRlZCB0byBzdXNwZW5kIG90aGVyIGRldmljZXMgYXJlCnN1c3BlbmRl
+ZCBpbiB0aGUgbm9pcnEgcGhhc2Ugb2Ygc3lzdGVtLXdpZGUgc3VzcGVuZCBhbmQgcmVzdW1lZCBp
+biB0aGUKbm9pcnEgcGhhc2Ugb2Ygc3lzdGVtLXdpZGUgcmVzdW1lLiAgT3IgYXQgbGVhc3QgYWxs
+IG9mIHRoZSBvdGhlciBkZXZpY2VzCm5lZWQgdG8gYmUgc3VzcGVuZGVkIGJlZm9yZSB0aGVtIGFu
+ZCByZXN1bWVkIGFmdGVyIHRoZW0uCgpUaGVzZSB0d28gdGhpbmdzIHNob3VsZCBhbGxvdyB5b3Ug
+dG8gY292ZXIgdGhlIHZhc3QgbWFqb3JpdHkgb2YgY2FzZXMgaWYKbm90IGFsbCBvZiB0aGVtIHdp
+dGhvdXQgbWVzc2luZyB1cCB3aXRoIHRoZSBydWxlcy4KClRoYW5rcyEKCgoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
