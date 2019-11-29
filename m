@@ -1,14 +1,14 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/9] drm/tegra: hub: Remove bogus connection mutex check
-Date: Fri, 29 Nov 2019 11:12:55 +0100
-Message-ID: <20191129101255.GA2771912@ulmo>
+Subject: Re: [PATCH 2/9] drm/tegra: gem: Properly pin imported buffers
+Date: Fri, 29 Nov 2019 11:15:37 +0100
+Message-ID: <20191129101537.GB2771912@ulmo>
 References: <20191128153741.2380419-1-thierry.reding@gmail.com>
- <20191128153741.2380419-2-thierry.reding@gmail.com>
- <20191129090643.GA624164@phenom.ffwll.local>
+ <20191128153741.2380419-3-thierry.reding@gmail.com>
+ <20191129091038.GB624164@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0048630322=="
+Content-Type: multipart/mixed; boundary="===============0124221833=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191129090643.GA624164@phenom.ffwll.local>
+In-Reply-To: <20191129091038.GB624164@phenom.ffwll.local>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -23,94 +23,154 @@ Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0048630322==
+--===============0124221833==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ncSAzJYg3Aa9+CRW"
+	protocol="application/pgp-signature"; boundary="Hf61M2y+wYpnELGG"
 Content-Disposition: inline
 
 
---ncSAzJYg3Aa9+CRW
+--Hf61M2y+wYpnELGG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 29, 2019 at 10:06:43AM +0100, Daniel Vetter wrote:
-> On Thu, Nov 28, 2019 at 04:37:33PM +0100, Thierry Reding wrote:
+On Fri, Nov 29, 2019 at 10:10:38AM +0100, Daniel Vetter wrote:
+> On Thu, Nov 28, 2019 at 04:37:34PM +0100, Thierry Reding wrote:
 > > From: Thierry Reding <treding@nvidia.com>
 > >=20
-> > I have no recollection why that check is there, but it seems to trigger
-> > all the time, so remove it. Everything works fine without.
+> > Buffers that are imported from a DMA-BUF don't have pages allocated with
+> > them. At the same time an SG table for them can't be derived using the
+> > DMA API helpers because the necessary information doesn't exist. However
+> > there's already an SG table that was created during import, so this can
+> > simply be duplicated.
 > >=20
 > > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > > ---
-> >  drivers/gpu/drm/tegra/hub.c | 3 ---
-> >  1 file changed, 3 deletions(-)
+> >  drivers/gpu/drm/tegra/gem.c | 43 +++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 43 insertions(+)
 > >=20
-> > diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-> > index 6aca0fd5a8e5..e56c0f7d3a13 100644
-> > --- a/drivers/gpu/drm/tegra/hub.c
-> > +++ b/drivers/gpu/drm/tegra/hub.c
-> > @@ -615,11 +615,8 @@ static struct tegra_display_hub_state *
-> >  tegra_display_hub_get_state(struct tegra_display_hub *hub,
-> >  			    struct drm_atomic_state *state)
-> >  {
-> > -	struct drm_device *drm =3D dev_get_drvdata(hub->client.parent);
-> >  	struct drm_private_state *priv;
+> > diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+> > index 746dae32c484..6dfad56eee2b 100644
+> > --- a/drivers/gpu/drm/tegra/gem.c
+> > +++ b/drivers/gpu/drm/tegra/gem.c
+> > @@ -27,6 +27,29 @@ static void tegra_bo_put(struct host1x_bo *bo)
+> >  	drm_gem_object_put_unlocked(&obj->gem);
+> >  }
 > > =20
-> > -	WARN_ON(!drm_modeset_is_locked(&drm->mode_config.connection_mutex));
+> > +/* XXX move this into lib/scatterlist.c? */
+> > +static int sg_alloc_table_from_sg(struct sg_table *sgt, struct scatter=
+list *sg,
+> > +				  unsigned int nents, gfp_t gfp_mask)
+> > +{
+> > +	struct scatterlist *dst;
+> > +	unsigned int i;
+> > +	int err;
+> > +
+> > +	err =3D sg_alloc_table(sgt, nents, gfp_mask);
+> > +	if (err < 0)
+> > +		return err;
+> > +
+> > +	dst =3D sgt->sgl;
+> > +
+> > +	for (i =3D 0; i < nents; i++) {
+> > +		sg_set_page(dst, sg_page(sg), sg->length, 0);
+> > +		dst =3D sg_next(dst);
+> > +		sg =3D sg_next(sg);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static struct sg_table *tegra_bo_pin(struct device *dev, struct host1x=
+_bo *bo,
+> >  				     dma_addr_t *phys)
+> >  {
+> > @@ -52,11 +75,31 @@ static struct sg_table *tegra_bo_pin(struct device =
+*dev, struct host1x_bo *bo,
+> >  		return ERR_PTR(-ENOMEM);
+> > =20
+> >  	if (obj->pages) {
+> > +		/*
+> > +		 * If the buffer object was allocated from the explicit IOMMU
+> > +		 * API code paths, construct an SG table from the pages.
+> > +		 */
+> >  		err =3D sg_alloc_table_from_pages(sgt, obj->pages, obj->num_pages,
+> >  						0, obj->gem.size, GFP_KERNEL);
+> >  		if (err < 0)
+> >  			goto free;
+> > +	} else if (obj->sgt) {
+> > +		/*
+> > +		 * If the buffer object already has an SG table but no pages
+> > +		 * were allocated for it, it means the buffer was imported and
+> > +		 * the SG table needs to be copied to avoid overwriting any
+> > +		 * other potential users of the original SG table.
+> > +		 */
+> > +		err =3D sg_alloc_table_from_sg(sgt, obj->sgt->sgl, obj->sgt->nents,
+> > +					     GFP_KERNEL);
 >=20
-> I suspect copypasta from the mst private state stuff, which relied on this
-> lock to protect it. Except your code never bothered to grab that lock (or
-> any other) so was technically broken until we added generic locking in
->=20
-> commit b962a12050a387e4bbf3a48745afe1d29d396b0d
-> Author: Rob Clark <robdclark@gmail.com>
-> Date:   Mon Oct 22 14:31:22 2018 +0200
->=20
->     drm/atomic: integrate modeset lock with private objects
->=20
-> Hence this is now ok to drop, originally it wasnt.
->=20
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Why duplicate this instead of just handing out obj->sgt, and then in unpin
+> making sure you don't release it? You could also only map/unmap the
+> dma_buf here in your pin/unpin, but that's a pile of work plus the mapping
+> is cached anyway so won't change a thing.
 
-Great, thanks for pointing that out. I'll update the commit message with
-that explanation.
-
-> Aside: You're single-thread all your atomic updates on the hub->lock,
-> which might not be what you want. At least updates to separate crtc should
-> go through in parallel. Usual way to fix this is to add a
-> tegra_crtc_state->hub_changed that your earlier code sets, and then you
-> walk the crtc states in the atomic commit (only those, not all, otherwise
-> you just rebuild that global lock again), and then only grab the hub state
-> when you need to update something.
-
-I'm confused. Where do you see hub->lock? Did you mean wgrp->lock?
+The problem with just handing out obj->sgt is that these buffers may be
+used by several of the host1x engines in the same job. This means that
+they may end up getting dma_map()'ed by multiple devices. dma_map_*()
+stores the DMA addresses for the buffer in the SG entries, so subsequent
+calls would effectively overwrite the earlier mappings, so we need a new
+SG table for each device.
 
 Thierry
 
---ncSAzJYg3Aa9+CRW
+> -Daniel
+>=20
+> > +		if (err < 0)
+> > +			goto free;
+> >  	} else {
+> > +		/*
+> > +		 * If the buffer object had no pages allocated and if it was
+> > +		 * not imported, it had to be allocated with the DMA API, so
+> > +		 * the DMA API helper can be used.
+> > +		 */
+> >  		err =3D dma_get_sgtable(dev, sgt, obj->vaddr, obj->iova,
+> >  				      obj->gem.size);
+> >  		if (err < 0)
+> > --=20
+> > 2.23.0
+> >=20
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>=20
+> --=20
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+
+--Hf61M2y+wYpnELGG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3g7ycACgkQ3SOs138+
-s6GOuQ/9HuycDIjBfg0rCdiRffTMfRaOWBHBnpkbzza9RvHQklg7RTWpqLMSe/iS
-gkgagWGI5SQDygWi+WQK9hGJsR7iKv6GzZ62Bsza+TWKN10mYB6bUtjsLKGTIAYu
-NRTs045Oa5xi0KKWfGnvFv2/gVM89TnjiJ+wf6CGQM5LHNkA4DfNokfyeIEFsw0p
-xNAja97cocFh2I8ba9zDoXAJUGqgjhttqlfpgiQ3Bu02QpfDW46YjkWOBYF/6zmI
-RbgAviKyrfxOAjEGfZBoHzWpOXMgq5Hz1TEQctznmhQy7MYEbPEFe7mPGFOPmOpU
-ZG423NHBxG0tfz+SE2dME2nSQ9d8bywl2Gf9wPpyENAXvmlxUtTCFuZe340zKBN9
-xz+tZWSvMS20qY0SuBjoT2D0r8P+pL6yxkram4FPBcTZc9TZxD1tmSuK8JR+iBws
-2u7U2gt2IZwx4f2AOzoXL3akdKDlDNnRD1YRiQCtHEp37gZODYWWIjtU3n+UjPco
-QTeAY54uzteREIYZbKtkPCezbPenQSFk70x1+8w6DSDNazHCGn5vuwAk/OxLWpnA
-W4Qg27ytBi6ZoPO0F7amgz/rqrJTpq9zvJMU1wDaq+YoYfFlwzpFYkh1i3JKgFQR
-kl7iOTfFGTVTxFMCI1yHU+NzAXNWcP5yRSmFpSFpqdZ5f2msSuM=
-=wr9b
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3g78kACgkQ3SOs138+
+s6HpxQ//VggJhmt9na98LluPjrj45QRtkZxHUX2ZpVqpVQqOq9Aja2GeCNj6HKB/
+NgiW37V+QJwVlLeEgOhWyJb49JQ48wHZJl2sW8JbXsiRlTiQXEJJtdzxPVaBHX8d
+vgiqi4jCRIOpm9McO3MrnRZJKBonCxND0fkMUZ5zUPcoByjrdO21q4lnzt8H/7K5
+ET+SniGMFGK3MZhYj2Rpd7MaDz7Ydi/SwZV+Y19qH/j8hB2aPGXInlZ8Bd+KTBfD
+dQ3qz3aSOF/5IHKdLcrNoN6iq9YXFOmzAWCp3HoizspaSqZQE3qnGmyS0g+QUKpf
+n2VngQOj3jGymh4aQ+X0EPACI5d0JnNG4edWJ8QxCdnbCahkPavZPlD52T4gGPI3
+vsP7yAp62BZi3wV6kPjGSiniwSOZbdsOaXDtrgP/Ato67qdTzc8t8KxocEWhJ25R
+AAziXEnCpMx7g3XRnoyr28UUH+RZBtFjmaGbb/EOOs96RrlSs9LIZ/wH+3AkMH+l
+4BFxmpPQB7DpGZ/2BvzRm5cnOPFgqzdwZ3ljS9MNQzkUQMxG3CDI6yonq5FWNLUI
+LHumo2QLjVrwtqXJb4ns/Au4/ifwxqOKkrrJCjlGoyBzZYogVM9IzDSp9Vkl6KK6
+FHXK84wbO6grpXUOMLQSSNKqCx7JPjS3LxLpxdNIhoK4ej7YQd4=
+=pzBO
 -----END PGP SIGNATURE-----
 
---ncSAzJYg3Aa9+CRW--
+--Hf61M2y+wYpnELGG--
 
---===============0048630322==
+--===============0124221833==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -120,4 +180,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
 
---===============0048630322==--
+--===============0124221833==--
