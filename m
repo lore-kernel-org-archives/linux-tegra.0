@@ -1,16 +1,14 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 1/2] PM / runtime: Allow drivers to override runtime PM
- behaviour on sleep
-Date: Fri, 29 Nov 2019 11:22:08 +0100
-Message-ID: <CAJZ5v0hhMSmLBr+M5CxCrfrcJHH2DzYkRFJBVyBymP0xs35Yzw@mail.gmail.com>
-References: <20191128160314.2381249-1-thierry.reding@gmail.com>
- <20191128163623.GA2382107@ulmo> <2310325.iNVD75376c@kreacher>
- <4149037.GOuMSCS4uT@kreacher> <20191129094303.GB2770902@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 3/9] drm/tegra: gem: Remove premature import restrictions
+Date: Fri, 29 Nov 2019 11:33:45 +0100
+Message-ID: <20191129103345.GC2771912@ulmo>
+References: <20191128153741.2380419-1-thierry.reding@gmail.com>
+ <20191128153741.2380419-4-thierry.reding@gmail.com>
+ <20191129091244.GC624164@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============2054849071=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191129094303.GB2770902@ulmo>
+In-Reply-To: <20191129091244.GC624164@phenom.ffwll.local>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -20,89 +18,130 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Len Brown <len.brown@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux PM <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, dri-devel <dri-devel@lists.freedesktop.org>, Pavel Machek <pavel@ucw.cz>, linux-tegra <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBOb3YgMjksIDIwMTkgYXQgMTE6MDggQU0gVGhpZXJyeSBSZWRpbmcKPHRoaWVycnku
-cmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4KPiBPbiBUaHUsIE5vdiAyOCwgMjAxOSBhdCAxMToy
-MDowMVBNICswMTAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90ZToKPiA+IE9uIFRodXJzZGF5LCBO
-b3ZlbWJlciAyOCwgMjAxOSAxMTowMzo1NyBQTSBDRVQgUmFmYWVsIEouIFd5c29ja2kgd3JvdGU6
-Cj4gPiA+IE9uIFRodXJzZGF5LCBOb3ZlbWJlciAyOCwgMjAxOSA1OjUwOjI2IFBNIENFVCBUaGll
-cnJ5IFJlZGluZyB3cm90ZToKPiA+ID4gPgo+ID4gPiA+IC0tMEYxcC8vOFBSSUNrSzRNVwo+ID4g
-PiA+IENvbnRlbnQtVHlwZTogdGV4dC9wbGFpbjsgY2hhcnNldD11cy1hc2NpaQo+ID4gPiA+IENv
-bnRlbnQtRGlzcG9zaXRpb246IGlubGluZQo+ID4gPiA+IENvbnRlbnQtVHJhbnNmZXItRW5jb2Rp
-bmc6IHF1b3RlZC1wcmludGFibGUKPiA+ID4gPgo+ID4gPiA+IE9uIFRodSwgTm92IDI4LCAyMDE5
-IGF0IDA1OjE0OjUxUE0gKzAxMDAsIFJhZmFlbCBKLiBXeXNvY2tpIHdyb3RlOgo+ID4gPiA+ID4g
-T24gVGh1LCBOb3YgMjgsIDIwMTkgYXQgNTowMyBQTSBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5y
-ZWRpbmdAZ21haWwuY29tPj0KPiA+ID4gPiAgd3JvdGU6Cj4gPiA+ID4gPiA+Cj4gPiA+ID4gPiA+
-IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gPiA+ID4gPiA+Cj4g
-PiA+ID4gPiA+IEN1cnJlbnRseSB0aGUgZHJpdmVyIFBNIGNvcmUgd2lsbCBhdXRvbWF0aWNhbGx5
-IGFjcXVpcmUgYSBydW50aW1lIFBNCj4gPiA+ID4gPiA+IHJlZmVyZW5jZSBmb3IgZGV2aWNlcyBi
-ZWZvcmUgc3lzdGVtIHNsZWVwIGlzIGVudGVyZWQuIFRoaXMgaXMgbmVlZGVkCj4gPiA+ID4gPiA+
-IHRvIGF2b2lkIHBvdGVudGlhbCBpc3N1ZXMgcmVsYXRlZCB0byBkZXZpY2VzJyBwYXJlbnRzIGdl
-dHRpbmcgcHV0IHRvCj4gPiA+ID4gPiA+IHJ1bnRpbWUgc3VzcGVuZCBhdCB0aGUgd3JvbmcgdGlt
-ZSBhbmQgY2F1c2luZyBwcm9ibGVtcyB3aXRoIHRoZWlyCj4gPiA+ID4gPiA+IGNoaWxkcmVuLgo+
-ID4gPiA+ID49MjAKPiA+ID4gPiA+IE5vdCBvbmx5IGZvciB0aGF0Lgo+ID4gPiA+ID49MjAKPiA+
-ID4gPiA+ID4gSW4gc29tZSBjYXNlcyBkcml2ZXJzIGFyZSBjYXJlZnVsbHkgd3JpdHRlbiB0byBh
-dm9pZCBzdWNoIGlzc3VlcyBhbmQKPiA+ID4gPiA+ID4gdGhlIGRlZmF1bHQgYmVoYXZpb3VyIGNh
-biBiZSBjaGFuZ2VkIHRvIGFsbG93IHJ1bnRpbWUgUE0gdG8gb3BlcmF0ZQo+ID4gPiA+ID4gPiBy
-ZWd1bGFybHkgZHVyaW5nIHN5c3RlbSBzbGVlcC4KPiA+ID4gPiA+PTIwCj4gPiA+ID4gPiBCdXQg
-dGhpcyBjaGFuZ2UgYnJlYWtzIHF1aXRlIGEgZmV3IGFzc3VtcHRpb25zIGluIHRoZSBjb3JlIHRv
-bywgc28gbm8sCj4gPiA+ID4gPiBpdCBjYW4ndCBiZSBtYWRlLgo+ID4gPiA+Cj4gPiA+ID4gQW55
-dGhpbmcgaW4gcGFydGljdWxhciB0aGF0IEkgY2FuIGxvb2sgYXQ/IEknbSBub3Qgc2VlaW5nIGFu
-eSBpc3N1ZXMKPiA+ID4gPiB3aGVuIEkgdGVzdCB0aGlzLCB3aGljaCBjb3VsZCBvZiBjb3Vyc2Ug
-bWVhbiB0aGF0IEknbSBqdXN0IGdldHRpbmcKPiA+ID4gPiBsdWNreS4KPiA+ID4KPiA+ID4gVGhl
-cmUgYXJlIHJhY2VzIGFuZCBzdWNoIHRoYXQgeW91IG1heSBuZXZlciBoaXQgZHVyaW5nIGNhc3Vh
-bCB0ZXN0aW5nLgo+ID4gPgo+ID4gPiA+IE9uZSB0aGluZyB0aGF0IGlycml0YXRlZCBtZSBpcyB0
-aGF0IEkgdGhpbmsgdGhpcyB1c2VkIHRvIHdvcmsuIEkgZG8KPiA+ID4gPiByZWNhbGwgdGVzdGlu
-ZyBzdXNwZW5kL3Jlc3VtZSBhIGZldyB5ZWFycyBhZ28gYW5kIGRldmljZXMgd291bGQgZ2V0Cj4g
-PiA+ID4gcHJvcGVybHkgcnVudGltZSBzdXNwZW5kZWQvcmVzdW1lZC4KPiA+ID4KPiA+ID4gTm90
-IHRydWUgYXQgYWxsLgo+ID4gPgo+ID4gPiBUaGUgUE0gY29yZSBoYXMgYWx3YXlzIHRha2VuIFBN
-LXJ1bnRpbWUgcmVmZXJlbmNlcyBvbiBhbGwgZGV2aWNlcyBwcmV0dHkgbXVjaAo+ID4gPiBzaW5j
-ZSB3aGVuIFBNLXJ1bnRpbWUgd2FzIGludHJvZHVjZWQuCj4gPiA+Cj4gPiA+ID4gSSBkaWQgc29t
-ZSBkaWdnaW5nIGJ1dCBjb3VsZG4ndAo+ID4gPiA+IGZpbmQgYW55dGhpbmcgdGhhdCB3b3VsZCBo
-YXZlIGhhZCBhbiBpbXBhY3Qgb24gdGhpcy4KPiA+ID4gPgo+ID4gPiA+IEdpdmVuIHRoYXQgdGhp
-cyBpcyBjb21wbGV0ZWx5IG9wdC1pbiBmZWF0dXJlLCB3aHkgYXJlIHlvdSBjYXRlZ29yaWNhbGx5
-Cj4gPiA+ID4gTkFLJ2luZyB0aGlzPwo+ID4gPgo+ID4gPiBUaGUgZ2VuZXJhbCBwcm9ibGVtIGlz
-IHRoYXQgaWYgYW55IGRldmljZSBoYXMgYmVlbiB0b3VjaGVkIGJ5IHN5c3RlbS13aWRlCj4gPiA+
-IHN1c3BlbmQgY29kZSwgaXQgc2hvdWxkIG5vdCBiZSBzdWJqZWN0IHRvIFBNLXJ1bnRpbWUgYW55
-IG1vcmUgdW50aWwgdGhlCj4gPiA+IHN1YnNlcXVlbnQgc3lzdGVtLXdpZGUgcmVzdW1lIGlzIGFi
-bGUgdG8gdW5kbyB3aGF0ZXZlciB0aGUgc3VzcGVuZCBkaWQuCj4gPiA+Cj4gPiA+IE1vcmVvdmVy
-LCBpZiBhIGRldmljZSBpcyBydW50aW1lLXN1c3BlbmRlZCwgdGhlIHN5c3RlbS13aWRlIHN1c3Bl
-bmQgY29kZQo+ID4gPiBtYXkgbWlzaGFuZGxlIGl0LCBpbiBnZW5lcmFsLiAgVGhhdCdzIHdoeSBQ
-TS1ydW50aW1lIHN1c3BlbmQgaXMgbm90IGFsbG93ZWQKPiA+ID4gZHVyaW5nIHN5c3RlbS13aWRl
-IHRyYW5zaXRpb25zIGF0IGFsbC4gIEFuZCBpdCBoYXMgYWx3YXlzIGJlZW4gbGlrZSB0aGF0Lgo+
-ID4gPgo+ID4gPiBGb3IgYSBzcGVjaWZpYyBwbGF0Zm9ybSB5b3UgbWF5IGJlIGFibGUgdG8gb3Zl
-cmNvbWUgdGhlc2UgbGltaXRhdGlvbnMgaWYKPiA+ID4geW91IGFyZSBjYXJlZnVsIGVub3VnaCwg
-YnV0IGNlcnRhaW5seSB0aGV5IGFyZSB0aGVyZSBpbiBnZW5lcmFsIGFuZCBzdXJlbHkKPiA+ID4g
-eW91IGNhbm5vdCBwcmV2ZW50IHBlb3BsZSBmcm9tIHVzaW5nIHlvdXIgb3B0LWluIGp1c3QgYmVj
-YXVzZSB0aGV5IHRoaW5rCj4gPiA+IHRoYXQgdGhleSBrbm93IHdoYXQgdGhleSBhcmUgZG9pbmcu
-Cj4gPgo+ID4gQlRXLCB3aGF0IGlmIHVzZXIgc3BhY2UgcHJldmVudHMgUE0tcnVudGltZSBmcm9t
-IHN1c3BlbmRpbmcgZGV2aWNlcyBieSB3cml0aW5nCj4gPiAib24iIHRvIHRoZWlyICJjb250cm9s
-IiBmaWxlcz8KPiA+Cj4gPiBTeXN0ZW0td2lkZSBzdXNwZW5kIGlzIChvZiBjb3Vyc2UpIHN0aWxs
-IGV4cGVjdGVkIHRvIHdvcmsgaW4gdGhhdCBjYXNlLCBzbyBob3cKPiA+IGV4YWN0bHkgd291bGQg
-eW91IG92ZXJjb21lIHRoYXQ/Cj4KPiBJIHN1cHBvc2Ugb25lIHdheSB0byBvdmVyY29tZSB0aGF0
-IHdvdWxkIGJlIHRvIG1ha2UgaXQgYW4gZXJyb3IgdG8gd3JpdGUKPiAib24iIHRvIHRoZSAiY29u
-dHJvbCIgZmlsZXMgZm9yIHRoZXNlIGRldmljZXMuCgpTZWVpbmcgc3VnZ2VzdGlvbnMgbGlrZSB0
-aGlzIGluIG1lc3NhZ2VzIGZyb20gc2Vhc29uZWQga2VybmVsCmRldmVsb3BlcnMgaXMgc2VyaW91
-c2x5IGRpc2FwcG9pbnRpbmcuIDotLwoKPiBDdXJyZW50bHkgZG9pbmcgdGhpcyBpcyBsaWtlbHkg
-Z29pbmcgdG8gYnJlYWsgZGlzcGxheSBzdXBwb3J0IG9uIFRlZ3JhLAo+IHNvIHRoaXMgd291bGQg
-YmUgYSBnb29kIGlkZWEgaW4gdGhpcyBjYXNlIGFueXdheS4KClBNLXJ1bnRpbWUgaGFzIGFsd2F5
-cyBhbGxvd2VkIHVzZXIgc3BhY2UgdG8gcHJldmVudCBkZXZpY2VzIGZyb20gYmVpbmcKc3VzcGVu
-ZGVkIGFuZCBpdCBzZWVtcyB0aGF0IHRoaXMgaGFzIG5vdCBiZWVuIHRha2VuIGludG8gYWNjb3Vu
-dCBieQpUZWdyYSBkaXNwbGF5IHN1cHBvcnQgZGV2ZWxvcGVycyBhdCBhbGwuCgo+IEFnYWluLCBJ
-IGNvdWxkIGF2b2lkIGFsbCBvZiB0aGVzZSBpc3N1ZXMgYnkgYXZvaWRpbmcgcnVudGltZSBQTSBp
-biB0aGlzIGRyaXZlciwKCkkgZG9uJ3QgcXVpdGUgc2VlIHRoZSBjb25uZWN0aW9uIGhlcmUuCgpQ
-cmV2ZW50aW5nIGEgZGV2aWNlIGZyb20gc3VzcGVuZGluZyBzaG91bGQgbmV2ZXIgYmUgYSBmdW5j
-dGlvbmFsCnByb2JsZW0uICBJdCBtYXkgYmUgYW4gZW5lcmd5LWVmZmljaWVuY3kgcHJvYmxlbSwg
-YnV0IHRoYXQncyBzb21ldGhpbmcKZm9yIHVzZXIgc3BhY2UgdG8gY29uc2lkZXIgYmVmb3JlIHdy
-aXRpbmcgIm9uIiB0byBhIGRldmljZSdzIGNvbnRyb2wKZmlsZS4KCj4gYnV0IEkgd291bGQgZW5k
-IHVwIHJlaW1wbGVtZW50aW5nIHNvbWUgb2YgdGhlIHNhbWUgY29uY2VwdHMuIEknZAo+IHJhdGhl
-ciB1c2Ugc29tZXRoaW5nIHRoYXQncyBzdXBwb3J0ZWQgYnkgdGhlIFBNIGNvcmUgYW5kIHRoYXQg
-bWlnaHQgYmUKPiB1c2VmdWwgdG8gb3RoZXIgZHJpdmVycyB0aGFuIHJlaW52ZW50IHRoZSB3aGVl
-bC4KCldoaWNoIGRvZXNuJ3QgaGF2ZSB0byBiZSBieSB1c2luZyBQTS1ydW50aW1lIHN1c3BlbmQg
-Zm9yIHRoZSBoYW5kbGluZwpvZiBzeXN0ZW0td2lkZSBzdXNwZW5kLCBhdCBsZWFzdCBpbiBteSB2
-aWV3LgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+
+--===============2054849071==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2qXFWqzzG3v1+95a"
+Content-Disposition: inline
+
+
+--2qXFWqzzG3v1+95a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 29, 2019 at 10:12:44AM +0100, Daniel Vetter wrote:
+> On Thu, Nov 28, 2019 at 04:37:35PM +0100, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > It's not known at import time whether or not all users of a DMA-BUF will
+> > be able to deal with non-contiguous memory. Each user needs to verify at
+> > map-time whether it can access the buffer.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>=20
+> I'm not seeing any other check for nents ... does this mean that there's
+> not actually any block that requires contig mem?
+
+All the blocks require contiguous memory. However, they are all behind
+an IOMMU and in practice will always end up mapping the buffers through
+the IOMMU. Techically this check should now be in tegra_dc_pin(), which
+is called by the ->prepare_fb() callback. I didn't add it because there
+are no practical use-cases where this happens, although I guess you
+could come up with a kernel and DTB combination where this is actually
+possible by jumping through some hoops.
+
+This fix here is to make Tegra DRM interoperation with Nouveau work
+again since that's currently broken after moving to the IOMMU-backed DMA
+API as an alternative to explicit IOMMU usage. With explicit IOMMU usage
+(that's the if corresponding to the else removed below) the IOMMU domain
+was shared between the display controllers at the driver level, so it
+was fine to make this determination in the else branch because this was
+the case where no IOMMU was in play. After the move to the DMA API, this
+else branch is also taken when the DMA API is backed by an IOMMU and at
+it is unfortunately not known at import time which display controller
+ends up scanning out the DMA BUF, nor if that display controller is
+behind an IOMMU. We only know that when the actual mapping takes place,
+so we'd need to look at sgt->nents after dma_map_sg() in in
+tegra_dc_pin().
+
+I'll add that check there, just in case anyone manages to conjure up
+such a configuration.
+
+Thierry
+
+> -Daniel
+>=20
+> > ---
+> >  drivers/gpu/drm/tegra/gem.c | 7 -------
+> >  1 file changed, 7 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+> > index 6dfad56eee2b..bc15b430156d 100644
+> > --- a/drivers/gpu/drm/tegra/gem.c
+> > +++ b/drivers/gpu/drm/tegra/gem.c
+> > @@ -440,13 +440,6 @@ static struct tegra_bo *tegra_bo_import(struct drm=
+_device *drm,
+> >  		err =3D tegra_bo_iommu_map(tegra, bo);
+> >  		if (err < 0)
+> >  			goto detach;
+> > -	} else {
+> > -		if (bo->sgt->nents > 1) {
+> > -			err =3D -EINVAL;
+> > -			goto detach;
+> > -		}
+> > -
+> > -		bo->iova =3D sg_dma_address(bo->sgt->sgl);
+> >  	}
+> > =20
+> >  	bo->gem.import_attach =3D attach;
+> > --=20
+> > 2.23.0
+> >=20
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>=20
+> --=20
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+
+--2qXFWqzzG3v1+95a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3g9AYACgkQ3SOs138+
+s6FG4Q/+MELOSntdI3cs//bpJH77d00IZ9a9pXAiFVD0YalrljI5RpYYDzICdEH6
+UTc0HSQlRocML4Rf999F7qCg0hTrbbts+zUvwmsOTOlxFtzYe1g/K7MZ6iIyEg7W
+pb5FbdjnObRbQLa9nwoq+dauKh38kJIV1+2VAZrtMM4c0TsUf9lRklo8t8pEa3ww
+XdAh/qCGFfIt47q30FAuB9FDeRSZoulA4HDfYVueWnDYQHWtJIERsdpz5tR7g8kV
+CWHYRLuwRqIWhgfKsXlLBiYoxm++6UbV0zrqwy3UZZQpZvXVuDr1ca5XincUrV1S
+q3T/xztSLuIEoFiJydwZbtqW4Z6s+694yNMBOOA88k2uvhKRa9WsTr2R2XhlXXam
+jz8RMUBUKY436Zph1kVyen+e9jhcOloJ9UfxzFQt2lgqstlYPmEEOJ9iPdQUmDJh
+JhKafEY/pX7RGLJYtRiy/e6+CMXlb9Gc6KCaomPHOszgdwfkyrKzMMMx+Azi6t2H
+fB8xtpAjfs7sV1BdEksUOpjT0RPcE2rCHRZABLRM0l1IL+TEwDsETFSLXQ4hTcUQ
+rYsx98FuJiuaV5DARARIr36aWHOdkmgghO3U0hSmQJeyqS5au7xbGDnzvosN6Qv2
+avRGtpspAMCuPnTQSalUgHYk1pFoqtLjweStvkA+JXPd2J10mhw=
+=QGlG
+-----END PGP SIGNATURE-----
+
+--2qXFWqzzG3v1+95a--
+
+--===============2054849071==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============2054849071==--
