@@ -1,79 +1,81 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 1/2] PM / runtime: Allow drivers to override runtime PM
- behaviour on sleep
-Date: Thu, 28 Nov 2019 23:20:01 +0100
-Message-ID: <4149037.GOuMSCS4uT@kreacher>
-References: <20191128160314.2381249-1-thierry.reding@gmail.com>
- <20191128163623.GA2382107@ulmo> <2310325.iNVD75376c@kreacher>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.4 00/66] 5.4.1-stable review
+Date: Fri, 29 Nov 2019 09:52:45 +0100
+Message-ID: <20191129085245.GC3584430@kroah.com>
+References: <20191127202632.536277063@linuxfoundation.org>
+ <772b6606-f65c-371f-ec74-e78aba55f798@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <2310325.iNVD75376c@kreacher>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Len Brown <len.brown@intel.com>, Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Pavel Machek <pavel@ucw.cz>, linux-tegra <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <772b6606-f65c-371f-ec74-e78aba55f798@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1cnNkYXksIE5vdmVtYmVyIDI4LCAyMDE5IDExOjAzOjU3IFBNIENFVCBSYWZhZWwgSi4g
-V3lzb2NraSB3cm90ZToKPiBPbiBUaHVyc2RheSwgTm92ZW1iZXIgMjgsIDIwMTkgNTo1MDoyNiBQ
-TSBDRVQgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gPiAKPiA+IC0tMEYxcC8vOFBSSUNrSzRNVwo+
-ID4gQ29udGVudC1UeXBlOiB0ZXh0L3BsYWluOyBjaGFyc2V0PXVzLWFzY2lpCj4gPiBDb250ZW50
-LURpc3Bvc2l0aW9uOiBpbmxpbmUKPiA+IENvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IHF1b3Rl
-ZC1wcmludGFibGUKPiA+IAo+ID4gT24gVGh1LCBOb3YgMjgsIDIwMTkgYXQgMDU6MTQ6NTFQTSAr
-MDEwMCwgUmFmYWVsIEouIFd5c29ja2kgd3JvdGU6Cj4gPiA+IE9uIFRodSwgTm92IDI4LCAyMDE5
-IGF0IDU6MDMgUE0gVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT49Cj4g
-PiAgd3JvdGU6Cj4gPiA+ID4KPiA+ID4gPiBGcm9tOiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0Bu
-dmlkaWEuY29tPgo+ID4gPiA+Cj4gPiA+ID4gQ3VycmVudGx5IHRoZSBkcml2ZXIgUE0gY29yZSB3
-aWxsIGF1dG9tYXRpY2FsbHkgYWNxdWlyZSBhIHJ1bnRpbWUgUE0KPiA+ID4gPiByZWZlcmVuY2Ug
-Zm9yIGRldmljZXMgYmVmb3JlIHN5c3RlbSBzbGVlcCBpcyBlbnRlcmVkLiBUaGlzIGlzIG5lZWRl
-ZAo+ID4gPiA+IHRvIGF2b2lkIHBvdGVudGlhbCBpc3N1ZXMgcmVsYXRlZCB0byBkZXZpY2VzJyBw
-YXJlbnRzIGdldHRpbmcgcHV0IHRvCj4gPiA+ID4gcnVudGltZSBzdXNwZW5kIGF0IHRoZSB3cm9u
-ZyB0aW1lIGFuZCBjYXVzaW5nIHByb2JsZW1zIHdpdGggdGhlaXIKPiA+ID4gPiBjaGlsZHJlbi4K
-PiA+ID49MjAKPiA+ID4gTm90IG9ubHkgZm9yIHRoYXQuCj4gPiA+PTIwCj4gPiA+ID4gSW4gc29t
-ZSBjYXNlcyBkcml2ZXJzIGFyZSBjYXJlZnVsbHkgd3JpdHRlbiB0byBhdm9pZCBzdWNoIGlzc3Vl
-cyBhbmQKPiA+ID4gPiB0aGUgZGVmYXVsdCBiZWhhdmlvdXIgY2FuIGJlIGNoYW5nZWQgdG8gYWxs
-b3cgcnVudGltZSBQTSB0byBvcGVyYXRlCj4gPiA+ID4gcmVndWxhcmx5IGR1cmluZyBzeXN0ZW0g
-c2xlZXAuCj4gPiA+PTIwCj4gPiA+IEJ1dCB0aGlzIGNoYW5nZSBicmVha3MgcXVpdGUgYSBmZXcg
-YXNzdW1wdGlvbnMgaW4gdGhlIGNvcmUgdG9vLCBzbyBubywKPiA+ID4gaXQgY2FuJ3QgYmUgbWFk
-ZS4KPiA+IAo+ID4gQW55dGhpbmcgaW4gcGFydGljdWxhciB0aGF0IEkgY2FuIGxvb2sgYXQ/IEkn
-bSBub3Qgc2VlaW5nIGFueSBpc3N1ZXMKPiA+IHdoZW4gSSB0ZXN0IHRoaXMsIHdoaWNoIGNvdWxk
-IG9mIGNvdXJzZSBtZWFuIHRoYXQgSSdtIGp1c3QgZ2V0dGluZwo+ID4gbHVja3kuCj4gCj4gVGhl
-cmUgYXJlIHJhY2VzIGFuZCBzdWNoIHRoYXQgeW91IG1heSBuZXZlciBoaXQgZHVyaW5nIGNhc3Vh
-bCB0ZXN0aW5nLgo+IAo+ID4gT25lIHRoaW5nIHRoYXQgaXJyaXRhdGVkIG1lIGlzIHRoYXQgSSB0
-aGluayB0aGlzIHVzZWQgdG8gd29yay4gSSBkbwo+ID4gcmVjYWxsIHRlc3Rpbmcgc3VzcGVuZC9y
-ZXN1bWUgYSBmZXcgeWVhcnMgYWdvIGFuZCBkZXZpY2VzIHdvdWxkIGdldAo+ID4gcHJvcGVybHkg
-cnVudGltZSBzdXNwZW5kZWQvcmVzdW1lZC4KPiAKPiBOb3QgdHJ1ZSBhdCBhbGwuCj4gCj4gVGhl
-IFBNIGNvcmUgaGFzIGFsd2F5cyB0YWtlbiBQTS1ydW50aW1lIHJlZmVyZW5jZXMgb24gYWxsIGRl
-dmljZXMgcHJldHR5IG11Y2gKPiBzaW5jZSB3aGVuIFBNLXJ1bnRpbWUgd2FzIGludHJvZHVjZWQu
-Cj4gCj4gPiBJIGRpZCBzb21lIGRpZ2dpbmcgYnV0IGNvdWxkbid0Cj4gPiBmaW5kIGFueXRoaW5n
-IHRoYXQgd291bGQgaGF2ZSBoYWQgYW4gaW1wYWN0IG9uIHRoaXMuCj4gPiAKPiA+IEdpdmVuIHRo
-YXQgdGhpcyBpcyBjb21wbGV0ZWx5IG9wdC1pbiBmZWF0dXJlLCB3aHkgYXJlIHlvdSBjYXRlZ29y
-aWNhbGx5Cj4gPiBOQUsnaW5nIHRoaXM/Cj4gCj4gVGhlIGdlbmVyYWwgcHJvYmxlbSBpcyB0aGF0
-IGlmIGFueSBkZXZpY2UgaGFzIGJlZW4gdG91Y2hlZCBieSBzeXN0ZW0td2lkZQo+IHN1c3BlbmQg
-Y29kZSwgaXQgc2hvdWxkIG5vdCBiZSBzdWJqZWN0IHRvIFBNLXJ1bnRpbWUgYW55IG1vcmUgdW50
-aWwgdGhlCj4gc3Vic2VxdWVudCBzeXN0ZW0td2lkZSByZXN1bWUgaXMgYWJsZSB0byB1bmRvIHdo
-YXRldmVyIHRoZSBzdXNwZW5kIGRpZC4KPiAKPiBNb3Jlb3ZlciwgaWYgYSBkZXZpY2UgaXMgcnVu
-dGltZS1zdXNwZW5kZWQsIHRoZSBzeXN0ZW0td2lkZSBzdXNwZW5kIGNvZGUKPiBtYXkgbWlzaGFu
-ZGxlIGl0LCBpbiBnZW5lcmFsLiAgVGhhdCdzIHdoeSBQTS1ydW50aW1lIHN1c3BlbmQgaXMgbm90
-IGFsbG93ZWQKPiBkdXJpbmcgc3lzdGVtLXdpZGUgdHJhbnNpdGlvbnMgYXQgYWxsLiAgQW5kIGl0
-IGhhcyBhbHdheXMgYmVlbiBsaWtlIHRoYXQuCj4gCj4gRm9yIGEgc3BlY2lmaWMgcGxhdGZvcm0g
-eW91IG1heSBiZSBhYmxlIHRvIG92ZXJjb21lIHRoZXNlIGxpbWl0YXRpb25zIGlmCj4geW91IGFy
-ZSBjYXJlZnVsIGVub3VnaCwgYnV0IGNlcnRhaW5seSB0aGV5IGFyZSB0aGVyZSBpbiBnZW5lcmFs
-IGFuZCBzdXJlbHkKPiB5b3UgY2Fubm90IHByZXZlbnQgcGVvcGxlIGZyb20gdXNpbmcgeW91ciBv
-cHQtaW4ganVzdCBiZWNhdXNlIHRoZXkgdGhpbmsKPiB0aGF0IHRoZXkga25vdyB3aGF0IHRoZXkg
-YXJlIGRvaW5nLgoKQlRXLCB3aGF0IGlmIHVzZXIgc3BhY2UgcHJldmVudHMgUE0tcnVudGltZSBm
-cm9tIHN1c3BlbmRpbmcgZGV2aWNlcyBieSB3cml0aW5nCiJvbiIgdG8gdGhlaXIgImNvbnRyb2wi
-IGZpbGVzPwoKU3lzdGVtLXdpZGUgc3VzcGVuZCBpcyAob2YgY291cnNlKSBzdGlsbCBleHBlY3Rl
-ZCB0byB3b3JrIGluIHRoYXQgY2FzZSwgc28gaG93CmV4YWN0bHkgd291bGQgeW91IG92ZXJjb21l
-IHRoYXQ/CgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+On Thu, Nov 28, 2019 at 10:42:00AM +0000, Jon Hunter wrote:
+> 
+> On 27/11/2019 20:31, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.1 release.
+> > There are 66 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.1-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> 
+> Here are the test results for Tegra ...
+> 
+> Test results for stable-v5.4:
+>     13 builds:	13 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     38 tests:	37 pass, 1 fail
+> 
+> Linux version:	5.4.1-rc1-gd6453d6b0c57
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
+> We are seeing 1 failure for Tegra194, but this is not a new failure this
+> is present in v5.4 and it is a kernel warnings failure that has been
+> fixed for v5.5 by the following commits.
+> 
+> This one has been merged for v5.5 ...
+> 
+> commit c745da8d4320c49e54662c0a8f7cb6b8204f44c4
+> Author: Jon Hunter <jonathanh@nvidia.com>
+> Date:   Fri Oct 11 09:34:59 2019 +0100
+> 
+>     mailbox: tegra: Fix superfluous IRQ error message
+> 
+> This one has not been merged for v5.5 yet ...
+
+I'll queue that up next.
+
+> commit d440538e5f219900a9fc9d96fd10727b4d2b3c48
+> Author: Jon Hunter <jonathanh@nvidia.com>
+> Date:   Wed Sep 25 15:12:28 2019 +0100
+> 
+>     arm64: tegra: Fix 'active-low' warning for Jetson Xavier regulator
+> 
+> If you like I can let you know once the above is merged so we can merge
+> for linux-5.4.y.
+
+Please do, that would be great.
+
+thanks for testing all of these and letting me know.
+
+greg k-h
