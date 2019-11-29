@@ -1,162 +1,123 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 1/2] PM / runtime: Allow drivers to override runtime PM
- behaviour on sleep
-Date: Fri, 29 Nov 2019 21:27:34 +0100
-Message-ID: <20191129202734.GU624164@phenom.ffwll.local>
-References: <20191128160314.2381249-1-thierry.reding@gmail.com>
- <20191128163623.GA2382107@ulmo> <2310325.iNVD75376c@kreacher>
- <4149037.GOuMSCS4uT@kreacher> <20191129094303.GB2770902@ulmo>
- <CAJZ5v0hhMSmLBr+M5CxCrfrcJHH2DzYkRFJBVyBymP0xs35Yzw@mail.gmail.com>
- <20191129120719.GF2771912@ulmo>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [RESEND PATCH] arm/arm64: defconfig: Update configs to use the new CROS_EC options
+Date: Fri, 29 Nov 2019 23:49:12 +0100
+Message-ID: <20191129224912.32087-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20191129120719.GF2771912@ulmo>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Len Brown <len.brown@intel.com>, Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, dri-devel <dri-devel@lists.freedesktop.org>, Pavel Machek <pavel@ucw.cz>, linux-tegra <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org, bleung@chromium.org, dtor@chromium.org, Krzysztof Kozlowski <krzk@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Lee Jones <lee.jones@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Joel Stanley <joel@jms.id.au>, Leonard Crestez <leonard.crestez@nxp.com>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Dinh Nguyen <dinguyen@kernel.org>, Bastien Nocera <hadess@hadess.net>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-arm-kernel@lists.inf
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBOb3YgMjksIDIwMTkgYXQgMDE6MDc6MTlQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
-d3JvdGU6Cj4gT24gRnJpLCBOb3YgMjksIDIwMTkgYXQgMTE6MjI6MDhBTSArMDEwMCwgUmFmYWVs
-IEouIFd5c29ja2kgd3JvdGU6Cj4gPiBPbiBGcmksIE5vdiAyOSwgMjAxOSBhdCAxMTowOCBBTSBU
-aGllcnJ5IFJlZGluZwo+ID4gPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4gPiA+
-Cj4gPiA+IE9uIFRodSwgTm92IDI4LCAyMDE5IGF0IDExOjIwOjAxUE0gKzAxMDAsIFJhZmFlbCBK
-LiBXeXNvY2tpIHdyb3RlOgo+ID4gPiA+IE9uIFRodXJzZGF5LCBOb3ZlbWJlciAyOCwgMjAxOSAx
-MTowMzo1NyBQTSBDRVQgUmFmYWVsIEouIFd5c29ja2kgd3JvdGU6Cj4gPiA+ID4gPiBPbiBUaHVy
-c2RheSwgTm92ZW1iZXIgMjgsIDIwMTkgNTo1MDoyNiBQTSBDRVQgVGhpZXJyeSBSZWRpbmcgd3Jv
-dGU6Cj4gPiA+ID4gPiA+Cj4gPiA+ID4gPiA+IC0tMEYxcC8vOFBSSUNrSzRNVwo+ID4gPiA+ID4g
-PiBDb250ZW50LVR5cGU6IHRleHQvcGxhaW47IGNoYXJzZXQ9dXMtYXNjaWkKPiA+ID4gPiA+ID4g
-Q29udGVudC1EaXNwb3NpdGlvbjogaW5saW5lCj4gPiA+ID4gPiA+IENvbnRlbnQtVHJhbnNmZXIt
-RW5jb2Rpbmc6IHF1b3RlZC1wcmludGFibGUKPiA+ID4gPiA+ID4KPiA+ID4gPiA+ID4gT24gVGh1
-LCBOb3YgMjgsIDIwMTkgYXQgMDU6MTQ6NTFQTSArMDEwMCwgUmFmYWVsIEouIFd5c29ja2kgd3Jv
-dGU6Cj4gPiA+ID4gPiA+ID4gT24gVGh1LCBOb3YgMjgsIDIwMTkgYXQgNTowMyBQTSBUaGllcnJ5
-IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPj0KPiA+ID4gPiA+ID4gIHdyb3RlOgo+
-ID4gPiA+ID4gPiA+ID4KPiA+ID4gPiA+ID4gPiA+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVk
-aW5nQG52aWRpYS5jb20+Cj4gPiA+ID4gPiA+ID4gPgo+ID4gPiA+ID4gPiA+ID4gQ3VycmVudGx5
-IHRoZSBkcml2ZXIgUE0gY29yZSB3aWxsIGF1dG9tYXRpY2FsbHkgYWNxdWlyZSBhIHJ1bnRpbWUg
-UE0KPiA+ID4gPiA+ID4gPiA+IHJlZmVyZW5jZSBmb3IgZGV2aWNlcyBiZWZvcmUgc3lzdGVtIHNs
-ZWVwIGlzIGVudGVyZWQuIFRoaXMgaXMgbmVlZGVkCj4gPiA+ID4gPiA+ID4gPiB0byBhdm9pZCBw
-b3RlbnRpYWwgaXNzdWVzIHJlbGF0ZWQgdG8gZGV2aWNlcycgcGFyZW50cyBnZXR0aW5nIHB1dCB0
-bwo+ID4gPiA+ID4gPiA+ID4gcnVudGltZSBzdXNwZW5kIGF0IHRoZSB3cm9uZyB0aW1lIGFuZCBj
-YXVzaW5nIHByb2JsZW1zIHdpdGggdGhlaXIKPiA+ID4gPiA+ID4gPiA+IGNoaWxkcmVuLgo+ID4g
-PiA+ID4gPiA+PTIwCj4gPiA+ID4gPiA+ID4gTm90IG9ubHkgZm9yIHRoYXQuCj4gPiA+ID4gPiA+
-ID49MjAKPiA+ID4gPiA+ID4gPiA+IEluIHNvbWUgY2FzZXMgZHJpdmVycyBhcmUgY2FyZWZ1bGx5
-IHdyaXR0ZW4gdG8gYXZvaWQgc3VjaCBpc3N1ZXMgYW5kCj4gPiA+ID4gPiA+ID4gPiB0aGUgZGVm
-YXVsdCBiZWhhdmlvdXIgY2FuIGJlIGNoYW5nZWQgdG8gYWxsb3cgcnVudGltZSBQTSB0byBvcGVy
-YXRlCj4gPiA+ID4gPiA+ID4gPiByZWd1bGFybHkgZHVyaW5nIHN5c3RlbSBzbGVlcC4KPiA+ID4g
-PiA+ID4gPj0yMAo+ID4gPiA+ID4gPiA+IEJ1dCB0aGlzIGNoYW5nZSBicmVha3MgcXVpdGUgYSBm
-ZXcgYXNzdW1wdGlvbnMgaW4gdGhlIGNvcmUgdG9vLCBzbyBubywKPiA+ID4gPiA+ID4gPiBpdCBj
-YW4ndCBiZSBtYWRlLgo+ID4gPiA+ID4gPgo+ID4gPiA+ID4gPiBBbnl0aGluZyBpbiBwYXJ0aWN1
-bGFyIHRoYXQgSSBjYW4gbG9vayBhdD8gSSdtIG5vdCBzZWVpbmcgYW55IGlzc3Vlcwo+ID4gPiA+
-ID4gPiB3aGVuIEkgdGVzdCB0aGlzLCB3aGljaCBjb3VsZCBvZiBjb3Vyc2UgbWVhbiB0aGF0IEkn
-bSBqdXN0IGdldHRpbmcKPiA+ID4gPiA+ID4gbHVja3kuCj4gPiA+ID4gPgo+ID4gPiA+ID4gVGhl
-cmUgYXJlIHJhY2VzIGFuZCBzdWNoIHRoYXQgeW91IG1heSBuZXZlciBoaXQgZHVyaW5nIGNhc3Vh
-bCB0ZXN0aW5nLgo+ID4gPiA+ID4KPiA+ID4gPiA+ID4gT25lIHRoaW5nIHRoYXQgaXJyaXRhdGVk
-IG1lIGlzIHRoYXQgSSB0aGluayB0aGlzIHVzZWQgdG8gd29yay4gSSBkbwo+ID4gPiA+ID4gPiBy
-ZWNhbGwgdGVzdGluZyBzdXNwZW5kL3Jlc3VtZSBhIGZldyB5ZWFycyBhZ28gYW5kIGRldmljZXMg
-d291bGQgZ2V0Cj4gPiA+ID4gPiA+IHByb3Blcmx5IHJ1bnRpbWUgc3VzcGVuZGVkL3Jlc3VtZWQu
-Cj4gPiA+ID4gPgo+ID4gPiA+ID4gTm90IHRydWUgYXQgYWxsLgo+ID4gPiA+ID4KPiA+ID4gPiA+
-IFRoZSBQTSBjb3JlIGhhcyBhbHdheXMgdGFrZW4gUE0tcnVudGltZSByZWZlcmVuY2VzIG9uIGFs
-bCBkZXZpY2VzIHByZXR0eSBtdWNoCj4gPiA+ID4gPiBzaW5jZSB3aGVuIFBNLXJ1bnRpbWUgd2Fz
-IGludHJvZHVjZWQuCj4gPiA+ID4gPgo+ID4gPiA+ID4gPiBJIGRpZCBzb21lIGRpZ2dpbmcgYnV0
-IGNvdWxkbid0Cj4gPiA+ID4gPiA+IGZpbmQgYW55dGhpbmcgdGhhdCB3b3VsZCBoYXZlIGhhZCBh
-biBpbXBhY3Qgb24gdGhpcy4KPiA+ID4gPiA+ID4KPiA+ID4gPiA+ID4gR2l2ZW4gdGhhdCB0aGlz
-IGlzIGNvbXBsZXRlbHkgb3B0LWluIGZlYXR1cmUsIHdoeSBhcmUgeW91IGNhdGVnb3JpY2FsbHkK
-PiA+ID4gPiA+ID4gTkFLJ2luZyB0aGlzPwo+ID4gPiA+ID4KPiA+ID4gPiA+IFRoZSBnZW5lcmFs
-IHByb2JsZW0gaXMgdGhhdCBpZiBhbnkgZGV2aWNlIGhhcyBiZWVuIHRvdWNoZWQgYnkgc3lzdGVt
-LXdpZGUKPiA+ID4gPiA+IHN1c3BlbmQgY29kZSwgaXQgc2hvdWxkIG5vdCBiZSBzdWJqZWN0IHRv
-IFBNLXJ1bnRpbWUgYW55IG1vcmUgdW50aWwgdGhlCj4gPiA+ID4gPiBzdWJzZXF1ZW50IHN5c3Rl
-bS13aWRlIHJlc3VtZSBpcyBhYmxlIHRvIHVuZG8gd2hhdGV2ZXIgdGhlIHN1c3BlbmQgZGlkLgo+
-ID4gPiA+ID4KPiA+ID4gPiA+IE1vcmVvdmVyLCBpZiBhIGRldmljZSBpcyBydW50aW1lLXN1c3Bl
-bmRlZCwgdGhlIHN5c3RlbS13aWRlIHN1c3BlbmQgY29kZQo+ID4gPiA+ID4gbWF5IG1pc2hhbmRs
-ZSBpdCwgaW4gZ2VuZXJhbC4gIFRoYXQncyB3aHkgUE0tcnVudGltZSBzdXNwZW5kIGlzIG5vdCBh
-bGxvd2VkCj4gPiA+ID4gPiBkdXJpbmcgc3lzdGVtLXdpZGUgdHJhbnNpdGlvbnMgYXQgYWxsLiAg
-QW5kIGl0IGhhcyBhbHdheXMgYmVlbiBsaWtlIHRoYXQuCj4gPiA+ID4gPgo+ID4gPiA+ID4gRm9y
-IGEgc3BlY2lmaWMgcGxhdGZvcm0geW91IG1heSBiZSBhYmxlIHRvIG92ZXJjb21lIHRoZXNlIGxp
-bWl0YXRpb25zIGlmCj4gPiA+ID4gPiB5b3UgYXJlIGNhcmVmdWwgZW5vdWdoLCBidXQgY2VydGFp
-bmx5IHRoZXkgYXJlIHRoZXJlIGluIGdlbmVyYWwgYW5kIHN1cmVseQo+ID4gPiA+ID4geW91IGNh
-bm5vdCBwcmV2ZW50IHBlb3BsZSBmcm9tIHVzaW5nIHlvdXIgb3B0LWluIGp1c3QgYmVjYXVzZSB0
-aGV5IHRoaW5rCj4gPiA+ID4gPiB0aGF0IHRoZXkga25vdyB3aGF0IHRoZXkgYXJlIGRvaW5nLgo+
-ID4gPiA+Cj4gPiA+ID4gQlRXLCB3aGF0IGlmIHVzZXIgc3BhY2UgcHJldmVudHMgUE0tcnVudGlt
-ZSBmcm9tIHN1c3BlbmRpbmcgZGV2aWNlcyBieSB3cml0aW5nCj4gPiA+ID4gIm9uIiB0byB0aGVp
-ciAiY29udHJvbCIgZmlsZXM/Cj4gPiA+ID4KPiA+ID4gPiBTeXN0ZW0td2lkZSBzdXNwZW5kIGlz
-IChvZiBjb3Vyc2UpIHN0aWxsIGV4cGVjdGVkIHRvIHdvcmsgaW4gdGhhdCBjYXNlLCBzbyBob3cK
-PiA+ID4gPiBleGFjdGx5IHdvdWxkIHlvdSBvdmVyY29tZSB0aGF0Pwo+ID4gPgo+ID4gPiBJIHN1
-cHBvc2Ugb25lIHdheSB0byBvdmVyY29tZSB0aGF0IHdvdWxkIGJlIHRvIG1ha2UgaXQgYW4gZXJy
-b3IgdG8gd3JpdGUKPiA+ID4gIm9uIiB0byB0aGUgImNvbnRyb2wiIGZpbGVzIGZvciB0aGVzZSBk
-ZXZpY2VzLgo+ID4gCj4gPiBTZWVpbmcgc3VnZ2VzdGlvbnMgbGlrZSB0aGlzIGluIG1lc3NhZ2Vz
-IGZyb20gc2Vhc29uZWQga2VybmVsCj4gPiBkZXZlbG9wZXJzIGlzIHNlcmlvdXNseSBkaXNhcHBv
-aW50aW5nLiA6LS8KPiA+IAo+ID4gPiBDdXJyZW50bHkgZG9pbmcgdGhpcyBpcyBsaWtlbHkgZ29p
-bmcgdG8gYnJlYWsgZGlzcGxheSBzdXBwb3J0IG9uIFRlZ3JhLAo+ID4gPiBzbyB0aGlzIHdvdWxk
-IGJlIGEgZ29vZCBpZGVhIGluIHRoaXMgY2FzZSBhbnl3YXkuCj4gPiAKPiA+IFBNLXJ1bnRpbWUg
-aGFzIGFsd2F5cyBhbGxvd2VkIHVzZXIgc3BhY2UgdG8gcHJldmVudCBkZXZpY2VzIGZyb20gYmVp
-bmcKPiA+IHN1c3BlbmRlZCBhbmQgaXQgc2VlbXMgdGhhdCB0aGlzIGhhcyBub3QgYmVlbiB0YWtl
-biBpbnRvIGFjY291bnQgYnkKPiA+IFRlZ3JhIGRpc3BsYXkgc3VwcG9ydCBkZXZlbG9wZXJzIGF0
-IGFsbC4KPiA+IAo+ID4gPiBBZ2FpbiwgSSBjb3VsZCBhdm9pZCBhbGwgb2YgdGhlc2UgaXNzdWVz
-IGJ5IGF2b2lkaW5nIHJ1bnRpbWUgUE0gaW4gdGhpcyBkcml2ZXIsCj4gPiAKPiA+IEkgZG9uJ3Qg
-cXVpdGUgc2VlIHRoZSBjb25uZWN0aW9uIGhlcmUuCj4gPiAKPiA+IFByZXZlbnRpbmcgYSBkZXZp
-Y2UgZnJvbSBzdXNwZW5kaW5nIHNob3VsZCBuZXZlciBiZSBhIGZ1bmN0aW9uYWwKPiA+IHByb2Js
-ZW0uICBJdCBtYXkgYmUgYW4gZW5lcmd5LWVmZmljaWVuY3kgcHJvYmxlbSwgYnV0IHRoYXQncyBz
-b21ldGhpbmcKPiA+IGZvciB1c2VyIHNwYWNlIHRvIGNvbnNpZGVyIGJlZm9yZSB3cml0aW5nICJv
-biIgdG8gYSBkZXZpY2UncyBjb250cm9sCj4gPiBmaWxlLgo+IAo+IFRoYXQncyByZWFsbHkgYSBx
-dWVzdGlvbiBvZiBob3cgeW91IGRlZmluZSBzdXNwZW5zaW9uLiBJbiB0aGUgY2FzZSBvZgo+IGRp
-c3BsYXkgZHJpdmVycyB3ZSBoYXZlIHRoZSBzb21ld2hhdCB1bmZvcnR1bmF0ZSBzaXR1YXRpb24g
-dGhhdCBpbiBtb3N0Cj4gU29DcyB0aGUgZGlzcGxheSAiZGV2aWNlIiBpcyBhY3R1YWxseSByZXBy
-ZXNlbnRlZCBieSBhIGNvbGxlY3Rpb24gb2YKPiBkaWZmZXJlbnQgZGV2aWNlcy4gT24gVGVncmEg
-c3BlY2lmaWNhbGx5LCBmb3IgZXhhbXBsZSwgeW91IGhhdmUgYSBjb3VwbGUKPiBvZiBkaXNwbGF5
-IGNvbnRyb2xsZXJzLCB0aGVuIHNvbWUgImVuY29kZXJzIiB0aGF0IHRha2UgcGl4ZWwgc3RyZWFt
-cwo+IGZyb20gdGhlIGRpc3BsYXkgY29udHJvbGxlcnMgYW5kIGVuY29kZSB0aGVtIGludG8gc29t
-ZSB3aXJlIGZvcm1hdCBsaWtlCj4gTFZEUywgSERNSSwgRFNJIG9yIERQLgo+IAo+IFByb2hpYml0
-aW5nIHN1c3BlbnNpb24gb2YgYW55IG9mIHRoZSBpbmRpdmlkdWFsIGRldmljZXMgY2F1c2VzIHBy
-b2JsZW1zCj4gYmVjYXVzZSBpdCBlZmZlY3RpdmVseSBtYWtlcyB0aGUgd2hvbGUgY29tcG9zaXRl
-IGRpc3BsYXkgZGV2aWNlIG5vdAo+IHN1c3BlbmRhYmxlLiBEb2luZyBzbyBpbiB0dXJuIHVzdWFs
-bHkgbWVhbnMgdGhhdCB5b3UgY2FuJ3QgY2hhbmdlIHRoZQo+IGRpc3BsYXkgY29uZmlndXJhdGlv
-biBhbnltb3JlIGJlY2F1c2UgZGV2aWNlcyBuZWVkIHRvIGJlIHBvd2VyZWQgdXAgYW5kCj4gZG93
-biBpbiBvcmRlciB0byBjaGFuZ2UgdGhlIGNvbmZpZ3VyYXRpb24uCj4gCj4gSSBjb25zaWRlciBw
-b3dlcmluZyB1cCBhbmQgZG93biB0aGUgZGV2aWNlcyBhIGZvcm0gb2Ygc3VzcGVuc2lvbi4gSGVu
-Y2UKPiBpdCBzZWVtZWQgbmF0dXJhbCB0byBpbXBsZW1lbnQgdXNpbmcgcnVudGltZSBQTS4KPiAK
-PiBJdCBzb3VuZHMgdG8gbWUgbGlrZSB1c2Vyc3BhY2UgcHJldmVudGluZyBydW50aW1lIFBNIGlz
-IHByb2JsZW1hdGljIGluCj4gbW9zdCBzY2VuYXJpb3MgdGhhdCBpbnZvbHZlIGNvbXBvc2l0ZSBk
-ZXZpY2VzIGJlY2F1c2UgaXQgbWFrZXMgYWxsIG9mCj4gdGhlIGludGVyYWN0aW9ucyBiZXR3ZWVu
-IHRoZSBkZXZpY2VzIGEgYml0IGNvbXBsaWNhdGVkLgoKWWVhaCB3aXRoIHRoZSBEVCBtb2RlbCBv
-ZiBob3cgYSBTb0Mgd29ya3MsIGFsbCB0aGVzZSB0aW55IGxpdHRsZSBkZXZpY2VzCmFyZSBlc3Nl
-bnRpYWxseSBpbXBsZW1lbnRhdGlvbiBkZXRhaWxzIHRoYXQgdXNlcnNwYWNlIHJlYWxseSBzaG91
-bGRuJ3QKZXZlciBjYXJlIGFib3V0LCBtdWNoIGxlc3MgY2hhbmdlIGFueXRoaW5nIHdpdGggdGhl
-bS4KCklmIHVzZXJzcGFjZSBkb2Vzbid0IHdhbnQgdGhlIGdwdSB0byBhdXRvLXN1c3BlbmQsIHRo
-ZW4gdGhlcmUncyB0aGUKb3ZlcmFsbCBncHUgZGV2aWNlIHRoYXQgaXQgY2FuIHNldCB0aGF0IG9u
-LCBhbmQgSSBndWVzcyBkb2luZyB0aGF0IHNob3VsZApub3QgYnJlYWsgYSBkZWNlbnRseSB3cml0
-dGVuIGRyaXZlci4gRm9yIGFsbCB0aGUgb3RoZXJzIGluc2lzdGluZyB0aGF0CnVzZXJzcGFjZSBj
-YW4gYmUgc3R1cGlkIGVzc2VudGlhbGx5IG1lYW5zIHdlIGdldCB0byBoYW5kIHJvbGwgbGFyZ2Ug
-Y2h1bmtzCm9mIHJ1bnRpbWUgcG0gaW4gZHJpdmVycywgd2hpY2ggZmVlbHMgcmF0aGVyIHBvaW50
-bGVzcy4gV2UgaGF2ZSBhIGxvdCBvZgp0aGF0IGhvbWUtZ3Jvd24gcnVudGltZSBwbSBmb3Igc3Vi
-Y29tcG9uZW50cyBpbiBpOTE1LCBhbmQgSSB2ZXJ5IG11Y2gKdW5kZXJzdGFuZCB3aHkgdGhlIERU
-IGZvbGtzIHdhbnRlZCB0byBzdGFuZGFyZGl6ZSBhbGwgdGhhdCB3aXRoIGxvdHMgb2YKbGl0dGxl
-IGV4cGxpY2l0IGRldmljZXMuCgpNYXliZSB0aGUgbWlzdGFrZSB3YXMgc2ltcGx5IGFsbG93aW5n
-IHRoZXNlIHRvIGJlIHZpc2libGUgdG8gdXNlcnNwYWNlLgotRGFuaWVsCgo+ID4gPiBidXQgSSB3
-b3VsZCBlbmQgdXAgcmVpbXBsZW1lbnRpbmcgc29tZSBvZiB0aGUgc2FtZSBjb25jZXB0cy4gSSdk
-Cj4gPiA+IHJhdGhlciB1c2Ugc29tZXRoaW5nIHRoYXQncyBzdXBwb3J0ZWQgYnkgdGhlIFBNIGNv
-cmUgYW5kIHRoYXQgbWlnaHQgYmUKPiA+ID4gdXNlZnVsIHRvIG90aGVyIGRyaXZlcnMgdGhhbiBy
-ZWludmVudCB0aGUgd2hlZWwuCj4gPiAKPiA+IFdoaWNoIGRvZXNuJ3QgaGF2ZSB0byBiZSBieSB1
-c2luZyBQTS1ydW50aW1lIHN1c3BlbmQgZm9yIHRoZSBoYW5kbGluZwo+ID4gb2Ygc3lzdGVtLXdp
-ZGUgc3VzcGVuZCwgYXQgbGVhc3QgaW4gbXkgdmlldy4KPiAKPiBXZWxsLCBydW50aW1lIFBNIGlz
-IHZlcnkgY29udmVuaWVudCBmb3IgdGhpcywgdGhvdWdoLiBJdCB3b3VsZCBhbGxvdyB0aGUKPiBz
-YW1lIGNvZGUgcGF0aHMgdG8gYmUgdXNlZCBpbiBhbGwgY2FzZXMuCj4gCj4gVGhpZXJyeQoKCgo+
-IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRw
-czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKCi0t
-IApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRw
-Oi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWw=
+Recently we refactored the CrOS EC drivers moving part of the code from
+the MFD subsystem to the platform chrome subsystem. During this change
+we needed to rename some config options, so, update the defconfigs
+accordingly.
+
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+
+ arch/arm/configs/exynos_defconfig   | 6 +++++-
+ arch/arm/configs/multi_v7_defconfig | 6 ++++--
+ arch/arm/configs/pxa_defconfig      | 4 +++-
+ arch/arm/configs/tegra_defconfig    | 2 +-
+ arch/arm64/configs/defconfig        | 6 ++++--
+ 5 files changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 08db1c83eb2d..e09bb7642272 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -157,7 +157,11 @@ CONFIG_CPU_THERMAL=y
+ CONFIG_THERMAL_EMULATION=y
+ CONFIG_WATCHDOG=y
+ CONFIG_S3C2410_WATCHDOG=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
++CONFIG_CROS_EC_I2C=y
++CONFIG_CROS_EC_SPI=y
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX77693=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index e4c8def9a0a5..fd9a3ba3a88f 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -525,10 +525,12 @@ CONFIG_MFD_BCM590XX=y
+ CONFIG_MFD_AC100=y
+ CONFIG_MFD_AXP20X_I2C=y
+ CONFIG_MFD_AXP20X_RSB=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+-CONFIG_MFD_CROS_EC_CHARDEV=m
++CONFIG_CROS_EC_CHARDEV=m
+ CONFIG_MFD_DA9063=m
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+index b817c57f05f1..f1b084ace88d 100644
+--- a/arch/arm/configs/pxa_defconfig
++++ b/arch/arm/configs/pxa_defconfig
+@@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=m
+ CONFIG_MFD_AS3711=y
+ CONFIG_MFD_BCM590XX=m
+ CONFIG_MFD_AXP20X=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+ CONFIG_MFD_ASIC3=y
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 8f5c6a5b444c..061037012335 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=y
+ CONFIG_WATCHDOG=y
+ CONFIG_TEGRA_WATCHDOG=y
+ CONFIG_MFD_AS3722=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index c9a867ac32d4..952d4b915430 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -466,8 +466,7 @@ CONFIG_MFD_ALTERA_SYSMGR=y
+ CONFIG_MFD_BD9571MWV=y
+ CONFIG_MFD_AXP20X_I2C=y
+ CONFIG_MFD_AXP20X_RSB=y
+-CONFIG_MFD_CROS_EC=y
+-CONFIG_MFD_CROS_EC_CHARDEV=m
++CONFIG_MFD_CROS_EC_DEV=y
+ CONFIG_MFD_EXYNOS_LPASS=m
+ CONFIG_MFD_HI6421_PMIC=y
+ CONFIG_MFD_HI655X_PMIC=y
+@@ -683,8 +682,11 @@ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_MMIO=y
+ CONFIG_XEN_GNTDEV=y
+ CONFIG_XEN_GRANT_DEV_ALLOC=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
+ CONFIG_CROS_EC_I2C=y
+ CONFIG_CROS_EC_SPI=y
++CONFIG_CROS_EC_CHARDEV=m
+ CONFIG_COMMON_CLK_RK808=y
+ CONFIG_COMMON_CLK_SCPI=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
+-- 
+2.20.1
