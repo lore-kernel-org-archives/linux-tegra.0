@@ -1,81 +1,69 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.4 00/66] 5.4.1-stable review
-Date: Fri, 29 Nov 2019 09:52:45 +0100
-Message-ID: <20191129085245.GC3584430@kroah.com>
-References: <20191127202632.536277063@linuxfoundation.org>
- <772b6606-f65c-371f-ec74-e78aba55f798@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 1/9] drm/tegra: hub: Remove bogus connection mutex check
+Date: Fri, 29 Nov 2019 10:06:43 +0100
+Message-ID: <20191129090643.GA624164@phenom.ffwll.local>
+References: <20191128153741.2380419-1-thierry.reding@gmail.com>
+ <20191128153741.2380419-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <772b6606-f65c-371f-ec74-e78aba55f798@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+In-Reply-To: <20191128153741.2380419-2-thierry.reding@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 10:42:00AM +0000, Jon Hunter wrote:
-> 
-> On 27/11/2019 20:31, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.1 release.
-> > There are 66 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.1-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
-> 
-> Here are the test results for Tegra ...
-> 
-> Test results for stable-v5.4:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	37 pass, 1 fail
-> 
-> Linux version:	5.4.1-rc1-gd6453d6b0c57
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
-> We are seeing 1 failure for Tegra194, but this is not a new failure this
-> is present in v5.4 and it is a kernel warnings failure that has been
-> fixed for v5.5 by the following commits.
-> 
-> This one has been merged for v5.5 ...
-> 
-> commit c745da8d4320c49e54662c0a8f7cb6b8204f44c4
-> Author: Jon Hunter <jonathanh@nvidia.com>
-> Date:   Fri Oct 11 09:34:59 2019 +0100
-> 
->     mailbox: tegra: Fix superfluous IRQ error message
-> 
-> This one has not been merged for v5.5 yet ...
-
-I'll queue that up next.
-
-> commit d440538e5f219900a9fc9d96fd10727b4d2b3c48
-> Author: Jon Hunter <jonathanh@nvidia.com>
-> Date:   Wed Sep 25 15:12:28 2019 +0100
-> 
->     arm64: tegra: Fix 'active-low' warning for Jetson Xavier regulator
-> 
-> If you like I can let you know once the above is merged so we can merge
-> for linux-5.4.y.
-
-Please do, that would be great.
-
-thanks for testing all of these and letting me know.
-
-greg k-h
+T24gVGh1LCBOb3YgMjgsIDIwMTkgYXQgMDQ6Mzc6MzNQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
+d3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBJ
+IGhhdmUgbm8gcmVjb2xsZWN0aW9uIHdoeSB0aGF0IGNoZWNrIGlzIHRoZXJlLCBidXQgaXQgc2Vl
+bXMgdG8gdHJpZ2dlcgo+IGFsbCB0aGUgdGltZSwgc28gcmVtb3ZlIGl0LiBFdmVyeXRoaW5nIHdv
+cmtzIGZpbmUgd2l0aG91dC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJl
+ZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaHViLmMgfCAz
+IC0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5j
+Cj4gaW5kZXggNmFjYTBmZDVhOGU1Li5lNTZjMGY3ZDNhMTMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2h1Yi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5j
+Cj4gQEAgLTYxNSwxMSArNjE1LDggQEAgc3RhdGljIHN0cnVjdCB0ZWdyYV9kaXNwbGF5X2h1Yl9z
+dGF0ZSAqCj4gIHRlZ3JhX2Rpc3BsYXlfaHViX2dldF9zdGF0ZShzdHJ1Y3QgdGVncmFfZGlzcGxh
+eV9odWIgKmh1YiwKPiAgCQkJICAgIHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSkKPiAg
+ewo+IC0Jc3RydWN0IGRybV9kZXZpY2UgKmRybSA9IGRldl9nZXRfZHJ2ZGF0YShodWItPmNsaWVu
+dC5wYXJlbnQpOwo+ICAJc3RydWN0IGRybV9wcml2YXRlX3N0YXRlICpwcml2Owo+ICAKPiAtCVdB
+Uk5fT04oIWRybV9tb2Rlc2V0X2lzX2xvY2tlZCgmZHJtLT5tb2RlX2NvbmZpZy5jb25uZWN0aW9u
+X211dGV4KSk7CgpJIHN1c3BlY3QgY29weXBhc3RhIGZyb20gdGhlIG1zdCBwcml2YXRlIHN0YXRl
+IHN0dWZmLCB3aGljaCByZWxpZWQgb24gdGhpcwpsb2NrIHRvIHByb3RlY3QgaXQuIEV4Y2VwdCB5
+b3VyIGNvZGUgbmV2ZXIgYm90aGVyZWQgdG8gZ3JhYiB0aGF0IGxvY2sgKG9yCmFueSBvdGhlcikg
+c28gd2FzIHRlY2huaWNhbGx5IGJyb2tlbiB1bnRpbCB3ZSBhZGRlZCBnZW5lcmljIGxvY2tpbmcg
+aW4KCmNvbW1pdCBiOTYyYTEyMDUwYTM4N2U0YmJmM2E0ODc0NWFmZTFkMjlkMzk2YjBkCkF1dGhv
+cjogUm9iIENsYXJrIDxyb2JkY2xhcmtAZ21haWwuY29tPgpEYXRlOiAgIE1vbiBPY3QgMjIgMTQ6
+MzE6MjIgMjAxOCArMDIwMAoKICAgIGRybS9hdG9taWM6IGludGVncmF0ZSBtb2Rlc2V0IGxvY2sg
+d2l0aCBwcml2YXRlIG9iamVjdHMKCkhlbmNlIHRoaXMgaXMgbm93IG9rIHRvIGRyb3AsIG9yaWdp
+bmFsbHkgaXQgd2FzbnQuCgpSZXZpZXdlZC1ieTogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRl
+ckBmZndsbC5jaD4KCkFzaWRlOiBZb3UncmUgc2luZ2xlLXRocmVhZCBhbGwgeW91ciBhdG9taWMg
+dXBkYXRlcyBvbiB0aGUgaHViLT5sb2NrLAp3aGljaCBtaWdodCBub3QgYmUgd2hhdCB5b3Ugd2Fu
+dC4gQXQgbGVhc3QgdXBkYXRlcyB0byBzZXBhcmF0ZSBjcnRjIHNob3VsZApnbyB0aHJvdWdoIGlu
+IHBhcmFsbGVsLiBVc3VhbCB3YXkgdG8gZml4IHRoaXMgaXMgdG8gYWRkIGEKdGVncmFfY3J0Y19z
+dGF0ZS0+aHViX2NoYW5nZWQgdGhhdCB5b3VyIGVhcmxpZXIgY29kZSBzZXRzLCBhbmQgdGhlbiB5
+b3UKd2FsayB0aGUgY3J0YyBzdGF0ZXMgaW4gdGhlIGF0b21pYyBjb21taXQgKG9ubHkgdGhvc2Us
+IG5vdCBhbGwsIG90aGVyd2lzZQp5b3UganVzdCByZWJ1aWxkIHRoYXQgZ2xvYmFsIGxvY2sgYWdh
+aW4pLCBhbmQgdGhlbiBvbmx5IGdyYWIgdGhlIGh1YiBzdGF0ZQp3aGVuIHlvdSBuZWVkIHRvIHVw
+ZGF0ZSBzb21ldGhpbmcuCgpDaGVlcnMsIERhbmllbAoKPiAtCj4gIAlwcml2ID0gZHJtX2F0b21p
+Y19nZXRfcHJpdmF0ZV9vYmpfc3RhdGUoc3RhdGUsICZodWItPmJhc2UpOwo+ICAJaWYgKElTX0VS
+Uihwcml2KSkKPiAgCQlyZXR1cm4gRVJSX0NBU1QocHJpdik7Cj4gLS0gCj4gMi4yMy4wCj4gCj4g
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCgotLSAK
+RGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDov
+L2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVs
