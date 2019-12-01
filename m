@@ -1,123 +1,56 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH] arm/arm64: defconfig: Update configs to use the new CROS_EC options
-Date: Fri, 29 Nov 2019 23:49:12 +0100
-Message-ID: <20191129224912.32087-1-enric.balletbo@collabora.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [PATCH v1 02/16] drm/exynos: fix opencoded use of drm_panel_*
+Date: Sun, 1 Dec 2019 12:32:21 +0100
+Message-ID: <20191201113221.GB8753@ravnborg.org>
+References: <20190804201637.1240-1-sam@ravnborg.org>
+ <20190804201637.1240-3-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org, bleung@chromium.org, dtor@chromium.org, Krzysztof Kozlowski <krzk@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Lee Jones <lee.jones@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Joel Stanley <joel@jms.id.au>, Leonard Crestez <leonard.crestez@nxp.com>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Dinh Nguyen <dinguyen@kernel.org>, Bastien Nocera <hadess@hadess.net>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-arm-kernel@lists.inf
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190804201637.1240-3-sam@ravnborg.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, Allison Randal <allison@lohutok.net>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Sascha Hauer <s.hauer@pengutronix.de>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Sean Paul <sean@poorly.run>, linux-arm-kernel@list
 List-Id: linux-tegra@vger.kernel.org
 
-Recently we refactored the CrOS EC drivers moving part of the code from
-the MFD subsystem to the platform chrome subsystem. During this change
-we needed to rename some config options, so, update the defconfigs
-accordingly.
-
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-Tested-by: Gwendal Grignou <gwendal@chromium.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
-
- arch/arm/configs/exynos_defconfig   | 6 +++++-
- arch/arm/configs/multi_v7_defconfig | 6 ++++--
- arch/arm/configs/pxa_defconfig      | 4 +++-
- arch/arm/configs/tegra_defconfig    | 2 +-
- arch/arm64/configs/defconfig        | 6 ++++--
- 5 files changed, 17 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 08db1c83eb2d..e09bb7642272 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -157,7 +157,11 @@ CONFIG_CPU_THERMAL=y
- CONFIG_THERMAL_EMULATION=y
- CONFIG_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
--CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_DEV=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=y
-+CONFIG_CROS_EC_I2C=y
-+CONFIG_CROS_EC_SPI=y
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
- CONFIG_MFD_MAX77693=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index e4c8def9a0a5..fd9a3ba3a88f 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -525,10 +525,12 @@ CONFIG_MFD_BCM590XX=y
- CONFIG_MFD_AC100=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
--CONFIG_MFD_CROS_EC=m
-+CONFIG_MFD_CROS_EC_DEV=m
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=m
- CONFIG_CROS_EC_I2C=m
- CONFIG_CROS_EC_SPI=m
--CONFIG_MFD_CROS_EC_CHARDEV=m
-+CONFIG_CROS_EC_CHARDEV=m
- CONFIG_MFD_DA9063=m
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
-diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
-index b817c57f05f1..f1b084ace88d 100644
---- a/arch/arm/configs/pxa_defconfig
-+++ b/arch/arm/configs/pxa_defconfig
-@@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=m
- CONFIG_MFD_AS3711=y
- CONFIG_MFD_BCM590XX=m
- CONFIG_MFD_AXP20X=y
--CONFIG_MFD_CROS_EC=m
-+CONFIG_MFD_CROS_EC_DEV=m
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=m
- CONFIG_CROS_EC_I2C=m
- CONFIG_CROS_EC_SPI=m
- CONFIG_MFD_ASIC3=y
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 8f5c6a5b444c..061037012335 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=y
- CONFIG_WATCHDOG=y
- CONFIG_TEGRA_WATCHDOG=y
- CONFIG_MFD_AS3722=y
--CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_DEV=y
- CONFIG_MFD_MAX8907=y
- CONFIG_MFD_STMPE=y
- CONFIG_MFD_PALMAS=y
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c9a867ac32d4..952d4b915430 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -466,8 +466,7 @@ CONFIG_MFD_ALTERA_SYSMGR=y
- CONFIG_MFD_BD9571MWV=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
--CONFIG_MFD_CROS_EC=y
--CONFIG_MFD_CROS_EC_CHARDEV=m
-+CONFIG_MFD_CROS_EC_DEV=y
- CONFIG_MFD_EXYNOS_LPASS=m
- CONFIG_MFD_HI6421_PMIC=y
- CONFIG_MFD_HI655X_PMIC=y
-@@ -683,8 +682,11 @@ CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_MMIO=y
- CONFIG_XEN_GNTDEV=y
- CONFIG_XEN_GRANT_DEV_ALLOC=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=y
- CONFIG_CROS_EC_I2C=y
- CONFIG_CROS_EC_SPI=y
-+CONFIG_CROS_EC_CHARDEV=m
- CONFIG_COMMON_CLK_RK808=y
- CONFIG_COMMON_CLK_SCPI=y
- CONFIG_COMMON_CLK_CS2000_CP=y
--- 
-2.20.1
+T24gU3VuLCBBdWcgMDQsIDIwMTkgYXQgMTA6MTY6MjNQTSArMDIwMCwgU2FtIFJhdm5ib3JnIHdy
+b3RlOgo+IGRybV9wYW5lbF9hdHRhY2goKSB3aWxsIGNoZWNrIGlmIHRoZXJlIGlzIGEgY29udHJv
+bGxlcgo+IGFscmVhZHkgYXR0YWNoZWQgLSBkcm9wIHRoZSBjaGVjayBpbiB0aGUgZHJpdmVyLgo+
+IAo+IFVzZSBkcm1fcGFuZWxfZ2V0X21vZGVzKCkgc28gdGhlIGRyaXZlciBubyBsb25nZXIgdXNl
+cyB0aGUgZnVuY3Rpb24KPiBwb2ludGVyLgoKQXBwbGllZCB0byBkcm0tbWlzYy1uZXh0LgoKCVNh
+bQoKPiAKPiBTaWduZWQtb2ZmLWJ5OiBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+Cj4g
+Q2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPiBDYzogSm9vbnlvdW5nIFNoaW0g
+PGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+IENjOiBTZXVuZy1Xb28gS2ltIDxzdzAzMTIua2lt
+QHNhbXN1bmcuY29tPgo+IENjOiBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcu
+Y29tPgo+IENjOiBLdWtqaW4gS2ltIDxrZ2VuZUBrZXJuZWwub3JnPgo+IENjOiBLcnp5c3p0b2Yg
+S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+Cj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZwo+IENjOiBsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmcKPiAt
+LS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RwaS5jIHwgNCArKy0tCj4g
+IDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4gCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyBiL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYwo+IGluZGV4IDNjZWJiMTllYzFjNC4u
+NTQ3OWZmNzFjYmM2IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kcGkuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGku
+Ywo+IEBAIC00Myw3ICs0Myw3IEBAIGV4eW5vc19kcGlfZGV0ZWN0KHN0cnVjdCBkcm1fY29ubmVj
+dG9yICpjb25uZWN0b3IsIGJvb2wgZm9yY2UpCj4gIHsKPiAgCXN0cnVjdCBleHlub3NfZHBpICpj
+dHggPSBjb25uZWN0b3JfdG9fZHBpKGNvbm5lY3Rvcik7Cj4gIAo+IC0JaWYgKGN0eC0+cGFuZWwg
+JiYgIWN0eC0+cGFuZWwtPmNvbm5lY3RvcikKPiArCWlmIChjdHgtPnBhbmVsKQo+ICAJCWRybV9w
+YW5lbF9hdHRhY2goY3R4LT5wYW5lbCwgJmN0eC0+Y29ubmVjdG9yKTsKPiAgCj4gIAlyZXR1cm4g
+Y29ubmVjdG9yX3N0YXR1c19jb25uZWN0ZWQ7Cj4gQEAgLTg1LDcgKzg1LDcgQEAgc3RhdGljIGlu
+dCBleHlub3NfZHBpX2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+
+ICAJfQo+ICAKPiAgCWlmIChjdHgtPnBhbmVsKQo+IC0JCXJldHVybiBjdHgtPnBhbmVsLT5mdW5j
+cy0+Z2V0X21vZGVzKGN0eC0+cGFuZWwpOwo+ICsJCXJldHVybiBkcm1fcGFuZWxfZ2V0X21vZGVz
+KGN0eC0+cGFuZWwpOwo+ICAKPiAgCXJldHVybiAwOwo+ICB9Cj4gLS0gCj4gMi4yMC4xCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
