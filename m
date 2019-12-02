@@ -1,70 +1,109 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v1 26/26] drm/panel: tpo-tpg110: use drm_panel backlight
- support
-Date: Mon,  2 Dec 2019 20:32:30 +0100
-Message-ID: <20191202193230.21310-27-sam@ravnborg.org>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: Re: [PATCH v1 0/26] drm/panel infrastructure + backlight update
+Date: Mon, 2 Dec 2019 12:59:29 -0700
+Message-ID: <CAOCk7NoKPoxcETLYQ4CyAtYGnPwvYapdSavZM=aRdswDydTLEA@mail.gmail.com>
 References: <20191202193230.21310-1-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20191202193230.21310-1-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Sam Ravnborg <sam@ravnborg.org>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jagan Teki <jagan@amarulasolutions.com>, NXP Linux Team <linux-imx@nxp.com>, Jitao Shi <jitao.shi@mediatek.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, linux-mediatek@lists.infradead.org, Abhinav Kumar <abhinavk@codeaurora.org>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Purism Kernel Team <kernel@puri.sm>, linux-renesas-soc@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Linus Walleij <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>, Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org, Abhinav Kumar <abhinavk@codeaurora.org>, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, NXP Linux Team <linux-imx@nxp.com>, Jagan Teki <jagan@amarulasolutions.com>, Jitao Shi <jitao.shi@mediatek.com>, Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, linux-mediatek@lists.infradead.org, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>Li
 List-Id: linux-tegra@vger.kernel.org
 
-VXNlIHRoZSBiYWNrbGlnaHQgc3VwcG9ydCBpbiBkcm1fcGFuZWwgdG8gc2ltcGxpZnkgdGhlIGRy
-aXZlcgoKU2lnbmVkLW9mZi1ieTogU2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJvcmcub3JnPgpDYzog
-TGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgpDYzogVGhpZXJyeSBSZWRp
-bmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4KQ2M6IFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5i
-b3JnLm9yZz4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtdHBvLXRwZzExMC5jIHwg
-MjAgKysrKysrLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyks
-IDE0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5l
-bC10cG8tdHBnMTEwLmMgYi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtdHBvLXRwZzExMC5j
-CmluZGV4IGJlZTIxM2VhMWE0Mi4uODQ3MmQwMThjMTZmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vcGFuZWwvcGFuZWwtdHBvLXRwZzExMC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9wYW5l
-bC9wYW5lbC10cG8tdHBnMTEwLmMKQEAgLTE0LDEzICsxNCwxMyBAQAogI2luY2x1ZGUgPGRybS9k
-cm1fcGFuZWwuaD4KICNpbmNsdWRlIDxkcm0vZHJtX3ByaW50Lmg+CiAKLSNpbmNsdWRlIDxsaW51
-eC9iYWNrbGlnaHQuaD4KICNpbmNsdWRlIDxsaW51eC9iaXRvcHMuaD4KICNpbmNsdWRlIDxsaW51
-eC9kZWxheS5oPgogI2luY2x1ZGUgPGxpbnV4L2dwaW8vY29uc3VtZXIuaD4KICNpbmNsdWRlIDxs
-aW51eC9pbml0Lmg+CiAjaW5jbHVkZSA8bGludXgva2VybmVsLmg+CiAjaW5jbHVkZSA8bGludXgv
-bW9kdWxlLmg+CisjaW5jbHVkZSA8bGludXgvb2YuaD4KICNpbmNsdWRlIDxsaW51eC9wbGF0Zm9y
-bV9kZXZpY2UuaD4KICNpbmNsdWRlIDxsaW51eC9zcGkvc3BpLmg+CiAKQEAgLTc2LDEwICs3Niw2
-IEBAIHN0cnVjdCB0cGcxMTAgewogCSAqIEBwYW5lbDogdGhlIERSTSBwYW5lbCBpbnN0YW5jZSBm
-b3IgdGhpcyBkZXZpY2UKIAkgKi8KIAlzdHJ1Y3QgZHJtX3BhbmVsIHBhbmVsOwotCS8qKgotCSAq
-IEBiYWNrbGlnaHQ6IGJhY2tsaWdodCBmb3IgdGhpcyBwYW5lbAotCSAqLwotCXN0cnVjdCBiYWNr
-bGlnaHRfZGV2aWNlICpiYWNrbGlnaHQ7CiAJLyoqCiAJICogQHBhbmVsX3R5cGU6IHRoZSBwYW5l
-bCBtb2RlIGFzIGRldGVjdGVkCiAJICovCkBAIC0zNTYsOCArMzUyLDYgQEAgc3RhdGljIGludCB0
-cGcxMTBfZGlzYWJsZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKIAl2YWwgJj0gflRQRzExMF9D
-VFJMMl9QTTsKIAl0cGcxMTBfd3JpdGVfcmVnKHRwZywgVFBHMTEwX0NUUkwyX1BNLCB2YWwpOwog
-Ci0JYmFja2xpZ2h0X2Rpc2FibGUodHBnLT5iYWNrbGlnaHQpOwotCiAJcmV0dXJuIDA7CiB9CiAK
-QEAgLTM2Niw4ICszNjAsNiBAQCBzdGF0aWMgaW50IHRwZzExMF9lbmFibGUoc3RydWN0IGRybV9w
-YW5lbCAqcGFuZWwpCiAJc3RydWN0IHRwZzExMCAqdHBnID0gdG9fdHBnMTEwKHBhbmVsKTsKIAl1
-OCB2YWw7CiAKLQliYWNrbGlnaHRfZW5hYmxlKHRwZy0+YmFja2xpZ2h0KTsKLQogCS8qIFRha2Ug
-Y2hpcCBvdXQgb2Ygc3RhbmRieSAqLwogCXZhbCA9IHRwZzExMF9yZWFkX3JlZyh0cGcsIFRQRzEx
-MF9DVFJMMl9QTSk7CiAJdmFsIHw9IFRQRzExMF9DVFJMMl9QTTsKQEAgLTQzMiwxMSArNDI0LDYg
-QEAgc3RhdGljIGludCB0cGcxMTBfcHJvYmUoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSkKIAlpZiAo
-cmV0KQogCQlEUk1fREVWX0VSUk9SKGRldiwgIm5vIHBhbmVsIGhlaWdodCBzcGVjaWZpZWRcbiIp
-OwogCi0JLyogTG9vayBmb3Igc29tZSBvcHRpb25hbCBiYWNrbGlnaHQgKi8KLQl0cGctPmJhY2ts
-aWdodCA9IGRldm1fb2ZfZmluZF9iYWNrbGlnaHQoZGV2KTsKLQlpZiAoSVNfRVJSKHRwZy0+YmFj
-a2xpZ2h0KSkKLQkJcmV0dXJuIFBUUl9FUlIodHBnLT5iYWNrbGlnaHQpOwotCiAJLyogVGhpcyBh
-c3NlcnRzIHRoZSBHUkVTVEIgc2lnbmFsLCBwdXR0aW5nIHRoZSBkaXNwbGF5IGludG8gcmVzZXQg
-Ki8KIAl0cGctPmdyZXN0YiA9IGRldm1fZ3Bpb2RfZ2V0KGRldiwgImdyZXN0YiIsIEdQSU9EX09V
-VF9ISUdIKTsKIAlpZiAoSVNfRVJSKHRwZy0+Z3Jlc3RiKSkgewpAQCAtNDU5LDYgKzQ0NiwxMSBA
-QCBzdGF0aWMgaW50IHRwZzExMF9wcm9iZShzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpKQogCiAJZHJt
-X3BhbmVsX2luaXQoJnRwZy0+cGFuZWwsIGRldiwgJnRwZzExMF9kcm1fZnVuY3MsCiAJCSAgICAg
-ICBEUk1fTU9ERV9DT05ORUNUT1JfRFBJKTsKKworCXJldCA9IGRybV9wYW5lbF9vZl9iYWNrbGln
-aHQoJnRwZy0+cGFuZWwpOworCWlmIChyZXQpCisJCXJldHVybiByZXQ7CisKIAlzcGlfc2V0X2Ry
-dmRhdGEoc3BpLCB0cGcpOwogCiAJcmV0dXJuIGRybV9wYW5lbF9hZGQoJnRwZy0+cGFuZWwpOwot
-LSAKMi4yMC4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+On Mon, Dec 2, 2019 at 12:33 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> This patchset include a couple of different
+> things - all related to panels.
+>
+> - The panel callbacks are optional - so drop error if
+>   callback is not present.
+>
+> - Add support for backlight in drm_panel.
+>   This allows us to make much simpler backlight
+>   support to most panels.
+>   The patchset include conversion of most of the
+>   trivial cases.
+>
+> - Drop drm_connector from drm_panel.
+>   This change required many changes to most
+>   panels and many bridges and display drivers.
+>   This is by far the most invasive change in this patchset.
+>
+> - Drop the unused get_timings() callback.
+>   No users, so no need to keep it around.
+>
+> With this patchset drm_panel_(attach|detach) are nop's
+> but they are kept for now.
+>
+> A few of these patches has been sent out before - but versioning
+> started again from v1 - as the most patches are new.
+>
+> I have tested the panel-simple changes, and thus some
+> of the infrastructure changes.
+> The testing was done on an earlier iteration - and I ended
+> up submitting this as Laurent and others started to depend on it.
+> Jitao has a patch to add more callbacks, and I wanted the
+> simplification of the callbacks before we add more callbacks.
+>
+>         Sam
+>
+>
+> Sam Ravnborg (26):
+>       drm/drm_panel: no error when no callback
+>       drm/panel: add backlight support
+>       drm/panel: simple: use drm_panel backlight support
+>       drm: get drm_bridge_panel connector via helper
+>       drm/panel: add drm_connector argument to get_modes()
+>       drm/panel: decouple connector from drm_panel
+>       drm/panel: remove get_timings
+>       drm/panel: drop drm_device from drm_panel
+>       drm/panel: feiyang-fy07024di26a30d: use drm_panel backlight support
+>       drm/panel: ilitek-ili9881c: use drm_panel backlight support
+>       drm/panel: innolux-p079zca: use drm_panel backlight support
+>       drm/panel: kingdisplay-kd097d04: use drm_panel backlight support
+>       drm/panel: lvds: use drm_panel backlight support
+>       drm/panel: olimex-lcd-olinuxino: use drm_panel backlight support
+>       drm/panel: osd-osd101t2587-53ts: use drm_panel backlight support
+>       drm/panel: panasonic-vvx10f034n00: use drm_panel backlight support
+>       drm/panel: raydium-rm68200: use drm_panel backlight support
+>       drm/panel: rocktech-jh057n00900: use drm_panel backlight support
+>       drm/panel: ronbo-rb070d30: use drm_panel backlight support
+>       drm/panel: seiko-43wvf1g: use drm_panel backlight support
+>       drm/panel: sharp-lq101r1sx01: use drm_panel backlight support
+>       drm/panel: sharp-ls043t1le01: use drm_panel backlight support
+>       drm/panel: sitronix-st7701: use drm_panel backlight support
+>       drm/panel: sitronix-st7789v: use drm_panel backlight support
+>       drm/panel: tpo-td028ttec1: use drm_panel backlight support
+>       drm/panel: tpo-tpg110: use drm_panel backlight support
+>
+>  drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |   2 +-
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |   2 +-
+>  drivers/gpu/drm/bridge/panel.c                     |  18 +++-
+>  drivers/gpu/drm/bridge/parade-ps8622.c             |   2 +-
+>  drivers/gpu/drm/bridge/tc358764.c                  |   2 +-
+>  drivers/gpu/drm/bridge/tc358767.c                  |   2 +-
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c              |   2 +-
+>  drivers/gpu/drm/drm_panel.c                        |  96 ++++++++++++++----
+>  drivers/gpu/drm/exynos/exynos_drm_dpi.c            |   2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c            |   2 +-
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |   2 +-
+>  drivers/gpu/drm/imx/imx-ldb.c                      |   2 +-
+>  drivers/gpu/drm/imx/parallel-display.c             |   2 +-
+>  drivers/gpu/drm/mediatek/mtk_dsi.c                 |   2 +-
+>  .../gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c    |   2 +-
+>  drivers/gpu/drm/msm/dsi/dsi_manager.c              |   2 +-
+
+How come the diff stat in the cover letter here indicates a change to
+this file, yet I cannot find a change to this file in any of the
+patches?  What am I missing?
