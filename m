@@ -1,172 +1,149 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v2 00/11] Move PMC clocks into Tegra PMC driver
-Date: Mon, 2 Dec 2019 10:47:49 -0800
-Message-ID: <8afb28cd-a90c-fbc2-1053-70cf6c282057@nvidia.com>
-References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
- <79e7bd6a-f138-1e7d-6e0b-435adde3b3e5@gmail.com>
- <04b093fe-5eff-1ad2-9a8a-7674dcb2318a@nvidia.com>
- <ebcce0df-bb7a-2f24-cfbc-daaf3ac6bb4f@nvidia.com>
- <45058e6b-244e-8926-584d-297452873612@gmail.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: [PATCH v1 0/26] drm/panel infrastructure + backlight update
+Date: Mon,  2 Dec 2019 20:32:04 +0100
+Message-ID: <20191202193230.21310-1-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <45058e6b-244e-8926-584d-297452873612@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, sboyd@kernel.org
-Cc: gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jagan Teki <jagan@amarulasolutions.com>, NXP Linux Team <linux-imx@nxp.com>, Jitao Shi <jitao.shi@mediatek.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, linux-mediatek@lists.infradead.org, Abhinav Kumar <abhinavk@codeaurora.org>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Purism Kernel Team <kernel@puri.sm>, linux-renesas-soc@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 11/28/19 5:06 AM, Dmitry Osipenko wrote:
-> 28.11.2019 00:38, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 11/27/19 9:02 AM, Sowjanya Komatineni wrote:
->>> On 11/27/19 6:31 AM, Dmitry Osipenko wrote:
->>>> 27.11.2019 07:59, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls whic=
-h
->>>>> are currently registered by Tegra clock driver using clk_regiser_mux
->>>>> and
->>>>> clk_register_gate which performs direct Tegra PMC register access.
->>>>>
->>>>> When Tegra PMC is in secure mode, any access from non-secure world wi=
-ll
->>>>> not go through.
->>>>>
->>>>> This patch series adds these Tegra PMC clocks and blink controls to
->>>>> Tegra
->>>>> PMC driver with PMC as clock provider and removed them from Tegra clo=
-ck
->>>>> driver. This also adds PMC specific clock id's to use in device tree
->>>>> and
->>>>> removed clock ids of PMC clock from Tegra clock driver.
->>>>>
->>>>> This series also includes patch to update clock provider from tegra_c=
-ar
->>>>> to pmc in the device tree tegra210-smaug.dts that uses clk_out_2
->>>>> from PMC.
->>>>>
->>>>> [v2]:=C2=A0=C2=A0=C2=A0 Changes between v1 and v2 are
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0- v2 includes patches for adding clk_out_1, =
-clk_out_2, clk_out_3,
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 blink controls to Tegra PMC driver an=
-d removing clk-tegra-pmc.
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0- feedback related to pmc clocks in Tegra PM=
-C driver from v1
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0- Removed patches for WB0 PLLM overrides and=
- PLLE IDDQ PMC
->>>>> programming
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 by the clock driver using helper func=
-tions from Tegra PMC.
->>>>>
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Note:
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 To use helper functions from PMC driv=
-er, PMC early init need to
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 happen prior to using helper function=
-s and these helper
->>>>> functions are
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for PLLM Override and PLLE IDDQ progr=
-amming in PMC during
->>>>> PLLM/PLLE
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock registration which happen in cl=
-ock_init prior to Tegra PMC
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 probe.
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Moving PLLM/PLLE clocks registration =
-to happen after Tegra PMC
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 impacts other clocks EMC, MC and corr=
-esponding tegra_emc_init and
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_mc_init.
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This implementation of configuring PM=
-C registers thru helper
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 functions in clock driver needs prope=
-r changes across PMC, Clock,
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EMC and MC inits to have it work acro=
-ss all Tegra platforms.
->>>>>
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Currently PLLM Override is not enable=
-d in the bootloader so
->>>>> proper
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 patches for this fix will be taken ca=
-re separately.
->>>> Hello Sowjanya,
->>>>
->>>> Could you please clarify what do you mean by "PLLM Override not enable=
-d
->>>> in bootloader"?
->>>>
->>>> There is T124 Nyan Big Chromebook which is supported in upstream kerne=
-l,
->>>> it has PLLM Override set by bootloader. I also have T30 Nexus 7 tablet
->>>> which has the PLLM Override set by bootloader as well. It's not clear =
-to
->>>> me whether this patch series is supposed to break these devices. If th=
-e
->>>> breakage is the case here, then I'm afraid you can't postpone supporti=
-ng
->>>> the PLLM Override and a full-featured implementation is needed.
->>> Hi Dmitry,
->>>
->>> Secure boot currently is enabled only on Tegra210 and Tegra210
->>> bootloader doesn't enable PLLM override.
->>>
->>> So PLLM override/PLLE IDDQ being in clock driver currently will not
->>> break on any of existing Tegra platforms.
->>>
->>>> I briefly tried to test this series on T30 and this time it doesn't ha=
-ng
->>>> on boot, but somehow WiFi MMC card detection is broken. AFAIK, the WiF=
-i
->>>> chip uses the Blink clock source and the clock should be enabled by th=
-e
->>>> MMC core because this is how DT part looks like:
->>>>
->>>> brcm_wifi_pwrseq: wifi-pwrseq {
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0compatible =3D "mmc-pwrseq-simple";
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0clocks =3D <&pmc TEGRA_PMC_CLK_BLINK>;
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0clock-names =3D "ext_clock";
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0reset-gpios =3D=C2=A0 <&gpio TEGRA_GPIO(D, 3)=
- GPIO_ACTIVE_LOW>;
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0post-power-on-delay-ms =3D <300>;
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0power-off-delay-us =3D <300>;
->>>> };
->>>>
->>>> BTW, I=C2=A0 tried this series on a T20 device which also uses the Bli=
-nk
->>>> clock for WiFi card and it works. So looks like this patchset has some
->>>> problem in regards to the T30 PMC clocks implementation.
->>>>
->>>> [snip]
->>> Blink init state is set to true for both Tegra20 and Tegra30 and all
->>> go through the same blink programming sequence.
->>>
->>> Will try to add more debug messages to dump registers and will test
->>> blink through device tree on T30 and will get back...
->>>
->>>
->> define value for BLINK uses BIT macro instead of just position. Will fix
->> this in v3.
-> Thanks, will try v3 once it will be ready.
->
-> I took a look through the T20 board's schematics and seems it doesn't
-> use the Blink clock for the WiFi, instead it uses 32k source directly
-> from PMU. While T30 board schematics tells that  32k comes out from the
-> Tegra chip.
->
-> BTW, I'm curious what's the reason for having Blink clock always-ON on
-> T20/30, any insights? Looks like it's just some relic from old clk
-> driver and it should be safe to drop the always-ON.
-
-T30 cardhu uses 32K from Tegra to WIFI but its only needed to be on=20
-during WIFI power up sequence and not required to be on during boot.
-
-I had it enabled as existing clock driver enables it default and dont=20
-want to break things if it was left ON intentionally.
-
-Peter/Thierry, Any reason 32K from Blink is enabled to be ON during=20
-clock init for T20/T30 in clock-tegra-pmc driver?
-
-Based on the design T30 uses this for WIFI and WIFI driver should be=20
-handling this clock enable/disable during power up/down sequence,
-
-so we don't have to enable it default during boot right?
+VGhpcyBwYXRjaHNldCBpbmNsdWRlIGEgY291cGxlIG9mIGRpZmZlcmVudAp0aGluZ3MgLSBhbGwg
+cmVsYXRlZCB0byBwYW5lbHMuCgotIFRoZSBwYW5lbCBjYWxsYmFja3MgYXJlIG9wdGlvbmFsIC0g
+c28gZHJvcCBlcnJvciBpZgogIGNhbGxiYWNrIGlzIG5vdCBwcmVzZW50LgogCi0gQWRkIHN1cHBv
+cnQgZm9yIGJhY2tsaWdodCBpbiBkcm1fcGFuZWwuCiAgVGhpcyBhbGxvd3MgdXMgdG8gbWFrZSBt
+dWNoIHNpbXBsZXIgYmFja2xpZ2h0CiAgc3VwcG9ydCB0byBtb3N0IHBhbmVscy4KICBUaGUgcGF0
+Y2hzZXQgaW5jbHVkZSBjb252ZXJzaW9uIG9mIG1vc3Qgb2YgdGhlCiAgdHJpdmlhbCBjYXNlcy4K
+Ci0gRHJvcCBkcm1fY29ubmVjdG9yIGZyb20gZHJtX3BhbmVsLgogIFRoaXMgY2hhbmdlIHJlcXVp
+cmVkIG1hbnkgY2hhbmdlcyB0byBtb3N0CiAgcGFuZWxzIGFuZCBtYW55IGJyaWRnZXMgYW5kIGRp
+c3BsYXkgZHJpdmVycy4KICBUaGlzIGlzIGJ5IGZhciB0aGUgbW9zdCBpbnZhc2l2ZSBjaGFuZ2Ug
+aW4gdGhpcyBwYXRjaHNldC4KCi0gRHJvcCB0aGUgdW51c2VkIGdldF90aW1pbmdzKCkgY2FsbGJh
+Y2suCiAgTm8gdXNlcnMsIHNvIG5vIG5lZWQgdG8ga2VlcCBpdCBhcm91bmQuCgpXaXRoIHRoaXMg
+cGF0Y2hzZXQgZHJtX3BhbmVsXyhhdHRhY2h8ZGV0YWNoKSBhcmUgbm9wJ3MKYnV0IHRoZXkgYXJl
+IGtlcHQgZm9yIG5vdy4KCkEgZmV3IG9mIHRoZXNlIHBhdGNoZXMgaGFzIGJlZW4gc2VudCBvdXQg
+YmVmb3JlIC0gYnV0IHZlcnNpb25pbmcKc3RhcnRlZCBhZ2FpbiBmcm9tIHYxIC0gYXMgdGhlIG1v
+c3QgcGF0Y2hlcyBhcmUgbmV3LgoKSSBoYXZlIHRlc3RlZCB0aGUgcGFuZWwtc2ltcGxlIGNoYW5n
+ZXMsIGFuZCB0aHVzIHNvbWUKb2YgdGhlIGluZnJhc3RydWN0dXJlIGNoYW5nZXMuClRoZSB0ZXN0
+aW5nIHdhcyBkb25lIG9uIGFuIGVhcmxpZXIgaXRlcmF0aW9uIC0gYW5kIEkgZW5kZWQKdXAgc3Vi
+bWl0dGluZyB0aGlzIGFzIExhdXJlbnQgYW5kIG90aGVycyBzdGFydGVkIHRvIGRlcGVuZCBvbiBp
+dC4KSml0YW8gaGFzIGEgcGF0Y2ggdG8gYWRkIG1vcmUgY2FsbGJhY2tzLCBhbmQgSSB3YW50ZWQg
+dGhlCnNpbXBsaWZpY2F0aW9uIG9mIHRoZSBjYWxsYmFja3MgYmVmb3JlIHdlIGFkZCBtb3JlIGNh
+bGxiYWNrcy4KCglTYW0KCgpTYW0gUmF2bmJvcmcgKDI2KToKICAgICAgZHJtL2RybV9wYW5lbDog
+bm8gZXJyb3Igd2hlbiBubyBjYWxsYmFjawogICAgICBkcm0vcGFuZWw6IGFkZCBiYWNrbGlnaHQg
+c3VwcG9ydAogICAgICBkcm0vcGFuZWw6IHNpbXBsZTogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQg
+c3VwcG9ydAogICAgICBkcm06IGdldCBkcm1fYnJpZGdlX3BhbmVsIGNvbm5lY3RvciB2aWEgaGVs
+cGVyCiAgICAgIGRybS9wYW5lbDogYWRkIGRybV9jb25uZWN0b3IgYXJndW1lbnQgdG8gZ2V0X21v
+ZGVzKCkKICAgICAgZHJtL3BhbmVsOiBkZWNvdXBsZSBjb25uZWN0b3IgZnJvbSBkcm1fcGFuZWwK
+ICAgICAgZHJtL3BhbmVsOiByZW1vdmUgZ2V0X3RpbWluZ3MKICAgICAgZHJtL3BhbmVsOiBkcm9w
+IGRybV9kZXZpY2UgZnJvbSBkcm1fcGFuZWwKICAgICAgZHJtL3BhbmVsOiBmZWl5YW5nLWZ5MDcw
+MjRkaTI2YTMwZDogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAogICAgICBkcm0vcGFu
+ZWw6IGlsaXRlay1pbGk5ODgxYzogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAogICAg
+ICBkcm0vcGFuZWw6IGlubm9sdXgtcDA3OXpjYTogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3Vw
+cG9ydAogICAgICBkcm0vcGFuZWw6IGtpbmdkaXNwbGF5LWtkMDk3ZDA0OiB1c2UgZHJtX3BhbmVs
+IGJhY2tsaWdodCBzdXBwb3J0CiAgICAgIGRybS9wYW5lbDogbHZkczogdXNlIGRybV9wYW5lbCBi
+YWNrbGlnaHQgc3VwcG9ydAogICAgICBkcm0vcGFuZWw6IG9saW1leC1sY2Qtb2xpbnV4aW5vOiB1
+c2UgZHJtX3BhbmVsIGJhY2tsaWdodCBzdXBwb3J0CiAgICAgIGRybS9wYW5lbDogb3NkLW9zZDEw
+MXQyNTg3LTUzdHM6IHVzZSBkcm1fcGFuZWwgYmFja2xpZ2h0IHN1cHBvcnQKICAgICAgZHJtL3Bh
+bmVsOiBwYW5hc29uaWMtdnZ4MTBmMDM0bjAwOiB1c2UgZHJtX3BhbmVsIGJhY2tsaWdodCBzdXBw
+b3J0CiAgICAgIGRybS9wYW5lbDogcmF5ZGl1bS1ybTY4MjAwOiB1c2UgZHJtX3BhbmVsIGJhY2ts
+aWdodCBzdXBwb3J0CiAgICAgIGRybS9wYW5lbDogcm9ja3RlY2gtamgwNTduMDA5MDA6IHVzZSBk
+cm1fcGFuZWwgYmFja2xpZ2h0IHN1cHBvcnQKICAgICAgZHJtL3BhbmVsOiByb25iby1yYjA3MGQz
+MDogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAogICAgICBkcm0vcGFuZWw6IHNlaWtv
+LTQzd3ZmMWc6IHVzZSBkcm1fcGFuZWwgYmFja2xpZ2h0IHN1cHBvcnQKICAgICAgZHJtL3BhbmVs
+OiBzaGFycC1scTEwMXIxc3gwMTogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAogICAg
+ICBkcm0vcGFuZWw6IHNoYXJwLWxzMDQzdDFsZTAxOiB1c2UgZHJtX3BhbmVsIGJhY2tsaWdodCBz
+dXBwb3J0CiAgICAgIGRybS9wYW5lbDogc2l0cm9uaXgtc3Q3NzAxOiB1c2UgZHJtX3BhbmVsIGJh
+Y2tsaWdodCBzdXBwb3J0CiAgICAgIGRybS9wYW5lbDogc2l0cm9uaXgtc3Q3Nzg5djogdXNlIGRy
+bV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAogICAgICBkcm0vcGFuZWw6IHRwby10ZDAyOHR0ZWMx
+OiB1c2UgZHJtX3BhbmVsIGJhY2tsaWdodCBzdXBwb3J0CiAgICAgIGRybS9wYW5lbDogdHBvLXRw
+ZzExMDogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAoKIGRyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgvYW5hbG9naXgtYW54NjM0NS5jIHwgICAyICstCiBkcml2ZXJzL2dwdS9k
+cm0vYnJpZGdlL2FuYWxvZ2l4L2FuYWxvZ2l4X2RwX2NvcmUuYyB8ICAgMiArLQogZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9wYW5lbC5jICAgICAgICAgICAgICAgICAgICAgfCAgMTggKysrLQogZHJp
+dmVycy9ncHUvZHJtL2JyaWRnZS9wYXJhZGUtcHM4NjIyLmMgICAgICAgICAgICAgfCAgIDIgKy0K
+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvdGMzNTg3NjQuYyAgICAgICAgICAgICAgICAgIHwgICAy
+ICstCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4NzY3LmMgICAgICAgICAgICAgICAgICB8
+ICAgMiArLQogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS90aS1zbjY1ZHNpODYuYyAgICAgICAgICAg
+ICAgfCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYyAgICAgICAgICAgICAgICAg
+ICAgICAgIHwgIDk2ICsrKysrKysrKysrKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2RwaS5jICAgICAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kc2kuYyAgICAgICAgICAgIHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0v
+ZnNsLWRjdS9mc2xfZGN1X2RybV9yZ2IuYyAgICAgICAgICB8ICAgMiArLQogZHJpdmVycy9ncHUv
+ZHJtL2lteC9pbXgtbGRiLmMgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMv
+Z3B1L2RybS9pbXgvcGFyYWxsZWwtZGlzcGxheS5jICAgICAgICAgICAgIHwgICAyICstCiBkcml2
+ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RzaS5jICAgICAgICAgICAgICAgICB8ICAgMiArLQog
+Li4uL2dwdS9kcm0vbXNtL2Rpc3AvbWRwNC9tZHA0X2x2ZHNfY29ubmVjdG9yLmMgICAgfCAgIDIg
+Ky0KIGRyaXZlcnMvZ3B1L2RybS9tc20vZHNpL2RzaV9tYW5hZ2VyLmMgICAgICAgICAgICAgIHwg
+ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vbXhzZmIvbXhzZmJfb3V0LmMgICAgICAgICAgICAgICAg
+ICB8ICAgMiArLQogZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9jb25uZWN0b3IuYyAgICAg
+ICAgICAgfCAgIDMgKy0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1hcm0tdmVyc2F0aWxl
+LmMgICAgICAgIHwgICA2ICstCiAuLi4vZ3B1L2RybS9wYW5lbC9wYW5lbC1mZWl5YW5nLWZ5MDcw
+MjRkaTI2YTMwZC5jICB8ICAxNiArKy0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1pbGl0
+ZWstaWxpOTMyMi5jICAgICAgIHwgIDIwICsrLS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5l
+bC1pbGl0ZWstaWxpOTg4MWMuYyAgICAgIHwgIDI5ICsrLS0tLQogZHJpdmVycy9ncHUvZHJtL3Bh
+bmVsL3BhbmVsLWlubm9sdXgtcDA3OXpjYS5jICAgICAgfCAgNDUgKysrLS0tLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vcGFuZWwvcGFuZWwtamRpLWx0MDcwbWUwNTAwMC5jICAgICB8ICAxMSArKy0KIGRy
+aXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1raW5nZGlzcGxheS1rZDA5N2QwNC5jIHwgIDQzICsr
+Ky0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtbGctbGIwMzVxMDIuYyAgICAgICAg
+ICB8ICAgNiArLQogZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLWxnLWxnNDU3My5jICAgICAg
+ICAgICAgfCAgMTIgKy0tCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtbHZkcy5jICAgICAg
+ICAgICAgICAgICB8ICA0NiArKy0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1u
+ZWMtbmw4MDQ4aGwxMS5jICAgICAgIHwgICA2ICstCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFu
+ZWwtbm92YXRlay1udDM5MDE2LmMgICAgICB8ICAgNiArLQogZHJpdmVycy9ncHUvZHJtL3BhbmVs
+L3BhbmVsLW9saW1leC1sY2Qtb2xpbnV4aW5vLmMgfCAgMjcgKystLS0KIGRyaXZlcnMvZ3B1L2Ry
+bS9wYW5lbC9wYW5lbC1vcmlzZXRlY2gtb3RtODAwOWEuYyAgIHwgIDExICsrLQogZHJpdmVycy9n
+cHUvZHJtL3BhbmVsL3BhbmVsLW9zZC1vc2QxMDF0MjU4Ny01M3RzLmMgfCAgMzcgKysrLS0tLQog
+Li4uL2dwdS9kcm0vcGFuZWwvcGFuZWwtcGFuYXNvbmljLXZ2eDEwZjAzNG4wMC5jICAgfCAgNTgg
+KysrLS0tLS0tLS0KIC4uLi9ncHUvZHJtL3BhbmVsL3BhbmVsLXJhc3BiZXJyeXBpLXRvdWNoc2Ny
+ZWVuLmMgIHwgICA5ICstCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtcmF5ZGl1bS1ybTY3
+MTkxLmMgICAgICB8ICAgOCArLQogZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXJheWRpdW0t
+cm02ODIwMC5jICAgICAgfCAgMjYgKysrLS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1y
+b2NrdGVjaC1qaDA1N24wMDkwMC5jIHwgIDM1ICsrKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5l
+bC9wYW5lbC1yb25iby1yYjA3MGQzMC5jICAgICAgIHwgIDMxICsrLS0tLQogZHJpdmVycy9ncHUv
+ZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctbGQ5MDQwLmMgICAgICAgfCAgIDQgKy0KIGRyaXZlcnMv
+Z3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5nLXM2ZDE2ZDAuYyAgICAgIHwgICA2ICstCiBkcml2
+ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUzaGEyLmMgICAgICB8ICAgNiArLQog
+ZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNhbXN1bmctczZlNjNqMHgwMy5jICAgfCAgIDYg
+Ky0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zYW1zdW5nLXM2ZTYzbTAuYyAgICAgIHwg
+ICA2ICstCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmU4YWEwLmMgICAg
+ICB8ICAgNCArLQogZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNlaWtvLTQzd3ZmMWcuYyAg
+ICAgICAgfCAgNzIgKysrLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1z
+aGFycC1scTEwMXIxc3gwMS5jICAgIHwgIDM0ICsrKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5l
+bC9wYW5lbC1zaGFycC1sczAzN3Y3ZHcwMS5jICAgIHwgICA2ICstCiBkcml2ZXJzL2dwdS9kcm0v
+cGFuZWwvcGFuZWwtc2hhcnAtbHMwNDN0MWxlMDEuYyAgICB8ICAzMyArKystLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vcGFuZWwvcGFuZWwtc2ltcGxlLmMgICAgICAgICAgICAgICB8IDExMCArKysrKyst
+LS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zaXRyb25peC1zdDc3
+MDEuYyAgICAgIHwgIDIzICsrLS0tCiBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2l0cm9u
+aXgtc3Q3Nzg5di5jICAgICB8ICA0OSArKy0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9w
+YW5lbC1zb255LWFjeDU2NWFrbS5jICAgICAgIHwgICA2ICstCiBkcml2ZXJzL2dwdS9kcm0vcGFu
+ZWwvcGFuZWwtdHBvLXRkMDI4dHRlYzEuYyAgICAgICB8ICAyMCArKy0tCiBkcml2ZXJzL2dwdS9k
+cm0vcGFuZWwvcGFuZWwtdHBvLXRkMDQzbXRlYTEuYyAgICAgICB8ICAgNiArLQogZHJpdmVycy9n
+cHUvZHJtL3BhbmVsL3BhbmVsLXRwby10cGcxMTAuYyAgICAgICAgICAgfCAgMjYgKystLS0KIGRy
+aXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC10cnVseS1udDM1NTk3LmMgICAgICAgIHwgICA0ICst
+CiBkcml2ZXJzL2dwdS9kcm0vcGwxMTEvcGwxMTFfZHJ2LmMgICAgICAgICAgICAgICAgICB8ICAg
+MiArLQogZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9sdmRzLmMgICAgICAgICAgICAgICAg
+fCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9sdmRzLmMgICAgICAg
+ICAgIHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9kdm8uYyAgICAgICAgICAgICAg
+ICAgICAgICB8ICAgMiArLQogZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2x2ZHMuYyAgICAg
+ICAgICAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9yZ2IuYyAg
+ICAgICAgICAgICAgICAgIHwgICAyICstCiBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNmlfbWlw
+aV9kc2kuYyAgICAgICAgICAgICB8ICAgMiArLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1
+dC5jICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS90dmUyMDAv
+dHZlMjAwX2Rydi5jICAgICAgICAgICAgICAgIHwgICAyICstCiBpbmNsdWRlL2RybS9kcm1fYnJp
+ZGdlLmggICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCiBpbmNsdWRlL2RybS9kcm1f
+cGFuZWwuaCAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICA0OSArKysrLS0tLS0KIDY4IGZp
+bGVzIGNoYW5nZWQsIDQ2MCBpbnNlcnRpb25zKCspLCA2NjQgZGVsZXRpb25zKC0pCgoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
