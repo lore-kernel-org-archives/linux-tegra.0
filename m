@@ -1,15 +1,16 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [PATCH v1 09/16] drm/tegra: fix opencoded use of drm_panel_*
-Date: Sun, 1 Dec 2019 12:33:23 +0100
-Message-ID: <20191201113323.GE8753@ravnborg.org>
-References: <20190804201637.1240-1-sam@ravnborg.org>
- <20190804201637.1240-10-sam@ravnborg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 8/9] drm/tegra: dpaux: Add missing runtime PM references
+Date: Mon, 2 Dec 2019 15:58:33 +0100
+Message-ID: <20191202145833.GB56608@ulmo>
+References: <20191128153741.2380419-1-thierry.reding@gmail.com>
+ <20191128153741.2380419-9-thierry.reding@gmail.com>
+ <20191129092319.GD624164@phenom.ffwll.local>
+ <20191129104412.GD2771912@ulmo>
+ <20191129202025.GT624164@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1854881368=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190804201637.1240-10-sam@ravnborg.org>
+In-Reply-To: <20191129202025.GT624164@phenom.ffwll.local>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -19,27 +20,209 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, Allison Randal <allison@lohutok.net>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Sascha Hauer <s.hauer@pengutronix.de>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Sean Paul <sean@poorly.run>, linux-arm-kernel@list
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gU3VuLCBBdWcgMDQsIDIwMTkgYXQgMTA6MTY6MzBQTSArMDIwMCwgU2FtIFJhdm5ib3JnIHdy
-b3RlOgo+IFVzZSB0aGUgZHJtX3BhbmVsX2dldF9tb2RlcyBmdW5jdGlvbi4KCkFwcGxpZWQgdG8g
-ZHJtLW1pc2MtbmV4dC4KCiAgICAgICAgU2FtCj4gCj4gU2lnbmVkLW9mZi1ieTogU2FtIFJhdm5i
-b3JnIDxzYW1AcmF2bmJvcmcub3JnPgo+IENjOiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRp
-bmdAZ21haWwuY29tPgo+IENjOiBKb25hdGhhbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29t
-Pgo+IENjOiBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmcKPiAtLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL3RlZ3JhL291dHB1dC5jIHwgMiArLQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
-KyksIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L291dHB1dC5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jCj4gaW5kZXggMjc0Y2I5
-NTVlMmUxLi41MmI4Mzk2ZWMyZGMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L291dHB1dC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jCj4gQEAgLTIz
-LDcgKzIzLDcgQEAgaW50IHRlZ3JhX291dHB1dF9jb25uZWN0b3JfZ2V0X21vZGVzKHN0cnVjdCBk
-cm1fY29ubmVjdG9yICpjb25uZWN0b3IpCj4gIAkgKiBpZ25vcmUgYW55IG90aGVyIG1lYW5zIG9m
-IG9idGFpbmluZyBhIG1vZGUuCj4gIAkgKi8KPiAgCWlmIChvdXRwdXQtPnBhbmVsKSB7Cj4gLQkJ
-ZXJyID0gb3V0cHV0LT5wYW5lbC0+ZnVuY3MtPmdldF9tb2RlcyhvdXRwdXQtPnBhbmVsKTsKPiAr
-CQllcnIgPSBkcm1fcGFuZWxfZ2V0X21vZGVzKG91dHB1dC0+cGFuZWwpOwo+ICAJCWlmIChlcnIg
-PiAwKQo+ICAJCQlyZXR1cm4gZXJyOwo+ICAJfQo+IC0tIAo+IDIuMjAuMQpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+
+--===============1854881368==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
+Content-Disposition: inline
+
+
+--PmA2V3Z32TCmWXqI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 29, 2019 at 09:20:25PM +0100, Daniel Vetter wrote:
+> On Fri, Nov 29, 2019 at 11:44:12AM +0100, Thierry Reding wrote:
+> > On Fri, Nov 29, 2019 at 10:23:19AM +0100, Daniel Vetter wrote:
+> > > On Thu, Nov 28, 2019 at 04:37:40PM +0100, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >=20
+> > > > Ensure that a runtime PM reference is acquired each time the DPAUX
+> > > > registers are accessed. Otherwise the code may end up running witho=
+ut
+> > > > the controller being powered, out-of-reset or clocked in some corner
+> > > > cases, resulting in a crash.
+> > > >=20
+> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > >=20
+> > > On patches 4,5,7 in this series Acked-by: Daniel Vetter <daniel.vette=
+r@ffwll.ch>
+> > >=20
+> > > On this one here I'm very confused.
+> > >=20
+> > > - Why do you drop the runtime pm between enable and disable? Is that =
+just
+> > >   how the hw works, i.e. the pad config stays, just the registers go =
+away?
+> >=20
+> > Now you've made me doubt this. I don't think the pad configuration stays
+> > across runtime suspend/resume, so you're right, this shouldn't work.
+> > I'll need to go retest this one specifically.
+> >=20
+> > I had added these runtime PM references to ensure the device was
+> > properly configured at resume from suspend, but there ended up being an
+> > additional issue with the I2C driver that relies on this, so perhaps
+> > this may not be necessary in the end.
+> >=20
+> > > - I'm not seeing any locking between the different users (dp aux and
+> > >   pinctrl). We might want to change drm_dp_aux->hw_mutex to a pointer=
+ to
+> > >   make this easier (but I'm not super fond of that pattern from i2c).
+> >=20
+> > There should be no need to lock here. DP AUX transfers will only be used
+> > between drm_dp_aux_enable() and drm_dp_aux_disable().
+>=20
+> So dp aux vs. dp aux aside (that's the next point below), there's
+> guaranteed no one else can get at that pinctrl mux? Since the other
+> setting is labelled I2C I assumed there's an i2c controller hanging of it,
+> exposed to userspace, and userspace might probe that whenever it feels
+> like (similar to the issue below). But I don't know your hw, nor do I
+> really know pinctrl. Just looked a bit strange.
+
+Well technically anyone could get at the mux, but since it controls the
+pins of a single I2C controller, only that I2C controller should ever
+get its hands on the pinmux. Anything else would be an error in the DT.
+
+Now, the pins can also be used in AUX mode when the SOR is used in DP
+mode. However, since DP and HDMI are mutually exclusive, this is a board
+level decision, so in practice you're only ever going to see them used
+in either I2C or AUX mode. The "off" mode is used only for power saving
+when I2C or DPAUX don't use the pins.
+
+Regarding the runtime PM references, it turns out that those are
+completely bogus because we already take a runtime PM reference at
+probe time. I'm going to drop this patch and look into fixing the other,
+real issues that you pointed out.
+
+Thierry
+
+>=20
+> Cheers, Daniel
+>=20
+>=20
+> > > - Your drm_dp_aux_enable/disable needs to be moved into the ->transfer
+> > >   callback, otherwise the various userspace interface (dp aux, but al=
+so
+> > >   i2c on top of that) won't work. Some pre/post_transfer functions li=
+ke
+> > >   i2c has might be useful for stuff like this.
+> >=20
+> > I suppose it would be possible for someone to attempt to use those
+> > userspace interfaces outside of drm_dp_aux_enable()/drm_dp_aux_disable()
+> > and then the locking would be required.
+> >=20
+> > I'll look into that.
+> >=20
+> > Thierry
+> >=20
+> > >=20
+> > > Cheers, Daniel
+> > >=20
+> > > > ---
+> > > >  drivers/gpu/drm/tegra/dpaux.c | 16 ++++++++++++++--
+> > > >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/=
+dpaux.c
+> > > > index 622cdf1ad246..4b2b86aed1a5 100644
+> > > > --- a/drivers/gpu/drm/tegra/dpaux.c
+> > > > +++ b/drivers/gpu/drm/tegra/dpaux.c
+> > > > @@ -434,8 +434,13 @@ static int tegra_dpaux_set_mux(struct pinctrl_=
+dev *pinctrl,
+> > > >  			       unsigned int function, unsigned int group)
+> > > >  {
+> > > >  	struct tegra_dpaux *dpaux =3D pinctrl_dev_get_drvdata(pinctrl);
+> > > > +	int err;
+> > > > +
+> > > > +	pm_runtime_get_sync(dpaux->dev);
+> > > > +	err =3D tegra_dpaux_pad_config(dpaux, function);
+> > > > +	pm_runtime_put(dpaux->dev);
+> > > > =20
+> > > > -	return tegra_dpaux_pad_config(dpaux, function);
+> > > > +	return err;
+> > > >  }
+> > > > =20
+> > > >  static const struct pinmux_ops tegra_dpaux_pinmux_ops =3D {
+> > > > @@ -809,15 +814,22 @@ enum drm_connector_status drm_dp_aux_detect(s=
+truct drm_dp_aux *aux)
+> > > >  int drm_dp_aux_enable(struct drm_dp_aux *aux)
+> > > >  {
+> > > >  	struct tegra_dpaux *dpaux =3D to_dpaux(aux);
+> > > > +	int err;
+> > > > +
+> > > > +	pm_runtime_get_sync(dpaux->dev);
+> > > > +	err =3D tegra_dpaux_pad_config(dpaux, DPAUX_PADCTL_FUNC_AUX);
+> > > > +	pm_runtime_put(dpaux->dev);
+> > > > =20
+> > > > -	return tegra_dpaux_pad_config(dpaux, DPAUX_PADCTL_FUNC_AUX);
+> > > > +	return err;
+> > > >  }
+> > > > =20
+> > > >  int drm_dp_aux_disable(struct drm_dp_aux *aux)
+> > > >  {
+> > > >  	struct tegra_dpaux *dpaux =3D to_dpaux(aux);
+> > > > =20
+> > > > +	pm_runtime_get_sync(dpaux->dev);
+> > > >  	tegra_dpaux_pad_power_down(dpaux);
+> > > > +	pm_runtime_put(dpaux->dev);
+> > > > =20
+> > > >  	return 0;
+> > > >  }
+> > > > --=20
+> > > > 2.23.0
+> > > >=20
+> > > > _______________________________________________
+> > > > dri-devel mailing list
+> > > > dri-devel@lists.freedesktop.org
+> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > >=20
+> > > --=20
+> > > Daniel Vetter
+> > > Software Engineer, Intel Corporation
+> > > http://blog.ffwll.ch
+>=20
+>=20
+>=20
+> --=20
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+
+--PmA2V3Z32TCmWXqI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3lJpkACgkQ3SOs138+
+s6HmXA/9HGBVEOn5lL+hQ+yWdZWLM/xtzaBOcY6GYXZqq5lmiG9NmC8XI3QGF8ZO
+SLKO6TwbcVOp+WIPImVLhtfzyfN+GBZc4FkOstQCqmw5vGXbigx0GVWv9KhGygm1
+x3GMH6TWzOpsWzQ9K7bltqVLzwR71MKM1KNhp2IFsN12hKx7qJJ6ZzX4W8snhc77
+gJv0CqF9pCuZreRY/GInAqsGOi6k4ChhsFjEhozsSSJnr0jps7aIPLlZx092azeN
+yQ5mnkl47pUZZKQCLFlbZgvUK3wR+PQJB9eeCnWzVLO51D6Gia/SnFA/Y9JVMMmZ
+E7IGvcKoITHphCm4Q/qoqT92A2JqutLu0mn1EiaJp/bG9Q+rzqK28unFSOwdR1N1
+ZYnpu62RvNv/1XL517NwuJTSAx3xG5/L6Larb9+oivXidWeGExhr5bUV9moy02Gh
+TAH+dVkXYdV6Sk5CZ2VuKGERP8lk0bOM7lZJVsW1d+Q0rMWg6Du00qgD5H2/cngZ
+6JmbEsTSFX95d+bkbqSTV2b5ubFvjVURY3oaKcUpjtURV1785UflNoebz4JnlMX+
+pjrwXdio7zw0b4fo2LwagmG/7iDpnit7ynrNEBEepIedMCf0HsrcDiMQG5WzluSU
+M2vKUpIiQGd4Fwf5ARn0kiIJ18IJuRMuBYXQu6hn3/5u+DI2D5M=
+=hhEW
+-----END PGP SIGNATURE-----
+
+--PmA2V3Z32TCmWXqI--
+
+--===============1854881368==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============1854881368==--
