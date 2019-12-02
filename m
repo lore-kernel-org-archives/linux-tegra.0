@@ -1,51 +1,31 @@
 From: =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
-Subject: [PATCH v2 1/1] arm64: tegra: Enable SDIO on Jetson Nano M.2 Key E
-Date: Mon,  2 Dec 2019 22:52:00 +0100
-Message-ID: <20191202215200.9656-2-tszucs@protonmail.ch>
-References: <20191202215200.9656-1-tszucs@protonmail.ch>
+Subject: [PATCH v2 0/1] arm64: tegra: enable SDIO on Jetson Nano M.2 Key E
+Date: Mon,  2 Dec 2019 22:51:59 +0100
+Message-ID: <20191202215200.9656-1-tszucs@protonmail.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191202215200.9656-1-tszucs@protonmail.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable SDMMC3 and set it up for SDIO devices.
+It turns out SDMMC3 on the Jetson Nano module is wired to respective pins of
+the carrier's M.2 Key E socket. However, it is not enabled. I see no reason
+why. This block is functional and has a fixed 1.8 V I/O supply. Perfect for
+SDIO cards nowdays. I think it would make sense to enable this feature. PCIe
+could be used for something else.
 
-Signed-off-by: Tamás Szűcs <tszucs@protonmail.ch>
----
-Changes in v2:
-- keep card powered in suspend and enable WoWLAN
+Kind regards,
+Tamas
+
+
+Tamás Szűcs (1):
+  arm64: tegra: Enable SDIO on Jetson Nano M.2 Key E
 
  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 13 +++++++++++++
  1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index 90381d52ac54..7f7b720a2a1c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -536,6 +536,19 @@
- 		vmmc-supply = <&vdd_3v3_sd>;
- 	};
- 
-+	sdhci@700b0400 {
-+		status = "okay";
-+		bus-width = <4>;
-+
-+		vqmmc-supply = <&vdd_1v8>;
-+		vmmc-supply = <&vdd_3v3_sys>;
-+
-+		non-removable;
-+		cap-sdio-irq;
-+		keep-power-in-suspend;
-+		wakeup-source;
-+	};
-+
- 	clocks {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
 -- 
 2.20.1
