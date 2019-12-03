@@ -1,167 +1,90 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 00/19] Consolidate and improve NVIDIA Tegra CPUIDLE driver(s)
-Date: Tue,  3 Dec 2019 03:40:57 +0300
-Message-ID: <20191203004116.11771-1-digetx@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v1 01/26] drm/drm_panel: no error when no callback
+Date: Tue, 3 Dec 2019 08:24:59 +0200
+Message-ID: <20191203062459.GA4730@pendragon.ideasonboard.com>
+References: <20191202193230.21310-1-sam@ravnborg.org>
+ <20191202193230.21310-2-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20191202193230.21310-2-sam@ravnborg.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, NXP Linux Team <linux-imx@nxp.com>, Jagan Teki <jagan@amarulasolutions.com>, Jitao Shi <jitao.shi@mediatek.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, linux-mediatek@lists.infradead.org, Abhinav Kumar <abhinavk@codeaurora.org>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Purism Kernel Team <kernel@puri.sm>, linux-renesas-soc@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
-
-This series does the following:
-
-  1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
-     into common drivers/cpuidle/ directory.
-
-  2. Enables CPU cluster power-down idling state on Tegra30.
-
-In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
-and of the Tegra's arch code in general. Please review, thanks!
-
-Changelog:
-
-v8: - Rebased on recent linux-next, now making use of
-      cpuidle_driver_state_disabled(). Added new patch to make this new API
-      usable by the updated Tegra cpuidle driver:
-
-        cpuidle: Avoid NULL dereference in cpuidle_driver_state_disabled()
-
-    - Added new patch to handle case where LP2 isn't available:
-
-        cpuidle: tegra: Disable CC6 state if LP2 unavailable
-
-v7: - drivers/cpuidle/cpuidle-tegra.c now includes an explicit comment that
-      clarifies the new terminology that is used for naming of the idling
-      states. This change was suggested by Peter De Schrijver in the review
-      comment to v6. See the comment to struct tegra_idle_driver in the code.
-
-    - (!) This series is now based on top of the "NVIDIA Tegra20 CPUFreq
-      driver major update" patchset. The conflict between these two series
-      is trivial to resolve, but still it's worth to mention about that.
-
-v6: - Addressed request from Thierry Reding to change the way patches are
-      organized by making changes in a more incremental manner.
-
-    - tegra_sleep_cpu() now checks for the secondary CPUs to be offline
-      in the "Make outer_disable() open-coded" patch.
-
-v5: - Rebased on a recent linux-next, fixed one minor conflict in Kconfig.
-
-    - Improved commit's message of the "Support CPU cluster power-down state
-      on Tegra30" patch.
-
-    - The "Support CPU cluster power-down state on Tegra30" patch is also
-      got split and now there is additional "Make outer_disable() open-coded"
-      patch.
-
-    - Made minor cosmetic changes to the "Introduce unified driver for
-      NVIDIA Tegra SoCs" patch by improving error message and renaming
-      one variable.
-
-v4: - Fixed compilation with !CONFIG_CACHE_L2X0 (and tested that it still
-      works).
-
-    - Replaced ktime_compare() with ktime_before() in the new driver,
-      for consistency.
-
-v3: - Addressed review comments that were made by Jon Hunter to v2 by
-      splitting patches into smaller (and simpler) chunks, better
-      documenting changes in the commit messages and using proper error
-      codes in the code.
-
-      Warnings are replaced with a useful error messages in the code of
-      "Introduce unified driver for NVIDIA Tegra SoCs" patch.
-
-      Secondary CPUs parking timeout increased to 100ms because I found
-      that it actually may happen to take more than 1ms if CPU is running
-      on a *very* low frequency.
-
-      Added diagnostic messages that are reporting Flow Controller state
-      when CPU parking fails.
-
-      Further polished cpuidle driver's code.
-
-      The coupled state entering is now aborted if there is a pending SGI
-      (Software Generated Interrupt) because it will be lost after GIC's
-      power-cycling. Like it was done by the old Tegra20 CPUIDLE driver.
-
-v2: - Added patches to enable the new cpuidle driver in the defconfigs:
-
-        ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
-        ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-
-    - Dropped patches that removed CPUIDLE_FLAG_TIMER_STOP from the idling
-      states because that flag actually doesn't have any negative effects,
-      but still is correct for the case of a local CPU timer on older Tegra
-      SoCs:
-
-        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from Tegra114/124 idle-state
-        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from all states
-
-    - The "Add unified driver for NVIDIA Tegra SoCs" patch got more polish.
-      Tegra30 and Terga114 states are now squashed into a single common C7
-      state (following Parker TRM terminology, see 17.2.2.2 Power Management
-      States), more comments added, etc minor changes.
-
-Dmitry Osipenko (19):
-  ARM: tegra: Compile sleep-tegra20/30.S unconditionally
-  ARM: tegra: Add tegra_pm_park_secondary_cpu()
-  ARM: tegra: Remove pen-locking from cpuidle-tegra20
-  ARM: tegra: Change tegra_set_cpu_in_lp2() type to void
-  ARM: tegra: Propagate error from tegra_idle_lp2_last()
-  ARM: tegra: Expose PM functions required for new cpuidle driver
-  ARM: tegra: Rename some of the newly exposed PM functions
-  ARM: tegra: Make outer_disable() open-coded
-  arm: tegra20: cpuidle: Handle case where secondary CPU hangs on
-    entering LP2
-  arm: tegra20: cpuidle: Make abort_flag atomic
-  arm: tegra20/30: cpuidle: Remove unnecessary memory barrier
-  cpuidle: Avoid NULL dereference in cpuidle_driver_state_disabled()
-  cpuidle: Refactor and move out NVIDIA Tegra20 driver into
-    drivers/cpuidle
-  cpuidle: tegra: Squash Tegra30 driver into the common driver
-  cpuidle: tegra: Support CPU cluster power-down state on Tegra30
-  cpuidle: tegra: Squash Tegra114 driver into the common driver
-  cpuidle: tegra: Disable CC6 state if LP2 unavailable
-  ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
-  ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-
- arch/arm/configs/multi_v7_defconfig           |   1 +
- arch/arm/configs/tegra_defconfig              |   1 +
- arch/arm/mach-tegra/Makefile                  |  19 +-
- arch/arm/mach-tegra/cpuidle-tegra114.c        |  89 -----
- arch/arm/mach-tegra/cpuidle-tegra20.c         | 212 ----------
- arch/arm/mach-tegra/cpuidle-tegra30.c         | 132 ------
- arch/arm/mach-tegra/cpuidle.c                 |  50 ---
- arch/arm/mach-tegra/cpuidle.h                 |  21 -
- arch/arm/mach-tegra/irq.c                     |   3 +-
- arch/arm/mach-tegra/pm.c                      |  54 ++-
- arch/arm/mach-tegra/pm.h                      |   4 -
- arch/arm/mach-tegra/reset-handler.S           |  11 -
- arch/arm/mach-tegra/reset.h                   |   9 +-
- arch/arm/mach-tegra/sleep-tegra20.S           | 170 --------
- arch/arm/mach-tegra/sleep-tegra30.S           |   6 +-
- arch/arm/mach-tegra/sleep.h                   |  15 -
- arch/arm/mach-tegra/tegra.c                   |   7 +-
- drivers/cpuidle/Kconfig.arm                   |   8 +
- drivers/cpuidle/Makefile                      |   1 +
- drivers/cpuidle/cpuidle-tegra.c               | 376 ++++++++++++++++++
- drivers/cpuidle/driver.c                      |   4 +
- include/soc/tegra/cpuidle.h                   |   2 +-
- .../mach-tegra => include/soc/tegra}/irq.h    |   8 +-
- include/soc/tegra/pm.h                        |  31 ++
- 24 files changed, 473 insertions(+), 761 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra114.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra20.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra30.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle.c
- delete mode 100644 arch/arm/mach-tegra/cpuidle.h
- create mode 100644 drivers/cpuidle/cpuidle-tegra.c
- rename {arch/arm/mach-tegra => include/soc/tegra}/irq.h (59%)
-
--- 
-2.24.0
+SGkgU2FtLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBNb24sIERlYyAwMiwgMjAxOSBh
+dCAwODozMjowNVBNICswMTAwLCBTYW0gUmF2bmJvcmcgd3JvdGU6Cj4gVGhlIGNhbGxiYWNrcyBp
+biBkcm1fcGFuZWxfZnVuY3MgYXJlIG9wdGlvbmFsLCBzbyBkbyBub3QKPiByZXR1cm4gYW4gZXJy
+b3IganVzdCBiZWNhdXNlIG5vIGNhbGxiYWNrIGlzIGFzc2lnbmVkLgoKVW5sZXNzIEknbSBtaXN0
+YWtlbiB0aGUgY2FsbGJhY2tzIGFyZSBub3QgZG9jdW1lbnRlZCBhcyBvcHRpb25hbC4gU2hvdWxk
+CnRoaXMgYmUgZml4ZWQgdG9vID8KCj4gU2lnbmVkLW9mZi1ieTogU2FtIFJhdm5ib3JnIDxzYW1A
+cmF2bmJvcmcub3JnPgo+IENjOiBNYWFydGVuIExhbmtob3JzdCA8bWFhcnRlbi5sYW5raG9yc3RA
+bGludXguaW50ZWwuY29tPgo+IENjOiBNYXhpbWUgUmlwYXJkIDxtcmlwYXJkQGtlcm5lbC5vcmc+
+Cj4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+Cj4gQ2M6IFNh
+bSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4KPiBDYzogRGF2aWQgQWlybGllIDxhaXJsaWVk
+QGxpbnV4LmllPgo+IENjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+Cj4gLS0tCj4g
+IGRyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYyB8IDM1ICsrKysrKysrKysrKysrKysrKysrKysr
+KystLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyNSBpbnNlcnRpb25zKCspLCAxMCBkZWxl
+dGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9wYW5lbC5jIGIv
+ZHJpdmVycy9ncHUvZHJtL2RybV9wYW5lbC5jCj4gaW5kZXggZWQ3OTg1YzA1MzVhLi4yZDU5Y2Rk
+MDVlNTAgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9wYW5lbC5jCj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2RybV9wYW5lbC5jCj4gQEAgLTE1MSwxMCArMTUxLDEzIEBAIEVYUE9S
+VF9TWU1CT0woZHJtX3BhbmVsX2RldGFjaCk7Cj4gICAqLwo+ICBpbnQgZHJtX3BhbmVsX3ByZXBh
+cmUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4gIHsKPiAtCWlmIChwYW5lbCAmJiBwYW5lbC0+
+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5wcmVwYXJlKQo+ICsJaWYgKCFwYW5lbCkKPiArCQlyZXR1
+cm4gLUVJTlZBTDsKPiArCj4gKwlpZiAocGFuZWwtPmZ1bmNzICYmIHBhbmVsLT5mdW5jcy0+cHJl
+cGFyZSkKPiAgCQlyZXR1cm4gcGFuZWwtPmZ1bmNzLT5wcmVwYXJlKHBhbmVsKTsKPiAgCj4gLQly
+ZXR1cm4gcGFuZWwgPyAtRU5PU1lTIDogLUVJTlZBTDsKPiArCXJldHVybiAwOwo+ICB9Cj4gIEVY
+UE9SVF9TWU1CT0woZHJtX3BhbmVsX3ByZXBhcmUpOwo+ICAKPiBAQCAtMTcxLDEwICsxNzQsMTMg
+QEAgRVhQT1JUX1NZTUJPTChkcm1fcGFuZWxfcHJlcGFyZSk7Cj4gICAqLwo+ICBpbnQgZHJtX3Bh
+bmVsX3VucHJlcGFyZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKPiAgewo+IC0JaWYgKHBhbmVs
+ICYmIHBhbmVsLT5mdW5jcyAmJiBwYW5lbC0+ZnVuY3MtPnVucHJlcGFyZSkKPiArCWlmICghcGFu
+ZWwpCj4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gKwo+ICsJaWYgKHBhbmVsLT5mdW5jcyAmJiBwYW5l
+bC0+ZnVuY3MtPnVucHJlcGFyZSkKPiAgCQlyZXR1cm4gcGFuZWwtPmZ1bmNzLT51bnByZXBhcmUo
+cGFuZWwpOwo+ICAKPiAtCXJldHVybiBwYW5lbCA/IC1FTk9TWVMgOiAtRUlOVkFMOwo+ICsJcmV0
+dXJuIDA7Cj4gIH0KPiAgRVhQT1JUX1NZTUJPTChkcm1fcGFuZWxfdW5wcmVwYXJlKTsKPiAgCj4g
+QEAgLTE5MCwxMCArMTk2LDEzIEBAIEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX3VucHJlcGFyZSk7
+Cj4gICAqLwo+ICBpbnQgZHJtX3BhbmVsX2VuYWJsZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkK
+PiAgewo+IC0JaWYgKHBhbmVsICYmIHBhbmVsLT5mdW5jcyAmJiBwYW5lbC0+ZnVuY3MtPmVuYWJs
+ZSkKPiArCWlmICghcGFuZWwpCj4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gKwo+ICsJaWYgKHBhbmVs
+LT5mdW5jcyAmJiBwYW5lbC0+ZnVuY3MtPmVuYWJsZSkKPiAgCQlyZXR1cm4gcGFuZWwtPmZ1bmNz
+LT5lbmFibGUocGFuZWwpOwo+ICAKPiAtCXJldHVybiBwYW5lbCA/IC1FTk9TWVMgOiAtRUlOVkFM
+Owo+ICsJcmV0dXJuIDA7Cj4gIH0KPiAgRVhQT1JUX1NZTUJPTChkcm1fcGFuZWxfZW5hYmxlKTsK
+PiAgCj4gQEAgLTIwOSwxMCArMjE4LDEzIEBAIEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX2VuYWJs
+ZSk7Cj4gICAqLwo+ICBpbnQgZHJtX3BhbmVsX2Rpc2FibGUoc3RydWN0IGRybV9wYW5lbCAqcGFu
+ZWwpCj4gIHsKPiAtCWlmIChwYW5lbCAmJiBwYW5lbC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5k
+aXNhYmxlKQo+ICsJaWYgKCFwYW5lbCkKPiArCQlyZXR1cm4gLUVJTlZBTDsKPiArCj4gKwlpZiAo
+cGFuZWwtPmZ1bmNzICYmIHBhbmVsLT5mdW5jcy0+ZGlzYWJsZSkKPiAgCQlyZXR1cm4gcGFuZWwt
+PmZ1bmNzLT5kaXNhYmxlKHBhbmVsKTsKPiAgCj4gLQlyZXR1cm4gcGFuZWwgPyAtRU5PU1lTIDog
+LUVJTlZBTDsKPiArCXJldHVybiAwOwo+ICB9Cj4gIEVYUE9SVF9TWU1CT0woZHJtX3BhbmVsX2Rp
+c2FibGUpOwo+ICAKPiBAQCAtMjI4LDEwICsyNDAsMTMgQEAgRVhQT1JUX1NZTUJPTChkcm1fcGFu
+ZWxfZGlzYWJsZSk7Cj4gICAqLwo+ICBpbnQgZHJtX3BhbmVsX2dldF9tb2RlcyhzdHJ1Y3QgZHJt
+X3BhbmVsICpwYW5lbCkKPiAgewo+IC0JaWYgKHBhbmVsICYmIHBhbmVsLT5mdW5jcyAmJiBwYW5l
+bC0+ZnVuY3MtPmdldF9tb2RlcykKPiArCWlmICghcGFuZWwpCj4gKwkJcmV0dXJuIC1FSU5WQUw7
+Cj4gKwo+ICsJaWYgKHBhbmVsLT5mdW5jcyAmJiBwYW5lbC0+ZnVuY3MtPmdldF9tb2RlcykKPiAg
+CQlyZXR1cm4gcGFuZWwtPmZ1bmNzLT5nZXRfbW9kZXMocGFuZWwpOwoKU2hvdWxkIGdldF9tb2Rl
+cygpIGJlIG9wdGlvbmFsID8gQXMgZmFyIGFzIEkgY2FuIHRlbGwgYWxsIHRoZSBwYW5lbApkcml2
+ZXJzIGluIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC8gaW1wbGVtZW50IGl0LCBhbmQgSSdtIG5vdCBz
+dXJlIHRvIHNlZQpob3cgYSBwYW5lbCBjb3VsZCBiZSB1c2FibGUgaWYgaXQgY2FuJ3QgcmV0dXJu
+IGl0cyBtb2RlLgoKT24gdGhlIG90aGVyIGhhbmQgeW91IHJldHVybiAwIGlmIHRoZSBjYWxsYmFj
+ayBpc24ndCBpbXBsZW1lbnRlZCwgd2hpY2gKZG9lc24ndCBtZWFuIHN1Y2Nlc3MgaGVyZSwgc28g
+SSBzdXBwb3NlIHRoYXQncyBmaW5lLCBidXQgSSBkb24ndCB0aGluawp3ZSBzaG91bGQgZG9jdW1l
+bnQgLmdldF9tb2RlcygpIGFzIGJlaW5nIG9wdGlvbmFsLgoKV2l0aCB0aGVzZSBpc3N1ZXMgYWRk
+cmVzc2VkIChpZiB0aGV5IG5lZWQgdG8gYmUpLAoKUmV2aWV3ZWQtYnk6IExhdXJlbnQgUGluY2hh
+cnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KCj4gIAo+IC0JcmV0dXJuIHBh
+bmVsID8gLUVOT1NZUyA6IC1FSU5WQUw7Cj4gKwlyZXR1cm4gMDsKPiAgfQo+ICBFWFBPUlRfU1lN
+Qk9MKGRybV9wYW5lbF9nZXRfbW9kZXMpOwo+ICAKCi0tIApSZWdhcmRzLAoKTGF1cmVudCBQaW5j
+aGFydApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
