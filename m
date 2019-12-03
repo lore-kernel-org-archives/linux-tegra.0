@@ -1,319 +1,654 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/3] drm/tegra: Implement correct DMA-BUF semantics
-Date: Tue,  3 Dec 2019 17:32:03 +0100
-Message-ID: <20191203163203.1486837-3-thierry.reding@gmail.com>
-References: <20191203163203.1486837-1-thierry.reding@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v2 02/11] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Tue, 3 Dec 2019 08:45:13 -0800
+Message-ID: <74ff9e90-0969-bf53-444c-d643d342d0cb@nvidia.com>
+References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+ <1574830773-14892-3-git-send-email-skomatineni@nvidia.com>
+ <749de44c-ec59-3cab-c02e-7b8fcb1fb9f4@gmail.com>
+ <3d1492a1-f2a5-2d56-5341-a28fcb73fe64@nvidia.com>
+ <484cb1bb-4fb2-9e71-87be-2bd5bd5b2348@gmail.com>
+ <e4ee58aa-c421-ea4b-a37b-574fc987c7c1@nvidia.com>
+ <e5da42b8-bf21-4b57-8ae6-37ce6ca4210c@gmail.com>
+ <bb4853a1-83d7-273d-50df-324570c4a4b8@nvidia.com>
+ <bd979864-b3e8-02b1-e0b0-869ddfa8ac67@nvidia.com>
+ <41508376-f30b-3761-47bf-c9c87db997dc@nvidia.com>
+ <348e9382-9978-0c01-1493-4226c1cd70a3@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191203163203.1486837-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <348e9382-9978-0c01-1493-4226c1cd70a3@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkRNQS1CVUYgcmVxdWly
-ZXMgdGhhdCBlYWNoIGRldmljZSB0aGF0IGFjY2Vzc2VzIGEgRE1BLUJVRiBhdHRhY2hlcyB0byBp
-dApzZXBhcmF0ZWx5LiBUbyBkbyBzbyB0aGUgaG9zdDF4X2JvX3BpbigpIGFuZCBob3N0MXhfYm9f
-dW5waW4oKSBmdW5jdGlvbnMKbmVlZCB0byBiZSByZWltcGxlbWVudGVkIHNvIHRoYXQgdGhleSBj
-YW4gcmV0dXJuIGEgbWFwcGluZywgd2hpY2ggZWl0aGVyCnJlcHJlc2VudHMgYW4gYXR0YWNobWVu
-dCBvciBhIG1hcCBvZiB0aGUgZHJpdmVyJ3Mgb3duIEdFTSBvYmplY3QuCgpTaWduZWQtb2ZmLWJ5
-OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9nZW0uYyAgIHwgMTMxICsrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0K
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5jIHwgIDQ3ICsrKystLS0tLS0tLQogZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL3BsYW5lLmggfCAgIDIgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9qb2Iu
-YyAgICAgIHwgMTI3ICsrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dw
-dS9ob3N0MXgvam9iLmggICAgICB8ICAgNiArLQogaW5jbHVkZS9saW51eC9ob3N0MXguaCAgICAg
-ICAgfCAgMzIgKysrKysrLS0tCiA2IGZpbGVzIGNoYW5nZWQsIDE2MiBpbnNlcnRpb25zKCspLCAx
-ODMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5j
-IGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jCmluZGV4IDEyMzdkZjE1N2UwNS4uYzA4NTQ5
-OTA2N2VkIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKKysrIGIvZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jCkBAIC0yNyw3MSArMjcsNzcgQEAgc3RhdGljIHZvaWQg
-dGVncmFfYm9fcHV0KHN0cnVjdCBob3N0MXhfYm8gKmJvKQogCWRybV9nZW1fb2JqZWN0X3B1dF91
-bmxvY2tlZCgmb2JqLT5nZW0pOwogfQogCi0vKiBYWFggbW92ZSB0aGlzIGludG8gbGliL3NjYXR0
-ZXJsaXN0LmM/ICovCi1zdGF0aWMgaW50IHNnX2FsbG9jX3RhYmxlX2Zyb21fc2coc3RydWN0IHNn
-X3RhYmxlICpzZ3QsIHN0cnVjdCBzY2F0dGVybGlzdCAqc2csCi0JCQkJICB1bnNpZ25lZCBpbnQg
-bmVudHMsIGdmcF90IGdmcF9tYXNrKQorc3RhdGljIHN0cnVjdCBob3N0MXhfYm9fbWFwcGluZyAq
-Cit0ZWdyYV9ib19waW4oc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgaG9zdDF4X2JvICpibywK
-KwkgICAgIGVudW0gZG1hX2RhdGFfZGlyZWN0aW9uIGRpcmVjdGlvbikKIHsKLQlzdHJ1Y3Qgc2Nh
-dHRlcmxpc3QgKmRzdDsKLQl1bnNpZ25lZCBpbnQgaTsKKwlzdHJ1Y3QgdGVncmFfYm8gKm9iaiA9
-IGhvc3QxeF90b190ZWdyYV9ibyhibyk7CisJc3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW0gPSAm
-b2JqLT5nZW07CisJc3RydWN0IGhvc3QxeF9ib19tYXBwaW5nICptYXA7CiAJaW50IGVycjsKIAot
-CWVyciA9IHNnX2FsbG9jX3RhYmxlKHNndCwgbmVudHMsIGdmcF9tYXNrKTsKLQlpZiAoZXJyIDwg
-MCkKLQkJcmV0dXJuIGVycjsKLQotCWRzdCA9IHNndC0+c2dsOworCW1hcCA9IGt6YWxsb2Moc2l6
-ZW9mKCptYXApLCBHRlBfS0VSTkVMKTsKKwlpZiAoIW1hcCkKKwkJcmV0dXJuIEVSUl9QVFIoLUVO
-T01FTSk7CiAKLQlmb3IgKGkgPSAwOyBpIDwgbmVudHM7IGkrKykgewotCQlzZ19zZXRfcGFnZShk
-c3QsIHNnX3BhZ2Uoc2cpLCBzZy0+bGVuZ3RoLCAwKTsKLQkJZHN0ID0gc2dfbmV4dChkc3QpOwot
-CQlzZyA9IHNnX25leHQoc2cpOwotCX0KLQotCXJldHVybiAwOwotfQotCi1zdGF0aWMgc3RydWN0
-IHNnX3RhYmxlICp0ZWdyYV9ib19waW4oc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgaG9zdDF4
-X2JvICpibywKLQkJCQkgICAgIGRtYV9hZGRyX3QgKnBoeXMpCi17Ci0Jc3RydWN0IHRlZ3JhX2Jv
-ICpvYmogPSBob3N0MXhfdG9fdGVncmFfYm8oYm8pOwotCXN0cnVjdCBzZ190YWJsZSAqc2d0Owot
-CWludCBlcnI7CisJbWFwLT5kaXJlY3Rpb24gPSBkaXJlY3Rpb247CisJbWFwLT5kZXYgPSBkZXY7
-CisJbWFwLT5ibyA9IGJvOwogCiAJLyoKIAkgKiBJZiB3ZSd2ZSBtYW51YWxseSBtYXBwZWQgdGhl
-IGJ1ZmZlciBvYmplY3QgdGhyb3VnaCB0aGUgSU9NTVUsIG1ha2UKIAkgKiBzdXJlIHRvIHJldHVy
-biB0aGUgSU9WQSBhZGRyZXNzIG9mIG91ciBtYXBwaW5nLgogCSAqLwotCWlmIChwaHlzICYmIG9i
-ai0+bW0pIHsKLQkJKnBoeXMgPSBvYmotPmlvdmE7Ci0JCXJldHVybiBOVUxMOworCWlmIChvYmot
-Pm1tKSB7CisJCW1hcC0+cGh5cyA9IG9iai0+aW92YTsKKwkJcmV0dXJuIG1hcDsKKwl9CisKKwkv
-KgorCSAqIEltcG9ydGVkIGJ1ZmZlcnMgbmVlZCBzcGVjaWFsIHRyZWF0bWVudCB0byBzYXRpc2Z5
-IHRoZSBzZW1hbnRpY3Mgb2YKKwkgKiBETUEtQlVGLgorCSAqLworCWlmIChnZW0tPmltcG9ydF9h
-dHRhY2gpIHsKKwkJc3RydWN0IGRtYV9idWYgKmJ1ZiA9IGdlbS0+aW1wb3J0X2F0dGFjaC0+ZG1h
-YnVmOworCisJCW1hcC0+YXR0YWNoID0gZG1hX2J1Zl9hdHRhY2goYnVmLCBkZXYpOworCQlpZiAo
-SVNfRVJSKG1hcC0+YXR0YWNoKSkgeworCQkJZXJyID0gUFRSX0VSUihtYXAtPmF0dGFjaCk7CisJ
-CQlnb3RvIGZyZWU7CisJCX0KKworCQltYXAtPnNndCA9IGRtYV9idWZfbWFwX2F0dGFjaG1lbnQo
-bWFwLT5hdHRhY2gsIGRpcmVjdGlvbik7CisJCWlmIChJU19FUlIobWFwLT5zZ3QpKSB7CisJCQlk
-bWFfYnVmX2RldGFjaChidWYsIG1hcC0+YXR0YWNoKTsKKwkJCWVyciA9IFBUUl9FUlIobWFwLT5z
-Z3QpOworCQkJZ290byBmcmVlOworCQl9CisKKwkJbWFwLT5jaHVua3MgPSBzZ3RfZG1hX2NvdW50
-X2NodW5rcyhtYXAtPnNndCk7CisJCW1hcC0+cGh5cyA9IHNnX2RtYV9hZGRyZXNzKG1hcC0+c2d0
-LT5zZ2wpOworCQltYXAtPnNpemUgPSBnZW0tPnNpemU7CisKKwkJcmV0dXJuIG1hcDsKIAl9CiAK
-IAkvKgogCSAqIElmIHdlIGRvbid0IGhhdmUgYSBtYXBwaW5nIGZvciB0aGlzIGJ1ZmZlciB5ZXQs
-IHJldHVybiBhbiBTRyB0YWJsZQogCSAqIHNvIHRoYXQgaG9zdDF4IGNhbiBkbyB0aGUgbWFwcGlu
-ZyBmb3IgdXMgdmlhIHRoZSBETUEgQVBJLgogCSAqLwotCXNndCA9IGt6YWxsb2Moc2l6ZW9mKCpz
-Z3QpLCBHRlBfS0VSTkVMKTsKLQlpZiAoIXNndCkKLQkJcmV0dXJuIEVSUl9QVFIoLUVOT01FTSk7
-CisJbWFwLT5zZ3QgPSBremFsbG9jKHNpemVvZigqbWFwLT5zZ3QpLCBHRlBfS0VSTkVMKTsKKwlp
-ZiAoIW1hcC0+c2d0KSB7CisJCWVyciA9IC1FTk9NRU07CisJCWdvdG8gZnJlZTsKKwl9CiAKIAlp
-ZiAob2JqLT5wYWdlcykgewogCQkvKgogCQkgKiBJZiB0aGUgYnVmZmVyIG9iamVjdCB3YXMgYWxs
-b2NhdGVkIGZyb20gdGhlIGV4cGxpY2l0IElPTU1VCiAJCSAqIEFQSSBjb2RlIHBhdGhzLCBjb25z
-dHJ1Y3QgYW4gU0cgdGFibGUgZnJvbSB0aGUgcGFnZXMuCiAJCSAqLwotCQllcnIgPSBzZ19hbGxv
-Y190YWJsZV9mcm9tX3BhZ2VzKHNndCwgb2JqLT5wYWdlcywgb2JqLT5udW1fcGFnZXMsCi0JCQkJ
-CQkwLCBvYmotPmdlbS5zaXplLCBHRlBfS0VSTkVMKTsKLQkJaWYgKGVyciA8IDApCi0JCQlnb3Rv
-IGZyZWU7Ci0JfSBlbHNlIGlmIChvYmotPnNndCkgewotCQkvKgotCQkgKiBJZiB0aGUgYnVmZmVy
-IG9iamVjdCBhbHJlYWR5IGhhcyBhbiBTRyB0YWJsZSBidXQgbm8gcGFnZXMKLQkJICogd2VyZSBh
-bGxvY2F0ZWQgZm9yIGl0LCBpdCBtZWFucyB0aGUgYnVmZmVyIHdhcyBpbXBvcnRlZCBhbmQKLQkJ
-ICogdGhlIFNHIHRhYmxlIG5lZWRzIHRvIGJlIGNvcGllZCB0byBhdm9pZCBvdmVyd3JpdGluZyBh
-bnkKLQkJICogb3RoZXIgcG90ZW50aWFsIHVzZXJzIG9mIHRoZSBvcmlnaW5hbCBTRyB0YWJsZS4K
-LQkJICovCi0JCWVyciA9IHNnX2FsbG9jX3RhYmxlX2Zyb21fc2coc2d0LCBvYmotPnNndC0+c2ds
-LCBvYmotPnNndC0+bmVudHMsCi0JCQkJCSAgICAgR0ZQX0tFUk5FTCk7CisJCWVyciA9IHNnX2Fs
-bG9jX3RhYmxlX2Zyb21fcGFnZXMobWFwLT5zZ3QsIG9iai0+cGFnZXMsCisJCQkJCQlvYmotPm51
-bV9wYWdlcywgMCwKKwkJCQkJCW9iai0+Z2VtLnNpemUsIEdGUF9LRVJORUwpOwogCQlpZiAoZXJy
-IDwgMCkKIAkJCWdvdG8gZnJlZTsKIAl9IGVsc2UgewpAQCAtMTAwLDI1ICsxMDYsNDggQEAgc3Rh
-dGljIHN0cnVjdCBzZ190YWJsZSAqdGVncmFfYm9fcGluKHN0cnVjdCBkZXZpY2UgKmRldiwgc3Ry
-dWN0IGhvc3QxeF9ibyAqYm8sCiAJCSAqIG5vdCBpbXBvcnRlZCwgaXQgaGFkIHRvIGJlIGFsbG9j
-YXRlZCB3aXRoIHRoZSBETUEgQVBJLCBzbwogCQkgKiB0aGUgRE1BIEFQSSBoZWxwZXIgY2FuIGJl
-IHVzZWQuCiAJCSAqLwotCQllcnIgPSBkbWFfZ2V0X3NndGFibGUoZGV2LCBzZ3QsIG9iai0+dmFk
-ZHIsIG9iai0+aW92YSwKKwkJZXJyID0gZG1hX2dldF9zZ3RhYmxlKGRldiwgbWFwLT5zZ3QsIG9i
-ai0+dmFkZHIsIG9iai0+aW92YSwKIAkJCQkgICAgICBvYmotPmdlbS5zaXplKTsKIAkJaWYgKGVy
-ciA8IDApCiAJCQlnb3RvIGZyZWU7CiAJfQogCi0JcmV0dXJuIHNndDsKKwllcnIgPSBkbWFfbWFw
-X3NnKGRldiwgbWFwLT5zZ3QtPnNnbCwgbWFwLT5zZ3QtPm5lbnRzLCBkaXJlY3Rpb24pOworCWlm
-ICghZXJyKSB7CisJCWVyciA9IC1FTk9NRU07CisJCWdvdG8gZnJlZV9zZ3Q7CisJfQorCisJbWFw
-LT5waHlzID0gc2dfZG1hX2FkZHJlc3MobWFwLT5zZ3QtPnNnbCk7CisJbWFwLT5zaXplID0gZ2Vt
-LT5zaXplOworCW1hcC0+Y2h1bmtzID0gZXJyOworCisJcmV0dXJuIG1hcDsKIAorZnJlZV9zZ3Q6
-CisJc2dfZnJlZV90YWJsZShtYXAtPnNndCk7CiBmcmVlOgotCWtmcmVlKHNndCk7CisJa2ZyZWUo
-bWFwLT5zZ3QpOworCWtmcmVlKG1hcCk7CiAJcmV0dXJuIEVSUl9QVFIoZXJyKTsKIH0KIAotc3Rh
-dGljIHZvaWQgdGVncmFfYm9fdW5waW4oc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qgc2dfdGFi
-bGUgKnNndCkKK3N0YXRpYyB2b2lkIHRlZ3JhX2JvX3VucGluKHN0cnVjdCBob3N0MXhfYm9fbWFw
-cGluZyAqbWFwKQogewotCWlmIChzZ3QpIHsKLQkJc2dfZnJlZV90YWJsZShzZ3QpOwotCQlrZnJl
-ZShzZ3QpOworCWlmICghbWFwKQorCQlyZXR1cm47CisKKwlpZiAobWFwLT5hdHRhY2gpIHsKKwkJ
-ZG1hX2J1Zl91bm1hcF9hdHRhY2htZW50KG1hcC0+YXR0YWNoLCBtYXAtPnNndCwgbWFwLT5kaXJl
-Y3Rpb24pOworCQlkbWFfYnVmX2RldGFjaChtYXAtPmF0dGFjaC0+ZG1hYnVmLCBtYXAtPmF0dGFj
-aCk7CisJfSBlbHNlIHsKKwkJZG1hX3VubWFwX3NnKG1hcC0+ZGV2LCBtYXAtPnNndC0+c2dsLCBt
-YXAtPnNndC0+bmVudHMsCisJCQkgICAgIG1hcC0+ZGlyZWN0aW9uKTsKKwkJc2dfZnJlZV90YWJs
-ZShtYXAtPnNndCk7CisJCWtmcmVlKG1hcC0+c2d0KTsKIAl9CisKKwlrZnJlZShtYXApOwogfQog
-CiBzdGF0aWMgdm9pZCAqdGVncmFfYm9fbW1hcChzdHJ1Y3QgaG9zdDF4X2JvICpibykKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL3BsYW5lLmMKaW5kZXggY2FkY2RkOWVhNDI3Li4yOGNmNjY4MDI2ZGEgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9wbGFuZS5jCkBAIC02Nyw3ICs2Nyw3IEBAIHRlZ3JhX3BsYW5lX2F0b21pY19kdXBsaWNhdGVf
-c3RhdGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCiAKIAlmb3IgKGkgPSAwOyBpIDwgMzsgaSsr
-KSB7CiAJCWNvcHktPmlvdmFbaV0gPSBETUFfTUFQUElOR19FUlJPUjsKLQkJY29weS0+c2d0W2ld
-ID0gTlVMTDsKKwkJY29weS0+bWFwW2ldID0gTlVMTDsKIAl9CiAKIAlyZXR1cm4gJmNvcHktPmJh
-c2U7CkBAIC0xMTQsMTggKzExNCwxMSBAQCBzdGF0aWMgaW50IHRlZ3JhX2RjX3BpbihzdHJ1Y3Qg
-dGVncmFfZGMgKmRjLCBzdHJ1Y3QgdGVncmFfcGxhbmVfc3RhdGUgKnN0YXRlKQogCQlzdHJ1Y3Qg
-dGVncmFfYm8gKmJvID0gdGVncmFfZmJfZ2V0X3BsYW5lKHN0YXRlLT5iYXNlLmZiLCBpKTsKIAog
-CQlpZiAoIWRjLT5jbGllbnQuZ3JvdXApIHsKLQkJCXN0cnVjdCBzZ190YWJsZSAqc2d0OworCQkJ
-c3RydWN0IGhvc3QxeF9ib19tYXBwaW5nICptYXA7CiAKLQkJCXNndCA9IGhvc3QxeF9ib19waW4o
-ZGMtPmRldiwgJmJvLT5iYXNlLCBOVUxMKTsKLQkJCWlmIChJU19FUlIoc2d0KSkgewotCQkJCWVy
-ciA9IFBUUl9FUlIoc2d0KTsKLQkJCQlnb3RvIHVucGluOwotCQkJfQotCi0JCQllcnIgPSBkbWFf
-bWFwX3NnKGRjLT5kZXYsIHNndC0+c2dsLCBzZ3QtPm5lbnRzLAotCQkJCQkgRE1BX1RPX0RFVklD
-RSk7Ci0JCQlpZiAoZXJyID09IDApIHsKLQkJCQllcnIgPSAtRU5PTUVNOworCQkJbWFwID0gaG9z
-dDF4X2JvX3BpbihkYy0+ZGV2LCAmYm8tPmJhc2UsIERNQV9UT19ERVZJQ0UpOworCQkJaWYgKElT
-X0VSUihtYXApKSB7CisJCQkJZXJyID0gUFRSX0VSUihtYXApOwogCQkJCWdvdG8gdW5waW47CiAJ
-CQl9CiAKQEAgLTEzNSwxMyArMTI4LDEzIEBAIHN0YXRpYyBpbnQgdGVncmFfZGNfcGluKHN0cnVj
-dCB0ZWdyYV9kYyAqZGMsIHN0cnVjdCB0ZWdyYV9wbGFuZV9zdGF0ZSAqc3RhdGUpCiAJCQkgKiBt
-YXAgaXRzIFNHIHRhYmxlIHRvIGEgc2luZ2xlIGNvbnRpZ3VvdXMgY2h1bmsgb2YKIAkJCSAqIEkv
-TyB2aXJ0dWFsIG1lbW9yeS4KIAkJCSAqLwotCQkJaWYgKGVyciA+IDEpIHsKKwkJCWlmIChtYXAt
-PmNodW5rcyA+IDEpIHsKIAkJCQllcnIgPSAtRUlOVkFMOwogCQkJCWdvdG8gdW5waW47CiAJCQl9
-CiAKLQkJCXN0YXRlLT5pb3ZhW2ldID0gc2dfZG1hX2FkZHJlc3Moc2d0LT5zZ2wpOwotCQkJc3Rh
-dGUtPnNndFtpXSA9IHNndDsKKwkJCXN0YXRlLT5pb3ZhW2ldID0gbWFwLT5waHlzOworCQkJc3Rh
-dGUtPm1hcFtpXSA9IG1hcDsKIAkJfSBlbHNlIHsKIAkJCXN0YXRlLT5pb3ZhW2ldID0gYm8tPmlv
-dmE7CiAJCX0KQEAgLTE1MywxNCArMTQ2LDkgQEAgc3RhdGljIGludCB0ZWdyYV9kY19waW4oc3Ry
-dWN0IHRlZ3JhX2RjICpkYywgc3RydWN0IHRlZ3JhX3BsYW5lX3N0YXRlICpzdGF0ZSkKIAlkZXZf
-ZXJyKGRjLT5kZXYsICJmYWlsZWQgdG8gbWFwIHBsYW5lICV1OiAlZFxuIiwgaSwgZXJyKTsKIAog
-CXdoaWxlIChpLS0pIHsKLQkJc3RydWN0IHRlZ3JhX2JvICpibyA9IHRlZ3JhX2ZiX2dldF9wbGFu
-ZShzdGF0ZS0+YmFzZS5mYiwgaSk7Ci0JCXN0cnVjdCBzZ190YWJsZSAqc2d0ID0gc3RhdGUtPnNn
-dFtpXTsKLQotCQlkbWFfdW5tYXBfc2coZGMtPmRldiwgc2d0LT5zZ2wsIHNndC0+bmVudHMsIERN
-QV9UT19ERVZJQ0UpOwotCQlob3N0MXhfYm9fdW5waW4oZGMtPmRldiwgJmJvLT5iYXNlLCBzZ3Qp
-OwotCisJCWhvc3QxeF9ib191bnBpbihzdGF0ZS0+bWFwW2ldKTsKIAkJc3RhdGUtPmlvdmFbaV0g
-PSBETUFfTUFQUElOR19FUlJPUjsKLQkJc3RhdGUtPnNndFtpXSA9IE5VTEw7CisJCXN0YXRlLT5t
-YXBbaV0gPSBOVUxMOwogCX0KIAogCXJldHVybiBlcnI7CkBAIC0xNzEsMjAgKzE1OSwxMSBAQCBz
-dGF0aWMgdm9pZCB0ZWdyYV9kY191bnBpbihzdHJ1Y3QgdGVncmFfZGMgKmRjLCBzdHJ1Y3QgdGVn
-cmFfcGxhbmVfc3RhdGUgKnN0YXRlKQogCXVuc2lnbmVkIGludCBpOwogCiAJZm9yIChpID0gMDsg
-aSA8IHN0YXRlLT5iYXNlLmZiLT5mb3JtYXQtPm51bV9wbGFuZXM7IGkrKykgewotCQlzdHJ1Y3Qg
-dGVncmFfYm8gKmJvID0gdGVncmFfZmJfZ2V0X3BsYW5lKHN0YXRlLT5iYXNlLmZiLCBpKTsKLQot
-CQlpZiAoIWRjLT5jbGllbnQuZ3JvdXApIHsKLQkJCXN0cnVjdCBzZ190YWJsZSAqc2d0ID0gc3Rh
-dGUtPnNndFtpXTsKLQotCQkJaWYgKHNndCkgewotCQkJCWRtYV91bm1hcF9zZyhkYy0+ZGV2LCBz
-Z3QtPnNnbCwgc2d0LT5uZW50cywKLQkJCQkJICAgICBETUFfVE9fREVWSUNFKTsKLQkJCQlob3N0
-MXhfYm9fdW5waW4oZGMtPmRldiwgJmJvLT5iYXNlLCBzZ3QpOwotCQkJfQotCQl9CisJCWlmICgh
-ZGMtPmNsaWVudC5ncm91cCkKKwkJCWhvc3QxeF9ib191bnBpbihzdGF0ZS0+bWFwW2ldKTsKIAog
-CQlzdGF0ZS0+aW92YVtpXSA9IERNQV9NQVBQSU5HX0VSUk9SOwotCQlzdGF0ZS0+c2d0W2ldID0g
-TlVMTDsKKwkJc3RhdGUtPm1hcFtpXSA9IE5VTEw7CiAJfQogfQogCmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vdGVncmEvcGxhbmUuaCBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5o
-CmluZGV4IGExNThhOTE1MTA5YS4uMDhkZjFiYTFmNTY3IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vdGVncmEvcGxhbmUuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvcGxhbmUuaApA
-QCAtMzksNyArMzksNyBAQCBzdHJ1Y3QgdGVncmFfcGxhbmVfbGVnYWN5X2JsZW5kaW5nX3N0YXRl
-IHsKIHN0cnVjdCB0ZWdyYV9wbGFuZV9zdGF0ZSB7CiAJc3RydWN0IGRybV9wbGFuZV9zdGF0ZSBi
-YXNlOwogCi0Jc3RydWN0IHNnX3RhYmxlICpzZ3RbM107CisJc3RydWN0IGhvc3QxeF9ib19tYXBw
-aW5nICptYXBbM107CiAJZG1hX2FkZHJfdCBpb3ZhWzNdOwogCiAJc3RydWN0IHRlZ3JhX2JvX3Rp
-bGluZyB0aWxpbmc7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvam9iLmMgYi9kcml2
-ZXJzL2dwdS9ob3N0MXgvam9iLmMKaW5kZXggNjBiMmZlZGQwMDYxLi44OGU0NDU1NTNkZjMgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9qb2IuYworKysgYi9kcml2ZXJzL2dwdS9ob3N0
-MXgvam9iLmMKQEAgLTk5LDYgKzk5LDcgQEAgRVhQT1JUX1NZTUJPTChob3N0MXhfam9iX2FkZF9n
-YXRoZXIpOwogCiBzdGF0aWMgdW5zaWduZWQgaW50IHBpbl9qb2Ioc3RydWN0IGhvc3QxeCAqaG9z
-dCwgc3RydWN0IGhvc3QxeF9qb2IgKmpvYikKIHsKKwl1bnNpZ25lZCBsb25nIG1hc2sgPSBIT1NU
-MVhfUkVMT0NfUkVBRCB8IEhPU1QxWF9SRUxPQ19XUklURTsKIAlzdHJ1Y3QgaG9zdDF4X2NsaWVu
-dCAqY2xpZW50ID0gam9iLT5jbGllbnQ7CiAJc3RydWN0IGRldmljZSAqZGV2ID0gY2xpZW50LT5k
-ZXY7CiAJdW5zaWduZWQgaW50IGk7CkBAIC0xMDgsOCArMTA5LDggQEAgc3RhdGljIHVuc2lnbmVk
-IGludCBwaW5fam9iKHN0cnVjdCBob3N0MXggKmhvc3QsIHN0cnVjdCBob3N0MXhfam9iICpqb2Ip
-CiAKIAlmb3IgKGkgPSAwOyBpIDwgam9iLT5udW1fcmVsb2NzOyBpKyspIHsKIAkJc3RydWN0IGhv
-c3QxeF9yZWxvYyAqcmVsb2MgPSAmam9iLT5yZWxvY3NbaV07Ci0JCWRtYV9hZGRyX3QgcGh5c19h
-ZGRyLCAqcGh5czsKLQkJc3RydWN0IHNnX3RhYmxlICpzZ3Q7CisJCWVudW0gZG1hX2RhdGFfZGly
-ZWN0aW9uIGRpcmVjdGlvbjsKKwkJc3RydWN0IGhvc3QxeF9ib19tYXBwaW5nICptYXA7CiAKIAkJ
-cmVsb2MtPnRhcmdldC5ibyA9IGhvc3QxeF9ib19nZXQocmVsb2MtPnRhcmdldC5ibyk7CiAJCWlm
-ICghcmVsb2MtPnRhcmdldC5ibykgewpAQCAtMTE3LDYzICsxMTgsNDAgQEAgc3RhdGljIHVuc2ln
-bmVkIGludCBwaW5fam9iKHN0cnVjdCBob3N0MXggKmhvc3QsIHN0cnVjdCBob3N0MXhfam9iICpq
-b2IpCiAJCQlnb3RvIHVucGluOwogCQl9CiAKLQkJaWYgKGNsaWVudC0+Z3JvdXApCi0JCQlwaHlz
-ID0gJnBoeXNfYWRkcjsKLQkJZWxzZQotCQkJcGh5cyA9IE5VTEw7Ci0KLQkJc2d0ID0gaG9zdDF4
-X2JvX3BpbihkZXYsIHJlbG9jLT50YXJnZXQuYm8sIHBoeXMpOwotCQlpZiAoSVNfRVJSKHNndCkp
-IHsKLQkJCWVyciA9IFBUUl9FUlIoc2d0KTsKLQkJCWdvdG8gdW5waW47Ci0JCX0KLQotCQlpZiAo
-c2d0KSB7Ci0JCQl1bnNpZ25lZCBsb25nIG1hc2sgPSBIT1NUMVhfUkVMT0NfUkVBRCB8Ci0JCQkJ
-CSAgICAgSE9TVDFYX1JFTE9DX1dSSVRFOwotCQkJZW51bSBkbWFfZGF0YV9kaXJlY3Rpb24gZGly
-OwotCi0JCQlzd2l0Y2ggKHJlbG9jLT5mbGFncyAmIG1hc2spIHsKLQkJCWNhc2UgSE9TVDFYX1JF
-TE9DX1JFQUQ6Ci0JCQkJZGlyID0gRE1BX1RPX0RFVklDRTsKLQkJCQlicmVhazsKLQotCQkJY2Fz
-ZSBIT1NUMVhfUkVMT0NfV1JJVEU6Ci0JCQkJZGlyID0gRE1BX0ZST01fREVWSUNFOwotCQkJCWJy
-ZWFrOworCQlzd2l0Y2ggKHJlbG9jLT5mbGFncyAmIG1hc2spIHsKKwkJY2FzZSBIT1NUMVhfUkVM
-T0NfUkVBRDoKKwkJCWRpcmVjdGlvbiA9IERNQV9UT19ERVZJQ0U7CisJCQlicmVhazsKIAotCQkJ
-Y2FzZSBIT1NUMVhfUkVMT0NfUkVBRCB8IEhPU1QxWF9SRUxPQ19XUklURToKLQkJCQlkaXIgPSBE
-TUFfQklESVJFQ1RJT05BTDsKLQkJCQlicmVhazsKKwkJY2FzZSBIT1NUMVhfUkVMT0NfV1JJVEU6
-CisJCQlkaXJlY3Rpb24gPSBETUFfRlJPTV9ERVZJQ0U7CisJCQlicmVhazsKIAotCQkJZGVmYXVs
-dDoKLQkJCQllcnIgPSAtRUlOVkFMOwotCQkJCWdvdG8gdW5waW47Ci0JCQl9CisJCWNhc2UgSE9T
-VDFYX1JFTE9DX1JFQUQgfCBIT1NUMVhfUkVMT0NfV1JJVEU6CisJCQlkaXJlY3Rpb24gPSBETUFf
-QklESVJFQ1RJT05BTDsKKwkJCWJyZWFrOwogCi0JCQllcnIgPSBkbWFfbWFwX3NnKGRldiwgc2d0
-LT5zZ2wsIHNndC0+bmVudHMsIGRpcik7Ci0JCQlpZiAoIWVycikgewotCQkJCWVyciA9IC1FTk9N
-RU07Ci0JCQkJZ290byB1bnBpbjsKLQkJCX0KKwkJZGVmYXVsdDoKKwkJCWVyciA9IC1FSU5WQUw7
-CisJCQlnb3RvIHVucGluOworCQl9CiAKLQkJCWpvYi0+dW5waW5zW2pvYi0+bnVtX3VucGluc10u
-ZGV2ID0gZGV2OwotCQkJam9iLT51bnBpbnNbam9iLT5udW1fdW5waW5zXS5kaXIgPSBkaXI7Ci0J
-CQlwaHlzX2FkZHIgPSBzZ19kbWFfYWRkcmVzcyhzZ3QtPnNnbCk7CisJCW1hcCA9IGhvc3QxeF9i
-b19waW4oZGV2LCByZWxvYy0+dGFyZ2V0LmJvLCBkaXJlY3Rpb24pOworCQlpZiAoSVNfRVJSKG1h
-cCkpIHsKKwkJCWVyciA9IFBUUl9FUlIobWFwKTsKKwkJCWdvdG8gdW5waW47CiAJCX0KIAotCQlq
-b2ItPmFkZHJfcGh5c1tqb2ItPm51bV91bnBpbnNdID0gcGh5c19hZGRyOwotCQlqb2ItPnVucGlu
-c1tqb2ItPm51bV91bnBpbnNdLmJvID0gcmVsb2MtPnRhcmdldC5ibzsKLQkJam9iLT51bnBpbnNb
-am9iLT5udW1fdW5waW5zXS5zZ3QgPSBzZ3Q7CisJCWpvYi0+YWRkcl9waHlzW2pvYi0+bnVtX3Vu
-cGluc10gPSBtYXAtPnBoeXM7CisJCWpvYi0+dW5waW5zW2pvYi0+bnVtX3VucGluc10ubWFwID0g
-bWFwOwogCQlqb2ItPm51bV91bnBpbnMrKzsKIAl9CiAKIAlmb3IgKGkgPSAwOyBpIDwgam9iLT5u
-dW1fZ2F0aGVyczsgaSsrKSB7CiAJCXN0cnVjdCBob3N0MXhfam9iX2dhdGhlciAqZyA9ICZqb2It
-PmdhdGhlcnNbaV07CisJCXN0cnVjdCBob3N0MXhfYm9fbWFwcGluZyAqbWFwOwogCQlzaXplX3Qg
-Z2F0aGVyX3NpemUgPSAwOwogCQlzdHJ1Y3Qgc2NhdHRlcmxpc3QgKnNnOwotCQlzdHJ1Y3Qgc2df
-dGFibGUgKnNndDsKLQkJZG1hX2FkZHJfdCBwaHlzX2FkZHI7CiAJCXVuc2lnbmVkIGxvbmcgc2hp
-ZnQ7CiAJCXN0cnVjdCBpb3ZhICphbGxvYzsKIAkJdW5zaWduZWQgaW50IGo7CkBAIC0xODQsMTUg
-KzE2MiwxNiBAQCBzdGF0aWMgdW5zaWduZWQgaW50IHBpbl9qb2Ioc3RydWN0IGhvc3QxeCAqaG9z
-dCwgc3RydWN0IGhvc3QxeF9qb2IgKmpvYikKIAkJCWdvdG8gdW5waW47CiAJCX0KIAotCQlzZ3Qg
-PSBob3N0MXhfYm9fcGluKGhvc3QtPmRldiwgZy0+Ym8sIE5VTEwpOwotCQlpZiAoSVNfRVJSKHNn
-dCkpIHsKLQkJCWVyciA9IFBUUl9FUlIoc2d0KTsKKwkJbWFwID0gaG9zdDF4X2JvX3Bpbihob3N0
-LT5kZXYsIGctPmJvLCBETUFfVE9fREVWSUNFKTsKKwkJaWYgKElTX0VSUihtYXApKSB7CisJCQll
-cnIgPSBQVFJfRVJSKG1hcCk7CiAJCQlnb3RvIHVucGluOwogCQl9CiAKIAkJaWYgKCFJU19FTkFC
-TEVEKENPTkZJR19URUdSQV9IT1NUMVhfRklSRVdBTEwpICYmIGhvc3QtPmRvbWFpbikgewotCQkJ
-Zm9yX2VhY2hfc2coc2d0LT5zZ2wsIHNnLCBzZ3QtPm5lbnRzLCBqKQorCQkJZm9yX2VhY2hfc2co
-bWFwLT5zZ3QtPnNnbCwgc2csIG1hcC0+c2d0LT5uZW50cywgaikKIAkJCQlnYXRoZXJfc2l6ZSAr
-PSBzZy0+bGVuZ3RoOworCiAJCQlnYXRoZXJfc2l6ZSA9IGlvdmFfYWxpZ24oJmhvc3QtPmlvdmEs
-IGdhdGhlcl9zaXplKTsKIAogCQkJc2hpZnQgPSBpb3ZhX3NoaWZ0KCZob3N0LT5pb3ZhKTsKQEAg
-LTIwNCwzNSArMTgzLDI0IEBAIHN0YXRpYyB1bnNpZ25lZCBpbnQgcGluX2pvYihzdHJ1Y3QgaG9z
-dDF4ICpob3N0LCBzdHJ1Y3QgaG9zdDF4X2pvYiAqam9iKQogCQkJfQogCiAJCQllcnIgPSBpb21t
-dV9tYXBfc2coaG9zdC0+ZG9tYWluLAotCQkJCQlpb3ZhX2RtYV9hZGRyKCZob3N0LT5pb3ZhLCBh
-bGxvYyksCi0JCQkJCXNndC0+c2dsLCBzZ3QtPm5lbnRzLCBJT01NVV9SRUFEKTsKKwkJCQkJICAg
-aW92YV9kbWFfYWRkcigmaG9zdC0+aW92YSwgYWxsb2MpLAorCQkJCQkgICBtYXAtPnNndC0+c2ds
-LCBtYXAtPnNndC0+bmVudHMsCisJCQkJCSAgIElPTU1VX1JFQUQpOwogCQkJaWYgKGVyciA9PSAw
-KSB7CiAJCQkJX19mcmVlX2lvdmEoJmhvc3QtPmlvdmEsIGFsbG9jKTsKIAkJCQllcnIgPSAtRUlO
-VkFMOwogCQkJCWdvdG8gdW5waW47CiAJCQl9CiAKLQkJCWpvYi0+dW5waW5zW2pvYi0+bnVtX3Vu
-cGluc10uc2l6ZSA9IGdhdGhlcl9zaXplOwotCQkJcGh5c19hZGRyID0gaW92YV9kbWFfYWRkcigm
-aG9zdC0+aW92YSwgYWxsb2MpOwotCQl9IGVsc2UgewotCQkJZXJyID0gZG1hX21hcF9zZyhob3N0
-LT5kZXYsIHNndC0+c2dsLCBzZ3QtPm5lbnRzLAotCQkJCQkgRE1BX1RPX0RFVklDRSk7Ci0JCQlp
-ZiAoIWVycikgewotCQkJCWVyciA9IC1FTk9NRU07Ci0JCQkJZ290byB1bnBpbjsKLQkJCX0KLQot
-CQkJam9iLT51bnBpbnNbam9iLT5udW1fdW5waW5zXS5kZXYgPSBob3N0LT5kZXY7Ci0JCQlwaHlz
-X2FkZHIgPSBzZ19kbWFfYWRkcmVzcyhzZ3QtPnNnbCk7CisJCQltYXAtPnBoeXMgPSBpb3ZhX2Rt
-YV9hZGRyKCZob3N0LT5pb3ZhLCBhbGxvYyk7CisJCQltYXAtPnNpemUgPSBnYXRoZXJfc2l6ZTsK
-IAkJfQogCi0JCWpvYi0+YWRkcl9waHlzW2pvYi0+bnVtX3VucGluc10gPSBwaHlzX2FkZHI7Ci0J
-CWpvYi0+Z2F0aGVyX2FkZHJfcGh5c1tpXSA9IHBoeXNfYWRkcjsKLQotCQlqb2ItPnVucGluc1tq
-b2ItPm51bV91bnBpbnNdLmRpciA9IERNQV9UT19ERVZJQ0U7Ci0JCWpvYi0+dW5waW5zW2pvYi0+
-bnVtX3VucGluc10uYm8gPSBnLT5ibzsKLQkJam9iLT51bnBpbnNbam9iLT5udW1fdW5waW5zXS5z
-Z3QgPSBzZ3Q7CisJCWpvYi0+YWRkcl9waHlzW2pvYi0+bnVtX3VucGluc10gPSBtYXAtPnBoeXM7
-CisJCWpvYi0+dW5waW5zW2pvYi0+bnVtX3VucGluc10ubWFwID0gbWFwOwogCQlqb2ItPm51bV91
-bnBpbnMrKzsKKworCQlqb2ItPmdhdGhlcl9hZGRyX3BoeXNbaV0gPSBtYXAtPnBoeXM7CiAJfQog
-CiAJcmV0dXJuIDA7CkBAIC02MDgsMjQgKzU3NiwxOSBAQCB2b2lkIGhvc3QxeF9qb2JfdW5waW4o
-c3RydWN0IGhvc3QxeF9qb2IgKmpvYikKIAl1bnNpZ25lZCBpbnQgaTsKIAogCWZvciAoaSA9IDA7
-IGkgPCBqb2ItPm51bV91bnBpbnM7IGkrKykgewotCQlzdHJ1Y3QgaG9zdDF4X2pvYl91bnBpbl9k
-YXRhICp1bnBpbiA9ICZqb2ItPnVucGluc1tpXTsKLQkJc3RydWN0IGRldmljZSAqZGV2ID0gdW5w
-aW4tPmRldiA/OiBob3N0LT5kZXY7Ci0JCXN0cnVjdCBzZ190YWJsZSAqc2d0ID0gdW5waW4tPnNn
-dDsKKwkJc3RydWN0IGhvc3QxeF9ib19tYXBwaW5nICptYXAgPSBqb2ItPnVucGluc1tpXS5tYXA7
-CisJCXN0cnVjdCBob3N0MXhfYm8gKmJvID0gbWFwLT5ibzsKIAogCQlpZiAoIUlTX0VOQUJMRUQo
-Q09ORklHX1RFR1JBX0hPU1QxWF9GSVJFV0FMTCkgJiYKLQkJICAgIHVucGluLT5zaXplICYmIGhv
-c3QtPmRvbWFpbikgeworCQkgICAgbWFwLT5zaXplICYmIGhvc3QtPmRvbWFpbikgewogCQkJaW9t
-bXVfdW5tYXAoaG9zdC0+ZG9tYWluLCBqb2ItPmFkZHJfcGh5c1tpXSwKLQkJCQkgICAgdW5waW4t
-PnNpemUpOworCQkJCSAgICBtYXAtPnNpemUpOwogCQkJZnJlZV9pb3ZhKCZob3N0LT5pb3ZhLAot
-CQkJCWlvdmFfcGZuKCZob3N0LT5pb3ZhLCBqb2ItPmFkZHJfcGh5c1tpXSkpOworCQkJCSAgaW92
-YV9wZm4oJmhvc3QtPmlvdmEsIGpvYi0+YWRkcl9waHlzW2ldKSk7CiAJCX0KIAotCQlpZiAodW5w
-aW4tPmRldiAmJiBzZ3QpCi0JCQlkbWFfdW5tYXBfc2codW5waW4tPmRldiwgc2d0LT5zZ2wsIHNn
-dC0+bmVudHMsCi0JCQkJICAgICB1bnBpbi0+ZGlyKTsKLQotCQlob3N0MXhfYm9fdW5waW4oZGV2
-LCB1bnBpbi0+Ym8sIHNndCk7Ci0JCWhvc3QxeF9ib19wdXQodW5waW4tPmJvKTsKKwkJaG9zdDF4
-X2JvX3VucGluKG1hcCk7CisJCWhvc3QxeF9ib19wdXQoYm8pOwogCX0KIAogCWpvYi0+bnVtX3Vu
-cGlucyA9IDA7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvam9iLmggYi9kcml2ZXJz
-L2dwdS9ob3N0MXgvam9iLmgKaW5kZXggOTRiYzJlNGFlMjQxLi5jMjhlZWJiOGNlMTQgMTAwNjQ0
-Ci0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9qb2IuaAorKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgv
-am9iLmgKQEAgLTE5LDExICsxOSw3IEBAIHN0cnVjdCBob3N0MXhfam9iX2dhdGhlciB7CiB9Owog
-CiBzdHJ1Y3QgaG9zdDF4X2pvYl91bnBpbl9kYXRhIHsKLQlzdHJ1Y3QgaG9zdDF4X2JvICpibzsK
-LQlzdHJ1Y3Qgc2dfdGFibGUgKnNndDsKLQlzdHJ1Y3QgZGV2aWNlICpkZXY7Ci0Jc2l6ZV90IHNp
-emU7Ci0JZW51bSBkbWFfZGF0YV9kaXJlY3Rpb24gZGlyOworCXN0cnVjdCBob3N0MXhfYm9fbWFw
-cGluZyAqbWFwOwogfTsKIAogLyoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvaG9zdDF4Lmgg
-Yi9pbmNsdWRlL2xpbnV4L2hvc3QxeC5oCmluZGV4IDAyNTRlYmNkYzBhNy4uZjFlNmZhZDE5Mjg5
-IDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2hvc3QxeC5oCisrKyBiL2luY2x1ZGUvbGludXgv
-aG9zdDF4LmgKQEAgLTcsNiArNyw3IEBACiAjZGVmaW5lIF9fTElOVVhfSE9TVDFYX0gKIAogI2lu
-Y2x1ZGUgPGxpbnV4L2RldmljZS5oPgorI2luY2x1ZGUgPGxpbnV4L2RtYS1kaXJlY3Rpb24uaD4K
-ICNpbmNsdWRlIDxsaW51eC90eXBlcy5oPgogCiBlbnVtIGhvc3QxeF9jbGFzcyB7CkBAIC03Miwx
-MiArNzMsMjQgQEAgc3RydWN0IGhvc3QxeF9jbGllbnQgewogc3RydWN0IGhvc3QxeF9ibzsKIHN0
-cnVjdCBzZ190YWJsZTsKIAorc3RydWN0IGhvc3QxeF9ib19tYXBwaW5nIHsKKwlzdHJ1Y3QgZG1h
-X2J1Zl9hdHRhY2htZW50ICphdHRhY2g7CisJZW51bSBkbWFfZGF0YV9kaXJlY3Rpb24gZGlyZWN0
-aW9uOworCXN0cnVjdCBob3N0MXhfYm8gKmJvOworCXN0cnVjdCBzZ190YWJsZSAqc2d0OworCXVu
-c2lnbmVkIGludCBjaHVua3M7CisJc3RydWN0IGRldmljZSAqZGV2OworCWRtYV9hZGRyX3QgcGh5
-czsKKwlzaXplX3Qgc2l6ZTsKK307CisKIHN0cnVjdCBob3N0MXhfYm9fb3BzIHsKIAlzdHJ1Y3Qg
-aG9zdDF4X2JvICooKmdldCkoc3RydWN0IGhvc3QxeF9ibyAqYm8pOwogCXZvaWQgKCpwdXQpKHN0
-cnVjdCBob3N0MXhfYm8gKmJvKTsKLQlzdHJ1Y3Qgc2dfdGFibGUgKigqcGluKShzdHJ1Y3QgZGV2
-aWNlICpkZXYsIHN0cnVjdCBob3N0MXhfYm8gKmJvLAotCQkJCWRtYV9hZGRyX3QgKnBoeXMpOwot
-CXZvaWQgKCp1bnBpbikoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qgc2dfdGFibGUgKnNndCk7
-CisJc3RydWN0IGhvc3QxeF9ib19tYXBwaW5nICooKnBpbikoc3RydWN0IGRldmljZSAqZGV2LAor
-CQkJCQkgc3RydWN0IGhvc3QxeF9ibyAqYm8sCisJCQkJCSBlbnVtIGRtYV9kYXRhX2RpcmVjdGlv
-biBkaXIpOworCXZvaWQgKCp1bnBpbikoc3RydWN0IGhvc3QxeF9ib19tYXBwaW5nICptYXApOwog
-CXZvaWQgKigqbW1hcCkoc3RydWN0IGhvc3QxeF9ibyAqYm8pOwogCXZvaWQgKCptdW5tYXApKHN0
-cnVjdCBob3N0MXhfYm8gKmJvLCB2b2lkICphZGRyKTsKIH07CkBAIC0xMDIsMTcgKzExNSwxNiBA
-QCBzdGF0aWMgaW5saW5lIHZvaWQgaG9zdDF4X2JvX3B1dChzdHJ1Y3QgaG9zdDF4X2JvICpibykK
-IAliby0+b3BzLT5wdXQoYm8pOwogfQogCi1zdGF0aWMgaW5saW5lIHN0cnVjdCBzZ190YWJsZSAq
-aG9zdDF4X2JvX3BpbihzdHJ1Y3QgZGV2aWNlICpkZXYsCi0JCQkJCSAgICAgc3RydWN0IGhvc3Qx
-eF9ibyAqYm8sCi0JCQkJCSAgICAgZG1hX2FkZHJfdCAqcGh5cykKK3N0YXRpYyBpbmxpbmUgc3Ry
-dWN0IGhvc3QxeF9ib19tYXBwaW5nICoKK2hvc3QxeF9ib19waW4oc3RydWN0IGRldmljZSAqZGV2
-LCBzdHJ1Y3QgaG9zdDF4X2JvICpibywKKwkgICAgICBlbnVtIGRtYV9kYXRhX2RpcmVjdGlvbiBk
-aXIpCiB7Ci0JcmV0dXJuIGJvLT5vcHMtPnBpbihkZXYsIGJvLCBwaHlzKTsKKwlyZXR1cm4gYm8t
-Pm9wcy0+cGluKGRldiwgYm8sIGRpcik7CiB9CiAKLXN0YXRpYyBpbmxpbmUgdm9pZCBob3N0MXhf
-Ym9fdW5waW4oc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgaG9zdDF4X2JvICpibywKLQkJCQkg
-ICBzdHJ1Y3Qgc2dfdGFibGUgKnNndCkKK3N0YXRpYyBpbmxpbmUgdm9pZCBob3N0MXhfYm9fdW5w
-aW4oc3RydWN0IGhvc3QxeF9ib19tYXBwaW5nICptYXApCiB7Ci0JYm8tPm9wcy0+dW5waW4oZGV2
-LCBzZ3QpOworCW1hcC0+Ym8tPm9wcy0+dW5waW4obWFwKTsKIH0KIAogc3RhdGljIGlubGluZSB2
-b2lkICpob3N0MXhfYm9fbW1hcChzdHJ1Y3QgaG9zdDF4X2JvICpibykKLS0gCjIuMjMuMAoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+On 12/2/19 4:07 PM, Sowjanya Komatineni wrote:
+>
+> On 12/2/19 3:14 PM, Sowjanya Komatineni wrote:
+>>
+>> On 12/2/19 3:10 PM, Sowjanya Komatineni wrote:
+>>>
+>>> On 12/2/19 2:58 PM, Sowjanya Komatineni wrote:
+>>>>
+>>>> On 12/2/19 1:50 PM, Dmitry Osipenko wrote:
+>>>>> 02.12.2019 23:09, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> On 11/28/19 5:25 AM, Dmitry Osipenko wrote:
+>>>>>>> 28.11.2019 01:57, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
+=82:
+>>>>>>>> On 11/27/19 7:14 AM, Dmitry Osipenko wrote:
+>>>>>>>>> 27.11.2019 07:59, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
+=82:
+>>>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2,=20
+>>>>>>>>>> clk_out_3 with
+>>>>>>>>>> mux and gate for each of these clocks.
+>>>>>>>>>>
+>>>>>>>>>> Currently these PMC clocks are registered by Tegra clock=20
+>>>>>>>>>> driver using
+>>>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base=20
+>>>>>>>>>> address
+>>>>>>>>>> and register offsets and PMC programming for these clocks=20
+>>>>>>>>>> happens
+>>>>>>>>>> through direct PMC access by the clock driver.
+>>>>>>>>>>
+>>>>>>>>>> With this, when PMC is in secure mode any direct PMC access=20
+>>>>>>>>>> from the
+>>>>>>>>>> non-secure world does not go through and these clocks will=20
+>>>>>>>>>> not be
+>>>>>>>>>> functional.
+>>>>>>>>>>
+>>>>>>>>>> This patch adds these clocks registration with PMC as a clock=20
+>>>>>>>>>> provider
+>>>>>>>>>> for these clocks. clk_ops callback implementations for these=20
+>>>>>>>>>> clocks
+>>>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
+>>>>>>>>>> programming
+>>>>>>>>>> in secure mode and non-secure mode.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>>>> ---
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 drivers/soc/tegra/pmc.c | 330
+>>>>>>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 1 file changed, 330 insertions(+)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>>>>>>>>> index ea0e11a09c12..a353f6d0a832 100644
+>>>>>>>>>> --- a/drivers/soc/tegra/pmc.c
+>>>>>>>>>> +++ b/drivers/soc/tegra/pmc.c
+>>>>>>>>>> @@ -13,6 +13,9 @@
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 =C2=A0 #include <linux/arm-smccc.h>
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #include <linux/clk.h>
+>>>>>>>>>> +#include <linux/clk-provider.h>
+>>>>>>>>>> +#include <linux/clkdev.h>
+>>>>>>>>>> +#include <linux/clk/clk-conf.h>
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #include <linux/clk/tegra.h>
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #include <linux/debugfs.h>
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #include <linux/delay.h>
+>>>>>>>>>> @@ -48,6 +51,7 @@
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #include <dt-bindings/pinctrl/pinctrl-tegra-i=
+o-pad.h>
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #include <dt-bindings/gpio/tegra186-gpio.h>
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #include <dt-bindings/gpio/tegra194-gpio.h>
+>>>>>>>>>> +#include <dt-bindings/soc/tegra-pmc.h>
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 =C2=A0 #define PMC_CNTRL=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x0
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #define=C2=A0 PMC_CNTRL_INTR_POLARITY=C2=A0=
+=C2=A0=C2=A0 BIT(17) /* inverts INTR
+>>>>>>>>>> polarity */
+>>>>>>>>>> @@ -100,6 +104,7 @@
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #define PMC_WAKE2_STATUS=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 0x168
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #define PMC_SW_WAKE2_STATUS=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x16c
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 +#define PMC_CLK_OUT_CNTRL=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x1a8
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #define PMC_SENSOR_CTRL=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1b0
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #define=C2=A0 PMC_SENSOR_CTRL_SCRATCH_WRITE B=
+IT(2)
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #define=C2=A0 PMC_SENSOR_CTRL_ENABLE_RST BIT(=
+1)
+>>>>>>>>>> @@ -155,6 +160,91 @@
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #define=C2=A0 TEGRA_SMC_PMC_READ=C2=A0=C2=A0=
+=C2=A0 0xaa
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 #define=C2=A0 TEGRA_SMC_PMC_WRITE=C2=A0=C2=A0=
+=C2=A0 0xbb
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 +struct pmc_clk_mux {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw=C2=A0=C2=A0=C2=A0 hw;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned long=C2=A0=C2=A0=C2=A0 offs;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 mask;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 shift;
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +#define to_pmc_clk_mux(_hw) container_of(_hw, struct=20
+>>>>>>>>>> pmc_clk_mux, hw)
+>>>>>>>>>> +
+>>>>>>>>>> +struct pmc_clk_gate {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw=C2=A0=C2=A0=C2=A0 hw;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned long=C2=A0=C2=A0=C2=A0 offs;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 shift;
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +#define to_pmc_clk_gate(_hw) container_of(_hw, struct
+>>>>>>>>>> pmc_clk_gate, hw)
+>>>>>>>>>> +
+>>>>>>>>>> +struct pmc_clk_init_data {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 char *mux_name;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 char *gate_name;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 const char **parents;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int num_parents;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int mux_id;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int gate_id;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 char *dev_name;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u8 mux_shift;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u8 gate_shift;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u8 init_parent_index;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int init_state;
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +static const char *clk_out1_parents[] =3D { "clk_m",=20
+>>>>>>>>>> "clk_m_div2",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 "clk_m_div4", "extern1",
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +static const char *clk_out2_parents[] =3D { "clk_m",=20
+>>>>>>>>>> "clk_m_div2",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 "clk_m_div4", "extern2",
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +static const char *clk_out3_parents[] =3D { "clk_m",=20
+>>>>>>>>>> "clk_m_div2",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 "clk_m_div4", "extern3",
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +static struct pmc_clk_init_data tegra_pmc_clks_data[] =3D {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_name =3D "clk_o=
+ut_1_mux",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_name =3D "clk_=
+out_1",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out=
+1_parents,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARR=
+AY_SIZE(clk_out1_parents),
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_id =3D TEGRA_PM=
+C_CLK_OUT_1_MUX,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_id =3D TEGRA_P=
+MC_CLK_OUT_1,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dev_name =3D "exter=
+n1",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D 6,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D 2,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_parent_index =
+=3D 3,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_state =3D 1,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_name =3D "clk_o=
+ut_2_mux",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_name =3D "clk_=
+out_2",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out=
+2_parents,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARR=
+AY_SIZE(clk_out2_parents),
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_id =3D TEGRA_PM=
+C_CLK_OUT_2_MUX,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_id =3D TEGRA_P=
+MC_CLK_OUT_2,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dev_name =3D "exter=
+n2",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D 14,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D 10,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_parent_index =
+=3D 0,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_state =3D 0,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_name =3D "clk_o=
+ut_3_mux",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_name =3D "clk_=
+out_3",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out=
+3_parents,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARR=
+AY_SIZE(clk_out3_parents),
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_id =3D TEGRA_PM=
+C_CLK_OUT_3_MUX,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_id =3D TEGRA_P=
+MC_CLK_OUT_3,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dev_name =3D "exter=
+n3",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D 22,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D 18,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_parent_index =
+=3D 0,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_state =3D 0,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 },
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 struct tegra_powergate {
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct generic_pm_dom=
+ain genpd;
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_pmc *pmc=
+;
+>>>>>>>>>> @@ -254,6 +344,9 @@ struct tegra_pmc_soc {
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct tegra_wa=
+ke_event *wake_events;
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int num_wake=
+_events;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_init_data *pmc_clks_data;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned int num_pmc_clks;
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 };
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 =C2=A0 static const char * const tegra186_res=
+et_sources[] =3D {
+>>>>>>>>>> @@ -2163,6 +2256,228 @@ static int=20
+>>>>>>>>>> tegra_pmc_clk_notify_cb(struct
+>>>>>>>>>> notifier_block *nb,
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NOTIFY_OK;
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 }
+>>>>>>>>>> =C2=A0=C2=A0=C2=A0 +static void pmc_clk_fence_udelay(u32 offset)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_readl(pmc, offset);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 /* pmc clk propagation delay 2 us */
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 udelay(2);
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static u8 pmc_clk_mux_get_parent(struct clk_hw *hw)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_mux *mux =3D to_pmc_clk_mux(h=
+w);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int num_parents =3D clk_hw_get_num_parents(h=
+w);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, mux->offs) >> m=
+ux->shift;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val &=3D mux->mask;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (val >=3D num_parents)
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return val;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static int pmc_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_mux *mux =3D to_pmc_clk_mux(h=
+w);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, mux->offs);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val &=3D ~(mux->mask << mux->shift);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val |=3D index << mux->shift;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, val, mux->offs);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_fence_udelay(mux->offs);
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static const struct clk_ops pmc_clk_mux_ops =3D {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .get_parent =3D pmc_clk_mux_get_parent,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .set_parent =3D pmc_clk_mux_set_parent,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .determine_rate =3D __clk_mux_determine_rate=
+,
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +static struct clk *
+>>>>>>>>>> +tegra_pmc_clk_mux_register(const char *name, const char * const
+>>>>>>>>>> *parent_names,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 int num_parents, unsigned long flags,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 unsigned long offset, u32 shift, u32 mask)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_init_data init;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_mux *mux;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!mux)
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ERR_PTR(-ENOM=
+EM);
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.name =3D name;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.ops =3D &pmc_clk_mux_ops;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.parent_names =3D parent_names;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.num_parents =3D num_parents;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.flags =3D flags;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux->hw.init =3D &init;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux->offs =3D offset;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux->mask =3D mask;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux->shift =3D shift;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return clk_register(NULL, &mux->hw);
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static int pmc_clk_is_enabled(struct clk_hw *hw)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_gate *gate =3D to_pmc_clk_gat=
+e(hw);
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return tegra_pmc_readl(pmc, gate->offs) &=20
+>>>>>>>>>> BIT(gate->shift) ? 1
+>>>>>>>>>> : 0;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static void pmc_clk_set_state(struct clk_hw *hw, int state)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_gate *gate =3D to_pmc_clk_gat=
+e(hw);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, gate->offs);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D state ? (val | BIT(gate->shift)) : (=
+val &
+>>>>>>>>>> ~BIT(gate->shift));
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, val, gate->offs);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_fence_udelay(gate->offs);
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static int pmc_clk_enable(struct clk_hw *hw)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_set_state(hw, 1);
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static void pmc_clk_disable(struct clk_hw *hw)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_set_state(hw, 0);
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops =3D {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +static struct clk *
+>>>>>>>>>> +tegra_pmc_clk_gate_register(const char *name, const char
+>>>>>>>>>> *parent_name,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long flags, unsigned long offset,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 shift)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_init_data init;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_gate *gate;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!gate)
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ERR_PTR(-ENOM=
+EM);
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.name =3D name;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.ops =3D &pmc_clk_gate_ops;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.parent_names =3D &parent_name;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.num_parents =3D 1;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.flags =3D flags;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 gate->hw.init =3D &init;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 gate->offs =3D offset;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 gate->shift =3D shift;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return clk_register(NULL, &gate->hw);
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_nod=
+e *np)
+>>>>>>>>>> +{
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk *clkmux, *clk, *parent;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_onecell_data *clk_data;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned int num_clks;
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int i, ret;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 /* each pmc clock output has a mux and a gat=
+e */
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 num_clks =3D pmc->soc->num_pmc_clks * 2;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!num_clks)
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 clk_data =3D kmalloc(sizeof(*clk_data), GFP_=
+KERNEL);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!clk_data)
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 clk_data->clks =3D kcalloc(TEGRA_PMC_CLK_MAX=
+,
+>>>>>>>>>> sizeof(*clk_data->clks),
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 GFP_KERNEL);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!clk_data->clks)
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto free_clkdata;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 clk_data->clk_num =3D num_clks;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < pmc->soc->num_pmc_clks; i+=
++) {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct pmc_clk_init_=
+data *data;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data =3D pmc->soc->p=
+mc_clks_data + i;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clkmux =3D tegra_pmc=
+_clk_mux_register(data->mux_name,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 data->parents,
+>>>>>>>>>> + data->num_parents,
+>>>>>>>>>> + CLK_SET_RATE_NO_REPARENT |
+>>>>>>>>>> + CLK_SET_RATE_PARENT,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 PMC_CLK_OUT_CNTRL,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 data->mux_shift, 3);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(clkmux))
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 goto free_clks;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_data->clks[data-=
+>mux_id] =3D clkmux;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk =3D tegra_pmc_cl=
+k_gate_register(data->gate_name,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 data->mux_name,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 CLK_SET_RATE_PARENT,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 PMC_CLK_OUT_CNTRL,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 data->gate_shift);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(clk))
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 goto free_clks;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_data->clks[data-=
+>gate_id] =3D clk;
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D clk_set_pare=
+nt(clk, clkmux);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret < 0) {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 pr_err("failed to set parent of %s to %s\n",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __func__, __clk_get_name(clk)=
+,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __clk_get_name(clkmux));
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_register_clkdev(=
+clk, data->dev_name,=20
+>>>>>>>>>> data->gate_name);
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* configure initial=
+ clock parent and state */
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 parent =3D clk_get_s=
+ys(data->gate_name,
+>>>>>>>>>> + data->parents[data->init_parent_index]);
+>>>>> Couldn't the default parent be defined using "assigned clock" in a
+>>>>> device-tree? Please see "Assigned clock parents and rates" in the=20
+>>>>> doc.
+>>>>>
+>>>>> https://www.kernel.org/doc/Documentation/devicetree/bindings/clock/cl=
+ock-bindings.txt=20
+>>>>>
+>>>>>
+>>>>> Then you could simply use of_clk_set_defaults(pmc->dev->of_node,=20
+>>>>> true).
+>>>>
+>>>> Yes, of_clk_add_provider() does of_clk_set_defaults which sets=20
+>>>> based on assigned parents and clock rates.
+>>>>
+>>>> This need device tree to specify assigned clock parent properties.=20
+>>>> Will update device tree and remove init parent from the driver.
+>>>>
+>>> assigned-clock properties should be set in consumer node of these=20
+>>> clocks and currently these clocks are not used yet.
+>>>
+>>> So will just remove init parent from driver and when these clocks=20
+>>> are used device tree can be updated in corresponding consumer node=20
+>>> with these properties.
+>>>
+>> How about default ON/OFF init state for the clocks? I see=20
+>> assigned-clock properties for parent and rate only.
+>>
+>> But based on existing clock-tegra-pmc driver, I see clk_out_1 is=20
+>> default enabled with extern1 parent for T30 thru T210 platforms.
+>>
+>> Peter/Thierry, What was the reason we enable clk_out_1 right from the=20
+>> clock registration?
+>>
+> clk_out_1 is for audio and its not required to be enabled during the=20
+> boot and audio driver can enable/disable it.
+>
+> same with blink 32khz which is used for WIFI. WIFI driver can=20
+> enable/disable during power up/down sequence and technically as per=20
+> design we dont need to have it always on right from the boot.
+>
+> So can remove out clocks init states from driver once thierry also=20
+> agree on this.
+>
+Hi Dmitry,
+
+Looking at audio driver, it doesn't take care of mclk which is from=20
+clk_out_1 and expects mclk to be always on.
+
+So probably we should have this init state enables in pmc driver for=20
+32Khz and clk_out's to not break existing functionality.
+
+Regarding using assigned-clock properties for init parent and removing=20
+init parent from driver, it also needs consumer node in device tree to=20
+be updated to specify assigned-clock properties for default/init parent.
+
+This breaks device tree ABI as prior Tegra210 supports audio driver.
+
+
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!IS_ERR(parent))=
+ {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 ret =3D clk_set_parent(clkmux, parent);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 if (ret < 0) {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("failed to set parent of %s to %s\n",
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __fun=
+c__, __clk_get_name(clkmux),
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __clk=
+_get_name(parent));
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON(1);
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 }
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>>>>>>> +
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (data->init_state=
+) {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 if (clk_prepare_enable(clk)) {
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("failed to enable %s\n", __func__,
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __clk=
+_get_name(clk));
+>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON(1);
+>>>>>>> Alternatively you could write it like this:
+>>>>>>>
+>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0err =3D clk_prepare_enable(clk);
+>>>>>>>
+>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0WARN_ON(err, "failed to enable %s: %d=
+\n",
+>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __clk_get_name(clk=
+), err);
+>>>>>>>
+>>>>>>>>> Should be a bit better to move the WARN_ON to the end of errors
+>>>>>>>>> handling
+>>>>>>>>> in order to catch all possible errors:
+>>>>>>>>>
+>>>>>>>>> @@ -2510,6 +2510,7 @@ static void tegra_pmc_clock_register(struct
+>>>>>>>>> tegra_pmc *pmc,
+>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retu=
+rn;
+>>>>>>>>>
+>>>>>>>>> =C2=A0=C2=A0=C2=A0 free_clks:
+>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON(1);
+>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kfre=
+e(clk_data->clks);
+>>>>>>>>> =C2=A0=C2=A0=C2=A0 free_clkdata:
+>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kfre=
+e(clk_data);
+>>>>>>>> Reason I had WARN_ON right during clk_set_parent failure is to=20
+>>>>>>>> have the
+>>>>>>>> loop continue for subsequence pmc clocks registration instead of
+>>>>>>>> terminating all pmc clocks registration.
+>>>>>>> Ah, okay. Nevertheless this WARN_ON in the end shouldn't be the=20
+>>>>>>> least
+>>>>>>> (IMO).
+>>>>>> Hi Dmitry, Just want to be clear on the above comment. Are you
+>>>>>> suggesting to add additional WARN_ON at the end?
+>>>>> Yes, it was my suggestion.
+>>>>>
+>>>>>> Thought WARN_ON right during corresponding clock failure with warn
+>>>>>> message showing clock names will be clear and also other clocks=20
+>>>>>> still
+>>>>>> should be registered.
+>>>>>>
+>>>>>> To add additional WARN_ON at the end need to track status of each=20
+>>>>>> clock
+>>>>>> and use that to as warn condition.
+>>>>> You could add a warning/error message to every point of failure.
+>>>>>
+>>>>> Primarily, it is important not to miss a error. Secondarily, it is
+>>>>> important to make diagnostic message meaningful.
+>>>>>
+>>>>> Realistically, I doubt that this chunk of code will ever fail once=20
+>>>>> it is
+>>>>> known to work well. So it will be nice to have a more detailed
+>>>>> diagnostics (just in a case), but it shouldn't be a must.
+>>>>
+>>>> OK, Will add additional WARN message "failed registering PMC=20
+>>>> clocks" at the end.
+>>>>
