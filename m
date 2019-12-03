@@ -1,16 +1,16 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v1 03/17] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock
- ids
-Date: Tue, 3 Dec 2019 14:19:37 -0800
-Message-ID: <50f7db27-a1bd-6e2a-0994-82740b4ef6cb@nvidia.com>
+Subject: Re: [PATCH v1 15/17] dt-bindings: tegra186-pmc: Add Tegra PMC clock
+ bindings
+Date: Tue, 3 Dec 2019 15:28:09 -0800
+Message-ID: <5445c579-4a85-ca36-69c9-7fe86dbf1fa9@nvidia.com>
 References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
- <1574146234-3871-4-git-send-email-skomatineni@nvidia.com>
- <20191203220850.GB22716@bogus>
+ <1574146234-3871-16-git-send-email-skomatineni@nvidia.com>
+ <20191203221137.GC22716@bogus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191203220850.GB22716@bogus>
+In-Reply-To: <20191203221137.GC22716@bogus>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh@kernel.org>
@@ -18,43 +18,89 @@ Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 12/3/19 2:08 PM, Rob Herring wrote:
-> On Mon, Nov 18, 2019 at 10:50:20PM -0800, Sowjanya Komatineni wrote:
->> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
->> these clocks has mux and a gate as a part of PMC controller.
->>
->> This patch adds ids for each of these PMC clock mux and gates to
->> use with the devicetree.
+On 12/3/19 2:11 PM, Rob Herring wrote:
+> On Mon, Nov 18, 2019 at 10:50:32PM -0800, Sowjanya Komatineni wrote:
+>> Document clock bindings for pmc clocks clk_out_1, clk_out_2 and clk_out_3.
+>> These clocks are part of Tegra PMC block and pmc node is the provider for
+>> these clocks.
 >>
 >> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 >> ---
->>   include/dt-bindings/soc/tegra-pmc.h | 16 ++++++++++++++++
->>   1 file changed, 16 insertions(+)
->>   create mode 100644 include/dt-bindings/soc/tegra-pmc.h
-> This should be part of the binding patch.
-ok, will combine in v3
->> diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
->> new file mode 100644
->> index 000000000000..fa1ccfc2514b
->> --- /dev/null
->> +++ b/include/dt-bindings/soc/tegra-pmc.h
->> @@ -0,0 +1,16 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
->> + */
+>>   .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 44 ++++++++++++++++++++++
+>>   1 file changed, 44 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+>> index 2d89cdc39eb0..4576de92e4cc 100644
+>> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+>> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+>> @@ -12,6 +12,10 @@ Required properties:
+>>     - "aotag"
+>>     - "scratch"
+>>     - "misc" (Only for Tegra194)
+>> +- #clock-cells : Should be 1 for Tegra30 and higher.
+>> +  In clock consumers, this cell represents the PMC clock ID.
+>> +  The assignments may be found in header file
+>> +  <dt-bindings/soc/tegra-pmc.h>.
+> Kind of strange the header is shared, but the binding doc is not.
+
+v2 has this patch removed. Tegra186 does not have pmc clocks. They were 
+accidentally added in v1 and this is fixed in v2.
+
+>
+>>   
+>>   Optional properties:
+>>   - nvidia,invert-interrupt: If present, inverts the PMU interrupt signal.
+>> @@ -130,3 +134,43 @@ Pinctrl client example:
+>>   		pinctrl-1 = <&hdmi_on>;
+>>   		pinctrl-names = "hdmi-on", "hdmi-off";
+>>   	};
 >> +
->> +#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
->> +#define _DT_BINDINGS_SOC_TEGRA_PMC_H
+>> +== Clock Control ==
 >> +
->> +#define TEGRA_PMC_CLK_OUT_1_MUX		0
->> +#define TEGRA_PMC_CLK_OUT_1		1
->> +#define TEGRA_PMC_CLK_OUT_2_MUX		2
->> +#define TEGRA_PMC_CLK_OUT_2		3
->> +#define TEGRA_PMC_CLK_OUT_3_MUX		4
->> +#define TEGRA_PMC_CLK_OUT_3		5
+>> +Tegra PMC has 3 clocks clk_1, clk_2 and clk_3. Each of these clocks has
+>> +source selection and enable/disable gate.
+>> +Parent/source for these clocks can be either of clk_m, clk_m_div2, clk_m_div4,
+>> +or extern clock from Tegra CAR module.
 >> +
->> +#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+>> +Clock configuration example:
+>> +	pmc: pmc@7000e400 {
+>> +		compatible = "nvidia,tegra186-pmc";
+>> +		reg = <0 0x0c360000 0 0x10000>,
+>> +		      <0 0x0c370000 0 0x10000>,
+>> +		      <0 0x0c380000 0 0x10000>,
+>> +		      <0 0x0c390000 0 0x10000>;
+>> +		reg-names = "pmc", "wake", "aotag", "scratch";
+>> +		...
+>> +		#clock-cells = <1>;
+>> +		...
+> Once converted to schema, the examples have to compile and this won't.
+> They also have to be complete enough to pass validation checks.
+ok, will go thru and run the validation checks.
+>> +	};
+>> +
+>> +Clock consumer example:
+>> +	host1x@50000000 {
+>> +		...
+>> +		vi@54080000 {
+>> +		...
+>> +		assigned-clocks = <&pmc TEGRA_PMC_CLK_OUT_3_MUX>;
+>> +		assigned-clock-parents = <&tegra_car TEGRA210_CLK_EXTERN3>;
+> Indentation is wrong.
+>
+>> +		};
+>> +		...
+>> +	};
+>> +	...
+>> +	i2c@7000c500 {
+>> +		cam_sensor {
+>> +		...
+>> +		clocks = <&pmc TEGRA_PMC_CLK_OUT_3>;
+>> +		clock-names = "mclk";
+> Same here.
+>
+>> +		...
+>> +		};
+>> +	};
 >> -- 
 >> 2.7.4
 >>
