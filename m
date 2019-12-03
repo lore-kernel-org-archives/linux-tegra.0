@@ -1,141 +1,181 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [TEGRA194_CPUFREQ Patch 1/3] firmware: tegra: adding function to
- get BPMP data
-Date: Tue, 3 Dec 2019 18:42:29 +0100
-Message-ID: <20191203174229.GA1721849@ulmo>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v1 11/17] dt-bindings: clock: tegra: Remove pmc clock ids
+ from clock dt-bindings
+Date: Tue, 3 Dec 2019 16:07:27 -0600
+Message-ID: <20191203220727.GA22716@bogus>
+References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
+ <1574146234-3871-12-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
+In-Reply-To: <1574146234-3871-12-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, catalin.marinas@arm.com, will@kernel.org, jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bbasu@nvidia.com, mperttunen@nvidia.com
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Nov 18, 2019 at 10:50:28PM -0800, Sowjanya Komatineni wrote:
+> clk_out_1, clk_out_2, clk_out_3, blink are part of Tegra pmc clocks.
+> 
+> This patch removes ids for these clocks from Tegra clock dt-bindings.
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Your commit message should answer why, not what.
 
-On Tue, Dec 03, 2019 at 11:02:26PM +0530, Sumit Gupta wrote:
-> Adding new function of_tegra_bpmp_get() to get BPMP data.
-> This function can be used by other drivers like cpufreq to
-> get BPMP data without adding any property in respective
-> drivers DT node.
+This is not a backwards compatible change if any of these IDs are used. 
 
-What's wrong with adding the property in the DT node? We already do that
-for Tegra186's CPU frequency driver, so it makes sense to continue that
-for Tegra194.
-
-Thierry
-
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/firmware/tegra/bpmp.c | 38 ++++++++++++++++++++++++++++++++++++++
->  include/soc/tegra/bpmp.h      |  5 +++++
->  2 files changed, 43 insertions(+)
->=20
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index 6741fcd..9c3d7f1 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -38,6 +38,44 @@ channel_to_ops(struct tegra_bpmp_channel *channel)
->  	return bpmp->soc->ops;
->  }
-> =20
-> +struct tegra_bpmp *of_tegra_bpmp_get(void)
-> +{
-> +	struct platform_device *pdev;
-> +	struct device_node *bpmp_dev;
-> +	struct tegra_bpmp *bpmp;
-> +
-> +	/* Check for bpmp device status in DT */
-> +	bpmp_dev =3D of_find_compatible_node(NULL, NULL, "nvidia,tegra186-bpmp"=
-);
-> +	if (!bpmp_dev) {
-> +		bpmp =3D ERR_PTR(-ENODEV);
-> +		goto err_out;
-> +	}
-> +	if (!of_device_is_available(bpmp_dev)) {
-> +		bpmp =3D ERR_PTR(-ENODEV);
-> +		goto err_put;
-> +	}
-> +
-> +	pdev =3D of_find_device_by_node(bpmp_dev);
-> +	if (!pdev) {
-> +		bpmp =3D ERR_PTR(-ENODEV);
-> +		goto err_put;
-> +	}
-> +
-> +	bpmp =3D platform_get_drvdata(pdev);
-> +	if (!bpmp) {
-> +		bpmp =3D ERR_PTR(-EPROBE_DEFER);
-> +		put_device(&pdev->dev);
-> +		goto err_put;
-> +	}
-> +
-> +	return bpmp;
-> +err_put:
-> +	of_node_put(bpmp_dev);
-> +err_out:
-> +	return bpmp;
-> +}
-> +EXPORT_SYMBOL_GPL(of_tegra_bpmp_get);
-> +
->  struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
->  {
->  	struct platform_device *pdev;
-> diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
-> index f2604e9..21402d9 100644
-> --- a/include/soc/tegra/bpmp.h
-> +++ b/include/soc/tegra/bpmp.h
-> @@ -107,6 +107,7 @@ struct tegra_bpmp_message {
->  };
-> =20
->  #if IS_ENABLED(CONFIG_TEGRA_BPMP)
-> +struct tegra_bpmp *of_tegra_bpmp_get(void);
->  struct tegra_bpmp *tegra_bpmp_get(struct device *dev);
->  void tegra_bpmp_put(struct tegra_bpmp *bpmp);
->  int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
-> @@ -122,6 +123,10 @@ void tegra_bpmp_free_mrq(struct tegra_bpmp *bpmp, un=
-signed int mrq,
->  			 void *data);
->  bool tegra_bpmp_mrq_is_supported(struct tegra_bpmp *bpmp, unsigned int m=
-rq);
->  #else
-> +static inline struct tegra_bpmp *of_tegra_bpmp_get(void)
-> +{
-> +	return ERR_PTR(-ENOTSUPP);
-> +}
->  static inline struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
->  {
->  	return ERR_PTR(-ENOTSUPP);
-> --=20
+>  include/dt-bindings/clock/tegra114-car.h        | 14 +++++++-------
+>  include/dt-bindings/clock/tegra124-car-common.h | 14 +++++++-------
+>  include/dt-bindings/clock/tegra20-car.h         |  2 +-
+>  include/dt-bindings/clock/tegra210-car.h        | 14 +++++++-------
+>  include/dt-bindings/clock/tegra30-car.h         | 14 +++++++-------
+>  5 files changed, 29 insertions(+), 29 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
+> index bb5c2c999c05..9175cd0571b5 100644
+> --- a/include/dt-bindings/clock/tegra114-car.h
+> +++ b/include/dt-bindings/clock/tegra114-car.h
+> @@ -270,10 +270,10 @@
+>  #define TEGRA114_CLK_AUDIO3 242
+>  #define TEGRA114_CLK_AUDIO4 243
+>  #define TEGRA114_CLK_SPDIF 244
+> -#define TEGRA114_CLK_CLK_OUT_1 245
+> -#define TEGRA114_CLK_CLK_OUT_2 246
+> -#define TEGRA114_CLK_CLK_OUT_3 247
+> -#define TEGRA114_CLK_BLINK 248
+> +/* 245 */
+> +/* 246 */
+> +/* 247 */
+> +/* 248 */
+>  /* 249 */
+>  /* 250 */
+>  /* 251 */
+> @@ -333,9 +333,9 @@
+>  #define TEGRA114_CLK_AUDIO3_MUX 303
+>  #define TEGRA114_CLK_AUDIO4_MUX 304
+>  #define TEGRA114_CLK_SPDIF_MUX 305
+> -#define TEGRA114_CLK_CLK_OUT_1_MUX 306
+> -#define TEGRA114_CLK_CLK_OUT_2_MUX 307
+> -#define TEGRA114_CLK_CLK_OUT_3_MUX 308
+> +/* 306 */
+> +/* 307 */
+> +/* 308 */
+>  #define TEGRA114_CLK_DSIA_MUX 309
+>  #define TEGRA114_CLK_DSIB_MUX 310
+>  #define TEGRA114_CLK_XUSB_SS_DIV2 311
+> diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
+> index 0c4f5be0a742..90a0c5e7eb5f 100644
+> --- a/include/dt-bindings/clock/tegra124-car-common.h
+> +++ b/include/dt-bindings/clock/tegra124-car-common.h
+> @@ -269,10 +269,10 @@
+>  #define TEGRA124_CLK_AUDIO3 242
+>  #define TEGRA124_CLK_AUDIO4 243
+>  #define TEGRA124_CLK_SPDIF 244
+> -#define TEGRA124_CLK_CLK_OUT_1 245
+> -#define TEGRA124_CLK_CLK_OUT_2 246
+> -#define TEGRA124_CLK_CLK_OUT_3 247
+> -#define TEGRA124_CLK_BLINK 248
+> +/* 245 */
+> +/* 246 */
+> +/* 247 */
+> +/* 248 */
+>  /* 249 */
+>  /* 250 */
+>  /* 251 */
+> @@ -332,9 +332,9 @@
+>  #define TEGRA124_CLK_AUDIO3_MUX 303
+>  #define TEGRA124_CLK_AUDIO4_MUX 304
+>  #define TEGRA124_CLK_SPDIF_MUX 305
+> -#define TEGRA124_CLK_CLK_OUT_1_MUX 306
+> -#define TEGRA124_CLK_CLK_OUT_2_MUX 307
+> -#define TEGRA124_CLK_CLK_OUT_3_MUX 308
+> +/* 306 */
+> +/* 307 */
+> +/* 308 */
+>  /* 309 */
+>  /* 310 */
+>  #define TEGRA124_CLK_SOR0_LVDS 311 /* deprecated */
+> diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindings/clock/tegra20-car.h
+> index b21a0eb32921..fe541f627965 100644
+> --- a/include/dt-bindings/clock/tegra20-car.h
+> +++ b/include/dt-bindings/clock/tegra20-car.h
+> @@ -131,7 +131,7 @@
+>  #define TEGRA20_CLK_CCLK 108
+>  #define TEGRA20_CLK_HCLK 109
+>  #define TEGRA20_CLK_PCLK 110
+> -#define TEGRA20_CLK_BLINK 111
+> +/* 111 */
+>  #define TEGRA20_CLK_PLL_A 112
+>  #define TEGRA20_CLK_PLL_A_OUT0 113
+>  #define TEGRA20_CLK_PLL_C 114
+> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+> index 44f60623f99b..a3d8d3e75728 100644
+> --- a/include/dt-bindings/clock/tegra210-car.h
+> +++ b/include/dt-bindings/clock/tegra210-car.h
+> @@ -304,10 +304,10 @@
+>  #define TEGRA210_CLK_AUDIO3 274
+>  #define TEGRA210_CLK_AUDIO4 275
+>  #define TEGRA210_CLK_SPDIF 276
+> -#define TEGRA210_CLK_CLK_OUT_1 277
+> -#define TEGRA210_CLK_CLK_OUT_2 278
+> -#define TEGRA210_CLK_CLK_OUT_3 279
+> -#define TEGRA210_CLK_BLINK 280
+> +/* 277 */
+> +/* 278 */
+> +/* 279 */
+> +/* 280 */
+>  #define TEGRA210_CLK_SOR0_LVDS 281 /* deprecated */
+>  #define TEGRA210_CLK_SOR0_OUT 281
+>  #define TEGRA210_CLK_SOR1_OUT 282
+> @@ -386,9 +386,9 @@
+>  #define TEGRA210_CLK_AUDIO3_MUX 353
+>  #define TEGRA210_CLK_AUDIO4_MUX 354
+>  #define TEGRA210_CLK_SPDIF_MUX 355
+> -#define TEGRA210_CLK_CLK_OUT_1_MUX 356
+> -#define TEGRA210_CLK_CLK_OUT_2_MUX 357
+> -#define TEGRA210_CLK_CLK_OUT_3_MUX 358
+> +/* 356 */
+> +/* 357 */
+> +/* 358 */
+>  #define TEGRA210_CLK_DSIA_MUX 359
+>  #define TEGRA210_CLK_DSIB_MUX 360
+>  /* 361 */
+> diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
+> index 3c90f1535551..20ef2462d9e1 100644
+> --- a/include/dt-bindings/clock/tegra30-car.h
+> +++ b/include/dt-bindings/clock/tegra30-car.h
+> @@ -230,11 +230,11 @@
+>  #define TEGRA30_CLK_AUDIO3 204
+>  #define TEGRA30_CLK_AUDIO4 205
+>  #define TEGRA30_CLK_SPDIF 206
+> -#define TEGRA30_CLK_CLK_OUT_1 207 /* (extern1) */
+> -#define TEGRA30_CLK_CLK_OUT_2 208 /* (extern2) */
+> -#define TEGRA30_CLK_CLK_OUT_3 209 /* (extern3) */
+> +/* 207 */
+> +/* 208 */
+> +/* 209 */
+>  #define TEGRA30_CLK_SCLK 210
+> -#define TEGRA30_CLK_BLINK 211
+> +/* 211 */
+>  #define TEGRA30_CLK_CCLK_G 212
+>  #define TEGRA30_CLK_CCLK_LP 213
+>  #define TEGRA30_CLK_TWD 214
+> @@ -260,9 +260,9 @@
+>  /* 297 */
+>  /* 298 */
+>  /* 299 */
+> -#define TEGRA30_CLK_CLK_OUT_1_MUX 300
+> -#define TEGRA30_CLK_CLK_OUT_2_MUX 301
+> -#define TEGRA30_CLK_CLK_OUT_3_MUX 302
+> +/* 300 */
+> +/* 301 */
+> +/* 302 */
+>  #define TEGRA30_CLK_AUDIO0_MUX 303
+>  #define TEGRA30_CLK_AUDIO1_MUX 304
+>  #define TEGRA30_CLK_AUDIO2_MUX 305
+> -- 
 > 2.7.4
->=20
-
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3mnoEACgkQ3SOs138+
-s6GpwBAAvaZJp87NoF1TROjbDypFZ2E7Oov0yzlV1zJak8mF3KIV0tKaCHoXheWI
-rcQZm8VFfh/Gqxw63Yk1Gn9nA1KJoqaIUY1On3cMHvY2wtVF7Wh/tFI+5JNXsCIi
-H9et1e5q/J9LaFHxcdNsEeYaocswM31Zy+rNIhT1bpLzvTZObIzbQp5v5eao8U6i
-VUdAUsr5XSj0vcN51HVz6CHFMpQsocQV1AsACAMUny+ajHL/FTmJYa5jvXvhqgpX
-yH593XBFitXrqAhWj3kR6okHC2U9UAd2S9ZXsu15xawQNymTi2mdqnaoeohRajFj
-z9GF5CxNbNCNOBMxvzAkF08s8dQCA/vsSkxQ518Z3BK+dPxu7Leho9yVeNs9muy/
-7fOU5sc+gIBuBB0V/fwP2xiPbvoe/wozI2LtbmDa6akd5rwxYLi3ogJOKtS1QRhN
-JHaTZ08hjuRiL64s8EAfz1VsQYF0MwkfomCfXKMoTCu+8mVXkcMuZcaotXul/Mck
-LMYlsKbCwgLpM4NrNW++q1nTewTXmQpzrLN762Ae23ud7ARns1mwaaGa6UvfxIhE
-cxZVU66dHXKEIdGsA6uSByRKUS8/1le4Iy6zRAu7O88XAbxSydYOm45/ovZTEzAz
-jAymOGgaP0NBMXICJoBLt3/Z0WwBmSAZ/Vir1cbs2jsup+XvzaE=
-=c7iN
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
+> 
