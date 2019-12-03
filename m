@@ -1,59 +1,107 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 2/3] drm/cma-helper: Use sgt_dma_contiguous() helper
-Date: Tue, 3 Dec 2019 18:28:00 +0100
-Message-ID: <20191203172800.GJ624164@phenom.ffwll.local>
-References: <20191203163203.1486837-1-thierry.reding@gmail.com>
- <20191203163203.1486837-2-thierry.reding@gmail.com>
+From: Sumit Gupta <sumitg@nvidia.com>
+Subject: [TEGRA194_CPUFREQ Patch 1/3] firmware: tegra: adding function to get
+ BPMP data
+Date: Tue, 3 Dec 2019 23:02:26 +0530
+Message-ID: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20191203163203.1486837-2-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: rjw@rjwysocki.net, viresh.kumar@linaro.org, catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: sumitg@nvidia.com, bbasu@nvidia.com, mperttunen@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBEZWMgMDMsIDIwMTkgYXQgMDU6MzI6MDJQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
-d3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBG
-dW5jdGlvbmFsaXR5IHRvIGNvdW50IHRoZSBudW1iZXIgb2YgY29udGlndW91cyBETUEgY2h1bmtz
-IGluIGFuIFNHCj4gdGFibGUgaGFzIGJlZW4gYWRkZWQgdG8gdGhlIHNjYXR0ZXJsaXN0IGxpYnJh
-cnkuIFVzZSB0aGlzIGZ1bmN0aW9uYWxpdHkKPiB0byByZXBsYWNlIGFuIG9wZW4tY29kZWQgdmVy
-c2lvbiBpbiB0aGUgR0VNL0NNQSBoZWxwZXJzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkg
-UmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+CgpPbiB0aGUgZmlyc3QgMiBwYXRjaGVzOgoKUmV2
-aWV3ZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+Cgo+IC0tLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2dlbV9jbWFfaGVscGVyLmMgfCAyMiArKy0tLS0tLS0tLS0t
-LS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIwIGRlbGV0aW9u
-cygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2dlbV9jbWFfaGVscGVy
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2dlbV9jbWFfaGVscGVyLmMKPiBpbmRleCAxMmU5OGZi
-MjgyMjkuLjViYmFlOTY1NGNjNiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2dl
-bV9jbWFfaGVscGVyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2dlbV9jbWFfaGVscGVy
-LmMKPiBAQCAtNDcxLDI2ICs0NzEsOCBAQCBkcm1fZ2VtX2NtYV9wcmltZV9pbXBvcnRfc2dfdGFi
-bGUoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKPiAgewo+ICAJc3RydWN0IGRybV9nZW1fY21hX29i
-amVjdCAqY21hX29iajsKPiAgCj4gLQlpZiAoc2d0LT5uZW50cyAhPSAxKSB7Cj4gLQkJLyogY2hl
-Y2sgaWYgdGhlIGVudHJpZXMgaW4gdGhlIHNnX3RhYmxlIGFyZSBjb250aWd1b3VzICovCj4gLQkJ
-ZG1hX2FkZHJfdCBuZXh0X2FkZHIgPSBzZ19kbWFfYWRkcmVzcyhzZ3QtPnNnbCk7Cj4gLQkJc3Ry
-dWN0IHNjYXR0ZXJsaXN0ICpzOwo+IC0JCXVuc2lnbmVkIGludCBpOwo+IC0KPiAtCQlmb3JfZWFj
-aF9zZyhzZ3QtPnNnbCwgcywgc2d0LT5uZW50cywgaSkgewo+IC0JCQkvKgo+IC0JCQkgKiBzZ19k
-bWFfYWRkcmVzcyhzKSBpcyBvbmx5IHZhbGlkIGZvciBlbnRyaWVzCj4gLQkJCSAqIHRoYXQgaGF2
-ZSBzZ19kbWFfbGVuKHMpICE9IDAKPiAtCQkJICovCj4gLQkJCWlmICghc2dfZG1hX2xlbihzKSkK
-PiAtCQkJCWNvbnRpbnVlOwo+IC0KPiAtCQkJaWYgKHNnX2RtYV9hZGRyZXNzKHMpICE9IG5leHRf
-YWRkcikKPiAtCQkJCXJldHVybiBFUlJfUFRSKC1FSU5WQUwpOwo+IC0KPiAtCQkJbmV4dF9hZGRy
-ID0gc2dfZG1hX2FkZHJlc3MocykgKyBzZ19kbWFfbGVuKHMpOwo+IC0JCX0KPiAtCX0KPiArCWlm
-ICghc2d0X2RtYV9jb250aWd1b3VzKHNndCkpCj4gKwkJcmV0dXJuIEVSUl9QVFIoLUVJTlZBTCk7
-Cj4gIAo+ICAJLyogQ3JlYXRlIGEgQ01BIEdFTSBidWZmZXIuICovCj4gIAljbWFfb2JqID0gX19k
-cm1fZ2VtX2NtYV9jcmVhdGUoZGV2LCBhdHRhY2gtPmRtYWJ1Zi0+c2l6ZSk7Cj4gLS0gCj4gMi4y
-My4wCj4gCgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9y
-YXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVs
+Adding new function of_tegra_bpmp_get() to get BPMP data.
+This function can be used by other drivers like cpufreq to
+get BPMP data without adding any property in respective
+drivers DT node.
+
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
+ drivers/firmware/tegra/bpmp.c | 38 ++++++++++++++++++++++++++++++++++++++
+ include/soc/tegra/bpmp.h      |  5 +++++
+ 2 files changed, 43 insertions(+)
+
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 6741fcd..9c3d7f1 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -38,6 +38,44 @@ channel_to_ops(struct tegra_bpmp_channel *channel)
+ 	return bpmp->soc->ops;
+ }
+ 
++struct tegra_bpmp *of_tegra_bpmp_get(void)
++{
++	struct platform_device *pdev;
++	struct device_node *bpmp_dev;
++	struct tegra_bpmp *bpmp;
++
++	/* Check for bpmp device status in DT */
++	bpmp_dev = of_find_compatible_node(NULL, NULL, "nvidia,tegra186-bpmp");
++	if (!bpmp_dev) {
++		bpmp = ERR_PTR(-ENODEV);
++		goto err_out;
++	}
++	if (!of_device_is_available(bpmp_dev)) {
++		bpmp = ERR_PTR(-ENODEV);
++		goto err_put;
++	}
++
++	pdev = of_find_device_by_node(bpmp_dev);
++	if (!pdev) {
++		bpmp = ERR_PTR(-ENODEV);
++		goto err_put;
++	}
++
++	bpmp = platform_get_drvdata(pdev);
++	if (!bpmp) {
++		bpmp = ERR_PTR(-EPROBE_DEFER);
++		put_device(&pdev->dev);
++		goto err_put;
++	}
++
++	return bpmp;
++err_put:
++	of_node_put(bpmp_dev);
++err_out:
++	return bpmp;
++}
++EXPORT_SYMBOL_GPL(of_tegra_bpmp_get);
++
+ struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
+ {
+ 	struct platform_device *pdev;
+diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
+index f2604e9..21402d9 100644
+--- a/include/soc/tegra/bpmp.h
++++ b/include/soc/tegra/bpmp.h
+@@ -107,6 +107,7 @@ struct tegra_bpmp_message {
+ };
+ 
+ #if IS_ENABLED(CONFIG_TEGRA_BPMP)
++struct tegra_bpmp *of_tegra_bpmp_get(void);
+ struct tegra_bpmp *tegra_bpmp_get(struct device *dev);
+ void tegra_bpmp_put(struct tegra_bpmp *bpmp);
+ int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
+@@ -122,6 +123,10 @@ void tegra_bpmp_free_mrq(struct tegra_bpmp *bpmp, unsigned int mrq,
+ 			 void *data);
+ bool tegra_bpmp_mrq_is_supported(struct tegra_bpmp *bpmp, unsigned int mrq);
+ #else
++static inline struct tegra_bpmp *of_tegra_bpmp_get(void)
++{
++	return ERR_PTR(-ENOTSUPP);
++}
+ static inline struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
+ {
+ 	return ERR_PTR(-ENOTSUPP);
+-- 
+2.7.4
