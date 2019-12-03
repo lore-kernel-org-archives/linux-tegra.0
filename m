@@ -1,14 +1,13 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v1 0/26] drm/panel infrastructure + backlight update
-Date: Tue, 3 Dec 2019 09:24:43 +0200
-Message-ID: <20191203072443.GK4730@pendragon.ideasonboard.com>
+From: Maxime Ripard <mripard@kernel.org>
+Subject: Re: [PATCH v1 07/26] drm/panel: remove get_timings
+Date: Tue, 3 Dec 2019 08:46:59 +0100
+Message-ID: <20191203074659.ilsyv4yx7pzw5vax@gilmour.lan>
 References: <20191202193230.21310-1-sam@ravnborg.org>
+ <20191202193230.21310-8-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0279673440=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20191202193230.21310-1-sam@ravnborg.org>
+In-Reply-To: <20191202193230.21310-8-sam@ravnborg.org>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -19,143 +18,130 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, NXP Linux Team <linux-imx@nxp.com>, Jagan Teki <jagan@amarulasolutions.com>, Jitao Shi <jitao.shi@mediatek.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, linux-mediatek@lists.infradead.org, Abhinav Kumar <abhinavk@codeaurora.org>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Purism Kernel Team <kernel@puri.sm>, linux-renesas-soc@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, NXP Linux Team <linux-imx@nxp.com>, Jagan Teki <jagan@amarulasolutions.com>, Jitao Shi <jitao.shi@mediatek.com>, Abhinav Kumar <abhinavk@codeaurora.org>, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Purism Kernel Team <kernel@puri.sm>, linux-renesas-soc@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>, Pengutronix Kernel Team <kernel@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgU2FtLAoKT24gTW9uLCBEZWMgMDIsIDIwMTkgYXQgMDg6MzI6MDRQTSArMDEwMCwgU2FtIFJh
-dm5ib3JnIHdyb3RlOgo+IFRoaXMgcGF0Y2hzZXQgaW5jbHVkZSBhIGNvdXBsZSBvZiBkaWZmZXJl
-bnQKPiB0aGluZ3MgLSBhbGwgcmVsYXRlZCB0byBwYW5lbHMuCj4gCj4gLSBUaGUgcGFuZWwgY2Fs
-bGJhY2tzIGFyZSBvcHRpb25hbCAtIHNvIGRyb3AgZXJyb3IgaWYKPiAgIGNhbGxiYWNrIGlzIG5v
-dCBwcmVzZW50Lgo+ICAKPiAtIEFkZCBzdXBwb3J0IGZvciBiYWNrbGlnaHQgaW4gZHJtX3BhbmVs
-Lgo+ICAgVGhpcyBhbGxvd3MgdXMgdG8gbWFrZSBtdWNoIHNpbXBsZXIgYmFja2xpZ2h0Cj4gICBz
-dXBwb3J0IHRvIG1vc3QgcGFuZWxzLgo+ICAgVGhlIHBhdGNoc2V0IGluY2x1ZGUgY29udmVyc2lv
-biBvZiBtb3N0IG9mIHRoZQo+ICAgdHJpdmlhbCBjYXNlcy4KPiAKPiAtIERyb3AgZHJtX2Nvbm5l
-Y3RvciBmcm9tIGRybV9wYW5lbC4KPiAgIFRoaXMgY2hhbmdlIHJlcXVpcmVkIG1hbnkgY2hhbmdl
-cyB0byBtb3N0Cj4gICBwYW5lbHMgYW5kIG1hbnkgYnJpZGdlcyBhbmQgZGlzcGxheSBkcml2ZXJz
-Lgo+ICAgVGhpcyBpcyBieSBmYXIgdGhlIG1vc3QgaW52YXNpdmUgY2hhbmdlIGluIHRoaXMgcGF0
-Y2hzZXQuCj4gCj4gLSBEcm9wIHRoZSB1bnVzZWQgZ2V0X3RpbWluZ3MoKSBjYWxsYmFjay4KPiAg
-IE5vIHVzZXJzLCBzbyBubyBuZWVkIHRvIGtlZXAgaXQgYXJvdW5kLgo+IAo+IFdpdGggdGhpcyBw
-YXRjaHNldCBkcm1fcGFuZWxfKGF0dGFjaHxkZXRhY2gpIGFyZSBub3Ancwo+IGJ1dCB0aGV5IGFy
-ZSBrZXB0IGZvciBub3cuCj4gCj4gQSBmZXcgb2YgdGhlc2UgcGF0Y2hlcyBoYXMgYmVlbiBzZW50
-IG91dCBiZWZvcmUgLSBidXQgdmVyc2lvbmluZwo+IHN0YXJ0ZWQgYWdhaW4gZnJvbSB2MSAtIGFz
-IHRoZSBtb3N0IHBhdGNoZXMgYXJlIG5ldy4KPiAKPiBJIGhhdmUgdGVzdGVkIHRoZSBwYW5lbC1z
-aW1wbGUgY2hhbmdlcywgYW5kIHRodXMgc29tZQo+IG9mIHRoZSBpbmZyYXN0cnVjdHVyZSBjaGFu
-Z2VzLgo+IFRoZSB0ZXN0aW5nIHdhcyBkb25lIG9uIGFuIGVhcmxpZXIgaXRlcmF0aW9uIC0gYW5k
-IEkgZW5kZWQKPiB1cCBzdWJtaXR0aW5nIHRoaXMgYXMgTGF1cmVudCBhbmQgb3RoZXJzIHN0YXJ0
-ZWQgdG8gZGVwZW5kIG9uIGl0Lgo+IEppdGFvIGhhcyBhIHBhdGNoIHRvIGFkZCBtb3JlIGNhbGxi
-YWNrcywgYW5kIEkgd2FudGVkIHRoZQo+IHNpbXBsaWZpY2F0aW9uIG9mIHRoZSBjYWxsYmFja3Mg
-YmVmb3JlIHdlIGFkZCBtb3JlIGNhbGxiYWNrcy4KCkdyZWF0IHNlcmllcyAhISEgVGhhbmtzIGZv
-ciB3b3JraW5nIG9uIHRoaXMuCgo+IFNhbSBSYXZuYm9yZyAoMjYpOgo+ICAgICAgIGRybS9kcm1f
-cGFuZWw6IG5vIGVycm9yIHdoZW4gbm8gY2FsbGJhY2sKPiAgICAgICBkcm0vcGFuZWw6IGFkZCBi
-YWNrbGlnaHQgc3VwcG9ydAo+ICAgICAgIGRybS9wYW5lbDogc2ltcGxlOiB1c2UgZHJtX3BhbmVs
-IGJhY2tsaWdodCBzdXBwb3J0Cj4gICAgICAgZHJtOiBnZXQgZHJtX2JyaWRnZV9wYW5lbCBjb25u
-ZWN0b3IgdmlhIGhlbHBlcgo+ICAgICAgIGRybS9wYW5lbDogYWRkIGRybV9jb25uZWN0b3IgYXJn
-dW1lbnQgdG8gZ2V0X21vZGVzKCkKPiAgICAgICBkcm0vcGFuZWw6IGRlY291cGxlIGNvbm5lY3Rv
-ciBmcm9tIGRybV9wYW5lbAo+ICAgICAgIGRybS9wYW5lbDogcmVtb3ZlIGdldF90aW1pbmdzCj4g
-ICAgICAgZHJtL3BhbmVsOiBkcm9wIGRybV9kZXZpY2UgZnJvbSBkcm1fcGFuZWwKPiAgICAgICBk
-cm0vcGFuZWw6IGZlaXlhbmctZnkwNzAyNGRpMjZhMzBkOiB1c2UgZHJtX3BhbmVsIGJhY2tsaWdo
-dCBzdXBwb3J0Cj4gICAgICAgZHJtL3BhbmVsOiBpbGl0ZWstaWxpOTg4MWM6IHVzZSBkcm1fcGFu
-ZWwgYmFja2xpZ2h0IHN1cHBvcnQKPiAgICAgICBkcm0vcGFuZWw6IGlubm9sdXgtcDA3OXpjYTog
-dXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAo+ICAgICAgIGRybS9wYW5lbDoga2luZ2Rp
-c3BsYXkta2QwOTdkMDQ6IHVzZSBkcm1fcGFuZWwgYmFja2xpZ2h0IHN1cHBvcnQKPiAgICAgICBk
-cm0vcGFuZWw6IGx2ZHM6IHVzZSBkcm1fcGFuZWwgYmFja2xpZ2h0IHN1cHBvcnQKPiAgICAgICBk
-cm0vcGFuZWw6IG9saW1leC1sY2Qtb2xpbnV4aW5vOiB1c2UgZHJtX3BhbmVsIGJhY2tsaWdodCBz
-dXBwb3J0Cj4gICAgICAgZHJtL3BhbmVsOiBvc2Qtb3NkMTAxdDI1ODctNTN0czogdXNlIGRybV9w
-YW5lbCBiYWNrbGlnaHQgc3VwcG9ydAo+ICAgICAgIGRybS9wYW5lbDogcGFuYXNvbmljLXZ2eDEw
-ZjAzNG4wMDogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAo+ICAgICAgIGRybS9wYW5l
-bDogcmF5ZGl1bS1ybTY4MjAwOiB1c2UgZHJtX3BhbmVsIGJhY2tsaWdodCBzdXBwb3J0Cj4gICAg
-ICAgZHJtL3BhbmVsOiByb2NrdGVjaC1qaDA1N24wMDkwMDogdXNlIGRybV9wYW5lbCBiYWNrbGln
-aHQgc3VwcG9ydAo+ICAgICAgIGRybS9wYW5lbDogcm9uYm8tcmIwNzBkMzA6IHVzZSBkcm1fcGFu
-ZWwgYmFja2xpZ2h0IHN1cHBvcnQKPiAgICAgICBkcm0vcGFuZWw6IHNlaWtvLTQzd3ZmMWc6IHVz
-ZSBkcm1fcGFuZWwgYmFja2xpZ2h0IHN1cHBvcnQKPiAgICAgICBkcm0vcGFuZWw6IHNoYXJwLWxx
-MTAxcjFzeDAxOiB1c2UgZHJtX3BhbmVsIGJhY2tsaWdodCBzdXBwb3J0Cj4gICAgICAgZHJtL3Bh
-bmVsOiBzaGFycC1sczA0M3QxbGUwMTogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAo+
-ICAgICAgIGRybS9wYW5lbDogc2l0cm9uaXgtc3Q3NzAxOiB1c2UgZHJtX3BhbmVsIGJhY2tsaWdo
-dCBzdXBwb3J0Cj4gICAgICAgZHJtL3BhbmVsOiBzaXRyb25peC1zdDc3ODl2OiB1c2UgZHJtX3Bh
-bmVsIGJhY2tsaWdodCBzdXBwb3J0Cj4gICAgICAgZHJtL3BhbmVsOiB0cG8tdGQwMjh0dGVjMTog
-dXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAo+ICAgICAgIGRybS9wYW5lbDogdHBvLXRw
-ZzExMDogdXNlIGRybV9wYW5lbCBiYWNrbGlnaHQgc3VwcG9ydAoKRm9yIHBhdGNoZXMgMDkvMjYg
-dG8gMjYvMjYsCgpSZXZpZXdlZC1ieTogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5waW5jaGFy
-dEBpZGVhc29uYm9hcmQuY29tPgoKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9hbmFsb2dp
-eC9hbmFsb2dpeC1hbng2MzQ1LmMgfCAgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9h
-bmFsb2dpeC9hbmFsb2dpeF9kcF9jb3JlLmMgfCAgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2Jy
-aWRnZS9wYW5lbC5jICAgICAgICAgICAgICAgICAgICAgfCAgMTggKysrLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vYnJpZGdlL3BhcmFkZS1wczg2MjIuYyAgICAgICAgICAgICB8ICAgMiArLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4NzY0LmMgICAgICAgICAgICAgICAgICB8ICAgMiArLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4NzY3LmMgICAgICAgICAgICAgICAgICB8ICAg
-MiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RpLXNuNjVkc2k4Ni5jICAgICAgICAgICAg
-ICB8ICAgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX3BhbmVsLmMgICAgICAgICAgICAgICAg
-ICAgICAgICB8ICA5NiArKysrKysrKysrKysrKy0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2RwaS5jICAgICAgICAgICAgfCAgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2RzaS5jICAgICAgICAgICAgfCAgIDIgKy0KPiAgZHJpdmVycy9n
-cHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fcmdiLmMgICAgICAgICAgfCAgIDIgKy0KPiAgZHJp
-dmVycy9ncHUvZHJtL2lteC9pbXgtbGRiLmMgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0K
-PiAgZHJpdmVycy9ncHUvZHJtL2lteC9wYXJhbGxlbC1kaXNwbGF5LmMgICAgICAgICAgICAgfCAg
-IDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kc2kuYyAgICAgICAgICAgICAg
-ICAgfCAgIDIgKy0KPiAgLi4uL2dwdS9kcm0vbXNtL2Rpc3AvbWRwNC9tZHA0X2x2ZHNfY29ubmVj
-dG9yLmMgICAgfCAgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL21zbS9kc2kvZHNpX21hbmFnZXIu
-YyAgICAgICAgICAgICAgfCAgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL214c2ZiL214c2ZiX291
-dC5jICAgICAgICAgICAgICAgICAgfCAgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL29tYXBkcm0v
-b21hcF9jb25uZWN0b3IuYyAgICAgICAgICAgfCAgIDMgKy0KPiAgZHJpdmVycy9ncHUvZHJtL3Bh
-bmVsL3BhbmVsLWFybS12ZXJzYXRpbGUuYyAgICAgICAgfCAgIDYgKy0KPiAgLi4uL2dwdS9kcm0v
-cGFuZWwvcGFuZWwtZmVpeWFuZy1meTA3MDI0ZGkyNmEzMGQuYyAgfCAgMTYgKystCj4gIGRyaXZl
-cnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1pbGl0ZWstaWxpOTMyMi5jICAgICAgIHwgIDIwICsrLS0K
-PiAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLWlsaXRlay1pbGk5ODgxYy5jICAgICAgfCAg
-MjkgKystLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1pbm5vbHV4LXAwNzl6Y2Eu
-YyAgICAgIHwgIDQ1ICsrKy0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtamRp
-LWx0MDcwbWUwNTAwMC5jICAgICB8ICAxMSArKy0KPiAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3Bh
-bmVsLWtpbmdkaXNwbGF5LWtkMDk3ZDA0LmMgfCAgNDMgKysrLS0tLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL3BhbmVsL3BhbmVsLWxnLWxiMDM1cTAyLmMgICAgICAgICAgfCAgIDYgKy0KPiAgZHJpdmVy
-cy9ncHUvZHJtL3BhbmVsL3BhbmVsLWxnLWxnNDU3My5jICAgICAgICAgICAgfCAgMTIgKy0tCj4g
-IGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1sdmRzLmMgICAgICAgICAgICAgICAgIHwgIDQ2
-ICsrLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtbmVjLW5sODA0OGhsMTEu
-YyAgICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtbm92YXRlay1u
-dDM5MDE2LmMgICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtb2xp
-bWV4LWxjZC1vbGludXhpbm8uYyB8ICAyNyArKy0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwv
-cGFuZWwtb3Jpc2V0ZWNoLW90bTgwMDlhLmMgICB8ICAxMSArKy0KPiAgZHJpdmVycy9ncHUvZHJt
-L3BhbmVsL3BhbmVsLW9zZC1vc2QxMDF0MjU4Ny01M3RzLmMgfCAgMzcgKysrLS0tLQo+ICAuLi4v
-Z3B1L2RybS9wYW5lbC9wYW5lbC1wYW5hc29uaWMtdnZ4MTBmMDM0bjAwLmMgICB8ICA1OCArKyst
-LS0tLS0tLQo+ICAuLi4vZ3B1L2RybS9wYW5lbC9wYW5lbC1yYXNwYmVycnlwaS10b3VjaHNjcmVl
-bi5jICB8ICAgOSArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtcmF5ZGl1bS1ybTY3
-MTkxLmMgICAgICB8ICAgOCArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtcmF5ZGl1
-bS1ybTY4MjAwLmMgICAgICB8ICAyNiArKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFu
-ZWwtcm9ja3RlY2gtamgwNTduMDA5MDAuYyB8ICAzNSArKystLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9wYW5lbC9wYW5lbC1yb25iby1yYjA3MGQzMC5jICAgICAgIHwgIDMxICsrLS0tLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1sZDkwNDAuYyAgICAgICB8ICAgNCArLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmQxNmQwLmMgICAgICB8ICAg
-NiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmUzaGEyLmMgICAg
-ICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1zNmU2M2ow
-eDAzLmMgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ftc3VuZy1z
-NmU2M20wLmMgICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2Ft
-c3VuZy1zNmU4YWEwLmMgICAgICB8ICAgNCArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFu
-ZWwtc2Vpa28tNDN3dmYxZy5jICAgICAgICB8ICA3MiArKystLS0tLS0tLS0tLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vcGFuZWwvcGFuZWwtc2hhcnAtbHExMDFyMXN4MDEuYyAgICB8ICAzNCArKystLS0t
-Cj4gIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zaGFycC1sczAzN3Y3ZHcwMS5jICAgIHwg
-ICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zaGFycC1sczA0M3QxbGUwMS5j
-ICAgIHwgIDMzICsrKy0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNpbXBsZS5j
-ICAgICAgICAgICAgICAgfCAxMTAgKysrKysrLS0tLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1
-L2RybS9wYW5lbC9wYW5lbC1zaXRyb25peC1zdDc3MDEuYyAgICAgIHwgIDIzICsrLS0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1zaXRyb25peC1zdDc3ODl2LmMgICAgIHwgIDQ5ICsr
-LS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc29ueS1hY3g1NjVha20uYyAg
-ICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtdHBvLXRkMDI4dHRl
-YzEuYyAgICAgICB8ICAyMCArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC10cG8t
-dGQwNDNtdGVhMS5jICAgICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5l
-bC10cG8tdHBnMTEwLmMgICAgICAgICAgIHwgIDI2ICsrLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9w
-YW5lbC9wYW5lbC10cnVseS1udDM1NTk3LmMgICAgICAgIHwgICA0ICstCj4gIGRyaXZlcnMvZ3B1
-L2RybS9wbDExMS9wbDExMV9kcnYuYyAgICAgICAgICAgICAgICAgIHwgICAyICstCj4gIGRyaXZl
-cnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfbHZkcy5jICAgICAgICAgICAgICAgIHwgICAyICstCj4g
-IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9sdmRzLmMgICAgICAgICAgIHwgICAy
-ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2R2by5jICAgICAgICAgICAgICAgICAgICAg
-IHwgICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9sdmRzLmMgICAgICAgICAg
-ICAgICAgIHwgICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9yZ2IuYyAgICAg
-ICAgICAgICAgICAgIHwgICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW42aV9taXBp
-X2RzaS5jICAgICAgICAgICAgIHwgICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9vdXRw
-dXQuYyAgICAgICAgICAgICAgICAgICAgIHwgICAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS90dmUy
-MDAvdHZlMjAwX2Rydi5jICAgICAgICAgICAgICAgIHwgICAyICstCj4gIGluY2x1ZGUvZHJtL2Ry
-bV9icmlkZ2UuaCAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKPiAgaW5jbHVkZS9k
-cm0vZHJtX3BhbmVsLmggICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgNDkgKysrKy0tLS0t
-Cj4gIDY4IGZpbGVzIGNoYW5nZWQsIDQ2MCBpbnNlcnRpb25zKCspLCA2NjQgZGVsZXRpb25zKC0p
-CgotLSAKUmVnYXJkcywKCkxhdXJlbnQgUGluY2hhcnQKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============0279673440==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mbec6vlpl4zotrv3"
+Content-Disposition: inline
+
+
+--mbec6vlpl4zotrv3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+On Mon, Dec 02, 2019 at 08:32:11PM +0100, Sam Ravnborg wrote:
+> There was no users - so remove it.
+> The callback was implemented in two drivers - deleted.
+>
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> ---
+>  drivers/gpu/drm/panel/panel-seiko-43wvf1g.c | 18 ------------------
+>  drivers/gpu/drm/panel/panel-simple.c        | 18 ------------------
+>  include/drm/drm_panel.h                     |  9 ---------
+>  3 files changed, 45 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
+> index b878930b17e4..3bcba64235c4 100644
+> --- a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
+> +++ b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
+> @@ -217,30 +217,12 @@ static int seiko_panel_get_modes(struct drm_panel *panel,
+>  	return seiko_panel_get_fixed_modes(p, connector);
+>  }
+>
+> -static int seiko_panel_get_timings(struct drm_panel *panel,
+> -				    unsigned int num_timings,
+> -				    struct display_timing *timings)
+> -{
+> -	struct seiko_panel *p = to_seiko_panel(panel);
+> -	unsigned int i;
+> -
+> -	if (p->desc->num_timings < num_timings)
+> -		num_timings = p->desc->num_timings;
+> -
+> -	if (timings)
+> -		for (i = 0; i < num_timings; i++)
+> -			timings[i] = p->desc->timings[i];
+> -
+> -	return p->desc->num_timings;
+> -}
+> -
+>  static const struct drm_panel_funcs seiko_panel_funcs = {
+>  	.disable = seiko_panel_disable,
+>  	.unprepare = seiko_panel_unprepare,
+>  	.prepare = seiko_panel_prepare,
+>  	.enable = seiko_panel_enable,
+>  	.get_modes = seiko_panel_get_modes,
+> -	.get_timings = seiko_panel_get_timings,
+>  };
+
+If anything, I think we should grow the usage of timings and / or make
+it usable by everyone.
+
+Using only the mode as we do currently has a bunch of shortcomings as
+almost no encoder will be able to provide the typical pixel clock, and
+that situation leads to multiple things:
+
+  - If someone working on one encoder wants to upstream a panel they
+    have tested, chances are this will not be the typical pixel clock
+    / timings being used but rather the one that will match what that
+    SoC is capable of. Trouble comes when a second user comes in with
+    a different encoder and different capabilities, and then we have a
+    maintainance fight over which timing is the true timing (with a
+    significant chance that none of them are).
+
+  - If we can't match the pixel clock, we currently have no easy way
+    to make the usual measures of reducing / growing the porches and
+    blankings areas to match the pixel clock we can provide, since we
+    don't have an easy way to get the tolerance on those timings for a
+    given panel. There's some ad hoc solutions on some drivers (I
+    think vc4 has that?) to ignore the panel and just play around with
+    the timings, but I think this should be generalised.
+
+Timings solves the first case since we have the operating range now
+and not a single set of timings, and it solves the second since we can
+use that range to take those measures instead of taking a shot in the
+dark.
+
+I appreciate that it's pretty far from where we are today, but
+removing the get_timings means that all the timings already defined in
+the panel drivers are becoming useless too, and that eventually it
+will get removed.
+
+Maxime
+
+--mbec6vlpl4zotrv3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXeYS8wAKCRDj7w1vZxhR
+xeBxAP9ee3FFwY4sVlAfBJhuRT34erKIih4z1areuTzVSIN+dQD/fzdVxhMZTPAY
+gvh8rpUVFlo152hrZ+11FZmcFestiwc=
+=ElRy
+-----END PGP SIGNATURE-----
+
+--mbec6vlpl4zotrv3--
+
+--===============0279673440==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============0279673440==--
