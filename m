@@ -1,92 +1,108 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v1 13/26] drm/panel: lvds: use drm_panel backlight support
-Date: Tue, 3 Dec 2019 09:16:06 +0200
-Message-ID: <20191203071606.GI4730@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v1 25/26] drm/panel: tpo-td028ttec1: use drm_panel
+ backlight support
+Date: Tue, 3 Dec 2019 09:16:56 +0200
+Message-ID: <20191203071656.GJ4730@pendragon.ideasonboard.com>
 References: <20191202193230.21310-1-sam@ravnborg.org>
- <20191202193230.21310-14-sam@ravnborg.org>
+ <20191202193230.21310-26-sam@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20191202193230.21310-14-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191202193230.21310-26-sam@ravnborg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, NXP Linux Team <linux-imx@nxp.com>, Jagan Teki <jagan@amarulasolutions.com>, Jitao Shi <jitao.shi@mediatek.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, linux-mediatek@lists.infradead.org, Abhinav Kumar <abhinavk@codeaurora.org>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Purism Kernel Team <kernel@puri.sm>, linux-renesas-soc@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Stefan Agner <stefan@agner.ch>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, NXP Linux Team <linux-imx@nxp.com>, Jagan Teki <jagan@amarulasolutions.com>, Jitao Shi <jitao.shi@mediatek.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, linux-mediatek@lists.infradead.org, Abhinav Kumar <abhinavk@codeaurora.org>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Purism Kernel Team <kernel@puri.sm>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgU2FtLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBNb24sIERlYyAwMiwgMjAxOSBh
-dCAwODozMjoxN1BNICswMTAwLCBTYW0gUmF2bmJvcmcgd3JvdGU6Cj4gVXNlIHRoZSBiYWNrbGln
-aHQgc3VwcG9ydCBpbiBkcm1fcGFuZWwgdG8gc2ltcGxpZnkgdGhlIGRyaXZlcgo+IAo+IFNpZ25l
-ZC1vZmYtYnk6IFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4KPiBDYzogVGhpZXJyeSBS
-ZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4KPiBDYzogU2FtIFJhdm5ib3JnIDxzYW1A
-cmF2bmJvcmcub3JnPgoKUmV2aWV3ZWQtYnk6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGlu
-Y2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9w
-YW5lbC1sdmRzLmMgfCA0MCArKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxl
-IGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMzUgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1sdmRzLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-cGFuZWwvcGFuZWwtbHZkcy5jCj4gaW5kZXggNWU0MGI2NzRiYjE1Li41Y2UzZjRhMmI3YTEgMTAw
-NjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLWx2ZHMuYwo+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9wYW5lbC9wYW5lbC1sdmRzLmMKPiBAQCAtOCw3ICs4LDYgQEAKPiAgICog
-Q29udGFjdDogTGF1cmVudCBQaW5jaGFydCAobGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQu
-Y29tKQo+ICAgKi8KPiAgCj4gLSNpbmNsdWRlIDxsaW51eC9iYWNrbGlnaHQuaD4KPiAgI2luY2x1
-ZGUgPGxpbnV4L2dwaW8vY29uc3VtZXIuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgo+
-ICAjaW5jbHVkZSA8bGludXgvb2ZfcGxhdGZvcm0uaD4KPiBAQCAtMzQsNyArMzMsNiBAQCBzdHJ1
-Y3QgcGFuZWxfbHZkcyB7Cj4gIAl1bnNpZ25lZCBpbnQgYnVzX2Zvcm1hdDsKPiAgCWJvb2wgZGF0
-YV9taXJyb3I7Cj4gIAo+IC0Jc3RydWN0IGJhY2tsaWdodF9kZXZpY2UgKmJhY2tsaWdodDsKPiAg
-CXN0cnVjdCByZWd1bGF0b3IgKnN1cHBseTsKPiAgCj4gIAlzdHJ1Y3QgZ3Bpb19kZXNjICplbmFi
-bGVfZ3BpbzsKPiBAQCAtNDYsMTkgKzQ0LDYgQEAgc3RhdGljIGlubGluZSBzdHJ1Y3QgcGFuZWxf
-bHZkcyAqdG9fcGFuZWxfbHZkcyhzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKPiAgCXJldHVybiBj
-b250YWluZXJfb2YocGFuZWwsIHN0cnVjdCBwYW5lbF9sdmRzLCBwYW5lbCk7Cj4gIH0KPiAgCj4g
-LXN0YXRpYyBpbnQgcGFuZWxfbHZkc19kaXNhYmxlKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQo+
-IC17Cj4gLQlzdHJ1Y3QgcGFuZWxfbHZkcyAqbHZkcyA9IHRvX3BhbmVsX2x2ZHMocGFuZWwpOwo+
-IC0KPiAtCWlmIChsdmRzLT5iYWNrbGlnaHQpIHsKPiAtCQlsdmRzLT5iYWNrbGlnaHQtPnByb3Bz
-LnBvd2VyID0gRkJfQkxBTktfUE9XRVJET1dOOwo+IC0JCWx2ZHMtPmJhY2tsaWdodC0+cHJvcHMu
-c3RhdGUgfD0gQkxfQ09SRV9GQkJMQU5LOwo+IC0JCWJhY2tsaWdodF91cGRhdGVfc3RhdHVzKGx2
-ZHMtPmJhY2tsaWdodCk7Cj4gLQl9Cj4gLQo+IC0JcmV0dXJuIDA7Cj4gLX0KPiAtCj4gIHN0YXRp
-YyBpbnQgcGFuZWxfbHZkc191bnByZXBhcmUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4gIHsK
-PiAgCXN0cnVjdCBwYW5lbF9sdmRzICpsdmRzID0gdG9fcGFuZWxfbHZkcyhwYW5lbCk7Cj4gQEAg
-LTkzLDE5ICs3OCw2IEBAIHN0YXRpYyBpbnQgcGFuZWxfbHZkc19wcmVwYXJlKHN0cnVjdCBkcm1f
-cGFuZWwgKnBhbmVsKQo+ICAJcmV0dXJuIDA7Cj4gIH0KPiAgCj4gLXN0YXRpYyBpbnQgcGFuZWxf
-bHZkc19lbmFibGUoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4gLXsKPiAtCXN0cnVjdCBwYW5l
-bF9sdmRzICpsdmRzID0gdG9fcGFuZWxfbHZkcyhwYW5lbCk7Cj4gLQo+IC0JaWYgKGx2ZHMtPmJh
-Y2tsaWdodCkgewo+IC0JCWx2ZHMtPmJhY2tsaWdodC0+cHJvcHMuc3RhdGUgJj0gfkJMX0NPUkVf
-RkJCTEFOSzsKPiAtCQlsdmRzLT5iYWNrbGlnaHQtPnByb3BzLnBvd2VyID0gRkJfQkxBTktfVU5C
-TEFOSzsKPiAtCQliYWNrbGlnaHRfdXBkYXRlX3N0YXR1cyhsdmRzLT5iYWNrbGlnaHQpOwo+IC0J
-fQo+IC0KPiAtCXJldHVybiAwOwo+IC19Cj4gLQo+ICBzdGF0aWMgaW50IHBhbmVsX2x2ZHNfZ2V0
-X21vZGVzKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsLAo+ICAJCQkJc3RydWN0IGRybV9jb25uZWN0
-b3IgKmNvbm5lY3RvcikKPiAgewo+IEBAIC0xMzIsMTAgKzEwNCw4IEBAIHN0YXRpYyBpbnQgcGFu
-ZWxfbHZkc19nZXRfbW9kZXMoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwsCj4gIH0KPiAgCj4gIHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX3BhbmVsX2Z1bmNzIHBhbmVsX2x2ZHNfZnVuY3MgPSB7Cj4g
-LQkuZGlzYWJsZSA9IHBhbmVsX2x2ZHNfZGlzYWJsZSwKPiAgCS51bnByZXBhcmUgPSBwYW5lbF9s
-dmRzX3VucHJlcGFyZSwKPiAgCS5wcmVwYXJlID0gcGFuZWxfbHZkc19wcmVwYXJlLAo+IC0JLmVu
-YWJsZSA9IHBhbmVsX2x2ZHNfZW5hYmxlLAo+ICAJLmdldF9tb2RlcyA9IHBhbmVsX2x2ZHNfZ2V0
-X21vZGVzLAo+ICB9Owo+ICAKPiBAQCAtMjQyLDEwICsyMTIsNiBAQCBzdGF0aWMgaW50IHBhbmVs
-X2x2ZHNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCQlyZXR1cm4gcmV0
-Owo+ICAJfQo+ICAKPiAtCWx2ZHMtPmJhY2tsaWdodCA9IGRldm1fb2ZfZmluZF9iYWNrbGlnaHQo
-bHZkcy0+ZGV2KTsKPiAtCWlmIChJU19FUlIobHZkcy0+YmFja2xpZ2h0KSkKPiAtCQlyZXR1cm4g
-UFRSX0VSUihsdmRzLT5iYWNrbGlnaHQpOwo+IC0KPiAgCS8qCj4gIAkgKiBUT0RPOiBIYW5kbGUg
-YWxsIHBvd2VyIHN1cHBsaWVzIHNwZWNpZmllZCBpbiB0aGUgRFQgbm9kZSBpbiBhIGdlbmVyaWMK
-PiAgCSAqIHdheSBmb3IgcGFuZWxzIHRoYXQgZG9uJ3QgY2FyZSBhYm91dCBwb3dlciBzdXBwbHkg
-b3JkZXJpbmcuIExWRFMKPiBAQCAtMjU3LDYgKzIyMywxMCBAQCBzdGF0aWMgaW50IHBhbmVsX2x2
-ZHNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCWRybV9wYW5lbF9pbml0
-KCZsdmRzLT5wYW5lbCwgbHZkcy0+ZGV2LCAmcGFuZWxfbHZkc19mdW5jcywKPiAgCQkgICAgICAg
-RFJNX01PREVfQ09OTkVDVE9SX0xWRFMpOwo+ICAKPiArCXJldCA9IGRybV9wYW5lbF9vZl9iYWNr
-bGlnaHQoJmx2ZHMtPnBhbmVsKTsKPiArCWlmIChyZXQpCj4gKwkJcmV0dXJuIHJldDsKPiArCj4g
-IAlyZXQgPSBkcm1fcGFuZWxfYWRkKCZsdmRzLT5wYW5lbCk7Cj4gIAlpZiAocmV0IDwgMCkKPiAg
-CQlyZXR1cm4gcmV0Owo+IEBAIC0yNzEsNyArMjQxLDcgQEAgc3RhdGljIGludCBwYW5lbF9sdmRz
-X3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAKPiAgCWRybV9wYW5lbF9y
-ZW1vdmUoJmx2ZHMtPnBhbmVsKTsKPiAgCj4gLQlwYW5lbF9sdmRzX2Rpc2FibGUoJmx2ZHMtPnBh
-bmVsKTsKPiArCWRybV9wYW5lbF9kaXNhYmxlKCZsdmRzLT5wYW5lbCk7Cj4gIAo+ICAJcmV0dXJu
-IDA7Cj4gIH0KCi0tIApSZWdhcmRzLAoKTGF1cmVudCBQaW5jaGFydApfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+Hi Sam,
+
+Thank you for the patch.
+
+On Mon, Dec 02, 2019 at 08:32:29PM +0100, Sam Ravnborg wrote:
+> Use the backlight support in drm_panel to simplify the driver
+> 
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/panel/panel-tpo-td028ttec1.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
+> index 37252590b541..cf29405a2dbe 100644
+> --- a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
+> +++ b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
+> @@ -17,7 +17,6 @@
+>   * H. Nikolaus Schaller <hns@goldelico.com>
+>   */
+>  
+> -#include <linux/backlight.h>
+>  #include <linux/delay.h>
+>  #include <linux/module.h>
+>  #include <linux/spi/spi.h>
+> @@ -83,7 +82,6 @@ struct td028ttec1_panel {
+>  	struct drm_panel panel;
+>  
+>  	struct spi_device *spi;
+> -	struct backlight_device *backlight;
+>  };
+>  
+>  #define to_td028ttec1_device(p) container_of(p, struct td028ttec1_panel, panel)
+> @@ -243,8 +241,6 @@ static int td028ttec1_enable(struct drm_panel *panel)
+>  	if (ret)
+>  		return ret;
+>  
+> -	backlight_enable(lcd->backlight);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -252,8 +248,6 @@ static int td028ttec1_disable(struct drm_panel *panel)
+>  {
+>  	struct td028ttec1_panel *lcd = to_td028ttec1_device(panel);
+>  
+> -	backlight_disable(lcd->backlight);
+> -
+>  	jbt_ret_write_0(lcd, JBT_REG_DISPLAY_OFF, NULL);
+>  
+>  	return 0;
+> @@ -334,10 +328,6 @@ static int td028ttec1_probe(struct spi_device *spi)
+>  	spi_set_drvdata(spi, lcd);
+>  	lcd->spi = spi;
+>  
+> -	lcd->backlight = devm_of_find_backlight(&spi->dev);
+> -	if (IS_ERR(lcd->backlight))
+> -		return PTR_ERR(lcd->backlight);
+> -
+>  	spi->mode = SPI_MODE_3;
+>  	spi->bits_per_word = 9;
+>  
+> @@ -350,6 +340,10 @@ static int td028ttec1_probe(struct spi_device *spi)
+>  	drm_panel_init(&lcd->panel, &lcd->spi->dev, &td028ttec1_funcs,
+>  		       DRM_MODE_CONNECTOR_DPI);
+>  
+> +	ret = drm_panel_of_backlight(&lcd->panel);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return drm_panel_add(&lcd->panel);
+>  }
+>  
+
+-- 
+Regards,
+
+Laurent Pinchart
