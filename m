@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 17/19] cpuidle: tegra: Disable CC6 state if LP2 unavailable
-Date: Tue,  3 Dec 2019 03:41:14 +0300
-Message-ID: <20191203004116.11771-18-digetx@gmail.com>
+Subject: [PATCH v8 11/19] arm: tegra20/30: cpuidle: Remove unnecessary memory barrier
+Date: Tue,  3 Dec 2019 03:41:08 +0300
+Message-ID: <20191203004116.11771-12-digetx@gmail.com>
 References: <20191203004116.11771-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,36 +12,41 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-LP2 suspending could be unavailable, for example if it is disabled in a
-device-tree. CC6 cpuidle state won't work in that case.
+There is no good justification for smp_rmb() after returning from LP2
+because there are no memory operations that require SMP synchronization.
+Thus remove the confusing barrier.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/cpuidle/cpuidle-tegra.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/mach-tegra/cpuidle-tegra20.c | 2 --
+ arch/arm/mach-tegra/cpuidle-tegra30.c | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index bbd7999a3910..077ff15e32fb 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -31,6 +31,7 @@
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/irq.h>
- #include <soc/tegra/pm.h>
-+#include <soc/tegra/pmc.h>
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+index 3f4c75dbb4aa..78cc424fac35 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra20.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+@@ -193,8 +193,6 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
  
- #include <asm/cpuidle.h>
- #include <asm/firmware.h>
-@@ -325,6 +326,10 @@ static void tegra_cpuidle_setup_tegra114_c7_state(void)
+ 	local_fiq_enable();
  
- static int tegra_cpuidle_probe(struct platform_device *pdev)
- {
-+	/* LP2 could be disabled in device-tree */
-+	if (tegra_pmc_get_suspend_mode() < TEGRA_SUSPEND_LP2)
-+		tegra_idle_driver.states[TEGRA_CC6].disabled = true;
-+
- 	/*
- 	 * Required suspend-resume functionality, which is provided by the
- 	 * Tegra-arch core and PMC driver, is unavailable if PM-sleep option
+-	smp_rmb();
+-
+ 	return entered_lp2 ? index : 0;
+ }
+ #endif
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+index a4f0add46a27..80ae64bcdf50 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra30.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
+@@ -113,8 +113,6 @@ static int tegra30_idle_lp2(struct cpuidle_device *dev,
+ 
+ 	local_fiq_enable();
+ 
+-	smp_rmb();
+-
+ 	return (entered_lp2) ? index : 0;
+ }
+ #endif
 -- 
 2.24.0
