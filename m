@@ -1,57 +1,77 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.4 00/46] 5.4.2-stable review
-Date: Wed, 4 Dec 2019 10:26:54 +0000
-Message-ID: <2c6d505c-e05a-9156-223a-0795f2090e1f@nvidia.com>
-References: <20191203212705.175425505@linuxfoundation.org>
+From: sumitg <sumitg@nvidia.com>
+Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
+Date: Wed, 4 Dec 2019 16:25:57 +0530
+Message-ID: <7347caa6-43a3-f761-de83-481b45f7b22a@nvidia.com>
+References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
+ <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
+ <20191204054043.o4ff7pnqec3fwdgu@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191204054043.o4ff7pnqec3fwdgu@vireshk-i7>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: bbasu@nvidia.com, linux-pm@vger.kernel.org, catalin.marinas@arm.com, rjw@rjwysocki.net, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, talho@nvidia.com, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, mperttunen@nvidia.com, will@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Viresh,
 
-On 03/12/2019 22:35, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.2 release.
-> There are 46 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 05 Dec 2019 21:20:36 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
+On 04/12/19 11:10 AM, Viresh Kumar wrote:
+> Hi Sumit,
+>
+> On 03-12-19, 23:02, Sumit Gupta wrote:
+>> Add support for CPU frequency scaling on Tegra194. The frequency
+>> of each core can be adjusted by writing a clock divisor value to
+>> an MSR on the core. The range of valid divisors is queried from
+>> the BPMP.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>> ---
+>>   drivers/cpufreq/Kconfig.arm        |   6 +
+>>   drivers/cpufreq/Makefile           |   1 +
+>>   drivers/cpufreq/tegra194-cpufreq.c | 423 +++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 430 insertions(+)
+>>   create mode 100644 drivers/cpufreq/tegra194-cpufreq.c
+> Overall these are the things that you are doing here in the driver:
+>
+> - open coded clk_{get|set}_rate(), why can't you implement a clock
+>    driver for the CPU and use the clk framework? You may not need the
+>    (hacky) work-queue usage then probably.
 
+In T194, CCPLEX doesn't have access to set clocks and the
 
-No new regressions for Tegra. Still one warning test failing, but that
-is expected.
+clk_{get|set}_rate() functions set clocks by hook to BPMP R5.
 
-Test results for stable-v5.4:
-    13 builds:	13 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	37 pass, 1 fail
+CPU freq can be directly set by CCPLEX using MSR(NVFREQ_REQ_EL1).
 
-Linux version:	5.4.2-rc1-g3eb35d2ecc30
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+As DVFS run's on BPMP, another MSR (NVFREQ_FEEDBACK_EL1) is
 
-Cheers
-Jon
+used to read the counters and calculate "actual" cpu freq at CCPLEX.
 
--- 
-nvpublic
+So, "cpuinfo_cur_freq" node gives the actual cpu frequency and not
+
+given by node "scaling_cur_freq".
+
+>
+> - populating cpufreq table, you can probably add OPPs instead using
+>    the same mechanism
+
+We are reading available frequencies from BPMP to populate
+
+cpufreq table and not using static opp table.
+
+>
+> - And then you can reuse the cpufreq-dt driver for your platform as
+>    well, as is the case for few other tegra platforms.
+>
