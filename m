@@ -1,753 +1,131 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v2 02/11] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-Date: Wed, 4 Dec 2019 13:26:52 -0800
-Message-ID: <23bc8662-af74-a776-8004-311213d1b7fb@nvidia.com>
-References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
- <1574830773-14892-3-git-send-email-skomatineni@nvidia.com>
- <749de44c-ec59-3cab-c02e-7b8fcb1fb9f4@gmail.com>
- <3d1492a1-f2a5-2d56-5341-a28fcb73fe64@nvidia.com>
- <484cb1bb-4fb2-9e71-87be-2bd5bd5b2348@gmail.com>
- <e4ee58aa-c421-ea4b-a37b-574fc987c7c1@nvidia.com>
- <e5da42b8-bf21-4b57-8ae6-37ce6ca4210c@gmail.com>
- <bb4853a1-83d7-273d-50df-324570c4a4b8@nvidia.com>
- <bd979864-b3e8-02b1-e0b0-869ddfa8ac67@nvidia.com>
- <41508376-f30b-3761-47bf-c9c87db997dc@nvidia.com>
- <348e9382-9978-0c01-1493-4226c1cd70a3@nvidia.com>
- <74ff9e90-0969-bf53-444c-d643d342d0cb@nvidia.com>
- <f9d85789-b847-ef88-dbd0-2883a45ed9c3@gmail.com>
- <474d4b95-91af-6bfb-c110-d2d232d9b522@nvidia.com>
- <0a16d627-b0e5-eb03-5aa4-ac200bf202b1@nvidia.com>
- <f649394b-18dc-1709-3c84-cbfb37f289f3@gmail.com>
- <a867bdae-977a-8aad-3c00-93430a739aef@nvidia.com>
- <48b3cc8d-c617-e3de-2110-34ddc6ec6094@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/6] dt-bindings: PCI: tegra: Add DT support for PCIe EP
+ nodes in Tegra194
+Date: Wed, 4 Dec 2019 15:43:40 -0600
+Message-ID: <20191204214340.GA19088@bogus>
+References: <20191122104505.8986-1-vidyas@nvidia.com>
+ <20191122104505.8986-3-vidyas@nvidia.com>
+ <20191122131931.GB1315704@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <48b3cc8d-c617-e3de-2110-34ddc6ec6094@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20191122131931.GB1315704@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Vidya Sagar <vidyas@nvidia.com>, lorenzo.pieralisi@arm.com, bhelgaas@google.com, jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Nov 22, 2019 at 02:19:31PM +0100, Thierry Reding wrote:
+> On Fri, Nov 22, 2019 at 04:15:01PM +0530, Vidya Sagar wrote:
+> > Add support for PCIe controllers that can operate in endpoint mode
+> > in Tegra194.
+> > 
+> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> > ---
+> >  .../bindings/pci/nvidia,tegra194-pcie-ep.txt  | 138 ++++++++++++++++++
+> >  1 file changed, 138 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.txt
+> 
+> The vast majority of this is a duplication of the host mode device tree
+> bindings. I think it'd be best to combine both and only highlight where
+> both modes differ.
 
-On 12/4/19 1:12 PM, Dmitry Osipenko wrote:
-> 04.12.2019 23:33, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 12/4/19 12:28 PM, Dmitry Osipenko wrote:
->>> 04.12.2019 23:08, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> On 12/4/19 8:02 AM, Sowjanya Komatineni wrote:
->>>>> On 12/4/19 5:39 AM, Dmitry Osipenko wrote:
->>>>>> 03.12.2019 19:45, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
->>>>>>> On 12/2/19 4:07 PM, Sowjanya Komatineni wrote:
->>>>>>>> On 12/2/19 3:14 PM, Sowjanya Komatineni wrote:
->>>>>>>>> On 12/2/19 3:10 PM, Sowjanya Komatineni wrote:
->>>>>>>>>> On 12/2/19 2:58 PM, Sowjanya Komatineni wrote:
->>>>>>>>>>> On 12/2/19 1:50 PM, Dmitry Osipenko wrote:
->>>>>>>>>>>> 02.12.2019 23:09, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=
-=D1=82:
->>>>>>>>>>>>> On 11/28/19 5:25 AM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>> 28.11.2019 01:57, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=
-=B5=D1=82:
->>>>>>>>>>>>>>> On 11/27/19 7:14 AM, Dmitry Osipenko wrote:
->>>>>>>>>>>>>>>> 27.11.2019 07:59, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=
-=D0=B5=D1=82:
->>>>>>>>>>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2,
->>>>>>>>>>>>>>>>> clk_out_3 with
->>>>>>>>>>>>>>>>> mux and gate for each of these clocks.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> Currently these PMC clocks are registered by Tegra clock
->>>>>>>>>>>>>>>>> driver using
->>>>>>>>>>>>>>>>> clk_register_mux and clk_register_gate by passing PMC bas=
-e
->>>>>>>>>>>>>>>>> address
->>>>>>>>>>>>>>>>> and register offsets and PMC programming for these clocks
->>>>>>>>>>>>>>>>> happens
->>>>>>>>>>>>>>>>> through direct PMC access by the clock driver.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> With this, when PMC is in secure mode any direct PMC acce=
-ss
->>>>>>>>>>>>>>>>> from the
->>>>>>>>>>>>>>>>> non-secure world does not go through and these clocks wil=
-l
->>>>>>>>>>>>>>>>> not be
->>>>>>>>>>>>>>>>> functional.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> This patch adds these clocks registration with PMC as a
->>>>>>>>>>>>>>>>> clock
->>>>>>>>>>>>>>>>> provider
->>>>>>>>>>>>>>>>> for these clocks. clk_ops callback implementations for
->>>>>>>>>>>>>>>>> these
->>>>>>>>>>>>>>>>> clocks
->>>>>>>>>>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports
->>>>>>>>>>>>>>>>> PMC
->>>>>>>>>>>>>>>>> programming
->>>>>>>>>>>>>>>>> in secure mode and non-secure mode.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.co=
-m>
->>>>>>>>>>>>>>>>> ---
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drivers/soc/tegra/pmc.c |=
- 330
->>>>>>>>>>>>>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 file changed, 330 inser=
-tions(+)
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> diff --git a/drivers/soc/tegra/pmc.c
->>>>>>>>>>>>>>>>> b/drivers/soc/tegra/pmc.c
->>>>>>>>>>>>>>>>> index ea0e11a09c12..a353f6d0a832 100644
->>>>>>>>>>>>>>>>> --- a/drivers/soc/tegra/pmc.c
->>>>>>>>>>>>>>>>> +++ b/drivers/soc/tegra/pmc.c
->>>>>>>>>>>>>>>>> @@ -13,6 +13,9 @@
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0 #include <linux/ar=
-m-smccc.h>
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #include <linux/clk.h>
->>>>>>>>>>>>>>>>> +#include <linux/clk-provider.h>
->>>>>>>>>>>>>>>>> +#include <linux/clkdev.h>
->>>>>>>>>>>>>>>>> +#include <linux/clk/clk-conf.h>
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #include <linux/clk/tegra=
-.h>
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #include <linux/debugfs.h=
->
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #include <linux/delay.h>
->>>>>>>>>>>>>>>>> @@ -48,6 +51,7 @@
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #include <dt-bindings/pin=
-ctrl/pinctrl-tegra-io-pad.h>
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #include <dt-bindings/gpi=
-o/tegra186-gpio.h>
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #include <dt-bindings/gpi=
-o/tegra194-gpio.h>
->>>>>>>>>>>>>>>>> +#include <dt-bindings/soc/tegra-pmc.h>
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0 #define PMC_CNTRL=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x0
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #define=C2=A0 PMC_CNTRL_I=
-NTR_POLARITY BIT(17) /*
->>>>>>>>>>>>>>>>> inverts INTR
->>>>>>>>>>>>>>>>> polarity */
->>>>>>>>>>>>>>>>> @@ -100,6 +104,7 @@
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #define PMC_WAKE2_STATUS=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x168
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #define PMC_SW_WAKE2_STAT=
-US 0x16c
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +#define PMC_CLK_OUT_CNTR=
-L 0x1a8
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #define PMC_SENSOR_CTRL 0=
-x1b0
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #define PMC_SENSOR_CTRL_S=
-CRATCH_WRITE BIT(2)
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #define=C2=A0 PMC_SENSOR_=
-CTRL_ENABLE_RST BIT(1)
->>>>>>>>>>>>>>>>> @@ -155,6 +160,91 @@
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #define=C2=A0 TEGRA_SMC_P=
-MC_READ=C2=A0=C2=A0=C2=A0 0xaa
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #define=C2=A0 TEGRA_SMC_P=
-MC_WRITE=C2=A0=C2=A0=C2=A0 0xbb
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +struct pmc_clk_mux {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw=C2=A0=C2=A0=C2=A0 hw;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned long=C2=A0=C2=A0=C2=A0 offs;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 mask;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 shift;
->>>>>>>>>>>>>>>>> +};
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +#define to_pmc_clk_mux(_hw) container_of(_hw, struct
->>>>>>>>>>>>>>>>> pmc_clk_mux, hw)
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +struct pmc_clk_gate {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw=C2=A0=C2=A0=C2=A0 hw;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned long=C2=A0=C2=A0=C2=A0 offs;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 shift;
->>>>>>>>>>>>>>>>> +};
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +#define to_pmc_clk_gate(_hw) container_of(_hw, struct
->>>>>>>>>>>>>>>>> pmc_clk_gate, hw)
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +struct pmc_clk_init_data {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 char *mux_name;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 char *gate_name;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 const char **parents;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int num_parents;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int mux_id;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int gate_id;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 char *dev_name;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u8 mux_shift;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u8 gate_shift;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u8 init_parent_index;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int init_state;
->>>>>>>>>>>>>>>>> +};
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static const char *clk_out1_parents[] =3D { "clk_m",
->>>>>>>>>>>>>>>>> "clk_m_div2",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 "clk_m_div4", "extern1",
->>>>>>>>>>>>>>>>> +};
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static const char *clk_out2_parents[] =3D { "clk_m",
->>>>>>>>>>>>>>>>> "clk_m_div2",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 "clk_m_div4", "extern2",
->>>>>>>>>>>>>>>>> +};
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static const char *clk_out3_parents[] =3D { "clk_m",
->>>>>>>>>>>>>>>>> "clk_m_div2",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 "clk_m_div4", "extern3",
->>>>>>>>>>>>>>>>> +};
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static struct pmc_clk_init_data tegra_pmc_clks_data[] =
-=3D {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_name =3D=
- "clk_out_1_mux",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_name =
-=3D "clk_out_1",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D =
-clk_out1_parents,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =
-=3D ARRAY_SIZE(clk_out1_parents),
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_id =3D T=
-EGRA_PMC_CLK_OUT_1_MUX,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_id =3D =
-TEGRA_PMC_CLK_OUT_1,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dev_name =3D=
- "extern1",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =
-=3D 6,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =
-=3D 2,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_parent_=
-index =3D 3,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_state =
-=3D 1,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 },
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_name =3D=
- "clk_out_2_mux",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_name =
-=3D "clk_out_2",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D =
-clk_out2_parents,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =
-=3D ARRAY_SIZE(clk_out2_parents),
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_id =3D T=
-EGRA_PMC_CLK_OUT_2_MUX,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_id =3D =
-TEGRA_PMC_CLK_OUT_2,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dev_name =3D=
- "extern2",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =
-=3D 14,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =
-=3D 10,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_parent_=
-index =3D 0,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_state =
-=3D 0,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 },
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_name =3D=
- "clk_out_3_mux",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_name =
-=3D "clk_out_3",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D =
-clk_out3_parents,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =
-=3D ARRAY_SIZE(clk_out3_parents),
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_id =3D T=
-EGRA_PMC_CLK_OUT_3_MUX,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_id =3D =
-TEGRA_PMC_CLK_OUT_3,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dev_name =3D=
- "extern3",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =
-=3D 22,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =
-=3D 18,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_parent_=
-index =3D 0,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .init_state =
-=3D 0,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 },
->>>>>>>>>>>>>>>>> +};
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_powergate {
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 s=
-truct generic_pm_domain genpd;
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 s=
-truct tegra_pmc *pmc;
->>>>>>>>>>>>>>>>> @@ -254,6 +344,9 @@ struct tegra_pmc_soc {
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 */
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 c=
-onst struct tegra_wake_event *wake_events;
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u=
-nsigned int num_wake_events;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_init_data *pmc_clks_da=
-ta;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned int num_pmc_clks;
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0 static const char =
-* const
->>>>>>>>>>>>>>>>> tegra186_reset_sources[] =3D {
->>>>>>>>>>>>>>>>> @@ -2163,6 +2256,228 @@ static int
->>>>>>>>>>>>>>>>> tegra_pmc_clk_notify_cb(struct
->>>>>>>>>>>>>>>>> notifier_block *nb,
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r=
-eturn NOTIFY_OK;
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>>>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +static void pmc_clk_fenc=
-e_udelay(u32 offset)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_readl(pmc, offset);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 /* pmc clk propagation delay 2 us */
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 udelay(2);
->>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static u8 pmc_clk_mux_get_parent(struct clk_hw *hw)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_mux *mux =3D to_pmc_cl=
-k_mux(hw);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int num_parents =3D clk_hw_get_num_pa=
-rents(hw);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, mux->off=
-s) >> mux->shift;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val &=3D mux->mask;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (val >=3D num_parents)
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVA=
-L;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return val;
->>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static int pmc_clk_mux_set_parent(struct clk_hw *hw, u8
->>>>>>>>>>>>>>>>> index)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_mux *mux =3D to_pmc_cl=
-k_mux(hw);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, mux->off=
-s);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val &=3D ~(mux->mask << mux->shift);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val |=3D index << mux->shift;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, val, mux->offs)=
-;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_fence_udelay(mux->offs);
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return 0;
->>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static const struct clk_ops pmc_clk_mux_ops =3D {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .get_parent =3D pmc_clk_mux_get_paren=
-t,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .set_parent =3D pmc_clk_mux_set_paren=
-t,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .determine_rate =3D __clk_mux_determi=
-ne_rate,
->>>>>>>>>>>>>>>>> +};
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static struct clk *
->>>>>>>>>>>>>>>>> +tegra_pmc_clk_mux_register(const char *name, const char =
-*
->>>>>>>>>>>>>>>>> const
->>>>>>>>>>>>>>>>> *parent_names,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int num_parents, unsigned long flags,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long offset, u32 shift, u32 mask)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_init_data init;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_mux *mux;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux =3D kzalloc(sizeof(*mux), GFP_KER=
-NEL);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!mux)
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ERR_PT=
-R(-ENOMEM);
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.name =3D name;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.ops =3D &pmc_clk_mux_ops;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.parent_names =3D parent_names;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.num_parents =3D num_parents;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.flags =3D flags;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux->hw.init =3D &init;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux->offs =3D offset;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux->mask =3D mask;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 mux->shift =3D shift;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return clk_register(NULL, &mux->hw);
->>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static int pmc_clk_is_enabled(struct clk_hw *hw)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_gate *gate =3D to_pmc_=
-clk_gate(hw);
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return tegra_pmc_readl(pmc, gate->off=
-s) &
->>>>>>>>>>>>>>>>> BIT(gate->shift) ? 1
->>>>>>>>>>>>>>>>> : 0;
->>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static void pmc_clk_set_state(struct clk_hw *hw, int
->>>>>>>>>>>>>>>>> state)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_gate *gate =3D to_pmc_=
-clk_gate(hw);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, gate->of=
-fs);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D state ? (val | BIT(gate->shif=
-t)) : (val &
->>>>>>>>>>>>>>>>> ~BIT(gate->shift));
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, val, gate->offs=
-);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_fence_udelay(gate->offs);
->>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static int pmc_clk_enable(struct clk_hw *hw)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_set_state(hw, 1);
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return 0;
->>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static void pmc_clk_disable(struct clk_hw *hw)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_set_state(hw, 0);
->>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops =3D {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
->>>>>>>>>>>>>>>>> +};
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static struct clk *
->>>>>>>>>>>>>>>>> +tegra_pmc_clk_gate_register(const char *name, const char
->>>>>>>>>>>>>>>>> *parent_name,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long flags, unsigned long off=
-set,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 shift)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_init_data init;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk_gate *gate;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 gate =3D kzalloc(sizeof(*gate), GFP_K=
-ERNEL);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!gate)
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ERR_PT=
-R(-ENOMEM);
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.name =3D name;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.ops =3D &pmc_clk_gate_ops;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.parent_names =3D &parent_name;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.num_parents =3D 1;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.flags =3D flags;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 gate->hw.init =3D &init;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 gate->offs =3D offset;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 gate->shift =3D shift;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 return clk_register(NULL, &gate->hw);
->>>>>>>>>>>>>>>>> +}
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +static void tegra_pmc_clock_register(struct tegra_pmc
->>>>>>>>>>>>>>>>> *pmc,
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct d=
-evice_node *np)
->>>>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk *clkmux, *clk, *parent;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_onecell_data *clk_data;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned int num_clks;
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 int i, ret;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 /* each pmc clock output has a mux an=
-d a gate */
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 num_clks =3D pmc->soc->num_pmc_clks *=
- 2;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!num_clks)
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 clk_data =3D kmalloc(sizeof(*clk_data=
-), GFP_KERNEL);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!clk_data)
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 clk_data->clks =3D kcalloc(TEGRA_PMC_=
-CLK_MAX,
->>>>>>>>>>>>>>>>> sizeof(*clk_data->clks),
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 GFP_KERNEL);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!clk_data->clks)
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto free_clk=
-data;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 clk_data->clk_num =3D num_clks;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < pmc->soc->num_pmc_c=
-lks; i++) {
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct pmc_cl=
-k_init_data *data;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data =3D pmc-=
->soc->pmc_clks_data + i;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clkmux =3D
->>>>>>>>>>>>>>>>> tegra_pmc_clk_mux_register(data->mux_name,
->>>>>>>>>>>>>>>>> + data->parents,
->>>>>>>>>>>>>>>>> + data->num_parents,
->>>>>>>>>>>>>>>>> + CLK_SET_RATE_NO_REPARENT |
->>>>>>>>>>>>>>>>> + CLK_SET_RATE_PARENT,
->>>>>>>>>>>>>>>>> + PMC_CLK_OUT_CNTRL,
->>>>>>>>>>>>>>>>> + data->mux_shift, 3);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(cl=
-kmux))
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 goto free_clks;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> + clk_data->clks[data->mux_id] =3D clkmux;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk =3D tegra=
-_pmc_clk_gate_register(data->gate_name,
->>>>>>>>>>>>>>>>> + data->mux_name,
->>>>>>>>>>>>>>>>> + CLK_SET_RATE_PARENT,
->>>>>>>>>>>>>>>>> + PMC_CLK_OUT_CNTRL,
->>>>>>>>>>>>>>>>> + data->gate_shift);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(cl=
-k))
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 goto free_clks;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> + clk_data->clks[data->gate_id] =3D clk;
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D clk_s=
-et_parent(clk, clkmux);
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret < 0) =
-{
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 pr_err("failed to set parent of %s to %s\n",
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __func__, __clk_get_=
-name(clk),
->>>>>>>>>>>>>>>>> + __clk_get_name(clkmux));
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_register_=
-clkdev(clk, data->dev_name,
->>>>>>>>>>>>>>>>> data->gate_name);
->>>>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* configure =
-initial clock parent and state */
->>>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 parent =3D cl=
-k_get_sys(data->gate_name,
->>>>>>>>>>>>>>>>> + data->parents[data->init_parent_index]);
->>>>>>>>>>>> Couldn't the default parent be defined using "assigned clock"
->>>>>>>>>>>> in a
->>>>>>>>>>>> device-tree? Please see "Assigned clock parents and rates" in
->>>>>>>>>>>> the
->>>>>>>>>>>> doc.
->>>>>>>>>>>>
->>>>>>>>>>>> https://www.kernel.org/doc/Documentation/devicetree/bindings/c=
-lock/clock-bindings.txt
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> Then you could simply use of_clk_set_defaults(pmc->dev->of_nod=
-e,
->>>>>>>>>>>> true).
->>>>>>>>>>> Yes, of_clk_add_provider() does of_clk_set_defaults which sets
->>>>>>>>>>> based on assigned parents and clock rates.
->>>>>>>>>>>
->>>>>>>>>>> This need device tree to specify assigned clock parent
->>>>>>>>>>> properties.
->>>>>>>>>>> Will update device tree and remove init parent from the driver.
->>>>>>>>>>>
->>>>>>>>>> assigned-clock properties should be set in consumer node of thes=
-e
->>>>>>>>>> clocks and currently these clocks are not used yet.
->>>>>>>>>>
->>>>>>>>>> So will just remove init parent from driver and when these clock=
-s
->>>>>>>>>> are used device tree can be updated in corresponding consumer no=
-de
->>>>>>>>>> with these properties.
->>>>>>>>>>
->>>>>>>>> How about default ON/OFF init state for the clocks? I see
->>>>>>>>> assigned-clock properties for parent and rate only.
->>>>>>>>>
->>>>>>>>> But based on existing clock-tegra-pmc driver, I see clk_out_1 is
->>>>>>>>> default enabled with extern1 parent for T30 thru T210 platforms.
->>>>>>>>>
->>>>>>>>> Peter/Thierry, What was the reason we enable clk_out_1 right
->>>>>>>>> from the
->>>>>>>>> clock registration?
->>>>>>>>>
->>>>>>>> clk_out_1 is for audio and its not required to be enabled during t=
-he
->>>>>>>> boot and audio driver can enable/disable it.
->>>>>>>>
->>>>>>>> same with blink 32khz which is used for WIFI. WIFI driver can
->>>>>>>> enable/disable during power up/down sequence and technically as pe=
-r
->>>>>>>> design we dont need to have it always on right from the boot.
->>>>>>>>
->>>>>>>> So can remove out clocks init states from driver once thierry also
->>>>>>>> agree on this.
->>>>>>>>
->>>>>>> Hi Dmitry,
->>>>>>>
->>>>>>> Looking at audio driver, it doesn't take care of mclk which is from
->>>>>>> clk_out_1 and expects mclk to be always on.
->>>>>>>
->>>>>>> So probably we should have this init state enables in pmc driver fo=
-r
->>>>>>> 32Khz and clk_out's to not break existing functionality.
->>>>>> Hello Sowjanya,
->>>>>>
->>>>>> IIUC, it's a bug in the device-trees and sound's MCLK actually
->>>>>> should be
->>>>>> set to CLK_OUT_1 of PMC instead of CaR's EXTPERIPH1. If that's the
->>>>>> case,
->>>>>> then the device-trees need to be fixed.
->>>>> OK, will have this in v3
->>>> Actually if we change mclk to use clk_out_1, then it will break with o=
-ld
->>>> device trees.
->>>>
->>>> Currently clk_out_1 parent is set to extern1 as init state by the cloc=
-k
->>>> driver and device tree for sound node is using extern1 as mclk works a=
-nd
->>>> extern1 itself has enable and disable. But yes implementation wise, it=
-s
->>>> incorrect as mclk should really be clk_out_1.
->>>>
->>>> Now, with moving clk_out_1 to tegra PMC, pmc is the clock provider and
->>>> if we now change the device tree to use CLK_OUT_1 as mclk then it will
->>>> break old device tree.
->>> There souldn't be any problem with enabling CLK_OUT_1 by the audio
->>> driver itself (in the code) if an old device-tree is detected.
->>>
->>>  =C2=A0=C2=A0=C2=A0=C2=A0clk_out_1 =3D clk_get(dev, "clk_out_1");
->>>  =C2=A0=C2=A0=C2=A0=C2=A0clk_set_parent(clk_out_1, clk_extern1);
->>>  =C2=A0=C2=A0=C2=A0=C2=A0...
->>>  =C2=A0=C2=A0=C2=A0=C2=A0data->clk_cdev1 =3D clk_out_1;
->>>
->>> Maybe it will be even better to compare clocks for detection of an
->>> older DT:
->>>
->>>  =C2=A0=C2=A0=C2=A0=C2=A0if (tegra_get_chip_id() > TEGRA20 &&
->>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_is_match(data->clk_cdev=
-1, clk_extern1)) {
->>>  =C2=A0=C2=A0=C2=A0=C2=A0...
->>>
->> we can do parent init in audio driver which is not an issue.
->>
->> But I was saying we can keep extern1 as mclk in device tree instead of
->> changing to clk_out_1 from pmc as it will break old device tree becasue
->> we moved clk_out_1 from clock driver to pmc driver.
->>
->> once we do init parent in audio driver, we still can use extern1 as mclk
->> in device tree.
->>
->> mclk -> clk_out_1 -> extern1 -> plla_out0 -> plla
->>
->> with init of clk_out_1 parent to extern1, mclk can use extern1 handle
->> for rate/enable/disable clk operations
-> It should be okay to fallback to extern1 for a backwards compatibility
-> of the new DT with older kernels.
->
-> @@ -192,8 +192,14 @@ int tegra_asoc_utils_init(struct
-> tegra_asoc_utils_data *data,
->          data->clk_cdev1 =3D clk_get(dev, "mclk");
->          if (IS_ERR(data->clk_cdev1)) {
->                  dev_err(data->dev, "Can't retrieve clk cdev1\n");
-> -               ret =3D PTR_ERR(data->clk_cdev1);
-> -               goto err_put_pll_a_out0;
-> +
-> +               data->clk_cdev1 =3D clk_get_sys("clk_out_1", "extern1");
-> +               if (IS_ERR(data->clk_cdev1)) {
-> +                       ret =3D PTR_ERR(data->clk_cdev1);
-> +                       goto err_put_pll_a_out0;
-> +               }
-> +
-> +               dev_err(data->dev, "Falling back to extern1\n");
->          }
->
->          ret =3D tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
->
-> This change should be a standalone patch and it should be requsted for
-> backporting into stable kernels.
+That will not work so well as a schema because all the common PCI bus 
+related properties don't apply. Child nodes if any for an EP aren't PCI 
+devices either. Though you could have 3 files with common properties, 
+host binding and ep bindings. 
 
-ok will add fallback. yes will request this patch for backporting.
+While we don't have anything in terms of common PCI EP bindings, I 
+somewhat expect that to change. There's been something for how to define 
+multiple EP functions for example.
 
-Thanks dmitry.
+> The designware-pcie.txt binding does something similar.
+> 
+> > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.txt
+> > new file mode 100644
+> > index 000000000000..4676ccf7dfa5
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.txt
+> > @@ -0,0 +1,138 @@
+> > +NVIDIA Tegra PCIe Endpoint mode controller (Synopsys DesignWare Core based)
+> > +
+> > +Some of the PCIe controllers which are based on Synopsys DesignWare PCIe IP
+> > +are dual mode i.e. they can work in root port mode or endpoint mode but one
+> > + at a time. Since they are based on DesignWare IP, they inherit all the common
+> > +properties defined in designware-pcie.txt.
+> > +
+> > +Required properties:
+> > +- compatible: For Tegra19x, must contain "nvidia,tegra194-pcie".
+> 
+> The device tree snippets that you added have "nvidia,tegra194-pcie-ep"
+> for EP mode controllers. So either this is wrong or the DTS files are
+> wrong.
+> 
+> This device tree binding describes the exact same hardware, so I don't
+> think we necessarily need two different compatible strings. It's fairly
+> easy to distinguish between which mode to run in by looking at which
+> properties exist. EP mode for example is the only one that uses the
+> "addr_space" reg entry.
+> 
+> Rob, do you know why a different compatible string was chosen for the EP
+> mode? Looking at the driver, there are only a handful of differences in
+> the programming, but most of the driver remains identical. An extra DT
+> compatible string seems a bit exaggerated since it suggests that this is
+> actually different hardware, where it clearly isn't.
 
->>>>>>> Regarding using assigned-clock properties for init parent and
->>>>>>> removing
->>>>>>> init parent from driver, it also needs consumer node in device
->>>>>>> tree to
->>>>>>> be updated to specify assigned-clock properties for default/init
->>>>>>> parent.
->>>>>>>
->>>>>>> This breaks device tree ABI as prior Tegra210 supports audio driver=
-.
->>>>>> So it's the sound node which should have had the assigned clocks in
->>>>>> device-tree in order to define route for the audio MCLK clock from C=
-aR
->>>>>> to PMC.
->>>>>>
->>>>>> Given that the audio clocks configuration is the same for all of the
->>>>>> currently supported boards, I think it will be better to remove the
->>>>>> entire audio clocks initialization from the clk drivers and move it
->>>>>> all
->>>>>> to the audio driver. It could be something like this:
->>>>>>
->>>>>> int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 struct device *dev)
->>>>>> {
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0...
->>>>>>
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!of_find_property(dev->of_node, "=
-assigned-clock-parents",
->>>>>> NULL) &&
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_get_chip_id(=
-) > TEGRA20) {
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_extern1 =3D cl=
-k_get(dev, "extern1");
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_set_parent(clk=
-_extern1, clk_pll_a_out0);
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_put(data->clk_=
-cdev1);
->>>>>>
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =
-=3D clk_out_1;
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0...
->>>>>>
->>>>>> So now the old device-trees will cointinue to work and new could hav=
-e
->>>>>> the assigned-clocks and set MCLK to CLK_OUT_1.
->>>>>>
->>>>>> [snip]
->>>>> Will update clk-tegra, pmc and audio driver to move init state
->>>>> configuration for extern1 and clk_out_1 into audio driver and will us=
-e
->>>>> assigned clock properties in device tree.
->>>>>
+Whether the driver shares a lot of code or not, it's fundamentally a 
+different device and driver stack.
+
+> > +  Tegra194: Only C0, C4 & C5 controllers are dual mode controllers.
+> > +- power-domains: A phandle to the node that controls power to the respective
+> > +  PCIe controller and a specifier name for the PCIe controller. Following are
+> > +  the specifiers for the different PCIe controllers
+> > +    TEGRA194_POWER_DOMAIN_PCIEX8B: C0
+> > +    TEGRA194_POWER_DOMAIN_PCIEX4A: C4
+> > +    TEGRA194_POWER_DOMAIN_PCIEX8A: C5
+> > +  these specifiers are defined in
+> > +  "include/dt-bindings/power/tegra194-powergate.h" file.
+> > +- reg: A list of physical base address and length pairs for each set of
+> > +  controller registers. Must contain an entry for each entry in the reg-names
+> > +  property.
+> > +- reg-names: Must include the following entries:
+> > +  "appl": Controller's application logic registers
+> > +  "atu_dma": iATU and DMA registers. This is where the iATU (internal Address
+> > +             Translation Unit) registers of the PCIe core are made available
+> > +             for SW access.
+> > +  "dbi": The aperture where root port's own configuration registers are
+> > +         available
+> > +  "addr_space": Used to map remote RC address space
+> > +- interrupts: A list of interrupt outputs of the controller. Must contain an
+> > +  entry for each entry in the interrupt-names property.
+> > +- interrupt-names: Must include the following entry:
+> > +  "intr": The Tegra interrupt that is asserted for controller interrupts
+> > +- clocks: Must contain an entry for each entry in clock-names.
+> > +  See ../clocks/clock-bindings.txt for details.
+> > +- clock-names: Must include the following entries:
+> > +  - core
+> > +- resets: Must contain an entry for each entry in reset-names.
+> > +  See ../reset/reset.txt for details.
+> > +- reset-names: Must include the following entries:
+> > +  - apb
+> > +  - core
+> > +- phys: Must contain a phandle to P2U PHY for each entry in phy-names.
+> > +- phy-names: Must include an entry for each active lane.
+> > +  "p2u-N": where N ranges from 0 to one less than the total number of lanes
+> > +- nvidia,bpmp: Must contain a pair of phandle to BPMP controller node followed
+> > +  by controller-id. Following are the controller ids for each controller.
+> > +    0: C0
+> > +    4: C4
+> > +    5: C5
+> > +- vddio-pex-ctl-supply: Regulator supply for PCIe side band signals
+> > +- nvidia,pex-rst-gpio: Must contain a phandle to a GPIO controller followed by
+> > +  GPIO that is being used as PERST signal
+> 
+> Why is this NVIDIA specific? Do other instantiations of the DW IP not
+> also need a means to define which GPIO is the reset?
+
+'reset-gpios' is used for PERST. Though in this case it's an input 
+rather than output.
+
+Rob
