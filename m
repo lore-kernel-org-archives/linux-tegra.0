@@ -1,36 +1,80 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v2 00/11] thermal: clean up output of make W=1
-Date: Wed, 4 Dec 2019 17:29:02 +0100
-Message-ID: <4318ca22-2e7c-c529-e97d-73eec7266376@linaro.org>
-References: <cover.1574242756.git.amit.kucheria@linaro.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.19 000/321] 4.19.88-stable review
+Date: Wed, 4 Dec 2019 18:18:19 +0100
+Message-ID: <20191204171819.GC3627415@kroah.com>
+References: <20191203223427.103571230@linuxfoundation.org>
+ <79c636e7-145b-3062-04a3-f03c78d51318@nvidia.com>
+ <20191204112936.GA3565947@kroah.com>
+ <4f1552b1-ff6b-7342-b66e-04685aacf6ea@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1574242756.git.amit.kucheria@linaro.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <4f1552b1-ff6b-7342-b66e-04685aacf6ea@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Kucheria <amit.kucheria@linaro.org>, linux-kernel@vger.kernel.org, edubezval@gmail.com, Amit Daniel Kachhap <amit.kachhap@gmail.com>, Amit Kucheria <amit.kucheria@verdurent.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Guillaume La Roque <glaroque@baylibre.com>, Heiko Stuebner <heiko@sntech.de>, Javi Merino <javi.merino@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Jun Nie <jun.nie@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>
-Cc: linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 20/11/2019 16:45, Amit Kucheria wrote:
-> Cleanup output of make W=1 inside drivers/thermal. This should allow us to
-> focus on real issues that tend to get lost in the noise much better.
+On Wed, Dec 04, 2019 at 02:53:24PM +0000, Jon Hunter wrote:
 > 
-> There is no functional change. This series was generate on top of
-> linux-next from 20191119.
+> On 04/12/2019 11:29, Greg Kroah-Hartman wrote:
+> > On Wed, Dec 04, 2019 at 09:45:31AM +0000, Jon Hunter wrote:
+> >>
+> >> On 03/12/2019 22:31, Greg Kroah-Hartman wrote:
+> >>> This is the start of the stable review cycle for the 4.19.88 release.
+> >>> There are 321 patches in this series, all will be posted as a response
+> >>> to this one.  If anyone has any issues with these being applied, please
+> >>> let me know.
+> >>>
+> >>> Responses should be made by Thu, 05 Dec 2019 22:30:32 +0000.
+> >>> Anything received after that time might be too late.
+> >>>
+> >>> The whole patch series can be found in one patch at:
+> >>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.88-rc1.gz
+> >>> or in the git tree and branch at:
+> >>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> >>> and the diffstat can be found below.
+> >>>
+> >>> thanks,
+> >>>
+> >>> greg k-h
+> >>>
+> >>> -------------
+> >>> Pseudo-Shortlog of commits:
+> >>
+> >> ...
+> >>
+> >>> Ding Tao <miyatsu@qq.com>
+> >>>     arm64: dts: marvell: armada-37xx: Enable emmc on espressobin
+> >>
+> >> The above commit is causing the following build failure for ARM64 ...
+> >>
+> >>   DTC     arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb
+> >> arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
+> >> (phandle_references): /soc/internal-regs@d0000000/sdhci@d0000: Reference
+> >> to non-existent node or label "sdio_pins"
+> >>
+> >> arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
+> >> (phandle_references): /soc/internal-regs@d0000000/sdhci@d8000: Reference
+> >> to non-existent node or label "mmc_pins"
+> > 
+> > Thanks for letting me know, I'll go drop this one and push out a -rc2
+> > with that removed.
 > 
-> Changes since v1:
-> - Add review tags
-> - Fixed up commit message for devfreq_cooling and samsung changes
+> 
+> Great! All tests now passing for Tegra ...
+> 
+> Test results for stable-v4.19:
+>     13 builds:	13 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     32 tests:	32 pass, 0 fail
+> 
+> Linux version:	4.19.88-rc2-gba731ec12c66
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-Applied, thanks!
+Wonderful, thanks for testing all of these and letting me know.
 
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+greg k-h
