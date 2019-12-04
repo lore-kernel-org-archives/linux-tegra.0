@@ -1,106 +1,114 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v1 15/17] dt-bindings: tegra186-pmc: Add Tegra PMC clock
- bindings
-Date: Tue, 3 Dec 2019 15:28:09 -0800
-Message-ID: <5445c579-4a85-ca36-69c9-7fe86dbf1fa9@nvidia.com>
-References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
- <1574146234-3871-16-git-send-email-skomatineni@nvidia.com>
- <20191203221137.GC22716@bogus>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 1/2] PM / runtime: Allow drivers to override runtime PM
+ behaviour on sleep
+Date: Wed, 4 Dec 2019 01:02:11 +0100
+Message-ID: <CAJZ5v0hAQ5g72NRxa_xykqVuWsetCb=u9qoTgmF4kHcEzhiVZQ@mail.gmail.com>
+References: <20191128160314.2381249-1-thierry.reding@gmail.com>
+ <20191128163623.GA2382107@ulmo> <2310325.iNVD75376c@kreacher>
+ <4149037.GOuMSCS4uT@kreacher> <20191129094303.GB2770902@ulmo>
+ <CAJZ5v0hhMSmLBr+M5CxCrfrcJHH2DzYkRFJBVyBymP0xs35Yzw@mail.gmail.com>
+ <20191129120719.GF2771912@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191203221137.GC22716@bogus>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191129120719.GF2771912@ulmo>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Len Brown <len.brown@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux PM <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, dri-devel <dri-devel@lists.freedesktop.org>, Pavel Machek <pavel@ucw.cz>, linux-tegra <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 12/3/19 2:11 PM, Rob Herring wrote:
-> On Mon, Nov 18, 2019 at 10:50:32PM -0800, Sowjanya Komatineni wrote:
->> Document clock bindings for pmc clocks clk_out_1, clk_out_2 and clk_out_3.
->> These clocks are part of Tegra PMC block and pmc node is the provider for
->> these clocks.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 44 ++++++++++++++++++++++
->>   1 file changed, 44 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
->> index 2d89cdc39eb0..4576de92e4cc 100644
->> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
->> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
->> @@ -12,6 +12,10 @@ Required properties:
->>     - "aotag"
->>     - "scratch"
->>     - "misc" (Only for Tegra194)
->> +- #clock-cells : Should be 1 for Tegra30 and higher.
->> +  In clock consumers, this cell represents the PMC clock ID.
->> +  The assignments may be found in header file
->> +  <dt-bindings/soc/tegra-pmc.h>.
-> Kind of strange the header is shared, but the binding doc is not.
-
-v2 has this patch removed. Tegra186 does not have pmc clocks. They were 
-accidentally added in v1 and this is fixed in v2.
-
->
->>   
->>   Optional properties:
->>   - nvidia,invert-interrupt: If present, inverts the PMU interrupt signal.
->> @@ -130,3 +134,43 @@ Pinctrl client example:
->>   		pinctrl-1 = <&hdmi_on>;
->>   		pinctrl-names = "hdmi-on", "hdmi-off";
->>   	};
->> +
->> +== Clock Control ==
->> +
->> +Tegra PMC has 3 clocks clk_1, clk_2 and clk_3. Each of these clocks has
->> +source selection and enable/disable gate.
->> +Parent/source for these clocks can be either of clk_m, clk_m_div2, clk_m_div4,
->> +or extern clock from Tegra CAR module.
->> +
->> +Clock configuration example:
->> +	pmc: pmc@7000e400 {
->> +		compatible = "nvidia,tegra186-pmc";
->> +		reg = <0 0x0c360000 0 0x10000>,
->> +		      <0 0x0c370000 0 0x10000>,
->> +		      <0 0x0c380000 0 0x10000>,
->> +		      <0 0x0c390000 0 0x10000>;
->> +		reg-names = "pmc", "wake", "aotag", "scratch";
->> +		...
->> +		#clock-cells = <1>;
->> +		...
-> Once converted to schema, the examples have to compile and this won't.
-> They also have to be complete enough to pass validation checks.
-ok, will go thru and run the validation checks.
->> +	};
->> +
->> +Clock consumer example:
->> +	host1x@50000000 {
->> +		...
->> +		vi@54080000 {
->> +		...
->> +		assigned-clocks = <&pmc TEGRA_PMC_CLK_OUT_3_MUX>;
->> +		assigned-clock-parents = <&tegra_car TEGRA210_CLK_EXTERN3>;
-> Indentation is wrong.
->
->> +		};
->> +		...
->> +	};
->> +	...
->> +	i2c@7000c500 {
->> +		cam_sensor {
->> +		...
->> +		clocks = <&pmc TEGRA_PMC_CLK_OUT_3>;
->> +		clock-names = "mclk";
-> Same here.
->
->> +		...
->> +		};
->> +	};
->> -- 
->> 2.7.4
->>
+T24gRnJpLCBOb3YgMjksIDIwMTkgYXQgMTowNyBQTSBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5y
+ZWRpbmdAZ21haWwuY29tPiB3cm90ZToKPgo+IE9uIEZyaSwgTm92IDI5LCAyMDE5IGF0IDExOjIy
+OjA4QU0gKzAxMDAsIFJhZmFlbCBKLiBXeXNvY2tpIHdyb3RlOgo+ID4KCltjdXRdCgpTb3JyeSBm
+b3IgdGhlIGRlbGF5LgoKRmlyc3Qgb2ZmLCBsZXQgbWUgbm90ZSB0aGF0IEkgaGF2ZSBzZWVuIHlv
+dXIgbW9zdCByZWNlbnQgcGF0Y2hlcyBhbmQKdGhhbmtzIGZvciB0YWtpbmcgdGhlIGZlZWRiYWNr
+IGludG8gYWNjb3VudCwgbXVjaCBhcHByZWNpYXRlZCEKCk5ldmVydGhlbGVzcywgSSBmZWVsIHRo
+YXQgSSBuZWVkIHRvIGFkZHJlc3MgdGhlIGJlbG93LCBiZWNhdXNlIGl0IGlzCnJlYWxseSBpbXBv
+cnRhbnQuCgo+ID4gUHJldmVudGluZyBhIGRldmljZSBmcm9tIHN1c3BlbmRpbmcgc2hvdWxkIG5l
+dmVyIGJlIGEgZnVuY3Rpb25hbAo+ID4gcHJvYmxlbS4gIEl0IG1heSBiZSBhbiBlbmVyZ3ktZWZm
+aWNpZW5jeSBwcm9ibGVtLCBidXQgdGhhdCdzIHNvbWV0aGluZwo+ID4gZm9yIHVzZXIgc3BhY2Ug
+dG8gY29uc2lkZXIgYmVmb3JlIHdyaXRpbmcgIm9uIiB0byBhIGRldmljZSdzIGNvbnRyb2wKPiA+
+IGZpbGUuCj4KPiBUaGF0J3MgcmVhbGx5IGEgcXVlc3Rpb24gb2YgaG93IHlvdSBkZWZpbmUgc3Vz
+cGVuc2lvbi4KCkluIGdlbmVyYWwsIHllcy4KCkhvd2V2ZXIsIGlmIHlvdSB0YWxrIGFib3V0IFBN
+LXJ1bnRpbWUsIHRoZXJlIGFyZSBkZWZpbml0aW9ucyBvZgoic3VzcGVuZGVkIiBhbmQgImFjdGl2
+ZSIgaW4gdGhlcmUgYWxyZWFkeS4gIE5hbWVseSwgaW4gdGhlIFBNLXJ1bnRpbWUKY29udGV4dCwg
+InN1c3BlbmRlZCIgbWVhbnMgIm1heSBub3QgYmUgYWNjZXNzaWJsZSB0byBzb2Z0d2FyZSIgd2hl
+cmVhcwoiYWN0aXZlIiBtZWFucyAic29mdHdhcmUgY2FuIGFjY2VzcyBpdCIuCgo+IEluIHRoZSBj
+YXNlIG9mCj4gZGlzcGxheSBkcml2ZXJzIHdlIGhhdmUgdGhlIHNvbWV3aGF0IHVuZm9ydHVuYXRl
+IHNpdHVhdGlvbiB0aGF0IGluIG1vc3QKPiBTb0NzIHRoZSBkaXNwbGF5ICJkZXZpY2UiIGlzIGFj
+dHVhbGx5IHJlcHJlc2VudGVkIGJ5IGEgY29sbGVjdGlvbiBvZgo+IGRpZmZlcmVudCBkZXZpY2Vz
+LiBPbiBUZWdyYSBzcGVjaWZpY2FsbHksIGZvciBleGFtcGxlLCB5b3UgaGF2ZSBhIGNvdXBsZQo+
+IG9mIGRpc3BsYXkgY29udHJvbGxlcnMsIHRoZW4gc29tZSAiZW5jb2RlcnMiIHRoYXQgdGFrZSBw
+aXhlbCBzdHJlYW1zCj4gZnJvbSB0aGUgZGlzcGxheSBjb250cm9sbGVycyBhbmQgZW5jb2RlIHRo
+ZW0gaW50byBzb21lIHdpcmUgZm9ybWF0IGxpa2UKPiBMVkRTLCBIRE1JLCBEU0kgb3IgRFAuCj4K
+PiBQcm9oaWJpdGluZyBzdXNwZW5zaW9uIG9mIGFueSBvZiB0aGUgaW5kaXZpZHVhbCBkZXZpY2Vz
+IGNhdXNlcyBwcm9ibGVtcwo+IGJlY2F1c2UgaXQgZWZmZWN0aXZlbHkgbWFrZXMgdGhlIHdob2xl
+IGNvbXBvc2l0ZSBkaXNwbGF5IGRldmljZSBub3QKPiBzdXNwZW5kYWJsZS4KCkZvciBQTS1ydW50
+aW1lLCB0aGF0IHNob3VsZG4ndCBiZSBhIHByb2JsZW0gYXQgYWxsLgoKUE0tcnVudGltZSBpcyBh
+bGwgYWJvdXQgKHBvc3NpYmx5KSBzYXZpbmcgZW5lcmd5IGJ5IHBvd2VyaW5nIGRvd24KZGV2aWNl
+cyB0aGF0IGFyZSBub3QgaW4gdXNlLiAgSW4gcGFydGljdWxhciwgSXQgaXMgbm90IGFib3V0IHBv
+d2VyaW5nCmRvd24gYW55IGRldmljZXMgb24gZGVtYW5kIGZvciBhbnkgcmVhc29uIG90aGVyIHRo
+YW4gaWRsZW5lc3MuClRoZXJlZm9yZSBpbiBQTS1ydW50aW1lIGEgc2l0dWF0aW9uIGluIHdoaWNo
+IGEgZ2l2ZW4gZGV2aWNlIGNhbm5vdCBiZQpzdXNwZW5kZWQgYXQgYWxsIGlzIHJlZ2FyZGVkIGFz
+IG5vcm1hbCwgZXZlbiB0aG91Z2ggdGhhdCBtYXkgbm90IGJlCmRlc2lyYWJsZSBmb3IgZW5lcmd5
+LWVmZmljaWVuY3kgcmVhc29ucy4gIEl0IGp1c3QgbWVhbnMgdGhhdCB0aGUKZGV2aWNlIGlzIGlu
+IHVzZSBieSBzb21lYm9keSBhbGwgdGhlIHRpbWUuICBNb3Jlb3ZlciwgUE0tcnVudGltZSBpcwpk
+ZXNpZ25lZCB0byBtYWtlIGl0IHBvc3NpYmxlIHRvIHJlc3VtZSBkZXZpY2VzIGF0IGFueSB0aW1l
+IChhcyBsb25nIGFzCnRoZSBoYXJkd2FyZSB3b3JrcyBhcyBleHBlY3RlZCksIGFzIHNvb24gYXMg
+dGhleSBhcmUgbmVlZGVkLCBtb2R1bG8Kc29tZSBwb3NzaWJsZSBkZWxheXMuICBBY3R1YWxseSwg
+dGhhdCdzIHRoZSBwdXJwb3NlIG9mIGEgc2lnbmlmaWNhbnQKcGFydCBvZiB0aGUgUE0tcnVudGlt
+ZSBmcmFtZXdvcmsuCgpBY2NvcmRpbmdseSwgZGV2aWNlIGRyaXZlcnMgbWF5IHJlZnVzZSB0byBz
+dXNwZW5kIGRldmljZXMsIGJ1dApyZWZ1c2luZyB0byByZXN1bWUgYSBkZXZpY2UgaXMgbm90IGV4
+cGVjdGVkIGJ5IFBNLXJ1bnRpbWUuCgpJZiB3cml0aW5nICJvbiIgdG8gdGhlICJjb250cm9sIiBm
+aWxlIG9mIGEgZGV2aWNlIGRvZXMgbm90IGNhdXNlIGl0IHRvCmJlIHJlc3VtZWQgKGlmIHN1c3Bl
+bmRlZCkgYW5kIHRvIHN0YXkgaW4gdGhlICJhY3RpdmUiIG1ldGEtc3RhdGUgdW50aWwKImF1dG8i
+IGlzIHdyaXR0ZW4gdG8gdGhhdCBmaWxlLCB5b3UgY2Fubm90IHJlYWxseSBjbGFpbSB0aGF0ClBN
+LXJ1bnRpbWUgaXMgd29ya2luZyBjb3JyZWN0bHkgb24geW91ciBzeXN0ZW0uCgo+IERvaW5nIHNv
+IGluIHR1cm4gdXN1YWxseSBtZWFucyB0aGF0IHlvdSBjYW4ndCBjaGFuZ2UgdGhlCj4gZGlzcGxh
+eSBjb25maWd1cmF0aW9uIGFueW1vcmUgYmVjYXVzZSBkZXZpY2VzIG5lZWQgdG8gYmUgcG93ZXJl
+ZCB1cCBhbmQKPiBkb3duIGluIG9yZGVyIHRvIGNoYW5nZSB0aGUgY29uZmlndXJhdGlvbi4KPgo+
+IEkgY29uc2lkZXIgcG93ZXJpbmcgdXAgYW5kIGRvd24gdGhlIGRldmljZXMgYSBmb3JtIG9mIHN1
+c3BlbnNpb24uIEhlbmNlCj4gaXQgc2VlbWVkIG5hdHVyYWwgdG8gaW1wbGVtZW50IHVzaW5nIHJ1
+bnRpbWUgUE0uCgpVbmZvcnR1bmF0ZWx5LCB0aGF0J3Mgbm90IHRoZSBjYXNlLgoKVGhlIHB1cnBv
+c2Ugb2YgUE0tcnVudGltZSBpcyB0byBhbGxvdyBpZGxlIGRldmljZXMgdG8gYmUgcHV0IGludG8K
+cG93ZXIgc3RhdGVzIGluIHdoaWNoIGl0IG1heSBub3QgYmUgc2FmZSB0byBhY2Nlc3MgdGhlbSBh
+bmQgdG8gbWFrZQp0aGVtIGdvIGJhY2sgaW50byB0aGUgImFjY2Vzc2libGUgYW5kIHJlc3BvbnNp
+dmUiIHN0YXRlIHdoZW5ldmVyCnNvZnR3YXJlIHdhbnRzL25lZWRzIHRvIGFjY2VzcyB0aGVtIGlu
+IGEgY29vcmRpbmF0ZWQgZmFzaGlvbi4gIElPVywgaXQKa2luZCBvZiBpcyBhIGNvdW50ZXJwYXJ0
+IG9mIENQVSBpZGxlIHRpbWUgbWFuYWdlbWVudC4KCj4gSXQgc291bmRzIHRvIG1lIGxpa2UgdXNl
+cnNwYWNlIHByZXZlbnRpbmcgcnVudGltZSBQTSBpcyBwcm9ibGVtYXRpYyBpbgo+IG1vc3Qgc2Nl
+bmFyaW9zIHRoYXQgaW52b2x2ZSBjb21wb3NpdGUgZGV2aWNlcyBiZWNhdXNlIGl0IG1ha2VzIGFs
+bCBvZgo+IHRoZSBpbnRlcmFjdGlvbnMgYmV0d2VlbiB0aGUgZGV2aWNlcyBhIGJpdCBjb21wbGlj
+YXRlZC4KCkV2ZW4gc28sIHRoYXQncyBob3cgaXQgd29ya3MuCgpVc2VyIHNwYWNlIGNhbiBleHBl
+Y3QgdG8gYmUgYWJsZSB0byBibG9jayBydW50aW1lIHN1c3BlbmQgb2YgZGV2aWNlcwphdCBhbnkg
+bGV2ZWwgb2YgZGV2aWNlIGhpZXJhcmNoeSwgYXQgbGVhc3QgZm9yIGRpYWdub3N0aWNzIGlmIG5v
+dGhpbmcKZWxzZSwgZW5kIHRoZSBrZXJuZWwgaXMgcmVzcG9uc2libGUgZm9yIGVuc3VyaW5nIHRo
+YXQuCgo+ID4gPiBidXQgSSB3b3VsZCBlbmQgdXAgcmVpbXBsZW1lbnRpbmcgc29tZSBvZiB0aGUg
+c2FtZSBjb25jZXB0cy4gSSdkCj4gPiA+IHJhdGhlciB1c2Ugc29tZXRoaW5nIHRoYXQncyBzdXBw
+b3J0ZWQgYnkgdGhlIFBNIGNvcmUgYW5kIHRoYXQgbWlnaHQgYmUKPiA+ID4gdXNlZnVsIHRvIG90
+aGVyIGRyaXZlcnMgdGhhbiByZWludmVudCB0aGUgd2hlZWwuCj4gPgo+ID4gV2hpY2ggZG9lc24n
+dCBoYXZlIHRvIGJlIGJ5IHVzaW5nIFBNLXJ1bnRpbWUgc3VzcGVuZCBmb3IgdGhlIGhhbmRsaW5n
+Cj4gPiBvZiBzeXN0ZW0td2lkZSBzdXNwZW5kLCBhdCBsZWFzdCBpbiBteSB2aWV3Lgo+Cj4gV2Vs
+bCwgcnVudGltZSBQTSBpcyB2ZXJ5IGNvbnZlbmllbnQgZm9yIHRoaXMsIHRob3VnaC4gSXQgd291
+bGQgYWxsb3cgdGhlCj4gc2FtZSBjb2RlIHBhdGhzIHRvIGJlIHVzZWQgaW4gYWxsIGNhc2VzLgoK
+VGhlIHNhbWUgbG93LWxldmVsIHBvd2VyLXVwIGFuZCBwb3dlci1kb3duIGNvZGUgY2FuIGJlIHVz
+ZWQgaW4gYWxsCmNhc2VzLCBidXQgUE0tcnVudGltZSBpcyBub3QgbG93LWxldmVsIGVub3VnaC4g
+IEl0IGlzIGFsc28Kb3Bwb3J0dW5pc3RpYywgc28gaWYgeW91IG5lZWQgdG8gcG93ZXIgZG93biBh
+IGRldmljZSBmb3IgcmVhc29ucyBvdGhlcgp0aGFuICJuYXR1cmFsIiBpZGxlbmVzcywgUE0tcnVu
+dGltZSBpcyBub3QgdGhlIHJpZ2h0IHRvb2wgZm9yIHRoYXQKdGFzay4KCk9mIGNvdXJzZSwgUE0t
+cnVudGltZSBjYWxsYmFja3MgY2FuIGludm9rZSB0aGUgbG93LWxldmVsIHBvd2VyLXVwIGFuZApw
+b3dlci1kb3duIGNvZGUsIGJ1dCBhcyB5b3Ugc2FpZCB0aGVyZSBhcmUgcmVhc29ucyBmb3IgcG93
+ZXJpbmcgZG93bgpkZXZpY2VzIG5vdCBqdXN0IGJlY2F1c2UgdGhleSBoYXBwZW4gdG8gYmUgaWRs
+ZS4gIFN5c3RlbS13aWRlIHN1c3BlbmQKaXMgb25lIG9mIHRoZW0uCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
