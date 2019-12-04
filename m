@@ -1,54 +1,50 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Fixes for v5.5-rc1
-Date: Wed,  4 Dec 2019 13:43:16 +0100
-Message-ID: <20191204124316.3534855-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 1/3] memory: tegra: Fixes for v5.5-rc1
+Date: Wed,  4 Dec 2019 14:07:51 +0100
+Message-ID: <20191204130753.3614278-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: soc@kernel.org, arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgODRkYjg4OWU2ZDgy
-N2VlZmMzZGRlMTMwZmVjODM4MmQyZGNiMjNhYzoKCiAgZHJtL3RlZ3JhOiBVbmNvbmRpdGlvbmFs
-bHkgc2VsZWN0IElPTU1VX0lPVkEgKDIwMTktMTEtMDEgMTA6NDk6MjkgKzAxMDApCgphcmUgYXZh
-aWxhYmxlIGluIHRoZSBHaXQgcmVwb3NpdG9yeSBhdDoKCiAgZ2l0Oi8vYW5vbmdpdC5mcmVlZGVz
-a3RvcC5vcmcvdGVncmEvbGludXggdGFncy9kcm0vdGVncmEvZm9yLTUuNS1yYzEtZml4ZXMKCmZv
-ciB5b3UgdG8gZmV0Y2ggY2hhbmdlcyB1cCB0byBkNjZkZmNmODBkMGY1NWY5NWI5ZWE0YTQ1Y2E0
-MWNjNzExNWU5Nzg5OgoKICBkcm0vdGVncmE6IFJ1biBodWIgY2xlYW51cCBvbiAtPnJlbW92ZSgp
-ICgyMDE5LTEyLTA0IDEzOjM4OjE2ICswMTAwKQoKVGhhbmtzLApUaGllcnJ5CgotLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCmRy
-bS90ZWdyYTogRml4ZXMgZm9yIHY1LjUtcmMxCgpUaGlzIGlzIGEgc2V0IG9mIHNtYWxsIGZpeGVz
-LCBtb3N0bHkgZm9yIHJlZ3Jlc3Npb25zIGludHJvZHVjZWQgd2l0aCB0aGUKRE1BIEFQSSBhbmQg
-RGlzcGxheVBvcnQgc3VwcG9ydCBpbiB0aGUgbWFpbiBwdWxsIHJlcXVlc3QgZm9yIHY1LjUtcmMx
-LgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQpUaGllcnJ5IFJlZGluZyAoOSk6CiAgICAgIGRybS90ZWdyYTogaHViOiBSZW1v
-dmUgYm9ndXMgY29ubmVjdGlvbiBtdXRleCBjaGVjawogICAgICBkcm0vdGVncmE6IGdlbTogUHJv
-cGVybHkgcGluIGltcG9ydGVkIGJ1ZmZlcnMKICAgICAgZHJtL3RlZ3JhOiBnZW06IFJlbW92ZSBw
-cmVtYXR1cmUgaW1wb3J0IHJlc3RyaWN0aW9ucwogICAgICBkcm0vdGVncmE6IFVzZSBwcm9wZXIg
-SU9WQSBhZGRyZXNzIGZvciBjdXJzb3IgaW1hZ2UKICAgICAgZHJtL3RlZ3JhOiBzb3I6IEltcGxl
-bWVudCBzeXN0ZW0gc3VzcGVuZC9yZXN1bWUKICAgICAgZHJtL3RlZ3JhOiB2aWM6IEV4cG9ydCBt
-b2R1bGUgZGV2aWNlIHRhYmxlCiAgICAgIGRybS90ZWdyYTogU2lsZW5jZSBleHBlY3RlZCBlcnJv
-cnMgb24gSU9NTVUgYXR0YWNoCiAgICAgIGRybS90ZWdyYTogc29yOiBNYWtlIHRoZSArNVYgSERN
-SSBzdXBwbHkgb3B0aW9uYWwKICAgICAgZHJtL3RlZ3JhOiBSdW4gaHViIGNsZWFudXAgb24gLT5y
-ZW1vdmUoKQoKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jICAgIHwgMTggKysrKysrKystLS0t
-LS0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgfCAgNyArKystLS0KIGRyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9nZW0uYyAgIHwgNTAgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2h1Yi5jICAgfCAgMyAtLS0KIGRy
-aXZlcnMvZ3B1L2RybS90ZWdyYS9wbGFuZS5jIHwgMTEgKysrKysrKysrKwogZHJpdmVycy9ncHUv
-ZHJtL3RlZ3JhL3Nvci5jICAgfCAzOCArKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLQog
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3ZpYy5jICAgfCAgNyArKystLS0KIDcgZmlsZXMgY2hhbmdl
-ZCwgMTA0IGluc2VydGlvbnMoKyksIDMwIGRlbGV0aW9ucygtKQpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+Hi ARM SoC maintainers,
+
+The following changes since commit 141bef44e123c101c0da0443ab6b3cfa750f251a:
+
+  memory: tegra: Consolidate registers definition into common header (2019-11-11 14:55:27 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-memory-fixes
+
+for you to fetch changes up to 030d2829f4c22e675e21904f32ab60f659174e72:
+
+  memory: tegra30-emc: Fix panic on suspend (2019-11-18 13:54:40 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+memory: tegra: Fixes for v5.5-rc1
+
+This contains a fix for a kernel panic that can occur on suspend if EMC
+timings are not available in device tree.
+
+----------------------------------------------------------------
+Dmitry Osipenko (1):
+      memory: tegra30-emc: Fix panic on suspend
+
+ drivers/memory/tegra/tegra30-emc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
