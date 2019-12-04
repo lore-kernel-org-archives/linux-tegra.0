@@ -1,156 +1,81 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
-Date: Wed, 4 Dec 2019 16:59:25 +0300
-Message-ID: <9f7521aa-4f9a-6dc2-60e0-2f9916656748@gmail.com>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.19 000/321] 4.19.88-stable review
+Date: Wed, 4 Dec 2019 14:53:24 +0000
+Message-ID: <4f1552b1-ff6b-7342-b66e-04685aacf6ea@nvidia.com>
+References: <20191203223427.103571230@linuxfoundation.org>
+ <79c636e7-145b-3062-04a3-f03c78d51318@nvidia.com>
+ <20191204112936.GA3565947@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20191204112936.GA3565947@kroah.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sumit Gupta <sumitg@nvidia.com>, rjw@rjwysocki.net, viresh.kumar@linaro.org, catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: bbasu@nvidia.com, mperttunen@nvidia.com
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-03.12.2019 20:32, Sumit Gupta пишет:
-> Add support for CPU frequency scaling on Tegra194. The frequency
-> of each core can be adjusted by writing a clock divisor value to
-> an MSR on the core. The range of valid divisors is queried from
-> the BPMP.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  drivers/cpufreq/Kconfig.arm        |   6 +
->  drivers/cpufreq/Makefile           |   1 +
->  drivers/cpufreq/tegra194-cpufreq.c | 423 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 430 insertions(+)
->  create mode 100644 drivers/cpufreq/tegra194-cpufreq.c
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index a905796..4bcd47c 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -320,6 +320,12 @@ config ARM_TEGRA186_CPUFREQ
->  	help
->  	  This adds the CPUFreq driver support for Tegra186 SOCs.
->  
-> +config ARM_TEGRA194_CPUFREQ
-> +	tristate "Tegra194 CPUFreq support"
-> +	depends on ARCH_TEGRA && TEGRA_BPMP
-> +	help
-> +	  This adds CPU frequency driver support for Tegra194 SOCs.
-> +
->  config ARM_TI_CPUFREQ
->  	bool "Texas Instruments CPUFreq support"
->  	depends on ARCH_OMAP2PLUS
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 9a9f5cc..433d492 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -85,6 +85,7 @@ obj-$(CONFIG_ARM_TANGO_CPUFREQ)		+= tango-cpufreq.o
->  obj-$(CONFIG_ARM_TEGRA20_CPUFREQ)	+= tegra20-cpufreq.o
->  obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
->  obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
-> +obj-$(CONFIG_ARM_TEGRA194_CPUFREQ)	+= tegra194-cpufreq.o
->  obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
->  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
->  
-> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-> new file mode 100644
-> index 0000000..9df12f4
-> --- /dev/null
-> +++ b/drivers/cpufreq/tegra194-cpufreq.c
-> @@ -0,0 +1,423 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved
-> + */
-> +
-> +#include <linux/cpu.h>
-> +#include <linux/cpufreq.h>
-> +#include <linux/delay.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include <asm/smp_plat.h>
-> +
-> +#include <soc/tegra/bpmp.h>
-> +#include <soc/tegra/bpmp-abi.h>
-> +
-> +#define KHZ                     1000
-> +#define REF_CLK_MHZ             408 /* 408 MHz */
-> +#define US_DELAY                2000
-> +#define US_DELAY_MIN            2
-> +#define CPUFREQ_TBL_STEP_HZ     (50 * KHZ * KHZ)
-> +#define MAX_CNT                 ~0U
-> +
-> +/* cpufreq transisition latency */
-> +#define TEGRA_CPUFREQ_TRANSITION_LATENCY (300 * 1000) /* unit in nanoseconds */
-> +
-> +enum cluster {
-> +	CLUSTER0,
-> +	CLUSTER1,
-> +	CLUSTER2,
-> +	CLUSTER3,
-> +	MAX_CLUSTERS,
-> +};
-> +
-> +struct tegra194_cpufreq_data {
-> +	void __iomem *regs;
-> +	size_t num_clusters;
-> +	struct cpufreq_frequency_table **tables;
-> +};
-> +
-> +static DEFINE_MUTEX(cpufreq_lock);
-> +
-> +struct tegra_cpu_ctr {
-> +	u32 cpu;
-> +	u32 delay;
-> +	u32 coreclk_cnt, last_coreclk_cnt;
-> +	u32 refclk_cnt, last_refclk_cnt;
-> +};
-> +
-> +static struct workqueue_struct *read_counters_wq;
-> +struct read_counters_work {
-> +	struct work_struct work;
-> +	struct tegra_cpu_ctr c;
-> +};
-> +
-> +static enum cluster get_cpu_cluster(u8 cpu)
-> +{
-> +	return MPIDR_AFFINITY_LEVEL(cpu_logical_map(cpu), 1);
-> +}
-> +
-> +/*
-> + * Read per-core Read-only system register NVFREQ_FEEDBACK_EL1.
-> + * The register provides frequency feedback information to
-> + * determine the average actual frequency a core has run at over
-> + * a period of time.
-> + *	[31:0] PLLP counter: Counts at fixed frequency (408 MHz)
-> + *	[63:32] Core clock counter: counts on every core clock cycle
-> + *			where the core is architecturally clocking
-> + */
-> +static u64 read_freq_feedback(void)
-> +{
-> +	u64 val = 0;
-> +
-> +	asm volatile("mrs %0, s3_0_c15_c0_5" : "=r" (val) : );
-> +
-> +	return val;
-> +}
-> +
-> +u16 map_freq_to_ndiv(struct mrq_cpu_ndiv_limits_response *nltbl, u32 freq)
-> +{
-> +	return DIV_ROUND_UP(freq * nltbl->pdiv * nltbl->mdiv,
-> +			    nltbl->ref_clk_hz / KHZ);
-> +}
 
-This function isn't used anywhere.
+On 04/12/2019 11:29, Greg Kroah-Hartman wrote:
+> On Wed, Dec 04, 2019 at 09:45:31AM +0000, Jon Hunter wrote:
+>>
+>> On 03/12/2019 22:31, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 4.19.88 release.
+>>> There are 321 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Thu, 05 Dec 2019 22:30:32 +0000.
+>>> Anything received after that time might be too late.
+>>>
+>>> The whole patch series can be found in one patch at:
+>>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.88-rc1.gz
+>>> or in the git tree and branch at:
+>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+>>> and the diffstat can be found below.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>>
+>>> -------------
+>>> Pseudo-Shortlog of commits:
+>>
+>> ...
+>>
+>>> Ding Tao <miyatsu@qq.com>
+>>>     arm64: dts: marvell: armada-37xx: Enable emmc on espressobin
+>>
+>> The above commit is causing the following build failure for ARM64 ...
+>>
+>>   DTC     arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb
+>> arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
+>> (phandle_references): /soc/internal-regs@d0000000/sdhci@d0000: Reference
+>> to non-existent node or label "sdio_pins"
+>>
+>> arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
+>> (phandle_references): /soc/internal-regs@d0000000/sdhci@d8000: Reference
+>> to non-existent node or label "mmc_pins"
+> 
+> Thanks for letting me know, I'll go drop this one and push out a -rc2
+> with that removed.
+
+
+Great! All tests now passing for Tegra ...
+
+Test results for stable-v4.19:
+    13 builds:	13 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
+
+Linux version:	4.19.88-rc2-gba731ec12c66
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
