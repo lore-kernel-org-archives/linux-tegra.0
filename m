@@ -1,54 +1,60 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
-Date: Wed, 4 Dec 2019 16:57:49 +0530
-Message-ID: <20191204112749.jkwlyteal4hfvnhb@vireshk-i7>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
- <20191204054043.o4ff7pnqec3fwdgu@vireshk-i7>
- <7347caa6-43a3-f761-de83-481b45f7b22a@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 4.19 000/321] 4.19.88-stable review
+Date: Wed, 4 Dec 2019 12:29:36 +0100
+Message-ID: <20191204112936.GA3565947@kroah.com>
+References: <20191203223427.103571230@linuxfoundation.org>
+ <79c636e7-145b-3062-04a3-f03c78d51318@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <7347caa6-43a3-f761-de83-481b45f7b22a@nvidia.com>
+In-Reply-To: <79c636e7-145b-3062-04a3-f03c78d51318@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sumitg <sumitg@nvidia.com>
-Cc: rjw@rjwysocki.net, catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bbasu@nvidia.com, mperttunen@nvidia.com
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04-12-19, 16:25, sumitg wrote:
-> In T194, CCPLEX doesn't have access to set clocks and the
+On Wed, Dec 04, 2019 at 09:45:31AM +0000, Jon Hunter wrote:
 > 
-> clk_{get|set}_rate() functions set clocks by hook to BPMP R5.
-> 
-> CPU freq can be directly set by CCPLEX using MSR(NVFREQ_REQ_EL1).
-> 
-> As DVFS run's on BPMP, another MSR (NVFREQ_FEEDBACK_EL1) is
-> 
-> used to read the counters and calculate "actual" cpu freq at CCPLEX.
-> 
-> So, "cpuinfo_cur_freq" node gives the actual cpu frequency and not
-> 
-> given by node "scaling_cur_freq".
-
-Right, but why can't this be hidden in the CPU's clk driver instead,
-so cpufreq driver can just do clk_get_rate() and clk_set_rate() ?
-
+> On 03/12/2019 22:31, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.19.88 release.
+> > There are 321 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > - populating cpufreq table, you can probably add OPPs instead using
-> >    the same mechanism
+> > Responses should be made by Thu, 05 Dec 2019 22:30:32 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.88-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> > Pseudo-Shortlog of commits:
 > 
-> We are reading available frequencies from BPMP to populate
+> ...
 > 
-> cpufreq table and not using static opp table.
+> > Ding Tao <miyatsu@qq.com>
+> >     arm64: dts: marvell: armada-37xx: Enable emmc on espressobin
+> 
+> The above commit is causing the following build failure for ARM64 ...
+> 
+>   DTC     arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb
+> arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
+> (phandle_references): /soc/internal-regs@d0000000/sdhci@d0000: Reference
+> to non-existent node or label "sdio_pins"
+> 
+> arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
+> (phandle_references): /soc/internal-regs@d0000000/sdhci@d8000: Reference
+> to non-existent node or label "mmc_pins"
 
-Right and lot of other platforms read it from firmware (I believe BBMP
-is a firmware here), and create OPPs at runtime. Look at this for
-example:
+Thanks for letting me know, I'll go drop this one and push out a -rc2
+with that removed.
 
-drivers/cpufreq/qcom-cpufreq-hw.c
-
-and search for dev_pm_opp_add().
-
--- 
-viresh
+greg k-h
