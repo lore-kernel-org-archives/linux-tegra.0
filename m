@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 2/3] soc/tegra: Fixes for v5.5-rc1
-Date: Wed,  4 Dec 2019 14:07:52 +0100
-Message-ID: <20191204130753.3614278-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/3] cpufreq: tegra: Fixes for v5.5-rc1
+Date: Wed,  4 Dec 2019 14:07:53 +0100
+Message-ID: <20191204130753.3614278-3-thierry.reding@gmail.com>
 References: <20191204130753.3614278-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,33 +23,40 @@ List-Id: linux-tegra@vger.kernel.org
 
 Hi ARM SoC maintainers,
 
-The following changes since commit 69dfb3d4a89afccca1d8f282e49ad1362100cc43:
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
-  soc/tegra: pmc: Remove unnecessary memory barrier (2019-10-29 14:36:24 +0100)
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-soc-fixes
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.5-cpufreq
 
-for you to fetch changes up to 48914c4ecb0c0fa1d70ea7b97d758ce5fadacfb0:
+for you to fetch changes up to 0fb438eed10ca13d212a5675363beb5a5cd721f2:
 
-  soc/tegra: pmc: Add reset sources and levels on Tegra194 (2019-11-18 13:56:58 +0100)
+  cpufreq: tegra124: Add suspend and resume support (2019-10-29 13:25:29 +0100)
+
+I had originally meant for this to go in through the cpufreq tree, but
+I might have messed up the messaging, so Viresh ended up not pulling it
+into his tree. He did provide an Acked-by, which I've included in the
+patch, so he probably was assuming this to go via some other tree all
+along.
+
+Unfortunately, it's now causing suspend/resume to fail because the clock
+driver changes require the CPU frequency driver to disable the CPU clock
+before suspend can be entered, so it'd be great to get this in via late
+fixes for ARM SoC.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Fixes for v5.5-rc1
+cpufreq: tegra: Changes for v5.5-rc1
 
-Fixes a regression for wake events on Tegra194 caused by the Tegra210
-support that was added in v5.5-rc1 as well as wrong reset sources and
-levels on Tegra194.
+Implements support for suspend/resume on Tegra124.
 
 ----------------------------------------------------------------
-Thierry Reding (3):
-      soc/tegra: pmc: Use lower-case for hexadecimal literals
-      soc/tegra: pmc: Add missing IRQ callbacks on Tegra194
-      soc/tegra: pmc: Add reset sources and levels on Tegra194
+Sowjanya Komatineni (1):
+      cpufreq: tegra124: Add suspend and resume support
 
- drivers/soc/tegra/pmc.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
+ drivers/cpufreq/tegra124-cpufreq.c | 59 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
