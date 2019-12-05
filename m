@@ -1,48 +1,55 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
-Date: Thu, 5 Dec 2019 08:21:25 +0530
-Message-ID: <20191205025125.imxnao2qwyons5zl@vireshk-i7>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
- <20191204054043.o4ff7pnqec3fwdgu@vireshk-i7>
- <7347caa6-43a3-f761-de83-481b45f7b22a@nvidia.com>
- <20191204112749.jkwlyteal4hfvnhb@vireshk-i7>
- <0b634341-ea2b-e9cd-4986-dc9a01c839bb@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 00/92] 4.4.206-stable review
+Date: Thu, 5 Dec 2019 06:59:07 +0000
+Message-ID: <3faa827e-eb8b-ef26-0392-0fbb1cd589b2@nvidia.com>
+References: <20191204174327.215426506@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0b634341-ea2b-e9cd-4986-dc9a01c839bb@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: sumitg <sumitg@nvidia.com>, rjw@rjwysocki.net, catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bbasu@nvidia.com, mperttunen@nvidia.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20191204174327.215426506@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04-12-19, 16:57, Dmitry Osipenko wrote:
-> 04.12.2019 14:27, Viresh Kumar пишет:
-> > On 04-12-19, 16:25, sumitg wrote:
-> >> In T194, CCPLEX doesn't have access to set clocks and the
-> >>
-> >> clk_{get|set}_rate() functions set clocks by hook to BPMP R5.
-> >>
-> >> CPU freq can be directly set by CCPLEX using MSR(NVFREQ_REQ_EL1).
-> >>
-> >> As DVFS run's on BPMP, another MSR (NVFREQ_FEEDBACK_EL1) is
-> >>
-> >> used to read the counters and calculate "actual" cpu freq at CCPLEX.
-> >>
-> >> So, "cpuinfo_cur_freq" node gives the actual cpu frequency and not
-> >>
-> >> given by node "scaling_cur_freq".
-> > 
-> > Right, but why can't this be hidden in the CPU's clk driver instead,
-> > so cpufreq driver can just do clk_get_rate() and clk_set_rate() ?
-> 
-> What about to make use of dev_pm_opp_register_set_opp_helper()?
 
-It has a different purpose where we have to play with different
-regulators. And that won't help with clk_get_rate() anyway.
+On 04/12/2019 17:49, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.206 release.
+> There are 92 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 06 Dec 2019 17:42:37 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.206-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+
+
+All tests are passing for Tegra ...
+
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
+
+Linux version:	4.4.206-rc1-g4fd2af91bc35
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
 
 -- 
-viresh
+nvpublic
