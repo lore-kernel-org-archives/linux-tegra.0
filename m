@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [PATCH 13/18] arm64: tegra: update OTG port entries for jetson-tx1
-Date: Fri, 6 Dec 2019 16:20:16 +0530
-Message-ID: <1575629421-7039-14-git-send-email-nkristam@nvidia.com>
+Subject: [PATCH 11/18] usb: gadget: tegra-xudc: use phy_set_mode to set/unset device mode
+Date: Fri, 6 Dec 2019 16:20:14 +0530
+Message-ID: <1575629421-7039-12-git-send-email-nkristam@nvidia.com>
 References: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,63 +12,50 @@ To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jona
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Populate OTG vbus regulator. Add usb-role-switch entry to USB 2-0 port
-and corresponding connector details.
+When device mode is set/uset, vbus override activity is done via
+exported functions from padctl driver. Use phy_set_mode instead.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ drivers/usb/gadget/udc/tegra-xudc.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index b009507..18c0610 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1336,7 +1336,6 @@
- 		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-5}>;
- 		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3", "usb3-0",
- 			    "usb3-1";
--
- 		dvddio-pex-supply = <&vdd_pex_1v05>;
- 		hvddio-pex-supply = <&vdd_1v8>;
- 		avdd-usb-supply = <&vdd_3v3_sys>;
-@@ -1440,7 +1439,19 @@
- 		ports {
- 			usb2-0 {
- 				status = "okay";
-+				vbus-supply = <&vdd_usb_vbus_otg>;
- 				mode = "otg";
-+
-+				usb-role-switch;
-+				connector {
-+					compatible = "usb-b-connector",
-+						     "gpio-usb-b-connector";
-+					label = "micro-USB";
-+					type = "micro";
-+					vbus-gpio = <&gpio TEGRA_GPIO(Z, 0)
-+						     GPIO_ACTIVE_LOW>;
-+					id-gpio = <&pmic 0 0>;
-+				};
- 			};
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index 0f27d57..283c320 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -615,7 +615,7 @@ static void tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
  
- 			usb2-1 {
-@@ -1606,6 +1617,17 @@
- 			vin-supply = <&vdd_5v0_sys>;
- 		};
+ 	dev_dbg(xudc->dev, "device mode on\n");
  
-+		vdd_usb_vbus_otg: regulator@11 {
-+			compatible = "regulator-fixed";
-+			reg = <9>;
-+			regulator-name = "USB_VBUS_EN0";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&vdd_5v0_sys>;
-+		};
+-	tegra_xusb_padctl_set_vbus_override(xudc->padctl, true);
++	phy_set_mode_ext(xudc->utmi_phy, PHY_MODE_USB_OTG, USB_ROLE_DEVICE);
+ 
+ 	xudc->device_mode = true;
+ 
+@@ -636,7 +636,7 @@ static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
+ 
+ 	reinit_completion(&xudc->disconnect_complete);
+ 
+-	tegra_xusb_padctl_set_vbus_override(xudc->padctl, false);
++	phy_set_mode_ext(xudc->utmi_phy, PHY_MODE_USB_OTG, USB_ROLE_NONE);
+ 
+ 	pls = (xudc_readl(xudc, PORTSC) & PORTSC_PLS_MASK) >>
+ 		PORTSC_PLS_SHIFT;
+@@ -716,9 +716,11 @@ static void tegra_xudc_plc_reset_work(struct work_struct *work)
+ 
+ 		if (pls == PORTSC_PLS_INACTIVE) {
+ 			dev_info(xudc->dev, "PLS = Inactive. Toggle VBUS\n");
+-			tegra_xusb_padctl_set_vbus_override(xudc->padctl,
+-							      false);
+-			tegra_xusb_padctl_set_vbus_override(xudc->padctl, true);
++			phy_set_mode_ext(xudc->utmi_phy, PHY_MODE_USB_OTG,
++					 USB_ROLE_NONE);
++			phy_set_mode_ext(xudc->utmi_phy, PHY_MODE_USB_OTG,
++					 USB_ROLE_DEVICE);
 +
- 		vdd_hdmi: regulator@10 {
- 			compatible = "regulator-fixed";
- 			reg = <10>;
+ 			xudc->wait_csc = false;
+ 		}
+ 	}
 -- 
 2.7.4
