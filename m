@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v3 10/15] clk: tegra: Remove extern1 and cdev1 from clocks inittable
-Date: Thu, 5 Dec 2019 18:48:50 -0800
-Message-ID: <1575600535-26877-11-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 08/15] ASoC: tegra: Add audio mclk control through clk_out_1 and extern1
+Date: Thu, 5 Dec 2019 18:48:48 -0800
+Message-ID: <1575600535-26877-9-git-send-email-skomatineni@nvidia.com>
 References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,85 +12,162 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dige
 Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-Current clock driver enables cdev1 on Tegra20 and extern1 on Tegra30
-and above as a part of clocks init and there is no need to have this
-clock enabled during the boot.
+Current ASoC driver uses extern1 as cdev1 clock from Tegra30 onwards
+through device tree.
 
-extern1 is used as parent for clk_out_1 and clk_out_1 is dedicated
-for audio mclk on Tegra30 and above Tegra platforms and these clocks
-are taken care by ASoC driver.
+Actual audio mclk is clk_out_1 and to use PLLA for mclk rate control,
+need to clk_out_1_mux parent to extern1 and extern1 parent to PLLA_OUT0.
 
-So, this patch removes parenting and enabling extern1 from clock init
-of Tegra30 and above and removes enabling cdev1 from Tegra20 clock init.
+Currently Tegra clock driver init sets the parents and enables both
+clk_out_1 and extern1 clocks. But these clocks parent and enables should
+be controlled by ASoC driver.
+
+Clock parents can be specified in device tree using assigned-clocks
+and assigned-clock-parents.
+
+To enable audio mclk, both clk_out_1 and extern1 clocks need to be
+enabled.
+
+This patch configures parents for clk_out_1 and extern1 clocks if device
+tree does not specify clock parents inorder to support old device tree
+and controls mclk using both clk_out_1 and extern1 clocks.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra114.c | 1 -
- drivers/clk/tegra/clk-tegra124.c | 1 -
- drivers/clk/tegra/clk-tegra20.c  | 1 -
- drivers/clk/tegra/clk-tegra210.c | 1 -
- drivers/clk/tegra/clk-tegra30.c  | 1 -
- 5 files changed, 5 deletions(-)
+ sound/soc/tegra/tegra_asoc_utils.c | 66 ++++++++++++++++++++++++++++++++++++++
+ sound/soc/tegra/tegra_asoc_utils.h |  1 +
+ 2 files changed, 67 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 36ba1eb3dbe0..3c29896b19a7 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1147,7 +1147,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA114_CLK_UARTD, TEGRA114_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 1 },
- 	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA114_CLK_EXTERN1, TEGRA114_CLK_PLL_A_OUT0, 0, 1 },
- 	{ TEGRA114_CLK_I2S0, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S1, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S2, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 24532d70e469..6861ded135e0 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1292,7 +1292,6 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_UARTD, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 564480000, 1 },
- 	{ TEGRA124_CLK_PLL_A_OUT0, TEGRA124_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA124_CLK_EXTERN1, TEGRA124_CLK_PLL_A_OUT0, 0, 1 },
- 	{ TEGRA124_CLK_I2S0, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S1, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index fe536f1d770d..a552dafb8174 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1031,7 +1031,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_UARTE, TEGRA20_CLK_PLL_P, 0, 0 },
- 	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 1 },
- 	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA20_CLK_CDEV1, TEGRA20_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA20_CLK_I2S1, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_I2S2, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_SDMMC1, TEGRA20_CLK_PLL_P, 48000000, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index af5119481d54..252859faeb4a 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3442,7 +3442,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_UARTD, TEGRA210_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA210_CLK_PLL_A, TEGRA210_CLK_CLK_MAX, 564480000, 1 },
- 	{ TEGRA210_CLK_PLL_A_OUT0, TEGRA210_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA210_CLK_EXTERN1, TEGRA210_CLK_PLL_A_OUT0, 0, 1 },
- 	{ TEGRA210_CLK_I2S0, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S1, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S2, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 24599ed2e6ff..65fdead2c764 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1221,7 +1221,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_UARTE, TEGRA30_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
- 	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
- 	{ TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+index 536a578e9512..8e3a3740df7c 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.c
++++ b/sound/soc/tegra/tegra_asoc_utils.c
+@@ -60,6 +60,7 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 	data->set_mclk = 0;
+ 
+ 	clk_disable_unprepare(data->clk_cdev1);
++	clk_disable_unprepare(data->clk_extern1);
+ 	clk_disable_unprepare(data->clk_pll_a_out0);
+ 	clk_disable_unprepare(data->clk_pll_a);
+ 
+@@ -89,6 +90,14 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 		return err;
+ 	}
+ 
++	if (!IS_ERR_OR_NULL(data->clk_extern1)) {
++		err = clk_prepare_enable(data->clk_extern1);
++		if (err) {
++			dev_err(data->dev, "Can't enable extern1: %d\n", err);
++			return err;
++		}
++	}
++
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+@@ -109,6 +118,7 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 	int err;
+ 
+ 	clk_disable_unprepare(data->clk_cdev1);
++	clk_disable_unprepare(data->clk_extern1);
+ 	clk_disable_unprepare(data->clk_pll_a_out0);
+ 	clk_disable_unprepare(data->clk_pll_a);
+ 
+@@ -142,6 +152,14 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 		return err;
+ 	}
+ 
++	if (!IS_ERR_OR_NULL(data->clk_extern1)) {
++		err = clk_prepare_enable(data->clk_extern1);
++		if (err) {
++			dev_err(data->dev, "Can't enable extern1: %d\n", err);
++			return err;
++		}
++	}
++
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+@@ -158,6 +176,7 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
+ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 			  struct device *dev)
+ {
++	struct clk *clk_out_1_mux;
+ 	int ret;
+ 
+ 	data->dev = dev;
+@@ -196,6 +215,51 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 		goto err_put_pll_a_out0;
+ 	}
+ 
++	/*
++	 * If clock parents are not set in DT, configure here to use clk_out_1
++	 * as mclk and extern1 as parent for Tegra30 and higher.
++	 */
++	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
++	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
++		data->clk_extern1 = clk_get_sys("clk_out_1", "extern1");
++		if (IS_ERR(data->clk_extern1)) {
++			dev_err(data->dev, "Can't retrieve clk extern1\n");
++			ret = PTR_ERR(data->clk_extern1);
++			goto err_put_cdev1;
++		}
++
++		ret = clk_set_parent(data->clk_extern1, data->clk_pll_a_out0);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for clk extern1: %d\n",
++				ret);
++			goto err_put_cdev1;
++		}
++
++		clk_out_1_mux = clk_get_sys(NULL, "clk_out_1_mux");
++		if (IS_ERR(clk_out_1_mux)) {
++			dev_err(data->dev, "Can't retrieve clk clk_out_1_mux\n");
++			ret = PTR_ERR(clk_out_1_mux);
++			goto err_put_cdev1;
++		}
++
++		ret = clk_set_parent(clk_out_1_mux, data->clk_extern1);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for clk_out_1_mux: %d\n",
++				ret);
++			clk_put(clk_out_1_mux);
++			goto err_put_cdev1;
++		}
++
++		data->clk_cdev1 = clk_get_sys(NULL, "clk_out_1");
++		if (IS_ERR(data->clk_cdev1)) {
++			dev_err(data->dev, "Can't retrieve clk clk_out_1\n");
++			ret = PTR_ERR(data->clk_cdev1);
++			goto err_put_cdev1;
++		}
++	}
++
+ 	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+ 	if (ret)
+ 		goto err_put_cdev1;
+@@ -215,6 +279,8 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_init);
+ 
+ void tegra_asoc_utils_fini(struct tegra_asoc_utils_data *data)
+ {
++	if (!IS_ERR_OR_NULL(data->clk_extern1))
++		clk_put(data->clk_extern1);
+ 	clk_put(data->clk_cdev1);
+ 	clk_put(data->clk_pll_a_out0);
+ 	clk_put(data->clk_pll_a);
+diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_asoc_utils.h
+index 0c13818dee75..5f2b96478caf 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.h
++++ b/sound/soc/tegra/tegra_asoc_utils.h
+@@ -25,6 +25,7 @@ struct tegra_asoc_utils_data {
+ 	struct clk *clk_pll_a;
+ 	struct clk *clk_pll_a_out0;
+ 	struct clk *clk_cdev1;
++	struct clk *clk_extern1;
+ 	int set_baseclock;
+ 	int set_mclk;
+ };
 -- 
 2.7.4
