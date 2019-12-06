@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [PATCH 05/18] phy: tegra: xusb: Add support to get companion USB 3 port
-Date: Fri, 6 Dec 2019 16:20:08 +0530
-Message-ID: <1575629421-7039-6-git-send-email-nkristam@nvidia.com>
+Subject: [PATCH 06/18] phy: tegra: xusb: Add set_mode support for USB 2 phy on Tegra210
+Date: Fri, 6 Dec 2019 16:20:09 +0530
+Message-ID: <1575629421-7039-7-git-send-email-nkristam@nvidia.com>
 References: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,57 +12,178 @@ To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jona
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra XUSB host, device mode driver requires the USB 3 companion port
-number for corresponding USB 2 port. Add API to retrieve the same.
+Add support for set_mode on USB 2 phy. This allow XUSB host/device mode
+drivers to configure the hardware to corresponding modes.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 ---
- drivers/phy/tegra/xusb.c       | 21 +++++++++++++++++++++
- include/linux/phy/tegra/xusb.h |  2 ++
- 2 files changed, 23 insertions(+)
+ drivers/phy/tegra/xusb-tegra210.c | 126 ++++++++++++++++++++++++++++++--------
+ 1 file changed, 99 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 4c86c99..2e73cf8 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -1254,6 +1254,27 @@ int tegra_phy_xusb_utmi_port_reset(struct phy *phy)
- }
- EXPORT_SYMBOL_GPL(tegra_phy_xusb_utmi_port_reset);
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index 394913b..6610b1d7 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -236,6 +236,7 @@
+ #define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT 18
+ #define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK 0xf
+ #define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING 8
++#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_GROUNDED 0
  
-+int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
-+				    unsigned int port)
+ struct tegra210_xusb_fuse_calibration {
+ 	u32 hs_curr_level[4];
+@@ -935,6 +936,98 @@ static int tegra210_usb2_phy_exit(struct phy *phy)
+ 	return tegra210_xusb_padctl_disable(lane->pad->padctl);
+ }
+ 
++static int tegra210_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
++					      bool status)
 +{
-+	struct tegra_xusb_usb2_port *usb2 = tegra_xusb_find_usb2_port(padctl,
-+								      port);
-+	struct tegra_xusb_usb3_port *usb3;
-+	int i;
++	u32 value;
 +
-+	if (!usb2)
-+		return -EINVAL;
++	dev_dbg(padctl->dev, "%s vbus override\n", status ? "set" : "clear");
 +
-+	for (i = 0; i < padctl->soc->ports.usb3.count; i++) {
-+		usb3 = tegra_xusb_find_usb3_port(padctl, i);
-+		if (usb3 && usb3->port == usb2->base.index)
-+			return usb3->base.index;
++	value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
++
++	if (status) {
++		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
++		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
++			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
++		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING <<
++			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
++	} else {
++		value &= ~XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
 +	}
 +
-+	return -1;
-+}
-+EXPORT_SYMBOL_GPL(tegra_xusb_padctl_get_usb3_companion);
++	padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
 +
- MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
- MODULE_DESCRIPTION("Tegra XUSB Pad Controller driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xusb.h
-index 1235865..71d9569 100644
---- a/include/linux/phy/tegra/xusb.h
-+++ b/include/linux/phy/tegra/xusb.h
-@@ -21,4 +21,6 @@ int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
- int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
- 					bool val);
- int tegra_phy_xusb_utmi_port_reset(struct phy *phy);
-+int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
-+					 unsigned int port);
- #endif /* PHY_TEGRA_XUSB_H */
++	return 0;
++}
++
++static int tegra210_xusb_padctl_id_override(struct tegra_xusb_padctl *padctl,
++					    bool status)
++{
++	u32 value;
++
++	dev_dbg(padctl->dev, "%s id override\n", status ? "set" : "clear");
++
++	value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
++
++	if (status) {
++		if (value & XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON) {
++			value &= ~XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
++			padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
++			usleep_range(1000, 2000);
++
++			value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
++		}
++
++		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
++			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
++		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_GROUNDED <<
++			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
++	} else {
++		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
++			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
++		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING <<
++			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
++	}
++
++	padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
++
++	return 0;
++}
++
++static int tegra210_usb2_phy_set_mode(struct phy *phy, enum phy_mode mode,
++				      int submode)
++{
++	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
++	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
++	struct tegra_xusb_usb2_port *port = tegra_xusb_find_usb2_port(padctl,
++								lane->index);
++	int err = 0;
++
++	mutex_lock(&padctl->lock);
++
++	dev_dbg(&port->base.dev, "%s: mode %d", __func__, mode);
++
++	if (mode == PHY_MODE_USB_OTG) {
++		if (submode == USB_ROLE_HOST) {
++			tegra210_xusb_padctl_id_override(padctl, true);
++
++			err = regulator_enable(port->supply);
++		} else if (submode == USB_ROLE_DEVICE) {
++			tegra210_xusb_padctl_vbus_override(padctl, true);
++		} else if (submode == USB_ROLE_NONE) {
++			if (regulator_is_enabled(port->supply))
++				regulator_disable(port->supply);
++
++			tegra210_xusb_padctl_id_override(padctl, false);
++			tegra210_xusb_padctl_vbus_override(padctl, false);
++		}
++	}
++
++	mutex_unlock(&padctl->lock);
++
++	return err;
++}
++
+ static int tegra210_usb2_phy_power_on(struct phy *phy)
+ {
+ 	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
+@@ -1048,9 +1141,11 @@ static int tegra210_usb2_phy_power_on(struct phy *phy)
+ 	padctl_writel(padctl, value,
+ 		      XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
+ 
+-	err = regulator_enable(port->supply);
+-	if (err)
+-		return err;
++	if (port->supply && port->mode == USB_DR_MODE_HOST) {
++		err = regulator_enable(port->supply);
++		if (err)
++			return err;
++	}
+ 
+ 	mutex_lock(&padctl->lock);
+ 
+@@ -1164,6 +1259,7 @@ static const struct phy_ops tegra210_usb2_phy_ops = {
+ 	.exit = tegra210_usb2_phy_exit,
+ 	.power_on = tegra210_usb2_phy_power_on,
+ 	.power_off = tegra210_usb2_phy_power_off,
++	.set_mode = tegra210_usb2_phy_set_mode,
+ 	.owner = THIS_MODULE,
+ };
+ 
+@@ -2023,30 +2119,6 @@ static const struct tegra_xusb_port_ops tegra210_usb3_port_ops = {
+ 	.map = tegra210_usb3_port_map,
+ };
+ 
+-static int tegra210_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
+-					      bool status)
+-{
+-	u32 value;
+-
+-	dev_dbg(padctl->dev, "%s vbus override\n", status ? "set" : "clear");
+-
+-	value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
+-
+-	if (status) {
+-		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
+-		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
+-			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
+-		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING <<
+-			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
+-	} else {
+-		value &= ~XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
+-	}
+-
+-	padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
+-
+-	return 0;
+-}
+-
+ static int tegra210_utmi_port_reset(struct phy *phy)
+ {
+ 	struct tegra_xusb_padctl *padctl;
 -- 
 2.7.4
