@@ -1,31 +1,50 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3 09/15] ASoC: tegra: Add fallback for audio mclk
-Date: Fri, 6 Dec 2019 18:56:00 +0100
-Message-ID: <20191206175600.GB186026@kroah.com>
+From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH v3 01/15] dt-bindings: soc: tegra-pmc: Add Tegra PMC
+ clock bindings
+Date: Fri, 6 Dec 2019 19:58:00 +0100
+Message-ID: <20191206185800.GB20259@qmqm.qmqm.pl>
 References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-10-git-send-email-skomatineni@nvidia.com>
- <e94e56bc-2b4c-5d95-002a-073c9272537d@nvidia.com>
+ <1575600535-26877-2-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <e94e56bc-2b4c-5d95-002a-073c9272537d@nvidia.com>
+In-Reply-To: <1575600535-26877-2-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh-dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms-renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 09:49:49AM -0800, Sowjanya Komatineni wrote:
-> Thanks Greg.
-> 
-> Sorry, Will send this patch separately (out of this series) with stable tag
-> to get this applied to stable kernels once review is done for this series.
+On Thu, Dec 05, 2019 at 06:48:41PM -0800, Sowjanya Komatineni wrote:
+> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
+> these clocks has mux and a gate as a part of PMC controller.
+[...]
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+[...]
+> +Clock consumer example:
+> +	host1x@50000000 {
+> +		...
+> +		vi@54080000 {
+> +			...
+> +			assigned-clocks = <&pmc TEGRA_PMC_CLK_OUT_3_MUX>;
+> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_EXTERN3>;
+> +		};
+> +		...
+> +	};
+> +	...
+> +	i2c@7000c500 {
+> +		cam_sensor {
+> +			...
+> +			clocks = <&pmc TEGRA_PMC_CLK_OUT_3>;
+> +			clock-names = "mclk";
+> +			...
+> +		};
+> +	};
 
-Why not just properly add the tag in the original patch when it gets
-merged?  That's how everyone else does it :)
+The assigned-clocks should be in the cam_sensor node, unless vi device
+also uses the clock.
 
-This isn't new, it's been happening this way for 12+ years now...
-
-thanks,
-
-greg k-h
+Best Regards,
+Micha³ Miros³aw
