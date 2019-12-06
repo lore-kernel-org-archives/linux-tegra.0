@@ -1,27 +1,42 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: stable request: 5.4.y: arm64: tegra: Fix 'active-low' warning
  for Jetson
-Date: Fri, 6 Dec 2019 13:23:35 +0100
-Message-ID: <20191206122335.GA1339268@kroah.com>
+Date: Fri, 6 Dec 2019 13:53:34 +0100
+Message-ID: <20191206125334.GA1361962@kroah.com>
 References: <16724779-0514-ca92-58b2-95f4e244c6f7@nvidia.com>
- <28364ffa-586e-bdcd-acf3-119742c92185@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <28364ffa-586e-bdcd-acf3-119742c92185@nvidia.com>
+In-Reply-To: <16724779-0514-ca92-58b2-95f4e244c6f7@nvidia.com>
 Sender: stable-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 11:04:38AM +0000, Jon Hunter wrote:
+On Fri, Dec 06, 2019 at 10:55:17AM +0000, Jon Hunter wrote:
+> Hi Greg,
 > 
-> On 06/12/2019 10:55, Jon Hunter wrote:
-> > External email: Use caution opening links or attachments
+> Please can you include the following device-tree fixes for 5.4.y that
+> are triggering some warnings on a couple of our Jetson platforms. This
+> is currently causing one of our kernel warnings tests to fail. Both of
+> these have now been merged into the mainline for v5.5-rc1.
 > 
-> Sorry ignore the above nonsense. Looks like a nice new 'feature' that
-> was sprung on us. I should be able to get this removed for future.
+> commit d440538e5f219900a9fc9d96fd10727b4d2b3c48
+> Author: Jon Hunter <jonathanh@nvidia.com>
+> Date:   Wed Sep 25 15:12:28 2019 +0100
+> 
+>     arm64: tegra: Fix 'active-low' warning for Jetson Xavier regulator
+> 
+> commit 1e5e929c009559bd7e898ac8e17a5d01037cb057
+> Author: Jon Hunter <jonathanh@nvidia.com>
+> Date:   Wed Sep 25 15:12:29 2019 +0100
+> 
+>     arm64: tegra: Fix 'active-low' warning for Jetson TX1 regulator
+> 
+> Thanks
+> Jon
 
-Odd, I don't see that on your email at all, perhaps you got it on the
-return to you?
+Now queued up, thanks.
+
+greg k-h
