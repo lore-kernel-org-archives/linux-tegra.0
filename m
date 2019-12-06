@@ -1,42 +1,40 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: stable request: 5.4.y: arm64: tegra: Fix 'active-low' warning
- for Jetson
-Date: Fri, 6 Dec 2019 13:53:34 +0100
-Message-ID: <20191206125334.GA1361962@kroah.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: stable request: 5.4.y: arm64: tegra: Fix 'active-low' warning for
+ Jetson
+Date: Fri, 6 Dec 2019 12:58:21 +0000
+Message-ID: <61c527a5-7999-b3da-5b87-37e48f51ef5f@nvidia.com>
 References: <16724779-0514-ca92-58b2-95f4e244c6f7@nvidia.com>
+ <28364ffa-586e-bdcd-acf3-119742c92185@nvidia.com>
+ <20191206122335.GA1339268@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <16724779-0514-ca92-58b2-95f4e244c6f7@nvidia.com>
+In-Reply-To: <20191206122335.GA1339268@kroah.com>
+Content-Language: en-US
 Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 10:55:17AM +0000, Jon Hunter wrote:
-> Hi Greg,
-> 
-> Please can you include the following device-tree fixes for 5.4.y that
-> are triggering some warnings on a couple of our Jetson platforms. This
-> is currently causing one of our kernel warnings tests to fail. Both of
-> these have now been merged into the mainline for v5.5-rc1.
-> 
-> commit d440538e5f219900a9fc9d96fd10727b4d2b3c48
-> Author: Jon Hunter <jonathanh@nvidia.com>
-> Date:   Wed Sep 25 15:12:28 2019 +0100
-> 
->     arm64: tegra: Fix 'active-low' warning for Jetson Xavier regulator
-> 
-> commit 1e5e929c009559bd7e898ac8e17a5d01037cb057
-> Author: Jon Hunter <jonathanh@nvidia.com>
-> Date:   Wed Sep 25 15:12:29 2019 +0100
-> 
->     arm64: tegra: Fix 'active-low' warning for Jetson TX1 regulator
-> 
-> Thanks
-> Jon
 
-Now queued up, thanks.
+On 06/12/2019 12:23, Greg Kroah-Hartman wrote:
+> On Fri, Dec 06, 2019 at 11:04:38AM +0000, Jon Hunter wrote:
+>>
+>> On 06/12/2019 10:55, Jon Hunter wrote:
+>>> External email: Use caution opening links or attachments
+>>
+>> Sorry ignore the above nonsense. Looks like a nice new 'feature' that
+>> was sprung on us. I should be able to get this removed for future.
+> 
+> Odd, I don't see that on your email at all, perhaps you got it on the
+> return to you?
 
-greg k-h
+Yes turns out it is just on inbound mail, so you would not have seen it.
+I just need to ensure I strip it, but I think I can opt out of it
+completely.
+
+Jon
+
+-- 
+nvpublic
