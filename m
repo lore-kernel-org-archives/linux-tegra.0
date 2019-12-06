@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v3 05/15] soc: pmc: Add blink output clock registration to Tegra PMC
-Date: Thu, 5 Dec 2019 18:48:45 -0800
-Message-ID: <1575600535-26877-6-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 11/15] ARM: dts: tegra: Add clock-cells property to pmc
+Date: Thu, 5 Dec 2019 18:48:51 -0800
+Message-ID: <1575600535-26877-12-git-send-email-skomatineni@nvidia.com>
 References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,153 +12,126 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dige
 Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC has blink control to output 32 Khz clock out to Tegra
-blink pin. Blink pad DPD state and enable controls are part of
-Tegra PMC register space.
+Tegra PMC has clk_out_1, clk_out_2, clk_out_3 with mux and gate
+for each of these clocks and 32 kHz blink.
 
-Currently Tegra clock driver registers blink control by passing
-PMC address and register offset to clk_register_gate which performs
-direct PMC access during clk_ops and with this when PMC is in secure
-mode, any access from non-secure world does not go through.
+These clocks are moved from clock driver to pmc driver with pmc
+as the clock provider for these clocks.
 
-This patch adds blink control registration to the Tegra PMC driver
-using PMC specific clock gate operations that use tegra_pmc_readl
-and tegra_pmc_writel to support both secure mode and non-secure
-mode PMC register access.
+This patch adds #clock-cells property with 1 clock specifier to
+the Tegra PMC node in device tree.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ arch/arm/boot/dts/tegra114.dtsi | 4 +++-
+ arch/arm/boot/dts/tegra124.dtsi | 4 +++-
+ arch/arm/boot/dts/tegra20.dtsi  | 4 +++-
+ arch/arm/boot/dts/tegra30.dtsi  | 4 +++-
+ 4 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index b8f6eb0ed8aa..c62ab84cce9c 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -61,12 +61,15 @@
- #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
- #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
- #define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
-+#define  PMC_CNTRL_BLINK_EN		7
- #define  PMC_CNTRL_MAIN_RST		BIT(4)
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 0d7a6327e404..b8f12f24f314 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -4,6 +4,7 @@
+ #include <dt-bindings/memory/tegra114-mc.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/soc/tegra-pmc.h>
  
- #define PMC_WAKE_MASK			0x0c
- #define PMC_WAKE_LEVEL			0x10
- #define PMC_WAKE_STATUS			0x14
- #define PMC_SW_WAKE_STATUS		0x18
-+#define PMC_DPD_PADS_ORIDE		0x1c
-+#define  PMC_DPD_PADS_ORIDE_BLINK	20
+ / {
+ 	compatible = "nvidia,tegra114";
+@@ -514,11 +515,12 @@
+ 		status = "disabled";
+ 	};
  
- #define DPD_SAMPLE			0x020
- #define  DPD_SAMPLE_ENABLE		BIT(0)
-@@ -79,6 +82,7 @@
+-	pmc@7000e400 {
++	pmc: pmc@7000e400 {
+ 		compatible = "nvidia,tegra114-pmc";
+ 		reg = <0x7000e400 0x400>;
+ 		clocks = <&tegra_car TEGRA114_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
++		#clock-cells = <1>;
+ 	};
  
- #define PWRGATE_STATUS			0x38
+ 	fuse@7000f800 {
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 413bfb981de8..d0802c4ae3bf 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -6,6 +6,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/reset/tegra124-car.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
++#include <dt-bindings/soc/tegra-pmc.h>
  
-+#define PMC_BLINK_TIMER		0x40
- #define PMC_IMPL_E_33V_PWR		0x40
+ / {
+ 	compatible = "nvidia,tegra124";
+@@ -595,11 +596,12 @@
+ 		clocks = <&tegra_car TEGRA124_CLK_RTC>;
+ 	};
  
- #define PMC_PWR_DET			0x48
-@@ -339,6 +343,7 @@ struct tegra_pmc_soc {
+-	pmc@7000e400 {
++	pmc: pmc@7000e400 {
+ 		compatible = "nvidia,tegra124-pmc";
+ 		reg = <0x0 0x7000e400 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA124_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
++		#clock-cells = <1>;
+ 	};
  
- 	const struct pmc_clk_init_data *pmc_clks_data;
- 	unsigned int num_pmc_clks;
-+	bool has_blink_output;
- };
+ 	fuse@7000f800 {
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 9c58e7fcf5c0..85a64747bec6 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -4,6 +4,7 @@
+ #include <dt-bindings/memory/tegra20-mc.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/soc/tegra-pmc.h>
  
- static const char * const tegra186_reset_sources[] = {
-@@ -2388,6 +2393,9 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
- 	/* each pmc clock output has a mux and a gate */
- 	num_clks = pmc->soc->num_pmc_clks * 2;
+ / {
+ 	compatible = "nvidia,tegra20";
+@@ -608,11 +609,12 @@
+ 		status = "disabled";
+ 	};
  
-+	if (pmc->soc->has_blink_output)
-+		num_clks += 1;
-+
- 	if (!num_clks)
- 		return;
+-	pmc@7000e400 {
++	pmc: pmc@7000e400 {
+ 		compatible = "nvidia,tegra20-pmc";
+ 		reg = <0x7000e400 0x400>;
+ 		clocks = <&tegra_car TEGRA20_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
++		#clock-cells = <1>;
+ 	};
  
-@@ -2442,6 +2450,26 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
- 		clk_register_clkdev(clk, data->dev_name, data->gate_name);
- 	}
+ 	mc: memory-controller@7000f000 {
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 55ae050042ce..4d5e9d0001d3 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -4,6 +4,7 @@
+ #include <dt-bindings/memory/tegra30-mc.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/soc/tegra-pmc.h>
  
-+	if (pmc->soc->has_blink_output) {
-+		tegra_pmc_writel(pmc, 0x0, PMC_BLINK_TIMER);
-+		clk = tegra_pmc_clk_gate_register("blink_override",
-+						  "clk_32k", 0,
-+						  PMC_DPD_PADS_ORIDE,
-+						  PMC_DPD_PADS_ORIDE_BLINK);
-+		if (IS_ERR(clk))
-+			goto free_clks;
-+
-+		clk = tegra_pmc_clk_gate_register("blink",
-+						  "blink_override", 0,
-+						  PMC_CNTRL,
-+						  PMC_CNTRL_BLINK_EN);
-+		if (IS_ERR(clk))
-+			goto free_clks;
-+
-+		clk_data->clks[TEGRA_PMC_CLK_BLINK] = clk;
-+		clk_register_clkdev(clk, "blink", NULL);
-+	}
-+
- 	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
+ / {
+ 	compatible = "nvidia,tegra30";
+@@ -714,11 +715,12 @@
+ 		status = "disabled";
+ 	};
  
- 	return;
-@@ -2715,6 +2743,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
-+	.has_blink_output = true,
- };
+-	pmc@7000e400 {
++	pmc: pmc@7000e400 {
+ 		compatible = "nvidia,tegra30-pmc";
+ 		reg = <0x7000e400 0x400>;
+ 		clocks = <&tegra_car TEGRA30_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
++		#clock-cells = <1>;
+ 	};
  
- static const char * const tegra30_powergates[] = {
-@@ -2764,6 +2793,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
- 
- static const char * const tegra114_powergates[] = {
-@@ -2817,6 +2847,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
- 
- static const char * const tegra124_powergates[] = {
-@@ -2930,6 +2961,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
- 
- static const char * const tegra210_powergates[] = {
-@@ -3046,6 +3078,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.wake_events = tegra210_wake_events,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
- 
- #define TEGRA186_IO_PAD_TABLE(_pad)					     \
-@@ -3177,6 +3210,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.wake_events = tegra186_wake_events,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
-+	.has_blink_output = false,
- };
- 
- static const struct tegra_io_pad_soc tegra194_io_pads[] = {
-@@ -3296,6 +3330,7 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
- 	.wake_events = tegra194_wake_events,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
-+	.has_blink_output = false,
- };
- 
- static const struct of_device_id tegra_pmc_match[] = {
+ 	mc: memory-controller@7000f000 {
 -- 
 2.7.4
