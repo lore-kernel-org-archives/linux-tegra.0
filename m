@@ -1,68 +1,79 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] drm/tegra: sor: Fix unused function warnings
-Date: Fri, 6 Dec 2019 14:47:41 +0800
-Message-ID: <20191206064741.23432-1-yuehaibing@huawei.com>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: [PATCH 00/18] Tegra XUSB OTG support
+Date: Fri, 6 Dec 2019 16:20:03 +0530
+Message-ID: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-drivers/gpu/drm/tegra/sor.c:3984:12: warning: 'tegra_sor_resume' defined but not used [-Wunused-function]
-drivers/gpu/drm/tegra/sor.c:3970:12: warning: 'tegra_sor_suspend' defined but not used [-Wunused-function]
-drivers/gpu/drm/tegra/sor.c:3937:12: warning: 'tegra_sor_runtime_resume' defined but not used [-Wunused-function]
-drivers/gpu/drm/tegra/sor.c:3915:12: warning: 'tegra_sor_runtime_suspend' defined but not used [-Wunused-function]
+This patch series adds OTG support on XUSB hardware used in Tegra210 and
+Tegra186 SoCs.
 
-Mark these functions as __maybe_unused so gcc can drop them
-silently.
+This patchset is composed with :
+ - dt bindings of XUSB Pad Controller
+ - dt bindings for XUSB device Driver
+ - Tegra PHY driver for usb-role-switch and usb-phy
+ - Tegra XUSB host mode driver to support OTG mode
+ - Tegra XUSB device mode driver to use usb-phy and multi device mode
+ - dts for XUSB pad controller
+ - dts for xudc
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/tegra/sor.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Tegra Pad controller driver register for role switch updates for
+OTG/peripheral capable USB ports and adds usb-phy for that corresponding
+USB ports.
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index a68d3b3..69b9ebe 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -3912,7 +3912,7 @@ static int tegra_sor_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int tegra_sor_runtime_suspend(struct device *dev)
-+static int __maybe_unused tegra_sor_runtime_suspend(struct device *dev)
- {
- 	struct tegra_sor *sor = dev_get_drvdata(dev);
- 	int err;
-@@ -3934,7 +3934,7 @@ static int tegra_sor_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_sor_runtime_resume(struct device *dev)
-+static int __maybe_unused tegra_sor_runtime_resume(struct device *dev)
- {
- 	struct tegra_sor *sor = dev_get_drvdata(dev);
- 	int err;
-@@ -3967,7 +3967,7 @@ static int tegra_sor_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_sor_suspend(struct device *dev)
-+static int __maybe_unused tegra_sor_suspend(struct device *dev)
- {
- 	struct tegra_sor *sor = dev_get_drvdata(dev);
- 	int err;
-@@ -3981,7 +3981,7 @@ static int tegra_sor_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_sor_resume(struct device *dev)
-+static int __maybe_unused tegra_sor_resume(struct device *dev)
- {
- 	struct tegra_sor *sor = dev_get_drvdata(dev);
- 	int err;
+Host and Device mode drivers gets usb-phy from USB2's phy and registers
+notifier for role changes to perform corresponding role tasks.
+
+Tests done:
+ - device mode support using micro-B USB cable connection between ubuntu
+   host and DUT on micro-B port
+ - host mode support by connecting pen-drive to micro USB port on DUT
+   using micro-B OTG cable.
+ - toggling between these 2 modes by hot plugging corresponding cables.
+
+DUT: Jetson-tx1, Jetson tx2.
+
+Nagarjuna Kristam (18):
+  dt-bindings: phy: tegra-xusb: Add usb-role-switch
+  dt-bindings: usb: Add NVIDIA Tegra XUSB device mode controller binding
+  phy: tegra: xusb: Add usb-role-switch support
+  phy: tegra: xusb: Add usb-phy support
+  phy: tegra: xusb: Add support to get companion USB 3 port
+  phy: tegra: xusb: Add set_mode support for USB 2 phy on Tegra210
+  phy: tegra: xusb: Add set_mode support for utmi phy on Tegra186
+  usb: xhci-tegra: Add OTG support
+  usb: gadget: tegra-xudc: Remove usb-role-switch support
+  usb: gadget: tegra-xudc: Add usb-phy support
+  usb: gadget: tegra-xudc: use phy_set_mode to set/unset device mode
+  usb: gadget: tegra-xudc: support multiple device modes
+  arm64: tegra: update OTG port entries for jetson-tx1
+  arm64: tegra: update OTG port entries for jetson-tx2
+  arm64: tegra: Add xudc node for Tegra210
+  arm64: tegra: Enable xudc on Jetson TX1
+  arm64: tegra: Add xudc node for Tegra186
+  arm64: tegra: Enable xudc node on Jetson TX2
+
+ .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   |   4 +
+ .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 204 +++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  23 +-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  19 ++
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |  34 ++-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  19 ++
+ drivers/phy/tegra/Kconfig                          |   1 +
+ drivers/phy/tegra/xusb-tegra186.c                  | 109 ++++++--
+ drivers/phy/tegra/xusb-tegra210.c                  | 126 ++++++++--
+ drivers/phy/tegra/xusb.c                           | 132 ++++++++++
+ drivers/phy/tegra/xusb.h                           |   5 +
+ drivers/usb/gadget/udc/tegra-xudc.c                | 277 ++++++++++++++-------
+ drivers/usb/host/xhci-tegra.c                      | 226 ++++++++++++++++-
+ include/linux/phy/tegra/xusb.h                     |   2 +
+ 14 files changed, 1042 insertions(+), 139 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+
 -- 
 2.7.4
