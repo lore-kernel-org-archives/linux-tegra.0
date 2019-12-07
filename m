@@ -1,76 +1,124 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v2 23/25] drm/panel: sitronix-st7789v: use drm_panel backlight
- support
-Date: Sat,  7 Dec 2019 15:03:51 +0100
-Message-ID: <20191207140353.23967-24-sam@ravnborg.org>
-References: <20191207140353.23967-1-sam@ravnborg.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 00/15] Move PMC clocks into Tegra PMC driver
+Date: Sat, 7 Dec 2019 17:26:15 +0300
+Message-ID: <dfda896d-27f3-7185-146e-4f697d823471@gmail.com>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191207140353.23967-1-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jagan Teki <jagan@amarulasolutions.com>, NXP Linux Team <linux-imx@nxp.com>, Jitao Shi <jitao.shi@mediatek.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, linux-mediatek@lists.infradead.org, Abhinav Kumar <abhinavk@codeaurora.org>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Purism Kernel Team <kernel@puri.sm>, linux-renesas-soc@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-VXNlIHRoZSBiYWNrbGlnaHQgc3VwcG9ydCBpbiBkcm1fcGFuZWwgdG8gc2ltcGxpZnkgdGhlIGRy
-aXZlcgoKU2lnbmVkLW9mZi1ieTogU2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJvcmcub3JnPgpSZXZp
-ZXdlZC1ieTogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQu
-Y29tPgpDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4KQ2M6IFNh
-bSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4KLS0tCiAuLi4vZ3B1L2RybS9wYW5lbC9wYW5l
-bC1zaXRyb25peC1zdDc3ODl2LmMgICAgfCAzNyArKy0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUg
-Y2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAzMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2l0cm9uaXgtc3Q3Nzg5di5jIGIvZHJpdmVycy9n
-cHUvZHJtL3BhbmVsL3BhbmVsLXNpdHJvbml4LXN0Nzc4OXYuYwppbmRleCBlYmVmZTJmNGMyNmIu
-LmNjMDJjNTRjMWIyZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNp
-dHJvbml4LXN0Nzc4OXYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtc2l0cm9u
-aXgtc3Q3Nzg5di5jCkBAIC0zLDcgKzMsNiBAQAogICogQ29weXJpZ2h0IChDKSAyMDE3IEZyZWUg
-RWxlY3Ryb25zCiAgKi8KIAotI2luY2x1ZGUgPGxpbnV4L2JhY2tsaWdodC5oPgogI2luY2x1ZGUg
-PGxpbnV4L2RlbGF5Lmg+CiAjaW5jbHVkZSA8bGludXgvZ3Bpby9jb25zdW1lci5oPgogI2luY2x1
-ZGUgPGxpbnV4L21vZHVsZS5oPgpAQCAtMTE2LDcgKzExNSw2IEBAIHN0cnVjdCBzdDc3ODl2IHsK
-IAlzdHJ1Y3QgZHJtX3BhbmVsIHBhbmVsOwogCXN0cnVjdCBzcGlfZGV2aWNlICpzcGk7CiAJc3Ry
-dWN0IGdwaW9fZGVzYyAqcmVzZXQ7Ci0Jc3RydWN0IGJhY2tsaWdodF9kZXZpY2UgKmJhY2tsaWdo
-dDsKIAlzdHJ1Y3QgcmVndWxhdG9yICpwb3dlcjsKIH07CiAKQEAgLTMyMywxMiArMzIxLDYgQEAg
-c3RhdGljIGludCBzdDc3ODl2X2VuYWJsZShzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKIHsKIAlz
-dHJ1Y3Qgc3Q3Nzg5diAqY3R4ID0gcGFuZWxfdG9fc3Q3Nzg5dihwYW5lbCk7CiAKLQlpZiAoY3R4
-LT5iYWNrbGlnaHQpIHsKLQkJY3R4LT5iYWNrbGlnaHQtPnByb3BzLnN0YXRlICY9IH5CTF9DT1JF
-X0ZCQkxBTks7Ci0JCWN0eC0+YmFja2xpZ2h0LT5wcm9wcy5wb3dlciA9IEZCX0JMQU5LX1VOQkxB
-Tks7Ci0JCWJhY2tsaWdodF91cGRhdGVfc3RhdHVzKGN0eC0+YmFja2xpZ2h0KTsKLQl9Ci0KIAly
-ZXR1cm4gc3Q3Nzg5dl93cml0ZV9jb21tYW5kKGN0eCwgTUlQSV9EQ1NfU0VUX0RJU1BMQVlfT04p
-OwogfQogCkBAIC0zMzksMTIgKzMzMSw2IEBAIHN0YXRpYyBpbnQgc3Q3Nzg5dl9kaXNhYmxlKHN0
-cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQogCiAJU1Q3Nzg5Vl9URVNUKHJldCwgc3Q3Nzg5dl93cml0
-ZV9jb21tYW5kKGN0eCwgTUlQSV9EQ1NfU0VUX0RJU1BMQVlfT0ZGKSk7CiAKLQlpZiAoY3R4LT5i
-YWNrbGlnaHQpIHsKLQkJY3R4LT5iYWNrbGlnaHQtPnByb3BzLnBvd2VyID0gRkJfQkxBTktfUE9X
-RVJET1dOOwotCQljdHgtPmJhY2tsaWdodC0+cHJvcHMuc3RhdGUgfD0gQkxfQ09SRV9GQkJMQU5L
-OwotCQliYWNrbGlnaHRfdXBkYXRlX3N0YXR1cyhjdHgtPmJhY2tsaWdodCk7Ci0JfQotCiAJcmV0
-dXJuIDA7CiB9CiAKQEAgLTM3MCw3ICszNTYsNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9w
-YW5lbF9mdW5jcyBzdDc3ODl2X2RybV9mdW5jcyA9IHsKIAogc3RhdGljIGludCBzdDc3ODl2X3By
-b2JlKHN0cnVjdCBzcGlfZGV2aWNlICpzcGkpCiB7Ci0Jc3RydWN0IGRldmljZV9ub2RlICpiYWNr
-bGlnaHQ7CiAJc3RydWN0IHN0Nzc4OXYgKmN0eDsKIAlpbnQgcmV0OwogCkBAIC0zOTQsMjYgKzM3
-OSwxNSBAQCBzdGF0aWMgaW50IHN0Nzc4OXZfcHJvYmUoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSkK
-IAkJcmV0dXJuIFBUUl9FUlIoY3R4LT5yZXNldCk7CiAJfQogCi0JYmFja2xpZ2h0ID0gb2ZfcGFy
-c2VfcGhhbmRsZShzcGktPmRldi5vZl9ub2RlLCAiYmFja2xpZ2h0IiwgMCk7Ci0JaWYgKGJhY2ts
-aWdodCkgewotCQljdHgtPmJhY2tsaWdodCA9IG9mX2ZpbmRfYmFja2xpZ2h0X2J5X25vZGUoYmFj
-a2xpZ2h0KTsKLQkJb2Zfbm9kZV9wdXQoYmFja2xpZ2h0KTsKLQotCQlpZiAoIWN0eC0+YmFja2xp
-Z2h0KQotCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7Ci0JfQorCXJldCA9IGRybV9wYW5lbF9vZl9i
-YWNrbGlnaHQoJmN0eC0+cGFuZWwpOworCWlmIChyZXQpCisJCXJldHVybiByZXQ7CiAKIAlyZXQg
-PSBkcm1fcGFuZWxfYWRkKCZjdHgtPnBhbmVsKTsKIAlpZiAocmV0IDwgMCkKLQkJZ290byBlcnJf
-ZnJlZV9iYWNrbGlnaHQ7CisJCXJldHVybiByZXQ7CiAKIAlyZXR1cm4gMDsKLQotZXJyX2ZyZWVf
-YmFja2xpZ2h0OgotCWlmIChjdHgtPmJhY2tsaWdodCkKLQkJcHV0X2RldmljZSgmY3R4LT5iYWNr
-bGlnaHQtPmRldik7Ci0KLQlyZXR1cm4gcmV0OwogfQogCiBzdGF0aWMgaW50IHN0Nzc4OXZfcmVt
-b3ZlKHN0cnVjdCBzcGlfZGV2aWNlICpzcGkpCkBAIC00MjIsOSArMzk2LDYgQEAgc3RhdGljIGlu
-dCBzdDc3ODl2X3JlbW92ZShzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpKQogCiAJZHJtX3BhbmVsX3Jl
-bW92ZSgmY3R4LT5wYW5lbCk7CiAKLQlpZiAoY3R4LT5iYWNrbGlnaHQpCi0JCXB1dF9kZXZpY2Uo
-JmN0eC0+YmFja2xpZ2h0LT5kZXYpOwotCiAJcmV0dXJuIDA7CiB9CiAKLS0gCjIuMjAuMQoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+06.12.2019 05:48, Sowjanya Komatineni пишет:
+> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+> are currently registered by Tegra clock driver using clk_regiser_mux and
+> clk_register_gate which performs direct Tegra PMC register access.
+> 
+> When Tegra PMC is in secure mode, any access from non-secure world will
+> not go through.
+> 
+> This patch series adds these Tegra PMC clocks and blink controls to Tegra
+> PMC driver with PMC as clock provider and removed them from Tegra clock
+> driver. This also adds PMC specific clock id's to use in device tree and
+> removed clock ids of PMC clock from Tegra clock driver.
+> 
+> clk_out_1 is dedicated for audio mclk and current ASoC driver does not
+> setting extern1 as parent for clk_out_1 and enabling clk_out_1 and
+> currently this is taken care by Tegra clock driver during clock inits
+> and there is no need to enable this during clock init.
+> 
+> So, this series also includes patch that updates ASoC driver to take
+> care of configuring parent of mclk and enabling mclk using both extern1
+> and clk_out_1 and updates all device trees to use clk_out_1 from pmc as
+> mclk incase if device tree don't specify assigned-clock-parents.
+> 
+> This series also includes a patch for mclk fallback to use extern1
+> when retrieving mclk fails with new device tree which uses pmc provider
+> to have this backward compatible of new DT with old kernels.
+> 
+> This series also includes a patch to remove clock ids for these clocks
+> from clock dt-binding as these clocks are not used in any of the existing
+> device tree except in tegra210-smaug.dts and this series includes a patch
+> to update clock provider from tegra_car to pmc in tegra210-smaug.dts for
+> clk_out_2.
+> 
+> [v3]:	Changes between v2 and v3 are
+> 	- Removes set parent of clk_out_1_mux to extern1 and enabling
+> 	  extern1 from the clock driver.
+> 	- Doesn't enable clk_out_1 and blink by default in pmc driver
+> 	- Updates ASoC driver to take care of audio mclk parent
+> 	  configuration incase if device tree don't specify assigned
+> 	  clock parent properties and enables mclk using both clk_out_1
+> 	  and extern1.
+> 	- updates all device trees using extern1 as mclk in sound node
+> 	  to use clk_out_1 from pmc.
+> 	- patch for YAML format pmc dt-binding
+> 	- Includes v2 feedback
+> 
+> [v2]:	Changes between v1 and v2 are
+> 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
+> 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
+> 	- feedback related to pmc clocks in Tegra PMC driver from v1
+> 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
+> 	  by the clock driver using helper functions from Tegra PMC.
+> 
+>  	  Note:
+> 	  To use helper functions from PMC driver, PMC early init need to
+> 	  happen prior to using helper functions and these helper functions are
+> 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
+> 	  clock registration which happen in clock_init prior to Tegra PMC
+> 	  probe.
+> 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
+> 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
+> 	  tegra_mc_init.
+> 	  This implementation of configuring PMC registers thru helper
+> 	  functions in clock driver needs proper changes across PMC, Clock,
+> 	  EMC and MC inits to have it work across all Tegra platforms.
+> 
+> 	  Currently PLLM Override is not enabled in the bootloader so proper
+> 	  patches for this fix will be taken care separately.
+> 
+> [v1]:	v1 includes patches for below fixes.
+> 	- adding clk_out_1, clk_out_2, clk_out_3, blink controls to Tegra PMC
+> 	  driver and removing clk-tegra-pmc.
+> 	- updated clock provider from tegra_car to pmc in the device tree
+> 	  tegra210-smaug.dts that uses clk_out_2.
+> 	- Added helper functions in PMC driver for WB0 PLLM overrides and PLLE
+> 	  IDDQ programming to use by clock driver and updated clock driver to
+> 	  use these helper functions and removed direct PMC access from clock
+> 	  driver and all pmc base address references in clock driver.
+> 
+> 
+> Sowjanya Komatineni (15):
+>   dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
+>   dt-bindings: tegra: Convert Tegra PMC bindings to YAML
+>   soc: tegra: Add Tegra PMC clock registrations into PMC driver
+>   dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
+>   soc: pmc: Add blink output clock registration to Tegra PMC
+>   clk: tegra: Remove tegra_pmc_clk_init along with clk ids
+>   dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
+>   ASoC: tegra: Add audio mclk control through clk_out_1 and extern1
+>   ASoC: tegra: Add fallback for audio mclk
+>   clk: tegra: Remove extern1 and cdev1 from clocks inittable
+>   ARM: dts: tegra: Add clock-cells property to pmc
+
+
+>   arm64: tegra: Add clock-cells property to Tegra PMC node
+>   ARM: tegra: Update sound node clocks in device tree
+>   arm64: tegra: smaug: Change clk_out_2 provider to pmc
+>   ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
+
+Hello Sowjanya,
+
+Something gone wrong with these patches because I didn't receive them
+and don't see them on the ML either.
+
+Also, the list of email correspondents looks a bit too larger. I'm
+pretty sure some of the people do not care much about this series. I
+tend to use script/get_maintainer.pl and then manually pick the relevant
+people for patches.
