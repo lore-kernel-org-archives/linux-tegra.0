@@ -1,70 +1,225 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-Date: Sat, 7 Dec 2019 19:00:04 +0300
-Message-ID: <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v3 08/15] ASoC: tegra: Add audio mclk control through
+ clk_out_1 and extern1
+Date: Sat, 7 Dec 2019 11:20:55 -0800
+Message-ID: <2eeceabe-b5f0-6f9e-ff8c-4ac6167b7cc3@nvidia.com>
 References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
- <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
- <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
- <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
+ <1575600535-26877-9-git-send-email-skomatineni@nvidia.com>
+ <0ce2e83b-800c-da1e-7a3c-3cf1427cfe20@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
+In-Reply-To: <0ce2e83b-800c-da1e-7a3c-3cf1427cfe20@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-07.12.2019 18:53, Dmitry Osipenko пишет:
-> 07.12.2019 18:47, Dmitry Osipenko пишет:
->> 07.12.2019 17:28, Dmitry Osipenko пишет:
->>> 06.12.2019 05:48, Sowjanya Komatineni пишет:
->>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out_3 with
->>>> mux and gate for each of these clocks.
->>>>
->>>> Currently these PMC clocks are registered by Tegra clock driver using
->>>> clk_register_mux and clk_register_gate by passing PMC base address
->>>> and register offsets and PMC programming for these clocks happens
->>>> through direct PMC access by the clock driver.
->>>>
->>>> With this, when PMC is in secure mode any direct PMC access from the
->>>> non-secure world does not go through and these clocks will not be
->>>> functional.
->>>>
->>>> This patch adds these clocks registration with PMC as a clock provider
->>>> for these clocks. clk_ops callback implementations for these clocks
->>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC programming
->>>> in secure mode and non-secure mode.
->>>>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>
->> [snip]
->>
->>>> +
->>>> +static const struct clk_ops pmc_clk_gate_ops = {
->>>> +	.is_enabled = pmc_clk_is_enabled,
->>>> +	.enable = pmc_clk_enable,
->>>> +	.disable = pmc_clk_disable,
->>>> +};
->>>
->>> What's the benefit of separating GATE from the MUX?
->>>
->>> I think it could be a single clock.
->>
->> According to TRM:
->>
->> 1. GATE and MUX are separate entities.
->>
->> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram in TRM).
->>
->> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable" it, correct?
-> 
-> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these clocks
-> should belong to PMC.
 
-Also, it should be "osc" and not "clk_m".
+On 12/7/19 6:58 AM, Dmitry Osipenko wrote:
+> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> Current ASoC driver uses extern1 as cdev1 clock from Tegra30 onwards
+>> through device tree.
+>>
+>> Actual audio mclk is clk_out_1 and to use PLLA for mclk rate control,
+>> need to clk_out_1_mux parent to extern1 and extern1 parent to PLLA_OUT0.
+>>
+>> Currently Tegra clock driver init sets the parents and enables both
+>> clk_out_1 and extern1 clocks. But these clocks parent and enables should
+>> be controlled by ASoC driver.
+>>
+>> Clock parents can be specified in device tree using assigned-clocks
+>> and assigned-clock-parents.
+>>
+>> To enable audio mclk, both clk_out_1 and extern1 clocks need to be
+>> enabled.
+>>
+>> This patch configures parents for clk_out_1 and extern1 clocks if device
+>> tree does not specify clock parents inorder to support old device tree
+>> and controls mclk using both clk_out_1 and extern1 clocks.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   sound/soc/tegra/tegra_asoc_utils.c | 66 ++++++++++++++++++++++++++++++=
+++++++++
+>>   sound/soc/tegra/tegra_asoc_utils.h |  1 +
+>>   2 files changed, 67 insertions(+)
+>>
+>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_=
+asoc_utils.c
+>> index 536a578e9512..8e3a3740df7c 100644
+>> --- a/sound/soc/tegra/tegra_asoc_utils.c
+>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+>> @@ -60,6 +60,7 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_=
+data *data, int srate,
+>>   	data->set_mclk =3D 0;
+>>  =20
+>>   	clk_disable_unprepare(data->clk_cdev1);
+>> +	clk_disable_unprepare(data->clk_extern1);
+>>   	clk_disable_unprepare(data->clk_pll_a_out0);
+>>   	clk_disable_unprepare(data->clk_pll_a);
+>>  =20
+>> @@ -89,6 +90,14 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils=
+_data *data, int srate,
+>>   		return err;
+>>   	}
+>>  =20
+>> +	if (!IS_ERR_OR_NULL(data->clk_extern1)) {
+>> +		err =3D clk_prepare_enable(data->clk_extern1);
+>> +		if (err) {
+>> +			dev_err(data->dev, "Can't enable extern1: %d\n", err);
+>> +			return err;
+>> +		}
+>> +	}
+>> +
+>>   	err =3D clk_prepare_enable(data->clk_cdev1);
+>>   	if (err) {
+>>   		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+>> @@ -109,6 +118,7 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc=
+_utils_data *data)
+>>   	int err;
+>>  =20
+>>   	clk_disable_unprepare(data->clk_cdev1);
+>> +	clk_disable_unprepare(data->clk_extern1);
+>>   	clk_disable_unprepare(data->clk_pll_a_out0);
+>>   	clk_disable_unprepare(data->clk_pll_a);
+>>  =20
+>> @@ -142,6 +152,14 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_aso=
+c_utils_data *data)
+>>   		return err;
+>>   	}
+>>  =20
+>> +	if (!IS_ERR_OR_NULL(data->clk_extern1)) {
+>> +		err =3D clk_prepare_enable(data->clk_extern1);
+>> +		if (err) {
+>> +			dev_err(data->dev, "Can't enable extern1: %d\n", err);
+>> +			return err;
+>> +		}
+>> +	}
+> Why this is needed given that clk_extern1 is either a child of MCLK or
+> MCLK itself (on T20)? The child clocks are enabled when the parent is
+> enabled.
+
+For T30 and later, clk_extern1 is one of the source for clk_out_1_mux.=20
+clk_extern1 is in CAR and it has its own gate and mux.
+
+As audio mclk related clocks (clk_out_1, clk_out_1_mux, and extern1) are=20
+moved into ASoC driver from clock driver
+
+need to enable extern1 gate as well along with clk_out1 for T30 through=20
+T210.
+
+Just FYI, extern1 enable here happens only when data->clk_extern1 is=20
+available which is for T30 onwards.
+
+>>   	err =3D clk_prepare_enable(data->clk_cdev1);
+>>   	if (err) {
+>>   		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+>> @@ -158,6 +176,7 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
+>>   int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+>>   			  struct device *dev)
+>>   {
+>> +	struct clk *clk_out_1_mux;
+>>   	int ret;
+>>  =20
+>>   	data->dev =3D dev;
+>> @@ -196,6 +215,51 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_d=
+ata *data,
+>>   		goto err_put_pll_a_out0;
+>>   	}
+> In a previous patch you added fallback to EXTPERIPH when clk_get(MCLK)
+> fails. This will work perfectly fine for the older kernels which have
+> all clocks in the same single CaR driver, but this may not work that
+> great for the newer kernels because PMC driver isn't registered early
+> during boot and thus it is possible to get a legit -EPROBE_DEFER which
+> shouldn't be ignored. In other words, you need to add into this patch a
+> check for the error code returned by clk_get(MCLK) and fallback only for
+> -EINVAL.
+yeah right, will add check in next version.
+>> +	/*
+>> +	 * If clock parents are not set in DT, configure here to use clk_out_1
+>> +	 * as mclk and extern1 as parent for Tegra30 and higher.
+>> +	 */
+>> +	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
+>> +	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
+>> +		data->clk_extern1 =3D clk_get_sys("clk_out_1", "extern1");
+>> +		if (IS_ERR(data->clk_extern1)) {
+>> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
+>> +			ret =3D PTR_ERR(data->clk_extern1);
+>> +			goto err_put_cdev1;
+>> +		}
+>> +
+>> +		ret =3D clk_set_parent(data->clk_extern1, data->clk_pll_a_out0);
+>> +		if (ret < 0) {
+>> +			dev_err(data->dev,
+>> +				"Set parent failed for clk extern1: %d\n",
+>> +				ret);
+>> +			goto err_put_cdev1;
+>> +		}
+>> +
+>> +		clk_out_1_mux =3D clk_get_sys(NULL, "clk_out_1_mux");
+> Note1: clk_get(dev, "clk_out_1_mux") should work here by letting clk
+> core to fall back to the clk_get_sys() by itself. Either way should be go=
+od.
+>
+> Note2: devm_clk_get() could be used everywhere here. Maybe it won't hurt
+> to convert tegra_asoc_utils to use managed resources to keep code a bit
+> cleaner. It should be a separate patch.
+
+OK Will add patch to use devm_clk_get() in tegra_asoc_utils_init and=20
+will use same for these patches
+
+>> +		if (IS_ERR(clk_out_1_mux)) {
+>> +			dev_err(data->dev, "Can't retrieve clk clk_out_1_mux\n");
+>> +			ret =3D PTR_ERR(clk_out_1_mux);
+>> +			goto err_put_cdev1;
+>> +		}
+>> +
+>> +		ret =3D clk_set_parent(clk_out_1_mux, data->clk_extern1);
+>> +		if (ret < 0) {
+>> +			dev_err(data->dev,
+>> +				"Set parent failed for clk_out_1_mux: %d\n",
+>> +				ret);
+>> +			clk_put(clk_out_1_mux);
+>> +			goto err_put_cdev1;
+>> +		}
+> clk_put(clk_cdev1);
+>
+>> +		data->clk_cdev1 =3D clk_get_sys(NULL, "clk_out_1");
+>> +		if (IS_ERR(data->clk_cdev1)) {
+>> +			dev_err(data->dev, "Can't retrieve clk clk_out_1\n");
+>> +			ret =3D PTR_ERR(data->clk_cdev1);
+>> +			goto err_put_cdev1;
+> goto err_put_pll_a_out0;
+>
+>> +		}
+>> +	}
+>> +
+>>   	ret =3D tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+>>   	if (ret)
+>>   		goto err_put_cdev1;
+>> @@ -215,6 +279,8 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_init);
+>>  =20
+>>   void tegra_asoc_utils_fini(struct tegra_asoc_utils_data *data)
+>>   {
+>> +	if (!IS_ERR_OR_NULL(data->clk_extern1))
+>> +		clk_put(data->clk_extern1);
+>>   	clk_put(data->clk_cdev1);
+>>   	clk_put(data->clk_pll_a_out0);
+>>   	clk_put(data->clk_pll_a);
+>> diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_=
+asoc_utils.h
+>> index 0c13818dee75..5f2b96478caf 100644
+>> --- a/sound/soc/tegra/tegra_asoc_utils.h
+>> +++ b/sound/soc/tegra/tegra_asoc_utils.h
+>> @@ -25,6 +25,7 @@ struct tegra_asoc_utils_data {
+>>   	struct clk *clk_pll_a;
+>>   	struct clk *clk_pll_a_out0;
+>>   	struct clk *clk_cdev1;
+>> +	struct clk *clk_extern1;
+>>   	int set_baseclock;
+>>   	int set_mclk;
+>>   };
+>>
