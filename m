@@ -1,58 +1,63 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 06/15] clk: tegra: Remove tegra_pmc_clk_init along with
- clk ids
-Date: Sat, 7 Dec 2019 18:04:14 +0300
-Message-ID: <5938df22-2474-3950-fc33-3e19cbf3da9c@gmail.com>
+Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Sat, 7 Dec 2019 18:47:48 +0300
+Message-ID: <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
 References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-7-git-send-email-skomatineni@nvidia.com>
- <3880aa15-c47a-5ab2-dd39-e8a47f6a3d6a@gmail.com>
- <e342a6e7-f213-53b4-1388-23cf61cf6fbb@gmail.com>
+ <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
+ <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e342a6e7-f213-53b4-1388-23cf61cf6fbb@gmail.com>
+In-Reply-To: <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-07.12.2019 17:43, Dmitry Osipenko пишет:
-> 07.12.2019 17:33, Dmitry Osipenko пишет:
->> 06.12.2019 05:48, Sowjanya Komatineni пишет:
->>> Current Tegra clock driver registers PMC clocks clk_out_1, clk_out_2,
->>> clk_out_3 and blink output in tegra_pmc_init() which does direct Tegra
->>> PMC access during clk_ops and these PMC register read and write access
->>> will not happen when PMC is in secure mode.
->>>
->>> Any direct PMC register access from non-secure world will not go
->>> through and all the PMC clocks and blink control are done in Tegra PMC
->>> driver with PMC as clock provider.
->>>
->>> This patch removes tegra_pmc_clk_init along with corresponding clk ids
->>> from Tegra clock driver.
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
+07.12.2019 17:28, Dmitry Osipenko пишет:
+> 06.12.2019 05:48, Sowjanya Komatineni пишет:
+>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out_3 with
+>> mux and gate for each of these clocks.
 >>
->> [snip]
+>> Currently these PMC clocks are registered by Tegra clock driver using
+>> clk_register_mux and clk_register_gate by passing PMC base address
+>> and register offsets and PMC programming for these clocks happens
+>> through direct PMC access by the clock driver.
 >>
->>> @@ -1230,9 +1222,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+>> With this, when PMC is in secure mode any direct PMC access from the
+>> non-secure world does not go through and these clocks will not be
+>> functional.
 >>
->>>  	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
->>>  	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
->>>  	{ TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
+>> This patch adds these clocks registration with PMC as a clock provider
+>> for these clocks. clk_ops callback implementations for these clocks
+>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC programming
+>> in secure mode and non-secure mode.
 >>
->> Perhaps these clocks do not need to be always-enabled?
->>
->> [snip]
->>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+
+[snip]
+
+>> +
+>> +static const struct clk_ops pmc_clk_gate_ops = {
+>> +	.is_enabled = pmc_clk_is_enabled,
+>> +	.enable = pmc_clk_enable,
+>> +	.disable = pmc_clk_disable,
+>> +};
 > 
-> Also, EXTERN1 parent configuration should be moved to the audio
-> driver/device-tree as well.
+> What's the benefit of separating GATE from the MUX?
+> 
+> I think it could be a single clock.
 
-Ah, I missed that it's done in the patch #10.
+According to TRM:
 
-> Maybe it even makes sense to move the whole configuration, including
-> PLLA. I don't see why clk driver need to do something for the audio driver.
+1. GATE and MUX are separate entities.
+
+2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram in TRM).
+
+3. PMC doesn't gate EXTPERIPH clock but could "force-enable" it, correct?
+
+[snip]
