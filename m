@@ -1,48 +1,76 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v8 00/19] Consolidate and improve NVIDIA Tegra CPUIDLE
- driver(s)
-Date: Sun, 8 Dec 2019 01:56:14 +0300
-Message-ID: <0b3a861d-e5e8-ddca-ac60-0a3c61a9d9dc@gmail.com>
-References: <20191203004116.11771-1-digetx@gmail.com>
- <20191207215216.GA9561@qmqm.qmqm.pl>
+Subject: Re: [PATCH v3 06/15] clk: tegra: Remove tegra_pmc_clk_init along with
+ clk ids
+Date: Sun, 8 Dec 2019 02:24:52 +0300
+Message-ID: <f8188f0d-ec7e-7d4a-f977-16273b594838@gmail.com>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+ <1575600535-26877-7-git-send-email-skomatineni@nvidia.com>
+ <3880aa15-c47a-5ab2-dd39-e8a47f6a3d6a@gmail.com>
+ <e342a6e7-f213-53b4-1388-23cf61cf6fbb@gmail.com>
+ <5938df22-2474-3950-fc33-3e19cbf3da9c@gmail.com>
+ <c81ccd45-781e-0fce-4f20-65281b8c6119@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191207215216.GA9561@qmqm.qmqm.pl>
+In-Reply-To: <c81ccd45-781e-0fce-4f20-65281b8c6119@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-08.12.2019 00:52, Michał Mirosław пишет:
-> On Tue, Dec 03, 2019 at 03:40:57AM +0300, Dmitry Osipenko wrote:
->> Hello,
->>
->> This series does the following:
->>
->>   1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
->>      into common drivers/cpuidle/ directory.
->>
->>   2. Enables CPU cluster power-down idling state on Tegra30.
->>
->> In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
->> and of the Tegra's arch code in general. Please review, thanks!
+07.12.2019 22:35, Sowjanya Komatineni пишет:
 > 
-> I did a quick smoke test for this series on top of Linus' master:
->  - rebuilding with the patches applied, CONFIG_ARM_TEGRA_CPUIDLE=n - works
->  - building with CONFIG_ARM_TEGRA_CPUIDLE=y - doesn't boot
+> On 12/7/19 7:04 AM, Dmitry Osipenko wrote:
+>> 07.12.2019 17:43, Dmitry Osipenko пишет:
+>>> 07.12.2019 17:33, Dmitry Osipenko пишет:
+>>>> 06.12.2019 05:48, Sowjanya Komatineni пишет:
+>>>>> Current Tegra clock driver registers PMC clocks clk_out_1, clk_out_2,
+>>>>> clk_out_3 and blink output in tegra_pmc_init() which does direct Tegra
+>>>>> PMC access during clk_ops and these PMC register read and write access
+>>>>> will not happen when PMC is in secure mode.
+>>>>>
+>>>>> Any direct PMC register access from non-secure world will not go
+>>>>> through and all the PMC clocks and blink control are done in Tegra PMC
+>>>>> driver with PMC as clock provider.
+>>>>>
+>>>>> This patch removes tegra_pmc_clk_init along with corresponding clk ids
+>>>>> from Tegra clock driver.
+>>>>>
+>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>> ---
+>>>> [snip]
+>>>>
+>>>>> @@ -1230,9 +1222,6 @@ static struct tegra_clk_init_table
+>>>>> init_table[] __initdata = {
+>>>>>       { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
+>>>>>       { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
+>>>>>       { TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
+>>>> Perhaps these clocks do not need to be always-enabled?
+>>>>
+>>>> [snip]
+>>>>
+>>> Also, EXTERN1 parent configuration should be moved to the audio
+>>> driver/device-tree as well.
+>> Ah, I missed that it's done in the patch #10.
+> Yes its done in Patch#10
+>>
+>>> Maybe it even makes sense to move the whole configuration, including
+>>> PLLA. I don't see why clk driver need to do something for the audio
+>>> driver.
 > 
-> The hang is somewhere early in the boot process, before simplefb can
-> take the console and show any logs. If I get BOOTFB to work again I might
-> be able to get some more info.
+> Current ASoC driver already takes care of PLLA rate and enables.
+> 
+> So PLLA init can be removed from clock driver too. I didn't went through
+> complete audio driver to be confident to remove this.
+> 
+> But PLLA is needed for i2s clock also and currently I2S driver takes
+> care of only I2S clock rate using PLLA as parent set by clock driver and
+> clock driver enables PLLA earlier to have it ready by the time both I2S
+> driver and ASoC driver .
+I2S could use assigned-clocks, but probably it's not really necessary
+and predefined configuration in the clk driver is good enough.
 
-Thank you very much for trying these patches!
-
-Could you please try to make ARM_TEGRA_CPUIDLE "tristate" in the Kconfig
-and compile it as a loadable module? That way you'll get framebuffer
-shown before the hang happens.
-
-Does LP2 suspend/resume work for you? There should be
-"nvidia,suspend-mode = <2>" in the PMC's node of device-tree.
+At least PLLA doesn't need to be always-enabled since audio drivers
+enable it when necessary.
