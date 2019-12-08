@@ -1,76 +1,97 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 06/15] clk: tegra: Remove tegra_pmc_clk_init along with
- clk ids
-Date: Sun, 8 Dec 2019 02:24:52 +0300
-Message-ID: <f8188f0d-ec7e-7d4a-f977-16273b594838@gmail.com>
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-7-git-send-email-skomatineni@nvidia.com>
- <3880aa15-c47a-5ab2-dd39-e8a47f6a3d6a@gmail.com>
- <e342a6e7-f213-53b4-1388-23cf61cf6fbb@gmail.com>
- <5938df22-2474-3950-fc33-3e19cbf3da9c@gmail.com>
- <c81ccd45-781e-0fce-4f20-65281b8c6119@nvidia.com>
+From: =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
+Subject: [PATCH v2] arm64: tegra: Enable PWM fan on Jetson Nano
+Date: Sun,  8 Dec 2019 20:55:31 +0100
+Message-ID: <20191208195531.11745-1-tszucs@protonmail.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c81ccd45-781e-0fce-4f20-65281b8c6119@nvidia.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-07.12.2019 22:35, Sowjanya Komatineni пишет:
-> 
-> On 12/7/19 7:04 AM, Dmitry Osipenko wrote:
->> 07.12.2019 17:43, Dmitry Osipenko пишет:
->>> 07.12.2019 17:33, Dmitry Osipenko пишет:
->>>> 06.12.2019 05:48, Sowjanya Komatineni пишет:
->>>>> Current Tegra clock driver registers PMC clocks clk_out_1, clk_out_2,
->>>>> clk_out_3 and blink output in tegra_pmc_init() which does direct Tegra
->>>>> PMC access during clk_ops and these PMC register read and write access
->>>>> will not happen when PMC is in secure mode.
->>>>>
->>>>> Any direct PMC register access from non-secure world will not go
->>>>> through and all the PMC clocks and blink control are done in Tegra PMC
->>>>> driver with PMC as clock provider.
->>>>>
->>>>> This patch removes tegra_pmc_clk_init along with corresponding clk ids
->>>>> from Tegra clock driver.
->>>>>
->>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>> ---
->>>> [snip]
->>>>
->>>>> @@ -1230,9 +1222,6 @@ static struct tegra_clk_init_table
->>>>> init_table[] __initdata = {
->>>>>       { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
->>>>>       { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
->>>>>       { TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
->>>> Perhaps these clocks do not need to be always-enabled?
->>>>
->>>> [snip]
->>>>
->>> Also, EXTERN1 parent configuration should be moved to the audio
->>> driver/device-tree as well.
->> Ah, I missed that it's done in the patch #10.
-> Yes its done in Patch#10
->>
->>> Maybe it even makes sense to move the whole configuration, including
->>> PLLA. I don't see why clk driver need to do something for the audio
->>> driver.
-> 
-> Current ASoC driver already takes care of PLLA rate and enables.
-> 
-> So PLLA init can be removed from clock driver too. I didn't went through
-> complete audio driver to be confident to remove this.
-> 
-> But PLLA is needed for i2s clock also and currently I2S driver takes
-> care of only I2S clock rate using PLLA as parent set by clock driver and
-> clock driver enables PLLA earlier to have it ready by the time both I2S
-> driver and ASoC driver .
-I2S could use assigned-clocks, but probably it's not really necessary
-and predefined configuration in the clk driver is good enough.
+Enable PWM fan and extend CPU thermal zones for monitoring and fan control.
+This will trigger the PWM fan on J15 and cool down the system if necessary.
 
-At least PLLA doesn't need to be always-enabled since audio drivers
-enable it when necessary.
+Signed-off-by: Tamás Szűcs <tszucs@protonmail.ch>
+---
+Changes in v2:
+- clean up redundant lines
+
+ .../boot/dts/nvidia/tegra210-p3450-0000.dts   | 60 +++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index 90381d52ac54..f2a138b14e36 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -573,6 +573,66 @@
+ 		};
+ 	};
+ 
++	fan: fan {
++		compatible = "pwm-fan";
++		pwms = <&pwm 3 45334>;
++
++		cooling-levels = <0 64 128 255>;
++		#cooling-cells = <2>;
++	};
++
++	thermal-zones {
++		cpu {
++			trips {
++				cpu_trip_critical: critical {
++					temperature = <96500>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++
++				cpu_trip_hot: hot {
++					temperature = <70000>;
++					hysteresis = <2000>;
++					type = "hot";
++				};
++
++				cpu_trip_active: active {
++					temperature = <50000>;
++					hysteresis = <2000>;
++					type = "active";
++				};
++
++				cpu_trip_passive: passive {
++					temperature = <30000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++			};
++
++			cooling-maps {
++				cpu-critical {
++					cooling-device = <&fan 3 3>;
++					trip = <&cpu_trip_critical>;
++				};
++
++				cpu-hot {
++					cooling-device = <&fan 2 2>;
++					trip = <&cpu_trip_hot>;
++				};
++
++				cpu-active {
++					cooling-device = <&fan 1 1>;
++					trip = <&cpu_trip_active>;
++				};
++
++				cpu-passive {
++					cooling-device = <&fan 0 0>;
++					trip = <&cpu_trip_passive>;
++				};
++			};
++		};
++	};
++
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 
+-- 
+2.20.1
