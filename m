@@ -1,56 +1,54 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: [PATCH v8 00/19] Consolidate and improve NVIDIA Tegra CPUIDLE
- driver(s)
-Date: Mon, 9 Dec 2019 17:04:20 +0100
-Message-ID: <20191209160420.GA24097@qmqm.qmqm.pl>
-References: <20191203004116.11771-1-digetx@gmail.com>
- <20191207215216.GA9561@qmqm.qmqm.pl>
- <0b3a861d-e5e8-ddca-ac60-0a3c61a9d9dc@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 09/15] ASoC: tegra: Add fallback for audio mclk
+Date: Mon, 9 Dec 2019 16:40:27 +0000
+Message-ID: <20191209164027.GG5483@sirena.org.uk>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+ <1575600535-26877-10-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="UKNXkkdQCYZ6W5l3"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <0b3a861d-e5e8-ddca-ac60-0a3c61a9d9dc@gmail.com>
+In-Reply-To: <1575600535-26877-10-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Dec 08, 2019 at 01:56:14AM +0300, Dmitry Osipenko wrote:
-> 08.12.2019 00:52, Michał Mirosław пишет:
-> > On Tue, Dec 03, 2019 at 03:40:57AM +0300, Dmitry Osipenko wrote:
-> >> Hello,
-> >>
-> >> This series does the following:
-> >>
-> >>   1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
-> >>      into common drivers/cpuidle/ directory.
-> >>
-> >>   2. Enables CPU cluster power-down idling state on Tegra30.
-> >>
-> >> In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
-> >> and of the Tegra's arch code in general. Please review, thanks!
-> > 
-> > I did a quick smoke test for this series on top of Linus' master:
-> >  - rebuilding with the patches applied, CONFIG_ARM_TEGRA_CPUIDLE=n - works
-> >  - building with CONFIG_ARM_TEGRA_CPUIDLE=y - doesn't boot
-> > 
-> > The hang is somewhere early in the boot process, before simplefb can
-> > take the console and show any logs. If I get BOOTFB to work again I might
-> > be able to get some more info.
-> 
-> Thank you very much for trying these patches!
-> 
-> Could you please try to make ARM_TEGRA_CPUIDLE "tristate" in the Kconfig
-> and compile it as a loadable module? That way you'll get framebuffer
-> shown before the hang happens.
-> 
-> Does LP2 suspend/resume work for you? There should be
-> "nvidia,suspend-mode = <2>" in the PMC's node of device-tree.
 
-Not at the moment. I also tried suspend-mode = <1> and <0>, but it
-made no difference.
+--UKNXkkdQCYZ6W5l3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best Regards,
-Michał Mirosław
+On Thu, Dec 05, 2019 at 06:48:49PM -0800, Sowjanya Komatineni wrote:
+> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
+> are moved to Tegra PMC driver with pmc as clock provider and using pmc
+> clock ids.
+>=20
+> New device tree uses clk_out_1 from pmc clock provider.
+>=20
+> So, this patch adds fallback to extern1 in case of retrieving mclk fails
+> to be backward compatible of new device tree with older kernels.
+>=20
+> Cc: stable@vger.kernel.org
+
+Why would this need to be a stable fix?  Presumably people with stable
+kernels are using the old device tree anyway?
+
+--UKNXkkdQCYZ6W5l3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3uePoACgkQJNaLcl1U
+h9D66wf9EtL0BmittcbTOCbTdEmV+6j2kRHf90+8kREBk+po5Zgw/f04NXW1VR/o
+kLtbsSNRWvW6HVGcWiKcNfqwBnq6P5mb2ufc9OsvjWAKJJNBnZxF2AacAn7/I2my
+ck6qGzJj4X70Xdt+KkhdTorKJX8PdX3Az9abC77DTq8cH2kbWt/domujEXrR/36g
+XCAXHpj+Id9dTLaqKz8z0ZhYsZlzaaW+QTJ12Ocuayna4rF/JB/P0n94rSjBVSVG
+ozfOhg7YYn9Q0NaGtjX7tUNX6vSF48kHKfrhfMIEDtkidq3AogcQACno8rg4amIL
+EhtifDhVUKFWuXliJGz3WveE8/2MrA==
+=CHYQ
+-----END PGP SIGNATURE-----
+
+--UKNXkkdQCYZ6W5l3--
