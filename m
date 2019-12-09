@@ -1,149 +1,89 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 02/25] drm/panel: add backlight support
-Date: Mon, 9 Dec 2019 02:55:54 +0200
-Message-ID: <20191209005554.GK14311@pendragon.ideasonboard.com>
-References: <20191207140353.23967-1-sam@ravnborg.org>
- <20191207140353.23967-3-sam@ravnborg.org>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: Re: [PATCH 01/18] dt-bindings: phy: tegra-xusb: Add usb-role-switch
+Date: Mon, 9 Dec 2019 10:15:29 +0530
+Message-ID: <59527c41-7388-b6ae-f49e-0f8eb1407063@nvidia.com>
+References: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
+ <1575629421-7039-2-git-send-email-nkristam@nvidia.com>
+ <20191206144905.GC2085684@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20191207140353.23967-3-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, NXP Linux Team <linux-imx@nxp.com>, Jagan Teki <jagan@amarulasolutions.com>, Jitao Shi <jitao.shi@mediatek.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, linux-mediatek@lists.infradead.org, Abhinav Kumar <abhinavk@codeaurora.org>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Purism Kernel Team <kernel@puri.sm>, linux-renesas-soc@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191206144905.GC2085684@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgU2FtLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBTYXQsIERlYyAwNywgMjAxOSBh
-dCAwMzowMzozMFBNICswMTAwLCBTYW0gUmF2bmJvcmcgd3JvdGU6Cj4gUGFuZWxzIG9mdGVuIHN1
-cHBvcnRzIGJhY2tsaWdodCBhcyBzcGVjaWZpZWQgaW4gYSBkZXZpY2UgdHJlZS4KCnMvc3VwcG9y
-dHMvc3VwcG9ydC8KCj4gVXBkYXRlIHRoZSBkcm1fcGFuZWwgaW5mcmFzdHJ1Y3R1cmUgdG8gc3Vw
-cG9ydCB0aGlzIHRvCj4gc2ltcGxpZnkgdGhlIGRyaXZlcnMuCj4gCj4gV2l0aCB0aGlzIHRoZSBw
-YW5lbCBkcml2ZXIganVzdCBuZWVkcyB0byBhZGQgdGhlIGZvbGxvd2luZyB0byB0aGUKPiBwcm9i
-ZSgpIGZ1bmN0aW9uOgo+IAo+ICAgICBlcnIgPSBkcm1fcGFuZWxfb2ZfYmFja2xpZ2h0KHBhbmVs
-KTsKPiAgICAgaWYgKGVycikKPiAgICAgICAgICAgICByZXR1cm4gZXJyOwo+IAo+IFRoZW4gZHJt
-X3BhbmVsIHdpbGwgaGFuZGxlIGFsbCB0aGUgcmVzdC4KPiAKPiBUaGVyZSBpcyBvbmUgY2F2ZWF0
-IHdpdGggdGhlIGJhY2tsaWdodCBzdXBwb3J0Lgo+IElmIGRybV9wYW5lbF8oZW5hYmxlfGRpc2Fi
-bGUpIGFyZSBjYWxsZWQgbXVsdGlwbGUgdGltZXMKPiBpbiByb3cgdGhlbiBiYWNrbGlnaHRfKGVu
-YWJsZXxkaXNhYmxlKSB3aWxsIGJlIGNhbGxlZCBtdWx0aXBsZSB0aW1lcy4KCnMvaW4gcm93L2lu
-IGEgcm93LwoKPiBUaGUgYWJvdmUgd2lsbCBoYXBwZW4gd2hlbiBhIHBhbmVsIGRyaXZlcnMgdW5j
-b25kaXRpb25hbGx5Cj4gY2FsbHMgZHJtX3BhbmVsX2Rpc2FibGUoKSBpbiB0aGVpciBzaHV0ZG93
-bigpIGZ1bmN0aW9uLAo+IHdoYW4gdGhlIHBhbmVsIGlzIGFscmVhZHkgZGlzYWJsZWQgYW5kIHRo
-ZW4gc2h1dGRvd24oKSBpcyBjYWxsZWQuCj4gCj4gUmVhZGluZyB0aGUgYmFja2xpZ2h0IGNvZGUg
-aXQgc2VlbXMgc2FmZSB0byBjYWxsCj4gdGhlIGJhY2tsaWdodF8oZW5hYmxlfGRpc2FibGUpIHNl
-dmVyYWwgdGltZXMuCj4gCj4gdjM6Cj4gLSBJbXByb3ZlIGNvbW1lbnRzLCBmaXggZ3JhbW1hciAo
-TGF1cmVudCkKPiAtIERvIG5vdCBmYWlsIGluIGRybV9wYW5lbF9vZl9iYWNrbGlnaHQoKSBpZiBu
-byBEVCBzdXBwb3J0IChMYXVyZW50KQo+IC0gTG9nIGlmIGJhY2tsaWdodF8oZW5hYmxlfGRpc2Fi
-bGUpIGZhaWxzIChMYXVyZW50KQo+IC0gSW1wcm92ZSBkcm1fcGFuZWxfb2ZfYmFja2xpZ2h0KCkg
-ZG9jcwo+IC0gVXBkYXRlZCBjaGFuZ2Vsb2cgd2l0aCBiYWNrbGlnaHQgYW5hbHlzaXMgKHRyaWdn
-ZXJlZCBieSBMYXVyZW50KQo+IAo+IHYyOgo+IC0gRHJvcCB0ZXN0IG9mIENPTkZJR19EUk1fUEFO
-RUwgaW4gaGVhZGVyLWZpbGUgKExhdXJlbnQpCj4gLSBkbyBub3QgZW5hYmxlIGJhY2tsaWdodCBp
-ZiAtPmVuYWJsZSgpIHJldHVybnMgYW4gZXJyb3IKPiAKPiBTaWduZWQtb2ZmLWJ5OiBTYW0gUmF2
-bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+Cj4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJl
-ZGluZ0BnbWFpbC5jb20+Cj4gQ2M6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRA
-aWRlYXNvbmJvYXJkLmNvbT4KPiBDYzogTWFhcnRlbiBMYW5raG9yc3QgPG1hYXJ0ZW4ubGFua2hv
-cnN0QGxpbnV4LmludGVsLmNvbT4KPiBDYzogTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBi
-b290bGluLmNvbT4KPiBDYzogU2VhbiBQYXVsIDxzZWFuQHBvb3JseS5ydW4+Cj4gQ2M6IERhdmlk
-IEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT4KPiBDYzogRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZm
-d2xsLmNoPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX3BhbmVsLmMgfCA1OCArKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKystCj4gIGluY2x1ZGUvZHJtL2RybV9wYW5lbC5o
-ICAgICB8IDI1ICsrKysrKysrKysrKysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCA4MiBpbnNlcnRp
-b25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9k
-cm1fcGFuZWwuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYwo+IGluZGV4IDRhYjcyMjlm
-YjIyYi4uYzMxMmQ1ZWIyMTRkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFu
-ZWwuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fcGFuZWwuYwo+IEBAIC0yMSwxMSArMjEs
-MTMgQEAKPiAgICogREVBTElOR1MgSU4gVEhFIFNPRlRXQVJFLgo+ICAgKi8KPiAgCj4gKyNpbmNs
-dWRlIDxsaW51eC9iYWNrbGlnaHQuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2Vyci5oPgo+ICAjaW5j
-bHVkZSA8bGludXgvbW9kdWxlLmg+Cj4gIAo+ICAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjLmg+Cj4g
-ICNpbmNsdWRlIDxkcm0vZHJtX3BhbmVsLmg+Cj4gKyNpbmNsdWRlIDxkcm0vZHJtX3ByaW50Lmg+
-Cj4gIAo+ICBzdGF0aWMgREVGSU5FX01VVEVYKHBhbmVsX2xvY2spOwo+ICBzdGF0aWMgTElTVF9I
-RUFEKHBhbmVsX2xpc3QpOwo+IEBAIC0xOTYsMTEgKzE5OCwyMCBAQCBFWFBPUlRfU1lNQk9MKGRy
-bV9wYW5lbF91bnByZXBhcmUpOwo+ICAgKi8KPiAgaW50IGRybV9wYW5lbF9lbmFibGUoc3RydWN0
-IGRybV9wYW5lbCAqcGFuZWwpCj4gIHsKPiArCWludCByZXQgPSAwOwo+ICsKPiAgCWlmICghcGFu
-ZWwpCj4gIAkJcmV0dXJuIC1FSU5WQUw7Cj4gIAo+ICAJaWYgKHBhbmVsLT5mdW5jcyAmJiBwYW5l
-bC0+ZnVuY3MtPmVuYWJsZSkKPiAtCQlyZXR1cm4gcGFuZWwtPmZ1bmNzLT5lbmFibGUocGFuZWwp
-Owo+ICsJCXJldCA9IHBhbmVsLT5mdW5jcy0+ZW5hYmxlKHBhbmVsKTsKPiArCj4gKwlpZiAocmV0
-IDwgMCkKPiArCQlyZXR1cm4gcmV0OwoKWW91IGNhbiBtb3ZlIHRoaXMgd2l0aGluIHRoZSBhYm92
-ZSBpZiAoKSBibG9jayBhbmQgYXZvaWQgaW5pdGlhbGl6aW5nCnJldCB0byAwOgoKCWlmIChwYW5l
-bC0+ZnVuY3MgJiYgcGFuZWwtPmZ1bmNzLT5lbmFibGUpIHsKCQlyZXQgPSBwYW5lbC0+ZnVuY3Mt
-PmVuYWJsZShwYW5lbCk7CgkJaWYgKHJldCA8IDApCgkJCXJldHVybiByZXQ7Cgl9CgpXaXRoIHRo
-ZXNlIHNtYWxsIGlzc3VlcyBhZGRyZXNzZWQsCgpSZXZpZXdlZC1ieTogTGF1cmVudCBQaW5jaGFy
-dCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgoKPiArCXJldCA9IGJhY2tsaWdo
-dF9lbmFibGUocGFuZWwtPmJhY2tsaWdodCk7Cj4gKwlpZiAocmV0IDwgMCkKPiArCQlEUk1fREVW
-X0lORk8ocGFuZWwtPmRldiwgImZhaWxlZCB0byBlbmFibGUgYmFja2xpZ2h0OiAlZFxuIiwgcmV0
-KTsKPiAgCj4gIAlyZXR1cm4gMDsKPiAgfQo+IEBAIC0yMTgsOSArMjI5LDE1IEBAIEVYUE9SVF9T
-WU1CT0woZHJtX3BhbmVsX2VuYWJsZSk7Cj4gICAqLwo+ICBpbnQgZHJtX3BhbmVsX2Rpc2FibGUo
-c3RydWN0IGRybV9wYW5lbCAqcGFuZWwpCj4gIHsKPiArCWludCByZXQ7Cj4gKwo+ICAJaWYgKCFw
-YW5lbCkKPiAgCQlyZXR1cm4gLUVJTlZBTDsKPiAgCj4gKwlyZXQgPSBiYWNrbGlnaHRfZGlzYWJs
-ZShwYW5lbC0+YmFja2xpZ2h0KTsKPiArCWlmIChyZXQgPCAwKQo+ICsJCURSTV9ERVZfSU5GTyhw
-YW5lbC0+ZGV2LCAiZmFpbGVkIHRvIGRpc2FibGUgYmFja2xpZ2h0OiAlZFxuIiwgcmV0KTsKPiAr
-Cj4gIAlpZiAocGFuZWwtPmZ1bmNzICYmIHBhbmVsLT5mdW5jcy0+ZGlzYWJsZSkKPiAgCQlyZXR1
-cm4gcGFuZWwtPmZ1bmNzLT5kaXNhYmxlKHBhbmVsKTsKPiAgCj4gQEAgLTI4OSw2ICszMDYsNDUg
-QEAgc3RydWN0IGRybV9wYW5lbCAqb2ZfZHJtX2ZpbmRfcGFuZWwoY29uc3Qgc3RydWN0IGRldmlj
-ZV9ub2RlICpucCkKPiAgRVhQT1JUX1NZTUJPTChvZl9kcm1fZmluZF9wYW5lbCk7Cj4gICNlbmRp
-Zgo+ICAKPiArI2lmZGVmIENPTkZJR19CQUNLTElHSFRfQ0xBU1NfREVWSUNFCj4gKy8qKgo+ICsg
-KiBkcm1fcGFuZWxfb2ZfYmFja2xpZ2h0IC0gdXNlIGJhY2tsaWdodCBkZXZpY2Ugbm9kZSBmb3Ig
-YmFja2xpZ2h0Cj4gKyAqIEBwYW5lbDogRFJNIHBhbmVsCj4gKyAqCj4gKyAqIFVzZSB0aGlzIGZ1
-bmN0aW9uIHRvIGVuYWJsZSBiYWNrbGlnaHQgaGFuZGxpbmcgaWYgeW91ciBwYW5lbAo+ICsgKiB1
-c2VzIGRldmljZSB0cmVlIGFuZCBoYXMgYSBiYWNrbGlnaHQgcGhhbmRsZS4KPiArICoKPiArICog
-V2hlbiB0aGUgcGFuZWwgaXMgZW5hYmxlZCBiYWNrbGlnaHQgd2lsbCBiZSBlbmFibGVkIGFmdGVy
-IGEKPiArICogc3VjY2Vzc2Z1bGwgY2FsbCB0byAmZHJtX3BhbmVsX2Z1bmNzLmVuYWJsZSgpCj4g
-KyAqCj4gKyAqIFdoZW4gdGhlIHBhbmVsIGlzIGRpc2FibGVkIGJhY2tsaWdodCB3aWxsIGJlIGRp
-c2FibGVkIGJlZm9yZSB0aGUKPiArICogY2FsbCB0byAmZHJtX3BhbmVsX2Z1bmNzLmRpc2FibGUo
-KS4KPiArICoKPiArICogQSB0eXBpY2FsIGltcGxlbWVudGF0aW9uIGZvciBhIHBhbmVsIGRyaXZl
-ciBzdXBwb3J0aW5nIGRldmljZSB0cmVlCj4gKyAqIHdpbGwgY2FsbCB0aGlzIGZ1bmN0aW9uIGF0
-IHByb2JlIHRpbWUuIEJhY2tsaWdodCB3aWxsIHRoZW4gYmUgaGFuZGxlZAo+ICsgKiB0cmFuc3Bh
-cmVudGx5IHdpdGhvdXQgcmVxdWlyaW5nIGFueSBpbnRlcnZlbnRpb24gZnJvbSB0aGUgZHJpdmVy
-Lgo+ICsgKiBkcm1fcGFuZWxfb2ZfYmFja2xpZ2h0KCkgbXVzdCBiZSBjYWxsZWQgYWZ0ZXIgdGhl
-IGNhbGwgdG8gZHJtX3BhbmVsX2luaXQoKS4KPiArICoKPiArICogUmV0dXJuOiAwIG9uIHN1Y2Nl
-c3Mgb3IgYSBuZWdhdGl2ZSBlcnJvciBjb2RlIG9uIGZhaWx1cmUuCj4gKyAqLwo+ICtpbnQgZHJt
-X3BhbmVsX29mX2JhY2tsaWdodChzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCkKPiArewo+ICsJc3Ry
-dWN0IGJhY2tsaWdodF9kZXZpY2UgKmJhY2tsaWdodDsKPiArCj4gKwlpZiAoIXBhbmVsIHx8ICFw
-YW5lbC0+ZGV2KQo+ICsJCXJldHVybiAtRUlOVkFMOwo+ICsKPiArCWJhY2tsaWdodCA9IGRldm1f
-b2ZfZmluZF9iYWNrbGlnaHQocGFuZWwtPmRldik7Cj4gKwo+ICsJaWYgKElTX0VSUihiYWNrbGln
-aHQpKQo+ICsgICAgICAgICAgICAgICAgcmV0dXJuIFBUUl9FUlIoYmFja2xpZ2h0KTsKPiArCj4g
-KwlwYW5lbC0+YmFja2xpZ2h0ID0gYmFja2xpZ2h0Owo+ICsJcmV0dXJuIDA7Cj4gK30KPiArRVhQ
-T1JUX1NZTUJPTChkcm1fcGFuZWxfb2ZfYmFja2xpZ2h0KTsKPiArI2VuZGlmCj4gKwo+ICBNT0RV
-TEVfQVVUSE9SKCJUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPiIpOwo+ICBNT0RV
-TEVfREVTQ1JJUFRJT04oIkRSTSBwYW5lbCBpbmZyYXN0cnVjdHVyZSIpOwo+ICBNT0RVTEVfTElD
-RU5TRSgiR1BMIGFuZCBhZGRpdGlvbmFsIHJpZ2h0cyIpOwo+IGRpZmYgLS1naXQgYS9pbmNsdWRl
-L2RybS9kcm1fcGFuZWwuaCBiL2luY2x1ZGUvZHJtL2RybV9wYW5lbC5oCj4gaW5kZXggZDcxNjU1
-YjI2MzRjLi5jNzUxYzliMTdkZjAgMTAwNjQ0Cj4gLS0tIGEvaW5jbHVkZS9kcm0vZHJtX3BhbmVs
-LmgKPiArKysgYi9pbmNsdWRlL2RybS9kcm1fcGFuZWwuaAo+IEBAIC0yOCw2ICsyOCw3IEBACj4g
-ICNpbmNsdWRlIDxsaW51eC9lcnJuby5oPgo+ICAjaW5jbHVkZSA8bGludXgvbGlzdC5oPgo+ICAK
-PiArc3RydWN0IGJhY2tsaWdodF9kZXZpY2U7Cj4gIHN0cnVjdCBkZXZpY2Vfbm9kZTsKPiAgc3Ry
-dWN0IGRybV9jb25uZWN0b3I7Cj4gIHN0cnVjdCBkcm1fZGV2aWNlOwo+IEBAIC01OSw2ICs2MCwx
-MCBAQCBzdHJ1Y3QgZGlzcGxheV90aW1pbmc7Cj4gICAqCj4gICAqIFRvIHNhdmUgcG93ZXIgd2hl
-biBubyB2aWRlbyBkYXRhIGlzIHRyYW5zbWl0dGVkLCBhIGRyaXZlciBjYW4gcG93ZXIgZG93bgo+
-ICAgKiB0aGUgcGFuZWwuIFRoaXMgaXMgdGhlIGpvYiBvZiB0aGUgLnVucHJlcGFyZSgpIGZ1bmN0
-aW9uLgo+ICsgKgo+ICsgKiBCYWNrbGlnaHQgY2FuIGJlIGhhbmRsZWQgYXV0b21hdGljYWxseSBp
-ZiBjb25maWd1cmVkIHVzaW5nCj4gKyAqIGRybV9wYW5lbF9vZl9iYWNrbGlnaHQoKS4gVGhlbiB0
-aGUgZHJpdmVyIGRvZXMgbm90IG5lZWQgdG8gaW1wbGVtZW50IHRoZQo+ICsgKiBmdW5jdGlvbmFs
-aXR5IHRvIGVuYWJsZS9kaXNhYmxlIGJhY2tsaWdodC4KPiAgICovCj4gIHN0cnVjdCBkcm1fcGFu
-ZWxfZnVuY3Mgewo+ICAJLyoqCj4gQEAgLTE0Niw2ICsxNTEsMTcgQEAgc3RydWN0IGRybV9wYW5l
-bCB7Cj4gIAkgKi8KPiAgCXN0cnVjdCBkZXZpY2UgKmRldjsKPiAgCj4gKwkvKioKPiArCSAqIEBi
-YWNrbGlnaHQ6Cj4gKwkgKgo+ICsJICogQmFja2xpZ2h0IGRldmljZSwgdXNlZCB0byB0dXJuIG9u
-IGJhY2tsaWdodCBhZnRlciB0aGUgY2FsbAo+ICsJICogdG8gZW5hYmxlKCksIGFuZCB0byB0dXJu
-IG9mZiBiYWNrbGlnaHQgYmVmb3JlIHRoZSBjYWxsIHRvCj4gKwkgKiBkaXNhYmxlKCkuCj4gKwkg
-KiBiYWNrbGlnaHQgaXMgc2V0IGJ5IGRybV9wYW5lbF9vZl9iYWNrbGlnaHQoKSBhbmQgZHJpdmVy
-cwo+ICsJICogc2hhbGwgbm90IGFzc2lnbiBpdC4KPiArCSAqLwo+ICsJc3RydWN0IGJhY2tsaWdo
-dF9kZXZpY2UgKmJhY2tsaWdodDsKPiArCj4gIAkvKioKPiAgCSAqIEBmdW5jczoKPiAgCSAqCj4g
-QEAgLTE5Nyw0ICsyMTMsMTMgQEAgc3RhdGljIGlubGluZSBzdHJ1Y3QgZHJtX3BhbmVsICpvZl9k
-cm1fZmluZF9wYW5lbChjb25zdCBzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQo+ICB9Cj4gICNlbmRp
-Zgo+ICAKPiArI2lmIElTX0VOQUJMRUQoQ09ORklHX0JBQ0tMSUdIVF9DTEFTU19ERVZJQ0UpCj4g
-K2ludCBkcm1fcGFuZWxfb2ZfYmFja2xpZ2h0KHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKTsKPiAr
-I2Vsc2UKPiArc3RhdGljIGlubGluZSBpbnQgZHJtX3BhbmVsX29mX2JhY2tsaWdodChzdHJ1Y3Qg
-ZHJtX3BhbmVsICpwYW5lbCkKPiArewo+ICsJcmV0dXJuIDA7Cj4gK30KPiArI2VuZGlmCj4gKwo+
-ICAjZW5kaWYKCi0tIApSZWdhcmRzLAoKTGF1cmVudCBQaW5jaGFydApfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+
+
+> On 06-12-2019 20:19, Thierry Reding wrote:
+> 
+> On Fri, Dec 06, 2019 at 04:20:04PM +0530, Nagarjuna Kristam wrote:
+>> Add usb-role-switch property for Tegra210 and Tegra186 platforms. This
+>> entry is used by XUSB pad controller driver to register for role changes
+>> for OTG/Peripheral capable USB 2 ports.
+>>
+>> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+>> ---
+>>  Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+>> index 9fb682e..0f19ed6 100644
+>> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+>> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+>> @@ -179,6 +179,10 @@ Optional properties:
+>>    is internal. In the absence of this property the port is considered to be
+>>    external.
+>>  - vbus-supply: phandle to a regulator supplying the VBUS voltage.
+>> +- usb-role-switch: boolean property to indicate use of USB Role Switch.
+> That first sentence here seems a bit useless and vague. It doesn't
+> really convey anything other than the name already does. Perhaps
+> something like:
+> 
+> 	Boolean property to indicate that the port support OTG. If
+> 	present, the port supports switching between USB host and
+> 	peripheral roles.
+> 
+Will update this accordingly.
+
+>> +  This property is MUST for OTG,Peripheral capable USB 2 ports. Connector
+> If this is mandatory, why not add it to the list of required properties?
+> I guess since it's only mandatory for ports that support OTG, perhaps we
+> could add a section "Required properties for OTG capable ports:" or
+> something like that? Then you can also omit the second sentence in the
+> description.
+> 
+Will add section "Required properties for OTG/Peripheral capable ports:" under ports
+and add usb-role-switch there.
+
+>> +  should be added as subnode, see connector.txt. vbus-gpio in connector is
+> There's no file called "connector.txt". Are you referring to
+> 
+> 	Documentation/devicetree/bindings/connector/usb-connector.txt
+> 
+> ? Also, that file calls the property "vbus-gpios" and lists it as
+> optional. What would happen if we don't specify it? Doesn't that just
+> mean that we can't support role detection?
+> 
+After going through other bindings found usb/usb-conn-gpio.txt is the one that should
+be referred. Will update accordingly. All details on gpios are documented clearly
+in usb/usb-conn-gpio.txt.
+
+>> +  Mandatory.
+> "mandatory"
+> 
+> Thierry
+> 
+>>  
+Will update.
+
+Thanks,
+Nagarjuna
+>>  ULPI ports:
+>>  -----------
+>> -- 
+>> 2.7.4
+>>
