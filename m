@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 04/17] clk: mediatek: convert to devm_platform_ioremap_resource
-Date: Mon,  9 Dec 2019 19:57:36 +0000
-Message-ID: <20191209195749.868-4-tiny.windzz@gmail.com>
+Subject: [PATCH 03/17] clk: samsung: convert to devm_platform_ioremap_resource
+Date: Mon,  9 Dec 2019 19:57:35 +0000
+Message-ID: <20191209195749.868-3-tiny.windzz@gmail.com>
 References: <20191209195749.868-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
@@ -14,34 +14,93 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/mediatek/clk-mt2701.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos-audss.c   | 4 +---
+ drivers/clk/samsung/clk-exynos4412-isp.c | 4 +---
+ drivers/clk/samsung/clk-exynos5433.c     | 4 +---
+ drivers/clk/samsung/clk-s5pv210-audss.c  | 4 +---
+ 4 files changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 695be0f77427..a6aea6646118 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -668,9 +668,8 @@ static int mtk_topckgen_init(struct platform_device *pdev)
- 	struct clk_onecell_data *clk_data;
- 	void __iomem *base;
- 	struct device_node *node = pdev->dev.of_node;
--	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 42b5d32c6cc7..9cc127a162ad 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -129,7 +129,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
+ 	const struct exynos_audss_clk_drvdata *variant;
+ 	struct clk_hw **clk_table;
+-	struct resource *res;
+ 	struct device *dev = &pdev->dev;
+ 	int i, ret = 0;
  
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+@@ -137,8 +136,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 	if (!variant)
+ 		return -EINVAL;
  
-@@ -889,9 +888,8 @@ static int mtk_pericfg_init(struct platform_device *pdev)
- 	void __iomem *base;
- 	int r;
- 	struct device_node *node = pdev->dev.of_node;
--	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg_base = devm_ioremap_resource(dev, res);
++	reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg_base))
+ 		return PTR_ERR(reg_base);
  
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+diff --git a/drivers/clk/samsung/clk-exynos4412-isp.c b/drivers/clk/samsung/clk-exynos4412-isp.c
+index 4b9e73608c21..20f5129f7212 100644
+--- a/drivers/clk/samsung/clk-exynos4412-isp.c
++++ b/drivers/clk/samsung/clk-exynos4412-isp.c
+@@ -110,11 +110,9 @@ static int __init exynos4x12_isp_clk_probe(struct platform_device *pdev)
+ 	struct samsung_clk_provider *ctx;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	struct resource *res;
+ 	void __iomem *reg_base;
  
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg_base = devm_ioremap_resource(dev, res);
++	reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg_base)) {
+ 		dev_err(dev, "failed to map registers\n");
+ 		return PTR_ERR(reg_base);
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 4b1aa9382ad2..b0d48cddfd6e 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -5557,7 +5557,6 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+ 	struct exynos5433_cmu_data *data;
+ 	struct samsung_clk_provider *ctx;
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 	void __iomem *reg_base;
+ 	int i;
+ 
+@@ -5570,8 +5569,7 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	ctx = &data->ctx;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg_base = devm_ioremap_resource(dev, res);
++	reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg_base))
+ 		return PTR_ERR(reg_base);
+ 
+diff --git a/drivers/clk/samsung/clk-s5pv210-audss.c b/drivers/clk/samsung/clk-s5pv210-audss.c
+index 14985ebd043b..503bd8a10d8f 100644
+--- a/drivers/clk/samsung/clk-s5pv210-audss.c
++++ b/drivers/clk/samsung/clk-s5pv210-audss.c
+@@ -63,15 +63,13 @@ static struct syscore_ops s5pv210_audss_clk_syscore_ops = {
+ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+ {
+ 	int i, ret = 0;
+-	struct resource *res;
+ 	const char *mout_audss_p[2];
+ 	const char *mout_i2s_p[3];
+ 	const char *hclk_p;
+ 	struct clk_hw **clk_table;
+ 	struct clk *hclk, *pll_ref, *pll_in, *cdclk, *sclk_audio;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg_base = devm_ioremap_resource(&pdev->dev, res);
++	reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg_base)) {
+ 		dev_err(&pdev->dev, "failed to map audss registers\n");
+ 		return PTR_ERR(reg_base);
 -- 
 2.17.1
