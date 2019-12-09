@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 13/17] clk: gemini: convert to devm_platform_ioremap_resource
-Date: Mon,  9 Dec 2019 19:57:45 +0000
-Message-ID: <20191209195749.868-13-tiny.windzz@gmail.com>
+Subject: [PATCH 16/17] clk: actions: convert to devm_platform_ioremap_resource
+Date: Mon,  9 Dec 2019 19:57:48 +0000
+Message-ID: <20191209195749.868-16-tiny.windzz@gmail.com>
 References: <20191209195749.868-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
@@ -14,27 +14,21 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/clk-gemini.c | 4 +---
+ drivers/clk/actions/owl-common.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
-index b51069e794ff..0184ff9bd206 100644
---- a/drivers/clk/clk-gemini.c
-+++ b/drivers/clk/clk-gemini.c
-@@ -276,7 +276,6 @@ static int gemini_clk_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	unsigned int mult, div;
+diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+index 4de97cc7cb54..9e98e8a92ad7 100644
+--- a/drivers/clk/actions/owl-common.c
++++ b/drivers/clk/actions/owl-common.c
+@@ -43,10 +43,8 @@ int owl_clk_regmap_init(struct platform_device *pdev,
+ {
+ 	void __iomem *base;
+ 	struct regmap *regmap;
 -	struct resource *res;
- 	u32 val;
- 	int ret;
- 	int i;
-@@ -286,8 +285,7 @@ static int gemini_clk_probe(struct platform_device *pdev)
- 		return -ENOMEM;
  
- 	/* Remap the system controller for the exclusive register */
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
+-	base = devm_ioremap_resource(&pdev->dev, res);
 +	base = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(base))
  		return PTR_ERR(base);
