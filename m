@@ -1,102 +1,43 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-Date: Mon, 9 Dec 2019 23:12:35 +0300
-Message-ID: <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
+Subject: Re: [PATCH v3 09/15] ASoC: tegra: Add fallback for audio mclk
+Date: Mon, 9 Dec 2019 23:31:59 +0300
+Message-ID: <7fe879fd-dae3-1e64-1031-cd9f00e31552@gmail.com>
 References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
- <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
- <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
- <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
- <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
- <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
- <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+ <1575600535-26877-10-git-send-email-skomatineni@nvidia.com>
+ <20191209164027.GG5483@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+In-Reply-To: <20191209164027.GG5483@sirena.org.uk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
+To: Mark Brown <broonie@kernel.org>, Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-08.12.2019 00:36, Sowjanya Komatineni пишет:
-> 
-> On 12/7/19 11:59 AM, Sowjanya Komatineni wrote:
+09.12.2019 19:40, Mark Brown пишет:
+> On Thu, Dec 05, 2019 at 06:48:49PM -0800, Sowjanya Komatineni wrote:
+>> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
+>> are moved to Tegra PMC driver with pmc as clock provider and using pmc
+>> clock ids.
 >>
->> On 12/7/19 8:00 AM, Dmitry Osipenko wrote:
->>> 07.12.2019 18:53, Dmitry Osipenko пишет:
->>>> 07.12.2019 18:47, Dmitry Osipenko пишет:
->>>>> 07.12.2019 17:28, Dmitry Osipenko пишет:
->>>>>> 06.12.2019 05:48, Sowjanya Komatineni пишет:
->>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out_3
->>>>>>> with
->>>>>>> mux and gate for each of these clocks.
->>>>>>>
->>>>>>> Currently these PMC clocks are registered by Tegra clock driver
->>>>>>> using
->>>>>>> clk_register_mux and clk_register_gate by passing PMC base address
->>>>>>> and register offsets and PMC programming for these clocks happens
->>>>>>> through direct PMC access by the clock driver.
->>>>>>>
->>>>>>> With this, when PMC is in secure mode any direct PMC access from the
->>>>>>> non-secure world does not go through and these clocks will not be
->>>>>>> functional.
->>>>>>>
->>>>>>> This patch adds these clocks registration with PMC as a clock
->>>>>>> provider
->>>>>>> for these clocks. clk_ops callback implementations for these clocks
->>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
->>>>>>> programming
->>>>>>> in secure mode and non-secure mode.
->>>>>>>
->>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>> ---
->>>>> [snip]
->>>>>
->>>>>>> +
->>>>>>> +static const struct clk_ops pmc_clk_gate_ops = {
->>>>>>> +    .is_enabled = pmc_clk_is_enabled,
->>>>>>> +    .enable = pmc_clk_enable,
->>>>>>> +    .disable = pmc_clk_disable,
->>>>>>> +};
->>>>>> What's the benefit of separating GATE from the MUX?
->>>>>>
->>>>>> I think it could be a single clock.
->>>>> According to TRM:
->>>>>
->>>>> 1. GATE and MUX are separate entities.
->>>>>
->>>>> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram in TRM).
->>>>>
->>>>> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable" it,
->>>>> correct?
-> 
-> Was following existing clk-tegra-pmc as I am not sure of reason for
-> having these clocks registered as separate mux and gate clocks.
-> 
-> Yes, PMC clocks can be registered as single clock and can use clk_ops
-> for set/get parent and enable/disable.
-> 
-> enable/disable of PMC clocks is for force-enable to force the clock to
-> run regardless of ACCEPT_REQ or INVERT_REQ.
-> 
->>>> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these clocks
->>>> should belong to PMC.
->>> Also, it should be "osc" and not "clk_m".
+>> New device tree uses clk_out_1 from pmc clock provider.
 >>
->> I followed the same parents as it were in existing clk-tegra-pmc driver.
+>> So, this patch adds fallback to extern1 in case of retrieving mclk fails
+>> to be backward compatible of new device tree with older kernels.
 >>
->> Yeah they are wrong and they should be from osc and not clk_m.
->>
->> Will fix in next version.
->>
+>> Cc: stable@vger.kernel.org
+> 
+> Why would this need to be a stable fix?  Presumably people with stable
+> kernels are using the old device tree anyway?
+> 
 
-Could you please describe the full EXTPERIPH clock topology and how the
-pinmux configuration is related to it all?
+Presumably, yes.
 
-What is internal to the Tegra chip and what are the external outputs?
-
-Is it possible to bypass PMC on T30+ for the EXTPERIPH clocks?
+At least Rob Herring is asking to maintain backwards compatibility
+because some ditros are using newer device-trees with stable kernels.
+I'm personally also tending to use the newer DTB with older kernel
+version whenever there is a need to check something using stable kernel.
+Perhaps losing sound is not very important, but will be nicer if that
+doesn't happen.
