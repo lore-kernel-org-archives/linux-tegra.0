@@ -1,44 +1,117 @@
-From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 15/17] clk: bm1880: convert to devm_platform_ioremap_resource
-Date: Mon,  9 Dec 2019 19:57:47 +0000
-Message-ID: <20191209195749.868-15-tiny.windzz@gmail.com>
-References: <20191209195749.868-1-tiny.windzz@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 08/15] ASoC: tegra: Add audio mclk control through
+ clk_out_1 and extern1
+Date: Mon, 9 Dec 2019 23:06:40 +0300
+Message-ID: <5d26e32c-a346-4d42-9872-840964512144@gmail.com>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+ <1575600535-26877-9-git-send-email-skomatineni@nvidia.com>
+ <0ce2e83b-800c-da1e-7a3c-3cf1427cfe20@gmail.com>
+ <2eeceabe-b5f0-6f9e-ff8c-4ac6167b7cc3@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
+In-Reply-To: <2eeceabe-b5f0-6f9e-ff8c-4ac6167b7cc3@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: afaerber@suse.de, manivannan.sadhasivam@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, Eugeniy.Paltsev@synopsys.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, agross@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, kgene@kernel.org, krzk@kernel.org, palmer@sifive.com, paul.walmsley@sifive.com, dinguyen@kernel.org, mripard@kernel.org, wens@csie.org, emilio@elopez.com.ar, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, matthias.bgg@gmail.com, rfontana@redhat.com, gregkh@linuxfoundation.org, t-kristo@ti.com, john@phrozen.org, tglx@linutronix.de, allison@lohutok.net, kstewart@linuxfoundation.org, swinslow@gmail.com, aisheng.dong
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org, Yangtao Li <tiny.windzz@gmail.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code.
+07.12.2019 22:20, Sowjanya Komatineni пишет:
+> 
+> On 12/7/19 6:58 AM, Dmitry Osipenko wrote:
+>> 06.12.2019 05:48, Sowjanya Komatineni пишет:
+>>> Current ASoC driver uses extern1 as cdev1 clock from Tegra30 onwards
+>>> through device tree.
+>>>
+>>> Actual audio mclk is clk_out_1 and to use PLLA for mclk rate control,
+>>> need to clk_out_1_mux parent to extern1 and extern1 parent to PLLA_OUT0.
+>>>
+>>> Currently Tegra clock driver init sets the parents and enables both
+>>> clk_out_1 and extern1 clocks. But these clocks parent and enables should
+>>> be controlled by ASoC driver.
+>>>
+>>> Clock parents can be specified in device tree using assigned-clocks
+>>> and assigned-clock-parents.
+>>>
+>>> To enable audio mclk, both clk_out_1 and extern1 clocks need to be
+>>> enabled.
+>>>
+>>> This patch configures parents for clk_out_1 and extern1 clocks if device
+>>> tree does not specify clock parents inorder to support old device tree
+>>> and controls mclk using both clk_out_1 and extern1 clocks.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   sound/soc/tegra/tegra_asoc_utils.c | 66
+>>> ++++++++++++++++++++++++++++++++++++++
+>>>   sound/soc/tegra/tegra_asoc_utils.h |  1 +
+>>>   2 files changed, 67 insertions(+)
+>>>
+>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
+>>> b/sound/soc/tegra/tegra_asoc_utils.c
+>>> index 536a578e9512..8e3a3740df7c 100644
+>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
+>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+>>> @@ -60,6 +60,7 @@ int tegra_asoc_utils_set_rate(struct
+>>> tegra_asoc_utils_data *data, int srate,
+>>>       data->set_mclk = 0;
+>>>         clk_disable_unprepare(data->clk_cdev1);
+>>> +    clk_disable_unprepare(data->clk_extern1);
+>>>       clk_disable_unprepare(data->clk_pll_a_out0);
+>>>       clk_disable_unprepare(data->clk_pll_a);
+>>>   @@ -89,6 +90,14 @@ int tegra_asoc_utils_set_rate(struct
+>>> tegra_asoc_utils_data *data, int srate,
+>>>           return err;
+>>>       }
+>>>   +    if (!IS_ERR_OR_NULL(data->clk_extern1)) {
+>>> +        err = clk_prepare_enable(data->clk_extern1);
+>>> +        if (err) {
+>>> +            dev_err(data->dev, "Can't enable extern1: %d\n", err);
+>>> +            return err;
+>>> +        }
+>>> +    }
+>>> +
+>>>       err = clk_prepare_enable(data->clk_cdev1);
+>>>       if (err) {
+>>>           dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+>>> @@ -109,6 +118,7 @@ int tegra_asoc_utils_set_ac97_rate(struct
+>>> tegra_asoc_utils_data *data)
+>>>       int err;
+>>>         clk_disable_unprepare(data->clk_cdev1);
+>>> +    clk_disable_unprepare(data->clk_extern1);
+>>>       clk_disable_unprepare(data->clk_pll_a_out0);
+>>>       clk_disable_unprepare(data->clk_pll_a);
+>>>   @@ -142,6 +152,14 @@ int tegra_asoc_utils_set_ac97_rate(struct
+>>> tegra_asoc_utils_data *data)
+>>>           return err;
+>>>       }
+>>>   +    if (!IS_ERR_OR_NULL(data->clk_extern1)) {
+>>> +        err = clk_prepare_enable(data->clk_extern1);
+>>> +        if (err) {
+>>> +            dev_err(data->dev, "Can't enable extern1: %d\n", err);
+>>> +            return err;
+>>> +        }
+>>> +    }
+>> Why this is needed given that clk_extern1 is either a child of MCLK or
+>> MCLK itself (on T20)? The child clocks are enabled when the parent is
+>> enabled.
+> 
+> For T30 and later, clk_extern1 is one of the source for clk_out_1_mux.
+> clk_extern1 is in CAR and it has its own gate and mux.
+> 
+> As audio mclk related clocks (clk_out_1, clk_out_1_mux, and extern1) are
+> moved into ASoC driver from clock driver
+> 
+> need to enable extern1 gate as well along with clk_out1 for T30 through
+> T210.
+> 
+> Just FYI, extern1 enable here happens only when data->clk_extern1 is
+> available which is for T30 onwards.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/clk/clk-bm1880.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+clk_out_1 is the parent of extern1, thus extern1 is enabled by the clk
+core whenever clk_out_1 is enabled because data->clk_cdev1=clk_out_1. An
+I missing something?
 
-diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
-index 4cd175afce9b..9fa0ca1fe833 100644
---- a/drivers/clk/clk-bm1880.c
-+++ b/drivers/clk/clk-bm1880.c
-@@ -893,16 +893,13 @@ static int bm1880_clk_probe(struct platform_device *pdev)
- 	struct bm1880_clock_data *clk_data;
- 	void __iomem *pll_base, *sys_base;
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	int num_clks, i;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pll_base = devm_ioremap_resource(&pdev->dev, res);
-+	pll_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pll_base))
- 		return PTR_ERR(pll_base);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	sys_base = devm_ioremap_resource(&pdev->dev, res);
-+	sys_base = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(sys_base))
- 		return PTR_ERR(sys_base);
- 
--- 
-2.17.1
+[snip]
