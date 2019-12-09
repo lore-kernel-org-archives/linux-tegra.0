@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 08/17] clk: imx: convert to devm_platform_ioremap_resource
-Date: Mon,  9 Dec 2019 19:57:40 +0000
-Message-ID: <20191209195749.868-8-tiny.windzz@gmail.com>
+Subject: [PATCH 09/17] clk: sifive: convert to devm_platform_ioremap_resource
+Date: Mon,  9 Dec 2019 19:57:41 +0000
+Message-ID: <20191209195749.868-9-tiny.windzz@gmail.com>
 References: <20191209195749.868-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
@@ -14,32 +14,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/imx/clk-imx8qxp-lpcg.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/clk/sifive/fu540-prci.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-index c0aff7ca6374..10ae712447c6 100644
---- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -164,7 +164,6 @@ static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
- 	struct clk_hw_onecell_data *clk_data;
- 	const struct imx8qxp_ss_lpcg *ss_lpcg;
- 	const struct imx8qxp_lpcg_data *lpcg;
+diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540-prci.c
+index 6282ee2f361c..ececee273d32 100644
+--- a/drivers/clk/sifive/fu540-prci.c
++++ b/drivers/clk/sifive/fu540-prci.c
+@@ -582,7 +582,6 @@ static int __prci_register_clocks(struct device *dev, struct __prci_data *pd)
+ static int sifive_fu540_prci_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
 -	struct resource *res;
- 	struct clk_hw **clks;
- 	void __iomem *base;
- 	int i;
-@@ -173,10 +172,7 @@ static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
- 	if (!ss_lpcg)
- 		return -ENODEV;
+ 	struct __prci_data *pd;
+ 	int r;
+ 
+@@ -590,8 +589,7 @@ static int sifive_fu540_prci_probe(struct platform_device *pdev)
+ 	if (!pd)
+ 		return -ENOMEM;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -EINVAL;
--	base = devm_ioremap(dev, res->start, resource_size(res));
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (!base)
- 		return -ENOMEM;
+-	pd->va = devm_ioremap_resource(dev, res);
++	pd->va = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pd->va))
+ 		return PTR_ERR(pd->va);
  
 -- 
 2.17.1
