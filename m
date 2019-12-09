@@ -1,32 +1,68 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: stable request: 5.4.y: SUNRPC: Avoid RPC delays when exiting suspend
-Date: Mon, 9 Dec 2019 08:46:24 +0000
-Message-ID: <370ef599-8164-170c-8ba0-f8a9082578c4@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 5/9] drm/tegra: sor: Implement system suspend/resume
+Date: Mon, 9 Dec 2019 03:40:25 +0300
+Message-ID: <8b789b1c-c44e-f169-d0ca-fff333608c28@gmail.com>
+References: <20191203161914.1312555-1-thierry.reding@gmail.com>
+ <20191203161914.1312555-5-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191203161914.1312555-5-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: Trond Myklebust <trondmy@hammerspace.com>, linux-tegra <linux-tegra@vger.kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Greg,
-
-Please can you include the following for 5.4.y. This fixes long delays
-exiting suspend when using NFS and was causing one of our suspend tests
-to fail.
-
-commit 66eb3add452aa1be65ad536da99fac4b8f620b74
-Author: Trond Myklebust <trond.myklebust@hammerspace.com>
-Date:   Tue Nov 5 09:10:54 2019 -0500
-
-    SUNRPC: Avoid RPC delays when exiting suspend
-
-
-Thanks
-Jon
-
--- 
-nvpublic
+MDMuMTIuMjAxOSAxOToxOSwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBGcm9tOiBUaGll
+cnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFVwb24gc3lzdGVtIHN1c3BlbmQs
+IG1ha2Ugc3VyZSB0aGUgKzVWIEhETUkgcmVndWxhdG9yIGlzIGRpc2FibGVkLiBUaGlzCj4gYXZv
+aWRzIHBvdGVudGlhbGx5IGxlYWtpbmcgY3VycmVudCB0byB0aGUgSERNSSBjb25uZWN0b3IuIFRo
+aXMgYWxzbwo+IG1ha2VzIHN1cmUgdGhhdCB1cG9uIHJlc3VtZSB0aGUgcmVndWxhdG9yIGlzIGVu
+YWJsZWQgYWdhaW4sIHdoaWNoIGluCj4gc29tZSBjYXNlcyBpcyBuZWNlc3NhcnkgdG8gcHJvcGVy
+bHkgcmVzdG9yZSB0aGUgc3RhdGUgb2YgdGhlIHN1cHBseSBvbgo+IHJlc3VtZS4KPiAKPiBSZXZp
+ZXdlZC1ieTogRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRlckBmZndsbC5jaD4KPiBTaWduZWQt
+b2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IC0tLQo+ICBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgfCAyNCArKysrKysrKysrKysrKysrKysrLS0tLS0KPiAg
+MSBmaWxlIGNoYW5nZWQsIDE5IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCj4gCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYyBiL2RyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9zb3IuYwo+IGluZGV4IDYxNWNiMzE5ZmE4Yi4uMjIwMGY0Y2QzOTdhIDEwMDY0NAo+IC0t
+LSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9zb3IuYwo+IEBAIC0zOTEyLDggKzM5MTIsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX3Nvcl9y
+ZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCXJldHVybiAwOwo+ICB9Cj4g
+IAo+IC0jaWZkZWYgQ09ORklHX1BNCj4gLXN0YXRpYyBpbnQgdGVncmFfc29yX3N1c3BlbmQoc3Ry
+dWN0IGRldmljZSAqZGV2KQo+ICtzdGF0aWMgaW50IHRlZ3JhX3Nvcl9ydW50aW1lX3N1c3BlbmQo
+c3RydWN0IGRldmljZSAqZGV2KQo+ICB7Cj4gIAlzdHJ1Y3QgdGVncmFfc29yICpzb3IgPSBkZXZf
+Z2V0X2RydmRhdGEoZGV2KTsKPiAgCWludCBlcnI7Cj4gQEAgLTM5MzUsNyArMzkzNCw3IEBAIHN0
+YXRpYyBpbnQgdGVncmFfc29yX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQo+ICAJcmV0dXJu
+IDA7Cj4gIH0KPiAgCj4gLXN0YXRpYyBpbnQgdGVncmFfc29yX3Jlc3VtZShzdHJ1Y3QgZGV2aWNl
+ICpkZXYpCj4gK3N0YXRpYyBpbnQgdGVncmFfc29yX3J1bnRpbWVfcmVzdW1lKHN0cnVjdCBkZXZp
+Y2UgKmRldikKPiAgewo+ICAJc3RydWN0IHRlZ3JhX3NvciAqc29yID0gZGV2X2dldF9kcnZkYXRh
+KGRldik7Cj4gIAlpbnQgZXJyOwo+IEBAIC0zOTY3LDEwICszOTY2LDI1IEBAIHN0YXRpYyBpbnQg
+dGVncmFfc29yX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpCj4gIAo+ICAJcmV0dXJuIDA7Cj4g
+IH0KPiAtI2VuZGlmCj4gKwo+ICtzdGF0aWMgaW50IHRlZ3JhX3Nvcl9zdXNwZW5kKHN0cnVjdCBk
+ZXZpY2UgKmRldikKPiArewo+ICsJc3RydWN0IHRlZ3JhX3NvciAqc29yID0gZGV2X2dldF9kcnZk
+YXRhKGRldik7Cj4gKwo+ICsJcmV0dXJuIHJlZ3VsYXRvcl9kaXNhYmxlKHNvci0+aGRtaV9zdXBw
+bHkpOwo+ICt9Cj4gKwo+ICtzdGF0aWMgaW50IHRlZ3JhX3Nvcl9yZXN1bWUoc3RydWN0IGRldmlj
+ZSAqZGV2KQo+ICt7Cj4gKwlzdHJ1Y3QgdGVncmFfc29yICpzb3IgPSBkZXZfZ2V0X2RydmRhdGEo
+ZGV2KTsKPiArCj4gKwlyZXR1cm4gcmVndWxhdG9yX2VuYWJsZShzb3ItPmhkbWlfc3VwcGx5KTsK
+PiArfQoKVGhlc2UgZnVuY3Rpb25zIHNob3VsZCBiZSBhbm5vdGF0ZWQgd2l0aCBfX21heWJlX3Vu
+dXNlZCBhdHRyaWJ1dGUuCgo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9vcHMgdGVncmFf
+c29yX3BtX29wcyA9IHsKPiAtCVNFVF9SVU5USU1FX1BNX09QUyh0ZWdyYV9zb3Jfc3VzcGVuZCwg
+dGVncmFfc29yX3Jlc3VtZSwgTlVMTCkKPiArCVNFVF9SVU5USU1FX1BNX09QUyh0ZWdyYV9zb3Jf
+cnVudGltZV9zdXNwZW5kLCB0ZWdyYV9zb3JfcnVudGltZV9yZXN1bWUsCj4gKwkJCSAgIE5VTEwp
+Cj4gKwlTRVRfU1lTVEVNX1NMRUVQX1BNX09QUyh0ZWdyYV9zb3Jfc3VzcGVuZCwgdGVncmFfc29y
+X3Jlc3VtZSkKPiAgfTsKPiAgCj4gIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgdGVncmFfc29yX2Ry
+aXZlciA9IHsKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bA==
