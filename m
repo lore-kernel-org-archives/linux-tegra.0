@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 16/17] clk: actions: convert to devm_platform_ioremap_resource
-Date: Mon,  9 Dec 2019 19:57:48 +0000
-Message-ID: <20191209195749.868-16-tiny.windzz@gmail.com>
+Subject: [PATCH 15/17] clk: bm1880: convert to devm_platform_ioremap_resource
+Date: Mon,  9 Dec 2019 19:57:47 +0000
+Message-ID: <20191209195749.868-15-tiny.windzz@gmail.com>
 References: <20191209195749.868-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
@@ -14,24 +14,31 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/actions/owl-common.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/clk/clk-bm1880.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-index 4de97cc7cb54..9e98e8a92ad7 100644
---- a/drivers/clk/actions/owl-common.c
-+++ b/drivers/clk/actions/owl-common.c
-@@ -43,10 +43,8 @@ int owl_clk_regmap_init(struct platform_device *pdev,
- {
- 	void __iomem *base;
- 	struct regmap *regmap;
+diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
+index 4cd175afce9b..9fa0ca1fe833 100644
+--- a/drivers/clk/clk-bm1880.c
++++ b/drivers/clk/clk-bm1880.c
+@@ -893,16 +893,13 @@ static int bm1880_clk_probe(struct platform_device *pdev)
+ 	struct bm1880_clock_data *clk_data;
+ 	void __iomem *pll_base, *sys_base;
+ 	struct device *dev = &pdev->dev;
 -	struct resource *res;
+ 	int num_clks, i;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+-	pll_base = devm_ioremap_resource(&pdev->dev, res);
++	pll_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pll_base))
+ 		return PTR_ERR(pll_base);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	sys_base = devm_ioremap_resource(&pdev->dev, res);
++	sys_base = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(sys_base))
+ 		return PTR_ERR(sys_base);
  
 -- 
 2.17.1
