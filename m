@@ -1,15 +1,16 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: Re: [PATCH 01/18] dt-bindings: phy: tegra-xusb: Add usb-role-switch
-Date: Mon, 9 Dec 2019 10:15:29 +0530
-Message-ID: <59527c41-7388-b6ae-f49e-0f8eb1407063@nvidia.com>
+Subject: Re: [PATCH 05/18] phy: tegra: xusb: Add support to get companion USB
+ 3 port
+Date: Mon, 9 Dec 2019 11:57:51 +0530
+Message-ID: <9c93d4ff-29aa-0a59-c667-643939c46c5a@nvidia.com>
 References: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
- <1575629421-7039-2-git-send-email-nkristam@nvidia.com>
- <20191206144905.GC2085684@ulmo>
+ <1575629421-7039-6-git-send-email-nkristam@nvidia.com>
+ <20191206145740.GE2085684@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191206144905.GC2085684@ulmo>
+In-Reply-To: <20191206145740.GE2085684@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
@@ -18,72 +19,71 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 
-> On 06-12-2019 20:19, Thierry Reding wrote:
-> 
-> On Fri, Dec 06, 2019 at 04:20:04PM +0530, Nagarjuna Kristam wrote:
->> Add usb-role-switch property for Tegra210 and Tegra186 platforms. This
->> entry is used by XUSB pad controller driver to register for role changes
->> for OTG/Peripheral capable USB 2 ports.
+On 06-12-2019 20:27, Thierry Reding wrote:
+> On Fri, Dec 06, 2019 at 04:20:08PM +0530, Nagarjuna Kristam wrote:
+>> Tegra XUSB host, device mode driver requires the USB 3 companion port
+>> number for corresponding USB 2 port. Add API to retrieve the same.
 >>
 >> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 >> ---
->>  Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt | 4 ++++
->>  1 file changed, 4 insertions(+)
+>>  drivers/phy/tegra/xusb.c       | 21 +++++++++++++++++++++
+>>  include/linux/phy/tegra/xusb.h |  2 ++
+>>  2 files changed, 23 insertions(+)
 >>
->> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> index 9fb682e..0f19ed6 100644
->> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> @@ -179,6 +179,10 @@ Optional properties:
->>    is internal. In the absence of this property the port is considered to be
->>    external.
->>  - vbus-supply: phandle to a regulator supplying the VBUS voltage.
->> +- usb-role-switch: boolean property to indicate use of USB Role Switch.
-> That first sentence here seems a bit useless and vague. It doesn't
-> really convey anything other than the name already does. Perhaps
-> something like:
-> 
-> 	Boolean property to indicate that the port support OTG. If
-> 	present, the port supports switching between USB host and
-> 	peripheral roles.
-> 
-Will update this accordingly.
-
->> +  This property is MUST for OTG,Peripheral capable USB 2 ports. Connector
-> If this is mandatory, why not add it to the list of required properties?
-> I guess since it's only mandatory for ports that support OTG, perhaps we
-> could add a section "Required properties for OTG capable ports:" or
-> something like that? Then you can also omit the second sentence in the
-> description.
-> 
-Will add section "Required properties for OTG/Peripheral capable ports:" under ports
-and add usb-role-switch there.
-
->> +  should be added as subnode, see connector.txt. vbus-gpio in connector is
-> There's no file called "connector.txt". Are you referring to
-> 
-> 	Documentation/devicetree/bindings/connector/usb-connector.txt
-> 
-> ? Also, that file calls the property "vbus-gpios" and lists it as
-> optional. What would happen if we don't specify it? Doesn't that just
-> mean that we can't support role detection?
-> 
-After going through other bindings found usb/usb-conn-gpio.txt is the one that should
-be referred. Will update accordingly. All details on gpios are documented clearly
-in usb/usb-conn-gpio.txt.
-
->> +  Mandatory.
-> "mandatory"
+>> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+>> index 4c86c99..2e73cf8 100644
+>> --- a/drivers/phy/tegra/xusb.c
+>> +++ b/drivers/phy/tegra/xusb.c
+>> @@ -1254,6 +1254,27 @@ int tegra_phy_xusb_utmi_port_reset(struct phy *phy)
+>>  }
+>>  EXPORT_SYMBOL_GPL(tegra_phy_xusb_utmi_port_reset);
+>>  
+>> +int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
+>> +				    unsigned int port)
+>> +{
+>> +	struct tegra_xusb_usb2_port *usb2 = tegra_xusb_find_usb2_port(padctl,
+>> +								      port);
+>> +	struct tegra_xusb_usb3_port *usb3;
+>> +	int i;
+>> +
+>> +	if (!usb2)
+>> +		return -EINVAL;
+>> +
+>> +	for (i = 0; i < padctl->soc->ports.usb3.count; i++) {
+>> +		usb3 = tegra_xusb_find_usb3_port(padctl, i);
+>> +		if (usb3 && usb3->port == usb2->base.index)
+>> +			return usb3->base.index;
+>> +	}
+>> +
+>> +	return -1;
+> Since you return -EINVAL above, callers will have to interpret negative
+> return values as standard errors, which would make this EPERM. That does
+> not really make sense. Perhaps something like -ENODEV would be more
+> appropriate in this case?
 > 
 > Thierry
 > 
->>  
-Will update.
+Yes, making -ENODEV instead of -1 makes it inline with generic error codes.
+Will update accordingly.
 
-Thanks,
-Nagarjuna
->>  ULPI ports:
->>  -----------
+-Nagarjuna
+>> +}
+>> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_get_usb3_companion);
+>> +
+>>  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+>>  MODULE_DESCRIPTION("Tegra XUSB Pad Controller driver");
+>>  MODULE_LICENSE("GPL v2");
+>> diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xusb.h
+>> index 1235865..71d9569 100644
+>> --- a/include/linux/phy/tegra/xusb.h
+>> +++ b/include/linux/phy/tegra/xusb.h
+>> @@ -21,4 +21,6 @@ int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
+>>  int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
+>>  					bool val);
+>>  int tegra_phy_xusb_utmi_port_reset(struct phy *phy);
+>> +int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
+>> +					 unsigned int port);
+>>  #endif /* PHY_TEGRA_XUSB_H */
 >> -- 
 >> 2.7.4
 >>
