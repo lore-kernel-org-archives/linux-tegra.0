@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 10/17] clk: axi-clkgen: convert to devm_platform_ioremap_resource
-Date: Mon,  9 Dec 2019 19:57:42 +0000
-Message-ID: <20191209195749.868-10-tiny.windzz@gmail.com>
+Subject: [PATCH 11/17] clk: milbeaut: convert to devm_platform_ioremap_resource
+Date: Mon,  9 Dec 2019 19:57:43 +0000
+Message-ID: <20191209195749.868-11-tiny.windzz@gmail.com>
 References: <20191209195749.868-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
@@ -14,30 +14,28 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/clk-axi-clkgen.c | 4 +---
+ drivers/clk/clk-milbeaut.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 96f351785b41..8d0c32e81e78 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -412,7 +412,6 @@ static int axi_clkgen_probe(struct platform_device *pdev)
- 	struct clk_init_data init;
- 	const char *parent_names[2];
- 	const char *clk_name;
--	struct resource *mem;
- 	unsigned int i;
- 	int ret;
+diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
+index 80b9d78493bc..05f09fbfb80a 100644
+--- a/drivers/clk/clk-milbeaut.c
++++ b/drivers/clk/clk-milbeaut.c
+@@ -560,14 +560,12 @@ static void m10v_reg_mux_pre(const struct m10v_clk_mux_factors *factors,
+ static int m10v_clk_probe(struct platform_device *pdev)
+ {
+ 	int id;
+-	struct resource *res;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	void __iomem *base;
+ 	const char *parent_name;
  
-@@ -427,8 +426,7 @@ static int axi_clkgen_probe(struct platform_device *pdev)
- 	if (!axi_clkgen)
- 		return -ENOMEM;
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	axi_clkgen->base = devm_ioremap_resource(&pdev->dev, mem);
-+	axi_clkgen->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(axi_clkgen->base))
- 		return PTR_ERR(axi_clkgen->base);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
  
 -- 
 2.17.1
