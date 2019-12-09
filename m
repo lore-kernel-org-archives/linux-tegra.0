@@ -1,91 +1,135 @@
-From: Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH 08/17] clk: imx: convert to devm_platform_ioremap_resource
-Date: Mon, 9 Dec 2019 20:44:39 +0000
-Message-ID: <VI1PR04MB7023BD6E46B6DEEBBB762060EE580@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <20191209195749.868-1-tiny.windzz@gmail.com>
- <20191209195749.868-8-tiny.windzz@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Mon, 9 Dec 2019 12:46:47 -0800
+Message-ID: <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+ <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
+ <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
+ <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
+ <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
+ <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
+ <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
+ <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+ <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
- <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
-List-Post: <mailto:linux-riscv@lists.infradead.org>
-List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
- <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
-Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
-To: Yangtao Li <tiny.windzz@gmail.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>
-Cc: "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "heiko@sntech.de" <heiko@sntech.de>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "chunhui.dai@mediatek.com" <chunhui.dai@mediatek.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "palmer@sifive.com" <palmer@sifive.com>, "nsekhar@ti.com" <nsekhar@ti.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "rfontana@redhat.com" <rfontana@redhat.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "festevam@gmail.com" <festevam@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, john@p
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09.12.2019 21:58, Yangtao Li wrote:=0A=
-> Use devm_platform_ioremap_resource() to simplify code.=0A=
-> =0A=
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>=0A=
-> ---=0A=
->   drivers/clk/imx/clk-imx8qxp-lpcg.c | 6 +-----=0A=
->   1 file changed, 1 insertion(+), 5 deletions(-)=0A=
-> =0A=
-> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx=
-8qxp-lpcg.c=0A=
-> index c0aff7ca6374..10ae712447c6 100644=0A=
-> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c=0A=
-> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c=0A=
-> @@ -164,7 +164,6 @@ static int imx8qxp_lpcg_clk_probe(struct platform_dev=
-ice *pdev)=0A=
->   	struct clk_hw_onecell_data *clk_data;=0A=
->   	const struct imx8qxp_ss_lpcg *ss_lpcg;=0A=
->   	const struct imx8qxp_lpcg_data *lpcg;=0A=
-> -	struct resource *res;=0A=
->   	struct clk_hw **clks;=0A=
->   	void __iomem *base;=0A=
->   	int i;=0A=
-> @@ -173,10 +172,7 @@ static int imx8qxp_lpcg_clk_probe(struct platform_de=
-vice *pdev)=0A=
->   	if (!ss_lpcg)=0A=
->   		return -ENODEV;=0A=
->   =0A=
-> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);=0A=
-> -	if (!res)=0A=
-> -		return -EINVAL;=0A=
-> -	base =3D devm_ioremap(dev, res->start, resource_size(res));=0A=
-> +	base =3D devm_platform_ioremap_resource(pdev, 0);=0A=
->   	if (!base)=0A=
->   		return -ENOMEM;=0A=
-=0A=
-This breaks imx8qxp-mek boot by causing most peripherals (like uart) to =0A=
-fail to probe.=0A=
-=0A=
-The old and new paths are not equivalent: devm_platform_ioremap_resource=0A=
-calls devm_ioremap_resource which differs from devm_ioremap by also =0A=
-calling devm_request_mem_region.=0A=
-=0A=
-This prevents other mappings in the area and imx8qxp-lpcg nodes map =0A=
-whole hardware "subsystems" and overlap most peripherals. For example:=0A=
-=0A=
-                  adma_lpcg: clock-controller@59000000 {=0A=
-                          compatible =3D "fsl,imx8qxp-lpcg-adma";=0A=
-                          reg =3D <0x59000000 0x2000000>;=0A=
-                          #clock-cells =3D <1>;=0A=
-		};=0A=
-=0A=
-                 adma_lpuart0: serial@5a060000 {=0A=
-			reg =3D <0x5a060000 0x1000>;=0A=
-			...=0A=
-		};=0A=
-=0A=
-I don't know if this issue affects any other platforms (imx8 lpcg =0A=
-bindings are unusual) but if you found this with an automated tool =0A=
-perhaps it should be adjusted?=0A=
-=0A=
-By my count it's the 4th time this incorrect cleanup was posted.=0A=
-=0A=
-Previously: https://lkml.org/lkml/2019/12/4/487=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+
+On 12/9/19 12:12 PM, Dmitry Osipenko wrote:
+> 08.12.2019 00:36, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 12/7/19 11:59 AM, Sowjanya Komatineni wrote:
+>>> On 12/7/19 8:00 AM, Dmitry Osipenko wrote:
+>>>> 07.12.2019 18:53, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> 07.12.2019 18:47, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> 07.12.2019 17:28, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
+=82:
+>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out_3
+>>>>>>>> with
+>>>>>>>> mux and gate for each of these clocks.
+>>>>>>>>
+>>>>>>>> Currently these PMC clocks are registered by Tegra clock driver
+>>>>>>>> using
+>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base address
+>>>>>>>> and register offsets and PMC programming for these clocks happens
+>>>>>>>> through direct PMC access by the clock driver.
+>>>>>>>>
+>>>>>>>> With this, when PMC is in secure mode any direct PMC access from t=
+he
+>>>>>>>> non-secure world does not go through and these clocks will not be
+>>>>>>>> functional.
+>>>>>>>>
+>>>>>>>> This patch adds these clocks registration with PMC as a clock
+>>>>>>>> provider
+>>>>>>>> for these clocks. clk_ops callback implementations for these clock=
+s
+>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
+>>>>>>>> programming
+>>>>>>>> in secure mode and non-secure mode.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>> ---
+>>>>>> [snip]
+>>>>>>
+>>>>>>>> +
+>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops =3D {
+>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
+>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
+>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
+>>>>>>>> +};
+>>>>>>> What's the benefit of separating GATE from the MUX?
+>>>>>>>
+>>>>>>> I think it could be a single clock.
+>>>>>> According to TRM:
+>>>>>>
+>>>>>> 1. GATE and MUX are separate entities.
+>>>>>>
+>>>>>> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram in TRM=
+).
+>>>>>>
+>>>>>> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable" it,
+>>>>>> correct?
+>> Was following existing clk-tegra-pmc as I am not sure of reason for
+>> having these clocks registered as separate mux and gate clocks.
+>>
+>> Yes, PMC clocks can be registered as single clock and can use clk_ops
+>> for set/get parent and enable/disable.
+>>
+>> enable/disable of PMC clocks is for force-enable to force the clock to
+>> run regardless of ACCEPT_REQ or INVERT_REQ.
+>>
+>>>>> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these clocks
+>>>>> should belong to PMC.
+>>>> Also, it should be "osc" and not "clk_m".
+>>> I followed the same parents as it were in existing clk-tegra-pmc driver=
+.
+>>>
+>>> Yeah they are wrong and they should be from osc and not clk_m.
+>>>
+>>> Will fix in next version.
+>>>
+> Could you please describe the full EXTPERIPH clock topology and how the
+> pinmux configuration is related to it all?
+>
+> What is internal to the Tegra chip and what are the external outputs?
+>
+> Is it possible to bypass PMC on T30+ for the EXTPERIPH clocks?
+
+PMC CLK1/2/3 possible sources are OSC_DIV1, OSC_DIV2, OSC_DIV4,=20
+EXTPERIPH from CAR.
+
+OSC_DIV1/2/4 are with internal dividers at the OSC Pads
+
+EXTPERIPH is from CAR and it has reset and enable controls along with=20
+clock source selections to choose one of the PLLA_OUT0, CLK_S,=20
+PLLP_OUT0, CLK_M, PLLE_OUT0
+
+So, PMC CLK1/2/4 possible parents are OSC_DIV1, OSC_DIV2, OSC_DIV4, EXTERN.
+
+
+CLK1/2/3 also has Pinmux to route EXTPERIPH output on to these pins.
+
+
+When EXTERN output clock is selected for these PMC clocks thru=20
+CLKx_SRC_SEL, output clock is from driver by EXTPERIPH from CAR via=20
+Pinmux logic or driven as per CLKx_SRC_SEL bypassing pinmux based on=20
+CLKx_ACCEPT_REQ bit.
+
+
+PMC Clock control register has bit CLKx_ACCEPT_REQ
+When CLKx_ACCEPT_REQ =3D 0, output clock driver is from by EXTPERIPH=20
+through the pinmux
+When CLKx_ACCEPT_REQ =3D 1, output clock is based on CLKx_SRC_SEL bits=20
+(OSC_DIV1/2/4 and EXTPERIPH clock bypassing the pinmux)
+
+FORCE_EN bit in PMC CLock control register forces the clock to run=20
+regardless of this.
