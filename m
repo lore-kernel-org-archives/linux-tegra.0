@@ -1,54 +1,69 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: Build regressions/improvements in v5.5-rc1
-Date: Mon, 9 Dec 2019 12:02:19 +0100
-Message-ID: <CAMuHMdV+4Q2atJUPsYuc+UFxyoh1fscQL7aLUp4CWrb7=U706g@mail.gmail.com>
-References: <20191209105613.2491-1-geert@linux-m68k.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v3 0/9] drm/nouveau: Various fixes for GP10B
+Date: Mon,  9 Dec 2019 12:59:56 +0100
+Message-ID: <20191209120005.2254786-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191209105613.2491-1-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ben Skeggs <bskeggs@redhat.com>
+Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 11:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Below is the list of build error/warning regressions/improvements in
-> v5.5-rc1[1] compared to v5.4[2].
->
-> Summarized:
->   - build errors: +2/-8
->   - build warnings: +84/-87
->
-> Happy fixing! ;-)
->
-> Thanks to the linux-next team for providing the build service.
->
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/e42617b825f8073569da76dc4510bfa019b1c35a/ (all 232 configs)
-> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/219d54332a09e8d8741c1e1982f5eae56099de85/ (all 232 configs)
->
->
-> *** ERRORS ***
->
-> 2 error regressions:
->   + error: "clk_set_min_rate" [drivers/devfreq/tegra30-devfreq.ko] undefined!:  => N/A
->   + error: tegra30-devfreq.c: undefined reference to `clk_set_min_rate':  => .text+0xcc8)
-
-sh-all{mod,yes}config
-
-Legacy non-CCF platform do not provide clk_set_min_rate(), so this needs
-a dependency on CCF.
-
-BTW, it seems this was already known back in June...
-https://lore.kernel.org/linux-pm/5301c593-97e1-db4e-067b-0522537b55d9@gmail.com/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkhpIEJlbiwKCmhlcmUn
+cyBhIHJldmlzZWQgc3Vic2V0IG9mIHRoZSBwYXRjaGVzIEkgaGFkIHNlbnQgb3V0IGEgY291cGxl
+IG9mIHdlZWtzCmFnby4gSSd2ZSByZXdvcmtlZCB0aGUgQkFSMiBhY2Nlc3NlcyBpbiB0aGUgd2F5
+IHRoYXQgeW91IGhhZCBzdWdnZXN0ZWQsCndoaWNoIGF0IGxlYXN0IGZvciBHUDEwQiB0dXJuZWQg
+b3V0IHRvIGJlIGZhaXJseSB0cml2aWFsIHRvIGRvLiBJIGhhdmUKbm90IGxvb2tlZCBpbiBkZXRh
+aWwgYXQgdGhpcyBmb3IgR1YxMUIgeWV0LCBidXQgYSBjdXJzb3J5IGxvb2sgc2hvd2VkCnRoYXQg
+QkFSMiBpcyBhY2Nlc3NlZCBpbiBtb3JlIHBsYWNlcywgc28gdGhlIGVxdWl2YWxlbnQgZm9yIEdW
+MTFCIG1pZ2h0CmJlIGEgYml0IG1vcmUgaW52b2x2ZWQuCgpPdGhlciB0aGFuIHRoYXQsIG5vdCBh
+IGxvdCBoYXMgY2hhbmdlZCBzaW5jZSB0aGVuLiBJJ3ZlIGFkZGVkIGEgY291cGxlCm9mIHByZWN1
+cnNvcnkgcGF0Y2hlcyB0byBhZGQgSU9NTVUgaGVscGVyIGR1bW1pZXMgZm9yIHRoZSBjYXNlIHdo
+ZXJlCklPTU1VIGlzIGRpc2FibGVkIChhcyBzdWdnZXN0ZWQgYnkgQmVuIERvb2tzKS4KCkpvZXJn
+IGhhcyBnaXZlbiBhbiBBY2tlZC1ieSBvbiB0aGUgZmlyc3QgdHdvIHBhdGNoZXMsIHNvIEkgdGhp
+bmsgaXQnZCBiZQplYXNpZXN0IGlmIHlvdSBwaWNrZWQgdGhvc2UgdXAgaW50byB0aGUgTm91dmVh
+dSB0cmVlIGJlY2F1c2Ugb2YgdGhlCmJ1aWxkIGRlcGVuZGVuY3kgb2Ygc3Vic2VxdWVudCBwYXRj
+aGVzIG9uIHRoZW0uCgpUaGllcnJ5CgpUaGllcnJ5IFJlZGluZyAoOSk6CiAgaW9tbXU6IERvY3Vt
+ZW50IGlvbW11X2Z3c3BlYzo6ZmxhZ3MgZmllbGQKICBpb21tdTogQWRkIGR1bW15IGRldl9pb21t
+dV9md3NwZWNfZ2V0KCkgaGVscGVyCiAgZHJtL25vdXZlYXU6IGZhdWx0OiBBZGQgc3VwcG9ydCBm
+b3IgR1AxMEIKICBkcm0vbm91dmVhdTogdGVncmE6IERvIG5vdCB0cnkgdG8gZGlzYWJsZSBQQ0kg
+ZGV2aWNlCiAgZHJtL25vdXZlYXU6IHRlZ3JhOiBBdm9pZCBwdWxzaW5nIHJlc2V0IHR3aWNlCiAg
+ZHJtL25vdXZlYXU6IHRlZ3JhOiBTZXQgY2xvY2sgcmF0ZSBpZiBub3Qgc2V0CiAgZHJtL25vdXZl
+YXU6IHNlY2Jvb3Q6IFJlYWQgV1BSIGNvbmZpZ3VyYXRpb24gZnJvbSBHUFUgcmVnaXN0ZXJzCiAg
+ZHJtL25vdXZlYXU6IGdwMTBiOiBBZGQgY3VzdG9tIEwyIGNhY2hlIGltcGxlbWVudGF0aW9uCiAg
+ZHJtL25vdXZlYXU6IGdwMTBiOiBVc2UgY29ycmVjdCBjb3B5IGVuZ2luZQoKIC4uLi9kcm0vbm91
+dmVhdS9pbmNsdWRlL252a20vc3ViZGV2L2ZhdWx0LmggICB8ICAxICsKIC4uLi9ncHUvZHJtL25v
+dXZlYXUvaW5jbHVkZS9udmttL3N1YmRldi9sdGMuaCB8ICAxICsKIGRyaXZlcnMvZ3B1L2RybS9u
+b3V2ZWF1L25vdXZlYXVfZHJtLmMgICAgICAgICB8ICAzICstCiAuLi4vZ3B1L2RybS9ub3V2ZWF1
+L252a20vZW5naW5lL2RldmljZS9iYXNlLmMgfCAgNiArLQogLi4uL2RybS9ub3V2ZWF1L252a20v
+ZW5naW5lL2RldmljZS90ZWdyYS5jICAgIHwgMjQgKysrKy0tCiAuLi4vZ3B1L2RybS9ub3V2ZWF1
+L252a20vc3ViZGV2L2ZhdWx0L0tidWlsZCAgfCAgMSArCiAuLi4vZ3B1L2RybS9ub3V2ZWF1L252
+a20vc3ViZGV2L2ZhdWx0L2Jhc2UuYyAgfCAgMiArLQogLi4uL2dwdS9kcm0vbm91dmVhdS9udmtt
+L3N1YmRldi9mYXVsdC9ncDEwMC5jIHwgMTcgKystLQogLi4uL2dwdS9kcm0vbm91dmVhdS9udmtt
+L3N1YmRldi9mYXVsdC9ncDEwYi5jIHwgNTMgKysrKysrKysrKysrCiAuLi4vZ3B1L2RybS9ub3V2
+ZWF1L252a20vc3ViZGV2L2ZhdWx0L2d2MTAwLmMgfCAgMSArCiAuLi4vZ3B1L2RybS9ub3V2ZWF1
+L252a20vc3ViZGV2L2ZhdWx0L3ByaXYuaCAgfCAxMCArKysKIC4uLi9ncHUvZHJtL25vdXZlYXUv
+bnZrbS9zdWJkZXYvbHRjL0tidWlsZCAgICB8ICAxICsKIC4uLi9ncHUvZHJtL25vdXZlYXUvbnZr
+bS9zdWJkZXYvbHRjL2dwMTBiLmMgICB8IDY1ICsrKysrKysrKysrKysrKwogLi4uL2dwdS9kcm0v
+bm91dmVhdS9udmttL3N1YmRldi9sdGMvcHJpdi5oICAgIHwgIDIgKwogLi4uL2RybS9ub3V2ZWF1
+L252a20vc3ViZGV2L3NlY2Jvb3QvZ20yMDAuaCAgIHwgIDIgKy0KIC4uLi9kcm0vbm91dmVhdS9u
+dmttL3N1YmRldi9zZWNib290L2dtMjBiLmMgICB8IDgxICsrKysrKysrKysrKy0tLS0tLS0KIC4u
+Li9kcm0vbm91dmVhdS9udmttL3N1YmRldi9zZWNib290L2dwMTBiLmMgICB8ICA0ICstCiBpbmNs
+dWRlL2xpbnV4L2lvbW11LmggICAgICAgICAgICAgICAgICAgICAgICAgfCA0NyArKysrKystLS0t
+LQogMTggZmlsZXMgY2hhbmdlZCwgMjQ5IGluc2VydGlvbnMoKyksIDcyIGRlbGV0aW9ucygtKQog
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2Zh
+dWx0L2dwMTBiLmMKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9u
+dmttL3N1YmRldi9sdGMvZ3AxMGIuYwoKLS0gCjIuMjMuMAoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
