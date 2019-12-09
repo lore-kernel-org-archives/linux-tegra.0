@@ -1,32 +1,54 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: stable request: 5.4.y: SUNRPC: Avoid RPC delays when exiting
- suspend
-Date: Mon, 9 Dec 2019 10:47:05 +0100
-Message-ID: <20191209094705.GC932866@kroah.com>
-References: <370ef599-8164-170c-8ba0-f8a9082578c4@nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: Build regressions/improvements in v5.5-rc1
+Date: Mon, 9 Dec 2019 12:02:19 +0100
+Message-ID: <CAMuHMdV+4Q2atJUPsYuc+UFxyoh1fscQL7aLUp4CWrb7=U706g@mail.gmail.com>
+References: <20191209105613.2491-1-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <370ef599-8164-170c-8ba0-f8a9082578c4@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org, Trond Myklebust <trondmy@hammerspace.com>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191209105613.2491-1-geert@linux-m68k.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 08:46:24AM +0000, Jon Hunter wrote:
-> Hi Greg,
-> 
-> Please can you include the following for 5.4.y. This fixes long delays
-> exiting suspend when using NFS and was causing one of our suspend tests
-> to fail.
-> 
-> commit 66eb3add452aa1be65ad536da99fac4b8f620b74
-> Author: Trond Myklebust <trond.myklebust@hammerspace.com>
-> Date:   Tue Nov 5 09:10:54 2019 -0500
-> 
->     SUNRPC: Avoid RPC delays when exiting suspend
+On Mon, Dec 9, 2019 at 11:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Below is the list of build error/warning regressions/improvements in
+> v5.5-rc1[1] compared to v5.4[2].
+>
+> Summarized:
+>   - build errors: +2/-8
+>   - build warnings: +84/-87
+>
+> Happy fixing! ;-)
+>
+> Thanks to the linux-next team for providing the build service.
+>
+> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/e42617b825f8073569da76dc4510bfa019b1c35a/ (all 232 configs)
+> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/219d54332a09e8d8741c1e1982f5eae56099de85/ (all 232 configs)
+>
+>
+> *** ERRORS ***
+>
+> 2 error regressions:
+>   + error: "clk_set_min_rate" [drivers/devfreq/tegra30-devfreq.ko] undefined!:  => N/A
+>   + error: tegra30-devfreq.c: undefined reference to `clk_set_min_rate':  => .text+0xcc8)
 
-Now queued up, thanks!
+sh-all{mod,yes}config
 
-greg k-h
+Legacy non-CCF platform do not provide clk_set_min_rate(), so this needs
+a dependency on CCF.
+
+BTW, it seems this was already known back in June...
+https://lore.kernel.org/linux-pm/5301c593-97e1-db4e-067b-0522537b55d9@gmail.com/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
