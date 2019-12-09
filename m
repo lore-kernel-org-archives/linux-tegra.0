@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 02/17] clk: qcom: convert to devm_platform_ioremap_resource
-Date: Mon,  9 Dec 2019 19:57:34 +0000
-Message-ID: <20191209195749.868-2-tiny.windzz@gmail.com>
+Subject: [PATCH 04/17] clk: mediatek: convert to devm_platform_ioremap_resource
+Date: Mon,  9 Dec 2019 19:57:36 +0000
+Message-ID: <20191209195749.868-4-tiny.windzz@gmail.com>
 References: <20191209195749.868-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
@@ -14,103 +14,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/qcom/a53-pll.c  | 4 +---
- drivers/clk/qcom/common.c   | 8 ++------
- drivers/clk/qcom/hfpll.c    | 4 +---
- drivers/clk/qcom/kpss-xcc.c | 4 +---
- 4 files changed, 5 insertions(+), 15 deletions(-)
+ drivers/clk/mediatek/clk-mt2701.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-index 45cfc57bff92..42d14b6861d4 100644
---- a/drivers/clk/qcom/a53-pll.c
-+++ b/drivers/clk/qcom/a53-pll.c
-@@ -38,7 +38,6 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct regmap *regmap;
--	struct resource *res;
- 	struct clk_pll *pll;
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index 695be0f77427..a6aea6646118 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -668,9 +668,8 @@ static int mtk_topckgen_init(struct platform_device *pdev)
+ 	struct clk_onecell_data *clk_data;
  	void __iomem *base;
- 	struct clk_init_data init = { };
-@@ -48,8 +47,7 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
- 	if (!pll)
- 		return -ENOMEM;
+ 	struct device_node *node = pdev->dev.of_node;
+-	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 60d2a78d1395..0932e019dd12 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -73,11 +73,9 @@ struct regmap *
- qcom_cc_map(struct platform_device *pdev, const struct qcom_cc_desc *desc)
- {
- 	void __iomem *base;
--	struct resource *res;
- 	struct device *dev = &pdev->dev;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return ERR_CAST(base);
- 
-@@ -313,11 +311,9 @@ int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
- 			   const struct qcom_cc_desc *desc)
- {
- 	struct regmap *regmap;
--	struct resource *res;
- 	void __iomem *base;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
 -	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, index);
- 	if (IS_ERR(base))
- 		return -ENOMEM;
- 
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-index a6de7101430c..de7df848dcfb 100644
---- a/drivers/clk/qcom/hfpll.c
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -47,7 +47,6 @@ static const struct regmap_config hfpll_regmap_config = {
- 
- static int qcom_hfpll_probe(struct platform_device *pdev)
- {
--	struct resource *res;
- 	struct device *dev = &pdev->dev;
- 	void __iomem *base;
- 	struct regmap *regmap;
-@@ -62,8 +61,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
- 	if (!h)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
 +	base = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(base))
  		return PTR_ERR(base);
  
-diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
-index 8590b5edd19d..4fec1f9142b8 100644
---- a/drivers/clk/qcom/kpss-xcc.c
-+++ b/drivers/clk/qcom/kpss-xcc.c
-@@ -33,7 +33,6 @@ static int kpss_xcc_driver_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *id;
- 	struct clk *clk;
--	struct resource *res;
+@@ -889,9 +888,8 @@ static int mtk_pericfg_init(struct platform_device *pdev)
  	void __iomem *base;
- 	const char *name;
+ 	int r;
+ 	struct device_node *node = pdev->dev.of_node;
+-	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
  
-@@ -41,8 +40,7 @@ static int kpss_xcc_driver_probe(struct platform_device *pdev)
- 	if (!id)
- 		return -ENODEV;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	base = devm_ioremap_resource(&pdev->dev, res);
 +	base = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(base))
