@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 11/17] clk: milbeaut: convert to devm_platform_ioremap_resource
-Date: Mon,  9 Dec 2019 19:57:43 +0000
-Message-ID: <20191209195749.868-11-tiny.windzz@gmail.com>
+Subject: [PATCH 14/17] clk: axm5516: convert to devm_platform_ioremap_resource
+Date: Mon,  9 Dec 2019 19:57:46 +0000
+Message-ID: <20191209195749.868-14-tiny.windzz@gmail.com>
 References: <20191209195749.868-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
@@ -14,22 +14,22 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/clk-milbeaut.c | 4 +---
+ drivers/clk/clk-axm5516.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
-index 80b9d78493bc..05f09fbfb80a 100644
---- a/drivers/clk/clk-milbeaut.c
-+++ b/drivers/clk/clk-milbeaut.c
-@@ -560,14 +560,12 @@ static void m10v_reg_mux_pre(const struct m10v_clk_mux_factors *factors,
- static int m10v_clk_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/clk-axm5516.c b/drivers/clk/clk-axm5516.c
+index 07e80fe8c310..3ab02b62b645 100644
+--- a/drivers/clk/clk-axm5516.c
++++ b/drivers/clk/clk-axm5516.c
+@@ -541,14 +541,12 @@ MODULE_DEVICE_TABLE(of, axmclk_match_table);
+ static int axmclk_probe(struct platform_device *pdev)
  {
- 	int id;
--	struct resource *res;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
  	void __iomem *base;
- 	const char *parent_name;
+-	struct resource *res;
+ 	int i, ret;
+ 	struct device *dev = &pdev->dev;
+ 	struct regmap *regmap;
+ 	size_t num_clks;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	base = devm_ioremap_resource(dev, res);
