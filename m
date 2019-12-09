@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 06/17] clk: tegra: convert to devm_platform_ioremap_resource
-Date: Mon,  9 Dec 2019 19:57:38 +0000
-Message-ID: <20191209195749.868-6-tiny.windzz@gmail.com>
+Subject: [PATCH 08/17] clk: imx: convert to devm_platform_ioremap_resource
+Date: Mon,  9 Dec 2019 19:57:40 +0000
+Message-ID: <20191209195749.868-8-tiny.windzz@gmail.com>
 References: <20191209195749.868-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
@@ -14,76 +14,32 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/tegra/clk-dfll.c | 34 ++++------------------------------
- 1 file changed, 4 insertions(+), 30 deletions(-)
+ drivers/clk/imx/clk-imx8qxp-lpcg.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index c051d92c2bbf..070a2957e119 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1935,7 +1935,6 @@ static int dfll_fetch_common_params(struct tegra_dfll *td)
- int tegra_dfll_register(struct platform_device *pdev,
- 			struct tegra_dfll_soc_data *soc)
- {
--	struct resource *mem;
- 	struct tegra_dfll *td;
- 	int ret;
- 
-@@ -1985,51 +1984,26 @@ int tegra_dfll_register(struct platform_device *pdev,
- 		return ret;
- 	}
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!mem) {
--		dev_err(td->dev, "no control register resource\n");
--		return -ENODEV;
--	}
--
--	td->base = devm_ioremap(td->dev, mem->start, resource_size(mem));
-+	td->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (!td->base) {
- 		dev_err(td->dev, "couldn't ioremap DFLL control registers\n");
+diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+index c0aff7ca6374..10ae712447c6 100644
+--- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
++++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+@@ -164,7 +164,6 @@ static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
+ 	struct clk_hw_onecell_data *clk_data;
+ 	const struct imx8qxp_ss_lpcg *ss_lpcg;
+ 	const struct imx8qxp_lpcg_data *lpcg;
+-	struct resource *res;
+ 	struct clk_hw **clks;
+ 	void __iomem *base;
+ 	int i;
+@@ -173,10 +172,7 @@ static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
+ 	if (!ss_lpcg)
  		return -ENODEV;
- 	}
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	if (!mem) {
--		dev_err(td->dev, "no i2c_base resource\n");
--		return -ENODEV;
--	}
--
--	td->i2c_base = devm_ioremap(td->dev, mem->start, resource_size(mem));
-+	td->i2c_base = devm_platform_ioremap_resource(pdev, 1);
- 	if (!td->i2c_base) {
- 		dev_err(td->dev, "couldn't ioremap i2c_base resource\n");
- 		return -ENODEV;
- 	}
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -EINVAL;
+-	base = devm_ioremap(dev, res->start, resource_size(res));
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (!base)
+ 		return -ENOMEM;
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	if (!mem) {
--		dev_err(td->dev, "no i2c_controller_base resource\n");
--		return -ENODEV;
--	}
--
--	td->i2c_controller_base = devm_ioremap(td->dev, mem->start,
--					       resource_size(mem));
-+	td->i2c_controller_base = devm_platform_ioremap_resource(pdev, 2);
- 	if (!td->i2c_controller_base) {
- 		dev_err(td->dev,
- 			"couldn't ioremap i2c_controller_base resource\n");
- 		return -ENODEV;
- 	}
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 3);
--	if (!mem) {
--		dev_err(td->dev, "no lut_base resource\n");
--		return -ENODEV;
--	}
--
--	td->lut_base = devm_ioremap(td->dev, mem->start, resource_size(mem));
-+	td->lut_base = devm_platform_ioremap_resource(pdev, 3);
- 	if (!td->lut_base) {
- 		dev_err(td->dev,
- 			"couldn't ioremap lut_base resource\n");
 -- 
 2.17.1
