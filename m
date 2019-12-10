@@ -1,163 +1,142 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: Fix restoration of PLLM when exiting suspend
-Date: Tue, 10 Dec 2019 23:29:42 +0300
-Message-ID: <1fe9cd2d-50a2-aae5-95fa-0329acce4c4c@gmail.com>
-References: <20191210103708.7023-1-jonathanh@nvidia.com>
- <1f2a4f23-5be5-aa7e-6eb4-2aeb4058481d@gmail.com>
+Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Tue, 10 Dec 2019 23:31:58 +0300
+Message-ID: <c8208be6-6471-9963-26ee-67579846b1ff@gmail.com>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+ <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
+ <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
+ <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
+ <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
+ <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
+ <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
+ <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+ <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
+ <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
+ <db3bee1e-1bfa-2f9e-9ed1-91b98554556a@gmail.com>
+ <22a2f8bd-561d-f4c6-4eef-bb61095c53b2@nvidia.com>
+ <5a5cfa74-66be-5c7a-04eb-88c355851c59@gmail.com>
+ <302d8483-513c-9c20-e4d4-1e24f2b317d6@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1f2a4f23-5be5-aa7e-6eb4-2aeb4058481d@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <302d8483-513c-9c20-e4d4-1e24f2b317d6@nvidia.com>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, stable@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-10.12.2019 22:28, Dmitry Osipenko пишет:
-> Hello Jon,
+10.12.2019 22:18, Sowjanya Komatineni пишет:
 > 
-> 10.12.2019 13:37, Jon Hunter пишет:
->> The suspend entry and exit code for 32-bit Tegra devices assumes that
->> the PLLM (which is used to provide the clock for external memory)
->> is always enabled on entry to suspend. Hence, the current code always
->> disables the PLLM on entry to suspend and re-enables the PLLM on exit
->> from suspend.
+> On 12/10/19 10:30 AM, Dmitry Osipenko wrote:
+>> 10.12.2019 20:48, Sowjanya Komatineni пишет:
+>>> On 12/10/19 9:41 AM, Dmitry Osipenko wrote:
+>>>> 09.12.2019 23:46, Sowjanya Komatineni пишет:
+>>>>> On 12/9/19 12:12 PM, Dmitry Osipenko wrote:
+>>>>>> 08.12.2019 00:36, Sowjanya Komatineni пишет:
+>>>>>>> On 12/7/19 11:59 AM, Sowjanya Komatineni wrote:
+>>>>>>>> On 12/7/19 8:00 AM, Dmitry Osipenko wrote:
+>>>>>>>>> 07.12.2019 18:53, Dmitry Osipenko пишет:
+>>>>>>>>>> 07.12.2019 18:47, Dmitry Osipenko пишет:
+>>>>>>>>>>> 07.12.2019 17:28, Dmitry Osipenko пишет:
+>>>>>>>>>>>> 06.12.2019 05:48, Sowjanya Komatineni пишет:
+>>>>>>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2,
+>>>>>>>>>>>>> clk_out_3
+>>>>>>>>>>>>> with
+>>>>>>>>>>>>> mux and gate for each of these clocks.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Currently these PMC clocks are registered by Tegra clock
+>>>>>>>>>>>>> driver
+>>>>>>>>>>>>> using
+>>>>>>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base
+>>>>>>>>>>>>> address
+>>>>>>>>>>>>> and register offsets and PMC programming for these clocks
+>>>>>>>>>>>>> happens
+>>>>>>>>>>>>> through direct PMC access by the clock driver.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> With this, when PMC is in secure mode any direct PMC access
+>>>>>>>>>>>>> from the
+>>>>>>>>>>>>> non-secure world does not go through and these clocks will
+>>>>>>>>>>>>> not be
+>>>>>>>>>>>>> functional.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> This patch adds these clocks registration with PMC as a clock
+>>>>>>>>>>>>> provider
+>>>>>>>>>>>>> for these clocks. clk_ops callback implementations for these
+>>>>>>>>>>>>> clocks
+>>>>>>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
+>>>>>>>>>>>>> programming
+>>>>>>>>>>>>> in secure mode and non-secure mode.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>>>>>>> ---
+>>>>>>>>>>> [snip]
+>>>>>>>>>>>
+>>>>>>>>>>>>> +
+>>>>>>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops = {
+>>>>>>>>>>>>> +    .is_enabled = pmc_clk_is_enabled,
+>>>>>>>>>>>>> +    .enable = pmc_clk_enable,
+>>>>>>>>>>>>> +    .disable = pmc_clk_disable,
+>>>>>>>>>>>>> +};
+>>>>>>>>>>>> What's the benefit of separating GATE from the MUX?
+>>>>>>>>>>>>
+>>>>>>>>>>>> I think it could be a single clock.
+>>>>>>>>>>> According to TRM:
+>>>>>>>>>>>
+>>>>>>>>>>> 1. GATE and MUX are separate entities.
+>>>>>>>>>>>
+>>>>>>>>>>> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram in
+>>>>>>>>>>> TRM).
+>>>>>>>>>>>
+>>>>>>>>>>> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable" it,
+>>>>>>>>>>> correct?
+>>>>>>> Was following existing clk-tegra-pmc as I am not sure of reason for
+>>>>>>> having these clocks registered as separate mux and gate clocks.
+>>>>>>>
+>>>>>>> Yes, PMC clocks can be registered as single clock and can use
+>>>>>>> clk_ops
+>>>>>>> for set/get parent and enable/disable.
+>>>>>>>
+>>>>>>> enable/disable of PMC clocks is for force-enable to force the
+>>>>>>> clock to
+>>>>>>> run regardless of ACCEPT_REQ or INVERT_REQ.
+>>>>>>>
+>>>>>>>>>> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these
+>>>>>>>>>> clocks
+>>>>>>>>>> should belong to PMC.
+>>>>>>>>> Also, it should be "osc" and not "clk_m".
+>>>>>>>> I followed the same parents as it were in existing clk-tegra-pmc
+>>>>>>>> driver.
+>>>>>>>>
+>>>>>>>> Yeah they are wrong and they should be from osc and not clk_m.
+>>>>>>>>
+>>>>>>>> Will fix in next version.
+>>>>>>>>
+>>>>>> Could you please describe the full EXTPERIPH clock topology and
+>>>>>> how the
+>>>>>> pinmux configuration is related to it all?
+>>>>>>
+>>>>>> What is internal to the Tegra chip and what are the external outputs?
+>>>>>>
+>>>>>> Is it possible to bypass PMC on T30+ for the EXTPERIPH clocks?
+>>>>> PMC CLK1/2/3 possible sources are OSC_DIV1, OSC_DIV2, OSC_DIV4,
+>>>>> EXTPERIPH from CAR.
+>>>>>
+>>>>> OSC_DIV1/2/4 are with internal dividers at the OSC Pads
+>>>>>
+>>>>> EXTPERIPH is from CAR and it has reset and enable controls along with
+>>>>> clock source selections to choose one of the PLLA_OUT0, CLK_S,
+>>>>> PLLP_OUT0, CLK_M, PLLE_OUT0
+>>>> Are you sure that EXTPERIPH has a reset? What will it reset? Why it's
+>>>> not documented in TRM?
+>>> Yes, Extperiph1/2/3 has RST part of CAR RST_DEVICES_V bits 24/25/26
+>> Are these bits not documented in a public TRMs? I checked
+>> T30/114/124/210 TRMs and CLK_RST_CONTROLLER_RST_DEVICES_V_0 doesn't have
+>> those bits in the docs.
 >>
->> Since the introduction of the Tegra124 EMC driver by commit 73a7f0a90641
->> ("memory: tegra: Add EMC (external memory controller) driver"), which is
->> used to scale the EMC frequency, PLLM may not be the current clock
->> source for the EMC on entry to suspend and hence may not be enabled.
->> Always enabling the PLLM on exit from suspend can cause the actual
->> status on the PLL to be different from that reported by the common clock
->> framework.
->>
->> On kernels prior to v4.5, the code to set the rate of the PLLM had a
->> test to verify if the PLL was enabled and if the PLL was enabled,
->> setting the rate would fail. Since commit 267b62a96951
->> ("clk: tegra: pll: Update PLLM handling") the test to see if PLLM is
->> enabled was removed.
->>
->> With these earlier kernels, if the PLLM is disabled on entering suspend
->> and the EMC driver attempts to set the parent of the EMC clock to the
->> PLLM on exiting suspend, then the set rate for the PLLM will fail and in
->> turn cause the resume to fail.
->>
->> We should not be re-enabling the PLLM on resume from suspend unless it
->> was enabled on entry to suspend. Therefore, fix this by saving the state
->> of PLLM on entry to suspend and only re-enable it, if it was already
->> enabled.
->>
->> Fixes: 73a7f0a90641 ("memory: tegra: Add EMC (external memory controller) driver")
->> Cc: stable@vger.kernel.org
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  arch/arm/mach-tegra/sleep-tegra30.S | 33 +++++++++++++++++++++++------
->>  1 file changed, 27 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
->> index 3341a12bbb9c..c2f0793a424f 100644
->> --- a/arch/arm/mach-tegra/sleep-tegra30.S
->> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
->> @@ -337,26 +337,42 @@ ENTRY(tegra30_lp1_reset)
->>  	add	r1, r1, #2
->>  	wait_until r1, r7, r3
->>  
->> -	/* enable PLLM via PMC */
->> +	/* restore PLLM state */
->>  	mov32	r2, TEGRA_PMC_BASE
->> +	adr	r7, tegra_pllm_status
->> +	ldr	r1, [r7]
->> +	cmp	r2, #(1 << 12)
->> +	bne	_skip_pllm
->> +
->>  	ldr	r1, [r2, #PMC_PLLP_WB0_OVERRIDE]
->>  	orr	r1, r1, #(1 << 12)
->>  	str	r1, [r2, #PMC_PLLP_WB0_OVERRIDE]
->>  
->>  	pll_enable r1, r0, CLK_RESET_PLLM_BASE, 0
->> +	pll_locked r1, r0, CLK_RESET_PLLM_BASE
->> +
->> +_skip_pllm:
->>  	pll_enable r1, r0, CLK_RESET_PLLC_BASE, 0
->>  	pll_enable r1, r0, CLK_RESET_PLLX_BASE, 0
->>  
->>  	b	_pll_m_c_x_done
->>  
->>  _no_pll_iddq_exit:
->> -	/* enable PLLM via PMC */
->> +	/* restore PLLM state */
->>  	mov32	r2, TEGRA_PMC_BASE
->> +	adr	r7, tegra_pllm_status
->> +	ldr	r1, [r7]
->> +	cmp	r2, #(1 << 12)
->> +	bne	_skip_pllm_no_iddq
->> +
->>  	ldr	r1, [r2, #PMC_PLLP_WB0_OVERRIDE]
->>  	orr	r1, r1, #(1 << 12)
->>  	str	r1, [r2, #PMC_PLLP_WB0_OVERRIDE]
->>  
->>  	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
->> +	pll_locked r1, r0, CLK_RESET_PLLM_BASE
->> +
->> +_skip_pllm_no_iddq:
->>  	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
->>  	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
->>  
->> @@ -364,7 +380,6 @@ _pll_m_c_x_done:
->>  	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
->>  	pll_enable r1, r0, CLK_RESET_PLLA_BASE, CLK_RESET_PLLA_MISC
->>  
->> -	pll_locked r1, r0, CLK_RESET_PLLM_BASE
->>  	pll_locked r1, r0, CLK_RESET_PLLP_BASE
->>  	pll_locked r1, r0, CLK_RESET_PLLA_BASE
->>  	pll_locked r1, r0, CLK_RESET_PLLC_BASE
->> @@ -526,6 +541,8 @@ __no_dual_emc_chanl:
->>  ENDPROC(tegra30_lp1_reset)
->>  
->>  	.align	L1_CACHE_SHIFT
->> +tegra_pllm_status:
->> +	.word	0
->>  tegra30_sdram_pad_address:
->>  	.word	TEGRA_EMC_BASE + EMC_CFG				@0x0
->>  	.word	TEGRA_EMC_BASE + EMC_ZCAL_INTERVAL			@0x4
->> @@ -624,10 +641,14 @@ tegra30_switch_cpu_to_clk32k:
->>  	add	r1, r1, #2
->>  	wait_until r1, r7, r9
-> 
-> 
->> -	/* disable PLLM via PMC in LP1 */
->> +	/* disable PLLM, if enabled, via PMC in LP1 */
->> +	adr	r1, tegra_pllm_status
->>  	ldr	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
->> -	bic	r0, r0, #(1 << 12)
->> -	str	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
->> +	and	r2, r0, #(1 << 12)
->> +	str     r2, [r1]
->> +	cmp	r2, #(1 << 12)
->> +	biceq	r0, r0, #(1 << 12)
->> +	streq	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
->>  
->>  	/* disable PLLP, PLLA, PLLC and PLLX */
->>  	ldr	r0, [r5, #CLK_RESET_PLLP_BASE]
-> 
-> PLLM's enable-status could be defined either by PMC or CaR. Thus at
-> first you need to check whether PMC overrides CaR's enable and then
-> judge the enable state based on PMC or CaR state respectively.
-> 
+> Yeah these bits are missing in all Tegra TRM docs. Will request for
+> having EXTPERIPH reset bits to be updated in TRM...
 
-Actually, now I think that it doesn't make sense to check PMC WB0 state
-at all. IIUC, PLLM's state of the WB0 register defines whether Boot ROM
-should enable PLLM on resume from suspend. Thus it will be correct to
-check only the CaR's enable-state of PLLM.
-
-I'm not sure what's the idea of WB0 overriding, maybe to resume faster.
-Peter, could you please clarify that?
-
-Looks like it is a bit of nonsense that clk_pll_is_enabled() checks
-PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE for judging of the enable-state. This
-is not the first time I'm getting confused by it, perhaps will be
-worthwhile to clean up that part of the clk driver's code (if I'm not
-missing something).
+Thanks
