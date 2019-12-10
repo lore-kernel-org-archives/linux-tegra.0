@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 62/71] spi: tegra20-slink: add missed clk_unprepare
-Date: Tue, 10 Dec 2019 17:33:07 -0500
-Message-ID: <20191210223316.14988-62-sashal@kernel.org>
-References: <20191210223316.14988-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 77/91] spi: tegra20-slink: add missed clk_unprepare
+Date: Tue, 10 Dec 2019 17:30:21 -0500
+Message-ID: <20191210223035.14270-77-sashal@kernel.org>
+References: <20191210223035.14270-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191210223316.14988-1-sashal@kernel.org>
+In-Reply-To: <20191210223035.14270-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Chuhong Yuan <hslester96@gmail.com>, Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
