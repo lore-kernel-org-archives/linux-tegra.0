@@ -1,93 +1,61 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 176/350] gpu: host1x: Allocate gather copy for
- host1x
-Date: Tue, 10 Dec 2019 16:04:41 -0500
-Message-ID: <20191210210735.9077-137-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 294/350] spi: tegra20-slink: add missed clk_unprepare
+Date: Tue, 10 Dec 2019 16:06:39 -0500
+Message-ID: <20191210210735.9077-255-sashal@kernel.org>
 References: <20191210210735.9077-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org
+Cc: Chuhong Yuan <hslester96@gmail.com>, Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit b78e70c04c149299bd210759d7c7af7c86b89ca8 ]
+[ Upstream commit 04358e40ba96d687c0811c21d9dede73f5244a98 ]
 
-Currently when the gather buffers are copied, they are copied to a
-buffer that is allocated for the host1x client that wants to execute the
-command streams in the buffers. However, the gather buffers will be read
-by the host1x device, which causes SMMU faults if the DMA API is backed
-by an IOMMU.
+The driver misses calling clk_unprepare in probe failure and remove.
+Add the calls to fix it.
 
-Fix this by allocating the gather buffer copy for the host1x device,
-which makes sure that it will be mapped into the host1x's IOVA space if
-the DMA API is backed by an IOMMU.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Link: https://lore.kernel.org/r/20191115083122.12278-1-hslester96@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/host1x/job.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/spi/spi-tegra20-slink.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index eaa5c3352c134..22559670faeef 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -436,7 +436,8 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
- 	return err;
- }
- 
--static inline int copy_gathers(struct host1x_job *job, struct device *dev)
-+static inline int copy_gathers(struct device *host, struct host1x_job *job,
-+			       struct device *dev)
- {
- 	struct host1x_firewall fw;
- 	size_t size = 0;
-@@ -459,12 +460,12 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
- 	 * Try a non-blocking allocation from a higher priority pools first,
- 	 * as awaiting for the allocation here is a major performance hit.
- 	 */
--	job->gather_copy_mapped = dma_alloc_wc(dev, size, &job->gather_copy,
-+	job->gather_copy_mapped = dma_alloc_wc(host, size, &job->gather_copy,
- 					       GFP_NOWAIT);
- 
- 	/* the higher priority allocation failed, try the generic-blocking */
- 	if (!job->gather_copy_mapped)
--		job->gather_copy_mapped = dma_alloc_wc(dev, size,
-+		job->gather_copy_mapped = dma_alloc_wc(host, size,
- 						       &job->gather_copy,
- 						       GFP_KERNEL);
- 	if (!job->gather_copy_mapped)
-@@ -512,7 +513,7 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
- 		goto out;
- 
- 	if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL)) {
--		err = copy_gathers(job, dev);
-+		err = copy_gathers(host->dev, job, dev);
- 		if (err)
- 			goto out;
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 111fffc91435c..374a2a32edcd3 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -1073,7 +1073,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	ret = clk_enable(tspi->clk);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
+-		goto exit_free_master;
++		goto exit_clk_unprepare;
  	}
-@@ -573,7 +574,7 @@ void host1x_job_unpin(struct host1x_job *job)
- 	job->num_unpins = 0;
  
- 	if (job->gather_copy_size)
--		dma_free_wc(job->channel->dev, job->gather_copy_size,
-+		dma_free_wc(host->dev, job->gather_copy_size,
- 			    job->gather_copy_mapped, job->gather_copy);
- }
- EXPORT_SYMBOL(host1x_job_unpin);
+ 	spi_irq = platform_get_irq(pdev, 0);
+@@ -1146,6 +1146,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	free_irq(spi_irq, tspi);
+ exit_clk_disable:
+ 	clk_disable(tspi->clk);
++exit_clk_unprepare:
++	clk_unprepare(tspi->clk);
+ exit_free_master:
+ 	spi_master_put(master);
+ 	return ret;
+@@ -1159,6 +1161,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
+ 	free_irq(tspi->irq, tspi);
+ 
+ 	clk_disable(tspi->clk);
++	clk_unprepare(tspi->clk);
+ 
+ 	if (tspi->tx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, false);
 -- 
 2.20.1
