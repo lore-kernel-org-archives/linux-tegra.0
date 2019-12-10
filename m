@@ -1,213 +1,123 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1] i2c: tegra: Support atomic transfers
-Date: Tue, 10 Dec 2019 04:58:56 +0300
-Message-ID: <20191210015856.5268-1-digetx@gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 03/17] clk: samsung: convert to
+ devm_platform_ioremap_resource
+Date: Tue, 10 Dec 2019 11:10:39 +0900
+Message-ID: <02ece950-b3d2-0d1a-fd94-acb64272bc96@samsung.com>
+References: <20191209195749.868-1-tiny.windzz@gmail.com>
+        <CGME20191209195912epcas5p2759273f3c5b15df7e78285e5db964ee5@epcas5p2.samsung.com>
+        <20191209195749.868-3-tiny.windzz@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191209195749.868-3-tiny.windzz@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yangtao Li <tiny.windzz@gmail.com>, afaerber@suse.de, manivannan.sadhasivam@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, Eugeniy.Paltsev@synopsys.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, agross@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, krzk@kernel.org, palmer@sifive.com, paul.walmsley@sifive.com, dinguyen@kernel.org, mripard@kernel.org, wens@csie.org, emilio@elopez.com.ar, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, matthias.bgg@gmail.com, rfontana@redhat.com, gregkh@linuxfoundation.org, t-kristo@ti.com, john@phrozen.org, tglx@linutronix.de, allison@lohutok.net, kstewart@linuxfoundation.org, swinslow@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-System shutdown may happen with interrupts being disabled and in this case
-I2C core rejects transfers if atomic transfer isn't supported by driver.
+Hi,
 
-There were several occurrences where I found my Nexus 7 completely
-discharged despite of being turned off and then one day I spotted this in
-the log:
+On 12/10/19 4:57 AM, Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-exynos-audss.c   | 4 +---
+>  drivers/clk/samsung/clk-exynos4412-isp.c | 4 +---
+>  drivers/clk/samsung/clk-exynos5433.c     | 4 +---
+>  drivers/clk/samsung/clk-s5pv210-audss.c  | 4 +---
+>  4 files changed, 4 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+> index 42b5d32c6cc7..9cc127a162ad 100644
+> --- a/drivers/clk/samsung/clk-exynos-audss.c
+> +++ b/drivers/clk/samsung/clk-exynos-audss.c
+> @@ -129,7 +129,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
+>  	const struct exynos_audss_clk_drvdata *variant;
+>  	struct clk_hw **clk_table;
+> -	struct resource *res;
+>  	struct device *dev = &pdev->dev;
+>  	int i, ret = 0;
+>  
+> @@ -137,8 +136,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  	if (!variant)
+>  		return -EINVAL;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	reg_base = devm_ioremap_resource(dev, res);
+> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(reg_base))
+>  		return PTR_ERR(reg_base);
+>  
+> diff --git a/drivers/clk/samsung/clk-exynos4412-isp.c b/drivers/clk/samsung/clk-exynos4412-isp.c
+> index 4b9e73608c21..20f5129f7212 100644
+> --- a/drivers/clk/samsung/clk-exynos4412-isp.c
+> +++ b/drivers/clk/samsung/clk-exynos4412-isp.c
+> @@ -110,11 +110,9 @@ static int __init exynos4x12_isp_clk_probe(struct platform_device *pdev)
+>  	struct samsung_clk_provider *ctx;
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+> -	struct resource *res;
+>  	void __iomem *reg_base;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	reg_base = devm_ioremap_resource(dev, res);
+> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(reg_base)) {
+>  		dev_err(dev, "failed to map registers\n");
+>  		return PTR_ERR(reg_base);
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index 4b1aa9382ad2..b0d48cddfd6e 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -5557,7 +5557,6 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+>  	struct exynos5433_cmu_data *data;
+>  	struct samsung_clk_provider *ctx;
+>  	struct device *dev = &pdev->dev;
+> -	struct resource *res;
+>  	void __iomem *reg_base;
+>  	int i;
+>  
+> @@ -5570,8 +5569,7 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	ctx = &data->ctx;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	reg_base = devm_ioremap_resource(dev, res);
+> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(reg_base))
+>  		return PTR_ERR(reg_base);
+>  
+> diff --git a/drivers/clk/samsung/clk-s5pv210-audss.c b/drivers/clk/samsung/clk-s5pv210-audss.c
+> index 14985ebd043b..503bd8a10d8f 100644
+> --- a/drivers/clk/samsung/clk-s5pv210-audss.c
+> +++ b/drivers/clk/samsung/clk-s5pv210-audss.c
+> @@ -63,15 +63,13 @@ static struct syscore_ops s5pv210_audss_clk_syscore_ops = {
+>  static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+>  {
+>  	int i, ret = 0;
+> -	struct resource *res;
+>  	const char *mout_audss_p[2];
+>  	const char *mout_i2s_p[3];
+>  	const char *hclk_p;
+>  	struct clk_hw **clk_table;
+>  	struct clk *hclk, *pll_ref, *pll_in, *cdclk, *sclk_audio;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	reg_base = devm_ioremap_resource(&pdev->dev, res);
+> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(reg_base)) {
+>  		dev_err(&pdev->dev, "failed to map audss registers\n");
+>  		return PTR_ERR(reg_base);
+> 
 
- reboot: Power down
- ------------[ cut here ]------------
- WARNING: CPU: 0 PID: 1 at drivers/i2c/i2c-core.h:40 i2c_transfer+0x95/0x9c
- No atomic I2C transfer handler for 'i2c-1'
- Modules linked in: tegra30_devfreq
- CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted 5.4.0-next-20191202-00120-gf7ecd80fb803-dirty #3195
- Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
- [<c010e4b5>] (unwind_backtrace) from [<c010a0fd>] (show_stack+0x11/0x14)
- [<c010a0fd>] (show_stack) from [<c09995e5>] (dump_stack+0x85/0x94)
- [<c09995e5>] (dump_stack) from [<c011f3d1>] (__warn+0xc1/0xc4)
- [<c011f3d1>] (__warn) from [<c011f691>] (warn_slowpath_fmt+0x61/0x78)
- [<c011f691>] (warn_slowpath_fmt) from [<c069a8dd>] (i2c_transfer+0x95/0x9c)
- [<c069a8dd>] (i2c_transfer) from [<c05667f1>] (regmap_i2c_read+0x4d/0x6c)
- [<c05667f1>] (regmap_i2c_read) from [<c0563601>] (_regmap_raw_read+0x99/0x1cc)
- [<c0563601>] (_regmap_raw_read) from [<c0563757>] (_regmap_bus_read+0x23/0x38)
- [<c0563757>] (_regmap_bus_read) from [<c056293d>] (_regmap_read+0x3d/0xfc)
- [<c056293d>] (_regmap_read) from [<c0562d3b>] (_regmap_update_bits+0x87/0xc4)
- [<c0562d3b>] (_regmap_update_bits) from [<c0563add>] (regmap_update_bits_base+0x39/0x50)
- [<c0563add>] (regmap_update_bits_base) from [<c056fd39>] (max77620_pm_power_off+0x29/0x2c)
- [<c056fd39>] (max77620_pm_power_off) from [<c013bbdd>] (__do_sys_reboot+0xe9/0x170)
- [<c013bbdd>] (__do_sys_reboot) from [<c0101001>] (ret_fast_syscall+0x1/0x28)
- Exception stack(0xde907fa8 to 0xde907ff0)
- 7fa0:                   00000000 00000000 fee1dead 28121969 4321fedc 00000000
- 7fc0: 00000000 00000000 00000000 00000058 00000000 00000000 00000000 00000000
- 7fe0: 0045adf0 bed9abb8 004444a0 b6c666d0
- ---[ end trace bdd18f87595b1a5e ]---
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-The atomic transferring is implemented by enforcing PIO mode for the
-transfer and by polling interrupt status until transfer is completed or
-failed.
 
-Now system shuts down properly every time.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/i2c/busses/i2c-tegra.c | 87 +++++++++++++++++++++++++++++++---
- 1 file changed, 80 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a98bf31d0e5c..19acf3e75605 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -17,6 +17,7 @@
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/kernel.h>
-+#include <linux/ktime.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/pinctrl/consumer.h>
-@@ -279,6 +280,7 @@ struct tegra_i2c_dev {
- 	unsigned int dma_buf_size;
- 	bool is_curr_dma_xfer;
- 	struct completion dma_complete;
-+	bool is_curr_atomic_xfer;
- };
- 
- static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
-@@ -999,6 +1001,44 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
- 	i2c_writel(i2c_dev, val, reg);
- }
- 
-+static unsigned long
-+tegra_i2c_poll_completion_timeout(struct tegra_i2c_dev *i2c_dev,
-+				  unsigned int timeout_ms)
-+{
-+	ktime_t ktime = ktime_get();
-+	ktime_t ktimeout = ktime_add_ms(ktime, timeout_ms);
-+
-+	do {
-+		u32 status = i2c_readl(i2c_dev, I2C_INT_STATUS);
-+
-+		if (status) {
-+			tegra_i2c_isr(i2c_dev->irq, i2c_dev);
-+
-+			if (completion_done(&i2c_dev->msg_complete)) {
-+				s64 delta = ktime_ms_delta(ktimeout, ktime);
-+
-+				return msecs_to_jiffies(delta) ?: 1;
-+			}
-+		}
-+
-+		ktime = ktime_get();
-+
-+	} while (ktime_before(ktime, ktimeout));
-+
-+	return 0;
-+}
-+
-+static unsigned long
-+tegra_i2c_wait_msg_completion_timeout(struct tegra_i2c_dev *i2c_dev,
-+				      unsigned int timeout_ms)
-+{
-+	if (i2c_dev->is_curr_atomic_xfer)
-+		return tegra_i2c_poll_completion_timeout(i2c_dev, timeout_ms);
-+
-+	return wait_for_completion_timeout(&i2c_dev->msg_complete,
-+					   msecs_to_jiffies(timeout_ms));
-+}
-+
- static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
- {
- 	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-@@ -1020,8 +1060,7 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
- 	i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
- 	tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 
--	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--						msecs_to_jiffies(50));
-+	time_left = tegra_i2c_wait_msg_completion_timeout(i2c_dev, 50);
- 	if (time_left == 0) {
- 		dev_err(i2c_dev->dev, "timed out for bus clear\n");
- 		return -ETIMEDOUT;
-@@ -1066,7 +1105,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 
- 	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
- 	i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
--				    i2c_dev->dma_buf;
-+				    i2c_dev->dma_buf &&
-+				    !i2c_dev->is_curr_atomic_xfer;
- 	tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
- 	dma = i2c_dev->is_curr_dma_xfer;
- 	/*
-@@ -1202,8 +1242,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 					      i2c_dev->tx_dma_chan);
- 	}
- 
--	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--						msecs_to_jiffies(xfer_time));
-+	time_left = tegra_i2c_wait_msg_completion_timeout(i2c_dev, xfer_time);
- 	tegra_i2c_mask_irq(i2c_dev, int_mask);
- 
- 	if (time_left == 0) {
-@@ -1270,6 +1309,38 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	return ret ?: i;
- }
- 
-+static int tegra_i2c_xfer_atomic(struct i2c_adapter *adap,
-+				 struct i2c_msg msgs[], int num)
-+{
-+	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-+	int ret;
-+
-+	i2c_dev->is_curr_atomic_xfer = true;
-+
-+	WARN_ON_ONCE(i2c_dev->irq_disabled);
-+
-+	if (!i2c_dev->irq_disabled) {
-+		disable_irq_nosync(i2c_dev->irq);
-+		i2c_dev->irq_disabled = true;
-+	}
-+
-+	ret = tegra_i2c_xfer(adap, msgs, num);
-+
-+	/*
-+	 * Interrupt will be enabled after hardware reset which happens in
-+	 * a case of transfer failure. For successful transfers interrupt
-+	 * need to be re-enabled.
-+	 */
-+	if (i2c_dev->irq_disabled) {
-+		enable_irq(i2c_dev->irq);
-+		i2c_dev->irq_disabled = false;
-+	}
-+
-+	i2c_dev->is_curr_atomic_xfer = false;
-+
-+	return ret;
-+}
-+
- static u32 tegra_i2c_func(struct i2c_adapter *adap)
- {
- 	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-@@ -1297,8 +1368,9 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
- }
- 
- static const struct i2c_algorithm tegra_i2c_algo = {
--	.master_xfer	= tegra_i2c_xfer,
--	.functionality	= tegra_i2c_func,
-+	.master_xfer		= tegra_i2c_xfer,
-+	.master_xfer_atomic	= tegra_i2c_xfer_atomic,
-+	.functionality		= tegra_i2c_func,
- };
- 
- /* payload size is only 12 bit */
-@@ -1607,6 +1679,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		goto unprepare_fast_clk;
- 	}
- 
-+	pm_runtime_irq_safe(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 	if (!pm_runtime_enabled(&pdev->dev))
- 		ret = tegra_i2c_runtime_resume(&pdev->dev);
 -- 
-2.24.0
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
