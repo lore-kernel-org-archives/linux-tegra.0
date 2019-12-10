@@ -1,17 +1,14 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 07/26] drm/panel: remove get_timings
-Date: Tue, 10 Dec 2019 22:33:48 +0100
-Message-ID: <CACRpkdZ7jg7JwNk12m9pGXOVBxHRta8nBWmpdqFvfQHB=8LptA@mail.gmail.com>
-References: <20191202193230.21310-1-sam@ravnborg.org>
- <20191202193230.21310-8-sam@ravnborg.org>
- <20191203074659.ilsyv4yx7pzw5vax@gilmour.lan>
- <CACRpkdZrReQs08+bXS7s7eJ-K76nMGvRgQ-L-1-baunEtiF40g@mail.gmail.com>
- <20191204081650.4n4ehbub4n7pxdom@gilmour.lan>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 084/177] gpu: host1x: Allocate gather copy for
+ host1x
+Date: Tue, 10 Dec 2019 16:30:48 -0500
+Message-ID: <20191210213221.11921-84-sashal@kernel.org>
+References: <20191210213221.11921-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191204081650.4n4ehbub4n7pxdom@gilmour.lan>
+In-Reply-To: <20191210213221.11921-1-sashal@kernel.org>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -21,30 +18,76 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sam Ravnborg <sam@ravnborg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, NXP Linux Team <linux-imx@nxp.com>, Jagan Teki <jagan@amarulasolutions.com>, Jitao Shi <jitao.shi@mediatek.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Abhinav Kumar <abhinavk@codeaurora.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Purism Kernel Team <kernel@puri.sm>Linux-Renesas <lin>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 9:16 AM Maxime Ripard <mripard@kernel.org> wrote:
-> On Tue, Dec 03, 2019 at 04:20:24PM +0100, Linus Walleij wrote:
+From: Thierry Reding <treding@nvidia.com>
 
-> > On the DSI displays in video mode there is also this EOL area
-> > which seems to be where the logic is normally just idling for a
-> > while, that can be adjusted on some hardware as well, but
-> > I don't quite understand it admittedly. Sometimes I wonder if
-> > anyone really understands DSI... :/
->
-> I'm not aware of any EOL area in MIPI-DSI that would make the hardware
-> idle, don't you mean LP-11?
+[ Upstream commit b78e70c04c149299bd210759d7c7af7c86b89ca8 ]
 
-I think in the spec the bubble used for this is tagged "BLLP"
-Blanking-Line-Low-Power or something.
+Currently when the gather buffers are copied, they are copied to a
+buffer that is allocated for the host1x client that wants to execute the
+command streams in the buffers. However, the gather buffers will be read
+by the host1x device, which causes SMMU faults if the DMA API is backed
+by an IOMMU.
 
-IIUC it is possible for displays to either receive continuous NULL
-packets or blanking packets or go to LP mode in this area.
+Fix this by allocating the gather buffer copy for the host1x device,
+which makes sure that it will be mapped into the host1x's IOVA space if
+the DMA API is backed by an IOMMU.
 
-And since that is not there for e.g. DPI displays I feel it adds
-another layer of confusion to timings.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/host1x/job.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index 527a1cddb14fd..916b2355e11a6 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -447,7 +447,8 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
+ 	return err;
+ }
+ 
+-static inline int copy_gathers(struct host1x_job *job, struct device *dev)
++static inline int copy_gathers(struct device *host, struct host1x_job *job,
++			       struct device *dev)
+ {
+ 	struct host1x_firewall fw;
+ 	size_t size = 0;
+@@ -470,12 +471,12 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+ 	 * Try a non-blocking allocation from a higher priority pools first,
+ 	 * as awaiting for the allocation here is a major performance hit.
+ 	 */
+-	job->gather_copy_mapped = dma_alloc_wc(dev, size, &job->gather_copy,
++	job->gather_copy_mapped = dma_alloc_wc(host, size, &job->gather_copy,
+ 					       GFP_NOWAIT);
+ 
+ 	/* the higher priority allocation failed, try the generic-blocking */
+ 	if (!job->gather_copy_mapped)
+-		job->gather_copy_mapped = dma_alloc_wc(dev, size,
++		job->gather_copy_mapped = dma_alloc_wc(host, size,
+ 						       &job->gather_copy,
+ 						       GFP_KERNEL);
+ 	if (!job->gather_copy_mapped)
+@@ -523,7 +524,7 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
+ 		goto out;
+ 
+ 	if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL)) {
+-		err = copy_gathers(job, dev);
++		err = copy_gathers(host->dev, job, dev);
+ 		if (err)
+ 			goto out;
+ 	}
+@@ -584,7 +585,7 @@ void host1x_job_unpin(struct host1x_job *job)
+ 	job->num_unpins = 0;
+ 
+ 	if (job->gather_copy_size)
+-		dma_free_wc(job->channel->dev, job->gather_copy_size,
++		dma_free_wc(host->dev, job->gather_copy_size,
+ 			    job->gather_copy_mapped, job->gather_copy);
+ }
+ EXPORT_SYMBOL(host1x_job_unpin);
+-- 
+2.20.1
