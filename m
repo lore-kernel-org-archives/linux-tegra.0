@@ -1,16 +1,14 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v5 2/4] Revert "drm/tegra: Move drm_dp_link helpers to
- Tegra DRM"
-Date: Tue, 10 Dec 2019 23:51:58 +0200
-Message-ID: <20191210215158.GA13051@pendragon.ideasonboard.com>
-References: <1575957299-12977-1-git-send-email-allen.chen@ite.com.tw>
- <1575957299-12977-3-git-send-email-allen.chen@ite.com.tw>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 062/130] gpu: host1x: Allocate gather copy for
+ host1x
+Date: Tue, 10 Dec 2019 17:01:53 -0500
+Message-ID: <20191210220301.13262-62-sashal@kernel.org>
+References: <20191210220301.13262-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1575957299-12977-3-git-send-email-allen.chen@ite.com.tw>
+In-Reply-To: <20191210220301.13262-1-sashal@kernel.org>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -20,35 +18,76 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: allen <allen.chen@ite.com.tw>
-Cc: Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>, David Airlie <airlied@linux.ie>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Pi-Hsun Shih <pihsun@chromium.org>, "open list:DRM DRIVERS FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>, Sean Paul <sean@poorly.run>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Allen,
+From: Thierry Reding <treding@nvidia.com>
 
-Thank you for the patch.
+[ Upstream commit b78e70c04c149299bd210759d7c7af7c86b89ca8 ]
 
-On Tue, Dec 10, 2019 at 01:53:40PM +0800, allen wrote:
-> This reverts commit 9a42c7c647a9ad0f7ebb147a52eda3dcb7c84292.
+Currently when the gather buffers are copied, they are copied to a
+buffer that is allocated for the host1x client that wants to execute the
+command streams in the buffers. However, the gather buffers will be read
+by the host1x device, which causes SMMU faults if the DMA API is backed
+by an IOMMU.
 
-Why ?
+Fix this by allocating the gather buffer copy for the host1x device,
+which makes sure that it will be mapped into the host1x's IOVA space if
+the DMA API is backed by an IOMMU.
 
-> Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
-> ---
->  drivers/gpu/drm/drm_dp_helper.c | 128 ++++++
->  drivers/gpu/drm/tegra/Makefile  |   1 -
->  drivers/gpu/drm/tegra/dp.c      | 876 ----------------------------------------
->  drivers/gpu/drm/tegra/dp.h      | 177 --------
->  drivers/gpu/drm/tegra/dpaux.c   |   1 -
->  drivers/gpu/drm/tegra/sor.c     |   1 -
->  include/drm/drm_dp_helper.h     |  16 +
->  7 files changed, 144 insertions(+), 1056 deletions(-)
->  delete mode 100644 drivers/gpu/drm/tegra/dp.c
->  delete mode 100644 drivers/gpu/drm/tegra/dp.h
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/host1x/job.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-[snip]
-
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index acd99783bbca1..67f3c050c4cfc 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -545,7 +545,8 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
+ 	return err;
+ }
+ 
+-static inline int copy_gathers(struct host1x_job *job, struct device *dev)
++static inline int copy_gathers(struct device *host, struct host1x_job *job,
++			       struct device *dev)
+ {
+ 	struct host1x_firewall fw;
+ 	size_t size = 0;
+@@ -570,12 +571,12 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+ 	 * Try a non-blocking allocation from a higher priority pools first,
+ 	 * as awaiting for the allocation here is a major performance hit.
+ 	 */
+-	job->gather_copy_mapped = dma_alloc_wc(dev, size, &job->gather_copy,
++	job->gather_copy_mapped = dma_alloc_wc(host, size, &job->gather_copy,
+ 					       GFP_NOWAIT);
+ 
+ 	/* the higher priority allocation failed, try the generic-blocking */
+ 	if (!job->gather_copy_mapped)
+-		job->gather_copy_mapped = dma_alloc_wc(dev, size,
++		job->gather_copy_mapped = dma_alloc_wc(host, size,
+ 						       &job->gather_copy,
+ 						       GFP_KERNEL);
+ 	if (!job->gather_copy_mapped)
+@@ -636,7 +637,7 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
+ 		goto out;
+ 
+ 	if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL)) {
+-		err = copy_gathers(job, dev);
++		err = copy_gathers(host->dev, job, dev);
+ 		if (err)
+ 			goto out;
+ 	}
+@@ -701,7 +702,7 @@ void host1x_job_unpin(struct host1x_job *job)
+ 	job->num_unpins = 0;
+ 
+ 	if (job->gather_copy_size)
+-		dma_free_wc(job->channel->dev, job->gather_copy_size,
++		dma_free_wc(host->dev, job->gather_copy_size,
+ 			    job->gather_copy_mapped, job->gather_copy);
+ }
+ EXPORT_SYMBOL(host1x_job_unpin);
 -- 
-Regards,
-
-Laurent Pinchart
+2.20.1
