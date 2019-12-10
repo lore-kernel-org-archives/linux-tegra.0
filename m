@@ -1,123 +1,39 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 03/17] clk: samsung: convert to
- devm_platform_ioremap_resource
-Date: Tue, 10 Dec 2019 11:10:39 +0900
-Message-ID: <02ece950-b3d2-0d1a-fd94-acb64272bc96@samsung.com>
-References: <20191209195749.868-1-tiny.windzz@gmail.com>
-        <CGME20191209195912epcas5p2759273f3c5b15df7e78285e5db964ee5@epcas5p2.samsung.com>
-        <20191209195749.868-3-tiny.windzz@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1] clk: tegra: Fix double-free in tegra_clk_init()
+Date: Tue, 10 Dec 2019 05:05:12 +0300
+Message-ID: <20191210020512.6088-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191209195749.868-3-tiny.windzz@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yangtao Li <tiny.windzz@gmail.com>, afaerber@suse.de, manivannan.sadhasivam@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, Eugeniy.Paltsev@synopsys.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, agross@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org, krzk@kernel.org, palmer@sifive.com, paul.walmsley@sifive.com, dinguyen@kernel.org, mripard@kernel.org, wens@csie.org, emilio@elopez.com.ar, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, matthias.bgg@gmail.com, rfontana@redhat.com, gregkh@linuxfoundation.org, t-kristo@ti.com, john@phrozen.org, tglx@linutronix.de, allison@lohutok.net, kstewart@linuxfoundation.org, swinslow@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+It's unlikely to happen in practice ever, but makes static checkers happy.
 
-On 12/10/19 4:57 AM, Yangtao Li wrote:
-> Use devm_platform_ioremap_resource() to simplify code.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/clk/samsung/clk-exynos-audss.c   | 4 +---
->  drivers/clk/samsung/clk-exynos4412-isp.c | 4 +---
->  drivers/clk/samsung/clk-exynos5433.c     | 4 +---
->  drivers/clk/samsung/clk-s5pv210-audss.c  | 4 +---
->  4 files changed, 4 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-> index 42b5d32c6cc7..9cc127a162ad 100644
-> --- a/drivers/clk/samsung/clk-exynos-audss.c
-> +++ b/drivers/clk/samsung/clk-exynos-audss.c
-> @@ -129,7 +129,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
->  	const struct exynos_audss_clk_drvdata *variant;
->  	struct clk_hw **clk_table;
-> -	struct resource *res;
->  	struct device *dev = &pdev->dev;
->  	int i, ret = 0;
->  
-> @@ -137,8 +136,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  	if (!variant)
->  		return -EINVAL;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg_base = devm_ioremap_resource(dev, res);
-> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(reg_base))
->  		return PTR_ERR(reg_base);
->  
-> diff --git a/drivers/clk/samsung/clk-exynos4412-isp.c b/drivers/clk/samsung/clk-exynos4412-isp.c
-> index 4b9e73608c21..20f5129f7212 100644
-> --- a/drivers/clk/samsung/clk-exynos4412-isp.c
-> +++ b/drivers/clk/samsung/clk-exynos4412-isp.c
-> @@ -110,11 +110,9 @@ static int __init exynos4x12_isp_clk_probe(struct platform_device *pdev)
->  	struct samsung_clk_provider *ctx;
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> -	struct resource *res;
->  	void __iomem *reg_base;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg_base = devm_ioremap_resource(dev, res);
-> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(reg_base)) {
->  		dev_err(dev, "failed to map registers\n");
->  		return PTR_ERR(reg_base);
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 4b1aa9382ad2..b0d48cddfd6e 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -5557,7 +5557,6 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
->  	struct exynos5433_cmu_data *data;
->  	struct samsung_clk_provider *ctx;
->  	struct device *dev = &pdev->dev;
-> -	struct resource *res;
->  	void __iomem *reg_base;
->  	int i;
->  
-> @@ -5570,8 +5569,7 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	ctx = &data->ctx;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg_base = devm_ioremap_resource(dev, res);
-> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(reg_base))
->  		return PTR_ERR(reg_base);
->  
-> diff --git a/drivers/clk/samsung/clk-s5pv210-audss.c b/drivers/clk/samsung/clk-s5pv210-audss.c
-> index 14985ebd043b..503bd8a10d8f 100644
-> --- a/drivers/clk/samsung/clk-s5pv210-audss.c
-> +++ b/drivers/clk/samsung/clk-s5pv210-audss.c
-> @@ -63,15 +63,13 @@ static struct syscore_ops s5pv210_audss_clk_syscore_ops = {
->  static int s5pv210_audss_clk_probe(struct platform_device *pdev)
->  {
->  	int i, ret = 0;
-> -	struct resource *res;
->  	const char *mout_audss_p[2];
->  	const char *mout_i2s_p[3];
->  	const char *hclk_p;
->  	struct clk_hw **clk_table;
->  	struct clk *hclk, *pll_ref, *pll_in, *cdclk, *sclk_audio;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg_base = devm_ioremap_resource(&pdev->dev, res);
-> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(reg_base)) {
->  		dev_err(&pdev->dev, "failed to map audss registers\n");
->  		return PTR_ERR(reg_base);
-> 
+Fixes: 535f296d47de ("clk: tegra: Add suspend and resume support on Tegra210")
+Reported-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index e6bd6d1ea012..f6cdce441cf7 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -231,8 +231,10 @@ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+ 	periph_banks = banks;
+ 
+ 	clks = kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
+-	if (!clks)
++	if (!clks) {
+ 		kfree(periph_clk_enb_refcnt);
++		return NULL;
++	}
+ 
+ 	clk_num = num;
+ 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.24.0
