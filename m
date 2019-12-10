@@ -1,69 +1,58 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4 273/350] mailbox: tegra: Fix superfluous IRQ error message
-Date: Tue, 10 Dec 2019 16:06:18 -0500
-Message-ID: <20191210210735.9077-234-sashal@kernel.org>
-References: <20191210210735.9077-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 079/177] drm/tegra: sor: Use correct SOR index on
+ Tegra210
+Date: Tue, 10 Dec 2019 16:30:43 -0500
+Message-ID: <20191210213221.11921-79-sashal@kernel.org>
+References: <20191210213221.11921-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191210213221.11921-1-sashal@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
+Cc: Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit c745da8d4320c49e54662c0a8f7cb6b8204f44c4 ]
+[ Upstream commit 24e64f86da40e68c5f58af08796110f147b12193 ]
 
-Commit 7723f4c5ecdb ("driver core: platform: Add an error message to
-platform_get_irq*()") added an error message to avoid drivers having
-to print an error message when IRQ lookup fails. However, there are
-some cases where IRQs are optional and so new optional versions of
-the platform_get_irq*() APIs have been added for these cases.
+The device tree bindings for the Tegra210 SOR don't require the
+controller instance to be defined, since the instance can be derived
+from the compatible string. The index is never used on Tegra210, so we
+got away with it not getting set. However, subsequent patches will
+change that, so make sure the proper index is used.
 
-The IRQs for Tegra HSP module are optional because not all instances
-of the module have the doorbell and all of the shared interrupts.
-Hence, since the above commit was applied the following error messages
-are now seen on Tegra194 ...
-
- ERR KERN tegra-hsp c150000.hsp: IRQ doorbell not found
- ERR KERN tegra-hsp c150000.hsp: IRQ shared0 not found
-
-The Tegra HSP driver deliberately does not fail if these are not found
-and so fix the above errors by updating the Tegra HSP driver to use
-the platform_get_irq_byname_optional() API.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Link: https://lore.kernel.org/r/20191011083459.11551-1-jonathanh@nvidia.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mailbox/tegra-hsp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/tegra/sor.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 4c5ba35d48d43..834b35dc3b137 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -657,7 +657,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	hsp->num_db = (value >> HSP_nDB_SHIFT) & HSP_nINT_MASK;
- 	hsp->num_si = (value >> HSP_nSI_SHIFT) & HSP_nINT_MASK;
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index d7fe9f15def1d..89cb70da2bfe6 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -2922,6 +2922,11 @@ static int tegra_sor_parse_dt(struct tegra_sor *sor)
+ 		 * earlier
+ 		 */
+ 		sor->pad = TEGRA_IO_PAD_HDMI_DP0 + sor->index;
++	} else {
++		if (sor->soc->supports_edp)
++			sor->index = 0;
++		else
++			sor->index = 1;
+ 	}
  
--	err = platform_get_irq_byname(pdev, "doorbell");
-+	err = platform_get_irq_byname_optional(pdev, "doorbell");
- 	if (err >= 0)
- 		hsp->doorbell_irq = err;
- 
-@@ -677,7 +677,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 			if (!name)
- 				return -ENOMEM;
- 
--			err = platform_get_irq_byname(pdev, name);
-+			err = platform_get_irq_byname_optional(pdev, name);
- 			if (err >= 0) {
- 				hsp->shared_irqs[i] = err;
- 				count++;
+ 	return 0;
 -- 
 2.20.1
