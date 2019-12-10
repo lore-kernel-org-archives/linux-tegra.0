@@ -1,146 +1,85 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: Fix restoration of PLLM when exiting suspend
-Date: Tue, 10 Dec 2019 22:28:20 +0300
-Message-ID: <1f2a4f23-5be5-aa7e-6eb4-2aeb4058481d@gmail.com>
-References: <20191210103708.7023-1-jonathanh@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ASoC: rt5677: add SPI_MASTER dependency
+Date: Tue, 10 Dec 2019 20:52:26 +0100
+Message-ID: <20191210195333.648018-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20191210103708.7023-1-jonathanh@nvidia.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ben Zhang <benzh@chromium.org>, Curtis Malainey <cujomalainey@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Cezary Rojewski <cezary.rojewski@intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, KaiChieh Chuang <kaichieh.chuang@mediatek.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Jon,
+When CONFIG_SPI is disabled, the newly added code for the DSP
+firmware loading fails to link:
 
-10.12.2019 13:37, Jon Hunter пишет:
-> The suspend entry and exit code for 32-bit Tegra devices assumes that
-> the PLLM (which is used to provide the clock for external memory)
-> is always enabled on entry to suspend. Hence, the current code always
-> disables the PLLM on entry to suspend and re-enables the PLLM on exit
-> from suspend.
-> 
-> Since the introduction of the Tegra124 EMC driver by commit 73a7f0a90641
-> ("memory: tegra: Add EMC (external memory controller) driver"), which is
-> used to scale the EMC frequency, PLLM may not be the current clock
-> source for the EMC on entry to suspend and hence may not be enabled.
-> Always enabling the PLLM on exit from suspend can cause the actual
-> status on the PLL to be different from that reported by the common clock
-> framework.
-> 
-> On kernels prior to v4.5, the code to set the rate of the PLLM had a
-> test to verify if the PLL was enabled and if the PLL was enabled,
-> setting the rate would fail. Since commit 267b62a96951
-> ("clk: tegra: pll: Update PLLM handling") the test to see if PLLM is
-> enabled was removed.
-> 
-> With these earlier kernels, if the PLLM is disabled on entering suspend
-> and the EMC driver attempts to set the parent of the EMC clock to the
-> PLLM on exiting suspend, then the set rate for the PLLM will fail and in
-> turn cause the resume to fail.
-> 
-> We should not be re-enabling the PLLM on resume from suspend unless it
-> was enabled on entry to suspend. Therefore, fix this by saving the state
-> of PLLM on entry to suspend and only re-enable it, if it was already
-> enabled.
-> 
-> Fixes: 73a7f0a90641 ("memory: tegra: Add EMC (external memory controller) driver")
-> Cc: stable@vger.kernel.org
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  arch/arm/mach-tegra/sleep-tegra30.S | 33 +++++++++++++++++++++++------
->  1 file changed, 27 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-> index 3341a12bbb9c..c2f0793a424f 100644
-> --- a/arch/arm/mach-tegra/sleep-tegra30.S
-> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
-> @@ -337,26 +337,42 @@ ENTRY(tegra30_lp1_reset)
->  	add	r1, r1, #2
->  	wait_until r1, r7, r3
->  
-> -	/* enable PLLM via PMC */
-> +	/* restore PLLM state */
->  	mov32	r2, TEGRA_PMC_BASE
-> +	adr	r7, tegra_pllm_status
-> +	ldr	r1, [r7]
-> +	cmp	r2, #(1 << 12)
-> +	bne	_skip_pllm
-> +
->  	ldr	r1, [r2, #PMC_PLLP_WB0_OVERRIDE]
->  	orr	r1, r1, #(1 << 12)
->  	str	r1, [r2, #PMC_PLLP_WB0_OVERRIDE]
->  
->  	pll_enable r1, r0, CLK_RESET_PLLM_BASE, 0
-> +	pll_locked r1, r0, CLK_RESET_PLLM_BASE
-> +
-> +_skip_pllm:
->  	pll_enable r1, r0, CLK_RESET_PLLC_BASE, 0
->  	pll_enable r1, r0, CLK_RESET_PLLX_BASE, 0
->  
->  	b	_pll_m_c_x_done
->  
->  _no_pll_iddq_exit:
-> -	/* enable PLLM via PMC */
-> +	/* restore PLLM state */
->  	mov32	r2, TEGRA_PMC_BASE
-> +	adr	r7, tegra_pllm_status
-> +	ldr	r1, [r7]
-> +	cmp	r2, #(1 << 12)
-> +	bne	_skip_pllm_no_iddq
-> +
->  	ldr	r1, [r2, #PMC_PLLP_WB0_OVERRIDE]
->  	orr	r1, r1, #(1 << 12)
->  	str	r1, [r2, #PMC_PLLP_WB0_OVERRIDE]
->  
->  	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
-> +	pll_locked r1, r0, CLK_RESET_PLLM_BASE
-> +
-> +_skip_pllm_no_iddq:
->  	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
->  	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
->  
-> @@ -364,7 +380,6 @@ _pll_m_c_x_done:
->  	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
->  	pll_enable r1, r0, CLK_RESET_PLLA_BASE, CLK_RESET_PLLA_MISC
->  
-> -	pll_locked r1, r0, CLK_RESET_PLLM_BASE
->  	pll_locked r1, r0, CLK_RESET_PLLP_BASE
->  	pll_locked r1, r0, CLK_RESET_PLLA_BASE
->  	pll_locked r1, r0, CLK_RESET_PLLC_BASE
-> @@ -526,6 +541,8 @@ __no_dual_emc_chanl:
->  ENDPROC(tegra30_lp1_reset)
->  
->  	.align	L1_CACHE_SHIFT
-> +tegra_pllm_status:
-> +	.word	0
->  tegra30_sdram_pad_address:
->  	.word	TEGRA_EMC_BASE + EMC_CFG				@0x0
->  	.word	TEGRA_EMC_BASE + EMC_ZCAL_INTERVAL			@0x4
-> @@ -624,10 +641,14 @@ tegra30_switch_cpu_to_clk32k:
->  	add	r1, r1, #2
->  	wait_until r1, r7, r9
+ERROR: "rt5677_spi_hotword_detected" [sound/soc/codecs/snd-soc-rt5677.ko] undefined!
+ERROR: "rt5677_spi_write" [sound/soc/codecs/snd-soc-rt5677.ko] undefined!
 
+Add a dependency to prevent this configuration.
 
-> -	/* disable PLLM via PMC in LP1 */
-> +	/* disable PLLM, if enabled, via PMC in LP1 */
-> +	adr	r1, tegra_pllm_status
->  	ldr	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
-> -	bic	r0, r0, #(1 << 12)
-> -	str	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
-> +	and	r2, r0, #(1 << 12)
-> +	str     r2, [r1]
-> +	cmp	r2, #(1 << 12)
-> +	biceq	r0, r0, #(1 << 12)
-> +	streq	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
->  
->  	/* disable PLLP, PLLA, PLLC and PLLX */
->  	ldr	r0, [r5, #CLK_RESET_PLLP_BASE]
+Note: the does not work with the DT probing, as there is no binding
+for the SPI half of the driver, but nothing seems to be using that
+with the mainline kernel anyway.
 
-PLLM's enable-status could be defined either by PMC or CaR. Thus at
-first you need to check whether PMC overrides CaR's enable and then
-judge the enable state based on PMC or CaR state respectively.
+Fixes: 461c623270e4 ("ASoC: rt5677: Load firmware via SPI using delayed work")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/codecs/Kconfig       | 1 +
+ sound/soc/intel/boards/Kconfig | 1 +
+ sound/soc/mediatek/Kconfig     | 2 +-
+ sound/soc/tegra/Kconfig        | 2 +-
+ 4 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 71b7286d14f2..8e9c461a84f8 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -1047,6 +1047,7 @@ config SND_SOC_RT5670
+ 
+ config SND_SOC_RT5677
+ 	tristate
++	depends on SPI_MASTER
+ 	select REGMAP_I2C
+ 	select REGMAP_IRQ
+ 
+diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
+index ef20316e83d1..da7f9111f3d3 100644
+--- a/sound/soc/intel/boards/Kconfig
++++ b/sound/soc/intel/boards/Kconfig
+@@ -34,6 +34,7 @@ if SND_SOC_INTEL_HASWELL || SND_SOC_SOF_BROADWELL
+ config SND_SOC_INTEL_BDW_RT5677_MACH
+ 	tristate "Broadwell with RT5677 codec"
+ 	depends on I2C
++	depends on SPI_MASTER
+ 	depends on I2C_DESIGNWARE_PLATFORM || COMPILE_TEST
+ 	depends on GPIOLIB || COMPILE_TEST
+ 	depends on X86_INTEL_LPSS || COMPILE_TEST
+diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+index a656d2014127..4699787c93ed 100644
+--- a/sound/soc/mediatek/Kconfig
++++ b/sound/soc/mediatek/Kconfig
+@@ -97,7 +97,7 @@ config SND_SOC_MT8173_RT5650_RT5514
+ 
+ config SND_SOC_MT8173_RT5650_RT5676
+ 	tristate "ASoC Audio driver for MT8173 with RT5650 RT5676 codecs"
+-	depends on SND_SOC_MT8173 && I2C
++	depends on SND_SOC_MT8173 && I2C && SPI_MASTER
+ 	select SND_SOC_RT5645
+ 	select SND_SOC_RT5677
+ 	select SND_SOC_HDMI_CODEC
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index addadc827b91..df36e84c0116 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -122,7 +122,7 @@ config SND_SOC_TEGRA_MAX98090
+ 
+ config SND_SOC_TEGRA_RT5677
+ 	tristate "SoC Audio support for Tegra boards using a RT5677 codec"
+-	depends on SND_SOC_TEGRA && I2C && GPIOLIB
++	depends on SND_SOC_TEGRA && I2C && GPIOLIB && SPI_MASTER
+ 	select SND_SOC_RT5677
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
+-- 
+2.20.0
