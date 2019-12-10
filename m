@@ -1,156 +1,137 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 0/9] drm/nouveau: Various fixes for GP10B
-Date: Tue, 10 Dec 2019 14:12:19 +0100
-Message-ID: <20191210131219.GE2703785@ulmo>
-References: <20191209120005.2254786-1-thierry.reding@gmail.com>
- <CACAvsv4NX7jvZb5_X5auU4-KKk9PfmtJvmnQNjY7ihqgXaRS6A@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 08/17] clk: imx: convert to devm_platform_ioremap_resource
+Date: Tue, 10 Dec 2019 14:21:46 +0100
+Message-ID: <20191210132146.GF2703785@ulmo>
+References: <20191209195749.868-1-tiny.windzz@gmail.com>
+ <20191209195749.868-8-tiny.windzz@gmail.com>
+ <VI1PR04MB7023BD6E46B6DEEBBB762060EE580@VI1PR04MB7023.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0096471076=="
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CACAvsv4NX7jvZb5_X5auU4-KKk9PfmtJvmnQNjY7ihqgXaRS6A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ML nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature"; boundary="yH1ZJFh+qWm+VodA"
+Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <VI1PR04MB7023BD6E46B6DEEBBB762060EE580@VI1PR04MB7023.eurprd04.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
+List-Post: <mailto:linux-riscv@lists.infradead.org>
+List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "heiko@sntech.de" <heiko@sntech.de>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "chunhui.dai@mediatek.com" <chunhui.dai@mediatek.com>, Yangtao Li <tiny.windzz@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "palmer@sifive.com" <palmer@sifive.com>, "nsekhar@ti.com" <nsekhar@ti.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "rfontana@redhat.com" <rfontana@redhat.com>, "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "festevam@gmail.com" <festevam@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "john@phrozen.org" <john@p>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0096471076==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vv4Sf/kQfcwinyKX"
-Content-Disposition: inline
-
-
---vv4Sf/kQfcwinyKX
+--yH1ZJFh+qWm+VodA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2019 at 06:15:30PM +1000, Ben Skeggs wrote:
-> On Mon, 9 Dec 2019 at 22:00, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> >
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> > Hi Ben,
-> >
-> > here's a revised subset of the patches I had sent out a couple of weeks
-> > ago. I've reworked the BAR2 accesses in the way that you had suggested,
-> > which at least for GP10B turned out to be fairly trivial to do. I have
-> > not looked in detail at this for GV11B yet, but a cursory look showed
-> > that BAR2 is accessed in more places, so the equivalent for GV11B might
-> > be a bit more involved.
-> >
-> > Other than that, not a lot has changed since then. I've added a couple
-> > of precursory patches to add IOMMU helper dummies for the case where
-> > IOMMU is disabled (as suggested by Ben Dooks).
-> >
-> > Joerg has given an Acked-by on the first two patches, so I think it'd be
-> > easiest if you picked those up into the Nouveau tree because of the
-> > build dependency of subsequent patches on them.
-> I've merged all the patches in my tree, after fixing a small build
-> issue on !TEGRA in the WPR config readout patch.
+On Mon, Dec 09, 2019 at 08:44:39PM +0000, Leonard Crestez wrote:
+> On 09.12.2019 21:58, Yangtao Li wrote:
+> > Use devm_platform_ioremap_resource() to simplify code.
+> >=20
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > ---
+> >   drivers/clk/imx/clk-imx8qxp-lpcg.c | 6 +-----
+> >   1 file changed, 1 insertion(+), 5 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-i=
+mx8qxp-lpcg.c
+> > index c0aff7ca6374..10ae712447c6 100644
+> > --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> > +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> > @@ -164,7 +164,6 @@ static int imx8qxp_lpcg_clk_probe(struct platform_d=
+evice *pdev)
+> >   	struct clk_hw_onecell_data *clk_data;
+> >   	const struct imx8qxp_ss_lpcg *ss_lpcg;
+> >   	const struct imx8qxp_lpcg_data *lpcg;
+> > -	struct resource *res;
+> >   	struct clk_hw **clks;
+> >   	void __iomem *base;
+> >   	int i;
+> > @@ -173,10 +172,7 @@ static int imx8qxp_lpcg_clk_probe(struct platform_=
+device *pdev)
+> >   	if (!ss_lpcg)
+> >   		return -ENODEV;
+> >  =20
+> > -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > -	if (!res)
+> > -		return -EINVAL;
+> > -	base =3D devm_ioremap(dev, res->start, resource_size(res));
+> > +	base =3D devm_platform_ioremap_resource(pdev, 0);
+> >   	if (!base)
+> >   		return -ENOMEM;
+>=20
+> This breaks imx8qxp-mek boot by causing most peripherals (like uart) to=
+=20
+> fail to probe.
+>=20
+> The old and new paths are not equivalent: devm_platform_ioremap_resource
+> calls devm_ioremap_resource which differs from devm_ioremap by also=20
+> calling devm_request_mem_region.
+>=20
+> This prevents other mappings in the area and imx8qxp-lpcg nodes map=20
+> whole hardware "subsystems" and overlap most peripherals. For example:
+>=20
+>                   adma_lpcg: clock-controller@59000000 {
+>                           compatible =3D "fsl,imx8qxp-lpcg-adma";
+>                           reg =3D <0x59000000 0x2000000>;
+>                           #clock-cells =3D <1>;
+> 		};
+>=20
+>                  adma_lpuart0: serial@5a060000 {
+> 			reg =3D <0x5a060000 0x1000>;
+> 			...
+> 		};
 
-Thanks for taking care of that. I'm going to need to add a non-Tegra
-configuration to my build scripts and make sure I run those.
+The whole point of doing a request_mem_region() is to avoid having
+multiple drivers trample on each others' mappings. What you do above
+doesn't look right. Why does that clock controller need access to 32
+MiB of I/O memory space?
 
-On a related note: have you ever considered submitting the Nouveau tree
-for linux-next? That'd be very convenient for people like me working on
-multiple patch series at the same time. In fact I've got another set of
-patches against Nouveau that I want to send out after you've merged
-these. Technically I would need to rebase them on your tree (since there
-may be dependencies on this set), but that means I need to pull in both
-your tree and linux-next if I want to keep up to date on all fronts and
-test all patches in my local tree at the same time.
-
-I'm not sure how well that would fit into your workflow. It's typically
-not more effort than setting up a permanent branch that you can push to
-whenever there's something that's ready for broader consumption. Beyond
-the initial setup (which is really not more complicated than sending
-Stephen an email with a URL and the branch name), it's really quite
-simple and goes a long way to get broad testing early on. And it's
-especially handy to catch potential conflicts with cross-subsystem
-changes like the IOMMU patches in this series.
+That said, there are legitimate reasons for sharing mappings across
+drivers, so I agree that automated conversions like this should be done
+very carefully. The difficulty is that there are cases where drivers
+simply omitted that request_mem_region() by mistake and where the
+conversion can be correct (and in fact an improvement), but we can't
+make the assumption blindly.
 
 Thierry
 
-> > Thierry Reding (9):
-> >   iommu: Document iommu_fwspec::flags field
-> >   iommu: Add dummy dev_iommu_fwspec_get() helper
-> >   drm/nouveau: fault: Add support for GP10B
-> >   drm/nouveau: tegra: Do not try to disable PCI device
-> >   drm/nouveau: tegra: Avoid pulsing reset twice
-> >   drm/nouveau: tegra: Set clock rate if not set
-> >   drm/nouveau: secboot: Read WPR configuration from GPU registers
-> >   drm/nouveau: gp10b: Add custom L2 cache implementation
-> >   drm/nouveau: gp10b: Use correct copy engine
-> >
-> >  .../drm/nouveau/include/nvkm/subdev/fault.h   |  1 +
-> >  .../gpu/drm/nouveau/include/nvkm/subdev/ltc.h |  1 +
-> >  drivers/gpu/drm/nouveau/nouveau_drm.c         |  3 +-
-> >  .../gpu/drm/nouveau/nvkm/engine/device/base.c |  6 +-
-> >  .../drm/nouveau/nvkm/engine/device/tegra.c    | 24 ++++--
-> >  .../gpu/drm/nouveau/nvkm/subdev/fault/Kbuild  |  1 +
-> >  .../gpu/drm/nouveau/nvkm/subdev/fault/base.c  |  2 +-
-> >  .../gpu/drm/nouveau/nvkm/subdev/fault/gp100.c | 17 ++--
-> >  .../gpu/drm/nouveau/nvkm/subdev/fault/gp10b.c | 53 ++++++++++++
-> >  .../gpu/drm/nouveau/nvkm/subdev/fault/gv100.c |  1 +
-> >  .../gpu/drm/nouveau/nvkm/subdev/fault/priv.h  | 10 +++
-> >  .../gpu/drm/nouveau/nvkm/subdev/ltc/Kbuild    |  1 +
-> >  .../gpu/drm/nouveau/nvkm/subdev/ltc/gp10b.c   | 65 +++++++++++++++
-> >  .../gpu/drm/nouveau/nvkm/subdev/ltc/priv.h    |  2 +
-> >  .../drm/nouveau/nvkm/subdev/secboot/gm200.h   |  2 +-
-> >  .../drm/nouveau/nvkm/subdev/secboot/gm20b.c   | 81 ++++++++++++-------
-> >  .../drm/nouveau/nvkm/subdev/secboot/gp10b.c   |  4 +-
-> >  include/linux/iommu.h                         | 47 ++++++-----
-> >  18 files changed, 249 insertions(+), 72 deletions(-)
-> >  create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/fault/gp10b.c
-> >  create mode 100644 drivers/gpu/drm/nouveau/nvkm/subdev/ltc/gp10b.c
-> >
-> > --
-> > 2.23.0
-> >
-> > _______________________________________________
-> > Nouveau mailing list
-> > Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> > https://lists.freedesktop.org/mailman/listinfo/nouveau
+> I don't know if this issue affects any other platforms (imx8 lpcg=20
+> bindings are unusual) but if you found this with an automated tool=20
+> perhaps it should be adjusted?
+>=20
+> By my count it's the 4th time this incorrect cleanup was posted.
+>=20
+> Previously: https://lkml.org/lkml/2019/12/4/487
+>=20
+> --
+> Regards,
+> Leonard
 
---vv4Sf/kQfcwinyKX
+--yH1ZJFh+qWm+VodA
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3vma8ACgkQ3SOs138+
-s6EMoA/+KLTq/6mdV+MZhJOaFxvM/cAMMf7P7ygfKhZGSjR+G5tdp4tpTr0xmTUM
-FaVQbs+u6SAIynt09/muATo/CDBFZPncLliZoquTY/KASlMRNqMGmp5i4EbZgAas
-Rtjb4DwmULvJqJGx4/ilzs0xBwMypaR1voLNfNHSWWN+oay3qQk+UKkxj09M7bXY
-r3r9uEM6CH3w2HH5dVclioH29+bszQahRAjzBMQA4Pan+RxYkcdbD2EldmB2sr8F
-JQsB9M/+9ESKuI8Gc4xoiOVx8tfEA4KTHOHlivnwiZmz2fqQayPB/huSFTswNmOK
-06dpwYW+4nYD31hKFR9bgaw3OMTSYyp8l2pAjePTIFP02MYBD9WzfcssORJPf4h0
-qV4BMtL2vUZxC09bmbxpLZX2/jrmJ7IC9yf+24I9c9RZ25cnsYqUmsbSwxToUkBX
-4Td9CPjOPqFaZs2eqZc0kI46e8dk7AD/H6nVnJmIecQJm+CzvUMukV3UsbZb5Gvj
-KNA+91ZvT+si9wnEGHVvyaRg9FNwN00b7PG2BH9Loa+yglBDaFOWziXRZWtnusXR
-AL5BhsMEQgKGIT5VcBu1FvXNkUmCnULl/88R9JAfBtHAneWvKtI1x/KcZFJPje57
-FeJPDY1CSKH7NOT2E8oKlJrgxdw6GjzB6hNGjlNk7RaFmupKoCA=
-=bn4W
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3vm+kACgkQ3SOs138+
+s6GULxAAilZa8OEmaTs15SX7kJWFjGSMuGZCPAm85TmYwx53oHvbjOuvkDgdiJVy
+bHs51DNXVvFeKTKCiiZLDflAjAhtV6lFBx0mqUk6re6p6Ix/wvmGqZUSJyFOgXBs
+DR33v6akOaCrtnJTEyyCvVJf1RmYd4T+MeONWbm6rfz93xzxT9DZmrU4I7VmRsxn
+8onxkgYw9VjtJQBxR++NgKmCqDoVmsf5nLBQxhuvZpFADhUPwhTfdkv4ehEmPETE
+WcdPQkzbQtqqjWvIMq0SDMr5wxybbQzZKb1j/R0H5umvNAAJYdxihPcMsLuXf5iX
+paNWTVxUjnRzmiPUzy8dPsxBYhlazonR791Clt22p91PJ+/WceAgPW7AaBWZnHT1
+U2jGi1puhPTaUIe93EUS4mgmMUOmbXFoLGBdj7tw9gla4OW8fCsQyIr23gXgCSWp
+iM2eHKLajC3q1sz7nwQ/YmJcEbXzu5BUF1XLo/MyOE04wdqnVAUGnDhSW06MOZpR
+/28nhqZxRMGeTSpGN4wjLGl/7zVF7U9XZVF+1mkgGBAWLeKoHZ+zznk7eRRAs3jm
+G55LaB83ZpUlJcRGTb6mvTMLntmcKTdff5IyNND9S5QRAzsxnUqS3PIGARSm5erh
+aM8vbqsy8rN4viYsg6b4AnC3pkXuzP9g6CymxLl8NlFMykwKJZE=
+=S6GE
 -----END PGP SIGNATURE-----
 
---vv4Sf/kQfcwinyKX--
-
---===============0096471076==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Nouveau mailing list
-Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-https://lists.freedesktop.org/mailman/listinfo/nouveau
-
---===============0096471076==--
+--yH1ZJFh+qWm+VodA--
