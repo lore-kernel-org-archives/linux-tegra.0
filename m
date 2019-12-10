@@ -1,174 +1,48 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: Re: [PATCH 03/18] phy: tegra: xusb: Add usb-role-switch support
-Date: Tue, 10 Dec 2019 09:22:23 +0530
-Message-ID: <9ce40f6c-e742-79f0-ee99-517571c46bc3@nvidia.com>
-References: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
- <1575629421-7039-4-git-send-email-nkristam@nvidia.com>
- <20191206145445.GD2085684@ulmo>
+From: allen <allen.chen@ite.com.tw>
+Subject: [PATCH v5 0/4] IT6505 cover letter
+Date: Tue, 10 Dec 2019 13:53:38 +0800
+Message-ID: <1575957299-12977-1-git-send-email-allen.chen@ite.com.tw>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191206145445.GD2085684@ulmo>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Allen Chen <allen.chen@ite.com.tw>, Pi-Hsun Shih <pihsun@chromium.org>, Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, Heiko Stuebner <heiko@sntech.de>, Icenowy Zheng <icenowy@aosc.io>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jernej Skrabec <jernej.skrabec@siol.net>, Jonas Karlman <jonas@kwiboo.se>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.in>
 List-Id: linux-tegra@vger.kernel.org
 
+The IT6505 is a high-performance DisplayPort 1.1a transmitter, fully compliant
+with DisplayPort 1.1a, HDCP 1.3 specifications. The IT6505 supports color depth
+of up to 36 bits (12 bits/color) and ensures robust transmission of high-quality
+uncompressed video content, along with uncompressed and compressed digital audio
+content.
 
+This series contains document bindings, revert commit, add vendor prefix,
+Kconfig to control the function enable or not.
 
-On 06-12-2019 20:24, Thierry Reding wrote:
-> On Fri, Dec 06, 2019 at 04:20:06PM +0530, Nagarjuna Kristam wrote:
->> If usb-role-switch property is present in USB 2 port, register
->> usb-role-switch to receive usb role changes.
->>
->> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
->> ---
->>  drivers/phy/tegra/Kconfig |  1 +
->>  drivers/phy/tegra/xusb.c  | 40 ++++++++++++++++++++++++++++++++++++++++
->>  drivers/phy/tegra/xusb.h  |  3 +++
->>  3 files changed, 44 insertions(+)
->>
->> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
->> index f9817c3..df07c4d 100644
->> --- a/drivers/phy/tegra/Kconfig
->> +++ b/drivers/phy/tegra/Kconfig
->> @@ -2,6 +2,7 @@
->>  config PHY_TEGRA_XUSB
->>  	tristate "NVIDIA Tegra XUSB pad controller driver"
->>  	depends on ARCH_TEGRA
->> +	select USB_CONN_GPIO
->>  	help
->>  	  Choose this option if you have an NVIDIA Tegra SoC.
->>  
->> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
->> index f98ec39..da60a63 100644
->> --- a/drivers/phy/tegra/xusb.c
->> +++ b/drivers/phy/tegra/xusb.c
->> @@ -523,6 +523,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
->>  	port->dev.type = &tegra_xusb_port_type;
->>  	port->dev.of_node = of_node_get(np);
->>  	port->dev.parent = padctl->dev;
->> +	port->dev.driver = padctl->dev->driver;
->>  
->>  	err = dev_set_name(&port->dev, "%s-%u", name, index);
->>  	if (err < 0)
->> @@ -532,6 +533,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
->>  	if (err < 0)
->>  		goto unregister;
->>  
->> +	dev_set_drvdata(&port->dev, port);
-> You never seem to use dev_get_drvdata() to get at this. Also, you can
-> get at it via container_of(), so this is only marginally useful to begin
-> with.
-> 
-Its actually used in API tegra_xusb_role_sw_set, but thats in patch 0004.
-Will move this line to 0004 patch to align with the usage.
+Allen Chen (1):
+  WIP: drm/bridge: add it6505 driver
 
->>  	return 0;
->>  
->>  unregister:
->> @@ -541,6 +543,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
->>  
->>  static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
->>  {
->> +	usb_role_switch_unregister(port->usb_role_sw);
->>  	device_unregister(&port->dev);
->>  }
->>  
->> @@ -551,11 +554,39 @@ static const char *const modes[] = {
->>  	[USB_DR_MODE_OTG] = "otg",
->>  };
->>  
->> +static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
->> +{
->> +	dev_dbg(dev, "%s calling notifier for role is %d\n", __func__, role);
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
->> +{
->> +	int err = 0;
->> +	struct usb_role_switch_desc role_sx_desc = {
->> +					.set = tegra_xusb_role_sw_set,
->> +					.fwnode = dev_fwnode(&port->dev),
->> +						   };
->> +
->> +	port->usb_role_sw = usb_role_switch_register(&port->dev,
->> +						&role_sx_desc);
->> +	if (IS_ERR(port->usb_role_sw)) {
->> +		err = PTR_ERR(port->usb_role_sw);
->> +		if (err != EPROBE_DEFER)
->> +			dev_err(&port->dev, "Failed to register USB role SW: %d",
->> +				err);
->> +	}
->> +
->> +	return err;
->> +}
->> +
->>  static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
->>  {
->>  	struct tegra_xusb_port *port = &usb2->base;
->>  	struct device_node *np = port->dev.of_node;
->>  	const char *mode;
->> +	int err;
->>  
->>  	usb2->internal = of_property_read_bool(np, "nvidia,internal");
->>  
->> @@ -572,6 +603,15 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
->>  		usb2->mode = USB_DR_MODE_HOST;
->>  	}
->>  
->> +	if (of_property_read_bool(np, "usb-role-switch")) {
->> +		/* populate connector entry */
->> +		of_platform_populate(np, NULL, NULL, &port->dev);
-> I think we want to clean this up on failure, don't we? Otherwise we
-> might end up trying to register the same platform device multiple times.
-> Also, do we want to depopulate when the port is removed again?
-> 
-> Have you tried unloading and loading the driver to see if that works?
-> 
-> Thierry
-> 
-platform needs to be depopulate on error/remove and will add corresponding code.
-padctl driver can be unloaded after unloading all dependent drivers. re-loading
-caused failure of usb role switch due to missing depopulate. Will update changes
-to consider the same.
+allen (3):
+  dt-bindings: Add vendor prefix for ITE Tech. Inc.
+  Revert "drm/tegra: Move drm_dp_link helpers to Tegra DRM"
+  WIP: dt-bindings: Add binding for IT6505.
 
-Thanks,
-Nagarjuna
->> +
->> +		err = tegra_xusb_setup_usb_role_switch(port);
->> +		if (err < 0)
->> +			return err;
->> +	}
->> +
->>  	usb2->supply = devm_regulator_get(&port->dev, "vbus");
->>  	return PTR_ERR_OR_ZERO(usb2->supply);
->>  }
->> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
->> index da94fcc..9f27899 100644
->> --- a/drivers/phy/tegra/xusb.h
->> +++ b/drivers/phy/tegra/xusb.h
->> @@ -12,6 +12,7 @@
->>  #include <linux/workqueue.h>
->>  
->>  #include <linux/usb/otg.h>
->> +#include <linux/usb/role.h>
->>  
->>  /* legacy entry points for backwards-compatibility */
->>  int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
->> @@ -266,6 +267,8 @@ struct tegra_xusb_port {
->>  	struct list_head list;
->>  	struct device dev;
->>  
->> +	struct usb_role_switch *usb_role_sw;
->> +
->>  	const struct tegra_xusb_port_ops *ops;
->>  };
->>  
->> -- 
->> 2.7.4
->>
+ .../bindings/display/bridge/ite,it6505.yaml        |   99 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |    2 +
+ drivers/gpu/drm/bridge/Kconfig                     |    7 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/ite-it6505.c                | 2753 ++++++++++++++++++++
+ drivers/gpu/drm/drm_dp_helper.c                    |  128 +
+ drivers/gpu/drm/tegra/Makefile                     |    1 -
+ drivers/gpu/drm/tegra/dp.c                         |  876 -------
+ drivers/gpu/drm/tegra/dp.h                         |  177 --
+ drivers/gpu/drm/tegra/dpaux.c                      |    1 -
+ drivers/gpu/drm/tegra/sor.c                        |    1 -
+ include/drm/drm_dp_helper.h                        |   16 +
+ 12 files changed, 3006 insertions(+), 1056 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/ite,it6505.yaml
+ create mode 100644 drivers/gpu/drm/bridge/ite-it6505.c
+ delete mode 100644 drivers/gpu/drm/tegra/dp.c
+ delete mode 100644 drivers/gpu/drm/tegra/dp.h
+
+-- 
+1.9.1
