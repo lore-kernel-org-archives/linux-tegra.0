@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 112/130] spi: tegra20-slink: add missed clk_unprepare
-Date: Tue, 10 Dec 2019 17:02:43 -0500
-Message-ID: <20191210220301.13262-112-sashal@kernel.org>
-References: <20191210220301.13262-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 62/71] spi: tegra20-slink: add missed clk_unprepare
+Date: Tue, 10 Dec 2019 17:33:07 -0500
+Message-ID: <20191210223316.14988-62-sashal@kernel.org>
+References: <20191210223316.14988-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191210220301.13262-1-sashal@kernel.org>
+In-Reply-To: <20191210223316.14988-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Chuhong Yuan <hslester96@gmail.com>, Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
@@ -28,7 +28,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 9831c1106945e..62b074b167a9a 100644
+index af2880d0c1126..cf2a329fd8958 100644
 --- a/drivers/spi/spi-tegra20-slink.c
 +++ b/drivers/spi/spi-tegra20-slink.c
 @@ -1078,7 +1078,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
