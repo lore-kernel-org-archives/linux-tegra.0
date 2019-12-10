@@ -1,158 +1,79 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v3 08/15] ASoC: tegra: Add audio mclk control through
- clk_out_1 and extern1
-Date: Mon, 9 Dec 2019 16:54:31 -0800
-Message-ID: <d984ca35-2c8f-d28c-e3c8-688f76ecd98f@nvidia.com>
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-9-git-send-email-skomatineni@nvidia.com>
- <0ce2e83b-800c-da1e-7a3c-3cf1427cfe20@gmail.com>
- <2eeceabe-b5f0-6f9e-ff8c-4ac6167b7cc3@nvidia.com>
- <5d26e32c-a346-4d42-9872-840964512144@gmail.com>
- <79661e2f-dcd4-6dd5-9b4d-9dcc40de478a@nvidia.com>
- <664a0b15-7136-2a11-f0a0-06f32cca1a9c@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1] sdhci: tegra: Add workaround for Broadcom WiFi
+Date: Tue, 10 Dec 2019 04:40:11 +0300
+Message-ID: <20191210014011.21987-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <664a0b15-7136-2a11-f0a0-06f32cca1a9c@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+All Tegra20 boards that have embedded Broadcom WiFi SDIO chip are affected
+by a problem where WiFi chip reports CCCR v1.10, while it should v1.20.
+In a result high-speed mode isn't enabled for the WiFi card and this
+results in a malfunctioning SDIO communication.
 
-On 12/9/19 3:12 PM, Dmitry Osipenko wrote:
-> 10.12.2019 02:05, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 12/9/19 12:06 PM, Dmitry Osipenko wrote:
->>> 07.12.2019 22:20, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> On 12/7/19 6:58 AM, Dmitry Osipenko wrote:
->>>>> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>> Current ASoC driver uses extern1 as cdev1 clock from Tegra30 onwards
->>>>>> through device tree.
->>>>>>
->>>>>> Actual audio mclk is clk_out_1 and to use PLLA for mclk rate control=
-,
->>>>>> need to clk_out_1_mux parent to extern1 and extern1 parent to
->>>>>> PLLA_OUT0.
->>>>>>
->>>>>> Currently Tegra clock driver init sets the parents and enables both
->>>>>> clk_out_1 and extern1 clocks. But these clocks parent and enables
->>>>>> should
->>>>>> be controlled by ASoC driver.
->>>>>>
->>>>>> Clock parents can be specified in device tree using assigned-clocks
->>>>>> and assigned-clock-parents.
->>>>>>
->>>>>> To enable audio mclk, both clk_out_1 and extern1 clocks need to be
->>>>>> enabled.
->>>>>>
->>>>>> This patch configures parents for clk_out_1 and extern1 clocks if
->>>>>> device
->>>>>> tree does not specify clock parents inorder to support old device tr=
-ee
->>>>>> and controls mclk using both clk_out_1 and extern1 clocks.
->>>>>>
->>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>> ---
->>>>>>  =C2=A0=C2=A0 sound/soc/tegra/tegra_asoc_utils.c | 66
->>>>>> ++++++++++++++++++++++++++++++++++++++
->>>>>>  =C2=A0=C2=A0 sound/soc/tegra/tegra_asoc_utils.h |=C2=A0 1 +
->>>>>>  =C2=A0=C2=A0 2 files changed, 67 insertions(+)
->>>>>>
->>>>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
->>>>>> b/sound/soc/tegra/tegra_asoc_utils.c
->>>>>> index 536a578e9512..8e3a3740df7c 100644
->>>>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
->>>>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
->>>>>> @@ -60,6 +60,7 @@ int tegra_asoc_utils_set_rate(struct
->>>>>> tegra_asoc_utils_data *data, int srate,
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->set_mclk =3D 0;
->>>>>>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(d=
-ata->clk_cdev1);
->>>>>> +=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_extern1);
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->cl=
-k_pll_a_out0);
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->cl=
-k_pll_a);
->>>>>>  =C2=A0=C2=A0 @@ -89,6 +90,14 @@ int tegra_asoc_utils_set_rate(struc=
-t
->>>>>> tegra_asoc_utils_data *data, int srate,
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return=
- err;
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>>>  =C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0 if (!IS_ERR_OR_NULL(data->clk_exte=
-rn1)) {
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D clk_prepare_enab=
-le(data->clk_extern1);
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-dev_err(data->dev, "Can't enable extern1: %d\n", err);
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-return err;
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>>> +=C2=A0=C2=A0=C2=A0 }
->>>>>> +
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D clk_prepare_enable(dat=
-a->clk_cdev1);
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_er=
-r(data->dev, "Can't enable cdev1: %d\n", err);
->>>>>> @@ -109,6 +118,7 @@ int tegra_asoc_utils_set_ac97_rate(struct
->>>>>> tegra_asoc_utils_data *data)
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int err;
->>>>>>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(d=
-ata->clk_cdev1);
->>>>>> +=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_extern1);
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->cl=
-k_pll_a_out0);
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->cl=
-k_pll_a);
->>>>>>  =C2=A0=C2=A0 @@ -142,6 +152,14 @@ int tegra_asoc_utils_set_ac97_rat=
-e(struct
->>>>>> tegra_asoc_utils_data *data)
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return=
- err;
->>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>>>  =C2=A0=C2=A0 +=C2=A0=C2=A0=C2=A0 if (!IS_ERR_OR_NULL(data->clk_exte=
-rn1)) {
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D clk_prepare_enab=
-le(data->clk_extern1);
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-dev_err(data->dev, "Can't enable extern1: %d\n", err);
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-return err;
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>>> +=C2=A0=C2=A0=C2=A0 }
->>>>> Why this is needed given that clk_extern1 is either a child of MCLK o=
-r
->>>>> MCLK itself (on T20)? The child clocks are enabled when the parent is
->>>>> enabled.
->>>> For T30 and later, clk_extern1 is one of the source for clk_out_1_mux.
->>>> clk_extern1 is in CAR and it has its own gate and mux.
->>>>
->>>> As audio mclk related clocks (clk_out_1, clk_out_1_mux, and extern1) a=
-re
->>>> moved into ASoC driver from clock driver
->>>>
->>>> need to enable extern1 gate as well along with clk_out1 for T30 throug=
-h
->>>> T210.
->>>>
->>>> Just FYI, extern1 enable here happens only when data->clk_extern1 is
->>>> available which is for T30 onwards.
->>> clk_out_1 is the parent of extern1, thus extern1 is enabled by the clk
->>> core whenever clk_out_1 is enabled because data->clk_cdev1=3Dclk_out_1.=
- An
->>> I missing something?
->>>
->>> [snip]
->> extern1 is the parent for clk_out_1. explained extern1 clock path to
->> clk_out in reply to your comment in other patch of this series.
-> Right, I meant extern1 the parent of clk_out_1, sorry for the confusion.
-> So when clk_out_1 (child) is enabled, extern1 (parent) is enabled as well=
-.
->
-> I'll take a closer look at the other email tomorrow.
-yes, will remove explicitly enabling extern1 in next version.
+ brcmfmac: brcmf_sdio_readframes: read 304 bytes from channel 1 failed: -84
+ brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
+
+Downstream kernels are overriding card's CCCR info in SDHCI driver to fix
+the problem, let's do the same in upstream.
+
+The change is inspired by omap_hsmmc_init_card() of OMAP's HSMMC driver,
+which overrides card's info for the TI wl1251 WiFi.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 7bc950520fd9..2ad87da98f2c 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1501,6 +1501,32 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
+ 	return ret;
+ }
+ 
++static void sdhci_tegra_init_card(struct mmc_host *mmc, struct mmc_card *card)
++{
++	if (card->type == MMC_TYPE_SDIO) {
++		struct device_node *np = mmc_dev(mmc)->of_node;
++
++		np = of_get_compatible_child(np, "brcm,bcm4329-fmac");
++		if (np) {
++			dev_info(mmc_dev(mmc), "found bcm4329\n");
++
++			/*
++			 * All Tegra20 boards that have embedded BCM4329
++			 * chip need to enable high speed for SDIO, otherwise
++			 * further communication with the card doesn't work
++			 * well.
++			 *
++			 * Later BCM43xx chips do not need this workaround,
++			 * but there is no good way to differentiate chip's
++			 * version at this stage and it doesn't cause any
++			 * harm for the later chips.
++			 */
++			card->cccr.high_speed = 1;
++			of_node_put(np);
++		}
++	}
++}
++
+ static int sdhci_tegra_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match;
+@@ -1545,6 +1571,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 		host->mmc_host_ops.execute_tuning =
+ 				tegra_sdhci_execute_hw_tuning;
+ 
++	host->mmc_host_ops.init_card = sdhci_tegra_init_card;
++
+ 	rc = mmc_of_parse(host->mmc);
+ 	if (rc)
+ 		goto err_parse_dt;
+-- 
+2.24.0
