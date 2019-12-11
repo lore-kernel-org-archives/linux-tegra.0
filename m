@@ -1,67 +1,70 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] sdhci: tegra: Add workaround for Broadcom WiFi
-Date: Wed, 11 Dec 2019 19:29:46 +0300
-Message-ID: <44f99e56-468e-c3f9-3785-73c2cf8ba118@gmail.com>
-References: <20191210014011.21987-1-digetx@gmail.com>
- <CAPDyKFpMe09PNQqinvvidF+wfASx2nuvgf7=Hx5+cGni8pdcRA@mail.gmail.com>
- <28045442-6a1c-1e0b-0dfe-c36fa9de149a@gmail.com>
- <CAPDyKFpWO_McZEoefX1T=SE=RYm_GU3S+LgYZrgJY_SJgv7egA@mail.gmail.com>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCH 08/17] clk: imx: convert to devm_platform_ioremap_resource
+Date: Wed, 11 Dec 2019 17:51:35 +0000 (UTC)
+Message-ID: <alpine.DEB.2.21.999.1912111743560.32095@utopia.booyaka.com>
+References: <20191209195749.868-1-tiny.windzz@gmail.com>
+ <20191209195749.868-8-tiny.windzz@gmail.com>
+ <VI1PR04MB7023BD6E46B6DEEBBB762060EE580@VI1PR04MB7023.eurprd04.prod.outlook.com>
+ <20191210132146.GF2703785@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFpWO_McZEoefX1T=SE=RYm_GU3S+LgYZrgJY_SJgv7egA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191210132146.GF2703785@ulmo>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
+List-Post: <mailto:linux-riscv@lists.infradead.org>
+List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "heiko@sntech.de" <heiko@sntech.de>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "chunhui.dai@mediatek.com" <chunhui.dai@mediatek.com>, Yangtao Li <tiny.windzz@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "palmer@sifive.com" <palmer@sifive.com>, "nsekhar@ti.com" <nsekhar@ti.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "rfontana@redhat.com" <rfontana@redhat.com>, Thierry Reding <thierry.reding@gmail.com>, "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "festevam@gmail.com" <festevam@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@v>
 List-Id: linux-tegra@vger.kernel.org
 
-11.12.2019 19:10, Ulf Hansson пишет:
-> On Wed, 11 Dec 2019 at 16:46, Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> Hello Ulf,
->>
->> 11.12.2019 11:11, Ulf Hansson пишет:
->>> On Tue, 10 Dec 2019 at 02:40, Dmitry Osipenko <digetx@gmail.com> wrote:
->>>>
->>>> All Tegra20 boards that have embedded Broadcom WiFi SDIO chip are affected
->>>> by a problem where WiFi chip reports CCCR v1.10, while it should v1.20.
->>>> In a result high-speed mode isn't enabled for the WiFi card and this
->>>> results in a malfunctioning SDIO communication.
->>>
->>> Does that also mean SDIO_SPEED_SHS bit is set when reading SDIO_CCCR_SPEED?
->>
->> Yes, the SDIO_SPEED_SHS bit is set.
->>
->>>>  brcmfmac: brcmf_sdio_readframes: read 304 bytes from channel 1 failed: -84
->>>>  brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
->>>>
->>>> Downstream kernels are overriding card's CCCR info in SDHCI driver to fix
->>>> the problem, let's do the same in upstream.
->>>>
->>>> The change is inspired by omap_hsmmc_init_card() of OMAP's HSMMC driver,
->>>> which overrides card's info for the TI wl1251 WiFi.
->>>
->>> This is a temporary solution and should be replaced by doing the DT
->>> parsing during
->>>
->>> So, yes, let's see if we can use a card quirk instead. That's the first option.
->>>
->>> A second option is simply to parse the DT subnode for a new DT
->>> property during mmc_sdio_init_card(). Along the lines of what we do
->>> for the broken-hpi DT binding for eMMC.
->>
->> Let's try the first option. My understanding is that the problem affects
->> only the specific model of the WiFi chip and it's not a board-specific
->> problem. I'll add Broadcom driver people to CC for the next version of
->> the patch, maybe they'll have something to say.
-> 
-> Okay, sounds reasonable. By looking at your latest attempt for a fix,
-> I have two minor nitpicks, otherwise it looks good.
-> 
-> The nitpicks:
-> I suggest to rename MMC_QUIRK_HIGH_SPEED_CARD to MMC_QUIRK_HIGH_SPEED
-> and mmc_card_need_high_speed_toggle() to mmc_card_quirk_hs().
++ Dong
 
-I'll take it into account, thanks.
+On Tue, 10 Dec 2019, Thierry Reding wrote:
+
+> On Mon, Dec 09, 2019 at 08:44:39PM +0000, Leonard Crestez wrote:
+>
+> > This breaks imx8qxp-mek boot by causing most peripherals (like uart) to 
+> > fail to probe.
+> > 
+> > The old and new paths are not equivalent: devm_platform_ioremap_resource
+> > calls devm_ioremap_resource which differs from devm_ioremap by also 
+> > calling devm_request_mem_region.
+> > 
+> > This prevents other mappings in the area and imx8qxp-lpcg nodes map 
+> > whole hardware "subsystems" and overlap most peripherals. For example:
+> > 
+> >                   adma_lpcg: clock-controller@59000000 {
+> >                           compatible = "fsl,imx8qxp-lpcg-adma";
+> >                           reg = <0x59000000 0x2000000>;
+> >                           #clock-cells = <1>;
+> > 		};
+> > 
+> >                  adma_lpuart0: serial@5a060000 {
+> > 			reg = <0x5a060000 0x1000>;
+> > 			...
+> > 		};
+> 
+> The whole point of doing a request_mem_region() is to avoid having
+> multiple drivers trample on each others' mappings. What you do above
+> doesn't look right. Why does that clock controller need access to 32
+> MiB of I/O memory space?
+
+Thierry's right; your DT data looks broken.  Unfortunately the IMX8M TRM 
+requires some sort of signup to download, so I can't easily read it, but 
+based on files like this:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/imx/clk-imx8qxp-lpcg.h
+
+it looks like what should be in the DT instead is either a large set of 
+smaller register ranges, or a set of separate DT nodes/drivers: one per 
+peripheral LPCG instance.  That should avoid the overlapping memory range 
+issue.
+
+
+- Paul
