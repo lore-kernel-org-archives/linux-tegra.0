@@ -1,232 +1,124 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-Date: Wed, 11 Dec 2019 10:50:11 -0800
-Message-ID: <bb966cf2-50f6-6729-7644-54d71d55bbcb@nvidia.com>
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
- <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
- <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
- <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
- <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
- <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
- <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
- <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
- <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
- <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
- <3f1c9325-3017-62be-1e3b-82fd28540fdf@nvidia.com>
- <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
- <8eb792ad-cded-05cc-93fc-763be7ee66aa@nvidia.com>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [PATCH 08/17] clk: imx: convert to devm_platform_ioremap_resource
+Date: Wed, 11 Dec 2019 20:54:53 +0100
+Message-ID: <76d72777-b144-0679-1f4c-1136496a5f06@suse.de>
+References: <20191209195749.868-1-tiny.windzz@gmail.com>
+ <20191209195749.868-8-tiny.windzz@gmail.com>
+ <VI1PR04MB7023BD6E46B6DEEBBB762060EE580@VI1PR04MB7023.eurprd04.prod.outlook.com>
+ <20191210132146.GF2703785@ulmo>
+ <8ff73b97-cf2e-0c91-2764-05ce4c548b06@suse.de>
+ <alpine.DEB.2.21.999.1912111751490.32095@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="iso-8859-15"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8eb792ad-cded-05cc-93fc-763be7ee66aa@nvidia.com>
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.21.999.1912111751490.32095-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, sboyd@kernel.org, pdeschrijver@nvidia.com
-Cc: gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: "kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org" <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, "geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org" <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, "chunhui.dai-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org" <chunhui.dai-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org" <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, "miquel.raynal-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org" <miquel.raynal-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, "nsekhar-l0cyMroinI0@public.gmane.org" <nsekhar-l0cyMroinI0@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "rfontana-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org" <rfontana-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org" <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, "krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-riscv-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-riscv-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Leonard Crestez <leonard.cres>
 List-Id: linux-tegra@vger.kernel.org
 
+Am 11.12.19 um 18:57 schrieb Paul Walmsley:
+> On Tue, 10 Dec 2019, Andreas F=E4rber wrote:
+> =
 
-On 12/10/19 5:06 PM, Sowjanya Komatineni wrote:
->
-> On 12/10/19 9:41 AM, Dmitry Osipenko wrote:
->> 10.12.2019 19:53, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> On 12/9/19 3:03 PM, Sowjanya Komatineni wrote:
->>>> On 12/9/19 12:46 PM, Sowjanya Komatineni wrote:
->>>>> On 12/9/19 12:12 PM, Dmitry Osipenko wrote:
->>>>>> 08.12.2019 00:36, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
->>>>>>> On 12/7/19 11:59 AM, Sowjanya Komatineni wrote:
->>>>>>>> On 12/7/19 8:00 AM, Dmitry Osipenko wrote:
->>>>>>>>> 07.12.2019 18:53, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>>>>> 07.12.2019 18:47, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
->>>>>>>>>>> 07.12.2019 17:28, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82:
->>>>>>>>>>>> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=
-=D1=82:
->>>>>>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2,=20
->>>>>>>>>>>>> clk_out_3
->>>>>>>>>>>>> with
->>>>>>>>>>>>> mux and gate for each of these clocks.
->>>>>>>>>>>>>
->>>>>>>>>>>>> Currently these PMC clocks are registered by Tegra clock=20
->>>>>>>>>>>>> driver
->>>>>>>>>>>>> using
->>>>>>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base
->>>>>>>>>>>>> address
->>>>>>>>>>>>> and register offsets and PMC programming for these clocks
->>>>>>>>>>>>> happens
->>>>>>>>>>>>> through direct PMC access by the clock driver.
->>>>>>>>>>>>>
->>>>>>>>>>>>> With this, when PMC is in secure mode any direct PMC access
->>>>>>>>>>>>> from the
->>>>>>>>>>>>> non-secure world does not go through and these clocks will
->>>>>>>>>>>>> not be
->>>>>>>>>>>>> functional.
->>>>>>>>>>>>>
->>>>>>>>>>>>> This patch adds these clocks registration with PMC as a clock
->>>>>>>>>>>>> provider
->>>>>>>>>>>>> for these clocks. clk_ops callback implementations for these
->>>>>>>>>>>>> clocks
->>>>>>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
->>>>>>>>>>>>> programming
->>>>>>>>>>>>> in secure mode and non-secure mode.
->>>>>>>>>>>>>
->>>>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>>>>>> ---
->>>>>>>>>>> [snip]
->>>>>>>>>>>
->>>>>>>>>>>>> +
->>>>>>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops =3D {
->>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
->>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
->>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
->>>>>>>>>>>>> +};
->>>>>>>>>>>> What's the benefit of separating GATE from the MUX?
->>>>>>>>>>>>
->>>>>>>>>>>> I think it could be a single clock.
->>>>>>>>>>> According to TRM:
->>>>>>>>>>>
->>>>>>>>>>> 1. GATE and MUX are separate entities.
->>>>>>>>>>>
->>>>>>>>>>> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram
->>>>>>>>>>> in TRM).
->>>>>>>>>>>
->>>>>>>>>>> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable"=20
->>>>>>>>>>> it,
->>>>>>>>>>> correct?
->>>>>>> Was following existing clk-tegra-pmc as I am not sure of reason for
->>>>>>> having these clocks registered as separate mux and gate clocks.
->>>>>>>
->>>>>>> Yes, PMC clocks can be registered as single clock and can use=20
->>>>>>> clk_ops
->>>>>>> for set/get parent and enable/disable.
->>>>>>>
->>>>>>> enable/disable of PMC clocks is for force-enable to force the=20
->>>>>>> clock to
->>>>>>> run regardless of ACCEPT_REQ or INVERT_REQ.
->>>>>>>
->>>>>>>>>> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these=20
->>>>>>>>>> clocks
->>>>>>>>>> should belong to PMC.
->>>>>>>>> Also, it should be "osc" and not "clk_m".
->>>>>>>> I followed the same parents as it were in existing clk-tegra-pmc
->>>>>>>> driver.
->>>>>>>>
->>>>>>>> Yeah they are wrong and they should be from osc and not clk_m.
->>>>>>>>
->>>>>>>> Will fix in next version.
->>>>>>>>
->>>> Reg clk_m_div2/3, they are dividers at OSC pad and not really internal
->>>> to PMC block.
->>>>
->>>> current clock driver creates clk_m_div clocks which should actually be
->>>> osc_div2/osc_div4 clocks with osc as parent.
->>>>
->>>> There are no clk_m_div2 and clk_m_div4 from clk_m
->>>>
->>>> Will fix this in next version.
->>>>
->>>>>> Could you please describe the full EXTPERIPH clock topology and=20
->>>>>> how the
->>>>>> pinmux configuration is related to it all?
->>>>>>
->>>>>> What is internal to the Tegra chip and what are the external=20
->>>>>> outputs?
->>>>>>
->>>>>> Is it possible to bypass PMC on T30+ for the EXTPERIPH clocks?
->>>>> PMC CLK1/2/3 possible sources are OSC_DIV1, OSC_DIV2, OSC_DIV4,
->>>>> EXTPERIPH from CAR.
->>>>>
->>>>> OSC_DIV1/2/4 are with internal dividers at the OSC Pads
->>>>>
->>>>> EXTPERIPH is from CAR and it has reset and enable controls along with
->>>>> clock source selections to choose one of the PLLA_OUT0, CLK_S,
->>>>> PLLP_OUT0, CLK_M, PLLE_OUT0
->>>>>
->>>>> So, PMC CLK1/2/4 possible parents are OSC_DIV1, OSC_DIV2, OSC_DIV4,
->>>>> EXTERN.
->>>>>
->>>>>
->>>>> CLK1/2/3 also has Pinmux to route EXTPERIPH output on to these pins.
->>>>>
->>>>>
->>>>> When EXTERN output clock is selected for these PMC clocks thru
->>>>> CLKx_SRC_SEL, output clock is from driver by EXTPERIPH from CAR via
->>>>> Pinmux logic or driven as per CLKx_SRC_SEL bypassing pinmux based on
->>>>> CLKx_ACCEPT_REQ bit.
->>>>>
->>>>>
->>>>> PMC Clock control register has bit CLKx_ACCEPT_REQ
->>>>> When CLKx_ACCEPT_REQ =3D 0, output clock driver is from by EXTPERIPH
->>>>> through the pinmux
->>>>> When CLKx_ACCEPT_REQ =3D 1, output clock is based on CLKx_SRC_SEL bit=
-s
->>>>> (OSC_DIV1/2/4 and EXTPERIPH clock bypassing the pinmux)
->>>>>
->>>>> FORCE_EN bit in PMC CLock control register forces the clock to run
->>>>> regardless of this.
->>> PMC clock gate is based on the state of CLKx_ACCEPT_REQ and FORCE_EN
->>> like explained above.
->>>
->>> CLKx_ACCEPT_REQ is 0 default and FORCE_EN acts as gate to=20
->>> enable/disable
->>> EXTPERIPH clock output to PMC CLK_OUT_1/2/3.
->> [and to enable OSC as well]
->>
->>> So I believe we need to register as MUX and Gate rather than as a=20
->>> single
->>> clock. Please confirm.
->> 1. The force-enabling is applied to both OSC and EXTERN sources of
->> PMC_CLK_OUT_x by PMC at once.
->>
->> 2. Both of PMC's force-enabling and OSC/EXTERN selection is internal=20
->> to PMC.
->>
->> Should be better to define it as a single "pmc_clk_out_x". I don't see
->> any good reasons for differentiating PMC's Gate from the MUX, it's a
->> single hardware unit from a point of view of the rest of the system.
->>
->> Peter, do you have any objections?
->
-> We added fallback option for audio mclk and also added check for=20
-> assigned-clock-parents dt property in audio driver and if its not then=20
-> we do parent init configuration in audio driver.
->
-> Current clock driver creates 2 separate clocks clk_out_1_mux and=20
-> clk_out_1 for each pmc clock in clock driver and uses extern1 as=20
-> parent to clk_out_1_mux and clk_out_1_mux is parent to clk_out_1.
->
-> With change of registering each pmc clock as a single clock, when we=20
-> do parent init assignment in audio driver when=20
-> assigned-clock-properties are not used in DT (as we removed parent=20
-> inits for extern and clk_outs from clock driver), we should still try=20
-> to get clock based on clk_out_1_mux as parent assignment of extern1 is=20
-> for clk_out_1_mux as per existing clock tree.
->
-> clk_out_1_mux clock retrieve will fail with this change of single=20
-> clock when any new platform device tree doesn't specify=20
-> assigned-clock-parents properties and tegra_asoc_utils_init fails.
->
-> With single clock, extern1 is the parent for clk_out_1 and with=20
-> separate clocks for mux and gate, extern1 is the parent for=20
-> clk_out_1_mux.
+>> I have similar cases with Realtek where registers are simply not grouped
+>> into convenient blocks but spread across large memory regions.
+> =
 
-If we move to single clock now, it need one more additional fallback=20
-implementation in audio driver during parent configuration as=20
-clk_out_1_mux will not be there with single clock change and old/current=20
-kernel has it as it uses separate clocks for pmc mux and gate.
+> At the hardware level, registers are grouped into IP blocks, to simply =
 
-Also, with single clock for both PMC mux and gate now, new DT should use=20
-extern1 as parent to CLK_OUT_1 as CLK_OUT_1_MUX will not be there old=20
-PMC dt-bindings has separate clocks for MUX (CLK_OUT_1_MUX) and gate=20
-(CLK_OUT_1)
+> both design integration and address decoding.
 
-DT bindings will not be compatible b/w old and new changes if we move to=20
-Single PMC clock now.
+Reality shows, not all vendors/chips always care about simplification.
 
-Should we go with same separate clocks to have it compatible to avoid=20
-all this?
+Blocks do have names, but they don't always group registers of the same
+kind, as Linux expects it - be it for historical backwards compatibility
+reasons or because Linux/Android wasn't their main use case in the past.
+Firmware developers won't care where their registers are located.
+
+>  Not knowing which Realtek =
+
+> device you're referring to,
+
+Arm based RTD1195 and RTD1295/RTD1395/RTD1619/RTD1319 SoC families,
+which I maintain.
+
+> most likely it's the same situation as with =
+
+> the IMX8M TRM, where the DT data doesn't match the underlying reality of =
+
+> the hardware.  In those cases the best approach is usually to just fix th=
+e =
+
+> DT data.
+
+No, you're not reading me. My DT data matches the hardware as far as I
+know it. You can be really happy that you can login to get NXP manuals;
+for other vendors, manuals simply don't exist and we have to deduce DT
+from register names/offsets ourselves. Reality is messy!
+
+Just please accept that hardware does not always allow for unique
+contiguous memory reservations, and we therefore cannot force these
+types of reservations onto everybody.
+
+There might be an opportunity for a new helper with even longer name
+that does the expected combination of actions. But is it worth it?
+People seem to have stopped giving motivations for their patches in
+commit message or cover letter, so it remains entirely unclear how else
+one might satisfy the submitter's goals while keeping your code working.
+(Also referring to unjustified style-only cleanups popping up lately.)
+"to simplify code" is not much to go on, it sounds like a style cleanup
+without any practical error avoidance benefits nor an API to be dropped.
+
+Note that I did not receive any cover letter accompanying this patch,
+but was CC'ed on plenty of other patches like this one that I'm not
+maintainer of, leading me to assume that none was sent.
+
+Alternatively one could do the reservations decoupled from DT inside the
+driver, but again not using this suggested helper.
+
+From what I read on other such patches, apparently some Coccinelle build
+target emits warnings when it matches some pattern for potential
+refactoring, which people then set out to resolve, without understanding
+the code they touch or being able to actually test it. That's probably
+the root cause that someone would need to tackle - whitelisting
+fully-intentional usages of certain APIs to protect against unwarranted
+refactorings, or otherwise making sure that people don't get inspired to
+in their best intentions break other people's code. I assume kbuild bot
+doesn't send out such cocci warnings to us maintainers for good reasons.
+
+A completely fragmented DT with either dozens of reg entries for single
+registers or distinct compatible strings for individual registers, to
+give them their own DT nodes, is not really handy, compared to one or
+two larger clk nodes that handle reg offsets under the hood, without
+impacting public DT bindings (e.g., bumping reg's maxItems, clk header).
+
+If you care about modeling this, you're welcome to participate in patch
+review @ DTML/LAKML/LRSML. So far there's largely been a yawning silence
+in response to my patches introducing syscon and simple-mfd as cleanups,
+before things get worse as we add to the DT. Following an unreviewed clk
+RFC of mine two years back, there's now been a clk patchset from Realtek
+that got a load of review comments from me, waiting for a v2.
+
+If you don't care, then please don't lecture us about how you think
+other people's hardware should ideally be like. That's not helpful.
+
+Regards,
+Andreas
+
+-- =
+
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Felix Imend=F6rffer
+HRB 36809 (AG N=FCrnberg)
