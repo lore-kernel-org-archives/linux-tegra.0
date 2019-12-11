@@ -1,61 +1,205 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 77/91] spi: tegra20-slink: add missed clk_unprepare
-Date: Tue, 10 Dec 2019 17:30:21 -0500
-Message-ID: <20191210223035.14270-77-sashal@kernel.org>
-References: <20191210223035.14270-1-sashal@kernel.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Tue, 10 Dec 2019 17:06:50 -0800
+Message-ID: <8eb792ad-cded-05cc-93fc-763be7ee66aa@nvidia.com>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+ <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
+ <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
+ <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
+ <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
+ <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
+ <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
+ <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+ <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
+ <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
+ <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
+ <3f1c9325-3017-62be-1e3b-82fd28540fdf@nvidia.com>
+ <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191210223035.14270-1-sashal@kernel.org>
+In-Reply-To: <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Chuhong Yuan <hslester96@gmail.com>, Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, sboyd@kernel.org, pdeschrijver@nvidia.com
+Cc: gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 04358e40ba96d687c0811c21d9dede73f5244a98 ]
+On 12/10/19 9:41 AM, Dmitry Osipenko wrote:
+> 10.12.2019 19:53, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 12/9/19 3:03 PM, Sowjanya Komatineni wrote:
+>>> On 12/9/19 12:46 PM, Sowjanya Komatineni wrote:
+>>>> On 12/9/19 12:12 PM, Dmitry Osipenko wrote:
+>>>>> 08.12.2019 00:36, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> On 12/7/19 11:59 AM, Sowjanya Komatineni wrote:
+>>>>>>> On 12/7/19 8:00 AM, Dmitry Osipenko wrote:
+>>>>>>>> 07.12.2019 18:53, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>> 07.12.2019 18:47, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>>> 07.12.2019 17:28, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
+:
+>>>>>>>>>>> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=
+=D1=82:
+>>>>>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out=
+_3
+>>>>>>>>>>>> with
+>>>>>>>>>>>> mux and gate for each of these clocks.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Currently these PMC clocks are registered by Tegra clock drive=
+r
+>>>>>>>>>>>> using
+>>>>>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base
+>>>>>>>>>>>> address
+>>>>>>>>>>>> and register offsets and PMC programming for these clocks
+>>>>>>>>>>>> happens
+>>>>>>>>>>>> through direct PMC access by the clock driver.
+>>>>>>>>>>>>
+>>>>>>>>>>>> With this, when PMC is in secure mode any direct PMC access
+>>>>>>>>>>>> from the
+>>>>>>>>>>>> non-secure world does not go through and these clocks will
+>>>>>>>>>>>> not be
+>>>>>>>>>>>> functional.
+>>>>>>>>>>>>
+>>>>>>>>>>>> This patch adds these clocks registration with PMC as a clock
+>>>>>>>>>>>> provider
+>>>>>>>>>>>> for these clocks. clk_ops callback implementations for these
+>>>>>>>>>>>> clocks
+>>>>>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
+>>>>>>>>>>>> programming
+>>>>>>>>>>>> in secure mode and non-secure mode.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>>>>>> ---
+>>>>>>>>>> [snip]
+>>>>>>>>>>
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops =3D {
+>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
+>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
+>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
+>>>>>>>>>>>> +};
+>>>>>>>>>>> What's the benefit of separating GATE from the MUX?
+>>>>>>>>>>>
+>>>>>>>>>>> I think it could be a single clock.
+>>>>>>>>>> According to TRM:
+>>>>>>>>>>
+>>>>>>>>>> 1. GATE and MUX are separate entities.
+>>>>>>>>>>
+>>>>>>>>>> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram
+>>>>>>>>>> in TRM).
+>>>>>>>>>>
+>>>>>>>>>> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable" it,
+>>>>>>>>>> correct?
+>>>>>> Was following existing clk-tegra-pmc as I am not sure of reason for
+>>>>>> having these clocks registered as separate mux and gate clocks.
+>>>>>>
+>>>>>> Yes, PMC clocks can be registered as single clock and can use clk_op=
+s
+>>>>>> for set/get parent and enable/disable.
+>>>>>>
+>>>>>> enable/disable of PMC clocks is for force-enable to force the clock =
+to
+>>>>>> run regardless of ACCEPT_REQ or INVERT_REQ.
+>>>>>>
+>>>>>>>>> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these cloc=
+ks
+>>>>>>>>> should belong to PMC.
+>>>>>>>> Also, it should be "osc" and not "clk_m".
+>>>>>>> I followed the same parents as it were in existing clk-tegra-pmc
+>>>>>>> driver.
+>>>>>>>
+>>>>>>> Yeah they are wrong and they should be from osc and not clk_m.
+>>>>>>>
+>>>>>>> Will fix in next version.
+>>>>>>>
+>>> Reg clk_m_div2/3, they are dividers at OSC pad and not really internal
+>>> to PMC block.
+>>>
+>>> current clock driver creates clk_m_div clocks which should actually be
+>>> osc_div2/osc_div4 clocks with osc as parent.
+>>>
+>>> There are no clk_m_div2 and clk_m_div4 from clk_m
+>>>
+>>> Will fix this in next version.
+>>>
+>>>>> Could you please describe the full EXTPERIPH clock topology and how t=
+he
+>>>>> pinmux configuration is related to it all?
+>>>>>
+>>>>> What is internal to the Tegra chip and what are the external outputs?
+>>>>>
+>>>>> Is it possible to bypass PMC on T30+ for the EXTPERIPH clocks?
+>>>> PMC CLK1/2/3 possible sources are OSC_DIV1, OSC_DIV2, OSC_DIV4,
+>>>> EXTPERIPH from CAR.
+>>>>
+>>>> OSC_DIV1/2/4 are with internal dividers at the OSC Pads
+>>>>
+>>>> EXTPERIPH is from CAR and it has reset and enable controls along with
+>>>> clock source selections to choose one of the PLLA_OUT0, CLK_S,
+>>>> PLLP_OUT0, CLK_M, PLLE_OUT0
+>>>>
+>>>> So, PMC CLK1/2/4 possible parents are OSC_DIV1, OSC_DIV2, OSC_DIV4,
+>>>> EXTERN.
+>>>>
+>>>>
+>>>> CLK1/2/3 also has Pinmux to route EXTPERIPH output on to these pins.
+>>>>
+>>>>
+>>>> When EXTERN output clock is selected for these PMC clocks thru
+>>>> CLKx_SRC_SEL, output clock is from driver by EXTPERIPH from CAR via
+>>>> Pinmux logic or driven as per CLKx_SRC_SEL bypassing pinmux based on
+>>>> CLKx_ACCEPT_REQ bit.
+>>>>
+>>>>
+>>>> PMC Clock control register has bit CLKx_ACCEPT_REQ
+>>>> When CLKx_ACCEPT_REQ =3D 0, output clock driver is from by EXTPERIPH
+>>>> through the pinmux
+>>>> When CLKx_ACCEPT_REQ =3D 1, output clock is based on CLKx_SRC_SEL bits
+>>>> (OSC_DIV1/2/4 and EXTPERIPH clock bypassing the pinmux)
+>>>>
+>>>> FORCE_EN bit in PMC CLock control register forces the clock to run
+>>>> regardless of this.
+>> PMC clock gate is based on the state of CLKx_ACCEPT_REQ and FORCE_EN
+>> like explained above.
+>>
+>> CLKx_ACCEPT_REQ is 0 default and FORCE_EN acts as gate to enable/disable
+>> EXTPERIPH clock output to PMC CLK_OUT_1/2/3.
+> [and to enable OSC as well]
+>
+>> So I believe we need to register as MUX and Gate rather than as a single
+>> clock. Please confirm.
+> 1. The force-enabling is applied to both OSC and EXTERN sources of
+> PMC_CLK_OUT_x by PMC at once.
+>
+> 2. Both of PMC's force-enabling and OSC/EXTERN selection is internal to P=
+MC.
+>
+> Should be better to define it as a single "pmc_clk_out_x". I don't see
+> any good reasons for differentiating PMC's Gate from the MUX, it's a
+> single hardware unit from a point of view of the rest of the system.
+>
+> Peter, do you have any objections?
 
-The driver misses calling clk_unprepare in probe failure and remove.
-Add the calls to fix it.
+We added fallback option for audio mclk and also added check for=20
+assigned-clock-parents dt property in audio driver and if its not then=20
+we do parent init configuration in audio driver.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Link: https://lore.kernel.org/r/20191115083122.12278-1-hslester96@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/spi/spi-tegra20-slink.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Current clock driver creates 2 separate clocks clk_out_1_mux and=20
+clk_out_1 for each pmc clock in clock driver and uses extern1 as parent=20
+to clk_out_1_mux and clk_out_1_mux is parent to clk_out_1.
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index af2880d0c1126..cf2a329fd8958 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1078,7 +1078,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	ret = clk_enable(tspi->clk);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
--		goto exit_free_master;
-+		goto exit_clk_unprepare;
- 	}
- 
- 	spi_irq = platform_get_irq(pdev, 0);
-@@ -1151,6 +1151,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	free_irq(spi_irq, tspi);
- exit_clk_disable:
- 	clk_disable(tspi->clk);
-+exit_clk_unprepare:
-+	clk_unprepare(tspi->clk);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
-@@ -1164,6 +1166,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
- 	free_irq(tspi->irq, tspi);
- 
- 	clk_disable(tspi->clk);
-+	clk_unprepare(tspi->clk);
- 
- 	if (tspi->tx_dma_chan)
- 		tegra_slink_deinit_dma_param(tspi, false);
--- 
-2.20.1
+With change of registering each pmc clock as a single clock, when we do=20
+parent init assignment in audio driver when assigned-clock-properties=20
+are not used in DT (as we removed parent inits for extern and clk_outs=20
+from clock driver), we should still try to get clock based on=20
+clk_out_1_mux as parent assignment of extern1 is for clk_out_1_mux as=20
+per existing clock tree.
+
+clk_out_1_mux clock retrieve will fail with this change of single clock=20
+when any new platform device tree doesn't specify assigned-clock-parents=20
+properties and tegra_asoc_utils_init fails.
+
+With single clock, extern1 is the parent for clk_out_1 and with separate=20
+clocks for mux and gate, extern1 is the parent for clk_out_1_mux.
