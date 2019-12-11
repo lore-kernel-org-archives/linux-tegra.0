@@ -1,100 +1,43 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v1] sdhci: tegra: Add workaround for Broadcom WiFi
-Date: Wed, 11 Dec 2019 09:11:59 +0100
-Message-ID: <CAPDyKFpMe09PNQqinvvidF+wfASx2nuvgf7=Hx5+cGni8pdcRA@mail.gmail.com>
-References: <20191210014011.21987-1-digetx@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: Fix restoration of PLLM when exiting suspend
+Date: Wed, 11 Dec 2019 10:50:16 +0200
+Message-ID: <20191211085016.GW28289@pdeschrijver-desktop.Nvidia.com>
+References: <20191210103708.7023-1-jonathanh@nvidia.com>
+ <1f2a4f23-5be5-aa7e-6eb4-2aeb4058481d@gmail.com>
+ <1fe9cd2d-50a2-aae5-95fa-0329acce4c4c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191210014011.21987-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1fe9cd2d-50a2-aae5-95fa-0329acce4c4c@gmail.com>
+Sender: stable-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 10 Dec 2019 at 02:40, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> All Tegra20 boards that have embedded Broadcom WiFi SDIO chip are affected
-> by a problem where WiFi chip reports CCCR v1.10, while it should v1.20.
-> In a result high-speed mode isn't enabled for the WiFi card and this
-> results in a malfunctioning SDIO communication.
+On Tue, Dec 10, 2019 at 11:29:42PM +0300, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>=20
+>=20
+> 10.12.2019 22:28, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Hello Jon,
+> >
+> > PLLM's enable-status could be defined either by PMC or CaR. Thus at
+> > first you need to check whether PMC overrides CaR's enable and then
+> > judge the enable state based on PMC or CaR state respectively.
+> >
+>=20
+> Actually, now I think that it doesn't make sense to check PMC WB0 state
+> at all. IIUC, PLLM's state of the WB0 register defines whether Boot ROM
+> should enable PLLM on resume from suspend. Thus it will be correct to
+> check only the CaR's enable-state of PLLM.
+>=20
+> I'm not sure what's the idea of WB0 overriding, maybe to resume faster.
+> Peter, could you please clarify that?
 
-Does that also mean SDIO_SPEED_SHS bit is set when reading SDIO_CCCR_SPEED?
+I don't know why these overriding bits exist. The code for them was in
+the downstream driver so I implemented the same in the upstream driver
+:)
 
->
->  brcmfmac: brcmf_sdio_readframes: read 304 bytes from channel 1 failed: -84
->  brcmfmac: brcmf_sdio_rxfail: abort command, terminate frame, send NAK
->
-> Downstream kernels are overriding card's CCCR info in SDHCI driver to fix
-> the problem, let's do the same in upstream.
->
-> The change is inspired by omap_hsmmc_init_card() of OMAP's HSMMC driver,
-> which overrides card's info for the TI wl1251 WiFi.
-
-This is a temporary solution and should be replaced by doing the DT
-parsing during
-
-So, yes, let's see if we can use a card quirk instead. That's the first option.
-
-A second option is simply to parse the DT subnode for a new DT
-property during mmc_sdio_init_card(). Along the lines of what we do
-for the broken-hpi DT binding for eMMC.
-
-Kind regards
-Uffe
-
->
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 7bc950520fd9..2ad87da98f2c 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -1501,6 +1501,32 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
->         return ret;
->  }
->
-> +static void sdhci_tegra_init_card(struct mmc_host *mmc, struct mmc_card *card)
-> +{
-> +       if (card->type == MMC_TYPE_SDIO) {
-> +               struct device_node *np = mmc_dev(mmc)->of_node;
-> +
-> +               np = of_get_compatible_child(np, "brcm,bcm4329-fmac");
-> +               if (np) {
-> +                       dev_info(mmc_dev(mmc), "found bcm4329\n");
-> +
-> +                       /*
-> +                        * All Tegra20 boards that have embedded BCM4329
-> +                        * chip need to enable high speed for SDIO, otherwise
-> +                        * further communication with the card doesn't work
-> +                        * well.
-> +                        *
-> +                        * Later BCM43xx chips do not need this workaround,
-> +                        * but there is no good way to differentiate chip's
-> +                        * version at this stage and it doesn't cause any
-> +                        * harm for the later chips.
-> +                        */
-> +                       card->cccr.high_speed = 1;
-> +                       of_node_put(np);
-> +               }
-> +       }
-> +}
-> +
->  static int sdhci_tegra_probe(struct platform_device *pdev)
->  {
->         const struct of_device_id *match;
-> @@ -1545,6 +1571,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->                 host->mmc_host_ops.execute_tuning =
->                                 tegra_sdhci_execute_hw_tuning;
->
-> +       host->mmc_host_ops.init_card = sdhci_tegra_init_card;
-> +
->         rc = mmc_of_parse(host->mmc);
->         if (rc)
->                 goto err_parse_dt;
-> --
-> 2.24.0
->
+Peter.
