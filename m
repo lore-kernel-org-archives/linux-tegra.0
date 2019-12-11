@@ -1,14 +1,14 @@
 From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 5.4 015/134] iommu/tegra-smmu: Fix page tables in > 4
+Subject: [PATCH AUTOSEL 4.19 07/79] iommu/tegra-smmu: Fix page tables in > 4
  GiB memory
-Date: Wed, 11 Dec 2019 10:09:51 -0500
-Message-ID: <20191211151150.19073-15-sashal@kernel.org>
-References: <20191211151150.19073-1-sashal@kernel.org>
+Date: Wed, 11 Dec 2019 10:25:31 -0500
+Message-ID: <20191211152643.23056-7-sashal@kernel.org>
+References: <20191211152643.23056-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20191211151150.19073-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20191211152643.23056-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
  <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
@@ -43,10 +43,10 @@ Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
  1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 7293fc3f796d6..dd486233e2828 100644
+index 121d3cb7ddd1d..fa0ecb5e63809 100644
 --- a/drivers/iommu/tegra-smmu.c
 +++ b/drivers/iommu/tegra-smmu.c
-@@ -159,9 +159,9 @@ static bool smmu_dma_addr_valid(struct tegra_smmu *smmu, dma_addr_t addr)
+@@ -164,9 +164,9 @@ static bool smmu_dma_addr_valid(struct tegra_smmu *smmu, dma_addr_t addr)
  	return (addr & smmu->pfn_mask) == addr;
  }
  
@@ -58,7 +58,7 @@ index 7293fc3f796d6..dd486233e2828 100644
  }
  
  static void smmu_flush_ptc_all(struct tegra_smmu *smmu)
-@@ -549,6 +549,7 @@ static u32 *tegra_smmu_pte_lookup(struct tegra_smmu_as *as, unsigned long iova,
+@@ -551,6 +551,7 @@ static u32 *tegra_smmu_pte_lookup(struct tegra_smmu_as *as, unsigned long iova,
  				  dma_addr_t *dmap)
  {
  	unsigned int pd_index = iova_pd_index(iova);
@@ -66,7 +66,7 @@ index 7293fc3f796d6..dd486233e2828 100644
  	struct page *pt_page;
  	u32 *pd;
  
-@@ -557,7 +558,7 @@ static u32 *tegra_smmu_pte_lookup(struct tegra_smmu_as *as, unsigned long iova,
+@@ -559,7 +560,7 @@ static u32 *tegra_smmu_pte_lookup(struct tegra_smmu_as *as, unsigned long iova,
  		return NULL;
  
  	pd = page_address(as->pd);
@@ -75,7 +75,7 @@ index 7293fc3f796d6..dd486233e2828 100644
  
  	return tegra_smmu_pte_offset(pt_page, iova);
  }
-@@ -599,7 +600,7 @@ static u32 *as_get_pte(struct tegra_smmu_as *as, dma_addr_t iova,
+@@ -601,7 +602,7 @@ static u32 *as_get_pte(struct tegra_smmu_as *as, dma_addr_t iova,
  	} else {
  		u32 *pd = page_address(as->pd);
  
@@ -84,7 +84,7 @@ index 7293fc3f796d6..dd486233e2828 100644
  	}
  
  	return tegra_smmu_pte_offset(as->pts[pde], iova);
-@@ -624,7 +625,7 @@ static void tegra_smmu_pte_put_use(struct tegra_smmu_as *as, unsigned long iova)
+@@ -626,7 +627,7 @@ static void tegra_smmu_pte_put_use(struct tegra_smmu_as *as, unsigned long iova)
  	if (--as->count[pde] == 0) {
  		struct tegra_smmu *smmu = as->smmu;
  		u32 *pd = page_address(as->pd);
