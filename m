@@ -1,76 +1,45 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4.19 000/243] 4.19.89-stable review
-Date: Thu, 12 Dec 2019 11:19:46 +0000
-Message-ID: <892c8078-6db4-d821-43fd-cacf09ca26b9@nvidia.com>
-References: <20191211150339.185439726@linuxfoundation.org>
- <7b43a504-160f-e793-99b2-bcb79d331b6a@nvidia.com>
- <8de7c018-32c7-f46e-4c43-ea3a70378a14@roeck-us.net>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] ALSA: hda/tegra: Remove unused "bus" variable
+Date: Thu, 12 Dec 2019 12:19:30 +0100
+Message-ID: <20191212111930.3076101-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8de7c018-32c7-f46e-4c43-ea3a70378a14@roeck-us.net>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
-On 12/12/2019 01:40, Guenter Roeck wrote:
-> On 12/11/19 1:36 PM, Jon Hunter wrote:
->>
->> On 11/12/2019 15:02, Greg Kroah-Hartman wrote:
->>> This is the start of the stable review cycle for the 4.19.89 release.
->>> There are 243 patches in this series, all will be posted as a response
->>> to this one.=C2=A0 If anyone has any issues with these being applied, p=
-lease
->>> let me know.
->>>
->>> Responses should be made by Fri, 13 Dec 2019 14:56:06 +0000.
->>> Anything received after that time might be too late.
->>>
->>> The whole patch series can be found in one patch at:
->>> =C2=A0=C2=A0=C2=A0=C2=A0https://www.kernel.org/pub/linux/kernel/v4.x/st=
-able-review/patch-4.19.89-rc1.gz
->>>
->>> or in the git tree and branch at:
->>> =C2=A0=C2=A0=C2=A0=C2=A0git://git.kernel.org/pub/scm/linux/kernel/git/s=
-table/linux-stable-rc.git
->>> linux-4.19.y
->>> and the diffstat can be found below.
->>>
->>> thanks,
->>>
->>> greg k-h
->>>
->>> -------------
->>> Pseudo-Shortlog of commits:
->>
->> ...
->>
->>> Linus Walleij <linus.walleij@linaro.org>
->>> =C2=A0=C2=A0=C2=A0=C2=A0 gpio: OF: Parse MMC-specific CD and WP propert=
-ies
->>
->> The above change is causing intermittent failures on Tegra30 eMMC.
->> Reverting this change on top of the 4.19.89-rc1 fixes the problem.
->>
->=20
-> Thanks for tracking that down. I see boot failures for arm:vexpress-a9
-> when trying to boot from mmc.
->=20
-> I dimly recall that this was a problem before. Ah yes ... commit
-> 89a5e15bcba8
-> ("gpio/mmc/of: Respect polarity in the device tree") fixes the above
-> commit.
-> Can you give it a try ?
+After commit f36da9406e66 ("ALSA: hda: Support PCM sync_stop"), the
+local "bus" variable is no longer used. Remove it.
 
-Thanks. I did try this and I can confirm that it does indeed work,
-although does not apply cleanly.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ sound/pci/hda/hda_tegra.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Cheers
-Jon
-
---=20
-nvpublic
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index fc2e0a294bc1..269f242fcbfd 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -166,7 +166,6 @@ static int __maybe_unused hda_tegra_runtime_suspend(struct device *dev)
+ 	struct snd_card *card = dev_get_drvdata(dev);
+ 	struct azx *chip = card->private_data;
+ 	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
+-	struct hdac_bus *bus = azx_bus(chip);
+ 
+ 	if (chip && chip->running) {
+ 		azx_stop_chip(chip);
+-- 
+2.23.0
