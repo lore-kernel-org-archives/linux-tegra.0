@@ -1,45 +1,62 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: Fix restoration of PLLM when exiting suspend
-Date: Fri, 13 Dec 2019 01:18:11 +0300
-Message-ID: <5ac5de2a-e43f-5332-8453-b73f6fdd64b7@gmail.com>
-References: <20191210103708.7023-1-jonathanh@nvidia.com>
- <1f2a4f23-5be5-aa7e-6eb4-2aeb4058481d@gmail.com>
- <1fe9cd2d-50a2-aae5-95fa-0329acce4c4c@gmail.com>
- <20191211085016.GW28289@pdeschrijver-desktop.Nvidia.com>
+Subject: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM state
+Date: Fri, 13 Dec 2019 02:34:28 +0300
+Message-ID: <20191212233428.14648-4-digetx@gmail.com>
+References: <20191212233428.14648-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20191211085016.GW28289@pdeschrijver-desktop.Nvidia.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191212233428.14648-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-11.12.2019 11:50, Peter De Schrijver пишет:
-> On Tue, Dec 10, 2019 at 11:29:42PM +0300, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 10.12.2019 22:28, Dmitry Osipenko пишет:
->>> Hello Jon,
->>>
->>> PLLM's enable-status could be defined either by PMC or CaR. Thus at
->>> first you need to check whether PMC overrides CaR's enable and then
->>> judge the enable state based on PMC or CaR state respectively.
->>>
->>
->> Actually, now I think that it doesn't make sense to check PMC WB0 state
->> at all. IIUC, PLLM's state of the WB0 register defines whether Boot ROM
->> should enable PLLM on resume from suspend. Thus it will be correct to
->> check only the CaR's enable-state of PLLM.
->>
->> I'm not sure what's the idea of WB0 overriding, maybe to resume faster.
->> Peter, could you please clarify that?
-> 
-> I don't know why these overriding bits exist. The code for them was in
-> the downstream driver so I implemented the same in the upstream driver
-> :)
+I noticed that sometime I2C clock is kept enabled during suspend-resume.
+This happens because runtime PM defers dynamic suspension and thus it may
+happen that runtime PM is in active state when system enters into suspend.
+In particular I2C controller that is used for CPU's DVFS is often kept ON
+during suspend because CPU's voltage scaling happens quite often.
 
-Okay, I'll try to figure out how to clean up it properly.
+Note: we marked runtime PM as IRQ-safe during the driver's probe in the
+"Support atomic transfers" patch, thus it's okay to enforce runtime PM
+suspend/resume in the NOIRQ phase which is used for the system-level
+suspend/resume of the driver.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index b3ecdd87e91f..d309a314f4d6 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1790,9 +1790,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+ static int __maybe_unused tegra_i2c_suspend(struct device *dev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
++	int err;
+ 
+ 	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+ 
++	err = pm_runtime_force_suspend(dev);
++	if (err < 0)
++		return err;
++
+ 	return 0;
+ }
+ 
+@@ -1813,6 +1818,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
+ 	if (err)
+ 		return err;
+ 
++	err = pm_runtime_force_resume(dev);
++	if (err < 0)
++		return err;
++
+ 	i2c_mark_adapter_resumed(&i2c_dev->adapter);
+ 
+ 	return 0;
+-- 
+2.24.0
