@@ -1,62 +1,44 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM state
-Date: Fri, 13 Dec 2019 02:34:28 +0300
-Message-ID: <20191212233428.14648-4-digetx@gmail.com>
-References: <20191212233428.14648-1-digetx@gmail.com>
+Subject: [PATCH v1 0/3] Tegra I2C: Support atomic transfers and correct suspend/resume
+Date: Fri, 13 Dec 2019 02:34:25 +0300
+Message-ID: <20191212233428.14648-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191212233428.14648-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-I noticed that sometime I2C clock is kept enabled during suspend-resume.
-This happens because runtime PM defers dynamic suspension and thus it may
-happen that runtime PM is in active state when system enters into suspend.
-In particular I2C controller that is used for CPU's DVFS is often kept ON
-during suspend because CPU's voltage scaling happens quite often.
+Hello,
 
-Note: we marked runtime PM as IRQ-safe during the driver's probe in the
-"Support atomic transfers" patch, thus it's okay to enforce runtime PM
-suspend/resume in the NOIRQ phase which is used for the system-level
-suspend/resume of the driver.
+This patchset adds support for atomic transfers which are required for
+shutting down machine properly. Secondly, a (not)suspending I2C is fixed
+by this small series as well.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Changelog:
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b3ecdd87e91f..d309a314f4d6 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1790,9 +1790,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- static int __maybe_unused tegra_i2c_suspend(struct device *dev)
- {
- 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+	int err;
- 
- 	i2c_mark_adapter_suspended(&i2c_dev->adapter);
- 
-+	err = pm_runtime_force_suspend(dev);
-+	if (err < 0)
-+		return err;
-+
- 	return 0;
- }
- 
-@@ -1813,6 +1818,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
- 	if (err)
- 		return err;
- 
-+	err = pm_runtime_force_resume(dev);
-+	if (err < 0)
-+		return err;
-+
- 	i2c_mark_adapter_resumed(&i2c_dev->adapter);
- 
- 	return 0;
+v1: The "i2c: tegra: Support atomic transfers" previously was sent out as
+    a separate patch, but later I spotted that suspend/resume doesn't
+    work properly. The "i2c: tegra: Fix suspending in active runtime PM
+    state" patch depends on the atomic patch because there is a need to
+    active IRQ-safe mode for the runtime PM by both patches.
+
+    I fixed a missed doc-comment of the newly added "is_curr_atomic_xfer"
+    structure field and added additional comment that explains why IRQ needs
+    to be disabled for the atomic transfer in the "Support atomic transfers"
+    patch.
+
+    Lastly, I added a minor "i2c: tegra: Rename .." patch that helps to
+    follow driver's code.
+
+Dmitry Osipenko (3):
+  i2c: tegra: Support atomic transfers
+  i2c: tegra: Rename I2C_PIO_MODE_MAX_LEN to I2C_PIO_MODE_PREFERRED_LEN
+  i2c: tegra: Fix suspending in active runtime PM state
+
+ drivers/i2c/busses/i2c-tegra.c | 113 +++++++++++++++++++++++++++++----
+ 1 file changed, 101 insertions(+), 12 deletions(-)
+
 -- 
 2.24.0
