@@ -1,61 +1,64 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 4.19 000/243] 4.19.89-stable review
-Date: Wed, 11 Dec 2019 17:40:34 -0800
-Message-ID: <8de7c018-32c7-f46e-4c43-ea3a70378a14@roeck-us.net>
-References: <20191211150339.185439726@linuxfoundation.org>
- <7b43a504-160f-e793-99b2-bcb79d331b6a@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Thu, 12 Dec 2019 04:43:53 +0300
+Message-ID: <0930a710-174b-859b-294c-e9f81f6a3b5e@gmail.com>
+References: <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
+ <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
+ <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
+ <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
+ <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+ <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
+ <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
+ <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
+ <3f1c9325-3017-62be-1e3b-82fd28540fdf@nvidia.com>
+ <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
+ <20191211151028.GZ28289@pdeschrijver-desktop.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <7b43a504-160f-e793-99b2-bcb79d331b6a@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191211151028.GZ28289@pdeschrijver-desktop.Nvidia.com>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, sboyd@kernel.org, gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.com, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/11/19 1:36 PM, Jon Hunter wrote:
+11.12.2019 18:10, Peter De Schrijver пишет:
+> On Tue, Dec 10, 2019 at 08:41:56PM +0300, Dmitry Osipenko wrote:
 > 
-> On 11/12/2019 15:02, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 4.19.89 release.
->> There are 243 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Fri, 13 Dec 2019 14:56:06 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.89-rc1.gz
->> or in the git tree and branch at:
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
->>
->> -------------
->> Pseudo-Shortlog of commits:
+> ..
 > 
-> ...
+>>>
+>>> PMC clock gate is based on the state of CLKx_ACCEPT_REQ and FORCE_EN
+>>> like explained above.
+>>>
+>>> CLKx_ACCEPT_REQ is 0 default and FORCE_EN acts as gate to enable/disable
+>>> EXTPERIPH clock output to PMC CLK_OUT_1/2/3.
+>>
+>> [and to enable OSC as well]
+>>
+>>> So I believe we need to register as MUX and Gate rather than as a single
+>>> clock. Please confirm.
+>>
+>> 1. The force-enabling is applied to both OSC and EXTERN sources of
+>> PMC_CLK_OUT_x by PMC at once.
+>>
+>> 2. Both of PMC's force-enabling and OSC/EXTERN selection is internal to PMC.
+>>
+>> Should be better to define it as a single "pmc_clk_out_x". I don't see
+>> any good reasons for differentiating PMC's Gate from the MUX, it's a
+>> single hardware unit from a point of view of the rest of the system.
+>>
+>> Peter, do you have any objections?
 > 
->> Linus Walleij <linus.walleij@linaro.org>
->>      gpio: OF: Parse MMC-specific CD and WP properties
-> 
-> The above change is causing intermittent failures on Tegra30 eMMC.
-> Reverting this change on top of the 4.19.89-rc1 fixes the problem.
-> 
+> The reason to have separate gate and mux clocks, is to preserve compatibility
+> with existing users.
+> Otherwise the current users would need to figure out if there's a
+> single clock or 2 clocks to configure. I don't think adding that code in
+> each user is worth it only to have a sligthly nicer modelling of the
+> hardware.
 
-Thanks for tracking that down. I see boot failures for arm:vexpress-a9
-when trying to boot from mmc.
-
-I dimly recall that this was a problem before. Ah yes ... commit 89a5e15bcba8
-("gpio/mmc/of: Respect polarity in the device tree") fixes the above commit.
-Can you give it a try ?
-
-[ One may wonder though why this was back-ported in the first place. ]
-
-Thanks,
-Guenter
+Could you please clarify what do you mean by the "existing users"?
+AFAIK, nothing in kernel uses mux clocks.
