@@ -1,282 +1,81 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 02/18] dt-bindings: usb: Add NVIDIA Tegra XUSB device
- mode controller binding
-Date: Fri, 13 Dec 2019 12:45:52 -0600
-Message-ID: <20191213184552.GA2133@bogus>
-References: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
- <1575629421-7039-3-git-send-email-nkristam@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [Regression 5.5-rc1] Extremely low GPU performance on NVIDIA
+ Tegra20/30
+Date: Fri, 13 Dec 2019 18:35:22 +0300
+Message-ID: <d03876b8-b0d1-850b-7ae8-a61302e23843@gmail.com>
+References: <a2c9eb65-c600-bf49-2c32-bddf7b44f784@gmail.com>
+ <20191213151045.GB222809@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1575629421-7039-3-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nagarjuna Kristam <nkristam@nvidia.com>
-Cc: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191213151045.GB222809@ulmo>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 04:20:05PM +0530, Nagarjuna Kristam wrote:
-> Add device-tree binding documentation for the XUSB device mode controller
-> present on Tegra210 and Tegra186 SoC. This controller supports the USB 3.0
-> specification.
-> 
-> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
-> ---
-
-Next time version your patches correctly and include version history 
-here so I don't have to go look up why my R-by is missing.
-
->  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 204 +++++++++++++++++++++
->  1 file changed, 204 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-> new file mode 100644
-> index 0000000..b23c451
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-> @@ -0,0 +1,204 @@
-> +# SPDX-License-Identifier: GPL-2.0
-
-Dual license new bindings please:
-
-(GPL-2.0-only OR BSD-2-Clause)
-
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/usb/nvidia,tegra-xudc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Device tree binding for NVIDIA Tegra XUSB device mode controller (XUDC)
-> +
-> +description:
-> +  The Tegra XUDC controller supports both USB 2.0 HighSpeed/FullSpeed and
-> +  USB 3.0 SuperSpeed protocols.
-> +
-> +maintainers:
-> +  - Nagarjuna Kristam <nkristam@nvidia.com>
-> +  - JC Kuo <jckuo@nvidia.com>
-> +  - Thierry Reding <treding@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +        - const: nvidia,tegra210-xudc # For Tegra210
-> +      - items:
-> +        - const: nvidia,tegra186-xudc # For Tegra186
-
-Use 'enum' instead of oneOf+const.
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: Must contain the XUSB device interrupt.
-
-Don't need a description for a single interrupt line.
-
-> +
-> +  power-domains:
-> +    maxItems: 2
-> +    description:
-> +      A list of PM domain specifiers that reference each power-domain
-> +      used by the XUSB device mode controller. This list must comprise of a
-> +      specifier for the XUSBA and XUSBB power-domains.
-> +      See ../power/power_domain.txt and ../arm/tegra/nvidia,tegra20-pmc.txt
-> +      for details.
-
-Just need:
-
-items:
-  - description: XUSBA power-domain
-  - description: XUSBB power-domain
-
-> +
-> +  power-domains-names:
-> +    maxItems: 2
-> +    description:
-> +       A list of names that represent each of the specifiers in
-> +       the 'power-domains' property.
-
-That's every 'power-domains-names'.
-
-> +    items:
-> +      - const: ss
-> +      - const: dev
-
-Okay, but those names don't match up with XUSBA and XUSBB. Names should 
-be meaningful or local to the module, not the provider if that helps.
-
-> +
-> +  nvidia,xusb-padctl:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      phandle to the XUSB pad controller that is used to configure the USB pads
-> +      used by the XUDC controller.
-> +
-> +  phys:
-> +    minItems: 1
-> +    description:
-> +      Must contain an entry for each entry in phy-names.
-> +      See ../phy/phy-bindings.txt for details.
-> +
-> +  phy-names:
-> +    minItems: 1
-> +    items:
-> +      - const: usb2-0
-> +      - const: usb2-1
-> +      - const: usb2-2
-> +      - const: usb2-3
-> +      - const: usb3-0
-> +      - const: usb3-1
-> +      - const: usb3-2
-> +      - const: usb3-3
-> +
-> +  avddio-usb-supply:
-> +    description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
-> +
-> +  hvdd-usb-supply:
-> +    description: USB controller power supply. Must supply 3.3 V.
-> +
-> +required:
-> +  - compatible
-> +  - power-domains
-> +  - power-domain-names
-> +  - nvidia,xusb-padctl
-> +  - phys
-> +  - phy-names
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          items:
-> +            const: nvidia,tegra210-xudc
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 3
-> +          items:
-> +          - description: XUSB device controller registers
-> +          - description: XUSB device PCI Config registers
-> +          - description: XUSB device registers.
-> +        reg-names:
-> +          maxItems: 3
-> +          items:
-> +            - const: base
-> +            - const: fpci
-> +            - const: ipfs
-
-As these are a superset of tegra186, you can move this up and tegra186 
-just needs to define 'maxItems: 2'.
-
-> +        clocks:
-> +          description:
-> +            Must contain an entry for all clocks used. See ../clock/clock-bindings.txt
-> +            for details.
-> +          maxItems: 5
-> +          items:
-> +            - description: Clock to enable core XUSB dev clock.
-> +            - description: Clock to enable XUSB super speed clock.
-> +            - description: Clock to enable XUSB super speed dev clock.
-> +            - description: Clock to enable XUSB high speed dev clock.
-> +            - description: Clock to enable XUSB full speed dev clock.
-> +        clock-names:
-> +          items:
-> +           - const: dev
-> +           - const: ss
-> +           - const: ss_src
-> +           - const: hs_src
-> +           - const: fs_src
-
-I would re-order the last 2 entries so that you can do the same thing as 
-I said for 'reg'.
-
-> +      required:
-> +        - reg
-> +        - reg-names
-> +        - clocks
-> +        - clock-names
-
-No need for these to be under the if. They are always required and 
-don't have to be where defined by 'properties'.
-
-> +        - avddio-usb-supply
-> +        - hvdd-usb-supply
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra186-xudc
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 2
-> +          items:
-> +          - description: XUSB device controller registers
-> +          - description: XUSB device PCI Config registers
-> +        reg-names:
-> +          maxItems: 2
-> +          items:
-> +            - const: base
-> +            - const: fpci
-> +        clocks:
-> +          description:
-> +            Must contain an entry for all clocks used. See ../clock/clock-bindings.txt
-> +            for details.
-> +          maxItems: 4
-> +          items:
-> +            - description: Clock to enable core XUSB dev clock.
-> +            - description: Clock to enable XUSB super speed clock.
-> +            - description: Clock to enable XUSB super speed dev clock.
-> +            - description: Clock to enable XUSB full speed dev clock.
-> +        clock-names:
-> +          items:
-> +           - const: dev
-> +           - const: ss
-> +           - const: ss_src
-> +           - const: fs_src
-> +      required:
-> +        - reg
-> +        - reg-names
-> +        - clocks
-> +        - clock-names
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra210-car.h>
-> +    #include <dt-bindings/gpio/tegra-gpio.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    usb@700d0000 {
-> +        compatible = "nvidia,tegra210-xudc";
-> +        reg = <0x0 0x700d0000 0x0 0x8000>,
-> +              <0x0 0x700d8000 0x0 0x1000>,
-> +              <0x0 0x700d9000 0x0 0x1000>;
-> +        reg-names = "base", "fpci", "ipfs";
-> +
-> +        interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +        clocks = <&tegra_car TEGRA210_CLK_XUSB_DEV>,
-> +                 <&tegra_car TEGRA210_CLK_XUSB_SS>,
-> +                 <&tegra_car TEGRA210_CLK_XUSB_SSP_SRC>,
-> +                 <&tegra_car TEGRA210_CLK_XUSB_HS_SRC>,
-> +                 <&tegra_car TEGRA210_CLK_XUSB_FS_SRC>;
-> +        clock-names = "dev", "ss", "ss_src", "hs_src", "fs_src";
-> +
-> +        power-domains = <&pd_xusbdev>, <&pd_xusbss>;
-> +        power-domain-names = "dev", "ss";
-> +
-> +        nvidia,xusb-padctl = <&padctl>;
-> +
-> +        phys = <&micro_b>;
-> +        phy-names = "usb2-0";
-> +
-> +        avddio-usb-supply = <&vdd_pex_1v05>;
-> +        hvdd-usb-supply = <&vdd_3v3_sys>;
-> +    };
-> -- 
-> 2.7.4
-> 
+MTMuMTIuMjAxOSAxODoxMCwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBPbiBGcmksIERl
+YyAxMywgMjAxOSBhdCAxMjoyNTozM0FNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+
+IEhlbGxvIFRoaWVycnksCj4+Cj4+IENvbW1pdCBbMV0gaW50cm9kdWNlZCBhIHNldmVyZSBHUFUg
+cGVyZm9ybWFuY2UgcmVncmVzc2lvbiBvbiBUZWdyYTIwIGFuZAo+PiBUZWdyYTMwIHVzaW5nLgo+
+Pgo+PiBbMV0KPj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9n
+aXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbW1pdC8/aD12NS41LXJjMSZpZD1mYTY2NjFiN2FhMGI1
+MjA3MzY4MWIwZDI2NzQyNjUwYzhjYmQzMGYzCj4+Cj4+IEludGVyZXN0aW5nbHkgdGhlIHBlcmZv
+cm1hbmNlIGlzIG9rYXkgb24gVGVncmEzMCBpZgo+PiBDT05GSUdfVEVHUkFfSE9TVDFYX0ZJUkVX
+QUxMPW4sIGJ1dCB0aGF0IGRvZXNuJ3QgbWFrZSBkaWZmZXJlbmNlIGZvcgo+PiBUZWdyYTIwLgo+
+Pgo+PiBJIHdhcyB0ZWxsaW5nIHlvdSBhYm91dCB0aGlzIHByb2JsZW0gb24gdGhlICN0ZWdyYSBJ
+UkMgc29tZXRpbWUgYWdvIGFuZAo+PiB5b3UgYXNrZWQgdG8gcmVwb3J0IGl0IGluIGEgdHJhY2th
+YmxlIGZvcm0sIHNvIGZpbmFsbHkgaGVyZSBpdCBpcy4KPj4KPj4gWW91IGNvdWxkIHJlcHJvZHVj
+ZSB0aGUgcHJvYmxlbSBieSBydW5uaW5nIFsyXSBsaWtlIHRoaXMKPj4gYGdyYXRlL3RleHR1cmUt
+ZmlsdGVyIC1mIC1zYCB3aGljaCBzaG91bGQgcHJvZHVjZSBvdmVyIDEwMCBGUFMgZm9yIDcyMHAK
+Pj4gZGlzcGxheSByZXNvbHV0aW9uIGFuZCBjdXJyZW50bHkgaXQncyB+MTEgRlBTLgo+Pgo+PiBb
+Ml0KPj4gaHR0cHM6Ly9naXRodWIuY29tL2dyYXRlLWRyaXZlci9ncmF0ZS9ibG9iL21hc3Rlci90
+ZXN0cy9ncmF0ZS90ZXh0dXJlLWZpbHRlci5jCj4+Cj4+IFByZXZpb3VzbHkgSSB3YXMgc2VlaW5n
+IHNvbWUgbWVtb3J5IGVycm9ycyBjb21pbmcgZnJvbSBIb3N0MXggRE1BLCBidXQKPj4gZG9uJ3Qg
+c2VlIGFueSBlcnJvcnMgYXQgYWxsIHJpZ2h0IG5vdy4KPj4KPj4gSSBkb24ndCBzZWUgYW55dGhp
+bmcgZG9uZSBob3JyaWJseSB3cm9uZyBpbiB0aGUgb2ZmZW5kaW5nIGNvbW1pdC4KPj4KPj4gVW5m
+b3J0dW5hdGVseSBJIGNvdWxkbid0IGRlZGljYXRlIGVub3VnaCB0aW1lIHRvIHNpdCBkb3duIGFu
+ZCBkZWJ1ZyB0aGUKPj4gcHJvYmxlbSB0aG9yb3VnaGx5IHlldC4gUGxlYXNlIGxldCBtZSBrbm93
+IGlmIHlvdSdsbCBmaW5kIGEgc29sdXRpb24sCj4+IEknbGwgYmUgaGFwcHkgdG8gdGVzdCBpdC4g
+VGhhbmtzIGluIGFkdmFuY2UhCj4gCj4gSSBzdXNwZWN0IHRoYXQgdGhlIHByb2JsZW0gaGVyZSBp
+cyB0aGF0IHdlJ3JlIG5vdyB1c2luZyB0aGUgRE1BIEFQSSwKPiB3aGljaCBjYXVzZXMgdGhlIDMy
+LWJpdCBBUk0gRE1BL0lPTU1VIGdsdWUgdG8gYmUgdXNlZC4gSSB2YWd1ZWx5IHJlY2FsbAo+IHRo
+YXQgdGhhdCBjb2RlIGRvZXNuJ3QgY29hbGVzY2UgZW50cmllcyBpbiB0aGUgU0cgdGFibGUsIHNv
+IHdlIG1heSBlbmQKPiB1cCBjYWxsaW5nIGlvbW11X21hcCgpIGEgbG90IG9mIHRpbWVzLCBhbmQg
+bWlzcyBvdXQgb24gbXVjaCBvZiB0aGUKPiBhZHZhbnRhZ2VzIHRoYXQgdGhlIC0+aW90bGJfc3lu
+Y19tYXAoKSBnaXZlcyB1cyBvbiBUZWdyYTIwLgo+IAo+IEF0IHRoZSBzYW1lIHRpbWUgZG1hX21h
+cF9zZygpIHdpbGwgZmx1c2ggY2FjaGVzLCB3aGljaCB3ZSBkaWRuJ3QgZG8KPiBiZWZvcmUuIFRo
+aXMgd2Ugc2hvdWxkIGJlIGFibGUgdG8gaW1wcm92ZSBieSBwYXNzaW5nIHRoZSBhdHRyaWJ1dGUK
+PiBETUFfQVRUUl9TS0lQX0NQVV9TWU5DIHRvIGRtYV9tYXBfc2coKSB3aGVuIHdlIGtub3cgdGhh
+dCB0aGUgY2FjaGUKPiBtYWludGVuYW5jZSBpc24ndCBuZWVkZWQuCj4gCj4gQW5kIHdoaWxlIHRo
+aW5raW5nIGFib3V0IGl0LCBvbmUgb3RoZXIgZGlmZmVyZW5jZSBpcyB0aGF0IHdpdGggdGhlIERN
+QQo+IEFQSSB3ZSBhY3R1YWxseSBtYXAvdW5tYXAgdGhlIGJ1ZmZlcnMgZm9yIGV2ZXJ5IHN1Ym1p
+c3Npb24uIFRoaXMgaXMKPiBiZWNhdXNlIHRoZSBETUEgQVBJIHNlbWFudGljcyByZXF1aXJlIHRo
+YXQgYnVmZmVycyBiZSBtYXBwZWQvdW5tYXBwZWQKPiBldmVyeSB0aW1lIHlvdSB1c2UgdGhlbS4g
+UHJldmlvdXNseSB3ZSB3b3VsZCBiYXNpY2FsbHkgb25seSBtYXAgZWFjaAo+IGJ1ZmZlciBvbmNl
+IChhdCBhbGxvY2F0aW9uIHRpbWUpIGFuZCBvbmx5IGhhdmUgdG8gZGVhbCB3aXRoIGNhY2hlCj4g
+bWFpbnRlbmFuY2UsIHNvIHRoZSBvdmVyaGVhZCBwZXIgc3VibWlzc2lvbiB3YXMgZHJhc3RpY2Fs
+bHkgbG93ZXIuCj4gCj4gSWYgRE1BX0FUVFJfU0tJUF9DUFVfU1lOQyBkb2Vzbid0IGdpdmUgdXMg
+ZW5vdWdoIG9mIGFuIGltcHJvdmVtZW50LCB3ZQo+IG1heSB3YW50IHRvIHJlc3RvcmUgZXhwbGlj
+aXQgSU9NTVUgdXNhZ2UsIGF0IGxlYXN0IG9uIGFueXRoaW5nIHByaW9yIHRvCj4gVGVncmExMjQg
+d2hlcmUgd2UncmUgdW5saWtlbHkgdG8gZXZlciB1c2UgZGlmZmVyZW50IElPTU1VIGRvbWFpbnMg
+YW55d2F5Cj4gKGJlY2F1c2UgdGhleSBhcmUgc3VjaCBhIHNjYXJjZSByZXNvdXJjZSkuCgpUZWdy
+YTIwIGRvZXNuJ3QgdXNlIElPTU1VIGluIGEgdmFuaWxsYSB1cHN0cmVhbSBrZXJuZWwgKHlldCks
+IHNvIEkgZG9uJ3QKdGhpbmsgdGhhdCBpdCdzIHRoZSByb290IG9mIHRoZSBwcm9ibGVtLiBEaXNh
+YmxpbmcgSU9NTVUgZm9yIFRlZ3JhMzAKYWxzbyBkaWRuJ3QgaGVscCAoSUlSQykuCgpUaGUgb2Zm
+ZW5kaW5nIHBhdGNoIHNob3VsZG4ndCBjaGFuZ2UgYW55dGhpbmcgaW4gcmVnYXJkcyB0byB0aGUg
+RE1BIEFQSSwKaWYgSSdtIG5vdCBtaXNzaW5nIHNvbWV0aGluZy4gU3RyYW5nZS4uCgpQbGVhc2Ug
+a2VlcCBtZSB1cC10by1kYXRlIQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
