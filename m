@@ -1,72 +1,45 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM
- state
-Date: Fri, 13 Dec 2019 02:43:41 +0300
-Message-ID: <60d798b5-4cc6-d285-b244-cc5b77aa5a71@gmail.com>
-References: <20191212233428.14648-1-digetx@gmail.com>
- <20191212233428.14648-4-digetx@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 01/17] clk: sunxi: sunxi-ng: convert to
+ devm_platform_ioremap_resource
+Date: Fri, 13 Dec 2019 16:05:41 +0800
+Message-ID: <CAGb2v67Ec3KPZZqAWHwx00ii1L+va-QTa78mj=4pFFCBVtwscw@mail.gmail.com>
+References: <20191209195749.868-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191212233428.14648-4-digetx@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
+List-Post: <mailto:linux-riscv@lists.infradead.org>
+List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
+To: Yangtao Li <tiny.windzz@gmail.com>
+Cc: kstewart@linuxfoundation.org, pgaikwad@nvidia.com, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, geert+renesas@glider.be, chunhui.dai@mediatek.com, Mike Turquette <mturquette@baylibre.com>, palmer@sifive.com, nsekhar@ti.com, Tomasz Figa <tomasz.figa@gmail.com>, rfontana@redhat.com, Thierry Reding <thierry.reding@gmail.com>, weiyongjun1@huawei.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, manivannan.sadhasivam@linaro.org, linux-riscv@lists.infradead.org, Fabio Estevam <festevam@gmail.com>, linux-clk <linux-clk@vger.kernel.org>, Rob Herring <robh@kernel.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>, Emilio Lopez <emilio@elopez.com.ar>, Krzysztof Kozlowski <krzk@kernel.org>, jonathanh@nvidia.com, Chanwoo Choi <cw00.choi@samsung.com>, John Crispin <john@phrozen.org>, agross@kernel.org, linux-imx@nxp.com, Eugeniy Paltsev <Eugeniy.Palt>
 List-Id: linux-tegra@vger.kernel.org
 
-13.12.2019 02:34, Dmitry Osipenko пишет:
-> I noticed that sometime I2C clock is kept enabled during suspend-resume.
-> This happens because runtime PM defers dynamic suspension and thus it may
-> happen that runtime PM is in active state when system enters into suspend.
-> In particular I2C controller that is used for CPU's DVFS is often kept ON
-> during suspend because CPU's voltage scaling happens quite often.
-> 
-> Note: we marked runtime PM as IRQ-safe during the driver's probe in the
-> "Support atomic transfers" patch, thus it's okay to enforce runtime PM
-> suspend/resume in the NOIRQ phase which is used for the system-level
-> suspend/resume of the driver.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+On Tue, Dec 10, 2019 at 3:58 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
+>
+> Use devm_platform_ioremap_resource() to simplify code.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index b3ecdd87e91f..d309a314f4d6 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1790,9 +1790,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
->  static int __maybe_unused tegra_i2c_suspend(struct device *dev)
->  {
->  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-> +	int err;
->  
->  	i2c_mark_adapter_suspended(&i2c_dev->adapter);
->  
-> +	err = pm_runtime_force_suspend(dev);
-> +	if (err < 0)
-> +		return err;
-> +
->  	return 0;
->  }
->  
-> @@ -1813,6 +1818,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
->  	if (err)
->  		return err;
->  
-> +	err = pm_runtime_force_resume(dev);
-> +	if (err < 0)
-> +		return err;
-> +
->  	i2c_mark_adapter_resumed(&i2c_dev->adapter);
->  
->  	return 0;
-> 
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c    | 4 +---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6.c     | 4 +---
+>  drivers/clk/sunxi-ng/ccu-sun8i-a83t.c    | 4 +---
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.c     | 4 +---
+>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c     | 4 +---
+>  drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c  | 4 +---
+>  drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c | 4 +---
+>  drivers/clk/sunxi-ng/ccu-sun9i-a80.c     | 4 +---
+>  drivers/clk/sunxi/clk-mod0.c             | 4 +---
+>  drivers/clk/sunxi/clk-sun6i-apb0-gates.c | 4 +---
+>  drivers/clk/sunxi/clk-sun6i-apb0.c       | 4 +---
+>  drivers/clk/sunxi/clk-sun6i-ar100.c      | 4 +---
+>  drivers/clk/sunxi/clk-sun8i-apb0.c       | 4 +---
+>  13 files changed, 13 insertions(+), 39 deletions(-)
 
-It just occurred to me that this patch needs to marked as fixes for the
-"i2c: tegra: Move suspend handling to NOIRQ phase" patch because it
-broke runtime PM enable-refcount by disabling clock/pinmux on resume
-from suspend. For now I'll wait for the review comments. Please review,
-thanks in advance.
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
