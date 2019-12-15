@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/3] media: staging: tegra-vde: Use __maybe_unused attribute instead of ifdef
-Date: Sun, 15 Dec 2019 21:07:52 +0300
-Message-ID: <20191215180752.5408-4-digetx@gmail.com>
+Subject: [PATCH v1 2/3] media: staging: tegra-vde: Sort headers alphabetically
+Date: Sun, 15 Dec 2019 21:07:51 +0300
+Message-ID: <20191215180752.5408-3-digetx@gmail.com>
 References: <20191215180752.5408-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,44 +12,29 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Replace #ifdef with __maybe_unused attribute just to keep code cleaner a
-tad.
+Keep the alphabetical order for consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/staging/media/tegra-vde/vde.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/staging/media/tegra-vde/vde.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-index 3466daddf663..e18fd48981da 100644
---- a/drivers/staging/media/tegra-vde/vde.c
-+++ b/drivers/staging/media/tegra-vde/vde.c
-@@ -1150,8 +1150,7 @@ static int tegra_vde_remove(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/drivers/staging/media/tegra-vde/vde.h b/drivers/staging/media/tegra-vde/vde.h
+index d369f1466bc7..5561291b0c88 100644
+--- a/drivers/staging/media/tegra-vde/vde.h
++++ b/drivers/staging/media/tegra-vde/vde.h
+@@ -10,11 +10,11 @@
  
--#ifdef CONFIG_PM_SLEEP
--static int tegra_vde_pm_suspend(struct device *dev)
-+static __maybe_unused int tegra_vde_pm_suspend(struct device *dev)
- {
- 	struct tegra_vde *vde = dev_get_drvdata(dev);
- 	int err;
-@@ -1165,7 +1164,7 @@ static int tegra_vde_pm_suspend(struct device *dev)
- 	return 0;
- }
+ #include <linux/completion.h>
+ #include <linux/dma-direction.h>
++#include <linux/iova.h>
+ #include <linux/list.h>
+ #include <linux/miscdevice.h>
+ #include <linux/mutex.h>
+ #include <linux/types.h>
+-#include <linux/iova.h>
  
--static int tegra_vde_pm_resume(struct device *dev)
-+static __maybe_unused int tegra_vde_pm_resume(struct device *dev)
- {
- 	struct tegra_vde *vde = dev_get_drvdata(dev);
- 	int err;
-@@ -1178,7 +1177,6 @@ static int tegra_vde_pm_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
- static const struct dev_pm_ops tegra_vde_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_vde_runtime_suspend,
+ struct clk;
+ struct dma_buf;
 -- 
 2.24.0
