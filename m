@@ -1,40 +1,31 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 2/3] media: staging: tegra-vde: Sort headers alphabetically
-Date: Sun, 15 Dec 2019 21:07:51 +0300
-Message-ID: <20191215180752.5408-3-digetx@gmail.com>
-References: <20191215180752.5408-1-digetx@gmail.com>
+Subject: [PATCH v1 0/3] Tegra GPIO: Minor code clean up
+Date: Sun, 15 Dec 2019 21:30:44 +0300
+Message-ID: <20191215183047.9414-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191215180752.5408-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Keep the alphabetical order for consistency.
+Hello,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/staging/media/tegra-vde/vde.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I was investigating why CPU hangs during of GPIO driver suspend and in
+the end it turned out that it is a Broadcom WiFi driver problem because
+it keeps OOB wake-interrupt enabled while WLAN interface is DOWN and this
+may cause a bit weird CPU hang on writing to INT_ENB register during of
+GPIO driver suspend. Meanwhile I also noticed that a few things could be
+improved in the driver, that's what this small series addresses.
 
-diff --git a/drivers/staging/media/tegra-vde/vde.h b/drivers/staging/media/tegra-vde/vde.h
-index d369f1466bc7..5561291b0c88 100644
---- a/drivers/staging/media/tegra-vde/vde.h
-+++ b/drivers/staging/media/tegra-vde/vde.h
-@@ -10,11 +10,11 @@
- 
- #include <linux/completion.h>
- #include <linux/dma-direction.h>
-+#include <linux/iova.h>
- #include <linux/list.h>
- #include <linux/miscdevice.h>
- #include <linux/mutex.h>
- #include <linux/types.h>
--#include <linux/iova.h>
- 
- struct clk;
- struct dma_buf;
+Dmitry Osipenko (3):
+  gpio: tegra: Use generic readl_relaxed/writel_relaxed accessors
+  gpio: tegra: Properly handle irq_set_irq_wake() error
+  gpio: tegra: Use NOIRQ phase for suspend/resume
+
+ drivers/gpio/gpio-tegra.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
+
 -- 
 2.24.0
