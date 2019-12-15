@@ -1,81 +1,38 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [Regression 5.5-rc1] Extremely low GPU performance on NVIDIA
- Tegra20/30
-Date: Fri, 13 Dec 2019 18:35:22 +0300
-Message-ID: <d03876b8-b0d1-850b-7ae8-a61302e23843@gmail.com>
-References: <a2c9eb65-c600-bf49-2c32-bddf7b44f784@gmail.com>
- <20191213151045.GB222809@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191213151045.GB222809@ulmo>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 1/2] cpufreq: kirkwood: convert to devm_platform_ioremap_resource
+Date: Sun, 15 Dec 2019 14:05:21 +0000
+Message-ID: <20191215140522.30872-1-tiny.windzz@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rjw@rjwysocki.net, viresh.kumar@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-MTMuMTIuMjAxOSAxODoxMCwgVGhpZXJyeSBSZWRpbmcg0L/QuNGI0LXRgjoKPiBPbiBGcmksIERl
-YyAxMywgMjAxOSBhdCAxMjoyNTozM0FNICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+
-IEhlbGxvIFRoaWVycnksCj4+Cj4+IENvbW1pdCBbMV0gaW50cm9kdWNlZCBhIHNldmVyZSBHUFUg
-cGVyZm9ybWFuY2UgcmVncmVzc2lvbiBvbiBUZWdyYTIwIGFuZAo+PiBUZWdyYTMwIHVzaW5nLgo+
-Pgo+PiBbMV0KPj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9n
-aXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbW1pdC8/aD12NS41LXJjMSZpZD1mYTY2NjFiN2FhMGI1
-MjA3MzY4MWIwZDI2NzQyNjUwYzhjYmQzMGYzCj4+Cj4+IEludGVyZXN0aW5nbHkgdGhlIHBlcmZv
-cm1hbmNlIGlzIG9rYXkgb24gVGVncmEzMCBpZgo+PiBDT05GSUdfVEVHUkFfSE9TVDFYX0ZJUkVX
-QUxMPW4sIGJ1dCB0aGF0IGRvZXNuJ3QgbWFrZSBkaWZmZXJlbmNlIGZvcgo+PiBUZWdyYTIwLgo+
-Pgo+PiBJIHdhcyB0ZWxsaW5nIHlvdSBhYm91dCB0aGlzIHByb2JsZW0gb24gdGhlICN0ZWdyYSBJ
-UkMgc29tZXRpbWUgYWdvIGFuZAo+PiB5b3UgYXNrZWQgdG8gcmVwb3J0IGl0IGluIGEgdHJhY2th
-YmxlIGZvcm0sIHNvIGZpbmFsbHkgaGVyZSBpdCBpcy4KPj4KPj4gWW91IGNvdWxkIHJlcHJvZHVj
-ZSB0aGUgcHJvYmxlbSBieSBydW5uaW5nIFsyXSBsaWtlIHRoaXMKPj4gYGdyYXRlL3RleHR1cmUt
-ZmlsdGVyIC1mIC1zYCB3aGljaCBzaG91bGQgcHJvZHVjZSBvdmVyIDEwMCBGUFMgZm9yIDcyMHAK
-Pj4gZGlzcGxheSByZXNvbHV0aW9uIGFuZCBjdXJyZW50bHkgaXQncyB+MTEgRlBTLgo+Pgo+PiBb
-Ml0KPj4gaHR0cHM6Ly9naXRodWIuY29tL2dyYXRlLWRyaXZlci9ncmF0ZS9ibG9iL21hc3Rlci90
-ZXN0cy9ncmF0ZS90ZXh0dXJlLWZpbHRlci5jCj4+Cj4+IFByZXZpb3VzbHkgSSB3YXMgc2VlaW5n
-IHNvbWUgbWVtb3J5IGVycm9ycyBjb21pbmcgZnJvbSBIb3N0MXggRE1BLCBidXQKPj4gZG9uJ3Qg
-c2VlIGFueSBlcnJvcnMgYXQgYWxsIHJpZ2h0IG5vdy4KPj4KPj4gSSBkb24ndCBzZWUgYW55dGhp
-bmcgZG9uZSBob3JyaWJseSB3cm9uZyBpbiB0aGUgb2ZmZW5kaW5nIGNvbW1pdC4KPj4KPj4gVW5m
-b3J0dW5hdGVseSBJIGNvdWxkbid0IGRlZGljYXRlIGVub3VnaCB0aW1lIHRvIHNpdCBkb3duIGFu
-ZCBkZWJ1ZyB0aGUKPj4gcHJvYmxlbSB0aG9yb3VnaGx5IHlldC4gUGxlYXNlIGxldCBtZSBrbm93
-IGlmIHlvdSdsbCBmaW5kIGEgc29sdXRpb24sCj4+IEknbGwgYmUgaGFwcHkgdG8gdGVzdCBpdC4g
-VGhhbmtzIGluIGFkdmFuY2UhCj4gCj4gSSBzdXNwZWN0IHRoYXQgdGhlIHByb2JsZW0gaGVyZSBp
-cyB0aGF0IHdlJ3JlIG5vdyB1c2luZyB0aGUgRE1BIEFQSSwKPiB3aGljaCBjYXVzZXMgdGhlIDMy
-LWJpdCBBUk0gRE1BL0lPTU1VIGdsdWUgdG8gYmUgdXNlZC4gSSB2YWd1ZWx5IHJlY2FsbAo+IHRo
-YXQgdGhhdCBjb2RlIGRvZXNuJ3QgY29hbGVzY2UgZW50cmllcyBpbiB0aGUgU0cgdGFibGUsIHNv
-IHdlIG1heSBlbmQKPiB1cCBjYWxsaW5nIGlvbW11X21hcCgpIGEgbG90IG9mIHRpbWVzLCBhbmQg
-bWlzcyBvdXQgb24gbXVjaCBvZiB0aGUKPiBhZHZhbnRhZ2VzIHRoYXQgdGhlIC0+aW90bGJfc3lu
-Y19tYXAoKSBnaXZlcyB1cyBvbiBUZWdyYTIwLgo+IAo+IEF0IHRoZSBzYW1lIHRpbWUgZG1hX21h
-cF9zZygpIHdpbGwgZmx1c2ggY2FjaGVzLCB3aGljaCB3ZSBkaWRuJ3QgZG8KPiBiZWZvcmUuIFRo
-aXMgd2Ugc2hvdWxkIGJlIGFibGUgdG8gaW1wcm92ZSBieSBwYXNzaW5nIHRoZSBhdHRyaWJ1dGUK
-PiBETUFfQVRUUl9TS0lQX0NQVV9TWU5DIHRvIGRtYV9tYXBfc2coKSB3aGVuIHdlIGtub3cgdGhh
-dCB0aGUgY2FjaGUKPiBtYWludGVuYW5jZSBpc24ndCBuZWVkZWQuCj4gCj4gQW5kIHdoaWxlIHRo
-aW5raW5nIGFib3V0IGl0LCBvbmUgb3RoZXIgZGlmZmVyZW5jZSBpcyB0aGF0IHdpdGggdGhlIERN
-QQo+IEFQSSB3ZSBhY3R1YWxseSBtYXAvdW5tYXAgdGhlIGJ1ZmZlcnMgZm9yIGV2ZXJ5IHN1Ym1p
-c3Npb24uIFRoaXMgaXMKPiBiZWNhdXNlIHRoZSBETUEgQVBJIHNlbWFudGljcyByZXF1aXJlIHRo
-YXQgYnVmZmVycyBiZSBtYXBwZWQvdW5tYXBwZWQKPiBldmVyeSB0aW1lIHlvdSB1c2UgdGhlbS4g
-UHJldmlvdXNseSB3ZSB3b3VsZCBiYXNpY2FsbHkgb25seSBtYXAgZWFjaAo+IGJ1ZmZlciBvbmNl
-IChhdCBhbGxvY2F0aW9uIHRpbWUpIGFuZCBvbmx5IGhhdmUgdG8gZGVhbCB3aXRoIGNhY2hlCj4g
-bWFpbnRlbmFuY2UsIHNvIHRoZSBvdmVyaGVhZCBwZXIgc3VibWlzc2lvbiB3YXMgZHJhc3RpY2Fs
-bHkgbG93ZXIuCj4gCj4gSWYgRE1BX0FUVFJfU0tJUF9DUFVfU1lOQyBkb2Vzbid0IGdpdmUgdXMg
-ZW5vdWdoIG9mIGFuIGltcHJvdmVtZW50LCB3ZQo+IG1heSB3YW50IHRvIHJlc3RvcmUgZXhwbGlj
-aXQgSU9NTVUgdXNhZ2UsIGF0IGxlYXN0IG9uIGFueXRoaW5nIHByaW9yIHRvCj4gVGVncmExMjQg
-d2hlcmUgd2UncmUgdW5saWtlbHkgdG8gZXZlciB1c2UgZGlmZmVyZW50IElPTU1VIGRvbWFpbnMg
-YW55d2F5Cj4gKGJlY2F1c2UgdGhleSBhcmUgc3VjaCBhIHNjYXJjZSByZXNvdXJjZSkuCgpUZWdy
-YTIwIGRvZXNuJ3QgdXNlIElPTU1VIGluIGEgdmFuaWxsYSB1cHN0cmVhbSBrZXJuZWwgKHlldCks
-IHNvIEkgZG9uJ3QKdGhpbmsgdGhhdCBpdCdzIHRoZSByb290IG9mIHRoZSBwcm9ibGVtLiBEaXNh
-YmxpbmcgSU9NTVUgZm9yIFRlZ3JhMzAKYWxzbyBkaWRuJ3QgaGVscCAoSUlSQykuCgpUaGUgb2Zm
-ZW5kaW5nIHBhdGNoIHNob3VsZG4ndCBjaGFuZ2UgYW55dGhpbmcgaW4gcmVnYXJkcyB0byB0aGUg
-RE1BIEFQSSwKaWYgSSdtIG5vdCBtaXNzaW5nIHNvbWV0aGluZy4gU3RyYW5nZS4uCgpQbGVhc2Ug
-a2VlcCBtZSB1cC10by1kYXRlIQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+Use devm_platform_ioremap_resource() to simplify code.
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/cpufreq/kirkwood-cpufreq.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/cpufreq/kirkwood-cpufreq.c b/drivers/cpufreq/kirkwood-cpufreq.c
+index cb74bdc5baaa..70ad8fe1d78b 100644
+--- a/drivers/cpufreq/kirkwood-cpufreq.c
++++ b/drivers/cpufreq/kirkwood-cpufreq.c
+@@ -102,13 +102,11 @@ static struct cpufreq_driver kirkwood_cpufreq_driver = {
+ static int kirkwood_cpufreq_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np;
+-	struct resource *res;
+ 	int err;
+ 
+ 	priv.dev = &pdev->dev;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv.base = devm_ioremap_resource(&pdev->dev, res);
++	priv.base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv.base))
+ 		return PTR_ERR(priv.base);
+ 
+-- 
+2.17.1
