@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 1/3] media: staging: tegra-vde: Select IOVA unconditionally in Kconfig
-Date: Sun, 15 Dec 2019 21:07:50 +0300
-Message-ID: <20191215180752.5408-2-digetx@gmail.com>
+Subject: [PATCH v1 3/3] media: staging: tegra-vde: Use __maybe_unused attribute instead of ifdef
+Date: Sun, 15 Dec 2019 21:07:52 +0300
+Message-ID: <20191215180752.5408-4-digetx@gmail.com>
 References: <20191215180752.5408-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,29 +12,44 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There were several reports of building failures due to IOVA being selected
-inconsistently by different drivers. All drivers that are using IOVA API
-should select it unconditionally in order to avoid the compilation
-problems, tegra-vde is one of those drivers.
+Replace #ifdef with __maybe_unused attribute just to keep code cleaner a
+tad.
 
-Link: https://patchwork.kernel.org/patch/11057831/
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/staging/media/tegra-vde/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/tegra-vde/vde.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
-index ba49ea50b8c0..0dc78afd09e0 100644
---- a/drivers/staging/media/tegra-vde/Kconfig
-+++ b/drivers/staging/media/tegra-vde/Kconfig
-@@ -3,7 +3,7 @@ config TEGRA_VDE
- 	tristate "NVIDIA Tegra Video Decoder Engine driver"
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	select DMA_SHARED_BUFFER
--	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
-+	select IOMMU_IOVA
- 	select SRAM
- 	help
- 	    Say Y here to enable support for the NVIDIA Tegra video decoder
+diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
+index 3466daddf663..e18fd48981da 100644
+--- a/drivers/staging/media/tegra-vde/vde.c
++++ b/drivers/staging/media/tegra-vde/vde.c
+@@ -1150,8 +1150,7 @@ static int tegra_vde_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static int tegra_vde_pm_suspend(struct device *dev)
++static __maybe_unused int tegra_vde_pm_suspend(struct device *dev)
+ {
+ 	struct tegra_vde *vde = dev_get_drvdata(dev);
+ 	int err;
+@@ -1165,7 +1164,7 @@ static int tegra_vde_pm_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_vde_pm_resume(struct device *dev)
++static __maybe_unused int tegra_vde_pm_resume(struct device *dev)
+ {
+ 	struct tegra_vde *vde = dev_get_drvdata(dev);
+ 	int err;
+@@ -1178,7 +1177,6 @@ static int tegra_vde_pm_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+ static const struct dev_pm_ops tegra_vde_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_vde_runtime_suspend,
 -- 
 2.24.0
