@@ -1,43 +1,30 @@
-From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 2/2] cpufreq: tegra186: convert to devm_platform_ioremap_resource
-Date: Sun, 15 Dec 2019 14:05:22 +0000
-Message-ID: <20191215140522.30872-2-tiny.windzz@gmail.com>
-References: <20191215140522.30872-1-tiny.windzz@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 0/3] Tegra VDE: Minor code clean up
+Date: Sun, 15 Dec 2019 21:07:49 +0300
+Message-ID: <20191215180752.5408-1-digetx@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191215140522.30872-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: rjw@rjwysocki.net, viresh.kumar@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code.
+Hello,
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/cpufreq/tegra186-cpufreq.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This small series just makes a minor clean up of the driver's code,
+addressing COMPILE_TEST build problem that was reported sometime ago.
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index bcecb068b51b..2e233ad72758 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -187,7 +187,6 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- {
- 	struct tegra186_cpufreq_data *data;
- 	struct tegra_bpmp *bpmp;
--	struct resource *res;
- 	unsigned int i = 0, err;
- 
- 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-@@ -205,8 +204,7 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 	if (IS_ERR(bpmp))
- 		return PTR_ERR(bpmp);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	data->regs = devm_ioremap_resource(&pdev->dev, res);
-+	data->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->regs)) {
- 		err = PTR_ERR(data->regs);
- 		goto put_bpmp;
+Dmitry Osipenko (3):
+  media: staging: tegra-vde: Select IOVA unconditionally in Kconfig
+  media: staging: tegra-vde: Sort headers alphabetically
+  media: staging: tegra-vde: Use __maybe_unused attribute instead of
+    ifdef
+
+ drivers/staging/media/tegra-vde/Kconfig | 2 +-
+ drivers/staging/media/tegra-vde/vde.c   | 6 ++----
+ drivers/staging/media/tegra-vde/vde.h   | 2 +-
+ 3 files changed, 4 insertions(+), 6 deletions(-)
+
 -- 
-2.17.1
+2.24.0
