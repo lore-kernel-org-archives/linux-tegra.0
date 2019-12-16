@@ -1,57 +1,288 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20
- and Tegra30 SoCs
-Date: Mon, 16 Dec 2019 09:38:08 +0530
-Message-ID: <20191216040808.w67jxu7oapxgm7yh@vireshk-i7>
-References: <20191118164512.8676-1-digetx@gmail.com>
- <20191118164512.8676-8-digetx@gmail.com>
- <20191216040532.mzdovqoub5rdztwb@vireshk-i7>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: Re: [PATCH 02/18] dt-bindings: usb: Add NVIDIA Tegra XUSB device mode
+ controller binding
+Date: Mon, 16 Dec 2019 12:00:09 +0530
+Message-ID: <d78fe56f-4ad2-085d-ba10-174fd1b53107@nvidia.com>
+References: <1575629421-7039-1-git-send-email-nkristam@nvidia.com>
+ <1575629421-7039-3-git-send-email-nkristam@nvidia.com>
+ <20191213184552.GA2133@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191216040532.mzdovqoub5rdztwb@vireshk-i7>
+In-Reply-To: <20191213184552.GA2133@bogus>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 16-12-19, 09:35, Viresh Kumar wrote:
-> On 18-11-19, 19:45, Dmitry Osipenko wrote:
-> > Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
-> > OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
-> > Currently cpufreq-dt driver produces a bit annoying warning splats
-> > during boot because valid OPPs are not found, this will be fixed once
-> > tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
-> > will also happen on older stable kernels using newer device-trees, thus
-> > this patch should be backported to stable kernels as well.
-> > 
-> > Cc: <stable@vger.kernel.org>
-> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> > Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> > index f1d170dcf4d3..aba591d57c67 100644
-> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> > @@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
-> >  	{ .compatible = "mediatek,mt8176", },
-> >  	{ .compatible = "mediatek,mt8183", },
-> >  
-> > +	{ .compatible = "nvidia,tegra20", },
-> > +	{ .compatible = "nvidia,tegra30", },
-> >  	{ .compatible = "nvidia,tegra124", },
-> >  	{ .compatible = "nvidia,tegra210", },
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Oops, pasted the wrong register here :(
-
-Applied. Thanks.
-
--- 
-viresh
+> 
+> On Fri, Dec 06, 2019 at 04:20:05PM +0530, Nagarjuna Kristam wrote:
+>> Add device-tree binding documentation for the XUSB device mode controller
+>> present on Tegra210 and Tegra186 SoC. This controller supports the USB 3.0
+>> specification.
+>>
+>> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+>> ---
+> Next time version your patches correctly and include version history
+> here so I don't have to go look up why my R-by is missing.
+> 
+Since this was a new series, i didnot add version history. But considering that this
+was reviewed in different series, i will take a note to include the reviewed link
+for quick reference.
+>>  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 204 +++++++++++++++++++++
+>>  1 file changed, 204 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+>> new file mode 100644
+>> index 0000000..b23c451
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+>> @@ -0,0 +1,204 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+> Dual license new bindings please:
+> 
+> (GPL-2.0-only OR BSD-2-Clause)
+> 
+Will update accordingly.
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/usb/nvidia,tegra-xudc.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Device tree binding for NVIDIA Tegra XUSB device mode controller (XUDC)
+>> +
+>> +description:
+>> +  The Tegra XUDC controller supports both USB 2.0 HighSpeed/FullSpeed and
+>> +  USB 3.0 SuperSpeed protocols.
+>> +
+>> +maintainers:
+>> +  - Nagarjuna Kristam <nkristam@nvidia.com>
+>> +  - JC Kuo <jckuo@nvidia.com>
+>> +  - Thierry Reding <treding@nvidia.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +        - const: nvidia,tegra210-xudc # For Tegra210
+>> +      - items:
+>> +        - const: nvidia,tegra186-xudc # For Tegra186
+> Use 'enum' instead of oneOf+const.
+> 
+Will update
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +    description: Must contain the XUSB device interrupt.
+> Don't need a description for a single interrupt line.
+> 
+Will remove
+>> +
+>> +  power-domains:
+>> +    maxItems: 2
+>> +    description:
+>> +      A list of PM domain specifiers that reference each power-domain
+>> +      used by the XUSB device mode controller. This list must comprise of a
+>> +      specifier for the XUSBA and XUSBB power-domains.
+>> +      See ../power/power_domain.txt and ../arm/tegra/nvidia,tegra20-pmc.txt
+>> +      for details.
+> Just need:
+> 
+> items:
+>   - description: XUSBA power-domain
+>   - description: XUSBB power-domain
+> 
+Will update including below coments to update as below
+   - description: XUSBA(superSpeed) power-domain
+   - description: XUSBB(device) power-domain
+>> +
+>> +  power-domains-names:
+>> +    maxItems: 2
+>> +    description:
+>> +       A list of names that represent each of the specifiers in
+>> +       the 'power-domains' property.
+> That's every 'power-domains-names'.
+> 
+>> +    items:
+>> +      - const: ss
+>> +      - const: dev
+> Okay, but those names don't match up with XUSBA and XUSBB. Names should
+> be meaningful or local to the module, not the provider if that helps.
+> 
+>> +
+>> +  nvidia,xusb-padctl:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    description:
+>> +      phandle to the XUSB pad controller that is used to configure the USB pads
+>> +      used by the XUDC controller.
+>> +
+>> +  phys:
+>> +    minItems: 1
+>> +    description:
+>> +      Must contain an entry for each entry in phy-names.
+>> +      See ../phy/phy-bindings.txt for details.
+>> +
+>> +  phy-names:
+>> +    minItems: 1
+>> +    items:
+>> +      - const: usb2-0
+>> +      - const: usb2-1
+>> +      - const: usb2-2
+>> +      - const: usb2-3
+>> +      - const: usb3-0
+>> +      - const: usb3-1
+>> +      - const: usb3-2
+>> +      - const: usb3-3
+>> +
+>> +  avddio-usb-supply:
+>> +    description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
+>> +
+>> +  hvdd-usb-supply:
+>> +    description: USB controller power supply. Must supply 3.3 V.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - power-domains
+>> +  - power-domain-names
+>> +  - nvidia,xusb-padctl
+>> +  - phys
+>> +  - phy-names
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          items:
+>> +            const: nvidia,tegra210-xudc
+>> +
+>> +    then:
+>> +      properties:
+>> +        reg:
+>> +          maxItems: 3
+>> +          items:
+>> +          - description: XUSB device controller registers
+>> +          - description: XUSB device PCI Config registers
+>> +          - description: XUSB device registers.
+>> +        reg-names:
+>> +          maxItems: 3
+>> +          items:
+>> +            - const: base
+>> +            - const: fpci
+>> +            - const: ipfs
+> As these are a superset of tegra186, you can move this up and tegra186
+> just needs to define 'maxItems: 2'.
+> 
+Will move Main definitions up and update these sections with minItems and maxItems
+accordingly.
+>> +        clocks:
+>> +          description:
+>> +            Must contain an entry for all clocks used. See ../clock/clock-bindings.txt
+>> +            for details.
+>> +          maxItems: 5
+>> +          items:
+>> +            - description: Clock to enable core XUSB dev clock.
+>> +            - description: Clock to enable XUSB super speed clock.
+>> +            - description: Clock to enable XUSB super speed dev clock.
+>> +            - description: Clock to enable XUSB high speed dev clock.
+>> +            - description: Clock to enable XUSB full speed dev clock.
+>> +        clock-names:
+>> +          items:
+>> +           - const: dev
+>> +           - const: ss
+>> +           - const: ss_src
+>> +           - const: hs_src
+>> +           - const: fs_src
+> I would re-order the last 2 entries so that you can do the same thing as
+> I said for 'reg'.
+> 
+>> +      required:
+>> +        - reg
+>> +        - reg-names
+>> +        - clocks
+>> +        - clock-names
+> No need for these to be under the if. They are always required and
+> don't have to be where defined by 'properties'.
+> 
+Will move to main "required" section.
+>> +        - avddio-usb-supply
+>> +        - hvdd-usb-supply
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: nvidia,tegra186-xudc
+>> +
+>> +    then:
+>> +      properties:
+>> +        reg:
+>> +          maxItems: 2
+>> +          items:
+>> +          - description: XUSB device controller registers
+>> +          - description: XUSB device PCI Config registers
+>> +        reg-names:
+>> +          maxItems: 2
+>> +          items:
+>> +            - const: base
+>> +            - const: fpci
+>> +        clocks:
+>> +          description:
+>> +            Must contain an entry for all clocks used. See ../clock/clock-bindings.txt
+>> +            for details.
+>> +          maxItems: 4
+>> +          items:
+>> +            - description: Clock to enable core XUSB dev clock.
+>> +            - description: Clock to enable XUSB super speed clock.
+>> +            - description: Clock to enable XUSB super speed dev clock.
+>> +            - description: Clock to enable XUSB full speed dev clock.
+>> +        clock-names:
+>> +          items:
+>> +           - const: dev
+>> +           - const: ss
+>> +           - const: ss_src
+>> +           - const: fs_src
+>> +      required:
+>> +        - reg
+>> +        - reg-names
+>> +        - clocks
+>> +        - clock-names
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/tegra210-car.h>
+>> +    #include <dt-bindings/gpio/tegra-gpio.h>
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    usb@700d0000 {
+>> +        compatible = "nvidia,tegra210-xudc";
+>> +        reg = <0x0 0x700d0000 0x0 0x8000>,
+>> +              <0x0 0x700d8000 0x0 0x1000>,
+>> +              <0x0 0x700d9000 0x0 0x1000>;
+>> +        reg-names = "base", "fpci", "ipfs";
+>> +
+>> +        interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+>> +
+>> +        clocks = <&tegra_car TEGRA210_CLK_XUSB_DEV>,
+>> +                 <&tegra_car TEGRA210_CLK_XUSB_SS>,
+>> +                 <&tegra_car TEGRA210_CLK_XUSB_SSP_SRC>,
+>> +                 <&tegra_car TEGRA210_CLK_XUSB_HS_SRC>,
+>> +                 <&tegra_car TEGRA210_CLK_XUSB_FS_SRC>;
+>> +        clock-names = "dev", "ss", "ss_src", "hs_src", "fs_src";
+>> +
+>> +        power-domains = <&pd_xusbdev>, <&pd_xusbss>;
+>> +        power-domain-names = "dev", "ss";
+>> +
+>> +        nvidia,xusb-padctl = <&padctl>;
+>> +
+>> +        phys = <&micro_b>;
+>> +        phy-names = "usb2-0";
+>> +
+>> +        avddio-usb-supply = <&vdd_pex_1v05>;
+>> +        hvdd-usb-supply = <&vdd_3v3_sys>;
+>> +    };
+>> --
+>> 2.7.4
+>>
