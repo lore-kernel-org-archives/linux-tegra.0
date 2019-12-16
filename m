@@ -1,36 +1,51 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 2/2] dt-bindings: net: broadcom-bluetooth: Document BCM4329 support
-Date: Sun, 15 Dec 2019 21:52:53 +0300
-Message-ID: <20191215185253.14024-2-digetx@gmail.com>
-References: <20191215185253.14024-1-digetx@gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20
+ and Tegra30 SoCs
+Date: Mon, 16 Dec 2019 09:35:32 +0530
+Message-ID: <20191216040532.mzdovqoub5rdztwb@vireshk-i7>
+References: <20191118164512.8676-1-digetx@gmail.com>
+ <20191118164512.8676-8-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191215185253.14024-1-digetx@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20191118164512.8676-8-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The BCM4329 is a 802.11 a/b/g/n WiFi + Bluetooth 2.1 chip which is found
-in Azurewave AW-NH611 WiFi+BT module.
+On 18-11-19, 19:45, Dmitry Osipenko wrote:
+> Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
+> OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
+> Currently cpufreq-dt driver produces a bit annoying warning splats
+> during boot because valid OPPs are not found, this will be fixed once
+> tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
+> will also happen on older stable kernels using newer device-trees, thus
+> this patch should be backported to stable kernels as well.
+> 
+> Cc: <stable@vger.kernel.org>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index f1d170dcf4d3..aba591d57c67 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
+>  	{ .compatible = "mediatek,mt8176", },
+>  	{ .compatible = "mediatek,mt8183", },
+>  
+> +	{ .compatible = "nvidia,tegra20", },
+> +	{ .compatible = "nvidia,tegra30", },
+>  	{ .compatible = "nvidia,tegra124", },
+>  	{ .compatible = "nvidia,tegra210", },
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-index b5eadee4a9a7..c44a30dbe43d 100644
---- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-+++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-@@ -11,6 +11,7 @@ Required properties:
- 
-  - compatible: should contain one of the following:
-    * "brcm,bcm20702a1"
-+   * "brcm,bcm4329-bt"
-    * "brcm,bcm4330-bt"
-    * "brcm,bcm43438-bt"
-    * "brcm,bcm4345c5"
 -- 
-2.24.0
+viresh
