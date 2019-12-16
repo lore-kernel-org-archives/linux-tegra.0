@@ -1,51 +1,48 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20
- and Tegra30 SoCs
-Date: Mon, 16 Dec 2019 09:35:32 +0530
-Message-ID: <20191216040532.mzdovqoub5rdztwb@vireshk-i7>
-References: <20191118164512.8676-1-digetx@gmail.com>
- <20191118164512.8676-8-digetx@gmail.com>
+Subject: Re: [PATCH 1/2] cpufreq: kirkwood: convert to
+ devm_platform_ioremap_resource
+Date: Mon, 16 Dec 2019 09:37:40 +0530
+Message-ID: <20191216040740.d5r2dn3gs6xamxh3@vireshk-i7>
+References: <20191215140522.30872-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20191118164512.8676-8-digetx@gmail.com>
+In-Reply-To: <20191215140522.30872-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yangtao Li <tiny.windzz@gmail.com>
+Cc: rjw@rjwysocki.net, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 18-11-19, 19:45, Dmitry Osipenko wrote:
-> Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
-> OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
-> Currently cpufreq-dt driver produces a bit annoying warning splats
-> during boot because valid OPPs are not found, this will be fixed once
-> tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
-> will also happen on older stable kernels using newer device-trees, thus
-> this patch should be backported to stable kernels as well.
+On 15-12-19, 14:05, Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
 > 
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/cpufreq/kirkwood-cpufreq.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index f1d170dcf4d3..aba591d57c67 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
->  	{ .compatible = "mediatek,mt8176", },
->  	{ .compatible = "mediatek,mt8183", },
+> diff --git a/drivers/cpufreq/kirkwood-cpufreq.c b/drivers/cpufreq/kirkwood-cpufreq.c
+> index cb74bdc5baaa..70ad8fe1d78b 100644
+> --- a/drivers/cpufreq/kirkwood-cpufreq.c
+> +++ b/drivers/cpufreq/kirkwood-cpufreq.c
+> @@ -102,13 +102,11 @@ static struct cpufreq_driver kirkwood_cpufreq_driver = {
+>  static int kirkwood_cpufreq_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np;
+> -	struct resource *res;
+>  	int err;
 >  
-> +	{ .compatible = "nvidia,tegra20", },
-> +	{ .compatible = "nvidia,tegra30", },
->  	{ .compatible = "nvidia,tegra124", },
->  	{ .compatible = "nvidia,tegra210", },
+>  	priv.dev = &pdev->dev;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	priv.base = devm_ioremap_resource(&pdev->dev, res);
+> +	priv.base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(priv.base))
+>  		return PTR_ERR(priv.base);
+>  
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Applied both. Thanks.
 
 -- 
 viresh
