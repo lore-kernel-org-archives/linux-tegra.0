@@ -1,38 +1,62 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 0/3] Tegra GPIO: Minor code clean up
-Date: Mon, 16 Dec 2019 17:45:57 +0300
-Message-ID: <b108c394-cdbc-e6c7-1688-69e05eea2279@gmail.com>
-References: <20191215183047.9414-1-digetx@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Mon, 16 Dec 2019 17:11:32 +0200
+Message-ID: <20191216151132.GC28289@pdeschrijver-desktop.Nvidia.com>
+References: <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+ <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
+ <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
+ <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
+ <3f1c9325-3017-62be-1e3b-82fd28540fdf@nvidia.com>
+ <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
+ <20191211151028.GZ28289@pdeschrijver-desktop.Nvidia.com>
+ <0930a710-174b-859b-294c-e9f81f6a3b5e@gmail.com>
+ <20191216122005.GB28289@pdeschrijver-desktop.Nvidia.com>
+ <53653719-f8e5-f6d1-a1d1-e53c7ccd7636@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191215183047.9414-1-digetx@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <53653719-f8e5-f6d1-a1d1-e53c7ccd7636@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, sboyd@kernel.org, gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com, allison@lohutok.net, pgaikwad@nvidia.com, mturquette@baylibre.com, horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, alexios.zavras@intel.comal
 List-Id: linux-tegra@vger.kernel.org
 
-15.12.2019 21:30, Dmitry Osipenko пишет:
-> Hello,
+On Mon, Dec 16, 2019 at 05:23:23PM +0300, Dmitry Osipenko wrote:
+> >> Could you please clarify what do you mean by the "existing users"?
+> >> AFAIK, nothing in kernel uses mux clocks.
+> >
+> > The DT clk bindings allow for parent initialization, so it's certainly
+> > possible there are some DTs which rely on this. We promised to never
+> > break the bindings, which changing to 1 clock would do.
 > 
-> I was investigating why CPU hangs during of GPIO driver suspend and in
-> the end it turned out that it is a Broadcom WiFi driver problem because
-> it keeps OOB wake-interrupt enabled while WLAN interface is DOWN and this
-> may cause a bit weird CPU hang on writing to INT_ENB register during of
-> GPIO driver suspend. Meanwhile I also noticed that a few things could be
-> improved in the driver, that's what this small series addresses.
+> What about this variant:
 > 
-> Dmitry Osipenko (3):
->   gpio: tegra: Use generic readl_relaxed/writel_relaxed accessors
->   gpio: tegra: Properly handle irq_set_irq_wake() error
->   gpio: tegra: Use NOIRQ phase for suspend/resume
+>   1. Keep the old CaR code in place.
 > 
->  drivers/gpio/gpio-tegra.c | 21 ++++++++++-----------
->  1 file changed, 10 insertions(+), 11 deletions(-)
+>   2. Make CaR driver to scan whole device-tree for the legacy PMC clocks.
 > 
+>   3. If legacy clock is found, then register PMC clocks from CaR.
+> 
+>   4. If legacy clocks are not found, then don't register PMC clocks from
+> CaR.
+> 
+>   5. Add clocks support to the PMC driver and only register them if
+> legacy clocks are not registered by CaR.
+> 
+> Now both old and new DTBs can co-exist and work, everyone happy.
 
-For the reference, here is the WiFi driver fix:
+That seems even more work.. Today the only upstream user is audio. 
+Currently these clocks are setup by the CAR clock driver. However
+as they will move to the PMC driver, this mechanism cannot be used.
+Hence the plan is to modify the audio driver to check for the PMC clocks
+in DT and if they are not available use the CAR clocks as fallback.
+The whole reason the clocks move to the PMC driver, is that when PMC
+becomes secure, all accesses have to go via an SMC. Given that we don't
+want SMCs all over the Tegra drivers, it's a good opportunity to move
+the PMC clock handling into the PMC driver. PMC can be secure with both
+'new' and old DTs, so just registering the PMC clocks in the CAR driver
+if legacy clocks are found in the DT, won't always work.
 
-https://patchwork.ozlabs.org/patch/1209997/
+Peter.
