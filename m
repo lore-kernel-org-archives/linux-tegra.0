@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.3 000/180] 5.3.17-stable review
-Date: Tue, 17 Dec 2019 11:27:58 +0000
-Message-ID: <ececd7aa-4187-d879-6d16-a3301bf36a97@nvidia.com>
-References: <20191216174806.018988360@linuxfoundation.org>
+Subject: Re: [PATCH 5.4 000/177] 5.4.4-stable review
+Date: Tue, 17 Dec 2019 11:28:17 +0000
+Message-ID: <b0514e98-0238-b226-de8d-865394a8c6f3@nvidia.com>
+References: <20191216174811.158424118@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
 Content-Language: en-US
 Sender: stable-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
@@ -16,8 +16,8 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 16/12/2019 17:47, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.3.17 release.
-> There are 180 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 5.4.4 release.
+> There are 177 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 16/12/2019 17:47, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.17-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.4-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -38,12 +38,12 @@ On 16/12/2019 17:47, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v5.3:
+Test results for stable-v5.4:
     13 builds:	13 pass, 0 fail
     22 boots:	22 pass, 0 fail
     38 tests:	38 pass, 0 fail
 
-Linux version:	5.3.17-rc1-g5770ae7aea0c
+Linux version:	5.4.4-rc1-gfffa88522363
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
