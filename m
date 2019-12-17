@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v4 15/19] ARM: dts: tegra: Add clock-cells property to pmc
-Date: Tue, 17 Dec 2019 12:04:02 -0800
-Message-ID: <1576613046-17159-16-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v4 16/19] arm64: tegra: Add clock-cells property to Tegra PMC node
+Date: Tue, 17 Dec 2019 12:04:03 -0800
+Message-ID: <1576613046-17159-17-git-send-email-skomatineni@nvidia.com>
 References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,62 +12,37 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dige
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC has clk_out_1, clk_out_2, clk_out_3, and blink clock.
+Tegra132 and Tegra210 PMC block has clk_out_1, clk_out_2, clk_out_3,
+and a blink clock as a part of PMC.
 
-These clocks are moved from clock driver to pmc driver with pmc
-as the clock provider for these clocks.
+These clocks are moved from clock driver to pmc driver with pmc as a
+clock provider.
 
-This patch adds #clock-cells property with 1 clock specifier to
-the Tegra PMC node in device tree.
+Clock ids for these clocks are defined in pmc dt-bindings.
+
+This patch updated device tree to include pmc dt-binding and adds
+#clock-cells property with one clock specifier to pmc node.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm/boot/dts/tegra114.dtsi | 4 +++-
- arch/arm/boot/dts/tegra124.dtsi | 4 +++-
- arch/arm/boot/dts/tegra20.dtsi  | 4 +++-
- arch/arm/boot/dts/tegra30.dtsi  | 4 +++-
- 4 files changed, 12 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 4 +++-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 0d7a6327e404..b8f12f24f314 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra114-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/soc/tegra-pmc.h>
- 
- / {
- 	compatible = "nvidia,tegra114";
-@@ -514,11 +515,12 @@
- 		status = "disabled";
- 	};
- 
--	pmc@7000e400 {
-+	pmc: pmc@7000e400 {
- 		compatible = "nvidia,tegra114-pmc";
- 		reg = <0x7000e400 0x400>;
- 		clocks = <&tegra_car TEGRA114_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#clock-cells = <1>;
- 	};
- 
- 	fuse@7000f800 {
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 413bfb981de8..d0802c4ae3bf 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 631a7f77c386..5bdb4a6a6b90 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
 @@ -6,6 +6,7 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra-xusb.h>
  #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/tegra124-car.h>
  #include <dt-bindings/thermal/tegra124-soctherm.h>
 +#include <dt-bindings/soc/tegra-pmc.h>
  
  / {
- 	compatible = "nvidia,tegra124";
-@@ -595,11 +596,12 @@
- 		clocks = <&tegra_car TEGRA124_CLK_RTC>;
+ 	compatible = "nvidia,tegra132", "nvidia,tegra124";
+@@ -577,11 +578,12 @@
+ 		clock-names = "rtc";
  	};
  
 -	pmc@7000e400 {
@@ -80,57 +55,25 @@ index 413bfb981de8..d0802c4ae3bf 100644
  	};
  
  	fuse@7000f800 {
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 9c58e7fcf5c0..85a64747bec6 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra20-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 48c63256ba7f..0d0432d3b37a 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/reset/tegra210-car.h>
  #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
 +#include <dt-bindings/soc/tegra-pmc.h>
  
  / {
- 	compatible = "nvidia,tegra20";
-@@ -608,11 +609,12 @@
- 		status = "disabled";
- 	};
- 
--	pmc@7000e400 {
-+	pmc: pmc@7000e400 {
- 		compatible = "nvidia,tegra20-pmc";
- 		reg = <0x7000e400 0x400>;
- 		clocks = <&tegra_car TEGRA20_CLK_PCLK>, <&clk32k_in>;
+ 	compatible = "nvidia,tegra210";
+@@ -780,6 +781,7 @@
+ 		reg = <0x0 0x7000e400 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
  		clock-names = "pclk", "clk32k_in";
 +		#clock-cells = <1>;
- 	};
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
  
- 	mc: memory-controller@7000f000 {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 55ae050042ce..4d5e9d0001d3 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra30-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/soc/tegra-pmc.h>
- 
- / {
- 	compatible = "nvidia,tegra30";
-@@ -714,11 +715,12 @@
- 		status = "disabled";
- 	};
- 
--	pmc@7000e400 {
-+	pmc: pmc@7000e400 {
- 		compatible = "nvidia,tegra30-pmc";
- 		reg = <0x7000e400 0x400>;
- 		clocks = <&tegra_car TEGRA30_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#clock-cells = <1>;
- 	};
- 
- 	mc: memory-controller@7000f000 {
 -- 
 2.7.4
