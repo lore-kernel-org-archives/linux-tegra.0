@@ -1,55 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.4 000/177] 5.4.4-stable review
-Date: Tue, 17 Dec 2019 13:07:06 +0100
-Message-ID: <20191217120706.GC3156341@kroah.com>
-References: <20191216174811.158424118@linuxfoundation.org>
- <b0514e98-0238-b226-de8d-865394a8c6f3@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 2/2] dt-bindings: net: broadcom-bluetooth: Document
+ BCM4329 support
+Date: Tue, 17 Dec 2019 16:10:29 +0300
+Message-ID: <e59a6d98-eef0-3473-add3-ac6b2fae02a8@gmail.com>
+References: <20191215185253.14024-1-digetx@gmail.com>
+ <20191215185253.14024-2-digetx@gmail.com>
+ <E971B7A3-B5F2-4F21-B0F4-B7D289080D9A@holtmann.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b0514e98-0238-b226-de8d-865394a8c6f3@nvidia.com>
+In-Reply-To: <E971B7A3-B5F2-4F21-B0F4-B7D289080D9A@holtmann.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Johan Hedberg <johan.hedberg@gmail.com>, devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 11:28:17AM +0000, Jon Hunter wrote:
+17.12.2019 10:40, Marcel Holtmann пишет:
+> Hi Dmitry,
 > 
-> On 16/12/2019 17:47, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.4 release.
-> > There are 177 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 18 Dec 2019 17:41:25 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.4-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
+>> The BCM4329 is a 802.11 a/b/g/n WiFi + Bluetooth 2.1 chip which is found
+>> in Azurewave AW-NH611 WiFi+BT module.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>> Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 1 +
+>> 1 file changed, 1 insertion(+)
 > 
-> All tests are passing for Tegra ...
+> patch has been applied to bluetooth-next tree.
 > 
-> Test results for stable-v5.4:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
+> Regards
 > 
-> Linux version:	5.4.4-rc1-gfffa88522363
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+> Marcel
 > 
 
-Wonderful, thanks for testing all of these and letting me know.
-
-greg k-h
+Thank you very much!
