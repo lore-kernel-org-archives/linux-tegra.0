@@ -1,33 +1,54 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Subject: Re: [PATCH v1 2/2] dt-bindings: net: broadcom-bluetooth: Document
- BCM4329 support
-Date: Tue, 17 Dec 2019 08:40:49 +0100
-Message-ID: <E971B7A3-B5F2-4F21-B0F4-B7D289080D9A@holtmann.org>
-References: <20191215185253.14024-1-digetx@gmail.com>
- <20191215185253.14024-2-digetx@gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
-Content-Type: text/plain;
-        charset=us-ascii
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.14 000/267] 4.14.159-stable review
+Date: Tue, 17 Dec 2019 11:27:22 +0000
+Message-ID: <c067e2f2-e9ec-6006-21b9-a1fd4d508d21@nvidia.com>
+References: <20191216174848.701533383@linuxfoundation.org>
+ <20191217090548.GA2801817@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191215185253.14024-2-digetx@gmail.com>
+In-Reply-To: <20191217090548.GA2801817@kroah.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Johan Hedberg <johan.hedberg@gmail.com>, devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
 
-> The BCM4329 is a 802.11 a/b/g/n WiFi + Bluetooth 2.1 chip which is found
-> in Azurewave AW-NH611 WiFi+BT module.
+On 17/12/2019 09:05, Greg Kroah-Hartman wrote:
+> On Mon, Dec 16, 2019 at 06:45:26PM +0100, Greg Kroah-Hartman wrote:
+>> This is the start of the stable review cycle for the 4.14.159 release.
+>> There are 267 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
+>>
+>> Responses should be made by Wed, 18 Dec 2019 17:41:25 +0000.
+>> Anything received after that time might be too late.
+>>
+>> The whole patch series can be found in one patch at:
+>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.159-rc1.gz
+>> or in the git tree and branch at:
+>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+>> and the diffstat can be found below.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
-> Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 1 +
-> 1 file changed, 1 insertion(+)
+> There is a -rc2 out now to resolve some reported issues:
+>  	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.159-rc2.gz
 
-patch has been applied to bluetooth-next tree.
 
-Regards
+All tests are passing for Tegra ...
 
-Marcel
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    24 tests:	24 pass, 0 fail
+
+Linux version:	4.14.159-rc2-g66745e000c83
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
