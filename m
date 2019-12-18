@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V2 15/18] arm64: tegra: Add xudc node for Tegra210
-Date: Wed, 18 Dec 2019 14:46:28 +0530
-Message-ID: <1576660591-10383-16-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V2 17/18] arm64: tegra: Add xudc node for Tegra186
+Date: Wed, 18 Dec 2019 14:46:30 +0530
+Message-ID: <1576660591-10383-18-git-send-email-nkristam@nvidia.com>
 References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,46 +12,46 @@ To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jona
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 has one XUSB device mode controller, which can be operated
+Tegra186 has one XUSB device mode controller, which can be operated
 HS and SS modes. Add DT entry for XUSB device mode controller.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 ---
 V2:
- - Updated clocks and clock-names sequence as per change in bindings doc.
+ - No changes in this version
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 19 +++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 19 +++++++++++++++++++
  1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 48c6325..dfce47b 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1207,6 +1207,25 @@
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 7893d78..6da9d09 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -554,6 +554,25 @@
+ 		#size-cells = <0>;
  	};
  
-+	usb@700d0000 {
-+		compatible = "nvidia,tegra210-xudc";
-+		reg = <0x0 0x700d0000 0x0 0x8000>,
-+		      <0x0 0x700d8000 0x0 0x1000>,
-+		      <0x0 0x700d9000 0x0 0x1000>;
-+		reg-names = "base", "fpci", "ipfs";
-+		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_XUSB_DEV>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_SS>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_SSP_SRC>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_FS_SRC>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_HS_SRC>;
-+		clock-names = "dev", "ss", "ss_src", "fs_src", "hs_src";
-+		power-domains = <&pd_xusbdev>, <&pd_xusbss>;
++	usb@3550000 {
++		compatible = "nvidia,tegra186-xudc";
++		reg = <0x0 0x03550000 0x0 0x8000>,
++		      <0x0 0x03558000 0x0 0x1000>;
++		reg-names = "base", "fpci";
++		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&bpmp TEGRA186_CLK_XUSB_CORE_DEV>,
++			 <&bpmp TEGRA186_CLK_XUSB_SS>,
++			 <&bpmp TEGRA186_CLK_XUSB_CORE_SS>,
++			 <&bpmp TEGRA186_CLK_XUSB_FS>;
++		clock-names = "dev", "ss", "ss_src", "fs_src";
++		iommus = <&smmu TEGRA186_SID_XUSB_DEV>;
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_XUSBB>,
++				<&bpmp TEGRA186_POWER_DOMAIN_XUSBA>;
 +		power-domain-names = "dev", "ss";
 +		nvidia,xusb-padctl = <&padctl>;
 +		status = "disabled";
 +	};
 +
- 	mipi: mipi@700e3000 {
- 		compatible = "nvidia,tegra210-mipi";
- 		reg = <0x0 0x700e3000 0x0 0x100>;
+ 	fuse@3820000 {
+ 		compatible = "nvidia,tegra186-efuse";
+ 		reg = <0x0 0x03820000 0x0 0x10000>;
 -- 
 2.7.4
