@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 04/17] ARM: tegra: Change tegra_set_cpu_in_lp2() type to void
-Date: Thu, 19 Dec 2019 00:04:50 +0300
-Message-ID: <20191218210503.6689-5-digetx@gmail.com>
+Subject: [PATCH v9 10/17] arm: tegra20: cpuidle: Make abort_flag atomic
+Date: Thu, 19 Dec 2019 00:04:56 +0300
+Message-ID: <20191218210503.6689-11-digetx@gmail.com>
 References: <20191218210503.6689-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,96 +12,48 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra30 CPUIDLE driver has intention to check whether primary CPU was
-the last CPU that entered LP2 (CC6) idle-state, but that functionality
-never got utilized because driver never supported the CC6 state for the
-case where any secondary CPU is online. The new cpuidle driver will
-properly support CC6 on Tegra30, including the case where secondary CPUs
-are online, and that knowledge about what CPUs entered into CC6 won't be
-needed at all because new driver will use different approach by making use
-of the coupled idle-state and explicitly parking secondary CPUs before
-entering into CC6. Thus this patch is just a minor cleanup change.
+Replace memory accessors with atomic API just to make code consistent
+with the abort_barrier. The new variant may be even more correct now since
+atomic_read() will prevent compiler from generating wrong things like
+carrying abort_flag value in a register instead of re-fetching it from
+memory.
 
 Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/cpuidle-tegra30.c | 14 ++++----------
- arch/arm/mach-tegra/pm.c              |  8 +-------
- arch/arm/mach-tegra/pm.h              |  2 +-
- 3 files changed, 6 insertions(+), 18 deletions(-)
+ arch/arm/mach-tegra/cpuidle-tegra20.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
-index c6128526877d..a3ce8dabfe18 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra30.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
-@@ -98,22 +98,16 @@ static int tegra30_idle_lp2(struct cpuidle_device *dev,
- 			    int index)
- {
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+index bcc158b72e67..ccb8b0aa6c46 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra20.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+@@ -32,7 +32,7 @@
+ #include "sleep.h"
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static bool abort_flag;
++static atomic_t abort_flag;
+ static atomic_t abort_barrier;
+ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
+ 				    struct cpuidle_driver *drv,
+@@ -168,13 +168,14 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
  	bool entered_lp2 = false;
--	bool last_cpu;
  
- 	local_fiq_disable();
+ 	if (tegra_pending_sgi())
+-		WRITE_ONCE(abort_flag, true);
++		atomic_set(&abort_flag, 1);
  
--	last_cpu = tegra_set_cpu_in_lp2();
-+	tegra_set_cpu_in_lp2();
- 	cpu_pm_enter();
+ 	cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
  
--	if (dev->cpu == 0) {
--		if (last_cpu)
--			entered_lp2 = tegra30_cpu_cluster_power_down(dev, drv,
--								     index);
--		else
--			cpu_do_idle();
--	} else {
-+	if (dev->cpu == 0)
-+		entered_lp2 = tegra30_cpu_cluster_power_down(dev, drv, index);
-+	else
- 		entered_lp2 = tegra30_cpu_core_power_down(dev, drv, index);
--	}
- 
- 	cpu_pm_exit();
- 	tegra_clear_cpu_in_lp2();
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 1ff499068bb1..a72f9a2d3cb7 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -123,11 +123,9 @@ void tegra_clear_cpu_in_lp2(void)
- 	spin_unlock(&tegra_lp2_lock);
- }
- 
--bool tegra_set_cpu_in_lp2(void)
-+void tegra_set_cpu_in_lp2(void)
- {
- 	int phy_cpu_id = cpu_logical_map(smp_processor_id());
--	bool last_cpu = false;
--	cpumask_t *cpu_lp2_mask = tegra_cpu_lp2_mask;
- 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
- 
- 	spin_lock(&tegra_lp2_lock);
-@@ -135,11 +133,7 @@ bool tegra_set_cpu_in_lp2(void)
- 	BUG_ON((*cpu_in_lp2 & BIT(phy_cpu_id)));
- 	*cpu_in_lp2 |= BIT(phy_cpu_id);
- 
--	if ((phy_cpu_id == 0) && cpumask_equal(cpu_lp2_mask, cpu_online_mask))
--		last_cpu = true;
--
- 	spin_unlock(&tegra_lp2_lock);
--	return last_cpu;
- }
- 
- static int tegra_sleep_cpu(unsigned long v2p)
-diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
-index b9cc12222bb1..2c294f6365c0 100644
---- a/arch/arm/mach-tegra/pm.h
-+++ b/arch/arm/mach-tegra/pm.h
-@@ -24,7 +24,7 @@ void tegra30_lp1_iram_hook(void);
- void tegra30_sleep_core_init(void);
- 
- void tegra_clear_cpu_in_lp2(void);
--bool tegra_set_cpu_in_lp2(void);
-+void tegra_set_cpu_in_lp2(void);
- void tegra_idle_lp2_last(void);
- extern void (*tegra_tear_down_cpu)(void);
+-	if (abort_flag) {
++	if (atomic_read(&abort_flag)) {
+ 		cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
+-		abort_flag = false;	/* clean flag for next coming */
++		/* clean flag for next coming */
++		atomic_set(&abort_flag, 0);
+ 		return -EINTR;
+ 	}
  
 -- 
 2.24.0
