@@ -1,53 +1,69 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.4 00/37] 5.4.5-stable review
-Date: Wed, 18 Dec 2019 10:24:29 +0000
-Message-ID: <778e872e-0eb4-a888-f0a3-e6ba79eba569@nvidia.com>
-References: <20191217200721.741054904@linuxfoundation.org>
+Subject: Re: [PATCH] ALSA: hda: Use standard waitqueue for RIRB
+ wakeup
+Date: Wed, 18 Dec 2019 14:17:27 +0000
+Message-ID: <53562c71-4d81-1580-f311-971ceb029431@nvidia.com>
+References: <20191210145727.22054-1-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191217200721.741054904@linuxfoundation.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20191210145727.22054-1-tiwai@suse.de>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 17/12/2019 20:09, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.5 release.
-> There are 37 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 10/12/2019 14:57, Takashi Iwai wrote:
+> The HD-audio CORB/RIRB communication was programmed in a way that was
+> documented in the reference in decades ago, which is essentially a
+> polling in the waiter side.  It's working fine but costs CPU cycles on
+> some platforms that support only slow communications.  Also, for some
+> platforms that had unreliable communications, we put longer wait time
+> (2 ms), which accumulate quite long time if you execute many verbs in
+> a shot (e.g. at the initialization or resume phase).
 > 
-> Responses should be made by Thu, 19 Dec 2019 20:06:21 +0000.
-> Anything received after that time might be too late.
+> This patch attempts to improve the situation by introducing the
+> standard waitqueue in the RIRB waiter side instead of polling.  The
+> test results on my machine show significant improvements.  The time
+> spent for "cat /proc/asound/card*/codec#*" were changed like:
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
+> * Intel SKL + Realtek codec
+>   before the patch:
+>    0.00user 0.04system 0:00.10elapsed 40.0%CPU
+>   after the patch:
+>    0.00user 0.01system 0:00.10elapsed 10.0%CPU
 > 
-> thanks,
+> * Nvidia GP107GL + Nvidia HDMI codec
+>   before the patch:
+>    0.00user 0.00system 0:02.76elapsed 0.0%CPU
+>   after the patch:
+>    0.00user 0.00system 0:00.01elapsed 17.0%CPU
 > 
-> greg k-h
+> So, for Intel chips, the total time is same, while the total time is
+> greatly reduced (from 2.76 to 0.01s) for Nvidia chips.
+> The only negative data here is the increase of CPU time for Nvidia,
+> but this is the unavoidable cost for faster wakeups, supposedly.
 > 
-> -------------
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Starting with next-20191217 I am seeing the following error on one of
+our Tegra platforms ...
 
+tegra-hda 3510000.hda: azx_get_response timeout, switching to polling
+mode: last cmd=0x404f2d00
 
-All tests are passing for Tegra ...
-
-Test results for stable-v5.4:
-    13 builds:	13 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.4.5-rc1-g3400efb6b47c
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+Bisect is point to this commit and although it does not cleanly revert,
+if I revert this and a couple dependencies on top of -next the issue
+goes away. Any thoughts on what could be going on here?
 
 Cheers
 Jon
