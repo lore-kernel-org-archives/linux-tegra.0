@@ -1,44 +1,37 @@
-From: Xidong Wang <wangxidong_97@163.com>
-Subject: [PATCH 1/1] staging: nvec: check return value
-Date: Wed, 18 Dec 2019 13:56:38 +0800
-Message-ID: <1576648598-12257-1-git-send-email-wangxidong_97@163.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 17/19] ARM: tegra: Update sound node clocks in device
+ tree
+Date: Wed, 18 Dec 2019 09:39:44 +0300
+Message-ID: <f76bf618-607a-af87-f652-4117ed050b70@gmail.com>
+References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
+ <1576613046-17159-18-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Xidong Wang <wangxidong_97@163.com>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, ac100@lists.launchpad.net
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1576613046-17159-18-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-In nvec_kbd_probe(), the return value of devm_input_allocate_device()
-should be checked before it is used.
+17.12.2019 23:04, Sowjanya Komatineni пишет:
+> clk_out_1, clk_out_2, and clk_out_3 are part of Tegra PMC block
+> and are moved from clock driver to pmc driver with pmc as clock
+> provider.
+> DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+> 	t=1576613055; bh=aZWp4sScdv8qprM+UpGS0w1DX7YelR50gFqoThf23X4=;
+> 	h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+> 	 In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+> 	 Content-Type;
+> 	b=p9EmVtuTvJK6owqo0lmnZnAvftCWc6+7Mkp/Ks9y26tKN5c4jU+I+YEAaMWoHuzd+
+> 	 7n0vS98WNMGomj19IUXoaH49IeTgPAlqOkU57IIiL2qEnX3sYNYpl/rCRUIs7vd33t
+> 	 LSn8tQeu9Lz+Yfl8hvXcN3sdxRQOEPDYwzWG+tVy1FCnwouTHSfBhgado2Tx/9cWgi
+> 	 HlSWkzjvodag7mAmZtLCl5P4J+oVEJnpYnjSZKNojqszn8u651ErvnVI/VbhZwQ0G5
+> 	 Yg8kEr8YECPk2L4MXUe8J2YmKtNyZaADOkUhjyxqMjZ2bGrB9RDm5dKNFxkWuEeSpb
+> 	 U3nMi7MNcvBmQ==
 
-Signed-off-by: Xidong Wang <wangxidong_97@163.com>
----
- drivers/staging/nvec/nvec_kbd.c | 2 ++
- 1 file changed, 2 insertions(+)
+Looks like NVIDIA's mail server has some problems.
 
-diff --git a/drivers/staging/nvec/nvec_kbd.c b/drivers/staging/nvec/nvec_kbd.c
-index 01dbb66..386d619 100644
---- a/drivers/staging/nvec/nvec_kbd.c
-+++ b/drivers/staging/nvec/nvec_kbd.c
-@@ -123,6 +123,8 @@ static int nvec_kbd_probe(struct platform_device *pdev)
- 		keycodes[j++] = extcode_tab_us102[i];
- 
- 	idev = devm_input_allocate_device(&pdev->dev);
-+	if (!idev)
-+		return -ENOMEM;
- 	idev->name = "nvec keyboard";
- 	idev->phys = "nvec";
- 	idev->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_REP) | BIT_MASK(EV_LED);
--- 
-2.7.4
+[snip]
