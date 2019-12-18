@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 15/17] cpuidle: tegra: Disable CC6 state if LP2 unavailable
-Date: Thu, 19 Dec 2019 00:05:01 +0300
-Message-ID: <20191218210503.6689-16-digetx@gmail.com>
+Subject: [PATCH v9 16/17] ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
+Date: Thu, 19 Dec 2019 00:05:02 +0300
+Message-ID: <20191218210503.6689-17-digetx@gmail.com>
 References: <20191218210503.6689-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,37 +12,26 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-LP2 suspending could be unavailable, for example if it is disabled in a
-device-tree. CC6 cpuidle state won't work in that case.
+The Tegra CPU Idle driver was moved out into driver/cpuidle/ directory and
+it is now a proper platform driver.
 
 Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/cpuidle/cpuidle-tegra.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index b6cdad8437af..675b8a4464ba 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -31,6 +31,7 @@
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/irq.h>
- #include <soc/tegra/pm.h>
-+#include <soc/tegra/pmc.h>
- 
- #include <asm/cpuidle.h>
- #include <asm/firmware.h>
-@@ -334,6 +335,10 @@ static void tegra_cpuidle_setup_tegra114_c7_state(void)
- 
- static int tegra_cpuidle_probe(struct platform_device *pdev)
- {
-+	/* LP2 could be disabled in device-tree */
-+	if (tegra_pmc_get_suspend_mode() < TEGRA_SUSPEND_LP2)
-+		tegra_cpuidle_disable_state(TEGRA_CC6);
-+
- 	/*
- 	 * Required suspend-resume functionality, which is provided by the
- 	 * Tegra-arch core and PMC driver, is unavailable if PM-sleep option
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 3f1b96dc7faa..1d1b595c998c 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -113,6 +113,7 @@ CONFIG_CPU_IDLE=y
+ CONFIG_ARM_CPUIDLE=y
+ CONFIG_ARM_ZYNQ_CPUIDLE=y
+ CONFIG_ARM_EXYNOS_CPUIDLE=y
++CONFIG_ARM_TEGRA_CPUIDLE=y
+ CONFIG_KERNEL_MODE_NEON=y
+ CONFIG_RASPBERRYPI_FIRMWARE=y
+ CONFIG_TRUSTED_FOUNDATIONS=y
 -- 
 2.24.0
