@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 12/12] ARM: dts: tegra30: beaver: Add CPU Operating Performance Points
-Date: Wed, 18 Dec 2019 23:21:42 +0300
-Message-ID: <20191218202142.11717-13-digetx@gmail.com>
+Subject: [PATCH v6 07/12] ARM: tegra: Don't enable PLLX while resuming from LP1 on Tegra30
+Date: Wed, 18 Dec 2019 23:21:37 +0300
+Message-ID: <20191218202142.11717-8-digetx@gmail.com>
 References: <20191218202142.11717-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,52 +12,47 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on beaver.
+PLLX may be kept disabled if cpufreq driver selects some other clock for
+CPU. In that case PLLX will be disabled later in the resume path by the
+CLK driver, which also can enable PLLX if necessary by itself. Thus there
+is no need to enable PLLX early during resume. Tegra114/124 CLK drivers do
+not manage PLLX on resume and thus they are left untouched by this patch.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-beaver.dts | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/mach-tegra/sleep-tegra30.S | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 6ebb3105af9e..86556622be25 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -2,6 +2,8 @@
- /dts-v1/;
+diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+index 9a20c93abe48..4f073869b8ac 100644
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -358,7 +358,6 @@ _no_pll_iddq_exit:
  
- #include "tegra30.dtsi"
-+#include "tegra30-cpu-opp.dtsi"
-+#include "tegra30-cpu-opp-microvolt.dtsi"
+ 	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
+ 	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
+-	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
  
- / {
- 	model = "NVIDIA Tegra30 Beaver evaluation board";
-@@ -2124,4 +2126,26 @@ sound {
- 			 <&tegra_car TEGRA30_CLK_EXTERN1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
+ _pll_m_c_x_done:
+ 	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
+@@ -368,8 +367,18 @@ _pll_m_c_x_done:
+ 	pll_locked r1, r0, CLK_RESET_PLLP_BASE
+ 	pll_locked r1, r0, CLK_RESET_PLLA_BASE
+ 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
 +
-+	cpus {
-+		cpu0: cpu@0 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
++	/*
++	 * CPUFreq driver could select other PLL for CPU. PLLX will be
++	 * enabled by the Tegra30 CLK driver on an as-needed basis, see
++	 * tegra30_cpu_clock_resume().
++	 */
++	cmp	r10, #TEGRA30
++	beq	_pll_m_c_x_locked
 +
-+		cpu@1 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@2 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+
-+		cpu@3 {
-+			cpu-supply = <&vddctrl_reg>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+	};
- };
+ 	pll_locked r1, r0, CLK_RESET_PLLX_BASE
+ 
++_pll_m_c_x_locked:
+ 	mov32	r7, TEGRA_TMRUS_BASE
+ 	ldr	r1, [r7]
+ 	add	r1, r1, #LOCK_DELAY
 -- 
 2.24.0
