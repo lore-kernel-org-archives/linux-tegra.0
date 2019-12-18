@@ -1,71 +1,59 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V2 05/18] phy: tegra: xusb: Add support to get companion USB 3 port
-Date: Wed, 18 Dec 2019 14:46:18 +0530
-Message-ID: <1576660591-10383-6-git-send-email-nkristam@nvidia.com>
-References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 5.3 00/25] 5.3.18-stable review
+Date: Wed, 18 Dec 2019 10:23:02 +0000
+Message-ID: <0d53cd34-e8d6-ca55-243a-ccf9d7c5c408@nvidia.com>
+References: <20191217200903.179327435@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20191217200903.179327435@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra XUSB host, device mode driver requires the USB 3 companion port
-number for corresponding USB 2 port. Add API to retrieve the same.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
----
-V2:
- - Added -ENODEV as return instead of -1, to sync other errors.
----
- drivers/phy/tegra/xusb.c       | 21 +++++++++++++++++++++
- include/linux/phy/tegra/xusb.h |  2 ++
- 2 files changed, 23 insertions(+)
+On 17/12/2019 20:15, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.3.18 release.
+> There are 25 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Note, this is the LAST 5.3.y kernel to be released, after this one, it
+> will be end-of-life.  You should have moved to the 5.4.y series already
+> by now.
+> 
+> Responses should be made by Thu, 19 Dec 2019 20:08:42 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.18-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 5bde8f1..e75cd71 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -1256,6 +1256,27 @@ int tegra_phy_xusb_utmi_port_reset(struct phy *phy)
- }
- EXPORT_SYMBOL_GPL(tegra_phy_xusb_utmi_port_reset);
- 
-+int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
-+				    unsigned int port)
-+{
-+	struct tegra_xusb_usb2_port *usb2 = tegra_xusb_find_usb2_port(padctl,
-+								      port);
-+	struct tegra_xusb_usb3_port *usb3;
-+	int i;
-+
-+	if (!usb2)
-+		return -EINVAL;
-+
-+	for (i = 0; i < padctl->soc->ports.usb3.count; i++) {
-+		usb3 = tegra_xusb_find_usb3_port(padctl, i);
-+		if (usb3 && usb3->port == usb2->base.index)
-+			return usb3->base.index;
-+	}
-+
-+	return -ENODEV;
-+}
-+EXPORT_SYMBOL_GPL(tegra_xusb_padctl_get_usb3_companion);
-+
- MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
- MODULE_DESCRIPTION("Tegra XUSB Pad Controller driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xusb.h
-index 1235865..71d9569 100644
---- a/include/linux/phy/tegra/xusb.h
-+++ b/include/linux/phy/tegra/xusb.h
-@@ -21,4 +21,6 @@ int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
- int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
- 					bool val);
- int tegra_phy_xusb_utmi_port_reset(struct phy *phy);
-+int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
-+					 unsigned int port);
- #endif /* PHY_TEGRA_XUSB_H */
+All tests are passing for Tegra ...
+
+Test results for stable-v5.3:
+    13 builds:	13 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	38 pass, 0 fail
+
+Linux version:	5.3.18-rc1-g0763039c4844
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.7.4
+nvpublic
