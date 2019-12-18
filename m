@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 08/12] dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
-Date: Wed, 18 Dec 2019 23:21:38 +0300
-Message-ID: <20191218202142.11717-9-digetx@gmail.com>
+Subject: [PATCH v6 06/12] ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
+Date: Wed, 18 Dec 2019 23:21:36 +0300
+Message-ID: <20191218202142.11717-7-digetx@gmail.com>
 References: <20191218202142.11717-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,78 +12,34 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add device-tree binding that describes CPU frequency-scaling hardware
-found on NVIDIA Tegra20/30 SoCs.
+The early-resume code shall not switch CPU to PLLX because PLLX
+configuration could be unstable or PLLX should be simply disabled if
+CPU enters into suspend running off some other PLL (the case if CPUFREQ
+driver is active). The actual burst policy is restored by the clock
+drivers.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../cpufreq/nvidia,tegra20-cpufreq.txt        | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+ arch/arm/mach-tegra/sleep-tegra30.S | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-new file mode 100644
-index 000000000000..daeca6ae6b76
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-@@ -0,0 +1,56 @@
-+Binding for NVIDIA Tegra20 CPUFreq
-+==================================
-+
-+Required properties:
-+- clocks: Must contain an entry for the CPU clock.
-+  See ../clocks/clock-bindings.txt for details.
-+- operating-points-v2: See ../bindings/opp/opp.txt for details.
-+- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
-+
-+For each opp entry in 'operating-points-v2' table:
-+- opp-supported-hw: Two bitfields indicating:
-+	On Tegra20:
-+	1. CPU process ID mask
-+	2. SoC speedo ID mask
-+
-+	On Tegra30:
-+	1. CPU process ID mask
-+	2. CPU speedo ID mask
-+
-+	A bitwise AND is performed against these values and if any bit
-+	matches, the OPP gets enabled.
-+
-+- opp-microvolt: CPU voltage triplet.
-+
-+Optional properties:
-+- cpu-supply: Phandle to the CPU power supply.
-+
-+Example:
-+	regulators {
-+		cpu_reg: regulator0 {
-+			regulator-name = "vdd_cpu";
-+		};
-+	};
-+
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+
-+		opp@456000000 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <825000 825000 1125000>;
-+			opp-supported-hw = <0x03 0x0001>;
-+			opp-hz = /bits/ 64 <456000000>;
-+		};
-+
-+		...
-+	};
-+
-+	cpus {
-+		cpu@0 {
-+			compatible = "arm,cortex-a9";
-+			clocks = <&tegra_car TEGRA20_CLK_CCLK>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			cpu-supply = <&cpu_reg>;
-+			#cooling-cells = <2>;
-+		};
-+	};
+diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+index 3341a12bbb9c..9a20c93abe48 100644
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -383,11 +383,8 @@ _pll_m_c_x_done:
+ 	ldr	r4, [r5, #0x1C]		@ restore SCLK_BURST
+ 	str	r4, [r0, #CLK_RESET_SCLK_BURST]
+ 
+-	cmp	r10, #TEGRA30
+-	movweq	r4, #:lower16:((1 << 28) | (0x8))	@ burst policy is PLLX
+-	movteq	r4, #:upper16:((1 << 28) | (0x8))
+-	movwne	r4, #:lower16:((1 << 28) | (0xe))
+-	movtne	r4, #:upper16:((1 << 28) | (0xe))
++	movw	r4, #:lower16:((1 << 28) | (0x4))	@ burst policy is PLLP
++	movt	r4, #:upper16:((1 << 28) | (0x4))
+ 	str	r4, [r0, #CLK_RESET_CCLK_BURST]
+ 
+ 	/* Restore pad power state to normal */
 -- 
 2.24.0
