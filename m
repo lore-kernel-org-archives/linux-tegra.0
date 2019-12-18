@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V2 03/18] phy: tegra: xusb: Add usb-role-switch support
-Date: Wed, 18 Dec 2019 14:46:16 +0530
-Message-ID: <1576660591-10383-4-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V2 04/18] phy: tegra: xusb: Add usb-phy support
+Date: Wed, 18 Dec 2019 14:46:17 +0530
+Message-ID: <1576660591-10383-5-git-send-email-nkristam@nvidia.com>
 References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,131 +12,145 @@ To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jona
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-If usb-role-switch property is present in USB 2 port, register
-usb-role-switch to receive usb role changes.
+For USB 2 ports that has usb-role-switch enabled, add usb-phy for
+corresponding USB 2 phy. USB role changes from role switch are then
+updated to corresponding host and device mode drivers via usb-phy notifier
+block.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 ---
 V2:
- - Removed dev_set_drvdata for port->dev.
- - Added of_platform_depopulate during error handling and driver removal.
+ - Added dev_set_drvdata for port->dev.
 ---
- drivers/phy/tegra/Kconfig |  1 +
- drivers/phy/tegra/xusb.c  | 42 ++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/tegra/xusb.h  |  3 +++
- 3 files changed, 46 insertions(+)
+ drivers/phy/tegra/xusb.c | 71 ++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/phy/tegra/xusb.h |  2 ++
+ 2 files changed, 73 insertions(+)
 
-diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
-index f9817c3..df07c4d 100644
---- a/drivers/phy/tegra/Kconfig
-+++ b/drivers/phy/tegra/Kconfig
-@@ -2,6 +2,7 @@
- config PHY_TEGRA_XUSB
- 	tristate "NVIDIA Tegra XUSB pad controller driver"
- 	depends on ARCH_TEGRA
-+	select USB_CONN_GPIO
- 	help
- 	  Choose this option if you have an NVIDIA Tegra SoC.
- 
 diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index f98ec39..dc00b42 100644
+index dc00b42..5bde8f1 100644
 --- a/drivers/phy/tegra/xusb.c
 +++ b/drivers/phy/tegra/xusb.c
-@@ -523,6 +523,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
- 	port->dev.type = &tegra_xusb_port_type;
- 	port->dev.of_node = of_node_get(np);
- 	port->dev.parent = padctl->dev;
-+	port->dev.driver = padctl->dev->driver;
- 
- 	err = dev_set_name(&port->dev, "%s-%u", name, index);
+@@ -533,6 +533,8 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
  	if (err < 0)
-@@ -541,6 +542,10 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+ 		goto unregister;
  
- static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
- {
-+	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
-+		of_platform_depopulate(&port->dev);
-+		usb_role_switch_unregister(port->usb_role_sw);
-+	}
++	dev_set_drvdata(&port->dev, port);
++
+ 	return 0;
+ 
+ unregister:
+@@ -545,6 +547,8 @@ static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
+ 	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
+ 		of_platform_depopulate(&port->dev);
+ 		usb_role_switch_unregister(port->usb_role_sw);
++		cancel_work_sync(&port->usb_phy_work);
++		usb_remove_phy(&port->usb_phy);
+ 	}
  	device_unregister(&port->dev);
  }
- 
-@@ -551,11 +556,42 @@ static const char *const modes[] = {
+@@ -556,16 +560,59 @@ static const char *const modes[] = {
  	[USB_DR_MODE_OTG] = "otg",
  };
  
-+static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
++static void tegra_xusb_usb_phy_work(struct work_struct *work)
 +{
-+	dev_dbg(dev, "%s calling notifier for role is %d\n", __func__, role);
++	struct tegra_xusb_port *port = container_of(work,
++				struct tegra_xusb_port, usb_phy_work);
++	enum usb_role role = usb_role_switch_get_role(port->usb_role_sw);
++
++	dev_dbg(&port->dev, "%s calling notifier for role %d\n", __func__,
++		role);
++
++	atomic_notifier_call_chain(&port->usb_phy.notifier, role,
++				   &port->usb_phy);
++}
++
+ static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
+ {
++	struct tegra_xusb_port *port = dev_get_drvdata(dev);
++
+ 	dev_dbg(dev, "%s calling notifier for role is %d\n", __func__, role);
+ 
++	schedule_work(&port->usb_phy_work);
 +
 +	return 0;
 +}
 +
-+static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
++static int tegra_xusb_set_peripheral(struct usb_otg *otg,
++					struct usb_gadget *gadget)
 +{
-+	int err = 0;
-+	struct usb_role_switch_desc role_sx_desc = {
-+					.set = tegra_xusb_role_sw_set,
-+					.fwnode = dev_fwnode(&port->dev),
-+						   };
++	struct tegra_xusb_port *port = container_of(otg->usb_phy,
++					struct tegra_xusb_port, usb_phy);
 +
-+	port->usb_role_sw = usb_role_switch_register(&port->dev,
-+						&role_sx_desc);
-+	if (IS_ERR(port->usb_role_sw)) {
-+		err = PTR_ERR(port->usb_role_sw);
-+		if (err != EPROBE_DEFER)
-+			dev_err(&port->dev, "Failed to register USB role SW: %d",
-+				err);
-+	}
++	if (gadget != NULL)
++		schedule_work(&port->usb_phy_work);
 +
-+	/* populate connector entry */
-+	of_platform_populate(port->dev.of_node, NULL, NULL, &port->dev);
-+
-+	return err;
++	return 0;
 +}
 +
- static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
++static int tegra_xusb_set_host(struct usb_otg *otg, struct usb_bus *host)
++{
++	struct tegra_xusb_port *port = container_of(otg->usb_phy,
++					struct tegra_xusb_port, usb_phy);
++
++	if (host != NULL)
++		schedule_work(&port->usb_phy_work);
++
+ 	return 0;
+ }
+ 
++
+ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
  {
- 	struct tegra_xusb_port *port = &usb2->base;
- 	struct device_node *np = port->dev.of_node;
- 	const char *mode;
-+	int err;
- 
- 	usb2->internal = of_property_read_bool(np, "nvidia,internal");
- 
-@@ -572,6 +608,12 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
- 		usb2->mode = USB_DR_MODE_HOST;
- 	}
- 
-+	if (of_property_read_bool(np, "usb-role-switch")) {
-+		err = tegra_xusb_setup_usb_role_switch(port);
-+		if (err < 0)
-+			return err;
+ 	int err = 0;
++	struct tegra_xusb_lane *lane = tegra_xusb_find_lane(port->padctl,
++							"usb2", port->index);
+ 	struct usb_role_switch_desc role_sx_desc = {
+ 					.set = tegra_xusb_role_sw_set,
+ 					.fwnode = dev_fwnode(&port->dev),
+@@ -578,6 +625,30 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
+ 		if (err != EPROBE_DEFER)
+ 			dev_err(&port->dev, "Failed to register USB role SW: %d",
+ 				err);
++		return err;
 +	}
 +
- 	usb2->supply = devm_regulator_get(&port->dev, "vbus");
- 	return PTR_ERR_OR_ZERO(usb2->supply);
- }
++	INIT_WORK(&port->usb_phy_work, tegra_xusb_usb_phy_work);
++
++	port->usb_phy.otg = devm_kzalloc(&port->dev,
++					 sizeof(struct usb_otg), GFP_KERNEL);
++	if (!port->usb_phy.otg)
++		return -ENOMEM;
++
++	/*
++	 * Assign phy dev to usb-phy dev. Host/device drivers can use phy
++	 * reference to retrieve usb-phy details.
++	 */
++	port->usb_phy.dev = &lane->pad->lanes[port->index]->dev;
++	port->usb_phy.dev->driver = port->padctl->dev->driver;
++	port->usb_phy.otg->usb_phy = &port->usb_phy;
++	port->usb_phy.otg->set_peripheral = tegra_xusb_set_peripheral;
++	port->usb_phy.otg->set_host = tegra_xusb_set_host;
++
++	err = usb_add_phy_dev(&port->usb_phy);
++	if (err < 0) {
++		dev_err(&port->dev, "Failed to add usbphy: %d\n", err);
++		return err;
+ 	}
+ 
+ 	/* populate connector entry */
 diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index da94fcc..9f27899 100644
+index 9f27899..2345657 100644
 --- a/drivers/phy/tegra/xusb.h
 +++ b/drivers/phy/tegra/xusb.h
-@@ -12,6 +12,7 @@
- #include <linux/workqueue.h>
- 
- #include <linux/usb/otg.h>
-+#include <linux/usb/role.h>
- 
- /* legacy entry points for backwards-compatibility */
- int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
-@@ -266,6 +267,8 @@ struct tegra_xusb_port {
- 	struct list_head list;
+@@ -268,6 +268,8 @@ struct tegra_xusb_port {
  	struct device dev;
  
-+	struct usb_role_switch *usb_role_sw;
-+
+ 	struct usb_role_switch *usb_role_sw;
++	struct work_struct usb_phy_work;
++	struct usb_phy usb_phy;
+ 
  	const struct tegra_xusb_port_ops *ops;
  };
- 
 -- 
 2.7.4
