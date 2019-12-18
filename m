@@ -1,113 +1,33 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 05/17] ARM: tegra: Propagate error from tegra_idle_lp2_last()
-Date: Thu, 19 Dec 2019 00:04:51 +0300
-Message-ID: <20191218210503.6689-6-digetx@gmail.com>
-References: <20191218210503.6689-1-digetx@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 01/19] dt-bindings: clock: tegra: Change CLK_M_DIV to
+ OSC_DIV clocks
+Date: Wed, 18 Dec 2019 15:19:04 -0600
+Message-ID: <20191218211904.GA5303@bogus>
+References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
+ <1576613046-17159-2-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191218210503.6689-1-digetx@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <1576613046-17159-2-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Technically cpu_suspend() may fail and it's never good to lose information
-about failure. For example things like cpuidle core could correctly sample
-idling time in the case of failure.
+On Tue, 17 Dec 2019 12:03:48 -0800, Sowjanya Komatineni wrote:
+> Tegra has no CLK_M_DIV2 and CLK_M_DIV4 clocks and instead it has
+> OSC_DIV2 and OSC_DIV4 clocks from OSC pads.
+> 
+> This patch changes CLK_M_DIV2 and CLK_M_DIV4 clock ids to OSC_DIV2
+> and OSC_DIV4 clock ids for Tegra30 through Tegra210.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  include/dt-bindings/clock/tegra114-car.h        | 4 ++--
+>  include/dt-bindings/clock/tegra124-car-common.h | 4 ++--
+>  include/dt-bindings/clock/tegra210-car.h        | 4 ++--
+>  include/dt-bindings/clock/tegra30-car.h         | 4 ++--
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+> 
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/mach-tegra/cpuidle-tegra20.c | 6 ++++--
- arch/arm/mach-tegra/cpuidle-tegra30.c | 4 +---
- arch/arm/mach-tegra/pm.c              | 8 ++++++--
- arch/arm/mach-tegra/pm.h              | 2 +-
- 4 files changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-index f7d5041e73cc..9789541adb7d 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-@@ -87,15 +87,17 @@ static bool tegra20_cpu_cluster_power_down(struct cpuidle_device *dev,
- 					   struct cpuidle_driver *drv,
- 					   int index)
- {
-+	bool ret;
-+
- 	while (!tegra_cpu_rail_off_ready())
- 		cpu_relax();
- 
--	tegra_idle_lp2_last();
-+	ret = !tegra_idle_lp2_last();
- 
- 	if (cpu_online(1))
- 		tegra20_wake_cpu1_from_reset();
- 
--	return true;
-+	return ret;
- }
- 
- #ifdef CONFIG_SMP
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
-index a3ce8dabfe18..17cbd118abee 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra30.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
-@@ -68,9 +68,7 @@ static bool tegra30_cpu_cluster_power_down(struct cpuidle_device *dev,
- 		return false;
- 	}
- 
--	tegra_idle_lp2_last();
--
--	return true;
-+	return !tegra_idle_lp2_last();
- }
- 
- #ifdef CONFIG_SMP
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index a72f9a2d3cb7..a094acaca307 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -189,14 +189,16 @@ static void tegra_pm_set(enum tegra_suspend_mode mode)
- 	tegra_pmc_enter_suspend_mode(mode);
- }
- 
--void tegra_idle_lp2_last(void)
-+int tegra_idle_lp2_last(void)
- {
-+	int err;
-+
- 	tegra_pm_set(TEGRA_SUSPEND_LP2);
- 
- 	cpu_cluster_pm_enter();
- 	suspend_cpu_complex();
- 
--	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
-+	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
- 
- 	/*
- 	 * Resume L2 cache if it wasn't re-enabled early during resume,
-@@ -208,6 +210,8 @@ void tegra_idle_lp2_last(void)
- 
- 	restore_cpu_complex();
- 	cpu_cluster_pm_exit();
-+
-+	return err;
- }
- 
- enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
-diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
-index 2c294f6365c0..7d72f31dee77 100644
---- a/arch/arm/mach-tegra/pm.h
-+++ b/arch/arm/mach-tegra/pm.h
-@@ -25,7 +25,7 @@ void tegra30_sleep_core_init(void);
- 
- void tegra_clear_cpu_in_lp2(void);
- void tegra_set_cpu_in_lp2(void);
--void tegra_idle_lp2_last(void);
-+int tegra_idle_lp2_last(void);
- extern void (*tegra_tear_down_cpu)(void);
- 
- #ifdef CONFIG_PM_SLEEP
--- 
-2.24.0
+Acked-by: Rob Herring <robh@kernel.org>
