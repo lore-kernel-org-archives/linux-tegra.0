@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V2 18/18] arm64: tegra: Enable xudc node on Jetson TX2
-Date: Wed, 18 Dec 2019 14:46:31 +0530
-Message-ID: <1576660591-10383-19-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V2 16/18] arm64: tegra: Enable xudc on Jetson TX1
+Date: Wed, 18 Dec 2019 14:46:29 +0530
+Message-ID: <1576660591-10383-17-git-send-email-nkristam@nvidia.com>
 References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,21 +12,21 @@ To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jona
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable XUSB device mode driver for USB 2-0 slot on Jetson TX2.
+Enable XUSB device mode driver for USB 2-0 slot on Jetson TX1.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 ---
 V2:
  - No changes in this version
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index a1dcdb9..d7628f5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -131,7 +131,7 @@
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index 18c0610..49a2a82 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1361,7 +1361,7 @@
  				status = "okay";
  
  				lanes {
@@ -35,19 +35,20 @@ index a1dcdb9..d7628f5 100644
  						nvidia,function = "xusb";
  						status = "okay";
  					};
-@@ -213,6 +213,13 @@
- 		phy-names = "usb2-0", "usb2-1", "usb3-0";
+@@ -1494,6 +1494,14 @@
+ 		vmmc-supply = <&vdd_3v3_sd>;
  	};
  
-+	usb@3550000 {
++	usb@700d0000 {
 +		status = "okay";
-+
 +		phys = <&micro_b>;
 +		phy-names = "usb2-0";
++		avddio-usb-supply = <&vdd_3v3_sys>;
++		hvdd-usb-supply = <&vdd_1v8>;
 +	};
 +
- 	i2c@c250000 {
- 		/* carrier board ID EEPROM */
- 		eeprom@57 {
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
 2.7.4
