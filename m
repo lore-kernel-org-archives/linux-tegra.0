@@ -1,167 +1,318 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 13/19] ASoC: tegra: Add fallback implementation for
- audio mclk
-Date: Wed, 18 Dec 2019 19:34:48 +0300
-Message-ID: <fb1aa60b-02f3-fd12-7d52-17e891015677@gmail.com>
+Subject: Re: [PATCH v4 06/19] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Date: Wed, 18 Dec 2019 19:48:05 +0300
+Message-ID: <befd4566-bed6-816f-69d0-ce2d38322000@gmail.com>
 References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-14-git-send-email-skomatineni@nvidia.com>
- <e2f96102-33fa-cbe5-f488-666b7b7ffb06@gmail.com>
- <7e49fef8-112c-1694-9316-7a23db8a01a4@gmail.com>
- <66a28f8a-82e8-5b12-464c-4c91441d1511@nvidia.com>
- <fb36edbf-08c9-aa7e-a7fd-6ee15261a525@gmail.com>
- <de4d2693-3d5c-d154-22eb-2e41ddc12974@gmail.com>
- <1499a012-f5e1-3c76-6750-5858765a0532@nvidia.com>
- <13074e67-2807-d494-b8b4-b2e3b529117a@gmail.com>
- <c4e20767-2263-7a29-f50c-d36876ad58e2@nvidia.com>
+ <1576613046-17159-7-git-send-email-skomatineni@nvidia.com>
+ <87b2b266-e4a9-9a7a-2336-6ec57d7c4d1d@gmail.com>
+ <55a56c3d-3fac-cc77-46ae-acf5de77d262@gmail.com>
+ <e4588ae6-8f9a-e4cb-3fd0-aba80a3689dc@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c4e20767-2263-7a29-f50c-d36876ad58e2@nvidia.com>
+In-Reply-To: <e4588ae6-8f9a-e4cb-3fd0-aba80a3689dc@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-18.12.2019 19:32, Sowjanya Komatineni пишет:
+18.12.2019 18:46, Sowjanya Komatineni пишет:
 > 
-> On 12/18/19 8:29 AM, Dmitry Osipenko wrote:
->> 18.12.2019 18:43, Sowjanya Komatineni пишет:
->>> On 12/17/19 11:31 PM, Dmitry Osipenko wrote:
->>>> 18.12.2019 10:22, Dmitry Osipenko пишет:
->>>>> 18.12.2019 10:14, Sowjanya Komatineni пишет:
->>>>>> On 12/17/19 11:01 PM, Dmitry Osipenko wrote:
->>>>>>> 18.12.2019 09:59, Dmitry Osipenko пишет:
->>>>>>>> 17.12.2019 23:04, Sowjanya Komatineni пишет:
->>>>>>>>> mclk is from clk_out_1 which is part of Tegra PMC block and pmc
->>>>>>>>> clocks
->>>>>>>>> are moved to Tegra PMC driver with pmc as clock provider and
->>>>>>>>> using pmc
->>>>>>>>> clock ids.
->>>>>>>>>
->>>>>>>>> New device tree uses clk_out_1 from pmc clock provider.
->>>>>>>>>
->>>>>>>>> So, this patch adds implementation for mclk fallback to extern1
->>>>>>>>> when
->>>>>>>>> retrieving mclk returns -ENOENT to be backward compatible of new
->>>>>>>>> device
->>>>>>>>> tree with older kernels.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>> ---
->>>>>>>>>     sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
->>>>>>>>>     1 file changed, 10 insertions(+), 1 deletion(-)
->>>>>>>>>
->>>>>>>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>>> b/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>>> index fe9ca8acd0fb..1b88c6043082 100644
->>>>>>>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>>> @@ -191,7 +191,16 @@ int tegra_asoc_utils_init(struct
->>>>>>>>> tegra_asoc_utils_data *data,
->>>>>>>>>         data->clk_cdev1 = devm_clk_get(dev, "mclk");
->>>>>>>>>         if (IS_ERR(data->clk_cdev1)) {
->>>>>>>>>             dev_err(data->dev, "Can't retrieve clk cdev1\n");
->>>>>>>>> -        return PTR_ERR(data->clk_cdev1);
->>>>>>>>> +        if (PTR_ERR(data->clk_cdev1) != -ENOENT)
->>>>>>>>> +            return PTR_ERR(data->clk_cdev1);
->>>>>>>>> +        /* Fall back to extern1 */
->>>>>>>>> +        data->clk_cdev1 = devm_clk_get(dev, "extern1");
->>>>>>>>> +        if (IS_ERR(data->clk_cdev1)) {
->>>>>>>>> +            dev_err(data->dev, "Can't retrieve clk extern1\n");
->>>>>>>>> +            return PTR_ERR(data->clk_cdev1);
->>>>>>>>> +        }
->>>>>>>>> +
->>>>>>>>> +        dev_err(data->dev, "Falling back to extern1\n");
->>>>>>>>>         }
->>>>>>>>>           /*
->>>>>>>>>
->>>>>>>> [    1.769091] ------------[ cut here ]------------
->>>>>>>> [    1.769249] WARNING: CPU: 2 PID: 1 at drivers/clk/clk.c:954
->>>>>>>> clk_core_disable+0xa5/0x1d4
->>>>>>>> [    1.769330] clk_out_1 already disabled
->>>>>>>> [    1.769459] Modules linked in:
->>>>>>>> [    1.769541] CPU: 2 PID: 1 Comm: swapper/0 Not tainted
->>>>>>>> 5.5.0-rc1-next-20191213-00167-g6b9fbcdac8f3-dirty #266
->>>>>>>> [    1.769676] Hardware name: NVIDIA Tegra SoC (Flattened Device
->>>>>>>> Tree)
->>>>>>>> [    1.769775] [<c010e4bd>] (unwind_backtrace) from [<c010a0fd>]
->>>>>>>> (show_stack+0x11/0x14)
->>>>>>>> [    1.769918] [<c010a0fd>] (show_stack) from [<c09a37b1>]
->>>>>>>> (dump_stack+0x85/0x94)
->>>>>>>> [    1.770061] [<c09a37b1>] (dump_stack) from [<c011f3d1>]
->>>>>>>> (__warn+0xc1/0xc4)
->>>>>>>> [    1.770144] [<c011f3d1>] (__warn) from [<c011f691>]
->>>>>>>> (warn_slowpath_fmt+0x61/0x78)
->>>>>>>> [    1.770285] [<c011f691>] (warn_slowpath_fmt) from [<c04a0e7d>]
->>>>>>>> (clk_core_disable+0xa5/0x1d4)
->>>>>>>> [    1.770427] [<c04a0e7d>] (clk_core_disable) from [<c04a0fc3>]
->>>>>>>> (clk_core_disable_lock+0x17/0x20)
->>>>>>>> [    1.770516] [<c04a0fc3>] (clk_core_disable_lock) from
->>>>>>>> [<c07792bb>]
->>>>>>>> (tegra_asoc_utils_set_rate+0x53/0x208)
->>>>>>>> [    1.770662] [<c07792bb>] (tegra_asoc_utils_set_rate) from
->>>>>>>> [<c077b8c5>] (tegra_rt5640_probe+0xd5/0x128)
->>>>>>>> [    1.770808] [<c077b8c5>] (tegra_rt5640_probe) from [<c0555eb7>]
->>>>>>>> (platform_drv_probe+0x33/0x68)
->>>>>>>> [    1.770958] [<c0555eb7>] (platform_drv_probe) from [<c055471d>]
->>>>>>>> (really_probe+0x14d/0x240)
->>>>>>>> [    1.771099] [<c055471d>] (really_probe) from [<c055493f>]
->>>>>>>> (driver_probe_device+0x43/0x11c)
->>>>>>>> [    1.771187] [<c055493f>] (driver_probe_device) from [<c0554b25>]
->>>>>>>> (device_driver_attach+0x3d/0x40)
->>>>>>>> [    1.771328] [<c0554b25>] (device_driver_attach) from
->>>>>>>> [<c0554b5f>]
->>>>>>>> (__driver_attach+0x37/0x78)
->>>>>>>> [    1.771469] [<c0554b5f>] (__driver_attach) from [<c05532fb>]
->>>>>>>> (bus_for_each_dev+0x43/0x6c)
->>>>>>>> [    1.771609] [<c05532fb>] (bus_for_each_dev) from [<c0553e0f>]
->>>>>>>> (bus_add_driver+0xe3/0x148)
->>>>>>>> [    1.771692] [<c0553e0f>] (bus_add_driver) from [<c055531d>]
->>>>>>>> (driver_register+0x39/0xa0)
->>>>>>>> [    1.771833] [<c055531d>] (driver_register) from [<c0102c2f>]
->>>>>>>> (do_one_initcall+0x43/0x1bc)
->>>>>>>> [    1.771979] [<c0102c2f>] (do_one_initcall) from [<c1000ce5>]
->>>>>>>> (kernel_init_freeable+0x121/0x194)
->>>>>>>> [    1.772129] [<c1000ce5>] (kernel_init_freeable) from
->>>>>>>> [<c09b40e9>]
->>>>>>>> (kernel_init+0xd/0xd0)
->>>>>>>> [    1.772215] [<c09b40e9>] (kernel_init) from [<c01010bd>]
->>>>>>>> (ret_from_fork+0x11/0x34)
->>>>>>>> [    1.772349] Exception stack(0xde907fb0 to 0xde907ff8)
->>>>>>>>
->>>>>>> Although, that's probably related to the "ASoC: tegra: Add initial
->>>>>>> parent configuration for audio mclk".
->>>>>>>
->>>>>> Actually I see these warnings of already unprepared and already
->>>>>> disabled
->>>>>> for pll_a, pll_a_out0, and clk_out_1 even without this whole patch
->>>>>> series as well.
->>>>>>
->>>>>> I think its from tegra_asoc_utils_set_rate() doing
->>>>>> clk_disable_unprepare
->>>>>> and these clocks are already unprepared and disabled so its just
->>>>>> warning
->>>>>> from clk_core_unprepare and clk_core_disable.
->>>>> Doesn't happen for me without this series.
->>> I looked at wrong log, right earlier clock driver keeps them enabled so
->>> asoc_utils_set_rate() disables the clock fine but now enabling audio
->>> clock should be done in asoc_utils_init() to let the
->>> clk_disable_unprepare from asoc_utils_set_rate not to show this warning.
+> On 12/18/19 12:35 AM, Dmitry Osipenko wrote:
+>> 18.12.2019 11:30, Dmitry Osipenko пишет:
+>>> 17.12.2019 23:03, Sowjanya Komatineni пишет:
+>>>> Tegra PMC has clk_out_1, clk_out_2, and clk_out_3 clocks and currently
+>>>> these PMC clocks are registered by Tegra clock driver with each
+>>>> clock as
+>>>> separate mux and gate clocks using clk_register_mux and
+>>>> clk_register_gate
+>>>> by passing PMC base address and register offsets and PMC programming
+>>>> for
+>>>> these clocks happens through direct PMC access by the clock driver.
+>>>>
+>>>> With this, when PMC is in secure mode any direct PMC access from the
+>>>> non-secure world does not go through and these clocks will not be
+>>>> functional.
+>>>>
+>>>> This patch adds these PMC clocks registration to pmc driver with PMC as
+>>>> a clock provider and registers each clock as single clock.
+>>>>
+>>>> clk_ops callback implementations for these clocks uses
+>>>> tegra_pmc_readl and
+>>>> tegra_pmc_writel which supports PMC programming in both secure mode and
+>>>> non-secure mode.
+>>>>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>   drivers/soc/tegra/pmc.c | 248
+>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>   1 file changed, 248 insertions(+)
+>>>>
+>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>>> index ea0e11a09c12..6d65194a6e71 100644
+>>>> --- a/drivers/soc/tegra/pmc.c
+>>>> +++ b/drivers/soc/tegra/pmc.c
+>>>> @@ -13,6 +13,9 @@
+>>>>     #include <linux/arm-smccc.h>
+>>>>   #include <linux/clk.h>
+>>>> +#include <linux/clk-provider.h>
+>>>> +#include <linux/clkdev.h>
+>>>> +#include <linux/clk/clk-conf.h>
+>>>>   #include <linux/clk/tegra.h>
+>>>>   #include <linux/debugfs.h>
+>>>>   #include <linux/delay.h>
+>>>> @@ -48,6 +51,7 @@
+>>>>   #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+>>>>   #include <dt-bindings/gpio/tegra186-gpio.h>
+>>>>   #include <dt-bindings/gpio/tegra194-gpio.h>
+>>>> +#include <dt-bindings/soc/tegra-pmc.h>
+>>>>     #define PMC_CNTRL            0x0
+>>>>   #define  PMC_CNTRL_INTR_POLARITY    BIT(17) /* inverts INTR
+>>>> polarity */
+>>>> @@ -100,6 +104,7 @@
+>>>>   #define PMC_WAKE2_STATUS        0x168
+>>>>   #define PMC_SW_WAKE2_STATUS        0x16c
+>>>>   +#define PMC_CLK_OUT_CNTRL        0x1a8
+>>>>   #define PMC_SENSOR_CTRL            0x1b0
+>>>>   #define  PMC_SENSOR_CTRL_SCRATCH_WRITE    BIT(2)
+>>>>   #define  PMC_SENSOR_CTRL_ENABLE_RST    BIT(1)
+>>>> @@ -155,6 +160,64 @@
+>>>>   #define  TEGRA_SMC_PMC_READ    0xaa
+>>>>   #define  TEGRA_SMC_PMC_WRITE    0xbb
+>>>>   +struct pmc_clk {
+>>>> +    struct clk_hw    hw;
+>>>> +    unsigned long    offs;
+>>>> +    u32        mux_mask;
+>>>> +    u32        mux_shift;
+>>>> +    u32        gate_shift;
+>>>> +};
+>>>> +
+>>>> +#define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
+>>>> +
+>>>> +struct pmc_clk_init_data {
+>>>> +    char *name;
+>>>> +    const char *const *parents;
+>>>> +    int num_parents;
+>>>> +    int clk_id;
+>>>> +    u8 mux_shift;
+>>>> +    u8 gate_shift;
+>>>> +};
+>>>> +
+>>>> +static const char * const clk_out1_parents[] = { "osc", "osc_div2",
+>>>> +    "osc_div4", "extern1",
+>>>> +};
+>>>> +
+>>>> +static const char * const clk_out2_parents[] = { "osc", "osc_div2",
+>>>> +    "osc_div4", "extern2",
+>>>> +};
+>>>> +
+>>>> +static const char * const clk_out3_parents[] = { "osc", "osc_div2",
+>>>> +    "osc_div4", "extern3",
+>>>> +};
+>>>> +
+>>>> +static const struct pmc_clk_init_data tegra_pmc_clks_data[] = {
+>>>> +    {
+>>>> +        .name = "clk_out_1",
+>>>> +        .parents = clk_out1_parents,
+>>>> +        .num_parents = ARRAY_SIZE(clk_out1_parents),
+>>>> +        .clk_id = TEGRA_PMC_CLK_OUT_1,
+>>>> +        .mux_shift = 6,
+>>>> +        .gate_shift = 2,
+>>> I'd replace these with a single .shift, given that mux_shift =
+>>> gate_shift + 4 for all clocks.
 >>>
->>> But actually we don't need to have clock enabled in asoc_utils_init
->>> prior to invoking asoc_utils_set_rate from utils_init and its just warns
->>> during sound driver probe because clock is already in disabled state. At
->>> same time it doesn't harm to have it kept enabled in utils_init. So will
->>> keep it enabled in asoc_utils_init to prevent this warning to show up.
+>>>> +    },
+>>>> +    {
+>>>> +        .name = "clk_out_2",
+>>>> +        .parents = clk_out2_parents,
+>>>> +        .num_parents = ARRAY_SIZE(clk_out2_parents),
+>>>> +        .clk_id = TEGRA_PMC_CLK_OUT_2,
+>>>> +        .mux_shift = 14,
+>>>> +        .gate_shift = 10,
+>>>> +    },
+>>>> +    {
+>>>> +        .name = "clk_out_3",
+>>>> +        .parents = clk_out3_parents,
+>>>> +        .num_parents = ARRAY_SIZE(clk_out3_parents),
+>>>> +        .clk_id = TEGRA_PMC_CLK_OUT_3,
+>>>> +        .mux_shift = 22,
+>>>> +        .gate_shift = 18,
+>>>> +    },
+>>>> +};
+>>>> +
+>>>>   struct tegra_powergate {
+>>>>       struct generic_pm_domain genpd;
+>>>>       struct tegra_pmc *pmc;
+>>>> @@ -254,6 +317,9 @@ struct tegra_pmc_soc {
+>>>>        */
+>>>>       const struct tegra_wake_event *wake_events;
+>>>>       unsigned int num_wake_events;
+>>>> +
+>>>> +    const struct pmc_clk_init_data *pmc_clks_data;
+>>>> +    unsigned int num_pmc_clks;
+>>>>   };
+>>>>     static const char * const tegra186_reset_sources[] = {
+>>>> @@ -2163,6 +2229,173 @@ static int tegra_pmc_clk_notify_cb(struct
+>>>> notifier_block *nb,
+>>>>       return NOTIFY_OK;
+>>>>   }
+>>>>   +static void pmc_clk_fence_udelay(u32 offset)
+>>>> +{
+>>>> +    tegra_pmc_readl(pmc, offset);
+>>>> +    /* pmc clk propagation delay 2 us */
+>>>> +    udelay(2);
+>>>> +}
+>>>> +
+>>>> +static u8 pmc_clk_mux_get_parent(struct clk_hw *hw)
+>>>> +{
+>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
+>>>> +    u32 val;
+>>>> +
+>>>> +    val = tegra_pmc_readl(pmc, clk->offs) >> clk->mux_shift;
+>>>> +    val &= clk->mux_mask;
+>>>> +
+>>>> +    return val;
+>>>> +}
+>>>> +
+>>>> +static int pmc_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>>>> +{
+>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
+>>>> +    u32 val;
+>>>> +
+>>>> +    val = tegra_pmc_readl(pmc, clk->offs);
+>>>> +    val &= ~(clk->mux_mask << clk->mux_shift);
+>>>> +    val |= index << clk->mux_shift;
+>>>> +    tegra_pmc_writel(pmc, val, clk->offs);
+>>>> +    pmc_clk_fence_udelay(clk->offs);
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int pmc_clk_is_enabled(struct clk_hw *hw)
+>>>> +{
+>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
+>>>> +
+>>>> +    return tegra_pmc_readl(pmc, clk->offs) & BIT(clk->gate_shift) ?
+>>>> 1 : 0;
+>>>> +}
+>>>> +
+>>>> +static void pmc_clk_set_state(unsigned long offs, u32 shift, int
+>>>> state)
+>>>> +{
+>>>> +    u32 val;
+>>>> +
+>>>> +    val = tegra_pmc_readl(pmc, offs);
+>>>> +    val = state ? (val | BIT(shift)) : (val & ~BIT(shift));
+>>>> +    tegra_pmc_writel(pmc, val, offs);
+>>>> +    pmc_clk_fence_udelay(offs);
+>>>> +}
+>>>> +
+>>>> +static int pmc_clk_enable(struct clk_hw *hw)
+>>>> +{
+>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
+>>>> +
+>>>> +    pmc_clk_set_state(clk->offs, clk->gate_shift, 1);
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static void pmc_clk_disable(struct clk_hw *hw)
+>>>> +{
+>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
+>>>> +
+>>>> +    pmc_clk_set_state(clk->offs, clk->gate_shift, 0);
+>>>> +}
+>>>> +
+>>>> +static const struct clk_ops pmc_clk_ops = {
+>>>> +    .get_parent = pmc_clk_mux_get_parent,
+>>>> +    .set_parent = pmc_clk_mux_set_parent,
+>>>> +    .determine_rate = __clk_mux_determine_rate,
+>>>> +    .is_enabled = pmc_clk_is_enabled,
+>>>> +    .enable = pmc_clk_enable,
+>>>> +    .disable = pmc_clk_disable,
+>>>> +};
+>>>> +
+>>>> +static struct clk *
+>>>> +tegra_pmc_clk_out_register(const struct pmc_clk_init_data *data,
+>>>> +               unsigned long offset)
+>>>> +{
+>>>> +    struct clk_init_data init;
+>>>> +    struct pmc_clk *pmc_clk;
+>>>> +
+>>>> +    pmc_clk = kzalloc(sizeof(*pmc_clk), GFP_KERNEL);
+>>>> +    if (!pmc_clk)
+>>>> +        return ERR_PTR(-ENOMEM);
+>>>> +
+>>>> +    init.name = data->name;
+>>>> +    init.ops = &pmc_clk_ops;
+>>>> +    init.parent_names = data->parents;
+>>>> +    init.num_parents = data->num_parents;
+>>>> +    init.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT |
+>>>> +             CLK_SET_PARENT_GATE;
+>>>> +
+>>>> +    pmc_clk->hw.init = &init;
+>>>> +    pmc_clk->offs = offset;
+>>>> +    pmc_clk->mux_mask = 3;
+>>> If mux_mask is a constant value, perhaps will be better to replace the
+>>> variable with a literal?
 >>>
->>>> But sound works with both old/new device-trees.
->> The rule of thumb: don't enable anything when it shouldn't be enabled.
->> If clocks are disabled at the time of drivers probe, then drivers
->> shouldn't disable the clocks.
-> Will fix asoc_utils_set_rate to disable only when its enabled.
+>>> #define PMC_CLK_OUT_MUX_MASK    GENMASK(1, 0)
+>> Maybe even:
+>>
+>> #define PMC_CLK_OUT_MUX_MASK(c)    GENMASK(c->shift + 1, c->shift)
+>>
+>>>> +    pmc_clk->mux_shift = data->mux_shift;
+>>>> +    pmc_clk->gate_shift = data->gate_shift;
+>>>> +
+>>>> +    return clk_register(NULL, &pmc_clk->hw);
+>>>> +}
+>>>> +
+>>>> +static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+>>>> +                     struct device_node *np)
+>>>> +{
+>>>> +    struct clk *clk;
+>>>> +    struct clk_onecell_data *clk_data;
+>>>> +    unsigned int num_clks;
+>>>> +    int i, err = -ENOMEM;
+>>>> +
+>>>> +    num_clks = pmc->soc->num_pmc_clks;
+>>>> +
+>>>> +    if (!num_clks)
+>>>> +        return;
+>>>> +
+>>>> +    clk_data = kmalloc(sizeof(*clk_data), GFP_KERNEL);
+>>>> +    if (!clk_data)
+>>>> +        goto err_clk;
+>>> What about devm_kmalloc, devm_kcalloc?
+>>>
+>>>> +    clk_data->clks = kcalloc(TEGRA_PMC_CLK_MAX,
+>>>> sizeof(*clk_data->clks),
+>>>> +                 GFP_KERNEL);
+>>>> +    if (!clk_data->clks)
+>>>> +        goto free_clkdata;
+>>>> +
+>>>> +    clk_data->clk_num = TEGRA_PMC_CLK_MAX;
+>>>> +
+>>>> +    for (i = 0; i < TEGRA_PMC_CLK_MAX; i++)
+>>>> +        clk_data->clks[i] = ERR_PTR(-ENOENT);
+>>>> +
+>>>> +    for (i = 0; i < pmc->soc->num_pmc_clks; i++) {
+>>>> +        const struct pmc_clk_init_data *data;
+>>>> +
+>>>> +        data = pmc->soc->pmc_clks_data + i;
+>>>> +
+>>>> +        clk = tegra_pmc_clk_out_register(data, PMC_CLK_OUT_CNTRL);>
+>>>> +        if (IS_ERR(clk)) {
+>>>> +            dev_err(pmc->dev,
+>>>> +                "unable to register %s\n", data->name);
+>>>> +            err = PTR_ERR(clk);
+>>> Error codes in a message could be useful.
+> 
+> Added error code at end of clock register along with WARN message to
+> have it common to show warning with error code for all errors including
+> kmalloc and kcalloc.
 
-BTW, you should CC ALSA maintainers for the audio patches. Perhaps it's
-not worth to CC ALSA's ML since it requires registration and spams on
-every reply.
+What about dev_WARN()?
