@@ -1,15 +1,15 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 17/19] ARM: tegra: Update sound node clocks in device
- tree
-Date: Wed, 18 Dec 2019 09:39:44 +0300
-Message-ID: <f76bf618-607a-af87-f652-4117ed050b70@gmail.com>
+Subject: Re: [PATCH v4 13/19] ASoC: tegra: Add fallback implementation for
+ audio mclk
+Date: Wed, 18 Dec 2019 09:59:43 +0300
+Message-ID: <e2f96102-33fa-cbe5-f488-666b7b7ffb06@gmail.com>
 References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-18-git-send-email-skomatineni@nvidia.com>
+ <1576613046-17159-14-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1576613046-17159-18-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1576613046-17159-14-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
@@ -17,21 +17,91 @@ Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvi
 List-Id: linux-tegra@vger.kernel.org
 
 17.12.2019 23:04, Sowjanya Komatineni пишет:
-> clk_out_1, clk_out_2, and clk_out_3 are part of Tegra PMC block
-> and are moved from clock driver to pmc driver with pmc as clock
-> provider.
-> DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-> 	t=1576613055; bh=aZWp4sScdv8qprM+UpGS0w1DX7YelR50gFqoThf23X4=;
-> 	h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-> 	 In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-> 	 Content-Type;
-> 	b=p9EmVtuTvJK6owqo0lmnZnAvftCWc6+7Mkp/Ks9y26tKN5c4jU+I+YEAaMWoHuzd+
-> 	 7n0vS98WNMGomj19IUXoaH49IeTgPAlqOkU57IIiL2qEnX3sYNYpl/rCRUIs7vd33t
-> 	 LSn8tQeu9Lz+Yfl8hvXcN3sdxRQOEPDYwzWG+tVy1FCnwouTHSfBhgado2Tx/9cWgi
-> 	 HlSWkzjvodag7mAmZtLCl5P4J+oVEJnpYnjSZKNojqszn8u651ErvnVI/VbhZwQ0G5
-> 	 Yg8kEr8YECPk2L4MXUe8J2YmKtNyZaADOkUhjyxqMjZ2bGrB9RDm5dKNFxkWuEeSpb
-> 	 U3nMi7MNcvBmQ==
+> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
+> are moved to Tegra PMC driver with pmc as clock provider and using pmc
+> clock ids.
+> 
+> New device tree uses clk_out_1 from pmc clock provider.
+> 
+> So, this patch adds implementation for mclk fallback to extern1 when
+> retrieving mclk returns -ENOENT to be backward compatible of new device
+> tree with older kernels.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+> index fe9ca8acd0fb..1b88c6043082 100644
+> --- a/sound/soc/tegra/tegra_asoc_utils.c
+> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+> @@ -191,7 +191,16 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+>  	data->clk_cdev1 = devm_clk_get(dev, "mclk");
+>  	if (IS_ERR(data->clk_cdev1)) {
+>  		dev_err(data->dev, "Can't retrieve clk cdev1\n");
+> -		return PTR_ERR(data->clk_cdev1);
+> +		if (PTR_ERR(data->clk_cdev1) != -ENOENT)
+> +			return PTR_ERR(data->clk_cdev1);
+> +		/* Fall back to extern1 */
+> +		data->clk_cdev1 = devm_clk_get(dev, "extern1");
+> +		if (IS_ERR(data->clk_cdev1)) {
+> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
+> +			return PTR_ERR(data->clk_cdev1);
+> +		}
+> +
+> +		dev_err(data->dev, "Falling back to extern1\n");
+>  	}
+>  
+>  	/*
+> 
 
-Looks like NVIDIA's mail server has some problems.
-
-[snip]
+[    1.769091] ------------[ cut here ]------------
+[    1.769249] WARNING: CPU: 2 PID: 1 at drivers/clk/clk.c:954
+clk_core_disable+0xa5/0x1d4
+[    1.769330] clk_out_1 already disabled
+[    1.769459] Modules linked in:
+[    1.769541] CPU: 2 PID: 1 Comm: swapper/0 Not tainted
+5.5.0-rc1-next-20191213-00167-g6b9fbcdac8f3-dirty #266
+[    1.769676] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[    1.769775] [<c010e4bd>] (unwind_backtrace) from [<c010a0fd>]
+(show_stack+0x11/0x14)
+[    1.769918] [<c010a0fd>] (show_stack) from [<c09a37b1>]
+(dump_stack+0x85/0x94)
+[    1.770061] [<c09a37b1>] (dump_stack) from [<c011f3d1>]
+(__warn+0xc1/0xc4)
+[    1.770144] [<c011f3d1>] (__warn) from [<c011f691>]
+(warn_slowpath_fmt+0x61/0x78)
+[    1.770285] [<c011f691>] (warn_slowpath_fmt) from [<c04a0e7d>]
+(clk_core_disable+0xa5/0x1d4)
+[    1.770427] [<c04a0e7d>] (clk_core_disable) from [<c04a0fc3>]
+(clk_core_disable_lock+0x17/0x20)
+[    1.770516] [<c04a0fc3>] (clk_core_disable_lock) from [<c07792bb>]
+(tegra_asoc_utils_set_rate+0x53/0x208)
+[    1.770662] [<c07792bb>] (tegra_asoc_utils_set_rate) from
+[<c077b8c5>] (tegra_rt5640_probe+0xd5/0x128)
+[    1.770808] [<c077b8c5>] (tegra_rt5640_probe) from [<c0555eb7>]
+(platform_drv_probe+0x33/0x68)
+[    1.770958] [<c0555eb7>] (platform_drv_probe) from [<c055471d>]
+(really_probe+0x14d/0x240)
+[    1.771099] [<c055471d>] (really_probe) from [<c055493f>]
+(driver_probe_device+0x43/0x11c)
+[    1.771187] [<c055493f>] (driver_probe_device) from [<c0554b25>]
+(device_driver_attach+0x3d/0x40)
+[    1.771328] [<c0554b25>] (device_driver_attach) from [<c0554b5f>]
+(__driver_attach+0x37/0x78)
+[    1.771469] [<c0554b5f>] (__driver_attach) from [<c05532fb>]
+(bus_for_each_dev+0x43/0x6c)
+[    1.771609] [<c05532fb>] (bus_for_each_dev) from [<c0553e0f>]
+(bus_add_driver+0xe3/0x148)
+[    1.771692] [<c0553e0f>] (bus_add_driver) from [<c055531d>]
+(driver_register+0x39/0xa0)
+[    1.771833] [<c055531d>] (driver_register) from [<c0102c2f>]
+(do_one_initcall+0x43/0x1bc)
+[    1.771979] [<c0102c2f>] (do_one_initcall) from [<c1000ce5>]
+(kernel_init_freeable+0x121/0x194)
+[    1.772129] [<c1000ce5>] (kernel_init_freeable) from [<c09b40e9>]
+(kernel_init+0xd/0xd0)
+[    1.772215] [<c09b40e9>] (kernel_init) from [<c01010bd>]
+(ret_from_fork+0x11/0x34)
+[    1.772349] Exception stack(0xde907fb0 to 0xde907ff8)
