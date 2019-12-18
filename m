@@ -1,31 +1,143 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 19/19] ASoC: nau8825: change Tegra clk_out_2 provider
- from tegra_car to pmc
-Date: Wed, 18 Dec 2019 15:32:45 -0600
-Message-ID: <20191218213245.GA23867@bogus>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 15/19] ARM: dts: tegra: Add clock-cells property to pmc
+Date: Thu, 19 Dec 2019 00:36:03 +0300
+Message-ID: <f9ccf209-e539-2ddc-cdcc-29cdb5749fae@gmail.com>
 References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-20-git-send-email-skomatineni@nvidia.com>
+ <1576613046-17159-16-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1576613046-17159-20-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1576613046-17159-16-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 17 Dec 2019 12:04:06 -0800, Sowjanya Komatineni wrote:
-> Tegra clk_out_1, clk_out_2, and clk_out_3 are part of PMC block and
-> these clocks are moved from clock drvier to pmc driver with pmc as
-> a provider for these clocks.
+17.12.2019 23:04, Sowjanya Komatineni пишет:
+> Tegra PMC has clk_out_1, clk_out_2, clk_out_3, and blink clock.
 > 
-> Update bindings document to use pmc as clock provider for clk_out_2 and
-> change id to pmc clock id.
+> These clocks are moved from clock driver to pmc driver with pmc
+> as the clock provider for these clocks.
+> 
+> This patch adds #clock-cells property with 1 clock specifier to
+> the Tegra PMC node in device tree.
 > 
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  Documentation/devicetree/bindings/sound/nau8825.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm/boot/dts/tegra114.dtsi | 4 +++-
+>  arch/arm/boot/dts/tegra124.dtsi | 4 +++-
+>  arch/arm/boot/dts/tegra20.dtsi  | 4 +++-
+>  arch/arm/boot/dts/tegra30.dtsi  | 4 +++-
+>  4 files changed, 12 insertions(+), 4 deletions(-)
 > 
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+> index 0d7a6327e404..b8f12f24f314 100644
+> --- a/arch/arm/boot/dts/tegra114.dtsi
+> +++ b/arch/arm/boot/dts/tegra114.dtsi
+> @@ -4,6 +4,7 @@
+>  #include <dt-bindings/memory/tegra114-mc.h>
+>  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/soc/tegra-pmc.h>
+>  
+>  / {
+>  	compatible = "nvidia,tegra114";
+> @@ -514,11 +515,12 @@
+>  		status = "disabled";
+>  	};
+>  
+> -	pmc@7000e400 {
+> +	pmc: pmc@7000e400 {
+>  		compatible = "nvidia,tegra114-pmc";
+>  		reg = <0x7000e400 0x400>;
+>  		clocks = <&tegra_car TEGRA114_CLK_PCLK>, <&clk32k_in>;
+>  		clock-names = "pclk", "clk32k_in";
+> +		#clock-cells = <1>;
+>  	};
+>  
+>  	fuse@7000f800 {
+> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+> index 413bfb981de8..d0802c4ae3bf 100644
+> --- a/arch/arm/boot/dts/tegra124.dtsi
+> +++ b/arch/arm/boot/dts/tegra124.dtsi
+> @@ -6,6 +6,7 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/reset/tegra124-car.h>
+>  #include <dt-bindings/thermal/tegra124-soctherm.h>
+> +#include <dt-bindings/soc/tegra-pmc.h>
+>  
+>  / {
+>  	compatible = "nvidia,tegra124";
+> @@ -595,11 +596,12 @@
+>  		clocks = <&tegra_car TEGRA124_CLK_RTC>;
+>  	};
+>  
+> -	pmc@7000e400 {
+> +	pmc: pmc@7000e400 {
+>  		compatible = "nvidia,tegra124-pmc";
+>  		reg = <0x0 0x7000e400 0x0 0x400>;
+>  		clocks = <&tegra_car TEGRA124_CLK_PCLK>, <&clk32k_in>;
+>  		clock-names = "pclk", "clk32k_in";
+> +		#clock-cells = <1>;
+>  	};
+>  
+>  	fuse@7000f800 {
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 9c58e7fcf5c0..85a64747bec6 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -4,6 +4,7 @@
+>  #include <dt-bindings/memory/tegra20-mc.h>
+>  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/soc/tegra-pmc.h>
+>  
+>  / {
+>  	compatible = "nvidia,tegra20";
+> @@ -608,11 +609,12 @@
+>  		status = "disabled";
+>  	};
+>  
+> -	pmc@7000e400 {
+> +	pmc: pmc@7000e400 {
+>  		compatible = "nvidia,tegra20-pmc";
+>  		reg = <0x7000e400 0x400>;
+>  		clocks = <&tegra_car TEGRA20_CLK_PCLK>, <&clk32k_in>;
+>  		clock-names = "pclk", "clk32k_in";
+> +		#clock-cells = <1>;
+>  	};
+>  
+>  	mc: memory-controller@7000f000 {
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+> index 55ae050042ce..4d5e9d0001d3 100644
+> --- a/arch/arm/boot/dts/tegra30.dtsi
+> +++ b/arch/arm/boot/dts/tegra30.dtsi
+> @@ -4,6 +4,7 @@
+>  #include <dt-bindings/memory/tegra30-mc.h>
+>  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/soc/tegra-pmc.h>
+>  
+>  / {
+>  	compatible = "nvidia,tegra30";
+> @@ -714,11 +715,12 @@
+>  		status = "disabled";
+>  	};
+>  
+> -	pmc@7000e400 {
+> +	pmc: pmc@7000e400 {
 
-Acked-by: Rob Herring <robh@kernel.org>
+I think will be a bit better to name the phandle as "tegra_pmc", it has
+the same vibe as the "tegra_car".
+
+>  		compatible = "nvidia,tegra30-pmc";
+>  		reg = <0x7000e400 0x400>;
+>  		clocks = <&tegra_car TEGRA30_CLK_PCLK>, <&clk32k_in>;
+>  		clock-names = "pclk", "clk32k_in";
+> +		#clock-cells = <1>;
+>  	};
+>  
+>  	mc: memory-controller@7000f000 {
+> 
