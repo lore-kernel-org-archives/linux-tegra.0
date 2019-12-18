@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 10/17] arm: tegra20: cpuidle: Make abort_flag atomic
-Date: Thu, 19 Dec 2019 00:04:56 +0300
-Message-ID: <20191218210503.6689-11-digetx@gmail.com>
+Subject: [PATCH v9 15/17] cpuidle: tegra: Disable CC6 state if LP2 unavailable
+Date: Thu, 19 Dec 2019 00:05:01 +0300
+Message-ID: <20191218210503.6689-16-digetx@gmail.com>
 References: <20191218210503.6689-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,48 +12,37 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Replace memory accessors with atomic API just to make code consistent
-with the abort_barrier. The new variant may be even more correct now since
-atomic_read() will prevent compiler from generating wrong things like
-carrying abort_flag value in a register instead of re-fetching it from
-memory.
+LP2 suspending could be unavailable, for example if it is disabled in a
+device-tree. CC6 cpuidle state won't work in that case.
 
 Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/cpuidle-tegra20.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/cpuidle/cpuidle-tegra.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-index bcc158b72e67..ccb8b0aa6c46 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-@@ -32,7 +32,7 @@
- #include "sleep.h"
+diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+index b6cdad8437af..675b8a4464ba 100644
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -31,6 +31,7 @@
+ #include <soc/tegra/fuse.h>
+ #include <soc/tegra/irq.h>
+ #include <soc/tegra/pm.h>
++#include <soc/tegra/pmc.h>
  
- #ifdef CONFIG_PM_SLEEP
--static bool abort_flag;
-+static atomic_t abort_flag;
- static atomic_t abort_barrier;
- static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
- 				    struct cpuidle_driver *drv,
-@@ -168,13 +168,14 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
- 	bool entered_lp2 = false;
+ #include <asm/cpuidle.h>
+ #include <asm/firmware.h>
+@@ -334,6 +335,10 @@ static void tegra_cpuidle_setup_tegra114_c7_state(void)
  
- 	if (tegra_pending_sgi())
--		WRITE_ONCE(abort_flag, true);
-+		atomic_set(&abort_flag, 1);
- 
- 	cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
- 
--	if (abort_flag) {
-+	if (atomic_read(&abort_flag)) {
- 		cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
--		abort_flag = false;	/* clean flag for next coming */
-+		/* clean flag for next coming */
-+		atomic_set(&abort_flag, 0);
- 		return -EINTR;
- 	}
- 
+ static int tegra_cpuidle_probe(struct platform_device *pdev)
+ {
++	/* LP2 could be disabled in device-tree */
++	if (tegra_pmc_get_suspend_mode() < TEGRA_SUSPEND_LP2)
++		tegra_cpuidle_disable_state(TEGRA_CC6);
++
+ 	/*
+ 	 * Required suspend-resume functionality, which is provided by the
+ 	 * Tegra-arch core and PMC driver, is unavailable if PM-sleep option
 -- 
 2.24.0
