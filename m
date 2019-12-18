@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V2 16/18] arm64: tegra: Enable xudc on Jetson TX1
-Date: Wed, 18 Dec 2019 14:46:29 +0530
-Message-ID: <1576660591-10383-17-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V2 05/18] phy: tegra: xusb: Add support to get companion USB 3 port
+Date: Wed, 18 Dec 2019 14:46:18 +0530
+Message-ID: <1576660591-10383-6-git-send-email-nkristam@nvidia.com>
 References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,43 +12,60 @@ To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jona
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable XUSB device mode driver for USB 2-0 slot on Jetson TX1.
+Tegra XUSB host, device mode driver requires the USB 3 companion port
+number for corresponding USB 2 port. Add API to retrieve the same.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 ---
 V2:
- - No changes in this version
+ - Added -ENODEV as return instead of -1, to sync other errors.
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/phy/tegra/xusb.c       | 21 +++++++++++++++++++++
+ include/linux/phy/tegra/xusb.h |  2 ++
+ 2 files changed, 23 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index 18c0610..49a2a82 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1361,7 +1361,7 @@
- 				status = "okay";
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 5bde8f1..e75cd71 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -1256,6 +1256,27 @@ int tegra_phy_xusb_utmi_port_reset(struct phy *phy)
+ }
+ EXPORT_SYMBOL_GPL(tegra_phy_xusb_utmi_port_reset);
  
- 				lanes {
--					usb2-0 {
-+					micro_b: usb2-0 {
- 						nvidia,function = "xusb";
- 						status = "okay";
- 					};
-@@ -1494,6 +1494,14 @@
- 		vmmc-supply = <&vdd_3v3_sd>;
- 	};
- 
-+	usb@700d0000 {
-+		status = "okay";
-+		phys = <&micro_b>;
-+		phy-names = "usb2-0";
-+		avddio-usb-supply = <&vdd_3v3_sys>;
-+		hvdd-usb-supply = <&vdd_1v8>;
-+	};
++int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
++				    unsigned int port)
++{
++	struct tegra_xusb_usb2_port *usb2 = tegra_xusb_find_usb2_port(padctl,
++								      port);
++	struct tegra_xusb_usb3_port *usb3;
++	int i;
 +
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
++	if (!usb2)
++		return -EINVAL;
++
++	for (i = 0; i < padctl->soc->ports.usb3.count; i++) {
++		usb3 = tegra_xusb_find_usb3_port(padctl, i);
++		if (usb3 && usb3->port == usb2->base.index)
++			return usb3->base.index;
++	}
++
++	return -ENODEV;
++}
++EXPORT_SYMBOL_GPL(tegra_xusb_padctl_get_usb3_companion);
++
+ MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+ MODULE_DESCRIPTION("Tegra XUSB Pad Controller driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xusb.h
+index 1235865..71d9569 100644
+--- a/include/linux/phy/tegra/xusb.h
++++ b/include/linux/phy/tegra/xusb.h
+@@ -21,4 +21,6 @@ int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
+ int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
+ 					bool val);
+ int tegra_phy_xusb_utmi_port_reset(struct phy *phy);
++int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
++					 unsigned int port);
+ #endif /* PHY_TEGRA_XUSB_H */
 -- 
 2.7.4
