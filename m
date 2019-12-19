@@ -1,59 +1,72 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 0/3] Tegra GPIO: Minor code clean up
-Date: Thu, 19 Dec 2019 18:26:08 +0300
-Message-ID: <aff1c503-f4da-275d-b867-ca14c86a00db@gmail.com>
-References: <20191215183047.9414-1-digetx@gmail.com>
- <20191219145341.GL1440537@ulmo>
+Subject: Re: [PATCH v1 3/4] usb: phy: tegra: Perform general clean up of the
+ code
+Date: Thu, 19 Dec 2019 18:37:12 +0300
+Message-ID: <a37a10de-2b40-16af-210c-c69049277f35@gmail.com>
+References: <20191218175313.16235-1-digetx@gmail.com>
+ <20191218175313.16235-4-digetx@gmail.com> <20191219125437.GB1440537@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191219145341.GL1440537@ulmo>
+In-Reply-To: <20191219125437.GB1440537@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.12.2019 17:53, Thierry Reding пишет:
-> On Sun, Dec 15, 2019 at 09:30:44PM +0300, Dmitry Osipenko wrote:
->> Hello,
+19.12.2019 15:54, Thierry Reding пишет:
+> On Wed, Dec 18, 2019 at 08:53:12PM +0300, Dmitry Osipenko wrote:
+>> This patch fixes few dozens of legit checkpatch warnings, adds missed
+>> handling of potential error-cases, fixes ULPI clk-prepare refcounting and
+>> prettifies code where makes sense. All these clean-up changes are quite
+>> minor and do not fix any problems.
 >>
->> I was investigating why CPU hangs during of GPIO driver suspend and in
->> the end it turned out that it is a Broadcom WiFi driver problem because
->> it keeps OOB wake-interrupt enabled while WLAN interface is DOWN and this
->> may cause a bit weird CPU hang on writing to INT_ENB register during of
->> GPIO driver suspend. Meanwhile I also noticed that a few things could be
->> improved in the driver, that's what this small series addresses.
->>
->> Dmitry Osipenko (3):
->>   gpio: tegra: Use generic readl_relaxed/writel_relaxed accessors
->>   gpio: tegra: Properly handle irq_set_irq_wake() error
->>   gpio: tegra: Use NOIRQ phase for suspend/resume
->>
->>  drivers/gpio/gpio-tegra.c | 21 ++++++++++-----------
->>  1 file changed, 10 insertions(+), 11 deletions(-)
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/usb/phy/phy-tegra-usb.c | 367 +++++++++++++++++---------------
+>>  1 file changed, 197 insertions(+), 170 deletions(-)
 > 
-> Patches look good:
+> This could've been multiple patches to make it easier to review, but
+> either way:
 > 
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> 
-> I also applied this series on top of v5.5-rc1 and ran it through our
-> test system:
-> 
->     Test results:
->         13 builds:  13 pass, 0 fail
->         22 boots:   22 pass, 0 fail
->         34 tests:   34 pass, 0 fail
-> 
->     Linux version:  5.5.0-rc1-g3d0b4fced39e
->     Boards tested:  tegra124-jetson-tk1, tegra186-p2771-0000,
->                     tegra194-p2972-0000, tegra20-ventana,
->                     tegra210-p2371-2180, tegra30-cardhu-a04
-> 
-> All tests passing, so:
-> 
-> Tested-by: Thierry Reding <treding@nvidia.com>
-> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thank you very much!
+Yes, it probably could be separated into 10 patches, but then there is a
+chance that I won't do it because sometimes it takes more time for me to
+write commit message than to make a code change + extra time to re-check
+every patch before sending it out :)
+
+> One minor comment below...
+> 
+>> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+>> index 15bd253d53c9..76949dbbbdc2 100644
+>> --- a/drivers/usb/phy/phy-tegra-usb.c
+>> +++ b/drivers/usb/phy/phy-tegra-usb.c
+> [...]
+>> @@ -310,13 +315,16 @@ static void ulpi_close(struct tegra_usb_phy *phy)
+>>  	}
+>>  }
+>>  
+>> -static void utmip_pad_power_on(struct tegra_usb_phy *phy)
+>> +static int utmip_pad_power_on(struct tegra_usb_phy *phy)
+>>  {
+>> -	unsigned long val, flags;
+>> -	void __iomem *base = phy->pad_regs;
+>>  	struct tegra_utmip_config *config = phy->config;
+>> +	void __iomem *base = phy->pad_regs;
+>> +	unsigned long val, flags;
+> 
+> I think technically the "val" variable would have to be u32 because
+> that's what readl() and writel() operate on.
+
+I had the same thought and decided it's not worth the extra effort.
+
+> That could be a separate
+> patch, though and isn't really a big problem.
+
+But I'll do it now for complicity, since you're asking about it (in a v2
+perhaps).
+
+Thank you very much for the reviews!
