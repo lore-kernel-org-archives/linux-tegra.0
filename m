@@ -1,135 +1,220 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [Patch V2 00/18] Tegra XUSB OTG support
-Date: Thu, 19 Dec 2019 14:13:49 +0100
-Message-ID: <20191219131349.GI1440537@ulmo>
+Subject: Re: [Patch V2 03/18] phy: tegra: xusb: Add usb-role-switch support
+Date: Thu, 19 Dec 2019 14:26:50 +0100
+Message-ID: <20191219132650.GJ1440537@ulmo>
 References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
+ <1576660591-10383-4-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cf0hFtnykp6aONGL"
+        protocol="application/pgp-signature"; boundary="2VXyA7JGja7B50zs"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
+In-Reply-To: <1576660591-10383-4-git-send-email-nkristam@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Nagarjuna Kristam <nkristam@nvidia.com>
 Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---cf0hFtnykp6aONGL
+--2VXyA7JGja7B50zs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 18, 2019 at 02:46:13PM +0530, Nagarjuna Kristam wrote:
-> This patch series adds OTG support on XUSB hardware used in Tegra210 and
-> Tegra186 SoCs.
+On Wed, Dec 18, 2019 at 02:46:16PM +0530, Nagarjuna Kristam wrote:
+> If usb-role-switch property is present in USB 2 port, register
+> usb-role-switch to receive usb role changes.
 >=20
-> This patchset is composed with :
->  - dt bindings of XUSB Pad Controller
->  - dt bindings for XUSB device Driver
->  - Tegra PHY driver for usb-role-switch and usb-phy
->  - Tegra XUSB host mode driver to support OTG mode
->  - Tegra XUSB device mode driver to use usb-phy and multi device mode
->  - dts for XUSB pad controller
->  - dts for xudc
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> ---
+> V2:
+>  - Removed dev_set_drvdata for port->dev.
+>  - Added of_platform_depopulate during error handling and driver removal.
+> ---
+>  drivers/phy/tegra/Kconfig |  1 +
+>  drivers/phy/tegra/xusb.c  | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/phy/tegra/xusb.h  |  3 +++
+>  3 files changed, 46 insertions(+)
 >=20
-> Tegra Pad controller driver register for role switch updates for
-> OTG/peripheral capable USB ports and adds usb-phy for that corresponding
-> USB ports.
->=20
-> Host and Device mode drivers gets usb-phy from USB2's phy and registers
-> notifier for role changes to perform corresponding role tasks.
->=20
-> Tests done:
->  - device mode support using micro-B USB cable connection between ubuntu
->    host and DUT on micro-B port
->  - host mode support by connecting pen-drive to micro USB port on DUT
->    using micro-B OTG cable.
->  - toggling between these 2 modes by hot plugging corresponding cables.
+> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+> index f9817c3..df07c4d 100644
+> --- a/drivers/phy/tegra/Kconfig
+> +++ b/drivers/phy/tegra/Kconfig
+> @@ -2,6 +2,7 @@
+>  config PHY_TEGRA_XUSB
+>  	tristate "NVIDIA Tegra XUSB pad controller driver"
+>  	depends on ARCH_TEGRA
+> +	select USB_CONN_GPIO
+>  	help
+>  	  Choose this option if you have an NVIDIA Tegra SoC.
+> =20
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index f98ec39..dc00b42 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -523,6 +523,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_por=
+t *port,
+>  	port->dev.type =3D &tegra_xusb_port_type;
+>  	port->dev.of_node =3D of_node_get(np);
+>  	port->dev.parent =3D padctl->dev;
+> +	port->dev.driver =3D padctl->dev->driver;
+> =20
+>  	err =3D dev_set_name(&port->dev, "%s-%u", name, index);
+>  	if (err < 0)
+> @@ -541,6 +542,10 @@ static int tegra_xusb_port_init(struct tegra_xusb_po=
+rt *port,
+> =20
+>  static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
+>  {
+> +	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
+> +		of_platform_depopulate(&port->dev);
+> +		usb_role_switch_unregister(port->usb_role_sw);
+> +	}
+>  	device_unregister(&port->dev);
 
-Are there any tests we can run without manual intervention? Can we force
-the device into peripheral mode and then setup a configuration using
-configfs? I'm not sure how useful that would be since it doesn't really
-exercise the driver code very much and doesn't tell whether it's
-actually working.
+Nit: I prefer blank lines after blocks for readability.
 
-Any other way how we can test this?
+>  }
+> =20
+> @@ -551,11 +556,42 @@ static const char *const modes[] =3D {
+>  	[USB_DR_MODE_OTG] =3D "otg",
+>  };
+> =20
+> +static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
+> +{
+> +	dev_dbg(dev, "%s calling notifier for role is %d\n", __func__, role);
+
+I don't understand what "for role is %d" means here. I think perhaps you
+meant to simply say "for role %d"? Also, perhaps add parentheses after
+the "%s" to clarify that you're referring to a function.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
+> +{
+> +	int err =3D 0;
+> +	struct usb_role_switch_desc role_sx_desc =3D {
+> +					.set =3D tegra_xusb_role_sw_set,
+> +					.fwnode =3D dev_fwnode(&port->dev),
+> +						   };
+
+The indentation here is odd. Use a single tab to indent lines after the
+opening { and put the closing } on the same column as "struct". Also,
+the above may become more readable if you follow the "inverse Christmas
+tree" style of declaring functions, where you order lines by their
+length, with the longest line first, like so:
+
+	struct usb_role_switch_desc role_sx_desc =3D {
+		.fwnode =3D dev_fwnode(&port->dev),
+		.set =3D tegra_xusb_role_sw_set,
+	};
+	int err =3D 0;
+
+> +
+> +	port->usb_role_sw =3D usb_role_switch_register(&port->dev,
+> +						&role_sx_desc);
+
+&role_sx_desc should be aligned with &port->dev.
+
+> +	if (IS_ERR(port->usb_role_sw)) {
+> +		err =3D PTR_ERR(port->usb_role_sw);
+> +		if (err !=3D EPROBE_DEFER)
+> +			dev_err(&port->dev, "Failed to register USB role SW: %d",
+
+Error messages typically start with a lowercase letter (at least in this
+driver). Also perhaps spell out "switch" above because SW could easily
+be confused with "software".
+
+> +				err);
+
+Shouldn't we abort here? Consider the case where this indeed defers
+probe. If we don't abort here, the of_platform_populate() below will be
+called multiple times. Shouldn't it only be called when we actually
+succeed in registering the switch?
+
+Also, looking at usb_role_switch_register(), I don't think it ever can
+return -EPROBE_DEFER, so I think you can drop that check and print the
+error unconditionally.
 
 Thierry
 
->=20
-> DUT: Jetson-tx1, Jetson tx2.
->=20
-> V2:
->  - Updated usb-role-switch documentation for Padctl driver.
->  - Update XUDC bindings doc as suggested by Rob.
->  - Used standard error codes for error return.
->  - Added of_platform_depopulate during error and driver removal.
->  - Updated error variable during phy initialization in XUDC driver.
->  - Updated Tegra210 soc dtb file as per changes to binding doc.
->=20
-> Nagarjuna Kristam (18):
->   dt-bindings: phy: tegra-xusb: Add usb-role-switch
->   dt-bindings: usb: Add NVIDIA Tegra XUSB device mode controller binding
->   phy: tegra: xusb: Add usb-role-switch support
->   phy: tegra: xusb: Add usb-phy support
->   phy: tegra: xusb: Add support to get companion USB 3 port
->   phy: tegra: xusb: Add set_mode support for USB 2 phy on Tegra210
->   phy: tegra: xusb: Add set_mode support for utmi phy on Tegra186
->   usb: xhci-tegra: Add OTG support
->   usb: gadget: tegra-xudc: Remove usb-role-switch support
->   usb: gadget: tegra-xudc: Add usb-phy support
->   usb: gadget: tegra-xudc: use phy_set_mode to set/unset device mode
->   usb: gadget: tegra-xudc: support multiple device modes
->   arm64: tegra: update OTG port entries for jetson-tx1
->   arm64: tegra: update OTG port entries for jetson-tx2
->   arm64: tegra: Add xudc node for Tegra210
->   arm64: tegra: Enable xudc on Jetson TX1
->   arm64: tegra: Add xudc node for Tegra186
->   arm64: tegra: Enable xudc node on Jetson TX2
->=20
->  .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   |   6 +
->  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 190 ++++++++++++++
->  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  23 +-
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  19 ++
->  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |  34 ++-
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  19 ++
->  drivers/phy/tegra/Kconfig                          |   1 +
->  drivers/phy/tegra/xusb-tegra186.c                  | 109 ++++++--
->  drivers/phy/tegra/xusb-tegra210.c                  | 126 ++++++++--
->  drivers/phy/tegra/xusb.c                           | 134 ++++++++++
->  drivers/phy/tegra/xusb.h                           |   5 +
->  drivers/usb/gadget/udc/tegra-xudc.c                | 276 ++++++++++++++-=
-------
->  drivers/usb/host/xhci-tegra.c                      | 225 +++++++++++++++=
-+-
->  include/linux/phy/tegra/xusb.h                     |   2 +
->  14 files changed, 1031 insertions(+), 138 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xu=
-dc.yaml
->=20
+> +	}
+> +
+> +	/* populate connector entry */
+> +	of_platform_populate(port->dev.of_node, NULL, NULL, &port->dev);
+> +
+> +	return err;
+> +}
+> +
+>  static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *us=
+b2)
+>  {
+>  	struct tegra_xusb_port *port =3D &usb2->base;
+>  	struct device_node *np =3D port->dev.of_node;
+>  	const char *mode;
+> +	int err;
+> =20
+>  	usb2->internal =3D of_property_read_bool(np, "nvidia,internal");
+> =20
+> @@ -572,6 +608,12 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegr=
+a_xusb_usb2_port *usb2)
+>  		usb2->mode =3D USB_DR_MODE_HOST;
+>  	}
+> =20
+> +	if (of_property_read_bool(np, "usb-role-switch")) {
+> +		err =3D tegra_xusb_setup_usb_role_switch(port);
+> +		if (err < 0)
+> +			return err;
+> +	}
+> +
+>  	usb2->supply =3D devm_regulator_get(&port->dev, "vbus");
+>  	return PTR_ERR_OR_ZERO(usb2->supply);
+>  }
+> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+> index da94fcc..9f27899 100644
+> --- a/drivers/phy/tegra/xusb.h
+> +++ b/drivers/phy/tegra/xusb.h
+> @@ -12,6 +12,7 @@
+>  #include <linux/workqueue.h>
+> =20
+>  #include <linux/usb/otg.h>
+> +#include <linux/usb/role.h>
+> =20
+>  /* legacy entry points for backwards-compatibility */
+>  int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
+> @@ -266,6 +267,8 @@ struct tegra_xusb_port {
+>  	struct list_head list;
+>  	struct device dev;
+> =20
+> +	struct usb_role_switch *usb_role_sw;
+> +
+>  	const struct tegra_xusb_port_ops *ops;
+>  };
+> =20
 > --=20
 > 2.7.4
 >=20
 
---cf0hFtnykp6aONGL
+--2VXyA7JGja7B50zs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl37d40ACgkQ3SOs138+
-s6GmMQ//UeIXKC8LonKqcjeF4FAXBH0H7fV5IRwdnm8zsRqWRZ18gzLd4ewLz6p3
-ETMQBEkzqmxtPsRsWnreMp1lSG8afpBTSjmfRKLqO56+Ch6LB2NRJWU8W+VzHi/m
-dMswAhZtjs++/jAPZX/EeME8EBEK60LoSk0XXLCZP51X20OJyJ49IN3SjZUrURP3
-DDR2ZGJzL+1gg6PZVRoGFW0qgXyfbK85X189EKCKkG3YnBpXEVOE00HvCOupMdkM
-9b8C8JvLP5kDpIVQafyrEphVMdleHNSkXkEYZgyE/TDUG6ypTgUebDxuHLaQu8sq
-iZy0bRS3P/uKBHZPxTeURW/EQURY8hBZf8j45Jqq/Qp7LXS6KXaFRFC28d9FealH
-bSTUIC2ji+QYuPqyZUj8KwtNXL3pcvOLvUeU7HesM1JRVtA91Qmgy/x1qFqseDGu
-fHawy4TE6CFdnaMK+SnmlYgEqH6DtyWCEDq7X8n0RC+IfBd3jTz4JfOKGt2VwLQW
-y6t5vP/TSC2eaKRdJIBjEERiqzPEkHGO4Q/7Qm7jrgMx8Uwq8QafMx9Qu5CvSFsV
-KZP6nGzhIA32VJAOfn9RdzYpVn7LYvQEZWZ5/vruMvlzJyEbg0vKTtx78akBR73q
-6bOLf2kCC3LeSUn/9oTGF63t59L1+9fN7s49eGt/ku91XTG/aN4=
-=9laO
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl37epgACgkQ3SOs138+
+s6Hh5RAAh0cel4clHZg+GIdIG6ZyBOYP5icjLpq2J4MtTqiQYoh6mSG4V+bLrqvb
+Vaal7meApdBQ0b31/Rv3bJRrFz0RQAy0cjiwkZWFKRASrM4s+aAgRBQoOXYPq0AM
+bqsVMloKvS5zBEI/JAy6e7/I+d41cjF+RGWIt4i2A7ubTYMlSs8d4Xl+SC81K3pb
+ufTs/0cI8e5rB75l6sgaEaareIX9tpXhbCzGpG1Etwp2ciXlUPE51+EQHxF//OXk
+WK/i3rrf07n438IAat5Ktu9PUxJxpoKKQVqoHRehYK7ujqZDZ8SaR6pXL9W6xLSe
+4TtrjD+snsZQ7KtgNbUxQ7s6iucg3woUpAglT6LIVyadcTLeLnXqInyaIbz6b+oS
+rrT6vhfJ2xXL4N4UP46epowWgEpJZ42L27h6dSB/VzsNMqcZYtzJ2687rVMMy6Lu
+VjsIpL0JTVRIOkUCYr01kB76jA1WKN+LwlpTX5zloIqTwCSw2TTj5bQw1odZuXxM
+ByhBAD8xshUZ/KFQPKiJIsYs6FmYWN/UQeNKPmIKiyLYKauFu4Yi3NRxUkCR9ACj
+lF6uv10ed/e2VDuHFhvOferCu+e1+tJVT5IJbQqy8Fg0YvoAfnoSzMOAKbrObq/5
+sgJnTS/mip96YoA8mu91XXHW/H4cW8Dei0aQ6113q9ppPqDcoS8=
+=od3S
 -----END PGP SIGNATURE-----
 
---cf0hFtnykp6aONGL--
+--2VXyA7JGja7B50zs--
