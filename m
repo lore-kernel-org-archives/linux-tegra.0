@@ -1,122 +1,88 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] ALSA: hda: Use standard waitqueue for RIRB
- wakeup
-Date: Thu, 19 Dec 2019 12:15:48 +0000
-Message-ID: <51e59f38-0db9-df80-bb62-44fff504ffc4@nvidia.com>
-References: <20191210145727.22054-1-tiwai@suse.de>
- <53562c71-4d81-1580-f311-971ceb029431@nvidia.com>
- <s5h5zid903h.wl-tiwai@suse.de>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v1 3/4] usb: phy: tegra: Perform general clean up of the
+ code
+Date: Thu, 19 Dec 2019 13:54:37 +0100
+Message-ID: <20191219125437.GB1440537@ulmo>
+References: <20191218175313.16235-1-digetx@gmail.com>
+ <20191218175313.16235-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <s5h5zid903h.wl-tiwai@suse.de>
-Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-tegra <linux-tegra@vger.kernel.org>, alsa-devel@alsa-project.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20191218175313.16235-4-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 18/12/2019 14:31, Takashi Iwai wrote:
-> On Wed, 18 Dec 2019 15:17:27 +0100,
-> Jon Hunter wrote:
->>
->>
->> On 10/12/2019 14:57, Takashi Iwai wrote:
->>> The HD-audio CORB/RIRB communication was programmed in a way that was
->>> documented in the reference in decades ago, which is essentially a
->>> polling in the waiter side.  It's working fine but costs CPU cycles on
->>> some platforms that support only slow communications.  Also, for some
->>> platforms that had unreliable communications, we put longer wait time
->>> (2 ms), which accumulate quite long time if you execute many verbs in
->>> a shot (e.g. at the initialization or resume phase).
->>>
->>> This patch attempts to improve the situation by introducing the
->>> standard waitqueue in the RIRB waiter side instead of polling.  The
->>> test results on my machine show significant improvements.  The time
->>> spent for "cat /proc/asound/card*/codec#*" were changed like:
->>>
->>> * Intel SKL + Realtek codec
->>>   before the patch:
->>>    0.00user 0.04system 0:00.10elapsed 40.0%CPU
->>>   after the patch:
->>>    0.00user 0.01system 0:00.10elapsed 10.0%CPU
->>>
->>> * Nvidia GP107GL + Nvidia HDMI codec
->>>   before the patch:
->>>    0.00user 0.00system 0:02.76elapsed 0.0%CPU
->>>   after the patch:
->>>    0.00user 0.00system 0:00.01elapsed 17.0%CPU
->>>
->>> So, for Intel chips, the total time is same, while the total time is
->>> greatly reduced (from 2.76 to 0.01s) for Nvidia chips.
->>> The only negative data here is the increase of CPU time for Nvidia,
->>> but this is the unavoidable cost for faster wakeups, supposedly.
->>>
->>> Signed-off-by: Takashi Iwai <tiwai@suse.de>
->> Starting with next-20191217 I am seeing the following error on one of
->> our Tegra platforms ...
->>
->> tegra-hda 3510000.hda: azx_get_response timeout, switching to polling
->> mode: last cmd=0x404f2d00
->>
->> Bisect is point to this commit and although it does not cleanly revert,
->> if I revert this and a couple dependencies on top of -next the issue
->> goes away. Any thoughts on what could be going on here?
-> 
-> Do you see any bad behavior other than the warning message?
+--l76fUT7nc3MelDdI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have done some more local testing and so far I don't see any bad
-behaviour just the warning.
+On Wed, Dec 18, 2019 at 08:53:12PM +0300, Dmitry Osipenko wrote:
+> This patch fixes few dozens of legit checkpatch warnings, adds missed
+> handling of potential error-cases, fixes ULPI clk-prepare refcounting and
+> prettifies code where makes sense. All these clean-up changes are quite
+> minor and do not fix any problems.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/usb/phy/phy-tegra-usb.c | 367 +++++++++++++++++---------------
+>  1 file changed, 197 insertions(+), 170 deletions(-)
 
-> If you don't see any dysfunction, I guess that the difference is that
-> the old code went to the trial mode at first silently (with
-> dev_dbg()), then switching to polling mode at next.  The trial mode is
-> basically same as polling mode, but it was just considered to be a
-> temporary transition, so not warned.
-> 
-> IOW, if my guess is correct, maybe Tegra never worked in the normal
-> mode but only in the polling mode (but without complaints).
-> If so, the patch like below would be needed.
-> 
-> To prove my theory, could you check the old code with dyndbg enabled
-> for sound/pci/hda/hda_controller.c?  If a message like below appears,
-> it's the case:
->   azx_get_response timeout, polling the codec once: last cmd=xxx
+This could've been multiple patches to make it easier to review, but
+either way:
 
-Yes I tried this and you are correct, this does appear even if v5.5-rc2.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Please note that this timeout is intermittent and so does not always
-happen. So it appears to work, but sometimes it can fail.
+One minor comment below...
 
-> --- a/sound/pci/hda/hda_tegra.c
-> +++ b/sound/pci/hda/hda_tegra.c
-> @@ -394,6 +394,7 @@ static int hda_tegra_create(struct snd_card *card,
->  	if (err < 0)
->  		return err;
->  
-> +	chip->bus.core.polling = 1;
->  	chip->bus.core.needs_damn_long_delay = 1;
->  
->  	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
+> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-=
+usb.c
+> index 15bd253d53c9..76949dbbbdc2 100644
+> --- a/drivers/usb/phy/phy-tegra-usb.c
+> +++ b/drivers/usb/phy/phy-tegra-usb.c
+[...]
+> @@ -310,13 +315,16 @@ static void ulpi_close(struct tegra_usb_phy *phy)
+>  	}
+>  }
+> =20
+> -static void utmip_pad_power_on(struct tegra_usb_phy *phy)
+> +static int utmip_pad_power_on(struct tegra_usb_phy *phy)
+>  {
+> -	unsigned long val, flags;
+> -	void __iomem *base =3D phy->pad_regs;
+>  	struct tegra_utmip_config *config =3D phy->config;
+> +	void __iomem *base =3D phy->pad_regs;
+> +	unsigned long val, flags;
 
-I don't think we want to do this, because so far this is only seen on
-one Tegra device and this enable polling for all.
+I think technically the "val" variable would have to be u32 because
+that's what readl() and writel() operate on. That could be a separate
+patch, though and isn't really a big problem.
 
-For now you can ignore this report and we will investigate what is
-happening on Tegra194 to cause this.
+Thierry
 
-Thanks
-Jon
+--l76fUT7nc3MelDdI
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-nvpublic
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl37cw0ACgkQ3SOs138+
+s6HXoQ//enaIv+19+8YhDuO73TpetmdsTfhTcNwIw276WtV7j53pQ/KcHAKir3H7
+PBCui7fiZXLj2b90PFucEjenupecmSC07u1Gc2pjTHCYWSHJLr2N0EDNkUiina00
+9ebxKCNPttnMFZAdcCldRTQ/lgDF6crUUoXpwSc+j9n6Pl+OhMFb3XhQ2/NNYPaM
+D7MnZU0sz4zN3/OcaBX42nhENrG6bUqXChImGkfAZnxXQgjFFLpR3GYjMX0pMy3g
+j+c3Q35I8QE9QbHmIyOEWuX94wc/j1ZUQbw3KmQwGQdx+OfAShvjynj4x+orA85o
+6cIF/WVoQk4ybulnKOvh7RkXf10BoNgQz17a6Nq0JSWMR8ju4XjmL1L9RN6hFcgC
+dq4cs8H4RFVMVX4Rb9cbbqysF3oMHKyIBbxLf3gw82KeVVT70/fZ0fpwyaKR9dDk
+6Cui0PlS8Eb/Ya5RC9rMmXOQQtUyXXtwVeNS3ye3fXC5uGNsSWqVrn/mUz1SR/FB
+5/qoq7jtk4wNzRMz6LsUW6iRLSYpnZZrgK73wAlM6pPJykwsq3Hjx4KrVDrgMiGH
+A9ZvXLkIeDWLKa6/d8GCvRvnb3jy7W5ivez65Ut1zDCkPh1ASqnOrEjlsAr7BT5z
+lcidEPxRLCoAj1GIK6LYYZgWDSpxoPulrnDbySY5l5MRgZBZNU8=
+=nQyV
+-----END PGP SIGNATURE-----
+
+--l76fUT7nc3MelDdI--
