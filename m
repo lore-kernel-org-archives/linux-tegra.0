@@ -1,88 +1,57 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 3/4] usb: phy: tegra: Perform general clean up of the
- code
-Date: Thu, 19 Dec 2019 13:54:37 +0100
-Message-ID: <20191219125437.GB1440537@ulmo>
+Subject: Re: [PATCH v1 4/4] usb: phy: tegra: Use relaxed versions of
+ readl/writel
+Date: Thu, 19 Dec 2019 13:55:15 +0100
+Message-ID: <20191219125515.GC1440537@ulmo>
 References: <20191218175313.16235-1-digetx@gmail.com>
- <20191218175313.16235-4-digetx@gmail.com>
+ <20191218175313.16235-5-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
+        protocol="application/pgp-signature"; boundary="da4uJneut+ArUgXk"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20191218175313.16235-4-digetx@gmail.com>
+In-Reply-To: <20191218175313.16235-5-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
 Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---l76fUT7nc3MelDdI
+--da4uJneut+ArUgXk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 18, 2019 at 08:53:12PM +0300, Dmitry Osipenko wrote:
-> This patch fixes few dozens of legit checkpatch warnings, adds missed
-> handling of potential error-cases, fixes ULPI clk-prepare refcounting and
-> prettifies code where makes sense. All these clean-up changes are quite
-> minor and do not fix any problems.
+On Wed, Dec 18, 2019 at 08:53:13PM +0300, Dmitry Osipenko wrote:
+> There is nothing to synchronize in regards to memory stores, thus all
+> readl/writel occurrences in the code could be replaced with a relaxed
+> versions, for consistency.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/usb/phy/phy-tegra-usb.c | 367 +++++++++++++++++---------------
->  1 file changed, 197 insertions(+), 170 deletions(-)
-
-This could've been multiple patches to make it easier to review, but
-either way:
+>  drivers/usb/phy/phy-tegra-usb.c | 195 ++++++++++++++++----------------
+>  1 file changed, 98 insertions(+), 97 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
-One minor comment below...
-
-> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-=
-usb.c
-> index 15bd253d53c9..76949dbbbdc2 100644
-> --- a/drivers/usb/phy/phy-tegra-usb.c
-> +++ b/drivers/usb/phy/phy-tegra-usb.c
-[...]
-> @@ -310,13 +315,16 @@ static void ulpi_close(struct tegra_usb_phy *phy)
->  	}
->  }
-> =20
-> -static void utmip_pad_power_on(struct tegra_usb_phy *phy)
-> +static int utmip_pad_power_on(struct tegra_usb_phy *phy)
->  {
-> -	unsigned long val, flags;
-> -	void __iomem *base =3D phy->pad_regs;
->  	struct tegra_utmip_config *config =3D phy->config;
-> +	void __iomem *base =3D phy->pad_regs;
-> +	unsigned long val, flags;
-
-I think technically the "val" variable would have to be u32 because
-that's what readl() and writel() operate on. That could be a separate
-patch, though and isn't really a big problem.
-
-Thierry
-
---l76fUT7nc3MelDdI
+--da4uJneut+ArUgXk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl37cw0ACgkQ3SOs138+
-s6HXoQ//enaIv+19+8YhDuO73TpetmdsTfhTcNwIw276WtV7j53pQ/KcHAKir3H7
-PBCui7fiZXLj2b90PFucEjenupecmSC07u1Gc2pjTHCYWSHJLr2N0EDNkUiina00
-9ebxKCNPttnMFZAdcCldRTQ/lgDF6crUUoXpwSc+j9n6Pl+OhMFb3XhQ2/NNYPaM
-D7MnZU0sz4zN3/OcaBX42nhENrG6bUqXChImGkfAZnxXQgjFFLpR3GYjMX0pMy3g
-j+c3Q35I8QE9QbHmIyOEWuX94wc/j1ZUQbw3KmQwGQdx+OfAShvjynj4x+orA85o
-6cIF/WVoQk4ybulnKOvh7RkXf10BoNgQz17a6Nq0JSWMR8ju4XjmL1L9RN6hFcgC
-dq4cs8H4RFVMVX4Rb9cbbqysF3oMHKyIBbxLf3gw82KeVVT70/fZ0fpwyaKR9dDk
-6Cui0PlS8Eb/Ya5RC9rMmXOQQtUyXXtwVeNS3ye3fXC5uGNsSWqVrn/mUz1SR/FB
-5/qoq7jtk4wNzRMz6LsUW6iRLSYpnZZrgK73wAlM6pPJykwsq3Hjx4KrVDrgMiGH
-A9ZvXLkIeDWLKa6/d8GCvRvnb3jy7W5ivez65Ut1zDCkPh1ASqnOrEjlsAr7BT5z
-lcidEPxRLCoAj1GIK6LYYZgWDSpxoPulrnDbySY5l5MRgZBZNU8=
-=nQyV
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl37czIACgkQ3SOs138+
+s6HYyA//d/1tMFLOizTJ5NnTpWkjtiUdrRlwYMNo/u6A/FKCJfC8H45BdEmbGp93
+b3W6VSuopFceXr1umc/3Fagd1Y72DRxSyazQcuFIDuoJ6d5MkGLEnpjZghyHzy8H
+vIcsZwGWYC8VIS/rCTiE8PFt5cV6vuR16+CU2dACu2p0AtX3NfDuq+FgjzezwAxh
+owUrtO5fJuedGYH+AAKG5hgIPB0QzCNtNEBBF56v0qbeRg5dnE/iVQIzKMrAzRYa
+MQjEyGVztCB+jKuXTd5tJBXrGOtOLrzt/xHfizoUgO8SBqXCjvuFqhxBUtAFpwEO
+KAX10NN1+LZAxim4i79KuaHXUFWWUwn7nJMncSenseT3BeVaMXq7gS2TjPSVA7te
+GP85v00Yn32nSCB8Ez2t77ZHkYvbIlPKJmee3xL0KQkVO7UiqJns8o5A1BlFqRoU
+4Wu1Rsg4uRiGO4i4XAxxOlZQBTYgcSw14yIIhxjH70/FQFRE99iS3e1gxAafHeCt
+B3vKLILj5RQ96FGkDgdJLoZOCm8VVjN8UH6NNwU4OtG6hZptgSbm8DAy+D/qb/uM
+kA3Xy6vFqTzkP1tZv3nIDN2Znc5v0xMmr8NdbX2F8fZ9W3NobiEt04KqYFAx+dH1
+4phVoIUA0q3Cvr6lK5Pph8VRzrH2B3eUQVT4UGtdtSeZfYdgM4E=
+=MWun
 -----END PGP SIGNATURE-----
 
---l76fUT7nc3MelDdI--
+--da4uJneut+ArUgXk--
