@@ -1,108 +1,59 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 2/4] usb: phy: tegra: Hook up init/shutdown callbacks
-Date: Thu, 19 Dec 2019 18:24:54 +0300
-Message-ID: <d10ca21c-3918-3f2c-f279-c0ce9f37aca5@gmail.com>
-References: <20191218175313.16235-1-digetx@gmail.com>
- <20191218175313.16235-3-digetx@gmail.com>
- <20191219065619.GA19921@b29397-desktop>
+Subject: Re: [PATCH v1 1/3] gpio: tegra: Use generic
+ readl_relaxed/writel_relaxed accessors
+Date: Thu, 19 Dec 2019 18:25:52 +0300
+Message-ID: <1e214577-1abe-22e6-ca55-2e9806fdb9b0@gmail.com>
+References: <20191215183047.9414-1-digetx@gmail.com>
+ <20191215183047.9414-2-digetx@gmail.com>
+ <CAMpxmJUmLOZoKeeo4XMVEOWKRgwfS4O2szVboY-qTTYXg_aTVg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191219065619.GA19921@b29397-desktop>
+In-Reply-To: <CAMpxmJUmLOZoKeeo4XMVEOWKRgwfS4O2szVboY-qTTYXg_aTVg@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Chen <peter.chen@nxp.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-19.12.2019 09:56, Peter Chen пишет:
-> On 19-12-18 20:53:11, Dmitry Osipenko wrote:
->> Generic PHY provides init/shutdown callbacks which allow USB-host drivers
->> to abstract PHY's hardware management in a common way. This change allows
->> to remove Tegra-specific PHY handling from the ChipIdea driver.
+19.12.2019 14:01, Bartosz Golaszewski пишет:
+> niedz., 15 gru 2019 o 19:31 Dmitry Osipenko <digetx@gmail.com> napisał(a):
 >>
->> Note that ChipIdea's driver shall be changed at the same time because it
->> turns PHY ON without the PHY's initialization and this doesn't work now,
->> resulting in a NULL dereference of phy->freq because it's set during of
->> the PHY's initialization.
+>> There is no point in using old-style raw accessors, the generic accessors
+>> do the same thing and also take into account CPU endianness. Tegra SoCs do
+>> not support big-endian mode in the upstream kernel, but let's switch away
+>> from the outdated things anyway, just to keep code up-to-date.
 >>
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>  drivers/usb/chipidea/ci_hdrc_tegra.c |   9 --
->>  drivers/usb/phy/phy-tegra-usb.c      | 165 +++++++++++++++++----------
->>  2 files changed, 102 insertions(+), 72 deletions(-)
+>>  drivers/gpio/gpio-tegra.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
->> index 0c9911d44ee5..7455df0ede49 100644
->> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
->> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
->> @@ -83,13 +83,6 @@ static int tegra_udc_probe(struct platform_device *pdev)
->>  		return err;
->>  	}
->>  
->> -	/*
->> -	 * Tegra's USB PHY driver doesn't implement optional phy_init()
->> -	 * hook, so we have to power on UDC controller before ChipIdea
->> -	 * driver initialization kicks in.
->> -	 */
->> -	usb_phy_set_suspend(udc->phy, 0);
->> -
->>  	/* setup and register ChipIdea HDRC device */
->>  	udc->data.name = "tegra-udc";
->>  	udc->data.flags = soc->flags;
->> @@ -109,7 +102,6 @@ static int tegra_udc_probe(struct platform_device *pdev)
->>  	return 0;
->>  
->>  fail_power_off:
->> -	usb_phy_set_suspend(udc->phy, 1);
->>  	clk_disable_unprepare(udc->clk);
->>  	return err;
->>  }
->> @@ -119,7 +111,6 @@ static int tegra_udc_remove(struct platform_device *pdev)
->>  	struct tegra_udc *udc = platform_get_drvdata(pdev);
->>  
->>  	ci_hdrc_remove_device(udc->dev);
->> -	usb_phy_set_suspend(udc->phy, 1);
->>  	clk_disable_unprepare(udc->clk);
->>  
->>  	return 0;
->> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
->> index ea7ef1dc0b42..15bd253d53c9 100644
->> --- a/drivers/usb/phy/phy-tegra-usb.c
->> +++ b/drivers/usb/phy/phy-tegra-usb.c
->> @@ -238,23 +238,6 @@ static int utmip_pad_open(struct tegra_usb_phy *phy)
+>> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+>> index 6fdfe4c5303e..f6a382fbd12d 100644
+>> --- a/drivers/gpio/gpio-tegra.c
+>> +++ b/drivers/gpio/gpio-tegra.c
+>> @@ -96,12 +96,12 @@ struct tegra_gpio_info {
+>>  static inline void tegra_gpio_writel(struct tegra_gpio_info *tgi,
+>>                                      u32 val, u32 reg)
 >>  {
->>  	int ret;
->>  
->> -	phy->pad_clk = devm_clk_get(phy->u_phy.dev, "utmi-pads");
->> -	if (IS_ERR(phy->pad_clk)) {
->> -		ret = PTR_ERR(phy->pad_clk);
->> -		dev_err(phy->u_phy.dev,
->> -			"Failed to get UTMIP pad clock: %d\n", ret);
->> -		return ret;
->> -	}
->> -
->> -	phy->pad_rst = devm_reset_control_get_optional_shared(
->> -						phy->u_phy.dev, "utmi-pads");
->> -	if (IS_ERR(phy->pad_rst)) {
->> -		ret = PTR_ERR(phy->pad_rst);
->> -		dev_err(phy->u_phy.dev,
->> -			"Failed to get UTMI-pads reset: %d\n", ret);
->> -		return ret;
->> -	}
->> -
->>  	ret = clk_prepare_enable(phy->pad_clk);
->>  	if (ret) {
->>  		dev_err(phy->u_phy.dev,
->> @@ -315,6 +298,18 @@ static int utmip_pad_close(struct tegra_usb_phy *phy)
->>  	return ret;
+>> -       __raw_writel(val, tgi->regs + reg);
+>> +       writel_relaxed(val, tgi->regs + reg);
 >>  }
+>>
+>>  static inline u32 tegra_gpio_readl(struct tegra_gpio_info *tgi, u32 reg)
+>>  {
+>> -       return __raw_readl(tgi->regs + reg);
+>> +       return readl_relaxed(tgi->regs + reg);
+>>  }
+>>
+>>  static unsigned int tegra_gpio_compose(unsigned int bank, unsigned int port,
+>> --
+>> 2.24.0
+>>
 > 
-> Acked-by: Peter Chen <peter.chen@nxp.com>
-> 
-> Felipe, would you please queue this series after reviewing for USB PHY
-> changes? If not, Dmitry may need to split the patch.
+> The entire series looks good to me, but I'll wait for Thierry's acks
+> just in case.
 
-I'll take a closer look whether it is possible to factor out ChipIdea's
-driver change into a separate patch in a sensible way. Thanks!
+Thank you very much for taking a look at the patches!
