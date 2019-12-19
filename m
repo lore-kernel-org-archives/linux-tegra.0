@@ -1,42 +1,48 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 1/3] gpio: tegra: Use generic
- readl_relaxed/writel_relaxed accessors
-Date: Thu, 19 Dec 2019 19:34:01 +0300
-Message-ID: <e6a67fa4-977d-bac9-f7c0-51d5cea526e5@gmail.com>
-References: <20191215183047.9414-1-digetx@gmail.com>
- <20191215183047.9414-2-digetx@gmail.com>
- <CAMpxmJUmLOZoKeeo4XMVEOWKRgwfS4O2szVboY-qTTYXg_aTVg@mail.gmail.com>
- <b38cd167-4a61-4903-cf44-910dcb66f751@codethink.co.uk>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH 1/1] staging: nvec: check return value
+Date: Thu, 19 Dec 2019 18:40:45 +0100 (CET)
+Message-ID: <alpine.OSX.2.21.1912191837580.5811@macbook-pro.fritz.box>
+References: <1576648598-12257-1-git-send-email-wangxidong_97@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b38cd167-4a61-4903-cf44-910dcb66f751@codethink.co.uk>
-Content-Language: en-US
+In-Reply-To: <1576648598-12257-1-git-send-email-wangxidong_97@163.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
+To: Xidong Wang <wangxidong_97@163.com>
+Cc: Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.12.2019 18:57, Ben Dooks пишет:
-> On 19/12/2019 11:01, Bartosz Golaszewski wrote:
->> niedz., 15 gru 2019 o 19:31 Dmitry Osipenko <digetx@gmail.com>
->> napisał(a):
->>>
->>> There is no point in using old-style raw accessors, the generic
->>> accessors
->>> do the same thing and also take into account CPU endianness. Tegra
->>> SoCs do
->>> not support big-endian mode in the upstream kernel, but let's switch
->>> away
->>> from the outdated things anyway, just to keep code up-to-date.
-> 
-> Good idea, I think I got most of the way to booting a tegra jetson board
-> with a big endian image a few years ago, but never got time to finish
-> the work.
-> 
+Hello Xidong,
 
-Thanks, I remember yours effort in regards to the upstreaming big endian
-support for Jetson :) You were pretty close back then, but Thierry had a
-different opinion in regards to maintaining that support in terms of
-having extra testing burden.
+On Wed, 18 Dec 2019, Xidong Wang wrote:
+
+> In nvec_kbd_probe(), the return value of devm_input_allocate_device()
+> should be checked before it is used.
+>
+> Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+
+looks good to me. Thanks!
+
+Acked-by: Marc Dietrich <marvin24@gmx.de>
+
+> ---
+> drivers/staging/nvec/nvec_kbd.c | 2 ++
+> 1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/staging/nvec/nvec_kbd.c b/drivers/staging/nvec/nvec_kbd.c
+> index 01dbb66..386d619 100644
+> --- a/drivers/staging/nvec/nvec_kbd.c
+> +++ b/drivers/staging/nvec/nvec_kbd.c
+> @@ -123,6 +123,8 @@ static int nvec_kbd_probe(struct platform_device *pdev)
+> 		keycodes[j++] = extcode_tab_us102[i];
+>
+> 	idev = devm_input_allocate_device(&pdev->dev);
+> +	if (!idev)
+> +		return -ENOMEM;
+> 	idev->name = "nvec keyboard";
+> 	idev->phys = "nvec";
+> 	idev->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_REP) | BIT_MASK(EV_LED);
+> -- 
+> 2.7.4
+>
+>
