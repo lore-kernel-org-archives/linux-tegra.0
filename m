@@ -1,72 +1,36 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/4] usb: phy: tegra: Perform general clean up of the
- code
-Date: Thu, 19 Dec 2019 18:37:12 +0300
-Message-ID: <a37a10de-2b40-16af-210c-c69049277f35@gmail.com>
-References: <20191218175313.16235-1-digetx@gmail.com>
- <20191218175313.16235-4-digetx@gmail.com> <20191219125437.GB1440537@ulmo>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH v1 1/3] gpio: tegra: Use generic
+ readl_relaxed/writel_relaxed accessors
+Date: Thu, 19 Dec 2019 15:57:09 +0000
+Message-ID: <b38cd167-4a61-4903-cf44-910dcb66f751@codethink.co.uk>
+References: <20191215183047.9414-1-digetx@gmail.com>
+ <20191215183047.9414-2-digetx@gmail.com>
+ <CAMpxmJUmLOZoKeeo4XMVEOWKRgwfS4O2szVboY-qTTYXg_aTVg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191219125437.GB1440537@ulmo>
-Content-Language: en-US
+In-Reply-To: <CAMpxmJUmLOZoKeeo4XMVEOWKRgwfS4O2szVboY-qTTYXg_aTVg@mail.gmail.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-19.12.2019 15:54, Thierry Reding пишет:
-> On Wed, Dec 18, 2019 at 08:53:12PM +0300, Dmitry Osipenko wrote:
->> This patch fixes few dozens of legit checkpatch warnings, adds missed
->> handling of potential error-cases, fixes ULPI clk-prepare refcounting and
->> prettifies code where makes sense. All these clean-up changes are quite
->> minor and do not fix any problems.
+On 19/12/2019 11:01, Bartosz Golaszewski wrote:
+> niedz., 15 gru 2019 o 19:31 Dmitry Osipenko <digetx@gmail.com> napisał(a):
 >>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/usb/phy/phy-tegra-usb.c | 367 +++++++++++++++++---------------
->>  1 file changed, 197 insertions(+), 170 deletions(-)
-> 
-> This could've been multiple patches to make it easier to review, but
-> either way:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+>> There is no point in using old-style raw accessors, the generic accessors
+>> do the same thing and also take into account CPU endianness. Tegra SoCs do
+>> not support big-endian mode in the upstream kernel, but let's switch away
+>> from the outdated things anyway, just to keep code up-to-date.
 
-Yes, it probably could be separated into 10 patches, but then there is a
-chance that I won't do it because sometimes it takes more time for me to
-write commit message than to make a code change + extra time to re-check
-every patch before sending it out :)
+Good idea, I think I got most of the way to booting a tegra jetson board
+with a big endian image a few years ago, but never got time to finish
+the work.
 
-> One minor comment below...
-> 
->> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
->> index 15bd253d53c9..76949dbbbdc2 100644
->> --- a/drivers/usb/phy/phy-tegra-usb.c
->> +++ b/drivers/usb/phy/phy-tegra-usb.c
-> [...]
->> @@ -310,13 +315,16 @@ static void ulpi_close(struct tegra_usb_phy *phy)
->>  	}
->>  }
->>  
->> -static void utmip_pad_power_on(struct tegra_usb_phy *phy)
->> +static int utmip_pad_power_on(struct tegra_usb_phy *phy)
->>  {
->> -	unsigned long val, flags;
->> -	void __iomem *base = phy->pad_regs;
->>  	struct tegra_utmip_config *config = phy->config;
->> +	void __iomem *base = phy->pad_regs;
->> +	unsigned long val, flags;
-> 
-> I think technically the "val" variable would have to be u32 because
-> that's what readl() and writel() operate on.
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
 
-I had the same thought and decided it's not worth the extra effort.
-
-> That could be a separate
-> patch, though and isn't really a big problem.
-
-But I'll do it now for complicity, since you're asking about it (in a v2
-perhaps).
-
-Thank you very much for the reviews!
+https://www.codethink.co.uk/privacy.html
