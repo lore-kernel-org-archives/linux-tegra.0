@@ -1,65 +1,54 @@
 From: Richard Leitner <richard.leitner@skidata.com>
-Subject: [PATCH 2/2] ARM: dts: tegra20: add labels to host1x its subnodes
-Date: Thu, 19 Dec 2019 14:04:31 +0100
-Message-ID: <20191219130431.30458-2-richard.leitner@skidata.com>
-References: <20191219130431.30458-1-richard.leitner@skidata.com>
+Subject: [PATCH 1/2] ARM: dts: tegra20: add labels to i2c nodes
+Date: Thu, 19 Dec 2019 14:04:30 +0100
+Message-ID: <20191219130431.30458-1-richard.leitner@skidata.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191219130431.30458-1-richard.leitner@skidata.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Leitner <richard.leitner@skidata.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add labels to the host1x, dc and hdmi nodes of the Tegra20 SoC so we
-just need to alias it from derived boards.
+Add numbered labels to the i2c nodes of the Tegra20 SoC so we just need
+to alias it from derived boards.
 
 Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra20.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index e02f75757a7e..c569bd87550f 100644
+index 9c58e7fcf5c0..e02f75757a7e 100644
 --- a/arch/arm/boot/dts/tegra20.dtsi
 +++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -29,7 +29,7 @@
- 		};
+@@ -464,7 +464,7 @@
+ 		clocks = <&tegra_car TEGRA20_CLK_RTC>;
  	};
  
--	host1x@50000000 {
-+	host1x: host1x@50000000 {
- 		compatible = "nvidia,tegra20-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
- 		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>, /* syncpt */
-@@ -96,7 +96,7 @@
- 			reset-names = "3d";
- 		};
+-	i2c@7000c000 {
++	i2c1: i2c@7000c000 {
+ 		compatible = "nvidia,tegra20-i2c";
+ 		reg = <0x7000c000 0x100>;
+ 		interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+@@ -494,7 +494,7 @@
+ 		status = "disabled";
+ 	};
  
--		dc@54200000 {
-+		dc1: dc@54200000 {
- 			compatible = "nvidia,tegra20-dc";
- 			reg = <0x54200000 0x00040000>;
- 			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-@@ -113,7 +113,7 @@
- 			};
- 		};
+-	i2c@7000c400 {
++	i2c2: i2c@7000c400 {
+ 		compatible = "nvidia,tegra20-i2c";
+ 		reg = <0x7000c400 0x100>;
+ 		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+@@ -510,7 +510,7 @@
+ 		status = "disabled";
+ 	};
  
--		dc@54240000 {
-+		dc2: dc@54240000 {
- 			compatible = "nvidia,tegra20-dc";
- 			reg = <0x54240000 0x00040000>;
- 			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-@@ -130,7 +130,7 @@
- 			};
- 		};
- 
--		hdmi@54280000 {
-+		hdmi: hdmi@54280000 {
- 			compatible = "nvidia,tegra20-hdmi";
- 			reg = <0x54280000 0x00040000>;
- 			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+-	i2c@7000c500 {
++	i2c3: i2c@7000c500 {
+ 		compatible = "nvidia,tegra20-i2c";
+ 		reg = <0x7000c500 0x100>;
+ 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.21.0
