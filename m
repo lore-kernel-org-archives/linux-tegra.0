@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v5 14/19] clk: tegra: Remove audio related clock enables from init_table
-Date: Fri, 20 Dec 2019 14:27:00 -0800
-Message-ID: <1576880825-15010-15-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v5 10/19] dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
+Date: Fri, 20 Dec 2019 14:26:56 -0800
+Message-ID: <1576880825-15010-11-git-send-email-skomatineni@nvidia.com>
 References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,105 +12,163 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broo
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Current clock driver enables PLLA, cdev1 on Tegra20 and extern1 on Tegra30
-and above as a part of clocks init and there is no need to have this
-clock enabled during the boot.
+clk_out_1, clk_out_2, clk_out_3, blink are part of Tegra PMC block and
+these clocks are moved to Tegra PMC driver with pmc as clock provider
+and uses clock ids from dt-bindings/soc/tegra-pmc.h
 
-extern1 is used as parent for clk_out_1 and clk_out_1 is dedicated
-for audio mclk on Tegra30 and above Tegra platforms and these clocks
-are taken care by ASoC driver.
+So, this patch removes ids for these clocks from Tegra clock dt-bindings.
 
-So, this patch removes parenting and enabling extern1 from clock init
-of Tegra30 and above and removes enabling cdev1 from Tegra20 clock init.
-
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra114.c | 5 ++---
- drivers/clk/tegra/clk-tegra124.c | 5 ++---
- drivers/clk/tegra/clk-tegra20.c  | 5 ++---
- drivers/clk/tegra/clk-tegra210.c | 5 ++---
- drivers/clk/tegra/clk-tegra30.c  | 5 ++---
- 5 files changed, 10 insertions(+), 15 deletions(-)
+ include/dt-bindings/clock/tegra114-car.h        | 14 +++++++-------
+ include/dt-bindings/clock/tegra124-car-common.h | 14 +++++++-------
+ include/dt-bindings/clock/tegra20-car.h         |  2 +-
+ include/dt-bindings/clock/tegra210-car.h        | 14 +++++++-------
+ include/dt-bindings/clock/tegra30-car.h         | 14 +++++++-------
+ 5 files changed, 29 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 4077dd3a1bd9..5821b636deb3 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1134,9 +1134,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA114_CLK_UARTB, TEGRA114_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA114_CLK_UARTC, TEGRA114_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA114_CLK_UARTD, TEGRA114_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 1 },
--	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA114_CLK_EXTERN1, TEGRA114_CLK_PLL_A_OUT0, 0, 1 },
-+	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S0, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S1, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S2, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 266a0c040933..3e49d6d39af4 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1290,9 +1290,8 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_UARTB, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA124_CLK_UARTC, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA124_CLK_UARTD, TEGRA124_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 564480000, 1 },
--	{ TEGRA124_CLK_PLL_A_OUT0, TEGRA124_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA124_CLK_EXTERN1, TEGRA124_CLK_PLL_A_OUT0, 0, 1 },
-+	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA124_CLK_PLL_A_OUT0, TEGRA124_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S0, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S1, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index fe536f1d770d..0da402c144d8 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1029,9 +1029,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_UARTC, TEGRA20_CLK_PLL_P, 0, 0 },
- 	{ TEGRA20_CLK_UARTD, TEGRA20_CLK_PLL_P, 0, 0 },
- 	{ TEGRA20_CLK_UARTE, TEGRA20_CLK_PLL_P, 0, 0 },
--	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 1 },
--	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA20_CLK_CDEV1, TEGRA20_CLK_CLK_MAX, 0, 1 },
-+	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 0 },
-+	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA20_CLK_I2S1, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_I2S2, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_SDMMC1, TEGRA20_CLK_PLL_P, 48000000, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 39dbfad73bf9..1deae4f9fca7 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3440,9 +3440,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_UARTB, TEGRA210_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA210_CLK_UARTC, TEGRA210_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA210_CLK_UARTD, TEGRA210_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA210_CLK_PLL_A, TEGRA210_CLK_CLK_MAX, 564480000, 1 },
--	{ TEGRA210_CLK_PLL_A_OUT0, TEGRA210_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA210_CLK_EXTERN1, TEGRA210_CLK_PLL_A_OUT0, 0, 1 },
-+	{ TEGRA210_CLK_PLL_A, TEGRA210_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA210_CLK_PLL_A_OUT0, TEGRA210_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S0, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S1, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S2, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 7bbdb5a4dec4..349acfafa8b9 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1219,9 +1219,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_UARTC, TEGRA30_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA30_CLK_UARTD, TEGRA30_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA30_CLK_UARTE, TEGRA30_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
--	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
-+	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
+index f4880959b094..2818ba12e1f7 100644
+--- a/include/dt-bindings/clock/tegra114-car.h
++++ b/include/dt-bindings/clock/tegra114-car.h
+@@ -270,10 +270,10 @@
+ #define TEGRA114_CLK_AUDIO3 242
+ #define TEGRA114_CLK_AUDIO4 243
+ #define TEGRA114_CLK_SPDIF 244
+-#define TEGRA114_CLK_CLK_OUT_1 245
+-#define TEGRA114_CLK_CLK_OUT_2 246
+-#define TEGRA114_CLK_CLK_OUT_3 247
+-#define TEGRA114_CLK_BLINK 248
++/* 245 */
++/* 246 */
++/* 247 */
++/* 248 */
+ /* 249 */
+ /* 250 */
+ /* 251 */
+@@ -333,9 +333,9 @@
+ #define TEGRA114_CLK_AUDIO3_MUX 303
+ #define TEGRA114_CLK_AUDIO4_MUX 304
+ #define TEGRA114_CLK_SPDIF_MUX 305
+-#define TEGRA114_CLK_CLK_OUT_1_MUX 306
+-#define TEGRA114_CLK_CLK_OUT_2_MUX 307
+-#define TEGRA114_CLK_CLK_OUT_3_MUX 308
++/* 306 */
++/* 307 */
++/* 308 */
+ #define TEGRA114_CLK_DSIA_MUX 309
+ #define TEGRA114_CLK_DSIB_MUX 310
+ #define TEGRA114_CLK_XUSB_SS_DIV2 311
+diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
+index e7e601a88d3d..366bac3043f2 100644
+--- a/include/dt-bindings/clock/tegra124-car-common.h
++++ b/include/dt-bindings/clock/tegra124-car-common.h
+@@ -269,10 +269,10 @@
+ #define TEGRA124_CLK_AUDIO3 242
+ #define TEGRA124_CLK_AUDIO4 243
+ #define TEGRA124_CLK_SPDIF 244
+-#define TEGRA124_CLK_CLK_OUT_1 245
+-#define TEGRA124_CLK_CLK_OUT_2 246
+-#define TEGRA124_CLK_CLK_OUT_3 247
+-#define TEGRA124_CLK_BLINK 248
++/* 245 */
++/* 246 */
++/* 247 */
++/* 248 */
+ /* 249 */
+ /* 250 */
+ /* 251 */
+@@ -332,9 +332,9 @@
+ #define TEGRA124_CLK_AUDIO3_MUX 303
+ #define TEGRA124_CLK_AUDIO4_MUX 304
+ #define TEGRA124_CLK_SPDIF_MUX 305
+-#define TEGRA124_CLK_CLK_OUT_1_MUX 306
+-#define TEGRA124_CLK_CLK_OUT_2_MUX 307
+-#define TEGRA124_CLK_CLK_OUT_3_MUX 308
++/* 306 */
++/* 307 */
++/* 308 */
+ /* 309 */
+ /* 310 */
+ #define TEGRA124_CLK_SOR0_LVDS 311 /* deprecated */
+diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindings/clock/tegra20-car.h
+index b21a0eb32921..fe541f627965 100644
+--- a/include/dt-bindings/clock/tegra20-car.h
++++ b/include/dt-bindings/clock/tegra20-car.h
+@@ -131,7 +131,7 @@
+ #define TEGRA20_CLK_CCLK 108
+ #define TEGRA20_CLK_HCLK 109
+ #define TEGRA20_CLK_PCLK 110
+-#define TEGRA20_CLK_BLINK 111
++/* 111 */
+ #define TEGRA20_CLK_PLL_A 112
+ #define TEGRA20_CLK_PLL_A_OUT0 113
+ #define TEGRA20_CLK_PLL_C 114
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 6f65c14bf013..098a73d36c33 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -304,10 +304,10 @@
+ #define TEGRA210_CLK_AUDIO3 274
+ #define TEGRA210_CLK_AUDIO4 275
+ #define TEGRA210_CLK_SPDIF 276
+-#define TEGRA210_CLK_CLK_OUT_1 277
+-#define TEGRA210_CLK_CLK_OUT_2 278
+-#define TEGRA210_CLK_CLK_OUT_3 279
+-#define TEGRA210_CLK_BLINK 280
++/* 277 */
++/* 278 */
++/* 279 */
++/* 280 */
+ #define TEGRA210_CLK_SOR0_LVDS 281 /* deprecated */
+ #define TEGRA210_CLK_SOR0_OUT 281
+ #define TEGRA210_CLK_SOR1_OUT 282
+@@ -386,9 +386,9 @@
+ #define TEGRA210_CLK_AUDIO3_MUX 353
+ #define TEGRA210_CLK_AUDIO4_MUX 354
+ #define TEGRA210_CLK_SPDIF_MUX 355
+-#define TEGRA210_CLK_CLK_OUT_1_MUX 356
+-#define TEGRA210_CLK_CLK_OUT_2_MUX 357
+-#define TEGRA210_CLK_CLK_OUT_3_MUX 358
++/* 356 */
++/* 357 */
++/* 358 */
+ #define TEGRA210_CLK_DSIA_MUX 359
+ #define TEGRA210_CLK_DSIB_MUX 360
+ /* 361 */
+diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
+index 907a8a04c280..2a63a9c4de5c 100644
+--- a/include/dt-bindings/clock/tegra30-car.h
++++ b/include/dt-bindings/clock/tegra30-car.h
+@@ -230,11 +230,11 @@
+ #define TEGRA30_CLK_AUDIO3 204
+ #define TEGRA30_CLK_AUDIO4 205
+ #define TEGRA30_CLK_SPDIF 206
+-#define TEGRA30_CLK_CLK_OUT_1 207 /* (extern1) */
+-#define TEGRA30_CLK_CLK_OUT_2 208 /* (extern2) */
+-#define TEGRA30_CLK_CLK_OUT_3 209 /* (extern3) */
++/* 207 */
++/* 208 */
++/* 209 */
+ #define TEGRA30_CLK_SCLK 210
+-#define TEGRA30_CLK_BLINK 211
++/* 211 */
+ #define TEGRA30_CLK_CCLK_G 212
+ #define TEGRA30_CLK_CCLK_LP 213
+ #define TEGRA30_CLK_TWD 214
+@@ -260,9 +260,9 @@
+ /* 297 */
+ /* 298 */
+ /* 299 */
+-#define TEGRA30_CLK_CLK_OUT_1_MUX 300
+-#define TEGRA30_CLK_CLK_OUT_2_MUX 301
+-#define TEGRA30_CLK_CLK_OUT_3_MUX 302
++/* 300 */
++/* 301 */
++/* 302 */
+ #define TEGRA30_CLK_AUDIO0_MUX 303
+ #define TEGRA30_CLK_AUDIO1_MUX 304
+ #define TEGRA30_CLK_AUDIO2_MUX 305
 -- 
 2.7.4
