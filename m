@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v5 08/19] soc: tegra: Add support for 32KHz blink clock
-Date: Fri, 20 Dec 2019 14:26:54 -0800
-Message-ID: <1576880825-15010-9-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v5 11/19] ASoC: tegra: Use device managed resource APIs to get the clock
+Date: Fri, 20 Dec 2019 14:26:57 -0800
+Message-ID: <1576880825-15010-12-git-send-email-skomatineni@nvidia.com>
 References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,242 +12,577 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broo
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC has blink control to output 32 Khz clock out to Tegra
-blink pin. Blink pad DPD state and enable controls are part of
-Tegra PMC register space.
+tegra_asoc_utils uses clk_get() and clk_put() to get the clock
+and to free them explicitly.
 
-Currently Tegra clock driver registers blink control by passing
-PMC address and register offset to clk_register_gate which performs
-direct PMC access during clk_ops and with this when PMC is in secure
-mode, any access from non-secure world does not go through.
-
-This patch adds blink control registration to the Tegra PMC driver
-using PMC specific clock gate operations that use tegra_pmc_readl
-and tegra_pmc_writel to support both secure mode and non-secure
-mode PMC register access.
+This patch updates it to use device managed resource API
+devm_clk_get() so the clock will be automatically released and freed
+when the device is unbound and removes tegra_asoc_utils_fini() as
+its no longer needed.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 110 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+ sound/soc/tegra/tegra_alc5632.c    |  7 +------
+ sound/soc/tegra/tegra_asoc_utils.c | 34 ++++++----------------------------
+ sound/soc/tegra/tegra_asoc_utils.h |  1 -
+ sound/soc/tegra/tegra_max98090.c   | 22 ++++++----------------
+ sound/soc/tegra/tegra_rt5640.c     | 22 ++++++----------------
+ sound/soc/tegra/tegra_rt5677.c     |  7 +------
+ sound/soc/tegra/tegra_sgtl5000.c   |  7 +------
+ sound/soc/tegra/tegra_wm8753.c     | 22 ++++++----------------
+ sound/soc/tegra/tegra_wm8903.c     | 22 ++++++----------------
+ sound/soc/tegra/tegra_wm9712.c     |  8 ++------
+ sound/soc/tegra/trimslice.c        | 18 ++++--------------
+ 11 files changed, 39 insertions(+), 131 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 2b1a709c3cb7..280f0c14e4ec 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -62,12 +62,15 @@
- #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
- #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
- #define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
-+#define  PMC_CNTRL_BLINK_EN		7
- #define  PMC_CNTRL_MAIN_RST		BIT(4)
- 
- #define PMC_WAKE_MASK			0x0c
- #define PMC_WAKE_LEVEL			0x10
- #define PMC_WAKE_STATUS			0x14
- #define PMC_SW_WAKE_STATUS		0x18
-+#define PMC_DPD_PADS_ORIDE		0x1c
-+#define  PMC_DPD_PADS_ORIDE_BLINK	20
- 
- #define DPD_SAMPLE			0x020
- #define  DPD_SAMPLE_ENABLE		BIT(0)
-@@ -80,6 +83,7 @@
- 
- #define PWRGATE_STATUS			0x38
- 
-+#define PMC_BLINK_TIMER			0x40
- #define PMC_IMPL_E_33V_PWR		0x40
- 
- #define PMC_PWR_DET			0x48
-@@ -171,6 +175,14 @@ struct pmc_clk {
- 
- #define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
- 
-+struct pmc_clk_gate {
-+	struct clk_hw	hw;
-+	unsigned long	offs;
-+	u32		shift;
-+};
-+
-+#define to_pmc_clk_gate(_hw) container_of(_hw, struct pmc_clk_gate, hw)
-+
- struct pmc_clk_init_data {
- 	char *name;
- 	const char *const *parents;
-@@ -321,6 +333,7 @@ struct tegra_pmc_soc {
- 
- 	const struct pmc_clk_init_data *pmc_clks_data;
- 	unsigned int num_pmc_clks;
-+	bool has_blink_output;
- };
- 
- static const char * const tegra186_reset_sources[] = {
-@@ -2334,6 +2347,60 @@ tegra_pmc_clk_out_register(struct tegra_pmc *pmc,
- 	return clk_register(NULL, &pmc_clk->hw);
- }
- 
-+static int pmc_clk_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
-+
-+	return tegra_pmc_readl(pmc, gate->offs) & BIT(gate->shift) ? 1 : 0;
-+}
-+
-+static int pmc_clk_gate_enable(struct clk_hw *hw)
-+{
-+	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
-+
-+	pmc_clk_set_state(gate->offs, gate->shift, 1);
-+
-+	return 0;
-+}
-+
-+static void pmc_clk_gate_disable(struct clk_hw *hw)
-+{
-+	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
-+
-+	pmc_clk_set_state(gate->offs, gate->shift, 0);
-+}
-+
-+static const struct clk_ops pmc_clk_gate_ops = {
-+	.is_enabled = pmc_clk_gate_is_enabled,
-+	.enable = pmc_clk_gate_enable,
-+	.disable = pmc_clk_gate_disable,
-+};
-+
-+static struct clk *
-+tegra_pmc_clk_gate_register(struct tegra_pmc *pmc, const char *name,
-+			    const char *parent_name, unsigned long offset,
-+			    u32 shift)
-+{
-+	struct clk_init_data init;
-+	struct pmc_clk_gate *gate;
-+
-+	gate = devm_kzalloc(pmc->dev, sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &pmc_clk_gate_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = 0;
-+
-+	gate->hw.init = &init;
-+	gate->offs = offset;
-+	gate->shift = shift;
-+
-+	return clk_register(NULL, &gate->hw);
-+}
-+
- static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
- 				     struct device_node *np)
- {
-@@ -2343,6 +2410,8 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
- 	int i, err;
- 
- 	num_clks = pmc->soc->num_pmc_clks;
-+	if (pmc->soc->has_blink_output)
-+		num_clks += 1;
- 
- 	if (!num_clks)
- 		return;
-@@ -2384,6 +2453,40 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
- 		clk_data->clks[data->clk_id] = clk;
+diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+index 9e8b1497efd3..50a6d2ff4442 100644
+--- a/sound/soc/tegra/tegra_alc5632.c
++++ b/sound/soc/tegra/tegra_alc5632.c
+@@ -205,13 +205,11 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto err_fini_utils;
++		goto err_put_cpu_of_node;
  	}
  
-+	if (pmc->soc->has_blink_output) {
-+		tegra_pmc_writel(pmc, 0x0, PMC_BLINK_TIMER);
-+		clk = tegra_pmc_clk_gate_register(pmc, "blink_override",
-+						  "clk_32k",
-+						  PMC_DPD_PADS_ORIDE,
-+						  PMC_DPD_PADS_ORIDE_BLINK);
-+		if (IS_ERR(clk)) {
-+			dev_warn(pmc->dev,
-+				 "unable to register blink_override: %d\n",
-+				 PTR_ERR_OR_ZERO(clk));
-+			return;
-+		}
-+
-+		clk = tegra_pmc_clk_gate_register(pmc, "blink",
-+						  "blink_override",
-+						  PMC_CNTRL,
-+						  PMC_CNTRL_BLINK_EN);
-+		if (IS_ERR(clk)) {
-+			dev_warn(pmc->dev, "unable to register blink: %d\n",
-+				 PTR_ERR_OR_ZERO(clk));
-+			return;
-+		}
-+
-+		err = clk_register_clkdev(clk, "blink", NULL);
-+		if (err) {
-+			dev_warn(pmc->dev,
-+				 "unable to register blink clock lookup: %d\n",
-+				 err);
-+			return;
-+		}
-+
-+		clk_data->clks[TEGRA_PMC_CLK_BLINK] = clk;
-+	}
-+
- 	err = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
- 	if (err)
- 		dev_warn(pmc->dev, "failed to add pmc clock provider: %d\n",
-@@ -2652,6 +2755,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
-+	.has_blink_output = true,
- };
+ 	return 0;
  
- static const char * const tegra30_powergates[] = {
-@@ -2701,6 +2805,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
+-err_fini_utils:
+-	tegra_asoc_utils_fini(&alc5632->util_data);
+ err_put_cpu_of_node:
+ 	of_node_put(tegra_alc5632_dai.cpus->of_node);
+ 	tegra_alc5632_dai.cpus->of_node = NULL;
+@@ -226,12 +224,9 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
+ static int tegra_alc5632_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+-	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(card);
  
- static const char * const tegra114_powergates[] = {
-@@ -2754,6 +2859,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
+ 	snd_soc_unregister_card(card);
  
- static const char * const tegra124_powergates[] = {
-@@ -2867,6 +2973,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
+-	tegra_asoc_utils_fini(&machine->util_data);
+-
+ 	of_node_put(tegra_alc5632_dai.cpus->of_node);
+ 	tegra_alc5632_dai.cpus->of_node = NULL;
+ 	tegra_alc5632_dai.platforms->of_node = NULL;
+diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+index 536a578e9512..38535962029c 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.c
++++ b/sound/soc/tegra/tegra_asoc_utils.c
+@@ -175,52 +175,30 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 		return -EINVAL;
+ 	}
  
- static const char * const tegra210_powergates[] = {
-@@ -2983,6 +3090,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.wake_events = tegra210_wake_events,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
+-	data->clk_pll_a = clk_get(dev, "pll_a");
++	data->clk_pll_a = devm_clk_get(dev, "pll_a");
+ 	if (IS_ERR(data->clk_pll_a)) {
+ 		dev_err(data->dev, "Can't retrieve clk pll_a\n");
+-		ret = PTR_ERR(data->clk_pll_a);
+-		goto err;
++		return PTR_ERR(data->clk_pll_a);
+ 	}
  
- #define TEGRA186_IO_PAD_TABLE(_pad)					     \
-@@ -3114,6 +3222,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.wake_events = tegra186_wake_events,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
-+	.has_blink_output = false,
- };
+-	data->clk_pll_a_out0 = clk_get(dev, "pll_a_out0");
++	data->clk_pll_a_out0 = devm_clk_get(dev, "pll_a_out0");
+ 	if (IS_ERR(data->clk_pll_a_out0)) {
+ 		dev_err(data->dev, "Can't retrieve clk pll_a_out0\n");
+-		ret = PTR_ERR(data->clk_pll_a_out0);
+-		goto err_put_pll_a;
++		return PTR_ERR(data->clk_pll_a_out0);
+ 	}
  
- static const struct tegra_io_pad_soc tegra194_io_pads[] = {
-@@ -3233,6 +3342,7 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
- 	.wake_events = tegra194_wake_events,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
-+	.has_blink_output = false,
- };
+-	data->clk_cdev1 = clk_get(dev, "mclk");
++	data->clk_cdev1 = devm_clk_get(dev, "mclk");
+ 	if (IS_ERR(data->clk_cdev1)) {
+ 		dev_err(data->dev, "Can't retrieve clk cdev1\n");
+-		ret = PTR_ERR(data->clk_cdev1);
+-		goto err_put_pll_a_out0;
++		return PTR_ERR(data->clk_cdev1);
+ 	}
  
- static const struct of_device_id tegra_pmc_match[] = {
+ 	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+-	if (ret)
+-		goto err_put_cdev1;
+ 
+-	return 0;
+-
+-err_put_cdev1:
+-	clk_put(data->clk_cdev1);
+-err_put_pll_a_out0:
+-	clk_put(data->clk_pll_a_out0);
+-err_put_pll_a:
+-	clk_put(data->clk_pll_a);
+-err:
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(tegra_asoc_utils_init);
+ 
+-void tegra_asoc_utils_fini(struct tegra_asoc_utils_data *data)
+-{
+-	clk_put(data->clk_cdev1);
+-	clk_put(data->clk_pll_a_out0);
+-	clk_put(data->clk_pll_a);
+-}
+-EXPORT_SYMBOL_GPL(tegra_asoc_utils_fini);
+-
+ MODULE_AUTHOR("Stephen Warren <swarren@nvidia.com>");
+ MODULE_DESCRIPTION("Tegra ASoC utility code");
+ MODULE_LICENSE("GPL");
+diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_asoc_utils.h
+index 0c13818dee75..a34439587d59 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.h
++++ b/sound/soc/tegra/tegra_asoc_utils.h
+@@ -34,6 +34,5 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data);
+ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 			  struct device *dev);
+-void tegra_asoc_utils_fini(struct tegra_asoc_utils_data *data);
+ 
+ #endif
+diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+index 4954a33ff46b..f554a3d4571f 100644
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -218,19 +218,18 @@ static int tegra_max98090_probe(struct platform_device *pdev)
+ 
+ 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = snd_soc_of_parse_audio_routing(card, "nvidia,audio-routing");
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	tegra_max98090_dai.codecs->of_node = of_parse_phandle(np,
+ 			"nvidia,audio-codec", 0);
+ 	if (!tegra_max98090_dai.codecs->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,audio-codec' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	tegra_max98090_dai.cpus->of_node = of_parse_phandle(np,
+@@ -238,40 +237,31 @@ static int tegra_max98090_probe(struct platform_device *pdev)
+ 	if (!tegra_max98090_dai.cpus->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,i2s-controller' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	tegra_max98090_dai.platforms->of_node = tegra_max98090_dai.cpus->of_node;
+ 
+ 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto err_fini_utils;
++		return ret;
+ 	}
+ 
+ 	return 0;
+-
+-err_fini_utils:
+-	tegra_asoc_utils_fini(&machine->util_data);
+-err:
+-	return ret;
+ }
+ 
+ static int tegra_max98090_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+-	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(card);
+ 
+ 	snd_soc_unregister_card(card);
+ 
+-	tegra_asoc_utils_fini(&machine->util_data);
+-
+ 	return 0;
+ }
+ 
+diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
+index d46915a3ec4c..5c695dfea009 100644
+--- a/sound/soc/tegra/tegra_rt5640.c
++++ b/sound/soc/tegra/tegra_rt5640.c
+@@ -164,19 +164,18 @@ static int tegra_rt5640_probe(struct platform_device *pdev)
+ 
+ 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = snd_soc_of_parse_audio_routing(card, "nvidia,audio-routing");
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	tegra_rt5640_dai.codecs->of_node = of_parse_phandle(np,
+ 			"nvidia,audio-codec", 0);
+ 	if (!tegra_rt5640_dai.codecs->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,audio-codec' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	tegra_rt5640_dai.cpus->of_node = of_parse_phandle(np,
+@@ -184,40 +183,31 @@ static int tegra_rt5640_probe(struct platform_device *pdev)
+ 	if (!tegra_rt5640_dai.cpus->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,i2s-controller' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	tegra_rt5640_dai.platforms->of_node = tegra_rt5640_dai.cpus->of_node;
+ 
+ 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto err_fini_utils;
++		return ret;
+ 	}
+ 
+ 	return 0;
+-
+-err_fini_utils:
+-	tegra_asoc_utils_fini(&machine->util_data);
+-err:
+-	return ret;
+ }
+ 
+ static int tegra_rt5640_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+-	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(card);
+ 
+ 	snd_soc_unregister_card(card);
+ 
+-	tegra_asoc_utils_fini(&machine->util_data);
+-
+ 	return 0;
+ }
+ 
+diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
+index 81cb6cc6236e..fb86f76728b3 100644
+--- a/sound/soc/tegra/tegra_rt5677.c
++++ b/sound/soc/tegra/tegra_rt5677.c
+@@ -270,13 +270,11 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto err_fini_utils;
++		goto err_put_cpu_of_node;
+ 	}
+ 
+ 	return 0;
+ 
+-err_fini_utils:
+-	tegra_asoc_utils_fini(&machine->util_data);
+ err_put_cpu_of_node:
+ 	of_node_put(tegra_rt5677_dai.cpus->of_node);
+ 	tegra_rt5677_dai.cpus->of_node = NULL;
+@@ -291,12 +289,9 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
+ static int tegra_rt5677_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+-	struct tegra_rt5677 *machine = snd_soc_card_get_drvdata(card);
+ 
+ 	snd_soc_unregister_card(card);
+ 
+-	tegra_asoc_utils_fini(&machine->util_data);
+-
+ 	tegra_rt5677_dai.platforms->of_node = NULL;
+ 	of_node_put(tegra_rt5677_dai.codecs->of_node);
+ 	tegra_rt5677_dai.codecs->of_node = NULL;
+diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
+index e13b81d29cf3..586f56f435f4 100644
+--- a/sound/soc/tegra/tegra_sgtl5000.c
++++ b/sound/soc/tegra/tegra_sgtl5000.c
+@@ -156,13 +156,11 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto err_fini_utils;
++		goto err_put_cpu_of_node;
+ 	}
+ 
+ 	return 0;
+ 
+-err_fini_utils:
+-	tegra_asoc_utils_fini(&machine->util_data);
+ err_put_cpu_of_node:
+ 	of_node_put(tegra_sgtl5000_dai.cpus->of_node);
+ 	tegra_sgtl5000_dai.cpus->of_node = NULL;
+@@ -177,13 +175,10 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+-	struct tegra_sgtl5000 *machine = snd_soc_card_get_drvdata(card);
+ 	int ret;
+ 
+ 	ret = snd_soc_unregister_card(card);
+ 
+-	tegra_asoc_utils_fini(&machine->util_data);
+-
+ 	of_node_put(tegra_sgtl5000_dai.cpus->of_node);
+ 	tegra_sgtl5000_dai.cpus->of_node = NULL;
+ 	tegra_sgtl5000_dai.platforms->of_node = NULL;
+diff --git a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
+index f6dd790dad71..f76cfdc963ed 100644
+--- a/sound/soc/tegra/tegra_wm8753.c
++++ b/sound/soc/tegra/tegra_wm8753.c
+@@ -127,19 +127,18 @@ static int tegra_wm8753_driver_probe(struct platform_device *pdev)
+ 
+ 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = snd_soc_of_parse_audio_routing(card, "nvidia,audio-routing");
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	tegra_wm8753_dai.codecs->of_node = of_parse_phandle(np,
+ 			"nvidia,audio-codec", 0);
+ 	if (!tegra_wm8753_dai.codecs->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,audio-codec' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	tegra_wm8753_dai.cpus->of_node = of_parse_phandle(np,
+@@ -147,40 +146,31 @@ static int tegra_wm8753_driver_probe(struct platform_device *pdev)
+ 	if (!tegra_wm8753_dai.cpus->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,i2s-controller' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	tegra_wm8753_dai.platforms->of_node = tegra_wm8753_dai.cpus->of_node;
+ 
+ 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto err_fini_utils;
++		return ret;
+ 	}
+ 
+ 	return 0;
+-
+-err_fini_utils:
+-	tegra_asoc_utils_fini(&machine->util_data);
+-err:
+-	return ret;
+ }
+ 
+ static int tegra_wm8753_driver_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+-	struct tegra_wm8753 *machine = snd_soc_card_get_drvdata(card);
+ 
+ 	snd_soc_unregister_card(card);
+ 
+-	tegra_asoc_utils_fini(&machine->util_data);
+-
+ 	return 0;
+ }
+ 
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index f08d3489c3cf..f5f78c3512cd 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -301,19 +301,18 @@ static int tegra_wm8903_driver_probe(struct platform_device *pdev)
+ 
+ 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = snd_soc_of_parse_audio_routing(card, "nvidia,audio-routing");
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	tegra_wm8903_dai.codecs->of_node = of_parse_phandle(np,
+ 						"nvidia,audio-codec", 0);
+ 	if (!tegra_wm8903_dai.codecs->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,audio-codec' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	tegra_wm8903_dai.cpus->of_node = of_parse_phandle(np,
+@@ -321,40 +320,31 @@ static int tegra_wm8903_driver_probe(struct platform_device *pdev)
+ 	if (!tegra_wm8903_dai.cpus->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,i2s-controller' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	tegra_wm8903_dai.platforms->of_node = tegra_wm8903_dai.cpus->of_node;
+ 
+ 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto err_fini_utils;
++		return ret;
+ 	}
+ 
+ 	return 0;
+-
+-err_fini_utils:
+-	tegra_asoc_utils_fini(&machine->util_data);
+-err:
+-	return ret;
+ }
+ 
+ static int tegra_wm8903_driver_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+-	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+ 
+ 	snd_soc_unregister_card(card);
+ 
+-	tegra_asoc_utils_fini(&machine->util_data);
+-
+ 	return 0;
+ }
+ 
+diff --git a/sound/soc/tegra/tegra_wm9712.c b/sound/soc/tegra/tegra_wm9712.c
+index b85bd9f89073..726edfa21a29 100644
+--- a/sound/soc/tegra/tegra_wm9712.c
++++ b/sound/soc/tegra/tegra_wm9712.c
+@@ -113,19 +113,17 @@ static int tegra_wm9712_driver_probe(struct platform_device *pdev)
+ 
+ 	ret = tegra_asoc_utils_set_ac97_rate(&machine->util_data);
+ 	if (ret)
+-		goto asoc_utils_fini;
++		goto codec_unregister;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto asoc_utils_fini;
++		goto codec_unregister;
+ 	}
+ 
+ 	return 0;
+ 
+-asoc_utils_fini:
+-	tegra_asoc_utils_fini(&machine->util_data);
+ codec_unregister:
+ 	platform_device_del(machine->codec);
+ codec_put:
+@@ -140,8 +138,6 @@ static int tegra_wm9712_driver_remove(struct platform_device *pdev)
+ 
+ 	snd_soc_unregister_card(card);
+ 
+-	tegra_asoc_utils_fini(&machine->util_data);
+-
+ 	platform_device_unregister(machine->codec);
+ 
+ 	return 0;
+diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+index 3f67ddd13674..e51c67092c8f 100644
+--- a/sound/soc/tegra/trimslice.c
++++ b/sound/soc/tegra/trimslice.c
+@@ -125,8 +125,7 @@ static int tegra_snd_trimslice_probe(struct platform_device *pdev)
+ 	if (!trimslice_tlv320aic23_dai.codecs->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,audio-codec' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	trimslice_tlv320aic23_dai.cpus->of_node = of_parse_phandle(np,
+@@ -134,8 +133,7 @@ static int tegra_snd_trimslice_probe(struct platform_device *pdev)
+ 	if (!trimslice_tlv320aic23_dai.cpus->of_node) {
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,i2s-controller' missing or invalid\n");
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	trimslice_tlv320aic23_dai.platforms->of_node =
+@@ -143,32 +141,24 @@ static int tegra_snd_trimslice_probe(struct platform_device *pdev)
+ 
+ 	ret = tegra_asoc_utils_init(&trimslice->util_data, &pdev->dev);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto err_fini_utils;
++		return ret;
+ 	}
+ 
+ 	return 0;
+-
+-err_fini_utils:
+-	tegra_asoc_utils_fini(&trimslice->util_data);
+-err:
+-	return ret;
+ }
+ 
+ static int tegra_snd_trimslice_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+-	struct tegra_trimslice *trimslice = snd_soc_card_get_drvdata(card);
+ 
+ 	snd_soc_unregister_card(card);
+ 
+-	tegra_asoc_utils_fini(&trimslice->util_data);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.7.4
