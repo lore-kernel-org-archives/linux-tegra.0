@@ -1,86 +1,29 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM
- state
-Date: Fri, 20 Dec 2019 01:58:36 +0300
-Message-ID: <1ff337b4-b4e9-4f16-44d5-9e89f88dd61f@gmail.com>
-References: <20191212233428.14648-1-digetx@gmail.com>
- <20191212233428.14648-4-digetx@gmail.com> <20191213134746.GA222809@ulmo>
- <3c2b16c0-3e66-d809-b263-f27cf925e203@gmail.com>
- <1ed725c9-361b-c920-d532-dd640c3ca59f@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+Subject: [PATCH 0/4] iommu/tegra-smmu: A set of small fixes
+Date: Thu, 19 Dec 2019 16:29:10 -0800
+Message-ID: <20191220002914.19043-1-nicoleotsuka@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1ed725c9-361b-c920-d532-dd640c3ca59f@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: thierry.reding@gmail.com, joro@8bytes.org
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-13.12.2019 21:01, Dmitry Osipenko пишет:
-> 13.12.2019 17:04, Dmitry Osipenko пишет:
->> 13.12.2019 16:47, Thierry Reding пишет:
->>> On Fri, Dec 13, 2019 at 02:34:28AM +0300, Dmitry Osipenko wrote:
->>>> I noticed that sometime I2C clock is kept enabled during suspend-resume.
->>>> This happens because runtime PM defers dynamic suspension and thus it may
->>>> happen that runtime PM is in active state when system enters into suspend.
->>>> In particular I2C controller that is used for CPU's DVFS is often kept ON
->>>> during suspend because CPU's voltage scaling happens quite often.
->>>>
->>>> Note: we marked runtime PM as IRQ-safe during the driver's probe in the
->>>> "Support atomic transfers" patch, thus it's okay to enforce runtime PM
->>>> suspend/resume in the NOIRQ phase which is used for the system-level
->>>> suspend/resume of the driver.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
->>>>  1 file changed, 9 insertions(+)
->>>
->>> I've recently discussed this with Rafael in the context of runtime PM
->>> support in the Tegra DRM driver and my understanding is that you're not
->>> supposed to force runtime PM suspension like this.
->>>
->>> I had meant to send out an alternative patch to fix this, which I've
->>> done now:
->>>
->>> 	http://patchwork.ozlabs.org/patch/1209148/
->>>
->>> That's more in line with what Rafael and I had discussed in the other
->>> thread and should address the issue that you're seeing as well.
->>
->> Well, either me or you are still having some misunderstanding of the
->> runtime PM :) To my knowledge there are a lot of drivers that enforce
->> suspension of the runtime PM during system's suspend, it should be a
->> right thing to do especially in a context of the Tegra I2C driver
->> because we're using asynchronous pm_runtime_put() and thus at the time
->> of system's suspending, the runtime PM could be ON (as I wrote in the
->> commit message) and then Terga's I2C driver manually disables the clock
->> on resume (woopsie).
-> 
-> Actually, looks like it's not the asynchronous pm_runtime_put() is the
-> cause of suspending in active state. I see that only one of three I2C
-> controllers is suspended in the enabled state, maybe some child (I2C
-> client) device keeps it awake, will try to find out.
-> 
->> By invoking pm_runtime_force_suspend() on systems's suspend, the runtime
->> PM executes tegra_i2c_runtime_suspend() if device is in active state. On
->> system resume, pm_runtime_force_resume() either keeps device in a
->> suspended state or resumes it, say if for userspace disabled the runtime
->> PM for the I2C controller.
->>
->> Rafael, could you please clarify whether my patch is doing a wrong thing?
+Hi all,
 
-[snip]
+This series of patches are some small fixes for tegra-smmu, mainly
+tested Tegra210 with downstream kernel. As we only enabled limited
+clients for Tegra210 on mainline tree, I am not sure how critical
+these fixes are, so not CCing stable tree.
 
-I'm now thinking that it will be not very worthwhile to spend time on
-trying to understand why runtime PM isn't working as expected here. It
-will be better to simply remove runtime PM from the I2C driver because
-it is used only for clock-gating/pinmuxing and it is a very light
-operation in comparison to I2C transfer performance. Thus it should be
-better to avoid the runtime PM overhead by enabling/disabling the I2C
-clocks before/after the transfer, I think that's what driver did before
-the runtime PM addition.
+Nicolin Chen (4):
+  memory: tegra: Correct reset value of xusb_hostr
+  iommu/tegra-smmu: Do not use PAGE_SHIFT and PAGE_MASK
+  iommu/tegra-smmu: Fix iova->phy translation
+  iommu/tegra-smmu: Prevent race condition between map and unmap
 
-Thierry / Jon / Mikko, any objections?
+ drivers/iommu/tegra-smmu.c      | 29 ++++++++++++++++++++++++-----
+ drivers/memory/tegra/tegra210.c |  2 +-
+ 2 files changed, 25 insertions(+), 6 deletions(-)
+
+-- 
+2.17.1
