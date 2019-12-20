@@ -1,360 +1,189 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v4 06/19] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-Date: Fri, 20 Dec 2019 11:06:16 -0800
-Message-ID: <48142928-fc5b-a5d3-957d-075ae646db86@nvidia.com>
-References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-7-git-send-email-skomatineni@nvidia.com>
- <87b2b266-e4a9-9a7a-2336-6ec57d7c4d1d@gmail.com>
- <55a56c3d-3fac-cc77-46ae-acf5de77d262@gmail.com>
- <e11d2ea9-20f1-6920-7efc-ba8a50312f75@gmail.com>
- <c5bb3c25-1fae-3ca9-6bf3-c3d66be20e19@nvidia.com>
- <664f1a41-d539-36e8-092b-11d7e4555108@nvidia.com>
- <31020f6b-97bf-eb48-1150-0355c868eafc@gmail.com>
- <8fa81a47-63e5-d64d-7cc6-7fdd20ff89f0@nvidia.com>
- <42f39288-da11-e28d-2a0e-28f1b020e674@gmail.com>
+Subject: [PATCH v5 00/19] Move PMC clocks into Tegra PMC driver
+Date: Fri, 20 Dec 2019 14:26:46 -0800
+Message-ID: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <42f39288-da11-e28d-2a0e-28f1b020e674@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+This patch series moves Tegra PMC clocks from clock driver to pmc driver
+along with the device trees changes and audio driver which uses one of
+the pmc clock for audio mclk.
 
-On 12/19/19 8:34 PM, Dmitry Osipenko wrote:
-> 20.12.2019 07:13, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 12/19/19 5:39 PM, Dmitry Osipenko wrote:
->>> 20.12.2019 04:21, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> On 12/18/19 4:41 PM, Sowjanya Komatineni wrote:
->>>>> On 12/18/19 1:44 PM, Dmitry Osipenko wrote:
->>>>>> 18.12.2019 11:35, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>> 18.12.2019 11:30, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>>> 17.12.2019 23:03, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82:
->>>>>>>>> Tegra PMC has clk_out_1, clk_out_2, and clk_out_3 clocks and
->>>>>>>>> currently
->>>>>>>>> these PMC clocks are registered by Tegra clock driver with each
->>>>>>>>> clock as
->>>>>>>>> separate mux and gate clocks using clk_register_mux and
->>>>>>>>> clk_register_gate
->>>>>>>>> by passing PMC base address and register offsets and PMC
->>>>>>>>> programming for
->>>>>>>>> these clocks happens through direct PMC access by the clock drive=
-r.
->>>>>>>>>
->>>>>>>>> With this, when PMC is in secure mode any direct PMC access from
->>>>>>>>> the
->>>>>>>>> non-secure world does not go through and these clocks will not be
->>>>>>>>> functional.
->>>>>>>>>
->>>>>>>>> This patch adds these PMC clocks registration to pmc driver with
->>>>>>>>> PMC as
->>>>>>>>> a clock provider and registers each clock as single clock.
->>>>>>>>>
->>>>>>>>> clk_ops callback implementations for these clocks uses
->>>>>>>>> tegra_pmc_readl and
->>>>>>>>> tegra_pmc_writel which supports PMC programming in both secure
->>>>>>>>> mode and
->>>>>>>>> non-secure mode.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>> ---
->>>>>>>>>  =C2=A0=C2=A0 drivers/soc/tegra/pmc.c | 248
->>>>>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>>>>  =C2=A0=C2=A0 1 file changed, 248 insertions(+)
->>>>>>>>>
->>>>>>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>>>>>>>> index ea0e11a09c12..6d65194a6e71 100644
->>>>>>>>> --- a/drivers/soc/tegra/pmc.c
->>>>>>>>> +++ b/drivers/soc/tegra/pmc.c
->>>>>>>>> @@ -13,6 +13,9 @@
->>>>>>>>>  =C2=A0=C2=A0 =C2=A0 #include <linux/arm-smccc.h>
->>>>>>>>>  =C2=A0=C2=A0 #include <linux/clk.h>
->>>>>>>>> +#include <linux/clk-provider.h>
->>>>>>>>> +#include <linux/clkdev.h>
->>>>>>>>> +#include <linux/clk/clk-conf.h>
->>>>>>>>>  =C2=A0=C2=A0 #include <linux/clk/tegra.h>
->>>>>>>>>  =C2=A0=C2=A0 #include <linux/debugfs.h>
->>>>>>>>>  =C2=A0=C2=A0 #include <linux/delay.h>
->>>>>>>>> @@ -48,6 +51,7 @@
->>>>>>>>>  =C2=A0=C2=A0 #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.=
-h>
->>>>>>>>>  =C2=A0=C2=A0 #include <dt-bindings/gpio/tegra186-gpio.h>
->>>>>>>>>  =C2=A0=C2=A0 #include <dt-bindings/gpio/tegra194-gpio.h>
->>>>>>>>> +#include <dt-bindings/soc/tegra-pmc.h>
->>>>>>>>>  =C2=A0=C2=A0 =C2=A0 #define PMC_CNTRL=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x0
->>>>>>>>>  =C2=A0=C2=A0 #define=C2=A0 PMC_CNTRL_INTR_POLARITY=C2=A0=C2=A0=
-=C2=A0 BIT(17) /* inverts INTR
->>>>>>>>> polarity */
->>>>>>>>> @@ -100,6 +104,7 @@
->>>>>>>>>  =C2=A0=C2=A0 #define PMC_WAKE2_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 0x168
->>>>>>>>>  =C2=A0=C2=A0 #define PMC_SW_WAKE2_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 0x16c
->>>>>>>>>  =C2=A0=C2=A0 +#define PMC_CLK_OUT_CNTRL=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 0x1a8
->>>>>>>>>  =C2=A0=C2=A0 #define PMC_SENSOR_CTRL=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1b0
->>>>>>>>>  =C2=A0=C2=A0 #define=C2=A0 PMC_SENSOR_CTRL_SCRATCH_WRITE=C2=A0=
-=C2=A0=C2=A0 BIT(2)
->>>>>>>>>  =C2=A0=C2=A0 #define=C2=A0 PMC_SENSOR_CTRL_ENABLE_RST=C2=A0=C2=
-=A0=C2=A0 BIT(1)
->>>>>>>>> @@ -155,6 +160,64 @@
->>>>>>>>>  =C2=A0=C2=A0 #define=C2=A0 TEGRA_SMC_PMC_READ=C2=A0=C2=A0=C2=A0 =
-0xaa
->>>>>>>>>  =C2=A0=C2=A0 #define=C2=A0 TEGRA_SMC_PMC_WRITE=C2=A0=C2=A0=C2=A0=
- 0xbb
->>>>>>>>>  =C2=A0=C2=A0 +struct pmc_clk {
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw=C2=A0=C2=A0=C2=A0 hw;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned long=C2=A0=C2=A0=C2=A0 offs;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- mux_mask;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- mux_shift;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- gate_shift;
->>>>>>>>> +};
->>>>>>>>> +
->>>>>>>>> +#define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
->>>>>>>>> +
->>>>>>>>> +struct pmc_clk_init_data {
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 char *name;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 const char *const *parents;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 int num_parents;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 int clk_id;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 u8 mux_shift;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 u8 gate_shift;
->>>>>>>>> +};
->>>>>>>>> +
->>>>>>>>> +static const char * const clk_out1_parents[] =3D { "osc",
->>>>>>>>> "osc_div2",
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 "osc_div4", "extern1",
->>>>>>>>> +};
->>>>>>>>> +
->>>>>>>>> +static const char * const clk_out2_parents[] =3D { "osc",
->>>>>>>>> "osc_div2",
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 "osc_div4", "extern2",
->>>>>>>>> +};
->>>>>>>>> +
->>>>>>>>> +static const char * const clk_out3_parents[] =3D { "osc",
->>>>>>>>> "osc_div2",
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 "osc_div4", "extern3",
->>>>>>>>> +};
->>>>>>>>> +
->>>>>>>>> +static const struct pmc_clk_init_data tegra_pmc_clks_data[] =3D =
-{
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 {
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "clk_out_1"=
-,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out1=
-_parents,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARRA=
-Y_SIZE(clk_out1_parents),
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .clk_id =3D TEGRA_PMC=
-_CLK_OUT_1,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D 6,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D 2,
->>>>>>>> I'd replace these with a single .shift, given that mux_shift =3D
->>>>>>>> gate_shift + 4 for all clocks.
->>>>>>>>
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 },
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 {
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "clk_out_2"=
-,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out2=
-_parents,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARRA=
-Y_SIZE(clk_out2_parents),
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .clk_id =3D TEGRA_PMC=
-_CLK_OUT_2,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D 14,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D 10,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 },
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 {
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "clk_out_3"=
-,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out3=
-_parents,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARRA=
-Y_SIZE(clk_out3_parents),
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .clk_id =3D TEGRA_PMC=
-_CLK_OUT_3,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D 22,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D 18,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 },
->>>>>>>>> +};
->>>>>>>>> +
->>>>>>>>>  =C2=A0=C2=A0 struct tegra_powergate {
->>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct generic_pm_domain ge=
-npd;
->>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_pmc *pmc;
->>>>>>>>> @@ -254,6 +317,9 @@ struct tegra_pmc_soc {
->>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct tegra_wake_eve=
-nt *wake_events;
->>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int num_wake_event=
-s;
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 const struct pmc_clk_init_data *pmc_clks_data=
-;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 unsigned int num_pmc_clks;
->>>>>>>>>  =C2=A0=C2=A0 };
->>>>>>>>>  =C2=A0=C2=A0 =C2=A0 static const char * const tegra186_reset_sou=
-rces[] =3D {
->>>>>>>>> @@ -2163,6 +2229,173 @@ static int tegra_pmc_clk_notify_cb(struct
->>>>>>>>> notifier_block *nb,
->>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NOTIFY_OK;
->>>>>>>>>  =C2=A0=C2=A0 }
->>>>>>>>>  =C2=A0=C2=A0 +static void pmc_clk_fence_udelay(u32 offset)
->>>>>>>>> +{
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_readl(pmc, offset);
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 /* pmc clk propagation delay 2 us */
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 udelay(2);
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static u8 pmc_clk_mux_get_parent(struct clk_hw *hw)
->>>>>>>>> +{
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, clk->offs) >> cl=
-k->mux_shift;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 val &=3D clk->mux_mask;
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 return val;
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static int pmc_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->>>>>>>>> +{
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, clk->offs);
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 val &=3D ~(clk->mux_mask << clk->mux_shift);
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 val |=3D index << clk->mux_shift;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, val, clk->offs);
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_fence_udelay(clk->offs);
->>> Is this fencing applies only to clock changes or maybe it won't hurt to
->>> move it into tegra_pmc_writel()?
-Only for clock changes
->>>
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 return 0;
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static int pmc_clk_is_enabled(struct clk_hw *hw)
->>>>>>>>> +{
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 return tegra_pmc_readl(pmc, clk->offs) & BIT(=
-clk->gate_shift)
->>>>>>>>> ? 1 : 0;
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static void pmc_clk_set_state(unsigned long offs, u32 shift, int
->>>>>>>>> state)
->>>>>>>>> +{
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, offs);
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 val =3D state ? (val | BIT(shift)) : (val & ~=
-BIT(shift));
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, val, offs);
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_fence_udelay(offs);
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static int pmc_clk_enable(struct clk_hw *hw)
->>>>>>>>> +{
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_set_state(clk->offs, clk->gate_shift,=
- 1);
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 return 0;
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static void pmc_clk_disable(struct clk_hw *hw)
->>>>>>>>> +{
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_set_state(clk->offs, clk->gate_shift,=
- 0);
->>>>>>>>> +}
->>>>>>>>> +
->>>>>>>>> +static const struct clk_ops pmc_clk_ops =3D {
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 .get_parent =3D pmc_clk_mux_get_parent,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 .set_parent =3D pmc_clk_mux_set_parent,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 .determine_rate =3D __clk_mux_determine_rate,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
->>>>>>>>> +};
->>>>>>>>> +
->>>>>>>>> +static struct clk *
->>>>>>>>> +tegra_pmc_clk_out_register(const struct pmc_clk_init_data *data,
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 unsigned long offset)
->>>>>>>>> +{
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct clk_init_data init;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *pmc_clk;
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk =3D kzalloc(sizeof(*pmc_clk), GFP_KER=
-NEL);
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!pmc_clk)
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ERR_PTR(-ENOME=
-M);
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.name =3D data->name;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.ops =3D &pmc_clk_ops;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.parent_names =3D data->parents;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.num_parents =3D data->num_parents;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 init.flags =3D CLK_SET_RATE_NO_REPARENT | CLK=
-_SET_RATE_PARENT |
->>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 CLK_SET_PARENT_GATE;
->>>>>>>>> +
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk->hw.init =3D &init;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk->offs =3D offset;
->>>>>>>>> +=C2=A0=C2=A0=C2=A0 pmc_clk->mux_mask =3D 3;
->>>>>>>> If mux_mask is a constant value, perhaps will be better to
->>>>>>>> replace the
->>>>>>>> variable with a literal?
->>>>>>>>
->>>>>>>> #define PMC_CLK_OUT_MUX_MASK=C2=A0=C2=A0=C2=A0 GENMASK(1, 0)
->>>>>>> Maybe even:
->>>>>>>
->>>>>>> #define PMC_CLK_OUT_MUX_MASK(c)=C2=A0=C2=A0=C2=A0 GENMASK(c->shift =
-+ 1, c->shift)
->>>>> MUX Mask is used only here for PMC clock out and is same for all
->>>>> clk_out mux so will use
->>>>>
->>>>> #define PMC_CLK_OUT_MUX_MASK=C2=A0=C2=A0=C2=A0 GENMASK(1, 0)
->>>>>
->>>>>> I want to point out that may be a separated gate/mux shifts is a fin=
-e
->>>>>> variant, you should try and see whether another variants produce mor=
-e
->>>>>> concise result.
->>>>>>
->>>>>> [snip]
->>>> We can do mux_shift as gate_shift + 4 and that restricts this clk
->>>> register only for clk1/2/3 as well and there are no other clocks in pm=
-c
->>>> anyway.
->>>>
->>>> How about using bit shift define for CLK1, CLK2, and CLK3?
->>>>
->>>> .mux_shift =3D PMC_CLK1_SRC_SEL_SHIFT,
->>>>
->>>> .gate_shift =3D PMC_CLK1_FORCE_EN_SHIFT,
->>>>
->>>>
->>> I think that just renaming ".gate_shift" -> ".force_en_shift" should be
->>> good enough.
->> You meant to assign bit position directly instead of defines like what I
->> have now in v4 and use force_en_shift instead of gate_shift?
-> Yes
+Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+are currently registered by Tegra clock driver using clk_regiser_mux and
+clk_register_gate which performs direct Tegra PMC register access.
+
+When Tegra PMC is in secure mode, any access from non-secure world will
+not go through.
+
+This patch series adds these Tegra PMC clocks and blink controls to Tegra
+PMC driver with PMC as clock provider and removes them from Tegra clock
+driver.
+
+PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru Tegra210
+and clock driver does inital parent configuration for it and enables them.
+But this clock should be taken care by audio driver as there is no need
+to have this clock pre enabled.
+
+So, this series also includes patch that updates ASoC driver to take
+care of parent configuration for mclk if device tree don't specify
+initial parent configuration using assigned-clock-parents.
+
+DTs are also updated to use clk_out_1 as audio mclk rather than extern1.
+
+This series also includes a patch for mclk fallback to extern1 when
+retrieving mclk fails to have this backward compatible of new DT with
+old kernels.
+
+[v5]:	Changes between v4 and v5 are
+	- v4 feedback
+	- updated dt-binding pmc YAML schema with more description on power
+	  gate nodes and pad configuration state nodes.
+	- update tegra_asoc_utils_set_rate to disable audio mclk only if
+	  its in enable state.
+
+[v4]:	Changes between v3 and v4 are
+	- v3 Feedback
+	- Updated clocks clk_m_div2 and clk_m_div4 as osc_div2 and osc_div4.
+	  Tegra don't have clk_m_div2, clk_m_div4 and they should actually
+	  be osc_div2 and osc_div4 clocks from osc pads.
+	- Fixed PMC clock parents to use osc, osc_div2, osc_div4.
+	- Register each PMC clock as single clock rather than separate
+	  mux and gate clocks.
+	- Update ASoC utils to use resource managed APIs rather than
+	  using clk_get and clk_put.
+	- Updated device tree and ASoC driver to use clk_out_1 instead of
+	  clk_out_1_mux as PMC clocks are registered as single clock.
+	- Update clock driver init_table to not enable audio related clocks
+	  as ASoC utils will do audio clock enables.
+
+[v3]:	Changes between v2 and v3 are
+	- Removes set parent of clk_out_1_mux to extern1 and enabling
+	  extern1 from the clock driver.
+	- Doesn't enable clk_out_1 and blink by default in pmc driver
+	- Updates ASoC driver to take care of audio mclk parent
+	  configuration incase if device tree don't specify assigned
+	  clock parent properties and enables mclk using both clk_out_1
+	  and extern1.
+	- updates all device trees using extern1 as mclk in sound node
+	  to use clk_out_1 from pmc.
+	- patch for YAML format pmc dt-binding
+	- Includes v2 feedback
+
+[v2]:	Changes between v1 and v2 are
+	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
+	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
+	- feedback related to pmc clocks in Tegra PMC driver from v1
+	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
+	  by the clock driver using helper functions from Tegra PMC.
+
+ 	  Note:
+	  To use helper functions from PMC driver, PMC early init need to
+	  happen prior to using helper functions and these helper functions are
+	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
+	  clock registration which happen in clock_init prior to Tegra PMC
+	  probe.
+	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
+	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
+	  tegra_mc_init.
+	  This implementation of configuring PMC registers thru helper
+	  functions in clock driver needs proper changes across PMC, Clock,
+	  EMC and MC inits to have it work across all Tegra platforms.
+
+	  Currently PLLM Override is not enabled in the bootloader so proper
+	  patches for this fix will be taken care separately.
+
+[v1]:	v1 includes patches for below fixes.
+	- adding clk_out_1, clk_out_2, clk_out_3, blink controls to Tegra PMC
+	  driver and removing clk-tegra-pmc.
+	- updated clock provider from tegra_car to pmc in the device tree
+	  tegra210-smaug.dts that uses clk_out_2.
+	- Added helper functions in PMC driver for WB0 PLLM overrides and PLLE
+	  IDDQ programming to use by clock driver and updated clock driver to
+	  use these helper functions and removed direct PMC access from clock
+	  driver and all pmc base address references in clock driver.
+
+
+Sowjanya Komatineni (19):
+  dt-bindings: clock: tegra: Change CLK_M_DIV to OSC_DIV clocks
+  clk: tegra: Change CLK_M_DIV clocks to OSC_DIV clocks
+  clk: tegra: Fix Tegra PMC clock out parents
+  dt-bindings: tegra: Convert Tegra PMC bindings to YAML
+  dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
+  soc: tegra: Add Tegra PMC clocks registration into PMC driver
+  dt-bindings: soc: tegra-pmc: Add id for Tegra PMC 32KHz blink clock
+  soc: tegra: Add support for 32KHz blink clock
+  clk: tegra: Remove tegra_pmc_clk_init along with clk ids
+  dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
+  ASoC: tegra: Use device managed resource APIs to get the clock
+  ASoC: tegra: Add initial parent configuration for audio mclk
+  ASoC: tegra: Add fallback implementation for audio mclk
+  clk: tegra: Remove audio related clock enables from init_table
+  ARM: dts: tegra: Add clock-cells property to pmc
+  arm64: tegra: Add clock-cells property to Tegra PMC node
+  ARM: tegra: Update sound node clocks in device tree
+  arm64: tegra: smaug: Change clk_out_2 provider to pmc
+  ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
+
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 300 -----------------
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 357 +++++++++++++++++++++
+ .../devicetree/bindings/sound/nau8825.txt          |   2 +-
+ arch/arm/boot/dts/tegra114-dalmore.dts             |   8 +-
+ arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi        |   8 +-
+ arch/arm/boot/dts/tegra124-apalis.dtsi             |   8 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   8 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi               |   8 +-
+ arch/arm/boot/dts/tegra124-venice2.dts             |   8 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
+ arch/arm/boot/dts/tegra20.dtsi                     |   4 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         |   8 +-
+ arch/arm/boot/dts/tegra30-apalis.dtsi              |   8 +-
+ arch/arm/boot/dts/tegra30-beaver.dts               |   8 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi              |   8 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi             |   8 +-
+ arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +-
+ drivers/clk/tegra/Makefile                         |   1 -
+ drivers/clk/tegra/clk-id.h                         |  11 +-
+ drivers/clk/tegra/clk-tegra-fixed.c                |  32 +-
+ drivers/clk/tegra/clk-tegra-pmc.c                  | 122 -------
+ drivers/clk/tegra/clk-tegra114.c                   |  41 +--
+ drivers/clk/tegra/clk-tegra124.c                   |  46 +--
+ drivers/clk/tegra/clk-tegra20.c                    |   9 +-
+ drivers/clk/tegra/clk-tegra210.c                   |  30 +-
+ drivers/clk/tegra/clk-tegra30.c                    |  31 +-
+ drivers/clk/tegra/clk.h                            |   1 -
+ drivers/soc/tegra/pmc.c                            | 352 ++++++++++++++++++++
+ include/dt-bindings/clock/tegra114-car.h           |  18 +-
+ include/dt-bindings/clock/tegra124-car-common.h    |  18 +-
+ include/dt-bindings/clock/tegra20-car.h            |   2 +-
+ include/dt-bindings/clock/tegra210-car.h           |  18 +-
+ include/dt-bindings/clock/tegra30-car.h            |  18 +-
+ include/dt-bindings/soc/tegra-pmc.h                |  16 +
+ sound/soc/tegra/tegra_alc5632.c                    |   7 +-
+ sound/soc/tegra/tegra_asoc_utils.c                 | 114 ++++---
+ sound/soc/tegra/tegra_asoc_utils.h                 |   1 -
+ sound/soc/tegra/tegra_max98090.c                   |  22 +-
+ sound/soc/tegra/tegra_rt5640.c                     |  22 +-
+ sound/soc/tegra/tegra_rt5677.c                     |   7 +-
+ sound/soc/tegra/tegra_sgtl5000.c                   |   7 +-
+ sound/soc/tegra/tegra_wm8753.c                     |  22 +-
+ sound/soc/tegra/tegra_wm8903.c                     |  22 +-
+ sound/soc/tegra/tegra_wm9712.c                     |   8 +-
+ sound/soc/tegra/trimslice.c                        |  18 +-
+ 49 files changed, 1012 insertions(+), 779 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+ delete mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
+ create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+
+-- 
+2.7.4
