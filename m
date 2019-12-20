@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 1/3] memory: tegra30-emc: Firm up suspend/resume sequence
-Date: Fri, 20 Dec 2019 05:08:47 +0300
-Message-ID: <20191220020849.11175-2-digetx@gmail.com>
+Subject: [PATCH v2 2/3] memory: tegra30-emc: Firm up hardware programming sequence
+Date: Fri, 20 Dec 2019 05:08:48 +0300
+Message-ID: <20191220020849.11175-3-digetx@gmail.com>
 References: <20191220020849.11175-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,114 +12,256 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The current code doesn't prevent race conditions of suspend/resume vs CCF.
-Let's take exclusive control over the EMC clock during suspend in a way
-that is free from race conditions.
+Previously there was a problem where a late handshake handling caused
+a memory corruption, this problem was resolved by issuing calibration
+command right after changing the timing, but looks like the solution
+wasn't entirely correct since calibration interval could be disabled as
+well. Now programming sequence is completed immediately after receiving
+handshake from CaR, without potentially long delays and in accordance to
+the TRM's programming guide.
+
+Secondly, the TRM's programming guide suggests to flush EMC writes by
+reading any *MC* register before doing CaR changes. This is also addressed
+now.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra30-emc.c | 38 ++++++++++++++++--------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
+ drivers/memory/tegra/tegra30-emc.c | 150 +++++++++++++++++------------
+ 1 file changed, 89 insertions(+), 61 deletions(-)
 
 diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 0b6a5e451ea3..770808da957d 100644
+index 770808da957d..2f91437a5f20 100644
 --- a/drivers/memory/tegra/tegra30-emc.c
 +++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -345,7 +345,6 @@ struct tegra_emc {
+@@ -331,7 +331,9 @@ struct tegra_emc {
+ 	struct clk *clk;
+ 	void __iomem *regs;
+ 	unsigned int irq;
++	bool bad_state;
+ 
++	struct emc_timing *new_timing;
+ 	struct emc_timing *timings;
+ 	unsigned int num_timings;
+ 
+@@ -345,9 +347,68 @@ struct tegra_emc {
  	bool vref_cal_toggle : 1;
  	bool zcal_long : 1;
  	bool dll_on : 1;
--	bool prepared : 1;
- 	bool bad_state : 1;
+-	bool bad_state : 1;
  };
  
-@@ -751,9 +750,6 @@ static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
- 	/* interrupt can be re-enabled now */
- 	enable_irq(emc->irq);
++static int emc_seq_update_timing(struct tegra_emc *emc)
++{
++	u32 val;
++	int err;
++
++	writel_relaxed(EMC_TIMING_UPDATE, emc->regs + EMC_TIMING_CONTROL);
++
++	err = readl_relaxed_poll_timeout_atomic(emc->regs + EMC_STATUS, val,
++				!(val & EMC_STATUS_TIMING_UPDATE_STALLED),
++				1, 200);
++	if (err) {
++		dev_err(emc->dev, "failed to update timing: %d\n", err);
++		return err;
++	}
++
++	return 0;
++}
++
++static void emc_complete_clk_change(struct tegra_emc *emc)
++{
++	struct emc_timing *timing = emc->new_timing;
++	unsigned int dram_num;
++	bool failed = false;
++	int err;
++
++	/* re-enable auto-refresh */
++	dram_num = tegra_mc_get_emem_device_count(emc->mc);
++	writel_relaxed(EMC_REFCTRL_ENABLE_ALL(dram_num),
++		       emc->regs + EMC_REFCTRL);
++
++	/* restore auto-calibration */
++	if (emc->vref_cal_toggle)
++		writel_relaxed(timing->emc_auto_cal_interval,
++			       emc->regs + EMC_AUTO_CAL_INTERVAL);
++
++	/* restore dynamic self-refresh */
++	if (timing->emc_cfg_dyn_self_ref) {
++		emc->emc_cfg |= EMC_CFG_DYN_SREF_ENABLE;
++		writel_relaxed(emc->emc_cfg, emc->regs + EMC_CFG);
++	}
++
++	/* set number of clocks to wait after each ZQ command */
++	if (emc->zcal_long)
++		writel_relaxed(timing->emc_zcal_cnt_long,
++			       emc->regs + EMC_ZCAL_WAIT_CNT);
++
++	/* wait for writes to settle */
++	udelay(2);
++
++	/* update restored timing */
++	err = emc_seq_update_timing(emc);
++	if (err)
++		failed = true;
++
++	/* restore early ACK */
++	mc_writel(emc->mc, emc->mc_override, MC_EMEM_ARB_OVERRIDE);
++
++	WRITE_ONCE(emc->bad_state, failed);
++}
++
+ static irqreturn_t tegra_emc_isr(int irq, void *data)
+ {
+ 	struct tegra_emc *emc = data;
+@@ -358,10 +419,6 @@ static irqreturn_t tegra_emc_isr(int irq, void *data)
+ 	if (!status)
+ 		return IRQ_NONE;
  
--	emc->bad_state = false;
--	emc->prepared = true;
+-	/* notify about EMC-CAR handshake completion */
+-	if (status & EMC_CLKCHANGE_COMPLETE_INT)
+-		complete(&emc->clk_handshake_complete);
 -
- 	return 0;
+ 	/* notify about HW problem */
+ 	if (status & EMC_REFRESH_OVERFLOW_INT)
+ 		dev_err_ratelimited(emc->dev,
+@@ -370,6 +427,18 @@ static irqreturn_t tegra_emc_isr(int irq, void *data)
+ 	/* clear interrupts */
+ 	writel_relaxed(status, emc->regs + EMC_INTSTATUS);
+ 
++	/* notify about EMC-CAR handshake completion */
++	if (status & EMC_CLKCHANGE_COMPLETE_INT) {
++		if (completion_done(&emc->clk_handshake_complete)) {
++			dev_err_ratelimited(emc->dev,
++					    "bogus handshake interrupt\n");
++			return IRQ_NONE;
++		}
++
++		emc_complete_clk_change(emc);
++		complete(&emc->clk_handshake_complete);
++	}
++
+ 	return IRQ_HANDLED;
  }
  
-@@ -762,13 +758,12 @@ static int emc_complete_timing_change(struct tegra_emc *emc,
+@@ -437,24 +506,6 @@ static bool emc_dqs_preset(struct tegra_emc *emc, struct emc_timing *timing,
+ 	return preset;
+ }
+ 
+-static int emc_seq_update_timing(struct tegra_emc *emc)
+-{
+-	u32 val;
+-	int err;
+-
+-	writel_relaxed(EMC_TIMING_UPDATE, emc->regs + EMC_TIMING_CONTROL);
+-
+-	err = readl_relaxed_poll_timeout_atomic(emc->regs + EMC_STATUS, val,
+-				!(val & EMC_STATUS_TIMING_UPDATE_STALLED),
+-				1, 200);
+-	if (err) {
+-		dev_err(emc->dev, "failed to update timing: %d\n", err);
+-		return err;
+-	}
+-
+-	return 0;
+-}
+-
+ static int emc_prepare_mc_clk_cfg(struct tegra_emc *emc, unsigned long rate)
  {
- 	struct emc_timing *timing = emc_find_timing(emc, rate);
+ 	struct tegra_mc *mc = emc->mc;
+@@ -620,9 +671,6 @@ static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
+ 		writel_relaxed(val, emc->regs + EMC_MRS_WAIT_CNT);
+ 	}
+ 
+-	/* disable interrupt since read access is prohibited after stalling */
+-	disable_irq(emc->irq);
+-
+ 	/* this read also completes the writes */
+ 	val = readl_relaxed(emc->regs + EMC_SEL_DPD_CTRL);
+ 
+@@ -738,17 +786,18 @@ static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
+ 				       emc->regs + EMC_ZQ_CAL);
+ 	}
+ 
+-	/* re-enable auto-refresh */
+-	writel_relaxed(EMC_REFCTRL_ENABLE_ALL(dram_num),
+-		       emc->regs + EMC_REFCTRL);
+-
+ 	/* flow control marker 3 */
+ 	writel_relaxed(0x1, emc->regs + EMC_UNSTALL_RW_AFTER_CLKCHANGE);
+ 
++	/*
++	 * Read and discard an arbitrary MC register (Note: EMC registers
++	 * can't be used) to ensure the register writes are completed.
++	 */
++	mc_readl(emc->mc, MC_EMEM_ARB_OVERRIDE);
++
+ 	reinit_completion(&emc->clk_handshake_complete);
+ 
+-	/* interrupt can be re-enabled now */
+-	enable_irq(emc->irq);
++	emc->new_timing = timing;
+ 
+ 	return 0;
+ }
+@@ -756,9 +805,7 @@ static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
+ static int emc_complete_timing_change(struct tegra_emc *emc,
+ 				      unsigned long rate)
+ {
+-	struct emc_timing *timing = emc_find_timing(emc, rate);
  	unsigned long timeout;
--	int ret;
-+	int err;
+-	int err;
  
  	timeout = wait_for_completion_timeout(&emc->clk_handshake_complete,
  					      msecs_to_jiffies(100));
- 	if (timeout == 0) {
- 		dev_err(emc->dev, "emc-car handshake failed\n");
--		emc->bad_state = true;
+@@ -767,33 +814,8 @@ static int emc_complete_timing_change(struct tegra_emc *emc,
  		return -EIO;
  	}
  
-@@ -790,22 +785,23 @@ static int emc_complete_timing_change(struct tegra_emc *emc,
+-	/* restore auto-calibration */
+-	if (emc->vref_cal_toggle)
+-		writel_relaxed(timing->emc_auto_cal_interval,
+-			       emc->regs + EMC_AUTO_CAL_INTERVAL);
+-
+-	/* restore dynamic self-refresh */
+-	if (timing->emc_cfg_dyn_self_ref) {
+-		emc->emc_cfg |= EMC_CFG_DYN_SREF_ENABLE;
+-		writel_relaxed(emc->emc_cfg, emc->regs + EMC_CFG);
+-	}
+-
+-	/* set number of clocks to wait after each ZQ command */
+-	if (emc->zcal_long)
+-		writel_relaxed(timing->emc_zcal_cnt_long,
+-			       emc->regs + EMC_ZCAL_WAIT_CNT);
+-
+-	udelay(2);
+-	/* update restored timing */
+-	err = emc_seq_update_timing(emc);
+-
+-	/* restore early ACK */
+-	mc_writel(emc->mc, emc->mc_override, MC_EMEM_ARB_OVERRIDE);
+-
+-	if (err)
+-		return err;
+-
+-	emc->bad_state = false;
++	if (READ_ONCE(emc->bad_state))
++		return -EIO;
  
- 	udelay(2);
- 	/* update restored timing */
--	ret = emc_seq_update_timing(emc);
--	if (ret)
--		emc->bad_state = true;
-+	err = emc_seq_update_timing(emc);
- 
- 	/* restore early ACK */
- 	mc_writel(emc->mc, emc->mc_override, MC_EMEM_ARB_OVERRIDE);
- 
--	emc->prepared = false;
-+	if (err)
-+		return err;
-+
-+	emc->bad_state = false;
- 
--	return ret;
-+	return 0;
- }
- 
- static int emc_unprepare_timing_change(struct tegra_emc *emc,
- 				       unsigned long rate)
- {
--	if (emc->prepared && !emc->bad_state) {
-+	if (!emc->bad_state) {
- 		/* shouldn't ever happen in practice */
- 		dev_err(emc->dev, "timing configuration can't be reverted\n");
- 		emc->bad_state = true;
-@@ -1181,13 +1177,17 @@ static int tegra_emc_probe(struct platform_device *pdev)
- static int tegra_emc_suspend(struct device *dev)
- {
- 	struct tegra_emc *emc = dev_get_drvdata(dev);
-+	int err;
-+
-+	/* take exclusive control over the clock's rate */
-+	err = clk_rate_exclusive_get(emc->clk);
-+	if (err) {
-+		dev_err(emc->dev, "failed to acquire clk: %d\n", err);
-+		return err;
-+	}
- 
--	/*
--	 * Suspending in a bad state will hang machine. The "prepared" var
--	 * shall be always false here unless it's a kernel bug that caused
--	 * suspending in a wrong order.
--	 */
--	if (WARN_ON(emc->prepared) || emc->bad_state)
-+	/* suspending in a bad state will hang machine */
-+	if (WARN(emc->bad_state, "hardware in a bad state\n"))
- 		return -EINVAL;
- 
- 	emc->bad_state = true;
-@@ -1202,6 +1202,8 @@ static int tegra_emc_resume(struct device *dev)
- 	emc_setup_hw(emc);
- 	emc->bad_state = false;
- 
-+	clk_rate_exclusive_put(emc->clk);
-+
  	return 0;
  }
+@@ -819,7 +841,13 @@ static int emc_clk_change_notify(struct notifier_block *nb,
  
+ 	switch (msg) {
+ 	case PRE_RATE_CHANGE:
++		/*
++		 * Disable interrupt since read accesses are prohibited after
++		 * stalling.
++		 */
++		disable_irq(emc->irq);
+ 		err = emc_prepare_timing_change(emc, cnd->new_rate);
++		enable_irq(emc->irq);
+ 		break;
+ 
+ 	case ABORT_RATE_CHANGE:
 -- 
 2.24.0
