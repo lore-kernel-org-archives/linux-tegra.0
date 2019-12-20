@@ -1,7 +1,7 @@
 From: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 3/4] iommu/tegra-smmu: Fix iova->phys translation
-Date: Thu, 19 Dec 2019 16:29:13 -0800
-Message-ID: <20191220002914.19043-4-nicoleotsuka@gmail.com>
+Subject: [PATCH 1/4] memory: tegra: Correct reset value of xusb_hostr
+Date: Thu, 19 Dec 2019 16:29:11 -0800
+Message-ID: <20191220002914.19043-2-nicoleotsuka@gmail.com>
 References: <20191220002914.19043-1-nicoleotsuka@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,26 +21,26 @@ To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joro-zLv9SwRftAIdnm+
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-IOVA might not be always 4KB aligned. So tegra_smmu_iova_to_phys
-function needs to add on the lower 12-bit offset from input iova.
+According to Tegra X1 (Tegra210) TRM, the reset value of xusb_hostr
+field (bit [7:0]) should be 0x7a. So this patch simply corrects it.
 
 Signed-off-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/iommu/tegra-smmu.c | 2 +-
+ drivers/memory/tegra/tegra210.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 5594b47a88bf..3999ecb63cfa 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -721,7 +721,7 @@ static phys_addr_t tegra_smmu_iova_to_phys(struct iommu_domain *domain,
- 
- 	pfn = *pte & as->smmu->pfn_mask;
- 
--	return SMMU_PFN_PHYS(pfn);
-+	return SMMU_PFN_PHYS(pfn) + SMMU_OFFSET_IN_PAGE(iova);
- }
- 
- static struct tegra_smmu *tegra_smmu_find(struct device_node *np)
+diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
+index a3918a96467f..eab4bc01c8bc 100644
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -436,7 +436,7 @@ static const struct tegra_mc_client tegra210_mc_clients[] = {
+ 			.reg = 0x37c,
+ 			.shift = 0,
+ 			.mask = 0xff,
+-			.def = 0x39,
++			.def = 0x7a,
+ 		},
+ 	}, {
+ 		.id = 0x4b,
 -- 
 2.17.1
