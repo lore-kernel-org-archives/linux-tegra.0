@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 07/10] usb: phy: tegra: Use devm_otg_ulpi_create()
-Date: Fri, 20 Dec 2019 04:52:35 +0300
-Message-ID: <20191220015238.9228-8-digetx@gmail.com>
+Subject: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module to driver's dependencies
+Date: Fri, 20 Dec 2019 04:52:38 +0300
+Message-ID: <20191220015238.9228-11-digetx@gmail.com>
 References: <20191220015238.9228-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,62 +12,50 @@ To: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation
 Cc: devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The resource-managed variant removes the necessity for the driver to care
-about freeing ULPI resources.
+Now, when ci_hdrc_tegra kernel module is loaded, the phy_tegra_usb module
+is loaded too regardless of kernel's configuration. Previously this
+problem was masked because Tegra's EHCI driver is usually enabled in
+kernel's config and thus PHY driver was getting loaded because of it, but
+now I was making some more thorough testing and noticed that PHY's module
+isn't getting auto-loaded without the host driver.
 
-Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+Note that ChipIdea's driver doesn't use any of the exported functions of
+phy_tegra_usb module and thus the module needs to be requested explicitly.
+
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 21 +++++----------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
+ drivers/usb/chipidea/Kconfig         | 1 +
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 9ce6699f40e7..d5739b6e0b6c 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -1170,7 +1170,9 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 			return err;
- 		}
+diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
+index ae850b3fddf2..d53db520e209 100644
+--- a/drivers/usb/chipidea/Kconfig
++++ b/drivers/usb/chipidea/Kconfig
+@@ -7,6 +7,7 @@ config USB_CHIPIDEA
+ 	select RESET_CONTROLLER
+ 	select USB_ULPI_BUS
+ 	select USB_ROLE_SWITCH
++	select USB_TEGRA_PHY if ARCH_TEGRA
+ 	help
+ 	  Say Y here if your system has a dual role high speed USB
+ 	  controller based on ChipIdea silicon IP. It supports:
+diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+index 7455df0ede49..8bc11100245d 100644
+--- a/drivers/usb/chipidea/ci_hdrc_tegra.c
++++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+@@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
+ 	struct tegra_udc *udc;
+ 	int err;
  
--		tegra_phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
-+		tegra_phy->ulpi = devm_otg_ulpi_create(&pdev->dev,
-+						       &ulpi_viewport_access_ops,
-+						       0);
- 		if (!tegra_phy->ulpi) {
- 			dev_err(&pdev->dev, "Failed to create ULPI OTG\n");
- 			err = -ENOMEM;
-@@ -1205,18 +1207,10 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, tegra_phy);
- 
- 	err = usb_add_phy_dev(&tegra_phy->u_phy);
--	if (err < 0)
--		goto free_ulpi;
-+	if (err)
-+		return err;
- 
- 	return 0;
--
--free_ulpi:
--	if (tegra_phy->ulpi) {
--		kfree(tegra_phy->ulpi->otg);
--		kfree(tegra_phy->ulpi);
--	}
--
--	return err;
- }
- 
- static int tegra_usb_phy_remove(struct platform_device *pdev)
-@@ -1225,11 +1219,6 @@ static int tegra_usb_phy_remove(struct platform_device *pdev)
- 
- 	usb_remove_phy(&tegra_phy->u_phy);
- 
--	if (tegra_phy->ulpi) {
--		kfree(tegra_phy->ulpi->otg);
--		kfree(tegra_phy->ulpi);
--	}
--
- 	return 0;
- }
- 
++	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
++		err = request_module("phy_tegra_usb");
++		if (err)
++			return err;
++	}
++
+ 	udc = devm_kzalloc(&pdev->dev, sizeof(*udc), GFP_KERNEL);
+ 	if (!udc)
+ 		return -ENOMEM;
 -- 
 2.24.0
