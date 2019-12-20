@@ -1,302 +1,70 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 06/19] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-Date: Fri, 20 Dec 2019 04:39:43 +0300
-Message-ID: <31020f6b-97bf-eb48-1150-0355c868eafc@gmail.com>
-References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-7-git-send-email-skomatineni@nvidia.com>
- <87b2b266-e4a9-9a7a-2336-6ec57d7c4d1d@gmail.com>
- <55a56c3d-3fac-cc77-46ae-acf5de77d262@gmail.com>
- <e11d2ea9-20f1-6920-7efc-ba8a50312f75@gmail.com>
- <c5bb3c25-1fae-3ca9-6bf3-c3d66be20e19@nvidia.com>
- <664f1a41-d539-36e8-092b-11d7e4555108@nvidia.com>
+Subject: [PATCH v2 00/10] NVIDIA Tegra USB2 drivers clean up
+Date: Fri, 20 Dec 2019 04:52:28 +0300
+Message-ID: <20191220015238.9228-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <664f1a41-d539-36e8-092b-11d7e4555108@nvidia.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-20.12.2019 04:21, Sowjanya Komatineni пишет:
-> 
-> On 12/18/19 4:41 PM, Sowjanya Komatineni wrote:
->>
->> On 12/18/19 1:44 PM, Dmitry Osipenko wrote:
->>> 18.12.2019 11:35, Dmitry Osipenko пишет:
->>>> 18.12.2019 11:30, Dmitry Osipenko пишет:
->>>>> 17.12.2019 23:03, Sowjanya Komatineni пишет:
->>>>>> Tegra PMC has clk_out_1, clk_out_2, and clk_out_3 clocks and
->>>>>> currently
->>>>>> these PMC clocks are registered by Tegra clock driver with each
->>>>>> clock as
->>>>>> separate mux and gate clocks using clk_register_mux and
->>>>>> clk_register_gate
->>>>>> by passing PMC base address and register offsets and PMC
->>>>>> programming for
->>>>>> these clocks happens through direct PMC access by the clock driver.
->>>>>>
->>>>>> With this, when PMC is in secure mode any direct PMC access from the
->>>>>> non-secure world does not go through and these clocks will not be
->>>>>> functional.
->>>>>>
->>>>>> This patch adds these PMC clocks registration to pmc driver with
->>>>>> PMC as
->>>>>> a clock provider and registers each clock as single clock.
->>>>>>
->>>>>> clk_ops callback implementations for these clocks uses
->>>>>> tegra_pmc_readl and
->>>>>> tegra_pmc_writel which supports PMC programming in both secure
->>>>>> mode and
->>>>>> non-secure mode.
->>>>>>
->>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>> ---
->>>>>>   drivers/soc/tegra/pmc.c | 248
->>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>   1 file changed, 248 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>>>>> index ea0e11a09c12..6d65194a6e71 100644
->>>>>> --- a/drivers/soc/tegra/pmc.c
->>>>>> +++ b/drivers/soc/tegra/pmc.c
->>>>>> @@ -13,6 +13,9 @@
->>>>>>     #include <linux/arm-smccc.h>
->>>>>>   #include <linux/clk.h>
->>>>>> +#include <linux/clk-provider.h>
->>>>>> +#include <linux/clkdev.h>
->>>>>> +#include <linux/clk/clk-conf.h>
->>>>>>   #include <linux/clk/tegra.h>
->>>>>>   #include <linux/debugfs.h>
->>>>>>   #include <linux/delay.h>
->>>>>> @@ -48,6 +51,7 @@
->>>>>>   #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
->>>>>>   #include <dt-bindings/gpio/tegra186-gpio.h>
->>>>>>   #include <dt-bindings/gpio/tegra194-gpio.h>
->>>>>> +#include <dt-bindings/soc/tegra-pmc.h>
->>>>>>     #define PMC_CNTRL            0x0
->>>>>>   #define  PMC_CNTRL_INTR_POLARITY    BIT(17) /* inverts INTR
->>>>>> polarity */
->>>>>> @@ -100,6 +104,7 @@
->>>>>>   #define PMC_WAKE2_STATUS        0x168
->>>>>>   #define PMC_SW_WAKE2_STATUS        0x16c
->>>>>>   +#define PMC_CLK_OUT_CNTRL        0x1a8
->>>>>>   #define PMC_SENSOR_CTRL            0x1b0
->>>>>>   #define  PMC_SENSOR_CTRL_SCRATCH_WRITE    BIT(2)
->>>>>>   #define  PMC_SENSOR_CTRL_ENABLE_RST    BIT(1)
->>>>>> @@ -155,6 +160,64 @@
->>>>>>   #define  TEGRA_SMC_PMC_READ    0xaa
->>>>>>   #define  TEGRA_SMC_PMC_WRITE    0xbb
->>>>>>   +struct pmc_clk {
->>>>>> +    struct clk_hw    hw;
->>>>>> +    unsigned long    offs;
->>>>>> +    u32        mux_mask;
->>>>>> +    u32        mux_shift;
->>>>>> +    u32        gate_shift;
->>>>>> +};
->>>>>> +
->>>>>> +#define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
->>>>>> +
->>>>>> +struct pmc_clk_init_data {
->>>>>> +    char *name;
->>>>>> +    const char *const *parents;
->>>>>> +    int num_parents;
->>>>>> +    int clk_id;
->>>>>> +    u8 mux_shift;
->>>>>> +    u8 gate_shift;
->>>>>> +};
->>>>>> +
->>>>>> +static const char * const clk_out1_parents[] = { "osc", "osc_div2",
->>>>>> +    "osc_div4", "extern1",
->>>>>> +};
->>>>>> +
->>>>>> +static const char * const clk_out2_parents[] = { "osc", "osc_div2",
->>>>>> +    "osc_div4", "extern2",
->>>>>> +};
->>>>>> +
->>>>>> +static const char * const clk_out3_parents[] = { "osc", "osc_div2",
->>>>>> +    "osc_div4", "extern3",
->>>>>> +};
->>>>>> +
->>>>>> +static const struct pmc_clk_init_data tegra_pmc_clks_data[] = {
->>>>>> +    {
->>>>>> +        .name = "clk_out_1",
->>>>>> +        .parents = clk_out1_parents,
->>>>>> +        .num_parents = ARRAY_SIZE(clk_out1_parents),
->>>>>> +        .clk_id = TEGRA_PMC_CLK_OUT_1,
->>>>>> +        .mux_shift = 6,
->>>>>> +        .gate_shift = 2,
->>>>> I'd replace these with a single .shift, given that mux_shift =
->>>>> gate_shift + 4 for all clocks.
->>>>>
->>>>>> +    },
->>>>>> +    {
->>>>>> +        .name = "clk_out_2",
->>>>>> +        .parents = clk_out2_parents,
->>>>>> +        .num_parents = ARRAY_SIZE(clk_out2_parents),
->>>>>> +        .clk_id = TEGRA_PMC_CLK_OUT_2,
->>>>>> +        .mux_shift = 14,
->>>>>> +        .gate_shift = 10,
->>>>>> +    },
->>>>>> +    {
->>>>>> +        .name = "clk_out_3",
->>>>>> +        .parents = clk_out3_parents,
->>>>>> +        .num_parents = ARRAY_SIZE(clk_out3_parents),
->>>>>> +        .clk_id = TEGRA_PMC_CLK_OUT_3,
->>>>>> +        .mux_shift = 22,
->>>>>> +        .gate_shift = 18,
->>>>>> +    },
->>>>>> +};
->>>>>> +
->>>>>>   struct tegra_powergate {
->>>>>>       struct generic_pm_domain genpd;
->>>>>>       struct tegra_pmc *pmc;
->>>>>> @@ -254,6 +317,9 @@ struct tegra_pmc_soc {
->>>>>>        */
->>>>>>       const struct tegra_wake_event *wake_events;
->>>>>>       unsigned int num_wake_events;
->>>>>> +
->>>>>> +    const struct pmc_clk_init_data *pmc_clks_data;
->>>>>> +    unsigned int num_pmc_clks;
->>>>>>   };
->>>>>>     static const char * const tegra186_reset_sources[] = {
->>>>>> @@ -2163,6 +2229,173 @@ static int tegra_pmc_clk_notify_cb(struct
->>>>>> notifier_block *nb,
->>>>>>       return NOTIFY_OK;
->>>>>>   }
->>>>>>   +static void pmc_clk_fence_udelay(u32 offset)
->>>>>> +{
->>>>>> +    tegra_pmc_readl(pmc, offset);
->>>>>> +    /* pmc clk propagation delay 2 us */
->>>>>> +    udelay(2);
->>>>>> +}
->>>>>> +
->>>>>> +static u8 pmc_clk_mux_get_parent(struct clk_hw *hw)
->>>>>> +{
->>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>> +    u32 val;
->>>>>> +
->>>>>> +    val = tegra_pmc_readl(pmc, clk->offs) >> clk->mux_shift;
->>>>>> +    val &= clk->mux_mask;
->>>>>> +
->>>>>> +    return val;
->>>>>> +}
->>>>>> +
->>>>>> +static int pmc_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->>>>>> +{
->>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>> +    u32 val;
->>>>>> +
->>>>>> +    val = tegra_pmc_readl(pmc, clk->offs);
->>>>>> +    val &= ~(clk->mux_mask << clk->mux_shift);
->>>>>> +    val |= index << clk->mux_shift;
->>>>>> +    tegra_pmc_writel(pmc, val, clk->offs);
->>>>>> +    pmc_clk_fence_udelay(clk->offs);
+Hello,
 
-Is this fencing applies only to clock changes or maybe it won't hurt to
-move it into tegra_pmc_writel()?
+This patch series brings the NVIDIA Tegra USB2 PHY driver into a better
+shape by refactoring code to match upstream standards, the ChipIdea/Tegra UDC
+driver also gets a minor update. Please review and apply, thanks in advance!
 
->>>>>> +    return 0;
->>>>>> +}
->>>>>> +
->>>>>> +static int pmc_clk_is_enabled(struct clk_hw *hw)
->>>>>> +{
->>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>> +
->>>>>> +    return tegra_pmc_readl(pmc, clk->offs) & BIT(clk->gate_shift)
->>>>>> ? 1 : 0;
->>>>>> +}
->>>>>> +
->>>>>> +static void pmc_clk_set_state(unsigned long offs, u32 shift, int
->>>>>> state)
->>>>>> +{
->>>>>> +    u32 val;
->>>>>> +
->>>>>> +    val = tegra_pmc_readl(pmc, offs);
->>>>>> +    val = state ? (val | BIT(shift)) : (val & ~BIT(shift));
->>>>>> +    tegra_pmc_writel(pmc, val, offs);
->>>>>> +    pmc_clk_fence_udelay(offs);
->>>>>> +}
->>>>>> +
->>>>>> +static int pmc_clk_enable(struct clk_hw *hw)
->>>>>> +{
->>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>> +
->>>>>> +    pmc_clk_set_state(clk->offs, clk->gate_shift, 1);
->>>>>> +
->>>>>> +    return 0;
->>>>>> +}
->>>>>> +
->>>>>> +static void pmc_clk_disable(struct clk_hw *hw)
->>>>>> +{
->>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>> +
->>>>>> +    pmc_clk_set_state(clk->offs, clk->gate_shift, 0);
->>>>>> +}
->>>>>> +
->>>>>> +static const struct clk_ops pmc_clk_ops = {
->>>>>> +    .get_parent = pmc_clk_mux_get_parent,
->>>>>> +    .set_parent = pmc_clk_mux_set_parent,
->>>>>> +    .determine_rate = __clk_mux_determine_rate,
->>>>>> +    .is_enabled = pmc_clk_is_enabled,
->>>>>> +    .enable = pmc_clk_enable,
->>>>>> +    .disable = pmc_clk_disable,
->>>>>> +};
->>>>>> +
->>>>>> +static struct clk *
->>>>>> +tegra_pmc_clk_out_register(const struct pmc_clk_init_data *data,
->>>>>> +               unsigned long offset)
->>>>>> +{
->>>>>> +    struct clk_init_data init;
->>>>>> +    struct pmc_clk *pmc_clk;
->>>>>> +
->>>>>> +    pmc_clk = kzalloc(sizeof(*pmc_clk), GFP_KERNEL);
->>>>>> +    if (!pmc_clk)
->>>>>> +        return ERR_PTR(-ENOMEM);
->>>>>> +
->>>>>> +    init.name = data->name;
->>>>>> +    init.ops = &pmc_clk_ops;
->>>>>> +    init.parent_names = data->parents;
->>>>>> +    init.num_parents = data->num_parents;
->>>>>> +    init.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT |
->>>>>> +             CLK_SET_PARENT_GATE;
->>>>>> +
->>>>>> +    pmc_clk->hw.init = &init;
->>>>>> +    pmc_clk->offs = offset;
->>>>>> +    pmc_clk->mux_mask = 3;
->>>>> If mux_mask is a constant value, perhaps will be better to replace the
->>>>> variable with a literal?
->>>>>
->>>>> #define PMC_CLK_OUT_MUX_MASK    GENMASK(1, 0)
->>>> Maybe even:
->>>>
->>>> #define PMC_CLK_OUT_MUX_MASK(c)    GENMASK(c->shift + 1, c->shift)
->>
->> MUX Mask is used only here for PMC clock out and is same for all
->> clk_out mux so will use
->>
->> #define PMC_CLK_OUT_MUX_MASK    GENMASK(1, 0)
->>
->>> I want to point out that may be a separated gate/mux shifts is a fine
->>> variant, you should try and see whether another variants produce more
->>> concise result.
->>>
->>> [snip]
-> 
-> We can do mux_shift as gate_shift + 4 and that restricts this clk
-> register only for clk1/2/3 as well and there are no other clocks in pmc
-> anyway.
-> 
-> How about using bit shift define for CLK1, CLK2, and CLK3?
-> 
-> .mux_shift = PMC_CLK1_SRC_SEL_SHIFT,
-> 
-> .gate_shift = PMC_CLK1_FORCE_EN_SHIFT,
-> 
-> 
+Changelog:
 
-I think that just renaming ".gate_shift" -> ".force_en_shift" should be
-good enough.
+v2: - The "usb: phy: tegra: Hook up init/shutdown callbacks" patch was
+      updated and now it does a better job in regards to checking whether
+      PHY is initialized before it is started to be used and whether there
+      is a double init/shutdown. This allows to factor out the ChipIdea's
+      driver change into a separate patch, which was requested by Peter Chen
+      in a review comment to v1. In a result there is this new patch:
+
+        usb: chipidea: tegra: Stop managing PHY's power
+
+    - Added few more new patches:
+
+        usb: phy: tegra: Use generic stub for a missing VBUS regulator
+
+      I noticed that VBUS regulator usage could be cleaned up a tad as well.
+
+        usb: ulpi: Add resource-managed variant of otg_ulpi_create()
+        usb: phy: tegra: Use devm_otg_ulpi_create()
+        usb: phy: tegra: Use u32 for hardware register variables
+
+      These patches are made in response to review comments that were made
+      by Thierry Reding to v1.
+
+      I also noticed that phy_tegra_usb isn't getting auto-loaded while it
+      should be. This is fixed in this new patch:
+
+        usb: chipidea: tegra: Add USB_TEGRA_PHY module to driver's dependencies
+
+Dmitry Osipenko (10):
+  dt-binding: usb: ci-hdrc-usb2: Document NVIDIA Tegra support
+  usb: phy: tegra: Hook up init/shutdown callbacks
+  usb: phy: tegra: Perform general clean up of the code
+  usb: phy: tegra: Use relaxed versions of readl/writel
+  usb: phy: tegra: Use generic stub for a missing VBUS regulator
+  usb: ulpi: Add resource-managed variant of otg_ulpi_create()
+  usb: phy: tegra: Use devm_otg_ulpi_create()
+  usb: phy: tegra: Use u32 for hardware register variables
+  usb: chipidea: tegra: Stop managing PHY's power
+  usb: chipidea: tegra: Add USB_TEGRA_PHY module to driver's
+    dependencies
+
+ .../devicetree/bindings/usb/ci-hdrc-usb2.txt  |   4 +
+ drivers/usb/chipidea/Kconfig                  |   1 +
+ drivers/usb/chipidea/ci_hdrc_tegra.c          |  15 +-
+ drivers/usb/phy/phy-tegra-usb.c               | 740 ++++++++++--------
+ drivers/usb/phy/phy-ulpi.c                    |  48 +-
+ include/linux/usb/ulpi.h                      |  11 +
+ 6 files changed, 462 insertions(+), 357 deletions(-)
+
+-- 
+2.24.0
