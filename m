@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module to driver's dependencies
-Date: Fri, 20 Dec 2019 04:52:38 +0300
-Message-ID: <20191220015238.9228-11-digetx@gmail.com>
+Subject: [PATCH v2 09/10] usb: chipidea: tegra: Stop managing PHY's power
+Date: Fri, 20 Dec 2019 04:52:37 +0300
+Message-ID: <20191220015238.9228-10-digetx@gmail.com>
 References: <20191220015238.9228-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,50 +12,48 @@ To: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation
 Cc: devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Now, when ci_hdrc_tegra kernel module is loaded, the phy_tegra_usb module
-is loaded too regardless of kernel's configuration. Previously this
-problem was masked because Tegra's EHCI driver is usually enabled in
-kernel's config and thus PHY driver was getting loaded because of it, but
-now I was making some more thorough testing and noticed that PHY's module
-isn't getting auto-loaded without the host driver.
-
-Note that ChipIdea's driver doesn't use any of the exported functions of
-phy_tegra_usb module and thus the module needs to be requested explicitly.
+Tegra's USB PHY driver now provides generic PHY init/shutdown callbacks
+and thus the custom PHY management could be removed from Tegra-specific
+part of the ChipIdea driver.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/chipidea/Kconfig         | 1 +
- drivers/usb/chipidea/ci_hdrc_tegra.c | 6 ++++++
- 2 files changed, 7 insertions(+)
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
-index ae850b3fddf2..d53db520e209 100644
---- a/drivers/usb/chipidea/Kconfig
-+++ b/drivers/usb/chipidea/Kconfig
-@@ -7,6 +7,7 @@ config USB_CHIPIDEA
- 	select RESET_CONTROLLER
- 	select USB_ULPI_BUS
- 	select USB_ROLE_SWITCH
-+	select USB_TEGRA_PHY if ARCH_TEGRA
- 	help
- 	  Say Y here if your system has a dual role high speed USB
- 	  controller based on ChipIdea silicon IP. It supports:
 diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-index 7455df0ede49..8bc11100245d 100644
+index 0c9911d44ee5..7455df0ede49 100644
 --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
 +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-@@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
- 	struct tegra_udc *udc;
- 	int err;
+@@ -83,13 +83,6 @@ static int tegra_udc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
  
-+	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
-+		err = request_module("phy_tegra_usb");
-+		if (err)
-+			return err;
-+	}
-+
- 	udc = devm_kzalloc(&pdev->dev, sizeof(*udc), GFP_KERNEL);
- 	if (!udc)
- 		return -ENOMEM;
+-	/*
+-	 * Tegra's USB PHY driver doesn't implement optional phy_init()
+-	 * hook, so we have to power on UDC controller before ChipIdea
+-	 * driver initialization kicks in.
+-	 */
+-	usb_phy_set_suspend(udc->phy, 0);
+-
+ 	/* setup and register ChipIdea HDRC device */
+ 	udc->data.name = "tegra-udc";
+ 	udc->data.flags = soc->flags;
+@@ -109,7 +102,6 @@ static int tegra_udc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ fail_power_off:
+-	usb_phy_set_suspend(udc->phy, 1);
+ 	clk_disable_unprepare(udc->clk);
+ 	return err;
+ }
+@@ -119,7 +111,6 @@ static int tegra_udc_remove(struct platform_device *pdev)
+ 	struct tegra_udc *udc = platform_get_drvdata(pdev);
+ 
+ 	ci_hdrc_remove_device(udc->dev);
+-	usb_phy_set_suspend(udc->phy, 1);
+ 	clk_disable_unprepare(udc->clk);
+ 
+ 	return 0;
 -- 
 2.24.0
