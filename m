@@ -1,92 +1,54 @@
-From: Tom Murphy <murphyt7@tcd.ie>
-Subject: [PATCH 8/8] DO NOT MERGE: iommu: disable list appending in dma-iommu
-Date: Sat, 21 Dec 2019 15:04:00 +0000
-Message-ID: <20191221150402.13868-9-murphyt7@tcd.ie>
+From: Arvind Sankar <nivedita@alum.mit.edu>
+Subject: Re: [PATCH 1/8] iommu/vt-d: clean up 32bit si_domain assignment
+Date: Sat, 21 Dec 2019 18:46:37 -0500
+Message-ID: <20191221234635.GA99623@rani.riverdale.lan>
 References: <20191221150402.13868-1-murphyt7@tcd.ie>
+ <20191221150402.13868-2-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191221150402.13868-1-murphyt7@tcd.ie>
+Content-Disposition: inline
+In-Reply-To: <20191221150402.13868-2-murphyt7@tcd.ie>
 Sender: linux-kernel-owner@vger.kernel.org
-To: iommu@lists.linux-foundation.org
-Cc: Tom Murphy <murphyt7@tcd.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>
+To: Tom Murphy <murphyt7@tcd.ie>
+Cc: iommu@lists.linux-foundation.org, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.>
 List-Id: linux-tegra@vger.kernel.org
 
-ops __finalise_sg
+On Sat, Dec 21, 2019 at 03:03:53PM +0000, Tom Murphy wrote:
+> In the intel iommu driver devices which only support 32bit DMA can't be
+> direct mapped. The implementation of this is weird. Currently we assign
+> it a direct mapped domain and then remove the domain later and replace
+> it with a domain of type IOMMU_DOMAIN_IDENTITY. We should just assign it
+> a domain of type IOMMU_DOMAIN_IDENTITY from the begging rather than
+> needlessly swapping domains.
+> 
+> Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
+> ---
+>  drivers/iommu/intel-iommu.c | 88 +++++++++++++------------------------
+>  1 file changed, 31 insertions(+), 57 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 0c8d81f56a30..c1ea66467918 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -5640,7 +5609,12 @@ static int intel_iommu_add_device(struct device *dev)
+>  	domain = iommu_get_domain_for_dev(dev);
+>  	dmar_domain = to_dmar_domain(domain);
+>  	if (domain->type == IOMMU_DOMAIN_DMA) {
+> -		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY) {
+> +		/*
+> +		 * We check dma_mask >= dma_get_required_mask(dev) because
+> +		 * 32 bit DMA falls back to non-identity mapping.
+> +		 */
+> +		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY &&
+> +				dma_mask >= dma_get_required_mask(dev)) {
+>  			ret = iommu_request_dm_for_dev(dev);
+>  			if (ret) {
+>  				dmar_remove_one_dev_info(dev);
+> -- 
+> 2.20.1
+> 
 
-Disable combining sg segments in the dma-iommu api.
-Combining the sg segments exposes a bug in the intel i915 driver which
-causes visual artifacts and the screen to freeze. This is most likely
-because of how the i915 handles the returned list. It probably doesn't
-respect the returned value specifying the number of elements in the list
-and instead depends on the previous behaviour of the intel iommu driver
-which would return the same number of elements in the output list as in
-the input list.
-
-Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
----
- drivers/iommu/dma-iommu.c | 38 +++++++-------------------------------
- 1 file changed, 7 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index cf778db7d84d..d7547b912c87 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -853,8 +853,7 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
- {
- 	struct scatterlist *s, *cur = sg;
- 	unsigned long seg_mask = dma_get_seg_boundary(dev);
--	unsigned int cur_len = 0, max_len = dma_get_max_seg_size(dev);
--	int i, count = 0;
-+	int i;
- 
- 	for_each_sg(sg, s, nents, i) {
- 		/* Restore this segment's original unaligned fields first */
-@@ -862,39 +861,16 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
- 		unsigned int s_length = sg_dma_len(s);
- 		unsigned int s_iova_len = s->length;
- 
-+		if (i > 0)
-+			cur = sg_next(cur);
-+
- 		s->offset += s_iova_off;
- 		s->length = s_length;
--		sg_dma_address(s) = DMA_MAPPING_ERROR;
--		sg_dma_len(s) = 0;
--
--		/*
--		 * Now fill in the real DMA data. If...
--		 * - there is a valid output segment to append to
--		 * - and this segment starts on an IOVA page boundary
--		 * - but doesn't fall at a segment boundary
--		 * - and wouldn't make the resulting output segment too long
--		 */
--		if (cur_len && !s_iova_off && (dma_addr & seg_mask) &&
--		    (max_len - cur_len >= s_length)) {
--			/* ...then concatenate it with the previous one */
--			cur_len += s_length;
--		} else {
--			/* Otherwise start the next output segment */
--			if (i > 0)
--				cur = sg_next(cur);
--			cur_len = s_length;
--			count++;
--
--			sg_dma_address(cur) = dma_addr + s_iova_off;
--		}
--
--		sg_dma_len(cur) = cur_len;
-+		sg_dma_address(cur) = dma_addr + s_iova_off;
-+		sg_dma_len(cur) = s_length;
- 		dma_addr += s_iova_len;
--
--		if (s_length + s_iova_off < s_iova_len)
--			cur_len = 0;
- 	}
--	return count;
-+	return nents;
- }
- 
- /*
--- 
-2.20.1
+Should this be dma_direct_get_required_mask? dma_get_required_mask may
+return DMA_BIT_MASK(32) -- it callbacks into intel_get_required_mask,
+but I'm not sure what iommu_no_mapping(dev) will do at this point?
