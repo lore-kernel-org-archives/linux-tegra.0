@@ -1,56 +1,75 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v5 03/19] clk: tegra: Fix Tegra PMC clock out parents
-Date: Fri, 20 Dec 2019 14:26:49 -0800
-Message-ID: <1576880825-15010-4-git-send-email-skomatineni@nvidia.com>
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
+From: Tom Murphy <murphyt7@tcd.ie>
+Subject: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+Date: Sat, 21 Dec 2019 15:03:52 +0000
+Message-ID: <20191221150402.13868-1-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: iommu@lists.linux-foundation.org
+Cc: Tom Murphy <murphyt7@tcd.ie>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC clock out parents are osc, osc_div2, osc_div4 and extern
-clock.
+This patchset converts the intel iommu driver to the dma-iommu api.
 
-Clock driver is using incorrect parents clk_m, clk_m_div2, clk_m_div4
-for PMC clocks.
+While converting the driver I exposed a bug in the intel i915 driver which causes a huge amount of artifacts on the screen of my laptop. You can see a picture of it here:
+https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_225922.jpg
 
-This patch fixes this.
+This issue is most likely in the i915 driver and is most likely caused by the driver not respecting the return value of the dma_map_ops::map_sg function. You can see the driver ignoring the return value here:
+https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e495f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/clk/tegra/clk-tegra-pmc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Previously this didn’t cause issues because the intel map_sg always returned the same number of elements as the input scatter gather list but with the change to this dma-iommu api this is no longer the case. I wasn’t able to track the bug down to a specific line of code unfortunately.  
 
-diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
-index bec3e008335f..5e044ba1ae36 100644
---- a/drivers/clk/tegra/clk-tegra-pmc.c
-+++ b/drivers/clk/tegra/clk-tegra-pmc.c
-@@ -49,16 +49,16 @@ struct pmc_clk_init_data {
- 
- static DEFINE_SPINLOCK(clk_out_lock);
- 
--static const char *clk_out1_parents[] = { "clk_m", "clk_m_div2",
--	"clk_m_div4", "extern1",
-+static const char *clk_out1_parents[] = { "osc", "osc_div2",
-+	"osc_div4", "extern1",
- };
- 
--static const char *clk_out2_parents[] = { "clk_m", "clk_m_div2",
--	"clk_m_div4", "extern2",
-+static const char *clk_out2_parents[] = { "osc", "osc_div2",
-+	"osc_div4", "extern2",
- };
- 
--static const char *clk_out3_parents[] = { "clk_m", "clk_m_div2",
--	"clk_m_div4", "extern3",
-+static const char *clk_out3_parents[] = { "osc", "osc_div2",
-+	"osc_div4", "extern3",
- };
- 
- static struct pmc_clk_init_data pmc_clks[] = {
+Could someone from the intel team look at this?
+
+
+I have been testing on a lenovo x1 carbon 5th generation. Let me know if there’s any more information you need.
+
+To allow my patch set to be tested I have added a patch (patch 8/8) in this series to disable combining sg segments in the dma-iommu api which fixes the bug but it doesn't fix the actual problem.
+
+As part of this patch series I copied the intel bounce buffer code to the dma-iommu path. The addition of the bounce buffer code took me by surprise. I did most of my development on this patch series before the bounce buffer code was added and my reimplementation in the dma-iommu path is very rushed and not properly tested but I’m running out of time to work on this patch set.
+
+On top of that I also didn’t port over the intel tracing code from this commit:
+https://github.com/torvalds/linux/commit/3b53034c268d550d9e8522e613a14ab53b8840d8#diff-6b3e7c4993f05e76331e463ab1fc87e1
+So all the work in that commit is now wasted. The code will need to be removed and reimplemented in the dma-iommu path. I would like to take the time to do this but I really don’t have the time at the moment and I want to get these changes out before the iommu code changes any more.
+
+
+Tom Murphy (8):
+  iommu/vt-d: clean up 32bit si_domain assignment
+  iommu/vt-d: Use default dma_direct_* mapping functions for direct
+    mapped devices
+  iommu/vt-d: Remove IOVA handling code from non-dma_ops path
+  iommu: Handle freelists when using deferred flushing in iommu drivers
+  iommu: Add iommu_dma_free_cpu_cached_iovas function
+  iommu: allow the dma-iommu api to use bounce buffers
+  iommu/vt-d: Convert intel iommu driver to the iommu ops
+  DO NOT MERGE: iommu: disable list appending in dma-iommu
+
+ drivers/iommu/Kconfig           |   1 +
+ drivers/iommu/amd_iommu.c       |  14 +-
+ drivers/iommu/arm-smmu-v3.c     |   3 +-
+ drivers/iommu/arm-smmu.c        |   3 +-
+ drivers/iommu/dma-iommu.c       | 183 +++++--
+ drivers/iommu/exynos-iommu.c    |   3 +-
+ drivers/iommu/intel-iommu.c     | 936 ++++----------------------------
+ drivers/iommu/iommu.c           |  39 +-
+ drivers/iommu/ipmmu-vmsa.c      |   3 +-
+ drivers/iommu/msm_iommu.c       |   3 +-
+ drivers/iommu/mtk_iommu.c       |   3 +-
+ drivers/iommu/mtk_iommu_v1.c    |   3 +-
+ drivers/iommu/omap-iommu.c      |   3 +-
+ drivers/iommu/qcom_iommu.c      |   3 +-
+ drivers/iommu/rockchip-iommu.c  |   3 +-
+ drivers/iommu/s390-iommu.c      |   3 +-
+ drivers/iommu/tegra-gart.c      |   3 +-
+ drivers/iommu/tegra-smmu.c      |   3 +-
+ drivers/iommu/virtio-iommu.c    |   3 +-
+ drivers/vfio/vfio_iommu_type1.c |   2 +-
+ include/linux/dma-iommu.h       |   3 +
+ include/linux/intel-iommu.h     |   1 -
+ include/linux/iommu.h           |  32 +-
+ 23 files changed, 345 insertions(+), 908 deletions(-)
+
 -- 
-2.7.4
+2.20.1
