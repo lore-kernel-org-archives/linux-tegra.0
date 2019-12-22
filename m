@@ -1,157 +1,66 @@
-From: Dejin Zheng <zhengdejin5@gmail.com>
-Subject: Re: [PATCH v2 08/10] usb: phy: tegra: Use u32 for hardware register
- variables
-Date: Sun, 22 Dec 2019 21:24:59 +0800
-Message-ID: <20191222132227.GA7096@nuc8i5>
-References: <20191220015238.9228-1-digetx@gmail.com>
- <20191220015238.9228-9-digetx@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 00/13] memory: tegra: Add Tegra186/Tegra194 support
+Date: Sun, 22 Dec 2019 15:10:22 +0100
+Message-ID: <20191222141035.1649937-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191220015238.9228-9-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 04:52:36AM +0300, Dmitry Osipenko wrote:
-> There is a mix of u32/ULONG usage in the driver's code. Let's switch to
-> u32 uniformly, for consistency.
-> 
-> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/usb/phy/phy-tegra-usb.c | 28 +++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-> index d5739b6e0b6c..551c94e3877a 100644
-> --- a/drivers/usb/phy/phy-tegra-usb.c
-> +++ b/drivers/usb/phy/phy-tegra-usb.c
-> @@ -202,7 +202,7 @@ static inline struct tegra_usb_phy *to_tegra_usb_phy(struct usb_phy *u_phy)
->  static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	if (phy->soc_config->has_hostpc) {
->  		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
-> @@ -221,7 +221,7 @@ static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
->  static void set_phcd(struct tegra_usb_phy *phy, bool enable)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	if (phy->soc_config->has_hostpc) {
->  		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
-> @@ -320,7 +320,8 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
->  {
->  	struct tegra_utmip_config *config = phy->config;
->  	void __iomem *base = phy->pad_regs;
-> -	unsigned long val, flags;
-> +	unsigned long flags;
-> +	u32 val;
-Why are you still using unsigned long here?
+From: Thierry Reding <treding@nvidia.com>
 
->  	int err;
->  
->  	err = clk_prepare_enable(phy->pad_clk);
-> @@ -355,7 +356,8 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
->  static int utmip_pad_power_off(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->pad_regs;
-> -	unsigned long val, flags;
-> +	unsigned long flags;
-> +	u32 val;
-ditto
+Hi,
 
->  	int err;
->  
->  	if (!utmip_pad_count) {
-> @@ -393,7 +395,7 @@ static int utmi_wait_register(void __iomem *reg, u32 mask, u32 result)
->  static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	/*
->  	 * The USB driver may have already initiated the phy clock
-> @@ -425,7 +427,7 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
->  static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	/*
->  	 * The USB driver may have already initiated the phy clock
-> @@ -460,7 +462,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
->  {
->  	struct tegra_utmip_config *config = phy->config;
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  	int err;
->  
->  	val = readl_relaxed(base + USB_SUSP_CTRL);
-> @@ -611,7 +613,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
->  static int utmi_phy_power_off(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	utmi_phy_clk_disable(phy);
->  
-> @@ -646,7 +648,7 @@ static int utmi_phy_power_off(struct tegra_usb_phy *phy)
->  static void utmi_phy_preresume(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	val = readl_relaxed(base + UTMIP_TX_CFG0);
->  	val |= UTMIP_HS_DISCON_DISABLE;
-> @@ -656,7 +658,7 @@ static void utmi_phy_preresume(struct tegra_usb_phy *phy)
->  static void utmi_phy_postresume(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	val = readl_relaxed(base + UTMIP_TX_CFG0);
->  	val &= ~UTMIP_HS_DISCON_DISABLE;
-> @@ -667,7 +669,7 @@ static void utmi_phy_restore_start(struct tegra_usb_phy *phy,
->  				   enum tegra_usb_phy_port_speed port_speed)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	val = readl_relaxed(base + UTMIP_MISC_CFG0);
->  	val &= ~UTMIP_DPDM_OBSERVE_SEL(~0);
-> @@ -687,7 +689,7 @@ static void utmi_phy_restore_start(struct tegra_usb_phy *phy,
->  static void utmi_phy_restore_end(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	val = readl_relaxed(base + UTMIP_MISC_CFG0);
->  	val &= ~UTMIP_DPDM_OBSERVE;
-> @@ -698,7 +700,7 @@ static void utmi_phy_restore_end(struct tegra_usb_phy *phy)
->  static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  	int err;
->  
->  	err = gpio_direction_output(phy->reset_gpio, 0);
-> -- 
-> 2.24.0
-> 
+this set of patches improves the Tegra186 memory controller support and
+extends it with Tegra194 support. The first three patches add the needed
+device tree bindings and headers. Patches 4-10 first refactor the driver
+to make it easier to support multiple SoC generations and finally add
+EMC frequency scaling support (via debugfs) as well as Tegra194 support.
+The last three patches enable the memory and external memory controllers
+in device tree.
+
+Thierry
+
+Thierry Reding (13):
+  dt-bindings: memory: Add Tegra186 memory client IDs
+  dt-bindings: memory: Add Tegra194 memory controller header
+  dt-bindings: memory: Add Tegra186 memory subsystem
+  memory: tegra: Rename tegra_mc to tegra186_mc on Tegra186
+  memory: tegra: Add per-SoC data for Tegra186
+  memory: tegra: Extract memory client SID programming
+  memory: tegra: Add system sleep support
+  memory: tegra: Support DVFS on Tegra186 and later
+  memory: tegra: Only include support for enabled SoCs
+  memory: tegra: Add support for the Tegra194 memory controller
+  arm64: tegra: Add interrupt for memory controller on Tegra186
+  arm64: tegra: Add external memory controller on Tegra186
+  arm64: tegra: Add the memory subsystem on Tegra194
+
+ .../nvidia,tegra186-mc.yaml                   |  130 ++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi      |   22 +
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |    4 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |   43 +
+ drivers/memory/tegra/Makefile                 |    3 +-
+ drivers/memory/tegra/tegra186-emc.c           |  293 +++++
+ drivers/memory/tegra/tegra186.c               | 1122 ++++++++++++++++-
+ include/dt-bindings/memory/tegra186-mc.h      |  139 ++
+ include/dt-bindings/memory/tegra194-mc.h      |  410 ++++++
+ 9 files changed, 2110 insertions(+), 56 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+ create mode 100644 drivers/memory/tegra/tegra186-emc.c
+ create mode 100644 include/dt-bindings/memory/tegra194-mc.h
+
+-- 
+2.24.1
