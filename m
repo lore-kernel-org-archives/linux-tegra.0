@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 06/13] memory: tegra: Extract memory client SID programming
-Date: Sun, 22 Dec 2019 15:10:28 +0100
-Message-ID: <20191222141035.1649937-7-thierry.reding@gmail.com>
+Subject: [PATCH 07/13] memory: tegra: Add system sleep support
+Date: Sun, 22 Dec 2019 15:10:29 +0100
+Message-ID: <20191222141035.1649937-8-thierry.reding@gmail.com>
 References: <20191222141035.1649937-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,88 +23,48 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Move programming of the memory client to SID mapping into a separate
-function so that it can be reused from multiple call sites.
+Add system suspend/resume support for the memory controller found on
+Tegra186 and later. This is required so that the SID registers can be
+reprogrammed after their content was lost during system sleep.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/memory/tegra/tegra186.c | 49 ++++++++++++++++++---------------
- 1 file changed, 27 insertions(+), 22 deletions(-)
+ drivers/memory/tegra/tegra186.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index ad5c353dba6e..57895116c8e5 100644
+index 57895116c8e5..77a313f1bf0e 100644
 --- a/drivers/memory/tegra/tegra186.c
 +++ b/drivers/memory/tegra/tegra186.c
-@@ -32,6 +32,32 @@ struct tegra186_mc {
- 	const struct tegra186_mc_soc *soc;
+@@ -602,10 +602,29 @@ static const struct of_device_id tegra186_mc_of_match[] = {
  };
+ MODULE_DEVICE_TABLE(of, tegra186_mc_of_match);
  
-+static void tegra186_mc_program_sid(struct tegra186_mc *mc)
++static int tegra186_mc_suspend(struct device *dev)
 +{
-+	unsigned int i;
-+
-+	for (i = 0; i < mc->soc->num_clients; i++) {
-+		const struct tegra186_mc_client *client = &mc->soc->clients[i];
-+		u32 override, security;
-+
-+		override = readl(mc->regs + client->regs.override);
-+		security = readl(mc->regs + client->regs.security);
-+
-+		dev_dbg(mc->dev, "client %s: override: %x security: %x\n",
-+			client->name, override, security);
-+
-+		dev_dbg(mc->dev, "setting SID %u for %s\n", client->sid,
-+			client->name);
-+		writel(client->sid, mc->regs + client->regs.override);
-+
-+		override = readl(mc->regs + client->regs.override);
-+		security = readl(mc->regs + client->regs.security);
-+
-+		dev_dbg(mc->dev, "client %s: override: %x security: %x\n",
-+			client->name, override, security);
-+	}
++	return 0;
 +}
 +
- static const struct tegra186_mc_client tegra186_mc_clients[] = {
- 	{
- 		.name = "ptcr",
-@@ -549,7 +575,6 @@ static int tegra186_mc_probe(struct platform_device *pdev)
- {
- 	struct tegra186_mc *mc;
- 	struct resource *res;
--	unsigned int i;
- 	int err;
- 
- 	mc = devm_kzalloc(&pdev->dev, sizeof(*mc), GFP_KERNEL);
-@@ -565,28 +590,8 @@ static int tegra186_mc_probe(struct platform_device *pdev)
- 
- 	mc->dev = &pdev->dev;
- 
--	for (i = 0; i < mc->soc->num_clients; i++) {
--		const struct tegra186_mc_client *client = &mc->soc->clients[i];
--		u32 override, security;
--
--		override = readl(mc->regs + client->regs.override);
--		security = readl(mc->regs + client->regs.security);
--
--		dev_dbg(&pdev->dev, "client %s: override: %x security: %x\n",
--			client->name, override, security);
--
--		dev_dbg(&pdev->dev, "setting SID %u for %s\n", client->sid,
--			client->name);
--		writel(client->sid, mc->regs + client->regs.override);
--
--		override = readl(mc->regs + client->regs.override);
--		security = readl(mc->regs + client->regs.security);
--
--		dev_dbg(&pdev->dev, "client %s: override: %x security: %x\n",
--			client->name, override, security);
--	}
--
- 	platform_set_drvdata(pdev, mc);
++static int tegra186_mc_resume(struct device *dev)
++{
++	struct tegra186_mc *mc = dev_get_drvdata(dev);
++
 +	tegra186_mc_program_sid(mc);
- 
- 	return err;
- }
++
++	return 0;
++}
++
++static const struct dev_pm_ops tegra186_mc_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(tegra186_mc_suspend, tegra186_mc_resume)
++};
++
+ static struct platform_driver tegra186_mc_driver = {
+ 	.driver = {
+ 		.name = "tegra186-mc",
+ 		.of_match_table = tegra186_mc_of_match,
++		.pm = &tegra186_mc_pm_ops,
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.prevent_deferred_probe = true,
 -- 
 2.24.1
