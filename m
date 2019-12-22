@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 05/13] memory: tegra: Add per-SoC data for Tegra186
-Date: Sun, 22 Dec 2019 15:10:27 +0100
-Message-ID: <20191222141035.1649937-6-thierry.reding@gmail.com>
+Subject: [PATCH 06/13] memory: tegra: Extract memory client SID programming
+Date: Sun, 22 Dec 2019 15:10:28 +0100
+Message-ID: <20191222141035.1649937-7-thierry.reding@gmail.com>
 References: <20191222141035.1649937-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,98 +23,88 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Instead of hard-coding the memory client table, use per-SoC data in
-preparation for adding support for other SoCs.
+Move programming of the memory client to SID mapping into a separate
+function so that it can be reused from multiple call sites.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/memory/tegra/tegra186.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+ drivers/memory/tegra/tegra186.c | 49 ++++++++++++++++++---------------
+ 1 file changed, 27 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index f72e89877295..ad5c353dba6e 100644
+index ad5c353dba6e..57895116c8e5 100644
 --- a/drivers/memory/tegra/tegra186.c
 +++ b/drivers/memory/tegra/tegra186.c
-@@ -6,15 +6,11 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
- #include <dt-bindings/memory/tegra186-mc.h>
- 
--struct tegra_mc {
--	struct device *dev;
--	void __iomem *regs;
--};
--
- struct tegra186_mc_client {
- 	const char *name;
- 	unsigned int sid;
-@@ -24,10 +20,16 @@ struct tegra186_mc_client {
- 	} regs;
+@@ -32,6 +32,32 @@ struct tegra186_mc {
+ 	const struct tegra186_mc_soc *soc;
  };
  
-+struct tegra186_mc_soc {
-+	const struct tegra186_mc_client *clients;
-+	unsigned int num_clients;
-+};
++static void tegra186_mc_program_sid(struct tegra186_mc *mc)
++{
++	unsigned int i;
 +
- struct tegra186_mc {
--	struct memory_controller base;
- 	struct device *dev;
- 	void __iomem *regs;
++	for (i = 0; i < mc->soc->num_clients; i++) {
++		const struct tegra186_mc_client *client = &mc->soc->clients[i];
++		u32 override, security;
 +
-+	const struct tegra186_mc_soc *soc;
- };
- 
++		override = readl(mc->regs + client->regs.override);
++		security = readl(mc->regs + client->regs.security);
++
++		dev_dbg(mc->dev, "client %s: override: %x security: %x\n",
++			client->name, override, security);
++
++		dev_dbg(mc->dev, "setting SID %u for %s\n", client->sid,
++			client->name);
++		writel(client->sid, mc->regs + client->regs.override);
++
++		override = readl(mc->regs + client->regs.override);
++		security = readl(mc->regs + client->regs.security);
++
++		dev_dbg(mc->dev, "client %s: override: %x security: %x\n",
++			client->name, override, security);
++	}
++}
++
  static const struct tegra186_mc_client tegra186_mc_clients[] = {
-@@ -538,17 +540,24 @@ static const struct tegra186_mc_client tegra186_mc_clients[] = {
- 	},
- };
- 
-+static const struct tegra186_mc_soc tegra186_mc_soc = {
-+	.num_clients = ARRAY_SIZE(tegra186_mc_clients),
-+	.clients = tegra186_mc_clients,
-+};
-+
- static int tegra186_mc_probe(struct platform_device *pdev)
+ 	{
+ 		.name = "ptcr",
+@@ -549,7 +575,6 @@ static int tegra186_mc_probe(struct platform_device *pdev)
  {
  	struct tegra186_mc *mc;
  	struct resource *res;
- 	unsigned int i;
--	int err = 0;
-+	int err;
+-	unsigned int i;
+ 	int err;
  
  	mc = devm_kzalloc(&pdev->dev, sizeof(*mc), GFP_KERNEL);
- 	if (!mc)
- 		return -ENOMEM;
- 
-+	mc->soc = of_device_get_match_data(&pdev->dev);
-+
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	mc->regs = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(mc->regs))
-@@ -556,8 +565,8 @@ static int tegra186_mc_probe(struct platform_device *pdev)
+@@ -565,28 +590,8 @@ static int tegra186_mc_probe(struct platform_device *pdev)
  
  	mc->dev = &pdev->dev;
  
--	for (i = 0; i < ARRAY_SIZE(tegra186_mc_clients); i++) {
--		const struct tegra186_mc_client *client = &tegra186_mc_clients[i];
-+	for (i = 0; i < mc->soc->num_clients; i++) {
-+		const struct tegra186_mc_client *client = &mc->soc->clients[i];
- 		u32 override, security;
+-	for (i = 0; i < mc->soc->num_clients; i++) {
+-		const struct tegra186_mc_client *client = &mc->soc->clients[i];
+-		u32 override, security;
+-
+-		override = readl(mc->regs + client->regs.override);
+-		security = readl(mc->regs + client->regs.security);
+-
+-		dev_dbg(&pdev->dev, "client %s: override: %x security: %x\n",
+-			client->name, override, security);
+-
+-		dev_dbg(&pdev->dev, "setting SID %u for %s\n", client->sid,
+-			client->name);
+-		writel(client->sid, mc->regs + client->regs.override);
+-
+-		override = readl(mc->regs + client->regs.override);
+-		security = readl(mc->regs + client->regs.security);
+-
+-		dev_dbg(&pdev->dev, "client %s: override: %x security: %x\n",
+-			client->name, override, security);
+-	}
+-
+ 	platform_set_drvdata(pdev, mc);
++	tegra186_mc_program_sid(mc);
  
- 		override = readl(mc->regs + client->regs.override);
-@@ -583,7 +592,7 @@ static int tegra186_mc_probe(struct platform_device *pdev)
+ 	return err;
  }
- 
- static const struct of_device_id tegra186_mc_of_match[] = {
--	{ .compatible = "nvidia,tegra186-mc", },
-+	{ .compatible = "nvidia,tegra186-mc", .data = &tegra186_mc_soc },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, tegra186_mc_of_match);
 -- 
 2.24.1
