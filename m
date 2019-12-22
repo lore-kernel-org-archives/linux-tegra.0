@@ -1,50 +1,47 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra
- PMC 32KHz blink clock
-Date: Mon, 23 Dec 2019 00:55:26 +0300
-Message-ID: <c8a847fb-3d23-6e1e-59e2-a2d15b63ce02@gmail.com>
+Subject: Re: [PATCH v5 18/19] arm64: tegra: smaug: Change clk_out_2 provider
+ to pmc
+Date: Mon, 23 Dec 2019 01:00:01 +0300
+Message-ID: <2f85578e-8552-9e2e-9f67-355b24d6b99f@gmail.com>
 References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
+ <1576880825-15010-19-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1576880825-15010-19-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-21.12.2019 01:26, Sowjanya Komatineni пишет:
-> Tegra PMC has blink functionality that allows 32KHz clock out to
-> blink pin of the Tegra.
+21.12.2019 01:27, Sowjanya Komatineni пишет:
+> clk_out_2 is one of the clocks from Tegra PMC block and Tegra PMC
+> clocks are moved from clock driver to pmc driver with pmc as clock
+> provider and using pmc clock ids.
 > 
-> This patch adds id for this blink clock to use for enabling or
-> disabling blink output through device tree.
+> This patch changes clk_out_2 provider to pmc and uses corresponding
+> pmc clock id for clk_out_2.
 > 
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  include/dt-bindings/soc/tegra-pmc.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
-> index f7c866404456..a99a457471ee 100644
-> --- a/include/dt-bindings/soc/tegra-pmc.h
-> +++ b/include/dt-bindings/soc/tegra-pmc.h
-> @@ -9,7 +9,8 @@
->  #define TEGRA_PMC_CLK_OUT_1		0
->  #define TEGRA_PMC_CLK_OUT_2		1
->  #define TEGRA_PMC_CLK_OUT_3		2
-> +#define TEGRA_PMC_CLK_BLINK		3
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> index 72c7a04ac1df..2faab6390552 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> @@ -1592,7 +1592,7 @@
+>  			reg = <0x1a>;
+>  			interrupt-parent = <&gpio>;
+>  			interrupts = <TEGRA_GPIO(E, 6) IRQ_TYPE_LEVEL_LOW>;
+> -			clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
+> +			clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_2>;
+>  			clock-names = "mclk";
 >  
-> -#define TEGRA_PMC_CLK_MAX		3
-> +#define TEGRA_PMC_CLK_MAX		4
->  
->  #endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+>  			nuvoton,jkdet-enable;
 > 
 
-Could you please explain the reason of separating CLK_OUT and BLINK PMC
-patches?
-
-Also, you only documented CLK_OUT clocks in the DT binding and no BLINK.
+Isn't "assigned-clocks" needed here?
