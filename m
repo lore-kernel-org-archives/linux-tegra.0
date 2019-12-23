@@ -1,57 +1,141 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: tegra20: add labels to i2c nodes
-Date: Mon, 23 Dec 2019 18:44:52 +0300
-Message-ID: <1a93a7a6-c3a1-0b94-ce3e-de8971487de5@gmail.com>
-References: <20191219130431.30458-1-richard.leitner@skidata.com>
- <01ac756c-1e51-5d62-ca45-9e0b4f106a29@gmail.com>
- <27d4c933-8117-f38e-d4da-e58326fc6ee4@skidata.com>
+Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
+ to driver's dependencies
+Date: Mon, 23 Dec 2019 20:23:40 +0300
+Message-ID: <1d2e3ea0-a7ff-3e83-57d1-05ffddb0da07@gmail.com>
+References: <20191220015238.9228-1-digetx@gmail.com>
+ <20191220015238.9228-11-digetx@gmail.com>
+ <20191220035650.GC19921@b29397-desktop>
+ <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
+ <20191223063958.GD19921@b29397-desktop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <27d4c933-8117-f38e-d4da-e58326fc6ee4@skidata.com>
+In-Reply-To: <20191223063958.GD19921@b29397-desktop>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Leitner <richard.leitner@skidata.com>, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Chen <peter.chen@nxp.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-23.12.2019 10:46, Richard Leitner пишет:
-> Hi,
-> thanks for the reply.
-> 
-> On 20/12/2019 15:00, Dmitry Osipenko wrote:
->> 19.12.2019 16:04, Richard Leitner пишет:
->>> Add numbered labels to the i2c nodes of the Tegra20 SoC so we just need
->>> to alias it from derived boards.
+23.12.2019 09:40, Peter Chen пишет:
+> On 19-12-20 07:31:08, Dmitry Osipenko wrote:
+>> 20.12.2019 06:56, Peter Chen пишет:
+>>> On 19-12-20 04:52:38, Dmitry Osipenko wrote:
+>>>> Now, when ci_hdrc_tegra kernel module is loaded, the phy_tegra_usb module
+>>>> is loaded too regardless of kernel's configuration. Previously this
+>>>> problem was masked because Tegra's EHCI driver is usually enabled in
+>>>> kernel's config and thus PHY driver was getting loaded because of it, but
+>>>> now I was making some more thorough testing and noticed that PHY's module
+>>>> isn't getting auto-loaded without the host driver.
+>>>>
+>>>> Note that ChipIdea's driver doesn't use any of the exported functions of
+>>>> phy_tegra_usb module and thus the module needs to be requested explicitly.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/usb/chipidea/Kconfig         | 1 +
+>>>>  drivers/usb/chipidea/ci_hdrc_tegra.c | 6 ++++++
+>>>>  2 files changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
+>>>> index ae850b3fddf2..d53db520e209 100644
+>>>> --- a/drivers/usb/chipidea/Kconfig
+>>>> +++ b/drivers/usb/chipidea/Kconfig
+>>>> @@ -7,6 +7,7 @@ config USB_CHIPIDEA
+>>>>  	select RESET_CONTROLLER
+>>>>  	select USB_ULPI_BUS
+>>>>  	select USB_ROLE_SWITCH
+>>>> +	select USB_TEGRA_PHY if ARCH_TEGRA
+>>>>  	help
+>>>>  	  Say Y here if your system has a dual role high speed USB
+>>>>  	  controller based on ChipIdea silicon IP. It supports:
+>>>> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+>>>> index 7455df0ede49..8bc11100245d 100644
+>>>> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+>>>> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+>>>> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
+>>>>  	struct tegra_udc *udc;
+>>>>  	int err;
+>>>>  
+>>>> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
+>>>> +		err = request_module("phy_tegra_usb");
+>>>> +		if (err)
+>>>> +			return err;
+>>>> +	}
+>>>> +
 >>>
->>> Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
->>> ---
->>>   arch/arm/boot/dts/tegra20.dtsi | 6 +++---
->>>   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> ...
-> 
+>>> Why you do this dependency, if this controller driver can't
+>>> get USB PHY, it should return error. What's the return value
+>>> after calling below:
+>>>
+>>> 	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
 >>
->> Hello Richard,
+>> It returns -EPROBE_DEFER when phy_tegra_usb isn't loaded.
 >>
->> Why derived boards couldn't label nodes by themselves? That's what all
->> derived boards are doing already.
-> 
-> Of course they can, but IMHO its more useful to have the same labels for
-> all derived boards.
-> 
+>> So if you'll do:
 >>
->> BTW, upstream should benefit from the submitted changes. This is not a
->> very useful change for upstream if you're not updating the actual DTs of
->> any of the boards in arch/arm/boot/dts/*.
+>> # rmmod ci_hdrc_tegra; rmmod ci_hdrc; rmmod phy_tegra_usb;
+>> # modprobe ci_hdrc_tegra
+>> # lsmod
+>> Module                  Size  Used by
+>> ci_hdrc_tegra          16384  0
+>> ci_hdrc                45056  1 ci_hdrc_tegra
+>>
+>> After this patch:
+>>
+>> # rmmod ci_hdrc_tegra; rmmod ci_hdrc; rmmod phy_tegra_usb;
+>> # modprobe ci_hdrc_tegra
+>> # lsmod
+>> Module                  Size  Used by
+>> Module                  Size  Used by
+>> phy_tegra_usb          20480  1
+>> ci_hdrc_tegra          16384  0
+>> ci_hdrc                45056  1 ci_hdrc_tegra
 > 
-> That's true. I thought of also patching the actual DTs but wasn't sure
-> if that should be in the same series...
-> Based on your answer I guess it should be.
-> 
-> Therefore I'll send a v2 soon.
-> 
-> Thanks again & regards;richard.l
+> I wonder why the driver needs such dependency? If there are two phy
+> drivers could work with this controller driver, you may request two
+> modules.
 
-Seeing the full picture will be very helpful, thanks.
+Well, if somebody wants to use some PHY driver other than the upstream's
+standard one, then that person could simply load the custom driver
+module first, such that it will bind to the PHY's device first.
+
+It is also possible to manually unbind the standard driver from PHY's
+device and then bind whatever driver you want.
+
+> Doesn't such dependency should be done by the board
+> level script?
+
+This patch only improves the default behaviour that is common for all
+NVIDIA Tegra boards, it doesn't prevent from doing any special
+customizations.
+
+Perhaps the Kconfig change could be dropped from this patch in order to
+provide a bit more flexibility in regards to kernel's configuration, but
+I'm very doubtful that realistically anyone would want to replace the
+default driver with anything else on Tegra. The Kconfig change also puts
+ChipIdea's UDC driver in line with the Tegra's EHCI driver that selects
+USB_TEGRA_PHY, please see drivers/usb/host/Kconfig.
+
+> Do you know are there any other drivers do such things?
+
+I don't think that any of the USB host drivers are currently doing such
+things, but in general there are quite a lot of drivers in kernel that
+are using request_module [1].
+
+[1] https://elixir.bootlin.com/linux/latest/ident/request_module
+
+Please note that drivers/usb/host/ehci-tegra.c uses exported symbols
+from usb/phy/phy-tegra-usb.c and that is why the EHCI driver doesn't
+need to explicitly load the phy_tegra_usb module, the load happens
+automatically because of the missing symbols.
+
+Also, please note that it is possible to squash the Tegra EHCI driver
+into ci_hdrc_tegra.c and then the explicit dependency on the
+phy_tegra_usb won't be needed anymore since it will be replaced with an
+implicit dependency. We (me and Peter Geis) already had some
+experimental patches that do the successful squashing of the drivers,
+but looks like Peter got sidetracked for a more important things for
+now, we'll probably return to that work later on.
