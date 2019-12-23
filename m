@@ -1,74 +1,121 @@
-From: Dejin Zheng <zhengdejin5@gmail.com>
-Subject: Re: [PATCH v2 08/10] usb: phy: tegra: Use u32 for hardware register
- variables
-Date: Mon, 23 Dec 2019 22:53:11 +0800
-Message-ID: <20191223145311.GA9183@nuc8i5>
-References: <20191220015238.9228-1-digetx@gmail.com>
- <20191220015238.9228-9-digetx@gmail.com>
- <20191222132227.GA7096@nuc8i5>
- <6c0fbeb2-3db2-f331-fc0a-a900241a32f5@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 4/9] memory: tegra: convert to
+ devm_platform_ioremap_resource
+Date: Mon, 23 Dec 2019 18:42:36 +0300
+Message-ID: <04758814-8e22-79b9-8ed1-ac0c31762d21@gmail.com>
+References: <20191222185034.4665-1-tiny.windzz@gmail.com>
+ <20191222185034.4665-4-tiny.windzz@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6c0fbeb2-3db2-f331-fc0a-a900241a32f5@gmail.com>
+In-Reply-To: <20191222185034.4665-4-tiny.windzz@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yangtao Li <tiny.windzz@gmail.com>, ssantosh@kernel.org, paul@crapouillou.net, matthias.bgg@gmail.com, rogerq@ti.com, tony@atomide.com, lukasz.luba@arm.com, kgene@kernel.org, krzk@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, allison@lohutok.net, tglx@linutronix.de, yong.wu@mediatek.com, jroedel@suse.de, evgreen@chromium.org, rfontana@redhat.com, pdeschrijver@nvidia.com, john@phrozen.org, alexios.zavras@intel.com, sboyd@kernel.org, kstewart@linuxfoundation.org, info@metux.net, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 12:48:09AM +0300, Dmitry Osipenko wrote:
-> 22.12.2019 16:24, Dejin Zheng пишет:
-> > On Fri, Dec 20, 2019 at 04:52:36AM +0300, Dmitry Osipenko wrote:
-> >> There is a mix of u32/ULONG usage in the driver's code. Let's switch to
-> >> u32 uniformly, for consistency.
-> >>
-> >> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  drivers/usb/phy/phy-tegra-usb.c | 28 +++++++++++++++-------------
-> >>  1 file changed, 15 insertions(+), 13 deletions(-)
-> >>
-> >> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-> >> index d5739b6e0b6c..551c94e3877a 100644
-> >> --- a/drivers/usb/phy/phy-tegra-usb.c
-> >> +++ b/drivers/usb/phy/phy-tegra-usb.c
-> >> @@ -202,7 +202,7 @@ static inline struct tegra_usb_phy *to_tegra_usb_phy(struct usb_phy *u_phy)
-> >>  static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
-> >>  {
-> >>  	void __iomem *base = phy->regs;
-> >> -	unsigned long val;
-> >> +	u32 val;
-> >>  
-> >>  	if (phy->soc_config->has_hostpc) {
-> >>  		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
-> >> @@ -221,7 +221,7 @@ static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
-> >>  static void set_phcd(struct tegra_usb_phy *phy, bool enable)
-> >>  {
-> >>  	void __iomem *base = phy->regs;
-> >> -	unsigned long val;
-> >> +	u32 val;
-> >>  
-> >>  	if (phy->soc_config->has_hostpc) {
-> >>  		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
-> >> @@ -320,7 +320,8 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
-> >>  {
-> >>  	struct tegra_utmip_config *config = phy->config;
-> >>  	void __iomem *base = phy->pad_regs;
-> >> -	unsigned long val, flags;
-> >> +	unsigned long flags;
-> >> +	u32 val;
-> > Why are you still using unsigned long here?
+22.12.2019 21:50, Yangtao Li пишет:
+> Use devm_platform_ioremap_resource() to simplify code.
 > 
-> Please take a look at [1][2], the types are matching callees.
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/memory/tegra/mc.c           | 4 +---
+>  drivers/memory/tegra/tegra124-emc.c | 4 +---
+>  drivers/memory/tegra/tegra186.c     | 4 +---
+>  drivers/memory/tegra/tegra20-emc.c  | 4 +---
+>  4 files changed, 4 insertions(+), 12 deletions(-)
 > 
-> [1]
-> https://elixir.bootlin.com/linux/v5.5-rc2/source/include/linux/spinlock.h#L249
+> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> index ec8403557ed4..71390d4ad809 100644
+> --- a/drivers/memory/tegra/mc.c
+> +++ b/drivers/memory/tegra/mc.c
+> @@ -593,7 +593,6 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
+>  
+>  static int tegra_mc_probe(struct platform_device *pdev)
+>  {
+> -	struct resource *res;
+>  	struct tegra_mc *mc;
+>  	void *isr;
+>  	u64 mask;
+> @@ -619,8 +618,7 @@ static int tegra_mc_probe(struct platform_device *pdev)
+>  	/* length of MC tick in nanoseconds */
+>  	mc->tick = 30;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	mc->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	mc->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(mc->regs))
+>  		return PTR_ERR(mc->regs);
+>  
+> diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+> index 464f0ceaee63..2c73260654ba 100644
+> --- a/drivers/memory/tegra/tegra124-emc.c
+> +++ b/drivers/memory/tegra/tegra124-emc.c
+> @@ -1085,7 +1085,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+>  	struct platform_device *mc;
+>  	struct device_node *np;
+>  	struct tegra_emc *emc;
+> -	struct resource *res;
+>  	u32 ram_code;
+>  	int err;
+>  
+> @@ -1095,8 +1094,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
+>  
+>  	emc->dev = &pdev->dev;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	emc->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	emc->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(emc->regs))
+>  		return PTR_ERR(emc->regs);
+>  
+> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+> index 441213a35930..226d2b16036d 100644
+> --- a/drivers/memory/tegra/tegra186.c
+> +++ b/drivers/memory/tegra/tegra186.c
+> @@ -534,7 +534,6 @@ static const struct tegra_mc_client tegra186_mc_clients[] = {
+>  
+>  static int tegra186_mc_probe(struct platform_device *pdev)
+>  {
+> -	struct resource *res;
+>  	struct tegra_mc *mc;
+>  	unsigned int i;
+>  	int err = 0;
+> @@ -543,8 +542,7 @@ static int tegra186_mc_probe(struct platform_device *pdev)
+>  	if (!mc)
+>  		return -ENOMEM;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	mc->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	mc->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(mc->regs))
+>  		return PTR_ERR(mc->regs);
+>  
+> diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+> index 1b23b1c34476..d2efd0c658c0 100644
+> --- a/drivers/memory/tegra/tegra20-emc.c
+> +++ b/drivers/memory/tegra/tegra20-emc.c
+> @@ -482,7 +482,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np;
+>  	struct tegra_emc *emc;
+> -	struct resource *res;
+>  	int irq, err;
+>  
+>  	/* driver has nothing to do in a case of memory timing absence */
+> @@ -518,8 +517,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
+>  	if (err)
+>  		return err;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	emc->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	emc->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(emc->regs))
+>  		return PTR_ERR(emc->regs);
+>  
 > 
-> [2]
-> https://elixir.bootlin.com/linux/v5.5-rc2/source/include/asm-generic/io.h#L297
 
-Okay, thanks for your explanation.
+Looks good, thanks!
 
-Dejin
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
