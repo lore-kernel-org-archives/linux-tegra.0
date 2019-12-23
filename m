@@ -1,78 +1,68 @@
-From: Peter Chen <peter.chen@nxp.com>
-Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
- to driver's dependencies
-Date: Mon, 23 Dec 2019 06:40:01 +0000
-Message-ID: <20191223063958.GD19921@b29397-desktop>
-References: <20191220015238.9228-1-digetx@gmail.com>
- <20191220015238.9228-11-digetx@gmail.com>
- <20191220035650.GC19921@b29397-desktop>
- <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
+From: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 9/9] memory: omap-gpmc: switch to platform_get_irq
+Date: Mon, 23 Dec 2019 09:25:20 +0200
+Message-ID: <7dc78b4c-d1a7-a990-669c-8d3ddbacee0d@ti.com>
+References: <20191222185034.4665-1-tiny.windzz@gmail.com>
+ <20191222185034.4665-9-tiny.windzz@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20191222185034.4665-9-tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Content-ID: <16EB02898F21B643BAAA0928D96C596E@eurprd04.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, lukasz.luba-5wv7dgnIgG8@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, allison-wcfNWazeolPR7s880joybQ@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, yong.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, jroedel-l3A5Bk7waGM@public.gmane.org, evgreen-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, rfontana-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org, alexios.zavras-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, info-EcKl7qYKIbxeoWH0uzbU5w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTktMTItMjAgMDc6MzE6MDgsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToNCj4gMjAuMTIuMjAx
-OSAwNjo1NiwgUGV0ZXIgQ2hlbiDQv9C40YjQtdGCOg0KPiA+IE9uIDE5LTEyLTIwIDA0OjUyOjM4
-LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6DQo+ID4+IE5vdywgd2hlbiBjaV9oZHJjX3RlZ3JhIGtl
-cm5lbCBtb2R1bGUgaXMgbG9hZGVkLCB0aGUgcGh5X3RlZ3JhX3VzYiBtb2R1bGUNCj4gPj4gaXMg
-bG9hZGVkIHRvbyByZWdhcmRsZXNzIG9mIGtlcm5lbCdzIGNvbmZpZ3VyYXRpb24uIFByZXZpb3Vz
-bHkgdGhpcw0KPiA+PiBwcm9ibGVtIHdhcyBtYXNrZWQgYmVjYXVzZSBUZWdyYSdzIEVIQ0kgZHJp
-dmVyIGlzIHVzdWFsbHkgZW5hYmxlZCBpbg0KPiA+PiBrZXJuZWwncyBjb25maWcgYW5kIHRodXMg
-UEhZIGRyaXZlciB3YXMgZ2V0dGluZyBsb2FkZWQgYmVjYXVzZSBvZiBpdCwgYnV0DQo+ID4+IG5v
-dyBJIHdhcyBtYWtpbmcgc29tZSBtb3JlIHRob3JvdWdoIHRlc3RpbmcgYW5kIG5vdGljZWQgdGhh
-dCBQSFkncyBtb2R1bGUNCj4gPj4gaXNuJ3QgZ2V0dGluZyBhdXRvLWxvYWRlZCB3aXRob3V0IHRo
-ZSBob3N0IGRyaXZlci4NCj4gPj4NCj4gPj4gTm90ZSB0aGF0IENoaXBJZGVhJ3MgZHJpdmVyIGRv
-ZXNuJ3QgdXNlIGFueSBvZiB0aGUgZXhwb3J0ZWQgZnVuY3Rpb25zIG9mDQo+ID4+IHBoeV90ZWdy
-YV91c2IgbW9kdWxlIGFuZCB0aHVzIHRoZSBtb2R1bGUgbmVlZHMgdG8gYmUgcmVxdWVzdGVkIGV4
-cGxpY2l0bHkuDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGln
-ZXR4QGdtYWlsLmNvbT4NCj4gPj4gLS0tDQo+ID4+ICBkcml2ZXJzL3VzYi9jaGlwaWRlYS9LY29u
-ZmlnICAgICAgICAgfCAxICsNCj4gPj4gIGRyaXZlcnMvdXNiL2NoaXBpZGVhL2NpX2hkcmNfdGVn
-cmEuYyB8IDYgKysrKysrDQo+ID4+ICAyIGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKQ0K
-PiA+Pg0KPiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvY2hpcGlkZWEvS2NvbmZpZyBiL2Ry
-aXZlcnMvdXNiL2NoaXBpZGVhL0tjb25maWcNCj4gPj4gaW5kZXggYWU4NTBiM2ZkZGYyLi5kNTNk
-YjUyMGUyMDkgMTAwNjQ0DQo+ID4+IC0tLSBhL2RyaXZlcnMvdXNiL2NoaXBpZGVhL0tjb25maWcN
-Cj4gPj4gKysrIGIvZHJpdmVycy91c2IvY2hpcGlkZWEvS2NvbmZpZw0KPiA+PiBAQCAtNyw2ICs3
-LDcgQEAgY29uZmlnIFVTQl9DSElQSURFQQ0KPiA+PiAgCXNlbGVjdCBSRVNFVF9DT05UUk9MTEVS
-DQo+ID4+ICAJc2VsZWN0IFVTQl9VTFBJX0JVUw0KPiA+PiAgCXNlbGVjdCBVU0JfUk9MRV9TV0lU
-Q0gNCj4gPj4gKwlzZWxlY3QgVVNCX1RFR1JBX1BIWSBpZiBBUkNIX1RFR1JBDQo+ID4+ICAJaGVs
-cA0KPiA+PiAgCSAgU2F5IFkgaGVyZSBpZiB5b3VyIHN5c3RlbSBoYXMgYSBkdWFsIHJvbGUgaGln
-aCBzcGVlZCBVU0INCj4gPj4gIAkgIGNvbnRyb2xsZXIgYmFzZWQgb24gQ2hpcElkZWEgc2lsaWNv
-biBJUC4gSXQgc3VwcG9ydHM6DQo+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9jaGlwaWRl
-YS9jaV9oZHJjX3RlZ3JhLmMgYi9kcml2ZXJzL3VzYi9jaGlwaWRlYS9jaV9oZHJjX3RlZ3JhLmMN
-Cj4gPj4gaW5kZXggNzQ1NWRmMGVkZTQ5Li44YmMxMTEwMDI0NWQgMTAwNjQ0DQo+ID4+IC0tLSBh
-L2RyaXZlcnMvdXNiL2NoaXBpZGVhL2NpX2hkcmNfdGVncmEuYw0KPiA+PiArKysgYi9kcml2ZXJz
-L3VzYi9jaGlwaWRlYS9jaV9oZHJjX3RlZ3JhLmMNCj4gPj4gQEAgLTUzLDYgKzUzLDEyIEBAIHN0
-YXRpYyBpbnQgdGVncmFfdWRjX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+
-ID4+ICAJc3RydWN0IHRlZ3JhX3VkYyAqdWRjOw0KPiA+PiAgCWludCBlcnI7DQo+ID4+ICANCj4g
-Pj4gKwlpZiAoSVNfTU9EVUxFKENPTkZJR19VU0JfVEVHUkFfUEhZKSkgew0KPiA+PiArCQllcnIg
-PSByZXF1ZXN0X21vZHVsZSgicGh5X3RlZ3JhX3VzYiIpOw0KPiA+PiArCQlpZiAoZXJyKQ0KPiA+
-PiArCQkJcmV0dXJuIGVycjsNCj4gPj4gKwl9DQo+ID4+ICsNCj4gPiANCj4gPiBXaHkgeW91IGRv
-IHRoaXMgZGVwZW5kZW5jeSwgaWYgdGhpcyBjb250cm9sbGVyIGRyaXZlciBjYW4ndA0KPiA+IGdl
-dCBVU0IgUEhZLCBpdCBzaG91bGQgcmV0dXJuIGVycm9yLiBXaGF0J3MgdGhlIHJldHVybiB2YWx1
-ZQ0KPiA+IGFmdGVyIGNhbGxpbmcgYmVsb3c6DQo+ID4gDQo+ID4gCXVkYy0+cGh5ID0gZGV2bV91
-c2JfZ2V0X3BoeV9ieV9waGFuZGxlKCZwZGV2LT5kZXYsICJudmlkaWEscGh5IiwgMCk7DQo+IA0K
-PiBJdCByZXR1cm5zIC1FUFJPQkVfREVGRVIgd2hlbiBwaHlfdGVncmFfdXNiIGlzbid0IGxvYWRl
-ZC4NCj4gDQo+IFNvIGlmIHlvdSdsbCBkbzoNCj4gDQo+ICMgcm1tb2QgY2lfaGRyY190ZWdyYTsg
-cm1tb2QgY2lfaGRyYzsgcm1tb2QgcGh5X3RlZ3JhX3VzYjsNCj4gIyBtb2Rwcm9iZSBjaV9oZHJj
-X3RlZ3JhDQo+ICMgbHNtb2QNCj4gTW9kdWxlICAgICAgICAgICAgICAgICAgU2l6ZSAgVXNlZCBi
-eQ0KPiBjaV9oZHJjX3RlZ3JhICAgICAgICAgIDE2Mzg0ICAwDQo+IGNpX2hkcmMgICAgICAgICAg
-ICAgICAgNDUwNTYgIDEgY2lfaGRyY190ZWdyYQ0KPiANCj4gQWZ0ZXIgdGhpcyBwYXRjaDoNCj4g
-DQo+ICMgcm1tb2QgY2lfaGRyY190ZWdyYTsgcm1tb2QgY2lfaGRyYzsgcm1tb2QgcGh5X3RlZ3Jh
-X3VzYjsNCj4gIyBtb2Rwcm9iZSBjaV9oZHJjX3RlZ3JhDQo+ICMgbHNtb2QNCj4gTW9kdWxlICAg
-ICAgICAgICAgICAgICAgU2l6ZSAgVXNlZCBieQ0KPiBNb2R1bGUgICAgICAgICAgICAgICAgICBT
-aXplICBVc2VkIGJ5DQo+IHBoeV90ZWdyYV91c2IgICAgICAgICAgMjA0ODAgIDENCj4gY2lfaGRy
-Y190ZWdyYSAgICAgICAgICAxNjM4NCAgMA0KPiBjaV9oZHJjICAgICAgICAgICAgICAgIDQ1MDU2
-ICAxIGNpX2hkcmNfdGVncmENCg0KSSB3b25kZXIgd2h5IHRoZSBkcml2ZXIgbmVlZHMgc3VjaCBk
-ZXBlbmRlbmN5PyBJZiB0aGVyZSBhcmUgdHdvIHBoeQ0KZHJpdmVycyBjb3VsZCB3b3JrIHdpdGgg
-dGhpcyBjb250cm9sbGVyIGRyaXZlciwgeW91IG1heSByZXF1ZXN0IHR3bw0KbW9kdWxlcy4gRG9l
-c24ndCBzdWNoIGRlcGVuZGVuY3kgc2hvdWxkIGJlIGRvbmUgYnkgdGhlIGJvYXJkDQpsZXZlbCBz
-Y3JpcHQ/IERvIHlvdSBrbm93IGFyZSB0aGVyZSBhbnkgb3RoZXIgZHJpdmVycyBkbyBzdWNoIHRo
-aW5ncz8NCg0KLS0gDQoNClRoYW5rcywNClBldGVyIENoZW4=
+
+On 22/12/2019 20:50, Yangtao Li wrote:
+> platform_get_resource(pdev, IORESOURCE_IRQ) is not recommended for
+> requesting IRQ's resources, as they can be not ready yet. Using
+> platform_get_irq() instead is preferred for getting IRQ even if it
+> was not retrieved earlier.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+
+Acked-by: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
+
+> ---
+>   drivers/memory/omap-gpmc.c | 10 +++-------
+>   1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+> index eff26c1b1394..6dd19d168f75 100644
+> --- a/drivers/memory/omap-gpmc.c
+> +++ b/drivers/memory/omap-gpmc.c
+> @@ -2366,13 +2366,9 @@ static int gpmc_probe(struct platform_device *pdev)
+>   	if (IS_ERR(gpmc_base))
+>   		return PTR_ERR(gpmc_base);
+>   
+> -	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> -	if (!res) {
+> -		dev_err(&pdev->dev, "Failed to get resource: irq\n");
+> -		return -ENOENT;
+> -	}
+> -
+> -	gpmc->irq = res->start;
+> +	gpmc->irq = platform_get_irq(pdev, 0);
+> +	if (gpmc->irq < 0)
+> +		return gpmc->irq;
+>   
+>   	gpmc_l3_clk = devm_clk_get(&pdev->dev, "fck");
+>   	if (IS_ERR(gpmc_l3_clk)) {
+> 
+
+-- 
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
