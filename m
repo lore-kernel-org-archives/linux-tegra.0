@@ -1,102 +1,60 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 2/2] drm/tegra: Do not implement runtime PM
-Date: Thu, 19 Dec 2019 23:17:07 +0100
-Message-ID: <CAPDyKFoJhn=v92qz=z6X9j4AfLwGCt350i1ntoNCRYqoemr9aw@mail.gmail.com>
-References: <20191209130336.2257506-1-thierry.reding@gmail.com>
- <20191209130336.2257506-2-thierry.reding@gmail.com>
- <CAPDyKFp6cnpn4yFaEBDPBdHc1siQvJbmwedbhRNCdDBVAc2qUA@mail.gmail.com>
- <20191212123352.GA3322354@ulmo>
- <CAPDyKFodOjta0JnEEMrC0j5=XeB-wLjTNvPFtmDtUBZBMTJvQg@mail.gmail.com>
- <CAJZ5v0hA6mz7r93_HVpfP-=72wARf9=NN1jNG3KHtzM_+oT9LA@mail.gmail.com>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+Date: Mon, 23 Dec 2019 12:37:47 +0200
+Message-ID: <87blrzwcn8.fsf@intel.com>
+References: <20191221150402.13868-1-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAJZ5v0hA6mz7r93_HVpfP-=72wARf9=NN1jNG3KHtzM_+oT9LA@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, dri-devel <dri-devel@lists.freedesktop.org>, Mikko Perttunen <mperttunen@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191221150402.13868-1-murphyt7@tcd.ie>
+Sender: linux-kernel-owner@vger.kernel.org
+To: iommu@lists.linux-foundation.org
+Cc: Tom Murphy <murphyt7@tcd.ie>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 12 Dec 2019 at 17:48, Rafael J. Wysocki <rafael@kernel.org> wrote:
+On Sat, 21 Dec 2019, Tom Murphy <murphyt7@tcd.ie> wrote:
+> This patchset converts the intel iommu driver to the dma-iommu api.
 >
-> On Thu, Dec 12, 2019 at 2:32 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >
-> > On Thu, 12 Dec 2019 at 13:33, Thierry Reding <thierry.reding@gmail.com> wrote:
-> > >
-> > > On Thu, Dec 12, 2019 at 09:52:22AM +0100, Ulf Hansson wrote:
-> > > > On Mon, 9 Dec 2019 at 14:03, Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > > >
-> > > > > From: Thierry Reding <treding@nvidia.com>
-> > > > >
-> > > > > The Tegra DRM driver heavily relies on the implementations for runtime
-> > > > > suspend/resume to be called at specific times. Unfortunately, there are
-> > > > > some cases where that doesn't work. One example is if the user disables
-> > > > > runtime PM for a given subdevice. Another example is that the PM core
-> > > > > acquires a reference to runtime PM during system sleep, effectively
-> > > > > preventing devices from going into low power modes. This is intentional
-> > > > > to avoid nasty race conditions, but it also causes system sleep to not
-> > > > > function properly on all Tegra systems.
-> > > >
-> > > > Are the problems you refer to above, solely for system suspend/resume?
-> > >
-> > > No, this patch also fixes potential issues with regular operation of the
-> > > display driver. The problem is that parts of the driver rely on being
-> > > able to shut down the hardware during runtime operations, such as
-> > > disabling an output. Under some circumstances part of this shutdown will
-> > > imply a reset and, at least on some platforms, we rely on that reset to
-> > > put the device into a known good state.
-> > >
-> > > So if a user decides to prevent the device from runtime suspending, we
-> > > can potentially run into a situation where we can't properly set a
-> > > display mode at runtime since we weren't allowed to reset the device.
-> >
-> > Thanks for clarifying!
-> >
-> > We have very similar issues for SDIO functional drivers (WiFi
-> > drivers). Typically, at some point there needs to be a guarantee that
-> > the power has been cut in between a "put" and "get", as to be able to
-> > re-program a FW.
-> >
-> > My worry in regards to this, is that we may reinvent the wheel over
-> > and over again, just because runtime PM today isn't a good fit.
-> >
-> > In principle, if you could, somehow forbid user-space from preventing
-> > the device from being runtime suspended, that would do the trick,
-> > wouldn't it?
+> While converting the driver I exposed a bug in the intel i915 driver
+> which causes a huge amount of artifacts on the screen of my
+> laptop. You can see a picture of it here:
+> https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_225922.jpg
 >
-> Treating pm_runtime_suspend() and pm_runtime_resume() as the low-level
-> device power off and power on routines for the given platform is a
-> mistake.  It has always been a mistake and I'm not going to accept
-> changes trying to make it look like it isn't a mistake.
-
-Of course you are right that it's a mistake. I am just pondering if
-over how bad the mistake(s) really are and what we can do about them.
-
-For example, on x86, the ACPI PM domain is used to power the SDIO card
-and the SDIO func device (the SDIO card is the parent to the SDIO func
-device) via runtime PM.
-
-Honestly, I don't know how to fix this, unless we allow the drivers to
-call the ACPI power on/off functions directly, but that doesn't sound
-very nice either and kind of defeats the purpose of using the PM
-domain.
-
+> This issue is most likely in the i915 driver and is most likely caused
+> by the driver not respecting the return value of the
+> dma_map_ops::map_sg function. You can see the driver ignoring the
+> return value here:
+> https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e495f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
 >
-> If any generic power off and power on helpers for DT-based platforms
-> are needed, add them and make PM-runtime use them.  That should be
-> straightforward enough.
+> Previously this didn’t cause issues because the intel map_sg always
+> returned the same number of elements as the input scatter gather list
+> but with the change to this dma-iommu api this is no longer the
+> case. I wasn’t able to track the bug down to a specific line of code
+> unfortunately.
+>
+> Could someone from the intel team look at this?
 
-That wouldn't help in the SDIO case as the power on/off thingy is
-still relying on those runtime PM calls.
+Let me get this straight. There is current API that on success always
+returns the same number of elements as the input scatter gather
+list. You propose to change the API so that this is no longer the case?
 
-Kind regards
-Uffe
+A quick check of various dma_map_sg() calls in the kernel seems to
+indicate checking for 0 for errors and then ignoring the non-zero return
+is a common pattern. Are you sure it's okay to make the change you're
+proposing?
+
+Anyway, due to the time of year and all, I'd like to ask you to file a
+bug against i915 at [1] so this is not forgotten, and please let's not
+merge the changes before this is resolved.
+
+
+Thanks,
+Jani.
+
+
+[1] https://gitlab.freedesktop.org/drm/intel/issues/new
+
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
