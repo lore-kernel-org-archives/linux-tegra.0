@@ -1,66 +1,74 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 2/9] memory: jz4780_nemc: convert to
- devm_platform_ioremap_resource
-Date: Mon, 23 Dec 2019 12:44:26 +0100
-Message-ID: <1577101466.3.0@crapouillou.net>
-References: <20191222185034.4665-1-tiny.windzz@gmail.com>
-        <20191222185034.4665-2-tiny.windzz@gmail.com>
+From: Dejin Zheng <zhengdejin5@gmail.com>
+Subject: Re: [PATCH v2 08/10] usb: phy: tegra: Use u32 for hardware register
+ variables
+Date: Mon, 23 Dec 2019 22:53:11 +0800
+Message-ID: <20191223145311.GA9183@nuc8i5>
+References: <20191220015238.9228-1-digetx@gmail.com>
+ <20191220015238.9228-9-digetx@gmail.com>
+ <20191222132227.GA7096@nuc8i5>
+ <6c0fbeb2-3db2-f331-fc0a-a900241a32f5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191222185034.4665-2-tiny.windzz@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <6c0fbeb2-3db2-f331-fc0a-a900241a32f5@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yangtao Li <tiny.windzz@gmail.com>
-Cc: ssantosh@kernel.org, matthias.bgg@gmail.com, rogerq@ti.com, tony@atomide.com, lukasz.luba@arm.com, kgene@kernel.org, krzk@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, allison@lohutok.net, tglx@linutronix.de, yong.wu@mediatek.com, jroedel@suse.de, evgreen@chromium.org, rfontana@redhat.com, digetx@gmail.com, pdeschrijver@nvidia.com, john@phrozen.org, alexios.zavras@intel.com, sboyd@kernel.org, kstewart@linuxfoundation.org, info@metux.net, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Mon, Dec 23, 2019 at 12:48:09AM +0300, Dmitry Osipenko wrote:
+> 22.12.2019 16:24, Dejin Zheng пишет:
+> > On Fri, Dec 20, 2019 at 04:52:36AM +0300, Dmitry Osipenko wrote:
+> >> There is a mix of u32/ULONG usage in the driver's code. Let's switch to
+> >> u32 uniformly, for consistency.
+> >>
+> >> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  drivers/usb/phy/phy-tegra-usb.c | 28 +++++++++++++++-------------
+> >>  1 file changed, 15 insertions(+), 13 deletions(-)
+> >>
+> >> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+> >> index d5739b6e0b6c..551c94e3877a 100644
+> >> --- a/drivers/usb/phy/phy-tegra-usb.c
+> >> +++ b/drivers/usb/phy/phy-tegra-usb.c
+> >> @@ -202,7 +202,7 @@ static inline struct tegra_usb_phy *to_tegra_usb_phy(struct usb_phy *u_phy)
+> >>  static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
+> >>  {
+> >>  	void __iomem *base = phy->regs;
+> >> -	unsigned long val;
+> >> +	u32 val;
+> >>  
+> >>  	if (phy->soc_config->has_hostpc) {
+> >>  		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
+> >> @@ -221,7 +221,7 @@ static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
+> >>  static void set_phcd(struct tegra_usb_phy *phy, bool enable)
+> >>  {
+> >>  	void __iomem *base = phy->regs;
+> >> -	unsigned long val;
+> >> +	u32 val;
+> >>  
+> >>  	if (phy->soc_config->has_hostpc) {
+> >>  		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
+> >> @@ -320,7 +320,8 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
+> >>  {
+> >>  	struct tegra_utmip_config *config = phy->config;
+> >>  	void __iomem *base = phy->pad_regs;
+> >> -	unsigned long val, flags;
+> >> +	unsigned long flags;
+> >> +	u32 val;
+> > Why are you still using unsigned long here?
+> 
+> Please take a look at [1][2], the types are matching callees.
+> 
+> [1]
+> https://elixir.bootlin.com/linux/v5.5-rc2/source/include/linux/spinlock.h#L249
+> 
+> [2]
+> https://elixir.bootlin.com/linux/v5.5-rc2/source/include/asm-generic/io.h#L297
 
+Okay, thanks for your explanation.
 
-Le dim., d=E9c. 22, 2019 at 18:50, Yangtao Li <tiny.windzz@gmail.com> a=20
-=E9crit :
-> Use devm_platform_ioremap_resource() to simplify code.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-
-Acked-by: Paul Cercueil <paul@crapouillou.net>
-
-Cheers,
--Paul
-
-
-> ---
->  drivers/memory/jz4780-nemc.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/memory/jz4780-nemc.c=20
-> b/drivers/memory/jz4780-nemc.c
-> index b232ed279fc3..857a9fa5cba5 100644
-> --- a/drivers/memory/jz4780-nemc.c
-> +++ b/drivers/memory/jz4780-nemc.c
-> @@ -269,7 +269,6 @@ static int jz4780_nemc_probe(struct=20
-> platform_device *pdev)
->  {
->  	struct device *dev =3D &pdev->dev;
->  	struct jz4780_nemc *nemc;
-> -	struct resource *res;
->  	struct device_node *child;
->  	const __be32 *prop;
->  	unsigned int bank;
-> @@ -287,8 +286,7 @@ static int jz4780_nemc_probe(struct=20
-> platform_device *pdev)
->  	spin_lock_init(&nemc->lock);
->  	nemc->dev =3D dev;
->=20
-> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	nemc->base =3D devm_ioremap_resource(dev, res);
-> +	nemc->base =3D devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(nemc->base)) {
->  		dev_err(dev, "failed to get I/O memory\n");
->  		return PTR_ERR(nemc->base);
-> --
-> 2.17.1
->=20
-
-=
+Dejin
