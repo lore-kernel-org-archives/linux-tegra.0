@@ -1,47 +1,64 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 18/19] arm64: tegra: smaug: Change clk_out_2 provider
- to pmc
-Date: Mon, 23 Dec 2019 01:00:01 +0300
-Message-ID: <2f85578e-8552-9e2e-9f67-355b24d6b99f@gmail.com>
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-19-git-send-email-skomatineni@nvidia.com>
+From: Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH 1/8] iommu/vt-d: clean up 32bit si_domain
+ assignment
+Date: Mon, 23 Dec 2019 11:00:47 +0800
+Message-ID: <e569e246-11a1-e8bd-9347-310284e96885@linux.intel.com>
+References: <20191221150402.13868-1-murphyt7@tcd.ie>
+ <20191221150402.13868-2-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1576880825-15010-19-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20191221150402.13868-2-murphyt7@tcd.ie>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
+Cc: Heiko Stuebner <heiko@sntech.de>, kvm@vger.kernel.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>, Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>, Joerg Roedel <joro@8bytes.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Eric Auger <eric.auger@redhat.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner <tglx@linutronix.d>
 List-Id: linux-tegra@vger.kernel.org
 
-21.12.2019 01:27, Sowjanya Komatineni пишет:
-> clk_out_2 is one of the clocks from Tegra PMC block and Tegra PMC
-> clocks are moved from clock driver to pmc driver with pmc as clock
-> provider and using pmc clock ids.
-> 
-> This patch changes clk_out_2 provider to pmc and uses corresponding
-> pmc clock id for clk_out_2.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> index 72c7a04ac1df..2faab6390552 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> @@ -1592,7 +1592,7 @@
->  			reg = <0x1a>;
->  			interrupt-parent = <&gpio>;
->  			interrupts = <TEGRA_GPIO(E, 6) IRQ_TYPE_LEVEL_LOW>;
-> -			clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
-> +			clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_2>;
->  			clock-names = "mclk";
->  
->  			nuvoton,jkdet-enable;
-> 
+Hi,
 
-Isn't "assigned-clocks" needed here?
+On 12/21/19 11:03 PM, Tom Murphy wrote:
+> @@ -5618,9 +5583,13 @@ static int intel_iommu_add_device(struct device *dev)
+>   	struct iommu_domain *domain;
+>   	struct intel_iommu *iommu;
+>   	struct iommu_group *group;
+> +	u64 dma_mask = *dev->dma_mask;
+>   	u8 bus, devfn;
+>   	int ret;
+>   
+> +	if (dev->coherent_dma_mask && dev->coherent_dma_mask < dma_mask)
+> +		dma_mask = dev->coherent_dma_mask;
+> +
+>   	iommu = device_to_iommu(dev, &bus, &devfn);
+>   	if (!iommu)
+>   		return -ENODEV;
+> @@ -5640,7 +5609,12 @@ static int intel_iommu_add_device(struct device *dev)
+>   	domain = iommu_get_domain_for_dev(dev);
+>   	dmar_domain = to_dmar_domain(domain);
+>   	if (domain->type == IOMMU_DOMAIN_DMA) {
+> -		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY) {
+> +		/*
+> +		 * We check dma_mask >= dma_get_required_mask(dev) because
+> +		 * 32 bit DMA falls back to non-identity mapping.
+> +		 */
+> +		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY &&
+> +				dma_mask >= dma_get_required_mask(dev)) {
+>   			ret = iommu_request_dm_for_dev(dev);
+>   			if (ret) {
+>   				dmar_remove_one_dev_info(dev);
+
+dev->dma_mask is set to 32bit by default. During loading driver, it sets
+the real dma_mask with dma_set_mask() according to the real capability.
+Here you will always see 32bit dma_mask for each device.
+
+Best regards,
+baolu
