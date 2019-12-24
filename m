@@ -1,50 +1,127 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
+From: Peter Chen <peter.chen@nxp.com>
+Subject: RE: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
  to driver's dependencies
-Date: Mon, 23 Dec 2019 22:32:34 +0100
-Message-ID: <20191223213234.GA28786@qmqm.qmqm.pl>
+Date: Tue, 24 Dec 2019 02:54:24 +0000
+Message-ID: <VI1PR04MB5327ADFDE053ACA5ABAA85708B290@VI1PR04MB5327.eurprd04.prod.outlook.com>
 References: <20191220015238.9228-1-digetx@gmail.com>
  <20191220015238.9228-11-digetx@gmail.com>
  <20191220035650.GC19921@b29397-desktop>
  <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
+ <20191223063958.GD19921@b29397-desktop>
+ <1d2e3ea0-a7ff-3e83-57d1-05ffddb0da07@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
+In-Reply-To: <1d2e3ea0-a7ff-3e83-57d1-05ffddb0da07@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Peter Chen <peter.chen@nxp.com>, Rob Herring <robh-dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Geis <pgwipeout@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 07:31:08AM +0300, Dmitry Osipenko wrote:
-> 20.12.2019 06:56, Peter Chen пишет:
-> > On 19-12-20 04:52:38, Dmitry Osipenko wrote:
-[...]
-> >> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> >> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> >> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
-> >>  	struct tegra_udc *udc;
-> >>  	int err;
-> >>  
-> >> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
-> >> +		err = request_module("phy_tegra_usb");
-> >> +		if (err)
-> >> +			return err;
-> >> +	}
-> >> +
-> > 
-> > Why you do this dependency, if this controller driver can't
-> > get USB PHY, it should return error. What's the return value
-> > after calling below:
-> > 
-> > 	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
-> 
-> It returns -EPROBE_DEFER when phy_tegra_usb isn't loaded.
-
-How are other driver modules autoloaded? Isn't there an appropriate
-MODALIAS or MODULE_DEVICE_TABLE in there?
-
-Best Regards,
-Michał Mirosław
+IA0KPiANCj4gMjMuMTIuMjAxOSAwOTo0MCwgUGV0ZXIgQ2hlbiDQv9C40YjQtdGCOg0KPiA+IE9u
+IDE5LTEyLTIwIDA3OjMxOjA4LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6DQo+ID4+IDIwLjEyLjIw
+MTkgMDY6NTYsIFBldGVyIENoZW4g0L/QuNGI0LXRgjoNCj4gPj4+IE9uIDE5LTEyLTIwIDA0OjUy
+OjM4LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6DQo+ID4+Pj4gTm93LCB3aGVuIGNpX2hkcmNfdGVn
+cmEga2VybmVsIG1vZHVsZSBpcyBsb2FkZWQsIHRoZSBwaHlfdGVncmFfdXNiDQo+ID4+Pj4gbW9k
+dWxlIGlzIGxvYWRlZCB0b28gcmVnYXJkbGVzcyBvZiBrZXJuZWwncyBjb25maWd1cmF0aW9uLg0K
+PiA+Pj4+IFByZXZpb3VzbHkgdGhpcyBwcm9ibGVtIHdhcyBtYXNrZWQgYmVjYXVzZSBUZWdyYSdz
+IEVIQ0kgZHJpdmVyIGlzDQo+ID4+Pj4gdXN1YWxseSBlbmFibGVkIGluIGtlcm5lbCdzIGNvbmZp
+ZyBhbmQgdGh1cyBQSFkgZHJpdmVyIHdhcyBnZXR0aW5nDQo+ID4+Pj4gbG9hZGVkIGJlY2F1c2Ug
+b2YgaXQsIGJ1dCBub3cgSSB3YXMgbWFraW5nIHNvbWUgbW9yZSB0aG9yb3VnaA0KPiA+Pj4+IHRl
+c3RpbmcgYW5kIG5vdGljZWQgdGhhdCBQSFkncyBtb2R1bGUgaXNuJ3QgZ2V0dGluZyBhdXRvLWxv
+YWRlZCB3aXRob3V0IHRoZQ0KPiBob3N0IGRyaXZlci4NCj4gPj4+Pg0KPiA+Pj4+IE5vdGUgdGhh
+dCBDaGlwSWRlYSdzIGRyaXZlciBkb2Vzbid0IHVzZSBhbnkgb2YgdGhlIGV4cG9ydGVkDQo+ID4+
+Pj4gZnVuY3Rpb25zIG9mIHBoeV90ZWdyYV91c2IgbW9kdWxlIGFuZCB0aHVzIHRoZSBtb2R1bGUg
+bmVlZHMgdG8gYmUNCj4gcmVxdWVzdGVkIGV4cGxpY2l0bHkuDQo+ID4+Pj4NCj4gPj4+PiBTaWdu
+ZWQtb2ZmLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5jb20+DQo+ID4+Pj4gLS0t
+DQo+ID4+Pj4gIGRyaXZlcnMvdXNiL2NoaXBpZGVhL0tjb25maWcgICAgICAgICB8IDEgKw0KPiA+
+Pj4+ICBkcml2ZXJzL3VzYi9jaGlwaWRlYS9jaV9oZHJjX3RlZ3JhLmMgfCA2ICsrKysrKw0KPiA+
+Pj4+ICAyIGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKQ0KPiA+Pj4+DQo+ID4+Pj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2NoaXBpZGVhL0tjb25maWcNCj4gPj4+PiBiL2RyaXZlcnMv
+dXNiL2NoaXBpZGVhL0tjb25maWcgaW5kZXggYWU4NTBiM2ZkZGYyLi5kNTNkYjUyMGUyMDkNCj4g
+Pj4+PiAxMDA2NDQNCj4gPj4+PiAtLS0gYS9kcml2ZXJzL3VzYi9jaGlwaWRlYS9LY29uZmlnDQo+
+ID4+Pj4gKysrIGIvZHJpdmVycy91c2IvY2hpcGlkZWEvS2NvbmZpZw0KPiA+Pj4+IEBAIC03LDYg
+KzcsNyBAQCBjb25maWcgVVNCX0NISVBJREVBDQo+ID4+Pj4gIAlzZWxlY3QgUkVTRVRfQ09OVFJP
+TExFUg0KPiA+Pj4+ICAJc2VsZWN0IFVTQl9VTFBJX0JVUw0KPiA+Pj4+ICAJc2VsZWN0IFVTQl9S
+T0xFX1NXSVRDSA0KPiA+Pj4+ICsJc2VsZWN0IFVTQl9URUdSQV9QSFkgaWYgQVJDSF9URUdSQQ0K
+PiA+Pj4+ICAJaGVscA0KPiA+Pj4+ICAJICBTYXkgWSBoZXJlIGlmIHlvdXIgc3lzdGVtIGhhcyBh
+IGR1YWwgcm9sZSBoaWdoIHNwZWVkIFVTQg0KPiA+Pj4+ICAJICBjb250cm9sbGVyIGJhc2VkIG9u
+IENoaXBJZGVhIHNpbGljb24gSVAuIEl0IHN1cHBvcnRzOg0KPiA+Pj4+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL3VzYi9jaGlwaWRlYS9jaV9oZHJjX3RlZ3JhLmMNCj4gPj4+PiBiL2RyaXZlcnMvdXNi
+L2NoaXBpZGVhL2NpX2hkcmNfdGVncmEuYw0KPiA+Pj4+IGluZGV4IDc0NTVkZjBlZGU0OS4uOGJj
+MTExMDAyNDVkIDEwMDY0NA0KPiA+Pj4+IC0tLSBhL2RyaXZlcnMvdXNiL2NoaXBpZGVhL2NpX2hk
+cmNfdGVncmEuYw0KPiA+Pj4+ICsrKyBiL2RyaXZlcnMvdXNiL2NoaXBpZGVhL2NpX2hkcmNfdGVn
+cmEuYw0KPiA+Pj4+IEBAIC01Myw2ICs1MywxMiBAQCBzdGF0aWMgaW50IHRlZ3JhX3VkY19wcm9i
+ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlDQo+ICpwZGV2KQ0KPiA+Pj4+ICAJc3RydWN0IHRlZ3Jh
+X3VkYyAqdWRjOw0KPiA+Pj4+ICAJaW50IGVycjsNCj4gPj4+Pg0KPiA+Pj4+ICsJaWYgKElTX01P
+RFVMRShDT05GSUdfVVNCX1RFR1JBX1BIWSkpIHsNCj4gPj4+PiArCQllcnIgPSByZXF1ZXN0X21v
+ZHVsZSgicGh5X3RlZ3JhX3VzYiIpOw0KPiA+Pj4+ICsJCWlmIChlcnIpDQo+ID4+Pj4gKwkJCXJl
+dHVybiBlcnI7DQo+ID4+Pj4gKwl9DQo+ID4+Pj4gKw0KPiA+Pj4NCj4gPj4+IFdoeSB5b3UgZG8g
+dGhpcyBkZXBlbmRlbmN5LCBpZiB0aGlzIGNvbnRyb2xsZXIgZHJpdmVyIGNhbid0IGdldCBVU0IN
+Cj4gPj4+IFBIWSwgaXQgc2hvdWxkIHJldHVybiBlcnJvci4gV2hhdCdzIHRoZSByZXR1cm4gdmFs
+dWUgYWZ0ZXIgY2FsbGluZw0KPiA+Pj4gYmVsb3c6DQo+ID4+Pg0KPiA+Pj4gCXVkYy0+cGh5ID0g
+ZGV2bV91c2JfZ2V0X3BoeV9ieV9waGFuZGxlKCZwZGV2LT5kZXYsICJudmlkaWEscGh5IiwNCj4g
+Pj4+IDApOw0KPiA+Pg0KPiA+PiBJdCByZXR1cm5zIC1FUFJPQkVfREVGRVIgd2hlbiBwaHlfdGVn
+cmFfdXNiIGlzbid0IGxvYWRlZC4NCj4gPj4NCj4gPj4gU28gaWYgeW91J2xsIGRvOg0KPiA+Pg0K
+PiA+PiAjIHJtbW9kIGNpX2hkcmNfdGVncmE7IHJtbW9kIGNpX2hkcmM7IHJtbW9kIHBoeV90ZWdy
+YV91c2I7ICMgbW9kcHJvYmUNCj4gPj4gY2lfaGRyY190ZWdyYSAjIGxzbW9kDQo+ID4+IE1vZHVs
+ZSAgICAgICAgICAgICAgICAgIFNpemUgIFVzZWQgYnkNCj4gPj4gY2lfaGRyY190ZWdyYSAgICAg
+ICAgICAxNjM4NCAgMA0KPiA+PiBjaV9oZHJjICAgICAgICAgICAgICAgIDQ1MDU2ICAxIGNpX2hk
+cmNfdGVncmENCj4gPj4NCj4gPj4gQWZ0ZXIgdGhpcyBwYXRjaDoNCj4gPj4NCj4gPj4gIyBybW1v
+ZCBjaV9oZHJjX3RlZ3JhOyBybW1vZCBjaV9oZHJjOyBybW1vZCBwaHlfdGVncmFfdXNiOyAjIG1v
+ZHByb2JlDQo+ID4+IGNpX2hkcmNfdGVncmEgIyBsc21vZA0KPiA+PiBNb2R1bGUgICAgICAgICAg
+ICAgICAgICBTaXplICBVc2VkIGJ5DQo+ID4+IE1vZHVsZSAgICAgICAgICAgICAgICAgIFNpemUg
+IFVzZWQgYnkNCj4gPj4gcGh5X3RlZ3JhX3VzYiAgICAgICAgICAyMDQ4MCAgMQ0KPiA+PiBjaV9o
+ZHJjX3RlZ3JhICAgICAgICAgIDE2Mzg0ICAwDQo+ID4+IGNpX2hkcmMgICAgICAgICAgICAgICAg
+NDUwNTYgIDEgY2lfaGRyY190ZWdyYQ0KPiA+DQo+ID4gSSB3b25kZXIgd2h5IHRoZSBkcml2ZXIg
+bmVlZHMgc3VjaCBkZXBlbmRlbmN5PyBJZiB0aGVyZSBhcmUgdHdvIHBoeQ0KPiA+IGRyaXZlcnMg
+Y291bGQgd29yayB3aXRoIHRoaXMgY29udHJvbGxlciBkcml2ZXIsIHlvdSBtYXkgcmVxdWVzdCB0
+d28NCj4gPiBtb2R1bGVzLg0KPiANCj4gV2VsbCwgaWYgc29tZWJvZHkgd2FudHMgdG8gdXNlIHNv
+bWUgUEhZIGRyaXZlciBvdGhlciB0aGFuIHRoZSB1cHN0cmVhbSdzDQo+IHN0YW5kYXJkIG9uZSwg
+dGhlbiB0aGF0IHBlcnNvbiBjb3VsZCBzaW1wbHkgbG9hZCB0aGUgY3VzdG9tIGRyaXZlciBtb2R1
+bGUgZmlyc3QsDQo+IHN1Y2ggdGhhdCBpdCB3aWxsIGJpbmQgdG8gdGhlIFBIWSdzIGRldmljZSBm
+aXJzdC4NCj4gDQo+IEl0IGlzIGFsc28gcG9zc2libGUgdG8gbWFudWFsbHkgdW5iaW5kIHRoZSBz
+dGFuZGFyZCBkcml2ZXIgZnJvbSBQSFkncyBkZXZpY2UgYW5kDQo+IHRoZW4gYmluZCB3aGF0ZXZl
+ciBkcml2ZXIgeW91IHdhbnQuDQo+IA0KPiA+IERvZXNuJ3Qgc3VjaCBkZXBlbmRlbmN5IHNob3Vs
+ZCBiZSBkb25lIGJ5IHRoZSBib2FyZCBsZXZlbCBzY3JpcHQ/DQo+IA0KPiBUaGlzIHBhdGNoIG9u
+bHkgaW1wcm92ZXMgdGhlIGRlZmF1bHQgYmVoYXZpb3VyIHRoYXQgaXMgY29tbW9uIGZvciBhbGwg
+TlZJRElBIFRlZ3JhDQo+IGJvYXJkcywgaXQgZG9lc24ndCBwcmV2ZW50IGZyb20gZG9pbmcgYW55
+IHNwZWNpYWwgY3VzdG9taXphdGlvbnMuDQo+IA0KPiBQZXJoYXBzIHRoZSBLY29uZmlnIGNoYW5n
+ZSBjb3VsZCBiZSBkcm9wcGVkIGZyb20gdGhpcyBwYXRjaCBpbiBvcmRlciB0byBwcm92aWRlIGEN
+Cj4gYml0IG1vcmUgZmxleGliaWxpdHkgaW4gcmVnYXJkcyB0byBrZXJuZWwncyBjb25maWd1cmF0
+aW9uLCBidXQgSSdtIHZlcnkgZG91YnRmdWwgdGhhdA0KPiByZWFsaXN0aWNhbGx5IGFueW9uZSB3
+b3VsZCB3YW50IHRvIHJlcGxhY2UgdGhlIGRlZmF1bHQgZHJpdmVyIHdpdGggYW55dGhpbmcgZWxz
+ZSBvbg0KPiBUZWdyYS4gVGhlIEtjb25maWcgY2hhbmdlIGFsc28gcHV0cyBDaGlwSWRlYSdzIFVE
+QyBkcml2ZXIgaW4gbGluZSB3aXRoIHRoZSBUZWdyYSdzDQo+IEVIQ0kgZHJpdmVyIHRoYXQgc2Vs
+ZWN0cyBVU0JfVEVHUkFfUEhZLCBwbGVhc2Ugc2VlIGRyaXZlcnMvdXNiL2hvc3QvS2NvbmZpZy4N
+Cj4gDQo+ID4gRG8geW91IGtub3cgYXJlIHRoZXJlIGFueSBvdGhlciBkcml2ZXJzIGRvIHN1Y2gg
+dGhpbmdzPw0KPiANCj4gSSBkb24ndCB0aGluayB0aGF0IGFueSBvZiB0aGUgVVNCIGhvc3QgZHJp
+dmVycyBhcmUgY3VycmVudGx5IGRvaW5nIHN1Y2ggdGhpbmdzLCBidXQgaW4NCj4gZ2VuZXJhbCB0
+aGVyZSBhcmUgcXVpdGUgYSBsb3Qgb2YgZHJpdmVycyBpbiBrZXJuZWwgdGhhdCBhcmUgdXNpbmcg
+cmVxdWVzdF9tb2R1bGUgWzFdLg0KPiANCj4gWzFdDQo+IGh0dHBzOi8vZXVyMDEuc2FmZWxpbmtz
+LnByb3RlY3Rpb24ub3V0bG9vay5jb20vP3VybD1odHRwcyUzQSUyRiUyRmVsaXhpci5ib290bGlu
+LmMNCj4gb20lMkZsaW51eCUyRmxhdGVzdCUyRmlkZW50JTJGcmVxdWVzdF9tb2R1bGUmYW1wO2Rh
+dGE9MDIlN0MwMSU3Q3BldGUNCj4gci5jaGVuJTQwbnhwLmNvbSU3Q2ExNTNiOWU0ZDgxMDQ0Y2Rl
+M2MxMDhkNzg3Y2NkY2I5JTdDNjg2ZWExZDNiYzJiDQo+IDRjNmZhOTJjZDk5YzVjMzAxNjM1JTdD
+MCU3QzAlN0M2MzcxMjcxODYyNTc2MTIyNjkmYW1wO3NkYXRhPXhPVm5uDQo+IGJWR1JWaHlwYmlN
+V3B0Mk1VZmNZYXlBbDR5d3BDYTd4T0FRMXZrJTNEJmFtcDtyZXNlcnZlZD0wDQo+IA0KPiBQbGVh
+c2Ugbm90ZSB0aGF0IGRyaXZlcnMvdXNiL2hvc3QvZWhjaS10ZWdyYS5jIHVzZXMgZXhwb3J0ZWQg
+c3ltYm9scyBmcm9tDQo+IHVzYi9waHkvcGh5LXRlZ3JhLXVzYi5jIGFuZCB0aGF0IGlzIHdoeSB0
+aGUgRUhDSSBkcml2ZXIgZG9lc24ndCBuZWVkIHRvIGV4cGxpY2l0bHkNCj4gbG9hZCB0aGUgcGh5
+X3RlZ3JhX3VzYiBtb2R1bGUsIHRoZSBsb2FkIGhhcHBlbnMgYXV0b21hdGljYWxseSBiZWNhdXNl
+IG9mIHRoZQ0KPiBtaXNzaW5nIHN5bWJvbHMuDQo+IA0KPiBBbHNvLCBwbGVhc2Ugbm90ZSB0aGF0
+IGl0IGlzIHBvc3NpYmxlIHRvIHNxdWFzaCB0aGUgVGVncmEgRUhDSSBkcml2ZXIgaW50bw0KPiBj
+aV9oZHJjX3RlZ3JhLmMgYW5kIHRoZW4gdGhlIGV4cGxpY2l0IGRlcGVuZGVuY3kgb24gdGhlIHBo
+eV90ZWdyYV91c2Igd29uJ3QgYmUNCj4gbmVlZGVkIGFueW1vcmUgc2luY2UgaXQgd2lsbCBiZSBy
+ZXBsYWNlZCB3aXRoIGFuIGltcGxpY2l0IGRlcGVuZGVuY3kuIFdlIChtZSBhbmQNCj4gUGV0ZXIg
+R2VpcykgYWxyZWFkeSBoYWQgc29tZSBleHBlcmltZW50YWwgcGF0Y2hlcyB0aGF0IGRvIHRoZSBz
+dWNjZXNzZnVsDQo+IHNxdWFzaGluZyBvZiB0aGUgZHJpdmVycywgYnV0IGxvb2tzIGxpa2UgUGV0
+ZXIgZ290IHNpZGV0cmFja2VkIGZvciBhIG1vcmUgaW1wb3J0YW50DQo+IHRoaW5ncyBmb3Igbm93
+LCB3ZSdsbCBwcm9iYWJseSByZXR1cm4gdG8gdGhhdCB3b3JrIGxhdGVyIG9uLg0KDQpIaSBEbWl0
+cnksDQoNClRoYW5rcyBmb3IgZXhwbGFpbmluZyBpdC4gIEluIGZhY3QsIHlvdXIgY2FzZSBpcyB2
+ZXJ5IGNvbW1vbiBmb3IgVVNCIHNpbmNlIFBIWSBkcml2ZXINCmFuZCBjb250cm9sbGVyIGRyaXZl
+ciBhcmUgdHdvIGluZGVwZW5kZW50IGRyaXZlcnMuICBJZiB5b3UgaGF2ZSBubyBvdGhlciB3YXlz
+DQp0byBmaXggdGhpcyBkZXBlbmRlbmN5IGlzc3VlLCBpdCBpcyBvayB0byBhZGQgaXQgYXQgZHJp
+dmVyLg0KDQpQZXRlcg0K
