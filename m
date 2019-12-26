@@ -1,77 +1,34 @@
-From: JC Kuo <jckuo@nvidia.com>
-Subject: Re: [Patch V2 05/18] phy: tegra: xusb: Add support to get companion
- USB 3 port
-Date: Thu, 26 Dec 2019 15:03:42 +0800
-Message-ID: <e37a083d-e5de-1b7c-f175-ec4234f60441@nvidia.com>
-References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
- <1576660591-10383-6-git-send-email-nkristam@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra
+ PMC 32KHz blink clock
+Date: Thu, 26 Dec 2019 11:17:15 -0700
+Message-ID: <20191226181715.GA12506@bogus>
+References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
+ <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1576660591-10383-6-git-send-email-nkristam@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nagarjuna Kristam <nkristam@nvidia.com>, balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, 20 Dec 2019 14:26:53 -0800, Sowjanya Komatineni wrote:
+> Tegra PMC has blink functionality that allows 32KHz clock out to
+> blink pin of the Tegra.
+> 
+> This patch adds id for this blink clock to use for enabling or
+> disabling blink output through device tree.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  include/dt-bindings/soc/tegra-pmc.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
-On 12/18/19 5:16 PM, Nagarjuna Kristam wrote:
-> Tegra XUSB host, device mode driver requires the USB 3 companion port
-> number for corresponding USB 2 port. Add API to retrieve the same.
-> 
-> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
-> ---
-> V2:
->  - Added -ENODEV as return instead of -1, to sync other errors.
-> ---
->  drivers/phy/tegra/xusb.c       | 21 +++++++++++++++++++++
->  include/linux/phy/tegra/xusb.h |  2 ++
->  2 files changed, 23 insertions(+)
-> 
-> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> index 5bde8f1..e75cd71 100644
-> --- a/drivers/phy/tegra/xusb.c
-> +++ b/drivers/phy/tegra/xusb.c
-> @@ -1256,6 +1256,27 @@ int tegra_phy_xusb_utmi_port_reset(struct phy *phy)
->  }
->  EXPORT_SYMBOL_GPL(tegra_phy_xusb_utmi_port_reset);
->  
-> +int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
-> +				    unsigned int port)
-> +{
-> +	struct tegra_xusb_usb2_port *usb2 = tegra_xusb_find_usb2_port(padctl,
-> +								      port);
-> +	struct tegra_xusb_usb3_port *usb3;
-> +	int i;
-> +
-> +	if (!usb2)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < padctl->soc->ports.usb3.count; i++) {
-> +		usb3 = tegra_xusb_find_usb3_port(padctl, i);
-> +		if (usb3 && usb3->port == usb2->base.index)
-> +			return usb3->base.index;
-> +	}
-> +
-> +	return -ENODEV;
-> +}
-> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_get_usb3_companion);
-> +
->  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
->  MODULE_DESCRIPTION("Tegra XUSB Pad Controller driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xusb.h
-> index 1235865..71d9569 100644
-> --- a/include/linux/phy/tegra/xusb.h
-> +++ b/include/linux/phy/tegra/xusb.h
-> @@ -21,4 +21,6 @@ int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
->  int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
->  					bool val);
->  int tegra_phy_xusb_utmi_port_reset(struct phy *phy);
-> +int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
-> +					 unsigned int port);
->  #endif /* PHY_TEGRA_XUSB_H */
-> 
-Reviewed-by: JC Kuo <jckuo@nvidia.com>
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
+
+If a tag was not added on purpose, please state why and what changed.
