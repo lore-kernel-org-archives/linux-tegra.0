@@ -1,30 +1,30 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
 Subject: Re: [Patch V2 03/18] phy: tegra: xusb: Add usb-role-switch support
-Date: Fri, 27 Dec 2019 11:48:56 +0530
-Message-ID: <5fc4c7b7-0005-2b55-71ed-92c249aa35d8@nvidia.com>
+Date: Fri, 27 Dec 2019 12:09:22 +0530
+Message-ID: <74d94004-2022-3b04-6cd9-d6b1e9eca230@nvidia.com>
 References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
  <1576660591-10383-4-git-send-email-nkristam@nvidia.com>
- <3f02b1c8-0d2e-700c-d1f5-80f9655f62e0@nvidia.com>
+ <20191219132650.GJ1440537@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3f02b1c8-0d2e-700c-d1f5-80f9655f62e0@nvidia.com>
+In-Reply-To: <20191219132650.GJ1440537@ulmo>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: JC Kuo <jckuo@nvidia.com>, balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 26-12-2019 12:12, JC Kuo wrote:
+On 19-12-2019 18:56, Thierry Reding wrote:
 > 
-> On 12/18/19 5:16 PM, Nagarjuna Kristam wrote:
+> On Wed, Dec 18, 2019 at 02:46:16PM +0530, Nagarjuna Kristam wrote:
 >> If usb-role-switch property is present in USB 2 port, register
 >> usb-role-switch to receive usb role changes.
 >>
->> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+>> Signed-off-by: Nagarjuna Kristam<nkristam@nvidia.com>
 >> ---
 >> V2:
 >>   - Removed dev_set_drvdata for port->dev.
@@ -68,6 +68,10 @@ On 26-12-2019 12:12, JC Kuo wrote:
 >> +		usb_role_switch_unregister(port->usb_role_sw);
 >> +	}
 >>   	device_unregister(&port->dev);
+> Nit: I prefer blank lines after blocks for readability.
+> 
+Will update
+
 >>   }
 >>   
 >> @@ -551,11 +556,42 @@ static const char *const modes[] = {
@@ -77,6 +81,12 @@ On 26-12-2019 12:12, JC Kuo wrote:
 >> +static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
 >> +{
 >> +	dev_dbg(dev, "%s calling notifier for role is %d\n", __func__, role);
+> I don't understand what "for role is %d" means here. I think perhaps you
+> meant to simply say "for role %d"? Also, perhaps add parentheses after
+> the "%s" to clarify that you're referring to a function.
+> 
+Yes, intention is to print role, Will update as mentioned "for role %d"
+
 >> +
 >> +	return 0;
 >> +}
@@ -88,14 +98,53 @@ On 26-12-2019 12:12, JC Kuo wrote:
 >> +					.set = tegra_xusb_role_sw_set,
 >> +					.fwnode = dev_fwnode(&port->dev),
 >> +						   };
+> The indentation here is odd. Use a single tab to indent lines after the
+> opening { and put the closing } on the same column as "struct". Also,
+> the above may become more readable if you follow the "inverse Christmas
+> tree" style of declaring functions, where you order lines by their
+> length, with the longest line first, like so:
+> 
+> 	struct usb_role_switch_desc role_sx_desc = {
+> 		.fwnode = dev_fwnode(&port->dev),
+> 		.set = tegra_xusb_role_sw_set,
+> 	};
+> 	int err = 0;
+> 
+Thanks for inputs, will update accordingly.
+
 >> +
 >> +	port->usb_role_sw = usb_role_switch_register(&port->dev,
 >> +						&role_sx_desc);
+> &role_sx_desc should be aligned with &port->dev.
+> 
+Will align here and at other places wherever missed.
+
 >> +	if (IS_ERR(port->usb_role_sw)) {
 >> +		err = PTR_ERR(port->usb_role_sw);
 >> +		if (err != EPROBE_DEFER)
 >> +			dev_err(&port->dev, "Failed to register USB role SW: %d",
+> Error messages typically start with a lowercase letter (at least in this
+> driver). Also perhaps spell out "switch" above because SW could easily
+> be confused with "software".
+> 
+Will update.
+
 >> +				err);
+> Shouldn't we abort here? Consider the case where this indeed defers
+> probe. If we don't abort here, the of_platform_populate() below will be
+> called multiple times. Shouldn't it only be called when we actually
+> succeed in registering the switch?
+> 
+Yes, we should abort here, "return err;" got moved to next patch during
+re-base. Will move to current patch.
+> Also, looking at usb_role_switch_register(), I don't think it ever can
+> return -EPROBE_DEFER, so I think you can drop that check and print the
+> error unconditionally.
+> 
+> Thierry
+> 
+Will update.
+-Nagarjuna
 >> +	}
 >> +
 >> +	/* populate connector entry */
@@ -117,16 +166,6 @@ On 26-12-2019 12:12, JC Kuo wrote:
 >>   		usb2->mode = USB_DR_MODE_HOST;
 >>   	}
 >>   
-> "usb-role-switch" is not required for host mode port. If a otg or a peripheral
-> port doesn't have "usb-role-switch" property, .probe() should abort.
-> 
-> Thanks,
-> JC
-> 
-
-Yes, will add the checks accordingly.
--nagarjuna
-
 >> +	if (of_property_read_bool(np, "usb-role-switch")) {
 >> +		err = tegra_xusb_setup_usb_role_switch(port);
 >> +		if (err < 0)
@@ -157,4 +196,5 @@ Yes, will add the checks accordingly.
 >>   	const struct tegra_xusb_port_ops *ops;
 >>   };
 >>   
->>
+>> -- 
+>> 2.7.4
