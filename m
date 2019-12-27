@@ -1,70 +1,60 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM
- state
-Date: Fri, 27 Dec 2019 16:55:30 +0300
-Message-ID: <bf9465a5-ffd1-09bc-cc36-11c6ba356231@gmail.com>
-References: <20191212233428.14648-1-digetx@gmail.com>
- <20191212233428.14648-4-digetx@gmail.com>
- <ae96db3a-0854-6e80-0469-e5fa6fd7bb8e@gmail.com>
- <ec7e11f6-2695-29c8-c9ed-98dc229b8aac@gmail.com>
+Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
+ for audio mclk
+Date: Fri, 27 Dec 2019 17:56:06 +0300
+Message-ID: <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
+References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
+ <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
+ <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
+ <20191225175736.GC27497@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ec7e11f6-2695-29c8-c9ed-98dc229b8aac@gmail.com>
+In-Reply-To: <20191225175736.GC27497@sirena.org.uk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>
+To: Mark Brown <broonie@kernel.org>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-13.12.2019 17:55, Dmitry Osipenko пишет:
-> 13.12.2019 17:29, Dmitry Osipenko пишет:
->> 13.12.2019 02:34, Dmitry Osipenko пишет:
->>> I noticed that sometime I2C clock is kept enabled during suspend-resume.
->>> This happens because runtime PM defers dynamic suspension and thus it may
->>> happen that runtime PM is in active state when system enters into suspend.
->>> In particular I2C controller that is used for CPU's DVFS is often kept ON
->>> during suspend because CPU's voltage scaling happens quite often.
->>>
->>> Note: we marked runtime PM as IRQ-safe during the driver's probe in the
->>> "Support atomic transfers" patch, thus it's okay to enforce runtime PM
->>> suspend/resume in the NOIRQ phase which is used for the system-level
->>> suspend/resume of the driver.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->>> index b3ecdd87e91f..d309a314f4d6 100644
->>> --- a/drivers/i2c/busses/i2c-tegra.c
->>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>> @@ -1790,9 +1790,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
->>>  static int __maybe_unused tegra_i2c_suspend(struct device *dev)
->>>  {
->>>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->>> +	int err;
->>>  
->>>  	i2c_mark_adapter_suspended(&i2c_dev->adapter);
->>
->> I'm now in a doubt that it is correct to use NOIRQ level at all for the
->> suspend because i2c_mark_adapter_suspended() uses mutex, thus I'm
->> wondering what will happen if there is an asynchronous transfer
->> happening during suspend..
->>
->> The i2c_mark_adapter_suspended() will try to block and will never return?
+25.12.2019 20:57, Mark Brown пишет:
+> On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
+>> 21.12.2019 01:26, Sowjanya Komatineni пишет:
+>>> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+>>> through Tegra210 and currently Tegra clock driver does initial parent
+>>> configuration for audio mclk "clk_out_1" and enables them by default.
 > 
-> Moreover, the I2C interrupt should be disabled during the NOIRQ phase.
-> So, yes.. looks like making use of NOIRQ level wasn't a correct
-> decision. On the other hand, I don't think that any I2C client driver
-> used by Tegra SoCs in the upstream kernel could cause the problem at the
-> moment, so it shouldn't be critical.
-> 
-> BTW: Jon, please CC me next time ;) [I'll try to find a better solution
-> for the PCIE problem]
+> Please delete unneeded context from mails when replying.  Doing this
+> makes it much easier to find your reply in the message, helping ensure
+> it won't be missed by people scrolling through the irrelevant quoted
+> material.
 
-On a second thought, the NOIRQ shouldn't really cause any big problems
-because if something executes I2C asynchronously, then the transfer
-should simply timeout.
+Ok
+
+>>> -	clk_disable_unprepare(data->clk_cdev1);
+>>> -	clk_disable_unprepare(data->clk_pll_a_out0);
+>>> -	clk_disable_unprepare(data->clk_pll_a);
+>>> +	if (__clk_is_enabled(data->clk_cdev1))
+>>> +		clk_disable_unprepare(data->clk_cdev1);
+> 
+>> The root of the problem is that you removed clocks enabling from
+>> tegra_asoc_utils_init().
+> 
+>> I'm not sure why clocks should be disabled during the rate-changing,
+>> probably this action is not really needed.
+> 
+> I know nothing about this particular device but this is not that
+> unusual a restriction for audio hardware, you often can't
+> robustly reconfigure the clocking for a device while it's active
+> due to issues in the hardware.  You often see issues with FIFOs
+> glitching or state machines getting stuck.  This may not be an
+> issue here but if it's something that's documented as a
+> requirement it's probably good to pay attention.
+
+I don't know details about that hardware either, maybe it is simply not
+safe to change PLL_A rate dynamically and then CLK_SET_RATE_GATE could
+be used.
+
+If nobody knows for sure, then will be better to keep
+tegra_asoc_utils_set_rate() unchanged.
