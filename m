@@ -1,43 +1,60 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v5 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra
- PMC 32KHz blink clock
-Date: Fri, 27 Dec 2019 13:35:34 -0800
-Message-ID: <fe48ca0e-c26e-5163-fb66-1eefe5f45bcc@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
+ for audio mclk
+Date: Fri, 27 Dec 2019 22:48:06 +0000
+Message-ID: <20191227224806.GP27497@sirena.org.uk>
 References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
- <20191226181715.GA12506@bogus>
+ <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
+ <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
+ <20191225175736.GC27497@sirena.org.uk>
+ <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CKf/2jVYos1l2hij"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191226181715.GA12506@bogus>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 12/26/19 10:17 AM, Rob Herring wrote:
-> On Fri, 20 Dec 2019 14:26:53 -0800, Sowjanya Komatineni wrote:
->> Tegra PMC has blink functionality that allows 32KHz clock out to
->> blink pin of the Tegra.
->>
->> This patch adds id for this blink clock to use for enabling or
->> disabling blink output through device tree.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   include/dt-bindings/soc/tegra-pmc.h | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
->
-> If a tag was not added on purpose, please state why and what changed.
+--CKf/2jVYos1l2hij
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry Rob, missed to add Acked-by tag for this patch in this series.
+On Fri, Dec 27, 2019 at 05:56:06PM +0300, Dmitry Osipenko wrote:
+> 25.12.2019 20:57, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
 
-Will make sure of having all received Acked-by/Reviewed-by tags from 
-next time.
+> >> I'm not sure why clocks should be disabled during the rate-changing,
+> >> probably this action is not really needed.
+
+> > I know nothing about this particular device but this is not that
+> > unusual a restriction for audio hardware, you often can't
+> > robustly reconfigure the clocking for a device while it's active
+
+> If nobody knows for sure, then will be better to keep
+> tegra_asoc_utils_set_rate() unchanged.
+
+Yeah, that's my instinct - unless we understand the disable it's
+safer not to do it.
+
+--CKf/2jVYos1l2hij
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4GiiUACgkQJNaLcl1U
+h9Df1wf/WpeKIdsJm9CpD2g6l/HiFfNALEg3OrDmzNwzbGiCqrMSTPog6EddD3e6
+5EmfLE3DY2tSCu1nkVCtEhrfteuwqWsQQDmn6x/+iXZrGLzL0GsLVMhF0TwSgd9s
+jIySU0jRy6I/AhnYgQ5qx/UsFjBRIweMVFMeoRJBkn0bzT0T5Q7f84ROYhKZcOtz
+e7CHXFFtNBU0zJ2/VZLoILusTGzrIaNkkrZ82+6Zy76v9FyMdVM8LWMwr0V10C3O
+8fl9hvJIfXB11FSWf7jsENBla9LotrwLLivIkhsPfUxA6ZYsYjWkw1KeYCOfKwE5
+LURwVXe5lfCgCP+WY0M7dh/y2cWpAQ==
+=jKXz
+-----END PGP SIGNATURE-----
+
+--CKf/2jVYos1l2hij--
