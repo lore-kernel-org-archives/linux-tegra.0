@@ -1,16 +1,16 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v5 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra
- PMC 32KHz blink clock
-Date: Fri, 27 Dec 2019 13:30:43 -0800
-Message-ID: <b46c21ca-855e-cd81-ab8d-aa96b61ebb56@nvidia.com>
+Subject: Re: [PATCH v5 18/19] arm64: tegra: smaug: Change clk_out_2 provider
+ to pmc
+Date: Fri, 27 Dec 2019 13:32:47 -0800
+Message-ID: <68d648e0-522e-ec8a-5ec5-c6c7881a87f1@nvidia.com>
 References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
- <c8a847fb-3d23-6e1e-59e2-a2d15b63ce02@gmail.com>
+ <1576880825-15010-19-git-send-email-skomatineni@nvidia.com>
+ <2f85578e-8552-9e2e-9f67-355b24d6b99f@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c8a847fb-3d23-6e1e-59e2-a2d15b63ce02@gmail.com>
+In-Reply-To: <2f85578e-8552-9e2e-9f67-355b24d6b99f@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
@@ -18,39 +18,39 @@ Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvi
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 12/22/19 1:55 PM, Dmitry Osipenko wrote:
-> 21.12.2019 01:26, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Tegra PMC has blink functionality that allows 32KHz clock out to
->> blink pin of the Tegra.
+On 12/22/19 2:00 PM, Dmitry Osipenko wrote:
+> 21.12.2019 01:27, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> clk_out_2 is one of the clocks from Tegra PMC block and Tegra PMC
+>> clocks are moved from clock driver to pmc driver with pmc as clock
+>> provider and using pmc clock ids.
 >>
->> This patch adds id for this blink clock to use for enabling or
->> disabling blink output through device tree.
+>> This patch changes clk_out_2 provider to pmc and uses corresponding
+>> pmc clock id for clk_out_2.
 >>
 >> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 >> ---
->>   include/dt-bindings/soc/tegra-pmc.h | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>   arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/s=
-oc/tegra-pmc.h
->> index f7c866404456..a99a457471ee 100644
->> --- a/include/dt-bindings/soc/tegra-pmc.h
->> +++ b/include/dt-bindings/soc/tegra-pmc.h
->> @@ -9,7 +9,8 @@
->>   #define TEGRA_PMC_CLK_OUT_1		0
->>   #define TEGRA_PMC_CLK_OUT_2		1
->>   #define TEGRA_PMC_CLK_OUT_3		2
->> +#define TEGRA_PMC_CLK_BLINK		3
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/=
+boot/dts/nvidia/tegra210-smaug.dts
+>> index 72c7a04ac1df..2faab6390552 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+>> @@ -1592,7 +1592,7 @@
+>>   			reg =3D <0x1a>;
+>>   			interrupt-parent =3D <&gpio>;
+>>   			interrupts =3D <TEGRA_GPIO(E, 6) IRQ_TYPE_LEVEL_LOW>;
+>> -			clocks =3D <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
+>> +			clocks =3D <&tegra_pmc TEGRA_PMC_CLK_OUT_2>;
+>>   			clock-names =3D "mclk";
 >>  =20
->> -#define TEGRA_PMC_CLK_MAX		3
->> +#define TEGRA_PMC_CLK_MAX		4
->>  =20
->>   #endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+>>   			nuvoton,jkdet-enable;
 >>
-> Could you please explain the reason of separating CLK_OUT and BLINK PMC
-> patches?
-No specific reason just thought to have BLINK as separate patch as its=20
-different register configuration to have fixed 32Khz clock out.
->
-> Also, you only documented CLK_OUT clocks in the DT binding and no BLINK.
-missed to add BLINK to dt-binding doc. Will add in v6.
+> Isn't "assigned-clocks" needed here?
+
+from existing device tree and clock driver init table clk_out_2 is from=20
+clk_m and not using extperiph2.
+
+So to have same clock configuration, didnt added assigned-clocks as=20
+default clk_out_2 parent is clk_m
