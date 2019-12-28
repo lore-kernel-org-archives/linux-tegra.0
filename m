@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 04/13] mailbox: mediatek: cmdq: convert to devm_platform_ioremap_resource
-Date: Sat, 28 Dec 2019 18:35:29 +0000
-Message-ID: <20191228183538.26189-4-tiny.windzz@gmail.com>
+Subject: [PATCH 05/13] mailbox: bcm2835: convert to devm_platform_ioremap_resource
+Date: Sat, 28 Dec 2019 18:35:30 +0000
+Message-ID: <20191228183538.26189-5-tiny.windzz@gmail.com>
 References: <20191228183538.26189-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191228183538.26189-1-tiny.windzz@gmail.com>
@@ -14,30 +14,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/mailbox/mtk-cmdq-mailbox.c | 4 +---
+ drivers/mailbox/bcm2835-mailbox.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 9a6ce9f5a7db..7f9e34b021c8 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -458,7 +458,6 @@ static struct mbox_chan *cmdq_xlate(struct mbox_controller *mbox,
- static int cmdq_probe(struct platform_device *pdev)
+diff --git a/drivers/mailbox/bcm2835-mailbox.c b/drivers/mailbox/bcm2835-mailbox.c
+index 39761d190545..79f93c9c7682 100644
+--- a/drivers/mailbox/bcm2835-mailbox.c
++++ b/drivers/mailbox/bcm2835-mailbox.c
+@@ -137,7 +137,6 @@ static int bcm2835_mbox_probe(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	struct cmdq *cmdq;
- 	int err, i;
+ 	int ret = 0;
+-	struct resource *iomem;
+ 	struct bcm2835_mbox *mbox;
  
-@@ -466,8 +465,7 @@ static int cmdq_probe(struct platform_device *pdev)
- 	if (!cmdq)
- 		return -ENOMEM;
+ 	mbox = devm_kzalloc(dev, sizeof(*mbox), GFP_KERNEL);
+@@ -153,8 +152,7 @@ static int bcm2835_mbox_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	cmdq->base = devm_ioremap_resource(dev, res);
-+	cmdq->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(cmdq->base)) {
- 		dev_err(dev, "failed to ioremap gce\n");
- 		return PTR_ERR(cmdq->base);
+-	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	mbox->regs = devm_ioremap_resource(&pdev->dev, iomem);
++	mbox->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mbox->regs)) {
+ 		ret = PTR_ERR(mbox->regs);
+ 		dev_err(&pdev->dev, "Failed to remap mailbox regs: %d\n", ret);
 -- 
 2.17.1
