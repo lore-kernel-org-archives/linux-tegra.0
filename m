@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 13/13] mailbox: armada-37xx-rwtm: convert to devm_platform_ioremap_resource
-Date: Sat, 28 Dec 2019 18:35:38 +0000
-Message-ID: <20191228183538.26189-13-tiny.windzz@gmail.com>
+Subject: [PATCH 07/13] mailbox: platform-mhu: convert to devm_platform_ioremap_resource
+Date: Sat, 28 Dec 2019 18:35:32 +0000
+Message-ID: <20191228183538.26189-7-tiny.windzz@gmail.com>
 References: <20191228183538.26189-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191228183538.26189-1-tiny.windzz@gmail.com>
@@ -14,31 +14,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/mailbox/armada-37xx-rwtm-mailbox.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/mailbox/platform_mhu.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mailbox/armada-37xx-rwtm-mailbox.c b/drivers/mailbox/armada-37xx-rwtm-mailbox.c
-index 19f086716dc5..02b7b28e6969 100644
---- a/drivers/mailbox/armada-37xx-rwtm-mailbox.c
-+++ b/drivers/mailbox/armada-37xx-rwtm-mailbox.c
-@@ -143,7 +143,6 @@ static const struct mbox_chan_ops a37xx_mbox_ops = {
- static int armada_37xx_mbox_probe(struct platform_device *pdev)
- {
- 	struct a37xx_mbox *mbox;
--	struct resource *regs;
- 	struct mbox_chan *chans;
- 	int ret;
- 
-@@ -156,9 +155,7 @@ static int armada_37xx_mbox_probe(struct platform_device *pdev)
- 	if (!chans)
+diff --git a/drivers/mailbox/platform_mhu.c b/drivers/mailbox/platform_mhu.c
+index b6e34952246b..a5922ac0b0bf 100644
+--- a/drivers/mailbox/platform_mhu.c
++++ b/drivers/mailbox/platform_mhu.c
+@@ -117,7 +117,6 @@ static int platform_mhu_probe(struct platform_device *pdev)
+ 	int i, err;
+ 	struct platform_mhu *mhu;
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 	int platform_mhu_reg[MHU_CHANS] = {
+ 		MHU_SEC_OFFSET, MHU_LP_OFFSET, MHU_HP_OFFSET
+ 	};
+@@ -127,8 +126,7 @@ static int platform_mhu_probe(struct platform_device *pdev)
+ 	if (!mhu)
  		return -ENOMEM;
  
--	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--
--	mbox->base = devm_ioremap_resource(&pdev->dev, regs);
-+	mbox->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mbox->base)) {
- 		dev_err(&pdev->dev, "ioremap failed\n");
- 		return PTR_ERR(mbox->base);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	mhu->base = devm_ioremap_resource(dev, res);
++	mhu->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mhu->base)) {
+ 		dev_err(dev, "ioremap failed\n");
+ 		return PTR_ERR(mhu->base);
 -- 
 2.17.1
