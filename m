@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 10/13] mailbox: tegra: convert to devm_platform_ioremap_resource
-Date: Sat, 28 Dec 2019 18:35:35 +0000
-Message-ID: <20191228183538.26189-10-tiny.windzz@gmail.com>
+Subject: [PATCH 12/13] mailbox: omap: do some cleanup
+Date: Sat, 28 Dec 2019 18:35:37 +0000
+Message-ID: <20191228183538.26189-12-tiny.windzz@gmail.com>
 References: <20191228183538.26189-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191228183538.26189-1-tiny.windzz@gmail.com>
@@ -11,33 +11,45 @@ Cc: Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
 Use devm_platform_ioremap_resource() to simplify code.
+'i' and 'ret' are variables of the same type and there is no
+need to use two lines.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/mailbox/tegra-hsp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mailbox/omap-mailbox.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 834b35dc3b13..6d16e56942ff 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -631,7 +631,6 @@ static int tegra_hsp_request_shared_irq(struct tegra_hsp *hsp)
- static int tegra_hsp_probe(struct platform_device *pdev)
- {
- 	struct tegra_hsp *hsp;
--	struct resource *res;
- 	unsigned int i;
- 	u32 value;
- 	int err;
-@@ -645,8 +644,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	INIT_LIST_HEAD(&hsp->doorbells);
- 	spin_lock_init(&hsp->lock);
+diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+index 5978a35aac6d..9b9994be5602 100644
+--- a/drivers/mailbox/omap-mailbox.c
++++ b/drivers/mailbox/omap-mailbox.c
+@@ -695,8 +695,7 @@ static struct mbox_chan *omap_mbox_of_xlate(struct mbox_controller *controller,
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	hsp->regs = devm_ioremap_resource(&pdev->dev, res);
-+	hsp->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(hsp->regs))
- 		return PTR_ERR(hsp->regs);
+ static int omap_mbox_probe(struct platform_device *pdev)
+ {
+-	struct resource *mem;
+-	int ret;
++	int ret, i;
+ 	struct mbox_chan *chnls;
+ 	struct omap_mbox **list, *mbox, *mboxblk;
+ 	struct omap_mbox_fifo_info *finfo, *finfoblk;
+@@ -709,7 +708,6 @@ static int omap_mbox_probe(struct platform_device *pdev)
+ 	u32 num_users, num_fifos;
+ 	u32 tmp[3];
+ 	u32 l;
+-	int i;
+ 
+ 	if (!node) {
+ 		pr_err("%s: only DT-based devices are supported\n", __func__);
+@@ -772,8 +770,7 @@ static int omap_mbox_probe(struct platform_device *pdev)
+ 	if (!mdev)
+ 		return -ENOMEM;
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	mdev->mbox_base = devm_ioremap_resource(&pdev->dev, mem);
++	mdev->mbox_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mdev->mbox_base))
+ 		return PTR_ERR(mdev->mbox_base);
  
 -- 
 2.17.1
