@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 05/16] usb: phy: tegra: Use generic stub for a missing VBUS regulator
-Date: Sat, 28 Dec 2019 23:33:47 +0300
-Message-ID: <20191228203358.23490-6-digetx@gmail.com>
+Subject: [PATCH v3 11/16] usb: phy: tegra: Disable VBUS regulator on tegra_usb_phy_init failure
+Date: Sat, 28 Dec 2019 23:33:53 +0300
+Message-ID: <20191228203358.23490-12-digetx@gmail.com>
 References: <20191228203358.23490-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,66 +12,55 @@ To: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation
 Cc: devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Regulator core provides dummy regulator if device-tree doesn't define VBUS
-regulator.
+VBUS regulator should be turned off in a case of error.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 28 +++++++++-------------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 4d6d586c49cc..0a07efc9de06 100644
+index cc6cca4dcecb..f7e7df812f83 100644
 --- a/drivers/usb/phy/phy-tegra-usb.c
 +++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -798,9 +798,7 @@ static void tegra_usb_phy_shutdown(struct usb_phy *u_phy)
- 	else
- 		utmip_pad_close(phy);
- 
--	if (!IS_ERR(phy->vbus))
--		regulator_disable(phy->vbus);
--
-+	regulator_disable(phy->vbus);
- 	clk_disable_unprepare(phy->pll_u);
- 
- 	phy->freq = NULL;
-@@ -878,14 +876,11 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
- 		goto fail;
+@@ -851,14 +851,14 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
+ 		dev_err(phy->u_phy.dev, "Invalid pll_u parent rate %ld\n",
+ 			parent_rate);
+ 		err = -EINVAL;
+-		goto fail;
++		goto disable_clk;
  	}
  
--	if (!IS_ERR(phy->vbus)) {
--		err = regulator_enable(phy->vbus);
--		if (err) {
--			dev_err(phy->u_phy.dev,
--				"Failed to enable USB VBUS regulator: %d\n",
--				err);
--			goto fail;
--		}
-+	err = regulator_enable(phy->vbus);
-+	if (err) {
-+		dev_err(phy->u_phy.dev,
-+			"Failed to enable USB VBUS regulator: %d\n", err);
-+		goto fail;
+ 	err = regulator_enable(phy->vbus);
+ 	if (err) {
+ 		dev_err(phy->u_phy.dev,
+ 			"Failed to enable USB VBUS regulator: %d\n", err);
+-		goto fail;
++		goto disable_clk;
  	}
  
  	if (phy->is_ulpi_phy)
-@@ -1120,14 +1115,9 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 	}
+@@ -866,7 +866,7 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
+ 	else
+ 		err = utmip_pad_open(phy);
+ 	if (err)
+-		goto fail;
++		goto disable_vbus;
  
- 	/* On some boards, the VBUS regulator doesn't need to be controlled */
--	if (of_find_property(np, "vbus-supply", NULL)) {
--		tegra_phy->vbus = devm_regulator_get(&pdev->dev, "vbus");
--		if (IS_ERR(tegra_phy->vbus))
--			return PTR_ERR(tegra_phy->vbus);
--	} else {
--		dev_notice(&pdev->dev, "no vbus regulator");
--		tegra_phy->vbus = ERR_PTR(-ENODEV);
--	}
-+	tegra_phy->vbus = devm_regulator_get(&pdev->dev, "vbus");
-+	if (IS_ERR(tegra_phy->vbus))
-+		return PTR_ERR(tegra_phy->vbus);
+ 	err = tegra_usb_phy_power_on(phy);
+ 	if (err)
+@@ -879,7 +879,11 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
+ 		ulpi_close(phy);
+ 	else
+ 		utmip_pad_close(phy);
+-fail:
++
++disable_vbus:
++	regulator_disable(phy->vbus);
++
++disable_clk:
+ 	clk_disable_unprepare(phy->pll_u);
  
- 	tegra_phy->pll_u = devm_clk_get(&pdev->dev, "pll_u");
- 	err = PTR_ERR_OR_ZERO(tegra_phy->pll_u);
+ 	phy->freq = NULL;
 -- 
 2.24.0
