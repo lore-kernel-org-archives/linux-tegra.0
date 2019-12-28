@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 13/16] usb: phy: tegra: Keep CPU interrupts enabled
-Date: Sat, 28 Dec 2019 23:33:55 +0300
-Message-ID: <20191228203358.23490-14-digetx@gmail.com>
+Subject: [PATCH v3 14/16] usb: chipidea: tegra: Stop managing PHY's power
+Date: Sat, 28 Dec 2019 23:33:56 +0300
+Message-ID: <20191228203358.23490-15-digetx@gmail.com>
 References: <20191228203358.23490-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,69 +12,48 @@ To: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation
 Cc: devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no good reason for disabling of CPU interrupts in order to
-protect the utmip_pad_count modification.
+Tegra's USB PHY driver now provides generic PHY init/shutdown callbacks
+and thus the custom PHY management could be removed from Tegra-specific
+part of the ChipIdea driver.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 72825d207840..b0c4f304a5ba 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -313,7 +313,6 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
- {
- 	struct tegra_utmip_config *config = phy->config;
- 	void __iomem *base = phy->pad_regs;
--	unsigned long flags;
- 	u32 val;
- 	int err;
- 
-@@ -321,7 +320,7 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
- 	if (err)
+diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+index 0c9911d44ee5..7455df0ede49 100644
+--- a/drivers/usb/chipidea/ci_hdrc_tegra.c
++++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+@@ -83,13 +83,6 @@ static int tegra_udc_probe(struct platform_device *pdev)
  		return err;
- 
--	spin_lock_irqsave(&utmip_pad_lock, flags);
-+	spin_lock(&utmip_pad_lock);
- 
- 	if (utmip_pad_count++ == 0) {
- 		val = readl_relaxed(base + UTMIP_BIAS_CFG0);
-@@ -339,7 +338,7 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
- 		writel_relaxed(val, base + UTMIP_BIAS_CFG0);
  	}
  
--	spin_unlock_irqrestore(&utmip_pad_lock, flags);
-+	spin_unlock(&utmip_pad_lock);
+-	/*
+-	 * Tegra's USB PHY driver doesn't implement optional phy_init()
+-	 * hook, so we have to power on UDC controller before ChipIdea
+-	 * driver initialization kicks in.
+-	 */
+-	usb_phy_set_suspend(udc->phy, 0);
+-
+ 	/* setup and register ChipIdea HDRC device */
+ 	udc->data.name = "tegra-udc";
+ 	udc->data.flags = soc->flags;
+@@ -109,7 +102,6 @@ static int tegra_udc_probe(struct platform_device *pdev)
+ 	return 0;
  
- 	clk_disable_unprepare(phy->pad_clk);
+ fail_power_off:
+-	usb_phy_set_suspend(udc->phy, 1);
+ 	clk_disable_unprepare(udc->clk);
+ 	return err;
+ }
+@@ -119,7 +111,6 @@ static int tegra_udc_remove(struct platform_device *pdev)
+ 	struct tegra_udc *udc = platform_get_drvdata(pdev);
  
-@@ -349,7 +348,6 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
- static int utmip_pad_power_off(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->pad_regs;
--	unsigned long flags;
- 	u32 val;
- 	int ret;
+ 	ci_hdrc_remove_device(udc->dev);
+-	usb_phy_set_suspend(udc->phy, 1);
+ 	clk_disable_unprepare(udc->clk);
  
-@@ -357,7 +355,7 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
- 	if (ret)
- 		return ret;
- 
--	spin_lock_irqsave(&utmip_pad_lock, flags);
-+	spin_lock(&utmip_pad_lock);
- 
- 	if (!utmip_pad_count) {
- 		dev_err(phy->u_phy.dev, "UTMIP pad already powered off\n");
-@@ -371,7 +369,7 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
- 		writel_relaxed(val, base + UTMIP_BIAS_CFG0);
- 	}
- ulock:
--	spin_unlock_irqrestore(&utmip_pad_lock, flags);
-+	spin_unlock(&utmip_pad_lock);
- 
- 	clk_disable_unprepare(phy->pad_clk);
- 
+ 	return 0;
 -- 
 2.24.0
