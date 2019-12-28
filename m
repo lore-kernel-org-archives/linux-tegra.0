@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 1/6] i2c: tegra: Fix suspending in active runtime PM state
-Date: Sun, 29 Dec 2019 01:16:49 +0300
-Message-ID: <20191228221654.28842-2-digetx@gmail.com>
+Subject: [PATCH v2 2/6] i2c: tegra: Properly disable runtime PM on driver's probe error
+Date: Sun, 29 Dec 2019 01:16:50 +0300
+Message-ID: <20191228221654.28842-3-digetx@gmail.com>
 References: <20191228221654.28842-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,47 +12,74 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-I noticed that sometime I2C clock is kept enabled during suspend-resume.
-This happens because runtime PM defers dynamic suspension and thus it may
-happen that runtime PM is in active state when system enters into suspend.
-In particular I2C controller that is used for CPU's DVFS is often kept ON
-during suspend because CPU's voltage scaling happens quite often.
+One of the recent Tegra I2C commits made a change that resumes runtime PM
+during driver's probe, but it missed to put the RPM in a case of error.
+Note that it's not correct to use pm_runtime_status_suspended because it
+breaks RPM refcounting.
 
 Fixes: 8ebf15e9c869 ("i2c: tegra: Move suspend handling to NOIRQ phase")
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/i2c/busses/i2c-tegra.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a98bf31d0e5c..79d19f6ce94e 100644
+index 79d19f6ce94e..61339c665ebd 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1710,9 +1710,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- static int __maybe_unused tegra_i2c_suspend(struct device *dev)
- {
- 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+	int err;
+@@ -1608,14 +1608,18 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	}
  
- 	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+ 	pm_runtime_enable(&pdev->dev);
+-	if (!pm_runtime_enabled(&pdev->dev))
++	if (!pm_runtime_enabled(&pdev->dev)) {
+ 		ret = tegra_i2c_runtime_resume(&pdev->dev);
+-	else
++		if (ret < 0) {
++			dev_err(&pdev->dev, "runtime resume failed\n");
++			goto unprepare_div_clk;
++		}
++	} else {
+ 		ret = pm_runtime_get_sync(i2c_dev->dev);
+-
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "runtime resume failed\n");
+-		goto unprepare_div_clk;
++		if (ret < 0) {
++			dev_err(&pdev->dev, "runtime resume failed\n");
++			goto disable_rpm;
++		}
+ 	}
  
-+	err = pm_runtime_force_suspend(dev);
-+	if (err < 0)
-+		return err;
+ 	if (i2c_dev->is_multimaster_mode) {
+@@ -1623,7 +1627,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 		if (ret < 0) {
+ 			dev_err(i2c_dev->dev, "div_clk enable failed %d\n",
+ 				ret);
+-			goto disable_rpm;
++			goto put_rpm;
+ 		}
+ 	}
+ 
+@@ -1671,11 +1675,16 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	if (i2c_dev->is_multimaster_mode)
+ 		clk_disable(i2c_dev->div_clk);
+ 
+-disable_rpm:
+-	pm_runtime_disable(&pdev->dev);
+-	if (!pm_runtime_status_suspended(&pdev->dev))
++put_rpm:
++	if (pm_runtime_enabled(&pdev->dev))
++		pm_runtime_put_sync(&pdev->dev);
++	else
+ 		tegra_i2c_runtime_suspend(&pdev->dev);
+ 
++disable_rpm:
++	if (pm_runtime_enabled(&pdev->dev))
++		pm_runtime_disable(&pdev->dev);
 +
- 	return 0;
- }
+ unprepare_div_clk:
+ 	clk_unprepare(i2c_dev->div_clk);
  
-@@ -1733,6 +1738,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
- 	if (err)
- 		return err;
- 
-+	err = pm_runtime_force_resume(dev);
-+	if (err < 0)
-+		return err;
-+
- 	i2c_mark_adapter_resumed(&i2c_dev->adapter);
- 
- 	return 0;
 -- 
 2.24.0
