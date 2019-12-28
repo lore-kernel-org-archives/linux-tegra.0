@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 06/16] usb: ulpi: Add resource-managed variant of otg_ulpi_create()
-Date: Sat, 28 Dec 2019 23:33:48 +0300
-Message-ID: <20191228203358.23490-7-digetx@gmail.com>
+Subject: [PATCH v3 07/16] usb: phy: tegra: Use devm_otg_ulpi_create()
+Date: Sat, 28 Dec 2019 23:33:49 +0300
+Message-ID: <20191228203358.23490-8-digetx@gmail.com>
 References: <20191228203358.23490-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,112 +12,74 @@ To: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation
 Cc: devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Now drivers (like NVIDIA Tegra USB PHY for example) will be able to
-benefit from the resource-managed variant, making driver's code a bit
-cleaner.
+The resource-managed variant removes the necessity for the driver to care
+about freeing ULPI resources.
 
 Suggested-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/phy/phy-ulpi.c | 48 +++++++++++++++++++++++++++++++-------
- include/linux/usb/ulpi.h   | 11 +++++++++
- 2 files changed, 50 insertions(+), 9 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-ulpi.c b/drivers/usb/phy/phy-ulpi.c
-index a43c49369a60..e683a37e3a7a 100644
---- a/drivers/usb/phy/phy-ulpi.c
-+++ b/drivers/usb/phy/phy-ulpi.c
-@@ -240,6 +240,21 @@ static int ulpi_set_vbus(struct usb_otg *otg, bool on)
- 	return usb_phy_io_write(phy, flags, ULPI_OTG_CTRL);
- }
- 
-+static void otg_ulpi_init(struct usb_phy *phy, struct usb_otg *otg,
-+			  struct usb_phy_io_ops *ops,
-+			  unsigned int flags)
-+{
-+	phy->label	= "ULPI";
-+	phy->flags	= flags;
-+	phy->io_ops	= ops;
-+	phy->otg	= otg;
-+	phy->init	= ulpi_init;
-+
-+	otg->usb_phy	= phy;
-+	otg->set_host	= ulpi_set_host;
-+	otg->set_vbus	= ulpi_set_vbus;
-+}
-+
- struct usb_phy *
- otg_ulpi_create(struct usb_phy_io_ops *ops,
- 		unsigned int flags)
-@@ -257,17 +272,32 @@ otg_ulpi_create(struct usb_phy_io_ops *ops,
- 		return NULL;
- 	}
- 
--	phy->label	= "ULPI";
--	phy->flags	= flags;
--	phy->io_ops	= ops;
--	phy->otg	= otg;
--	phy->init	= ulpi_init;
--
--	otg->usb_phy	= phy;
--	otg->set_host	= ulpi_set_host;
--	otg->set_vbus	= ulpi_set_vbus;
-+	otg_ulpi_init(phy, otg, ops, flags);
- 
- 	return phy;
- }
- EXPORT_SYMBOL_GPL(otg_ulpi_create);
- 
-+struct usb_phy *
-+devm_otg_ulpi_create(struct device *dev,
-+		     struct usb_phy_io_ops *ops,
-+		     unsigned int flags)
-+{
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 0a07efc9de06..a3d102f6f81e 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -1080,6 +1080,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	enum usb_phy_interface phy_type;
+ 	struct reset_control *reset;
+ 	struct resource *res;
 +	struct usb_phy *phy;
-+	struct usb_otg *otg;
-+
-+	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
-+	if (!phy)
-+		return NULL;
-+
-+	otg = devm_kzalloc(dev, sizeof(*otg), GFP_KERNEL);
-+	if (!otg) {
-+		devm_kfree(dev, phy);
-+		return NULL;
-+	}
-+
-+	otg_ulpi_init(phy, otg, ops, flags);
-+
-+	return phy;
-+}
-+EXPORT_SYMBOL_GPL(devm_otg_ulpi_create);
-diff --git a/include/linux/usb/ulpi.h b/include/linux/usb/ulpi.h
-index c515765adab7..36c2982780ad 100644
---- a/include/linux/usb/ulpi.h
-+++ b/include/linux/usb/ulpi.h
-@@ -55,12 +55,23 @@
- #if IS_ENABLED(CONFIG_USB_ULPI)
- struct usb_phy *otg_ulpi_create(struct usb_phy_io_ops *ops,
- 					unsigned int flags);
-+
-+struct usb_phy *devm_otg_ulpi_create(struct device *dev,
-+				     struct usb_phy_io_ops *ops,
-+				     unsigned int flags);
- #else
- static inline struct usb_phy *otg_ulpi_create(struct usb_phy_io_ops *ops,
- 					      unsigned int flags)
- {
- 	return NULL;
- }
-+
-+static inline struct usb_phy *devm_otg_ulpi_create(struct device *dev,
-+						   struct usb_phy_io_ops *ops,
-+						   unsigned int flags)
-+{
-+	return NULL;
-+}
- #endif
+ 	int err;
  
- #ifdef CONFIG_USB_ULPI_VIEWPORT
+ 	tegra_phy = devm_kzalloc(&pdev->dev, sizeof(*tegra_phy), GFP_KERNEL);
+@@ -1180,12 +1181,14 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 			return err;
+ 		}
+ 
+-		tegra_phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
+-		if (!tegra_phy->ulpi) {
++		phy = devm_otg_ulpi_create(&pdev->dev,
++					   &ulpi_viewport_access_ops, 0);
++		if (!phy) {
+ 			dev_err(&pdev->dev, "Failed to create ULPI OTG\n");
+ 			return -ENOMEM;
+ 		}
+ 
++		tegra_phy->ulpi = phy;
+ 		tegra_phy->ulpi->io_priv = tegra_phy->regs + ULPI_VIEWPORT;
+ 		break;
+ 
+@@ -1204,17 +1207,9 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 
+ 	err = usb_add_phy_dev(&tegra_phy->u_phy);
+ 	if (err)
+-		goto free_ulpi;
++		return err;
+ 
+ 	return 0;
+-
+-free_ulpi:
+-	if (tegra_phy->ulpi) {
+-		kfree(tegra_phy->ulpi->otg);
+-		kfree(tegra_phy->ulpi);
+-	}
+-
+-	return err;
+ }
+ 
+ static int tegra_usb_phy_remove(struct platform_device *pdev)
+@@ -1223,11 +1218,6 @@ static int tegra_usb_phy_remove(struct platform_device *pdev)
+ 
+ 	usb_remove_phy(&tegra_phy->u_phy);
+ 
+-	if (tegra_phy->ulpi) {
+-		kfree(tegra_phy->ulpi->otg);
+-		kfree(tegra_phy->ulpi);
+-	}
+-
+ 	return 0;
+ }
+ 
 -- 
 2.24.0
