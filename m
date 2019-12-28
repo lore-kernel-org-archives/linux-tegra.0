@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 09/13] mailbox: sti: do some cleanup
-Date: Sat, 28 Dec 2019 18:35:34 +0000
-Message-ID: <20191228183538.26189-9-tiny.windzz@gmail.com>
+Subject: [PATCH 11/13] mailbox: hi6220: convert to devm_platform_ioremap_resource
+Date: Sat, 28 Dec 2019 18:35:36 +0000
+Message-ID: <20191228183538.26189-11-tiny.windzz@gmail.com>
 References: <20191228183538.26189-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191228183538.26189-1-tiny.windzz@gmail.com>
@@ -11,38 +11,41 @@ Cc: Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
 Use devm_platform_ioremap_resource() to simplify code.
-'irq' and 'ret' are variables of the same type and there is no
-need to use two lines.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/mailbox/mailbox-sti.c | 7 ++-----
+ drivers/mailbox/hi6220-mailbox.c | 7 ++-----
  1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mailbox/mailbox-sti.c b/drivers/mailbox/mailbox-sti.c
-index 2baf69a0b81c..2a2316dfdca0 100644
---- a/drivers/mailbox/mailbox-sti.c
-+++ b/drivers/mailbox/mailbox-sti.c
-@@ -408,9 +408,7 @@ static int sti_mbox_probe(struct platform_device *pdev)
- 	struct sti_mbox_device *mdev;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct mbox_chan *chans;
+diff --git a/drivers/mailbox/hi6220-mailbox.c b/drivers/mailbox/hi6220-mailbox.c
+index cc236ac7a0b5..d9140a016170 100644
+--- a/drivers/mailbox/hi6220-mailbox.c
++++ b/drivers/mailbox/hi6220-mailbox.c
+@@ -264,7 +264,6 @@ static int hi6220_mbox_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct device *dev = &pdev->dev;
+ 	struct hi6220_mbox *mbox;
 -	struct resource *res;
--	int irq;
--	int ret;
-+	int irq, ret;
+ 	int i, err;
  
- 	match = of_match_device(sti_mailbox_match, &pdev->dev);
- 	if (!match) {
-@@ -425,8 +423,7 @@ static int sti_mbox_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, mdev);
+ 	mbox = devm_kzalloc(dev, sizeof(*mbox), GFP_KERNEL);
+@@ -287,15 +286,13 @@ static int hi6220_mbox_probe(struct platform_device *pdev)
+ 	if (mbox->irq < 0)
+ 		return mbox->irq;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mdev->base = devm_ioremap_resource(&pdev->dev, res);
-+	mdev->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mdev->base))
- 		return PTR_ERR(mdev->base);
+-	mbox->ipc = devm_ioremap_resource(dev, res);
++	mbox->ipc = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mbox->ipc)) {
+ 		dev_err(dev, "ioremap ipc failed\n");
+ 		return PTR_ERR(mbox->ipc);
+ 	}
  
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	mbox->base = devm_ioremap_resource(dev, res);
++	mbox->base = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(mbox->base)) {
+ 		dev_err(dev, "ioremap buffer failed\n");
+ 		return PTR_ERR(mbox->base);
 -- 
 2.17.1
