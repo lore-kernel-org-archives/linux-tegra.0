@@ -1,60 +1,86 @@
-From: Mark Brown <broonie@kernel.org>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
  for audio mclk
-Date: Fri, 27 Dec 2019 22:48:06 +0000
-Message-ID: <20191227224806.GP27497@sirena.org.uk>
+Date: Sat, 28 Dec 2019 17:28:24 +0300
+Message-ID: <0eaf3942-047b-2412-7843-315842dcf5d1@gmail.com>
 References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
  <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
  <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
- <20191225175736.GC27497@sirena.org.uk>
- <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
+ <1b79ab92-c163-3857-dd38-df35c509b823@gmail.com>
+ <4fd01e04-8240-8562-467d-324f7adbdbdf@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CKf/2jVYos1l2hij"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
+In-Reply-To: <4fd01e04-8240-8562-467d-324f7adbdbdf@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+28.12.2019 00:25, Sowjanya Komatineni пишет:
+> 
+> On 12/22/19 1:18 PM, Dmitry Osipenko wrote:
+>> 23.12.2019 00:14, Dmitry Osipenko пишет:
+>>> 21.12.2019 01:26, Sowjanya Komatineni пишет:
+>>>> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+>>>> through Tegra210 and currently Tegra clock driver does initial parent
+>>>> configuration for audio mclk "clk_out_1" and enables them by default.
+>>>>
+>>>> With the move of Tera PMC clocks from clock driver to Tegra PMC
+>>>> driver, initial parent configuration for audio clocks are through
+>>>> the device tree using assigned-clock-parents property.
+>>>>
+>>>> Default clock parents can be specified in device tree using
+>>>> assigned-clocks and assigned-clock-parents and there is no need
+>>>> to have clock driver do parent configuration and enable audio related
+>>>> clocks.
+>>>>
+>>>> This patch has implementation for initial parent configuration in
+>>>> audio driver when default parent configuration is not specified in the
+>>>> device tree using assigned-clock properties and enables audio clocks
+>>>> during the clock rate change.
+>>>>
+>>>> This patch configures PLLA_OUT0 as parent to extern1 and extern1
+>>>> as parent to clk_out_1 and uses clk_out_1 as cdev1 clock to allow
+>>>> mclk control from this driver.
+>>>>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>   sound/soc/tegra/tegra_asoc_utils.c | 71
+>>>> ++++++++++++++++++++++----------------
+>>>>   1 file changed, 41 insertions(+), 30 deletions(-)
+>>>>
+>>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
+>>>> b/sound/soc/tegra/tegra_asoc_utils.c
+>>>> index 38535962029c..fc3135c08f43 100644
+>>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
+>>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+>>>> @@ -7,6 +7,7 @@
+>>>>    */
+>>>>     #include <linux/clk.h>
+>>>> +#include <linux/clk-provider.h>
+>>> This is illegal, it is not a clock provider.
+>>>
+> __clk_is_enabled API is used in this patch to disable clock only when
+> its enabled.
 
---CKf/2jVYos1l2hij
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As I wrote in the other reply, this is a wrong solution since it works
+around the problem and doesn't solve the root of the problem. Please fix
+it properly in the next version.
 
-On Fri, Dec 27, 2019 at 05:56:06PM +0300, Dmitry Osipenko wrote:
-> 25.12.2019 20:57, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
+> __clk_is_enabled API is from clk-provider.h
 
-> >> I'm not sure why clocks should be disabled during the rate-changing,
-> >> probably this action is not really needed.
+That's exactly the reason why it is in clk-provider.h, you absolutely
+cannot use __clk_is_enabled() outside of clk providers because:
 
-> > I know nothing about this particular device but this is not that
-> > unusual a restriction for audio hardware, you often can't
-> > robustly reconfigure the clocking for a device while it's active
+1. __clk_is_enabled doesn't use any lockings, so you need to be very
+careful when using it
 
-> If nobody knows for sure, then will be better to keep
-> tegra_asoc_utils_set_rate() unchanged.
+2. every function that is prefixed with __ is usually meant for internal
+use only
 
-Yeah, that's my instinct - unless we understand the disable it's
-safer not to do it.
-
---CKf/2jVYos1l2hij
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4GiiUACgkQJNaLcl1U
-h9Df1wf/WpeKIdsJm9CpD2g6l/HiFfNALEg3OrDmzNwzbGiCqrMSTPog6EddD3e6
-5EmfLE3DY2tSCu1nkVCtEhrfteuwqWsQQDmn6x/+iXZrGLzL0GsLVMhF0TwSgd9s
-jIySU0jRy6I/AhnYgQ5qx/UsFjBRIweMVFMeoRJBkn0bzT0T5Q7f84ROYhKZcOtz
-e7CHXFFtNBU0zJ2/VZLoILusTGzrIaNkkrZ82+6Zy76v9FyMdVM8LWMwr0V10C3O
-8fl9hvJIfXB11FSWf7jsENBla9LotrwLLivIkhsPfUxA6ZYsYjWkw1KeYCOfKwE5
-LURwVXe5lfCgCP+WY0M7dh/y2cWpAQ==
-=jKXz
------END PGP SIGNATURE-----
-
---CKf/2jVYos1l2hij--
+3. tegra_asoc_utils is simply not a clk provider, such cases when you
+need to do hacks in order to achieve something are a good indication
+about that you're likely doing something wrong
