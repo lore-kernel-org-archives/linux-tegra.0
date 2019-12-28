@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 07/13] mailbox: platform-mhu: convert to devm_platform_ioremap_resource
-Date: Sat, 28 Dec 2019 18:35:32 +0000
-Message-ID: <20191228183538.26189-7-tiny.windzz@gmail.com>
+Subject: [PATCH 10/13] mailbox: tegra: convert to devm_platform_ioremap_resource
+Date: Sat, 28 Dec 2019 18:35:35 +0000
+Message-ID: <20191228183538.26189-10-tiny.windzz@gmail.com>
 References: <20191228183538.26189-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191228183538.26189-1-tiny.windzz@gmail.com>
@@ -14,30 +14,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/mailbox/platform_mhu.c | 4 +---
+ drivers/mailbox/tegra-hsp.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mailbox/platform_mhu.c b/drivers/mailbox/platform_mhu.c
-index b6e34952246b..a5922ac0b0bf 100644
---- a/drivers/mailbox/platform_mhu.c
-+++ b/drivers/mailbox/platform_mhu.c
-@@ -117,7 +117,6 @@ static int platform_mhu_probe(struct platform_device *pdev)
- 	int i, err;
- 	struct platform_mhu *mhu;
- 	struct device *dev = &pdev->dev;
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 834b35dc3b13..6d16e56942ff 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -631,7 +631,6 @@ static int tegra_hsp_request_shared_irq(struct tegra_hsp *hsp)
+ static int tegra_hsp_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_hsp *hsp;
 -	struct resource *res;
- 	int platform_mhu_reg[MHU_CHANS] = {
- 		MHU_SEC_OFFSET, MHU_LP_OFFSET, MHU_HP_OFFSET
- 	};
-@@ -127,8 +126,7 @@ static int platform_mhu_probe(struct platform_device *pdev)
- 	if (!mhu)
- 		return -ENOMEM;
+ 	unsigned int i;
+ 	u32 value;
+ 	int err;
+@@ -645,8 +644,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	INIT_LIST_HEAD(&hsp->doorbells);
+ 	spin_lock_init(&hsp->lock);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mhu->base = devm_ioremap_resource(dev, res);
-+	mhu->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mhu->base)) {
- 		dev_err(dev, "ioremap failed\n");
- 		return PTR_ERR(mhu->base);
+-	hsp->regs = devm_ioremap_resource(&pdev->dev, res);
++	hsp->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hsp->regs))
+ 		return PTR_ERR(hsp->regs);
+ 
 -- 
 2.17.1
