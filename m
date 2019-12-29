@@ -1,8 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 16/32] pwm: bcm-iproc: convert to
- devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:05:54 +0000
-Message-ID: <20191229080610.7597-16-tiny.windzz__30908.9763950155$1577607613$gmane$org@gmail.com>
+Subject: [PATCH 14/32] pwm: meson: convert to devm_platform_ioremap_resource
+Date: Sun, 29 Dec 2019 08:05:52 +0000
+Message-ID: <20191229080610.7597-14-tiny.windzz__45455.345760432$1577607626$gmane$org@gmail.com>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
@@ -23,30 +22,29 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/pwm/pwm-bcm-iproc.c | 4 +---
+ drivers/pwm/pwm-meson.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pwm/pwm-bcm-iproc.c b/drivers/pwm/pwm-bcm-iproc.c
-index 1f829edd8ee7..52860df7d9b7 100644
---- a/drivers/pwm/pwm-bcm-iproc.c
-+++ b/drivers/pwm/pwm-bcm-iproc.c
-@@ -193,7 +193,6 @@ static const struct pwm_ops iproc_pwm_ops = {
- static int iproc_pwmc_probe(struct platform_device *pdev)
+diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+index 6245bbdb6e6c..62fc79092038 100644
+--- a/drivers/pwm/pwm-meson.c
++++ b/drivers/pwm/pwm-meson.c
+@@ -537,15 +537,13 @@ static int meson_pwm_init_channels(struct meson_pwm *meson)
+ static int meson_pwm_probe(struct platform_device *pdev)
  {
- 	struct iproc_pwmc *ip;
--	struct resource *res;
- 	unsigned int i;
- 	u32 value;
- 	int ret;
-@@ -211,8 +210,7 @@ static int iproc_pwmc_probe(struct platform_device *pdev)
- 	ip->chip.of_xlate = of_pwm_xlate_with_flags;
- 	ip->chip.of_pwm_n_cells = 3;
+ 	struct meson_pwm *meson;
+-	struct resource *regs;
+ 	int err;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	ip->base = devm_ioremap_resource(&pdev->dev, res);
-+	ip->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(ip->base))
- 		return PTR_ERR(ip->base);
+ 	meson = devm_kzalloc(&pdev->dev, sizeof(*meson), GFP_KERNEL);
+ 	if (!meson)
+ 		return -ENOMEM;
+ 
+-	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	meson->base = devm_ioremap_resource(&pdev->dev, regs);
++	meson->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(meson->base))
+ 		return PTR_ERR(meson->base);
  
 -- 
 2.17.1
