@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 12/12] dmaengine: tegra-apb: Remove MODULE_ALIAS
-Date: Sun, 29 Dec 2019 17:55:25 +0300
-Message-ID: <20191229145525.533-13-digetx@gmail.com>
+Subject: [PATCH v2 11/12] dmaengine: tegra-apb: Allow to compile as a loadable kernel module
+Date: Sun, 29 Dec 2019 17:55:24 +0300
+Message-ID: <20191229145525.533-12-digetx@gmail.com>
 References: <20191229145525.533-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,26 +12,26 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan W
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra APB DMA driver is an Open Firmware driver and thus it uses OF alias
-naming scheme which overrides MODULE_ALIAS, meaning that MODULE_ALIAS does
-nothing and could be removed safely.
+The driver's removal was fixed by a recent commit and module load/unload
+is working well now, tested on Tegra30.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/dma/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index d96de35c8253..2eae3b3cdc58 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1633,7 +1633,6 @@ static struct platform_driver tegra_dmac_driver = {
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index 6fa1eba9d477..9f43e2cae8b4 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -586,7 +586,7 @@ config TXX9_DMAC
+ 	  integrated in chips such as the Toshiba TX4927/38/39.
  
- module_platform_driver(tegra_dmac_driver);
- 
--MODULE_ALIAS("platform:tegra20-apbdma");
- MODULE_DESCRIPTION("NVIDIA Tegra APB DMA Controller driver");
- MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
- MODULE_LICENSE("GPL v2");
+ config TEGRA20_APB_DMA
+-	bool "NVIDIA Tegra20 APB DMA support"
++	tristate "NVIDIA Tegra20 APB DMA support"
+ 	depends on ARCH_TEGRA
+ 	select DMA_ENGINE
+ 	help
 -- 
 2.24.0
