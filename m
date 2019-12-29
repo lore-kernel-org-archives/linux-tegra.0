@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 12/32] pwm: bcm-kona: convert to devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:05:50 +0000
-Message-ID: <20191229080610.7597-12-tiny.windzz__29000.0961673044$1577607596$gmane$org@gmail.com>
+Subject: [PATCH 15/32] pwm: rockchip: convert to devm_platform_ioremap_resource
+Date: Sun, 29 Dec 2019 08:05:53 +0000
+Message-ID: <20191229080610.7597-15-tiny.windzz__49846.3585901604$1577607604$gmane$org@gmail.com>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
@@ -22,30 +22,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/pwm/pwm-bcm-kona.c | 4 +---
+ drivers/pwm/pwm-rockchip.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pwm/pwm-bcm-kona.c b/drivers/pwm/pwm-bcm-kona.c
-index 81da91df2529..aa451987733b 100644
---- a/drivers/pwm/pwm-bcm-kona.c
-+++ b/drivers/pwm/pwm-bcm-kona.c
-@@ -259,7 +259,6 @@ static const struct pwm_ops kona_pwm_ops = {
- static int kona_pwmc_probe(struct platform_device *pdev)
+diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
+index 73352e6fbccb..f0549b82338d 100644
+--- a/drivers/pwm/pwm-rockchip.c
++++ b/drivers/pwm/pwm-rockchip.c
+@@ -292,7 +292,6 @@ static int rockchip_pwm_probe(struct platform_device *pdev)
  {
- 	struct kona_pwmc *kp;
--	struct resource *res;
- 	unsigned int chan;
- 	unsigned int value = 0;
- 	int ret = 0;
-@@ -277,8 +276,7 @@ static int kona_pwmc_probe(struct platform_device *pdev)
- 	kp->chip.of_xlate = of_pwm_xlate_with_flags;
- 	kp->chip.of_pwm_n_cells = 3;
+ 	const struct of_device_id *id;
+ 	struct rockchip_pwm_chip *pc;
+-	struct resource *r;
+ 	int ret, count;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	kp->base = devm_ioremap_resource(&pdev->dev, res);
-+	kp->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(kp->base))
- 		return PTR_ERR(kp->base);
+ 	id = of_match_device(rockchip_pwm_dt_ids, &pdev->dev);
+@@ -303,8 +302,7 @@ static int rockchip_pwm_probe(struct platform_device *pdev)
+ 	if (!pc)
+ 		return -ENOMEM;
+ 
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pc->base = devm_ioremap_resource(&pdev->dev, r);
++	pc->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pc->base))
+ 		return PTR_ERR(pc->base);
  
 -- 
 2.17.1
