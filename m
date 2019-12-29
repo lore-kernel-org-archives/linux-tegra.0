@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 14/32] pwm: meson: convert to devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:05:52 +0000
-Message-ID: <20191229080610.7597-14-tiny.windzz__45455.345760432$1577607626$gmane$org@gmail.com>
+Subject: [PATCH 19/32] pwm: puv3: convert to devm_platform_ioremap_resource
+Date: Sun, 29 Dec 2019 08:05:57 +0000
+Message-ID: <20191229080610.7597-19-tiny.windzz__45327.4719229498$1577607627$gmane$org@gmail.com>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
@@ -22,29 +22,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/pwm/pwm-meson.c | 4 +---
+ drivers/pwm/pwm-puv3.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
-index 6245bbdb6e6c..62fc79092038 100644
---- a/drivers/pwm/pwm-meson.c
-+++ b/drivers/pwm/pwm-meson.c
-@@ -537,15 +537,13 @@ static int meson_pwm_init_channels(struct meson_pwm *meson)
- static int meson_pwm_probe(struct platform_device *pdev)
+diff --git a/drivers/pwm/pwm-puv3.c b/drivers/pwm/pwm-puv3.c
+index 9d0bd87a425e..2367dad7cf95 100644
+--- a/drivers/pwm/pwm-puv3.c
++++ b/drivers/pwm/pwm-puv3.c
+@@ -100,7 +100,6 @@ static const struct pwm_ops puv3_pwm_ops = {
+ static int pwm_probe(struct platform_device *pdev)
  {
- 	struct meson_pwm *meson;
--	struct resource *regs;
- 	int err;
+ 	struct puv3_pwm_chip *puv3;
+-	struct resource *r;
+ 	int ret;
  
- 	meson = devm_kzalloc(&pdev->dev, sizeof(*meson), GFP_KERNEL);
- 	if (!meson)
- 		return -ENOMEM;
+ 	puv3 = devm_kzalloc(&pdev->dev, sizeof(*puv3), GFP_KERNEL);
+@@ -111,8 +110,7 @@ static int pwm_probe(struct platform_device *pdev)
+ 	if (IS_ERR(puv3->clk))
+ 		return PTR_ERR(puv3->clk);
  
--	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	meson->base = devm_ioremap_resource(&pdev->dev, regs);
-+	meson->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(meson->base))
- 		return PTR_ERR(meson->base);
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	puv3->base = devm_ioremap_resource(&pdev->dev, r);
++	puv3->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(puv3->base))
+ 		return PTR_ERR(puv3->base);
  
 -- 
 2.17.1
