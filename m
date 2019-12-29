@@ -1,7 +1,8 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 26/32] pwm: mtk-disp: convert to devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:06:04 +0000
-Message-ID: <20191229080610.7597-26-tiny.windzz__15183.9240150125$1577607668$gmane$org@gmail.com>
+Subject: [PATCH 29/32] pwm: lpc18xx-sct: convert to
+ devm_platform_ioremap_resource
+Date: Sun, 29 Dec 2019 08:06:07 +0000
+Message-ID: <20191229080610.7597-29-tiny.windzz__9591.31287397526$1577607670$gmane$org@gmail.com>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
@@ -22,30 +23,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/pwm/pwm-mtk-disp.c | 4 +---
+ drivers/pwm/pwm-lpc18xx-sct.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pwm/pwm-mtk-disp.c b/drivers/pwm/pwm-mtk-disp.c
-index 83b8be0209b7..87c6b4bc5d43 100644
---- a/drivers/pwm/pwm-mtk-disp.c
-+++ b/drivers/pwm/pwm-mtk-disp.c
-@@ -172,7 +172,6 @@ static const struct pwm_ops mtk_disp_pwm_ops = {
- static int mtk_disp_pwm_probe(struct platform_device *pdev)
+diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
+index 5ff11145c1a3..dc5133bec3e7 100644
+--- a/drivers/pwm/pwm-lpc18xx-sct.c
++++ b/drivers/pwm/pwm-lpc18xx-sct.c
+@@ -325,7 +325,6 @@ static int lpc18xx_pwm_probe(struct platform_device *pdev)
  {
- 	struct mtk_disp_pwm *mdp;
--	struct resource *r;
- 	int ret;
+ 	struct lpc18xx_pwm_chip *lpc18xx_pwm;
+ 	struct pwm_device *pwm;
+-	struct resource *res;
+ 	int ret, i;
+ 	u64 val;
  
- 	mdp = devm_kzalloc(&pdev->dev, sizeof(*mdp), GFP_KERNEL);
-@@ -181,8 +180,7 @@ static int mtk_disp_pwm_probe(struct platform_device *pdev)
+@@ -336,8 +335,7 @@ static int lpc18xx_pwm_probe(struct platform_device *pdev)
  
- 	mdp->data = of_device_get_match_data(&pdev->dev);
+ 	lpc18xx_pwm->dev = &pdev->dev;
  
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mdp->base = devm_ioremap_resource(&pdev->dev, r);
-+	mdp->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mdp->base))
- 		return PTR_ERR(mdp->base);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	lpc18xx_pwm->base = devm_ioremap_resource(&pdev->dev, res);
++	lpc18xx_pwm->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(lpc18xx_pwm->base))
+ 		return PTR_ERR(lpc18xx_pwm->base);
  
 -- 
 2.17.1
