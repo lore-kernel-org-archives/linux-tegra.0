@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 11/32] pwm: spear: convert to devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:05:49 +0000
-Message-ID: <20191229080610.7597-11-tiny.windzz__7475.1121037238$1577607573$gmane$org@gmail.com>
+Subject: [PATCH 13/32] pwm: lpc32xx: convert to devm_platform_ioremap_resource
+Date: Sun, 29 Dec 2019 08:05:51 +0000
+Message-ID: <20191229080610.7597-13-tiny.windzz__17591.1590036534$1577607582$gmane$org@gmail.com>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
@@ -22,30 +22,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/pwm/pwm-spear.c | 4 +---
+ drivers/pwm/pwm-lpc32xx.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pwm/pwm-spear.c b/drivers/pwm/pwm-spear.c
-index 6c6b44fd3f43..f63b54aae1b4 100644
---- a/drivers/pwm/pwm-spear.c
-+++ b/drivers/pwm/pwm-spear.c
-@@ -174,7 +174,6 @@ static int spear_pwm_probe(struct platform_device *pdev)
+diff --git a/drivers/pwm/pwm-lpc32xx.c b/drivers/pwm/pwm-lpc32xx.c
+index 710d9a207d2b..6b4090436c06 100644
+--- a/drivers/pwm/pwm-lpc32xx.c
++++ b/drivers/pwm/pwm-lpc32xx.c
+@@ -98,7 +98,6 @@ static const struct pwm_ops lpc32xx_pwm_ops = {
+ static int lpc32xx_pwm_probe(struct platform_device *pdev)
  {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct spear_pwm_chip *pc;
--	struct resource *r;
+ 	struct lpc32xx_pwm_chip *lpc32xx;
+-	struct resource *res;
  	int ret;
  	u32 val;
  
-@@ -182,8 +181,7 @@ static int spear_pwm_probe(struct platform_device *pdev)
- 	if (!pc)
+@@ -106,8 +105,7 @@ static int lpc32xx_pwm_probe(struct platform_device *pdev)
+ 	if (!lpc32xx)
  		return -ENOMEM;
  
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pc->mmio_base = devm_ioremap_resource(&pdev->dev, r);
-+	pc->mmio_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pc->mmio_base))
- 		return PTR_ERR(pc->mmio_base);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	lpc32xx->base = devm_ioremap_resource(&pdev->dev, res);
++	lpc32xx->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(lpc32xx->base))
+ 		return PTR_ERR(lpc32xx->base);
  
 -- 
 2.17.1
