@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 05/32] pwm: ep93xx: convert to devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:05:43 +0000
-Message-ID: <20191229080610.7597-5-tiny.windzz__45783.5384689801$1577607519$gmane$org@gmail.com>
+Subject: [PATCH 08/32] pwm: sti: convert to devm_platform_ioremap_resource
+Date: Sun, 29 Dec 2019 08:05:46 +0000
+Message-ID: <20191229080610.7597-8-tiny.windzz__8921.12264861993$1577607525$gmane$org@gmail.com>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
@@ -22,29 +22,31 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/pwm/pwm-ep93xx.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pwm/pwm-sti.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/pwm/pwm-ep93xx.c b/drivers/pwm/pwm-ep93xx.c
-index 4bab73073ad7..c9fc6f223640 100644
---- a/drivers/pwm/pwm-ep93xx.c
-+++ b/drivers/pwm/pwm-ep93xx.c
-@@ -169,15 +169,13 @@ static const struct pwm_ops ep93xx_pwm_ops = {
- static int ep93xx_pwm_probe(struct platform_device *pdev)
- {
- 	struct ep93xx_pwm *ep93xx_pwm;
+diff --git a/drivers/pwm/pwm-sti.c b/drivers/pwm/pwm-sti.c
+index 1508616d794c..eaeb38c0c0c7 100644
+--- a/drivers/pwm/pwm-sti.c
++++ b/drivers/pwm/pwm-sti.c
+@@ -540,7 +540,6 @@ static int sti_pwm_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct sti_pwm_compat_data *cdata;
+ 	struct sti_pwm_chip *pc;
 -	struct resource *res;
- 	int ret;
+ 	unsigned int i;
+ 	int irq, ret;
  
- 	ep93xx_pwm = devm_kzalloc(&pdev->dev, sizeof(*ep93xx_pwm), GFP_KERNEL);
- 	if (!ep93xx_pwm)
+@@ -552,9 +551,7 @@ static int sti_pwm_probe(struct platform_device *pdev)
+ 	if (!cdata)
  		return -ENOMEM;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	ep93xx_pwm->base = devm_ioremap_resource(&pdev->dev, res);
-+	ep93xx_pwm->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(ep93xx_pwm->base))
- 		return PTR_ERR(ep93xx_pwm->base);
+-
+-	pc->mmio = devm_ioremap_resource(dev, res);
++	pc->mmio = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pc->mmio))
+ 		return PTR_ERR(pc->mmio);
  
 -- 
 2.17.1
