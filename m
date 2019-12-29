@@ -1,51 +1,73 @@
-From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 31/32] pwm: sifive: convert to devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:06:09 +0000
-Message-ID: <20191229080610.7597-31-tiny.windzz__23512.2527157486$1577607685$gmane$org@gmail.com>
-References: <20191229080610.7597-1-tiny.windzz@gmail.com>
-Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
- <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
-List-Post: <mailto:linux-riscv@lists.infradead.org>
-List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
- <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
-Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
-To: claudiu.beznea@microchip.com, thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com, nsaenzjulienne@suse.de, shc_work@mail.ru, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, vz@mleia.com, slemieux.tyco@gmail.com, khilman@baylibre.com, matthias.bgg@gmail.com, heiko@sntech.de, palmer@dabbelt.com, paul.walmsley@sifive.com, mripard@kernel.org, wens@csie.org, jonathanh@nvidia.com, linux@prisktech.co.nz, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@li
-Cc: Yangtao Li <tiny.windzz@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [Patch V2 03/18] phy: tegra: xusb: Add usb-role-switch support
+Date: Sun, 29 Dec 2019 10:36:43 +0100
+Message-ID: <20191229093643.GA47966@mithrandir>
+References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
+ <1576660591-10383-4-git-send-email-nkristam@nvidia.com>
+ <20191219132650.GJ1440537@ulmo>
+ <74d94004-2022-3b04-6cd9-d6b1e9eca230@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <74d94004-2022-3b04-6cd9-d6b1e9eca230@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nagarjuna Kristam <nkristam@nvidia.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/pwm/pwm-sifive.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
-index cc63f9baa481..cb9134d7197b 100644
---- a/drivers/pwm/pwm-sifive.c
-+++ b/drivers/pwm/pwm-sifive.c
-@@ -232,7 +232,6 @@ static int pwm_sifive_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct pwm_sifive_ddata *ddata;
- 	struct pwm_chip *chip;
--	struct resource *res;
- 	int ret;
- 
- 	ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
-@@ -248,8 +247,7 @@ static int pwm_sifive_probe(struct platform_device *pdev)
- 	chip->base = -1;
- 	chip->npwm = 4;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	ddata->regs = devm_ioremap_resource(dev, res);
-+	ddata->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(ddata->regs))
- 		return PTR_ERR(ddata->regs);
- 
--- 
-2.17.1
+On Fri, Dec 27, 2019 at 12:09:22PM +0530, Nagarjuna Kristam wrote:
+> On 19-12-2019 18:56, Thierry Reding wrote:
+> > On Wed, Dec 18, 2019 at 02:46:16PM +0530, Nagarjuna Kristam wrote:
+[...]
+> > > @@ -551,11 +556,42 @@ static const char *const modes[] =3D {
+> > >   	[USB_DR_MODE_OTG] =3D "otg",
+> > >   };
+> > > +static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role =
+role)
+> > > +{
+> > > +	dev_dbg(dev, "%s calling notifier for role is %d\n", __func__, role=
+);
+> > I don't understand what "for role is %d" means here. I think perhaps you
+> > meant to simply say "for role %d"? Also, perhaps add parentheses after
+> > the "%s" to clarify that you're referring to a function.
+> >=20
+> Yes, intention is to print role, Will update as mentioned "for role %d"
+
+It might be better to print the name of the role here because I suspect
+very few people know the value of the role defines without looking them
+up. I thought there was already a function to return the role name for
+a given enum usb_role, but it seems like we only have name -> enum
+conversion. Might be worth adding that, but doesn't have to be as part
+of this series.
+
+Thierry
+
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4Ic6YACgkQ3SOs138+
+s6F9Qg//diLO90kPs0EI/W6HXy+wcF1k8DI9KuspMV5DRFTRcqtt6dBJ+2wK3uQh
+57OWWgV/+4Fu+QLNp20OSSm1s9GM//iV43ZfoT0J/flkuRLVQNu3rjLmHJG79oQb
+pozYgHxEfEqv2uB6ZZmtIN2ev+MEjHWbl9hJ/qwuNdPQTulsDjLk9TIodV/LRGyt
+QzAUcyhLfJuEqrVXEYUuvov5Vmf8qm/nQKKoRdcnLGz7pw2o9GlnhIgpXKupD08g
+6Z6FWMM3agKXcWB8dVb3UzSbbUrVP9lx9+bOfnVy1QzvjWaRXJFeh0AmNxqdtbJX
+NpFR3eZZUkrD2N4mtOqaaiVSoa8wQq5PLOOtIE6QvBBPxk003BmntrlKi3nuxScR
+k7YpBrWwxszHiGLEpuPGS9weGV0m7nbkp0x+YEc5JuGyj/HGmyl9P2CbFoHOdBll
+YsA90b4DXW2W9k3HV/tAYcQPjRqZ9vf6goHibQWjOgCqTVMwnJHo2i9ThNr2PPUT
+/lieJb5M837w/n67TCbwDLad/xX6DnpYts2yFSttElJALSxrPooChhN7Ky8p1hrd
+6sans1bQHa9itH4JQOK3ZmQtZEiBhAfXa1VXMiKjmmRUIhhRymediKJSfMucjqkZ
+3s+MXSWnzU+ZOqrPu+yf4jceuMDf3rM3Ngb6439HS6iWyOmEd0U=
+=tuXa
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
