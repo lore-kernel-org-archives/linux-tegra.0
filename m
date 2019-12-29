@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 03/12] dmaengine: tegra-apb: Prevent race conditions on channel's freeing
-Date: Sun, 29 Dec 2019 17:55:16 +0300
-Message-ID: <20191229145525.533-4-digetx@gmail.com>
+Subject: [PATCH v2 02/12] dmaengine: tegra-apb: Implement synchronization callback
+Date: Sun, 29 Dec 2019 17:55:15 +0300
+Message-ID: <20191229145525.533-3-digetx@gmail.com>
 References: <20191229145525.533-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,44 +12,39 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan W
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-It's unsafe to check the channel's "busy" state without taking a lock,
-it is also unsafe to assume that tasklet isn't in-fly.
+The ISR tasklet could be kept scheduled after DMA transfer termination,
+let's add synchronization callback which blocks until tasklet is finished.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 664e9c5df3ba..28aff0b9763e 100644
+index 319f31d27014..664e9c5df3ba 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1294,8 +1294,8 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
+@@ -798,6 +798,13 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+ 	return 0;
+ }
  
- 	dev_dbg(tdc2dev(tdc), "Freeing channel %d\n", tdc->id);
- 
--	if (tdc->busy)
--		tegra_dma_terminate_all(dc);
-+	tegra_dma_terminate_all(dc);
++static void tegra_dma_synchronize(struct dma_chan *dc)
++{
++	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
++
 +	tasklet_kill(&tdc->tasklet);
++}
++
+ static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
+ 					       struct tegra_dma_sg_req *sg_req)
+ {
+@@ -1506,6 +1513,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+ 	tdma->dma_dev.device_config = tegra_dma_slave_config;
+ 	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
++	tdma->dma_dev.device_synchronize = tegra_dma_synchronize;
+ 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
+ 	tdma->dma_dev.device_issue_pending = tegra_dma_issue_pending;
  
- 	spin_lock_irqsave(&tdc->lock, flags);
- 	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
-@@ -1543,7 +1543,6 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		struct tegra_dma_channel *tdc = &tdma->channels[i];
- 
- 		free_irq(tdc->irq, tdc);
--		tasklet_kill(&tdc->tasklet);
- 	}
- 
- 	pm_runtime_disable(&pdev->dev);
-@@ -1563,7 +1562,6 @@ static int tegra_dma_remove(struct platform_device *pdev)
- 	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
- 		tdc = &tdma->channels[i];
- 		free_irq(tdc->irq, tdc);
--		tasklet_kill(&tdc->tasklet);
- 	}
- 
- 	pm_runtime_disable(&pdev->dev);
 -- 
 2.24.0
