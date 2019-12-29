@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 28/32] pwm: img: convert to devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:06:06 +0000
-Message-ID: <20191229080610.7597-28-tiny.windzz__6394.63048880629$1577607675$gmane$org@gmail.com>
+Subject: [PATCH 24/32] pwm: vt8500: convert to devm_platform_ioremap_resource
+Date: Sun, 29 Dec 2019 08:06:02 +0000
+Message-ID: <20191229080610.7597-24-tiny.windzz__1216.28180365718$1577607680$gmane$org@gmail.com>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
@@ -22,30 +22,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/pwm/pwm-img.c | 4 +---
+ drivers/pwm/pwm-vt8500.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pwm/pwm-img.c b/drivers/pwm/pwm-img.c
-index c9e57bd109fb..e9b25440b808 100644
---- a/drivers/pwm/pwm-img.c
-+++ b/drivers/pwm/pwm-img.c
-@@ -238,7 +238,6 @@ static int img_pwm_probe(struct platform_device *pdev)
+diff --git a/drivers/pwm/pwm-vt8500.c b/drivers/pwm/pwm-vt8500.c
+index 11d45e56a923..6e36851a22bb 100644
+--- a/drivers/pwm/pwm-vt8500.c
++++ b/drivers/pwm/pwm-vt8500.c
+@@ -193,7 +193,6 @@ MODULE_DEVICE_TABLE(of, vt8500_pwm_dt_ids);
+ static int vt8500_pwm_probe(struct platform_device *pdev)
+ {
+ 	struct vt8500_chip *chip;
+-	struct resource *r;
+ 	struct device_node *np = pdev->dev.of_node;
  	int ret;
- 	u64 val;
- 	unsigned long clk_rate;
--	struct resource *res;
- 	struct img_pwm_chip *pwm;
- 	const struct of_device_id *of_dev_id;
  
-@@ -248,8 +247,7 @@ static int img_pwm_probe(struct platform_device *pdev)
+@@ -219,8 +218,7 @@ static int vt8500_pwm_probe(struct platform_device *pdev)
+ 		return PTR_ERR(chip->clk);
+ 	}
  
- 	pwm->dev = &pdev->dev;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pwm->base = devm_ioremap_resource(&pdev->dev, res);
-+	pwm->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pwm->base))
- 		return PTR_ERR(pwm->base);
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	chip->base = devm_ioremap_resource(&pdev->dev, r);
++	chip->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(chip->base))
+ 		return PTR_ERR(chip->base);
  
 -- 
 2.17.1
