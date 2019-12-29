@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 05/12] dmaengine: tegra-apb: Use devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 17:55:18 +0300
-Message-ID: <20191229145525.533-6-digetx@gmail.com>
+Subject: [PATCH v2 10/12] dmaengine: tegra-apb: Add missing of_dma_controller_free
+Date: Sun, 29 Dec 2019 17:55:23 +0300
+Message-ID: <20191229145525.533-11-digetx@gmail.com>
 References: <20191229145525.533-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,26 +12,24 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan W
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource to keep code cleaner a tad.
+The DMA controller shall be released on driver's removal.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 740b0ceec7ec..d2353f23b201 100644
+index ad54a55e2f24..d96de35c8253 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1405,8 +1405,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 	tdma->chip_data = cdata;
- 	platform_set_drvdata(pdev, tdma);
+@@ -1559,6 +1559,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_dma *tdma = platform_get_drvdata(pdev);
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	tdma->base_addr = devm_ioremap_resource(&pdev->dev, res);
-+	tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(tdma->base_addr))
- 		return PTR_ERR(tdma->base_addr);
++	of_dma_controller_free(pdev->dev.of_node);
+ 	dma_async_device_unregister(&tdma->dma_dev);
+ 	tegra_dma_deinit_hw(tdma);
  
 -- 
 2.24.0
