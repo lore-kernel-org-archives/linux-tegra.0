@@ -1,8 +1,7 @@
 From: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 04/32] pwm: renesas-tpu: convert to
- devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:05:42 +0000
-Message-ID: <20191229080610.7597-4-tiny.windzz__28948.6924697243$1577607342$gmane$org@gmail.com>
+Subject: [PATCH 08/32] pwm: sti: convert to devm_platform_ioremap_resource
+Date: Sun, 29 Dec 2019 08:05:46 +0000
+Message-ID: <20191229080610.7597-8-tiny.windzz__22363.8525045075$1577607410$gmane$org@gmail.com>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -26,30 +25,31 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/pwm/pwm-renesas-tpu.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pwm/pwm-sti.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/pwm/pwm-renesas-tpu.c b/drivers/pwm/pwm-renesas-tpu.c
-index 4a855a21b782..9f4695cc8e72 100644
---- a/drivers/pwm/pwm-renesas-tpu.c
-+++ b/drivers/pwm/pwm-renesas-tpu.c
-@@ -383,7 +383,6 @@ static const struct pwm_ops tpu_pwm_ops = {
- static int tpu_probe(struct platform_device *pdev)
- {
- 	struct tpu_device *tpu;
+diff --git a/drivers/pwm/pwm-sti.c b/drivers/pwm/pwm-sti.c
+index 1508616d794c..eaeb38c0c0c7 100644
+--- a/drivers/pwm/pwm-sti.c
++++ b/drivers/pwm/pwm-sti.c
+@@ -540,7 +540,6 @@ static int sti_pwm_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct sti_pwm_compat_data *cdata;
+ 	struct sti_pwm_chip *pc;
 -	struct resource *res;
- 	int ret;
+ 	unsigned int i;
+ 	int irq, ret;
  
- 	tpu = devm_kzalloc(&pdev->dev, sizeof(*tpu), GFP_KERNEL);
-@@ -394,8 +393,7 @@ static int tpu_probe(struct platform_device *pdev)
- 	tpu->pdev = pdev;
+@@ -552,9 +551,7 @@ static int sti_pwm_probe(struct platform_device *pdev)
+ 	if (!cdata)
+ 		return -ENOMEM;
  
- 	/* Map memory, get clock and pin control. */
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	tpu->base = devm_ioremap_resource(&pdev->dev, res);
-+	tpu->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(tpu->base))
- 		return PTR_ERR(tpu->base);
+-
+-	pc->mmio = devm_ioremap_resource(dev, res);
++	pc->mmio = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pc->mmio))
+ 		return PTR_ERR(pc->mmio);
  
 -- 
 2.17.1
