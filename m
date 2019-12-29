@@ -1,7 +1,7 @@
 From: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 06/32] pwm: tegra: convert to devm_platform_ioremap_resource
-Date: Sun, 29 Dec 2019 08:05:44 +0000
-Message-ID: <20191229080610.7597-6-tiny.windzz__4955.23409206129$1577607434$gmane$org@gmail.com>
+Subject: [PATCH 07/32] pwm: mediatek: convert to devm_platform_ioremap_resource
+Date: Sun, 29 Dec 2019 08:05:45 +0000
+Message-ID: <20191229080610.7597-7-tiny.windzz__45267.3908833944$1577607468$gmane$org@gmail.com>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -25,30 +25,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/pwm/pwm-tegra.c | 4 +---
+ drivers/pwm/pwm-mediatek.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index aa12fb3ed92e..7f77a93eb4b5 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -170,7 +170,6 @@ static const struct pwm_ops tegra_pwm_ops = {
- static int tegra_pwm_probe(struct platform_device *pdev)
+diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+index b94e0d09c300..e4a715d3860c 100644
+--- a/drivers/pwm/pwm-mediatek.c
++++ b/drivers/pwm/pwm-mediatek.c
+@@ -207,7 +207,6 @@ static const struct pwm_ops pwm_mediatek_ops = {
+ static int pwm_mediatek_probe(struct platform_device *pdev)
  {
- 	struct tegra_pwm_chip *pwm;
--	struct resource *r;
+ 	struct pwm_mediatek_chip *pc;
+-	struct resource *res;
+ 	unsigned int i;
  	int ret;
  
- 	pwm = devm_kzalloc(&pdev->dev, sizeof(*pwm), GFP_KERNEL);
-@@ -180,8 +179,7 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- 	pwm->soc = of_device_get_match_data(&pdev->dev);
- 	pwm->dev = &pdev->dev;
+@@ -217,8 +216,7 @@ static int pwm_mediatek_probe(struct platform_device *pdev)
  
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pwm->regs = devm_ioremap_resource(&pdev->dev, r);
-+	pwm->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pwm->regs))
- 		return PTR_ERR(pwm->regs);
+ 	pc->soc = of_device_get_match_data(&pdev->dev);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pc->regs = devm_ioremap_resource(&pdev->dev, res);
++	pc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pc->regs))
+ 		return PTR_ERR(pc->regs);
  
 -- 
 2.17.1
