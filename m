@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V3 10/18] usb: gadget: tegra-xudc: Add usb-phy support
-Date: Mon, 30 Dec 2019 16:39:47 +0530
-Message-ID: <1577704195-2535-11-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V3 13/18] arm64: tegra: update OTG port entries for jetson-tx1
+Date: Mon, 30 Dec 2019 16:39:50 +0530
+Message-ID: <1577704195-2535-14-git-send-email-nkristam@nvidia.com>
 References: <1577704195-2535-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,103 +12,66 @@ To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jona
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-usb-phy is used to get notified on the USB role changes. Get usb-phy from
-the utmi phy.
+Populate OTG vbus regulator. Add usb-role-switch entry to USB 2-0 port
+and corresponding connector details.
 
 Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 ---
 V2-V3:
  - No changes in this version
 ---
- drivers/usb/gadget/udc/tegra-xudc.c | 39 +++++++++++++++++++++++++++++++++----
- 1 file changed, 35 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index 6ddb974..0f27d57 100644
---- a/drivers/usb/gadget/udc/tegra-xudc.c
-+++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -26,7 +26,9 @@
- #include <linux/reset.h>
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
-+#include <linux/usb/otg.h>
- #include <linux/usb/role.h>
-+#include <linux/usb/phy.h>
- #include <linux/workqueue.h>
- 
- /* XUSB_DEV registers */
-@@ -488,6 +490,9 @@ struct tegra_xudc {
- 	bool suspended;
- 	bool powergated;
- 
-+	struct usb_phy *usbphy;
-+	struct notifier_block vbus_nb;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index b009507..18c0610 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1336,7 +1336,6 @@
+ 		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-5}>;
+ 		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3", "usb3-0",
+ 			    "usb3-1";
+-
+ 		dvddio-pex-supply = <&vdd_pex_1v05>;
+ 		hvddio-pex-supply = <&vdd_1v8>;
+ 		avdd-usb-supply = <&vdd_3v3_sys>;
+@@ -1440,7 +1439,19 @@
+ 		ports {
+ 			usb2-0 {
+ 				status = "okay";
++				vbus-supply = <&vdd_usb_vbus_otg>;
+ 				mode = "otg";
 +
- 	struct completion disconnect_complete;
++				usb-role-switch;
++				connector {
++					compatible = "usb-b-connector",
++						     "gpio-usb-b-connector";
++					label = "micro-USB";
++					type = "micro";
++					vbus-gpio = <&gpio TEGRA_GPIO(Z, 0)
++						     GPIO_ACTIVE_LOW>;
++					id-gpio = <&pmic 0 0>;
++				};
+ 			};
  
- 	bool selfpowered;
-@@ -678,7 +683,22 @@ static void tegra_xudc_usb_role_sw_work(struct work_struct *work)
- 		tegra_xudc_device_mode_on(xudc);
- 	else
- 		tegra_xudc_device_mode_off(xudc);
-+}
+ 			usb2-1 {
+@@ -1606,6 +1617,17 @@
+ 			vin-supply = <&vdd_5v0_sys>;
+ 		};
+ 
++		vdd_usb_vbus_otg: regulator@11 {
++			compatible = "regulator-fixed";
++			reg = <9>;
++			regulator-name = "USB_VBUS_EN0";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vdd_5v0_sys>;
++		};
 +
-+static int tegra_xudc_vbus_notifier(struct notifier_block *nb,
-+					 unsigned long action, void *data)
-+{
-+	struct tegra_xudc *xudc = container_of(nb, struct tegra_xudc,
-+					       vbus_nb);
-+
-+	dev_dbg(xudc->dev, "%s action is %ld\n", __func__, action);
-+
-+	xudc->role = (enum usb_role)action;
- 
-+	if (!xudc->suspended)
-+		schedule_work(&xudc->usb_role_sw_work);
-+
-+	return NOTIFY_OK;
- }
- 
- static void tegra_xudc_plc_reset_work(struct work_struct *work)
-@@ -1949,6 +1969,9 @@ static int tegra_xudc_gadget_start(struct usb_gadget *gadget,
- 		xudc_writel(xudc, val, CTRL);
- 	}
- 
-+	if (xudc->usbphy)
-+		otg_set_peripheral(xudc->usbphy->otg, gadget);
-+
- 	xudc->driver = driver;
- unlock:
- 	dev_dbg(xudc->dev, "%s: ret value is %d", __func__, ret);
-@@ -1969,6 +1992,9 @@ static int tegra_xudc_gadget_stop(struct usb_gadget *gadget)
- 
- 	spin_lock_irqsave(&xudc->lock, flags);
- 
-+	if (xudc->usbphy)
-+		otg_set_peripheral(xudc->usbphy->otg, NULL);
-+
- 	val = xudc_readl(xudc, CTRL);
- 	val &= ~(CTRL_IE | CTRL_ENABLE);
- 	xudc_writel(xudc, val, CTRL);
-@@ -3573,10 +3599,15 @@ static int tegra_xudc_probe(struct platform_device *pdev)
- 	INIT_DELAYED_WORK(&xudc->port_reset_war_work,
- 				tegra_xudc_port_reset_war_work);
- 
--	/* Set the mode as device mode and this keeps phy always ON */
--	dev_info(xudc->dev, "Set usb role to device mode always");
--	xudc->role = USB_ROLE_DEVICE;
--	schedule_work(&xudc->usb_role_sw_work);
-+	xudc->vbus_nb.notifier_call = tegra_xudc_vbus_notifier;
-+	xudc->usbphy = devm_usb_get_phy_by_node(xudc->dev,
-+						xudc->utmi_phy->dev.of_node,
-+						&xudc->vbus_nb);
-+	if (IS_ERR(xudc->usbphy)) {
-+		err = PTR_ERR(xudc->usbphy);
-+		dev_err(xudc->dev, "failed to get usbphy phy: %d\n", err);
-+		goto free_eps;
-+	}
- 
- 	pm_runtime_enable(&pdev->dev);
- 
+ 		vdd_hdmi: regulator@10 {
+ 			compatible = "regulator-fixed";
+ 			reg = <10>;
 -- 
 2.7.4
