@@ -1,60 +1,61 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 15/32] pwm: rockchip: convert to
+From: Lukasz Luba <lukasz.luba@arm.com>
+Subject: Re: [PATCH 7/9] memory: samsung: exynos5422-dmc: convert to
  devm_platform_ioremap_resource
-Date: Mon, 30 Dec 2019 09:39:38 +0100
-Message-ID: <3343090.K8KIS9te04@phil>
-References: <20191229080610.7597-1-tiny.windzz@gmail.com>
- <20191229080610.7597-15-tiny.windzz@gmail.com>
+Date: Mon, 30 Dec 2019 09:13:43 +0000
+Message-ID: <a331ae9c-ee2c-6c5e-3a61-a50c172359aa@arm.com>
+References: <20191222185034.4665-1-tiny.windzz@gmail.com>
+ <20191222185034.4665-7-tiny.windzz@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191229080610.7597-15-tiny.windzz@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Yangtao Li <tiny.windzz@gmail.com>
-Cc: alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, linux-riscv@lists.infradead.org, festevam@gmail.com, f.fainelli@gmail.com, shc_work@mail.ru, khilman@baylibre.com, wens@csie.org, jonathanh@nvidia.com, linux-rockchip@lists.infradead.org, ludovic.desroches@microchip.com, bcm-kernel-feedback-list@broadcom.com, linux-imx@nxp.com, slemieux.tyco@gmail.com, linux-pwm@vger.kernel.org, rjui@broadcom.com, s.hauer@pengutronix.de, u.kleine-koenig@pengutronix.de, mripard@kernel.org, vz@mleia.com, linux-mediatek@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, paul.walmsley@sifive.com, matthias.bgg@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, sbranden@broadcom.com, linux@prisktech.co.nz, palmer@dabbelt.com, kernel@pengutronix.de, shawnguo@kernel.org, claudiu.beznea@micro
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191222185034.4665-7-tiny.windzz@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yangtao Li <tiny.windzz@gmail.com>, ssantosh@kernel.org, paul@crapouillou.net, matthias.bgg@gmail.com, rogerq@ti.com, tony@atomide.com, kgene@kernel.org, krzk@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, allison@lohutok.net, tglx@linutronix.de, yong.wu@mediatek.com, jroedel@suse.de, evgreen@chromium.org, rfontana@redhat.com, digetx@gmail.com, pdeschrijver@nvidia.com, john@phrozen.org, alexios.zavras@intel.com, sboyd@kernel.org, kstewart@linuxfoundation.org, info@metux.net, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Sonntag, 29. Dezember 2019, 09:05:53 CET schrieb Yangtao Li:
+Hi,
+
+On 12/22/19 6:50 PM, Yangtao Li wrote:
 > Use devm_platform_ioremap_resource() to simplify code.
 > 
 > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
 > ---
->  drivers/pwm/pwm-rockchip.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>   drivers/memory/samsung/exynos5422-dmc.c | 7 ++-----
+>   1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
-> index 73352e6fbccb..f0549b82338d 100644
-> --- a/drivers/pwm/pwm-rockchip.c
-> +++ b/drivers/pwm/pwm-rockchip.c
-> @@ -292,7 +292,6 @@ static int rockchip_pwm_probe(struct platform_device *pdev)
->  {
->  	const struct of_device_id *id;
->  	struct rockchip_pwm_chip *pc;
-> -	struct resource *r;
->  	int ret, count;
->  
->  	id = of_match_device(rockchip_pwm_dt_ids, &pdev->dev);
-> @@ -303,8 +302,7 @@ static int rockchip_pwm_probe(struct platform_device *pdev)
->  	if (!pc)
->  		return -ENOMEM;
->  
-> -	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	pc->base = devm_ioremap_resource(&pdev->dev, r);
-> +	pc->base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(pc->base))
->  		return PTR_ERR(pc->base);
->  
+> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+> index 47dbf6d1789f..81a1b1d01683 100644
+> --- a/drivers/memory/samsung/exynos5422-dmc.c
+> +++ b/drivers/memory/samsung/exynos5422-dmc.c
+> @@ -1374,7 +1374,6 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
+>   	struct device *dev = &pdev->dev;
+>   	struct device_node *np = dev->of_node;
+>   	struct exynos5_dmc *dmc;
+> -	struct resource *res;
+>   	int irq[2];
+>   
+>   	dmc = devm_kzalloc(dev, sizeof(*dmc), GFP_KERNEL);
+> @@ -1386,13 +1385,11 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
+>   	dmc->dev = dev;
+>   	platform_set_drvdata(pdev, dmc);
+>   
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	dmc->base_drexi0 = devm_ioremap_resource(dev, res);
+> +	dmc->base_drexi0 = devm_platform_ioremap_resource(pdev, 0);
+>   	if (IS_ERR(dmc->base_drexi0))
+>   		return PTR_ERR(dmc->base_drexi0);
+>   
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> -	dmc->base_drexi1 = devm_ioremap_resource(dev, res);
+> +	dmc->base_drexi1 = devm_platform_ioremap_resource(pdev, 1);
+>   	if (IS_ERR(dmc->base_drexi1))
+>   		return PTR_ERR(dmc->base_drexi1);
+>   
 > 
+
+Acked-by: Lukasz Luba <lukasz.luba@arm.com>
+
+Regards,
+Lukasz
