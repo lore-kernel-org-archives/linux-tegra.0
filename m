@@ -1,78 +1,51 @@
-From: Peter Chen <peter.chen@nxp.com>
-Subject: Re: [PATCH v3 15/16] usb: chipidea: tegra: Add USB_TEGRA_PHY to
- driver's dependencies
-Date: Mon, 30 Dec 2019 02:25:01 +0000
-Message-ID: <20191230022459.GD5283@b29397-desktop>
-References: <20191228203358.23490-1-digetx@gmail.com>
- <20191228203358.23490-16-digetx@gmail.com>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: Re: [Patch V2 03/18] phy: tegra: xusb: Add usb-role-switch support
+Date: Mon, 30 Dec 2019 10:47:25 +0530
+Message-ID: <ba264e94-33c9-41bb-be23-3a8cad6cef52@nvidia.com>
+References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
+ <1576660591-10383-4-git-send-email-nkristam@nvidia.com>
+ <20191219132650.GJ1440537@ulmo>
+ <74d94004-2022-3b04-6cd9-d6b1e9eca230@nvidia.com>
+ <20191229093643.GA47966@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191228203358.23490-16-digetx@gmail.com>
+In-Reply-To: <20191229093643.GA47966@mithrandir>
 Content-Language: en-US
-Content-ID: <E439EE9989653A4D8683C7AE56AF83FC@eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 19-12-28 23:33:57, Dmitry Osipenko wrote:
-> Now, when ci_hdrc_tegra kernel module is loaded, the phy_tegra_usb module
-> is loaded too regardless of kernel's configuration. Previously this
-> problem was masked because Tegra's EHCI driver is usually enabled in
-> kernel's config and thus PHY driver was getting loaded because of it, but
-> now I was making some more thorough testing and noticed that PHY's module
-> isn't getting auto-loaded without the host driver.
->=20
-> Note that ChipIdea's driver doesn't use any of the exported functions of
-> phy_tegra_usb module and thus the module needs to be requested explicitly=
-.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/usb/chipidea/Kconfig         | 1 +
->  drivers/usb/chipidea/ci_hdrc_tegra.c | 6 ++++++
->  2 files changed, 7 insertions(+)
->=20
-> diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
-> index ae850b3fddf2..d53db520e209 100644
-> --- a/drivers/usb/chipidea/Kconfig
-> +++ b/drivers/usb/chipidea/Kconfig
-> @@ -7,6 +7,7 @@ config USB_CHIPIDEA
->  	select RESET_CONTROLLER
->  	select USB_ULPI_BUS
->  	select USB_ROLE_SWITCH
-> +	select USB_TEGRA_PHY if ARCH_TEGRA
->  	help
->  	  Say Y here if your system has a dual role high speed USB
->  	  controller based on ChipIdea silicon IP. It supports:
-> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/=
-ci_hdrc_tegra.c
-> index 7455df0ede49..8bc11100245d 100644
-> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pde=
-v)
->  	struct tegra_udc *udc;
->  	int err;
-> =20
-> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
-> +		err =3D request_module("phy_tegra_usb");
-> +		if (err)
-> +			return err;
-> +	}
-> +
->  	udc =3D devm_kzalloc(&pdev->dev, sizeof(*udc), GFP_KERNEL);
->  	if (!udc)
->  		return -ENOMEM;
-> --=20
-> 2.24.0
->=20
 
-Acked-by: Peter Chen <peter.chen@nxp.com>
 
---=20
+On 29-12-2019 15:06, Thierry Reding wrote:
+> On Fri, Dec 27, 2019 at 12:09:22PM +0530, Nagarjuna Kristam wrote:
+>> On 19-12-2019 18:56, Thierry Reding wrote:
+>>> On Wed, Dec 18, 2019 at 02:46:16PM +0530, Nagarjuna Kristam wrote:
+> [...]
+>>>> @@ -551,11 +556,42 @@ static const char *const modes[] = {
+>>>>    	[USB_DR_MODE_OTG] = "otg",
+>>>>    };
+>>>> +static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
+>>>> +{
+>>>> +	dev_dbg(dev, "%s calling notifier for role is %d\n", __func__, role);
+>>> I don't understand what "for role is %d" means here. I think perhaps you
+>>> meant to simply say "for role %d"? Also, perhaps add parentheses after
+>>> the "%s" to clarify that you're referring to a function.
+>>>
+>> Yes, intention is to print role, Will update as mentioned "for role %d"
+> It might be better to print the name of the role here because I suspect
+> very few people know the value of the role defines without looking them
+> up. I thought there was already a function to return the role name for
+> a given enum usb_role, but it seems like we only have name -> enum
+> conversion. Might be worth adding that, but doesn't have to be as part
+> of this series.
+> 
+> Thierry
 
-Thanks,
-Peter Chen=
+Will add a structure to define strings for roles enums, similar to modes
+usage in this driver.
+
+-Nagarjuna
