@@ -1,58 +1,55 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra
- PMC 32KHz blink clock
-Date: Mon, 30 Dec 2019 22:39:44 +0300
-Message-ID: <9a4a125c-7a39-31c9-4670-4f4a29e18c56@gmail.com>
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
- <c8a847fb-3d23-6e1e-59e2-a2d15b63ce02@gmail.com>
- <b46c21ca-855e-cd81-ab8d-aa96b61ebb56@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.14 000/161] 4.14.161-stable review
+Date: Mon, 30 Dec 2019 20:19:00 +0000
+Message-ID: <6f3d971c-ef8c-62e3-b0e1-e1ad1d135c73@nvidia.com>
+References: <20191229162355.500086350@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b46c21ca-855e-cd81-ab8d-aa96b61ebb56@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-28.12.2019 00:30, Sowjanya Komatineni пишет:
-> 
-> On 12/22/19 1:55 PM, Dmitry Osipenko wrote:
->> 21.12.2019 01:26, Sowjanya Komatineni пишет:
->>> Tegra PMC has blink functionality that allows 32KHz clock out to
->>> blink pin of the Tegra.
->>>
->>> This patch adds id for this blink clock to use for enabling or
->>> disabling blink output through device tree.
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>>   include/dt-bindings/soc/tegra-pmc.h | 3 ++-
->>>   1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/include/dt-bindings/soc/tegra-pmc.h
->>> b/include/dt-bindings/soc/tegra-pmc.h
->>> index f7c866404456..a99a457471ee 100644
->>> --- a/include/dt-bindings/soc/tegra-pmc.h
->>> +++ b/include/dt-bindings/soc/tegra-pmc.h
->>> @@ -9,7 +9,8 @@
->>>   #define TEGRA_PMC_CLK_OUT_1        0
->>>   #define TEGRA_PMC_CLK_OUT_2        1
->>>   #define TEGRA_PMC_CLK_OUT_3        2
->>> +#define TEGRA_PMC_CLK_BLINK        3
->>>   -#define TEGRA_PMC_CLK_MAX        3
->>> +#define TEGRA_PMC_CLK_MAX        4
->>>     #endif    /* _DT_BINDINGS_SOC_TEGRA_PMC_H */
->>>
->> Could you please explain the reason of separating CLK_OUT and BLINK PMC
->> patches?
-> No specific reason just thought to have BLINK as separate patch as its
-> different register configuration to have fixed 32Khz clock out.
->>
->> Also, you only documented CLK_OUT clocks in the DT binding and no BLINK.
-> missed to add BLINK to dt-binding doc. Will add in v6.
 
-Ok
+On 29/12/2019 17:17, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.161 release.
+> There are 161 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 31 Dec 2019 16:17:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.161-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+
+
+All tests are passing for Tegra ...
+
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    24 tests:	24 pass, 0 fail
+
+Linux version:	4.14.161-rc1-g9973cdd1885a
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
