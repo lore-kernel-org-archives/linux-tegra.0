@@ -1,53 +1,41 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V3 18/18] arm64: tegra: Enable xudc node on Jetson TX2
-Date: Mon, 30 Dec 2019 16:39:55 +0530
-Message-ID: <1577704195-2535-19-git-send-email-nkristam@nvidia.com>
-References: <1577704195-2535-1-git-send-email-nkristam@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/2] pwm: Fix minor Kconfig whitespace issues
+Date: Mon, 30 Dec 2019 18:21:12 +0100
+Message-ID: <20191230172113.17222-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1577704195-2535-1-git-send-email-nkristam@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable XUSB device mode driver for USB 2-0 slot on Jetson TX2.
+Remove double whitespace after "config" keyword.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
-V2-V3:
- - No changes in this version
----
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/pwm/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index a1dcdb9..d7628f5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -131,7 +131,7 @@
- 				status = "okay";
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index bd21655c37a6..c865d688f6b4 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -490,7 +490,7 @@ config PWM_TEGRA
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called pwm-tegra.
  
- 				lanes {
--					usb2-0 {
-+					micro_b: usb2-0 {
- 						nvidia,function = "xusb";
- 						status = "okay";
- 					};
-@@ -213,6 +213,13 @@
- 		phy-names = "usb2-0", "usb2-1", "usb3-0";
- 	};
+-config  PWM_TIECAP
++config PWM_TIECAP
+ 	tristate "ECAP PWM support"
+ 	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX || ARCH_KEYSTONE || ARCH_K3
+ 	help
+@@ -499,7 +499,7 @@ config  PWM_TIECAP
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called pwm-tiecap.
  
-+	usb@3550000 {
-+		status = "okay";
-+
-+		phys = <&micro_b>;
-+		phy-names = "usb2-0";
-+	};
-+
- 	i2c@c250000 {
- 		/* carrier board ID EEPROM */
- 		eeprom@57 {
+-config  PWM_TIEHRPWM
++config PWM_TIEHRPWM
+ 	tristate "EHRPWM PWM support"
+ 	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX || ARCH_K3
+ 	help
 -- 
-2.7.4
+2.17.1
