@@ -1,39 +1,76 @@
-From: CK Hu <ck.hu@mediatek.com>
-Subject: Re: [PATCH 04/13] mailbox: mediatek: cmdq: convert to
- devm_platform_ioremap_resource
-Date: Mon, 30 Dec 2019 09:58:20 +0800
-Message-ID: <1577671100.8160.0.camel@mtksdaap41>
-References: <20191228183538.26189-1-tiny.windzz@gmail.com>
-         <20191228183538.26189-4-tiny.windzz@gmail.com>
+From: Peter Chen <peter.chen@nxp.com>
+Subject: Re: [PATCH v3 14/16] usb: chipidea: tegra: Stop managing PHY's power
+Date: Mon, 30 Dec 2019 02:24:40 +0000
+Message-ID: <20191230022437.GC5283@b29397-desktop>
+References: <20191228203358.23490-1-digetx@gmail.com>
+ <20191228203358.23490-15-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191228183538.26189-4-tiny.windzz@gmail.com>
+In-Reply-To: <20191228203358.23490-15-digetx@gmail.com>
+Content-Language: en-US
+Content-ID: <CA1EFAA76B873D4EB7085D0BBD969BC1@eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yangtao Li <tiny.windzz@gmail.com>
-Cc: jassisinghbrar@gmail.com, nsaenzjulienne@suse.de, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, lftan@altera.com, matthias.bgg@gmail.com, agross@kernel.org, bjorn.andersson@linaro.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, nios2-dev@lists.rocketboards.org, linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGksIFlhbmd0YW86DQoNCk9uIFNhdCwgMjAxOS0xMi0yOCBhdCAxODozNSArMDAwMCwgWWFuZ3Rh
-byBMaSB3cm90ZToNCj4gVXNlIGRldm1fcGxhdGZvcm1faW9yZW1hcF9yZXNvdXJjZSgpIHRvIHNp
-bXBsaWZ5IGNvZGUuDQo+IA0KDQpSZXZpZXdlZC1ieTogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNv
-bT4NCg0KPiBTaWduZWQtb2ZmLWJ5OiBZYW5ndGFvIExpIDx0aW55LndpbmR6ekBnbWFpbC5jb20+
-DQo+IC0tLQ0KPiAgZHJpdmVycy9tYWlsYm94L210ay1jbWRxLW1haWxib3guYyB8IDQgKy0tLQ0K
-PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmMgYi9kcml2ZXJz
-L21haWxib3gvbXRrLWNtZHEtbWFpbGJveC5jDQo+IGluZGV4IDlhNmNlOWY1YTdkYi4uN2Y5ZTM0
-YjAyMWM4IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL21haWxib3gvbXRrLWNtZHEtbWFpbGJveC5j
-DQo+ICsrKyBiL2RyaXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmMNCj4gQEAgLTQ1OCw3
-ICs0NTgsNiBAQCBzdGF0aWMgc3RydWN0IG1ib3hfY2hhbiAqY21kcV94bGF0ZShzdHJ1Y3QgbWJv
-eF9jb250cm9sbGVyICptYm94LA0KPiAgc3RhdGljIGludCBjbWRxX3Byb2JlKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICB7DQo+ICAJc3RydWN0IGRldmljZSAqZGV2ID0gJnBkZXYt
-PmRldjsNCj4gLQlzdHJ1Y3QgcmVzb3VyY2UgKnJlczsNCj4gIAlzdHJ1Y3QgY21kcSAqY21kcTsN
-Cj4gIAlpbnQgZXJyLCBpOw0KPiAgDQo+IEBAIC00NjYsOCArNDY1LDcgQEAgc3RhdGljIGludCBj
-bWRxX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJaWYgKCFjbWRxKQ0K
-PiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gIA0KPiAtCXJlcyA9IHBsYXRmb3JtX2dldF9yZXNvdXJj
-ZShwZGV2LCBJT1JFU09VUkNFX01FTSwgMCk7DQo+IC0JY21kcS0+YmFzZSA9IGRldm1faW9yZW1h
-cF9yZXNvdXJjZShkZXYsIHJlcyk7DQo+ICsJY21kcS0+YmFzZSA9IGRldm1fcGxhdGZvcm1faW9y
-ZW1hcF9yZXNvdXJjZShwZGV2LCAwKTsNCj4gIAlpZiAoSVNfRVJSKGNtZHEtPmJhc2UpKSB7DQo+
-ICAJCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGlvcmVtYXAgZ2NlXG4iKTsNCj4gIAkJcmV0dXJu
-IFBUUl9FUlIoY21kcS0+YmFzZSk7DQoNCg==
+On 19-12-28 23:33:56, Dmitry Osipenko wrote:
+> Tegra's USB PHY driver now provides generic PHY init/shutdown callbacks
+> and thus the custom PHY management could be removed from Tegra-specific
+> part of the ChipIdea driver.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/usb/chipidea/ci_hdrc_tegra.c | 9 ---------
+>  1 file changed, 9 deletions(-)
+>=20
+> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/=
+ci_hdrc_tegra.c
+> index 0c9911d44ee5..7455df0ede49 100644
+> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> @@ -83,13 +83,6 @@ static int tegra_udc_probe(struct platform_device *pde=
+v)
+>  		return err;
+>  	}
+> =20
+> -	/*
+> -	 * Tegra's USB PHY driver doesn't implement optional phy_init()
+> -	 * hook, so we have to power on UDC controller before ChipIdea
+> -	 * driver initialization kicks in.
+> -	 */
+> -	usb_phy_set_suspend(udc->phy, 0);
+> -
+>  	/* setup and register ChipIdea HDRC device */
+>  	udc->data.name =3D "tegra-udc";
+>  	udc->data.flags =3D soc->flags;
+> @@ -109,7 +102,6 @@ static int tegra_udc_probe(struct platform_device *pd=
+ev)
+>  	return 0;
+> =20
+>  fail_power_off:
+> -	usb_phy_set_suspend(udc->phy, 1);
+>  	clk_disable_unprepare(udc->clk);
+>  	return err;
+>  }
+> @@ -119,7 +111,6 @@ static int tegra_udc_remove(struct platform_device *p=
+dev)
+>  	struct tegra_udc *udc =3D platform_get_drvdata(pdev);
+> =20
+>  	ci_hdrc_remove_device(udc->dev);
+> -	usb_phy_set_suspend(udc->phy, 1);
+>  	clk_disable_unprepare(udc->clk);
+> =20
+>  	return 0;
+> --=20
+> 2.24.0
+>=20
+
+Acked-by: Peter Chen <peter.chen@nxp.com>
+
+--=20
+
+Thanks,
+Peter Chen=
