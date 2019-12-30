@@ -1,29 +1,100 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 2/2] pwm: Enable compile testing for some of drivers
-Date: Mon, 30 Dec 2019 11:30:21 -0800
-Message-ID: <31653485-d6f1-5887-f101-ea8926a7879c@gmail.com>
-References: <20191230172113.17222-1-krzk@kernel.org>
- <20191230172113.17222-2-krzk@kernel.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] ASoC: rt5640: Fix NULL dereference on module unload
+Date: Mon, 30 Dec 2019 22:37:03 +0300
+Message-ID: <68754394-fb34-b109-264a-98f36d05ff2a@gmail.com>
+References: <20191229150454.2127-1-digetx@gmail.com>
+ <s5hh81i47a5.wl-tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191230172113.17222-2-krzk@kernel.org>
+In-Reply-To: <s5hh81i47a5.wl-tiwai@suse.de>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/30/19 9:21 AM, Krzysztof Kozlowski wrote:
-> Some of the PWM drivers can be compile tested to increase build
-> coverage.
+30.12.2019 10:11, Takashi Iwai пишет:
+> On Sun, 29 Dec 2019 16:04:54 +0100,
+> Dmitry Osipenko wrote:
+>>
+>> The rt5640->jack is NULL if jack is already disabled at the time of
+>> driver's module unloading.
+>>
+>>  Unable to handle kernel NULL pointer dereference at virtual address 00000024
+>>  ...
+>>  (rt5640_set_jack [snd_soc_rt5640]) from [<bf86f7ed>] (snd_soc_component_set_jack+0x11/0x1c [snd_soc_core])
+>>  (snd_soc_component_set_jack [snd_soc_core]) from [<bf8675cf>] (soc_remove_component+0x1b/0x54 [snd_soc_core])
+>>  (soc_remove_component [snd_soc_core]) from [<bf868859>] (soc_cleanup_card_resources+0xad/0x1cc [snd_soc_core])
+>>  (soc_cleanup_card_resources [snd_soc_core]) from [<bf86945f>] (snd_soc_unregister_card+0x47/0x78 [snd_soc_core])
+>>  (snd_soc_unregister_card [snd_soc_core]) from [<bf8b4013>] (tegra_rt5640_remove+0x13/0x1c [snd_soc_tegra_rt5640])
+>>  (tegra_rt5640_remove [snd_soc_tegra_rt5640]) from [<c0516d2f>] (platform_drv_remove+0x17/0x24)
+>>  (platform_drv_remove) from [<c0515aed>] (device_release_driver_internal+0x95/0x114)
+>>  (device_release_driver_internal) from [<c0515bd9>] (driver_detach+0x4d/0x90)
+>>  (driver_detach) from [<c0514d59>] (bus_remove_driver+0x31/0x70)
+>>  (bus_remove_driver) from [<bf8b4215>] (tegra_rt5640_driver_exit+0x9/0xdf4 [snd_soc_tegra_rt5640])
+>>  (tegra_rt5640_driver_exit [snd_soc_tegra_rt5640]) from [<c019336f>] (sys_delete_module+0xe7/0x184)
+>>  (sys_delete_module) from [<c0101001>] (ret_fast_syscall+0x1/0x28)
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  sound/soc/codecs/rt5640.c | 22 ++++++++++++++--------
+>>  1 file changed, 14 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/sound/soc/codecs/rt5640.c b/sound/soc/codecs/rt5640.c
+>> index adbae1f36a8a..b245c44cafbc 100644
+>> --- a/sound/soc/codecs/rt5640.c
+>> +++ b/sound/soc/codecs/rt5640.c
+>> @@ -2432,16 +2432,22 @@ static void rt5640_disable_jack_detect(struct snd_soc_component *component)
+>>  {
+>>  	struct rt5640_priv *rt5640 = snd_soc_component_get_drvdata(component);
+>>  
+>> -	disable_irq(rt5640->irq);
+>> -	rt5640_cancel_work(rt5640);
+>> +	/*
+>> +	 * soc_remove_component() force-disables jack and thus rt5640->jack
+>> +	 * could be NULL at the time of driver's module unloading.
+>> +	 */
+>> +	if (rt5640->jack) {
+>> +		disable_irq(rt5640->irq);
+>> +		rt5640_cancel_work(rt5640);
+>>  
+>> -	if (rt5640->jack->status & SND_JACK_MICROPHONE) {
+>> -		rt5640_disable_micbias1_ovcd_irq(component);
+>> -		rt5640_disable_micbias1_for_ovcd(component);
+>> -		snd_soc_jack_report(rt5640->jack, 0, SND_JACK_BTN_0);
+>> -	}
+>> +		if (rt5640->jack->status & SND_JACK_MICROPHONE) {
+>> +			rt5640_disable_micbias1_ovcd_irq(component);
+>> +			rt5640_disable_micbias1_for_ovcd(component);
+>> +			snd_soc_jack_report(rt5640->jack, 0, SND_JACK_BTN_0);
+>> +		}
+>>  
+>> -	rt5640->jack = NULL;
+>> +		rt5640->jack = NULL;
+>> +	}
+>>  }
 > 
-> The Meson PWM driver requires COMMON_CLK dependency.
+> I guess it's simpler just returning if rt5640->jack is already NULL.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> --- a/sound/soc/codecs/rt5640.c
+> +++ b/sound/soc/codecs/rt5640.c
+> @@ -2432,6 +2432,10 @@ static void rt5640_disable_jack_detect(struct snd_soc_component *component)
+>  {
+>  	struct rt5640_priv *rt5640 = snd_soc_component_get_drvdata(component);
+>  
+> +	/* already disabled? */
+> +	if (!rt5640->jack)
+> +		return;
+> +
+>  	disable_irq(rt5640->irq);
+>  	rt5640_cancel_work(rt5640);
+>  
+> 
+> thanks,
+> 
+> Takashi
+> 
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-
-for PWM_BCM2835 and PWM_BRCMSTB, thanks!
--- 
-Florian
+Okay, I'll make v2.
