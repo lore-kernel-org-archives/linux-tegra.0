@@ -1,60 +1,55 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v1] ASoC: rt5640: Fix NULL dereference on module unload
-Date: Tue, 31 Dec 2019 00:17:19 +0000
-Message-ID: <20191231001719.GC3897@sirena.org.uk>
-References: <20191229150454.2127-1-digetx@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.4 000/434] 5.4.7-stable review
+Date: Tue, 31 Dec 2019 09:31:14 +0100
+Message-ID: <20191231083114.GB1928116@kroah.com>
+References: <20191229172702.393141737@linuxfoundation.org>
+ <43686be4-0ea2-472f-8b8f-2c69e16de96d@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20191229150454.2127-1-digetx@gmail.com>
+In-Reply-To: <43686be4-0ea2-472f-8b8f-2c69e16de96d@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Dec 30, 2019 at 08:20:41PM +0000, Jon Hunter wrote:
+> 
+> On 29/12/2019 17:20, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.7 release.
+> > There are 434 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Tue, 31 Dec 2019 17:25:52 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.7-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> 
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.4:
+>     13 builds:	13 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     38 tests:	38 pass, 0 fail
+> 
+> Linux version:	5.4.7-rc1-g6bc086f94af5
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
 
---jy6Sn24JjFx/iggw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for testing all of these and letting me know.
 
-On Sun, Dec 29, 2019 at 06:04:54PM +0300, Dmitry Osipenko wrote:
-> The rt5640->jack is NULL if jack is already disabled at the time of
-> driver's module unloading.
->=20
->  Unable to handle kernel NULL pointer dereference at virtual address 0000=
-0024
->  ...
->  (rt5640_set_jack [snd_soc_rt5640]) from [<bf86f7ed>] (snd_soc_component_=
-set_jack+0x11/0x1c [snd_soc_core])
->  (snd_soc_component_set_jack [snd_soc_core]) from [<bf8675cf>] (soc_remov=
-e_component+0x1b/0x54 [snd_soc_core])
->  (soc_remove_component [snd_soc_core]) from [<bf868859>] (soc_cleanup_car=
-d_resources+0xad/0x1cc [snd_soc_core])
-
-In addition to what Takashi said:
-
-Please think hard before including complete backtraces in upstream
-reports, they are very large and contain almost no useful information
-relative to their size so often obscure the relevant content in your
-message. If part of the backtrace is usefully illustrative then it's
-usually better to pull out the relevant sections.
-
---jy6Sn24JjFx/iggw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4Kk44ACgkQJNaLcl1U
-h9B0vAf+Jesim6R6yU2diF32zHcRsUbMmsppI6c2j5Th/D8i5h+fRxjvXEvVkuGI
-XjQkntGRuppBqIv7EcVt19JhOaO2S2+dCWskZY9G1C2t0k/i4FaGv20iVr+Zd1qI
-po2/Sv/mjruuFZqpx8ZVGdGVwrdCB8EnANT6k62eFFGb+bvrE9k6xh4db9CyYBKH
-EO+NXjIDf/115a4XcHEfWGe3627k8rlw5llArmHyp+kTo2jq5jbCVcUxsXGTsz7W
-QyGsYgljmuJ7OVMZv2lpHa4Wxl1hdCobWS8TCrjK5gMFmlWZypw1zOh5Z9lkEVcl
-nm/taB4a/p7GEMWOa+AJevErYZjl2w==
-=D3/K
------END PGP SIGNATURE-----
-
---jy6Sn24JjFx/iggw--
+greg k-h
