@@ -1,66 +1,60 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
- to driver's dependencies
-Date: Mon, 30 Dec 2019 22:02:59 +0100
-Message-ID: <20191230210259.GD24135@qmqm.qmqm.pl>
-References: <20191220015238.9228-1-digetx@gmail.com>
- <20191220015238.9228-11-digetx@gmail.com>
- <20191220035650.GC19921@b29397-desktop>
- <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
- <20191223213234.GA28786@qmqm.qmqm.pl>
- <7174833f-8325-7fb4-d190-78ba4bed0cbb@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v1] ASoC: rt5640: Fix NULL dereference on module unload
+Date: Tue, 31 Dec 2019 00:17:19 +0000
+Message-ID: <20191231001719.GC3897@sirena.org.uk>
+References: <20191229150454.2127-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <7174833f-8325-7fb4-d190-78ba4bed0cbb@gmail.com>
+In-Reply-To: <20191229150454.2127-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Peter Chen <peter.chen@nxp.com>, Rob Herring <robh-dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 24, 2019 at 07:21:05AM +0300, Dmitry Osipenko wrote:
-> 24.12.2019 00:32, Michał Mirosław пишет:
-> > On Fri, Dec 20, 2019 at 07:31:08AM +0300, Dmitry Osipenko wrote:
-> >> 20.12.2019 06:56, Peter Chen пишет:
-> >>> On 19-12-20 04:52:38, Dmitry Osipenko wrote:
-> > [...]
-> >>>> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> >>>> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> >>>> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
-> >>>>  	struct tegra_udc *udc;
-> >>>>  	int err;
-> >>>>  
-> >>>> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
-> >>>> +		err = request_module("phy_tegra_usb");
-> >>>> +		if (err)
-> >>>> +			return err;
-> >>>> +	}
-> >>>> +
-> >>>
-> >>> Why you do this dependency, if this controller driver can't
-> >>> get USB PHY, it should return error. What's the return value
-> >>> after calling below:
-> >>>
-> >>> 	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
-> >>
-> >> It returns -EPROBE_DEFER when phy_tegra_usb isn't loaded.
-> > 
-> > How are other driver modules autoloaded? Isn't there an appropriate
-> > MODALIAS or MODULE_DEVICE_TABLE in there?
-> 
-> Hello Michał,
-> 
-> The phy_tegra_usb module is fine by itself, it's getting autoloaded.
-> 
-> The problem is that ci_hdrc_tegra module depends on the phy_tegra_usb
-> module and thus the PHY module should be loaded before the CI module,
-> otherwise CI driver fails with the EPROBE_DEFER.
 
-Why, then, is CI driver not being probed again after PHY driver loads?
-EPROBE_DEFER is what should cause driver core to re-probe a device after
-other devices appear (PHY in this case).
+--jy6Sn24JjFx/iggw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best Regards,
-Michał Mirosław
+On Sun, Dec 29, 2019 at 06:04:54PM +0300, Dmitry Osipenko wrote:
+> The rt5640->jack is NULL if jack is already disabled at the time of
+> driver's module unloading.
+>=20
+>  Unable to handle kernel NULL pointer dereference at virtual address 0000=
+0024
+>  ...
+>  (rt5640_set_jack [snd_soc_rt5640]) from [<bf86f7ed>] (snd_soc_component_=
+set_jack+0x11/0x1c [snd_soc_core])
+>  (snd_soc_component_set_jack [snd_soc_core]) from [<bf8675cf>] (soc_remov=
+e_component+0x1b/0x54 [snd_soc_core])
+>  (soc_remove_component [snd_soc_core]) from [<bf868859>] (soc_cleanup_car=
+d_resources+0xad/0x1cc [snd_soc_core])
+
+In addition to what Takashi said:
+
+Please think hard before including complete backtraces in upstream
+reports, they are very large and contain almost no useful information
+relative to their size so often obscure the relevant content in your
+message. If part of the backtrace is usefully illustrative then it's
+usually better to pull out the relevant sections.
+
+--jy6Sn24JjFx/iggw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4Kk44ACgkQJNaLcl1U
+h9B0vAf+Jesim6R6yU2diF32zHcRsUbMmsppI6c2j5Th/D8i5h+fRxjvXEvVkuGI
+XjQkntGRuppBqIv7EcVt19JhOaO2S2+dCWskZY9G1C2t0k/i4FaGv20iVr+Zd1qI
+po2/Sv/mjruuFZqpx8ZVGdGVwrdCB8EnANT6k62eFFGb+bvrE9k6xh4db9CyYBKH
+EO+NXjIDf/115a4XcHEfWGe3627k8rlw5llArmHyp+kTo2jq5jbCVcUxsXGTsz7W
+QyGsYgljmuJ7OVMZv2lpHa4Wxl1hdCobWS8TCrjK5gMFmlWZypw1zOh5Z9lkEVcl
+nm/taB4a/p7GEMWOa+AJevErYZjl2w==
+=D3/K
+-----END PGP SIGNATURE-----
+
+--jy6Sn24JjFx/iggw--
