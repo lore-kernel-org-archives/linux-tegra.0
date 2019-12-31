@@ -1,55 +1,39 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.4 000/434] 5.4.7-stable review
-Date: Tue, 31 Dec 2019 09:31:14 +0100
-Message-ID: <20191231083114.GB1928116@kroah.com>
-References: <20191229172702.393141737@linuxfoundation.org>
- <43686be4-0ea2-472f-8b8f-2c69e16de96d@nvidia.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 2/2] pwm: Enable compile testing for some of drivers
+Date: Tue, 31 Dec 2019 15:52:50 +0100
+Message-ID: <CAFBinCAeE-mu4+F9vOkp3cMaGjQ7tst0xdd47zSp54wW4ArRug@mail.gmail.com>
+References: <20191230172113.17222-1-krzk@kernel.org>
+ <20191230172113.17222-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <43686be4-0ea2-472f-8b8f-2c69e16de96d@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191230172113.17222-2-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pwm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Thierry Reding <thierry.reding@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 08:20:41PM +0000, Jon Hunter wrote:
-> 
-> On 29/12/2019 17:20, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.7 release.
-> > There are 434 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Tue, 31 Dec 2019 17:25:52 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.7-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.4:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.4.7-rc1-g6bc086f94af5
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+On Mon, Dec 30, 2019 at 6:21 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Some of the PWM drivers can be compile tested to increase build
+> coverage.
+>
+> The Meson PWM driver requires COMMON_CLK dependency.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+for PWM_MESON:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Thanks for testing all of these and letting me know.
+thank you!
 
-greg k-h
+
+Martin
