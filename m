@@ -1,14 +1,11 @@
 From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Subject: [PATCH 1/4] drm/tegra: Provide ddc symlink in output connector sysfs
- directory
-Date: Thu,  2 Jan 2020 14:22:57 +0100
-Message-ID: <20200102132300.24309-2-andrzej.p@collabora.com>
-References: <20200102132300.24309-1-andrzej.p@collabora.com>
+Subject: [PATCH 0/4] Complete ddc symlink addition
+Date: Thu,  2 Jan 2020 14:22:56 +0100
+Message-ID: <20200102132300.24309-1-andrzej.p@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20200102132300.24309-1-andrzej.p@collabora.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -22,51 +19,23 @@ To: dri-devel@lists.freedesktop.org
 Cc: David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, kernel@collabora.com, Shawn Guo <shawnguo@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use the ddc pointer provided by the generic connector.
+The series completes the process of adding ddc symlink in connector's
+sysfs directory: of the initial submission only the below patches are
+still pending, hence this resend. Rebased onto drm-misc-next as of
+2020-01-02.
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
-Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
----
- drivers/gpu/drm/tegra/hdmi.c | 7 ++++---
- drivers/gpu/drm/tegra/sor.c  | 7 ++++---
- 2 files changed, 8 insertions(+), 6 deletions(-)
+Andrzej Pietrasiewicz (4):
+  drm/tegra: Provide ddc symlink in output connector sysfs directory
+  drm/vc4: Provide ddc symlink in connector sysfs directory
+  drm: zte: Provide ddc symlink in hdmi connector sysfs directory
+  drm: zte: Provide ddc symlink in vga connector sysfs directory
 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index 50269ffbcb6b..21a629adcb51 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -1430,9 +1430,10 @@ static int tegra_hdmi_init(struct host1x_client *client)
- 
- 	hdmi->output.dev = client->dev;
- 
--	drm_connector_init(drm, &hdmi->output.connector,
--			   &tegra_hdmi_connector_funcs,
--			   DRM_MODE_CONNECTOR_HDMIA);
-+	drm_connector_init_with_ddc(drm, &hdmi->output.connector,
-+				    &tegra_hdmi_connector_funcs,
-+				    DRM_MODE_CONNECTOR_HDMIA,
-+				    hdmi->output.ddc);
- 	drm_connector_helper_add(&hdmi->output.connector,
- 				 &tegra_hdmi_connector_helper_funcs);
- 	hdmi->output.connector.dpms = DRM_MODE_DPMS_OFF;
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index fbbb974c1e1a..7fbcb348c7ee 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -2836,9 +2836,10 @@ static int tegra_sor_init(struct host1x_client *client)
- 
- 	sor->output.dev = sor->dev;
- 
--	drm_connector_init(drm, &sor->output.connector,
--			   &tegra_sor_connector_funcs,
--			   connector);
-+	drm_connector_init_with_ddc(drm, &sor->output.connector,
-+				    &tegra_sor_connector_funcs,
-+				    connector,
-+				    sor->output.ddc);
- 	drm_connector_helper_add(&sor->output.connector,
- 				 &tegra_sor_connector_helper_funcs);
- 	sor->output.connector.dpms = DRM_MODE_DPMS_OFF;
+ drivers/gpu/drm/tegra/hdmi.c   |  7 ++++---
+ drivers/gpu/drm/tegra/sor.c    |  7 ++++---
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 12 ++++++++----
+ drivers/gpu/drm/zte/zx_hdmi.c  |  6 ++++--
+ drivers/gpu/drm/zte/zx_vga.c   |  6 ++++--
+ 5 files changed, 24 insertions(+), 14 deletions(-)
+
 -- 
 2.17.1
