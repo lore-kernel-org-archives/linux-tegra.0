@@ -1,8 +1,8 @@
 From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Subject: [PATCH 4/4] drm: zte: Provide ddc symlink in vga connector sysfs
+Subject: [PATCH 3/4] drm: zte: Provide ddc symlink in hdmi connector sysfs
  directory
-Date: Thu,  2 Jan 2020 14:23:00 +0100
-Message-ID: <20200102132300.24309-5-andrzej.p@collabora.com>
+Date: Thu,  2 Jan 2020 14:22:59 +0100
+Message-ID: <20200102132300.24309-4-andrzej.p@collabora.com>
 References: <20200102132300.24309-1-andrzej.p@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -28,25 +28,25 @@ Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 Acked-by: Sam Ravnborg <sam@ravnborg.org>
 Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
 ---
- drivers/gpu/drm/zte/zx_vga.c | 6 ++++--
+ drivers/gpu/drm/zte/zx_hdmi.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/zte/zx_vga.c b/drivers/gpu/drm/zte/zx_vga.c
-index 9b67e419280c..c4fa3bbaba78 100644
---- a/drivers/gpu/drm/zte/zx_vga.c
-+++ b/drivers/gpu/drm/zte/zx_vga.c
-@@ -165,8 +165,10 @@ static int zx_vga_register(struct drm_device *drm, struct zx_vga *vga)
+diff --git a/drivers/gpu/drm/zte/zx_hdmi.c b/drivers/gpu/drm/zte/zx_hdmi.c
+index a50f5a1f09b8..b98a1420dcd3 100644
+--- a/drivers/gpu/drm/zte/zx_hdmi.c
++++ b/drivers/gpu/drm/zte/zx_hdmi.c
+@@ -319,8 +319,10 @@ static int zx_hdmi_register(struct drm_device *drm, struct zx_hdmi *hdmi)
  
- 	vga->connector.polled = DRM_CONNECTOR_POLL_HPD;
+ 	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
  
--	ret = drm_connector_init(drm, connector, &zx_vga_connector_funcs,
--				 DRM_MODE_CONNECTOR_VGA);
-+	ret = drm_connector_init_with_ddc(drm, connector,
-+					  &zx_vga_connector_funcs,
-+					  DRM_MODE_CONNECTOR_VGA,
-+					  &vga->ddc->adap);
- 	if (ret) {
- 		DRM_DEV_ERROR(dev, "failed to init connector: %d\n", ret);
- 		goto clean_encoder;
+-	drm_connector_init(drm, &hdmi->connector, &zx_hdmi_connector_funcs,
+-			   DRM_MODE_CONNECTOR_HDMIA);
++	drm_connector_init_with_ddc(drm, &hdmi->connector,
++				    &zx_hdmi_connector_funcs,
++				    DRM_MODE_CONNECTOR_HDMIA,
++				    &hdmi->ddc->adap);
+ 	drm_connector_helper_add(&hdmi->connector,
+ 				 &zx_hdmi_connector_helper_funcs);
+ 
 -- 
 2.17.1
