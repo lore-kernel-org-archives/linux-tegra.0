@@ -1,52 +1,49 @@
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Subject: [PATCH 3/4] drm: zte: Provide ddc symlink in hdmi connector sysfs
- directory
-Date: Thu,  2 Jan 2020 14:22:59 +0100
-Message-ID: <20200102132300.24309-4-andrzej.p@collabora.com>
-References: <20200102132300.24309-1-andrzej.p@collabora.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 13/16] usb: phy: tegra: Keep CPU interrupts enabled
+Date: Thu, 2 Jan 2020 17:40:48 +0300
+Message-ID: <ad1a2b09-12b0-112e-1556-6faf6a01c330@gmail.com>
+References: <20191228203358.23490-1-digetx@gmail.com>
+ <20191228203358.23490-14-digetx@gmail.com>
+ <20191230203648.GA24135@qmqm.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20200102132300.24309-1-andrzej.p@collabora.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, kernel@collabora.com, Shawn Guo <shawnguo@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191230203648.GA24135@qmqm.qmqm.pl>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use the ddc pointer provided by the generic connector.
+30.12.2019 23:36, Michał Mirosław пишет:
+> On Sat, Dec 28, 2019 at 11:33:55PM +0300, Dmitry Osipenko wrote:
+>> There is no good reason for disabling of CPU interrupts in order to
+>> protect the utmip_pad_count modification.
+> 
+> Since there are sleeping functions called outside of the locked sections,
+> this should be a mutex instead. OTOH if the spin_lock is to protect register
+> write against IRQ handler, then the patch is wrong.
+> 
+> [...]
+>> -	spin_unlock_irqrestore(&utmip_pad_lock, flags);
+>> +	spin_unlock(&utmip_pad_lock);
+>>  
+>>  	clk_disable_unprepare(phy->pad_clk);
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
-Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
----
- drivers/gpu/drm/zte/zx_hdmi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Hello Michał,
 
-diff --git a/drivers/gpu/drm/zte/zx_hdmi.c b/drivers/gpu/drm/zte/zx_hdmi.c
-index a50f5a1f09b8..b98a1420dcd3 100644
---- a/drivers/gpu/drm/zte/zx_hdmi.c
-+++ b/drivers/gpu/drm/zte/zx_hdmi.c
-@@ -319,8 +319,10 @@ static int zx_hdmi_register(struct drm_device *drm, struct zx_hdmi *hdmi)
- 
- 	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
- 
--	drm_connector_init(drm, &hdmi->connector, &zx_hdmi_connector_funcs,
--			   DRM_MODE_CONNECTOR_HDMIA);
-+	drm_connector_init_with_ddc(drm, &hdmi->connector,
-+				    &zx_hdmi_connector_funcs,
-+				    DRM_MODE_CONNECTOR_HDMIA,
-+				    &hdmi->ddc->adap);
- 	drm_connector_helper_add(&hdmi->connector,
- 				 &zx_hdmi_connector_helper_funcs);
- 
--- 
-2.17.1
+This spinlock isn't for protecting from the IRQ handler, it's used
+solely to protect modification of the registers that are shared by all
+USB controllers.
+
+It's possible to use mutex instead of spinlock here, but it doesn't
+bring any benefits because mutex is more useful when protected code
+could block for a long time due to sleep or whatever, while spinlock is
+much more efficient when protected code doesn't sleep and takes no more
+than dozens microseconds to execute (which is the case here).
+
+In this particular case of the Tegra USB PHY driver, the chance of
+getting a block on taking the utmip_pad_lock is zero unless USB
+controller drivers will start to use asynchronous probing. So this patch
+does a very minor clean-up change and nothing more.
