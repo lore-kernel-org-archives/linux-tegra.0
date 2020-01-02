@@ -1,49 +1,74 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 13/16] usb: phy: tegra: Keep CPU interrupts enabled
-Date: Thu, 2 Jan 2020 17:40:48 +0300
-Message-ID: <ad1a2b09-12b0-112e-1556-6faf6a01c330@gmail.com>
-References: <20191228203358.23490-1-digetx@gmail.com>
- <20191228203358.23490-14-digetx@gmail.com>
- <20191230203648.GA24135@qmqm.qmqm.pl>
+Subject: Re: [PATCH v1 3/7] dmaengine: tegra-apb: Prevent race conditions on
+ channel's freeing
+Date: Thu, 2 Jan 2020 18:03:08 +0300
+Message-ID: <4ac0c861-0497-3961-026b-8c05b739df7d@gmail.com>
+References: <20191228204640.25163-1-digetx@gmail.com>
+ <20191228204640.25163-4-digetx@gmail.com>
+ <20191230204555.GB24135@qmqm.qmqm.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191230203648.GA24135@qmqm.qmqm.pl>
+In-Reply-To: <20191230204555.GB24135@qmqm.qmqm.pl>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-30.12.2019 23:36, Michał Mirosław пишет:
-> On Sat, Dec 28, 2019 at 11:33:55PM +0300, Dmitry Osipenko wrote:
->> There is no good reason for disabling of CPU interrupts in order to
->> protect the utmip_pad_count modification.
+30.12.2019 23:45, Michał Mirosław пишет:
+> On Sat, Dec 28, 2019 at 11:46:36PM +0300, Dmitry Osipenko wrote:
+>> It's unsafe to check the channel's "busy" state without taking a lock,
+>> it is also unsafe to assume that tasklet isn't in-fly.
 > 
-> Since there are sleeping functions called outside of the locked sections,
-> this should be a mutex instead. OTOH if the spin_lock is to protect register
-> write against IRQ handler, then the patch is wrong.
+> 'in-flight'. Also, the patch seems to have two independent bug-fixes
+> in it. Second one doesn't look right, at least not without an explanation.
+
+Technically, this all shouldn't be needed at all since it should be a
+responsibility of the DMA client drivers to make sure that channel is
+idling before releasing it. But, AFAIK, the behavior of channel's
+releasing isn't strictly defined by the DMA API, so it should be better
+to keep the original behavior in place.
+
+> First:
 > 
-> [...]
->> -	spin_unlock_irqrestore(&utmip_pad_lock, flags);
->> +	spin_unlock(&utmip_pad_lock);
+>> -	if (tdc->busy)
+>> -		tegra_dma_terminate_all(dc);
+>> +	tegra_dma_terminate_all(dc);
+> 
+> Second:
+> 
+>> +	tasklet_kill(&tdc->tasklet);
+
+Yes, it could be a separate change. Actually, this is not a fix, but a
+clean-up change that simply stops tasklet instead of trying to work
+around the fact that tasklet could be scheduled at the time channel's
+freeing.
+
+>>  	spin_lock_irqsave(&tdc->lock, flags);
+
+I now see that missed to remove this locking since it's not needed now,
+given that tasklet is already stopped after killing it by the above change.
+
+I'll update and split this patch into two in v3.
+
+>>  	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
+>> @@ -1543,7 +1543,6 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>>  		struct tegra_dma_channel *tdc = &tdma->channels[i];
 >>  
->>  	clk_disable_unprepare(phy->pad_clk);
+>>  		free_irq(tdc->irq, tdc);
+>> -		tasklet_kill(&tdc->tasklet);
+>>  	}
+>>  
+>>  	pm_runtime_disable(&pdev->dev);
+>> @@ -1563,7 +1562,6 @@ static int tegra_dma_remove(struct platform_device *pdev)
+>>  	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
+>>  		tdc = &tdma->channels[i];
+>>  		free_irq(tdc->irq, tdc);
+>> -		tasklet_kill(&tdc->tasklet);
+>>  	}
+>>  
+>>  	pm_runtime_disable(&pdev->dev);
 
-Hello Michał,
-
-This spinlock isn't for protecting from the IRQ handler, it's used
-solely to protect modification of the registers that are shared by all
-USB controllers.
-
-It's possible to use mutex instead of spinlock here, but it doesn't
-bring any benefits because mutex is more useful when protected code
-could block for a long time due to sleep or whatever, while spinlock is
-much more efficient when protected code doesn't sleep and takes no more
-than dozens microseconds to execute (which is the case here).
-
-In this particular case of the Tegra USB PHY driver, the chance of
-getting a block on taking the utmip_pad_lock is zero unless USB
-controller drivers will start to use asynchronous probing. So this patch
-does a very minor clean-up change and nothing more.
+Thank you very much for taking a look at it!
