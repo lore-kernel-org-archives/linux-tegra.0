@@ -1,7 +1,8 @@
 From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Subject: [PATCH 2/4] drm/vc4: Provide ddc symlink in connector sysfs directory
-Date: Thu,  2 Jan 2020 14:22:58 +0100
-Message-ID: <20200102132300.24309-3-andrzej.p@collabora.com>
+Subject: [PATCH 4/4] drm: zte: Provide ddc symlink in vga connector sysfs
+ directory
+Date: Thu,  2 Jan 2020 14:23:00 +0100
+Message-ID: <20200102132300.24309-5-andrzej.p@collabora.com>
 References: <20200102132300.24309-1-andrzej.p@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -27,45 +28,25 @@ Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 Acked-by: Sam Ravnborg <sam@ravnborg.org>
 Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
 ---
- drivers/gpu/drm/vc4/vc4_hdmi.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/zte/zx_vga.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 1c62c6c9244b..cea18dc15f77 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -267,7 +267,8 @@ static const struct drm_connector_helper_funcs vc4_hdmi_connector_helper_funcs =
- };
+diff --git a/drivers/gpu/drm/zte/zx_vga.c b/drivers/gpu/drm/zte/zx_vga.c
+index 9b67e419280c..c4fa3bbaba78 100644
+--- a/drivers/gpu/drm/zte/zx_vga.c
++++ b/drivers/gpu/drm/zte/zx_vga.c
+@@ -165,8 +165,10 @@ static int zx_vga_register(struct drm_device *drm, struct zx_vga *vga)
  
- static struct drm_connector *vc4_hdmi_connector_init(struct drm_device *dev,
--						     struct drm_encoder *encoder)
-+						     struct drm_encoder *encoder,
-+						     struct i2c_adapter *ddc)
- {
- 	struct drm_connector *connector;
- 	struct vc4_hdmi_connector *hdmi_connector;
-@@ -281,8 +282,10 @@ static struct drm_connector *vc4_hdmi_connector_init(struct drm_device *dev,
+ 	vga->connector.polled = DRM_CONNECTOR_POLL_HPD;
  
- 	hdmi_connector->encoder = encoder;
- 
--	drm_connector_init(dev, connector, &vc4_hdmi_connector_funcs,
--			   DRM_MODE_CONNECTOR_HDMIA);
-+	drm_connector_init_with_ddc(dev, connector,
-+				    &vc4_hdmi_connector_funcs,
-+				    DRM_MODE_CONNECTOR_HDMIA,
-+				    ddc);
- 	drm_connector_helper_add(connector, &vc4_hdmi_connector_helper_funcs);
- 
- 	/* Create and attach TV margin props to this connector. */
-@@ -1395,7 +1398,8 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 	drm_encoder_helper_add(hdmi->encoder, &vc4_hdmi_encoder_helper_funcs);
- 
--	hdmi->connector = vc4_hdmi_connector_init(drm, hdmi->encoder);
-+	hdmi->connector =
-+		vc4_hdmi_connector_init(drm, hdmi->encoder, hdmi->ddc);
- 	if (IS_ERR(hdmi->connector)) {
- 		ret = PTR_ERR(hdmi->connector);
- 		goto err_destroy_encoder;
+-	ret = drm_connector_init(drm, connector, &zx_vga_connector_funcs,
+-				 DRM_MODE_CONNECTOR_VGA);
++	ret = drm_connector_init_with_ddc(drm, connector,
++					  &zx_vga_connector_funcs,
++					  DRM_MODE_CONNECTOR_VGA,
++					  &vga->ddc->adap);
+ 	if (ret) {
+ 		DRM_DEV_ERROR(dev, "failed to init connector: %d\n", ret);
+ 		goto clean_encoder;
 -- 
 2.17.1
