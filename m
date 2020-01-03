@@ -1,109 +1,88 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 3/5] dt-bindings: phy: tegra: Add Tegra194 support
-Date: Fri, 3 Jan 2020 15:39:40 -0700
-Message-ID: <20200103223940.GA9205@bogus>
-References: <20200103081814.9848-1-jckuo@nvidia.com>
- <20200103081814.9848-4-jckuo@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
+ to driver's dependencies
+Date: Sat, 4 Jan 2020 02:19:01 +0300
+Message-ID: <51ecc509-e277-591d-3db5-fc9d46eee326@gmail.com>
+References: <20191220015238.9228-1-digetx@gmail.com>
+ <20191220015238.9228-11-digetx@gmail.com>
+ <20191220035650.GC19921@b29397-desktop>
+ <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
+ <20191223213234.GA28786@qmqm.qmqm.pl>
+ <7174833f-8325-7fb4-d190-78ba4bed0cbb@gmail.com>
+ <20191230210259.GD24135@qmqm.qmqm.pl>
+ <b34972e3-569e-d74a-4d30-d52c89032a08@gmail.com>
+ <20200103072536.GA14228@qmqm.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20200103081814.9848-4-jckuo@nvidia.com>
+In-Reply-To: <20200103072536.GA14228@qmqm.qmqm.pl>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: JC Kuo <jckuo@nvidia.com>
-Cc: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: Peter Chen <peter.chen@nxp.com>, Rob Herring <robh-dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 03, 2020 at 04:18:12PM +0800, JC Kuo wrote:
-> Extend the bindings to cover the set of features found in Tegra194.
-> Note that, technically, there are four more supplies connected to the
-> XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL)
-> , but the power sequencing requirements of Tegra194 require these to be
-> under the control of the PMIC.
+03.01.2020 10:25, Michał Mirosław пишет:
+> On Thu, Jan 02, 2020 at 06:17:47PM +0300, Dmitry Osipenko wrote:
+>> 31.12.2019 00:02, Michał Mirosław пишет:
+>>> On Tue, Dec 24, 2019 at 07:21:05AM +0300, Dmitry Osipenko wrote:
+>>>> 24.12.2019 00:32, Michał Mirosław пишет:
+>>>>> On Fri, Dec 20, 2019 at 07:31:08AM +0300, Dmitry Osipenko wrote:
+>>>>>> 20.12.2019 06:56, Peter Chen пишет:
+>>>>>>> On 19-12-20 04:52:38, Dmitry Osipenko wrote:
+>>>>> [...]
+>>>>>>>> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+>>>>>>>> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+>>>>>>>> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
+>>>>>>>>  	struct tegra_udc *udc;
+>>>>>>>>  	int err;
+>>>>>>>>  
+>>>>>>>> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
+>>>>>>>> +		err = request_module("phy_tegra_usb");
+>>>>>>>> +		if (err)
+>>>>>>>> +			return err;
+>>>>>>>> +	}
+>>>>>>>> +
+>>>>>>>
+>>>>>>> Why you do this dependency, if this controller driver can't
+>>>>>>> get USB PHY, it should return error. What's the return value
+>>>>>>> after calling below:
+>>>>>>>
+>>>>>>> 	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
+>>>>>>
+>>>>>> It returns -EPROBE_DEFER when phy_tegra_usb isn't loaded.
+>>>>>
+>>>>> How are other driver modules autoloaded? Isn't there an appropriate
+>>>>> MODALIAS or MODULE_DEVICE_TABLE in there?
+>>>>
+>>>> Hello Michał,
+>>>>
+>>>> The phy_tegra_usb module is fine by itself, it's getting autoloaded.
+>>>>
+>>>> The problem is that ci_hdrc_tegra module depends on the phy_tegra_usb
+>>>> module and thus the PHY module should be loaded before the CI module,
+>>>> otherwise CI driver fails with the EPROBE_DEFER.
+>>>
+>>> Why, then, is CI driver not being probed again after PHY driver loads?
+>>> EPROBE_DEFER is what should cause driver core to re-probe a device after
+>>> other devices appear (PHY in this case).
+>>
+>> CI driver is getting re-probed just fine if PHY's driver module is
+>> loaded manually after loading the CI's module. This patch removes this
+>> necessity to manually load PHY's module.
+>>
+>> This is just a minor convenience change that brings the CI's driver
+>> loading behaviour on par with the behaviour of loading Tegra's EHCI
+>> driver module.
 > 
-> Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it
-> is possible for some platforms have long signal trace that could not
-> provide sufficient electrical environment for Gen 2 speed. This patch
-> adds a "maximum-speed" property to usb3 ports which can be used to
-> specify the maximum supported speed for any particular USB 3.1 port.
-> For a port that is not capable of SuperSpeedPlus, "maximum-speed"
-> property should carry "super-speed".
-> 
-> Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> ---
-> Changes in v5:
-> - re-use "maximum-speed" instead of adding "nvidia,disable-gen2"
-> Changes in v4: none
-> Changes in v3: none
-> Changes in v2:
-> - fix a typo
-> 
->  .../phy/nvidia,tegra124-xusb-padctl.txt        | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-> index 9fb682e47c29..7d0089006e67 100644
-> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-> @@ -37,6 +37,7 @@ Required properties:
->    - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
->    - Tegra210: "nvidia,tegra210-xusb-padctl"
->    - Tegra186: "nvidia,tegra186-xusb-padctl"
-> +  - Tegra194: "nvidia,tegra194-xusb-padctl"
->  - reg: Physical base address and length of the controller's registers.
->  - resets: Must contain an entry for each entry in reset-names.
->  - reset-names: Must include the following entries:
-> @@ -62,6 +63,10 @@ For Tegra186:
->  - vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
->  - vddio-hsic-supply: HSIC PHY power supply. Must supply 1.2 V.
->  
-> +For Tegra194:
-> +- avdd-usb-supply: USB I/Os, VBUS, ID, REXT, D+/D- power supply. Must supply
-> +  3.3 V.
-> +- vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
->  
->  Pad nodes:
->  ==========
-> @@ -154,6 +159,11 @@ For Tegra210, the list of valid PHY nodes is given below:
->  - sata: sata-0
->    - functions: "usb3-ss", "sata"
->  
-> +For Tegra194, the list of valid PHY nodes is given below:
-> +- usb2: usb2-0, usb2-1, usb2-2, usb2-3
-> +  - functions: "xusb"
-> +- usb3: usb3-0, usb3-1, usb3-2, usb3-3
-> +  - functions: "xusb"
->  
->  Port nodes:
->  ===========
-> @@ -221,6 +231,11 @@ Optional properties:
->    is internal. In the absence of this property the port is considered to be
->    external.
->  
-> +- maximum-speed: Only for Tegra194. A string property that specifies maximum
-> +  supported speed of a usb3 port. Valid values are:
-> +  - "super-speed-plus": default, the usb3 port supports USB 3.1 Gen 2 speed.
+> I fully understand the goal, but what I'm missing is that why this
+> doesn't work out of the box? If the PHY module is autoloaded, and so is
+> CI driver, and (as I understand) the driver's probe() correctly returns
+> EPROBE_DEFER when PHY is not probed yet, then I guess that means bug
+> somewhere else and the patch just covers it up.
 
-Not defined as a valid value in usb/generic.txt. '-gen2' instead of 
-'-plus' would be clearer IMO. However, is there any need to define the 
-maximum speed possible? The purpose of this property is to limit the 
-speed below the max.
-
-> +  - "super-speed": the usb3 port supports USB 3.1 Gen 1 speed only.
-> +
->  For Tegra124 and Tegra132, the XUSB pad controller exposes the following
->  ports:
->  - 3x USB2: usb2-0, usb2-1, usb2-2
-> @@ -233,6 +248,9 @@ For Tegra210, the XUSB pad controller exposes the following ports:
->  - 2x HSIC: hsic-0, hsic-1
->  - 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
->  
-> +For Tegra194, the XUSB pad controller exposes the following ports:
-> +- 4x USB2: usb2-0, usb2-1, usb2-2, usb2-3
-> +- 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
->  
->  Examples:
->  =========
-> -- 
-> 2.17.1
-> 
+It works out of the box, but it also could work a bit better in a case
+of manually reloading modules. Perhaps it should be possible to derive
+module dependencies from the Kconfig dependencies, apparently kernel
+doesn't support it yet or maybe there is some reason why it can't be done.
