@@ -1,55 +1,98 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.4 000/191] 5.4.8-stable review
-Date: Sat, 4 Jan 2020 10:21:19 +0100
-Message-ID: <20200104092119.GC1249964@kroah.com>
-References: <20200102215829.911231638@linuxfoundation.org>
- <f709c06a-ce46-a235-e0d1-5b7331c80c66@nvidia.com>
+From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
+ to driver's dependencies
+Date: Sat, 4 Jan 2020 12:01:38 +0100
+Message-ID: <20200104110138.GA7849@qmqm.qmqm.pl>
+References: <20191220015238.9228-1-digetx@gmail.com>
+ <20191220015238.9228-11-digetx@gmail.com>
+ <20191220035650.GC19921@b29397-desktop>
+ <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
+ <20191223213234.GA28786@qmqm.qmqm.pl>
+ <7174833f-8325-7fb4-d190-78ba4bed0cbb@gmail.com>
+ <20191230210259.GD24135@qmqm.qmqm.pl>
+ <b34972e3-569e-d74a-4d30-d52c89032a08@gmail.com>
+ <20200103072536.GA14228@qmqm.qmqm.pl>
+ <51ecc509-e277-591d-3db5-fc9d46eee326@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <f709c06a-ce46-a235-e0d1-5b7331c80c66@nvidia.com>
+In-Reply-To: <51ecc509-e277-591d-3db5-fc9d46eee326@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Peter Chen <peter.chen@nxp.com>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 03, 2020 at 05:51:33PM +0000, Jon Hunter wrote:
-> 
-> On 02/01/2020 22:04, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.8 release.
-> > There are 191 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+On Sat, Jan 04, 2020 at 02:19:01AM +0300, Dmitry Osipenko wrote:
+> 03.01.2020 10:25, Michał Mirosław пишет:
+> > On Thu, Jan 02, 2020 at 06:17:47PM +0300, Dmitry Osipenko wrote:
+> >> 31.12.2019 00:02, Michał Mirosław пишет:
+> >>> On Tue, Dec 24, 2019 at 07:21:05AM +0300, Dmitry Osipenko wrote:
+> >>>> 24.12.2019 00:32, Michał Mirosław пишет:
+> >>>>> On Fri, Dec 20, 2019 at 07:31:08AM +0300, Dmitry Osipenko wrote:
+> >>>>>> 20.12.2019 06:56, Peter Chen пишет:
+> >>>>>>> On 19-12-20 04:52:38, Dmitry Osipenko wrote:
+> >>>>> [...]
+> >>>>>>>> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> >>>>>>>> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> >>>>>>>> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
+> >>>>>>>>  	struct tegra_udc *udc;
+> >>>>>>>>  	int err;
+> >>>>>>>>  
+> >>>>>>>> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
+> >>>>>>>> +		err = request_module("phy_tegra_usb");
+> >>>>>>>> +		if (err)
+> >>>>>>>> +			return err;
+> >>>>>>>> +	}
+> >>>>>>>> +
+> >>>>>>>
+> >>>>>>> Why you do this dependency, if this controller driver can't
+> >>>>>>> get USB PHY, it should return error. What's the return value
+> >>>>>>> after calling below:
+> >>>>>>>
+> >>>>>>> 	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
+> >>>>>>
+> >>>>>> It returns -EPROBE_DEFER when phy_tegra_usb isn't loaded.
+> >>>>>
+> >>>>> How are other driver modules autoloaded? Isn't there an appropriate
+> >>>>> MODALIAS or MODULE_DEVICE_TABLE in there?
+> >>>>
+> >>>> Hello Michał,
+> >>>>
+> >>>> The phy_tegra_usb module is fine by itself, it's getting autoloaded.
+> >>>>
+> >>>> The problem is that ci_hdrc_tegra module depends on the phy_tegra_usb
+> >>>> module and thus the PHY module should be loaded before the CI module,
+> >>>> otherwise CI driver fails with the EPROBE_DEFER.
+> >>>
+> >>> Why, then, is CI driver not being probed again after PHY driver loads?
+> >>> EPROBE_DEFER is what should cause driver core to re-probe a device after
+> >>> other devices appear (PHY in this case).
+> >>
+> >> CI driver is getting re-probed just fine if PHY's driver module is
+> >> loaded manually after loading the CI's module. This patch removes this
+> >> necessity to manually load PHY's module.
+> >>
+> >> This is just a minor convenience change that brings the CI's driver
+> >> loading behaviour on par with the behaviour of loading Tegra's EHCI
+> >> driver module.
 > > 
-> > Responses should be made by Sat, 04 Jan 2020 21:55:35 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.8-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
+> > I fully understand the goal, but what I'm missing is that why this
+> > doesn't work out of the box? If the PHY module is autoloaded, and so is
+> > CI driver, and (as I understand) the driver's probe() correctly returns
+> > EPROBE_DEFER when PHY is not probed yet, then I guess that means bug
+> > somewhere else and the patch just covers it up.
 > 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.4:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.4.8-rc1-gb06e60adec89
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+> It works out of the box, but it also could work a bit better in a case
+> of manually reloading modules. Perhaps it should be possible to derive
+> module dependencies from the Kconfig dependencies, apparently kernel
+> doesn't support it yet or maybe there is some reason why it can't be done.
 
-Thanks for testing all of these and letting me know.
+Kconfig change I'm ok with as it simplifies kernel configuration.
+The request_module() is something I would advise against, because if I
+do manual module loading, I usually don't want modules loaded
+automatically.
 
-greg k-h
+Best Regards,
+Michał Mirosław
