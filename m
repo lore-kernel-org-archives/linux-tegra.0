@@ -1,129 +1,54 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
- for audio mclk
-Date: Sun, 5 Jan 2020 04:05:36 +0300
-Message-ID: <0f956c12-98cf-3466-f3ee-ffc3a23e3e3d@gmail.com>
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
- <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
- <20191225175736.GC27497@sirena.org.uk>
- <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
- <dbbce994-27f5-d949-078d-05646100e6be@nvidia.com>
- <b6ec6cfd-d883-ea28-00f8-884fa80cfee1@nvidia.com>
- <576fca44-6734-5431-b523-512747a0bf12@gmail.com>
- <fb252096-e101-7d21-9717-c23607ae6edd@nvidia.com>
+Subject: Re: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
+	samples
+Date: Sun, 5 Jan 2020 04:48:38 +0300
+Message-ID: <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
+References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
+ <20191018154833.7560-3-ben.dooks@codethink.co.uk>
+ <d2110a1f-c1de-e2c5-a1ff-5eb4c5d3e1da@gmail.com>
+ <b4e2ec44-bc89-b5ca-cfa7-a6d5c45a9c94@codethink.co.uk>
+ <a11ba33e-5ffb-c5c6-04f5-0e031877c55f@gmail.com>
+ <621fa27d-9259-2949-9cf5-d2eda5cb0677@gmail.com>
+ <a0f027d9-e9e0-d76c-1e40-002fdc37eb5f@nvidia.com>
+ <d43d518d-9336-a011-2a69-3f9331f6d0b4@codethink.co.uk>
+ <aba4edd6-0ea5-5e95-c5a0-9e749587c763@nvidia.com>
+ <449bdc3c-bf82-7cc4-6704-440dd100ca3a@gmail.com>
+ <5d3ae629-5d30-0930-5dd1-15161e64926e@codethink.co.uk>
+ <9daeeb94-2b90-18b8-2e1e-daae5acf079d@gmail.com>
+ <fd73f68c-80f5-ac80-f6e4-42256d3df76d@codethink.co.uk>
+ <37beb96a-a525-c72f-a7e1-e9ef5d61f3b2@gmail.com>
+ <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
+ <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+ <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fb252096-e101-7d21-9717-c23607ae6edd@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, Mark Brown <broonie@kernel.org>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-04.01.2020 08:49, Sowjanya Komatineni пишет:
-> 
-> On 1/2/20 8:12 AM, Dmitry Osipenko wrote:
->> 02.01.2020 10:03, Sowjanya Komatineni пишет:
->>> On 12/27/19 1:19 PM, Sowjanya Komatineni wrote:
->>>> On 12/27/19 6:56 AM, Dmitry Osipenko wrote:
->>>>> 25.12.2019 20:57, Mark Brown пишет:
->>>>>> On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
->>>>>>> 21.12.2019 01:26, Sowjanya Komatineni пишет:
->>>>>>>> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
->>>>>>>> through Tegra210 and currently Tegra clock driver does initial parent
->>>>>>>> configuration for audio mclk "clk_out_1" and enables them by default.
->>>>>> Please delete unneeded context from mails when replying.  Doing this
->>>>>> makes it much easier to find your reply in the message, helping ensure
->>>>>> it won't be missed by people scrolling through the irrelevant quoted
->>>>>> material.
->>>>> Ok
->>>>>
->>>>>>>> -    clk_disable_unprepare(data->clk_cdev1);
->>>>>>>> -    clk_disable_unprepare(data->clk_pll_a_out0);
->>>>>>>> -    clk_disable_unprepare(data->clk_pll_a);
->>>>>>>> +    if (__clk_is_enabled(data->clk_cdev1))
->>>>>>>> +        clk_disable_unprepare(data->clk_cdev1);
->>>>>>> The root of the problem is that you removed clocks enabling from
->>>>>>> tegra_asoc_utils_init().
->>>> currently, audio mclk and its parent clocks enabling are from clock
->>>> driver init and not from tegra_asoc_utils_init.
->>>>>>> I'm not sure why clocks should be disabled during the rate-changing,
->>>>>>> probably this action is not really needed.
->>>>>> I know nothing about this particular device but this is not that
->>>>>> unusual a restriction for audio hardware, you often can't
->>>>>> robustly reconfigure the clocking for a device while it's active
->>>>>> due to issues in the hardware.  You often see issues with FIFOs
->>>>>> glitching or state machines getting stuck.  This may not be an
->>>>>> issue here but if it's something that's documented as a
->>>>>> requirement it's probably good to pay attention.
->>>>> I don't know details about that hardware either, maybe it is simply not
->>>>> safe to change PLL_A rate dynamically and then CLK_SET_RATE_GATE could
->>>>> be used.
->>>>>
->>>>> If nobody knows for sure, then will be better to keep
->>>>> tegra_asoc_utils_set_rate() unchanged.
->>>> plla rate change through tegra_asoc_utils_set_rate() happens only when
->>>> there is not active playback or record corresponding to this sound
->>>> device.
->>>>
->>>> So, I don't see reason for disabling clock during rate change and not
->>>> sure why we had this from the beginning.
->>>>
->>>> Thierry/Sameer,
->>>>
->>>> Can you please comment?
->>>>
->>>> Yes, we can use CLK_SET_RATE_GATE for PLLA and remove clock disabling
->>>> before rate change.
->>>>
->>> PLLA is used for both I2S controller clock and also for audio mclk. I2S
->>> driver suspend resume implementations takes care of enabling and
->>> disabling I2S clock but audio mclk will be enabled during that time and
->>> PLLA disable might not happen. So using CLK_SET_RATE_GATE prevents rate
->>> change to happen and as rate change happens only when there is no active
->>> audio record/playback, we can perform rate change without disable/enable
->>> during rate change.
->>>
->>> So probably below changes should be good.
->>>
->>>   * remove asoc_utils_set_rate call from asoc_utils_init as set_rate
->>>     happens during existing hw_params callback implementations in sound
->>>     drivers and there is no need to do rate change during asoc_utils_init.
->>>   * remove disable/enable clocks during rate change in asoc_utils_set_rate.
->>>   * add startup and shutdown snd_soc_ops callbacks to do enable and
->>>     disable audio mclk.
->>>
->> Sounds good, thanks. I'll be happy to review and test it.
-> 
-> Regarding disabling audio mclk during PLLA rate change, no need to
-> explicitly disable PLLA on asoc utils as clock driver takes care of it
-> properly during pll rate change.
-> 
-> But the downstream clock divider hardware can malfunction without
-> recovery when subject to unstable PLL output during locking, unless
-> clock is gated.
-> 
-> So it is recommended to disable downstream clocks during PLL rate change.
-> 
-> PLLA downstream clocks are I2S and audio mclk (cdev1/clk1 and extern1
-> clocks) and I2S clock is disabled in I2S driver by PM runtime ops.
-
-The I2S driver uses asynchronous pm_runtime_put() and thus there is no
-guarantee that I2S clock is disabled at the time of changing PLLA rate.
-Could this be a problem?
-
-> For audio mclk, need to make sure mclk are disabled during rate change.
-> 
-> So below are the changes to audio clocks that will be in next version.
-> 
->   * remove tegra_asoc_utils_set_rate call from tegra_asoc_utils_init as
->     tegra_asoc_utils_set_rate happens during hw_params callback.
->   * add shutdown snd_soc_ops callbacks to disable of audio mclk.
->   * remove disable audio mclk (cdev1) and plla clocks prior to rate
->     change in tegra_asoc_utils_set_rate (as audio mclk will always be in
->     disabled state every time hw_param callback gets executed) and keep
->     audio mclk enable after the rate change in tegra_asoc_utils_set_rate.
-> 
+MDUuMDEuMjAyMCAwMzowNCwgQmVuIERvb2tzINC/0LjRiNC10YI6Cj4gW3NuaXBdCj4gCj4gSSd2
+ZSBqdXN0IGdvbmUgdGhyb3VnaCB0ZXN0aW5nLgo+IAo+IFNvbWUgc2ltcGxlIGRhdGEgdGVzdHMg
+c2hvdyAxNiBhbmQgMzItYml0cyB3b3JrLgo+IAo+IFRoZSAyNCBiaXQgY2FzZSBzZWVtcyB0byBi
+ZSB3ZWlyZCwgaXQgbG9va3MgbGlrZSB0aGUgMjQtYml0IGV4cGVjdHMKPiAyNCBiaXQgc2FtcGxl
+cyBpbiAzMiBiaXQgd29yZHMuIEkgY2FuJ3Qgc2VlIGFueSBwYWNraW5nIG9wdGlvbnMgdG8KPiBk
+byAyNCBiaXQgaW4gMjQgYml0LCBzbyB3ZSBtYXkgaGF2ZSB0byByZW1vdmUgMjQgYml0IHNhbXBs
+ZSBzdXBwb3J0Cj4gKHdoaWNoIGlzIGEgc2hhbWUpCj4gCj4gTXkgcHJlZmVyZW5jZSBpcyB0byBy
+ZW1vdmUgdGhlIDI0LWJpdCBzdXBwb3J0IGFuZCBrZWVwIHRoZSAzMiBiaXQgaW4uCj4gCgpJbnRl
+cmVzdGluZy4uIEpvbiwgY291bGQgeW91IHBsZWFzZSBjb25maXJtIHRoYXQgMjRiaXQgZm9ybWF0
+IGlzbid0CnVzYWJsZSBvbiBUMzA/Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9q
+ZWN0Lm9yZwpodHRwczovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2Fsc2EtZGV2ZWwK
