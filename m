@@ -1,101 +1,49 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
- to driver's dependencies
-Date: Sun, 5 Jan 2020 03:42:50 +0300
-Message-ID: <27363204-6a18-213e-f0bf-2fc02bd5f74c@gmail.com>
-References: <20191220015238.9228-1-digetx@gmail.com>
- <20191220015238.9228-11-digetx@gmail.com>
- <20191220035650.GC19921@b29397-desktop>
- <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
- <20191223213234.GA28786@qmqm.qmqm.pl>
- <7174833f-8325-7fb4-d190-78ba4bed0cbb@gmail.com>
- <20191230210259.GD24135@qmqm.qmqm.pl>
- <b34972e3-569e-d74a-4d30-d52c89032a08@gmail.com>
- <20200103072536.GA14228@qmqm.qmqm.pl>
- <51ecc509-e277-591d-3db5-fc9d46eee326@gmail.com>
- <20200104110138.GA7849@qmqm.qmqm.pl>
+Subject: Re: [PATCH v3 10/16] usb: phy: tegra: Use device-tree notion of
+ reset-GPIO's active-state
+Date: Sun, 5 Jan 2020 03:58:39 +0300
+Message-ID: <9fd12e5f-00c0-0292-b8a1-3fad48bfc4a3@gmail.com>
+References: <20191228203358.23490-1-digetx@gmail.com>
+ <20191228203358.23490-11-digetx@gmail.com>
+ <20200103075803.GC14228@qmqm.qmqm.pl>
+ <42f1d6c9-99f2-b829-0d2c-649fcdfb156d@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200104110138.GA7849@qmqm.qmqm.pl>
+In-Reply-To: <42f1d6c9-99f2-b829-0d2c-649fcdfb156d@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: Peter Chen <peter.chen@nxp.com>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-04.01.2020 14:01, Michał Mirosław пишет:
-> On Sat, Jan 04, 2020 at 02:19:01AM +0300, Dmitry Osipenko wrote:
->> 03.01.2020 10:25, Michał Mirosław пишет:
->>> On Thu, Jan 02, 2020 at 06:17:47PM +0300, Dmitry Osipenko wrote:
->>>> 31.12.2019 00:02, Michał Mirosław пишет:
->>>>> On Tue, Dec 24, 2019 at 07:21:05AM +0300, Dmitry Osipenko wrote:
->>>>>> 24.12.2019 00:32, Michał Mirosław пишет:
->>>>>>> On Fri, Dec 20, 2019 at 07:31:08AM +0300, Dmitry Osipenko wrote:
->>>>>>>> 20.12.2019 06:56, Peter Chen пишет:
->>>>>>>>> On 19-12-20 04:52:38, Dmitry Osipenko wrote:
->>>>>>> [...]
->>>>>>>>>> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
->>>>>>>>>> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
->>>>>>>>>> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
->>>>>>>>>>  	struct tegra_udc *udc;
->>>>>>>>>>  	int err;
->>>>>>>>>>  
->>>>>>>>>> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
->>>>>>>>>> +		err = request_module("phy_tegra_usb");
->>>>>>>>>> +		if (err)
->>>>>>>>>> +			return err;
->>>>>>>>>> +	}
->>>>>>>>>> +
->>>>>>>>>
->>>>>>>>> Why you do this dependency, if this controller driver can't
->>>>>>>>> get USB PHY, it should return error. What's the return value
->>>>>>>>> after calling below:
->>>>>>>>>
->>>>>>>>> 	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
->>>>>>>>
->>>>>>>> It returns -EPROBE_DEFER when phy_tegra_usb isn't loaded.
->>>>>>>
->>>>>>> How are other driver modules autoloaded? Isn't there an appropriate
->>>>>>> MODALIAS or MODULE_DEVICE_TABLE in there?
->>>>>>
->>>>>> Hello Michał,
->>>>>>
->>>>>> The phy_tegra_usb module is fine by itself, it's getting autoloaded.
->>>>>>
->>>>>> The problem is that ci_hdrc_tegra module depends on the phy_tegra_usb
->>>>>> module and thus the PHY module should be loaded before the CI module,
->>>>>> otherwise CI driver fails with the EPROBE_DEFER.
->>>>>
->>>>> Why, then, is CI driver not being probed again after PHY driver loads?
->>>>> EPROBE_DEFER is what should cause driver core to re-probe a device after
->>>>> other devices appear (PHY in this case).
->>>>
->>>> CI driver is getting re-probed just fine if PHY's driver module is
->>>> loaded manually after loading the CI's module. This patch removes this
->>>> necessity to manually load PHY's module.
->>>>
->>>> This is just a minor convenience change that brings the CI's driver
->>>> loading behaviour on par with the behaviour of loading Tegra's EHCI
->>>> driver module.
->>>
->>> I fully understand the goal, but what I'm missing is that why this
->>> doesn't work out of the box? If the PHY module is autoloaded, and so is
->>> CI driver, and (as I understand) the driver's probe() correctly returns
->>> EPROBE_DEFER when PHY is not probed yet, then I guess that means bug
->>> somewhere else and the patch just covers it up.
+04.01.2020 02:53, Dmitry Osipenko пишет:
+> 03.01.2020 10:58, Michał Mirosław пишет:
+[snip]
+>> [...]
+>>> -		err = devm_gpio_request(&pdev->dev, tegra_phy->reset_gpio,
+>>> -					"ulpi_phy_reset_b");
+>>> +		gpiod = devm_gpiod_get_from_of_node(&pdev->dev, np,
+>>> +						    "nvidia,phy-reset-gpio",
+>>> +						    0, GPIOD_OUT_HIGH,
+>>> +						    "ulpi_phy_reset_b");
+>>> +		err = PTR_ERR_OR_ZERO(gpiod);
+>>>  		if (err) {
+>>> -			dev_err(&pdev->dev, "Request failed for GPIO %d: %d\n",
+>>> -				tegra_phy->reset_gpio, err);
+>>> +			dev_err(&pdev->dev,
+>>> +				"Request failed for reset GPIO: %d\n", err);
+>>>  			return err;
+>>>  		}
+>>> +		tegra_phy->reset_gpio = gpiod;
 >>
->> It works out of the box, but it also could work a bit better in a case
->> of manually reloading modules. Perhaps it should be possible to derive
->> module dependencies from the Kconfig dependencies, apparently kernel
->> doesn't support it yet or maybe there is some reason why it can't be done.
+>> A nice extension to kernel's printf - "%pe" format - has just landed in
+>> Linus' master tree.
 > 
-> Kconfig change I'm ok with as it simplifies kernel configuration.
-> The request_module() is something I would advise against, because if I
-> do manual module loading, I usually don't want modules loaded
-> automatically.
+> Thank you very much, I didn't know about that.
 
-Okay, I'll drop the request_module since it raises a bit too many
-questions and since it's an optional change that won't be needed once
-Tegra EHCI driver will be squashed into CI.
+In this particular case PTR_ERR_OR_ZERO() results in a bit more cleaner
+code than with IS_ERR() and PTR_ERR() [IMHO], so I'll probably keep it
+as-is. Anyways, thanks again for the pointer to "%pe", it could come
+handy later on.
