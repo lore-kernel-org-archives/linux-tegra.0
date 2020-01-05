@@ -1,58 +1,101 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
-	samples
-Date: Sun, 5 Jan 2020 00:04:04 +0000
-Message-ID: <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
-References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
- <20191018154833.7560-3-ben.dooks@codethink.co.uk>
- <d2110a1f-c1de-e2c5-a1ff-5eb4c5d3e1da@gmail.com>
- <b4e2ec44-bc89-b5ca-cfa7-a6d5c45a9c94@codethink.co.uk>
- <a11ba33e-5ffb-c5c6-04f5-0e031877c55f@gmail.com>
- <621fa27d-9259-2949-9cf5-d2eda5cb0677@gmail.com>
- <a0f027d9-e9e0-d76c-1e40-002fdc37eb5f@nvidia.com>
- <d43d518d-9336-a011-2a69-3f9331f6d0b4@codethink.co.uk>
- <aba4edd6-0ea5-5e95-c5a0-9e749587c763@nvidia.com>
- <449bdc3c-bf82-7cc4-6704-440dd100ca3a@gmail.com>
- <5d3ae629-5d30-0930-5dd1-15161e64926e@codethink.co.uk>
- <9daeeb94-2b90-18b8-2e1e-daae5acf079d@gmail.com>
- <fd73f68c-80f5-ac80-f6e4-42256d3df76d@codethink.co.uk>
- <37beb96a-a525-c72f-a7e1-e9ef5d61f3b2@gmail.com>
- <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
- <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
+ to driver's dependencies
+Date: Sun, 5 Jan 2020 03:42:50 +0300
+Message-ID: <27363204-6a18-213e-f0bf-2fc02bd5f74c@gmail.com>
+References: <20191220015238.9228-1-digetx@gmail.com>
+ <20191220015238.9228-11-digetx@gmail.com>
+ <20191220035650.GC19921@b29397-desktop>
+ <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
+ <20191223213234.GA28786@qmqm.qmqm.pl>
+ <7174833f-8325-7fb4-d190-78ba4bed0cbb@gmail.com>
+ <20191230210259.GD24135@qmqm.qmqm.pl>
+ <b34972e3-569e-d74a-4d30-d52c89032a08@gmail.com>
+ <20200103072536.GA14228@qmqm.qmqm.pl>
+ <51ecc509-e277-591d-3db5-fc9d46eee326@gmail.com>
+ <20200104110138.GA7849@qmqm.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
-Content-Language: en-GB
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk, Edward Cragg <edward.cragg@codethink.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200104110138.GA7849@qmqm.qmqm.pl>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: Peter Chen <peter.chen@nxp.com>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-[snip]
+04.01.2020 14:01, Michał Mirosław пишет:
+> On Sat, Jan 04, 2020 at 02:19:01AM +0300, Dmitry Osipenko wrote:
+>> 03.01.2020 10:25, Michał Mirosław пишет:
+>>> On Thu, Jan 02, 2020 at 06:17:47PM +0300, Dmitry Osipenko wrote:
+>>>> 31.12.2019 00:02, Michał Mirosław пишет:
+>>>>> On Tue, Dec 24, 2019 at 07:21:05AM +0300, Dmitry Osipenko wrote:
+>>>>>> 24.12.2019 00:32, Michał Mirosław пишет:
+>>>>>>> On Fri, Dec 20, 2019 at 07:31:08AM +0300, Dmitry Osipenko wrote:
+>>>>>>>> 20.12.2019 06:56, Peter Chen пишет:
+>>>>>>>>> On 19-12-20 04:52:38, Dmitry Osipenko wrote:
+>>>>>>> [...]
+>>>>>>>>>> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+>>>>>>>>>> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+>>>>>>>>>> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
+>>>>>>>>>>  	struct tegra_udc *udc;
+>>>>>>>>>>  	int err;
+>>>>>>>>>>  
+>>>>>>>>>> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
+>>>>>>>>>> +		err = request_module("phy_tegra_usb");
+>>>>>>>>>> +		if (err)
+>>>>>>>>>> +			return err;
+>>>>>>>>>> +	}
+>>>>>>>>>> +
+>>>>>>>>>
+>>>>>>>>> Why you do this dependency, if this controller driver can't
+>>>>>>>>> get USB PHY, it should return error. What's the return value
+>>>>>>>>> after calling below:
+>>>>>>>>>
+>>>>>>>>> 	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
+>>>>>>>>
+>>>>>>>> It returns -EPROBE_DEFER when phy_tegra_usb isn't loaded.
+>>>>>>>
+>>>>>>> How are other driver modules autoloaded? Isn't there an appropriate
+>>>>>>> MODALIAS or MODULE_DEVICE_TABLE in there?
+>>>>>>
+>>>>>> Hello Michał,
+>>>>>>
+>>>>>> The phy_tegra_usb module is fine by itself, it's getting autoloaded.
+>>>>>>
+>>>>>> The problem is that ci_hdrc_tegra module depends on the phy_tegra_usb
+>>>>>> module and thus the PHY module should be loaded before the CI module,
+>>>>>> otherwise CI driver fails with the EPROBE_DEFER.
+>>>>>
+>>>>> Why, then, is CI driver not being probed again after PHY driver loads?
+>>>>> EPROBE_DEFER is what should cause driver core to re-probe a device after
+>>>>> other devices appear (PHY in this case).
+>>>>
+>>>> CI driver is getting re-probed just fine if PHY's driver module is
+>>>> loaded manually after loading the CI's module. This patch removes this
+>>>> necessity to manually load PHY's module.
+>>>>
+>>>> This is just a minor convenience change that brings the CI's driver
+>>>> loading behaviour on par with the behaviour of loading Tegra's EHCI
+>>>> driver module.
+>>>
+>>> I fully understand the goal, but what I'm missing is that why this
+>>> doesn't work out of the box? If the PHY module is autoloaded, and so is
+>>> CI driver, and (as I understand) the driver's probe() correctly returns
+>>> EPROBE_DEFER when PHY is not probed yet, then I guess that means bug
+>>> somewhere else and the patch just covers it up.
+>>
+>> It works out of the box, but it also could work a bit better in a case
+>> of manually reloading modules. Perhaps it should be possible to derive
+>> module dependencies from the Kconfig dependencies, apparently kernel
+>> doesn't support it yet or maybe there is some reason why it can't be done.
+> 
+> Kconfig change I'm ok with as it simplifies kernel configuration.
+> The request_module() is something I would advise against, because if I
+> do manual module loading, I usually don't want modules loaded
+> automatically.
 
-I've just gone through testing.
-
-Some simple data tests show 16 and 32-bits work.
-
-The 24 bit case seems to be weird, it looks like the 24-bit expects
-24 bit samples in 32 bit words. I can't see any packing options to
-do 24 bit in 24 bit, so we may have to remove 24 bit sample support
-(which is a shame)
-
-My preference is to remove the 24-bit support and keep the 32 bit in.
-
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+Okay, I'll drop the request_module since it raises a bit too many
+questions and since it's an optional change that won't be needed once
+Tegra EHCI driver will be squashed into CI.
