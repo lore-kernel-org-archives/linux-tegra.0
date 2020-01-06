@@ -1,40 +1,41 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 05/13] dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
-Date: Mon,  6 Jan 2020 04:17:00 +0300
-Message-ID: <20200106011708.7463-6-digetx@gmail.com>
-References: <20200106011708.7463-1-digetx@gmail.com>
+Subject: [PATCH v4 01/20] dt-binding: usb: ci-hdrc-usb2: Document NVIDIA Tegra support
+Date: Mon,  6 Jan 2020 04:33:57 +0300
+Message-ID: <20200106013416.9604-2-digetx@gmail.com>
+References: <20200106013416.9604-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200106011708.7463-1-digetx@gmail.com>
+In-Reply-To: <20200106013416.9604-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The interrupt handler puts a half-completed DMA descriptor on a free list
-and then schedules tasklet to process bottom half of the descriptor that
-executes client's callback, this creates possibility to pick up the busy
-descriptor from the free list. Thus let's disallow descriptor's re-use
-until it is fully processed.
+NVIDIA Tegra SoCs use ChipIdea silicon IP for the USB controllers.
 
+Acked-by: Peter Chen <peter.chen@nxp.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 1b8a11804962..aafad50d075e 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -281,7 +281,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
+diff --git a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
+index cfc9f40ab641..51376cbe5f3d 100644
+--- a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
++++ b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
+@@ -15,6 +15,10 @@ Required properties:
+ 	"qcom,ci-hdrc"
+ 	"chipidea,usb2"
+ 	"xlnx,zynq-usb-2.20a"
++	"nvidia,tegra20-udc"
++	"nvidia,tegra30-udc"
++	"nvidia,tegra114-udc"
++	"nvidia,tegra124-udc"
+ - reg: base address and length of the registers
+ - interrupts: interrupt for the USB controller
  
- 	/* Do not allocate if desc are waiting for ack */
- 	list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
--		if (async_tx_test_ack(&dma_desc->txd)) {
-+		if (async_tx_test_ack(&dma_desc->txd) && !dma_desc->cb_count) {
- 			list_del(&dma_desc->node);
- 			spin_unlock_irqrestore(&tdc->lock, flags);
- 			dma_desc->txd.flags = 0;
 -- 
 2.24.0
