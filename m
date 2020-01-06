@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 03/13] dmaengine: tegra-apb: Prevent race conditions on channel's freeing
-Date: Mon,  6 Jan 2020 04:16:58 +0300
-Message-ID: <20200106011708.7463-4-digetx@gmail.com>
+Subject: [PATCH v3 06/13] dmaengine: tegra-apb: Use devm_platform_ioremap_resource
+Date: Mon,  6 Jan 2020 04:17:01 +0300
+Message-ID: <20200106011708.7463-7-digetx@gmail.com>
 References: <20200106011708.7463-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,9 +12,7 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan W
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-It's incorrect to check the channel's "busy" state without taking a lock.
-That shouldn't cause any real troubles, nevertheless it's always better
-not to have any race conditions in the code.
+Use devm_platform_ioremap_resource to keep code cleaner a tad.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
@@ -22,18 +20,18 @@ Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 664e9c5df3ba..24ad3a5a04e3 100644
+index aafad50d075e..f44291207928 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1294,8 +1294,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
+@@ -1402,8 +1402,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	tdma->chip_data = cdata;
+ 	platform_set_drvdata(pdev, tdma);
  
- 	dev_dbg(tdc2dev(tdc), "Freeing channel %d\n", tdc->id);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	tdma->base_addr = devm_ioremap_resource(&pdev->dev, res);
++	tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(tdma->base_addr))
+ 		return PTR_ERR(tdma->base_addr);
  
--	if (tdc->busy)
--		tegra_dma_terminate_all(dc);
-+	tegra_dma_terminate_all(dc);
- 
- 	spin_lock_irqsave(&tdc->lock, flags);
- 	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
 -- 
 2.24.0
