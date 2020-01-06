@@ -1,136 +1,232 @@
-From: JC Kuo <jckuo@nvidia.com>
-Subject: Re: [PATCH v5 3/5] dt-bindings: phy: tegra: Add Tegra194 support
-Date: Mon, 6 Jan 2020 15:10:24 +0800
-Message-ID: <baa9b5f4-74be-0ab4-0b24-bf926cf3207c@nvidia.com>
-References: <20200103081814.9848-1-jckuo@nvidia.com>
- <20200103081814.9848-4-jckuo@nvidia.com> <20200103223940.GA9205@bogus>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH V2] PCI: Add MCFG quirks for Tegra194 host controllers
+Date: Mon, 6 Jan 2020 13:57:09 +0530
+Message-ID: <20200106082709.14370-1-vidyas@nvidia.com>
+References: <20200103174935.5612-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200103223940.GA9205@bogus>
-Content-Language: en-US
+In-Reply-To: <20200103174935.5612-1-vidyas@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nkristam@nvidia.com
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, lenb@kernel.org, andrew.murray@arm.com, treding@nvidia.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/4/20 6:39 AM, Rob Herring wrote:
-> On Fri, Jan 03, 2020 at 04:18:12PM +0800, JC Kuo wrote:
->> Extend the bindings to cover the set of features found in Tegra194.
->> Note that, technically, there are four more supplies connected to the
->> XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL)
->> , but the power sequencing requirements of Tegra194 require these to be
->> under the control of the PMIC.
->>
->> Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it
->> is possible for some platforms have long signal trace that could not
->> provide sufficient electrical environment for Gen 2 speed. This patch
->> adds a "maximum-speed" property to usb3 ports which can be used to
->> specify the maximum supported speed for any particular USB 3.1 port.
->> For a port that is not capable of SuperSpeedPlus, "maximum-speed"
->> property should carry "super-speed".
->>
->> Signed-off-by: JC Kuo <jckuo@nvidia.com>
->> ---
->> Changes in v5:
->> - re-use "maximum-speed" instead of adding "nvidia,disable-gen2"
->> Changes in v4: none
->> Changes in v3: none
->> Changes in v2:
->> - fix a typo
->>
->>  .../phy/nvidia,tegra124-xusb-padctl.txt        | 18 ++++++++++++++++++
->>  1 file changed, 18 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> index 9fb682e47c29..7d0089006e67 100644
->> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> @@ -37,6 +37,7 @@ Required properties:
->>    - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
->>    - Tegra210: "nvidia,tegra210-xusb-padctl"
->>    - Tegra186: "nvidia,tegra186-xusb-padctl"
->> +  - Tegra194: "nvidia,tegra194-xusb-padctl"
->>  - reg: Physical base address and length of the controller's registers.
->>  - resets: Must contain an entry for each entry in reset-names.
->>  - reset-names: Must include the following entries:
->> @@ -62,6 +63,10 @@ For Tegra186:
->>  - vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
->>  - vddio-hsic-supply: HSIC PHY power supply. Must supply 1.2 V.
->>  
->> +For Tegra194:
->> +- avdd-usb-supply: USB I/Os, VBUS, ID, REXT, D+/D- power supply. Must supply
->> +  3.3 V.
->> +- vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
->>  
->>  Pad nodes:
->>  ==========
->> @@ -154,6 +159,11 @@ For Tegra210, the list of valid PHY nodes is given below:
->>  - sata: sata-0
->>    - functions: "usb3-ss", "sata"
->>  
->> +For Tegra194, the list of valid PHY nodes is given below:
->> +- usb2: usb2-0, usb2-1, usb2-2, usb2-3
->> +  - functions: "xusb"
->> +- usb3: usb3-0, usb3-1, usb3-2, usb3-3
->> +  - functions: "xusb"
->>  
->>  Port nodes:
->>  ===========
->> @@ -221,6 +231,11 @@ Optional properties:
->>    is internal. In the absence of this property the port is considered to be
->>    external.
->>  
->> +- maximum-speed: Only for Tegra194. A string property that specifies maximum
->> +  supported speed of a usb3 port. Valid values are:
->> +  - "super-speed-plus": default, the usb3 port supports USB 3.1 Gen 2 speed.
-> 
-> Not defined as a valid value in usb/generic.txt. '-gen2' instead of 
-> '-plus' would be clearer IMO. However, is there any need to define the 
-> maximum speed possible? The purpose of this property is to limit the 
-> speed below the max.
-> 
-usb_get_maximum_speed(), which parses "maximum-speed" property, indeed handles
-string "super-speed-plus". Should "super-speed-plus" be documented in
-usb/generic.txt"?
+The PCIe controller in Tegra194 SoC is not completely ECAM-compliant.
+With the current hardware design limitations in place, ECAM can be enabled
+only for one controller (C5 controller to be precise) with bus numbers
+starting from 160 instead of 0. A different approach is taken to avoid this
+abnormal way of enabling ECAM  for just one controller and to also enable
+configuration space access for all the other controllers. In this approach,
+MCFG quirks are added for each controller with a 30MB PCIe aperture
+resource for each controller in the disguise of ECAM region. But, this
+region actually contains DesignWare core's internal Address Translation
+Unit (iATU) using which the ECAM ops access configuration space in the
+otherwise standard way of programming iATU registers in DesignWare core
+based IPs for a respective B:D:F.
 
-static const char *const speed_names[] = {
-	[USB_SPEED_UNKNOWN] = "UNKNOWN",
-	[USB_SPEED_LOW] = "low-speed",
-	[USB_SPEED_FULL] = "full-speed",
-	[USB_SPEED_HIGH] = "high-speed",
-	[USB_SPEED_WIRELESS] = "wireless",
-	[USB_SPEED_SUPER] = "super-speed",
-	[USB_SPEED_SUPER_PLUS] = "super-speed-plus",
-};
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+---
+V2:
+* Fixed build issues reported by kbuild test bot
 
-A proprietary "nvidia,disable-gen2" property was proposed in earlier revision to
-"limit the speed below the max". I like it because it fit our needs better and
-requires only one line of code change.
+ drivers/acpi/pci_mcfg.c                    |  13 +++
+ drivers/pci/controller/dwc/Kconfig         |   3 +-
+ drivers/pci/controller/dwc/Makefile        |   2 +-
+ drivers/pci/controller/dwc/pcie-tegra194.c | 100 +++++++++++++++++++++
+ include/linux/pci-ecam.h                   |   1 +
+ 5 files changed, 117 insertions(+), 2 deletions(-)
 
-   usb3->disable_gen2 = of_property_read_bool(np, "nvidia,disable-gen2");
-
-Should I fallback to that approach?
-
-Thanks,
-JC
-
->> +  - "super-speed": the usb3 port supports USB 3.1 Gen 1 speed only.
->> +
->>  For Tegra124 and Tegra132, the XUSB pad controller exposes the following
->>  ports:
->>  - 3x USB2: usb2-0, usb2-1, usb2-2
->> @@ -233,6 +248,9 @@ For Tegra210, the XUSB pad controller exposes the following ports:
->>  - 2x HSIC: hsic-0, hsic-1
->>  - 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
->>  
->> +For Tegra194, the XUSB pad controller exposes the following ports:
->> +- 4x USB2: usb2-0, usb2-1, usb2-2, usb2-3
->> +- 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
->>  
->>  Examples:
->>  =========
->> -- 
->> 2.17.1
->>
+diff --git a/drivers/acpi/pci_mcfg.c b/drivers/acpi/pci_mcfg.c
+index 6b347d9920cc..a42918ecc19a 100644
+--- a/drivers/acpi/pci_mcfg.c
++++ b/drivers/acpi/pci_mcfg.c
+@@ -116,6 +116,19 @@ static struct mcfg_fixup mcfg_quirks[] = {
+ 	THUNDER_ECAM_QUIRK(2, 12),
+ 	THUNDER_ECAM_QUIRK(2, 13),
+ 
++	{ "NVIDIA", "TEGRA194", 1, 0, MCFG_BUS_ANY, &tegra194_pcie_ops,
++	  DEFINE_RES_MEM(0x38200000, (30 * SZ_1M))},
++	{ "NVIDIA", "TEGRA194", 1, 1, MCFG_BUS_ANY, &tegra194_pcie_ops,
++	  DEFINE_RES_MEM(0x30200000, (30 * SZ_1M))},
++	{ "NVIDIA", "TEGRA194", 1, 2, MCFG_BUS_ANY, &tegra194_pcie_ops,
++	  DEFINE_RES_MEM(0x32200000, (30 * SZ_1M))},
++	{ "NVIDIA", "TEGRA194", 1, 3, MCFG_BUS_ANY, &tegra194_pcie_ops,
++	  DEFINE_RES_MEM(0x34200000, (30 * SZ_1M))},
++	{ "NVIDIA", "TEGRA194", 1, 4, MCFG_BUS_ANY, &tegra194_pcie_ops,
++	  DEFINE_RES_MEM(0x36200000, (30 * SZ_1M))},
++	{ "NVIDIA", "TEGRA194", 1, 5, MCFG_BUS_ANY, &tegra194_pcie_ops,
++	  DEFINE_RES_MEM(0x3a200000, (30 * SZ_1M))},
++
+ #define XGENE_V1_ECAM_MCFG(rev, seg) \
+ 	{"APM   ", "XGENE   ", rev, seg, MCFG_BUS_ANY, \
+ 		&xgene_v1_pcie_ecam_ops }
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index 0830dfcfa43a..f5b9e75aceed 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -255,7 +255,8 @@ config PCIE_TEGRA194
+ 	select PHY_TEGRA194_P2U
+ 	help
+ 	  Say Y here if you want support for DesignWare core based PCIe host
+-	  controller found in NVIDIA Tegra194 SoC.
++	  controller found in NVIDIA Tegra194 SoC. ACPI platforms with Tegra194
++	  don't need to enable this.
+ 
+ config PCIE_UNIPHIER
+ 	bool "Socionext UniPhier PCIe controllers"
+diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+index 8a637cfcf6e9..76a6c52b8500 100644
+--- a/drivers/pci/controller/dwc/Makefile
++++ b/drivers/pci/controller/dwc/Makefile
+@@ -17,7 +17,6 @@ obj-$(CONFIG_PCIE_INTEL_GW) += pcie-intel-gw.o
+ obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
+ obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
+ obj-$(CONFIG_PCI_MESON) += pci-meson.o
+-obj-$(CONFIG_PCIE_TEGRA194) += pcie-tegra194.o
+ obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
+ 
+ # The following drivers are for devices that use the generic ACPI
+@@ -33,4 +32,5 @@ obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
+ ifdef CONFIG_PCI
+ obj-$(CONFIG_ARM64) += pcie-al.o
+ obj-$(CONFIG_ARM64) += pcie-hisi.o
++obj-$(CONFIG_ARM64) += pcie-tegra194.o
+ endif
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index cbe95f0ea0ca..0b9bd2875ec2 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -21,6 +21,8 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
++#include <linux/pci-acpi.h>
++#include <linux/pci-ecam.h>
+ #include <linux/phy/phy.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+@@ -285,6 +287,101 @@ struct tegra_pcie_dw {
+ 	struct dentry *debugfs;
+ };
+ 
++#if defined(CONFIG_ACPI) && defined(CONFIG_PCI_QUIRKS)
++struct tegra194_pcie_acpi  {
++	void __iomem *dbi_base;
++	void __iomem *iatu_base;
++};
++
++static int tegra194_acpi_init(struct pci_config_window *cfg)
++{
++	struct device *dev = cfg->parent;
++	struct tegra194_pcie_acpi *pcie;
++
++	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
++	if (!pcie)
++		return -ENOMEM;
++
++	pcie->dbi_base = cfg->win;
++	pcie->iatu_base = cfg->win + SZ_256K;
++	cfg->priv = pcie;
++
++	return 0;
++}
++
++static inline void atu_reg_write(struct tegra194_pcie_acpi *pcie, int index,
++				 u32 val, u32 reg)
++{
++	u32 offset = PCIE_GET_ATU_OUTB_UNR_REG_OFFSET(index);
++
++	writel(val, pcie->iatu_base + offset + reg);
++}
++
++static void program_outbound_atu(struct tegra194_pcie_acpi *pcie, int index,
++				 int type, u64 cpu_addr, u64 pci_addr, u64 size)
++{
++	atu_reg_write(pcie, index, lower_32_bits(cpu_addr),
++		      PCIE_ATU_LOWER_BASE);
++	atu_reg_write(pcie, index, upper_32_bits(cpu_addr),
++		      PCIE_ATU_UPPER_BASE);
++	atu_reg_write(pcie, index, lower_32_bits(pci_addr),
++		      PCIE_ATU_LOWER_TARGET);
++	atu_reg_write(pcie, index, lower_32_bits(cpu_addr + size - 1),
++		      PCIE_ATU_LIMIT);
++	atu_reg_write(pcie, index, upper_32_bits(pci_addr),
++		      PCIE_ATU_UPPER_TARGET);
++	atu_reg_write(pcie, index, type, PCIE_ATU_CR1);
++	atu_reg_write(pcie, index, PCIE_ATU_ENABLE, PCIE_ATU_CR2);
++}
++
++static void __iomem *tegra194_map_bus(struct pci_bus *bus,
++				      unsigned int devfn, int where)
++{
++	struct pci_config_window *cfg = bus->sysdata;
++	struct tegra194_pcie_acpi *pcie = cfg->priv;
++	u32 busdev;
++	int type;
++
++	if (bus->number < cfg->busr.start || bus->number > cfg->busr.end)
++		return NULL;
++
++	if (bus->number == cfg->busr.start) {
++		if (PCI_SLOT(devfn) == 0)
++			return pcie->dbi_base + where;
++		else
++			return NULL;
++	}
++
++	busdev = PCIE_ATU_BUS(bus->number) | PCIE_ATU_DEV(PCI_SLOT(devfn)) |
++		 PCIE_ATU_FUNC(PCI_FUNC(devfn));
++
++	if (bus->parent->number == cfg->busr.start) {
++		if (PCI_SLOT(devfn) == 0)
++			type = PCIE_ATU_TYPE_CFG0;
++		else
++			return NULL;
++	} else {
++		type = PCIE_ATU_TYPE_CFG1;
++	}
++
++	program_outbound_atu(pcie, PCIE_ATU_REGION_INDEX0, type,
++			     cfg->res.start + SZ_128K, busdev, SZ_128K);
++	return (void __iomem *)(pcie->dbi_base + SZ_128K + where);
++}
++
++struct pci_ecam_ops tegra194_pcie_ops = {
++	.bus_shift	= 20,
++	.init		= tegra194_acpi_init,
++	.pci_ops	= {
++		.map_bus	= tegra194_map_bus,
++		.read		= pci_generic_config_read,
++		.write		= pci_generic_config_write,
++	}
++};
++#endif /* defined(CONFIG_ACPI) && defined(CONFIG_PCI_QUIRKS) */
++
++#ifdef CONFIG_PCIE_TEGRA194
++
+ static inline struct tegra_pcie_dw *to_tegra_pcie(struct dw_pcie *pci)
+ {
+ 	return container_of(pci, struct tegra_pcie_dw, pci);
+@@ -1728,3 +1825,6 @@ MODULE_DEVICE_TABLE(of, tegra_pcie_dw_of_match);
+ MODULE_AUTHOR("Vidya Sagar <vidyas@nvidia.com>");
+ MODULE_DESCRIPTION("NVIDIA PCIe host controller driver");
+ MODULE_LICENSE("GPL v2");
++
++#endif /* CONFIG_PCIE_TEGRA194 */
++
+diff --git a/include/linux/pci-ecam.h b/include/linux/pci-ecam.h
+index a73164c85e78..6156140dcbb6 100644
+--- a/include/linux/pci-ecam.h
++++ b/include/linux/pci-ecam.h
+@@ -57,6 +57,7 @@ extern struct pci_ecam_ops pci_thunder_ecam_ops; /* Cavium ThunderX 1.x */
+ extern struct pci_ecam_ops xgene_v1_pcie_ecam_ops; /* APM X-Gene PCIe v1 */
+ extern struct pci_ecam_ops xgene_v2_pcie_ecam_ops; /* APM X-Gene PCIe v2.x */
+ extern struct pci_ecam_ops al_pcie_ops; /* Amazon Annapurna Labs PCIe */
++extern struct pci_ecam_ops tegra194_pcie_ops; /* Tegra194 PCIe */
+ #endif
+ 
+ #ifdef CONFIG_PCI_HOST_COMMON
+-- 
+2.17.1
