@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 15/20] usb: phy: tegra: Move utmip_pad_count checking under lock
-Date: Mon,  6 Jan 2020 04:34:11 +0300
-Message-ID: <20200106013416.9604-16-digetx@gmail.com>
+Subject: [PATCH v4 14/20] usb: phy: tegra: Disable VBUS regulator on tegra_usb_phy_init failure
+Date: Mon,  6 Jan 2020 04:34:10 +0300
+Message-ID: <20200106013416.9604-15-digetx@gmail.com>
 References: <20200106013416.9604-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,60 +12,53 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.
 Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-It's unlikely that two drivers could manage PHY's state simultaneously in
-practice, nevertheless the utmip_pad_count checking should be under lock,
-for consistency.
+VBUS regulator should be turned off in a case of error.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 90b42e963a1e..1b9667b0aa11 100644
+index c431968d0433..90b42e963a1e 100644
 --- a/drivers/usb/phy/phy-tegra-usb.c
 +++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -348,30 +348,31 @@ static int utmip_pad_power_off(struct tegra_usb_phy *phy)
- 	void __iomem *base = phy->pad_regs;
- 	unsigned long flags;
- 	u32 val;
--	int err;
-+	int ret;
-+
-+	ret = clk_prepare_enable(phy->pad_clk);
-+	if (ret)
-+		return ret;
-+
-+	spin_lock_irqsave(&utmip_pad_lock, flags);
- 
- 	if (!utmip_pad_count) {
- 		dev_err(phy->u_phy.dev, "UTMIP pad already powered off\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto ulock;
+@@ -864,20 +864,20 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
+ 		dev_err(phy->u_phy.dev, "Invalid pll_u parent rate %ld\n",
+ 			parent_rate);
+ 		err = -EINVAL;
+-		goto fail;
++		goto disable_clk;
  	}
  
--	err = clk_prepare_enable(phy->pad_clk);
--	if (err)
--		return err;
--
--	spin_lock_irqsave(&utmip_pad_lock, flags);
--
- 	if (--utmip_pad_count == 0) {
- 		val = readl_relaxed(base + UTMIP_BIAS_CFG0);
- 		val |= UTMIP_OTGPD | UTMIP_BIASPD;
- 		writel_relaxed(val, base + UTMIP_BIAS_CFG0);
+ 	err = regulator_enable(phy->vbus);
+ 	if (err) {
+ 		dev_err(phy->u_phy.dev,
+ 			"Failed to enable USB VBUS regulator: %d\n", err);
+-		goto fail;
++		goto disable_clk;
  	}
--
-+ulock:
- 	spin_unlock_irqrestore(&utmip_pad_lock, flags);
  
- 	clk_disable_unprepare(phy->pad_clk);
+ 	if (!phy->is_ulpi_phy) {
+ 		err = utmip_pad_open(phy);
+ 		if (err)
+-			goto fail;
++			goto disable_vbus;
+ 	}
  
--	return 0;
-+	return ret;
- }
+ 	err = tegra_usb_phy_power_on(phy);
+@@ -889,7 +889,11 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
+ close_phy:
+ 	if (!phy->is_ulpi_phy)
+ 		utmip_pad_close(phy);
+-fail:
++
++disable_vbus:
++	regulator_disable(phy->vbus);
++
++disable_clk:
+ 	clk_disable_unprepare(phy->pll_u);
  
- static int utmi_wait_register(void __iomem *reg, u32 mask, u32 result)
+ 	phy->freq = NULL;
 -- 
 2.24.0
