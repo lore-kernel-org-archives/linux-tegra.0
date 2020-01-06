@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 06/13] dmaengine: tegra-apb: Use devm_platform_ioremap_resource
-Date: Mon,  6 Jan 2020 04:17:01 +0300
-Message-ID: <20200106011708.7463-7-digetx@gmail.com>
+Subject: [PATCH v3 05/13] dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
+Date: Mon,  6 Jan 2020 04:17:00 +0300
+Message-ID: <20200106011708.7463-6-digetx@gmail.com>
 References: <20200106011708.7463-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,26 +12,29 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan W
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource to keep code cleaner a tad.
+The interrupt handler puts a half-completed DMA descriptor on a free list
+and then schedules tasklet to process bottom half of the descriptor that
+executes client's callback, this creates possibility to pick up the busy
+descriptor from the free list. Thus let's disallow descriptor's re-use
+until it is fully processed.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index aafad50d075e..f44291207928 100644
+index 1b8a11804962..aafad50d075e 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1402,8 +1402,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 	tdma->chip_data = cdata;
- 	platform_set_drvdata(pdev, tdma);
+@@ -281,7 +281,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	tdma->base_addr = devm_ioremap_resource(&pdev->dev, res);
-+	tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(tdma->base_addr))
- 		return PTR_ERR(tdma->base_addr);
- 
+ 	/* Do not allocate if desc are waiting for ack */
+ 	list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
+-		if (async_tx_test_ack(&dma_desc->txd)) {
++		if (async_tx_test_ack(&dma_desc->txd) && !dma_desc->cb_count) {
+ 			list_del(&dma_desc->node);
+ 			spin_unlock_irqrestore(&tdc->lock, flags);
+ 			dma_desc->txd.flags = 0;
 -- 
 2.24.0
