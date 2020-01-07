@@ -1,32 +1,54 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 09/13] dmaengine: tegra-apb: Remove runtime PM usage
-Date: Tue, 7 Jan 2020 15:13:52 +0000
-Message-ID: <f63a68cf-bb9d-0e79-23f3-233fc97ca6f9@nvidia.com>
-References: <20200106011708.7463-1-digetx@gmail.com>
- <20200106011708.7463-10-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 20/20] usb: host: ehci-tegra: Remove unused fields from
+ tegra_ehci_hcd
+Date: Tue, 7 Jan 2020 19:13:12 +0300
+Message-ID: <b5c262a9-4a7f-6293-e3c4-31ba4822cd12@gmail.com>
+References: <Pine.LNX.4.44L0.2001061014430.1514-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200106011708.7463-10-digetx@gmail.com>
+In-Reply-To: <Pine.LNX.4.44L0.2001061014430.1514-100000@iolanthe.rowland.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <Peter.Chen@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Felipe Balbi <balbi@kernel.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+06.01.2020 18:16, Alan Stern пишет:
+> On Mon, 6 Jan 2020, Dmitry Osipenko wrote:
+> 
+>> There are few stale fields in tegra_ehci_hcd structure, let's remove them.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/usb/host/ehci-tegra.c | 2 --
+>>  1 file changed, 2 deletions(-)
+>>
+>> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+>> index 1eb94205a5ac..d6433f206c17 100644
+>> --- a/drivers/usb/host/ehci-tegra.c
+>> +++ b/drivers/usb/host/ehci-tegra.c
+>> @@ -42,12 +42,10 @@ struct tegra_ehci_soc_config {
+>>  };
+>>  
+>>  struct tegra_ehci_hcd {
+>> -	struct tegra_usb_phy *phy;
+>>  	struct clk *clk;
+>>  	struct reset_control *rst;
+>>  	int port_resuming;
+>>  	bool needs_double_reset;
+>> -	enum tegra_usb_phy_port_speed port_speed;
+>>  };
+>>  
+>>  static int tegra_reset_usb_controller(struct platform_device *pdev)
+> 
+> For patches 2, 19, and 20:
+> 
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> 
+> It's nice to see that patch 2 makes the sequence of events in 
+> tegra_ehci_remove() exactly the same as the failure pathway in 
+> tegra_ehci_probe().
 
-On 06/01/2020 01:17, Dmitry Osipenko wrote:
-> There is no benefit from runtime PM usage for the APB DMA driver because
-> it enables clock at the time of channel's allocation and thus clock stays
-> enabled all the time in practice, secondly there is benefit from manually
-> disabled clock because hardware auto-gates it during idle by itself.
-
-This assumes that the channel is allocated during a driver
-initialisation. That may not always be the case. I believe audio is one
-case where channels are requested at the start of audio playback.
-
-Jon
-
--- 
-nvpublic
+Thank you very much for taking a look at the patches!
