@@ -1,56 +1,128 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v6 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra PMC 32KHz blink clock
-Date: Mon, 6 Jan 2020 20:14:06 -0800
-Message-ID: <1578370458-3686-8-git-send-email-skomatineni@nvidia.com>
-References: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH] drm: replace IS_ERR and PTR_ERR with PTR_ERR_OR_ZERO
+Date: Tue, 7 Jan 2020 08:47:40 +0200
+Message-ID: <ec4d34d6-7c58-ea1e-cc9c-c2df0baaf23b@ti.com>
+References: <20191225132042.5491-1-yukuai3@huawei.com>
+ <20191227115401.agumkfuiwexl2wmx@hendrix.home>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20191227115401.agumkfuiwexl2wmx@hendrix.home>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: yu kuai <yukuai3@huawei.com>
+Cc: jernej.skrabec@siol.net, yi.zhang@huawei.com, airlied@linux.ie, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, zhengbin13@huawei.com, wens@csie.org, thierry.reding@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC has blink functionality that allows 32KHz clock out to
-blink pin of the Tegra.
+On 27/12/2019 13:54, Maxime Ripard wrote:
+> On Wed, Dec 25, 2019 at 09:20:42PM +0800, yu kuai wrote:
+>> no functional change, just to make the code simpler
+>>
+>> Signed-off-by: yu kuai <yukuai3@huawei.com>
+>> ---
+>>   drivers/gpu/drm/omapdrm/dss/hdmi4.c         | 5 +----
+>>   drivers/gpu/drm/omapdrm/dss/hdmi4_core.c    | 6 ++----
+>>   drivers/gpu/drm/omapdrm/dss/hdmi5_core.c    | 4 +---
+>>   drivers/gpu/drm/omapdrm/dss/hdmi_phy.c      | 4 +---
+>>   drivers/gpu/drm/sun4i/sun4i_dotclock.c      | 4 +---
+>>   drivers/gpu/drm/sun4i/sun4i_hdmi_i2c.c      | 4 +---
+>>   drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 4 +---
+>>   drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c  | 5 +----
+>>   drivers/gpu/drm/tegra/drm.c                 | 4 +---
+>>   drivers/gpu/drm/tegra/gem.c                 | 4 +---
+>>   10 files changed, 11 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi4.c b/drivers/gpu/drm/omapdrm/dss/hdmi4.c
+>> index 0f557fad4513..eb71baedf19e 100644
+>> --- a/drivers/gpu/drm/omapdrm/dss/hdmi4.c
+>> +++ b/drivers/gpu/drm/omapdrm/dss/hdmi4.c
+>> @@ -587,10 +587,7 @@ static int hdmi_audio_register(struct omap_hdmi *hdmi)
+>>   		&hdmi->pdev->dev, "omap-hdmi-audio", PLATFORM_DEVID_AUTO,
+>>   		&pdata, sizeof(pdata));
+>>
+>> -	if (IS_ERR(hdmi->audio_pdev))
+>> -		return PTR_ERR(hdmi->audio_pdev);
+>> -
+>> -	return 0;
+>> +	return PTR_ERR_OR_ZERO(hdmi->audio_pdev);
+>>   }
+>>
+>>   /* -----------------------------------------------------------------------------
+>> diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c b/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
+>> index ea5d5c228534..fdd73fb73653 100644
+>> --- a/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
+>> +++ b/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
+>> @@ -924,8 +924,6 @@ int hdmi4_core_init(struct platform_device *pdev, struct hdmi_core_data *core)
+>>
+>>   	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "core");
+>>   	core->base = devm_ioremap_resource(&pdev->dev, res);
+>> -	if (IS_ERR(core->base))
+>> -		return PTR_ERR(core->base);
+>> -
+>> -	return 0;
+>> +
+>> +	return PTR_ERR_OR_ZERO(core->base);
+>>   }
+>> diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi5_core.c b/drivers/gpu/drm/omapdrm/dss/hdmi5_core.c
+>> index ff4d35c8771f..30454bc9de78 100644
+>> --- a/drivers/gpu/drm/omapdrm/dss/hdmi5_core.c
+>> +++ b/drivers/gpu/drm/omapdrm/dss/hdmi5_core.c
+>> @@ -908,8 +908,6 @@ int hdmi5_core_init(struct platform_device *pdev, struct hdmi_core_data *core)
+>>
+>>   	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "core");
+>>   	core->base = devm_ioremap_resource(&pdev->dev, res);
+>> -	if (IS_ERR(core->base))
+>> -		return PTR_ERR(core->base);
+>>
+>> -	return 0;
+>> +	return PTR_ERR_OR_ZERO(core->base);
+>>   }
+>> diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi_phy.c b/drivers/gpu/drm/omapdrm/dss/hdmi_phy.c
+>> index 00bbf24488c1..bbc02d5aa8fb 100644
+>> --- a/drivers/gpu/drm/omapdrm/dss/hdmi_phy.c
+>> +++ b/drivers/gpu/drm/omapdrm/dss/hdmi_phy.c
+>> @@ -191,8 +191,6 @@ int hdmi_phy_init(struct platform_device *pdev, struct hdmi_phy_data *phy,
+>>
+>>   	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "phy");
+>>   	phy->base = devm_ioremap_resource(&pdev->dev, res);
+>> -	if (IS_ERR(phy->base))
+>> -		return PTR_ERR(phy->base);
+>>
+>> -	return 0;
+>> +	return PTR_ERR_OR_ZERO(phy->base);
+>>   }
+>> diff --git a/drivers/gpu/drm/sun4i/sun4i_dotclock.c b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+>> index 417ade3d2565..84c04d8192b3 100644
+>> --- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+>> +++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+>> @@ -191,10 +191,8 @@ int sun4i_dclk_create(struct device *dev, struct sun4i_tcon *tcon)
+>>   	dclk->hw.init = &init;
+>>
+>>   	tcon->dclk = clk_register(dev, &dclk->hw);
+>> -	if (IS_ERR(tcon->dclk))
+>> -		return PTR_ERR(tcon->dclk);
+>>
+>> -	return 0;
+>> +	return PTR_ERR_OR_ZERO(tcon->dclk);
+> 
+> This has been submitted a couple of times already. It's harder to
+> maintain and not easier to read.
+> 
+> Please remove sun4i from your patch
 
-This patch adds id for this blink clock to use for enabling or
-disabling blink output through device tree.
+Nack for the omapdrm parts too, for the same reasons.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml | 2 ++
- include/dt-bindings/soc/tegra-pmc.h                                 | 3 ++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+  Tomi
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-index 5b5c42a00264..f17bb353f65e 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-@@ -44,6 +44,8 @@ properties:
-     const: 1
-     description:
-       Tegra PMC has clk_out_1, clk_out_2, and clk_out_3.
-+      PMC also has blink control which allows 32Khz clock output to
-+      Tegra blink pad.
-       Consumer of PMC clock should specify the desired clock by having
-       the clock ID in its "clocks" phandle cell with pmc clock provider.
-       See include/dt-bindings/soc/tegra-pmc.h for the list of Tegra PMC
-diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
-index f7c866404456..a99a457471ee 100644
---- a/include/dt-bindings/soc/tegra-pmc.h
-+++ b/include/dt-bindings/soc/tegra-pmc.h
-@@ -9,7 +9,8 @@
- #define TEGRA_PMC_CLK_OUT_1		0
- #define TEGRA_PMC_CLK_OUT_2		1
- #define TEGRA_PMC_CLK_OUT_3		2
-+#define TEGRA_PMC_CLK_BLINK		3
- 
--#define TEGRA_PMC_CLK_MAX		3
-+#define TEGRA_PMC_CLK_MAX		4
- 
- #endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
 -- 
-2.7.4
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
