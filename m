@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v6 01/19] dt-bindings: clock: tegra: Change CLK_M_DIV to OSC_DIV clocks
-Date: Mon, 6 Jan 2020 20:14:00 -0800
-Message-ID: <1578370458-3686-2-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v6 05/19] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
+Date: Mon, 6 Jan 2020 20:14:04 -0800
+Message-ID: <1578370458-3686-6-git-send-email-skomatineni@nvidia.com>
 References: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,80 +12,82 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broo
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra has no CLK_M_DIV2 and CLK_M_DIV4 clocks and instead it has
-OSC_DIV2 and OSC_DIV4 clocks from OSC pads.
+Tegra PMC has 3 clocks clk_out_1, clk_out_2, and clk_out_3.
 
-This patch changes CLK_M_DIV2 and CLK_M_DIV4 clock ids to OSC_DIV2
-and OSC_DIV4 clock ids for Tegra30 through Tegra210.
+This patch documents PMC clock bindings and adds a header defining
+Tegra PMC clock ids.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- include/dt-bindings/clock/tegra114-car.h        | 4 ++--
- include/dt-bindings/clock/tegra124-car-common.h | 4 ++--
- include/dt-bindings/clock/tegra210-car.h        | 4 ++--
- include/dt-bindings/clock/tegra30-car.h         | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml | 12 ++++++++++++
+ include/dt-bindings/soc/tegra-pmc.h                       | 15 +++++++++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 include/dt-bindings/soc/tegra-pmc.h
 
-diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
-index bb5c2c999c05..f4880959b094 100644
---- a/include/dt-bindings/clock/tegra114-car.h
-+++ b/include/dt-bindings/clock/tegra114-car.h
-@@ -226,8 +226,8 @@
- #define TEGRA114_CLK_FUSE_BURN 199
- #define TEGRA114_CLK_CLK_32K 200
- #define TEGRA114_CLK_CLK_M 201
--#define TEGRA114_CLK_CLK_M_DIV2 202
--#define TEGRA114_CLK_CLK_M_DIV4 203
-+#define TEGRA114_CLK_OSC_DIV2 202
-+#define TEGRA114_CLK_OSC_DIV4 203
- #define TEGRA114_CLK_PLL_REF 204
- #define TEGRA114_CLK_PLL_C 205
- #define TEGRA114_CLK_PLL_C_OUT1 206
-diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
-index 0c4f5be0a742..e7e601a88d3d 100644
---- a/include/dt-bindings/clock/tegra124-car-common.h
-+++ b/include/dt-bindings/clock/tegra124-car-common.h
-@@ -225,8 +225,8 @@
- #define TEGRA124_CLK_FUSE_BURN 199
- #define TEGRA124_CLK_CLK_32K 200
- #define TEGRA124_CLK_CLK_M 201
--#define TEGRA124_CLK_CLK_M_DIV2 202
--#define TEGRA124_CLK_CLK_M_DIV4 203
-+#define TEGRA124_CLK_OSC_DIV2 202
-+#define TEGRA124_CLK_OSC_DIV4 203
- #define TEGRA124_CLK_PLL_REF 204
- #define TEGRA124_CLK_PLL_C 205
- #define TEGRA124_CLK_PLL_C_OUT1 206
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 44f60623f99b..6f65c14bf013 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -260,8 +260,8 @@
- #define TEGRA210_CLK_FUSE_BURN 231
- #define TEGRA210_CLK_CLK_32K 232
- #define TEGRA210_CLK_CLK_M 233
--#define TEGRA210_CLK_CLK_M_DIV2 234
--#define TEGRA210_CLK_CLK_M_DIV4 235
-+#define TEGRA210_CLK_OSC_DIV2 234
-+#define TEGRA210_CLK_OSC_DIV4 235
- #define TEGRA210_CLK_PLL_REF 236
- #define TEGRA210_CLK_PLL_C 237
- #define TEGRA210_CLK_PLL_C_OUT1 238
-diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
-index 3c90f1535551..907a8a04c280 100644
---- a/include/dt-bindings/clock/tegra30-car.h
-+++ b/include/dt-bindings/clock/tegra30-car.h
-@@ -194,8 +194,8 @@
- #define TEGRA30_CLK_TVO 169
- #define TEGRA30_CLK_CLK_32K 170
- #define TEGRA30_CLK_CLK_M 171
--#define TEGRA30_CLK_CLK_M_DIV2 172
--#define TEGRA30_CLK_CLK_M_DIV4 173
-+#define TEGRA30_CLK_OSC_DIV2 172
-+#define TEGRA30_CLK_OSC_DIV4 173
- #define TEGRA30_CLK_PLL_REF 174
- #define TEGRA30_CLK_PLL_C 175
- #define TEGRA30_CLK_PLL_C_OUT1 176
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+index 3ff34b348141..5b5c42a00264 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+@@ -40,6 +40,15 @@ properties:
+       Must contain an entry for each entry in clock-names.
+       See ../clocks/clocks-bindings.txt for details.
+ 
++  '#clock-cells':
++    const: 1
++    description:
++      Tegra PMC has clk_out_1, clk_out_2, and clk_out_3.
++      Consumer of PMC clock should specify the desired clock by having
++      the clock ID in its "clocks" phandle cell with pmc clock provider.
++      See include/dt-bindings/soc/tegra-pmc.h for the list of Tegra PMC
++      clock IDs.
++
+   '#interrupt-cells':
+     const: 2
+     description:
+@@ -296,6 +305,7 @@ required:
+   - reg
+   - clock-names
+   - clocks
++  - '#clock-cells'
+ 
+ dependencies:
+   "nvidia,suspend-mode": ["nvidia,core-pwr-off-time", "nvidia,cpu-pwr-off-time"]
+@@ -307,12 +317,14 @@ examples:
+ 
+     #include <dt-bindings/clock/tegra210-car.h>
+     #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
++    #include <dt-bindings/soc/tegra-pmc.h>
+ 
+     tegra_pmc: pmc@7000e400 {
+               compatible = "nvidia,tegra210-pmc";
+               reg = <0x0 0x7000e400 0x0 0x400>;
+               clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+               clock-names = "pclk", "clk32k_in";
++              #clock-cells = <1>;
+ 
+               nvidia,invert-interrupt;
+               nvidia,suspend-mode = <0>;
+diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
+new file mode 100644
+index 000000000000..f7c866404456
+--- /dev/null
++++ b/include/dt-bindings/soc/tegra-pmc.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
++#define _DT_BINDINGS_SOC_TEGRA_PMC_H
++
++#define TEGRA_PMC_CLK_OUT_1		0
++#define TEGRA_PMC_CLK_OUT_2		1
++#define TEGRA_PMC_CLK_OUT_3		2
++
++#define TEGRA_PMC_CLK_MAX		3
++
++#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
 -- 
 2.7.4
