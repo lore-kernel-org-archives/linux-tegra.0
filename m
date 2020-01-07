@@ -1,10 +1,9 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
 Subject: Re: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
 	samples
-Date: Tue, 7 Jan 2020 10:29:10 +0000
-Message-ID: <eb90ee78-e462-401a-de60-4a9bfc2a00c4@nvidia.com>
+Date: Tue, 7 Jan 2020 10:35:11 +0000
+Message-ID: <79ce7519-a544-9c22-15c7-865c56a1a57c@codethink.co.uk>
 References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
- <20191018154833.7560-3-ben.dooks@codethink.co.uk>
  <d2110a1f-c1de-e2c5-a1ff-5eb4c5d3e1da@gmail.com>
  <b4e2ec44-bc89-b5ca-cfa7-a6d5c45a9c94@codethink.co.uk>
  <a11ba33e-5ffb-c5c6-04f5-0e031877c55f@gmail.com>
@@ -22,12 +21,13 @@ References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
  <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
  <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
  <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
+ <eb90ee78-e462-401a-de60-4a9bfc2a00c4@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Content-Transfer-Encoding: base64
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
-Content-Language: en-US
+In-Reply-To: <eb90ee78-e462-401a-de60-4a9bfc2a00c4@nvidia.com>
+Content-Language: en-GB
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -37,28 +37,35 @@ List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, Dmitry Osipenko <digetx@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>
 Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA1LzAxLzIwMjAgMTA6NTMsIEJlbiBEb29rcyB3cm90ZToKPiAKPiAKPiBPbiAyMDIwLTAx
-LTA1IDAxOjQ4LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+IDA1LjAxLjIwMjAgMDM6MDQsIEJl
-biBEb29rcyDQv9C40YjQtdGCOgo+Pj4gW3NuaXBdCj4+Pgo+Pj4gSSd2ZSBqdXN0IGdvbmUgdGhy
-b3VnaCB0ZXN0aW5nLgo+Pj4KPj4+IFNvbWUgc2ltcGxlIGRhdGEgdGVzdHMgc2hvdyAxNiBhbmQg
-MzItYml0cyB3b3JrLgo+Pj4KPj4+IFRoZSAyNCBiaXQgY2FzZSBzZWVtcyB0byBiZSB3ZWlyZCwg
-aXQgbG9va3MgbGlrZSB0aGUgMjQtYml0IGV4cGVjdHMKPj4+IDI0IGJpdCBzYW1wbGVzIGluIDMy
-IGJpdCB3b3Jkcy4gSSBjYW4ndCBzZWUgYW55IHBhY2tpbmcgb3B0aW9ucyB0bwo+Pj4gZG8gMjQg
-Yml0IGluIDI0IGJpdCwgc28gd2UgbWF5IGhhdmUgdG8gcmVtb3ZlIDI0IGJpdCBzYW1wbGUgc3Vw
-cG9ydAo+Pj4gKHdoaWNoIGlzIGEgc2hhbWUpCj4+Pgo+Pj4gTXkgcHJlZmVyZW5jZSBpcyB0byBy
-ZW1vdmUgdGhlIDI0LWJpdCBzdXBwb3J0IGFuZCBrZWVwIHRoZSAzMiBiaXQgaW4uCj4+Pgo+Pgo+
-PiBJbnRlcmVzdGluZy4uIEpvbiwgY291bGQgeW91IHBsZWFzZSBjb25maXJtIHRoYXQgMjRiaXQg
-Zm9ybWF0IGlzbid0Cj4+IHVzYWJsZSBvbiBUMzA/Cj4gCj4gSWYgdGhlcmUgaXMgYW4gb3B0aW9u
-IG9mIDI0IHBhY2tlZCBpbnRvIDMyLCB0aGVuIEkgdGhpbmsgdGhhdCB3b3VsZCB3b3JrLgo+IAo+
-IEkgY2FuIHRyeSB0ZXN0aW5nIHRoYXQgd2l0aCByYXcgZGF0YSBvbiBNb25kYXkuCgpJIHdpbGwg
-Y2hlY2sgb24gdGhpcy4gSSB3b3VsZCBoYXZlIHRob3VnaHQgdGhhdCBTMjRfTEUgKDI0LWJpdHMg
-cGFja2VkCmludG8gMzItYml0IGVsZW1lbnRzKSB3b3VsZCBiZSBmaW5lLiBUeXBpY2FsbHkgd2Ug
-ZG9uJ3Qgc3VwcG9ydCBTMjRfM0xFCigyNC1iaXRzIGluIDI0LWJpdCBlbGVtZW50cykuCgpKb24K
-Ci0tIApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcK
-aHR0cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNhLWRl
-dmVsCg==
+T24gMDcvMDEvMjAyMCAxMDoyOSwgSm9uIEh1bnRlciB3cm90ZToKPiAKPiBPbiAwNS8wMS8yMDIw
+IDEwOjUzLCBCZW4gRG9va3Mgd3JvdGU6Cj4+Cj4+Cj4+IE9uIDIwMjAtMDEtMDUgMDE6NDgsIERt
+aXRyeSBPc2lwZW5rbyB3cm90ZToKPj4+IDA1LjAxLjIwMjAgMDM6MDQsIEJlbiBEb29rcyDQv9C4
+0YjQtdGCOgo+Pj4+IFtzbmlwXQo+Pj4+Cj4+Pj4gSSd2ZSBqdXN0IGdvbmUgdGhyb3VnaCB0ZXN0
+aW5nLgo+Pj4+Cj4+Pj4gU29tZSBzaW1wbGUgZGF0YSB0ZXN0cyBzaG93IDE2IGFuZCAzMi1iaXRz
+IHdvcmsuCj4+Pj4KPj4+PiBUaGUgMjQgYml0IGNhc2Ugc2VlbXMgdG8gYmUgd2VpcmQsIGl0IGxv
+b2tzIGxpa2UgdGhlIDI0LWJpdCBleHBlY3RzCj4+Pj4gMjQgYml0IHNhbXBsZXMgaW4gMzIgYml0
+IHdvcmRzLiBJIGNhbid0IHNlZSBhbnkgcGFja2luZyBvcHRpb25zIHRvCj4+Pj4gZG8gMjQgYml0
+IGluIDI0IGJpdCwgc28gd2UgbWF5IGhhdmUgdG8gcmVtb3ZlIDI0IGJpdCBzYW1wbGUgc3VwcG9y
+dAo+Pj4+ICh3aGljaCBpcyBhIHNoYW1lKQo+Pj4+Cj4+Pj4gTXkgcHJlZmVyZW5jZSBpcyB0byBy
+ZW1vdmUgdGhlIDI0LWJpdCBzdXBwb3J0IGFuZCBrZWVwIHRoZSAzMiBiaXQgaW4uCj4+Pj4KPj4+
+Cj4+PiBJbnRlcmVzdGluZy4uIEpvbiwgY291bGQgeW91IHBsZWFzZSBjb25maXJtIHRoYXQgMjRi
+aXQgZm9ybWF0IGlzbid0Cj4+PiB1c2FibGUgb24gVDMwPwo+Pgo+PiBJZiB0aGVyZSBpcyBhbiBv
+cHRpb24gb2YgMjQgcGFja2VkIGludG8gMzIsIHRoZW4gSSB0aGluayB0aGF0IHdvdWxkIHdvcmsu
+Cj4+Cj4+IEkgY2FuIHRyeSB0ZXN0aW5nIHRoYXQgd2l0aCByYXcgZGF0YSBvbiBNb25kYXkuCj4g
+Cj4gSSB3aWxsIGNoZWNrIG9uIHRoaXMuIEkgd291bGQgaGF2ZSB0aG91Z2h0IHRoYXQgUzI0X0xF
+ICgyNC1iaXRzIHBhY2tlZAo+IGludG8gMzItYml0IGVsZW1lbnRzKSB3b3VsZCBiZSBmaW5lLiBU
+eXBpY2FsbHkgd2UgZG9uJ3Qgc3VwcG9ydCBTMjRfM0xFCj4gKDI0LWJpdHMgaW4gMjQtYml0IGVs
+ZW1lbnRzKS4KCkkgd2lsbCBoYXZlIGEgbG9vayBhZ2FpbiwgSSB0aG91Z2h0IFMyNCB3YXMgMjQt
+aW4tMjQsIHNvIHdyb3RlIG15IHRlc3QKZ2VuZXJhdG9yIGNvZGUgdG8gZG8gdGhhdC4gSSdsbCBn
+byBhbmQgc2VlIGlmIEkgY2FuIHJlLXRlc3QgdGhpcyBhcyBzb29uCmFzIHBvc3NpYmxlIChtYXkg
+YmUgV2VkL1RodSBieSB0aGUgdGltZSBJIGNhbiBnZXQgdG8gY2hlY2sgaXQpCgotLSAKQmVuIERv
+b2tzCQkJCWh0dHA6Ly93d3cuY29kZXRoaW5rLmNvLnVrLwpTZW5pb3IgRW5naW5lZXIJCQkJQ29k
+ZXRoaW5rIC0gUHJvdmlkaW5nIEdlbml1cwoKaHR0cHM6Ly93d3cuY29kZXRoaW5rLmNvLnVrL3By
+aXZhY3kuaHRtbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0
+cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNhLWRldmVs
+Cg==
