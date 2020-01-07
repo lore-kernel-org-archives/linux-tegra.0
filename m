@@ -1,71 +1,116 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
-	samples
-Date: Tue, 7 Jan 2020 10:35:11 +0000
-Message-ID: <79ce7519-a544-9c22-15c7-865c56a1a57c@codethink.co.uk>
-References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
- <d2110a1f-c1de-e2c5-a1ff-5eb4c5d3e1da@gmail.com>
- <b4e2ec44-bc89-b5ca-cfa7-a6d5c45a9c94@codethink.co.uk>
- <a11ba33e-5ffb-c5c6-04f5-0e031877c55f@gmail.com>
- <621fa27d-9259-2949-9cf5-d2eda5cb0677@gmail.com>
- <a0f027d9-e9e0-d76c-1e40-002fdc37eb5f@nvidia.com>
- <d43d518d-9336-a011-2a69-3f9331f6d0b4@codethink.co.uk>
- <aba4edd6-0ea5-5e95-c5a0-9e749587c763@nvidia.com>
- <449bdc3c-bf82-7cc4-6704-440dd100ca3a@gmail.com>
- <5d3ae629-5d30-0930-5dd1-15161e64926e@codethink.co.uk>
- <9daeeb94-2b90-18b8-2e1e-daae5acf079d@gmail.com>
- <fd73f68c-80f5-ac80-f6e4-42256d3df76d@codethink.co.uk>
- <37beb96a-a525-c72f-a7e1-e9ef5d61f3b2@gmail.com>
- <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
- <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
- <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
- <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
- <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
- <eb90ee78-e462-401a-de60-4a9bfc2a00c4@nvidia.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 2/2] pwm: Enable compile testing for some of drivers
+Date: Tue, 7 Jan 2020 11:42:34 +0100
+Message-ID: <20200107104234.wq74fska3szrg4ii@pengutronix.de>
+References: <20191230172113.17222-1-krzk@kernel.org>
+ <20191230172113.17222-2-krzk@kernel.org>
+ <20200107072645.ko247bwhh3ibdu73@pengutronix.de>
+ <20200107082539.GA31827@pi3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <eb90ee78-e462-401a-de60-4a9bfc2a00c4@nvidia.com>
-Content-Language: en-GB
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20200107082539.GA31827@pi3>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Richard Weinberger <richard@nod.at>, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Thierry Reding <thierry.reding@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, kernel@pengutronix.de, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDcvMDEvMjAyMCAxMDoyOSwgSm9uIEh1bnRlciB3cm90ZToKPiAKPiBPbiAwNS8wMS8yMDIw
-IDEwOjUzLCBCZW4gRG9va3Mgd3JvdGU6Cj4+Cj4+Cj4+IE9uIDIwMjAtMDEtMDUgMDE6NDgsIERt
-aXRyeSBPc2lwZW5rbyB3cm90ZToKPj4+IDA1LjAxLjIwMjAgMDM6MDQsIEJlbiBEb29rcyDQv9C4
-0YjQtdGCOgo+Pj4+IFtzbmlwXQo+Pj4+Cj4+Pj4gSSd2ZSBqdXN0IGdvbmUgdGhyb3VnaCB0ZXN0
-aW5nLgo+Pj4+Cj4+Pj4gU29tZSBzaW1wbGUgZGF0YSB0ZXN0cyBzaG93IDE2IGFuZCAzMi1iaXRz
-IHdvcmsuCj4+Pj4KPj4+PiBUaGUgMjQgYml0IGNhc2Ugc2VlbXMgdG8gYmUgd2VpcmQsIGl0IGxv
-b2tzIGxpa2UgdGhlIDI0LWJpdCBleHBlY3RzCj4+Pj4gMjQgYml0IHNhbXBsZXMgaW4gMzIgYml0
-IHdvcmRzLiBJIGNhbid0IHNlZSBhbnkgcGFja2luZyBvcHRpb25zIHRvCj4+Pj4gZG8gMjQgYml0
-IGluIDI0IGJpdCwgc28gd2UgbWF5IGhhdmUgdG8gcmVtb3ZlIDI0IGJpdCBzYW1wbGUgc3VwcG9y
-dAo+Pj4+ICh3aGljaCBpcyBhIHNoYW1lKQo+Pj4+Cj4+Pj4gTXkgcHJlZmVyZW5jZSBpcyB0byBy
-ZW1vdmUgdGhlIDI0LWJpdCBzdXBwb3J0IGFuZCBrZWVwIHRoZSAzMiBiaXQgaW4uCj4+Pj4KPj4+
-Cj4+PiBJbnRlcmVzdGluZy4uIEpvbiwgY291bGQgeW91IHBsZWFzZSBjb25maXJtIHRoYXQgMjRi
-aXQgZm9ybWF0IGlzbid0Cj4+PiB1c2FibGUgb24gVDMwPwo+Pgo+PiBJZiB0aGVyZSBpcyBhbiBv
-cHRpb24gb2YgMjQgcGFja2VkIGludG8gMzIsIHRoZW4gSSB0aGluayB0aGF0IHdvdWxkIHdvcmsu
-Cj4+Cj4+IEkgY2FuIHRyeSB0ZXN0aW5nIHRoYXQgd2l0aCByYXcgZGF0YSBvbiBNb25kYXkuCj4g
-Cj4gSSB3aWxsIGNoZWNrIG9uIHRoaXMuIEkgd291bGQgaGF2ZSB0aG91Z2h0IHRoYXQgUzI0X0xF
-ICgyNC1iaXRzIHBhY2tlZAo+IGludG8gMzItYml0IGVsZW1lbnRzKSB3b3VsZCBiZSBmaW5lLiBU
-eXBpY2FsbHkgd2UgZG9uJ3Qgc3VwcG9ydCBTMjRfM0xFCj4gKDI0LWJpdHMgaW4gMjQtYml0IGVs
-ZW1lbnRzKS4KCkkgd2lsbCBoYXZlIGEgbG9vayBhZ2FpbiwgSSB0aG91Z2h0IFMyNCB3YXMgMjQt
-aW4tMjQsIHNvIHdyb3RlIG15IHRlc3QKZ2VuZXJhdG9yIGNvZGUgdG8gZG8gdGhhdC4gSSdsbCBn
-byBhbmQgc2VlIGlmIEkgY2FuIHJlLXRlc3QgdGhpcyBhcyBzb29uCmFzIHBvc3NpYmxlIChtYXkg
-YmUgV2VkL1RodSBieSB0aGUgdGltZSBJIGNhbiBnZXQgdG8gY2hlY2sgaXQpCgotLSAKQmVuIERv
-b2tzCQkJCWh0dHA6Ly93d3cuY29kZXRoaW5rLmNvLnVrLwpTZW5pb3IgRW5naW5lZXIJCQkJQ29k
-ZXRoaW5rIC0gUHJvdmlkaW5nIEdlbml1cwoKaHR0cHM6Ly93d3cuY29kZXRoaW5rLmNvLnVrL3By
-aXZhY3kuaHRtbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0
-cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNhLWRldmVs
-Cg==
+Hello Krzysztof,
+
+On Tue, Jan 07, 2020 at 09:25:39AM +0100, Krzysztof Kozlowski wrote:
+> On Tue, Jan 07, 2020 at 08:26:45AM +0100, Uwe Kleine-K=F6nig wrote:
+> > On Mon, Dec 30, 2019 at 06:21:13PM +0100, Krzysztof Kozlowski wrote:
+> > > Some of the PWM drivers can be compile tested to increase build
+> > > coverage.
+> > > =
+
+> > > The Meson PWM driver requires COMMON_CLK dependency.
+> > =
+
+> > I'm surprised that there are not more that need this. Is HAVE_CLK not
+> > enough?
+> =
+
+> Nope. E.g. for alpha architecture, HAVE_CLK is not set and without
+> COMMON_CLK:
+> =
+
+> drivers/pwm/pwm-meson.o: In function `meson_pwm_init_channels':
+> (.text+0x244): undefined reference to `devm_clk_register'
+
+I see. devm_clk_register() only exists in include/linux/clk-provider.h.
+
+> I guess other solution would be to add stubs for few clk functions...
+> =
+
+> > Also HAS_IOMEM is a typical requirement, but I tested with an ARCH=3Dum
+> > config (which does't have HAS_IOMEM) and they all compile fine.
+> =
+
+> Because of !HAS_IOMEM, since some time ARCH=3Dum does not support
+> COMPILE_TEST. Therefore HAS_IOMEM dependency is not needed for compile
+> testing (and for regular build it is selected by ARCH).
+
+Hehe, I didn't notice because for testing I just dropped the "depends on
+..." lines in Kconfig instead of adding "|| COMPILE_TEST" :-) Still they
+compile fine on UML.
+
+Ah, since bc083a64b6c0 ("init/Kconfig: make COMPILE_TEST depend on
+!UML") =3D=3D v4.8-rc1~52^2~83 COMPILE_TEST cannot be enabled on UML, but
+later 1bcbfbfdeb00 ("um: add dummy ioremap and iounmap functions")
+=3D=3D v4.13-rc1~8^2~6 UM got a dummy implementation. So maybe we could
+revert bc083a64b6c0 today? (And if not, a comment about why near the
+"depends on !UML" in init/Kconfig would be great.)
+
+Orthogonal to that, I wonder if depending on HAS_IOMEM is right even
+though the compile testers won't notice it missing. Or should HAS_IOMEM
+be dropped?
+
+> > > @@ -318,7 +319,7 @@ config PWM_MEDIATEK
+> > >  =
+
+> > >  config PWM_MXS
+> > >  	tristate "Freescale MXS PWM support"
+> > > -	depends on ARCH_MXS && OF
+> > > +	depends on (ARCH_MXS && OF) || COMPILE_TEST
+> > >  	select STMP_DEVICE
+> > >  	help
+> > >  	  Generic PWM framework driver for Freescale MXS.
+> > > @@ -328,7 +329,8 @@ config PWM_MXS
+> > >  =
+
+> > >  config PWM_OMAP_DMTIMER
+> > >  	tristate "OMAP Dual-Mode Timer PWM support"
+> > > -	depends on OF && ARCH_OMAP && OMAP_DM_TIMER
+> > > +	depends on (ARCH_OMAP && OMAP_DM_TIMER) || COMPILE_TEST
+> > > +	depends on OF
+> > =
+
+> > I'm surprised that OF isn't required for PWM_MXS but is is for
+> > PWM_OMAP_DMTIMER. pwm-mxs compiles without CONFIG_OF, didn't test
+> > pwm-omap-dmtimer.
+> =
+
+> Since some time !OF has all necessary stubs so OF is actually needed
+> only for binding, not compiling.
+
+That doesn't explain why you handle PWM_MXS and PWM_OMAP_DMTIMER
+differently though.
+
+Best regards
+Uwe
+
+-- =
+
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
