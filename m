@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v6 18/19] arm64: tegra: smaug: Change clk_out_2 provider to pmc
-Date: Mon, 6 Jan 2020 20:14:17 -0800
-Message-ID: <1578370458-3686-19-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v6 19/19] ASoC: nau8825: change Tegra clk_out_2 provider to tegra_pmc
+Date: Mon, 6 Jan 2020 20:14:18 -0800
+Message-ID: <1578370458-3686-20-git-send-email-skomatineni@nvidia.com>
 References: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,30 +12,29 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broo
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-clk_out_2 is one of the clocks from Tegra PMC block and Tegra PMC
-clocks are moved from clock driver to pmc driver with pmc as clock
-provider and using pmc clock ids.
+Tegra clk_out_1, clk_out_2, and clk_out_3 are part of PMC block and
+these clocks are moved from clock drvier to pmc driver with pmc as
+a provider for these clocks.
 
-This patch changes clk_out_2 provider to pmc and uses corresponding
-pmc clock id for clk_out_2.
+Update bindings document to use pmc as clock provider for clk_out_2 and
+change id to pmc clock id.
 
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 2 +-
+ Documentation/devicetree/bindings/sound/nau8825.txt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 72c7a04ac1df..2faab6390552 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1592,7 +1592,7 @@
- 			reg = <0x1a>;
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(E, 6) IRQ_TYPE_LEVEL_LOW>;
--			clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
-+			clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_2>;
- 			clock-names = "mclk";
+diff --git a/Documentation/devicetree/bindings/sound/nau8825.txt b/Documentation/devicetree/bindings/sound/nau8825.txt
+index d16d96839bcb..388a7bc60b1f 100644
+--- a/Documentation/devicetree/bindings/sound/nau8825.txt
++++ b/Documentation/devicetree/bindings/sound/nau8825.txt
+@@ -101,5 +101,5 @@ Example:
+       nuvoton,crosstalk-enable;
  
- 			nuvoton,jkdet-enable;
+       clock-names = "mclk";
+-      clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
++      clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_2>;
+   };
 -- 
 2.7.4
