@@ -1,85 +1,75 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] of: Rework and simplify phandle cache to use a fixed size
-Date: Tue, 7 Jan 2020 10:22:23 +0000
-Message-ID: <5386e959-f9c4-2748-ed08-34ab361aee2c@nvidia.com>
-References: <20191211232345.24810-1-robh@kernel.org>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH] regmap: add iopoll-like atomic polling macro
+Date: Tue, 7 Jan 2020 15:58:09 +0530
+Message-ID: <1578392889-16587-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191211232345.24810-1-robh@kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michael Ellerman <mpe@ellerman.id.au>, Segher Boessenkool <segher@kernel.crashing.org>, Frank Rowand <frowand.list@gmail.com>, linux-tegra <linux-tegra@vger.kernel.org>
+To: broonie@kernel.org
+Cc: jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Rob,
+This patch adds a macro 'regmap_read_poll_timeout_atomic' that works
+similar to 'readx_poll_timeout_atomic' defined in linux/iopoll.h; This
+is atomic version of already available 'regmap_read_poll_timeout' macro.
 
-On 11/12/2019 23:23, Rob Herring wrote:
-> The phandle cache was added to speed up of_find_node_by_phandle() by
-> avoiding walking the whole DT to find a matching phandle. The
-> implementation has several shortcomings:
-> 
->   - The cache is designed to work on a linear set of phandle values.
->     This is true for dtc generated DTs, but not for other cases such as
->     Power.
->   - The cache isn't enabled until of_core_init() and a typical system
->     may see hundreds of calls to of_find_node_by_phandle() before that
->     point.
->   - The cache is freed and re-allocated when the number of phandles
->     changes.
->   - It takes a raw spinlock around a memory allocation which breaks on
->     RT.
-> 
-> Change the implementation to a fixed size and use hash_32() as the
-> cache index. This greatly simplifies the implementation. It avoids
-> the need for any re-alloc of the cache and taking a reference on nodes
-> in the cache. We only have a single source of removing cache entries
-> which is of_detach_node().
-> 
-> Using hash_32() removes any assumption on phandle values improving
-> the hit rate for non-linear phandle values. The effect on linear values
-> using hash_32() is about a 10% collision. The chances of thrashing on
-> colliding values seems to be low.
-> 
-> To compare performance, I used a RK3399 board which is a pretty typical
-> system. I found that just measuring boot time as done previously is
-> noisy and may be impacted by other things. Also bringing up secondary
-> cores causes some issues with measuring, so I booted with 'nr_cpus=1'.
-> With no caching, calls to of_find_node_by_phandle() take about 20124 us
-> for 1248 calls. There's an additional 288 calls before time keeping is
-> up. Using the average time per hit/miss with the cache, we can calculate
-> these calls to take 690 us (277 hit / 11 miss) with a 128 entry cache
-> and 13319 us with no cache or an uninitialized cache.
-> 
-> Comparing the 3 implementations the time spent in
-> of_find_node_by_phandle() is:
-> 
-> no cache:        20124 us (+ 13319 us)
-> 128 entry cache:  5134 us (+ 690 us)
-> current cache:     819 us (+ 13319 us)
-> 
-> We could move the allocation of the cache earlier to improve the
-> current cache, but that just further complicates the situation as it
-> needs to be after slab is up, so we can't do it when unflattening (which
-> uses memblock).
-> 
-> Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Segher Boessenkool <segher@kernel.crashing.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ include/linux/regmap.h | 41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-With next-20200106 I have noticed a regression on Tegra210 where it
-appears that only one of the eMMC devices is being registered. Bisect is
-pointing to this patch and reverting on top of next fixes the problem.
-That is as far as I have got so far, so if you have any ideas, please
-let me know. Unfortunately, there do not appear to be any obvious errors
-from the bootlog.
-
-Thanks
-Jon
-
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index dfe493a..09d79ea 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -145,6 +145,47 @@ struct reg_sequence {
+ })
+ 
+ /**
++ * regmap_read_poll_timeout_atomic - Poll until a condition is met or a timeout occurs
++ *
++ * @map: Regmap to read from
++ * @addr: Address to poll
++ * @val: Unsigned integer variable to read the value into
++ * @cond: Break condition (usually involving @val)
++ * @delay_us: Time to udelay between reads in us (0 tight-loops).
++ *            Should be less than ~10us since udelay is used
++ *            (see Documentation/timers/timers-howto.rst).
++ * @timeout_us: Timeout in us, 0 means never timeout
++ *
++ * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_read
++ * error return value in case of a error read. In the two former cases,
++ * the last read value at @addr is stored in @val.
++ *
++ * This is modelled after the readx_poll_timeout_atomic macros in linux/iopoll.h.
++ */
++#define regmap_read_poll_timeout_atomic(map, addr, val, cond, delay_us, timeout_us) \
++({ \
++	u64 __timeout_us = (timeout_us); \
++	unsigned long __delay_us = (delay_us); \
++	ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
++	int __ret; \
++	for (;;) { \
++		__ret = regmap_read((map), (addr), &(val)); \
++		if (__ret) \
++			break; \
++		if (cond) \
++			break; \
++		if ((__timeout_us) && \
++		    ktime_compare(ktime_get(), __timeout) > 0) { \
++			__ret = regmap_read((map), (addr), &(val)); \
++			break; \
++		} \
++		if (__delay_us) \
++			udelay(__delay_us); \
++	} \
++	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
++})
++
++/**
+  * regmap_field_read_poll_timeout - Poll until a condition is met or timeout
+  *
+  * @field: Regmap field to read from
 -- 
-nvpublic
+2.7.4
