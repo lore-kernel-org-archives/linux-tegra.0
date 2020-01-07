@@ -1,72 +1,45 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] pwm: Enable compile testing for some of drivers
-Date: Tue, 7 Jan 2020 09:25:39 +0100
-Message-ID: <20200107082539.GA31827@pi3>
-References: <20191230172113.17222-1-krzk@kernel.org>
- <20191230172113.17222-2-krzk@kernel.org>
- <20200107072645.ko247bwhh3ibdu73@pengutronix.de>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v1 0/3] Tegra GPIO: Minor code clean up
+Date: Tue, 7 Jan 2020 09:25:47 +0100
+Message-ID: <CAMpxmJVi1hy6a72M7rAHP0AXW1Z4cGp8H0O6ayLMwFm9UL3WPQ@mail.gmail.com>
+References: <20191215183047.9414-1-digetx@gmail.com> <CACRpkdYAKS50-CNmE0nRNQanFxKejoHrwxho3fZXROoLZUb4+Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20200107072645.ko247bwhh3ibdu73@pengutronix.de>
+In-Reply-To: <CACRpkdYAKS50-CNmE0nRNQanFxKejoHrwxho3fZXROoLZUb4+Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 08:26:45AM +0100, Uwe Kleine-König wrote:
-> Hello Krzysztof,
-> 
-> On Mon, Dec 30, 2019 at 06:21:13PM +0100, Krzysztof Kozlowski wrote:
-> > Some of the PWM drivers can be compile tested to increase build
-> > coverage.
-> > 
-> > The Meson PWM driver requires COMMON_CLK dependency.
-> 
-> I'm surprised that there are not more that need this. Is HAVE_CLK not
-> enough?
+pon., 6 sty 2020 o 23:59 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
+=82(a):
+>
+> On Sun, Dec 15, 2019 at 7:31 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> > I was investigating why CPU hangs during of GPIO driver suspend and in
+> > the end it turned out that it is a Broadcom WiFi driver problem because
+> > it keeps OOB wake-interrupt enabled while WLAN interface is DOWN and th=
+is
+> > may cause a bit weird CPU hang on writing to INT_ENB register during of
+> > GPIO driver suspend. Meanwhile I also noticed that a few things could b=
+e
+> > improved in the driver, that's what this small series addresses.
+> >
+> > Dmitry Osipenko (3):
+> >   gpio: tegra: Use generic readl_relaxed/writel_relaxed accessors
+> >   gpio: tegra: Properly handle irq_set_irq_wake() error
+> >   gpio: tegra: Use NOIRQ phase for suspend/resume
+>
+> All three patches applied with Thierry's review/test tag.
+>
+> Yours,
+> Linus Walleij
 
-Nope. E.g. for alpha architecture, HAVE_CLK is not set and without
-COMMON_CLK:
+Ugh, I now noticed I responded to Thierry only after applying this to my tr=
+ee.
 
-drivers/pwm/pwm-meson.o: In function `meson_pwm_init_channels':
-(.text+0x244): undefined reference to `devm_clk_register'
+Anyway, it shouldn't be a problem. I'll take more care next time.
 
-I guess other solution would be to add stubs for few clk functions...
-
-> Also HAS_IOMEM is a typical requirement, but I tested with an ARCH=um
-> config (which does't have HAS_IOMEM) and they all compile fine.
-
-Because of !HAS_IOMEM, since some time ARCH=um does not support
-COMPILE_TEST. Therefore HAS_IOMEM dependency is not needed for compile
-testing (and for regular build it is selected by ARCH).
-
-> 
-> > @@ -318,7 +319,7 @@ config PWM_MEDIATEK
-> >  
-> >  config PWM_MXS
-> >  	tristate "Freescale MXS PWM support"
-> > -	depends on ARCH_MXS && OF
-> > +	depends on (ARCH_MXS && OF) || COMPILE_TEST
-> >  	select STMP_DEVICE
-> >  	help
-> >  	  Generic PWM framework driver for Freescale MXS.
-> > @@ -328,7 +329,8 @@ config PWM_MXS
-> >  
-> >  config PWM_OMAP_DMTIMER
-> >  	tristate "OMAP Dual-Mode Timer PWM support"
-> > -	depends on OF && ARCH_OMAP && OMAP_DM_TIMER
-> > +	depends on (ARCH_OMAP && OMAP_DM_TIMER) || COMPILE_TEST
-> > +	depends on OF
-> 
-> I'm surprised that OF isn't required for PWM_MXS but is is for
-> PWM_OMAP_DMTIMER. pwm-mxs compiles without CONFIG_OF, didn't test
-> pwm-omap-dmtimer.
-
-Since some time !OF has all necessary stubs so OF is actually needed
-only for binding, not compiling.
-
-Best regards,
-Krzysztof
+Bart
