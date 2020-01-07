@@ -1,57 +1,72 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2] PCI: tegra: Fix afi_pex2_ctrl reg offset for Tegra30
-Date: Tue,  7 Jan 2020 09:14:02 +0100
-Message-ID: <20200107081402.213149-1-marcel@ziswiler.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/2] pwm: Enable compile testing for some of drivers
+Date: Tue, 7 Jan 2020 09:25:39 +0100
+Message-ID: <20200107082539.GA31827@pi3>
+References: <20191230172113.17222-1-krzk@kernel.org>
+ <20191230172113.17222-2-krzk@kernel.org>
+ <20200107072645.ko247bwhh3ibdu73@pengutronix.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20200107072645.ko247bwhh3ibdu73@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Thierry Reding <treding@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, Andrew Murray <andrew.murray@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix AFI_PEX2_CTRL reg offset for Tegra30 by moving it from the Tegra20
-SoC struct where it erroneously got added. This fixes the AFI_PEX2_CTRL
-reg offset being uninitialised subsequently failing to bring up the
-third PCIe port.
+On Tue, Jan 07, 2020 at 08:26:45AM +0100, Uwe Kleine-König wrote:
+> Hello Krzysztof,
+> 
+> On Mon, Dec 30, 2019 at 06:21:13PM +0100, Krzysztof Kozlowski wrote:
+> > Some of the PWM drivers can be compile tested to increase build
+> > coverage.
+> > 
+> > The Meson PWM driver requires COMMON_CLK dependency.
+> 
+> I'm surprised that there are not more that need this. Is HAVE_CLK not
+> enough?
 
-Fixes: adb2653b3d2e ("PCI: tegra: Add AFI_PEX2_CTRL reg offset as part of SoC struct")
+Nope. E.g. for alpha architecture, HAVE_CLK is not set and without
+COMMON_CLK:
 
-Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
+drivers/pwm/pwm-meson.o: In function `meson_pwm_init_channels':
+(.text+0x244): undefined reference to `devm_clk_register'
 
----
+I guess other solution would be to add stubs for few clk functions...
 
-Changes in v2:
-- Fix recipient list concerning CC: and To: lines as suggested by
-  Thierry.
-- Fix subject line and commit message to adhere to standard formatting
-  rules as suggested by Thierry.
-- Add Thierry's Acked-by tag.
-- Add standard Fixes tag as suggested by Andrew.
+> Also HAS_IOMEM is a typical requirement, but I tested with an ARCH=um
+> config (which does't have HAS_IOMEM) and they all compile fine.
 
- drivers/pci/controller/pci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Because of !HAS_IOMEM, since some time ARCH=um does not support
+COMPILE_TEST. Therefore HAS_IOMEM dependency is not needed for compile
+testing (and for regular build it is selected by ARCH).
 
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 090b632965e2..ac93f5a0398e 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2499,7 +2499,6 @@ static const struct tegra_pcie_soc tegra20_pcie = {
- 	.num_ports = 2,
- 	.ports = tegra20_pcie_ports,
- 	.msi_base_shift = 0,
--	.afi_pex2_ctrl = 0x128,
- 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA20,
- 	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_DIV10,
- 	.pads_refclk_cfg0 = 0xfa5cfa5c,
-@@ -2528,6 +2527,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
- 	.num_ports = 3,
- 	.ports = tegra30_pcie_ports,
- 	.msi_base_shift = 8,
-+	.afi_pex2_ctrl = 0x128,
- 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
- 	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
- 	.pads_refclk_cfg0 = 0xfa5cfa5c,
--- 
-2.24.1
+> 
+> > @@ -318,7 +319,7 @@ config PWM_MEDIATEK
+> >  
+> >  config PWM_MXS
+> >  	tristate "Freescale MXS PWM support"
+> > -	depends on ARCH_MXS && OF
+> > +	depends on (ARCH_MXS && OF) || COMPILE_TEST
+> >  	select STMP_DEVICE
+> >  	help
+> >  	  Generic PWM framework driver for Freescale MXS.
+> > @@ -328,7 +329,8 @@ config PWM_MXS
+> >  
+> >  config PWM_OMAP_DMTIMER
+> >  	tristate "OMAP Dual-Mode Timer PWM support"
+> > -	depends on OF && ARCH_OMAP && OMAP_DM_TIMER
+> > +	depends on (ARCH_OMAP && OMAP_DM_TIMER) || COMPILE_TEST
+> > +	depends on OF
+> 
+> I'm surprised that OF isn't required for PWM_MXS but is is for
+> PWM_OMAP_DMTIMER. pwm-mxs compiles without CONFIG_OF, didn't test
+> pwm-omap-dmtimer.
+
+Since some time !OF has all necessary stubs so OF is actually needed
+only for binding, not compiling.
+
+Best regards,
+Krzysztof
