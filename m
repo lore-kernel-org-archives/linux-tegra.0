@@ -1,61 +1,91 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v1 0/3] Tegra GPIO: Minor code clean up
-Date: Tue, 7 Jan 2020 10:31:46 +0100
-Message-ID: <CAMpxmJXbR8=esuKhMKzD8LGFC6_Rz4uQXJ2egCXGLj_eauxS5g@mail.gmail.com>
-References: <20191215183047.9414-1-digetx@gmail.com> <CACRpkdYAKS50-CNmE0nRNQanFxKejoHrwxho3fZXROoLZUb4+Q@mail.gmail.com>
- <CAMpxmJVi1hy6a72M7rAHP0AXW1Z4cGp8H0O6ayLMwFm9UL3WPQ@mail.gmail.com> <CACRpkdaNAzpDu6uxETnuDGxnXTJTh0LhcE=9DL9-Kwi4butZLA@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] mmc: tegra: fix SDR50 tuning override
+Date: Tue, 7 Jan 2020 10:37:15 +0100
+Message-ID: <20200107093715.GB1028311@kroah.com>
+References: <245d569e4c258063dbd78bd30c7027638b30f059.1577960737.git.mirq-linux@rere.qmqm.pl>
+ <20200106120718.GA1955714@ulmo>
+ <20200106122745.GA3414443@kroah.com>
+ <20200106133703.GE1955714@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaNAzpDu6uxETnuDGxnXTJTh0LhcE=9DL9-Kwi4butZLA@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20200106133703.GE1955714@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Lucas Stach <dev@lynxeye.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-wt., 7 sty 2020 o 10:29 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
-=82(a):
->
-> On Tue, Jan 7, 2020 at 9:25 AM Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> wrote:
->
-> > pon., 6 sty 2020 o 23:59 Linus Walleij <linus.walleij@linaro.org> napis=
-a=C5=82(a):
-> > > On Sun, Dec 15, 2019 at 7:31 PM Dmitry Osipenko <digetx@gmail.com> wr=
-ote:
-> > >
-> > > > I was investigating why CPU hangs during of GPIO driver suspend and=
- in
-> > > > the end it turned out that it is a Broadcom WiFi driver problem bec=
-ause
-> > > > it keeps OOB wake-interrupt enabled while WLAN interface is DOWN an=
-d this
-> > > > may cause a bit weird CPU hang on writing to INT_ENB register durin=
-g of
-> > > > GPIO driver suspend. Meanwhile I also noticed that a few things cou=
-ld be
-> > > > improved in the driver, that's what this small series addresses.
-> > > >
-> > > > Dmitry Osipenko (3):
-> > > >   gpio: tegra: Use generic readl_relaxed/writel_relaxed accessors
-> > > >   gpio: tegra: Properly handle irq_set_irq_wake() error
-> > > >   gpio: tegra: Use NOIRQ phase for suspend/resume
-> > >
-> > > All three patches applied with Thierry's review/test tag.
-> > >
-> > > Yours,
-> > > Linus Walleij
-> >
-> > Ugh, I now noticed I responded to Thierry only after applying this to m=
-y tree.
-> >
-> > Anyway, it shouldn't be a problem. I'll take more care next time.
->
-> OK shall I drop the patches from my tree then? No big deal.
->
+On Mon, Jan 06, 2020 at 02:37:03PM +0100, Thierry Reding wrote:
+> On Mon, Jan 06, 2020 at 01:27:45PM +0100, Greg Kroah-Hartman wrote:
+> > On Mon, Jan 06, 2020 at 01:07:18PM +0100, Thierry Reding wrote:
+> > > On Thu, Jan 02, 2020 at 11:30:50AM +0100, Michał Mirosław wrote:
+> > > > Commit 7ad2ed1dfcbe inadvertently mixed up a quirk flag's name and
+> > > > broke SDR50 tuning override. Use correct NVQUIRK_ name.
+> > > > 
+> > > > Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
+> > > > Depends-on: 4f6aa3264af4 ("mmc: tegra: Only advertise UHS modes if IO regulator is present")
+> > > > Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> > > > ---
+> > > >  drivers/mmc/host/sdhci-tegra.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > Oh my... good catch!
+> > > 
+> > > Reviewed-by: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > I also ran this through our internal test system and all tests pass, so
+> > > also:
+> > > 
+> > > Tested-by: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > I'm not sure if that "Depends-on:" tag is anything that's recognized
+> > > anywhere. It might be better to turn that into an additional "Fixes:"
+> > > line. Adding Greg to see if he has a standard way of dealing with this
+> > > kind of dependency.
+> > > 
+> > > Greg, what's your preferred way to handle these situations? I think the
+> > > intention here was to describe that the original error was introduced by
+> > > commit 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes"), but then commit
+> > > 4f6aa3264af4 ("mmc: tegra: Only advertise UHS modes if IO regulator is
+> > > present") moved that code around, so this patch here will only be back-
+> > > portable until the latter commit, but should be backported until the
+> > > former.
+> > 
+> > The stable kernel rules document says how to handle this, but the
+> > "depends on" commit id in the comment to the right of the stable@k.o cc:
+> > line in the changelog area.
+> 
+> That only mentions "static" prerequisites needed by the patch, but what
+> if the prerequisites change depending on version?
+> 
+> Could I do something like this:
+> 
+> 	Cc: <stable@vger.kernel.org> # 4.4.x: abcdef: ...
+> 	Cc: <stable@vger.kernel.org> # 4.9.x: bcdefa: ...
+> 	Cc: <stable@vger.kernel.org>
 
-If you're fine with this, sure!
+Yes.
 
-Thanks a lot,
-Bart
+> Would that mean that the patch is selected for all stable releases
+> (because of the last line with no version prerequisite) but when applied
+> for stable-4.4 the abcdef patch gets pulled in and for stable-4.9 the
+> bcdefa dependency is applied before the patch?
+
+Yes.
+
+> I suppose this is perhaps a bit of an exotic case, but it might be good
+> to document it specifically because it might be fairly rare. I can draft
+> a change if you think this is useful to add.
+
+I thought this was already in there, as others have done it in the past.
+
+It's a _very_ exotic case, I wouldn't worry about it, just document it
+like this, and if I have problems applying the patches to stable I'll be
+sure to let you know and you can always tell me then.  That's usually
+the easiest thing to do anyway :)
+
+thanks,
+
+greg k-h
