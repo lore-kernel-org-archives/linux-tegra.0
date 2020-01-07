@@ -1,480 +1,84 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH v6 12/19] ASoC: tegra: Add audio mclk configuration
-Date: Tue, 7 Jan 2020 16:44:46 +0530
-Message-ID: <c23bf3f5-55d6-ab93-fd7b-13f9f2155dcc@nvidia.com>
-References: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
- <1578370458-3686-13-git-send-email-skomatineni@nvidia.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 2/2] pwm: Enable compile testing for some of drivers
+Date: Tue, 7 Jan 2020 12:33:54 +0100
+Message-ID: <20200107113354.ggq6zarewq5ip354@pengutronix.de>
+References: <20191230172113.17222-1-krzk@kernel.org>
+ <20191230172113.17222-2-krzk@kernel.org>
+ <20200107072645.ko247bwhh3ibdu73@pengutronix.de>
+ <20200107082539.GA31827@pi3>
+ <20200107104234.wq74fska3szrg4ii@pengutronix.de>
+ <20200107110359.GA32423@pi3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1578370458-3686-13-git-send-email-skomatineni@nvidia.com>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <20200107110359.GA32423@pi3>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Richard Weinberger <richard@nod.at>, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Thierry Reding <thierry.reding@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, kernel@pengutronix.de, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Jan 07, 2020 at 12:03:59PM +0100, Krzysztof Kozlowski wrote:
+> On Tue, Jan 07, 2020 at 11:42:34AM +0100, Uwe Kleine-König wrote:
+> > > I guess other solution would be to add stubs for few clk functions...
+> > > 
+> > > > Also HAS_IOMEM is a typical requirement, but I tested with an ARCH=um
+> > > > config (which does't have HAS_IOMEM) and they all compile fine.
+> > > 
+> > > Because of !HAS_IOMEM, since some time ARCH=um does not support
+> > > COMPILE_TEST. Therefore HAS_IOMEM dependency is not needed for compile
+> > > testing (and for regular build it is selected by ARCH).
+> > 
+> > Hehe, I didn't notice because for testing I just dropped the "depends on
+> > ..." lines in Kconfig instead of adding "|| COMPILE_TEST" :-) Still they
+> > compile fine on UML.
+> > 
+> > Ah, since bc083a64b6c0 ("init/Kconfig: make COMPILE_TEST depend on
+> > !UML") == v4.8-rc1~52^2~83 COMPILE_TEST cannot be enabled on UML, but
+> > later 1bcbfbfdeb00 ("um: add dummy ioremap and iounmap functions")
+> > == v4.13-rc1~8^2~6 UM got a dummy implementation. So maybe we could
+> > revert bc083a64b6c0 today? (And if not, a comment about why near the
+> > "depends on !UML" in init/Kconfig would be great.)
+> > 
+> > Orthogonal to that, I wonder if depending on HAS_IOMEM is right even
+> > though the compile testers won't notice it missing. Or should HAS_IOMEM
+> > be dropped?
+> 
+> I think yes, it can be dropped, but this would require:
+> 1. Fixing any dependencies on HAS_IOMEM, e.g.:
+>     WARNING: unmet direct dependencies detected for MFD_SYSCON
+>       Depends on [n]: HAS_IOMEM [=n]
+>       Selected by [y]:
+>       - PHY_DA8XX_USB [=y] && (ARCH_DAVINCI_DA8XX || COMPILE_TEST [=y])
 
-On 1/7/2020 9:44 AM, Sowjanya Komatineni wrote:
-> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
-> through Tegra210 and currently Tegra clock driver does the initial parent
-> configuration for audio mclk and keeps it enabled by default.
->
-> With the move of PMC clocks from clock driver into pmc driver,
-> audio clocks parent configuration can be specified through the device tree
-> using assigned-clock-parents property and audio mclk control should be
-> taken care by the audio driver.
->
-> This patch has implementation for parent configuration when default parent
-> configuration is not specified in the device tree and controls audio mclk
-> enable and disable during machine startup and shutdown.
->
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+I don't understand that warning. What did you modify to trigger that?
+Probably related to the big "if HAS_IOMEM" in drivers/mfd/Kconfig?!
 
-Minor comments, otherwise LGTM.
+> 2. Checking if all of stubs are implemented (not only IOMEM but maybe
+>    DMA as well). Also 1bcbfbfdeb00 brought only few stubs. Still we
+>    need devm_ioremap_resource() and others.
 
-> ---
->   sound/soc/tegra/tegra_alc5632.c    | 21 ++++++++++
->   sound/soc/tegra/tegra_asoc_utils.c | 84 ++++++++++++++++++++++++--------------
->   sound/soc/tegra/tegra_asoc_utils.h |  2 +
->   sound/soc/tegra/tegra_max98090.c   | 21 ++++++++++
->   sound/soc/tegra/tegra_rt5640.c     | 21 ++++++++++
->   sound/soc/tegra/tegra_rt5677.c     | 21 ++++++++++
->   sound/soc/tegra/tegra_sgtl5000.c   | 21 ++++++++++
->   sound/soc/tegra/tegra_wm8753.c     | 21 ++++++++++
->   sound/soc/tegra/tegra_wm8903.c     | 21 ++++++++++
->   sound/soc/tegra/trimslice.c        | 21 ++++++++++
->   10 files changed, 224 insertions(+), 30 deletions(-)
->
-> diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
-> index 50a6d2ff4442..0fd10023f7a6 100644
-> --- a/sound/soc/tegra/tegra_alc5632.c
-> +++ b/sound/soc/tegra/tegra_alc5632.c
-> @@ -62,8 +62,29 @@ static int tegra_alc5632_asoc_hw_params(struct snd_pcm_substream *substream,
->   	return 0;
->   }
->   
-> +static int tegra_alc5632_asoc_startup(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +	int ret;
-> +
-> +	ret = tegra_asoc_utils_clk_enable(&machine->util_data);
-> +
-> +	return ret;
-> +}
-> +
-> +static void tegra_alc5632_asoc_shutdown(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +
-> +	tegra_asoc_utils_clk_disable(&machine->util_data);
-> +}
-> +
->   static const struct snd_soc_ops tegra_alc5632_asoc_ops = {
-> +	.startup = tegra_alc5632_asoc_startup,
->   	.hw_params = tegra_alc5632_asoc_hw_params,
-> +	.shutdown = tegra_alc5632_asoc_shutdown,
->   };
->   
->   static struct snd_soc_jack tegra_alc5632_hs_jack;
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-> index 0d2271952555..2886ae9f5a16 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.c
-> +++ b/sound/soc/tegra/tegra_asoc_utils.c
-> @@ -60,8 +60,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
->   	data->set_mclk = 0;
->   
->   	clk_disable_unprepare(data->clk_cdev1);
-> -	clk_disable_unprepare(data->clk_pll_a_out0);
-> -	clk_disable_unprepare(data->clk_pll_a);
->   
->   	err = clk_set_rate(data->clk_pll_a, new_baseclock);
->   	if (err) {
-> @@ -77,18 +75,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
->   
->   	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
->   
-> -	err = clk_prepare_enable(data->clk_pll_a);
-> -	if (err) {
-> -		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
-> -		return err;
-> -	}
-> -
-> -	err = clk_prepare_enable(data->clk_pll_a_out0);
-> -	if (err) {
-> -		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
-> -		return err;
-> -	}
-> -
->   	err = clk_prepare_enable(data->clk_cdev1);
->   	if (err) {
->   		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
-> @@ -109,8 +95,6 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
->   	int err;
->   
->   	clk_disable_unprepare(data->clk_cdev1);
-> -	clk_disable_unprepare(data->clk_pll_a_out0);
-> -	clk_disable_unprepare(data->clk_pll_a);
->   
->   	/*
->   	 * AC97 rate is fixed at 24.576MHz and is used for both the host
-> @@ -130,17 +114,27 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
->   
->   	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
->   
-> -	err = clk_prepare_enable(data->clk_pll_a);
-> +	err = clk_prepare_enable(data->clk_cdev1);
->   	if (err) {
-> -		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
-> +		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
->   		return err;
->   	}
->   
-> -	err = clk_prepare_enable(data->clk_pll_a_out0);
-> -	if (err) {
-> -		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
-> -		return err;
-> -	}
-> +	data->set_baseclock = pll_rate;
-> +	data->set_mclk = ac97_rate;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
-> +
-> +void tegra_asoc_utils_clk_disable(struct tegra_asoc_utils_data *data)
-> +{
-> +	clk_disable_unprepare(data->clk_cdev1);
-> +}
-> +
-> +int tegra_asoc_utils_clk_enable(struct tegra_asoc_utils_data *data)
-> +{
-> +	int err;
->   
->   	err = clk_prepare_enable(data->clk_cdev1);
->   	if (err) {
-> @@ -148,16 +142,13 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
->   		return err;
->   	}
->   
-> -	data->set_baseclock = pll_rate;
-> -	data->set_mclk = ac97_rate;
-> -
->   	return 0;
->   }
-> -EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
->   
->   int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->   			  struct device *dev)
->   {
-> +	struct clk *clk_out_1, *clk_extern1;
->   	int ret;
->   
->   	data->dev = dev;
-> @@ -193,9 +184,42 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->   		return PTR_ERR(data->clk_cdev1);
->   	}
->   
-> -	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
-> -	if (ret)
-> -		return ret;
-> +	/*
-> +	 * If clock parents are not set in DT, configure here to use clk_out_1
-> +	 * as mclk and extern1 as parent for Tegra30 and higher.
-> +	 */
-> +	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
-> +	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
-> +		dev_err(data->dev,
+A problem is that it's unclear (to me at least) what the presence of
+HAS_IOMEM actually implies. I thought it's about ioremap + readl +
+writel (including their respective variants). Does it really include dma
+stuff, too?
 
-As this is a fallback mechanism, use dev_info or dev_dbg instead?
+> Quick test shows mentioned "unmet direct dependencies" and:
+>     phy-pxa-usb.c:(.text+0x2f5): undefined reference to `devm_ioremap_resource'
+>     dma-iommu.c:(.text+0x179): undefined reference to `dma_pgprot'
 
-> +			"Configuring clocks for a legacy device-tree\n");
-> +		clk_extern1 = devm_clk_get(dev, "extern1");
-> +		if (IS_ERR(clk_extern1)) {
-> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
-> +			return PTR_ERR(clk_extern1);
-> +		}
-> +
-> +		ret = clk_set_parent(clk_extern1, data->clk_pll_a_out0);
-> +		if (ret < 0) {
-> +			dev_err(data->dev,
-> +				"Set parent failed for clk extern1\n");
-> +			return ret;
-> +		}
-> +
-> +		clk_out_1 = devm_clk_get(dev, "clk_out_1");
-> +		if (IS_ERR(clk_out_1)) {
-> +			dev_err(data->dev, "Can't retrieve clk clk_out_1\n");
-> +			return PTR_ERR(clk_out_1);
-> +		}
-> +
-> +		ret = clk_set_parent(clk_out_1, clk_extern1);
-> +		if (ret < 0) {
-> +			dev_err(data->dev,
-> +				"Set parent failed for clk_out_1\n");
-> +			return ret;
-> +		}
-> +
-> +		data->clk_cdev1 = clk_out_1;
-> +	}
->   
->   	return 0;
->   }
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_asoc_utils.h
-> index a34439587d59..6db93009a317 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.h
-> +++ b/sound/soc/tegra/tegra_asoc_utils.h
-> @@ -34,5 +34,7 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
->   int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data);
->   int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->   			  struct device *dev);
-> +int tegra_asoc_utils_clk_enable(struct tegra_asoc_utils_data *data);
-> +void tegra_asoc_utils_clk_disable(struct tegra_asoc_utils_data *data);
->   
->   #endif
-> diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
-> index f554a3d4571f..98d1ff49074b 100644
-> --- a/sound/soc/tegra/tegra_max98090.c
-> +++ b/sound/soc/tegra/tegra_max98090.c
-> @@ -82,8 +82,29 @@ static int tegra_max98090_asoc_hw_params(struct snd_pcm_substream *substream,
->   	return 0;
->   }
->   
-> +static int tegra_max98090_asoc_startup(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +	int ret;
-> +
-> +	ret = tegra_asoc_utils_clk_enable(&machine->util_data);
+dma_pgprot seems to depend on HAS_DMA though, not HAS_IOMEM.
 
-"ret" can be removed.
-instead "return tegra_asoc_utils_clk_enable(&machine->util_data)"
+(Oh, HAS_DMA is defined using "depends on !NO_DMA" + "default y".
+NO_DMA has three different definitions. Two of them (in
+drivers/crypto/ccree/cc_hw_queue_defs.h and arch/arm/include/asm/dma.h)
+unrelated.)
 
-> +
-> +	return ret;
-> +}
-> +
-> +static void tegra_max98090_asoc_shutdown(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +
-> +	tegra_asoc_utils_clk_disable(&machine->util_data);
-> +}
-> +
->   static const struct snd_soc_ops tegra_max98090_ops = {
-> +	.startup = tegra_max98090_asoc_startup,
->   	.hw_params = tegra_max98090_asoc_hw_params,
-> +	.shutdown = tegra_max98090_asoc_shutdown,
->   };
->   
->   static struct snd_soc_jack tegra_max98090_hp_jack;
-> diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
-> index 5c695dfea009..8705b1a32a14 100644
-> --- a/sound/soc/tegra/tegra_rt5640.c
-> +++ b/sound/soc/tegra/tegra_rt5640.c
-> @@ -65,8 +65,29 @@ static int tegra_rt5640_asoc_hw_params(struct snd_pcm_substream *substream,
->   	return 0;
->   }
->   
-> +static int tegra_rt5640_asoc_startup(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +	int ret;
-> +
-> +	ret = tegra_asoc_utils_clk_enable(&machine->util_data);
-> +
-> +	return ret;
-> +}
-> +
-> +static void tegra_rt5640_asoc_shutdown(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +
-> +	tegra_asoc_utils_clk_disable(&machine->util_data);
-> +}
-> +
->   static const struct snd_soc_ops tegra_rt5640_ops = {
-> +	.startup = tegra_rt5640_asoc_startup,
->   	.hw_params = tegra_rt5640_asoc_hw_params,
-> +	.shutdown = tegra_rt5640_asoc_shutdown,
->   };
->   
->   static struct snd_soc_jack tegra_rt5640_hp_jack;
-> diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
-> index fb86f76728b3..a44b5ddc33ee 100644
-> --- a/sound/soc/tegra/tegra_rt5677.c
-> +++ b/sound/soc/tegra/tegra_rt5677.c
-> @@ -82,8 +82,29 @@ static int tegra_rt5677_event_hp(struct snd_soc_dapm_widget *w,
->   	return 0;
->   }
->   
-> +static int tegra_rt5677_asoc_startup(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_rt5677 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +	int ret;
-> +
-> +	ret = tegra_asoc_utils_clk_enable(&machine->util_data);
-> +
-> +	return ret;
-> +}
-> +
-> +static void tegra_rt5677_asoc_shutdown(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_rt5677 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +
-> +	tegra_asoc_utils_clk_disable(&machine->util_data);
-> +}
-> +
->   static const struct snd_soc_ops tegra_rt5677_ops = {
-> +	.startup = tegra_rt5677_asoc_startup,
->   	.hw_params = tegra_rt5677_asoc_hw_params,
-> +	.shutdown = tegra_rt5677_asoc_shutdown,
->   };
->   
->   static struct snd_soc_jack tegra_rt5677_hp_jack;
-> diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-> index 586f56f435f4..f3317dd4a79f 100644
-> --- a/sound/soc/tegra/tegra_sgtl5000.c
-> +++ b/sound/soc/tegra/tegra_sgtl5000.c
-> @@ -71,8 +71,29 @@ static int tegra_sgtl5000_hw_params(struct snd_pcm_substream *substream,
->   	return 0;
->   }
->   
-> +static int tegra_sgtl5000_startup(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_sgtl5000 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +	int ret;
-> +
-> +	ret = tegra_asoc_utils_clk_enable(&machine->util_data);
-> +
-> +	return ret;
-> +}
-> +
-> +static void tegra_sgtl5000_shutdown(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_sgtl5000 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +
-> +	tegra_asoc_utils_clk_disable(&machine->util_data);
-> +}
-> +
->   static const struct snd_soc_ops tegra_sgtl5000_ops = {
-> +	.startup = tegra_sgtl5000_startup,
->   	.hw_params = tegra_sgtl5000_hw_params,
-> +	.shutdown = tegra_sgtl5000_shutdown,
->   };
->   
->   static const struct snd_soc_dapm_widget tegra_sgtl5000_dapm_widgets[] = {
-> diff --git a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
-> index f76cfdc963ed..f4a000ec7506 100644
-> --- a/sound/soc/tegra/tegra_wm8753.c
-> +++ b/sound/soc/tegra/tegra_wm8753.c
-> @@ -75,8 +75,29 @@ static int tegra_wm8753_hw_params(struct snd_pcm_substream *substream,
->   	return 0;
->   }
->   
-> +static int tegra_wm8753_startup(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_wm8753 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +	int ret;
-> +
-> +	ret = tegra_asoc_utils_clk_enable(&machine->util_data);
-> +
-> +	return ret;
-> +}
-> +
-> +static void tegra_wm8753_shutdown(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_wm8753 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +
-> +	tegra_asoc_utils_clk_disable(&machine->util_data);
-> +}
-> +
->   static const struct snd_soc_ops tegra_wm8753_ops = {
-> +	.startup = tegra_wm8753_startup,
->   	.hw_params = tegra_wm8753_hw_params,
-> +	.shutdown = tegra_wm8753_shutdown,
->   };
->   
->   static const struct snd_soc_dapm_widget tegra_wm8753_dapm_widgets[] = {
-> diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-> index f5f78c3512cd..7b5cd1653821 100644
-> --- a/sound/soc/tegra/tegra_wm8903.c
-> +++ b/sound/soc/tegra/tegra_wm8903.c
-> @@ -82,8 +82,29 @@ static int tegra_wm8903_hw_params(struct snd_pcm_substream *substream,
->   	return 0;
->   }
->   
-> +static int tegra_wm8903_startup(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +	int ret;
-> +
-> +	ret = tegra_asoc_utils_clk_enable(&machine->util_data);
-> +
-> +	return ret;
-> +}
-> +
-> +static void tegra_wm8903_shutdown(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(rtd->card);
-> +
-> +	tegra_asoc_utils_clk_disable(&machine->util_data);
-> +}
-> +
->   static const struct snd_soc_ops tegra_wm8903_ops = {
-> +	.startup = tegra_wm8903_startup,
->   	.hw_params = tegra_wm8903_hw_params,
-> +	.shutdown = tegra_wm8903_shutdown,
->   };
->   
->   static struct snd_soc_jack tegra_wm8903_hp_jack;
-> diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
-> index e51c67092c8f..4b703734904f 100644
-> --- a/sound/soc/tegra/trimslice.c
-> +++ b/sound/soc/tegra/trimslice.c
-> @@ -60,8 +60,29 @@ static int trimslice_asoc_hw_params(struct snd_pcm_substream *substream,
->   	return 0;
->   }
->   
-> +static int trimslice_asoc_startup(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_trimslice *machine = snd_soc_card_get_drvdata(rtd->card);
-> +	int ret;
-> +
-> +	ret = tegra_asoc_utils_clk_enable(&machine->util_data);
-> +
-> +	return ret;
-> +}
-> +
-> +static void trimslice_asoc_shutdown(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct tegra_trimslice *machine = snd_soc_card_get_drvdata(rtd->card);
-> +
-> +	tegra_asoc_utils_clk_disable(&machine->util_data);
-> +}
-> +
->   static const struct snd_soc_ops trimslice_asoc_ops = {
-> +	.startup = trimslice_asoc_startup,
->   	.hw_params = trimslice_asoc_hw_params,
-> +	.shutdown = trimslice_asoc_shutdown,
->   };
->   
->   static const struct snd_soc_dapm_widget trimslice_dapm_widgets[] = {
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
