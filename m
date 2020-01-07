@@ -1,75 +1,64 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH] regmap: add iopoll-like atomic polling macro
-Date: Tue, 7 Jan 2020 15:58:09 +0530
-Message-ID: <1578392889-16587-1-git-send-email-spujar@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
+	samples
+Date: Tue, 7 Jan 2020 10:29:10 +0000
+Message-ID: <eb90ee78-e462-401a-de60-4a9bfc2a00c4@nvidia.com>
+References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
+ <20191018154833.7560-3-ben.dooks@codethink.co.uk>
+ <d2110a1f-c1de-e2c5-a1ff-5eb4c5d3e1da@gmail.com>
+ <b4e2ec44-bc89-b5ca-cfa7-a6d5c45a9c94@codethink.co.uk>
+ <a11ba33e-5ffb-c5c6-04f5-0e031877c55f@gmail.com>
+ <621fa27d-9259-2949-9cf5-d2eda5cb0677@gmail.com>
+ <a0f027d9-e9e0-d76c-1e40-002fdc37eb5f@nvidia.com>
+ <d43d518d-9336-a011-2a69-3f9331f6d0b4@codethink.co.uk>
+ <aba4edd6-0ea5-5e95-c5a0-9e749587c763@nvidia.com>
+ <449bdc3c-bf82-7cc4-6704-440dd100ca3a@gmail.com>
+ <5d3ae629-5d30-0930-5dd1-15161e64926e@codethink.co.uk>
+ <9daeeb94-2b90-18b8-2e1e-daae5acf079d@gmail.com>
+ <fd73f68c-80f5-ac80-f6e4-42256d3df76d@codethink.co.uk>
+ <37beb96a-a525-c72f-a7e1-e9ef5d61f3b2@gmail.com>
+ <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
+ <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+ <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
+ <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
+ <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org
-Cc: jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
+Content-Language: en-US
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds a macro 'regmap_read_poll_timeout_atomic' that works
-similar to 'readx_poll_timeout_atomic' defined in linux/iopoll.h; This
-is atomic version of already available 'regmap_read_poll_timeout' macro.
-
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- include/linux/regmap.h | 41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index dfe493a..09d79ea 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -145,6 +145,47 @@ struct reg_sequence {
- })
- 
- /**
-+ * regmap_read_poll_timeout_atomic - Poll until a condition is met or a timeout occurs
-+ *
-+ * @map: Regmap to read from
-+ * @addr: Address to poll
-+ * @val: Unsigned integer variable to read the value into
-+ * @cond: Break condition (usually involving @val)
-+ * @delay_us: Time to udelay between reads in us (0 tight-loops).
-+ *            Should be less than ~10us since udelay is used
-+ *            (see Documentation/timers/timers-howto.rst).
-+ * @timeout_us: Timeout in us, 0 means never timeout
-+ *
-+ * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_read
-+ * error return value in case of a error read. In the two former cases,
-+ * the last read value at @addr is stored in @val.
-+ *
-+ * This is modelled after the readx_poll_timeout_atomic macros in linux/iopoll.h.
-+ */
-+#define regmap_read_poll_timeout_atomic(map, addr, val, cond, delay_us, timeout_us) \
-+({ \
-+	u64 __timeout_us = (timeout_us); \
-+	unsigned long __delay_us = (delay_us); \
-+	ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
-+	int __ret; \
-+	for (;;) { \
-+		__ret = regmap_read((map), (addr), &(val)); \
-+		if (__ret) \
-+			break; \
-+		if (cond) \
-+			break; \
-+		if ((__timeout_us) && \
-+		    ktime_compare(ktime_get(), __timeout) > 0) { \
-+			__ret = regmap_read((map), (addr), &(val)); \
-+			break; \
-+		} \
-+		if (__delay_us) \
-+			udelay(__delay_us); \
-+	} \
-+	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
-+})
-+
-+/**
-  * regmap_field_read_poll_timeout - Poll until a condition is met or timeout
-  *
-  * @field: Regmap field to read from
--- 
-2.7.4
+Ck9uIDA1LzAxLzIwMjAgMTA6NTMsIEJlbiBEb29rcyB3cm90ZToKPiAKPiAKPiBPbiAyMDIwLTAx
+LTA1IDAxOjQ4LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6Cj4+IDA1LjAxLjIwMjAgMDM6MDQsIEJl
+biBEb29rcyDQv9C40YjQtdGCOgo+Pj4gW3NuaXBdCj4+Pgo+Pj4gSSd2ZSBqdXN0IGdvbmUgdGhy
+b3VnaCB0ZXN0aW5nLgo+Pj4KPj4+IFNvbWUgc2ltcGxlIGRhdGEgdGVzdHMgc2hvdyAxNiBhbmQg
+MzItYml0cyB3b3JrLgo+Pj4KPj4+IFRoZSAyNCBiaXQgY2FzZSBzZWVtcyB0byBiZSB3ZWlyZCwg
+aXQgbG9va3MgbGlrZSB0aGUgMjQtYml0IGV4cGVjdHMKPj4+IDI0IGJpdCBzYW1wbGVzIGluIDMy
+IGJpdCB3b3Jkcy4gSSBjYW4ndCBzZWUgYW55IHBhY2tpbmcgb3B0aW9ucyB0bwo+Pj4gZG8gMjQg
+Yml0IGluIDI0IGJpdCwgc28gd2UgbWF5IGhhdmUgdG8gcmVtb3ZlIDI0IGJpdCBzYW1wbGUgc3Vw
+cG9ydAo+Pj4gKHdoaWNoIGlzIGEgc2hhbWUpCj4+Pgo+Pj4gTXkgcHJlZmVyZW5jZSBpcyB0byBy
+ZW1vdmUgdGhlIDI0LWJpdCBzdXBwb3J0IGFuZCBrZWVwIHRoZSAzMiBiaXQgaW4uCj4+Pgo+Pgo+
+PiBJbnRlcmVzdGluZy4uIEpvbiwgY291bGQgeW91IHBsZWFzZSBjb25maXJtIHRoYXQgMjRiaXQg
+Zm9ybWF0IGlzbid0Cj4+IHVzYWJsZSBvbiBUMzA/Cj4gCj4gSWYgdGhlcmUgaXMgYW4gb3B0aW9u
+IG9mIDI0IHBhY2tlZCBpbnRvIDMyLCB0aGVuIEkgdGhpbmsgdGhhdCB3b3VsZCB3b3JrLgo+IAo+
+IEkgY2FuIHRyeSB0ZXN0aW5nIHRoYXQgd2l0aCByYXcgZGF0YSBvbiBNb25kYXkuCgpJIHdpbGwg
+Y2hlY2sgb24gdGhpcy4gSSB3b3VsZCBoYXZlIHRob3VnaHQgdGhhdCBTMjRfTEUgKDI0LWJpdHMg
+cGFja2VkCmludG8gMzItYml0IGVsZW1lbnRzKSB3b3VsZCBiZSBmaW5lLiBUeXBpY2FsbHkgd2Ug
+ZG9uJ3Qgc3VwcG9ydCBTMjRfM0xFCigyNC1iaXRzIGluIDI0LWJpdCBlbGVtZW50cykuCgpKb24K
+Ci0tIApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcK
+aHR0cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNhLWRl
+dmVsCg==
