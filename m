@@ -1,51 +1,70 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH v2] mmc: tegra: fix SDR50 tuning override
-Date: Tue, 7 Jan 2020 09:23:23 +0200
-Message-ID: <9ad68894-fe90-4fb1-47b9-2304dee5b902@intel.com>
-References: <b20c4847980c2c385ff0d7677fa5101c4d040749.1578314098.git.mirq-linux@rere.qmqm.pl>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 2/2] pwm: Enable compile testing for some of drivers
+Date: Tue, 7 Jan 2020 08:26:45 +0100
+Message-ID: <20200107072645.ko247bwhh3ibdu73@pengutronix.de>
+References: <20191230172113.17222-1-krzk@kernel.org>
+ <20191230172113.17222-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b20c4847980c2c385ff0d7677fa5101c4d040749.1578314098.git.mirq-linux@rere.qmqm.pl>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20191230172113.17222-2-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pwm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Thierry Reding <thierry.reding@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/01/20 2:36 pm, Michał Mirosław wrote:
-> Commit 7ad2ed1dfcbe inadvertently mixed up a quirk flag's name and
-> broke SDR50 tuning override. Use correct NVQUIRK_ name.
-> 
-> Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
-> Cc: <stable@vger.kernel.org> # 4f6aa3264af4: mmc: tegra: Only advertise UHS modes if IO regulator is present
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Hello Krzysztof,
 
-You should have included Thierry's Reviewed-by and Tested-by
+On Mon, Dec 30, 2019 at 06:21:13PM +0100, Krzysztof Kozlowski wrote:
+> Some of the PWM drivers can be compile tested to increase build
+> coverage.
+> =
 
-Otherwise:
+> The Meson PWM driver requires COMMON_CLK dependency.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+I'm surprised that there are not more that need this. Is HAVE_CLK not
+enough?
 
-> ---
->  v2: converted 'Depends-On' tag to proper 'Cc: stable' lines
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 7bc950520fd9..403ac44a7378 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -386,7 +386,7 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
->  			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
->  		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
->  			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
-> -		if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
-> +		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
->  			clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
->  	}
->  
-> 
+Also HAS_IOMEM is a typical requirement, but I tested with an ARCH=3Dum
+config (which does't have HAS_IOMEM) and they all compile fine.
+
+> @@ -318,7 +319,7 @@ config PWM_MEDIATEK
+>  =
+
+>  config PWM_MXS
+>  	tristate "Freescale MXS PWM support"
+> -	depends on ARCH_MXS && OF
+> +	depends on (ARCH_MXS && OF) || COMPILE_TEST
+>  	select STMP_DEVICE
+>  	help
+>  	  Generic PWM framework driver for Freescale MXS.
+> @@ -328,7 +329,8 @@ config PWM_MXS
+>  =
+
+>  config PWM_OMAP_DMTIMER
+>  	tristate "OMAP Dual-Mode Timer PWM support"
+> -	depends on OF && ARCH_OMAP && OMAP_DM_TIMER
+> +	depends on (ARCH_OMAP && OMAP_DM_TIMER) || COMPILE_TEST
+> +	depends on OF
+
+I'm surprised that OF isn't required for PWM_MXS but is is for
+PWM_OMAP_DMTIMER. pwm-mxs compiles without CONFIG_OF, didn't test
+pwm-omap-dmtimer.
+
+Best regards
+Uwe
+
+-- =
+
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            =
+|    | https://www.pengutronix.de/ |
