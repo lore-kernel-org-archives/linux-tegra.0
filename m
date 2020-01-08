@@ -1,72 +1,127 @@
-From: Nicolas Chauvet <kwizart@gmail.com>
-Subject: Re: [PATCH v7 05/21] clk: tegra: Fix Tegra PMC clock out parents
-Date: Wed, 8 Jan 2020 09:34:19 +0100
-Message-ID: <CABr+WT=qP1BJUfzgmr4AzN18Zp-trMEStF6SQ+AH7+aYBUuUww@mail.gmail.com>
-References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com> <1578457515-3477-6-git-send-email-skomatineni@nvidia.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH] phy: core: Add consumer device link support
+Date: Wed, 8 Jan 2020 09:37:22 +0100
+Message-ID: <b4bceef4-44b1-a48a-7b76-41eb3f5acc81@st.com>
+References: <20191104143713.11137-1-alexandre.torgue@st.com>
+ <146b2971-d51a-164c-aea8-9b6b4ff5f420@nvidia.com>
+ <341954e6-79f8-d45c-fc05-1ce5bd4e3abb@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1578457515-3477-6-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <341954e6-79f8-d45c-fc05-1ce5bd4e3abb@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, Rob Herring <robh+dt@kernel.org>, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, Manikanta Maddireddy <mmaddireddy@nvidia.com>, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Le mer. 8 janv. 2020 =C3=A0 05:27, Sowjanya Komatineni
-<skomatineni@nvidia.com> a =C3=A9crit :
->
-> Tegra PMC clock out parents are osc, osc_div2, osc_div4 and extern
-> clock.
->
-> Clock driver is using incorrect parents clk_m, clk_m_div2, clk_m_div4
-> for PMC clocks.
->
-> This patch fixes this.
->
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra-pmc.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-te=
-gra-pmc.c
-> index bec3e008335f..5e044ba1ae36 100644
-> --- a/drivers/clk/tegra/clk-tegra-pmc.c
-> +++ b/drivers/clk/tegra/clk-tegra-pmc.c
-> @@ -49,16 +49,16 @@ struct pmc_clk_init_data {
->
->  static DEFINE_SPINLOCK(clk_out_lock);
->
-> -static const char *clk_out1_parents[] =3D { "clk_m", "clk_m_div2",
-> -       "clk_m_div4", "extern1",
-> +static const char *clk_out1_parents[] =3D { "osc", "osc_div2",
-> +       "osc_div4", "extern1",
->  };
->
-> -static const char *clk_out2_parents[] =3D { "clk_m", "clk_m_div2",
-> -       "clk_m_div4", "extern2",
-> +static const char *clk_out2_parents[] =3D { "osc", "osc_div2",
-> +       "osc_div4", "extern2",
->  };
->
-> -static const char *clk_out3_parents[] =3D { "clk_m", "clk_m_div2",
-> -       "clk_m_div4", "extern3",
-> +static const char *clk_out3_parents[] =3D { "osc", "osc_div2",
-> +       "osc_div4", "extern3",
->  };
->
->  static struct pmc_clk_init_data pmc_clks[] =3D {
-> --
-> 2.7.4
 
-Out of curiosity, this patch touch the clk-tegra-pmc.c file which is
-later removed (by patch 11).
-Is this change made for bugfix ? Is there a stable tag missing ?
 
---=20
--
+On 1/8/20 8:29 AM, Kishon Vijay Abraham I wrote:
+> Hi Jon,
+> 
+> On 07/01/20 5:21 PM, Jon Hunter wrote:
+>>
+>> On 04/11/2019 14:37, Alexandre Torgue wrote:
+>>> In order to enforce suspend/resume ordering, this commit creates link
+>>> between phy consumers and phy devices. This link avoids to suspend phy
+>>> before phy consumers.
+>>>
+>>> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+>>
+>> With next-20200106 we are seeing a boot regression on Tegra124 Jetson
+>> TK1 board. Bisect is pointing to this commit and reverting this on top
+>> of -next fixes the problem.
+>>
+>> The bootlog is showing the following crash on boot ...
+>>
+>> [    1.730024] 8<--- cut here ---
+>> [    1.733079] Unable to handle kernel paging request at virtual address fffffe7f
+>> [    1.740318] pgd = (ptrval)
+>> [    1.743021] [fffffe7f] *pgd=affff841, *pte=00000000, *ppte=00000000
+>> [    1.749304] Internal error: Oops: 27 [#1] SMP ARM
+>> [    1.754001] Modules linked in:
+>> [    1.757057] CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc4-next-20200106-g9eb1b48ca4ce #1
+>> [    1.765654] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>> [    1.771919] PC is at device_link_add+0x68/0x4d4
+>> [    1.776444] LR is at device_link_add+0x68/0x4d4
+>> [    1.780967] pc : [<c09832e4>]    lr : [<c09832e4>]    psr: 60000013
+>> [    1.787223] sp : ee0e1d60  ip : 60000013  fp : 00000005
+>> [    1.792439] r10: 00000000  r9 : 00000000  r8 : eefedd88
+>> [    1.797657] r7 : ee269c10  r6 : fffffdfb  r5 : 00000001  r4 : 00000001
+>> [    1.804173] r3 : ee0d8000  r2 : 00000000  r1 : 00000000  r0 : c1858f88
+>> [    1.810691] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+>> [    1.817815] Control: 10c5387d  Table: 8020406a  DAC: 00000051
+>> [    1.823552] Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
+>> [    1.829549] Stack: (0xee0e1d60 to 0xee0e2000)
+>> [    1.833904] 1d60: eefedd88 00000040 c07087a0 fffffdfb ee269c10 ee737640 00000000 eefedd88
+>> [    1.842073] 1d80: 00000000 00000000 00000005 c0707d34 00000000 ee3c8a00 ee7375c0 ee269c10
+>> [    1.850242] 1da0: eefedd88 c0a0bd2c c1704e48 ee269c10 ee269c00 ee3c8a00 00000000 c0a0c4a8
+>> [    1.858409] 1dc0: ee269c10 c1704e48 c186603c 00000000 c186603c 00000000 00000000 bc98ab22
+>> [    1.866577] 1de0: ffffffff ee269c10 00000000 c186603c ee269c00 c186603c 00000000 00000000
+>> [    1.874744] 1e00: c1656690 c0a0ffe0 00000000 bc98ab22 ee269c10 ee269c10 00000000 c186603c
+>> [    1.882913] 1e20: 00000000 c186603c 00000000 c09887e0 c18ff9dc ee269c10 c18ff9e0 c0986860
+>> [    1.891082] 1e40: ee269c10 c186603c c186603c c1704e48 00000000 c15003f0 c15c3854 c0986af0
+>> [    1.899249] 1e60: c15c3854 c0d128b4 c10e48ec ee269c10 00000000 c186603c c1704e48 00000000
+>> [    1.907416] 1e80: c15003f0 c15c3854 c1656690 c0986da0 00000000 c186603c ee269c10 c0986e28
+>> [    1.915583] 1ea0: 00000000 c186603c c0986da8 c0984ba0 c15003f0 ee20c058 ee242334 bc98ab22
+>> [    1.923752] 1ec0: c18588c8 c186603c ee737200 c18588c8 00000000 c0985b94 c133ef10 ffffe000
+>> [    1.931919] 1ee0: c186603c c186603c c18aaf80 ffffe000 c158b72c c09878ac c1704e48 c18aaf80
+>> [    1.940088] 1f00: ffffe000 c0302f80 00000168 c0367d84 c143e5b4 c1371000 00000000 00000006
+>> [    1.948255] 1f20: 00000006 c125b1b4 00000000 c1704e48 c126f324 c125b228 00000000 efffec88
+>> [    1.956424] 1f40: 00000000 bc98ab22 00000000 c18b6bc0 c18b6bc0 bc98ab22 c18b6bc0 c18b6bc0
+>> [    1.964591] 1f60: 00000007 c15c3834 00000169 c1500f28 00000006 00000006 00000000 c15003f0
+>> [    1.972758] 1f80: 00000000 00000000 c0ef1cdc 00000000 00000000 00000000 00000000 00000000
+>> [    1.980924] 1fa0: 00000000 c0ef1ce4 00000000 c03010e8 00000000 00000000 00000000 00000000
+>> [    1.989092] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>> [    1.997260] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+>> [    2.005440] [<c09832e4>] (device_link_add) from [<c0707d34>] (devm_of_phy_get+0x6c/0xb0)
+>> [    2.013528] [<c0707d34>] (devm_of_phy_get) from [<c0a0bd2c>] (ahci_platform_get_phy+0x28/0xd0)
+>> [    2.022134] [<c0a0bd2c>] (ahci_platform_get_phy) from [<c0a0c4a8>] (ahci_platform_get_resources+0x384/0x468)
+>> [    2.031952] [<c0a0c4a8>] (ahci_platform_get_resources) from [<c0a0ffe0>] (tegra_ahci_probe+0x14/0x650)
+>> [    2.041254] [<c0a0ffe0>] (tegra_ahci_probe) from [<c09887e0>] (platform_drv_probe+0x48/0x98)
+>> [    2.049686] [<c09887e0>] (platform_drv_probe) from [<c0986860>] (really_probe+0x234/0x34c)
+>> [    2.057944] [<c0986860>] (really_probe) from [<c0986af0>] (driver_probe_device+0x60/0x168)
+>> [    2.066202] [<c0986af0>] (driver_probe_device) from [<c0986da0>] (device_driver_attach+0x58/0x60)
+>> [    2.075064] [<c0986da0>] (device_driver_attach) from [<c0986e28>] (__driver_attach+0x80/0xbc)
+>> [    2.083582] [<c0986e28>] (__driver_attach) from [<c0984ba0>] (bus_for_each_dev+0x74/0xb4)
+>> [    2.091751] [<c0984ba0>] (bus_for_each_dev) from [<c0985b94>] (bus_add_driver+0x164/0x1e8)
+>> [    2.100008] [<c0985b94>] (bus_add_driver) from [<c09878ac>] (driver_register+0x7c/0x114)
+>> [    2.108094] [<c09878ac>] (driver_register) from [<c0302f80>] (do_one_initcall+0x54/0x22c)
+>> [    2.116271] [<c0302f80>] (do_one_initcall) from [<c1500f28>] (kernel_init_freeable+0x14c/0x1b0)
+>> [    2.124967] [<c1500f28>] (kernel_init_freeable) from [<c0ef1ce4>] (kernel_init+0x8/0x10c)
+>> [    2.133139] [<c0ef1ce4>] (kernel_init) from [<c03010e8>] (ret_from_fork+0x14/0x2c)
+>> [    2.140697] Exception stack(0xee0e1fb0 to 0xee0e1ff8)
+>> [    2.145743] 1fa0:                                     00000000 00000000 00000000 00000000
+>> [    2.153910] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>> [    2.162076] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>> [    2.168686] Code: e59f0470 03844040 eb15cb16 eb004c8a (e5d63084)
+>> [    2.174824] ---[ end trace fddbf111e88ec722 ]---
+>>
+>>
+>> I believe that there is a bug in this patch and the following fixed it for me ...
+>>
+>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+>> index 8dfb4868c8c3..2eb28cc2d2dc 100644
+>> --- a/drivers/phy/phy-core.c
+>> +++ b/drivers/phy/phy-core.c
+>> @@ -799,6 +799,7 @@ struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
+>>                  devres_add(dev, ptr);
+>>          } else {
+>>                  devres_free(ptr);
+>> +               return phy;
+>>          }
+>>   
+>>          link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+> 
+> Thank you for spotting this. I've included the fix now.
 
-Nicolas (kwizart)
+Thanks guys, and sorry for this regression.
+
+alex
+
+> 
+> Thanks
+> Kishon
+> 
