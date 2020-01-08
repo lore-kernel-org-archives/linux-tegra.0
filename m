@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 10/21] soc: tegra: Add support for 32KHz blink clock
-Date: Tue, 7 Jan 2020 20:25:04 -0800
-Message-ID: <1578457515-3477-11-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 19/21] ARM: tegra: Update sound node clocks in device tree
+Date: Tue, 7 Jan 2020 20:25:13 -0800
+Message-ID: <1578457515-3477-20-git-send-email-skomatineni@nvidia.com>
 References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,244 +12,249 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broo
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC has blink control to output 32 Khz clock out to Tegra
-blink pin. Blink pad DPD state and enable controls are part of
-Tegra PMC register space.
+clk_out_1, clk_out_2, and clk_out_3 are part of Tegra PMC block
+and are moved from clock driver to pmc driver with pmc as clock
+provider.
 
-Currently Tegra clock driver registers blink control by passing
-PMC address and register offset to clk_register_gate which performs
-direct PMC access during clk_ops and with this when PMC is in secure
-mode, any access from non-secure world does not go through.
+clk_out_1 is dedicated for audio mclk on Tegra30 through Tegra210.
 
-This patch adds blink control registration to the Tegra PMC driver
-using PMC specific clock gate operations that use tegra_pmc_readl
-and tegra_pmc_writel to support both secure mode and non-secure
-mode PMC register access.
+This patch updates device tree sound node to use clk_out_1 from
+pmc provider as mclk and uses assigned-clock properties to specify
+clock parents for clk_out_1 and extern1.
 
 Tested-by: Dmitry Osipenko <digetx@gmail.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 110 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+ arch/arm/boot/dts/tegra114-dalmore.dts      | 8 +++++++-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 8 +++++++-
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 8 +++++++-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 8 +++++++-
+ arch/arm/boot/dts/tegra124-nyan.dtsi        | 8 +++++++-
+ arch/arm/boot/dts/tegra124-venice2.dts      | 8 +++++++-
+ arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi  | 8 +++++++-
+ arch/arm/boot/dts/tegra30-apalis.dtsi       | 8 +++++++-
+ arch/arm/boot/dts/tegra30-beaver.dts        | 8 +++++++-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi       | 8 +++++++-
+ arch/arm/boot/dts/tegra30-colibri.dtsi      | 8 +++++++-
+ 11 files changed, 77 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 2b1a709c3cb7..280f0c14e4ec 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -62,12 +62,15 @@
- #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
- #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
- #define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
-+#define  PMC_CNTRL_BLINK_EN		7
- #define  PMC_CNTRL_MAIN_RST		BIT(4)
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 97a5c3504bbe..d3e032e7d21a 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -1296,7 +1296,13 @@
  
- #define PMC_WAKE_MASK			0x0c
- #define PMC_WAKE_LEVEL			0x10
- #define PMC_WAKE_STATUS			0x14
- #define PMC_SW_WAKE_STATUS		0x18
-+#define PMC_DPD_PADS_ORIDE		0x1c
-+#define  PMC_DPD_PADS_ORIDE_BLINK	20
- 
- #define DPD_SAMPLE			0x020
- #define  DPD_SAMPLE_ENABLE		BIT(0)
-@@ -80,6 +83,7 @@
- 
- #define PWRGATE_STATUS			0x38
- 
-+#define PMC_BLINK_TIMER			0x40
- #define PMC_IMPL_E_33V_PWR		0x40
- 
- #define PMC_PWR_DET			0x48
-@@ -171,6 +175,14 @@ struct pmc_clk {
- 
- #define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
- 
-+struct pmc_clk_gate {
-+	struct clk_hw	hw;
-+	unsigned long	offs;
-+	u32		shift;
-+};
+ 		clocks = <&tegra_car TEGRA114_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA114_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA114_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
 +
-+#define to_pmc_clk_gate(_hw) container_of(_hw, struct pmc_clk_gate, hw)
++		assigned-clocks = <&tegra_car TEGRA114_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
 +
- struct pmc_clk_init_data {
- 	char *name;
- 	const char *const *parents;
-@@ -321,6 +333,7 @@ struct tegra_pmc_soc {
++		assigned-clock-parents = <&tegra_car TEGRA114_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA114_CLK_EXTERN1>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+index 0462ed2dd8b8..de499f736bda 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+@@ -2009,8 +2009,14 @@
+ 		nvidia,audio-codec = <&sgtl5000>;
+ 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA124_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
++
++		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++
++		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA124_CLK_EXTERN1>;
+ 	};
  
- 	const struct pmc_clk_init_data *pmc_clks_data;
- 	unsigned int num_pmc_clks;
-+	bool has_blink_output;
+ 	thermal-zones {
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index d1e8593ef0d9..d70a86da4ee4 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -2001,8 +2001,14 @@
+ 		nvidia,audio-codec = <&sgtl5000>;
+ 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA124_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
++
++		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++
++		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA124_CLK_EXTERN1>;
+ 	};
+ 
+ 	thermal-zones {
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index d5fd642f8b77..aaf8f6a56ca8 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -2058,8 +2058,14 @@
+ 
+ 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA124_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
++
++		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++
++		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA124_CLK_EXTERN1>;
+ 	};
+ 
+ 	thermal-zones {
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index 3b10f475037f..9b1af50cd4b8 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -788,9 +788,15 @@
+ 
+ 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA124_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 
++		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++
++		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA124_CLK_EXTERN1>;
++
+ 		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(I, 7) GPIO_ACTIVE_HIGH>;
+ 		nvidia,mic-det-gpios =
+ 				<&gpio TEGRA_GPIO(R, 7) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 7309393bfced..8c2ee6e7d6f1 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -1266,8 +1266,14 @@
+ 
+ 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA124_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
++
++		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++
++		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA124_CLK_EXTERN1>;
+ 	};
  };
  
- static const char * const tegra186_reset_sources[] = {
-@@ -2334,6 +2347,60 @@ tegra_pmc_clk_out_register(struct tegra_pmc *pmc,
- 	return clk_register(NULL, &pmc_clk->hw);
- }
+diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+index 8b7a827d604d..387b17458e22 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+@@ -1189,7 +1189,13 @@
+ 		nvidia,audio-codec = <&sgtl5000>;
+ 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA30_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
++
++		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++
++		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA30_CLK_EXTERN1>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index c18f6f61d764..6648506f3aa4 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -1171,7 +1171,13 @@
+ 		nvidia,audio-codec = <&sgtl5000>;
+ 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA30_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
++
++		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++
++		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA30_CLK_EXTERN1>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index a3b0f3555cd2..45ef6002b225 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -2111,7 +2111,13 @@
  
-+static int pmc_clk_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
+ 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA30_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
 +
-+	return tegra_pmc_readl(pmc, gate->offs) & BIT(gate->shift) ? 1 : 0;
-+}
++		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
 +
-+static int pmc_clk_gate_enable(struct clk_hw *hw)
-+{
-+	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
-+
-+	pmc_clk_set_state(gate->offs, gate->shift, 1);
-+
-+	return 0;
-+}
-+
-+static void pmc_clk_gate_disable(struct clk_hw *hw)
-+{
-+	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
-+
-+	pmc_clk_set_state(gate->offs, gate->shift, 0);
-+}
-+
-+static const struct clk_ops pmc_clk_gate_ops = {
-+	.is_enabled = pmc_clk_gate_is_enabled,
-+	.enable = pmc_clk_gate_enable,
-+	.disable = pmc_clk_gate_disable,
-+};
-+
-+static struct clk *
-+tegra_pmc_clk_gate_register(struct tegra_pmc *pmc, const char *name,
-+			    const char *parent_name, unsigned long offset,
-+			    u32 shift)
-+{
-+	struct clk_init_data init;
-+	struct pmc_clk_gate *gate;
-+
-+	gate = devm_kzalloc(pmc->dev, sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &pmc_clk_gate_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = 0;
-+
-+	gate->hw.init = &init;
-+	gate->offs = offset;
-+	gate->shift = shift;
-+
-+	return clk_register(NULL, &gate->hw);
-+}
-+
- static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
- 				     struct device_node *np)
- {
-@@ -2343,6 +2410,8 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
- 	int i, err;
++		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA30_CLK_EXTERN1>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 7ce61edd52f5..4b4f49a49394 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -619,8 +619,14 @@
  
- 	num_clks = pmc->soc->num_pmc_clks;
-+	if (pmc->soc->has_blink_output)
-+		num_clks += 1;
+ 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA30_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
++
++		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++
++		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA30_CLK_EXTERN1>;
+ 	};
  
- 	if (!num_clks)
- 		return;
-@@ -2384,6 +2453,40 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
- 		clk_data->clks[data->clk_id] = clk;
- 	}
- 
-+	if (pmc->soc->has_blink_output) {
-+		tegra_pmc_writel(pmc, 0x0, PMC_BLINK_TIMER);
-+		clk = tegra_pmc_clk_gate_register(pmc, "blink_override",
-+						  "clk_32k",
-+						  PMC_DPD_PADS_ORIDE,
-+						  PMC_DPD_PADS_ORIDE_BLINK);
-+		if (IS_ERR(clk)) {
-+			dev_warn(pmc->dev,
-+				 "unable to register blink_override: %d\n",
-+				 PTR_ERR_OR_ZERO(clk));
-+			return;
-+		}
+ 	gpio-keys {
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 1f9198bb24ff..adba554381c7 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -1030,8 +1030,14 @@
+ 		nvidia,audio-codec = <&sgtl5000>;
+ 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
+-			 <&tegra_car TEGRA30_CLK_EXTERN1>;
++			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
 +
-+		clk = tegra_pmc_clk_gate_register(pmc, "blink",
-+						  "blink_override",
-+						  PMC_CNTRL,
-+						  PMC_CNTRL_BLINK_EN);
-+		if (IS_ERR(clk)) {
-+			dev_warn(pmc->dev, "unable to register blink: %d\n",
-+				 PTR_ERR_OR_ZERO(clk));
-+			return;
-+		}
++		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
 +
-+		err = clk_register_clkdev(clk, "blink", NULL);
-+		if (err) {
-+			dev_warn(pmc->dev,
-+				 "unable to register blink clock lookup: %d\n",
-+				 err);
-+			return;
-+		}
-+
-+		clk_data->clks[TEGRA_PMC_CLK_BLINK] = clk;
-+	}
-+
- 	err = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
- 	if (err)
- 		dev_warn(pmc->dev, "failed to add pmc clock provider: %d\n",
-@@ -2652,6 +2755,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
-+	.has_blink_output = true,
++		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
++					 <&tegra_car TEGRA30_CLK_EXTERN1>;
+ 	};
  };
  
- static const char * const tegra30_powergates[] = {
-@@ -2701,6 +2805,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
- 
- static const char * const tegra114_powergates[] = {
-@@ -2754,6 +2859,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
- 
- static const char * const tegra124_powergates[] = {
-@@ -2867,6 +2973,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.num_reset_levels = 0,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
- 
- static const char * const tegra210_powergates[] = {
-@@ -2983,6 +3090,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.wake_events = tegra210_wake_events,
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
-+	.has_blink_output = true,
- };
- 
- #define TEGRA186_IO_PAD_TABLE(_pad)					     \
-@@ -3114,6 +3222,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.wake_events = tegra186_wake_events,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
-+	.has_blink_output = false,
- };
- 
- static const struct tegra_io_pad_soc tegra194_io_pads[] = {
-@@ -3233,6 +3342,7 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
- 	.wake_events = tegra194_wake_events,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
-+	.has_blink_output = false,
- };
- 
- static const struct of_device_id tegra_pmc_match[] = {
 -- 
 2.7.4
