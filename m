@@ -1,15 +1,16 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 01/13] dt-bindings: memory: Add Tegra186 memory client IDs
-Date: Wed, 8 Jan 2020 10:14:30 -0600
-Message-ID: <20200108161430.GA8334@bogus>
+Subject: Re: [PATCH 02/13] dt-bindings: memory: Add Tegra194 memory
+ controller header
+Date: Wed, 8 Jan 2020 10:15:45 -0600
+Message-ID: <20200108161545.GA10129@bogus>
 References: <20191222141035.1649937-1-thierry.reding@gmail.com>
- <20191222141035.1649937-2-thierry.reding@gmail.com>
+ <20191222141035.1649937-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20191222141035.1649937-2-thierry.reding@gmail.com>
+In-Reply-To: <20191222141035.1649937-3-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,16 +23,18 @@ Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, 22 Dec 2019 15:10:23 +0100, Thierry Reding wrote:
+On Sun, 22 Dec 2019 15:10:24 +0100, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Add IDs for the memory clients found on NVIDIA Tegra186 SoCs. This will
-> be used to describe interconnect paths from devices to system memory.
+> This header contains definitions for the memory controller found on
+> NVIDIA Tegra194 SoCs, such as the stream IDs used for the ARM SMMU and
+> the IDs used to identify the various memory clients.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  include/dt-bindings/memory/tegra186-mc.h | 139 +++++++++++++++++++++++
->  1 file changed, 139 insertions(+)
+>  include/dt-bindings/memory/tegra194-mc.h | 410 +++++++++++++++++++++++
+>  1 file changed, 410 insertions(+)
+>  create mode 100644 include/dt-bindings/memory/tegra194-mc.h
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
