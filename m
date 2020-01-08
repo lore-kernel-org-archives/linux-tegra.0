@@ -1,75 +1,113 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v6 00/19] Move PMC clocks into Tegra PMC driver
-Date: Wed, 8 Jan 2020 03:40:23 +0300
-Message-ID: <f6a28f8d-5061-0be5-2530-966c3a25aaf4@gmail.com>
+Subject: Re: [PATCH v6 06/19] soc: tegra: Add Tegra PMC clocks registration
+ into PMC driver
+Date: Wed, 8 Jan 2020 04:00:25 +0300
+Message-ID: <b37d1be0-affc-a0c7-157a-140b141ca155@gmail.com>
 References: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
- <20200107122152.GD1964183@ulmo>
- <1f7d3c1e-115c-e08e-240b-c4df9e68543d@nvidia.com>
+ <1578370458-3686-7-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1f7d3c1e-115c-e08e-240b-c4df9e68543d@nvidia.com>
+In-Reply-To: <1578370458-3686-7-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-07.01.2020 19:50, Sowjanya Komatineni пишет:
+07.01.2020 07:14, Sowjanya Komatineni пишет:
+> Tegra PMC has clk_out_1, clk_out_2, and clk_out_3 clocks and currently
+> these PMC clocks are registered by Tegra clock driver with each clock as
+> separate mux and gate clocks using clk_register_mux and clk_register_gate
+> by passing PMC base address and register offsets and PMC programming for
+> these clocks happens through direct PMC access by the clock driver.
 > 
-> On 1/7/20 4:21 AM, Thierry Reding wrote:
->> On Mon, Jan 06, 2020 at 08:13:59PM -0800, Sowjanya Komatineni wrote:
->>> This patch series moves Tegra PMC clocks from clock driver to pmc driver
->>> along with the device trees changes and audio driver which uses one of
->>> the pmc clock for audio mclk.
->>>
->>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
->>> are currently registered by Tegra clock driver using clk_regiser_mux and
->>> clk_register_gate which performs direct Tegra PMC register access.
->>>
->>> When Tegra PMC is in secure mode, any access from non-secure world will
->>> not go through.
->>>
->>> This patch series adds these Tegra PMC clocks and blink controls to
->>> Tegra
->>> PMC driver with PMC as clock provider and removes them from Tegra clock
->>> driver.
->>>
->>> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru
->>> Tegra210
->>> and clock driver does inital parent configuration for it and enables
->>> them.
->>> But this clock should be taken care by audio driver as there is no need
->>> to have this clock pre enabled.
->>>
->>> So, this series also includes patch that updates ASoC driver to take
->>> care of parent configuration for mclk if device tree don't specify
->>> initial parent configuration using assigned-clock-parents and controls
->>> audio mclk enable/disable during ASoC machine startup and shutdown.
->>>
->>> DTs are also updated to use clk_out_1 as audio mclk rather than extern1.
->>>
->>> This series also includes a patch for mclk fallback to extern1 when
->>> retrieving mclk fails to have this backward compatible of new DT with
->>> old kernels.
->> Hi Sowjanya,
->>
->> this looks like it's almost ready to merge. Can you highlight if there
->> are any build-time or runtime dependencies between the patches? The
->> audio driver changes seem to be mostly isolated from the rest by the
->> fallback implementation for legacy device trees.
->>
->> Is there anything that I need to keep in mind when applying these? And
->> would it be fine for Mark to pick up the ASoC patches separately from
->> the rest?
->>
->> Thierry
+> With this, when PMC is in secure mode any direct PMC access from the
+> non-secure world does not go through and these clocks will not be
+> functional.
 > 
-> Yes, ASoC patches can be picked separately.
+> This patch adds these PMC clocks registration to pmc driver with PMC as
+> a clock provider and registers each clock as single clock.
 > 
-> dependencies are b/w clock and pmc driver patches.
+> clk_ops callback implementations for these clocks uses tegra_pmc_readl and
+> tegra_pmc_writel which supports PMC programming in both secure mode and
+> non-secure mode.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 242 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 242 insertions(+)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 1699dda6b393..2b1a709c3cb7 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -13,9 +13,13 @@
+>  
+>  #include <linux/arm-smccc.h>
+>  #include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk/clk-conf.h>
+>  #include <linux/clk/tegra.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/delay.h>
+> +#include <linux/device.h>
+>  #include <linux/err.h>
+>  #include <linux/export.h>
+>  #include <linux/init.h>
+> @@ -48,6 +52,7 @@
+>  #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+>  #include <dt-bindings/gpio/tegra186-gpio.h>
+>  #include <dt-bindings/gpio/tegra194-gpio.h>
+> +#include <dt-bindings/soc/tegra-pmc.h>
+>  
+>  #define PMC_CNTRL			0x0
+>  #define  PMC_CNTRL_INTR_POLARITY	BIT(17) /* inverts INTR polarity */
+> @@ -100,6 +105,8 @@
+>  #define PMC_WAKE2_STATUS		0x168
+>  #define PMC_SW_WAKE2_STATUS		0x16c
+>  
+> +#define PMC_CLK_OUT_CNTRL		0x1a8
+> +#define  PMC_CLK_OUT_MUX_MASK		GENMASK(1, 0)
+>  #define PMC_SENSOR_CTRL			0x1b0
+>  #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
+>  #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+> @@ -155,6 +162,63 @@
+>  #define  TEGRA_SMC_PMC_READ	0xaa
+>  #define  TEGRA_SMC_PMC_WRITE	0xbb
+>  
+> +struct pmc_clk {
+> +	struct clk_hw	hw;
+> +	unsigned long	offs;
+> +	u32		mux_shift;
+> +	u32		force_en_shift;
+> +};
+> +
+> +#define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
+> +
+> +struct pmc_clk_init_data {
+> +	char *name;
+> +	const char *const *parents;
+> +	int num_parents;
+> +	int clk_id;
+> +	u8 mux_shift;
+> +	u8 force_en_shift;
+> +};
+> +
+> +static const char * const clk_out1_parents[] = { "osc", "osc_div2",
+> +	"osc_div4", "extern1",
+> +};
+> +
+> +static const char * const clk_out2_parents[] = { "osc", "osc_div2",
+> +	"osc_div4", "extern2",
+> +};
+> +
+> +static const char * const clk_out3_parents[] = { "osc", "osc_div2",
+> +	"osc_div4", "extern3",
+> +};
 
-Technically, the ASoC compatibility patches should be applied before the
-CaR changes. But perhaps it's not critical if audio fails during git's
-bisection.
+There is no way to specify "osc" as a parent clock in a device-tree
+because there is no DT ID assigned to the OSC in the CaR driver, should
+this be fixed?
