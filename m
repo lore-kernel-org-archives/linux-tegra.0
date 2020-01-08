@@ -1,55 +1,52 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] pwm: Fix minor Kconfig whitespace issues
-Date: Wed, 8 Jan 2020 14:00:52 +0100
-Message-ID: <20200108130052.GF1993114@ulmo>
-References: <20191230172113.17222-1-krzk@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Re: [PATCH] regmap: add iopoll-like atomic polling macro
+Date: Wed, 8 Jan 2020 13:36:08 +0000
+Message-ID: <20200108133608.GB3817@sirena.org.uk>
+References: <1578392889-16587-1-git-send-email-spujar@nvidia.com>
+ <20200107120902.GC4877@sirena.org.uk>
+ <ae119533-6966-157a-d14b-365306907554@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+jhVVhN62yS6hEJ8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20191230172113.17222-1-krzk@kernel.org>
+In-Reply-To: <ae119533-6966-157a-d14b-365306907554@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
+To: Sameer Pujar <spujar@nvidia.com>
+Cc: jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---+jhVVhN62yS6hEJ8
+--ftEhullJWpWg/VHq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 30, 2019 at 06:21:12PM +0100, Krzysztof Kozlowski wrote:
-> Remove double whitespace after "config" keyword.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/pwm/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, Jan 08, 2020 at 10:20:37AM +0530, Sameer Pujar wrote:
 
-Applied, thanks.
+> While checking the documentation on snd_soc_dai_ops, it appears trigger() is
+> in atomic context.
+> This means I cannot use regmap interface (with default configuration) in
+> trigger().
+> The above issue went away with usage of regmap_read_poll_timeout_atomic()
+> and now I think I just got lucky.
 
-Thierry
+It's fine if your regmap is set up to support atomic use (using a flat
+or no cache and MMIO) but not for regmaps in general, I'm asking you to
+document the fact that it's only usable with some regmaps.
 
---+jhVVhN62yS6hEJ8
+--ftEhullJWpWg/VHq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4V0oQACgkQ3SOs138+
-s6GW+RAAqt7l9DVUT1XZy2TgE7UeLRkeCbnVtYRqr1q4kqqjW1uRyRc2gbd6Q15a
-Orl53tUGiuE+Fr/t+UpQSLOmsc93zRIqkhbyMdfyTXJRGhzU5UCx2BuBDkelvmZ/
-ZcTgvi8IkXRVh7SJx6E2i956iFXifCQQKd/pbS3oPZbUCeRPJuhCTgmfD7NAKvCR
-YsaDo4MWHuuulx05CCLeZ+g915YEGXCV5nKr5RdY9/uf1ifS1waeUZK8+C+uwAy6
-17J7Ee4+27mydyVzsutgTLAWfnNf3wcwDzbYaR61G4dKZXHWZBlzjq1hAlyfLrfI
-Ue9fAv71KPfLULXpotqvoVkzKeTzW5SSnbtsi22wLJfmu5RI2ZCS2gXdRN0Z5f8y
-9M59CBmSSOvoQ7b/nBbOCxxlUqZTXGjnlJCXqrqGmomCMQvKZIJBNBILlFoQDDtZ
-wCVV+XXEHq3j4qvgsjgkAHLGyxkjmryg6fOFe9mqCGwk1huV5NYbI4aP1xiSCmTt
-00wLZMd67PnKuPv1GAgvRW+BLif97N1U7g2OP5ewhYXPj7cd1DVQHsgwbKnKkz1H
-UWG3gn+7n3KcstFfKsgS3X8fhKQ2+HalnX9hBfeORhPef5cCtIURILtOU/sS/pvZ
-f30UWoLal+Aylqbsc01nUJmxg27i/m0q4+v7waQmAJlE0L+1c6o=
-=p5N4
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4V2scACgkQJNaLcl1U
+h9DyyQf+LRcDvu8nJIgo56AfloLDZvisdiVJj7IrHeWoTCRS9c1x+UZUP70TNT6z
+U8jW6z/jfA0AjReMQygFjd6K+3qAlfl3A/7EdFIb2oIv8xhW89KOhEIG2gp0ai57
+bID5m+17D34TDlaCbzVgR5jAapB34UzAK6Okv1VjbeTgAXvEhUbbPYPgNbF2WVB7
+Sz8KTR4CVfHPNN3UVh/9PBkrbEx5ndgBhAyjf00iffGfisbtUJ2WoHWd06VuUAmW
+MlUxoi4kSwbgx+yd9L1gq+TOcCYqrCiW/8b2UubQ/xEe4hOM6i8SvMKbtuViORIa
+W9nhfZ/Ki+3VjeiMnh+n2/XUVY4ndw==
+=8PIN
 -----END PGP SIGNATURE-----
 
---+jhVVhN62yS6hEJ8--
+--ftEhullJWpWg/VHq--
