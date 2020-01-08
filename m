@@ -1,13 +1,12 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V3 2/4] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
-Date: Wed, 8 Jan 2020 13:00:13 +0100
-Message-ID: <20200108120013.GB1993114@ulmo>
+Subject: Re: [PATCH V3 1/4] clk: tegra: mark fuse clock as critical
+Date: Wed, 8 Jan 2020 12:59:49 +0100
+Message-ID: <20200108115949.GA1993114@ulmo>
 References: <20191003205033.98381-1-swarren@wwwdotorg.org>
- <20191003205033.98381-2-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1347602008950912197=="
+Content-Type: multipart/mixed; boundary="===============8777011363908664921=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191003205033.98381-2-swarren@wwwdotorg.org>
+In-Reply-To: <20191003205033.98381-1-swarren@wwwdotorg.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,40 +21,27 @@ Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Pet
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1347602008950912197==
+--===============8777011363908664921==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
+	protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
 Content-Disposition: inline
 
 
---0eh6TmSyL6TZE2Uz
+--fdj2RfSjLxBAspz7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 03, 2019 at 02:50:31PM -0600, Stephen Warren wrote:
+On Thu, Oct 03, 2019 at 02:50:30PM -0600, Stephen Warren wrote:
 > From: Stephen Warren <swarren@nvidia.com>
 >=20
-> For a little over a year, U-Boot has configured the flow controller to
-> perform automatic RAM re-repair on off->on power transitions of the CPU
-> rail1]. This is mandatory for correct operation of Tegra124. However, RAM
-> re-repair relies on certain clocks, which the kernel must enable and
-> leave running. PLLP is one of those clocks. This clock is shut down
-> during LP1 in order to save power. Enable bypass (which I believe routes
-> osc_div_clk, essentially the crystal clock, to the PLL output) so that
-> this clock signal toggles even though the PLL is not active. This is
-> required so that LP1 power mode (system suspend) operates correctly.
->=20
-> The bypass configuration must then be undone when resuming from LP1, so
-> that all peripheral clocks run at the expected rate. Without this, many
-> peripherals won't work correctly; for example, the UART baud rate would
-> be incorrect.
->=20
-> NVIDIA's downstream kernel code only does this if not compiled for
-> Tegra30, so the added code is made conditional upon the chip ID. NVIDIA's
-> downstream code makes this change conditional upon the active CPU
-> cluster. The upstream kernel currently doesn't support cluster switching,
-> so this patch doesn't test the active CPU cluster ID.
+> For a little over a year, U-Boot on Tegra124 has configured the flow
+> controller to perform automatic RAM re-repair on off->on power transitions
+> of the CPU rail1]. This is mandatory for correct operation of Tegra124.
+> However, RAM re-repair relies on certain clocks, which the kernel must
+> enable and leave running. The fuse clock is one of those clocks. Mark this
+> clock as critical so that LP1 power mode (system suspend) operates
+> correctly.
 >=20
 > [1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
 >=20
@@ -63,40 +49,42 @@ On Thu, Oct 03, 2019 at 02:50:31PM -0600, Stephen Warren wrote:
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Stephen Warren <swarren@nvidia.com>
 > ---
-> v3: No change.
-> v2: No change.
+> v3: Added comment to the clock table entry indicating why the clock is
+>     critical.
+> v2: Set CRITICAL flag on the clock, rather than enabling it in
+>     tegra124_init_table[].
 > ---
->  arch/arm/mach-tegra/sleep-tegra30.S | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  drivers/clk/tegra/clk-tegra-periph.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-Patches 2-4 applied to for-5.6/arm/core, thanks.
+Applied to for-5.6/clk, thanks.
 
 Thierry
 
---0eh6TmSyL6TZE2Uz
+--fdj2RfSjLxBAspz7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4VxE0ACgkQ3SOs138+
-s6E3Ig/+JjmQL+DrA9FZlgMo3Ni2wA7V95dT4yry/2c1athzRmI2QNMrQpfGZScP
-zXrhZTpPO4Nyq0mFhxV9cjSDs6HPfMIPqtO3HGt3n2r0glywFRTmzOROfUAwC06B
-sGJ8NzV47AGQd4ueON+jf81GXvBvlsqeLsUc2fC8zy1wtuic68jo+p4/Xypw+Lwu
-W9lPUE5yThqJ2AegnYTZMwT7L+O4XtpXEJb8kwtDVFSOilRfoZwtURCjUGjRZ9X9
-oe40yUAdeiHWo0RyMyawgZ6LpcsFREdBtfS19hI32K7YZr/PtMppD8F4oiNdz7pu
-nxtHZwgz3GeLa4I5l5sAVXgaVjnbMaC0qIlnAQJ+mu8x5slHogJtARb/sLOKdahc
-2hlfD+0Ig4lCGhNHTG9xvDL5aP1TMX3JseK51H2l/Poo0p6o00auUM83NuLBsavs
-y/Xh02MT9bt/Nl4++GPWQxyAyoWUmgNPwlxzLwqAiimSFMmIUw0zla2ux97Mn0wO
-hPuyFZrXWysD+y8sl2RjzwbOnF+rWP425zxKNg8hxspCOUGd5zcIsUrKyth2KTJI
-Y8tbHYXVO3L6Zt8ctpnah81m19pZEezqDNKXeCjC2BKdQNINeadrOJcXTdzm6y6k
-03LVoHLMTU+IfoOvV9W7xM+XfoIy2tTyR7ApXAhsO9BxdVucBw4=
-=oiR4
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4VxDMACgkQ3SOs138+
+s6F6PhAAlrIuajL3DdiqYncmRYYV7/TjqJxFw2VwBy9bhCisUem0d4zjoIWBl90E
+0smLovIXi5278XwG2zdZAtPqA58tKy6xybLzZRez0CY3ACghUSPnfxC6fLH0EMpj
+QecOh6LeN6mKkf0EtM810FDRTh+k2YJciaFGV7l5lz+d6qmxEPGeawy81VbnVNyB
+F16b9sCYjzqPlEbz/UxySc/b6hD7po6+MBguko8kb6xXs0beKRiKVQ7hJxuOUA2F
+RhR1h1amdCArtcqRwWIgTGhS+e+M2sMssv/JCywjBGhm9yMjI6hPffyKkawCoLJD
+GUBbV2cnt3ucR1DxmWnnkm1Vks577M11PDro+7V4FM0qWMBsLysO4t2uq2QlkHpk
+2tAhMt7X0VvSqtG7pO8aUteCezY+JPck26XOhMuzCVR/ByaaIVi2gEFOzwOezgDy
+YuyAa0zL1oB92AjsaTwtgZ7jIULmUox+kEt2IwEJJcDesOGOmTDfsvZTWiXsJe0K
+JfhmAsU3jnFHUkgUCATa6gSuZJiFhcfY1pPJoZ2GJDtEHDP0DTF63WDJDDqM/i8l
+CTjNIg8dC4MX8wEkZvdZ1VP2Dp/A1zWEl2cppCLX/y5rQFCB8hSyIfYg++KvVN0b
+whEWoIWUs0tJfDWAFroFO2GLa6B2n2NbzgaEIKl6tTN6A6p7BeY=
+=zoua
 -----END PGP SIGNATURE-----
 
---0eh6TmSyL6TZE2Uz--
+--fdj2RfSjLxBAspz7--
 
 
---===============1347602008950912197==
+--===============8777011363908664921==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -107,4 +95,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============1347602008950912197==--
+--===============8777011363908664921==--
