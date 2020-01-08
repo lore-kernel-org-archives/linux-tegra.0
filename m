@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 19/21] ARM: tegra: Update sound node clocks in device tree
-Date: Tue, 7 Jan 2020 20:25:13 -0800
-Message-ID: <1578457515-3477-20-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 14/21] ASoC: tegra: Add audio mclk configuration
+Date: Tue, 7 Jan 2020 20:25:08 -0800
+Message-ID: <1578457515-3477-15-git-send-email-skomatineni@nvidia.com>
 References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,249 +12,438 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broo
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-clk_out_1, clk_out_2, and clk_out_3 are part of Tegra PMC block
-and are moved from clock driver to pmc driver with pmc as clock
-provider.
+Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+through Tegra210 and currently Tegra clock driver does the initial parent
+configuration for audio mclk and keeps it enabled by default.
 
-clk_out_1 is dedicated for audio mclk on Tegra30 through Tegra210.
+With the move of PMC clocks from clock driver into pmc driver,
+audio clocks parent configuration can be specified through the device tree
+using assigned-clock-parents property and audio mclk control should be
+taken care by the audio driver.
 
-This patch updates device tree sound node to use clk_out_1 from
-pmc provider as mclk and uses assigned-clock properties to specify
-clock parents for clk_out_1 and extern1.
+This patch has implementation for parent configuration when default parent
+configuration is not specified in the device tree and controls audio mclk
+enable and disable during machine startup and shutdown.
 
 Tested-by: Dmitry Osipenko <digetx@gmail.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm/boot/dts/tegra114-dalmore.dts      | 8 +++++++-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 8 +++++++-
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 8 +++++++-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 8 +++++++-
- arch/arm/boot/dts/tegra124-nyan.dtsi        | 8 +++++++-
- arch/arm/boot/dts/tegra124-venice2.dts      | 8 +++++++-
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi  | 8 +++++++-
- arch/arm/boot/dts/tegra30-apalis.dtsi       | 8 +++++++-
- arch/arm/boot/dts/tegra30-beaver.dts        | 8 +++++++-
- arch/arm/boot/dts/tegra30-cardhu.dtsi       | 8 +++++++-
- arch/arm/boot/dts/tegra30-colibri.dtsi      | 8 +++++++-
- 11 files changed, 77 insertions(+), 11 deletions(-)
+ sound/soc/tegra/tegra_alc5632.c    | 18 ++++++++
+ sound/soc/tegra/tegra_asoc_utils.c | 88 +++++++++++++++++++++++++-------------
+ sound/soc/tegra/tegra_asoc_utils.h |  2 +
+ sound/soc/tegra/tegra_max98090.c   | 18 ++++++++
+ sound/soc/tegra/tegra_rt5640.c     | 18 ++++++++
+ sound/soc/tegra/tegra_rt5677.c     | 18 ++++++++
+ sound/soc/tegra/tegra_sgtl5000.c   | 18 ++++++++
+ sound/soc/tegra/tegra_wm8753.c     | 18 ++++++++
+ sound/soc/tegra/tegra_wm8903.c     | 18 ++++++++
+ sound/soc/tegra/trimslice.c        | 18 ++++++++
+ 10 files changed, 204 insertions(+), 30 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 97a5c3504bbe..d3e032e7d21a 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -1296,7 +1296,13 @@
+diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+index 50a6d2ff4442..5da7933f6a99 100644
+--- a/sound/soc/tegra/tegra_alc5632.c
++++ b/sound/soc/tegra/tegra_alc5632.c
+@@ -62,8 +62,26 @@ static int tegra_alc5632_asoc_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
  
- 		clocks = <&tegra_car TEGRA114_CLK_PLL_A>,
- 			 <&tegra_car TEGRA114_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA114_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
++static int tegra_alc5632_asoc_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(rtd->card);
 +
-+		assigned-clocks = <&tegra_car TEGRA114_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++	return tegra_asoc_utils_clk_enable(&machine->util_data);
++}
 +
-+		assigned-clock-parents = <&tegra_car TEGRA114_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA114_CLK_EXTERN1>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 0462ed2dd8b8..de499f736bda 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -2009,8 +2009,14 @@
- 		nvidia,audio-codec = <&sgtl5000>;
- 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
- 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA124_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
++static void tegra_alc5632_asoc_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(rtd->card);
 +
-+		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++	tegra_asoc_utils_clk_disable(&machine->util_data);
++}
 +
-+		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA124_CLK_EXTERN1>;
- 	};
- 
- 	thermal-zones {
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index d1e8593ef0d9..d70a86da4ee4 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -2001,8 +2001,14 @@
- 		nvidia,audio-codec = <&sgtl5000>;
- 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
- 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA124_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
-+
-+		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA124_CLK_EXTERN1>;
- 	};
- 
- 	thermal-zones {
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index d5fd642f8b77..aaf8f6a56ca8 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -2058,8 +2058,14 @@
- 
- 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
- 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA124_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
-+
-+		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA124_CLK_EXTERN1>;
- 	};
- 
- 	thermal-zones {
-diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
-index 3b10f475037f..9b1af50cd4b8 100644
---- a/arch/arm/boot/dts/tegra124-nyan.dtsi
-+++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
-@@ -788,9 +788,15 @@
- 
- 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
- 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA124_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 
-+		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA124_CLK_EXTERN1>;
-+
- 		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(I, 7) GPIO_ACTIVE_HIGH>;
- 		nvidia,mic-det-gpios =
- 				<&gpio TEGRA_GPIO(R, 7) GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index 7309393bfced..8c2ee6e7d6f1 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -1266,8 +1266,14 @@
- 
- 		clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
- 			 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA124_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
-+
-+		assigned-clocks = <&tegra_car TEGRA124_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA124_CLK_EXTERN1>;
- 	};
+ static const struct snd_soc_ops tegra_alc5632_asoc_ops = {
++	.startup = tegra_alc5632_asoc_startup,
+ 	.hw_params = tegra_alc5632_asoc_hw_params,
++	.shutdown = tegra_alc5632_asoc_shutdown,
  };
  
-diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-index 8b7a827d604d..387b17458e22 100644
---- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-@@ -1189,7 +1189,13 @@
- 		nvidia,audio-codec = <&sgtl5000>;
- 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
- 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA30_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
-+
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA30_CLK_EXTERN1>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index c18f6f61d764..6648506f3aa4 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -1171,7 +1171,13 @@
- 		nvidia,audio-codec = <&sgtl5000>;
- 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
- 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA30_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
-+
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA30_CLK_EXTERN1>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index a3b0f3555cd2..45ef6002b225 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -2111,7 +2111,13 @@
+ static struct snd_soc_jack tegra_alc5632_hs_jack;
+diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+index 0d2271952555..9cfebef74870 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.c
++++ b/sound/soc/tegra/tegra_asoc_utils.c
+@@ -60,8 +60,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 	data->set_mclk = 0;
  
- 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
- 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA30_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	clk_disable_unprepare(data->clk_cdev1);
+-	clk_disable_unprepare(data->clk_pll_a_out0);
+-	clk_disable_unprepare(data->clk_pll_a);
+ 
+ 	err = clk_set_rate(data->clk_pll_a, new_baseclock);
+ 	if (err) {
+@@ -77,18 +75,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 
+ 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
+ 
+-	err = clk_prepare_enable(data->clk_pll_a);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
+-		return err;
+-	}
+-
+-	err = clk_prepare_enable(data->clk_pll_a_out0);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
+-		return err;
+-	}
+-
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+@@ -109,8 +95,6 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 	int err;
+ 
+ 	clk_disable_unprepare(data->clk_cdev1);
+-	clk_disable_unprepare(data->clk_pll_a_out0);
+-	clk_disable_unprepare(data->clk_pll_a);
+ 
+ 	/*
+ 	 * AC97 rate is fixed at 24.576MHz and is used for both the host
+@@ -130,17 +114,28 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 
+ 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
+ 
+-	err = clk_prepare_enable(data->clk_pll_a);
++	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
++		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+ 		return err;
+ 	}
+ 
+-	err = clk_prepare_enable(data->clk_pll_a_out0);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
+-		return err;
+-	}
++	data->set_baseclock = pll_rate;
++	data->set_mclk = ac97_rate;
 +
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
 +
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA30_CLK_EXTERN1>;
- 	};
++void tegra_asoc_utils_clk_disable(struct tegra_asoc_utils_data *data)
++{
++	clk_disable_unprepare(data->clk_cdev1);
++}
++EXPORT_SYMBOL_GPL(tegra_asoc_utils_clk_disable);
++
++int tegra_asoc_utils_clk_enable(struct tegra_asoc_utils_data *data)
++{
++	int err;
+ 
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+@@ -148,16 +143,14 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 		return err;
+ 	}
+ 
+-	data->set_baseclock = pll_rate;
+-	data->set_mclk = ac97_rate;
+-
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
++EXPORT_SYMBOL_GPL(tegra_asoc_utils_clk_enable);
+ 
+ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 			  struct device *dev)
+ {
++	struct clk *clk_out_1, *clk_extern1;
+ 	int ret;
+ 
+ 	data->dev = dev;
+@@ -193,9 +186,44 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 		return PTR_ERR(data->clk_cdev1);
+ 	}
+ 
+-	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+-	if (ret)
+-		return ret;
++	/*
++	 * If clock parents are not set in DT, configure here to use clk_out_1
++	 * as mclk and extern1 as parent for Tegra30 and higher.
++	 */
++	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
++	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
++		dev_warn(data->dev,
++			 "Configuring clocks for a legacy device-tree\n");
++		dev_warn(data->dev,
++			 "Please update DT to use assigned-clock-parents\n");
++		clk_extern1 = devm_clk_get(dev, "extern1");
++		if (IS_ERR(clk_extern1)) {
++			dev_err(data->dev, "Can't retrieve clk extern1\n");
++			return PTR_ERR(clk_extern1);
++		}
++
++		ret = clk_set_parent(clk_extern1, data->clk_pll_a_out0);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for clk extern1\n");
++			return ret;
++		}
++
++		clk_out_1 = devm_clk_get(dev, "clk_out_1");
++		if (IS_ERR(clk_out_1)) {
++			dev_err(data->dev, "Can't retrieve clk clk_out_1\n");
++			return PTR_ERR(clk_out_1);
++		}
++
++		ret = clk_set_parent(clk_out_1, clk_extern1);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for clk_out_1\n");
++			return ret;
++		}
++
++		data->clk_cdev1 = clk_out_1;
++	}
+ 
+ 	return 0;
+ }
+diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_asoc_utils.h
+index a34439587d59..6db93009a317 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.h
++++ b/sound/soc/tegra/tegra_asoc_utils.h
+@@ -34,5 +34,7 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data);
+ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 			  struct device *dev);
++int tegra_asoc_utils_clk_enable(struct tegra_asoc_utils_data *data);
++void tegra_asoc_utils_clk_disable(struct tegra_asoc_utils_data *data);
+ 
+ #endif
+diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+index f554a3d4571f..ec43b27ca3f7 100644
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -82,8 +82,26 @@ static int tegra_max98090_asoc_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
++static int tegra_max98090_asoc_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	return tegra_asoc_utils_clk_enable(&machine->util_data);
++}
++
++static void tegra_max98090_asoc_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	tegra_asoc_utils_clk_disable(&machine->util_data);
++}
++
+ static const struct snd_soc_ops tegra_max98090_ops = {
++	.startup = tegra_max98090_asoc_startup,
+ 	.hw_params = tegra_max98090_asoc_hw_params,
++	.shutdown = tegra_max98090_asoc_shutdown,
  };
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index 7ce61edd52f5..4b4f49a49394 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -619,8 +619,14 @@
  
- 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
- 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA30_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
-+
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA30_CLK_EXTERN1>;
- 	};
+ static struct snd_soc_jack tegra_max98090_hp_jack;
+diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
+index 5c695dfea009..2d63ab0987ea 100644
+--- a/sound/soc/tegra/tegra_rt5640.c
++++ b/sound/soc/tegra/tegra_rt5640.c
+@@ -65,8 +65,26 @@ static int tegra_rt5640_asoc_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
  
- 	gpio-keys {
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 1f9198bb24ff..adba554381c7 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -1030,8 +1030,14 @@
- 		nvidia,audio-codec = <&sgtl5000>;
- 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
- 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA30_CLK_EXTERN1>;
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
++static int tegra_rt5640_asoc_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(rtd->card);
 +
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++	return tegra_asoc_utils_clk_enable(&machine->util_data);
++}
 +
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA30_CLK_EXTERN1>;
- 	};
++static void tegra_rt5640_asoc_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	tegra_asoc_utils_clk_disable(&machine->util_data);
++}
++
+ static const struct snd_soc_ops tegra_rt5640_ops = {
++	.startup = tegra_rt5640_asoc_startup,
+ 	.hw_params = tegra_rt5640_asoc_hw_params,
++	.shutdown = tegra_rt5640_asoc_shutdown,
  };
  
+ static struct snd_soc_jack tegra_rt5640_hp_jack;
+diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
+index fb86f76728b3..81485dbe4ec6 100644
+--- a/sound/soc/tegra/tegra_rt5677.c
++++ b/sound/soc/tegra/tegra_rt5677.c
+@@ -82,8 +82,26 @@ static int tegra_rt5677_event_hp(struct snd_soc_dapm_widget *w,
+ 	return 0;
+ }
+ 
++static int tegra_rt5677_asoc_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_rt5677 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	return tegra_asoc_utils_clk_enable(&machine->util_data);
++}
++
++static void tegra_rt5677_asoc_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_rt5677 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	tegra_asoc_utils_clk_disable(&machine->util_data);
++}
++
+ static const struct snd_soc_ops tegra_rt5677_ops = {
++	.startup = tegra_rt5677_asoc_startup,
+ 	.hw_params = tegra_rt5677_asoc_hw_params,
++	.shutdown = tegra_rt5677_asoc_shutdown,
+ };
+ 
+ static struct snd_soc_jack tegra_rt5677_hp_jack;
+diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
+index 586f56f435f4..8852a4bcafe7 100644
+--- a/sound/soc/tegra/tegra_sgtl5000.c
++++ b/sound/soc/tegra/tegra_sgtl5000.c
+@@ -71,8 +71,26 @@ static int tegra_sgtl5000_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
++static int tegra_sgtl5000_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_sgtl5000 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	return tegra_asoc_utils_clk_enable(&machine->util_data);
++}
++
++static void tegra_sgtl5000_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_sgtl5000 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	tegra_asoc_utils_clk_disable(&machine->util_data);
++}
++
+ static const struct snd_soc_ops tegra_sgtl5000_ops = {
++	.startup = tegra_sgtl5000_startup,
+ 	.hw_params = tegra_sgtl5000_hw_params,
++	.shutdown = tegra_sgtl5000_shutdown,
+ };
+ 
+ static const struct snd_soc_dapm_widget tegra_sgtl5000_dapm_widgets[] = {
+diff --git a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
+index f76cfdc963ed..a4595d73df53 100644
+--- a/sound/soc/tegra/tegra_wm8753.c
++++ b/sound/soc/tegra/tegra_wm8753.c
+@@ -75,8 +75,26 @@ static int tegra_wm8753_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
++static int tegra_wm8753_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_wm8753 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	return tegra_asoc_utils_clk_enable(&machine->util_data);
++}
++
++static void tegra_wm8753_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_wm8753 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	tegra_asoc_utils_clk_disable(&machine->util_data);
++}
++
+ static const struct snd_soc_ops tegra_wm8753_ops = {
++	.startup = tegra_wm8753_startup,
+ 	.hw_params = tegra_wm8753_hw_params,
++	.shutdown = tegra_wm8753_shutdown,
+ };
+ 
+ static const struct snd_soc_dapm_widget tegra_wm8753_dapm_widgets[] = {
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index f5f78c3512cd..9cd637385685 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -82,8 +82,26 @@ static int tegra_wm8903_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
++static int tegra_wm8903_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	return tegra_asoc_utils_clk_enable(&machine->util_data);
++}
++
++static void tegra_wm8903_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	tegra_asoc_utils_clk_disable(&machine->util_data);
++}
++
+ static const struct snd_soc_ops tegra_wm8903_ops = {
++	.startup = tegra_wm8903_startup,
+ 	.hw_params = tegra_wm8903_hw_params,
++	.shutdown = tegra_wm8903_shutdown,
+ };
+ 
+ static struct snd_soc_jack tegra_wm8903_hp_jack;
+diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+index e51c67092c8f..a78c2bc633bc 100644
+--- a/sound/soc/tegra/trimslice.c
++++ b/sound/soc/tegra/trimslice.c
+@@ -60,8 +60,26 @@ static int trimslice_asoc_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
++static int trimslice_asoc_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_trimslice *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	return tegra_asoc_utils_clk_enable(&machine->util_data);
++}
++
++static void trimslice_asoc_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct tegra_trimslice *machine = snd_soc_card_get_drvdata(rtd->card);
++
++	tegra_asoc_utils_clk_disable(&machine->util_data);
++}
++
+ static const struct snd_soc_ops trimslice_asoc_ops = {
++	.startup = trimslice_asoc_startup,
+ 	.hw_params = trimslice_asoc_hw_params,
++	.shutdown = trimslice_asoc_shutdown,
+ };
+ 
+ static const struct snd_soc_dapm_widget trimslice_dapm_widgets[] = {
 -- 
 2.7.4
