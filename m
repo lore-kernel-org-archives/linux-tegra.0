@@ -1,81 +1,50 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v3 00/13] NVIDIA Tegra APB DMA driver fixes and
- improvements
-Date: Wed, 8 Jan 2020 18:07:46 +0300
-Message-ID: <c68cde59-0571-f58f-bf3c-8ce1cbdcc387@gmail.com>
+Subject: Re: [PATCH v3 09/13] dmaengine: tegra-apb: Remove runtime PM usage
+Date: Wed, 8 Jan 2020 18:10:30 +0300
+Message-ID: <c077c687-57dc-c33f-f434-57918492c789@gmail.com>
 References: <20200106011708.7463-1-digetx@gmail.com>
- <85d8ea335734417081399a082d44024c@HQMAIL105.nvidia.com>
+ <20200106011708.7463-10-digetx@gmail.com>
+ <f63a68cf-bb9d-0e79-23f3-233fc97ca6f9@nvidia.com>
+ <fd6215ac-a646-4e13-ee22-e815a69cd099@gmail.com>
+ <01660250-0489-870a-6f0e-d74c5041e8e3@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <85d8ea335734417081399a082d44024c@HQMAIL105.nvidia.com>
+In-Reply-To: <01660250-0489-870a-6f0e-d74c5041e8e3@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCIGF3?= <mirq-linux@rere.qmqm.pl>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-08.01.2020 15:51, Thierry Reding пишет:
-> On Mon, 06 Jan 2020 04:16:55 +0300, Dmitry Osipenko wrote:
->> Hello,
->>
->> This is series fixes some problems that I spotted recently, secondly the
->> driver's code gets a cleanup. Please review and apply, thanks in advance!
->>
->> Changelog:
->>
->> v3: - In the review comment to v1 Michał Mirosław suggested that "Prevent
->>       race conditions on channel's freeing" does changes that deserve to
->>       be separated into two patches. I factored out and improved tasklet
->>       releasing into this new patch:
->>
->>         dmaengine: tegra-apb: Clean up tasklet releasing
->>
->>     - The "Fix use-after-free" patch got an improved commit message.
->>
->> v2: - I took another look at the driver and spotted few more things that
->>       could be improved, which resulted in these new patches:
->>
->>         dmaengine: tegra-apb: Remove runtime PM usage
->>         dmaengine: tegra-apb: Clean up suspend-resume
->>         dmaengine: tegra-apb: Add missing of_dma_controller_free
->>         dmaengine: tegra-apb: Allow to compile as a loadable kernel module
->>         dmaengine: tegra-apb: Remove MODULE_ALIAS
->>
->> Dmitry Osipenko (13):
->>   dmaengine: tegra-apb: Fix use-after-free
->>   dmaengine: tegra-apb: Implement synchronization callback
->>   dmaengine: tegra-apb: Prevent race conditions on channel's freeing
->>   dmaengine: tegra-apb: Clean up tasklet releasing
->>   dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
->>   dmaengine: tegra-apb: Use devm_platform_ioremap_resource
->>   dmaengine: tegra-apb: Use devm_request_irq
->>   dmaengine: tegra-apb: Fix coding style problems
->>   dmaengine: tegra-apb: Remove runtime PM usage
->>   dmaengine: tegra-apb: Clean up suspend-resume
->>   dmaengine: tegra-apb: Add missing of_dma_controller_free
->>   dmaengine: tegra-apb: Allow to compile as a loadable kernel module
->>   dmaengine: tegra-apb: Remove MODULE_ALIAS
->>
->>  drivers/dma/Kconfig           |   2 +-
->>  drivers/dma/tegra20-apb-dma.c | 481 ++++++++++++++++------------------
->>  2 files changed, 220 insertions(+), 263 deletions(-)
+07.01.2020 21:38, Jon Hunter пишет:
 > 
-> Test results:
->   13 builds: 13 pass, 0 fail
->   12 boots:  11 pass, 1 fail
-
-I'm not sure how to interpret this result. Could you please explain what
-that fail means?
-
->   38 tests:  38 pass, 0 fail
+> On 07/01/2020 17:12, Dmitry Osipenko wrote:
+>> 07.01.2020 18:13, Jon Hunter пишет:
+>>>
+>>> On 06/01/2020 01:17, Dmitry Osipenko wrote:
+>>>> There is no benefit from runtime PM usage for the APB DMA driver because
+>>>> it enables clock at the time of channel's allocation and thus clock stays
+>>>> enabled all the time in practice, secondly there is benefit from manually
+>>>> disabled clock because hardware auto-gates it during idle by itself.
+>>>
+>>> This assumes that the channel is allocated during a driver
+>>> initialisation. That may not always be the case. I believe audio is one
+>>> case where channels are requested at the start of audio playback.
+>>
+>> At least serial, I2C, SPI and T20 FUSE are permanently keeping channels
+>> allocated, thus audio is an exception here. I don't think that it's
+>> practical to assume that there is a real-world use-case where audio
+>> driver is the only active DMA client.
+>>
+>> The benefits of gating the DMA clock are also dim, do you have any
+>> power-consumption numbers that show that it's really worth to care about
+>> the clock-gating?
 > 
-> Linux version: 5.5.0-rc5-gf9d40c056c0f
-> Boards tested: tegra20-ventana, tegra30-cardhu-a04, tegra124-jetson-tk1,
->                tegra186-p2771-0000, tegra194-p2972-0000,
->                tegra210-p2371-2180
-> 
+> No, but at the same time, I really don't see the point in this. In fact,
+> I think it is a step backwards. If we wanted to only enable clocks while
+> DMA channels are active we could. So I request you drop this.
 
-Will be awesome to see the detailed testing results, at least console
-log like it was with NVTB.
+I'll take a look at making RPM active only during the time of DMA
+activity, otherwise it's pretty much a dead code as it is now.
