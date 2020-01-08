@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 20/21] arm64: tegra: smaug: Change clk_out_2 provider to pmc
-Date: Tue, 7 Jan 2020 20:25:14 -0800
-Message-ID: <1578457515-3477-21-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for audio mclk
+Date: Tue, 7 Jan 2020 20:25:09 -0800
+Message-ID: <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
 References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,31 +12,44 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broo
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-clk_out_2 is one of the clocks from Tegra PMC block and Tegra PMC
-clocks are moved from clock driver to pmc driver with pmc as clock
-provider and using pmc clock ids.
+mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
+are moved to Tegra PMC driver with pmc as clock provider and using pmc
+clock ids.
 
-This patch changes clk_out_2 provider to pmc and uses corresponding
-pmc clock id for clk_out_2.
+New device tree uses clk_out_1 from pmc clock provider.
 
+So, this patch adds implementation for mclk fallback to extern1 when
+retrieving mclk returns -ENOENT to be backward compatible of new device
+tree with older kernels.
+
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 72c7a04ac1df..2faab6390552 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1592,7 +1592,7 @@
- 			reg = <0x1a>;
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(E, 6) IRQ_TYPE_LEVEL_LOW>;
--			clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
-+			clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_2>;
- 			clock-names = "mclk";
+diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+index 9cfebef74870..9a5f81039491 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.c
++++ b/sound/soc/tegra/tegra_asoc_utils.c
+@@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 	data->clk_cdev1 = devm_clk_get(dev, "mclk");
+ 	if (IS_ERR(data->clk_cdev1)) {
+ 		dev_err(data->dev, "Can't retrieve clk cdev1\n");
+-		return PTR_ERR(data->clk_cdev1);
++		if (PTR_ERR(data->clk_cdev1) != -ENOENT)
++			return PTR_ERR(data->clk_cdev1);
++		/* Fall back to extern1 */
++		data->clk_cdev1 = devm_clk_get(dev, "extern1");
++		if (IS_ERR(data->clk_cdev1)) {
++			dev_err(data->dev, "Can't retrieve clk extern1\n");
++			return PTR_ERR(data->clk_cdev1);
++		}
++
++		dev_err(data->dev, "Falling back to extern1\n");
+ 	}
  
- 			nuvoton,jkdet-enable;
+ 	/*
 -- 
 2.7.4
