@@ -1,71 +1,55 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v3 00/13] NVIDIA Tegra APB DMA driver fixes and improvements
-Date: Wed, 8 Jan 2020 12:51:07 +0000
-Message-ID: <85d8ea335734417081399a082d44024c@HQMAIL105.nvidia.com>
-References: <20200106011708.7463-1-digetx@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] pwm: Fix minor Kconfig whitespace issues
+Date: Wed, 8 Jan 2020 14:00:52 +0100
+Message-ID: <20200108130052.GF1993114@ulmo>
+References: <20191230172113.17222-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+jhVVhN62yS6hEJ8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200106011708.7463-1-digetx@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20191230172113.17222-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?utf-8?q?Micha=C5=82_Miros=C5=82?= aw <mirq-linux@rere.qmqm.pl>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 06 Jan 2020 04:16:55 +0300, Dmitry Osipenko wrote:
-> Hello,
->=20
-> This is series fixes some problems that I spotted recently, secondly the
-> driver's code gets a cleanup. Please review and apply, thanks in advance!
->=20
-> Changelog:
->=20
-> v3: - In the review comment to v1 Micha=C5=82 Miros=C5=82aw suggested tha=
-t "Prevent
->       race conditions on channel's freeing" does changes that deserve to
->       be separated into two patches. I factored out and improved tasklet
->       releasing into this new patch:
->=20
->         dmaengine: tegra-apb: Clean up tasklet releasing
->=20
->     - The "Fix use-after-free" patch got an improved commit message.
->=20
-> v2: - I took another look at the driver and spotted few more things that
->       could be improved, which resulted in these new patches:
->=20
->         dmaengine: tegra-apb: Remove runtime PM usage
->         dmaengine: tegra-apb: Clean up suspend-resume
->         dmaengine: tegra-apb: Add missing of_dma_controller_free
->         dmaengine: tegra-apb: Allow to compile as a loadable kernel modul=
-e
->         dmaengine: tegra-apb: Remove MODULE_ALIAS
->=20
-> Dmitry Osipenko (13):
->   dmaengine: tegra-apb: Fix use-after-free
->   dmaengine: tegra-apb: Implement synchronization callback
->   dmaengine: tegra-apb: Prevent race conditions on channel's freeing
->   dmaengine: tegra-apb: Clean up tasklet releasing
->   dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
->   dmaengine: tegra-apb: Use devm_platform_ioremap_resource
->   dmaengine: tegra-apb: Use devm_request_irq
->   dmaengine: tegra-apb: Fix coding style problems
->   dmaengine: tegra-apb: Remove runtime PM usage
->   dmaengine: tegra-apb: Clean up suspend-resume
->   dmaengine: tegra-apb: Add missing of_dma_controller_free
->   dmaengine: tegra-apb: Allow to compile as a loadable kernel module
->   dmaengine: tegra-apb: Remove MODULE_ALIAS
->=20
->  drivers/dma/Kconfig           |   2 +-
->  drivers/dma/tegra20-apb-dma.c | 481 ++++++++++++++++------------------
->  2 files changed, 220 insertions(+), 263 deletions(-)
 
-Test results:
-  13 builds: 13 pass, 0 fail
-  12 boots:  11 pass, 1 fail
-  38 tests:  38 pass, 0 fail
+--+jhVVhN62yS6hEJ8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Linux version: 5.5.0-rc5-gf9d40c056c0f
-Boards tested: tegra20-ventana, tegra30-cardhu-a04, tegra124-jetson-tk1,
-               tegra186-p2771-0000, tegra194-p2972-0000,
-               tegra210-p2371-2180
+On Mon, Dec 30, 2019 at 06:21:12PM +0100, Krzysztof Kozlowski wrote:
+> Remove double whitespace after "config" keyword.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/pwm/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Applied, thanks.
+
+Thierry
+
+--+jhVVhN62yS6hEJ8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4V0oQACgkQ3SOs138+
+s6GW+RAAqt7l9DVUT1XZy2TgE7UeLRkeCbnVtYRqr1q4kqqjW1uRyRc2gbd6Q15a
+Orl53tUGiuE+Fr/t+UpQSLOmsc93zRIqkhbyMdfyTXJRGhzU5UCx2BuBDkelvmZ/
+ZcTgvi8IkXRVh7SJx6E2i956iFXifCQQKd/pbS3oPZbUCeRPJuhCTgmfD7NAKvCR
+YsaDo4MWHuuulx05CCLeZ+g915YEGXCV5nKr5RdY9/uf1ifS1waeUZK8+C+uwAy6
+17J7Ee4+27mydyVzsutgTLAWfnNf3wcwDzbYaR61G4dKZXHWZBlzjq1hAlyfLrfI
+Ue9fAv71KPfLULXpotqvoVkzKeTzW5SSnbtsi22wLJfmu5RI2ZCS2gXdRN0Z5f8y
+9M59CBmSSOvoQ7b/nBbOCxxlUqZTXGjnlJCXqrqGmomCMQvKZIJBNBILlFoQDDtZ
+wCVV+XXEHq3j4qvgsjgkAHLGyxkjmryg6fOFe9mqCGwk1huV5NYbI4aP1xiSCmTt
+00wLZMd67PnKuPv1GAgvRW+BLif97N1U7g2OP5ewhYXPj7cd1DVQHsgwbKnKkz1H
+UWG3gn+7n3KcstFfKsgS3X8fhKQ2+HalnX9hBfeORhPef5cCtIURILtOU/sS/pvZ
+f30UWoLal+Aylqbsc01nUJmxg27i/m0q4+v7waQmAJlE0L+1c6o=
+=p5N4
+-----END PGP SIGNATURE-----
+
+--+jhVVhN62yS6hEJ8--
