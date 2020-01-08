@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for audio mclk
-Date: Tue, 7 Jan 2020 20:25:09 -0800
-Message-ID: <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 21/21] ASoC: nau8825: change Tegra clk_out_2 provider to tegra_pmc
+Date: Tue, 7 Jan 2020 20:25:15 -0800
+Message-ID: <1578457515-3477-22-git-send-email-skomatineni@nvidia.com>
 References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,44 +12,30 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broo
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
-are moved to Tegra PMC driver with pmc as clock provider and using pmc
-clock ids.
+Tegra clk_out_1, clk_out_2, and clk_out_3 are part of PMC block and
+these clocks are moved from clock drvier to pmc driver with pmc as
+a provider for these clocks.
 
-New device tree uses clk_out_1 from pmc clock provider.
+Update bindings document to use pmc as clock provider for clk_out_2 and
+change id to pmc clock id.
 
-So, this patch adds implementation for mclk fallback to extern1 when
-retrieving mclk returns -ENOENT to be backward compatible of new device
-tree with older kernels.
-
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/sound/nau8825.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-index 9cfebef74870..9a5f81039491 100644
---- a/sound/soc/tegra/tegra_asoc_utils.c
-+++ b/sound/soc/tegra/tegra_asoc_utils.c
-@@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
- 	data->clk_cdev1 = devm_clk_get(dev, "mclk");
- 	if (IS_ERR(data->clk_cdev1)) {
- 		dev_err(data->dev, "Can't retrieve clk cdev1\n");
--		return PTR_ERR(data->clk_cdev1);
-+		if (PTR_ERR(data->clk_cdev1) != -ENOENT)
-+			return PTR_ERR(data->clk_cdev1);
-+		/* Fall back to extern1 */
-+		data->clk_cdev1 = devm_clk_get(dev, "extern1");
-+		if (IS_ERR(data->clk_cdev1)) {
-+			dev_err(data->dev, "Can't retrieve clk extern1\n");
-+			return PTR_ERR(data->clk_cdev1);
-+		}
-+
-+		dev_err(data->dev, "Falling back to extern1\n");
- 	}
+diff --git a/Documentation/devicetree/bindings/sound/nau8825.txt b/Documentation/devicetree/bindings/sound/nau8825.txt
+index d16d96839bcb..388a7bc60b1f 100644
+--- a/Documentation/devicetree/bindings/sound/nau8825.txt
++++ b/Documentation/devicetree/bindings/sound/nau8825.txt
+@@ -101,5 +101,5 @@ Example:
+       nuvoton,crosstalk-enable;
  
- 	/*
+       clock-names = "mclk";
+-      clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
++      clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_2>;
+   };
 -- 
 2.7.4
