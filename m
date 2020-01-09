@@ -1,74 +1,117 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v7 05/21] clk: tegra: Fix Tegra PMC clock out parents
-Date: Thu, 9 Jan 2020 22:45:12 +0300
-Message-ID: <94661229-58e6-a43f-50fd-0d0f65c0339c@gmail.com>
-References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
- <1578457515-3477-6-git-send-email-skomatineni@nvidia.com>
- <CABr+WT=qP1BJUfzgmr4AzN18Zp-trMEStF6SQ+AH7+aYBUuUww@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CABr+WT=qP1BJUfzgmr4AzN18Zp-trMEStF6SQ+AH7+aYBUuUww-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Applied "regmap: add iopoll-like atomic polling macro" to the regmap tree
+Date: Thu, 09 Jan 2020 21:30:50 +0000
+Message-ID: <applied-1578546590-24737-1-git-send-email-spujar@nvidia.com>
+References: <1578546590-24737-1-git-send-email-spujar@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1578546590-24737-1-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orgMark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-08.01.2020 11:34, Nicolas Chauvet пишет:
-> Le mer. 8 janv. 2020 à 05:27, Sowjanya Komatineni
-> <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> a écrit :
->>
->> Tegra PMC clock out parents are osc, osc_div2, osc_div4 and extern
->> clock.
->>
->> Clock driver is using incorrect parents clk_m, clk_m_div2, clk_m_div4
->> for PMC clocks.
->>
->> This patch fixes this.
->>
->> Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/clk/tegra/clk-tegra-pmc.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
->> index bec3e008335f..5e044ba1ae36 100644
->> --- a/drivers/clk/tegra/clk-tegra-pmc.c
->> +++ b/drivers/clk/tegra/clk-tegra-pmc.c
->> @@ -49,16 +49,16 @@ struct pmc_clk_init_data {
->>
->>  static DEFINE_SPINLOCK(clk_out_lock);
->>
->> -static const char *clk_out1_parents[] = { "clk_m", "clk_m_div2",
->> -       "clk_m_div4", "extern1",
->> +static const char *clk_out1_parents[] = { "osc", "osc_div2",
->> +       "osc_div4", "extern1",
->>  };
->>
->> -static const char *clk_out2_parents[] = { "clk_m", "clk_m_div2",
->> -       "clk_m_div4", "extern2",
->> +static const char *clk_out2_parents[] = { "osc", "osc_div2",
->> +       "osc_div4", "extern2",
->>  };
->>
->> -static const char *clk_out3_parents[] = { "clk_m", "clk_m_div2",
->> -       "clk_m_div4", "extern3",
->> +static const char *clk_out3_parents[] = { "osc", "osc_div2",
->> +       "osc_div4", "extern3",
->>  };
->>
->>  static struct pmc_clk_init_data pmc_clks[] = {
->> --
->> 2.7.4
-> 
-> Out of curiosity, this patch touch the clk-tegra-pmc.c file which is
-> later removed (by patch 11).
-> Is this change made for bugfix ? Is there a stable tag missing ?
-> 
+The patch
 
-This is not a bugfix, but a minor correction which doesn't need a stable
-tag.
+   regmap: add iopoll-like atomic polling macro
+
+has been applied to the regmap tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-5.6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 50816a4c39263913d8cfd1ee32f90102679606c6 Mon Sep 17 00:00:00 2001
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date: Thu, 9 Jan 2020 10:39:50 +0530
+Subject: [PATCH] regmap: add iopoll-like atomic polling macro
+
+This patch adds a macro 'regmap_read_poll_timeout_atomic' that works
+similar to 'readx_poll_timeout_atomic' defined in linux/iopoll.h; This
+is atomic version of already available 'regmap_read_poll_timeout' macro.
+
+It should be noted that above atomic macro cannot be used by all regmaps.
+If the regmap is set up for atomic use (flat or no cache and MMIO) then
+only it can use.
+
+Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Link: https://lore.kernel.org/r/1578546590-24737-1-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ include/linux/regmap.h | 45 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index dfe493ac692d..f0a092a1a96d 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -144,6 +144,51 @@ struct reg_sequence {
+ 	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
+ })
+ 
++/**
++ * regmap_read_poll_timeout_atomic - Poll until a condition is met or a timeout occurs
++ *
++ * @map: Regmap to read from
++ * @addr: Address to poll
++ * @val: Unsigned integer variable to read the value into
++ * @cond: Break condition (usually involving @val)
++ * @delay_us: Time to udelay between reads in us (0 tight-loops).
++ *            Should be less than ~10us since udelay is used
++ *            (see Documentation/timers/timers-howto.rst).
++ * @timeout_us: Timeout in us, 0 means never timeout
++ *
++ * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_read
++ * error return value in case of a error read. In the two former cases,
++ * the last read value at @addr is stored in @val.
++ *
++ * This is modelled after the readx_poll_timeout_atomic macros in linux/iopoll.h.
++ *
++ * Note: In general regmap cannot be used in atomic context. If you want to use
++ * this macro then first setup your regmap for atomic use (flat or no cache
++ * and MMIO regmap).
++ */
++#define regmap_read_poll_timeout_atomic(map, addr, val, cond, delay_us, timeout_us) \
++({ \
++	u64 __timeout_us = (timeout_us); \
++	unsigned long __delay_us = (delay_us); \
++	ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
++	int __ret; \
++	for (;;) { \
++		__ret = regmap_read((map), (addr), &(val)); \
++		if (__ret) \
++			break; \
++		if (cond) \
++			break; \
++		if ((__timeout_us) && \
++		    ktime_compare(ktime_get(), __timeout) > 0) { \
++			__ret = regmap_read((map), (addr), &(val)); \
++			break; \
++		} \
++		if (__delay_us) \
++			udelay(__delay_us); \
++	} \
++	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
++})
++
+ /**
+  * regmap_field_read_poll_timeout - Poll until a condition is met or timeout
+  *
+-- 
+2.20.1
