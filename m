@@ -1,69 +1,51 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 0/3] NVIDIA Tegra30 EMC driver improvements
-Date: Fri, 10 Jan 2020 15:46:14 +0100
-Message-ID: <20200110144614.GH2233456@ulmo>
-References: <20191220020849.11175-1-digetx@gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH v2] PCI: tegra: Fix return value check of
+ pm_runtime_get_sync
+Date: Fri, 10 Jan 2020 14:45:55 +0000
+Message-ID: <20200110144555.GA27048@e121166-lin.cambridge.arm.com>
+References: <20200109121309.GB10919@e121166-lin.cambridge.arm.com>
+ <20200109182333.GA252736@google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PNpeiK4tTqhYOExY"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20191220020849.11175-1-digetx@gmail.com>
+In-Reply-To: <20200109182333.GA252736@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: David Engraf <david.engraf@sysgo.com>, thierry.reding@gmail.com, andrew.murray@arm.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Manikanta Maddireddy <mmaddireddy@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jan 09, 2020 at 12:23:33PM -0600, Bjorn Helgaas wrote:
+> On Thu, Jan 09, 2020 at 12:13:09PM +0000, Lorenzo Pieralisi wrote:
+> > On Tue, Dec 17, 2019 at 08:36:32AM -0600, Bjorn Helgaas wrote:
+> > > On Mon, Dec 16, 2019 at 12:18:25PM +0100, David Engraf wrote:
+> > > > pm_runtime_get_sync() returns the device's usage counter. This might
+> > > > be >0 if the device is already powered up or CONFIG_PM is disabled.
+> > > > 
+> > > > Abort probe function on real error only.
+> > > > 
+> > > > Fixes: da76ba50963b ("PCI: tegra: Add power management support")
+> > > > Signed-off-by: David Engraf <david.engraf@sysgo.com>
+> > > 
+> > > I added Andrew's ack and a stable tag for v4.17+.  Also cc'd
+> > > Manikanta, author of da76ba50963b.
+> > > 
+> > > I put this on my pci/host-tegra branch for v5.6 for now.  Lorenzo may
+> > > move this when he returns.
+> > 
+> > Hi Bjorn,
+> > 
+> > I could not find pci/host-tegra in your public repo, have you deleted it
+> > in the meanwhile ?
+> 
+> Welcome back, Lorenzo!  Sorry, I forgot to push the pci/host-tegra
+> branch.  It has been in -next for a while, though.  I pushed it now.
+> Happy to drop the branch if you want to add more Tegra stuff, just let
+> me know.
 
---PNpeiK4tTqhYOExY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you, I will have to add at least another tegra patch so I think
+it is best to drop your branch, I applied this patch to my pci/tegra
+branch and pushed it out in the meanwhile.
 
-On Fri, Dec 20, 2019 at 05:08:46AM +0300, Dmitry Osipenko wrote:
-> Hello,
->=20
-> I took a refreshed look at the driver's code and spotted few things that
-> could be improved. No critical fixes here, just improvements. Please
-> review and apply, thanks in advance!
->=20
-> Changelog:
->=20
-> v2: - Now using WRITE/READ_ONCE() in the "Firm up hardware programming
->       sequence" patch for interrupt handler interactions, to firm driver
->       even further.
->=20
-> Dmitry Osipenko (3):
->   memory: tegra30-emc: Firm up suspend/resume sequence
->   memory: tegra30-emc: Firm up hardware programming sequence
->   memory: tegra30-emc: Correct error message for timed out auto
->     calibration
->=20
->  drivers/memory/tegra/tegra30-emc.c | 179 +++++++++++++++++------------
->  1 file changed, 104 insertions(+), 75 deletions(-)
-
-Applied to for-5.6/memory, thanks.
-
-Thierry
-
---PNpeiK4tTqhYOExY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4YjjUACgkQ3SOs138+
-s6HihQ/7BoT7ElvPG4frfgK9JBo3hJ8xRh9OUfByjYrQMhMpZhkKix8HxH2JF63g
-mWZ/ph/Zn28GXaGRxIBnYrcjfus/8NY5fRpdpZrvbEYFSlBVutEnUgLhlSAKffdr
-q8SOmaUPSrlrbpc8to4JAMnXYnWK4XFuBPaKQywIkL9wYfonctHuLgFCbbk4QB9h
-Uq0+qjuIx6F2HACK1/qEhM/otH0wR7ExIXsP58w6ZDWp0LdC8/qZ2fawRrk3lGG7
-4wofzHGjgeQXNg95DinEqLeYcnfJseo6h206QSsEcZoZAVs1bCYy2B54QWw48/7j
-vHihF72VhMOm9oe42EvDtP651vZrycAB/PTp85F9NMftoxZ7G+0OWQnyoSPUu+uB
-j7eiw8PBQrn/1f/nzcjmNpw23cpeTMeN07w0voqEohlNcTJftcfXAC6DOljkCex4
-1VloC30lvPlqOpqFShzV44BeCPUXZAgszNaCB09G9eOvOqZb8YeBRU2jnRZJ8pqF
-xe6Bav0/Zo15ZtaNS4UGR5XZ36NEb9jEQxMirbT755vz0vI0nKM94vPu6PQ9PpJ+
-QAJv1C9rK/RiV9LO2/+k8HyGQS59mQVaxMO2ADxhZEtdNYwrdmkVGlqjK3o4z1Bk
-asArwOQlUlxrLYRnw+4+bDugu3s/SlArUCGruXhRu7a6cNYhFKQ=
-=QEPV
------END PGP SIGNATURE-----
-
---PNpeiK4tTqhYOExY--
+Thanks,
+Lorenzo
