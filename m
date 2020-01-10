@@ -1,51 +1,60 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v2] PCI: tegra: Fix return value check of
- pm_runtime_get_sync
-Date: Fri, 10 Jan 2020 14:45:55 +0000
-Message-ID: <20200110144555.GA27048@e121166-lin.cambridge.arm.com>
-References: <20200109121309.GB10919@e121166-lin.cambridge.arm.com>
- <20200109182333.GA252736@google.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH RESEND for 5.6 v1 1/3] clk: tegra: divider: Check UART's
+ divider enable-bit state on rate's recalculation
+Date: Fri, 10 Jan 2020 15:52:16 +0100
+Message-ID: <20200110145216.GI2233456@ulmo>
+References: <20191218184407.25790-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6lCXDTVICvIQMz0h"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20200109182333.GA252736@google.com>
+In-Reply-To: <20191218184407.25790-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: David Engraf <david.engraf@sysgo.com>, thierry.reding@gmail.com, andrew.murray@arm.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Manikanta Maddireddy <mmaddireddy@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 12:23:33PM -0600, Bjorn Helgaas wrote:
-> On Thu, Jan 09, 2020 at 12:13:09PM +0000, Lorenzo Pieralisi wrote:
-> > On Tue, Dec 17, 2019 at 08:36:32AM -0600, Bjorn Helgaas wrote:
-> > > On Mon, Dec 16, 2019 at 12:18:25PM +0100, David Engraf wrote:
-> > > > pm_runtime_get_sync() returns the device's usage counter. This might
-> > > > be >0 if the device is already powered up or CONFIG_PM is disabled.
-> > > > 
-> > > > Abort probe function on real error only.
-> > > > 
-> > > > Fixes: da76ba50963b ("PCI: tegra: Add power management support")
-> > > > Signed-off-by: David Engraf <david.engraf@sysgo.com>
-> > > 
-> > > I added Andrew's ack and a stable tag for v4.17+.  Also cc'd
-> > > Manikanta, author of da76ba50963b.
-> > > 
-> > > I put this on my pci/host-tegra branch for v5.6 for now.  Lorenzo may
-> > > move this when he returns.
-> > 
-> > Hi Bjorn,
-> > 
-> > I could not find pci/host-tegra in your public repo, have you deleted it
-> > in the meanwhile ?
-> 
-> Welcome back, Lorenzo!  Sorry, I forgot to push the pci/host-tegra
-> branch.  It has been in -next for a while, though.  I pushed it now.
-> Happy to drop the branch if you want to add more Tegra stuff, just let
-> me know.
 
-Thank you, I will have to add at least another tegra patch so I think
-it is best to drop your branch, I applied this patch to my pci/tegra
-branch and pushed it out in the meanwhile.
+--6lCXDTVICvIQMz0h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Lorenzo
+On Wed, Dec 18, 2019 at 09:44:05PM +0300, Dmitry Osipenko wrote:
+> UART clock is divided using divisor values from DLM/DLL registers when
+> enable-bit is unset in clk register and clk's divider configuration isn't
+> taken onto account in this case. This doesn't cause any problems, but
+> let's add a check for the divider's enable-bit state, for consistency.
+>=20
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-divider.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+
+All three patches applied to for-5.6/clk, thanks.
+
+Thierry
+
+--6lCXDTVICvIQMz0h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4Yj6AACgkQ3SOs138+
+s6GxRRAAkhh+jeJ2znxH5p0u5lU7TnqfCZkhhIf9AuHOtxu8TBDgvsruRrJRS86P
+hAc4z201mWg29UpR0R9fOvuQhGNGvuYAGU/m46Utq9XLQLlG5ZLNsettLgBmg/Ju
+u4yX3YIrDvBde7/xgWB5GjBUhzTkDrcdn9nz12DHbE2weHao8xK5zeEosZw/LdYs
+IDkKdGeuzYlFM3yo/Kro63RgHsG6srdoXid4elJt/RdcwrNY13hROSyGTuE5LXx6
+6iZHUaMh/E947uCPe3/H3S+Sy2ZWR/6bu44kp3h6B6vh0ybyOUG4cfeJT2bqNXOb
+YB6sqcXSwJapIpPy2jmQzx2LMUJPpsFglHF2E27IV2D1z7DEDSNdR8cGm0wy8CBR
+xhKujgI0hs5y84GuJSFlqM1bTndC2/3GvAAqTW5BH0IekzmffvJt2a2NCwoi6jB4
+HKji0Dxw4XzHkiWj+RE1tXfZu7IKOsz0W029+LX9G4EhiYAMJ7+KkJp3lHJ1f487
+a3p2uRoBneOYSLMALSZ0OqNu9GWXqqUVd+nf+VH5WpLGCHpGqzXnfJyqIWyhpUey
+XXkZfqhzFEjyawT4EAPVnkfOtwYuWjSV/Iz4v9qbGj/6GMy/yN6jZ6Y3LlV/kQ6y
+pJq9/0eNDwcTjAsiD1z2+/eHLFhy3Pzks3GRi+Y8gdkjkxl+ppg=
+=oKAe
+-----END PGP SIGNATURE-----
+
+--6lCXDTVICvIQMz0h--
