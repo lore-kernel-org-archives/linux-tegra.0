@@ -1,54 +1,61 @@
-From: Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v3 09/13] dmaengine: tegra-apb: Remove runtime PM usage
-Date: Fri, 10 Jan 2020 13:35:10 +0530
-Message-ID: <20200110080510.GH2818@vkoul-mobl>
-References: <20200106011708.7463-1-digetx@gmail.com>
- <20200106011708.7463-10-digetx@gmail.com>
- <f63a68cf-bb9d-0e79-23f3-233fc97ca6f9@nvidia.com>
- <fd6215ac-a646-4e13-ee22-e815a69cd099@gmail.com>
- <01660250-0489-870a-6f0e-d74c5041e8e3@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v1 0/2] enable Tegra194 fuse
+Date: Fri, 10 Jan 2020 12:08:09 +0100
+Message-ID: <20200110110809.GA2233355@ulmo>
+References: <20200103083018.10575-1-jckuo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <01660250-0489-870a-6f0e-d74c5041e8e3@nvidia.com>
+In-Reply-To: <20200103083018.10575-1-jckuo@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: JC Kuo <jckuo@nvidia.com>
+Cc: gregkh@linuxfoundation.org, robh@kernel.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07-01-20, 18:38, Jon Hunter wrote:
-> 
-> On 07/01/2020 17:12, Dmitry Osipenko wrote:
-> > 07.01.2020 18:13, Jon Hunter пишет:
-> >>
-> >> On 06/01/2020 01:17, Dmitry Osipenko wrote:
-> >>> There is no benefit from runtime PM usage for the APB DMA driver because
-> >>> it enables clock at the time of channel's allocation and thus clock stays
-> >>> enabled all the time in practice, secondly there is benefit from manually
-> >>> disabled clock because hardware auto-gates it during idle by itself.
-> >>
-> >> This assumes that the channel is allocated during a driver
-> >> initialisation. That may not always be the case. I believe audio is one
-> >> case where channels are requested at the start of audio playback.
-> > 
-> > At least serial, I2C, SPI and T20 FUSE are permanently keeping channels
-> > allocated, thus audio is an exception here. I don't think that it's
-> > practical to assume that there is a real-world use-case where audio
-> > driver is the only active DMA client.
-> > 
-> > The benefits of gating the DMA clock are also dim, do you have any
-> > power-consumption numbers that show that it's really worth to care about
-> > the clock-gating?
-> 
-> No, but at the same time, I really don't see the point in this. In fact,
-> I think it is a step backwards. If we wanted to only enable clocks while
-> DMA channels are active we could. So I request you drop this.
 
-Agree, if pm is working fine with audio, doesnt make much sense to
-remove. Future clients or updates to existing clients can be done to
-make it dynamic..
+--n8g4imXOkfNTN/H1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-~Vinod
+On Fri, Jan 03, 2020 at 04:30:16PM +0800, JC Kuo wrote:
+> This patch series enables Tegra194 fuse registers access.
+>=20
+> JC Kuo (2):
+>   soc/tegra: fuse: Add Tegra194 support
+>   arm64: tegra: Add fuse/apbmisc node on Tegra194
+>=20
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 13 +++++++++++
+>  drivers/soc/tegra/fuse/fuse-tegra.c      |  3 +++
+>  drivers/soc/tegra/fuse/fuse-tegra30.c    | 29 ++++++++++++++++++++++++
+>  drivers/soc/tegra/fuse/fuse.h            |  4 ++++
+>  drivers/soc/tegra/fuse/tegra-apbmisc.c   |  1 +
+>  5 files changed, 50 insertions(+)
+
+Applied, thanks.
+
+Thierry
+
+--n8g4imXOkfNTN/H1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4YWxYACgkQ3SOs138+
+s6EK4BAAtbeDyCnCYBEbKXjx+1prKfhmQ0MbAc7Qr0b2XeX4daJwGCg1rD/lnQhY
+dEXWoUm5EwUBaaxzZYAFif9PD1Ks0BE6M6jaBt9PhUIPZnfIsKjDfZJKNrXzTTbA
+hCUPJ9LwJdO0tdf99C+GIa9yZRu2ZeJy0qKMHydUwcy4MO2VxIO0+IQelyqB6TOb
+o2zzN51jk5Y8smwxBtDTOVIavrsm7k9sUPz+7XryYzqQyeaUPG5rGtoQhpH66isv
+U3imJKXmY9O4IV6Z7/3/6jrSHQi2s2+a1OTk87Lv5NHN3WpM20zxDpP4LrZL/nwd
+qzQHhabI7ot27cNOpu7YYoAlyrs6Eh3srJMef07qQZ2XiZ2Kkgh18aaFHx7mVJsM
+KLM9SQinV4WRS+72hbwOdrYpTC8haumldfPLua09pzfL3rBC3nBFp7B5sQ8rTtmK
+3Qrxtvyhv3AOqD4b0qkx3WZaiwtS3sB1RP1yq5iEO8YiNehQh7QV74P/TCz7ZL8K
+NcjrQwjnozbACeaPxFRQLl+eYrq3FqoZnwKqB3qLWz1g/VfS6MOLQiUQ2ewdSRrh
+7SWs7oRN8o5JotMyEGWlSSa2dr66hZURkqXOEx6tQGS0bQw8NidFJ4E35CaonZbA
+IagR/rzfChZLzwP87bbAGCEVYXzI1d+XpiX1tJOcwxyp0SlXcxM=
+=HJXW
+-----END PGP SIGNATURE-----
+
+--n8g4imXOkfNTN/H1--
