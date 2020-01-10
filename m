@@ -1,60 +1,58 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1] ARM: dts: tegra20: paz00: Add memory timings
-Date: Fri, 10 Jan 2020 15:42:31 +0100
-Message-ID: <20200110144231.GF2233456@ulmo>
-References: <20191218185957.29237-1-digetx@gmail.com>
+Subject: Re: [PATCH v1] soc/tegra: regulators: Do nothing if voltage is
+ unchanged
+Date: Fri, 10 Jan 2020 15:43:22 +0100
+Message-ID: <20200110144322.GG2233456@ulmo>
+References: <20191218185535.28009-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NGIwU0kFl1Z1A3An"
+        protocol="application/pgp-signature"; boundary="NPukt5Otb9an/u20"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20191218185957.29237-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20191218185535.28009-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---NGIwU0kFl1Z1A3An
+--NPukt5Otb9an/u20
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 18, 2019 at 09:59:57PM +0300, Dmitry Osipenko wrote:
-> PAZ00 board has two variants of DDR2 SDRAM devices for External Memory:
-> one is Hynix HY5PS1G831CLFP-Y5 and the other is Micron MT47H128M8CF-25:H.
-> The Micron variant doesn't have official timings in the wild, hence only
-> timings for the Hynix are added. The memory frequency-scaling was tested
-> using the Tegra20 devfreq driver.
+On Wed, Dec 18, 2019 at 09:55:35PM +0300, Dmitry Osipenko wrote:
+> There is no need to re-apply the same voltage. This change is just a minor
+> cleanup.
 >=20
-> Tested-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  arch/arm/boot/dts/tegra20-paz00.dts | 46 +++++++++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
+>  drivers/soc/tegra/regulators-tegra20.c | 8 +++++++-
+>  drivers/soc/tegra/regulators-tegra30.c | 6 ++++++
+>  2 files changed, 13 insertions(+), 1 deletion(-)
 
-Applied to for-5.6/arm/dt, thanks.
+Applied, thanks.
 
 Thierry
 
---NGIwU0kFl1Z1A3An
+--NPukt5Otb9an/u20
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4YjVcACgkQ3SOs138+
-s6HkpA/8CbhhHcQAkwJsrNO3qGrC0BCvrr95IzgmK2dlrt4HRaX0xI93G/7lAs3A
-ESdv1OCJbpBUYV5qILm9PXeCaUPHgQVbRB/vf3WvJxFUqtOHeo2wP8931G3RsWVK
-ZVql+BiFRh9+DNt12XcAATzsQ0UKA49+SVib7oR4jr7DYcWLqKrUyHeGkORLBUfa
-ayLd/MrZg0gRG+u4cWgV5uw8J1gfWoyt1mq3hBSyvFGNhNuk+OIdsXZRpjrfGY53
-6DriMKW0Lm0/vX6z4vAs05NBQttmYO0twCVTkqD/QthAz2ssBxBsizou7PyivxYo
-elP0ufCAugGveccayZ3nv9vOU8TIBNpAWTu7teiNndB64SWUNZjnYLeQhS1SmzEW
-hNudE74BlQsG3tNtOhvAq4TihFcl1dDMG2O4eV9Kll05X2BSAlVwZWUVJ0wdYclL
-j9qEGReoJuyPweinCP5SRXdgqRoMQZsGFXm/B4F6a987OEiEXUJ4tVchSoAu0z1t
-aIkHm1Y4VpQrivAh/7cFj5JUbxQxmAGLx6sqkAy+9B141Vw/oLYHdCibs7OfDxip
-JGGwV7BLtunWMhi7fs1XKb4X+ocZlBd8+WSYLwWwwKU60VUJa4AU/TeBO8UL+RKB
-1Wa8250M4xugLICBcfJi8ed/jfPbcbntXGiJkpnNsF5BZY1dUaY=
-=ljwl
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4YjYoACgkQ3SOs138+
+s6Eusw/9G9TlQ95LtoxHiZ7aTwYjtkWu8hMQHdaqfAwA4dTYFXFR+GEwFiG8sbZE
+Z3gymKFyJsGtJ/ZjEfpHjSIr17XgJSWjHoLWbZFMKK83qDhvvZVorATVgYxrwEVd
+PGX/ID+vStx6nD+5wKBraSSTNZfHXDIcX/sZk0Fsg/Rt22d1pJP9o2MsPdNfCKss
+NFnTF75mg/v1t5c7K4kj2GXmJS1ML3Md7rFapSohYO3F7nUSjG2W9J41skROaoLO
+QnxXxzzEicALtEkzNqZqFrQpvJivW/gsE4WVStx1ycMQF82Z8Ev2+Lvj+MiuHCYO
+EmBfQmz4uYxWMCJVZfnuaKCy20/TMDySYFJLbNS5qwdWubx/Tj3l5ZkwJQyIkLDO
+o4W0FzUvIfPIIwbf8n6J93jP/1rDN3zKfAZyqbwbYfYAz964ztBak3LYirmtIHD8
+pkOhDin5glDOUkI5it24wfS4SyOb1a6wKtluSRMSrPBL1e+074HoWAhpv5kt7Gyu
+PcizKWX98I3gLfdhQ5I28/Zk8244psnk/iHulSs3207nQlurzirO+9dK/PGEwjJC
+fZEGD0ed4psamobjXwYQQbilRFkWpf14EwkiBwvBVEd3J1knlrX78JoW0tDj3tQT
+1Z6YmkSsIQEuJwE3pMN/rMkHGr0jmjcQFWFPBEl4+AzBbypQubk=
+=gKKP
 -----END PGP SIGNATURE-----
 
---NGIwU0kFl1Z1A3An--
+--NPukt5Otb9an/u20--
