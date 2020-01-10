@@ -1,82 +1,57 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] bus: tegra-aconnect: remove PM_CLK dependency
-Date: Fri, 10 Jan 2020 12:32:31 +0100
-Message-ID: <20200110113231.GC2233456@ulmo>
-References: <1561045919-15449-1-git-send-email-spujar@nvidia.com>
- <55217434-2a50-7abe-25c3-6f4f90d8ba34@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4] memory: tegra: Correct reset value of xusb_hostr
+Date: Fri, 10 Jan 2020 15:34:37 +0100
+Message-ID: <20200110143437.GE2233456@ulmo>
+References: <20191220002914.19043-1-nicoleotsuka@gmail.com>
+ <20191220002914.19043-2-nicoleotsuka@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7gGkHNMELEOhSGF6"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="KuLpqunXa7jZSBt+"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <55217434-2a50-7abe-25c3-6f4f90d8ba34@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Sameer Pujar <spujar@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20191220002914.19043-2-nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---7gGkHNMELEOhSGF6
+--KuLpqunXa7jZSBt+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2019 at 05:02:27PM +0100, Jon Hunter wrote:
+On Thu, Dec 19, 2019 at 04:29:11PM -0800, Nicolin Chen wrote:
+> According to Tegra X1 (Tegra210) TRM, the reset value of xusb_hostr
+> field (bit [7:0]) should be 0x7a. So this patch simply corrects it.
 >=20
-> On 20/06/2019 16:51, Sameer Pujar wrote:
-> > aconnect bus driver does not use pm-clk interface now and hence the
-> > dependency is removed from Kconfig.
-> >=20
-> > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> > ---
-> >  drivers/bus/Kconfig | 1 -
-> >  1 file changed, 1 deletion(-)
-> >=20
-> > diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-> > index 1851112..4587ef2 100644
-> > --- a/drivers/bus/Kconfig
-> > +++ b/drivers/bus/Kconfig
-> > @@ -128,7 +128,6 @@ config TEGRA_ACONNECT
-> >  	tristate "Tegra ACONNECT Bus Driver"
-> >  	depends on ARCH_TEGRA_210_SOC
-> >  	depends on OF && PM
-> > -	select PM_CLK
-> >  	help
-> >  	  Driver for the Tegra ACONNECT bus which is used to interface with
-> >  	  the devices inside the Audio Processing Engine (APE) for Tegra210.
->=20
-> Thanks. We should probably populate the 'Fixes:' tag for this to show
-> which commit this fixes. Otherwise ...
->=20
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/memory/tegra/tegra210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks like this was never applied. I don't recollect that there was a
-specific reason why we shouldn't, so I went ahead and applied this after
-adding:
+Applied to for-5.6/memory, thanks.
 
-Fixes: 0d7dab926130 ("bus: tegra-aconnect: use devm_clk_*() helpers")
-
-Thanks,
 Thierry
 
---7gGkHNMELEOhSGF6
+--KuLpqunXa7jZSBt+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4YYM8ACgkQ3SOs138+
-s6FVRw//T20mgoBuGWTrMprzcNfp4FCfm3vVNQ++PT0MLgHryl4scurRrsBATSKa
-9ksRZaXbwGkxrfypVAliBl6VQ012T5daNqnVCc5InnC5fBBwB+D90Bpqe2/dSglX
-YhaRrl3bujE/OuHYnoHY/TxOqJjYoIxgJ9WIQExDOxRdPT6y1U/6NQIjARXrDLob
-0qo08Pln5nHDoJ2rrYnRaNwC51YGOnNMnv6YQgxJpoPJ5Z82Ikck7WRJv8oFPuCV
-tn2UeQM+McZhd3tE/7MhQv6MA95n59+VgcNCNVaFgkN856fzIVMOK0ArDUk1pNgO
-a8EACZgWZaXpUOz3V0TPpTJVwNq6p/+xjHb3vQGwLFtIo6NMcq10TYmFpqjv7z7z
-HGQeeOk+ZlR1dwaMI6bPMEnccdbQmKesqGn59GtAiejwbcJIoO2/IvERmYX77kNh
-opAIwVDUEOE8LWx0WrxmiLOOF8Xgn84IDevhuRR/mNa+GmwPsb4znDMUSfuOi5c8
-jV9vDWDd8/oNmQjaPvaEp4f6nI/gO2ghxtjS8HpU+ZaiR0rmwqjq6LRy7lvuqbDS
-SpTnqO86uuxLVBFB0Qe2tN572dTdItvvTkAI5WO/bnSFlJGcnPqlIIpbhgr2I6lu
-YhTQDFav40BzgLiD44ZHOhixifJMgJKRBCNBP9I3aXJHxESBkgQ=
-=zEDp
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4Yi30ACgkQ3SOs138+
+s6HnChAAlH9Yv1ffvGQBL7EGN1kk3CBGC5ioxvxbPHjtk7tQhpESolBHMLLsAGIO
+a8MT248f+xIhyJ1KIcr2KBatN7OHkpDzwbUjqEY/YkpVtaFv+OtZiTLGFOHXF/IV
+r+NdozdY0wYbcNr84AGJoIjGzUP4yxreQ5k+MeZhZiUlSAwuSqGBaXgNJO3ILwP9
+MkvWIWF0qdIJaFr9TnekBxusLdjkk+5+S8wWkgBT8t3VQidLDJwcrbvFeey6+zSm
+G6cfuLKRPUxnh0mjrhptz+ykE0ew4mDoN1KcmYRu0pdz3Em9SAfg0bFUiuZXhz+w
+gsEsc/DWhsTzG2zbSuO82oTes1u66rwSz6LzUNWX+isAbUazd3MpN8Ff4xwuSDHk
+7wQYbG9514z60MXQQ8DFvoKaRikQXF2TcTESvOZRcaUxOcEqDrhIYSif+cFHiYfU
+hWVv1YU6RIH6oQO4gtVbJbNPMYrNxwbifLm46fHkiylkc5VOFelXRd4roXdhNZBX
+uqmSY0sa/7xUNmXaCvS7N1tOrfmVSXKWBzRB1waCZyhEkFnkreWfa1KCQh0KMxLT
+GsLAw6ICzF7cgR0WWMd4hc04bEU8wG+eWgDZkysK2hVRl3sG7hyCnhahT6OugCpv
+4jDTUd2qR7tScl63x4t0yM8WiWgeRia7K8S4L7GIwXpvjWjYVUU=
+=PM99
 -----END PGP SIGNATURE-----
 
---7gGkHNMELEOhSGF6--
+--KuLpqunXa7jZSBt+--
