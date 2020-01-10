@@ -1,117 +1,59 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Applied "regmap: add iopoll-like atomic polling macro" to the regmap tree
-Date: Thu, 09 Jan 2020 21:30:50 +0000
-Message-ID: <applied-1578546590-24737-1-git-send-email-spujar@nvidia.com>
-References: <1578546590-24737-1-git-send-email-spujar@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1578546590-24737-1-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orgMark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v7 00/21] Move PMC clocks into Tegra PMC driver
+Date: Thu, 9 Jan 2020 17:39:13 -0800
+Message-ID: <61a78ba8-4cc3-f6a6-513b-36daa9be32f0@nvidia.com>
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <4e9fab30-14b5-bf1f-dc91-fd57ef614503@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <4e9fab30-14b5-bf1f-dc91-fd57ef614503@gmail.com>
+Content-Language: en-US
+Sender: linux-clk-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
 
-   regmap: add iopoll-like atomic polling macro
-
-has been applied to the regmap tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-5.6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 50816a4c39263913d8cfd1ee32f90102679606c6 Mon Sep 17 00:00:00 2001
-From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Date: Thu, 9 Jan 2020 10:39:50 +0530
-Subject: [PATCH] regmap: add iopoll-like atomic polling macro
-
-This patch adds a macro 'regmap_read_poll_timeout_atomic' that works
-similar to 'readx_poll_timeout_atomic' defined in linux/iopoll.h; This
-is atomic version of already available 'regmap_read_poll_timeout' macro.
-
-It should be noted that above atomic macro cannot be used by all regmaps.
-If the regmap is set up for atomic use (flat or no cache and MMIO) then
-only it can use.
-
-Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Link: https://lore.kernel.org/r/1578546590-24737-1-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- include/linux/regmap.h | 45 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
-
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index dfe493ac692d..f0a092a1a96d 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -144,6 +144,51 @@ struct reg_sequence {
- 	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
- })
- 
-+/**
-+ * regmap_read_poll_timeout_atomic - Poll until a condition is met or a timeout occurs
-+ *
-+ * @map: Regmap to read from
-+ * @addr: Address to poll
-+ * @val: Unsigned integer variable to read the value into
-+ * @cond: Break condition (usually involving @val)
-+ * @delay_us: Time to udelay between reads in us (0 tight-loops).
-+ *            Should be less than ~10us since udelay is used
-+ *            (see Documentation/timers/timers-howto.rst).
-+ * @timeout_us: Timeout in us, 0 means never timeout
-+ *
-+ * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_read
-+ * error return value in case of a error read. In the two former cases,
-+ * the last read value at @addr is stored in @val.
-+ *
-+ * This is modelled after the readx_poll_timeout_atomic macros in linux/iopoll.h.
-+ *
-+ * Note: In general regmap cannot be used in atomic context. If you want to use
-+ * this macro then first setup your regmap for atomic use (flat or no cache
-+ * and MMIO regmap).
-+ */
-+#define regmap_read_poll_timeout_atomic(map, addr, val, cond, delay_us, timeout_us) \
-+({ \
-+	u64 __timeout_us = (timeout_us); \
-+	unsigned long __delay_us = (delay_us); \
-+	ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
-+	int __ret; \
-+	for (;;) { \
-+		__ret = regmap_read((map), (addr), &(val)); \
-+		if (__ret) \
-+			break; \
-+		if (cond) \
-+			break; \
-+		if ((__timeout_us) && \
-+		    ktime_compare(ktime_get(), __timeout) > 0) { \
-+			__ret = regmap_read((map), (addr), &(val)); \
-+			break; \
-+		} \
-+		if (__delay_us) \
-+			udelay(__delay_us); \
-+	} \
-+	__ret ?: ((cond) ? 0 : -ETIMEDOUT); \
-+})
-+
- /**
-  * regmap_field_read_poll_timeout - Poll until a condition is met or timeout
-  *
--- 
-2.20.1
+On 1/9/20 11:44 AM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 08.01.2020 07:24, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> This patch series moves Tegra PMC clocks from clock driver to pmc driver
+>> along with the device trees changes and audio driver which uses one of
+>> the pmc clock for audio mclk.
+>>
+>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+>> are currently registered by Tegra clock driver using clk_regiser_mux and
+>> clk_register_gate which performs direct Tegra PMC register access.
+>>
+>> When Tegra PMC is in secure mode, any access from non-secure world will
+>> not go through.
+>>
+>> This patch series adds these Tegra PMC clocks and blink controls to Tegr=
+a
+>> PMC driver with PMC as clock provider and removes them from Tegra clock
+>> driver.
+>>
+>> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru Tegra2=
+10
+>> and clock driver does inital parent configuration for it and enables the=
+m.
+>> But this clock should be taken care by audio driver as there is no need
+>> to have this clock pre enabled.
+>>
+>> So, this series also includes patch that updates ASoC driver to take
+>> care of parent configuration for mclk if device tree don't specify
+>> initial parent configuration using assigned-clock-parents and controls
+>> audio mclk enable/disable during ASoC machine startup and shutdown.
+>>
+>> DTs are also updated to use clk_out_1 as audio mclk rather than extern1.
+>>
+>> This series also includes a patch for mclk fallback to extern1 when
+>> retrieving mclk fails to have this backward compatible of new DT with
+>> old kernels.
+> Suspend-resume doesn't work anymore, reverting this series helps. I
+> don't have any other information yet, please take a look.
+Thanks Dmitry. Will test suspend resume and check..
