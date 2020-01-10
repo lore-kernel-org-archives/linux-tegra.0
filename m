@@ -1,137 +1,66 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v7 00/21] Move PMC clocks into Tegra PMC driver
-Date: Fri, 10 Jan 2020 17:54:45 +0300
-Message-ID: <06919c0e-d0a5-5cf6-ba94-758fe9e1cdd6@gmail.com>
-References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
- <4e9fab30-14b5-bf1f-dc91-fd57ef614503@gmail.com>
- <61a78ba8-4cc3-f6a6-513b-36daa9be32f0@nvidia.com>
- <37a9676b-e0e5-7e80-5ee4-abfca361dcf7@nvidia.com>
- <62751d2d-2b7d-509b-e236-363d2bb29b02@nvidia.com>
- <880b2e8a-aa55-40f3-7502-24392b88e53f@nvidia.com>
- <738f42e2-7135-b111-5863-1cb15aa96c18@nvidia.com>
- <dbb80785-59a8-6725-f43b-babe27ebbaeb@nvidia.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH v2] PCI: tegra: Fix afi_pex2_ctrl reg offset for Tegra30
+Date: Fri, 10 Jan 2020 15:55:20 +0000
+Message-ID: <20200110155519.GB29372@e121166-lin.cambridge.arm.com>
+References: <20200107081402.213149-1-marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <dbb80785-59a8-6725-f43b-babe27ebbaeb@nvidia.com>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20200107081402.213149-1-marcel@ziswiler.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Thierry Reding <treding@nvidia.com>, Andrew Murray <andrew.murray@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-10.01.2020 07:47, Sowjanya Komatineni пишет:
+On Tue, Jan 07, 2020 at 09:14:02AM +0100, Marcel Ziswiler wrote:
+> Fix AFI_PEX2_CTRL reg offset for Tegra30 by moving it from the Tegra20
+> SoC struct where it erroneously got added. This fixes the AFI_PEX2_CTRL
+> reg offset being uninitialised subsequently failing to bring up the
+> third PCIe port.
 > 
-> On 1/9/20 8:43 PM, Sameer Pujar wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 1/10/2020 10:06 AM, Sowjanya Komatineni wrote:
->>>
->>> On 1/9/20 7:32 PM, Sowjanya Komatineni wrote:
->>>>
->>>> On 1/9/20 7:24 PM, Sowjanya Komatineni wrote:
->>>>>
->>>>> On 1/9/20 5:39 PM, Sowjanya Komatineni wrote:
->>>>>>
->>>>>> On 1/9/20 11:44 AM, Dmitry Osipenko wrote:
->>>>>>> External email: Use caution opening links or attachments
->>>>>>>
->>>>>>>
->>>>>>> 08.01.2020 07:24, Sowjanya Komatineni пишет:
->>>>>>>> This patch series moves Tegra PMC clocks from clock driver to pmc
->>>>>>>> driver
->>>>>>>> along with the device trees changes and audio driver which uses
->>>>>>>> one of
->>>>>>>> the pmc clock for audio mclk.
->>>>>>>>
->>>>>>>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls
->>>>>>>> which
->>>>>>>> are currently registered by Tegra clock driver using
->>>>>>>> clk_regiser_mux and
->>>>>>>> clk_register_gate which performs direct Tegra PMC register access.
->>>>>>>>
->>>>>>>> When Tegra PMC is in secure mode, any access from non-secure
->>>>>>>> world will
->>>>>>>> not go through.
->>>>>>>>
->>>>>>>> This patch series adds these Tegra PMC clocks and blink controls
->>>>>>>> to Tegra
->>>>>>>> PMC driver with PMC as clock provider and removes them from Tegra
->>>>>>>> clock
->>>>>>>> driver.
->>>>>>>>
->>>>>>>> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru
->>>>>>>> Tegra210
->>>>>>>> and clock driver does inital parent configuration for it and
->>>>>>>> enables them.
->>>>>>>> But this clock should be taken care by audio driver as there is
->>>>>>>> no need
->>>>>>>> to have this clock pre enabled.
->>>>>>>>
->>>>>>>> So, this series also includes patch that updates ASoC driver to
->>>>>>>> take
->>>>>>>> care of parent configuration for mclk if device tree don't specify
->>>>>>>> initial parent configuration using assigned-clock-parents and
->>>>>>>> controls
->>>>>>>> audio mclk enable/disable during ASoC machine startup and shutdown.
->>>>>>>>
->>>>>>>> DTs are also updated to use clk_out_1 as audio mclk rather than
->>>>>>>> extern1.
->>>>>>>>
->>>>>>>> This series also includes a patch for mclk fallback to extern1 when
->>>>>>>> retrieving mclk fails to have this backward compatible of new DT
->>>>>>>> with
->>>>>>>> old kernels.
->>>>>>> Suspend-resume doesn't work anymore, reverting this series helps. I
->>>>>>> don't have any other information yet, please take a look.
->>>>>> Thanks Dmitry. Will test suspend resume and check..
->>>>>
->>>>> I see if we leave audio mclk (cdev1) enabled during
->>>>> tegra_asoc_utils_init, suspend resume works.
->>>>>
->>>>> Without audio mclk enabled during tegra_asoc_utils_init, somehow it
->>>>> prevents entry to suspend on Tegra30 platform.
->>>>>
->>>>> Will look in detail..
->>>>>
->>>> audio mclk is only needed for audio and werid that having it not
->>>> enabled all the time like in current clock driver prevents suspend
->>>> entry on Tegra30
->>>>
->>>> Looks like this issue is masked earlier with having mclk enabled all
->>>> the time by clock driver.
->>>>
->>> On linux-next without this patch series, I just disabled mclk to be
->>> enabled all the time (removed set_rate from utils_init) and also
->>> disabled default enable from clock driver.
->>>
->>> So somehow disabling mclk is preventing suspend entry.
->>
->> This is strange.
->>
->>>
->>> Probably debugging suspend issue on Tegra30 when audio mclk is
->>> disabled can be done separately and will keep audio mclk enabled in
->>> asoc_utils_init with comment mentioning this issue and fix as TBD to
->>> move on with PMC clock fixes.
->>
->> Sounds fine with me as the suspend/resume issue is not introduced in the
->> current series. It can be addressed separately.
->>
->>>
-> Thanks Sameer. So, will keep mclk not enabled in clock driver but will
-> do mclk enable in asoc_utils_init and will remove machine startup and
-> shutdown.
+> Fixes: adb2653b3d2e ("PCI: tegra: Add AFI_PEX2_CTRL reg offset as part of SoC struct")
 > 
-> mclk dependency with suspend/resume and I2S and audio clocks proper
-> handling in audio driver can be taken care separately out of this series.
+> Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 > 
-> Dimitry, I hope you too agree with this.
+> ---
+> 
+> Changes in v2:
+> - Fix recipient list concerning CC: and To: lines as suggested by
+>   Thierry.
+> - Fix subject line and commit message to adhere to standard formatting
+>   rules as suggested by Thierry.
+> - Add Thierry's Acked-by tag.
+> - Add standard Fixes tag as suggested by Andrew.
+> 
+>  drivers/pci/controller/pci-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, should be fine to fix it separately from this series.
+Applied to pci/tegra, thanks.
 
-I suppose the clocks management isn't done properly by some of the audio
-drivers and machine hangs after trying to access hardware module which
-has the disabled clock. That's a quite typical bug.
+Lorenzo
+
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index 090b632965e2..ac93f5a0398e 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -2499,7 +2499,6 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+>  	.num_ports = 2,
+>  	.ports = tegra20_pcie_ports,
+>  	.msi_base_shift = 0,
+> -	.afi_pex2_ctrl = 0x128,
+>  	.pads_pll_ctl = PADS_PLL_CTL_TEGRA20,
+>  	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_DIV10,
+>  	.pads_refclk_cfg0 = 0xfa5cfa5c,
+> @@ -2528,6 +2527,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+>  	.num_ports = 3,
+>  	.ports = tegra30_pcie_ports,
+>  	.msi_base_shift = 8,
+> +	.afi_pex2_ctrl = 0x128,
+>  	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
+>  	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
+>  	.pads_refclk_cfg0 = 0xfa5cfa5c,
+> -- 
+> 2.24.1
+> 
