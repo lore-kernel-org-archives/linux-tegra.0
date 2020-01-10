@@ -1,66 +1,54 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH v3] regmap: add iopoll-like atomic polling macro
-Date: Fri, 10 Jan 2020 10:20:05 +0530
-Message-ID: <b14d6130-8a9e-28ac-3ce6-dc6b9e3a3886@nvidia.com>
-References: <1578546590-24737-1-git-send-email-spujar@nvidia.com>
- <fa5198bf-0001-3a57-017f-1b40e0188606@gmail.com>
- <b9f5459f-007e-3139-a3cf-c7dfd3fc335a@nvidia.com>
- <e1ab2304-2ef8-c50d-d9c7-21569b397c23@gmail.com>
+From: Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v3 09/13] dmaengine: tegra-apb: Remove runtime PM usage
+Date: Fri, 10 Jan 2020 13:35:10 +0530
+Message-ID: <20200110080510.GH2818@vkoul-mobl>
+References: <20200106011708.7463-1-digetx@gmail.com>
+ <20200106011708.7463-10-digetx@gmail.com>
+ <f63a68cf-bb9d-0e79-23f3-233fc97ca6f9@nvidia.com>
+ <fd6215ac-a646-4e13-ee22-e815a69cd099@gmail.com>
+ <01660250-0489-870a-6f0e-d74c5041e8e3@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e1ab2304-2ef8-c50d-d9c7-21569b397c23@gmail.com>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <01660250-0489-870a-6f0e-d74c5041e8e3@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, broonie@kernel.org
-Cc: jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 07-01-20, 18:38, Jon Hunter wrote:
+> 
+> On 07/01/2020 17:12, Dmitry Osipenko wrote:
+> > 07.01.2020 18:13, Jon Hunter пишет:
+> >>
+> >> On 06/01/2020 01:17, Dmitry Osipenko wrote:
+> >>> There is no benefit from runtime PM usage for the APB DMA driver because
+> >>> it enables clock at the time of channel's allocation and thus clock stays
+> >>> enabled all the time in practice, secondly there is benefit from manually
+> >>> disabled clock because hardware auto-gates it during idle by itself.
+> >>
+> >> This assumes that the channel is allocated during a driver
+> >> initialisation. That may not always be the case. I believe audio is one
+> >> case where channels are requested at the start of audio playback.
+> > 
+> > At least serial, I2C, SPI and T20 FUSE are permanently keeping channels
+> > allocated, thus audio is an exception here. I don't think that it's
+> > practical to assume that there is a real-world use-case where audio
+> > driver is the only active DMA client.
+> > 
+> > The benefits of gating the DMA clock are also dim, do you have any
+> > power-consumption numbers that show that it's really worth to care about
+> > the clock-gating?
+> 
+> No, but at the same time, I really don't see the point in this. In fact,
+> I think it is a step backwards. If we wanted to only enable clocks while
+> DMA channels are active we could. So I request you drop this.
 
-On 1/9/2020 7:27 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 09.01.2020 10:24, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 1/9/2020 11:30 AM, Dmitry Osipenko wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> 09.01.2020 08:09, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> This patch adds a macro 'regmap_read_poll_timeout_atomic' that works
->>>> similar to 'readx_poll_timeout_atomic' defined in linux/iopoll.h; This
->>>> is atomic version of already available 'regmap_read_poll_timeout' macr=
-o.
->>>>
->>>> It should be noted that above atomic macro cannot be used by all
->>>> regmaps.
->>>> If the regmap is set up for atomic use (flat or no cache and MMIO) the=
-n
->>>> only it can use.
->>>>
->>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>>> ---
->>> Could you please explain what is the targeted use-case here?
->> I was trying to use regmap_read_poll_timeout() to poll for status change
->> of a register. This resulted in "BUG: scheduling while atomic". The
->> callback function, in which I was trying to use the macro, runs in
->> atomic context. Hence new atomic macro is added. I was checking ALSA
->> playback/capture and trigger() callback had to monitor some register
->> status.
->>
->> In general, the new macro can be used in atomic callbacks where regmap
->> interface is used and polling is required.
->>
-> You should send a full patchset because it may turn out that the patch
-> which makes use of the new feature isn't correct or maybe the new
-> feature isn't really needed.
->
-> If there was a previous discussion about the need for this change, then
-> you should provide a link to that discussion.
->
-> Please note that usually changes without a real use-case in kernel are
-> not getting picked up or they are getting removed later on if nobody
-> makes use of them, so I assume this is a kind of an RFC patch for now.
+Agree, if pm is working fine with audio, doesnt make much sense to
+remove. Future clients or updates to existing clients can be done to
+make it dynamic..
 
-OK. I will send this as part of the complete series. Thank you.
+-- 
+~Vinod
