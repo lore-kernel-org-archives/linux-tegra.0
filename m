@@ -1,60 +1,137 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH RESEND for 5.6 v1 1/3] clk: tegra: divider: Check UART's
- divider enable-bit state on rate's recalculation
-Date: Fri, 10 Jan 2020 15:52:16 +0100
-Message-ID: <20200110145216.GI2233456@ulmo>
-References: <20191218184407.25790-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v7 00/21] Move PMC clocks into Tegra PMC driver
+Date: Fri, 10 Jan 2020 17:54:45 +0300
+Message-ID: <06919c0e-d0a5-5cf6-ba94-758fe9e1cdd6@gmail.com>
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <4e9fab30-14b5-bf1f-dc91-fd57ef614503@gmail.com>
+ <61a78ba8-4cc3-f6a6-513b-36daa9be32f0@nvidia.com>
+ <37a9676b-e0e5-7e80-5ee4-abfca361dcf7@nvidia.com>
+ <62751d2d-2b7d-509b-e236-363d2bb29b02@nvidia.com>
+ <880b2e8a-aa55-40f3-7502-24392b88e53f@nvidia.com>
+ <738f42e2-7135-b111-5863-1cb15aa96c18@nvidia.com>
+ <dbb80785-59a8-6725-f43b-babe27ebbaeb@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6lCXDTVICvIQMz0h"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191218184407.25790-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <dbb80785-59a8-6725-f43b-babe27ebbaeb@nvidia.com>
+Content-Language: en-US
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+10.01.2020 07:47, Sowjanya Komatineni пишет:
+> 
+> On 1/9/20 8:43 PM, Sameer Pujar wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 1/10/2020 10:06 AM, Sowjanya Komatineni wrote:
+>>>
+>>> On 1/9/20 7:32 PM, Sowjanya Komatineni wrote:
+>>>>
+>>>> On 1/9/20 7:24 PM, Sowjanya Komatineni wrote:
+>>>>>
+>>>>> On 1/9/20 5:39 PM, Sowjanya Komatineni wrote:
+>>>>>>
+>>>>>> On 1/9/20 11:44 AM, Dmitry Osipenko wrote:
+>>>>>>> External email: Use caution opening links or attachments
+>>>>>>>
+>>>>>>>
+>>>>>>> 08.01.2020 07:24, Sowjanya Komatineni пишет:
+>>>>>>>> This patch series moves Tegra PMC clocks from clock driver to pmc
+>>>>>>>> driver
+>>>>>>>> along with the device trees changes and audio driver which uses
+>>>>>>>> one of
+>>>>>>>> the pmc clock for audio mclk.
+>>>>>>>>
+>>>>>>>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls
+>>>>>>>> which
+>>>>>>>> are currently registered by Tegra clock driver using
+>>>>>>>> clk_regiser_mux and
+>>>>>>>> clk_register_gate which performs direct Tegra PMC register access.
+>>>>>>>>
+>>>>>>>> When Tegra PMC is in secure mode, any access from non-secure
+>>>>>>>> world will
+>>>>>>>> not go through.
+>>>>>>>>
+>>>>>>>> This patch series adds these Tegra PMC clocks and blink controls
+>>>>>>>> to Tegra
+>>>>>>>> PMC driver with PMC as clock provider and removes them from Tegra
+>>>>>>>> clock
+>>>>>>>> driver.
+>>>>>>>>
+>>>>>>>> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru
+>>>>>>>> Tegra210
+>>>>>>>> and clock driver does inital parent configuration for it and
+>>>>>>>> enables them.
+>>>>>>>> But this clock should be taken care by audio driver as there is
+>>>>>>>> no need
+>>>>>>>> to have this clock pre enabled.
+>>>>>>>>
+>>>>>>>> So, this series also includes patch that updates ASoC driver to
+>>>>>>>> take
+>>>>>>>> care of parent configuration for mclk if device tree don't specify
+>>>>>>>> initial parent configuration using assigned-clock-parents and
+>>>>>>>> controls
+>>>>>>>> audio mclk enable/disable during ASoC machine startup and shutdown.
+>>>>>>>>
+>>>>>>>> DTs are also updated to use clk_out_1 as audio mclk rather than
+>>>>>>>> extern1.
+>>>>>>>>
+>>>>>>>> This series also includes a patch for mclk fallback to extern1 when
+>>>>>>>> retrieving mclk fails to have this backward compatible of new DT
+>>>>>>>> with
+>>>>>>>> old kernels.
+>>>>>>> Suspend-resume doesn't work anymore, reverting this series helps. I
+>>>>>>> don't have any other information yet, please take a look.
+>>>>>> Thanks Dmitry. Will test suspend resume and check..
+>>>>>
+>>>>> I see if we leave audio mclk (cdev1) enabled during
+>>>>> tegra_asoc_utils_init, suspend resume works.
+>>>>>
+>>>>> Without audio mclk enabled during tegra_asoc_utils_init, somehow it
+>>>>> prevents entry to suspend on Tegra30 platform.
+>>>>>
+>>>>> Will look in detail..
+>>>>>
+>>>> audio mclk is only needed for audio and werid that having it not
+>>>> enabled all the time like in current clock driver prevents suspend
+>>>> entry on Tegra30
+>>>>
+>>>> Looks like this issue is masked earlier with having mclk enabled all
+>>>> the time by clock driver.
+>>>>
+>>> On linux-next without this patch series, I just disabled mclk to be
+>>> enabled all the time (removed set_rate from utils_init) and also
+>>> disabled default enable from clock driver.
+>>>
+>>> So somehow disabling mclk is preventing suspend entry.
+>>
+>> This is strange.
+>>
+>>>
+>>> Probably debugging suspend issue on Tegra30 when audio mclk is
+>>> disabled can be done separately and will keep audio mclk enabled in
+>>> asoc_utils_init with comment mentioning this issue and fix as TBD to
+>>> move on with PMC clock fixes.
+>>
+>> Sounds fine with me as the suspend/resume issue is not introduced in the
+>> current series. It can be addressed separately.
+>>
+>>>
+> Thanks Sameer. So, will keep mclk not enabled in clock driver but will
+> do mclk enable in asoc_utils_init and will remove machine startup and
+> shutdown.
+> 
+> mclk dependency with suspend/resume and I2S and audio clocks proper
+> handling in audio driver can be taken care separately out of this series.
+> 
+> Dimitry, I hope you too agree with this.
 
---6lCXDTVICvIQMz0h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, should be fine to fix it separately from this series.
 
-On Wed, Dec 18, 2019 at 09:44:05PM +0300, Dmitry Osipenko wrote:
-> UART clock is divided using divisor values from DLM/DLL registers when
-> enable-bit is unset in clk register and clk's divider configuration isn't
-> taken onto account in this case. This doesn't cause any problems, but
-> let's add a check for the divider's enable-bit state, for consistency.
->=20
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/clk-divider.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-
-All three patches applied to for-5.6/clk, thanks.
-
-Thierry
-
---6lCXDTVICvIQMz0h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4Yj6AACgkQ3SOs138+
-s6GxRRAAkhh+jeJ2znxH5p0u5lU7TnqfCZkhhIf9AuHOtxu8TBDgvsruRrJRS86P
-hAc4z201mWg29UpR0R9fOvuQhGNGvuYAGU/m46Utq9XLQLlG5ZLNsettLgBmg/Ju
-u4yX3YIrDvBde7/xgWB5GjBUhzTkDrcdn9nz12DHbE2weHao8xK5zeEosZw/LdYs
-IDkKdGeuzYlFM3yo/Kro63RgHsG6srdoXid4elJt/RdcwrNY13hROSyGTuE5LXx6
-6iZHUaMh/E947uCPe3/H3S+Sy2ZWR/6bu44kp3h6B6vh0ybyOUG4cfeJT2bqNXOb
-YB6sqcXSwJapIpPy2jmQzx2LMUJPpsFglHF2E27IV2D1z7DEDSNdR8cGm0wy8CBR
-xhKujgI0hs5y84GuJSFlqM1bTndC2/3GvAAqTW5BH0IekzmffvJt2a2NCwoi6jB4
-HKji0Dxw4XzHkiWj+RE1tXfZu7IKOsz0W029+LX9G4EhiYAMJ7+KkJp3lHJ1f487
-a3p2uRoBneOYSLMALSZ0OqNu9GWXqqUVd+nf+VH5WpLGCHpGqzXnfJyqIWyhpUey
-XXkZfqhzFEjyawT4EAPVnkfOtwYuWjSV/Iz4v9qbGj/6GMy/yN6jZ6Y3LlV/kQ6y
-pJq9/0eNDwcTjAsiD1z2+/eHLFhy3Pzks3GRi+Y8gdkjkxl+ppg=
-=oKAe
------END PGP SIGNATURE-----
-
---6lCXDTVICvIQMz0h--
+I suppose the clocks management isn't done properly by some of the audio
+drivers and machine hangs after trying to access hardware module which
+has the disabled clock. That's a quite typical bug.
