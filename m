@@ -1,89 +1,54 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] of: Rework and simplify phandle cache to use a fixed size
-Date: Fri, 10 Jan 2020 17:50:37 -0600
-Message-ID: <CAL_JsqLmth0bYcG2VnxU-jk_VoC4TgvWD8_e6r1_8WqVwYGq0g@mail.gmail.com>
-References: <20191211232345.24810-1-robh@kernel.org> <5386e959-f9c4-2748-ed08-34ab361aee2c@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL 1/8] dt-bindings: Changes for v5.6-rc1
+Date: Sat, 11 Jan 2020 01:35:46 +0100
+Message-ID: <20200111003553.2411874-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5386e959-f9c4-2748-ed08-34ab361aee2c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Segher Boessenkool <segher-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 4:22 AM Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
-> Hi Rob,
->
-> On 11/12/2019 23:23, Rob Herring wrote:
-> > The phandle cache was added to speed up of_find_node_by_phandle() by
-> > avoiding walking the whole DT to find a matching phandle. The
-> > implementation has several shortcomings:
-> >
-> >   - The cache is designed to work on a linear set of phandle values.
-> >     This is true for dtc generated DTs, but not for other cases such as
-> >     Power.
-> >   - The cache isn't enabled until of_core_init() and a typical system
-> >     may see hundreds of calls to of_find_node_by_phandle() before that
-> >     point.
-> >   - The cache is freed and re-allocated when the number of phandles
-> >     changes.
-> >   - It takes a raw spinlock around a memory allocation which breaks on
-> >     RT.
-> >
-> > Change the implementation to a fixed size and use hash_32() as the
-> > cache index. This greatly simplifies the implementation. It avoids
-> > the need for any re-alloc of the cache and taking a reference on nodes
-> > in the cache. We only have a single source of removing cache entries
-> > which is of_detach_node().
-> >
-> > Using hash_32() removes any assumption on phandle values improving
-> > the hit rate for non-linear phandle values. The effect on linear values
-> > using hash_32() is about a 10% collision. The chances of thrashing on
-> > colliding values seems to be low.
-> >
-> > To compare performance, I used a RK3399 board which is a pretty typical
-> > system. I found that just measuring boot time as done previously is
-> > noisy and may be impacted by other things. Also bringing up secondary
-> > cores causes some issues with measuring, so I booted with 'nr_cpus=1'.
-> > With no caching, calls to of_find_node_by_phandle() take about 20124 us
-> > for 1248 calls. There's an additional 288 calls before time keeping is
-> > up. Using the average time per hit/miss with the cache, we can calculate
-> > these calls to take 690 us (277 hit / 11 miss) with a 128 entry cache
-> > and 13319 us with no cache or an uninitialized cache.
-> >
-> > Comparing the 3 implementations the time spent in
-> > of_find_node_by_phandle() is:
-> >
-> > no cache:        20124 us (+ 13319 us)
-> > 128 entry cache:  5134 us (+ 690 us)
-> > current cache:     819 us (+ 13319 us)
-> >
-> > We could move the allocation of the cache earlier to improve the
-> > current cache, but that just further complicates the situation as it
-> > needs to be after slab is up, so we can't do it when unflattening (which
-> > uses memblock).
-> >
-> > Reported-by: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-> > Cc: Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>
-> > Cc: Segher Boessenkool <segher-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
-> > Cc: Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->
-> With next-20200106 I have noticed a regression on Tegra210 where it
-> appears that only one of the eMMC devices is being registered. Bisect is
-> pointing to this patch and reverting on top of next fixes the problem.
-> That is as far as I have got so far, so if you have any ideas, please
-> let me know. Unfortunately, there do not appear to be any obvious errors
-> from the bootlog.
+Hi ARM SoC maintainers,
 
-I guess that's tegra210-p2371-2180.dts because none of the others have
-2 SD hosts enabled. I don't see anything obvious though. Are you doing
-any runtime mods to the DT?
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
-Can you try just removing the cache lookup at the beginning? Pretty
-sure that will work as that's pretty much what we had before any
-cache. Next try dumping out the phandle values and node ptr values.
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
 
-Rob
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.6-dt-bindings
+
+for you to fetch changes up to 720ad00eade9d08aabaf7b130fed1817252badf5:
+
+  dt-bindings: memory: Add Tegra186 memory subsystem (2020-01-09 19:11:26 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+dt-bindings: Changes for v5.6-rc1
+
+This contains a conversion of the Tegra124 EMC bindings to json-schema
+as well as the addition of the bindings for the memory subsystem found
+on Tegra186 and Tegra194.
+
+----------------------------------------------------------------
+Thierry Reding (4):
+      dt-bindings: memory-controller: Convert Tegra124 EMC to json-schema
+      dt-bindings: memory: Add Tegra186 memory client IDs
+      dt-bindings: memory: Add Tegra194 memory controller header
+      dt-bindings: memory: Add Tegra186 memory subsystem
+
+ .../memory-controllers/nvidia,tegra124-emc.txt     | 374 ---------------
+ .../memory-controllers/nvidia,tegra124-emc.yaml    | 528 +++++++++++++++++++++
+ .../memory-controllers/nvidia,tegra186-mc.yaml     | 130 +++++
+ include/dt-bindings/memory/tegra186-mc.h           | 139 ++++++
+ include/dt-bindings/memory/tegra194-mc.h           | 410 ++++++++++++++++
+ 5 files changed, 1207 insertions(+), 374 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.txt
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+ create mode 100644 include/dt-bindings/memory/tegra194-mc.h
