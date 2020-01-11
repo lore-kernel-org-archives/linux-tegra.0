@@ -1,78 +1,84 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 8/8] dt-bindings: Changes for v5.6-rc1
-Date: Sat, 11 Jan 2020 01:57:25 +0100
-Message-ID: <20200111005725.GA2414054@ulmo>
-References: <20200111003553.2411874-1-thierry.reding@gmail.com>
- <20200111003553.2411874-8-thierry.reding@gmail.com>
+From: Saravana Kannan <saravanak-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC 0/2] iommu: arm-smmu: Add support for early direct mappings
+Date: Fri, 10 Jan 2020 20:56:39 -0800
+Message-ID: <20200111045639.210486-1-saravanak@google.com>
+References: <20191209150748.2471814-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200111003553.2411874-8-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20191209150748.2471814-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Saravana Kannan <saravanak-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Patrick Daly <pdaly-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pratik Patel <pratikp-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, kernel-team-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Thierry,
 
---+HP7ph2BbKc20aGI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I happened upon this thread while looking into another thread [1].
 
-On Sat, Jan 11, 2020 at 01:35:53AM +0100, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
->=20
-> The following changes since commit e42617b825f8073569da76dc4510bfa019b1c3=
-5a:
->=20
->   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
-a-for-5.6-arm64-defconfig
->=20
-> for you to fetch changes up to ddb8840d2777bfca7c9ebc8c24ea20f9a37145ba:
->=20
->   arm64: defconfig: Enable tegra XUDC support (2020-01-10 18:34:14 +0100)
->=20
-> Thanks,
-> Thierry
->=20
-> ----------------------------------------------------------------
-> dt-bindings: Changes for v5.6-rc1
->=20
-> This contains a conversion of the Tegra124 EMC bindings to json-schema
-> as well as the addition of the bindings for the memory subsystem found
-> on Tegra186 and Tegra194.
->=20
-> ----------------------------------------------------------------
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> On some platforms, the firmware will setup hardware to read from a given
+> region of memory. One such example is a display controller that is
+> scanning out a splash screen from physical memory.
+> 
+> During Linux' boot process, the ARM SMMU will configure all contexts to
+> fault by default. This means that memory accesses that happen by an SMMU
+> master before its driver has had a chance to properly set up the IOMMU
+> will cause a fault. This is especially annoying for something like the
+> display controller scanning out a splash screen because the faults will
+> result in the display controller getting bogus data (all-ones on Tegra)
+> and since it repeatedly scans that framebuffer, it will keep triggering
+> such faults and spam the boot log with them.
 
-Looks like I messed up the tag description for this one. Please ignore
-this, I've sent a corrected version of pull 8/8 now.
+While I'm not an expert on IOMMUs, I have a decent high level
+understanding of the problem you are trying to solve.
 
-Thierry
+> In order to work around such problems, scan the device tree for IOMMU
+> masters and set up a special identity domain that will map 1:1 all of
+> the reserved regions associated with them. This happens before the SMMU
+> is enabled, so that the mappings are already set up before translations
+> begin.
 
---+HP7ph2BbKc20aGI
-Content-Type: application/pgp-signature; name="signature.asc"
+I'm not sure if this RFC will solve the splash screen issue across SoCs
+([1] seems to have a different issue and might not have memory-regions).
 
------BEGIN PGP SIGNATURE-----
+> One thing that was pointed out earlier, and which I don't have a good
+> idea on how to solve it, is that the early identity domain is not
+> discarded. The assumption is that the standard direct mappings code of
+> the IOMMU framework will replace the early identity domain once devices
+> are properly attached to domains, but we don't have a good point in time
+> when it would be safe to remove the early identity domain.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4ZHXUACgkQ3SOs138+
-s6H0nhAAkL8m7+IYeOhWSL5T3B60NqF7jmJfsXikf5q09AZgWwoKvPyudv3/EBll
-Hwkp4NxZKD3J9ExgJhKmX0/1Pl5nzZFUtTz5sgMBpmEGHNHDqDnAIHn0Oqi3ew9H
-J9sXNB4cMRFfMPaZth8e62AaWgnqHBLygefOf8MnbqS11smugiQRd1/eAKpaUY1w
-MZUEEcTIFETxmIdBWbs/GXZGgLq9FfmH6LDVPj1cvKHA/tWXhgoyeknmiOTjI28c
-xsk/BFA1LLD4ZrLV+6dtuN28nwjR+NipjdJ0t17r1J63KvNgkUgvHe04+Lk9x+AF
-J44yYfpnRXOfpC+Z20BBkAsmckK14/TDWt6KiW5aI120HdXffRxca7cYjCUYfl54
-DutIdwRznp9pOd/taqsQ7BYZdMTyegvPqn3vbuccdhREjAPHiazFDkE68I/qyFAD
-OAl3nFtqkwZCslmiLYp0CAOgkHxsqLvTdfMnHpE2QAjZu6LoVmpPmwH4tEwkch/M
-l7EGOe2N5GPnVkuoZn0f0iciJhv+TNQJ1ze+sn8lMGjBCqn+DIWY0KP1gldR70QI
-M6CB8O8xLAKsP1taImTLVfW0OEX8c9x3xzcKkfKvl/PoiL8CmlvT/m3B2LfvVk5y
-g8zHL6yBJHu2LHs3eKng+Wu2Y59zPXfVuwrMggoR8FbbM2E0dFI=
-=AApv
------END PGP SIGNATURE-----
+You are in luck! I added sync_state() driver callbacks [2] exactly for
+cases like this. Heck, I even listed IOMMUs as an example use case. :)
+sync_state() works even with modules if one enables of_devlink [3] kernel
+parameter (which already supports iommus DT bindings). I'd be happy to
+answer any question you have on sync_state() and of_devlink.
 
---+HP7ph2BbKc20aGI--
+> One option that I can think of would be to create an early identity
+> domain for each master and inherit it when that master is attached to
+> the domain later on, but that seems rather complicated from an book-
+> keeping point of view and tricky because we need to be careful not to
+> map regions twice, etc.
+> 
+> Any good ideas on how to solve this? It'd also be interesting to see if
+> there's a more generic way of doing this. I know that something like
+> this isn't necessary on earlier Tegra SoCs with the custom Tegra SMMU
+> because translations are only enabled when the devices are attached to a
+> domain.
+
+Good foresight. As [1] shows, identity mapping doesn't solve it in a
+generic way.
+
+How about actually reading the current settings/mappings and just
+inheriting that instead of always doing a 1:1 identity mapping? And then
+those "inherited" mappings can be dropped when you get a sync_state().
+What's wrong with that option?
+
+Cheers,
+Saravana
+
+[1] https://lore.kernel.org/linux-arm-msm/20200108091641.GA15147@willie-the-truck/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/driver-api/driver-model/driver.rst#n172
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/kernel-parameters.txt#n3239
