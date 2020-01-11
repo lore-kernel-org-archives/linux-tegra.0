@@ -1,27 +1,25 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 5/8] ARM: tegra: Core changes for v5.6-rc1
-Date: Sat, 11 Jan 2020 01:35:50 +0100
-Message-ID: <20200111003553.2411874-5-thierry.reding@gmail.com>
-References: <20200111003553.2411874-1-thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Changes for v5.6-rc1
+Date: Sat, 11 Jan 2020 01:48:35 +0100
+Message-ID: <20200111004835.2412858-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
-In-Reply-To: <20200111003553.2411874-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org
-To: arm@kernel.org, soc@kernel.org
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+Hi Dave,
 
 The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
@@ -29,25 +27,47 @@ The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.6-arm-core
+  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-5.6-rc1
 
-for you to fetch changes up to 9c65b8463f41f3a9edef97e3109752159d4c6a4b:
+for you to fetch changes up to 033ccdb7f6b11701623507339646013b4ce389d3:
 
-  ARM: tegra: Use clk_m CPU on Tegra124 LP1 resume (2020-01-08 12:58:46 +0100)
+  gpu: host1x: Remove dev_err() on platform_get_irq() failure (2020-01-10 17:05:12 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Core changes for v5.6-rc1
+drm/tegra: Changes for v5.6-rc1
 
-Contains a couple of fixes for RAM repair on Tegra124.
+This contains a small set of mostly fixes and some minor improvements.
 
 ----------------------------------------------------------------
-Stephen Warren (3):
-      ARM: tegra: Enable PLLP bypass during Tegra124 LP1
-      ARM: tegra: Modify reshift divider during LP1
-      ARM: tegra: Use clk_m CPU on Tegra124 LP1 resume
+Arnd Bergmann (1):
+      drm/tegra: sor: Mark PM functions as __maybe_unused
 
- arch/arm/mach-tegra/sleep-tegra30.S | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+Thierry Reding (3):
+      gpu: host1x: Rename "parent" to "host"
+      drm/tegra: Do not implement runtime PM
+      drm/tegra: output: Implement system suspend/resume
+
+YueHaibing (1):
+      gpu: host1x: Remove dev_err() on platform_get_irq() failure
+
+ drivers/gpu/drm/tegra/dc.c     | 147 +++++++++++++++++-------------
+ drivers/gpu/drm/tegra/dpaux.c  |   2 +-
+ drivers/gpu/drm/tegra/drm.c    |   4 +-
+ drivers/gpu/drm/tegra/drm.h    |   2 +
+ drivers/gpu/drm/tegra/dsi.c    | 177 ++++++++++++++++++++----------------
+ drivers/gpu/drm/tegra/gr2d.c   |   4 +-
+ drivers/gpu/drm/tegra/gr3d.c   |   4 +-
+ drivers/gpu/drm/tegra/hdmi.c   | 118 +++++++++++++-----------
+ drivers/gpu/drm/tegra/hub.c    | 198 ++++++++++++++++++++++++-----------------
+ drivers/gpu/drm/tegra/hub.h    |   2 +-
+ drivers/gpu/drm/tegra/output.c |  16 ++++
+ drivers/gpu/drm/tegra/sor.c    | 163 ++++++++++++++++++++-------------
+ drivers/gpu/drm/tegra/vic.c    |   8 +-
+ drivers/gpu/host1x/bus.c       |  79 +++++++++++++++-
+ drivers/gpu/host1x/dev.c       |   4 +-
+ drivers/gpu/host1x/syncpt.c    |   2 +-
+ include/linux/host1x.h         |  15 +++-
+ 17 files changed, 593 insertions(+), 352 deletions(-)
