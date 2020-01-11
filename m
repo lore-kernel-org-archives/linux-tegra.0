@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 6/8] ARM: tegra: Device tree changes for v5.6-rc1
-Date: Sat, 11 Jan 2020 01:35:51 +0100
-Message-ID: <20200111003553.2411874-6-thierry.reding@gmail.com>
+Subject: [GIT PULL 5/8] ARM: tegra: Core changes for v5.6-rc1
+Date: Sat, 11 Jan 2020 01:35:50 +0100
+Message-ID: <20200111003553.2411874-5-thierry.reding@gmail.com>
 References: <20200111003553.2411874-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -29,33 +29,25 @@ The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.6-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.6-arm-core
 
-for you to fetch changes up to 834f1d6cf3647e804e7a80569e42ee7fbee50eb1:
+for you to fetch changes up to 9c65b8463f41f3a9edef97e3109752159d4c6a4b:
 
-  ARM: dts: tegra20: paz00: Add memory timings (2020-01-10 15:41:54 +0100)
+  ARM: tegra: Use clk_m CPU on Tegra124 LP1 resume (2020-01-08 12:58:46 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v5.6-rc1
+ARM: tegra: Core changes for v5.6-rc1
 
-This adds memory timings for the PAZ100 and does some minor cleanup for
-the external memory controller device tree node on Tegra124.
+Contains a couple of fixes for RAM repair on Tegra124.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (1):
-      ARM: dts: tegra20: paz00: Add memory timings
+Stephen Warren (3):
+      ARM: tegra: Enable PLLP bypass during Tegra124 LP1
+      ARM: tegra: Modify reshift divider during LP1
+      ARM: tegra: Use clk_m CPU on Tegra124 LP1 resume
 
-Thierry Reding (2):
-      ARM: tegra: Let the EMC hardware use the EMC clock
-      ARM: tegra: Rename EMC on Tegra124
-
- arch/arm/boot/dts/tegra124-apalis-emc.dtsi     |  2 +-
- arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |  2 +-
- arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi   |  2 +-
- arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi |  2 +-
- arch/arm/boot/dts/tegra124.dtsi                |  4 ++-
- arch/arm/boot/dts/tegra20-paz00.dts            | 46 ++++++++++++++++++++++++++
- 6 files changed, 53 insertions(+), 5 deletions(-)
+ arch/arm/mach-tegra/sleep-tegra30.S | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
