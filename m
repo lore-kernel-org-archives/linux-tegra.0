@@ -1,16 +1,24 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 7/8] arm64: tegra: Device tree changes for v5.6-rc1
-Date: Sat, 11 Jan 2020 01:35:52 +0100
-Message-ID: <20200111003553.2411874-7-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL 4/8] soc: tegra: Changes for v5.6-rc1
+Date: Sat, 11 Jan 2020 01:35:49 +0100
+Message-ID: <20200111003553.2411874-4-thierry.reding@gmail.com>
 References: <20200111003553.2411874-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200111003553.2411874-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
+In-Reply-To: <20200111003553.2411874-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org
+To: arm@kernel.org, soc@kernel.org
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 Hi ARM SoC maintainers,
@@ -21,52 +29,40 @@ The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.6-arm64-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.6-soc
 
-for you to fetch changes up to f41f34ddcee679641ff7d177b37597844d82d634:
+for you to fetch changes up to 02676345e9b31ad8907af3755960e3cfef575f8d:
 
-  arm64: tegra: Allow bootloader to configure Ethernet MAC on Jetson TX2 (2020-01-10 17:04:29 +0100)
+  soc/tegra: fuse: Unmap registers once they are not needed anymore (2020-01-10 15:59:43 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Device tree changes for v5.6-rc1
+soc: tegra: Changes for v5.6-rc1
 
-These patches do some cleanup to existing nodes, add the memory
-subsystem on Tegra186 and Tegra194 as well as the FUSE and APB MISC
-nodes on Tegra194. There are also a few additions to the Jetson Nano
-device tree to enable additional features and the force recovery
-button on the Jetson AGX Xavier now produces a key code that is
-actually valid. Finally, an alias is added for the Ethernet card on
-Jetson TX2 to allow firmware to find it and pass a MAC address via
-device tree.
+This adds a couple of optimizations to how the chip ID and straps are
+read and adds support for the FUSE block on Tegra194. Included is also a
+small optimization for the coupled regulator driver to abort early if no
+voltage change has occurred.
 
 ----------------------------------------------------------------
+Dmitry Osipenko (6):
+      soc/tegra: fuse: Add APB DMA dependency for Tegra20
+      soc/tegra: regulators: Do nothing if voltage is unchanged
+      soc/tegra: fuse: Cache values of straps and Chip ID registers
+      soc/tegra: fuse: Warn if straps are not ready
+      soc/tegra: fuse: Correct straps' address for older Tegra124 device trees
+      soc/tegra: fuse: Unmap registers once they are not needed anymore
+
 JC Kuo (1):
-      arm64: tegra: Add fuse/apbmisc node on Tegra194
+      soc/tegra: fuse: Add Tegra194 support
 
-Peter Robinson (1):
-      arm64: tegra: Allow bootloader to configure Ethernet MAC on Jetson TX2
-
-Tamás Szűcs (2):
-      arm64: tegra: Enable PWM fan on Jetson Nano
-      arm64: tegra: Enable SDIO on Jetson Nano M.2 Key E
-
-Thierry Reding (7):
-      arm64: tegra: Let the EMC hardware use the EMC clock
-      arm64: tegra: Rename EMC on Tegra132
-      arm64: tegra: Add interrupt for memory controller on Tegra186
-      arm64: tegra: Add external memory controller on Tegra186
-      arm64: tegra: Add the memory subsystem on Tegra194
-      arm64: tegra: Make XUSB node consistent with the rest
-      arm64: tegra: Redefine force recovery key on Jetson AGX Xavier
-
- arch/arm64/boot/dts/nvidia/tegra132.dtsi           |  4 +-
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |  1 +
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 34 +++++++---
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |  4 ++
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |  2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 56 +++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 73 ++++++++++++++++++++++
- 7 files changed, 164 insertions(+), 10 deletions(-)
+ drivers/soc/tegra/Kconfig              |  1 +
+ drivers/soc/tegra/fuse/fuse-tegra.c    |  3 +++
+ drivers/soc/tegra/fuse/fuse-tegra30.c  | 29 +++++++++++++++++++++++++++++
+ drivers/soc/tegra/fuse/fuse.h          |  4 ++++
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 34 ++++++++++++++++++++--------------
+ drivers/soc/tegra/regulators-tegra20.c |  8 +++++++-
+ drivers/soc/tegra/regulators-tegra30.c |  6 ++++++
+ 7 files changed, 70 insertions(+), 15 deletions(-)
