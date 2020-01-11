@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 8/8] dt-bindings: Changes for v5.6-rc1
-Date: Sat, 11 Jan 2020 01:35:53 +0100
-Message-ID: <20200111003553.2411874-8-thierry.reding@gmail.com>
+Subject: [GIT PULL 7/8] arm64: tegra: Device tree changes for v5.6-rc1
+Date: Sat, 11 Jan 2020 01:35:52 +0100
+Message-ID: <20200111003553.2411874-7-thierry.reding@gmail.com>
 References: <20200111003553.2411874-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,25 +21,52 @@ The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.6-arm64-defconfig
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.6-arm64-dt
 
-for you to fetch changes up to ddb8840d2777bfca7c9ebc8c24ea20f9a37145ba:
+for you to fetch changes up to f41f34ddcee679641ff7d177b37597844d82d634:
 
-  arm64: defconfig: Enable tegra XUDC support (2020-01-10 18:34:14 +0100)
+  arm64: tegra: Allow bootloader to configure Ethernet MAC on Jetson TX2 (2020-01-10 17:04:29 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Changes for v5.6-rc1
+arm64: tegra: Device tree changes for v5.6-rc1
 
-This contains a conversion of the Tegra124 EMC bindings to json-schema
-as well as the addition of the bindings for the memory subsystem found
-on Tegra186 and Tegra194.
+These patches do some cleanup to existing nodes, add the memory
+subsystem on Tegra186 and Tegra194 as well as the FUSE and APB MISC
+nodes on Tegra194. There are also a few additions to the Jetson Nano
+device tree to enable additional features and the force recovery
+button on the Jetson AGX Xavier now produces a key code that is
+actually valid. Finally, an alias is added for the Ethernet card on
+Jetson TX2 to allow firmware to find it and pass a MAC address via
+device tree.
 
 ----------------------------------------------------------------
-Nagarjuna Kristam (1):
-      arm64: defconfig: Enable tegra XUDC support
+JC Kuo (1):
+      arm64: tegra: Add fuse/apbmisc node on Tegra194
 
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Peter Robinson (1):
+      arm64: tegra: Allow bootloader to configure Ethernet MAC on Jetson TX2
+
+Tamás Szűcs (2):
+      arm64: tegra: Enable PWM fan on Jetson Nano
+      arm64: tegra: Enable SDIO on Jetson Nano M.2 Key E
+
+Thierry Reding (7):
+      arm64: tegra: Let the EMC hardware use the EMC clock
+      arm64: tegra: Rename EMC on Tegra132
+      arm64: tegra: Add interrupt for memory controller on Tegra186
+      arm64: tegra: Add external memory controller on Tegra186
+      arm64: tegra: Add the memory subsystem on Tegra194
+      arm64: tegra: Make XUSB node consistent with the rest
+      arm64: tegra: Redefine force recovery key on Jetson AGX Xavier
+
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           |  4 +-
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |  1 +
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 34 +++++++---
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |  4 ++
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |  2 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 56 +++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 73 ++++++++++++++++++++++
+ 7 files changed, 164 insertions(+), 10 deletions(-)
