@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 05/14] dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
-Date: Sun, 12 Jan 2020 20:29:57 +0300
-Message-ID: <20200112173006.29863-6-digetx@gmail.com>
+Subject: [PATCH v4 09/14] dmaengine: tegra-apb: Clean up runtime PM teardown
+Date: Sun, 12 Jan 2020 20:30:01 +0300
+Message-ID: <20200112173006.29863-10-digetx@gmail.com>
 References: <20200112173006.29863-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,29 +12,64 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan W
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The interrupt handler puts a half-completed DMA descriptor on a free list
-and then schedules tasklet to process bottom half of the descriptor that
-executes client's callback, this creates possibility to pick up the busy
-descriptor from the free list. Thus let's disallow descriptor's re-use
-until it is fully processed.
+It's cleaner to teardown RPM by revering the enable sequence, which makes
+code much easier to follow.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/tegra20-apb-dma.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 1b8a11804962..aafad50d075e 100644
+index 7158bd3145c4..cc4a9ca20780 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -281,7 +281,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
+@@ -1429,13 +1429,15 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	spin_lock_init(&tdma->global_lock);
  
- 	/* Do not allocate if desc are waiting for ack */
- 	list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
--		if (async_tx_test_ack(&dma_desc->txd)) {
-+		if (async_tx_test_ack(&dma_desc->txd) && !dma_desc->cb_count) {
- 			list_del(&dma_desc->node);
- 			spin_unlock_irqrestore(&tdc->lock, flags);
- 			dma_desc->txd.flags = 0;
+ 	pm_runtime_enable(&pdev->dev);
+-	if (!pm_runtime_enabled(&pdev->dev))
++	if (!pm_runtime_enabled(&pdev->dev)) {
+ 		ret = tegra_dma_runtime_resume(&pdev->dev);
+-	else
++		if (ret)
++			return ret;
++	} else {
+ 		ret = pm_runtime_get_sync(&pdev->dev);
+-
+-	if (ret < 0)
+-		goto err_pm_disable;
++		if (ret < 0)
++			goto err_pm_disable;
++	}
+ 
+ 	/* Reset DMA controller */
+ 	reset_control_assert(tdma->rst);
+@@ -1545,9 +1547,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	dma_async_device_unregister(&tdma->dma_dev);
+ 
+ err_pm_disable:
+-	pm_runtime_disable(&pdev->dev);
+-	if (!pm_runtime_status_suspended(&pdev->dev))
++	if (!pm_runtime_enabled(&pdev->dev))
+ 		tegra_dma_runtime_suspend(&pdev->dev);
++	else
++		pm_runtime_disable(&pdev->dev);
+ 
+ 	return ret;
+ }
+@@ -1558,9 +1561,10 @@ static int tegra_dma_remove(struct platform_device *pdev)
+ 
+ 	dma_async_device_unregister(&tdma->dma_dev);
+ 
+-	pm_runtime_disable(&pdev->dev);
+-	if (!pm_runtime_status_suspended(&pdev->dev))
++	if (!pm_runtime_enabled(&pdev->dev))
+ 		tegra_dma_runtime_suspend(&pdev->dev);
++	else
++		pm_runtime_disable(&pdev->dev);
+ 
+ 	return 0;
+ }
 -- 
 2.24.0
