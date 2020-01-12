@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 06/14] dmaengine: tegra-apb: Use devm_platform_ioremap_resource
-Date: Sun, 12 Jan 2020 20:29:58 +0300
-Message-ID: <20200112173006.29863-7-digetx@gmail.com>
+Subject: [PATCH v4 02/14] dmaengine: tegra-apb: Implement synchronization callback
+Date: Sun, 12 Jan 2020 20:29:54 +0300
+Message-ID: <20200112173006.29863-3-digetx@gmail.com>
 References: <20200112173006.29863-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,26 +12,39 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan W
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource to keep code cleaner a tad.
+The ISR tasklet could be kept scheduled after DMA transfer termination,
+let's add synchronization callback which blocks until tasklet is finished.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index aafad50d075e..f44291207928 100644
+index 319f31d27014..664e9c5df3ba 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1402,8 +1402,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 	tdma->chip_data = cdata;
- 	platform_set_drvdata(pdev, tdma);
+@@ -798,6 +798,13 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+ 	return 0;
+ }
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	tdma->base_addr = devm_ioremap_resource(&pdev->dev, res);
-+	tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(tdma->base_addr))
- 		return PTR_ERR(tdma->base_addr);
++static void tegra_dma_synchronize(struct dma_chan *dc)
++{
++	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
++
++	tasklet_kill(&tdc->tasklet);
++}
++
+ static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
+ 					       struct tegra_dma_sg_req *sg_req)
+ {
+@@ -1506,6 +1513,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+ 	tdma->dma_dev.device_config = tegra_dma_slave_config;
+ 	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
++	tdma->dma_dev.device_synchronize = tegra_dma_synchronize;
+ 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
+ 	tdma->dma_dev.device_issue_pending = tegra_dma_issue_pending;
  
 -- 
 2.24.0
