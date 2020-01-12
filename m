@@ -1,58 +1,86 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 7/8] i2c: tegra: Always terminate DMA transfer
-Date: Sun, 12 Jan 2020 20:14:29 +0300
-Message-ID: <20200112171430.27219-8-digetx@gmail.com>
+Subject: [PATCH v4 2/8] i2c: tegra: Properly disable runtime PM on driver's probe error
+Date: Sun, 12 Jan 2020 20:14:24 +0300
+Message-ID: <20200112171430.27219-3-digetx@gmail.com>
 References: <20200112171430.27219-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20200112171430.27219-1-digetx@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Mikko Perttunen <cyndis@kapsi.fi>, Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-It is possible that I2C could error out in the middle of DMA transfer and
-in this case DMA channel needs to be reset, otherwise a follow up transfer
-will fail because DMA channel stays blocked.
+One of the recent Tegra I2C commits made a change that resumes runtime PM
+during driver's probe, but it missed to put the RPM in a case of error.
+Note that it's not correct to use pm_runtime_status_suspended because it
+breaks RPM refcounting.
 
+Fixes: 8ebf15e9c869 ("i2c: tegra: Move suspend handling to NOIRQ phase")
 Tested-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 1a390e1bff72..3c7c86d4b0e4 100644
+index 79d19f6ce94e..61339c665ebd 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1220,11 +1220,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		time_left = tegra_i2c_wait_completion_timeout(
- 				i2c_dev, &i2c_dev->dma_complete, xfer_time);
- 
-+		dmaengine_terminate_sync(i2c_dev->msg_read ?
-+					 i2c_dev->rx_dma_chan :
-+					 i2c_dev->tx_dma_chan);
-+
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
--			dmaengine_terminate_sync(i2c_dev->msg_read ?
--						 i2c_dev->rx_dma_chan :
--						 i2c_dev->tx_dma_chan);
- 			tegra_i2c_init(i2c_dev, true);
- 			return -ETIMEDOUT;
- 		}
-@@ -1237,11 +1238,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 			memcpy(i2c_dev->msg_buf, i2c_dev->dma_buf,
- 			       msg->len);
- 		}
--
--		if (i2c_dev->msg_err != I2C_ERR_NONE)
--			dmaengine_synchronize(i2c_dev->msg_read ?
--					      i2c_dev->rx_dma_chan :
--					      i2c_dev->tx_dma_chan);
+@@ -1608,14 +1608,18 @@ static int tegra_i2c_probe(struct platform_device *pdev)
  	}
  
- 	time_left = tegra_i2c_wait_completion_timeout(
+ 	pm_runtime_enable(&pdev->dev);
+-	if (!pm_runtime_enabled(&pdev->dev))
++	if (!pm_runtime_enabled(&pdev->dev)) {
+ 		ret = tegra_i2c_runtime_resume(&pdev->dev);
+-	else
++		if (ret < 0) {
++			dev_err(&pdev->dev, "runtime resume failed\n");
++			goto unprepare_div_clk;
++		}
++	} else {
+ 		ret = pm_runtime_get_sync(i2c_dev->dev);
+-
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "runtime resume failed\n");
+-		goto unprepare_div_clk;
++		if (ret < 0) {
++			dev_err(&pdev->dev, "runtime resume failed\n");
++			goto disable_rpm;
++		}
+ 	}
+ 
+ 	if (i2c_dev->is_multimaster_mode) {
+@@ -1623,7 +1627,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 		if (ret < 0) {
+ 			dev_err(i2c_dev->dev, "div_clk enable failed %d\n",
+ 				ret);
+-			goto disable_rpm;
++			goto put_rpm;
+ 		}
+ 	}
+ 
+@@ -1671,11 +1675,16 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	if (i2c_dev->is_multimaster_mode)
+ 		clk_disable(i2c_dev->div_clk);
+ 
+-disable_rpm:
+-	pm_runtime_disable(&pdev->dev);
+-	if (!pm_runtime_status_suspended(&pdev->dev))
++put_rpm:
++	if (pm_runtime_enabled(&pdev->dev))
++		pm_runtime_put_sync(&pdev->dev);
++	else
+ 		tegra_i2c_runtime_suspend(&pdev->dev);
+ 
++disable_rpm:
++	if (pm_runtime_enabled(&pdev->dev))
++		pm_runtime_disable(&pdev->dev);
++
+ unprepare_div_clk:
+ 	clk_unprepare(i2c_dev->div_clk);
+ 
 -- 
 2.24.0
