@@ -1,43 +1,82 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 8/8] i2c: tegra: Check DMA completion status in addition to left time
-Date: Sun, 12 Jan 2020 20:14:30 +0300
-Message-ID: <20200112171430.27219-9-digetx@gmail.com>
-References: <20200112171430.27219-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v4 0/8] NVIDIA Tegra I2C driver fixes and improvements
+Date: Sun, 12 Jan 2020 20:14:22 +0300
+Message-ID: <20200112171430.27219-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200112171430.27219-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Mikko Perttunen <cyndis@kapsi.fi>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-It is more robust to check completion status in addition to the left time
-in a case of DMA transfer because transfer's completion happens in two
-phases [one is ISR, other is tasklet] and thus it is possible that DMA is
-completed while I2C completion awaiting times out because of the deferred
-notification done by the DMA driver. The DMA completion status becomes
-100% actual after DMA synchronization. This fixes spurious DMA timeouts
-when system is under load.
+Hello,
 
-Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/i2c/busses/i2c-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patchset adds support for atomic transfers which are required for
+shutting down machine properly. Secondly, a (not)suspending I2C and some
+other things are fixed/improved by this small series as well. Please review
+and apply, thanks in advance!
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 3c7c86d4b0e4..cbc2ad49043e 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1224,7 +1224,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 					 i2c_dev->rx_dma_chan :
- 					 i2c_dev->tx_dma_chan);
- 
--		if (time_left == 0) {
-+		if (!time_left && !completion_done(&i2c_dev->dma_complete)) {
- 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
- 			tegra_i2c_init(i2c_dev, true);
- 			return -ETIMEDOUT;
+Changelog:
+
+v4: Removed the "clk: tegra: Fix double-free in tegra_clk_init()" patch
+    from this series, which was added by accident in v3.
+
+    Added Thierry's tested-by to the patches.
+
+v3: The "Prevent interrupt triggering after transfer timeout" and "Support
+    atomic transfers" patches got extra very minor improvements. The
+    completion now is passed directly to tegra_i2c_poll_completion_timeout(),
+    for consistency.
+
+    Added two new patches that firm up DMA transfer handling:
+
+      i2c: tegra: Always terminate DMA transfer
+      i2c: tegra: Check DMA completion status in addition to left time
+
+v2: The series is renamed from "Tegra I2C: Support atomic transfers and
+    correct suspend/resume" to "NVIDIA Tegra I2C driver fixes and
+    improvements" because it now contains some more various changes.
+
+    New patches in v2:
+
+      i2c: tegra: Correct unwinding order on driver's probe error
+      i2c: tegra: Prevent interrupt triggering after transfer timeout
+      i2c: tegra: Use relaxed versions of readl/writel
+
+    The "Rename I2C_PIO_MODE_MAX_LEN to I2C_PIO_MODE_PREFERRED_LEN" got an
+    improved wording for the code's comment to I2C_PIO_MODE_PREFERRED_LEN.
+
+    The "Support atomic transfers" also got some very minor tuning, like
+    s/in_interrupt()/i2c_dev->is_curr_atomic_xfer/ in dvc_writel() that was
+    missed in v1.
+
+v1: The "i2c: tegra: Support atomic transfers" previously was sent out as
+    a separate patch, but later I spotted that suspend/resume doesn't
+    work properly. The "i2c: tegra: Fix suspending in active runtime PM
+    state" patch depends on the atomic patch because there is a need to
+    active IRQ-safe mode for the runtime PM by both patches.
+
+    I fixed a missed doc-comment of the newly added "is_curr_atomic_xfer"
+    structure field and added additional comment that explains why IRQ needs
+    to be disabled for the atomic transfer in the "Support atomic transfers"
+    patch.
+
+    Lastly, I added a minor "i2c: tegra: Rename .." patch that helps to
+    follow driver's code.
+
+Dmitry Osipenko (8):
+  i2c: tegra: Fix suspending in active runtime PM state
+  i2c: tegra: Properly disable runtime PM on driver's probe error
+  i2c: tegra: Prevent interrupt triggering after transfer timeout
+  i2c: tegra: Support atomic transfers
+  i2c: tegra: Rename I2C_PIO_MODE_MAX_LEN to I2C_PIO_MODE_PREFERRED_LEN
+  i2c: tegra: Use relaxed versions of readl/writel
+  i2c: tegra: Always terminate DMA transfer
+  i2c: tegra: Check DMA completion status in addition to left time
+
+ drivers/i2c/busses/i2c-tegra.c | 216 ++++++++++++++++++++++-----------
+ 1 file changed, 144 insertions(+), 72 deletions(-)
+
 -- 
 2.24.0
