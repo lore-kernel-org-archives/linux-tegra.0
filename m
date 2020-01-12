@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 04/14] dmaengine: tegra-apb: Clean up tasklet releasing
-Date: Sun, 12 Jan 2020 20:29:56 +0300
-Message-ID: <20200112173006.29863-5-digetx@gmail.com>
+Subject: [PATCH v4 07/14] dmaengine: tegra-apb: Use devm_request_irq
+Date: Sun, 12 Jan 2020 20:29:59 +0300
+Message-ID: <20200112173006.29863-8-digetx@gmail.com>
 References: <20200112173006.29863-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,61 +12,108 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan W
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no need to kill tasklet when driver's probe fails because tasklet
-can't be scheduled at this time. It is also cleaner to kill tasklet on
-channel's freeing rather than to kill it on driver's removal, otherwise
-tasklet could perform a dummy execution after channel's releasing, which
-isn't very nice.
+Use resource-managed variant of request_irq for brevity.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 35 +++++++++++------------------------
+ 1 file changed, 11 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 24ad3a5a04e3..1b8a11804962 100644
+index f44291207928..dff21e80ffa4 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1287,7 +1287,6 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 	struct tegra_dma_sg_req *sg_req;
- 	struct list_head dma_desc_list;
- 	struct list_head sg_req_list;
--	unsigned long flags;
+@@ -182,7 +182,6 @@ struct tegra_dma_channel {
+ 	char			name[12];
+ 	bool			config_init;
+ 	int			id;
+-	int			irq;
+ 	void __iomem		*chan_addr;
+ 	spinlock_t		lock;
+ 	bool			busy;
+@@ -1380,7 +1379,6 @@ static const struct tegra_dma_chip_data tegra148_dma_chip_data = {
  
- 	INIT_LIST_HEAD(&dma_desc_list);
- 	INIT_LIST_HEAD(&sg_req_list);
-@@ -1295,15 +1294,14 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 	dev_dbg(tdc2dev(tdc), "Freeing channel %d\n", tdc->id);
- 
- 	tegra_dma_terminate_all(dc);
-+	tasklet_kill(&tdc->tasklet);
- 
--	spin_lock_irqsave(&tdc->lock, flags);
- 	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
- 	list_splice_init(&tdc->free_sg_req, &sg_req_list);
- 	list_splice_init(&tdc->free_dma_desc, &dma_desc_list);
- 	INIT_LIST_HEAD(&tdc->cb_desc);
- 	tdc->config_init = false;
- 	tdc->isr_handler = NULL;
--	spin_unlock_irqrestore(&tdc->lock, flags);
- 
- 	while (!list_empty(&dma_desc_list)) {
- 		dma_desc = list_first_entry(&dma_desc_list,
-@@ -1542,7 +1540,6 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ static int tegra_dma_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct tegra_dma *tdma;
+ 	int ret;
+ 	int i;
+@@ -1446,25 +1444,27 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	INIT_LIST_HEAD(&tdma->dma_dev.channels);
+ 	for (i = 0; i < cdata->nr_channels; i++) {
  		struct tegra_dma_channel *tdc = &tdma->channels[i];
++		int irq;
  
- 		free_irq(tdc->irq, tdc);
--		tasklet_kill(&tdc->tasklet);
+ 		tdc->chan_addr = tdma->base_addr +
+ 				 TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET +
+ 				 (i * cdata->channel_reg_size);
+ 
+-		res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+-		if (!res) {
+-			ret = -EINVAL;
++		irq = platform_get_irq(pdev, i);
++		if (irq < 0) {
++			ret = irq;
+ 			dev_err(&pdev->dev, "No irq resource for chan %d\n", i);
+-			goto err_irq;
++			goto err_pm_disable;
+ 		}
+-		tdc->irq = res->start;
++
+ 		snprintf(tdc->name, sizeof(tdc->name), "apbdma.%d", i);
+-		ret = request_irq(tdc->irq, tegra_dma_isr, 0, tdc->name, tdc);
++		ret = devm_request_irq(&pdev->dev, irq, tegra_dma_isr, 0,
++				       tdc->name, tdc);
+ 		if (ret) {
+ 			dev_err(&pdev->dev,
+ 				"request_irq failed with err %d channel %d\n",
+ 				ret, i);
+-			goto err_irq;
++			goto err_pm_disable;
+ 		}
+ 
+ 		tdc->dma_chan.device = &tdma->dma_dev;
+@@ -1517,7 +1517,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev,
+ 			"Tegra20 APB DMA driver registration failed %d\n", ret);
+-		goto err_irq;
++		goto err_pm_disable;
  	}
  
- 	pm_runtime_disable(&pdev->dev);
-@@ -1562,7 +1559,6 @@ static int tegra_dma_remove(struct platform_device *pdev)
- 	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
- 		tdc = &tdma->channels[i];
- 		free_irq(tdc->irq, tdc);
--		tasklet_kill(&tdc->tasklet);
- 	}
+ 	ret = of_dma_controller_register(pdev->dev.of_node,
+@@ -1534,13 +1534,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
  
+ err_unregister_dma_dev:
+ 	dma_async_device_unregister(&tdma->dma_dev);
+-err_irq:
+-	while (--i >= 0) {
+-		struct tegra_dma_channel *tdc = &tdma->channels[i];
+-
+-		free_irq(tdc->irq, tdc);
+-	}
+-
++err_pm_disable:
  	pm_runtime_disable(&pdev->dev);
+ 	if (!pm_runtime_status_suspended(&pdev->dev))
+ 		tegra_dma_runtime_suspend(&pdev->dev);
+@@ -1550,16 +1544,9 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ static int tegra_dma_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_dma *tdma = platform_get_drvdata(pdev);
+-	int i;
+-	struct tegra_dma_channel *tdc;
+ 
+ 	dma_async_device_unregister(&tdma->dma_dev);
+ 
+-	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
+-		tdc = &tdma->channels[i];
+-		free_irq(tdc->irq, tdc);
+-	}
+-
+ 	pm_runtime_disable(&pdev->dev);
+ 	if (!pm_runtime_status_suspended(&pdev->dev))
+ 		tegra_dma_runtime_suspend(&pdev->dev);
 -- 
 2.24.0
