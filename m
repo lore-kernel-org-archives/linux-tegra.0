@@ -1,83 +1,57 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 6/8] i2c: tegra: Use relaxed versions of readl/writel
-Date: Sun, 12 Jan 2020 20:14:28 +0300
-Message-ID: <20200112171430.27219-7-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v4 5/8] i2c: tegra: Rename I2C_PIO_MODE_MAX_LEN to I2C_PIO_MODE_PREFERRED_LEN
+Date: Sun, 12 Jan 2020 20:14:27 +0300
+Message-ID: <20200112171430.27219-6-digetx@gmail.com>
 References: <20200112171430.27219-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20200112171430.27219-1-digetx@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Mikko Perttunen <cyndis@kapsi.fi>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200112171430.27219-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is nothing to synchronize in regards to memory accesses for PIO
-transfers and for DMA transfers the DMA API takes care of the syncing.
+DMA is preferred for a larger transfers, while PIO is preferred for a
+smaller transfers to avoid unnecessary DMA overhead. There is no strict
+size limitations for the PIO-mode transfers, so let's rename the constant
+for clarity.
 
-Tested-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/i2c/busses/i2c-tegra.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index e0eb8f5dcd6b..1a390e1bff72 100644
+index 0245fc2b5684..e0eb8f5dcd6b 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -284,12 +284,12 @@ struct tegra_i2c_dev {
- static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
- 		       unsigned long reg)
- {
--	writel(val, i2c_dev->base + reg);
-+	writel_relaxed(val, i2c_dev->base + reg);
- }
- 
- static u32 dvc_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
- {
--	return readl(i2c_dev->base + reg);
-+	return readl_relaxed(i2c_dev->base + reg);
- }
+@@ -131,11 +131,12 @@
+ #define I2C_PACKET_HEADER_SIZE			12
  
  /*
-@@ -307,16 +307,16 @@ static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
- static void i2c_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
- 		       unsigned long reg)
- {
--	writel(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
-+	writel_relaxed(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
+- * Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
+- * above this, controller will use DMA to fill FIFO.
+- * MAX PIO len is 20 bytes excluding packet header.
++ * I2C Controller will use PIO mode for transfers up to 32 bytes in order to
++ * avoid DMA overhead, otherwise external APB DMA controller will be used.
++ * Note that the actual MAX PIO length is 20 bytes because 32 bytes include
++ * I2C_PACKET_HEADER_SIZE.
+  */
+-#define I2C_PIO_MODE_MAX_LEN			32
++#define I2C_PIO_MODE_PREFERRED_LEN		32
  
- 	/* Read back register to make sure that register writes completed */
- 	if (reg != I2C_TX_FIFO)
--		readl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
-+		readl_relaxed(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
- }
+ /*
+  * msg_end_type: The bus control which need to be send at end of transfer.
+@@ -1110,7 +1111,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
  
- static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
- {
--	return readl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
-+	return readl_relaxed(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
- }
- 
- static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
-@@ -689,12 +689,13 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
- 
- 		if (i2c_dev->is_curr_atomic_xfer)
--			err = readl_poll_timeout_atomic(addr, val, val == 0,
--							1000,
--							I2C_CONFIG_LOAD_TIMEOUT);
-+			err = readl_relaxed_poll_timeout_atomic(
-+						addr, val, val == 0, 1000,
-+						I2C_CONFIG_LOAD_TIMEOUT);
- 		else
--			err = readl_poll_timeout(addr, val, val == 0, 1000,
--						 I2C_CONFIG_LOAD_TIMEOUT);
-+			err = readl_relaxed_poll_timeout(
-+						addr, val, val == 0, 1000,
-+						I2C_CONFIG_LOAD_TIMEOUT);
- 
- 		if (err) {
- 			dev_warn(i2c_dev->dev,
+ 	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
+-	i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
++	i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_PREFERRED_LEN) &&
+ 				    i2c_dev->dma_buf &&
+ 				    !i2c_dev->is_curr_atomic_xfer;
+ 	tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
 -- 
 2.24.0
