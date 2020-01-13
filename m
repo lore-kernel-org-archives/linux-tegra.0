@@ -1,55 +1,63 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH 5.4 000/165] 5.4.11-stable review
-Date: Mon, 13 Jan 2020 19:27:21 +0100
-Message-ID: <20200113182721.GJ411698@kroah.com>
-References: <20200111094921.347491861@linuxfoundation.org>
- <ace61a61-9241-5734-aeea-86de9e9e608a@nvidia.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v4 0/8] NVIDIA Tegra I2C driver fixes and improvements
+Date: Mon, 13 Jan 2020 22:53:41 +0100
+Message-ID: <20200113215341.GA2689@ninjato>
+References: <20200112171430.27219-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <ace61a61-9241-5734-aeea-86de9e9e608a-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200112171430.27219-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 03:49:01PM +0000, Jon Hunter wrote:
-> 
-> On 11/01/2020 09:48, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.11 release.
-> > There are 165 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Mon, 13 Jan 2020 09:46:17 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.11-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.4:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.4.11-g9d61432efb21
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
 
-Thanks for testing all of these and letting me know.
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-greg k-h
+On Sun, Jan 12, 2020 at 08:14:22PM +0300, Dmitry Osipenko wrote:
+> Hello,
+>=20
+> This patchset adds support for atomic transfers which are required for
+> shutting down machine properly. Secondly, a (not)suspending I2C and some
+> other things are fixed/improved by this small series as well. Please revi=
+ew
+> and apply, thanks in advance!
+>=20
+> Changelog:
+>=20
+> v4: Removed the "clk: tegra: Fix double-free in tegra_clk_init()" patch
+>     from this series, which was added by accident in v3.
+>=20
+>     Added Thierry's tested-by to the patches.
+
+Looks good to me. I think all these patches should go to v5.6, let me
+know if patches 1 and/or 2 should go to v5.5?
+
+
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4c5uEACgkQFA3kzBSg
+KbaNOg/8Djo9bVYyGrlZcv32vzUo/Ey82Z5EzFt9OvJt3HJZjk9P0968XqubSUDM
+avR6DhJR9xaVLfgqJRmQvxA3nnNm4N1k4ezckknwoDeiWdUNqt4MWWFxJuc7ropM
+ehzoaGRgp+Q8ERRHdo/dJtJcrvl/IkanWZWik9VbhrtsTexKXwpGV0hx8KvkqOhP
+HU3bO/WJR1s7bfrxPHvMmp0GYcqEsqiZ1R910oYka0QDo4cAc3HjLllN5IpnfKo7
+azK1cd70TjVzYoFXHX+wrU0n+8XqoRLRjZxVEoLAMt+UpS+LBXNI+29xB0jkx2+m
+/EFg2yaS65zltyvhnR/eMiFj2qrVZ+Rx8oz8ZJOYVlw5pZkWN1SbbBZg+s7G/NCq
+TDFzkCtyprj9KDDdH9Vu+ahChiEm9X2+LkG0jKAo/c/GGXgyRjv6DqIJshPD+T7z
+h1+IuakJCUd2HAVcL5hjKLfg4QpbKGn2DJhV3AnjbLTIhTrVujv/8KWtgNj+c7JQ
+UoEPA1g5j6CXe5jxWNV7eO9hlkaZSekZ17kQ3y5/3hf0ZbqVU95ffiWHAv/KFMC+
+zlLSXD6iZznJUX44mBoLaRltNJn6KFAhL1kU7q8lePCbRbSIcdaVkofJ16Kbr/tv
+ExY+wXPXhu39HstjFveuKcC0L9zm5bTBBu3zw12zE9uxfXUHRjI=
+=qKVs
+-----END PGP SIGNATURE-----
+
+--wRRV7LY7NUeQGEoC--
