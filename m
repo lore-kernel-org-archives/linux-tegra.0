@@ -1,52 +1,73 @@
-From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/6] dt-bindings: memory-controller: Convert Tegra124 EMC
- to json-schema
-Date: Mon, 13 Jan 2020 12:03:02 -0600
-Message-ID: <CAL_JsqKWRm7BN1vjV=DDHJooEbQti+zFN=PrvEtrNhKoKa06YQ@mail.gmail.com>
-References: <20191222113921.1469372-1-thierry.reding@gmail.com> <20191222113921.1469372-2-thierry.reding@gmail.com>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Re: [PATCH V2 3/5] PCI: tegra: Add support for PCIe endpoint mode
+ in Tegra194
+Date: Mon, 13 Jan 2020 23:42:55 +0530
+Message-ID: <e4a806f5-6efb-d221-7627-a50a427bea99@nvidia.com>
+References: <20200103124404.20662-1-vidyas@nvidia.com>
+ <20200103124404.20662-4-vidyas@nvidia.com> <20200106131416.GD1955714@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20191222113921.1469372-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200106131416.GD1955714@ulmo>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, andrew.murray-5wv7dgnIgG8@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, gustavo.pimentel-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Dec 22, 2019 at 5:39 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Convert the device tree bindings for the Tegra124 EMC controller to the
-> DT schema format using json-schema. While at it, clean up the binding a
-> little bit by removing any mention of how RAM code and clock frequency
-> are represented in unit-addresses (which they aren't) and by adding the
-> EMC clock without which the EMC controller can't change the frequency at
-> which the external memory is clocked. While this is technically an ABI
-> break (the clock was not required before), this should be fine because
-> there isn't much that the EMC driver can do without access to the EMC
-> clock.
->
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../nvidia,tegra124-emc.txt                   | 374 -------------
->  .../nvidia,tegra124-emc.yaml                  | 528 ++++++++++++++++++
->  2 files changed, 528 insertions(+), 374 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.txt
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
 
-The example fails 'make dt_binding_check':
 
-/home/rob/proj/git/linux-dt/.build-arm64/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.example.dt.yaml:
-memory-controller@70019000: '#reset-cells' is a required property
-/home/rob/proj/git/linux-dt/.build-arm64/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.example.dt.yaml:
-external-memory-controller@7001b000: emc-timings-0:timing-0:
-'nvidia,emc-mrs-wait-cnt' is a required property
-/home/rob/proj/git/linux-dt/.build-arm64/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.example.dt.yaml:
-external-memory-controller@7001b000: emc-timings-0:timing-0:
-'nvidia,emc-xm2dqspadctrl2' is a required property
-/home/rob/proj/git/linux-dt/.build-arm64/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.example.dt.yaml:
-external-memory-controller@7001b000: emc-timings-0:timing-0:
-'nvidia,emc-zcal-interval' is a required property
+On 1/6/20 6:44 PM, Thierry Reding wrote:
+> On Fri, Jan 03, 2020 at 06:14:02PM +0530, Vidya Sagar wrote:
+>> Add support for the endpoint mode of Synopsys DesignWare core based
+>> dual mode PCIe controllers present in Tegra194 SoC.
+>>
+>> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> V2:
+>> * Addressed Bjorn's review comments
+>> * Made changes as part of addressing review comments for other patches
+>>
+>>   drivers/pci/controller/dwc/Kconfig         |  30 +-
+>>   drivers/pci/controller/dwc/pcie-tegra194.c | 782 ++++++++++++++++++++-
+>>   2 files changed, 796 insertions(+), 16 deletions(-)
+>>
+> [...]
+>> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+>> index cbe95f0ea0ca..6621ac79efee 100644
+>> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+>> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> [...]
+>> @@ -1427,8 +1620,553 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+> [...]
+>> +static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
+>> +				struct platform_device *pdev)
+>> +{
+> [...]
+>> +	ret = devm_request_irq(dev, pcie->pex_rst_irq,
+>> +			       tegra_pcie_ep_pex_rst_irq,
+>> +			       IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+>> +			       name, (void *)pcie);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "Failed to request IRQ for PERST: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +	disable_irq(pcie->pex_rst_irq);
+> 
+> I just came across this while reviewing another patch: it looks like a
+> better way to handle "disabled by default" interrupts is to do this:
+> 
+> 	irq_set_status_flags(rtc->irq, IRQ_NOAUTOEN);
+> 
+> before calling devm_request_irq(). See here for an example:
+> 
+> 	http://patchwork.ozlabs.org/patch/1217944/
+I'll take care of it.
 
-Rob
+Thanks for the review.
+Vidya Sagar
+
+> 
+> Thierry
+> 
