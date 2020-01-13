@@ -1,28 +1,42 @@
-From: Rick Schaech <cathben72-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: I wait for your swift response,
-Date: Mon, 13 Jan 2020 01:52:37 -0400
-Message-ID: <CAEcBxO=DoZZeZuHjVOxQpB8CM4fADYg6sCQVLkjP+qQwsNEH9A__17464.4501226552$1578894825$gmane$org@mail.gmail.com>
-Reply-To: rickschaech-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: JC Kuo <jckuo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v1] dt-binding: usb: add "super-speed-plus"
+Date: Mon, 13 Jan 2020 14:00:46 +0800
+Message-ID: <20200113060046.14448-1-jckuo@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, JC Kuo <jckuo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Dear, I'm Mr Rick Schaech, I am the General Account Auditor, Though i
-know we have not meet each other before but sometimes in life God have
-a reason of bringing two people from two different countries together
-as business partners or life partners.
+This commit adds "super-speed-plus" to valid argument list of
+"maximum-speed" property.
 
-My dear friend, I have the sum of 15.7 Million USD i wish to put in
-your name due to the death of my late client who died several years
-ago as his next of kin column still remain blank. Though the internet
-medium is highly abuse these days but am assuring you that this
-transaction is legitimate and I am contacting you that we may have a
-deal, note for your cooperation and collaboration 40% of the sum will
-be for you while the other 60% will be for me as well. I wait for your
-swift response for more details. please forward your response to my
-personal E-mail: rickschaech-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Signed-off-by: JC Kuo <jckuo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ Documentation/devicetree/bindings/usb/generic.txt | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Yours sincerely,
-Rick Schaech.
+diff --git a/Documentation/devicetree/bindings/usb/generic.txt b/Documentation/devicetree/bindings/usb/generic.txt
+index cf5a1ad456e6..e6790d2a4da9 100644
+--- a/Documentation/devicetree/bindings/usb/generic.txt
++++ b/Documentation/devicetree/bindings/usb/generic.txt
+@@ -2,10 +2,11 @@ Generic USB Properties
+ 
+ Optional properties:
+  - maximum-speed: tells USB controllers we want to work up to a certain
+-			speed. Valid arguments are "super-speed", "high-speed",
+-			"full-speed" and "low-speed". In case this isn't passed
+-			via DT, USB controllers should default to their maximum
+-			HW capability.
++			speed. Valid arguments are "super-speed-plus",
++			"super-speed", "high-speed", "full-speed" and
++			"low-speed". In case this isn't passed via DT, USB
++			controllers should default to their maximum HW
++			capability.
+  - dr_mode: tells Dual-Role USB controllers that we want to work on a
+ 			particular mode. Valid arguments are "host",
+ 			"peripheral" and "otg". In case this attribute isn't
+-- 
+2.17.1
