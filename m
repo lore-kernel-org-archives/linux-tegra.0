@@ -1,55 +1,52 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.4 000/165] 5.4.11-stable review
-Date: Mon, 13 Jan 2020 15:49:01 +0000
-Message-ID: <ace61a61-9241-5734-aeea-86de9e9e608a@nvidia.com>
-References: <20200111094921.347491861@linuxfoundation.org>
+From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/6] dt-bindings: memory-controller: Convert Tegra124 EMC
+ to json-schema
+Date: Mon, 13 Jan 2020 12:03:02 -0600
+Message-ID: <CAL_JsqKWRm7BN1vjV=DDHJooEbQti+zFN=PrvEtrNhKoKa06YQ@mail.gmail.com>
+References: <20191222113921.1469372-1-thierry.reding@gmail.com> <20191222113921.1469372-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20200111094921.347491861@linuxfoundation.org>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20191222113921.1469372-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Sun, Dec 22, 2019 at 5:39 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Convert the device tree bindings for the Tegra124 EMC controller to the
+> DT schema format using json-schema. While at it, clean up the binding a
+> little bit by removing any mention of how RAM code and clock frequency
+> are represented in unit-addresses (which they aren't) and by adding the
+> EMC clock without which the EMC controller can't change the frequency at
+> which the external memory is clocked. While this is technically an ABI
+> break (the clock was not required before), this should be fine because
+> there isn't much that the EMC driver can do without access to the EMC
+> clock.
+>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../nvidia,tegra124-emc.txt                   | 374 -------------
+>  .../nvidia,tegra124-emc.yaml                  | 528 ++++++++++++++++++
+>  2 files changed, 528 insertions(+), 374 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.txt
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
 
-On 11/01/2020 09:48, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.11 release.
-> There are 165 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Mon, 13 Jan 2020 09:46:17 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
+The example fails 'make dt_binding_check':
 
-All tests are passing for Tegra ...
+/home/rob/proj/git/linux-dt/.build-arm64/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.example.dt.yaml:
+memory-controller@70019000: '#reset-cells' is a required property
+/home/rob/proj/git/linux-dt/.build-arm64/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.example.dt.yaml:
+external-memory-controller@7001b000: emc-timings-0:timing-0:
+'nvidia,emc-mrs-wait-cnt' is a required property
+/home/rob/proj/git/linux-dt/.build-arm64/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.example.dt.yaml:
+external-memory-controller@7001b000: emc-timings-0:timing-0:
+'nvidia,emc-xm2dqspadctrl2' is a required property
+/home/rob/proj/git/linux-dt/.build-arm64/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.example.dt.yaml:
+external-memory-controller@7001b000: emc-timings-0:timing-0:
+'nvidia,emc-zcal-interval' is a required property
 
-Test results for stable-v5.4:
-    13 builds:	13 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.4.11-g9d61432efb21
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+Rob
