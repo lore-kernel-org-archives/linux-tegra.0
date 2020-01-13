@@ -1,51 +1,62 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V3 0/5] Add support for PCIe endpoint mode in Tegra194
-Date: Mon, 13 Jan 2020 23:44:06 +0530
-Message-ID: <20200113181411.32743-1-vidyas@nvidia.com>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 4/5] arm64: tegra: Add support for PCIe endpoint mode in P2972-0000 platform
+Date: Mon, 13 Jan 2020 23:44:10 +0530
+Message-ID: <20200113181411.32743-5-vidyas@nvidia.com>
+References: <20200113181411.32743-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-pci-owner@vger.kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com
-Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200113181411.32743-1-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, andrew.murray-5wv7dgnIgG8@public.gmane.org
+Cc: kishon-l0cyMroinI0@public.gmane.org, gustavo.pimentel-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that can operate
-either in root port mode or in end point mode but only in one mode at a time.
-Platform P2972-0000 supports enabling endpoint mode for C5 controller. This
-patch series adds support for PCIe endpoint mode in both the driver as well as
-in DT.
-This patch series depends on the changes made for Synopsys DesignWare endpoint
-mode subsystem that are currently under review
-@ https://patchwork.kernel.org/project/linux-pci/list/?series=202211
-which in turn depends on the patch made by Kishon
-@ https://patchwork.kernel.org/patch/10975123/
-which is also under review.
+Add endpoint mode support for PCIe C5 controller in P2972-0000 platform
+with information about supplies, PHY, PERST GPIO and GPIO that controls
+PCIe reference clock coming from the host system.
 
+Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 V3:
-* Re-ordered patches in the series to make the driver change as the last patch
-* Took care of Thierry's review comments
+* None
 
 V2:
-* Addressed Thierry & Bjorn's review comments
-* Added EP mode specific binding documentation to already existing binding documentation file
-* Removed patch that enables GPIO controller nodes explicitly as they are enabled already
+* Addressed Thierry's review comments
+* Changed 'nvidia,pex-rst-gpio' to 'reset-gpios'
+* Added 'nvidia,refclk-select-gpios'
 
-Vidya Sagar (5):
-  soc/tegra: bpmp: Update ABI header
-  dt-bindings: PCI: tegra: Add DT support for PCIe EP nodes in Tegra194
-  arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
-  arm64: tegra: Add support for PCIe endpoint mode in P2972-0000
-    platform
-  PCI: tegra: Add support for PCIe endpoint mode in Tegra194
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts    | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
- .../bindings/pci/nvidia,tegra194-pcie.txt     | 125 ++-
- .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  18 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  99 +++
- drivers/pci/controller/dwc/Kconfig            |  30 +-
- drivers/pci/controller/dwc/pcie-tegra194.c    | 770 +++++++++++++++++-
- include/soc/tegra/bpmp-abi.h                  |  10 +-
- 6 files changed, 1007 insertions(+), 45 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+index 353a6a22196d..87ae7c6d38e2 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+@@ -136,6 +136,24 @@
+ 			    "p2u-5", "p2u-6", "p2u-7";
+ 	};
+ 
++	pcie_ep@141a0000 {
++		status = "disabled";
++
++		vddio-pex-ctl-supply = <&vdd_1v8ao>;
++
++		reset-gpios = <&gpio TEGRA194_MAIN_GPIO(GG, 1) GPIO_ACTIVE_LOW>;
++
++		nvidia,refclk-select-gpios = <&gpio_aon TEGRA194_AON_GPIO(AA, 5)
++					      GPIO_ACTIVE_HIGH>;
++
++		phys = <&p2u_nvhs_0>, <&p2u_nvhs_1>, <&p2u_nvhs_2>,
++		       <&p2u_nvhs_3>, <&p2u_nvhs_4>, <&p2u_nvhs_5>,
++		       <&p2u_nvhs_6>, <&p2u_nvhs_7>;
++
++		phy-names = "p2u-0", "p2u-1", "p2u-2", "p2u-3", "p2u-4",
++			    "p2u-5", "p2u-6", "p2u-7";
++	};
++
+ 	fan: fan {
+ 		compatible = "pwm-fan";
+ 		pwms = <&pwm4 0 45334>;
 -- 
 2.17.1
