@@ -1,508 +1,682 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v8 20/22] clk: tegra: Remove tegra_pmc_clk_init along with clk ids
-Date: Mon, 13 Jan 2020 23:24:25 -0800
-Message-ID: <1578986667-16041-21-git-send-email-skomatineni@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH v8 06/22] dt-bindings: tegra: Convert Tegra PMC bindings to YAML
+Date: Mon, 13 Jan 2020 23:24:11 -0800
+Message-ID: <1578986667-16041-7-git-send-email-skomatineni@nvidia.com>
 References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1578986667-16041-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Current Tegra clock driver registers PMC clocks clk_out_1, clk_out_2,
-clk_out_3 and 32KHz blink output in tegra_pmc_init() which does direct
-PMC register access during clk_ops and these PMC register read and write
-access will not happen when PMC is in secure mode.
+This patch converts text based Tegra PMC bindings document to YAML
+schema for performing dt validation.
 
-Any direct PMC register access from non-secure world will not go
-through.
-
-All the PMC clocks are moved to Tegra PMC driver with PMC as a clock
-provider.
-
-This patch removes tegra_pmc_clk_init along with corresponding clk ids
-from Tegra clock driver.
-
-Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/Makefile        |   1 -
- drivers/clk/tegra/clk-id.h        |   7 ---
- drivers/clk/tegra/clk-tegra-pmc.c | 122 --------------------------------------
- drivers/clk/tegra/clk-tegra114.c  |  17 +-----
- drivers/clk/tegra/clk-tegra124.c  |  33 ++++-------
- drivers/clk/tegra/clk-tegra20.c   |   4 --
- drivers/clk/tegra/clk-tegra210.c  |  17 +-----
- drivers/clk/tegra/clk-tegra30.c   |  18 +-----
- drivers/clk/tegra/clk.h           |   1 -
- 9 files changed, 19 insertions(+), 201 deletions(-)
- delete mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 300 ------------------
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 340 +++++++++++++++++++++
+ 2 files changed, 340 insertions(+), 300 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index df966ca06788..1f7c30f87ece 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -12,7 +12,6 @@ obj-y					+= clk-sdmmc-mux.o
- obj-y					+= clk-super.o
- obj-y					+= clk-tegra-audio.o
- obj-y					+= clk-tegra-periph.o
--obj-y					+= clk-tegra-pmc.o
- obj-y					+= clk-tegra-fixed.o
- obj-y					+= clk-tegra-super-gen4.o
- obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index cf42e5995794..ff7da2d3e94d 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -32,7 +32,6 @@ enum clk_id {
- 	tegra_clk_audio4,
- 	tegra_clk_audio4_2x,
- 	tegra_clk_audio4_mux,
--	tegra_clk_blink,
- 	tegra_clk_bsea,
- 	tegra_clk_bsev,
- 	tegra_clk_cclk_g,
-@@ -47,12 +46,6 @@ enum clk_id {
- 	tegra_clk_osc,
- 	tegra_clk_osc_div2,
- 	tegra_clk_osc_div4,
--	tegra_clk_clk_out_1,
--	tegra_clk_clk_out_1_mux,
--	tegra_clk_clk_out_2,
--	tegra_clk_clk_out_2_mux,
--	tegra_clk_clk_out_3,
--	tegra_clk_clk_out_3_mux,
- 	tegra_clk_cml0,
- 	tegra_clk_cml1,
- 	tegra_clk_csi,
-diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
 deleted file mode 100644
-index 5e044ba1ae36..000000000000
---- a/drivers/clk/tegra/clk-tegra-pmc.c
+index cb12f33a247f..000000000000
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
 +++ /dev/null
-@@ -1,122 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * Copyright (c) 2012, 2013, NVIDIA CORPORATION.  All rights reserved.
-- */
+@@ -1,300 +0,0 @@
+-NVIDIA Tegra Power Management Controller (PMC)
 -
--#include <linux/io.h>
--#include <linux/clk-provider.h>
--#include <linux/clkdev.h>
--#include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/delay.h>
--#include <linux/export.h>
--#include <linux/clk/tegra.h>
+-== Power Management Controller Node ==
 -
--#include "clk.h"
--#include "clk-id.h"
+-The PMC block interacts with an external Power Management Unit. The PMC
+-mostly controls the entry and exit of the system from different sleep
+-modes. It provides power-gating controllers for SoC and CPU power-islands.
 -
--#define PMC_CLK_OUT_CNTRL 0x1a8
--#define PMC_DPD_PADS_ORIDE 0x1c
--#define PMC_DPD_PADS_ORIDE_BLINK_ENB 20
--#define PMC_CTRL 0
--#define PMC_CTRL_BLINK_ENB 7
--#define PMC_BLINK_TIMER 0x40
+-Required properties:
+-- name : Should be pmc
+-- compatible : Should contain one of the following:
+-	For Tegra20 must contain "nvidia,tegra20-pmc".
+-	For Tegra30 must contain "nvidia,tegra30-pmc".
+-	For Tegra114 must contain "nvidia,tegra114-pmc"
+-	For Tegra124 must contain "nvidia,tegra124-pmc"
+-	For Tegra132 must contain "nvidia,tegra124-pmc"
+-	For Tegra210 must contain "nvidia,tegra210-pmc"
+-- reg : Offset and length of the register set for the device
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  "pclk" (The Tegra clock of that name),
+-  "clk32k_in" (The 32KHz clock input to Tegra).
 -
--struct pmc_clk_init_data {
--	char *mux_name;
--	char *gate_name;
--	const char **parents;
--	int num_parents;
--	int mux_id;
--	int gate_id;
--	char *dev_name;
--	u8 mux_shift;
--	u8 gate_shift;
+-Optional properties:
+-- nvidia,invert-interrupt : If present, inverts the PMU interrupt signal.
+-  The PMU is an external Power Management Unit, whose interrupt output
+-  signal is fed into the PMC. This signal is optionally inverted, and then
+-  fed into the ARM GIC. The PMC is not involved in the detection or
+-  handling of this interrupt signal, merely its inversion.
+-- nvidia,suspend-mode : The suspend mode that the platform should use.
+-  Valid values are 0, 1 and 2:
+-  0 (LP0): CPU + Core voltage off and DRAM in self-refresh
+-  1 (LP1): CPU voltage off and DRAM in self-refresh
+-  2 (LP2): CPU voltage off
+-- nvidia,core-power-req-active-high : Boolean, core power request active-high
+-- nvidia,sys-clock-req-active-high : Boolean, system clock request active-high
+-- nvidia,combined-power-req : Boolean, combined power request for CPU & Core
+-- nvidia,cpu-pwr-good-en : Boolean, CPU power good signal (from PMIC to PMC)
+-			   is enabled.
+-
+-Required properties when nvidia,suspend-mode is specified:
+-- nvidia,cpu-pwr-good-time : CPU power good time in uS.
+-- nvidia,cpu-pwr-off-time : CPU power off time in uS.
+-- nvidia,core-pwr-good-time : <Oscillator-stable-time Power-stable-time>
+-			      Core power good time in uS.
+-- nvidia,core-pwr-off-time : Core power off time in uS.
+-
+-Required properties when nvidia,suspend-mode=<0>:
+-- nvidia,lp0-vec : <start length> Starting address and length of LP0 vector
+-  The LP0 vector contains the warm boot code that is executed by AVP when
+-  resuming from the LP0 state. The AVP (Audio-Video Processor) is an ARM7
+-  processor and always being the first boot processor when chip is power on
+-  or resume from deep sleep mode. When the system is resumed from the deep
+-  sleep mode, the warm boot code will restore some PLLs, clocks and then
+-  bring up CPU0 for resuming the system.
+-
+-Hardware-triggered thermal reset:
+-On Tegra30, Tegra114 and Tegra124, if the 'i2c-thermtrip' subnode exists,
+-hardware-triggered thermal reset will be enabled.
+-
+-Required properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'):
+-- nvidia,i2c-controller-id : ID of I2C controller to send poweroff command to. Valid values are
+-                             described in section 9.2.148 "APBDEV_PMC_SCRATCH53_0" of the
+-                             Tegra K1 Technical Reference Manual.
+-- nvidia,bus-addr : Bus address of the PMU on the I2C bus
+-- nvidia,reg-addr : I2C register address to write poweroff command to
+-- nvidia,reg-data : Poweroff command to write to PMU
+-
+-Optional properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'):
+-- nvidia,pinmux-id : Pinmux used by the hardware when issuing poweroff command.
+-                     Defaults to 0. Valid values are described in section 12.5.2
+-                     "Pinmux Support" of the Tegra4 Technical Reference Manual.
+-
+-Optional nodes:
+-- powergates : This node contains a hierarchy of power domain nodes, which
+-	       should match the powergates on the Tegra SoC. See "Powergate
+-	       Nodes" below.
+-
+-Example:
+-
+-/ SoC dts including file
+-pmc@7000f400 {
+-	compatible = "nvidia,tegra20-pmc";
+-	reg = <0x7000e400 0x400>;
+-	clocks = <&tegra_car 110>, <&clk32k_in>;
+-	clock-names = "pclk", "clk32k_in";
+-	nvidia,invert-interrupt;
+-	nvidia,suspend-mode = <1>;
+-	nvidia,cpu-pwr-good-time = <2000>;
+-	nvidia,cpu-pwr-off-time = <100>;
+-	nvidia,core-pwr-good-time = <3845 3845>;
+-	nvidia,core-pwr-off-time = <458>;
+-	nvidia,core-power-req-active-high;
+-	nvidia,sys-clock-req-active-high;
+-	nvidia,lp0-vec = <0xbdffd000 0x2000>;
 -};
 -
--#define PMC_CLK(_num, _mux_shift, _gate_shift)\
--	{\
--		.mux_name = "clk_out_" #_num "_mux",\
--		.gate_name = "clk_out_" #_num,\
--		.parents = clk_out ##_num ##_parents,\
--		.num_parents = ARRAY_SIZE(clk_out ##_num ##_parents),\
--		.mux_id = tegra_clk_clk_out_ ##_num ##_mux,\
--		.gate_id = tegra_clk_clk_out_ ##_num,\
--		.dev_name = "extern" #_num,\
--		.mux_shift = _mux_shift,\
--		.gate_shift = _gate_shift,\
--	}
--
--static DEFINE_SPINLOCK(clk_out_lock);
--
--static const char *clk_out1_parents[] = { "osc", "osc_div2",
--	"osc_div4", "extern1",
--};
--
--static const char *clk_out2_parents[] = { "osc", "osc_div2",
--	"osc_div4", "extern2",
--};
--
--static const char *clk_out3_parents[] = { "osc", "osc_div2",
--	"osc_div4", "extern3",
--};
--
--static struct pmc_clk_init_data pmc_clks[] = {
--	PMC_CLK(1, 6, 2),
--	PMC_CLK(2, 14, 10),
--	PMC_CLK(3, 22, 18),
--};
--
--void __init tegra_pmc_clk_init(void __iomem *pmc_base,
--				struct tegra_clk *tegra_clks)
+-/ Tegra board dts file
 -{
--	struct clk *clk;
--	struct clk **dt_clk;
--	int i;
+-	...
+-	pmc@7000f400 {
+-		i2c-thermtrip {
+-			nvidia,i2c-controller-id = <4>;
+-			nvidia,bus-addr = <0x40>;
+-			nvidia,reg-addr = <0x36>;
+-			nvidia,reg-data = <0x2>;
+-		};
+-	};
+-	...
+-	clocks {
+-		compatible = "simple-bus";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
 -
--	for (i = 0; i < ARRAY_SIZE(pmc_clks); i++) {
--		struct pmc_clk_init_data *data;
--
--		data = pmc_clks + i;
--
--		dt_clk = tegra_lookup_dt_id(data->mux_id, tegra_clks);
--		if (!dt_clk)
--			continue;
--
--		clk = clk_register_mux(NULL, data->mux_name, data->parents,
--				data->num_parents,
--				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
--				pmc_base + PMC_CLK_OUT_CNTRL, data->mux_shift,
--				3, 0, &clk_out_lock);
--		*dt_clk = clk;
+-		clk32k_in: clock {
+-			compatible = "fixed-clock";
+-			reg=<0>;
+-			#clock-cells = <0>;
+-			clock-frequency = <32768>;
+-		};
+-	};
+-	...
+-};
 -
 -
--		dt_clk = tegra_lookup_dt_id(data->gate_id, tegra_clks);
--		if (!dt_clk)
--			continue;
+-== Powergate Nodes ==
 -
--		clk = clk_register_gate(NULL, data->gate_name, data->mux_name,
--					CLK_SET_RATE_PARENT,
--					pmc_base + PMC_CLK_OUT_CNTRL,
--					data->gate_shift, 0, &clk_out_lock);
--		*dt_clk = clk;
--		clk_register_clkdev(clk, data->dev_name, data->gate_name);
--	}
+-Each of the powergate nodes represents a power-domain on the Tegra SoC
+-that can be power-gated by the Tegra PMC. The name of the powergate node
+-should be one of the below. Note that not every powergate is applicable
+-to all Tegra devices and the following list shows which powergates are
+-applicable to which devices. Please refer to the Tegra TRM for more
+-details on the various powergates.
 -
--	/* blink */
--	writel_relaxed(0, pmc_base + PMC_BLINK_TIMER);
--	clk = clk_register_gate(NULL, "blink_override", "clk_32k", 0,
--				pmc_base + PMC_DPD_PADS_ORIDE,
--				PMC_DPD_PADS_ORIDE_BLINK_ENB, 0, NULL);
+- Name		Description			Devices Applicable
+- 3d		3D Graphics			Tegra20/114/124/210
+- 3d0		3D Graphics 0			Tegra30
+- 3d1		3D Graphics 1			Tegra30
+- aud		Audio				Tegra210
+- dfd		Debug				Tegra210
+- dis		Display A			Tegra114/124/210
+- disb		Display B			Tegra114/124/210
+- heg		2D Graphics			Tegra30/114/124/210
+- iram		Internal RAM			Tegra124/210
+- mpe		MPEG Encode			All
+- nvdec		NVIDIA Video Decode Engine	Tegra210
+- nvjpg		NVIDIA JPEG Engine		Tegra210
+- pcie		PCIE				Tegra20/30/124/210
+- sata		SATA				Tegra30/124/210
+- sor		Display interfaces		Tegra124/210
+- ve2		Video Encode Engine 2		Tegra210
+- venc		Video Encode Engine		All
+- vdec		Video Decode Engine		Tegra20/30/114/124
+- vic		Video Imaging Compositor	Tegra124/210
+- xusba		USB Partition A			Tegra114/124/210
+- xusbb		USB Partition B 		Tegra114/124/210
+- xusbc		USB Partition C			Tegra114/124/210
 -
--	dt_clk = tegra_lookup_dt_id(tegra_clk_blink, tegra_clks);
--	if (!dt_clk)
--		return;
+-Required properties:
+-  - clocks: Must contain an entry for each clock required by the PMC for
+-    controlling a power-gate. See ../clocks/clock-bindings.txt for details.
+-  - resets: Must contain an entry for each reset required by the PMC for
+-    controlling a power-gate. See ../reset/reset.txt for details.
+-  - #power-domain-cells: Must be 0.
 -
--	clk = clk_register_gate(NULL, "blink", "blink_override", 0,
--				pmc_base + PMC_CTRL,
--				PMC_CTRL_BLINK_ENB, 0, NULL);
--	clk_register_clkdev(clk, "blink", NULL);
--	*dt_clk = clk;
--}
+-Example:
 -
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 180ddc2abfd2..c138ef75480b 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -779,10 +779,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_audio3] = { .dt_id = TEGRA114_CLK_AUDIO3, .present = true },
- 	[tegra_clk_audio4] = { .dt_id = TEGRA114_CLK_AUDIO4, .present = true },
- 	[tegra_clk_spdif] = { .dt_id = TEGRA114_CLK_SPDIF, .present = true },
--	[tegra_clk_clk_out_1] = { .dt_id = TEGRA114_CLK_CLK_OUT_1, .present = true },
--	[tegra_clk_clk_out_2] = { .dt_id = TEGRA114_CLK_CLK_OUT_2, .present = true },
--	[tegra_clk_clk_out_3] = { .dt_id = TEGRA114_CLK_CLK_OUT_3, .present = true },
--	[tegra_clk_blink] = { .dt_id = TEGRA114_CLK_BLINK, .present = true },
- 	[tegra_clk_xusb_host_src] = { .dt_id = TEGRA114_CLK_XUSB_HOST_SRC, .present = true },
- 	[tegra_clk_xusb_falcon_src] = { .dt_id = TEGRA114_CLK_XUSB_FALCON_SRC, .present = true },
- 	[tegra_clk_xusb_fs_src] = { .dt_id = TEGRA114_CLK_XUSB_FS_SRC, .present = true },
-@@ -804,9 +800,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_audio3_mux] = { .dt_id = TEGRA114_CLK_AUDIO3_MUX, .present = true },
- 	[tegra_clk_audio4_mux] = { .dt_id = TEGRA114_CLK_AUDIO4_MUX, .present = true },
- 	[tegra_clk_spdif_mux] = { .dt_id = TEGRA114_CLK_SPDIF_MUX, .present = true },
--	[tegra_clk_clk_out_1_mux] = { .dt_id = TEGRA114_CLK_CLK_OUT_1_MUX, .present = true },
--	[tegra_clk_clk_out_2_mux] = { .dt_id = TEGRA114_CLK_CLK_OUT_2_MUX, .present = true },
--	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA114_CLK_CLK_OUT_3_MUX, .present = true },
- 	[tegra_clk_dsia_mux] = { .dt_id = TEGRA114_CLK_DSIA_MUX, .present = true },
- 	[tegra_clk_dsib_mux] = { .dt_id = TEGRA114_CLK_DSIB_MUX, .present = true },
- 	[tegra_clk_cec] = { .dt_id = TEGRA114_CLK_CEC, .present = true },
-@@ -865,10 +858,9 @@ static struct tegra_devclk devclks[] __initdata = {
- 	{ .con_id = "audio3_2x", .dt_id = TEGRA114_CLK_AUDIO3_2X },
- 	{ .con_id = "audio4_2x", .dt_id = TEGRA114_CLK_AUDIO4_2X },
- 	{ .con_id = "spdif_2x", .dt_id = TEGRA114_CLK_SPDIF_2X },
--	{ .con_id = "extern1", .dev_id = "clk_out_1", .dt_id = TEGRA114_CLK_EXTERN1 },
--	{ .con_id = "extern2", .dev_id = "clk_out_2", .dt_id = TEGRA114_CLK_EXTERN2 },
--	{ .con_id = "extern3", .dev_id = "clk_out_3", .dt_id = TEGRA114_CLK_EXTERN3 },
--	{ .con_id = "blink", .dt_id = TEGRA114_CLK_BLINK },
-+	{ .con_id = "extern1", .dt_id = TEGRA114_CLK_EXTERN1 },
-+	{ .con_id = "extern2", .dt_id = TEGRA114_CLK_EXTERN2 },
-+	{ .con_id = "extern3", .dt_id = TEGRA114_CLK_EXTERN3 },
- 	{ .con_id = "cclk_g", .dt_id = TEGRA114_CLK_CCLK_G },
- 	{ .con_id = "cclk_lp", .dt_id = TEGRA114_CLK_CCLK_LP },
- 	{ .con_id = "sclk", .dt_id = TEGRA114_CLK_SCLK },
-@@ -1147,8 +1139,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 1 },
- 	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 1 },
- 	{ TEGRA114_CLK_EXTERN1, TEGRA114_CLK_PLL_A_OUT0, 0, 1 },
--	{ TEGRA114_CLK_CLK_OUT_1_MUX, TEGRA114_CLK_EXTERN1, 0, 1 },
--	{ TEGRA114_CLK_CLK_OUT_1, TEGRA114_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA114_CLK_I2S0, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S1, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S2, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
-@@ -1350,7 +1340,6 @@ static void __init tegra114_clock_init(struct device_node *np)
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
- 			     tegra114_audio_plls,
- 			     ARRAY_SIZE(tegra114_audio_plls), 24000000);
--	tegra_pmc_clk_init(pmc_base, tegra114_clks);
- 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
- 					&pll_x_params);
- 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 7a16e50eb20f..54cac77deaa3 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -903,10 +903,6 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_audio3] = { .dt_id = TEGRA124_CLK_AUDIO3, .present = true },
- 	[tegra_clk_audio4] = { .dt_id = TEGRA124_CLK_AUDIO4, .present = true },
- 	[tegra_clk_spdif] = { .dt_id = TEGRA124_CLK_SPDIF, .present = true },
--	[tegra_clk_clk_out_1] = { .dt_id = TEGRA124_CLK_CLK_OUT_1, .present = true },
--	[tegra_clk_clk_out_2] = { .dt_id = TEGRA124_CLK_CLK_OUT_2, .present = true },
--	[tegra_clk_clk_out_3] = { .dt_id = TEGRA124_CLK_CLK_OUT_3, .present = true },
--	[tegra_clk_blink] = { .dt_id = TEGRA124_CLK_BLINK, .present = true },
- 	[tegra_clk_xusb_host_src] = { .dt_id = TEGRA124_CLK_XUSB_HOST_SRC, .present = true },
- 	[tegra_clk_xusb_falcon_src] = { .dt_id = TEGRA124_CLK_XUSB_FALCON_SRC, .present = true },
- 	[tegra_clk_xusb_fs_src] = { .dt_id = TEGRA124_CLK_XUSB_FS_SRC, .present = true },
-@@ -932,9 +928,6 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_audio3_mux] = { .dt_id = TEGRA124_CLK_AUDIO3_MUX, .present = true },
- 	[tegra_clk_audio4_mux] = { .dt_id = TEGRA124_CLK_AUDIO4_MUX, .present = true },
- 	[tegra_clk_spdif_mux] = { .dt_id = TEGRA124_CLK_SPDIF_MUX, .present = true },
--	[tegra_clk_clk_out_1_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_1_MUX, .present = true },
--	[tegra_clk_clk_out_2_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_2_MUX, .present = true },
--	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_3_MUX, .present = true },
- 	[tegra_clk_cec] = { .dt_id = TEGRA124_CLK_CEC, .present = true },
- };
- 
-@@ -990,10 +983,9 @@ static struct tegra_devclk devclks[] __initdata = {
- 	{ .con_id = "audio3_2x", .dt_id = TEGRA124_CLK_AUDIO3_2X },
- 	{ .con_id = "audio4_2x", .dt_id = TEGRA124_CLK_AUDIO4_2X },
- 	{ .con_id = "spdif_2x", .dt_id = TEGRA124_CLK_SPDIF_2X },
--	{ .con_id = "extern1", .dev_id = "clk_out_1", .dt_id = TEGRA124_CLK_EXTERN1 },
--	{ .con_id = "extern2", .dev_id = "clk_out_2", .dt_id = TEGRA124_CLK_EXTERN2 },
--	{ .con_id = "extern3", .dev_id = "clk_out_3", .dt_id = TEGRA124_CLK_EXTERN3 },
--	{ .con_id = "blink", .dt_id = TEGRA124_CLK_BLINK },
-+	{ .con_id = "extern1", .dt_id = TEGRA124_CLK_EXTERN1 },
-+	{ .con_id = "extern2", .dt_id = TEGRA124_CLK_EXTERN2 },
-+	{ .con_id = "extern3", .dt_id = TEGRA124_CLK_EXTERN3 },
- 	{ .con_id = "cclk_g", .dt_id = TEGRA124_CLK_CCLK_G },
- 	{ .con_id = "cclk_lp", .dt_id = TEGRA124_CLK_CCLK_LP },
- 	{ .con_id = "sclk", .dt_id = TEGRA124_CLK_SCLK },
-@@ -1303,8 +1295,6 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 564480000, 1 },
- 	{ TEGRA124_CLK_PLL_A_OUT0, TEGRA124_CLK_CLK_MAX, 11289600, 1 },
- 	{ TEGRA124_CLK_EXTERN1, TEGRA124_CLK_PLL_A_OUT0, 0, 1 },
--	{ TEGRA124_CLK_CLK_OUT_1_MUX, TEGRA124_CLK_EXTERN1, 0, 1 },
--	{ TEGRA124_CLK_CLK_OUT_1, TEGRA124_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA124_CLK_I2S0, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S1, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
-@@ -1459,11 +1449,9 @@ static void __init tegra132_clock_apply_init_table(void)
-  * tegra124_132_clock_init_pre - clock initialization preamble for T124/T132
-  * @np: struct device_node * of the DT node for the SoC CAR IP block
-  *
-- * Register most of the clocks controlled by the CAR IP block, along
-- * with a few clocks controlled by the PMC IP block.  Everything in
-- * this function should be common to Tegra124 and Tegra132.  XXX The
-- * PMC clock initialization should probably be moved to PMC-specific
-- * driver code.  No return value.
-+ * Register most of the clocks controlled by the CAR IP block.
-+ * Everything in this function should be common to Tegra124 and Tegra132.
-+ * No return value.
-  */
- static void __init tegra124_132_clock_init_pre(struct device_node *np)
- {
-@@ -1506,7 +1494,6 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks,
- 			     tegra124_audio_plls,
- 			     ARRAY_SIZE(tegra124_audio_plls), 24576000);
--	tegra_pmc_clk_init(pmc_base, tegra124_clks);
- 
- 	/* For Tegra124 & Tegra132, PLLD is the only source for DSIA & DSIB */
- 	plld_base = readl(clk_base + PLLD_BASE);
-@@ -1518,11 +1505,11 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
-  * tegra124_132_clock_init_post - clock initialization postamble for T124/T132
-  * @np: struct device_node * of the DT node for the SoC CAR IP block
-  *
-- * Register most of the along with a few clocks controlled by the PMC
-- * IP block.  Everything in this function should be common to Tegra124
-+ * Register most of the clocks controlled by the CAR IP block.
-+ * Everything in this function should be common to Tegra124
-  * and Tegra132.  This function must be called after
-- * tegra124_132_clock_init_pre(), otherwise clk_base and pmc_base will
-- * not be set.  No return value.
-+ * tegra124_132_clock_init_pre(), otherwise clk_base will not be set.
-+ * No return value.
-  */
- static void __init tegra124_132_clock_init_post(struct device_node *np)
- {
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 4d8222f5c638..fe536f1d770d 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -458,7 +458,6 @@ static struct tegra_devclk devclks[] __initdata = {
- 	{ .con_id = "cdev1", .dt_id = TEGRA20_CLK_CDEV1 },
- 	{ .con_id = "cdev2", .dt_id = TEGRA20_CLK_CDEV2 },
- 	{ .con_id = "clk_32k", .dt_id = TEGRA20_CLK_CLK_32K },
--	{ .con_id = "blink", .dt_id = TEGRA20_CLK_BLINK },
- 	{ .con_id = "clk_m", .dt_id = TEGRA20_CLK_CLK_M },
- 	{ .con_id = "pll_ref", .dt_id = TEGRA20_CLK_PLL_REF },
- 	{ .dev_id = "tegra20-i2s.0", .dt_id = TEGRA20_CLK_I2S1 },
-@@ -537,7 +536,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_csi] = { .dt_id = TEGRA20_CLK_CSI, .present = true },
- 	[tegra_clk_isp] = { .dt_id = TEGRA20_CLK_ISP, .present = true },
- 	[tegra_clk_clk_32k] = { .dt_id = TEGRA20_CLK_CLK_32K, .present = true },
--	[tegra_clk_blink] = { .dt_id = TEGRA20_CLK_BLINK, .present = true },
- 	[tegra_clk_hclk] = { .dt_id = TEGRA20_CLK_HCLK, .present = true },
- 	[tegra_clk_pclk] = { .dt_id = TEGRA20_CLK_PCLK, .present = true },
- 	[tegra_clk_pll_p_out1] = { .dt_id = TEGRA20_CLK_PLL_P_OUT1, .present = true },
-@@ -1034,7 +1032,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 1 },
- 	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 1 },
- 	{ TEGRA20_CLK_CDEV1, TEGRA20_CLK_CLK_MAX, 0, 1 },
--	{ TEGRA20_CLK_BLINK, TEGRA20_CLK_CLK_MAX, 32768, 1 },
- 	{ TEGRA20_CLK_I2S1, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_I2S2, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_SDMMC1, TEGRA20_CLK_PLL_P, 48000000, 0 },
-@@ -1148,7 +1145,6 @@ static void __init tegra20_clock_init(struct device_node *np)
- 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra20_clks, NULL);
- 	tegra20_periph_clk_init();
- 	tegra20_audio_clk_init();
--	tegra_pmc_clk_init(pmc_base, tegra20_clks);
- 
- 	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA20_CLK_CLK_MAX);
- 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 45d54ead30bc..d2f1e9c0ed25 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2418,10 +2418,6 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_audio3] = { .dt_id = TEGRA210_CLK_AUDIO3, .present = true },
- 	[tegra_clk_audio4] = { .dt_id = TEGRA210_CLK_AUDIO4, .present = true },
- 	[tegra_clk_spdif] = { .dt_id = TEGRA210_CLK_SPDIF, .present = true },
--	[tegra_clk_clk_out_1] = { .dt_id = TEGRA210_CLK_CLK_OUT_1, .present = true },
--	[tegra_clk_clk_out_2] = { .dt_id = TEGRA210_CLK_CLK_OUT_2, .present = true },
--	[tegra_clk_clk_out_3] = { .dt_id = TEGRA210_CLK_CLK_OUT_3, .present = true },
--	[tegra_clk_blink] = { .dt_id = TEGRA210_CLK_BLINK, .present = true },
- 	[tegra_clk_xusb_gate] = { .dt_id = TEGRA210_CLK_XUSB_GATE, .present = true },
- 	[tegra_clk_xusb_host_src_8] = { .dt_id = TEGRA210_CLK_XUSB_HOST_SRC, .present = true },
- 	[tegra_clk_xusb_falcon_src_8] = { .dt_id = TEGRA210_CLK_XUSB_FALCON_SRC, .present = true },
-@@ -2453,9 +2449,6 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_audio3_mux] = { .dt_id = TEGRA210_CLK_AUDIO3_MUX, .present = true },
- 	[tegra_clk_audio4_mux] = { .dt_id = TEGRA210_CLK_AUDIO4_MUX, .present = true },
- 	[tegra_clk_spdif_mux] = { .dt_id = TEGRA210_CLK_SPDIF_MUX, .present = true },
--	[tegra_clk_clk_out_1_mux] = { .dt_id = TEGRA210_CLK_CLK_OUT_1_MUX, .present = true },
--	[tegra_clk_clk_out_2_mux] = { .dt_id = TEGRA210_CLK_CLK_OUT_2_MUX, .present = true },
--	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA210_CLK_CLK_OUT_3_MUX, .present = true },
- 	[tegra_clk_maud] = { .dt_id = TEGRA210_CLK_MAUD, .present = true },
- 	[tegra_clk_mipibif] = { .dt_id = TEGRA210_CLK_MIPIBIF, .present = true },
- 	[tegra_clk_qspi] = { .dt_id = TEGRA210_CLK_QSPI, .present = true },
-@@ -2542,10 +2535,9 @@ static struct tegra_devclk devclks[] __initdata = {
- 	{ .con_id = "audio4", .dt_id = TEGRA210_CLK_AUDIO4 },
- 	{ .con_id = "spdif", .dt_id = TEGRA210_CLK_SPDIF },
- 	{ .con_id = "spdif_2x", .dt_id = TEGRA210_CLK_SPDIF_2X },
--	{ .con_id = "extern1", .dev_id = "clk_out_1", .dt_id = TEGRA210_CLK_EXTERN1 },
--	{ .con_id = "extern2", .dev_id = "clk_out_2", .dt_id = TEGRA210_CLK_EXTERN2 },
--	{ .con_id = "extern3", .dev_id = "clk_out_3", .dt_id = TEGRA210_CLK_EXTERN3 },
--	{ .con_id = "blink", .dt_id = TEGRA210_CLK_BLINK },
-+	{ .con_id = "extern1", .dt_id = TEGRA210_CLK_EXTERN1 },
-+	{ .con_id = "extern2", .dt_id = TEGRA210_CLK_EXTERN2 },
-+	{ .con_id = "extern3", .dt_id = TEGRA210_CLK_EXTERN3 },
- 	{ .con_id = "cclk_g", .dt_id = TEGRA210_CLK_CCLK_G },
- 	{ .con_id = "cclk_lp", .dt_id = TEGRA210_CLK_CCLK_LP },
- 	{ .con_id = "sclk", .dt_id = TEGRA210_CLK_SCLK },
-@@ -3453,8 +3445,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_PLL_A, TEGRA210_CLK_CLK_MAX, 564480000, 1 },
- 	{ TEGRA210_CLK_PLL_A_OUT0, TEGRA210_CLK_CLK_MAX, 11289600, 1 },
- 	{ TEGRA210_CLK_EXTERN1, TEGRA210_CLK_PLL_A_OUT0, 0, 1 },
--	{ TEGRA210_CLK_CLK_OUT_1_MUX, TEGRA210_CLK_EXTERN1, 0, 1 },
--	{ TEGRA210_CLK_CLK_OUT_1, TEGRA210_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA210_CLK_I2S0, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S1, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S2, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
-@@ -3695,7 +3685,6 @@ static void __init tegra210_clock_init(struct device_node *np)
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra210_clks,
- 			     tegra210_audio_plls,
- 			     ARRAY_SIZE(tegra210_audio_plls), 24576000);
--	tegra_pmc_clk_init(pmc_base, tegra210_clks);
- 
- 	/* For Tegra210, PLLD is the only source for DSIA & DSIB */
- 	value = readl(clk_base + PLLD_BASE);
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index ddc5ab66d09e..5732fdbe20db 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -569,10 +569,9 @@ static struct tegra_devclk devclks[] __initdata = {
- 	{ .con_id = "audio3_2x", .dt_id = TEGRA30_CLK_AUDIO3_2X },
- 	{ .con_id = "audio4_2x", .dt_id = TEGRA30_CLK_AUDIO4_2X },
- 	{ .con_id = "spdif_2x", .dt_id = TEGRA30_CLK_SPDIF_2X },
--	{ .con_id = "extern1", .dev_id = "clk_out_1", .dt_id = TEGRA30_CLK_EXTERN1 },
--	{ .con_id = "extern2", .dev_id = "clk_out_2", .dt_id = TEGRA30_CLK_EXTERN2 },
--	{ .con_id = "extern3", .dev_id = "clk_out_3", .dt_id = TEGRA30_CLK_EXTERN3 },
--	{ .con_id = "blink", .dt_id = TEGRA30_CLK_BLINK },
-+	{ .con_id = "extern1", .dt_id = TEGRA30_CLK_EXTERN1 },
-+	{ .con_id = "extern2", .dt_id = TEGRA30_CLK_EXTERN2 },
-+	{ .con_id = "extern3", .dt_id = TEGRA30_CLK_EXTERN3 },
- 	{ .con_id = "cclk_g", .dt_id = TEGRA30_CLK_CCLK_G },
- 	{ .con_id = "cclk_lp", .dt_id = TEGRA30_CLK_CCLK_LP },
- 	{ .con_id = "sclk", .dt_id = TEGRA30_CLK_SCLK },
-@@ -713,13 +712,6 @@ static struct tegra_clk tegra30_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_audio3_2x] = { .dt_id = TEGRA30_CLK_AUDIO3_2X, .present = true },
- 	[tegra_clk_audio4_2x] = { .dt_id = TEGRA30_CLK_AUDIO4_2X, .present = true },
- 	[tegra_clk_spdif_2x] = { .dt_id = TEGRA30_CLK_SPDIF_2X, .present = true },
--	[tegra_clk_clk_out_1] = { .dt_id = TEGRA30_CLK_CLK_OUT_1, .present = true },
--	[tegra_clk_clk_out_2] = { .dt_id = TEGRA30_CLK_CLK_OUT_2, .present = true },
--	[tegra_clk_clk_out_3] = { .dt_id = TEGRA30_CLK_CLK_OUT_3, .present = true },
--	[tegra_clk_blink] = { .dt_id = TEGRA30_CLK_BLINK, .present = true },
--	[tegra_clk_clk_out_1_mux] = { .dt_id = TEGRA30_CLK_CLK_OUT_1_MUX, .present = true },
--	[tegra_clk_clk_out_2_mux] = { .dt_id = TEGRA30_CLK_CLK_OUT_2_MUX, .present = true },
--	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA30_CLK_CLK_OUT_3_MUX, .present = true },
- 	[tegra_clk_hclk] = { .dt_id = TEGRA30_CLK_HCLK, .present = true },
- 	[tegra_clk_pclk] = { .dt_id = TEGRA30_CLK_PCLK, .present = true },
- 	[tegra_clk_i2s0] = { .dt_id = TEGRA30_CLK_I2S0, .present = true },
-@@ -1232,9 +1224,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
- 	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
- 	{ TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
--	{ TEGRA30_CLK_CLK_OUT_1_MUX, TEGRA30_CLK_EXTERN1, 0, 0 },
--	{ TEGRA30_CLK_CLK_OUT_1, TEGRA30_CLK_CLK_MAX, 0, 1 },
--	{ TEGRA30_CLK_BLINK, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
-@@ -1366,7 +1355,6 @@ static void __init tegra30_clock_init(struct device_node *np)
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks,
- 			     tegra30_audio_plls,
- 			     ARRAY_SIZE(tegra30_audio_plls), 24000000);
--	tegra_pmc_clk_init(pmc_base, tegra30_clks);
- 
- 	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 416a6b09f6a3..2c9a68302e02 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -854,7 +854,6 @@ void tegra_periph_clk_init(void __iomem *clk_base, void __iomem *pmc_base,
- 			struct tegra_clk *tegra_clks,
- 			struct tegra_clk_pll_params *pll_params);
- 
--void tegra_pmc_clk_init(void __iomem *pmc_base, struct tegra_clk *tegra_clks);
- void tegra_fixed_clk_init(struct tegra_clk *tegra_clks);
- int tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
- 		       unsigned long *input_freqs, unsigned int num,
+-	pmc: pmc@7000e400 {
+-		compatible = "nvidia,tegra210-pmc";
+-		reg = <0x0 0x7000e400 0x0 0x400>;
+-		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+-		clock-names = "pclk", "clk32k_in";
+-
+-		powergates {
+-			pd_audio: aud {
+-				clocks = <&tegra_car TEGRA210_CLK_APE>,
+-					 <&tegra_car TEGRA210_CLK_APB2APE>;
+-				resets = <&tegra_car 198>;
+-				#power-domain-cells = <0>;
+-			};
+-		};
+-	};
+-
+-
+-== Powergate Clients ==
+-
+-Hardware blocks belonging to a power domain should contain a "power-domains"
+-property that is a phandle pointing to the corresponding powergate node.
+-
+-Example:
+-
+-	adma: adma@702e2000 {
+-		...
+-		power-domains = <&pd_audio>;
+-		...
+-	};
+-
+-== Pad Control ==
+-
+-On Tegra SoCs a pad is a set of pins which are configured as a group.
+-The pin grouping is a fixed attribute of the hardware. The PMC can be
+-used to set pad power state and signaling voltage. A pad can be either
+-in active or power down mode. The support for power state and signaling
+-voltage configuration varies depending on the pad in question. 3.3 V and
+-1.8 V signaling voltages are supported on pins where software
+-controllable signaling voltage switching is available.
+-
+-The pad configuration state nodes are placed under the pmc node and they
+-are referred to by the pinctrl client properties. For more information
+-see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+-The pad name should be used as the value of the pins property in pin
+-configuration nodes.
+-
+-The following pads are present on Tegra124 and Tegra132:
+-audio		bb		cam		comp
+-csia		csb		cse		dsi
+-dsib		dsic		dsid		hdmi
+-hsic		hv		lvds		mipi-bias
+-nand		pex-bias	pex-clk1	pex-clk2
+-pex-cntrl	sdmmc1		sdmmc3		sdmmc4
+-sys_ddc		uart		usb0		usb1
+-usb2		usb_bias
+-
+-The following pads are present on Tegra210:
+-audio		audio-hv	cam		csia
+-csib		csic		csid		csie
+-csif		dbg		debug-nonao	dmic
+-dp		dsi		dsib		dsic
+-dsid		emmc		emmc2		gpio
+-hdmi		hsic		lvds		mipi-bias
+-pex-bias	pex-clk1	pex-clk2	pex-cntrl
+-sdmmc1		sdmmc3		spi		spi-hv
+-uart		usb0		usb1		usb2
+-usb3		usb-bias
+-
+-Required pin configuration properties:
+-  - pins: Must contain name of the pad(s) to be configured.
+-
+-Optional pin configuration properties:
+-  - low-power-enable: Configure the pad into power down mode
+-  - low-power-disable: Configure the pad into active mode
+-  - power-source: Must contain either TEGRA_IO_PAD_VOLTAGE_1V8
+-    or TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
+-    The values are defined in
+-    include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
+-
+-Note: The power state can be configured on all of the Tegra124 and
+-      Tegra132 pads. None of the Tegra124 or Tegra132 pads support
+-      signaling voltage switching.
+-
+-Note: All of the listed Tegra210 pads except pex-cntrl support power
+-      state configuration. Signaling voltage switching is supported on
+-      following Tegra210 pads: audio, audio-hv, cam, dbg, dmic, gpio,
+-      pex-cntrl, sdmmc1, sdmmc3, spi, spi-hv, and uart.
+-
+-Pad configuration state example:
+-	pmc: pmc@7000e400 {
+-		compatible = "nvidia,tegra210-pmc";
+-		reg = <0x0 0x7000e400 0x0 0x400>;
+-		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+-		clock-names = "pclk", "clk32k_in";
+-
+-		...
+-
+-		sdmmc1_3v3: sdmmc1-3v3 {
+-			pins = "sdmmc1";
+-			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+-		};
+-
+-		sdmmc1_1v8: sdmmc1-1v8 {
+-			pins = "sdmmc1";
+-			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+-		};
+-
+-		hdmi_off: hdmi-off {
+-			pins = "hdmi";
+-			low-power-enable;
+-		}
+-
+-		hdmi_on: hdmi-on {
+-			pins = "hdmi";
+-			low-power-disable;
+-		}
+-	};
+-
+-Pinctrl client example:
+-	sdmmc1: sdhci@700b0000 {
+-		...
+-		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+-		pinctrl-0 = <&sdmmc1_3v3>;
+-		pinctrl-1 = <&sdmmc1_1v8>;
+-	};
+-	...
+-	sor@54540000 {
+-		...
+-		pinctrl-0 = <&hdmi_off>;
+-		pinctrl-1 = <&hdmi_on>;
+-		pinctrl-names = "hdmi-on", "hdmi-off";
+-	};
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+new file mode 100644
+index 000000000000..3ff34b348141
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+@@ -0,0 +1,340 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/tegra/nvidia,tegra20-pmc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Tegra Power Management Controller (PMC)
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jonathan Hunter <jonathanh@nvidia.com>
++
++properties:
++  compatible:
++    enum:
++      - nvidia,tegra20-pmc
++      - nvidia,tegra20-pmc
++      - nvidia,tegra30-pmc
++      - nvidia,tegra114-pmc
++      - nvidia,tegra124-pmc
++      - nvidia,tegra210-pmc
++
++  reg:
++    maxItems: 1
++    description:
++      Offset and length of the register set for the device.
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: clk32k_in
++    description:
++      Must includes entries pclk and clk32k_in.
++      pclk is the Tegra clock of that name and clk32k_in is 32KHz clock
++      input to Tegra.
++
++  clocks:
++    maxItems: 2
++    description:
++      Must contain an entry for each entry in clock-names.
++      See ../clocks/clocks-bindings.txt for details.
++
++  '#interrupt-cells':
++    const: 2
++    description:
++      Specifies number of cells needed to encode an interrupt source.
++      The value must be 2.
++
++  interrupt-controller: true
++
++  nvidia,invert-interrupt:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: Inverts the PMU interrupt signal.
++      The PMU is an external Power Management Unit, whose interrupt output
++      signal is fed into the PMC. This signal is optionally inverted, and
++      then fed into the ARM GIC. The PMC is not involved in the detection
++      or handling of this interrupt signal, merely its inversion.
++
++  nvidia,core-power-req-active-high:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: Core power request active-high.
++
++  nvidia,sys-clock-req-active-high:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: System clock request active-high.
++
++  nvidia,combined-power-req:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: combined power request for CPU and Core.
++
++  nvidia,cpu-pwr-good-en:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      CPU power good signal from external PMIC to PMC is enabled.
++
++  nvidia,suspend-mode:
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++      - enum: [0, 1, 2]
++    description:
++      The suspend mode that the platform should use.
++      Mode 0 is for LP0, CPU + Core voltage off and DRAM in self-refresh
++      Mode 1 is for LP1, CPU voltage off and DRAM in self-refresh
++      Mode 2 is for LP2, CPU voltage off
++
++  nvidia,cpu-pwr-good-time:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: CPU power good time in uSec.
++
++  nvidia,cpu-pwr-off-time:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: CPU power off time in uSec.
++
++  nvidia,core-pwr-good-time:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    description:
++      <Oscillator-stable-time Power-stable-time>
++      Core power good time in uSec.
++
++  nvidia,core-pwr-off-time:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Core power off time in uSec.
++
++  nvidia,lp0-vec:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    description:
++      <start length> Starting address and length of LP0 vector.
++      The LP0 vector contains the warm boot code that is executed
++      by AVP when resuming from the LP0 state.
++      The AVP (Audio-Video Processor) is an ARM7 processor and
++      always being the first boot processor when chip is power on
++      or resume from deep sleep mode. When the system is resumed
++      from the deep sleep mode, the warm boot code will restore
++      some PLLs, clocks and then brings up CPU0 for resuming the
++      system.
++
++  i2c-thermtrip:
++    type: object
++    description:
++      On Tegra30, Tegra114 and Tegra124 if i2c-thermtrip subnode exists,
++      hardware-triggered thermal reset will be enabled.
++
++    properties:
++      nvidia,i2c-controller-id:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          ID of I2C controller to send poweroff command to PMU.
++          Valid values are described in section 9.2.148
++          "APBDEV_PMC_SCRATCH53_0" of the Tegra K1 Technical Reference
++          Manual.
++
++      nvidia,bus-addr:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: Bus address of the PMU on the I2C bus.
++
++      nvidia,reg-addr:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: PMU I2C register address to issue poweroff command.
++
++      nvidia,reg-data:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: Poweroff command to write to PMU.
++
++      nvidia,pinmux-id:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          Pinmux used by the hardware when issuing Poweroff command.
++          Defaults to 0. Valid values are described in section 12.5.2
++          "Pinmux Support" of the Tegra4 Technical Reference Manual.
++
++    required:
++      - nvidia,i2c-controller-id
++      - nvidia,bus-addr
++      - nvidia,reg-addr
++      - nvidia,reg-data
++
++    additionalProperties: false
++
++  powergates:
++    type: object
++    description: |
++      This node contains a hierarchy of power domain nodes, which should
++      match the powergates on the Tegra SoC. Each powergate node
++      represents a power-domain on the Tegra SoC that can be power-gated
++      by the Tegra PMC.
++      Hardware blocks belonging to a power domain should contain
++      "power-domains" property that is a phandle pointing to corresponding
++      powergate node.
++      The name of the powergate node should be one of the below. Note that
++      not every powergate is applicable to all Tegra devices and the following
++      list shows which powergates are applicable to which devices.
++      Please refer to Tegra TRM for mode details on the powergate nodes to
++      use for each power-gate block inside Tegra.
++      Name		Description			            Devices Applicable
++      3d		  3D Graphics			            Tegra20/114/124/210
++      3d0		  3D Graphics 0		            Tegra30
++      3d1		  3D Graphics 1		            Tegra30
++      aud		  Audio				                Tegra210
++      dfd		  Debug				                Tegra210
++      dis		  Display A			              Tegra114/124/210
++      disb		Display B			              Tegra114/124/210
++      heg		  2D Graphics		            	Tegra30/114/124/210
++      iram		Internal RAM		            Tegra124/210
++      mpe		  MPEG Encode			            All
++      nvdec		NVIDIA Video Decode Engine	Tegra210
++      nvjpg		NVIDIA JPEG Engine		      Tegra210
++      pcie		PCIE				                Tegra20/30/124/210
++      sata		SATA				                Tegra30/124/210
++      sor		  Display interfaces       		Tegra124/210
++      ve2		  Video Encode Engine 2		    Tegra210
++      venc		Video Encode Engine		      All
++      vdec		Video Decode Engine		      Tegra20/30/114/124
++      vic		  Video Imaging Compositor	  Tegra124/210
++      xusba		USB Partition A			        Tegra114/124/210
++      xusbb		USB Partition B 		        Tegra114/124/210
++      xusbc		USB Partition C			        Tegra114/124/210
++
++    patternProperties:
++      "^[a-z0-9]+$":
++        type: object
++
++        patternProperties:
++          clocks:
++            minItems: 1
++            maxItems: 8
++            description:
++              Must contain an entry for each clock required by the PMC
++              for controlling a power-gate.
++              See ../clocks/clock-bindings.txt document for more details.
++
++          resets:
++            minItems: 1
++            maxItems: 8
++            description:
++              Must contain an entry for each reset required by the PMC
++              for controlling a power-gate.
++              See ../reset/reset.txt for more details.
++
++          '#power-domain-cells':
++            const: 0
++            description: Must be 0.
++
++        required:
++          - clocks
++          - resets
++          - '#power-domain-cells'
++
++    additionalProperties: false
++
++patternProperties:
++  "^[a-f0-9]+-[a-f0-9]+$":
++    type: object
++    description:
++      This is a Pad configuration node. On Tegra SOCs a pad is a set of
++      pins which are configured as a group. The pin grouping is a fixed
++      attribute of the hardware. The PMC can be used to set pad power state
++      and signaling voltage. A pad can be either in active or power down mode.
++      The support for power state and signaling voltage configuration varies
++      depending on the pad in question. 3.3V and 1.8V signaling voltages
++      are supported on pins where software controllable signaling voltage
++      switching is available.
++
++      The pad configuration state nodes are placed under the pmc node and they
++      are referred to by the pinctrl client properties. For more information
++      see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
++      The pad name should be used as the value of the pins property in pin
++      configuration nodes.
++
++      The following pads are present on Tegra124 and Tegra132
++      audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid, hdmi, hsic,
++      hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2, pex-cntrl,
++      sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2, usb_bias.
++
++      The following pads are present on Tegra210
++      audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, dbg,
++      debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, gpio, hdmi,
++      hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
++      sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, usb-bias.
++
++    properties:
++      pins:
++        $ref: /schemas/types.yaml#/definitions/string
++        description: Must contain name of the pad(s) to be configured.
++
++      low-power-enable:
++        $ref: /schemas/types.yaml#/definitions/flag
++        description: Configure the pad into power down mode.
++
++      low-power-disable:
++        $ref: /schemas/types.yaml#/definitions/flag
++        description: Configure the pad into active mode.
++
++      power-source:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
++          TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
++          The values are defined in
++          include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
++          Power state can be configured on all Tegra124 and Tegra132
++          pads. None of the Tegra124 or Tegra132 pads support signaling
++          voltage switching.
++          All of the listed Tegra210 pads except pex-cntrl support power
++          state configuration. Signaling voltage switching is supported
++          on below Tegra210 pads.
++          audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1,
++          sdmmc3, spi, spi-hv, and uart.
++
++    required:
++      - pins
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - clock-names
++  - clocks
++
++dependencies:
++  "nvidia,suspend-mode": ["nvidia,core-pwr-off-time", "nvidia,cpu-pwr-off-time"]
++  "nvidia,core-pwr-off-time": ["nvidia,core-pwr-good-time"]
++  "nvidia,cpu-pwr-off-time": ["nvidia,cpu-pwr-good-time"]
++
++examples:
++  - |
++
++    #include <dt-bindings/clock/tegra210-car.h>
++    #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
++
++    tegra_pmc: pmc@7000e400 {
++              compatible = "nvidia,tegra210-pmc";
++              reg = <0x0 0x7000e400 0x0 0x400>;
++              clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
++              clock-names = "pclk", "clk32k_in";
++
++              nvidia,invert-interrupt;
++              nvidia,suspend-mode = <0>;
++              nvidia,cpu-pwr-good-time = <0>;
++              nvidia,cpu-pwr-off-time = <0>;
++              nvidia,core-pwr-good-time = <4587 3876>;
++              nvidia,core-pwr-off-time = <39065>;
++              nvidia,core-power-req-active-high;
++              nvidia,sys-clock-req-active-high;
++
++              powergates {
++                    pd_audio: aud {
++                            clocks = <&tegra_car TEGRA210_CLK_APE>,
++                                     <&tegra_car TEGRA210_CLK_APB2APE>;
++                            resets = <&tegra_car 198>;
++                            #power-domain-cells = <0>;
++                    };
++
++                    pd_xusbss: xusba {
++                            clocks = <&tegra_car TEGRA210_CLK_XUSB_SS>;
++                            resets = <&tegra_car TEGRA210_CLK_XUSB_SS>;
++                            #power-domain-cells = <0>;
++                    };
++              };
++    };
 -- 
 2.7.4
