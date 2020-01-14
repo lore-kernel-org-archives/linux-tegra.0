@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 1/8] i2c: tegra: Fix suspending in active runtime PM state
-Date: Tue, 14 Jan 2020 04:34:35 +0300
-Message-ID: <20200114013442.28448-2-digetx@gmail.com>
+Subject: [PATCH v5 5/8] i2c: tegra: Rename I2C_PIO_MODE_MAX_LEN to I2C_PIO_MODE_PREFERRED_LEN
+Date: Tue, 14 Jan 2020 04:34:39 +0300
+Message-ID: <20200114013442.28448-6-digetx@gmail.com>
 References: <20200114013442.28448-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,49 +12,46 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I noticed that sometime I2C clock is kept enabled during suspend-resume.
-This happens because runtime PM defers dynamic suspension and thus it may
-happen that runtime PM is in active state when system enters into suspend.
-In particular I2C controller that is used for CPU's DVFS is often kept ON
-during suspend because CPU's voltage scaling happens quite often.
+DMA is preferred for a larger transfers, while PIO is preferred for a
+smaller transfers to avoid unnecessary DMA overhead. There is no strict
+size limitations for the PIO-mode transfers, so let's rename the constant
+for clarity.
 
-Fixes: 8ebf15e9c869 ("i2c: tegra: Move suspend handling to NOIRQ phase")
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v5.4+
 Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/i2c/busses/i2c-tegra.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a98bf31d0e5c..79d19f6ce94e 100644
+index 0245fc2b5684..e0eb8f5dcd6b 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1710,9 +1710,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- static int __maybe_unused tegra_i2c_suspend(struct device *dev)
- {
- 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+	int err;
+@@ -131,11 +131,12 @@
+ #define I2C_PACKET_HEADER_SIZE			12
  
- 	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+ /*
+- * Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
+- * above this, controller will use DMA to fill FIFO.
+- * MAX PIO len is 20 bytes excluding packet header.
++ * I2C Controller will use PIO mode for transfers up to 32 bytes in order to
++ * avoid DMA overhead, otherwise external APB DMA controller will be used.
++ * Note that the actual MAX PIO length is 20 bytes because 32 bytes include
++ * I2C_PACKET_HEADER_SIZE.
+  */
+-#define I2C_PIO_MODE_MAX_LEN			32
++#define I2C_PIO_MODE_PREFERRED_LEN		32
  
-+	err = pm_runtime_force_suspend(dev);
-+	if (err < 0)
-+		return err;
-+
- 	return 0;
- }
+ /*
+  * msg_end_type: The bus control which need to be send at end of transfer.
+@@ -1110,7 +1111,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
  
-@@ -1733,6 +1738,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
- 	if (err)
- 		return err;
- 
-+	err = pm_runtime_force_resume(dev);
-+	if (err < 0)
-+		return err;
-+
- 	i2c_mark_adapter_resumed(&i2c_dev->adapter);
- 
- 	return 0;
+ 	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
+-	i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
++	i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_PREFERRED_LEN) &&
+ 				    i2c_dev->dma_buf &&
+ 				    !i2c_dev->is_curr_atomic_xfer;
+ 	tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
 -- 
 2.24.0
