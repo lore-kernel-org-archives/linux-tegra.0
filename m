@@ -1,51 +1,47 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 03/14] dmaengine: tegra-apb: Prevent race conditions on
- channel's freeing
-Date: Tue, 14 Jan 2020 15:16:45 +0000
-Message-ID: <b99f455c-edd8-1a84-337a-fa0dc4ecb16a@nvidia.com>
-References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-4-digetx@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.4 00/78] 5.4.12-stable review
+Date: Tue, 14 Jan 2020 16:18:07 +0100
+Message-ID: <20200114151807.GA2029513@kroah.com>
+References: <20200114094352.428808181@linuxfoundation.org>
+ <67098cc6-6b86-c441-065a-2cb7fe9a2be6@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200112173006.29863-4-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <67098cc6-6b86-c441-065a-2cb7fe9a2be6@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 12/01/2020 17:29, Dmitry Osipenko wrote:
-> It's incorrect to check the channel's "busy" state without taking a lock.
-> That shouldn't cause any real troubles, nevertheless it's always better
-> not to have any race conditions in the code.
+On Tue, Jan 14, 2020 at 03:02:56PM +0000, Jon Hunter wrote:
 > 
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/dma/tegra20-apb-dma.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> On 14/01/2020 10:00, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.12 release.
+> > There are 78 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 16 Jan 2020 09:41:58 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.12-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 664e9c5df3ba..24ad3a5a04e3 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -1294,8 +1294,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  
->  	dev_dbg(tdc2dev(tdc), "Freeing channel %d\n", tdc->id);
->  
-> -	if (tdc->busy)
-> -		tegra_dma_terminate_all(dc);
-> +	tegra_dma_terminate_all(dc);
->  
->  	spin_lock_irqsave(&tdc->lock, flags);
->  	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.4:
+>     13 builds:	13 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     38 tests:	38 pass, 0 fail
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Wonderful, thanks for the testing and quick response.
 
-Cheers
-Jon
-
--- 
-nvpublic
+greg k-h
