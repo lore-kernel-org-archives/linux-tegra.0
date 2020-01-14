@@ -1,14 +1,15 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 04/14] dmaengine: tegra-apb: Clean up tasklet releasing
-Date: Tue, 14 Jan 2020 15:36:00 +0000
-Message-ID: <2395e415-c435-0305-b53e-81278ff24d30@nvidia.com>
+Subject: Re: [PATCH v4 05/14] dmaengine: tegra-apb: Prevent race conditions of
+ tasklet vs free list
+Date: Tue, 14 Jan 2020 15:43:35 +0000
+Message-ID: <1331b7c1-3839-69cb-4de2-16771c652d41@nvidia.com>
 References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-5-digetx@gmail.com>
+ <20200112173006.29863-6-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200112173006.29863-5-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200112173006.29863-6-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
@@ -17,62 +18,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 12/01/2020 17:29, Dmitry Osipenko wrote:
-> There is no need to kill tasklet when driver's probe fails because tasklet
-> can't be scheduled at this time. It is also cleaner to kill tasklet on
-> channel's freeing rather than to kill it on driver's removal, otherwise
-> tasklet could perform a dummy execution after channel's releasing, which
-> isn't very nice.
+> The interrupt handler puts a half-completed DMA descriptor on a free list
+> and then schedules tasklet to process bottom half of the descriptor that
+> executes client's callback, this creates possibility to pick up the busy
+> descriptor from the free list. Thus let's disallow descriptor's re-use
+> until it is fully processed.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/dma/tegra20-apb-dma.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+>  drivers/dma/tegra20-apb-dma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 24ad3a5a04e3..1b8a11804962 100644
+> index 1b8a11804962..aafad50d075e 100644
 > --- a/drivers/dma/tegra20-apb-dma.c
 > +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -1287,7 +1287,6 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  	struct tegra_dma_sg_req *sg_req;
->  	struct list_head dma_desc_list;
->  	struct list_head sg_req_list;
-> -	unsigned long flags;
+> @@ -281,7 +281,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
 >  
->  	INIT_LIST_HEAD(&dma_desc_list);
->  	INIT_LIST_HEAD(&sg_req_list);
-> @@ -1295,15 +1294,14 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  	dev_dbg(tdc2dev(tdc), "Freeing channel %d\n", tdc->id);
->  
->  	tegra_dma_terminate_all(dc);
-> +	tasklet_kill(&tdc->tasklet);
->  
-> -	spin_lock_irqsave(&tdc->lock, flags);
->  	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
->  	list_splice_init(&tdc->free_sg_req, &sg_req_list);
->  	list_splice_init(&tdc->free_dma_desc, &dma_desc_list);
->  	INIT_LIST_HEAD(&tdc->cb_desc);
->  	tdc->config_init = false;
->  	tdc->isr_handler = NULL;
-> -	spin_unlock_irqrestore(&tdc->lock, flags);
->  
->  	while (!list_empty(&dma_desc_list)) {
->  		dma_desc = list_first_entry(&dma_desc_list,
-> @@ -1542,7 +1540,6 @@ static int tegra_dma_probe(struct platform_device *pdev)
->  		struct tegra_dma_channel *tdc = &tdma->channels[i];
->  
->  		free_irq(tdc->irq, tdc);
-> -		tasklet_kill(&tdc->tasklet);
->  	}
->  
->  	pm_runtime_disable(&pdev->dev);
-> @@ -1562,7 +1559,6 @@ static int tegra_dma_remove(struct platform_device *pdev)
->  	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
->  		tdc = &tdma->channels[i];
->  		free_irq(tdc->irq, tdc);
-> -		tasklet_kill(&tdc->tasklet);
->  	}
->  
->  	pm_runtime_disable(&pdev->dev);
+>  	/* Do not allocate if desc are waiting for ack */
+>  	list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
+> -		if (async_tx_test_ack(&dma_desc->txd)) {
+> +		if (async_tx_test_ack(&dma_desc->txd) && !dma_desc->cb_count) {
+>  			list_del(&dma_desc->node);
+>  			spin_unlock_irqrestore(&tdc->lock, flags);
+>  			dma_desc->txd.flags = 0;
+> 
 
 Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
