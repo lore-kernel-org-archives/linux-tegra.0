@@ -1,52 +1,60 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 4/8] i2c: tegra: Support atomic transfers
-Date: Tue, 14 Jan 2020 04:26:52 +0300
-Message-ID: <49fbcb5d-011b-8ace-15f9-a36d4ae30397@gmail.com>
-References: <20200112171430.27219-1-digetx@gmail.com>
- <20200112171430.27219-5-digetx@gmail.com> <20200113220315.GB2689@ninjato>
- <86f71bfe-7d17-0bf4-edda-13c84301a598@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v5 1/8] i2c: tegra: Fix suspending in active runtime PM state
+Date: Tue, 14 Jan 2020 04:34:35 +0300
+Message-ID: <20200114013442.28448-2-digetx@gmail.com>
+References: <20200114013442.28448-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <86f71bfe-7d17-0bf4-edda-13c84301a598@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Mikko Perttunen <cyndis@kapsi.fi>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200114013442.28448-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-14.01.2020 01:52, Dmitry Osipenko пишет:
-> 14.01.2020 01:03, Wolfram Sang пишет:
->> On Sun, Jan 12, 2020 at 08:14:26PM +0300, Dmitry Osipenko wrote:
->>> System shutdown may happen with interrupts being disabled and in this case
->>> I2C core rejects transfers if atomic transfer isn't supported by driver.
->>
->> Well, not quite. The core complains about it nowadays, but does not
->> reject messages. It will try the same behaviour as before. It will just
->> inform the user that somethings is tried which may not work. I probably
->> should update the error message printed saying that the transfer is
->> still tried.
-> 
-> Indeed, now I'm recalling noticing that the transfer actually should
-> happen despite of the error message, but then completely forgot to
-> update the commit's message. I can update the message and send out v5,
-> if you're thinking that it's worthwhile to do.
+I noticed that sometime I2C clock is kept enabled during suspend-resume.
+This happens because runtime PM defers dynamic suspension and thus it may
+happen that runtime PM is in active state when system enters into suspend.
+In particular I2C controller that is used for CPU's DVFS is often kept ON
+during suspend because CPU's voltage scaling happens quite often.
 
-I have time to do it now, will send v5 shortly.
+Fixes: 8ebf15e9c869 ("i2c: tegra: Move suspend handling to NOIRQ phase")
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v5.4+
+Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-And yes, clarifying the error message could be helpful. Although,
-perhaps it won't help much to drivers which may schedule during the
-atomic transfer.
-
->>> There were several occurrences where I found my Nexus 7 completely
->>> discharged despite of being turned off and then one day I spotted this in
->>> the log:
->>
->> Given my reasoning above, that should have happened before the warning
->> was printed as well? Because same behaviour. I'd be surprised if there
->> was a change...
-> 
-> Pretty sure that it was happening before, but I wasn't paying much
-> attention back then.
-> 
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index a98bf31d0e5c..79d19f6ce94e 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1710,9 +1710,14 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+ static int __maybe_unused tegra_i2c_suspend(struct device *dev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
++	int err;
+ 
+ 	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+ 
++	err = pm_runtime_force_suspend(dev);
++	if (err < 0)
++		return err;
++
+ 	return 0;
+ }
+ 
+@@ -1733,6 +1738,10 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
+ 	if (err)
+ 		return err;
+ 
++	err = pm_runtime_force_resume(dev);
++	if (err < 0)
++		return err;
++
+ 	i2c_mark_adapter_resumed(&i2c_dev->adapter);
+ 
+ 	return 0;
+-- 
+2.24.0
