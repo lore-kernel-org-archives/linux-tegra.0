@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v8 18/22] ASoC: tegra: Add audio mclk parent configuration
-Date: Mon, 13 Jan 2020 23:24:23 -0800
-Message-ID: <1578986667-16041-19-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v8 05/22] clk: tegra: Remove CLK_M_DIV fixed clocks
+Date: Mon, 13 Jan 2020 23:24:10 -0800
+Message-ID: <1578986667-16041-6-git-send-email-skomatineni@nvidia.com>
 References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,140 +12,171 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, broo
 Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
-through Tegra210 and currently Tegra clock driver does the initial parent
-configuration for audio mclk and keeps it enabled by default.
+Tegra has no CLK_M_DIV2 and CLK_M_DIV4 clocks and instead it has
+OSC_DIV2 and OSC_DIV4 clocks from OSC pads which are the possible
+parents of PMC clocks for Tegra30 through Tegra210.
 
-With the move of PMC clocks from clock driver into pmc driver,
-audio clocks parent configuration can be specified through the device tree
-using assigned-clock-parents property and audio mclk control should be
-taken care by the audio driver.
+Tegra PMC clock parents are changed to use OSC_DIV clocks.
 
-This patch has implementation for parent configuration when default parent
-configuration through assigned-clock-parents property is not specified in
-the device tree.
+So, this patch removes CLK_M_DIV fixed clocks
 
 Tested-by: Dmitry Osipenko <digetx@gmail.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Sameer Pujar <spujar@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- sound/soc/tegra/tegra_asoc_utils.c | 68 ++++++++++++++++++++++----------------
- 1 file changed, 40 insertions(+), 28 deletions(-)
+ drivers/clk/tegra/clk-id.h          |  2 --
+ drivers/clk/tegra/clk-tegra-fixed.c | 16 ----------------
+ drivers/clk/tegra/clk-tegra114.c    | 15 ---------------
+ drivers/clk/tegra/clk-tegra124.c    |  4 ----
+ drivers/clk/tegra/clk-tegra210.c    |  4 ----
+ drivers/clk/tegra/clk-tegra30.c     |  4 ----
+ 6 files changed, 45 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-index 84c4f59df71f..1dce5ad6e665 100644
---- a/sound/soc/tegra/tegra_asoc_utils.c
-+++ b/sound/soc/tegra/tegra_asoc_utils.c
-@@ -60,8 +60,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
- 	data->set_mclk = 0;
- 
- 	clk_disable_unprepare(data->clk_cdev1);
--	clk_disable_unprepare(data->clk_pll_a_out0);
--	clk_disable_unprepare(data->clk_pll_a);
- 
- 	err = clk_set_rate(data->clk_pll_a, new_baseclock);
- 	if (err) {
-@@ -77,18 +75,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
- 
- 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
- 
--	err = clk_prepare_enable(data->clk_pll_a);
--	if (err) {
--		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
--		return err;
--	}
--
--	err = clk_prepare_enable(data->clk_pll_a_out0);
--	if (err) {
--		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
--		return err;
--	}
--
- 	err = clk_prepare_enable(data->clk_cdev1);
- 	if (err) {
- 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
-@@ -109,8 +95,6 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
- 	int err;
- 
- 	clk_disable_unprepare(data->clk_cdev1);
--	clk_disable_unprepare(data->clk_pll_a_out0);
--	clk_disable_unprepare(data->clk_pll_a);
- 
- 	/*
- 	 * AC97 rate is fixed at 24.576MHz and is used for both the host
-@@ -130,18 +114,6 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
- 
- 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
- 
--	err = clk_prepare_enable(data->clk_pll_a);
--	if (err) {
--		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
--		return err;
--	}
--
--	err = clk_prepare_enable(data->clk_pll_a_out0);
--	if (err) {
--		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
--		return err;
--	}
--
- 	err = clk_prepare_enable(data->clk_cdev1);
- 	if (err) {
- 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
-@@ -158,6 +130,7 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
- int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
- 			  struct device *dev)
- {
-+	struct clk *clk_out_1, *clk_extern1;
- 	int ret;
- 
- 	data->dev = dev;
-@@ -204,6 +177,45 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
- 		dev_info(data->dev, "Falling back to extern1\n");
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index 17c13d1aa6bc..cf42e5995794 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -44,8 +44,6 @@ enum clk_id {
+ 	tegra_clk_clk72Mhz,
+ 	tegra_clk_clk72Mhz_8,
+ 	tegra_clk_clk_m,
+-	tegra_clk_clk_m_div2,
+-	tegra_clk_clk_m_div4,
+ 	tegra_clk_osc,
+ 	tegra_clk_osc_div2,
+ 	tegra_clk_osc_div4,
+diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
+index 0dc2d5f5cfb5..77c22cef5014 100644
+--- a/drivers/clk/tegra/clk-tegra-fixed.c
++++ b/drivers/clk/tegra/clk-tegra-fixed.c
+@@ -105,22 +105,6 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
+ 		clk = clk_register_fixed_rate(NULL, "clk_32k", NULL, 0, 32768);
+ 		*dt_clk = clk;
  	}
+-
+-	/* clk_m_div2 */
+-	dt_clk = tegra_lookup_dt_id(tegra_clk_clk_m_div2, tegra_clks);
+-	if (dt_clk) {
+-		clk = clk_register_fixed_factor(NULL, "clk_m_div2", "clk_m",
+-					CLK_SET_RATE_PARENT, 1, 2);
+-		*dt_clk = clk;
+-	}
+-
+-	/* clk_m_div4 */
+-	dt_clk = tegra_lookup_dt_id(tegra_clk_clk_m_div4, tegra_clks);
+-	if (dt_clk) {
+-		clk = clk_register_fixed_factor(NULL, "clk_m_div4", "clk_m",
+-					CLK_SET_RATE_PARENT, 1, 4);
+-		*dt_clk = clk;
+-	}
+ }
  
-+	/*
-+	 * If clock parents are not set in DT, configure here to use clk_out_1
-+	 * as mclk and extern1 as parent for Tegra30 and higher.
-+	 */
-+	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
-+	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
-+		dev_warn(data->dev,
-+			 "Configuring clocks for a legacy device-tree\n");
-+		dev_warn(data->dev,
-+			 "Please update DT to use assigned-clock-parents\n");
-+		clk_extern1 = devm_clk_get(dev, "extern1");
-+		if (IS_ERR(clk_extern1)) {
-+			dev_err(data->dev, "Can't retrieve clk extern1\n");
-+			return PTR_ERR(clk_extern1);
-+		}
-+
-+		ret = clk_set_parent(clk_extern1, data->clk_pll_a_out0);
-+		if (ret < 0) {
-+			dev_err(data->dev,
-+				"Set parent failed for clk extern1\n");
-+			return ret;
-+		}
-+
-+		clk_out_1 = devm_clk_get(dev, "pmc_clk_out_1");
-+		if (IS_ERR(clk_out_1)) {
-+			dev_err(data->dev, "Can't retrieve pmc_clk_out_1\n");
-+			return PTR_ERR(clk_out_1);
-+		}
-+
-+		ret = clk_set_parent(clk_out_1, clk_extern1);
-+		if (ret < 0) {
-+			dev_err(data->dev,
-+				"Set parent failed for pmc_clk_out_1\n");
-+			return ret;
-+		}
-+
-+		data->clk_cdev1 = clk_out_1;
-+	}
-+
- 	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
- 	if (ret)
- 		return ret;
+ void tegra_clk_osc_resume(void __iomem *clk_base)
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index e3c68eca54b7..180ddc2abfd2 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -735,8 +735,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_fuse_burn] = { .dt_id = TEGRA114_CLK_FUSE_BURN, .present = true },
+ 	[tegra_clk_clk_32k] = { .dt_id = TEGRA114_CLK_CLK_32K, .present = true },
+ 	[tegra_clk_clk_m] = { .dt_id = TEGRA114_CLK_CLK_M, .present = true },
+-	[tegra_clk_clk_m_div2] = { .dt_id = TEGRA114_CLK_CLK_M_DIV2, .present = true },
+-	[tegra_clk_clk_m_div4] = { .dt_id = TEGRA114_CLK_CLK_M_DIV4, .present = true },
+ 	[tegra_clk_osc] = { .dt_id = TEGRA114_CLK_OSC, .present = true },
+ 	[tegra_clk_osc_div2] = { .dt_id = TEGRA114_CLK_OSC_DIV2, .present = true },
+ 	[tegra_clk_osc_div4] = { .dt_id = TEGRA114_CLK_OSC_DIV4, .present = true },
+@@ -818,8 +816,6 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "clk_m", .dt_id = TEGRA114_CLK_CLK_M },
+ 	{ .con_id = "pll_ref", .dt_id = TEGRA114_CLK_PLL_REF },
+ 	{ .con_id = "clk_32k", .dt_id = TEGRA114_CLK_CLK_32K },
+-	{ .con_id = "clk_m_div2", .dt_id = TEGRA114_CLK_CLK_M_DIV2 },
+-	{ .con_id = "clk_m_div4", .dt_id = TEGRA114_CLK_CLK_M_DIV4 },
+ 	{ .con_id = "osc", .dt_id = TEGRA114_CLK_OSC },
+ 	{ .con_id = "osc_div2", .dt_id = TEGRA114_CLK_OSC_DIV2 },
+ 	{ .con_id = "osc_div4", .dt_id = TEGRA114_CLK_OSC_DIV4 },
+@@ -906,17 +902,6 @@ static void __init tegra114_fixed_clk_init(void __iomem *clk_base)
+ 	/* clk_32k */
+ 	clk = clk_register_fixed_rate(NULL, "clk_32k", NULL, 0, 32768);
+ 	clks[TEGRA114_CLK_CLK_32K] = clk;
+-
+-	/* clk_m_div2 */
+-	clk = clk_register_fixed_factor(NULL, "clk_m_div2", "clk_m",
+-					CLK_SET_RATE_PARENT, 1, 2);
+-	clks[TEGRA114_CLK_CLK_M_DIV2] = clk;
+-
+-	/* clk_m_div4 */
+-	clk = clk_register_fixed_factor(NULL, "clk_m_div4", "clk_m",
+-					CLK_SET_RATE_PARENT, 1, 4);
+-	clks[TEGRA114_CLK_CLK_M_DIV4] = clk;
+-
+ }
+ 
+ static void __init tegra114_pll_init(void __iomem *clk_base,
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index ef0f928f0259..7a16e50eb20f 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -860,8 +860,6 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_fuse_burn] = { .dt_id = TEGRA124_CLK_FUSE_BURN, .present = true },
+ 	[tegra_clk_clk_32k] = { .dt_id = TEGRA124_CLK_CLK_32K, .present = true },
+ 	[tegra_clk_clk_m] = { .dt_id = TEGRA124_CLK_CLK_M, .present = true },
+-	[tegra_clk_clk_m_div2] = { .dt_id = TEGRA124_CLK_CLK_M_DIV2, .present = true },
+-	[tegra_clk_clk_m_div4] = { .dt_id = TEGRA124_CLK_CLK_M_DIV4, .present = true },
+ 	[tegra_clk_osc] = { .dt_id = TEGRA124_CLK_OSC, .present = true },
+ 	[tegra_clk_osc_div2] = { .dt_id = TEGRA124_CLK_OSC_DIV2, .present = true },
+ 	[tegra_clk_osc_div4] = { .dt_id = TEGRA124_CLK_OSC_DIV4, .present = true },
+@@ -944,8 +942,6 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "clk_m", .dt_id = TEGRA124_CLK_CLK_M },
+ 	{ .con_id = "pll_ref", .dt_id = TEGRA124_CLK_PLL_REF },
+ 	{ .con_id = "clk_32k", .dt_id = TEGRA124_CLK_CLK_32K },
+-	{ .con_id = "clk_m_div2", .dt_id = TEGRA124_CLK_CLK_M_DIV2 },
+-	{ .con_id = "clk_m_div4", .dt_id = TEGRA124_CLK_CLK_M_DIV4 },
+ 	{ .con_id = "osc", .dt_id = TEGRA124_CLK_OSC },
+ 	{ .con_id = "osc_div2", .dt_id = TEGRA124_CLK_OSC_DIV2 },
+ 	{ .con_id = "osc_div4", .dt_id = TEGRA124_CLK_OSC_DIV4 },
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 958f5f6c894d..45d54ead30bc 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2371,8 +2371,6 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_fuse_burn] = { .dt_id = TEGRA210_CLK_FUSE_BURN, .present = true },
+ 	[tegra_clk_clk_32k] = { .dt_id = TEGRA210_CLK_CLK_32K, .present = true },
+ 	[tegra_clk_clk_m] = { .dt_id = TEGRA210_CLK_CLK_M, .present = true },
+-	[tegra_clk_clk_m_div2] = { .dt_id = TEGRA210_CLK_CLK_M_DIV2, .present = true },
+-	[tegra_clk_clk_m_div4] = { .dt_id = TEGRA210_CLK_CLK_M_DIV4, .present = true },
+ 	[tegra_clk_osc] = { .dt_id = TEGRA210_CLK_OSC, .present = true },
+ 	[tegra_clk_osc_div2] = { .dt_id = TEGRA210_CLK_OSC_DIV2, .present = true },
+ 	[tegra_clk_osc_div4] = { .dt_id = TEGRA210_CLK_OSC_DIV4, .present = true },
+@@ -2500,8 +2498,6 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "clk_m", .dt_id = TEGRA210_CLK_CLK_M },
+ 	{ .con_id = "pll_ref", .dt_id = TEGRA210_CLK_PLL_REF },
+ 	{ .con_id = "clk_32k", .dt_id = TEGRA210_CLK_CLK_32K },
+-	{ .con_id = "clk_m_div2", .dt_id = TEGRA210_CLK_CLK_M_DIV2 },
+-	{ .con_id = "clk_m_div4", .dt_id = TEGRA210_CLK_CLK_M_DIV4 },
+ 	{ .con_id = "osc", .dt_id = TEGRA210_CLK_OSC },
+ 	{ .con_id = "osc_div2", .dt_id = TEGRA210_CLK_OSC_DIV2 },
+ 	{ .con_id = "osc_div4", .dt_id = TEGRA210_CLK_OSC_DIV4 },
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 5f3484758123..ddc5ab66d09e 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -581,8 +581,6 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "twd", .dt_id = TEGRA30_CLK_TWD },
+ 	{ .con_id = "emc", .dt_id = TEGRA30_CLK_EMC },
+ 	{ .con_id = "clk_32k", .dt_id = TEGRA30_CLK_CLK_32K },
+-	{ .con_id = "clk_m_div2", .dt_id = TEGRA30_CLK_CLK_M_DIV2 },
+-	{ .con_id = "clk_m_div4", .dt_id = TEGRA30_CLK_CLK_M_DIV4 },
+ 	{ .con_id = "osc", .dt_id = TEGRA30_CLK_OSC },
+ 	{ .con_id = "osc_div2", .dt_id = TEGRA30_CLK_OSC_DIV2 },
+ 	{ .con_id = "osc_div4", .dt_id = TEGRA30_CLK_OSC_DIV4 },
+@@ -686,8 +684,6 @@ static struct tegra_devclk devclks[] __initdata = {
+ static struct tegra_clk tegra30_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_clk_32k] = { .dt_id = TEGRA30_CLK_CLK_32K, .present = true },
+ 	[tegra_clk_clk_m] = { .dt_id = TEGRA30_CLK_CLK_M, .present = true },
+-	[tegra_clk_clk_m_div2] = { .dt_id = TEGRA30_CLK_CLK_M_DIV2, .present = true },
+-	[tegra_clk_clk_m_div4] = { .dt_id = TEGRA30_CLK_CLK_M_DIV4, .present = true },
+ 	[tegra_clk_osc] = { .dt_id = TEGRA30_CLK_OSC, .present = true },
+ 	[tegra_clk_osc_div2] = { .dt_id = TEGRA30_CLK_OSC_DIV2, .present = true },
+ 	[tegra_clk_osc_div4] = { .dt_id = TEGRA30_CLK_OSC_DIV4, .present = true },
 -- 
 2.7.4
