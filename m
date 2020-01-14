@@ -1,53 +1,37 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.4 00/78] 5.4.12-stable review
-Date: Tue, 14 Jan 2020 15:02:56 +0000
-Message-ID: <67098cc6-6b86-c441-065a-2cb7fe9a2be6@nvidia.com>
-References: <20200114094352.428808181@linuxfoundation.org>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 01/14] dmaengine: tegra-apb: Fix use-after-free
+Date: Tue, 14 Jan 2020 15:09:51 +0000
+Message-ID: <4c1b9e48-5468-0c03-2108-158ee814eea8@nvidia.com>
+References: <20200112173006.29863-1-digetx@gmail.com>
+ <20200112173006.29863-2-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200112173006.29863-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 14/01/2020 10:00, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.12 release.
-> There are 78 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 16 Jan 2020 09:41:58 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.12-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On 12/01/2020 17:29, Dmitry Osipenko wrote:
+> I was doing some experiments with I2C and noticed that Tegra APB DMA
+> driver crashes sometime after I2C DMA transfer termination. The crash
+> happens because tegra_dma_terminate_all() bails out immediately if pending
+> list is empty, thus it doesn't release the half-completed descriptors
+> which are getting re-used before ISR tasklet kicks-in.
 
-All tests are passing for Tegra ...
+Can you elaborate a bit more on how these are getting re-used? What is
+the sequence of events which results in the panic? I believe that this
+was also reported in the past [0] and so I don't doubt there is an issue
+here, but would like to completely understand this.
 
-Test results for stable-v5.4:
-    13 builds:	13 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.4.12-rc1-g5c903e10834d
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
+Thanks!
 Jon
+
+[0] https://lore.kernel.org/patchwork/patch/675349/
 
 -- 
 nvpublic
