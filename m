@@ -1,16 +1,15 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 01/14] dmaengine: tegra-apb: Fix use-after-free
-Date: Wed, 15 Jan 2020 09:00:51 +0000
-Message-ID: <e39ef31d-4cff-838a-0fc1-73a39a8d6120@nvidia.com>
+Subject: Re: [PATCH v4 09/14] dmaengine: tegra-apb: Clean up runtime PM
+ teardown
+Date: Wed, 15 Jan 2020 09:57:44 +0000
+Message-ID: <9a5c4f82-5653-8d81-e304-76675aff5d8f@nvidia.com>
 References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-2-digetx@gmail.com>
- <4c1b9e48-5468-0c03-2108-158ee814eea8@nvidia.com>
- <1327bb21-0364-da26-e6ed-ff6c19df03e6@gmail.com>
+ <20200112173006.29863-10-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1327bb21-0364-da26-e6ed-ff6c19df03e6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200112173006.29863-10-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
@@ -18,42 +17,69 @@ Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 14/01/2020 20:33, Dmitry Osipenko wrote:
-> 14.01.2020 18:09, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->> On 12/01/2020 17:29, Dmitry Osipenko wrote:
->>> I was doing some experiments with I2C and noticed that Tegra APB DMA
->>> driver crashes sometime after I2C DMA transfer termination. The crash
->>> happens because tegra_dma_terminate_all() bails out immediately if pend=
-ing
->>> list is empty, thus it doesn't release the half-completed descriptors
->>> which are getting re-used before ISR tasklet kicks-in.
->>
->> Can you elaborate a bit more on how these are getting re-used? What is
->> the sequence of events which results in the panic? I believe that this
->> was also reported in the past [0] and so I don't doubt there is an issue
->> here, but would like to completely understand this.
->>
->> Thanks!
->> Jon
->>
->> [0] https://lore.kernel.org/patchwork/patch/675349/
->>
->=20
-> In my case it happens in the touchscreen driver during of the
-> touchscreen's interrupt handling (in a threaded IRQ handler) + CPU is
-> under load and there is other interrupts activity. So what happens here
-> is that the TS driver issues one I2C transfer, which fails with
-> (apparently bogus) timeout (because DMA descriptor is completed and
-> removed from the pending list, but tasklet not executed yet), and then
-> TS immediately issues another I2C transfer that re-uses the
-> yet-incompleted descriptor. That's my understanding.
+On 12/01/2020 17:30, Dmitry Osipenko wrote:
+> It's cleaner to teardown RPM by revering the enable sequence, which makes
+> code much easier to follow.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index 7158bd3145c4..cc4a9ca20780 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -1429,13 +1429,15 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>  	spin_lock_init(&tdma->global_lock);
+>  
+>  	pm_runtime_enable(&pdev->dev);
+> -	if (!pm_runtime_enabled(&pdev->dev))
+> +	if (!pm_runtime_enabled(&pdev->dev)) {
+>  		ret = tegra_dma_runtime_resume(&pdev->dev);
+> -	else
+> +		if (ret)
+> +			return ret;
+> +	} else {
+>  		ret = pm_runtime_get_sync(&pdev->dev);
+> -
+> -	if (ret < 0)
+> -		goto err_pm_disable;
+> +		if (ret < 0)
+> +			goto err_pm_disable;
+> +	}
+>  
+>  	/* Reset DMA controller */
+>  	reset_control_assert(tdma->rst);
+> @@ -1545,9 +1547,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>  	dma_async_device_unregister(&tdma->dma_dev);
+>  
+>  err_pm_disable:
+> -	pm_runtime_disable(&pdev->dev);
+> -	if (!pm_runtime_status_suspended(&pdev->dev))
+> +	if (!pm_runtime_enabled(&pdev->dev))
+>  		tegra_dma_runtime_suspend(&pdev->dev);
+> +	else
+> +		pm_runtime_disable(&pdev->dev);
+>  
+>  	return ret;
+>  }
+> @@ -1558,9 +1561,10 @@ static int tegra_dma_remove(struct platform_device *pdev)
+>  
+>  	dma_async_device_unregister(&tdma->dma_dev);
+>  
+> -	pm_runtime_disable(&pdev->dev);
+> -	if (!pm_runtime_status_suspended(&pdev->dev))
+> +	if (!pm_runtime_enabled(&pdev->dev))
+>  		tegra_dma_runtime_suspend(&pdev->dev);
+> +	else
+> +		pm_runtime_disable(&pdev->dev);
 
-OK, but what is the exact sequence that it allowing it to re-use the
-incompleted descriptor?
+Looks like dma_async_device_unregister() will warn if a client still has
+a channel requested but does not prevent the unregister from completing.
+So it could be possible that we could be leaving the controller active now.
 
-Thanks
 Jon
 
---=20
+-- 
 nvpublic
