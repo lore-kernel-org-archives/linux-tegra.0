@@ -1,85 +1,67 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 09/14] dmaengine: tegra-apb: Clean up runtime PM
- teardown
-Date: Wed, 15 Jan 2020 09:57:44 +0000
-Message-ID: <9a5c4f82-5653-8d81-e304-76675aff5d8f@nvidia.com>
-References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-10-digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drm/nouveau: gp10b: Use gp100_grctx and gp100_gr_zbc
+Date: Wed, 15 Jan 2020 15:07:56 +0100
+Message-ID: <20200115140756.70830-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200112173006.29863-10-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On 12/01/2020 17:30, Dmitry Osipenko wrote:
-> It's cleaner to teardown RPM by revering the enable sequence, which makes
-> code much easier to follow.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/dma/tegra20-apb-dma.c | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 7158bd3145c4..cc4a9ca20780 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -1429,13 +1429,15 @@ static int tegra_dma_probe(struct platform_device *pdev)
->  	spin_lock_init(&tdma->global_lock);
->  
->  	pm_runtime_enable(&pdev->dev);
-> -	if (!pm_runtime_enabled(&pdev->dev))
-> +	if (!pm_runtime_enabled(&pdev->dev)) {
->  		ret = tegra_dma_runtime_resume(&pdev->dev);
-> -	else
-> +		if (ret)
-> +			return ret;
-> +	} else {
->  		ret = pm_runtime_get_sync(&pdev->dev);
-> -
-> -	if (ret < 0)
-> -		goto err_pm_disable;
-> +		if (ret < 0)
-> +			goto err_pm_disable;
-> +	}
->  
->  	/* Reset DMA controller */
->  	reset_control_assert(tdma->rst);
-> @@ -1545,9 +1547,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
->  	dma_async_device_unregister(&tdma->dma_dev);
->  
->  err_pm_disable:
-> -	pm_runtime_disable(&pdev->dev);
-> -	if (!pm_runtime_status_suspended(&pdev->dev))
-> +	if (!pm_runtime_enabled(&pdev->dev))
->  		tegra_dma_runtime_suspend(&pdev->dev);
-> +	else
-> +		pm_runtime_disable(&pdev->dev);
->  
->  	return ret;
->  }
-> @@ -1558,9 +1561,10 @@ static int tegra_dma_remove(struct platform_device *pdev)
->  
->  	dma_async_device_unregister(&tdma->dma_dev);
->  
-> -	pm_runtime_disable(&pdev->dev);
-> -	if (!pm_runtime_status_suspended(&pdev->dev))
-> +	if (!pm_runtime_enabled(&pdev->dev))
->  		tegra_dma_runtime_suspend(&pdev->dev);
-> +	else
-> +		pm_runtime_disable(&pdev->dev);
+gp10b doesn't have all the registers that gp102_gr_zbc wants to access,
+which causes IBUS MMIO faults to occur. Avoid this by using the gp100
+variants of grctx and gr_zbc.
 
-Looks like dma_async_device_unregister() will warn if a client still has
-a channel requested but does not prevent the unregister from completing.
-So it could be possible that we could be leaving the controller active now.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h | 1 +
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/gp100.c | 2 +-
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/gp10b.c | 4 ++--
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
-Jon
-
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h
+index fafdd0bbea9b..c4b2e6346684 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.h
+@@ -245,6 +245,7 @@ void gp100_gr_init_fecs_exceptions(struct gf100_gr *);
+ void gp100_gr_init_shader_exceptions(struct gf100_gr *, int, int);
+ void gp100_gr_zbc_clear_color(struct gf100_gr *, int);
+ void gp100_gr_zbc_clear_depth(struct gf100_gr *, int);
++extern const struct gf100_gr_func_zbc gp100_gr_zbc;
+ 
+ void gp102_gr_init_swdx_pes_mask(struct gf100_gr *);
+ extern const struct gf100_gr_func_zbc gp102_gr_zbc;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gp100.c b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gp100.c
+index 9d0521ce309a..ef16fee61327 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gp100.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gp100.c
+@@ -62,7 +62,7 @@ gp100_gr_zbc_clear_depth(struct gf100_gr *gr, int zbc)
+ 			  gr->zbc_depth[zbc].format << ((znum % 4) * 7));
+ }
+ 
+-static const struct gf100_gr_func_zbc
++const struct gf100_gr_func_zbc
+ gp100_gr_zbc = {
+ 	.clear_color = gp100_gr_zbc_clear_color,
+ 	.clear_depth = gp100_gr_zbc_clear_depth,
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gp10b.c b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gp10b.c
+index 303dceddd4a8..0b375b2587d2 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gp10b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gp10b.c
+@@ -48,8 +48,8 @@ gp10b_gr = {
+ 	.gpc_nr = 1,
+ 	.tpc_nr = 2,
+ 	.ppc_nr = 1,
+-	.grctx = &gp102_grctx,
+-	.zbc = &gp102_gr_zbc,
++	.grctx = &gp100_grctx,
++	.zbc = &gp100_gr_zbc,
+ 	.sclass = {
+ 		{ -1, -1, FERMI_TWOD_A },
+ 		{ -1, -1, KEPLER_INLINE_TO_MEMORY_B },
 -- 
-nvpublic
+2.24.1
