@@ -1,151 +1,74 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v4 10/14] dmaengine: tegra-apb: Keep clock enabled only
- during of DMA transfer
-Date: Wed, 15 Jan 2020 10:08:25 +0000
-Message-ID: <5ae55a09-a1be-d93b-80f5-6ad3d712cb93@nvidia.com>
-References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-11-digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drm/nouveau: gm20b, gp10b: Fix Falcon bootstrapping
+Date: Wed, 15 Jan 2020 15:06:13 +0100
+Message-ID: <20200115140613.70268-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200112173006.29863-11-digetx@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+The low-level Falcon bootstrapping callbacks are expected to return 0 on
+success or a negative error code on failure. However, the implementation
+on Tegra returns the ID or mask of the Falcons that were bootstrapped on
+success, thus breaking the calling code, which treats this as failure.
 
-On 12/01/2020 17:30, Dmitry Osipenko wrote:
-> It's a bit impractical to enable hardware's clock at the time of DMA
-> channel's allocation because most of DMA client drivers allocate DMA
-> channel at the time of the driver's probing and thus DMA clock is kept
-> always-enabled in practice, defeating the whole purpose of runtime PM.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/dma/tegra20-apb-dma.c | 43 ++++++++++++++++++++++-------------
->  1 file changed, 27 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index cc4a9ca20780..b9d8e57eaf54 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -436,6 +436,8 @@ static void tegra_dma_stop(struct tegra_dma_channel *tdc)
->  		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
->  	}
->  	tdc->busy = false;
-> +
-> +	pm_runtime_put(tdc->tdma->dev);
+Fix this by making sure we only return 0 or a negative error code, just
+like the code for discrete GPUs does.
 
-Is this the right place to call put? Seems that in terminate_all resume
-is called after stop which will access the registers.
+Fixes: 86ce2a71539c ("drm/nouveau/flcn/cmdq: move command generation to subdevs")
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Note that this is against Ben's tree, which should only hit linux-next
+tomorrow, so most people should not be hitting this yet.
 
->  }
->  
->  static void tegra_dma_start(struct tegra_dma_channel *tdc,
-> @@ -500,18 +502,25 @@ static void tegra_dma_configure_for_next(struct tegra_dma_channel *tdc,
->  	tegra_dma_resume(tdc);
->  }
->  
-> -static void tdc_start_head_req(struct tegra_dma_channel *tdc)
-> +static bool tdc_start_head_req(struct tegra_dma_channel *tdc)
->  {
->  	struct tegra_dma_sg_req *sg_req;
-> +	int err;
->  
->  	if (list_empty(&tdc->pending_sg_req))
-> -		return;
-> +		return false;
-> +
-> +	err = pm_runtime_get_sync(tdc->tdma->dev);
-> +	if (WARN_ON_ONCE(err < 0))
-> +		return false;
->  
->  	sg_req = list_first_entry(&tdc->pending_sg_req, typeof(*sg_req), node);
->  	tegra_dma_start(tdc, sg_req);
->  	sg_req->configured = true;
->  	sg_req->words_xferred = 0;
->  	tdc->busy = true;
-> +
-> +	return true;
->  }
->  
->  static void tdc_configure_next_head_desc(struct tegra_dma_channel *tdc)
-> @@ -615,6 +624,8 @@ static void handle_once_dma_done(struct tegra_dma_channel *tdc,
->  	}
->  	list_add_tail(&sgreq->node, &tdc->free_sg_req);
->  
-> +	pm_runtime_put(tdc->tdma->dev);
-> +
->  	/* Do not start DMA if it is going to be terminate */
->  	if (to_terminate || list_empty(&tdc->pending_sg_req))
->  		return;
-> @@ -730,9 +741,7 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
->  		dev_err(tdc2dev(tdc), "No DMA request\n");
->  		goto end;
->  	}
-> -	if (!tdc->busy) {
-> -		tdc_start_head_req(tdc);
-> -
-> +	if (!tdc->busy && tdc_start_head_req(tdc)) {
->  		/* Continuous single mode: Configure next req */
->  		if (tdc->cyclic) {
->  			/*
-> @@ -1280,22 +1289,15 @@ tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr,
->  static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
->  {
->  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
-> -	struct tegra_dma *tdma = tdc->tdma;
-> -	int ret;
->  
->  	dma_cookie_init(&tdc->dma_chan);
->  
-> -	ret = pm_runtime_get_sync(tdma->dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
->  	return 0;
->  }
->  
->  static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  {
->  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
-> -	struct tegra_dma *tdma = tdc->tdma;
->  	struct tegra_dma_desc *dma_desc;
->  	struct tegra_dma_sg_req *sg_req;
->  	struct list_head dma_desc_list;
-> @@ -1328,7 +1330,6 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  		list_del(&sg_req->node);
->  		kfree(sg_req);
->  	}
-> -	pm_runtime_put(tdma->dev);
->  
->  	tdc->slave_id = TEGRA_APBDMA_SLAVE_ID_INVALID;
->  }
-> @@ -1428,11 +1429,16 @@ static int tegra_dma_probe(struct platform_device *pdev)
->  
->  	spin_lock_init(&tdma->global_lock);
->  
-> +	ret = clk_prepare(tdma->dma_clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pm_runtime_irq_safe(&pdev->dev);
->  	pm_runtime_enable(&pdev->dev);
->  	if (!pm_runtime_enabled(&pdev->dev)) {
->  		ret = tegra_dma_runtime_resume(&pdev->dev);
->  		if (ret)
-> -			return ret;
-> +			goto err_clk_unprepare;
->  	} else {
->  		ret = pm_runtime_get_sync(&pdev->dev);
+ drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gm20b.c | 9 +++++++--
+ drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c | 9 +++++++--
+ 2 files changed, 14 insertions(+), 4 deletions(-)
 
-There is a get here but I don't see a put in probe.
-
-Jon
-
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gm20b.c
+index 6d5a13e4a857..82571032a07d 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gm20b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gm20b.c
+@@ -52,8 +52,13 @@ gm20b_pmu_acr_bootstrap_falcon(struct nvkm_falcon *falcon,
+ 	ret = nvkm_falcon_cmdq_send(pmu->hpq, &cmd.cmd.hdr,
+ 				    gm20b_pmu_acr_bootstrap_falcon_cb,
+ 				    &pmu->subdev, msecs_to_jiffies(1000));
+-	if (ret >= 0 && ret != cmd.falcon_id)
+-		ret = -EIO;
++	if (ret >= 0) {
++		if (ret != cmd.falcon_id)
++			ret = -EIO;
++		else
++			ret = 0;
++	}
++
+ 	return ret;
+ }
+ 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c
+index 39c86bc56310..5b81c7320479 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/gp10b.c
+@@ -52,8 +52,13 @@ gp10b_pmu_acr_bootstrap_multiple_falcons(struct nvkm_falcon *falcon, u32 mask)
+ 	ret = nvkm_falcon_cmdq_send(pmu->hpq, &cmd.cmd.hdr,
+ 				    gp10b_pmu_acr_bootstrap_multiple_falcons_cb,
+ 				    &pmu->subdev, msecs_to_jiffies(1000));
+-	if (ret >= 0 && ret != cmd.falcon_mask)
+-		ret = -EIO;
++	if (ret >= 0) {
++		if (ret != cmd.falcon_mask)
++			ret = -EIO;
++		else
++			ret = 0;
++	}
++
+ 	return ret;
+ }
+ 
 -- 
-nvpublic
+2.24.1
