@@ -1,65 +1,50 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 02/14] dmaengine: tegra-apb: Implement synchronization
- callback
-Date: Wed, 15 Jan 2020 09:18:15 +0000
-Message-ID: <34ec4c18-f082-def6-8544-0d15a109d7f8@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v4 13/14] dmaengine: tegra-apb: Allow to compile as a
+ loadable kernel module
+Date: Wed, 15 Jan 2020 10:10:44 +0000
+Message-ID: <620aa569-b880-d226-8dee-382ea5143fa3@nvidia.com>
 References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-3-digetx@gmail.com>
- <c225399c-f032-8001-e67b-b807dcda748c@nvidia.com>
- <627f996c-1487-1b9a-e953-f5737f3ad32a@gmail.com>
+ <20200112173006.29863-14-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <627f996c-1487-1b9a-e953-f5737f3ad32a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200112173006.29863-14-digetx@gmail.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 14/01/2020 21:02, Dmitry Osipenko wrote:
-> 14.01.2020 18:15, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->> On 12/01/2020 17:29, Dmitry Osipenko wrote:
->>> The ISR tasklet could be kept scheduled after DMA transfer termination,
->>> let's add synchronization callback which blocks until tasklet is finish=
-ed.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>>  drivers/dma/tegra20-apb-dma.c | 8 ++++++++
->>>  1 file changed, 8 insertions(+)
->>>
->>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
-a.c
->>> index 319f31d27014..664e9c5df3ba 100644
->>> --- a/drivers/dma/tegra20-apb-dma.c
->>> +++ b/drivers/dma/tegra20-apb-dma.c
->>> @@ -798,6 +798,13 @@ static int tegra_dma_terminate_all(struct dma_chan=
- *dc)
->>>  	return 0;
->>>  }
->>> =20
->>> +static void tegra_dma_synchronize(struct dma_chan *dc)
->>> +{
->>> +	struct tegra_dma_channel *tdc =3D to_tegra_dma_chan(dc);
->>> +
->>> +	tasklet_kill(&tdc->tasklet);
->>> +}
->>> +
->>
->> Wouldn't there need to be some clean-up here? If the tasklet is
->> scheduled, seems that there would be some other house-keeping that needs
->> to be done after killing it.
->=20
-> I'm not seeing anything to clean-up, could you please clarify?
+On 12/01/2020 17:30, Dmitry Osipenko wrote:
+> The driver's removal was fixed by a recent commit and module load/unload
+> is working well now, tested on Tegra30.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/dma/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+> index 6fa1eba9d477..9f43e2cae8b4 100644
+> --- a/drivers/dma/Kconfig
+> +++ b/drivers/dma/Kconfig
+> @@ -586,7 +586,7 @@ config TXX9_DMAC
+>  	  integrated in chips such as the Toshiba TX4927/38/39.
+>  
+>  config TEGRA20_APB_DMA
+> -	bool "NVIDIA Tegra20 APB DMA support"
+> +	tristate "NVIDIA Tegra20 APB DMA support"
+>  	depends on ARCH_TEGRA
+>  	select DMA_ENGINE
+>  	help
 
-Clean-up with regard to the descriptors. I was concerned if you will the
-tasklet the necessary clean-up of the descriptors is not handled.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
+Cheers
 Jon
 
---=20
+
+-- 
 nvpublic
