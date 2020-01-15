@@ -1,152 +1,65 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v4 08/14] dmaengine: tegra-apb: Fix coding style problems
-Date: Wed, 15 Jan 2020 09:49:36 +0000
-Message-ID: <844c4ace-d043-a908-823d-545b5b753008@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 02/14] dmaengine: tegra-apb: Implement synchronization
+ callback
+Date: Wed, 15 Jan 2020 09:18:15 +0000
+Message-ID: <34ec4c18-f082-def6-8544-0d15a109d7f8@nvidia.com>
 References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-9-digetx@gmail.com>
+ <20200112173006.29863-3-digetx@gmail.com>
+ <c225399c-f032-8001-e67b-b807dcda748c@nvidia.com>
+ <627f996c-1487-1b9a-e953-f5737f3ad32a@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200112173006.29863-9-digetx@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <627f996c-1487-1b9a-e953-f5737f3ad32a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
+On 14/01/2020 21:02, Dmitry Osipenko wrote:
+> 14.01.2020 18:15, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>> On 12/01/2020 17:29, Dmitry Osipenko wrote:
+>>> The ISR tasklet could be kept scheduled after DMA transfer termination,
+>>> let's add synchronization callback which blocks until tasklet is finish=
+ed.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> ---
+>>>  drivers/dma/tegra20-apb-dma.c | 8 ++++++++
+>>>  1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
+a.c
+>>> index 319f31d27014..664e9c5df3ba 100644
+>>> --- a/drivers/dma/tegra20-apb-dma.c
+>>> +++ b/drivers/dma/tegra20-apb-dma.c
+>>> @@ -798,6 +798,13 @@ static int tegra_dma_terminate_all(struct dma_chan=
+ *dc)
+>>>  	return 0;
+>>>  }
+>>> =20
+>>> +static void tegra_dma_synchronize(struct dma_chan *dc)
+>>> +{
+>>> +	struct tegra_dma_channel *tdc =3D to_tegra_dma_chan(dc);
+>>> +
+>>> +	tasklet_kill(&tdc->tasklet);
+>>> +}
+>>> +
+>>
+>> Wouldn't there need to be some clean-up here? If the tasklet is
+>> scheduled, seems that there would be some other house-keeping that needs
+>> to be done after killing it.
+>=20
+> I'm not seeing anything to clean-up, could you please clarify?
 
-On 12/01/2020 17:30, Dmitry Osipenko wrote:
-> This patch fixes few dozens of coding style problems reported by
-> checkpatch and prettifies code where makes sense.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/dma/tegra20-apb-dma.c | 276 ++++++++++++++++++----------------
->  1 file changed, 144 insertions(+), 132 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index dff21e80ffa4..7158bd3145c4 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
+Clean-up with regard to the descriptors. I was concerned if you will the
+tasklet the necessary clean-up of the descriptors is not handled.
 
-...
-
-> @@ -1003,20 +1014,23 @@ static void tegra_dma_prep_wcount(struct tegra_dma_channel *tdc,
->  		ch_regs->csr |= len_field;
->  }
->  
-> -static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
-> -	struct dma_chan *dc, struct scatterlist *sgl, unsigned int sg_len,
-> -	enum dma_transfer_direction direction, unsigned long flags,
-> -	void *context)
-> +static struct dma_async_tx_descriptor *
-> +tegra_dma_prep_slave_sg(struct dma_chan *dc,
-> +			struct scatterlist *sgl,
-> +			unsigned int sg_len,
-> +			enum dma_transfer_direction direction,
-> +			unsigned long flags,
-> +			void *context)
->  {
->  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
-> +	struct tegra_dma_sg_req *sg_req = NULL;
-> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
-> +	enum dma_slave_buswidth slave_bw;
->  	struct tegra_dma_desc *dma_desc;
-> -	unsigned int i;
-> -	struct scatterlist *sg;
-> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
->  	struct list_head req_list;
-> -	struct tegra_dma_sg_req  *sg_req = NULL;
-> -	u32 burst_size;
-> -	enum dma_slave_buswidth slave_bw;
-> +	struct scatterlist *sg;
-> +	unsigned int burst_size;
-> +	unsigned int i;
-
-This is not really consistent with the rest of the changes by having 'i'
-and 'burst_size' on separate lines.
-
->  
->  	if (!tdc->config_init) {
->  		dev_err(tdc2dev(tdc), "DMA channel is not configured\n");
-> @@ -1028,7 +1042,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
->  	}
->  
->  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
-> -				&burst_size, &slave_bw) < 0)
-> +			       &burst_size, &slave_bw) < 0)
->  		return NULL;
->  
->  	INIT_LIST_HEAD(&req_list);
-> @@ -1074,7 +1088,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
->  		len = sg_dma_len(sg);
->  
->  		if ((len & 3) || (mem & 3) ||
-> -				(len > tdc->tdma->chip_data->max_dma_count)) {
-> +		    len > tdc->tdma->chip_data->max_dma_count) {
->  			dev_err(tdc2dev(tdc),
->  				"DMA length/memory address is not supported\n");
->  			tegra_dma_desc_put(tdc, dma_desc);
-> @@ -1126,20 +1140,21 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
->  	return &dma_desc->txd;
->  }
->  
-> -static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
-> -	struct dma_chan *dc, dma_addr_t buf_addr, size_t buf_len,
-> -	size_t period_len, enum dma_transfer_direction direction,
-> -	unsigned long flags)
-> +static struct dma_async_tx_descriptor *
-> +tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr,
-> +			  size_t buf_len,
-> +			  size_t period_len,
-> +			  enum dma_transfer_direction direction,
-> +			  unsigned long flags)
->  {
->  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
-> -	struct tegra_dma_desc *dma_desc = NULL;
->  	struct tegra_dma_sg_req *sg_req = NULL;
-> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
-> -	int len;
-> -	size_t remain_len;
-> -	dma_addr_t mem = buf_addr;
-> -	u32 burst_size;
-> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
->  	enum dma_slave_buswidth slave_bw;
-> +	struct tegra_dma_desc *dma_desc;
-> +	dma_addr_t mem = buf_addr;
-> +	unsigned int burst_size;
-> +	size_t len, remain_len;
->  
->  	if (!buf_len || !period_len) {
->  		dev_err(tdc2dev(tdc), "Invalid buffer/period len\n");
-> @@ -1173,13 +1188,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
->  
->  	len = period_len;
->  	if ((len & 3) || (buf_addr & 3) ||
-> -			(len > tdc->tdma->chip_data->max_dma_count)) {
-> +	    len > tdc->tdma->chip_data->max_dma_count) {
->  		dev_err(tdc2dev(tdc), "Req len/mem address is not correct\n");
->  		return NULL;
->  	}
->  
->  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
-> -				&burst_size, &slave_bw) < 0)
-> +			       &burst_size, &slave_bw) < 0)
->  		return NULL;
->  
->  	ahb_seq = TEGRA_APBDMA_AHBSEQ_INTR_ENB;
-> @@ -1269,7 +1284,6 @@ static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
->  	int ret;
->  
->  	dma_cookie_init(&tdc->dma_chan);
-> -	tdc->config_init = false;
-
-Why is this removed? Does not seem to belong in this patch.
-
-Cheers
 Jon
 
--- 
+--=20
 nvpublic
