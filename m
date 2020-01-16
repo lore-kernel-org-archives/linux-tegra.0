@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 5.4 011/205] soc/tegra: pmc: Fix crashes for hierarchical interrupts
-Date: Thu, 16 Jan 2020 11:39:46 -0500
-Message-ID: <20200116164300.6705-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 060/205] drm/tegra: Fix ordering of cleanup code
+Date: Thu, 16 Jan 2020 11:40:35 -0500
+Message-ID: <20200116164300.6705-60-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,75 +9,57 @@ Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20200116164300.6705-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-[ Upstream commit c9e753767a9c75d2044fb7343950a6a992d34a16 ]
+[ Upstream commit 051172e8c1ceef8749f19faacc1d3bef65d20d8d ]
 
-Interrupts that don't have an associated wake event or GPIO wake events
-end up with an associate IRQ chip that is NULL and which causes IRQ code
-to crash. This is because we don't implicitly set the parent IRQ chip by
-allocating the interrupt at the parent. However, there really isn't a
-corresponding interrupt at the parent, so we need to work around this by
-setting the special no_irq_chip as the IRQ chip for these interrupts.
+Commit Fixes: b9f8b09ce256 ("drm/tegra: Setup shared IOMMU domain after
+initialization") changed the initialization order of the IOMMU related
+bits but didn't update the cleanup path accordingly. This asymmetry can
+cause failures during error recovery.
 
-Fixes: 19906e6b1667 ("soc/tegra: pmc: Add wake event support")
+Fixes: b9f8b09ce256 ("drm/tegra: Setup shared IOMMU domain after initialization")
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- drivers/soc/tegra/pmc.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/drm.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 9f9c1c677cf4..0447afa970f5 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1899,6 +1899,20 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
- 							    event->id,
- 							    &pmc->irq, pmc);
- 
-+			/*
-+			 * GPIOs don't have an equivalent interrupt in the
-+			 * parent controller (GIC). However some code, such
-+			 * as the one in irq_get_irqchip_state(), require a
-+			 * valid IRQ chip to be set. Make sure that's the
-+			 * case by passing NULL here, which will install a
-+			 * dummy IRQ chip for the interrupt in the parent
-+			 * domain.
-+			 */
-+			if (domain->parent)
-+				irq_domain_set_hwirq_and_chip(domain->parent,
-+							      virq, 0, NULL,
-+							      NULL);
-+
- 			break;
- 		}
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 6fb7d74ff553..bc7cc32140f8 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -201,19 +201,19 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+ 	if (tegra->hub)
+ 		tegra_display_hub_cleanup(tegra->hub);
+ device:
+-	host1x_device_exit(device);
+-fbdev:
+-	drm_kms_helper_poll_fini(drm);
+-	tegra_drm_fb_free(drm);
+-config:
+-	drm_mode_config_cleanup(drm);
+-
+ 	if (tegra->domain) {
+ 		mutex_destroy(&tegra->mm_lock);
+ 		drm_mm_takedown(&tegra->mm);
+ 		put_iova_domain(&tegra->carveout.domain);
+ 		iova_cache_put();
  	}
-@@ -1908,10 +1922,22 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
- 	 * dummy hardware IRQ number. This is used in the ->irq_set_type()
- 	 * and ->irq_set_wake() callbacks to return early for these IRQs.
- 	 */
--	if (i == soc->num_wake_events)
-+	if (i == soc->num_wake_events) {
- 		err = irq_domain_set_hwirq_and_chip(domain, virq, ULONG_MAX,
- 						    &pmc->irq, pmc);
- 
-+		/*
-+		 * Interrupts without a wake event don't have a corresponding
-+		 * interrupt in the parent controller (GIC). Pass NULL for the
-+		 * chip here, which causes a dummy IRQ chip to be installed
-+		 * for the interrupt in the parent domain, to make this
-+		 * explicit.
-+		 */
-+		if (domain->parent)
-+			irq_domain_set_hwirq_and_chip(domain->parent, virq, 0,
-+						      NULL, NULL);
-+	}
 +
- 	return err;
- }
- 
++	host1x_device_exit(device);
++fbdev:
++	drm_kms_helper_poll_fini(drm);
++	tegra_drm_fb_free(drm);
++config:
++	drm_mode_config_cleanup(drm);
+ domain:
+ 	if (tegra->domain)
+ 		iommu_domain_free(tegra->domain);
 -- 
 2.20.1
