@@ -1,43 +1,133 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] dt-bindings: firmware: Convert Tegra186 BPMP
- bindings to json-schema
-Date: Thu, 16 Jan 2020 13:28:17 -0600
-Message-ID: <20200116192817.GA30287@bogus>
-References: <20200114181519.3402385-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 01/14] dmaengine: tegra-apb: Fix use-after-free
+Date: Thu, 16 Jan 2020 23:10:37 +0300
+Message-ID: <b0c85ca7-d8ac-5f9d-2c57-79543c1f9b5d@gmail.com>
+References: <20200112173006.29863-1-digetx@gmail.com>
+ <20200112173006.29863-2-digetx@gmail.com>
+ <4c1b9e48-5468-0c03-2108-158ee814eea8@nvidia.com>
+ <1327bb21-0364-da26-e6ed-ff6c19df03e6@gmail.com>
+ <e39ef31d-4cff-838a-0fc1-73a39a8d6120@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200114181519.3402385-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <e39ef31d-4cff-838a-0fc1-73a39a8d6120-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 14 Jan 2020 19:15:18 +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+15.01.2020 12:00, Jon Hunter пишет:
 > 
-> Convert the Tegra186 BPMP bindings from the old free-form text format to
-> a json-schema and fix things up so that existing device trees properly
-> validate.
+> On 14/01/2020 20:33, Dmitry Osipenko wrote:
+>> 14.01.2020 18:09, Jon Hunter пишет:
+>>>
+>>> On 12/01/2020 17:29, Dmitry Osipenko wrote:
+>>>> I was doing some experiments with I2C and noticed that Tegra APB DMA
+>>>> driver crashes sometime after I2C DMA transfer termination. The crash
+>>>> happens because tegra_dma_terminate_all() bails out immediately if pending
+>>>> list is empty, thus it doesn't release the half-completed descriptors
+>>>> which are getting re-used before ISR tasklet kicks-in.
+>>>
+>>> Can you elaborate a bit more on how these are getting re-used? What is
+>>> the sequence of events which results in the panic? I believe that this
+>>> was also reported in the past [0] and so I don't doubt there is an issue
+>>> here, but would like to completely understand this.
+>>>
+>>> Thanks!
+>>> Jon
+>>>
+>>> [0] https://lore.kernel.org/patchwork/patch/675349/
+>>>
+>>
+>> In my case it happens in the touchscreen driver during of the
+>> touchscreen's interrupt handling (in a threaded IRQ handler) + CPU is
+>> under load and there is other interrupts activity. So what happens here
+>> is that the TS driver issues one I2C transfer, which fails with
+>> (apparently bogus) timeout (because DMA descriptor is completed and
+>> removed from the pending list, but tasklet not executed yet), and then
+>> TS immediately issues another I2C transfer that re-uses the
+>> yet-incompleted descriptor. That's my understanding.
 > 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../firmware/nvidia,tegra186-bpmp.txt         | 107 ---------
->  .../firmware/nvidia,tegra186-bpmp.yaml        | 209 ++++++++++++++++++
->  2 files changed, 209 insertions(+), 107 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->  create mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
-> 
+> OK, but what is the exact sequence that it allowing it to re-use the
+> incompleted descriptor?
 
-My bot found errors running 'make dt_binding_check' on your patch:
+   TDMA driver                      DMA Client
 
-Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
-Error: Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.example.dts:52.29-30 syntax error
-FATAL ERROR: Unable to parse input tree
-scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.example.dt.yaml' failed
-make[1]: *** [Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.example.dt.yaml] Error 1
-Makefile:1263: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
+1.
+                                    dmaengine_prep()
 
-See https://patchwork.ozlabs.org/patch/1222983
-Please check and re-submit.
+2.
+   tegra_dma_desc_get()
+   dma_desc = kzalloc()
+   ...
+   tegra_dma_prep_slave_sg()
+   INIT_LIST_HEAD(&dma_desc->tx_list);
+   INIT_LIST_HEAD(&dma_desc->cb_node);
+   list_add_tail(sgreq->node,
+                 dma_desc->tx_list)
+
+3.
+                                    dma_async_issue_pending()
+
+4.
+   tegra_dma_tx_submit()
+   list_splice_tail_init(dma_desc->tx_list,
+                         tdc->pending_sg_req)
+
+5.
+   tegra_dma_isr()
+   ...
+   handle_once_dma_done()
+   ...
+   sgreq = list_first_entry(tdc->pending_sg_req)
+   list_del(sgreq->node);
+   ...
+   list_add_tail(dma_desc->cb_node,
+                 tdc->cb_desc);
+   list_add_tail(dma_desc->node,
+                 tdc->free_dma_desc);
+   ...
+   tasklet_schedule(&tdc->tasklet);
+   ...
+
+6.
+                                    timeout
+                                    dmaengine_terminate_async()
+
+7.
+   tegra_dma_terminate_all()
+   if (list_empty(tdc->pending_sg_req))
+       return 0;
+
+8.
+                                    dmaengine_prep()
+
+9.
+   tegra_dma_desc_get()
+   list_for_each_entry(dma_desc,
+                       tdc->free_dma_desc) {
+       list_del(dma_desc->node);
+       return dma_desc;
+   }
+   ...
+   tegra_dma_prep_slave_sg()
+   INIT_LIST_HEAD(&dma_desc->tx_list);
+   INIT_LIST_HEAD(&dma_desc->cb_node);
+
+   *** tdc->cb_desc list is wrecked now! ***
+
+   list_add_tail(sgreq->node,
+                 dma_desc->tx_list)
+   ...
+
+10.
+   same actions as in #4 #5 ...
+
+11.
+   tegra_dma_tasklet()
+   dma_desc = list_first_entry(tdc->cb_desc)
+   list_del(dma_desc->cb_node);
+
+   eventual woopsie
