@@ -1,172 +1,100 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 150/371] spi: tegra114: fix for unpacked mode transfers
-Date: Thu, 16 Jan 2020 12:20:22 -0500
-Message-ID: <20200116172403.18149-93-sashal@kernel.org>
-References: <20200116172403.18149-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 367/671] dmaengine: tegra210-adma: Fix crash during probe
+Date: Thu, 16 Jan 2020 12:00:05 -0500
+Message-ID: <20200116170509.12787-104-sashal@kernel.org>
+References: <20200116170509.12787-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
+In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-[ Upstream commit 1a89ac5b91895127f7c586ec5075c3753ca25501 ]
+[ Upstream commit b53611fb1ce9b1786bd18205473e0c1d6bfa8934 ]
 
-Fixes: computation of actual bytes to fill/receive in/from FIFO in unpacked
-mode when transfer length is not a multiple of requested bits per word.
+Commit f33e7bb3eb92 ("dmaengine: tegra210-adma: restore channel status")
+added support to save and restore the DMA channel registers when runtime
+suspending the ADMA. This change is causing the kernel to crash when
+probing the ADMA, if the device is probed deferred when looking up the
+channel interrupts. The crash occurs because not all of the channel base
+addresses have been setup at this point and in the clean-up path of the
+probe, pm_runtime_suspend() is called invoking its callback which
+expects all the channel base addresses to be initialised.
 
-unpacked mode transfers fails when the transfer includes partial bytes in
-the last word.
+Although this could be fixed by simply checking for a NULL address, on
+further review of the driver it seems more appropriate that we only call
+pm_runtime_get_sync() after all the channel interrupts and base
+addresses have been configured. Therefore, fix this crash by moving the
+calls to pm_runtime_enable(), pm_runtime_get_sync() and
+tegra_adma_init() after the DMA channels have been initialised.
 
-Total words to be written/read to/from FIFO is computed based on transfer
-length and bits per word. Unpacked mode includes 0 padding bytes for partial
-words to align with bits per word and these extra bytes are also accounted
-for calculating bytes left to transfer in the current driver.
+Fixes: f33e7bb3eb92 ("dmaengine: tegra210-adma: restore channel status")
 
-This causes extra bytes access of tx/rx buffers along with buffer index
-position crossing actual length where remain_len becomes negative and due to
-unsigned type, negative value is a 32 bit representation of signed value
-and transferred bytes never meets the actual transfer length resulting in
-transfer timeout and a hang.
-
-This patch fixes this with proper computation of the actual bytes to fill in
-FIFO during transmit and the actual bytes to read from FIFO during receive
-ignoring 0 padded bytes.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-tegra114.c | 43 +++++++++++++++++++++++++++++++-------
- 1 file changed, 36 insertions(+), 7 deletions(-)
+ drivers/dma/tegra210-adma.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 3a6b202dfffe..c6674b01e0fd 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -307,10 +307,16 @@ static unsigned tegra_spi_fill_tx_fifo_from_client_txbuf(
- 				x |= (u32)(*tx_buf++) << (i * 8);
- 			tegra_spi_writel(tspi, x, SPI_TX_FIFO);
- 		}
-+
-+		tspi->cur_tx_pos += written_words * tspi->bytes_per_word;
- 	} else {
-+		unsigned int write_bytes;
- 		max_n_32bit = min(tspi->curr_dma_words,  tx_empty_count);
- 		written_words = max_n_32bit;
- 		nbytes = written_words * tspi->bytes_per_word;
-+		if (nbytes > t->len - tspi->cur_pos)
-+			nbytes = t->len - tspi->cur_pos;
-+		write_bytes = nbytes;
- 		for (count = 0; count < max_n_32bit; count++) {
- 			u32 x = 0;
- 
-@@ -319,8 +325,10 @@ static unsigned tegra_spi_fill_tx_fifo_from_client_txbuf(
- 				x |= (u32)(*tx_buf++) << (i * 8);
- 			tegra_spi_writel(tspi, x, SPI_TX_FIFO);
- 		}
-+
-+		tspi->cur_tx_pos += write_bytes;
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index ac2a6b800db3..4f4733d831a1 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -744,16 +744,6 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 		return PTR_ERR(tdma->ahub_clk);
  	}
--	tspi->cur_tx_pos += written_words * tspi->bytes_per_word;
+ 
+-	pm_runtime_enable(&pdev->dev);
+-
+-	ret = pm_runtime_get_sync(&pdev->dev);
+-	if (ret < 0)
+-		goto rpm_disable;
+-
+-	ret = tegra_adma_init(tdma);
+-	if (ret)
+-		goto rpm_put;
+-
+ 	INIT_LIST_HEAD(&tdma->dma_dev.channels);
+ 	for (i = 0; i < tdma->nr_channels; i++) {
+ 		struct tegra_adma_chan *tdc = &tdma->channels[i];
+@@ -771,6 +761,16 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 		tdc->tdma = tdma;
+ 	}
+ 
++	pm_runtime_enable(&pdev->dev);
 +
- 	return written_words;
++	ret = pm_runtime_get_sync(&pdev->dev);
++	if (ret < 0)
++		goto rpm_disable;
++
++	ret = tegra_adma_init(tdma);
++	if (ret)
++		goto rpm_put;
++
+ 	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
+ 	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
+ 	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
+@@ -812,13 +812,13 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 
+ dma_remove:
+ 	dma_async_device_unregister(&tdma->dma_dev);
+-irq_dispose:
+-	while (--i >= 0)
+-		irq_dispose_mapping(tdma->channels[i].irq);
+ rpm_put:
+ 	pm_runtime_put_sync(&pdev->dev);
+ rpm_disable:
+ 	pm_runtime_disable(&pdev->dev);
++irq_dispose:
++	while (--i >= 0)
++		irq_dispose_mapping(tdma->channels[i].irq);
+ 
+ 	return ret;
  }
- 
-@@ -344,20 +352,27 @@ static unsigned int tegra_spi_read_rx_fifo_to_client_rxbuf(
- 			for (i = 0; len && (i < 4); i++, len--)
- 				*rx_buf++ = (x >> i*8) & 0xFF;
- 		}
--		tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 		read_words += tspi->curr_dma_words;
-+		tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 	} else {
- 		u32 rx_mask = ((u32)1 << t->bits_per_word) - 1;
-+		u8 bytes_per_word = tspi->bytes_per_word;
-+		unsigned int read_bytes;
- 
-+		len = rx_full_count * bytes_per_word;
-+		if (len > t->len - tspi->cur_pos)
-+			len = t->len - tspi->cur_pos;
-+		read_bytes = len;
- 		for (count = 0; count < rx_full_count; count++) {
- 			u32 x = tegra_spi_readl(tspi, SPI_RX_FIFO) & rx_mask;
- 
--			for (i = 0; (i < tspi->bytes_per_word); i++)
-+			for (i = 0; len && (i < bytes_per_word); i++, len--)
- 				*rx_buf++ = (x >> (i*8)) & 0xFF;
- 		}
--		tspi->cur_rx_pos += rx_full_count * tspi->bytes_per_word;
- 		read_words += rx_full_count;
-+		tspi->cur_rx_pos += read_bytes;
- 	}
-+
- 	return read_words;
- }
- 
-@@ -372,12 +387,17 @@ static void tegra_spi_copy_client_txbuf_to_spi_txbuf(
- 		unsigned len = tspi->curr_dma_words * tspi->bytes_per_word;
- 
- 		memcpy(tspi->tx_dma_buf, t->tx_buf + tspi->cur_pos, len);
-+		tspi->cur_tx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 	} else {
- 		unsigned int i;
- 		unsigned int count;
- 		u8 *tx_buf = (u8 *)t->tx_buf + tspi->cur_tx_pos;
- 		unsigned consume = tspi->curr_dma_words * tspi->bytes_per_word;
-+		unsigned int write_bytes;
- 
-+		if (consume > t->len - tspi->cur_pos)
-+			consume = t->len - tspi->cur_pos;
-+		write_bytes = consume;
- 		for (count = 0; count < tspi->curr_dma_words; count++) {
- 			u32 x = 0;
- 
-@@ -386,8 +406,9 @@ static void tegra_spi_copy_client_txbuf_to_spi_txbuf(
- 				x |= (u32)(*tx_buf++) << (i * 8);
- 			tspi->tx_dma_buf[count] = x;
- 		}
-+
-+		tspi->cur_tx_pos += write_bytes;
- 	}
--	tspi->cur_tx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 
- 	/* Make the dma buffer to read by dma */
- 	dma_sync_single_for_device(tspi->dev, tspi->tx_dma_phys,
-@@ -405,20 +426,28 @@ static void tegra_spi_copy_spi_rxbuf_to_client_rxbuf(
- 		unsigned len = tspi->curr_dma_words * tspi->bytes_per_word;
- 
- 		memcpy(t->rx_buf + tspi->cur_rx_pos, tspi->rx_dma_buf, len);
-+		tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 	} else {
- 		unsigned int i;
- 		unsigned int count;
- 		unsigned char *rx_buf = t->rx_buf + tspi->cur_rx_pos;
- 		u32 rx_mask = ((u32)1 << t->bits_per_word) - 1;
-+		unsigned consume = tspi->curr_dma_words * tspi->bytes_per_word;
-+		unsigned int read_bytes;
- 
-+		if (consume > t->len - tspi->cur_pos)
-+			consume = t->len - tspi->cur_pos;
-+		read_bytes = consume;
- 		for (count = 0; count < tspi->curr_dma_words; count++) {
- 			u32 x = tspi->rx_dma_buf[count] & rx_mask;
- 
--			for (i = 0; (i < tspi->bytes_per_word); i++)
-+			for (i = 0; consume && (i < tspi->bytes_per_word);
-+							i++, consume--)
- 				*rx_buf++ = (x >> (i*8)) & 0xFF;
- 		}
-+
-+		tspi->cur_rx_pos += read_bytes;
- 	}
--	tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 
- 	/* Make the dma buffer to read by dma */
- 	dma_sync_single_for_device(tspi->dev, tspi->rx_dma_phys,
 -- 
 2.20.1
