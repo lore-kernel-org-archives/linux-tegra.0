@@ -1,34 +1,40 @@
-From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V6 07/27] PCI: tegra: Advertise PCIe Advanced Error
- Reporting (AER) capability
-Date: Wed, 15 Jan 2020 23:13:34 +0100
-Message-ID: <CABr+WTkoj1zk6RRdPvb2wd9HgBJEbPJR=dtY4f+V1gFrEb671A@mail.gmail.com>
-References: <20190618180206.4908-1-mmaddireddy@nvidia.com> <20190618180206.4908-8-mmaddireddy@nvidia.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] usb: gadget: xudc: Remove redundant platform_get_irq error message
+Date: Thu, 16 Jan 2020 22:14:33 +0800
+Message-ID: <20200116141433.57056-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20190618180206.4908-8-mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, yuehaibing@huawei.com, nkristam@nvidia.com, felipe.balbi@linux.intel.com
+Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Le mar. 18 juin 2019 =C3=A0 20:02, Manikanta Maddireddy
-<mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> a =C3=A9crit :
->
-> Default root port setting hides AER capability. This patch enables the
-> advertisement of AER capability by root port.
+platform_get_irq() will call dev_err() itself on failure,
+so there is no need for the driver to also do this.
+This is detected by coccinelle.
 
-Hello,
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/usb/gadget/udc/tegra-xudc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-For your information, I've reported an issue on kernel.org that is
-related to AER in pcie with the ethernet NIC on jetson-tk1
-https://bugzilla.kernel.org/show_bug.cgi?id=3D206217
-
-I hope someone can shred some lights on this.
-
---=20
--
-
-Nicolas (kwizart)
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index 634c2c1..fc1eafc 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -3492,11 +3492,8 @@ static int tegra_xudc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	xudc->irq = platform_get_irq(pdev, 0);
+-	if (xudc->irq < 0) {
+-		dev_err(xudc->dev, "failed to get IRQ: %d\n",
+-				xudc->irq);
++	if (xudc->irq < 0)
+ 		return xudc->irq;
+-	}
+ 
+ 	err = devm_request_irq(&pdev->dev, xudc->irq, tegra_xudc_irq, 0,
+ 			       dev_name(&pdev->dev), xudc);
+-- 
+2.7.4
