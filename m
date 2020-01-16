@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 153/371] spi: tegra114: configure dma burst size to fifo trig level
-Date: Thu, 16 Jan 2020 12:20:25 -0500
-Message-ID: <20200116172403.18149-96-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 186/371] dmaengine: tegra210-adma: restore channel status
+Date: Thu, 16 Jan 2020 12:20:58 -0500
+Message-ID: <20200116172403.18149-129-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,135 +9,124 @@ Return-path: <stable-owner@vger.kernel.org>
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Cc: Sameer Pujar <spujar@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Sameer Pujar <spujar@nvidia.com>
 
-[ Upstream commit f4ce428c41fb22e3ed55496dded94df44cb920fa ]
+[ Upstream commit f33e7bb3eb922618612a90f0a828c790e8880773 ]
 
-Fixes: Configure DMA burst size to be same as SPI TX/RX trigger levels
-to avoid mismatch.
+Status of ADMA channel registers is not saved and restored during system
+suspend. During active playback if system enters suspend, this results in
+wrong state of channel registers during system resume and playback fails
+to resume properly. Fix this by saving following channel registers in
+runtime suspend and restore during runtime resume.
+ * ADMA_CH_LOWER_SRC_ADDR
+ * ADMA_CH_LOWER_TRG_ADDR
+ * ADMA_CH_FIFO_CTRL
+ * ADMA_CH_CONFIG
+ * ADMA_CH_CTRL
+ * ADMA_CH_CMD
+ * ADMA_CH_TC
+Runtime PM calls will be inovked during system resume path if a playback
+or capture needs to be resumed. Hence above changes work fine for system
+suspend case.
 
-SPI FIFO trigger levels are calculated based on the transfer length.
-So this patch moves DMA slave configuration to happen before start
-of DMAs.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-tegra114.c | 52 ++++++++++++++++++++++----------------
- 1 file changed, 30 insertions(+), 22 deletions(-)
+ drivers/dma/tegra210-adma.c | 46 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 18dfbd57c61f..84ff0c507f0b 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -529,6 +529,8 @@ static int tegra_spi_start_dma_based_transfer(
- 	u32 val;
- 	unsigned int len;
- 	int ret = 0;
-+	u8 dma_burst;
-+	struct dma_slave_config dma_sconfig = {0};
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 09b6756366c3..ac2a6b800db3 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -98,6 +98,7 @@ struct tegra_adma_chan_regs {
+ 	unsigned int src_addr;
+ 	unsigned int trg_addr;
+ 	unsigned int fifo_ctrl;
++	unsigned int cmd;
+ 	unsigned int tc;
+ };
  
- 	val = SPI_DMA_BLK_SET(tspi->curr_dma_words - 1);
- 	tegra_spi_writel(tspi, val, SPI_DMA_BLK);
-@@ -540,12 +542,16 @@ static int tegra_spi_start_dma_based_transfer(
- 		len = tspi->curr_dma_words * 4;
+@@ -127,6 +128,7 @@ struct tegra_adma_chan {
+ 	enum dma_transfer_direction	sreq_dir;
+ 	unsigned int			sreq_index;
+ 	bool				sreq_reserved;
++	struct tegra_adma_chan_regs	ch_regs;
  
- 	/* Set attention level based on length of transfer */
--	if (len & 0xF)
-+	if (len & 0xF) {
- 		val |= SPI_TX_TRIG_1 | SPI_RX_TRIG_1;
--	else if (((len) >> 4) & 0x1)
-+		dma_burst = 1;
-+	} else if (((len) >> 4) & 0x1) {
- 		val |= SPI_TX_TRIG_4 | SPI_RX_TRIG_4;
--	else
-+		dma_burst = 4;
-+	} else {
- 		val |= SPI_TX_TRIG_8 | SPI_RX_TRIG_8;
-+		dma_burst = 8;
+ 	/* Transfer count and position info */
+ 	unsigned int			tx_buf_count;
+@@ -635,8 +637,30 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
+ static int tegra_adma_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra_adma *tdma = dev_get_drvdata(dev);
++	struct tegra_adma_chan_regs *ch_reg;
++	struct tegra_adma_chan *tdc;
++	int i;
+ 
+ 	tdma->global_cmd = tdma_read(tdma, ADMA_GLOBAL_CMD);
++	if (!tdma->global_cmd)
++		goto clk_disable;
++
++	for (i = 0; i < tdma->nr_channels; i++) {
++		tdc = &tdma->channels[i];
++		ch_reg = &tdc->ch_regs;
++		ch_reg->cmd = tdma_ch_read(tdc, ADMA_CH_CMD);
++		/* skip if channel is not active */
++		if (!ch_reg->cmd)
++			continue;
++		ch_reg->tc = tdma_ch_read(tdc, ADMA_CH_TC);
++		ch_reg->src_addr = tdma_ch_read(tdc, ADMA_CH_LOWER_SRC_ADDR);
++		ch_reg->trg_addr = tdma_ch_read(tdc, ADMA_CH_LOWER_TRG_ADDR);
++		ch_reg->ctrl = tdma_ch_read(tdc, ADMA_CH_CTRL);
++		ch_reg->fifo_ctrl = tdma_ch_read(tdc, ADMA_CH_FIFO_CTRL);
++		ch_reg->config = tdma_ch_read(tdc, ADMA_CH_CONFIG);
 +	}
- 
- 	if (tspi->cur_direction & DATA_DIR_TX)
- 		val |= SPI_IE_TX;
-@@ -556,7 +562,18 @@ static int tegra_spi_start_dma_based_transfer(
- 	tegra_spi_writel(tspi, val, SPI_DMA_CTL);
- 	tspi->dma_control_reg = val;
- 
-+	dma_sconfig.device_fc = true;
- 	if (tspi->cur_direction & DATA_DIR_TX) {
-+		dma_sconfig.dst_addr = tspi->phys + SPI_TX_FIFO;
-+		dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		dma_sconfig.dst_maxburst = dma_burst;
-+		ret = dmaengine_slave_config(tspi->tx_dma_chan, &dma_sconfig);
-+		if (ret < 0) {
-+			dev_err(tspi->dev,
-+				"DMA slave config failed: %d\n", ret);
-+			return ret;
-+		}
 +
- 		tegra_spi_copy_client_txbuf_to_spi_txbuf(tspi, t);
- 		ret = tegra_spi_start_tx_dma(tspi, len);
- 		if (ret < 0) {
-@@ -567,6 +584,16 @@ static int tegra_spi_start_dma_based_transfer(
- 	}
++clk_disable:
+ 	clk_disable_unprepare(tdma->ahub_clk);
  
- 	if (tspi->cur_direction & DATA_DIR_RX) {
-+		dma_sconfig.src_addr = tspi->phys + SPI_RX_FIFO;
-+		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		dma_sconfig.src_maxburst = dma_burst;
-+		ret = dmaengine_slave_config(tspi->rx_dma_chan, &dma_sconfig);
-+		if (ret < 0) {
-+			dev_err(tspi->dev,
-+				"DMA slave config failed: %d\n", ret);
-+			return ret;
-+		}
-+
- 		/* Make the dma buffer to read by dma */
- 		dma_sync_single_for_device(tspi->dev, tspi->rx_dma_phys,
- 				tspi->dma_buf_size, DMA_FROM_DEVICE);
-@@ -626,7 +653,6 @@ static int tegra_spi_init_dma_param(struct tegra_spi_data *tspi,
- 	u32 *dma_buf;
- 	dma_addr_t dma_phys;
- 	int ret;
--	struct dma_slave_config dma_sconfig;
- 
- 	dma_chan = dma_request_slave_channel_reason(tspi->dev,
- 					dma_to_memory ? "rx" : "tx");
-@@ -646,19 +672,6 @@ static int tegra_spi_init_dma_param(struct tegra_spi_data *tspi,
- 		return -ENOMEM;
- 	}
- 
--	if (dma_to_memory) {
--		dma_sconfig.src_addr = tspi->phys + SPI_RX_FIFO;
--		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
--		dma_sconfig.src_maxburst = 0;
--	} else {
--		dma_sconfig.dst_addr = tspi->phys + SPI_TX_FIFO;
--		dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
--		dma_sconfig.dst_maxburst = 0;
--	}
--
--	ret = dmaengine_slave_config(dma_chan, &dma_sconfig);
--	if (ret)
--		goto scrub;
- 	if (dma_to_memory) {
- 		tspi->rx_dma_chan = dma_chan;
- 		tspi->rx_dma_buf = dma_buf;
-@@ -669,11 +682,6 @@ static int tegra_spi_init_dma_param(struct tegra_spi_data *tspi,
- 		tspi->tx_dma_phys = dma_phys;
- 	}
  	return 0;
--
--scrub:
--	dma_free_coherent(tspi->dev, tspi->dma_buf_size, dma_buf, dma_phys);
--	dma_release_channel(dma_chan);
--	return ret;
+@@ -645,7 +669,9 @@ static int tegra_adma_runtime_suspend(struct device *dev)
+ static int tegra_adma_runtime_resume(struct device *dev)
+ {
+ 	struct tegra_adma *tdma = dev_get_drvdata(dev);
+-	int ret;
++	struct tegra_adma_chan_regs *ch_reg;
++	struct tegra_adma_chan *tdc;
++	int ret, i;
+ 
+ 	ret = clk_prepare_enable(tdma->ahub_clk);
+ 	if (ret) {
+@@ -654,6 +680,24 @@ static int tegra_adma_runtime_resume(struct device *dev)
+ 	}
+ 	tdma_write(tdma, ADMA_GLOBAL_CMD, tdma->global_cmd);
+ 
++	if (!tdma->global_cmd)
++		return 0;
++
++	for (i = 0; i < tdma->nr_channels; i++) {
++		tdc = &tdma->channels[i];
++		ch_reg = &tdc->ch_regs;
++		/* skip if channel was not active earlier */
++		if (!ch_reg->cmd)
++			continue;
++		tdma_ch_write(tdc, ADMA_CH_TC, ch_reg->tc);
++		tdma_ch_write(tdc, ADMA_CH_LOWER_SRC_ADDR, ch_reg->src_addr);
++		tdma_ch_write(tdc, ADMA_CH_LOWER_TRG_ADDR, ch_reg->trg_addr);
++		tdma_ch_write(tdc, ADMA_CH_CTRL, ch_reg->ctrl);
++		tdma_ch_write(tdc, ADMA_CH_FIFO_CTRL, ch_reg->fifo_ctrl);
++		tdma_ch_write(tdc, ADMA_CH_CONFIG, ch_reg->config);
++		tdma_ch_write(tdc, ADMA_CH_CMD, ch_reg->cmd);
++	}
++
+ 	return 0;
  }
  
- static void tegra_spi_deinit_dma_param(struct tegra_spi_data *tspi,
 -- 
 2.20.1
