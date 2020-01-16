@@ -1,57 +1,46 @@
-From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 4.19 116/671] memory: tegra: Don't invoke Tegra30+ specific memory timing setup on Tegra20
-Date: Thu, 16 Jan 2020 11:45:47 -0500
-Message-ID: <20200116165502.8838-116-sashal@kernel.org>
-References: <20200116165502.8838-1-sashal@kernel.org>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 266/671] spi: tegra114: clear packed bit for unpacked mode
+Date: Thu, 16 Jan 2020 11:58:24 -0500
+Message-ID: <20200116170509.12787-3-sashal@kernel.org>
+References: <20200116170509.12787-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200116165502.8838-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-[ Upstream commit be4dbdec2bab8635c7a41573668624ee13d83022 ]
+[ Upstream commit 7b3d10cdf54b8bc1dc0da21faed9789ac4da3684 ]
 
-This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
-timings for RAM code 0 registered" warning message during of kernels
-boot-up on Tegra20.
+Fixes: Clear packed bit when not using packed mode.
 
-Fixes: a8d502fd3348 ("memory: tegra: Squash tegra20-mc into common tegra-mc driver")
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
-Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Packed bit is not cleared when not using packed mode. This results
+in transfer timeouts for the unpacked mode transfers followed by the
+packed mode transfers.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memory/tegra/mc.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/spi/spi-tegra114.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index c8f16666256c..346d8eadb44b 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -664,12 +664,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 		}
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index a1888dc6a938..fd039cab768a 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -730,6 +730,8 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
  
- 		isr = tegra_mc_irq;
--	}
+ 	if (tspi->is_packed)
+ 		command1 |= SPI_PACKED;
++	else
++		command1 &= ~SPI_PACKED;
  
--	err = tegra_mc_setup_timings(mc);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to setup timings: %d\n", err);
--		return err;
-+		err = tegra_mc_setup_timings(mc);
-+		if (err < 0) {
-+			dev_err(&pdev->dev, "failed to setup timings: %d\n",
-+				err);
-+			return err;
-+		}
- 	}
- 
- 	mc->irq = platform_get_irq(pdev, 0);
+ 	command1 &= ~(SPI_CS_SEL_MASK | SPI_TX_EN | SPI_RX_EN);
+ 	tspi->cur_direction = 0;
 -- 
 2.20.1
