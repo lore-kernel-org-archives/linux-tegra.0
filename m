@@ -1,50 +1,83 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 0/8] NVIDIA Tegra I2C driver fixes and improvements
-Date: Thu, 16 Jan 2020 19:38:16 +0300
-Message-ID: <ea7c484b-d8ae-48b9-84ca-db26902f4654@gmail.com>
-References: <20200114013442.28448-1-digetx@gmail.com>
- <20200115173535.GF1239@ninjato>
+From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH AUTOSEL 5.4 011/205] soc/tegra: pmc: Fix crashes for hierarchical interrupts
+Date: Thu, 16 Jan 2020 11:39:46 -0500
+Message-ID: <20200116164300.6705-11-sashal@kernel.org>
+References: <20200116164300.6705-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200115173535.GF1239@ninjato>
-Content-Language: en-US
+In-Reply-To: <20200116164300.6705-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-15.01.2020 20:35, Wolfram Sang пишет:
-> On Tue, Jan 14, 2020 at 04:34:34AM +0300, Dmitry Osipenko wrote:
->> Hello,
->>
->> This patchset adds support for atomic transfers which are required for
->> shutting down machine properly. Secondly, a (not)suspending I2C and some
->> other things are fixed/improved by this small series as well. Please review
->> and apply, thanks in advance!
->>
->> Changelog:
->>
->> v5: Improved commit message of the "Support atomic transfers" patch,
->>     thanks to Wolfram Sang.
->>
->>     Added explicit stable tags to these patches:
->>
->>       i2c: tegra: Fix suspending in active runtime PM state
->>       i2c: tegra: Properly disable runtime PM on driver's probe error
-> 
-> Patches 1+2 applied to for-current and patches 3-8 applied to for-next,
-> thanks!
-> 
-> Checkpatch spit out some of those:
-> 
-> CHECK: Lines should not end with a '('
-> 
-> I didn't mind. We can fix it incrementally if you want to fix it.
-> 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thank you very much!
+[ Upstream commit c9e753767a9c75d2044fb7343950a6a992d34a16 ]
 
-I was aware of those minor warnings, but couldn't instantly see how to
-fix them without making code less readable.
+Interrupts that don't have an associated wake event or GPIO wake events
+end up with an associate IRQ chip that is NULL and which causes IRQ code
+to crash. This is because we don't implicitly set the parent IRQ chip by
+allocating the interrupt at the parent. However, there really isn't a
+corresponding interrupt at the parent, so we need to work around this by
+setting the special no_irq_chip as the IRQ chip for these interrupts.
+
+Fixes: 19906e6b1667 ("soc/tegra: pmc: Add wake event support")
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ drivers/soc/tegra/pmc.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 9f9c1c677cf4..0447afa970f5 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1899,6 +1899,20 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+ 							    event->id,
+ 							    &pmc->irq, pmc);
+ 
++			/*
++			 * GPIOs don't have an equivalent interrupt in the
++			 * parent controller (GIC). However some code, such
++			 * as the one in irq_get_irqchip_state(), require a
++			 * valid IRQ chip to be set. Make sure that's the
++			 * case by passing NULL here, which will install a
++			 * dummy IRQ chip for the interrupt in the parent
++			 * domain.
++			 */
++			if (domain->parent)
++				irq_domain_set_hwirq_and_chip(domain->parent,
++							      virq, 0, NULL,
++							      NULL);
++
+ 			break;
+ 		}
+ 	}
+@@ -1908,10 +1922,22 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
+ 	 * dummy hardware IRQ number. This is used in the ->irq_set_type()
+ 	 * and ->irq_set_wake() callbacks to return early for these IRQs.
+ 	 */
+-	if (i == soc->num_wake_events)
++	if (i == soc->num_wake_events) {
+ 		err = irq_domain_set_hwirq_and_chip(domain, virq, ULONG_MAX,
+ 						    &pmc->irq, pmc);
+ 
++		/*
++		 * Interrupts without a wake event don't have a corresponding
++		 * interrupt in the parent controller (GIC). Pass NULL for the
++		 * chip here, which causes a dummy IRQ chip to be installed
++		 * for the interrupt in the parent domain, to make this
++		 * explicit.
++		 */
++		if (domain->parent)
++			irq_domain_set_hwirq_and_chip(domain->parent, virq, 0,
++						      NULL, NULL);
++	}
++
+ 	return err;
+ }
+ 
+-- 
+2.20.1
