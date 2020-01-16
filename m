@@ -1,46 +1,132 @@
-From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 4.4 067/174] spi: tegra114: clear packed bit for unpacked mode
-Date: Thu, 16 Jan 2020 12:41:04 -0500
-Message-ID: <20200116174251.24326-67-sashal@kernel.org>
-References: <20200116174251.24326-1-sashal@kernel.org>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 132/251] dmaengine: tegra210-adma: restore channel status
+Date: Thu, 16 Jan 2020 12:34:41 -0500
+Message-ID: <20200116173641.22137-92-sashal@kernel.org>
+References: <20200116173641.22137-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200116174251.24326-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Sameer Pujar <spujar@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Sameer Pujar <spujar@nvidia.com>
 
-[ Upstream commit 7b3d10cdf54b8bc1dc0da21faed9789ac4da3684 ]
+[ Upstream commit f33e7bb3eb922618612a90f0a828c790e8880773 ]
 
-Fixes: Clear packed bit when not using packed mode.
+Status of ADMA channel registers is not saved and restored during system
+suspend. During active playback if system enters suspend, this results in
+wrong state of channel registers during system resume and playback fails
+to resume properly. Fix this by saving following channel registers in
+runtime suspend and restore during runtime resume.
+ * ADMA_CH_LOWER_SRC_ADDR
+ * ADMA_CH_LOWER_TRG_ADDR
+ * ADMA_CH_FIFO_CTRL
+ * ADMA_CH_CONFIG
+ * ADMA_CH_CTRL
+ * ADMA_CH_CMD
+ * ADMA_CH_TC
+Runtime PM calls will be inovked during system resume path if a playback
+or capture needs to be resumed. Hence above changes work fine for system
+suspend case.
 
-Packed bit is not cleared when not using packed mode. This results
-in transfer timeouts for the unpacked mode transfers followed by the
-packed mode transfers.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Fixes: f46b195799b5 ("dmaengine: tegra-adma: Add support for Tegra210 ADMA")
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-tegra114.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/dma/tegra210-adma.c | 46 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 705f515863d4..d98c502a9c47 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -730,6 +730,8 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index e9e46a520745..8c3cab463354 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -98,6 +98,7 @@ struct tegra_adma_chan_regs {
+ 	unsigned int src_addr;
+ 	unsigned int trg_addr;
+ 	unsigned int fifo_ctrl;
++	unsigned int cmd;
+ 	unsigned int tc;
+ };
  
- 	if (tspi->is_packed)
- 		command1 |= SPI_PACKED;
-+	else
-+		command1 &= ~SPI_PACKED;
+@@ -127,6 +128,7 @@ struct tegra_adma_chan {
+ 	enum dma_transfer_direction	sreq_dir;
+ 	unsigned int			sreq_index;
+ 	bool				sreq_reserved;
++	struct tegra_adma_chan_regs	ch_regs;
  
- 	command1 &= ~(SPI_CS_SEL_MASK | SPI_TX_EN | SPI_RX_EN);
- 	tspi->cur_direction = 0;
+ 	/* Transfer count and position info */
+ 	unsigned int			tx_buf_count;
+@@ -635,8 +637,30 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
+ static int tegra_adma_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra_adma *tdma = dev_get_drvdata(dev);
++	struct tegra_adma_chan_regs *ch_reg;
++	struct tegra_adma_chan *tdc;
++	int i;
+ 
+ 	tdma->global_cmd = tdma_read(tdma, ADMA_GLOBAL_CMD);
++	if (!tdma->global_cmd)
++		goto clk_disable;
++
++	for (i = 0; i < tdma->nr_channels; i++) {
++		tdc = &tdma->channels[i];
++		ch_reg = &tdc->ch_regs;
++		ch_reg->cmd = tdma_ch_read(tdc, ADMA_CH_CMD);
++		/* skip if channel is not active */
++		if (!ch_reg->cmd)
++			continue;
++		ch_reg->tc = tdma_ch_read(tdc, ADMA_CH_TC);
++		ch_reg->src_addr = tdma_ch_read(tdc, ADMA_CH_LOWER_SRC_ADDR);
++		ch_reg->trg_addr = tdma_ch_read(tdc, ADMA_CH_LOWER_TRG_ADDR);
++		ch_reg->ctrl = tdma_ch_read(tdc, ADMA_CH_CTRL);
++		ch_reg->fifo_ctrl = tdma_ch_read(tdc, ADMA_CH_FIFO_CTRL);
++		ch_reg->config = tdma_ch_read(tdc, ADMA_CH_CONFIG);
++	}
++
++clk_disable:
+ 	clk_disable_unprepare(tdma->ahub_clk);
+ 
+ 	return 0;
+@@ -645,7 +669,9 @@ static int tegra_adma_runtime_suspend(struct device *dev)
+ static int tegra_adma_runtime_resume(struct device *dev)
+ {
+ 	struct tegra_adma *tdma = dev_get_drvdata(dev);
+-	int ret;
++	struct tegra_adma_chan_regs *ch_reg;
++	struct tegra_adma_chan *tdc;
++	int ret, i;
+ 
+ 	ret = clk_prepare_enable(tdma->ahub_clk);
+ 	if (ret) {
+@@ -654,6 +680,24 @@ static int tegra_adma_runtime_resume(struct device *dev)
+ 	}
+ 	tdma_write(tdma, ADMA_GLOBAL_CMD, tdma->global_cmd);
+ 
++	if (!tdma->global_cmd)
++		return 0;
++
++	for (i = 0; i < tdma->nr_channels; i++) {
++		tdc = &tdma->channels[i];
++		ch_reg = &tdc->ch_regs;
++		/* skip if channel was not active earlier */
++		if (!ch_reg->cmd)
++			continue;
++		tdma_ch_write(tdc, ADMA_CH_TC, ch_reg->tc);
++		tdma_ch_write(tdc, ADMA_CH_LOWER_SRC_ADDR, ch_reg->src_addr);
++		tdma_ch_write(tdc, ADMA_CH_LOWER_TRG_ADDR, ch_reg->trg_addr);
++		tdma_ch_write(tdc, ADMA_CH_CTRL, ch_reg->ctrl);
++		tdma_ch_write(tdc, ADMA_CH_FIFO_CTRL, ch_reg->fifo_ctrl);
++		tdma_ch_write(tdc, ADMA_CH_CONFIG, ch_reg->config);
++		tdma_ch_write(tdc, ADMA_CH_CMD, ch_reg->cmd);
++	}
++
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
