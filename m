@@ -1,100 +1,160 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 206/371] dmaengine: tegra210-adma: Fix crash during probe
-Date: Thu, 16 Jan 2020 12:21:18 -0500
-Message-ID: <20200116172403.18149-149-sashal@kernel.org>
-References: <20200116172403.18149-1-sashal@kernel.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 08/14] dmaengine: tegra-apb: Fix coding style problems
+Date: Thu, 16 Jan 2020 20:37:27 +0300
+Message-ID: <134adcfb-83fb-4bb7-986e-65217bc4f821@gmail.com>
+References: <20200112173006.29863-1-digetx@gmail.com>
+ <20200112173006.29863-9-digetx@gmail.com>
+ <844c4ace-d043-a908-823d-545b5b753008@nvidia.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
+In-Reply-To: <844c4ace-d043-a908-823d-545b5b753008@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
+15.01.2020 12:49, Jon Hunter пишет:
+> 
+> 
+> On 12/01/2020 17:30, Dmitry Osipenko wrote:
+>> This patch fixes few dozens of coding style problems reported by
+>> checkpatch and prettifies code where makes sense.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/dma/tegra20-apb-dma.c | 276 ++++++++++++++++++----------------
+>>  1 file changed, 144 insertions(+), 132 deletions(-)
+>>
+>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+>> index dff21e80ffa4..7158bd3145c4 100644
+>> --- a/drivers/dma/tegra20-apb-dma.c
+>> +++ b/drivers/dma/tegra20-apb-dma.c
+> 
+> ...
+> 
+>> @@ -1003,20 +1014,23 @@ static void tegra_dma_prep_wcount(struct tegra_dma_channel *tdc,
+>>  		ch_regs->csr |= len_field;
+>>  }
+>>  
+>> -static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>> -	struct dma_chan *dc, struct scatterlist *sgl, unsigned int sg_len,
+>> -	enum dma_transfer_direction direction, unsigned long flags,
+>> -	void *context)
+>> +static struct dma_async_tx_descriptor *
+>> +tegra_dma_prep_slave_sg(struct dma_chan *dc,
+>> +			struct scatterlist *sgl,
+>> +			unsigned int sg_len,
+>> +			enum dma_transfer_direction direction,
+>> +			unsigned long flags,
+>> +			void *context)
+>>  {
+>>  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+>> +	struct tegra_dma_sg_req *sg_req = NULL;
+>> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
+>> +	enum dma_slave_buswidth slave_bw;
+>>  	struct tegra_dma_desc *dma_desc;
+>> -	unsigned int i;
+>> -	struct scatterlist *sg;
+>> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
+>>  	struct list_head req_list;
+>> -	struct tegra_dma_sg_req  *sg_req = NULL;
+>> -	u32 burst_size;
+>> -	enum dma_slave_buswidth slave_bw;
+>> +	struct scatterlist *sg;
+>> +	unsigned int burst_size;
+>> +	unsigned int i;
+> 
+> This is not really consistent with the rest of the changes by having 'i'
+> and 'burst_size' on separate lines.
 
-[ Upstream commit b53611fb1ce9b1786bd18205473e0c1d6bfa8934 ]
+The goal wasn't to squash everything into a single line, but to make
+code more readable. In this particular case the separated lines look
+better to me.
 
-Commit f33e7bb3eb92 ("dmaengine: tegra210-adma: restore channel status")
-added support to save and restore the DMA channel registers when runtime
-suspending the ADMA. This change is causing the kernel to crash when
-probing the ADMA, if the device is probed deferred when looking up the
-channel interrupts. The crash occurs because not all of the channel base
-addresses have been setup at this point and in the clean-up path of the
-probe, pm_runtime_suspend() is called invoking its callback which
-expects all the channel base addresses to be initialised.
+>>  
+>>  	if (!tdc->config_init) {
+>>  		dev_err(tdc2dev(tdc), "DMA channel is not configured\n");
+>> @@ -1028,7 +1042,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>>  	}
+>>  
+>>  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
+>> -				&burst_size, &slave_bw) < 0)
+>> +			       &burst_size, &slave_bw) < 0)
+>>  		return NULL;
+>>  
+>>  	INIT_LIST_HEAD(&req_list);
+>> @@ -1074,7 +1088,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>>  		len = sg_dma_len(sg);
+>>  
+>>  		if ((len & 3) || (mem & 3) ||
+>> -				(len > tdc->tdma->chip_data->max_dma_count)) {
+>> +		    len > tdc->tdma->chip_data->max_dma_count) {
+>>  			dev_err(tdc2dev(tdc),
+>>  				"DMA length/memory address is not supported\n");
+>>  			tegra_dma_desc_put(tdc, dma_desc);
+>> @@ -1126,20 +1140,21 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>>  	return &dma_desc->txd;
+>>  }
+>>  
+>> -static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+>> -	struct dma_chan *dc, dma_addr_t buf_addr, size_t buf_len,
+>> -	size_t period_len, enum dma_transfer_direction direction,
+>> -	unsigned long flags)
+>> +static struct dma_async_tx_descriptor *
+>> +tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr,
+>> +			  size_t buf_len,
+>> +			  size_t period_len,
+>> +			  enum dma_transfer_direction direction,
+>> +			  unsigned long flags)
+>>  {
+>>  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+>> -	struct tegra_dma_desc *dma_desc = NULL;
+>>  	struct tegra_dma_sg_req *sg_req = NULL;
+>> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
+>> -	int len;
+>> -	size_t remain_len;
+>> -	dma_addr_t mem = buf_addr;
+>> -	u32 burst_size;
+>> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
+>>  	enum dma_slave_buswidth slave_bw;
+>> +	struct tegra_dma_desc *dma_desc;
+>> +	dma_addr_t mem = buf_addr;
+>> +	unsigned int burst_size;
+>> +	size_t len, remain_len;
+>>  
+>>  	if (!buf_len || !period_len) {
+>>  		dev_err(tdc2dev(tdc), "Invalid buffer/period len\n");
+>> @@ -1173,13 +1188,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+>>  
+>>  	len = period_len;
+>>  	if ((len & 3) || (buf_addr & 3) ||
+>> -			(len > tdc->tdma->chip_data->max_dma_count)) {
+>> +	    len > tdc->tdma->chip_data->max_dma_count) {
+>>  		dev_err(tdc2dev(tdc), "Req len/mem address is not correct\n");
+>>  		return NULL;
+>>  	}
+>>  
+>>  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
+>> -				&burst_size, &slave_bw) < 0)
+>> +			       &burst_size, &slave_bw) < 0)
+>>  		return NULL;
+>>  
+>>  	ahb_seq = TEGRA_APBDMA_AHBSEQ_INTR_ENB;
+>> @@ -1269,7 +1284,6 @@ static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
+>>  	int ret;
+>>  
+>>  	dma_cookie_init(&tdc->dma_chan);
+>> -	tdc->config_init = false;
+> 
+> Why is this removed? Does not seem to belong in this patch.
 
-Although this could be fixed by simply checking for a NULL address, on
-further review of the driver it seems more appropriate that we only call
-pm_runtime_get_sync() after all the channel interrupts and base
-addresses have been configured. Therefore, fix this crash by moving the
-calls to pm_runtime_enable(), pm_runtime_get_sync() and
-tegra_adma_init() after the DMA channels have been initialised.
-
-Fixes: f33e7bb3eb92 ("dmaengine: tegra210-adma: restore channel status")
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/dma/tegra210-adma.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index ac2a6b800db3..4f4733d831a1 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -744,16 +744,6 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 		return PTR_ERR(tdma->ahub_clk);
- 	}
- 
--	pm_runtime_enable(&pdev->dev);
--
--	ret = pm_runtime_get_sync(&pdev->dev);
--	if (ret < 0)
--		goto rpm_disable;
--
--	ret = tegra_adma_init(tdma);
--	if (ret)
--		goto rpm_put;
--
- 	INIT_LIST_HEAD(&tdma->dma_dev.channels);
- 	for (i = 0; i < tdma->nr_channels; i++) {
- 		struct tegra_adma_chan *tdc = &tdma->channels[i];
-@@ -771,6 +761,16 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 		tdc->tdma = tdma;
- 	}
- 
-+	pm_runtime_enable(&pdev->dev);
-+
-+	ret = pm_runtime_get_sync(&pdev->dev);
-+	if (ret < 0)
-+		goto rpm_disable;
-+
-+	ret = tegra_adma_init(tdma);
-+	if (ret)
-+		goto rpm_put;
-+
- 	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
- 	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
- 	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
-@@ -812,13 +812,13 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 
- dma_remove:
- 	dma_async_device_unregister(&tdma->dma_dev);
--irq_dispose:
--	while (--i >= 0)
--		irq_dispose_mapping(tdma->channels[i].irq);
- rpm_put:
- 	pm_runtime_put_sync(&pdev->dev);
- rpm_disable:
- 	pm_runtime_disable(&pdev->dev);
-+irq_dispose:
-+	while (--i >= 0)
-+		irq_dispose_mapping(tdma->channels[i].irq);
- 
- 	return ret;
- }
--- 
-2.20.1
+Because initially, on driver's probe, the tdc->config_init is false for
+all channels and then tegra_dma_free_chan_resources() also sets it to
+false. Thus there is no need to re-initilize the already initialized
+variable. It's not a very good coding style if variables are
+unnecessarily initialized, you probably noticed that there are few other
+cases of removing the unneeded initializations of local variables in
+this patch.
