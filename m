@@ -1,133 +1,53 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 01/14] dmaengine: tegra-apb: Fix use-after-free
-Date: Thu, 16 Jan 2020 23:10:37 +0300
-Message-ID: <b0c85ca7-d8ac-5f9d-2c57-79543c1f9b5d@gmail.com>
-References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-2-digetx@gmail.com>
- <4c1b9e48-5468-0c03-2108-158ee814eea8@nvidia.com>
- <1327bb21-0364-da26-e6ed-ff6c19df03e6@gmail.com>
- <e39ef31d-4cff-838a-0fc1-73a39a8d6120@nvidia.com>
+From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH -next] usb: gadget: xudc: Remove redundant
+ platform_get_irq error message
+Date: Fri, 17 Jan 2020 09:36:31 +0530
+Message-ID: <0a693269-3727-bb71-414e-856eab485353@nvidia.com>
+References: <20200116141433.57056-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e39ef31d-4cff-838a-0fc1-73a39a8d6120-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200116141433.57056-1-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-15.01.2020 12:00, Jon Hunter пишет:
+Reviewed-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+On 16-01-2020 19:44, YueHaibing wrote:
+> External email: Use caution opening links or attachments
 > 
-> On 14/01/2020 20:33, Dmitry Osipenko wrote:
->> 14.01.2020 18:09, Jon Hunter пишет:
->>>
->>> On 12/01/2020 17:29, Dmitry Osipenko wrote:
->>>> I was doing some experiments with I2C and noticed that Tegra APB DMA
->>>> driver crashes sometime after I2C DMA transfer termination. The crash
->>>> happens because tegra_dma_terminate_all() bails out immediately if pending
->>>> list is empty, thus it doesn't release the half-completed descriptors
->>>> which are getting re-used before ISR tasklet kicks-in.
->>>
->>> Can you elaborate a bit more on how these are getting re-used? What is
->>> the sequence of events which results in the panic? I believe that this
->>> was also reported in the past [0] and so I don't doubt there is an issue
->>> here, but would like to completely understand this.
->>>
->>> Thanks!
->>> Jon
->>>
->>> [0] https://lore.kernel.org/patchwork/patch/675349/
->>>
->>
->> In my case it happens in the touchscreen driver during of the
->> touchscreen's interrupt handling (in a threaded IRQ handler) + CPU is
->> under load and there is other interrupts activity. So what happens here
->> is that the TS driver issues one I2C transfer, which fails with
->> (apparently bogus) timeout (because DMA descriptor is completed and
->> removed from the pending list, but tasklet not executed yet), and then
->> TS immediately issues another I2C transfer that re-uses the
->> yet-incompleted descriptor. That's my understanding.
 > 
-> OK, but what is the exact sequence that it allowing it to re-use the
-> incompleted descriptor?
-
-   TDMA driver                      DMA Client
-
-1.
-                                    dmaengine_prep()
-
-2.
-   tegra_dma_desc_get()
-   dma_desc = kzalloc()
-   ...
-   tegra_dma_prep_slave_sg()
-   INIT_LIST_HEAD(&dma_desc->tx_list);
-   INIT_LIST_HEAD(&dma_desc->cb_node);
-   list_add_tail(sgreq->node,
-                 dma_desc->tx_list)
-
-3.
-                                    dma_async_issue_pending()
-
-4.
-   tegra_dma_tx_submit()
-   list_splice_tail_init(dma_desc->tx_list,
-                         tdc->pending_sg_req)
-
-5.
-   tegra_dma_isr()
-   ...
-   handle_once_dma_done()
-   ...
-   sgreq = list_first_entry(tdc->pending_sg_req)
-   list_del(sgreq->node);
-   ...
-   list_add_tail(dma_desc->cb_node,
-                 tdc->cb_desc);
-   list_add_tail(dma_desc->node,
-                 tdc->free_dma_desc);
-   ...
-   tasklet_schedule(&tdc->tasklet);
-   ...
-
-6.
-                                    timeout
-                                    dmaengine_terminate_async()
-
-7.
-   tegra_dma_terminate_all()
-   if (list_empty(tdc->pending_sg_req))
-       return 0;
-
-8.
-                                    dmaengine_prep()
-
-9.
-   tegra_dma_desc_get()
-   list_for_each_entry(dma_desc,
-                       tdc->free_dma_desc) {
-       list_del(dma_desc->node);
-       return dma_desc;
-   }
-   ...
-   tegra_dma_prep_slave_sg()
-   INIT_LIST_HEAD(&dma_desc->tx_list);
-   INIT_LIST_HEAD(&dma_desc->cb_node);
-
-   *** tdc->cb_desc list is wrecked now! ***
-
-   list_add_tail(sgreq->node,
-                 dma_desc->tx_list)
-   ...
-
-10.
-   same actions as in #4 #5 ...
-
-11.
-   tegra_dma_tasklet()
-   dma_desc = list_first_entry(tdc->cb_desc)
-   list_del(dma_desc->cb_node);
-
-   eventual woopsie
+> platform_get_irq() will call dev_err() itself on failure,
+> so there is no need for the driver to also do this.
+> This is detected by coccinelle.
+> 
+> Signed-off-by: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+> ---
+>   drivers/usb/gadget/udc/tegra-xudc.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+> index 634c2c1..fc1eafc 100644
+> --- a/drivers/usb/gadget/udc/tegra-xudc.c
+> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
+> @@ -3492,11 +3492,8 @@ static int tegra_xudc_probe(struct platform_device *pdev)
+>          }
+> 
+>          xudc->irq = platform_get_irq(pdev, 0);
+> -       if (xudc->irq < 0) {
+> -               dev_err(xudc->dev, "failed to get IRQ: %d\n",
+> -                               xudc->irq);
+> +       if (xudc->irq < 0)
+>                  return xudc->irq;
+> -       }
+> 
+>          err = devm_request_irq(&pdev->dev, xudc->irq, tegra_xudc_irq, 0,
+>                                 dev_name(&pdev->dev), xudc);
+> --
+> 2.7.4
+> 
+> 
