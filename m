@@ -1,65 +1,18 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v8 19/22] ASoC: tegra: Enable audio mclk during
- tegra_asoc_utils_init
-Date: Sun, 19 Jan 2020 18:14:07 +0300
-Message-ID: <3a8e609a-58aa-d2c1-c140-e1f0127dd53b@gmail.com>
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <1578986667-16041-20-git-send-email-skomatineni@nvidia.com>
+From: Favor Desmond <contecindy5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: HELLO
+Date: Sun, 19 Jan 2020 18:44:18 +0000
+Message-ID: <CAOfCPNxgSoAU_ns0j9jYL-ArKfcD=i8NkJvHsR4-OGvFBVDMZg__11177.2339021385$1579459464$gmane$org@mail.gmail.com>
+Reply-To: favordens-zuv13RyHHZkAvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1578986667-16041-20-git-send-email-skomatineni@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-14.01.2020 10:24, Sowjanya Komatineni пишет:
-> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
-> through Tegra210 and currently Tegra clock driver keeps the audio
-> mclk enabled.
-> 
-> With the move of PMC clocks from clock driver into pmc driver,
-> audio mclk enable from clock driver is removed and this should be
-> taken care by the audio driver.
-> 
-> tegra_asoc_utils_init calls tegra_asoc_utils_set_rate and audio mclk
-> rate configuration is not needed during init and set_rate is actually
-> done during hw_params callback.
-> 
-> So, this patch removes tegra_asoc_utils_set_rate call and just leaves
-> the audio mclk enabled.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  sound/soc/tegra/tegra_asoc_utils.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-> index 1dce5ad6e665..99584970f5f4 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.c
-> +++ b/sound/soc/tegra/tegra_asoc_utils.c
-> @@ -216,9 +216,16 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->  		data->clk_cdev1 = clk_out_1;
->  	}
->  
-> -	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
-> -	if (ret)
-> +	/*
-> +	 * FIXME: There is some unknown dependency between audio mclk disable
-> +	 * and suspend-resume functionality on Tegra30, although audio mclk is
-> +	 * only needed for audio.
-> +	 */
-> +	ret = clk_prepare_enable(data->clk_cdev1);
-> +	if (ret) {
-> +		dev_err(data->dev, "Can't enable cdev1: %d\n", ret);
->  		return ret;
-> +	}
->  
->  	return 0;
->  }
-> 
-
-Shouldn't the clock be disabled on driver's removal?
+Hello Dear
+Greetings to you,I am Favor Desmond from Ivory coast currently living
+in  Togo Republic,I would like to know you more, so that i can tell
+you little amount myself and my photo, email address is
+favordens-zuv13RyHHZkAvxtiuMwx3w@public.gmane.org
+Thanks
+Favor
