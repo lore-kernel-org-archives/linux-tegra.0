@@ -1,49 +1,42 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V6 07/27] PCI: tegra: Advertise PCIe Advanced Error
- Reporting (AER) capability
-Date: Sun, 19 Jan 2020 15:43:49 +0530
-Message-ID: <7739c4e7-d604-a23f-7469-08fbdafb8537@nvidia.com>
-References: <20190618180206.4908-1-mmaddireddy@nvidia.com>
- <20190618180206.4908-8-mmaddireddy@nvidia.com>
- <CABr+WTkoj1zk6RRdPvb2wd9HgBJEbPJR=dtY4f+V1gFrEb671A@mail.gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v8 22/22] clk: tegra: Remove audio clocks configuration
+ from clock driver
+Date: Sun, 19 Jan 2020 18:04:44 +0300
+Message-ID: <d69fe7a8-71cc-c560-a567-f89b936753ad@gmail.com>
+References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
+ <1578986667-16041-23-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CABr+WTkoj1zk6RRdPvb2wd9HgBJEbPJR=dtY4f+V1gFrEb671A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1578986667-16041-23-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+14.01.2020 10:24, Sowjanya Komatineni пишет:
 
+[snip]
 
-On 16-Jan-20 3:43 AM, Nicolas Chauvet wrote:
-> External email: Use caution opening links or attachments
->
->
-> Le mar. 18 juin 2019 =C3=A0 20:02, Manikanta Maddireddy
-> <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> a =C3=A9crit :
->> Default root port setting hides AER capability. This patch enables the
->> advertisement of AER capability by root port.
-> Hello,
->
-> For your information, I've reported an issue on kernel.org that is
-> related to AER in pcie with the ethernet NIC on jetson-tk1
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D206217
->
-> I hope someone can shred some lights on this.
->
-> --
-> -
->
-> Nicolas (kwizart)
+> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+> index 5732fdbe20db..53d1c48532ae 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -1221,9 +1221,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+>  	{ TEGRA30_CLK_UARTC, TEGRA30_CLK_PLL_P, 408000000, 0 },
+>  	{ TEGRA30_CLK_UARTD, TEGRA30_CLK_PLL_P, 408000000, 0 },
+>  	{ TEGRA30_CLK_UARTE, TEGRA30_CLK_PLL_P, 408000000, 0 },
+> -	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
+> -	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
+> -	{ TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
+> +	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 0 },
+> +	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 0 },
+>  	{ TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+>  	{ TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+>  	{ TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+> 
 
-Hi Nicolas,
-
-This patch enables error reporting capability, it shouldn't have caused
-"NETDEV WATCHDOG" error. Let us follow up on the issue in kernel.org.
-
-Thanks,
-Manikanta
+What about to use the assigned-clock-rates in device-tree and thus to
+remove those PLL_A entries?
