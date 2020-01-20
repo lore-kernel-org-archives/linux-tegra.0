@@ -1,696 +1,226 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 8/9] arm64: tegra: add AHUB components for few Tegra chips
-Date: Mon, 20 Jan 2020 19:53:17 +0530
-Message-ID: <1579530198-13431-9-git-send-email-spujar@nvidia.com>
-References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 2/2] dt-bindings: firmware: tegra186-bpmp: Document
+ interconnects property
+Date: Mon, 20 Jan 2020 16:06:05 +0100
+Message-ID: <20200120150605.GA712203@ulmo>
+References: <20200114181519.3402385-1-thierry.reding@gmail.com>
+ <20200114181519.3402385-2-thierry.reding@gmail.com>
+ <7aefac6c-092c-b5a6-2fa6-e283d2147fc3@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: perex@perex.cz, tiwai@suse.com, robh+dt@kernel.org
-Cc: broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com, Sameer Pujar <spujar@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <7aefac6c-092c-b5a6-2fa6-e283d2147fc3-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds few AHUB modules for Tegra210, Tegra186 and Tegra194.
-Following modules are common to all above SoCs,
- * AHUB added as a child node under ACONNECT
- * AHUB includes many HW accelerators and below components are added
-   as its children.
-   * ADMAIF
-   * I2S
-   * DMIC
-   * DSPK (added for Tegra186 and Tegra194 only, since Tegra210 does
-     not have this module)
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 231 ++++++++++++++++++++++++++++-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 239 ++++++++++++++++++++++++++++++-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 145 +++++++++++++++++++
- 3 files changed, 613 insertions(+), 2 deletions(-)
+--3V7upXqbjpZ4EhLz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index c905527..04a1b4e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -82,7 +82,7 @@
- 		ranges = <0x02900000 0x0 0x02900000 0x200000>;
- 		status = "disabled";
- 
--		dma-controller@2930000 {
-+		adma: dma-controller@2930000 {
- 			compatible = "nvidia,tegra186-adma";
- 			reg = <0x02930000 0x20000>;
- 			interrupt-parent = <&agic>;
-@@ -137,6 +137,235 @@
- 			clock-names = "clk";
- 			status = "disabled";
- 		};
-+
-+		tegra_ahub: ahub@2900800 {
-+			compatible = "nvidia,tegra186-ahub";
-+			reg = <0x02900800 0x800>;
-+			clocks = <&bpmp TEGRA186_CLK_AHUB>;
-+			clock-names = "ahub";
-+			assigned-clocks = <&bpmp TEGRA186_CLK_AHUB>;
-+			assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x02900800 0x02900800 0x11800>;
-+			#sound-dai-cells = <1>;
-+			status = "disabled";
-+
-+			tegra_admaif: admaif@290f000 {
-+				compatible = "nvidia,tegra186-admaif";
-+				reg = <0x0290f000 0x1000>;
-+				dmas = <&adma 1>, <&adma 1>,
-+				       <&adma 2>, <&adma 2>,
-+				       <&adma 3>, <&adma 3>,
-+				       <&adma 4>, <&adma 4>,
-+				       <&adma 5>, <&adma 5>,
-+				       <&adma 6>, <&adma 6>,
-+				       <&adma 7>, <&adma 7>,
-+				       <&adma 8>, <&adma 8>,
-+				       <&adma 9>, <&adma 9>,
-+				       <&adma 10>, <&adma 10>,
-+				       <&adma 11>, <&adma 11>,
-+				       <&adma 12>, <&adma 12>,
-+				       <&adma 13>, <&adma 13>,
-+				       <&adma 14>, <&adma 14>,
-+				       <&adma 15>, <&adma 15>,
-+				       <&adma 16>, <&adma 16>,
-+				       <&adma 17>, <&adma 17>,
-+				       <&adma 18>, <&adma 18>,
-+				       <&adma 19>, <&adma 19>,
-+				       <&adma 20>, <&adma 20>;
-+				dma-names = "rx1", "tx1",
-+					    "rx2", "tx2",
-+					    "rx3", "tx3",
-+					    "rx4", "tx4",
-+					    "rx5", "tx5",
-+					    "rx6", "tx6",
-+					    "rx7", "tx7",
-+					    "rx8", "tx8",
-+					    "rx9", "tx9",
-+					    "rx10", "tx10",
-+					    "rx11", "tx11",
-+					    "rx12", "tx12",
-+					    "rx13", "tx13",
-+					    "rx14", "tx14",
-+					    "rx15", "tx15",
-+					    "rx16", "tx16",
-+					    "rx17", "tx17",
-+					    "rx18", "tx18",
-+					    "rx19", "tx19",
-+					    "rx20", "tx20";
-+				#sound-dai-cells = <1>;
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s1: i2s@2901000 {
-+				compatible = "nvidia,tegra186-i2s",
-+					     "nvidia,tegra210-i2s";
-+				reg = <0x2901000 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_I2S1>,
-+					 <&bpmp TEGRA186_CLK_I2S1_SYNC_INPUT>;
-+				clock-names = "i2s", "sync_input";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_I2S1>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S1";
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s2: i2s@2901100 {
-+				compatible = "nvidia,tegra186-i2s",
-+					     "nvidia,tegra210-i2s";
-+				reg = <0x2901100 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_I2S2>,
-+					 <&bpmp TEGRA186_CLK_I2S2_SYNC_INPUT>;
-+				clock-names = "i2s", "sync_input";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_I2S2>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S2";
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s3: i2s@2901200 {
-+				compatible = "nvidia,tegra186-i2s",
-+					     "nvidia,tegra210-i2s";
-+				reg = <0x2901200 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_I2S3>,
-+					 <&bpmp TEGRA186_CLK_I2S3_SYNC_INPUT>;
-+				clock-names = "i2s", "sync_input";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_I2S3>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S3";
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s4: i2s@2901300 {
-+				compatible = "nvidia,tegra186-i2s",
-+					     "nvidia,tegra210-i2s";
-+				reg = <0x2901300 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_I2S4>,
-+					 <&bpmp TEGRA186_CLK_I2S4_SYNC_INPUT>;
-+				clock-names = "i2s", "sync_input";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_I2S4>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S4";
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s5: i2s@2901400 {
-+				compatible = "nvidia,tegra186-i2s",
-+					     "nvidia,tegra210-i2s";
-+				reg = <0x2901400 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_I2S5>,
-+					 <&bpmp TEGRA186_CLK_I2S5_SYNC_INPUT>;
-+				clock-names = "i2s", "sync_input";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_I2S5>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S5";
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s6: i2s@2901500 {
-+				compatible = "nvidia,tegra186-i2s",
-+					     "nvidia,tegra210-i2s";
-+				reg = <0x2901500 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_I2S6>,
-+					 <&bpmp TEGRA186_CLK_I2S6_SYNC_INPUT>;
-+				clock-names = "i2s", "sync_input";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_I2S6>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S6";
-+				status = "disabled";
-+			};
-+
-+			tegra_dmic1: dmic@2904000 {
-+				compatible = "nvidia,tegra210-dmic";
-+				reg = <0x2904000 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_DMIC1>;
-+				clock-names = "dmic";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_DMIC1>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <3072000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "DMIC1";
-+				status = "disabled";
-+			};
-+
-+			tegra_dmic2: dmic@2904100 {
-+				compatible = "nvidia,tegra210-dmic";
-+				reg = <0x2904100 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_DMIC2>;
-+				clock-names = "dmic";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_DMIC2>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <3072000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "DMIC2";
-+				status = "disabled";
-+			};
-+
-+			tegra_dmic3: dmic@2904200 {
-+				compatible = "nvidia,tegra210-dmic";
-+				reg = <0x2904200 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_DMIC3>;
-+				clock-names = "dmic";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_DMIC3>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <3072000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "DMIC3";
-+				status = "disabled";
-+			};
-+
-+			tegra_dmic4: dmic@2904300 {
-+				compatible = "nvidia,tegra210-dmic";
-+				reg = <0x2904300 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_DMIC4>;
-+				clock-names = "dmic";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_DMIC4>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <3072000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "DMIC4";
-+				status = "disabled";
-+			};
-+
-+			tegra_dspk1: dspk@2905000 {
-+				compatible = "nvidia,tegra186-dspk";
-+				reg = <0x2905000 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_DSPK1>;
-+				clock-names = "dspk";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_DSPK1>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <12288000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "DSPK1";
-+				status = "disabled";
-+			};
-+
-+			tegra_dspk2: dspk@2905100 {
-+				compatible = "nvidia,tegra186-dspk";
-+				reg = <0x2905100 0x100>;
-+				clocks = <&bpmp TEGRA186_CLK_DSPK2>;
-+				clock-names = "dspk";
-+				assigned-clocks = <&bpmp TEGRA186_CLK_DSPK2>;
-+				assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <12288000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "DSPK2";
-+				status = "disabled";
-+			};
-+		};
- 	};
- 
- 	memory-controller@2c00000 {
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index ccac43b..7da39f0 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -80,7 +80,7 @@
- 			ranges = <0x02900000 0x02900000 0x200000>;
- 			status = "disabled";
- 
--			dma-controller@2930000 {
-+			adma: dma-controller@2930000 {
- 				compatible = "nvidia,tegra194-adma",
- 					     "nvidia,tegra186-adma";
- 				reg = <0x02930000 0x20000>;
-@@ -137,6 +137,243 @@
- 				clock-names = "clk";
- 				status = "disabled";
- 			};
-+
-+			tegra_ahub: ahub@2900800 {
-+				compatible = "nvidia,tegra194-ahub",
-+					     "nvidia,tegra186-ahub";
-+				reg = <0x02900800 0x800>;
-+				clocks = <&bpmp TEGRA194_CLK_AHUB>;
-+				clock-names = "ahub";
-+				assigned-clocks = <&bpmp TEGRA194_CLK_AHUB>;
-+				assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x02900800 0x02900800 0x11800>;
-+				#sound-dai-cells = <1>;
-+				status = "disabled";
-+
-+				tegra_admaif: admaif@290f000 {
-+					compatible = "nvidia,tegra194-admaif",
-+						     "nvidia,tegra186-admaif";
-+					reg = <0x0290f000 0x1000>;
-+					dmas = <&adma 1>, <&adma 1>,
-+					       <&adma 2>, <&adma 2>,
-+					       <&adma 3>, <&adma 3>,
-+					       <&adma 4>, <&adma 4>,
-+					       <&adma 5>, <&adma 5>,
-+					       <&adma 6>, <&adma 6>,
-+					       <&adma 7>, <&adma 7>,
-+					       <&adma 8>, <&adma 8>,
-+					       <&adma 9>, <&adma 9>,
-+					       <&adma 10>, <&adma 10>,
-+					       <&adma 11>, <&adma 11>,
-+					       <&adma 12>, <&adma 12>,
-+					       <&adma 13>, <&adma 13>,
-+					       <&adma 14>, <&adma 14>,
-+					       <&adma 15>, <&adma 15>,
-+					       <&adma 16>, <&adma 16>,
-+					       <&adma 17>, <&adma 17>,
-+					       <&adma 18>, <&adma 18>,
-+					       <&adma 19>, <&adma 19>,
-+					       <&adma 20>, <&adma 20>;
-+					dma-names = "rx1", "tx1",
-+						    "rx2", "tx2",
-+						    "rx3", "tx3",
-+						    "rx4", "tx4",
-+						    "rx5", "tx5",
-+						    "rx6", "tx6",
-+						    "rx7", "tx7",
-+						    "rx8", "tx8",
-+						    "rx9", "tx9",
-+						    "rx10", "tx10",
-+						    "rx11", "tx11",
-+						    "rx12", "tx12",
-+						    "rx13", "tx13",
-+						    "rx14", "tx14",
-+						    "rx15", "tx15",
-+						    "rx16", "tx16",
-+						    "rx17", "tx17",
-+						    "rx18", "tx18",
-+						    "rx19", "tx19",
-+						    "rx20", "tx20";
-+					#sound-dai-cells = <1>;
-+					status = "disabled";
-+				};
-+
-+				tegra_i2s1: i2s@2901000 {
-+					compatible = "nvidia,tegra194-i2s",
-+						     "nvidia,tegra210-i2s";
-+					reg = <0x2901000 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_I2S1>,
-+						 <&bpmp TEGRA194_CLK_I2S1_SYNC_INPUT>;
-+					clock-names = "i2s", "sync_input";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_I2S1>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <1536000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "I2S1";
-+					status = "disabled";
-+				};
-+
-+				tegra_i2s2: i2s@2901100 {
-+					compatible = "nvidia,tegra194-i2s",
-+						     "nvidia,tegra210-i2s";
-+					reg = <0x2901100 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_I2S2>,
-+						 <&bpmp TEGRA194_CLK_I2S2_SYNC_INPUT>;
-+					clock-names = "i2s", "sync_input";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_I2S2>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <1536000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "I2S2";
-+					status = "disabled";
-+				};
-+
-+				tegra_i2s3: i2s@2901200 {
-+					compatible = "nvidia,tegra194-i2s",
-+						     "nvidia,tegra210-i2s";
-+					reg = <0x2901200 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_I2S3>,
-+						 <&bpmp TEGRA194_CLK_I2S3_SYNC_INPUT>;
-+					clock-names = "i2s", "sync_input";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_I2S3>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <1536000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "I2S3";
-+					status = "disabled";
-+				};
-+
-+				tegra_i2s4: i2s@2901300 {
-+					compatible = "nvidia,tegra194-i2s",
-+						     "nvidia,tegra210-i2s";
-+					reg = <0x2901300 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_I2S4>,
-+						 <&bpmp TEGRA194_CLK_I2S4_SYNC_INPUT>;
-+					clock-names = "i2s", "sync_input";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_I2S4>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <1536000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "I2S4";
-+					status = "disabled";
-+				};
-+
-+				tegra_i2s5: i2s@2901400 {
-+					compatible = "nvidia,tegra194-i2s",
-+						     "nvidia,tegra210-i2s";
-+					reg = <0x2901400 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_I2S5>,
-+						 <&bpmp TEGRA194_CLK_I2S5_SYNC_INPUT>;
-+					clock-names = "i2s", "sync_input";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_I2S5>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <1536000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "I2S5";
-+					status = "disabled";
-+				};
-+
-+				tegra_i2s6: i2s@2901500 {
-+					compatible = "nvidia,tegra194-i2s",
-+						     "nvidia,tegra210-i2s";
-+					reg = <0x2901500 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_I2S6>,
-+						 <&bpmp TEGRA194_CLK_I2S6_SYNC_INPUT>;
-+					clock-names = "i2s", "sync_input";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_I2S6>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <1536000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "I2S6";
-+					status = "disabled";
-+				};
-+
-+				tegra_dmic1: dmic@2904000 {
-+					compatible = "nvidia,tegra194-dmic",
-+						     "nvidia,tegra210-dmic";
-+					reg = <0x2904000 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_DMIC1>;
-+					clock-names = "dmic";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_DMIC1>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <3072000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "DMIC1";
-+					status = "disabled";
-+				};
-+
-+				tegra_dmic2: dmic@2904100 {
-+					compatible = "nvidia,tegra194-dmic",
-+						     "nvidia,tegra210-dmic";
-+					reg = <0x2904100 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_DMIC2>;
-+					clock-names = "dmic";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_DMIC2>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <3072000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "DMIC2";
-+					status = "disabled";
-+				};
-+
-+				tegra_dmic3: dmic@2904200 {
-+					compatible = "nvidia,tegra194-dmic",
-+						     "nvidia,tegra210-dmic";
-+					reg = <0x2904200 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_DMIC3>;
-+					clock-names = "dmic";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_DMIC3>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <3072000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "DMIC3";
-+					status = "disabled";
-+				};
-+
-+				tegra_dmic4: dmic@2904300 {
-+					compatible = "nvidia,tegra194-dmic",
-+						     "nvidia,tegra210-dmic";
-+					reg = <0x2904300 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_DMIC4>;
-+					clock-names = "dmic";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_DMIC4>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <3072000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "DMIC4";
-+					status = "disabled";
-+				};
-+
-+				tegra_dspk1: dspk@2905000 {
-+					compatible = "nvidia,tegra194-dspk",
-+						     "nvidia,tegra186-dspk";
-+					reg = <0x2905000 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_DSPK1>;
-+					clock-names = "dspk";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_DSPK1>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <12288000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "DSPK1";
-+					status = "disabled";
-+				};
-+
-+				tegra_dspk2: dspk@2905100 {
-+					compatible = "nvidia,tegra194-dspk",
-+						     "nvidia,tegra186-dspk";
-+					reg = <0x2905100 0x100>;
-+					clocks = <&bpmp TEGRA194_CLK_DSPK2>;
-+					clock-names = "dspk";
-+					assigned-clocks = <&bpmp TEGRA194_CLK_DSPK2>;
-+					assigned-clock-parents = <&bpmp TEGRA194_CLK_PLLA_OUT0>;
-+					assigned-clock-rates = <12288000>;
-+					#sound-dai-cells = <1>;
-+					sound-name-prefix = "DSPK2";
-+					status = "disabled";
-+				};
-+			};
- 		};
- 
- 		pinmux: pinmux@2430000 {
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 48c6325..98f32aa 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1288,6 +1288,151 @@
- 			clock-names = "clk";
- 			status = "disabled";
- 		};
-+
-+		tegra_ahub: ahub@702d0800 {
-+			compatible = "nvidia,tegra210-ahub";
-+			reg = <0x702d0800 0x800>;
-+			clocks = <&tegra_car TEGRA210_CLK_D_AUDIO>;
-+			clock-names = "ahub";
-+			assigned-clocks = <&tegra_car TEGRA210_CLK_D_AUDIO>;
-+			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x702d0000 0x702d0000 0x0000e400>;
-+			#sound-dai-cells = <1>;
-+			status = "disabled";
-+
-+			tegra_admaif: admaif@702d0000 {
-+				compatible = "nvidia,tegra210-admaif";
-+				reg = <0x702d0000 0x800>;
-+				dmas = <&adma 1>,  <&adma 1>,
-+				       <&adma 2>,  <&adma 2>,
-+				       <&adma 3>,  <&adma 3>,
-+				       <&adma 4>,  <&adma 4>,
-+				       <&adma 5>,  <&adma 5>,
-+				       <&adma 6>,  <&adma 6>,
-+				       <&adma 7>,  <&adma 7>,
-+				       <&adma 8>,  <&adma 8>,
-+				       <&adma 9>,  <&adma 9>,
-+				       <&adma 10>, <&adma 10>;
-+				dma-names = "rx1",  "tx1",
-+					    "rx2",  "tx2",
-+					    "rx3",  "tx3",
-+					    "rx4",  "tx4",
-+					    "rx5",  "tx5",
-+					    "rx6",  "tx6",
-+					    "rx7",  "tx7",
-+					    "rx8",  "tx8",
-+					    "rx9",  "tx9",
-+					    "rx10", "tx10";
-+				#sound-dai-cells = <1>;
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s1: i2s@702d1000 {
-+				compatible = "nvidia,tegra210-i2s";
-+				reg = <0x702d1000 0x100>;
-+				clocks = <&tegra_car TEGRA210_CLK_I2S0>;
-+				clock-names = "i2s";
-+				assigned-clocks = <&tegra_car TEGRA210_CLK_I2S0>;
-+				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S1";
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s2: i2s@702d1100 {
-+				compatible = "nvidia,tegra210-i2s";
-+				reg = <0x702d1100 0x100>;
-+				clocks = <&tegra_car TEGRA210_CLK_I2S1>;
-+				clock-names = "i2s";
-+				assigned-clocks = <&tegra_car TEGRA210_CLK_I2S1>;
-+				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S2";
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s3: i2s@702d1200 {
-+				compatible = "nvidia,tegra210-i2s";
-+				reg = <0x702d1200 0x100>;
-+				clocks = <&tegra_car TEGRA210_CLK_I2S2>;
-+				clock-names = "i2s";
-+				assigned-clocks = <&tegra_car TEGRA210_CLK_I2S2>;
-+				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S3";
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s4: i2s@702d1300 {
-+				compatible = "nvidia,tegra210-i2s";
-+				reg = <0x702d1300 0x100>;
-+				clocks = <&tegra_car TEGRA210_CLK_I2S3>;
-+				clock-names = "i2s";
-+				assigned-clocks = <&tegra_car TEGRA210_CLK_I2S3>;
-+				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S4";
-+				status = "disabled";
-+			};
-+
-+			tegra_i2s5: i2s@702d1400 {
-+				compatible = "nvidia,tegra210-i2s";
-+				reg = <0x702d1400 0x100>;
-+				clocks = <&tegra_car TEGRA210_CLK_I2S4>;
-+				clock-names = "i2s";
-+				assigned-clocks = <&tegra_car TEGRA210_CLK_I2S4>;
-+				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <1536000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "I2S5";
-+				status = "disabled";
-+			};
-+
-+			tegra_dmic1: dmic@702d4000 {
-+				compatible = "nvidia,tegra210-dmic";
-+				reg = <0x702d4000 0x100>;
-+				clocks = <&tegra_car TEGRA210_CLK_DMIC1>;
-+				clock-names = "dmic";
-+				assigned-clocks = <&tegra_car TEGRA210_CLK_DMIC1>;
-+				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <3072000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "DMIC1";
-+				status = "disabled";
-+			};
-+
-+			tegra_dmic2: dmic@702d4100 {
-+				compatible = "nvidia,tegra210-dmic";
-+				reg = <0x702d4100 0x100>;
-+				clocks = <&tegra_car TEGRA210_CLK_DMIC2>;
-+				clock-names = "dmic";
-+				assigned-clocks = <&tegra_car TEGRA210_CLK_DMIC2>;
-+				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <3072000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "DMIC2";
-+				status = "disabled";
-+			};
-+
-+			tegra_dmic3: dmic@702d4200 {
-+				compatible = "nvidia,tegra210-dmic";
-+				reg = <0x702d4200 0x100>;
-+				clocks = <&tegra_car TEGRA210_CLK_DMIC3>;
-+				clock-names = "dmic";
-+				assigned-clocks = <&tegra_car TEGRA210_CLK_DMIC3>;
-+				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-+				assigned-clock-rates = <3072000>;
-+				#sound-dai-cells = <1>;
-+				sound-name-prefix = "DMIC3";
-+				status = "disabled";
-+			};
-+		};
- 	};
- 
- 	spi@70410000 {
--- 
-2.7.4
+On Fri, Jan 17, 2020 at 05:23:43PM +0200, Georgi Djakov wrote:
+> Hi Thierry,
+>=20
+> Thanks for the patch!
+>=20
+> On 1/14/20 20:15, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > Document the interconnects property that is used to describe the paths
+> > from and to system memory from and to the BPMP.
+> >=20
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > Rob, Georgi,
+> >=20
+> > after the initial RFC that I did for adding interconnect properties on
+> > Tegra, I realized that the description wasn't complete. This is an
+> > attempt at a more accurate description, but unfortunately I'm not sure
+> > if it's even correct in terms of the interconnect bindings.
+> >=20
+> > The problem here is that on Tegra, each device has multiple paths to
+> > system memory, and I have no good idea on what to pick as the default.
+> > They are all basically the same path, but each provides extra controls
+> > to configure the "interconnect".
+>=20
+> Are these multiple paths between a device and system memory used simultan=
+eously
+> for load-balancing, or who makes the decision about which path would be u=
+sed?
+
+It varies. The vast majority of these paths are read/write pairs, which
+can be configured separately. There are also cases where multiple paths
+are used for load-balancing and I don't think there's any direct
+software control over which path will be used.
+
+A third class is where you have one device, but two read/write pairs,
+one which is tied to a microcontroller that's part of the device, and
+another read/write pair that is used for DMA to/from the device.
+
+Often in the latter case, the microcontroller memory client interfaces
+will be used by the microcontroller to read firmware and once the micro-
+controller has booted up, the DMA memory client interfaces will be used
+to read/write system memory with bulk data (like frame buffers, etc.).
+
+> Is this based on the client/stream ID that you mentioned previously?
+
+These are now all what's call memory client IDs, which identify the
+corresponding interface to the memory controller. Stream IDs are
+slightly higher-level and typically identify the "module" that uses
+the SMMU. Generally a stream ID is mapped to one or more memory client
+IDs.
+
+> Looking at the the binding below, it seems to me like there are different
+> master/slave pairs between MC and EMC and each link is used for
+> unidirectional traffic only. In terms of the interconnect API, both read
+> and write paths have the same direction.
+
+I'm not sure I understand what you mean by this last sentence. Are you
+saying that each path in terms of the interconnect API is a always a
+bidirectional link?
+
+> Is the EMC really an interconnect provider or is it just a slave port? Can
+> we scale both EMC and MC independently?
+
+The EMC is the only one where we can scale the frequency, but the MC has
+various knobs that can be used to fine-tune arbitration, set maximum
+latency, etc.
+
+I vaguely recall Dmitry mentioning that the EMC in early generations of
+Tegra used to have controls for individual memory clients, but I don't
+see that in more recent generations.
+
+Thierry
+
+> > Any ideas on how to resolve this? Let me know if the DT bindings and
+> > example don't make things clear enough.
+> >=20
+> > Thierry
+> >=20
+> >  .../firmware/nvidia,tegra186-bpmp.yaml        | 59 +++++++++++++++++++
+> >  1 file changed, 59 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186=
+-bpmp.yaml b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpm=
+p.yaml
+> > index dabf1c1aec2f..d40fcd836e90 100644
+> > --- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.y=
+aml
+> > +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.y=
+aml
+> > @@ -43,6 +43,24 @@ properties:
+> >        - enum:
+> >            - nvidia,tegra186-bpmp
+> > =20
+> > +  interconnects:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +    description: A list of phandle and specifier pairs that describe t=
+he
+> > +      interconnect paths to and from the BPMP.
+> > +
+> > +  interconnect-names:
+> > +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> > +    description: One string for each pair of phandle and specifier in =
+the
+> > +      "interconnects" property.
+> > +    # XXX We need at least one of these to be named dma-mem so that th=
+e core
+> > +    # will set the DMA mask based on the DMA parent, but all of these =
+go to
+> > +    # system memory eventually.
+> > +    items:
+> > +      - const: dma-mem
+> > +      - const: dma-mem
+> > +      - const: dma-mem
+> > +      - const: dma-mem
+> > +
+> >    iommus:
+> >      $ref: /schemas/types.yaml#/definitions/phandle-array
+> >      description: |
+> > @@ -152,8 +170,43 @@ additionalProperties: false
+> > =20
+> >  examples:
+> >    - |
+> > +    #include <dt-bindings/clock/tegra186-clock.h>
+> >      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >      #include <dt-bindings/mailbox/tegra186-hsp.h>
+> > +    #include <dt-bindings/memory/tegra186-mc.h>
+> > +
+> > +    mc: memory-controller@2c00000 {
+> > +        compatible =3D "nvidia,tegra186-mc";
+> > +        reg =3D <0x02c00000 0xb0000>;
+> > +        interrupts =3D <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
+> > +        status =3D "disabled";
+> > +
+> > +        #interconnect-cells =3D <1>;
+> > +        #address-cells =3D <2>;
+> > +        #size-cells =3D <2>;
+> > +
+> > +        ranges =3D <0x02c00000 0x0 0x02c00000 0x0 0xb0000>;
+> > +
+> > +        /*
+> > +         * Memory clients have access to all 40 bits that the memory
+> > +         * controller can address.
+> > +         */
+> > +        dma-ranges =3D <0x0 0x0 0x0 0x100 0x0>;
+> > +
+> > +        #memory-controller-cells =3D <0>;
+> > +
+> > +        emc: external-memory-controller@2c60000 {
+> > +            compatible =3D "nvidia,tegra186-emc";
+> > +            reg =3D <0x0 0x02c60000 0x0 0x50000>;
+> > +            interrupts =3D <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
+> > +            clocks =3D <&bpmp TEGRA186_CLK_EMC>;
+> > +            clock-names =3D "emc";
+> > +
+> > +            #interconnect-cells =3D <0>;
+> > +
+> > +            nvidia,bpmp =3D <&bpmp>;
+> > +        };
+> > +    };
+> > =20
+> >      hsp_top0: hsp@3c00000 {
+> >          compatible =3D "nvidia,tegra186-hsp";
+> > @@ -187,6 +240,12 @@ examples:
+> > =20
+> >      bpmp {
+> >          compatible =3D "nvidia,tegra186-bpmp";
+> > +        interconnects =3D <&emc &mc TEGRA186_MEMORY_CLIENT_BPMPR>,
+> > +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPW &emc>,
+> > +                        <&emc &mc TEGRA186_MEMORY_CLIENT_BPMPDMAR>,
+> > +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAW &emc>;
+> > +        interconnect-names =3D "dma-mem", "dma-mem", "dma-mem", "dma-m=
+em";
+> > +
+> >          iommus =3D <&smmu TEGRA186_SID_BPMP>;
+> >          mboxes =3D <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB TEGRA_HSP_DB_MAST=
+ER_BPMP>;
+> >          shmem =3D <&cpu_bpmp_tx &cpu_bpmp_rx>;
+> >=20
+
+--3V7upXqbjpZ4EhLz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4lwdsACgkQ3SOs138+
+s6Hdgg/+PAPsRJzrmRnjHtctC9WCw3qssBToHFiLFo2ggkiMJ/C7xDYSV6oP3Ntr
+45st7Nu+TjphUW4BmDROUA+0YN4pUikmwmiCwm4Xr0xx2Og4pYc1SjChC3+/Cj2+
+IO3bPBlLzorH36dL2vNiEF8ZemsdCHSBQKdJQ8tohuTYEEf/OcXvPbXo8F9/WMJj
+REfgg4sJaGFt+1O7ESJhAvSQuLQ+8mva5Nm7CVqbi2tYb5w1Tzo6seM7mBtmUWdL
+jDr5yYC4pqJcJF0gZ0Y7Bz6IIhwepKfer2LQDW87/8cy7/kAUEezI7Es9SEq0t6G
+SjMAU39bSNe9jHpCg9hKu1NIQC4W6ItZlZG42nkxgLpLPlIddzArRdb+IhSV4xFb
+bpvOLEa+4dktjtUHZ2S2dJMSNKb3X13MAQ031eYRHC8eZJeA4+fCVGlGrTUygt4W
+3CMOrx6Kk2z+Qj4OXZWbvK1Xo1XetN50BEfewrQG8HI4Pd2IDskRHXdpCkCMMVee
+B8vzmRQf5lNoaeQsy6T+zr3SMd+HXBYxNgDOpO3D9NFlpV4jPu0I4PJIQMLpde87
+cl1PS0uh5Bq+Owpda22WIqSUczCLIFNjegUxzbgZQULa76vOXiOTr3iAOVNUwk1X
+18Caf9PG1LWpiWGoxdFFOQt/fRRgIHnhHY6flotcZcjqbtrcouM=
+=GEA6
+-----END PGP SIGNATURE-----
+
+--3V7upXqbjpZ4EhLz--
