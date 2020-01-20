@@ -1,98 +1,50 @@
-From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Subject: Re: [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow 24bit and 32bit
- samples
-Date: Mon, 20 Jan 2020 17:36:53 +0000
-Message-ID: <f1f56dc5-c2d0-eb01-d68f-50f3f5d9fce1@codethink.co.uk>
-References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
- <621fa27d-9259-2949-9cf5-d2eda5cb0677@gmail.com>
- <a0f027d9-e9e0-d76c-1e40-002fdc37eb5f@nvidia.com>
- <d43d518d-9336-a011-2a69-3f9331f6d0b4@codethink.co.uk>
- <aba4edd6-0ea5-5e95-c5a0-9e749587c763@nvidia.com>
- <449bdc3c-bf82-7cc4-6704-440dd100ca3a@gmail.com>
- <5d3ae629-5d30-0930-5dd1-15161e64926e@codethink.co.uk>
- <9daeeb94-2b90-18b8-2e1e-daae5acf079d@gmail.com>
- <fd73f68c-80f5-ac80-f6e4-42256d3df76d@codethink.co.uk>
- <37beb96a-a525-c72f-a7e1-e9ef5d61f3b2@gmail.com>
- <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
- <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
- <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
- <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
- <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
- <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
- <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
- <07cd66dc-1a6c-6b49-55a9-1420fe235161@nvidia.com>
- <ebfaa0d3-1236-cac4-4bd8-4456a171d773@gmail.com>
+From: "Prof, William Roberts" <eco.bank1204-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Contact Diplomatic Agent, Mr. Mcclaine John to receive your ATM CARD
+ valued the sum of $12.8Million United States Dollars
+Date: Mon, 20 Jan 2020 20:32:40 +0100
+Message-ID: <CAOE+jABpcHQWZWhtskhDFbtTqfBe7h065WE2kC1G+jQD+tQiTA__26323.53693932$1579548766$gmane$org@mail.gmail.com>
+Reply-To: mcclainejohn.13-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <ebfaa0d3-1236-cac4-4bd8-4456a171d773-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20/01/2020 16:50, Dmitry Osipenko wrote:
-> 08.01.2020 14:37, Jon Hunter пишет:
->>
->> On 07/01/2020 01:39, Dmitry Osipenko wrote:
->>> 06.01.2020 22:00, Ben Dooks пишет:
->>>> On 05/01/2020 10:53, Ben Dooks wrote:
->>>>>
->>>>>
->>>>> On 2020-01-05 01:48, Dmitry Osipenko wrote:
->>>>>> 05.01.2020 03:04, Ben Dooks пишет:
->>>>>>> [snip]
->>>>>>>
->>>>>>> I've just gone through testing.
->>>>>>>
->>>>>>> Some simple data tests show 16 and 32-bits work.
->>>>>>>
->>>>>>> The 24 bit case seems to be weird, it looks like the 24-bit expects
->>>>>>> 24 bit samples in 32 bit words. I can't see any packing options to
->>>>>>> do 24 bit in 24 bit, so we may have to remove 24 bit sample support
->>>>>>> (which is a shame)
->>>>>>>
->>>>>>> My preference is to remove the 24-bit support and keep the 32 bit in.
->>>>>>>
->>>>>>
->>>>>> Interesting.. Jon, could you please confirm that 24bit format isn't
->>>>>> usable on T30?
->>>>>
->>>>> If there is an option of 24 packed into 32, then I think that would work.
->>>>>
->>>>> I can try testing that with raw data on Monday.
->>>>
->>>> I need to check some things, I assumed 24 was 24 packed bits, it looks
->>>> like the default is 24 in 32 bits so we may be ok. However I need to
->>>> re-write my test case which assumed it was 24bits in 3 bytes (S24_3LE).
->>>>
->>>> I'll follow up later,
->>>
->>> Okay, the S24_3LE isn't supported by RT5640 codec in my case. I briefly
->>> looked through the TRM doc and got impression that AHUB could re-pack
->>> data stream into something that codec supports, but maybe it's a wrong
->>> impression.
->>
->> I chatted with Sameer about this, so yes the AHUB can repack, but there
->> is a problem with S24_LE where if we try to extract 24-bits we actually
->> get the upper 24-bits and not the lower LSBs in the 32-bit data element.
->> So actually we don't support S24_LE.
->>
->> Ben do you need 24-bit support or 32-bit or both?
+Attn: Dear Beneficiary,
 
-I think the S24 should work unpacked. The packed just doesn't seem to
-be an option on tegra2/tegra3 hardware (the manual does not talk about
-it either).
+I wish to inform you that the diplomatic agent conveying your ATM CARD
+valued the sum of $12.8Million United States Dollars has misplaced
+your address and he is currently stranded at (George Bush
+International Airport) Houston Texas USA now
+We required you to reconfirm the following information's below to him
+so that he can deliver your Payment CARD to you today or tomorrow
+morning as information provided with open communications via email and
+telephone for security reasons.
+HERE IS THE DETAILS  HE NEED FROM YOU URGENT
+YOUR FULL NAME:========
+ADDRESS:========
+MOBILE NO:========
+NAME OF YOUR NEAREST AIRPORT:========
+A COPY OF YOUR IDENTIFICATION :========
 
-I will try and get this looked at again on Thursday 23rd and see if
-I can run some more tests with 24 sample data in the input format and
-a logic analyser on the output.
+Note; do contact the diplomatic agent immediately through the
+information's listed below
+Contact Person: Diplomatic Agent, Mr. Mcclaine John
+EMAIL: mcclainejohn.13-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Tel:(223) 777-7518
 
+Contact the diplomatic agent immediately
+because he is waiting to hear from you today with the needed information's.
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+NOTE: The Diplomatic agent does not know that the content of the
+consignment box is $12.800,000,00 Million United States Dollars and on
+no circumstances should you let him know the content. The consignment
+was moved from here as family treasures, so never allow him to open
+the box. Please I have paid delivery fees for you but the only money
+you must send to Mcclaine John is your ATM CARD delivery fee $25.00
+only. text Him as you contact Him Immediately
 
-https://www.codethink.co.uk/privacy.html
+Thanks,
+with Regards.
+Prof, William Roberts
+Director DHL COURIER SERVICES-Benin
