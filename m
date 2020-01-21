@@ -1,50 +1,53 @@
-From: "Prof, William Roberts" <eco.bank1204-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Contact Diplomatic Agent, Mr. Mcclaine John to receive your ATM CARD
- valued the sum of $12.8Million United States Dollars
-Date: Mon, 20 Jan 2020 20:32:40 +0100
-Message-ID: <CAOE+jABpcHQWZWhtskhDFbtTqfBe7h065WE2kC1G+jQD+tQiTA__26323.53693932$1579548766$gmane$org@mail.gmail.com>
-Reply-To: mcclainejohn.13-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH 2/9] ASoC: tegra: add support for CIF
+ programming
+Date: Tue, 21 Jan 2020 10:11:16 +0530
+Message-ID: <a8409b81-7c6b-37a9-81fd-772eb2eca185@nvidia.com>
+References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
+ <1579530198-13431-3-git-send-email-spujar@nvidia.com>
+ <d01ed171-d949-19b2-3390-ee30eada2779@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <d01ed171-d949-19b2-3390-ee30eada2779-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Attn: Dear Beneficiary,
 
-I wish to inform you that the diplomatic agent conveying your ATM CARD
-valued the sum of $12.8Million United States Dollars has misplaced
-your address and he is currently stranded at (George Bush
-International Airport) Houston Texas USA now
-We required you to reconfirm the following information's below to him
-so that he can deliver your Payment CARD to you today or tomorrow
-morning as information provided with open communications via email and
-telephone for security reasons.
-HERE IS THE DETAILS  HE NEED FROM YOU URGENT
-YOUR FULL NAME:========
-ADDRESS:========
-MOBILE NO:========
-NAME OF YOUR NEAREST AIRPORT:========
-A COPY OF YOUR IDENTIFICATION :========
+On 1/20/2020 9:28 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> Hello Sameer,
+>
+> 20.01.2020 17:23, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>
+> [snip]
+>
+>> Tegra30 and Tegra124 have an identical CIF programming helper function.
+> [snip]
+>
+>> -#define TEGRA124_AUDIOCIF_CTRL_FIFO_THRESHOLD_SHIFT  24
+>> -#define TEGRA124_AUDIOCIF_CTRL_FIFO_THRESHOLD_MASK_US        0x3f
+>> -#define TEGRA124_AUDIOCIF_CTRL_FIFO_THRESHOLD_MASK   (TEGRA124_AUDIOCIF=
+_CTRL_FIFO_THRESHOLD_MASK_US << TEGRA124_AUDIOCIF_CTRL_FIFO_THRESHOLD_SHIFT=
+)
+>> -
+>> -/* Channel count minus 1 */
+>> -#define TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_SHIFT   24
+>> -#define TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_MASK_US 7
+>> -#define TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_MASK    (TEGRA30_AUDIOCIF_=
+CTRL_AUDIO_CHANNELS_MASK_US << TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_SHIFT)
+> The AUDIOCIF_CTRL bitfields are not the same on T30 and T124, why are
+> you claiming that programming is identical? Have you actually tried to
+> test these patches on T30?
 
-Note; do contact the diplomatic agent immediately through the
-information's listed below
-Contact Person: Diplomatic Agent, Mr. Mcclaine John
-EMAIL: mcclainejohn.13-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Tel:(223) 777-7518
-
-Contact the diplomatic agent immediately
-because he is waiting to hear from you today with the needed information's.
-
-NOTE: The Diplomatic agent does not know that the content of the
-consignment box is $12.800,000,00 Million United States Dollars and on
-no circumstances should you let him know the content. The consignment
-was moved from here as family treasures, so never allow him to open
-the box. Please I have paid delivery fees for you but the only money
-you must send to Mcclaine John is your ATM CARD delivery fee $25.00
-only. text Him as you contact Him Immediately
-
-Thanks,
-with Regards.
-Prof, William Roberts
-Director DHL COURIER SERVICES-Benin
+Oh yes! seems like I overlooked the macro values. Thanks for pointing=20
+this. I will retain separate CIF function for Tegra30.
+I do not have a Tegra30 board with me and hence could not test anything=20
+specific to it apart from build sanity.
+If someone can help me test I would really appreciate.
