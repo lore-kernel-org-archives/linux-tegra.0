@@ -1,236 +1,185 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 2/2] dt-bindings: firmware: tegra186-bpmp: Document
- interconnects property
-Date: Tue, 21 Jan 2020 09:53:48 +0300
-Message-ID: <57c37b3c-1473-d444-db59-8c6650241188@gmail.com>
-References: <20200114181519.3402385-1-thierry.reding@gmail.com>
- <20200114181519.3402385-2-thierry.reding@gmail.com>
- <7aefac6c-092c-b5a6-2fa6-e283d2147fc3@linaro.org>
- <20200120150605.GA712203@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] PCI: Add MCFG quirks for Tegra194 host controllers
+Date: Tue, 21 Jan 2020 14:44:35 +0100
+Message-ID: <20200121134435.GC899558@ulmo>
+References: <20200103174935.5612-1-vidyas@nvidia.com>
+ <CABhMZUUHGEEhsJ-+foSsodqtKXyX5ZNPkGgv_VzXz=Qv+NVcUA@mail.gmail.com>
+ <9a767725-9671-6402-4e1c-a648f5a7860b@nvidia.com>
+ <20200117121736.GA7072@e121166-lin.cambridge.arm.com>
+ <20200120111042.GA203160@ulmo>
+ <20200120151849.GA24402@e121166-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="S1BNGpv0yoYahz37"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200120150605.GA712203@ulmo>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200120151849.GA24402-LhTu/34fCX3ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bjorn-vnFzb0PiAZFBDgjK7y7TUQ@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Len Brown <lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-20.01.2020 18:06, Thierry Reding пишет:
-> On Fri, Jan 17, 2020 at 05:23:43PM +0200, Georgi Djakov wrote:
->> Hi Thierry,
->>
->> Thanks for the patch!
->>
->> On 1/14/20 20:15, Thierry Reding wrote:
->>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> Document the interconnects property that is used to describe the paths
->>> from and to system memory from and to the BPMP.
->>>
->>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>> Rob, Georgi,
->>>
->>> after the initial RFC that I did for adding interconnect properties on
->>> Tegra, I realized that the description wasn't complete. This is an
->>> attempt at a more accurate description, but unfortunately I'm not sure
->>> if it's even correct in terms of the interconnect bindings.
->>>
->>> The problem here is that on Tegra, each device has multiple paths to
->>> system memory, and I have no good idea on what to pick as the default.
->>> They are all basically the same path, but each provides extra controls
->>> to configure the "interconnect".
->>
->> Are these multiple paths between a device and system memory used simultaneously
->> for load-balancing, or who makes the decision about which path would be used?
-> 
-> It varies. The vast majority of these paths are read/write pairs, which
-> can be configured separately. There are also cases where multiple paths
-> are used for load-balancing and I don't think there's any direct
-> software control over which path will be used.
-> 
-> A third class is where you have one device, but two read/write pairs,
-> one which is tied to a microcontroller that's part of the device, and
-> another read/write pair that is used for DMA to/from the device.
-> 
-> Often in the latter case, the microcontroller memory client interfaces
-> will be used by the microcontroller to read firmware and once the micro-
-> controller has booted up, the DMA memory client interfaces will be used
-> to read/write system memory with bulk data (like frame buffers, etc.).
-> 
->> Is this based on the client/stream ID that you mentioned previously?
-> 
-> These are now all what's call memory client IDs, which identify the
-> corresponding interface to the memory controller. Stream IDs are
-> slightly higher-level and typically identify the "module" that uses
-> the SMMU. Generally a stream ID is mapped to one or more memory client
-> IDs.
-> 
->> Looking at the the binding below, it seems to me like there are different
->> master/slave pairs between MC and EMC and each link is used for
->> unidirectional traffic only. In terms of the interconnect API, both read
->> and write paths have the same direction.
 
-Yes, that definition should be incorrect.
+--S1BNGpv0yoYahz37
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I'm not sure I understand what you mean by this last sentence. Are you
-> saying that each path in terms of the interconnect API is a always a
-> bidirectional link?
+On Mon, Jan 20, 2020 at 03:18:49PM +0000, Lorenzo Pieralisi wrote:
+> On Mon, Jan 20, 2020 at 12:10:42PM +0100, Thierry Reding wrote:
+>=20
+> [...]
+>=20
+> > > > Currently the BSP has the kernel booting through Device Tree mechan=
+ism
+> > > > and there is a plan to support UEFI based boot as well in the futur=
+e software
+> > > > releases for which we need this quirky way of handling ECAM.
+> > > > Tegra194 is going to be the only and last chip with this issue and =
+next chip
+> > > > in line in Tegra SoC series will be fully compliant with ECAM.
+> > >=20
+> > > ACPI on ARM64 works on a standard subset of systems, defined by the
+> > > ARM SBSA:
+> > >=20
+> > > http://infocenter.arm.com/help/topic/com.arm.doc.den0029c/Server_Base=
+_System_Architecture_v6_0_ARM_DEN_0029C_SBSA_6_0.pdf
+> >=20
+> > I don't understand what you're saying here. Are you saying that you want
+> > to prevent vendors from upstreaming code that they need to support their
+> > ACPI based platforms? I understand that the lack of support for proper
+> > ECAM means that a platform will not be SBSA compatible, but I wasn't
+> > aware that lack of SBSA compatibility meant that a platform would be
+> > prohibited from implementing ACPI support in an upstream kernel.
+>=20
+> ACPI on ARM64 requires a set of HW components described in the SBSA.
+>=20
+> If those HW requirements are not fulfilled you can't bootstrap an ARM64
+> system with ACPI - it is as simple as that.
 
-Please see more below.
+That's an odd statement. We do in fact have an ARM64 system that doesn't
+fulfill the ECAM requirement and yet it successfully boots with ACPI.
 
->> Is the EMC really an interconnect provider or is it just a slave port? Can
->> we scale both EMC and MC independently?
-> 
-> The EMC is the only one where we can scale the frequency, but the MC has
-> various knobs that can be used to fine-tune arbitration, set maximum
-> latency, etc.
+>                                             It is not even appropriate
+> to discuss this on a Linux mailing list anymore since it is HW
+> requirements and it has been public information since ACPI on ARM64 was
+> first enabled.
 
-Yes..
+Erm... we're discussing Linux patches. Why would it be inappropriate to
+discuss them on a Linux mailing list?
 
+> > > These patches will have to be carried out of tree, the MCFG quirk
+> > > mechanism (merged as Bjorn said more than three years ago) was suppos=
+ed
+> > > to be a temporary plaster to bootstrap server platforms with teething
+> > > issues, the aim is to remove it eventually not to add more code to it
+> > > indefinitely.
+> >=20
+> > Now, I fully agree that quirks are suboptimal and we'd all prefer if we
+> > didn't have to deal with them. Unfortunately the reality is that
+> > mistakes happen and hardware doesn't always work the way we want it to.
+> > There's plenty of other quirk mechanisms in the kernel, and frankly this
+> > one isn't really that bad in comparison.
+>=20
+> Because you don't have to maintain it ;) - I think I said what I had to
+> say about the MCFG mechanism in the past - it has been three years
+> and counting - it is time to remove it rather that adding to it.
 
-EMC controls the total amount of available memory bandwidth, things like
-DRAM timing and EMC-DRAM channel's performance. EMC is facing MC from
-one side and DRAM (EMEM) from the other.
+What makes you think you can simply remove this without breaking support
+for all of the devices that currently rely on the quirks?
 
+> > > So I am afraid but this quirk (and any other coming our way) will not=
+ be
+> > > merged in an upstream kernel anymore - for any queries please put Nvi=
+dia
+> > > in touch.
+> >=20
+> > Again, I don't understand what you're trying to achieve here. You seem
+> > to be saying that we categorically can't support this hardware because
+> > it isn't fully SBSA compatible.
+>=20
+> I am not trying to achieve anything - I am just stating public
+> information - let me repeat it again for interested readers: to
+> bootstrap an ARM64 system with ACPI the platform HW design must follow
+> the SBSA guidelines.
 
+Can you clarify for me where I can find this public information? What
+I've been able to find suggests that that SBSA-compliant systems would
+typically run ACPI, but I can't find anything about SBSA compliance
+being a prerequisite for booting a system with ACPI.
 
-MC controls allocation of that total bandwidth between the memory
-clients. It has knobs to prioritize clients, the knobs are per
-read/write port. MC is facing memory clients from one side and EMC from
-the other.
+I can understand why someone might *wish* for that to always be true,
+but it seems to be a bit far removed from reality.
 
+> > Do you have any alternative suggestions on how we can support this in an
+> > upstream kernel?
+>=20
+> Booting with a device tree ?
 
-> I vaguely recall Dmitry mentioning that the EMC in early generations of
-> Tegra used to have controls for individual memory clients, but I don't
-> see that in more recent generations.
+We can already do that, but should that prevent us from making UEFI and
+ACPI an alternative boot mechanism?
 
-EMC doesn't have direct controls over memory clients on all Tegra SoCs,
-but it may have some extra knobs for the MC arbitration config.
+> > We realized a while ago that we cannot achieve proper ECAM on Tegra194
+> > because of some issues with the hardware and we've provided this as
+> > feedback to the hardware engineers. As a result, the next generation of
+> > Tegra should no longer suffer from these issues.
+>=20
+> We will bootstrap next generation Tegra with ACPI then, there are
+> SBSA tests available for compliancy - again, that's a matter for
+> Nvidia and Arm to settle, not a mailing list discussion.
 
-The MC bandwidth allocation logic and hardware programming interface
-differs among SoC generations, but the basic principle is the same.
+I don't understand why you keep insisting on this. The mailing lists are
+where kernel patches are discussed, are they not?
 
->>> Any ideas on how to resolve this? Let me know if the DT bindings and
->>> example don't make things clear enough.
+> > As for Tegra194, that chip taped out two years ago and it isn't possible
+> > to make it fully ECAM compliant other than by revising the chip, which,
+> > frankly, isn't going to happen.
+> >=20
+> > So I see two options here: either we find a way of dealing with this, by
+> > either merging this quirk or finding an alternative solution, or we make
+> > the decision that some hardware just can't be supported.
+> >=20
+> > The former is fairly common, whereas I've never heard of the latter.
+>=20
+> What does this mean ? Should I wreck the upstream kernel to make it boot
+> with ACPI on *any* ARM64 platform out there then ?
 
-I'm also interested in the answer to this question.
+Heh... you must have a very low opinion of the upstream kernel if you
+think merging these 100 lines of code is going to wreck it.
 
-A quick thought.. maybe it could be some new ICC DT property which tells
-that all paths are the "dma-mem":
+And if you look at the patch, the bulk (95/109 lines) is actually in the
+Tegra194 PCIe driver and only 14/109 lines are added to the MCFG quirks.
+That's hardly the kind of change that's going to wreck the kernel.
 
-	interconnects-all-dma-mem;
+> My stance is clear above and the ACPI PCI programming model - inclusive
+> of firmware - has been there since ACPI was deployed, if ACPI support
+> is required HW must comply, either that or it is out of tree patches
+> and I can't be blamed for that.
 
->>>  .../firmware/nvidia,tegra186-bpmp.yaml        | 59 +++++++++++++++++++
->>>  1 file changed, 59 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
->>> index dabf1c1aec2f..d40fcd836e90 100644
->>> --- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
->>> +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
->>> @@ -43,6 +43,24 @@ properties:
->>>        - enum:
->>>            - nvidia,tegra186-bpmp
->>>  
->>> +  interconnects:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->>> +    description: A list of phandle and specifier pairs that describe the
->>> +      interconnect paths to and from the BPMP.
->>> +
->>> +  interconnect-names:
->>> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
->>> +    description: One string for each pair of phandle and specifier in the
->>> +      "interconnects" property.
->>> +    # XXX We need at least one of these to be named dma-mem so that the core
->>> +    # will set the DMA mask based on the DMA parent, but all of these go to
->>> +    # system memory eventually.
->>> +    items:
->>> +      - const: dma-mem
->>> +      - const: dma-mem
->>> +      - const: dma-mem
->>> +      - const: dma-mem
+Looking at the existing quirks table, there's evidently a number of
+people that didn't get the memo. The issue seems to be fairly common,
+yet for some reason you're singling out Tegra194.
 
-Names should be unique, otherwise it's not possible to retrieve ICC path
-other than the first one.
+Thierry
 
->>>    iommus:
->>>      $ref: /schemas/types.yaml#/definitions/phandle-array
->>>      description: |
->>> @@ -152,8 +170,43 @@ additionalProperties: false
->>>  
->>>  examples:
->>>    - |
->>> +    #include <dt-bindings/clock/tegra186-clock.h>
->>>      #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>      #include <dt-bindings/mailbox/tegra186-hsp.h>
->>> +    #include <dt-bindings/memory/tegra186-mc.h>
->>> +
->>> +    mc: memory-controller@2c00000 {
->>> +        compatible = "nvidia,tegra186-mc";
->>> +        reg = <0x02c00000 0xb0000>;
->>> +        interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
->>> +        status = "disabled";
->>> +
->>> +        #interconnect-cells = <1>;
->>> +        #address-cells = <2>;
->>> +        #size-cells = <2>;
->>> +
->>> +        ranges = <0x02c00000 0x0 0x02c00000 0x0 0xb0000>;
->>> +
->>> +        /*
->>> +         * Memory clients have access to all 40 bits that the memory
->>> +         * controller can address.
->>> +         */
->>> +        dma-ranges = <0x0 0x0 0x0 0x100 0x0>;
->>> +
->>> +        #memory-controller-cells = <0>;
->>> +
->>> +        emc: external-memory-controller@2c60000 {
->>> +            compatible = "nvidia,tegra186-emc";
->>> +            reg = <0x0 0x02c60000 0x0 0x50000>;
->>> +            interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
->>> +            clocks = <&bpmp TEGRA186_CLK_EMC>;
->>> +            clock-names = "emc";
->>> +
->>> +            #interconnect-cells = <0>;
->>> +
->>> +            nvidia,bpmp = <&bpmp>;
->>> +        };
->>> +    };
->>>  
->>>      hsp_top0: hsp@3c00000 {
->>>          compatible = "nvidia,tegra186-hsp";
->>> @@ -187,6 +240,12 @@ examples:
->>>  
->>>      bpmp {
->>>          compatible = "nvidia,tegra186-bpmp";
->>> +        interconnects = <&emc &mc TEGRA186_MEMORY_CLIENT_BPMPR>,
->>> +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPW &emc>,
->>> +                        <&emc &mc TEGRA186_MEMORY_CLIENT_BPMPDMAR>,
->>> +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAW &emc>;
+--S1BNGpv0yoYahz37
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I don't think this is a correct definition of the ICC paths because the
-first node-MC_ID pair should define the source, second pair is the final
-destination. Then the interconnect core builds (by itself) the path from
-MC client to MC and finally to EMC based on the given source /
-destination. Please see my v1 patchset for the example.
+-----BEGIN PGP SIGNATURE-----
 
-It should look somewhat like this:
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4nAEEACgkQ3SOs138+
+s6G5DQ/9G0ZaDC8Mzmqe9WaV7CIEFGsBcaF8PeT7dmcnEc9yaR1hcFy255/cDsSA
+IKNlJgD7GdhlSLKRqUOA1jpfMBhfGGRrZ62yG/Ba7Ha1IevQTlmQrvqW4lDbCAH4
+My53v0C3pEsBu9SFsvUxG8PenzWwq6OWtFXOwSngmF/iVyXoNgENJCxjC1perYn6
+mAWNINizszqjmlKyaOguNx4Pct/9awCESnrmATe6pnGkZ84r3SSU3TkzihizNpGc
+4tbTBHfzAIkldohAJ/dskbXdRDlv2uFabwJMYt554Irb6tnmx8xPZ73SBXjJ6qFz
+ljQf2d6c82KEfyVkfAODJaskWWvMLIhq9vVnpNDjtXQbQaRtXtYBD3TG4sRyDOFh
+G4hCRYmNkunnr636vR/la/0yi5ld5K0dSJOlYfzLFbjmyZ3OSv0ppJw3QHcyYN9F
+0H66WiZNYKHaVhhtGwSjEd3mYX0lH2xGgfNBHTekARi0BUbVfNT1kuwfaontTJYw
+HXhrdMRc+rugMu4jZ5rFq3KrX31sY6pUw07Z0O//EYne4pGDtx8Fluqei2kMZwug
+MmeO0ikMgXpXDloX5azoWn7wUvjMfhsAzVULVX8kahDmL8BgKttH/y5iSWDWFwao
+bdNvSU81crFj9E37pnjfo1+tAQ9N9hLcF16frOywJnDhvAvvpAM=
+=/1Qm
+-----END PGP SIGNATURE-----
 
-interconnects =
-    <&mc TEGRA186_MEMORY_CLIENT_BPMPR &emc TEGRA_ICC_EMEM>,
-    <&mc TEGRA186_MEMORY_CLIENT_BPMPW &emc TEGRA_ICC_EMEM>,
-    <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAR &emc TEGRA_ICC_EMEM>,
-    <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAW &emc TEGRA_ICC_EMEM>;
-
-interconnect-names = "bpmpr", "bpmpw", "bpmpdmar", "bpmpdmaw";
-
->>> +        interconnect-names = "dma-mem", "dma-mem", "dma-mem", "dma-mem";
->>> +
->>>          iommus = <&smmu TEGRA186_SID_BPMP>;
->>>          mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB TEGRA_HSP_DB_MASTER_BPMP>;
->>>          shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
->>>
+--S1BNGpv0yoYahz37--
