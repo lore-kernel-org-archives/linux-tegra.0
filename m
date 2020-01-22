@@ -1,224 +1,171 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v4 11/14] dmaengine: tegra-apb: Clean up suspend-resume
-Date: Wed, 22 Jan 2020 00:23:06 +0300
-Message-ID: <7e0d2cfa-5570-93e6-e3dc-7d3f6902a528@gmail.com>
-References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-12-digetx@gmail.com>
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH 4/9] ASoC: tegra: add Tegra210 based I2S
+ driver
+Date: Wed, 22 Jan 2020 10:02:25 +0530
+Message-ID: <bdc749bc-b62c-a041-c17c-33fd49fe8e2e@nvidia.com>
+References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
+ <1579530198-13431-5-git-send-email-spujar@nvidia.com>
+ <a440d105-8db9-ecf1-3718-e58804ce14b8@gmail.com>
+ <0c571858-d72c-97c2-2d6a-ead6fdde06eb@nvidia.com>
+ <444731da-c4cd-8578-a732-c803eef31ef0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200112173006.29863-12-digetx@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <444731da-c4cd-8578-a732-c803eef31ef0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-GB
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-12.01.2020 20:30, Dmitry Osipenko пишет:
-> It is enough to check whether hardware is busy on suspend and to reset
-> it across of suspend-resume because channel's configuration is fully
-> re-programmed on each DMA transaction anyways and because save-restore
-> of an active channel won't end up well without pausing transfer prior to
-> saving of the state (note that all channels shall be idling at the time of
-> suspend, so save-restore is not needed at all).
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/dma/tegra20-apb-dma.c | 131 +++++++++++++++++-----------------
->  1 file changed, 67 insertions(+), 64 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index b9d8e57eaf54..398a0e1d6506 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -1392,6 +1392,36 @@ static const struct tegra_dma_chip_data tegra148_dma_chip_data = {
->  	.support_separate_wcount_reg = true,
->  };
->  
-> +static int tegra_dma_init_hw(struct tegra_dma *tdma)
-> +{
-> +	int err;
-> +
-> +	err = reset_control_assert(tdma->rst);
-> +	if (err) {
-> +		dev_err(tdma->dev, "failed to assert reset: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	err = clk_enable(tdma->dma_clk);
-> +	if (err) {
-> +		dev_err(tdma->dev, "failed to enable clk: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	/* reset DMA controller */
-> +	udelay(2);
-> +	reset_control_deassert(tdma->rst);
-> +
-> +	/* enable global DMA registers */
-> +	tdma_write(tdma, TEGRA_APBDMA_GENERAL, TEGRA_APBDMA_GENERAL_ENABLE);
-> +	tdma_write(tdma, TEGRA_APBDMA_CONTROL, 0);
-> +	tdma_write(tdma, TEGRA_APBDMA_IRQ_MASK_SET, 0xFFFFFFFF);
-> +
-> +	clk_disable(tdma->dma_clk);
-> +
-> +	return 0;
-> +}
-> +
->  static int tegra_dma_probe(struct platform_device *pdev)
->  {
->  	const struct tegra_dma_chip_data *cdata;
-> @@ -1433,30 +1463,18 @@ static int tegra_dma_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	ret = tegra_dma_init_hw(tdma);
-> +	if (ret)
-> +		goto err_clk_unprepare;
-> +
->  	pm_runtime_irq_safe(&pdev->dev);
->  	pm_runtime_enable(&pdev->dev);
->  	if (!pm_runtime_enabled(&pdev->dev)) {
->  		ret = tegra_dma_runtime_resume(&pdev->dev);
->  		if (ret)
->  			goto err_clk_unprepare;
 
-Jon, but isn't the RPM mandatory for all Tegra SoCs now and thus
-guaranteed to be enabled? Maybe we should start to remove handling the
-case of unavailable RPM from all Tegra drivers?
 
-> -	} else {
-> -		ret = pm_runtime_get_sync(&pdev->dev);
-> -		if (ret < 0)
-> -			goto err_pm_disable;
->  	}
->  
-> -	/* Reset DMA controller */
-> -	reset_control_assert(tdma->rst);
-> -	udelay(2);
-> -	reset_control_deassert(tdma->rst);
-> -
-> -	/* Enable global DMA registers */
-> -	tdma_write(tdma, TEGRA_APBDMA_GENERAL, TEGRA_APBDMA_GENERAL_ENABLE);
-> -	tdma_write(tdma, TEGRA_APBDMA_CONTROL, 0);
-> -	tdma_write(tdma, TEGRA_APBDMA_IRQ_MASK_SET, 0xFFFFFFFFul);
-> -
-> -	pm_runtime_put(&pdev->dev);
-> -
->  	INIT_LIST_HEAD(&tdma->dma_dev.channels);
->  	for (i = 0; i < cdata->nr_channels; i++) {
->  		struct tegra_dma_channel *tdc = &tdma->channels[i];
-> @@ -1583,26 +1601,6 @@ static int tegra_dma_remove(struct platform_device *pdev)
->  static int tegra_dma_runtime_suspend(struct device *dev)
->  {
->  	struct tegra_dma *tdma = dev_get_drvdata(dev);
-> -	unsigned int i;
-> -
-> -	tdma->reg_gen = tdma_read(tdma, TEGRA_APBDMA_GENERAL);
-> -	for (i = 0; i < tdma->chip_data->nr_channels; i++) {
-> -		struct tegra_dma_channel *tdc = &tdma->channels[i];
-> -		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
-> -
-> -		/* Only save the state of DMA channels that are in use */
-> -		if (!tdc->config_init)
-> -			continue;
-> -
-> -		ch_reg->csr = tdc_read(tdc, TEGRA_APBDMA_CHAN_CSR);
-> -		ch_reg->ahb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBPTR);
-> -		ch_reg->apb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBPTR);
-> -		ch_reg->ahb_seq = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBSEQ);
-> -		ch_reg->apb_seq = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBSEQ);
-> -		if (tdma->chip_data->support_separate_wcount_reg)
-> -			ch_reg->wcount = tdc_read(tdc,
-> -						  TEGRA_APBDMA_CHAN_WCOUNT);
-> -	}
->  
->  	clk_disable(tdma->dma_clk);
->  
-> @@ -1612,46 +1610,51 @@ static int tegra_dma_runtime_suspend(struct device *dev)
->  static int tegra_dma_runtime_resume(struct device *dev)
->  {
->  	struct tegra_dma *tdma = dev_get_drvdata(dev);
-> -	unsigned int i;
-> -	int ret;
->  
-> -	ret = clk_enable(tdma->dma_clk);
-> -	if (ret < 0) {
-> -		dev_err(dev, "clk_enable failed: %d\n", ret);
-> -		return ret;
-> -	}
-> +	return clk_enable(tdma->dma_clk);
-> +}
->  
-> -	tdma_write(tdma, TEGRA_APBDMA_GENERAL, tdma->reg_gen);
-> -	tdma_write(tdma, TEGRA_APBDMA_CONTROL, 0);
-> -	tdma_write(tdma, TEGRA_APBDMA_IRQ_MASK_SET, 0xFFFFFFFFul);
-> +static int __maybe_unused tegra_dma_dev_suspend(struct device *dev)
-> +{
-> +	struct tegra_dma *tdma = dev_get_drvdata(dev);
-> +	unsigned long flags;
-> +	unsigned int i;
-> +	bool busy;
->  
->  	for (i = 0; i < tdma->chip_data->nr_channels; i++) {
->  		struct tegra_dma_channel *tdc = &tdma->channels[i];
-> -		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
-> -
-> -		/* Only restore the state of DMA channels that are in use */
-> -		if (!tdc->config_init)
-> -			continue;
-> -
-> -		if (tdma->chip_data->support_separate_wcount_reg)
-> -			tdc_write(tdc, TEGRA_APBDMA_CHAN_WCOUNT,
-> -				  ch_reg->wcount);
-> -		tdc_write(tdc, TEGRA_APBDMA_CHAN_APBSEQ, ch_reg->apb_seq);
-> -		tdc_write(tdc, TEGRA_APBDMA_CHAN_APBPTR, ch_reg->apb_ptr);
-> -		tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBSEQ, ch_reg->ahb_seq);
-> -		tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBPTR, ch_reg->ahb_ptr);
-> -		tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
-> -			  ch_reg->csr & ~TEGRA_APBDMA_CSR_ENB);
-> +
-> +		spin_lock_irqsave(&tdc->lock, flags);
-> +		busy = tdc->busy;
-> +		spin_unlock_irqrestore(&tdc->lock, flags);
-> +
-> +		if (busy) {
-> +			dev_err(tdma->dev, "channel %u busy\n", i);
-> +			return -EBUSY;
-> +		}
-> +
-> +		tasklet_kill(&tdc->tasklet);
+On 1/21/2020 9:33 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 21.01.2020 17:21, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>
+> [snip]
+>
+>>>> +static int tegra210_i2s_put_control(struct snd_kcontrol *kcontrol,
+>>>> +     struct snd_ctl_elem_value *ucontrol)
+>>> Checkpatch should complain about the wrong indentation here.
+>> I had run checkpatch before sending the patch, below is the result.
+>> -----
+>> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating=
+?
+>> #70:
+>> new file mode 100644
+>>
+>> total: 0 errors, 1 warnings, 1103 lines checked
+>>
+>> NOTE: For some of the reported defects, checkpatch may be able to
+>>        mechanically convert to the typical style using --fix or
+>> --fix-inplace.
+>> -----
+> Using 'checkpatch --strict':
+>
+> CHECK: Alignment should match open parenthesis
+> #2693: FILE: sound/soc/tegra/tegra210_i2s.c:362:
+> +static int tegra210_i2s_put_control(struct snd_kcontrol *kcontrol,
+> +       struct snd_ctl_elem_value *ucontrol
+>
+> [snip]
 
-I realized that it will be more robust to kill the tasklet before
-checking the busy state because technically tasklet could issue new DMA
-transfer, will correct it in v5.
+will fix
+>>>> +
+>>>> +     } else if (strstr(kcontrol->id.name, "Playback Audio Bit Format"=
+))
+>>>> +             i2s->audio_fmt_override[I2S_RX_PATH] =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Capture Audio Bit Format"))
+>>>> +             i2s->audio_fmt_override[I2S_TX_PATH] =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Client Bit Format"))
+>>>> +             i2s->client_fmt_override =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Playback Audio Channels"))
+>>>> +             i2s->audio_ch_override[I2S_RX_PATH] =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Capture Audio Channels"))
+>>>> +             i2s->audio_ch_override[I2S_TX_PATH] =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Client Channels"))
+>>>> +             i2s->client_ch_override =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Capture Stereo To Mono"))
+>>>> +             i2s->stereo_to_mono[I2S_TX_PATH] =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Capture Mono To Stereo"))
+>>>> +             i2s->mono_to_stereo[I2S_TX_PATH] =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Playback Stereo To Mono"))
+>>>> +             i2s->stereo_to_mono[I2S_RX_PATH] =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Playback Mono To Stereo"))
+>>>> +             i2s->mono_to_stereo[I2S_RX_PATH] =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "Playback FIFO Threshold"))
+>>>> +             i2s->rx_fifo_th =3D value;
+>>>> +     else if (strstr(kcontrol->id.name, "BCLK Ratio"))
+>>>> +             i2s->bclk_ratio =3D value;
+>>> I'm pretty sure that checkpatch should complain about the missing
+>>> brackets, they should make code's indentation uniform and thus easier t=
+o
+>>> read. Same for all other occurrences in the code.
+>> same as above
+> CHECK: braces {} should be used on all arms of this statement
+> #2699: FILE: sound/soc/tegra/tegra210_i2s.c:368:
+> +       if (strstr(kcontrol->id.name, "Loopback")) {
+> [...]
+> +       } else if (strstr(kcontrol->id.name, "Sample Rate"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "FSYNC Width")) {
+> [...]
+> +       } else if (strstr(kcontrol->id.name, "Playback Audio Bit Format")=
+)
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Capture Audio Bit Format"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Client Bit Format"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Playback Audio Channels"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Capture Audio Channels"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Client Channels"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Capture Stereo To Mono"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Capture Mono To Stereo"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Playback Stereo To Mono"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Playback Mono To Stereo"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "Playback FIFO Threshold"))
+> [...]
+> +       else if (strstr(kcontrol->id.name, "BCLK Ratio"))
+> [...]
+>
+> [snip]
 
->  	}
->  
-> -	return 0;
-> +	return pm_runtime_force_suspend(dev);
-> +}
-> +
-> +static int __maybe_unused tegra_dma_dev_resume(struct device *dev)
-> +{
-> +	struct tegra_dma *tdma = dev_get_drvdata(dev);
-> +	int err;
-> +
-> +	err = tegra_dma_init_hw(tdma);
-> +	if (err)
-> +		return err;
-> +
-> +	return pm_runtime_force_resume(dev);
->  }
->  
->  static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
->  	SET_RUNTIME_PM_OPS(tegra_dma_runtime_suspend, tegra_dma_runtime_resume,
->  			   NULL)
-> -	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> -				pm_runtime_force_resume)
-> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_dev_suspend, tegra_dma_dev_resume)
->  };
->  
->  static const struct of_device_id tegra_dma_of_match[] = {
-> 
+will fix
+>>>> +     pm_runtime_enable(dev);
+>>> Error checking?
+>> return type for above is void()
+> Ok
+>
+>>>> +     return 0;
+>>>> +}
+>>>> +
+>>>> +static int tegra210_i2s_remove(struct platform_device *pdev)
+>>>> +{
+>>>> +     pm_runtime_disable(&pdev->dev);
+>>>> +     if (!pm_runtime_status_suspended(&pdev->dev))
+>>>> +             tegra210_i2s_runtime_suspend(&pdev->dev);
+>>> This breaks device's RPM refcounting if it was disabled in the active
+>>> state. This code should be removed. At most you could warn about the
+>>> unxpected RPM state here, but it shouldn't be necessary.
+>> I guess this was added for safety and explicit suspend keeps clock
+>> disabled.
+>> Not sure if ref-counting of the device matters when runtime PM is
+>> disabled and device is removed.
+>> I see few drivers using this way.
+> It should matter (if I'm not missing something) because RPM should be in
+> a wrecked state once you'll try to re-load the driver's module. Likely
+> that those few other drivers are wrong.
+>
+> [snip]
+
+Once the driver is re-loaded and RPM is enabled, I don't think it would use
+the same 'dev' and the corresponding ref count. Doesn't it use the new=20
+counters?
+If RPM is not working for some reason, most likely it would be the case=20
+for other
+devices. What best driver can do is probably do a force suspend during=20
+removal if
+already not done. I would prefer to keep, since multiple drivers still=20
+have it,
+unless there is a real harm in doing so.
+>
+>>>> +     int rx_fifo_th;
+>>> Could rx_fifo_th be negative?
+>> rx_fifo_th itself does not take negative values, explicit typecasting> i=
+s avoided in "if" condition by declaring this as "int"
+> Explicit typecasting isn't needed for integers.
+
+What I meant was, rx_fifo_th is checked against a 'int' variable in an=20
+"if" condition.
