@@ -1,78 +1,35 @@
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Subject: [PATCH] drm: tegra: Fix warning in PM ops
-Date: Wed, 22 Jan 2020 12:19:51 +0000
-Message-ID: <20200122121951.52639-1-vincenzo.frascino@arm.com>
+From: Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH v2] usb: host: xhci-tegra: set MODULE_FIRMWARE for
+ tegra186
+Date: Wed, 22 Jan 2020 16:54:05 +0200
+Message-ID: <ee78d12c-d3f5-e122-e4bd-b43b2cc79a3c@linux.intel.com>
+References: <20200120141910.116097-1-pbrobinson@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, vincenzo.frascino@arm.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200120141910.116097-1-pbrobinson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Robinson <pbrobinson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra driver can be compiled without CONFIG_PM_SLEEP enabled.
-In this case the compilation triggers the warning below:
+On 20.1.2020 16.19, Peter Robinson wrote:
+> Set the MODULE_FIRMWARE for tegra186, it's registered for 124/210 and
+> ensures the firmware is available at the appropriate time such as in
+> the initrd, else if the firmware is unavailable the driver fails with
+> the following errors:
+> 
+> tegra-xusb 3530000.usb: Direct firmware load for nvidia/tegra186/xusb.bin failed with error -2
+> tegra-xusb 3530000.usb: failed to request firmware: -2
+> tegra-xusb 3530000.usb: failed to load firmware: -2
+> tegra-xusb: probe of 3530000.usb failed with error -2
+> 
+> Fixes: 5f9be5f3f899 ("usb: host: xhci-tegra: Add Tegra186 XUSB support")
+> Signed-off-by: Peter Robinson <pbrobinson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
 
-drivers/gpu/drm/tegra/sor.c:3984:12: warning: ‘tegra_sor_resume’
-defined but not used [-Wunused-function]
- 3984 | static int tegra_sor_resume(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~
-drivers/gpu/drm/tegra/sor.c:3970:12: warning: ‘tegra_sor_suspend’
-defined but not used [-Wunused-function]
- 3970 | static int tegra_sor_suspend(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~
+Thanks, added to queue
 
-Fix the warning adding __maybe_unused to the PM functions.
-
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
- drivers/gpu/drm/tegra/sor.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index a68d3b36b972..69b9ebee7486 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -3912,7 +3912,7 @@ static int tegra_sor_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int tegra_sor_runtime_suspend(struct device *dev)
-+static int __maybe_unused tegra_sor_runtime_suspend(struct device *dev)
- {
- 	struct tegra_sor *sor = dev_get_drvdata(dev);
- 	int err;
-@@ -3934,7 +3934,7 @@ static int tegra_sor_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_sor_runtime_resume(struct device *dev)
-+static int __maybe_unused tegra_sor_runtime_resume(struct device *dev)
- {
- 	struct tegra_sor *sor = dev_get_drvdata(dev);
- 	int err;
-@@ -3967,7 +3967,7 @@ static int tegra_sor_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_sor_suspend(struct device *dev)
-+static int __maybe_unused tegra_sor_suspend(struct device *dev)
- {
- 	struct tegra_sor *sor = dev_get_drvdata(dev);
- 	int err;
-@@ -3981,7 +3981,7 @@ static int tegra_sor_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_sor_resume(struct device *dev)
-+static int __maybe_unused tegra_sor_resume(struct device *dev)
- {
- 	struct tegra_sor *sor = dev_get_drvdata(dev);
- 	int err;
--- 
-2.25.0
+-Mathias
