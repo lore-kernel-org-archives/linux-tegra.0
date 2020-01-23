@@ -1,73 +1,79 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 04/14] dmaengine: tegra-apb: Clean up tasklet releasing
-Date: Fri, 24 Jan 2020 02:03:15 +0300
-Message-ID: <20200123230325.3037-5-digetx@gmail.com>
-References: <20200123230325.3037-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v8 11/22] ASoC: tegra: Add fallback implementation for
+ audio mclk
+Date: Fri, 24 Jan 2020 02:56:45 +0300
+Message-ID: <aef36b46-789a-c44e-4cd1-9d4183435ba9@gmail.com>
+References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
+ <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200123230325.3037-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
+Content-Language: en-US
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-There is no need to kill tasklet when driver's probe fails because tasklet
-can't be scheduled at this time. It is also cleaner to kill tasklet on
-channel's freeing rather than to kill it on driver's removal, otherwise
-tasklet could perform a dummy execution after channel's releasing, which
-isn't very nice.
+14.01.2020 10:24, Sowjanya Komatineni пишет:
+> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
+> are moved to Tegra PMC driver with pmc as clock provider and using pmc
+> clock ids.
+> 
+> New device tree uses clk_out_1 from pmc clock provider as audio mclk.
+> 
+> So, this patch adds implementation for mclk fallback to extern1 when
+> retrieving mclk returns -ENOENT to be backward compatible of new device
+> tree with older kernels.
+> 
+> Fixes: 110147c8c513 ("ASoC: tegra: always use clk_get() in utility code")
+> 
+> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  sound/soc/tegra/tegra_asoc_utils.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
+> 
+> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+> index 536a578e9512..74d3ffe7e603 100644
+> --- a/sound/soc/tegra/tegra_asoc_utils.c
+> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+> @@ -191,9 +191,21 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+>  
+>  	data->clk_cdev1 = clk_get(dev, "mclk");
+>  	if (IS_ERR(data->clk_cdev1)) {
+> -		dev_err(data->dev, "Can't retrieve clk cdev1\n");
+> -		ret = PTR_ERR(data->clk_cdev1);
+> -		goto err_put_pll_a_out0;
+> +		if (PTR_ERR(data->clk_cdev1) != -ENOENT) {
+> +			dev_err(data->dev, "Can't retrieve clk cdev1\n");
+> +			ret = PTR_ERR(data->clk_cdev1);
+> +			goto err_put_pll_a_out0;
+> +		}
+> +
+> +		/* Fall back to extern1 */
+> +		data->clk_cdev1 = clk_get(dev, "extern1");
+> +		if (IS_ERR(data->clk_cdev1)) {
+> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
+> +			ret = PTR_ERR(data->clk_cdev1);
+> +			goto err_put_pll_a_out0;
+> +		}
+> +
+> +		dev_info(data->dev, "Falling back to extern1\n");
+>  	}
+>  
+>  	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+> 
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/dma/tegra20-apb-dma.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+I tried to double-check if audio works using the updated DT works with
+this fallback and unfortunately it is not (maybe I actually missed to
+test this case before).. the driver doesn't probe at all because of the
+assigned-clocks presence, which makes clk core to fail finding the MCLK
+and thus assigned-clocks configuration fails, preventing the driver's
+loading.
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 24ad3a5a04e3..1b8a11804962 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1287,7 +1287,6 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 	struct tegra_dma_sg_req *sg_req;
- 	struct list_head dma_desc_list;
- 	struct list_head sg_req_list;
--	unsigned long flags;
- 
- 	INIT_LIST_HEAD(&dma_desc_list);
- 	INIT_LIST_HEAD(&sg_req_list);
-@@ -1295,15 +1294,14 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 	dev_dbg(tdc2dev(tdc), "Freeing channel %d\n", tdc->id);
- 
- 	tegra_dma_terminate_all(dc);
-+	tasklet_kill(&tdc->tasklet);
- 
--	spin_lock_irqsave(&tdc->lock, flags);
- 	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
- 	list_splice_init(&tdc->free_sg_req, &sg_req_list);
- 	list_splice_init(&tdc->free_dma_desc, &dma_desc_list);
- 	INIT_LIST_HEAD(&tdc->cb_desc);
- 	tdc->config_init = false;
- 	tdc->isr_handler = NULL;
--	spin_unlock_irqrestore(&tdc->lock, flags);
- 
- 	while (!list_empty(&dma_desc_list)) {
- 		dma_desc = list_first_entry(&dma_desc_list,
-@@ -1542,7 +1540,6 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		struct tegra_dma_channel *tdc = &tdma->channels[i];
- 
- 		free_irq(tdc->irq, tdc);
--		tasklet_kill(&tdc->tasklet);
- 	}
- 
- 	pm_runtime_disable(&pdev->dev);
-@@ -1562,7 +1559,6 @@ static int tegra_dma_remove(struct platform_device *pdev)
- 	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
- 		tdc = &tdma->channels[i];
- 		free_irq(tdc->irq, tdc);
--		tasklet_kill(&tdc->tasklet);
- 	}
- 
- 	pm_runtime_disable(&pdev->dev);
--- 
-2.24.0
+I'm not sure what could be done about it. Perhaps just to give up on the
+compatibility of older kernels with the new DTs, missing audio isn't
+really that critical (perhaps).
