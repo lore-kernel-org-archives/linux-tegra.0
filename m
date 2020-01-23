@@ -1,38 +1,36 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 14/14] dmaengine: tegra-apb: Remove MODULE_ALIAS
-Date: Fri, 24 Jan 2020 02:03:25 +0300
-Message-ID: <20200123230325.3037-15-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v5 12/14] dmaengine: tegra-apb: Add missing of_dma_controller_free
+Date: Fri, 24 Jan 2020 02:03:23 +0300
+Message-ID: <20200123230325.3037-13-digetx@gmail.com>
 References: <20200123230325.3037-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200123230325.3037-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200123230325.3037-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra APB DMA driver is an Open Firmware driver and thus it uses OF alias
-naming scheme which overrides MODULE_ALIAS, meaning that MODULE_ALIAS does
-nothing and could be removed safely.
+The DMA controller shall be released on driver's removal.
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/dma/tegra20-apb-dma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 8f4281ab6296..756a5dbef118 100644
+index 4a371891b7c4..8f4281ab6296 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1684,7 +1684,6 @@ static struct platform_driver tegra_dmac_driver = {
+@@ -1587,6 +1587,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_dma *tdma = platform_get_drvdata(pdev);
  
- module_platform_driver(tegra_dmac_driver);
- 
--MODULE_ALIAS("platform:tegra20-apbdma");
- MODULE_DESCRIPTION("NVIDIA Tegra APB DMA Controller driver");
- MODULE_AUTHOR("Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_LICENSE("GPL v2");
++	of_dma_controller_free(pdev->dev.of_node);
+ 	dma_async_device_unregister(&tdma->dma_dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	clk_unprepare(tdma->dma_clk);
 -- 
 2.24.0
