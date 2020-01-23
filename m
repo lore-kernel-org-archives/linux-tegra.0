@@ -1,85 +1,66 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 00/14] NVIDIA Tegra APB DMA driver fixes and improvements
-Date: Fri, 24 Jan 2020 02:03:11 +0300
-Message-ID: <20200123230325.3037-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v5 01/14] dmaengine: tegra-apb: Fix use-after-free
+Date: Fri, 24 Jan 2020 02:03:12 +0300
+Message-ID: <20200123230325.3037-2-digetx@gmail.com>
+References: <20200123230325.3037-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200123230325.3037-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+I was doing some experiments with I2C and noticed that Tegra APB DMA
+driver crashes sometime after I2C DMA transfer termination. The crash
+happens because tegra_dma_terminate_all() bails out immediately if pending
+list is empty, thus it doesn't release the half-completed descriptors
+which are getting re-used before ISR tasklet kicks-in.
 
-This series fixes some problems that I spotted recently, secondly the
-driver's code gets a cleanup. Please review and apply, thanks in advance!
+ tegra-i2c 7000c400.i2c: DMA transfer timeout
+ elants_i2c 0-0010: elants_i2c_irq: failed to read data: -110
+ ------------[ cut here ]------------
+ WARNING: CPU: 0 PID: 142 at lib/list_debug.c:45 __list_del_entry_valid+0x45/0xac
+ list_del corruption, ddbaac44->next is LIST_POISON1 (00000100)
+ Modules linked in:
+ CPU: 0 PID: 142 Comm: kworker/0:2 Not tainted 5.5.0-rc2-next-20191220-00175-gc3605715758d-dirty #538
+ Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+ Workqueue: events_freezable_power_ thermal_zone_device_check
+ [<c010e5c5>] (unwind_backtrace) from [<c010a1c5>] (show_stack+0x11/0x14)
+ [<c010a1c5>] (show_stack) from [<c0973925>] (dump_stack+0x85/0x94)
+ [<c0973925>] (dump_stack) from [<c011f529>] (__warn+0xc1/0xc4)
+ [<c011f529>] (__warn) from [<c011f7e9>] (warn_slowpath_fmt+0x61/0x78)
+ [<c011f7e9>] (warn_slowpath_fmt) from [<c042497d>] (__list_del_entry_valid+0x45/0xac)
+ [<c042497d>] (__list_del_entry_valid) from [<c047a87f>] (tegra_dma_tasklet+0x5b/0x154)
+ [<c047a87f>] (tegra_dma_tasklet) from [<c0124799>] (tasklet_action_common.constprop.0+0x41/0x7c)
+ [<c0124799>] (tasklet_action_common.constprop.0) from [<c01022ab>] (__do_softirq+0xd3/0x2a8)
+ [<c01022ab>] (__do_softirq) from [<c0124683>] (irq_exit+0x7b/0x98)
+ [<c0124683>] (irq_exit) from [<c0168c19>] (__handle_domain_irq+0x45/0x80)
+ [<c0168c19>] (__handle_domain_irq) from [<c043e429>] (gic_handle_irq+0x45/0x7c)
+ [<c043e429>] (gic_handle_irq) from [<c0101aa5>] (__irq_svc+0x65/0x94)
+ Exception stack(0xde2ebb90 to 0xde2ebbd8)
 
-Changelog:
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/dma/tegra20-apb-dma.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-v5: - Fixed touching hardware registers after RPM-suspending in the patch
-      "Keep clock enabled only during of DMA transfer", now RPM is kept
-      resumed in the tegra_dma_terminate_all() while needed. Thanks to
-      Jon Hunter for pointing at this problem in a review comment to v4.
-
-    - The "Clean up runtime PM teardown" patch is replaced with the "Remove
-      assumptions about unavailable runtime PM" patch because I recalled that
-      now RPM is always available on all Tegra SoCs.
-
-    - The "Clean up suspend-resume" patch got a minor improvement, now
-      tasklet_kill() is invoked before checking of the busy state in
-      tegra_dma_dev_suspend(), this should allow us to catch problems if DMA
-      callback issues a new DMA transfer.
-
-    - Added Jon's acks to the reviewed patches.
-
-v4: - Addressed Jon's request to *not* remove the runtime PM usage, instead
-      there is now new patch that makes RPM more practical:
-
-        dmaengine: tegra-apb: Keep clock enabled only during of DMA transfer
-
-    - Added new minor patch to clean up RPM's teardown:
-
-        dmaengine: tegra-apb: Clean up runtime PM teardown
-
-v3: - In the review comment to v1 Michał Mirosław suggested that "Prevent
-      race conditions on channel's freeing" does changes that deserve to
-      be separated into two patches. I factored out and improved tasklet
-      releasing into this new patch:
-
-        dmaengine: tegra-apb: Clean up tasklet releasing
-
-    - The "Fix use-after-free" patch got an improved commit message.
-
-v2: - I took another look at the driver and spotted few more things that
-      could be improved, which resulted in these new patches:
-
-        dmaengine: tegra-apb: Remove runtime PM usage
-        dmaengine: tegra-apb: Clean up suspend-resume
-        dmaengine: tegra-apb: Add missing of_dma_controller_free
-        dmaengine: tegra-apb: Allow to compile as a loadable kernel module
-        dmaengine: tegra-apb: Remove MODULE_ALIAS
-
-Dmitry Osipenko (14):
-  dmaengine: tegra-apb: Fix use-after-free
-  dmaengine: tegra-apb: Implement synchronization hook
-  dmaengine: tegra-apb: Prevent race conditions on channel's freeing
-  dmaengine: tegra-apb: Clean up tasklet releasing
-  dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
-  dmaengine: tegra-apb: Use devm_platform_ioremap_resource
-  dmaengine: tegra-apb: Use devm_request_irq
-  dmaengine: tegra-apb: Fix coding style problems
-  dmaengine: tegra-apb: Remove assumptions about unavailable runtime PM
-  dmaengine: tegra-apb: Keep clock enabled only during of DMA transfer
-  dmaengine: tegra-apb: Clean up suspend-resume
-  dmaengine: tegra-apb: Add missing of_dma_controller_free
-  dmaengine: tegra-apb: Allow to compile as a loadable kernel module
-  dmaengine: tegra-apb: Remove MODULE_ALIAS
-
- drivers/dma/Kconfig           |   2 +-
- drivers/dma/tegra20-apb-dma.c | 507 +++++++++++++++++-----------------
- 2 files changed, 260 insertions(+), 249 deletions(-)
-
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 3a45079d11ec..319f31d27014 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -756,10 +756,6 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+ 	bool was_busy;
+ 
+ 	spin_lock_irqsave(&tdc->lock, flags);
+-	if (list_empty(&tdc->pending_sg_req)) {
+-		spin_unlock_irqrestore(&tdc->lock, flags);
+-		return 0;
+-	}
+ 
+ 	if (!tdc->busy)
+ 		goto skip_dma_stop;
 -- 
 2.24.0
