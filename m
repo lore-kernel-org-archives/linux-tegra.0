@@ -1,129 +1,53 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH 4/9] ASoC: tegra: add Tegra210 based I2S
- driver
-Date: Fri, 24 Jan 2020 17:04:19 +0300
-Message-ID: <075e476a-36bb-5fee-15bc-76af4474a797@gmail.com>
-References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
- <1579530198-13431-5-git-send-email-spujar@nvidia.com>
- <a440d105-8db9-ecf1-3718-e58804ce14b8@gmail.com>
- <0c571858-d72c-97c2-2d6a-ead6fdde06eb@nvidia.com>
- <444731da-c4cd-8578-a732-c803eef31ef0@gmail.com>
- <bdc749bc-b62c-a041-c17c-33fd49fe8e2e@nvidia.com>
- <598fe377-5b95-d30a-eb64-89a645166d42@gmail.com>
- <3f51939d-cf4b-f69b-728a-7eb99bbae458@nvidia.com>
- <34ac1fd3-ae0f-07f2-555f-a55087a2c9dc@nvidia.com>
- <1a84b393-938f-8bed-d08e-cc3bb6ed4844@gmail.com>
- <0fc814c2-0dc6-7741-b954-463381ff7fb9@nvidia.com>
- <b5c581b9-17af-d004-33fb-2cc782ab820a@gmail.com>
- <9f73afdf-1e9a-cdbd-f972-a022d503ef51@nvidia.com>
- <264d3354-8a2e-ee12-44ae-aff69213d551@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.19 000/639] 4.19.99-stable review
+Date: Fri, 24 Jan 2020 14:50:05 +0000
+Message-ID: <23f2a904-3351-4a75-aaaf-2623dc55d114@nvidia.com>
+References: <20200124093047.008739095@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <264d3354-8a2e-ee12-44ae-aff69213d551-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200124093047.008739095@linuxfoundation.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-24.01.2020 12:51, Jon Hunter пишет:
-> 
-> On 24/01/2020 09:07, Jon Hunter wrote:
->>
->> On 23/01/2020 15:16, Dmitry Osipenko wrote:
->>> 23.01.2020 12:22, Sameer Pujar пишет:
->>>>
->>>>
->>>> On 1/22/2020 9:57 PM, Dmitry Osipenko wrote:
->>>>> External email: Use caution opening links or attachments
->>>>>
->>>>>
->>>>> 22.01.2020 14:52, Jon Hunter пишет:
->>>>>> On 22/01/2020 07:16, Sameer Pujar wrote:
->>>>>>
->>>>>> ...
->>>>>>
->>>>>>>>>>>>> +static int tegra210_i2s_remove(struct platform_device *pdev)
->>>>>>>>>>>>> +{
->>>>>>>>>>>>> +     pm_runtime_disable(&pdev->dev);
->>>>>>>>>>>>> +     if (!pm_runtime_status_suspended(&pdev->dev))
->>>>>>>>>>>>> +             tegra210_i2s_runtime_suspend(&pdev->dev);
->>>>>>>>>>>> This breaks device's RPM refcounting if it was disabled in the
->>>>>>>>>>>> active
->>>>>>>>>>>> state. This code should be removed. At most you could warn
->>>>>>>>>>>> about the
->>>>>>>>>>>> unxpected RPM state here, but it shouldn't be necessary.
->>>>>>>>>>> I guess this was added for safety and explicit suspend keeps clock
->>>>>>>>>>> disabled.
->>>>>>>>>>> Not sure if ref-counting of the device matters when runtime PM is
->>>>>>>>>>> disabled and device is removed.
->>>>>>>>>>> I see few drivers using this way.
->>>>>>>>>> It should matter (if I'm not missing something) because RPM should
->>>>>>>>>> be in
->>>>>>>>>> a wrecked state once you'll try to re-load the driver's module.
->>>>>>>>>> Likely
->>>>>>>>>> that those few other drivers are wrong.
->>>>>>>>>>
->>>>>>>>>> [snip]
->>>>>>>>> Once the driver is re-loaded and RPM is enabled, I don't think it
->>>>>>>>> would use
->>>>>>>>> the same 'dev' and the corresponding ref count. Doesn't it use the
->>>>>>>>> new
->>>>>>>>> counters?
->>>>>>>>> If RPM is not working for some reason, most likely it would be the
->>>>>>>>> case
->>>>>>>>> for other
->>>>>>>>> devices. What best driver can do is probably do a force suspend
->>>>>>>>> during
->>>>>>>>> removal if
->>>>>>>>> already not done. I would prefer to keep, since multiple drivers
->>>>>>>>> still
->>>>>>>>> have it,
->>>>>>>>> unless there is a real harm in doing so.
->>>>>>>> I took a closer look and looks like the counter actually should be
->>>>>>>> reset. Still I don't think that it's a good practice to make changes
->>>>>>>> underneath of RPM, it may strike back.
->>>>>>> If RPM is broken, it probably would have been caught during device
->>>>>>> usage.
->>>>>>> I will remove explicit suspend here if no any concerns from other
->>>>>>> folks.
->>>>>>> Thanks.
->>>>>> I recall that this was the preferred way of doing this from the RPM
->>>>>> folks. Tegra30 I2S driver does the same and Stephen had pointed me to
->>>>>> this as a reference.
->>>>>> I believe that this is meant to ensure that the
->>>>>> device is always powered-off regardless of it RPM is enabled or not and
->>>>>> what the current state is.
->>>>> Yes, it was kinda actual for the case of unavailable RPM.
->>>>
->>>>> Anyways, /I think/ variant like this should have been more preferred:
->>>>>
->>>>> if (!pm_runtime_enabled(&pdev->dev))
->>>>>          tegra210_i2s_runtime_suspend(&pdev->dev);
->>>>> else
->>>>>          pm_runtime_disable(&pdev->dev);
->>>>
->>>> I think it looks to be similar to what is there already.
->>>>
->>>> pm_runtime_disable(&pdev->dev); // it would turn out to be a dummy call
->>>> if !RPM
->>>> if (!pm_runtime_status_suspended(&pdev->dev)) // it is true always if !RPM
->>>>         tegra210_i2s_runtime_suspend(&pdev->dev);
->>>
->>> Maybe this is fine for !RPM, but not really fine in a case of enabled
->>> RPM. Device could be in resumed state after pm_runtime_disable() if it
->>> wasn't suspended before the disabling.
->>
->> I don't see any problem with this for the !RPM case.
-> 
-> Sorry I meant the RPM case. In other words, I don't see a problem for
-> neither the RPM case of the !RPM case.
+Hi Greg,
 
-1. Device shall be in RPM-suspended state at the time of driver's
-removal, unless there is a bug in the sound driver. Hence why do you
-need the dead code which doesn't bring any practical value?
+On 24/01/2020 09:22, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.99 release.
+> There are 639 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 26 Jan 2020 09:26:29 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.99-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
 
-2. Making changes underneath of RPM is simply error-prone. It may hit
-badly in the future once something will change in the RPM core.
+...
+
+> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>     PCI: PM: Skip devices in D0 for suspend-to-idle
+
+The above commit is causing a suspend regression on Tegra124 Jetson-TK1.
+Reverting this on top of v4.19.99-rc1 fixes the issue.
+
+Cheers
+Jon
+
+-- 
+nvpublic
