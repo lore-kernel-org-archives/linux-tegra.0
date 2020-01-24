@@ -1,82 +1,127 @@
-From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Subject: Re: [PATCH v8 22/22] clk: tegra: Remove audio clocks configuration
- from clock driver
-Date: Fri, 24 Jan 2020 08:50:10 +0000
-Message-ID: <fc2b6c3d-a204-ee35-fce4-b2831c444eb3@codethink.co.uk>
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <1578986667-16041-23-git-send-email-skomatineni@nvidia.com>
- <d69fe7a8-71cc-c560-a567-f89b936753ad@gmail.com>
- <9765b723-33af-9863-72c9-8094203c8cb8@nvidia.com>
- <f2506b91-0199-f2a5-ea8c-ace7b651b443@gmail.com>
- <e6013c72-4ceb-aa3f-50bf-187794f85b66@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH 4/9] ASoC: tegra: add Tegra210 based I2S
+ driver
+Date: Fri, 24 Jan 2020 09:07:22 +0000
+Message-ID: <9f73afdf-1e9a-cdbd-f972-a022d503ef51@nvidia.com>
+References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
+ <1579530198-13431-5-git-send-email-spujar@nvidia.com>
+ <a440d105-8db9-ecf1-3718-e58804ce14b8@gmail.com>
+ <0c571858-d72c-97c2-2d6a-ead6fdde06eb@nvidia.com>
+ <444731da-c4cd-8578-a732-c803eef31ef0@gmail.com>
+ <bdc749bc-b62c-a041-c17c-33fd49fe8e2e@nvidia.com>
+ <598fe377-5b95-d30a-eb64-89a645166d42@gmail.com>
+ <3f51939d-cf4b-f69b-728a-7eb99bbae458@nvidia.com>
+ <34ac1fd3-ae0f-07f2-555f-a55087a2c9dc@nvidia.com>
+ <1a84b393-938f-8bed-d08e-cc3bb6ed4844@gmail.com>
+ <0fc814c2-0dc6-7741-b954-463381ff7fb9@nvidia.com>
+ <b5c581b9-17af-d004-33fb-2cc782ab820a@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e6013c72-4ceb-aa3f-50bf-187794f85b66-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-GB
+In-Reply-To: <b5c581b9-17af-d004-33fb-2cc782ab820a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 24/01/2020 04:34, Dmitry Osipenko wrote:
-> 21.01.2020 19:57, Dmitry Osipenko пишет:
->> 21.01.2020 19:19, Sowjanya Komatineni пишет:
->>>
->>> On 1/19/20 7:04 AM, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 14.01.2020 10:24, Sowjanya Komatineni пишет:
->>>>
->>>> [snip]
->>>>
->>>>> diff --git a/drivers/clk/tegra/clk-tegra30.c
->>>>> b/drivers/clk/tegra/clk-tegra30.c
->>>>> index 5732fdbe20db..53d1c48532ae 100644
->>>>> --- a/drivers/clk/tegra/clk-tegra30.c
->>>>> +++ b/drivers/clk/tegra/clk-tegra30.c
->>>>> @@ -1221,9 +1221,8 @@ static struct tegra_clk_init_table init_table[]
->>>>> __initdata = {
->>>>>         { TEGRA30_CLK_UARTC, TEGRA30_CLK_PLL_P, 408000000, 0 },
->>>>>         { TEGRA30_CLK_UARTD, TEGRA30_CLK_PLL_P, 408000000, 0 },
->>>>>         { TEGRA30_CLK_UARTE, TEGRA30_CLK_PLL_P, 408000000, 0 },
->>>>> -     { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
->>>>> -     { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
->>>>> -     { TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
->>>>> +     { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 0 },
->>>>> +     { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 0 },
->>>>>         { TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
->>>>>         { TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
->>>>>         { TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
->>>>>
->>>> What about to use the assigned-clock-rates in device-tree and thus to
->>>> remove those PLL_A entries?
->>>
->>> Yes clock rates can be used and also PLL rate is set based on sample
->>> rate during hw_params. So this can be removed.
->>>
->>> But PLLA clock rates are not related to this patch series and also
->>> changing this needs audio function testing across all platforms and
->>> currently we don't have audio functional tests in place for older
->>> platforms.
->>>
->>> All audio clocks proper fixes and cleanup b/w clock driver and audio
->>> driver will be done separately.
+
+On 23/01/2020 15:16, Dmitry Osipenko wrote:
+> 23.01.2020 12:22, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 >>
->> If there are real plans to make sound driver to drive the PLLA rate,
->> then indeed should be fine to keep it as-is for now.
-> 
-> Looking at tegra_asoc_utils_set_rate(), it already sets the PLLA rate.
-> Maybe those table entries are not needed already?
+>>
+>> On 1/22/2020 9:57 PM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 22.01.2020 14:52, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> On 22/01/2020 07:16, Sameer Pujar wrote:
+>>>>
+>>>> ...
+>>>>
+>>>>>>>>>>> +static int tegra210_i2s_remove(struct platform_device *pdev)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 pm_runtime_disable(&pdev->dev);
+>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (!pm_runtime_status_suspended(&pde=
+v->dev))
+>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 tegra210_i2s_runtime_suspend(&pdev->dev);
+>>>>>>>>>> This breaks device's RPM refcounting if it was disabled in the
+>>>>>>>>>> active
+>>>>>>>>>> state. This code should be removed. At most you could warn
+>>>>>>>>>> about the
+>>>>>>>>>> unxpected RPM state here, but it shouldn't be necessary.
+>>>>>>>>> I guess this was added for safety and explicit suspend keeps cloc=
+k
+>>>>>>>>> disabled.
+>>>>>>>>> Not sure if ref-counting of the device matters when runtime PM is
+>>>>>>>>> disabled and device is removed.
+>>>>>>>>> I see few drivers using this way.
+>>>>>>>> It should matter (if I'm not missing something) because RPM should
+>>>>>>>> be in
+>>>>>>>> a wrecked state once you'll try to re-load the driver's module.
+>>>>>>>> Likely
+>>>>>>>> that those few other drivers are wrong.
+>>>>>>>>
+>>>>>>>> [snip]
+>>>>>>> Once the driver is re-loaded and RPM is enabled, I don't think it
+>>>>>>> would use
+>>>>>>> the same 'dev' and the corresponding ref count. Doesn't it use the
+>>>>>>> new
+>>>>>>> counters?
+>>>>>>> If RPM is not working for some reason, most likely it would be the
+>>>>>>> case
+>>>>>>> for other
+>>>>>>> devices. What best driver can do is probably do a force suspend
+>>>>>>> during
+>>>>>>> removal if
+>>>>>>> already not done. I would prefer to keep, since multiple drivers
+>>>>>>> still
+>>>>>>> have it,
+>>>>>>> unless there is a real harm in doing so.
+>>>>>> I took a closer look and looks like the counter actually should be
+>>>>>> reset. Still I don't think that it's a good practice to make changes
+>>>>>> underneath of RPM, it may strike back.
+>>>>> If RPM is broken, it probably would have been caught during device
+>>>>> usage.
+>>>>> I will remove explicit suspend here if no any concerns from other
+>>>>> folks.
+>>>>> Thanks.
+>>>> I recall that this was the preferred way of doing this from the RPM
+>>>> folks. Tegra30 I2S driver does the same and Stephen had pointed me to
+>>>> this as a reference.
+>>>> I believe that this is meant to ensure that the
+>>>> device is always powered-off regardless of it RPM is enabled or not an=
+d
+>>>> what the current state is.
+>>> Yes, it was kinda actual for the case of unavailable RPM.
+>>
+>>> Anyways, /I think/ variant like this should have been more preferred:
+>>>
+>>> if (!pm_runtime_enabled(&pdev->dev))
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra210_i2s_runtime_s=
+uspend(&pdev->dev);
+>>> else
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pm_runtime_disable(&pd=
+ev->dev);
+>>
+>> I think it looks to be similar to what is there already.
+>>
+>> pm_runtime_disable(&pdev->dev); // it would turn out to be a dummy call
+>> if !RPM
+>> if (!pm_runtime_status_suspended(&pdev->dev)) // it is true always if !R=
+PM
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra210_i2s_runtime_suspend(=
+&pdev->dev);
+>=20
+> Maybe this is fine for !RPM, but not really fine in a case of enabled
+> RPM. Device could be in resumed state after pm_runtime_disable() if it
+> wasn't suspended before the disabling.
 
-This reminds me I still have patches for support for tegra30 as clock
-slave. I should really sort out getting these finished up and tested.
+I don't see any problem with this for the !RPM case.
 
+Jon
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+--=20
+nvpublic
