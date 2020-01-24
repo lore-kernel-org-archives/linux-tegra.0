@@ -1,8 +1,8 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
 Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
  24bit and 32bit samples
-Date: Fri, 24 Jan 2020 16:56:41 +0000
-Message-ID: <26aeb591-e770-5e6a-5ee4-05414ae4ddc6@nvidia.com>
+Date: Fri, 24 Jan 2020 17:00:08 +0000
+Message-ID: <318f0256-fe6d-c34d-4deb-74540fca8d0d@codethink.co.uk>
 References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
  <621fa27d-9259-2949-9cf5-d2eda5cb0677@gmail.com>
  <a0f027d9-e9e0-d76c-1e40-002fdc37eb5f@nvidia.com>
@@ -21,28 +21,28 @@ References: <20191018154833.7560-1-ben.dooks@codethink.co.uk>
  <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
  <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
  <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
- <9b3a0cdd-34c7-ecb4-4a26-268fd4a63041@codethink.co.uk>
+ <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9b3a0cdd-34c7-ecb4-4a26-268fd4a63041-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <3d8544be-af20-f382-85fd-32183365267b-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 23/01/2020 21:59, Ben Dooks wrote:
+On 24/01/2020 16:50, Jon Hunter wrote:
+> 
 > On 23/01/2020 19:38, Ben Dooks wrote:
 >> On 07/01/2020 01:39, Dmitry Osipenko wrote:
->>> 06.01.2020 22:00, Ben Dooks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> 06.01.2020 22:00, Ben Dooks пишет:
 >>>> On 05/01/2020 10:53, Ben Dooks wrote:
 >>>>>
 >>>>>
 >>>>> On 2020-01-05 01:48, Dmitry Osipenko wrote:
->>>>>> 05.01.2020 03:04, Ben Dooks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> 05.01.2020 03:04, Ben Dooks пишет:
 >>>>>>> [snip]
 >>>>>>>
 >>>>>>> I've just gone through testing.
@@ -54,8 +54,7 @@ On 23/01/2020 21:59, Ben Dooks wrote:
 >>>>>>> do 24 bit in 24 bit, so we may have to remove 24 bit sample support
 >>>>>>> (which is a shame)
 >>>>>>>
->>>>>>> My preference is to remove the 24-bit support and keep the 32 bit
->>>>>>> in.
+>>>>>>> My preference is to remove the 24-bit support and keep the 32 bit in.
 >>>>>>>
 >>>>>>
 >>>>>> Interesting.. Jon, could you please confirm that 24bit format isn't
@@ -68,8 +67,7 @@ On 23/01/2020 21:59, Ben Dooks wrote:
 >>>>
 >>>> I need to check some things, I assumed 24 was 24 packed bits, it looks
 >>>> like the default is 24 in 32 bits so we may be ok. However I need to
->>>> re-write my test case which assumed it was 24bits in 3 bytes (S24_3LE)=
-.
+>>>> re-write my test case which assumed it was 24bits in 3 bytes (S24_3LE).
 >>>>
 >>>> I'll follow up later,
 >>>
@@ -81,35 +79,39 @@ On 23/01/2020 21:59, Ben Dooks wrote:
 >>
 >> I did a quick test with the following:
 >>
->> =C2=A0=C2=A0sox -n -b 16 -c 2 -r 44100 /tmp/tmp.wav=C2=A0 synth sine 500=
- vol 0.5
->> =C2=A0=C2=A0sox -n -b 24 -c 2 -r 44100 /tmp/tmp.wav=C2=A0 synth sine 500=
- vol 0.5
->> =C2=A0=C2=A0sox -n -b 32 -c 2 -r 44100 /tmp/tmp.wav=C2=A0 synth sine 500=
- vol 0.5
+>>   sox -n -b 16 -c 2 -r 44100 /tmp/tmp.wav  synth sine 500 vol 0.5
+>>   sox -n -b 24 -c 2 -r 44100 /tmp/tmp.wav  synth sine 500 vol 0.5
+>>   sox -n -b 32 -c 2 -r 44100 /tmp/tmp.wav  synth sine 500 vol 0.5
 >>
 >> The 16 and 32 work fine, the 24 is showing a playback output freq
 >> of 440Hz instead of 500Hz... this suggests the clock is off, or there
 >> is something else weird going on...
->>
->=20
-> I should have checked pll_a_out0 rate, for 24bit 2ch, I get
-> pll_a_out at which makes:
->=20
-> 11289600/(24*2*44100) =3D 5.3333333333
->=20
-> For some reason the PLL can't get a decent divisor for this.
+> 
+> I was looking at using sox to create such as file, but the above command
+> generates a S24_3LE file and not S24_LE file. The codec on Jetson-TK1
+> supports S24_LE but does not support S24_3LE and so I cannot test this.
+> Anyway, we really need to test S24_LE and not S24_3LE because this is
+> the problem that Dmitry is having.
+> 
+> Ben is S24_3LE what you really need to support?
 
-Yes that is going to be a problem. I assume that your codec wants a
-256*fs MCLK? Maybe in that case you are better off having the codec
-drive the bit clock and fsync?
+No, it is S24_LE the format this hardware supports. I wonder if
+aplay is transforming it.
 
-Is 24-bit critical to what you are doing?
+Plug PCM: Linear conversion PCM (S24_LE)
+Its setup is:
+   stream       : PLAYBACK
+   access       : RW_INTERLEAVED
+   format       : S24_3LE
+   subformat    : STD
+   channels     : 2
 
-Otherwise maybe we should drop the 24-bit support for now and just keep
-32-bit.
+So I assume aplay has turned the S24_3LE -> S24_LE
 
-Jon
 
---=20
-nvpublic
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
