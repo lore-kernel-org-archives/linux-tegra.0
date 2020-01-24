@@ -1,79 +1,114 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v8 11/22] ASoC: tegra: Add fallback implementation for
- audio mclk
-Date: Fri, 24 Jan 2020 02:56:45 +0300
-Message-ID: <aef36b46-789a-c44e-4cd1-9d4183435ba9@gmail.com>
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH 5/9] ASoC: tegra: add Tegra210 based AHUB
+ driver
+Date: Fri, 24 Jan 2020 04:18:36 +0300
+Message-ID: <5ed7482e-e874-9e11-c84e-7418e4b5162e@gmail.com>
+References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
+ <1579530198-13431-6-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1579530198-13431-6-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-14.01.2020 10:24, Sowjanya Komatineni пишет:
-> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
-> are moved to Tegra PMC driver with pmc as clock provider and using pmc
-> clock ids.
-> 
-> New device tree uses clk_out_1 from pmc clock provider as audio mclk.
-> 
-> So, this patch adds implementation for mclk fallback to extern1 when
-> retrieving mclk returns -ENOENT to be backward compatible of new device
-> tree with older kernels.
-> 
-> Fixes: 110147c8c513 ("ASoC: tegra: always use clk_get() in utility code")
-> 
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  sound/soc/tegra/tegra_asoc_utils.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-> index 536a578e9512..74d3ffe7e603 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.c
-> +++ b/sound/soc/tegra/tegra_asoc_utils.c
-> @@ -191,9 +191,21 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->  
->  	data->clk_cdev1 = clk_get(dev, "mclk");
->  	if (IS_ERR(data->clk_cdev1)) {
-> -		dev_err(data->dev, "Can't retrieve clk cdev1\n");
-> -		ret = PTR_ERR(data->clk_cdev1);
-> -		goto err_put_pll_a_out0;
-> +		if (PTR_ERR(data->clk_cdev1) != -ENOENT) {
-> +			dev_err(data->dev, "Can't retrieve clk cdev1\n");
-> +			ret = PTR_ERR(data->clk_cdev1);
-> +			goto err_put_pll_a_out0;
-> +		}
+20.01.2020 17:23, Sameer Pujar пишет:
+[snip]
+> +static int tegra_ahub_get_value_enum(struct snd_kcontrol *kctl,
+> +				     struct snd_ctl_elem_value *uctl)
+> +{
+> +	struct snd_soc_component *cmpnt = snd_soc_dapm_kcontrol_component(kctl);
+> +	struct tegra_ahub *ahub = snd_soc_component_get_drvdata(cmpnt);
+> +	struct soc_enum *e = (struct soc_enum *)kctl->private_value;
+> +	unsigned int reg, i, bit_pos = 0;
 > +
-> +		/* Fall back to extern1 */
-> +		data->clk_cdev1 = clk_get(dev, "extern1");
-> +		if (IS_ERR(data->clk_cdev1)) {
-> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
-> +			ret = PTR_ERR(data->clk_cdev1);
-> +			goto err_put_pll_a_out0;
-> +		}
+> +	/*
+> +	 * Find the bit position of current MUX input.
+> +	 * If nothing is set, position would be 0 and it corresponds to 'None'.
+> +	 */
+> +	for (i = 0; i < ahub->soc_data->reg_count; i++) {
+> +		unsigned int reg_val;
 > +
-> +		dev_info(data->dev, "Falling back to extern1\n");
->  	}
->  
->  	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
-> 
+> +		reg = e->reg + (TEGRA210_XBAR_PART1_RX * i);
+> +		snd_soc_component_read(cmpnt, reg, &reg_val);
+> +		reg_val &= ahub->soc_data->mask[i];
+> +
+> +		if (reg_val) {
+> +			bit_pos = ffs(reg_val) +
+> +				  (8 * cmpnt->val_bytes * i);
 
-I tried to double-check if audio works using the updated DT works with
-this fallback and unfortunately it is not (maybe I actually missed to
-test this case before).. the driver doesn't probe at all because of the
-assigned-clocks presence, which makes clk core to fail finding the MCLK
-and thus assigned-clocks configuration fails, preventing the driver's
-loading.
+Multiplication takes precedence, braces are not needed. Same for all
+other occurrences in the code.
 
-I'm not sure what could be done about it. Perhaps just to give up on the
-compatibility of older kernels with the new DTs, missing audio isn't
-really that critical (perhaps).
+[snip]
+> +			break;
+> +		}
+> +	}
+> +
+> +	/* Find index related to the item in array *_ahub_mux_texts[] */
+> +	for (i = 0; i < e->items; i++) {
+> +		if (bit_pos == e->values[i]) {
+> +			uctl->value.enumerated.item[0] = i;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_ahub_put_value_enum(struct snd_kcontrol *kctl,
+> +				     struct snd_ctl_elem_value *uctl)
+> +{
+> +	struct snd_soc_component *cmpnt = snd_soc_dapm_kcontrol_component(kctl);
+> +	struct tegra_ahub *ahub = snd_soc_component_get_drvdata(cmpnt);
+> +	struct snd_soc_dapm_context *dapm = snd_soc_dapm_kcontrol_dapm(kctl);
+> +	struct soc_enum *e = (struct soc_enum *)kctl->private_value;
+> +	struct snd_soc_dapm_update update[TEGRA_XBAR_UPDATE_MAX_REG] = { };
+
+Shouldn't this be {0} to make array zero'ed?
+
+[snip]
+> +static int tegra_ahub_probe(struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *match;
+> +	struct tegra_ahub *ahub;
+> +	struct tegra_ahub_soc_data *soc_data;
+> +	void __iomem *regs;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	match = of_match_device(tegra_ahub_of_match, &pdev->dev);
+> +	if (!match) {
+> +		dev_err(&pdev->dev, "error: no device match found\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	soc_data = (struct tegra_ahub_soc_data *)match->data;
+
+soc_data = device_get_match_data(&pdev->dev);
+
+> +	ahub = devm_kcalloc(&pdev->dev, 1, sizeof(*ahub), GFP_KERNEL);
+> +	if (!ahub)
+> +		return -ENOMEM;
+> +
+> +	ahub->soc_data = soc_data;
+> +
+> +	platform_set_drvdata(pdev, ahub);
+> +
+> +	ahub->clk = devm_clk_get(&pdev->dev, "ahub");
+> +	if (IS_ERR(ahub->clk)) {
+> +		dev_err(&pdev->dev, "can't retrieve AHUB clock\n");
+> +		return PTR_ERR(ahub->clk);
+> +	}
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +
+> +	regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(regs))
+> +		return PTR_ERR(regs);
+
+regs = devm_platform_ioremap_resource(pdev, 0);
