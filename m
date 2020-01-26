@@ -1,110 +1,65 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 000/639] 4.19.99-stable review
-Date: Sun, 26 Jan 2020 10:13:19 +0100
-Message-ID: <20200126091319.GA3549630@kroah.com>
-References: <20200124093047.008739095@linuxfoundation.org>
- <23f2a904-3351-4a75-aaaf-2623dc55d114@nvidia.com>
- <20200124173659.GD3166016@kroah.com>
- <8a782263-aca3-3846-12a0-4eb21f015894@nvidia.com>
- <87fcb1f0-b1b8-a6e2-b8f6-b95a07f67919@nvidia.com>
- <eadee1dd-fb6d-855d-935a-4bf93a9ad505@roeck-us.net>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
+ move_page_tables()
+Date: Sun, 26 Jan 2020 17:47:57 +0300
+Message-ID: <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
+References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
+ <20200117232254.2792-4-richardw.yang@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <eadee1dd-fb6d-855d-935a-4bf93a9ad505@roeck-us.net>
-Sender: stable-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200117232254.2792-4-richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, aneesh.kumar-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org, kirill-oKw7cIdHH8eLwutG50LtGA@public.gmane.org, yang.shi-KPsoFbNs7GizrGE5bRqYAgC/G2K4zDHf@public.gmane.org, thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Jan 25, 2020 at 07:46:47AM -0800, Guenter Roeck wrote:
-> On 1/25/20 3:32 AM, Jon Hunter wrote:
-> > 
-> > On 24/01/2020 18:07, Jon Hunter wrote:
-> > > 
-> > > On 24/01/2020 17:36, Greg Kroah-Hartman wrote:
-> > > > On Fri, Jan 24, 2020 at 02:50:05PM +0000, Jon Hunter wrote:
-> > > > > Hi Greg,
-> > > > > 
-> > > > > On 24/01/2020 09:22, Greg Kroah-Hartman wrote:
-> > > > > > This is the start of the stable review cycle for the 4.19.99 release.
-> > > > > > There are 639 patches in this series, all will be posted as a response
-> > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > let me know.
-> > > > > > 
-> > > > > > Responses should be made by Sun, 26 Jan 2020 09:26:29 +0000.
-> > > > > > Anything received after that time might be too late.
-> > > > > > 
-> > > > > > The whole patch series can be found in one patch at:
-> > > > > > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.99-rc1.gz
-> > > > > > or in the git tree and branch at:
-> > > > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > > > > > and the diffstat can be found below.
-> > > > > > 
-> > > > > > thanks,
-> > > > > > 
-> > > > > > greg k-h
-> > > > > > 
-> > > > > > -------------
-> > > > > > Pseudo-Shortlog of commits:
-> > > > > 
-> > > > > ...
-> > > > > 
-> > > > > > Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > >      PCI: PM: Skip devices in D0 for suspend-to-idle
-> > > > > 
-> > > > > The above commit is causing a suspend regression on Tegra124 Jetson-TK1.
-> > > > > Reverting this on top of v4.19.99-rc1 fixes the issue.
-> > > > 
-> > > > This is also in the 4.14 queue, so should I drop it there too?
-> > > 
-> > > I did not see any failures with the same board on that branch, so I
-> > > would say no, but odd that it only fails here. It was failing for me
-> > > 100% so I would have expected to see if there too if it was a problem.
-> > 
-> > Hmmm, rc2 still not working for me ...
-> > 
-> > Test results for stable-v4.19:
-> >      11 builds:	11 pass, 0 fail
-> >      22 boots:	22 pass, 0 fail
-> >      32 tests:	30 pass, 2 fail
-> > 
-> > Linux version:	4.19.99-rc2-g24832ad2c623
-> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-> >                  tegra194-p2972-0000, tegra20-ventana,
-> >                  tegra210-p2371-2180, tegra30-cardhu-a04
-> > 
-> > I still see the following commit in rc2 ...
-> > 
-> > commit bb52152abe85f971278a7a4f033b29483f64bfdb
-> > Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Date:   Thu Jun 13 23:59:45 2019 +0200
-> > 
-> >      PCI: PM: Skip devices in D0 for suspend-to-idle
-
-Yes, I did not change anything in -rc2 for you, sorry.
-
-> > BTW, I checked the 4.14. queue and I do not see the above change in
-> > there, however, there is similar change ...
-> > 
-> > Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >      PCI: PM: Avoid possible suspend-to-idle issue
-> > 
-> bb52152abe85 fixes this one, which in turn fixes 33e4f80ee69b.
-> The above in 4.14 but not its fixes is spelling a bit of trouble.
+18.01.2020 02:22, Wei Yang пишет:
+> Use the general helper instead of do it by hand.
 > 
-> Maybe commit 471a739a47aa7 ("PCI: PM: Avoid skipping bus-level
-> PM on platforms without ACPI") was added to -rc2, since it is
-> supposed to fix bb52152abe85.
+> Signed-off-by: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> ---
+>  mm/mremap.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index c2af8ba4ba43..a258914f3ee1 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -253,11 +253,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+>  
+>  	for (; old_addr < old_end; old_addr += extent, new_addr += extent) {
+>  		cond_resched();
+> -		next = (old_addr + PMD_SIZE) & PMD_MASK;
+> -		/* even if next overflowed, extent below will be ok */
+> +		next = pmd_addr_end(old_addr, old_end);
+>  		extent = next - old_addr;
+> -		if (extent > old_end - old_addr)
+> -			extent = old_end - old_addr;
+>  		old_pmd = get_old_pmd(vma->vm_mm, old_addr);
+>  		if (!old_pmd)
+>  			continue;
+> @@ -301,7 +298,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+>  
+>  		if (pte_alloc(new_vma->vm_mm, new_pmd))
+>  			break;
+> -		next = (new_addr + PMD_SIZE) & PMD_MASK;
+> +		next = pmd_addr_end(new_addr, new_addr + len);
+>  		if (extent > next - new_addr)
+>  			extent = next - new_addr;
+>  		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
+> 
 
-I have added that fix to 4.14 now, and will go push out a -rc3 for both
-4.19.y and 4.14.y to try to sync up on this and figure it out.
+Hello Wei,
 
-Jon, if you could retest 4.14.y, that would be great, to see if it has
-the same issue that 4.19.y has.  And if so, that means I should probably
-just drop both patches from both trees, right?
+Starting with next-20200122, I'm seeing the following in KMSG on NVIDIA
+Tegra (ARM32):
 
-thanks,
+  BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:190
 
-greg k-h
+and eventually kernel hangs.
+
+Git's bisection points to this patch and reverting it helps. Please fix,
+thanks in advance.
