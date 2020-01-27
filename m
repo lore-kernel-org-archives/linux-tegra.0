@@ -1,72 +1,50 @@
-From: Dejin Zheng <zhengdejin5@gmail.com>
-Subject: [PATCH] usb: phy: tegra: make the code simple by devm_platform_ioremap_resource()
-Date: Mon, 27 Jan 2020 21:58:41 +0800
-Message-ID: <20200127135841.17935-1-zhengdejin5@gmail.com>
+From: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] usb: chipidea: tegra: fix hardlock with invalid dr mode
+Date: Mon, 27 Jan 2020 10:25:33 -0500
+Message-ID: <CAMdYzYqctkfqhHN0-WDvX9kKdXH-AVir193SpcrR_t3K=VN=0w@mail.gmail.com>
+References: <20200127023548.27107-1-pgwipeout@gmail.com> <20200127071758.GD279449@kroah.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Dejin Zheng <zhengdejin5@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200127071758.GD279449-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-make the code simple by use devm_platform_ioremap_resource() function
-to replace platform_get_resource() and devm_ioremap().
+On Mon, Jan 27, 2020 at 2:18 AM Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
+>
+> On Sun, Jan 26, 2020 at 09:35:48PM -0500, Peter Geis wrote:
+> > The ci_hdrc_tegra driver does not currently support dual role mode, but
+> > it does not explicitly prevent its use.
+> > Certain devices support dual role mode, but not automatic role switch.
+> > This can cause the device to lock up during initialization of the
+> > driver.
+> >
+> > Detect this state by checking for the extcon phandle when dual role mode
+> > is set to otg.
+> > If it doesn't exist request the driver to only enable manual role
+> > switching.
+> >
+> > Fixes: dfebb5f ("usb: chipidea: Add support for Tegra20/30/114/124")
+>
+> Please use 12 digits for kernel sha1 values, this should be:
+> Fixes: dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
 
-Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
----
- drivers/usb/phy/phy-tegra-usb.c | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+Understood, thank you.
+I will ensure that is the case in the future.
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index ea7ef1dc0b42..8220bb4ce1ed 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -944,20 +944,12 @@ static int read_utmi_param(struct platform_device *pdev, const char *param,
- static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
- 			  struct platform_device *pdev)
- {
--	struct resource *res;
- 	int err;
- 	struct tegra_utmip_config *config;
- 
- 	tegra_phy->is_ulpi_phy = false;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	if (!res) {
--		dev_err(&pdev->dev, "Failed to get UTMI pad regs\n");
--		return  -ENXIO;
--	}
--
--	tegra_phy->pad_regs = devm_ioremap(&pdev->dev, res->start,
--		resource_size(res));
-+	tegra_phy->pad_regs = devm_platform_ioremap_resource(pdev, 1);
- 	if (!tegra_phy->pad_regs) {
- 		dev_err(&pdev->dev, "Failed to remap UTMI pad regs\n");
- 		return -ENOMEM;
-@@ -1054,7 +1046,6 @@ MODULE_DEVICE_TABLE(of, tegra_usb_phy_id_table);
- static int tegra_usb_phy_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
--	struct resource *res;
- 	struct tegra_usb_phy *tegra_phy = NULL;
- 	struct device_node *np = pdev->dev.of_node;
- 	enum usb_phy_interface phy_type;
-@@ -1071,14 +1062,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 	}
- 	tegra_phy->soc_config = match->data;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "Failed to get I/O memory\n");
--		return  -ENXIO;
--	}
--
--	tegra_phy->regs = devm_ioremap(&pdev->dev, res->start,
--		resource_size(res));
-+	tegra_phy->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (!tegra_phy->regs) {
- 		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
- 		return -ENOMEM;
--- 
-2.25.0
+>
+> As proof of the need of this, just using the values you gave here causes
+> git to complain:
+>
+> $ git show dfebb5f
+> error: short SHA1 dfebb5f is ambiguous
+> hint: The candidates are:
+> hint:   dfebb5f43a78 commit 2017-08-16 - usb: chipidea: Add support for Tegra20/30/114/124
+> hint:   dfebb5fec744 tree
+> fatal: ambiguous argument 'dfebb5f': unknown revision or path not in the working tree.
+>
+> thanks,
+>
+> greg k-h
