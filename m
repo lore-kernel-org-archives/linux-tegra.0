@@ -1,7 +1,7 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH 4.19 000/639] 4.19.99-stable review
-Date: Mon, 27 Jan 2020 09:38:17 +0000
-Message-ID: <61b59750-b08f-c4e9-b472-44b1d096f4cf@nvidia.com>
+Date: Mon, 27 Jan 2020 10:41:42 +0100
+Message-ID: <20200127094142.GA414145@kroah.com>
 References: <20200124093047.008739095@linuxfoundation.org>
  <23f2a904-3351-4a75-aaaf-2623dc55d114@nvidia.com>
  <20200124173659.GD3166016@kroah.com>
@@ -9,124 +9,127 @@ References: <20200124093047.008739095@linuxfoundation.org>
  <87fcb1f0-b1b8-a6e2-b8f6-b95a07f67919@nvidia.com>
  <eadee1dd-fb6d-855d-935a-4bf93a9ad505@roeck-us.net>
  <20200126091319.GA3549630@kroah.com>
+ <61b59750-b08f-c4e9-b472-44b1d096f4cf@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200126091319.GA3549630@kroah.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <61b59750-b08f-c4e9-b472-44b1d096f4cf@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 26/01/2020 09:13, Greg Kroah-Hartman wrote:
-> On Sat, Jan 25, 2020 at 07:46:47AM -0800, Guenter Roeck wrote:
->> On 1/25/20 3:32 AM, Jon Hunter wrote:
->>>
->>> On 24/01/2020 18:07, Jon Hunter wrote:
->>>>
->>>> On 24/01/2020 17:36, Greg Kroah-Hartman wrote:
->>>>> On Fri, Jan 24, 2020 at 02:50:05PM +0000, Jon Hunter wrote:
->>>>>> Hi Greg,
->>>>>>
->>>>>> On 24/01/2020 09:22, Greg Kroah-Hartman wrote:
->>>>>>> This is the start of the stable review cycle for the 4.19.99 release.
->>>>>>> There are 639 patches in this series, all will be posted as a response
->>>>>>> to this one.  If anyone has any issues with these being applied, please
->>>>>>> let me know.
->>>>>>>
->>>>>>> Responses should be made by Sun, 26 Jan 2020 09:26:29 +0000.
->>>>>>> Anything received after that time might be too late.
->>>>>>>
->>>>>>> The whole patch series can be found in one patch at:
->>>>>>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.99-rc1.gz
->>>>>>> or in the git tree and branch at:
->>>>>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
->>>>>>> and the diffstat can be found below.
->>>>>>>
->>>>>>> thanks,
->>>>>>>
->>>>>>> greg k-h
->>>>>>>
->>>>>>> -------------
->>>>>>> Pseudo-Shortlog of commits:
->>>>>>
->>>>>> ...
->>>>>>
->>>>>>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>>>>      PCI: PM: Skip devices in D0 for suspend-to-idle
->>>>>>
->>>>>> The above commit is causing a suspend regression on Tegra124 Jetson-TK1.
->>>>>> Reverting this on top of v4.19.99-rc1 fixes the issue.
->>>>>
->>>>> This is also in the 4.14 queue, so should I drop it there too?
->>>>
->>>> I did not see any failures with the same board on that branch, so I
->>>> would say no, but odd that it only fails here. It was failing for me
->>>> 100% so I would have expected to see if there too if it was a problem.
->>>
->>> Hmmm, rc2 still not working for me ...
->>>
->>> Test results for stable-v4.19:
->>>      11 builds:	11 pass, 0 fail
->>>      22 boots:	22 pass, 0 fail
->>>      32 tests:	30 pass, 2 fail
->>>
->>> Linux version:	4.19.99-rc2-g24832ad2c623
->>> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->>>                  tegra194-p2972-0000, tegra20-ventana,
->>>                  tegra210-p2371-2180, tegra30-cardhu-a04
->>>
->>> I still see the following commit in rc2 ...
->>>
->>> commit bb52152abe85f971278a7a4f033b29483f64bfdb
->>> Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> Date:   Thu Jun 13 23:59:45 2019 +0200
->>>
->>>      PCI: PM: Skip devices in D0 for suspend-to-idle
+On Mon, Jan 27, 2020 at 09:38:17AM +0000, Jon Hunter wrote:
 > 
-> Yes, I did not change anything in -rc2 for you, sorry.
+> On 26/01/2020 09:13, Greg Kroah-Hartman wrote:
+> > On Sat, Jan 25, 2020 at 07:46:47AM -0800, Guenter Roeck wrote:
+> >> On 1/25/20 3:32 AM, Jon Hunter wrote:
+> >>>
+> >>> On 24/01/2020 18:07, Jon Hunter wrote:
+> >>>>
+> >>>> On 24/01/2020 17:36, Greg Kroah-Hartman wrote:
+> >>>>> On Fri, Jan 24, 2020 at 02:50:05PM +0000, Jon Hunter wrote:
+> >>>>>> Hi Greg,
+> >>>>>>
+> >>>>>> On 24/01/2020 09:22, Greg Kroah-Hartman wrote:
+> >>>>>>> This is the start of the stable review cycle for the 4.19.99 release.
+> >>>>>>> There are 639 patches in this series, all will be posted as a response
+> >>>>>>> to this one.  If anyone has any issues with these being applied, please
+> >>>>>>> let me know.
+> >>>>>>>
+> >>>>>>> Responses should be made by Sun, 26 Jan 2020 09:26:29 +0000.
+> >>>>>>> Anything received after that time might be too late.
+> >>>>>>>
+> >>>>>>> The whole patch series can be found in one patch at:
+> >>>>>>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.99-rc1.gz
+> >>>>>>> or in the git tree and branch at:
+> >>>>>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> >>>>>>> and the diffstat can be found below.
+> >>>>>>>
+> >>>>>>> thanks,
+> >>>>>>>
+> >>>>>>> greg k-h
+> >>>>>>>
+> >>>>>>> -------------
+> >>>>>>> Pseudo-Shortlog of commits:
+> >>>>>>
+> >>>>>> ...
+> >>>>>>
+> >>>>>>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>>>>>      PCI: PM: Skip devices in D0 for suspend-to-idle
+> >>>>>>
+> >>>>>> The above commit is causing a suspend regression on Tegra124 Jetson-TK1.
+> >>>>>> Reverting this on top of v4.19.99-rc1 fixes the issue.
+> >>>>>
+> >>>>> This is also in the 4.14 queue, so should I drop it there too?
+> >>>>
+> >>>> I did not see any failures with the same board on that branch, so I
+> >>>> would say no, but odd that it only fails here. It was failing for me
+> >>>> 100% so I would have expected to see if there too if it was a problem.
+> >>>
+> >>> Hmmm, rc2 still not working for me ...
+> >>>
+> >>> Test results for stable-v4.19:
+> >>>      11 builds:	11 pass, 0 fail
+> >>>      22 boots:	22 pass, 0 fail
+> >>>      32 tests:	30 pass, 2 fail
+> >>>
+> >>> Linux version:	4.19.99-rc2-g24832ad2c623
+> >>> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> >>>                  tegra194-p2972-0000, tegra20-ventana,
+> >>>                  tegra210-p2371-2180, tegra30-cardhu-a04
+> >>>
+> >>> I still see the following commit in rc2 ...
+> >>>
+> >>> commit bb52152abe85f971278a7a4f033b29483f64bfdb
+> >>> Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>> Date:   Thu Jun 13 23:59:45 2019 +0200
+> >>>
+> >>>      PCI: PM: Skip devices in D0 for suspend-to-idle
+> > 
+> > Yes, I did not change anything in -rc2 for you, sorry.
+> > 
+> >>> BTW, I checked the 4.14. queue and I do not see the above change in
+> >>> there, however, there is similar change ...
+> >>>
+> >>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>      PCI: PM: Avoid possible suspend-to-idle issue
+> >>>
+> >> bb52152abe85 fixes this one, which in turn fixes 33e4f80ee69b.
+> >> The above in 4.14 but not its fixes is spelling a bit of trouble.
+> >>
+> >> Maybe commit 471a739a47aa7 ("PCI: PM: Avoid skipping bus-level
+> >> PM on platforms without ACPI") was added to -rc2, since it is
+> >> supposed to fix bb52152abe85.
+> > 
+> > I have added that fix to 4.14 now, and will go push out a -rc3 for both
+> > 4.19.y and 4.14.y to try to sync up on this and figure it out.
+> > 
+> > Jon, if you could retest 4.14.y, that would be great, to see if it has
+> > the same issue that 4.19.y has.  And if so, that means I should probably
+> > just drop both patches from both trees, right?
 > 
->>> BTW, I checked the 4.14. queue and I do not see the above change in
->>> there, however, there is similar change ...
->>>
->>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>      PCI: PM: Avoid possible suspend-to-idle issue
->>>
->> bb52152abe85 fixes this one, which in turn fixes 33e4f80ee69b.
->> The above in 4.14 but not its fixes is spelling a bit of trouble.
->>
->> Maybe commit 471a739a47aa7 ("PCI: PM: Avoid skipping bus-level
->> PM on platforms without ACPI") was added to -rc2, since it is
->> supposed to fix bb52152abe85.
 > 
-> I have added that fix to 4.14 now, and will go push out a -rc3 for both
-> 4.19.y and 4.14.y to try to sync up on this and figure it out.
+> So v4.19 is still failing for me ...
 > 
-> Jon, if you could retest 4.14.y, that would be great, to see if it has
-> the same issue that 4.19.y has.  And if so, that means I should probably
-> just drop both patches from both trees, right?
+> Test results for stable-v4.19:
+>     11 builds:  11 pass, 0 fail
+>     22 boots:   22 pass, 0 fail
+>     32 tests:   30 pass, 2 fail
+> 
+> Linux version:  4.19.99-rc3-g041f280e6a1a
+> Boards tested:  tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
+> However, I am not seeing any issues with v4.14, so still not clear what
+> is going on here.
 
+Ugh, odd.  Ok, I'll go drop both patches from both trees and do some
+releases in a few hours and then try adding them back so we can do a bit
+more debugging without the deadline of the release being on us.
 
-So v4.19 is still failing for me ...
+thanks so much for letting me know!
 
-Test results for stable-v4.19:
-    11 builds:  11 pass, 0 fail
-    22 boots:   22 pass, 0 fail
-    32 tests:   30 pass, 2 fail
-
-Linux version:  4.19.99-rc3-g041f280e6a1a
-Boards tested:  tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-However, I am not seeing any issues with v4.14, so still not clear what
-is going on here.
-
-Cheers
-Jon
-
--- 
-nvpublic
+greg k-h
