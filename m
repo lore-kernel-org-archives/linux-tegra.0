@@ -1,53 +1,72 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] clk: tegra: Changes for v5.6-rc1
-Date: Mon, 27 Jan 2020 14:07:47 +0100
-Message-ID: <20200127130747.2287794-1-thierry.reding@gmail.com>
+From: Dejin Zheng <zhengdejin5@gmail.com>
+Subject: [PATCH] usb: phy: tegra: make the code simple by devm_platform_ioremap_resource()
+Date: Mon, 27 Jan 2020 21:58:41 +0800
+Message-ID: <20200127135841.17935-1-zhengdejin5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Dejin Zheng <zhengdejin5@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mike, Stephen,
+make the code simple by use devm_platform_ioremap_resource() function
+to replace platform_get_resource() and devm_ioremap().
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+Signed-off-by: Dejin Zheng <zhengdejin5@gmail.com>
+---
+ drivers/usb/phy/phy-tegra-usb.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.6-clk
-
-for you to fetch changes up to 41a1f096e94c9559b45ccce43fba94913ebc7313:
-
-  clk: tegra20/30: Explicitly set parent clock for Video Decoder (2020-01-10 15:50:43 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-clk: tegra: Changes for v5.6-rc1
-
-This contains some minor fixes and cleanups for Tegra clocks.
-
-----------------------------------------------------------------
-Dmitry Osipenko (3):
-      clk: tegra: divider: Check UART's divider enable-bit state on rate's recalculation
-      clk: tegra20/30: Don't pre-initialize displays parent clock
-      clk: tegra20/30: Explicitly set parent clock for Video Decoder
-
-Sowjanya Komatineni (1):
-      clk: tegra: clk-dfll: Remove call to pm_runtime_irq_safe()
-
-Stephen Warren (1):
-      clk: tegra: Mark fuse clock as critical
-
- drivers/clk/tegra/clk-dfll.c         | 3 +--
- drivers/clk/tegra/clk-divider.c      | 9 +++++++--
- drivers/clk/tegra/clk-tegra-periph.c | 6 +++++-
- drivers/clk/tegra/clk-tegra20.c      | 4 +---
- drivers/clk/tegra/clk-tegra30.c      | 4 +---
- 5 files changed, 15 insertions(+), 11 deletions(-)
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index ea7ef1dc0b42..8220bb4ce1ed 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -944,20 +944,12 @@ static int read_utmi_param(struct platform_device *pdev, const char *param,
+ static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
+ 			  struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	int err;
+ 	struct tegra_utmip_config *config;
+ 
+ 	tegra_phy->is_ulpi_phy = false;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (!res) {
+-		dev_err(&pdev->dev, "Failed to get UTMI pad regs\n");
+-		return  -ENXIO;
+-	}
+-
+-	tegra_phy->pad_regs = devm_ioremap(&pdev->dev, res->start,
+-		resource_size(res));
++	tegra_phy->pad_regs = devm_platform_ioremap_resource(pdev, 1);
+ 	if (!tegra_phy->pad_regs) {
+ 		dev_err(&pdev->dev, "Failed to remap UTMI pad regs\n");
+ 		return -ENOMEM;
+@@ -1054,7 +1046,6 @@ MODULE_DEVICE_TABLE(of, tegra_usb_phy_id_table);
+ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match;
+-	struct resource *res;
+ 	struct tegra_usb_phy *tegra_phy = NULL;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	enum usb_phy_interface phy_type;
+@@ -1071,14 +1062,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	}
+ 	tegra_phy->soc_config = match->data;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "Failed to get I/O memory\n");
+-		return  -ENXIO;
+-	}
+-
+-	tegra_phy->regs = devm_ioremap(&pdev->dev, res->start,
+-		resource_size(res));
++	tegra_phy->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (!tegra_phy->regs) {
+ 		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
+ 		return -ENOMEM;
+-- 
+2.25.0
