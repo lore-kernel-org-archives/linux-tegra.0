@@ -1,47 +1,70 @@
-From: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] usb: chipidea: tegra: fix hardlock with invalid dr mode
-Date: Sun, 26 Jan 2020 21:35:48 -0500
-Message-ID: <20200127023548.27107-1-pgwipeout@gmail.com>
+From: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
+ move_page_tables()
+Date: Sun, 26 Jan 2020 18:59:51 -0800
+Message-ID: <20200126185951.c9246349befcccce210a4ab8@linux-foundation.org>
+References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
+        <20200117232254.2792-4-richardw.yang@linux.intel.com>
+        <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <7147774a-14e9-4ff3-1548-4565f0d214d5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, aneesh.kumar-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org, kirill-oKw7cIdHH8eLwutG50LtGA@public.gmane.org, yang.shi-KPsoFbNs7GizrGE5bRqYAgC/G2K4zDHf@public.gmane.org, thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The ci_hdrc_tegra driver does not currently support dual role mode, but
-it does not explicitly prevent its use.
-Certain devices support dual role mode, but not automatic role switch.
-This can cause the device to lock up during initialization of the
-driver.
+On Sun, 26 Jan 2020 17:47:57 +0300 Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-Detect this state by checking for the extcon phandle when dual role mode
-is set to otg.
-If it doesn't exist request the driver to only enable manual role
-switching.
+> 18.01.2020 02:22, Wei Yang пишет:
+> > Use the general helper instead of do it by hand.
+> > 
+> > Signed-off-by: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> > ---
+> >  mm/mremap.c | 7 ++-----
+> >  1 file changed, 2 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/mm/mremap.c b/mm/mremap.c
+> > index c2af8ba4ba43..a258914f3ee1 100644
+> > --- a/mm/mremap.c
+> > +++ b/mm/mremap.c
+> > @@ -253,11 +253,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+> >  
+> >  	for (; old_addr < old_end; old_addr += extent, new_addr += extent) {
+> >  		cond_resched();
+> > -		next = (old_addr + PMD_SIZE) & PMD_MASK;
+> > -		/* even if next overflowed, extent below will be ok */
+> > +		next = pmd_addr_end(old_addr, old_end);
+> >  		extent = next - old_addr;
+> > -		if (extent > old_end - old_addr)
+> > -			extent = old_end - old_addr;
+> >  		old_pmd = get_old_pmd(vma->vm_mm, old_addr);
+> >  		if (!old_pmd)
+> >  			continue;
+> > @@ -301,7 +298,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+> >  
+> >  		if (pte_alloc(new_vma->vm_mm, new_pmd))
+> >  			break;
+> > -		next = (new_addr + PMD_SIZE) & PMD_MASK;
+> > +		next = pmd_addr_end(new_addr, new_addr + len);
+> >  		if (extent > next - new_addr)
+> >  			extent = next - new_addr;
+> >  		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
+> > 
+> 
+> Hello Wei,
+> 
+> Starting with next-20200122, I'm seeing the following in KMSG on NVIDIA
+> Tegra (ARM32):
+> 
+>   BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:190
+> 
+> and eventually kernel hangs.
+> 
+> Git's bisection points to this patch and reverting it helps. Please fix,
+> thanks in advance.
 
-Fixes: dfebb5f ("usb: chipidea: Add support for Tegra20/30/114/124")
-Signed-off-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/usb/chipidea/ci_hdrc_tegra.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-index 7455df0ede49..2f6f6ce3e8f5 100644
---- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-+++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-@@ -89,6 +89,13 @@ static int tegra_udc_probe(struct platform_device *pdev)
- 	udc->data.usb_phy = udc->phy;
- 	udc->data.capoffset = DEF_CAPOFFSET;
- 
-+	/* check the dual mode and warn about bad configurations */
-+	if (usb_get_dr_mode(&pdev->dev) == USB_DR_MODE_OTG &&
-+	   !of_property_read_bool(pdev->dev.of_node, "extcon")) {
-+		dev_warn(&pdev->dev, "no extcon registered, otg unavailable");
-+		udc->data.flags |= CI_HDRC_DUAL_ROLE_NOT_OTG;
-+	}
-+
- 	udc->dev = ci_hdrc_add_device(&pdev->dev, pdev->resource,
- 				      pdev->num_resources, &udc->data);
- 	if (IS_ERR(udc->dev)) {
--- 
-2.17.1
+Thanks.  I had these tagged for 5.7-rc1 anyway, so I'll drop all five
+patches.
