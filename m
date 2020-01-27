@@ -1,70 +1,68 @@
-From: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
- move_page_tables()
-Date: Sun, 26 Jan 2020 18:59:51 -0800
-Message-ID: <20200126185951.c9246349befcccce210a4ab8@linux-foundation.org>
-References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
-        <20200117232254.2792-4-richardw.yang@linux.intel.com>
-        <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH 7/9] ASoC: tegra: add Tegra210 based ADMAIF
+ driver
+Date: Mon, 27 Jan 2020 10:38:39 +0530
+Message-ID: <208e3f8b-75ca-9bb0-ad43-7489709fcae0@nvidia.com>
+References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
+ <1579530198-13431-8-git-send-email-spujar@nvidia.com>
+ <743d6d7d-f29c-191a-853b-414250ca38df@gmail.com>
+ <3759aa0b-9e56-0fb4-27b7-4f98898d4e22@nvidia.com>
+ <8a3259b7-6875-236a-b16c-cd8e023cc8b2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7147774a-14e9-4ff3-1548-4565f0d214d5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <8a3259b7-6875-236a-b16c-cd8e023cc8b2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, aneesh.kumar-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org, kirill-oKw7cIdHH8eLwutG50LtGA@public.gmane.org, yang.shi-KPsoFbNs7GizrGE5bRqYAgC/G2K4zDHf@public.gmane.org, thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, 26 Jan 2020 17:47:57 +0300 Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-> 18.01.2020 02:22, Wei Yang пишет:
-> > Use the general helper instead of do it by hand.
-> > 
-> > Signed-off-by: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> > ---
-> >  mm/mremap.c | 7 ++-----
-> >  1 file changed, 2 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/mm/mremap.c b/mm/mremap.c
-> > index c2af8ba4ba43..a258914f3ee1 100644
-> > --- a/mm/mremap.c
-> > +++ b/mm/mremap.c
-> > @@ -253,11 +253,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
-> >  
-> >  	for (; old_addr < old_end; old_addr += extent, new_addr += extent) {
-> >  		cond_resched();
-> > -		next = (old_addr + PMD_SIZE) & PMD_MASK;
-> > -		/* even if next overflowed, extent below will be ok */
-> > +		next = pmd_addr_end(old_addr, old_end);
-> >  		extent = next - old_addr;
-> > -		if (extent > old_end - old_addr)
-> > -			extent = old_end - old_addr;
-> >  		old_pmd = get_old_pmd(vma->vm_mm, old_addr);
-> >  		if (!old_pmd)
-> >  			continue;
-> > @@ -301,7 +298,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
-> >  
-> >  		if (pte_alloc(new_vma->vm_mm, new_pmd))
-> >  			break;
-> > -		next = (new_addr + PMD_SIZE) & PMD_MASK;
-> > +		next = pmd_addr_end(new_addr, new_addr + len);
-> >  		if (extent > next - new_addr)
-> >  			extent = next - new_addr;
-> >  		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
-> > 
-> 
-> Hello Wei,
-> 
-> Starting with next-20200122, I'm seeing the following in KMSG on NVIDIA
-> Tegra (ARM32):
-> 
->   BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:190
-> 
-> and eventually kernel hangs.
-> 
-> Git's bisection points to this patch and reverting it helps. Please fix,
-> thanks in advance.
 
-Thanks.  I had these tagged for 5.7-rc1 anyway, so I'll drop all five
-patches.
+On 1/24/2020 9:55 AM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 24.01.2020 06:27, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>> On 1/24/2020 6:58 AM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 20.01.2020 17:23, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> [snip]
+>>>> +static bool tegra_admaif_wr_reg(struct device *dev, unsigned int reg)
+>>>> +{
+>>>> +     struct tegra_admaif *admaif =3D dev_get_drvdata(dev);
+>>>> +     unsigned int ch_stride =3D TEGRA_ADMAIF_CHANNEL_REG_STRIDE;
+>>>> +     unsigned int num_ch =3D admaif->soc_data->num_ch;
+>>>> +     unsigned int rx_base =3D admaif->soc_data->rx_base;
+>>>> +     unsigned int tx_base =3D admaif->soc_data->tx_base;
+>>>> +     unsigned int global_base =3D admaif->soc_data->global_base;
+>>>> +     unsigned int reg_max =3D
+>>>> admaif->soc_data->regmap_conf->max_register;
+>>>> +     unsigned int rx_max =3D rx_base + (num_ch * ch_stride);
+>>>> +     unsigned int tx_max =3D tx_base + (num_ch * ch_stride);
+>>>> +
+>>>> +     if ((reg >=3D rx_base) && (reg < rx_max)) {
+>>> The braces are not needed around the comparisons because they precede
+>>> the AND. Same for all other similar occurrences in the code.
+>> While that is true, some prefer to use explicit braces to make it more
+>> readable.
+>> In the past I was told to use explicitly in such cases.
+> At least most of code in kernel (I've seen) doesn't have superfluous
+> parens (the curvy thingies actually should be the braces). Readability
+> is arguable in this case, I'm finding such code a bit more difficult to
+> read, although in some cases parens and spacing may help to read more
+> complex constructions.
+
+Yes this is subjective and depends on the individual reading the code. It i=
+s
+confusing every time, for the sender, about which guideline to follow.=20
+Resending
+the patch/series for only this reason may not be really necessary. Since=20
+I need
+to fix couple of issues in this series I may consider removing the=20
+explicit braces.
