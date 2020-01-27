@@ -1,44 +1,39 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: chipidea: tegra: fix hardlock with invalid dr mode
-Date: Mon, 27 Jan 2020 18:38:00 +0300
-Message-ID: <76f6d7b6-f4de-c2ae-ce6b-28847666c477@gmail.com>
-References: <20200127023548.27107-1-pgwipeout@gmail.com>
- <20200127071758.GD279449@kroah.com>
- <CAMdYzYqctkfqhHN0-WDvX9kKdXH-AVir193SpcrR_t3K=VN=0w@mail.gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v5.6-rc1
+Date: Mon, 27 Jan 2020 11:03:58 -0800
+Message-ID: <20200127190359.1E84B206D3@mail.kernel.org>
+References: <20200127130747.2287794-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMdYzYqctkfqhHN0-WDvX9kKdXH-AVir193SpcrR_t3K=VN=0w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20200127130747.2287794-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-27.01.2020 18:25, Peter Geis пишет:
-> On Mon, Jan 27, 2020 at 2:18 AM Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
->>
->> On Sun, Jan 26, 2020 at 09:35:48PM -0500, Peter Geis wrote:
->>> The ci_hdrc_tegra driver does not currently support dual role mode, but
->>> it does not explicitly prevent its use.
->>> Certain devices support dual role mode, but not automatic role switch.
->>> This can cause the device to lock up during initialization of the
->>> driver.
->>>
->>> Detect this state by checking for the extcon phandle when dual role mode
->>> is set to otg.
->>> If it doesn't exist request the driver to only enable manual role
->>> switching.
->>>
->>> Fixes: dfebb5f ("usb: chipidea: Add support for Tegra20/30/114/124")
->>
->> Please use 12 digits for kernel sha1 values, this should be:
->> Fixes: dfebb5f43a78 ("usb: chipidea: Add support for Tegra20/30/114/124")
-> 
-> Understood, thank you.
-> I will ensure that is the case in the future.
+Quoting Thierry Reding (2020-01-27 05:07:47)
+> Hi Mike, Stephen,
+>=20
+> The following changes since commit e42617b825f8073569da76dc4510bfa019b1c3=
+5a:
+>=20
+>   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
+5.6-clk
+>=20
+> for you to fetch changes up to 41a1f096e94c9559b45ccce43fba94913ebc7313:
+>=20
+>   clk: tegra20/30: Explicitly set parent clock for Video Decoder (2020-01=
+-10 15:50:43 +0100)
+>=20
+> Thanks,
+> Thierry
+>=20
+> ----------------------------------------------------------------
 
-Please also take a look at the kernel's scripts/checkpatch.pl, running
-'scripts/checkpatch.pl --strict path_to.patch' will help to catch such
-things.
+Thanks. Pulled into clk-next
