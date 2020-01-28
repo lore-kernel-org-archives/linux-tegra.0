@@ -1,104 +1,176 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v4 01/14] dmaengine: tegra-apb: Fix use-after-free
-Date: Tue, 28 Jan 2020 14:02:38 +0000
-Message-ID: <5bbe9e3e-a64f-53be-e7f6-63e36cbae77d@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 08/14] dmaengine: tegra-apb: Fix coding style problems
+Date: Tue, 28 Jan 2020 14:05:17 +0000
+Message-ID: <bab1eec0-8b1d-6005-e9eb-05e93da844aa@nvidia.com>
 References: <20200112173006.29863-1-digetx@gmail.com>
- <20200112173006.29863-2-digetx@gmail.com>
- <4c1b9e48-5468-0c03-2108-158ee814eea8@nvidia.com>
- <1327bb21-0364-da26-e6ed-ff6c19df03e6@gmail.com>
- <e39ef31d-4cff-838a-0fc1-73a39a8d6120@nvidia.com>
- <b0c85ca7-d8ac-5f9d-2c57-79543c1f9b5d@gmail.com>
+ <20200112173006.29863-9-digetx@gmail.com>
+ <844c4ace-d043-a908-823d-545b5b753008@nvidia.com>
+ <134adcfb-83fb-4bb7-986e-65217bc4f821@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b0c85ca7-d8ac-5f9d-2c57-79543c1f9b5d@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <134adcfb-83fb-4bb7-986e-65217bc4f821-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 16/01/2020 20:10, Dmitry Osipenko wrote:
-> 15.01.2020 12:00, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+On 16/01/2020 17:37, Dmitry Osipenko wrote:
+> 15.01.2020 12:49, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 >>
->> On 14/01/2020 20:33, Dmitry Osipenko wrote:
->>> 14.01.2020 18:09, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>
->>>> On 12/01/2020 17:29, Dmitry Osipenko wrote:
->>>>> I was doing some experiments with I2C and noticed that Tegra APB DMA
->>>>> driver crashes sometime after I2C DMA transfer termination. The crash
->>>>> happens because tegra_dma_terminate_all() bails out immediately if pe=
-nding
->>>>> list is empty, thus it doesn't release the half-completed descriptors
->>>>> which are getting re-used before ISR tasklet kicks-in.
->>>>
->>>> Can you elaborate a bit more on how these are getting re-used? What is
->>>> the sequence of events which results in the panic? I believe that this
->>>> was also reported in the past [0] and so I don't doubt there is an iss=
-ue
->>>> here, but would like to completely understand this.
->>>>
->>>> Thanks!
->>>> Jon
->>>>
->>>> [0] https://lore.kernel.org/patchwork/patch/675349/
->>>>
+>>
+>> On 12/01/2020 17:30, Dmitry Osipenko wrote:
+>>> This patch fixes few dozens of coding style problems reported by
+>>> checkpatch and prettifies code where makes sense.
 >>>
->>> In my case it happens in the touchscreen driver during of the
->>> touchscreen's interrupt handling (in a threaded IRQ handler) + CPU is
->>> under load and there is other interrupts activity. So what happens here
->>> is that the TS driver issues one I2C transfer, which fails with
->>> (apparently bogus) timeout (because DMA descriptor is completed and
->>> removed from the pending list, but tasklet not executed yet), and then
->>> TS immediately issues another I2C transfer that re-uses the
->>> yet-incompleted descriptor. That's my understanding.
+>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> ---
+>>>  drivers/dma/tegra20-apb-dma.c | 276 ++++++++++++++++++----------------
+>>>  1 file changed, 144 insertions(+), 132 deletions(-)
+>>>
+>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
+a.c
+>>> index dff21e80ffa4..7158bd3145c4 100644
+>>> --- a/drivers/dma/tegra20-apb-dma.c
+>>> +++ b/drivers/dma/tegra20-apb-dma.c
 >>
->> OK, but what is the exact sequence that it allowing it to re-use the
->> incompleted descriptor?
+>> ...
+>>
+>>> @@ -1003,20 +1014,23 @@ static void tegra_dma_prep_wcount(struct tegra_=
+dma_channel *tdc,
+>>>  		ch_regs->csr |=3D len_field;
+>>>  }
+>>> =20
+>>> -static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>>> -	struct dma_chan *dc, struct scatterlist *sgl, unsigned int sg_len,
+>>> -	enum dma_transfer_direction direction, unsigned long flags,
+>>> -	void *context)
+>>> +static struct dma_async_tx_descriptor *
+>>> +tegra_dma_prep_slave_sg(struct dma_chan *dc,
+>>> +			struct scatterlist *sgl,
+>>> +			unsigned int sg_len,
+>>> +			enum dma_transfer_direction direction,
+>>> +			unsigned long flags,
+>>> +			void *context)
+>>>  {
+>>>  	struct tegra_dma_channel *tdc =3D to_tegra_dma_chan(dc);
+>>> +	struct tegra_dma_sg_req *sg_req =3D NULL;
+>>> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
+>>> +	enum dma_slave_buswidth slave_bw;
+>>>  	struct tegra_dma_desc *dma_desc;
+>>> -	unsigned int i;
+>>> -	struct scatterlist *sg;
+>>> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
+>>>  	struct list_head req_list;
+>>> -	struct tegra_dma_sg_req  *sg_req =3D NULL;
+>>> -	u32 burst_size;
+>>> -	enum dma_slave_buswidth slave_bw;
+>>> +	struct scatterlist *sg;
+>>> +	unsigned int burst_size;
+>>> +	unsigned int i;
+>>
+>> This is not really consistent with the rest of the changes by having 'i'
+>> and 'burst_size' on separate lines.
 >=20
->    TDMA driver                      DMA Client
+> The goal wasn't to squash everything into a single line, but to make
+> code more readable. In this particular case the separated lines look
+> better to me.
 >=20
-> 1.
->                                     dmaengine_prep()
+>>> =20
+>>>  	if (!tdc->config_init) {
+>>>  		dev_err(tdc2dev(tdc), "DMA channel is not configured\n");
+>>> @@ -1028,7 +1042,7 @@ static struct dma_async_tx_descriptor *tegra_dma_=
+prep_slave_sg(
+>>>  	}
+>>> =20
+>>>  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
+>>> -				&burst_size, &slave_bw) < 0)
+>>> +			       &burst_size, &slave_bw) < 0)
+>>>  		return NULL;
+>>> =20
+>>>  	INIT_LIST_HEAD(&req_list);
+>>> @@ -1074,7 +1088,7 @@ static struct dma_async_tx_descriptor *tegra_dma_=
+prep_slave_sg(
+>>>  		len =3D sg_dma_len(sg);
+>>> =20
+>>>  		if ((len & 3) || (mem & 3) ||
+>>> -				(len > tdc->tdma->chip_data->max_dma_count)) {
+>>> +		    len > tdc->tdma->chip_data->max_dma_count) {
+>>>  			dev_err(tdc2dev(tdc),
+>>>  				"DMA length/memory address is not supported\n");
+>>>  			tegra_dma_desc_put(tdc, dma_desc);
+>>> @@ -1126,20 +1140,21 @@ static struct dma_async_tx_descriptor *tegra_dm=
+a_prep_slave_sg(
+>>>  	return &dma_desc->txd;
+>>>  }
+>>> =20
+>>> -static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+>>> -	struct dma_chan *dc, dma_addr_t buf_addr, size_t buf_len,
+>>> -	size_t period_len, enum dma_transfer_direction direction,
+>>> -	unsigned long flags)
+>>> +static struct dma_async_tx_descriptor *
+>>> +tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr,
+>>> +			  size_t buf_len,
+>>> +			  size_t period_len,
+>>> +			  enum dma_transfer_direction direction,
+>>> +			  unsigned long flags)
+>>>  {
+>>>  	struct tegra_dma_channel *tdc =3D to_tegra_dma_chan(dc);
+>>> -	struct tegra_dma_desc *dma_desc =3D NULL;
+>>>  	struct tegra_dma_sg_req *sg_req =3D NULL;
+>>> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
+>>> -	int len;
+>>> -	size_t remain_len;
+>>> -	dma_addr_t mem =3D buf_addr;
+>>> -	u32 burst_size;
+>>> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
+>>>  	enum dma_slave_buswidth slave_bw;
+>>> +	struct tegra_dma_desc *dma_desc;
+>>> +	dma_addr_t mem =3D buf_addr;
+>>> +	unsigned int burst_size;
+>>> +	size_t len, remain_len;
+>>> =20
+>>>  	if (!buf_len || !period_len) {
+>>>  		dev_err(tdc2dev(tdc), "Invalid buffer/period len\n");
+>>> @@ -1173,13 +1188,13 @@ static struct dma_async_tx_descriptor *tegra_dm=
+a_prep_dma_cyclic(
+>>> =20
+>>>  	len =3D period_len;
+>>>  	if ((len & 3) || (buf_addr & 3) ||
+>>> -			(len > tdc->tdma->chip_data->max_dma_count)) {
+>>> +	    len > tdc->tdma->chip_data->max_dma_count) {
+>>>  		dev_err(tdc2dev(tdc), "Req len/mem address is not correct\n");
+>>>  		return NULL;
+>>>  	}
+>>> =20
+>>>  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
+>>> -				&burst_size, &slave_bw) < 0)
+>>> +			       &burst_size, &slave_bw) < 0)
+>>>  		return NULL;
+>>> =20
+>>>  	ahb_seq =3D TEGRA_APBDMA_AHBSEQ_INTR_ENB;
+>>> @@ -1269,7 +1284,6 @@ static int tegra_dma_alloc_chan_resources(struct =
+dma_chan *dc)
+>>>  	int ret;
+>>> =20
+>>>  	dma_cookie_init(&tdc->dma_chan);
+>>> -	tdc->config_init =3D false;
+>>
+>> Why is this removed? Does not seem to belong in this patch.
 >=20
-> 2.
->    tegra_dma_desc_get()
->    dma_desc =3D kzalloc()
->    ...
->    tegra_dma_prep_slave_sg()
->    INIT_LIST_HEAD(&dma_desc->tx_list);
->    INIT_LIST_HEAD(&dma_desc->cb_node);
->    list_add_tail(sgreq->node,
->                  dma_desc->tx_list)
->=20
-> 3.
->                                     dma_async_issue_pending()
->=20
-> 4.
->    tegra_dma_tx_submit()
->    list_splice_tail_init(dma_desc->tx_list,
->                          tdc->pending_sg_req)
->=20
-> 5.
->    tegra_dma_isr()
->    ...
->    handle_once_dma_done()
->    ...
->    sgreq =3D list_first_entry(tdc->pending_sg_req)
->    list_del(sgreq->node);
->    ...
->    list_add_tail(dma_desc->cb_node,
->                  tdc->cb_desc);
->    list_add_tail(dma_desc->node,
->                  tdc->free_dma_desc);
+> Because initially, on driver's probe, the tdc->config_init is false for
+> all channels and then tegra_dma_free_chan_resources() also sets it to
+> false. Thus there is no need to re-initilize the already initialized
+> variable. It's not a very good coding style if variables are
+> unnecessarily initialized, you probably noticed that there are few other
+> cases of removing the unneeded initializations of local variables in
+> this patch.
 
-Isn't this the problem here, that we have placed this on the free list
-before we are actually done?
-
-It seems to me that there could still be a potential race condition
-between the ISR and the tasklet running.
+OK, but I don't really consider this coding-style and would prefer a
+separate patch for this.
 
 Jon
 
