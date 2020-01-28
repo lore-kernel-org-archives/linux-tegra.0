@@ -1,88 +1,89 @@
-From: Dejin Zheng <zhengdejin5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: phy: tegra: make the code simple by
- devm_platform_ioremap_resource()
-Date: Tue, 28 Jan 2020 13:06:46 +0800
-Message-ID: <20200128050356.GA21357@nuc8i5>
-References: <20200127135841.17935-1-zhengdejin5@gmail.com>
- <ebb395ec-89ef-12e9-b3a9-2fc35f764ee2@gmail.com>
+From: Mohan Kumar <mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ALSA: hda: Reset stream if DMA RUN bit not cleared
+Date: Tue, 28 Jan 2020 10:45:08 +0530
+Message-ID: <20200128051508.26064-1-mkumard@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <ebb395ec-89ef-12e9-b3a9-2fc35f764ee2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: tiwai-IBi9RG/b67k@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mohan Kumar <mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 10:47:36PM +0300, Dmitry Osipenko wrote:
-> 27.01.2020 16:58, Dejin Zheng пишет:
-> > make the code simple by use devm_platform_ioremap_resource() function
-> > to replace platform_get_resource() and devm_ioremap().
-> > 
-> > Signed-off-by: Dejin Zheng <zhengdejin5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> >  drivers/usb/phy/phy-tegra-usb.c | 20 ++------------------
-> >  1 file changed, 2 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-> > index ea7ef1dc0b42..8220bb4ce1ed 100644
-> > --- a/drivers/usb/phy/phy-tegra-usb.c
-> > +++ b/drivers/usb/phy/phy-tegra-usb.c
-> > @@ -944,20 +944,12 @@ static int read_utmi_param(struct platform_device *pdev, const char *param,
-> >  static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
-> >  			  struct platform_device *pdev)
-> >  {
-> > -	struct resource *res;
-> >  	int err;
-> >  	struct tegra_utmip_config *config;
-> >  
-> >  	tegra_phy->is_ulpi_phy = false;
-> >  
-> > -	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> > -	if (!res) {
-> > -		dev_err(&pdev->dev, "Failed to get UTMI pad regs\n");
-> > -		return  -ENXIO;
-> > -	}
-> > -
-> > -	tegra_phy->pad_regs = devm_ioremap(&pdev->dev, res->start,
-> > -		resource_size(res));
-> > +	tegra_phy->pad_regs = devm_platform_ioremap_resource(pdev, 1);
-> >  	if (!tegra_phy->pad_regs) {
-> >  		dev_err(&pdev->dev, "Failed to remap UTMI pad regs\n");
-> >  		return -ENOMEM;
-> > @@ -1054,7 +1046,6 @@ MODULE_DEVICE_TABLE(of, tegra_usb_phy_id_table);
-> >  static int tegra_usb_phy_probe(struct platform_device *pdev)
-> >  {
-> >  	const struct of_device_id *match;
-> > -	struct resource *res;
-> >  	struct tegra_usb_phy *tegra_phy = NULL;
-> >  	struct device_node *np = pdev->dev.of_node;
-> >  	enum usb_phy_interface phy_type;
-> > @@ -1071,14 +1062,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
-> >  	}
-> >  	tegra_phy->soc_config = match->data;
-> >  
-> > -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > -	if (!res) {
-> > -		dev_err(&pdev->dev, "Failed to get I/O memory\n");
-> > -		return  -ENXIO;
-> > -	}
-> > -
-> > -	tegra_phy->regs = devm_ioremap(&pdev->dev, res->start,
-> > -		resource_size(res));
-> > +	tegra_phy->regs = devm_platform_ioremap_resource(pdev, 0);
-> >  	if (!tegra_phy->regs) {
-> >  		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
-> >  		return -ENOMEM;
-> > 
-> 
-> Hello Dejin,
-> 
-> Unfortunately this is not a correct change because registers are shared
-> by both PHY and USB controllers on Tegra SoCs. The
-> devm_platform_ioremap_resource() can't be used here because it makes the
-> mapping exclusive for a single driver, while it should be shared.
+Tegra HDA has FIFO size which can hold upto 10 audio frames to support
+DVFS. When HDA DMA RUN bit is set to 0 to stop the stream, the DMA RUN
+bit will be cleared to 0 only after transferring all the remaining audio
+frames queued up in the fifo. This is not in sync with spec which states
+the controller will stop transmitting(output) in the beginning of the
+next frame for the relevant stream.
 
-Dmitry, Thanks a lot for your comment! and abandon this commit.
+The above behavior with Tegra HDA was resulting in machine check error
+during the system suspend flow with active audio playback with below kernel
+error logs.
+[ 33.524583] mc-err: [mcerr] (hda) csr_hdar: EMEM address decode error
+[ 33.531088] mc-err: [mcerr] status = 0x20000015; addr = 0x00000000
+[ 33.537431] mc-err: [mcerr] secure: no, access-type: read, SMMU fault: none
+
+This was due to the fifo has more than one audio frame when the DMA
+RUN bit is set to 0 during system suspend flow and the timeout handling in
+snd_hdac_stream_sync() was not designed to handle this scenario. So the
+DMA will continue running even after timeout hit until all remaining
+audio frames in the fifo are transferred, but the suspend flow will try
+to reset the controller and turn off the hda clocks without the knowledge
+of the DMA is still running and could result in mc-err.
+
+The above issue can be resolved by doing stream reset with the help of
+snd_hdac_stream_reset() which would ensure the DMA RUN bit is cleared
+if the timeout was hit in snd_hdac_stream_sync().
+
+Signed-off-by: Mohan Kumar <mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ sound/hda/hdac_stream.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
+
+diff --git a/sound/hda/hdac_stream.c b/sound/hda/hdac_stream.c
+index 682ed39f79b0..890ff1b7a878 100644
+--- a/sound/hda/hdac_stream.c
++++ b/sound/hda/hdac_stream.c
+@@ -629,20 +629,27 @@ void snd_hdac_stream_sync(struct hdac_stream *azx_dev, bool start,
+ 		nwait = 0;
+ 		i = 0;
+ 		list_for_each_entry(s, &bus->stream_list, list) {
+-			if (streams & (1 << i)) {
+-				if (start) {
+-					/* check FIFO gets ready */
+-					if (!(snd_hdac_stream_readb(s, SD_STS) &
+-					      SD_STS_FIFO_READY))
+-						nwait++;
+-				} else {
+-					/* check RUN bit is cleared */
+-					if (snd_hdac_stream_readb(s, SD_CTL) &
+-					    SD_CTL_DMA_START)
+-						nwait++;
++			if (!(streams & (1 << i++)))
++				continue;
++
++			if (start) {
++				/* check FIFO gets ready */
++				if (!(snd_hdac_stream_readb(s, SD_STS) &
++				      SD_STS_FIFO_READY))
++					nwait++;
++			} else {
++				/* check RUN bit is cleared */
++				if (snd_hdac_stream_readb(s, SD_CTL) &
++				    SD_CTL_DMA_START) {
++					nwait++;
++					/*
++					 * Perform stream reset if DMA RUN
++					 * bit not cleared within given timeout
++					 */
++					if (timeout == 1)
++						snd_hdac_stream_reset(s);
+ 				}
+ 			}
+-			i++;
+ 		}
+ 		if (!nwait)
+ 			break;
+-- 
+2.17.1
