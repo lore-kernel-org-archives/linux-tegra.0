@@ -1,60 +1,69 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Patch V3 06/18] phy: tegra: xusb: Add set_mode support for USB
- 2 phy on Tegra210
-Date: Tue, 28 Jan 2020 18:41:49 +0100
-Message-ID: <20200128174149.GD2293590@ulmo>
-References: <1577704195-2535-1-git-send-email-nkristam@nvidia.com>
- <1577704195-2535-7-git-send-email-nkristam@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
+ 24bit and 32bit samples
+Date: Tue, 28 Jan 2020 20:42:43 +0300
+Message-ID: <047c8caa-e715-5295-9794-67ff3e10cea2@gmail.com>
+References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
+ <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+ <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
+ <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
+ <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
+ <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
+ <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
+ <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
+ <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
+ <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
+ <20200128121315.GD4689@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="8w3uRX/HFJGApMzv"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1577704195-2535-7-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200128121315.GD4689-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+28.01.2020 15:13, Mark Brown пишет:
+> On Mon, Jan 27, 2020 at 10:20:25PM +0300, Dmitry Osipenko wrote:
+>> 24.01.2020 19:50, Jon Hunter пишет:
+> 
+>>>                 .rates = SNDRV_PCM_RATE_8000_96000,
+>>>                 .formats = SNDRV_PCM_FMTBIT_S32_LE |
+>>> -                          SNDRV_PCM_FMTBIT_S24_LE |
+>>> +                          SNDRV_PCM_FMTBIT_S24_3LE |
+> 
+>> It should solve the problem in my particular case, but I'm not sure that
+>> the solution is correct.
+> 
+> If the format implemented by the driver is S24_3LE the driver should
+> advertise S24_3LE.
 
---8w3uRX/HFJGApMzv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It should be S24_LE, but seems we still don't know for sure.
 
-On Mon, Dec 30, 2019 at 04:39:43PM +0530, Nagarjuna Kristam wrote:
-> Add support for set_mode on USB 2 phy. This allow XUSB host/device mode
-> drivers to configure the hardware to corresponding modes.
->=20
-> Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V2-V3:
->  - No changes in this version
-> ---
->  drivers/phy/tegra/xusb-tegra210.c | 126 ++++++++++++++++++++++++++++++--=
-------
->  1 file changed, 99 insertions(+), 27 deletions(-)
+>> The v5.5 kernel is released now with the broken audio and apparently
+>> getting 24bit to work won't be trivial (if possible at all). Ben, could
+>> you please send a patch to fix v5.5 by removing the S24 support
+>> advertisement from the driver?
+> 
+> Why is that the best fix rather than just advertising the format
+> implemented by the driver?
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The currently supported format that is known to work well is S16_LE.
 
---8w3uRX/HFJGApMzv
-Content-Type: application/pgp-signature; name="signature.asc"
+I'm suggesting to drop the S24_LE and S32_LE that were added by the
+applied patches simply because this series wasn't tested properly before
+it was sent out and turned out that it doesn't work well.
 
------BEGIN PGP SIGNATURE-----
+> I really don't understand why this is all taking so long, this thread
+> just seems to be going round in interminable circles long after it
+> looked like the issue was understood.  I have to admit I've not read
+> every single message in the thread but it's difficult to see why it
+> doesn't seem to be making any progress.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4wcl0ACgkQ3SOs138+
-s6Gzdw//T0TzStcx4Ls9rs7glP6lCDnKHC7MT3T3R3bCcl+5lfRhw57519KSLJ08
-tnZN7R5VikD552BdU4rx7Az5Xc2WyMD75FC46BlJaYB5J2+EBep405gs3chsT5c6
-a0BLT1tibvdeO1iE2Bkf4EaP3k2Mh4vkZ+mDeHaxMtsYARi80asTTnFZ9S43YUh9
-EmVZXguUi+Nc9qbPpCGabyCxzBUDU+uvi2itwVL8pk+STjiLmfV0LAlIxycBmw77
-CEaRP7xEy4f9QjibvRs45UmgkVFZybvQoOi3M2Rs3Katzdsl1vgXlQP1yIvhaT6P
-r/eUNQSx2Jt1e8FIjDEdK7LPmJvfRV2sqbPTYK1o281dvSi8ip8bQm28WT02fdnz
-OvSG/cub4k7mk4XIP3MQliz3pIsT31AUPWCJ3Cx4pU2+Duu65oy2JfKQ2Le0qI+l
-oYYS/oO7cxBlVVaFnFPKXWNd8HbRyjbmlMWPTXgXWluxaDqDEDBDy+Q7Eqr/nxOV
-1qAEFwFlPve6s6Vz/HW2wiOiaBUS206WsqodwH+ymGD197bwagDpAKy4a4mpNJUS
-4Dg7xkVHpLePFMTSRsM2OcJ2y7zEdNajimnwtrcPtTUc4PhG0uijp4Ple52t1moT
-WWRSMfNRkUDBrb4V7ftmJg7/HTuCCge154ywzlzeFPQrWeDZjvE=
-=CMq6
------END PGP SIGNATURE-----
+Ben was trying to make a fix for the introduced problem, but it's not
+easy as we see now.
 
---8w3uRX/HFJGApMzv--
+Perhaps the best solution should be to revert all of the three applied
+patches and try again later on, once all current problems will be resolved.
