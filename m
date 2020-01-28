@@ -1,69 +1,161 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
- 24bit and 32bit samples
-Date: Tue, 28 Jan 2020 20:42:43 +0300
-Message-ID: <047c8caa-e715-5295-9794-67ff3e10cea2@gmail.com>
-References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
- <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
- <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
- <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
- <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
- <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
- <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
- <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
- <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
- <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
- <20200128121315.GD4689@sirena.org.uk>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Patch V3 07/18] phy: tegra: xusb: Add set_mode support for utmi
+ phy on Tegra186
+Date: Tue, 28 Jan 2020 18:45:06 +0100
+Message-ID: <20200128174506.GE2293590@ulmo>
+References: <1577704195-2535-1-git-send-email-nkristam@nvidia.com>
+ <1577704195-2535-8-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200128121315.GD4689-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="r7U+bLA8boMOj+mD"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1577704195-2535-8-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-28.01.2020 15:13, Mark Brown пишет:
-> On Mon, Jan 27, 2020 at 10:20:25PM +0300, Dmitry Osipenko wrote:
->> 24.01.2020 19:50, Jon Hunter пишет:
-> 
->>>                 .rates = SNDRV_PCM_RATE_8000_96000,
->>>                 .formats = SNDRV_PCM_FMTBIT_S32_LE |
->>> -                          SNDRV_PCM_FMTBIT_S24_LE |
->>> +                          SNDRV_PCM_FMTBIT_S24_3LE |
-> 
->> It should solve the problem in my particular case, but I'm not sure that
->> the solution is correct.
-> 
-> If the format implemented by the driver is S24_3LE the driver should
-> advertise S24_3LE.
 
-It should be S24_LE, but seems we still don't know for sure.
+--r7U+bLA8boMOj+mD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> The v5.5 kernel is released now with the broken audio and apparently
->> getting 24bit to work won't be trivial (if possible at all). Ben, could
->> you please send a patch to fix v5.5 by removing the S24 support
->> advertisement from the driver?
-> 
-> Why is that the best fix rather than just advertising the format
-> implemented by the driver?
+On Mon, Dec 30, 2019 at 04:39:44PM +0530, Nagarjuna Kristam wrote:
+> Add support for set_mode on utmi phy. This allow XUSB host/device mode
+> drivers to configure the hardware to corresponding modes.
 
-The currently supported format that is known to work well is S16_LE.
+"utmi" -> "UTMI" in the subject and the commit message.
 
-I'm suggesting to drop the S24_LE and S32_LE that were added by the
-applied patches simply because this series wasn't tested properly before
-it was sent out and turned out that it doesn't work well.
+>=20
+> Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> V2-V3:
+>  - No changes in this version
+> ---
+>  drivers/phy/tegra/xusb-tegra186.c | 109 ++++++++++++++++++++++++++++++--=
+------
+>  1 file changed, 87 insertions(+), 22 deletions(-)
+>=20
+> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-t=
+egra186.c
+> index 84c2739..9a45160 100644
+> --- a/drivers/phy/tegra/xusb-tegra186.c
+> +++ b/drivers/phy/tegra/xusb-tegra186.c
+> @@ -301,6 +301,92 @@ static void tegra_phy_xusb_utmi_pad_power_down(struc=
+t phy *phy)
+>  	tegra186_utmi_bias_pad_power_off(padctl);
+>  }
+> =20
+> +static int tegra186_xusb_padctl_vbus_override(struct tegra_xusb_padctl *=
+padctl,
+> +					       bool status)
+> +{
+> +	u32 value;
+> +
+> +	dev_dbg(padctl->dev, "%s vbus override\n", status ? "set" : "clear");
+> +
+> +	value =3D padctl_readl(padctl, USB2_VBUS_ID);
+> +
+> +	if (status) {
+> +		value |=3D VBUS_OVERRIDE;
+> +		value &=3D ~ID_OVERRIDE(~0);
+> +		value |=3D ID_OVERRIDE_FLOATING;
+> +	} else {
+> +		value &=3D ~VBUS_OVERRIDE;
+> +	}
+> +
+> +	padctl_writel(padctl, value, USB2_VBUS_ID);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra186_xusb_padctl_id_override(struct tegra_xusb_padctl *pa=
+dctl,
+> +					    bool status)
+> +{
+> +	u32 value;
+> +
+> +	dev_dbg(padctl->dev, "%s id override\n", status ? "set" : "clear");
+> +
+> +	value =3D padctl_readl(padctl, USB2_VBUS_ID);
+> +
+> +	if (status) {
+> +		if (value & VBUS_OVERRIDE) {
+> +			value &=3D ~VBUS_OVERRIDE;
+> +			padctl_writel(padctl, value, USB2_VBUS_ID);
+> +			usleep_range(1000, 2000);
+> +
+> +			value =3D padctl_readl(padctl, USB2_VBUS_ID);
+> +		}
+> +
+> +		value &=3D ~ID_OVERRIDE(~0);
+> +		value |=3D ID_OVERRIDE_GROUNDED;
+> +	} else {
+> +		value &=3D ~ID_OVERRIDE(~0);
+> +		value |=3D ID_OVERRIDE_FLOATING;
+> +	}
+> +
+> +	padctl_writel(padctl, value, USB2_VBUS_ID);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra186_utmi_phy_set_mode(struct phy *phy, enum phy_mode mod=
+e,
+> +				      int submode)
+> +{
+> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
+> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
+> +	struct tegra_xusb_usb2_port *port =3D tegra_xusb_find_usb2_port(padctl,
+> +								lane->index);
+> +	int err =3D 0;
+> +
+> +	mutex_lock(&padctl->lock);
+> +
+> +	dev_dbg(&port->base.dev, "%s: mode %d", __func__, mode);
+> +
+> +	if (mode =3D=3D PHY_MODE_USB_OTG) {
+> +		if (submode =3D=3D USB_ROLE_HOST) {
+> +			tegra186_xusb_padctl_id_override(padctl, true);
+> +
+> +			err =3D regulator_enable(port->supply);
+> +		} else if (submode =3D=3D USB_ROLE_DEVICE) {
+> +			tegra186_xusb_padctl_vbus_override(padctl, true);
+> +		} else if (submode =3D=3D USB_ROLE_NONE) {
+> +			if (regulator_is_enabled(port->supply))
 
-> I really don't understand why this is all taking so long, this thread
-> just seems to be going round in interminable circles long after it
-> looked like the issue was understood.  I have to admit I've not read
-> every single message in the thread but it's difficult to see why it
-> doesn't seem to be making any progress.
+I vaguely recall that we discussed this before, but I don't recall. Why
+do we need to check that the regulator is enabled? Regulators are
+reference-counted, so as long as the reference count is balanced, there
+should be no need to check for this.
 
-Ben was trying to make a fix for the introduced problem, but it's not
-easy as we see now.
+If there's really no way to avoid this check, perhaps add a comment that
+points out exactly why this is needed?
 
-Perhaps the best solution should be to revert all of the three applied
-patches and try again later on, once all current problems will be resolved.
+With that fixed:
+
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--r7U+bLA8boMOj+mD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4wcyIACgkQ3SOs138+
+s6E37Q//bbam3CY/x1HTAfm1BwM7131zZzp7TC9NqqFuDL7ie5bJ+EZ/JaEeZTwp
+4gfAOPTtzGO3zMFUh8pBCwGuNiUpJtwQMgddekFWeQqeo4R1ssWOSOvYrnVVIt+N
+vhcG29TTUQ0EHGUwnJbkB8AG811QauUGXgjA+mabg7fUt91/W9T4gbsgeXCyVtfg
+UTjDjhy1Anx8dMaMWrEygse2tnXpXOCZ23YJVr6r3ssxy5+YzP4D81xuhkMLnf9Y
+6SSnTgvVwRKVbTeTydl1RlKmvEDJf6DqgpcORh4HGouCFwZL96pK1witeJAXcpjj
+3xPH1l5K4VSEWM+c1UQR6UXyHajv6FCmk5By2uoRscrcsObp2JxoEMO/Ofj60kpx
+7HChBDhGu2Tg/m3w3tLoZg/DQDVvn+gVwaoqcPSvZC7/fklKB3tXMHkSZOj4qFmp
+y4j1EkdzRPhN4cvFl+bRUYk0/dqlOr48SpiZvo5OqxVV/bJDcdl1qKNViw6hSVUh
+Ezs77PGwD1xKmur6Mge4qiUVvxfECmKcsqa/Bzmn/DgCTpFDSwuDx4Ehqkq19nI+
+dKcpPDIA8WMPXwLagQCTSedosaTE5Nxkgw9IWrnUJuAgZr7dPopEzcwAG19mMqun
+8po9CavfSDm4hesW1+T1BK70alG1ykujHWSUTUjVBD2pwYeeCas=
+=ILly
+-----END PGP SIGNATURE-----
+
+--r7U+bLA8boMOj+mD--
