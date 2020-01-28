@@ -1,80 +1,125 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
- 24bit and 32bit samples
-Date: Tue, 28 Jan 2020 15:26:32 +0000
-Message-ID: <20200128152632.GF4689@sirena.org.uk>
-References: <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
- <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
- <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
- <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
- <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
- <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
- <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
- <1aa6a4bf-10ea-001d-2d35-44494d9554f8@gmail.com>
- <62cea895-c1f1-a833-b63c-050642bb8a79@codethink.co.uk>
- <d6bb92e2-16ba-3c00-2f07-e741ecaa5ec8@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Regression 5.5-rc1] Extremely low GPU performance on NVIDIA
+ Tegra20/30
+Date: Tue, 28 Jan 2020 18:43:36 +0300
+Message-ID: <8b1a4006-d680-e4a7-dc91-a746c30681e4@gmail.com>
+References: <a2c9eb65-c600-bf49-2c32-bddf7b44f784@gmail.com>
+ <20191213151045.GB222809@ulmo>
+ <d03876b8-b0d1-850b-7ae8-a61302e23843@gmail.com>
+ <2f5c6fda-adf9-c6c3-7601-fa912813ce1f@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5Mfx4RzfBqgnTE/w"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <d6bb92e2-16ba-3c00-2f07-e741ecaa5ec8-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <2f5c6fda-adf9-c6c3-7601-fa912813ce1f-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+20.01.2020 05:53, Dmitry Osipenko пишет:
+> 13.12.2019 18:35, Dmitry Osipenko пишет:
+>> 13.12.2019 18:10, Thierry Reding пишет:
+>>> On Fri, Dec 13, 2019 at 12:25:33AM +0300, Dmitry Osipenko wrote:
+>>>> Hello Thierry,
+>>>>
+>>>> Commit [1] introduced a severe GPU performance regression on Tegra20 and
+>>>> Tegra30 using.
+>>>>
+>>>> [1]
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.5-rc1&id=fa6661b7aa0b52073681b0d26742650c8cbd30f3
+>>>>
+>>>> Interestingly the performance is okay on Tegra30 if
+>>>> CONFIG_TEGRA_HOST1X_FIREWALL=n, but that doesn't make difference for
+>>>> Tegra20.
+>>>>
+>>>> I was telling you about this problem on the #tegra IRC sometime ago and
+>>>> you asked to report it in a trackable form, so finally here it is.
+>>>>
+>>>> You could reproduce the problem by running [2] like this
+>>>> `grate/texture-filter -f -s` which should produce over 100 FPS for 720p
+>>>> display resolution and currently it's ~11 FPS.
+>>>>
+>>>> [2]
+>>>> https://github.com/grate-driver/grate/blob/master/tests/grate/texture-filter.c
+>>>>
+>>>> Previously I was seeing some memory errors coming from Host1x DMA, but
+>>>> don't see any errors at all right now.
+>>>>
+>>>> I don't see anything done horribly wrong in the offending commit.
+>>>>
+>>>> Unfortunately I couldn't dedicate enough time to sit down and debug the
+>>>> problem thoroughly yet. Please let me know if you'll find a solution,
+>>>> I'll be happy to test it. Thanks in advance!
+>>>
+>>> I suspect that the problem here is that we're now using the DMA API,
+>>> which causes the 32-bit ARM DMA/IOMMU glue to be used. I vaguely recall
+>>> that that code doesn't coalesce entries in the SG table, so we may end
+>>> up calling iommu_map() a lot of times, and miss out on much of the
+>>> advantages that the ->iotlb_sync_map() gives us on Tegra20.
+>>>
+>>> At the same time dma_map_sg() will flush caches, which we didn't do
+>>> before. This we should be able to improve by passing the attribute
+>>> DMA_ATTR_SKIP_CPU_SYNC to dma_map_sg() when we know that the cache
+>>> maintenance isn't needed.
+>>>
+>>> And while thinking about it, one other difference is that with the DMA
+>>> API we actually map/unmap the buffers for every submission. This is
+>>> because the DMA API semantics require that buffers be mapped/unmapped
+>>> every time you use them. Previously we would basically only map each
+>>> buffer once (at allocation time) and only have to deal with cache
+>>> maintenance, so the overhead per submission was drastically lower.
+>>>
+>>> If DMA_ATTR_SKIP_CPU_SYNC doesn't give us enough of an improvement, we
+>>> may want to restore explicit IOMMU usage, at least on anything prior to
+>>> Tegra124 where we're unlikely to ever use different IOMMU domains anyway
+>>> (because they are such a scarce resource).
+>>
+>> Tegra20 doesn't use IOMMU in a vanilla upstream kernel (yet), so I don't
+>> think that it's the root of the problem. Disabling IOMMU for Tegra30
+>> also didn't help (IIRC).
+>>
+>> The offending patch shouldn't change anything in regards to the DMA API,
+>> if I'm not missing something. Strange..
+>>
+>> Please keep me up-to-date!
+>>
+> 
+> Hello Thierry,
+> 
+> I took another look at the problem and here what was found:
+> 
+> 1) The "Optionally attach clients to the IOMMU" patch is wrong because:
+> 
+>     1. host1x_drm_probe() is invoked *before* any of the
+>        host1x_client_iommu_attach() happens, so there is no way
+>        on earth the 'use_explicit_iommu' could ever be true.
+> 
+>     2. Not attaching DRM clients to IOMMU if HOST1x isn't
+>        attached is wrong because it never attached in the case
+>        of CONFIG_TEGRA_HOST1X_FIREWALL=y [1] and this also
+>        makes no sense for T20/30 that do not support LPAE.
+> 
+> [1]
+> https://elixir.bootlin.com/linux/v5.5-rc6/source/drivers/gpu/host1x/dev.c#L205
+> 
+> 2) Because of the above problems, the DRM clients are erroneously not
+> getting attached to IOMMU at all and thus CMA is getting used for the BO
+> allocations. Here comes the problems introduced by the "gpu: host1x:
+> Support DMA mapping of buffers" patch, which makes DMA API to perform
+> CPU cache maintenance on each job submission and apparently this is
+> super bad for performance. This also makes no sense in comparison to the
+> case of enabled IOMMU, where cache maintenance isn't performed at all
+> (like it should be).
+> 
+> Please let me know if you're going to fix the problems or if you'd
+> prefer me to create the patches.
+> 
+> Here is a draft of the fix for #2, it doesn't cover case of imported
+> buffers (which should be statically mapped, IIUC):
+...
 
---5Mfx4RzfBqgnTE/w
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 28, 2020 at 01:19:17PM +0000, Jon Hunter wrote:
-> On 28/01/2020 08:59, Ben Dooks wrote:
-> > On 27/01/2020 19:23, Dmitry Osipenko wrote:
-> >> 27.01.2020 22:20, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>> 24.01.2020 19:50, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>>
-> >>>> On 23/01/2020 19:38, Ben Dooks wrote:
-> >>>>> On 07/01/2020 01:39, Dmitry Osipenko wrote:
-> >>>>>> 06.01.2020 22:00, Ben Dooks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>>>>> On 05/01/2020 10:53, Ben Dooks wrote:
-
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
-
-> >> I also suspect that s32 may need some extra patches and thus could be
-> >> worthwhile to stop advertising it as well.
-
-> > As far as I am aware that works and we can hit the audio rates for it.
-
-> I ran a test on Tegra124 Jetson-TK1 and 24-bit playback seems to work as
-> Ben has indicated. So I don't think it is broken.
-
-> Can you try Ben's testcase on Tegra30 (ie. generate a tone using sox and
-> use aplay to play)?
-
-Another test application that's quite useful for this sort of stuff is
-speaker-test, it generates audio data directly in arbatrary formats and
-it's part of alsa-utils so if you've got aplay and friends you may
-already have it already installed.
-
---5Mfx4RzfBqgnTE/w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4wUqcACgkQJNaLcl1U
-h9B6zwf/bk3qZHsSK2RLEgZKCG2/3BpReS1NgtJgzDzuTw0u3kGyEKE9Q0j3VCfH
-B9C4tiFnJuE2wA8p/AvUQJgN3QfJ0HRkNSJJ2hmYYVoIb8TfSSo/YGOjw/heTKNH
-ZS+BixlzZq9j8NueNO/IvR5iC6l1llkzVk/qWmVKL5nJ2KQXbQ8vc4PA/8kZONgj
-ANqDiMzgz/Blsh6HS0sZG9eq2i631rqNdtHUo53ik2KpAF860XiUWtWirTqwpBZ3
-ID1PjemWQ1qcivZql2rhDT2ZiQ7gcqSk/oZT+dZnhwUIDXRYtrv52tp0gLRcME2w
-ljW6U5CNV6GT5egrDAU5mKLeG0J8lg==
-=sDvO
------END PGP SIGNATURE-----
-
---5Mfx4RzfBqgnTE/w--
+The v5.5 is released now with the unusable GPU driver. Thierry, could
+please let me know if you're planning to do something about it? Should I
+help?
