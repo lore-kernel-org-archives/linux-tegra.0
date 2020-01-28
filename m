@@ -1,113 +1,76 @@
-From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/9] add ASoC components for AHUB
-Date: Tue, 28 Jan 2020 16:19:49 +0530
-Message-ID: <81db77b5-a65a-eafe-d42d-947c38ea1d3c@nvidia.com>
-References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
+ 24bit and 32bit samples
+Date: Tue, 28 Jan 2020 12:13:15 +0000
+Message-ID: <20200128121315.GD4689@sirena.org.uk>
+References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
+ <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+ <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
+ <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
+ <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
+ <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
+ <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
+ <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
+ <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
+ <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1579530198-13431-1-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-GB
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GpGaEY17fSl8rd50"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1b3c2af4-510e-306c-749a-efffc994b20a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
+--GpGaEY17fSl8rd50
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 1/20/2020 7:53 PM, Sameer Pujar wrote:
-> Overview
-> ========
-> The Audio Hub (AHUB) is part of the Audio Processing Engine (APE) which
-> comprises a collection of hardware accelerators for audio pre-processing
-> and post-processing. It also includes a programmable full crossbar for
-> routing audio data across these accelerators.
->
-> This series exposes some of these below mentioned HW devices as ASoC
-> components for Tegra platforms from Tegra210 onwards.
->   * ADMAIF : The interface between ADMA and AHUB
->   * XBAR   : Crossbar for routing audio samples across various modules
->   * I2S    : Inter-IC Sound Controller
->   * DMIC   : Digital Microphone
->   * DSPK   : Digital Speaker
->
-> Following is the summary of current series.
->   1. Add YAML DT binding documentation for above mentioned modules.
->   2. ACIF programming is same for Tegra generations and hence it is moved
->      to a common file.
->   3. Add ASoC driver components for each of the above modules.
->   4. Add DT entries for above components for Tegra210, Tegra186 and
->      Tegra194.
->   5. Enable these components for Jetson-Tx1, Jetson-Tx2 and
->      Jetson-Xavier.
->
-> Machine driver series will be sent separately.
->
-> Sameer Pujar (9):
->    dt-bindings: sound: tegra: add DT binding for AHUB
->    ASoC: tegra: add support for CIF programming
->    ASoC: tegra: add Tegra210 based DMIC driver
->    ASoC: tegra: add Tegra210 based I2S driver
->    ASoC: tegra: add Tegra210 based AHUB driver
->    ASoC: tegra: add Tegra186 based DSPK driver
->    ASoC: tegra: add Tegra210 based ADMAIF driver
->    arm64: tegra: add AHUB components for few Tegra chips
->    arm64: tegra: enable AHUB modules for few Tegra chips
+On Mon, Jan 27, 2020 at 10:20:25PM +0300, Dmitry Osipenko wrote:
+> 24.01.2020 19:50, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-If any comments on the series, please let me know.
-I am planning to publish v2 based on the discussion we had in v1.
+> >                 .rates =3D SNDRV_PCM_RATE_8000_96000,
+> >                 .formats =3D SNDRV_PCM_FMTBIT_S32_LE |
+> > -                          SNDRV_PCM_FMTBIT_S24_LE |
+> > +                          SNDRV_PCM_FMTBIT_S24_3LE |
 
-Thanks,
-Sameer.
->
->   .../bindings/sound/nvidia,tegra186-dspk.yaml       | 105 +++
->   .../bindings/sound/nvidia,tegra210-admaif.yaml     | 165 ++++
->   .../bindings/sound/nvidia,tegra210-ahub.yaml       | 130 +++
->   .../bindings/sound/nvidia,tegra210-dmic.yaml       | 105 +++
->   .../bindings/sound/nvidia,tegra210-i2s.yaml        | 112 +++
->   arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  48 ++
->   arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 231 ++++-
->   arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |  36 +
->   arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 239 +++++-
->   arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |  40 +
->   arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 145 ++++
->   sound/soc/tegra/Kconfig                            |  56 ++
->   sound/soc/tegra/Makefile                           |  12 +
->   sound/soc/tegra/tegra186_dspk.c                    | 516 +++++++++++
->   sound/soc/tegra/tegra186_dspk.h                    |  73 ++
->   sound/soc/tegra/tegra210_admaif.c                  | 896 ++++++++++++++++++++
->   sound/soc/tegra/tegra210_admaif.h                  | 164 ++++
->   sound/soc/tegra/tegra210_ahub.c                    | 667 +++++++++++++++
->   sound/soc/tegra/tegra210_ahub.h                    | 125 +++
->   sound/soc/tegra/tegra210_dmic.c                    | 522 ++++++++++++
->   sound/soc/tegra/tegra210_dmic.h                    |  85 ++
->   sound/soc/tegra/tegra210_i2s.c                     | 941 +++++++++++++++++++++
->   sound/soc/tegra/tegra210_i2s.h                     | 132 +++
->   sound/soc/tegra/tegra30_ahub.c                     |  94 +-
->   sound/soc/tegra/tegra30_ahub.h                     | 129 ---
->   sound/soc/tegra/tegra30_i2s.c                      |  35 +-
->   sound/soc/tegra/tegra30_i2s.h                      |   7 -
->   sound/soc/tegra/tegra_cif.c                        |  34 +
->   sound/soc/tegra/tegra_cif.h                        |  50 ++
->   sound/soc/tegra/tegra_pcm.c                        | 224 ++++-
->   sound/soc/tegra/tegra_pcm.h                        |  23 +-
->   31 files changed, 5897 insertions(+), 244 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
->   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
->   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
->   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
->   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
->   create mode 100644 sound/soc/tegra/tegra186_dspk.c
->   create mode 100644 sound/soc/tegra/tegra186_dspk.h
->   create mode 100644 sound/soc/tegra/tegra210_admaif.c
->   create mode 100644 sound/soc/tegra/tegra210_admaif.h
->   create mode 100644 sound/soc/tegra/tegra210_ahub.c
->   create mode 100644 sound/soc/tegra/tegra210_ahub.h
->   create mode 100644 sound/soc/tegra/tegra210_dmic.c
->   create mode 100644 sound/soc/tegra/tegra210_dmic.h
->   create mode 100644 sound/soc/tegra/tegra210_i2s.c
->   create mode 100644 sound/soc/tegra/tegra210_i2s.h
->   create mode 100644 sound/soc/tegra/tegra_cif.c
->   create mode 100644 sound/soc/tegra/tegra_cif.h
->
+> It should solve the problem in my particular case, but I'm not sure that
+> the solution is correct.
+
+If the format implemented by the driver is S24_3LE the driver should
+advertise S24_3LE.
+
+> The v5.5 kernel is released now with the broken audio and apparently
+> getting 24bit to work won't be trivial (if possible at all). Ben, could
+> you please send a patch to fix v5.5 by removing the S24 support
+> advertisement from the driver?
+
+Why is that the best fix rather than just advertising the format
+implemented by the driver?
+
+I really don't understand why this is all taking so long, this thread
+just seems to be going round in interminable circles long after it
+looked like the issue was understood.  I have to admit I've not read
+every single message in the thread but it's difficult to see why it
+doesn't seem to be making any progress.
+
+--GpGaEY17fSl8rd50
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4wJVoACgkQJNaLcl1U
+h9DMkAf/bHJV00niDhM1x/+jpTGcn0N2F9TKUa1eQk5NFuzmH+wPdJN/fVIXQ9/H
+9svsreaVKTU1il6uhl3HOUB2Prenx04OggzHfRaMQ4zbB1yCd67uL83R5jlj3yao
+bdFTP/7O7ngzG9P7foNPQtJrWR72KEr7e6Ay4ekDrHJLiI9p0TBnwrLcA5Wop35m
+C/k5YwvlJ8SzZgADBN74cxrzx/E59pw9w0M31RGRhAtXTWVu7GfjiitfvKLhcJWz
+JfzVil637Tm3taQ4hiyqYvTGeQlUOS86ix1AcDBGQigMC0tCZtCnblr8pOhW09nv
+i/k+B9psW4N99h6sq5+2z85Qk/svwQ==
+=dv7A
+-----END PGP SIGNATURE-----
+
+--GpGaEY17fSl8rd50--
