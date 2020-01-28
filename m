@@ -1,49 +1,58 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v1 2/5] clk: tegra: Add Tegra210 CSI TPG clock gate
-Date: Tue, 28 Jan 2020 10:23:18 -0800
-Message-ID: <1580235801-4129-3-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v1 3/5] dt-binding: tegra: Add VI and CSI bindings
+Date: Tue, 28 Jan 2020 10:23:19 -0800
+Message-ID: <1580235801-4129-4-git-send-email-skomatineni@nvidia.com>
 References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
 In-Reply-To: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 CSI hardware internally uses PLLD for internal test pattern
-generator logic.
+Tegra contains VI controller which can support up to 6 MIPI CSI
+camera sensors.
 
-PLLD_BASE register in CAR has a bit CSI_CLK_SOURCE to enable PLLD
-out to CSI during TPG mode.
+Each Tegra CSI port from CSI unit can be one-to-one mapper to
+VI channel and can capture from an external camera sensor or
+from built-in test pattern generator.
 
-This patch adds this CSI TPG clock gate to Tegra210 clock driver
-to allow Tegra video driver to ungate CSI TPG clock during TPG mode
-and gate during non TPG mode.
+This patch adds dt-bindings for Tegra VI and CSI.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../bindings/display/tegra/nvidia,tegra20-host1x.txt           | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 762cd186f714..e66498b5fd6f 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3041,6 +3041,13 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					     periph_clk_enb_refcnt);
- 	clks[TEGRA210_CLK_DSIB] = clk;
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+index 9999255ac5b6..47cd6532b7d3 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+@@ -40,7 +40,7 @@ of the following host1x client modules:
  
-+	/* csi_tpg */
-+	clk = clk_register_gate(NULL, "csi_tpg", "pll_d_out0",
-+				CLK_SET_RATE_PARENT, clk_base + PLLD_BASE,
-+				23, 0, &pll_d_lock);
-+	clk_register_clkdev(clk, "csi_tpg", NULL);
-+	clks[TEGRA210_CLK_CSI_TPG] = clk;
+   Required properties:
+   - compatible: "nvidia,tegra<chip>-vi"
+-  - reg: Physical base address and length of the controller's registers.
++  - reg: Physical base address and length of the controller registers.
+   - interrupts: The interrupt outputs from the controller.
+   - clocks: Must contain one entry, for the module clock.
+     See ../clocks/clock-bindings.txt for details.
+@@ -49,6 +49,14 @@ of the following host1x client modules:
+   - reset-names: Must include the following entries:
+     - vi
+ 
++- csi: mipi csi interface to vi
 +
- 	/* la */
- 	clk = tegra_clk_register_periph("la", la_parents,
- 			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
++  Required properties:
++  - compatible: "nvidia,tegra<chip>-csi"
++  - reg: Physical base address and length of the controller registers.
++  - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
++    See ../clocks/clock-bindings.txt for details.
++
+ - epp: encoder pre-processor
+ 
+   Required properties:
 -- 
 2.7.4
