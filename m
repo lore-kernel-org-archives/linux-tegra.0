@@ -1,68 +1,69 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 2/2] dt-bindings: firmware: tegra186-bpmp: Document
- interconnects property
-Date: Tue, 28 Jan 2020 22:27:00 +0300
-Message-ID: <d56618e1-8940-65ae-381e-796e44bcf537@gmail.com>
-References: <20200114181519.3402385-1-thierry.reding@gmail.com>
- <20200114181519.3402385-2-thierry.reding@gmail.com>
- <7aefac6c-092c-b5a6-2fa6-e283d2147fc3@linaro.org>
- <20200120150605.GA712203@ulmo>
- <57c37b3c-1473-d444-db59-8c6650241188@gmail.com>
- <20200121141027.GE899558@ulmo>
- <83d94918-bc01-131b-924c-9750767d3b29@linaro.org>
- <20200121155432.GA912205@ulmo>
- <ffc22502-0e7e-522c-543d-0e74cc25f4b1@gmail.com>
- <20200127122115.GA2117209@ulmo>
+From: Helen Koike <helen.koike@collabora.com>
+Subject: Re: [RFC PATCH v1 3/5] dt-binding: tegra: Add VI and CSI bindings
+Date: Tue, 28 Jan 2020 17:32:28 -0300
+Message-ID: <ee1e61bc-918d-8f9c-592d-f9e63322a1c0@collabora.com>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <1580235801-4129-4-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200127122115.GA2117209@ulmo>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1580235801-4129-4-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-27.01.2020 15:21, Thierry Reding пишет:
-> On Tue, Jan 21, 2020 at 11:12:11PM +0300, Dmitry Osipenko wrote:
->> 21.01.2020 18:54, Thierry Reding пишет:
->>> On Tue, Jan 21, 2020 at 05:18:43PM +0200, Georgi Djakov wrote:
->>>> On 1/21/20 16:10, Thierry Reding wrote:
-> [...]
->>>>> I'm not sure if that TEGRA_ICC_EMEM makes a lot of sense. It's always
->>>>> going to be the same and it's arbitrarily defined, so it's effectively
->>>>> useless. But other than that it looks good.
->>>>
->>>> Well, in most cases the target would be the EMEM, so that's fine. I have seen
->>>> that other vendors that may have an additional internal memory, especially
->>>> dedicated to some DSPs and in such cases the bandwidth needs are different for
->>>> the two paths (to internal memory and DDR).
->>>
->>> Most chips have a small internal memory that can be used, though it
->>> seldomly is. However, in that case I would expect the target to be a
->>> completely different device, so it'd look more like this:
->>>
->>> 	interconnects = <&mc TEGRA186_MEMORY_CLIENT_BPMPR &iram>,
->>> 			...;
->>>
->>> I don't think EMEM has any "downstream" other than external memory.
->>
->> The node ID should be mandatory in terms of interconnect, even if it's a
->> single node. EMC (provider) != EMEM (endpoint).
+Hi,
+
+On 1/28/20 4:23 PM, Sowjanya Komatineni wrote:
+> Tegra contains VI controller which can support up to 6 MIPI CSI
+> camera sensors.
 > 
-> I don't understand why. An ID only makes sense if you've got multiple
-> endpoints. For example, a regulator is a provider with a single endpoint
-> so we don't specify an ID.
+> Each Tegra CSI port from CSI unit can be one-to-one mapper to
+> VI channel and can capture from an external camera sensor or
+> from built-in test pattern generator.
+> 
+> This patch adds dt-bindings for Tegra VI and CSI.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  .../bindings/display/tegra/nvidia,tegra20-host1x.txt           | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> index 9999255ac5b6..47cd6532b7d3 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> @@ -40,7 +40,7 @@ of the following host1x client modules:
+>  
+>    Required properties:
+>    - compatible: "nvidia,tegra<chip>-vi"
+> -  - reg: Physical base address and length of the controller's registers.
+> +  - reg: Physical base address and length of the controller registers.
+>    - interrupts: The interrupt outputs from the controller.
+>    - clocks: Must contain one entry, for the module clock.
+>      See ../clocks/clock-bindings.txt for details.
+> @@ -49,6 +49,14 @@ of the following host1x client modules:
+>    - reset-names: Must include the following entries:
+>      - vi
+>  
+> +- csi: mipi csi interface to vi
+> +
+> +  Required properties:
+> +  - compatible: "nvidia,tegra<chip>-csi"
+> +  - reg: Physical base address and length of the controller registers.
+> +  - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
+> +    See ../clocks/clock-bindings.txt for details.
+> +
 
-Because this is how ICC binding is defined, unless I'm missing something.
+I think it would be nice to add an example, in the Example section at the end of this file, same as other modules do.
 
-> By its very definition an ID is used to identify something and we use it
-> with a phandle to create a unique pair that identifies a resource within
-> whatever the phandle represents, with the goal to differentiate it from
-> other resources within the same provider. However, if there's only one
-> such resource, the ID becomes redundant because the phandle without an
-> ID is already unique and there's no need to differentiate with an extra
-> ID.
+Regards,
+Helen
 
-Georgi, do you think it is possible to support what Thierry is asking for?
+>  - epp: encoder pre-processor
+>  
+>    Required properties:
+> 
