@@ -1,85 +1,99 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
- move_page_tables()
-Date: Tue, 28 Jan 2020 18:59:48 +0300
-Message-ID: <d66bb20e-c0e7-caef-cbbc-aa216c2be7d6@gmail.com>
-References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
- <20200117232254.2792-4-richardw.yang@linux.intel.com>
- <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
- <20200128004301.GD20624@richard>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [Patch V3 03/18] phy: tegra: xusb: Add usb-role-switch support
+Date: Tue, 28 Jan 2020 18:32:44 +0100
+Message-ID: <20200128173244.GA2293590@ulmo>
+References: <1577704195-2535-1-git-send-email-nkristam@nvidia.com>
+ <1577704195-2535-4-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200128004301.GD20624@richard>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Cc: akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, aneesh.kumar-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org, kirill-oKw7cIdHH8eLwutG50LtGA@public.gmane.org, yang.shi-KPsoFbNs7GizrGE5bRqYAgC/G2K4zDHf@public.gmane.org, thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1577704195-2535-4-git-send-email-nkristam@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nagarjuna Kristam <nkristam@nvidia.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-28.01.2020 03:43, Wei Yang пишет:
-> On Sun, Jan 26, 2020 at 05:47:57PM +0300, Dmitry Osipenko wrote:
->> 18.01.2020 02:22, Wei Yang пишет:
->>> Use the general helper instead of do it by hand.
->>>
->>> Signed-off-by: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
->>> ---
->>>  mm/mremap.c | 7 ++-----
->>>  1 file changed, 2 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/mm/mremap.c b/mm/mremap.c
->>> index c2af8ba4ba43..a258914f3ee1 100644
->>> --- a/mm/mremap.c
->>> +++ b/mm/mremap.c
->>> @@ -253,11 +253,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
->>>  
->>>  	for (; old_addr < old_end; old_addr += extent, new_addr += extent) {
->>>  		cond_resched();
->>> -		next = (old_addr + PMD_SIZE) & PMD_MASK;
->>> -		/* even if next overflowed, extent below will be ok */
->>> +		next = pmd_addr_end(old_addr, old_end);
->>>  		extent = next - old_addr;
->>> -		if (extent > old_end - old_addr)
->>> -			extent = old_end - old_addr;
->>>  		old_pmd = get_old_pmd(vma->vm_mm, old_addr);
->>>  		if (!old_pmd)
->>>  			continue;
->>> @@ -301,7 +298,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
->>>  
->>>  		if (pte_alloc(new_vma->vm_mm, new_pmd))
->>>  			break;
->>> -		next = (new_addr + PMD_SIZE) & PMD_MASK;
->>> +		next = pmd_addr_end(new_addr, new_addr + len);
->>>  		if (extent > next - new_addr)
->>>  			extent = next - new_addr;
->>>  		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
->>>
->>
->> Hello Wei,
->>
->> Starting with next-20200122, I'm seeing the following in KMSG on NVIDIA
->> Tegra (ARM32):
->>
->>  BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:190
->>
-> 
-> Thanks.
-> 
-> Would you mind letting me know which case you are testing?
 
-Nothing special, systemd starts to fall apart during boot.
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Or the special thing is 32-bit platform?
-I have a limited knowledge about mm/, so can't provide detailed explanation.
+On Mon, Dec 30, 2019 at 04:39:40PM +0530, Nagarjuna Kristam wrote:
+> If usb-role-switch property is present in USB 2 port, register
+> usb-role-switch to receive usb role changes.
+>=20
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> ---
+> V3:
+>  - Driver aborts if usb-role-switch is not added in dt forotg/peripheral
+>    roles.
+>  - Added role name strings instead of enum values in debug prints.
+>  - Updated arguments and variable allignments as per Thierry inputs.
+> ---
+> V2:
+>  - Removed dev_set_drvdata for port->dev.
+>  - Added of_platform_depopulate during error handling and driver removal.
+> ---
+>  drivers/phy/tegra/Kconfig |  1 +
+>  drivers/phy/tegra/xusb.c  | 57 +++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/phy/tegra/xusb.h  |  3 +++
+>  3 files changed, 61 insertions(+)
+>=20
+> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+> index f9817c3..df07c4d 100644
+> --- a/drivers/phy/tegra/Kconfig
+> +++ b/drivers/phy/tegra/Kconfig
+> @@ -2,6 +2,7 @@
+>  config PHY_TEGRA_XUSB
+>  	tristate "NVIDIA Tegra XUSB pad controller driver"
+>  	depends on ARCH_TEGRA
+> +	select USB_CONN_GPIO
+>  	help
+>  	  Choose this option if you have an NVIDIA Tegra SoC.
+> =20
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index f98ec39..11ea9b5 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -523,6 +523,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_por=
+t *port,
+>  	port->dev.type =3D &tegra_xusb_port_type;
+>  	port->dev.of_node =3D of_node_get(np);
+>  	port->dev.parent =3D padctl->dev;
+> +	port->dev.driver =3D padctl->dev->driver;
 
-Please take a look at this:
+This looks wrong. I don't think driver's are supposed to set this
+because it basically means that the device is being attached to the
+driver, but in this case it doesn't get probed by the driver and in
+fact the ports don't match the pad controller, so they can't really
+be driven by the same driver.
 
-[1]
-https://elixir.bootlin.com/linux/v5.5/source/arch/arm/include/asm/pgtable-2level.h#L210
+Is there any particular reason why you need this?
 
-[2]
-https://elixir.bootlin.com/linux/v5.5/source/include/asm-generic/pgtable.h#L549
+Thierry
 
-[3]
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c0ba10b512eb2e2a3888b6e6cc0e089f5e7a191b
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4wcDkACgkQ3SOs138+
+s6FsghAAoD/UomjaeZd8bY2R43NpHXrHIRhlcnRJUrm2NQzod8kdj9tkUH093usf
+t+oPi+lizbJqV3P8wJUrk0wNPAz1B+2TchrcpuWXzc/orwcMhQVhV4Vw/B3psEo3
+jxL0UE5bhSdErLS4enDP8lu9XiKfDBM5rXwroRYYWogQK86I3RLPeW+WJEzLbDfR
+gJH47XBA7ZMTP3EmBXd92NZZA0+2CSiAjwoT5QC4+EJpYdhJTDPjmxQbZY/dHB37
+TKu7s1tJMSz14Vkypgh2ExUufbk+f3JlYEka2R+DWXHSN3e2vLixoMtVIwYlaM33
+AWAlBHW7iJPxGmoZLY3QyjF3fZOMvOzRRI/GwIbY+F6kwPFEiZHmoPruBVLKyg4a
+4q0hkBD/O2Q/8A/boju/7eUVw3WXRFzVvSYHoKVvl3rsY6o4hIlAuGj6crkaDarh
+gPJYvJh6eDY5snTEM98/Xmrme82PKLaXJGcf8FBZ1ZCUQoak4EX2mop+30Ml38Ly
+ABLHIaubha4ciqJ4DZwX5lwuUQyEXSgr1IKeLklGBuIvK6ffvsjSK9fYHasGUrmz
+V2W+urskYuFQPefo0zND/vBGFtYTWbFz+cQxNWz/F4uU1j8adbVb5txSgOleRutF
+lXfIGLpnOk+eGhf/it6b6phm/AKz2FgJt3d2E4xNMq27JuMUsuk=
+=nbqn
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
