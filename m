@@ -1,89 +1,37 @@
-From: Mohan Kumar <mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ALSA: hda: Reset stream if DMA RUN bit not cleared
-Date: Tue, 28 Jan 2020 10:45:08 +0530
-Message-ID: <20200128051508.26064-1-mkumard@nvidia.com>
+From: Ricard Wanderlof <ricardw-VrBV9hrLPhE@public.gmane.org>
+Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
+ 24bit and 32bit samples
+Date: Tue, 28 Jan 2020 08:49:47 +0100
+Message-ID: <alpine.DEB.2.20.2001280846330.9620@lnxricardw1.se.axis.com>
+References: <20191018154833.7560-1-ben.dooks@codethink.co.uk> <d43d518d-9336-a011-2a69-3f9331f6d0b4@codethink.co.uk> <aba4edd6-0ea5-5e95-c5a0-9e749587c763@nvidia.com> <449bdc3c-bf82-7cc4-6704-440dd100ca3a@gmail.com> <5d3ae629-5d30-0930-5dd1-15161e64926e@codethink.co.uk>
+ <9daeeb94-2b90-18b8-2e1e-daae5acf079d@gmail.com> <fd73f68c-80f5-ac80-f6e4-42256d3df76d@codethink.co.uk> <37beb96a-a525-c72f-a7e1-e9ef5d61f3b2@gmail.com> <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk> <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+ <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk> <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com> <0e0cd260e39ad293edb881da1c565510@codethink.co.uk> <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk> <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
+ <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk> <3d8544be-af20-f382-85fd-32183365267b@nvidia.com> <318f0256-fe6d-c34d-4deb-74540fca8d0d@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <318f0256-fe6d-c34d-4deb-74540fca8d0d-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: tiwai-IBi9RG/b67k@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mohan Kumar <mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org" <linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra HDA has FIFO size which can hold upto 10 audio frames to support
-DVFS. When HDA DMA RUN bit is set to 0 to stop the stream, the DMA RUN
-bit will be cleared to 0 only after transferring all the remaining audio
-frames queued up in the fifo. This is not in sync with spec which states
-the controller will stop transmitting(output) in the beginning of the
-next frame for the relevant stream.
 
-The above behavior with Tegra HDA was resulting in machine check error
-during the system suspend flow with active audio playback with below kernel
-error logs.
-[ 33.524583] mc-err: [mcerr] (hda) csr_hdar: EMEM address decode error
-[ 33.531088] mc-err: [mcerr] status = 0x20000015; addr = 0x00000000
-[ 33.537431] mc-err: [mcerr] secure: no, access-type: read, SMMU fault: none
+On Fri, 24 Jan 2020, Ben Dooks wrote:
 
-This was due to the fifo has more than one audio frame when the DMA
-RUN bit is set to 0 during system suspend flow and the timeout handling in
-snd_hdac_stream_sync() was not designed to handle this scenario. So the
-DMA will continue running even after timeout hit until all remaining
-audio frames in the fifo are transferred, but the suspend flow will try
-to reset the controller and turn off the hda clocks without the knowledge
-of the DMA is still running and could result in mc-err.
+> So I assume aplay has turned the S24_3LE -> S24_LE
 
-The above issue can be resolved by doing stream reset with the help of
-snd_hdac_stream_reset() which would ensure the DMA RUN bit is cleared
-if the timeout was hit in snd_hdac_stream_sync().
+A couple of years ago (so may be inaccurate now) I concluded after some 
+testing that S24_LE was broken in arecord and aplay, at least when it came 
+to .wav files. Meaning that files I recorded with arecord could be played 
+back by aplay, but not in any other application I tried, such as Audacity.
 
-Signed-off-by: Mohan Kumar <mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- sound/hda/hdac_stream.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+I can try to dig out the gory details, but ISTR it came down to the 
+header(s) in the .wav file being incorrectly filled in with regard to 
+number of bits per sample vs valid bits per sample.
 
-diff --git a/sound/hda/hdac_stream.c b/sound/hda/hdac_stream.c
-index 682ed39f79b0..890ff1b7a878 100644
---- a/sound/hda/hdac_stream.c
-+++ b/sound/hda/hdac_stream.c
-@@ -629,20 +629,27 @@ void snd_hdac_stream_sync(struct hdac_stream *azx_dev, bool start,
- 		nwait = 0;
- 		i = 0;
- 		list_for_each_entry(s, &bus->stream_list, list) {
--			if (streams & (1 << i)) {
--				if (start) {
--					/* check FIFO gets ready */
--					if (!(snd_hdac_stream_readb(s, SD_STS) &
--					      SD_STS_FIFO_READY))
--						nwait++;
--				} else {
--					/* check RUN bit is cleared */
--					if (snd_hdac_stream_readb(s, SD_CTL) &
--					    SD_CTL_DMA_START)
--						nwait++;
-+			if (!(streams & (1 << i++)))
-+				continue;
-+
-+			if (start) {
-+				/* check FIFO gets ready */
-+				if (!(snd_hdac_stream_readb(s, SD_STS) &
-+				      SD_STS_FIFO_READY))
-+					nwait++;
-+			} else {
-+				/* check RUN bit is cleared */
-+				if (snd_hdac_stream_readb(s, SD_CTL) &
-+				    SD_CTL_DMA_START) {
-+					nwait++;
-+					/*
-+					 * Perform stream reset if DMA RUN
-+					 * bit not cleared within given timeout
-+					 */
-+					if (timeout == 1)
-+						snd_hdac_stream_reset(s);
- 				}
- 			}
--			i++;
- 		}
- 		if (!nwait)
- 			break;
+/Ricard
 -- 
-2.17.1
+Ricard Wolf Wanderlof                           ricardw(at)axis.com
+Axis Communications AB, Lund, Sweden            www.axis.com
+Phone +46 46 272 2016                           Fax +46 46 13 61 30
