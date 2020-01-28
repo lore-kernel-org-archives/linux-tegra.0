@@ -1,63 +1,88 @@
-From: Wei Yang <richardw.yang@linux.intel.com>
-Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
- move_page_tables()
-Date: Tue, 28 Jan 2020 08:43:01 +0800
-Message-ID: <20200128004301.GD20624@richard>
-References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
- <20200117232254.2792-4-richardw.yang@linux.intel.com>
- <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+From: Dejin Zheng <zhengdejin5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] usb: phy: tegra: make the code simple by
+ devm_platform_ioremap_resource()
+Date: Tue, 28 Jan 2020 13:06:46 +0800
+Message-ID: <20200128050356.GA21357@nuc8i5>
+References: <20200127135841.17935-1-zhengdejin5@gmail.com>
+ <ebb395ec-89ef-12e9-b3a9-2fc35f764ee2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: thellstrom@vmware.com, yang.shi@linux.alibaba.com, Russell King - ARM Linux <linux@armlinux.org.uk>, aneesh.kumar@linux.ibm.com, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, linux-mm@kvack.org, Thierry Reding <thierry.reding@gmail.com>, Wei Yang <richardw.yang@linux.intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, kirill@shutemov.name, akpm@linux-foundation.org, dan.j.williams@intel.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <ebb395ec-89ef-12e9-b3a9-2fc35f764ee2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gU3VuLCBKYW4gMjYsIDIwMjAgYXQgMDU6NDc6NTdQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtv
-IHdyb3RlOgo+MTguMDEuMjAyMCAwMjoyMiwgV2VpIFlhbmcg0L/QuNGI0LXRgjoKPj4gVXNlIHRo
-ZSBnZW5lcmFsIGhlbHBlciBpbnN0ZWFkIG9mIGRvIGl0IGJ5IGhhbmQuCj4+IAo+PiBTaWduZWQt
-b2ZmLWJ5OiBXZWkgWWFuZyA8cmljaGFyZHcueWFuZ0BsaW51eC5pbnRlbC5jb20+Cj4+IC0tLQo+
-PiAgbW0vbXJlbWFwLmMgfCA3ICsrLS0tLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
-bnMoKyksIDUgZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZmIC0tZ2l0IGEvbW0vbXJlbWFwLmMgYi9t
-bS9tcmVtYXAuYwo+PiBpbmRleCBjMmFmOGJhNGJhNDMuLmEyNTg5MTRmM2VlMSAxMDA2NDQKPj4g
-LS0tIGEvbW0vbXJlbWFwLmMKPj4gKysrIGIvbW0vbXJlbWFwLmMKPj4gQEAgLTI1MywxMSArMjUz
-LDggQEAgdW5zaWduZWQgbG9uZyBtb3ZlX3BhZ2VfdGFibGVzKHN0cnVjdCB2bV9hcmVhX3N0cnVj
-dCAqdm1hLAo+PiAgCj4+ICAJZm9yICg7IG9sZF9hZGRyIDwgb2xkX2VuZDsgb2xkX2FkZHIgKz0g
-ZXh0ZW50LCBuZXdfYWRkciArPSBleHRlbnQpIHsKPj4gIAkJY29uZF9yZXNjaGVkKCk7Cj4+IC0J
-CW5leHQgPSAob2xkX2FkZHIgKyBQTURfU0laRSkgJiBQTURfTUFTSzsKPj4gLQkJLyogZXZlbiBp
-ZiBuZXh0IG92ZXJmbG93ZWQsIGV4dGVudCBiZWxvdyB3aWxsIGJlIG9rICovCj4+ICsJCW5leHQg
-PSBwbWRfYWRkcl9lbmQob2xkX2FkZHIsIG9sZF9lbmQpOwo+PiAgCQlleHRlbnQgPSBuZXh0IC0g
-b2xkX2FkZHI7Cj4+IC0JCWlmIChleHRlbnQgPiBvbGRfZW5kIC0gb2xkX2FkZHIpCj4+IC0JCQll
-eHRlbnQgPSBvbGRfZW5kIC0gb2xkX2FkZHI7Cj4+ICAJCW9sZF9wbWQgPSBnZXRfb2xkX3BtZCh2
-bWEtPnZtX21tLCBvbGRfYWRkcik7Cj4+ICAJCWlmICghb2xkX3BtZCkKPj4gIAkJCWNvbnRpbnVl
-Owo+PiBAQCAtMzAxLDcgKzI5OCw3IEBAIHVuc2lnbmVkIGxvbmcgbW92ZV9wYWdlX3RhYmxlcyhz
-dHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSwKPj4gIAo+PiAgCQlpZiAocHRlX2FsbG9jKG5ld192
-bWEtPnZtX21tLCBuZXdfcG1kKSkKPj4gIAkJCWJyZWFrOwo+PiAtCQluZXh0ID0gKG5ld19hZGRy
-ICsgUE1EX1NJWkUpICYgUE1EX01BU0s7Cj4+ICsJCW5leHQgPSBwbWRfYWRkcl9lbmQobmV3X2Fk
-ZHIsIG5ld19hZGRyICsgbGVuKTsKPj4gIAkJaWYgKGV4dGVudCA+IG5leHQgLSBuZXdfYWRkcikK
-Pj4gIAkJCWV4dGVudCA9IG5leHQgLSBuZXdfYWRkcjsKPj4gIAkJbW92ZV9wdGVzKHZtYSwgb2xk
-X3BtZCwgb2xkX2FkZHIsIG9sZF9hZGRyICsgZXh0ZW50LCBuZXdfdm1hLAo+PiAKPgo+SGVsbG8g
-V2VpLAo+Cj5TdGFydGluZyB3aXRoIG5leHQtMjAyMDAxMjIsIEknbSBzZWVpbmcgdGhlIGZvbGxv
-d2luZyBpbiBLTVNHIG9uIE5WSURJQQo+VGVncmEgKEFSTTMyKToKPgo+ICBCVUc6IEJhZCByc3Mt
-Y291bnRlciBzdGF0ZSBtbToocHRydmFsKSB0eXBlOk1NX0FOT05QQUdFUyB2YWw6MTkwCj4KClRo
-YW5rcy4KCldvdWxkIHlvdSBtaW5kIGxldHRpbmcgbWUga25vdyB3aGljaCBjYXNlIHlvdSBhcmUg
-dGVzdGluZz8gT3IgdGhlIHNwZWNpYWwKdGhpbmcgaXMgMzItYml0IHBsYXRmb3JtPwoKPmFuZCBl
-dmVudHVhbGx5IGtlcm5lbCBoYW5ncy4KPgo+R2l0J3MgYmlzZWN0aW9uIHBvaW50cyB0byB0aGlz
-IHBhdGNoIGFuZCByZXZlcnRpbmcgaXQgaGVscHMuIFBsZWFzZSBmaXgsCj50aGFua3MgaW4gYWR2
-YW5jZS4KCi0tIApXZWkgWWFuZwpIZWxwIHlvdSwgSGVscCBtZQoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxp
-c3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZy
-YWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+On Mon, Jan 27, 2020 at 10:47:36PM +0300, Dmitry Osipenko wrote:
+> 27.01.2020 16:58, Dejin Zheng пишет:
+> > make the code simple by use devm_platform_ioremap_resource() function
+> > to replace platform_get_resource() and devm_ioremap().
+> > 
+> > Signed-off-by: Dejin Zheng <zhengdejin5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > ---
+> >  drivers/usb/phy/phy-tegra-usb.c | 20 ++------------------
+> >  1 file changed, 2 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+> > index ea7ef1dc0b42..8220bb4ce1ed 100644
+> > --- a/drivers/usb/phy/phy-tegra-usb.c
+> > +++ b/drivers/usb/phy/phy-tegra-usb.c
+> > @@ -944,20 +944,12 @@ static int read_utmi_param(struct platform_device *pdev, const char *param,
+> >  static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
+> >  			  struct platform_device *pdev)
+> >  {
+> > -	struct resource *res;
+> >  	int err;
+> >  	struct tegra_utmip_config *config;
+> >  
+> >  	tegra_phy->is_ulpi_phy = false;
+> >  
+> > -	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> > -	if (!res) {
+> > -		dev_err(&pdev->dev, "Failed to get UTMI pad regs\n");
+> > -		return  -ENXIO;
+> > -	}
+> > -
+> > -	tegra_phy->pad_regs = devm_ioremap(&pdev->dev, res->start,
+> > -		resource_size(res));
+> > +	tegra_phy->pad_regs = devm_platform_ioremap_resource(pdev, 1);
+> >  	if (!tegra_phy->pad_regs) {
+> >  		dev_err(&pdev->dev, "Failed to remap UTMI pad regs\n");
+> >  		return -ENOMEM;
+> > @@ -1054,7 +1046,6 @@ MODULE_DEVICE_TABLE(of, tegra_usb_phy_id_table);
+> >  static int tegra_usb_phy_probe(struct platform_device *pdev)
+> >  {
+> >  	const struct of_device_id *match;
+> > -	struct resource *res;
+> >  	struct tegra_usb_phy *tegra_phy = NULL;
+> >  	struct device_node *np = pdev->dev.of_node;
+> >  	enum usb_phy_interface phy_type;
+> > @@ -1071,14 +1062,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+> >  	}
+> >  	tegra_phy->soc_config = match->data;
+> >  
+> > -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > -	if (!res) {
+> > -		dev_err(&pdev->dev, "Failed to get I/O memory\n");
+> > -		return  -ENXIO;
+> > -	}
+> > -
+> > -	tegra_phy->regs = devm_ioremap(&pdev->dev, res->start,
+> > -		resource_size(res));
+> > +	tegra_phy->regs = devm_platform_ioremap_resource(pdev, 0);
+> >  	if (!tegra_phy->regs) {
+> >  		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
+> >  		return -ENOMEM;
+> > 
+> 
+> Hello Dejin,
+> 
+> Unfortunately this is not a correct change because registers are shared
+> by both PHY and USB controllers on Tegra SoCs. The
+> devm_platform_ioremap_resource() can't be used here because it makes the
+> mapping exclusive for a single driver, while it should be shared.
+
+Dmitry, Thanks a lot for your comment! and abandon this commit.
