@@ -1,49 +1,78 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
- 24bit and 32bit samples
-Date: Wed, 29 Jan 2020 10:49:37 +0000
-Message-ID: <4b90efd2-5d0c-84df-961d-80cee288e0d4@nvidia.com>
-References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
- <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
- <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
- <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
- <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
- <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
- <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
- <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
- <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
- <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
- <20200128121315.GD4689@sirena.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v5 01/14] dmaengine: tegra-apb: Fix use-after-free
+Date: Wed, 29 Jan 2020 10:56:15 +0000
+Message-ID: <858021de-62fd-2d21-7152-42af4e3a04b2@nvidia.com>
+References: <20200123230325.3037-1-digetx@gmail.com>
+ <20200123230325.3037-2-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200128121315.GD4689-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200123230325.3037-2-digetx@gmail.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 28/01/2020 12:13, Mark Brown wrote:
-> I really don't understand why this is all taking so long, this thread
-> just seems to be going round in interminable circles long after it
-> looked like the issue was understood.  I have to admit I've not read
-> every single message in the thread but it's difficult to see why it
-> doesn't seem to be making any progress.
+On 23/01/2020 23:03, Dmitry Osipenko wrote:
+> I was doing some experiments with I2C and noticed that Tegra APB DMA
+> driver crashes sometime after I2C DMA transfer termination. The crash
+> happens because tegra_dma_terminate_all() bails out immediately if pending
+> list is empty, thus it doesn't release the half-completed descriptors
+> which are getting re-used before ISR tasklet kicks-in.
+> 
+>  tegra-i2c 7000c400.i2c: DMA transfer timeout
+>  elants_i2c 0-0010: elants_i2c_irq: failed to read data: -110
+>  ------------[ cut here ]------------
+>  WARNING: CPU: 0 PID: 142 at lib/list_debug.c:45 __list_del_entry_valid+0x45/0xac
+>  list_del corruption, ddbaac44->next is LIST_POISON1 (00000100)
+>  Modules linked in:
+>  CPU: 0 PID: 142 Comm: kworker/0:2 Not tainted 5.5.0-rc2-next-20191220-00175-gc3605715758d-dirty #538
+>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+>  Workqueue: events_freezable_power_ thermal_zone_device_check
+>  [<c010e5c5>] (unwind_backtrace) from [<c010a1c5>] (show_stack+0x11/0x14)
+>  [<c010a1c5>] (show_stack) from [<c0973925>] (dump_stack+0x85/0x94)
+>  [<c0973925>] (dump_stack) from [<c011f529>] (__warn+0xc1/0xc4)
+>  [<c011f529>] (__warn) from [<c011f7e9>] (warn_slowpath_fmt+0x61/0x78)
+>  [<c011f7e9>] (warn_slowpath_fmt) from [<c042497d>] (__list_del_entry_valid+0x45/0xac)
+>  [<c042497d>] (__list_del_entry_valid) from [<c047a87f>] (tegra_dma_tasklet+0x5b/0x154)
+>  [<c047a87f>] (tegra_dma_tasklet) from [<c0124799>] (tasklet_action_common.constprop.0+0x41/0x7c)
+>  [<c0124799>] (tasklet_action_common.constprop.0) from [<c01022ab>] (__do_softirq+0xd3/0x2a8)
+>  [<c01022ab>] (__do_softirq) from [<c0124683>] (irq_exit+0x7b/0x98)
+>  [<c0124683>] (irq_exit) from [<c0168c19>] (__handle_domain_irq+0x45/0x80)
+>  [<c0168c19>] (__handle_domain_irq) from [<c043e429>] (gic_handle_irq+0x45/0x7c)
+>  [<c043e429>] (gic_handle_irq) from [<c0101aa5>] (__irq_svc+0x65/0x94)
+>  Exception stack(0xde2ebb90 to 0xde2ebbd8)
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index 3a45079d11ec..319f31d27014 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -756,10 +756,6 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+>  	bool was_busy;
+>  
+>  	spin_lock_irqsave(&tdc->lock, flags);
+> -	if (list_empty(&tdc->pending_sg_req)) {
+> -		spin_unlock_irqrestore(&tdc->lock, flags);
+> -		return 0;
+> -	}
+>  
+>  	if (!tdc->busy)
+>  		goto skip_dma_stop;
 
-Sorry about that. On reviewing this with the audio team at NVIDIA, I was
-told we don't support S24_LE for I2S. The reason being that the crossbar
-between the DMA and I2S is not able to extract the correct 24-bits from
-the 32-bit sample to feed to the I2S interface. The Tegra documentation
-does show support for 24-bits, but not state explicit support for S24_LE.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Now Ben says that he has this working, but I am unable to reproduce
-this, so before just dropping the S24_LE support, I would like to
-understand how this is working for Ben in case there is something that
-we have overlooked here.
+I think that we should mark this one for stable.
 
+Cheers
 Jon
 
 -- 
