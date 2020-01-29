@@ -1,37 +1,53 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 01/14] dmaengine: tegra-apb: Fix use-after-free
-Date: Wed, 29 Jan 2020 17:38:20 +0300
-Message-ID: <362d18b9-e928-bcdd-9183-88e2d487ba22@gmail.com>
+Subject: Re: [PATCH v5 05/14] dmaengine: tegra-apb: Prevent race conditions of
+ tasklet vs free list
+Date: Wed, 29 Jan 2020 17:39:07 +0300
+Message-ID: <5f867023-d49a-aff5-8d7f-d682a3b32770@gmail.com>
 References: <20200123230325.3037-1-digetx@gmail.com>
- <20200123230325.3037-2-digetx@gmail.com>
- <858021de-62fd-2d21-7152-42af4e3a04b2@nvidia.com>
+ <20200123230325.3037-6-digetx@gmail.com>
+ <cd1da99a-e52e-e202-257d-17466132d088@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <858021de-62fd-2d21-7152-42af4e3a04b2-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <cd1da99a-e52e-e202-257d-17466132d088-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-29.01.2020 13:56, Jon Hunter пишет:
+29.01.2020 14:01, Jon Hunter пишет:
+> 
 > On 23/01/2020 23:03, Dmitry Osipenko wrote:
-[snip]
-
->> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-
-^^^
-
+>> The interrupt handler puts a half-completed DMA descriptor on a free list
+>> and then schedules tasklet to process bottom half of the descriptor that
+>> executes client's callback, this creates possibility to pick up the busy
+>> descriptor from the free list. Thus let's disallow descriptor's re-use
+>> until it is fully processed.
+>>
+>> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >> ---
-[snip]
+>>  drivers/dma/tegra20-apb-dma.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+>> index 1b8a11804962..aafad50d075e 100644
+>> --- a/drivers/dma/tegra20-apb-dma.c
+>> +++ b/drivers/dma/tegra20-apb-dma.c
+>> @@ -281,7 +281,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
+>>  
+>>  	/* Do not allocate if desc are waiting for ack */
+>>  	list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
+>> -		if (async_tx_test_ack(&dma_desc->txd)) {
+>> +		if (async_tx_test_ack(&dma_desc->txd) && !dma_desc->cb_count) {
+>>  			list_del(&dma_desc->node);
+>>  			spin_unlock_irqrestore(&tdc->lock, flags);
+>>  			dma_desc->txd.flags = 0;
+>>
+> 
+> I think we should mark this for stable as well. I would make this the
+> 2nd patch in the series as it is related to #1.
 
-> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Thanks!
-
-> I think that we should mark this one for stable.
-
-This one is marked already ;)
+Okay!
