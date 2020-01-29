@@ -1,953 +1,365 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v1 4/5] media: tegra: Add Tegra Video input driver
- for Tegra210
-Date: Wed, 29 Jan 2020 12:13:40 +0100
-Message-ID: <20200129111340.GF2479935@ulmo>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <1580235801-4129-5-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [Regression 5.5-rc1] Extremely low GPU performance on NVIDIA
+ Tegra20/30
+Date: Wed, 29 Jan 2020 13:39:35 +0100
+Message-ID: <20200129123935.GG2479935@ulmo>
+References: <a2c9eb65-c600-bf49-2c32-bddf7b44f784@gmail.com>
+ <20191213151045.GB222809@ulmo>
+ <d03876b8-b0d1-850b-7ae8-a61302e23843@gmail.com>
+ <2f5c6fda-adf9-c6c3-7601-fa912813ce1f@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ExXT7PjY8AI4Hyfa"
+        protocol="application/pgp-signature"; boundary="E69HUUNAyIJqGpVn"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1580235801-4129-5-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <2f5c6fda-adf9-c6c3-7601-fa912813ce1f-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---ExXT7PjY8AI4Hyfa
-Content-Type: text/plain; charset=us-ascii
+--E69HUUNAyIJqGpVn
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 28, 2020 at 10:23:20AM -0800, Sowjanya Komatineni wrote:
-> diff --git a/drivers/staging/media/tegra/csi.h b/drivers/staging/media/tegra/csi.h
-[...]
-> +struct tegra_csi_soc_data {
+On Mon, Jan 20, 2020 at 05:53:03AM +0300, Dmitry Osipenko wrote:
+> 13.12.2019 18:35, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 13.12.2019 18:10, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> On Fri, Dec 13, 2019 at 12:25:33AM +0300, Dmitry Osipenko wrote:
+> >>> Hello Thierry,
+> >>>
+> >>> Commit [1] introduced a severe GPU performance regression on Tegra20 =
+and
+> >>> Tegra30 using.
+> >>>
+> >>> [1]
+> >>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/co=
+mmit/?h=3Dv5.5-rc1&id=3Dfa6661b7aa0b52073681b0d26742650c8cbd30f3
+> >>>
+> >>> Interestingly the performance is okay on Tegra30 if
+> >>> CONFIG_TEGRA_HOST1X_FIREWALL=3Dn, but that doesn't make difference for
+> >>> Tegra20.
+> >>>
+> >>> I was telling you about this problem on the #tegra IRC sometime ago a=
+nd
+> >>> you asked to report it in a trackable form, so finally here it is.
+> >>>
+> >>> You could reproduce the problem by running [2] like this
+> >>> `grate/texture-filter -f -s` which should produce over 100 FPS for 72=
+0p
+> >>> display resolution and currently it's ~11 FPS.
+> >>>
+> >>> [2]
+> >>> https://github.com/grate-driver/grate/blob/master/tests/grate/texture=
+-filter.c
+> >>>
+> >>> Previously I was seeing some memory errors coming from Host1x DMA, but
+> >>> don't see any errors at all right now.
+> >>>
+> >>> I don't see anything done horribly wrong in the offending commit.
+> >>>
+> >>> Unfortunately I couldn't dedicate enough time to sit down and debug t=
+he
+> >>> problem thoroughly yet. Please let me know if you'll find a solution,
+> >>> I'll be happy to test it. Thanks in advance!
+> >>
+> >> I suspect that the problem here is that we're now using the DMA API,
+> >> which causes the 32-bit ARM DMA/IOMMU glue to be used. I vaguely recall
+> >> that that code doesn't coalesce entries in the SG table, so we may end
+> >> up calling iommu_map() a lot of times, and miss out on much of the
+> >> advantages that the ->iotlb_sync_map() gives us on Tegra20.
+> >>
+> >> At the same time dma_map_sg() will flush caches, which we didn't do
+> >> before. This we should be able to improve by passing the attribute
+> >> DMA_ATTR_SKIP_CPU_SYNC to dma_map_sg() when we know that the cache
+> >> maintenance isn't needed.
+> >>
+> >> And while thinking about it, one other difference is that with the DMA
+> >> API we actually map/unmap the buffers for every submission. This is
+> >> because the DMA API semantics require that buffers be mapped/unmapped
+> >> every time you use them. Previously we would basically only map each
+> >> buffer once (at allocation time) and only have to deal with cache
+> >> maintenance, so the overhead per submission was drastically lower.
+> >>
+> >> If DMA_ATTR_SKIP_CPU_SYNC doesn't give us enough of an improvement, we
+> >> may want to restore explicit IOMMU usage, at least on anything prior to
+> >> Tegra124 where we're unlikely to ever use different IOMMU domains anyw=
+ay
+> >> (because they are such a scarce resource).
+> >=20
+> > Tegra20 doesn't use IOMMU in a vanilla upstream kernel (yet), so I don't
+> > think that it's the root of the problem. Disabling IOMMU for Tegra30
+> > also didn't help (IIRC).
+> >=20
+> > The offending patch shouldn't change anything in regards to the DMA API,
+> > if I'm not missing something. Strange..
+> >=20
+> > Please keep me up-to-date!
+> >=20
+>=20
+> Hello Thierry,
+>=20
+> I took another look at the problem and here what was found:
+>=20
+> 1) The "Optionally attach clients to the IOMMU" patch is wrong because:
+>=20
+>     1. host1x_drm_probe() is invoked *before* any of the
+>        host1x_client_iommu_attach() happens, so there is no way
+>        on earth the 'use_explicit_iommu' could ever be true.
 
-I'd just leave out the _data suffix since it's not useful.
+That's not correct. host1x_client_iommu_attach() happens during
+host1x_device_init(), which is called during host1x_drm_probe(). The
+idea is that host1x_drm_probe() sets up the minimum IOMMU so that all
+devices can attach, if they want to. If any of them connect (because
+they aren't already attached via something like the DMA/IOMMU glue)
+then the tegra->use_explicit_iommu is set to true, in which case the
+IOMMU domain setup for explicit IOMMU API usage is completed. If, on
+the other hand, none of the clients have a need for the explicit IOMMU
+domain, there's no need to set it up and host1x_drm_probe() will just
+discard it.
 
-> +	const struct tegra_csi_fops *csi_fops;
-> +	unsigned int cil_max_clk_hz;
-> +	unsigned int num_tpg_channels;
-> +};
-> +
-> +/**
-> + * struct tegra_csi_device - NVIDIA Tegra CSI device structure
-> + * @dev: device struct
-> + * @client: host1x_client struct
-> + *
-> + * @iomem: register base
-> + * @csi_clk: clock for CSI
-> + * @cilab_clk: clock for CIL AB
-> + * @cilcd_clk: clock for CIL CD
-> + * @cilef_clk: clock for CIL EF
-> + * @tpg_clk: clock for internal CSI TPG logic
-> + *
-> + * @soc_data: pointer to SoC data structure
-> + * @fops: csi operations
-> + *
-> + * @channels: list of CSI channels
-> + */
-> +struct tegra_csi_device {
-> +	struct device *dev;
-> +	struct host1x_client client;
-> +
-> +	void __iomem *iomem;
-> +	struct clk *csi_clk;
-> +	struct clk *cilab_clk;
-> +	struct clk *cilcd_clk;
-> +	struct clk *cilef_clk;
-> +	struct clk *tpg_clk;
-> +	atomic_t clk_refcnt;
-> +
-> +	const struct tegra_csi_soc_data *soc_data;
+>     2. Not attaching DRM clients to IOMMU if HOST1x isn't
+>        attached is wrong because it never attached in the case
+>        of CONFIG_TEGRA_HOST1X_FIREWALL=3Dy [1] and this also
+>        makes no sense for T20/30 that do not support LPAE.
 
-Same here. No need for the _data suffix, it's just an extra 5 characters
-that you have to potentially repeat a lot but doesn't add anything.
+It's not at all wrong. Take for example the case of Tegra124 and
+Tegra210 where host1x and its clients can address 34 bits. In those
+cases, allocating individual pages via shmem has a high probability of
+hitting physical addresses beyond the 32-bit range, which means that the
+host1x can not access them unless it is also attached to an IOMMU where
+physical addresses to >=3D 4 GiB addresses can be translated into < 4 GiB
+virtual addresses. This is a very real problem that I was running into
+when testing on Tegra124 and Tegra210.
 
-> +	const struct tegra_csi_fops *fops;
-> +
-> +	struct list_head csi_chans;
-> +};
-> +
-> +void tegra_csi_error_status(struct v4l2_subdev *subdev);
-> +
-> +#endif
-> diff --git a/drivers/staging/media/tegra/csi2_fops.c b/drivers/staging/media/tegra/csi2_fops.c
-> new file mode 100644
-> index 000000000000..5f2f7bd3ae50
-> --- /dev/null
-> +++ b/drivers/staging/media/tegra/csi2_fops.c
-> @@ -0,0 +1,335 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk/tegra.h>
-> +#include <linux/delay.h>
-> +
-> +#include "vi2_registers.h"
-> +#include "mc_common.h"
-> +#include "csi2_fops.h"
-> +#include "csi.h"
-> +
-> +/* CSI block registers offset */
-> +#define TEGRA210_CSI_PORT_OFFSET		0x34
-> +/* CSI CIL parition registers offset */
-> +#define TEGRA210_CSI_CIL_OFFSET			0x0f4
-> +/* CSI TPG registers offset */
-> +#define TEGRA210_CSI_TPG_OFFSET			0x18c
-> +
-> +#define CSI_PP_OFFSET(block)	((block) * 0x800)
-> +
-> +static void csi_write(struct tegra_csi_channel *chan, u8 block,
-> +		      unsigned int addr, u32 val)
-> +{
-> +	void __iomem *csi_pp_base;
-> +
-> +	csi_pp_base = chan->csi->iomem + CSI_PP_OFFSET(block);
-> +	writel(val, csi_pp_base + addr);
-> +}
-> +
-> +/* Pixel parser registers accessors */
-> +static void pp_write(struct tegra_csi_port *port, u32 addr, u32 val)
-> +{
-> +	writel(val, port->pixel_parser + addr);
-> +}
-> +
-> +static u32 pp_read(struct tegra_csi_port *port, u32 addr)
-> +{
-> +	return readl(port->pixel_parser + addr);
-> +}
-> +
-> +/* CSI CIL A/B port registers accessors */
-> +static void cil_write(struct tegra_csi_port *port, u8 port_id,
-> +		      u32 addr, u32 val)
-> +{
-> +	if (port_id & PORT_B)
-> +		writel(val, port->cilb + addr);
-> +	else
-> +		writel(val, port->cila + addr);
-> +}
-> +
-> +static u32 cil_read(struct tegra_csi_port *port, u8 port_id,
-> +		    u32 addr)
-> +{
-> +	if (port_id & PORT_B)
-> +		return readl(port->cilb + addr);
-> +	else
-> +		return readl(port->cila + addr);
-> +}
-> +
-> +/* Test pattern generator registers accessor */
-> +static void tpg_write(struct tegra_csi_port *port, unsigned int addr, u32 val)
-> +{
-> +	writel(val, port->tpg + addr);
-> +}
+But I agree that this shouldn't be necessary on Tegra20 and Tegra30. We
+should be able to remedy the situation on Tegra20 and Tegra30 by adding
+another check, based on the DMA mask. Something like the below should
+work:
 
-These register accessors all look a bit convoluted to me. For example,
-the cil_write()/cil_read() take a port ID in order to select between
-port->cila and port->cilb register banks. But then during ->hw_init()
-you need to go and assign port->cila and port->cilb using a CIL base
-and a port offset from that base.
+--- >8 ---
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index aa9e49f04988..bd268028fb3d 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1037,23 +1037,9 @@ void tegra_drm_free(struct tegra_drm *tegra, size_t =
+size, void *virt,
+ 	free_pages((unsigned long)virt, get_order(size));
+ }
+=20
+-static int host1x_drm_probe(struct host1x_device *dev)
++static bool host1x_drm_wants_iommu(struct host1x_device *dev)
+ {
+-	struct drm_driver *driver =3D &tegra_drm_driver;
+ 	struct iommu_domain *domain;
+-	struct tegra_drm *tegra;
+-	struct drm_device *drm;
+-	int err;
+-
+-	drm =3D drm_dev_alloc(driver, &dev->dev);
+-	if (IS_ERR(drm))
+-		return PTR_ERR(drm);
+-
+-	tegra =3D kzalloc(sizeof(*tegra), GFP_KERNEL);
+-	if (!tegra) {
+-		err =3D -ENOMEM;
+-		goto put;
+-	}
+=20
+ 	/*
+ 	 * If the Tegra DRM clients are backed by an IOMMU, push buffers are
+@@ -1082,9 +1068,38 @@ static int host1x_drm_probe(struct host1x_device *de=
+v)
+ 	 * up the device tree appropriately. This is considered an problem
+ 	 * of integration, so care must be taken for the DT to be consistent.
+ 	 */
+-	domain =3D iommu_get_domain_for_dev(drm->dev->parent);
++	domain =3D iommu_get_domain_for_dev(dev->dev.parent);
++
++	/*
++	 * Tegra20 and Tegra30 don't support addressing memory beyond the
++	 * 32-bit boundary, so the regular GATHER opcodes will always be
++	 * sufficient and whether or not the host1x is attached to an IOMMU
++	 * doesn't matter.
++	 */
++	if (!domain && dma_get_mask(dev->dev.parent) <=3D DMA_BIT_MASK(32))
++		return true;
++
++	return domain !=3D NULL;
++}
++
++static int host1x_drm_probe(struct host1x_device *dev)
++{
++	struct drm_driver *driver =3D &tegra_drm_driver;
++	struct tegra_drm *tegra;
++	struct drm_device *drm;
++	int err;
++
++	drm =3D drm_dev_alloc(driver, &dev->dev);
++	if (IS_ERR(drm))
++		return PTR_ERR(drm);
++
++	tegra =3D kzalloc(sizeof(*tegra), GFP_KERNEL);
++	if (!tegra) {
++		err =3D -ENOMEM;
++		goto put;
++	}
+=20
+-	if (domain && iommu_present(&platform_bus_type)) {
++	if (host1x_drm_wants_iommu(dev) && iommu_present(&platform_bus_type)) {
+ 		tegra->domain =3D iommu_domain_alloc(&platform_bus_type);
+ 		if (!tegra->domain) {
+ 			err =3D -ENOMEM;
+--- >8 ---
 
-So it sounds like this could be done much easier by doing something
-like:
+> [1]
+> https://elixir.bootlin.com/linux/v5.5-rc6/source/drivers/gpu/host1x/dev.c=
+#L205
+>=20
+> 2) Because of the above problems, the DRM clients are erroneously not
+> getting attached to IOMMU at all and thus CMA is getting used for the BO
+> allocations. Here comes the problems introduced by the "gpu: host1x:
+> Support DMA mapping of buffers" patch, which makes DMA API to perform
+> CPU cache maintenance on each job submission and apparently this is
+> super bad for performance. This also makes no sense in comparison to the
+> case of enabled IOMMU, where cache maintenance isn't performed at all
+> (like it should be).
 
-	static u32 cil_read(struct tegra_csi_port *port, u8 port_id, u32 addr)
-	{
-		unsigned int offset = port_id * TEGRA210_CSI_PORT_OFFSET;
+It actually does make a lot of sense. Very strictly speaking we were
+violating the DMA API prior to the above patch because we were not DMA
+mapping the buffers at all. Whenever you pass a buffer to hardware you
+need to map it for the device. At that point, the kernel does not know
+whether or not the buffer is dirty, so it has to perform a cache flush.
+Similarily, when the hardware is done with a buffer, we need to unmap it
+so that the CPU can access it again. This typically requires a cache
+invalidate.
 
-		return readl(port->cila + TEGRA210_CSI_CIL_OFFSET + offset);
-	}
+That things even worked to begin with more by accident than by design.
 
-Obviously there'd be no need for port->cilb in that case and port->cila
-could just be port->cil. Furthermore, since you have the prefixes here
-it sounds like these will be different for other generations, so perhaps
-they can be parameterized as part of the SoC-specific structure?
+So yes, this is different from what we were doing before, but it's
+actually the right thing to do. That said, I'm sure we can find ways to
+optimize this. For example, as part of the DMA API conversion series I
+added the possibility to set direction flags for relocation buffers. In
+cases where it is known that a certain buffer will only be used for
+reading, we should be able to avoid at least the cache invalidate
+operation after a job is done, since the hardware won't have modified
+the contents (when using an SMMU this can even be enforced). It's
+slightly trickier to avoid cache flushes. For buffers that are only
+going to be written, there's no need to flush the cache because the CPUs
+changes can be assumed to be overwritten by the hardware anyway. However
+we still need to make sure that we invalidate the caches in that case to
+ensure subsequent cache flushes don't overwrite data already written by
+hardware.
 
-Another thing that I find confusing is that we have a structure called
-tegra_csi_port, but in order to access registers within it we also need
-to pass a port ID. So it sounds like whatever tegra_csi_port represents
-isn't really a port.
+One other potential optimization I can imagine is to add flags to make
+cache maintenance optional on buffers when we know it's safe to do so.
+I'm not sure we can always know, so this is going to require further
+thought.
 
-Do you have any ideas on how to simplify this? It's not a terribly big
-deal, so feel free to leave it like this for now. I can take a look at
-simplifying later on if it keeps bugging me.
+> Please let me know if you're going to fix the problems or if you'd
+> prefer me to create the patches.
+>=20
+> Here is a draft of the fix for #2, it doesn't cover case of imported
+> buffers (which should be statically mapped, IIUC):
+>=20
+> @@ -38,7 +38,7 @@ static struct sg_table *tegra_bo_pin(struct device
+> *dev, struct host1x_bo *bo,
+>          * If we've manually mapped the buffer object through the IOMMU,
+> make
+>          * sure to return the IOVA address of our mapping.
+>          */
+> -       if (phys && obj->mm) {
+> +       if (phys && (obj->mm || obj->vaddr)) {
+>                 *phys =3D obj->iova;
 
-> +static int csi2_start_streaming(struct tegra_csi_channel *csi_chan,
-> +				u8 pg_mode, int enable)
-> +{
-> +	struct tegra_csi_device *csi = csi_chan->csi;
-> +	unsigned int port_num = csi_chan->csi_port_num;
-> +	unsigned int block = port_num >> 1;
-> +	struct tegra_csi_port *port = csi_chan->ports;
-> +	unsigned int cil_max_freq = csi->soc_data->cil_max_clk_hz;
-> +	struct clk *cil_clk;
-> +	int ret;
-> +
-> +	if (block == CSI_CIL_AB)
-> +		cil_clk = csi->cilab_clk;
-> +	else if (block == CSI_CIL_CD)
-> +		cil_clk = csi->cilcd_clk;
-> +	else
-> +		cil_clk = csi->cilef_clk;
-> +
-> +	if (enable) {
-> +		ret = clk_set_rate(cil_clk, cil_max_freq);
-> +		if (ret)
-> +			dev_err(csi->dev,
-> +				"failed to set cil clk rate, err: %d\n", ret);
+This doesn't work for the case where we use the DMA API for mapping. Or
+at least it isn't going to work in the general case. The reason is
+because obj->iova is only valid for whatever the device was that mapped
+or allocated the buffer, which in this case is the host1x device, which
+isn't even a real device, so it won't work. The only case where it does
+work is if we're not behind an IOMMU, so obj->iova will actually be the
+physical address.
 
-Perhaps dev_warn() since it's not a fatal error? Also, maybe spell out
-"clock" in error messages (and perhaps s/cil/CIL/). I also personally
-prefer the style of error messages to be:
-
-	"failed to ...: %d\n"
-
-i.e. without that ", err" in there. We use that style very widely, which
-has the advantage of making the log look very consistent.
-
-> +
-> +		/* enable CIL clock on first open */
-> +		if (atomic_add_return(1, &csi->clk_refcnt) == 1) {
-> +			ret = clk_prepare_enable(cil_clk);
-> +			if (ret) {
-> +				dev_err(csi->dev,
-> +					"failed to enable cil clk, err: %d\n",
-> +					ret);
-> +				return ret;
-> +			}
-> +		}
-> +
-> +		/*
-> +		 * On Tegra210, TPG internal logic uses PLLD out along with
-> +		 * the CIL clock.
-> +		 * So, enable TPG clock during TPG mode streaming.
-> +		 */
-> +		if (pg_mode) {
-> +			ret = clk_set_rate(csi->tpg_clk, TEGRA210_TPG_CLOCK);
-> +			if (ret)
-> +				dev_err(csi->dev,
-> +					"failed to set tpg clk rate\n");
-> +
-> +			ret = clk_prepare_enable(csi->tpg_clk);
-> +			if (ret) {
-> +				dev_err(csi->dev,
-> +					"failed to enable tpg clk, err: %d\n",
-> +					ret);
-> +				return ret;
-> +			}
-> +		}
-> +
-> +		csi_write(csi_chan, block, TEGRA_CSI_CLKEN_OVERRIDE, 0);
-> +
-> +		/* clean up status */
-> +		pp_write(port, TEGRA_CSI_PIXEL_PARSER_STATUS, 0xFFFFFFFF);
-> +		cil_write(port, port_num, TEGRA_CSI_CIL_STATUS, 0xFFFFFFFF);
-> +		cil_write(port, port_num, TEGRA_CSI_CILX_STATUS, 0xFFFFFFFF);
-> +		cil_write(port, port_num, TEGRA_CSI_CIL_INTERRUPT_MASK, 0x0);
-> +
-> +		/* CIL PHY registers setup */
-> +		cil_write(port, port_num, TEGRA_CSI_CIL_PAD_CONFIG0, 0x0);
-> +		cil_write(port, port_num, TEGRA_CSI_CIL_PHY_CONTROL, 0xA);
-> +
-> +		/*
-> +		 * The CSI unit provides for connection of up to six cameras in
-> +		 * the system and is organized as three identical instances of
-> +		 * two MIPI support blocks, each with a separate 4-lane
-> +		 * interface that can be configured as a single camera with 4
-> +		 * lanes or as a dual camera with 2 lanes available for each
-> +		 * camera.
-> +		 */
-> +		if (port->lanes == 4) {
-> +			cil_write(port, port_num, TEGRA_CSI_CIL_PAD_CONFIG0,
-> +				  BRICK_CLOCK_A_4X);
-> +
-> +			cil_write(port, (port_num + 1),
-
-No need for parentheses around "port_num + 1" here and below.
-
-> +				  TEGRA_CSI_CIL_PAD_CONFIG0, 0x0);
-> +
-> +			cil_write(port, (port_num + 1),
-> +				  TEGRA_CSI_CIL_INTERRUPT_MASK, 0x0);
-> +
-> +			cil_write(port, (port_num + 1),
-> +				  TEGRA_CSI_CIL_PHY_CONTROL, 0xA);
-> +
-> +			csi_write(csi_chan, block, TEGRA_CSI_PHY_CIL_COMMAND,
-> +				  CSI_A_PHY_CIL_ENABLE | CSI_B_PHY_CIL_ENABLE);
-> +		} else {
-> +			u32 val = ((port_num & 1) == PORT_A) ?
-> +				  CSI_A_PHY_CIL_ENABLE | CSI_B_PHY_CIL_NOP :
-> +				  CSI_B_PHY_CIL_ENABLE | CSI_A_PHY_CIL_NOP;
-> +			csi_write(csi_chan, block, TEGRA_CSI_PHY_CIL_COMMAND,
-> +				  val);
-> +		}
-> +
-> +		/* CSI pixel parser registers setup */
-> +		pp_write(port, TEGRA_CSI_PIXEL_STREAM_PP_COMMAND,
-> +			 (0xF << CSI_PP_START_MARKER_FRAME_MAX_OFFSET) |
-> +			 CSI_PP_SINGLE_SHOT_ENABLE | CSI_PP_RST);
-> +		pp_write(port, TEGRA_CSI_PIXEL_PARSER_INTERRUPT_MASK, 0x0);
-> +		pp_write(port, TEGRA_CSI_PIXEL_STREAM_CONTROL0,
-> +			 CSI_PP_PACKET_HEADER_SENT |
-> +			 CSI_PP_DATA_IDENTIFIER_ENABLE |
-> +			 CSI_PP_WORD_COUNT_SELECT_HEADER |
-> +			 CSI_PP_CRC_CHECK_ENABLE |  CSI_PP_WC_CHECK |
-> +			 CSI_PP_OUTPUT_FORMAT_STORE |
-> +			 CSI_PP_HEADER_EC_DISABLE | CSI_PPA_PAD_FRAME_NOPAD |
-> +			 (port_num & 1));
-> +		pp_write(port, TEGRA_CSI_PIXEL_STREAM_CONTROL1,
-> +			 (0x1 << CSI_PP_TOP_FIELD_FRAME_OFFSET) |
-> +			 (0x1 << CSI_PP_TOP_FIELD_FRAME_MASK_OFFSET));
-> +		pp_write(port, TEGRA_CSI_PIXEL_STREAM_GAP,
-> +			 0x14 << PP_FRAME_MIN_GAP_OFFSET);
-> +		pp_write(port, TEGRA_CSI_PIXEL_STREAM_EXPECTED_FRAME, 0x0);
-> +		pp_write(port, TEGRA_CSI_INPUT_STREAM_CONTROL,
-> +			 (0x3f << CSI_SKIP_PACKET_THRESHOLD_OFFSET) |
-> +			 (port->lanes - 1));
-> +
-> +		/* TPG setup */
-> +		if (pg_mode) {
-> +			tpg_write(port, TEGRA_CSI_PATTERN_GENERATOR_CTRL,
-> +				  ((pg_mode - 1) << PG_MODE_OFFSET) |
-> +				  PG_ENABLE);
-> +			tpg_write(port, TEGRA_CSI_PG_PHASE, 0x0);
-> +			tpg_write(port, TEGRA_CSI_PG_RED_FREQ,
-> +				  (0x10 << PG_RED_VERT_INIT_FREQ_OFFSET) |
-> +				  (0x10 << PG_RED_HOR_INIT_FREQ_OFFSET));
-> +			tpg_write(port, TEGRA_CSI_PG_RED_FREQ_RATE, 0x0);
-> +			tpg_write(port, TEGRA_CSI_PG_GREEN_FREQ,
-> +				  (0x10 << PG_GREEN_VERT_INIT_FREQ_OFFSET) |
-> +				  (0x10 << PG_GREEN_HOR_INIT_FREQ_OFFSET));
-> +			tpg_write(port, TEGRA_CSI_PG_GREEN_FREQ_RATE, 0x0);
-> +			tpg_write(port, TEGRA_CSI_PG_BLUE_FREQ,
-> +				  (0x10 << PG_BLUE_VERT_INIT_FREQ_OFFSET) |
-> +				  (0x10 << PG_BLUE_HOR_INIT_FREQ_OFFSET));
-> +			tpg_write(port, TEGRA_CSI_PG_BLUE_FREQ_RATE, 0x0);
-> +		}
-> +
-> +		pp_write(port, TEGRA_CSI_PIXEL_STREAM_PP_COMMAND,
-> +			 (0xF << CSI_PP_START_MARKER_FRAME_MAX_OFFSET) |
-> +			 CSI_PP_SINGLE_SHOT_ENABLE | CSI_PP_ENABLE);
-> +	} else {
-> +		u32 val = pp_read(port, TEGRA_CSI_PIXEL_PARSER_STATUS);
-> +
-> +		dev_dbg(csi->dev, "TEGRA_CSI_PIXEL_PARSER_STATUS 0x%08x\n",
-> +			val);
-
-Are these still useful? I notice that you don't have debug output for
-the case where enable == true.
-
-> +
-> +		val = cil_read(port, port_num, TEGRA_CSI_CIL_STATUS);
-> +		dev_dbg(csi->dev, "TEGRA_CSI_CIL_STATUS 0x%08x\n", val);
-> +
-> +		val = cil_read(port, port_num, TEGRA_CSI_CILX_STATUS);
-> +		dev_dbg(csi->dev, "TEGRA_CSI_CILX_STATUS 0x%08x\n", val);
-> +
-> +		pp_write(port, TEGRA_CSI_PIXEL_STREAM_PP_COMMAND,
-> +			 (0xF << CSI_PP_START_MARKER_FRAME_MAX_OFFSET) |
-> +			 CSI_PP_DISABLE);
-> +
-> +		if (pg_mode) {
-> +			tpg_write(port, TEGRA_CSI_PATTERN_GENERATOR_CTRL,
-> +				  ((pg_mode - 1) << PG_MODE_OFFSET) |
-> +				  PG_DISABLE);
-> +			clk_disable_unprepare(csi->tpg_clk);
-> +		}
-> +
-> +		if (port->lanes == 4) {
-> +			csi_write(csi_chan, block, TEGRA_CSI_PHY_CIL_COMMAND,
-> +				  CSI_A_PHY_CIL_DISABLE |
-> +				  CSI_B_PHY_CIL_DISABLE);
-> +
-> +		} else {
-> +			u32 val = ((port_num & 1) == PORT_A) ?
-> +				  CSI_A_PHY_CIL_DISABLE | CSI_B_PHY_CIL_NOP :
-> +				  CSI_B_PHY_CIL_DISABLE | CSI_A_PHY_CIL_NOP;
-> +			csi_write(csi_chan, block, TEGRA_CSI_PHY_CIL_COMMAND,
-> +				  val);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int csi2_hw_init(struct tegra_csi_device *csi)
-> +{
-> +	struct tegra_csi_channel *csi_chan;
-> +	struct tegra_csi_port *port;
-> +	u8 portno;
-> +	int ret;
-> +
-> +	csi->cilab_clk = devm_clk_get(csi->dev, "cilab");
-> +	if (IS_ERR(csi->cilab_clk)) {
-> +		dev_err(csi->dev, "Failed to get cilab clock\n");
-
-Maybe output the error code here? The important thing here is to make
-error messages consistent, which can simplify analysis of the kernel log
-later on.
-
-> +		return PTR_ERR(csi->cilab_clk);
-> +	}
-> +
-> +	csi->cilcd_clk = devm_clk_get(csi->dev, "cilcd");
-> +	if (IS_ERR(csi->cilcd_clk)) {
-> +		dev_err(csi->dev, "Failed to get cilcd clock\n");
-> +		return PTR_ERR(csi->cilcd_clk);
-> +	}
-> +
-> +	csi->cilef_clk = devm_clk_get(csi->dev, "cile");
-> +	if (IS_ERR(csi->cilef_clk)) {
-> +		dev_err(csi->dev, "Failed to get cile clock\n");
-> +		return PTR_ERR(csi->cilef_clk);
-> +	}
-> +
-> +	csi->tpg_clk = devm_clk_get(csi->dev, "csi_tpg");
-> +	if (IS_ERR(csi->tpg_clk)) {
-> +		dev_err(csi->dev, "Failed to get csi_tpg clock\n");
-> +		return PTR_ERR(csi->tpg_clk);
-> +	}
-> +
-> +	csi->csi_clk = devm_clk_get(csi->dev, "csi");
-> +	if (IS_ERR(csi->csi_clk)) {
-> +		dev_err(csi->dev, "Failed to get csi clock\n");
-> +		return PTR_ERR(csi->csi_clk);
-> +	}
-> +
-> +	ret = clk_prepare_enable(csi->csi_clk);
-> +	if (ret) {
-> +		dev_err(csi->dev, "Failed to enable csi clk, err: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	list_for_each_entry(csi_chan, &csi->csi_chans, list) {
-> +		void __iomem *csi_pp_base;
-> +
-> +		port = csi_chan->ports;
-> +		portno = csi_chan->csi_port_num;
-> +		csi_pp_base = csi->iomem + CSI_PP_OFFSET(portno >> 1);
-> +		port->pixel_parser = csi_pp_base +
-> +				     (portno % CSI_PORTS_PER_BRICK) *
-> +				     TEGRA210_CSI_PORT_OFFSET;
-> +		port->cila = csi_pp_base + TEGRA210_CSI_CIL_OFFSET;
-> +		port->cilb = port->cila + TEGRA210_CSI_PORT_OFFSET;
-> +		port->tpg = port->pixel_parser + TEGRA210_CSI_TPG_OFFSET;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +const struct tegra_csi_fops csi2_fops = {
-> +	.hw_init = csi2_hw_init,
-> +	.csi_start_streaming = csi2_start_streaming,
-> +	.csi_err_status = csi2_error_status,
-> +};
-> +EXPORT_SYMBOL(csi2_fops);
-> diff --git a/drivers/staging/media/tegra/csi2_fops.h b/drivers/staging/media/tegra/csi2_fops.h
-> new file mode 100644
-> index 000000000000..cf22a28ceb1f
-> --- /dev/null
-> +++ b/drivers/staging/media/tegra/csi2_fops.h
-> @@ -0,0 +1,15 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#ifndef __CSI2_H__
-> +#define __CSI2_H__
-> +
-> +#define	TEGRA210_TPG_CLOCK		594000000
-> +#define	TEGRA210_CSI_CIL_CLK_MAX	102000000
-> +#define TEGRA210_CSI_BRICKS_MAX		3
-> +
-> +extern const struct tegra_csi_fops csi2_fops;
-> +
-> +#endif
-> diff --git a/drivers/staging/media/tegra/host1x-video.c b/drivers/staging/media/tegra/host1x-video.c
-> new file mode 100644
-> index 000000000000..740806121e6b
-> --- /dev/null
-> +++ b/drivers/staging/media/tegra/host1x-video.c
-> @@ -0,0 +1,120 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#include <linux/host1x.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "host1x-video.h"
-> +
-> +static int host1x_video_probe(struct host1x_device *dev)
-> +{
-> +	struct tegra_camera *cam;
-> +	int ret;
-> +
-> +	cam = devm_kzalloc(&dev->dev, sizeof(*cam), GFP_KERNEL);
-> +	if (!cam)
-> +		return -ENOMEM;
-> +
-> +	cam->dev = get_device(&dev->dev);
-> +	cam->media_dev.dev = cam->dev;
-> +	strscpy(cam->media_dev.model, "NVIDIA Tegra Video Input Device",
-> +		sizeof(cam->media_dev.model));
-> +	cam->media_dev.hw_revision = 3;
-
-Where does this come from?
-
-> +
-> +	media_device_init(&cam->media_dev);
-> +	ret = media_device_register(&cam->media_dev);
-> +	if (ret < 0) {
-> +		dev_err(cam->dev, "failed to register media device: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	cam->v4l2_dev.mdev = &cam->media_dev;
-> +	ret = v4l2_device_register(cam->dev, &cam->v4l2_dev);
-> +	if (ret < 0) {
-> +		dev_err(cam->dev, "V4L2 device registration failed: %d\n", ret);
-> +		goto register_error;
-> +	}
-> +
-> +	dev_set_drvdata(&dev->dev, cam);
-> +
-> +	ret = host1x_device_init(dev);
-> +	if (ret < 0)
-> +		goto dev_exit;
-> +
-> +	return 0;
-> +
-> +dev_exit:
-> +	host1x_device_exit(dev);
-
-There should be no need to call host1x_device_exit() when
-host1x_device_init() failed because the latter already takes care of
-undoing whatever it did already.
-
-> +	v4l2_device_unregister(&cam->v4l2_dev);
-> +register_error:
-> +	media_device_unregister(&cam->media_dev);
-> +	media_device_cleanup(&cam->media_dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int host1x_video_remove(struct host1x_device *dev)
-> +{
-> +	struct tegra_camera *cam = dev_get_drvdata(&dev->dev);
-> +
-> +	host1x_device_exit(dev);
-> +	v4l2_device_unregister(&cam->v4l2_dev);
-> +	media_device_unregister(&cam->media_dev);
-> +	media_device_cleanup(&cam->media_dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id host1x_video_subdevs[] = {
-> +	{ .compatible = "nvidia,tegra210-csi", },
-> +	{ .compatible = "nvidia,tegra210-vi", },
-> +	{ }
-> +};
-> +
-> +static struct host1x_driver host1x_video_driver = {
-> +	.driver = {
-> +		.name = "host1x_video",
-
-We typically use - instead of _ in names. This helps making access to
-sysfs or debugfs consistent across drivers.
-
-> +	},
-> +	.probe = host1x_video_probe,
-> +	.remove = host1x_video_remove,
-> +	.subdevs = host1x_video_subdevs,
-> +};
-> +
-> +static struct platform_driver * const drivers[] = {
-> +	&tegra_csi_driver,
-> +	&tegra_vi_driver,
-> +};
-> +
-> +static int __init host1x_video_init(void)
-> +{
-> +	int err;
-> +
-> +	err = host1x_driver_register(&host1x_video_driver);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	err = platform_register_drivers(drivers, ARRAY_SIZE(drivers));
-> +	if (err < 0)
-> +		goto unregister_host1x;
-> +
-> +	return 0;
-> +
-> +unregister_host1x:
-> +	host1x_driver_unregister(&host1x_video_driver);
-> +	return err;
-> +}
-> +module_init(host1x_video_init);
-> +
-> +static void __exit host1x_video_exit(void)
-> +{
-> +	platform_unregister_drivers(drivers, ARRAY_SIZE(drivers));
-> +	host1x_driver_unregister(&host1x_video_driver);
-> +}
-> +module_exit(host1x_video_exit);
-> +
-> +MODULE_AUTHOR("Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-> +MODULE_DESCRIPTION("NVIDIA Tegra Host1x Video driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/staging/media/tegra/host1x-video.h b/drivers/staging/media/tegra/host1x-video.h
-> new file mode 100644
-> index 000000000000..84d28e6f4362
-> --- /dev/null
-> +++ b/drivers/staging/media/tegra/host1x-video.h
-> @@ -0,0 +1,33 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#ifndef HOST1X_VIDEO_H
-> +#define HOST1X_VIDEO_H 1
-> +
-> +#include <linux/host1x.h>
-> +
-> +#include <media/media-device.h>
-> +#include <media/media-entity.h>
-> +#include <media/v4l2-async.h>
-> +#include <media/v4l2-ctrls.h>
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-dev.h>
-> +#include <media/videobuf2-v4l2.h>
-> +
-> +#include "tegra-vi.h"
-> +#include "csi.h"
-> +
-> +struct tegra_camera {
-
-Nit: "camera" seems like a suboptimal choice because usually VI will
-consume data from multiple cameras. Maybe something like "tegra_video"
-would be a better name?
-
-> +	struct v4l2_device v4l2_dev;
-> +	struct media_device media_dev;
-> +	struct device *dev;
-> +	struct tegra_vi *vi;
-> +	struct tegra_csi_device *csi;
-> +};
-> +
-> +extern struct platform_driver tegra_vi_driver;
-> +extern struct platform_driver tegra_csi_driver;
-> +
-> +#endif /* HOST1X_VIDEO_H */
-[...]
-> diff --git a/drivers/staging/media/tegra/tegra-channel.c b/drivers/staging/media/tegra/tegra-channel.c
-> new file mode 100644
-> index 000000000000..7561f6fb8748
-> --- /dev/null
-> +++ b/drivers/staging/media/tegra/tegra-channel.c
-> @@ -0,0 +1,628 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#include <linux/atomic.h>
-> +#include <linux/bitmap.h>
-> +#include <linux/clk.h>
-> +#include <linux/host1x.h>
-> +#include <linux/kthread.h>
-> +#include <linux/lcm.h>
-> +#include <linux/list.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/sched.h>
-> +#include <linux/slab.h>
-> +
-> +#include <media/v4l2-event.h>
-> +#include <media/v4l2-fh.h>
-> +#include <media/v4l2-ioctl.h>
-> +#include <media/videobuf2-dma-contig.h>
-> +
-> +#include <soc/tegra/pmc.h>
-> +
-> +#include "mc_common.h"
-> +#include "tegra-vi.h"
-> +#include "host1x-video.h"
-> +
-> +#define MAX_CID_CONTROLS		1
-> +
-> +static const char *const vi_pattern_strings[] = {
-> +	"Black/White Direct Mode",
-> +	"Color Patch Mode",
-> +};
-> +
-> +static int vi_s_ctrl(struct v4l2_ctrl *ctrl)
-> +{
-> +	struct tegra_channel *chan = container_of(ctrl->handler,
-> +						  struct tegra_channel,
-> +						  ctrl_handler);
-> +
-> +	switch (ctrl->id) {
-> +	case V4L2_CID_TEST_PATTERN:
-> +		chan->vi->pg_mode = ctrl->val + 1;
-> +		dev_info(chan->vi->dev, "TPG mode is set to %s\n",
-> +			 vi_pattern_strings[ctrl->val]);
-
-dev_dbg()?
-
-> +		break;
-> +
-> +	default:
-> +		dev_err(chan->vi->dev, "Invalid Tegra video control\n");
-
-That potentially allows an attacker to DoS by flooding the kernel log.
-Isn't the -EINVAL below already going to provide enough information to
-the caller? If we really want this, perhaps turn it into a dev_dbg() or
-even better yet, a rate-limited dev_dbg().
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-[...]
-> diff --git a/drivers/staging/media/tegra/vi2_fops.c b/drivers/staging/media/tegra/vi2_fops.c
-[...]
-> +const struct tegra_vi_fops vi2_fops = {
-> +	.vi_stride_align = vi2_stride_align,
-> +	.vi_start_streaming = vi2_channel_start_streaming,
-> +	.vi_stop_streaming = vi2_channel_stop_streaming,
-> +};
-> +EXPORT_SYMBOL(vi2_fops);
-
-There should be no need to export this, unless you want to build this as
-a separate module, which I don't think is a good idea.
-
-> diff --git a/drivers/staging/media/tegra/vi2_fops.h b/drivers/staging/media/tegra/vi2_fops.h
-> new file mode 100644
-> index 000000000000..dcbd3ad4b642
-> --- /dev/null
-> +++ b/drivers/staging/media/tegra/vi2_fops.h
-> @@ -0,0 +1,15 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#ifndef __T210_VI_H__
-> +#define __T210_VI_H__
-> +
-> +#define	TEGRA210_CLOCK_VI_MAX			460000000
-> +
-> +#define	TEGRA_VI_CSI_BASE(x)			(0x100 + (x) * 0x100)
-> +
-> +extern const struct tegra_vi_fops vi2_fops;
-> +
-> +#endif
-
-I've been wondering about this. So far we've got two pairs of Tegra210
-specific files: vi2_fops.[ch] and csi2_fops.[ch]. Is there any reason
-why we couldn't merge those two files into a single file, say,
-tegra210.c?
-
-I don't think a header file would be really necessary in that case since
-only the tegra210.c file would use any of the definitions in that header
-and we coul simply put the "extern" definitions into some central
-location to make them available to the main driver.
-
-These files aren't terribly huge, so merging them should result in still
-fairly manageable chunks.
-
-> diff --git a/drivers/staging/media/tegra/vi2_formats.h b/drivers/staging/media/tegra/vi2_formats.h
-> new file mode 100644
-> index 000000000000..416960b1c1f2
-> --- /dev/null
-> +++ b/drivers/staging/media/tegra/vi2_formats.h
-> @@ -0,0 +1,119 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#ifndef __VI2_FORMATS_H_
-> +#define __VI2_FORMATS_H_
-> +
-> +#include "tegra-core.h"
-> +
-> +/*
-> + * These go into the TEGRA_VI_CSI_n_IMAGE_DEF registers bits 23:16
-> + * Output pixel memory format for the VI channel.
-> + */
-> +enum tegra_image_format {
-> +	TEGRA_IMAGE_FORMAT_T_L8 = 16,
-> +
-> +	TEGRA_IMAGE_FORMAT_T_R16_I = 32,
-> +	TEGRA_IMAGE_FORMAT_T_B5G6R5,
-> +	TEGRA_IMAGE_FORMAT_T_R5G6B5,
-> +	TEGRA_IMAGE_FORMAT_T_A1B5G5R5,
-> +	TEGRA_IMAGE_FORMAT_T_A1R5G5B5,
-> +	TEGRA_IMAGE_FORMAT_T_B5G5R5A1,
-> +	TEGRA_IMAGE_FORMAT_T_R5G5B5A1,
-> +	TEGRA_IMAGE_FORMAT_T_A4B4G4R4,
-> +	TEGRA_IMAGE_FORMAT_T_A4R4G4B4,
-> +	TEGRA_IMAGE_FORMAT_T_B4G4R4A4,
-> +	TEGRA_IMAGE_FORMAT_T_R4G4B4A4,
-> +
-> +	TEGRA_IMAGE_FORMAT_T_A8B8G8R8 = 64,
-> +	TEGRA_IMAGE_FORMAT_T_A8R8G8B8,
-> +	TEGRA_IMAGE_FORMAT_T_B8G8R8A8,
-> +	TEGRA_IMAGE_FORMAT_T_R8G8B8A8,
-> +	TEGRA_IMAGE_FORMAT_T_A2B10G10R10,
-> +	TEGRA_IMAGE_FORMAT_T_A2R10G10B10,
-> +	TEGRA_IMAGE_FORMAT_T_B10G10R10A2,
-> +	TEGRA_IMAGE_FORMAT_T_R10G10B10A2,
-> +
-> +	TEGRA_IMAGE_FORMAT_T_A8Y8U8V8 = 193,
-> +	TEGRA_IMAGE_FORMAT_T_V8U8Y8A8,
-> +
-> +	TEGRA_IMAGE_FORMAT_T_A2Y10U10V10 = 197,
-> +	TEGRA_IMAGE_FORMAT_T_V10U10Y10A2,
-> +	TEGRA_IMAGE_FORMAT_T_Y8_U8__Y8_V8,
-> +	TEGRA_IMAGE_FORMAT_T_Y8_V8__Y8_U8,
-> +	TEGRA_IMAGE_FORMAT_T_U8_Y8__V8_Y8,
-> +	TEGRA_IMAGE_FORMAT_T_V8_Y8__U8_Y8,
-> +
-> +	TEGRA_IMAGE_FORMAT_T_Y8__U8__V8_N444 = 224,
-> +	TEGRA_IMAGE_FORMAT_T_Y8__U8V8_N444,
-> +	TEGRA_IMAGE_FORMAT_T_Y8__V8U8_N444,
-> +	TEGRA_IMAGE_FORMAT_T_Y8__U8__V8_N422,
-> +	TEGRA_IMAGE_FORMAT_T_Y8__U8V8_N422,
-> +	TEGRA_IMAGE_FORMAT_T_Y8__V8U8_N422,
-> +	TEGRA_IMAGE_FORMAT_T_Y8__U8__V8_N420,
-> +	TEGRA_IMAGE_FORMAT_T_Y8__U8V8_N420,
-> +	TEGRA_IMAGE_FORMAT_T_Y8__V8U8_N420,
-> +	TEGRA_IMAGE_FORMAT_T_X2LC10LB10LA10,
-> +	TEGRA_IMAGE_FORMAT_T_A2R6R6R6R6R6,
-> +};
-> +
-> +static const struct tegra_video_format vi2_video_formats[] = {
-> +	/* RAW 8 */
-> +	TEGRA_VIDEO_FORMAT(RAW8, 8, SRGGB8_1X8, 1, 1, T_L8,
-> +			   RAW8, SRGGB8, "RGRG.. GBGB.."),
-> +	TEGRA_VIDEO_FORMAT(RAW8, 8, SGRBG8_1X8, 1, 1, T_L8,
-> +			   RAW8, SGRBG8, "GRGR.. BGBG.."),
-> +	TEGRA_VIDEO_FORMAT(RAW8, 8, SGBRG8_1X8, 1, 1, T_L8,
-> +			   RAW8, SGBRG8, "GBGB.. RGRG.."),
-> +	TEGRA_VIDEO_FORMAT(RAW8, 8, SBGGR8_1X8, 1, 1, T_L8,
-> +			   RAW8, SBGGR8, "BGBG.. GRGR.."),
-> +
-> +	/* RAW 10 */
-> +	TEGRA_VIDEO_FORMAT(RAW10, 10, SRGGB10_1X10, 2, 1, T_R16_I,
-> +			   RAW10, SRGGB10, "RGRG.. GBGB.."),
-> +	TEGRA_VIDEO_FORMAT(RAW10, 10, SGRBG10_1X10, 2, 1, T_R16_I,
-> +			   RAW10, SGRBG10, "GRGR.. BGBG.."),
-> +	TEGRA_VIDEO_FORMAT(RAW10, 10, SGBRG10_1X10, 2, 1, T_R16_I,
-> +			   RAW10, SGBRG10, "GBGB.. RGRG.."),
-> +	TEGRA_VIDEO_FORMAT(RAW10, 10, SBGGR10_1X10, 2, 1, T_R16_I,
-> +			   RAW10, SBGGR10, "BGBG.. GRGR.."),
-> +
-> +	/* RAW 12 */
-> +	TEGRA_VIDEO_FORMAT(RAW12, 12, SRGGB12_1X12, 2, 1, T_R16_I,
-> +			   RAW12, SRGGB12, "RGRG.. GBGB.."),
-> +	TEGRA_VIDEO_FORMAT(RAW12, 12, SGRBG12_1X12, 2, 1, T_R16_I,
-> +			   RAW12, SGRBG12, "GRGR.. BGBG.."),
-> +	TEGRA_VIDEO_FORMAT(RAW12, 12, SGBRG12_1X12, 2, 1, T_R16_I,
-> +			   RAW12, SGBRG12, "GBGB.. RGRG.."),
-> +	TEGRA_VIDEO_FORMAT(RAW12, 12, SBGGR12_1X12, 2, 1, T_R16_I,
-> +			   RAW12, SBGGR12, "BGBG.. GRGR.."),
-> +
-> +	/* RGB888 */
-> +	TEGRA_VIDEO_FORMAT(RGB888, 24, RGB888_1X24, 4, 1, T_A8R8G8B8,
-> +			   RGB888, ABGR32, "BGRA-8-8-8-8"),
-> +	TEGRA_VIDEO_FORMAT(RGB888, 24, RGB888_1X32_PADHI, 4, 1, T_A8B8G8R8,
-> +			   RGB888, RGB32, "RGB-8-8-8-8"),
-> +
-> +	/* YUV422 */
-> +	TEGRA_VIDEO_FORMAT(YUV422, 16, UYVY8_1X16, 2, 1, T_U8_Y8__V8_Y8,
-> +			   YUV422_8, UYVY, "YUV 4:2:2"),
-> +	TEGRA_VIDEO_FORMAT(YUV422, 16, VYUY8_1X16, 2, 1, T_V8_Y8__U8_Y8,
-> +			   YUV422_8, VYUY, "YUV 4:2:2"),
-> +	TEGRA_VIDEO_FORMAT(YUV422, 16, YUYV8_1X16, 2, 1, T_Y8_U8__Y8_V8,
-> +			   YUV422_8, YUYV, "YUV 4:2:2"),
-> +	TEGRA_VIDEO_FORMAT(YUV422, 16, YVYU8_1X16, 2, 1, T_Y8_V8__Y8_U8,
-> +			   YUV422_8, YVYU, "YUV 4:2:2"),
-> +	TEGRA_VIDEO_FORMAT(YUV422, 16, UYVY8_1X16, 1, 1, T_Y8__V8U8_N422,
-> +			   YUV422_8, NV16, "NV16"),
-> +	TEGRA_VIDEO_FORMAT(YUV422, 16, UYVY8_2X8, 2, 1, T_U8_Y8__V8_Y8,
-> +			   YUV422_8, UYVY, "YUV 4:2:2 UYVY"),
-> +	TEGRA_VIDEO_FORMAT(YUV422, 16, VYUY8_2X8, 2, 1, T_V8_Y8__U8_Y8,
-> +			   YUV422_8, VYUY, "YUV 4:2:2 VYUY"),
-> +	TEGRA_VIDEO_FORMAT(YUV422, 16, YUYV8_2X8, 2, 1, T_Y8_U8__Y8_V8,
-> +			   YUV422_8, YUYV, "YUV 4:2:2 YUYV"),
-> +	TEGRA_VIDEO_FORMAT(YUV422, 16, YVYU8_2X8, 2, 1, T_Y8_V8__Y8_U8,
-> +			   YUV422_8, YVYU, "YUV 4:2:2 YVYU"),
-> +};
-
-Does this table perhaps also belong in tegra210.c?
-
-> +#endif
-> diff --git a/drivers/staging/media/tegra/vi2_registers.h b/drivers/staging/media/tegra/vi2_registers.h
-> new file mode 100644
-> index 000000000000..c54a6a3aa1c4
-> --- /dev/null
-> +++ b/drivers/staging/media/tegra/vi2_registers.h
-> @@ -0,0 +1,194 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#ifndef __REGISTERS_H__
-> +#define __REGISTERS_H__
-> +
-> +#define	TEGRA_CLOCK_VI_MAX				793600000
-> +#define	TEGRA210_SURFACE_ALIGNMENT			64
-> +#define TEGRA210_MAX_CHANNELS				6
-> +
-> +/* Tegra210 VI registers */
-
-If these are Tegra210-specific, are they accessed outside of Tegra210-
-specific code? If not, they may be better located in that new tegra210.c
-source file as well. That way it becomes a lot easier to distinguish
-between generic, perhaps parameterized, core code and the SoC generation
-specific code.
+So what this basically ends up doing is avoid dma_map_*() all the time,
+which I guess is what you're trying to achieve. But it also gives you
+the wrong I/O virtual address in any case where an IOMMU is involved.
+Also, as discussed above, avoiding cache maintenance isn't correct.
 
 Thierry
 
---ExXT7PjY8AI4Hyfa
+>                 return NULL;
+>         }
+> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+> index 25ca54de8fc5..69adfd66196b 100644
+> --- a/drivers/gpu/host1x/job.c
+> +++ b/drivers/gpu/host1x/job.c
+> @@ -108,7 +108,7 @@ static unsigned int pin_job(struct host1x *host,
+> struct host1x_job *job)
+>=20
+>         for (i =3D 0; i < job->num_relocs; i++) {
+>                 struct host1x_reloc *reloc =3D &job->relocs[i];
+> -               dma_addr_t phys_addr, *phys;
+> +               dma_addr_t phys_addr;
+>                 struct sg_table *sgt;
+>=20
+>                 reloc->target.bo =3D host1x_bo_get(reloc->target.bo);
+> @@ -117,12 +117,7 @@ static unsigned int pin_job(struct host1x *host,
+> struct host1x_job *job)
+>                         goto unpin;
+>                 }
+>=20
+> -               if (client->group)
+> -                       phys =3D &phys_addr;
+> -               else
+> -                       phys =3D NULL;
+> -
+> -               sgt =3D host1x_bo_pin(dev, reloc->target.bo, phys);
+> +               sgt =3D host1x_bo_pin(dev, reloc->target.bo, &phys_addr);
+>                 if (IS_ERR(sgt)) {
+>                         err =3D PTR_ERR(sgt);
+>                         goto unpin;
+> @@ -184,7 +179,7 @@ static unsigned int pin_job(struct host1x *host,
+> struct host1x_job *job)
+>                         goto unpin;
+>                 }
+>=20
+> -               sgt =3D host1x_bo_pin(host->dev, g->bo, NULL);
+> +               sgt =3D host1x_bo_pin(host->dev, g->bo, &phys_addr);
+>                 if (IS_ERR(sgt)) {
+>                         err =3D PTR_ERR(sgt);
+>                         goto unpin;
+> @@ -214,7 +209,7 @@ static unsigned int pin_job(struct host1x *host,
+> struct host1x_job *job)
+>=20
+>                         job->unpins[job->num_unpins].size =3D gather_size;
+>                         phys_addr =3D iova_dma_addr(&host->iova, alloc);
+> -               } else {
+> +               } else if (sgt) {
+>                         err =3D dma_map_sg(host->dev, sgt->sgl, sgt->nent=
+s,
+>                                          DMA_TO_DEVICE);
+>                         if (!err) {
+
+--E69HUUNAyIJqGpVn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4xaOEACgkQ3SOs138+
-s6GJgw//W1Du3WDITs2Mcp4QOU6MvkRj95D08Wiujh9Acs5yjhw4p3Yag9ol3pMc
-v2IsEqnY4HyCADKFHhCnTdEM8WI5mJebYPiObJg7C2s8fcKdfFSN24gOebEU+VUE
-S7i7mkUmjFxsGh5PkkWNycOXgU35IXHXXK7uEBvFq7zHmHoFIbtea6KGRgwS4cPv
-+asG72WUZrzUrE23ei3oLcrNNMYQH/LGvcYJB/kL24Yud02818nGoyIMA0jrktRV
-mPDYF022GoIL9ZFWSpHe8vxiHs5iuJVqPKGRHoEDULZgfY4t00eWEHcgfmPmpvqD
-GnuCb6Gtk2fFu6UPkeNO+tHadmR+GkjNSnUJCrUgKqg6vfkW3WFCY2WKfoJ5zKiF
-j0Hq08ehxXKyri4maNEI6t2u/vNy+50mO3Py042tEWiYkcJpd8PBB1jMh6HbQ7OB
-3JJmkURiV2lsc2HUqTQDkfRNSpnT9tlI7nNVtJk2cL9/4I2BGowgLHrrbv1AnKO/
-EMXN50UksrdhWJ+BMQOPZeY9cG+w87YJThLSmGat7/DnEuAH3JOxln0Tqae/ehjT
-c7AEIY8LRELhITRLym8YgPSL/yWye6aythqnPUFsagXJyFpMC0IaCvAspheQoo5U
-liTx+wVjN986r+zMPBm3sm6SJoP9DnwtUEZSIOP6W8SW79SdvNM=
-=h+7c
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4xfQQACgkQ3SOs138+
+s6HWChAAlCyIorcMK5RHeKegmA2S4u4xd1Z4ROaXeTEBAXOEuz8TTpHUXDo+u+LM
+g81szBPh7Zet3aVKvyvYM/jfR+jngurY+oxmV45vzBxhMWOom8pbKgDetN6gDWEZ
+zSNvtOirf48D1hUR9D1+5hpu3MxtP+ZW8zosp2ByTAYBuV9+3RqvkKjuun0kRA5q
+uFH4K6YkvulLThKIzNBmPU8Iwhzrg6fHTGnUolXiCTOSMHIehuH/CtQw473FMnj4
+2VYD0S4oi0iuKRZCKBrN7ESj5vVqtfvXt3TOY9Ac605LParo7zhCS4SqzAaVqW82
+N+zB85EL+x67MYDEpRy9dsGVvCtOI1LPC4kXv3gRrKOHmErx7D0a9ef8n7iGrW2U
+xWt+TeyM/BF9Jb1edo8DOv+uEfRQlQaSlWAtJIDiz4wkhJpC/cYtFzgnBdfwT+i2
+qahKq8/ElgurYaF9hGV3d8MQ3sT+3vgEalH51nd0Xj3gKkwJTdwPacHnMA8MPIc4
+u1sOTKwbtmrbDVistJMZ7g+0HA1ZmwwCZkwgnV/XEe6/+LInj7s0jMftQH4+I7SF
+jblRWdG84l2BedmUNxC2pBDG378/1+C3fysShuaYwcePTmKKqFZVfpGDt1/IRlT1
+sDx7GpNJWjjIwypTAXlRSwX3hCsK2PAya7MgUOPtAJJFDAYUM2k=
+=9Bls
 -----END PGP SIGNATURE-----
 
---ExXT7PjY8AI4Hyfa--
+--E69HUUNAyIJqGpVn--
