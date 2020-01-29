@@ -1,99 +1,108 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
- move_page_tables()
-Date: Wed, 29 Jan 2020 02:35:25 +0300
-Message-ID: <27b70b0c-7945-cc85-8321-d9e4b6f17865@gmail.com>
-References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
- <20200117232254.2792-4-richardw.yang@linux.intel.com>
- <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
- <20200128004301.GD20624@richard>
- <d66bb20e-c0e7-caef-cbbc-aa216c2be7d6@gmail.com>
- <20200128232907.GA11467@richard>
+Subject: Re: [PATCH v4 01/14] dmaengine: tegra-apb: Fix use-after-free
+Date: Wed, 29 Jan 2020 03:12:05 +0300
+Message-ID: <9ca67d17-3bb0-abb4-9d95-1057d0828ed2@gmail.com>
+References: <20200112173006.29863-1-digetx@gmail.com>
+ <20200112173006.29863-2-digetx@gmail.com>
+ <4c1b9e48-5468-0c03-2108-158ee814eea8@nvidia.com>
+ <1327bb21-0364-da26-e6ed-ff6c19df03e6@gmail.com>
+ <e39ef31d-4cff-838a-0fc1-73a39a8d6120@nvidia.com>
+ <b0c85ca7-d8ac-5f9d-2c57-79543c1f9b5d@gmail.com>
+ <5bbe9e3e-a64f-53be-e7f6-63e36cbae77d@nvidia.com>
+ <be7addff-9f5c-e40a-923f-db895ce89fa2@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200128232907.GA11467@richard>
+In-Reply-To: <be7addff-9f5c-e40a-923f-db895ce89fa2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, aneesh.kumar-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org, kirill-oKw7cIdHH8eLwutG50LtGA@public.gmane.org, yang.shi-KPsoFbNs7GizrGE5bRqYAgC/G2K4zDHf@public.gmane.org, thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-29.01.2020 02:29, Wei Yang пишет:
-> On Tue, Jan 28, 2020 at 06:59:48PM +0300, Dmitry Osipenko wrote:
->> 28.01.2020 03:43, Wei Yang пишет:
->>> On Sun, Jan 26, 2020 at 05:47:57PM +0300, Dmitry Osipenko wrote:
->>>> 18.01.2020 02:22, Wei Yang пишет:
->>>>> Use the general helper instead of do it by hand.
+28.01.2020 17:51, Dmitry Osipenko пишет:
+> 28.01.2020 17:02, Jon Hunter пишет:
+>>
+>> On 16/01/2020 20:10, Dmitry Osipenko wrote:
+>>> 15.01.2020 12:00, Jon Hunter пишет:
+>>>>
+>>>> On 14/01/2020 20:33, Dmitry Osipenko wrote:
+>>>>> 14.01.2020 18:09, Jon Hunter пишет:
+>>>>>>
+>>>>>> On 12/01/2020 17:29, Dmitry Osipenko wrote:
+>>>>>>> I was doing some experiments with I2C and noticed that Tegra APB DMA
+>>>>>>> driver crashes sometime after I2C DMA transfer termination. The crash
+>>>>>>> happens because tegra_dma_terminate_all() bails out immediately if pending
+>>>>>>> list is empty, thus it doesn't release the half-completed descriptors
+>>>>>>> which are getting re-used before ISR tasklet kicks-in.
+>>>>>>
+>>>>>> Can you elaborate a bit more on how these are getting re-used? What is
+>>>>>> the sequence of events which results in the panic? I believe that this
+>>>>>> was also reported in the past [0] and so I don't doubt there is an issue
+>>>>>> here, but would like to completely understand this.
+>>>>>>
+>>>>>> Thanks!
+>>>>>> Jon
+>>>>>>
+>>>>>> [0] https://lore.kernel.org/patchwork/patch/675349/
+>>>>>>
 >>>>>
->>>>> Signed-off-by: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
->>>>> ---
->>>>>  mm/mremap.c | 7 ++-----
->>>>>  1 file changed, 2 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/mm/mremap.c b/mm/mremap.c
->>>>> index c2af8ba4ba43..a258914f3ee1 100644
->>>>> --- a/mm/mremap.c
->>>>> +++ b/mm/mremap.c
->>>>> @@ -253,11 +253,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
->>>>>  
->>>>>  	for (; old_addr < old_end; old_addr += extent, new_addr += extent) {
->>>>>  		cond_resched();
->>>>> -		next = (old_addr + PMD_SIZE) & PMD_MASK;
->>>>> -		/* even if next overflowed, extent below will be ok */
->>>>> +		next = pmd_addr_end(old_addr, old_end);
->>>>>  		extent = next - old_addr;
->>>>> -		if (extent > old_end - old_addr)
->>>>> -			extent = old_end - old_addr;
->>>>>  		old_pmd = get_old_pmd(vma->vm_mm, old_addr);
->>>>>  		if (!old_pmd)
->>>>>  			continue;
->>>>> @@ -301,7 +298,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
->>>>>  
->>>>>  		if (pte_alloc(new_vma->vm_mm, new_pmd))
->>>>>  			break;
->>>>> -		next = (new_addr + PMD_SIZE) & PMD_MASK;
->>>>> +		next = pmd_addr_end(new_addr, new_addr + len);
->>>>>  		if (extent > next - new_addr)
->>>>>  			extent = next - new_addr;
->>>>>  		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
->>>>>
+>>>>> In my case it happens in the touchscreen driver during of the
+>>>>> touchscreen's interrupt handling (in a threaded IRQ handler) + CPU is
+>>>>> under load and there is other interrupts activity. So what happens here
+>>>>> is that the TS driver issues one I2C transfer, which fails with
+>>>>> (apparently bogus) timeout (because DMA descriptor is completed and
+>>>>> removed from the pending list, but tasklet not executed yet), and then
+>>>>> TS immediately issues another I2C transfer that re-uses the
+>>>>> yet-incompleted descriptor. That's my understanding.
 >>>>
->>>> Hello Wei,
->>>>
->>>> Starting with next-20200122, I'm seeing the following in KMSG on NVIDIA
->>>> Tegra (ARM32):
->>>>
->>>>  BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:190
->>>>
+>>>> OK, but what is the exact sequence that it allowing it to re-use the
+>>>> incompleted descriptor?
 >>>
->>> Thanks.
+>>>    TDMA driver                      DMA Client
 >>>
->>> Would you mind letting me know which case you are testing?
+>>> 1.
+>>>                                     dmaengine_prep()
+>>>
+>>> 2.
+>>>    tegra_dma_desc_get()
+>>>    dma_desc = kzalloc()
+>>>    ...
+>>>    tegra_dma_prep_slave_sg()
+>>>    INIT_LIST_HEAD(&dma_desc->tx_list);
+>>>    INIT_LIST_HEAD(&dma_desc->cb_node);
+>>>    list_add_tail(sgreq->node,
+>>>                  dma_desc->tx_list)
+>>>
+>>> 3.
+>>>                                     dma_async_issue_pending()
+>>>
+>>> 4.
+>>>    tegra_dma_tx_submit()
+>>>    list_splice_tail_init(dma_desc->tx_list,
+>>>                          tdc->pending_sg_req)
+>>>
+>>> 5.
+>>>    tegra_dma_isr()
+>>>    ...
+>>>    handle_once_dma_done()
+>>>    ...
+>>>    sgreq = list_first_entry(tdc->pending_sg_req)
+>>>    list_del(sgreq->node);
+>>>    ...
+>>>    list_add_tail(dma_desc->cb_node,
+>>>                  tdc->cb_desc);
+>>>    list_add_tail(dma_desc->node,
+>>>                  tdc->free_dma_desc);
 >>
->> Nothing special, systemd starts to fall apart during boot.
+>> Isn't this the problem here, that we have placed this on the free list
+>> before we are actually done?
 >>
->>> Or the special thing is 32-bit platform?
->> I have a limited knowledge about mm/, so can't provide detailed explanation.
->>
->> Please take a look at this:
->>
->> [1]
->> https://elixir.bootlin.com/linux/v5.5/source/arch/arm/include/asm/pgtable-2level.h#L210
->>
->> [2]
->> https://elixir.bootlin.com/linux/v5.5/source/include/asm-generic/pgtable.h#L549
->>
->> [3]
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c0ba10b512eb2e2a3888b6e6cc0e089f5e7a191b
+>> It seems to me that there could still be a potential race condition
+>> between the ISR and the tasklet running.
 > 
-> Thanks, I see the difference here.
-> 
-> If this is the case, we can't use pmd_addr_end() to simplify the calculation.
-> This changes the behavior.
-> 
-> I would prepare another patch set to fix this. Would you mind helping me
-> verify on your platform?
+> Yes, this should be addressed by the patch #3 "dmaengine: tegra-apb:
+> Prevent race conditions of tasklet vs free list".
 
-Sure, please feel free to CC me on that patch.
+correction (to avoid confusion): it's actually patch #5, my bad
