@@ -1,97 +1,72 @@
-From: Russell King - ARM Linux admin <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
- move_page_tables()
-Date: Wed, 29 Jan 2020 09:47:38 +0000
-Message-ID: <20200129094738.GE25745@shell.armlinux.org.uk>
-References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
- <20200117232254.2792-4-richardw.yang@linux.intel.com>
- <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC PATCH v1 4/5] media: tegra: Add Tegra Video input driver
+ for Tegra210
+Date: Wed, 29 Jan 2020 11:09:06 +0100
+Message-ID: <20200129100906.GE2479935@ulmo>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <1580235801-4129-5-git-send-email-skomatineni@nvidia.com>
+ <3cdea635-a9ca-7b9c-3c99-8f489f4d669a@collabora.com>
+ <162488d0-4e74-963a-3366-e4c1f7cf04ca@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="BZaMRJmqxGScZ8Mx"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <7147774a-14e9-4ff3-1548-4565f0d214d5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, aneesh.kumar-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org, kirill-oKw7cIdHH8eLwutG50LtGA@public.gmane.org, yang.shi-KPsoFbNs7GizrGE5bRqYAgC/G2K4zDHf@public.gmane.org, thellstrom-pghWNbHTmq7QT0dZR+AlfA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <162488d0-4e74-963a-3366-e4c1f7cf04ca@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: Helen Koike <helen.koike@collabora.com>, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Jan 26, 2020 at 05:47:57PM +0300, Dmitry Osipenko wrote:
-> 18.01.2020 02:22, Wei Yang пишет:
-> > Use the general helper instead of do it by hand.
-> > 
-> > Signed-off-by: Wei Yang <richardw.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> > ---
-> >  mm/mremap.c | 7 ++-----
-> >  1 file changed, 2 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/mm/mremap.c b/mm/mremap.c
-> > index c2af8ba4ba43..a258914f3ee1 100644
-> > --- a/mm/mremap.c
-> > +++ b/mm/mremap.c
-> > @@ -253,11 +253,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
-> >  
-> >  	for (; old_addr < old_end; old_addr += extent, new_addr += extent) {
-> >  		cond_resched();
-> > -		next = (old_addr + PMD_SIZE) & PMD_MASK;
-> > -		/* even if next overflowed, extent below will be ok */
-> > +		next = pmd_addr_end(old_addr, old_end);
-> >  		extent = next - old_addr;
-> > -		if (extent > old_end - old_addr)
-> > -			extent = old_end - old_addr;
-> >  		old_pmd = get_old_pmd(vma->vm_mm, old_addr);
-> >  		if (!old_pmd)
-> >  			continue;
-> > @@ -301,7 +298,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
-> >  
-> >  		if (pte_alloc(new_vma->vm_mm, new_pmd))
-> >  			break;
-> > -		next = (new_addr + PMD_SIZE) & PMD_MASK;
-> > +		next = pmd_addr_end(new_addr, new_addr + len);
-> >  		if (extent > next - new_addr)
-> >  			extent = next - new_addr;
-> >  		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
-> > 
-> 
-> Hello Wei,
-> 
-> Starting with next-20200122, I'm seeing the following in KMSG on NVIDIA
-> Tegra (ARM32):
-> 
->   BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:190
-> 
-> and eventually kernel hangs.
-> 
-> Git's bisection points to this patch and reverting it helps. Please fix,
-> thanks in advance.
 
-The above is definitely wrong - pXX_addr_end() are designed to be used
-with an address index within the pXX table table and the address index
-of either the last entry in the same pXX table or the beginning of the
-_next_ pXX table.  Arbitary end address indicies are not allowed.
+--BZaMRJmqxGScZ8Mx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When page tables are "rolled up" when levels don't exist, it is common
-practice for these macros to just return their end address index.
-Hence, if they are used with arbitary end address indicies, then the
-iteration will fail.
+On Tue, Jan 28, 2020 at 02:13:17PM -0800, Sowjanya Komatineni wrote:
+> On 1/28/20 1:45 PM, Helen Koike wrote:
+[...]
+> > On 1/28/20 4:23 PM, Sowjanya Komatineni wrote:
+[...]
+> > > +const struct tegra_csi_fops csi2_fops = {
+> > > +     .hw_init = csi2_hw_init,
+> > > +     .csi_start_streaming = csi2_start_streaming,
+> > > +     .csi_err_status = csi2_error_status,
+> > > +};
+> > If I saw correctly, you don't have other instances of struct tegra_csi_fops with different functions.
+> > So why not exposing the functions directly instead of creating a global variable?
+> Currently driver supports Tegra210 only. Later we will add for Tegra186 and
+> Tegra184 support too where we will have separate csi fops.
 
-The only way to do this is:
+Perhaps this structure should be prefixed with a tegra210_ to make that
+more obvious?
 
-	next = pmd_addr_end(old_addr,
-			pud_addr_end(old_addr,
-				p4d_addr_end(old_addr,
-					pgd_addr_end(old_addr, old_end))));
+> > > +EXPORT_SYMBOL(csi2_fops);
 
-which gives pmd_addr_end() (and each of the intermediate pXX_addr_end())
-the correct end argument.  However, that's a more complex and verbose,
-and likely less efficient than the current code.
+Also, why do we need to export these? These will be built as linked into
+the Tegra VI driver, which is the only one that uses these, right? Would
+it not be enough to just make it global? Why the need to export?
 
-I'd suggest that there's nothing to "fix" in the v5.5 code wrt this,
-and trying to "clean it up" will just result in less efficient or
-broken code.
+Thierry
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+--BZaMRJmqxGScZ8Mx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4xWb8ACgkQ3SOs138+
+s6F1hA/9GY8167sFUVNO8KAreHJSXbIQSrdcxKTgKjZfBglU/9QzkA+r1/DV8uo+
+uIqzdDwVcEcJCl8muMVSPCUt0oUSy7NZF/OFwZAVod20aFsse59HO0zogDrekJhC
+co8t2A4foXyQiiFV/fxL2tT8jLmojdS8I4wciqiECAw+V5jsyKe8GkoRGVfX6twV
+7MW05Bv1FW20Rt0H4lqP9gMolFHS3y/ZpU9rT29Fx9t1EgdKYPzwbjjCYqPGCEvi
+NAqLxgqlczodpmMM0BgjTOs/6N0Fp5fnEgjU6focsRXSQbi2vkb2XpN2t08i+Vpn
+cvMLJLZhmb4l2sJ71QnhTGmhOpfepPnE5KcHyh5irzLcX4XeDSb+Ldj6DT8pcROd
+wbfBXOXnRAxwmTndCvnd+njWKN8I8MzQ3X8QDL18o6NABhNsFWTNQIJ6FZMzBZZU
+llMRtRn9AlAKbJs/KAYiH+hPHDea0j/pO9gI4R8QWST+DmdEYl0FcZI6g2DrI0D7
+LqcwS4feOIOUHyAAr8wMCHFMWpgK/9Qp9wwXp9u98Xm7j/6FHU8+uDp/AnTdWFD/
+obJsoimu7Pmy82cSH7Bm/NL37aIOuDmnmCSansSo4m5wizC0pFejKmR0QCcTHufJ
+LEzX36NaAED0ZaGyfgQivPdBbvize02W30xhprd+6noVxmnS57Y=
+=cT4U
+-----END PGP SIGNATURE-----
+
+--BZaMRJmqxGScZ8Mx--
