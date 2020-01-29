@@ -1,53 +1,94 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 05/14] dmaengine: tegra-apb: Prevent race conditions of
- tasklet vs free list
-Date: Wed, 29 Jan 2020 17:39:07 +0300
-Message-ID: <5f867023-d49a-aff5-8d7f-d682a3b32770@gmail.com>
-References: <20200123230325.3037-1-digetx@gmail.com>
- <20200123230325.3037-6-digetx@gmail.com>
- <cd1da99a-e52e-e202-257d-17466132d088@nvidia.com>
+Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
+ 24bit and 32bit samples
+Date: Wed, 29 Jan 2020 18:22:28 +0300
+Message-ID: <5a239652-0964-7234-21ab-00519c6c40f0@gmail.com>
+References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
+ <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+ <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
+ <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
+ <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
+ <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
+ <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
+ <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
+ <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
+ <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
+ <20200128121315.GD4689@sirena.org.uk>
+ <4b90efd2-5d0c-84df-961d-80cee288e0d4@nvidia.com>
+ <586ea2b9-c204-2bd1-f8e2-875e0974e42d@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cd1da99a-e52e-e202-257d-17466132d088-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <586ea2b9-c204-2bd1-f8e2-875e0974e42d-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-29.01.2020 14:01, Jon Hunter пишет:
+29.01.2020 17:33, Jon Hunter пишет:
 > 
-> On 23/01/2020 23:03, Dmitry Osipenko wrote:
->> The interrupt handler puts a half-completed DMA descriptor on a free list
->> and then schedules tasklet to process bottom half of the descriptor that
->> executes client's callback, this creates possibility to pick up the busy
->> descriptor from the free list. Thus let's disallow descriptor's re-use
->> until it is fully processed.
+> On 29/01/2020 10:49, Jon Hunter wrote:
 >>
->> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/dma/tegra20-apb-dma.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> On 28/01/2020 12:13, Mark Brown wrote:
+>>> I really don't understand why this is all taking so long, this thread
+>>> just seems to be going round in interminable circles long after it
+>>> looked like the issue was understood.  I have to admit I've not read
+>>> every single message in the thread but it's difficult to see why it
+>>> doesn't seem to be making any progress.
 >>
->> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->> index 1b8a11804962..aafad50d075e 100644
->> --- a/drivers/dma/tegra20-apb-dma.c
->> +++ b/drivers/dma/tegra20-apb-dma.c
->> @@ -281,7 +281,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
->>  
->>  	/* Do not allocate if desc are waiting for ack */
->>  	list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
->> -		if (async_tx_test_ack(&dma_desc->txd)) {
->> +		if (async_tx_test_ack(&dma_desc->txd) && !dma_desc->cb_count) {
->>  			list_del(&dma_desc->node);
->>  			spin_unlock_irqrestore(&tdc->lock, flags);
->>  			dma_desc->txd.flags = 0;
+>> Sorry about that. On reviewing this with the audio team at NVIDIA, I was
+>> told we don't support S24_LE for I2S. The reason being that the crossbar
+>> between the DMA and I2S is not able to extract the correct 24-bits from
+>> the 32-bit sample to feed to the I2S interface. The Tegra documentation
+>> does show support for 24-bits, but not state explicit support for S24_LE.
 >>
+>> Now Ben says that he has this working, but I am unable to reproduce
+>> this, so before just dropping the S24_LE support, I would like to
+>> understand how this is working for Ben in case there is something that
+>> we have overlooked here.
 > 
-> I think we should mark this for stable as well. I would make this the
-> 2nd patch in the series as it is related to #1.
+> Ah, I see that part of the problem is that patches 6 and 7 are yet to be
+> applied and without these the audio is completely distorted because
+> there is a mismatch in the data size between the APBIF and I2S
+> controller. Applying these patches it is not distorted but now I am
+> observing the clocking issue Ben reported and so the tone is not quite
+> right.
+> 
+> Ben, I was able to workaround the clocking issue by making the I2S word
+> clock 64 bits long and not 48.
+> 
+> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+> index bbf81b5aa723..3c9b4779e61b 100644
+> --- a/sound/soc/tegra/tegra30_i2s.c
+> +++ b/sound/soc/tegra/tegra30_i2s.c
+> @@ -143,7 +143,7 @@ static int tegra30_i2s_hw_params(struct
+> snd_pcm_substream *substream,
+>         case SNDRV_PCM_FORMAT_S24_LE:
+>                 val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
+>                 audio_bits = TEGRA30_AUDIOCIF_BITS_24;
+> -               sample_size = 24;
+> +               sample_size = 32;
+>                 break;
+>         case SNDRV_PCM_FORMAT_S32_LE:
+>                 val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
+> 
+> For I2S I believe we only care about the edges of the word clock and so
+> we make the overall period of the word clock 64 bit clocks then we no
+> longer have an issue with the bit clock frequency. I assume that this
+> should also be fine for TDM modes as well.
+> 
+> Can you let me know if this works for you?
 
-Okay!
+cat /proc/asound/card0/pcm0p/sub0/hw_params
+
+access: MMAP_INTERLEAVED
+format: S24_LE
+subformat: STD
+channels: 2
+rate: 48000 (48000/1)
+period_size: 512
+buffer_size: 4096
+
+No distortion at all! Jon, thank you very much!
