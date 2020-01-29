@@ -1,34 +1,86 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v5 08/14] dmaengine: tegra-apb: Fix coding style problems
-Date: Wed, 29 Jan 2020 17:31:06 +0300
-Message-ID: <5f540eb8-07ab-eb42-b5de-e198d5439cbd@gmail.com>
-References: <20200123230325.3037-1-digetx@gmail.com>
- <20200123230325.3037-9-digetx@gmail.com>
- <f724fd45-aa91-face-a267-5ea4caf6d8d5@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
+ 24bit and 32bit samples
+Date: Wed, 29 Jan 2020 14:33:12 +0000
+Message-ID: <586ea2b9-c204-2bd1-f8e2-875e0974e42d@nvidia.com>
+References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
+ <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+ <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
+ <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
+ <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
+ <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
+ <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
+ <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
+ <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
+ <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
+ <20200128121315.GD4689@sirena.org.uk>
+ <4b90efd2-5d0c-84df-961d-80cee288e0d4@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f724fd45-aa91-face-a267-5ea4caf6d8d5@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4b90efd2-5d0c-84df-961d-80cee288e0d4-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-29.01.2020 14:03, Jon Hunter пишет:
-> On 23/01/2020 23:03, Dmitry Osipenko wrote:
->>  	ahb_seq = TEGRA_APBDMA_AHBSEQ_INTR_ENB;
->> @@ -1269,7 +1284,6 @@ static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
->>  	int ret;
->>  
->>  	dma_cookie_init(&tdc->dma_chan);
->> -	tdc->config_init = false;
+
+On 29/01/2020 10:49, Jon Hunter wrote:
 > 
-> Please put this in a separate patch. It is easily overlooked in this big
-> change.
+> On 28/01/2020 12:13, Mark Brown wrote:
+>> I really don't understand why this is all taking so long, this thread
+>> just seems to be going round in interminable circles long after it
+>> looked like the issue was understood.  I have to admit I've not read
+>> every single message in the thread but it's difficult to see why it
+>> doesn't seem to be making any progress.
+> 
+> Sorry about that. On reviewing this with the audio team at NVIDIA, I was
+> told we don't support S24_LE for I2S. The reason being that the crossbar
+> between the DMA and I2S is not able to extract the correct 24-bits from
+> the 32-bit sample to feed to the I2S interface. The Tegra documentation
+> does show support for 24-bits, but not state explicit support for S24_LE.
+> 
+> Now Ben says that he has this working, but I am unable to reproduce
+> this, so before just dropping the S24_LE support, I would like to
+> understand how this is working for Ben in case there is something that
+> we have overlooked here.
 
-Somehow I missed context of yours reply to the v4 of this patch and was
-thinking that you were talking about the "unsigned int".. sorry :)
+Ah, I see that part of the problem is that patches 6 and 7 are yet to be
+applied and without these the audio is completely distorted because
+there is a mismatch in the data size between the APBIF and I2S
+controller. Applying these patches it is not distorted but now I am
+observing the clocking issue Ben reported and so the tone is not quite
+right.
 
-I'll factor out this change into a separate patch in v6.
+Ben, I was able to workaround the clocking issue by making the I2S word
+clock 64 bits long and not 48.
+
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index bbf81b5aa723..3c9b4779e61b 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -143,7 +143,7 @@ static int tegra30_i2s_hw_params(struct
+snd_pcm_substream *substream,
+        case SNDRV_PCM_FORMAT_S24_LE:
+                val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
+                audio_bits = TEGRA30_AUDIOCIF_BITS_24;
+-               sample_size = 24;
++               sample_size = 32;
+                break;
+        case SNDRV_PCM_FORMAT_S32_LE:
+                val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
+
+For I2S I believe we only care about the edges of the word clock and so
+we make the overall period of the word clock 64 bit clocks then we no
+longer have an issue with the bit clock frequency. I assume that this
+should also be fine for TDM modes as well.
+
+Can you let me know if this works for you?
+
+Cheers
+Jon
+
+-- 
+nvpublic
