@@ -1,54 +1,99 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.4 000/104] 5.4.16-stable review
-Date: Wed, 29 Jan 2020 14:43:13 +0100
-Message-ID: <20200129134313.GB21979@kroah.com>
-References: <20200128135817.238524998@linuxfoundation.org>
- <6e27f82c-1804-8041-dd93-7c9e7b5b6c0b@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 3/5] mm/mremap: use pmd_addr_end to calculate next in
+ move_page_tables()
+Date: Wed, 29 Jan 2020 17:21:55 +0300
+Message-ID: <2791a187-ec3e-6b78-515f-25e7559a3749@gmail.com>
+References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
+ <20200117232254.2792-4-richardw.yang@linux.intel.com>
+ <7147774a-14e9-4ff3-1548-4565f0d214d5@gmail.com>
+ <20200129094738.GE25745@shell.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6e27f82c-1804-8041-dd93-7c9e7b5b6c0b@nvidia.com>
-Sender: stable-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200129094738.GE25745@shell.armlinux.org.uk>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc: Wei Yang <richardw.yang@linux.intel.com>, akpm@linux-foundation.org, dan.j.williams@intel.com, aneesh.kumar@linux.ibm.com, kirill@shutemov.name, yang.shi@linux.alibaba.com, thellstrom@vmware.com, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 01:16:44PM +0000, Jon Hunter wrote:
+29.01.2020 12:47, Russell King - ARM Linux admin пишет:
+> On Sun, Jan 26, 2020 at 05:47:57PM +0300, Dmitry Osipenko wrote:
+>> 18.01.2020 02:22, Wei Yang пишет:
+>>> Use the general helper instead of do it by hand.
+>>>
+>>> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>>> ---
+>>>  mm/mremap.c | 7 ++-----
+>>>  1 file changed, 2 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/mm/mremap.c b/mm/mremap.c
+>>> index c2af8ba4ba43..a258914f3ee1 100644
+>>> --- a/mm/mremap.c
+>>> +++ b/mm/mremap.c
+>>> @@ -253,11 +253,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+>>>  
+>>>  	for (; old_addr < old_end; old_addr += extent, new_addr += extent) {
+>>>  		cond_resched();
+>>> -		next = (old_addr + PMD_SIZE) & PMD_MASK;
+>>> -		/* even if next overflowed, extent below will be ok */
+>>> +		next = pmd_addr_end(old_addr, old_end);
+>>>  		extent = next - old_addr;
+>>> -		if (extent > old_end - old_addr)
+>>> -			extent = old_end - old_addr;
+>>>  		old_pmd = get_old_pmd(vma->vm_mm, old_addr);
+>>>  		if (!old_pmd)
+>>>  			continue;
+>>> @@ -301,7 +298,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+>>>  
+>>>  		if (pte_alloc(new_vma->vm_mm, new_pmd))
+>>>  			break;
+>>> -		next = (new_addr + PMD_SIZE) & PMD_MASK;
+>>> +		next = pmd_addr_end(new_addr, new_addr + len);
+>>>  		if (extent > next - new_addr)
+>>>  			extent = next - new_addr;
+>>>  		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
+>>>
+>>
+>> Hello Wei,
+>>
+>> Starting with next-20200122, I'm seeing the following in KMSG on NVIDIA
+>> Tegra (ARM32):
+>>
+>>   BUG: Bad rss-counter state mm:(ptrval) type:MM_ANONPAGES val:190
+>>
+>> and eventually kernel hangs.
+>>
+>> Git's bisection points to this patch and reverting it helps. Please fix,
+>> thanks in advance.
 > 
-> On 28/01/2020 13:59, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.16 release.
-> > There are 104 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu, 30 Jan 2020 13:57:09 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.16-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+> The above is definitely wrong - pXX_addr_end() are designed to be used
+> with an address index within the pXX table table and the address index
+> of either the last entry in the same pXX table or the beginning of the
+> _next_ pXX table.  Arbitary end address indicies are not allowed.
 > 
-> All tests are passing for Tegra ...
+> When page tables are "rolled up" when levels don't exist, it is common
+> practice for these macros to just return their end address index.
+> Hence, if they are used with arbitary end address indicies, then the
+> iteration will fail.
 > 
-> Test results for stable-v5.4:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     40 tests:	40 pass, 0 fail
+> The only way to do this is:
 > 
-> Linux version:	5.4.16-rc1-g4acf9f18a8fe
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
+> 	next = pmd_addr_end(old_addr,
+> 			pud_addr_end(old_addr,
+> 				p4d_addr_end(old_addr,
+> 					pgd_addr_end(old_addr, old_end))));
+> 
+> which gives pmd_addr_end() (and each of the intermediate pXX_addr_end())
+> the correct end argument.  However, that's a more complex and verbose,
+> and likely less efficient than the current code.
+> 
+> I'd suggest that there's nothing to "fix" in the v5.5 code wrt this,
+> and trying to "clean it up" will just result in less efficient or
+> broken code.
 > 
 
-Thanks for testing all of these and letting me know.
+Hello Russell,
 
-greg k-h
+Thank you very much for the extra clarification!
