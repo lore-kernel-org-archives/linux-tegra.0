@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6 15/16] dmaengine: tegra-apb: Remove MODULE_ALIAS
-Date: Thu, 30 Jan 2020 07:38:03 +0300
-Message-ID: <20200130043804.32243-16-digetx@gmail.com>
+Subject: [PATCH v6 16/16] dmaengine: tegra-apb: Support COMPILE_TEST
+Date: Thu, 30 Jan 2020 07:38:04 +0300
+Message-ID: <20200130043804.32243-17-digetx@gmail.com>
 References: <20200130043804.32243-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,26 @@ To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod K
 Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra APB DMA driver is an Open Firmware driver, so it uses OF alias
-naming scheme which overrides MODULE_ALIAS, meaning that MODULE_ALIAS
-does nothing and could be removed safely.
+There is nothing arch-specific in the driver's code, so let's enable
+compile-testing for the driver.
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/dma/tegra20-apb-dma.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/dma/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 8f4281ab6296..756a5dbef118 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1684,7 +1684,6 @@ static struct platform_driver tegra_dmac_driver = {
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index 98daf3aafdcc..7fc725d928b2 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -617,7 +617,7 @@ config TXX9_DMAC
  
- module_platform_driver(tegra_dmac_driver);
- 
--MODULE_ALIAS("platform:tegra20-apbdma");
- MODULE_DESCRIPTION("NVIDIA Tegra APB DMA Controller driver");
- MODULE_AUTHOR("Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_LICENSE("GPL v2");
+ config TEGRA20_APB_DMA
+ 	tristate "NVIDIA Tegra20 APB DMA support"
+-	depends on ARCH_TEGRA
++	depends on ARCH_TEGRA || COMPILE_TEST
+ 	select DMA_ENGINE
+ 	help
+ 	  Support for the NVIDIA Tegra20 APB DMA controller driver. The
 -- 
 2.24.0
