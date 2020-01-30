@@ -1,8 +1,8 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
 Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
  24bit and 32bit samples
-Date: Thu, 30 Jan 2020 12:05:06 +0000
-Message-ID: <c01e6e09-d3ed-7c39-5a66-e25950f8bdcc@nvidia.com>
+Date: Thu, 30 Jan 2020 12:07:34 +0000
+Message-ID: <5898e2ed-1773-8f8f-b26b-d4613a8ad4de@codethink.co.uk>
 References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
  <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
  <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
@@ -17,28 +17,41 @@ References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
  <4b90efd2-5d0c-84df-961d-80cee288e0d4@nvidia.com>
  <586ea2b9-c204-2bd1-f8e2-875e0974e42d@nvidia.com>
  <fe002ec7-ae6e-f770-b82a-49237e0b29c6@codethink.co.uk>
+ <c01e6e09-d3ed-7c39-5a66-e25950f8bdcc@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <fe002ec7-ae6e-f770-b82a-49237e0b29c6-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <c01e6e09-d3ed-7c39-5a66-e25950f8bdcc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 30/01/2020 12:05, Jon Hunter wrote:
+> 
+> On 30/01/2020 08:17, Ben Dooks wrote:
+> 
+> ...
+> 
+>> I'll be back in the office next week to test.
+> 
+> Any objections to reverting this patch now for v5.6 and pushing to
+> stable for v5.5, then getting this fixed properly for v5.7?
 
-On 30/01/2020 08:17, Ben Dooks wrote:
+No, as long as it does not drag on too much.
+The other option is just to remove the announcement of these
+capabilities.
 
-...
+I think I need to check exactly what got merged and then go and
+work out a full series.
 
-> I'll be back in the office next week to test.
+The original authors and testers left Codethink nearly 2 years ago now.
 
-Any objections to reverting this patch now for v5.6 and pushing to
-stable for v5.5, then getting this fixed properly for v5.7?
-
-Jon
 
 -- 
-nvpublic
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
