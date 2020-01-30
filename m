@@ -1,1017 +1,221 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC] dt-bindings: display: Convert Tegra host1x to json-schema
-Date: Thu, 30 Jan 2020 18:46:36 +0100
-Message-ID: <20200130174636.GA3154793@ulmo>
-References: <20200130174006.3154922-1-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: Re: Re: [RFC PATCH v1 5/5] arm64: tegra: Add Tegra VI CSI
+ suppport in device tree
+Date: Thu, 30 Jan 2020 18:58:20 +0100
+Message-ID: <20200130175820.GA3155155@ulmo>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <1580235801-4129-6-git-send-email-skomatineni@nvidia.com>
+ <20200129094624.GD2479935@ulmo>
+ <bd18711d-ce23-cbee-7824-37a8c78908e6@nvidia.com>
+ <20200130123607.GB2584455@ulmo>
+ <c5fd4eb3-0026-95a5-5162-e1cf5302698e@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20200130174006.3154922-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <c5fd4eb3-0026-95a5-5162-e1cf5302698e@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---tThc/1wpZn/ma/RB
+--zYM0uCDKw75PZbzx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 30, 2020 at 06:40:06PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Jan 30, 2020 at 09:18:50AM -0800, Sowjanya Komatineni wrote:
 >=20
-> Convert the Tegra host1x controller bindings from the free-form text
-> format to json-schema.
+> On 1/30/20 4:36 AM, Thierry Reding wrote:
+> > On Wed, Jan 29, 2020 at 08:22:48AM -0800, Sowjanya Komatineni wrote:
+> > > On 1/29/20 1:46 AM, Thierry Reding wrote:
+> > > > On Tue, Jan 28, 2020 at 10:23:21AM -0800, Sowjanya Komatineni wrote:
+> > > > > Tegra210 contains VI controller for video input capture from MIPI
+> > > > > CSI camera sensors and also supports built-in test pattern genera=
+tor.
+> > > > >=20
+> > > > > CSI ports can be one-to-one mapped to VI channels for capturing f=
+rom
+> > > > > an external sensor or from built-in test pattern generator.
+> > > > >=20
+> > > > > This patch adds support for VI and CSI and enables them in Tegra2=
+10
+> > > > > device tree.
+> > > > >=20
+> > > > > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> > > > > ---
+> > > > >    arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  8 +++++++
+> > > > >    arch/arm64/boot/dts/nvidia/tegra210.dtsi       | 31 ++++++++++=
++++++++++++++++-
+> > > > >    2 files changed, 38 insertions(+), 1 deletion(-)
+> > > > >=20
+> > > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arc=
+h/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> > > > > index b0095072bc28..ec1b3033fa03 100644
+> > > > > --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> > > > > +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> > > > > @@ -10,6 +10,14 @@
+> > > > >    			status =3D "okay";
+> > > > >    		};
+> > > > > +		vi@54080000 {
+> > > > > +			status =3D "okay";
+> > > > > +		};
+> > > > > +
+> > > > > +		csi@0x54080838 {
+> > > > > +			status =3D "okay";
+> > > > > +		};
+> > > > > +
+> > > > >    		sor@54580000 {
+> > > > >    			status =3D "okay";
+> > > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm6=
+4/boot/dts/nvidia/tegra210.dtsi
+> > > > > index 48c63256ba7f..c6107ec03ad1 100644
+> > > > > --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > > > > +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> > > > > @@ -136,9 +136,38 @@
+> > > > >    		vi@54080000 {
+> > > > >    			compatible =3D "nvidia,tegra210-vi";
+> > > > > -			reg =3D <0x0 0x54080000 0x0 0x00040000>;
+> > > > > +			reg =3D <0x0 0x54080000 0x0 0x808>;
+> > > > >    			interrupts =3D <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+> > > > >    			status =3D "disabled";
+> > > > > +			assigned-clocks =3D <&tegra_car TEGRA210_CLK_VI>;
+> > > > > +			assigned-clock-parents =3D <&tegra_car TEGRA210_CLK_PLL_C4_OU=
+T0>;
+> > > > > +
+> > > > > +			clocks =3D <&tegra_car TEGRA210_CLK_VI>;
+> > > > > +			clock-names =3D "vi";
+> > > > > +			resets =3D <&tegra_car 20>;
+> > > > > +			reset-names =3D "vi";
+> > > > > +		};
+> > > > > +
+> > > > > +		csi@0x54080838 {
+> > > > > +			compatible =3D "nvidia,tegra210-csi";
+> > > > > +			reg =3D <0x0 0x54080838 0x0 0x2000>;
+> > > > > +			status =3D "disabled";
+> > > > > +			assigned-clocks =3D <&tegra_car TEGRA210_CLK_CILAB>,
+> > > > > +					  <&tegra_car TEGRA210_CLK_CILCD>,
+> > > > > +					  <&tegra_car TEGRA210_CLK_CILE>;
+> > > > > +			assigned-clock-parents =3D <&tegra_car TEGRA210_CLK_PLL_P>,
+> > > > > +						 <&tegra_car TEGRA210_CLK_PLL_P>,
+> > > > > +						 <&tegra_car TEGRA210_CLK_PLL_P>;
+> > > > > +			assigned-clock-rates =3D <102000000>,
+> > > > > +					       <102000000>,
+> > > > > +					       <102000000>;
+> > > > > +
+> > > > > +			clocks =3D <&tegra_car TEGRA210_CLK_CSI>,
+> > > > > +				 <&tegra_car TEGRA210_CLK_CILAB>,
+> > > > > +				 <&tegra_car TEGRA210_CLK_CILCD>,
+> > > > > +				 <&tegra_car TEGRA210_CLK_CILE>;
+> > > > > +			clock-names =3D "csi", "cilab", "cilcd", "cile";
+> > > > > +
+> > > > >    		};
+> > > > Can this be a child of the vi node? Looking at the register ranges =
+it
+> > > > seems like these are actually a single IP block. If they have separ=
+ate
+> > > > blocks with clearly separate functionality, then it makes sense to =
+have
+> > > > CSI be a child node of VI, though it may also be okay to merge both=
+ and
+> > > > have a single node with the driver doing all of the differentiation
+> > > > between what's VI and what's CSI.
+> > > >=20
+> > > > Looking at later chips, the split between VI and CSI is more explic=
+it,
+> > > > so having the split in DT for Tegra210 may make sense for consisten=
+cy.
+> > > >=20
+> > > > I know we've discussed this before, but for some reason I keep comi=
+ng
+> > > > back to this. I'll go through the other patches to see if I can get=
+ a
+> > > > clearer picture of how this could all work together.
+> > > >=20
+> > > > Thierry
+> > > We can keep it separate as we discussed.
+> > >=20
+> > > But as Tegra186 onwards, CSI is separate device to be all cosistent I=
+ kept
+> > > CSI as separate node for Tegra210 as well.
+> >  From our discussion, my understanding was that CSI would be a separate
+> > device, but it would still be a subdevice of VI. The address offset of
+> > the CSI registers not being aligned to a power of two is a strong
+> > indication that this is really all part of the same block.
 >=20
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../display/tegra/nvidia,tegra20-host1x.txt   | 487 ----------
->  .../display/tegra/nvidia,tegra20-host1x.yaml  | 884 ++++++++++++++++++
->  2 files changed, 884 insertions(+), 487 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/display/tegra/nvidi=
-a,tegra20-host1x.txt
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidi=
-a,tegra20-host1x.yaml
-[...]
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra=
-20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
-ra20-host1x.yaml
-> new file mode 100644
-> index 000000000000..26b2325813eb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host=
-1x.yaml
-> @@ -0,0 +1,884 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-host1x.y=
-aml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra host1x controller
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> +  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> +
-> +description: The host1x top-level node defines a number of children, each
-> +  representing one of the host1x client modules defined in this binding.
-> +
-> +properties:
-> +  # required
-> +  compatible:
-> +    oneOf:
-> +      - description: NVIDIA Tegra20
-> +        allOf:
-> +          - enum:
-> +              - nvidia,tegra20-host1x
-> +          - const: simple-bus
-> +
-> +      - description: NVIDIA Tegra30
-> +        allOf:
-> +          - enum:
-> +              - nvidia,tegra30-host1x
-> +          - const: simple-bus
-> +
-> +      - description: NVIDIA Tegra114
-> +        allOf:
-> +          - enum:
-> +              - nvidia,tegra114-host1x
-> +          - const: simple-bus
-> +
-> +      - description: NVIDIA Tegra124
-> +        allOf:
-> +          - enum:
-> +              - nvidia,tegra124-host1x
-> +          - const: simple-bus
-> +
-> +      - description: NVIDIA Tegra132
-> +        allOf:
-> +          - enum:
-> +              - nvidia,tegra132-host1x
-> +          - const: simple-bus
-> +
-> +      - description: NVIDIA Tegra210
-> +        allOf:
-> +          - enum:
-> +              - nvidia,tegra210-host1x
-> +          - const: simple-bus
-> +
-> +      - description: NVIDIA Tegra186
-> +        allOf:
-> +          - enum:
-> +              - nvidia,tegra186-host1x
-> +          - const: simple-bus
-> +
-> +      - description: NVIDIA Tegra194
-> +        allOf:
-> +          - enum:
-> +              - nvidia,tegra194-host1x
-> +          - const: simple-bus
+> Yes our earlier discussion is to have CSI as subdevice.
+>=20
+> Later looking into T186 and later NVCSI is totally separate so it will be
+> separate device and to have driver common moved Tegra210 CSI also as
+> separate device instead of having it as subdevice of VI.
+>=20
+> Earlier when we discussed at that time I am using TPG also from device
+> graphs but not moved to hard media links inside driver for TPG.
+>=20
+> For this we need CSI to be available prior to VI.
 
-Hi Rob, all,
+Why is that? Does creating the hard media links need access to a struct
+device? What if we created that device in the VI driver without any
+reliance on DT? Shouldn't that also work? I have a hard time imagining
+that there aren't other devices like this where we don't necessarily
+have separate devices for these links.
 
-I've been trying to convert this to json-schema, but I'm running into
-weird issues. What I seem to be seeing is that the above schema for the
-compatible string ends up matching various device tree nodes, such as
-the top-level "regulators" node which has just:
+> If we add CSI as subdevice to VI, CSI will not be available by the time
+> VI init happens.
 
-	compatible =3D "simple-bus";
+The CSI subdevice should be registered as part of the VI driver's probe,
+right? That's typically where you'd call of_platform_populate(). Could
+we not set up the hard media links in the ->init() callbacks for the
+host1x clients? Those are called after all of the devices have been
+probed, so the CSI device should be available at that time.
 
-The intention here is to have one (or more) SoC-specific string and a
-"simple-bus" in the compatible string. Here are a few examples:
+> Currently host1x subdevices listed has CSI before VI and CSI init happens
+> earlier so by the time VI init happens CSI is available to do media links
+> b/w VI video entity and CSI subdevice entity.
 
-	tegra124.dtsi: compatible =3D "nvidia,tegra124-host1x", "simple-bus";
-	tegra132.dtsi: compatible =3D "nvidia,tegra132-host1x",
-				    "nvidia,tegra124-host1x",
-				    "simple-bus";
-	tegra186.dtsi: compatible =3D "nvidia,tegra186-host1x", "simple-bus";
+Okay, I understand how this would be a convenient solution. However, the
+device tree is a hardware description, so we need to ignore what we know
+about the operating system infrastructure that we want to use when
+writing the device tree bindings (and the device tree content) in order
+to make sure the same binding will work on a different operating system
+which may have a completely different infrastructure (or none at all).
 
-For some reason none of the variants I've tried (such as items: instead
-of allOf: in the above) seem to properly match.
+> Also having CSI as separate subdevice (not as subdevice to VI) for T210 w=
+ill
+> be consistent with T186 and later.
 
-Any ideas what I'm doing wrong here? There are a couple of additional
-errors flagged when I run this through the checker, but I think they are
-all follow-up errors from the mismatched compatible strings.
+Again, I see how that's convenient. But the main difference between
+Tegra210 and Tegra186 is that on the former, the CSI is merged with VI,
+whereas on the latter the CSI is a completely separate hardware block.
 
-Quoting in full for reference.
+Since device tree describes the hardware, that difference should be
+apparent in the device tree. I initially thought as well that it would
+be advantageous if both had the same representation, but I do realize
+now that this has a significant impact on the device tree, and it
+violates the basic principles we base device tree binding design on.
 
 Thierry
 
-> +
-> +  interrupts:
-> +    items:
-> +      - description: host1x syncpoint interrupt
-> +      - description: host1x general interrupt
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  '#address-cells':
-> +    description: The number of cells used to represent physical base add=
-resses
-> +      in the host1x address space.
-> +    enum: [1, 2]
-> +
-> +  '#size-cells':
-> +    description: The number of cells used to represent the size of an ad=
-dress
-> +      range in the host1x address space.
-> +    enum: [1, 2]
-> +
-> +  ranges:
-> +    description: The mapping of the host1x address space to the CPU addr=
-ess
-> +      space.
-> +
-> +  clocks:
-> +    description: Must contain one entry, for the module clock. See
-> +      ../clocks/clock-bindings.txt for details.
-> +
-> +  resets:
-> +    description: Must contain an entry for each entry in reset-names. See
-> +      ../reset/reset.txt for details.
-> +
-> +  reset-names:
-> +    items:
-> +      - const: host1x
-> +
-> +  # optional
-> +  interconnects:
-> +    description: Description of the interconnect paths for the host1x
-> +      controller; see ../interconnect/interconnect.txt for details.
-> +  interconnect-names:
-> +    description: A list of names identifying each entry listed in the
-> +      "interconnects" property.
-> +
-> +  # host1x clients
-> +  vi:
-> +    description: video input
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        oneOf:
-> +          - const: nvidia,tegra20-vi
-> +          - const: nvidia,tegra30-vi
-> +          - const: nvidia,tegra114-vi
-> +          - const: nvidia,tegra124-vi
-> +          - allOf:
-> +              - const: nvidia,tegra132-vi
-> +              - const: nvidia,tegra124-vi
-> +          - const: nvidia,tegra210-vi
-> +          - const: nvidia,tegra186-vi
-> +          - const: nvidia,tegra194-vi
-> +
-> +      reg: true
-> +      interrupts: true
-> +      clocks: true
-> +
-> +      resets: true
-> +      reset-names:
-> +        items:
-> +          - const: vi
-> +
-> +  isp:
-> +    description: image signal processor
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        oneOf:
-> +          - const: nvidia,tegra20-isp
-> +          - const: nvidia,tegra30-isp
-> +          - const: nvidia,tegra114-isp
-> +          - const: nvidia,tegra124-isp
-> +          - allOf:
-> +              - const: nvidia,tegra132-isp
-> +              - const: nvidia,tegra124-isp
-> +          - const: nvidia,tegra210-isp
-> +          - const: nvidia,tegra186-isp
-> +          - const: nvidia,tegra194-isp
-> +
-> +      reg: true
-> +      interrupts: true
-> +      clocks: true
-> +      resets: true
-> +      reset-names:
-> +        items:
-> +          - const: isp
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            oneOf:
-> +              - const: nvidia,tegra186-host1x
-> +              - const: nvidia,tegra194-host1x
-> +    then:
-> +      properties:
-> +        reg-names:
-> +          items:
-> +            - const: hypervisor
-> +            - const: vm
-> +        reg:
-> +          items:
-> +            - description: physical base address and length of the regis=
-ter
-> +                region assigned to the VM
-> +            - description: physical base address and length of the regis=
-ter
-> +                region used by the hypervisor
-> +    else:
-> +      properties:
-> +        reg:
-> +          items:
-> +            - description: physical base address and length of the contr=
-oller
-> +                registers
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            oneOf:
-> +              - const: nvidia,tegra20-host1x
-> +              - const: nvidia,tegra30-host1x
-> +    then:
-> +      properties:
-> +        epp:
-> +          description: encoder pre-processor
-> +          type: object
-> +          properties:
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra20-epp
-> +                - const: nvidia,tegra30-epp
-> +                - const: nvidia,tegra114-epp
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - const: epp
-> +
-> +        mpe:
-> +          description: video encoder
-> +          type: object
-> +          properties:
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra20-mpe
-> +                - const: nvidia,tegra30-mpe
-> +                - const: nvidia,tegra114-mpe
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - const: mpe
-> +
-> +        gr2d:
-> +          description: 2D graphics engine
-> +          type: object
-> +          properties:
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra20-gr2d
-> +                - const: nvidia,tegra30-gr2d
-> +                - const: nvidia,tegra114-gr2d
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - const: 2d
-> +
-> +        gr3d:
-> +          description: 3D graphics engine
-> +          type: object
-> +          properties:
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra20-gr3d
-> +                - const: nvidia,tegra30-gr3d
-> +                - const: nvidia,tegra114-gr3d
-> +            reg: true
-> +            clocks: true
-> +            resets: true
-> +
-> +          allOf:
-> +            - if:
-> +                properties:
-> +                  compatible:
-> +                    contains:
-> +                      oneOf:
-> +                        - const: nvidia,tegra30-gr3d
-> +              then:
-> +                properties:
-> +                  clock-names:
-> +                    items:
-> +                      - const: 3d
-> +                      - const: 3d2
-> +                  reset-names:
-> +                    items:
-> +                      - const: 3d
-> +                      - const: 3d2
-> +              else:
-> +                properties:
-> +                  clock-names:
-> +                    items:
-> +                      - const: 3d
-> +                  reset-names:
-> +                    items:
-> +                      - const: 3d
-> +
-> +        tvo:
-> +          description: TV encoder output
-> +          type: object
-> +          properties:
-> +            # required
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra20-tvo
-> +                - const: nvidia,tegra30-tvo
-> +                - const: nvidia,tegra114-tvo
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            oneOf:
-> +              - const: nvidia,tegra20-host1x
-> +              - const: nvidia,tegra30-host1x
-> +              - const: nvidia,tegra114-host1x
-> +              - const: nvidia,tegra124-host1x
-> +              - const: nvidia,tegra132-host1x
-> +              - const: nvidia,tegra210-host1x
-> +    then:
-> +      properties:
-> +        dc:
-> +          description: display controller
-> +          type: object
-> +          properties:
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra20-dc
-> +                - const: nvidia,tegra30-dc
-> +                - const: nvidia,tegra114-dc
-> +                - const: nvidia,tegra124-dc
-> +                - allOf:
-> +                    - const: nvidia,tegra124-dc
-> +                    - const: nvidia,tegra132-dc
-> +                - const: nvidia,tegra210-dc
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +            clock-names:
-> +              items:
-> +                - const: dc
-> +                - const: parent
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - const: dc
-> +            interconnects: true
-> +            interconnect-names:
-> +              items:
-> +                - const: XXX
-> +                - const: XXX
-> +            nvidia,head:
-> +              description: The number of the display controller head. Th=
-is is
-> +                used to setup the various types of output to receive vid=
-eo
-> +                data from the given head.
-> +              $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +          if:
-> +            properties:
-> +              compatible:
-> +                contains:
-> +                  oneOf:
-> +                    - const: nvidia,tegra20-dc
-> +                    - const: nvidia,tegra30-dc
-> +                    - const: nvidia,tegra114-dc
-> +          then:
-> +            properties:
-> +              rgb:
-> +                description: Each display controller node has a child no=
-de,
-> +                  named "rgb", that represents the RGB output associated=
- with
-> +                  the controller.
-> +                type: object
-> +                properties:
-> +                  nvidia,ddc-i2c-bus:
-> +                    $ref: /schemas/types.yaml#/definitions/phandle
-> +                    description: phandle of an I2C controller used for D=
-DC
-> +                      EDID probing
-> +
-> +                  nvidia,hpd-gpio:
-> +                    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +                    description: specifies a GPIO used for hotplug detec=
-tion
-> +
-> +                  nvidia,edid:
-> +                    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +                    description: supplies a binary EDID blob
-> +
-> +                  nvidia,panel:
-> +                    $ref: /schemas/types.yaml#/definitions/phandle
-> +                    description: phandle of a display panel
-> +
-> +                  # XXX
-> +    else:
-> +      properties:
-> +        display-hub:
-> +          description: display controller hub
-> +          type: object
-> +          properties:
-> +            compatible:
-> +              oneOf:
-> +                - allOf:
-> +                    - const: nvidia,tegra186-display
-> +                    - const: simple-bus
-> +                - allOf:
-> +                    - const: nvidia,tegra194-display
-> +                    - const: simple-bus
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +            clock-names:
-> +              items:
-> +                - const: disp
-> +                - const: dsc
-> +                - const: hub
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - const: misc
-> +                - const: wgrp0
-> +                - const: wgrp1
-> +                - const: wgrp2
-> +                - const: wgrp3
-> +                - const: wgrp4
-> +                - const: wgrp5
-> +            power-domains: true
-> +            ranges: true
-> +
-> +            display:
-> +              #$nodename: display@[0-9a-f]+
-> +              description: display controller
-> +              type: object
-> +              properties:
-> +                compatible:
-> +                  oneOf:
-> +                    - const: nvidia,tegra186-dc
-> +                    - const: nvidia,tegra194-dc
-> +                reg: true
-> +                interrupts: true
-> +                clocks: true
-> +                clock-names:
-> +                  items:
-> +                    - const: dc
-> +                    - const: parent
-> +                resets: true
-> +                reset-names:
-> +                  items:
-> +                    - const: dc
-> +                power-domains:
-> +                  description: A list of phandle and specifiers that ide=
-ntify
-> +                    the power domains that this display controller is pa=
-rt of.
-> +
-> +                interconnects: true
-> +                interconnect-names:
-> +                  items:
-> +                    - const: read-0
-> +                    - const: read-1
-> +
-> +                iommus:
-> +                  $ref: /schemas/types.yaml#/definitions/phandle-array
-> +                  description: a phandle and specifier identifying the S=
-MMU
-> +                    master interface of this display controller.
-> +                nvidia,outputs:
-> +                  description: A list of phandles of outputs that this d=
-isplay
-> +                    controller can drive.
-> +                  $ref: /schemas/types.yaml#/definitions/phandle-array
-> +                nvidia,head:
-> +                  description: The number of the display controller head=
-=2E This
-> +                    is used to setup the various types of output to rece=
-ive
-> +                    video data from the given head.
-> +                  $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            oneOf:
-> +              - const: nvidia,tegra20-host1x
-> +              - const: nvidia,tegra30-host1x
-> +              - const: nvidia,tegra114-host1x
-> +              - const: nvidia,tegra124-host1x
-> +    then:
-> +      properties:
-> +        hdmi:
-> +          description: High Definition Multimedia Interface
-> +          type: object
-> +          properties:
-> +            # required
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra20-hdmi
-> +                - const: nvidia,tegra30-hdmi
-> +                - const: nvidia,tegra114-hdmi
-> +                - const: nvidia,tegra124-hdmi
-> +                - allOf:
-> +                    - const: nvidia,tegra132-hdmi
-> +                    - const: nvidia,tegra124-hdmi
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +            clock-names:
-> +              items:
-> +                - const: hdmi
-> +                - const: parent
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - const: hdmi
-> +            hdmi-supply:
-> +              description: supply for the +5V HDMI connector pin
-> +            vdd-supply:
-> +              description: regulator for supply voltage
-> +            pll-supply:
-> +              description: regulator for PLL
-> +
-> +            # optional
-> +            nvidia,ddc-i2c-bus:
-> +              description: phandle of an I2C controller used for DDC EDID
-> +                probing
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +            nvidia,hpd-gpio:
-> +              description: specifies a GPIO used for hotplug detection
-> +              $ref: /schemas/types.yaml#/definitions/phandle-array
-> +            nvidia,edid:
-> +              description: supplies a binary EDID blob
-> +              $ref: /schemas/types.yaml#/definitions/uint8-array
-> +            nvidia,panel:
-> +              description: phandle of a display panel
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            oneOf:
-> +              - const: nvidia,tegra124-host1x
-> +              - const: nvidia,tegra210-host1x
-> +              - const: nvidia,tegra186-host1x
-> +              - const: nvidia,tegra194-host1x
-> +    then:
-> +      properties:
-> +        sor:
-> +          description: The Serial Output Resource (SOR) can be used to d=
-rive
-> +            HDMI, LVDS, eDP and DP outputs.
-> +
-> +            See ../pinctrl/nvidia,tegra124-dpaux-padctl.txt for informat=
-ion
-> +            regarding the DPAUX pad controller bindings.
-> +          type: object
-> +          properties:
-> +            # required
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra124-sor
-> +                - allOf:
-> +                    - const: nvidia,tegra132-sor
-> +                    - const: nvidia,tegra124-sor
-> +                - const: nvidia,tegra210-sor
-> +                - const: nvidia,tegra210-sor1
-> +                - const: nvidia,tegra186-sor
-> +                - const: nvidia,tegra186-sor1
-> +                - const: nvidia,tegra194-sor
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +            clock-names:
-> +              items:
-> +                - description: clock input for the SOR hardware
-> +                  const: sor
-> +                - description: SOR output clock
-> +                  const: out
-> +                - description: input for the pixel clock
-> +                  const: parent
-> +                - description: reference clock for the SOR clock
-> +                  const: dp
-> +                - description: safe reference clock for the SOR clock du=
-ring
-> +                    power up
-> +                  const: safe
-> +                  # deprecated
-> +                - description: source clock for the SOR clock (obsolete,=
- use
-> +                    "out" instead)
-> +                  const: source
-> +                  # Tegra186 and later
-> +                - description: SOR pad output clock
-> +                  const: pad
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - description: module reset
-> +                  const: sor
-> +
-> +            # Tegra186 and later
-> +            nvidia,interface:
-> +              $ref: /schemas/types.yaml#/definitions/uint32
-> +              description: index of the SOR interface
-> +
-> +            # optional
-> +            nvidia,ddc-i2c-bus:
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +              description: phandle of an I2C controller used for DDC EDID
-> +                probing
-> +
-> +            nvidia,hpd-gpio:
-> +              $ref: /schemas/types.yaml#/definitions/phandle-array
-> +              description: specifies a GPIO used for hotplug detection
-> +
-> +            nvidia,edid:
-> +              $ref: /schemas/types.yaml#/definitions/uint8-array
-> +              description: supplies a binary EDID blob
-> +
-> +            nvidia,panel:
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +              description: phandle of a display panel
-> +
-> +            nvidia,xbar-cfg:
-> +              $ref: /schemas/types.yaml#/definitions/uint32-array
-> +              description: 5 cells containing the crossbar configuration.
-> +                Each lane of the SOR, identified by the cell's index, is
-> +                mapped via the crossbar to the pad specified by the cell=
-'s
-> +                value.
-> +
-> +            # optional when driving an eDP output
-> +            nvidia,dpaux:
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +              description: phandle to a DispayPort AUX interface
-> +
-> +        dpaux:
-> +          description: DisplayPort AUX interface
-> +          type: object
-> +          properties:
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra124-dpaux
-> +                - allOf:
-> +                    - const: nvidia,tegra132-dpaux
-> +                    - const: nvidia,tegra124-dpaux
-> +                - const: nvidia,tegra210-dpaux
-> +                - const: nvidia,tegra186-dpaux
-> +                - const: nvidia,tegra194-dpaux
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +            clock-names:
-> +              items:
-> +                - description: clock input for the DPAUX hardware
-> +                  const: dpaux
-> +                - description: reference clock
-> +                  const: parent
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - const: dpaux
-> +            vdd-supply:
-> +              description: phandle of a supply that powers the DisplayPo=
-rt
-> +                link
-> +            i2c-bus:
-> +              description: Subnode where I2C slave devices are listed. T=
-his
-> +                subnode must be always present. If there are no I2C slave
-> +                devices, an empty node should be added. See ../../i2c/i2=
-c.yaml
-> +                for more information.
-> +
-> +        vic:
-> +          description: Video Image Compositor
-> +          type: object
-> +          properties:
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra124-vic
-> +                - allOf:
-> +                    - const: nvidia,tegra132-vic
-> +                    - const: nvidia,tegra124-vic
-> +                - const: nvidia,tegra210-vic
-> +                - const: nvidia,tegra186-vic
-> +                - const: nvidia,tegra194-vic
-> +            reg: true
-> +            interrupts: true
-> +            clocks: true
-> +            clock-names:
-> +              items:
-> +                - description: clock input for the VIC hardware
-> +                - const: vic
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - const: vic
-> +            interconnects: true
-> +            interconnect-names:
-> +              items:
-> +                - const: read
-> +                - const: write
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            oneOf:
-> +              - const: nvidia,tegra30-host1x
-> +              - const: nvidia,tegra114-host1x
-> +              - const: nvidia,tegra124-host1x
-> +              - const: nvidia,tegra210-host1x
-> +              - const: nvidia,tegra186-host1x
-> +    then:
-> +      properties:
-> +        dsi:
-> +          description: display serial interface
-> +          type: object
-> +          properties:
-> +            # required
-> +            compatible:
-> +              oneOf:
-> +                - const: nvidia,tegra30-dsi
-> +                - const: nvidia,tegra114-dsi
-> +                - const: nvidia,tegra124-dsi
-> +                - allOf:
-> +                    - const: nvidia,tegra132-dsi
-> +                    - const: nvidia,tegra124-dsi
-> +                - const: nvidia,tegra210-dsi
-> +                - const: nvidia,tegra186-dsi
-> +            reg: true
-> +            clocks: true
-> +            clock-names:
-> +              items:
-> +                - description: DSI module clock
-> +                  const: dsi
-> +                - description: low-power module clock
-> +                  const: lp
-> +                - description: input for the pixel clock
-> +                  const: parent
-> +            resets: true
-> +            reset-names:
-> +              items:
-> +                - description: module reset
-> +                - const: dsi
-> +            avdd-dsi-supply:
-> +              description: phandle of a supply that powers the DSI contr=
-oller
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +            nvidia,mipi-calibrate:
-> +              $ref: /schemas/types.yaml#/definitions/phandle-array
-> +              description: Should contain a phandle and a specifier spec=
-ifying
-> +                which pads are used by this DSI output and need to be
-> +                calibrated. See also ../display/tegra/nvidia,tegra114-mi=
-pi.txt.
-> +
-> +            # optional
-> +            nvidia,ddc-i2c-bus:
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +              description: phandle of an I2C controller used for DDC EDID
-> +                probing
-> +            nvidia,hpd-gpio:
-> +              $ref: /schemas/types.yaml#/definitions/phandle-array
-> +              description: specifies a GPIO used for hotplug detection
-> +            nvidia,edid:
-> +              $ref: /schemas/types.yaml#/definitions/uint8-array
-> +              description: supplies a binary EDID blob
-> +            nvidia,panel:
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +              description: phandle of a display panel
-> +            nvidia,ganged-mode:
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +              description: contains a phandle to a second DSI controller=
- to
-> +                gang up with in order to support up to 8 data lanes
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra20-car.h>
-> +
-> +    host1x {
-> +        compatible =3D "nvidia,tegra20-host1x", "simple-bus";
-> +        reg =3D <0x50000000 0x00024000>;
-> +        interrupts =3D <0 65 0x04   /* mpcore syncpt */
-> +                      0 67 0x04>; /* mpcore general */
-> +        clocks =3D <&tegra_car TEGRA20_CLK_HOST1X>;
-> +        resets =3D <&tegra_car 28>;
-> +        reset-names =3D "host1x";
-> +
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <1>;
-> +
-> +        ranges =3D <0x54000000 0x54000000 0x04000000>;
-> +
-> +        mpe {
-> +                compatible =3D "nvidia,tegra20-mpe";
-> +                reg =3D <0x54040000 0x00040000>;
-> +                interrupts =3D <0 68 0x04>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_MPE>;
-> +                resets =3D <&tegra_car 60>;
-> +                reset-names =3D "mpe";
-> +        };
-> +
-> +        vi {
-> +                compatible =3D "nvidia,tegra20-vi";
-> +                reg =3D <0x54080000 0x00040000>;
-> +                interrupts =3D <0 69 0x04>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_VI>;
-> +                resets =3D <&tegra_car 100>;
-> +                reset-names =3D "vi";
-> +        };
-> +
-> +        epp {
-> +                compatible =3D "nvidia,tegra20-epp";
-> +                reg =3D <0x540c0000 0x00040000>;
-> +                interrupts =3D <0 70 0x04>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_EPP>;
-> +                resets =3D <&tegra_car 19>;
-> +                reset-names =3D "epp";
-> +        };
-> +
-> +        isp {
-> +                compatible =3D "nvidia,tegra20-isp";
-> +                reg =3D <0x54100000 0x00040000>;
-> +                interrupts =3D <0 71 0x04>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_ISP>;
-> +                resets =3D <&tegra_car 23>;
-> +                reset-names =3D "isp";
-> +        };
-> +
-> +        gr2d {
-> +                compatible =3D "nvidia,tegra20-gr2d";
-> +                reg =3D <0x54140000 0x00040000>;
-> +                interrupts =3D <0 72 0x04>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_GR2D>;
-> +                resets =3D <&tegra_car 21>;
-> +                reset-names =3D "2d";
-> +        };
-> +
-> +        gr3d {
-> +                compatible =3D "nvidia,tegra20-gr3d";
-> +                reg =3D <0x54180000 0x00040000>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_GR3D>;
-> +                resets =3D <&tegra_car 24>;
-> +                reset-names =3D "3d";
-> +        };
-> +
-> +        dc@54200000 {
-> +                compatible =3D "nvidia,tegra20-dc";
-> +                reg =3D <0x54200000 0x00040000>;
-> +                interrupts =3D <0 73 0x04>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_DISP1>,
-> +                         <&tegra_car TEGRA20_CLK_PLL_P>;
-> +                clock-names =3D "dc", "parent";
-> +                resets =3D <&tegra_car 27>;
-> +                reset-names =3D "dc";
-> +
-> +                rgb {
-> +                        status =3D "disabled";
-> +                };
-> +        };
-> +
-> +        dc@54240000 {
-> +                compatible =3D "nvidia,tegra20-dc";
-> +                reg =3D <0x54240000 0x00040000>;
-> +                interrupts =3D <0 74 0x04>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_DISP2>,
-> +                         <&tegra_car TEGRA20_CLK_PLL_P>;
-> +                clock-names =3D "dc", "parent";
-> +                resets =3D <&tegra_car 26>;
-> +                reset-names =3D "dc";
-> +
-> +                rgb {
-> +                        status =3D "disabled";
-> +                };
-> +        };
-> +
-> +        hdmi {
-> +                compatible =3D "nvidia,tegra20-hdmi";
-> +                reg =3D <0x54280000 0x00040000>;
-> +                interrupts =3D <0 75 0x04>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_HDMI>,
-> +                         <&tegra_car TEGRA20_CLK_PLL_D_OUT0>;
-> +                clock-names =3D "hdmi", "parent";
-> +                resets =3D <&tegra_car 51>;
-> +                reset-names =3D "hdmi";
-> +                status =3D "disabled";
-> +        };
-> +
-> +        tvo {
-> +                compatible =3D "nvidia,tegra20-tvo";
-> +                reg =3D <0x542c0000 0x00040000>;
-> +                interrupts =3D <0 76 0x04>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_TVO>;
-> +                status =3D "disabled";
-> +        };
-> +
-> +        dsi {
-> +                compatible =3D "nvidia,tegra20-dsi";
-> +                reg =3D <0x54300000 0x00040000>;
-> +                clocks =3D <&tegra_car TEGRA20_CLK_DSI>,
-> +                         <&tegra_car TEGRA20_CLK_PLL_D_OUT0>;
-> +                clock-names =3D "dsi", "parent";
-> +                resets =3D <&tegra_car 48>;
-> +                reset-names =3D "dsi";
-> +                status =3D "disabled";
-> +        };
-> +    };
-> --=20
-> 2.24.1
->=20
-
---tThc/1wpZn/ma/RB
+--zYM0uCDKw75PZbzx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4zFnwACgkQ3SOs138+
-s6FhlxAAslAK/CkDeCC0gOkq9HC5Srl6MsBuh//Pqah2aNYyf/X8WMjnok/iKEgx
-8Kn9jxZpLrXw1KB7Z/7GUQJEyNoGZfl+W4fIfP5Antxp97gA4tUj/LiErc8F/Umd
-xhDPsWeiPS8JPz5r50HUbuoazedTwkot3jeSGhZBaMzkoU0F2O3mmnUOzIFXN+t/
-EltYIuOG7GVGZGcw25N8/WcMY41MeBbcvPF7q6Z3xDcGvfTAVGxmTkGfLsWC3peU
-GpeoBTlTqaViwOYOaj1o39B+lOkPoPlRmJ0Y6BbOjCVkKKv5XvHtcwbVMZ9Ngi5s
-vGOt1ft0TibJr1bwp1Xsd+ROwM0blXbLhLZhORlqPgYw1D8I5Ed21qfyWjbxrsOW
-12pa8IGy9738ElNho/nJH5S4wHAkvc6FDWg4xn3uZqYgN6OejlTpzc6Mr8zvCXFg
-ClpxUmygBSqIg4mSc6g/z3eqDaKmK1kPhxlYp1fj0I4JREeCe5wGyzTcnYAc4tR4
-cdg+nsPLXjAYJdKLbeGLjDUODYnNxrRE3x5WiXarFYTqhQOwDj87ip+ZNyje7mBY
-6LiHwPoQHIGZ1wffl3vC5uTB+whNiZ/SqJhPDneB3vH7fKm8eOQyiN5c6pmW44bi
-gjgbn3UQGjcFd5VSXqRivGwqndK50TxP4sXOQnQ0wcUA6hO6vHg=
-=Reyc
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4zGToACgkQ3SOs138+
+s6FrSA//S4hnF6LegLDj4px69095POZCKniXdjgAkBMlbI1KEeGYD0TNY/6m7Y0U
+B9TXlvgURxhKD4kARgcRKOH0huPJ65nFka5Gud/zK4uQJHmxBrhP2wb1P6KVOCQq
+GsNMLUarCfEmMfGAJMnsfZxR/CkA25pKvs+kwm78AKbUfqt8mBttSpLPp9Uo1Nua
+drhCx64Qiih4usggc5cIxv5c4YnVG5rP5oItrW7lpc92lt7f+1e9wCIpDsv1Y+nT
+L/M/zs9rY20JwQYkST1c7LXKaJUWvz34CDL1pgIUonXpfsmXTULd6UPxCtqSiS1R
+LXzl4YY6paC4fd7r+FUxLw/aX5gNGeBFtbWqJFbp93w8g/hYR40SAQWTxD9BWgPe
+mE21ZYZuTSz7UjX7u6XPK7jhG561rFt6lrrcrsh0R9aJVRIE6m9DEwVaWKO3icUt
+R66e5zPy1JiqM0IAcp7bUjAjMuzPhidCNJ3//PQUFXGvJqO8RInQzzKg7i6KbZyc
+J2ztnKAOsRMjaFiXAcshRk8Yqgr607kHnkd3cUAvZd8cuRfK+bLSLFk01Kcu61ks
+7376g17I8GoofulfuYaTd7lgV0upQpkmCsnz4e4/B0KmqFYmTVsx8iJnoo69jdXF
+ysgeilHCDLH4isYpGqj6jPc0sgo4g1YSHbegOIU7+Zzo0m6bW0Y=
+=uJqZ
 -----END PGP SIGNATURE-----
 
---tThc/1wpZn/ma/RB--
+--zYM0uCDKw75PZbzx--
