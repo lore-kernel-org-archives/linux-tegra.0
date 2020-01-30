@@ -1,7 +1,7 @@
-From: Clemens Ladisch <clemens@ladisch.de>
-Subject: Re: (no subject)
-Date: Thu, 30 Jan 2020 10:31:22 +0100
-Message-ID: <96ed04cb-24ab-7e4d-bd44-6a4bb7c046ac@ladisch.de>
+From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+Subject: Re: [alsa-devel] (no subject)
+Date: Thu, 30 Jan 2020 09:39:33 +0000
+Message-ID: <8161fc88-fa8c-ec92-cc14-1caa5c6f2fe7@codethink.co.uk>
 References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
  <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
  <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
@@ -17,52 +17,64 @@ References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
  <70f344bf-f991-606c-55ab-bdadea27d233@nvidia.com>
  <2ff97414-f0a5-7224-0e53-6cad2ed0ccd2@gmail.com>
  <35667c85-67b5-6f6f-ffe8-4fe3455ea4bb@codethink.co.uk>
+ <96ed04cb-24ab-7e4d-bd44-6a4bb7c046ac@ladisch.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <35667c85-67b5-6f6f-ffe8-4fe3455ea4bb@codethink.co.uk>
-Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <96ed04cb-24ab-7e4d-bd44-6a4bb7c046ac-P6GI/4k7KOmELgA04lAiVw@public.gmane.org>
+Content-Language: en-GB
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Clemens Ladisch <clemens-P6GI/4k7KOmELgA04lAiVw@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-QmVuIERvb2tzIHdyb3RlOgo+IE9uIDI5LzAxLzIwMjAgMDA6MTcsIERtaXRyeSBPc2lwZW5rbyB3
-cm90ZToKPj4gMjguMDEuMjAyMCAyMToxOSwgSm9uIEh1bnRlciDQv9C40YjQtdGCOgo+Pj4gT24g
-MjgvMDEvMjAyMCAxNzo0MiwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+Pj4+IDI4LjAxLjIwMjAg
-MTU6MTMsIE1hcmsgQnJvd24g0L/QuNGI0LXRgjoKPj4+Pj4gT24gTW9uLCBKYW4gMjcsIDIwMjAg
-YXQgMTA6MjA6MjVQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+Pj4+Pj4gMjQuMDEu
-MjAyMCAxOTo1MCwgSm9uIEh1bnRlciDQv9C40YjQtdGCOgo+Pj4+Pgo+Pj4+Pj4+ICAgICAgICAg
-ICAgICAgICAgLnJhdGVzID0gU05EUlZfUENNX1JBVEVfODAwMF85NjAwMCwKPj4+Pj4+PiAgICAg
-ICAgICAgICAgICAgIC5mb3JtYXRzID0gU05EUlZfUENNX0ZNVEJJVF9TMzJfTEUgfAo+Pj4+Pj4+
-IC0gICAgICAgICAgICAgICAgICAgICAgICAgIFNORFJWX1BDTV9GTVRCSVRfUzI0X0xFIHwKPj4+
-Pj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICBTTkRSVl9QQ01fRk1UQklUX1MyNF8zTEUg
-fAo+Pj4+Pgo+Pj4+Pj4gSXQgc2hvdWxkIHNvbHZlIHRoZSBwcm9ibGVtIGluIG15IHBhcnRpY3Vs
-YXIgY2FzZSwgYnV0IEknbSBub3Qgc3VyZSB0aGF0Cj4+Pj4+PiB0aGUgc29sdXRpb24gaXMgY29y
-cmVjdC4KPj4+Pj4KPj4+Pj4gSWYgdGhlIGZvcm1hdCBpbXBsZW1lbnRlZCBieSB0aGUgZHJpdmVy
-IGlzIFMyNF8zTEUgdGhlIGRyaXZlciBzaG91bGQKPj4+Pj4gYWR2ZXJ0aXNlIFMyNF8zTEUuCj4+
-Pj4KPj4+PiBJdCBzaG91bGQgYmUgUzI0X0xFLCBidXQgc2VlbXMgd2Ugc3RpbGwgZG9uJ3Qga25v
-dyBmb3Igc3VyZS4KPj4+Cj4+PiBXaHk/Cj4+IC9JIHRoaW5rLyBzb3VuZCBzaG91bGQgYmUgbXVj
-aCBtb3JlIGRpc3RvcnRlZCBpZiBpdCB3YXMgUzI0XzNMRSwgYnV0Cj4+IG1heWJlIEknbSB3cm9u
-Zy4KPgo+IFMyNF8zTEUgaXMgSUlDQyB0aGUgd3JvbmcgdGhpbmcgYW5kIHdlIGNhbid0IHN1cHBv
-cnQgaXQgb24gdGhlIHRlZ3JhMwoKVGhlcmUgYXJlIHRocmVlIHdheXMgb2YgYXJyYW5naW5nIDI0
-LWJpdCBzYW1wbGVzIGluIG1lbW9yeToKClMyNF8zTEU6IDI0LWJpdCBzYW1wbGVzIGluIDI0LWJp
-dCB3b3JkcyB3aXRob3V0IHBhZGRpbmcKUzI0X0xFOiAgMjQtYml0IHNhbXBsZXMgaW4gMzItYml0
-IHdvcmRzLCBhbGlnbmVkIHRvIHRoZSBMU0IKUzMyX0xFOiAgMjQtYml0IHNhbXBsZXMgaW4gMzIt
-Yml0IHdvcmRzLCBhbGlnbmVkIHRvIHRoZSBNU0IKCkl0IGlzIHZlcnkgdW5saWtlbHkgdGhhdCB5
-b3VyIGhhcmR3YXJlIGltcGxlbWVudHMgUzI0X0xFLgoKSWYgYSBTMzJfTEUgZHJpdmVyIHdhbnRz
-IHRvIGRlc2NyaWJlIGhvdyBtYW55IGJpdHMgYXJlIGFjdHVhbGx5IHVzZWQsIGl0CnNob3VsZCBp
-bnN0YWxsIGEgbXNiaXRzIGNvbnN0cmFpbnQgKHNuZF9wY21faHdfY29uc3RyYWludF9tc2JpdHMo
-KSkuCgoKUmVnYXJkcywKQ2xlbWVucwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJv
-amVjdC5vcmcKaHR0cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9hbHNhLWRldmVsCg==
+On 30/01/2020 09:31, Clemens Ladisch wrote:
+> Ben Dooks wrote:
+>> On 29/01/2020 00:17, Dmitry Osipenko wrote:
+>>> 28.01.2020 21:19, Jon Hunter пишет:
+>>>> On 28/01/2020 17:42, Dmitry Osipenko wrote:
+>>>>> 28.01.2020 15:13, Mark Brown пишет:
+>>>>>> On Mon, Jan 27, 2020 at 10:20:25PM +0300, Dmitry Osipenko wrote:
+>>>>>>> 24.01.2020 19:50, Jon Hunter пишет:
+>>>>>>
+>>>>>>>>                   .rates = SNDRV_PCM_RATE_8000_96000,
+>>>>>>>>                   .formats = SNDRV_PCM_FMTBIT_S32_LE |
+>>>>>>>> -                          SNDRV_PCM_FMTBIT_S24_LE |
+>>>>>>>> +                          SNDRV_PCM_FMTBIT_S24_3LE |
+>>>>>>
+>>>>>>> It should solve the problem in my particular case, but I'm not sure that
+>>>>>>> the solution is correct.
+>>>>>>
+>>>>>> If the format implemented by the driver is S24_3LE the driver should
+>>>>>> advertise S24_3LE.
+>>>>>
+>>>>> It should be S24_LE, but seems we still don't know for sure.
+>>>>
+>>>> Why?
+>>> /I think/ sound should be much more distorted if it was S24_3LE, but
+>>> maybe I'm wrong.
+>>
+>> S24_3LE is IICC the wrong thing and we can't support it on the tegra3
+> 
+> There are three ways of arranging 24-bit samples in memory:
+> 
+> S24_3LE: 24-bit samples in 24-bit words without padding
+> S24_LE:  24-bit samples in 32-bit words, aligned to the LSB
+> S32_LE:  24-bit samples in 32-bit words, aligned to the MSB
+> 
+> It is very unlikely that your hardware implements S24_LE.
+
+Which is wrong, since this is exactly what the hardware implements.
+
+The DMA fetches 32 bit words, and then the front end dispatches only
+24 bits of these to the I2S/TDM
+
+> 
+
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
