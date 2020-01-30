@@ -1,8 +1,7 @@
-From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
- 24bit and 32bit samples
-Date: Thu, 30 Jan 2020 08:17:37 +0000
-Message-ID: <fe002ec7-ae6e-f770-b82a-49237e0b29c6@codethink.co.uk>
+From: Clemens Ladisch <clemens@ladisch.de>
+Subject: Re: (no subject)
+Date: Thu, 30 Jan 2020 10:31:22 +0100
+Message-ID: <96ed04cb-24ab-7e4d-bd44-6a4bb7c046ac@ladisch.de>
 References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
  <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
  <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
@@ -14,82 +13,56 @@ References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
  <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
  <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
  <20200128121315.GD4689@sirena.org.uk>
- <4b90efd2-5d0c-84df-961d-80cee288e0d4@nvidia.com>
- <586ea2b9-c204-2bd1-f8e2-875e0974e42d@nvidia.com>
+ <047c8caa-e715-5295-9794-67ff3e10cea2@gmail.com>
+ <70f344bf-f991-606c-55ab-bdadea27d233@nvidia.com>
+ <2ff97414-f0a5-7224-0e53-6cad2ed0ccd2@gmail.com>
+ <35667c85-67b5-6f6f-ffe8-4fe3455ea4bb@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <586ea2b9-c204-2bd1-f8e2-875e0974e42d-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-GB
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <35667c85-67b5-6f6f-ffe8-4fe3455ea4bb@codethink.co.uk>
+Content-Language: en-US
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>, Dmitry Osipenko <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 29/01/2020 14:33, Jon Hunter wrote:
-> 
-> On 29/01/2020 10:49, Jon Hunter wrote:
->>
->> On 28/01/2020 12:13, Mark Brown wrote:
->>> I really don't understand why this is all taking so long, this thread
->>> just seems to be going round in interminable circles long after it
->>> looked like the issue was understood.  I have to admit I've not read
->>> every single message in the thread but it's difficult to see why it
->>> doesn't seem to be making any progress.
->>
->> Sorry about that. On reviewing this with the audio team at NVIDIA, I was
->> told we don't support S24_LE for I2S. The reason being that the crossbar
->> between the DMA and I2S is not able to extract the correct 24-bits from
->> the 32-bit sample to feed to the I2S interface. The Tegra documentation
->> does show support for 24-bits, but not state explicit support for S24_LE.
->>
->> Now Ben says that he has this working, but I am unable to reproduce
->> this, so before just dropping the S24_LE support, I would like to
->> understand how this is working for Ben in case there is something that
->> we have overlooked here.
-> 
-> Ah, I see that part of the problem is that patches 6 and 7 are yet to be
-> applied and without these the audio is completely distorted because
-> there is a mismatch in the data size between the APBIF and I2S
-> controller. Applying these patches it is not distorted but now I am
-> observing the clocking issue Ben reported and so the tone is not quite
-> right.
-
-I thought they had been applied? I probably dragged them back in when
-putting in the support for the test channel on the colibri.
-
-> Ben, I was able to workaround the clocking issue by making the I2S word
-> clock 64 bits long and not 48.
-
-Ok, that will work for I2S case, but maybe not TDM? I'd have to check.
-
-> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-> index bbf81b5aa723..3c9b4779e61b 100644
-> --- a/sound/soc/tegra/tegra30_i2s.c
-> +++ b/sound/soc/tegra/tegra30_i2s.c
-> @@ -143,7 +143,7 @@ static int tegra30_i2s_hw_params(struct
-> snd_pcm_substream *substream,
->          case SNDRV_PCM_FORMAT_S24_LE:
->                  val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
->                  audio_bits = TEGRA30_AUDIOCIF_BITS_24;
-> -               sample_size = 24;
-> +               sample_size = 32;
->                  break;
->          case SNDRV_PCM_FORMAT_S32_LE:
->                  val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
-> 
-> For I2S I believe we only care about the edges of the word clock and so
-> we make the overall period of the word clock 64 bit clocks then we no
-> longer have an issue with the bit clock frequency. I assume that this
-> should also be fine for TDM modes as well.
-> 
-> Can you let me know if this works for you?
-
-I'll be back in the office next week to test.
-
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+QmVuIERvb2tzIHdyb3RlOgo+IE9uIDI5LzAxLzIwMjAgMDA6MTcsIERtaXRyeSBPc2lwZW5rbyB3
+cm90ZToKPj4gMjguMDEuMjAyMCAyMToxOSwgSm9uIEh1bnRlciDQv9C40YjQtdGCOgo+Pj4gT24g
+MjgvMDEvMjAyMCAxNzo0MiwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+Pj4+IDI4LjAxLjIwMjAg
+MTU6MTMsIE1hcmsgQnJvd24g0L/QuNGI0LXRgjoKPj4+Pj4gT24gTW9uLCBKYW4gMjcsIDIwMjAg
+YXQgMTA6MjA6MjVQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOgo+Pj4+Pj4gMjQuMDEu
+MjAyMCAxOTo1MCwgSm9uIEh1bnRlciDQv9C40YjQtdGCOgo+Pj4+Pgo+Pj4+Pj4+ICAgICAgICAg
+ICAgICAgICAgLnJhdGVzID0gU05EUlZfUENNX1JBVEVfODAwMF85NjAwMCwKPj4+Pj4+PiAgICAg
+ICAgICAgICAgICAgIC5mb3JtYXRzID0gU05EUlZfUENNX0ZNVEJJVF9TMzJfTEUgfAo+Pj4+Pj4+
+IC0gICAgICAgICAgICAgICAgICAgICAgICAgIFNORFJWX1BDTV9GTVRCSVRfUzI0X0xFIHwKPj4+
+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICBTTkRSVl9QQ01fRk1UQklUX1MyNF8zTEUg
+fAo+Pj4+Pgo+Pj4+Pj4gSXQgc2hvdWxkIHNvbHZlIHRoZSBwcm9ibGVtIGluIG15IHBhcnRpY3Vs
+YXIgY2FzZSwgYnV0IEknbSBub3Qgc3VyZSB0aGF0Cj4+Pj4+PiB0aGUgc29sdXRpb24gaXMgY29y
+cmVjdC4KPj4+Pj4KPj4+Pj4gSWYgdGhlIGZvcm1hdCBpbXBsZW1lbnRlZCBieSB0aGUgZHJpdmVy
+IGlzIFMyNF8zTEUgdGhlIGRyaXZlciBzaG91bGQKPj4+Pj4gYWR2ZXJ0aXNlIFMyNF8zTEUuCj4+
+Pj4KPj4+PiBJdCBzaG91bGQgYmUgUzI0X0xFLCBidXQgc2VlbXMgd2Ugc3RpbGwgZG9uJ3Qga25v
+dyBmb3Igc3VyZS4KPj4+Cj4+PiBXaHk/Cj4+IC9JIHRoaW5rLyBzb3VuZCBzaG91bGQgYmUgbXVj
+aCBtb3JlIGRpc3RvcnRlZCBpZiBpdCB3YXMgUzI0XzNMRSwgYnV0Cj4+IG1heWJlIEknbSB3cm9u
+Zy4KPgo+IFMyNF8zTEUgaXMgSUlDQyB0aGUgd3JvbmcgdGhpbmcgYW5kIHdlIGNhbid0IHN1cHBv
+cnQgaXQgb24gdGhlIHRlZ3JhMwoKVGhlcmUgYXJlIHRocmVlIHdheXMgb2YgYXJyYW5naW5nIDI0
+LWJpdCBzYW1wbGVzIGluIG1lbW9yeToKClMyNF8zTEU6IDI0LWJpdCBzYW1wbGVzIGluIDI0LWJp
+dCB3b3JkcyB3aXRob3V0IHBhZGRpbmcKUzI0X0xFOiAgMjQtYml0IHNhbXBsZXMgaW4gMzItYml0
+IHdvcmRzLCBhbGlnbmVkIHRvIHRoZSBMU0IKUzMyX0xFOiAgMjQtYml0IHNhbXBsZXMgaW4gMzIt
+Yml0IHdvcmRzLCBhbGlnbmVkIHRvIHRoZSBNU0IKCkl0IGlzIHZlcnkgdW5saWtlbHkgdGhhdCB5
+b3VyIGhhcmR3YXJlIGltcGxlbWVudHMgUzI0X0xFLgoKSWYgYSBTMzJfTEUgZHJpdmVyIHdhbnRz
+IHRvIGRlc2NyaWJlIGhvdyBtYW55IGJpdHMgYXJlIGFjdHVhbGx5IHVzZWQsIGl0CnNob3VsZCBp
+bnN0YWxsIGEgbXNiaXRzIGNvbnN0cmFpbnQgKHNuZF9wY21faHdfY29uc3RyYWludF9tc2JpdHMo
+KSkuCgoKUmVnYXJkcywKQ2xlbWVucwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJv
+amVjdC5vcmcKaHR0cHM6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9hbHNhLWRldmVsCg==
