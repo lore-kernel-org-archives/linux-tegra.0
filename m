@@ -1,70 +1,50 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: Re: [RFC PATCH v1 4/5] media: tegra: Add Tegra Video input driver for
- Tegra210
-Date: Thu, 30 Jan 2020 15:45:34 +0100
-Message-ID: <60357c4c-13cc-f623-12c5-92dfdc3ae21d@xs4all.nl>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <1580235801-4129-5-git-send-email-skomatineni@nvidia.com>
+From: Clemens Ladisch <clemens-P6GI/4k7KOmELgA04lAiVw@public.gmane.org>
+Subject: Re: [alsa-devel] (no subject)
+Date: Thu, 30 Jan 2020 15:58:37 +0100
+Message-ID: <182fd434-f15a-f049-1ba1-83bd864b4590@ladisch.de>
+References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
+ <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+ <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
+ <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
+ <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
+ <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
+ <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
+ <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
+ <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
+ <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
+ <20200128121315.GD4689@sirena.org.uk>
+ <047c8caa-e715-5295-9794-67ff3e10cea2@gmail.com>
+ <70f344bf-f991-606c-55ab-bdadea27d233@nvidia.com>
+ <2ff97414-f0a5-7224-0e53-6cad2ed0ccd2@gmail.com>
+ <35667c85-67b5-6f6f-ffe8-4fe3455ea4bb@codethink.co.uk>
+ <96ed04cb-24ab-7e4d-bd44-6a4bb7c046ac@ladisch.de>
+ <8161fc88-fa8c-ec92-cc14-1caa5c6f2fe7@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1580235801-4129-5-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <8161fc88-fa8c-ec92-cc14-1caa5c6f2fe7-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
-> Tegra210 contains a powerful Video Input (VI) hardware controller
-> which can support up to 6 MIPI CSI camera sensors.
-> 
-> Each Tegra CSI port can be one-to-one mapped to VI channel and can
-> capture from an external camera sensor connected to CSI or from
-> built-in test pattern generator.
-> 
-> Tegra210 supports built-in test pattern generator from CSI to VI.
-> 
-> This patch adds a V4L2 media controller and capture driver support
-> for Tegra210 built-in CSI to VI test pattern generator.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/staging/media/Kconfig               |   2 +
->  drivers/staging/media/Makefile              |   1 +
->  drivers/staging/media/tegra/Kconfig         |  12 +
->  drivers/staging/media/tegra/Makefile        |  11 +
->  drivers/staging/media/tegra/TODO            |  10 +
->  drivers/staging/media/tegra/csi.h           | 111 +++++
->  drivers/staging/media/tegra/csi2_fops.c     | 335 +++++++++++++++
->  drivers/staging/media/tegra/csi2_fops.h     |  15 +
->  drivers/staging/media/tegra/host1x-video.c  | 120 ++++++
->  drivers/staging/media/tegra/host1x-video.h  |  33 ++
->  drivers/staging/media/tegra/mc_common.h     | 131 ++++++
->  drivers/staging/media/tegra/tegra-channel.c | 628 ++++++++++++++++++++++++++++
->  drivers/staging/media/tegra/tegra-core.c    | 111 +++++
->  drivers/staging/media/tegra/tegra-core.h    | 125 ++++++
->  drivers/staging/media/tegra/tegra-csi.c     | 380 +++++++++++++++++
->  drivers/staging/media/tegra/tegra-vi.c      | 351 ++++++++++++++++
->  drivers/staging/media/tegra/tegra-vi.h      | 101 +++++
->  drivers/staging/media/tegra/vi2_fops.c      | 364 ++++++++++++++++
->  drivers/staging/media/tegra/vi2_fops.h      |  15 +
->  drivers/staging/media/tegra/vi2_formats.h   | 119 ++++++
->  drivers/staging/media/tegra/vi2_registers.h | 194 +++++++++
+Ben Dooks wrote:
+> On 30/01/2020 09:31, Clemens Ladisch wrote:
+>> S24_LE:  24-bit samples in 32-bit words, aligned to the LSB
+>> S32_LE:  24-bit samples in 32-bit words, aligned to the MSB
+>>
+>> It is very unlikely that your hardware implements S24_LE.
+>
+> Which is wrong, since this is exactly what the hardware implements.
+>
+> The DMA fetches 32 bit words, and then the front end dispatches only
+> 24 bits of these to the I2S/TDM
 
-Please add an entry to the MAINTAINERS file for this new driver.
+Which 24 bits?  Is the padding in the first byte (S32_LE) or in the
+last byte (S24_LE)?
 
-Also, checkpatch.pl --strict complains about the SPDX tag in the headers:
-
-WARNING: Improper SPDX comment style for 'drivers/staging/media/tegra/csi.h', please use '/*' instead
-#141: FILE: drivers/staging/media/tegra/csi.h:1:
-+// SPDX-License-Identifier: GPL-2.0-only
-
-(same warning for all headers)
-
-Please fix for v2.
 
 Regards,
-
-	Hans
+Clemens
