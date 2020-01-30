@@ -1,57 +1,188 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 12/16] dmaengine: tegra-apb: Clean up suspend-resume
-Date: Thu, 30 Jan 2020 21:26:16 +0300
-Message-ID: <3d8f599d-a46f-a7e5-8816-e0c44e2aceff@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v6 11/16] dmaengine: tegra-apb: Keep clock enabled only
+ during of DMA transfer
+Date: Thu, 30 Jan 2020 18:45:03 +0000
+Message-ID: <e72d00ee-abee-9ae2-4654-da77420b440e@nvidia.com>
 References: <20200130043804.32243-1-digetx@gmail.com>
- <20200130043804.32243-13-digetx@gmail.com>
- <e787bee2-4b52-1643-b3a5-8c4e70f6fdca@nvidia.com>
- <394014f3-011a-d6b6-b5f2-f8c86834ec70@gmail.com>
- <ffd9dbd0-be74-7bb4-9ca9-a97ee8023fc2@gmail.com>
+ <20200130043804.32243-12-digetx@gmail.com>
+ <2442aee7-2c2a-bacc-7be9-8eed17498928@nvidia.com>
+ <0c766352-700a-68bf-cf7b-9b1686ba9ca9@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <ffd9dbd0-be74-7bb4-9ca9-a97ee8023fc2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0c766352-700a-68bf-cf7b-9b1686ba9ca9@gmail.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-30.01.2020 21:06, Dmitry Osipenko пишет:
-> 30.01.2020 19:08, Dmitry Osipenko пишет:
->> 30.01.2020 17:09, Jon Hunter пишет:
->>>
->>> On 30/01/2020 04:38, Dmitry Osipenko wrote:
->>>> It is enough to check whether hardware is busy on suspend and to reset
->>>> it across of suspend-resume because channel's configuration is fully
->>>> re-programmed on each DMA transaction anyways and because save-restore
->>>> of an active channel won't end up well without pausing transfer prior to
->>>> saving of the state (note that all channels shall be idling at the time of
->>>> suspend, so save-restore is not needed at all).
->>>
->>> I guess if we ever wanted to support SNDRV_PCM_INFO_PAUSE for audio and
->>> support the pause callback, then saving and restoring the channels could
->>> be needed. Right now I believe that it will just terminate_all transfers
->>> for audio on entering suspend. Any value in keeping this?
->>
->> Indeed, looks like [1] pauses DMA during suspend if SNDRV_PCM_INFO_PAUSE
->> is supported.
->>
->> [1]
->> https://elixir.bootlin.com/linux/v5.5/source/sound/core/pcm_dmaengine.c#L199
->>
->> So we'll need to save-restore context only if DMA is in a paused state
->> during suspend, I'll adjust this patch to do that and will see if
->> enabling SNDRV_PCM_INFO_PAUSE works.
-> 
-> I started to look at it and found that the .device_pause() hook isn't
-> implemented by the driver. So, it's fine to remove the context's
-> save-restore for now.
-> 
-> Jon, what about to keep this patch as-is? Later on I'll take a look at
-> implementing the proper pausing functionality and try to cleanup code a
-> bit further (remove the free list usage, etc).
 
-Ah, only T114+ supports the per-channel pausing. So, I won't care about
-implementing the device_pause(), let's leave it to somebody else :)
+On 30/01/2020 16:11, Dmitry Osipenko wrote:
+> 30.01.2020 17:09, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>> On 30/01/2020 04:37, Dmitry Osipenko wrote:
+>>> It's a bit impractical to enable hardware's clock at the time of DMA
+>>> channel's allocation because most of DMA client drivers allocate DMA
+>>> channel at the time of the driver's probing, and thus, DMA clock is kep=
+t
+>>> always-enabled in practice, defeating the whole purpose of runtime PM.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/dma/tegra20-apb-dma.c | 47 ++++++++++++++++++++++++-----------
+>>>  1 file changed, 32 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
+a.c
+>>> index 22b88ccff05d..0ee28d8e3c96 100644
+>>> --- a/drivers/dma/tegra20-apb-dma.c
+>>> +++ b/drivers/dma/tegra20-apb-dma.c
+>>> @@ -436,6 +436,8 @@ static void tegra_dma_stop(struct tegra_dma_channel=
+ *tdc)
+>>>  		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
+>>>  	}
+>>>  	tdc->busy =3D false;
+>>> +
+>>> +	pm_runtime_put(tdc->tdma->dev);
+>>>  }
+>>> =20
+>>>  static void tegra_dma_start(struct tegra_dma_channel *tdc,
+>>> @@ -500,18 +502,25 @@ static void tegra_dma_configure_for_next(struct t=
+egra_dma_channel *tdc,
+>>>  	tegra_dma_resume(tdc);
+>>>  }
+>>> =20
+>>> -static void tdc_start_head_req(struct tegra_dma_channel *tdc)
+>>> +static bool tdc_start_head_req(struct tegra_dma_channel *tdc)
+>>>  {
+>>>  	struct tegra_dma_sg_req *sg_req;
+>>> +	int err;
+>>> =20
+>>>  	if (list_empty(&tdc->pending_sg_req))
+>>> -		return;
+>>> +		return false;
+>>> +
+>>> +	err =3D pm_runtime_get_sync(tdc->tdma->dev);
+>>> +	if (WARN_ON_ONCE(err < 0))
+>>> +		return false;
+>>> =20
+>>>  	sg_req =3D list_first_entry(&tdc->pending_sg_req, typeof(*sg_req), no=
+de);
+>>>  	tegra_dma_start(tdc, sg_req);
+>>>  	sg_req->configured =3D true;
+>>>  	sg_req->words_xferred =3D 0;
+>>>  	tdc->busy =3D true;
+>>> +
+>>> +	return true;
+>>>  }
+>>> =20
+>>>  static void tdc_configure_next_head_desc(struct tegra_dma_channel *tdc=
+)
+>>> @@ -615,6 +624,8 @@ static void handle_once_dma_done(struct tegra_dma_c=
+hannel *tdc,
+>>>  	}
+>>>  	list_add_tail(&sgreq->node, &tdc->free_sg_req);
+>>> =20
+>>> +	pm_runtime_put(tdc->tdma->dev);
+>>> +
+>>>  	/* Do not start DMA if it is going to be terminate */
+>>>  	if (to_terminate || list_empty(&tdc->pending_sg_req))
+>>>  		return;
+>>> @@ -730,9 +741,7 @@ static void tegra_dma_issue_pending(struct dma_chan=
+ *dc)
+>>>  		dev_err(tdc2dev(tdc), "No DMA request\n");
+>>>  		goto end;
+>>>  	}
+>>> -	if (!tdc->busy) {
+>>> -		tdc_start_head_req(tdc);
+>>> -
+>>> +	if (!tdc->busy && tdc_start_head_req(tdc)) {
+>>>  		/* Continuous single mode: Configure next req */
+>>>  		if (tdc->cyclic) {
+>>>  			/*
+>>> @@ -775,6 +784,13 @@ static int tegra_dma_terminate_all(struct dma_chan=
+ *dc)
+>>>  	else
+>>>  		wcount =3D status;
+>>> =20
+>>> +	/*
+>>> +	 * tegra_dma_stop() will drop the RPM's usage refcount, but
+>>> +	 * tegra_dma_resume() touches hardware and thus we should keep
+>>> +	 * the DMA clock active while it's needed.
+>>> +	 */
+>>> +	pm_runtime_get(tdc->tdma->dev);
+>>> +
+>>
+>> Would it work and make it simpler to just enable in the issue_pending
+>> and disable in the handle_once_dma_done or terminate_all?
+>>
+>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma=
+.c
+>> index 3a45079d11ec..86bbb45da93d 100644
+>> --- a/drivers/dma/tegra20-apb-dma.c
+>> +++ b/drivers/dma/tegra20-apb-dma.c
+>> @@ -616,9 +616,14 @@ static void handle_once_dma_done(struct
+>> tegra_dma_channel *tdc,
+>>         list_add_tail(&sgreq->node, &tdc->free_sg_req);
+>>
+>>         /* Do not start DMA if it is going to be terminate */
+>> -       if (to_terminate || list_empty(&tdc->pending_sg_req))
+>> +       if (to_terminate)
+>>                 return;
+>>
+>> +       if (list_empty(&tdc->pending_sg_req)) {
+>> +               pm_runtime_put(tdc->tdma->dev);
+>> +               return;
+>> +       }
+>> +
+>>         tdc_start_head_req(tdc);
+>>  }
+>>
+>> @@ -729,6 +734,11 @@ static void tegra_dma_issue_pending(struct dma_chan
+>> *dc)
+>>                 goto end;
+>>         }
+>>         if (!tdc->busy) {
+>> +               if (pm_runtime_get_sync(tdc->tdma->dev) < 0) {
+>> +                       dev_err(tdc2dev(tdc), "Failed to enable DMA!\n")=
+;
+>> +                       goto end;
+>> +               }
+>> +
+>>                 tdc_start_head_req(tdc);
+>>
+>>                 /* Continuous single mode: Configure next req */
+>> @@ -788,6 +798,7 @@ static int tegra_dma_terminate_all(struct dma_chan *=
+dc)
+>>                                 get_current_xferred_count(tdc, sgreq,
+>> wcount);
+>>         }
+>>         tegra_dma_resume(tdc);
+>> +       pm_runtime_put(tdc->tdma->dev);
+>>
+>>  skip_dma_stop:
+>>         tegra_dma_abort_all(tdc);
+>>
+>=20
+> The tegra_dma_stop() should put RPM anyways, which is missed in yours
+> sample. Please see handle_continuous_head_request().
+
+Yes and that is deliberate. The cyclic transfers the transfers *should*
+not stop until terminate_all is called. The tegra_dma_stop in
+handle_continuous_head_request() is an error condition and so I am not
+sure it is actually necessary to call pm_runtime_put() here.
+
+> I'm also finding the explicit get/put a bit easier to follow in the
+> code, don't you think so?
+
+I can see that, but I was thinking that in the case of cyclic transfers,
+it should only really be necessary to call the get/put at the beginning
+and end. So in my mind there should only be two exit points which are
+the ISR handler for SG and terminate_all for SG and cyclic.
+
+Jon
+
+--=20
+nvpublic
