@@ -1,15 +1,15 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v6 09/16] dmaengine: tegra-apb: Remove unneeded
- initialization of tdc->config_init
-Date: Thu, 30 Jan 2020 14:08:53 +0000
-Message-ID: <1743d334-8b15-a8bb-8203-6cb6a93986a9@nvidia.com>
+Subject: Re: [PATCH v6 10/16] dmaengine: tegra-apb: Remove assumptions about
+ unavailable runtime PM
+Date: Thu, 30 Jan 2020 14:09:02 +0000
+Message-ID: <24ca0a86-032f-2686-4dd2-6e4c5cf60223@nvidia.com>
 References: <20200130043804.32243-1-digetx@gmail.com>
- <20200130043804.32243-10-digetx@gmail.com>
+ <20200130043804.32243-11-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200130043804.32243-10-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200130043804.32243-11-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
@@ -18,33 +18,57 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 30/01/2020 04:37, Dmitry Osipenko wrote:
-> There is no need to re-initialize the already initialized variables.
-> The tdc->config_init=false after driver's probe and after channel's
-> freeing, so there is no need to re-initialize it on the channel's
-> allocation.
+> The runtime PM is always available on all Tegra SoCs since the commit
+> 40b2bb1b132a ("ARM: tegra: enforce PM requirement"), so there is no
+> need to handle the case of unavailable RPM in the code anymore.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/dma/tegra20-apb-dma.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/dma/tegra20-apb-dma.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
 > 
 > diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index b4535b3a07ce..7158bd3145c4 100644
+> index 7158bd3145c4..22b88ccff05d 100644
 > --- a/drivers/dma/tegra20-apb-dma.c
 > +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -1284,7 +1284,6 @@ static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
->  	int ret;
+> @@ -1429,11 +1429,8 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>  	spin_lock_init(&tdma->global_lock);
 >  
->  	dma_cookie_init(&tdc->dma_chan);
-> -	tdc->config_init = false;
+>  	pm_runtime_enable(&pdev->dev);
+> -	if (!pm_runtime_enabled(&pdev->dev))
+> -		ret = tegra_dma_runtime_resume(&pdev->dev);
+> -	else
+> -		ret = pm_runtime_get_sync(&pdev->dev);
 >  
->  	ret = pm_runtime_get_sync(tdma->dev);
+> +	ret = pm_runtime_get_sync(&pdev->dev);
 >  	if (ret < 0)
-> 
+>  		goto err_pm_disable;
+>  
+> @@ -1546,8 +1543,6 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>  
+>  err_pm_disable:
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!pm_runtime_status_suspended(&pdev->dev))
+> -		tegra_dma_runtime_suspend(&pdev->dev);
+>  
+>  	return ret;
+>  }
+> @@ -1557,10 +1552,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
+>  	struct tegra_dma *tdma = platform_get_drvdata(pdev);
+>  
+>  	dma_async_device_unregister(&tdma->dma_dev);
+> -
+>  	pm_runtime_disable(&pdev->dev);
+> -	if (!pm_runtime_status_suspended(&pdev->dev))
+> -		tegra_dma_runtime_suspend(&pdev->dev);
+>  
+>  	return 0;
+>  }
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+I wonder if we need to make the pm_runtime_put a pm_runtime_put_sync or
+call pm_runtime_barrier() here, to ensure it has called the callback
+when freeing the channel? Otherwise this is fine.
 
-Cheers
 Jon
 
 -- 
