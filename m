@@ -1,188 +1,196 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v6 11/16] dmaengine: tegra-apb: Keep clock enabled only
- during of DMA transfer
-Date: Thu, 30 Jan 2020 18:45:03 +0000
-Message-ID: <e72d00ee-abee-9ae2-4654-da77420b440e@nvidia.com>
-References: <20200130043804.32243-1-digetx@gmail.com>
- <20200130043804.32243-12-digetx@gmail.com>
- <2442aee7-2c2a-bacc-7be9-8eed17498928@nvidia.com>
- <0c766352-700a-68bf-cf7b-9b1686ba9ca9@gmail.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Re: Re: Re: [RFC PATCH v1 5/5] arm64: tegra: Add Tegra VI CSI
+ suppport in device tree
+Date: Thu, 30 Jan 2020 10:58:00 -0800
+Message-ID: <deb6839b-2ddb-be54-a985-a2b7624374af@nvidia.com>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <1580235801-4129-6-git-send-email-skomatineni@nvidia.com>
+ <20200129094624.GD2479935@ulmo>
+ <bd18711d-ce23-cbee-7824-37a8c78908e6@nvidia.com>
+ <20200130123607.GB2584455@ulmo>
+ <c5fd4eb3-0026-95a5-5162-e1cf5302698e@nvidia.com>
+ <20200130175820.GA3155155@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0c766352-700a-68bf-cf7b-9b1686ba9ca9@gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200130175820.GA3155155@ulmo>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 30/01/2020 16:11, Dmitry Osipenko wrote:
-> 30.01.2020 17:09, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+On 1/30/20 9:58 AM, Thierry Reding wrote:
+> On Thu, Jan 30, 2020 at 09:18:50AM -0800, Sowjanya Komatineni wrote:
+>> On 1/30/20 4:36 AM, Thierry Reding wrote:
+>>> On Wed, Jan 29, 2020 at 08:22:48AM -0800, Sowjanya Komatineni wrote:
+>>>> On 1/29/20 1:46 AM, Thierry Reding wrote:
+>>>>> On Tue, Jan 28, 2020 at 10:23:21AM -0800, Sowjanya Komatineni wrote:
+>>>>>> Tegra210 contains VI controller for video input capture from MIPI
+>>>>>> CSI camera sensors and also supports built-in test pattern generator.
+>>>>>>
+>>>>>> CSI ports can be one-to-one mapped to VI channels for capturing from
+>>>>>> an external sensor or from built-in test pattern generator.
+>>>>>>
+>>>>>> This patch adds support for VI and CSI and enables them in Tegra210
+>>>>>> device tree.
+>>>>>>
+>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>> ---
+>>>>>>     arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  8 +++++++
+>>>>>>     arch/arm64/boot/dts/nvidia/tegra210.dtsi       | 31 +++++++++++++++++++++++++-
+>>>>>>     2 files changed, 38 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>>>> index b0095072bc28..ec1b3033fa03 100644
+>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>>>> @@ -10,6 +10,14 @@
+>>>>>>     			status = "okay";
+>>>>>>     		};
+>>>>>> +		vi@54080000 {
+>>>>>> +			status = "okay";
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		csi@0x54080838 {
+>>>>>> +			status = "okay";
+>>>>>> +		};
+>>>>>> +
+>>>>>>     		sor@54580000 {
+>>>>>>     			status = "okay";
+>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>>>>> index 48c63256ba7f..c6107ec03ad1 100644
+>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>>>>> @@ -136,9 +136,38 @@
+>>>>>>     		vi@54080000 {
+>>>>>>     			compatible = "nvidia,tegra210-vi";
+>>>>>> -			reg = <0x0 0x54080000 0x0 0x00040000>;
+>>>>>> +			reg = <0x0 0x54080000 0x0 0x808>;
+>>>>>>     			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+>>>>>>     			status = "disabled";
+>>>>>> +			assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
+>>>>>> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
+>>>>>> +
+>>>>>> +			clocks = <&tegra_car TEGRA210_CLK_VI>;
+>>>>>> +			clock-names = "vi";
+>>>>>> +			resets = <&tegra_car 20>;
+>>>>>> +			reset-names = "vi";
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		csi@0x54080838 {
+>>>>>> +			compatible = "nvidia,tegra210-csi";
+>>>>>> +			reg = <0x0 0x54080838 0x0 0x2000>;
+>>>>>> +			status = "disabled";
+>>>>>> +			assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
+>>>>>> +					  <&tegra_car TEGRA210_CLK_CILCD>,
+>>>>>> +					  <&tegra_car TEGRA210_CLK_CILE>;
+>>>>>> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
+>>>>>> +						 <&tegra_car TEGRA210_CLK_PLL_P>,
+>>>>>> +						 <&tegra_car TEGRA210_CLK_PLL_P>;
+>>>>>> +			assigned-clock-rates = <102000000>,
+>>>>>> +					       <102000000>,
+>>>>>> +					       <102000000>;
+>>>>>> +
+>>>>>> +			clocks = <&tegra_car TEGRA210_CLK_CSI>,
+>>>>>> +				 <&tegra_car TEGRA210_CLK_CILAB>,
+>>>>>> +				 <&tegra_car TEGRA210_CLK_CILCD>,
+>>>>>> +				 <&tegra_car TEGRA210_CLK_CILE>;
+>>>>>> +			clock-names = "csi", "cilab", "cilcd", "cile";
+>>>>>> +
+>>>>>>     		};
+>>>>> Can this be a child of the vi node? Looking at the register ranges it
+>>>>> seems like these are actually a single IP block. If they have separate
+>>>>> blocks with clearly separate functionality, then it makes sense to have
+>>>>> CSI be a child node of VI, though it may also be okay to merge both and
+>>>>> have a single node with the driver doing all of the differentiation
+>>>>> between what's VI and what's CSI.
+>>>>>
+>>>>> Looking at later chips, the split between VI and CSI is more explicit,
+>>>>> so having the split in DT for Tegra210 may make sense for consistency.
+>>>>>
+>>>>> I know we've discussed this before, but for some reason I keep coming
+>>>>> back to this. I'll go through the other patches to see if I can get a
+>>>>> clearer picture of how this could all work together.
+>>>>>
+>>>>> Thierry
+>>>> We can keep it separate as we discussed.
+>>>>
+>>>> But as Tegra186 onwards, CSI is separate device to be all cosistent I kept
+>>>> CSI as separate node for Tegra210 as well.
+>>>   From our discussion, my understanding was that CSI would be a separate
+>>> device, but it would still be a subdevice of VI. The address offset of
+>>> the CSI registers not being aligned to a power of two is a strong
+>>> indication that this is really all part of the same block.
+>> Yes our earlier discussion is to have CSI as subdevice.
 >>
->> On 30/01/2020 04:37, Dmitry Osipenko wrote:
->>> It's a bit impractical to enable hardware's clock at the time of DMA
->>> channel's allocation because most of DMA client drivers allocate DMA
->>> channel at the time of the driver's probing, and thus, DMA clock is kep=
-t
->>> always-enabled in practice, defeating the whole purpose of runtime PM.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/dma/tegra20-apb-dma.c | 47 ++++++++++++++++++++++++-----------
->>>  1 file changed, 32 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
-a.c
->>> index 22b88ccff05d..0ee28d8e3c96 100644
->>> --- a/drivers/dma/tegra20-apb-dma.c
->>> +++ b/drivers/dma/tegra20-apb-dma.c
->>> @@ -436,6 +436,8 @@ static void tegra_dma_stop(struct tegra_dma_channel=
- *tdc)
->>>  		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
->>>  	}
->>>  	tdc->busy =3D false;
->>> +
->>> +	pm_runtime_put(tdc->tdma->dev);
->>>  }
->>> =20
->>>  static void tegra_dma_start(struct tegra_dma_channel *tdc,
->>> @@ -500,18 +502,25 @@ static void tegra_dma_configure_for_next(struct t=
-egra_dma_channel *tdc,
->>>  	tegra_dma_resume(tdc);
->>>  }
->>> =20
->>> -static void tdc_start_head_req(struct tegra_dma_channel *tdc)
->>> +static bool tdc_start_head_req(struct tegra_dma_channel *tdc)
->>>  {
->>>  	struct tegra_dma_sg_req *sg_req;
->>> +	int err;
->>> =20
->>>  	if (list_empty(&tdc->pending_sg_req))
->>> -		return;
->>> +		return false;
->>> +
->>> +	err =3D pm_runtime_get_sync(tdc->tdma->dev);
->>> +	if (WARN_ON_ONCE(err < 0))
->>> +		return false;
->>> =20
->>>  	sg_req =3D list_first_entry(&tdc->pending_sg_req, typeof(*sg_req), no=
-de);
->>>  	tegra_dma_start(tdc, sg_req);
->>>  	sg_req->configured =3D true;
->>>  	sg_req->words_xferred =3D 0;
->>>  	tdc->busy =3D true;
->>> +
->>> +	return true;
->>>  }
->>> =20
->>>  static void tdc_configure_next_head_desc(struct tegra_dma_channel *tdc=
-)
->>> @@ -615,6 +624,8 @@ static void handle_once_dma_done(struct tegra_dma_c=
-hannel *tdc,
->>>  	}
->>>  	list_add_tail(&sgreq->node, &tdc->free_sg_req);
->>> =20
->>> +	pm_runtime_put(tdc->tdma->dev);
->>> +
->>>  	/* Do not start DMA if it is going to be terminate */
->>>  	if (to_terminate || list_empty(&tdc->pending_sg_req))
->>>  		return;
->>> @@ -730,9 +741,7 @@ static void tegra_dma_issue_pending(struct dma_chan=
- *dc)
->>>  		dev_err(tdc2dev(tdc), "No DMA request\n");
->>>  		goto end;
->>>  	}
->>> -	if (!tdc->busy) {
->>> -		tdc_start_head_req(tdc);
->>> -
->>> +	if (!tdc->busy && tdc_start_head_req(tdc)) {
->>>  		/* Continuous single mode: Configure next req */
->>>  		if (tdc->cyclic) {
->>>  			/*
->>> @@ -775,6 +784,13 @@ static int tegra_dma_terminate_all(struct dma_chan=
- *dc)
->>>  	else
->>>  		wcount =3D status;
->>> =20
->>> +	/*
->>> +	 * tegra_dma_stop() will drop the RPM's usage refcount, but
->>> +	 * tegra_dma_resume() touches hardware and thus we should keep
->>> +	 * the DMA clock active while it's needed.
->>> +	 */
->>> +	pm_runtime_get(tdc->tdma->dev);
->>> +
+>> Later looking into T186 and later NVCSI is totally separate so it will be
+>> separate device and to have driver common moved Tegra210 CSI also as
+>> separate device instead of having it as subdevice of VI.
 >>
->> Would it work and make it simpler to just enable in the issue_pending
->> and disable in the handle_once_dma_done or terminate_all?
+>> Earlier when we discussed at that time I am using TPG also from device
+>> graphs but not moved to hard media links inside driver for TPG.
 >>
->> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma=
-.c
->> index 3a45079d11ec..86bbb45da93d 100644
->> --- a/drivers/dma/tegra20-apb-dma.c
->> +++ b/drivers/dma/tegra20-apb-dma.c
->> @@ -616,9 +616,14 @@ static void handle_once_dma_done(struct
->> tegra_dma_channel *tdc,
->>         list_add_tail(&sgreq->node, &tdc->free_sg_req);
->>
->>         /* Do not start DMA if it is going to be terminate */
->> -       if (to_terminate || list_empty(&tdc->pending_sg_req))
->> +       if (to_terminate)
->>                 return;
->>
->> +       if (list_empty(&tdc->pending_sg_req)) {
->> +               pm_runtime_put(tdc->tdma->dev);
->> +               return;
->> +       }
->> +
->>         tdc_start_head_req(tdc);
->>  }
->>
->> @@ -729,6 +734,11 @@ static void tegra_dma_issue_pending(struct dma_chan
->> *dc)
->>                 goto end;
->>         }
->>         if (!tdc->busy) {
->> +               if (pm_runtime_get_sync(tdc->tdma->dev) < 0) {
->> +                       dev_err(tdc2dev(tdc), "Failed to enable DMA!\n")=
-;
->> +                       goto end;
->> +               }
->> +
->>                 tdc_start_head_req(tdc);
->>
->>                 /* Continuous single mode: Configure next req */
->> @@ -788,6 +798,7 @@ static int tegra_dma_terminate_all(struct dma_chan *=
-dc)
->>                                 get_current_xferred_count(tdc, sgreq,
->> wcount);
->>         }
->>         tegra_dma_resume(tdc);
->> +       pm_runtime_put(tdc->tdma->dev);
->>
->>  skip_dma_stop:
->>         tegra_dma_abort_all(tdc);
->>
->=20
-> The tegra_dma_stop() should put RPM anyways, which is missed in yours
-> sample. Please see handle_continuous_head_request().
+>> For this we need CSI to be available prior to VI.
+> Why is that? Does creating the hard media links need access to a struct
+> device? What if we created that device in the VI driver without any
+> reliance on DT? Shouldn't that also work? I have a hard time imagining
+> that there aren't other devices like this where we don't necessarily
+> have separate devices for these links.
+Yes we need CSI structure for hard link TPG also as all csi channel list 
+is part of CSI device.
 
-Yes and that is deliberate. The cyclic transfers the transfers *should*
-not stop until terminate_all is called. The tegra_dma_stop in
-handle_continuous_head_request() is an error condition and so I am not
-sure it is actually necessary to call pm_runtime_put() here.
+We can create CSI channel subdevices within VI without using CSI device 
+from a separate CSI driver probe for Tegra210 and make all subdev 
+related ops implementations as global so they can be used from VI driver 
+for Tegra210 and can also be used for Tegra186 and later in separate CSI 
+driver.
 
-> I'm also finding the explicit get/put a bit easier to follow in the
-> code, don't you think so?
+During creating media links in VI driver for TPG, for T210 we can use 
+local CSI device structure and for T186+ we can use CSI device structure 
+created during CSI probe.
 
-I can see that, but I was thinking that in the case of cyclic transfers,
-it should only really be necessary to call the get/put at the beginning
-and end. So in my mind there should only be two exit points which are
-the ISR handler for SG and terminate_all for SG and cyclic.
+Sorry, I didn't understood what you meant by separate devices for these 
+link.
 
-Jon
+We only have Tegra CSI linked to Tegra VI for TPG/Real sensor.
 
---=20
-nvpublic
+>> If we add CSI as subdevice to VI, CSI will not be available by the time
+>> VI init happens.
+> The CSI subdevice should be registered as part of the VI driver's probe,
+> right? That's typically where you'd call of_platform_populate(). Could
+> we not set up the hard media links in the ->init() callbacks for the
+> host1x clients? Those are called after all of the devices have been
+> probed, so the CSI device should be available at that time.
+>
+>> Currently host1x subdevices listed has CSI before VI and CSI init happens
+>> earlier so by the time VI init happens CSI is available to do media links
+>> b/w VI video entity and CSI subdevice entity.
+> Okay, I understand how this would be a convenient solution. However, the
+> device tree is a hardware description, so we need to ignore what we know
+> about the operating system infrastructure that we want to use when
+> writing the device tree bindings (and the device tree content) in order
+> to make sure the same binding will work on a different operating system
+> which may have a completely different infrastructure (or none at all).
+>
+>> Also having CSI as separate subdevice (not as subdevice to VI) for T210 will
+>> be consistent with T186 and later.
+> Again, I see how that's convenient. But the main difference between
+> Tegra210 and Tegra186 is that on the former, the CSI is merged with VI,
+> whereas on the latter the CSI is a completely separate hardware block.
+>
+> Since device tree describes the hardware, that difference should be
+> apparent in the device tree. I initially thought as well that it would
+> be advantageous if both had the same representation, but I do realize
+> now that this has a significant impact on the device tree, and it
+> violates the basic principles we base device tree binding design on.
+>
+> Thierry
+
+I just thought of driver implementation being common b/w T210 and T186+ 
+by having CSI as separate device node rather than as child node to VI to 
+avoid CSI structure handling within VI for T210 only.
+
+Will update DT and driver to have CSI as child node of VI for T210.
