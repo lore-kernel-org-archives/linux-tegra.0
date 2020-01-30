@@ -1,50 +1,127 @@
-From: Clemens Ladisch <clemens-P6GI/4k7KOmELgA04lAiVw@public.gmane.org>
-Subject: Re: [alsa-devel] (no subject)
-Date: Thu, 30 Jan 2020 15:58:37 +0100
-Message-ID: <182fd434-f15a-f049-1ba1-83bd864b4590@ladisch.de>
-References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
- <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
- <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
- <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
- <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
- <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
- <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
- <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
- <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
- <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
- <20200128121315.GD4689@sirena.org.uk>
- <047c8caa-e715-5295-9794-67ff3e10cea2@gmail.com>
- <70f344bf-f991-606c-55ab-bdadea27d233@nvidia.com>
- <2ff97414-f0a5-7224-0e53-6cad2ed0ccd2@gmail.com>
- <35667c85-67b5-6f6f-ffe8-4fe3455ea4bb@codethink.co.uk>
- <96ed04cb-24ab-7e4d-bd44-6a4bb7c046ac@ladisch.de>
- <8161fc88-fa8c-ec92-cc14-1caa5c6f2fe7@codethink.co.uk>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+Date: Thu, 30 Jan 2020 16:42:46 +0100
+Message-ID: <20200130154246.GA2904678@ulmo>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <8161fc88-fa8c-ec92-cc14-1caa5c6f2fe7-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com, frankc@nvidia.com, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ben Dooks wrote:
-> On 30/01/2020 09:31, Clemens Ladisch wrote:
->> S24_LE:  24-bit samples in 32-bit words, aligned to the LSB
->> S32_LE:  24-bit samples in 32-bit words, aligned to the MSB
->>
->> It is very unlikely that your hardware implements S24_LE.
->
-> Which is wrong, since this is exactly what the hardware implements.
->
-> The DMA fetches 32 bit words, and then the front end dispatches only
-> 24 bits of these to the I2S/TDM
 
-Which 24 bits?  Is the padding in the first byte (S32_LE) or in the
-last byte (S24_LE)?
+--G4iJoqBmSsgzjUCe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
+> Hi Sowjanya,
+>=20
+> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
+> > This series adds Tegra210 VI and CSI driver for built-in test pattern
+> > generator (TPG) capture.
+> >=20
+> > Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+> > CSI port is one-to-one mapped to VI channel for video capture.
+> >=20
+> > This series has TPG support only where it creates hard media links
+> > between CSI subdevice and VI video device without device graphs.
+> >=20
+> > v4l2-compliance results are available below the patch diff.
+> >=20
+> > [v0]:	Includes,
+> > 	- Adds CSI TPG clock to Tegra210 clock driver
+> > 	- Host1x video driver with VI and CSI clients.
+> > 	- Support for Tegra210 only.
+> > 	- VI CSI TPG support with hard media links in driver.
+> > 	- Video formats supported by Tegra210 VI
+> > 	- CSI TPG supported video formats
+>=20
+> I'm trying to compile this patch series using the media_tree master
+> branch (https://git.linuxtv.org//media_tree.git), but it fails:
+>=20
+> drivers/staging/media/tegra/tegra-channel.c: In function =E2=80=98tegra_c=
+hannel_queue_setup=E2=80=99:
+> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused variab=
+le =E2=80=98count=E2=80=99 [-Wunused-variable]
+>    71 |  unsigned int count =3D *nbuffers;
+>       |               ^~~~~
+> drivers/staging/media/tegra/tegra-channel.c: In function =E2=80=98tegra_c=
+hannel_init=E2=80=99:
+> drivers/staging/media/tegra/tegra-channel.c:518:55: error: =E2=80=98struc=
+t host1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+>   518 |  struct tegra_camera *cam =3D dev_get_drvdata(vi->client.host);
+>       |                                                       ^
+> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/teg=
+ra-channel.o] Error 1
+> make[4]: *** Waiting for unfinished jobs....
+> drivers/staging/media/tegra/tegra-vi.c: In function =E2=80=98tegra_vi_tpg=
+_graph_init=E2=80=99:
+> drivers/staging/media/tegra/tegra-vi.c:157:55: error: =E2=80=98struct hos=
+t1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+>   157 |  struct tegra_camera *cam =3D dev_get_drvdata(vi->client.host);
+>       |                                                       ^
+> drivers/staging/media/tegra/tegra-vi.c: In function =E2=80=98tegra_vi_ini=
+t=E2=80=99:
+> drivers/staging/media/tegra/tegra-csi.c: In function =E2=80=98tegra_csi_i=
+nit=E2=80=99:
+> drivers/staging/media/tegra/tegra-vi.c:213:51: error: =E2=80=98struct hos=
+t1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+>   213 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
+>       |                                                   ^~
+> drivers/staging/media/tegra/tegra-csi.c:259:51: error: =E2=80=98struct ho=
+st1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+>   259 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
+>       |                                                   ^~
+> drivers/staging/media/tegra/tegra-vi.c: In function =E2=80=98tegra_vi_exi=
+t=E2=80=99:
+> drivers/staging/media/tegra/tegra-vi.c:246:51: error: =E2=80=98struct hos=
+t1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+>   246 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
+>       |                                                   ^~
+> drivers/staging/media/tegra/tegra-csi.c: In function =E2=80=98tegra_csi_e=
+xit=E2=80=99:
+> drivers/staging/media/tegra/tegra-csi.c:286:51: error: =E2=80=98struct ho=
+st1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+>   286 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
+>       |                                                   ^~
+>=20
+> And indeed, struct host1x_client as defined in include/linux/host1x.h doe=
+sn't
+> have a 'host' field.
+>=20
+> Does this series depend on another patch that's not yet in mainline?
 
-Regards,
-Clemens
+Sowjanya's been working on top of linux-next, so, yes, this patch
+depends on a change that's been merged into the DRM tree for v5.6-rc1.
+
+Thierry
+
+--G4iJoqBmSsgzjUCe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4y+XIACgkQ3SOs138+
+s6FAZA//cpCNsEQU8gEHAU0CjI4DzvBc1qaYpfV6h43+F3Yray8ifipc/2NH66wY
+QUfBqh14a7p01FH/E2Y/aI01fJO62p7TN/vpTSJj7IkznUTIRDoBwSGU4AGwIHnU
+GTSjcYbv247B1aD1zZdG7T8xVN6qoCyVostAQz4LQJGm/wlalTlHbjvhnxXIFgAm
+tcZWT0dz7AEct7cStf5FbbfUe/3Q7YUPD/VofigxjL1QHiLrD9GlSHk4HSW2BUq+
+rrYI+raXFfVyE615KDqmZRcar9D/jVWdIqkn352u7M0G7te3JNkvwGujV7CuiS6B
+I/7E+QOG+r+gPR7TjLrZETkqbpaJZlhlYE2/V/GEWMavezU6yxuRnNkLH058lZ1I
+BJ+m/Elc4wOu9i1Y0JvlZgtChSGekGkjv/h0Doc2M/82l0OfbWJ0SGUudc0SeFtw
+eL65CkD7JaWTcamAzMmlpZAO7KulHW5bNhU9NnYL/lYt30OS2I2clqK2bgAKS3G4
+qyIOdqDaxmxkiOl4YTR+jGu1HTTpLvD9UxaV0Xk1tZ40X1AvapdG+cLogvV4LLrr
+8jvUw0vkEjDg6qwQ8gFs3zAG6Zn2rgbSwNb8tOUw0tR15FWM7ti7P0Ldaep2LT2T
+2qQF+D4XPiA5U5iL6jne6eRwZ1/n1aNpH2YsCgq1PfJFofV0nII=
+=5dmL
+-----END PGP SIGNATURE-----
+
+--G4iJoqBmSsgzjUCe--
