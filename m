@@ -1,59 +1,42 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 5/9] ASoC: tegra: add Tegra210 based AHUB driver
-Date: Fri, 31 Jan 2020 17:34:59 +0300
-Message-ID: <aeced6f5-cd7d-bc57-ce83-541554a7dd40@gmail.com>
-References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
- <1580380422-3431-6-git-send-email-spujar@nvidia.com>
- <160bb2ca-89bb-0ecf-a334-0fac591b439a@gmail.com>
- <00ce0f46-4401-c1da-5513-4aa38d224a44@nvidia.com>
+Subject: Re: [PATCH] Revert "ASoC: tegra: Allow 24bit and 32bit samples"
+Date: Fri, 31 Jan 2020 18:38:54 +0300
+Message-ID: <2bb53d7d-2d36-e16e-5858-24360b19f936@gmail.com>
+References: <20200131091901.13014-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <00ce0f46-4401-c1da-5513-4aa38d224a44@nvidia.com>
+In-Reply-To: <20200131091901.13014-1-jonathanh@nvidia.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sameer Pujar <spujar@nvidia.com>, perex@perex.cz, tiwai@suse.com, robh+dt@kernel.org
-Cc: broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com
+To: Jon Hunter <jonathanh@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-31.01.2020 06:12, Sameer Pujar пишет:
+31.01.2020 12:19, Jon Hunter пишет:
+> Commit f3ee99087c8ca0ecfdd549ef5a94f557c42d5428 ("ASoC: tegra: Allow
+> 24bit and 32bit samples") added 24-bit and 32-bit support for to the
+> Tegra30 I2S driver. However, there are two additional commits that are
+> also needed to get 24-bit and 32-bit support to work correctly. These
+> commits are not yet applied because there are still some review comments
+> that need to be addressed. With only this change applied, 24-bit and
+> 32-bit support is advertised by the I2S driver, but it does not work and
+> the audio is distorted. Therefore, revert this patch for now until the
+> other changes are also ready.
 > 
+> Furthermore, a clock issue with 24-bit support has been identified with
+> this change and so if we revert this now, we can also fix that in the
+> updated version.
 > 
-> On 1/30/2020 10:55 PM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 30.01.2020 13:33, Sameer Pujar пишет:
->> ...
->>> +#include <linux/clk.h>
->>> +#include <linux/device.h>
->>> +#include <linux/module.h>
->>> +#include <linux/of_platform.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/pm_runtime.h>
->>> +#include <linux/regmap.h>
->>> +#include <sound/soc.h>
->>> +#include "tegra210_ahub.h"
->> Nit: I'd separate the per-directory includes with a blank line, like it
->> done by the most of existing drivers, for consistency.
+> Cc: stable@vger.kernel.org
 > 
-> Hi Dmitry,
-> 
-> I'd assume these are the only review comments (which includes your other
-> replies for v2 5/9) for the series.
-> Let me know otherwise.
-> 
-> It would help me to discuss all the issues at once, finalize changes for
-> v3 and so that we can avoid multiple iterations.
+> Reported-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
 
-Hello Sameer,
+Thanks, Jon!
 
-I'll take another look at the patches around Monday.
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
 
-In general, you should wait for a week or two if you're expecting to get
-more comments.
-
-There is now more than month for you to finish this series. If you have
-any other patches that depend on this series, then you may send them as
-RFC and explicitly state that they depend on another series.
+Ben, looking forward to have 24bit working in 5.7 :)
