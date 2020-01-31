@@ -1,53 +1,101 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v6 11/16] dmaengine: tegra-apb: Keep clock enabled only
- during of DMA transfer
-Date: Fri, 31 Jan 2020 09:05:41 +0000
-Message-ID: <1b7dd052-20f0-7b38-9578-44967eca1770@nvidia.com>
-References: <20200130043804.32243-1-digetx@gmail.com>
- <20200130043804.32243-12-digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] Revert "ASoC: tegra: Allow 24bit and 32bit samples"
+Date: Fri, 31 Jan 2020 09:19:01 +0000
+Message-ID: <20200131091901.13014-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200130043804.32243-12-digetx@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Commit f3ee99087c8ca0ecfdd549ef5a94f557c42d5428 ("ASoC: tegra: Allow
+24bit and 32bit samples") added 24-bit and 32-bit support for to the
+Tegra30 I2S driver. However, there are two additional commits that are
+also needed to get 24-bit and 32-bit support to work correctly. These
+commits are not yet applied because there are still some review comments
+that need to be addressed. With only this change applied, 24-bit and
+32-bit support is advertised by the I2S driver, but it does not work and
+the audio is distorted. Therefore, revert this patch for now until the
+other changes are also ready.
 
-On 30/01/2020 04:37, Dmitry Osipenko wrote:
-> It's a bit impractical to enable hardware's clock at the time of DMA
-> channel's allocation because most of DMA client drivers allocate DMA
-> channel at the time of the driver's probing, and thus, DMA clock is kept
-> always-enabled in practice, defeating the whole purpose of runtime PM.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/dma/tegra20-apb-dma.c | 47 ++++++++++++++++++++++++-----------
->  1 file changed, 32 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 22b88ccff05d..0ee28d8e3c96 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -436,6 +436,8 @@ static void tegra_dma_stop(struct tegra_dma_channel *tdc)
->  		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
->  	}
->  	tdc->busy = false;
-> +
-> +	pm_runtime_put(tdc->tdma->dev);
+Furthermore, a clock issue with 24-bit support has been identified with
+this change and so if we revert this now, we can also fix that in the
+updated version.
 
-There are only 3 places where tegra_dma_stop is called, does it simplify
-the code if we move the pm_runtime_put() outside of tegra_dma_stop? In
-other words, everywhere there is a tegra_dma_stop, afterwards we then
-call pm_runtime_put?
+Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-This would allow us to get rid of the extra pm_runtime_get in
-terminate_all.
+Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ sound/soc/tegra/tegra30_i2s.c | 25 +++++--------------------
+ 1 file changed, 5 insertions(+), 20 deletions(-)
 
-Jon
-
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index dbed3c5408e7..d59882ec48f1 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -127,7 +127,7 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	struct device *dev = dai->dev;
+ 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+ 	unsigned int mask, val, reg;
+-	int ret, sample_size, srate, i2sclock, bitcnt, audio_bits;
++	int ret, sample_size, srate, i2sclock, bitcnt;
+ 	struct tegra30_ahub_cif_conf cif_conf;
+ 
+ 	if (params_channels(params) != 2)
+@@ -137,19 +137,8 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
+-		audio_bits = TEGRA30_AUDIOCIF_BITS_16;
+ 		sample_size = 16;
+ 		break;
+-	case SNDRV_PCM_FORMAT_S24_LE:
+-		val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
+-		audio_bits = TEGRA30_AUDIOCIF_BITS_24;
+-		sample_size = 24;
+-		break;
+-	case SNDRV_PCM_FORMAT_S32_LE:
+-		val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
+-		audio_bits = TEGRA30_AUDIOCIF_BITS_32;
+-		sample_size = 32;
+-		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -181,8 +170,8 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	cif_conf.threshold = 0;
+ 	cif_conf.audio_channels = 2;
+ 	cif_conf.client_channels = 2;
+-	cif_conf.audio_bits = audio_bits;
+-	cif_conf.client_bits = audio_bits;
++	cif_conf.audio_bits = TEGRA30_AUDIOCIF_BITS_16;
++	cif_conf.client_bits = TEGRA30_AUDIOCIF_BITS_16;
+ 	cif_conf.expand = 0;
+ 	cif_conf.stereo_conv = 0;
+ 	cif_conf.replicate = 0;
+@@ -317,18 +306,14 @@ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+-		.formats = SNDRV_PCM_FMTBIT_S32_LE |
+-			   SNDRV_PCM_FMTBIT_S24_LE |
+-			   SNDRV_PCM_FMTBIT_S16_LE,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+ 	.capture = {
+ 		.stream_name = "Capture",
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+-		.formats = SNDRV_PCM_FMTBIT_S32_LE |
+-			   SNDRV_PCM_FMTBIT_S24_LE |
+-			   SNDRV_PCM_FMTBIT_S16_LE,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+ 	.ops = &tegra30_i2s_dai_ops,
+ 	.symmetric_rates = 1,
 -- 
-nvpublic
+2.17.1
