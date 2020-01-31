@@ -1,60 +1,67 @@
-From: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] usb: phy: tegra: make the code simple by devm_platform_ioremap_resource()
-Date: Fri, 31 Jan 2020 15:21:01 +0200
-Message-ID: <874kwb92yq.fsf@kernel.org>
-References: <20200127135841.17935-1-zhengdejin5@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 11/16] dmaengine: tegra-apb: Keep clock enabled only
+ during of DMA transfer
+Date: Fri, 31 Jan 2020 17:22:53 +0300
+Message-ID: <1b64a3c6-a8b9-34d7-96cc-95b93ca1a392@gmail.com>
+References: <20200130043804.32243-1-digetx@gmail.com>
+ <20200130043804.32243-12-digetx@gmail.com>
+ <2442aee7-2c2a-bacc-7be9-8eed17498928@nvidia.com>
+ <0c766352-700a-68bf-cf7b-9b1686ba9ca9@gmail.com>
+ <e72d00ee-abee-9ae2-4654-da77420b440e@nvidia.com>
+ <cedbf558-b15b-81ca-7833-c94aedce5c5c@gmail.com>
+ <315241b5-f5a2-aaa0-7327-24055ff306c7@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200127135841.17935-1-zhengdejin5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <315241b5-f5a2-aaa0-7327-24055ff306c7-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dejin Zheng <zhengdejin5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+31.01.2020 12:02, Jon Hunter пишет:
+> 
+> On 30/01/2020 20:04, Dmitry Osipenko wrote:
+> 
+> ...
+> 
+>>>> The tegra_dma_stop() should put RPM anyways, which is missed in yours
+>>>> sample. Please see handle_continuous_head_request().
+>>>
+>>> Yes and that is deliberate. The cyclic transfers the transfers *should*
+>>> not stop until terminate_all is called. The tegra_dma_stop in
+>>> handle_continuous_head_request() is an error condition and so I am not
+>>> sure it is actually necessary to call pm_runtime_put() here.
+>>
+>> But then tegra_dma_stop() shouldn't unset the "busy" mark.
+> 
+> True.
+> 
+>>>> I'm also finding the explicit get/put a bit easier to follow in the
+>>>> code, don't you think so?
+>>>
+>>> I can see that, but I was thinking that in the case of cyclic transfers,
+>>> it should only really be necessary to call the get/put at the beginning
+>>> and end. So in my mind there should only be two exit points which are
+>>> the ISR handler for SG and terminate_all for SG and cyclic.
+>>
+>> Alright, I'll update this patch.
+> 
+> Hmmm ... I am wondering if we should not mess with that and leave how
+> you have it.
 
+I took another look and seems my current v6 should be more correct because:
 
-Hi,
+1. If "busy" is unset in tegra_dma_stop(), then the RPM should be put
+there since tegra_dma_terminate_all() won't put RPM in this case:
 
-Dejin Zheng <zhengdejin5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
+	if (!tdc->busy)
+		goto skip_dma_stop;
 
-> make the code simple by use devm_platform_ioremap_resource() function
-> to replace platform_get_resource() and devm_ioremap().
->
-> Signed-off-by: Dejin Zheng <zhengdejin5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-checking file drivers/usb/phy/phy-tegra-usb.c
-Hunk #1 FAILED at 944.
-Hunk #2 FAILED at 1054.
-Hunk #3 FAILED at 1071.
-3 out of 3 hunks FAILED
-
-unfortunately, it doesn't apply.
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl40Kb0ACgkQzL64meEa
-mQa9oQ/+N8kMk+Fj6NEXBzM8cCr8usoHA7A7qOqstj20pLW3cE8yLXehv64Brcio
-QromC9dq9QqoFEQmvK7VkZYAMu1rZJxZysZNTO/bNpVdA3mF1/yqKME92oJCg7X5
-5+ouEFUQNGvyxNuWX5Uo7SycH66xZm8/vyPwK3dUNA64Ex/gqoDMJomSpdhI7PiS
-VUf3Fr+BQNAJ9w5Z+IEsQj/E6dQpVITr17gt426oEQmmhzHmwHX5viypc+jys/Dn
-y02SCHcx8IbzBBzNnH31pFFQ+COtT7NbBjTbkeqs0BOGaLSWpFROp/80Jnn2/4l/
-d2QNytRnoy9uXpqo3zLAVAJcFakqofr6mgqoEO6FOJ3o+B0uXI3u2JHUkenAUM+v
-V/ugEbWI3LHtCCGsWIZHmNtfPxQtxKXyGVEOq7KSvHFMjoVExln+kI7TOrtgZdkM
-fpqvqr8uUZiDxSXr2ScF0vtlkZW5ECZPZ74aRl+iznIyYaPHy0ma6vxm12K40HGV
-Xdwhdn9D/VD2Zn01rBusPn1wJoZI/E6nhEpe/6XqEEWCghusWP3UpI6u+pTGNyrY
-T80o58Ay/F4vGx57vpX5iLWvwFItX3IIfVVbyoV1SlQeLLMChVfX5GaQIzLNJVdi
-6naoDsgqekY33RmJ3YqRupMO/gJUu9diGEYyiow1WabipwFNz68=
-=doA5
------END PGP SIGNATURE-----
---=-=-=--
+2. We can't move the "busy" unsetting into the terminate because then
+tegra_dma_stop() will be invoked twice. Although, one option could be to
+remove the tegra_dma_stop() from the error paths of
+handle_continuous_head_request(), but I'm not sure that this is correct
+to do.
