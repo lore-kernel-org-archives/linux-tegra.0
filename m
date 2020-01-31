@@ -1,54 +1,51 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] Revert "ASoC: tegra: Allow 24bit and 32bit samples"
-Date: Fri, 31 Jan 2020 16:08:18 +0000
-Message-ID: <7fafb8d2-8754-e5c0-8952-0253ba8b656a@nvidia.com>
-References: <20200131091901.13014-1-jonathanh@nvidia.com>
- <2bb53d7d-2d36-e16e-5858-24360b19f936@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/3] drm/tegra: sor: Suspend on clock registration failure
+Date: Fri, 31 Jan 2020 17:59:08 +0100
+Message-ID: <20200131165910.3443936-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2bb53d7d-2d36-e16e-5858-24360b19f936-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On 31/01/2020 15:38, Dmitry Osipenko wrote:
-> 31.01.2020 12:19, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Commit f3ee99087c8ca0ecfdd549ef5a94f557c42d5428 ("ASoC: tegra: Allow
->> 24bit and 32bit samples") added 24-bit and 32-bit support for to the
->> Tegra30 I2S driver. However, there are two additional commits that are
->> also needed to get 24-bit and 32-bit support to work correctly. These
->> commits are not yet applied because there are still some review comments
->> that need to be addressed. With only this change applied, 24-bit and
->> 32-bit support is advertised by the I2S driver, but it does not work and
->> the audio is distorted. Therefore, revert this patch for now until the
->> other changes are also ready.
->>
->> Furthermore, a clock issue with 24-bit support has been identified with
->> this change and so if we revert this now, we can also fix that in the
->> updated version.
->>
->> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>
->> Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->=20
-> Thanks, Jon!
->=20
-> Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Make sure the SOR module is suspenden after we fail to register the SOR
+pad output clock.
 
-Thanks. I just realised I forgot the fixes-tag ...
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/sor.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Fixes: f3ee99087c8c ("ASoC: tegra: Allow 24bit and 32bit samples")
-
-Mark, let me know if you want me to resend.
-
-Jon
-
---=20
-nvpublic
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 41d24949478e..96cd89bb2e82 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -3922,15 +3922,16 @@ static int tegra_sor_probe(struct platform_device *pdev)
+ 	if (!sor->clk_pad) {
+ 		char *name;
+ 
+-		err = host1x_client_resume(&sor->client);
+-		if (err < 0) {
+-			dev_err(sor->dev, "failed to resume: %d\n", err);
++		name = devm_kasprintf(sor->dev, GFP_KERNEL, "sor%u_pad_clkout",
++				      sor->index);
++		if (!name) {
++			err = -ENOMEM;
+ 			goto remove;
+ 		}
+ 
+-		name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "sor%u_pad_clkout", sor->index);
+-		if (!name) {
+-			err = -ENOMEM;
++		err = host1x_client_resume(&sor->client);
++		if (err < 0) {
++			dev_err(sor->dev, "failed to resume: %d\n", err);
+ 			goto remove;
+ 		}
+ 
+-- 
+2.24.1
