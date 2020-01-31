@@ -1,49 +1,75 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH v2 5/9] ASoC: tegra: add Tegra210 based AHUB driver
-Date: Fri, 31 Jan 2020 08:42:28 +0530
-Message-ID: <00ce0f46-4401-c1da-5513-4aa38d224a44@nvidia.com>
-References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
- <1580380422-3431-6-git-send-email-spujar@nvidia.com>
- <160bb2ca-89bb-0ecf-a334-0fac591b439a@gmail.com>
+From: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
+Subject: Re: [PATCH] usb: chipidea: tegra: fix hardlock with invalid dr mode
+Date: Fri, 31 Jan 2020 05:27:17 +0000
+Message-ID: <20200131052716.GA30672@b29397-desktop>
+References: <20200127023548.27107-1-pgwipeout@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <160bb2ca-89bb-0ecf-a334-0fac591b439a@gmail.com>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, perex@perex.cz, tiwai@suse.com, robh+dt@kernel.org
-Cc: spujar@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200127023548.27107-1-pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Content-ID: <6A4B4B302F48934DA0D49F700EDD2297-jdb/QiT5osKcE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 20-01-26 21:35:48, Peter Geis wrote:
+> The ci_hdrc_tegra driver does not currently support dual role mode, but
+> it does not explicitly prevent its use.
+> Certain devices support dual role mode, but not automatic role switch.
+> This can cause the device to lock up during initialization of the
+> driver.
 
+If the driver only supports peripheral mode, you could set dr_mode as
+peripheral-only at glue layer, it would not be override by core.c.
+See ci_get_platdata.
 
-On 1/30/2020 10:55 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 30.01.2020 13:33, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
->> +#include <linux/clk.h>
->> +#include <linux/device.h>
->> +#include <linux/module.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/regmap.h>
->> +#include <sound/soc.h>
->> +#include "tegra210_ahub.h"
-> Nit: I'd separate the per-directory includes with a blank line, like it
-> done by the most of existing drivers, for consistency.
+But one thing I could not understand, if the driver doesn't support
+dual-role, how could you do manual role switch?
 
-Hi Dmitry,
+>=20
+> Detect this state by checking for the extcon phandle when dual role mode
+> is set to otg.
+> If it doesn't exist request the driver to only enable manual role
+> switching.
+>=20
+> Fixes: dfebb5f ("usb: chipidea: Add support for Tegra20/30/114/124")
+> Signed-off-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/usb/chipidea/ci_hdrc_tegra.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/=
+ci_hdrc_tegra.c
+> index 7455df0ede49..2f6f6ce3e8f5 100644
+> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> @@ -89,6 +89,13 @@ static int tegra_udc_probe(struct platform_device *pde=
+v)
+>  	udc->data.usb_phy =3D udc->phy;
+>  	udc->data.capoffset =3D DEF_CAPOFFSET;
+> =20
+> +	/* check the dual mode and warn about bad configurations */
+> +	if (usb_get_dr_mode(&pdev->dev) =3D=3D USB_DR_MODE_OTG &&
+> +	   !of_property_read_bool(pdev->dev.of_node, "extcon")) {
+> +		dev_warn(&pdev->dev, "no extcon registered, otg unavailable");
+> +		udc->data.flags |=3D CI_HDRC_DUAL_ROLE_NOT_OTG;
+> +	}
+> +
 
-I'd assume these are the only review comments (which includes your other=20
-replies for v2 5/9) for the series.
-Let me know otherwise.
+The CI_HDRC_DUAL_ROLE_NOT_OTG flag may not be suitable here, please see
+comments for it.
+=20
+>  	udc->dev =3D ci_hdrc_add_device(&pdev->dev, pdev->resource,
+>  				      pdev->num_resources, &udc->data);
+>  	if (IS_ERR(udc->dev)) {
+> --=20
+> 2.17.1
+>=20
 
-It would help me to discuss all the issues at once, finalize changes for=20
-v3 and so that we can avoid multiple iterations.
+--=20
 
 Thanks,
-Sameer.
+Peter Chen=
