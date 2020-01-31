@@ -1,75 +1,54 @@
-From: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
-Subject: Re: [PATCH] usb: chipidea: tegra: fix hardlock with invalid dr mode
-Date: Fri, 31 Jan 2020 05:27:17 +0000
-Message-ID: <20200131052716.GA30672@b29397-desktop>
-References: <20200127023548.27107-1-pgwipeout@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v6 11/16] dmaengine: tegra-apb: Keep clock enabled only
+ during of DMA transfer
+Date: Fri, 31 Jan 2020 09:02:28 +0000
+Message-ID: <315241b5-f5a2-aaa0-7327-24055ff306c7@nvidia.com>
+References: <20200130043804.32243-1-digetx@gmail.com>
+ <20200130043804.32243-12-digetx@gmail.com>
+ <2442aee7-2c2a-bacc-7be9-8eed17498928@nvidia.com>
+ <0c766352-700a-68bf-cf7b-9b1686ba9ca9@gmail.com>
+ <e72d00ee-abee-9ae2-4654-da77420b440e@nvidia.com>
+ <cedbf558-b15b-81ca-7833-c94aedce5c5c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200127023548.27107-1-pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <cedbf558-b15b-81ca-7833-c94aedce5c5c-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Content-ID: <6A4B4B302F48934DA0D49F700EDD2297-jdb/QiT5osKcE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20-01-26 21:35:48, Peter Geis wrote:
-> The ci_hdrc_tegra driver does not currently support dual role mode, but
-> it does not explicitly prevent its use.
-> Certain devices support dual role mode, but not automatic role switch.
-> This can cause the device to lock up during initialization of the
-> driver.
 
-If the driver only supports peripheral mode, you could set dr_mode as
-peripheral-only at glue layer, it would not be override by core.c.
-See ci_get_platdata.
+On 30/01/2020 20:04, Dmitry Osipenko wrote:
 
-But one thing I could not understand, if the driver doesn't support
-dual-role, how could you do manual role switch?
+...
 
->=20
-> Detect this state by checking for the extcon phandle when dual role mode
-> is set to otg.
-> If it doesn't exist request the driver to only enable manual role
-> switching.
->=20
-> Fixes: dfebb5f ("usb: chipidea: Add support for Tegra20/30/114/124")
-> Signed-off-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/usb/chipidea/ci_hdrc_tegra.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/=
-ci_hdrc_tegra.c
-> index 7455df0ede49..2f6f6ce3e8f5 100644
-> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> @@ -89,6 +89,13 @@ static int tegra_udc_probe(struct platform_device *pde=
-v)
->  	udc->data.usb_phy =3D udc->phy;
->  	udc->data.capoffset =3D DEF_CAPOFFSET;
-> =20
-> +	/* check the dual mode and warn about bad configurations */
-> +	if (usb_get_dr_mode(&pdev->dev) =3D=3D USB_DR_MODE_OTG &&
-> +	   !of_property_read_bool(pdev->dev.of_node, "extcon")) {
-> +		dev_warn(&pdev->dev, "no extcon registered, otg unavailable");
-> +		udc->data.flags |=3D CI_HDRC_DUAL_ROLE_NOT_OTG;
-> +	}
-> +
+>>> The tegra_dma_stop() should put RPM anyways, which is missed in yours
+>>> sample. Please see handle_continuous_head_request().
+>>
+>> Yes and that is deliberate. The cyclic transfers the transfers *should*
+>> not stop until terminate_all is called. The tegra_dma_stop in
+>> handle_continuous_head_request() is an error condition and so I am not
+>> sure it is actually necessary to call pm_runtime_put() here.
+> 
+> But then tegra_dma_stop() shouldn't unset the "busy" mark.
 
-The CI_HDRC_DUAL_ROLE_NOT_OTG flag may not be suitable here, please see
-comments for it.
-=20
->  	udc->dev =3D ci_hdrc_add_device(&pdev->dev, pdev->resource,
->  				      pdev->num_resources, &udc->data);
->  	if (IS_ERR(udc->dev)) {
-> --=20
-> 2.17.1
->=20
+True.
 
---=20
+>>> I'm also finding the explicit get/put a bit easier to follow in the
+>>> code, don't you think so?
+>>
+>> I can see that, but I was thinking that in the case of cyclic transfers,
+>> it should only really be necessary to call the get/put at the beginning
+>> and end. So in my mind there should only be two exit points which are
+>> the ISR handler for SG and terminate_all for SG and cyclic.
+> 
+> Alright, I'll update this patch.
 
-Thanks,
-Peter Chen=
+Hmmm ... I am wondering if we should not mess with that and leave how
+you have it.
+
+-- 
+nvpublic
