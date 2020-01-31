@@ -1,67 +1,95 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 11/16] dmaengine: tegra-apb: Keep clock enabled only
- during of DMA transfer
-Date: Fri, 31 Jan 2020 17:22:53 +0300
-Message-ID: <1b64a3c6-a8b9-34d7-96cc-95b93ca1a392@gmail.com>
-References: <20200130043804.32243-1-digetx@gmail.com>
- <20200130043804.32243-12-digetx@gmail.com>
- <2442aee7-2c2a-bacc-7be9-8eed17498928@nvidia.com>
- <0c766352-700a-68bf-cf7b-9b1686ba9ca9@gmail.com>
- <e72d00ee-abee-9ae2-4654-da77420b440e@nvidia.com>
- <cedbf558-b15b-81ca-7833-c94aedce5c5c@gmail.com>
- <315241b5-f5a2-aaa0-7327-24055ff306c7@nvidia.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+Date: Fri, 31 Jan 2020 15:29:52 +0100
+Message-ID: <8654e6fd-c403-6e68-e5cf-09297b5d8b5d@xs4all.nl>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
+ <20200130154246.GA2904678@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <315241b5-f5a2-aaa0-7327-24055ff306c7-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20200130154246.GA2904678@ulmo>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-media-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com, frankc@nvidia.com, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-31.01.2020 12:02, Jon Hunter пишет:
-> 
-> On 30/01/2020 20:04, Dmitry Osipenko wrote:
-> 
-> ...
-> 
->>>> The tegra_dma_stop() should put RPM anyways, which is missed in yours
->>>> sample. Please see handle_continuous_head_request().
->>>
->>> Yes and that is deliberate. The cyclic transfers the transfers *should*
->>> not stop until terminate_all is called. The tegra_dma_stop in
->>> handle_continuous_head_request() is an error condition and so I am not
->>> sure it is actually necessary to call pm_runtime_put() here.
+On 1/30/20 4:42 PM, Thierry Reding wrote:
+> On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
+>> Hi Sowjanya,
 >>
->> But then tegra_dma_stop() shouldn't unset the "busy" mark.
-> 
-> True.
-> 
->>>> I'm also finding the explicit get/put a bit easier to follow in the
->>>> code, don't you think so?
+>> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
+>>> This series adds Tegra210 VI and CSI driver for built-in test pattern
+>>> generator (TPG) capture.
 >>>
->>> I can see that, but I was thinking that in the case of cyclic transfers,
->>> it should only really be necessary to call the get/put at the beginning
->>> and end. So in my mind there should only be two exit points which are
->>> the ISR handler for SG and terminate_all for SG and cyclic.
+>>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+>>> CSI port is one-to-one mapped to VI channel for video capture.
+>>>
+>>> This series has TPG support only where it creates hard media links
+>>> between CSI subdevice and VI video device without device graphs.
+>>>
+>>> v4l2-compliance results are available below the patch diff.
+>>>
+>>> [v0]:	Includes,
+>>> 	- Adds CSI TPG clock to Tegra210 clock driver
+>>> 	- Host1x video driver with VI and CSI clients.
+>>> 	- Support for Tegra210 only.
+>>> 	- VI CSI TPG support with hard media links in driver.
+>>> 	- Video formats supported by Tegra210 VI
+>>> 	- CSI TPG supported video formats
 >>
->> Alright, I'll update this patch.
+>> I'm trying to compile this patch series using the media_tree master
+>> branch (https://git.linuxtv.org//media_tree.git), but it fails:
+>>
+>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_queue_setup’:
+>> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused variable ‘count’ [-Wunused-variable]
+>>    71 |  unsigned int count = *nbuffers;
+>>       |               ^~~~~
+>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_init’:
+>> drivers/staging/media/tegra/tegra-channel.c:518:55: error: ‘struct host1x_client’ has no member named ‘host’
+>>   518 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
+>>       |                                                       ^
+>> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/tegra-channel.o] Error 1
+>> make[4]: *** Waiting for unfinished jobs....
+>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_tpg_graph_init’:
+>> drivers/staging/media/tegra/tegra-vi.c:157:55: error: ‘struct host1x_client’ has no member named ‘host’
+>>   157 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
+>>       |                                                       ^
+>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_init’:
+>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_init’:
+>> drivers/staging/media/tegra/tegra-vi.c:213:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>   213 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>       |                                                   ^~
+>> drivers/staging/media/tegra/tegra-csi.c:259:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>   259 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>       |                                                   ^~
+>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_exit’:
+>> drivers/staging/media/tegra/tegra-vi.c:246:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>   246 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>       |                                                   ^~
+>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_exit’:
+>> drivers/staging/media/tegra/tegra-csi.c:286:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>   286 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>       |                                                   ^~
+>>
+>> And indeed, struct host1x_client as defined in include/linux/host1x.h doesn't
+>> have a 'host' field.
+>>
+>> Does this series depend on another patch that's not yet in mainline?
 > 
-> Hmmm ... I am wondering if we should not mess with that and leave how
-> you have it.
+> Sowjanya's been working on top of linux-next, so, yes, this patch
+> depends on a change that's been merged into the DRM tree for v5.6-rc1.
+> 
+> Thierry
+> 
 
-I took another look and seems my current v6 should be more correct because:
+Is there a specific linux-next tag that works? I tried next-20200131 but that
+failed to boot. Same problem with the mainline repo since the host1x patches
+were merged yesterday. It compiles fine, but the boot just stops. Or am I
+missing some kernel config that is now important to have?
 
-1. If "busy" is unset in tegra_dma_stop(), then the RPM should be put
-there since tegra_dma_terminate_all() won't put RPM in this case:
+Regards,
 
-	if (!tdc->busy)
-		goto skip_dma_stop;
-
-2. We can't move the "busy" unsetting into the terminate because then
-tegra_dma_stop() will be invoked twice. Although, one option could be to
-remove the tegra_dma_stop() from the error paths of
-handle_continuous_head_request(), but I'm not sure that this is correct
-to do.
+	Hans
