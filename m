@@ -1,115 +1,53 @@
-From: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: chipidea: tegra: fix hardlock with invalid dr mode
-Date: Fri, 31 Jan 2020 15:43:24 -0500
-Message-ID: <CAMdYzYqwz9HLsjvc1hDmovzWqiV_Vswe57d_gWhwBnvb2aNPyQ@mail.gmail.com>
-References: <20200127023548.27107-1-pgwipeout@gmail.com> <20200131052716.GA30672@b29397-desktop>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 5.5 00/56] 5.5.1-stable review
+Date: Fri, 31 Jan 2020 22:24:52 +0100
+Message-ID: <20200131212452.GB2278356@kroah.com>
+References: <20200130183608.849023566@linuxfoundation.org>
+ <69db1365-4b9a-0e58-4998-c9275bbc8f83@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200131052716.GA30672@b29397-desktop>
+Content-Disposition: inline
+In-Reply-To: <69db1365-4b9a-0e58-4998-c9275bbc8f83-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 12:27 AM Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org> wrote:
->
-> On 20-01-26 21:35:48, Peter Geis wrote:
-> > The ci_hdrc_tegra driver does not currently support dual role mode, but
-> > it does not explicitly prevent its use.
-> > Certain devices support dual role mode, but not automatic role switch.
-> > This can cause the device to lock up during initialization of the
-> > driver.
->
-> If the driver only supports peripheral mode, you could set dr_mode as
-> peripheral-only at glue layer, it would not be override by core.c.
-> See ci_get_platdata.
+On Fri, Jan 31, 2020 at 11:04:11AM +0000, Jon Hunter wrote:
+> 
+> On 30/01/2020 18:38, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.5.1 release.
+> > There are 56 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat, 01 Feb 2020 18:35:06 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.1-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.5:
+>     13 builds:	13 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     40 tests:	40 pass, 0 fail
+> 
+> Linux version:	5.5.1-rc1-gad64b54689dd
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
 
-The mode is set via the device tree dr_mode property.
-Even though the current tegra_udc driver does not currently support
-mode switching, board device tree files such as the apalis-eval and
-colibri-eval-v3 have dr_mode set to otg.
+Thanks for testing all of these and letting me know.
 
-They also seem to be missing the extcon phandle, which means automatic
-mode switching is not possible?
-
->
-> But one thing I could not understand, if the driver doesn't support
-> dual-role, how could you do manual role switch?
-
-Manual role switching is conducted via debugfs,
-/sys/kernel/debug/usb/ci_hdrc.0/role
-
->
-> >
-> > Detect this state by checking for the extcon phandle when dual role mode
-> > is set to otg.
-> > If it doesn't exist request the driver to only enable manual role
-> > switching.
-> >
-> > Fixes: dfebb5f ("usb: chipidea: Add support for Tegra20/30/114/124")
-> > Signed-off-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> >  drivers/usb/chipidea/ci_hdrc_tegra.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > index 7455df0ede49..2f6f6ce3e8f5 100644
-> > --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > @@ -89,6 +89,13 @@ static int tegra_udc_probe(struct platform_device *pdev)
-> >       udc->data.usb_phy = udc->phy;
-> >       udc->data.capoffset = DEF_CAPOFFSET;
-> >
-> > +     /* check the dual mode and warn about bad configurations */
-> > +     if (usb_get_dr_mode(&pdev->dev) == USB_DR_MODE_OTG &&
-> > +        !of_property_read_bool(pdev->dev.of_node, "extcon")) {
-> > +             dev_warn(&pdev->dev, "no extcon registered, otg unavailable");
-> > +             udc->data.flags |= CI_HDRC_DUAL_ROLE_NOT_OTG;
-> > +     }
-> > +
->
-> The CI_HDRC_DUAL_ROLE_NOT_OTG flag may not be suitable here, please see
-> comments for it.
-
-I've dug around the various mailing lists and I fail to find any
-reference to why this is not a valid use case.
-The commit message specifically references dual role capable devices
-without proper otg implementations, such as missing the otgsc
-register.
-
-My current use case is the Ouya, which deadlocks the kernel durning
-probe if the otg capable usb controller is set to dr_mode=otg.
-It works with this flag set.
-Unfortunately there isn't a property for dr_mode set to non_otg_dr_mode.
-
-I found a post stating that the driver blindly touches registers in
-otg mode, which leads to the deadlock if those registers are read only
-or non-existent,
-Eventually someone should look into why this deadlock occurs and make
-a proper fix that applies to all users.
-Unfortunately I do not have the knowledge yet to accomplish this task.
-
-With some simple modifications to the tegra_udc driver it is possible
-to get host mode working, vice using the tegra-ehci driver.
-At this point role switch works
-
-I also managed to move all of the functionality of the tegra-ehci
-driver into the tegra-udc driver.
-Unfortunately it doesn't behave correctly under some cases, so I never
-submitted it.
-
-Do you have a recommendation for handling this?
-
->
-> >       udc->dev = ci_hdrc_add_device(&pdev->dev, pdev->resource,
-> >                                     pdev->num_resources, &udc->data);
-> >       if (IS_ERR(udc->dev)) {
-> > --
-> > 2.17.1
-> >
->
-> --
->
-> Thanks,
-> Peter Chen
+greg k-h
