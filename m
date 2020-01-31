@@ -1,54 +1,67 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.5 00/56] 5.5.1-stable review
-Date: Fri, 31 Jan 2020 11:04:11 +0000
-Message-ID: <69db1365-4b9a-0e58-4998-c9275bbc8f83@nvidia.com>
-References: <20200130183608.849023566@linuxfoundation.org>
+From: Clemens Ladisch <clemens@ladisch.de>
+Subject: Re: (no subject)
+Date: Fri, 31 Jan 2020 12:03:39 +0100
+Message-ID: <dbd01efe-bada-5b20-2c5e-ccd0e8f2f5ad@ladisch.de>
+References: <29db3df4-6f51-7c0f-1eef-90171f1d233a@codethink.co.uk>
+ <9a5447e2-155c-7e6e-b8f1-95523c6f42c6@gmail.com>
+ <b4a416fb-f2b1-660d-27e3-aebf602178f9@codethink.co.uk>
+ <680e2dfd-6f4f-5c96-63b7-97520961dc82@gmail.com>
+ <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
+ <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
+ <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
+ <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
+ <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
+ <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
+ <20200128121315.GD4689@sirena.org.uk>
+ <047c8caa-e715-5295-9794-67ff3e10cea2@gmail.com>
+ <70f344bf-f991-606c-55ab-bdadea27d233@nvidia.com>
+ <2ff97414-f0a5-7224-0e53-6cad2ed0ccd2@gmail.com>
+ <35667c85-67b5-6f6f-ffe8-4fe3455ea4bb@codethink.co.uk>
+ <96ed04cb-24ab-7e4d-bd44-6a4bb7c046ac@ladisch.de>
+ <8161fc88-fa8c-ec92-cc14-1caa5c6f2fe7@codethink.co.uk>
+ <182fd434-f15a-f049-1ba1-83bd864b4590@ladisch.de>
+ <6ceb0c37867dd9ec9c5285e4470d462b@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20200130183608.849023566@linuxfoundation.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <6ceb0c37867dd9ec9c5285e4470d462b@codethink.co.uk>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Edward Cragg <edward.cragg@codethink.co.uk>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Ben Dooks wrote:
+> On 2020-01-30 14:58, Clemens Ladisch wrote:
+>> Ben Dooks wrote:
+>>> On 30/01/2020 09:31, Clemens Ladisch wrote:
+>>>> S24_LE:  24-bit samples in 32-bit words, aligned to the LSB
+>>>> S32_LE:  24-bit samples in 32-bit words, aligned to the MSB
+>>>>
+>>>> It is very unlikely that your hardware implements S24_LE.
+>>>
+>>> Which is wrong, since this is exactly what the hardware implements.
+>>>
+>>> The DMA fetches 32 bit words, and then the front end dispatches only
+>>> 24 bits of these to the I2S/TDM
+>>
+>> Which 24 bits?  Is the padding in the first byte (S32_LE) or in the
+>> last byte (S24_LE)?
+>
+> I think the low 24 bits are sent from the 32 bit word.
 
-On 30/01/2020 18:38, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.5.1 release.
-> There are 56 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 01 Feb 2020 18:35:06 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.1-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+This would indeed by S24_LE.  If you change the driver to say that it
+supports _only_ S24_LE, is the data then played correctly?
 
-All tests are passing for Tegra ...
 
-Test results for stable-v5.5:
-    13 builds:	13 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    40 tests:	40 pass, 0 fail
-
-Linux version:	5.5.1-rc1-gad64b54689dd
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+Regards,
+Clemens
