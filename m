@@ -1,102 +1,48 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v6 07/12] ARM: tegra: Don't enable PLLX while resuming
- from LP1 on Tegra30
-Date: Sun, 2 Feb 2020 04:08:12 +0300
-Message-ID: <31e4cf7e-9bdc-c9f8-7e6d-a972f43fc5be@gmail.com>
-References: <20191218202142.11717-1-digetx@gmail.com>
- <20191218202142.11717-8-digetx@gmail.com>
- <334ac00a0c83e4178e3195cca5d77acaf4a3fae7.camel@ziswiler.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] Revert "ASoC: tegra: Allow 24bit and 32bit samples"
+Date: Sat, 1 Feb 2020 11:27:37 +0000
+Message-ID: <20200201112737.GS3897@sirena.org.uk>
+References: <20200131091901.13014-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <334ac00a0c83e4178e3195cca5d77acaf4a3fae7.camel@ziswiler.com>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Wty5iWagpjJlozQq"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200131091901.13014-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-02.02.2020 01:57, Marcel Ziswiler пишет:
-> Hi Dmitry
-> 
-> Finally, I came around giving this a try again on the Colibri T20 and
-> Apalis/Colibri T30.
-> 
-> Overall, works like a charm and you may add the following to the entire
-> series:
-> 
-> On Wed, 2019-12-18 at 23:21 +0300, Dmitry Osipenko wrote:
->> PLLX may be kept disabled if cpufreq driver selects some other clock
->> for
->> CPU. In that case PLLX will be disabled later in the resume path by
->> the
->> CLK driver, which also can enable PLLX if necessary by itself. Thus
->> there
->> is no need to enable PLLX early during resume. Tegra114/124 CLK
->> drivers do
->> not manage PLLX on resume and thus they are left untouched by this
->> patch.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-on: Colibri T20, Apalis/Colibri T30 on resp. EvalBoards
 
-Hello Marcel,
+--Wty5iWagpjJlozQq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thank you very much for the testing! Very appreciate that!
+On Fri, Jan 31, 2020 at 09:19:01AM +0000, Jon Hunter wrote:
+> Commit f3ee99087c8ca0ecfdd549ef5a94f557c42d5428 ("ASoC: tegra: Allow
+> 24bit and 32bit samples") added 24-bit and 32-bit support for to the
+> Tegra30 I2S driver. However, there are two additional commits that are
 
-Could you please clarify whether you tried to enable the CPU DVFS by
-including OPPs/etc into device-tree files of the tested boards?
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
->> ---
->>  arch/arm/mach-tegra/sleep-tegra30.S | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-
->> tegra/sleep-tegra30.S
->> index 9a20c93abe48..4f073869b8ac 100644
->> --- a/arch/arm/mach-tegra/sleep-tegra30.S
->> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
->> @@ -358,7 +358,6 @@ _no_pll_iddq_exit:
->>  
->>  	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
->>  	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
->> -	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
->>  
->>  _pll_m_c_x_done:
->>  	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
->> @@ -368,8 +367,18 @@ _pll_m_c_x_done:
->>  	pll_locked r1, r0, CLK_RESET_PLLP_BASE
->>  	pll_locked r1, r0, CLK_RESET_PLLA_BASE
->>  	pll_locked r1, r0, CLK_RESET_PLLC_BASE
->> +
->> +	/*
->> +	 * CPUFreq driver could select other PLL for CPU. PLLX will be
->> +	 * enabled by the Tegra30 CLK driver on an as-needed basis, see
->> +	 * tegra30_cpu_clock_resume().
->> +	 */
->> +	cmp	r10, #TEGRA30
->> +	beq	_pll_m_c_x_locked
->> +
->>  	pll_locked r1, r0, CLK_RESET_PLLX_BASE
->>  
->> +_pll_m_c_x_locked:
->>  	mov32	r7, TEGRA_TMRUS_BASE
->>  	ldr	r1, [r7]
->>  	add	r1, r1, #LOCK_DELAY
-> 
-> Unfortunately, that one does no longer apply after the following patch
-> recently got applied on Wed Jan 8:
-> 
-> commit 1a3388d506bf ("ARM: tegra: Enable PLLP bypass during Tegra124
-> LP1")
-> 
-> Thanks!
+--Wty5iWagpjJlozQq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yes, I'm aware about it and going to send out the updated version of the
-patches soon. Meanwhile you could find recent rebase of the patches here
-[1].
+-----BEGIN PGP SIGNATURE-----
 
-[1] https://github.com/grate-driver/linux/commits/master
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl41YKgACgkQJNaLcl1U
+h9C48wf/XDYc+rP2dIu/vZ21qwktMH3XJC7y6d0I2npbH96AkZTpWmJd1Xni6LMO
+X9XDm6w29xXEQvMvkQ+p6n7q74ZdCwfwNgHdPujzyQNEY33uSWkQ+gFzFyDKrec7
+EGgzNKoCogdGHBTu6SED3em04EGbLIulAi2qwOd5jJ8ZCXErpBqUvwvFBRx9qQmK
+Fy2RivEzWysEXqYe/Icsn4wVgZ4Nm5vyNQDEDkiigGKISdDMYqS5Y3W2Yg43Mpx/
+KfLeQqxI7JZ3rodqfkpksVuzzhdvT/nyWuU46TOXyri4WhQMI75HewY/ZFKzQ9R0
+38NCD8W5/kRbbfv8Y8+x8j423SX3dA==
+=yaIF
+-----END PGP SIGNATURE-----
+
+--Wty5iWagpjJlozQq--
