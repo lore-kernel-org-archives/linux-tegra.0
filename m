@@ -1,38 +1,38 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 17/19] dmaengine: tegra-apb: Allow to compile as a loadable kernel module
-Date: Mon,  3 Feb 2020 01:28:52 +0300
-Message-ID: <20200202222854.18409-18-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v7 19/19] dmaengine: tegra-apb: Support COMPILE_TEST
+Date: Mon,  3 Feb 2020 01:28:54 +0300
+Message-ID: <20200202222854.18409-20-digetx@gmail.com>
 References: <20200202222854.18409-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200202222854.18409-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200202222854.18409-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The driver's removal was fixed by a recent commit and module load/unload
-is working well now, tested on Tegra30.
+There is nothing arch-specific in the driver's code, so let's enable
+compile-testing for the driver.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
  drivers/dma/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index 5142da401db3..98daf3aafdcc 100644
+index 98daf3aafdcc..7fc725d928b2 100644
 --- a/drivers/dma/Kconfig
 +++ b/drivers/dma/Kconfig
-@@ -616,7 +616,7 @@ config TXX9_DMAC
- 	  integrated in chips such as the Toshiba TX4927/38/39.
+@@ -617,7 +617,7 @@ config TXX9_DMAC
  
  config TEGRA20_APB_DMA
--	bool "NVIDIA Tegra20 APB DMA support"
-+	tristate "NVIDIA Tegra20 APB DMA support"
- 	depends on ARCH_TEGRA
+ 	tristate "NVIDIA Tegra20 APB DMA support"
+-	depends on ARCH_TEGRA
++	depends on ARCH_TEGRA || COMPILE_TEST
  	select DMA_ENGINE
  	help
+ 	  Support for the NVIDIA Tegra20 APB DMA controller driver. The
 -- 
 2.24.0
