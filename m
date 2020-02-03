@@ -1,41 +1,99 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] soc/tegra: fuse: Fix build with Tegra194 configuration
-Date: Mon,  3 Feb 2020 15:31:14 +0100
-Message-ID: <20200203143114.3967295-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v6 11/16] dmaengine: tegra-apb: Keep clock enabled only
+ during of DMA transfer
+Date: Mon, 3 Feb 2020 19:24:12 +0300
+Message-ID: <1a1a52e1-8d75-93cd-b082-29846f9d2fb9@gmail.com>
+References: <20200130043804.32243-1-digetx@gmail.com>
+ <20200130043804.32243-12-digetx@gmail.com>
+ <2442aee7-2c2a-bacc-7be9-8eed17498928@nvidia.com>
+ <0c766352-700a-68bf-cf7b-9b1686ba9ca9@gmail.com>
+ <e72d00ee-abee-9ae2-4654-da77420b440e@nvidia.com>
+ <cedbf558-b15b-81ca-7833-c94aedce5c5c@gmail.com>
+ <315241b5-f5a2-aaa0-7327-24055ff306c7@nvidia.com>
+ <1b64a3c6-a8b9-34d7-96cc-95b93ca1a392@gmail.com>
+ <bf459b54-fa4c-b0ff-0af8-b7cb66b0a43c@gmail.com>
+ <423eb28f-b5fc-c917-a7b2-72562183683f@nvidia.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <423eb28f-b5fc-c917-a7b2-72562183683f@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+03.02.2020 14:37, Jon Hunter пишет:
+> 
+> On 01/02/2020 15:13, Dmitry Osipenko wrote:
+>> 31.01.2020 17:22, Dmitry Osipenko пишет:
+>>> 31.01.2020 12:02, Jon Hunter пишет:
+>>>>
+>>>> On 30/01/2020 20:04, Dmitry Osipenko wrote:
+>>>>
+>>>> ...
+>>>>
+>>>>>>> The tegra_dma_stop() should put RPM anyways, which is missed in yours
+>>>>>>> sample. Please see handle_continuous_head_request().
+>>>>>>
+>>>>>> Yes and that is deliberate. The cyclic transfers the transfers *should*
+>>>>>> not stop until terminate_all is called. The tegra_dma_stop in
+>>>>>> handle_continuous_head_request() is an error condition and so I am not
+>>>>>> sure it is actually necessary to call pm_runtime_put() here.
+>>>>>
+>>>>> But then tegra_dma_stop() shouldn't unset the "busy" mark.
+>>>>
+>>>> True.
+>>>>
+>>>>>>> I'm also finding the explicit get/put a bit easier to follow in the
+>>>>>>> code, don't you think so?
+>>>>>>
+>>>>>> I can see that, but I was thinking that in the case of cyclic transfers,
+>>>>>> it should only really be necessary to call the get/put at the beginning
+>>>>>> and end. So in my mind there should only be two exit points which are
+>>>>>> the ISR handler for SG and terminate_all for SG and cyclic.
+>>>>>
+>>>>> Alright, I'll update this patch.
+>>>>
+>>>> Hmmm ... I am wondering if we should not mess with that and leave how
+>>>> you have it.
+>>>
+>>> I took another look and seems my current v6 should be more correct because:
+>>>
+>>> 1. If "busy" is unset in tegra_dma_stop(), then the RPM should be put
+>>> there since tegra_dma_terminate_all() won't put RPM in this case:
+>>>
+>>> 	if (!tdc->busy)
+>>> 		goto skip_dma_stop;
+>>>
+>>> 2. We can't move the "busy" unsetting into the terminate because then
+>>> tegra_dma_stop() will be invoked twice. Although, one option could be to
+>>> remove the tegra_dma_stop() from the error paths of
+>>> handle_continuous_head_request(), but I'm not sure that this is correct
+>>> to do.
+>>
+>> Jon, I realized that my v6 variant is wrong too because
+>> tegra_dma_terminate_all() -> tdc->isr_handler() will put RPM, and thus,
+>> the RPM enable-count will be wrecked in this case.
+> 
+> Did you see my other suggestion to move the pm_runtime_put() outside of
+> tegra_dma_stop?
 
-If only Tegra194 support is enabled, the tegra30_fuse_read() and
-tegra30_fuse_init() function are not declared and cause a build failure.
-Add Tegra194 to the preprocessor guard to make sure these functions are
-available for Tegra194-only builds as well.
+Yes, but seems I skimmed too quickly through the lines and failed to
+recognize the point you made.
 
-Reported-by: kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/soc/tegra/fuse/fuse-tegra30.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> There are only a few call sites for tegra_dma_stop and
+> so if we call pm_runtime_put() after calling tegra_dma_stop this should
+> simplify matters.
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index f68f4e1c215d..e6037f900fb7 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra30.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -36,7 +36,8 @@
-     defined(CONFIG_ARCH_TEGRA_124_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_132_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_210_SOC) || \
--    defined(CONFIG_ARCH_TEGRA_186_SOC)
-+    defined(CONFIG_ARCH_TEGRA_186_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_194_SOC)
- static u32 tegra30_fuse_read_early(struct tegra_fuse *fuse, unsigned int offset)
- {
- 	if (WARN_ON(!fuse->base))
--- 
-2.24.1
+This is somewhat similar to what I made in the v7. Instead of adding
+pm_runtime_put() after each tegra_dma_stop(), I removed the
+tegra_dma_stop().
+
+Looking at it once again, perhaps indeed it will be better to leave the
+relevant tegra_dma_stop() in place (the irrelevant could be removed).
+
+Please take a look at the v7, I'll drop the "[PATCH v7 13/19] dmaengine:
+tegra-apb: Don't stop cyclic DMA in a case of error condition" and make
+v8 after yours review of the v7. Thanks in advance!
