@@ -1,92 +1,92 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1] usb: phy: tegra: Add clarifying comments about the
- shared registers
-Date: Mon, 3 Feb 2020 12:28:18 +0100
-Message-ID: <20200203112818.GA3506060@ulmo>
-References: <20200202224259.29187-1-digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v6 11/16] dmaengine: tegra-apb: Keep clock enabled only
+ during of DMA transfer
+Date: Mon, 3 Feb 2020 11:37:44 +0000
+Message-ID: <423eb28f-b5fc-c917-a7b2-72562183683f@nvidia.com>
+References: <20200130043804.32243-1-digetx@gmail.com>
+ <20200130043804.32243-12-digetx@gmail.com>
+ <2442aee7-2c2a-bacc-7be9-8eed17498928@nvidia.com>
+ <0c766352-700a-68bf-cf7b-9b1686ba9ca9@gmail.com>
+ <e72d00ee-abee-9ae2-4654-da77420b440e@nvidia.com>
+ <cedbf558-b15b-81ca-7833-c94aedce5c5c@gmail.com>
+ <315241b5-f5a2-aaa0-7327-24055ff306c7@nvidia.com>
+ <1b64a3c6-a8b9-34d7-96cc-95b93ca1a392@gmail.com>
+ <bf459b54-fa4c-b0ff-0af8-b7cb66b0a43c@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200202224259.29187-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <bf459b54-fa4c-b0ff-0af8-b7cb66b0a43c-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 03, 2020 at 01:42:59AM +0300, Dmitry Osipenko wrote:
-> Tools like Coccinelle may erroneously recommend to use the
-> devm_platform_ioremap_resource() API for the registers mapping because
-> these tools are not aware about the implementation details of the driver.
-> Let's add a clarifying comments to the code, which should help to stop
-> future attempts to break the driver.
+On 01/02/2020 15:13, Dmitry Osipenko wrote:
+> 31.01.2020 17:22, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> 31.01.2020 12:02, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>
+>>> On 30/01/2020 20:04, Dmitry Osipenko wrote:
+>>>
+>>> ...
+>>>
+>>>>>> The tegra_dma_stop() should put RPM anyways, which is missed in your=
+s
+>>>>>> sample. Please see handle_continuous_head_request().
+>>>>>
+>>>>> Yes and that is deliberate. The cyclic transfers the transfers *shoul=
+d*
+>>>>> not stop until terminate_all is called. The tegra_dma_stop in
+>>>>> handle_continuous_head_request() is an error condition and so I am no=
+t
+>>>>> sure it is actually necessary to call pm_runtime_put() here.
+>>>>
+>>>> But then tegra_dma_stop() shouldn't unset the "busy" mark.
+>>>
+>>> True.
+>>>
+>>>>>> I'm also finding the explicit get/put a bit easier to follow in the
+>>>>>> code, don't you think so?
+>>>>>
+>>>>> I can see that, but I was thinking that in the case of cyclic transfe=
+rs,
+>>>>> it should only really be necessary to call the get/put at the beginni=
+ng
+>>>>> and end. So in my mind there should only be two exit points which are
+>>>>> the ISR handler for SG and terminate_all for SG and cyclic.
+>>>>
+>>>> Alright, I'll update this patch.
+>>>
+>>> Hmmm ... I am wondering if we should not mess with that and leave how
+>>> you have it.
+>>
+>> I took another look and seems my current v6 should be more correct becau=
+se:
+>>
+>> 1. If "busy" is unset in tegra_dma_stop(), then the RPM should be put
+>> there since tegra_dma_terminate_all() won't put RPM in this case:
+>>
+>> 	if (!tdc->busy)
+>> 		goto skip_dma_stop;
+>>
+>> 2. We can't move the "busy" unsetting into the terminate because then
+>> tegra_dma_stop() will be invoked twice. Although, one option could be to
+>> remove the tegra_dma_stop() from the error paths of
+>> handle_continuous_head_request(), but I'm not sure that this is correct
+>> to do.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/usb/phy/phy-tegra-usb.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-=
-usb.c
-> index 037e8eee737d..6153cc35aba0 100644
-> --- a/drivers/usb/phy/phy-tegra-usb.c
-> +++ b/drivers/usb/phy/phy-tegra-usb.c
-> @@ -969,6 +969,10 @@ static int utmi_phy_probe(struct tegra_usb_phy *tegr=
-a_phy,
->  		return  -ENXIO;
->  	}
-> =20
-> +	/*
-> +	 * Note that UTMI pad registers are shared by all PHYs, therefore
-> +	 * devm_platform_ioremap_resource() can't be used here.
-> +	 */
->  	tegra_phy->pad_regs =3D devm_ioremap(&pdev->dev, res->start,
->  					   resource_size(res));
->  	if (!tegra_phy->pad_regs) {
-> @@ -1087,6 +1091,10 @@ static int tegra_usb_phy_probe(struct platform_dev=
-ice *pdev)
->  		return  -ENXIO;
->  	}
-> =20
-> +	/*
-> +	 * Note that PHY and USB controller are using shared registers,
-> +	 * therefore devm_platform_ioremap_resource() can't be used here.
-> +	 */
->  	tegra_phy->regs =3D devm_ioremap(&pdev->dev, res->start,
->  				       resource_size(res));
->  	if (!tegra_phy->regs) {
+> Jon, I realized that my v6 variant is wrong too because
+> tegra_dma_terminate_all() -> tdc->isr_handler() will put RPM, and thus,
+> the RPM enable-count will be wrecked in this case.
 
-I'm not sure it's really going to stop *all* attempts. But at least for
-people that go through the trouble of reading the comments, yes, this
-should do the trick, so:
+Did you see my other suggestion to move the pm_runtime_put() outside of
+tegra_dma_stop? There are only a few call sites for tegra_dma_stop and
+so if we call pm_runtime_put() after calling tegra_dma_stop this should
+simplify matters.
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Jon
 
---OXfL5xGRrasGEqWY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl44A9AACgkQ3SOs138+
-s6E5LA//eA+l0WY720Az8s4VDR4EoNCATb9zoF8BYUaqhMGRF3PGFK2ih0Fblls4
-U8foPI8ezcnxqIVwfI8dzfFhGMlAf0lKyJbEmPfBofwLjrprH9jDDcD2aYBEqDtB
-Hco1ZZRHmRcSLvzSIZIf5oOfm2aGzqHVjbCbi+eKS4k2LYg3pJbEbZVwV0QYUCkV
-bgrxv9+RfTm3umKVXd9pL41j8zhVrvSgE7ta32AilhU7BSSIAQjBD3o/COr2H8w5
-rgIPHVlIRgoEEfGUdGc0yk/xHY5uaLy2LX98HZ8O3sI7LdveevDtlUaDowDHU4+k
-Y3uZio3jNsUccxRm3lmIB2hpjjJ06J0A1r0Aa6Z/pEpJL3d6Z9U8WoB73SHJGX0t
-rNUzt3KC2h4w38sYAUtYm0r2YRc1vcRN6xE+gA74VUn48H2T8Ih3BLSCExaOVwbw
-FtAcmq5KYYCHAe2GLITEGqjJ98P5RiG8Irda9N2IRD87HMFUwFFbr5ZRSbDZklpV
-WAWCHxf8K6QAjk0HBbSCG1HqMJ0iOVjEXWj48wjJvrLchyrpYnFV9A3TGKTQfUZB
-FwVqrua3RIEtzxzstc+z3/6ywa7cg/BOZobL0NiFHqE3s546zymlG7fjqu35xeX+
-cWebVl3Pvt/ueJ16bAhtr8ippPBFS9sDlZ9uacJqfBRN7R0d0mM=
-=GgDd
------END PGP SIGNATURE-----
-
---OXfL5xGRrasGEqWY--
+--=20
+nvpublic
