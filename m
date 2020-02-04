@@ -1,57 +1,53 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V4 17/19] arm64: tegra: Add xudc node for Tegra186
-Date: Tue, 4 Feb 2020 16:47:03 +0530
-Message-ID: <1580815025-10915-18-git-send-email-nkristam@nvidia.com>
+From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [Patch V4 18/19] arm64: tegra: Enable xudc node on Jetson TX2
+Date: Tue, 4 Feb 2020 16:47:04 +0530
+Message-ID: <1580815025-10915-19-git-send-email-nkristam@nvidia.com>
 References: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1580815025-10915-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra186 has one XUSB device mode controller, which can be operated
-HS and SS modes. Add DT entry for XUSB device mode controller.
+Enable XUSB device mode driver for USB 2-0 slot on Jetson TX2.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2-V4:
  - No changes in this version
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index c905527..58100fb 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -572,6 +572,25 @@
- 		nvidia,xusb-padctl = <&padctl>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+index a1dcdb9..d7628f5 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+@@ -131,7 +131,7 @@
+ 				status = "okay";
+ 
+ 				lanes {
+-					usb2-0 {
++					micro_b: usb2-0 {
+ 						nvidia,function = "xusb";
+ 						status = "okay";
+ 					};
+@@ -213,6 +213,13 @@
+ 		phy-names = "usb2-0", "usb2-1", "usb3-0";
  	};
  
 +	usb@3550000 {
-+		compatible = "nvidia,tegra186-xudc";
-+		reg = <0x0 0x03550000 0x0 0x8000>,
-+		      <0x0 0x03558000 0x0 0x1000>;
-+		reg-names = "base", "fpci";
-+		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&bpmp TEGRA186_CLK_XUSB_CORE_DEV>,
-+			 <&bpmp TEGRA186_CLK_XUSB_SS>,
-+			 <&bpmp TEGRA186_CLK_XUSB_CORE_SS>,
-+			 <&bpmp TEGRA186_CLK_XUSB_FS>;
-+		clock-names = "dev", "ss", "ss_src", "fs_src";
-+		iommus = <&smmu TEGRA186_SID_XUSB_DEV>;
-+		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_XUSBB>,
-+				<&bpmp TEGRA186_POWER_DOMAIN_XUSBA>;
-+		power-domain-names = "dev", "ss";
-+		nvidia,xusb-padctl = <&padctl>;
-+		status = "disabled";
++		status = "okay";
++
++		phys = <&micro_b>;
++		phy-names = "usb2-0";
 +	};
 +
- 	fuse@3820000 {
- 		compatible = "nvidia,tegra186-efuse";
- 		reg = <0x0 0x03820000 0x0 0x10000>;
+ 	i2c@c250000 {
+ 		/* carrier board ID EEPROM */
+ 		eeprom@57 {
 -- 
 2.7.4
