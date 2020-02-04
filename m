@@ -1,54 +1,59 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH 5.5 00/23] 5.5.2-stable review
-Date: Mon, 3 Feb 2020 22:51:11 +0000
-Message-ID: <20200203225111.GA3925646@kroah.com>
-References: <20200203161902.288335885@linuxfoundation.org>
- <10cd3c5f-0a2a-f73c-f071-17d1cc33531b@nvidia.com>
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 1/9] dt-bindings: sound: tegra: add DT binding for AHUB
+Date: Tue, 4 Feb 2020 09:54:34 +0530
+Message-ID: <62ea74fe-1f3c-e56c-669f-9a2dd9c02412@nvidia.com>
+References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
+ <1580380422-3431-2-git-send-email-spujar@nvidia.com>
+ <32d6c62d-0ac4-54e0-2efb-9f9a8cf2d271@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <10cd3c5f-0a2a-f73c-f071-17d1cc33531b-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <32d6c62d-0ac4-54e0-2efb-9f9a8cf2d271-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-GB
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 09:40:21PM +0000, Jon Hunter wrote:
-> 
-> On 03/02/2020 16:20, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.5.2 release.
-> > There are 23 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.2-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.5:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     40 tests:	40 pass, 0 fail
-> 
-> Linux version:	5.5.2-rc1-g8dc0cb8ae177
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
-> 
 
-Thanks for testing all of these so quickly and letting me know.
 
-greg k-h
+On 2/4/2020 1:49 AM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 30.01.2020 13:33, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          const: nvidia,tegra210-i2s
+>> +      - items:
+>> +          - enum:
+>> +              - nvidia,tegra194-i2s
+>> +              - nvidia,tegra186-i2s
+>> +          - enum:
+>> +              - nvidia,tegra210-i2s
+> Couldn't this be something like this:
+>
+> properties:
+>    compatible:
+>      - enum:
+>        - nvidia,tegra210-i2s
+>        - nvidia,tegra186-i2s
+>        - nvidia,tegra194-i2s
+
+I used that way because,
+For Tegra210: compatible =3D "nvidia,tegra210-i2s";
+For Tegra186: compatible =3D "nvidia,tegra186-i2s", "nvidia,tegra210-i2s";=
+=20
+(future proof)
+For Tegra194: compatible =3D "nvidia,tegra194-i2s", "nvidia,tegra210-i2s";=
+=20
+(future proof)
+
+Currently driver uses "nvidia,tegra210-i2s" alone.
+
+YAML binding check fails otherwise as it does not let me have future=20
+proof bindings.
