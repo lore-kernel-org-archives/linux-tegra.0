@@ -1,153 +1,126 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V4 09/19] usb: gadget: tegra-xudc: Remove usb-role-switch support
-Date: Tue, 4 Feb 2020 16:46:55 +0530
-Message-ID: <1580815025-10915-10-git-send-email-nkristam@nvidia.com>
+From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [Patch V4 10/19] usb: gadget: tegra-xudc: Add usb-phy support
+Date: Tue, 4 Feb 2020 16:46:56 +0530
+Message-ID: <1580815025-10915-11-git-send-email-nkristam@nvidia.com>
 References: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1580815025-10915-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Padctl driver will act as a central driver to receive USB role changes via
-usb-role-switch. This is updated to corresponding host, device drivers.
-Hence remove usb-role-switch from XUDC driver.
+usb-phy is used to get notified on the USB role changes. Get usb-phy from
+the UTMI PHY.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V4
- - Updated device_mode variable with usb_role and remove role variable.
- - Removed debug log related to always on.
+V4:
+ - Addressed nit comments from Thierry.
+ - usb_phy_event is used to detect device mode instead of usb_role.
 ---
 V2-V3:
  - No changes in this version
 ---
- drivers/usb/gadget/udc/tegra-xudc.c | 58 +++++--------------------------------
- 1 file changed, 7 insertions(+), 51 deletions(-)
+ drivers/usb/gadget/udc/tegra-xudc.c | 48 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 45 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index 634c2c1..acecdcf 100644
+index acecdcf..7411dd15 100644
 --- a/drivers/usb/gadget/udc/tegra-xudc.c
 +++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -477,8 +477,7 @@ struct tegra_xudc {
+@@ -26,7 +26,9 @@
+ #include <linux/reset.h>
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
++#include <linux/usb/otg.h>
+ #include <linux/usb/role.h>
++#include <linux/usb/phy.h>
+ #include <linux/workqueue.h>
  
- 	struct clk_bulk_data *clks;
+ /* XUSB_DEV registers */
+@@ -487,6 +489,9 @@ struct tegra_xudc {
+ 	bool suspended;
+ 	bool powergated;
  
--	enum usb_role device_mode;
--	struct usb_role_switch *usb_role_sw;
-+	bool device_mode;
- 	struct work_struct usb_role_sw_work;
++	struct usb_phy *usbphy;
++	struct notifier_block vbus_nb;
++
+ 	struct completion disconnect_complete;
  
- 	struct phy *usb3_phy;
-@@ -609,8 +608,6 @@ static void tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
- 	dev_dbg(xudc->dev, "device mode on\n");
- 
- 	tegra_xusb_padctl_set_vbus_override(xudc->padctl, true);
--
--	xudc->device_mode = USB_ROLE_DEVICE;
+ 	bool selfpowered;
+@@ -669,6 +674,31 @@ static void tegra_xudc_usb_role_sw_work(struct work_struct *work)
+ 		tegra_xudc_device_mode_off(xudc);
  }
  
- static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
-@@ -643,8 +640,6 @@ static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
- 		xudc_writel(xudc, val, PORTSC);
++static int tegra_xudc_vbus_notify(struct notifier_block *nb,
++					 unsigned long action, void *data)
++{
++	struct tegra_xudc *xudc = container_of(nb, struct tegra_xudc,
++					       vbus_nb);
++	struct usb_phy *usbphy = (struct usb_phy *)data;
++
++	dev_dbg(xudc->dev, "%s(): event is %d\n", __func__, usbphy->last_event);
++
++	if ((xudc->device_mode && usbphy->last_event == USB_EVENT_VBUS) ||
++	    (!xudc->device_mode && usbphy->last_event != USB_EVENT_VBUS)) {
++		dev_dbg(xudc->dev, "Same role(%d) received. Ignore",
++			xudc->device_mode);
++		return NOTIFY_OK;
++	}
++
++	xudc->device_mode = (usbphy->last_event == USB_EVENT_VBUS) ? true :
++								     false;
++
++	if (!xudc->suspended)
++		schedule_work(&xudc->usb_role_sw_work);
++
++	return NOTIFY_OK;
++}
++
+ static void tegra_xudc_plc_reset_work(struct work_struct *work)
+ {
+ 	struct delayed_work *dwork = to_delayed_work(work);
+@@ -1937,6 +1967,9 @@ static int tegra_xudc_gadget_start(struct usb_gadget *gadget,
+ 		xudc_writel(xudc, val, CTRL);
  	}
  
--	xudc->device_mode = USB_ROLE_NONE;
--
- 	/* Wait for disconnect event. */
- 	if (connected)
- 		wait_for_completion(&xudc->disconnect_complete);
-@@ -668,29 +663,10 @@ static void tegra_xudc_usb_role_sw_work(struct work_struct *work)
- 	struct tegra_xudc *xudc = container_of(work, struct tegra_xudc,
- 					       usb_role_sw_work);
- 
--	if (!xudc->usb_role_sw ||
--		usb_role_switch_get_role(xudc->usb_role_sw) == USB_ROLE_DEVICE)
-+	if (xudc->device_mode)
- 		tegra_xudc_device_mode_on(xudc);
- 	else
- 		tegra_xudc_device_mode_off(xudc);
--
--}
--
--static int tegra_xudc_usb_role_sw_set(struct device *dev, enum usb_role role)
--{
--	struct tegra_xudc *xudc = dev_get_drvdata(dev);
--	unsigned long flags;
--
--	dev_dbg(dev, "%s role is %d\n", __func__, role);
--
--	spin_lock_irqsave(&xudc->lock, flags);
--
--	if (!xudc->suspended)
--		schedule_work(&xudc->usb_role_sw_work);
--
--	spin_unlock_irqrestore(&xudc->lock, flags);
--
--	return 0;
- }
- 
- static void tegra_xudc_plc_reset_work(struct work_struct *work)
-@@ -729,8 +705,7 @@ static void tegra_xudc_port_reset_war_work(struct work_struct *work)
++	if (xudc->usbphy)
++		otg_set_peripheral(xudc->usbphy->otg, gadget);
++
+ 	xudc->driver = driver;
+ unlock:
+ 	dev_dbg(xudc->dev, "%s: ret value is %d", __func__, ret);
+@@ -1957,6 +1990,9 @@ static int tegra_xudc_gadget_stop(struct usb_gadget *gadget)
  
  	spin_lock_irqsave(&xudc->lock, flags);
  
--	if ((xudc->device_mode == USB_ROLE_DEVICE)
--			      && xudc->wait_for_sec_prc) {
-+	if (xudc->device_mode && xudc->wait_for_sec_prc) {
- 		pls = (xudc_readl(xudc, PORTSC) & PORTSC_PLS_MASK) >>
- 			PORTSC_PLS_SHIFT;
- 		dev_dbg(xudc->dev, "pls = %x\n", pls);
-@@ -3457,7 +3432,6 @@ static int tegra_xudc_probe(struct platform_device *pdev)
- {
- 	struct tegra_xudc *xudc;
- 	struct resource *res;
--	struct usb_role_switch_desc role_sx_desc = { 0 };
- 	unsigned int i;
- 	int err;
- 
-@@ -3587,23 +3561,9 @@ static int tegra_xudc_probe(struct platform_device *pdev)
++	if (xudc->usbphy)
++		otg_set_peripheral(xudc->usbphy->otg, NULL);
++
+ 	val = xudc_readl(xudc, CTRL);
+ 	val &= ~(CTRL_IE | CTRL_ENABLE);
+ 	xudc_writel(xudc, val, CTRL);
+@@ -3561,9 +3597,15 @@ static int tegra_xudc_probe(struct platform_device *pdev)
  	INIT_DELAYED_WORK(&xudc->port_reset_war_work,
  				tegra_xudc_port_reset_war_work);
  
--	if (of_property_read_bool(xudc->dev->of_node, "usb-role-switch")) {
--		role_sx_desc.set = tegra_xudc_usb_role_sw_set;
--		role_sx_desc.fwnode = dev_fwnode(xudc->dev);
--
--		xudc->usb_role_sw = usb_role_switch_register(xudc->dev,
--							&role_sx_desc);
--		if (IS_ERR(xudc->usb_role_sw)) {
--			err = PTR_ERR(xudc->usb_role_sw);
--			dev_err(xudc->dev, "Failed to register USB role SW: %d",
--					   err);
--			goto free_eps;
--		}
--	} else {
--		/* Set the mode as device mode and this keeps phy always ON */
--		dev_info(xudc->dev, "Set usb role to device mode always");
--		schedule_work(&xudc->usb_role_sw_work);
--	}
-+	/* Set the mode as device mode and this keeps phy always ON */
-+	xudc->device_mode = true;
-+	schedule_work(&xudc->usb_role_sw_work);
+-	/* Set the mode as device mode and this keeps phy always ON */
+-	xudc->device_mode = true;
+-	schedule_work(&xudc->usb_role_sw_work);
++	xudc->vbus_nb.notifier_call = tegra_xudc_vbus_notify;
++	xudc->usbphy = devm_usb_get_phy_by_node(xudc->dev,
++						xudc->utmi_phy->dev.of_node,
++						&xudc->vbus_nb);
++	if (IS_ERR(xudc->usbphy)) {
++		err = PTR_ERR(xudc->usbphy);
++		dev_err(xudc->dev, "failed to get USB PHY: %d\n", err);
++		goto free_eps;
++	}
  
  	pm_runtime_enable(&pdev->dev);
- 
-@@ -3643,11 +3603,7 @@ static int tegra_xudc_remove(struct platform_device *pdev)
- 	pm_runtime_get_sync(xudc->dev);
- 
- 	cancel_delayed_work(&xudc->plc_reset_work);
--
--	if (xudc->usb_role_sw) {
--		usb_role_switch_unregister(xudc->usb_role_sw);
--		cancel_work_sync(&xudc->usb_role_sw_work);
--	}
-+	cancel_work_sync(&xudc->usb_role_sw_work);
- 
- 	usb_del_gadget_udc(&xudc->gadget);
  
 -- 
 2.7.4
