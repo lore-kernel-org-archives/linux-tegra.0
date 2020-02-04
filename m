@@ -1,77 +1,60 @@
-From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [Patch V4 13/19] arm64: tegra: update OTG port entries for jetson-tx1
-Date: Tue, 4 Feb 2020 16:46:59 +0530
-Message-ID: <1580815025-10915-14-git-send-email-nkristam@nvidia.com>
-References: <1580815025-10915-1-git-send-email-nkristam@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v7 12/19] dmaengine: tegra-apb: Remove handling of
+ unrealistic error condition
+Date: Tue, 4 Feb 2020 11:52:41 +0000
+Message-ID: <b2461a42-5939-b2b1-01fe-6f18c860dbd9@nvidia.com>
+References: <20200202222854.18409-1-digetx@gmail.com>
+ <20200202222854.18409-13-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1580815025-10915-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200202222854.18409-13-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Populate OTG vbus regulator. Add usb-role-switch entry to USB 2-0 port
-and corresponding connector details.
 
-Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V2-V4:
- - No changes in this version
----
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+On 02/02/2020 22:28, Dmitry Osipenko wrote:
+> The pending_sg_req list can't ever be empty because:
+> 
+> 1. If it was empty, then handle_cont_sngl_cycle_dma_done() shall crash
+>    before of handle_continuous_head_request() invocation.
+> 
+> 2. The handle_cont_sngl_cycle_dma_done() can't happen after stopping DMA.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index b009507..18c0610 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1336,7 +1336,6 @@
- 		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-5}>;
- 		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3", "usb3-0",
- 			    "usb3-1";
--
- 		dvddio-pex-supply = <&vdd_pex_1v05>;
- 		hvddio-pex-supply = <&vdd_1v8>;
- 		avdd-usb-supply = <&vdd_3v3_sys>;
-@@ -1440,7 +1439,19 @@
- 		ports {
- 			usb2-0 {
- 				status = "okay";
-+				vbus-supply = <&vdd_usb_vbus_otg>;
- 				mode = "otg";
-+
-+				usb-role-switch;
-+				connector {
-+					compatible = "usb-b-connector",
-+						     "gpio-usb-b-connector";
-+					label = "micro-USB";
-+					type = "micro";
-+					vbus-gpio = <&gpio TEGRA_GPIO(Z, 0)
-+						     GPIO_ACTIVE_LOW>;
-+					id-gpio = <&pmic 0 0>;
-+				};
- 			};
- 
- 			usb2-1 {
-@@ -1606,6 +1617,17 @@
- 			vin-supply = <&vdd_5v0_sys>;
- 		};
- 
-+		vdd_usb_vbus_otg: regulator@11 {
-+			compatible = "regulator-fixed";
-+			reg = <9>;
-+			regulator-name = "USB_VBUS_EN0";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&vdd_5v0_sys>;
-+		};
-+
- 		vdd_hdmi: regulator@10 {
- 			compatible = "regulator-fixed";
- 			reg = <10>;
+By this you mean calling terminate_all?
+
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index 62d181bd5e62..c7dc27ef1856 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -564,12 +564,6 @@ static bool handle_continuous_head_request(struct tegra_dma_channel *tdc,
+>  {
+>  	struct tegra_dma_sg_req *hsgreq;
+>  
+> -	if (list_empty(&tdc->pending_sg_req)) {
+> -		dev_err(tdc2dev(tdc), "DMA is running without req\n");
+> -		tegra_dma_stop(tdc);
+> -		return false;
+> -	}
+> -
+>  	/*
+>  	 * Check that head req on list should be in flight.
+>  	 * If it is not in flight then abort transfer as
+> 
+
+There is also a list_empty() check in tdc_configure_next_head_desc()
+which is also redundant and could be removed here as well.
+
+Jon
+
 -- 
-2.7.4
+nvpublic
