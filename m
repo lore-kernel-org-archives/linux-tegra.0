@@ -1,10 +1,12 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 0/3] drm/tegra: A couple of fixes for v5.6-rc1
-Date: Tue,  4 Feb 2020 14:59:23 +0100
-Message-ID: <20200204135926.1156340-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/3] drm/tegra: Relax IOMMU usage criteria on old Tegra
+Date: Tue,  4 Feb 2020 14:59:24 +0100
+Message-ID: <20200204135926.1156340-2-thierry.reding@gmail.com>
+References: <20200204135926.1156340-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200204135926.1156340-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
@@ -12,24 +14,86 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Hi,
+Older Tegra devices only allow addressing 32 bits of memory, so whether
+or not the host1x is attached to an IOMMU doesn't matter. host1x IOMMU
+attachment is only needed on devices that can address memory beyond the
+32-bit boundary and where the host1x doesn't support the wide GATHER
+opcode that allows it to access buffers at higher addresses.
 
-this contains a couple of fixes for a DMA API performance regression
-that was introduced in v5.5 for older Tegra devices. Patches 1 and 2
-will likely have to be backported to v5.5.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/drm.c | 49 ++++++++++++++++++++++++-------------
+ 1 file changed, 32 insertions(+), 17 deletions(-)
 
-Thierry
-
-Thierry Reding (3):
-  drm/tegra: Relax IOMMU usage criteria on old Tegra
-  drm/tegra: Reuse IOVA mapping where possible
-  gpu: host1x: Set DMA direction only for DMA-mapped buffer objects
-
- drivers/gpu/drm/tegra/drm.c   | 49 +++++++++++++++++++++++------------
- drivers/gpu/drm/tegra/gem.c   | 10 ++++++-
- drivers/gpu/drm/tegra/plane.c | 44 +++++++++++++++++--------------
- drivers/gpu/host1x/job.c      | 34 +++++++++++++++++++++---
- 4 files changed, 96 insertions(+), 41 deletions(-)
-
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index aa9e49f04988..bd268028fb3d 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1037,23 +1037,9 @@ void tegra_drm_free(struct tegra_drm *tegra, size_t size, void *virt,
+ 	free_pages((unsigned long)virt, get_order(size));
+ }
+ 
+-static int host1x_drm_probe(struct host1x_device *dev)
++static bool host1x_drm_wants_iommu(struct host1x_device *dev)
+ {
+-	struct drm_driver *driver = &tegra_drm_driver;
+ 	struct iommu_domain *domain;
+-	struct tegra_drm *tegra;
+-	struct drm_device *drm;
+-	int err;
+-
+-	drm = drm_dev_alloc(driver, &dev->dev);
+-	if (IS_ERR(drm))
+-		return PTR_ERR(drm);
+-
+-	tegra = kzalloc(sizeof(*tegra), GFP_KERNEL);
+-	if (!tegra) {
+-		err = -ENOMEM;
+-		goto put;
+-	}
+ 
+ 	/*
+ 	 * If the Tegra DRM clients are backed by an IOMMU, push buffers are
+@@ -1082,9 +1068,38 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 	 * up the device tree appropriately. This is considered an problem
+ 	 * of integration, so care must be taken for the DT to be consistent.
+ 	 */
+-	domain = iommu_get_domain_for_dev(drm->dev->parent);
++	domain = iommu_get_domain_for_dev(dev->dev.parent);
++
++	/*
++	 * Tegra20 and Tegra30 don't support addressing memory beyond the
++	 * 32-bit boundary, so the regular GATHER opcodes will always be
++	 * sufficient and whether or not the host1x is attached to an IOMMU
++	 * doesn't matter.
++	 */
++	if (!domain && dma_get_mask(dev->dev.parent) <= DMA_BIT_MASK(32))
++		return true;
++
++	return domain != NULL;
++}
++
++static int host1x_drm_probe(struct host1x_device *dev)
++{
++	struct drm_driver *driver = &tegra_drm_driver;
++	struct tegra_drm *tegra;
++	struct drm_device *drm;
++	int err;
++
++	drm = drm_dev_alloc(driver, &dev->dev);
++	if (IS_ERR(drm))
++		return PTR_ERR(drm);
++
++	tegra = kzalloc(sizeof(*tegra), GFP_KERNEL);
++	if (!tegra) {
++		err = -ENOMEM;
++		goto put;
++	}
+ 
+-	if (domain && iommu_present(&platform_bus_type)) {
++	if (host1x_drm_wants_iommu(dev) && iommu_present(&platform_bus_type)) {
+ 		tegra->domain = iommu_domain_alloc(&platform_bus_type);
+ 		if (!tegra->domain) {
+ 			err = -ENOMEM;
 -- 
 2.24.1
