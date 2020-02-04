@@ -1,116 +1,71 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
-Date: Tue, 4 Feb 2020 10:50:57 +0100
-Message-ID: <b1678339-5ba6-4950-6afe-01fe26ee527f@xs4all.nl>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
- <20200130154246.GA2904678@ulmo>
- <8654e6fd-c403-6e68-e5cf-09297b5d8b5d@xs4all.nl>
- <20200131170351.GA3444092@ulmo>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/3] drm/tegra: sor: Suspend on clock registration failure
+Date: Tue, 4 Feb 2020 10:31:31 +0000
+Message-ID: <ac6cbd0c-d2ea-c085-ecfc-3fd761649f1b@nvidia.com>
+References: <20200131165910.3443936-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200131170351.GA3444092@ulmo>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200131165910.3443936-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com, frankc@nvidia.com, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/31/20 6:03 PM, Thierry Reding wrote:
-> On Fri, Jan 31, 2020 at 03:29:52PM +0100, Hans Verkuil wrote:
->> On 1/30/20 4:42 PM, Thierry Reding wrote:
->>> On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
->>>> Hi Sowjanya,
->>>>
->>>> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
->>>>> This series adds Tegra210 VI and CSI driver for built-in test pattern
->>>>> generator (TPG) capture.
->>>>>
->>>>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
->>>>> CSI port is one-to-one mapped to VI channel for video capture.
->>>>>
->>>>> This series has TPG support only where it creates hard media links
->>>>> between CSI subdevice and VI video device without device graphs.
->>>>>
->>>>> v4l2-compliance results are available below the patch diff.
->>>>>
->>>>> [v0]:	Includes,
->>>>> 	- Adds CSI TPG clock to Tegra210 clock driver
->>>>> 	- Host1x video driver with VI and CSI clients.
->>>>> 	- Support for Tegra210 only.
->>>>> 	- VI CSI TPG support with hard media links in driver.
->>>>> 	- Video formats supported by Tegra210 VI
->>>>> 	- CSI TPG supported video formats
->>>>
->>>> I'm trying to compile this patch series using the media_tree master
->>>> branch (https://git.linuxtv.org//media_tree.git), but it fails:
->>>>
->>>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_queue_setup’:
->>>> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused variable ‘count’ [-Wunused-variable]
->>>>    71 |  unsigned int count = *nbuffers;
->>>>       |               ^~~~~
->>>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_init’:
->>>> drivers/staging/media/tegra/tegra-channel.c:518:55: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   518 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
->>>>       |                                                       ^
->>>> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/tegra-channel.o] Error 1
->>>> make[4]: *** Waiting for unfinished jobs....
->>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_tpg_graph_init’:
->>>> drivers/staging/media/tegra/tegra-vi.c:157:55: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   157 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
->>>>       |                                                       ^
->>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_init’:
->>>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_init’:
->>>> drivers/staging/media/tegra/tegra-vi.c:213:51: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   213 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>>>       |                                                   ^~
->>>> drivers/staging/media/tegra/tegra-csi.c:259:51: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   259 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>>>       |                                                   ^~
->>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_exit’:
->>>> drivers/staging/media/tegra/tegra-vi.c:246:51: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   246 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>>>       |                                                   ^~
->>>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_exit’:
->>>> drivers/staging/media/tegra/tegra-csi.c:286:51: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   286 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>>>       |                                                   ^~
->>>>
->>>> And indeed, struct host1x_client as defined in include/linux/host1x.h doesn't
->>>> have a 'host' field.
->>>>
->>>> Does this series depend on another patch that's not yet in mainline?
->>>
->>> Sowjanya's been working on top of linux-next, so, yes, this patch
->>> depends on a change that's been merged into the DRM tree for v5.6-rc1.
->>>
->>> Thierry
->>>
->>
->> Is there a specific linux-next tag that works? I tried next-20200131 but that
->> failed to boot. Same problem with the mainline repo since the host1x patches
->> were merged yesterday. It compiles fine, but the boot just stops. Or am I
->> missing some kernel config that is now important to have?
+
+
+On 31/01/2020 16:59, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> linux-next and mainline are currently regressing on Tegra210 (and some
-> Tegra124) boards. I just sent out a series that fixes the regression for
-> me:
-> 
-> 	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=156215
-> 
-> Please test if this works for you. If so, I'll send this to Dave as soon
-> as possible.
+> Make sure the SOR module is suspenden after we fail to register the SOR
+> pad output clock.
 
-Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-
-Thank you, now it boots on mainline + this series + the new VI/CSI driver.
-
-Regards,
-
-	Hans
+s/suspenden/suspended/
 
 > 
-> Thierry
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/sor.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+> index 41d24949478e..96cd89bb2e82 100644
+> --- a/drivers/gpu/drm/tegra/sor.c
+> +++ b/drivers/gpu/drm/tegra/sor.c
+> @@ -3922,15 +3922,16 @@ static int tegra_sor_probe(struct platform_device *pdev)
+>  	if (!sor->clk_pad) {
+>  		char *name;
+>  
+> -		err = host1x_client_resume(&sor->client);
+> -		if (err < 0) {
+> -			dev_err(sor->dev, "failed to resume: %d\n", err);
+> +		name = devm_kasprintf(sor->dev, GFP_KERNEL, "sor%u_pad_clkout",
+> +				      sor->index);
+> +		if (!name) {
+> +			err = -ENOMEM;
+>  			goto remove;
+>  		}
+>  
+> -		name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "sor%u_pad_clkout", sor->index);
+> -		if (!name) {
+> -			err = -ENOMEM;
+> +		err = host1x_client_resume(&sor->client);
+> +		if (err < 0) {
+> +			dev_err(sor->dev, "failed to resume: %d\n", err);
+>  			goto remove;
+>  		}
+>  
+> 
+
+Otherwise ...
+
+Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Cheers
+Jon
+
+-- 
+nvpublic
