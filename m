@@ -1,172 +1,116 @@
-From: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
-Subject: Re: [PATCH] usb: chipidea: tegra: fix hardlock with invalid dr mode
-Date: Tue, 4 Feb 2020 07:44:20 +0000
-Message-ID: <20200204074419.GA6681@b29397-desktop>
-References: <20200127023548.27107-1-pgwipeout@gmail.com>
- <20200131052716.GA30672@b29397-desktop>
- <CAMdYzYqwz9HLsjvc1hDmovzWqiV_Vswe57d_gWhwBnvb2aNPyQ@mail.gmail.com>
- <20200201061330.GA9178@b29397-desktop>
- <CAMdYzYrbvsTunwxJLcC_-ZhczsQfyDLOjTnZ+eorb325qO-QhA@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+Date: Tue, 4 Feb 2020 10:50:57 +0100
+Message-ID: <b1678339-5ba6-4950-6afe-01fe26ee527f@xs4all.nl>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
+ <20200130154246.GA2904678@ulmo>
+ <8654e6fd-c403-6e68-e5cf-09297b5d8b5d@xs4all.nl>
+ <20200131170351.GA3444092@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMdYzYrbvsTunwxJLcC_-ZhczsQfyDLOjTnZ+eorb325qO-QhA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200131170351.GA3444092@ulmo>
 Content-Language: en-US
-Content-ID: <C011C59726DBE746A361D68A58C9D361-jdb/QiT5osKcE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com, frankc@nvidia.com, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20-02-03 12:22:37, Peter Geis wrote:
-> > diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipide=
-a/ci_hdrc_tegra.c
-> > index 0c9911d44ee5..5d85363ad0f4 100644
-> > --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > @@ -95,6 +95,7 @@ static int tegra_udc_probe(struct platform_device *pd=
-ev)
-> >         udc->data.flags =3D soc->flags;
-> >         udc->data.usb_phy =3D udc->phy;
-> >         udc->data.capoffset =3D DEF_CAPOFFSET;
-> > +       udc->data.dr_mode =3D USB_DR_MODE_PERIPHERAL;
-> >
-> >         udc->dev =3D ci_hdrc_add_device(&pdev->dev, pdev->resource,
-> >                                       pdev->num_resources, &udc->data);
->=20
-> I do not wish to set the dr_mode manually, since this could break
-> things on devices I do not own.
-> Future work is needed to address the tegra_udc capabilities, as well
-> as fully correct the hang issue.
-> This patch merely aims to fix a corner case.
->=20
-> >
-> > > They also seem to be missing the extcon phandle, which means automati=
-c
-> > > mode switching is not possible?
-> > >
-> > > >
-> > > > But one thing I could not understand, if the driver doesn't support
-> > > > dual-role, how could you do manual role switch?
-> > >
-> > > Manual role switching is conducted via debugfs,
-> > > /sys/kernel/debug/usb/ci_hdrc.0/role
-> > >
-> > > >
-> > > > >
-> > > > > Detect this state by checking for the extcon phandle when dual ro=
-le mode
-> > > > > is set to otg.
-> > > > > If it doesn't exist request the driver to only enable manual role
-> > > > > switching.
-> > > > >
-> > > > > Fixes: dfebb5f ("usb: chipidea: Add support for Tegra20/30/114/12=
-4")
-> > > > > Signed-off-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > > > > ---
-> > > > >  drivers/usb/chipidea/ci_hdrc_tegra.c | 7 +++++++
-> > > > >  1 file changed, 7 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/c=
-hipidea/ci_hdrc_tegra.c
-> > > > > index 7455df0ede49..2f6f6ce3e8f5 100644
-> > > > > --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > > > > +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> > > > > @@ -89,6 +89,13 @@ static int tegra_udc_probe(struct platform_dev=
-ice *pdev)
-> > > > >       udc->data.usb_phy =3D udc->phy;
-> > > > >       udc->data.capoffset =3D DEF_CAPOFFSET;
-> > > > >
-> > > > > +     /* check the dual mode and warn about bad configurations */
-> > > > > +     if (usb_get_dr_mode(&pdev->dev) =3D=3D USB_DR_MODE_OTG &&
-> > > > > +        !of_property_read_bool(pdev->dev.of_node, "extcon")) {
-> > > > > +             dev_warn(&pdev->dev, "no extcon registered, otg una=
-vailable");
-> > > > > +             udc->data.flags |=3D CI_HDRC_DUAL_ROLE_NOT_OTG;
-> > > > > +     }
-> > > > > +
-> > > >
-> > > > The CI_HDRC_DUAL_ROLE_NOT_OTG flag may not be suitable here, please=
- see
-> > > > comments for it.
-> > >
-> > > I've dug around the various mailing lists and I fail to find any
-> > > reference to why this is not a valid use case.
-> > > The commit message specifically references dual role capable devices
-> > > without proper otg implementations, such as missing the otgsc
-> > > register.
-> > >
-> > > My current use case is the Ouya, which deadlocks the kernel durning
-> > > probe if the otg capable usb controller is set to dr_mode=3Dotg.
-> > > It works with this flag set.
-> > > Unfortunately there isn't a property for dr_mode set to non_otg_dr_mo=
-de.
-> > >
-> > > I found a post stating that the driver blindly touches registers in
-> > > otg mode, which leads to the deadlock if those registers are read onl=
-y
-> > > or non-existent,
-> > > Eventually someone should look into why this deadlock occurs and make
-> > > a proper fix that applies to all users.
-> > > Unfortunately I do not have the knowledge yet to accomplish this task=
-.
-> > >
-> > > With some simple modifications to the tegra_udc driver it is possible
-> > > to get host mode working, vice using the tegra-ehci driver.
-> > > At this point role switch works
-> > >
-> > > I also managed to move all of the functionality of the tegra-ehci
-> > > driver into the tegra-udc driver.
-> > > Unfortunately it doesn't behave correctly under some cases, so I neve=
-r
-> > > submitted it.
-> > >
-> > > Do you have a recommendation for handling this?
-> >
-> > If you would like adding host function in chipidea driver for tegra, an=
-d
-> > want dual-role switch to work, first, you may need to know which
-> > dual-role switch you need:
-> > - Through controller's id and vbus pins
-> > - Through extcon, eg,GPIO.
-> > - Through usb-role-switch class, eg, Type-C controller
-> > - Through sysfs, /sys/bus/platform/devices/ci_hdrc.0/role
-> >
-> > The first three are automatically switch, the last one is manually.
-> > Current chipidea core should support all above switches, maybe there ar=
-e
-> > some limitations for them, the fixes are welcome.
->=20
-> AFAIK reading through the comments, the chipidea driver intended to
-> exclusively use extcon for automatic role switching, please correct me
-> if I'm wrong here.
+On 1/31/20 6:03 PM, Thierry Reding wrote:
+> On Fri, Jan 31, 2020 at 03:29:52PM +0100, Hans Verkuil wrote:
+>> On 1/30/20 4:42 PM, Thierry Reding wrote:
+>>> On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
+>>>> Hi Sowjanya,
+>>>>
+>>>> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
+>>>>> This series adds Tegra210 VI and CSI driver for built-in test pattern
+>>>>> generator (TPG) capture.
+>>>>>
+>>>>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+>>>>> CSI port is one-to-one mapped to VI channel for video capture.
+>>>>>
+>>>>> This series has TPG support only where it creates hard media links
+>>>>> between CSI subdevice and VI video device without device graphs.
+>>>>>
+>>>>> v4l2-compliance results are available below the patch diff.
+>>>>>
+>>>>> [v0]:	Includes,
+>>>>> 	- Adds CSI TPG clock to Tegra210 clock driver
+>>>>> 	- Host1x video driver with VI and CSI clients.
+>>>>> 	- Support for Tegra210 only.
+>>>>> 	- VI CSI TPG support with hard media links in driver.
+>>>>> 	- Video formats supported by Tegra210 VI
+>>>>> 	- CSI TPG supported video formats
+>>>>
+>>>> I'm trying to compile this patch series using the media_tree master
+>>>> branch (https://git.linuxtv.org//media_tree.git), but it fails:
+>>>>
+>>>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_queue_setup’:
+>>>> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused variable ‘count’ [-Wunused-variable]
+>>>>    71 |  unsigned int count = *nbuffers;
+>>>>       |               ^~~~~
+>>>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_init’:
+>>>> drivers/staging/media/tegra/tegra-channel.c:518:55: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   518 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
+>>>>       |                                                       ^
+>>>> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/tegra-channel.o] Error 1
+>>>> make[4]: *** Waiting for unfinished jobs....
+>>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_tpg_graph_init’:
+>>>> drivers/staging/media/tegra/tegra-vi.c:157:55: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   157 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
+>>>>       |                                                       ^
+>>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_init’:
+>>>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_init’:
+>>>> drivers/staging/media/tegra/tegra-vi.c:213:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   213 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>>>       |                                                   ^~
+>>>> drivers/staging/media/tegra/tegra-csi.c:259:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   259 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>>>       |                                                   ^~
+>>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_exit’:
+>>>> drivers/staging/media/tegra/tegra-vi.c:246:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   246 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>>>       |                                                   ^~
+>>>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_exit’:
+>>>> drivers/staging/media/tegra/tegra-csi.c:286:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   286 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>>>       |                                                   ^~
+>>>>
+>>>> And indeed, struct host1x_client as defined in include/linux/host1x.h doesn't
+>>>> have a 'host' field.
+>>>>
+>>>> Does this series depend on another patch that's not yet in mainline?
+>>>
+>>> Sowjanya's been working on top of linux-next, so, yes, this patch
+>>> depends on a change that's been merged into the DRM tree for v5.6-rc1.
+>>>
+>>> Thierry
+>>>
+>>
+>> Is there a specific linux-next tag that works? I tried next-20200131 but that
+>> failed to boot. Same problem with the mainline repo since the host1x patches
+>> were merged yesterday. It compiles fine, but the boot just stops. Or am I
+>> missing some kernel config that is now important to have?
+> 
+> linux-next and mainline are currently regressing on Tegra210 (and some
+> Tegra124) boards. I just sent out a series that fixes the regression for
+> me:
+> 
+> 	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=156215
+> 
+> Please test if this works for you. If so, I'll send this to Dave as soon
+> as possible.
 
-No, extcon is supported.
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-> USB-C support is not a likely scenario, as currently the chipidea
-> driver only supports usb 2.0.
+Thank you, now it boots on mainline + this series + the new VI/CSI driver.
 
-USB-C is a connector, not related to USB HW revision. For USB 2.0
-USB-C solution, there is no SS TX/RX connected on connector.
+Regards,
 
->=20
-> >
-> > Second, you may check if touch otgsc will hang or deadlock the system.
-> > If you can't touch otgsc when portsc.phcd =3D 0, you may need the flag
-> > CI_HDRC_DUAL_ROLE_NOT_OTG, afaik, few SoCs can't touch otgsc if it
-> > supports dual-role.
->=20
-> I added some traces to the driver, and it doesn't actually appear to
-> be a register read/write that is breaking things. (Not directly
-> anyways).
-> The hang occurs after it enumerates the usb gadgets and hub.
-> Still trying to track down exactly where the hang occurs.
->=20
+	Hans
 
-Try to see if it is related to runtime power management.
-
---=20
-
-Thanks,
-Peter Chen=
+> 
+> Thierry
+> 
