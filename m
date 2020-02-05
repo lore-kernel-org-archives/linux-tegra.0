@@ -1,47 +1,39 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [RFC PATCH v1 4/5] media: tegra: Add Tegra Video input driver for
- Tegra210
-Date: Wed, 5 Feb 2020 11:54:26 -0800
-Message-ID: <7e0ec06e-bb40-acf7-fd47-ced4b401afb2@nvidia.com>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <1580235801-4129-5-git-send-email-skomatineni@nvidia.com>
- <20200205192620.3A1F620720@mail.kernel.org>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC PATCH v2 1/6] dt-bindings: clock: tegra: Add clk id for CSI TPG clock
+Date: Wed, 5 Feb 2020 13:23:21 -0800
+Message-ID: <1580937806-17376-2-git-send-email-skomatineni@nvidia.com>
+References: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20200205192620.3A1F620720@mail.kernel.org>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>, frankc@nvidia.com, hverkuil@xs4all.nl, jonathanh@nvidia.com, thierry.reding@gmail.com
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1580937806-17376-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra210 uses PLLD out internally for CSI TPG.
 
-On 2/5/20 11:26 AM, Stephen Boyd wrote:
-> External email: Use caution opening links or attachments
->
->
-> Quoting Sowjanya Komatineni (2020-01-28 10:23:20)
->> diff --git a/drivers/staging/media/tegra/Kconfig b/drivers/staging/media/tegra/Kconfig
->> new file mode 100644
->> index 000000000000..443b99f2e2c9
->> --- /dev/null
->> +++ b/drivers/staging/media/tegra/Kconfig
->> @@ -0,0 +1,12 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +config VIDEO_TEGRA
->> +       tristate "NVIDIA Tegra VI driver"
->> +       depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
->> +       depends on COMMON_CLK
-> What depends on the common clk framework? I don't see any clk-provider.h
-> includes here.
-COMMON_CLK is not needed. Will remove in v2. Thanks.
->
->> +       depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
->> +       depends on MEDIA_CONTROLLER
->> +       select TEGRA_HOST1X
->> +       select VIDEOBUF2_DMA_CONTIG
->> +       select V4L2_FWNODE
->> +       help
->> +         Say yes here to enable support for Tegra video input hardware
+This patch adds clk id for this CSI TPG clock from PLLD.
+
+Acked-by: Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ include/dt-bindings/clock/tegra210-car.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 44f60623f99b..dc22aaec8805 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -349,7 +349,7 @@
+ #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
+ #define TEGRA210_CLK_XUSB_SSP_SRC 318
+ #define TEGRA210_CLK_PLL_RE_OUT1 319
+-/* 320 */
++#define TEGRA210_CLK_CSI_TPG 320
+ /* 321 */
+ #define TEGRA210_CLK_ISP 322
+ #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
+-- 
+2.7.4
