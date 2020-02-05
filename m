@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH 2/3] drm/tegra: Reuse IOVA mapping where possible
-Date: Wed, 5 Feb 2020 20:23:36 +0300
-Message-ID: <34fad3cf-b187-e80e-8654-d2a85b061734@gmail.com>
+Date: Wed, 5 Feb 2020 20:29:33 +0300
+Message-ID: <af7c156e-937b-e8fd-2a84-2e54671b7ed8@gmail.com>
 References: <20200204135926.1156340-1-thierry.reding@gmail.com>
  <20200204135926.1156340-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
@@ -16,30 +16,7 @@ Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNg
 List-Id: linux-tegra@vger.kernel.org
 
 04.02.2020 16:59, Thierry Reding пишет:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This partially reverts the DMA API support that was recently merged
-> because it was causing performance regressions on older Tegra devices.
-> Unfortunately, the cache maintenance performed by dma_map_sg() and
-> dma_unmap_sg() causes performance to drop by a factor of 10.
-> 
-> The right solution for this would be to cache mappings for buffers per
-> consumer device, but that's a bit involved. Instead, we simply revert to
-> the old behaviour of sharing IOVA mappings when we know that devices can
-> do so (i.e. they share the same IOMMU domain).
-
-Needs a stable tag:
-
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v5.5
-
-> Reported-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/drm/tegra/gem.c   | 10 +++++++-
->  drivers/gpu/drm/tegra/plane.c | 44 ++++++++++++++++++++---------------
->  drivers/gpu/host1x/job.c      | 32 ++++++++++++++++++++++---
->  3 files changed, 63 insertions(+), 23 deletions(-)
-
-Otherwise LGTM,
-
-Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> -		sgt = host1x_bo_pin(host->dev, g->bo, NULL);
+> +		/**
+                  ^
+Although one nit: ^ the second asterisk isn't needed :)
