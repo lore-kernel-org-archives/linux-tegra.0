@@ -1,64 +1,45 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v7 12/19] dmaengine: tegra-apb: Remove handling of
- unrealistic error condition
-Date: Wed, 5 Feb 2020 01:17:29 +0300
-Message-ID: <e89b7319-74c6-4a88-4634-f127aca86851@gmail.com>
-References: <20200202222854.18409-1-digetx@gmail.com>
- <20200202222854.18409-13-digetx@gmail.com>
- <b2461a42-5939-b2b1-01fe-6f18c860dbd9@nvidia.com>
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+Date: Wed, 5 Feb 2020 08:57:32 +0100
+Message-ID: <474ca8c5-4735-1707-d6f6-cf541bfeb525@xs4all.nl>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <098ac46f-fe13-f215-b9a4-aa8d01395592@xs4all.nl>
+ <6c3d2557-8982-37bf-810a-6d9faad9e5a4@nvidia.com>
+ <9c4775f2-8188-43f4-1de1-56620fad2e7c@xs4all.nl>
+ <af813a4e-339c-4254-75a0-8db995fe2aba@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <b2461a42-5939-b2b1-01fe-6f18c860dbd9-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <af813a4e-339c-4254-75a0-8db995fe2aba-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-04.02.2020 14:52, Jon Hunter пишет:
+On 2/4/20 8:02 PM, Sowjanya Komatineni wrote:
+>>>> I also noticed that changing the test pattern while streaming did not seem to have
+>>>> any effect until I stop and restart streaming. Is that a limitation of the HW or of
+>>>> the driver?
+>>> Do you mean changing test pattern mode of different channel while other
+>>> channels are streaming?
+>> No, from the same channel. E.g. v4l2-ctl --stream-mmap, then do from another
+>> console 'v4l2-ctl -c test-pattern=1'.
+>>
+>> It depends on the hardware whether or not you can change the test pattern
+>> while streaming. But it is nice for testing if this is possible.
 > 
-> On 02/02/2020 22:28, Dmitry Osipenko wrote:
->> The pending_sg_req list can't ever be empty because:
->>
->> 1. If it was empty, then handle_cont_sngl_cycle_dma_done() shall crash
->>    before of handle_continuous_head_request() invocation.
->>
->> 2. The handle_cont_sngl_cycle_dma_done() can't happen after stopping DMA.
+> Test-pattern mode changes during active streaming will not get set as 
+> test-pattern mode is in CSI and mode is set every time during the start 
+> of streaming and then VI keeps capturing the frames.
 > 
-> By this you mean calling terminate_all?
+> basically its during CSI subdevice stream enable.
 
-Yes, and also the handle_continuous_head_request() itself because it
-stops DMA on error, which clears interrupt status, and thus, ISR handle
-returns IRQ_NONE without handling next interrupt.
+OK. Just add a little comment either at the point the control is created or
+where the control is set in vi_s_ctrl(). It's just to document that this
+will only take effect at the next streamon.
 
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/dma/tegra20-apb-dma.c | 6 ------
->>  1 file changed, 6 deletions(-)
->>
->> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->> index 62d181bd5e62..c7dc27ef1856 100644
->> --- a/drivers/dma/tegra20-apb-dma.c
->> +++ b/drivers/dma/tegra20-apb-dma.c
->> @@ -564,12 +564,6 @@ static bool handle_continuous_head_request(struct tegra_dma_channel *tdc,
->>  {
->>  	struct tegra_dma_sg_req *hsgreq;
->>  
->> -	if (list_empty(&tdc->pending_sg_req)) {
->> -		dev_err(tdc2dev(tdc), "DMA is running without req\n");
->> -		tegra_dma_stop(tdc);
->> -		return false;
->> -	}
->> -
->>  	/*
->>  	 * Check that head req on list should be in flight.
->>  	 * If it is not in flight then abort transfer as
->>
-> 
-> There is also a list_empty() check in tdc_configure_next_head_desc()
-> which is also redundant and could be removed here as well.
+Regards,
 
-Good catch :) I'll squash all these list_empty() removals into a single
-patch.
+	Hans
