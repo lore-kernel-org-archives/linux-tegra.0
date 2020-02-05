@@ -1,38 +1,48 @@
-From: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
-Subject: RE: [PATCH] usb: chipidea: tegra: fix hardlock with invalid dr mode
-Date: Wed, 5 Feb 2020 11:17:04 +0000
-Message-ID: <VI1PR04MB5327AF1B75732C9E24988A2F8B020@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <20200127023548.27107-1-pgwipeout@gmail.com>
- <20200131052716.GA30672@b29397-desktop>
- <CAMdYzYqwz9HLsjvc1hDmovzWqiV_Vswe57d_gWhwBnvb2aNPyQ@mail.gmail.com>
- <20200201061330.GA9178@b29397-desktop>
- <CAMdYzYrbvsTunwxJLcC_-ZhczsQfyDLOjTnZ+eorb325qO-QhA@mail.gmail.com>
- <20200204074419.GA6681@b29397-desktop>
- <CAMdYzYo8Vgw8h=LtfLnQNF4j-rVzgKJTp1hCyf7BFKrdhAhAHQ@mail.gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 2/9] ASoC: tegra: add support for CIF programming
+Date: Wed, 5 Feb 2020 20:02:22 +0300
+Message-ID: <7239e858-16b7-609f-c4e3-8135bee8450b@gmail.com>
+References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
+ <1580380422-3431-3-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMdYzYo8Vgw8h=LtfLnQNF4j-rVzgKJTp1hCyf7BFKrdhAhAHQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1580380422-3431-3-git-send-email-spujar@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sameer Pujar <spujar@nvidia.com>, perex@perex.cz, tiwai@suse.com, robh+dt@kernel.org
+Cc: broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-IA0KPiA+ID4gPiBTZWNvbmQsIHlvdSBtYXkgY2hlY2sgaWYgdG91Y2ggb3Rnc2Mgd2lsbCBoYW5n
-IG9yIGRlYWRsb2NrIHRoZSBzeXN0ZW0uDQo+ID4gPiA+IElmIHlvdSBjYW4ndCB0b3VjaCBvdGdz
-YyB3aGVuIHBvcnRzYy5waGNkID0gMCwgeW91IG1heSBuZWVkIHRoZQ0KPiA+ID4gPiBmbGFnIENJ
-X0hEUkNfRFVBTF9ST0xFX05PVF9PVEcsIGFmYWlrLCBmZXcgU29DcyBjYW4ndCB0b3VjaCBvdGdz
-Yw0KPiA+ID4gPiBpZiBpdCBzdXBwb3J0cyBkdWFsLXJvbGUuDQo+ID4gPg0KPiA+ID4gSSBhZGRl
-ZCBzb21lIHRyYWNlcyB0byB0aGUgZHJpdmVyLCBhbmQgaXQgZG9lc24ndCBhY3R1YWxseSBhcHBl
-YXIgdG8NCj4gPiA+IGJlIGEgcmVnaXN0ZXIgcmVhZC93cml0ZSB0aGF0IGlzIGJyZWFraW5nIHRo
-aW5ncy4gKE5vdCBkaXJlY3RseQ0KPiA+ID4gYW55d2F5cykuDQo+ID4gPiBUaGUgaGFuZyBvY2N1
-cnMgYWZ0ZXIgaXQgZW51bWVyYXRlcyB0aGUgdXNiIGdhZGdldHMgYW5kIGh1Yi4NCj4gPiA+IFN0
-aWxsIHRyeWluZyB0byB0cmFjayBkb3duIGV4YWN0bHkgd2hlcmUgdGhlIGhhbmcgb2NjdXJzLg0K
-PiA+ID4NCj4gPg0KPiA+IFRyeSB0byBzZWUgaWYgaXQgaXMgcmVsYXRlZCB0byBydW50aW1lIHBv
-d2VyIG1hbmFnZW1lbnQuDQo+IA0KPiBUaGF0J3MgaXQhDQo+IFRoZXJlIGRvZXNuJ3QgYXBwZWFy
-IHRvIGJlIGEgbWV0aG9kIHRvIGRpc2FibGUgUE0gaW5zaWRlIHRoZSBjaGlwaWRlYSBkcml2ZXIu
-DQo+IERvIHlvdSBoYXZlIGEgc3VnZ2VzdGlvbiBvbiBob3cgdG8gZG8gaXQsIGFzaWRlIGZyb20g
-dGhlIGdsb2JhbCBtZXRob2Q/DQo+IA0KIA0KDQpTZWUgZHJpdmVycy91c2IvY2hpcGlkZWEvY2lf
-aGRyY19pbXguYyBmb3IgcmVmZXJlbmNlIHBsZWFzZS4NCg0KUGV0ZXINCg==
+30.01.2020 13:33, Sameer Pujar пишет:
+...
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include "tegra_cif.h"
+> +
+> +void tegra_set_cif(struct regmap *regmap, unsigned int reg,
+> +		   struct tegra_cif_conf *conf)
+> +{
+> +	unsigned int value;
+> +
+> +	value = (conf->threshold << TEGRA_ACIF_CTRL_FIFO_TH_SHIFT) |
+> +		((conf->audio_ch - 1) << TEGRA_ACIF_CTRL_AUDIO_CH_SHIFT) |
+> +		((conf->client_ch - 1) << TEGRA_ACIF_CTRL_CLIENT_CH_SHIFT) |
+> +		(conf->audio_bits << TEGRA_ACIF_CTRL_AUDIO_BITS_SHIFT) |
+> +		(conf->client_bits << TEGRA_ACIF_CTRL_CLIENT_BITS_SHIFT) |
+> +		(conf->expand << TEGRA_ACIF_CTRL_EXPAND_SHIFT) |
+> +		(conf->stereo_conv << TEGRA_ACIF_CTRL_STEREO_CONV_SHIFT) |
+> +		(conf->replicate << TEGRA_ACIF_CTRL_REPLICATE_SHIFT) |
+> +		(conf->truncate << TEGRA_ACIF_CTRL_TRUNCATE_SHIFT) |
+> +		(conf->mono_conv << TEGRA_ACIF_CTRL_MONO_CONV_SHIFT);
+> +
+> +	regmap_update_bits(regmap, reg, TEGRA_ACIF_UPDATE_MASK, value);
+> +}
+> +EXPORT_SYMBOL_GPL(tegra_set_cif);
+
+Are you going to add more stuff into this source file later on?
+
+If not, then it's too much to have a separate driver module just for a
+single tiny function, you should move it into the header file (make it
+inline).
