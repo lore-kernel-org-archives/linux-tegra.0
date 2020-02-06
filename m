@@ -1,270 +1,119 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/9] dt-bindings: sound: tegra: add DT binding for AHUB
-Date: Thu, 6 Feb 2020 18:10:45 +0000
-Message-ID: <20200206181045.GA31521@bogus>
-References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
- <1580380422-3431-2-git-send-email-spujar@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH v2 3/6] dt-binding: tegra: Add VI and CSI bindings
+Date: Thu, 6 Feb 2020 14:49:53 -0700
+Message-ID: <20200206214953.GA4995@bogus>
+References: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
+ <1580937806-17376-4-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1580380422-3431-2-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+In-Reply-To: <1580937806-17376-4-git-send-email-skomatineni@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, helen.koike@collabora.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 04:03:34PM +0530, Sameer Pujar wrote:
-> Audio Hub (AHUB) comprises a collection of hardware accelerators for audio
-> pre-processing and post-processing and a programmable full crossbar for
-> audio routing across these accelerators. This patch adds YAML schema for DT
-> binding of AHUB and few of its following components. These devices will be
-> registered as ASoC components.
->  * ADMAIF
->  * I2S
->  * DMIC
->  * DSPK
+On Wed, Feb 05, 2020 at 01:23:23PM -0800, Sowjanya Komatineni wrote:
+> Tegra contains VI controller which can support up to 6 MIPI CSI
+> camera sensors.
 > 
-> Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Each Tegra CSI port from CSI unit can be one-to-one mapper to
+> VI channel and can capture from an external camera sensor or
+> from built-in test pattern generator.
+> 
+> This patch adds dt-bindings for Tegra VI and CSI.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  .../bindings/sound/nvidia,tegra186-dspk.yaml       | 105 +++++++++++++
->  .../bindings/sound/nvidia,tegra210-admaif.yaml     | 165 +++++++++++++++++++++
->  .../bindings/sound/nvidia,tegra210-ahub.yaml       | 130 ++++++++++++++++
->  .../bindings/sound/nvidia,tegra210-dmic.yaml       | 105 +++++++++++++
->  .../bindings/sound/nvidia,tegra210-i2s.yaml        | 112 ++++++++++++++
->  5 files changed, 617 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
+>  .../display/tegra/nvidia,tegra20-host1x.txt        | 55 ++++++++++++++++++----
+>  1 file changed, 47 insertions(+), 8 deletions(-)
+
+Thierry is working on converting this to schema, so you'll need to 
+coordinate.
+
+Rob
+
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
-> new file mode 100644
-> index 0000000..dc9fef3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
-> @@ -0,0 +1,105 @@
-> +# SPDX-License-Identifier: (GPL-2.0)
-
-Dual license new bindings:
-
-(GPL-2.0-only OR BSD-2-Clause)
-
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra186-dspk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> index 9999255ac5b6..3d0ed540a646 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> @@ -40,14 +40,24 @@ of the following host1x client modules:
+>  
+>    Required properties:
+>    - compatible: "nvidia,tegra<chip>-vi"
+> -  - reg: Physical base address and length of the controller's registers.
+> +  - reg: Physical base address and length of the controller registers.
+>    - interrupts: The interrupt outputs from the controller.
+> -  - clocks: Must contain one entry, for the module clock.
+> +  - clocks: Must contain an entry for the module clock "vi"
+>      See ../clocks/clock-bindings.txt for details.
+>    - resets: Must contain an entry for each entry in reset-names.
+>      See ../reset/reset.txt for details.
+> -  - reset-names: Must include the following entries:
+> -    - vi
+> +  - reset-names: Must include the entry "vi"
 > +
-> +title: Tegra186 DSPK Controller Device Tree Bindings
+> +  Tegra210 has CSI part of VI sharing same host interface and register
+> +  space. So, VI device node should have CSI child node.
 > +
-> +description: |
-> +  The Digital Speaker Controller (DSPK) can be viewed as a Pulse
-> +  Density Modulation (PDM) transmitter that up-samples the input to
-> +  the desired sampling rate by interpolation and then converts the
-> +  over sampled Pulse Code Modulation (PCM) input to the desired 1-bit
-> +  output via Delta Sigma Modulation (DSM).
+> +  - csi: mipi csi interface to vi
 > +
-> +maintainers:
-> +  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> +  - Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-
-Drop 'items' for a single entry.
-
-> +          const: nvidia,tegra186-dspk
-> +      - items:
-> +          - enum:
-> +              - nvidia,tegra194-dspk
-> +          - enum:
-> +              - nvidia,tegra186-dspk
-
-This can be a 'const'
-
-> +
-> +  reg:
-> +    description: offset and length of the register set for the device.
-
-That's every 'reg'. Drop.
-
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    description: must contain an entry for each entry in clock-names.
-> +      See ../clocks/clocks-bindings.txt for details.
-> +    minItems: 1
-
-Drop description and minItems. minItems is implied by the length of 
-'items'.
-
-> +    items:
-> +      - description: Module clock
-> +
-> +  clock-names:
-> +    description: must contain clock names for each corresponding entry in clocks.
-> +      See ../clocks/clocks-bindings.txt for details.
-> +    minItems: 1
-
-ditto
-
-> +    items:
-> +      - const: dspk
-> +
-> +  assigned-clocks:
-> +    description: list of input clocks and dividers for the audio system.
+> +    Required properties:
+> +    - compatible: "nvidia,tegra<chip>-csi"
+> +    - reg: Physical base address and length of the controller registers.
+> +    - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
 > +      See ../clocks/clock-bindings.txt for details.
-> +    minItems: 1
-
-ditto
-
-> +    items:
-> +      - description: Module clock
+>  
+>  - epp: encoder pre-processor
+>  
+> @@ -310,12 +320,41 @@ Example:
+>  		};
+>  
+>  		vi {
+> -			compatible = "nvidia,tegra20-vi";
+> -			reg = <0x54080000 0x00040000>;
+> +			compatible = "nvidia,tegra210-vi";
+> +			reg = <0x0 0x54080000 0x0 0x700>;
+>  			interrupts = <0 69 0x04>;
+> -			clocks = <&tegra_car TEGRA20_CLK_VI>;
+> -			resets = <&tegra_car 100>;
+> +			assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
+> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
+> +			clocks = <&tegra_car TEGRA210_CLK_VI>;
+> +			clock-names = "vi";
+> +			resets = <&tegra_car 20>;
+>  			reset-names = "vi";
 > +
-> +  assigned-clock-parents:
-> +    description: parent clock for each entry in assigned-clocks
-> +      See ../clocks/clock-bindings.txt for details.
-> +    minItems: 1
-
-ditto
-
-> +    items:
-> +      - description: Parent for module clock
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
 > +
-> +  assigned-clock-rates:
-> +    description: clock rate for each entry in assigned-clocks
-> +      See ../clocks/clock-bindings.txt for details.
-
-ditto
-
-> +    items:
-> +      - description: initial module clock rate
+> +			ranges = <0x0 0x54080808 0x0 0x54080808 0x0 0x2000>;
 > +
-> +  "#sound-dai-cells":
-> +    const: 1
+> +			csi@0x54080838 {
+> +				compatible = "nvidia,tegra210-csi";
+> +				reg = <0x0 0x54080838 0x0 0x2000>;
+> +				status = "disabled";
+> +				assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
+> +						  <&tegra_car TEGRA210_CLK_CILCD>,
+> +						  <&tegra_car TEGRA210_CLK_CILE>;
+> +				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
+> +							 <&tegra_car TEGRA210_CLK_PLL_P>,
+> +							 <&tegra_car TEGRA210_CLK_PLL_P>;
+> +				assigned-clock-rates = <102000000>,
+> +						       <102000000>,
+> +						       <102000000>;
+> +				clocks = <&tegra_car TEGRA210_CLK_CSI>,
+> +					 <&tegra_car TEGRA210_CLK_CILAB>,
+> +					 <&tegra_car TEGRA210_CLK_CILCD>,
+> +					 <&tegra_car TEGRA210_CLK_CILE>;
+> +				clock-names = "csi", "cilab", "cilcd", "cile";
+> +			};
 > +
-> +  sound-name-prefix:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      Used as prefix for sink/source names of the component. Must be a
-> +      unique string among multiple instances of the same component.
-> +      The name can be "DSPK1" or "DSPKx", where x depends on the maximum
-
-Sounds like a constraint.
-
-> +      available instances on a Tegra SoC.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - assigned-clocks
-> +  - assigned-clock-parents
-> +  - "#sound-dai-cells"
-> +
-> +examples:
-> +  - |
-> +    #include<dt-bindings/clock/tegra186-clock.h>
-> +
-> +    tegra_dspk1: dspk@2905000 {
-> +        compatible = "nvidia,tegra186-dspk";
-> +        reg = <0x2905000 0x100>;
-> +        clocks = <&bpmp TEGRA186_CLK_DSPK1>;
-> +        clock-names = "dspk";
-> +        assigned-clocks = <&bpmp TEGRA186_CLK_DSPK1>;
-> +        assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
-> +        assigned-clock-rates = <12288000>;
-> +        #sound-dai-cells = <1>;
-> +        sound-name-prefix = "DSPK1";
-> +    };
-> +
-> +...
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
-> new file mode 100644
-> index 0000000..a8a41ba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
-> @@ -0,0 +1,165 @@
-> +# SPAT-License-Identifier: (GPL-2.0)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-admaif.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Tegra210 ADMAIF Device Tree Bindings
-> +
-> +description: |
-> +  ADMAIF is the interface between ADMA and AHUB. Each ADMA channel
-> +  that sends/receives data to/from AHUB must interface through an
-> +  ADMAIF channel. ADMA channel sending data to AHUB pairs with ADMAIF
-> +  Tx channel and ADMA channel receiving data from AHUB pairs with
-> +  ADMAIF Rx channel.
-> +
-> +maintainers:
-> +  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> +  - Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          const: nvidia,tegra210-admaif
-> +      - items:
-> +          const: nvidia,tegra186-admaif
-
-These 2 can be a single enum.
-
-> +      - items:
-> +          - enum:
-> +             - nvidia,tegra194-admaif
-> +          - enum:
-> +             - nvidia,tegra186-admaif
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  dmas: true
-> +
-> +  dma-names: true
-> +
-> +  "#sound-dai-cells":
-> +    const: 1
-> +
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: nvidia,tegra210-admaif
-> +
-> +then:
-> +  properties:
-> +    dmas:
-> +      $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Drop. Common properties already have a type.
-
-Plus this is wrong. A '$ref' means all other keywords are ignored (until 
-we move to draft8).
-
-> +      description:
-> +        Two or more DMA channel specifiers, equally divided for Tx and Rx.
-> +      minItems: 2
-> +      maxItems: 20
-> +    dma-names:
-> +      $ref: /schemas/types.yaml#/definitions/string-array
-
-drop
-
-> +      description:
-> +        There must be at least one channel named "tx1" for transmit and "rx1"
-> +        for receive. If more channels need to be specified then "tx1",
-> +        "tx2" ... "tx10" can be used. Similarly for Rx channels as well.
-
-Sounds like constraints.
-
-
-Stopping there. Similar issues on the rest...
+>  		};
+>  
+>  		epp {
+> -- 
+> 2.7.4
+> 
