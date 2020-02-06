@@ -1,2325 +1,270 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH v2 0/6] Add Tegra driver for video capture
-Date: Thu, 6 Feb 2020 10:26:28 -0800
-Message-ID: <1850f4ad-2e84-beec-bc2a-143949a2626a@nvidia.com>
-References: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
- <e455f767-ccf1-7707-51df-f37a40a44f9a@xs4all.nl>
- <69dfbac3-ec21-3f8e-1e9b-63cb117e2dea@nvidia.com>
- <782ee810-1858-ce1f-3be2-46d657a33227@collabora.com>
- <cdb80b61-5f56-cf06-88f9-70954179cafc@nvidia.com>
- <924bd118-5a90-d771-eef4-dd66e084c310@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/9] dt-bindings: sound: tegra: add DT binding for AHUB
+Date: Thu, 6 Feb 2020 18:10:45 +0000
+Message-ID: <20200206181045.GA31521@bogus>
+References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
+ <1580380422-3431-2-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <924bd118-5a90-d771-eef4-dd66e084c310-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Helen Koike <helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1580380422-3431-2-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jan 30, 2020 at 04:03:34PM +0530, Sameer Pujar wrote:
+> Audio Hub (AHUB) comprises a collection of hardware accelerators for audio
+> pre-processing and post-processing and a programmable full crossbar for
+> audio routing across these accelerators. This patch adds YAML schema for DT
+> binding of AHUB and few of its following components. These devices will be
+> registered as ASoC components.
+>  * ADMAIF
+>  * I2S
+>  * DMIC
+>  * DSPK
+> 
+> Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/sound/nvidia,tegra186-dspk.yaml       | 105 +++++++++++++
+>  .../bindings/sound/nvidia,tegra210-admaif.yaml     | 165 +++++++++++++++++++++
+>  .../bindings/sound/nvidia,tegra210-ahub.yaml       | 130 ++++++++++++++++
+>  .../bindings/sound/nvidia,tegra210-dmic.yaml       | 105 +++++++++++++
+>  .../bindings/sound/nvidia,tegra210-i2s.yaml        | 112 ++++++++++++++
+>  5 files changed, 617 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+> new file mode 100644
+> index 0000000..dc9fef3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+> @@ -0,0 +1,105 @@
+> +# SPDX-License-Identifier: (GPL-2.0)
 
-On 2/6/20 9:13 AM, Sowjanya Komatineni wrote:
->
-> On 2/6/20 8:57 AM, Sowjanya Komatineni wrote:
->>
->> On 2/6/20 8:54 AM, Helen Koike wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> On 2/6/20 1:51 PM, Sowjanya Komatineni wrote:
->>>> On 2/6/20 4:01 AM, Hans Verkuil wrote:
->>>>> External email: Use caution opening links or attachments
->>>>>
->>>>>
->>>>> On 2/5/20 10:23 PM, Sowjanya Komatineni wrote:
->>>>>> This series adds Tegra210 VI and CSI driver for built-in test=20
->>>>>> pattern
->>>>>> generator (TPG) capture.
->>>>>>
->>>>>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
->>>>>> CSI port is one-to-one mapped to VI channel for video capture.
->>>>>>
->>>>>> This series has TPG support only where it creates hard media links
->>>>>> between CSI subdevice and VI video device without device graphs.
->>>>> Hmm, I tried this series and as soon as I ran 'v4l2-ctl=20
->>>>> --stream-mmap' (first
->>>>> thing I did after booting up the Jetson TX1) I got this in the=20
->>>>> kernel log:
->>>>>
->>>>> [=C2=A0 184.867368] video4linux video0: MW_ACK_DONE syncpoint timeout=
-: -11
->>>>> [=C2=A0 184.867373] video4linux video0: frame start syncpt timeout: -=
-11
->>>>> [=C2=A0 184.879460] video4linux video0: TEGRA_VI_CSI_ERROR_STATUS=20
->>>>> 0x00000000
->>>>> [=C2=A0 184.886507] video4linux video0:=20
->>>>> TEGRA_VI_CFG_VI_INCR_SYNCPT_ERROR 0x00000000
->>>>> [=C2=A0 184.896306] tegra-csi 54080838.csi:=20
->>>>> TEGRA_CSI_PIXEL_PARSER_STATUS 0x00004031
->>>>> [=C2=A0 184.906103] tegra-csi 54080838.csi: TEGRA_CSI_CIL_STATUS=20
->>>>> 0x00000000
->>>>> [=C2=A0 184.914428] tegra-csi 54080838.csi: TEGRA_CSI_CILX_STATUS=20
->>>>> 0x00000000
->>>>> [=C2=A0 185.699375] video4linux video0: MW_ACK_DONE syncpoint timeout=
-: -11
->>>>>
->>>>> Running v4l2-compliance -m0 -s10 after boot will just hang and I=20
->>>>> see a single
->>>>>
->>>>> [=C2=A0=C2=A0 40.354218] video4linux video0: MW_ACK_DONE syncpoint ti=
-meout: -11
->>>>>
->>>>> in the kernel log.
->>>> I tried several times and somehow couldn't see this. Will do more=20
->>>> testing...
+Dual license new bindings:
 
-I tried 50 loop test and I see timeout some times. Found fix. Will=20
-include in v3 and will do more loop testing.
+(GPL-2.0-only OR BSD-2-Clause)
 
->>>>> This still uses the three patches from Thierry, I just replaced=20
->>>>> the old
->>>>> v1 patches with the new v2 and rebased everything to the latest=20
->>>>> mainline
->>>>> code.
->>>>>
->>>>> I also noticed the new /dev/v4l-subdev devices.
->>>>>
->>>>> There are two ways to create video drivers: either as a=20
->>>>> straightforward
->>>>> video pipeline where all configuration is done through the video=20
->>>>> device
->>>>> node: e.g. setting the format with S_FMT will configure the whole=20
->>>>> pipeline,
->>>>> including sensors etc. for that format.
->>>>>
->>>>> The other method is one where userspace has to configure the whole=20
->>>>> pipeline,
->>>>> configuring not just the video device but also the v4l-subdev=20
->>>>> devices that
->>>>> are part of that pipeline. In addition, you can typically change=20
->>>>> routing
->>>>> in the topology using the media device.
->>>>>
->>>>> The advantage is full control, the disadvantage is that it is much=20
->>>>> more
->>>>> work in userspace and that you will need to support this driver in=20
->>>>> the
->>>>> libcamera framework.
->>>>>
->>>>> Now, this driver is just a simple video pipeline where you capture=20
->>>>> the
->>>>> video to memory. There is no need to make things complex. Unless=20
->>>>> NVIDIA
->>>>> plans to open up more of their camera pipeline. Complex camera=20
->>>>> pipelines
->>>>> DO need this advanced functionality.
->>>>>
->>>>> Regards,
->>>>>
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hans
->>>> v1 configures S_FMT for whole pipeline (video, sensors thru=20
->>>> subdevices) thru video device node.
->>>>
->>>> But based on Helen feedback for v1, removed it from video S_FMT and=20
->>>> added link_validate in v2.
->>> I mentioned because in v1 you were already exposing the channels=20
->>> with V4L2_SUBDEV_FL_HAS_DEVNODE,
->>> which were exposing get/set_fmt in the csi subdevice.
->>> I can be wrong, but if I understand correctly, or you configure all=20
->>> the pads through the
->>> video node, or you expose all the subdevices and let userspace to=20
->>> configure them, not a mix.
->>>
->>> Regards,
->>> Helen
->>
->> Removing subdevice nodes is easier. But I was referring to your v1=20
->> feedback
->>
->> "entities formats should be independent, it is up to link_validate
->> to check formats between entities.
->> The capture shouldn't change the format of the subdevice"
->>
->> If we all agree to have video node do all pipeline formats, which is=20
->> what I have in v1, will revert to that in v3.
->>
->>
-> BTW, v1 doesn't create subdevice nodes as it does all pipeline format=20
-> thru video node.
->
-> It has flag V4L2_SUBDEV_FL_HAS_DEVNODE accidentally with these TPG=20
-> patches.
->
-> So will have v3 to remove this flag and will revert back to v1 patches=20
-> S_FMT/G_FMT.
->
->>>> With this user space has to configure so had to create nodes for=20
->>>> subdevice nodes also.
->>>>
->>>> Please confirm if we want to stick with doing S_FMT configuration=20
->>>> for complete pipeline from video device node.
->>>>
->>>> Will change back in v3.
->>>>
->>>>>> v4l2-compliance results are available below the patch diff.
->>>>>>
->>>>>> [v1]: Includes,
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - v0 feedback
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Merged files to have Te=
-gra specific separately
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Moved CSI device as chi=
-ld to VI as Tegra210 CSI is
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 part of VI sh=
-aring same host interface and register
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 space.
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Added link_validate for=
- format validation.
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Fixes for passing v4l2-=
-compliance for media, video,
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 and subdevice=
-s.
->>>>>>
->>>>>> [v0]: Includes,
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Adds CSI TPG clock to T=
-egra210 clock driver
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Host1x video driver wit=
-h VI and CSI clients.
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Support for Tegra210 on=
-ly.
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - VI CSI TPG support with=
- hard media links in driver.
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Video formats supported=
- by Tegra210 VI
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - CSI TPG supported video=
- formats
->>>>>>
->>>>>>
->>>>>> Sowjanya Komatineni (6):
->>>>>> =C2=A0=C2=A0=C2=A0 dt-bindings: clock: tegra: Add clk id for CSI TPG=
- clock
->>>>>> =C2=A0=C2=A0=C2=A0 clk: tegra: Add Tegra210 CSI TPG clock gate
->>>>>> =C2=A0=C2=A0=C2=A0 dt-binding: tegra: Add VI and CSI bindings
->>>>>> =C2=A0=C2=A0=C2=A0 media: tegra: Add Tegra210 Video input driver
->>>>>> =C2=A0=C2=A0=C2=A0 MAINTAINERS: Add Tegra Video driver section
->>>>>> =C2=A0=C2=A0=C2=A0 arm64: tegra: Add Tegra VI CSI suppport in device=
- tree
->>>>>>
->>>>>> =C2=A0=C2=A0 .../display/tegra/nvidia,tegra20-host1x.txt=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 55 +-
->>>>>> =C2=A0=C2=A0 MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 +
->>>>>> =C2=A0=C2=A0 arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 8 +
->>>>>> =C2=A0=C2=A0 arch/arm64/boot/dts/nvidia/tegra210.dtsi=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 36 +-
->>>>>> =C2=A0=C2=A0 drivers/clk/tegra/clk-tegra210.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 7 +
->>>>>> =C2=A0=C2=A0 drivers/staging/media/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 +
->>>>>> =C2=A0=C2=A0 drivers/staging/media/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 1 +
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/Kconfig=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | =
-10 +
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/Makefile=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 8 +
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/TODO=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 10 +
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/tegra-common.h=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 237 +++++
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/tegra-csi.c=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 374 ++++++++
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/tegra-csi.h=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 116 +++
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/tegra-vi.c=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 998=20
->>>>>> +++++++++++++++++++++
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/tegra-vi.h=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 82 ++
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/tegra-video.c=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 118 +++
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/tegra-video.h=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 32 +
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/tegra210.c=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 698=20
->>>>>> ++++++++++++++
->>>>>> =C2=A0=C2=A0 drivers/staging/media/tegra/tegra210.h=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 190 ++++
->>>>>> =C2=A0=C2=A0 include/dt-bindings/clock/tegra210-car.h=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 +-
->>>>>> =C2=A0=C2=A0 20 files changed, 2984 insertions(+), 10 deletions(-)
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/Kconfig
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/Makefile
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/TODO
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-co=
-mmon.h
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-cs=
-i.c
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-cs=
-i.h
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi=
-.c
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi=
-.h
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi=
-deo.c
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi=
-deo.h
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/tegra210=
-.c
->>>>>> =C2=A0=C2=A0 create mode 100644 drivers/staging/media/tegra/tegra210=
-.h
->>>>>>
->>>>>> ./v4l2-compliance -m0 -s10
->>>>>> v4l2-compliance SHA: e7402fb758fd106955c3b7d5a5e961d1cb606f4a, 32=20
->>>>>> bits, 32-bit time_t
->>>>>>
->>>>>> Compliance test for tegra-video device /dev/media0:
->>>>>>
->>>>>> Media Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Model=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : NVIDIA Tegra=
- Video Input Device
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Serial=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Media version=
-=C2=A0=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hardware revi=
-sion: 0x00000003 (3)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>>
->>>>>> Required ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MEDIA_IO=
-C_DEVICE_INFO: OK
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/media0 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MEDIA_IO=
-C_DEVICE_INFO: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> Media Controller ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MEDIA_IO=
-C_G_TOPOLOGY: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Entities: 12 =
-Interfaces: 12 Pads: 12 Links: 18
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MEDIA_IO=
-C_ENUM_ENTITIES/LINKS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MEDIA_IO=
-C_SETUP_LINK: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>>
->>>>>> Total for tegra-video device /dev/media0: 8, Succeeded: 8,=20
->>>>>> Failed: 0, Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for tegra-video device /dev/video0:
->>>>>>
->>>>>> Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Card type=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.vi-output-0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Capabilities=
-=C2=A0=C2=A0=C2=A0=C2=A0 : 0x85200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Capabilities
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Caps=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 0x05200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> Media Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Model=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : NVIDIA Tegra=
- Video Input Device
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Serial=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Media version=
-=C2=A0=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hardware revi=
-sion: 0x00000003 (3)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> Interface Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x03000003
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Type=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L Video
->>>>>> Entity Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x00000001 (1)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Name=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.=
-vi-output-0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Function=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L2 I/O
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Pad 0x0100000=
-2=C2=A0=C2=A0 : 0: Sink
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 L=
-ink 0x0200001b: from remote pad 0x100001a of entity=20
->>>>>> 'tpg-0': Data, Enabled
->>>>>>
->>>>>> Required ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MC infor=
-mation (see 'Media Driver Info' above): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/video0 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PRIORITY: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-BG_G/S_REGISTER: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 1 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 2 Private Controls: 0
->>>>>>
->>>>>> Format ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK
->>>>>>
->>>>>> Codec ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Test input 0:
->>>>>>
->>>>>> Streaming ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test read/wri=
-te: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test blocking=
- wait: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (no=
- poll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (se=
-lect): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (ep=
-oll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(no poll): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(select): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test DMABUF: =
-Cannot test, specify --expbuf-device
->>>>>>
->>>>>> Total for tegra-video device /dev/video0: 53, Succeeded: 53,=20
->>>>>> Failed: 0, Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for tegra-video device /dev/video1:
->>>>>>
->>>>>> Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Card type=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.vi-output-1
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Capabilities=
-=C2=A0=C2=A0=C2=A0=C2=A0 : 0x85200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Capabilities
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Caps=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 0x05200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> Media Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Model=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : NVIDIA Tegra=
- Video Input Device
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Serial=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Media version=
-=C2=A0=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hardware revi=
-sion: 0x00000003 (3)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> Interface Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x03000007
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Type=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L Video
->>>>>> Entity Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x00000005 (5)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Name=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.=
-vi-output-1
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Function=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L2 I/O
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Pad 0x0100000=
-6=C2=A0=C2=A0 : 0: Sink
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 L=
-ink 0x0200001f: from remote pad 0x100001e of entity=20
->>>>>> 'tpg-1': Data, Enabled
->>>>>>
->>>>>> Required ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MC infor=
-mation (see 'Media Driver Info' above): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/video1 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PRIORITY: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-BG_G/S_REGISTER: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 1 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 2 Private Controls: 0
->>>>>>
->>>>>> Format ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK
->>>>>>
->>>>>> Codec ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Test input 0:
->>>>>>
->>>>>> Streaming ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test read/wri=
-te: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test blocking=
- wait: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (no=
- poll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (se=
-lect): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (ep=
-oll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(no poll): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(select): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test DMABUF: =
-Cannot test, specify --expbuf-device
->>>>>>
->>>>>> Total for tegra-video device /dev/video1: 53, Succeeded: 53,=20
->>>>>> Failed: 0, Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for tegra-video device /dev/video2:
->>>>>>
->>>>>> Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Card type=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.vi-output-2
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Capabilities=
-=C2=A0=C2=A0=C2=A0=C2=A0 : 0x85200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Capabilities
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Caps=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 0x05200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> Media Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Model=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : NVIDIA Tegra=
- Video Input Device
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Serial=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Media version=
-=C2=A0=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hardware revi=
-sion: 0x00000003 (3)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> Interface Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x0300000b
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Type=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L Video
->>>>>> Entity Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x00000009 (9)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Name=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.=
-vi-output-2
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Function=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L2 I/O
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Pad 0x0100000=
-a=C2=A0=C2=A0 : 0: Sink
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 L=
-ink 0x02000023: from remote pad 0x1000022 of entity=20
->>>>>> 'tpg-2': Data, Enabled
->>>>>>
->>>>>> Required ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MC infor=
-mation (see 'Media Driver Info' above): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/video2 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PRIORITY: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-BG_G/S_REGISTER: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 1 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 2 Private Controls: 0
->>>>>>
->>>>>> Format ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK
->>>>>>
->>>>>> Codec ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Test input 0:
->>>>>>
->>>>>> Streaming ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test read/wri=
-te: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test blocking=
- wait: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (no=
- poll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (se=
-lect): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (ep=
-oll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(no poll): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(select): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test DMABUF: =
-Cannot test, specify --expbuf-device
->>>>>>
->>>>>> Total for tegra-video device /dev/video2: 53, Succeeded: 53,=20
->>>>>> Failed: 0, Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for tegra-video device /dev/video3:
->>>>>>
->>>>>> Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Card type=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.vi-output-3
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Capabilities=
-=C2=A0=C2=A0=C2=A0=C2=A0 : 0x85200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Capabilities
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Caps=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 0x05200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> Media Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Model=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : NVIDIA Tegra=
- Video Input Device
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Serial=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Media version=
-=C2=A0=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hardware revi=
-sion: 0x00000003 (3)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> Interface Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x0300000f
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Type=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L Video
->>>>>> Entity Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x0000000d (13)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Name=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.=
-vi-output-3
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Function=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L2 I/O
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Pad 0x0100000=
-e=C2=A0=C2=A0 : 0: Sink
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 L=
-ink 0x02000027: from remote pad 0x1000026 of entity=20
->>>>>> 'tpg-3': Data, Enabled
->>>>>>
->>>>>> Required ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MC infor=
-mation (see 'Media Driver Info' above): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/video3 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PRIORITY: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-BG_G/S_REGISTER: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 1 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 2 Private Controls: 0
->>>>>>
->>>>>> Format ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK
->>>>>>
->>>>>> Codec ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Test input 0:
->>>>>>
->>>>>> Streaming ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test read/wri=
-te: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test blocking=
- wait: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (no=
- poll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (se=
-lect): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (ep=
-oll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(no poll): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(select): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test DMABUF: =
-Cannot test, specify --expbuf-device
->>>>>>
->>>>>> Total for tegra-video device /dev/video3: 53, Succeeded: 53,=20
->>>>>> Failed: 0, Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for tegra-video device /dev/video4:
->>>>>>
->>>>>> Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Card type=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.vi-output-4
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Capabilities=
-=C2=A0=C2=A0=C2=A0=C2=A0 : 0x85200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Capabilities
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Caps=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 0x05200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> Media Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Model=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : NVIDIA Tegra=
- Video Input Device
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Serial=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Media version=
-=C2=A0=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hardware revi=
-sion: 0x00000003 (3)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> Interface Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x03000013
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Type=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L Video
->>>>>> Entity Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x00000011 (17)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Name=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.=
-vi-output-4
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Function=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L2 I/O
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Pad 0x0100001=
-2=C2=A0=C2=A0 : 0: Sink
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 L=
-ink 0x0200002b: from remote pad 0x100002a of entity=20
->>>>>> 'tpg-4': Data, Enabled
->>>>>>
->>>>>> Required ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MC infor=
-mation (see 'Media Driver Info' above): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/video4 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PRIORITY: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-BG_G/S_REGISTER: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 1 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 2 Private Controls: 0
->>>>>>
->>>>>> Format ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK
->>>>>>
->>>>>> Codec ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Test input 0:
->>>>>>
->>>>>> Streaming ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test read/wri=
-te: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test blocking=
- wait: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (no=
- poll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (se=
-lect): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (ep=
-oll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(no poll): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(select): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test DMABUF: =
-Cannot test, specify --expbuf-device
->>>>>>
->>>>>> Total for tegra-video device /dev/video4: 53, Succeeded: 53,=20
->>>>>> Failed: 0, Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for tegra-video device /dev/video5:
->>>>>>
->>>>>> Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Card type=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.vi-output-5
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Capabilities=
-=C2=A0=C2=A0=C2=A0=C2=A0 : 0x85200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Capabilities
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Device Caps=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 0x05200001
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Video Capture
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Read/Write
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Streaming
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Extended Pix Format
->>>>>> Media Driver Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver name=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : tegra-video
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Model=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : NVIDIA Tegra=
- Video Input Device
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Serial=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Bus info=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : platform:54080000.vi
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Media version=
-=C2=A0=C2=A0=C2=A0 : 5.5.0
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hardware revi=
-sion: 0x00000003 (3)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Driver versio=
-n=C2=A0=C2=A0 : 5.5.0
->>>>>> Interface Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x03000017
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Type=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L Video
->>>>>> Entity Info:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ID=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- : 0x00000015 (21)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Name=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 54080000.=
-vi-output-5
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Function=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : V4L2 I/O
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Pad 0x0100001=
-6=C2=A0=C2=A0 : 0: Sink
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 L=
-ink 0x0200002f: from remote pad 0x100002e of entity=20
->>>>>> 'tpg-5': Data, Enabled
->>>>>>
->>>>>> Required ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MC infor=
-mation (see 'Media Driver Info' above): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/video5 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCAP: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PRIORITY: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-BG_G/S_REGISTER: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 1 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 2 Private Controls: 0
->>>>>>
->>>>>> Format ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK
->>>>>>
->>>>>> Codec ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls (Input 0):
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Test input 0:
->>>>>>
->>>>>> Streaming ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test read/wri=
-te: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test blocking=
- wait: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (no=
- poll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (se=
-lect): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test MMAP (ep=
-oll): OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(no poll): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test USERPTR =
-(select): OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test DMABUF: =
-Cannot test, specify --expbuf-device
->>>>>>
->>>>>> Total for tegra-video device /dev/video5: 53, Succeeded: 53,=20
->>>>>> Failed: 0, Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for device /dev/v4l-subdev0:
->>>>>>
->>>>>>
->>>>>> Required ioctls:
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/v4l-subdev0 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 0 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 0 Private Controls: 0
->>>>>>
->>>>>> Format ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK (Not Supported)
->>>>>>
->>>>>> Codec ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Total for device /dev/v4l-subdev0: 41, Succeeded: 41, Failed: 0,=20
->>>>>> Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for device /dev/v4l-subdev1:
->>>>>>
->>>>>>
->>>>>> Required ioctls:
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/v4l-subdev1 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 0 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 0 Private Controls: 0
->>>>>>
->>>>>> Format ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK (Not Supported)
->>>>>>
->>>>>> Codec ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Total for device /dev/v4l-subdev1: 41, Succeeded: 41, Failed: 0,=20
->>>>>> Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for device /dev/v4l-subdev2:
->>>>>>
->>>>>>
->>>>>> Required ioctls:
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/v4l-subdev2 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 0 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 0 Private Controls: 0
->>>>>>
->>>>>> Format ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK (Not Supported)
->>>>>>
->>>>>> Codec ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Total for device /dev/v4l-subdev2: 41, Succeeded: 41, Failed: 0,=20
->>>>>> Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for device /dev/v4l-subdev3:
->>>>>>
->>>>>>
->>>>>> Required ioctls:
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/v4l-subdev3 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 0 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 0 Private Controls: 0
->>>>>>
->>>>>> Format ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK (Not Supported)
->>>>>>
->>>>>> Codec ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Total for device /dev/v4l-subdev3: 41, Succeeded: 41, Failed: 0,=20
->>>>>> Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for device /dev/v4l-subdev4:
->>>>>>
->>>>>>
->>>>>> Required ioctls:
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/v4l-subdev4 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 0 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 0 Private Controls: 0
->>>>>>
->>>>>> Format ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK (Not Supported)
->>>>>>
->>>>>> Codec ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Total for device /dev/v4l-subdev4: 41, Succeeded: 41, Failed: 0,=20
->>>>>> Warnings: 0
->>>>>> --------------------------------------------------------------------=
-------------=20
->>>>>>
->>>>>> Compliance test for device /dev/v4l-subdev5:
->>>>>>
->>>>>>
->>>>>> Required ioctls:
->>>>>>
->>>>>> Allow for multiple opens:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test second /=
-dev/v4l-subdev5 open: OK
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test for unli=
-mited opens: OK
->>>>>>
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test invalid =
-ioctls: OK
->>>>>> Debug ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_L=
-OG_STATUS: OK (Not Supported)
->>>>>>
->>>>>> Input ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_HW_FREQ_SEEK: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMINPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDIO: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Inputs: 0 Aud=
-io Inputs: 0 Tuners: 0
->>>>>>
->>>>>> Output ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_MODULATOR: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_FREQUENCY: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUMAUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/ENUMOUTPUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_AUDOUT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Outputs: 0 Au=
-dio Outputs: 0 Modulators: 0
->>>>>>
->>>>>> Input/Output configuration ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_STD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_D=
-V_TIMINGS_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_EDID: OK (Not Supported)
->>>>>>
->>>>>> Control ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_Q=
-UERYCTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_CTRL: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S/TRY_EXT_CTRLS: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_JPEGCOMP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard Cont=
-rols: 0 Private Controls: 0
->>>>>>
->>>>>> Format ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-NUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-/S_PARM: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_T=
-RY_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_S=
-_FMT: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_SLICED_VBI_CAP: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Cropping=
-: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Composin=
-g: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Scaling:=
- OK (Not Supported)
->>>>>>
->>>>>> Codec ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)ENCODER_CMD: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_G=
-_ENC_INDEX: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_(=
-TRY_)DECODER_CMD: OK (Not Supported)
->>>>>>
->>>>>> Buffer ioctls:
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_R=
-EQBUFS/CREATE_BUFS/QUERYBUF: OK (Not=20
->>>>>> Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_E=
-XPBUF: OK (Not Supported)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests=
-: OK (Not Supported)
->>>>>>
->>>>>> Total for device /dev/v4l-subdev5: 41, Succeeded: 41, Failed: 0,=20
->>>>>> Warnings: 0
->>>>>>
->>>>>> Grand Total for tegra-video device /dev/media0: 572, Succeeded:=20
->>>>>> 572, Failed: 0, Warnings: 0
->>>>>>
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra186-dspk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra186 DSPK Controller Device Tree Bindings
+> +
+> +description: |
+> +  The Digital Speaker Controller (DSPK) can be viewed as a Pulse
+> +  Density Modulation (PDM) transmitter that up-samples the input to
+> +  the desired sampling rate by interpolation and then converts the
+> +  over sampled Pulse Code Modulation (PCM) input to the desired 1-bit
+> +  output via Delta Sigma Modulation (DSM).
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +  - Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+
+Drop 'items' for a single entry.
+
+> +          const: nvidia,tegra186-dspk
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra194-dspk
+> +          - enum:
+> +              - nvidia,tegra186-dspk
+
+This can be a 'const'
+
+> +
+> +  reg:
+> +    description: offset and length of the register set for the device.
+
+That's every 'reg'. Drop.
+
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description: must contain an entry for each entry in clock-names.
+> +      See ../clocks/clocks-bindings.txt for details.
+> +    minItems: 1
+
+Drop description and minItems. minItems is implied by the length of 
+'items'.
+
+> +    items:
+> +      - description: Module clock
+> +
+> +  clock-names:
+> +    description: must contain clock names for each corresponding entry in clocks.
+> +      See ../clocks/clocks-bindings.txt for details.
+> +    minItems: 1
+
+ditto
+
+> +    items:
+> +      - const: dspk
+> +
+> +  assigned-clocks:
+> +    description: list of input clocks and dividers for the audio system.
+> +      See ../clocks/clock-bindings.txt for details.
+> +    minItems: 1
+
+ditto
+
+> +    items:
+> +      - description: Module clock
+> +
+> +  assigned-clock-parents:
+> +    description: parent clock for each entry in assigned-clocks
+> +      See ../clocks/clock-bindings.txt for details.
+> +    minItems: 1
+
+ditto
+
+> +    items:
+> +      - description: Parent for module clock
+> +
+> +  assigned-clock-rates:
+> +    description: clock rate for each entry in assigned-clocks
+> +      See ../clocks/clock-bindings.txt for details.
+
+ditto
+
+> +    items:
+> +      - description: initial module clock rate
+> +
+> +  "#sound-dai-cells":
+> +    const: 1
+> +
+> +  sound-name-prefix:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      Used as prefix for sink/source names of the component. Must be a
+> +      unique string among multiple instances of the same component.
+> +      The name can be "DSPK1" or "DSPKx", where x depends on the maximum
+
+Sounds like a constraint.
+
+> +      available instances on a Tegra SoC.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - assigned-clocks
+> +  - assigned-clock-parents
+> +  - "#sound-dai-cells"
+> +
+> +examples:
+> +  - |
+> +    #include<dt-bindings/clock/tegra186-clock.h>
+> +
+> +    tegra_dspk1: dspk@2905000 {
+> +        compatible = "nvidia,tegra186-dspk";
+> +        reg = <0x2905000 0x100>;
+> +        clocks = <&bpmp TEGRA186_CLK_DSPK1>;
+> +        clock-names = "dspk";
+> +        assigned-clocks = <&bpmp TEGRA186_CLK_DSPK1>;
+> +        assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
+> +        assigned-clock-rates = <12288000>;
+> +        #sound-dai-cells = <1>;
+> +        sound-name-prefix = "DSPK1";
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+> new file mode 100644
+> index 0000000..a8a41ba
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+> @@ -0,0 +1,165 @@
+> +# SPAT-License-Identifier: (GPL-2.0)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-admaif.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 ADMAIF Device Tree Bindings
+> +
+> +description: |
+> +  ADMAIF is the interface between ADMA and AHUB. Each ADMA channel
+> +  that sends/receives data to/from AHUB must interface through an
+> +  ADMAIF channel. ADMA channel sending data to AHUB pairs with ADMAIF
+> +  Tx channel and ADMA channel receiving data from AHUB pairs with
+> +  ADMAIF Rx channel.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +  - Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          const: nvidia,tegra210-admaif
+> +      - items:
+> +          const: nvidia,tegra186-admaif
+
+These 2 can be a single enum.
+
+> +      - items:
+> +          - enum:
+> +             - nvidia,tegra194-admaif
+> +          - enum:
+> +             - nvidia,tegra186-admaif
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  dmas: true
+> +
+> +  dma-names: true
+> +
+> +  "#sound-dai-cells":
+> +    const: 1
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: nvidia,tegra210-admaif
+> +
+> +then:
+> +  properties:
+> +    dmas:
+> +      $ref: /schemas/types.yaml#/definitions/phandle-array
+
+Drop. Common properties already have a type.
+
+Plus this is wrong. A '$ref' means all other keywords are ignored (until 
+we move to draft8).
+
+> +      description:
+> +        Two or more DMA channel specifiers, equally divided for Tx and Rx.
+> +      minItems: 2
+> +      maxItems: 20
+> +    dma-names:
+> +      $ref: /schemas/types.yaml#/definitions/string-array
+
+drop
+
+> +      description:
+> +        There must be at least one channel named "tx1" for transmit and "rx1"
+> +        for receive. If more channels need to be specified then "tx1",
+> +        "tx2" ... "tx10" can be used. Similarly for Rx channels as well.
+
+Sounds like constraints.
+
+
+Stopping there. Similar issues on the rest...
