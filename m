@@ -1,70 +1,42 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/9] ASoC: tegra: add support for CIF programming
-Date: Thu, 6 Feb 2020 19:49:55 +0300
-Message-ID: <fb0a96bd-ac3c-0916-0337-0c86de196527@gmail.com>
+Subject: Re: [PATCH v2 3/9] ASoC: tegra: add Tegra210 based DMIC driver
+Date: Thu, 6 Feb 2020 19:53:57 +0300
+Message-ID: <9ada4090-169e-0767-db5d-739f6e621812@gmail.com>
 References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
- <1580380422-3431-3-git-send-email-spujar@nvidia.com>
- <7239e858-16b7-609f-c4e3-8135bee8450b@gmail.com>
- <1305a6db-a492-eec2-111e-ddc801d58d86@nvidia.com>
+ <1580380422-3431-4-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1305a6db-a492-eec2-111e-ddc801d58d86-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1580380422-3431-4-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-06.02.2020 14:56, Sameer Pujar пишет:
-> 
-> 
-> On 2/5/2020 10:32 PM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 30.01.2020 13:33, Sameer Pujar пишет:
->> ...
->>> +#include <linux/module.h>
->>> +#include <linux/regmap.h>
->>> +#include "tegra_cif.h"
->>> +
->>> +void tegra_set_cif(struct regmap *regmap, unsigned int reg,
->>> +                struct tegra_cif_conf *conf)
->>> +{
->>> +     unsigned int value;
->>> +
->>> +     value = (conf->threshold << TEGRA_ACIF_CTRL_FIFO_TH_SHIFT) |
->>> +             ((conf->audio_ch - 1) << TEGRA_ACIF_CTRL_AUDIO_CH_SHIFT) |
->>> +             ((conf->client_ch - 1) <<
->>> TEGRA_ACIF_CTRL_CLIENT_CH_SHIFT) |
->>> +             (conf->audio_bits << TEGRA_ACIF_CTRL_AUDIO_BITS_SHIFT) |
->>> +             (conf->client_bits << TEGRA_ACIF_CTRL_CLIENT_BITS_SHIFT) |
->>> +             (conf->expand << TEGRA_ACIF_CTRL_EXPAND_SHIFT) |
->>> +             (conf->stereo_conv << TEGRA_ACIF_CTRL_STEREO_CONV_SHIFT) |
->>> +             (conf->replicate << TEGRA_ACIF_CTRL_REPLICATE_SHIFT) |
->>> +             (conf->truncate << TEGRA_ACIF_CTRL_TRUNCATE_SHIFT) |
->>> +             (conf->mono_conv << TEGRA_ACIF_CTRL_MONO_CONV_SHIFT);
->>> +
->>> +     regmap_update_bits(regmap, reg, TEGRA_ACIF_UPDATE_MASK, value);
->>> +}
->>> +EXPORT_SYMBOL_GPL(tegra_set_cif);
->> Are you going to add more stuff into this source file later on?
-> 
-> Yes I plan to add Tegra30 and Tegra124 CIF functions in this. Anything
-> related to CIF can be moved here.
->>
->> If not, then it's too much to have a separate driver module just for a
->> single tiny function, you should move it into the header file (make it
->> inline).
-> 
+30.01.2020 13:33, Sameer Pujar пишет:
+...
+> +static const struct reg_default tegra210_dmic_reg_defaults[] = {
+> +	{ TEGRA210_DMIC_TX_INT_MASK, 0x00000001},
+> +	{ TEGRA210_DMIC_TX_CIF_CTRL, 0x00007700},
+> +	{ TEGRA210_DMIC_CG, 0x1},
+> +	{ TEGRA210_DMIC_CTRL, 0x00000301},
+> +	/* Below enables all filters - DCR, LP and SC */
+> +	{ TEGRA210_DMIC_DBG_CTRL, 0xe },
+> +	/* Below as per latest POR value */
+> +	{ TEGRA210_DMIC_DCR_BIQUAD_0_COEF_4, 0x0},
+> +	/* LP filter is configured for pass through and used to apply gain */
+> +	{ TEGRA210_DMIC_LP_BIQUAD_0_COEF_0, 0x00800000},
+> +	{ TEGRA210_DMIC_LP_BIQUAD_0_COEF_1, 0x0},
+> +	{ TEGRA210_DMIC_LP_BIQUAD_0_COEF_2, 0x0},
+> +	{ TEGRA210_DMIC_LP_BIQUAD_0_COEF_3, 0x0},
+> +	{ TEGRA210_DMIC_LP_BIQUAD_0_COEF_4, 0x0},
+> +	{ TEGRA210_DMIC_LP_BIQUAD_1_COEF_0, 0x00800000},
+> +	{ TEGRA210_DMIC_LP_BIQUAD_1_COEF_1, 0x0},
+> +	{ TEGRA210_DMIC_LP_BIQUAD_1_COEF_2, 0x0},
+> +	{ TEGRA210_DMIC_LP_BIQUAD_1_COEF_3, 0x0},
+> +	{ TEGRA210_DMIC_LP_BIQUAD_1_COEF_4, 0x0},
+> +};
 
-You should consider whether it's worth to move anything else to this
-module first, because if the functions are not reusable by the drivers,
-then the movement won't bring any benefits and final result could be
-negative in regards to the code's organization.
-
-I suggest to start clean and easy, without the driver module. You will
-be able to factor code into module later on, once there will a real need
-to do that.
+I'd add a space on the right side of `}`, for consistency with the left.
