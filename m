@@ -1,37 +1,79 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [tip: core/kprobes] arm/ftrace: Use __patch_text()
-Date: Fri, 7 Feb 2020 11:26:56 +0100
-Message-ID: <20200207102656.GS14946@hirez.programming.kicks-ass.net>
-References: <20191113092636.GG4131@hirez.programming.kicks-ass.net>
- <157544841563.21853.2859696202562513480.tip-bot2@tip-bot2>
- <10cbfd9e-2f1f-0a0c-0160-afe6c2ccbebd@gmail.com>
- <20200207101747.GE14914@hirez.programming.kicks-ass.net>
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 2/9] ASoC: tegra: add support for CIF programming
+Date: Fri, 7 Feb 2020 16:33:04 +0530
+Message-ID: <bb2ab8e1-a42c-6a03-1ffa-495565c8e914@nvidia.com>
+References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
+ <1580380422-3431-3-git-send-email-spujar@nvidia.com>
+ <7239e858-16b7-609f-c4e3-8135bee8450b@gmail.com>
+ <1305a6db-a492-eec2-111e-ddc801d58d86@nvidia.com>
+ <fb0a96bd-ac3c-0916-0337-0c86de196527@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20200207101747.GE14914@hirez.programming.kicks-ass.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, x86 <x86@kernel.org>, Denys Vlasenko <dvlasenk@redhat.com>, linux-tip-commits@vger.kernel.org, Brian Gerst <brgerst@gmail.com>, ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org, tip-bot2 for Peter Zijlstra <tip-bot2@linutronix.de>, Jon Hunter <jonathanh@nvidia.com>, rabin@rab.in, Linus Torvalds <torvalds@linux-foundation.org>, Thierry Reding <thierry.reding@gmail.com>, Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, james.morse@arm.com, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, Ingo Molnar <mingo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <fb0a96bd-ac3c-0916-0337-0c86de196527-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-GB
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 11:17:47AM +0100, Peter Zijlstra wrote:
-> Is that crash with FTRACE=y or =n ?
-> 
-> This really isn't making much sense to me, Will, Mark, any clues?
 
-Does the initial patch:
 
-  https://lkml.kernel.org/r/20191111132458.220458362@infradead.org
+On 2/6/2020 10:19 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 06.02.2020 14:56, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>> On 2/5/2020 10:32 PM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 30.01.2020 13:33, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> ...
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/regmap.h>
+>>>> +#include "tegra_cif.h"
+>>>> +
+>>>> +void tegra_set_cif(struct regmap *regmap, unsigned int reg,
+>>>> +                struct tegra_cif_conf *conf)
+>>>> +{
+>>>> +     unsigned int value;
+>>>> +
+>>>> +     value =3D (conf->threshold << TEGRA_ACIF_CTRL_FIFO_TH_SHIFT) |
+>>>> +             ((conf->audio_ch - 1) << TEGRA_ACIF_CTRL_AUDIO_CH_SHIFT)=
+ |
+>>>> +             ((conf->client_ch - 1) <<
+>>>> TEGRA_ACIF_CTRL_CLIENT_CH_SHIFT) |
+>>>> +             (conf->audio_bits << TEGRA_ACIF_CTRL_AUDIO_BITS_SHIFT) |
+>>>> +             (conf->client_bits << TEGRA_ACIF_CTRL_CLIENT_BITS_SHIFT)=
+ |
+>>>> +             (conf->expand << TEGRA_ACIF_CTRL_EXPAND_SHIFT) |
+>>>> +             (conf->stereo_conv << TEGRA_ACIF_CTRL_STEREO_CONV_SHIFT)=
+ |
+>>>> +             (conf->replicate << TEGRA_ACIF_CTRL_REPLICATE_SHIFT) |
+>>>> +             (conf->truncate << TEGRA_ACIF_CTRL_TRUNCATE_SHIFT) |
+>>>> +             (conf->mono_conv << TEGRA_ACIF_CTRL_MONO_CONV_SHIFT);
+>>>> +
+>>>> +     regmap_update_bits(regmap, reg, TEGRA_ACIF_UPDATE_MASK, value);
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(tegra_set_cif);
+>>> Are you going to add more stuff into this source file later on?
+>> Yes I plan to add Tegra30 and Tegra124 CIF functions in this. Anything
+>> related to CIF can be moved here.
+>>> If not, then it's too much to have a separate driver module just for a
+>>> single tiny function, you should move it into the header file (make it
+>>> inline).
+> You should consider whether it's worth to move anything else to this
+> module first, because if the functions are not reusable by the drivers,
+> then the movement won't bring any benefits and final result could be
+> negative in regards to the code's organization.
+>
+> I suggest to start clean and easy, without the driver module. You will
+> be able to factor code into module later on, once there will a real need
+> to do that.
 
-work, or does it crash the exact same?
+Tegra124 can reuse above CIF function. Tegra30 will continue to use the=20
+same function. For consistency all CIF related helpers can be grouped at=20
+one place. But this is for later. I will start with inline function.
