@@ -1,41 +1,34 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 6/9] ASoC: tegra: add Tegra186 based DSPK driver
-Date: Fri, 7 Feb 2020 21:22:51 +0300
-Message-ID: <847f4512-7118-e087-1004-685e476e11d8@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 0/9] add ASoC components for AHUB
+Date: Fri, 7 Feb 2020 21:25:41 +0300
+Message-ID: <40a4d544-7c33-3f28-0b9c-384bc9fe3b53@gmail.com>
 References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
- <1580380422-3431-7-git-send-email-spujar@nvidia.com>
- <f8ed8c4a-af40-44b2-b720-4d3a9b660fda@gmail.com>
- <75a63cb3-7d79-7216-6791-3cec57464cd9@nvidia.com>
+ <fcab0af1-fe84-6028-701b-ab101feaa8de@gmail.com>
+ <d17b2654-a888-8251-468d-12ef1451cd4b@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <75a63cb3-7d79-7216-6791-3cec57464cd9-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <d17b2654-a888-8251-468d-12ef1451cd4b@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sameer Pujar <spujar@nvidia.com>
+Cc: perex@perex.cz, tiwai@suse.com, robh+dt@kernel.org, broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-07.02.2020 14:26, Sameer Pujar пишет:
+07.02.2020 14:30, Sameer Pujar пишет:
 > 
 > 
-> On 2/6/2020 10:45 PM, Dmitry Osipenko wrote:
+> On 2/6/2020 11:06 PM, Dmitry Osipenko wrote:
 >> External email: Use caution opening links or attachments
 >>
 >>
 >> 30.01.2020 13:33, Sameer Pujar пишет:
->>> +static const struct dev_pm_ops tegra186_dspk_pm_ops = {
->>> +     SET_RUNTIME_PM_OPS(tegra186_dspk_runtime_suspend,
->>> +                        tegra186_dspk_runtime_resume, NULL)
->>> +     SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
->>> +                                  pm_runtime_force_resume)
->>> +};
->> Could you please explain why drivers need the "late" system sleep?
+>> ...
+>>>   sound/soc/tegra/Kconfig                            |  56 ++
+>> Probably won't hurt to enable the new drivers in the
+>> arch/arm64/configs/defconfig?
 > 
-> It was done to ensure core drivers are suspended first and defer the
-> codec driver suspend
+> Do you mean, if drivers can be enabled?
 
-Suspend order is opposite to the drivers registration order. If there is
-no real problem with that, then you should use the default suspend
-level. Please don't try to fix a non-existent problems.
+Yes, I mean to enable them in the default kernel configuration.
