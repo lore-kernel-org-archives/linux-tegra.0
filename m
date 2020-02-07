@@ -1,15 +1,15 @@
 From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 4/9] ASoC: tegra: add Tegra210 based I2S driver
-Date: Fri, 7 Feb 2020 16:54:33 +0530
-Message-ID: <eccf7df5-bc24-3fe2-e57c-9f3238a6a66d@nvidia.com>
+Subject: Re: [PATCH v2 6/9] ASoC: tegra: add Tegra186 based DSPK driver
+Date: Fri, 7 Feb 2020 16:56:55 +0530
+Message-ID: <75a63cb3-7d79-7216-6791-3cec57464cd9@nvidia.com>
 References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
- <1580380422-3431-5-git-send-email-spujar@nvidia.com>
- <3a586a6b-5f53-dc44-b9fc-67c633c626ef@gmail.com>
+ <1580380422-3431-7-git-send-email-spujar@nvidia.com>
+ <f8ed8c4a-af40-44b2-b720-4d3a9b660fda@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3a586a6b-5f53-dc44-b9fc-67c633c626ef-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <f8ed8c4a-af40-44b2-b720-4d3a9b660fda-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -18,29 +18,18 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 2/6/2020 10:29 PM, Dmitry Osipenko wrote:
+On 2/6/2020 10:45 PM, Dmitry Osipenko wrote:
 > External email: Use caution opening links or attachments
 >
 >
 > 30.01.2020 13:33, Sameer Pujar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
->> +static const int tegra210_cif_fmt[] =3D {
->> +     0,
->> +     TEGRA_ACIF_BITS_16,
->> +     TEGRA_ACIF_BITS_32,
+>> +static const struct dev_pm_ops tegra186_dspk_pm_ops =3D {
+>> +     SET_RUNTIME_PM_OPS(tegra186_dspk_runtime_suspend,
+>> +                        tegra186_dspk_runtime_resume, NULL)
+>> +     SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+>> +                                  pm_runtime_force_resume)
 >> +};
->> +
->> +static const int tegra210_i2s_bit_fmt[] =3D {
->> +     0,
->> +     I2S_BITS_16,
->> +     I2S_BITS_32,
->> +};
->> +
->> +static const int tegra210_i2s_sample_size[] =3D {
->> +     0,
->> +     16,
->> +     32,
->> +};
-> static const *unsigned* int?
+> Could you please explain why drivers need the "late" system sleep?
 
-will do.
+It was done to ensure core drivers are suspended first and defer the=20
+codec driver suspend
