@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 04/19] dmaengine: tegra-apb: Prevent race conditions on channel's freeing
-Date: Sun,  9 Feb 2020 19:33:41 +0300
-Message-ID: <20200209163356.6439-5-digetx@gmail.com>
+Subject: [PATCH v8 02/19] dmaengine: tegra-apb: Prevent race conditions of tasklet vs free list
+Date: Sun,  9 Feb 2020 19:33:39 +0300
+Message-ID: <20200209163356.6439-3-digetx@gmail.com>
 References: <20200209163356.6439-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,29 +12,31 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan W
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-It's incorrect to check the channel's "busy" state without taking a lock.
-That shouldn't cause any real troubles, nevertheless it's always better
-not to have any race conditions in the code.
+The interrupt handler puts a half-completed DMA descriptor on a free list
+and then schedules tasklet to process bottom half of the descriptor that
+executes client's callback, this creates possibility to pick up the busy
+descriptor from the free list. Thus, let's disallow descriptor's re-use
+until it is fully processed.
 
+Cc: <stable@vger.kernel.org>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index f56881500a23..766c2c9eac8e 100644
+index 319f31d27014..4a750e29bfb5 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1294,8 +1294,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
+@@ -281,7 +281,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
  
- 	dev_dbg(tdc2dev(tdc), "Freeing channel %d\n", tdc->id);
- 
--	if (tdc->busy)
--		tegra_dma_terminate_all(dc);
-+	tegra_dma_terminate_all(dc);
- 
- 	spin_lock_irqsave(&tdc->lock, flags);
- 	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
+ 	/* Do not allocate if desc are waiting for ack */
+ 	list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
+-		if (async_tx_test_ack(&dma_desc->txd)) {
++		if (async_tx_test_ack(&dma_desc->txd) && !dma_desc->cb_count) {
+ 			list_del(&dma_desc->node);
+ 			spin_unlock_irqrestore(&tdc->lock, flags);
+ 			dma_desc->txd.flags = 0;
 -- 
 2.24.0
