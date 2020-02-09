@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v8 16/19] dmaengine: tegra-apb: Remove MODULE_ALIAS
-Date: Sun,  9 Feb 2020 19:33:53 +0300
-Message-ID: <20200209163356.6439-17-digetx@gmail.com>
+Subject: [PATCH v8 14/19] dmaengine: tegra-apb: Add missing of_dma_controller_free
+Date: Sun,  9 Feb 2020 19:33:51 +0300
+Message-ID: <20200209163356.6439-15-digetx@gmail.com>
 References: <20200209163356.6439-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,25 @@ To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod K
 Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra APB DMA driver is an Open Firmware driver, so it uses OF alias
-naming scheme which overrides MODULE_ALIAS, meaning that MODULE_ALIAS
-does nothing and could be removed safely.
+The DMA controller shall be released on driver's removal.
 
 Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/dma/tegra20-apb-dma.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/dma/tegra20-apb-dma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 370c3f2d68a5..7b9d59bbd2c1 100644
+index 7fa0430503d4..370c3f2d68a5 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1666,7 +1666,6 @@ static struct platform_driver tegra_dmac_driver = {
+@@ -1569,6 +1569,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_dma *tdma = platform_get_drvdata(pdev);
  
- module_platform_driver(tegra_dmac_driver);
- 
--MODULE_ALIAS("platform:tegra20-apbdma");
- MODULE_DESCRIPTION("NVIDIA Tegra APB DMA Controller driver");
- MODULE_AUTHOR("Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_LICENSE("GPL v2");
++	of_dma_controller_free(pdev->dev.of_node);
+ 	dma_async_device_unregister(&tdma->dma_dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	clk_unprepare(tdma->dma_clk);
 -- 
 2.24.0
