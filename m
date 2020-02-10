@@ -1,173 +1,179 @@
 From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [Patch V5 03/21] phy: tegra: xusb: Add usb-role-switch support
-Date: Mon, 10 Feb 2020 13:41:29 +0530
-Message-ID: <1581322307-11140-4-git-send-email-nkristam@nvidia.com>
+Subject: [Patch V5 04/21] phy: tegra: xusb: Add usb-phy support
+Date: Mon, 10 Feb 2020 13:41:30 +0530
+Message-ID: <1581322307-11140-5-git-send-email-nkristam@nvidia.com>
 References: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1581322307-11140-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-If usb-role-switch property is present in USB 2 port, register
-usb-role-switch to receive usb role changes.
+For USB 2 ports that has usb-role-switch enabled, add usb-phy for
+corresponding USB 2 phy. USB role changes from role switch are then
+updated to corresponding host and device mode drivers via usb-phy notifier
+block.
 
 Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V5
- - No changes
+V5:
+ - No changes.
 ---
 V4:
- - Updated function name in debug messages as suggested by Thierry.
- - Added owner info to port->dev during USB role switch registration.
----
+ - Addressed nit comments from Thierry.
+ - usb_phy_event is set accoring to received usb_role.
+ - Added Acked-by info.
 V3:
- - Driver aborts if usb-role-switch is not added in dt forotg/peripheral
-   roles.
- - Added role name strings instead of enum values in debug prints.
  - Updated arguments and variable allignments as per Thierry inputs.
 ---
 V2:
- - Removed dev_set_drvdata for port->dev.
- - Added of_platform_depopulate during error handling and driver removal.
+ - Added dev_set_drvdata for port->dev.
 ---
- drivers/phy/tegra/Kconfig |  1 +
- drivers/phy/tegra/xusb.c  | 67 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/tegra/xusb.h  |  3 +++
- 3 files changed, 71 insertions(+)
+ drivers/phy/tegra/xusb.c | 84 ++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/phy/tegra/xusb.h |  2 ++
+ 2 files changed, 86 insertions(+)
 
-diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
-index f9817c3..df07c4d 100644
---- a/drivers/phy/tegra/Kconfig
-+++ b/drivers/phy/tegra/Kconfig
-@@ -2,6 +2,7 @@
- config PHY_TEGRA_XUSB
- 	tristate "NVIDIA Tegra XUSB pad controller driver"
- 	depends on ARCH_TEGRA
-+	select USB_CONN_GPIO
- 	help
- 	  Choose this option if you have an NVIDIA Tegra SoC.
- 
 diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index f98ec39..0fdbaa2 100644
+index 0fdbaa2..2c0e29c 100644
 --- a/drivers/phy/tegra/xusb.c
 +++ b/drivers/phy/tegra/xusb.c
-@@ -541,6 +541,11 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+@@ -532,6 +532,8 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+ 	if (err < 0)
+ 		goto unregister;
  
- static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
- {
-+	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
-+		of_platform_depopulate(&port->dev);
-+		usb_role_switch_unregister(port->usb_role_sw);
-+	}
++	dev_set_drvdata(&port->dev, port);
 +
- 	device_unregister(&port->dev);
- }
+ 	return 0;
  
-@@ -551,11 +556,59 @@ static const char *const modes[] = {
- 	[USB_DR_MODE_OTG] = "otg",
+ unregister:
+@@ -544,6 +546,8 @@ static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
+ 	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
+ 		of_platform_depopulate(&port->dev);
+ 		usb_role_switch_unregister(port->usb_role_sw);
++		cancel_work_sync(&port->usb_phy_work);
++		usb_remove_phy(&port->usb_phy);
+ 	}
+ 
+ 	device_unregister(&port->dev);
+@@ -562,15 +566,70 @@ static const char * const usb_roles[] = {
+ 	[USB_ROLE_DEVICE]	= "device",
  };
  
-+static const char * const usb_roles[] = {
-+	[USB_ROLE_NONE]		= "none",
-+	[USB_ROLE_HOST]		= "host",
-+	[USB_ROLE_DEVICE]	= "device",
-+};
-+
-+static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
++static enum usb_phy_events to_usb_phy_event(enum usb_role role)
 +{
-+	dev_dbg(dev, "%s(): role %s\n", __func__, usb_roles[role]);
++	switch (role) {
++	case USB_ROLE_DEVICE: return USB_EVENT_VBUS;
++	case USB_ROLE_HOST: return USB_EVENT_ID;
++	default: return USB_EVENT_NONE;
++	}
++}
++
++static void tegra_xusb_usb_phy_work(struct work_struct *work)
++{
++	struct tegra_xusb_port *port = container_of(work,
++						    struct tegra_xusb_port,
++						    usb_phy_work);
++	enum usb_role role = usb_role_switch_get_role(port->usb_role_sw);
++
++	usb_phy_set_event(&port->usb_phy, to_usb_phy_event(role));
++
++	dev_dbg(&port->dev, "%s(): calling notifier for role %s\n", __func__,
++		usb_roles[role]);
++
++	atomic_notifier_call_chain(&port->usb_phy.notifier, 0, &port->usb_phy);
++}
++
+ static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
+ {
++	struct tegra_xusb_port *port = dev_get_drvdata(dev);
++
+ 	dev_dbg(dev, "%s(): role %s\n", __func__, usb_roles[role]);
+ 
++	schedule_work(&port->usb_phy_work);
 +
 +	return 0;
 +}
 +
-+static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
++static int tegra_xusb_set_peripheral(struct usb_otg *otg,
++				     struct usb_gadget *gadget)
 +{
-+	struct usb_role_switch_desc role_sx_desc = {
-+		.fwnode = dev_fwnode(&port->dev),
-+		.set = tegra_xusb_role_sw_set,
-+	};
-+	int err = 0;
++	struct tegra_xusb_port *port = container_of(otg->usb_phy,
++						    struct tegra_xusb_port,
++						    usb_phy);
++
++	if (gadget != NULL)
++		schedule_work(&port->usb_phy_work);
++
+ 	return 0;
+ }
+ 
++static int tegra_xusb_set_host(struct usb_otg *otg, struct usb_bus *host)
++{
++	struct tegra_xusb_port *port = container_of(otg->usb_phy,
++						    struct tegra_xusb_port,
++						    usb_phy);
++
++	if (host != NULL)
++		schedule_work(&port->usb_phy_work);
++
++	return 0;
++}
++
++
+ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
+ {
++	struct tegra_xusb_lane *lane;
+ 	struct usb_role_switch_desc role_sx_desc = {
+ 		.fwnode = dev_fwnode(&port->dev),
+ 		.set = tegra_xusb_role_sw_set,
+@@ -597,6 +656,31 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
+ 		return err;
+ 	}
+ 
++	INIT_WORK(&port->usb_phy_work, tegra_xusb_usb_phy_work);
++
++	port->usb_phy.otg = devm_kzalloc(&port->dev, sizeof(struct usb_otg),
++					 GFP_KERNEL);
++	if (!port->usb_phy.otg)
++		return -ENOMEM;
++
++	lane = tegra_xusb_find_lane(port->padctl, "usb2", port->index);
 +
 +	/*
-+	 * USB role switch driver needs parent driver owner info. This is a
-+	 * suboptimal solution. TODO: Need to revisit this in a follow-up patch
-+	 * where an optimal solution is possible with changes to USB role
-+	 * switch driver.
++	 * Assign phy dev to usb-phy dev. Host/device drivers can use phy
++	 * reference to retrieve usb-phy details.
 +	 */
-+	port->dev.driver = devm_kzalloc(&port->dev,
-+					sizeof(struct device_driver),
-+					GFP_KERNEL);
-+	port->dev.driver->owner	 = THIS_MODULE;
++	port->usb_phy.dev = &lane->pad->lanes[port->index]->dev;
++	port->usb_phy.dev->driver = port->padctl->dev->driver;
++	port->usb_phy.otg->usb_phy = &port->usb_phy;
++	port->usb_phy.otg->set_peripheral = tegra_xusb_set_peripheral;
++	port->usb_phy.otg->set_host = tegra_xusb_set_host;
 +
-+	port->usb_role_sw = usb_role_switch_register(&port->dev,
-+						     &role_sx_desc);
-+	if (IS_ERR(port->usb_role_sw)) {
-+		err = PTR_ERR(port->usb_role_sw);
-+		dev_err(&port->dev, "failed to register USB role switch: %d",
-+			err);
++	err = usb_add_phy_dev(&port->usb_phy);
++	if (err < 0) {
++		dev_err(&port->dev, "Failed to add USB PHY: %d\n", err);
 +		return err;
 +	}
 +
-+	/* populate connector entry */
-+	of_platform_populate(port->dev.of_node, NULL, NULL, &port->dev);
-+
-+	return err;
-+}
-+
- static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
- {
- 	struct tegra_xusb_port *port = &usb2->base;
- 	struct device_node *np = port->dev.of_node;
- 	const char *mode;
-+	int err;
+ 	/* populate connector entry */
+ 	of_platform_populate(port->dev.of_node, NULL, NULL, &port->dev);
  
- 	usb2->internal = of_property_read_bool(np, "nvidia,internal");
- 
-@@ -572,6 +625,20 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
- 		usb2->mode = USB_DR_MODE_HOST;
- 	}
- 
-+	/* usb-role-switch property is mandatory for OTG/Peripheral modes */
-+	if (usb2->mode == USB_DR_MODE_PERIPHERAL ||
-+	    usb2->mode == USB_DR_MODE_OTG) {
-+		if (of_property_read_bool(np, "usb-role-switch")) {
-+			err = tegra_xusb_setup_usb_role_switch(port);
-+			if (err < 0)
-+				return err;
-+		} else {
-+			dev_err(&port->dev, "usb-role-switch not found for %s mode",
-+				modes[usb2->mode]);
-+			return -EINVAL;
-+		}
-+	}
-+
- 	usb2->supply = devm_regulator_get(&port->dev, "vbus");
- 	return PTR_ERR_OR_ZERO(usb2->supply);
- }
 diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index da94fcc..9f27899 100644
+index 9f27899..2345657 100644
 --- a/drivers/phy/tegra/xusb.h
 +++ b/drivers/phy/tegra/xusb.h
-@@ -12,6 +12,7 @@
- #include <linux/workqueue.h>
- 
- #include <linux/usb/otg.h>
-+#include <linux/usb/role.h>
- 
- /* legacy entry points for backwards-compatibility */
- int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
-@@ -266,6 +267,8 @@ struct tegra_xusb_port {
- 	struct list_head list;
+@@ -268,6 +268,8 @@ struct tegra_xusb_port {
  	struct device dev;
  
-+	struct usb_role_switch *usb_role_sw;
-+
+ 	struct usb_role_switch *usb_role_sw;
++	struct work_struct usb_phy_work;
++	struct usb_phy usb_phy;
+ 
  	const struct tegra_xusb_port_ops *ops;
  };
- 
 -- 
 2.7.4
