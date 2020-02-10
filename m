@@ -1,53 +1,50 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V5 18/21] arm64: tegra: Enable xudc node on Jetson TX2
-Date: Mon, 10 Feb 2020 13:41:44 +0530
-Message-ID: <1581322307-11140-19-git-send-email-nkristam@nvidia.com>
+From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [Patch V5 20/21] arm64: tegra: update OTG port entries for jetson-nano
+Date: Mon, 10 Feb 2020 13:41:46 +0530
+Message-ID: <1581322307-11140-21-git-send-email-nkristam@nvidia.com>
 References: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1581322307-11140-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable XUSB device mode driver for USB 2-0 slot on Jetson TX2.
+Add usb-role-switch entry to peripheral usb port and add corresponding
+connector details.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V2-V5:
- - No changes in this version
+V5:
+ - New patch in the series.
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index a1dcdb9..d7628f5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -131,7 +131,7 @@
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index 9101d3a..b75f69d 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -505,7 +505,17 @@
+ 		ports {
+ 			usb2-0 {
  				status = "okay";
- 
- 				lanes {
--					usb2-0 {
-+					micro_b: usb2-0 {
- 						nvidia,function = "xusb";
- 						status = "okay";
- 					};
-@@ -213,6 +213,13 @@
- 		phy-names = "usb2-0", "usb2-1", "usb3-0";
- 	};
- 
-+	usb@3550000 {
-+		status = "okay";
+-				mode = "otg";
++				mode = "peripheral";
 +
-+		phys = <&micro_b>;
-+		phy-names = "usb2-0";
-+	};
-+
- 	i2c@c250000 {
- 		/* carrier board ID EEPROM */
- 		eeprom@57 {
++				usb-role-switch;
++				connector {
++					compatible = "usb-b-connector",
++						     "gpio-usb-b-connector";
++					label = "micro-USB";
++					type = "micro";
++					vbus-gpio = <&gpio TEGRA_GPIO(CC, 4)
++						     GPIO_ACTIVE_LOW>;
++				};
+ 			};
+ 
+ 			usb2-1 {
 -- 
 2.7.4
