@@ -1,70 +1,77 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V5 11/21] usb: gadget: tegra-xudc: use phy_set_mode to set/unset device mode
-Date: Mon, 10 Feb 2020 13:41:37 +0530
-Message-ID: <1581322307-11140-12-git-send-email-nkristam@nvidia.com>
+From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [Patch V5 13/21] arm64: tegra: update OTG port entries for jetson-tx1
+Date: Mon, 10 Feb 2020 13:41:39 +0530
+Message-ID: <1581322307-11140-14-git-send-email-nkristam@nvidia.com>
 References: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1581322307-11140-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When device mode is set/uset, VBUS override activity is done via
-exported functions from padctl driver. Use phy_set_mode() instead.
+Populate OTG vbus regulator. Add usb-role-switch entry to USB 2-0 port
+and corresponding connector details.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V5:
- - No changes.
----
-V4:
- - Updated commit message as per comments from Thierry.
----
-V2-V3:
+V2-V5:
  - No changes in this version
 ---
- drivers/usb/gadget/udc/tegra-xudc.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index 7411dd15..a2299ee 100644
---- a/drivers/usb/gadget/udc/tegra-xudc.c
-+++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -612,7 +612,7 @@ static void tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
- 
- 	dev_dbg(xudc->dev, "device mode on\n");
- 
--	tegra_xusb_padctl_set_vbus_override(xudc->padctl, true);
-+	phy_set_mode_ext(xudc->utmi_phy, PHY_MODE_USB_OTG, USB_ROLE_DEVICE);
- }
- 
- static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
-@@ -627,7 +627,7 @@ static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
- 
- 	reinit_completion(&xudc->disconnect_complete);
- 
--	tegra_xusb_padctl_set_vbus_override(xudc->padctl, false);
-+	phy_set_mode_ext(xudc->utmi_phy, PHY_MODE_USB_OTG, USB_ROLE_NONE);
- 
- 	pls = (xudc_readl(xudc, PORTSC) & PORTSC_PLS_MASK) >>
- 		PORTSC_PLS_SHIFT;
-@@ -714,9 +714,11 @@ static void tegra_xudc_plc_reset_work(struct work_struct *work)
- 
- 		if (pls == PORTSC_PLS_INACTIVE) {
- 			dev_info(xudc->dev, "PLS = Inactive. Toggle VBUS\n");
--			tegra_xusb_padctl_set_vbus_override(xudc->padctl,
--							      false);
--			tegra_xusb_padctl_set_vbus_override(xudc->padctl, true);
-+			phy_set_mode_ext(xudc->utmi_phy, PHY_MODE_USB_OTG,
-+					 USB_ROLE_NONE);
-+			phy_set_mode_ext(xudc->utmi_phy, PHY_MODE_USB_OTG,
-+					 USB_ROLE_DEVICE);
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index b009507..18c0610 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1336,7 +1336,6 @@
+ 		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-5}>;
+ 		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3", "usb3-0",
+ 			    "usb3-1";
+-
+ 		dvddio-pex-supply = <&vdd_pex_1v05>;
+ 		hvddio-pex-supply = <&vdd_1v8>;
+ 		avdd-usb-supply = <&vdd_3v3_sys>;
+@@ -1440,7 +1439,19 @@
+ 		ports {
+ 			usb2-0 {
+ 				status = "okay";
++				vbus-supply = <&vdd_usb_vbus_otg>;
+ 				mode = "otg";
 +
- 			xudc->wait_csc = false;
- 		}
- 	}
++				usb-role-switch;
++				connector {
++					compatible = "usb-b-connector",
++						     "gpio-usb-b-connector";
++					label = "micro-USB";
++					type = "micro";
++					vbus-gpio = <&gpio TEGRA_GPIO(Z, 0)
++						     GPIO_ACTIVE_LOW>;
++					id-gpio = <&pmic 0 0>;
++				};
+ 			};
+ 
+ 			usb2-1 {
+@@ -1606,6 +1617,17 @@
+ 			vin-supply = <&vdd_5v0_sys>;
+ 		};
+ 
++		vdd_usb_vbus_otg: regulator@11 {
++			compatible = "regulator-fixed";
++			reg = <9>;
++			regulator-name = "USB_VBUS_EN0";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vdd_5v0_sys>;
++		};
++
+ 		vdd_hdmi: regulator@10 {
+ 			compatible = "regulator-fixed";
+ 			reg = <10>;
 -- 
 2.7.4
