@@ -1,53 +1,80 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH 5.5 000/367] 5.5.3-stable review
-Date: Tue, 11 Feb 2020 04:16:48 -0800
-Message-ID: <20200211121648.GA1856500@kroah.com>
-References: <20200210122423.695146547@linuxfoundation.org>
- <ecd95628-a1c2-307a-1d59-34a37bf425ff@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/9] dt-bindings: sound: tegra: add DT binding for AHUB
+Date: Tue, 11 Feb 2020 12:15:53 -0600
+Message-ID: <CAL_JsqKCzR5DXm_ip-mrrPyeAUcZJRWi_cQEhPd7agp9T_uumA@mail.gmail.com>
+References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
+ <1580380422-3431-2-git-send-email-spujar@nvidia.com> <20200206181045.GA31521@bogus>
+ <af58b6b2-25b2-e968-73c9-d87e1a9e2746@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <ecd95628-a1c2-307a-1d59-34a37bf425ff-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <af58b6b2-25b2-e968-73c9-d87e1a9e2746-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux-ALSA <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 08:05:39PM +0000, Jon Hunter wrote:
-> 
-> On 10/02/2020 12:28, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.5.3 release.
-> > There are 367 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 12 Feb 2020 12:18:57 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.3-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.5:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     40 tests:	40 pass, 0 fail
-> 
-> Linux version:	5.5.3-rc1-g1d9d90e88c9f
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
+On Mon, Feb 10, 2020 at 5:31 AM Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>
+>
+>
+> On 2/6/2020 11:40 PM, Rob Herring wrote:
+> > External email: Use caution opening links or attachments
+> >
+> >
+> > On Thu, Jan 30, 2020 at 04:03:34PM +0530, Sameer Pujar wrote:
+> >> Audio Hub (AHUB) comprises a collection of hardware accelerators for audio
+> >> pre-processing and post-processing and a programmable full crossbar for
+> >> audio routing across these accelerators. This patch adds YAML schema for DT
+> >> binding of AHUB and few of its following components. These devices will be
+> >> registered as ASoC components.
+> >>   * ADMAIF
+> >>   * I2S
+> >>   * DMIC
+> >>   * DSPK
+> >>
+> >> Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> ---
+> >>   .../bindings/sound/nvidia,tegra186-dspk.yaml       | 105 +++++++++++++
+> >>   .../bindings/sound/nvidia,tegra210-admaif.yaml     | 165 +++++++++++++++++++++
+> >>   .../bindings/sound/nvidia,tegra210-ahub.yaml       | 130 ++++++++++++++++
+> >>   .../bindings/sound/nvidia,tegra210-dmic.yaml       | 105 +++++++++++++
+> >>   .../bindings/sound/nvidia,tegra210-i2s.yaml        | 112 ++++++++++++++
+> >>   5 files changed, 617 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
+> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+> >> new file mode 100644
+> >> index 0000000..dc9fef3
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+> >> @@ -0,0 +1,105 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0)
+> . . .
+> >> +    items:
+> >> +      - description: initial module clock rate
+> >> +
+> >> +  "#sound-dai-cells":
+> >> +    const: 1
+> >> +
+> >> +  sound-name-prefix:
+> >> +    $ref: /schemas/types.yaml#/definitions/string
+> >> +    description:
+> >> +      Used as prefix for sink/source names of the component. Must be a
+> >> +      unique string among multiple instances of the same component.
+> >> +      The name can be "DSPK1" or "DSPKx", where x depends on the maximum
+> > Sounds like a constraint.
+>
+> Is there a better way to convey the recommended strings above?
 
-Wonderful, thanks for testing all of these and letting me know.
+pattern: '^DSPK[1-9]$'
 
-greg k-h
+Adjusting the number range regex as you need.
+
+(And $ref will need to be under an 'allOf')
+
+Rob
