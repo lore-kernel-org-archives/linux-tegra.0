@@ -1,53 +1,24 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] amba: tegra-ahb: Replace zero-length array with
- flexible-array member
-Date: Tue, 11 Feb 2020 15:02:13 -0600
-Message-ID: <20200211210213.GA28043@embeddedor>
+From: Julian Smith <juliansmith2015-JGs/UdohzUI@public.gmane.org>
+Subject: Request for catalog and price list 2020
+Date: Tue, 11 Feb 2020 12:56:29 -0500 (EST)
+Message-ID: <20200211175652.454EA4F41E@mail.moenepa.ml>
+Reply-To: juliansmith2015-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Hi,friend,
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+This is Julian Smith and i am purchasing manager from Sinara Group Co.,LTD in Russia.
+We are glad to know about your company from the web and we are interested in your products.
+Could you kindly send us your Latest catalog and price list for our trial order.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertenly introduced[3] to the codebase from now on.
+Thanks and Best Regards,
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/amba/tegra-ahb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
-index b0b688c481e8..e9e5c7bb580c 100644
---- a/drivers/amba/tegra-ahb.c
-+++ b/drivers/amba/tegra-ahb.c
-@@ -129,7 +129,7 @@ static const u32 tegra_ahb_gizmo[] = {
- struct tegra_ahb {
- 	void __iomem	*regs;
- 	struct device	*dev;
--	u32		ctx[0];
-+	u32		ctx[];
- };
- 
- static inline u32 gizmo_readl(struct tegra_ahb *ahb, u32 offset)
--- 
-2.25.0
+Ms. Julian Smith
+Purchasing Manager
+Sinara Group Co.,LTD
