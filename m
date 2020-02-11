@@ -1,80 +1,53 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/9] dt-bindings: sound: tegra: add DT binding for AHUB
-Date: Tue, 11 Feb 2020 12:15:53 -0600
-Message-ID: <CAL_JsqKCzR5DXm_ip-mrrPyeAUcZJRWi_cQEhPd7agp9T_uumA@mail.gmail.com>
-References: <1580380422-3431-1-git-send-email-spujar@nvidia.com>
- <1580380422-3431-2-git-send-email-spujar@nvidia.com> <20200206181045.GA31521@bogus>
- <af58b6b2-25b2-e968-73c9-d87e1a9e2746@nvidia.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] amba: tegra-ahb: Replace zero-length array with
+ flexible-array member
+Date: Tue, 11 Feb 2020 15:02:13 -0600
+Message-ID: <20200211210213.GA28043@embeddedor>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <af58b6b2-25b2-e968-73c9-d87e1a9e2746-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux-ALSA <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 5:31 AM Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
->
->
-> On 2/6/2020 11:40 PM, Rob Herring wrote:
-> > External email: Use caution opening links or attachments
-> >
-> >
-> > On Thu, Jan 30, 2020 at 04:03:34PM +0530, Sameer Pujar wrote:
-> >> Audio Hub (AHUB) comprises a collection of hardware accelerators for audio
-> >> pre-processing and post-processing and a programmable full crossbar for
-> >> audio routing across these accelerators. This patch adds YAML schema for DT
-> >> binding of AHUB and few of its following components. These devices will be
-> >> registered as ASoC components.
-> >>   * ADMAIF
-> >>   * I2S
-> >>   * DMIC
-> >>   * DSPK
-> >>
-> >> Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
-> >>   .../bindings/sound/nvidia,tegra186-dspk.yaml       | 105 +++++++++++++
-> >>   .../bindings/sound/nvidia,tegra210-admaif.yaml     | 165 +++++++++++++++++++++
-> >>   .../bindings/sound/nvidia,tegra210-ahub.yaml       | 130 ++++++++++++++++
-> >>   .../bindings/sound/nvidia,tegra210-dmic.yaml       | 105 +++++++++++++
-> >>   .../bindings/sound/nvidia,tegra210-i2s.yaml        | 112 ++++++++++++++
-> >>   5 files changed, 617 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
-> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
-> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
-> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
-> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
-> >> new file mode 100644
-> >> index 0000000..dc9fef3
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
-> >> @@ -0,0 +1,105 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0)
-> . . .
-> >> +    items:
-> >> +      - description: initial module clock rate
-> >> +
-> >> +  "#sound-dai-cells":
-> >> +    const: 1
-> >> +
-> >> +  sound-name-prefix:
-> >> +    $ref: /schemas/types.yaml#/definitions/string
-> >> +    description:
-> >> +      Used as prefix for sink/source names of the component. Must be a
-> >> +      unique string among multiple instances of the same component.
-> >> +      The name can be "DSPK1" or "DSPKx", where x depends on the maximum
-> > Sounds like a constraint.
->
-> Is there a better way to convey the recommended strings above?
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-pattern: '^DSPK[1-9]$'
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Adjusting the number range regex as you need.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertenly introduced[3] to the codebase from now on.
 
-(And $ref will need to be under an 'allOf')
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-Rob
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/amba/tegra-ahb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+index b0b688c481e8..e9e5c7bb580c 100644
+--- a/drivers/amba/tegra-ahb.c
++++ b/drivers/amba/tegra-ahb.c
+@@ -129,7 +129,7 @@ static const u32 tegra_ahb_gizmo[] = {
+ struct tegra_ahb {
+ 	void __iomem	*regs;
+ 	struct device	*dev;
+-	u32		ctx[0];
++	u32		ctx[];
+ };
+ 
+ static inline u32 gizmo_readl(struct tegra_ahb *ahb, u32 offset)
+-- 
+2.25.0
