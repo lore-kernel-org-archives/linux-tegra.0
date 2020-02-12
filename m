@@ -1,50 +1,106 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v7 06/12] ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
-Date: Thu, 13 Feb 2020 02:46:01 +0300
-Message-ID: <20200212234607.11521-7-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v7 03/12] clk: tegra: cclk: Add helpers for handling PLLX rate changes
+Date: Thu, 13 Feb 2020 02:45:58 +0300
+Message-ID: <20200212234607.11521-4-digetx@gmail.com>
 References: <20200212234607.11521-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200212234607.11521-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200212234607.11521-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, Jasper Korten <jja2000@gmail.com>, David Heidelberg <david@ixit.cz>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The early-resume code shall not switch CPU to PLLX because PLLX
-configuration could be unstable or PLLX should be simply disabled if
-CPU enters into suspend running off some other PLL (the case if CPUFREQ
-driver is active). The actual burst policy is restored by the clock
-drivers.
+CCLK should be re-parented away from PLLX if PLLX's rate is changing.
+The PLLP parent is a common safe CPU parent for all Tegra SoCs, thus
+CCLK will be re-parented to PLLP before PLLX rate-change begins and then
+switched back to PLLX after the rate-change completion. This patch adds
+helper functions which perform CCLK re-parenting, these helpers will be
+utilized by further patches.
 
-Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Jasper Korten <jja2000@gmail.com>
+Tested-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/sleep-tegra30.S | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/clk/tegra/clk-tegra-super-cclk.c | 34 ++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h                  |  2 ++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 02cc6ff96f30..b897d4a433b3 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -398,11 +398,8 @@ _pll_m_c_x_done:
- 	ldr	r4, [r5, #0x1C]		@ restore SCLK_BURST
- 	str	r4, [r0, #CLK_RESET_SCLK_BURST]
+diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/clk-tegra-super-cclk.c
+index 7bcb9e8d0860..a03119c30456 100644
+--- a/drivers/clk/tegra/clk-tegra-super-cclk.c
++++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
+@@ -25,6 +25,9 @@
  
--	cmp	r10, #TEGRA30
--	movweq	r4, #:lower16:((1 << 28) | (0x8))	@ burst policy is PLLX
--	movteq	r4, #:upper16:((1 << 28) | (0x8))
--	movwne	r4, #:lower16:((1 << 28) | (0xe))
--	movtne	r4, #:upper16:((1 << 28) | (0xe))
-+	movw	r4, #:lower16:((1 << 28) | (0x4))	@ burst policy is PLLP
-+	movt	r4, #:upper16:((1 << 28) | (0x4))
- 	str	r4, [r0, #CLK_RESET_CCLK_BURST]
+ #define SUPER_CDIV_ENB		BIT(31)
  
- 	/* Restore pad power state to normal */
++static struct tegra_clk_super_mux *cclk_super;
++static bool cclk_on_pllx;
++
+ static u8 cclk_super_get_parent(struct clk_hw *hw)
+ {
+ 	return tegra_clk_super_ops.get_parent(hw);
+@@ -115,6 +118,9 @@ struct clk *tegra_clk_register_super_cclk(const char *name,
+ 	struct clk_init_data init;
+ 	u32 val;
+ 
++	if (WARN_ON(cclk_super))
++		return ERR_PTR(-EBUSY);
++
+ 	super = kzalloc(sizeof(*super), GFP_KERNEL);
+ 	if (!super)
+ 		return ERR_PTR(-ENOMEM);
+@@ -173,6 +179,34 @@ struct clk *tegra_clk_register_super_cclk(const char *name,
+ 	clk = clk_register(NULL, &super->hw);
+ 	if (IS_ERR(clk))
+ 		kfree(super);
++	else
++		cclk_super = super;
+ 
+ 	return clk;
+ }
++
++int tegra_cclk_pre_pllx_rate_change(void)
++{
++	if (IS_ERR_OR_NULL(cclk_super))
++		return -EINVAL;
++
++	if (cclk_super_get_parent(&cclk_super->hw) == PLLX_INDEX)
++		cclk_on_pllx = true;
++	else
++		cclk_on_pllx = false;
++
++	/*
++	 * CPU needs to be temporarily re-parented away from PLLX if PLLX
++	 * changes its rate. PLLP is a safe parent for CPU on all Tegra SoCs.
++	 */
++	if (cclk_on_pllx)
++		cclk_super_set_parent(&cclk_super->hw, PLLP_INDEX);
++
++	return 0;
++}
++
++void tegra_cclk_post_pllx_rate_change(void)
++{
++	if (cclk_on_pllx)
++		cclk_super_set_parent(&cclk_super->hw, PLLX_INDEX);
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index fa18bef914af..0afe28f4372b 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -771,6 +771,8 @@ struct clk *tegra_clk_register_super_cclk(const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+ 		spinlock_t *lock);
++int tegra_cclk_pre_pllx_rate_change(void);
++void tegra_cclk_post_pllx_rate_change(void);
+ 
+ /**
+  * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
 -- 
 2.24.0
