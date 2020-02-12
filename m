@@ -1,44 +1,64 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v7 10/12] ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
-Date: Thu, 13 Feb 2020 02:46:05 +0300
-Message-ID: <20200212234607.11521-11-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v7 07/12] ARM: tegra: Don't enable PLLX while resuming from LP1 on Tegra30
+Date: Thu, 13 Feb 2020 02:46:02 +0300
+Message-ID: <20200212234607.11521-8-digetx@gmail.com>
 References: <20200212234607.11521-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200212234607.11521-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200212234607.11521-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, Jasper Korten <jja2000@gmail.com>, David Heidelberg <david@ixit.cz>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra20-cpufreq now instantiates cpufreq-dt and Tegra30 is fully
-supported by that driver.
+PLLX may be kept disabled if cpufreq driver selects some other clock for
+CPU. In that case PLLX will be disabled later in the resume path by the
+CLK driver, which also can enable PLLX if necessary by itself. Thus there
+is no need to enable PLLX early during resume. Tegra114/124 CLK drivers do
+not manage PLLX on resume and thus they are left untouched by this patch.
 
-Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Jasper Korten <jja2000@gmail.com>
+Tested-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/tegra.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/mach-tegra/sleep-tegra30.S | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index e512e606eabd..1e3b85923ca3 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -95,6 +95,10 @@ static void __init tegra_dt_init_late(void)
- 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
- 	    of_machine_is_compatible("nvidia,tegra20"))
- 		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
-+
-+	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) &&
-+	    of_machine_is_compatible("nvidia,tegra30"))
-+		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
- }
+diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+index b897d4a433b3..c3946dbd0240 100644
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -361,7 +361,6 @@ _no_pll_iddq_exit:
  
- static const char * const tegra_dt_board_compat[] = {
+ 	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
+ 	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
+-	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
+ 
+ _pll_m_c_x_done:
+ 	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
+@@ -371,12 +370,18 @@ _pll_m_c_x_done:
+ 	pll_locked r1, r0, CLK_RESET_PLLP_BASE
+ 	pll_locked r1, r0, CLK_RESET_PLLA_BASE
+ 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
+-	pll_locked r1, r0, CLK_RESET_PLLX_BASE
+ 
++	/*
++	 * CPUFreq driver could select other PLL for CPU. PLLX will be
++	 * enabled by the Tegra30 CLK driver on an as-needed basis, see
++	 * tegra30_cpu_clock_resume().
++	 */
+ 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
+ 	cmp	r1, #TEGRA30
+ 	beq	1f
+ 
++	pll_locked r1, r0, CLK_RESET_PLLX_BASE
++
+ 	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
+ 	bic	r1, r1, #(1<<31)	@ disable PllP bypass
+ 	str	r1, [r0, #CLK_RESET_PLLP_BASE]
 -- 
 2.24.0
