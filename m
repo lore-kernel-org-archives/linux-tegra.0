@@ -1,64 +1,63 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 07/12] ARM: tegra: Don't enable PLLX while resuming from LP1 on Tegra30
-Date: Thu, 13 Feb 2020 02:46:02 +0300
-Message-ID: <20200212234607.11521-8-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v7 12/12] ARM: dts: tegra30: beaver: Add CPU Operating Performance Points
+Date: Thu, 13 Feb 2020 02:46:07 +0300
+Message-ID: <20200212234607.11521-13-digetx@gmail.com>
 References: <20200212234607.11521-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200212234607.11521-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Nicolas Chauvet <kwizart@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, Jasper Korten <jja2000@gmail.com>, David Heidelberg <david@ixit.cz>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200212234607.11521-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-PLLX may be kept disabled if cpufreq driver selects some other clock for
-CPU. In that case PLLX will be disabled later in the resume path by the
-CLK driver, which also can enable PLLX if necessary by itself. Thus there
-is no need to enable PLLX early during resume. Tegra114/124 CLK drivers do
-not manage PLLX on resume and thus they are left untouched by this patch.
+Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on beaver.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-Tested-by: Jasper Korten <jja2000@gmail.com>
-Tested-by: David Heidelberg <david@ixit.cz>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- arch/arm/mach-tegra/sleep-tegra30.S | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30-beaver.dts | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index b897d4a433b3..c3946dbd0240 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -361,7 +361,6 @@ _no_pll_iddq_exit:
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 6ebb3105af9e..86556622be25 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -2,6 +2,8 @@
+ /dts-v1/;
  
- 	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
- 	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
--	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
+ #include "tegra30.dtsi"
++#include "tegra30-cpu-opp.dtsi"
++#include "tegra30-cpu-opp-microvolt.dtsi"
  
- _pll_m_c_x_done:
- 	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
-@@ -371,12 +370,18 @@ _pll_m_c_x_done:
- 	pll_locked r1, r0, CLK_RESET_PLLP_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLA_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
--	pll_locked r1, r0, CLK_RESET_PLLX_BASE
- 
-+	/*
-+	 * CPUFreq driver could select other PLL for CPU. PLLX will be
-+	 * enabled by the Tegra30 CLK driver on an as-needed basis, see
-+	 * tegra30_cpu_clock_resume().
-+	 */
- 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
- 	cmp	r1, #TEGRA30
- 	beq	1f
- 
-+	pll_locked r1, r0, CLK_RESET_PLLX_BASE
+ / {
+ 	model = "NVIDIA Tegra30 Beaver evaluation board";
+@@ -2124,4 +2126,26 @@ sound {
+ 			 <&tegra_car TEGRA30_CLK_EXTERN1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
 +
- 	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
- 	bic	r1, r1, #(1<<31)	@ disable PllP bypass
- 	str	r1, [r0, #CLK_RESET_PLLP_BASE]
++	cpus {
++		cpu0: cpu@0 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
++		cpu@1 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
++		cpu@2 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
++		cpu@3 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++	};
+ };
 -- 
 2.24.0
