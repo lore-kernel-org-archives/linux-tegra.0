@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 1/5] dt-bindings: Add memory controller bindings
-Date: Thu, 13 Feb 2020 17:39:55 +0100
-Message-ID: <20200213163959.819733-2-thierry.reding@gmail.com>
+Subject: [PATCH v4 4/5] memory: tegra186: Register as memory controller
+Date: Thu, 13 Feb 2020 17:39:58 +0100
+Message-ID: <20200213163959.819733-5-thierry.reding@gmail.com>
 References: <20200213163959.819733-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,73 +14,54 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add the DT schema for memory controller and consumer bindings.
+Registering as memory controller allows other drivers to obtain a
+reference to it. This is mostly useful as a way of ordering probe
+between devices depending on one another.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/memory-controllers/consumer.yaml | 14 ++++++++
- .../memory-controllers/memory-controller.yaml | 32 +++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/consumer.yaml
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/memory-controller.yaml
+ drivers/memory/tegra/tegra186.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/consumer.yaml b/Documentation/devicetree/bindings/memory-controllers/consumer.yaml
-new file mode 100644
-index 000000000000..7b71a6110c51
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/consumer.yaml
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/memory-controllers/consumer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+index 5d53f11ca7b6..8c43702340e8 100644
+--- a/drivers/memory/tegra/tegra186.c
++++ b/drivers/memory/tegra/tegra186.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/io.h>
++#include <linux/memory-controller.h>
+ #include <linux/module.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/of_device.h>
+@@ -32,6 +33,7 @@ struct tegra186_mc_soc {
+ };
+ 
+ struct tegra186_mc {
++	struct memory_controller base;
+ 	struct device *dev;
+ 	void __iomem *regs;
+ 
+@@ -1532,13 +1534,18 @@ static int tegra186_mc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	mc->soc = of_device_get_match_data(&pdev->dev);
++	mc->dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	mc->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(mc->regs))
+ 		return PTR_ERR(mc->regs);
+ 
+-	mc->dev = &pdev->dev;
++	mc->base.dev = &pdev->dev;
 +
-+title: Common memory controller consumer binding
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+
-+properties:
-+  memory-controller:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-diff --git a/Documentation/devicetree/bindings/memory-controllers/memory-controller.yaml b/Documentation/devicetree/bindings/memory-controllers/memory-controller.yaml
-new file mode 100644
-index 000000000000..26257a666c3c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/memory-controller.yaml
-@@ -0,0 +1,32 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/memory-controllers/memory-controller.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Common memory controller binding
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+
-+description: |
-+  The memory access hierarchy in a modern device can be fairly complicated.
-+  Accesses to system memory typically end up going through a memory controller
-+  that ensures that data is stored. Along the way, these accesses can undergo
-+  classification and be prioritized and/or arbitrated.
-+
-+  The interconnect bindings (see ../interconnect/interconnect.txt) provides a
-+  way of describing the data paths between devices and system memory. However
-+  these interconnect paths, in order to be most flexible, describe the paths
-+  in a very fine-grained way, so situations can arise where it is no longer
-+  possible to derive a unique memory parent for any given device.
-+
-+  In order to remove such potential ambiguities, a memory controller can be
-+  specified in device tree. A memory controller specified in this way will be
-+  used as the DMA parent for a given device. The memory controller defines a
-+  memory bus via the "dma-ranges" property, which will in turn be used to set
-+  the range of memory accessible to DMA children of the memory controller.
-+
-+properties:
-+  "#memory-controller-cells": true
-+  dma-ranges: true
++	err = memory_controller_register(&mc->base);
++	if (err < 0)
++		return err;
+ 
+ 	err = of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
+ 	if (err < 0)
 -- 
 2.24.1
