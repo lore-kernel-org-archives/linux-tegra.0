@@ -1,87 +1,51 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFT PATCH v2] xhci: Fix memory leak when caching protocol
- extended capability PSI tables
-Date: Fri, 14 Feb 2020 08:35:01 +0000
-Message-ID: <bbe3378e-04e6-5223-a698-f744d05c9726@nvidia.com>
-References: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
- <20200211150158.14475-1-mathias.nyman@linux.intel.com>
- <f42f7f73-48e7-74ad-2524-2514f29490cb@nvidia.com>
- <0f871a8f-aa96-4684-1d9c-a18c6edfb62f@linux.intel.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4.4 00/91] 4.4.214-stable review
+Date: Fri, 14 Feb 2020 10:25:56 +0000
+Message-ID: <27634e98-7fb3-77ea-1700-cbf57d839933@nvidia.com>
+References: <20200213151821.384445454@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <0f871a8f-aa96-4684-1d9c-a18c6edfb62f@linux.intel.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200213151821.384445454-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Mathias Nyman <mathias.nyman@linux.intel.com>, gregkh@linuxfoundation.org, m.szyprowski@samsung.com
-Cc: pmenzel@molgen.mpg.de, mika.westerberg@linux.intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, stable <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 14/02/2020 07:47, Mathias Nyman wrote:
-> On 13.2.2020 15.33, Jon Hunter wrote:
->>
->> On 11/02/2020 15:01, Mathias Nyman wrote:
->>> xhci driver assumed that xHC controllers have at most one custom
->>> supported speed table (PSI) for all usb 3.x ports.
->>> Memory was allocated for one PSI table under the xhci hub structure.
->>>
->>> Turns out this is not the case, some controllers have a separate
->>> "supported protocol capability" entry with a PSI table for each port.
->>> This means each usb3 roothub port can in theory support different custom
->>> speeds.
->>>
->>> To solve this, cache all supported protocol capabilities with their PSI
->>> tables in an array, and add pointers to the xhci port structure so that
->>> every port points to its capability entry in the array.
->>>
->>> When creating the SuperSpeedPlus USB Device Capability BOS descriptor
->>> for the xhci USB 3.1 roothub we for now will use only data from the
->>> first USB 3.1 capable protocol capability entry in the array.
->>> This could be improved later, this patch focuses resolving
->>> the memory leak.
->>>
->>> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
->>> Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
->>> Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
->>> Cc: stable <stable@vger.kernel.org> # v4.4+
->>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
->>
->>
->> Since next-20200211, we have been observing a regression exiting suspend
->> on our Tegra124 Jetson TK1 board. Bisect is pointing to this commit and
->> reverting on top of -next fixes the problem.
->>
->> On exiting suspend, I am seeing the following ...
->>
->> [   56.216793] tegra-xusb 70090000.usb: Firmware already loaded, Falcon state 0x20
->> [   56.216834] usb usb3: root hub lost power or was reset
->> [   56.216837] usb usb4: root hub lost power or was reset
->> [   56.217760] tegra-xusb 70090000.usb: No ports on the roothubs?
->> [   56.218257] tegra-xusb 70090000.usb: failed to resume XHCI: -12
->> [   56.218299] PM: dpm_run_callback(): platform_pm_resume+0x0/0x40 returns -12
->> [   56.218312] PM: Device 70090000.usb failed to resume: error -12
->> [   56.334366] hub 4-0:1.0: hub_ext_port_status failed (err = -32)
->> [   56.334368] hub 3-0:1.0: hub_ext_port_status failed (err = -32)
->>
->> Let me know if you have any thoughts on this.
->>
->> Cheers
->> Jon
+	
+On 13/02/2020 15:19, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.214 release.
+> There are 91 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> This was an issue with the first version, and should be fixed in the second.
+> Responses should be made by Sat, 15 Feb 2020 15:16:40 +0000.
+> Anything received after that time might be too late.
 > 
-> next-20200211 has the faulty version, 
-> next-20200213 is fixed, reverted first version and applied second.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.214-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
 > 
-> Does next-20200213 work for you?
+> thanks,
+> 
+> greg k-h
 
-Yes it does. Sorry I am an idiot and should have read the changes and
-thread more closely!
+All tests are passing for Tegra ...
 
-Thanks for fixing so quickly.
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
 
+Linux version:	4.4.214-rc1-ga4539ca32651
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
 Jon
 
 -- 
