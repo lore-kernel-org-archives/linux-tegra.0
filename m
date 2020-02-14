@@ -1,45 +1,50 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.5 317/542] soc/tegra: fuse: Correct straps' address for older Tegra124 device trees
-Date: Fri, 14 Feb 2020 10:45:09 -0500
-Message-ID: <20200214154854.6746-317-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [RFC PATCH v3 2/6] clk: tegra: Add Tegra210 CSI TPG clock gate
+Date: Fri, 14 Feb 2020 10:23:24 -0800
+Message-ID: <1581704608-31219-3-git-send-email-skomatineni@nvidia.com>
+References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, helen.koike@collabora.com, sboyd@kernel.org
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+Tegra210 CSI hardware internally uses PLLD for internal test pattern
+generator logic.
 
-[ Upstream commit 2d9ea1934f8ef0dfb862d103389562cc28b4fc03 ]
+PLLD_BASE register in CAR has a bit CSI_CLK_SOURCE to enable PLLD
+out to CSI during TPG mode.
 
-Trying to read out Chip ID before APBMISC registers are mapped won't
-succeed, in a result Tegra124 gets a wrong address for the HW straps
-register if machine uses an old outdated device tree.
+This patch adds this CSI TPG clock gate to Tegra210 clock driver
+to allow Tegra video driver to ungate CSI TPG clock during TPG mode
+and gate during non TPG mode.
 
-Fixes: 297c4f3dcbff ("soc/tegra: fuse: Restrict legacy code to 32-bit ARM")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra210.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index df76778af601e..f8b9c4058926b 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -123,7 +123,7 @@ void __init tegra_init_apbmisc(void)
- 			apbmisc.flags = IORESOURCE_MEM;
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 762cd186f714..e66498b5fd6f 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3041,6 +3041,13 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 					     periph_clk_enb_refcnt);
+ 	clks[TEGRA210_CLK_DSIB] = clk;
  
- 			/* strapping options */
--			if (tegra_get_chip_id() == TEGRA124) {
-+			if (of_machine_is_compatible("nvidia,tegra124")) {
- 				straps.start = 0x7000e864;
- 				straps.end = 0x7000e867;
- 			} else {
++	/* csi_tpg */
++	clk = clk_register_gate(NULL, "csi_tpg", "pll_d_out0",
++				CLK_SET_RATE_PARENT, clk_base + PLLD_BASE,
++				23, 0, &pll_d_lock);
++	clk_register_clkdev(clk, "csi_tpg", NULL);
++	clks[TEGRA210_CLK_CSI_TPG] = clk;
++
+ 	/* la */
+ 	clk = tegra_clk_register_periph("la", la_parents,
+ 			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
 -- 
-2.20.1
+2.7.4
