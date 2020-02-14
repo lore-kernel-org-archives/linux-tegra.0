@@ -1,79 +1,88 @@
-From: Maxime Ripard <maxime-R63rPqgGiG5yDzI6CaY1VQ@public.gmane.org>
-Subject: Re: [PATCH v4 0/5] memory: Introduce memory controller mini-framework
-Date: Fri, 14 Feb 2020 08:46:46 +0100
-Message-ID: <20200214074646.j57uywq27xqrnjrd@gilmour.lan>
-References: <20200213163959.819733-1-thierry.reding@gmail.com>
- <9841eb35-65e4-632a-ceff-bb2ba3b11bb0@arm.com>
- <20200213181555.GB1006063@ulmo>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFT PATCH v2] xhci: Fix memory leak when caching protocol
+ extended capability PSI tables
+Date: Fri, 14 Feb 2020 08:35:01 +0000
+Message-ID: <bbe3378e-04e6-5223-a698-f744d05c9726@nvidia.com>
+References: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
+ <20200211150158.14475-1-mathias.nyman@linux.intel.com>
+ <f42f7f73-48e7-74ad-2524-2514f29490cb@nvidia.com>
+ <0f871a8f-aa96-4684-1d9c-a18c6edfb62f@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cgx7eqxuhae5r2xz"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200213181555.GB1006063@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <0f871a8f-aa96-4684-1d9c-a18c6edfb62f@linux.intel.com>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@linux.intel.com>, gregkh@linuxfoundation.org, m.szyprowski@samsung.com
+Cc: pmenzel@molgen.mpg.de, mika.westerberg@linux.intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, stable <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---cgx7eqxuhae5r2xz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 14/02/2020 07:47, Mathias Nyman wrote:
+> On 13.2.2020 15.33, Jon Hunter wrote:
+>>
+>> On 11/02/2020 15:01, Mathias Nyman wrote:
+>>> xhci driver assumed that xHC controllers have at most one custom
+>>> supported speed table (PSI) for all usb 3.x ports.
+>>> Memory was allocated for one PSI table under the xhci hub structure.
+>>>
+>>> Turns out this is not the case, some controllers have a separate
+>>> "supported protocol capability" entry with a PSI table for each port.
+>>> This means each usb3 roothub port can in theory support different custom
+>>> speeds.
+>>>
+>>> To solve this, cache all supported protocol capabilities with their PSI
+>>> tables in an array, and add pointers to the xhci port structure so that
+>>> every port points to its capability entry in the array.
+>>>
+>>> When creating the SuperSpeedPlus USB Device Capability BOS descriptor
+>>> for the xhci USB 3.1 roothub we for now will use only data from the
+>>> first USB 3.1 capable protocol capability entry in the array.
+>>> This could be improved later, this patch focuses resolving
+>>> the memory leak.
+>>>
+>>> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+>>> Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
+>>> Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
+>>> Cc: stable <stable@vger.kernel.org> # v4.4+
+>>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+>>
+>>
+>> Since next-20200211, we have been observing a regression exiting suspend
+>> on our Tegra124 Jetson TK1 board. Bisect is pointing to this commit and
+>> reverting on top of -next fixes the problem.
+>>
+>> On exiting suspend, I am seeing the following ...
+>>
+>> [   56.216793] tegra-xusb 70090000.usb: Firmware already loaded, Falcon state 0x20
+>> [   56.216834] usb usb3: root hub lost power or was reset
+>> [   56.216837] usb usb4: root hub lost power or was reset
+>> [   56.217760] tegra-xusb 70090000.usb: No ports on the roothubs?
+>> [   56.218257] tegra-xusb 70090000.usb: failed to resume XHCI: -12
+>> [   56.218299] PM: dpm_run_callback(): platform_pm_resume+0x0/0x40 returns -12
+>> [   56.218312] PM: Device 70090000.usb failed to resume: error -12
+>> [   56.334366] hub 4-0:1.0: hub_ext_port_status failed (err = -32)
+>> [   56.334368] hub 3-0:1.0: hub_ext_port_status failed (err = -32)
+>>
+>> Let me know if you have any thoughts on this.
+>>
+>> Cheers
+>> Jon
+> 
+> This was an issue with the first version, and should be fixed in the second.
+> 
+> next-20200211 has the faulty version, 
+> next-20200213 is fixed, reverted first version and applied second.
+> 
+> Does next-20200213 work for you?
 
-On Thu, Feb 13, 2020 at 07:15:55PM +0100, Thierry Reding wrote:
-> On Thu, Feb 13, 2020 at 05:23:23PM +0000, Robin Murphy wrote:
-> > [+ Maxime]
-> >
-> > On 13/02/2020 4:39 pm, Thierry Reding wrote:
-> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >
-> > > Hi,
-> > >
-> > > this set of patches adds a new binding that allows device tree nodes to
-> > > explicitly define the DMA parent for a given device. This supplements
-> > > the existing interconnect bindings and is useful to disambiguate in the
-> > > case where a device has multiple paths to system memory. Beyond that it
-> > > can also be useful when there aren't any actual interconnect paths that
-> > > can be controlled, so in simple cases this can serve as a simpler
-> > > variant of interconnect paths.
-> >
-> > Isn't that still squarely the intent of the "dma-mem" binding, though? i.e.
-> > it's not meant to be a 'real' interconnect provider, but a very simple way
-> > to encode DMA parentage piggybacked onto a more general binding (with the
-> > *option* of being a full-blown interconnect if it wants to, but certainly no
-> > expectation).
->
-> The way that this works on Tegra is that we want to describe multiple
-> interconnect paths. A typical device will have a read and a write memory
-> client, which can be separately "tuned". Both of these paths will target
-> system memory, so they would both technically be "dma-mem" paths. But
-> that would make it impossible to treat them separately elsewhere.
->
-> So we could choose any of them to be the "dma-mem" path, but then we
-> need to be very careful about defining which one that is, so that
-> drivers know how to look them up, which is also not really desirable.
->
-> One other things we could do is to duplicate one of the entries, so that
-> we'd have "read", "write" and "dma-mem" interconnect paths, with
-> "dma-mem" referencing the same path as "read" or "write". That doesn't
-> sound *too* bad, but it's still a bit of a hack. Having an explicit
-> description for this sounds much clearer and less error prone to me.
+Yes it does. Sorry I am an idiot and should have read the changes and
+thread more closely!
 
-IIRC the dmaengine binding allows to do that, so it would make sense
-to me to have the same thing allowed for interconnects.
+Thanks for fixing so quickly.
 
-Maxime
+Jon
 
---cgx7eqxuhae5r2xz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXkZQZgAKCRDj7w1vZxhR
-xZN1AP9xEZt3x9xN7nNg9v862AKEohAW68yHN8slrEdDkuDjLAEArPnr7wS/Ocya
-nXTLIBU8NqQbSLnqTc5obXprpB/YcgM=
-=twP1
------END PGP SIGNATURE-----
-
---cgx7eqxuhae5r2xz--
+-- 
+nvpublic
