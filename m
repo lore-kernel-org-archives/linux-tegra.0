@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 060/100] soc/tegra: fuse: Correct straps' address for older Tegra124 device trees
-Date: Fri, 14 Feb 2020 11:23:44 -0500
-Message-ID: <20200214162425.21071-60-sashal@kernel.org>
-References: <20200214162425.21071-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 084/141] soc/tegra: fuse: Correct straps' address for older Tegra124 device trees
+Date: Fri, 14 Feb 2020 11:20:24 -0500
+Message-ID: <20200214162122.19794-84-sashal@kernel.org>
+References: <20200214162122.19794-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
+In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
 Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
