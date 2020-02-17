@@ -1,70 +1,75 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v8 11/22] ASoC: tegra: Add fallback implementation for
- audio mclk
-Date: Mon, 17 Feb 2020 10:40:20 +0100
-Message-ID: <20200217094020.GM1339021@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v8 12/22] ASoC: tegra: Use device managed resource APIs
+ to get the clock
+Date: Mon, 17 Feb 2020 10:48:26 +0100
+Message-ID: <20200217094826.GN1339021@ulmo>
 References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
+ <1578986667-16041-13-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="egxrhndXibJAPJ54"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="WeDu0lr7bteb/II5"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1578986667-16041-12-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1578986667-16041-13-git-send-email-skomatineni@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, digetx@gmail.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---egxrhndXibJAPJ54
+--WeDu0lr7bteb/II5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 13, 2020 at 11:24:16PM -0800, Sowjanya Komatineni wrote:
-> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
-> are moved to Tegra PMC driver with pmc as clock provider and using pmc
-> clock ids.
+On Mon, Jan 13, 2020 at 11:24:17PM -0800, Sowjanya Komatineni wrote:
+> tegra_asoc_utils uses clk_get() to get the clock and clk_put() to
+> free them explicitly.
 >=20
-> New device tree uses clk_out_1 from pmc clock provider as audio mclk.
+> This patch updates it to use device managed resource API
+> devm_clk_get() so the clock will be automatically released and freed
+> when the device is unbound and removes tegra_asoc_utils_fini() as
+> its no longer needed.
 >=20
-> So, this patch adds implementation for mclk fallback to extern1 when
-> retrieving mclk returns -ENOENT to be backward compatible of new device
-> tree with older kernels.
->=20
-> Fixes: 110147c8c513 ("ASoC: tegra: always use clk_get() in utility code")
->=20
-> Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Sameer Pujar <spujar@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  sound/soc/tegra/tegra_asoc_utils.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
+>  sound/soc/tegra/tegra_alc5632.c    |  7 +------
+>  sound/soc/tegra/tegra_asoc_utils.c | 39 +++++++++-----------------------=
+------
+>  sound/soc/tegra/tegra_asoc_utils.h |  1 -
+>  sound/soc/tegra/tegra_max98090.c   | 22 ++++++---------------
+>  sound/soc/tegra/tegra_rt5640.c     | 22 ++++++---------------
+>  sound/soc/tegra/tegra_rt5677.c     |  7 +------
+>  sound/soc/tegra/tegra_sgtl5000.c   |  7 +------
+>  sound/soc/tegra/tegra_wm8753.c     | 22 ++++++---------------
+>  sound/soc/tegra/tegra_wm8903.c     | 22 ++++++---------------
+>  sound/soc/tegra/tegra_wm9712.c     |  8 ++------
+>  sound/soc/tegra/trimslice.c        | 18 ++++--------------
+>  11 files changed, 42 insertions(+), 133 deletions(-)
 
-There's some inconsistent spelling of PMC in the above, but other than
-that:
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---egxrhndXibJAPJ54
+--WeDu0lr7bteb/II5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KX4EACgkQ3SOs138+
-s6Fv6RAAuWcedNtxcpf1Te+X5nra3uQEEKd0TuNszot0ysatU9RzdUyV2WgKYaNM
-waUPM+ScmUboRJSGBgFEuXcIFs3eYo9JV0ODdkkONJfJqWAVR05lcn/CzpWyLYBt
-9KbqTnNPDMGZ/55wkn6+7VWl0skvgUrNtYsIFIXxAbPFQJle0X2Fv57a/b9XWTc4
-oJw4eEM16pHXkrl60WtbvMvt3Fwjj7juBa8bS707DnVOeMufR/SCJ5R9D2R0kJeI
-YIDbYuyLKzAjdrWc1cnWwYmfJmyAV2TNAH6QFxDPY6gxXErjvuY7xNSxxwlq/QDX
-8HW8FDKJQ7GREF5rAO+AbKfE1iF9jrmkGCKZwDdms3BvVEm2nYx+ZG9L86+kk6NN
-nn03DpAmNXNC3eiNNVgtTpDGokbKvDgjr/84dMdha1MHjqlaE9sovhfQpCpbcIEl
-gvHMRDmdIHhxF8zYn8wmqPSGI2xpvqLWt4gzkQNv79Bq+Q9qhGRRTbVJBg0SawRb
-TooYWT4EpiKvA8RV4rsM3gvCCtqQAD0ekFRSEb39r3Sn65zUmvCttPKyzAZ0ePk9
-/2TjbCQEtPPPjXV3DZYtmCGAODV+kEI/TPiz7t66TCV16oVSWmTFBSvIsrV3FmX1
-+/pfxQbsWJlWHjjsCDQ634jKLFUtefD6kaSrTMq+CbAnfspQTdw=
-=/mBF
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KYWoACgkQ3SOs138+
+s6GK5A/5AcdDL/94+MLDuWQO9rtvoWy8z68TTio7XPaP1m3tLsAWmOrO4b+QPfyp
+pnyHtrq8rW9fRShCzBPf6DM5tAKALPrwoJSBWABqZNr0vupPZKcDCc47xRyz0VSI
+oeT4BuDIjYJtEQyzvUibM3ZsnbKJ0Iis8ZKQZK2b5UjGKt3/mO2sf6HmrXrUjAnn
+fo3FNwCiEvIkBkcyEu7NIZN7BzpHHWKRni7BgBnu+2Tr7cdqKwxkr9Eek52AVFV6
+IBY7pn2JSCd3Yf82RadY/lpLmQ2i5M/ZKFhraMnVGfBYFr73B56sv69XEtv+I3do
+GP7t8FimcM2Nj+yNERQidOxBTT4JaF5lt6lXFEqqz3OYFcJ2GVc/3BNpEwrsL2z+
+s0mv00ALzbrSdifmLYE+JbSBdscZArJDzs4aOJmNEbJUXEo3ucMkRVBwFoGcHtjQ
+4RrvHR/pvGX85Cyhjmo0Z+uNi0Nr/JciRePBelXdjdeLn0LRCaSqntQ90rHnCi3V
+txQ33jOfO2Q5VlEsHBwuRYYzlqhIVVnIW8WII8cPSso91NM99QyI6tY+BLXJqT6p
+kqQw2OzXfCBdO/xCFLGu1LLsVFmFe9HPI+Yh5tde07/OutCgQ0hl5BnEDzg9ywnl
+CLdRdoUHbVoZdwg7R8QzMuUZ+nYTslcYQYYOBW5r/iBkd7u36Co=
+=yMLv
 -----END PGP SIGNATURE-----
 
---egxrhndXibJAPJ54--
+--WeDu0lr7bteb/II5--
