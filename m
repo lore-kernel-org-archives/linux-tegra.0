@@ -1,68 +1,75 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Patch V5 09/21] usb: gadget: tegra-xudc: Remove usb-role-switch
- support
-Date: Mon, 17 Feb 2020 09:38:03 +0100
-Message-ID: <20200217083803.GE1339021@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [Patch V5 03/21] phy: tegra: xusb: Add usb-role-switch support
+Date: Mon, 17 Feb 2020 09:39:19 +0100
+Message-ID: <20200217083919.GF1339021@ulmo>
 References: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
- <1581322307-11140-10-git-send-email-nkristam@nvidia.com>
+ <1581322307-11140-4-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ILuaRSyQpoVaJ1HG"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="sDKAb4OeUBrWWL6P"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1581322307-11140-10-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1581322307-11140-4-git-send-email-nkristam@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nagarjuna Kristam <nkristam@nvidia.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ILuaRSyQpoVaJ1HG
+--sDKAb4OeUBrWWL6P
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 10, 2020 at 01:41:35PM +0530, Nagarjuna Kristam wrote:
-> Padctl driver will act as a central driver to receive USB role changes via
-> usb-role-switch. This is updated to corresponding host, device drivers.
-> Hence remove usb-role-switch from XUDC driver.
+On Mon, Feb 10, 2020 at 01:41:29PM +0530, Nagarjuna Kristam wrote:
+> If usb-role-switch property is present in USB 2 port, register
+> usb-role-switch to receive usb role changes.
 >=20
-> Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
 > ---
-> V5:
->  - Removed select USB_ROLE_SWITCH from Kconfig.
+> V5
+>  - No changes
 > ---
-> V4
->  - Updated device_mode variable with usb_role and remove role variable.
->  - Removed debug log related to always on.
+> V4:
+>  - Updated function name in debug messages as suggested by Thierry.
+>  - Added owner info to port->dev during USB role switch registration.
 > ---
-> V2-V3:
->  - No changes in this version
+> V3:
+>  - Driver aborts if usb-role-switch is not added in dt forotg/peripheral
+>    roles.
+>  - Added role name strings instead of enum values in debug prints.
+>  - Updated arguments and variable allignments as per Thierry inputs.
 > ---
->  drivers/usb/gadget/udc/tegra-xudc.c | 58 +++++--------------------------=
-------
->  2 files changed, 7 insertions(+), 52 deletions(-)
+> V2:
+>  - Removed dev_set_drvdata for port->dev.
+>  - Added of_platform_depopulate during error handling and driver removal.
+> ---
+>  drivers/phy/tegra/Kconfig |  1 +
+>  drivers/phy/tegra/xusb.c  | 67 +++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/phy/tegra/xusb.h  |  3 +++
+>  3 files changed, 71 insertions(+)
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---ILuaRSyQpoVaJ1HG
+--sDKAb4OeUBrWWL6P
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KUOsACgkQ3SOs138+
-s6E+pxAAjij1EkuGeJ/PrsnWFIzGxqC2hx3tx1qdlArC6SLmUZDLHbjf30ywoYAy
-jJekzHYN6r5lYfVE3HmvsJogBCqRowQYp3Ld7rKzOZdDzCIDVBz9v6r0IJkLYfN3
-Autd3TnAI3klGZ9AW37rACQoGVAmcyydsXqdNZKotM9A/ah6/GKZ0qNCPSuZSnZq
-4Nwwa3XENQquhGiMd37CbH7MeVgoH2XUsN9DBtGB0t4NNvqV44WPDmy4ExjBj+M2
-XZ1chP+ul8n8AvZIWf23QV5mpR3otgCYv8+Aer3tleejbBcfRqDZfroXgahqHCA8
-rE1z4ysvSvZMsnh7tl65aFvqxZOxjR5y9ew5qhVqWoqqyKVJJvhNkjteJ2A18BkM
-X70TVdZANAcKldv3Az9ojFToCMWevo9oA9ESqz6aTUMQbExD22D6X7Pw2iTFL7pM
-0njYV/EM/VH/dsVUg/wgfafpjwJORsmAslXpdHSBN6JbVk2W2EngP8ZHU2lZb1pR
-BRwZQCbTA6ZQhwL7tJb2oNpK3/yNz4tgmIkcNCZlNYTekn7QfMWecF98JZKBONYH
-ONTmlT/jdbI+UmOYV7TeJWRlhFilwki0hy58374sFpH91bhuNr7mY9yQWEaonjYc
-FGearA2eaxKwp8q6OjbHFnymA5KRrU9QnAt2tP3+1DTuqKKFOTA=
-=SV9f
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KUTcACgkQ3SOs138+
+s6F3aA//VUmI29LB+vP9qNxFW3wdDt2nGlLmhkG5hic35GoOPaB0U+uYacvlSRUk
+h5/OJsTN0BG9wW9jvQwQjXm4DvI0AZDYwYFTkcRuu7aPX4dEsTOtQKgnlMCQBa/E
+NpZdFP3SRUzkKVzoUyZNE609qHKW0NnLQDSrdNny3JFZt30ECaBdcV3zd8pwi2M7
+jB91dl/qly/FvCO23RDN2ngpj81bsvdNx4kMr89cvmFdLruikjtiF6Bts3FGcBh2
+hy0CBDTHXEwE9npbodqLkZjlFGowuhNfIYZBTWDfS6BIEByGAw53neXzWcOzH3eh
+qMeOswVpT+IadnejojaEDuUA4VwewPRbMqtJeGiBW0FOHzCYorix9N+wSS07fcOu
+9l622lI1Hbq+IstTjQkpUi9/GlwPzhdg3R1pJBW8vA4CGLIOw4bxBlTwrWXN6zFR
+WPI8W5iVHecVO+Y4xChoM9LviqdLa0qnOa1eNy/NkEjw0dtZnMtJQcHLyAiRkpS/
+cDPW5cAMZXrxS+sJ4/8E/6wNUjbNRxewbltwPFZHorfRd+0YBTzYfMTidXb2Nxb6
+Jf1YIaklsGKR6hbxht9g+QGj4t7V8poKdkbyePuOqZ5C42det4eMRgt6sfp4PABx
+RmEmYGOyswayZqYYGxHJp/BZFWfp9S+j0tS34N3GptE0Ik4QNS0=
+=Abay
 -----END PGP SIGNATURE-----
 
---ILuaRSyQpoVaJ1HG--
+--sDKAb4OeUBrWWL6P--
