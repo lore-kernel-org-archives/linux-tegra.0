@@ -1,75 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [Patch V5 03/21] phy: tegra: xusb: Add usb-role-switch support
-Date: Mon, 17 Feb 2020 09:39:19 +0100
-Message-ID: <20200217083919.GF1339021@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Patch V5 10/21] usb: gadget: tegra-xudc: Add usb-phy support
+Date: Mon, 17 Feb 2020 09:40:20 +0100
+Message-ID: <20200217084020.GG1339021@ulmo>
 References: <1581322307-11140-1-git-send-email-nkristam@nvidia.com>
- <1581322307-11140-4-git-send-email-nkristam@nvidia.com>
+ <1581322307-11140-11-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sDKAb4OeUBrWWL6P"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="MrRUTeZlqqNo1jQ9"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1581322307-11140-4-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nagarjuna Kristam <nkristam@nvidia.com>
-Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1581322307-11140-11-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---sDKAb4OeUBrWWL6P
+--MrRUTeZlqqNo1jQ9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 10, 2020 at 01:41:29PM +0530, Nagarjuna Kristam wrote:
-> If usb-role-switch property is present in USB 2 port, register
-> usb-role-switch to receive usb role changes.
+On Mon, Feb 10, 2020 at 01:41:36PM +0530, Nagarjuna Kristam wrote:
+> usb-phy is used to get notified on the USB role changes. Get usb-phy from
+> the UTMI PHY.
 >=20
-> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
-> V5
->  - No changes
+> V5:
+>  - No changes.
 > ---
 > V4:
->  - Updated function name in debug messages as suggested by Thierry.
->  - Added owner info to port->dev during USB role switch registration.
+>  - Addressed nit comments from Thierry.
+>  - usb_phy_event is used to detect device mode instead of usb_role.
 > ---
-> V3:
->  - Driver aborts if usb-role-switch is not added in dt forotg/peripheral
->    roles.
->  - Added role name strings instead of enum values in debug prints.
->  - Updated arguments and variable allignments as per Thierry inputs.
+> V2-V3:
+>  - No changes in this version
 > ---
-> V2:
->  - Removed dev_set_drvdata for port->dev.
->  - Added of_platform_depopulate during error handling and driver removal.
-> ---
->  drivers/phy/tegra/Kconfig |  1 +
->  drivers/phy/tegra/xusb.c  | 67 +++++++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/phy/tegra/xusb.h  |  3 +++
->  3 files changed, 71 insertions(+)
+>  drivers/usb/gadget/udc/tegra-xudc.c | 48 +++++++++++++++++++++++++++++++=
++++---
+>  1 file changed, 45 insertions(+), 3 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---sDKAb4OeUBrWWL6P
+--MrRUTeZlqqNo1jQ9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KUTcACgkQ3SOs138+
-s6F3aA//VUmI29LB+vP9qNxFW3wdDt2nGlLmhkG5hic35GoOPaB0U+uYacvlSRUk
-h5/OJsTN0BG9wW9jvQwQjXm4DvI0AZDYwYFTkcRuu7aPX4dEsTOtQKgnlMCQBa/E
-NpZdFP3SRUzkKVzoUyZNE609qHKW0NnLQDSrdNny3JFZt30ECaBdcV3zd8pwi2M7
-jB91dl/qly/FvCO23RDN2ngpj81bsvdNx4kMr89cvmFdLruikjtiF6Bts3FGcBh2
-hy0CBDTHXEwE9npbodqLkZjlFGowuhNfIYZBTWDfS6BIEByGAw53neXzWcOzH3eh
-qMeOswVpT+IadnejojaEDuUA4VwewPRbMqtJeGiBW0FOHzCYorix9N+wSS07fcOu
-9l622lI1Hbq+IstTjQkpUi9/GlwPzhdg3R1pJBW8vA4CGLIOw4bxBlTwrWXN6zFR
-WPI8W5iVHecVO+Y4xChoM9LviqdLa0qnOa1eNy/NkEjw0dtZnMtJQcHLyAiRkpS/
-cDPW5cAMZXrxS+sJ4/8E/6wNUjbNRxewbltwPFZHorfRd+0YBTzYfMTidXb2Nxb6
-Jf1YIaklsGKR6hbxht9g+QGj4t7V8poKdkbyePuOqZ5C42det4eMRgt6sfp4PABx
-RmEmYGOyswayZqYYGxHJp/BZFWfp9S+j0tS34N3GptE0Ik4QNS0=
-=Abay
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KUXQACgkQ3SOs138+
+s6He/A/+NvmNzVycAfLDcJJgsSNYD4OlUiIZfaPP1qgjhMSdtb0HekLzdiKabsPz
+jp9VHDewmnEGM8Dg89vurRKJoAAMmVBTO9SrBAWcEp3ld+dLguxLG+SVpL4Ji+9S
+tl8zybuUHDNmxZLVQ1Haxmba0KaI8OuaN4bDDB73WPCXS8I753N18QN/eaKuE05+
+XjjhTmtcgmnWOyxZOf7x4V695kmFmUwckoCaSLGE+65Cdl9xifi5krBl6NfhfNKO
+O5AcGRmBLmtVdw6AjekQJJ9ZT7PTlBYaZnwUso2GKNOSNQWzk9nNqSZn/eeXpUgD
+1di8H0Fta77xSGiTO0dG4xln2B1sktjscc1Kw0xkDZLxeWS2neN3TvjYGuXzROhe
+QAbpGEG5BvA/K+7/wHP9jFEfXUh+MEzHyTpsUju55jgk7LzfL7jUfMXdu8iVcnax
+oDKdtyC+x8ugUFr3Uz/9TorjGTbKMnBV1li8CqIwMpFZBCNqnuN49PMJPkrjgCB2
+o6OTtuYxtadBB2qAoO/8LIM/0c0je7yy7it6LjPCp55ELZmjaajeBWrEjDPvXNPZ
+Fm8NkfoG7mtVCSCUQtGv/0rktNh9rCbg57JRmLPIW5yRlQL0jrVUCPAfEqD38X9s
+intiE4YDqHbL8m/1RpNiM3nWvM+kNrC0TBNSSrEIwOQtIyAVEK4=
+=gtx2
 -----END PGP SIGNATURE-----
 
---sDKAb4OeUBrWWL6P--
+--MrRUTeZlqqNo1jQ9--
