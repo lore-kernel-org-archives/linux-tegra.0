@@ -1,48 +1,43 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v8 11/22] ASoC: tegra: Add fallback implementation for
- audio mclk
-Date: Mon, 17 Feb 2020 17:51:44 +0300
-Message-ID: <072c8e53-58fa-4e14-2106-00a5226a230f@gmail.com>
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
- <20200217094020.GM1339021@ulmo>
+Subject: Re: [PATCH v8 18/19] dmaengine: tegra-apb: Remove unused function
+ argument
+Date: Mon, 17 Feb 2020 17:56:37 +0300
+Message-ID: <1d10367e-4e1c-3d25-2e80-e601b34a01d7@gmail.com>
+References: <20200209163356.6439-1-digetx@gmail.com>
+ <20200209163356.6439-19-digetx@gmail.com>
+ <d9a1bd6a-bd26-36ad-7d94-57801a2aa616@nvidia.com>
+ <392ccaf4-3cc9-e8af-130c-fa068cc56527@gmail.com>
+ <f9ea6be9-71d6-0119-eade-fe06bbbcbd5b@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200217094020.GM1339021@ulmo>
+In-Reply-To: <f9ea6be9-71d6-0119-eade-fe06bbbcbd5b-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-17.02.2020 12:40, Thierry Reding пишет:
-> On Mon, Jan 13, 2020 at 11:24:16PM -0800, Sowjanya Komatineni wrote:
->> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
->> are moved to Tegra PMC driver with pmc as clock provider and using pmc
->> clock ids.
->>
->> New device tree uses clk_out_1 from pmc clock provider as audio mclk.
->>
->> So, this patch adds implementation for mclk fallback to extern1 when
->> retrieving mclk returns -ENOENT to be backward compatible of new device
->> tree with older kernels.
->>
->> Fixes: 110147c8c513 ("ASoC: tegra: always use clk_get() in utility code")
->>
->> Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  sound/soc/tegra/tegra_asoc_utils.c | 18 +++++++++++++++---
->>  1 file changed, 15 insertions(+), 3 deletions(-)
+17.02.2020 14:15, Jon Hunter пишет:
 > 
-> There's some inconsistent spelling of PMC in the above, but other than
-> that:
+> On 14/02/2020 16:54, Dmitry Osipenko wrote:
+>> 14.02.2020 17:16, Jon Hunter пишет:
+>> ...
+>>> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> Thanks!
+>>> Jon
+>>>
+>>
+>> Jon, thank you very much!
+>>
+>> In the patchwork I see that you acked all the patches, but my Gmail
+>> missed 2 of 4 emails, maybe the missing emails will arrive a day later :)
 > 
-> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
+> Yes all should be ACK'ed now. I did receive an email from our mail
+> server saying that there was an issue and the message was delayed. So
+> not sure if you ever got it.
 
-Seems you missed my point.. this patch doesn't work at all, and thus, it
-should be dropped.
+The emails arrived a day later, just like it was predicted :) Thank you
+very much for reviewing the patches!
