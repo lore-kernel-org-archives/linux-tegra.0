@@ -1,139 +1,36 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [RFC PATCH v3 3/6] dt-binding: tegra: Add VI and CSI bindings
-Date: Tue, 18 Feb 2020 19:28:36 -0800
-Message-ID: <5948bf42-9be2-8cf0-1c28-80f69b708c65@nvidia.com>
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-4-git-send-email-skomatineni@nvidia.com>
- <20200218231503.GA19099@bogus>
+From: ''Michael weirsky'' <dushkin-nE6b8zJojf2FtgOYpeylmQ@public.gmane.org>
+Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Euro?=
+Date: Tue, 18 Feb 2020 21:59:28 +0200
+Message-ID: <20200218195938.A2A864FD5A9@zmail.nuczu.edu.ua>
+Reply-To: mikeweirskyspende-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20200218231503.GA19099@bogus>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, helen.koike@collabora.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Description: Mail message body
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Recipients <dushkin-nE6b8zJojf2FtgOYpeylmQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Lieber Freund,
 
-On 2/18/20 3:15 PM, Rob Herring wrote:
-> External email: Use caution opening links or attachments
->
->
-> On Fri, Feb 14, 2020 at 10:23:25AM -0800, Sowjanya Komatineni wrote:
->> Tegra contains VI controller which can support up to 6 MIPI CSI
->> camera sensors.
->>
->> Each Tegra CSI port from CSI unit can be one-to-one mapper to
->> VI channel and can capture from an external camera sensor or
->> from built-in test pattern generator.
->>
->> This patch adds dt-bindings for Tegra VI and CSI.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   .../display/tegra/nvidia,tegra20-host1x.txt        | 55 ++++++++++++++++++----
->>   1 file changed, 47 insertions(+), 8 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->> index 9999255ac5b6..3d0ed540a646 100644
->> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->> @@ -40,14 +40,24 @@ of the following host1x client modules:
->>
->>     Required properties:
->>     - compatible: "nvidia,tegra<chip>-vi"
->> -  - reg: Physical base address and length of the controller's registers.
->> +  - reg: Physical base address and length of the controller registers.
->>     - interrupts: The interrupt outputs from the controller.
->> -  - clocks: Must contain one entry, for the module clock.
->> +  - clocks: Must contain an entry for the module clock "vi"
->>       See ../clocks/clock-bindings.txt for details.
->>     - resets: Must contain an entry for each entry in reset-names.
->>       See ../reset/reset.txt for details.
->> -  - reset-names: Must include the following entries:
->> -    - vi
->> +  - reset-names: Must include the entry "vi"
->> +
->> +  Tegra210 has CSI part of VI sharing same host interface and register
->> +  space. So, VI device node should have CSI child node.
->> +
->> +  - csi: mipi csi interface to vi
->> +
->> +    Required properties:
->> +    - compatible: "nvidia,tegra<chip>-csi"
->> +    - reg: Physical base address and length of the controller registers.
->> +    - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
->> +      See ../clocks/clock-bindings.txt for details.
->>
->>   - epp: encoder pre-processor
->>
->> @@ -310,12 +320,41 @@ Example:
->>                };
->>
->>                vi {
->> -                     compatible = "nvidia,tegra20-vi";
->> -                     reg = <0x54080000 0x00040000>;
->> +                     compatible = "nvidia,tegra210-vi";
->> +                     reg = <0x0 0x54080000 0x0 0x700>;
->>                        interrupts = <0 69 0x04>;
->> -                     clocks = <&tegra_car TEGRA20_CLK_VI>;
->> -                     resets = <&tegra_car 100>;
->> +                     assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
->> +                     assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
->> +                     clocks = <&tegra_car TEGRA210_CLK_VI>;
->> +                     clock-names = "vi";
->> +                     resets = <&tegra_car 20>;
->>                        reset-names = "vi";
->> +
->> +                     #address-cells = <2>;
->> +                     #size-cells = <2>;
->> +
->> +                     ranges = <0x0 0x54080808 0x0 0x54080808 0x0 0x2000>;
->> +
->> +                     csi@0x54080838 {
-> Drop '0x'
-Will fix in v4
->
->> +                             compatible = "nvidia,tegra210-csi";
->> +                             reg = <0x0 0x54080838 0x0 0x2000>;
-> Kind of odd that this address and ranges address are not the same. And
-> also wrong that the size here exceeds the bounds of ranges.
->
-> Also, best practice is to make the child address 0 or relative to the
-> parent.
+Ich bin Herr Mike Weirsky, New Jersey, Vereinigte Staaten von Amerika, der =
+Mega-Gewinner von $ 273million In Mega Millions Jackpot, spende ich an 5 zu=
+f=C3=A4llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Ma=
+il nach einem Spinball ausgew=C3=A4hlt.Ich habe den gr=C3=B6=C3=9Ften Teil =
+meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=A4tigkeitsorganisationen =
+und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die =
+Summe von =E2=82=AC 2.000.000,00 an Sie als eine der ausgew=C3=A4hlten 5 zu=
+ spenden, um meine Gewinne zu =C3=BCberpr=C3=BCfen.
+Das ist dein Spendencode: [MW530342019]
+www.youtube.com/watch?v=3Dun8yRTmrYMY
 
-Actual CSI starts at offset 0x808 but we don't use couple of registers 
-at offset 0x808.
+Antworten Sie mit dem SPENDE-CODE an diese =
 
-Will update ranges in v4 to start from 0x838 offset and will make child 
-address relative to parent.
 
->
->> +                             status = "disabled";
-> Don't show status in examples.
-Will remove.
->
->> +                             assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
->> +                                               <&tegra_car TEGRA210_CLK_CILCD>,
->> +                                               <&tegra_car TEGRA210_CLK_CILE>;
->> +                             assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
->> +                                                      <&tegra_car TEGRA210_CLK_PLL_P>,
->> +                                                      <&tegra_car TEGRA210_CLK_PLL_P>;
->> +                             assigned-clock-rates = <102000000>,
->> +                                                    <102000000>,
->> +                                                    <102000000>;
->> +                             clocks = <&tegra_car TEGRA210_CLK_CSI>,
->> +                                      <&tegra_car TEGRA210_CLK_CILAB>,
->> +                                      <&tegra_car TEGRA210_CLK_CILCD>,
->> +                                      <&tegra_car TEGRA210_CLK_CILE>;
->> +                             clock-names = "csi", "cilab", "cilcd", "cile";
->> +                     };
->> +
->>                };
->>
->>                epp {
->> --
->> 2.7.4
->>
+E-Mail:mikeweirskyspende-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+
+Ich hoffe, Sie und Ihre Familie gl=C3=BCcklich zu machen.
+
+Gr=C3=BC=C3=9Fe
+Herr Mike Weirsky
