@@ -1,49 +1,167 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v9 00/17] Consolidate and improve NVIDIA Tegra CPUIDLE
- driver(s)
-Date: Tue, 18 Feb 2020 17:56:55 +0300
-Message-ID: <234f1d75-d86a-58b4-29d6-c0497498e85c@gmail.com>
-References: <20200212235134.12638-1-digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Wambui Karuga <wambui.karugax-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drm/tegra: remove checks for debugfs functions return value
+Date: Tue, 18 Feb 2020 18:55:33 +0300
+Message-ID: <20200218155534.15504-1-wambui.karugax@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200212235134.12638-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-13.02.2020 02:51, Dmitry Osipenko пишет:
-> Hello,
-> 
-> This series does the following:
-> 
->   1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
->      into common drivers/cpuidle/ directory.
-> 
->   2. Enables CPU cluster power-down idling state on Tegra30.
-> 
-> In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
-> and of the Tegra's arch code in general. Please apply, thanks!
-> 
-> !!!WARNING!!! This series was made on top of the cpufreq patches [1]. But it
->               should be fine as long as Thierry Reding would pick up this and
->               the cpufreq patchsets via the Tegra tree, otherwise there will
->               one minor merge-conflict.
-> 
-> [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=158206
-...
->   cpuidle: Refactor and move out NVIDIA Tegra20 driver into
->     drivers/cpuidle
->   cpuidle: tegra: Squash Tegra30 driver into the common driver
->   cpuidle: tegra: Squash Tegra114 driver into the common driver
->   cpuidle: tegra: Disable CC6 state if LP2 unavailable
+Remove the return checks and error handling of the
+drm_debugfs_create_files function from various debugfs init functions in
+drm/tegra and have them return 0 directly.
 
-Hello Rafael and Daniel,
+Signed-off-by: Wambui Karuga <wambui.karugax-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dc.c   | 11 +----------
+ drivers/gpu/drm/tegra/drm.c  |  7 ++++---
+ drivers/gpu/drm/tegra/dsi.c  | 11 +----------
+ drivers/gpu/drm/tegra/hdmi.c | 11 +----------
+ drivers/gpu/drm/tegra/sor.c  | 11 +----------
+ 5 files changed, 8 insertions(+), 43 deletions(-)
 
-Could you please let us know whether you're fine with the above patches
-by giving an ACK to them? My understanding is that Thierry can't take
-the cpuidle patches through the Tegra tree without yours ACK. Thanks in
-advance!
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 7c70fd31a4c2..e70d58b21964 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -1496,7 +1496,6 @@ static int tegra_dc_late_register(struct drm_crtc *crtc)
+ 	struct drm_minor *minor = crtc->dev->primary;
+ 	struct dentry *root;
+ 	struct tegra_dc *dc = to_tegra_dc(crtc);
+-	int err;
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 	root = crtc->debugfs_entry;
+@@ -1512,17 +1511,9 @@ static int tegra_dc_late_register(struct drm_crtc *crtc)
+ 	for (i = 0; i < count; i++)
+ 		dc->debugfs_files[i].data = dc;
+ 
+-	err = drm_debugfs_create_files(dc->debugfs_files, count, root, minor);
+-	if (err < 0)
+-		goto free;
++	drm_debugfs_create_files(dc->debugfs_files, count, root, minor);
+ 
+ 	return 0;
+-
+-free:
+-	kfree(dc->debugfs_files);
+-	dc->debugfs_files = NULL;
+-
+-	return err;
+ }
+ 
+ static void tegra_dc_early_unregister(struct drm_crtc *crtc)
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index bd268028fb3d..6ec224f3d824 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -841,9 +841,10 @@ static struct drm_info_list tegra_debugfs_list[] = {
+ 
+ static int tegra_debugfs_init(struct drm_minor *minor)
+ {
+-	return drm_debugfs_create_files(tegra_debugfs_list,
+-					ARRAY_SIZE(tegra_debugfs_list),
+-					minor->debugfs_root, minor);
++	drm_debugfs_create_files(tegra_debugfs_list,
++				 ARRAY_SIZE(tegra_debugfs_list),
++				 minor->debugfs_root, minor);
++	return 0;
+ }
+ #endif
+ 
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index 88b9d64c77bf..30626fcf61eb 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -234,7 +234,6 @@ static int tegra_dsi_late_register(struct drm_connector *connector)
+ 	struct drm_minor *minor = connector->dev->primary;
+ 	struct dentry *root = connector->debugfs_entry;
+ 	struct tegra_dsi *dsi = to_dsi(output);
+-	int err;
+ 
+ 	dsi->debugfs_files = kmemdup(debugfs_files, sizeof(debugfs_files),
+ 				     GFP_KERNEL);
+@@ -244,17 +243,9 @@ static int tegra_dsi_late_register(struct drm_connector *connector)
+ 	for (i = 0; i < count; i++)
+ 		dsi->debugfs_files[i].data = dsi;
+ 
+-	err = drm_debugfs_create_files(dsi->debugfs_files, count, root, minor);
+-	if (err < 0)
+-		goto free;
++	drm_debugfs_create_files(dsi->debugfs_files, count, root, minor);
+ 
+ 	return 0;
+-
+-free:
+-	kfree(dsi->debugfs_files);
+-	dsi->debugfs_files = NULL;
+-
+-	return err;
+ }
+ 
+ static void tegra_dsi_early_unregister(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 6f117628f257..d7799d13d8ad 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -1064,7 +1064,6 @@ static int tegra_hdmi_late_register(struct drm_connector *connector)
+ 	struct drm_minor *minor = connector->dev->primary;
+ 	struct dentry *root = connector->debugfs_entry;
+ 	struct tegra_hdmi *hdmi = to_hdmi(output);
+-	int err;
+ 
+ 	hdmi->debugfs_files = kmemdup(debugfs_files, sizeof(debugfs_files),
+ 				      GFP_KERNEL);
+@@ -1074,17 +1073,9 @@ static int tegra_hdmi_late_register(struct drm_connector *connector)
+ 	for (i = 0; i < count; i++)
+ 		hdmi->debugfs_files[i].data = hdmi;
+ 
+-	err = drm_debugfs_create_files(hdmi->debugfs_files, count, root, minor);
+-	if (err < 0)
+-		goto free;
++	drm_debugfs_create_files(hdmi->debugfs_files, count, root, minor);
+ 
+ 	return 0;
+-
+-free:
+-	kfree(hdmi->debugfs_files);
+-	hdmi->debugfs_files = NULL;
+-
+-	return err;
+ }
+ 
+ static void tegra_hdmi_early_unregister(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 81226a4953c1..47c1d133069a 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -1687,7 +1687,6 @@ static int tegra_sor_late_register(struct drm_connector *connector)
+ 	struct drm_minor *minor = connector->dev->primary;
+ 	struct dentry *root = connector->debugfs_entry;
+ 	struct tegra_sor *sor = to_sor(output);
+-	int err;
+ 
+ 	sor->debugfs_files = kmemdup(debugfs_files, sizeof(debugfs_files),
+ 				     GFP_KERNEL);
+@@ -1697,17 +1696,9 @@ static int tegra_sor_late_register(struct drm_connector *connector)
+ 	for (i = 0; i < count; i++)
+ 		sor->debugfs_files[i].data = sor;
+ 
+-	err = drm_debugfs_create_files(sor->debugfs_files, count, root, minor);
+-	if (err < 0)
+-		goto free;
++	drm_debugfs_create_files(sor->debugfs_files, count, root, minor);
+ 
+ 	return 0;
+-
+-free:
+-	kfree(sor->debugfs_files);
+-	sor->debugfs_files = NULL;
+-
+-	return err;
+ }
+ 
+ static void tegra_sor_early_unregister(struct drm_connector *connector)
+-- 
+2.17.1
