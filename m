@@ -1,54 +1,62 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH v3 0/7] ASoC: soc-pcm cleanup step2
-Date: Wed, 19 Feb 2020 17:03:55 +0000
-Message-ID: <20200219170355.GG4488@sirena.org.uk>
-References: <87d0anceze.wl-kuninori.morimoto.gx@renesas.com>
- <5d19876d-86a4-a461-f47a-68c7ba1f46ac@gmail.com>
- <d60ccad5-9c52-551b-ae22-2815ab768a59@linux.intel.com>
- <alpine.DEB.2.21.2002191900170.2957@eliteleevi.tm.intel.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] partitions/efi: Add 'gpt_sector' kernel cmdline
+ parameter
+Date: Wed, 19 Feb 2020 20:44:40 +0300
+Message-ID: <0c0d0cff-7b20-f777-8724-0d2b07e60e3d@gmail.com>
+References: <20200219162339.16192-1-digetx@gmail.com>
+ <20200219162738.GA10644@infradead.org>
+ <f9e41108-7811-0deb-6977-be0f60e23b52@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="c7hkjup166d4FzgN"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2002191900170.2957-cz35TXaqH4VICrp9aNEsHNh3ngVCH38I@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kai Vehmanen <kai.vehmanen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-ALSA <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f9e41108-7811-0deb-6977-be0f60e23b52@wwwdotorg.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Christoph Hellwig <hch@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Davidlohr Bueso <dave@stgolabs.net>, Colin Cross <ccross@android.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, linux-efi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+19.02.2020 19:59, Stephen Warren пишет:
+> On 2/19/20 9:27 AM, Christoph Hellwig wrote:
+>> On Wed, Feb 19, 2020 at 07:23:39PM +0300, Dmitry Osipenko wrote:
+>>> The gpt_sector=<sector> causes the GPT partition search to look at the
+>>> specified sector for a valid GPT header if the GPT is not found at the
+>>> beginning or the end of block device.
+>>>
+>>> In particular this is needed for NVIDIA Tegra consumer-grade Android
+>>> devices in order to make them usable with the upstream kernel because
+>>> these devices use a proprietary / closed-source partition table format
+>>> for the EMMC and it's impossible to change the partition's format.
+>>> Luckily
+>>> there is a GPT table in addition to the proprietary table, which is
+>>> placed
+>>> in uncommon location of the EMMC storage and bootloader passes the
+>>> location to kernel using "gpt gpt_sector=<sector>" cmdline parameters.
+>>>
+>>> This patch is based on the original work done by Colin Cross for the
+>>> downstream Android kernel.
+>>
+>> I don't think a magic command line is the way to go.  The best would be
+>> to reverse-engineer the proprietary partition table format.  If that is
+>> too hard we can at least key off the odd GPT location based of it's
+>> magic number.
+> 
+> I thought that the backup GPT was always present in the standard
+> location; it's just the primary GPT that's in an odd location. So, this
+> kernel parameter just forces the kernel to look first for the primary
+> GPT in the unusual location, thus avoiding an error message when that's
+> not there, and the system falls back to the backup GPT.
+> 
+> Or, do I misremember the layout, or the kernel's behaviour if primary
+> GPT is missing?
 
---c7hkjup166d4FzgN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The backup GPT not always presents in the standard location. For example
+Tegra30 ASUS Google Nexus 7 has a backup GPT in the proper location and
+this is what KMSG prints:
 
-On Wed, Feb 19, 2020 at 07:01:33PM +0200, Kai Vehmanen wrote:
-> On Wed, 19 Feb 2020, Pierre-Louis Bossart wrote:
+[    1.722888] Primary GPT is invalid, using alternate GPT.
+[    1.723076]  mmcblk1: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10
 
-> > We also see a regression Kai bisected to the same patch
-
-> > https://github.com/thesofproject/linux/pull/1805#issuecomment-588266014
-
-> issue rootcaused -- this relates to the new "opened" tracking, I'll send =
-a=20
-> patch shortly after a few more test rounds.
-
-Oh, excellent thanks - I was just starting to poke at this a little!
-
---c7hkjup166d4FzgN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5NanoACgkQJNaLcl1U
-h9DF8Qf9GsLpU85BKuVRGsLykt81rr/+87ujyl8pzIcOzVotCJtAhfKR4DsnnHJz
-7u01I/fyGwYdxO2gvRjlFxe4UO0KVJh8Kbmyh4ZwPjeAEa5NLhs9D9JQo7qEhRWM
-6ARwANJVcZ43UQDcvlV3ZX7lHCuRZPQi2ZuIiaI9jo4jRpfEIh25iVuxjafrKkkc
-AD1EYa/nFJKUWXRMrJfFhZdXYQvnY6pCX/3PGwrxD0gnwsaPW7wVR5iwElZyToVK
-i/TIjmyKHvNXYSKbpYA/FQYYuAzwIUFJD7wczFgCH4ImrJbdYZl7RxJnso81UynD
-s8aFo8gkQQ5ke6JIyJF+eHlQjhevWA==
-=C3SM
------END PGP SIGNATURE-----
-
---c7hkjup166d4FzgN--
+But this doesn't work for Tegra20 Acer A500 and (IIRC) Tegra30 Ouya
+because both primary and backup GPTs are invalid at the standard locations.
