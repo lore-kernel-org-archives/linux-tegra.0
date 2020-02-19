@@ -1,62 +1,53 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1] partitions/efi: Add 'gpt_sector' kernel cmdline
- parameter
-Date: Wed, 19 Feb 2020 20:44:40 +0300
-Message-ID: <0c0d0cff-7b20-f777-8724-0d2b07e60e3d@gmail.com>
-References: <20200219162339.16192-1-digetx@gmail.com>
- <20200219162738.GA10644@infradead.org>
- <f9e41108-7811-0deb-6977-be0f60e23b52@wwwdotorg.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 5.5 00/80] 5.5.5-stable review
+Date: Wed, 19 Feb 2020 19:52:20 +0100
+Message-ID: <20200219185220.GC2857377@kroah.com>
+References: <20200218190432.043414522@linuxfoundation.org>
+ <67cf2b44-666d-c573-0e99-8f433444f84f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f9e41108-7811-0deb-6977-be0f60e23b52@wwwdotorg.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Christoph Hellwig <hch@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Davidlohr Bueso <dave@stgolabs.net>, Colin Cross <ccross@android.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, linux-efi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <67cf2b44-666d-c573-0e99-8f433444f84f@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-19.02.2020 19:59, Stephen Warren пишет:
-> On 2/19/20 9:27 AM, Christoph Hellwig wrote:
->> On Wed, Feb 19, 2020 at 07:23:39PM +0300, Dmitry Osipenko wrote:
->>> The gpt_sector=<sector> causes the GPT partition search to look at the
->>> specified sector for a valid GPT header if the GPT is not found at the
->>> beginning or the end of block device.
->>>
->>> In particular this is needed for NVIDIA Tegra consumer-grade Android
->>> devices in order to make them usable with the upstream kernel because
->>> these devices use a proprietary / closed-source partition table format
->>> for the EMMC and it's impossible to change the partition's format.
->>> Luckily
->>> there is a GPT table in addition to the proprietary table, which is
->>> placed
->>> in uncommon location of the EMMC storage and bootloader passes the
->>> location to kernel using "gpt gpt_sector=<sector>" cmdline parameters.
->>>
->>> This patch is based on the original work done by Colin Cross for the
->>> downstream Android kernel.
->>
->> I don't think a magic command line is the way to go.  The best would be
->> to reverse-engineer the proprietary partition table format.  If that is
->> too hard we can at least key off the odd GPT location based of it's
->> magic number.
+On Wed, Feb 19, 2020 at 11:06:26AM +0000, Jon Hunter wrote:
 > 
-> I thought that the backup GPT was always present in the standard
-> location; it's just the primary GPT that's in an odd location. So, this
-> kernel parameter just forces the kernel to look first for the primary
-> GPT in the unusual location, thus avoiding an error message when that's
-> not there, and the system falls back to the backup GPT.
+> On 18/02/2020 19:54, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.5.5 release.
+> > There are 80 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 20 Feb 2020 19:03:19 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.5-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Or, do I misremember the layout, or the kernel's behaviour if primary
-> GPT is missing?
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.5:
+>     13 builds:	13 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     40 tests:	40 pass, 0 fail
+> 
+> Linux version:	5.5.5-rc1-g8aa3a43b129c
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
 
-The backup GPT not always presents in the standard location. For example
-Tegra30 ASUS Google Nexus 7 has a backup GPT in the proper location and
-this is what KMSG prints:
+Thanks for testing all of these and letting me know.
 
-[    1.722888] Primary GPT is invalid, using alternate GPT.
-[    1.723076]  mmcblk1: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10
-
-But this doesn't work for Tegra20 Acer A500 and (IIRC) Tegra30 Ouya
-because both primary and backup GPTs are invalid at the standard locations.
+greg k-h
