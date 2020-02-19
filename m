@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 5.4 00/66] 5.4.21-stable review
-Date: Wed, 19 Feb 2020 11:06:12 +0000
-Message-ID: <07395747-8acf-2bc2-4d1a-a18d459ee051@nvidia.com>
-References: <20200218190428.035153861@linuxfoundation.org>
+Subject: Re: [PATCH 5.5 00/80] 5.5.5-stable review
+Date: Wed, 19 Feb 2020 11:06:26 +0000
+Message-ID: <67cf2b44-666d-c573-0e99-8f433444f84f@nvidia.com>
+References: <20200218190432.043414522@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200218190428.035153861-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20200218190432.043414522-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -16,8 +16,8 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 18/02/2020 19:54, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.21 release.
-> There are 66 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 5.5.5 release.
+> There are 80 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 18/02/2020 19:54, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.21-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.5-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,12 +36,12 @@ On 18/02/2020 19:54, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v5.4:
+Test results for stable-v5.5:
     13 builds:	13 pass, 0 fail
     22 boots:	22 pass, 0 fail
     40 tests:	40 pass, 0 fail
 
-Linux version:	5.4.21-rc1-g70464966e42b
+Linux version:	5.5.5-rc1-g8aa3a43b129c
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra210-p3450-0000,
