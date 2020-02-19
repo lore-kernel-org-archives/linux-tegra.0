@@ -1,36 +1,53 @@
-From: ''Michael weirsky'' <dushkin-nE6b8zJojf2FtgOYpeylmQ@public.gmane.org>
-Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Euro?=
-Date: Tue, 18 Feb 2020 21:59:28 +0200
-Message-ID: <20200218195938.A2A864FD5A9@zmail.nuczu.edu.ua>
-Reply-To: mikeweirskyspende-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.19 00/38] 4.19.105-stable review
+Date: Wed, 19 Feb 2020 11:06:00 +0000
+Message-ID: <21d5fe3f-9b2c-571c-a8a5-8d8966e18764@nvidia.com>
+References: <20200218190418.536430858@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Description: Mail message body
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Recipients <dushkin-nE6b8zJojf2FtgOYpeylmQ@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200218190418.536430858@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Lieber Freund,
 
-Ich bin Herr Mike Weirsky, New Jersey, Vereinigte Staaten von Amerika, der =
-Mega-Gewinner von $ 273million In Mega Millions Jackpot, spende ich an 5 zu=
-f=C3=A4llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Ma=
-il nach einem Spinball ausgew=C3=A4hlt.Ich habe den gr=C3=B6=C3=9Ften Teil =
-meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=A4tigkeitsorganisationen =
-und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die =
-Summe von =E2=82=AC 2.000.000,00 an Sie als eine der ausgew=C3=A4hlten 5 zu=
- spenden, um meine Gewinne zu =C3=BCberpr=C3=BCfen.
-Das ist dein Spendencode: [MW530342019]
-www.youtube.com/watch?v=3Dun8yRTmrYMY
+On 18/02/2020 19:54, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.105 release.
+> There are 38 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 20 Feb 2020 19:03:19 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.105-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Antworten Sie mit dem SPENDE-CODE an diese =
+All tests are passing for Tegra ...
 
+Test results for stable-v4.19:
+    11 builds:	11 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-E-Mail:mikeweirskyspende-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Linux version:	4.19.105-rc1-g85265e81d664
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Ich hoffe, Sie und Ihre Familie gl=C3=BCcklich zu machen.
+Cheers
+Jon
 
-Gr=C3=BC=C3=9Fe
-Herr Mike Weirsky
+-- 
+nvpublic
