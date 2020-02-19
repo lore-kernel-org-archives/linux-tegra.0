@@ -1,22 +1,22 @@
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
 Subject: Re: [PATCH v1] partitions/efi: Add 'gpt_sector' kernel cmdline
  parameter
-Date: Wed, 19 Feb 2020 19:38:30 +0300
-Message-ID: <d0df41ca-e14a-1bbf-5632-781d3e46f279@gmail.com>
+Date: Wed, 19 Feb 2020 09:59:54 -0700
+Message-ID: <f9e41108-7811-0deb-6977-be0f60e23b52@wwwdotorg.org>
 References: <20200219162339.16192-1-digetx@gmail.com>
  <20200219162738.GA10644@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-block-owner@vger.kernel.org>
 In-Reply-To: <20200219162738.GA10644@infradead.org>
 Content-Language: en-US
 Sender: linux-block-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>, Dmitry Osipenko <digetx@gmail.com>
 Cc: Jens Axboe <axboe@kernel.dk>, Davidlohr Bueso <dave@stgolabs.net>, Colin Cross <ccross@android.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, linux-efi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.02.2020 19:27, Christoph Hellwig пишет:
+On 2/19/20 9:27 AM, Christoph Hellwig wrote:
 > On Wed, Feb 19, 2020 at 07:23:39PM +0300, Dmitry Osipenko wrote:
 >> The gpt_sector=<sector> causes the GPT partition search to look at the
 >> specified sector for a valid GPT header if the GPT is not found at the
@@ -38,4 +38,11 @@ List-Id: linux-tegra@vger.kernel.org
 > too hard we can at least key off the odd GPT location based of it's
 > magic number.
 
-I'll try to take a look at RE, pretty sure somebody tried to do that before.
+I thought that the backup GPT was always present in the standard 
+location; it's just the primary GPT that's in an odd location. So, this 
+kernel parameter just forces the kernel to look first for the primary 
+GPT in the unusual location, thus avoiding an error message when that's 
+not there, and the system falls back to the backup GPT.
+
+Or, do I misremember the layout, or the kernel's behaviour if primary 
+GPT is missing?
