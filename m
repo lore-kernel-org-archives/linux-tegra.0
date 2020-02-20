@@ -1,83 +1,110 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
-Date: Thu, 20 Feb 2020 14:33:47 +0100
-Message-ID: <dc592f29-3109-d10c-7df7-ffdb2755ade0@xs4all.nl>
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
- <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 02/10] ASoC: tegra: add support for CIF programming
+Date: Thu, 20 Feb 2020 14:30:55 +0000
+Message-ID: <f930e81b-3635-3b4d-8613-6e8b43e2efaf@nvidia.com>
+References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
+ <1582180492-25297-3-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <b301c247-537d-d78e-b057-a3225b10de7e-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+In-Reply-To: <1582180492-25297-3-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-(Replying to myself so I can explain this a bit more)
 
-On 2/20/20 1:44 PM, Hans Verkuil wrote:
->> +
->> +static int tegra_csi_tpg_channels_alloc(struct tegra_csi *csi)
->> +{
->> +	struct device_node *node = csi->dev->of_node;
->> +	unsigned int port_num;
->> +	int ret;
->> +	struct tegra_csi_channel *item;
->> +	unsigned int tpg_channels = csi->soc->csi_max_channels;
->> +
->> +	/* allocate CSI channel for each CSI x2 ports */
->> +	for (port_num = 0; port_num < tpg_channels; port_num++) {
->> +		item = devm_kzalloc(csi->dev, sizeof(*item), GFP_KERNEL);
+On 20/02/2020 06:34, Sameer Pujar wrote:
+> Audio Client Interface (CIF) is a proprietary interface employed to route
+> audio samples through Audio Hub (AHUB) components by inter connecting the
+> various modules.
 > 
-> Using devm_*alloc can be dangerous. If someone unbinds the driver, then
-> all memory allocated with devm_ is immediately freed. But if an application
-> still has a filehandle open, then when it closes it it might still reference
-> this already-freed memory.
+> This patch exports an inline function tegra_set_cif() which can be used,
+> for now, to program CIF on Tegra210 and later Tegra generations. Later it
+> can be extended to include helpers for legacy chips as well.
 > 
-> I recommend that you avoid using devm_*alloc for media drivers.
+> Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  sound/soc/tegra/tegra_cif.h | 63 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 sound/soc/tegra/tegra_cif.h
+> 
+> diff --git a/sound/soc/tegra/tegra_cif.h b/sound/soc/tegra/tegra_cif.h
+> new file mode 100644
+> index 0000000..ecc0850
+> --- /dev/null
+> +++ b/sound/soc/tegra/tegra_cif.h
+> @@ -0,0 +1,63 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * tegra_cif.h - TEGRA Audio CIF Programming
+> + *
+> + * Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + */
+> +
+> +#ifndef __TEGRA_CIF_H__
+> +#define __TEGRA_CIF_H__
+> +
+> +#define TEGRA_ACIF_CTRL_FIFO_TH_SHIFT		24
+> +#define TEGRA_ACIF_CTRL_AUDIO_CH_SHIFT		20
+> +#define TEGRA_ACIF_CTRL_CLIENT_CH_SHIFT		16
+> +#define TEGRA_ACIF_CTRL_AUDIO_BITS_SHIFT	12
+> +#define TEGRA_ACIF_CTRL_CLIENT_BITS_SHIFT	8
+> +#define TEGRA_ACIF_CTRL_EXPAND_SHIFT		6
+> +#define TEGRA_ACIF_CTRL_STEREO_CONV_SHIFT	4
+> +#define TEGRA_ACIF_CTRL_REPLICATE_SHIFT		3
+> +#define TEGRA_ACIF_CTRL_TRUNCATE_SHIFT		1
+> +#define TEGRA_ACIF_CTRL_MONO_CONV_SHIFT		0
+> +
+> +/* AUDIO/CLIENT_BITS values */
+> +#define TEGRA_ACIF_BITS_8			1
+> +#define TEGRA_ACIF_BITS_16			3
+> +#define TEGRA_ACIF_BITS_24			5
+> +#define TEGRA_ACIF_BITS_32			7
+> +
+> +#define TEGRA_ACIF_UPDATE_MASK			0x3ffffffb
+> +
+> +struct tegra_cif_conf {
+> +	unsigned int threshold;
+> +	unsigned int audio_ch;
+> +	unsigned int client_ch;
+> +	unsigned int audio_bits;
+> +	unsigned int client_bits;
+> +	unsigned int expand;
+> +	unsigned int stereo_conv;
+> +	unsigned int replicate;
+> +	unsigned int truncate;
+> +	unsigned int mono_conv;
+> +};
+> +
+> +static inline void tegra_set_cif(struct regmap *regmap, unsigned int reg,
+> +				 struct tegra_cif_conf *conf)
+> +{
+> +	unsigned int value;
+> +
+> +	value = (conf->threshold << TEGRA_ACIF_CTRL_FIFO_TH_SHIFT) |
+> +		((conf->audio_ch - 1) << TEGRA_ACIF_CTRL_AUDIO_CH_SHIFT) |
+> +		((conf->client_ch - 1) << TEGRA_ACIF_CTRL_CLIENT_CH_SHIFT) |
+> +		(conf->audio_bits << TEGRA_ACIF_CTRL_AUDIO_BITS_SHIFT) |
+> +		(conf->client_bits << TEGRA_ACIF_CTRL_CLIENT_BITS_SHIFT) |
+> +		(conf->expand << TEGRA_ACIF_CTRL_EXPAND_SHIFT) |
+> +		(conf->stereo_conv << TEGRA_ACIF_CTRL_STEREO_CONV_SHIFT) |
+> +		(conf->replicate << TEGRA_ACIF_CTRL_REPLICATE_SHIFT) |
+> +		(conf->truncate << TEGRA_ACIF_CTRL_TRUNCATE_SHIFT) |
+> +		(conf->mono_conv << TEGRA_ACIF_CTRL_MONO_CONV_SHIFT);
+> +
+> +	regmap_update_bits(regmap, reg, TEGRA_ACIF_UPDATE_MASK, value);
+> +}
+> +
+> +#endif
 
-A good test is to unbind & bind the driver:
+Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-cd /sys/devices/platform/50000000.host1x/54080000.vi/driver
-echo -n 54080000.vi >unbind
-echo -n 54080000.vi >bind
+Cheers!
+Jon
 
-First just do this without the driver being used. That already
-gives me 'list_del corruption' kernel messages (list debugging
-is turned on in my kernel).
-
-Note that this first test is basically identical to a rmmod/modprobe
-of the driver. But when I compiled the driver as a module it didn't
-create any video device nodes! Nor did I see any errors in the kernel
-log. I didn't pursue this, and perhaps I did something wrong, but it's
-worth taking a look at.
-
-The next step would be to have a video node open with:
-
-v4l2-ctl --sleep 10
-
-then while it is sleeping unbind the driver and see what happens
-when v4l2-ctl exits.
-
-Worst case is when you are streaming:
-
-v4l2-ctl --stream-mmap
-
-and then unbind.
-
-In general, the best way to get this to work correctly is:
-
-1) don't use devm_*alloc
-2) set the release callback of struct v4l2_device and do all freeing there.
-3) in the platform remove() callback you call media_device_unregister()
-   and video_unregister_device().
-
-It's worth getting this right in this early stage, rather than fixing it
-in the future.
-
-Regards,
-
-	Hans
+-- 
+nvpublic
