@@ -1,15 +1,14 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 10/10] arm64: defconfig: enable AHUB components for
- Tegra210 and later
-Date: Thu, 20 Feb 2020 14:52:52 +0000
-Message-ID: <78372fd0-63ed-ea92-874f-ae1d3b78b54e@nvidia.com>
+Subject: Re: [PATCH v3 05/10] ASoC: tegra: add Tegra210 based AHUB driver
+Date: Thu, 20 Feb 2020 15:08:03 +0000
+Message-ID: <d6fec11f-3ea3-6da3-ef96-74e4c0a9293e@nvidia.com>
 References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
- <1582180492-25297-11-git-send-email-spujar@nvidia.com>
+ <1582180492-25297-6-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1582180492-25297-11-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1582180492-25297-6-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
@@ -18,51 +17,35 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 20/02/2020 06:34, Sameer Pujar wrote:
-> This patch enables following configs:
->  +CONFIG_TEGRA_ACONNECT=m
->  +CONFIG_SND_SOC_TEGRA=m
->  +CONFIG_SND_SOC_TEGRA210_AHUB=m
->  +CONFIG_SND_SOC_TEGRA210_DMIC=m
->  +CONFIG_SND_SOC_TEGRA210_I2S=m
->  +CONFIG_SND_SOC_TEGRA186_DSPK=m
->  +CONFIG_SND_SOC_TEGRA210_ADMAIF=m
+> The Audio Hub (AHUB) comprises a collection of hardware accelerators for
+> audio pre/post-processing and a programmable full crossbar (XBAR) for
+> routing audio data across these accelerators in time and in parallel.
+> AHUB supports multiple interfaces to I2S, DSPK, DMIC etc., XBAR is a
+> switch used to configure or modify audio routing between HW accelerators
+> present inside AHUB.
 > 
-> This patch helps to register AHUB and its clients (I2S, DMIC, DSPK, ADMAIF)
-> with ASoC core. Since AHUB is child of ACONNECT, config TEGRA_ACONNECT is
-> enabled as well.
+> This patch registers AHUB component with ASoC framework. The component
+> driver exposes DAPM widgets, routes and kcontrols for the device. The DAI
+> driver exposes AHUB interfaces, which can be used to connect different
+> components in the ASoC layer. Currently the driver takes care of XBAR
+> programming to allow audio data flow through various clients of the AHUB.
+> Makefile and Kconfig support is added to allow to build the driver. The
+> AHUB component can be enabled in the DT via below compatible bindings.
+>   - "nvidia,tegra210-ahub" for Tegra210
+>   - "nvidia,tegra186-ahub" for Tegra186 and Tegra194
 > 
 > Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm64/configs/defconfig | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index c8801be..784ca4f 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -207,6 +207,7 @@ CONFIG_FW_LOADER_USER_HELPER=y
->  CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
->  CONFIG_HISILICON_LPC=y
->  CONFIG_SIMPLE_PM_BUS=y
-> +CONFIG_TEGRA_ACONNECT=m
->  CONFIG_MTD=y
->  CONFIG_MTD_BLOCK=y
->  CONFIG_MTD_RAW_NAND=y
-> @@ -590,6 +591,12 @@ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
->  CONFIG_SND_SOC_SAMSUNG=y
->  CONFIG_SND_SOC_RCAR=m
->  CONFIG_SND_SUN4I_SPDIF=m
-> +CONFIG_SND_SOC_TEGRA=m
-> +CONFIG_SND_SOC_TEGRA210_AHUB=m
-> +CONFIG_SND_SOC_TEGRA210_DMIC=m
-> +CONFIG_SND_SOC_TEGRA210_I2S=m
-> +CONFIG_SND_SOC_TEGRA186_DSPK=m
-> +CONFIG_SND_SOC_TEGRA210_ADMAIF=m
->  CONFIG_SND_SOC_AK4613=m
->  CONFIG_SND_SOC_ES7134=m
->  CONFIG_SND_SOC_ES7241=m
+>  sound/soc/tegra/Kconfig         |  10 +
+>  sound/soc/tegra/Makefile        |   2 +
+>  sound/soc/tegra/tegra210_ahub.c | 651 ++++++++++++++++++++++++++++++++++++++++
+>  sound/soc/tegra/tegra210_ahub.h | 125 ++++++++
+>  4 files changed, 788 insertions(+)
+>  create mode 100644 sound/soc/tegra/tegra210_ahub.c
+>  create mode 100644 sound/soc/tegra/tegra210_ahub.h
 
-Thanks!
+
+Aside from Randy's comment ...
 
 Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
