@@ -1,59 +1,53 @@
-From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 10/10] arm64: defconfig: enable AHUB components for Tegra210 and later
-Date: Thu, 20 Feb 2020 12:04:52 +0530
-Message-ID: <1582180492-25297-11-git-send-email-spujar@nvidia.com>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH v3 05/10] ASoC: tegra: add Tegra210 based AHUB driver
+Date: Wed, 19 Feb 2020 22:51:10 -0800
+Message-ID: <2d655f98-33ed-1dcf-f346-e1f1b267f0cd@infradead.org>
 References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
+ <1582180492-25297-6-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1582180492-25297-1-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1582180492-25297-6-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch enables following configs:
- +CONFIG_TEGRA_ACONNECT=m
- +CONFIG_SND_SOC_TEGRA=m
- +CONFIG_SND_SOC_TEGRA210_AHUB=m
- +CONFIG_SND_SOC_TEGRA210_DMIC=m
- +CONFIG_SND_SOC_TEGRA210_I2S=m
- +CONFIG_SND_SOC_TEGRA186_DSPK=m
- +CONFIG_SND_SOC_TEGRA210_ADMAIF=m
+On 2/19/20 10:34 PM, Sameer Pujar wrote:
+> diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+> index 157fa7a..0c07f63 100644
+> --- a/sound/soc/tegra/Kconfig
+> +++ b/sound/soc/tegra/Kconfig
+> @@ -62,6 +62,16 @@ config SND_SOC_TEGRA30_I2S
+>  	  Tegra30 I2S interface. You will also need to select the individual
+>  	  machine drivers to support below.
+>  
+> +config SND_SOC_TEGRA210_AHUB
+> +        tristate "Tegra210 AHUB module"
+> +        depends on SND_SOC_TEGRA
+> +        help
+> +	  Config to enable Audio Hub (AHUB) module, which comprises of a
+> +	  switch called Audio Crossbar (AXBAR) used to configure or modify
+> +	  the audio routing path between various HW accelerators present in
+> +	  AHUB.
+> +          Say Y or M if you want to add support for Tegra210 AHUB module.
+> +
+>  config SND_SOC_TEGRA210_DMIC
+>          tristate "Tegra210 DMIC module"
+>          depends on SND_SOC_TEGRA
 
-This patch helps to register AHUB and its clients (I2S, DMIC, DSPK, ADMAIF)
-with ASoC core. Since AHUB is child of ACONNECT, config TEGRA_ACONNECT is
-enabled as well.
+Please fix above according to Documentation/process/coding-style.rst:
 
-Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/configs/defconfig | 7 +++++++
- 1 file changed, 7 insertions(+)
+10) Kconfig configuration files
+-------------------------------
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c8801be..784ca4f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -207,6 +207,7 @@ CONFIG_FW_LOADER_USER_HELPER=y
- CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
- CONFIG_HISILICON_LPC=y
- CONFIG_SIMPLE_PM_BUS=y
-+CONFIG_TEGRA_ACONNECT=m
- CONFIG_MTD=y
- CONFIG_MTD_BLOCK=y
- CONFIG_MTD_RAW_NAND=y
-@@ -590,6 +591,12 @@ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
- CONFIG_SND_SOC_SAMSUNG=y
- CONFIG_SND_SOC_RCAR=m
- CONFIG_SND_SUN4I_SPDIF=m
-+CONFIG_SND_SOC_TEGRA=m
-+CONFIG_SND_SOC_TEGRA210_AHUB=m
-+CONFIG_SND_SOC_TEGRA210_DMIC=m
-+CONFIG_SND_SOC_TEGRA210_I2S=m
-+CONFIG_SND_SOC_TEGRA186_DSPK=m
-+CONFIG_SND_SOC_TEGRA210_ADMAIF=m
- CONFIG_SND_SOC_AK4613=m
- CONFIG_SND_SOC_ES7134=m
- CONFIG_SND_SOC_ES7241=m
+For all of the Kconfig* configuration files throughout the source tree,
+the indentation is somewhat different.  Lines under a ``config`` definition
+are indented with one tab, while help text is indented an additional two
+spaces.
+
+
 -- 
-2.7.4
+~Randy
