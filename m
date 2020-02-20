@@ -1,51 +1,166 @@
-From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH v3 07/10] ASoC: tegra: add Tegra210 based ADMAIF driver
-Date: Wed, 19 Feb 2020 22:55:21 -0800
-Message-ID: <c1871939-ebf9-150e-1786-96a7f6bd6522@infradead.org>
-References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
- <1582180492-25297-8-git-send-email-spujar@nvidia.com>
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
+Date: Thu, 20 Feb 2020 10:29:02 +0100
+Message-ID: <dae3a6dd-f7ab-5e0f-08a9-2b0be4c68fe1@xs4all.nl>
+References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
+ <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
+ <30e417ba-84e1-63d2-de74-22cfe859bddb@xs4all.nl>
+ <920b4276-b2ca-646c-a21b-ca0b9bacf471@nvidia.com>
+ <6bb124db-681c-55c1-e328-6e1f766a8bb3@nvidia.com>
+ <0f84d37c-105f-8de6-c922-186d2f9ea156@nvidia.com>
+ <44fc39f4-8e9f-bcab-8642-fe1cb332016a@xs4all.nl>
+ <fb5f1566-9347-8f34-ada0-15c831cbc394@nvidia.com>
+ <87c1c97d-abd7-8ca5-0709-d7c64a7d7b39@nvidia.com>
+ <32ebc124-cb2d-f545-a5a0-d71192af8219@nvidia.com>
+ <d1505a3b-92e0-4f98-1882-c56bdab7e2f6@xs4all.nl>
+ <fc7b975a-dffa-4826-7ae5-40abb1f16b3d@nvidia.com>
+ <3adacc07-7e3a-2d06-8d18-003b004ede17@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1582180492-25297-8-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <3adacc07-7e3a-2d06-8d18-003b004ede17-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 2/19/20 10:34 PM, Sameer Pujar wrote:
-> diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
-> index fb77df3..c0a5f0b 100644
-> --- a/sound/soc/tegra/Kconfig
-> +++ b/sound/soc/tegra/Kconfig
-> @@ -106,6 +106,18 @@ config SND_SOC_TEGRA186_DSPK
->            the desired 1-bit output via Delta Sigma Modulation (DSM).
->            Say Y or M if you want to add support for Tegra186 DSPK module.
->  
-> +config SND_SOC_TEGRA210_ADMAIF
-> +        tristate "Tegra210 ADMAIF module"
-> +        depends on SND_SOC_TEGRA
-> +        help
-> +          Config to enable ADMAIF which is the interface between ADMA and
-> +          Audio Hub (AHUB). Each ADMA channel that sends/receives data to/
-> +          from AHUB must interface through an ADMAIF channel. ADMA channel
-> +          sending data to AHUB pairs with an ADMAIF Tx channel, where as
-> +          ADMA channel receiving data from AHUB pairs with an ADMAIF Rx
-> +          channel. Buffer size is confiigurable for each ADMAIIF channel.
+On 2/20/20 1:09 AM, Sowjanya Komatineni wrote:
+>> Thanks Hans. Probably dma address is not aligned properly. Will check.
+> 
+> 
+> I see this time repro happened right on power up during 1st run of 
+> compliance test and it shows kernel write to read-only error right 
+> during vb2_core_qbuf -> buf_prepare.
+> 
+> it happened after buffers allocation and during pre-queuing of buffers 
+> right before starting 1st stream on power up.
+> 
+> Hi Thierry,
+> 
+> Currently tegra vi driver don't use iommu. Could this be some issue with 
+> contig allocation as iommu is not being used?
 
-                                     configurable
+Nothing to do with that. The root cause is that struct tegra_channel_buffer
+must start with struct vb2_v4l2_buffer since that's what vb2 assumes. Instead
+it starts with 'chan'. The really surprising thing is that this didn't cause
+more problems sooner.
 
-> +          Say Y or M if you want to add support for Tegra210 ADMAIF module.
+The patch below fixes this KASAN error. Whether it also fixes the original
+error you found is something you need to test, but I think that's very likely.
 
-Please fix indentation according to coding style.
+Regards,
 
-> +
->  config SND_SOC_TEGRA_RT5640
->  	tristate "SoC Audio support for Tegra boards using an RT5640 codec"
->  	depends on SND_SOC_TEGRA && I2C && GPIOLIB
+	Hans
+
+diff --git a/drivers/staging/media/tegra/tegra-common.h b/drivers/staging/media/tegra/tegra-common.h
+index 79ec550c6f27..3980a8759e68 100644
+--- a/drivers/staging/media/tegra/tegra-common.h
++++ b/drivers/staging/media/tegra/tegra-common.h
+@@ -221,9 +221,9 @@ struct tegra_vi_channel {
+  * @mw_ack_sp_thresh: MW_ACK_DONE syncpoint threshold
+  */
+ struct tegra_channel_buffer {
+-	struct tegra_vi_channel *chan;
+ 	struct vb2_v4l2_buffer buf;
+ 	struct list_head queue;
++	struct tegra_vi_channel *chan;
+ 	dma_addr_t addr;
+ 	u32 mw_ack_sp_thresh;
+ };
 
 
--- 
-~Randy
+> 
+> 
+> [   54.041421]  tegra_channel_buffer_prepare+0x34/0x88
+> [   54.047666]  __buf_prepare+0x1c4/0x230
+> [   54.052094]  vb2_core_qbuf+0x454/0x508
+> [   54.056434]  __vb2_init_fileio+0x1f8/0x2b8
+> [   54.060519]  __vb2_perform_fileio+0x5a0/0x6b8
+> [   54.064864]  vb2_read+0x10/0x18
+> [   54.067996]  vb2_fop_read+0xb0/0xf8
+> [   54.071475]  v4l2_read+0x74/0xb8
+> [   54.074697]  __vfs_read+0x18/0x40
+> [   54.078003]  vfs_read+0x98/0x168
+> [   54.081222]  ksys_read+0x64/0xf0
+> [   54.084439]  __arm64_sys_read+0x14/0x20
+> [   54.088268]  el0_svc_common.constprop.2+0xb0/0x168
+> [   54.093047]  do_el0_svc_compat+0x18/0x38
+> [   54.096961]  el0_sync_compat_handler+0x13c/0x194
+> [   54.101565]  el0_sync_compat+0x144/0x180
+> [   54.105478] Code: b9407802 eb02007f 540001e8 b9007404 (f81f8001)
+> [   54.111559] ---[ end trace 7fbb77a9700492f1 ]---
+> 
+>>>
+>>>> [   41.222012] Mem abort info:
+>>>> [   41.224807]   ESR = 0x9600004f
+>>>> [   41.227852]   EC = 0x25: DABT (current EL), IL = 32 bits
+>>>> [   41.233160]   SET = 0, FnV = 0
+>>>> [   41.236204]   EA = 0, S1PTW = 0
+>>>> [   41.239344] Data abort info:
+>>>> [   41.242225]   ISV = 0, ISS = 0x0000004f
+>>>> [   41.246058]   CM = 0, WnR = 1
+>>>> [   41.249026] swapper pgtable: 4k pages, 48-bit VAs, 
+>>>> pgdp=0000000081498000
+>>>> [   41.255733] [ffff0000f5c3fff8] pgd=000000017f1f8003,
+>>>> pud=000000017ec06003, pmd=000000017ea57003, pte=0060000175c3f793
+>>>> [   41.266345] Internal error: Oops: 9600004f [#1] PREEMPT SMP
+>>>> [   41.271905] Modules linked in: panel_simple tegra_drm
+>>>> snd_hda_codec_hdmi snd_hda_tegra crct10dif_ce snd_hda_codec cec
+>>>> drm_kms_helper snd_hda_core lp855x_bl drm pwm_tegra ip_tables x_tables
+>>>> ipv6 nf_defrag_ipv6
+>>>> [   41.290401] CPU: 3 PID: 532 Comm: v4l2-compliance Tainted: G
+>>>> W         5.6.0-rc1-00035-g6a105c1c479a-dirty #1
+>>>> [   41.300902] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
+>>>> [   41.306807] pstate: 60000005 (nZCv daif -PAN -UAO)
+>>>> [   41.311593] pc : tegra_channel_buffer_prepare+0x34/0x88
+>>>> [   41.316807] lr : __buf_prepare+0x1c4/0x230
+>>>> [   41.320891] sp : ffff800011f5baa0
+>>>> [   41.324195] x29: ffff800011f5baa0 x28: ffff0000f58cc100
+>>>> [   41.329494] x27: ffff800011f5bc58 x26: ffff80001100b780
+>>>> [   41.334792] x25: ffff0000f81f1608 x24: ffff0000f7be7c00
+>>>> [   41.340091] x23: 00000000c058565d x22: 0000000000000000
+>>>> [   41.345390] x21: ffff0000f81f16e8 x20: 0000000000000000
+>>>> [   41.350688] x19: ffff0000f5c40000 x18: 0000000000000000
+>>>> [   41.355986] x17: 0000000000000000 x16: 0000000000000000
+>>>> [   41.361285] x15: ffff0000f8553800 x14: 0000000000000000
+>>>> [   41.366583] x13: 003f480000000000 x12: 003f500000000000
+>>>> [   41.371881] x11: 0000000100000000 x10: 0000000000000000
+>>>> [   41.377180] x9 : 0000000000000000 x8 : ffff0000f5c40258
+>>>> [   41.382478] x7 : 0000000000000030 x6 : 0000000000000001
+>>>> [   41.387776] x5 : 0000000000000000 x4 : 00000000003f4800
+>>>> [   41.393074] x3 : 00000000003f4800 x2 : 00000000003f4800
+>>>> [   41.398373] x1 : ffff0000f81f1080 x0 : ffff0000f5c40000
+>>>> [   41.403671] Call trace:
+>>>> [   41.406109]  tegra_channel_buffer_prepare+0x34/0x88
+>>>> [   41.410974]  __buf_prepare+0x1c4/0x230
+>>>> [   41.414713]  vb2_core_prepare_buf+0x94/0x110
+>>>> [   41.418971]  vb2_prepare_buf+0x74/0xa8
+>>>> [   41.422710]  vb2_ioctl_prepare_buf+0x54/0x60
+>>>> [   41.426970]  v4l_prepare_buf+0x44/0x58
+>>>> [   41.430707]  __video_do_ioctl+0x228/0x3e8
+>>>> [   41.434705]  video_usercopy+0x1cc/0x4d0
+>>>> [   41.438531]  video_ioctl2+0x14/0x20
+>>>> [   41.442010]  v4l2_ioctl+0x44/0x68
+>>>> [   41.445316]  v4l2_compat_ioctl32+0x21c/0x1420
+>>>> [   41.449665]  __arm64_compat_sys_ioctl+0xc8/0x108
+>>>> [   41.454273]  el0_svc_common.constprop.2+0xb0/0x168
+>>>> [   41.459051]  do_el0_svc_compat+0x18/0x38
+>>>> [   41.462964]  el0_sync_compat_handler+0x13c/0x194
+>>>> [   41.467570]  el0_sync_compat+0x144/0x180
+>>>> [   41.471483] Code: b9407802 eb02007f 540001e8 b9007404 (f81f8001)
+>>>> [   41.477563] ---[ end trace 051c84051f60870a ]---
+>>>>
+>>>>>>>>>> With using minimum 3 buffers, this issue doesnt happen at all 
+>>>>>>>>>> from
+>>>>>>>>>> almost 72 hours of testing.
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Will try with setting vb2 queue field min_buffers_needed as 3
+>>>>>>>>>> instead
+>>>>>>>>>> of adding check in queue setup.
+>>>>>>>>>>
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +     return 0;
+>>>>>>>>>>>> +}
