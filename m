@@ -1,14 +1,14 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 02/10] ASoC: tegra: add support for CIF programming
-Date: Thu, 20 Feb 2020 14:30:55 +0000
-Message-ID: <f930e81b-3635-3b4d-8613-6e8b43e2efaf@nvidia.com>
+Subject: Re: [PATCH v3 03/10] ASoC: tegra: add Tegra210 based DMIC driver
+Date: Thu, 20 Feb 2020 14:36:22 +0000
+Message-ID: <d7e81ada-9711-647d-3c4f-29dd469c6621@nvidia.com>
 References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
- <1582180492-25297-3-git-send-email-spujar@nvidia.com>
+ <1582180492-25297-4-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1582180492-25297-3-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1582180492-25297-4-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
@@ -17,93 +17,26 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 20/02/2020 06:34, Sameer Pujar wrote:
-> Audio Client Interface (CIF) is a proprietary interface employed to route
-> audio samples through Audio Hub (AHUB) components by inter connecting the
-> various modules.
+> The Digital MIC (DMIC) Controller is used to interface with Pulse Density
+> Modulation (PDM) input devices. The DMIC controller implements a converter
+> to convert PDM signals to Pulse Code Modulation (PCM) signals. From signal
+> flow perspective, the DMIC can be viewed as a PDM receiver.
 > 
-> This patch exports an inline function tegra_set_cif() which can be used,
-> for now, to program CIF on Tegra210 and later Tegra generations. Later it
-> can be extended to include helpers for legacy chips as well.
+> This patch registers DMIC component with ASoC framework. The component
+> driver exposes DAPM widgets, routes and kcontrols for the device. The DAI
+> driver exposes DMIC interfaces, which can be used to connect different
+> components in the ASoC layer. Makefile and Kconfig support is added to
+> allow to build the driver. The DMIC devices can be enabled in the DT via
+> "nvidia,tegra210-dmic" compatible string. This driver can be used for
+> Tegra186 and Tegra194 chips as well.
 > 
 > Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  sound/soc/tegra/tegra_cif.h | 63 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 sound/soc/tegra/tegra_cif.h
-> 
-> diff --git a/sound/soc/tegra/tegra_cif.h b/sound/soc/tegra/tegra_cif.h
-> new file mode 100644
-> index 0000000..ecc0850
-> --- /dev/null
-> +++ b/sound/soc/tegra/tegra_cif.h
-> @@ -0,0 +1,63 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * tegra_cif.h - TEGRA Audio CIF Programming
-> + *
-> + * Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + */
-> +
-> +#ifndef __TEGRA_CIF_H__
-> +#define __TEGRA_CIF_H__
-> +
-> +#define TEGRA_ACIF_CTRL_FIFO_TH_SHIFT		24
-> +#define TEGRA_ACIF_CTRL_AUDIO_CH_SHIFT		20
-> +#define TEGRA_ACIF_CTRL_CLIENT_CH_SHIFT		16
-> +#define TEGRA_ACIF_CTRL_AUDIO_BITS_SHIFT	12
-> +#define TEGRA_ACIF_CTRL_CLIENT_BITS_SHIFT	8
-> +#define TEGRA_ACIF_CTRL_EXPAND_SHIFT		6
-> +#define TEGRA_ACIF_CTRL_STEREO_CONV_SHIFT	4
-> +#define TEGRA_ACIF_CTRL_REPLICATE_SHIFT		3
-> +#define TEGRA_ACIF_CTRL_TRUNCATE_SHIFT		1
-> +#define TEGRA_ACIF_CTRL_MONO_CONV_SHIFT		0
-> +
-> +/* AUDIO/CLIENT_BITS values */
-> +#define TEGRA_ACIF_BITS_8			1
-> +#define TEGRA_ACIF_BITS_16			3
-> +#define TEGRA_ACIF_BITS_24			5
-> +#define TEGRA_ACIF_BITS_32			7
-> +
-> +#define TEGRA_ACIF_UPDATE_MASK			0x3ffffffb
-> +
-> +struct tegra_cif_conf {
-> +	unsigned int threshold;
-> +	unsigned int audio_ch;
-> +	unsigned int client_ch;
-> +	unsigned int audio_bits;
-> +	unsigned int client_bits;
-> +	unsigned int expand;
-> +	unsigned int stereo_conv;
-> +	unsigned int replicate;
-> +	unsigned int truncate;
-> +	unsigned int mono_conv;
-> +};
-> +
-> +static inline void tegra_set_cif(struct regmap *regmap, unsigned int reg,
-> +				 struct tegra_cif_conf *conf)
-> +{
-> +	unsigned int value;
-> +
-> +	value = (conf->threshold << TEGRA_ACIF_CTRL_FIFO_TH_SHIFT) |
-> +		((conf->audio_ch - 1) << TEGRA_ACIF_CTRL_AUDIO_CH_SHIFT) |
-> +		((conf->client_ch - 1) << TEGRA_ACIF_CTRL_CLIENT_CH_SHIFT) |
-> +		(conf->audio_bits << TEGRA_ACIF_CTRL_AUDIO_BITS_SHIFT) |
-> +		(conf->client_bits << TEGRA_ACIF_CTRL_CLIENT_BITS_SHIFT) |
-> +		(conf->expand << TEGRA_ACIF_CTRL_EXPAND_SHIFT) |
-> +		(conf->stereo_conv << TEGRA_ACIF_CTRL_STEREO_CONV_SHIFT) |
-> +		(conf->replicate << TEGRA_ACIF_CTRL_REPLICATE_SHIFT) |
-> +		(conf->truncate << TEGRA_ACIF_CTRL_TRUNCATE_SHIFT) |
-> +		(conf->mono_conv << TEGRA_ACIF_CTRL_MONO_CONV_SHIFT);
-> +
-> +	regmap_update_bits(regmap, reg, TEGRA_ACIF_UPDATE_MASK, value);
-> +}
-> +
-> +#endif
+
+Thanks!
 
 Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Cheers!
+Cheers
 Jon
 
 -- 
