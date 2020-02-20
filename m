@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
 Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
-Date: Thu, 20 Feb 2020 09:29:19 -0800
-Message-ID: <9dc0a5a6-af2c-f84f-298f-2c16a9c2bb0c@nvidia.com>
+Date: Thu, 20 Feb 2020 11:11:51 -0800
+Message-ID: <b3933aa1-0717-183d-f00c-2d5fd6836a18@nvidia.com>
 References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
  <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
  <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
@@ -17,7 +17,6 @@ To: Hans Verkuil <hverkuil@xs4all.nl>, thierry.reding@gmail.com, jonathanh@nvidi
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Sure, Will update in v4.
 
 On 2/20/20 5:33 AM, Hans Verkuil wrote:
 > External email: Use caution opening links or attachments
@@ -79,7 +78,11 @@ On 2/20/20 5:33 AM, Hans Verkuil wrote:
 > 2) set the release callback of struct v4l2_device and do all freeing there.
 > 3) in the platform remove() callback you call media_device_unregister()
 >     and video_unregister_device().
->
+Reg 3, in current patch, media_device_unregister is called in 
+host1x_video_remove
+video_unregister_device happens during host1x_video_remove -> 
+host1x_device_exit -> tegra_vi_exit -> tegra_vi_channels_cleanup
+
 > It's worth getting this right in this early stage, rather than fixing it
 > in the future.
 >
