@@ -1,110 +1,37 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v9 09/17] arm: tegra20: cpuidle: Handle case where
- secondary CPU hangs on entering LP2
-Date: Fri, 21 Feb 2020 15:55:22 +0100
-Message-ID: <20200221145522.GG10516@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v9 03/17] ARM: tegra: Remove pen-locking from
+ cpuidle-tegra20
+Date: Fri, 21 Feb 2020 15:58:47 +0100
+Message-ID: <20200221145847.GH10516@linaro.org>
 References: <20200212235134.12638-1-digetx@gmail.com>
- <20200212235134.12638-10-digetx@gmail.com>
+ <20200212235134.12638-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20200212235134.12638-10-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20200212235134.12638-4-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, Jasper Korten <jja2000@gmail.com>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 02:51:26AM +0300, Dmitry Osipenko wrote:
-> It is possible that something may go wrong with the secondary CPU, in that
-> case it is much nicer to get a dump of the flow-controller state before
-> hanging machine.
+On Thu, Feb 13, 2020 at 02:51:20AM +0300, Dmitry Osipenko wrote:
+> Pen-locking is meant to block CPU0 if CPU1 wakes up during of entering
+> into LP2 because of some interrupt firing up, preventing unnecessary LP2
+> enter that will be resumed immediately. Apparently this case doesn't
+> happen often in practice, I checked how often it takes place and found
+> that after ~20 hours of browsing web, managing email, watching videos and
+> idling (15+ hours) there is only a dozen of early LP2 entering abortions
+> and they all happened while device was idling. Thus let's remove the
+> pen-locking and make LP2 entering uninterruptible, simplifying code quite
+> a lot. This will also become very handy for the upcoming unified cpuidle
+> driver, allowing to have a common LP2 code-path across of different
+> hardware generations.
 > 
-> Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Jasper Korten <jja2000@gmail.com>
+> Tested-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Acked-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
-> ---
->  arch/arm/mach-tegra/cpuidle-tegra20.c | 47 +++++++++++++++++++++++++--
->  1 file changed, 45 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> index 9672c619f4bc..bcc158b72e67 100644
-> --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-> +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> @@ -83,14 +83,57 @@ static inline void tegra20_wake_cpu1_from_reset(void)
->  }
->  #endif
->  
-> +static void tegra20_report_cpus_state(void)
-> +{
-> +	unsigned long cpu, lcpu, csr;
-> +
-> +	for_each_cpu(lcpu, cpu_possible_mask) {
-> +		cpu = cpu_logical_map(lcpu);
-> +		csr = flowctrl_read_cpu_csr(cpu);
-> +
-> +		pr_err("cpu%lu: online=%d flowctrl_csr=0x%08lx\n",
-> +		       cpu, cpu_online(lcpu), csr);
-> +	}
-> +}
-> +
-> +static int tegra20_wait_for_secondary_cpu_parking(void)
-> +{
-> +	unsigned int retries = 3;
-> +
-> +	while (retries--) {
-> +		ktime_t timeout = ktime_add_ms(ktime_get(), 500);
-> +
-> +		/*
-> +		 * The primary CPU0 core shall wait for the secondaries
-> +		 * shutdown in order to power-off CPU's cluster safely.
-> +		 * The timeout value depends on the current CPU frequency,
-> +		 * it takes about 40-150us  in average and over 1000us in
-> +		 * a worst case scenario.
-> +		 */
-> +		do {
-> +			if (tegra_cpu_rail_off_ready())
-> +				return 0;
-> +
-> +		} while (ktime_before(ktime_get(), timeout));
-> +
-> +		pr_err("secondary CPU taking too long to park\n");
-> +
-> +		tegra20_report_cpus_state();
-> +	}
-> +
-> +	pr_err("timed out waiting secondaries to park\n");
-> +
-> +	return -ETIMEDOUT;
-> +}
-> +
->  static bool tegra20_cpu_cluster_power_down(struct cpuidle_device *dev,
->  					   struct cpuidle_driver *drv,
->  					   int index)
->  {
->  	bool ret;
->  
-> -	while (!tegra_cpu_rail_off_ready())
-> -		cpu_relax();
-> +	if (tegra20_wait_for_secondary_cpu_parking())
-> +		return false;
->  
->  	ret = !tegra_pm_enter_lp2();
->  
-> -- 
-> 2.24.0
-> 
-
--- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
