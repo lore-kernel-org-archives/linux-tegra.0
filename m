@@ -1,59 +1,56 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 07/10] ASoC: tegra: add Tegra210 based ADMAIF driver
-Date: Fri, 21 Feb 2020 09:08:44 +0300
-Message-ID: <e6114203-57d1-bc74-f786-c2246ccb4341@gmail.com>
-References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
- <1582180492-25297-8-git-send-email-spujar@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 5.4 000/344] 5.4.22-stable review
+Date: Fri, 21 Feb 2020 10:04:19 +0000
+Message-ID: <529a5a4a-974e-995a-9556-c2a14d09bb5d@nvidia.com>
+References: <20200221072349.335551332@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1582180492-25297-8-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200221072349.335551332-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-20.02.2020 09:34, Sameer Pujar пишет:
-> ADMAIF is the interface between ADMA and AHUB. Each ADMA channel that
-> sends/receives data to/from AHUB must intreface through an ADMAIF channel.
-> ADMA channel sending data to AHUB pairs with an ADMAIF Tx channel and
-> similarly ADMA channel receiving data from AHUB pairs with an ADMAIF Rx
-> channel. Buffer size is configuranle for each ADMAIF channel, but currently
-> SW uses default values.
+
+On 21/02/2020 07:36, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.22 release.
+> There are 344 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> This patch registers ADMAIF driver with ASoC framework. The component
-> driver exposes DAPM widgets, routes and kcontrols for the device. The DAI
-> driver exposes ADMAIF interfaces, which can be used to connect different
-> components in the ASoC layer. Makefile and Kconfig support is added to
-> allow to build the driver. The ADMAIF device can be enabled in the DT via
-> "nvidia,tegra210-admaif" compatible binding.
+> Responses should be made by Sun, 23 Feb 2020 07:19:49 +0000.
+> Anything received after that time might be too late.
 > 
-> Tegra PCM driver is updated to expose required PCM interfaces and
-> snd_pcm_ops callbacks.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.22-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
+
 ...
-> +int tegra_pcm_construct(struct snd_soc_component *component,
-> +			struct snd_soc_pcm_runtime *rtd);
-> +void tegra_pcm_destruct(struct snd_soc_component *component,
-> +			struct snd_pcm *pcm);
-> +int tegra_pcm_open(struct snd_soc_component *component,
-> +		   struct snd_pcm_substream *substream);
-> +int tegra_pcm_close(struct snd_soc_component *component,
-> +		    struct snd_pcm_substream *substream);
-> +int tegra_pcm_hw_params(struct snd_soc_component *component,
-> +			struct snd_pcm_substream *substream,
-> +			struct snd_pcm_hw_params *params);
-> +int tegra_pcm_hw_free(struct snd_soc_component *component,
-> +		      struct snd_pcm_substream *substream);
-> +int tegra_pcm_mmap(struct snd_soc_component *component,
-> +		   struct snd_pcm_substream *substream,
-> +		   struct vm_area_struct *vma);
 
-> +int tegra_pcm_trigger(struct snd_soc_component *component,
-> +		      struct snd_pcm_substream *substream, int cmd);
+> Tero Kristo <t-kristo-l0cyMroinI0@public.gmane.org>
+>     ARM: OMAP2+: pdata-quirks: add PRM data for reset support
 
-Looks like this function doesn't exist.
+
+The above commit is generating the following build error on ARM systems ...
+
+dvs/git/dirty/git-master_l4t-upstream/kernel/arch/arm/mach-omap2/pdata-quirks.c:27:10: fatal error: linux/platform_data/ti-prm.h: No such file or directory
+ #include <linux/platform_data/ti-prm.h>
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Cheers
+Jon
+
+-- 
+nvpublic
