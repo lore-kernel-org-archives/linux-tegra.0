@@ -1,77 +1,83 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH for 5.6 v2] tty: serial: tegra: Handle RX transfer in PIO
- mode if DMA wasn't started
-Date: Fri, 21 Feb 2020 22:10:26 +0300
-Message-ID: <008a54e3-3585-2f73-a4cb-198fd2fa725a@gmail.com>
-References: <20200209164415.9632-1-digetx@gmail.com>
- <15b01f79-007d-09bb-03be-050c009ceff6@suse.cz>
- <4d9a2352-6daa-4dcc-376b-175b1398ff6a@gmail.com>
- <01397ba1-a738-257a-adb1-84cdcba68a57@nvidia.com>
+From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v9 05/17] ARM: tegra: Propagate error from
+ tegra_idle_lp2_last()
+Date: Fri, 21 Feb 2020 20:16:00 +0100
+Message-ID: <ecb91a99-1e5b-4b76-a27b-56e49e17e9a8@linaro.org>
+References: <20200212235134.12638-1-digetx@gmail.com>
+ <20200212235134.12638-6-digetx@gmail.com> <20200221151612.GJ10516@linaro.org>
+ <1a8c81ab-6f6a-8221-6a4e-c080ba595836@gmail.com>
+ <20200221174033.GV10516@linaro.org>
+ <535bff1a-cb38-a36e-4c8e-1e656618588e@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <01397ba1-a738-257a-adb1-84cdcba68a57@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <535bff1a-cb38-a36e-4c8e-1e656618588e-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-serial-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Jiri Slaby <jslaby@suse.cz>, Laxman Dewangan <ldewangan@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.02.2020 17:38, Jon Hunter пишет:
-> 
-> On 19/02/2020 12:25, Dmitry Osipenko wrote:
->> 17.02.2020 10:37, Jiri Slaby пишет:
->>> On 09. 02. 20, 17:44, Dmitry Osipenko wrote:
->>>> It is possible to get an instant RX timeout or end-of-transfer interrupt
->>>> before RX DMA was started, if transaction is less than 16 bytes. Transfer
->>>> should be handled in PIO mode in this case because DMA can't handle it.
->>>> This patch brings back the original behaviour of the driver that was
->>>> changed by accident by a previous commit, it fixes occasional Bluetooth HW
->>>> initialization failures which I started to notice recently.
+On 21/02/2020 19:42, Dmitry Osipenko wrote:
+> 21.02.2020 20:40, Daniel Lezcano пишет:
+>> On Fri, Feb 21, 2020 at 08:21:41PM +0300, Dmitry Osipenko wrote:
+>>> 21.02.2020 18:16, Daniel Lezcano пишет:
+>>>> On Thu, Feb 13, 2020 at 02:51:22AM +0300, Dmitry Osipenko wrote:
+>>>>> Technically cpu_suspend() may fail and it's never good to lose information
+>>>>> about failure. For example things like cpuidle core could correctly sample
+>>>>> idling time in the case of failure.
+>>>>>
+>>>>> Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>> Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>> Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>> Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
+>>>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>> ---
 >>>>
->>>> Fixes: d5e3fadb7012 ("tty: serial: tegra: Activate RX DMA transfer by request")
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
+>>>> [ ... ]
 >>>>
->>>> Changelog:
+>>>>>  	cpu_cluster_pm_enter();
+>>>>>  	suspend_cpu_complex();
+>>>>>  
+>>>>> -	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
+>>>>> +	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
+>>>>>  
+>>>>>  	/*
+>>>>>  	 * Resume L2 cache if it wasn't re-enabled early during resume,
+>>>>> @@ -208,6 +210,8 @@ void tegra_idle_lp2_last(void)
+>>>>>  
+>>>>>  	restore_cpu_complex();
 >>>>
->>>> v2: - Corrected commit's title by adding the accidentally missed "tegra: "
->>>>       to the prefix.
->>>>
->>>>  drivers/tty/serial/serial-tegra.c | 35 ++++++++++++++-----------------
->>>>  1 file changed, 16 insertions(+), 19 deletions(-)
->>>>
->>>> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
->>>> index 33034b852a51..8de8bac9c6c7 100644
->>>> --- a/drivers/tty/serial/serial-tegra.c
->>>> +++ b/drivers/tty/serial/serial-tegra.c
->>>> @@ -692,11 +692,22 @@ static void tegra_uart_copy_rx_to_tty(struct tegra_uart_port *tup,
->>>>  				   count, DMA_TO_DEVICE);
->>>>  }
->>>>  
->>>> +static void do_handle_rx_pio(struct tegra_uart_port *tup)
->>>> +{
->>>> +	struct tty_struct *tty = tty_port_tty_get(&tup->uport.state->port);
->>>> +	struct tty_port *port = &tup->uport.state->port;
->>>> +
->>>> +	tegra_uart_handle_rx_pio(tup, port);
->>>> +	if (tty) {
+>>>> If the cpu_suspend fails, does restore_cpu_complex() need to be called ?
 >>>
->>> What's the tty good for here, actually?
->>>
->>>> +		tty_flip_buffer_push(port);
->>>> +		tty_kref_put(tty);
->>>> +	}
->>>> +}
+>>> Yes, because suspend_cpu_complex() didn't fail. I don't see any reason
+>>> why restore_cpu_complex() shouldn't be called, please clarify yours thought.
 >>
->> I'm not really a TTY expert..
+>> If the suspend fails, the power down does not happen, thus the logic is not
+>> lost and then it not necessary to restore something which has not been lost.
 >>
->> Jon, maybe you have any clue whether TTY could disappear while port is
->> opened?
+>> I don't know the hardware details, so that may be partially correct.
 > 
-> Nothing specific that I am aware of. The function tty_kref_get() appears
-> to check that the tty pointer is valid and so it would seem logical to
-> check here as well. But happy to be corrected :-)
+> At quick glance, the restore_cpu_complex() is only used for restoring
+> the GIC's state on Tegra.
+> 
+> I don't think it's really worth the effort to handle
+> restore_cpu_complex() specially in a case of the error condition because
+> the chance that the error will ever happen is very small and restoring
+> the cluster's state won't cause any trouble in that case.
+> 
+> Let's keep this patch as-is for simplicity :)
 
-Okay, thanks.
+Yep, not a big deal.
+
+Acked-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
