@@ -1,32 +1,35 @@
 From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v9 05/17] ARM: tegra: Propagate error from
- tegra_idle_lp2_last()
-Date: Fri, 21 Feb 2020 20:16:00 +0100
-Message-ID: <ecb91a99-1e5b-4b76-a27b-56e49e17e9a8@linaro.org>
+Subject: Re: [PATCH v9 09/17] arm: tegra20: cpuidle: Handle case where
+ secondary CPU hangs on entering LP2
+Date: Fri, 21 Feb 2020 21:02:30 +0100
+Message-ID: <f27481cf-ca5e-df47-932b-fcb4713f0d78@linaro.org>
 References: <20200212235134.12638-1-digetx@gmail.com>
- <20200212235134.12638-6-digetx@gmail.com> <20200221151612.GJ10516@linaro.org>
- <1a8c81ab-6f6a-8221-6a4e-c080ba595836@gmail.com>
- <20200221174033.GV10516@linaro.org>
- <535bff1a-cb38-a36e-4c8e-1e656618588e@gmail.com>
+ <20200212235134.12638-10-digetx@gmail.com>
+ <20200221154318.GO10516@linaro.org>
+ <239a2b66-8da8-2e6c-d19d-9ed207ad0a64@gmail.com>
+ <20200221173649.GU10516@linaro.org>
+ <b51f3f6b-8287-5ce8-fcaa-77cbab507618@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <535bff1a-cb38-a36e-4c8e-1e656618588e-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <b51f3f6b-8287-5ce8-fcaa-77cbab507618-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 21/02/2020 19:42, Dmitry Osipenko wrote:
-> 21.02.2020 20:40, Daniel Lezcano пишет:
->> On Fri, Feb 21, 2020 at 08:21:41PM +0300, Dmitry Osipenko wrote:
->>> 21.02.2020 18:16, Daniel Lezcano пишет:
->>>> On Thu, Feb 13, 2020 at 02:51:22AM +0300, Dmitry Osipenko wrote:
->>>>> Technically cpu_suspend() may fail and it's never good to lose information
->>>>> about failure. For example things like cpuidle core could correctly sample
->>>>> idling time in the case of failure.
+On 21/02/2020 19:19, Dmitry Osipenko wrote:
+> 21.02.2020 20:36, Daniel Lezcano пишет:
+>> On Fri, Feb 21, 2020 at 07:56:51PM +0300, Dmitry Osipenko wrote:
+>>> Hello Daniel,
+>>>
+>>> 21.02.2020 18:43, Daniel Lezcano пишет:
+>>>> On Thu, Feb 13, 2020 at 02:51:26AM +0300, Dmitry Osipenko wrote:
+>>>>> It is possible that something may go wrong with the secondary CPU, in that
+>>>>> case it is much nicer to get a dump of the flow-controller state before
+>>>>> hanging machine.
 >>>>>
 >>>>> Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>>>> Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -34,44 +37,78 @@ On 21/02/2020 19:42, Dmitry Osipenko wrote:
 >>>>> Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
 >>>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >>>>> ---
+>>
+>> [ ... ]
+>>
+>>>>> +static int tegra20_wait_for_secondary_cpu_parking(void)
+>>>>> +{
+>>>>> +	unsigned int retries = 3;
+>>>>> +
+>>>>> +	while (retries--) {
+>>>>> +		ktime_t timeout = ktime_add_ms(ktime_get(), 500);
 >>>>
->>>> [ ... ]
->>>>
->>>>>  	cpu_cluster_pm_enter();
->>>>>  	suspend_cpu_complex();
->>>>>  
->>>>> -	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
->>>>> +	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
->>>>>  
->>>>>  	/*
->>>>>  	 * Resume L2 cache if it wasn't re-enabled early during resume,
->>>>> @@ -208,6 +210,8 @@ void tegra_idle_lp2_last(void)
->>>>>  
->>>>>  	restore_cpu_complex();
->>>>
->>>> If the cpu_suspend fails, does restore_cpu_complex() need to be called ?
+>>>> Oops I missed this one. Do not use ktime_get() in this code path, use jiffies.
 >>>
->>> Yes, because suspend_cpu_complex() didn't fail. I don't see any reason
->>> why restore_cpu_complex() shouldn't be called, please clarify yours thought.
+>>> Could you please explain what benefits jiffies have over the ktime_get()?
 >>
->> If the suspend fails, the power down does not happen, thus the logic is not
->> lost and then it not necessary to restore something which has not been lost.
+>> ktime_get() is very slow, jiffies is updated every tick.
+> 
+> But how jiffies are supposed to be updated if interrupts are disabled?
+
+Yeah, other cpus must not be idle in this.
+
+> Aren't jiffies actually slower than ktime_get() because jiffies are
+> updating every 10/1ms (depending on CONFIG_HZ)?
+
+They are no slower, they have a lower resolution which is 10ms or 4ms.
+
+Given the 500ms timeout, it is fine.
+
+> We're kinda interesting here in getting into deep-idling state as quick
+> as possible. I was checking how much time takes the busy-loop below and
+> it takes ~40-150us in average, which is good enough.
+
+ktime_get() gets a seq lock and it is very slow.
+
+>>>>> +
+>>>>> +		/*
+>>>>> +		 * The primary CPU0 core shall wait for the secondaries
+>>>>> +		 * shutdown in order to power-off CPU's cluster safely.
+>>>>> +		 * The timeout value depends on the current CPU frequency,
+>>>>> +		 * it takes about 40-150us  in average and over 1000us in
+>>>>> +		 * a worst case scenario.
+>>>>> +		 */
+>>>>> +		do {
+>>>>> +			if (tegra_cpu_rail_off_ready())
+>>>>> +				return 0;
+>>>>> +
+>>>>> +		} while (ktime_before(ktime_get(), timeout));
+>>>>
+>>>> So this loop will aggresively call tegra_cpu_rail_off_ready() and retry 3
+>>>> times. The tegra_cpu_rail_off_ready() function can be called thoushand of times
+>>>> here but the function will hang 1.5s :/
+>>>>
+>>>> I suggest something like:
+>>>>
+>>>> 	while (retries--i && !tegra_cpu_rail_off_ready()) 
+>>>> 		udelay(100);
+>>>>
+>>>> So <retries> calls to tegra_cpu_rail_off_ready() and 100us x <retries> maximum
+>>>> impact.
+>>> But udelay() also results into CPU spinning in a busy-loop, and thus,
+>>> what's the difference?
 >>
->> I don't know the hardware details, so that may be partially correct.
+>> busy looping instead of register reads with all the hardware things involved behind.
 > 
-> At quick glance, the restore_cpu_complex() is only used for restoring
-> the GIC's state on Tegra.
+> Please notice that this code runs only on an older Cortex-A9/A15, which
+> doesn't support WFE for the delaying, and thus, CPU always busy-loops
+> inside udelay().
 > 
-> I don't think it's really worth the effort to handle
-> restore_cpu_complex() specially in a case of the error condition because
-> the chance that the error will ever happen is very small and restoring
-> the cluster's state won't cause any trouble in that case.
-> 
-> Let's keep this patch as-is for simplicity :)
+> What about if I'll add cpu_relax() to the loop? Do you think it it could
+> have any positive effect?
 
-Yep, not a big deal.
+I think udelay() has a call to cpu_relax().
 
-Acked-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
 
 
