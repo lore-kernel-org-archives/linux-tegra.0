@@ -1,8 +1,8 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v9 09/17] arm: tegra20: cpuidle: Handle case where
  secondary CPU hangs on entering LP2
-Date: Fri, 21 Feb 2020 23:42:18 +0300
-Message-ID: <e5f25dc2-f96f-0108-e02f-0b0d32da3053@gmail.com>
+Date: Fri, 21 Feb 2020 21:48:56 +0100
+Message-ID: <21e3cc35-cc6b-5452-da93-bdaac43716c5@linaro.org>
 References: <20200212235134.12638-1-digetx@gmail.com>
  <20200212235134.12638-10-digetx@gmail.com>
  <20200221154318.GO10516@linaro.org>
@@ -18,71 +18,15 @@ Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <50a8fb7c-f497-2234-c0b0-560aec1c5691-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-21.02.2020 23:21, Dmitry Osipenko пишет:
+On 21/02/2020 21:21, Dmitry Osipenko wrote:
 > 21.02.2020 23:02, Daniel Lezcano пишет:
->> On 21/02/2020 19:19, Dmitry Osipenko wrote:
->>> 21.02.2020 20:36, Daniel Lezcano пишет:
->>>> On Fri, Feb 21, 2020 at 07:56:51PM +0300, Dmitry Osipenko wrote:
->>>>> Hello Daniel,
->>>>>
->>>>> 21.02.2020 18:43, Daniel Lezcano пишет:
->>>>>> On Thu, Feb 13, 2020 at 02:51:26AM +0300, Dmitry Osipenko wrote:
->>>>>>> It is possible that something may go wrong with the secondary CPU, in that
->>>>>>> case it is much nicer to get a dump of the flow-controller state before
->>>>>>> hanging machine.
->>>>>>>
->>>>>>> Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>>> Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>>>>> Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>>>>> Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
->>>>>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>>>>> ---
->>>>
->>>> [ ... ]
->>>>
->>>>>>> +static int tegra20_wait_for_secondary_cpu_parking(void)
->>>>>>> +{
->>>>>>> +	unsigned int retries = 3;
->>>>>>> +
->>>>>>> +	while (retries--) {
->>>>>>> +		ktime_t timeout = ktime_add_ms(ktime_get(), 500);
->>>>>>
->>>>>> Oops I missed this one. Do not use ktime_get() in this code path, use jiffies.
->>>>>
->>>>> Could you please explain what benefits jiffies have over the ktime_get()?
->>>>
->>>> ktime_get() is very slow, jiffies is updated every tick.
->>>
->>> But how jiffies are supposed to be updated if interrupts are disabled?
->>
->> Yeah, other cpus must not be idle in this.
-> 
-> Okay, then jiffies can't be used here because this function is used for
-> the coupled / power-gated state only. All CPUs are idling in this state.
-> 
->>> Aren't jiffies actually slower than ktime_get() because jiffies are
->>> updating every 10/1ms (depending on CONFIG_HZ)?
->>
->> They are no slower, they have a lower resolution which is 10ms or 4ms.
->>
->> Given the 500ms timeout, it is fine.
->>
->>> We're kinda interesting here in getting into deep-idling state as quick
->>> as possible. I was checking how much time takes the busy-loop below and
->>> it takes ~40-150us in average, which is good enough.
->>
->> ktime_get() gets a seq lock and it is very slow.
-> 
-> Since all CPUs are idling here, the locking isn't a problem.
-> 
-> The wait_for_secondary_cpu_parking() function is called on CPU0, it
-> waits for the secondary CPUs to enter into safe-state before CPU0 could
-> power-gate the whole CPU cluster.
-> 
+
+[ ... ]
+
 >>>>>>> +
 >>>>>>> +		/*
 >>>>>>> +		 * The primary CPU0 core shall wait for the secondaries
@@ -131,7 +75,11 @@ List-Id: linux-tegra@vger.kernel.org
 > 2. udelay() spins in a busy-loop until delay is expired, just like we're
 > doing it in this function already
 
-I'll try the udelay()-loop over the weekend and will see if it makes any
-real difference, maybe I'm missing something.
+In this case why not remove ktime_get() and increase the number of retries?
 
-If it doesn't make any difference, I'll leave this patch as-is, okay?
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
