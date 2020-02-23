@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 12/25] soc/tegra: fuse: Fix build with Tegra194 configuration
-Date: Sat, 22 Feb 2020 21:23:26 -0500
-Message-ID: <20200223022339.1885-12-sashal@kernel.org>
-References: <20200223022339.1885-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 28/58] soc/tegra: fuse: Fix build with Tegra194 configuration
+Date: Sat, 22 Feb 2020 21:20:49 -0500
+Message-ID: <20200223022119.707-28-sashal@kernel.org>
+References: <20200223022119.707-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20200223022339.1885-1-sashal@kernel.org>
+In-Reply-To: <20200223022119.707-1-sashal@kernel.org>
 Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Thierry Reding <treding@nvidia.com>, kbuild test robot <lkp@intel.com>, Olof Johansson <olof@lixom.net>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
@@ -31,10 +31,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index 257e254c6137f..0ec6385eb15e6 100644
+index b8daaf5b7291b..efd158b4607cb 100644
 --- a/drivers/soc/tegra/fuse/fuse-tegra30.c
 +++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -47,7 +47,8 @@
+@@ -36,7 +36,8 @@
      defined(CONFIG_ARCH_TEGRA_124_SOC) || \
      defined(CONFIG_ARCH_TEGRA_132_SOC) || \
      defined(CONFIG_ARCH_TEGRA_210_SOC) || \
