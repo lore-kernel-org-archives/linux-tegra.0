@@ -1,12 +1,48 @@
-From: "RECEIVE AND SECURE THIS MONEY FOR ME" <fta447447-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: RECEIVE MONEY IN BANK ACCOUNT REPLY TO fta447447-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Date: Fri, 21 Feb 20 11:42:39 GMT
-Message-ID: <p3o44--eu8u3zhbgz9q$5$v$-68@g2p5r.d9.8th>
-Reply-To: "RECEIVE AND SECURE THIS MONEY FOR ME" <fta447447-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 27/50] soc/tegra: fuse: Fix build with Tegra194 configuration
+Date: Sat, 22 Feb 2020 21:22:12 -0500
+Message-ID: <20200223022235.1404-27-sashal@kernel.org>
+References: <20200223022235.1404-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="A..C8.._3321CEA_"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Thierry Reding <treding@nvidia.com>, kbuild test robot <lkp@intel.com>, Olof Johansson <olof@lixom.net>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
+
+From: Thierry Reding <treding@nvidia.com>
+
+[ Upstream commit 6f4ecbe284df5f22e386a640d9a4b32cede62030 ]
+
+If only Tegra194 support is enabled, the tegra30_fuse_read() and
+tegra30_fuse_init() function are not declared and cause a build failure.
+Add Tegra194 to the preprocessor guard to make sure these functions are
+available for Tegra194-only builds as well.
+
+Link: https://lore.kernel.org/r/20200203143114.3967295-1-thierry.reding@gmail.com
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index be9424a871734..9c3ef0a02fd4e 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -35,7 +35,8 @@
+     defined(CONFIG_ARCH_TEGRA_124_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_132_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_210_SOC) || \
+-    defined(CONFIG_ARCH_TEGRA_186_SOC)
++    defined(CONFIG_ARCH_TEGRA_186_SOC) || \
++    defined(CONFIG_ARCH_TEGRA_194_SOC)
+ static u32 tegra30_fuse_read_early(struct tegra_fuse *fuse, unsigned int offset)
+ {
+ 	if (WARN_ON(!fuse->base))
+-- 
+2.20.1
