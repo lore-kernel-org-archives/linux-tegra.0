@@ -1,62 +1,219 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1] partitions/efi: Add 'gpt_sector' kernel cmdline
- parameter
-Date: Mon, 24 Feb 2020 21:22:34 +0300
-Message-ID: <eb1e3a64-b1ac-94d0-07f7-c84a83d9b21e@gmail.com>
-References: <20200219162339.16192-1-digetx@gmail.com>
- <20200219162738.GA10644@infradead.org>
- <f9e41108-7811-0deb-6977-be0f60e23b52@wwwdotorg.org>
- <20200224163342.d4acf224b56celup@ws.net.home>
- <9c7343eb-1b09-ffcf-cba0-11d6a26dfd77@gmail.com>
+Subject: [PATCH v11 00/17] Consolidate and improve NVIDIA Tegra CPUIDLE driver(s)
+Date: Tue, 25 Feb 2020 01:40:40 +0300
+Message-ID: <20200224224057.21877-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9c7343eb-1b09-ffcf-cba0-11d6a26dfd77-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Karel Zak <kzak-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>
-Cc: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Davidlohr Bueso <dave-h16yJtLeMjHk1uMJSBkQmQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-24.02.2020 20:23, Dmitry Osipenko пишет:
-> 24.02.2020 19:33, Karel Zak пишет:
->> On Wed, Feb 19, 2020 at 09:59:54AM -0700, Stephen Warren wrote:
->>> On 2/19/20 9:27 AM, Christoph Hellwig wrote:
->>>> On Wed, Feb 19, 2020 at 07:23:39PM +0300, Dmitry Osipenko wrote:
->>>>> The gpt_sector=<sector> causes the GPT partition search to look at the
->>>>> specified sector for a valid GPT header if the GPT is not found at the
->>>>> beginning or the end of block device.
->>>>>
->>>>> In particular this is needed for NVIDIA Tegra consumer-grade Android
->>>>> devices in order to make them usable with the upstream kernel because
->>>>> these devices use a proprietary / closed-source partition table format
->>>>> for the EMMC and it's impossible to change the partition's format. Luckily
->>>>> there is a GPT table in addition to the proprietary table, which is placed
->>>>> in uncommon location of the EMMC storage and bootloader passes the
->>>>> location to kernel using "gpt gpt_sector=<sector>" cmdline parameters.
->>>>>
->>>>> This patch is based on the original work done by Colin Cross for the
->>>>> downstream Android kernel.
->>>>
->>>> I don't think a magic command line is the way to go.  The best would be
->>>> to reverse-engineer the proprietary partition table format.  If that is
->>>> too hard we can at least key off the odd GPT location based of it's
->>>> magic number.
->>
->>  +1
->>
->>> I thought that the backup GPT was always present in the standard location;
->>
->> If they have proprietary stuff on begin of the device and valid backup
->> GPT at the end of the device then designer of this junk is crazy, because
->> many GPT fdisk-like tools will try to recover from the backup header and 
->> overwrite the unknown (invalid) stuff at the begin of the device...
-> 
-> It's a problem created by vendor, but these devices are assumed to run
-> Android-only. So it's not really that bad :)
-> 
+Hello,
 
-Is there any way to mark parts of block device as read-only? Such that
-userspace couldn't write to the RO-marked sectors, I guess that could
-help to save someone's bacon.
+This series does the following:
+
+  1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
+     into common drivers/cpuidle/ directory.
+
+  2. Prepares upcoming CPU cluster power-down idling state enabling for
+     Tegra30.
+
+In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
+and of the Tegra's arch code in general. Please apply, thanks!
+
+!!!WARNING!!! This series was made on top of the cpufreq patches [1]. But it
+              should be fine as long as Thierry Reding would pick up this and
+              the cpufreq patchsets via the Tegra tree, otherwise there will
+              one minor merge-conflict.
+
+[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=158206
+
+Changelog:
+
+v11: - Added acks from Daniel Lezcano.
+
+     - Added t-b from Nicolas Chauvet.
+
+     - @Daniel Lezcano: In regards to -M, I assume it's useless. The
+       cpuidle-tegra driver was rewritten from scratch, it's not a simple
+       code move.
+
+         rename arch/arm/mach-tegra/cpuidle-tegra20.c => drivers/cpuidle/cpuidle-tegra.c (9%)
+
+     - Replaced ktime_get() with udelay(), thanks to Daniel Lezcano for the
+       suggestion.
+
+     - Note to Thierry: this series uses [1] +  next-20200218 for the base,
+       you could also cherry-pick the patches from the grate-kernel if it
+       makes things easier (it is up-to-date).
+
+v10: - Added acks from Peter De Schrijver.
+
+    - Added tested-by from Peter Geis, Jasper Korten and David Heidelberg
+      who tested these patches on Ouya, TF300T and Nexus 7 devices.
+
+    - Temporarily dropped the "cpuidle: tegra: Support CPU cluster power-down
+      state on Tegra30" patch because Michał Mirosław reported that it didn't
+      work well on his TF300T. After some testing we found that changing
+      a way in which firmware performs L2 cache maintenance helps, but later
+      on we also found that the current v9 series works just fine without the
+      extra firmware changes using recent linux-next and the reason why v8
+      didn't work before is still unknown (need more testing). So I decided
+      that it will be better to postpone the dropped patch until we know for
+      sure that it works well for everyone in every possible configuration.
+
+    - Rebased this series on top of recent linux-next, in a result dropped
+      the "cpuidle: Avoid NULL dereference in cpuidle_driver_state_disabled()"
+      patch because it's not needed anymore.
+
+v9: - Rebased on recent linux-next. Dropped the v8 "Avoid NULL dereference.."
+      patch as a result, it's not needed anymore.
+
+    - Temporarily dropped "cpuidle: tegra: Support CPU cluster power-down
+      state on Tegra30" patch because Michał Mirosław reported that it causes
+      problem for ASUS TF300T Tegra30 device, we'll have to resolve the
+      problem first.
+
+    - Added ACKs from Peter De Schrijver to the patches.
+
+v8: - Rebased on recent linux-next, now making use of
+      cpuidle_driver_state_disabled(). Added new patch to make this new API
+      usable by the updated Tegra cpuidle driver:
+
+        cpuidle: Avoid NULL dereference in cpuidle_driver_state_disabled()
+
+    - Added new patch to handle case where LP2 isn't available:
+
+        cpuidle: tegra: Disable CC6 state if LP2 unavailable
+
+v7: - drivers/cpuidle/cpuidle-tegra.c now includes an explicit comment that
+      clarifies the new terminology that is used for naming of the idling
+      states. This change was suggested by Peter De Schrijver in the review
+      comment to v6. See the comment to struct tegra_idle_driver in the code.
+
+    - (!) This series is now based on top of the "NVIDIA Tegra20 CPUFreq
+      driver major update" patchset. The conflict between these two series
+      is trivial to resolve, but still it's worth to mention about that.
+
+v6: - Addressed request from Thierry Reding to change the way patches are
+      organized by making changes in a more incremental manner.
+
+    - tegra_sleep_cpu() now checks for the secondary CPUs to be offline
+      in the "Make outer_disable() open-coded" patch.
+
+v5: - Rebased on a recent linux-next, fixed one minor conflict in Kconfig.
+
+    - Improved commit's message of the "Support CPU cluster power-down state
+      on Tegra30" patch.
+
+    - The "Support CPU cluster power-down state on Tegra30" patch is also
+      got split and now there is additional "Make outer_disable() open-coded"
+      patch.
+
+    - Made minor cosmetic changes to the "Introduce unified driver for
+      NVIDIA Tegra SoCs" patch by improving error message and renaming
+      one variable.
+
+v4: - Fixed compilation with !CONFIG_CACHE_L2X0 (and tested that it still
+      works).
+
+    - Replaced ktime_compare() with ktime_before() in the new driver,
+      for consistency.
+
+v3: - Addressed review comments that were made by Jon Hunter to v2 by
+      splitting patches into smaller (and simpler) chunks, better
+      documenting changes in the commit messages and using proper error
+      codes in the code.
+
+      Warnings are replaced with a useful error messages in the code of
+      "Introduce unified driver for NVIDIA Tegra SoCs" patch.
+
+      Secondary CPUs parking timeout increased to 100ms because I found
+      that it actually may happen to take more than 1ms if CPU is running
+      on a *very* low frequency.
+
+      Added diagnostic messages that are reporting Flow Controller state
+      when CPU parking fails.
+
+      Further polished cpuidle driver's code.
+
+      The coupled state entering is now aborted if there is a pending SGI
+      (Software Generated Interrupt) because it will be lost after GIC's
+      power-cycling. Like it was done by the old Tegra20 CPUIDLE driver.
+
+v2: - Added patches to enable the new cpuidle driver in the defconfigs:
+
+        ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
+        ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
+
+    - Dropped patches that removed CPUIDLE_FLAG_TIMER_STOP from the idling
+      states because that flag actually doesn't have any negative effects,
+      but still is correct for the case of a local CPU timer on older Tegra
+      SoCs:
+
+        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from Tegra114/124 idle-state
+        cpuidle: tegra: Remove CPUIDLE_FLAG_TIMER_STOP from all states
+
+    - The "Add unified driver for NVIDIA Tegra SoCs" patch got more polish.
+      Tegra30 and Terga114 states are now squashed into a single common C7
+      state (following Parker TRM terminology, see 17.2.2.2 Power Management
+      States), more comments added, etc minor changes.
+
+Dmitry Osipenko (17):
+  ARM: tegra: Compile sleep-tegra20/30.S unconditionally
+  ARM: tegra: Add tegra_pm_park_secondary_cpu()
+  ARM: tegra: Remove pen-locking from cpuidle-tegra20
+  ARM: tegra: Change tegra_set_cpu_in_lp2() type to void
+  ARM: tegra: Propagate error from tegra_idle_lp2_last()
+  ARM: tegra: Expose PM functions required for new cpuidle driver
+  ARM: tegra: Rename some of the newly exposed PM functions
+  ARM: tegra: Make outer_disable() open-coded
+  arm: tegra20: cpuidle: Handle case where secondary CPU hangs on
+    entering LP2
+  arm: tegra20: cpuidle: Make abort_flag atomic
+  arm: tegra20/30: cpuidle: Remove unnecessary memory barrier
+  cpuidle: Refactor and move out NVIDIA Tegra20 driver into
+    drivers/cpuidle
+  cpuidle: tegra: Squash Tegra30 driver into the common driver
+  cpuidle: tegra: Squash Tegra114 driver into the common driver
+  cpuidle: tegra: Disable CC6 state if LP2 unavailable
+  ARM: multi_v7_defconfig: Enable Tegra cpuidle driver
+  ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
+
+ arch/arm/configs/multi_v7_defconfig           |   1 +
+ arch/arm/configs/tegra_defconfig              |   1 +
+ arch/arm/mach-tegra/Makefile                  |  19 +-
+ arch/arm/mach-tegra/cpuidle-tegra114.c        |  89 ----
+ arch/arm/mach-tegra/cpuidle-tegra20.c         | 212 ----------
+ arch/arm/mach-tegra/cpuidle-tegra30.c         | 132 ------
+ arch/arm/mach-tegra/cpuidle.c                 |  50 ---
+ arch/arm/mach-tegra/cpuidle.h                 |  21 -
+ arch/arm/mach-tegra/irq.c                     |   3 +-
+ arch/arm/mach-tegra/pm.c                      |  54 ++-
+ arch/arm/mach-tegra/pm.h                      |   4 -
+ arch/arm/mach-tegra/reset-handler.S           |  11 -
+ arch/arm/mach-tegra/reset.h                   |   9 +-
+ arch/arm/mach-tegra/sleep-tegra20.S           | 170 --------
+ arch/arm/mach-tegra/sleep-tegra30.S           |   6 +-
+ arch/arm/mach-tegra/sleep.h                   |  15 -
+ arch/arm/mach-tegra/tegra.c                   |   7 +-
+ drivers/cpuidle/Kconfig.arm                   |   8 +
+ drivers/cpuidle/Makefile                      |   1 +
+ drivers/cpuidle/cpuidle-tegra.c               | 392 ++++++++++++++++++
+ include/soc/tegra/cpuidle.h                   |   2 +-
+ .../mach-tegra => include/soc/tegra}/irq.h    |   8 +-
+ include/soc/tegra/pm.h                        |  31 ++
+ 23 files changed, 485 insertions(+), 761 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra114.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra20.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle-tegra30.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle.c
+ delete mode 100644 arch/arm/mach-tegra/cpuidle.h
+ create mode 100644 drivers/cpuidle/cpuidle-tegra.c
+ rename {arch/arm/mach-tegra => include/soc/tegra}/irq.h (59%)
+
+-- 
+2.24.0
