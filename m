@@ -1,56 +1,60 @@
-From: Karel Zak <kzak-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v1] partitions/efi: Add 'gpt_sector' kernel cmdline
- parameter
-Date: Mon, 24 Feb 2020 17:33:42 +0100
-Message-ID: <20200224163342.d4acf224b56celup@ws.net.home>
-References: <20200219162339.16192-1-digetx@gmail.com>
- <20200219162738.GA10644@infradead.org>
- <f9e41108-7811-0deb-6977-be0f60e23b52@wwwdotorg.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v9 00/17] Consolidate and improve NVIDIA Tegra CPUIDLE
+ driver(s)
+Date: Mon, 24 Feb 2020 19:44:19 +0300
+Message-ID: <6fc959d6-8602-5ab0-d624-b410827005cf@gmail.com>
+References: <20200212235134.12638-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <f9e41108-7811-0deb-6977-be0f60e23b52-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Davidlohr Bueso <dave-h16yJtLeMjHk1uMJSBkQmQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200212235134.12638-1-digetx@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, Jasper Korten <jja2000@gmail.com>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 09:59:54AM -0700, Stephen Warren wrote:
-> On 2/19/20 9:27 AM, Christoph Hellwig wrote:
-> > On Wed, Feb 19, 2020 at 07:23:39PM +0300, Dmitry Osipenko wrote:
-> > > The gpt_sector=<sector> causes the GPT partition search to look at the
-> > > specified sector for a valid GPT header if the GPT is not found at the
-> > > beginning or the end of block device.
-> > > 
-> > > In particular this is needed for NVIDIA Tegra consumer-grade Android
-> > > devices in order to make them usable with the upstream kernel because
-> > > these devices use a proprietary / closed-source partition table format
-> > > for the EMMC and it's impossible to change the partition's format. Luckily
-> > > there is a GPT table in addition to the proprietary table, which is placed
-> > > in uncommon location of the EMMC storage and bootloader passes the
-> > > location to kernel using "gpt gpt_sector=<sector>" cmdline parameters.
-> > > 
-> > > This patch is based on the original work done by Colin Cross for the
-> > > downstream Android kernel.
-> > 
-> > I don't think a magic command line is the way to go.  The best would be
-> > to reverse-engineer the proprietary partition table format.  If that is
-> > too hard we can at least key off the odd GPT location based of it's
-> > magic number.
+13.02.2020 02:51, Dmitry Osipenko пишет:
+> Hello,
+> 
+> This series does the following:
+> 
+>   1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
+>      into common drivers/cpuidle/ directory.
+> 
+>   2. Enables CPU cluster power-down idling state on Tegra30.
+> 
+> In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
+> and of the Tegra's arch code in general. Please apply, thanks!
+> 
+> !!!WARNING!!! This series was made on top of the cpufreq patches [1]. But it
+>               should be fine as long as Thierry Reding would pick up this and
+>               the cpufreq patchsets via the Tegra tree, otherwise there will
+>               one minor merge-conflict.
+> 
+> [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=158206
+> 
+> Changelog:
+> 
+> v9: - Added acks from Peter De Schrijver.
+> 
+>     - Added tested-by from Peter Geis, Jasper Korten and David Heidelberg
+>       who tested these patches on Ouya, TF300T and Nexus 7 devices.
+> 
+>     - Temporarily dropped the "cpuidle: tegra: Support CPU cluster power-down
+>       state on Tegra30" patch because Michał Mirosław reported that it didn't
+>       work well on his TF300T. After some testing we found that changing
+>       a way in which firmware performs L2 cache maintenance helps, but later
+>       on we also found that the current v9 series works just fine without the
+>       extra firmware changes using recent linux-next and the reason why v8
+>       didn't work before is still unknown (need more testing). So I decided
+>       that it will be better to postpone the dropped patch until we know for
+>       sure that it works well for everyone in every possible configuration.
+> 
+>     - Rebased this series on top of recent linux-next, in a result dropped
+>       the "cpuidle: Avoid NULL dereference in cpuidle_driver_state_disabled()"
+>       patch because it's not needed anymore.
 
- +1
-
-> I thought that the backup GPT was always present in the standard location;
-
-If they have proprietary stuff on begin of the device and valid backup
-GPT at the end of the device then designer of this junk is crazy, because
-many GPT fdisk-like tools will try to recover from the backup header and 
-overwrite the unknown (invalid) stuff at the begin of the device...
-
-    Karel
-
-
--- 
- Karel Zak  <kzak-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
- http://karelzak.blogspot.com
+I just noticed that this patchset was versioned wrongly, it should've
+been v10. Sorry for the confusion, next version will be v11.
