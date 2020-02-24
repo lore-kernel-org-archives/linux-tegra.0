@@ -1,60 +1,53 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v9 00/17] Consolidate and improve NVIDIA Tegra CPUIDLE
- driver(s)
-Date: Mon, 24 Feb 2020 19:44:19 +0300
-Message-ID: <6fc959d6-8602-5ab0-d624-b410827005cf@gmail.com>
-References: <20200212235134.12638-1-digetx@gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] regulator: pwm: Don't warn on probe deferral
+Date: Mon, 24 Feb 2020 16:58:59 +0000
+Message-ID: <20200224165859.GJ6215@sirena.org.uk>
+References: <20200224144048.6587-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200212235134.12638-1-digetx@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, Jasper Korten <jja2000@gmail.com>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cDtQGJ/EJIRf/Cpq"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200224144048.6587-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-13.02.2020 02:51, Dmitry Osipenko пишет:
-> Hello,
-> 
-> This series does the following:
-> 
->   1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
->      into common drivers/cpuidle/ directory.
-> 
->   2. Enables CPU cluster power-down idling state on Tegra30.
-> 
-> In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
-> and of the Tegra's arch code in general. Please apply, thanks!
-> 
-> !!!WARNING!!! This series was made on top of the cpufreq patches [1]. But it
->               should be fine as long as Thierry Reding would pick up this and
->               the cpufreq patchsets via the Tegra tree, otherwise there will
->               one minor merge-conflict.
-> 
-> [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=158206
-> 
-> Changelog:
-> 
-> v9: - Added acks from Peter De Schrijver.
-> 
->     - Added tested-by from Peter Geis, Jasper Korten and David Heidelberg
->       who tested these patches on Ouya, TF300T and Nexus 7 devices.
-> 
->     - Temporarily dropped the "cpuidle: tegra: Support CPU cluster power-down
->       state on Tegra30" patch because Michał Mirosław reported that it didn't
->       work well on his TF300T. After some testing we found that changing
->       a way in which firmware performs L2 cache maintenance helps, but later
->       on we also found that the current v9 series works just fine without the
->       extra firmware changes using recent linux-next and the reason why v8
->       didn't work before is still unknown (need more testing). So I decided
->       that it will be better to postpone the dropped patch until we know for
->       sure that it works well for everyone in every possible configuration.
-> 
->     - Rebased this series on top of recent linux-next, in a result dropped
->       the "cpuidle: Avoid NULL dereference in cpuidle_driver_state_disabled()"
->       patch because it's not needed anymore.
 
-I just noticed that this patchset was versioned wrongly, it should've
-been v10. Sorry for the confusion, next version will be v11.
+--cDtQGJ/EJIRf/Cpq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Feb 24, 2020 at 02:40:48PM +0000, Jon Hunter wrote:
+> Deferred probe is an expected return value for devm_pwm_get(). Given
+> that the driver deals with it properly, there's no need to output a
+> warning that may potentially confuse users.
+
+>  		ret = PTR_ERR(drvdata->pwm);
+> -		dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
+
+This then means that there's no way for users to determine why the
+driver has failed to instantiate which can be frustrating.  It'd be
+better to at least have some dev_dbg() output when deferring so that
+there's something for people to go on without having to instrument the
+code.
+
+--cDtQGJ/EJIRf/Cpq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5UANMACgkQJNaLcl1U
+h9BiGAf/ZAVaOOpbqGhitjs7tP8A/g9x/elIDmribdXRTC809OYbjyWsgBPgUqJE
+E8WSPABeY9t3f9Ie+fcrkidjuUShoOf7CUoWTRS7dba/BICLSFBo2NWcwBwk56gg
+qLeEVL37SL4BkipNJeBSh5pXW4oPqyytURkDPK2+7qz0myDw5DkptO3+2F9LNZuI
+Ywl4BGnW3pgSHBU6jgHwTQHvvRZDSjixeIuwuNu/3FkLL3O9HceuSZ3LumxXxP2j
+N5EUom2pp9dGhkzMZbw/nS0bZqTrlDKOBNIRdKHtYrglPiHKj8P4w4sEzhNYLgtI
+bfK6L0eKoKsFz9d5ju7xTBL7e77/yA==
+=uw3Q
+-----END PGP SIGNATURE-----
+
+--cDtQGJ/EJIRf/Cpq--
