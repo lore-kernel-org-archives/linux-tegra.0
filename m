@@ -1,38 +1,133 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] phy: tegra: xusb: Don't warn on probe defer
-Date: Mon, 24 Feb 2020 14:36:41 +0000
-Message-ID: <20200224143641.5851-1-jonathanh@nvidia.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH] backlight: lp855x: Ensure regulators are disabled on
+ probe failure
+Date: Mon, 24 Feb 2020 14:37:32 +0000
+Message-ID: <20200224143732.rreev3ypou26hvx3@holly.lan>
+References: <20200224140748.2182-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20200224140748.2182-1-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Milo Kim <milo.kim@ti.com>, Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Deferred probe is an expected return value for tegra_fuse_readl().
-Given that the driver deals with it properly, there's no need to
-output a warning that may potentially confuse users.
+On Mon, Feb 24, 2020 at 02:07:48PM +0000, Jon Hunter wrote:
+> If probing the LP885x backlight fails after the regulators have been
+> enabled, then the following warning is seen when releasing the
+> regulators ...
+> 
+>  WARNING: CPU: 1 PID: 289 at drivers/regulator/core.c:2051 _regulator_put.part.28+0x158/0x160
+>  Modules linked in: tegra_xudc lp855x_bl(+) host1x pwm_tegra ip_tables x_tables ipv6 nf_defrag_ipv6
+>  CPU: 1 PID: 289 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200224 #1
+>  Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
+> 
+>  ...
+> 
+>  Call trace:
+>   _regulator_put.part.28+0x158/0x160
+>   regulator_put+0x34/0x50
+>   devm_regulator_release+0x10/0x18
+>   release_nodes+0x12c/0x230
+>   devres_release_all+0x34/0x50
+>   really_probe+0x1c0/0x370
+>   driver_probe_device+0x58/0x100
+>   device_driver_attach+0x6c/0x78
+>   __driver_attach+0xb0/0xf0
+>   bus_for_each_dev+0x68/0xc8
+>   driver_attach+0x20/0x28
+>   bus_add_driver+0x160/0x1f0
+>   driver_register+0x60/0x110
+>   i2c_register_driver+0x40/0x80
+>   lp855x_driver_init+0x20/0x1000 [lp855x_bl]
+>   do_one_initcall+0x58/0x1a0
+>   do_init_module+0x54/0x1d0
+>   load_module+0x1d80/0x21c8
+>   __do_sys_finit_module+0xe8/0x100
+>   __arm64_sys_finit_module+0x18/0x20
+>   el0_svc_common.constprop.3+0xb0/0x168
+>   do_el0_svc+0x20/0x98
+>   el0_sync_handler+0xf4/0x1b0
+>   el0_sync+0x140/0x180
+> 
+> Fix this by ensuring that the regulators are disabled, if enabled, on
+> probe failure.
+> 
+> Finally, ensure that the vddio regulator is disabled in the driver
+> remove handler.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/phy/tegra/xusb-tegra186.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index 84c27394c181..12d0f3e30dbc 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -802,7 +802,9 @@ tegra186_xusb_read_fuse_calibration(struct tegra186_xusb_padctl *padctl)
- 
- 	err = tegra_fuse_readl(TEGRA_FUSE_SKU_CALIB_0, &value);
- 	if (err) {
--		dev_err(dev, "failed to read calibration fuse: %d\n", err);
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "failed to read calibration fuse: %d\n",
-+				err);
- 		return err;
- 	}
- 
--- 
-2.17.1
+
+
+> ---
+>  drivers/video/backlight/lp855x_bl.c | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/lp855x_bl.c b/drivers/video/backlight/lp855x_bl.c
+> index f68920131a4a..e94932c69f54 100644
+> --- a/drivers/video/backlight/lp855x_bl.c
+> +++ b/drivers/video/backlight/lp855x_bl.c
+> @@ -456,7 +456,7 @@ static int lp855x_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+>  		ret = regulator_enable(lp->enable);
+>  		if (ret < 0) {
+>  			dev_err(lp->dev, "failed to enable vddio: %d\n", ret);
+> -			return ret;
+> +			goto disable_supply;
+>  		}
+>  
+>  		/*
+> @@ -471,24 +471,34 @@ static int lp855x_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+>  	ret = lp855x_configure(lp);
+>  	if (ret) {
+>  		dev_err(lp->dev, "device config err: %d", ret);
+> -		return ret;
+> +		goto disable_vddio;
+>  	}
+>  
+>  	ret = lp855x_backlight_register(lp);
+>  	if (ret) {
+>  		dev_err(lp->dev,
+>  			"failed to register backlight. err: %d\n", ret);
+> -		return ret;
+> +		goto disable_vddio;
+>  	}
+>  
+>  	ret = sysfs_create_group(&lp->dev->kobj, &lp855x_attr_group);
+>  	if (ret) {
+>  		dev_err(lp->dev, "failed to register sysfs. err: %d\n", ret);
+> -		return ret;
+> +		goto disable_vddio;
+>  	}
+>  
+>  	backlight_update_status(lp->bl);
+> +
+>  	return 0;
+> +
+> +disable_vddio:
+> +	if (lp->enable)
+> +		regulator_disable(lp->enable);
+> +disable_supply:
+> +	if (lp->supply)
+> +		regulator_disable(lp->supply);
+> +
+> +	return ret;
+>  }
+>  
+>  static int lp855x_remove(struct i2c_client *cl)
+> @@ -497,6 +507,8 @@ static int lp855x_remove(struct i2c_client *cl)
+>  
+>  	lp->bl->props.brightness = 0;
+>  	backlight_update_status(lp->bl);
+> +	if (lp->enable)
+> +		regulator_disable(lp->enable);
+>  	if (lp->supply)
+>  		regulator_disable(lp->supply);
+>  	sysfs_remove_group(&lp->dev->kobj, &lp855x_attr_group);
+> -- 
+> 2.17.1
+> 
