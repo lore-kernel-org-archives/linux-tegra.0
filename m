@@ -1,10 +1,12 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 1/3] memory: tegra: Correct debugfs clk rate-range on Tegra20
-Date: Tue, 25 Feb 2020 02:58:34 +0300
-Message-ID: <20200224235836.30694-1-digetx@gmail.com>
+Subject: [PATCH v1 3/3] memory: tegra: Correct debugfs clk rate-range on Tegra124
+Date: Tue, 25 Feb 2020 02:58:36 +0300
+Message-ID: <20200224235836.30694-3-digetx@gmail.com>
+References: <20200224235836.30694-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200224235836.30694-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -14,17 +16,17 @@ Correctly set clk rate-range if number of available timings is zero.
 This fixes noisy "invalid range [4294967295, 0]" error messages during
 boot.
 
-Fixes: 8209eefa3d37 ("memory: tegra: Implement EMC debugfs interface on Tegra20")
+Fixes: 6b9acd935546 ("memory: tegra: Refashion EMC debugfs interface on Tegra124")
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/memory/tegra/tegra20-emc.c | 5 +++++
+ drivers/memory/tegra/tegra124-emc.c | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 313a95fa23d4..eb30484656bc 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -637,6 +637,11 @@ static void tegra_emc_debugfs_init(struct tegra_emc *emc)
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index 284b8aa8418c..ac9ca09c7b0d 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -1158,6 +1158,11 @@ static void emc_debugfs_init(struct device *dev, struct tegra_emc *emc)
  			emc->debugfs.max_rate = emc->timings[i].rate;
  	}
  
