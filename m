@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v11 05/17] ARM: tegra: Propagate error from tegra_idle_lp2_last()
-Date: Tue, 25 Feb 2020 01:40:45 +0300
-Message-ID: <20200224224057.21877-6-digetx@gmail.com>
+Subject: [PATCH v11 09/17] arm: tegra20: cpuidle: Handle case where secondary CPU hangs on entering LP2
+Date: Tue, 25 Feb 2020 01:40:49 +0300
+Message-ID: <20200224224057.21877-10-digetx@gmail.com>
 References: <20200224224057.21877-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,9 +12,9 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Technically cpu_suspend() may fail and it's never good to lose information
-about failure. For example things like cpuidle core could correctly sample
-idling time in the case of failure.
+It is possible that something may go wrong with the secondary CPU, in that
+case it is much nicer to get a dump of the flow-controller state before
+hanging machine.
 
 Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -24,95 +24,83 @@ Tested-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Acked-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- arch/arm/mach-tegra/cpuidle-tegra20.c | 6 ++++--
- arch/arm/mach-tegra/cpuidle-tegra30.c | 4 +---
- arch/arm/mach-tegra/pm.c              | 8 ++++++--
- arch/arm/mach-tegra/pm.h              | 2 +-
- 4 files changed, 12 insertions(+), 8 deletions(-)
+ arch/arm/mach-tegra/cpuidle-tegra20.c | 51 +++++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-index 78c20025dcfe..b3087ece9421 100644
+index a5b7d4e68f43..40566da25c6c 100644
 --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
 +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-@@ -86,15 +86,17 @@ static bool tegra20_cpu_cluster_power_down(struct cpuidle_device *dev,
+@@ -14,6 +14,7 @@
+ #include <linux/tick.h>
+ #include <linux/cpuidle.h>
+ #include <linux/cpu_pm.h>
++#include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ 
+@@ -82,14 +83,60 @@ static inline void tegra20_wake_cpu1_from_reset(void)
+ }
+ #endif
+ 
++static void tegra20_report_cpus_state(void)
++{
++	unsigned long cpu, lcpu, csr;
++
++	for_each_cpu(lcpu, cpu_possible_mask) {
++		cpu = cpu_logical_map(lcpu);
++		csr = flowctrl_read_cpu_csr(cpu);
++
++		pr_err("cpu%lu: online=%d flowctrl_csr=0x%08lx\n",
++		       cpu, cpu_online(lcpu), csr);
++	}
++}
++
++static int tegra20_wait_for_secondary_cpu_parking(void)
++{
++	unsigned int retries = 3;
++
++	while (retries--) {
++		unsigned int delay_us = 10;
++		unsigned int timeout_us = 500 * 1000 / delay_us;
++
++		/*
++		 * The primary CPU0 core shall wait for the secondaries
++		 * shutdown in order to power-off CPU's cluster safely.
++		 * The timeout value depends on the current CPU frequency,
++		 * it takes about 40-150us  in average and over 1000us in
++		 * a worst case scenario.
++		 */
++		do {
++			if (tegra_cpu_rail_off_ready())
++				return 0;
++
++			udelay(delay_us);
++
++		} while (timeout_us--);
++
++		pr_err("secondary CPU taking too long to park\n");
++
++		tegra20_report_cpus_state();
++	}
++
++	pr_err("timed out waiting secondaries to park\n");
++
++	return -ETIMEDOUT;
++}
++
+ static bool tegra20_cpu_cluster_power_down(struct cpuidle_device *dev,
  					   struct cpuidle_driver *drv,
  					   int index)
  {
-+	bool ret;
-+
- 	while (!tegra_cpu_rail_off_ready())
- 		cpu_relax();
+ 	bool ret;
  
--	tegra_idle_lp2_last();
-+	ret = !tegra_idle_lp2_last();
+-	while (!tegra_cpu_rail_off_ready())
+-		cpu_relax();
++	if (tegra20_wait_for_secondary_cpu_parking())
++		return false;
  
- 	if (cpu_online(1))
- 		tegra20_wake_cpu1_from_reset();
+ 	ret = !tegra_pm_enter_lp2();
  
--	return true;
-+	return ret;
- }
- 
- #ifdef CONFIG_SMP
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
-index a3ce8dabfe18..17cbd118abee 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra30.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
-@@ -68,9 +68,7 @@ static bool tegra30_cpu_cluster_power_down(struct cpuidle_device *dev,
- 		return false;
- 	}
- 
--	tegra_idle_lp2_last();
--
--	return true;
-+	return !tegra_idle_lp2_last();
- }
- 
- #ifdef CONFIG_SMP
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index a72f9a2d3cb7..a094acaca307 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -189,14 +189,16 @@ static void tegra_pm_set(enum tegra_suspend_mode mode)
- 	tegra_pmc_enter_suspend_mode(mode);
- }
- 
--void tegra_idle_lp2_last(void)
-+int tegra_idle_lp2_last(void)
- {
-+	int err;
-+
- 	tegra_pm_set(TEGRA_SUSPEND_LP2);
- 
- 	cpu_cluster_pm_enter();
- 	suspend_cpu_complex();
- 
--	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
-+	err = cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
- 
- 	/*
- 	 * Resume L2 cache if it wasn't re-enabled early during resume,
-@@ -208,6 +210,8 @@ void tegra_idle_lp2_last(void)
- 
- 	restore_cpu_complex();
- 	cpu_cluster_pm_exit();
-+
-+	return err;
- }
- 
- enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
-diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
-index 2c294f6365c0..7d72f31dee77 100644
---- a/arch/arm/mach-tegra/pm.h
-+++ b/arch/arm/mach-tegra/pm.h
-@@ -25,7 +25,7 @@ void tegra30_sleep_core_init(void);
- 
- void tegra_clear_cpu_in_lp2(void);
- void tegra_set_cpu_in_lp2(void);
--void tegra_idle_lp2_last(void);
-+int tegra_idle_lp2_last(void);
- extern void (*tegra_tear_down_cpu)(void);
- 
- #ifdef CONFIG_PM_SLEEP
 -- 
 2.24.0
