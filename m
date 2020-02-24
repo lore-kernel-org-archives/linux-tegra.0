@@ -1,82 +1,47 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v11 01/17] ARM: tegra: Compile sleep-tegra20/30.S unconditionally
-Date: Tue, 25 Feb 2020 01:40:41 +0300
-Message-ID: <20200224224057.21877-2-digetx@gmail.com>
-References: <20200224224057.21877-1-digetx@gmail.com>
+Subject: [PATCH v1 0/3] Introduce NVIDIA Tegra Partition Table
+Date: Tue, 25 Feb 2020 02:18:38 +0300
+Message-ID: <20200224231841.26550-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200224224057.21877-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The sleep-tegra*.S provides functionality required for suspend/resume
-and CPU hotplugging. The new unified CPUIDLE driver will support multiple
-hardware generations starting from Terga20 and ending with Tegra124, the
-driver will utilize functions that are provided by the assembly and thus
-it is cleaner to compile that code without any build-dependencies in order
-to avoid churning with #ifdef's.
+Some NVIDIA Tegra devices have GPT entry at a wrong location and others may
+even not have it at all. So either a custom workaround for GPT parsing or
+TegraPT support is needed for those devices if we want to support them in
+upstream kernel. The former solution was already rejected [1], let's try
+the latter.
 
-Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
-Tested-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- arch/arm/mach-tegra/Makefile | 6 ++----
- arch/arm/mach-tegra/sleep.h  | 2 --
- 2 files changed, 2 insertions(+), 6 deletions(-)
+[1] https://patchwork.ozlabs.org/patch/1240809/
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 6c1dff2eccc2..965862608ff6 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -8,13 +8,13 @@ obj-y					+= reset.o
- obj-y					+= reset-handler.o
- obj-y					+= sleep.o
- obj-y					+= tegra.o
-+obj-y					+= sleep-tegra20.o
-+obj-y					+= sleep-tegra30.o
- obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
--obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= sleep-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pm-tegra20.o
- ifeq ($(CONFIG_CPU_IDLE),y)
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= cpuidle-tegra20.o
- endif
--obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= sleep-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= pm-tegra30.o
- ifeq ($(CONFIG_CPU_IDLE),y)
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= cpuidle-tegra30.o
-@@ -22,12 +22,10 @@ endif
- obj-$(CONFIG_SMP)			+= platsmp.o
- obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
- 
--obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= sleep-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= pm-tegra30.o
- ifeq ($(CONFIG_CPU_IDLE),y)
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= cpuidle-tegra114.o
- endif
--obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= sleep-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= pm-tegra30.o
- ifeq ($(CONFIG_CPU_IDLE),y)
- obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= cpuidle-tegra114.o
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 78ef32a907c8..63e2205cbc82 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -120,10 +120,8 @@ void tegra_resume(void);
- int tegra_sleep_cpu_finish(unsigned long);
- void tegra_disable_clean_inv_dcache(u32 flag);
- 
--#ifdef CONFIG_HOTPLUG_CPU
- void tegra20_hotplug_shutdown(void);
- void tegra30_hotplug_shutdown(void);
--#endif
- 
- void tegra20_cpu_shutdown(int cpu);
- int tegra20_cpu_is_resettable_soon(void);
+Big thanks to everyone who helped with figuring out the TegraPT format!
+
+Dmitry Osipenko (3):
+  mmc: core: Add raw_boot_mult field to mmc_ext_csd
+  mmc: block: Add mmc_bdev_to_card() helper
+  partitions: Introduce NVIDIA Tegra Partition Table
+
+ arch/arm/mach-tegra/tegra.c         |  35 +++
+ block/partitions/Kconfig            |   8 +
+ block/partitions/Makefile           |   1 +
+ block/partitions/check.c            |   4 +
+ block/partitions/tegra.c            | 373 ++++++++++++++++++++++++++++
+ block/partitions/tegra.h            |  71 ++++++
+ drivers/mmc/core/block.c            |  14 ++
+ drivers/mmc/core/mmc.c              |   2 +
+ include/linux/mmc/card.h            |   4 +
+ include/soc/tegra/bct.h             |  42 ++++
+ include/soc/tegra/common.h          |   9 +
+ include/soc/tegra/partition_table.h |  18 ++
+ 12 files changed, 581 insertions(+)
+ create mode 100644 block/partitions/tegra.c
+ create mode 100644 block/partitions/tegra.h
+ create mode 100644 include/soc/tegra/bct.h
+ create mode 100644 include/soc/tegra/partition_table.h
+
 -- 
 2.24.0
