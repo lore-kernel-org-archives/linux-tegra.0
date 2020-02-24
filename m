@@ -1,86 +1,97 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] phy: tegra: xusb: Don't warn on probe defer
-Date: Mon, 24 Feb 2020 16:12:18 +0100
-Message-ID: <20200224151218.GA2570205@ulmo>
-References: <20200224143641.5851-1-jonathanh@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v9 09/17] arm: tegra20: cpuidle: Handle case where
+ secondary CPU hangs on entering LP2
+Date: Mon, 24 Feb 2020 18:12:48 +0300
+Message-ID: <e818e844-a3b6-1493-b4d6-3bdac28f99c6@gmail.com>
+References: <20200212235134.12638-1-digetx@gmail.com>
+ <20200212235134.12638-10-digetx@gmail.com>
+ <20200221154318.GO10516@linaro.org>
+ <239a2b66-8da8-2e6c-d19d-9ed207ad0a64@gmail.com>
+ <20200221173649.GU10516@linaro.org>
+ <b51f3f6b-8287-5ce8-fcaa-77cbab507618@gmail.com>
+ <f27481cf-ca5e-df47-932b-fcb4713f0d78@linaro.org>
+ <50a8fb7c-f497-2234-c0b0-560aec1c5691@gmail.com>
+ <21e3cc35-cc6b-5452-da93-bdaac43716c5@linaro.org>
+ <c13aa8f9-092b-55ca-742e-17db0184649b@gmail.com>
+ <f27e7974-f102-f9dc-6b48-9814b88465bf@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200224143641.5851-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <f27e7974-f102-f9dc-6b48-9814b88465bf-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+22.02.2020 00:11, Daniel Lezcano пишет:
+> On 21/02/2020 21:54, Dmitry Osipenko wrote:
+>> 21.02.2020 23:48, Daniel Lezcano пишет:
+>>> On 21/02/2020 21:21, Dmitry Osipenko wrote:
+>>>> 21.02.2020 23:02, Daniel Lezcano пишет:
+>>>
+>>> [ ... ]
+>>>
+>>>>>>>>>> +
+>>>>>>>>>> +		/*
+>>>>>>>>>> +		 * The primary CPU0 core shall wait for the secondaries
+>>>>>>>>>> +		 * shutdown in order to power-off CPU's cluster safely.
+>>>>>>>>>> +		 * The timeout value depends on the current CPU frequency,
+>>>>>>>>>> +		 * it takes about 40-150us  in average and over 1000us in
+>>>>>>>>>> +		 * a worst case scenario.
+>>>>>>>>>> +		 */
+>>>>>>>>>> +		do {
+>>>>>>>>>> +			if (tegra_cpu_rail_off_ready())
+>>>>>>>>>> +				return 0;
+>>>>>>>>>> +
+>>>>>>>>>> +		} while (ktime_before(ktime_get(), timeout));
+>>>>>>>>>
+>>>>>>>>> So this loop will aggresively call tegra_cpu_rail_off_ready() and retry 3
+>>>>>>>>> times. The tegra_cpu_rail_off_ready() function can be called thoushand of times
+>>>>>>>>> here but the function will hang 1.5s :/
+>>>>>>>>>
+>>>>>>>>> I suggest something like:
+>>>>>>>>>
+>>>>>>>>> 	while (retries--i && !tegra_cpu_rail_off_ready()) 
+>>>>>>>>> 		udelay(100);
+>>>>>>>>>
+>>>>>>>>> So <retries> calls to tegra_cpu_rail_off_ready() and 100us x <retries> maximum
+>>>>>>>>> impact.
+>>>>>>>> But udelay() also results into CPU spinning in a busy-loop, and thus,
+>>>>>>>> what's the difference?
+>>>>>>>
+>>>>>>> busy looping instead of register reads with all the hardware things involved behind.
+>>>>>>
+>>>>>> Please notice that this code runs only on an older Cortex-A9/A15, which
+>>>>>> doesn't support WFE for the delaying, and thus, CPU always busy-loops
+>>>>>> inside udelay().
+>>>>>>
+>>>>>> What about if I'll add cpu_relax() to the loop? Do you think it it could
+>>>>>> have any positive effect?
+>>>>>
+>>>>> I think udelay() has a call to cpu_relax().
+>>>>
+>>>> Yes, my point is that udelay() doesn't bring much benefit for us here
+>>>> because:
+>>>>
+>>>> 1. we want to enter into power-gated state as quick as possible and
+>>>> udelay() just adds an unnecessary delay
+>>>>
+>>>> 2. udelay() spins in a busy-loop until delay is expired, just like we're
+>>>> doing it in this function already
+>>>
+>>> In this case why not remove ktime_get() and increase the number of retries?
+>>
+>> Because the busy-loop performance depends on CPU's frequency, so we
+>> can't rely on a bare number of the retries.
+> 
+> Why not if computed in the worst case scenario?
 
---T4sUOijqQbZv57TR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are always at least a few dozens of microseconds to wait, so
+something like udelay(10) should be a bit better variant anyways.
 
-On Mon, Feb 24, 2020 at 02:36:41PM +0000, Jon Hunter wrote:
-> Deferred probe is an expected return value for tegra_fuse_readl().
-> Given that the driver deals with it properly, there's no need to
-> output a warning that may potentially confuse users.
->=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/phy/tegra/xusb-tegra186.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-
-Kishon,
-
-I already have a couple of PHY subsystem patches from JC and Nagarjuna
-in a branch in the Tegra tree that I need to resolve a dependency. Do
-you mind if I pick this up into that branch as well and send it to you
-as a pull request later on? Say around v5.6-rc6?
-
-Alternatively you could provide an Acked-by and then I can take them all
-through ARM SoC.
-
-Thierry
-
-> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-t=
-egra186.c
-> index 84c27394c181..12d0f3e30dbc 100644
-> --- a/drivers/phy/tegra/xusb-tegra186.c
-> +++ b/drivers/phy/tegra/xusb-tegra186.c
-> @@ -802,7 +802,9 @@ tegra186_xusb_read_fuse_calibration(struct tegra186_x=
-usb_padctl *padctl)
-> =20
->  	err =3D tegra_fuse_readl(TEGRA_FUSE_SKU_CALIB_0, &value);
->  	if (err) {
-> -		dev_err(dev, "failed to read calibration fuse: %d\n", err);
-> +		if (err !=3D -EPROBE_DEFER)
-> +			dev_err(dev, "failed to read calibration fuse: %d\n",
-> +				err);
->  		return err;
->  	}
-> =20
-> --=20
-> 2.17.1
->=20
-
---T4sUOijqQbZv57TR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5T58wACgkQ3SOs138+
-s6HK2A//Uc6bvnvwYC3R0rgqsjQKhZkzdLOEI8/+qvoe9Q0HvINFsEExyjDNqtDl
-ySlshrwTbE3yPM7IYt/McEOKPX3sUu2ohxuPkkJDbmrOvy5pMPJXYehR8eZn54No
-9609LoVxtyelAMbBwmHG3ghBN1O81zDIzojocrByUcXWhBZ7Mxvi/gtKUh0P9g2K
-us8bcsbrlu93D/hoZ/kRsPe4/diOwwk6Zw+HZo8HyvSeVOhcmGmPStFxx5ggl2+h
-LPqskdrqs5nYcCmB9tQEOhfMz6UcnpFvITjowOOKKSuEEZhUdLi2n2JSnOEov7qr
-xzK6ZaFUB2akiIwbIBlMhBsIi/yqA1Cc40pFVRuUSZ9qHSVAvfQc8zcg8ppIr4dJ
-7ZdN5MFIq+KcWnnz6XM5U02Kuor3AzGgSP5scMEo9Z7ucrzymz1ifJfRUvaWYAC9
-lhK+9zNCWRr2Obki3PgaJHLnR4/GDh/7Abj/gxHe2aN7fQDRSJHoH7uTf535UMta
-FSA/mGfyr67AnqBvDF3bHg/z9FTqWbUNaq/Y0Q1qT5FV+0n1glOBM7qL15QEt6SI
-zlpE81h3YapwAQzg9ce3nnnphepgNXMuEcmiXgDmJjfbQzy01JCPUUWHCUrR3xzi
-uw/zZmFsD+rU1Aw6G3jbAvDy9L57GjCeSpcvCnNZI2pSzto5pSg=
-=e6/4
------END PGP SIGNATURE-----
-
---T4sUOijqQbZv57TR--
+> Anyway, I'll let you give a try.
+Turned out that udelay(10) is noticeably better when system is running
+on a lower freqs in comparison to ktime_get(). I'll switch to udelay in
+v10, thank you very much for the suggestion!
