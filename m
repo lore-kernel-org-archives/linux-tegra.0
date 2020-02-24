@@ -1,47 +1,53 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 0/3] Introduce NVIDIA Tegra Partition Table
-Date: Tue, 25 Feb 2020 02:18:38 +0300
-Message-ID: <20200224231841.26550-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 1/3] mmc: core: Add raw_boot_mult field to mmc_ext_csd
+Date: Tue, 25 Feb 2020 02:18:39 +0300
+Message-ID: <20200224231841.26550-2-digetx@gmail.com>
+References: <20200224231841.26550-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200224231841.26550-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some NVIDIA Tegra devices have GPT entry at a wrong location and others may
-even not have it at all. So either a custom workaround for GPT parsing or
-TegraPT support is needed for those devices if we want to support them in
-upstream kernel. The former solution was already rejected [1], let's try
-the latter.
+In order to support parsing of NVIDIA Tegra Partition Table format, we
+need to know the BOOT_SIZE_MULT value of the Extended CSD register because
+NVIDIA's bootloader linearizes the boot0/boot1/main partitions into a
+single virtual space, and thus, all partition addresses are shifted by
+the size of boot0 + boot1 partitions.
 
-[1] https://patchwork.ozlabs.org/patch/1240809/
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/mmc/core/mmc.c   | 2 ++
+ include/linux/mmc/card.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-Big thanks to everyone who helped with figuring out the TegraPT format!
-
-Dmitry Osipenko (3):
-  mmc: core: Add raw_boot_mult field to mmc_ext_csd
-  mmc: block: Add mmc_bdev_to_card() helper
-  partitions: Introduce NVIDIA Tegra Partition Table
-
- arch/arm/mach-tegra/tegra.c         |  35 +++
- block/partitions/Kconfig            |   8 +
- block/partitions/Makefile           |   1 +
- block/partitions/check.c            |   4 +
- block/partitions/tegra.c            | 373 ++++++++++++++++++++++++++++
- block/partitions/tegra.h            |  71 ++++++
- drivers/mmc/core/block.c            |  14 ++
- drivers/mmc/core/mmc.c              |   2 +
- include/linux/mmc/card.h            |   4 +
- include/soc/tegra/bct.h             |  42 ++++
- include/soc/tegra/common.h          |   9 +
- include/soc/tegra/partition_table.h |  18 ++
- 12 files changed, 581 insertions(+)
- create mode 100644 block/partitions/tegra.c
- create mode 100644 block/partitions/tegra.h
- create mode 100644 include/soc/tegra/bct.h
- create mode 100644 include/soc/tegra/partition_table.h
-
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index f6912ded652d..88e5b4224d3c 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -417,6 +417,8 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 		ext_csd[EXT_CSD_ERASE_TIMEOUT_MULT];
+ 	card->ext_csd.raw_hc_erase_grp_size =
+ 		ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE];
++	card->ext_csd.raw_boot_mult =
++		ext_csd[EXT_CSD_BOOT_MULT];
+ 	if (card->ext_csd.rev >= 3) {
+ 		u8 sa_shift = ext_csd[EXT_CSD_S_A_TIMEOUT];
+ 		card->ext_csd.part_config = ext_csd[EXT_CSD_PART_CONFIG];
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index cf3780a6ccc4..90b1d83ce675 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -108,6 +108,7 @@ struct mmc_ext_csd {
+ 	u8			raw_hc_erase_gap_size;	/* 221 */
+ 	u8			raw_erase_timeout_mult;	/* 223 */
+ 	u8			raw_hc_erase_grp_size;	/* 224 */
++	u8			raw_boot_mult;		/* 226 */
+ 	u8			raw_sec_trim_mult;	/* 229 */
+ 	u8			raw_sec_erase_mult;	/* 230 */
+ 	u8			raw_sec_feature_support;/* 231 */
 -- 
 2.24.0
