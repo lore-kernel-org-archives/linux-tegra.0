@@ -1,67 +1,34 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH] phy: tegra: xusb: Don't warn on probe defer
-Date: Tue, 25 Feb 2020 10:32:14 +0530
-Message-ID: <7292f4cc-ec5c-4840-3627-72883a0353c7@ti.com>
-References: <20200224143641.5851-1-jonathanh@nvidia.com>
- <20200224151218.GA2570205@ulmo>
+From: Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v8 00/19] NVIDIA Tegra APB DMA driver fixes and
+ improvements
+Date: Tue, 25 Feb 2020 12:02:00 +0530
+Message-ID: <20200225063200.GL2618@vkoul-mobl>
+References: <20200209163356.6439-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200224151218.GA2570205@ulmo>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200209163356.6439-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-On 24/02/20 8:42 pm, Thierry Reding wrote:
-> On Mon, Feb 24, 2020 at 02:36:41PM +0000, Jon Hunter wrote:
->> Deferred probe is an expected return value for tegra_fuse_readl().
->> Given that the driver deals with it properly, there's no need to
->> output a warning that may potentially confuse users.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/phy/tegra/xusb-tegra186.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
+On 09-02-20, 19:33, Dmitry Osipenko wrote:
+> Hello,
 > 
-> Kishon,
-> 
-> I already have a couple of PHY subsystem patches from JC and Nagarjuna
-> in a branch in the Tegra tree that I need to resolve a dependency. Do
-> you mind if I pick this up into that branch as well and send it to you
-> as a pull request later on? Say around v5.6-rc6?
+> This series fixes some problems that I spotted recently, secondly the
+> driver's code gets a cleanup. Please review and apply, thanks in advance!
 
-You can take this via Tegra tree itself.
+Applied, thanks
 
-Acked-by: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+One note I would like to add thanking you and Jon for the series :)
 
--Kishon
+This version was pleasure to read. A patch should do *one* thing and
+this series really illustrates this principal and as a result I enjoyed
+reading the series and was able to do a quick review of the series,
+notwithstanding the fact that it had 19 patches. So thanks to you and
+Jon (i know he pushed for split etc) for the wonderful read.
 
-> 
-> Alternatively you could provide an Acked-by and then I can take them all
-> through ARM SoC.
-> 
-> Thierry
-> 
->> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
->> index 84c27394c181..12d0f3e30dbc 100644
->> --- a/drivers/phy/tegra/xusb-tegra186.c
->> +++ b/drivers/phy/tegra/xusb-tegra186.c
->> @@ -802,7 +802,9 @@ tegra186_xusb_read_fuse_calibration(struct tegra186_xusb_padctl *padctl)
->>  
->>  	err = tegra_fuse_readl(TEGRA_FUSE_SKU_CALIB_0, &value);
->>  	if (err) {
->> -		dev_err(dev, "failed to read calibration fuse: %d\n", err);
->> +		if (err != -EPROBE_DEFER)
->> +			dev_err(dev, "failed to read calibration fuse: %d\n",
->> +				err);
->>  		return err;
->>  	}
->>  
->> -- 
->> 2.17.1
->>
+-- 
+~Vinod
