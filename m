@@ -1,43 +1,453 @@
-From: Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH] usb: host: xhci-tegra: Tegra186/Tegra194 LPM
-Date: Wed, 26 Feb 2020 11:32:04 +0200
-Message-ID: <6c93af2b-5a4d-a3ad-07f4-f5c72f569752@linux.intel.com>
-References: <20200224062145.25785-1-jckuo@nvidia.com>
- <20200224125100.GA2108060@ulmo>
- <223f5f09-781a-825d-e75e-3b878acec27d@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 01/10] dt-bindings: sound: tegra: add DT binding for
+ AHUB
+Date: Wed, 26 Feb 2020 10:02:52 -0600
+Message-ID: <20200226160252.GA3671@bogus>
+References: <1582180492-25297-1-git-send-email-spujar@nvidia.com>
+ <1582180492-25297-2-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <223f5f09-781a-825d-e75e-3b878acec27d-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1582180492-25297-2-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: JC Kuo <jckuo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 26.2.2020 10.12, JC Kuo wrote:
-> Hi Thierry,
-> Yes, it can be verified with a LPM capable device. For example, a VIA USB 3.0
-> hub is connected to Jetson-Xavier. "lsusb -v" output [1] shows the device
-> supports LPM and the host has enabled U1/U2 states for the device. If host LPM
-> is disabled, there will be no "U1 Enabled" and "U2 Enabled" strings in "Device
-> Status" section.
+On Thu, Feb 20, 2020 at 12:04:43PM +0530, Sameer Pujar wrote:
+> Audio Hub (AHUB) comprises a collection of hardware accelerators for audio
+> pre-processing and post-processing and a programmable full crossbar for
+> audio routing across these accelerators. This patch adds YAML schema for DT
+> binding of AHUB and few of its following components. These devices will be
+> registered as ASoC components.
+>  * ADMAIF
+>  * I2S
+>  * DMIC
+>  * DSPK
 > 
-> To check LPM operation, disconnect all USB 3.0 devices from the hub and disable
-> runtime PM for the super-speed portion of the hub, so that it won't be
-> auto-suspended.
-> root@tegra-ubuntu:~# echo on > /sys/bus/usb/devices/2-4/power/control
+> Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/sound/nvidia,tegra186-dspk.yaml       |  88 +++++++++++
+>  .../bindings/sound/nvidia,tegra210-admaif.yaml     | 163 +++++++++++++++++++++
+>  .../bindings/sound/nvidia,tegra210-ahub.yaml       | 110 ++++++++++++++
+>  .../bindings/sound/nvidia,tegra210-dmic.yaml       |  88 +++++++++++
+>  .../bindings/sound/nvidia,tegra210-i2s.yaml        | 101 +++++++++++++
+>  5 files changed, 550 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
 > 
-> Since there is no data transaction for the hub, link will enter U2 soon. This
-> can be checked by reading XHCI.PORTSC register. In below, PLS (Port Link State)
-> field is U2.
-> root@tegra-ubuntu:~# devmem 0x3610450
-> 0x00001243
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+> new file mode 100644
+> index 0000000..79c720d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+> @@ -0,0 +1,88 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra186-dspk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra186 DSPK Controller Device Tree Bindings
+> +
+> +description: |
+> +  The Digital Speaker Controller (DSPK) can be viewed as a Pulse
+> +  Density Modulation (PDM) transmitter that up-samples the input to
+> +  the desired sampling rate by interpolation and then converts the
+> +  over sampled Pulse Code Modulation (PCM) input to the desired 1-bit
+> +  output via Delta Sigma Modulation (DSM).
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +  - Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^dspk@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra186-dspk
+> +      - items:
+> +          - const: nvidia,tegra194-dspk
+> +          - const: nvidia,tegra186-dspk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description: DSPK interface clock
 
-A more human friendly way to read portsc registers:
+Needs: 
 
-# cat /sys/kernel/debug/usb/xhci/0000\:00\:14.0/ports/port02/portsc 
-Powered Connected Enabled Link:U0 PortSpeed:3 Change: Wake: 
+maxItems: 1
 
--Mathias
+I'd drop the description too. It's pretty generic...
+
+> +
+> +  clock-names:
+> +    const: dspk
+> +
+
+> +  assigned-clocks:
+> +    description: DSPK interface clock
+> +
+> +  assigned-clock-parents:
+> +    description: Parent for DSPK interface clock
+> +
+> +  assigned-clock-rates:
+> +    description: Initial rate of DSPK interface clock
+
+maxItems: 1 for these 3.
+
+> +
+> +  "#sound-dai-cells":
+> +    const: 1
+> +
+> +  sound-name-prefix:
+> +    pattern: "^DSPK[1-9]$"
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      Used as prefix for sink/source names of the component. Must be a
+> +      unique string among multiple instances of the same component.
+> +      The name can be "DSPK1" or "DSPKx", where x depends on the maximum
+> +      available instances on a Tegra SoC.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - assigned-clocks
+> +  - assigned-clock-parents
+> +  - "#sound-dai-cells"
+> +  - sound-name-prefix
+> +
+> +examples:
+> +  - |
+> +    #include<dt-bindings/clock/tegra186-clock.h>
+> +
+> +    dspk@2905000 {
+> +        compatible = "nvidia,tegra186-dspk";
+> +        reg = <0x2905000 0x100>;
+> +        clocks = <&bpmp TEGRA186_CLK_DSPK1>;
+> +        clock-names = "dspk";
+> +        assigned-clocks = <&bpmp TEGRA186_CLK_DSPK1>;
+> +        assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
+> +        assigned-clock-rates = <12288000>;
+> +        #sound-dai-cells = <1>;
+> +        sound-name-prefix = "DSPK1";
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+> new file mode 100644
+> index 0000000..46637c6a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+> @@ -0,0 +1,163 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-admaif.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 ADMAIF Device Tree Bindings
+> +
+> +description: |
+> +  ADMAIF is the interface between ADMA and AHUB. Each ADMA channel
+> +  that sends/receives data to/from AHUB must interface through an
+> +  ADMAIF channel. ADMA channel sending data to AHUB pairs with ADMAIF
+> +  Tx channel and ADMA channel receiving data from AHUB pairs with
+> +  ADMAIF Rx channel.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +  - Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^admaif@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nvidia,tegra210-admaif
+> +          - nvidia,tegra186-admaif
+> +      - items:
+> +          - const: nvidia,tegra194-admaif
+> +          - const: nvidia,tegra186-admaif
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  dmas: true
+> +
+> +  dma-names: true
+> +
+> +  "#sound-dai-cells":
+> +    const: 1
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: nvidia,tegra210-admaif
+> +
+> +then:
+> +  properties:
+> +    dmas:
+> +      description:
+> +        DMA channel specifiers, equally divided for Tx and Rx.
+> +      minItems: 1
+> +      maxItems: 20
+> +    dma-names:
+> +      items:
+> +        pattern: "^[rt]x(10|[1-9])$"
+> +      description:
+> +        Should be "rx1", "rx2" ... "rx10" for DMA Rx channel
+> +        Should be "tx1", "tx2" ... "tx10" for DMA Tx channel
+> +      minItems: 1
+> +      maxItems: 20
+> +
+> +else:
+> +  properties:
+> +    dmas:
+> +      description:
+> +        DMA channel specifiers, equally divided for Tx and Rx.
+> +      minItems: 1
+> +      maxItems: 40
+> +    dma-names:
+> +      items:
+> +        pattern: "^[rt]x(1[0-9]|[1-9]|20)$"
+> +      description:
+> +        Should be "rx1", "rx2" ... "rx20" for DMA Rx channel
+> +        Should be "tx1", "tx2" ... "tx20" for DMA Tx channel
+> +      minItems: 1
+> +      maxItems: 40
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - dmas
+> +  - dma-names
+> +  - "#sound-dai-cells"
+> +
+> +examples:
+> +  - |
+> +    admaif@702d0000 {
+> +        compatible = "nvidia,tegra210-admaif";
+> +        reg = <0x702d0000 0x800>;
+> +        dmas = <&adma 1>,  <&adma 1>,
+> +               <&adma 2>,  <&adma 2>,
+> +               <&adma 3>,  <&adma 3>,
+> +               <&adma 4>,  <&adma 4>,
+> +               <&adma 5>,  <&adma 5>,
+> +               <&adma 6>,  <&adma 6>,
+> +               <&adma 7>,  <&adma 7>,
+> +               <&adma 8>,  <&adma 8>,
+> +               <&adma 9>,  <&adma 9>,
+> +               <&adma 10>, <&adma 10>;
+> +        dma-names = "rx1",  "tx1",
+> +                    "rx2",  "tx2",
+> +                    "rx3",  "tx3",
+> +                    "rx4",  "tx4",
+> +                    "rx5",  "tx5",
+> +                    "rx6",  "tx6",
+> +                    "rx7",  "tx7",
+> +                    "rx8",  "tx8",
+> +                    "rx9",  "tx9",
+> +                    "rx10", "tx10";
+> +        #sound-dai-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    admaif@290f000 {
+> +        compatible = "nvidia,tegra186-admaif";
+> +        reg = <0x0290f000 0x1000>;
+> +        dmas = <&adma 1>, <&adma 1>,
+> +               <&adma 2>, <&adma 2>,
+> +               <&adma 3>, <&adma 3>,
+> +               <&adma 4>, <&adma 4>,
+> +               <&adma 5>, <&adma 5>,
+> +               <&adma 6>, <&adma 6>,
+> +               <&adma 7>, <&adma 7>,
+> +               <&adma 8>, <&adma 8>,
+> +               <&adma 9>, <&adma 9>,
+> +               <&adma 10>, <&adma 10>,
+> +               <&adma 11>, <&adma 11>,
+> +               <&adma 12>, <&adma 12>,
+> +               <&adma 13>, <&adma 13>,
+> +               <&adma 14>, <&adma 14>,
+> +               <&adma 15>, <&adma 15>,
+> +               <&adma 16>, <&adma 16>,
+> +               <&adma 17>, <&adma 17>,
+> +               <&adma 18>, <&adma 18>,
+> +               <&adma 19>, <&adma 19>,
+> +               <&adma 20>, <&adma 20>;
+> +        dma-names = "rx1", "tx1",
+> +                    "rx2", "tx2",
+> +                    "rx3", "tx3",
+> +                    "rx4", "tx4",
+> +                    "rx5", "tx5",
+> +                    "rx6", "tx6",
+> +                    "rx7", "tx7",
+> +                    "rx8", "tx8",
+> +                    "rx9", "tx9",
+> +                    "rx10", "tx10",
+> +                    "rx11", "tx11",
+> +                    "rx12", "tx12",
+> +                    "rx13", "tx13",
+> +                    "rx14", "tx14",
+> +                    "rx15", "tx15",
+> +                    "rx16", "tx16",
+> +                    "rx17", "tx17",
+> +                    "rx18", "tx18",
+> +                    "rx19", "tx19",
+> +                    "rx20", "tx20";
+> +        #sound-dai-cells = <1>;
+> +    };
+
+I don't see a lot of value in having 2 examples.
+
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> new file mode 100644
+> index 0000000..5f3e1ed
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+
+Same prior comments apply here.
+
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-ahub.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 AHUB Device Tree Bindings
+> +
+> +description: |
+> +  The Audio Hub (AHUB) comprises a collection of hardware accelerators
+> +  for audio pre-processing, post-processing and a programmable full
+> +  crossbar for routing audio data across these accelerators. It has
+> +  external interfaces such as I2S, DMIC, DSPK. It interfaces with ADMA
+> +  engine through ADMAIF.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +  - Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^ahub@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nvidia,tegra210-ahub
+> +          - nvidia,tegra186-ahub
+> +      - items:
+> +          - const: nvidia,tegra194-ahub
+> +          - const: nvidia,tegra186-ahub
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description: AHUB module clock
+> +
+> +  clock-names:
+> +    const: ahub
+> +
+> +  assigned-clocks:
+> +    description: AHUB module clock
+> +
+> +  assigned-clock-parents:
+> +    description: parent for AHUB module clock
+> +
+> +  assigned-clock-rates:
+> +    description: AHUB module clock rate
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+
+ranges already has a type.
+
+> +    description: Specify address range for the node and its children
+
+Drop. That's every 'ranges'.
+
+> +    minItems: 1
+> +
+> +  "#sound-dai-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - assigned-clocks
+> +  - assigned-clock-parents
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - ranges
+> +  - "#sound-dai-cells"
+> +
+> +examples:
+> +  - |
+> +    #include<dt-bindings/clock/tegra210-car.h>
+> +
+> +    ahub@702d0800 {
+> +        compatible = "nvidia,tegra210-ahub";
+> +        reg = <0x702d0800 0x800>;
+> +        clocks = <&tegra_car TEGRA210_CLK_D_AUDIO>;
+> +        clock-names = "ahub";
+> +        assigned-clocks = <&tegra_car TEGRA210_CLK_D_AUDIO>;
+> +        assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
+
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0x702d0000 0x702d0000 0x0000e400>;
+
+These properties imply you have child nodes, but none are defined.
+
+> +        #sound-dai-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    #include<dt-bindings/clock/tegra186-clock.h>
+> +
+> +    ahub@2900800 {
+> +        compatible = "nvidia,tegra186-ahub";
+> +        reg = <0x02900800 0x800>;
+> +        clocks = <&bpmp TEGRA186_CLK_AHUB>;
+> +        clock-names = "ahub";
+> +        assigned-clocks = <&bpmp TEGRA186_CLK_AHUB>;
+> +        assigned-clock-parents = <&bpmp TEGRA186_CLK_PLL_A_OUT0>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0x02900800 0x02900800 0x11800>;
+> +        #sound-dai-cells = <1>;
+> +    };
+
+Really need 2 examples?
+
+> +
+> +...
+
+Same comments apply to the rest.
