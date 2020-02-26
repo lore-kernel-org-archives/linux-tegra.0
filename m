@@ -1,317 +1,117 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
-Date: Tue, 25 Feb 2020 21:50:18 -0800
-Message-ID: <33d21639-6a61-3870-a160-53482614bd66@nvidia.com>
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
- <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
- <821f0878-56da-9b51-425a-9d6fb65d2e0c@nvidia.com>
+From: JC Kuo <jckuo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] usb: host: xhci-tegra: Tegra186/Tegra194 LPM
+Date: Wed, 26 Feb 2020 16:12:05 +0800
+Message-ID: <223f5f09-781a-825d-e75e-3b878acec27d@nvidia.com>
+References: <20200224062145.25785-1-jckuo@nvidia.com>
+ <20200224125100.GA2108060@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <821f0878-56da-9b51-425a-9d6fb65d2e0c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200224125100.GA2108060@ulmo>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Thierry,
+Yes, it can be verified with a LPM capable device. For example, a VIA USB 3.0
+hub is connected to Jetson-Xavier. "lsusb -v" output [1] shows the device
+supports LPM and the host has enabled U1/U2 states for the device. If host LPM
+is disabled, there will be no "U1 Enabled" and "U2 Enabled" strings in "Device
+Status" section.
 
-On 2/25/20 8:49 PM, Sowjanya Komatineni wrote:
->
-> On 2/20/20 4:44 AM, Hans Verkuil wrote:
->> External email: Use caution opening links or attachments
+To check LPM operation, disconnect all USB 3.0 devices from the hub and disable
+runtime PM for the super-speed portion of the hub, so that it won't be
+auto-suspended.
+root@tegra-ubuntu:~# echo on > /sys/bus/usb/devices/2-4/power/control
+
+Since there is no data transaction for the hub, link will enter U2 soon. This
+can be checked by reading XHCI.PORTSC register. In below, PLS (Port Link State)
+field is U2.
+root@tegra-ubuntu:~# devmem 0x3610450
+0x00001243
+
+Thanks,
+JC
+
+[1] lsusb -v -d 2109:0820
+Bus 002 Device 002: ID 2109:0820 VIA Labs, Inc.
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               3.10
+  bDeviceClass            9 Hub
+  bDeviceSubClass         0 Unused
+  bDeviceProtocol         3
+  bMaxPacketSize0         9
+  idVendor           0x2109 VIA Labs, Inc.
+  idProduct          0x0820
+  bcdDevice            4.e3
+  iManufacturer           1 VIA Labs, Inc.
+  iProduct                2 USB3.0 Hub
+  iSerial                 0
+  bNumConfigurations      1
+
+...
+Binary Object Store Descriptor:
+  bLength                 5
+  bDescriptorType        15
+  wTotalLength           42
+  bNumDeviceCaps          3
+  USB 2.0 Extension Device Capability:
+    bLength                 7
+    bDescriptorType        16
+    bDevCapabilityType      2
+    bmAttributes   0x00000002
+      Link Power Management (LPM) Supported
+  SuperSpeed USB Device Capability:
+    bLength                10
+    bDescriptorType        16
+    bDevCapabilityType      3
+    bmAttributes         0x00
+    wSpeedsSupported   0x000e
+      Device can operate at Full Speed (12Mbps)
+      Device can operate at High Speed (480Mbps)
+      Device can operate at SuperSpeed (5Gbps)
+    bFunctionalitySupport   1
+      Lowest fully-functional device speed is Full Speed (12Mbps)
+    bU1DevExitLat           4 micro seconds
+    bU2DevExitLat         231 micro seconds
+  Container ID Device Capability:
+    bLength                20
+    bDescriptorType        16
+    bDevCapabilityType      4
+    bReserved               0
+    ContainerID             {5cf3ee30-d507-4925-b001-802d79434c30}
+Device Status:     0x000d
+  Self Powered
+  U1 Enabled
+  U2 Enabled
+
+
+
+On 2/24/20 8:51 PM, Thierry Reding wrote:
+> On Mon, Feb 24, 2020 at 02:21:45PM +0800, JC Kuo wrote:
+>> Tegra186 and Tegra194 xHC supports USB 3.0 LPM. This commit enables
+>> XHCI_LPM_SUPPORT quirk for Tegra186 and Tegra194.
 >>
->>
->> Hi Sowjanya,
->>
->> Some code review comments below:
->>
->> On 2/14/20 7:23 PM, Sowjanya Komatineni wrote:
->>> Tegra210 contains a powerful Video Input (VI) hardware controller
->>> which can support up to 6 MIPI CSI camera sensors.
->>>
->>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
->>> capture from an external camera sensor connected to CSI or from
->>> built-in test pattern generator.
->>>
->>> Tegra210 supports built-in test pattern generator from CSI to VI.
->>>
->>> This patch adds a V4L2 media controller and capture driver support
->>> for Tegra210 built-in CSI to VI test pattern generator.
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>> =C2=A0 drivers/staging/media/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 2 +
->>> =C2=A0 drivers/staging/media/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
->>> =C2=A0 drivers/staging/media/tegra/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 10 +
->>> =C2=A0 drivers/staging/media/tegra/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 8 +
->>> =C2=A0 drivers/staging/media/tegra/TODO=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 10 +
->>> =C2=A0 drivers/staging/media/tegra/tegra-common.h |=C2=A0 239 +++++++
->>> =C2=A0 drivers/staging/media/tegra/tegra-csi.c=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 374 ++++++++++
->>> =C2=A0 drivers/staging/media/tegra/tegra-csi.h=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 115 ++++
->>> =C2=A0 drivers/staging/media/tegra/tegra-vi.c=C2=A0=C2=A0=C2=A0=C2=A0 |=
- 1019=20
->>> ++++++++++++++++++++++++++++
->>> =C2=A0 drivers/staging/media/tegra/tegra-vi.h=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 79 +++
->>> =C2=A0 drivers/staging/media/tegra/tegra-video.c=C2=A0 |=C2=A0 118 ++++
->>> =C2=A0 drivers/staging/media/tegra/tegra-video.h=C2=A0 |=C2=A0=C2=A0 32=
- +
->>> =C2=A0 drivers/staging/media/tegra/tegra210.c=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 767=20
->>> +++++++++++++++++++++
->>> =C2=A0 drivers/staging/media/tegra/tegra210.h=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 190 ++++++
->>> =C2=A0 14 files changed, 2964 insertions(+)
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/Kconfig
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/Makefile
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/TODO
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-common.h
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-csi.c
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-csi.h
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi.c
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi.h
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-video.c
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-video.h
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra210.c
->>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra210.h
->>>
->
->>> +static int chan_capture_kthread_done(void *data)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_vi_channel *chan =3D data;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_channel_buffer *buf;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 set_freezable();
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 while (1) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 try_to_freeze();
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 wait_event_interruptible(chan->done_wait,
->>> + !list_empty(&chan->done) ||
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 kthread_should_stop());
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 if (kthread_should_stop())
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
->> I think it makes more sense if this test is moved to the end...
->>
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 buf =3D dequeue_buf_done(chan);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 if (!buf)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 continue;
->> ... and this becomes:
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 if (buf)
->>> + tegra_channel_capture_done(chan, buf);
->> This change simplifies stop_streaming (see below).
->
-> With kthread_should_stop check at end, I see sometimes outstanding=20
-> buffer in done queue by the time threads are stopped during stream stop.
->
-> When I run compliance stream io tests continuously in loop, depending=20
-> on time of stream stop request capture thread terminated after=20
-> initiating frame capture and moving buffer to done queue while done=20
-> thread was still in wait for previous MW_ACK and on seeing=20
-> kthread_should_stop done thread terminated with last buffer left in=20
-> done queue.
->
-> So looks like we need to keep checking for outstanding buffer and=20
-> handle it during stop streaming like in v3.
->
-Will change in v4 to handle all pending done queue buffers before=20
-terminating thread.
->
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>> +}
->>> +
->>> +int tegra210_vi_start_streaming(struct vb2_queue *vq, u32 count)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_vi_channel *chan =3D vb2_get_drv=
-_priv(vq);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct media_pipeline *pipe =3D &chan->video.=
-pipe;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 int ret =3D 0;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 tegra_vi_write(chan, TEGRA_VI_CFG_CG_CTRL, VI=
-_CG_2ND_LEVEL_EN);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 /* clear errors */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 vi_csi_write(chan, TEGRA_VI_CSI_ERROR_STATUS,=
- 0xFFFFFFFF);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 /*
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Sync point FIFO full stalls the host =
-interface.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Setting NO_STALL will drop INCR_SYNCP=
-T methods when fifos are
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * full and the corresponding condition =
-bits in INCR_SYNCPT_ERROR
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * register will be set.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * This allows SW to process error recov=
-ery.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 tegra_vi_write(chan, TEGRA_VI_CFG_VI_INCR_SYN=
-CPT_CNTRL,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 TEGRA_VI_CFG_VI_INCR_SYNCPT_N=
-O_STALL);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 /* start the pipeline */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D media_pipeline_start(&chan->video.ent=
-ity, pipe);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (ret < 0)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 goto error_pipeline_start;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 /* program VI registers after TPG, sensors an=
-d CSI streaming */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D tegra_channel_set_stream(chan, true);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (ret < 0)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 goto error_set_stream;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 tegra_channel_capture_setup(chan);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 chan->sequence =3D 0;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 /* start kthreads to capture data to buffer a=
-nd return them */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 chan->kthread_capture_done =3D=20
->>> kthread_run(chan_capture_kthread_done,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chan, "%s:1",
->>> + chan->video.name);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(chan->kthread_capture_done)) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 ret =3D PTR_ERR(chan->kthread_capture_done);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 chan->kthread_capture_done =3D NULL;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 dev_err(&chan->video.dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "failed capture done kt=
-hread: %d\n", ret);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 goto error_kthread_done;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 chan->kthread_capture_start =3D=20
->>> kthread_run(chan_capture_kthread_start,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chan, "%s:0",
->>> + chan->video.name);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(chan->kthread_capture_start)) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 ret =3D PTR_ERR(chan->kthread_capture_start);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 chan->kthread_capture_start =3D NULL;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 dev_err(&chan->video.dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "failed capture start k=
-thread: %d\n", ret);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 goto error_kthread_start;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>> +
->>> +error_kthread_start:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 kthread_stop(chan->kthread_capture_done);
->>> +error_kthread_done:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 tegra_channel_set_stream(chan, false);
->>> +error_set_stream:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 media_pipeline_stop(&chan->video.entity);
->>> +error_pipeline_start:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 vq->start_streaming_called =3D 0;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 tegra_channel_release_queued_buffers(chan, VB=
-2_BUF_STATE_QUEUED);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->>> +}
->>> +
->>> +void tegra210_vi_stop_streaming(struct vb2_queue *vq)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_vi_channel *chan =3D vb2_get_drv=
-_priv(vq);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_channel_buffer *buf;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (!chan->kthread_capture_start || !chan->kt=
-hread_capture_done)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 return;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 kthread_stop(chan->kthread_capture_start);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 chan->kthread_capture_start =3D NULL;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 kthread_stop(chan->kthread_capture_done);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 chan->kthread_capture_done =3D NULL;
->>> +
->> With the change in chan_capture_kthread_done() as described above you=20
->> can
->> drop the next 4 lines since that's guaranteed to be done by the thread.
->>
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 /* wait for last frame MW_ACK_DONE */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 buf =3D dequeue_buf_done(chan);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (buf)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 tegra_channel_capture_done(chan, buf);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 tegra_channel_release_queued_buffers(chan, VB=
-2_BUF_STATE_ERROR);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 tegra_channel_set_stream(chan, false);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 /* disable clock gating to enable continuous =
-clock */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 tegra_vi_write(chan, TEGRA_VI_CFG_CG_CTRL, 0)=
-;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 /* reset VI MCIF, PF, SENSORCTL, and SHADOW l=
-ogic */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 vi_csi_write(chan, TEGRA_VI_CSI_SW_RESET, 0xF=
-);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 vi_csi_write(chan, TEGRA_VI_CSI_SW_RESET, 0x0=
-);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 vi_csi_write(chan, TEGRA_VI_CSI_IMAGE_DEF, 0)=
-;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 /* enable clock gating so VI can be clock gat=
-ed if necessary */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 tegra_vi_write(chan, TEGRA_VI_CFG_CG_CTRL, VI=
-_CG_2ND_LEVEL_EN);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 vi_csi_write(chan, TEGRA_VI_CSI_ERROR_STATUS,=
- 0xFFFFFFFF);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 media_pipeline_stop(&chan->video.entity);
->>> +}
->>> +
->>> +void tegra210_csi_error_recover(struct tegra_csi_channel *csi_chan)
->>
->> Regards,
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hans
+>> Signed-off-by: JC Kuo <jckuo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/usb/host/xhci-tegra.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+> 
+> I see that Mathias has already queued this up, but for the record:
+> 
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> JC, is there some way that we can test this? I see that there are some
+> sysfs files that can control LPM enablement on a per-device basis, but
+> is there some way to check that this works as expected? Or do we just
+> assume everything is fine as long as all the devices continue to operate
+> properly? Perhaps there are some state transition counters or something
+> that would indicate that devices are properly transitioning?
+> 
+> Thierry
+> 
