@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4.9 000/165] 4.9.215-stable review
-Date: Thu, 27 Feb 2020 18:51:09 +0000
-Message-ID: <ca4bee67-e45d-cb5c-deb1-15dba8e4a047@nvidia.com>
-References: <20200227132230.840899170@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 000/237] 4.14.172-stable review
+Date: Thu, 27 Feb 2020 18:51:35 +0000
+Message-ID: <00d00c75-b0fb-ab9b-035f-892c0adf566f@nvidia.com>
+References: <20200227132255.285644406@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200227132230.840899170-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20200227132255.285644406-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -15,9 +15,9 @@ Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JL
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 27/02/2020 13:34, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.215 release.
-> There are 165 patches in this series, all will be posted as a response
+On 27/02/2020 13:33, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.172 release.
+> There are 237 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 27/02/2020 13:34, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.215-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.172-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,12 +36,12 @@ On 27/02/2020 13:34, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v4.9:
+Test results for stable-v4.14:
     8 builds:	8 pass, 0 fail
     16 boots:	16 pass, 0 fail
     24 tests:	24 pass, 0 fail
 
-Linux version:	4.9.215-rc1-gb8e4943d6bee
+Linux version:	4.14.172-rc1-g47e811c62a4a
 Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
 
