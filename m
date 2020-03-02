@@ -1,54 +1,75 @@
-From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v1] media: staging: tegra-vde: Use
- devm_platform_ioremap_resource_byname()
-Date: Mon, 2 Mar 2020 07:20:58 -0800 (PST)
-Message-ID: <20200302152058.GB24372@kadam>
-References: <20200227180915.9541-1-digetx@gmail.com>
- <20200302080456.GD4140@kadam>
- <d748bf2c-e38c-dabb-59ad-39e14813e40a@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Applied "regulator: pwm: Don't warn on probe deferral" to the regulator tree
+Date: Mon, 02 Mar 2020 16:04:59 +0000
+Message-ID: <applied-20200302141428.14119-1-jonathanh@nvidia.com>
+References: <20200302141428.14119-1-jonathanh@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d748bf2c-e38c-dabb-59ad-39e14813e40a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200302141428.14119-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 06:04:20PM +0300, Dmitry Osipenko wrote:
-> 02.03.2020 11:04, Dan Carpenter пишет:
-> > On Thu, Feb 27, 2020 at 09:09:15PM +0300, Dmitry Osipenko wrote:
-> >> This helps to make code cleaner a tad.
-> > 
-> > Please don't start the commit message in the middle of a sentence.
-> 
-> Could you please clarify what do you mean by the "middle of a sentence"?
-> The commit's message doesn't sound "middle" to me at all.
-> 
-> > It looks like this for some of us:
-> > 
-> > https://marc.info/?l=linux-driver-devel&m=158282701430176&w=2
-> 
-> This link points to this patch, I don't quite understand what you're
-> trying to convey here.
-> 
-> > I generally read the subject or the full commit message but seldom
-> > both.
-> 
-> The commit's title describes the change briefly, while the message gives
-> a rational for the change. Usually reviewer should consult the code
-> changes themselves for more details.
-> 
-> Do you have some kind of a email filter that shows only the commit's
-> message? Otherwise I'm not sure what's the problem.
+The patch
 
+   regulator: pwm: Don't warn on probe deferral
 
-The commit message just says "This helps to make code cleaner a tad."
-but it doesn't mention devm_platform_ioremap_resource_byname().  That
-information is there in the subject but not in the commit message itself.
-Take a look at the link I sent you and try to find the subject.  It's
-far away from the commit message.
+has been applied to the regulator tree at
 
-regards,
-dan carpenter
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 0cd71b9a43ad80f4d9a8bfde6ec6db8daf447029 Mon Sep 17 00:00:00 2001
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date: Mon, 2 Mar 2020 14:14:28 +0000
+Subject: [PATCH] regulator: pwm: Don't warn on probe deferral
+
+Deferred probe is an expected return value for devm_pwm_get(). Given
+that the driver deals with it properly, rather than warn on probe
+deferral, only output a message on probe deferral if debug level
+prints are enabled.
+
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Link: https://lore.kernel.org/r/20200302141428.14119-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ drivers/regulator/pwm-regulator.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index e74e11101fc1..638329bd0745 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -354,7 +354,11 @@ static int pwm_regulator_probe(struct platform_device *pdev)
+ 	drvdata->pwm = devm_pwm_get(&pdev->dev, NULL);
+ 	if (IS_ERR(drvdata->pwm)) {
+ 		ret = PTR_ERR(drvdata->pwm);
+-		dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
++		if (ret == -EPROBE_DEFER)
++			dev_dbg(&pdev->dev,
++				"Failed to get PWM, deferring probe\n");
++		else
++			dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-- 
+2.20.1
