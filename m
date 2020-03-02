@@ -1,31 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH v1] media: staging: tegra-vde: Use
- devm_platform_ioremap_resource_byname()
-Date: Mon, 2 Mar 2020 11:04:56 +0300
-Message-ID: <20200302080456.GD4140@kadam>
-References: <20200227180915.9541-1-digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] regulator: pwm: Don't warn on probe deferral
+Date: Mon, 2 Mar 2020 14:14:28 +0000
+Message-ID: <20200302141428.14119-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20200227180915.9541-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 09:09:15PM +0300, Dmitry Osipenko wrote:
-> This helps to make code cleaner a tad.
+Deferred probe is an expected return value for devm_pwm_get(). Given
+that the driver deals with it properly, rather than warn on probe
+deferral, only output a message on probe deferral if debug level
+prints are enabled.
 
-Please don't start the commit message in the middle of a sentence.
-It looks like this for some of us:
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes since V1:
+- Update change to add a debug print for probe deferral
 
-https://marc.info/?l=linux-driver-devel&m=158282701430176&w=2
+ drivers/regulator/pwm-regulator.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-I generally read the subject or the full commit message but seldom
-both.
-
-Otherwise the patch looks very good.
-
-regards,
-dan carpenter
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index e74e11101fc1..638329bd0745 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -354,7 +354,11 @@ static int pwm_regulator_probe(struct platform_device *pdev)
+ 	drvdata->pwm = devm_pwm_get(&pdev->dev, NULL);
+ 	if (IS_ERR(drvdata->pwm)) {
+ 		ret = PTR_ERR(drvdata->pwm);
+-		dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
++		if (ret == -EPROBE_DEFER)
++			dev_dbg(&pdev->dev,
++				"Failed to get PWM, deferring probe\n");
++		else
++			dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-- 
+2.17.1
