@@ -1,24 +1,64 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] media: staging: tegra-vde: Use
- devm_platform_ioremap_resource_byname()
-Date: Tue, 3 Mar 2020 17:52:07 +0300
-Message-ID: <0e4c875b-e859-2621-9252-dbd6a69d244c@gmail.com>
-References: <20200302172904.460-1-digetx@gmail.com>
- <20200303073134.GF4118@kadam>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH V4 0/5] Add support for PCIe endpoint mode in Tegra194
+Date: Tue, 3 Mar 2020 15:02:09 +0000
+Message-ID: <20200303150209.GA6334@e121166-lin.cambridge.arm.com>
+References: <20200303105418.2840-1-vidyas@nvidia.com>
+ <20200303134053.GC2854899@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200303073134.GF4118@kadam>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200303134053.GC2854899@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, andrew.murray-5wv7dgnIgG8@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, gustavo.pimentel-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-03.03.2020 10:31, Dan Carpenter пишет:
-> Thanks!
+On Tue, Mar 03, 2020 at 02:40:53PM +0100, Thierry Reding wrote:
+> On Tue, Mar 03, 2020 at 04:24:13PM +0530, Vidya Sagar wrote:
+> > Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that can operate
+> > either in root port mode or in end point mode but only in one mode at a time.
+> > Platform P2972-0000 supports enabling endpoint mode for C5 controller. This
+> > patch series adds support for PCIe endpoint mode in both the driver as well as
+> > in DT.
+> > This patch series depends on the changes made for Synopsys DesignWare endpoint
+> > mode subsystem that are recently accepted.
+> > @ https://patchwork.kernel.org/project/linux-pci/list/?series=202211
+> > which in turn depends on the patch made by Kishon
+> > @ https://patchwork.kernel.org/patch/10975123/
+> > which is also under review.
+> > 
+> > V4:
+> > * Started using threaded irqs instead of kthreads
+> > 
+> > V3:
+> > * Re-ordered patches in the series to make the driver change as the last patch
+> > * Took care of Thierry's review comments
+> > 
+> > V2:
+> > * Addressed Thierry & Bjorn's review comments
+> > * Added EP mode specific binding documentation to already existing binding documentation file
+> > * Removed patch that enables GPIO controller nodes explicitly as they are enabled already
+> > 
+> > Vidya Sagar (5):
+> >   soc/tegra: bpmp: Update ABI header
+> >   dt-bindings: PCI: tegra: Add DT support for PCIe EP nodes in Tegra194
+> >   arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
+> >   arm64: tegra: Add support for PCIe endpoint mode in P2972-0000
+> >     platform
+> >   PCI: tegra: Add support for PCIe endpoint mode in Tegra194
 > 
-> Reviewed-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+> Hi Lorenzo,
+> 
+> I've acked patches 1, 2 and 5 of the series. I think you're going to
+> need to apply patch 1 in order to satisfy a build-time dependency from
+> patch 5. I can apply patches 3 and 4 to the Tegra tree since they're
+> only adding device tree content that may conflict with some other
+> patches that I have in the Tegra tree.
+> 
+> Does that sound reasonable?
 
-Awesome, thank you :)
+Sure, that's absolutely fine by me, I will do.
+
+Thanks,
+Lorenzo
