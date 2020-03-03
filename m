@@ -1,175 +1,54 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 5/5] PCI: tegra: Add support for PCIe endpoint mode in
- Tegra194
-Date: Tue, 3 Mar 2020 16:05:06 +0530
-Message-ID: <8a7edc61-48bf-704f-8d3f-7cf2c390517e@nvidia.com>
-References: <20200113181411.32743-1-vidyas@nvidia.com>
- <20200113181411.32743-6-vidyas@nvidia.com>
- <20200227114816.GA11443@e121166-lin.cambridge.arm.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH V4 0/5] Add support for PCIe endpoint mode in Tegra194
+Date: Tue, 3 Mar 2020 16:24:13 +0530
+Message-ID: <20200303105418.2840-1-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200227114816.GA11443-LhTu/34fCX3ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, andrew.murray-5wv7dgnIgG8@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, gustavo.pimentel-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com
+Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that can operate
+either in root port mode or in end point mode but only in one mode at a time.
+Platform P2972-0000 supports enabling endpoint mode for C5 controller. This
+patch series adds support for PCIe endpoint mode in both the driver as well as
+in DT.
+This patch series depends on the changes made for Synopsys DesignWare endpoint
+mode subsystem that are recently accepted.
+@ https://patchwork.kernel.org/project/linux-pci/list/?series=202211
+which in turn depends on the patch made by Kishon
+@ https://patchwork.kernel.org/patch/10975123/
+which is also under review.
 
+V4:
+* Started using threaded irqs instead of kthreads
 
-On 2/27/2020 5:18 PM, Lorenzo Pieralisi wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Mon, Jan 13, 2020 at 11:44:11PM +0530, Vidya Sagar wrote:
->> Add support for the endpoint mode of Synopsys DesignWare core based
->> dual mode PCIe controllers present in Tegra194 SoC.
->>
->> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> V3:
->> * Addressed Thierry's review comments
-> 
-> I need his ACK to merge this series.
-> 
-> [...]
-> 
->> +static int tegra_pcie_ep_work_thread(void *p)
->> +{
->> +     struct tegra_pcie_dw *pcie = (struct tegra_pcie_dw *)p;
->> +     u32 event;
->> +
->> +     while (true) {
->> +             wait_event_interruptible(pcie->wq,
->> +                                      !kfifo_is_empty(&pcie->event_fifo));
->> +
->> +             if (kthread_should_stop())
->> +                     break;
->> +
->> +             if (!kfifo_get(&pcie->event_fifo, &event)) {
->> +                     dev_warn(pcie->dev, "EVENT FIFO is empty\n");
->> +                     continue;
->> +             }
->> +
->> +             switch (event) {
->> +             case EP_PEX_RST_DEASSERT:
->> +                     dev_info(pcie->dev, "EVENT: EP_PEX_RST_DEASSERT\n");
->> +                     pex_ep_event_pex_rst_deassert(pcie);
->> +                     break;
->> +
->> +             case EP_PEX_RST_ASSERT:
->> +                     dev_info(pcie->dev, "EVENT: EP_PEX_RST_ASSERT\n");
->> +                     pex_ep_event_pex_rst_assert(pcie);
->> +                     break;
->> +
->> +             case EP_HOT_RST_DONE:
->> +                     dev_info(pcie->dev, "EVENT: EP_HOT_RST_DONE\n");
->> +                     pex_ep_event_hot_rst_done(pcie);
->> +                     break;
->> +
->> +             case EP_BME_CHANGE:
->> +                     dev_info(pcie->dev, "EVENT: EP_BME_CHANGE\n");
->> +                     pex_ep_event_bme_change(pcie);
->> +                     break;
->> +
->> +             case EP_EVENT_EXIT:
->> +                     dev_info(pcie->dev, "EVENT: EP_EVENT_EXIT\n");
->> +                     return 0;
->> +
->> +             default:
->> +                     dev_warn(pcie->dev, "Invalid PCIe EP event: %u\n",
->> +                              event);
->> +                     break;
->> +             }
->> +     }
->> +
->> +     return 0;
->> +}
->> +
->> +static irqreturn_t tegra_pcie_ep_pex_rst_irq(int irq, void *arg)
->> +{
->> +     struct tegra_pcie_dw *pcie = arg;
->> +
->> +     if (gpiod_get_value(pcie->pex_rst_gpiod)) {
->> +             if (!kfifo_put(&pcie->event_fifo, EP_PEX_RST_ASSERT)) {
->> +                     dev_err(pcie->dev, "EVENT FIFO is full\n");
->> +                     return IRQ_HANDLED;
->> +             }
->> +     } else {
->> +             if (!kfifo_put(&pcie->event_fifo, EP_PEX_RST_DEASSERT)) {
->> +                     dev_err(pcie->dev, "EVENT FIFO is full\n");
->> +                     return IRQ_HANDLED;
->> +             }
->> +     }
->> +
->> +     wake_up(&pcie->wq);
->> +
->> +     return IRQ_HANDLED;
->> +}
->> +
-> 
-> [...]
-> 
->> +static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
->> +                             struct platform_device *pdev)
->> +{
->> +     struct dw_pcie *pci = &pcie->pci;
->> +     struct device *dev = pcie->dev;
->> +     struct dw_pcie_ep *ep;
->> +     struct resource *res;
->> +     char *name;
->> +     int ret;
->> +
->> +     ep = &pci->ep;
->> +     ep->ops = &pcie_ep_ops;
->> +
->> +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
->> +     if (!res)
->> +             return -EINVAL;
->> +
->> +     ep->phys_base = res->start;
->> +     ep->addr_size = resource_size(res);
->> +     ep->page_size = SZ_64K;
->> +
->> +     ret = gpiod_set_debounce(pcie->pex_rst_gpiod, PERST_DEBOUNCE_TIME);
->> +     if (ret < 0) {
->> +             dev_err(dev, "Failed to set PERST GPIO debounce time: %d\n",
->> +                     ret);
->> +             return ret;
->> +     }
->> +
->> +     ret = gpiod_to_irq(pcie->pex_rst_gpiod);
->> +     if (ret < 0) {
->> +             dev_err(dev, "Failed to get IRQ for PERST GPIO: %d\n", ret);
->> +             return ret;
->> +     }
->> +     pcie->pex_rst_irq = (unsigned int)ret;
->> +
->> +     name = devm_kasprintf(dev, GFP_KERNEL, "tegra_pcie_%u_pex_rst_irq",
->> +                           pcie->cid);
->> +     if (!name) {
->> +             dev_err(dev, "Failed to create PERST IRQ string\n");
->> +             return -ENOMEM;
->> +     }
->> +
->> +     irq_set_status_flags(pcie->pex_rst_irq, IRQ_NOAUTOEN);
->> +
->> +     ret = devm_request_irq(dev, pcie->pex_rst_irq,
->> +                            tegra_pcie_ep_pex_rst_irq,
->> +                            IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
->> +                            name, (void *)pcie);
-> 
-> I have the impression that a threaded IRQ is what you need, which
-> will also remove some boilerplate in the process. Any reason why
-> you can't use a threaded IRQ instead of a standalone kthread ?
-No reason specifically. We started with kthreads and continued with 
-that. I'll post a new series with threaded IRQ. It should be doable.
+V3:
+* Re-ordered patches in the series to make the driver change as the last patch
+* Took care of Thierry's review comments
 
-Thanks,
-Vidya Sagar
-> 
-> Thanks,
-> Lorenzo
-> 
+V2:
+* Addressed Thierry & Bjorn's review comments
+* Added EP mode specific binding documentation to already existing binding documentation file
+* Removed patch that enables GPIO controller nodes explicitly as they are enabled already
+
+Vidya Sagar (5):
+  soc/tegra: bpmp: Update ABI header
+  dt-bindings: PCI: tegra: Add DT support for PCIe EP nodes in Tegra194
+  arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
+  arm64: tegra: Add support for PCIe endpoint mode in P2972-0000
+    platform
+  PCI: tegra: Add support for PCIe endpoint mode in Tegra194
+
+ .../bindings/pci/nvidia,tegra194-pcie.txt     | 125 +++-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  18 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  99 +++
+ drivers/pci/controller/dwc/Kconfig            |  30 +-
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 681 +++++++++++++++++-
+ include/soc/tegra/bpmp-abi.h                  |  10 +-
+ 6 files changed, 918 insertions(+), 45 deletions(-)
+
+-- 
+2.17.1
