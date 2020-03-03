@@ -1,54 +1,83 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH V4 0/5] Add support for PCIe endpoint mode in Tegra194
-Date: Tue, 3 Mar 2020 16:24:13 +0530
-Message-ID: <20200303105418.2840-1-vidyas@nvidia.com>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V4 1/5] soc/tegra: bpmp: Update ABI header
+Date: Tue, 3 Mar 2020 16:24:14 +0530
+Message-ID: <20200303105418.2840-2-vidyas@nvidia.com>
+References: <20200303105418.2840-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-pci-owner@vger.kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com
-Cc: kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com, sagar.tv@gmail.com
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200303105418.2840-1-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, andrew.murray-5wv7dgnIgG8@public.gmane.org
+Cc: kishon-l0cyMroinI0@public.gmane.org, gustavo.pimentel-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that can operate
-either in root port mode or in end point mode but only in one mode at a time.
-Platform P2972-0000 supports enabling endpoint mode for C5 controller. This
-patch series adds support for PCIe endpoint mode in both the driver as well as
-in DT.
-This patch series depends on the changes made for Synopsys DesignWare endpoint
-mode subsystem that are recently accepted.
-@ https://patchwork.kernel.org/project/linux-pci/list/?series=202211
-which in turn depends on the patch made by Kishon
-@ https://patchwork.kernel.org/patch/10975123/
-which is also under review.
+Update the firmware header to support uninitialization of UPHY PLL
+when the PCIe controller is operating in endpoint mode and host cuts
+the PCIe reference clock.
 
+Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 V4:
-* Started using threaded irqs instead of kthreads
+* None
 
 V3:
-* Re-ordered patches in the series to make the driver change as the last patch
-* Took care of Thierry's review comments
+* Added Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 V2:
-* Addressed Thierry & Bjorn's review comments
-* Added EP mode specific binding documentation to already existing binding documentation file
-* Removed patch that enables GPIO controller nodes explicitly as they are enabled already
+* Changed Copyright year from 2019 to 2020
 
-Vidya Sagar (5):
-  soc/tegra: bpmp: Update ABI header
-  dt-bindings: PCI: tegra: Add DT support for PCIe EP nodes in Tegra194
-  arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
-  arm64: tegra: Add support for PCIe endpoint mode in P2972-0000
-    platform
-  PCI: tegra: Add support for PCIe endpoint mode in Tegra194
+ include/soc/tegra/bpmp-abi.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
- .../bindings/pci/nvidia,tegra194-pcie.txt     | 125 +++-
- .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  18 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  99 +++
- drivers/pci/controller/dwc/Kconfig            |  30 +-
- drivers/pci/controller/dwc/pcie-tegra194.c    | 681 +++++++++++++++++-
- include/soc/tegra/bpmp-abi.h                  |  10 +-
- 6 files changed, 918 insertions(+), 45 deletions(-)
-
+diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
+index cac6f610b3fe..8f8e73e5cd45 100644
+--- a/include/soc/tegra/bpmp-abi.h
++++ b/include/soc/tegra/bpmp-abi.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2014-2020, NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
+ #ifndef _ABI_BPMP_ABI_H_
+@@ -2119,6 +2119,7 @@ enum {
+ 	CMD_UPHY_PCIE_LANE_MARGIN_STATUS = 2,
+ 	CMD_UPHY_PCIE_EP_CONTROLLER_PLL_INIT = 3,
+ 	CMD_UPHY_PCIE_CONTROLLER_STATE = 4,
++	CMD_UPHY_PCIE_EP_CONTROLLER_PLL_OFF = 5,
+ 	CMD_UPHY_MAX,
+ };
+ 
+@@ -2151,6 +2152,11 @@ struct cmd_uphy_pcie_controller_state_request {
+ 	uint8_t enable;
+ } __ABI_PACKED;
+ 
++struct cmd_uphy_ep_controller_pll_off_request {
++	/** @brief EP controller number, valid: 0, 4, 5 */
++	uint8_t ep_controller;
++} __ABI_PACKED;
++
+ /**
+  * @ingroup UPHY
+  * @brief Request with #MRQ_UPHY
+@@ -2165,6 +2171,7 @@ struct cmd_uphy_pcie_controller_state_request {
+  * |CMD_UPHY_PCIE_LANE_MARGIN_STATUS     |                                        |
+  * |CMD_UPHY_PCIE_EP_CONTROLLER_PLL_INIT |cmd_uphy_ep_controller_pll_init_request |
+  * |CMD_UPHY_PCIE_CONTROLLER_STATE       |cmd_uphy_pcie_controller_state_request  |
++ * |CMD_UPHY_PCIE_EP_CONTROLLER_PLL_OFF  |cmd_uphy_ep_controller_pll_off_request  |
+  *
+  */
+ 
+@@ -2178,6 +2185,7 @@ struct mrq_uphy_request {
+ 		struct cmd_uphy_margin_control_request uphy_set_margin_control;
+ 		struct cmd_uphy_ep_controller_pll_init_request ep_ctrlr_pll_init;
+ 		struct cmd_uphy_pcie_controller_state_request controller_state;
++		struct cmd_uphy_ep_controller_pll_off_request ep_ctrlr_pll_off;
+ 	} __UNION_ANON;
+ } __ABI_PACKED;
+ 
 -- 
 2.17.1
