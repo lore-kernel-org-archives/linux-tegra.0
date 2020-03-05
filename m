@@ -1,37 +1,59 @@
-From: "Juanito S. Galang" <juanito.galang-FNl/tBucPvhSZMwInbf+E9d+tgCGH7ND@public.gmane.org>
-Subject: (unknown)
-Date: Thu, 5 Mar 2020 18:46:46 +0800 (PST)
-Message-ID: <1980644409.3575157.1583405206290.JavaMail.zimbra__35964.8139377654$1583406986$gmane$org@pagasa.dost.gov.ph>
+From: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] pwm: tegra: Add support for Tegra194
+Date: Thu, 5 Mar 2020 16:57:33 +0530
+Message-ID: <1583407653-30059-1-git-send-email-spatra@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra194 has multiple PWM controllers with each having only one output.
 
+Also the maxmimum frequency is higher than earlier SoCs.
 
-Herzlichen Gl=C3=BCckwunsch Lieber Beg=C3=BCnstigter,Sie erhalten diese E-M=
-ail von der Robert Bailey Foundation. Ich bin ein pensionierter Regierungsa=
-ngestellter aus Harlem und ein Gewinner des Powerball Lottery Jackpot im We=
-rt von 343,8 Millionen US-Dollar. Ich bin der gr=C3=B6=C3=9Fte Jackpot-Gewi=
-nner in der Geschichte der New Yorker Lotterie im US-Bundesstaat Amerika. I=
-ch habe diese Lotterie am 27. Oktober 2018 gewonnen und m=C3=B6chte Sie dar=
-=C3=BCber informieren, dass Google in Zusammenarbeit mit Microsoft Ihre "E-=
-Mail-Adresse" auf meine Bitte, einen Spendenbetrag von 3.000.000,00 Million=
-en Euro zu erhalten, =C3=BCbermittelt hat. Ich spende diese 3 Millionen Eur=
-o an Sie, um den Wohlt=C3=A4tigkeitsheimen und armen Menschen in Ihrer Geme=
-inde zu helfen, damit wir die Welt f=C3=BCr alle verbessern k=C3=B6nnen.Wei=
-tere Informationen finden Sie auf der folgenden Website, damit Sie nicht sk=
-eptisch sind
-Diese Spende von 3 Mio. EUR.https://nypost.com/2018/11/14/meet-the-winner-o=
-f-the-biggest-lottery-jackpot-in-new-york-history/Sie k=C3=B6nnen auch mein=
- YouTube f=C3=BCr mehr Best=C3=A4tigung aufpassen:
-https://www.youtube.com/watch?v=3DH5vT18Ysavc
-Bitte beachten Sie, dass alle Antworten an (robertdonation7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org=C2=A0=
- ) gesendet werden, damit wir das k=C3=B6nnen
-Fahren Sie fort, um das gespendete Geld an Sie zu =C3=BCberweisen.E-Mail: r=
-obertdonation7-Re5JQEeQqe/BREloi785ARduMeKFjlen@public.gmane.org Gr=C3=BC=C3=9Fe,
-Robert Bailey
-* * * * * * * * * * * * * * * *
-Powerball Jackpot Gewinner
+Add support for Tegra194 and specify the number of PWM outputs and
+maximum supported frequency using device tree match data.
+
+Signed-off-by: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 1 +
+ drivers/pwm/pwm-tegra.c                                      | 6 ++++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+index 0a69ead..74c41e3 100644
+--- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
++++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+@@ -9,6 +9,7 @@ Required properties:
+   - "nvidia,tegra132-pwm", "nvidia,tegra20-pwm": for Tegra132
+   - "nvidia,tegra210-pwm", "nvidia,tegra20-pwm": for Tegra210
+   - "nvidia,tegra186-pwm": for Tegra186
++  - "nvidia,tegra194-pwm": for Tegra194
+ - reg: physical base address and length of the controller's registers
+ - #pwm-cells: should be 2. See pwm.yaml in this directory for a description of
+   the cells format.
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index aa12fb3..d26ed8f 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -282,9 +282,15 @@ static const struct tegra_pwm_soc tegra186_pwm_soc = {
+ 	.max_frequency = 102000000UL,
+ };
+ 
++static const struct tegra_pwm_soc tegra194_pwm_soc = {
++	.num_channels = 1,
++	.max_frequency = 408000000UL,
++};
++
+ static const struct of_device_id tegra_pwm_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-pwm", .data = &tegra20_pwm_soc },
+ 	{ .compatible = "nvidia,tegra186-pwm", .data = &tegra186_pwm_soc },
++	{ .compatible = "nvidia,tegra194-pwm", .data = &tegra194_pwm_soc },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
+-- 
+2.7.4
