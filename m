@@ -1,79 +1,130 @@
-From: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
-Subject: Re: usb: chipidea: udc: BUG: sleeping function called from invalid
- context
-Date: Thu, 5 Mar 2020 02:12:24 +0000
-Message-ID: <20200305021226.GA12837@b29397-desktop>
-References: <bfa5b2f7-cf52-0055-ffb2-2cb8278a1181@gmail.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [RESEND RESEND PATCH] arm/arm64: defconfig: Update configs to use the new CROS_EC options
+Date: Thu,  5 Mar 2020 12:10:47 +0100
+Message-ID: <20200305111047.147355-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <bfa5b2f7-cf52-0055-ffb2-2cb8278a1181-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Content-ID: <F0C8F5F98247604D897003DAF000762B-jdb/QiT5osKcE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org, bleung@chromium.org, dtor@chromium.org, gwendal@chromium.org, Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee.jones@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, linux-tegra@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Leonard Crestez <leonard.crestez@nxp.com>, linux-samsung-soc@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>, Bastien Nocera <hadess@hadess.net>, Miquel Raynal <miquel.raynal@bootlin.com>, Lubomir Rintel <lkundrak@v3.sk>, Daniel
 List-Id: linux-tegra@vger.kernel.org
 
-On 20-03-04 19:10:08, Dmitry Osipenko wrote:
-> Hello,
->=20
-> I was trying out today's linux-next-20200304 and noticed this splat in KM=
-SG:
->=20
-> [    1.161244] BUG: sleeping function called from invalid context at
-> drivers/base/power/runtime.c:1075
-> [    1.161393] in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid:
-> 37, name: kworker/u8:1
-> [    1.161481] CPU: 1 PID: 37 Comm: kworker/u8:1 Not tainted
-> 5.6.0-rc4-next-20200304-00181-gbebfd2a5be98 #1588
-> [    1.161616] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [    1.161769] Workqueue: ci_otg ci_otg_work
-> [    1.161882] [<c010e8bd>] (unwind_backtrace) from [<c010a315>]
-> (show_stack+0x11/0x14)
-> [    1.162035] [<c010a315>] (show_stack) from [<c0987d29>]
-> (dump_stack+0x85/0x94)
-> [    1.162132] [<c0987d29>] (dump_stack) from [<c013e77f>]
-> (___might_sleep+0xeb/0x118)
-> [    1.162281] [<c013e77f>] (___might_sleep) from [<c052fa1d>]
-> (__pm_runtime_resume+0x75/0x78)
-> [    1.162427] [<c052fa1d>] (__pm_runtime_resume) from [<c0627a33>]
-> (ci_udc_pullup+0x23/0x74)
-> [    1.162575] [<c0627a33>] (ci_udc_pullup) from [<c062fb93>]
-> (usb_gadget_connect+0x2b/0xcc)
-> [    1.162665] [<c062fb93>] (usb_gadget_connect) from [<c062769d>]
-> (ci_hdrc_gadget_connect+0x59/0x104)
-> [    1.162807] [<c062769d>] (ci_hdrc_gadget_connect) from [<c062778b>]
-> (ci_udc_vbus_session+0x43/0x48)
-> [    1.162949] [<c062778b>] (ci_udc_vbus_session) from [<c062f997>]
-> (usb_gadget_vbus_connect+0x17/0x9c)
-> [    1.163089] [<c062f997>] (usb_gadget_vbus_connect) from [<c062634d>]
-> (ci_otg_work+0xbd/0x128)
-> [    1.163245] [<c062634d>] (ci_otg_work) from [<c0134719>]
-> (process_one_work+0x149/0x404)
-> [    1.163335] [<c0134719>] (process_one_work) from [<c0134acb>]
-> (worker_thread+0xf7/0x3bc)
-> [    1.163479] [<c0134acb>] (worker_thread) from [<c0139433>]
-> (kthread+0xf3/0x118)
-> [    1.163621] [<c0139433>] (kthread) from [<c01010bd>]
-> (ret_from_fork+0x11/0x34)
->=20
-> I haven't tried to figure out what change causes this problem, it didn't
-> happen using next-20200218. Please take a look, thanks in advance.
+We refactored the CrOS EC drivers moving part of the code from the MFD
+subsystem to the platform chrome subsystem. During this change we needed
+to rename some config options, so, update the defconfigs accordingly.
 
-Dmitry, thanks for reporting. I haven't met that issue, it maybe I
-enable runtime pm, but you have not? So I don't trigger
-"dev->power.runtime_status !=3D RPM_ACTIVE" condition below
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+Dear all,
 
-	might_sleep_if(!(rpmflags & RPM_ASYNC) && !dev->power.irq_safe &&
-			dev->power.runtime_status !=3D RPM_ACTIVE);
+This is a resend of a resend patch [3]. In some previous discussions
+maintainers would prefer to have this merged through the arm-soc tree
+but wasn't merged yet and I forget to ping again, hence, sending a new
+resend.
 
-I send the fix patch, but git send-email seems doesn't add auto cc
-according to reported-by tag, so you are not at cc list. Would you
-please have a test?
-
---=20
+To give some context to some discussions that can arise again (i.e
+whether some symbols should be built-in or not) please look at the
+previous resends [1] and [2].
 
 Thanks,
-Peter Chen=
+ Enric
+
+[1] https://lkml.org/lkml/2019/8/23/518
+[2] https://lkml.org/lkml/2019/8/23/475
+[3] https://patchwork.kernel.org/patch/11267741/
+
+ arch/arm/configs/exynos_defconfig   | 4 +++-
+ arch/arm/configs/multi_v7_defconfig | 5 ++++-
+ arch/arm/configs/pxa_defconfig      | 4 +++-
+ arch/arm/configs/tegra_defconfig    | 2 +-
+ arch/arm64/configs/defconfig        | 5 ++++-
+ 5 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index c8e0c14092e8..cb030549dd69 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -160,7 +160,9 @@ CONFIG_DEVFREQ_THERMAL=y
+ CONFIG_THERMAL_EMULATION=y
+ CONFIG_WATCHDOG=y
+ CONFIG_S3C2410_WATCHDOG=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX77693=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 017d65f86eba..9099787ccf70 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -938,7 +938,7 @@ CONFIG_SERIO_NVEC_PS2=y
+ CONFIG_NVEC_POWER=y
+ CONFIG_NVEC_PAZ00=y
+ CONFIG_STAGING_BOARD=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+ CONFIG_COMMON_CLK_MAX77686=y
+@@ -1118,3 +1118,6 @@ CONFIG_CMA_SIZE_MBYTES=64
+ CONFIG_PRINTK_TIME=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_FS=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
++CONFIG_CROS_EC_CHARDEV=m
+diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+index b817c57f05f1..f1b084ace88d 100644
+--- a/arch/arm/configs/pxa_defconfig
++++ b/arch/arm/configs/pxa_defconfig
+@@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=m
+ CONFIG_MFD_AS3711=y
+ CONFIG_MFD_BCM590XX=m
+ CONFIG_MFD_AXP20X=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+ CONFIG_MFD_ASIC3=y
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index a27592d3b1fa..7bfae67d2016 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=y
+ CONFIG_WATCHDOG=y
+ CONFIG_TEGRA_WATCHDOG=y
+ CONFIG_MFD_AS3722=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 905109f6814f..2095e61c8665 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -705,9 +705,12 @@ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_MMIO=y
+ CONFIG_XEN_GNTDEV=y
+ CONFIG_XEN_GRANT_DEV_ALLOC=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
+ CONFIG_CROS_EC_I2C=y
+ CONFIG_CROS_EC_SPI=y
++CONFIG_CROS_EC_CHARDEV=m
+ CONFIG_COMMON_CLK_RK808=y
+ CONFIG_COMMON_CLK_SCPI=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
+-- 
+2.25.1
