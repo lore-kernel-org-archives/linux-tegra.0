@@ -1,61 +1,79 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v8 00/22] Move PMC clocks into Tegra PMC driver
-Date: Thu, 5 Mar 2020 00:22:52 +0300
-Message-ID: <7722b7b8-82df-c450-a94c-704d15819af0@gmail.com>
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <20200217095940.GE1345979@ulmo>
- <96ed39c9-32d3-98a1-e9d8-ffe63307a556@gmail.com>
+From: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
+Subject: Re: usb: chipidea: udc: BUG: sleeping function called from invalid
+ context
+Date: Thu, 5 Mar 2020 02:12:24 +0000
+Message-ID: <20200305021226.GA12837@b29397-desktop>
+References: <bfa5b2f7-cf52-0055-ffb2-2cb8278a1181@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <96ed39c9-32d3-98a1-e9d8-ffe63307a556@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <bfa5b2f7-cf52-0055-ffb2-2cb8278a1181-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com, gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org, mmaddireddy@nvidia.com, markz@nvidia.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-ID: <F0C8F5F98247604D897003DAF000762B-jdb/QiT5osKcE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-04.03.2020 22:26, Dmitry Osipenko пишет:
-> 17.02.2020 12:59, Thierry Reding пишет:
-> ...
->> I've applied patches 1-10 and 13-16 to the Tegra tree, but I think it
->> should be fine for Mark to pick up the ASoC patches into his tree,
->> right?
->>
->> As I mentioned in my reply to patch 20, I think we need to hold off on
->> applying patches 20-22 until all the rest have been merged, otherwise
->> we'll regress.
-> 
-> Hello Thierry and Sowjanya,
-> 
-> I was trying today's next-20200304 and found that WiFi / Bluetooth got
-> broken:
-> 
-> [   23.130017] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
-> brcmf_proto_bcdc_msg failed w/status -110
-> [   23.130167] ieee80211 phy0: brcmf_cfg80211_get_channel: chanspec
-> failed (-110)
-> [   25.690008] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
-> brcmf_proto_bcdc_msg failed w/status -110
-> [   30.811972] ieee80211 phy0: brcmf_dongle_scantime: Scan assoc time
-> error (-110)
-> [   33.370184] ieee80211 phy0: brcmf_netdev_open: failed to bring up
-> cfg80211
-> [   35.929994] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
-> brcmf_proto_bcdc_msg failed w/status -110
-> [   35.930181] ieee80211 phy0: brcmf_cfg80211_get_channel: chanspec
-> failed (-110)
-> 
-> The fix is to replace TEGRA30_CLK_BLINK with TEGRA_PMC_CLK_BLINK in a
-> device-tree.
-> 
-> I'm not sure that the TEGRA30_CLK_BLINK breakage is expected to happen
-> because all clk/tegra/ PMC code is still in place. Please take a look,
-> thanks in advance.
+On 20-03-04 19:10:08, Dmitry Osipenko wrote:
+> Hello,
+>=20
+> I was trying out today's linux-next-20200304 and noticed this splat in KM=
+SG:
+>=20
+> [    1.161244] BUG: sleeping function called from invalid context at
+> drivers/base/power/runtime.c:1075
+> [    1.161393] in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid:
+> 37, name: kworker/u8:1
+> [    1.161481] CPU: 1 PID: 37 Comm: kworker/u8:1 Not tainted
+> 5.6.0-rc4-next-20200304-00181-gbebfd2a5be98 #1588
+> [    1.161616] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [    1.161769] Workqueue: ci_otg ci_otg_work
+> [    1.161882] [<c010e8bd>] (unwind_backtrace) from [<c010a315>]
+> (show_stack+0x11/0x14)
+> [    1.162035] [<c010a315>] (show_stack) from [<c0987d29>]
+> (dump_stack+0x85/0x94)
+> [    1.162132] [<c0987d29>] (dump_stack) from [<c013e77f>]
+> (___might_sleep+0xeb/0x118)
+> [    1.162281] [<c013e77f>] (___might_sleep) from [<c052fa1d>]
+> (__pm_runtime_resume+0x75/0x78)
+> [    1.162427] [<c052fa1d>] (__pm_runtime_resume) from [<c0627a33>]
+> (ci_udc_pullup+0x23/0x74)
+> [    1.162575] [<c0627a33>] (ci_udc_pullup) from [<c062fb93>]
+> (usb_gadget_connect+0x2b/0xcc)
+> [    1.162665] [<c062fb93>] (usb_gadget_connect) from [<c062769d>]
+> (ci_hdrc_gadget_connect+0x59/0x104)
+> [    1.162807] [<c062769d>] (ci_hdrc_gadget_connect) from [<c062778b>]
+> (ci_udc_vbus_session+0x43/0x48)
+> [    1.162949] [<c062778b>] (ci_udc_vbus_session) from [<c062f997>]
+> (usb_gadget_vbus_connect+0x17/0x9c)
+> [    1.163089] [<c062f997>] (usb_gadget_vbus_connect) from [<c062634d>]
+> (ci_otg_work+0xbd/0x128)
+> [    1.163245] [<c062634d>] (ci_otg_work) from [<c0134719>]
+> (process_one_work+0x149/0x404)
+> [    1.163335] [<c0134719>] (process_one_work) from [<c0134acb>]
+> (worker_thread+0xf7/0x3bc)
+> [    1.163479] [<c0134acb>] (worker_thread) from [<c0139433>]
+> (kthread+0xf3/0x118)
+> [    1.163621] [<c0139433>] (kthread) from [<c01010bd>]
+> (ret_from_fork+0x11/0x34)
+>=20
+> I haven't tried to figure out what change causes this problem, it didn't
+> happen using next-20200218. Please take a look, thanks in advance.
 
-This happens because the unused "pmc_blink" is getting auto-disabled by
-the CCF. Which means that it's wrong to apply this series partially.
+Dmitry, thanks for reporting. I haven't met that issue, it maybe I
+enable runtime pm, but you have not? So I don't trigger
+"dev->power.runtime_status !=3D RPM_ACTIVE" condition below
 
-@Thierry, please re-apply it all properly. All patches, excluding patch
-#11, should be applied. Thanks in advance.
+	might_sleep_if(!(rpmflags & RPM_ASYNC) && !dev->power.irq_safe &&
+			dev->power.runtime_status !=3D RPM_ACTIVE);
+
+I send the fix patch, but git send-email seems doesn't add auto cc
+according to reported-by tag, so you are not at cc list. Would you
+please have a test?
+
+--=20
+
+Thanks,
+Peter Chen=
