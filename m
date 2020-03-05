@@ -1,43 +1,48 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: usb: chipidea: udc: BUG: sleeping function called from invalid
- context
-Date: Thu, 5 Mar 2020 23:53:46 +0300
-Message-ID: <7a142dd4-9ae8-2560-e5be-25648f88a864@gmail.com>
-References: <bfa5b2f7-cf52-0055-ffb2-2cb8278a1181@gmail.com>
- <20200305021226.GA12837@b29397-desktop>
+From: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [BUG] 5.6-rc1 breaks sdhci on tegra-30 ouya
+Date: Thu, 5 Mar 2020 15:56:22 -0500
+Message-ID: <CAMdYzYoxsBAyBhp+S6LKE060qLLq=XioVVPUmOka0auOo8aXcg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200305021226.GA12837@b29397-desktop>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
-Cc: "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-05.03.2020 05:12, Peter Chen пишет:
-> On 20-03-04 19:10:08, Dmitry Osipenko wrote:
->> Hello,
->>
->> I was trying out today's linux-next-20200304 and noticed this splat in KMSG:
->>
-...
->> I haven't tried to figure out what change causes this problem, it didn't
->> happen using next-20200218. Please take a look, thanks in advance.
-> 
-> Dmitry, thanks for reporting. I haven't met that issue, it maybe I
-> enable runtime pm, but you have not? So I don't trigger
-> "dev->power.runtime_status != RPM_ACTIVE" condition below
-> 
-> 	might_sleep_if(!(rpmflags & RPM_ASYNC) && !dev->power.irq_safe &&
-> 			dev->power.runtime_status != RPM_ACTIVE);
+Good Afternoon,
 
-The runtime PM always presents on Tegra, do you have
-CONFIG_DEBUG_ATOMIC_SLEEP=y in the kernel's config?
+I have been fighting a bug with sdhci on the tegra-30 based ouya since 5.6-rc1.
+I've traced it to the following commit:
 
-> I send the fix patch, but git send-email seems doesn't add auto cc
-> according to reported-by tag, so you are not at cc list. Would you
-> please have a test?
+mmc: core: Specify timeouts for BKOPS and CACHE_FLUSH for eMMC
+24ed3bd01d6a844fd5e8a75f48d0a3d10ed71bf9
 
-It fixes the problem, thanks!
+[   51.401369] mmc0: Card stuck being busy! mmc_poll_for_busy
+[   51.407288] mmc0: cache flush error -110
+[   51.412347] blk_update_request: I/O error, dev mmcblk0, sector 0 op
+0x1:(WRITE) flags 0x800 phys_seg 0 prio class 0
+
+It also caused issues with hitching with the bcm4330 sdio wifi chip.
+
+Reverting this commit fixes the issue.
+
+After reverting this commit, with the following commit still intact:
+
+mmc: core: Default to generic_cmd6_time as timeout in __mmc_switch()
+
+I am seeing a lot of the following messages:
+[   22.626377] mmc0: unspecified timeout for CMD6 - use generic
+[   22.687349] mmc0: unspecified timeout for CMD6 - use generic
+[   23.362736] mmc0: unspecified timeout for CMD6 - use generic
+[   23.487824] mmc0: unspecified timeout for CMD6 - use generic
+[   23.547674] mmc0: unspecified timeout for CMD6 - use generic
+[   23.745527] mmc0: unspecified timeout for CMD6 - use generic
+[   23.817678] mmc0: unspecified timeout for CMD6 - use generic
+[   24.045600] mmc0: unspecified timeout for CMD6 - use generic
+[   24.155577] mmc0: unspecified timeout for CMD6 - use generic
+[   24.223448] mmc0: unspecified timeout for CMD6 - use generic
+[   24.286257] mmc0: unspecified timeout for CMD6 - use generic
+
+Very Respectfully,
+Peter Geis
