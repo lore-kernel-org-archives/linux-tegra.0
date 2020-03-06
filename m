@@ -1,42 +1,75 @@
-From: Peter Chen <peter.chen-3arQi8VN3Tc@public.gmane.org>
-Subject: Re: usb: chipidea: udc: BUG: sleeping function called from invalid
- context
-Date: Fri, 6 Mar 2020 01:53:41 +0000
-Message-ID: <20200306015344.GA29800@b29397-desktop>
-References: <bfa5b2f7-cf52-0055-ffb2-2cb8278a1181@gmail.com>
- <20200305021226.GA12837@b29397-desktop>
- <7a142dd4-9ae8-2560-e5be-25648f88a864@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2 0/8] Introduce NVIDIA Tegra Partition Tablex
+Date: Fri,  6 Mar 2020 05:12:12 +0300
+Message-ID: <20200306021220.22097-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7a142dd4-9ae8-2560-e5be-25648f88a864-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Content-ID: <952D56765ABE2A42AD1B629A96FE1D55-jdb/QiT5osKcE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjAtMDMtMDUgMjM6NTM6NDYsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToNCj4gMDUuMDMuMjAy
-MCAwNToxMiwgUGV0ZXIgQ2hlbiDQv9C40YjQtdGCOg0KPiA+IE9uIDIwLTAzLTA0IDE5OjEwOjA4
-LCBEbWl0cnkgT3NpcGVua28gd3JvdGU6DQo+ID4+IEhlbGxvLA0KPiA+Pg0KPiA+PiBJIHdhcyB0
-cnlpbmcgb3V0IHRvZGF5J3MgbGludXgtbmV4dC0yMDIwMDMwNCBhbmQgbm90aWNlZCB0aGlzIHNw
-bGF0IGluIEtNU0c6DQo+ID4+DQo+IC4uLg0KPiA+PiBJIGhhdmVuJ3QgdHJpZWQgdG8gZmlndXJl
-IG91dCB3aGF0IGNoYW5nZSBjYXVzZXMgdGhpcyBwcm9ibGVtLCBpdCBkaWRuJ3QNCj4gPj4gaGFw
-cGVuIHVzaW5nIG5leHQtMjAyMDAyMTguIFBsZWFzZSB0YWtlIGEgbG9vaywgdGhhbmtzIGluIGFk
-dmFuY2UuDQo+ID4gDQo+ID4gRG1pdHJ5LCB0aGFua3MgZm9yIHJlcG9ydGluZy4gSSBoYXZlbid0
-IG1ldCB0aGF0IGlzc3VlLCBpdCBtYXliZSBJDQo+ID4gZW5hYmxlIHJ1bnRpbWUgcG0sIGJ1dCB5
-b3UgaGF2ZSBub3Q/IFNvIEkgZG9uJ3QgdHJpZ2dlcg0KPiA+ICJkZXYtPnBvd2VyLnJ1bnRpbWVf
-c3RhdHVzICE9IFJQTV9BQ1RJVkUiIGNvbmRpdGlvbiBiZWxvdw0KPiA+IA0KPiA+IAltaWdodF9z
-bGVlcF9pZighKHJwbWZsYWdzICYgUlBNX0FTWU5DKSAmJiAhZGV2LT5wb3dlci5pcnFfc2FmZSAm
-Jg0KPiA+IAkJCWRldi0+cG93ZXIucnVudGltZV9zdGF0dXMgIT0gUlBNX0FDVElWRSk7DQo+IA0K
-PiBUaGUgcnVudGltZSBQTSBhbHdheXMgcHJlc2VudHMgb24gVGVncmEsIGRvIHlvdSBoYXZlDQo+
-IENPTkZJR19ERUJVR19BVE9NSUNfU0xFRVA9eSBpbiB0aGUga2VybmVsJ3MgY29uZmlnPw0KPiAN
-Cg0KTm8sIHRoZSByZWFzb24gc2hvdWxkIGJlICJkZXYtPnBvd2VyLnJ1bnRpbWVfc3RhdHVzICE9
-IFJQTV9BQ1RJVkUiLCB5b3VyDQpjaSBkZXZpY2UncyBydW50aW1lIG1heSBub3QgYmUgYWN0aXZl
-IGF0IHRoYXQgdGltZSwgaWYgSSBtb3ZlIHRoZSBzcGlubG9jaw0KYWJvdmUgcG1fcnVudGltZV9n
-ZXRfc3luYyBhdCBjaV9oZHJjX2dhZGdldF9jb25uZWN0LCBJIGNvdWxkIHJlcHJvZHVjZSBpdA0K
-dG9vLg0KDQpJIGVuYWJsZWQgQ09ORklHX0RFQlVHX0FUT01JQ19TTEVFUCwgYnV0IGNhbid0IHJl
-cHJvZHVjZSB0aGUgZHVtcA0Kd2l0aG91dCBhYm92ZSBjaGFuZ2VzLg0KDQotLSANCg0KVGhhbmtz
-LA0KUGV0ZXIgQ2hlbg==
+Some NVIDIA Tegra devices have GPT entry at a wrong location and others may
+even not have it at all. So either a custom workaround for GPT parsing or
+TegraPT support is needed for those devices if we want to support them in
+upstream kernel. The former solution was already rejected [1], let's try
+the latter.
+
+[1] https://patchwork.ozlabs.org/patch/1240809/
+
+Big thanks to everyone who helped with figuring out the TegraPT format!
+
+Changelog:
+
+v2: - Addressed v1 review comments from Stephen Warren by using BIT for
+      locating BCT position in IRAM.
+
+    - Added more validations to the TegraPT parser: partition type is
+      verified, eMMC instance ID is verified.
+
+    - TegraPT parser now doesn't touch any devices other than eMMC.
+
+    - EKS (encrypted keys) partition is blacklisted now.
+
+    - Implemented eMMC boot partitions scanning. These new patches are
+      added in a result:
+
+        mmc: block: Add mmc_bdev_to_part_type() helper
+        mmc: block: Add mmc_bdev_to_area_type() helper
+        mmc: block: Add MMC_QUIRK_RESCAN_MAIN_BLKDEV
+        mmc: block: Enable partition-table scanning for boot partitions
+        partitions/tegra: Implement eMMC boot partitions scanning
+
+Dmitry Osipenko (8):
+  mmc: core: Add raw_boot_mult field to mmc_ext_csd
+  mmc: block: Add mmc_bdev_to_card() helper
+  partitions: Introduce NVIDIA Tegra Partition Table
+  mmc: block: Add mmc_bdev_to_part_type() helper
+  mmc: block: Add mmc_bdev_to_area_type() helper
+  mmc: block: Add MMC_QUIRK_RESCAN_MAIN_BLKDEV
+  mmc: block: Enable partition-table scanning for boot partitions
+  partitions/tegra: Implement eMMC boot partitions scanning
+
+ arch/arm/mach-tegra/tegra.c   |  54 +++
+ block/partitions/Kconfig      |   9 +
+ block/partitions/Makefile     |   1 +
+ block/partitions/check.c      |   4 +
+ block/partitions/tegra.c      | 608 ++++++++++++++++++++++++++++++++++
+ block/partitions/tegra.h      |  83 +++++
+ drivers/mmc/core/block.c      |  85 ++++-
+ drivers/mmc/core/mmc.c        |   2 +
+ include/linux/mmc/blkdev.h    |  15 +
+ include/linux/mmc/card.h      |   2 +
+ include/soc/tegra/bootdata.h  |  46 +++
+ include/soc/tegra/common.h    |   9 +
+ include/soc/tegra/partition.h |  18 +
+ 13 files changed, 934 insertions(+), 2 deletions(-)
+ create mode 100644 block/partitions/tegra.c
+ create mode 100644 block/partitions/tegra.h
+ create mode 100644 include/linux/mmc/blkdev.h
+ create mode 100644 include/soc/tegra/bootdata.h
+ create mode 100644 include/soc/tegra/partition.h
+
+-- 
+2.25.1
