@@ -1,112 +1,77 @@
-From: Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 17/22] drm/tilcdc: Use simple encoder
-Date: Fri, 6 Mar 2020 18:03:18 +0200
-Message-ID: <d4b7313e-3b5e-0659-fb2a-32a969a80081@ti.com>
-References: <20200305155950.2705-1-tzimmermann@suse.de>
- <20200305155950.2705-18-tzimmermann@suse.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v1 3/3] partitions: Introduce NVIDIA Tegra Partition Table
+Date: Fri, 6 Mar 2020 09:52:56 -0700
+Message-ID: <6fe6d262-c6b0-52d8-0150-4c32a4c36cbd@wwwdotorg.org>
+References: <20200224231841.26550-1-digetx@gmail.com>
+ <20200224231841.26550-4-digetx@gmail.com>
+ <44c22925-a14e-96d0-1f93-1979c0c60525@wwwdotorg.org>
+ <CAPDyKFoXnoukjH_2cM=f0DGHBHS6kVUQSYOa_5ffQppC7VOn2A@mail.gmail.com>
+ <824a4d5f-8280-8860-3e80-68188a13aa3d@gmail.com>
+ <CAPDyKFric6pZbJ5-2qkwAFoeJ0c0kcha99zHJ12AUrWO6FQmgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane-mx.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20200305155950.2705-18-tzimmermann-l3A5Bk7waGM@public.gmane.org>
-Content-Language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane-mx.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, airlied-cv59FeDIM0c@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org, abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org, alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org, ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org, maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, alison.wang-3arQi8VN3Tc@public.gmane.org, patrik.r.jakobsson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, xinliang.liu-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, zourongrong-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kong.kongxinwei-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, puck.chen-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-imx-3arQi8VN3Tc@public.gmane.org, paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPDyKFric6pZbJ5-2qkwAFoeJ0c0kcha99zHJ12AUrWO6FQmgg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-block <linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/03/2020 17:59, Thomas Zimmermann wrote:
-> The tilcdc driver uses empty implementations for its encoders. Replace
-> the code with the generic simple encoder.
+On 3/6/20 6:37 AM, Ulf Hansson wrote:
+> On Wed, 4 Mar 2020 at 18:09, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>
+>> 04.03.2020 19:36, Ulf Hansson пишет:
+>>> On Tue, 25 Feb 2020 at 01:20, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>>
+>>>> On 2/24/20 4:18 PM, Dmitry Osipenko wrote:
+>>>>> All NVIDIA Tegra devices use a special partition table format for the
+>>>>> internal storage partitioning. Most of Tegra devices have GPT partition
+>>>>> in addition to TegraPT, but some older Android consumer-grade devices do
+>>>>> not or GPT is placed in a wrong sector, and thus, the TegraPT is needed
+>>>>> in order to support these devices properly in the upstream kernel. This
+>>>>> patch adds support for NVIDIA Tegra Partition Table format that is used
+>>>>> at least by all NVIDIA Tegra20 and Tegra30 devices.
+>>>>
+>>>>> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+>>>>
+>>>>> +static void __init tegra_boot_config_table_init(void)
+>>>>> +{
+>>>>> +     void __iomem *bct_base;
+>>>>> +     u16 pt_addr, pt_size;
+>>>>> +
+>>>>> +     bct_base = IO_ADDRESS(TEGRA_IRAM_BASE) + TEGRA_IRAM_BCT_OFFSET;
+>>>>
+>>>> This shouldn't be hard-coded. IIRC, the boot ROM writes a BIT (Boot
+>>>> Information Table) to a fixed location in IRAM, and there's some value
+>>>> in the BIT that points to where the BCT is in IRAM. In practice, it
+>>>> might work out that the BCT is always at the same place in IRAM, but
+>>>> this certainly isn't guaranteed. I think there's code in U-Boot which
+>>>> extracts the BCT location from the BIT? Yes, see
+>>>> arch/arm/mach-tegra/ap.c:get_odmdata().
+>>>
+>>> So, have you considered using the command line partition option,
+>>> rather than adding yet another partition scheme to the kernel?
+>>>
+>>> In principle, you would let the boot loader scan for the partitions,
+>>> likely from machine specific code in U-boot. Then you append these to
+>>> the kernel command line and let block/partitions/cmdline.c scan for
+>>> it.
+>>
+>> The bootloader is usually locked-down on a consumer Tegra machines (it's
+>> signed / encrypted).
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
-
-Acked-by: Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>
-
-> ---
->  drivers/gpu/drm/tilcdc/tilcdc_external.c | 10 +++-------
->  drivers/gpu/drm/tilcdc/tilcdc_panel.c    |  8 ++------
->  2 files changed, 5 insertions(+), 13 deletions(-)
+> Right, you are you talking about this from a developer point of view,
+> not from an end product user?
 > 
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_external.c b/drivers/gpu/drm/tilcdc/tilcdc_external.c
-> index 28b7f703236e..b177525588c1 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_external.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_external.c
-> @@ -10,6 +10,7 @@
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_bridge.h>
->  #include <drm/drm_of.h>
-> +#include <drm/drm_simple_kms_helper.h>
->  
->  #include "tilcdc_drv.h"
->  #include "tilcdc_external.h"
-> @@ -83,10 +84,6 @@ int tilcdc_add_component_encoder(struct drm_device *ddev)
->  	return 0;
->  }
->  
-> -static const struct drm_encoder_funcs tilcdc_external_encoder_funcs = {
-> -	.destroy	= drm_encoder_cleanup,
-> -};
-> -
->  static
->  int tilcdc_attach_bridge(struct drm_device *ddev, struct drm_bridge *bridge)
->  {
-> @@ -131,9 +128,8 @@ int tilcdc_attach_external_device(struct drm_device *ddev)
->  	if (!priv->external_encoder)
->  		return -ENOMEM;
->  
-> -	ret = drm_encoder_init(ddev, priv->external_encoder,
-> -			       &tilcdc_external_encoder_funcs,
-> -			       DRM_MODE_ENCODER_NONE, NULL);
-> +	ret = drm_simple_encoder_init(ddev, priv->external_encoder,
-> +				      DRM_MODE_ENCODER_NONE);
->  	if (ret) {
->  		dev_err(ddev->dev, "drm_encoder_init() failed %d\n", ret);
->  		return ret;
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_panel.c b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> index 5584e656b857..12823d60c4e8 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> @@ -16,6 +16,7 @@
->  #include <drm/drm_connector.h>
->  #include <drm/drm_modeset_helper_vtables.h>
->  #include <drm/drm_probe_helper.h>
-> +#include <drm/drm_simple_kms_helper.h>
->  
->  #include "tilcdc_drv.h"
->  #include "tilcdc_panel.h"
-> @@ -74,10 +75,6 @@ static void panel_encoder_mode_set(struct drm_encoder *encoder,
->  	/* nothing needed */
->  }
->  
-> -static const struct drm_encoder_funcs panel_encoder_funcs = {
-> -		.destroy        = drm_encoder_cleanup,
-> -};
-> -
->  static const struct drm_encoder_helper_funcs panel_encoder_helper_funcs = {
->  		.dpms           = panel_encoder_dpms,
->  		.prepare        = panel_encoder_prepare,
-> @@ -102,8 +99,7 @@ static struct drm_encoder *panel_encoder_create(struct drm_device *dev,
->  	encoder = &panel_encoder->base;
->  	encoder->possible_crtcs = 1;
->  
-> -	ret = drm_encoder_init(dev, encoder, &panel_encoder_funcs,
-> -			DRM_MODE_ENCODER_LVDS, NULL);
-> +	ret = drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_LVDS);
->  	if (ret < 0)
->  		goto fail;
->  
-> 
+> I mean, for sure you can upgrade the bootloader on Nvidia products? No, really?
 
+For developer-oriented products like Jetson developer kits, you can 
+upgrade the bootloader, and luckily they haven't used this partition 
+table format for many versions.
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+However, commercial Android products typically have secure boot enabled, 
+so you can't replace the bootloader unless you know the secure boot 
+keys, which only the manufacturer knows. Dmitry is working on 
+re-purposing such products.
