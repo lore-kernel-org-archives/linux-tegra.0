@@ -1,100 +1,78 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 6/8] mmc: block: Add MMC_QUIRK_RESCAN_MAIN_BLKDEV
-Date: Fri,  6 Mar 2020 05:12:18 +0300
-Message-ID: <20200306021220.22097-7-digetx@gmail.com>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH v2 3/8] partitions: Introduce NVIDIA Tegra Partition Table
+Date: Thu, 5 Mar 2020 18:22:53 -0800
+Message-ID: <14ebbc7f-91f3-16dd-b998-ddd71385c772@infradead.org>
 References: <20200306021220.22097-1-digetx@gmail.com>
+ <20200306021220.22097-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200306021220.22097-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200306021220.22097-4-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA Tegra Partition Table location isn't restricted by the main eMMC
-partition. This patch introduces new MMC-card quirk which is needed by
-some NVIDIA Tegra devices in order to set up partition table if it is
-stored on a eMMC boot partition.
+On 3/5/20 6:12 PM, Dmitry Osipenko wrote:
+> All NVIDIA Tegra devices use a special partition table format for the
+> internal storage partitioning. Most of Tegra devices have GPT partition
+> in addition to TegraPT, but some older Android consumer-grade devices do
+> not or GPT is placed in a wrong sector, and thus, the TegraPT is needed
+> in order to support these devices properly in the upstream kernel. This
+> patch adds support for NVIDIA Tegra Partition Table format that is used
+> at least by all NVIDIA Tegra20 and Tegra30 devices.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/tegra.c   |  54 ++++
+>  block/partitions/Kconfig      |   9 +
+>  block/partitions/Makefile     |   1 +
+>  block/partitions/check.c      |   4 +
+>  block/partitions/tegra.c      | 510 ++++++++++++++++++++++++++++++++++
+>  block/partitions/tegra.h      |  83 ++++++
+>  include/soc/tegra/bootdata.h  |  46 +++
+>  include/soc/tegra/common.h    |   9 +
+>  include/soc/tegra/partition.h |  18 ++
+>  9 files changed, 734 insertions(+)
+>  create mode 100644 block/partitions/tegra.c
+>  create mode 100644 block/partitions/tegra.h
+>  create mode 100644 include/soc/tegra/bootdata.h
+>  create mode 100644 include/soc/tegra/partition.h
 
-The tegra-partition parser will read out FS partition table from the eMMC
-boot partition and stash it for the main eMMC partition. In this case
-block device of the main eMMC partition needs to be re-scanned in order
-to assign the stashed partition table to the main MMC block device by
-tegra-partition parser.
+Hi Dmitry,
 
-This patch adds new MMC card flag that is applied by tegra-partition
-parser to the scanned MMC card if partition table is found on a boot
-eMMC partition. This flag tells MMC_BLOCK core that main MMC partition
-needs to be re-scanned once all block devices of the MMC card are
-instantiated.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/mmc/core/block.c | 31 +++++++++++++++++++++++++++++++
- include/linux/mmc/card.h |  1 +
- 2 files changed, 32 insertions(+)
+> diff --git a/block/partitions/Kconfig b/block/partitions/Kconfig
+> index 702689a628f0..d3c5c6ad6d58 100644
+> --- a/block/partitions/Kconfig
+> +++ b/block/partitions/Kconfig
+> @@ -268,3 +268,12 @@ config CMDLINE_PARTITION
+>  	help
+>  	  Say Y here if you want to read the partition table from bootargs.
+>  	  The format for the command line is just like mtdparts.
+> +
+> +config TEGRA_PARTITION
+> +	bool "NVIDIA Tegra Partition support" if PARTITION_ADVANCED
+> +	default y if ARCH_TEGRA
+> +	depends on ARCH_TEGRA || COMPILE_TEST
+> +	select MMC_BLOCK
 
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index ec69b613ee92..2c2bec114fd6 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -2955,6 +2955,27 @@ static void mmc_blk_remove_debugfs(struct mmc_card *card,
- 
- #endif /* CONFIG_DEBUG_FS */
- 
-+static int mmc_blk_rescan_disk(struct mmc_blk_data *md)
-+{
-+	struct block_device *bdev;
-+
-+	bdev = blkdev_get_by_dev(disk_devt(md->disk), FMODE_READ | FMODE_EXCL,
-+				 md);
-+	if (IS_ERR(bdev)) {
-+		pr_err("%s: %s: failed to get block device\n",
-+		       __func__, md->disk->disk_name);
-+		return PTR_ERR(bdev);
-+	}
-+
-+	mutex_lock(&bdev->bd_mutex);
-+	bdev_disk_changed(bdev, false);
-+	mutex_unlock(&bdev->bd_mutex);
-+
-+	blkdev_put(bdev, FMODE_READ | FMODE_EXCL);
-+
-+	return 0;
-+}
-+
- static int mmc_blk_probe(struct mmc_card *card)
- {
- 	struct mmc_blk_data *md, *part_md;
-@@ -2998,6 +3019,16 @@ static int mmc_blk_probe(struct mmc_card *card)
- 			goto out;
- 	}
- 
-+	/*
-+	 * Quirk for NVIDIA Tegra devices that store FS partition table
-+	 * on a boot partition.  Tegra-partition scanner found partition
-+	 * table on a boot MMC partition and stashed it for the main MMC
-+	 * partition if MMC_QUIRK_RESCAN_MAIN_BLKDEV is set, and thus,
-+	 * the main partition needs to be re-scanned.
-+	 */
-+	if (card->quirks & MMC_QUIRK_RESCAN_MAIN_BLKDEV)
-+		mmc_blk_rescan_disk(md);
-+
- 	/* Add two debugfs entries */
- 	mmc_blk_add_debugfs(card, md);
- 
-diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-index 90b1d83ce675..550d50e57cc4 100644
---- a/include/linux/mmc/card.h
-+++ b/include/linux/mmc/card.h
-@@ -270,6 +270,7 @@ struct mmc_card {
- #define MMC_QUIRK_BROKEN_IRQ_POLLING	(1<<11)	/* Polling SDIO_CCCR_INTx could create a fake interrupt */
- #define MMC_QUIRK_TRIM_BROKEN	(1<<12)		/* Skip trim */
- #define MMC_QUIRK_BROKEN_HPI	(1<<13)		/* Disable broken HPI support */
-+#define MMC_QUIRK_RESCAN_MAIN_BLKDEV	(1<<14)	/* Main partition needs to be re-scanned after instantiating all partitions */
- 
- 	bool			reenable_cmdq;	/* Re-enable Command Queue */
- 
+You shouldn't select MMC_BLOCK unless MMC is already enabled,
+so this entire config should depend on MMC also.
+As is, without MMC set/enabled, it should give you a kconfig warning.
+
+(no, you should not also select MMC here.)
+
+(This is just based on reading the patch--I haven't tested it
+with CONFIG_MMC not set/enabled.  Have you?)
+
+
+> +	help
+> +	  Say Y here if you would like to be able to read the hard disk
+> +	  partition table format used by NVIDIA Tegra machines.
+
+Thanks.
 -- 
-2.25.1
+~Randy
