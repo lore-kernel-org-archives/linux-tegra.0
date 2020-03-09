@@ -1,20 +1,21 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH v2 3/8] partitions: Introduce NVIDIA Tegra Partition Table
-Date: Mon, 9 Mar 2020 07:30:28 +0800
-Message-ID: <202003090750.zN9t6wln%lkp@intel.com>
-References: <20200306021220.22097-4-digetx@gmail.com>
+From: kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 8/8] partitions/tegra: Implement eMMC boot partitions
+ scanning
+Date: Mon, 9 Mar 2020 13:56:42 +0800
+Message-ID: <202003091349.u0W5iWHj%lkp@intel.com>
+References: <20200306021220.22097-9-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="wac7ysb48OaltWcw"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="3V7upXqbjpZ4EhLz"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200306021220.22097-4-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: kbuild-all@lists.01.org, Jens Axboe <axboe@kernel.dk>, linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20200306021220.22097-9-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: kbuild-all-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---wac7ysb48OaltWcw
+--3V7upXqbjpZ4EhLz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -23,7 +24,7 @@ Hi Dmitry,
 I love your patch! Yet something to improve:
 
 [auto build test ERROR on tegra/for-next]
-[also build test ERROR on block/for-next linus/master v5.6-rc4 next-20200306]
+[also build test ERROR on block/for-next linus/master v5.6-rc5 next-20200306]
 [cannot apply to ulf.hansson-mmc/next]
 [if your patch is applied to the wrong git tree, please drop us a note to help
 improve the system. BTW, we also suggest to use '--base' option to specify the
@@ -40,86 +41,117 @@ reproduce:
         GCC_VERSION=7.5.0 make.cross ARCH=arm64 
 
 If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
 All errors (new ones prefixed by >>):
 
    block/partitions/tegra.o: In function `tegra_partition_table_emmc_boot_offset':
->> block/partitions/tegra.c:370: undefined reference to `mmc_bdev_to_card'
-   block/partitions/tegra.c:370:(.text+0x66c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `mmc_bdev_to_card'
->> block/partitions/tegra.c:379: undefined reference to `mmc_card_is_blockaddr'
-   block/partitions/tegra.c:379:(.text+0x69c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `mmc_card_is_blockaddr'
+   block/partitions/tegra.c:379: undefined reference to `mmc_bdev_to_card'
+   block/partitions/tegra.c:379:(.text+0x674): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `mmc_bdev_to_card'
+   block/partitions/tegra.c:389: undefined reference to `mmc_card_is_blockaddr'
+   block/partitions/tegra.c:389:(.text+0x6a4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `mmc_card_is_blockaddr'
+>> block/partitions/tegra.c:424: undefined reference to `mmc_bdev_to_part_type'
+   block/partitions/tegra.c:424:(.text+0x748): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `mmc_bdev_to_part_type'
+>> block/partitions/tegra.c:417: undefined reference to `mmc_bdev_to_area_type'
+   block/partitions/tegra.c:417:(.text+0xbec): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `mmc_bdev_to_area_type'
 
-vim +370 block/partitions/tegra.c
+vim +424 block/partitions/tegra.c
 
-   366	
-   367	static int
-   368	tegra_partition_table_emmc_boot_offset(struct tegra_partition_table_parser *ptp)
-   369	{
- > 370		struct mmc_card *card = mmc_bdev_to_card(ptp->state->bdev);
-   371		const struct of_device_id *matched;
-   372		const u32 *sdhci_bases;
-   373		u32 sdhci_base;
-   374		unsigned int i;
-   375		int err;
-   376	
-   377		/* filter out unexpected/untested boot sources */
-   378		if (!card || card->ext_csd.rev < 3 ||
- > 379		    !mmc_card_is_blockaddr(card) ||
-   380		     mmc_card_is_removable(card->host))
-   381			return -1;
-   382	
-   383		/* skip everything unrelated to Tegra eMMC */
-   384		matched = of_match_node(tegra_sdhci_match, card->host->parent->of_node);
-   385		if (!matched)
-   386			return -1;
-   387	
-   388		sdhci_bases = matched->data;
-   389	
-   390		/* figure out SDHCI instance ID by the base address */
-   391		err = of_property_read_u32_index(card->host->parent->of_node,
-   392						 "reg", 0, &sdhci_base);
-   393		if (err)
-   394			return -1;
-   395	
-   396		for (i = 0; i < TEGRA_PT_SDHCI_DEVICE_INSTANCES; i++) {
-   397			if (sdhci_base == sdhci_bases[i])
-   398				break;
-   399		}
-   400	
-   401		if (i == TEGRA_PT_SDHCI_DEVICE_INSTANCES)
-   402			return -1;
-   403	
-   404		ptp->dev_id       = TEGRA_PT_SDHCI_DEVICE_ID;
-   405		ptp->dev_instance = i;
-   406	
-   407		/*
-   408		 * eMMC storage has two special boot partitions in addition to the
-   409		 * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1->main
-   410		 * accesses, this means that the partition table addresses are shifted
-   411		 * by the size of boot partitions.  In accordance with the eMMC
-   412		 * specification, the boot partition size is calculated as follows:
-   413		 *
-   414		 *	boot partition size = 128K byte x BOOT_SIZE_MULT
-   415		 *
-   416		 * This function returns number of sectors occupied by the both boot
-   417		 * partitions.
-   418		 */
-   419		return card->ext_csd.raw_boot_mult * SZ_128K /
-   420		       SECTOR_SIZE * MMC_NUM_BOOT_PARTITION;
-   421	}
-   422	
+   375	
+   376	static int
+   377	tegra_partition_table_emmc_boot_offset(struct tegra_partition_table_parser *ptp)
+   378	{
+   379		struct mmc_card *card = mmc_bdev_to_card(ptp->state->bdev);
+   380		const struct of_device_id *matched;
+   381		int part_type, area_type;
+   382		const u32 *sdhci_bases;
+   383		u32 sdhci_base;
+   384		unsigned int i;
+   385		int err;
+   386	
+   387		/* filter out unexpected/untested boot sources */
+   388		if (!card || card->ext_csd.rev < 3 ||
+   389		    !mmc_card_is_blockaddr(card) ||
+   390		     mmc_card_is_removable(card->host))
+   391			return -1;
+   392	
+   393		/* skip everything unrelated to Tegra eMMC */
+   394		matched = of_match_node(tegra_sdhci_match, card->host->parent->of_node);
+   395		if (!matched)
+   396			return -1;
+   397	
+   398		sdhci_bases = matched->data;
+   399	
+   400		/* figure out SDHCI instance ID by the base address */
+   401		err = of_property_read_u32_index(card->host->parent->of_node,
+   402						 "reg", 0, &sdhci_base);
+   403		if (err)
+   404			return -1;
+   405	
+   406		for (i = 0; i < TEGRA_PT_SDHCI_DEVICE_INSTANCES; i++) {
+   407			if (sdhci_base == sdhci_bases[i])
+   408				break;
+   409		}
+   410	
+   411		if (i == TEGRA_PT_SDHCI_DEVICE_INSTANCES)
+   412			return -1;
+   413	
+   414		ptp->dev_id       = TEGRA_PT_SDHCI_DEVICE_ID;
+   415		ptp->dev_instance = i;
+   416	
+ > 417		area_type = mmc_bdev_to_area_type(ptp->state->bdev);
+   418	
+   419		if (WARN_ON(area_type < 0))
+   420			return -1;
+   421	
+   422		switch (area_type) {
+   423		case MMC_BLK_DATA_AREA_BOOT:
+ > 424			part_type = mmc_bdev_to_part_type(ptp->state->bdev);
+   425	
+   426			if (WARN_ON(part_type < 0))
+   427				return -1;
+   428	
+   429			ptp->boot_id = part_type - EXT_CSD_PART_CONFIG_ACC_BOOT0;
+   430			ptp->snapshot_mode = true;
+   431			break;
+   432	
+   433		case MMC_BLK_DATA_AREA_MAIN:
+   434			break;
+   435	
+   436		default:
+   437			TEGRA_PT_ERR(ptp, "unexpected area_type: %u\n", area_type);
+   438			return -1;
+   439		}
+   440	
+   441		ptp->card = card;
+   442	
+   443		/*
+   444		 * eMMC storage has two special boot partitions in addition to the
+   445		 * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1->main
+   446		 * accesses, this means that the partition table addresses are shifted
+   447		 * by the size of boot partitions.  In accordance with the eMMC
+   448		 * specification, the boot partition size is calculated as follows:
+   449		 *
+   450		 *	boot partition size = 128K byte x BOOT_SIZE_MULT
+   451		 *
+   452		 * This function returns number of sectors occupied by the both boot
+   453		 * partitions.
+   454		 */
+   455		return card->ext_csd.raw_boot_mult * SZ_128K /
+   456		       SECTOR_SIZE * MMC_NUM_BOOT_PARTITION;
+   457	}
+   458	
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+https://lists.01.org/hyperkitty/list/kbuild-all-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
 
---wac7ysb48OaltWcw
+--3V7upXqbjpZ4EhLz
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICH5oZV4AAy5jb25maWcAnDzbcty4ju/zFV2Zl3Pq1OT0xZdkt/xAUVSL05Ioi1S37RdV
+H4sICBu/ZV4AAy5jb25maWcAnDzbcty4ju/zFV2Zl3Pq1OT0xZdkt/xAUVSL05Ioi1S37RdV
 j9PJuE5sZ9v2XP5+AVIXkqI62Z3KzKQJEARBEARAUD//9POMvL0+P+5fH+73X7/+PftyeDoc
 96+HT7PPD18P/z2LxawQasZirt4Dcvbw9PbXv/fHx4uz2fn7i/fzX473i9nmcHw6fJ3R56fP
 D1/eoPvD89NPP/8Ef36GxsdvQOn4X7P9/nj/+8XZL1+Rxi9f7u9n/1hT+s/Z5fvz93PApaJI
@@ -743,4 +775,4 @@ uyUMu4Jm2IiVbN0kjGEoV6DX5NoQh2NKryKWPYwwOnQZovq7K/SM+QkTtMwlD3G7SHd1QIer
 2log/FbyCcZ8YyHV2gUd0W1wq0kevfJSopYN5pWOyES8i6LsalDvVdCzy5EVztBAMkl8iVDM
 K/lP+t3tap0vOgOZIQNhWzKrTN2h4YSHY0/PUet8R6TqsETy6rG0iDC1d83/A5cWElTcGwIA
 
---wac7ysb48OaltWcw--
+--3V7upXqbjpZ4EhLz--
