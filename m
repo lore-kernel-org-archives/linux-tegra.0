@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v5 3/8] clk: tegra: Implement Tegra210 EMC clock
-Date: Tue, 10 Mar 2020 19:55:39 +0300
-Message-ID: <b5fb83d8-003c-d76b-9dac-7c8ef15f2ab1@gmail.com>
+Date: Tue, 10 Mar 2020 20:03:05 +0300
+Message-ID: <7a4e0ab4-e17e-9e6a-2d30-d9a321be1dc8@gmail.com>
 References: <20200310152003.2945170-1-thierry.reding@gmail.com>
  <20200310152003.2945170-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
@@ -33,28 +33,7 @@ List-Id: linux-tegra@vger.kernel.org
 > - major rework and cleanup
 
 ...
+> +#ifdef CONFIG_PM_SLEEP
+> +static int tegra210_emc_suspend(struct device *dev)
 
-> +static int tegra210_emc_resume(struct device *dev)
-> +{
-> +	struct tegra_emc *emc = dev_get_drvdata(dev);
-> +
-> +	emc->emc_suspend = false;
-
-Looks like the 'emc->emc_suspend' isn't really needed, nothing in kernel
-shall touch EMC rate at this point.
-
-Perhaps should be better to make EMC clk exlusive in order to catch
-abusers, please see tegra30-emc suspend/resume for an example.
-
-> +	clk_set_rate(emc->emc_clk, emc->emc_resume_rate);
-> +
-> +	pr_debug("%s at rate %lu\n", __func__, clk_get_rate(emc->emc_clk));
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
-> +static const struct dev_pm_ops tegra210_emc_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(tegra210_emc_suspend, tegra210_emc_resume)
-> +};
-What about to use the default suspend/resume level?
+The __maybe_unused attribute will be a bit cleaner than the #ifdef.
