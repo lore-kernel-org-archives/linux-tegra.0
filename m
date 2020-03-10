@@ -1,40 +1,28 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 5/8] memory: tegra: Add EMC scaling support code for
- Tegra210
-Date: Tue, 10 Mar 2020 19:43:12 +0300
-Message-ID: <4ea3a96f-52cb-4eab-cf92-932f6882ad85@gmail.com>
+Subject: Re: [PATCH v5 3/8] clk: tegra: Implement Tegra210 EMC clock
+Date: Tue, 10 Mar 2020 19:55:39 +0300
+Message-ID: <b5fb83d8-003c-d76b-9dac-7c8ef15f2ab1@gmail.com>
 References: <20200310152003.2945170-1-thierry.reding@gmail.com>
- <20200310152003.2945170-6-thierry.reding@gmail.com>
+ <20200310152003.2945170-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200310152003.2945170-6-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200310152003.2945170-4-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-10.03.2020 18:20, Thierry Reding пишет:
+10.03.2020 18:19, Thierry Reding пишет:
 > From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> This is the initial patch for Tegra210 EMC frequency scaling. It has the
-> code to program various aspects of the EMC that are standardized, but it
-> does not yet include the specific programming sequence needed for clock
-> scaling.
-> 
-> The driver is designed to support LPDDR4 SDRAM. Devices that use LPDDR4
-> need to perform training of the RAM before it can be used. Firmware will
-> perform this training during early boot and pass a table of supported
-> frequencies to the kernel via device tree.
-> 
-> For the frequencies above 800 MHz, periodic retraining is needed to
-> compensate for changes in timing. This periodic training will have to be
-> performed until the frequency drops back to or below 800 MHz.
-> 
-> This driver provides helpers used during this runtime retraining that
-> will be used by the sequence specific code in a follow-up patch.
+> The EMC clock needs to carefully coordinate with the EMC controller
+> programming to make sure external memory can be properly clocked. Do so
+> by hooking up the EMC clock with an EMC provider that will specify which
+> rates are supported by the EMC and provide a callback to use for setting
+> the clock rate at the EMC.
 > 
 > Based on work by Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
 > 
@@ -43,24 +31,30 @@ List-Id: linux-tegra@vger.kernel.org
 > ---
 > Changes in v5:
 > - major rework and cleanup
-> 
->  drivers/memory/tegra/tegra210-emc.c | 1952 +++++++++++++++++++++------
->  drivers/memory/tegra/tegra210-emc.h |  893 +++++++++++-
->  2 files changed, 2390 insertions(+), 455 deletions(-)
-> 
-> diff --git a/drivers/memory/tegra/tegra210-emc.c b/drivers/memory/tegra/tegra210-emc.c
-> index 80ea14d1e6ce..4ea8fb70a4fd 100644
-> --- a/drivers/memory/tegra/tegra210-emc.c
-> +++ b/drivers/memory/tegra/tegra210-emc.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Copyright (c) 2015-2019, NVIDIA CORPORATION.  All rights reserved.
-> + * Copyright (c) 2015-2020, NVIDIA CORPORATION.  All rights reserved.
->   */
 
-Would be nice to avoid all the unnecessary changes, like the one above
-and then all the code's removals/reshuffling.
+...
 
-Such that a new patch was a clean addition to a previous patch, instead
-of a re-write.
+> +static int tegra210_emc_resume(struct device *dev)
+> +{
+> +	struct tegra_emc *emc = dev_get_drvdata(dev);
+> +
+> +	emc->emc_suspend = false;
+
+Looks like the 'emc->emc_suspend' isn't really needed, nothing in kernel
+shall touch EMC rate at this point.
+
+Perhaps should be better to make EMC clk exlusive in order to catch
+abusers, please see tegra30-emc suspend/resume for an example.
+
+> +	clk_set_rate(emc->emc_clk, emc->emc_resume_rate);
+> +
+> +	pr_debug("%s at rate %lu\n", __func__, clk_get_rate(emc->emc_clk));
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static const struct dev_pm_ops tegra210_emc_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(tegra210_emc_suspend, tegra210_emc_resume)
+> +};
+What about to use the default suspend/resume level?
