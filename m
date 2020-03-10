@@ -1,97 +1,65 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 2/8] clk: tegra: Export functions for EMC clock scaling
-Date: Tue, 10 Mar 2020 16:19:57 +0100
-Message-ID: <20200310152003.2945170-3-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v5 1/8] clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
+Date: Tue, 10 Mar 2020 16:19:56 +0100
+Message-ID: <20200310152003.2945170-2-thierry.reding@gmail.com>
 References: <20200310152003.2945170-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200310152003.2945170-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20200310152003.2945170-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Joseph Lo <josephl@nvidia.com>
 
-Export functions to allow accessing the CAR register required by EMC
-clock scaling. These functions will be used to access the CAR register
-as part of the scaling sequence.
+Introduce the low jitter path of PLLP and PLLMB which can be used as EMC
+clock source.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v5:
-- remove tegra210_clk_emc_update_setting() which is no longer needed
-
- drivers/clk/tegra/clk-tegra210.c | 26 ++++++++++++++++++++++++++
- include/linux/clk/tegra.h        |  3 +++
- 2 files changed, 29 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c         | 11 +++++++++++
+ include/dt-bindings/clock/tegra210-car.h |  4 ++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index f99647b4a71f..0a5be781da60 100644
+index 45d54ead30bc..f99647b4a71f 100644
 --- a/drivers/clk/tegra/clk-tegra210.c
 +++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -37,6 +37,7 @@
- #define CLK_SOURCE_LA 0x1f8
- #define CLK_SOURCE_SDMMC2 0x154
- #define CLK_SOURCE_SDMMC4 0x164
-+#define CLK_SOURCE_EMC_DLL 0x664
+@@ -3161,6 +3161,17 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 	clk_register_clkdev(clk, "pll_m_ud", NULL);
+ 	clks[TEGRA210_CLK_PLL_M_UD] = clk;
  
- #define PLLC_BASE 0x80
- #define PLLC_OUT 0x84
-@@ -227,6 +228,10 @@
- #define RST_DFLL_DVCO 0x2f4
- #define DVFS_DFLL_RESET_SHIFT 0
- 
-+#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET	0x284
-+#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR	0x288
-+#define CLK_OUT_ENB_X_CLK_ENB_EMC_DLL		BIT(14)
++	/* PLLMB_UD */
++	clk = clk_register_fixed_factor(NULL, "pll_mb_ud", "pll_mb",
++					CLK_SET_RATE_PARENT, 1, 1);
++	clk_register_clkdev(clk, "pll_mb_ud", NULL);
++	clks[TEGRA210_CLK_PLL_MB_UD] = clk;
 +
- #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
- #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
- #define CPU_SOFTRST_CTRL 0x380
-@@ -555,6 +560,27 @@ void tegra210_set_sata_pll_seq_sw(bool state)
- }
- EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
- 
-+void tegra210_clk_emc_dll_enable(bool flag)
-+{
-+	u32 offset = flag ? CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET :
-+		     CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR;
++	/* PLLP_UD */
++	clk = clk_register_fixed_factor(NULL, "pll_p_ud", "pll_p",
++					0, 1, 1);
++	clks[TEGRA210_CLK_PLL_P_UD] = clk;
 +
-+	writel_relaxed(CLK_OUT_ENB_X_CLK_ENB_EMC_DLL, clk_base + offset);
-+}
-+EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_enable);
-+
-+void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value)
-+{
-+	writel_relaxed(emc_dll_src_value, clk_base + CLK_SOURCE_EMC_DLL);
-+}
-+EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_update_setting);
-+
-+void tegra210_clk_emc_update_setting(u32 emc_src_value)
-+{
-+	writel_relaxed(emc_src_value, clk_base + CLK_SOURCE_EMC);
-+}
-+EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
-+
- static void tegra210_generic_mbist_war(struct tegra210_domain_mbist_war *mbist)
- {
- 	u32 val;
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index 2b1b35240074..5b0bdb413460 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -131,6 +131,9 @@ extern void tegra210_set_sata_pll_seq_sw(bool state);
- extern void tegra210_put_utmipll_in_iddq(void);
- extern void tegra210_put_utmipll_out_iddq(void);
- extern int tegra210_clk_handle_mbist_war(unsigned int id);
-+extern void tegra210_clk_emc_dll_enable(bool flag);
-+extern void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value);
-+extern void tegra210_clk_emc_update_setting(u32 emc_src_value);
- 
- struct clk;
- 
+ 	/* PLLU_VCO */
+ 	if (!tegra210_init_pllu()) {
+ 		clk = clk_register_fixed_rate(NULL, "pll_u_vco", "pll_ref", 0,
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 7a8f10b9a66d..5c93b01156d4 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -351,8 +351,8 @@
+ #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
+ #define TEGRA210_CLK_XUSB_SSP_SRC 318
+ #define TEGRA210_CLK_PLL_RE_OUT1 319
+-/* 320 */
+-/* 321 */
++#define TEGRA210_CLK_PLL_MB_UD 320
++#define TEGRA210_CLK_PLL_P_UD 321
+ #define TEGRA210_CLK_ISP 322
+ #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
+ #define TEGRA210_CLK_PLL_A_OUT0_OUT_ADSP 324
 -- 
 2.24.1
