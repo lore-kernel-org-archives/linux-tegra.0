@@ -1,83 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v5 3/8] clk: tegra: Implement Tegra210 EMC clock
-Date: Tue, 10 Mar 2020 18:10:25 +0100
-Message-ID: <20200310171025.GD3079591@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 4/8] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+Date: Tue, 10 Mar 2020 18:12:08 +0100
+Message-ID: <20200310171208.GE3079591@ulmo>
 References: <20200310152003.2945170-1-thierry.reding@gmail.com>
- <20200310152003.2945170-4-thierry.reding@gmail.com>
- <88d18719-b6dd-98d0-e147-f89eed2f3f0c@gmail.com>
+ <20200310152003.2945170-5-thierry.reding@gmail.com>
+ <67295862-0898-87d1-ddb2-660713501bca@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bjuZg6miEcdLYP6q"
-Return-path: <linux-clk-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="KuLpqunXa7jZSBt+"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <88d18719-b6dd-98d0-e147-f89eed2f3f0c@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <67295862-0898-87d1-ddb2-660713501bca-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---bjuZg6miEcdLYP6q
+--KuLpqunXa7jZSBt+
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 10, 2020 at 07:26:28PM +0300, Dmitry Osipenko wrote:
+On Tue, Mar 10, 2020 at 07:35:01PM +0300, Dmitry Osipenko wrote:
 > 10.03.2020 18:19, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > From: Joseph Lo <josephl@nvidia.com>
+> > From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > >=20
-> > The EMC clock needs to carefully coordinate with the EMC controller
-> > programming to make sure external memory can be properly clocked. Do so
-> > by hooking up the EMC clock with an EMC provider that will specify which
-> > rates are supported by the EMC and provide a callback to use for setting
-> > the clock rate at the EMC.
+> > Add the binding document for the external memory controller (EMC) which
+> > communicates with external LPDDR4 devices. It includes the bindings of
+> > the EMC node and a sub-node of EMC table which under the reserved memory
+> > node. The EMC table contains the data of the rates that EMC supported.
 > >=20
-> > Based on work by Peter De Schrijver <pdeschrijver@nvidia.com>.
-> >=20
-> > Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > > ---
 > > Changes in v5:
-> > - major rework and cleanup
+> > - convert to dt-schema
 >=20
 > ...
 >=20
-> > +u32 emc_readl(struct tegra_emc *emc, unsigned long offset)
-> > +{
-> > +	return readl_relaxed(emc->emc_base[REG_EMC] + offset);
-> > +}
+> > +  memory-region:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      phandle to a reserved memory region describing the table of EMC
+> > +      frequencies trained by the firmware
 >=20
-> static u32 emc_readl()
->=20
-> > +u32 emc_readl_per_ch(struct tegra_emc *emc, int type,
-> > +			    unsigned long offset)
->=20
-> static u32 emc_readl_per_ch()
+> Shouldn't the table's format be documented?
 
-I think something went wrong here during a rebase. These are actually
-supposed to be part of the EMC driver patch and are no longer needed in
-the clock driver.
+I'm not sure that's needed here. A proprietary bootloader creates this
+table and the kernel has a structure for it. Describing the exact layout
+in the device tree binding seems a bit excessive.
 
 Thierry
 
---bjuZg6miEcdLYP6q
+--KuLpqunXa7jZSBt+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5nygEACgkQ3SOs138+
-s6Go7BAAtIjGuj40OUzzPquQVnTWUkzR2TnhGUCRZwzN625caWOJH8hMCv7Djey8
-1wKJoORtan933YKqVNLCtn6GsV8hnfyM9cZ3rQKnYvUbaNQPritrOlE1oq2lH+6B
-9LKudhswinPgNaToOqVsxhQPGGsZBpAuN4+zTFmGniDHswCyGuV76CVDrUkyqSu4
-CiF7BfCWitZPEJMLCgDrmhWPQxejAjmAsO/ce+VC+plvlDdCChlqoqT3yz+KjEPr
-32YyEFZ9MWnrbqLh+UHm+JE5rs4eq++kDbgf86OZ8JaVmYSo1mz/Sl4kEEoLh6OV
-39qfF+QHsqy7jLSVww8EF6pWmiKpEIryhb3Qil9FMwFhu+i9tpL2WZYaFZ6qOstX
-HKZm9I/ABVIQzixvwlHoJhOroxno0nWpyP6HJzOdW8q7FAF9yvH9ZyEPwT1y2T1e
-T/m8IztVMS1kjkDNIEgnIeeXRfiEBNj4lJAXR4W6maAmmQ+HS7ioLXvOEYsm43M1
-076vcA8ZgtKM1sOgvbT4Nl3wgYsZcJ5iIkOUB0yUfqpid6EbN4JR1Fz8FjI2l2Ry
-NjAftd3fA0CBWjMBY4JwdJmNilWiK7y84K6MH92+j6gh+YnuC8uHLxKqrOUBCoJQ
-sYndXufYEVVgSa/Ci7hMw53zRxEaZ8bGooBkIsiFnw0hpF7sLpo=
-=rt6T
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5nymgACgkQ3SOs138+
+s6Fj5BAAmv+mvasJUdui0XMVUv4sBs9YLxhTG+7acJVbOtaCfrhyxXoIoI3Y+PpF
+HwS5ueYZ/cl+OHk0zkXiUWx8bZ6lQzZHw10iSkdLFAZze2LZmms9vHbIMwYaF+g9
+APNbwV+anz+If2OTSXP1AFYorlo9myooQy4hBHILwy8pXcMnJg7FYIZkYtq8L836
+ffkocgrgeo4QfP1JKLXbyb3fsT5rwoxrKiaLNCxH/+vNOdxuMnstI9QhZxFNvNgu
+DlFXjRfpnlK99G7wfbqEYn8aP0VQ2l/6UeFGG37PTCBZX6WWg9WpWrMqzacKJO6K
++Esu24qd266pgSu2Tw9iy09JYOVqWwlPWQg0O47IFs0fCq2nj+ldJ7eJJ6uTIIsu
+b/OOK2wh5zJ/rYy+9mR+IsjNtsux2vXXElJrj4kMvcNFuC70VfAeihGIB5PtlFOP
+diCYDy8BJKwH0mPRbf9cIu1N885HNAhDilEw3o9QvtuyYYSeO+A4i55kBA+yc3RZ
++2MRvFaI28cNU6FrXuHAvBxnfLaH6AKVgGd16mW+0A34xlKiLqlzwjc/2pub4Udn
+1MDG5vnvAWIutHjR0KOraodPzntxR8y0HJmihMTY2iNA87OolC7UjoNxpJcc0p7T
+znsyuk0wZUYktfTHaJz9rPpk+LYecFvNue0jKSzQbukSU4ah0vA=
+=DG9g
 -----END PGP SIGNATURE-----
 
---bjuZg6miEcdLYP6q--
+--KuLpqunXa7jZSBt+--
