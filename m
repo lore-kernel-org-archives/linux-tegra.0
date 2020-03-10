@@ -1,39 +1,89 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 3/8] clk: tegra: Implement Tegra210 EMC clock
-Date: Tue, 10 Mar 2020 20:03:05 +0300
-Message-ID: <7a4e0ab4-e17e-9e6a-2d30-d9a321be1dc8@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 1/8] clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
+Date: Tue, 10 Mar 2020 18:05:08 +0100
+Message-ID: <20200310170508.GA3079591@ulmo>
 References: <20200310152003.2945170-1-thierry.reding@gmail.com>
- <20200310152003.2945170-4-thierry.reding@gmail.com>
+ <20200310152003.2945170-2-thierry.reding@gmail.com>
+ <9b343fd1-15df-409a-390f-e30fa6bbbfe7@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200310152003.2945170-4-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <9b343fd1-15df-409a-390f-e30fa6bbbfe7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-10.03.2020 18:19, Thierry Reding пишет:
-> From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The EMC clock needs to carefully coordinate with the EMC controller
-> programming to make sure external memory can be properly clocked. Do so
-> by hooking up the EMC clock with an EMC provider that will specify which
-> rates are supported by the EMC and provide a callback to use for setting
-> the clock rate at the EMC.
-> 
-> Based on work by Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
-> 
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in v5:
-> - major rework and cleanup
 
-...
-> +#ifdef CONFIG_PM_SLEEP
-> +static int tegra210_emc_suspend(struct device *dev)
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The __maybe_unused attribute will be a bit cleaner than the #ifdef.
+On Tue, Mar 10, 2020 at 07:19:59PM +0300, Dmitry Osipenko wrote:
+> 10.03.2020 18:19, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > Introduce the low jitter path of PLLP and PLLMB which can be used as EMC
+> > clock source.
+> >=20
+> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/clk/tegra/clk-tegra210.c         | 11 +++++++++++
+> >  include/dt-bindings/clock/tegra210-car.h |  4 ++--
+> >  2 files changed, 13 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-t=
+egra210.c
+> > index 45d54ead30bc..f99647b4a71f 100644
+> > --- a/drivers/clk/tegra/clk-tegra210.c
+> > +++ b/drivers/clk/tegra/clk-tegra210.c
+> > @@ -3161,6 +3161,17 @@ static void __init tegra210_pll_init(void __iome=
+m *clk_base,
+> >  	clk_register_clkdev(clk, "pll_m_ud", NULL);
+> >  	clks[TEGRA210_CLK_PLL_M_UD] =3D clk;
+> > =20
+> > +	/* PLLMB_UD */
+> > +	clk =3D clk_register_fixed_factor(NULL, "pll_mb_ud", "pll_mb",
+> > +					CLK_SET_RATE_PARENT, 1, 1);
+> > +	clk_register_clkdev(clk, "pll_mb_ud", NULL);
+> > +	clks[TEGRA210_CLK_PLL_MB_UD] =3D clk;
+> > +
+> > +	/* PLLP_UD */
+> > +	clk =3D clk_register_fixed_factor(NULL, "pll_p_ud", "pll_p",
+> > +					0, 1, 1);
+> > +	clks[TEGRA210_CLK_PLL_P_UD] =3D clk;
+>=20
+> Isn't it possible to auto-enable the low-jitter bit when necessary
+> during of the rate-change based on a given clock-rate?
+
+I don't think so. These new clocks (pll_mb_ud and pll_p_ud) are parents
+for the emc clock, so they are needed to properly reflect the position
+of the emc clock in the clock tree.
+
+Thierry
+
+--uAKRQypu60I7Lcqm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5nyMIACgkQ3SOs138+
+s6EMCA//Uxo0Bgi/lGCwUNR+qekqxpV446rEudb/jWg4Kh7pFTMGgzA/YUE8sFUV
+Q2y2URjCPwMRveAm1dE4gBq7UA/eLIYBBMl/9tmc8PVad14aOyoKuiDX3jYddvg7
+/kXm+UZPC3HLCPuSZKpF34zadrI4ndEw9z22S8hWClGuaUYBegAApiOI28T5FSSX
+ZrPydC1NjdkXPNxL5KLaCugVCbBP4J36UhjY9xOhAxCLb3MX5Qxwbh0BKJDe+7xw
+l/b134bBjjaF8yIogH6PmSABg1bsL0K+aCzK3JVXvEmMJXZwl0rSeQFs0kZZRdND
+yvMdV7RyvhnPvuplbMU3Mym3o/RfQB2XUzsPqj8g6yQqBokJdV5xyTJ60H7sqamW
+Ag+5jrVpzud7nJLXMjBYteAsCMBMvOe9T4SknvruYNxpWAWsLDTkqoa0YQ1P7kvD
+rT3aW0XDLCt9jyQ+bHjl5xhYgCbJdAVgdq9sRe8BBNcQOPCh9Fk8vIEJyglcRDJ4
+flGMTeQTGvnugxfEzQ4auDqpm1EjWHB9M/CRCbRgvFdB/irb+N/J42xqIPQUzAa5
+iFIq+4u9NfKAGKO+QONto4nHk2cnEMZaCA3DKXf1zQ/9T+/ELbDV8LbpxkUJZadB
+4pWq0GsF2rjnAApsk8Uyo69TZyWLhxZFLjxhNDEJZZTHkLbHRTo=
+=oCYd
+-----END PGP SIGNATURE-----
+
+--uAKRQypu60I7Lcqm--
