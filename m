@@ -1,22 +1,22 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH v5 3/8] clk: tegra: Implement Tegra210 EMC clock
-Date: Tue, 10 Mar 2020 19:26:28 +0300
-Message-ID: <88d18719-b6dd-98d0-e147-f89eed2f3f0c@gmail.com>
+Date: Tue, 10 Mar 2020 19:29:42 +0300
+Message-ID: <3b583202-50d0-145c-d60f-91bd646008ad@gmail.com>
 References: <20200310152003.2945170-1-thierry.reding@gmail.com>
  <20200310152003.2945170-4-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200310152003.2945170-4-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20200310152003.2945170-4-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 10.03.2020 18:19, Thierry Reding пишет:
-> From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> From: Joseph Lo <josephl@nvidia.com>
 > 
 > The EMC clock needs to carefully coordinate with the EMC controller
 > programming to make sure external memory can be properly clocked. Do so
@@ -24,24 +24,26 @@ List-Id: linux-tegra@vger.kernel.org
 > rates are supported by the EMC and provide a callback to use for setting
 > the clock rate at the EMC.
 > 
-> Based on work by Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
+> Based on work by Peter De Schrijver <pdeschrijver@nvidia.com>.
 > 
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
 > Changes in v5:
 > - major rework and cleanup
 
 ...
-
-> +u32 emc_readl(struct tegra_emc *emc, unsigned long offset)
+> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_attach);
+> +
+> +void tegra210_clk_emc_detach(struct clk *clk)
 > +{
-> +	return readl_relaxed(emc->emc_base[REG_EMC] + offset);
+> +	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(__clk_get_hw(clk));
+> +
+> +	emc->provider = NULL;
 > +}
+> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_detach);...
+> +config TEGRA210_EMC
+> +	bool "NVIDIA Tegra210 External Memory Controller driver"
 
-static u32 emc_readl()
 
-> +u32 emc_readl_per_ch(struct tegra_emc *emc, int type,
-> +			    unsigned long offset)
-
-static u32 emc_readl_per_ch()
+I'd remove all the exports for now, given that the driver is built-in.
