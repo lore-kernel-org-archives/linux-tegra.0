@@ -1,89 +1,73 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 1/8] clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
-Date: Tue, 10 Mar 2020 18:05:08 +0100
-Message-ID: <20200310170508.GA3079591@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5 2/8] clk: tegra: Export functions for EMC clock scaling
+Date: Tue, 10 Mar 2020 18:06:23 +0100
+Message-ID: <20200310170623.GB3079591@ulmo>
 References: <20200310152003.2945170-1-thierry.reding@gmail.com>
- <20200310152003.2945170-2-thierry.reding@gmail.com>
- <9b343fd1-15df-409a-390f-e30fa6bbbfe7@gmail.com>
+ <20200310152003.2945170-3-thierry.reding@gmail.com>
+ <8e1f11e9-a95a-500f-ff44-6f44ad990863@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <9b343fd1-15df-409a-390f-e30fa6bbbfe7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <8e1f11e9-a95a-500f-ff44-6f44ad990863@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---uAKRQypu60I7Lcqm
+--DBIVS5p969aUjpLe
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 10, 2020 at 07:19:59PM +0300, Dmitry Osipenko wrote:
+On Tue, Mar 10, 2020 at 07:13:25PM +0300, Dmitry Osipenko wrote:
 > 10.03.2020 18:19, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > From: Joseph Lo <josephl@nvidia.com>
 > >=20
-> > Introduce the low jitter path of PLLP and PLLMB which can be used as EMC
-> > clock source.
+> > Export functions to allow accessing the CAR register required by EMC
+> > clock scaling. These functions will be used to access the CAR register
+> > as part of the scaling sequence.
 > >=20
-> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > > ---
-> >  drivers/clk/tegra/clk-tegra210.c         | 11 +++++++++++
-> >  include/dt-bindings/clock/tegra210-car.h |  4 ++--
-> >  2 files changed, 13 insertions(+), 2 deletions(-)
+> > Changes in v5:
+> > - remove tegra210_clk_emc_update_setting() which is no longer needed
 > >=20
-> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-t=
-egra210.c
-> > index 45d54ead30bc..f99647b4a71f 100644
-> > --- a/drivers/clk/tegra/clk-tegra210.c
-> > +++ b/drivers/clk/tegra/clk-tegra210.c
-> > @@ -3161,6 +3161,17 @@ static void __init tegra210_pll_init(void __iome=
-m *clk_base,
-> >  	clk_register_clkdev(clk, "pll_m_ud", NULL);
-> >  	clks[TEGRA210_CLK_PLL_M_UD] =3D clk;
-> > =20
-> > +	/* PLLMB_UD */
-> > +	clk =3D clk_register_fixed_factor(NULL, "pll_mb_ud", "pll_mb",
-> > +					CLK_SET_RATE_PARENT, 1, 1);
-> > +	clk_register_clkdev(clk, "pll_mb_ud", NULL);
-> > +	clks[TEGRA210_CLK_PLL_MB_UD] =3D clk;
-> > +
-> > +	/* PLLP_UD */
-> > +	clk =3D clk_register_fixed_factor(NULL, "pll_p_ud", "pll_p",
-> > +					0, 1, 1);
-> > +	clks[TEGRA210_CLK_PLL_P_UD] =3D clk;
+> ...
+> > +EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
+> ...
+> > +extern void tegra210_clk_emc_dll_enable(bool flag);
+> > +extern void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value);
+> > +extern void tegra210_clk_emc_update_setting(u32 emc_src_value);
 >=20
-> Isn't it possible to auto-enable the low-jitter bit when necessary
-> during of the rate-change based on a given clock-rate?
+> Why these exports are needed given that the EMC driver is built-in?
 
-I don't think so. These new clocks (pll_mb_ud and pll_p_ud) are parents
-for the emc clock, so they are needed to properly reflect the position
-of the emc clock in the clock tree.
+Let me try if I can make the driver tristate. Given that it's fairly
+large it may be better to keep that as an option.
 
 Thierry
 
---uAKRQypu60I7Lcqm
+--DBIVS5p969aUjpLe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5nyMIACgkQ3SOs138+
-s6EMCA//Uxo0Bgi/lGCwUNR+qekqxpV446rEudb/jWg4Kh7pFTMGgzA/YUE8sFUV
-Q2y2URjCPwMRveAm1dE4gBq7UA/eLIYBBMl/9tmc8PVad14aOyoKuiDX3jYddvg7
-/kXm+UZPC3HLCPuSZKpF34zadrI4ndEw9z22S8hWClGuaUYBegAApiOI28T5FSSX
-ZrPydC1NjdkXPNxL5KLaCugVCbBP4J36UhjY9xOhAxCLb3MX5Qxwbh0BKJDe+7xw
-l/b134bBjjaF8yIogH6PmSABg1bsL0K+aCzK3JVXvEmMJXZwl0rSeQFs0kZZRdND
-yvMdV7RyvhnPvuplbMU3Mym3o/RfQB2XUzsPqj8g6yQqBokJdV5xyTJ60H7sqamW
-Ag+5jrVpzud7nJLXMjBYteAsCMBMvOe9T4SknvruYNxpWAWsLDTkqoa0YQ1P7kvD
-rT3aW0XDLCt9jyQ+bHjl5xhYgCbJdAVgdq9sRe8BBNcQOPCh9Fk8vIEJyglcRDJ4
-flGMTeQTGvnugxfEzQ4auDqpm1EjWHB9M/CRCbRgvFdB/irb+N/J42xqIPQUzAa5
-iFIq+4u9NfKAGKO+QONto4nHk2cnEMZaCA3DKXf1zQ/9T+/ELbDV8LbpxkUJZadB
-4pWq0GsF2rjnAApsk8Uyo69TZyWLhxZFLjxhNDEJZZTHkLbHRTo=
-=oCYd
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5nyQ8ACgkQ3SOs138+
+s6FOXhAAocJcbbDxFJK3TvLJTTuZlywjEwIb3UcWO1BERHW2K7hEx8rNt2UqhoGu
+EoqVqjO7HnXaOT++1BbSFSRP3ye4ErmWyQcSRKSObSl20m+lGvWgvv1Chk8jCJha
+uJ47NctrQMiBD0lb/Ip7vup/4Qqi6WjJpLNfvct92NFTGty6TuwFAV39r4L874wd
+yEryO/AwteBrAClEMLH8SS+bZwHSWy5jCHuirgGxe0ck29Hx5kBUb4HAmiMQxJH3
+v0dNrkzAXl+dd98s93uI7ocOWtiKjQWJiQJ8mSDVLnmClkiPjFnRDvgu3TkbAQEh
+BLAgRFgmaCTmKvdD8LBlA88W0DVP3J5bx6iQKMOrYvJ95PmntiDtURq4rmXRXl/v
+BX7KUlkV3eXTLkukY2r/z4uHOhOCdo1LD6/12jzezVLSA32Uw6QXeyuDa2Cg7Hc6
+C99avAx0XUVVjGr++9yY1Rn3jpLEvBsAWk6tjNNXn2a/5+l5ygCjvDfZeOKl//j8
+6Mcsw4ML1Lj/CV52+YM2rtAwXr3hRCpwGHPEN9K5i+mozudHb4TOV3Yt3KTEGUW/
+3rdlIPacpzyQmM8+xUp2E4oF4PqGqgp2wllYb8NNC7MFXDzp1JwXUvCAVabOnaw3
+xqcijH1JXc4rsCeUVNMD4rE/PQkrq0mFfPMd8Jv4I9RqY4FkZPI=
+=x6Nz
 -----END PGP SIGNATURE-----
 
---uAKRQypu60I7Lcqm--
+--DBIVS5p969aUjpLe--
