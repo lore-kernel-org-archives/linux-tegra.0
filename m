@@ -1,71 +1,36 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH] clk: Do not recalc rate for reparented clocks
-Date: Tue, 10 Mar 2020 12:25:01 +0200
-Message-ID: <21f65d74-eb09-6735-4338-8c5e865533ad@kapsi.fi>
-References: <20200305175138.92075-1-thierry.reding@gmail.com>
- <158380492739.149997.15800995149056434664@swboyd.mtv.corp.google.com>
+From: ''Michael weirsky'' <ronald.pena-fWdiQ1A3/YsD25zO0Aa3Jj/laDblWjpS@public.gmane.org>
+Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Millionen_Euro?=
+Date: Tue, 10 Mar 2020 10:16:11 +0200
+Message-ID: <20200310074644.549522F67C98@mail.11d01.mspz7.gob.ec>
+Reply-To: mikeweirskyspende-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <158380492739.149997.15800995149056434664-n1Xw8LXHxjTHt/MElyovVYaSKrA+ACpX0E9HWUfgJXw@public.gmane.org>
-Content-Language: en-US
+Content-Description: Mail message body
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Recipients <ronald.pena-fWdiQ1A3/YsD25zO0Aa3Jj/laDblWjpS@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 3/10/20 3:48 AM, Stephen Boyd wrote:
-> Quoting Thierry Reding (2020-03-05 09:51:38)
->> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> As part of the clock frequency change sequence, a driver may need to
->> reparent a clock. In that case, the rate will already have been updated
->> and the cached parent rate will no longer be valid, so just skip the
->> recalculation.
-> 
-> Can you describe more about what's going on and why this needs to
-> change? For example, we have 'set_rate_and_parent' for cases where a
-> driver reparents a clk during a rate change. Is that not sufficient
-> here?
-> 
+Lieber Freund,
 
-I believe this is related to the memory clock change sequence on Tegra, 
-where the EMC clock may have to be reparented multiple times during the 
-rate change sequence.
+Ich bin Herr Mike Weirsky, New Jersey, Vereinigte Staaten von Amerika, der =
+Mega-Gewinner von $ 273million In Mega Millions Jackpot, spende ich an 5 zu=
+f=C3=A4llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Ma=
+il nach einem Spinball ausgew=C3=A4hlt.Ich habe den gr=C3=B6=C3=9Ften Teil =
+meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=A4tigkeitsorganisationen =
+und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die =
+Summe von =E2=82=AC 2.000.000,00 an Sie als eine der ausgew=C3=A4hlten 5 zu=
+ spenden, um meine Gewinne zu =C3=BCberpr=C3=BCfen.
+Das ist dein Spendencode: [MW530342019]
+www.youtube.com/watch?v=3Dun8yRTmrYMY
 
-If EMC is running off parent A, and the requested new OPP also uses 
-parent A, we have to temporarily switch to a different OPP with parent B 
-so that the rate change sequence can be executed on parent A without 
-affecting the system's memory accesses.
+Antworten Sie mit dem SPENDE-CODE an diese =
 
-Mikko
 
->>
->> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   drivers/clk/clk.c | 9 ++++++++-
->>   1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index ebfc1e2103cb..49d92f4785a2 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -2079,7 +2079,14 @@ static void clk_change_rate(struct clk_core *core)
->>   
->>          trace_clk_set_rate_complete(core, core->new_rate);
->>   
->> -       core->rate = clk_recalc(core, best_parent_rate);
->> +       /*
->> +        * Some drivers need to change the parent of a clock as part of the
->> +        * rate change sequence. In that case, best_parent_rate is no longer
->> +        * valid. However, reparenting already recalculates the rate for the
->> +        * entire clock subtree, so we can safely skip this here.
->> +        */
->> +       if (core->parent == parent)
->> +               core->rate = clk_recalc(core, best_parent_rate);
->>   
-> 
-> I wonder if we can undo the recursion and figure out a way to make this
-> only happen once, when we want it to happen.
-> 
+E-Mail:mikeweirskyspende-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+
+Ich hoffe, Sie und Ihre Familie gl=C3=BCcklich zu machen.
+
+Gr=C3=BC=C3=9Fe
+Herr Mike Weirsky
