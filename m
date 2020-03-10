@@ -1,65 +1,52 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V4 0/5] Add support for PCIe endpoint mode in Tegra194
-Date: Tue, 10 Mar 2020 17:58:28 +0000
-Message-ID: <20200310175820.GA13909@e121166-lin.cambridge.arm.com>
-References: <20200303105418.2840-1-vidyas@nvidia.com>
- <20200303170103.GA9641@e121166-lin.cambridge.arm.com>
- <d1e3a42f-c179-fd03-fac0-7cd449580e5b@nvidia.com>
- <b47de9cd-be18-1672-d72c-de4169fb90e5@nvidia.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v1] i2c: tegra: Make timeout error more informative
+Date: Tue, 10 Mar 2020 19:15:38 +0100
+Message-ID: <20200310181537.GA15874@ninjato>
+References: <20200302173512.2743-1-digetx@gmail.com>
+ <20200310113706.GW1987@ninjato>
+ <017aad72-9872-a4aa-dc99-bd7d08c0db14@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <b47de9cd-be18-1672-d72c-de4169fb90e5-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <017aad72-9872-a4aa-dc99-bd7d08c0db14-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, andrew.murray-5wv7dgnIgG8@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, gustavo.pimentel-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 11:12:35PM +0530, Vidya Sagar wrote:
-> 
-> 
-> On 3/3/2020 11:43 PM, Vidya Sagar wrote:
-> > 
-> > 
-> > On 3/3/2020 10:31 PM, Lorenzo Pieralisi wrote:
-> > > External email: Use caution opening links or attachments
-> > > 
-> > > 
-> > > On Tue, Mar 03, 2020 at 04:24:13PM +0530, Vidya Sagar wrote:
-> > > > Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that
-> > > > can operate
-> > > > either in root port mode or in end point mode but only in one
-> > > > mode at a time.
-> > > > Platform P2972-0000 supports enabling endpoint mode for C5
-> > > > controller. This
-> > > > patch series adds support for PCIe endpoint mode in both the
-> > > > driver as well as
-> > > > in DT.
-> > > > This patch series depends on the changes made for Synopsys
-> > > > DesignWare endpoint
-> > > > mode subsystem that are recently accepted.
-> > > > @ https://patchwork.kernel.org/project/linux-pci/list/?series=202211
-> > > > which in turn depends on the patch made by Kishon
-> > > > @ https://patchwork.kernel.org/patch/10975123/
-> > > > which is also under review.
-> > > > 
-> > > > V4:
-> > > > * Started using threaded irqs instead of kthreads
-> > > 
-> > > Hi Vidya,
-> > > 
-> > > sorry for the bother, may I ask you to rebase the series (after
-> > > answering Thierry's query) on top of my pci/endpoint branch please ?
-> > > 
-> > > Please resend it and I will merge patches {1,2,5} then.
-> > Sure.
-> > I just sent V5 series rebasing patches on top of your pci/endpoint branch.
-> Hi,
-> Sorry to bother you again.
-> Could you please take a look at V5 series?
 
-I will merge it tomorrow, apologies.
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Lorenzo
+
+> Oh, well. I'll keep this debugging applied locally then, it's quite
+> unfortunate when something fails silently :)
+
+I understand. Still, it depends on the I2C client driver to flag it. For
+some devices, this is an error. For some, just one possible state.
+
+
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5n2UAACgkQFA3kzBSg
+KbZJsA/9ErRQgh321oAvGAVlwLVHFTP4xePY7f0V2hGdPmmSFzgPjn9+Bl96RnUA
+KsLYDCl4GUwQ8rsbv6O1ZNITNsWI0E5pJrye/wzjf9UXZ/UjMCMDpfkS8eBSwfKR
++XJb4OsOYz7pR0gWAUaUdEt8CLwzn/vtDH/RFJiCBXY5y7EsjkwLn/UgPrD1GI/0
++4/Q8/uKNqneFCE+L1/HsE77Q/wGwC8ufNLzkv5ngd9nw+FQi+8a6lKibxq4T03S
+aKiLCx87kgh0JUronYfjAAiINs6n+9OSrIiIv9JgXSGIvFwIYqQrUrM5IxsD79AL
+7qhC5VZ4kVJyBn0C6w3SabnDrmlIuHWJOsGWAU3KU/C44jSG5+uEkPspRXmecrf1
+leZ95mWhZlifARo/4rK+EkT8+ReQ4z/bAzcx2o56DJHNvsGs3s/YTQDyZ+pzvNI8
+UFkkle6S18B/Um7cuirg3yax7bPpXPQi7Oao1qgDDceNZW9cy5IiI3QwIV7/QB0u
+Lyfs020A5cFDgYLSFYIzZ0I9qyeSAtDBWDDzd1PQWYBFNA3TryJu8RFMVS+hbCUH
+UlCZd3QijSbTPzDRckoH6d17/hJdGZN84JFW4aY+UPkaxovt/POT5t7mflA2rcjf
+1Gfi0u5lgcE7kQnY5Cb9PdaeI4Blv2pM1WtA6kAzC/qBlDHue9E=
+=5lp1
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
