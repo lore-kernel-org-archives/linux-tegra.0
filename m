@@ -1,39 +1,82 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v2 2/2] sdhci: tegra: Enable MMC_CAP_WAIT_WHILE_BUSY host capability
-Date: Wed, 11 Mar 2020 08:47:55 -0700
-Message-ID: <1583941675-9884-2-git-send-email-skomatineni@nvidia.com>
-References: <1583941675-9884-1-git-send-email-skomatineni@nvidia.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V5 0/5] Add support for PCIe endpoint mode in Tegra194
+Date: Wed, 11 Mar 2020 21:18:02 +0530
+Message-ID: <e49b3c8d-f669-007b-5d35-b8ec4f0529aa@nvidia.com>
+References: <20200303181052.16134-1-vidyas@nvidia.com>
+ <20200311105141.GA30083@e121166-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1583941675-9884-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org, baolin.wang@linaro.org, kstewart@linuxfoundation.org, tglx@linutronix.de, bradleybolen@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, skomatineni@nvidia.com
-Cc: anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20200311105141.GA30083@e121166-lin.cambridge.arm.com>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, thierry.reding@gmail.com
+Cc: bhelgaas@google.com, robh+dt@kernel.org, jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra sdhci host supports HW busy detection of the device busy
-signaling over data0 lane.
 
-So, this patch enables host capability MMC_CAP_wAIT_WHILE_BUSY.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 3/11/2020 4:22 PM, Lorenzo Pieralisi wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On Tue, Mar 03, 2020 at 11:40:47PM +0530, Vidya Sagar wrote:
+>> Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that can operate
+>> either in root port mode or in end point mode but only in one mode at a time.
+>> Platform P2972-0000 supports enabling endpoint mode for C5 controller. This
+>> patch series adds support for PCIe endpoint mode in both the driver as well as
+>> in DT.
+>> This patch series depends on the changes made for Synopsys DesignWare endpoint
+>> mode subsystem that are recently accepted.
+>> @ https://patchwork.kernel.org/project/linux-pci/list/?series=202211
+>> which in turn depends on the patch made by Kishon
+>> @ https://patchwork.kernel.org/patch/10975123/
+>> which is also under review.
+>>
+>> V5:
+>> * Rebased patch-2 on top of Lorenzo's pci/endpoint branch
+>> * Removed unwanted header files inclusion in patch-5
+> 
+> Applied patches 1,2,5 to pci/endpoint for v5.7, please let me know
+> if something is missing.
+Thanks Lorenzo and Thierry.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index fa8f6a4..1c381f8 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1580,6 +1580,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	if (rc)
- 		goto err_parse_dt;
- 
-+	host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
-+
- 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
- 
--- 
-2.7.4
+Thanks,
+Vidya Sagar
+
+> 
+> Thanks,
+> Lorenzo
+> 
+>> V4:
+>> * Started using threaded irqs instead of kthreads
+>>
+>> V3:
+>> * Re-ordered patches in the series to make the driver change as the last patch
+>> * Took care of Thierry's review comments
+>>
+>> V2:
+>> * Addressed Thierry & Bjorn's review comments
+>> * Added EP mode specific binding documentation to already existing binding documentation file
+>> * Removed patch that enables GPIO controller nodes explicitly as they are enabled already
+>>
+>> Vidya Sagar (5):
+>>    soc/tegra: bpmp: Update ABI header
+>>    dt-bindings: PCI: tegra: Add DT support for PCIe EP nodes in Tegra194
+>>    arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
+>>    arm64: tegra: Add support for PCIe endpoint mode in P2972-0000
+>>      platform
+>>    PCI: tegra: Add support for PCIe endpoint mode in Tegra194
+>>
+>>   .../bindings/pci/nvidia,tegra194-pcie.txt     | 125 +++-
+>>   .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  18 +
+>>   arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  99 +++
+>>   drivers/pci/controller/dwc/Kconfig            |  30 +-
+>>   drivers/pci/controller/dwc/pcie-tegra194.c    | 679 +++++++++++++++++-
+>>   include/soc/tegra/bpmp-abi.h                  |  10 +-
+>>   6 files changed, 916 insertions(+), 45 deletions(-)
+>>
+>> --
+>> 2.17.1
+>>
