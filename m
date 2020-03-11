@@ -1,70 +1,37 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v1 1/3] mmc: core: Add capability for hosts supporting long HW busy wait
-Date: Mon,  9 Mar 2020 17:13:23 -0700
-Message-ID: <1583799205-8442-1-git-send-email-skomatineni@nvidia.com>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
+Subject: [PATCH v2 2/2] sdhci: tegra: Enable MMC_CAP_WAIT_WHILE_BUSY host capability
+Date: Tue, 10 Mar 2020 17:20:30 -0700
+Message-ID: <1583886030-11339-2-git-send-email-skomatineni@nvidia.com>
+References: <1583886030-11339-1-git-send-email-skomatineni@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1583886030-11339-1-git-send-email-skomatineni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: adrian.hunter@intel.com, ulf.hansson@linaro.org, baolin.wang@linaro.org, kstewart@linuxfoundation.org, tglx@linutronix.de, bradleybolen@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
 Cc: skomatineni@nvidia.com, anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some mmc operation like SLEEP_AWAKE and cache flush through SWITCH
-command takes longer time and for host controllers supporting HW
-busy detection, core driver converts R1B type to R1 type response
-for these commands if operation time is more than HW busy timeout
-and uses SW poll for busy state.
+Tegra sdhci host supports HW busy detection of the device busy
+signaling over data0 lane.
 
-This patch adds a host capability MMC_CAP2_LONG_WAIT_HW_BUSY for
-hosts supporting long or infinite busy wait of HW busy detection
-for these long mmc operations and prevents core driver from
-converting R1B to R1 response type.
+So, this patch enables host capability MMC_CAP_wAIT_WHILE_BUSY.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/mmc/core/mmc.c     | 3 ++-
- drivers/mmc/core/mmc_ops.c | 3 ++-
- include/linux/mmc/host.h   | 1 +
- 3 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index c2abd41..5aea3a6 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1916,7 +1916,8 @@ static int mmc_sleep(struct mmc_host *host)
- 	 * from doing hw busy detection, which is done by converting to a R1
- 	 * response instead of a R1B.
- 	 */
--	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout)) {
-+	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout) &&
-+	    !(host->caps2 & MMC_CAP2_LONG_WAIT_HW_BUSY)) {
- 		cmd.flags = MMC_RSP_R1 | MMC_CMD_AC;
- 	} else {
- 		cmd.flags = MMC_RSP_R1B | MMC_CMD_AC;
-diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-index aa0cab1..251b4c7 100644
---- a/drivers/mmc/core/mmc_ops.c
-+++ b/drivers/mmc/core/mmc_ops.c
-@@ -579,7 +579,8 @@ int __mmc_switch(struct mmc_card *card, u8 set, u8 index, u8 value,
- 	 * the host to avoid HW busy detection, by converting to a R1 response
- 	 * instead of a R1B.
- 	 */
--	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout))
-+	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout) &&
-+	    !(host->caps2 & MMC_CAP2_LONG_WAIT_HW_BUSY))
- 		use_r1b_resp = false;
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index fa8f6a4..1c381f8 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1580,6 +1580,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	if (rc)
+ 		goto err_parse_dt;
  
- 	cmd.opcode = MMC_SWITCH;
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 6aaa15e..1cda4dd 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -371,6 +371,7 @@ struct mmc_host {
- #define MMC_CAP2_CQE_DCMD	(1 << 24)	/* CQE can issue a direct command */
- #define MMC_CAP2_AVOID_3_3V	(1 << 25)	/* Host must negotiate down from 3.3V */
- #define MMC_CAP2_MERGE_CAPABLE	(1 << 26)	/* Host can merge a segment over the segment size */
-+#define MMC_CAP2_LONG_WAIT_HW_BUSY (1 << 27)	/* Host can support long busy timeout, do not convert R1B to R1 response */
- 
- 	int			fixed_drv_type;	/* fixed driver type for non-removable media */
++	host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
++
+ 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
+ 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
  
 -- 
 2.7.4
