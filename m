@@ -1,51 +1,95 @@
-From: Wambui Karuga <wambui.karugax-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 10/21] drm/tegra: remove checks for debugfs functions
- return value
-Date: Wed, 11 Mar 2020 17:54:46 +0300 (EAT)
-Message-ID: <alpine.LNX.2.21.99999.375.2003111750360.14786@wambui>
-References: <20200227120232.19413-1-wambui.karugax@gmail.com> <20200227120232.19413-11-wambui.karugax@gmail.com> <20200311143753.GC494173@ulmo>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH v2 1/2] sdhci: tegra: Implement Tegra specific set_timeout callback
+Date: Wed, 11 Mar 2020 08:47:54 -0700
+Message-ID: <1583941675-9884-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200311143753.GC494173@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Wambui Karuga <wambui.karugax-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, daniel-/w4YWyX8dFk@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org, baolin.wang@linaro.org, kstewart@linuxfoundation.org, tglx@linutronix.de, bradleybolen@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, skomatineni@nvidia.com
+Cc: anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hey Thierry,
+Tegra host supports HW busy detection and timeouts based on the
+count programmed in SDHCI_TIMEOUT_CONTROL register and max busy
+timeout it supports is 11s in finite busy wait mode.
 
-On Wed, 11 Mar 2020, Thierry Reding wrote:
+Some operations like SLEEP_AWAKE, ERASE and flush cache through
+SWITCH commands take longer than 11s and Tegra host supports
+infinite HW busy wait mode where HW waits forever till the card
+is busy without HW timeout.
 
-> On Thu, Feb 27, 2020 at 03:02:21PM +0300, Wambui Karuga wrote:
->> Since 987d65d01356 (drm: debugfs: make
->> drm_debugfs_create_files() never fail) there is no need to check the
->> return value of drm_debugfs_create_files(). Therefore, remove the
->> return checks and error handling of the drm_debugfs_create_files()
->> function from various debugfs init functions in drm/tegra and have
->> them return 0 directly.
->>
->> This change also includes removing the use of drm_debugfs_create_files
->> as a return value in tegra_debugfs_init() and have the function declared
->> as void.
->>
->> Signed-off-by: Wambui Karuga <wambui.karugax-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/gpu/drm/tegra/dc.c   | 11 +----------
->>  drivers/gpu/drm/tegra/drm.c  |  8 ++++----
->>  drivers/gpu/drm/tegra/dsi.c  | 11 +----------
->>  drivers/gpu/drm/tegra/hdmi.c | 11 +----------
->>  drivers/gpu/drm/tegra/sor.c  | 11 +----------
->>  5 files changed, 8 insertions(+), 44 deletions(-)
->
-> Applied, thanks.
->
-There's a newer version[1] of this patch series as this specific patch 
-depends on other work in drm.
+This patch implements Tegra specific set_timeout sdhci_ops to allow
+switching between finite and infinite HW busy detection wait modes
+based on the device command expected operation time.
 
-Thanks,
-wambui karuga.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-[1] https://lists.freedesktop.org/archives/dri-devel/2020-March/258793.html
-> Thierry
->
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index a25c3a4..fa8f6a4 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -45,6 +45,7 @@
+ #define SDHCI_TEGRA_CAP_OVERRIDES_DQS_TRIM_SHIFT	8
+ 
+ #define SDHCI_TEGRA_VENDOR_MISC_CTRL			0x120
++#define SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT		BIT(0)
+ #define SDHCI_MISC_CTRL_ENABLE_SDR104			0x8
+ #define SDHCI_MISC_CTRL_ENABLE_SDR50			0x10
+ #define SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300		0x20
+@@ -1227,6 +1228,34 @@ static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
+ 	return 0;
+ }
+ 
++static void tegra_sdhci_set_timeout(struct sdhci_host *host,
++				    struct mmc_command *cmd)
++{
++	u32 val;
++
++	/*
++	 * HW busy detection timeout is based on programmed data timeout
++	 * counter and maximum supported timeout is 11s which may not be
++	 * enough for long operations like cache flush, sleep awake, erase.
++	 *
++	 * ERASE_TIMEOUT_LIMIT bit of VENDOR_MISC_CTRL register allows
++	 * host controller to wait for busy state until the card is busy
++	 * without HW timeout.
++	 *
++	 * So, use infinite busy wait mode for operations that may take
++	 * more than maximum HW busy timeout of 11s otherwise use finite
++	 * busy wait mode.
++	 */
++	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
++	if (cmd && cmd->busy_timeout >= 11 * HZ)
++		val |= SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
++	else
++		val &= ~SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
++	sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_MISC_CTRL);
++
++	__sdhci_set_timeout(host, cmd);
++}
++
+ static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+ 	.write_l    = tegra_cqhci_writel,
+ 	.enable	= sdhci_tegra_cqe_enable,
+@@ -1366,6 +1395,7 @@ static const struct sdhci_ops tegra210_sdhci_ops = {
+ 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+ 	.voltage_switch = tegra_sdhci_voltage_switch,
+ 	.get_max_clock = tegra_sdhci_get_max_clock,
++	.set_timeout = tegra_sdhci_set_timeout,
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+@@ -1403,6 +1433,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+ 	.voltage_switch = tegra_sdhci_voltage_switch,
+ 	.get_max_clock = tegra_sdhci_get_max_clock,
+ 	.irq = sdhci_tegra_cqhci_irq,
++	.set_timeout = tegra_sdhci_set_timeout,
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+-- 
+2.7.4
