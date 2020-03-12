@@ -1,53 +1,64 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] sdhci: tegra: Enable MMC_CAP_WAIT_WHILE_BUSY host capability
-Date: Thu, 12 Mar 2020 14:08:16 +0100
-Message-ID: <CAPDyKFrF4EahPZ3VxEGYBbxCGXAEHFZHtte79CW=2-jEpvLvTA@mail.gmail.com>
-References: <1583916962-9467-1-git-send-email-skomatineni@nvidia.com> <1583916962-9467-2-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 3/3] drm/tegra: dc: Silence RGB output deferred-probe
+ error
+Date: Thu, 12 Mar 2020 17:03:56 +0300
+Message-ID: <d2f72b22-59d1-ed0e-c22c-756091723415@gmail.com>
+References: <20200308223809.23549-1-digetx@gmail.com>
+ <20200308223809.23549-3-digetx@gmail.com> <20200312093353.GB1199023@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1583916962-9467-2-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200312093353.GB1199023@ulmo>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Bradley Bolen <bradleybolen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aniruddha Tvs Rao <anrao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
--trimmed cc list
+12.03.2020 12:33, Thierry Reding пишет:
+> On Mon, Mar 09, 2020 at 01:38:09AM +0300, Dmitry Osipenko wrote:
+>> Driver fails to probe with -EPROBE_DEFER if display output isn't ready
+>> yet. This produces a bit noisy error message in KMSG during kernel's boot
+>> up on Tegra20 and Tegra30 because RGB output tends to be probed earlier
+>> than a corresponding voltage regulator driver.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  drivers/gpu/drm/tegra/dc.c | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+>> index 56d933e81797..d7f2c4654b6b 100644
+>> --- a/drivers/gpu/drm/tegra/dc.c
+>> +++ b/drivers/gpu/drm/tegra/dc.c
+>> @@ -2571,7 +2571,11 @@ static int tegra_dc_probe(struct platform_device *pdev)
+>>  
+>>  	err = tegra_dc_rgb_probe(dc);
+>>  	if (err < 0 && err != -ENODEV) {
+>> -		dev_err(&pdev->dev, "failed to probe RGB output: %d\n", err);
+>> +		if (err == -EPROBE_DEFER)
+>> +			dev_dbg(&pdev->dev, "RGB output probe deferred\n");
+>> +		else
+>> +			dev_err(&pdev->dev, "failed to probe RGB output: %d\n",
+>> +				err);
+>>  		return err;
+>>  	}
+> 
+> I'd prefer if we had just a single message and only differentiate on the
+> kernel message level, something more along these lines:
+> 
+> 	if (err < 0 && err != -ENODEV) {
+> 		const char *level = KERN_ERR;
+> 
+> 		if (err == -EPROBE_DEFER)
+> 			level = KERN_DEBUG;
+> 
+> 		dev_printk(level, dc->dev, "failed to probe RGB output: %d\n",
+> 			   err);
+> 		return err;
+> 	}
+> 
+> Do you mind if I squash that into your patch?
 
-On Thu, 12 Mar 2020 at 00:51, Sowjanya Komatineni
-<skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
-> Tegra sdhci host supports HW busy detection of the device busy
-> signaling over data0 lane.
->
-> So, this patch enables host capability MMC_CAP_wAIT_WHILE_BUSY.
->
-> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
-
-
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index fa8f6a4..1c381f8 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -1580,6 +1580,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->         if (rc)
->                 goto err_parse_dt;
->
-> +       host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
-> +
->         if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
->                 host->mmc->caps |= MMC_CAP_1_8V_DDR;
->
-> --
-> 2.7.4
->
+I don't mind, thanks :)
