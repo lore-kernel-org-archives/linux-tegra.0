@@ -1,81 +1,125 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1] drm/tegra: hdmi: Silence deferred-probe error
-Date: Thu, 12 Mar 2020 18:04:32 +0300
-Message-ID: <20200312150432.2745-1-digetx@gmail.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] sdhci: tegra: Implement Tegra specific set_timeout
+ callback
+Date: Thu, 12 Mar 2020 08:28:40 -0700
+Message-ID: <7bf5bfb5-b07c-96d3-2c33-124085a36a65@nvidia.com>
+References: <1583886030-11339-1-git-send-email-skomatineni@nvidia.com>
+ <CAPDyKFpAgk0uboGXdmA_m1-2=GK2oRXVv+97ZFFFAtT-ZZo4fw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPDyKFpAgk0uboGXdmA_m1-2=GK2oRXVv+97ZFFFAtT-ZZo4fw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Bradley Bolen <bradleybolen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aniruddha Tvs Rao <anrao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Driver fails to probe with -EPROBE_DEFER, which produces a bit noisy error
-message in KMSG during kernel's boot up. This happens because voltage
-regulators tend to be probed later than the DRM driver.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/gpu/drm/tegra/hdmi.c | 34 +++++++++++++++++++++++++---------
- 1 file changed, 25 insertions(+), 9 deletions(-)
+On 3/12/20 6:08 AM, Ulf Hansson wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> -trimmed cc list
+>
+> On Thu, 12 Mar 2020 at 00:51, Sowjanya Komatineni
+> <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> Tegra host supports HW busy detection and timeouts based on the
+>> count programmed in SDHCI_TIMEOUT_CONTROL register and max busy
+>> timeout it supports is 11s in finite busy wait mode.
+>>
+>> Some operations like SLEEP_AWAKE, ERASE and flush cache through
+>> SWITCH commands take longer than 11s and Tegra host supports
+>> infinite HW busy wait mode where HW waits forever till the card
+>> is busy without HW timeout.
+>>
+>> This patch implements Tegra specific set_timeout sdhci_ops to allow
+>> switching between finite and infinite HW busy detection wait modes
+>> based on the device command expected operation time.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Applied for next, thanks!
+>
+> We should probably tag this for stable as well, don't you think?
+>
+> Kind regards
+> Uffe
 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index 6f117628f257..e8ee8058c587 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -1648,6 +1648,7 @@ static irqreturn_t tegra_hdmi_irq(int irq, void *data)
- 
- static int tegra_hdmi_probe(struct platform_device *pdev)
- {
-+	const char *err_level = KERN_ERR;
- 	struct tegra_hdmi *hdmi;
- 	struct resource *regs;
- 	int err;
-@@ -1686,21 +1687,36 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
- 	}
- 
- 	hdmi->hdmi = devm_regulator_get(&pdev->dev, "hdmi");
--	if (IS_ERR(hdmi->hdmi)) {
--		dev_err(&pdev->dev, "failed to get HDMI regulator\n");
--		return PTR_ERR(hdmi->hdmi);
-+	err = PTR_ERR_OR_ZERO(hdmi->hdmi);
-+	if (err) {
-+		if (err == -EPROBE_DEFER)
-+			err_level = KERN_DEBUG;
-+
-+		dev_printk(err_level, &pdev->dev,
-+			   "failed to get HDMI regulator: %d\n", err);
-+		return err;
- 	}
- 
- 	hdmi->pll = devm_regulator_get(&pdev->dev, "pll");
--	if (IS_ERR(hdmi->pll)) {
--		dev_err(&pdev->dev, "failed to get PLL regulator\n");
--		return PTR_ERR(hdmi->pll);
-+	err = PTR_ERR_OR_ZERO(hdmi->pll);
-+	if (err) {
-+		if (err == -EPROBE_DEFER)
-+			err_level = KERN_DEBUG;
-+
-+		dev_printk(err_level, &pdev->dev,
-+			   "failed to get PLL regulator: %d\n", err);
-+		return err;
- 	}
- 
- 	hdmi->vdd = devm_regulator_get(&pdev->dev, "vdd");
--	if (IS_ERR(hdmi->vdd)) {
--		dev_err(&pdev->dev, "failed to get VDD regulator\n");
--		return PTR_ERR(hdmi->vdd);
-+	err = PTR_ERR_OR_ZERO(hdmi->vdd);
-+	if (err) {
-+		if (err == -EPROBE_DEFER)
-+			err_level = KERN_DEBUG;
-+
-+		dev_printk(err_level, &pdev->dev,
-+			   "failed to get VDD regulator: %d\n", err);
-+		return err;
- 	}
- 
- 	hdmi->output.dev = &pdev->dev;
--- 
-2.25.1
+Yes, we need this for stable as well. As this is applied for next, looks 
+like can't re-send patch with tag.
+
+Can you please help to add tag if you don't mind?
+
+>
+>
+>> ---
+>>   drivers/mmc/host/sdhci-tegra.c | 31 +++++++++++++++++++++++++++++++
+>>   1 file changed, 31 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+>> index a25c3a4..fa8f6a4 100644
+>> --- a/drivers/mmc/host/sdhci-tegra.c
+>> +++ b/drivers/mmc/host/sdhci-tegra.c
+>> @@ -45,6 +45,7 @@
+>>   #define SDHCI_TEGRA_CAP_OVERRIDES_DQS_TRIM_SHIFT       8
+>>
+>>   #define SDHCI_TEGRA_VENDOR_MISC_CTRL                   0x120
+>> +#define SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT            BIT(0)
+>>   #define SDHCI_MISC_CTRL_ENABLE_SDR104                  0x8
+>>   #define SDHCI_MISC_CTRL_ENABLE_SDR50                   0x10
+>>   #define SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300          0x20
+>> @@ -1227,6 +1228,34 @@ static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>>          return 0;
+>>   }
+>>
+>> +static void tegra_sdhci_set_timeout(struct sdhci_host *host,
+>> +                                   struct mmc_command *cmd)
+>> +{
+>> +       u32 val;
+>> +
+>> +       /*
+>> +        * HW busy detection timeout is based on programmed data timeout
+>> +        * counter and maximum supported timeout is 11s which may not be
+>> +        * enough for long operations like cache flush, sleep awake, erase.
+>> +        *
+>> +        * ERASE_TIMEOUT_LIMIT bit of VENDOR_MISC_CTRL register allows
+>> +        * host controller to wait for busy state until the card is busy
+>> +        * without HW timeout.
+>> +        *
+>> +        * So, use infinite busy wait mode for operations that may take
+>> +        * more than maximum HW busy timeout of 11s otherwise use finite
+>> +        * busy wait mode.
+>> +        */
+>> +       val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+>> +       if (cmd && cmd->busy_timeout >= 11 * HZ)
+>> +               val |= SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
+>> +       else
+>> +               val &= ~SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
+>> +       sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+>> +
+>> +       __sdhci_set_timeout(host, cmd);
+>> +}
+>> +
+>>   static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+>>          .write_l    = tegra_cqhci_writel,
+>>          .enable = sdhci_tegra_cqe_enable,
+>> @@ -1366,6 +1395,7 @@ static const struct sdhci_ops tegra210_sdhci_ops = {
+>>          .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>>          .voltage_switch = tegra_sdhci_voltage_switch,
+>>          .get_max_clock = tegra_sdhci_get_max_clock,
+>> +       .set_timeout = tegra_sdhci_set_timeout,
+>>   };
+>>
+>>   static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+>> @@ -1403,6 +1433,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+>>          .voltage_switch = tegra_sdhci_voltage_switch,
+>>          .get_max_clock = tegra_sdhci_get_max_clock,
+>>          .irq = sdhci_tegra_cqhci_irq,
+>> +       .set_timeout = tegra_sdhci_set_timeout,
+>>   };
+>>
+>>   static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+>> --
+>> 2.7.4
+>>
