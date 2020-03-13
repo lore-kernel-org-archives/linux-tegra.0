@@ -1,79 +1,100 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] backlight: lp855x: Ensure regulators are disabled on
- probe failure
-Date: Fri, 13 Mar 2020 14:16:16 +0000
-Message-ID: <6ec74817-968b-ab5e-6566-56bbb9b67599@nvidia.com>
-References: <20200224140748.2182-1-jonathanh@nvidia.com>
- <20200224143732.rreev3ypou26hvx3@holly.lan>
+From: Felipe Balbi <balbi@kernel.org>
+Subject: Re: [Patch V5 00/21] Tegra XUSB OTG support
+Date: Fri, 13 Mar 2020 16:48:06 +0200
+Message-ID: <87r1xwfh09.fsf@kernel.org>
+References: <1581322307-11140-1-git-send-email-nkristam@nvidia.com> <20200217085130.GJ1339021@ulmo> <20200227173226.GA1114616@ulmo> <20200304070100.GA1271591@kroah.com> <20200312092232.GA1199023@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200224143732.rreev3ypou26hvx3-SoAo7ar8mTX/PtFMR13I2A@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Milo Kim <milo.kim-l0cyMroinI0@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200312092232.GA1199023@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nagarjuna Kristam <nkristam@nvidia.com>, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lee, Daniel,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On 24/02/2020 14:37, Daniel Thompson wrote:
-> On Mon, Feb 24, 2020 at 02:07:48PM +0000, Jon Hunter wrote:
->> If probing the LP885x backlight fails after the regulators have been
->> enabled, then the following warning is seen when releasing the
->> regulators ...
->>
->>  WARNING: CPU: 1 PID: 289 at drivers/regulator/core.c:2051 _regulator_put.part.28+0x158/0x160
->>  Modules linked in: tegra_xudc lp855x_bl(+) host1x pwm_tegra ip_tables x_tables ipv6 nf_defrag_ipv6
->>  CPU: 1 PID: 289 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200224 #1
->>  Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
->>
->>  ...
->>
->>  Call trace:
->>   _regulator_put.part.28+0x158/0x160
->>   regulator_put+0x34/0x50
->>   devm_regulator_release+0x10/0x18
->>   release_nodes+0x12c/0x230
->>   devres_release_all+0x34/0x50
->>   really_probe+0x1c0/0x370
->>   driver_probe_device+0x58/0x100
->>   device_driver_attach+0x6c/0x78
->>   __driver_attach+0xb0/0xf0
->>   bus_for_each_dev+0x68/0xc8
->>   driver_attach+0x20/0x28
->>   bus_add_driver+0x160/0x1f0
->>   driver_register+0x60/0x110
->>   i2c_register_driver+0x40/0x80
->>   lp855x_driver_init+0x20/0x1000 [lp855x_bl]
->>   do_one_initcall+0x58/0x1a0
->>   do_init_module+0x54/0x1d0
->>   load_module+0x1d80/0x21c8
->>   __do_sys_finit_module+0xe8/0x100
->>   __arm64_sys_finit_module+0x18/0x20
->>   el0_svc_common.constprop.3+0xb0/0x168
->>   do_el0_svc+0x20/0x98
->>   el0_sync_handler+0xf4/0x1b0
->>   el0_sync+0x140/0x180
->>
->> Fix this by ensuring that the regulators are disabled, if enabled, on
->> probe failure.
->>
->> Finally, ensure that the vddio regulator is disabled in the driver
->> remove handler.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Reviewed-by: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-I received a bounce from Milo's email and so I am not sure that his
-email address is still valid.
 
-Can either of you pick this up?
+Hi,
 
-Not sure if we should update the MAINTAINERS as well?
+Thierry Reding <thierry.reding@gmail.com> writes:
+> On Wed, Mar 04, 2020 at 08:01:00AM +0100, Greg Kroah-Hartman wrote:
+>> On Thu, Feb 27, 2020 at 06:32:26PM +0100, Thierry Reding wrote:
+>> > On Mon, Feb 17, 2020 at 09:51:30AM +0100, Thierry Reding wrote:
+>> > > On Mon, Feb 10, 2020 at 01:41:26PM +0530, Nagarjuna Kristam wrote:
+>> > > > This patch series adds OTG support on XUSB hardware used in Tegra2=
+10 and
+>> > > > Tegra186 SoCs.
+>> > > >=20
+>> > > > This patchset is composed with :
+>> > > >  - dt bindings of XUSB Pad Controller
+>> > > >  - dt bindings for XUSB device Driver
+>> > > >  - Tegra PHY driver for usb-role-switch and usb-phy
+>> > > >  - Tegra XUSB host mode driver to support OTG mode
+>> > > >  - Tegra XUSB device mode driver to use usb-phy and multi device m=
+ode
+>> > > >  - dts for XUSB pad controller
+>> > > >  - dts for xudc for Jetson TX1 and TX2
+>> > > >  - dts for Jetson-TK1
+>> > > >  - dts for Jetson-Nano
+>> > > >=20
+>> > > > Tegra Pad controller driver register for role switch updates for
+>> > > > OTG/peripheral capable USB ports and adds usb-phy for that corresp=
+onding
+>> > > > USB ports.
+>> > > >=20
+>> > > > Host and Device mode drivers gets usb-phy from USB2's phy and regi=
+sters
+>> > > > notifier for role changes to perform corresponding role tasks.
+>> > > >=20
+>> > > > Order of merging Patches:
+>> > > > Please merge DT changes first followed Tegra PHY driver changes an=
+d then
+>> > > > USB driver changes.
+>> > >=20
+>> > > Felipe, Greg, Kishon,
+>> > >=20
+>> > > Given the runtime dependencies between these various parts, I could =
+pick
+>> > > these up into the Tegra tree if you provide an Acked-by.
+>> >=20
+>> > Ping. Are you guys okay if I pick these up into the Tegra tree?
+>>=20
+>> That's up to Felipe, I have no opinion :)
+>
+> Felipe, Kishon,
+>
+> I've picked up the device tree changes into the Tegra tree. Let me know
+> if you also want me to pick up the USB and PHY driver changes.
 
-Jon
+Sorry for the super long delay, no problems if you want to pick it
+through your tree:
 
--- 
-nvpublic
+Acked-by: Felipe Balbi <balbi@kernel.org>
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl5rnSYACgkQzL64meEa
+mQbcOw/+PHC2C6s2hZma+wKIIWRf2etmytep7PH5htS6qBEqiZclRJChw9ks8nh6
+87xBYHbPcR3ajUbf/qLdU53B/P/fv18aBnG+v26qoE6KusJ/SwIuo7IqMtxS4h1e
+SteaHHsqvsQuYpq2Jy10nHTGLszKzjkjKt/ZGgyZ9Naq5IT9A/dyWPjkwOr1Cfen
+ufJ+uqH/aEMcrfL/ejGJLZMVvmi8hIppZnld02J02/Ip4pzp+fSn4/NhXDUlnIa3
+Ru9Zdzs5upEva8KZb7oUiWqZLEUIXHPP4tGDl6AaXmR774EhPXD4vCEo+8SIX2NI
+gQ8zODCKOfEwYCblxhwI5AK+W2i6BEqeKUo+H7PdyU5lFA/SvKnEvrlmL9XECnSL
+2+boUbAC4VdDRQ0ZE4jMep8ehPTBK7SyUVYYGI5TOC4p6O8JvdlSIJS9Bbemo0Lj
+7Z+/zyumOuy4WHe0w6I357LpTv8M6N2jEgOLHqQXqs7ROgQKo8EBgFT9n1lmYZAs
+0zWLZioos7Vy31c3MWWTQdwtvCBz8iSlW+EciKcoYEZt27i2petNrQh0i7hTSyfv
+rakKekvpyBXXSt5BITvCpP0SuvJ6IwXpeWZq7v38juDR2wYh6qWnogSww0pRmjqc
+PMyDMRHSu9WpmR2a+ftAvFmEhIkBV/9bPb10jWwWcXdiwCPhLjM=
+=6Pve
+-----END PGP SIGNATURE-----
+--=-=-=--
