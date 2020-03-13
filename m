@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 08/10] arm64: tegra: Device tree changes for v5.7-rc1
-Date: Fri, 13 Mar 2020 17:58:46 +0100
-Message-ID: <20200313165848.2915133-8-thierry.reding@gmail.com>
+Subject: [GIT PULL 10/10] phy: tegra: Changes for v5.7-rc1
+Date: Fri, 13 Mar 2020 17:58:48 +0100
+Message-ID: <20200313165848.2915133-10-thierry.reding@gmail.com>
 References: <20200313165848.2915133-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,86 +21,46 @@ The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.7-arm64-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.7-phy
 
-for you to fetch changes up to 84eaaf7500036f292f5563b39a983c492d5b12ae:
+for you to fetch changes up to 04c929223d1db6ad4ba8e4c23122e1052f670c2e:
 
-  arm64: tegra: Add support for PCIe endpoint mode in P2972-0000 platform (2020-03-12 12:14:31 +0100)
+  phy: tegra: xusb: Don't warn on probe defer (2020-03-13 09:17:50 +0100)
+
+This is a dependency for the USB changes that are also part of this
+series of pull requests, so it was deemed easier to take this all
+through the ARM SoC tree. The patches have all been acked by Kishon.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Device tree changes for v5.7-rc1
+phy: tegra: Changes for v5.7-rc1
 
-These changes add support for the XUSB pad controller, as well as the
-XUSB controller on Tegra194. Furthermore, USB device mode is supported
-across Tegra210 and Tegra186 boards. PCIe endpoint mode support is added
-for the Jetson AGX Xavier platform.
-
-Various minor fixes eliminate warnings on boot related to missing power
-supplies for some devices.
+This set of patches adds role switching support for the XUSB pad
+controller, which will be used by USB host and device drivers to
+switch between peripheral and host modes.
 
 ----------------------------------------------------------------
 JC Kuo (2):
-      arm64: tegra: Add XUSB and pad controller on Tegra194
-      arm64: tegra: Enable XUSB host in P2972-0000 board
+      phy: tegra: xusb: Protect Tegra186 soc with config
+      phy: tegra: xusb: Add Tegra194 support
 
-Jon Hunter (5):
-      arm64: tegra: Fix Tegra194 PCIe compatible string
-      arm64: tegra: Enable I2C controller for EEPROM
-      arm64: tegra: Add EEPROM supplies
-      arm64: tegra: Fix Tegra186 SOR supply
-      arm64: tegra: Populate LP8557 backlight regulator
+Jon Hunter (1):
+      phy: tegra: xusb: Don't warn on probe defer
 
-Nagarjuna Kristam (8):
-      arm64: tegra: Update OTG port entries for Jetson TX1
-      arm64: tegra: Update OTG port entries for Jetson TX2
-      arm64: tegra: Add XUDC node for Tegra210
-      arm64: tegra: Enable XUDC on Jetson TX1
-      arm64: tegra: Add XUDC node for Tegra186
-      arm64: tegra: Enable XUDC node on Jetson TX2
-      arm64: tegra: Update OTG port entries for Jetson Nano
-      arm64: tegra: Enable XUDC node on Jetson Nano
+Nagarjuna Kristam (5):
+      phy: tegra: xusb: Add usb-role-switch support
+      phy: tegra: xusb: Add usb-phy support
+      phy: tegra: xusb: Add support to get companion USB 3 port
+      phy: tegra: xusb: Add set_mode support for USB 2 phy on Tegra210
+      phy: tegra: xusb: Add set_mode support for UTMI phy on Tegra186
 
-Sowjanya Komatineni (6):
-      dt-bindings: clock: tegra: Add IDs for OSC clocks
-      dt-bindings: tegra: Convert Tegra PMC bindings to YAML
-      dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
-      dt-bindings: soc: tegra-pmc: Add ID for Tegra PMC 32 kHz blink clock
-      arm64: tegra: Add clock-cells property to Tegra PMC node
-      arm64: tegra: smaug: Change clk_out_2 provider to PMC
-
-Thierry Reding (2):
-      Merge branch 'for-5.7/dt-bindings' into for-5.7/arm64/dt
-      arm64: tegra: Add ethernet alias on Jetson TX1
-
-Vidya Sagar (2):
-      arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
-      arm64: tegra: Add support for PCIe endpoint mode in P2972-0000 platform
-
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 300 -----------------
- .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 354 +++++++++++++++++++++
- .../bindings/pci/nvidia,tegra194-pcie.txt          |   2 +-
- arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  26 +-
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |   1 +
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  19 ++
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |  36 ++-
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |  81 +++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 250 ++++++++++++++-
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |   3 +
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |   2 +
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |  45 ++-
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  24 +-
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  25 +-
- include/dt-bindings/clock/tegra114-car.h           |   4 +-
- include/dt-bindings/clock/tegra124-car-common.h    |   4 +-
- include/dt-bindings/clock/tegra210-car.h           |   4 +-
- include/dt-bindings/clock/tegra30-car.h            |   4 +-
- include/dt-bindings/soc/tegra-pmc.h                |  16 +
- 21 files changed, 883 insertions(+), 323 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
- create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+ drivers/phy/tegra/Kconfig         |   1 +
+ drivers/phy/tegra/Makefile        |   1 +
+ drivers/phy/tegra/xusb-tegra186.c | 261 +++++++++++++++++++++++++++++---------
+ drivers/phy/tegra/xusb-tegra210.c | 131 +++++++++++++++----
+ drivers/phy/tegra/xusb.c          | 189 +++++++++++++++++++++++++++
+ drivers/phy/tegra/xusb.h          |  10 ++
+ include/linux/phy/tegra/xusb.h    |   2 +
+ 7 files changed, 511 insertions(+), 84 deletions(-)
