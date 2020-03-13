@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 04/10] memory: tegra: Changes for v5.7-rc1
-Date: Fri, 13 Mar 2020 17:58:42 +0100
-Message-ID: <20200313165848.2915133-4-thierry.reding@gmail.com>
+Subject: [GIT PULL 05/10] ARM: tegra: Core changes for v5.7-rc1
+Date: Fri, 13 Mar 2020 17:58:43 +0100
+Message-ID: <20200313165848.2915133-5-thierry.reding@gmail.com>
 References: <20200313165848.2915133-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,28 +21,49 @@ The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.7-memory
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.7-arm-core
 
-for you to fetch changes up to 141267bffd1dc19a76e4d50e3e4829f85a806875:
+for you to fetch changes up to 650a941c341b880dae451e36dd8e47f3762a3909:
 
-  memory: tegra: Correct debugfs clk rate-range on Tegra124 (2020-03-11 15:24:16 +0100)
+  ARM: tegra: cpuidle: Remove unnecessary memory barrier (2020-03-13 11:23:10 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-memory: tegra: Changes for v5.7-rc1
+ARM: tegra: Core changes for v5.7-rc1
 
-These patches contain fixes for EMC scaling debugfs support on Tegra20,
-Tegra30 and Tegra124.
+These patches a preparatory work to move the CPU idle drivers into
+drivers/cpuidle.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (3):
-      memory: tegra: Correct debugfs clk rate-range on Tegra20
-      memory: tegra: Correct debugfs clk rate-range on Tegra30
-      memory: tegra: Correct debugfs clk rate-range on Tegra124
+Dmitry Osipenko (11):
+      ARM: tegra: Compile sleep-tegra20/30.S unconditionally
+      ARM: tegra: Add tegra_pm_park_secondary_cpu()
+      ARM: tegra: Remove pen-locking from cpuidle-tegra20
+      ARM: tegra: Change tegra_set_cpu_in_lp2() type to void
+      ARM: tegra: Propagate error from tegra_idle_lp2_last()
+      ARM: tegra: Expose PM functions required for new cpuidle driver
+      ARM: tegra: Rename some of the newly exposed PM functions
+      ARM: tegra: Make outer_disable() open-coded
+      ARM: tegra: cpuidle: Handle case where secondary CPU hangs on entering LP2
+      ARM: tegra: cpuidle: Make abort_flag atomic
+      ARM: tegra: cpuidle: Remove unnecessary memory barrier
 
- drivers/memory/tegra/tegra124-emc.c | 5 +++++
- drivers/memory/tegra/tegra20-emc.c  | 5 +++++
- drivers/memory/tegra/tegra30-emc.c  | 5 +++++
- 3 files changed, 15 insertions(+)
+ arch/arm/mach-tegra/Makefile                     |   6 +-
+ arch/arm/mach-tegra/cpuidle-tegra114.c           |   9 +-
+ arch/arm/mach-tegra/cpuidle-tegra20.c            | 111 ++++++++-------
+ arch/arm/mach-tegra/cpuidle-tegra30.c            |  27 ++--
+ arch/arm/mach-tegra/irq.c                        |   3 +-
+ arch/arm/mach-tegra/pm.c                         |  54 ++++---
+ arch/arm/mach-tegra/pm.h                         |   4 -
+ arch/arm/mach-tegra/reset-handler.S              |  11 --
+ arch/arm/mach-tegra/reset.h                      |   9 +-
+ arch/arm/mach-tegra/sleep-tegra20.S              | 170 -----------------------
+ arch/arm/mach-tegra/sleep-tegra30.S              |   6 +-
+ arch/arm/mach-tegra/sleep.h                      |  15 --
+ arch/arm/mach-tegra/tegra.c                      |   1 -
+ {arch/arm/mach-tegra => include/soc/tegra}/irq.h |   8 +-
+ include/soc/tegra/pm.h                           |  31 +++++
+ 15 files changed, 150 insertions(+), 315 deletions(-)
+ rename {arch/arm/mach-tegra => include/soc/tegra}/irq.h (59%)
