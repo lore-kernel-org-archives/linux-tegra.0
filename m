@@ -1,65 +1,82 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v4 8/8] arm64: tegra: Add Tegra VI CSI support in device tree
-Date: Sat, 14 Mar 2020 18:46:06 -0700
-Message-ID: <1584236766-24819-9-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v4 5/8] dt-binding: tegra: Add VI and CSI bindings
+Date: Sat, 14 Mar 2020 18:46:03 -0700
+Message-ID: <1584236766-24819-6-git-send-email-skomatineni@nvidia.com>
 References: <1584236766-24819-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-clk-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1584236766-24819-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, helen.koike@collabora.com, sboyd@kernel.org
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 contains VI controller for video input capture from MIPI
-CSI camera sensors and also supports built-in test pattern generator.
+Tegra contains VI controller which can support up to 6 MIPI CSI
+camera sensors.
 
-CSI ports can be one-to-one mapped to VI channels for capturing from
-an external sensor or from built-in test pattern generator.
+Each Tegra CSI port from CSI unit can be one-to-one mapper to
+VI channel and can capture from an external camera sensor or
+from built-in test pattern generator.
 
-This patch adds support for VI and CSI and enables them in Tegra210
-device tree.
+This patch adds dt-bindings for Tegra VI and CSI.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 10 ++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi       | 45 +++++++++++++++++++++++++-
- 2 files changed, 54 insertions(+), 1 deletion(-)
+ .../display/tegra/nvidia,tegra20-host1x.txt        | 67 +++++++++++++++++-----
+ 1 file changed, 54 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index 313a4c2..b57d837 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -14,6 +14,16 @@
- 			status = "okay";
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+index 9999255..9421569 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+@@ -40,14 +40,25 @@ of the following host1x client modules:
+ 
+   Required properties:
+   - compatible: "nvidia,tegra<chip>-vi"
+-  - reg: Physical base address and length of the controller's registers.
++  - reg: Physical base address and length of the controller registers.
+   - interrupts: The interrupt outputs from the controller.
+-  - clocks: Must contain one entry, for the module clock.
++  - clocks: Must contain an entry for the module clock "vi"
+     See ../clocks/clock-bindings.txt for details.
+-  - resets: Must contain an entry for each entry in reset-names.
+-    See ../reset/reset.txt for details.
+-  - reset-names: Must include the following entries:
+-    - vi
++  - power-domains: Must include venc powergate node as vi is in VE partition.
++
++  Tegra210 has CSI part of VI sharing same host interface and register
++  space. So, VI device node should have CSI child node.
++
++  - csi: mipi csi interface to vi
++
++    Required properties:
++    - compatible: "nvidia,tegra<chip>-csi"
++    - reg: Physical base address offset to parent and length of the controller
++      registers.
++    - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
++      See ../clocks/clock-bindings.txt for details.
++  - power-domains: Must include sor powergate node as csicil is in
++    SOR partition.
+ 
+ - epp: encoder pre-processor
+ 
+@@ -309,13 +320,43 @@ Example:
+ 			reset-names = "mpe";
  		};
  
+-		vi {
+-			compatible = "nvidia,tegra20-vi";
+-			reg = <0x54080000 0x00040000>;
+-			interrupts = <0 69 0x04>;
+-			clocks = <&tegra_car TEGRA20_CLK_VI>;
+-			resets = <&tegra_car 100>;
+-			reset-names = "vi";
 +		vi@54080000 {
-+			status = "okay";
-+
-+			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
-+
-+			csi@838 {
-+				status = "okay";
-+			};
-+		};
-+
- 		sor@54580000 {
- 			status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 5b1dfd8..14d292b 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -137,9 +137,43 @@
- 
- 		vi@54080000 {
- 			compatible = "nvidia,tegra210-vi";
--			reg = <0x0 0x54080000 0x0 0x00040000>;
++			compatible = "nvidia,tegra210-vi";
 +			reg = <0x0 0x54080000 0x0 0x700>;
- 			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
++			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
 +			assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
 +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
 +
@@ -75,7 +92,6 @@ index 5b1dfd8..14d292b 100644
 +			csi@838 {
 +				compatible = "nvidia,tegra210-csi";
 +				reg = <0x838 0x1300>;
-+				status = "disabled";
 +				assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
 +						  <&tegra_car TEGRA210_CLK_CILCD>,
 +						  <&tegra_car TEGRA210_CLK_CILE>;
@@ -96,22 +112,6 @@ index 5b1dfd8..14d292b 100644
 +
  		};
  
- 		tsec@54100000 {
-@@ -839,6 +873,15 @@
- 				reset-names = "vic";
- 				#power-domain-cells = <0>;
- 			};
-+
-+			pd_venc: venc {
-+				clocks = <&tegra_car TEGRA210_CLK_VI>,
-+					 <&tegra_car TEGRA210_CLK_CSI>;
-+				resets = <&tegra_car 20>,
-+					 <&tegra_car TEGRA210_CLK_CSI>,
-+					 <&mc TEGRA210_MC_RESET_VI>;
-+				#power-domain-cells = <0>;
-+			};
- 		};
- 
- 		sdmmc1_3v3: sdmmc1-3v3 {
+ 		epp {
 -- 
 2.7.4
