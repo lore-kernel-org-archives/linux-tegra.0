@@ -1,68 +1,58 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 10/21] drm/tegra: remove checks for debugfs functions
- return value
-Date: Mon, 16 Mar 2020 09:33:09 +0100
-Message-ID: <20200316083309.GD2363188@phenom.ffwll.local>
-References: <20200227120232.19413-1-wambui.karugax@gmail.com>
- <20200227120232.19413-11-wambui.karugax@gmail.com>
- <20200311143753.GC494173@ulmo>
- <alpine.LNX.2.21.99999.375.2003111750360.14786@wambui>
- <20200311232446.GA998881@ulmo>
+From: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] backlight: lp855x: Ensure regulators are disabled on
+ probe failure
+Date: Mon, 16 Mar 2020 09:05:46 +0000
+Message-ID: <20200316090546.5eufi423ahstz6v3@holly.lan>
+References: <20200224140748.2182-1-jonathanh@nvidia.com>
+ <20200224143732.rreev3ypou26hvx3@holly.lan>
+ <6ec74817-968b-ab5e-6566-56bbb9b67599@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200311232446.GA998881@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Wambui Karuga <wambui.karugax@gmail.com>, daniel@ffwll.ch, airlied@linux.ie, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+In-Reply-To: <6ec74817-968b-ab5e-6566-56bbb9b67599-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Milo Kim <milo.kim-l0cyMroinI0@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 12:24:46AM +0100, Thierry Reding wrote:
-> On Wed, Mar 11, 2020 at 05:54:46PM +0300, Wambui Karuga wrote:
-> > Hey Thierry,
+On Fri, Mar 13, 2020 at 02:16:16PM +0000, Jon Hunter wrote:
+> Hi Lee, Daniel,
+> 
+> On 24/02/2020 14:37, Daniel Thompson wrote:
+> > On Mon, Feb 24, 2020 at 02:07:48PM +0000, Jon Hunter wrote:
+> >> If probing the LP885x backlight fails after the regulators have been
+> >> enabled, then the following warning is seen when releasing the
+> >> regulators ...
+> >>
+> >>  WARNING: CPU: 1 PID: 289 at drivers/regulator/core.c:2051 _regulator_put.part.28+0x158/0x160
+> >>  Modules linked in: tegra_xudc lp855x_bl(+) host1x pwm_tegra ip_tables x_tables ipv6 nf_defrag_ipv6
+> >>  CPU: 1 PID: 289 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200224 #1
+> >>  Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
+> >>
+> >>  ...
+> >>
+> >> Fix this by ensuring that the regulators are disabled, if enabled, on
+> >> probe failure.
+> >>
+> >> Finally, ensure that the vddio regulator is disabled in the driver
+> >> remove handler.
+> >>
+> >> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > > 
-> > On Wed, 11 Mar 2020, Thierry Reding wrote:
-> > 
-> > > On Thu, Feb 27, 2020 at 03:02:21PM +0300, Wambui Karuga wrote:
-> > > > Since 987d65d01356 (drm: debugfs: make
-> > > > drm_debugfs_create_files() never fail) there is no need to check the
-> > > > return value of drm_debugfs_create_files(). Therefore, remove the
-> > > > return checks and error handling of the drm_debugfs_create_files()
-> > > > function from various debugfs init functions in drm/tegra and have
-> > > > them return 0 directly.
-> > > > 
-> > > > This change also includes removing the use of drm_debugfs_create_files
-> > > > as a return value in tegra_debugfs_init() and have the function declared
-> > > > as void.
-> > > > 
-> > > > Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
-> > > > ---
-> > > >  drivers/gpu/drm/tegra/dc.c   | 11 +----------
-> > > >  drivers/gpu/drm/tegra/drm.c  |  8 ++++----
-> > > >  drivers/gpu/drm/tegra/dsi.c  | 11 +----------
-> > > >  drivers/gpu/drm/tegra/hdmi.c | 11 +----------
-> > > >  drivers/gpu/drm/tegra/sor.c  | 11 +----------
-> > > >  5 files changed, 8 insertions(+), 44 deletions(-)
-> > > 
-> > > Applied, thanks.
-> > > 
-> > There's a newer version[1] of this patch series as this specific patch
-> > depends on other work in drm.
+> > Reviewed-by: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> I received a bounce from Milo's email and so I am not sure that his
+> email address is still valid.
 > 
-> Oh yeah, I just noticed that this patch causes a build failure, so I
-> backed it out again.
-> 
-> If there's dependencies on other work, it's probably best to take this
-> through drm-misc, in which case:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> 
-> Let me know if you'd prefer me to apply this to drm/tegra instead.
+> Can either of you pick this up?
 
-Yeah I'm going to pull in the entire series through -misc rsn.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Lee generally starts to hoover up patches about this stage in the dev
+cycle so I'd expect this to move fairly soon.
+
+
+> Not sure if we should update the MAINTAINERS as well?
+
+Sounds like a good plan, yes.
+
+
+Daniel.
