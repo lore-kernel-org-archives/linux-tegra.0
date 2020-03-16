@@ -1,68 +1,68 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH v4 8/8] arm64: tegra: Add Tegra VI CSI support in
- device tree
-Date: Sun, 15 Mar 2020 15:21:36 -0700
-Message-ID: <80805c85-a6b0-62c4-877c-6af3831bce1d@nvidia.com>
-References: <1584236766-24819-1-git-send-email-skomatineni@nvidia.com>
- <1584236766-24819-9-git-send-email-skomatineni@nvidia.com>
- <b4bbcc1d-d38c-14c5-7205-2f7657ab8712@gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 10/21] drm/tegra: remove checks for debugfs functions
+ return value
+Date: Mon, 16 Mar 2020 09:33:09 +0100
+Message-ID: <20200316083309.GD2363188@phenom.ffwll.local>
+References: <20200227120232.19413-1-wambui.karugax@gmail.com>
+ <20200227120232.19413-11-wambui.karugax@gmail.com>
+ <20200311143753.GC494173@ulmo>
+ <alpine.LNX.2.21.99999.375.2003111750360.14786@wambui>
+ <20200311232446.GA998881@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <b4bbcc1d-d38c-14c5-7205-2f7657ab8712-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20200311232446.GA998881@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Wambui Karuga <wambui.karugax@gmail.com>, daniel@ffwll.ch, airlied@linux.ie, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Mar 12, 2020 at 12:24:46AM +0100, Thierry Reding wrote:
+> On Wed, Mar 11, 2020 at 05:54:46PM +0300, Wambui Karuga wrote:
+> > Hey Thierry,
+> > 
+> > On Wed, 11 Mar 2020, Thierry Reding wrote:
+> > 
+> > > On Thu, Feb 27, 2020 at 03:02:21PM +0300, Wambui Karuga wrote:
+> > > > Since 987d65d01356 (drm: debugfs: make
+> > > > drm_debugfs_create_files() never fail) there is no need to check the
+> > > > return value of drm_debugfs_create_files(). Therefore, remove the
+> > > > return checks and error handling of the drm_debugfs_create_files()
+> > > > function from various debugfs init functions in drm/tegra and have
+> > > > them return 0 directly.
+> > > > 
+> > > > This change also includes removing the use of drm_debugfs_create_files
+> > > > as a return value in tegra_debugfs_init() and have the function declared
+> > > > as void.
+> > > > 
+> > > > Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+> > > > ---
+> > > >  drivers/gpu/drm/tegra/dc.c   | 11 +----------
+> > > >  drivers/gpu/drm/tegra/drm.c  |  8 ++++----
+> > > >  drivers/gpu/drm/tegra/dsi.c  | 11 +----------
+> > > >  drivers/gpu/drm/tegra/hdmi.c | 11 +----------
+> > > >  drivers/gpu/drm/tegra/sor.c  | 11 +----------
+> > > >  5 files changed, 8 insertions(+), 44 deletions(-)
+> > > 
+> > > Applied, thanks.
+> > > 
+> > There's a newer version[1] of this patch series as this specific patch
+> > depends on other work in drm.
+> 
+> Oh yeah, I just noticed that this patch causes a build failure, so I
+> backed it out again.
+> 
+> If there's dependencies on other work, it's probably best to take this
+> through drm-misc, in which case:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+> Let me know if you'd prefer me to apply this to drm/tegra instead.
 
-On 3/15/20 5:54 AM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 15.03.2020 04:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Tegra210 contains VI controller for video input capture from MIPI
->> CSI camera sensors and also supports built-in test pattern generator.
->>
->> CSI ports can be one-to-one mapped to VI channels for capturing from
->> an external sensor or from built-in test pattern generator.
->>
->> This patch adds support for VI and CSI and enables them in Tegra210
->> device tree.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
-> Hello Sowjanya,
->
-> ...
->> +
->> +                     pd_venc: venc {
->> +                             clocks =3D <&tegra_car TEGRA210_CLK_VI>,
->> +                                      <&tegra_car TEGRA210_CLK_CSI>;
->> +                             resets =3D <&tegra_car 20>,
-> What is the clock #20?
-
-Hi Dmitry,
-
-20 is VI_RST not defined in include/dt-bindings/reset/tegra210-car.h
-
-Will add define and will fix to use it.
-
-
-
->> +                                      <&tegra_car TEGRA210_CLK_CSI>,
->> +                                      <&mc TEGRA210_MC_RESET_VI>;
-> Does this order means that memory controller will be reset *after*
-> resetting the CSI/VI hardware? This is incorrect reset sequence.
->
-> The memory controller reset should be kept asserted during of the time
-> of the hardware resetting procedure.
->
-> The correct sequence should be as follows:
->
-> 1. Assert MC
-> 2. Reset VI
-> 3. Deassert MC
-Right, will fix order. Thanks
+Yeah I'm going to pull in the entire series through -misc rsn.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
