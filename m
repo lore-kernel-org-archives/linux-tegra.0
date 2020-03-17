@@ -1,46 +1,122 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [GIT PULL] usb: tegra: Changes for v5.7-rc1
-Date: Tue, 17 Mar 2020 19:58:35 +0100
-Message-ID: <20200317185835.GC1480055@kroah.com>
-References: <20200313170730.2924259-1-thierry.reding@gmail.com>
+From: Kirill Timofeev <kt97679-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: kernel panic on the nvidia tegra tk1 board running nginx
+Date: Tue, 17 Mar 2020 16:44:56 -0700
+Message-ID: <CAG8jQEmNCcusJX2QK4OBNjiPJEc8U0amUtZcWCgsWtbx8H8eyA@mail.gmail.com>
+References: <CAG8jQE=TtOVFm=0UdSpqf506G-4zWriZKnm2g2jV7kyTSf-TnA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200313170730.2924259-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAG8jQE=TtOVFm=0UdSpqf506G-4zWriZKnm2g2jV7kyTSf-TnA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 06:07:30PM +0100, Thierry Reding wrote:
-> Hi Greg, Felipe,
-> 
-> The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
-> 
->   Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.7-usb
-> 
-> for you to fetch changes up to 9dd4fbef2f88ccf46f5294805bf121d6554791e8:
-> 
->   usb: gadget: tegra-xudc: Support multiple device modes (2020-03-13 17:16:28 +0100)
-> 
-> It occurred to me that I could just as well send this pull request to
-> you guys, rather than take it via ARM SoC. Kishon already acked all the
-> patches for the PHY tree that this series depends on, so I've included
-> them here as a dependency.
-> 
-> Let me know if you'd prefer that I take this through ARM SoC.
+Hi folks,
 
-I tried to merge this into my usb-next branch, but get merge issues in
-drivers/usb/gadget/udc/tegra-xudc.c that I really don't know how to
-resolve.
+after some trial and error and with the help from Ralf Ramsauer
+(thanks a bunch Ralf!) we figured out that removing CONFIG_ARM_LPAE
+eliminates kernel panic. Here is the kernel config diff:
 
-Can you give me a clue as to what to do here?
+kvt@rage ~ $ diff kernel.config.old /usr/src/linux/.config
+236d235
+< CONFIG_ZONE_DMA=y
+240c239
+< CONFIG_PGTABLE_LEVELS=3
+---
+> CONFIG_PGTABLE_LEVELS=2
+279d277
+< # CONFIG_ARCH_AXXIA is not set
+347c345
+< CONFIG_ARM_LPAE=y
+---
+> # CONFIG_ARM_LPAE is not set
+411a410
+> # CONFIG_VMSPLIT_3G_OPT is not set
+434a434
+> CONFIG_CPU_SW_DOMAIN_PAN=y
+436,437d435
+< CONFIG_SYS_SUPPORTS_HUGETLBFS=y
+< CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y
+567d564
+< CONFIG_HAVE_RCU_TABLE_FREE=y
+702d698
+< CONFIG_HAVE_FAST_GUP=y
+709d704
+< CONFIG_PHYS_ADDR_T_64BIT=y
+713d707
+< # CONFIG_TRANSPARENT_HUGEPAGE is not set
+728d721
+< CONFIG_ARCH_HAS_PTE_SPECIAL=y
+3369a3363
+> # CONFIG_USB_FUSB300 is not set
+4436d4429
+< # CONFIG_LIBNVDIMM is not set
+4537d4529
+< # CONFIG_HUGETLBFS is not set
+4801a4794
+> # CONFIG_CRYPTO_DEV_HIFN_795X is not set
+4883d4875
+< CONFIG_ARCH_DMA_ADDR_T_64BIT=y
+4887,4889d4878
+< CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE=y
+< CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU=y
+< CONFIG_SWIOTLB=y
+kvt@rage ~ $
 
-thanks,
+Thanks,
+Kirill.
 
-greg k-h
+
+
+On Wed, Feb 26, 2020 at 8:34 AM Kirill Timofeev <kt97679-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+> I'm sorry if you will see this as a duplicate, resending as a plain
+> text message.
+>
+> Hi folks,
+>
+> I run home server on the nvidia tegra tk1 using gentoo:
+>
+> Linux rage 5.5.6-gentoo #1 SMP PREEMPT Tue Feb 25 12:40:17 PST 2020
+> armv7l ARMv7 Processor rev 3 (v7l) NVIDIA Tegra SoC (Flattened Device
+> Tree) GNU/Linux
+>
+> This server runs nginx on both 80 and 443. I recently was updating my
+> let's encrypt certificate and it failed because plain http was not
+> working (while https was working ok):
+>
+> kvt@joy:~$ curl -s http://a0.twilightparadox.com|hd
+> 00000000  89 1f 00 00 02 2e 00 00  00 00 00 00 9d 1f 00 00  |................|
+> 00000010  02 2e 00 00 00 00 00 00  aa 1f 00 00 02 2e 00 00  |................|
+> 00000020  00 00 00 00 b8 1f 00 00  02 2e 00 00 00           |.............|
+> 0000002d
+> kvt@joy:~$ curl -s https://a0.twilightparadox.com|hd
+> 00000000  3c 68 74 6d 6c 3e 3c 62  6f 64 79 3e 55 6e 64 65  |<html><body>Unde|
+> 00000010  72 20 63 6f 6e 73 74 72  75 63 74 69 6f 6e 3c 2f  |r construction</|
+> 00000020  62 6f 64 79 3e 3c 2f 68  74 6d 6c 3e 0a           |body></html>.|
+> 0000002d
+> kvt@joy:~$
+>
+> I reverted kernel to 4.19.98 and everything worked fine with same
+> settings. Locally everything works fine (with latest kernel):
+>
+> kvt@rage:~$ curl -s 127.0.0.1
+> <html><body>Under construction</body></html>
+> kvt@rage:~$
+>
+> The worst thing is that if I do local http call and then do external
+> http call I'm getting kernel panic (please see file attached). This
+> kernel panic was captured on 5.4.10 but I see same behavior with
+> latest 5.5.6.
+>
+> If I shutdown nginx and run some other http server (e.g. python3 -m
+> http.server) everything works fine.
+>
+> Just in case please find my kernel config attached.
+>
+> Please let me know if something is wrong with my kernel config or if I
+> need to provide any additional information.
+>
+> Thanks,
+> Kirill.
