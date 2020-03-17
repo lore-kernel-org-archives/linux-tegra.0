@@ -1,74 +1,104 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 10/10] phy: tegra: Changes for v5.7-rc1
-Date: Mon, 16 Mar 2020 14:48:50 +0100
-Message-ID: <20200316134850.GB3825456@ulmo>
-References: <20200313165848.2915133-1-thierry.reding@gmail.com>
- <20200313165848.2915133-10-thierry.reding@gmail.com>
+From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 2/3] mmc: tegra: Implement HW busy wait timeout based
+ on command busy time
+Date: Tue, 17 Mar 2020 11:51:07 +0200
+Message-ID: <ae9f09a9-8f39-8dc0-c1c8-fdf40fcea1f6@intel.com>
+References: <1583799205-8442-1-git-send-email-skomatineni@nvidia.com>
+ <1583799205-8442-2-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="K8nIJk4ghYZn606h"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200313165848.2915133-10-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1583799205-8442-2-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, bradleybolen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: anrao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/03/20 2:13 am, Sowjanya Komatineni wrote:
+> Tegra host supports HW busy detection and timeouts based on the
+> count programmed in SDHCI_TIMEOUT_CONTROL register and max busy
+> timeout it supports is 11s in finite busy wait mode.
+> 
+> Some operations like SLEEP_AWAKE, ERASE and flush cache through
+> SWITCH commands take longer than 11s and Tegra host supports
+> infinite HW busy wait mode where HW waits forever till the card
+> is busy without HW timeout.
+> 
+> This patch implements Tegra specific set_timeout sdhci_ops to allow
+> switching between finite and infinite HW busy detection wait modes
+> based on the device command expected operation time.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 31 +++++++++++++++++++++++++++++++
 
---K8nIJk4ghYZn606h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
-On Fri, Mar 13, 2020 at 05:58:48PM +0100, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
->=20
-> The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862=
-b9:
->=20
->   Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
-a-for-5.7-phy
->=20
-> for you to fetch changes up to 04c929223d1db6ad4ba8e4c23122e1052f670c2e:
->=20
->   phy: tegra: xusb: Don't warn on probe defer (2020-03-13 09:17:50 +0100)
->=20
-> This is a dependency for the USB changes that are also part of this
-> series of pull requests, so it was deemed easier to take this all
-> through the ARM SoC tree. The patches have all been acked by Kishon.
-
-Please don't merge this just yet. Stephen reported today that this was
-breaking the build in linux-next because of a conflict with the USB
-tree. I'll rebase this on top of Greg's usb-next branch and resend the
-pull request.
-
-Sorry for the inconvenience.
-
-Thierry
-
---K8nIJk4ghYZn606h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5vg8IACgkQ3SOs138+
-s6FqWw//c6MHAtQmVy/jmygoyRjW60kHc9dGR6wmzgrZ2PEAN3SPkKHxMmsAOjQ1
-POFT7wg72m/PWduosFoVp6hLzSgVLFEY4HhEtuEGV9LaAtiEkDCmCSa3Q0cHsxhI
-SPYBmvkfmX3pWU0asxuh18gQJ8N2umoD99whfEgi4fwfwVpM19vrYdmpfjn43YrO
-RgNKr8v5/nL390jLNKqTwb4vv8uHOq5lSMG7udBFWH57JiOiajAHqVdigo6R/QGG
-WLkP3qS5Q+dQ1JH6NII68bFgCZNUxJweOaQXb9lBERmqmBdhWUqBtmoOu72hkZwT
-iBo0uXtAToTQ1i5N8+9GQi85BDoa3/ZktIiHeJPLAjRGSB1U2l3SU387cB8/DR+M
-nY47ctZlt6+oD3guO1Ilh8HxCqu8MV0OdnlauEZRDriunAaH5Xcg2STsPqUErjZg
-skbyWtMNbkx/XSNVkYkX2LSE0Pn5m/PUdsD7ieD40jOtHzkvi8njKRvE5F3KHCFg
-vc1EwoVYJ9e6EMsF0g9c+4Fxf/AhL9WcUqCfscSFLk14pSo40yQ3qc0QRMsbuFas
-1GQMWuPCMICvf7UxVfCg6bjKZgPAhSmRuF/Y2XUOo00DyksRUpr4JxmQN31XTqDh
-U+6rwgMb5I6RKtr2JxYdxKpWg+kwdZqOfr3zNg4PYJK4jq0WRpw=
-=s9Fz
------END PGP SIGNATURE-----
-
---K8nIJk4ghYZn606h--
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 403ac44..40a221d 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -45,6 +45,7 @@
+>  #define SDHCI_TEGRA_CAP_OVERRIDES_DQS_TRIM_SHIFT	8
+>  
+>  #define SDHCI_TEGRA_VENDOR_MISC_CTRL			0x120
+> +#define SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT		BIT(0)
+>  #define SDHCI_MISC_CTRL_ENABLE_SDR104			0x8
+>  #define SDHCI_MISC_CTRL_ENABLE_SDR50			0x10
+>  #define SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300		0x20
+> @@ -1227,6 +1228,34 @@ static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>  	return 0;
+>  }
+>  
+> +static void tegra_sdhci_set_timeout(struct sdhci_host *host,
+> +				    struct mmc_command *cmd)
+> +{
+> +	u32 val;
+> +
+> +	/*
+> +	 * HW busy detection timeout is based on programmed data timeout
+> +	 * counter and maximum supported timeout is 11s which may not be
+> +	 * enough for long operations like cache flush, sleep awake, erase.
+> +	 *
+> +	 * ERASE_TIMEOUT_LIMIT bit of VENDOR_MISC_CTRL register allows
+> +	 * host controller to wait for busy state until the card is busy
+> +	 * without HW timeout.
+> +	 *
+> +	 * So, use infinite busy wait mode for operations that may take
+> +	 * more than maximum HW busy timeout of 11s otherwise use finite
+> +	 * busy wait mode.
+> +	 */
+> +	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+> +	if (cmd && cmd->busy_timeout >= 11 * HZ)
+> +		val |= SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
+> +	else
+> +		val &= ~SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
+> +	sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+> +
+> +	__sdhci_set_timeout(host, cmd);
+> +}
+> +
+>  static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+>  	.write_l    = tegra_cqhci_writel,
+>  	.enable	= sdhci_tegra_cqe_enable,
+> @@ -1366,6 +1395,7 @@ static const struct sdhci_ops tegra210_sdhci_ops = {
+>  	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>  	.voltage_switch = tegra_sdhci_voltage_switch,
+>  	.get_max_clock = tegra_sdhci_get_max_clock,
+> +	.set_timeout = tegra_sdhci_set_timeout,
+>  };
+>  
+>  static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+> @@ -1403,6 +1433,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+>  	.voltage_switch = tegra_sdhci_voltage_switch,
+>  	.get_max_clock = tegra_sdhci_get_max_clock,
+>  	.irq = sdhci_tegra_cqhci_irq,
+> +	.set_timeout = tegra_sdhci_set_timeout,
+>  };
+>  
+>  static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+> 
