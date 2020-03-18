@@ -1,35 +1,35 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [PATCH V1 7/8] phy: tegra: xusb: Enable charger detect for Tegra186
-Date: Wed, 18 Mar 2020 16:01:06 +0530
-Message-ID: <1584527467-8058-8-git-send-email-nkristam@nvidia.com>
+From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V1 8/8] phy: tegra: xusb: Enable charger detect for Tegra210
+Date: Wed, 18 Mar 2020 16:01:07 +0530
+Message-ID: <1584527467-8058-9-git-send-email-nkristam@nvidia.com>
 References: <1584527467-8058-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1584527467-8058-1-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kishon@ti.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, jckuo@nvidia.com, Nagarjuna Kristam <nkristam@nvidia.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1584527467-8058-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kishon-l0cyMroinI0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jckuo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra186 SoC supports charger detect, set corresponding soc flag.
+Tegra210 SoC supports charger detect, set corresponding soc flag.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/phy/tegra/xusb-tegra186.c | 1 +
+ drivers/phy/tegra/xusb-tegra210.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index 5d8f3229..4787065 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -1037,6 +1037,7 @@ const struct tegra_xusb_padctl_soc tegra186_xusb_padctl_soc = {
- 	.ops = &tegra186_xusb_padctl_ops,
- 	.supply_names = tegra186_xusb_padctl_supply_names,
- 	.num_supplies = ARRAY_SIZE(tegra186_xusb_padctl_supply_names),
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index 93517b1..4c8cb0a 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -2347,6 +2347,7 @@ const struct tegra_xusb_padctl_soc tegra210_xusb_padctl_soc = {
+ 	.supply_names = tegra210_xusb_padctl_supply_names,
+ 	.num_supplies = ARRAY_SIZE(tegra210_xusb_padctl_supply_names),
+ 	.need_fake_usb3_port = true,
 +	.charger_detect = true,
  };
- EXPORT_SYMBOL_GPL(tegra186_xusb_padctl_soc);
- #endif
+ EXPORT_SYMBOL_GPL(tegra210_xusb_padctl_soc);
+ 
 -- 
 2.7.4
