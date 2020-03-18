@@ -1,38 +1,135 @@
-From: Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] soc/tegra: pmc: should select GENERIC_PINCONF
-Date: Wed, 18 Mar 2020 15:25:08 +0000
-Message-ID: <1584545108-20111-1-git-send-email-clabbe@baylibre.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: avienamo@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com, treding@nvidia.com
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>, stable <stable@vger.kernel.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
+Date: Wed, 18 Mar 2020 09:14:13 -0700
+Message-ID: <19081d90-62cc-e6eb-0337-f108fb6ca9bc@nvidia.com>
+References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
+ <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
+ <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
+ <dc592f29-3109-d10c-7df7-ffdb2755ade0@xs4all.nl>
+ <b3933aa1-0717-183d-f00c-2d5fd6836a18@nvidia.com>
+ <12a36c2a-593c-e555-d44e-e2e6c4c1a562@nvidia.com>
+ <5f54c018-5670-8193-7c68-969f9bde92f6@xs4all.nl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <5f54c018-5670-8193-7c68-969f9bde92f6@xs4all.nl>
+Content-Language: en-US
+Sender: linux-clk-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, helen.koike@collabora.com, sboyd@kernel.org
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-I have hit the following build error:
-armv7a-hardfloat-linux-gnueabi-ld: drivers/soc/tegra/pmc.o: in function `pinconf_generic_dt_node_to_map_pin':
-pmc.c:(.text+0x500): undefined reference to `pinconf_generic_dt_node_to_map'
-armv7a-hardfloat-linux-gnueabi-ld: drivers/soc/tegra/pmc.o:(.rodata+0x1f88): undefined reference to `pinconf_generic_dt_free_map'
 
-So SOC_TEGRA_PMC should select GENERIC_PINCONF
+On 3/18/20 4:48 AM, Hans Verkuil wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On 2/24/20 5:45 AM, Sowjanya Komatineni wrote:
+>> On 2/20/20 11:11 AM, Sowjanya Komatineni wrote:
+>>> On 2/20/20 5:33 AM, Hans Verkuil wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> (Replying to myself so I can explain this a bit more)
+>>>>
+>>>> On 2/20/20 1:44 PM, Hans Verkuil wrote:
+>>>>>> +
+>>>>>> +static int tegra_csi_tpg_channels_alloc(struct tegra_csi *csi)
+>>>>>> +{
+>>>>>> +    struct device_node *node = csi->dev->of_node;
+>>>>>> +    unsigned int port_num;
+>>>>>> +    int ret;
+>>>>>> +    struct tegra_csi_channel *item;
+>>>>>> +    unsigned int tpg_channels = csi->soc->csi_max_channels;
+>>>>>> +
+>>>>>> +    /* allocate CSI channel for each CSI x2 ports */
+>>>>>> +    for (port_num = 0; port_num < tpg_channels; port_num++) {
+>>>>>> +            item = devm_kzalloc(csi->dev, sizeof(*item), GFP_KERNEL);
+>>>>> Using devm_*alloc can be dangerous. If someone unbinds the driver, then
+>>>>> all memory allocated with devm_ is immediately freed. But if an
+>>>>> application
+>>>>> still has a filehandle open, then when it closes it it might still
+>>>>> reference
+>>>>> this already-freed memory.
+>>>>>
+>>>>> I recommend that you avoid using devm_*alloc for media drivers.
+>>>> A good test is to unbind & bind the driver:
+>>>>
+>>>> cd /sys/devices/platform/50000000.host1x/54080000.vi/driver
+>>>> echo -n 54080000.vi >unbind
+>>>> echo -n 54080000.vi >bind
+>>>>
+>>>> First just do this without the driver being used. That already
+>>>> gives me 'list_del corruption' kernel messages (list debugging
+>>>> is turned on in my kernel).
+>> Will fix in v4 to use kzalloc and also proper release v4l2 to make sure
+>> unbind/bind works properly.
+>>
+>> BTW, tegra vi and csi are registered as clients to host1x video driver.
+>>
+>> So, unbind and bind should be done with host1x video driver "tegra-video"
+>>
+>> cd /sys/devices/platform/50000000.host1x/tegra-video/driver
+>> echo -n tegra-video > unbind
+>> echo -n tegra-video > bind
+> This still crashes with v4, at least if I am streaming with v4l2-ctl --stream-mmap.
+> Is that known?
+>
+> It's not a big deal at this moment, just want to know if this will be looked
+> at later.
+>
+> Regards,
+>
+>          Hans
 
-Fixes: 4a37f11c8f57 ("soc/tegra: pmc: Implement pad configuration via pinctrl")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- drivers/soc/tegra/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Weird, I tested streaming after unbind and bind as well and don't see 
+crash. Did below steps and tried several times unbind/bind as well.
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index 3693532949b8..6bc603d0b9d9 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -133,6 +133,7 @@ config SOC_TEGRA_FLOWCTRL
- 
- config SOC_TEGRA_PMC
- 	bool
-+	select GENERIC_PINCONF
- 
- config SOC_TEGRA_POWERGATE_BPMP
- 	def_bool y
--- 
-2.24.1
+./v4l2-ctl --stream-mmap --stream-count=1 -d /dev/video3
+cd /sys/devices/platform/50000000.host1x/tegra-video/driver
+echo -n tegra-video > unbind
+sleep 1
+echo -n tegra-video > bind
+cd /home/ubuntu
+./v4l2-ctl --stream-mmap --stream-count=1 -d /dev/video3
+
+Can you post call trace when you saw crash?
+
+>>>> Note that this first test is basically identical to a rmmod/modprobe
+>>>> of the driver. But when I compiled the driver as a module it didn't
+>>>> create any video device nodes! Nor did I see any errors in the kernel
+>>>> log. I didn't pursue this, and perhaps I did something wrong, but it's
+>>>> worth taking a look at.
+>>>>
+>>>> The next step would be to have a video node open with:
+>>>>
+>>>> v4l2-ctl --sleep 10
+>>>>
+>>>> then while it is sleeping unbind the driver and see what happens
+>>>> when v4l2-ctl exits.
+>>>>
+>>>> Worst case is when you are streaming:
+>>>>
+>>>> v4l2-ctl --stream-mmap
+>>>>
+>>>> and then unbind.
+>>>>
+>>>> In general, the best way to get this to work correctly is:
+>>>>
+>>>> 1) don't use devm_*alloc
+>>>> 2) set the release callback of struct v4l2_device and do all freeing
+>>>> there.
+>>>> 3) in the platform remove() callback you call media_device_unregister()
+>>>>      and video_unregister_device().
+>>> Reg 3, in current patch, media_device_unregister is called in
+>>> host1x_video_remove
+>>> video_unregister_device happens during host1x_video_remove ->
+>>> host1x_device_exit -> tegra_vi_exit -> tegra_vi_channels_cleanup
+>>>
+>>>> It's worth getting this right in this early stage, rather than fixing it
+>>>> in the future.
+>>>>
+>>>> Regards,
+>>>>
+>>>>           Hans
