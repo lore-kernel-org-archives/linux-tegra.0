@@ -1,51 +1,112 @@
-From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
- 24bit and 32bit samples
-Date: Thu, 19 Mar 2020 15:32:50 +0000
-Message-ID: <1df9cc13ea636502ac09191523ff0669@codethink.co.uk>
-References: <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
- <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
- <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
- <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
- <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
- <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
- <20200128121315.GD4689@sirena.org.uk>
- <4b90efd2-5d0c-84df-961d-80cee288e0d4@nvidia.com>
- <586ea2b9-c204-2bd1-f8e2-875e0974e42d@nvidia.com>
- <fe002ec7-ae6e-f770-b82a-49237e0b29c6@codethink.co.uk>
- <20200130131039.GC6682@sirena.org.uk>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: Print -EPROBE_DEFER error message at debug
+ level
+Date: Thu, 19 Mar 2020 22:34:01 +0530
+Message-ID: <2e763237-fe19-68b3-d584-a3ad28689b87@nvidia.com>
+References: <20200319131230.3216305-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200130131039.GC6682-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+In-Reply-To: <20200319131230.3216305-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Andrew Murray <amurray-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 2020-01-30 13:10, Mark Brown wrote:
-> On Thu, Jan 30, 2020 at 08:17:37AM +0000, Ben Dooks wrote:
->> On 29/01/2020 14:33, Jon Hunter wrote:
+On 3/19/2020 6:42 PM, Thierry Reding wrote:
+> External email: Use caution opening links or attachments
 > 
->> > controller. Applying these patches it is not distorted but now I am
->> > observing the clocking issue Ben reported and so the tone is not quite
->> > right.
 > 
->> I thought they had been applied? I probably dragged them back in when
->> putting in the support for the test channel on the colibri.
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> There were review comments from Jon on patch 6 that you never responded
-> to.
+> Probe deferral is an expected error condition that will usually be
+> recovered from. Print such error messages at debug level to make them
+> available for diagnostic purposes when building with debugging enabled
+> and hide them otherwise to not spam the kernel log with them.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   drivers/pci/controller/dwc/pcie-tegra194.c | 42 ++++++++++++++++++----
+>   1 file changed, 35 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 97d3f3db1020..e4870fa6ce9c 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1159,17 +1159,31 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+>          /* Endpoint mode specific DT entries */
+>          pcie->pex_rst_gpiod = devm_gpiod_get(pcie->dev, "reset", GPIOD_IN);
+>          if (IS_ERR(pcie->pex_rst_gpiod)) {
+> -               dev_err(pcie->dev, "Failed to get PERST GPIO: %ld\n",
+> -                       PTR_ERR(pcie->pex_rst_gpiod));
+> -               return PTR_ERR(pcie->pex_rst_gpiod);
+> +               int err = PTR_ERR(pcie->pex_rst_gpiod);
+> +               const char *level = KERN_ERR;
+> +
+> +               if (err == -EPROBE_DEFER)
+> +                       level = KERN_DEBUG;
+> +
+> +               dev_printk(level, pcie->dev,
+> +                          dev_fmt("Failed to get PERST GPIO: %d\n"),
+> +                          err);
+> +               return err;
+>          }
+> 
+>          pcie->pex_refclk_sel_gpiod = devm_gpiod_get(pcie->dev,
+>                                                      "nvidia,refclk-select",
+>                                                      GPIOD_OUT_HIGH);
+>          if (IS_ERR(pcie->pex_refclk_sel_gpiod)) {
+> -               dev_info(pcie->dev, "Failed to get REFCLK select GPIOs: %ld\n",
+> -                        PTR_ERR(pcie->pex_refclk_sel_gpiod));
+> +               int err = PTR_ERR(pcie->pex_refclk_sel_gpiod);
+> +               const char *level = KERN_ERR;
+> +
+> +               if (err == -EPROBE_DEFER)
+> +                       level = KERN_DEBUG;
+> +
+> +               dev_printk(level, pcie->dev,
+> +                          dev_fmt("Failed to get REFCLK select GPIOs: %d\n"),
+> +                          err);
+>                  pcie->pex_refclk_sel_gpiod = NULL;
+>          }
+> 
+> @@ -2058,13 +2072,27 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+> 
+>          ret = tegra_pcie_dw_parse_dt(pcie);
+>          if (ret < 0) {
+> -               dev_err(dev, "Failed to parse device tree: %d\n", ret);
+> +               const char *level = KERN_ERR;
+> +
+> +               if (ret == -EPROBE_DEFER)
+> +                       level = KERN_DEBUG;
+> +
+> +               dev_printk(level, dev,
+> +                          dev_fmt("Failed to parse device tree: %d\n"),
+> +                          ret);
+>                  return ret;
+>          }
+> 
+>          ret = tegra_pcie_get_slot_regulators(pcie);
+>          if (ret < 0) {
+> -               dev_err(dev, "Failed to get slot regulators: %d\n", ret);
+> +               const char *level = KERN_ERR;
+> +
+> +               if (ret == -EPROBE_DEFER)
+> +                       level = KERN_DEBUG;
+> +
+> +               dev_printk(level, dev,
+> +                          dev_fmt("Failed to get slot regulators: %d\n"),
+> +                          ret);
+>                  return ret;
+>          }
+> 
+> --
+> 2.24.1
+> 
 
-Hmm, I may have accidentally deleted those.
-
-I will look to see if I can re-form the series and re-send in the next
-couple of weeks. I've got no access currently to the machine and having
-to deal with working from home for the next month or so.
-
--- 
-Ben
+Reviewed-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
