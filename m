@@ -1,69 +1,70 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: boot: Obtain start of physical memory from DTB
-Date: Thu, 19 Mar 2020 04:11:00 +0300
-Message-ID: <90c006f2-8c13-2976-008f-37139ca49f37@gmail.com>
-References: <CGME20200225112354eucas1p1300749b32c6809b6a22194c1a952a68c@eucas1p1.samsung.com>
- <20200127140716.15673-1-geert+renesas@glider.be>
- <d1b12473-5199-1cf6-25d1-a6ce79450e8e@samsung.com>
- <CAMuHMdUGu4eStpYp5W0SKJd8yrLLDTgF4__Jq_n+Z7SWtPM+Cg@mail.gmail.com>
+From: LABBE Corentin <clabbe-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: tegra124-jetson-tk1: sata doesnt work since 5.2
+Date: Thu, 19 Mar 2020 08:44:01 +0100
+Message-ID: <20200319074401.GA4116@Red>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMuHMdUGu4eStpYp5W0SKJd8yrLLDTgF4__Jq_n+Z7SWtPM+Cg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Cc: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Eric Miao <eric.miao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-25.02.2020 14:40, Geert Uytterhoeven пишет:
-> Hi Marek,
-> 
-> On Tue, Feb 25, 2020 at 12:24 PM Marek Szyprowski
-> <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> On 27.01.2020 15:07, Geert Uytterhoeven wrote:
->>> Currently, the start address of physical memory is obtained by masking
->>> the program counter with a fixed mask of 0xf8000000.  This mask value
->>> was chosen as a balance between the requirements of different platforms.
->>> However, this does require that the start address of physical memory is
->>> a multiple of 128 MiB, precluding booting Linux on platforms where this
->>> requirement is not fulfilled.
->>>
->>> Fix this limitation by obtaining the start address from the DTB instead,
->>> if available (either explicitly passed, or appended to the kernel).
->>> Fall back to the traditional method when needed.
->>>
->>> This allows to boot Linux on r7s9210/rza2mevb using the 64 MiB of SDRAM
->>> on the RZA2MEVB sub board, which is located at 0x0C000000 (CS3 space),
->>> i.e. not at a multiple of 128 MiB.
->>>
->>> Suggested-by: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
->>> Reviewed-by: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
->>> ---
->>> Against arm/for-next.
->>
->> This patch landed recently in linux-next. It breaks legacy booting from
->> the zImage + appended DT + cmdline/memory info provided via ATAGs. I
->> will debug it further once I find some spare time. What I noticed so
->> far, the cmdline/memory info is not read from the ATAGs, only the values
->> provided via appended DT are used.
-> 
-> Oops, something happening like this was one of my biggest worries when
-> posting this patch... Sorry for the breakage.
-> 
-> IIUIC, the kernel still boots, but just doesn't use the info passed by ATAGs?
-> 
-> I'll have a closer look later today.
-> In the mean time, I've sent some debug code I used when developing
-> this patch, which may be useful, hopefully.
+Hello
 
-Hello,
+sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
+[    0.492810] +5V_SATA: supplied by +5V_SYS
+[    0.493230] +12V_SATA: supplied by +VDD_MUX
+[    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+[    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+[    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+[    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+[    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+[    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+[    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
+[    5.310270] phy phy-sata.6: phy poweron failed --> -110
+[    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
+[    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
+[   35.694269] +5V_SATA: disabling
+[   35.697438] +12V_SATA: disabling
 
-NVIDIA Tegra is also affected by this patch. A week ago an updated
-version of the patch was pushed into linux-next and now machine doesn't
-boot at all.
+I have bisected this problem:
+git bisect start
+# bad: [22c58fd70ca48a29505922b1563826593b08cc00] Merge tag 'armsoc-soc' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+git bisect bad 22c58fd70ca48a29505922b1563826593b08cc00
+# good: [67e38f578aaebf34fc1278bbe45a78ee8c73dd33] ARM: ep93xx: move pinctrl interfaces into include/linux/soc
+git bisect good 67e38f578aaebf34fc1278bbe45a78ee8c73dd33
+# good: [80f232121b69cc69a31ccb2b38c1665d770b0710] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
+git bisect good 80f232121b69cc69a31ccb2b38c1665d770b0710
+# good: [e57ccca1ba33e1d92cc3bbf8b6304a46948844b0] Merge tag 'sound-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+git bisect good e57ccca1ba33e1d92cc3bbf8b6304a46948844b0
+# bad: [983dfa4b6ee556563f7963348e4e2f97fc8a15b8] Merge tag 'for-linus-5.2-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/rw/uml
+git bisect bad 983dfa4b6ee556563f7963348e4e2f97fc8a15b8
+# good: [8e4ff713ce313dcabbb60e6ede1ffc193e67631f] Merge tag 'rtc-5.2' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux
+git bisect good 8e4ff713ce313dcabbb60e6ede1ffc193e67631f
+# bad: [b970afcfcabd63cd3832e95db096439c177c3592] Merge tag 'powerpc-5.2-1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+git bisect bad b970afcfcabd63cd3832e95db096439c177c3592
+# bad: [601e6bcc4ef02bda2831d5ac8133947b5edf597b] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
+git bisect bad 601e6bcc4ef02bda2831d5ac8133947b5edf597b
+# good: [7e9c62bdb41af76974d594da89854a6aba645e58] Merge branches 'clk-sa', 'clk-aspeed', 'clk-samsung', 'clk-ingenic' and 'clk-zynq' into clk-next
+git bisect good 7e9c62bdb41af76974d594da89854a6aba645e58
+# bad: [0caf000817353cfc5db22363ecdac63b83d3a3f9] Merge branch 'clk-ti' into clk-next
+git bisect bad 0caf000817353cfc5db22363ecdac63b83d3a3f9
+# good: [5816b74581b45cf086a84ab14e13354a65e8e22c] Merge branches 'clk-hisi', 'clk-lochnagar', 'clk-allwinner', 'clk-rockchip' and 'clk-qoriq' into clk-next
+git bisect good 5816b74581b45cf086a84ab14e13354a65e8e22c
+# good: [7b4c162e03d47e037f8ee773c3e300eefb599a83] clk: at91: Mark struct clk_range as const
+git bisect good 7b4c162e03d47e037f8ee773c3e300eefb599a83
+# bad: [e71f4d385878671991e200083c7d30eb4ca8e99a] clk: tegra: divider: Mark Memory Controller clock as read-only
+git bisect bad e71f4d385878671991e200083c7d30eb4ca8e99a
+# bad: [924ee3d551c9deb16090230b824988bd37e72aa8] clk: tegra: emc: Don't enable EMC clock manually
+git bisect bad 924ee3d551c9deb16090230b824988bd37e72aa8
+# bad: [40db569d6769ffa3864fd1b89616b1a7323568a8] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
+git bisect bad 40db569d6769ffa3864fd1b89616b1a7323568a8
+# bad: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
+git bisect bad bff1cef5f23afbe49f5ebd766980dc612f5e9d0a
+# first bad commit: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
 
-I couldn't find v3 on the ML, so replying to the v2. Please take a look
-and fix the problem, or revert/drop the offending patch, thanks in advance.
+Basic reverting of this patch is impossible.
+
+Regards
