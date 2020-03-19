@@ -1,71 +1,129 @@
-From: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v1 0/3] drm: drm_encoder_init() =>
- drm_encoder_init_funcs()
-Date: Thu, 19 Mar 2020 18:05:22 +0100
-Message-ID: <20200319170522.GA29213@ravnborg.org>
-References: <20200313201744.19773-1-sam@ravnborg.org>
- <20200319141954.GA25036@ravnborg.org>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/9] gpio: tegra186: Add support for pin ranges
+Date: Thu, 19 Mar 2020 22:35:46 +0530
+Message-ID: <f3e56f49-2105-6514-f5a5-c1137569d083@nvidia.com>
+References: <20200319122737.3063291-1-thierry.reding@gmail.com>
+ <20200319122737.3063291-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200319141954.GA25036-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <20200319122737.3063291-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Jose Roberto de Souza <jose.souza-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.orglinux-a
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 03:19:54PM +0100, Sam Ravnborg wrote:
-> On Fri, Mar 13, 2020 at 09:17:41PM +0100, Sam Ravnborg wrote:
-> > Thomas Zimmermann had made a nice patch-set that introduced
-> > drm_simple_encoder_init() which is already present in drm-misc-next.
-> > 
-> > While looking at this it was suddenly obvious to me that
-> > this was functionalty that really should be included in drm_encoder.c
-> > The case where the core could handle the callback is pretty
-> > common and not part of the simple pipe line.
-> > 
-> > So after some dialog on dri-devel the conclusion was to go for
-> > a change like this:
-> > 
-> >     drm_encoder_init_funcs() for all users that specified a
-> >     drm_encoder_funcs to extend the functionality.
-> > 
-> >     drm_encoder_init() for all users that did not
-> >     need to extend the basic functionality with
-> >     drm_encoder_funcs.
-> > 
-> > A similar approach with a _funcs() prefix is used elsewhere in drm/
-> > 
-> > This required a rename of the existing users, and
-> > a follow-up patch that moves drm_simple_encoder_init()
-> > to drm_encoder.c
-> > 
-> > Patches 3 in this set demonstrate the use of drm_encoder_init().
-> > There are many more drivers that can be converted as Thomas
-> > has already demonstrated.
-> > 
-> > This is all based on work done by Thomas Zimmermann,
-> > I just wanted to implement my suggestion so
-> > we could select the best way forward.
-> > 
-> > Note: Daniel Vetter has hinted the approach implemented
-> > here smelled like middle-layer.
-> > IMO this is not so, it is just a way to handle cleanup
-> > for the simple cases.
-> 
-> We discussed this patch-set briefly on irc.
-Just to clarify, we in this context was Daniel Vetter & me.
 
-	Sam
 
-> With the upcoming drmm_ changes and such this is bad timing..
-> And in the end this may be pointless code-chrunch.
+On 3/19/2020 5:57 PM, Thierry Reding wrote:
+> External email: Use caution opening links or attachments
 > 
-> Patch-set shelfed for now - may re-visit it later.
 > 
-> 	Sam
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Add support for Tegra SoC generations to specify a list of pin ranges
+> that map GPIOs to ranges of pins in the pin controller.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   drivers/gpio/gpio-tegra186.c | 56 ++++++++++++++++++++++++++++++++++++
+>   1 file changed, 56 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index de241263d4be..1086c1fcaf49 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -58,11 +58,20 @@ struct tegra_gpio_port {
+>          unsigned int pins;
+>   };
+> 
+> +struct tegra186_pin_range {
+> +       unsigned int offset;
+> +       const char *group;
+> +};
+> +
+>   struct tegra_gpio_soc {
+>          const struct tegra_gpio_port *ports;
+>          unsigned int num_ports;
+>          const char *name;
+>          unsigned int instance;
+> +
+> +       const struct tegra186_pin_range *pin_ranges;
+> +       unsigned int num_pin_ranges;
+> +       const char *pinmux;
+>   };
+> 
+>   struct tegra_gpio {
+> @@ -254,6 +263,50 @@ static int tegra186_gpio_set_config(struct gpio_chip *chip,
+>          return 0;
+>   }
+> 
+> +static int tegra186_gpio_add_pin_ranges(struct gpio_chip *chip)
+> +{
+> +       struct tegra_gpio *gpio = gpiochip_get_data(chip);
+> +       struct pinctrl_dev *pctldev;
+> +       struct device_node *np;
+> +       unsigned int i, j;
+> +       int err;
+> +
+> +       if (!gpio->soc->pinmux || gpio->soc->num_pin_ranges == 0)
+> +               return 0;
+> +
+> +       np = of_find_compatible_node(NULL, NULL, gpio->soc->pinmux);
+> +       if (!np)
+> +               return -ENODEV;
+> +
+> +       pctldev = of_pinctrl_get(np);
+> +       of_node_put(np);
+> +       if (!pctldev)
+> +               return -EPROBE_DEFER;
+> +
+> +       for (i = 0; i < gpio->soc->num_pin_ranges; i++) {
+> +               unsigned int pin = gpio->soc->pin_ranges[i].offset, port;
+> +               const char *group = gpio->soc->pin_ranges[i].group;
+> +
+> +               port = pin / 8;
+> +               pin = pin % 8;
+> +
+> +               if (port >= gpio->soc->num_ports) {
+> +                       dev_warn(chip->parent, "invalid port %u for %s\n",
+> +                                port, group);
+> +                       continue;
+> +               }
+> +
+> +               for (j = 0; j < port; j++)
+> +                       pin += gpio->soc->ports[j].pins;
+> +
+> +               err = gpiochip_add_pingroup_range(chip, pctldev, pin, group);
+> +               if (err < 0)
+> +                       return err;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>   static int tegra186_gpio_of_xlate(struct gpio_chip *chip,
+>                                    const struct of_phandle_args *spec,
+>                                    u32 *flags)
+> @@ -578,12 +631,15 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+>          gpio->gpio.label = gpio->soc->name;
+>          gpio->gpio.parent = &pdev->dev;
+> 
+> +       gpio->gpio.request = gpiochip_generic_request;
+> +       gpio->gpio.free = gpiochip_generic_free;
+>          gpio->gpio.get_direction = tegra186_gpio_get_direction;
+>          gpio->gpio.direction_input = tegra186_gpio_direction_input;
+>          gpio->gpio.direction_output = tegra186_gpio_direction_output;
+>          gpio->gpio.get = tegra186_gpio_get,
+>          gpio->gpio.set = tegra186_gpio_set;
+>          gpio->gpio.set_config = tegra186_gpio_set_config;
+> +       gpio->gpio.add_pin_ranges = tegra186_gpio_add_pin_ranges;
+> 
+>          gpio->gpio.base = -1;
+> 
+> --
+> 2.24.1
+> 
+Tested-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
