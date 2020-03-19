@@ -1,34 +1,47 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 0/2] NVIDIA Tegra I2C synchronization correction
-Date: Thu, 19 Mar 2020 23:11:38 +0300
-Message-ID: <20200319201140.17451-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1 2/2] i2c: tegra: Synchronize DMA before termination
+Date: Thu, 19 Mar 2020 23:11:40 +0300
+Message-ID: <20200319201140.17451-3-digetx@gmail.com>
+References: <20200319201140.17451-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200319201140.17451-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+DMA transfer could be completed, but CPU (which handles DMA interrupt)
+may get too busy and can't handle the interrupt in a timely manner,
+despite of DMA IRQ being raised. In this case the DMA state needs to
+synchronized before terminating DMA transfer in order not to miss the
+DMA transfer completion.
 
-Recently I found a way to reliably reproduce I2C timeouts that happen due
-to improper synchronizations made by the I2C driver. It's quite easy to
-reproduce the problem when memory is running on a lower freq + there is
-some memory activity + CPU could get busy for a significant time. This
-is the case when KASAN is enabled and CPU is busy while accessing FS via
-NFS. This small series addresses the found problems.
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Please note that the "Synchronize DMA before termination" patch implicitly
-depends on the "dmaengine: tegra-apb: Improve DMA synchronization" patch,
-which is sent separately, otherwise DMA synchronization won't happen.
-
-Dmitry Osipenko (2):
-  i2c: tegra: Better handle case where CPU0 is busy for a long time
-  i2c: tegra: Synchronize DMA before termination
-
- drivers/i2c/busses/i2c-tegra.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index dabb9223990c..b69a10497cd5 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1224,6 +1224,15 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		time_left = tegra_i2c_wait_completion_timeout(
+ 				i2c_dev, &i2c_dev->dma_complete, xfer_time);
+ 
++		/*
++		 * Synchronize DMA first, since dmaengine_terminate_sync()
++		 * performs synchronization after the transfer's termination
++		 * and we want to get a completion if transfer succeeded.
++		 */
++		dmaengine_synchronize(i2c_dev->msg_read ?
++				      i2c_dev->rx_dma_chan :
++				      i2c_dev->tx_dma_chan);
++
+ 		dmaengine_terminate_sync(i2c_dev->msg_read ?
+ 					 i2c_dev->rx_dma_chan :
+ 					 i2c_dev->tx_dma_chan);
 -- 
 2.25.1
