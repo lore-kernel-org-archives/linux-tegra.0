@@ -1,29 +1,29 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v2] ARM: boot: Obtain start of physical memory from DTB
-Date: Thu, 19 Mar 2020 17:35:44 +0300
-Message-ID: <75358399-c292-4e60-abdc-bd0729cf5c08@gmail.com>
+Date: Thu, 19 Mar 2020 17:35:49 +0300
+Message-ID: <86239143-b7de-3385-5288-82ac94e7e5db@gmail.com>
 References: <CGME20200225112354eucas1p1300749b32c6809b6a22194c1a952a68c@eucas1p1.samsung.com>
  <20200127140716.15673-1-geert+renesas@glider.be>
  <d1b12473-5199-1cf6-25d1-a6ce79450e8e@samsung.com>
  <CAMuHMdUGu4eStpYp5W0SKJd8yrLLDTgF4__Jq_n+Z7SWtPM+Cg@mail.gmail.com>
  <90c006f2-8c13-2976-008f-37139ca49f37@gmail.com>
- <CAMuHMdVkhf+4CQwpf9tn3UfaMb=qoRRYS2XpwcgBMciTVmXjHA@mail.gmail.com>
+ <20200319092535.GB25745@shell.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMuHMdVkhf+4CQwpf9tn3UfaMb=qoRRYS2XpwcgBMciTVmXjHA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20200319092535.GB25745-QEMnZ+CodIVURfEZ8mYm6t73F7V6hmMc@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Eric Miao <eric.miao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Russell King - ARM Linux admin <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Eric Miao <eric.miao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-19.03.2020 11:18, Geert Uytterhoeven пишет:
-> Hi Dmitry,
-> 
-> On Thu, Mar 19, 2020 at 2:11 AM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+19.03.2020 12:25, Russell King - ARM Linux admin пишет:
+> On Thu, Mar 19, 2020 at 04:11:00AM +0300, Dmitry Osipenko wrote:
 >> 25.02.2020 14:40, Geert Uytterhoeven пишет:
+>>> Hi Marek,
+>>>
 >>> On Tue, Feb 25, 2020 at 12:24 PM Marek Szyprowski
 >>> <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
 >>>> On 27.01.2020 15:07, Geert Uytterhoeven wrote:
@@ -63,37 +63,17 @@ List-Id: linux-tegra@vger.kernel.org
 >>> In the mean time, I've sent some debug code I used when developing
 >>> this patch, which may be useful, hopefully.
 >>
+>> Hello,
+>>
 >> NVIDIA Tegra is also affected by this patch. A week ago an updated
 >> version of the patch was pushed into linux-next and now machine doesn't
 >> boot at all.
-> 
-> I'm sorry to hear that.
-> 
-> Did v2 work for you?
-
-Same as it was for Marek.
-
-> Are you sure this updated version is the culprit? There are several other
-> recent changes to head.S in arm/for-next.
-
-Yes
-
-> Do you boot a separate DTB or an appended DTB?
-
-Appended
-
-> Do you use ATAGS?
-
-Yes
-
+>>
 >> I couldn't find v3 on the ML, so replying to the v2. Please take a look
 >> and fix the problem, or revert/drop the offending patch, thanks in advance.
 > 
-> V3 is v2 combined with "[PATCH] ARM: boot: Fix ATAGs with appended DTB"
-> (https://lore.kernel.org/linux-renesas-soc/20200225144749.19815-1-geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org/).
+> I'll drop the patch. It's clear that this is going to be difficult,
+> so I would ask you to test the next version, rather than waiting for
+> it to appear in linux-next.
 
-Thank you for the clarification.
-
-I recalled that CONFIG_THUMB2_KERNEL=y is set in my kernel's config and
-disabling thumb2 build fixes the problem. Please correct it in the next
-version of the patch, thanks in advance.
+Thank you very much! I'll be happy to try v4, please feel free to CC me.
