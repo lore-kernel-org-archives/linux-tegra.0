@@ -1,74 +1,34 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: [PATCH] amba: tegra-ahb: Replace zero-length array with
- flexible-array member
-Date: Thu, 19 Mar 2020 15:03:55 -0500
-Message-ID: <a5a852d9-9f42-ce8a-58e6-d14e3da001af@embeddedor.com>
-References: <20200211210213.GA28043@embeddedor>
- <292f9b65-c2b5-c719-ba79-c0db4a11f482@embeddedor.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 0/2] NVIDIA Tegra I2C synchronization correction
+Date: Thu, 19 Mar 2020 23:11:38 +0300
+Message-ID: <20200319201140.17451-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <292f9b65-c2b5-c719-ba79-c0db4a11f482@embeddedor.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi all,
+Hello,
 
-Friendly ping (second time): Who can take this?
+Recently I found a way to reliably reproduce I2C timeouts that happen due
+to improper synchronizations made by the I2C driver. It's quite easy to
+reproduce the problem when memory is running on a lower freq + there is
+some memory activity + CPU could get busy for a significant time. This
+is the case when KASAN is enabled and CPU is busy while accessing FS via
+NFS. This small series addresses the found problems.
 
-Thanks
---
-Gustavo
+Please note that the "Synchronize DMA before termination" patch implicitly
+depends on the "dmaengine: tegra-apb: Improve DMA synchronization" patch,
+which is sent separately, otherwise DMA synchronization won't happen.
 
-On 2/27/20 1:33 PM, Gustavo A. R. Silva wrote:
-> Hi all,
-> 
-> Friendly ping: Who can take this?
-> 
-> Thanks
-> --
-> Gustavo
-> 
-> On 2/11/20 15:02, Gustavo A. R. Silva wrote:
->> The current codebase makes use of the zero-length array language
->> extension to the C90 standard, but the preferred mechanism to declare
->> variable-length types such as these ones is a flexible array member[1][2],
->> introduced in C99:
->>
->> struct foo {
->>         int stuff;
->>         struct boo array[];
->> };
->>
->> By making use of the mechanism above, we will get a compiler warning
->> in case the flexible array does not occur last in the structure, which
->> will help us prevent some kind of undefined behavior bugs from being
->> inadvertenly introduced[3] to the codebase from now on.
->>
->> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->> [2] https://github.com/KSPP/linux/issues/21
->> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/amba/tegra-ahb.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
->> index b0b688c481e8..e9e5c7bb580c 100644
->> --- a/drivers/amba/tegra-ahb.c
->> +++ b/drivers/amba/tegra-ahb.c
->> @@ -129,7 +129,7 @@ static const u32 tegra_ahb_gizmo[] = {
->>  struct tegra_ahb {
->>  	void __iomem	*regs;
->>  	struct device	*dev;
->> -	u32		ctx[0];
->> +	u32		ctx[];
->>  };
->>  
->>  static inline u32 gizmo_readl(struct tegra_ahb *ahb, u32 offset)
->>
+Dmitry Osipenko (2):
+  i2c: tegra: Better handle case where CPU0 is busy for a long time
+  i2c: tegra: Synchronize DMA before termination
+
+ drivers/i2c/busses/i2c-tegra.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
+
+-- 
+2.25.1
