@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v8 06/12] ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
-Date: Thu, 19 Mar 2020 22:02:23 +0300
-Message-ID: <20200319190229.32200-7-digetx@gmail.com>
+Subject: [PATCH v8 10/12] ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
+Date: Thu, 19 Mar 2020 22:02:27 +0300
+Message-ID: <20200319190229.32200-11-digetx@gmail.com>
 References: <20200319190229.32200-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,40 +12,33 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The early-resume code shall not switch CPU to PLLX because PLLX
-configuration could be unstable or PLLX should be simply disabled if
-CPU enters into suspend running off some other PLL (the case if CPUFREQ
-driver is active). The actual burst policy is restored by the clock
-drivers.
+The tegra20-cpufreq now instantiates cpufreq-dt and Tegra30 is fully
+supported by that driver.
 
 Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Tested-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
 Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
-Tested-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- arch/arm/mach-tegra/sleep-tegra30.S | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/arm/mach-tegra/tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index e7bcf7dc4675..9942265ed650 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -398,11 +398,8 @@ _pll_m_c_x_done:
- 	ldr	r4, [r5, #0x1C]		@ restore SCLK_BURST
- 	str	r4, [r0, #CLK_RESET_SCLK_BURST]
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index f1ce2857a251..3882a6c66969 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -96,6 +96,10 @@ static void __init tegra_dt_init_late(void)
  
--	cmp	r10, #TEGRA30
--	movweq	r4, #:lower16:((1 << 28) | (0x8))	@ burst policy is PLLX
--	movteq	r4, #:upper16:((1 << 28) | (0x8))
--	movwne	r4, #:lower16:((1 << 28) | (0xe))
--	movtne	r4, #:upper16:((1 << 28) | (0xe))
-+	movw	r4, #:lower16:((1 << 28) | (0x4))	@ burst policy is PLLP
-+	movt	r4, #:upper16:((1 << 28) | (0x4))
- 	str	r4, [r0, #CLK_RESET_CCLK_BURST]
+ 	if (IS_ENABLED(CONFIG_ARM_TEGRA_CPUIDLE) && !psci_smp_available())
+ 		platform_device_register_simple("tegra-cpuidle", -1, NULL, 0);
++
++	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) &&
++	    of_machine_is_compatible("nvidia,tegra30"))
++		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
+ }
  
- 	/* Restore pad power state to normal */
+ static const char * const tegra_dt_board_compat[] = {
 -- 
 2.25.1
