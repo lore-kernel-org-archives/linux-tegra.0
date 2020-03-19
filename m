@@ -1,81 +1,69 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL] usb: tegra: Changes for v5.7-rc1
-Date: Thu, 19 Mar 2020 00:20:22 +0100
-Message-ID: <20200318232022.GB2885069@ulmo>
-References: <20200313170730.2924259-1-thierry.reding@gmail.com>
- <20200317185835.GC1480055@kroah.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: boot: Obtain start of physical memory from DTB
+Date: Thu, 19 Mar 2020 04:11:00 +0300
+Message-ID: <90c006f2-8c13-2976-008f-37139ca49f37@gmail.com>
+References: <CGME20200225112354eucas1p1300749b32c6809b6a22194c1a952a68c@eucas1p1.samsung.com>
+ <20200127140716.15673-1-geert+renesas@glider.be>
+ <d1b12473-5199-1cf6-25d1-a6ce79450e8e@samsung.com>
+ <CAMuHMdUGu4eStpYp5W0SKJd8yrLLDTgF4__Jq_n+Z7SWtPM+Cg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200317185835.GC1480055-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CAMuHMdUGu4eStpYp5W0SKJd8yrLLDTgF4__Jq_n+Z7SWtPM+Cg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+Cc: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Eric Miao <eric.miao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+25.02.2020 14:40, Geert Uytterhoeven пишет:
+> Hi Marek,
+> 
+> On Tue, Feb 25, 2020 at 12:24 PM Marek Szyprowski
+> <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> On 27.01.2020 15:07, Geert Uytterhoeven wrote:
+>>> Currently, the start address of physical memory is obtained by masking
+>>> the program counter with a fixed mask of 0xf8000000.  This mask value
+>>> was chosen as a balance between the requirements of different platforms.
+>>> However, this does require that the start address of physical memory is
+>>> a multiple of 128 MiB, precluding booting Linux on platforms where this
+>>> requirement is not fulfilled.
+>>>
+>>> Fix this limitation by obtaining the start address from the DTB instead,
+>>> if available (either explicitly passed, or appended to the kernel).
+>>> Fall back to the traditional method when needed.
+>>>
+>>> This allows to boot Linux on r7s9210/rza2mevb using the 64 MiB of SDRAM
+>>> on the RZA2MEVB sub board, which is located at 0x0C000000 (CS3 space),
+>>> i.e. not at a multiple of 128 MiB.
+>>>
+>>> Suggested-by: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+>>> Reviewed-by: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
+>>> ---
+>>> Against arm/for-next.
+>>
+>> This patch landed recently in linux-next. It breaks legacy booting from
+>> the zImage + appended DT + cmdline/memory info provided via ATAGs. I
+>> will debug it further once I find some spare time. What I noticed so
+>> far, the cmdline/memory info is not read from the ATAGs, only the values
+>> provided via appended DT are used.
+> 
+> Oops, something happening like this was one of my biggest worries when
+> posting this patch... Sorry for the breakage.
+> 
+> IIUIC, the kernel still boots, but just doesn't use the info passed by ATAGs?
+> 
+> I'll have a closer look later today.
+> In the mean time, I've sent some debug code I used when developing
+> this patch, which may be useful, hopefully.
 
---eAbsdosE1cNLO4uF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-On Tue, Mar 17, 2020 at 07:58:35PM +0100, Greg Kroah-Hartman wrote:
-> On Fri, Mar 13, 2020 at 06:07:30PM +0100, Thierry Reding wrote:
-> > Hi Greg, Felipe,
-> >=20
-> > The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea098=
-62b9:
-> >=20
-> >   Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-> >=20
-> > are available in the Git repository at:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/fo=
-r-5.7-usb
-> >=20
-> > for you to fetch changes up to 9dd4fbef2f88ccf46f5294805bf121d6554791e8:
-> >=20
-> >   usb: gadget: tegra-xudc: Support multiple device modes (2020-03-13 17=
-:16:28 +0100)
-> >=20
-> > It occurred to me that I could just as well send this pull request to
-> > you guys, rather than take it via ARM SoC. Kishon already acked all the
-> > patches for the PHY tree that this series depends on, so I've included
-> > them here as a dependency.
-> >=20
-> > Let me know if you'd prefer that I take this through ARM SoC.
->=20
-> I tried to merge this into my usb-next branch, but get merge issues in
-> drivers/usb/gadget/udc/tegra-xudc.c that I really don't know how to
-> resolve.
->=20
-> Can you give me a clue as to what to do here?
+NVIDIA Tegra is also affected by this patch. A week ago an updated
+version of the patch was pushed into linux-next and now machine doesn't
+boot at all.
 
-Let me rebase this on top of your usb-next branch and resend this PR
-after resolving the conflict.
-
-Thierry
-
---eAbsdosE1cNLO4uF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5yrLYACgkQ3SOs138+
-s6H07hAAoRtKHCeERZPuj3qTdFkm/k6KVMKDmmjN2Aj7jLVTbGGNrcjplf5J5bWO
-9x905oLXFCmcerVaX/oK6Q68feEWkpEEC6dQrDssixyN6hmEDH534KpM9NxFqUFR
-XL4FYYcwlhIyQtMSx/8i3gs8efPdjreKg0BPXbej4fWYWc4/IwD+WMJa7B5bzYfJ
-F5spv1T08zEn5QXzOJ6rdmTBHKZ6ximxHZbbrmltm7YvCQweOGykmnuo+FNNmMOm
-IvjBaYQZ9iqhfc2cEWzKmyV8Oitwx07McTEtUcr/AfKHEA29jGNSafyQJVxUo2Un
-FMoi9WNnUR4fRAAHLSnYqiKH2yoYqFAZOIrLDWs92eRlHUia2x6+5ZdxXaZbQ4Ln
-kozSV9D240VBWZUb0BW5g4oSjYkIkC8O/hYxah1T3aTIeHAcS2Jv4kWBfO3VL2K6
-BJIJxJOniwGIy6gRlPvYHLHffmqJD05aDDZXthSyawdp81EUmj3qBfjN1slQH3mk
-anW8v+/DaaNons4dlnVXt+uc7Y2ZDcD0h/i+FODe5EgFtSd1+HNbgbVNNVIRw0ts
-BAF0EG1U1+kpJr8W6y6vcgaeSRjxjmQ5A/ZKgiTEsbU/kwudkCKBXCVddHYpo6rv
-fTBjr3t+jDNnavS5/LDVNj05bEDglTKZQy03z95XinXgl47ulOA=
-=tYCX
------END PGP SIGNATURE-----
-
---eAbsdosE1cNLO4uF--
+I couldn't find v3 on the ML, so replying to the v2. Please take a look
+and fix the problem, or revert/drop the offending patch, thanks in advance.
