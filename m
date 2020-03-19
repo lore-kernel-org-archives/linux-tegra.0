@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 3/9] gpio: tegra186: Add Tegra194 pin ranges for GG.0 and GG.1
-Date: Thu, 19 Mar 2020 13:27:31 +0100
-Message-ID: <20200319122737.3063291-4-thierry.reding@gmail.com>
+Subject: [PATCH 2/9] gpio: tegra186: Add support for pin ranges
+Date: Thu, 19 Mar 2020 13:27:30 +0100
+Message-ID: <20200319122737.3063291-3-thierry.reding@gmail.com>
 References: <20200319122737.3063291-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,48 +14,105 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The GG.0 and GG.1 GPIOs serve as CLKREQ and RST pins, respectively, for
-PCIe controller 5 on Tegra194. When this controller is configured in
-endpoint mode, these pins need to be used as GPIOs by the PCIe endpoint
-driver. Typically the mode programming of these pins (GPIO vs. SFIO) is
-performed by early boot firmware to ensure that the configuration is
-consistent.
-
-However, the GG.0 and GG.1 pins are part of a special power partition
-that is not enabled during early boot, and hence the early boot firmware
-cannot program these pins to be GPIOs (they are SFIO by default). Adding
-them as pin ranges for the pin controller allows the pin controller to
-be involved when these pins are requested as GPIOs and allows the proper
-programming to take place.
+Add support for Tegra SoC generations to specify a list of pin ranges
+that map GPIOs to ranges of pins in the pin controller.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpio-tegra186.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpio/gpio-tegra186.c | 56 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
 diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 1086c1fcaf49..79b553dc39a3 100644
+index de241263d4be..1086c1fcaf49 100644
 --- a/drivers/gpio/gpio-tegra186.c
 +++ b/drivers/gpio/gpio-tegra186.c
-@@ -839,11 +839,19 @@ static const struct tegra_gpio_port tegra194_main_ports[] = {
- 	TEGRA194_MAIN_GPIO_PORT(GG, 0, 0, 2)
+@@ -58,11 +58,20 @@ struct tegra_gpio_port {
+ 	unsigned int pins;
  };
  
-+static const struct tegra186_pin_range tegra194_main_pin_ranges[] = {
-+	{ TEGRA194_MAIN_GPIO(GG, 0), "pex_l5_clkreq_n_pgg0" },
-+	{ TEGRA194_MAIN_GPIO(GG, 1), "pex_l5_rst_n_pgg1" },
++struct tegra186_pin_range {
++	unsigned int offset;
++	const char *group;
 +};
 +
- static const struct tegra_gpio_soc tegra194_main_soc = {
- 	.num_ports = ARRAY_SIZE(tegra194_main_ports),
- 	.ports = tegra194_main_ports,
- 	.name = "tegra194-gpio",
- 	.instance = 0,
-+	.num_pin_ranges = ARRAY_SIZE(tegra194_main_pin_ranges),
-+	.pin_ranges = tegra194_main_pin_ranges,
-+	.pinmux = "nvidia,tegra194-pinmux",
+ struct tegra_gpio_soc {
+ 	const struct tegra_gpio_port *ports;
+ 	unsigned int num_ports;
+ 	const char *name;
+ 	unsigned int instance;
++
++	const struct tegra186_pin_range *pin_ranges;
++	unsigned int num_pin_ranges;
++	const char *pinmux;
  };
  
- #define TEGRA194_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
+ struct tegra_gpio {
+@@ -254,6 +263,50 @@ static int tegra186_gpio_set_config(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
++static int tegra186_gpio_add_pin_ranges(struct gpio_chip *chip)
++{
++	struct tegra_gpio *gpio = gpiochip_get_data(chip);
++	struct pinctrl_dev *pctldev;
++	struct device_node *np;
++	unsigned int i, j;
++	int err;
++
++	if (!gpio->soc->pinmux || gpio->soc->num_pin_ranges == 0)
++		return 0;
++
++	np = of_find_compatible_node(NULL, NULL, gpio->soc->pinmux);
++	if (!np)
++		return -ENODEV;
++
++	pctldev = of_pinctrl_get(np);
++	of_node_put(np);
++	if (!pctldev)
++		return -EPROBE_DEFER;
++
++	for (i = 0; i < gpio->soc->num_pin_ranges; i++) {
++		unsigned int pin = gpio->soc->pin_ranges[i].offset, port;
++		const char *group = gpio->soc->pin_ranges[i].group;
++
++		port = pin / 8;
++		pin = pin % 8;
++
++		if (port >= gpio->soc->num_ports) {
++			dev_warn(chip->parent, "invalid port %u for %s\n",
++				 port, group);
++			continue;
++		}
++
++		for (j = 0; j < port; j++)
++			pin += gpio->soc->ports[j].pins;
++
++		err = gpiochip_add_pingroup_range(chip, pctldev, pin, group);
++		if (err < 0)
++			return err;
++	}
++
++	return 0;
++}
++
+ static int tegra186_gpio_of_xlate(struct gpio_chip *chip,
+ 				  const struct of_phandle_args *spec,
+ 				  u32 *flags)
+@@ -578,12 +631,15 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 	gpio->gpio.label = gpio->soc->name;
+ 	gpio->gpio.parent = &pdev->dev;
+ 
++	gpio->gpio.request = gpiochip_generic_request;
++	gpio->gpio.free = gpiochip_generic_free;
+ 	gpio->gpio.get_direction = tegra186_gpio_get_direction;
+ 	gpio->gpio.direction_input = tegra186_gpio_direction_input;
+ 	gpio->gpio.direction_output = tegra186_gpio_direction_output;
+ 	gpio->gpio.get = tegra186_gpio_get,
+ 	gpio->gpio.set = tegra186_gpio_set;
+ 	gpio->gpio.set_config = tegra186_gpio_set_config;
++	gpio->gpio.add_pin_ranges = tegra186_gpio_add_pin_ranges;
+ 
+ 	gpio->gpio.base = -1;
+ 
 -- 
 2.24.1
