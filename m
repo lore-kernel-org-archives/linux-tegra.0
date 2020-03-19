@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 07/12] ARM: tegra: Don't enable PLLX while resuming from LP1 on Tegra30
-Date: Thu, 19 Mar 2020 22:02:24 +0300
-Message-ID: <20200319190229.32200-8-digetx@gmail.com>
+Subject: [PATCH v8 03/12] clk: tegra: cclk: Add helpers for handling PLLX rate changes
+Date: Thu, 19 Mar 2020 22:02:20 +0300
+Message-ID: <20200319190229.32200-4-digetx@gmail.com>
 References: <20200319190229.32200-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,11 +12,12 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-PLLX may be kept disabled if cpufreq driver selects some other clock for
-CPU. In that case PLLX will be disabled later in the resume path by the
-CLK driver, which also can enable PLLX if necessary by itself. Thus there
-is no need to enable PLLX early during resume. Tegra114/124 CLK drivers do
-not manage PLLX on resume and thus they are left untouched by this patch.
+CCLK should be re-parented away from PLLX if PLLX's rate is changing.
+The PLLP parent is a common safe CPU parent for all Tegra SoCs, thus
+CCLK will be re-parented to PLLP before PLLX rate-change begins and then
+switched back to PLLX after the rate-change completion. This patch adds
+helper functions which perform CCLK re-parenting, these helpers will be
+utilized by further patches.
 
 Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Tested-by: Peter Geis <pgwipeout@gmail.com>
@@ -26,40 +27,81 @@ Tested-by: David Heidelberg <david@ixit.cz>
 Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/sleep-tegra30.S | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-tegra-super-cclk.c | 34 ++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h                  |  2 ++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 9942265ed650..2667bcdb5dc6 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -361,7 +361,6 @@ _no_pll_iddq_exit:
+diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/clk-tegra-super-cclk.c
+index 7bcb9e8d0860..a03119c30456 100644
+--- a/drivers/clk/tegra/clk-tegra-super-cclk.c
++++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
+@@ -25,6 +25,9 @@
  
- 	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
- 	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
--	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
+ #define SUPER_CDIV_ENB		BIT(31)
  
- _pll_m_c_x_done:
- 	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
-@@ -371,12 +370,18 @@ _pll_m_c_x_done:
- 	pll_locked r1, r0, CLK_RESET_PLLP_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLA_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
--	pll_locked r1, r0, CLK_RESET_PLLX_BASE
- 
-+	/*
-+	 * CPUFreq driver could select other PLL for CPU. PLLX will be
-+	 * enabled by the Tegra30 CLK driver on an as-needed basis, see
-+	 * tegra30_cpu_clock_resume().
-+	 */
- 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
- 	cmp	r1, #TEGRA30
- 	beq	1f
- 
-+	pll_locked r1, r0, CLK_RESET_PLLX_BASE
++static struct tegra_clk_super_mux *cclk_super;
++static bool cclk_on_pllx;
 +
- 	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
- 	bic	r1, r1, #(1<<31)	@ disable PllP bypass
- 	str	r1, [r0, #CLK_RESET_PLLP_BASE]
+ static u8 cclk_super_get_parent(struct clk_hw *hw)
+ {
+ 	return tegra_clk_super_ops.get_parent(hw);
+@@ -115,6 +118,9 @@ struct clk *tegra_clk_register_super_cclk(const char *name,
+ 	struct clk_init_data init;
+ 	u32 val;
+ 
++	if (WARN_ON(cclk_super))
++		return ERR_PTR(-EBUSY);
++
+ 	super = kzalloc(sizeof(*super), GFP_KERNEL);
+ 	if (!super)
+ 		return ERR_PTR(-ENOMEM);
+@@ -173,6 +179,34 @@ struct clk *tegra_clk_register_super_cclk(const char *name,
+ 	clk = clk_register(NULL, &super->hw);
+ 	if (IS_ERR(clk))
+ 		kfree(super);
++	else
++		cclk_super = super;
+ 
+ 	return clk;
+ }
++
++int tegra_cclk_pre_pllx_rate_change(void)
++{
++	if (IS_ERR_OR_NULL(cclk_super))
++		return -EINVAL;
++
++	if (cclk_super_get_parent(&cclk_super->hw) == PLLX_INDEX)
++		cclk_on_pllx = true;
++	else
++		cclk_on_pllx = false;
++
++	/*
++	 * CPU needs to be temporarily re-parented away from PLLX if PLLX
++	 * changes its rate. PLLP is a safe parent for CPU on all Tegra SoCs.
++	 */
++	if (cclk_on_pllx)
++		cclk_super_set_parent(&cclk_super->hw, PLLP_INDEX);
++
++	return 0;
++}
++
++void tegra_cclk_post_pllx_rate_change(void)
++{
++	if (cclk_on_pllx)
++		cclk_super_set_parent(&cclk_super->hw, PLLX_INDEX);
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index e67c19eadb19..8ca215955bfa 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -771,6 +771,8 @@ struct clk *tegra_clk_register_super_cclk(const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+ 		spinlock_t *lock);
++int tegra_cclk_pre_pllx_rate_change(void);
++void tegra_cclk_post_pllx_rate_change(void);
+ 
+ /**
+  * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
 -- 
 2.25.1
