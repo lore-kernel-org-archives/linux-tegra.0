@@ -1,101 +1,114 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/7] clocksource: Add Tegra186 timers support
-Date: Fri, 20 Mar 2020 16:04:06 +0100
-Message-ID: <20200320150406.GA3706404@ulmo>
-References: <20200320133452.3705040-1-thierry.reding@gmail.com>
- <20200320133452.3705040-3-thierry.reding@gmail.com>
- <df532fef-1533-9da7-d676-f4671746fde3@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] soc/tegra: fuse: Add custom SoC attributes
+Date: Fri, 20 Mar 2020 16:10:35 +0100
+Message-ID: <20200320151035.GB3706404@ulmo>
+References: <20200320113716.6105-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <df532fef-1533-9da7-d676-f4671746fde3@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20200320113716.6105-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=utf-8
+--E39vaYmALEf/7YXx
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 20, 2020 at 05:39:01PM +0300, Dmitry Osipenko wrote:
-> 20.03.2020 16:34, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Currently this only supports a single watchdog, which uses a timer in
-> > the background for countdown. Eventually the timers could be used for
-> > various time-keeping tasks, but by default the architected timer will
-> > already provide that functionality.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/clocksource/Kconfig          |   8 +
-> >  drivers/clocksource/Makefile         |   1 +
-> >  drivers/clocksource/timer-tegra186.c | 377 +++++++++++++++++++++++++++
-> >  3 files changed, 386 insertions(+)
-> >  create mode 100644 drivers/clocksource/timer-tegra186.c
-> Hello Thierry,
+On Fri, Mar 20, 2020 at 11:37:16AM +0000, Jon Hunter wrote:
+> Add a custom SoC attribute for Tegra to expose the HIDREV register
+> contents to userspace via the sysfs. This register provides additional
+> details about the fabrication and versioning of the device. Exposing
+> this information is useful for identifying the exact device revision and
+> device type.
 >=20
-> Shouldn't this driver reside in drivers/watchdog/? Like it's done in a
-> case of the T30+ driver.
+> Please note that the fields in this register vary depending on the Tegra
+> generation and so instead of exposing the individual fields, just expose
+> the entire contents of the register. Details of the register fields can
+> be found in the Technical Reference Manual for each Tegra device.
 
-The hardware block that this binds to is primarily a time-keeping block
-that just so happens to also implement a watchdog. Moving this to
-drivers/watchdog would put us into an odd situation if we ever added
-code to also implement the time-keeping bits for this hardware.
+That seems a little suboptimal to me. It's pretty trivial for the kernel
+to distinguish between different SoC generations in order to know what
+the fields are. It's a lot more difficult for userspace to do so. Is the
+register completely different between SoC generations or just slightly?
 
-I also think that the way this is done on Tegra30 was a bad choice. The
-problem is that we now have two drivers (tegra_wdt.c and tegra-timer.c)
-that both access the same region of memory. This seems to be relatively
-safe to do on those chips because there's no overlap between the timer
-and the watchdog interfaces, but on Tegra186 and later the watchdog is
-actually using one of the timers, so we'd have to be extra careful how
-to coordinate between the two. It seems much easier to do that by having
-everything in the same driver and have that register multiple devices in
-the system.
-
-> > +static int __maybe_unused tegra186_timer_suspend(struct device *dev)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +static int __maybe_unused tegra186_timer_resume(struct device *dev)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +static SIMPLE_DEV_PM_OPS(tegra186_timer_pm_ops, tegra186_timer_suspend,
-> > +			 tegra186_timer_resume);
->=20
-> Perhaps will be better to remove these OPS for now?
-
-Yeah, I suppose I could remove those. Although... perhaps I should just
-try and make this work properly.
+Having individual fields exposed as individual attributes seems like it
+would make it a lot easier for userspace to get at the needed bits.
 
 Thierry
 
---OXfL5xGRrasGEqWY
+>=20
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>=20
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse=
+/fuse-tegra.c
+> index 802717b9f6a3..217e326da232 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+> @@ -300,6 +300,24 @@ static void tegra_enable_fuse_clk(void __iomem *base)
+>  	writel(reg, base + 0x14);
+>  }
+> =20
+> +static ssize_t tegra_soc_hidrev_show(struct device *dev,
+> +				     struct device_attribute *attr,
+> +				     char *buf)
+> +{
+> +	return sprintf(buf, "%d\n", tegra_read_chipid());
+
+Would it be better to print this as hexadecimal?
+
+> +}
+> +
+> +static DEVICE_ATTR(hidrev, S_IRUGO, tegra_soc_hidrev_show,  NULL);
+> +
+> +static struct attribute *tegra_soc_attr[] =3D {
+> +	&dev_attr_hidrev.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group tegra_soc_attr_group =3D {
+> +	.attrs =3D tegra_soc_attr,
+> +};
+> +
+>  struct device * __init tegra_soc_device_register(void)
+>  {
+>  	struct soc_device_attribute *attr;
+> @@ -312,6 +330,7 @@ struct device * __init tegra_soc_device_register(void)
+>  	attr->family =3D kasprintf(GFP_KERNEL, "Tegra");
+>  	attr->revision =3D kasprintf(GFP_KERNEL, "%d", tegra_sku_info.revision);
+>  	attr->soc_id =3D kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
+
+I guess we print all of these as decimal, so hidrev should probably be
+the same, so never mind the previous comment.
+
+Thierry
+
+--E39vaYmALEf/7YXx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5022MACgkQ3SOs138+
-s6FsBQ//Ri1u6rKgOJuYjvW33oLfxl/pb6GVz9aRl6ejeEQtO8CN8QmHsXz5kvSa
-YVjGMinw5iqwSHHvSL7gs1GM13V4xCe3MkJ/N4BIkeXstty6xEM3hHPhBjLGvQEp
-oRxvQ8q+pOhRBwqM7qQqOGs+wBhsP2w62zguSbZPo/uQdf7rZ+7FaTc2qUDITtgh
-gZaxzE7XOoDuRy2xCahMQgcJqmQk0X27cr62Zis1tSrIudx6UxUgnv5Pey1cvpCB
-a7wUSeOab+tLy4AG2ujBkQjz8O8s1pYrcRwy+XamzyqLGU+bcpAgSXqk5E13uhjG
-L8LT0yfFRoIRSW1pGjAHo+LdhxF3jBHThH66yfcn7epBscwygmAwYbOZKskVrwuL
-updpuGcZ29v7nWxG8dVrz/gDKbmzMSAmS5E2XBCK+eNLnYSnW6eaLf9rcYcZgMG0
-HErtuhhsRtUaaALt1sDtyy9rhtUACktCK5biH+xgjVU+o84/gM6bYK7mOD6ATMgb
-Z2atcIMJZK1b+K1luk60X3Yno2XSuwHKUp9HQaQhXR0ABdsKV7iMSooa8jmuLXaC
-9UTrVD9owoF0uz73HSb9Ch9rPGG7Nb/uB7A2sPWmf3S3SnPfDimSelkaSH9jKzH3
-CKSUHhALPD38t+kV5IzdfeIfXLbvtM+JXE5Njw2GVQfUS0m7cK8=
-=f02j
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl503OsACgkQ3SOs138+
+s6HEwQ/+O9SCRbBqNXYN9nux8BzE8Ipn8+xWykZAptrwS9KAHbiT69ijOt10NCMp
+cOisPIp+xylrpVBsItNmVr5LUdhY6tG74J8thr5ad/8YduzBPGIR9IxDqS7E4Btu
+106OsngzZjFHEcN65/6mey7WnAn20h510IYTxInMBeSuY0ZuhZj7WJd8LkoPURYu
+wfTQnRwKPCYORz+E492TVr/rFeAi9svq8Q7fB63c/CXvG3yQd+4h24b6hdC+/cC6
+MepbgXOe2RwaVU5d+VBSMa+Xd2hbxqw07AAuxlaEvsbSHQfCnkCwn++Ew3wqox+g
+pTOEzEziwSyjXUim9Fbhrd7Ihei2q/RKyWLx+PxjzdB9IGwKbN9MXaMX8skDVOTf
+h55hTSIhdREE5fJdXb3kP+OYGidzW09etaKBxDwIZj/tiTHND/l2oUDqsC6r5753
+MaWX8Kc4zWsEYW/3SQyWfWsWzO80zOOHSoV6nJIOLlr4OgiWBeDcl0gnerN2ZHBE
+US06/1Apu7wb/toICZR+t/u+ml6BZ4fR/Ddp4u8sGIKKDzKkAdFuAMJZKFQj2KMw
+KPi3RwQBIbwSyoFF3+i3Rinq84qKSbm1oe5NLUb0ld1nVHKBV+8o6M3AXqFYNX0Z
+3j2qb3qI5Jgk1bJF8F1zOOM/BI71WfxCDnKYvAuR+x4vRMQNq6o=
+=Nf1c
 -----END PGP SIGNATURE-----
 
---OXfL5xGRrasGEqWY--
+--E39vaYmALEf/7YXx--
