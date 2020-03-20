@@ -1,44 +1,59 @@
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH 3/8] iommu/vt-d: Remove IOVA handling code from
- non-dma_ops path
-Date: Fri, 20 Mar 2020 15:06:24 +0800
-Message-ID: <46bf21e2-bb3e-1c1e-8dae-2c5bd8c5274f@linux.intel.com>
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
- <20191221150402.13868-4-murphyt7@tcd.ie>
- <CALQxJuuue2MCF+xAAAcWCW=301HHZ9yWBmYV-K-ubCxO4s5eqQ@mail.gmail.com>
+From: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH -next] dmaengine: tegra-apb: mark PM functions as __maybe_unused
+Date: Fri, 20 Mar 2020 15:13:37 +0800
+Message-ID: <20200320071337.59756-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <CALQxJuuue2MCF+xAAAcWCW=301HHZ9yWBmYV-K-ubCxO4s5eqQ@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
-Cc: baolu.lu@linux.intel.com, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.co>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2020/3/20 14:30, Tom Murphy wrote:
-> Could we merge patch 1-3 from this series? it just cleans up weird
-> code and merging these patches will cover some of the work needed to
-> move the intel iommu driver to the dma-iommu api in the future.
+When CONFIG_PM is disabled, gcc warning this:
 
-Can you please take a look at this patch series?
+drivers/dma/tegra20-apb-dma.c:1587:12: warning: 'tegra_dma_runtime_resume' defined but not used [-Wunused-function]
+drivers/dma/tegra20-apb-dma.c:1578:12: warning: 'tegra_dma_runtime_suspend' defined but not used [-Wunused-function]
 
-https://lkml.org/lkml/2020/3/13/1162
+Make it as __maybe_unused to fix the warnings,
+also remove unneeded function declarations.
 
-It probably makes this series easier.
+Fixes: ec8a1586780c ("dma: tegra: add dmaengine based dma driver")
+Signed-off-by: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+---
+ drivers/dma/tegra20-apb-dma.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Best regards,
-baolu
-
-> 
-> On Sat, 21 Dec 2019 at 07:04, Tom Murphy<murphyt7@tcd.ie>  wrote:
->> Remove all IOVA handling code from the non-dma_ops path in the intel
->> iommu driver.
->>
->> There's no need for the non-dma_ops path to keep track of IOVAs. The
->> whole point of the non-dma_ops path is that it allows the IOVAs to be
->> handled separately. The IOVA handling code removed in this patch is
->> pointless.
->>
->> Signed-off-by: Tom Murphy<murphyt7@tcd.ie>
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 4e295d121be6..b33000976f66 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -263,8 +263,6 @@ static inline struct device *tdc2dev(struct tegra_dma_channel *tdc)
+ }
+ 
+ static dma_cookie_t tegra_dma_tx_submit(struct dma_async_tx_descriptor *tx);
+-static int tegra_dma_runtime_suspend(struct device *dev);
+-static int tegra_dma_runtime_resume(struct device *dev);
+ 
+ /* Get DMA desc from free list, if not there then allocate it.  */
+ static struct tegra_dma_desc *tegra_dma_desc_get(struct tegra_dma_channel *tdc)
+@@ -1575,7 +1573,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int tegra_dma_runtime_suspend(struct device *dev)
++static int __maybe_unused tegra_dma_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra_dma *tdma = dev_get_drvdata(dev);
+ 
+@@ -1584,7 +1582,7 @@ static int tegra_dma_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_dma_runtime_resume(struct device *dev)
++static int __maybe_unused tegra_dma_runtime_resume(struct device *dev)
+ {
+ 	struct tegra_dma *tdma = dev_get_drvdata(dev);
+ 
+-- 
+2.17.1
