@@ -1,26 +1,31 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/9] pinctrl: tegra: Support SFIO/GPIO programming
-Date: Fri, 20 Mar 2020 20:37:48 +0100
-Message-ID: <CACRpkdY7LnyHdX4xKrr1V8Cquched0PMNL1sFTrWT6J3fdRx=w@mail.gmail.com>
-References: <20200319122737.3063291-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 0/2] Support built-in Mic on Tegra boards that use WM8903
+Date: Fri, 20 Mar 2020 23:55:02 +0300
+Message-ID: <20200320205504.30466-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200319122737.3063291-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 1:27 PM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+Hello,
 
-> This series of patches establishes the mapping of these two pins to
-> their GPIO equivalents and implements the code necessary to switch
-> between SFIO and GPIO modes when the kernel requests or releases the
-> GPIOs, respectively.
+This small series adds audio route for built-in microphone on NVIDIA Tegra
+boards that use WM8903 CODEC. In particular this is needed in order to unmute
+internal microphone on Acer A500 tablet device. I'm planning to send out the
+device tree for the A500 for 5.8, so will be nice to get the microphone
+sorted out. Please review and apply, thanks in advance.
 
-Is it possible to apply the gpio and pinctrl patches to
-each tree separately?
+Dmitry Osipenko (2):
+  dt-bindings: sound: tegra-wm8903: Document built-in microphone audio
+    source
+  ASoC: tegra: tegra_wm8903: Support DAPM events for built-in microphone
 
-Yours,
-Linus Walleij
+ .../sound/nvidia,tegra-audio-wm8903.txt        |  1 +
+ sound/soc/tegra/tegra_wm8903.c                 | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
+
+-- 
+2.25.1
