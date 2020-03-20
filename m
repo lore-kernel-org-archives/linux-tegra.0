@@ -1,37 +1,38 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
- 24bit and 32bit samples
-Date: Fri, 20 Mar 2020 17:18:24 +0300
-Message-ID: <e28e72e7-c4c0-952a-29b7-fb49462708f1@gmail.com>
-References: <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
- <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
- <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
- <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
- <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
- <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
- <20200128121315.GD4689@sirena.org.uk>
- <4b90efd2-5d0c-84df-961d-80cee288e0d4@nvidia.com>
- <586ea2b9-c204-2bd1-f8e2-875e0974e42d@nvidia.com>
- <fe002ec7-ae6e-f770-b82a-49237e0b29c6@codethink.co.uk>
- <20200130131039.GC6682@sirena.org.uk>
- <1df9cc13ea636502ac09191523ff0669@codethink.co.uk>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v3 6/6] i2c: drivers: Use generic definitions for bus
+ frequencies
+Date: Fri, 20 Mar 2020 17:23:25 +0300
+Message-ID: <44e50f6f-9674-60e6-9217-aeba96ef011d@gmail.com>
+References: <20200316154929.20886-1-andriy.shevchenko@linux.intel.com>
+ <20200316154929.20886-6-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1df9cc13ea636502ac09191523ff0669-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <20200316154929.20886-6-andriy.shevchenko@linux.intel.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-i2c-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-19.03.2020 18:32, Ben Dooks пишет:
-...
-> Hmm, I may have accidentally deleted those.
-> 
-> I will look to see if I can re-form the series and re-send in the next
-> couple of weeks. I've got no access currently to the machine and having
-> to deal with working from home for the next month or so.
+16.03.2020 18:49, Andy Shevchenko пишет:
+> Since we have generic definitions for bus frequencies, let's use them.
 
-Great, looking forward to the new version :)
+...
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index cbc2ad49043e..4c4d17ddc96b 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -123,10 +123,6 @@
+>  #define I2C_THIGH_SHIFT				8
+>  #define I2C_INTERFACE_TIMING_1			0x98
+>  
+> -#define I2C_STANDARD_MODE			100000
+> -#define I2C_FAST_MODE				400000
+> -#define I2C_FAST_PLUS_MODE			1000000
+...
+
+For NVIDIA Tegra I2C:
+
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
