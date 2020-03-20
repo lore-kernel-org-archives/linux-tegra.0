@@ -1,109 +1,95 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 2/2] dmaengine: tegra-apb: Improve DMA synchronization
-Date: Fri, 20 Mar 2020 00:23:21 +0300
-Message-ID: <20200319212321.3297-2-digetx@gmail.com>
-References: <20200319212321.3297-1-digetx@gmail.com>
+From: Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org>
+Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+Date: Thu, 19 Mar 2020 23:28:09 -0700
+Message-ID: <CALQxJuujCe7TsqkbfusPnzef2SApDBNPa7wj=U4ozDJWCoBHOg@mail.gmail.com>
+References: <20191221150402.13868-1-murphyt7@tcd.ie> <87blrzwcn8.fsf@intel.com>
+ <432d306c-fe9f-75b2-f0f7-27698f1467ad@arm.com> <87o8vzuv4i.fsf@intel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200319212321.3297-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <87o8vzuv4i.fsf-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Rodrigo Vivi <rodrigo.vivi-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Lu Baolu <baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding@gmail.>
 List-Id: linux-tegra@vger.kernel.org
 
-Boot CPU0 always handles DMA interrupts and under some rare circumstances
-it could stuck in uninterruptible state for a significant time (like in a
-case of KASAN + NFS root). In this case sibling CPU, which waits for DMA
-transfer completion, will get a DMA transfer timeout. In order to handle
-this rare condition, interrupt status needs to be polled until interrupt
-is handled.
+Any news on this? Is there anyone who wants to try and fix this possible bu=
+g?
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
-
-Changelog:
-
-v2: Added forgotten wake_up_all() to tegra_dma_terminate_all(), which
-    will wake up waiting threads after transfer's abortion.
-
- drivers/dma/tegra20-apb-dma.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 26f427e02369..733fda4e7e45 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -24,6 +24,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
-+#include <linux/wait.h>
- 
- #include "dmaengine.h"
- 
-@@ -202,6 +203,8 @@ struct tegra_dma_channel {
- 	unsigned int slave_id;
- 	struct dma_slave_config dma_sconfig;
- 	struct tegra_dma_channel_regs channel_reg;
-+
-+	struct wait_queue_head wq;
- };
- 
- /* tegra_dma: Tegra DMA specific information */
-@@ -682,6 +685,7 @@ static irqreturn_t tegra_dma_isr(int irq, void *dev_id)
- 		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
- 		tdc->isr_handler(tdc, false);
- 		tasklet_schedule(&tdc->tasklet);
-+		wake_up_all(&tdc->wq);
- 		spin_unlock(&tdc->lock);
- 		return IRQ_HANDLED;
- 	}
-@@ -783,6 +787,7 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
- 	tegra_dma_resume(tdc);
- 
- 	pm_runtime_put(tdc->tdma->dev);
-+	wake_up_all(&tdc->wq);
- 
- skip_dma_stop:
- 	tegra_dma_abort_all(tdc);
-@@ -798,10 +803,29 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
- 	return 0;
- }
- 
-+static bool tegra_dma_eoc_interrupt_deasserted(struct tegra_dma_channel *tdc)
-+{
-+	unsigned long flags;
-+	u32 status;
-+
-+	spin_lock_irqsave(&tdc->lock, flags);
-+	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-+	spin_unlock_irqrestore(&tdc->lock, flags);
-+
-+	return !(status & TEGRA_APBDMA_STATUS_ISE_EOC);
-+}
-+
- static void tegra_dma_synchronize(struct dma_chan *dc)
- {
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
- 
-+	/*
-+	 * CPU, which handles interrupt, could be busy in
-+	 * uninterruptible state, in this case sibling CPU
-+	 * should wait until interrupt is handled.
-+	 */
-+	wait_event(tdc->wq, tegra_dma_eoc_interrupt_deasserted(tdc));
-+
- 	tasklet_kill(&tdc->tasklet);
- }
- 
-@@ -1495,6 +1519,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		tasklet_init(&tdc->tasklet, tegra_dma_tasklet,
- 			     (unsigned long)tdc);
- 		spin_lock_init(&tdc->lock);
-+		init_waitqueue_head(&tdc->wq);
- 
- 		INIT_LIST_HEAD(&tdc->pending_sg_req);
- 		INIT_LIST_HEAD(&tdc->free_sg_req);
--- 
-2.25.1
+On Mon, 23 Dec 2019 at 03:41, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org> wro=
+te:
+>
+> On Mon, 23 Dec 2019, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org> wrote:
+> > On 2019-12-23 10:37 am, Jani Nikula wrote:
+> >> On Sat, 21 Dec 2019, Tom Murphy <murphyt7-/Zw1syy4LHg@public.gmane.org> wrote:
+> >>> This patchset converts the intel iommu driver to the dma-iommu api.
+> >>>
+> >>> While converting the driver I exposed a bug in the intel i915 driver
+> >>> which causes a huge amount of artifacts on the screen of my
+> >>> laptop. You can see a picture of it here:
+> >>> https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_22=
+5922.jpg
+> >>>
+> >>> This issue is most likely in the i915 driver and is most likely cause=
+d
+> >>> by the driver not respecting the return value of the
+> >>> dma_map_ops::map_sg function. You can see the driver ignoring the
+> >>> return value here:
+> >>> https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e4=
+95f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
+> >>>
+> >>> Previously this didn=E2=80=99t cause issues because the intel map_sg =
+always
+> >>> returned the same number of elements as the input scatter gather list
+> >>> but with the change to this dma-iommu api this is no longer the
+> >>> case. I wasn=E2=80=99t able to track the bug down to a specific line =
+of code
+> >>> unfortunately.
+> >>>
+> >>> Could someone from the intel team look at this?
+> >>
+> >> Let me get this straight. There is current API that on success always
+> >> returns the same number of elements as the input scatter gather
+> >> list. You propose to change the API so that this is no longer the case=
+?
+> >
+> > No, the API for dma_map_sg() has always been that it may return fewer
+> > DMA segments than nents - see Documentation/DMA-API.txt (and otherwise,
+> > the return value would surely be a simple success/fail condition).
+> > Relying on a particular implementation behaviour has never been strictl=
+y
+> > correct, even if it does happen to be a very common behaviour.
+> >
+> >> A quick check of various dma_map_sg() calls in the kernel seems to
+> >> indicate checking for 0 for errors and then ignoring the non-zero retu=
+rn
+> >> is a common pattern. Are you sure it's okay to make the change you're
+> >> proposing?
+> >
+> > Various code uses tricks like just iterating the mapped list until the
+> > first segment with zero sg_dma_len(). Others may well simply have bugs.
+>
+> Thanks for the clarification.
+>
+> BR,
+> Jani.
+>
+> >
+> > Robin.
+> >
+> >> Anyway, due to the time of year and all, I'd like to ask you to file a
+> >> bug against i915 at [1] so this is not forgotten, and please let's not
+> >> merge the changes before this is resolved.
+> >>
+> >>
+> >> Thanks,
+> >> Jani.
+> >>
+> >>
+> >> [1] https://gitlab.freedesktop.org/drm/intel/issues/new
+> >>
+> >>
+>
+> --
+> Jani Nikula, Intel Open Source Graphics Center
