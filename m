@@ -1,29 +1,37 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: boot: Obtain start of physical memory from DTB
-Date: Fri, 20 Mar 2020 16:47:38 +0300
-Message-ID: <4e362c26-84b1-2f94-3659-ab9120927a12@gmail.com>
-References: <CGME20200225112354eucas1p1300749b32c6809b6a22194c1a952a68c@eucas1p1.samsung.com>
- <20200127140716.15673-1-geert+renesas@glider.be>
- <d1b12473-5199-1cf6-25d1-a6ce79450e8e@samsung.com>
- <CAMuHMdUGu4eStpYp5W0SKJd8yrLLDTgF4__Jq_n+Z7SWtPM+Cg@mail.gmail.com>
- <90c006f2-8c13-2976-008f-37139ca49f37@gmail.com>
- <CAMuHMdVkhf+4CQwpf9tn3UfaMb=qoRRYS2XpwcgBMciTVmXjHA@mail.gmail.com>
- <75358399-c292-4e60-abdc-bd0729cf5c08@gmail.com>
- <CAMuHMdX9PH+WUvONz2C8D1fRrZXn5rEND-p_my2mYvoyxF_gWA@mail.gmail.com>
- <CAMuHMdVwxi57jMrVoH8P2ms0j9YrZvc1Zi+BVR3VDo8QJHaU-w@mail.gmail.com>
+Subject: Re: [alsa-devel] [Linux-kernel] [PATCH v5 2/7] ASoC: tegra: Allow
+ 24bit and 32bit samples
+Date: Fri, 20 Mar 2020 17:18:24 +0300
+Message-ID: <e28e72e7-c4c0-952a-29b7-fb49462708f1@gmail.com>
+References: <0e0cd260e39ad293edb881da1c565510@codethink.co.uk>
+ <507dcd5a-672b-61ac-aa7f-af5ff01accff@codethink.co.uk>
+ <a2744ea0-cf6d-d083-75e6-853746195001@gmail.com>
+ <28cafc56-095b-68c6-638d-270608a2983f@codethink.co.uk>
+ <3d8544be-af20-f382-85fd-32183365267b@nvidia.com>
+ <1b3c2af4-510e-306c-749a-efffc994b20a@gmail.com>
+ <20200128121315.GD4689@sirena.org.uk>
+ <4b90efd2-5d0c-84df-961d-80cee288e0d4@nvidia.com>
+ <586ea2b9-c204-2bd1-f8e2-875e0974e42d@nvidia.com>
+ <fe002ec7-ae6e-f770-b82a-49237e0b29c6@codethink.co.uk>
+ <20200130131039.GC6682@sirena.org.uk>
+ <1df9cc13ea636502ac09191523ff0669@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMuHMdVwxi57jMrVoH8P2ms0j9YrZvc1Zi+BVR3VDo8QJHaU-w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1df9cc13ea636502ac09191523ff0669-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Eric Miao <eric.miao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-20.03.2020 16:43, Geert Uytterhoeven пишет:
+19.03.2020 18:32, Ben Dooks пишет:
 ...
-> Will send v4 shortly.
+> Hmm, I may have accidentally deleted those.
+> 
+> I will look to see if I can re-form the series and re-send in the next
+> couple of weeks. I've got no access currently to the machine and having
+> to deal with working from home for the next month or so.
 
-Awesome, I'll test the v4.
+Great, looking forward to the new version :)
