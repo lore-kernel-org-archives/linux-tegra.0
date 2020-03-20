@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/7] dt-bindings: timer: Add bindings for NVIDIA Tegra186 timers
-Date: Fri, 20 Mar 2020 14:34:46 +0100
-Message-ID: <20200320133452.3705040-2-thierry.reding@gmail.com>
+Subject: [PATCH 3/7] arm64: tegra: Order nodes by unit-address on Tegra194
+Date: Fri, 20 Mar 2020 14:34:48 +0100
+Message-ID: <20200320133452.3705040-4-thierry.reding@gmail.com>
 References: <20200320133452.3705040-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,76 +14,96 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The NVIDIA Tegra186 SoC contains an IP block that provides a register
-interface for ten timers with a 29-bit counter that can generate one-
-shot, periodic or watchdog interrupts.
+The pin controller device tree node was accidentally added in the wrong
+place. Move it to the correct location to keep nodes ordered by unit-
+address.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/timer/nvidia,tegra186-timer.yaml | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 64 ++++++++++++------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
-new file mode 100644
-index 000000000000..f9b55041a5ca
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index f4ede86e32b4..019f66f03a97 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -45,6 +45,38 @@ gpio: gpio@2200000 {
+ 			gpio-controller;
+ 		};
+ 
++		pinmux: pinmux@2430000 {
++			compatible = "nvidia,tegra194-pinmux";
++			reg = <0x2430000 0x17000
++			       0xc300000 0x4000>;
 +
-+title: NVIDIA Tegra186 timers
++			status = "okay";
 +
-+maintainers:
-+  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+  - Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++			pex_rst_c5_out_state: pex_rst_c5_out {
++				pex_rst {
++					nvidia,pins = "pex_l5_rst_n_pgg1";
++					nvidia,schmitt = <TEGRA_PIN_DISABLE>;
++					nvidia,lpdr = <TEGRA_PIN_ENABLE>;
++					nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++					nvidia,io-high-voltage = <TEGRA_PIN_ENABLE>;
++					nvidia,tristate = <TEGRA_PIN_DISABLE>;
++					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				};
++			};
 +
-+description: |
-+  The Tegra186 timer provides ten 29-bit timer counters and one 32-bit TSC
-+  (timestamp counter). The timers run at either a fixed 1 MHz clock rate
-+  derived from the oscillator clock. Each timer can be programmed to raise
-+  one-shot, periodic, or watchdog interrupts.
++			clkreq_c5_bi_dir_state: clkreq_c5_bi_dir {
++				clkreq {
++					nvidia,pins = "pex_l5_clkreq_n_pgg0";
++					nvidia,schmitt = <TEGRA_PIN_DISABLE>;
++					nvidia,lpdr = <TEGRA_PIN_ENABLE>;
++					nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++					nvidia,io-high-voltage = <TEGRA_PIN_ENABLE>;
++					nvidia,tristate = <TEGRA_PIN_DISABLE>;
++					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				};
++			};
++		};
 +
-+properties:
-+  compatible:
-+    oneOf:
-+      - description: NVIDIA Tegra186
-+        items:
-+          - const: nvidia,tegra186-timer
-+
-+      - description: NVIDIA Tegra194
-+        items:
-+          - const: nvidia,tegra194-timer
-+          - const: nvidia,tegra186-timer
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 10
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    timer@3010000 {
-+        compatible = "nvidia,tegra186-timer";
-+        reg = <0x03010000 0x000e0000>;
-+        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+        status = "disabled";
-+    };
+ 		ethernet@2490000 {
+ 			compatible = "nvidia,tegra194-eqos",
+ 				     "nvidia,tegra186-eqos",
+@@ -139,38 +171,6 @@ agic: interrupt-controller@2a40000 {
+ 			};
+ 		};
+ 
+-		pinmux: pinmux@2430000 {
+-			compatible = "nvidia,tegra194-pinmux";
+-			reg = <0x2430000 0x17000
+-			       0xc300000 0x4000>;
+-
+-			status = "okay";
+-
+-			pex_rst_c5_out_state: pex_rst_c5_out {
+-				pex_rst {
+-					nvidia,pins = "pex_l5_rst_n_pgg1";
+-					nvidia,schmitt = <TEGRA_PIN_DISABLE>;
+-					nvidia,lpdr = <TEGRA_PIN_ENABLE>;
+-					nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+-					nvidia,io-high-voltage = <TEGRA_PIN_ENABLE>;
+-					nvidia,tristate = <TEGRA_PIN_DISABLE>;
+-					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+-				};
+-			};
+-
+-			clkreq_c5_bi_dir_state: clkreq_c5_bi_dir {
+-				clkreq {
+-					nvidia,pins = "pex_l5_clkreq_n_pgg0";
+-					nvidia,schmitt = <TEGRA_PIN_DISABLE>;
+-					nvidia,lpdr = <TEGRA_PIN_ENABLE>;
+-					nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+-					nvidia,io-high-voltage = <TEGRA_PIN_ENABLE>;
+-					nvidia,tristate = <TEGRA_PIN_DISABLE>;
+-					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+-				};
+-			};
+-		};
+-
+ 		mc: memory-controller@2c00000 {
+ 			compatible = "nvidia,tegra194-mc";
+ 			reg = <0x02c00000 0x100000>,
 -- 
 2.24.1
