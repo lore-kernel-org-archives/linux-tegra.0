@@ -1,59 +1,101 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 2/7] clocksource: Add Tegra186 timers support
-Date: Mon, 23 Mar 2020 19:10:52 +0300
-Message-ID: <23f9ba4f-0e6b-a946-a52d-eea1916a38ef@gmail.com>
-References: <20200320133452.3705040-1-thierry.reding@gmail.com>
- <20200320133452.3705040-3-thierry.reding@gmail.com>
- <48b2099c-dd83-d4dc-aab4-8c6f68a215cf@gmail.com>
- <da2a0501-664a-c5d0-7b13-174e5347eaf7@gmail.com>
- <20200323134221.GI3883508@ulmo>
- <b3859b98-02a3-d197-735c-2c9a9fbe597c@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 00/10] Introduce NVIDIA Tegra Partition Table
+Date: Mon, 23 Mar 2020 19:34:21 +0300
+Message-ID: <20200323163431.7678-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b3859b98-02a3-d197-735c-2c9a9fbe597c@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-23.03.2020 16:45, Dmitry Osipenko пишет:
-> 23.03.2020 16:42, Thierry Reding пишет:
->> On Fri, Mar 20, 2020 at 06:38:32PM +0300, Dmitry Osipenko wrote:
->>> 20.03.2020 18:11, Dmitry Osipenko пишет:
->>>> 20.03.2020 16:34, Thierry Reding пишет:
->>>>> From: Thierry Reding <treding@nvidia.com>
->>>>>
->>>>> Currently this only supports a single watchdog, which uses a timer in
->>>>> the background for countdown. Eventually the timers could be used for
->>>>> various time-keeping tasks, but by default the architected timer will
->>>>> already provide that functionality.
->>>>>
->>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>>>> ---
->>>>
->>>> ...
->>>>> +config TEGRA186_TIMER
->>>>> +	bool "NVIDIA Tegra186 timer driver"
->>>>
->>>> tristate?
->>>>
->>>>> +	depends on ARCH_TEGRA || COMPILE_TEST
->>>>
->>>> depends on WATCHDOG && WATCHDOG_CORE?
->>>
->>> Actually `select WATCHDOG_CORE` for the WATCHDOG_CORE.
->>
->> WATCHDOG_CORE is user-visible, so it's not safe to select it. Any reason
->> depends on WATCHDOG && WATCHDOG_CORE wouldn't work? I guess a dependency
->> on WATCHDOG_CORE would be enough because that itself already depends on
->> WATCHDOG.
-> 
-> It looks to that should be much better if you could factor out all the
-> watchdog functionality into the drivers/watchdog, like it's done in a
-> case of MC / SMMU drivers for example.
+Some NVIDIA Tegra devices have GPT entry at a wrong location and others may
+even not have it at all. So either a custom workaround for GPT parsing or
+TegraPT support is needed for those devices if we want to support them in
+upstream kernel. The former solution was already rejected [1], let's try
+the latter.
 
-Also, please see drivers/watchdog/Kconfig where each individual driver
-selects WATCHDOG_CORE on by as-needed basis.
+[1] https://patchwork.ozlabs.org/patch/1240809/
+
+Big thanks to everyone who helped with figuring out the TegraPT format!
+
+Changelog:
+
+v3: - Fixed "BUG: KASAN: slab-out-of-bounds in tegra_partition". Thanks to
+      Peter Geis for noticing the problem.
+
+    - The MMC boot partitions scanning is now opt-in. See this patch:
+
+        mmc: block: Support partition-table scanning on boot partitions
+
+    - The found MMC boot partitions won't be assigned to the MMC boot
+      block device ever due to the new GENHD_FL_PART_SCAN_ONCE flag.
+
+      This makes us to ensure that the old behavior of the MMC core is
+      preserved for a non-Tegra MMC-block users.
+
+    New patches in v3:
+
+        block: Introduce GENHD_FL_PART_SCAN_ONCE
+        mmc: sdhci-tegra: Enable boot partitions scanning on Tegra20 and Tegra30
+
+v2: - Addressed v1 review comments from Stephen Warren by using BIT for
+      locating BCT position in IRAM.
+
+    - Added more validations to the TegraPT parser: partition type is
+      verified, eMMC instance ID is verified.
+
+    - TegraPT parser now doesn't touch any devices other than eMMC.
+
+    - EKS (encrypted keys) partition is blacklisted now.
+
+    - Implemented eMMC boot partitions scanning. These new patches are
+      added in a result:
+
+        mmc: block: Add mmc_bdev_to_part_type() helper
+        mmc: block: Add mmc_bdev_to_area_type() helper
+        mmc: block: Add MMC_QUIRK_RESCAN_MAIN_BLKDEV
+        mmc: block: Enable partition-table scanning for boot partitions
+        partitions/tegra: Implement eMMC boot partitions scanning
+
+Dmitry Osipenko (10):
+  mmc: core: Add raw_boot_mult field to mmc_ext_csd
+  mmc: block: Add mmc_bdev_to_card() helper
+  partitions: Introduce NVIDIA Tegra Partition Table
+  block: Introduce GENHD_FL_PART_SCAN_ONCE
+  mmc: block: Add mmc_bdev_to_part_type() helper
+  mmc: block: Add mmc_bdev_to_area_type() helper
+  mmc: block: Add MMC_QUIRK_RESCAN_MAIN_BLKDEV
+  mmc: block: Support partition-table scanning on boot partitions
+  mmc: sdhci-tegra: Enable boot partitions scanning on Tegra20 and
+    Tegra30
+  partitions/tegra: Implement eMMC boot partitions scanning
+
+ arch/arm/mach-tegra/tegra.c    |  54 +++
+ block/genhd.c                  |   2 +-
+ block/partition-generic.c      |  13 +-
+ block/partitions/Kconfig       |  10 +
+ block/partitions/Makefile      |   1 +
+ block/partitions/check.c       |   4 +
+ block/partitions/tegra.c       | 612 +++++++++++++++++++++++++++++++++
+ block/partitions/tegra.h       |   8 +
+ drivers/mmc/core/block.c       | 104 ++++++
+ drivers/mmc/core/mmc.c         |   2 +
+ drivers/mmc/host/sdhci-tegra.c |  10 +-
+ include/linux/genhd.h          |  12 +
+ include/linux/mmc/blkdev.h     |  15 +
+ include/linux/mmc/card.h       |   2 +
+ include/linux/mmc/host.h       |   2 +
+ include/soc/tegra/bootdata.h   |  46 +++
+ include/soc/tegra/common.h     |   9 +
+ include/soc/tegra/partition.h  |  91 +++++
+ 18 files changed, 993 insertions(+), 4 deletions(-)
+ create mode 100644 block/partitions/tegra.c
+ create mode 100644 block/partitions/tegra.h
+ create mode 100644 include/linux/mmc/blkdev.h
+ create mode 100644 include/soc/tegra/bootdata.h
+ create mode 100644 include/soc/tegra/partition.h
+
+-- 
+2.25.1
