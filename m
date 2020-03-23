@@ -1,47 +1,52 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH V5 5/5] PCI: tegra: Add support for PCIe endpoint mode in
- Tegra194
-Date: Sun, 22 Mar 2020 22:45:50 +0530
-Message-ID: <7e6a9643-fcdb-fd80-8e84-2983975889a9@nvidia.com>
-References: <20200303181052.16134-1-vidyas@nvidia.com>
- <20200303181052.16134-6-vidyas@nvidia.com>
- <20200322145020.GA2040@roeck-us.net>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: Re: [PATCH] phy: tegra: should select USB_PHY
+Date: Mon, 23 Mar 2020 09:09:41 +0530
+Message-ID: <f720dc73-e6c3-ead7-6a45-6f2b54e0f4ff@nvidia.com>
+References: <1584545013-19859-1-git-send-email-clabbe@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200322145020.GA2040@roeck-us.net>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1584545013-19859-1-git-send-email-clabbe@baylibre.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com, gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Sender: stable-owner@vger.kernel.org
+To: Corentin Labbe <clabbe@baylibre.com>, jonathanh@nvidia.com, kishon@ti.com, thierry.reding@gmail.com, treding@nvidia.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stable <stable@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Reviewed-by: Nagarjuna Kristam <nkristam@nvidia.com>
 
-
-On 3/22/2020 8:20 PM, Guenter Roeck wrote:
+On 18-03-2020 20:53, Corentin Labbe wrote:
 > External email: Use caution opening links or attachments
 > 
 > 
-> On Tue, Mar 03, 2020 at 11:40:52PM +0530, Vidya Sagar wrote:
->> Add support for the endpoint mode of Synopsys DesignWare core based
->> dual mode PCIe controllers present in Tegra194 SoC.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> Acked-by: Thierry Reding <treding@nvidia.com>
+> I have hit the following build error:
+> armv7a-hardfloat-linux-gnueabi-ld: drivers/phy/tegra/xusb.o: in function `tegra_xusb_port_unregister':
+> xusb.c:(.text+0x2ac): undefined reference to `usb_remove_phy'
+> armv7a-hardfloat-linux-gnueabi-ld: drivers/phy/tegra/xusb.o: in function `tegra_xusb_setup_ports':
+> xusb.c:(.text+0xf30): undefined reference to `usb_add_phy_dev'
 > 
-> ERROR: modpost: "dw_pcie_ep_init" [drivers/pci/controller/dwc/pcie-tegra194.ko] undefined!
-> ERROR: modpost: "dw_pcie_ep_linkup" [drivers/pci/controller/dwc/pcie-tegra194.ko] undefined!
-> ERROR: modpost: "dw_pcie_ep_init_notify" [drivers/pci/controller/dwc/pcie-tegra194.ko] undefined!
-> ERROR: modpost: "dw_pcie_ep_init_complete" [drivers/pci/controller/dwc/pcie-tegra194.ko] undefined!
+> PHY_TEGRA_XUSB should select USB_PHY
 > 
-> Either the symbols must be exported, or the driver's Kconfig entry must be
-> bool, not tristate.
-Qiujun has already posted a patch to fix it @ 
-http://patchwork.ozlabs.org/patch/1258659/
-
-Thanks,
-Vidya Sagar
+> Fixes: 23babe30fb45d ("phy: tegra: xusb: Add usb-phy support")
+> Cc: stable <stable@vger.kernel.org>
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>   drivers/phy/tegra/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> Guenter
+> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+> index df07c4dea059..a208aca4ba7b 100644
+> --- a/drivers/phy/tegra/Kconfig
+> +++ b/drivers/phy/tegra/Kconfig
+> @@ -3,6 +3,7 @@ config PHY_TEGRA_XUSB
+>          tristate "NVIDIA Tegra XUSB pad controller driver"
+>          depends on ARCH_TEGRA
+>          select USB_CONN_GPIO
+> +       select USB_PHY
+>          help
+>            Choose this option if you have an NVIDIA Tegra SoC.
+> 
+> --
+> 2.24.1
 > 
