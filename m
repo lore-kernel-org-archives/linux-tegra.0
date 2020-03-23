@@ -1,164 +1,96 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: Print -EPROBE_DEFER error message at debug
- level
-Date: Mon, 23 Mar 2020 14:34:56 +0100
-Message-ID: <20200323133456.GG3883508@ulmo>
-References: <20200319131230.3216305-1-thierry.reding@gmail.com>
- <20200319180529.GB7433@e121166-lin.cambridge.arm.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/7] clocksource: Add Tegra186 timers support
+Date: Mon, 23 Mar 2020 14:38:35 +0100
+Message-ID: <20200323133835.GH3883508@ulmo>
+References: <20200320133452.3705040-1-thierry.reding@gmail.com>
+ <20200320133452.3705040-3-thierry.reding@gmail.com>
+ <df532fef-1533-9da7-d676-f4671746fde3@gmail.com>
+ <20200320150406.GA3706404@ulmo>
+ <5a559950-0497-b24f-6484-c2513375fe62@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VACxsDaSTfeluoxK"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="3ecMC0kzqsE2ddMN"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20200319180529.GB7433-LhTu/34fCX3ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: Andrew Murray <amurray-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <5a559950-0497-b24f-6484-c2513375fe62@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---VACxsDaSTfeluoxK
-Content-Type: text/plain; charset=us-ascii
+--3ecMC0kzqsE2ddMN
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 19, 2020 at 06:05:30PM +0000, Lorenzo Pieralisi wrote:
-> On Thu, Mar 19, 2020 at 02:12:30PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, Mar 20, 2020 at 06:23:35PM +0300, Dmitry Osipenko wrote:
+> 20.03.2020 18:04, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Fri, Mar 20, 2020 at 05:39:01PM +0300, Dmitry Osipenko wrote:
+> >> 20.03.2020 16:34, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> From: Thierry Reding <treding@nvidia.com>
+> >>>
+> >>> Currently this only supports a single watchdog, which uses a timer in
+> >>> the background for countdown. Eventually the timers could be used for
+> >>> various time-keeping tasks, but by default the architected timer will
+> >>> already provide that functionality.
+> >>>
+> >>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >>> ---
+> >>>  drivers/clocksource/Kconfig          |   8 +
+> >>>  drivers/clocksource/Makefile         |   1 +
+> >>>  drivers/clocksource/timer-tegra186.c | 377 +++++++++++++++++++++++++=
+++
+> >>>  3 files changed, 386 insertions(+)
+> >>>  create mode 100644 drivers/clocksource/timer-tegra186.c
+> >> Hello Thierry,
+> >>
+> >> Shouldn't this driver reside in drivers/watchdog/? Like it's done in a
+> >> case of the T30+ driver.
 > >=20
-> > Probe deferral is an expected error condition that will usually be
-> > recovered from. Print such error messages at debug level to make them
-> > available for diagnostic purposes when building with debugging enabled
-> > and hide them otherwise to not spam the kernel log with them.
+> > The hardware block that this binds to is primarily a time-keeping block
+> > that just so happens to also implement a watchdog. Moving this to
+> > drivers/watchdog would put us into an odd situation if we ever added
+> > code to also implement the time-keeping bits for this hardware.
 > >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-tegra194.c | 42 ++++++++++++++++++----
-> >  1 file changed, 35 insertions(+), 7 deletions(-)
+> > I also think that the way this is done on Tegra30 was a bad choice. The
+> > problem is that we now have two drivers (tegra_wdt.c and tegra-timer.c)
+> > that both access the same region of memory. This seems to be relatively
+> > safe to do on those chips because there's no overlap between the timer
+> > and the watchdog interfaces, but on Tegra186 and later the watchdog is
+> > actually using one of the timers, so we'd have to be extra careful how
+> > to coordinate between the two. It seems much easier to do that by having
+> > everything in the same driver and have that register multiple devices in
+> > the system.
 >=20
-> Hi Thierry,
+> Sounds like a watchdog on Tegra20, where one of the timer is shared with
+> a watchdog function and there are no other free timers. Well, yes, it's
+> not nice.
 >=20
-> what tree/branch is it based on ? I assume it may depend on some
-> patches queued in one of my branches so please let me know and
-> I will apply accordingly.
+> But, will you really ever need an additional clocksource on T186?
 
-Hi Lorenzo,
-
-This should apply on top of commit 5b645b7fade9 ("PCI: tegra: Add
-support for PCIe endpoint mode in Tegra194") which is currently in
-linux-next.
-
-Looking at your "pci" tree, that commit seems to be in a branch
-called pci/endpoint, though the equivalent commit there has a slightly
-different SHA:
-
-    f4746b0ccef9 ("PCI: tegra: Add support for PCIe endpoint mode in Tegra1=
-94")
-
-git range-diff shows that the only difference is that in the patch in
-linux-next there are a couple of additional exported symbols that are
-not in your pci/endpoint branch. That shouldn't be relevant, though,
-since this patch touches another area of the code, so applying this to
-your pci/endpoint branch should work.
+I don't know. It's possible that they will become useful at some point.
 
 Thierry
 
-> > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/c=
-ontroller/dwc/pcie-tegra194.c
-> > index 97d3f3db1020..e4870fa6ce9c 100644
-> > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > @@ -1159,17 +1159,31 @@ static int tegra_pcie_dw_parse_dt(struct tegra_=
-pcie_dw *pcie)
-> >  	/* Endpoint mode specific DT entries */
-> >  	pcie->pex_rst_gpiod =3D devm_gpiod_get(pcie->dev, "reset", GPIOD_IN);
-> >  	if (IS_ERR(pcie->pex_rst_gpiod)) {
-> > -		dev_err(pcie->dev, "Failed to get PERST GPIO: %ld\n",
-> > -			PTR_ERR(pcie->pex_rst_gpiod));
-> > -		return PTR_ERR(pcie->pex_rst_gpiod);
-> > +		int err =3D PTR_ERR(pcie->pex_rst_gpiod);
-> > +		const char *level =3D KERN_ERR;
-> > +
-> > +		if (err =3D=3D -EPROBE_DEFER)
-> > +			level =3D KERN_DEBUG;
-> > +
-> > +		dev_printk(level, pcie->dev,
-> > +			   dev_fmt("Failed to get PERST GPIO: %d\n"),
-> > +			   err);
-> > +		return err;
-> >  	}
-> > =20
-> >  	pcie->pex_refclk_sel_gpiod =3D devm_gpiod_get(pcie->dev,
-> >  						    "nvidia,refclk-select",
-> >  						    GPIOD_OUT_HIGH);
-> >  	if (IS_ERR(pcie->pex_refclk_sel_gpiod)) {
-> > -		dev_info(pcie->dev, "Failed to get REFCLK select GPIOs: %ld\n",
-> > -			 PTR_ERR(pcie->pex_refclk_sel_gpiod));
-> > +		int err =3D PTR_ERR(pcie->pex_refclk_sel_gpiod);
-> > +		const char *level =3D KERN_ERR;
-> > +
-> > +		if (err =3D=3D -EPROBE_DEFER)
-> > +			level =3D KERN_DEBUG;
-> > +
-> > +		dev_printk(level, pcie->dev,
-> > +			   dev_fmt("Failed to get REFCLK select GPIOs: %d\n"),
-> > +			   err);
-> >  		pcie->pex_refclk_sel_gpiod =3D NULL;
-> >  	}
-> > =20
-> > @@ -2058,13 +2072,27 @@ static int tegra_pcie_dw_probe(struct platform_=
-device *pdev)
-> > =20
-> >  	ret =3D tegra_pcie_dw_parse_dt(pcie);
-> >  	if (ret < 0) {
-> > -		dev_err(dev, "Failed to parse device tree: %d\n", ret);
-> > +		const char *level =3D KERN_ERR;
-> > +
-> > +		if (ret =3D=3D -EPROBE_DEFER)
-> > +			level =3D KERN_DEBUG;
-> > +
-> > +		dev_printk(level, dev,
-> > +			   dev_fmt("Failed to parse device tree: %d\n"),
-> > +			   ret);
-> >  		return ret;
-> >  	}
-> > =20
-> >  	ret =3D tegra_pcie_get_slot_regulators(pcie);
-> >  	if (ret < 0) {
-> > -		dev_err(dev, "Failed to get slot regulators: %d\n", ret);
-> > +		const char *level =3D KERN_ERR;
-> > +
-> > +		if (ret =3D=3D -EPROBE_DEFER)
-> > +			level =3D KERN_DEBUG;
-> > +
-> > +		dev_printk(level, dev,
-> > +			   dev_fmt("Failed to get slot regulators: %d\n"),
-> > +			   ret);
-> >  		return ret;
-> >  	}
-> > =20
-> > --=20
-> > 2.24.1
-> >=20
-
---VACxsDaSTfeluoxK
+--3ecMC0kzqsE2ddMN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl54uvwACgkQ3SOs138+
-s6FfuBAAlW4UiwzsUPmv3tieVAqkE491ZYfPFMfSyCGf9YiLGnPegKAJE+cCmCqF
-uKxCzLE7DfvWMCrelvaGJu4h5nxwg8IpKWNLvTQd23QHrn1iNmBgbEsbkg70IhiA
-B+loO7Msrcyx11BUhfPQQq6g1Ggxa3y61WHM81tYkTBdV2eZn3qtaHJer21fRv95
-C/v04JJg3MWIy+8mooPIbDC3P3OQLmmmy8CT/TD5q0/bRJ5Nw+SxqV35vZODjB5v
-TUTjlywZqeNzjVxwQz1CURU7Fi56G/N/hNry9SeynH0gTkBjxfuBHSUESORabavu
-7wwMpnfccpdR6fcUlF3eEg6NVBHmrathxGVRXH1XROjhY9SO4S2WQVR5b47ydCIY
-0pRY51UDIHs0necw+8SCPPxBcWlscxRM4BnIltQ5OkBSyngO+c0Bua4QTbp+aB6o
-JGYK0lkiJwtzGef+7hdF6dLDUTZ8CUinJNfaexxeshDdS9AQDpmAvNoEBWYeR1l0
-NHR5IBa5ucCKT05iA5w1ZecjzdqlD4NfzrFjeu5O7LnjrRBIEogeDAAbaVFPoS6A
-N6VKg5+UJ/warGxZ9SOFp/2zz9dVPpzPXsRDzNBlMcXuvujXkfWAIiHFJB5MpGmS
-PV/TbqaZAcPdU0N8E4RlwL+EIKOVxARtDGjmsxdv4UMNlA0/AOY=
-=ite/
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl54u9sACgkQ3SOs138+
+s6HhmxAAlcQJPxMadaHu5SXzYWXICljQrwPSVzxl0B1ALvIUVRQNswXyEcmtWBQ2
+jZ4hHyPoUuQoiFr5D5gfvYPigp39RNCxijn9kDL/QwzbLld270PZvpQIuosuhTrN
+737BcaHkhzy+sdlqf7HQC/OWPd5qwMegVL1If2UwvoyB8ENeHngTuH9PQClVXwsf
+IPeC1ewK5l0kJGnpwUNPURjCXT2vhbyG7fGWDFfkF7muqOWG8eVQLzZLfVTE47p8
+Jq81lMF/u+Bwk/GVtMDQfS4SIH97wBbuSJYb/qRiD/mO3ojdaBq6N33GfeBlhs0v
+zgFdQqFgh+hBQPf9S1kX7ViciQZAJDYxQ2pQw4Cq0MYxWur4g0Ke5UWWRWmWqmrp
+ab0DbqmsaMopG2tlKkcuFUucET4szrP0wTS3X2wqNqYp96LBECD9bvnPvjJo1Dro
+Yi9kB4GCGy+YQJSeMPnHPz7siZ+OIsMluEardSz65G37CHA/DbiZLi2v8NS4h37K
++qeOyILxXclDn54NpV13hIdvTBfDn/iysaVSBbWfNiy02UX+4a8jDe7tdkoHp4cg
+ZinamyX87pzkAOJYO1UgpbdjjGK93pClLZn5JLacJW9/QUIiag2LoeImZIM9a/hX
+YFThiI6Guo9EGewLfjuKu7sYdK5GL+LUtzHrZ6W0SfLLWSu60yA=
+=wIxO
 -----END PGP SIGNATURE-----
 
---VACxsDaSTfeluoxK--
+--3ecMC0kzqsE2ddMN--
