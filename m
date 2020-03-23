@@ -1,73 +1,30 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] pwm: tegra: Add support for Tegra194
-Date: Mon, 23 Mar 2020 11:36:07 +0000
-Message-ID: <1e40daf7-e5f8-7b79-cabe-8aceef6dda58@nvidia.com>
-References: <1583407653-30059-1-git-send-email-spatra@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 3/8] clk: tegra: Implement Tegra210 EMC clock
+Date: Mon, 23 Mar 2020 16:14:17 +0300
+Message-ID: <d57eaef9-65b9-23e5-e66b-9cea9df19fd5@gmail.com>
+References: <20200310152003.2945170-1-thierry.reding@gmail.com>
+ <20200310152003.2945170-4-thierry.reding@gmail.com>
+ <b5fb83d8-003c-d76b-9dac-7c8ef15f2ab1@gmail.com>
+ <20200323110531.GD3883508@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <1583407653-30059-1-git-send-email-spatra@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200323110531.GD3883508@ulmo>
 Content-Language: en-US
-Sender: linux-pwm-owner@vger.kernel.org
-To: Sandipan Patra <spatra@nvidia.com>, treding@nvidia.com, robh+dt@kernel.org, u.kleine-koenig@pengutronix.de
-Cc: bbasu@nvidia.com, ldewangan@nvidia.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 05/03/2020 11:27, Sandipan Patra wrote:
-> Tegra194 has multiple PWM controllers with each having only one output.
+23.03.2020 14:05, Thierry Reding пишет:
+...
+>>> +static const struct dev_pm_ops tegra210_emc_pm_ops = {
+>>> +	SET_SYSTEM_SLEEP_PM_OPS(tegra210_emc_suspend, tegra210_emc_resume)
+>>> +};
+>> What about to use the default suspend/resume level?
 > 
-> Also the maxmimum frequency is higher than earlier SoCs.
-> 
-> Add support for Tegra194 and specify the number of PWM outputs and
-> maximum supported frequency using device tree match data.
-> 
-> Signed-off-by: Sandipan Patra <spatra@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 1 +
->  drivers/pwm/pwm-tegra.c                                      | 6 ++++++
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> index 0a69ead..74c41e3 100644
-> --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> @@ -9,6 +9,7 @@ Required properties:
->    - "nvidia,tegra132-pwm", "nvidia,tegra20-pwm": for Tegra132
->    - "nvidia,tegra210-pwm", "nvidia,tegra20-pwm": for Tegra210
->    - "nvidia,tegra186-pwm": for Tegra186
-> +  - "nvidia,tegra194-pwm": for Tegra194
->  - reg: physical base address and length of the controller's registers
->  - #pwm-cells: should be 2. See pwm.yaml in this directory for a description of
->    the cells format.
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> index aa12fb3..d26ed8f 100644
-> --- a/drivers/pwm/pwm-tegra.c
-> +++ b/drivers/pwm/pwm-tegra.c
-> @@ -282,9 +282,15 @@ static const struct tegra_pwm_soc tegra186_pwm_soc = {
->  	.max_frequency = 102000000UL,
->  };
->  
-> +static const struct tegra_pwm_soc tegra194_pwm_soc = {
-> +	.num_channels = 1,
-> +	.max_frequency = 408000000UL,
-> +};
-> +
->  static const struct of_device_id tegra_pwm_of_match[] = {
->  	{ .compatible = "nvidia,tegra20-pwm", .data = &tegra20_pwm_soc },
->  	{ .compatible = "nvidia,tegra186-pwm", .data = &tegra186_pwm_soc },
-> +	{ .compatible = "nvidia,tegra194-pwm", .data = &tegra194_pwm_soc },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
-> 
+> I don't understand. This is already the default suspend/resume level,
+> isn't it?
 
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+Please use SIMPLE_DEV_PM_OPS, for clarity.
