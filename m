@@ -1,52 +1,29 @@
-From: Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: Re: [PATCH] phy: tegra: should select USB_PHY
-Date: Mon, 23 Mar 2020 09:09:41 +0530
-Message-ID: <f720dc73-e6c3-ead7-6a45-6f2b54e0f4ff@nvidia.com>
-References: <1584545013-19859-1-git-send-email-clabbe@baylibre.com>
+From: Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH -next] dmaengine: tegra-apb: mark PM functions as
+ __maybe_unused
+Date: Mon, 23 Mar 2020 12:00:14 +0530
+Message-ID: <20200323063014.GG72691@vkoul-mobl>
+References: <20200320071337.59756-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1584545013-19859-1-git-send-email-clabbe@baylibre.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Corentin Labbe <clabbe@baylibre.com>, jonathanh@nvidia.com, kishon@ti.com, thierry.reding@gmail.com, treding@nvidia.com
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200320071337.59756-1-yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Cc: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Reviewed-by: Nagarjuna Kristam <nkristam@nvidia.com>
+On 20-03-20, 15:13, YueHaibing wrote:
+> When CONFIG_PM is disabled, gcc warning this:
+> 
+> drivers/dma/tegra20-apb-dma.c:1587:12: warning: 'tegra_dma_runtime_resume' defined but not used [-Wunused-function]
+> drivers/dma/tegra20-apb-dma.c:1578:12: warning: 'tegra_dma_runtime_suspend' defined but not used [-Wunused-function]
+> 
+> Make it as __maybe_unused to fix the warnings,
+> also remove unneeded function declarations.
 
-On 18-03-2020 20:53, Corentin Labbe wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> I have hit the following build error:
-> armv7a-hardfloat-linux-gnueabi-ld: drivers/phy/tegra/xusb.o: in function `tegra_xusb_port_unregister':
-> xusb.c:(.text+0x2ac): undefined reference to `usb_remove_phy'
-> armv7a-hardfloat-linux-gnueabi-ld: drivers/phy/tegra/xusb.o: in function `tegra_xusb_setup_ports':
-> xusb.c:(.text+0xf30): undefined reference to `usb_add_phy_dev'
-> 
-> PHY_TEGRA_XUSB should select USB_PHY
-> 
-> Fixes: 23babe30fb45d ("phy: tegra: xusb: Add usb-phy support")
-> Cc: stable <stable@vger.kernel.org>
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->   drivers/phy/tegra/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
-> index df07c4dea059..a208aca4ba7b 100644
-> --- a/drivers/phy/tegra/Kconfig
-> +++ b/drivers/phy/tegra/Kconfig
-> @@ -3,6 +3,7 @@ config PHY_TEGRA_XUSB
->          tristate "NVIDIA Tegra XUSB pad controller driver"
->          depends on ARCH_TEGRA
->          select USB_CONN_GPIO
-> +       select USB_PHY
->          help
->            Choose this option if you have an NVIDIA Tegra SoC.
-> 
-> --
-> 2.24.1
-> 
+Applied, thanks
+
+-- 
+~Vinod
