@@ -1,83 +1,86 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 02/10] mmc: block: Add mmc_bdev_to_card() helper
-Date: Mon, 23 Mar 2020 19:34:23 +0300
-Message-ID: <20200323163431.7678-3-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 08/10] mmc: block: Support partition-table scanning on boot partitions
+Date: Mon, 23 Mar 2020 19:34:29 +0300
+Message-ID: <20200323163431.7678-9-digetx@gmail.com>
 References: <20200323163431.7678-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200323163431.7678-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200323163431.7678-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA Tegra Partition Table takes into account MMC card's BOOT_SIZE_MULT
-parameter, and thus, the partition parser needs to retrieve that EXT_CSD
-value from the block device. There are also some other parts of struct
-mmc_card that are needed for the partition parser in order to calculate
-the eMMC offset and verify different things. This patch introduces new
-helper which takes block device for the input argument and returns the
-corresponding MMC card.
+Some NVIDIA Tegra devices store partition table on a boot eMMC partition,
+and thus, boot partitions need to be scanned. This patch enables scanning
+of the boot MMC partitions, but only if MMC host allows to do that. This
+patch adds new scan_mmc_boot_partitions field to the struct MMC host,
+which should be set to true by the platform-specific SDHCI drivers if
+MMC boot partitions scanning is desired.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/mmc/core/block.c   | 15 +++++++++++++++
- include/linux/mmc/blkdev.h | 13 +++++++++++++
+ drivers/mmc/core/block.c | 26 ++++++++++++++++++++++++++
+ include/linux/mmc/host.h |  2 ++
  2 files changed, 28 insertions(+)
- create mode 100644 include/linux/mmc/blkdev.h
 
 diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 7634894df853..36d84a8e182c 100644
+index 2c2bec114fd6..d22498bd9968 100644
 --- a/drivers/mmc/core/block.c
 +++ b/drivers/mmc/core/block.c
-@@ -40,6 +40,7 @@
- #include <linux/debugfs.h>
- 
- #include <linux/mmc/ioctl.h>
-+#include <linux/mmc/blkdev.h>
- #include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
- #include <linux/mmc/mmc.h>
-@@ -306,6 +307,20 @@ static ssize_t force_ro_store(struct device *dev, struct device_attribute *attr,
- 	return ret;
+@@ -2334,6 +2334,22 @@ static inline int mmc_blk_readonly(struct mmc_card *card)
+ 	       !(card->csd.cmdclass & CCC_BLOCK_WRITE);
  }
  
-+struct mmc_card *mmc_bdev_to_card(struct block_device *bdev)
++static bool mmc_blk_boot_part_scan(struct mmc_blk_data *md,
++				   struct mmc_card *card)
 +{
-+	struct mmc_blk_data *md;
++	if (!(md->area_type & MMC_BLK_DATA_AREA_BOOT))
++		return false;
 +
-+	if (bdev->bd_disk->major != MMC_BLOCK_MAJOR)
-+		return NULL;
++	/*
++	 * Platform driver shall explicitly allow the boot partitions
++	 * scanning because this is a non-standard behavior.
++	 */
++	if (!card->host->scan_mmc_boot_partitions)
++		return false;
 +
-+	md = mmc_blk_get(bdev->bd_disk);
-+	if (!md)
-+		return NULL;
-+
-+	return md->queue.card;
++	return true;
 +}
 +
- static int mmc_blk_open(struct block_device *bdev, fmode_t mode)
- {
- 	struct mmc_blk_data *md = mmc_blk_get(bdev->bd_disk);
-diff --git a/include/linux/mmc/blkdev.h b/include/linux/mmc/blkdev.h
-new file mode 100644
-index 000000000000..67608c58de70
---- /dev/null
-+++ b/include/linux/mmc/blkdev.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ *  linux/include/linux/mmc/blkdev.h
-+ */
-+#ifndef LINUX_MMC_BLOCK_DEVICE_H
-+#define LINUX_MMC_BLOCK_DEVICE_H
+ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
+ 					      struct device *parent,
+ 					      sector_t size,
+@@ -2414,6 +2430,16 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
+ 		md->disk->flags |= GENHD_FL_NO_PART_SCAN
+ 				   | GENHD_FL_SUPPRESS_PARTITION_INFO;
+ 
++	/*
++	 * Some embedded devices store FS partition table on a boot eMMC
++	 * partition (NVIDIA Tegra for example).  In this case partition
++	 * scanner will scan the boot partitions, but the found partitions
++	 * won't be assigned to the boot block device.  It's up to a
++	 * partition scanner what to do with the found partitions.
++	 */
++	if (mmc_blk_boot_part_scan(md, card))
++		md->disk->flags |= GENHD_FL_PART_SCAN_ONCE;
 +
-+struct block_device;
-+struct mmc_card;
+ 	/*
+ 	 * As discussed on lkml, GENHD_FL_REMOVABLE should:
+ 	 *
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index c318fb5b6a94..e3d47c7e9c48 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -468,6 +468,8 @@ struct mmc_host {
+ 	/* Host Software Queue support */
+ 	bool			hsq_enabled;
+ 
++	bool			scan_mmc_boot_partitions;
 +
-+struct mmc_card *mmc_bdev_to_card(struct block_device *bdev);
-+
-+#endif /* LINUX_MMC_BLOCK_DEVICE_H */
+ 	unsigned long		private[] ____cacheline_aligned;
+ };
+ 
 -- 
 2.25.1
