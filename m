@@ -1,227 +1,67 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 10/10] partitions/tegra: Implement eMMC boot partitions scanning
-Date: Mon, 23 Mar 2020 19:34:31 +0300
-Message-ID: <20200323163431.7678-11-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3 09/10] mmc: sdhci-tegra: Enable boot partitions scanning on Tegra20 and Tegra30
+Date: Mon, 23 Mar 2020 19:34:30 +0300
+Message-ID: <20200323163431.7678-10-digetx@gmail.com>
 References: <20200323163431.7678-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200323163431.7678-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200323163431.7678-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some NVIDIA Tegra devices store partition table on eMMC boot partition.
-In order to support this case, the tegra-partition parser will read out
-partition table from a boot partition and stash it for the main eMMC
-partition.
+Consumer-grade devices usually have a custom NVIDIA Tegra Partition table
+used by built-in eMMC storage. On some devices partition table resides on
+a boot eMMC partition, and thus, the boot partitions need to be scanned.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- block/partitions/tegra.c | 122 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 111 insertions(+), 11 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/block/partitions/tegra.c b/block/partitions/tegra.c
-index 4cb8064bf458..09c300330f81 100644
---- a/block/partitions/tegra.c
-+++ b/block/partitions/tegra.c
-@@ -25,6 +25,7 @@
- #include <linux/mmc/blkdev.h>
- #include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
-+#include <linux/mmc/mmc.h>
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 3e2c5101291d..364572eaed8a 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -100,6 +100,7 @@
+ #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
+ #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
+ #define NVQUIRK_CQHCI_DCMD_R1B_CMD_TIMING		BIT(9)
++#define NVQUIRK_SCAN_BOOT_PARTITIONS			BIT(10)
  
- #include <soc/tegra/common.h>
- #include <soc/tegra/partition.h>
-@@ -50,7 +51,10 @@
- struct tegra_partition_table_parser {
- 	struct tegra_partition_table *pt;
- 	struct parsed_partitions *state;
-+	struct mmc_card *card;
- 	bool pt_entry_checked;
-+	unsigned int boot_id;
-+	bool snapshot_mode;
- 	sector_t sector;
- 	int boot_offset;
- 	u32 dev_instance;
-@@ -67,6 +71,7 @@ struct tegra_partition_type {
- 	char *name;
+ /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+ #define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
+@@ -1304,7 +1305,8 @@ static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
+ 	.pdata = &sdhci_tegra20_pdata,
+ 	.dma_mask = DMA_BIT_MASK(32),
+ 	.nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
+-		    NVQUIRK_ENABLE_BLOCK_GAP_DET,
++		    NVQUIRK_ENABLE_BLOCK_GAP_DET |
++		    NVQUIRK_SCAN_BOOT_PARTITIONS,
  };
  
-+static struct tegra_partition_table *scratch_pt;
- static sector_t tegra_pt_sector_address;
- static sector_t tegra_pt_sectors_num;
+ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+@@ -1333,7 +1335,8 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+ 	.nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
+ 		    NVQUIRK_ENABLE_SDR50 |
+ 		    NVQUIRK_ENABLE_SDR104 |
+-		    NVQUIRK_HAS_PADCALIB,
++		    NVQUIRK_HAS_PADCALIB |
++		    NVQUIRK_SCAN_BOOT_PARTITIONS,
+ };
  
-@@ -224,6 +229,10 @@ static bool tegra_partition_valid(struct tegra_partition_table_parser *ptp,
- 		return false;
- 	}
+ static const struct sdhci_ops tegra114_sdhci_ops = {
+@@ -1586,6 +1589,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	/* HW busy detection is supported, but R1B responses are required. */
+ 	host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
  
-+	/* size will be validated when ptp->snapshot_mode=false */
-+	if (ptp->snapshot_mode && size)
-+		return true;
++	if (tegra_host->soc_data->nvquirks & NVQUIRK_SCAN_BOOT_PARTITIONS)
++		host->mmc->scan_mmc_boot_partitions = true;
 +
- 	sect_end = get_capacity(ptp->state->bdev->bd_disk);
+ 	tegra_sdhci_parse_dt(host);
  
- 	/* eMMC boot partitions are below ptp->boot_offset */
-@@ -254,6 +263,9 @@ static bool tegra_partitions_parse(struct tegra_partition_table_parser *ptp,
- 	sector_t sector, size;
- 	int i, slot = 1;
- 
-+	if (ptp->snapshot_mode && !check_only)
-+		return true;
-+
- 	ptp->pt_entry_checked = false;
- 
- 	for (i = 0; i < pt->secure.num_partitions; i++) {
-@@ -369,6 +381,7 @@ tegra_partition_table_emmc_boot_offset(struct tegra_partition_table_parser *ptp)
- {
- 	struct mmc_card *card = mmc_bdev_to_card(ptp->state->bdev);
- 	const struct of_device_id *matched;
-+	int part_type, area_type;
- 	const u32 *sdhci_bases;
- 	u32 sdhci_base;
- 	unsigned int i;
-@@ -404,6 +417,32 @@ tegra_partition_table_emmc_boot_offset(struct tegra_partition_table_parser *ptp)
- 	ptp->dev_id       = TEGRA_PT_SDHCI_DEVICE_ID;
- 	ptp->dev_instance = i;
- 
-+	area_type = mmc_bdev_to_area_type(ptp->state->bdev);
-+
-+	if (WARN_ON(area_type < 0))
-+		return -1;
-+
-+	switch (area_type) {
-+	case MMC_BLK_DATA_AREA_BOOT:
-+		part_type = mmc_bdev_to_part_type(ptp->state->bdev);
-+
-+		if (WARN_ON(part_type < 0))
-+			return -1;
-+
-+		ptp->boot_id = part_type - EXT_CSD_PART_CONFIG_ACC_BOOT0;
-+		ptp->snapshot_mode = true;
-+		break;
-+
-+	case MMC_BLK_DATA_AREA_MAIN:
-+		break;
-+
-+	default:
-+		TEGRA_PT_ERR(ptp, "unexpected area_type: %u\n", area_type);
-+		return -1;
-+	}
-+
-+	ptp->card = card;
-+
- 	/*
- 	 * eMMC storage has two special boot partitions in addition to the
- 	 * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1->main
-@@ -427,6 +466,9 @@ static int tegra_read_partition_table(struct tegra_partition_table_parser *ptp)
- 	Sector sect;
- 	void *part;
- 
-+	if (scratch_pt)
-+		return 1;
-+
- 	for (i = 0; i < ARRAY_SIZE(ptu->pt_parts); i++) {
- 		/*
- 		 * Partition table takes at maximum 4096 bytes, but
-@@ -462,18 +504,64 @@ int tegra_partition(struct parsed_partitions *state)
- 	if (ptp.boot_offset < 0)
- 		return 0;
- 
--	if (tegra_pt_sector_address < ptp.boot_offset) {
--		TEGRA_PT_INFO(&ptp,
--			      "scanning eMMC boot partitions unimplemented\n");
--		return 0;
--	}
-+	/*
-+	 * Some devices store partition table on boot MMC partition.
-+	 * In this case a "snapshot mode" will be used, which will
-+	 * only read->check->store partition table, the stored table
-+	 * will be used for the main MMC partition later on.
-+	 */
-+	if (ptp.snapshot_mode) {
-+		sector_t boot_start, boot_end, boot_size;
- 
--	ptp.pt = kmalloc(TEGRA_PT_LOGICAL_SECTOR_SIZE, GFP_KERNEL);
--	if (!ptp.pt)
--		return 0;
-+		/* partition is already snapshoted, no need to proceed */
-+		if (scratch_pt)
-+			return 0;
-+
-+		boot_size  = ptp.boot_offset / MMC_NUM_BOOT_PARTITION;
-+		boot_start = ptp.boot_id * boot_size;
-+		boot_end   = boot_start + boot_size;
- 
--	ptp.sector = tegra_pt_sector_address - ptp.boot_offset;
--	end_sector = ptp.sector + tegra_pt_sectors_num;
-+		/*
-+		 * Bail out if partition table isn't located here, at this MMC
-+		 * partition.
-+		 */
-+		if (tegra_pt_sector_address < boot_start ||
-+		    tegra_pt_sector_address >= boot_end)
-+			return 0;
-+
-+		ptp.boot_offset = boot_start;
-+
-+		/*
-+		 * Note that mmc_blk_probe() always registers boot partitions
-+		 * after the main and we rely on this feature, otherwise
-+		 * scratch_pt won't be released (although this is not a big
-+		 * deal).
-+		 */
-+		ptp.pt = kmalloc(TEGRA_PT_LOGICAL_SECTOR_SIZE, GFP_KERNEL);
-+		if (!ptp.pt)
-+			return 0;
-+
-+		ptp.sector = tegra_pt_sector_address - ptp.boot_offset;
-+		end_sector = ptp.sector + tegra_pt_sectors_num;
-+
-+	} else if (scratch_pt) {
-+		TEGRA_PT_INFO(&ptp, "using stashed partition table\n");
-+
-+		ptp.pt     = scratch_pt;
-+		ptp.sector = 0;
-+		end_sector = 1;
-+
-+	} else {
-+		if (tegra_pt_sector_address < ptp.boot_offset)
-+			return 0;
-+
-+		ptp.pt = kmalloc(TEGRA_PT_LOGICAL_SECTOR_SIZE, GFP_KERNEL);
-+		if (!ptp.pt)
-+			return 0;
-+
-+		ptp.sector = tegra_pt_sector_address - ptp.boot_offset;
-+		end_sector = ptp.sector + tegra_pt_sectors_num;
-+	}
- 
- 	/*
- 	 * Partition table is duplicated till the end_sector.
-@@ -503,9 +591,21 @@ int tegra_partition(struct parsed_partitions *state)
- 		ptp.sector += TEGRA_PT_SECTOR_SZ;
- 	}
- 
--	if (ret == 1)
-+	if (ret == 1) {
-+		if (ptp.snapshot_mode) {
-+			ptp.card->quirks |= MMC_QUIRK_RESCAN_MAIN_BLKDEV;
-+			scratch_pt = ptp.pt;
-+
-+			strlcat(state->pp_buf,
-+				" stashed tegra-partition table\n", PAGE_SIZE);
-+
-+			return ret;
-+		}
-+
- 		strlcat(state->pp_buf, "\n", PAGE_SIZE);
-+	}
- 
-+	scratch_pt = NULL;
- 	kfree(ptp.pt);
- 
- 	return ret;
+ 	tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
 -- 
 2.25.1
