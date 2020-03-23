@@ -1,37 +1,33 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v5 2/9] arm64: tegra: Add reset-cells to mc
-Date: Mon, 23 Mar 2020 10:52:28 -0700
-Message-ID: <1584985955-19101-3-git-send-email-skomatineni@nvidia.com>
-References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH v3 00/10] Introduce NVIDIA Tegra Partition Table
+Date: Mon, 23 Mar 2020 19:07:50 +0100
+Message-ID: <20200323180750.GA30585@qmqm.qmqm.pl>
+References: <20200323163431.7678-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <20200323163431.7678-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, helen.koike@collabora.com
-Cc: digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>, linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 device tree is missing reset-cells property for mc node.
+On Mon, Mar 23, 2020 at 07:34:21PM +0300, Dmitry Osipenko wrote:
+> Some NVIDIA Tegra devices have GPT entry at a wrong location and others may
+> even not have it at all. So either a custom workaround for GPT parsing or
+> TegraPT support is needed for those devices if we want to support them in
+> upstream kernel. The former solution was already rejected [1], let's try
+> the latter.
+[...]
 
-This patch fixes it.
+Hi Dmitry,
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+This amusing use of whole-device offsets in the TegraPT makes it take
+a lot of hacks to support it. Have you considered to first join the MMC
+hardware partitions using DM and its linear target and only then processing
+the partition table dividing just the merged device?
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index d0eff92..5b1dfd8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -894,6 +894,7 @@
- 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
- 
- 		#iommu-cells = <1>;
-+		#reset-cells = <1>;
- 	};
- 
- 	sata@70020000 {
--- 
-2.7.4
+Best Regards,
+Micha³ Miros³aw
