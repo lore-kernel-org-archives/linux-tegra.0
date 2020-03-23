@@ -1,51 +1,59 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1 0/2] Support built-in Mic on Tegra boards that use
- WM8903
-Date: Mon, 23 Mar 2020 19:05:23 +0300
-Message-ID: <8b7a8eb3-98ed-71cb-5bd7-9c784ec24d68@gmail.com>
-References: <20200320205504.30466-1-digetx@gmail.com>
- <c27c2087-14cf-614d-a8c0-05072a54f24b@wwwdotorg.org>
- <da88ddff-e665-8cee-6f03-1a396602b076@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 2/7] clocksource: Add Tegra186 timers support
+Date: Mon, 23 Mar 2020 19:10:52 +0300
+Message-ID: <23f9ba4f-0e6b-a946-a52d-eea1916a38ef@gmail.com>
+References: <20200320133452.3705040-1-thierry.reding@gmail.com>
+ <20200320133452.3705040-3-thierry.reding@gmail.com>
+ <48b2099c-dd83-d4dc-aab4-8c6f68a215cf@gmail.com>
+ <da2a0501-664a-c5d0-7b13-174e5347eaf7@gmail.com>
+ <20200323134221.GI3883508@ulmo>
+ <b3859b98-02a3-d197-735c-2c9a9fbe597c@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <da88ddff-e665-8cee-6f03-1a396602b076-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <b3859b98-02a3-d197-735c-2c9a9fbe597c@gmail.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-23.03.2020 18:59, Jon Hunter пишет:
-> 
-> 
-> On 20/03/2020 22:30, Stephen Warren wrote:
->> On 3/20/20 2:55 PM, Dmitry Osipenko wrote:
->>> Hello,
+23.03.2020 16:45, Dmitry Osipenko пишет:
+> 23.03.2020 16:42, Thierry Reding пишет:
+>> On Fri, Mar 20, 2020 at 06:38:32PM +0300, Dmitry Osipenko wrote:
+>>> 20.03.2020 18:11, Dmitry Osipenko пишет:
+>>>> 20.03.2020 16:34, Thierry Reding пишет:
+>>>>> From: Thierry Reding <treding@nvidia.com>
+>>>>>
+>>>>> Currently this only supports a single watchdog, which uses a timer in
+>>>>> the background for countdown. Eventually the timers could be used for
+>>>>> various time-keeping tasks, but by default the architected timer will
+>>>>> already provide that functionality.
+>>>>>
+>>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>>>> ---
+>>>>
+>>>> ...
+>>>>> +config TEGRA186_TIMER
+>>>>> +	bool "NVIDIA Tegra186 timer driver"
+>>>>
+>>>> tristate?
+>>>>
+>>>>> +	depends on ARCH_TEGRA || COMPILE_TEST
+>>>>
+>>>> depends on WATCHDOG && WATCHDOG_CORE?
 >>>
->>> This small series adds audio route for built-in microphone on NVIDIA Tegra
->>> boards that use WM8903 CODEC. In particular this is needed in order to unmute
->>> internal microphone on Acer A500 tablet device. I'm planning to send out the
->>> device tree for the A500 for 5.8, so will be nice to get the microphone
->>> sorted out. Please review and apply, thanks in advance.
+>>> Actually `select WATCHDOG_CORE` for the WATCHDOG_CORE.
 >>
->> It's been a long time since I looked at this code, but the series looks
->> plausible,
->> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> (I wonder why machine->gpio_int_mic_en was already parse but never used!)
+>> WATCHDOG_CORE is user-visible, so it's not safe to select it. Any reason
+>> depends on WATCHDOG && WATCHDOG_CORE wouldn't work? I guess a dependency
+>> on WATCHDOG_CORE would be enough because that itself already depends on
+>> WATCHDOG.
 > 
-> Looking at the ventana schematics, it appears that the internal-mic
-> signals was connected to a header and not an actual mic, so maybe we
-> never had a proper internal-mic on any board but allowed one to be
-> connected.
+> It looks to that should be much better if you could factor out all the
+> watchdog functionality into the drivers/watchdog, like it's done in a
+> case of MC / SMMU drivers for example.
 
-I guess cardhu may have a mic, judging by downstream kernel sources (I
-don't have cardhu schematics).
-
-> Anyway, looks good to me as well.
-> 
-> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Thanks
+Also, please see drivers/watchdog/Kconfig where each individual driver
+selects WATCHDOG_CORE on by as-needed basis.
