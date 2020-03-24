@@ -1,47 +1,33 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 2/2] i2c: tegra: Synchronize DMA before termination
-Date: Tue, 24 Mar 2020 22:12:17 +0300
-Message-ID: <20200324191217.1829-3-digetx@gmail.com>
-References: <20200324191217.1829-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH v5 9/9] arm64: tegra: Add Tegra VI CSI support in
+ device tree
+Date: Tue, 24 Mar 2020 22:19:02 +0300
+Message-ID: <672819ea-01d3-2eca-8bb7-84ffd64256d4@gmail.com>
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+ <1584985955-19101-10-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200324191217.1829-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1584985955-19101-10-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-DMA transfer could be completed, but CPU (which handles DMA interrupt)
-may get too busy and can't handle the interrupt in a timely manner,
-despite of DMA IRQ being raised. In this case the DMA state needs to
-synchronized before terminating DMA transfer in order not to miss the
-DMA transfer completion.
+23.03.2020 20:52, Sowjanya Komatineni пишет:
+...
+> +			pd_venc: venc {
+> +				clocks = <&tegra_car TEGRA210_CLK_VI>,
+> +					 <&tegra_car TEGRA210_CLK_CSI>;
+> +				resets = <&mc TEGRA210_MC_RESET_VI>,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+The MC resetting should be needed only for a hardware hot-resetting. It
+should be wrong to add it to the power domain.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 0daa863fb26f..0c6dac770fc3 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1223,6 +1223,15 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		time_left = tegra_i2c_wait_completion_timeout(
- 				i2c_dev, &i2c_dev->dma_complete, xfer_time);
- 
-+		/*
-+		 * Synchronize DMA first, since dmaengine_terminate_sync()
-+		 * performs synchronization after the transfer's termination
-+		 * and we want to get a completion if transfer succeeded.
-+		 */
-+		dmaengine_synchronize(i2c_dev->msg_read ?
-+				      i2c_dev->rx_dma_chan :
-+				      i2c_dev->tx_dma_chan);
-+
- 		dmaengine_terminate_sync(i2c_dev->msg_read ?
- 					 i2c_dev->rx_dma_chan :
- 					 i2c_dev->tx_dma_chan);
--- 
-2.25.1
+> +					 <&tegra_car TEGRA210_RST_VI>,
+> +					 <&tegra_car TEGRA210_CLK_CSI>;
+> +				#power-domain-cells = <0>;
+> +			};
+>  		};
