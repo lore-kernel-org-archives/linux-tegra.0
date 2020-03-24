@@ -1,70 +1,43 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [RFC PATCH v5 5/9] dt-binding: tegra: Add VI and CSI bindings
-Date: Tue, 24 Mar 2020 14:16:16 -0700
-Message-ID: <b461690f-4e8d-6050-a7cb-fd8148a120de@nvidia.com>
-References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
- <1584985955-19101-6-git-send-email-skomatineni@nvidia.com>
- <2256dc66-f3f9-3400-85e9-0641729b1316@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1 0/3] Enable LP2 CPUIDLE state on NVIDIA Tegra30
+Date: Wed, 25 Mar 2020 01:43:32 +0300
+Message-ID: <20200324224335.5825-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <2256dc66-f3f9-3400-85e9-0641729b1316@gmail.com>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
-On 3/24/20 12:20 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 23.03.2020 20:52, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Tegra contains VI controller which can support up to 6 MIPI CSI
->> camera sensors.
->>
->> Each Tegra CSI port from CSI unit can be one-to-one mapper to
->> VI channel and can capture from an external camera sensor or
->> from built-in test pattern generator.
->>
->> This patch adds dt-bindings for Tegra VI and CSI.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   .../display/tegra/nvidia,tegra20-host1x.txt        | 67 ++++++++++++++=
-+++-----
->>   1 file changed, 54 insertions(+), 13 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegr=
-a20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
-ra20-host1x.txt
->> index 9999255..9421569 100644
->> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hos=
-t1x.txt
->> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hos=
-t1x.txt
->> @@ -40,14 +40,25 @@ of the following host1x client modules:
->>
->>     Required properties:
->>     - compatible: "nvidia,tegra<chip>-vi"
->> -  - reg: Physical base address and length of the controller's registers=
-.
->> +  - reg: Physical base address and length of the controller registers.
->>     - interrupts: The interrupt outputs from the controller.
->> -  - clocks: Must contain one entry, for the module clock.
->> +  - clocks: Must contain an entry for the module clock "vi"
->>       See ../clocks/clock-bindings.txt for details.
->> -  - resets: Must contain an entry for each entry in reset-names.
->> -    See ../reset/reset.txt for details.
->> -  - reset-names: Must include the following entries:
->> -    - vi
-> This should be a wrong change because ARM32 Tegra SoCs do not use power
-> domain.
+This series enables LP2 CPU idling state on Tegra30. Previously,
+Michał Mirosław reported that this wasn't working on ASUS Transformer
+device and we found that replicating the Transformer's downstream kernel
+behavior (in regards to the firmware) helps. Later on Michał told that
+LP2 works without the firmware changes using a different kernel version /
+config, we don't know for sure what was the cause of the original problem.
 
-Will update tegra20-host1x.txt to specify power-domains for Tegra210+=20
-and to keep reset properties for prior Tegra210.
+This series makes the TF firmware changes that are known to work well
+in regards to LP2 idling on all devices and then the LP2 idling state
+is enabled.
 
->> +  - power-domains: Must include venc powergate node as vi is in VE part=
-ition.
+Please review and apply, thanks in advance.
+
+Dmitry Osipenko (3):
+  ARM: tegra: Initialize r0 register for firmware wake-up
+  firmware: trusted_foundations: Different way of L2 cache enabling
+    after LP2 suspend
+  cpuidle: tegra: Support CPU cluster power-down state on Tegra30
+
+ arch/arm/mach-tegra/pm.c                     |  4 ++++
+ arch/arm/mach-tegra/reset-handler.S          |  7 ++++++-
+ drivers/cpuidle/cpuidle-tegra.c              |  1 -
+ drivers/firmware/trusted_foundations.c       | 21 ++++++++++++++++++--
+ include/linux/firmware/trusted_foundations.h |  1 +
+ 5 files changed, 30 insertions(+), 4 deletions(-)
+
+-- 
+2.25.1
