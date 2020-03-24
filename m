@@ -1,50 +1,42 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 1/3] ARM: tegra: Initialize r0 register for firmware wake-up
-Date: Wed, 25 Mar 2020 01:43:33 +0300
-Message-ID: <20200324224335.5825-2-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 3/3] cpuidle: tegra: Support CPU cluster power-down state on Tegra30
+Date: Wed, 25 Mar 2020 01:43:35 +0300
+Message-ID: <20200324224335.5825-4-digetx@gmail.com>
 References: <20200324224335.5825-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200324224335.5825-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200324224335.5825-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, Jasper Korten <jja2000@gmail.com>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Downstream kernel of ASUS TF300T sets r0 to #3. There is no explanation in
-downstream code whether this is really needed and some of T30 downstream
-kernels have and explicit comment telling that all arguments are ignored
-by firmware. Let's take a safe side by replicating behavior of the TF300T
-downstream kernel. This change works fine on Ouya and Nexus 7 devices.
+The new Tegra CPU Idle driver now has a unified code path for the coupled
+CC6 (LP2) state, this allows to enable the deepest idling state on Tegra30
+SoC where the whole CPU cluster is power-gated.
 
-Tested-by: Michał Mirosław <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
-Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Tested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Tested-by: Jasper Korten <jja2000@gmail.com>
+Tested-by: David Heidelberg <david@ixit.cz>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/reset-handler.S | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/cpuidle/cpuidle-tegra.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index 53123ae4ac3b..06ca44b09381 100644
---- a/arch/arm/mach-tegra/reset-handler.S
-+++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -98,7 +98,12 @@ ENTRY(tegra_resume_trusted_foundations)
- 	reteq	lr
+diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+index 313b0290e97b..150045849d78 100644
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -365,7 +365,6 @@ static int tegra_cpuidle_probe(struct platform_device *pdev)
+ 		break;
  
-  .arch_extension sec
--	/* First call after suspend wakes firmware. No arguments required. */
-+	/*
-+	 * First call after suspend wakes firmware. No arguments required
-+	 * for some firmware versions. Downstream kernel of ASUS TF300T uses
-+	 * r0=3 for the wake-up notification.
-+	 */
-+	mov	r0, #3
- 	smc	#0
+ 	case TEGRA30:
+-		tegra_cpuidle_disable_state(TEGRA_CC6);
+ 		break;
  
- 	b	cpu_resume
+ 	case TEGRA114:
 -- 
 2.25.1
