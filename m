@@ -1,279 +1,114 @@
-From: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH v1 0/3] drm: drm_encoder_init() =>
- drm_encoder_init_funcs()
-Date: Tue, 24 Mar 2020 09:33:23 +0100
-Message-ID: <c93bb45d-7922-56dc-061f-6ef70493a358@suse.de>
-References: <20200313201744.19773-1-sam@ravnborg.org>
+From: Rodrigo Siqueira <rodrigosiqueiramelo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 20/22] drm/vkms: Use simple encoder
+Date: Tue, 24 Mar 2020 07:59:05 -0400
+Message-ID: <20200324115905.dp5jqzbmvhbmk2rn@smtp.gmail.com>
+References: <20200305155950.2705-1-tzimmermann@suse.de>
+ <20200305155950.2705-21-tzimmermann@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="Ufl74Lq2kLxag3rezk70YaJ2XyXJCpUyg"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xyxw5g6b72ps7vfq"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200313201744.19773-1-sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200305155950.2705-21-tzimmermann-l3A5Bk7waGM@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jose Roberto de Souza <jose.souza-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, Emil Velikov <emil.velikov-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Andrzej
+To: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
+Cc: airlied-cv59FeDIM0c@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org, abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org, alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org, ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org, maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, alison.wang-3arQi8VN3Tc@public.gmane.org, patrik.r.jakobsson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, xinliang.liu-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, zourongrong-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kong.kongxinwei-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, puck.chen-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-imx-3arQi8VN3Tc@public.gmane.org, paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org, ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Ufl74Lq2kLxag3rezk70YaJ2XyXJCpUyg
-Content-Type: multipart/mixed; boundary="De4ctwLgWXvPGwhVVivy7i6RNXKKkyzAV";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
-To: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>,
- Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>,
- dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>,
- David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jose Roberto de Souza
- <jose.souza-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org,
- Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org,
- Emil Velikov <emil.velikov-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>,
- linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org,
- linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org,
- Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>,
- NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>,
- linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
- linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org,
- Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>,
- Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>,
- Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>,
- linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Message-ID: <c93bb45d-7922-56dc-061f-6ef70493a358-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH v1 0/3] drm: drm_encoder_init() =>
- drm_encoder_init_funcs()
-References: <20200313201744.19773-1-sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-In-Reply-To: <20200313201744.19773-1-sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
 
---De4ctwLgWXvPGwhVVivy7i6RNXKKkyzAV
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+--xyxw5g6b72ps7vfq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sam
+Hi Thomas,
 
-Am 13.03.20 um 21:17 schrieb Sam Ravnborg:
-> Thomas Zimmermann had made a nice patch-set that introduced
-> drm_simple_encoder_init() which is already present in drm-misc-next.
->=20
-> While looking at this it was suddenly obvious to me that
-> this was functionalty that really should be included in drm_encoder.c
-> The case where the core could handle the callback is pretty
-> common and not part of the simple pipe line.
+First of all, thanks for your patch!
 
-The original patchset put the new function into the core implementation
-and was shot down for this. So it ended up in the simple-KMS helpers.
+I applied all your series, compiled it, and when I tried
+`make INSTALL_MOD_PATH=3D/PATH/ modules_instal` I got the following
+message:
 
->=20
-> So after some dialog on dri-devel the conclusion was to go for
-> a change like this:
->=20
->     drm_encoder_init_funcs() for all users that specified a
->     drm_encoder_funcs to extend the functionality.
->=20
->     drm_encoder_init() for all users that did not
->     need to extend the basic functionality with
->     drm_encoder_funcs.
+ depmod: ERROR: Cycle detected: drm_kms_helper -> drm -> drm_kms_helper
+ depmod: ERROR: Found 2 modules in dependency cycles!
+ make: *** [Makefile:1317: _modinst_post] Error 1
 
-TBH, my take-away was to keep the core as it is ans maybe rename
-drm_simple_encoder_init() to some better name.
+I cleaned up my local files and tried again, but I got the same error;
+If I just use `drm-misc-next` everything is fine.  Did I miss something?
 
->=20
-> A similar approach with a _funcs() prefix is used elsewhere in drm/
+Thanks
 
-IMHO, there are a few things to consider:
-
-=46rom grepping, I could only find drm_gem_fb_create_with_funcs(). And th=
-e
-proposed change would make the encoder's function name inconsistent with
-drm_connector_init(), drm_crtc_init(), and others. Finally,
-drm_connector_init_with_ddc() was criticiced for being mid-layerish and
-could lead to many combinations of postfixes (e.g., _with_funcs(),
-with_ddc(), _with_ddc_and_funcs(), etc).
-
-If there is consent that the drm_simple_encoder_init() should go away,
-I'd propose to change drm_encoder_init(). It could use a default
-implementation for funcs, if no funcs argument has been specified. We
-already have such behavior for some GEM callbacks. In later patches,
-drm_gem_fb_create_with_funcs() and drm_connector_init_with_ddc() could
-go away as well.
-
-Best regards
-Thomas
-
-
+On 03/05, Thomas Zimmermann wrote:
+> The vkms driver uses an empty implementation for its encoder. Replace
+> the code with the generic simple encoder.
 >=20
-> This required a rename of the existing users, and
-> a follow-up patch that moves drm_simple_encoder_init()
-> to drm_encoder.c
+> Signed-off-by: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
+> ---
+>  drivers/gpu/drm/vkms/vkms_output.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
 >=20
-> Patches 3 in this set demonstrate the use of drm_encoder_init().
-> There are many more drivers that can be converted as Thomas
-> has already demonstrated.
->=20
-> This is all based on work done by Thomas Zimmermann,
-> I just wanted to implement my suggestion so
-> we could select the best way forward.
->=20
-> Note: Daniel Vetter has hinted the approach implemented
-> here smelled like middle-layer.
-> IMO this is not so, it is just a way to handle cleanup
-> for the simple cases.
->=20
-> 	Sam
->=20
->=20
-> Sam Ravnborg (3):
->       drm: drm_encoder_init() =3D> drm_encoder_init_funcs()
->       drm: drm_simple_encoder_init() =3D> drm_encoder_init()
->       drm/atmel-hlcdc: Use drm_encoder_init()
->=20
->  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c             | 28 ++++++-------
->  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c             | 28 ++++++-------
->  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c              | 28 ++++++-------
->  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c              | 28 ++++++-------
->  drivers/gpu/drm/amd/amdgpu/dce_virtual.c           |  4 +-
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 10 ++---
->  .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 10 ++---
->  drivers/gpu/drm/arc/arcpgu_hdmi.c                  |  4 +-
->  drivers/gpu/drm/arc/arcpgu_sim.c                   |  4 +-
->  drivers/gpu/drm/ast/ast_mode.c                     |  3 +-
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c   |  8 +---
->  drivers/gpu/drm/drm_encoder.c                      | 49 ++++++++++++++=
-+++++---
->  drivers/gpu/drm/drm_encoder_slave.c                |  2 +-
->  drivers/gpu/drm/drm_simple_kms_helper.c            | 45 +-------------=
-------
->  drivers/gpu/drm/drm_writeback.c                    |  6 +--
->  drivers/gpu/drm/exynos/exynos_dp.c                 |  4 +-
->  drivers/gpu/drm/exynos/exynos_drm_dpi.c            |  4 +-
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  4 +-
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c           |  4 +-
->  drivers/gpu/drm/exynos/exynos_hdmi.c               |  4 +-
->  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |  4 +-
->  drivers/gpu/drm/gma500/cdv_intel_crt.c             |  5 ++-
->  drivers/gpu/drm/gma500/cdv_intel_dp.c              |  4 +-
->  drivers/gpu/drm/gma500/cdv_intel_hdmi.c            |  4 +-
->  drivers/gpu/drm/gma500/cdv_intel_lvds.c            |  6 +--
->  drivers/gpu/drm/gma500/mdfld_dsi_dpi.c             |  7 ++--
->  drivers/gpu/drm/gma500/oaktrail_hdmi.c             |  6 +--
->  drivers/gpu/drm/gma500/oaktrail_lvds.c             |  4 +-
->  drivers/gpu/drm/gma500/psb_intel_lvds.c            |  6 +--
->  drivers/gpu/drm/gma500/psb_intel_sdvo.c            |  4 +-
->  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c   |  4 +-
->  drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c       |  4 +-
->  drivers/gpu/drm/i2c/tda998x_drv.c                  |  5 ++-
->  drivers/gpu/drm/i915/display/icl_dsi.c             |  4 +-
->  drivers/gpu/drm/i915/display/intel_crt.c           |  5 ++-
->  drivers/gpu/drm/i915/display/intel_ddi.c           |  6 ++-
->  drivers/gpu/drm/i915/display/intel_dp.c            |  6 +--
->  drivers/gpu/drm/i915/display/intel_dp_mst.c        |  6 ++-
->  drivers/gpu/drm/i915/display/intel_dvo.c           |  6 +--
->  drivers/gpu/drm/i915/display/intel_hdmi.c          |  6 +--
->  drivers/gpu/drm/i915/display/intel_lvds.c          |  4 +-
->  drivers/gpu/drm/i915/display/intel_sdvo.c          |  6 +--
->  drivers/gpu/drm/i915/display/intel_tv.c            |  4 +-
->  drivers/gpu/drm/i915/display/vlv_dsi.c             |  5 ++-
->  drivers/gpu/drm/imx/dw_hdmi-imx.c                  |  4 +-
->  drivers/gpu/drm/imx/imx-ldb.c                      |  4 +-
->  drivers/gpu/drm/imx/imx-tve.c                      |  4 +-
->  drivers/gpu/drm/imx/parallel-display.c             |  4 +-
->  drivers/gpu/drm/ingenic/ingenic-drm.c              |  5 ++-
->  drivers/gpu/drm/mediatek/mtk_dpi.c                 |  5 ++-
->  drivers/gpu/drm/mediatek/mtk_dsi.c                 |  4 +-
->  drivers/gpu/drm/meson/meson_dw_hdmi.c              |  5 ++-
->  drivers/gpu/drm/meson/meson_venc_cvbs.c            |  5 ++-
->  drivers/gpu/drm/mgag200/mgag200_mode.c             |  7 +---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  4 +-
->  drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c   |  4 +-
->  drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c   |  4 +-
->  drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c  |  4 +-
->  drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c       |  3 +-
->  drivers/gpu/drm/nouveau/dispnv04/dac.c             |  4 +-
->  drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  3 +-
->  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  4 +-
->  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |  4 +-
->  drivers/gpu/drm/nouveau/dispnv50/disp.c            | 16 +++----
->  drivers/gpu/drm/omapdrm/omap_encoder.c             |  4 +-
->  drivers/gpu/drm/qxl/qxl_display.c                  |  7 +---
->  drivers/gpu/drm/radeon/atombios_encoders.c         | 40 +++++++++-----=
-----
->  drivers/gpu/drm/radeon/radeon_dp_mst.c             |  4 +-
->  drivers/gpu/drm/radeon/radeon_legacy_encoders.c    | 20 ++++-----
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.c          |  4 +-
->  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  5 ++-
->  drivers/gpu/drm/rockchip/cdn-dp-core.c             |  4 +-
->  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c    |  5 ++-
->  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  4 +-
->  drivers/gpu/drm/rockchip/inno_hdmi.c               |  4 +-
->  drivers/gpu/drm/rockchip/rk3066_hdmi.c             |  4 +-
->  drivers/gpu/drm/rockchip/rockchip_lvds.c           |  5 ++-
->  drivers/gpu/drm/rockchip/rockchip_rgb.c            |  5 ++-
->  drivers/gpu/drm/shmobile/shmob_drm_crtc.c          |  4 +-
->  drivers/gpu/drm/sti/sti_tvout.c                    | 16 +++----
->  drivers/gpu/drm/stm/ltdc.c                         |  4 +-
->  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c             | 10 ++---
->  drivers/gpu/drm/sun4i/sun4i_lvds.c                 | 10 ++---
->  drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 10 ++---
->  drivers/gpu/drm/sun4i/sun4i_tv.c                   | 10 ++---
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c             | 10 ++---
->  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              |  4 +-
->  drivers/gpu/drm/tegra/dsi.c                        |  6 +--
->  drivers/gpu/drm/tegra/hdmi.c                       |  5 ++-
->  drivers/gpu/drm/tegra/rgb.c                        |  4 +-
->  drivers/gpu/drm/tegra/sor.c                        |  4 +-
->  drivers/gpu/drm/tidss/tidss_encoder.c              |  4 +-
->  drivers/gpu/drm/tilcdc/tilcdc_external.c           |  8 ++--
->  drivers/gpu/drm/tilcdc/tilcdc_panel.c              |  4 +-
->  drivers/gpu/drm/vboxvideo/vbox_mode.c              |  4 +-
->  drivers/gpu/drm/vc4/vc4_dpi.c                      |  4 +-
->  drivers/gpu/drm/vc4/vc4_dsi.c                      |  4 +-
->  drivers/gpu/drm/vc4/vc4_hdmi.c                     |  4 +-
->  drivers/gpu/drm/vc4/vc4_vec.c                      |  4 +-
->  drivers/gpu/drm/virtio/virtgpu_display.c           |  4 +-
->  drivers/gpu/drm/vkms/vkms_output.c                 |  4 +-
->  drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c                |  4 +-
->  drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c               |  5 ++-
->  drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               |  4 +-
->  drivers/gpu/drm/zte/zx_hdmi.c                      |  4 +-
->  drivers/gpu/drm/zte/zx_tvenc.c                     |  4 +-
->  drivers/gpu/drm/zte/zx_vga.c                       |  4 +-
->  include/drm/drm_encoder.h                          |  9 ++--
->  include/drm/drm_simple_kms_helper.h                |  4 --
->  109 files changed, 394 insertions(+), 395 deletions(-)
->=20
->=20
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vk=
+ms_output.c
+> index fb1941a6522c..85afb77e97f0 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -3,6 +3,7 @@
+>  #include "vkms_drv.h"
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_probe_helper.h>
+> +#include <drm/drm_simple_kms_helper.h>
+> =20
+>  static void vkms_connector_destroy(struct drm_connector *connector)
+>  {
+> @@ -17,10 +18,6 @@ static const struct drm_connector_funcs vkms_connector=
+_funcs =3D {
+>  	.atomic_destroy_state =3D drm_atomic_helper_connector_destroy_state,
+>  };
+> =20
+> -static const struct drm_encoder_funcs vkms_encoder_funcs =3D {
+> -	.destroy =3D drm_encoder_cleanup,
+> -};
+> -
+>  static int vkms_conn_get_modes(struct drm_connector *connector)
+>  {
+>  	int count;
+> @@ -70,8 +67,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int i=
+ndex)
+> =20
+>  	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+> =20
+> -	ret =3D drm_encoder_init(dev, encoder, &vkms_encoder_funcs,
+> -			       DRM_MODE_ENCODER_VIRTUAL, NULL);
+> +	ret =3D drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_VIRTUAL);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to init encoder\n");
+>  		goto err_encoder;
+> --=20
+> 2.25.1
 >=20
 
 --=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+Rodrigo Siqueira
+https://siqueira.tech
 
-
---De4ctwLgWXvPGwhVVivy7i6RNXKKkyzAV--
-
---Ufl74Lq2kLxag3rezk70YaJ2XyXJCpUyg
+--xyxw5g6b72ps7vfq
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl55xdYACgkQaA3BHVML
-eiNJUgf+LxlsmFqczF3bmdnqDSQXVB5DSYpT/HzisNKZmH17VGhSjbA3cP6Y+MqX
-r8dHz/QG6y6SoIMm1lhQ4I8uGA3Swmf+Iaod60POAoD4mzFwTfXiI29WEYQ3Qhd2
-sH8DzeBhnTyCt5aUBHxlPkhY4tuF7rfNHwyc1lTAweYfWoy+yMDgWTOQG8ZON7vT
-LScFm4Y78iS3XrmPMMjgZnckvzUrexf7AILZ5zJovktYC1HQVbimK2UY/HxwXmc5
-oiKOttFDWLE9zM4jv7xTzDJ+17ERSiLuHiPcnMU3O3MQmwfWLVY5j5uPF7vhsLw/
-WxudAVCiFE1ukZUitIL3GVyYKuoKNw==
-=3HjZ
+iQIzBAABCgAdFiEE4tZ+ii1mjMCMQbfkWJzP/comvP8FAl559gMACgkQWJzP/com
+vP9BEQ//bENFpSJc2y0XTYIOh3A9lmWbJYMBLW1j5T3uUJJu8x0lC0hqd0fJW3V8
+iT1Pedxmmf7duluAn7uKjUQ1sPztm2PcJB8F9ADs+bJdKN2CqmsL3kB4Ip1Q+US7
+t7cptBTF6FrLPo4e1WpZAEEu4UdyVsq16+0v3+8icC0YSX6KMQdI9QNvvp/5PmXF
+xYc6wwyGGqNZhmVRyLu0Im+zG5TvscTmK3iIu1BOMEubsgZD/BP8ZSx0efQJKRhA
+aPhzGs8S7Sp+EnE4wiTU6iZch3+KUw6D0lc398rdlvbZXmvxSxe8WxCwciMksgu5
+c+A/+oJ80KIhkjWCQNpF5oddWXUUqy6yHZrzIWzkPAj9oVxQa0jr7EwAkT1h+Zp1
+wUDLrQw9ZRw/GHv6awiSFDukLpHIabDgN9F0fsvx9aa/PJ53FOR6hilCOn8tIVnJ
+oZabUjqa7pV3L8N5CFott+8EV2y4GZK5R+VW6MX8px2bfa7SaJl+9HgeKssOYOkF
+6cwm+IquaD3wz9h7elWGmEQgqj3jOviny3HT7I8U+ZlmMa6+JCMt4iq5e1R9q4du
+PP4mh695VhSas/mbB3qjZFy/FCj1bvJ8J6AdHOoNDmjM4JVv9F5S5yi3UN5uEBXC
+ZtKmSxghh2GJS2LFK6b88yxVNVNYrCX6bYWSyfovToU6C0QzbKs=
+=srDw
 -----END PGP SIGNATURE-----
 
---Ufl74Lq2kLxag3rezk70YaJ2XyXJCpUyg--
+--xyxw5g6b72ps7vfq--
