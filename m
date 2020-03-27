@@ -1,75 +1,53 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/9] gpio: Support GPIO controllers without pin-ranges
-Date: Fri, 27 Mar 2020 13:13:51 +0100
-Message-ID: <20200327121351.GA2229783@ulmo>
-References: <20200319122737.3063291-1-thierry.reding@gmail.com>
- <20200319122737.3063291-2-thierry.reding@gmail.com>
- <CACRpkda5M4NPvMBBLg+_2BJw7ZmryrgN72JZL_XAFQ137s0OLA@mail.gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v8 00/22] Move PMC clocks into Tegra PMC driver
+Date: Fri, 27 Mar 2020 15:45:06 +0000
+Message-ID: <20200327154506.GF4437@sirena.org.uk>
+References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
+ <20200325212708.GA836215@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6v9BRtpmy+umdQlo"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkda5M4NPvMBBLg+_2BJw7ZmryrgN72JZL_XAFQ137s0OLA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20200325212708.GA836215@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---fdj2RfSjLxBAspz7
+--6v9BRtpmy+umdQlo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 27, 2020 at 11:37:07AM +0100, Linus Walleij wrote:
-> On Thu, Mar 19, 2020 at 1:27 PM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>=
- wrote:
->=20
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> > Wake gpiochip_generic_request() call into the pinctrl helpers only if a
-> > GPIO controller had any pin-ranges assigned to it. This allows a driver
-> > to unconditionally use this helper if it supports multiple devices of
-> > which only a subset have pin-ranges assigned to them.
-> >
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Patch applied.
->=20
-> We have some drivers like this:
-> drivers/gpio/gpio-pl061.c:
->=20
->         if (of_property_read_bool(dev->of_node, "gpio-ranges")) {
->                 pl061->gc.request =3D gpiochip_generic_request;
->                 pl061->gc.free =3D gpiochip_generic_free;
->         }
->=20
-> Should we just make a patch assigning these callbacks
-> unconditionally as a follow-up?
+On Wed, Mar 25, 2020 at 10:27:08PM +0100, Thierry Reding wrote:
 
-Yeah, that's a good idea. I'll look into it.
+> there's a few runtime dependencies between the various patches in this
+> series, so I think it'd probably be best if I picked up the ASoC patches
+> into the Tegra tree and let them soak for a day or two in linux-next to
+> make sure everything is there and in the right order.
 
-Thierry
+> Do you mind if I pick them up and send to you as a pull request in the
+> next few days?
 
---fdj2RfSjLxBAspz7
+I guess, I think I lost track of what was going on with this as it
+seemed to continually be getting lots of discussions:
+
+Acked-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+--6v9BRtpmy+umdQlo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl597foACgkQ3SOs138+
-s6Gtww//f2wgHp8+oZLyJJoqc6KL8UkvcBfrJRzcHr37THvP7BGCNWS7KIIvyR6Z
-7NYjQOm5daGIQJ1FQSBZHOKOPJ8t6Yocsf8sisIq53pW9EjUYjmJUKkwB1rNnD2Y
-/eh/szX/Z60bfuFlPNiYJgSWfIoRw4crM5yTrxjfIoV+HjX86zAkt8Ko7JLYYB/7
-5gGS4SEGwhyDvFNJwwdyW0CurFRmQbUWsSB1BPOzNYB30kubmB5HxBws/xaE3Pqk
-Z53TgLNemQ4hRcDzm0PeiPdvDWjI3Khy0j04+ivOUONzq7w7S+y+sTRha6mCykD8
-SNm92eegAtpSOrt/Ji4Qja1d7CQFO5SKvs4JlqifTuJ/PMuxH0aDmIUsVmKHPTqq
-rTrdvGWT3rV0TLWgZ1Q/j3nZrqp18pGGGSRaAZesE9dHVXrWfpO3WS+nGo2/Yb4q
-86XzxbIStJ17vrkrOI5ntSOdXVgouEgBR+XYkr8l4Yde4FoZTeAHQfM+0dhys0nG
-rIXMo74gRouOLhhz/tzvAYCnVTRWX4rrrfY5/bkSnlwGNmrLAYKbg02+faJVNFQy
-mSTjB7BtZ4C7w0ZsPCCwSYBXSPZZATgHJMjwf1FlO+j6AZ7l8URXC2HGuVfhmzl3
-qyGEfDlIRES9gbNzYyyMH21viwL3+6eA5GN9AVzA8e3G6PQvbwo=
-=0srh
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5+H4IACgkQJNaLcl1U
+h9CSOAf/QSUkbVkzKfzHrLVi8t1LfFrrL8b00ZDF6zpPcKZ7xMhrTbzFDBQfh1/N
+OMocm4O6vBAKX9nnnW5nQrm0DwtDgBaCdw2LZ2vMHmjj+djIxeLUblO495rjKoSy
+eTMOEpejXV4hKE/XEiTeFyF/3xAzWaTwGFU5lnbm6gBGGo7FWHTjAikYvMCxfm85
+BFFGdkWccrl+RhvRPqlLqHLh4eLBXkHh6O88XXSkAd1uA74Ajm6KgnngXkowX40d
+NkkBVV9/AsRGicERL8Fl35btPAXe07mQNRC7cPcTlqbXOKr+ACnqdmAvPrj67gSd
+HfNd9wiUiT5pRu1Vm2vM93ZG0P3vzA==
+=JK9F
 -----END PGP SIGNATURE-----
 
---fdj2RfSjLxBAspz7--
+--6v9BRtpmy+umdQlo--
