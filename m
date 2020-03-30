@@ -1,46 +1,80 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 01/22] dt-bindings: memory: tegra20: mc: Document new interconnect property
-Date: Mon, 30 Mar 2020 04:08:43 +0300
-Message-ID: <20200330010904.27643-2-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 08/22] ARM: tegra: Add interconnect properties to Tegra20 device-tree
+Date: Mon, 30 Mar 2020 04:08:50 +0300
+Message-ID: <20200330010904.27643-9-digetx@gmail.com>
 References: <20200330010904.27643-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200330010904.27643-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200330010904.27643-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Memory controller is interconnected with memory clients and with the
-external memory controller. Document new interconnect property which
-turns memory controller into interconnect provider.
+Add interconnect properties to the memory controller, external memory
+controller and the display controller nodes in order to describe hardware
+interconnection.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- .../bindings/memory-controllers/nvidia,tegra20-mc.txt          | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/tegra20.dtsi | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
-index e55328237df4..739b7c6f2e26 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
-@@ -16,6 +16,8 @@ Required properties:
-   IOMMU specifier needed to encode an address. GART supports only a single
-   address space that is shared by all devices, therefore no additional
-   information needed for the address encoding.
-+- #interconnect-cells : Should be 1. This cell represents memory client.
-+  The assignments may be found in header file <dt-bindings/memory/tegra20-mc.h>.
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index c3b8ad53b967..974048e83541 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -109,6 +109,15 @@ dc@54200000 {
  
- Example:
- 	mc: memory-controller@7000f000 {
-@@ -27,6 +29,7 @@ Example:
- 		interrupts = <GIC_SPI 77 0x04>;
+ 			nvidia,head = <0>;
+ 
++			interconnects = <&mc TEGRA20_MC_DISPLAY0A &emc>,
++					<&mc TEGRA20_MC_DISPLAY0B &emc>,
++					<&mc TEGRA20_MC_DISPLAY0C &emc>,
++					<&mc TEGRA20_MC_DISPLAY1B &emc>;
++			interconnect-names = "display0a",
++					     "display0b",
++					     "display0c",
++					     "display1b";
++
+ 			rgb {
+ 				status = "disabled";
+ 			};
+@@ -126,6 +135,15 @@ dc@54240000 {
+ 
+ 			nvidia,head = <1>;
+ 
++			interconnects = <&mc TEGRA20_MC_DISPLAY0AB &emc>,
++					<&mc TEGRA20_MC_DISPLAY0BB &emc>,
++					<&mc TEGRA20_MC_DISPLAY0CB &emc>,
++					<&mc TEGRA20_MC_DISPLAY1BB &emc>;
++			interconnect-names = "display0a",
++					     "display0b",
++					     "display0c",
++					     "display1b";
++
+ 			rgb {
+ 				status = "disabled";
+ 			};
+@@ -626,15 +644,17 @@ mc: memory-controller@7000f000 {
+ 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
  		#reset-cells = <1>;
  		#iommu-cells = <0>;
 +		#interconnect-cells = <1>;
  	};
  
- 	video-codec@6001a000 {
+-	memory-controller@7000f400 {
++	emc: memory-controller@7000f400 {
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f400 0x200>;
+ 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA20_CLK_EMC>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		#interconnect-cells = <0>;
+ 	};
+ 
+ 	fuse@7000f800 {
 -- 
 2.25.1
