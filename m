@@ -1,52 +1,104 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 3/5] PM / devfreq: tegra20: Use clk_round_rate_unboundly()
-Date: Tue, 31 Mar 2020 02:16:15 +0300
-Message-ID: <20200330231617.17079-4-digetx@gmail.com>
-References: <20200330231617.17079-1-digetx@gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/7] dt-bindings: timer: Add bindings for NVIDIA Tegra186
+ timers
+Date: Mon, 30 Mar 2020 17:28:42 -0600
+Message-ID: <20200330232842.GA25358@bogus>
+References: <20200320133452.3705040-1-thierry.reding@gmail.com>
+ <20200320133452.3705040-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200330231617.17079-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200320133452.3705040-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The clk_round_rate() doesn't work for us properly if clock rate is bounded
-by a min/max rate that is requested by some other clk-user because we're
-building devfreq's OPP table based on the rounding.
+On Fri, Mar 20, 2020 at 02:34:46PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> The NVIDIA Tegra186 SoC contains an IP block that provides a register
+> interface for ten timers with a 29-bit counter that can generate one-
+> shot, periodic or watchdog interrupts.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/timer/nvidia,tegra186-timer.yaml | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> new file mode 100644
+> index 000000000000..f9b55041a5ca
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra186 timers
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> +  - Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +
+> +description: |
+> +  The Tegra186 timer provides ten 29-bit timer counters and one 32-bit TSC
+> +  (timestamp counter). The timers run at either a fixed 1 MHz clock rate
+> +  derived from the oscillator clock. Each timer can be programmed to raise
+> +  one-shot, periodic, or watchdog interrupts.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - description: NVIDIA Tegra186
+> +        items:
+> +          - const: nvidia,tegra186-timer
+> +
+> +      - description: NVIDIA Tegra194
+> +        items:
+> +          - const: nvidia,tegra194-timer
+> +          - const: nvidia,tegra186-timer
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 10
 
-In particular this becomes a problem if display driver is probed earlier
-than devfreq, and thus, display adds a memory bandwidth request using
-interconnect API, which results in a minimum clock-rate being set for
-the memory clk. In a result, the lowest devfreq OPP rate is getting
-limited to the minimum rate imposed by the display driver.
+required props?
 
-Let's use new clk_round_rate_unboundly() that resolves the problem by
-rounding clock rate without taking into account min/max limits imposed by
-active clk users.
+Also, add:
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/devfreq/tegra20-devfreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+additionalProperties: false
 
-diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
-index ff82bac9ee4e..1bb10ef11dfe 100644
---- a/drivers/devfreq/tegra20-devfreq.c
-+++ b/drivers/devfreq/tegra20-devfreq.c
-@@ -149,10 +149,10 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 
- 	tegra->regs = mc->regs;
- 
--	max_rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
-+	max_rate = clk_round_rate_unboundly(tegra->emc_clock, ULONG_MAX);
- 
- 	for (rate = 0; rate <= max_rate; rate++) {
--		rate = clk_round_rate(tegra->emc_clock, rate);
-+		rate = clk_round_rate_unboundly(tegra->emc_clock, rate);
- 
- 		err = dev_pm_opp_add(&pdev->dev, rate, 0);
- 		if (err) {
--- 
-2.25.1
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    timer@3010000 {
+> +        compatible = "nvidia,tegra186-timer";
+> +        reg = <0x03010000 0x000e0000>;
+> +        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +        status = "disabled";
+
+Don't show status in examples.
+
+> +    };
+> -- 
+> 2.24.1
+> 
