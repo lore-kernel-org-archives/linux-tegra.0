@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 5/5] PM / devfreq: tegra30: Make CPUFreq notifier to take into account boosting
-Date: Tue, 31 Mar 2020 02:16:17 +0300
-Message-ID: <20200330231617.17079-6-digetx@gmail.com>
+Subject: [PATCH v1 3/5] PM / devfreq: tegra20: Use clk_round_rate_unboundly()
+Date: Tue, 31 Mar 2020 02:16:15 +0300
+Message-ID: <20200330231617.17079-4-digetx@gmail.com>
 References: <20200330231617.17079-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,26 +12,41 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Myu
 Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-MCCPU frequency boosting needs to be taken into account in order to avoid
-scheduling of unnecessary devfreq updates.
+The clk_round_rate() doesn't work for us properly if clock rate is bounded
+by a min/max rate that is requested by some other clk-user because we're
+building devfreq's OPP table based on the rounding.
+
+In particular this becomes a problem if display driver is probed earlier
+than devfreq, and thus, display adds a memory bandwidth request using
+interconnect API, which results in a minimum clock-rate being set for
+the memory clk. In a result, the lowest devfreq OPP rate is getting
+limited to the minimum rate imposed by the display driver.
+
+Let's use new clk_round_rate_unboundly() that resolves the problem by
+rounding clock rate without taking into account min/max limits imposed by
+active clk users.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/devfreq/tegra30-devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/devfreq/tegra20-devfreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 34f6291e880c..3b57aac9894c 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -420,7 +420,7 @@ tegra_actmon_cpufreq_contribution(struct tegra_devfreq *tegra,
+diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
+index ff82bac9ee4e..1bb10ef11dfe 100644
+--- a/drivers/devfreq/tegra20-devfreq.c
++++ b/drivers/devfreq/tegra20-devfreq.c
+@@ -149,10 +149,10 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
  
- 	static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
+ 	tegra->regs = mc->regs;
  
--	if (dev_freq >= static_cpu_emc_freq)
-+	if (dev_freq + actmon_dev->boost_freq >= static_cpu_emc_freq)
- 		return 0;
+-	max_rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
++	max_rate = clk_round_rate_unboundly(tegra->emc_clock, ULONG_MAX);
  
- 	return static_cpu_emc_freq;
+ 	for (rate = 0; rate <= max_rate; rate++) {
+-		rate = clk_round_rate(tegra->emc_clock, rate);
++		rate = clk_round_rate_unboundly(tegra->emc_clock, rate);
+ 
+ 		err = dev_pm_opp_add(&pdev->dev, rate, 0);
+ 		if (err) {
 -- 
 2.25.1
