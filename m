@@ -1,81 +1,45 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 09/22] ARM: tegra: Add interconnect properties to Tegra30 device-tree
-Date: Mon, 30 Mar 2020 04:08:51 +0300
-Message-ID: <20200330010904.27643-10-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2 02/22] dt-bindings: memory: tegra20: emc: Document new interconnect property
+Date: Mon, 30 Mar 2020 04:08:44 +0300
+Message-ID: <20200330010904.27643-3-digetx@gmail.com>
 References: <20200330010904.27643-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200330010904.27643-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200330010904.27643-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add interconnect properties to the memory controller, external memory
-controller and the display controller nodes in order to describe hardware
-interconnection.
+External memory controller is interconnected with memory controller and
+with external memory. Document new interconnect property which turns
+external memory controller into interconnect provider.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30.dtsi | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ .../bindings/memory-controllers/nvidia,tegra20-emc.txt          | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index d2d05f1da274..2b183025629f 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -208,6 +208,15 @@ dc@54200000 {
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+index add95367640b..f51da7662de4 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+@@ -12,6 +12,7 @@ Properties:
+   irrespective of ram-code configuration.
+ - interrupts : Should contain EMC General interrupt.
+ - clocks : Should contain EMC clock.
++- #interconnect-cells : Should be 0.
  
- 			nvidia,head = <0>;
+ Child device nodes describe the memory settings for different configurations and clock rates.
  
-+			interconnects = <&mc TEGRA30_MC_DISPLAY0A &emc>,
-+					<&mc TEGRA30_MC_DISPLAY0B &emc>,
-+					<&mc TEGRA30_MC_DISPLAY0C &emc>,
-+					<&mc TEGRA30_MC_DISPLAY1B &emc>;
-+			interconnect-names = "display0a",
-+					     "display0b",
-+					     "display0c",
-+					     "display1b";
-+
- 			rgb {
- 				status = "disabled";
- 			};
-@@ -227,6 +236,15 @@ dc@54240000 {
- 
- 			nvidia,head = <1>;
- 
-+			interconnects = <&mc TEGRA30_MC_DISPLAY0AB &emc>,
-+					<&mc TEGRA30_MC_DISPLAY0BB &emc>,
-+					<&mc TEGRA30_MC_DISPLAY0CB &emc>,
-+					<&mc TEGRA30_MC_DISPLAY1BB &emc>;
-+			interconnect-names = "display0a",
-+					     "display0b",
-+					     "display0c",
-+					     "display1b";
-+
- 			rgb {
- 				status = "disabled";
- 			};
-@@ -733,15 +751,18 @@ mc: memory-controller@7000f000 {
- 
- 		#iommu-cells = <1>;
- 		#reset-cells = <1>;
-+		#interconnect-cells = <1>;
- 	};
- 
--	memory-controller@7000f400 {
-+	emc: memory-controller@7000f400 {
- 		compatible = "nvidia,tegra30-emc";
- 		reg = <0x7000f400 0x400>;
- 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA30_CLK_EMC>;
- 
- 		nvidia,memory-controller = <&mc>;
-+
-+		#interconnect-cells = <0>;
- 	};
- 
- 	fuse@7000f800 {
+@@ -20,6 +21,7 @@ Example:
+ 	memory-controller@7000f400 {
+ 		#address-cells = < 1 >;
+ 		#size-cells = < 0 >;
++		#interconnect-cells = < 0 >;
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f4000 0x200>;
+ 		interrupts = <0 78 0x04>;
 -- 
 2.25.1
