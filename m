@@ -1,49 +1,46 @@
 From: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH -next] memory: tegra: mark PM functions as __maybe_unuse
-Date: Mon, 30 Mar 2020 10:33:58 +0800
-Message-ID: <20200330023358.30100-1-yuehaibing@huawei.com>
+Subject: [PATCH -next] phy: tegra: Add missing USB_SUPPORT dependency
+Date: Mon, 30 Mar 2020 11:46:46 +0800
+Message-ID: <20200330034646.30572-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, allison-wcfNWazeolPR7s880joybQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, info-EcKl7qYKIbxeoWH0uzbU5w@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kishon-l0cyMroinI0@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, clabbe-rdvid1DuHRBWk0Htik3J/w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Without this, we get a couple of warnings when CONFIG_PM
-is disabled:
+When USB_SUPPORT is not set, we got this warnings:
 
-drivers/memory/tegra/tegra186.c:1578:12: warning: 'tegra186_mc_resume' defined but not used [-Wunused-function]
- static int tegra186_mc_resume(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~
-drivers/memory/tegra/tegra186.c:1573:12: warning: 'tegra186_mc_suspend' defined but not used [-Wunused-function]
- static int tegra186_mc_suspend(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~~
+WARNING: unmet direct dependencies detected for USB_PHY
+  Depends on [n]: USB_SUPPORT [=n]
+  Selected by [y]:
+  - PHY_TEGRA_XUSB [=y] && ARCH_TEGRA [=y]
 
-Fixes: 177602b00641 ("memory: tegra: Add system sleep support")
+WARNING: unmet direct dependencies detected for USB_CONN_GPIO
+  Depends on [n]: USB_SUPPORT [=n] && GPIOLIB [=y]
+  Selected by [y]:
+  - PHY_TEGRA_XUSB [=y] && ARCH_TEGRA [=y]
+
+Fix by adding USB_SUPPORT as a dependency.
+
+Fixes: 23babe30fb45d ("phy: tegra: xusb: Add usb-phy support")
 Signed-off-by: YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 ---
- drivers/memory/tegra/tegra186.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/phy/tegra/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index 5d53f11ca7b6..e25c954dde2e 100644
---- a/drivers/memory/tegra/tegra186.c
-+++ b/drivers/memory/tegra/tegra186.c
-@@ -1570,12 +1570,12 @@ static const struct of_device_id tegra186_mc_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, tegra186_mc_of_match);
- 
--static int tegra186_mc_suspend(struct device *dev)
-+static int __maybe_unused tegra186_mc_suspend(struct device *dev)
- {
- 	return 0;
- }
- 
--static int tegra186_mc_resume(struct device *dev)
-+static int __maybe_unused tegra186_mc_resume(struct device *dev)
- {
- 	struct tegra186_mc *mc = dev_get_drvdata(dev);
- 
+diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+index a208aca4ba7b..bb86d09a173b 100644
+--- a/drivers/phy/tegra/Kconfig
++++ b/drivers/phy/tegra/Kconfig
+@@ -2,6 +2,7 @@
+ config PHY_TEGRA_XUSB
+ 	tristate "NVIDIA Tegra XUSB pad controller driver"
+ 	depends on ARCH_TEGRA
++	depends on USB_SUPPORT
+ 	select USB_CONN_GPIO
+ 	select USB_PHY
+ 	help
 -- 
 2.17.1
