@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 1/5] PM / devfreq: tegra: Add Dmitry as a maintainer
-Date: Tue, 31 Mar 2020 02:16:13 +0300
-Message-ID: <20200330231617.17079-2-digetx@gmail.com>
+Subject: [PATCH v1 4/5] PM / devfreq: tegra30: Use clk_round_rate_unboundly()
+Date: Tue, 31 Mar 2020 02:16:16 +0300
+Message-ID: <20200330231617.17079-5-digetx@gmail.com>
 References: <20200330231617.17079-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,34 +12,46 @@ To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsun
 Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
-want to help keep them working and evolving in the future.
+The clk_round_rate() doesn't work for us properly if clock rate is bounded
+by a min/max rate that is requested by some other clk-user because we're
+building devfreq's OPP table based on the rounding.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+In particular this becomes a problem if display driver is probed earlier
+than devfreq, and thus, display adds a memory bandwidth request using
+interconnect API, which results in a minimum clock-rate being set for
+the memory clk. In a result, the lowest devfreq OPP rate is getting
+limited to the minimum rate imposed by the display driver.
+
+Let's use new clk_round_rate_unboundly() that resolves the problem by
+rounding clock rate without taking into account min/max limits imposed by
+active clk users.
+
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/devfreq/tegra30-devfreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8b8abe756ae0..9e8b0779f6df 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10931,6 +10931,15 @@ F:	include/linux/memblock.h
- F:	mm/memblock.c
- F:	Documentation/core-api/boot-time-mm.rst
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 28b2c7ca416e..34f6291e880c 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -834,7 +834,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
  
-+MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
-+M:	Dmitry Osipenko <digetx@gmail.com>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-tegra@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-+S:	Maintained
-+F:	drivers/devfreq/tegra20-devfreq.c
-+F:	drivers/devfreq/tegra30-devfreq.c
-+
- MEMORY MANAGEMENT
- M:	Andrew Morton <akpm@linux-foundation.org>
- L:	linux-mm@kvack.org
+ 	reset_control_deassert(tegra->reset);
+ 
+-	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
++	rate = clk_round_rate_unboundly(tegra->emc_clock, ULONG_MAX);
+ 	if (rate < 0) {
+ 		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+ 		return rate;
+@@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
+-		rate = clk_round_rate(tegra->emc_clock, rate);
++		rate = clk_round_rate_unboundly(tegra->emc_clock, rate);
+ 
+ 		if (rate < 0) {
+ 			dev_err(&pdev->dev,
 -- 
 2.25.1
