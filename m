@@ -1,103 +1,46 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 00/22] Introduce memory interconnect for NVIDIA Tegra SoCs
-Date: Mon, 30 Mar 2020 04:08:42 +0300
-Message-ID: <20200330010904.27643-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2 01/22] dt-bindings: memory: tegra20: mc: Document new interconnect property
+Date: Mon, 30 Mar 2020 04:08:43 +0300
+Message-ID: <20200330010904.27643-2-digetx@gmail.com>
+References: <20200330010904.27643-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200330010904.27643-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+Memory controller is interconnected with memory clients and with the
+external memory controller. Document new interconnect property which
+turns memory controller into interconnect provider.
 
-This series brings initial support for memory interconnect to Tegra20 and
-Tegra30 SoCs. The interconnect provides are quite generic and should be
-suitable for all Tegra SoCs, but currently support is added only for these
-two generations of Tegra SoCs.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ .../bindings/memory-controllers/nvidia,tegra20-mc.txt          | 3 +++
+ 1 file changed, 3 insertions(+)
 
-For the starter only display controllers are getting interconnect API
-support, others could be supported later on. The display controllers
-have the biggest demand for interconnect API right now because dynamic
-memory frequency scaling can't be done safely without taking into account
-bandwidth requirement from the displays.
-
-(!) Please note that the EMC patches are made on top of the other EMC
-    patches [1][2] that I was sending out recently.
-
-[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=164165
-[2] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=165451
-
-Changelog:
-
-v2: - Instead of a single dma-mem interconnect path, the paths are now
-      defined per memory client.
-
-    - The EMC provider now uses #interconnect-cells=<0>.
-
-    - Dropped Tegra124 because there is no enough information about how to
-      properly calculate required EMC clock rate for it and I don't have
-      hardware for testing. Somebody else will have to work on it.
-
-    - Moved interconnect providers code into drivers/memory/tegra/*.
-
-    - Added "Create tegra20-devfreq device" patch because interconnect
-      is not very usable without the devfreq memory auto-scaling since
-      memory freq will be fixed to the display's requirement.
-
-Artur Świgoń (1):
-  interconnect: Relax requirement in of_icc_get_from_provider()
-
-Dmitry Osipenko (21):
-  dt-bindings: memory: tegra20: mc: Document new interconnect property
-  dt-bindings: memory: tegra20: emc: Document new interconnect property
-  dt-bindings: memory: tegra30: mc: Document new interconnect property
-  dt-bindings: memory: tegra30: emc: Document new interconnect property
-  dt-bindings: host1x: Document new interconnect properties
-  dt-bindings: memory: tegra20: Add memory client IDs
-  dt-bindings: memory: tegra30: Add memory client IDs
-  ARM: tegra: Add interconnect properties to Tegra20 device-tree
-  ARM: tegra: Add interconnect properties to Tegra30 device-tree
-  memory: tegra: Register as interconnect provider
-  memory: tegra20-emc: Use devm_platform_ioremap_resource
-  memory: tegra20-emc: Continue probing if timings are missing in
-    device-tree
-  memory: tegra20-emc: Register as interconnect provider
-  memory: tegra20-emc: Create tegra20-devfreq device
-  memory: tegra30-emc: Continue probing if timings are missing in
-    device-tree
-  memory: tegra30-emc: Register as interconnect provider
-  drm/tegra: dc: Support memory bandwidth management
-  drm/tegra: dc: Tune up high priority request controls for Tegra20
-  drm/tegra: dc: Extend debug stats with total number of events
-  ARM: tegra: Enable interconnect API in tegra_defconfig
-  ARM: multi_v7_defconfig: Enable interconnect API
-
- .../display/tegra/nvidia,tegra20-host1x.txt   |  68 +++++
- .../memory-controllers/nvidia,tegra20-emc.txt |   2 +
- .../memory-controllers/nvidia,tegra20-mc.txt  |   3 +
- .../nvidia,tegra30-emc.yaml                   |   6 +
- .../memory-controllers/nvidia,tegra30-mc.yaml |   5 +
- arch/arm/boot/dts/tegra20.dtsi                |  22 +-
- arch/arm/boot/dts/tegra30.dtsi                |  23 +-
- arch/arm/configs/multi_v7_defconfig           |   1 +
- arch/arm/configs/tegra_defconfig              |   1 +
- drivers/gpu/drm/tegra/dc.c                    | 289 +++++++++++++++++-
- drivers/gpu/drm/tegra/dc.h                    |  13 +
- drivers/gpu/drm/tegra/drm.c                   |  19 ++
- drivers/gpu/drm/tegra/plane.c                 |   1 +
- drivers/gpu/drm/tegra/plane.h                 |   4 +-
- drivers/interconnect/core.c                   |  11 +-
- drivers/memory/tegra/mc.c                     | 118 +++++++
- drivers/memory/tegra/mc.h                     |   8 +
- drivers/memory/tegra/tegra20-emc.c            | 161 ++++++++--
- drivers/memory/tegra/tegra30-emc.c            | 144 ++++++++-
- include/dt-bindings/memory/tegra20-mc.h       |  53 ++++
- include/dt-bindings/memory/tegra30-mc.h       |  67 ++++
- include/soc/tegra/mc.h                        |   3 +
- 22 files changed, 975 insertions(+), 47 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+index e55328237df4..739b7c6f2e26 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+@@ -16,6 +16,8 @@ Required properties:
+   IOMMU specifier needed to encode an address. GART supports only a single
+   address space that is shared by all devices, therefore no additional
+   information needed for the address encoding.
++- #interconnect-cells : Should be 1. This cell represents memory client.
++  The assignments may be found in header file <dt-bindings/memory/tegra20-mc.h>.
+ 
+ Example:
+ 	mc: memory-controller@7000f000 {
+@@ -27,6 +29,7 @@ Example:
+ 		interrupts = <GIC_SPI 77 0x04>;
+ 		#reset-cells = <1>;
+ 		#iommu-cells = <0>;
++		#interconnect-cells = <1>;
+ 	};
+ 
+ 	video-codec@6001a000 {
 -- 
 2.25.1
