@@ -1,28 +1,44 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V1 1/8] dt-bindings: phy: tegra-xusb: Add charger-detect
- property
-Date: Mon, 30 Mar 2020 17:06:47 -0600
-Message-ID: <20200330230647.GA29166@bogus>
-References: <1584527467-8058-1-git-send-email-nkristam@nvidia.com>
- <1584527467-8058-2-git-send-email-nkristam@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 0/5] NVIDIA Tegra devfreq drivers improvements
+Date: Tue, 31 Mar 2020 02:16:12 +0300
+Message-ID: <20200330231617.17079-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1584527467-8058-2-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kishon-l0cyMroinI0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jckuo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 18 Mar 2020 16:01:00 +0530, Nagarjuna Kristam wrote:
-> Add nvidia,charger-detect boolean property for Tegra210 and Tegra186
-> platforms. This property is used to inform driver to perform charger
-> detection on corresponding USB 2 port.
-> 
-> Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+Hello,
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+This series contains minor patches that I was going to send out a month or
+two ago, but completely forgot about. More importantly, it also contains new
+patches that are needed in order to address an upcoming problem in regards
+to adding interconnect API support for NVIDIA Tegra [1].
+
+[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=167480
+
+The problem lies in clk_round_rate(), which rounds clock rate based on the
+min/max clk limits imposed by active clk users. This is not suitable for
+the Tegra devfreq drivers because they use clk_round_rate() for building
+OPP table, and thus, nothing should limit the clk rate, otherwise the OPP
+table values are erroneously getting limited to the clk's limits.
+
+Dmitry Osipenko (5):
+  PM / devfreq: tegra: Add Dmitry as a maintainer
+  clk: Introduce clk_round_rate_unboundly()
+  PM / devfreq: tegra20: Use clk_round_rate_unboundly()
+  PM / devfreq: tegra30: Use clk_round_rate_unboundly()
+  PM / devfreq: tegra30: Make CPUFreq notifier to take into account
+    boosting
+
+ MAINTAINERS                       |  9 ++++++
+ drivers/clk/clk.c                 | 49 ++++++++++++++++++++++++-------
+ drivers/devfreq/tegra20-devfreq.c |  4 +--
+ drivers/devfreq/tegra30-devfreq.c |  6 ++--
+ include/linux/clk.h               | 18 ++++++++++++
+ 5 files changed, 70 insertions(+), 16 deletions(-)
+
+-- 
+2.25.1
