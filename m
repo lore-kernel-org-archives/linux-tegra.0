@@ -1,40 +1,36 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2 15/22] memory: tegra20-emc: Create tegra20-devfreq device
-Date: Mon, 30 Mar 2020 04:08:57 +0300
-Message-ID: <20200330010904.27643-16-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 22/22] ARM: multi_v7_defconfig: Enable interconnect API
+Date: Mon, 30 Mar 2020 04:09:04 +0300
+Message-ID: <20200330010904.27643-23-digetx@gmail.com>
 References: <20200330010904.27643-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200330010904.27643-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200330010904.27643-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra20-devfreq driver provides memory frequency scaling functionality
-and it uses EMC clock for the scaling. Since tegra20-devfreq is a software
-driver, the device for the driver needs to be created manually. Let's do
-it from EMC driver since it provides the clk rate-change functionality.
+NVIDIA Tegra now has interconnect providers that are used for memory
+bandwidth allocation.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/memory/tegra/tegra20-emc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index a2fcff221659..867cd518b32e 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -838,6 +838,9 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 				err);
- 	}
- 
-+	if (IS_ENABLED(CONFIG_ARM_TEGRA20_DEVFREQ))
-+		platform_device_register_simple("tegra20-devfreq", -1, NULL, 0);
-+
- 	return 0;
- 
- unset_cb:
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index f8e45351c3f9..658b5c1892eb 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -1085,6 +1085,7 @@ CONFIG_FSI_MASTER_ASPEED=m
+ CONFIG_FSI_SCOM=m
+ CONFIG_FSI_SBEFIFO=m
+ CONFIG_FSI_OCC=m
++CONFIG_INTERCONNECT=y
+ CONFIG_EXT4_FS=y
+ CONFIG_AUTOFS4_FS=y
+ CONFIG_MSDOS_FS=y
 -- 
 2.25.1
