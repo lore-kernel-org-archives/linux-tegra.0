@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 16/22] memory: tegra30-emc: Continue probing if timings are missing in device-tree
-Date: Mon, 30 Mar 2020 04:08:58 +0300
-Message-ID: <20200330010904.27643-17-digetx@gmail.com>
+Subject: [PATCH v2 17/22] memory: tegra30-emc: Register as interconnect provider
+Date: Mon, 30 Mar 2020 04:08:59 +0300
+Message-ID: <20200330010904.27643-18-digetx@gmail.com>
 References: <20200330010904.27643-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,83 +12,160 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-EMC driver will become mandatory after turning it into interconnect
-provider because interconnect users, like display controller driver, will
-fail to probe using newer device-trees that have interconnect properties.
-Thus make EMC driver to probe even if timings are missing in device-tree.
+Now external memory controller is a memory interconnection provider.
+This allows us to use interconnect API to change memory configuration.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/memory/tegra/tegra30-emc.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ drivers/memory/tegra/tegra30-emc.c | 115 +++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
 
 diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 900a291803ca..69698665d431 100644
+index 69698665d431..5a4106173a75 100644
 --- a/drivers/memory/tegra/tegra30-emc.c
 +++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -988,6 +988,11 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
- 	u32 value, ram_code;
- 	int err;
+@@ -14,6 +14,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
++#include <linux/interconnect-provider.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+@@ -327,6 +328,7 @@ struct tegra_emc {
+ 	struct device *dev;
+ 	struct tegra_mc *mc;
+ 	struct notifier_block clk_nb;
++	struct icc_provider provider;
+ 	struct clk *clk;
+ 	void __iomem *regs;
+ 	unsigned int irq;
+@@ -1264,6 +1266,112 @@ static void tegra_emc_debugfs_init(struct tegra_emc *emc)
+ 			    emc, &tegra_emc_debug_max_rate_fops);
+ }
  
-+	if (of_get_child_count(dev->of_node) == 0) {
-+		dev_info(dev, "device-tree doesn't have memory timings\n");
-+		return NULL;
++static inline struct tegra_emc *
++to_tegra_emc_provider(struct icc_provider *provider)
++{
++	return container_of(provider, struct tegra_emc, provider);
++}
++
++static struct icc_node *
++emc_of_icc_xlate_onecell(struct of_phandle_args *spec, void *data)
++{
++	struct icc_provider *provider = data;
++	struct icc_node *node;
++
++	/* External Memory is the only possible ICC route */
++	list_for_each_entry(node, &provider->nodes, node_list) {
++		if (node->id == TEGRA_ICC_EMEM)
++			return node;
 +	}
 +
- 	ram_code = tegra_read_ram_code();
- 
- 	for_each_child_of_node(dev->of_node, np) {
-@@ -1057,6 +1062,9 @@ static long emc_round_rate(unsigned long rate,
- 	struct tegra_emc *emc = arg;
- 	unsigned int i;
- 
-+	if (!emc->num_timings)
-+		return clk_get_rate(emc->clk);
++	return ERR_PTR(-EINVAL);
++}
 +
- 	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
++static int emc_icc_set(struct icc_node *src, struct icc_node *dst)
++{
++	struct tegra_emc *emc = to_tegra_emc_provider(dst->provider);
++	unsigned long long rate = icc_units_to_bps(dst->avg_bw);
++	unsigned int dram_data_bus_width_bytes = 4;
++	unsigned int ddr = 2;
++	int err;
++
++	do_div(rate, ddr * dram_data_bus_width_bytes);
++	rate = min_t(u64, rate, U32_MAX);
++
++	err = clk_set_min_rate(emc->clk, rate);
++	if (err)
++		return err;
++
++	err = clk_set_rate(emc->clk, rate);
++	if (err)
++		return err;
++
++	return 0;
++}
++
++static int emc_icc_aggregate(struct icc_node *node,
++			     u32 tag, u32 avg_bw, u32 peak_bw,
++			     u32 *agg_avg, u32 *agg_peak)
++{
++	*agg_avg = min((u64)avg_bw + (*agg_avg), (u64)U32_MAX);
++	*agg_peak = max(*agg_peak, peak_bw);
++
++	return 0;
++}
++
++static int tegra_emc_interconnect_init(struct tegra_emc *emc)
++{
++	struct icc_node *node;
++	int err;
++
++	/* older device-trees don't have interconnect properties */
++	if (!of_find_property(emc->dev->of_node, "#interconnect-cells", NULL))
++		return 0;
++
++	emc->provider.dev = emc->dev;
++	emc->provider.set = emc_icc_set;
++	emc->provider.data = &emc->provider;
++	emc->provider.xlate = emc_of_icc_xlate_onecell;
++	emc->provider.aggregate = emc_icc_aggregate;
++
++	err = icc_provider_add(&emc->provider);
++	if (err)
++		return err;
++
++	/* create External Memory Controller node */
++	node = icc_node_create(TEGRA_ICC_EMC);
++	err = PTR_ERR_OR_ZERO(node);
++	if (err)
++		goto del_provider;
++
++	node->name = "External Memory Controller";
++	icc_node_add(node, &emc->provider);
++
++	/* link External Memory Controller to External Memory (DRAM) */
++	err = icc_link_create(node, TEGRA_ICC_EMEM);
++	if (err)
++		goto remove_nodes;
++
++	/* create External Memory node */
++	node = icc_node_create(TEGRA_ICC_EMEM);
++	err = PTR_ERR_OR_ZERO(node);
++	if (err)
++		goto remove_nodes;
++
++	node->name = "External Memory (DRAM)";
++	icc_node_add(node, &emc->provider);
++
++	return 0;
++
++remove_nodes:
++	icc_nodes_remove(&emc->provider);
++
++del_provider:
++	icc_provider_del(&emc->provider);
++
++	return err;
++}
++
+ static int tegra_emc_probe(struct platform_device *pdev)
+ {
+ 	struct platform_device *mc;
+@@ -1344,6 +1452,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, emc);
+ 	tegra_emc_debugfs_init(emc);
  
- 	for (i = 0; i < emc->num_timings; i++) {
-@@ -1263,12 +1271,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	struct tegra_emc *emc;
- 	int err;
- 
--	if (of_get_child_count(pdev->dev.of_node) == 0) {
--		dev_info(&pdev->dev,
--			 "device-tree node doesn't have memory timings\n");
--		return -ENODEV;
--	}
--
- 	np = of_parse_phandle(pdev->dev.of_node, "nvidia,memory-controller", 0);
- 	if (!np) {
- 		dev_err(&pdev->dev, "could not get memory controller node\n");
-@@ -1280,10 +1282,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	if (!mc)
- 		return -ENOENT;
- 
--	np = emc_find_node_by_ram_code(&pdev->dev);
--	if (!np)
--		return -EINVAL;
--
- 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
- 	if (!emc) {
- 		of_node_put(np);
-@@ -1297,10 +1295,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	emc->clk_nb.notifier_call = emc_clk_change_notify;
- 	emc->dev = &pdev->dev;
- 
--	err = emc_load_timings_from_dt(emc, np);
--	of_node_put(np);
--	if (err)
--		return err;
-+	np = emc_find_node_by_ram_code(&pdev->dev);
-+	if (np) {
-+		err = emc_load_timings_from_dt(emc, np);
-+		of_node_put(np);
++	if (IS_ENABLED(CONFIG_INTERCONNECT)) {
++		err = tegra_emc_interconnect_init(emc);
 +		if (err)
-+			return err;
++			dev_err(&pdev->dev, "failed to initialize ICC: %d\n",
++				err);
 +	}
++
+ 	return 0;
  
- 	emc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(emc->regs))
+ unset_cb:
 -- 
 2.25.1
