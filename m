@@ -1,65 +1,43 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/9] gpio: tegra186: Add support for pin ranges
-Date: Tue, 31 Mar 2020 22:53:04 +0200
-Message-ID: <20200331205304.GD2954599@ulmo>
-References: <20200319122737.3063291-1-thierry.reding@gmail.com>
- <20200319122737.3063291-3-thierry.reding@gmail.com>
- <CACRpkdZ-7Fm8uPYoE6fL7WXQYbdV-nW_Ttt1ggXSApxMi55ODQ@mail.gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1 0/6] Support NVIDIA Tegra-based Acer A500 and Nexus 7 devices
+Date: Wed,  1 Apr 2020 00:43:21 +0300
+Message-ID: <20200331214327.6496-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OROCMA9jn6tkzFBc"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ-7Fm8uPYoE6fL7WXQYbdV-nW_Ttt1ggXSApxMi55ODQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Jon Hunter <jonathanh@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Pedro=20=C3=82ngelo?= <pangelo-yxaQD43p5Qo@public.gmane.org>, Matt Merhar <mattmerhar-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
---OROCMA9jn6tkzFBc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series introduces upstream kernel support for Acer Iconia Tab A500
+and ASUS Google Nexus 7 tablet devices. Please review and apply, thanks
+in advance.
 
-On Fri, Mar 27, 2020 at 11:39:35AM +0100, Linus Walleij wrote:
-> On Thu, Mar 19, 2020 at 1:27 PM Thierry Reding <thierry.reding@gmail.com>=
- wrote:
->=20
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Add support for Tegra SoC generations to specify a list of pin ranges
-> > that map GPIOs to ranges of pins in the pin controller.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> Patch applied!
+Dmitry Osipenko (6):
+  ARM: tegra: Add device-tree for Acer Iconia Tab A500
+  ARM: tegra: Add device-tree for ASUS Google Nexus 7
+  dt-bindings: Add vendor prefix for Acer Inc.
+  dt-bindings: ARM: tegra: Add Acer Iconia Tab A500
+  dt-bindings: ARM: tegra: Add ASUS Google Nexus 7
+  ARM: tegra_defconfig: Enable options useful for Nexus 7 and Acer A500
 
-Hi Linus,
+ .../devicetree/bindings/arm/tegra.yaml        |   10 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ arch/arm/boot/dts/Makefile                    |    3 +
+ .../boot/dts/tegra20-acer-a500-picasso.dts    | 1444 +++++++++
+ .../tegra30-asus-nexus7-grouper-common.dtsi   | 2646 +++++++++++++++++
+ .../boot/dts/tegra30-asus-nexus7-grouper.dts  |  463 +++
+ .../boot/dts/tegra30-asus-nexus7-tilapia.dts  |  549 ++++
+ arch/arm/configs/tegra_defconfig              |   28 +
+ 8 files changed, 5145 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dts
 
-I see patch 1 applied to gpio/for-next, but patches 2 and 3 don't seem
-to be in linux-next yet. Did anything go wrong with those?
-
-Thierry
-
---OROCMA9jn6tkzFBc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6DrbAACgkQ3SOs138+
-s6Fjig/+ITFzu90AVbO2aoJvVTkwo257Rmutpy+shRroAqnbY0/JvKMDCnESkeYU
-lWH/LBVf5dxgmr+z6E7zlEHHyHM8atMziMVVLgu9st9GAOljFXf4Ia031HNVZNTb
-1L+XnasEKcYtInDbw0d0PrdzQVXQ9QV1/mU+FZX700wRRz3TvOqFHybztn7dZ1Yg
-x0KIVC13UNUIvFFiMb184SgPCgCxWVybVqSCbjSd+VgSuwCmfwCTkFYXQ95YWF5F
-zOcVAScfUtbl2e2E/hK0yDgwEarNDrDUhsZeOFO2Z6MLeSXyPP9uI8Dj9eFQTVJq
-JXYEiUL3eKGhXIQ68F7kHdrl2i210Z0GzzfQR0zJm6REOn06yJcpUaUIk4ZrG/a8
-HY/bEggZvz+XlSST8fd1+e1BLzLkcp+lXwb55WoWluKND8WZACjn4qkS/uA4faFH
-aWoPdCef9LzbOqHlZjZlT4pMApWv5Jtw32AXW4hH5uhTAl+L6YbIiFYfy1UB2BFU
-/ynGkvyhsjwi0aHLsjW4xs4pwIpRssz41s2jYjrMQBuyjinfF2WMsKB+XLvrYwBK
-bU+0XTHDouN4eNh0OltOdLiV5XljIP6/mzF9bZN03LDwiqwB05Y/yz7/Gq2wnmXB
-5nYU9hkjIWJLX5JrTvtYY5z5u527He38NZRQEKDMvILC6/TUWSE=
-=Ezrv
------END PGP SIGNATURE-----
-
---OROCMA9jn6tkzFBc--
+-- 
+2.25.1
