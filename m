@@ -1,60 +1,69 @@
 From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v1 1/5] PM / devfreq: tegra: Add Dmitry as a maintainer
-Date: Wed, 1 Apr 2020 08:13:43 +0900
-Message-ID: <db4883d4-18b7-238a-798b-ad45aad978fc@samsung.com>
+Subject: Re: [PATCH v1 3/5] PM / devfreq: tegra20: Use
+ clk_round_rate_unboundly()
+Date: Wed, 1 Apr 2020 08:22:30 +0900
+Message-ID: <8e62e4ac-081c-a1ac-f0a9-b4e882fcd3b5@samsung.com>
 References: <20200330231617.17079-1-digetx@gmail.com>
-        <CGME20200330232036epcas1p2cba89238a41fa0941d0abcaf2b457072@epcas1p2.samsung.com>
-        <20200330231617.17079-2-digetx@gmail.com>
+        <CGME20200330232035epcas1p4dc533fd4e30d543a1cd12ebb5c5e80b3@epcas1p4.samsung.com>
+        <20200330231617.17079-4-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200330231617.17079-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200330231617.17079-4-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Dmitry,
+
 On 3/31/20 8:16 AM, Dmitry Osipenko wrote:
-> I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
-> want to help keep them working and evolving in the future.
+> The clk_round_rate() doesn't work for us properly if clock rate is bounded
+> by a min/max rate that is requested by some other clk-user because we're
+> building devfreq's OPP table based on the rounding.
 > 
-> Acked-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> In particular this becomes a problem if display driver is probed earlier
+> than devfreq, and thus, display adds a memory bandwidth request using
+> interconnect API, which results in a minimum clock-rate being set for
+> the memory clk. In a result, the lowest devfreq OPP rate is getting
+> limited to the minimum rate imposed by the display driver.
+> 
+> Let's use new clk_round_rate_unboundly() that resolves the problem by
+> rounding clock rate without taking into account min/max limits imposed by
+> active clk users.
+> 
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  MAINTAINERS | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  drivers/devfreq/tegra20-devfreq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8b8abe756ae0..9e8b0779f6df 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10931,6 +10931,15 @@ F:	include/linux/memblock.h
->  F:	mm/memblock.c
->  F:	Documentation/core-api/boot-time-mm.rst
+> diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
+> index ff82bac9ee4e..1bb10ef11dfe 100644
+> --- a/drivers/devfreq/tegra20-devfreq.c
+> +++ b/drivers/devfreq/tegra20-devfreq.c
+> @@ -149,10 +149,10 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
 >  
-> +MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
-> +M:	Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> +L:	linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> +L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-
-Need to update it as following:
-git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
-
-> +S:	Maintained
-> +F:	drivers/devfreq/tegra20-devfreq.c
-> +F:	drivers/devfreq/tegra30-devfreq.c
-> +
->  MEMORY MANAGEMENT
->  M:	Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
->  L:	linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org
+>  	tegra->regs = mc->regs;
+>  
+> -	max_rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+> +	max_rate = clk_round_rate_unboundly(tegra->emc_clock, ULONG_MAX);
+>  
+>  	for (rate = 0; rate <= max_rate; rate++) {
+> -		rate = clk_round_rate(tegra->emc_clock, rate);
+> +		rate = clk_round_rate_unboundly(tegra->emc_clock, rate);
+>  
+>  		err = dev_pm_opp_add(&pdev->dev, rate, 0);
+>  		if (err) {
 > 
 
-I already agreed it. To prevent the merge conflict of MAINTAINERS,
-better to be merged it to linux-pm.git maintainer. On next time,
-please add Rafael J. Wysocki to To list.
+Firstly, patch1 have to be reviewed for this patch.
+I have no any objection. It looks good to me.
+
+If patch1 get the confirmation from clock maintainer,
+feel free to add my acked tag:
+Acked-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
 -- 
 Best Regards,
