@@ -1,106 +1,64 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Wed, 1 Apr 2020 11:24:05 -0700
-Message-ID: <e3b437c6-76e1-d407-e81d-c05912ffcd0b@nvidia.com>
-References: <20200325110358.GB853@valkosipuli.retiisi.org.uk>
- <8bc44545-7d1e-0e37-db27-d37784679574@xs4all.nl>
- <20200331103215.GI2394@valkosipuli.retiisi.org.uk>
- <ba37eb84-392c-3767-57f6-d297b0ab79a3@xs4all.nl>
- <20200331111018.GJ2394@valkosipuli.retiisi.org.uk>
- <a1145ee4-2991-a958-1225-090c57fec533@xs4all.nl>
- <20200331115221.GA4767@pendragon.ideasonboard.com>
- <6aa7d86c-3943-d508-ccf6-5ac46546abe9@nvidia.com>
- <3b00a559-992a-2da9-92b1-bee44e137ba2@nvidia.com>
- <1c60491b-1bb2-6291-80a6-c0fa14094077@nvidia.com>
- <20200401165805.GE4876@pendragon.ideasonboard.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 1/5] PM / devfreq: tegra: Add Dmitry as a maintainer
+Date: Wed, 1 Apr 2020 21:52:51 +0300
+Message-ID: <cfaf5c1c-51e7-2b5c-dcfa-65546674ca95@gmail.com>
+References: <20200330231617.17079-1-digetx@gmail.com>
+ <CGME20200330232036epcas1p2cba89238a41fa0941d0abcaf2b457072@epcas1p2.samsung.com>
+ <20200330231617.17079-2-digetx@gmail.com>
+ <db4883d4-18b7-238a-798b-ad45aad978fc@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200401165805.GE4876@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <db4883d4-18b7-238a-798b-ad45aad978fc-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@iki.fi>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 4/1/20 9:58 AM, Laurent Pinchart wrote:
-> External email: Use caution opening links or attachments
->
->
-> Hi Sowjanya,
->
-> On Wed, Apr 01, 2020 at 09:36:03AM -0700, Sowjanya Komatineni wrote:
->> Hi Sakari/Laurent,
+01.04.2020 02:13, Chanwoo Choi пишет:
+> On 3/31/20 8:16 AM, Dmitry Osipenko wrote:
+>> I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
+>> want to help keep them working and evolving in the future.
 >>
->> Few questions to confirm my understanding on below discussion.
+>> Acked-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  MAINTAINERS | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
 >>
->> 1. Some sensors that you are referring as don't work with single devnode
->> controlling pipeline devices are ISP built-in sensors where setup of
->> pipeline and subdevices happen separately?
-> Sensors that include ISPs could indeed require to be exposed as multiple
-> subdevs, but I was mostly referring to raw Bayer sensors with hardware
-> architectures similar to the SMIA++ and MIPI CCS specifications. Those
-> sensors can perform cropping in up to three different locations (analog
-> crop, digital crop, output crop), and can also scale in up to three
-> different locations (binning, skipping and filter-based scaling).
->
-> Furthermore, with the V4L2 support for multiplexed streams that we are
-> working on, a sensor that can produce both image data and embedded data
-> would also need to be split in multiple subdevs.
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 8b8abe756ae0..9e8b0779f6df 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -10931,6 +10931,15 @@ F:	include/linux/memblock.h
+>>  F:	mm/memblock.c
+>>  F:	Documentation/core-api/boot-time-mm.rst
+>>  
+>> +MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
+>> +M:	Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> +L:	linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> +L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+> 
+> Need to update it as following:
+> git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
 
-Thanks Laurent.
+Indeed, good catch!
 
-For sensors with meta/embedded data along with image in same frame, 
-Tegra VI HW extracts based on programmed embedded data size info.
+>> +S:	Maintained
+>> +F:	drivers/devfreq/tegra20-devfreq.c
+>> +F:	drivers/devfreq/tegra30-devfreq.c
+>> +
+>>  MEMORY MANAGEMENT
+>>  M:	Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+>>  L:	linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org
+>>
+> 
+> I already agreed it. To prevent the merge conflict of MAINTAINERS,
+> better to be merged it to linux-pm.git maintainer. On next time,
+> please add Rafael J. Wysocki to To list.
 
-So in our driver we capture this as separate buffer as embedded data is 
-part of frame.
-
-You above comment on multiplexed streams is for sensors using different 
-virutal channels for diff streams?
-
-
->> 2. With driver supporting single device node control of entire pipeline
->> devices compared to MC-based, limitation is with userspace apps for only
->> these complex camera sensors?
-> In those cases, several policy decisions on how to configure the sensor
-> (whether to use binning, skipping and/or filter-based scaling for
-> instance, or how much cropping and scaling to apply to achieve a certain
-> output resolution) will need to be implemented in the kernel, and
-> userspace will not have any control on them.
->
->> 3. Does all upstream video capture drivers eventually will be moved to
->> support MC-based?
-> I think we'll see a decrease of the video-node-centric drivers in the
-> future for embedded systems, especially the ones that include an ISP.
-> When a system has an ISP, even if the ISP is implemented as a
-> memory-to-memory device separate from the CSI-2 capture side, userspace
-> will likely have a need for fine-grained control of the camera sensor.
->
->> 4. Based on libcamera doc looks like it will work with both types of
->> MC-based and single devnode based pipeline setup drivers for normal
->> sensors and limitation is when we use ISP built-in sensor or ISP HW
->> block. Is my understanding correct?
-> libcamera supports both, it doesn't put any restriction in that area.
-> The pipeline handler (the device-specific code in libcamera that
-> configures and control the hardware pipeline) is responsible for
-> interfacing with the kernel drivers, and is free to use an MC-centric or
-> video-node-centric API depending on what the kernel drivers offer.
->
-> The IPA (image processing algorithms) module is also vendor-specific.
-> Although it will not interface directly with kernel drivers, it will
-> have requirements on how fine-grained control of the sensor is required.
-> For systems that have an ISP in the SoC, reaching a high image quality
-> level requires fine-grained control of the sensor, or at the very least
-> being able to retrieve fine-grained sensor configuration information
-> from the kernel. For systems using a camera sensor with an integrated
-> ISP and a CSI-2 receiver without any further processing on the SoC side,
-> there will be no such fine-grained control of the sensor by the IPA (and
-> there could even be no IPA module at all).
->
-> --
-> Regards,
->
-> Laurent Pinchart
+I'll update and re-send this patch separately from the rest of the
+patches, thank you.
