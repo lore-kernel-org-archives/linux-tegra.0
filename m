@@ -1,50 +1,53 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: Re: [PATCH v1 5/6] dt-bindings: ARM: tegra: Add ASUS Google Nexus 7
-Date: Thu, 2 Apr 2020 06:50:08 +0200
-Message-ID: <20200402045008.GB11124@qmqm.qmqm.pl>
-References: <20200331214327.6496-1-digetx@gmail.com>
- <20200331214327.6496-6-digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4.4 00/91] 4.4.218-rc1 review
+Date: Thu, 2 Apr 2020 08:09:10 +0100
+Message-ID: <4e761152-6dd1-dfcc-df24-a073323f202d@nvidia.com>
+References: <20200401161512.917494101@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200331214327.6496-6-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200401161512.917494101-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pedro =?iso-8859-2?Q?=C2ngelo?= <pangelo-yxaQD43p5Qo@public.gmane.org>, Matt Merhar <mattmerhar-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 12:43:26AM +0300, Dmitry Osipenko wrote:
-> Add a binding for the Tegra30-based ASUS Google Nexus 7 tablet device.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/arm/tegra.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-> index 7fd0b66c69b2..fb3bbf7a5fb4 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra.yaml
-> +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-> @@ -62,6 +62,13 @@ properties:
->                - toradex,colibri_t30-eval-v3
->            - const: toradex,colibri_t30
->            - const: nvidia,tegra30
-> +      - items:
-> +          - const: asus,grouper
-> +          - const: nvidia,tegra30
-> +      - items:
-> +          - const: asus,tilapia
-> +          - const: asus,grouper
-> +          - const: nvidia,tegra30
->        - items:
->            - enum:
->                - nvidia,dalmore
 
-Is it really necessary to list every possible device using a SoC chip?
-Wouldn't it be enough to just list SoC value nvidia,tegraXYZ and allow
-any other supplemental "compatibles"?
+On 01/04/2020 17:16, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.218 release.
+> There are 91 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 03 Apr 2020 16:09:36 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.218-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Best Regards,
-Micha³ Miros³aw
+
+All tests are passing for Tegra ...
+
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
+
+Linux version:	4.4.218-rc1-g2d26509e19e3
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
