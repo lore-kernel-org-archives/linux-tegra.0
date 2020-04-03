@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 1/7] dt-bindings: timer: Add bindings for NVIDIA Tegra186 timers
-Date: Fri,  3 Apr 2020 22:22:03 +0200
-Message-ID: <20200403202209.299823-2-thierry.reding@gmail.com>
+Subject: [PATCH v3 4/7] arm64: tegra: Add native timer support on Tegra186
+Date: Fri,  3 Apr 2020 22:22:06 +0200
+Message-ID: <20200403202209.299823-5-thierry.reding@gmail.com>
 References: <20200403202209.299823-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,87 +14,41 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The NVIDIA Tegra186 SoC contains an IP block that provides a register
-interface for ten timers with a 29-bit counter that can generate one-
-shot, periodic or watchdog interrupts.
+The native timers IP block found on NVIDIA Tegra SoCs implements a
+watchdog timer that can be used to recover from system hangs. Add the
+device tree node on Tegra186.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes in v2:
-- add required properties section
-- add additionalProperties: false
-- do not show status in example
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
- .../bindings/timer/nvidia,tegra186-timer.yaml | 61 +++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
-
-diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
-new file mode 100644
-index 000000000000..d722cd267bf9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 58100fb9cd8b..4dfa70e93693 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -167,6 +167,22 @@ emc: external-memory-controller@2c60000 {
+ 		};
+ 	};
+ 
++	timer@3010000 {
++		compatible = "nvidia,tegra186-timer";
++		reg = <0x0 0x03010000 0x0 0x000e0000>;
++		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		status = "disabled";
++	};
 +
-+title: NVIDIA Tegra186 timers
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+  - Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-+
-+description: |
-+  The Tegra186 timer provides ten 29-bit timer counters and one 32-bit TSC
-+  (timestamp counter). The timers run at either a fixed 1 MHz clock rate
-+  derived from the oscillator clock. Each timer can be programmed to raise
-+  one-shot, periodic, or watchdog interrupts.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - description: NVIDIA Tegra186
-+        items:
-+          - const: nvidia,tegra186-timer
-+
-+      - description: NVIDIA Tegra194
-+        items:
-+          - const: nvidia,tegra194-timer
-+          - const: nvidia,tegra186-timer
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 10
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    timer@3010000 {
-+        compatible = "nvidia,tegra186-timer";
-+        reg = <0x03010000 0x000e0000>;
-+        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+    };
+ 	uarta: serial@3100000 {
+ 		compatible = "nvidia,tegra186-uart", "nvidia,tegra20-uart";
+ 		reg = <0x0 0x03100000 0x0 0x40>;
 -- 
 2.24.1
