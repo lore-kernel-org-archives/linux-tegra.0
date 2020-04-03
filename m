@@ -1,38 +1,41 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 2/7] clocksource: Add Tegra186 timers support
-Date: Sat, 4 Apr 2020 00:06:58 +0300
-Message-ID: <185abbe6-5c17-1c04-708e-6374b28ce97f@gmail.com>
+Subject: Re: [PATCH v3 5/7] arm64: tegra: Enable native timers on Jetson TX2
+Date: Sat, 4 Apr 2020 00:11:53 +0300
+Message-ID: <948734ce-0f4e-e09b-a928-74199455eed7@gmail.com>
 References: <20200403202209.299823-1-thierry.reding@gmail.com>
- <20200403202209.299823-3-thierry.reding@gmail.com>
- <eb2a848f-9a4f-7c06-aff0-86d5087fe053@gmail.com>
+ <20200403202209.299823-6-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <eb2a848f-9a4f-7c06-aff0-86d5087fe053-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200403202209.299823-6-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-03.04.2020 23:51, Dmitry Osipenko пишет:
-> 03.04.2020 23:22, Thierry Reding пишет:
-> ...
->> +static irqreturn_t tegra186_timer_irq(int irq, void *data)
->> +{
->> +	struct tegra186_timer *tegra = data;
->> +
->> +	if (watchdog_active(&tegra->wdt->base)) {
->> +		tegra186_wdt_disable(tegra->wdt);
->> +		tegra186_wdt_enable(tegra->wdt);
->> +	}
+03.04.2020 23:22, Thierry Reding пишет:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Shouldn't this return IRQ_NONE if watchdog is inactive?
+> Enable the native timers on Jetson TX2 to allow using the watchdog
+> functionality to recover from system hangs, for example.
 > 
->> +	return IRQ_HANDLED;
->> +}
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+> index da96de04d003..9aa17744c4a0 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+> @@ -58,6 +58,10 @@ memory-controller@2c00000 {
+>  		status = "okay";
+>  	};
+>  
+> +	timer@3010000 {
+> +		status = "okay";
+> +	};
 
-Could you please explain why this interrupt handler is needed at all?
-Shouldn't the watchdog's core take care of the pinging?
+Why timer needs to be enabled per-board?
