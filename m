@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v2 2/7] clocksource: Add Tegra186 timers support
-Date: Fri, 3 Apr 2020 19:24:55 +0300
-Message-ID: <edf08b18-ad19-7191-020d-a06d57747c45@gmail.com>
+Date: Fri, 3 Apr 2020 19:33:24 +0300
+Message-ID: <a982d831-fc59-f705-8f8a-9370b897adb8@gmail.com>
 References: <20200331221914.2966407-1-thierry.reding@gmail.com>
  <20200331221914.2966407-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
@@ -17,47 +17,35 @@ List-Id: linux-tegra@vger.kernel.org
 
 01.04.2020 01:19, Thierry Reding пишет:
 ...
-> +static int tegra186_wdt_set_timeout(struct watchdog_device *wdd,
-> +				    unsigned int timeout)
+> +static int tegra186_timer_probe(struct platform_device *pdev)
 > +{
-> +	struct tegra186_wdt *wdt = to_tegra186_wdt(wdd);
+> +	struct device *dev = &pdev->dev;
+> +	struct tegra186_timer *tegra;
+> +	int err;
 > +
-> +	tegra186_wdt_disable(wdt);
-> +	wdt->base.timeout = timeout;
-> +	tegra186_wdt_enable(wdt);
+> +	tegra = devm_kzalloc(dev, sizeof(*tegra), GFP_KERNEL);
+> +	if (!tegra)
+> +		return -ENOMEM;
+> +
+> +	tegra->soc = of_device_get_match_data(dev);
+> +	dev_set_drvdata(dev, tegra);
+> +	tegra->dev = dev;
+> +
+> +	tegra->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(tegra->regs))
+> +		return PTR_ERR(tegra->regs);
+> +
+> +	err = platform_get_irq(pdev, 0);
+> +	if (err < 0) {
+> +		dev_err(dev, "failed to get interrupt #0: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	tegra->irq = err;
+> +
+> +	err = devm_request_irq(dev, tegra->irq, tegra186_timer_irq,
+> +			       IRQF_ONESHOT | IRQF_TRIGGER_HIGH,
+> +			       "tegra186-timer", tegra);
 
-Why changing timeout enables the watchdog?
-
-> +	return 0;
-> +}
-> +
-> +static const struct watchdog_ops tegra186_wdt_ops = {
-> +	.owner = THIS_MODULE,
-> +	.start = tegra186_wdt_start,
-> +	.stop = tegra186_wdt_stop,
-> +	.ping = tegra186_wdt_ping,
-> +	.set_timeout = tegra186_wdt_set_timeout,
-> +};
-
-...
-> +static int __maybe_unused tegra186_timer_suspend(struct device *dev)
-> +{
-> +	struct tegra186_timer *tegra = dev_get_drvdata(dev);
-> +
-> +	if (tegra->wdt)
-> +		tegra186_wdt_disable(tegra->wdt);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused tegra186_timer_resume(struct device *dev)
-> +{
-> +	struct tegra186_timer *tegra = dev_get_drvdata(dev);
-> +
-> +	if (tegra->wdt)
-> +		tegra186_wdt_enable(tegra->wdt);
-
-What if watchdog is in a stopped state? Why it's enabled unconditionally?
-
-> +	return 0;
-> +}
+Looks like there is no need to store tegra->irq in the struct
+tegra186_timer.
