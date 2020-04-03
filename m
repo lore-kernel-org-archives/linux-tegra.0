@@ -1,10 +1,12 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 0/4] of: reserved-memory: Various improvements
-Date: Fri,  3 Apr 2020 20:56:36 +0200
-Message-ID: <20200403185640.118569-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/4] dt-bindings: reserved-memory: Introduce memory-region{s,-names}
+Date: Fri,  3 Apr 2020 20:56:37 +0200
+Message-ID: <20200403185640.118569-2-thierry.reding@gmail.com>
+References: <20200403185640.118569-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200403185640.118569-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -12,46 +14,58 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Hi Rob, all,
+In order to make the reserved-memory bindings more consistent with other
+existing bindings, add a memory-region-names property that contains an
+array of strings that name the entries of the memory-region property and
+allows these regions to be looked up by name.
 
-this is a set of patches that I've been working on to allow me to use
-reserved memory regions more flexibly. One of the use-cases that I have
-is an external memory controller driver that gets passed one or two
-tables from firmware containing a set of EMC frequencies and the
-corresponding register values to program for these frequencies.
+Also add the memory-regions property as an alias for the existing
+memory-region property. This is again for consistency with other similar
+bindings and makes it clearer that this property can take multiple
+<phandle, specifier> pairs.
 
-One of these tables is the "nominal" table and an optional second table
-is "derated" and is used when the DRAM chips are overheating. I want to
-be able to pass these tables as separate memory-region entries.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ .../bindings/reserved-memory/reserved-memory.txt     | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-So what this small patchset does is make the reserved-memory code adapt
-to this situation better. On one hand, while the DT bindings currently
-support multiple regions per device tree node, it's slightly unintuitive
-to specify them. The first patch adds a memory-region-names property
-that allows the DT to specify a "consumer" name for these regions much
-like we do for things like clocks, resets or the reg property. At the
-same time, a new alias for memory-region, named memory-regions, is
-introduced to make this more consistent with other bindings.
-
-Patches 2 and 3 add support in the core OF reserved-memory code for
-these binding changes, with a fallback to the memory-region property if
-no memory-regions property exists.
-
-Patch 4 implements support for releasing multiple regions assigned to a
-single device rather than just the first.
-
-Thierry
-
-Thierry Reding (4):
-  dt-bindings: reserved-memory: Introduce memory-region{s,-names}
-  of: reserved-memory: Support memory-regions property
-  of: reserved-memory: Support lookup of regions by name
-  of: reserved-memory: Support multiple regions per device
-
- .../reserved-memory/reserved-memory.txt       | 12 +++--
- drivers/of/of_reserved_mem.c                  | 52 +++++++++++++------
- include/linux/of_reserved_mem.h               | 11 ++++
- 3 files changed, 55 insertions(+), 20 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+index bac4afa3b197..823e619cfca3 100644
+--- a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
++++ b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+@@ -76,7 +76,11 @@ Device node references to reserved memory
+ Regions in the /reserved-memory node may be referenced by other device
+ nodes by adding a memory-region property to the device node.
+ 
+-memory-region (optional) - phandle, specifier pairs to children of /reserved-memory
++memory-regions (optional) - phandle, specifier pairs to children of /reserved-memory
++memory-region-names (optional) - a list of names, one for each corresponding
++  entry in the memory-regions property
++
++memory-region (optional) - alias for memory-regions
+ 
+ Example
+ -------
+@@ -120,17 +124,17 @@ one for multimedia processing (named multimedia-memory@77000000, 64MiB).
+ 	/* ... */
+ 
+ 	fb0: video@12300000 {
+-		memory-region = <&display_reserved>;
++		memory-regions = <&display_reserved>;
+ 		/* ... */
+ 	};
+ 
+ 	scaler: scaler@12500000 {
+-		memory-region = <&multimedia_reserved>;
++		memory-regions = <&multimedia_reserved>;
+ 		/* ... */
+ 	};
+ 
+ 	codec: codec@12600000 {
+-		memory-region = <&multimedia_reserved>;
++		memory-regions = <&multimedia_reserved>;
+ 		/* ... */
+ 	};
+ };
 -- 
 2.24.1
