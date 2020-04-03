@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 7/7] arm64: tegra: Enable native timers on Jetson AGX Xavier
-Date: Fri,  3 Apr 2020 22:22:09 +0200
-Message-ID: <20200403202209.299823-8-thierry.reding@gmail.com>
+Subject: [PATCH v3 5/7] arm64: tegra: Enable native timers on Jetson TX2
+Date: Fri,  3 Apr 2020 22:22:07 +0200
+Message-ID: <20200403202209.299823-6-thierry.reding@gmail.com>
 References: <20200403202209.299823-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,28 +14,28 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Enable the native timers on Jetson AGX Xavier to allow using the
-watchdog functionality to recover from system hangs, for example.
+Enable the native timers on Jetson TX2 to allow using the watchdog
+functionality to recover from system hangs, for example.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 4 ++++
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-index 623f7d7d216b..d68588f2709e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -52,6 +52,10 @@ memory-controller@2c00000 {
- 			status = "okay";
- 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+index da96de04d003..9aa17744c4a0 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+@@ -58,6 +58,10 @@ memory-controller@2c00000 {
+ 		status = "okay";
+ 	};
  
-+		timer@3010000 {
-+			status = "okay";
-+		};
++	timer@3010000 {
++		status = "okay";
++	};
 +
- 		serial@3110000 {
- 			status = "okay";
- 		};
+ 	serial@3100000 {
+ 		status = "okay";
+ 	};
 -- 
 2.24.1
