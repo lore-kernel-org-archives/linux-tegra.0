@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v3 2/7] clocksource: Add Tegra186 timers support
-Date: Fri, 3 Apr 2020 23:51:57 +0300
-Message-ID: <eb2a848f-9a4f-7c06-aff0-86d5087fe053@gmail.com>
+Date: Fri, 3 Apr 2020 23:58:40 +0300
+Message-ID: <894dbbd4-be96-13ce-96b9-432b5d71f06b@gmail.com>
 References: <20200403202209.299823-1-thierry.reding@gmail.com>
  <20200403202209.299823-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
@@ -17,16 +17,23 @@ List-Id: linux-tegra@vger.kernel.org
 
 03.04.2020 23:22, Thierry Reding пишет:
 ...
-> +static irqreturn_t tegra186_timer_irq(int irq, void *data)
+> +static int tegra186_wdt_set_timeout(struct watchdog_device *wdd,
+> +				    unsigned int timeout)
 > +{
-> +	struct tegra186_timer *tegra = data;
+> +	struct tegra186_wdt *wdt = to_tegra186_wdt(wdd);
 > +
-> +	if (watchdog_active(&tegra->wdt->base)) {
-> +		tegra186_wdt_disable(tegra->wdt);
-> +		tegra186_wdt_enable(tegra->wdt);
-> +	}
+> +	if (watchdog_active(&wdt->base))
+> +		tegra186_wdt_disable(wdt);
 
-Shouldn't this return IRQ_NONE if watchdog is inactive?
+Could this and other tegra186_wdt_enable/disable occurrences race with
+the interrupt handler?
 
-> +	return IRQ_HANDLED;
+Shouldn't IRQ be disabled/enable in a such cases to avoid the races?
+
+> +	wdt->base.timeout = timeout;
+> +
+> +	if (watchdog_active(&wdt->base))
+> +		tegra186_wdt_enable(wdt);
+> +
+> +	return 0;
 > +}
