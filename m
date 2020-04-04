@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v6 2/9] arm64: tegra: Add reset-cells to mc
-Date: Fri, 3 Apr 2020 18:25:00 -0700
-Message-ID: <1585963507-12610-3-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v6 3/9] dt-bindings: clock: tegra: Add clk id for CSI TPG clock
+Date: Fri, 3 Apr 2020 18:25:01 -0700
+Message-ID: <1585963507-12610-4-git-send-email-skomatineni@nvidia.com>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,26 +12,28 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, fran
 Cc: digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 device tree is missing reset-cells property for mc node.
+Tegra210 uses PLLD out internally for CSI TPG.
 
-This patch fixes it.
+This patch adds clk id for this CSI TPG clock from PLLD.
 
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ include/dt-bindings/clock/tegra210-car.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index d0eff92..5b1dfd8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -894,6 +894,7 @@
- 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
- 
- 		#iommu-cells = <1>;
-+		#reset-cells = <1>;
- 	};
- 
- 	sata@70020000 {
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 7a8f10b..d8909e0 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -351,7 +351,7 @@
+ #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
+ #define TEGRA210_CLK_XUSB_SSP_SRC 318
+ #define TEGRA210_CLK_PLL_RE_OUT1 319
+-/* 320 */
++#define TEGRA210_CLK_CSI_TPG 320
+ /* 321 */
+ #define TEGRA210_CLK_ISP 322
+ #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
 -- 
 2.7.4
