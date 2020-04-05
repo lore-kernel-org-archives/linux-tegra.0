@@ -1,32 +1,40 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [TEGRA194_CPUFREQ Patch v2 2/3] cpufreq: Add Tegra194 cpufreq
- driver
-Date: Sun, 5 Apr 2020 17:11:56 +0300
-Message-ID: <ba12496f-ac27-d4f2-dc69-d0a7e2d58679@gmail.com>
-References: <1586028547-14993-1-git-send-email-sumitg@nvidia.com>
- <1586028547-14993-3-git-send-email-sumitg@nvidia.com>
+Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
+Date: Sun, 5 Apr 2020 22:37:47 +0300
+Message-ID: <ca9a792f-ff5e-c82b-c2bc-32c4875e558d@gmail.com>
+References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
+ <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1586028547-14993-3-git-send-email-sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1585963507-12610-7-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-04.04.2020 22:29, Sumit Gupta пишет:
+04.04.2020 04:25, Sowjanya Komatineni пишет:
 ...
-> +static void tegra_read_counters(struct work_struct *work)
+> +static int tegra_csi_init(struct host1x_client *client)
 > +{
-> +	struct read_counters_work *read_counters_work;
-> +	struct tegra_cpu_ctr *c;
-> +	u64 val;
+> +	struct tegra_csi *csi = host1x_client_to_csi(client);
+> +	struct tegra_video_device *vid = dev_get_drvdata(client->host);
+> +	int ret;
 > +
-> +	/*
-> +	 * ref_clk_counter(32 bit counter) runs on constant clk,
-> +	 * pll_p(408MHz).
+> +	vid->csi = csi;
+> +
+> +	INIT_LIST_HEAD(&csi->csi_chans);
+> +
+> +	if (pm_runtime_enabled(csi->dev)) {
+> +		ret = pm_runtime_get_sync(csi->dev);
+> +		if (ret < 0) {
+> +			dev_err(csi->dev,
+> +				"failed to get runtime PM: %d\n", ret);
+> +			pm_runtime_put_noidle(csi->dev);
+> +			return ret;
+> +		}
+> +	} else {
 
-Is changing PLLP rate really impossible on T194? What makes you say that
-it runs on a fixed 408MHz?
+RPM is supposed to be always available on Tegra nowadays.
