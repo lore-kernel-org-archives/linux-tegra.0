@@ -1,19 +1,22 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
 Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Mon, 6 Apr 2020 14:18:18 -0700
-Message-ID: <ae1a90af-12ff-69dd-74c3-89f42a945a5c@nvidia.com>
+Date: Mon, 6 Apr 2020 14:39:58 -0700
+Message-ID: <dd16c560-ba8f-e7df-5dc4-5227e0043196@nvidia.com>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
  <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
- <782c8c4e-f5c2-d75e-0410-757172dd3090@gmail.com>
- <ac225ff3-8de8-256c-7f81-0225b4153540@nvidia.com>
- <86bbcd55-fa13-5a35-e38b-c23745eafb87@gmail.com>
- <2839b1ee-dedc-d0ee-e484-32729a82a6ea@nvidia.com>
- <7361d00d-9cfe-3e4a-6199-524d37d53bd0@gmail.com>
+ <200bb96e-2d07-764f-9e14-55538dc742fd@gmail.com>
+ <23bfab09-b464-6e51-9843-06d13000e9b9@nvidia.com>
+ <be77b0ef-d605-8357-4180-f40b2886d07a@gmail.com>
+ <08cd31d5-e8b9-4d3a-fb0e-0e4462947d96@nvidia.com>
+ <12a834ac-52b1-6dc0-7d3a-3e6a1fa85a2a@gmail.com>
+ <e3712e7b-b335-b35b-a94f-24eb85122dca@nvidia.com>
+ <b1726d33-0d35-9323-a747-407148d0104e@gmail.com>
+ <eb80178f-30f4-8f46-51cd-ea3f4914b81d@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <7361d00d-9cfe-3e4a-6199-524d37d53bd0@gmail.com>
+In-Reply-To: <eb80178f-30f4-8f46-51cd-ea3f4914b81d@nvidia.com>
 Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
@@ -21,57 +24,40 @@ Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, l
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 4/6/20 1:54 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
+On 4/6/20 2:15 PM, Sowjanya Komatineni wrote:
 >
->
-> 06.04.2020 23:38, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 4/6/20 1:37 PM, Dmitry Osipenko wrote:
->>> External email: Use caution opening links or attachments
+> On 4/6/20 2:11 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 07.04.2020 00:02, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>>> Am I understanding correctly that this thread will take 100% CPU,
+>>>>>>>> spinning here, if more than 2 frame-captures queued?
+>>>>>>> on more than 2 frames captures, it breaks thread and on next=20
+>>>>>>> wakeup it
+>>>>>>> continues
+>>>>>> The wait_event() won't wait if condition is true.
+>>>>> condition is checked when waitqueue is woken up
+>>>> https://elixir.bootlin.com/linux/v5.6.2/source/include/linux/wait.h#L4=
+62=20
+>>>>
+>>> process is put to sleep until the condition evaluates to true or signal
+>>> is received.
 >>>
->>>
->>> 06.04.2020 23:20, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> On 4/6/20 1:02 PM, Dmitry Osipenko wrote:
->>>>> External email: Use caution opening links or attachments
->>>>>
->>>>>
->>>>> 04.04.2020 04:25, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> ...
->>>>>> +static int chan_capture_kthread_start(void *data)
->>>>>> +{
->>>>>> +     struct tegra_vi_channel *chan =3D data;
->>>>>> +     struct tegra_channel_buffer *buf;
->>>>>> +     int err =3D 0;
->>>>>> +     int caps_inflight;
->>>>>> +
->>>>>> +     set_freezable();
->>>>>> +
->>>>>> +     while (1) {
->>>>>> +             try_to_freeze();
->>>>>> +
->>>>>> +             wait_event_interruptible(chan->start_wait,
->>>>>> +                                      !list_empty(&chan->capture) |=
-|
->>>>>> +                                      kthread_should_stop());
->>>>> Is it really okay that list_empty() isn't protected with a lock?
->>>>>
->>>>> Why wait_event is "interruptible"?
->>>> To allow it to sleep until wakeup on thread it to avoid constant
->>>> checking for condition even when no buffers are ready, basically to
->>>> prevent blocking.
->>> So the "interrupt" is for getting event about kthread_should_stop(),
->>> correct?
->> also to prevent blocking and to let is sleep and wakeup based on wait
->> queue to evaluate condition to proceed with the task
-> This looks suspicious, the comment to wait_event_interruptible() says
-> that it will return ERESTARTSYS if signal is recieved..
+>>> condition is checked each time the waitqueue head is woken up.
+>> This is a wrong assumption in accordance to the code.
 >
-> Does this mean that I can send signal from userspace to wake it up?
+> when every buffer is available as long as we are in streaming, we=20
+> should process it.
 >
-> The "interruptible" part looks wrong to me.
+> So if wake up happens when list has buffer, it will be processed but=20
+> at a time we limit processing 2 simultaneous buffer capture starts only.
+>
+Fixing typo.
 
-We are not checking for wait_event_interruptible to handle case when it=20
-returns ERESTARTSYS.
+I meant when ever buffer is available as long as we are in streaming, we=20
+should process it.
 
-So, signals sent from user space are ignore and we check if when wakeup=20
-happens if kthread_stop has requested to stop thread.
+So capture thread processes as long as buffers are available from user=20
+space limiting 2 simultaneous trigger of captures and thread will be in=20
+sleep when capture buffers list is empty or no stop thread is signaled.
