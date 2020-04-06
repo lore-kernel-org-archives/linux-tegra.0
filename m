@@ -1,55 +1,120 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: host: ehci-tegra: Remove superfluous dev_err()
- message
-Date: Mon, 6 Apr 2020 12:05:14 +0200
-Message-ID: <20200406100514.GC475759@ulmo>
-References: <20200406055530.10860-1-tangbin@cmss.chinamobile.com>
+From: Alan Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/5] [2/5] mmc: host: Remove redundant host CQE bindings
+Date: Mon, 6 Apr 2020 09:59:16 -0400
+Message-ID: <CAOGqxeUjx+OWRhwWznk-uHZ9op7WTZaAGq6xd4Z4QdL+Hja2yA@mail.gmail.com>
+References: <1586165281-11888-1-git-send-email-chun-hung.wu@mediatek.com> <1586165281-11888-3-git-send-email-chun-hung.wu@mediatek.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bAmEntskrkuBymla"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200406055530.10860-1-tangbin-0p4V/sDNsUmm0O/7XYngnFaTQe2KTcn/@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tang Bin <tangbin-0p4V/sDNsUmm0O/7XYngnFaTQe2KTcn/@public.gmane.org>
-Cc: stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1586165281-11888-3-git-send-email-chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, BCM Kernel Feedback <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Martin Blumenstingl <martin.bl>
 List-Id: linux-tegra@vger.kernel.org
 
-
---bAmEntskrkuBymla
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Apr 06, 2020 at 01:55:30PM +0800, Tang Bin wrote:
-> The platform_get_irq() can print error message,so remove the redundant
-> dev_err() here.
->=20
-> Signed-off-by: Tang Bin <tangbin-0p4V/sDNsUmm0O/7XYngnFaTQe2KTcn/@public.gmane.org>
+On Mon, Apr 6, 2020 at 5:28 AM Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
+>
+> CQE bindings "supports-cqe" and "disable-cqe-dcmd" is parsed
+> in mmc_of_parse(). Remove vendor code which parses CQE bindings,
+> and use mmc_host->caps2 to decide support CQE or not.
+>
+> Signed-off-by: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 > ---
->  drivers/usb/host/ehci-tegra.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/mmc/host/sdhci-brcmstb.c   | 11 ++++++-----
+>  drivers/mmc/host/sdhci-msm.c       |  3 +--
+>  drivers/mmc/host/sdhci-of-arasan.c |  3 ---
+>  drivers/mmc/host/sdhci-tegra.c     |  2 +-
+>  4 files changed, 8 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
+> index ad01f64..07c90c6 100644
+> --- a/drivers/mmc/host/sdhci-brcmstb.c
+> +++ b/drivers/mmc/host/sdhci-brcmstb.c
+> @@ -247,10 +247,6 @@ static int sdhci_brcmstb_probe(struct platform_device *pdev)
+>                 return res;
+>
+>         memset(&brcmstb_pdata, 0, sizeof(brcmstb_pdata));
+> -       if (device_property_read_bool(&pdev->dev, "supports-cqe")) {
+> -               has_cqe = true;
+> -               match_priv->ops->irq = sdhci_brcmstb_cqhci_irq;
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The above line that sets the irq was moved to later in the function,
+but needs to come before sdhci_pltfm_init()
 
---bAmEntskrkuBymla
-Content-Type: application/pgp-signature; name="signature.asc"
+Al
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6K/toACgkQ3SOs138+
-s6EFiQ/9HplumsKrtti66E0YSQfH8LrXsSNONksobklebtje7hxEn+0GDKDzoFT8
-yYMmEQMLLwZuOpaK884bFA8FZ4hGtZp7lNNV7oBJkkb/Ecfmsz6IL32LwEhGMWXr
-aGYYctiRXIUJNjVcE9dCIUArp8G/qzNmrb4rOv4/EqXw50FIz5DdwCWiQiDEmpBO
-kr/qnxF7fUPCcKJSIeoKGc8GVv61ML3YAUVC7tgLYLKSde8okR0fGtSnkwdSPGqS
-HBoJ5gKHCizrbvP2z9Fx0Ek1jpmutscmmigR3oidgefcLqqRhEdek7b4phZmmGHE
-Aq5n3Vbgqwcdh16WAvgz4Zen+8MF2sMNHWYGDY/PxzzBnVAimqptha3D1urc1Oda
-OFJ679xu1DK2hKiaVnb7zDpD9DtARuy3JX8JyV2TuTd43Q59nLN1L5GtW3CtRYmg
-LzN36Y8v+aB3faNkRDI5tipxkRezOJxTO2ETIISqcnvwqEn5kWz0LQ3MOxZFuiv0
-/GzzbWTC2zIyaj8Hhyc2yokNXRdblt64alNLeRzNsHmieweoW6TUtxDb0pwdSBJw
-BWhlF5PnzzI810uaxyVDt2B6O7GfN9Au84gM+MdkDmIY0OZdyikVq8j1vHzGpxTY
-nQAJ+8b6zdgjh/WMnljO/EvkiFAF5e1wyjP1MsR1EfATzbJNeWo=
-=B7KZ
------END PGP SIGNATURE-----
-
---bAmEntskrkuBymla--
+> -       }
+>         brcmstb_pdata.ops = match_priv->ops;
+>         host = sdhci_pltfm_init(pdev, &brcmstb_pdata,
+>                                 sizeof(struct sdhci_brcmstb_priv));
+> @@ -261,7 +257,6 @@ static int sdhci_brcmstb_probe(struct platform_device *pdev)
+>
+>         pltfm_host = sdhci_priv(host);
+>         priv = sdhci_pltfm_priv(pltfm_host);
+> -       priv->has_cqe = has_cqe;
+>
+>         /* Map in the non-standard CFG registers */
+>         iomem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> @@ -276,6 +271,12 @@ static int sdhci_brcmstb_probe(struct platform_device *pdev)
+>         if (res)
+>                 goto err;
+>
+> +       if (host->mmc->caps2 & MMC_CAP2_CQE) {
+> +               has_cqe = true;
+> +               match_priv->ops->irq = sdhci_brcmstb_cqhci_irq;
+> +       }
+> +       priv->has_cqe = has_cqe;
+> +
+>         /*
+>          * If the chip has enhanced strobe and it's enabled, add
+>          * callback
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index c3a160c..fbb2f57 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -1880,7 +1880,6 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>         u8 core_major;
+>         const struct sdhci_msm_offset *msm_offset;
+>         const struct sdhci_msm_variant_info *var_info;
+> -       struct device_node *node = pdev->dev.of_node;
+>
+>         host = sdhci_pltfm_init(pdev, &sdhci_msm_pdata, sizeof(*msm_host));
+>         if (IS_ERR(host))
+> @@ -2076,7 +2075,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>         pm_runtime_use_autosuspend(&pdev->dev);
+>
+>         host->mmc_host_ops.execute_tuning = sdhci_msm_execute_tuning;
+> -       if (of_property_read_bool(node, "supports-cqe"))
+> +       if (host->mmc->caps2 & MMC_CAP2_CQE)
+>                 ret = sdhci_msm_cqe_add_host(host, pdev);
+>         else
+>                 ret = sdhci_add_host(host);
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+> index e49b44b..359eff6 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -1281,9 +1281,6 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
+>                                         sdhci_arasan_voltage_switch;
+>                 sdhci_arasan->has_cqe = true;
+>                 host->mmc->caps2 |= MMC_CAP2_CQE;
+> -
+> -               if (!of_property_read_bool(np, "disable-cqe-dcmd"))
+> -                       host->mmc->caps2 |= MMC_CAP2_CQE_DCMD;
+>         }
+>
+>         ret = sdhci_arasan_add_host(sdhci_arasan);
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 403ac44..d09abdd 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -715,7 +715,7 @@ static void tegra_sdhci_parse_dt(struct sdhci_host *host)
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>         struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+>
+> -       if (device_property_read_bool(host->mmc->parent, "supports-cqe"))
+> +       if (host->mmc->caps2 & MMC_CAP2_CQE)
+>                 tegra_host->enable_hwcq = true;
+>         else
+>                 tegra_host->enable_hwcq = false;
+> --
+> 1.9.1
