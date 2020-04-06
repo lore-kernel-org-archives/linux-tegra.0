@@ -1,91 +1,46 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Mon, 6 Apr 2020 13:20:46 -0700
-Message-ID: <ac225ff3-8de8-256c-7f81-0225b4153540@nvidia.com>
+Date: Mon, 6 Apr 2020 23:28:51 +0300
+Message-ID: <1c2c921e-daef-ba0f-5d1a-b58aa0b940fb@gmail.com>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
  <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
- <782c8c4e-f5c2-d75e-0410-757172dd3090@gmail.com>
+ <38d921a7-5cdf-8d0a-2772-4399dd1a96a0@gmail.com>
+ <9b8cf37b-d2ad-9df2-aad8-216c2c954e69@nvidia.com>
+ <1a12974a-7cc7-2c3a-3995-076b9956714d@gmail.com>
+ <66cc8646-43d3-3fc8-c31d-d0d2efac505f@nvidia.com>
+ <f000f6b9-0f05-b2a5-6dad-37b09803711d@gmail.com>
+ <fe6a17c1-fae2-a365-4dd6-6d3a25d47d54@nvidia.com>
+ <9038ce90-ac53-93e7-ce65-57f6ff1e9b30@nvidia.com>
+ <abe82fd1-0464-0627-6c97-39c896e53dd0@gmail.com>
+ <36b5627a-8639-6244-8620-4f23828e0638@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <782c8c4e-f5c2-d75e-0410-757172dd3090@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <36b5627a-8639-6244-8620-4f23828e0638-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+06.04.2020 23:05, Sowjanya Komatineni пишет:
+..
+>>> Wait time for HW syncpt to reach threshold is tuned to work for all
+>>> frame rates. So if increment doesn't happen by then, its definitely
+>>> missed event.
+>> This is questionable. Technically, speculating about whether the tuned
+>> value is good for all possible cases is incorrect thing to do.
+>>
+>> Although, I guess in practice it should be good enough for the starter
+>> and could be improved later on, once the host1x driver will be improved.
+> 
+> By tuned value I meant about 200ms wait timeout for frame event to
+> happen is what we have been using in downstream and with BSP release
+> images which works good for all sensors and bridges we supported so far.
 
-On 4/6/20 1:02 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 04.04.2020 04:25, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
->> +static int chan_capture_kthread_start(void *data)
->> +{
->> +     struct tegra_vi_channel *chan =3D data;
->> +     struct tegra_channel_buffer *buf;
->> +     int err =3D 0;
->> +     int caps_inflight;
->> +
->> +     set_freezable();
->> +
->> +     while (1) {
->> +             try_to_freeze();
->> +
->> +             wait_event_interruptible(chan->start_wait,
->> +                                      !list_empty(&chan->capture) ||
->> +                                      kthread_should_stop());
-> Is it really okay that list_empty() isn't protected with a lock?
->
-> Why wait_event is "interruptible"?
-
-To allow it to sleep until wakeup on thread it to avoid constant=20
-checking for condition even when no buffers are ready, basically to=20
-prevent blocking.
-
->
->> +             /*
->> +              * Frame start and MW_ACK_DONE syncpoint condition FIFOs a=
-re
->> +              * of max depth 2. So make sure max 2 capture requests are
->> +              * in process by the hardware at a time.
->> +              */
->> +             while (!(kthread_should_stop() || list_empty(&chan->captur=
-e))) {
->> +                     caps_inflight =3D chan->capture_reqs - chan->seque=
-nce;
->> +                     /*
->> +                      * Source is not streaming if error is non-zero.
->> +                      * So, do not dequeue buffers on capture error or =
-when
->> +                      * syncpoint requests in FIFO are full.
->> +                      */
->> +                     if (err || caps_inflight >=3D SYNCPT_FIFO_DEPTH)
->> +                             break;
->> +
->> +                     /* dequeue the buffer and start capture */
->> +                     spin_lock(&chan->start_lock);
->> +                     if (list_empty(&chan->capture))
->> +                             break;
->> +                     buf =3D list_entry(chan->capture.next,
->> +                                      struct tegra_channel_buffer, queu=
-e);
-> list_first_entry()
->
->> +                     list_del_init(&buf->queue);
->> +                     spin_unlock(&chan->start_lock);
->> +
->> +                     err =3D tegra_channel_capture_frame(chan, buf);
->> +                     if (err)
->> +                             vb2_queue_error(&chan->queue);
->> +             }
->> +
->> +             if (kthread_should_stop())
->> +                     break;
->> +     }
->> +
->> +     return 0;
->> +}
+I don't know anything about the state of today's downstream, but
+downstream of older Tegra SoCs was pretty awful in regards to the host1x
+syncing, unfortunately it was borrowed into the upstream host1x years
+ago and nothing was done about it so far. I'd suggest to be careful
+about it.
