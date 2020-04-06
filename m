@@ -1,65 +1,67 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Mon, 6 Apr 2020 23:53:31 +0300
-Message-ID: <be77b0ef-d605-8357-4180-f40b2886d07a@gmail.com>
+Date: Mon, 6 Apr 2020 23:54:46 +0300
+Message-ID: <7361d00d-9cfe-3e4a-6199-524d37d53bd0@gmail.com>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
  <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
- <200bb96e-2d07-764f-9e14-55538dc742fd@gmail.com>
- <23bfab09-b464-6e51-9843-06d13000e9b9@nvidia.com>
+ <782c8c4e-f5c2-d75e-0410-757172dd3090@gmail.com>
+ <ac225ff3-8de8-256c-7f81-0225b4153540@nvidia.com>
+ <86bbcd55-fa13-5a35-e38b-c23745eafb87@gmail.com>
+ <2839b1ee-dedc-d0ee-e484-32729a82a6ea@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <23bfab09-b464-6e51-9843-06d13000e9b9-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2839b1ee-dedc-d0ee-e484-32729a82a6ea@nvidia.com>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-06.04.2020 23:50, Sowjanya Komatineni пишет:
+06.04.2020 23:38, Sowjanya Komatineni пишет:
 > 
-> On 4/6/20 1:45 PM, Dmitry Osipenko wrote:
+> On 4/6/20 1:37 PM, Dmitry Osipenko wrote:
 >> External email: Use caution opening links or attachments
 >>
 >>
->> 04.04.2020 04:25, Sowjanya Komatineni пишет:
->>> +static int chan_capture_kthread_start(void *data)
->>> +{
->>> +     struct tegra_vi_channel *chan = data;
->>> +     struct tegra_channel_buffer *buf;
->>> +     int err = 0;
->>> +     int caps_inflight;
->>> +
->>> +     set_freezable();
->>> +
->>> +     while (1) {
->>> +             try_to_freeze();
->>> +
->>> +             wait_event_interruptible(chan->start_wait,
->>> +                                      !list_empty(&chan->capture) ||
->>> +                                      kthread_should_stop());
->>> +             /*
->>> +              * Frame start and MW_ACK_DONE syncpoint condition
->>> FIFOs are
->>> +              * of max depth 2. So make sure max 2 capture requests are
->>> +              * in process by the hardware at a time.
->>> +              */
->>> +             while (!(kthread_should_stop() ||
->>> list_empty(&chan->capture))) {
->>> +                     caps_inflight = chan->capture_reqs -
->>> chan->sequence;
->>> +                     /*
->>> +                      * Source is not streaming if error is non-zero.
->>> +                      * So, do not dequeue buffers on capture error
->>> or when
->>> +                      * syncpoint requests in FIFO are full.
->>> +                      */
->>> +                     if (err || caps_inflight >= SYNCPT_FIFO_DEPTH)
->>> +                             break;
->> Am I understanding correctly that this thread will take 100% CPU,
->> spinning here, if more than 2 frame-captures queued?
-> on more than 2 frames captures, it breaks thread and on next wakeup it
-> continues
+>> 06.04.2020 23:20, Sowjanya Komatineni пишет:
+>>> On 4/6/20 1:02 PM, Dmitry Osipenko wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> 04.04.2020 04:25, Sowjanya Komatineni пишет:
+>>>> ...
+>>>>> +static int chan_capture_kthread_start(void *data)
+>>>>> +{
+>>>>> +     struct tegra_vi_channel *chan = data;
+>>>>> +     struct tegra_channel_buffer *buf;
+>>>>> +     int err = 0;
+>>>>> +     int caps_inflight;
+>>>>> +
+>>>>> +     set_freezable();
+>>>>> +
+>>>>> +     while (1) {
+>>>>> +             try_to_freeze();
+>>>>> +
+>>>>> +             wait_event_interruptible(chan->start_wait,
+>>>>> +                                      !list_empty(&chan->capture) ||
+>>>>> +                                      kthread_should_stop());
+>>>> Is it really okay that list_empty() isn't protected with a lock?
+>>>>
+>>>> Why wait_event is "interruptible"?
+>>> To allow it to sleep until wakeup on thread it to avoid constant
+>>> checking for condition even when no buffers are ready, basically to
+>>> prevent blocking.
+>> So the "interrupt" is for getting event about kthread_should_stop(),
+>> correct?
+> also to prevent blocking and to let is sleep and wakeup based on wait
+> queue to evaluate condition to proceed with the task
+>>
 
-The wait_event() won't wait if condition is true.
+This looks suspicious, the comment to wait_event_interruptible() says
+that it will return ERESTARTSYS if signal is recieved..
+
+Does this mean that I can send signal from userspace to wake it up?
+
+The "interruptible" part looks wrong to me.
