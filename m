@@ -1,120 +1,111 @@
-From: Alan Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/5] [2/5] mmc: host: Remove redundant host CQE bindings
-Date: Mon, 6 Apr 2020 09:59:16 -0400
-Message-ID: <CAOGqxeUjx+OWRhwWznk-uHZ9op7WTZaAGq6xd4Z4QdL+Hja2yA@mail.gmail.com>
-References: <1586165281-11888-1-git-send-email-chun-hung.wu@mediatek.com> <1586165281-11888-3-git-send-email-chun-hung.wu@mediatek.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
+Date: Mon, 6 Apr 2020 08:35:43 -0700
+Message-ID: <9b8cf37b-d2ad-9df2-aad8-216c2c954e69@nvidia.com>
+References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
+ <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
+ <38d921a7-5cdf-8d0a-2772-4399dd1a96a0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1586165281-11888-3-git-send-email-chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+In-Reply-To: <38d921a7-5cdf-8d0a-2772-4399dd1a96a0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, BCM Kernel Feedback <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Martin Blumenstingl <martin.bl>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 6, 2020 at 5:28 AM Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
->
-> CQE bindings "supports-cqe" and "disable-cqe-dcmd" is parsed
-> in mmc_of_parse(). Remove vendor code which parses CQE bindings,
-> and use mmc_host->caps2 to decide support CQE or not.
->
-> Signed-off-by: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> ---
->  drivers/mmc/host/sdhci-brcmstb.c   | 11 ++++++-----
->  drivers/mmc/host/sdhci-msm.c       |  3 +--
->  drivers/mmc/host/sdhci-of-arasan.c |  3 ---
->  drivers/mmc/host/sdhci-tegra.c     |  2 +-
->  4 files changed, 8 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
-> index ad01f64..07c90c6 100644
-> --- a/drivers/mmc/host/sdhci-brcmstb.c
-> +++ b/drivers/mmc/host/sdhci-brcmstb.c
-> @@ -247,10 +247,6 @@ static int sdhci_brcmstb_probe(struct platform_device *pdev)
->                 return res;
->
->         memset(&brcmstb_pdata, 0, sizeof(brcmstb_pdata));
-> -       if (device_property_read_bool(&pdev->dev, "supports-cqe")) {
-> -               has_cqe = true;
-> -               match_priv->ops->irq = sdhci_brcmstb_cqhci_irq;
 
-The above line that sets the irq was moved to later in the function,
-but needs to come before sdhci_pltfm_init()
+On 4/5/20 1:35 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 04.04.2020 04:25, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+>> +static int tegra_channel_capture_frame(struct tegra_vi_channel *chan,
+>> +                                    struct tegra_channel_buffer *buf)
+>> +{
+>> +     int err =3D 0;
+>> +     u32 thresh, value, frame_start, mw_ack_done;
+>> +     int bytes_per_line =3D chan->format.bytesperline;
+>> +
+>> +     /* program buffer address by using surface 0 */
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_SURFACE0_OFFSET_MSB,
+>> +                  (u64)buf->addr >> 32);
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_SURFACE0_OFFSET_LSB, buf->addr);
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_SURFACE0_STRIDE, bytes_per_line);
+>> +
+>> +     /*
+>> +      * Tegra VI block interacts with host1x syncpt for synchronizing
+>> +      * programmed condition of capture state and hardware operation.
+>> +      * Frame start and Memory write acknowledge syncpts has their own
+>> +      * FIFO of depth 2.
+>> +      *
+>> +      * Syncpoint trigger conditions set through VI_INCR_SYNCPT registe=
+r
+>> +      * are added to HW syncpt FIFO and when the HW triggers, syncpt
+>> +      * condition is removed from the FIFO and counter at syncpoint ind=
+ex
+>> +      * will be incremented by the hardware and software can wait for
+>> +      * counter to reach threshold to synchronize capturing frame with =
+the
+>> +      * hardware capture events.
+>> +      */
+>> +
+>> +     /* increase channel syncpoint threshold for FRAME_START */
+>> +     thresh =3D host1x_syncpt_incr_max(chan->frame_start_sp, 1);
+>> +
+>> +     /* Program FRAME_START trigger condition syncpt request */
+>> +     frame_start =3D VI_CSI_PP_FRAME_START(chan->portno);
+>> +     value =3D VI_CFG_VI_INCR_SYNCPT_COND(frame_start) |
+>> +             host1x_syncpt_id(chan->frame_start_sp);
+>> +     tegra_vi_write(chan, TEGRA_VI_CFG_VI_INCR_SYNCPT, value);
+>> +
+>> +     /* increase channel syncpoint threshold for MW_ACK_DONE */
+>> +     buf->mw_ack_sp_thresh =3D host1x_syncpt_incr_max(chan->mw_ack_sp, =
+1);
+>> +
+>> +     /* Program MW_ACK_DONE trigger condition syncpt request */
+>> +     mw_ack_done =3D VI_CSI_MW_ACK_DONE(chan->portno);
+>> +     value =3D VI_CFG_VI_INCR_SYNCPT_COND(mw_ack_done) |
+>> +             host1x_syncpt_id(chan->mw_ack_sp);
+>> +     tegra_vi_write(chan, TEGRA_VI_CFG_VI_INCR_SYNCPT, value);
+>> +
+>> +     /* enable single shot capture */
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_SINGLE_SHOT, SINGLE_SHOT_CAPTURE);
+>> +     chan->capture_reqs++;
+>> +
+>> +     /* wait for syncpt counter to reach frame start event threshold */
+>> +     err =3D host1x_syncpt_wait(chan->frame_start_sp, thresh,
+>> +                              TEGRA_VI_SYNCPT_WAIT_TIMEOUT, &value);
+>> +     if (err) {
+>> +             dev_err(&chan->video.dev,
+>> +                     "frame start syncpt timeout: %d\n", err);
+>> +             /* increment syncpoint counter for timedout events */
+>> +             host1x_syncpt_incr(chan->frame_start_sp);
+> Why incrementing is done while hardware is still active?
+>
+> The sync point's state needs to be completely reset after resetting
+> hardware. But I don't think that the current upstream host1x driver
+> supports doing that, it's one of the known-long-standing problems of the
+> host1x driver.
+>
+> At least the sp->max_val incrementing should be done based on the actual
+> syncpoint value and this should be done after resetting hardware.
 
-Al
+upstream host1x driver don't have API to reset or to equalize max value=20
+with min/load value.
 
-> -       }
->         brcmstb_pdata.ops = match_priv->ops;
->         host = sdhci_pltfm_init(pdev, &brcmstb_pdata,
->                                 sizeof(struct sdhci_brcmstb_priv));
-> @@ -261,7 +257,6 @@ static int sdhci_brcmstb_probe(struct platform_device *pdev)
->
->         pltfm_host = sdhci_priv(host);
->         priv = sdhci_pltfm_priv(pltfm_host);
-> -       priv->has_cqe = has_cqe;
->
->         /* Map in the non-standard CFG registers */
->         iomem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> @@ -276,6 +271,12 @@ static int sdhci_brcmstb_probe(struct platform_device *pdev)
->         if (res)
->                 goto err;
->
-> +       if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> +               has_cqe = true;
-> +               match_priv->ops->irq = sdhci_brcmstb_cqhci_irq;
-> +       }
-> +       priv->has_cqe = has_cqe;
-> +
->         /*
->          * If the chip has enhanced strobe and it's enabled, add
->          * callback
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index c3a160c..fbb2f57 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -1880,7 +1880,6 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->         u8 core_major;
->         const struct sdhci_msm_offset *msm_offset;
->         const struct sdhci_msm_variant_info *var_info;
-> -       struct device_node *node = pdev->dev.of_node;
->
->         host = sdhci_pltfm_init(pdev, &sdhci_msm_pdata, sizeof(*msm_host));
->         if (IS_ERR(host))
-> @@ -2076,7 +2075,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->         pm_runtime_use_autosuspend(&pdev->dev);
->
->         host->mmc_host_ops.execute_tuning = sdhci_msm_execute_tuning;
-> -       if (of_property_read_bool(node, "supports-cqe"))
-> +       if (host->mmc->caps2 & MMC_CAP2_CQE)
->                 ret = sdhci_msm_cqe_add_host(host, pdev);
->         else
->                 ret = sdhci_add_host(host);
-> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-> index e49b44b..359eff6 100644
-> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> @@ -1281,9 +1281,6 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
->                                         sdhci_arasan_voltage_switch;
->                 sdhci_arasan->has_cqe = true;
->                 host->mmc->caps2 |= MMC_CAP2_CQE;
-> -
-> -               if (!of_property_read_bool(np, "disable-cqe-dcmd"))
-> -                       host->mmc->caps2 |= MMC_CAP2_CQE_DCMD;
->         }
->
->         ret = sdhci_arasan_add_host(sdhci_arasan);
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 403ac44..d09abdd 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -715,7 +715,7 @@ static void tegra_sdhci_parse_dt(struct sdhci_host *host)
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->         struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
->
-> -       if (device_property_read_bool(host->mmc->parent, "supports-cqe"))
-> +       if (host->mmc->caps2 & MMC_CAP2_CQE)
->                 tegra_host->enable_hwcq = true;
->         else
->                 tegra_host->enable_hwcq = false;
-> --
-> 1.9.1
+So to synchronize missed event, incrementing HW syncpt counter.
+
+This should not impact as we increment this in case of missed events only.
+
+>> +             spin_lock(&chan->sp_incr_lock);
+>> +             host1x_syncpt_incr(chan->mw_ack_sp);
+>> +             spin_unlock(&chan->sp_incr_lock);
+>> +             /* clear errors and recover */
+>> +             tegra_channel_capture_error_recover(chan);
+>> +             release_buffer(chan, buf, VB2_BUF_STATE_ERROR);
+>> +             return err;
+>> +     }
