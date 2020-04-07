@@ -1,9 +1,8 @@
 From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Tue, 7 Apr 2020 16:38:07 -0700
-Message-ID: <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
+Date: Tue, 7 Apr 2020 16:57:42 -0700
+Message-ID: <edefcfd9-b268-0ea5-b438-f5ab5efe61bf@nvidia.com>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <200bb96e-2d07-764f-9e14-55538dc742fd@gmail.com>
  <23bfab09-b464-6e51-9843-06d13000e9b9@nvidia.com>
  <be77b0ef-d605-8357-4180-f40b2886d07a@gmail.com>
  <08cd31d5-e8b9-4d3a-fb0e-0e4462947d96@nvidia.com>
@@ -21,11 +20,12 @@ References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
  <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
  <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
  <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
+ <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1a31cd60-739f-0660-1c45-31487d2f2128-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <603084a5-249a-4fe2-3646-e9335ef9ab43-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
@@ -33,50 +33,57 @@ Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 4/7/20 4:36 PM, Sowjanya Komatineni wrote:
+On 4/7/20 4:38 PM, Sowjanya Komatineni wrote:
 >
-> On 4/7/20 4:12 PM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
+> On 4/7/20 4:36 PM, Sowjanya Komatineni wrote:
 >>
->>
->> 08.04.2020 01:22, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> On 4/7/20 3:08 PM, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 08.04.2020 00:08, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> ...
->>>>>>> I think you need a semaphore with resource count =3D 2.
->>>>>> we hold on to issuing capture if more than 2 buffers are queued=20
->>>>>> and it
->>>>>> continues only after fifo has min 1 slot empty
->>>>> Just want to close on this part of feedback. Hope above=20
->>>>> explanation is
->>>>> clear regarding triggering/issuing at max 2 frame capture to VI HW=20
->>>>> and
->>>>> also regarding capture threads where they use=20
->>>>> wait_event_interruptible
->>>>> to prevent blocking waiting for buffers to be available for captures.
+>> On 4/7/20 4:12 PM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 08.04.2020 01:22, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> On 4/7/20 3:08 PM, Dmitry Osipenko wrote:
+>>>>> External email: Use caution opening links or attachments
 >>>>>
->>>>> So no changes related to this part are needed in v7.
->>>> =C2=A0 From what I see in the code, you "hold on" by making kthread to=
-=20
->>>> spin in
->>>> a busy-loop while caps_inflight >=3D SYNCPT_FIFO_DEPTH. So some change
->>>> should be needed to prevent this.
+>>>>>
+>>>>> 08.04.2020 00:08, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> ...
+>>>>>>>> I think you need a semaphore with resource count =3D 2.
+>>>>>>> we hold on to issuing capture if more than 2 buffers are queued=20
+>>>>>>> and it
+>>>>>>> continues only after fifo has min 1 slot empty
+>>>>>> Just want to close on this part of feedback. Hope above=20
+>>>>>> explanation is
+>>>>>> clear regarding triggering/issuing at max 2 frame capture to VI=20
+>>>>>> HW and
+>>>>>> also regarding capture threads where they use=20
+>>>>>> wait_event_interruptible
+>>>>>> to prevent blocking waiting for buffers to be available for=20
+>>>>>> captures.
+>>>>>>
+>>>>>> So no changes related to this part are needed in v7.
+>>>>> =C2=A0 From what I see in the code, you "hold on" by making kthread t=
+o=20
+>>>>> spin in
+>>>>> a busy-loop while caps_inflight >=3D SYNCPT_FIFO_DEPTH. So some chang=
+e
+>>>>> should be needed to prevent this.
+>>>>>
+>>>>> The wait_event_interruptible seems should be okay.
+>>>> We don't want to prevent that as we already have buffers available for
+>>>> capture so as soon as VI HW issuing single shot is done and when min 1
+>>>> slot is empty we should continue with issuing for another capture.
 >>>>
->>>> The wait_event_interruptible seems should be okay.
->>> We don't want to prevent that as we already have buffers available for
->>> capture so as soon as VI HW issuing single shot is done and when min 1
->>> slot is empty we should continue with issuing for another capture.
->>>
->>> As long as buffers are available, we should continue to capture and
->>> should not hold
->>>
->> I suppose that taking a shot takes at least few milliseconds, which
->> should be unacceptable to waste.
-> As long as buffers are in queue we have to keep processing each buffer=20
-> and between buffers obviously we have to wait for previous frames to=20
-> finish and this why we have separate thread for frame finish where we=20
-> can have next buffer capture ready and issue while previous frame=20
-> memory write happens
+>>>> As long as buffers are available, we should continue to capture and
+>>>> should not hold
+>>>>
+>>> I suppose that taking a shot takes at least few milliseconds, which
+>>> should be unacceptable to waste.
+>> As long as buffers are in queue we have to keep processing each=20
+>> buffer and between buffers obviously we have to wait for previous=20
+>> frames to finish and this why we have separate thread for frame=20
+>> finish where we can have next buffer capture ready and issue while=20
+>> previous frame memory write happens
+Also we specified numbers buffers as 3 to vb2 queue. So this is rare=20
+case but to prevent issuing more than 2 at a time as VI HW is only=20
+double buffered and syncpt fifo max depth is 2 added this to be safer.
