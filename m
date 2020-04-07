@@ -1,9 +1,8 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Wed, 8 Apr 2020 02:12:26 +0300
-Message-ID: <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
+Date: Tue, 7 Apr 2020 16:38:07 -0700
+Message-ID: <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
  <200bb96e-2d07-764f-9e14-55538dc742fd@gmail.com>
  <23bfab09-b464-6e51-9843-06d13000e9b9@nvidia.com>
  <be77b0ef-d605-8357-4180-f40b2886d07a@gmail.com>
@@ -20,48 +19,64 @@ References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
  <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
  <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
  <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
+ <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
+ <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <0c425505-347f-7418-af7e-d121fe0d06dc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1a31cd60-739f-0660-1c45-31487d2f2128-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
 Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-08.04.2020 01:22, Sowjanya Komatineni пишет:
-> 
-> On 4/7/20 3:08 PM, Dmitry Osipenko wrote:
+
+On 4/7/20 4:36 PM, Sowjanya Komatineni wrote:
+>
+> On 4/7/20 4:12 PM, Dmitry Osipenko wrote:
 >> External email: Use caution opening links or attachments
 >>
 >>
->> 08.04.2020 00:08, Sowjanya Komatineni пишет:
->> ...
->>>>> I think you need a semaphore with resource count = 2.
->>>> we hold on to issuing capture if more than 2 buffers are queued and it
->>>> continues only after fifo has min 1 slot empty
+>> 08.04.2020 01:22, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> On 4/7/20 3:08 PM, Dmitry Osipenko wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> 08.04.2020 00:08, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> ...
+>>>>>>> I think you need a semaphore with resource count =3D 2.
+>>>>>> we hold on to issuing capture if more than 2 buffers are queued=20
+>>>>>> and it
+>>>>>> continues only after fifo has min 1 slot empty
+>>>>> Just want to close on this part of feedback. Hope above=20
+>>>>> explanation is
+>>>>> clear regarding triggering/issuing at max 2 frame capture to VI HW=20
+>>>>> and
+>>>>> also regarding capture threads where they use=20
+>>>>> wait_event_interruptible
+>>>>> to prevent blocking waiting for buffers to be available for captures.
+>>>>>
+>>>>> So no changes related to this part are needed in v7.
+>>>> =C2=A0 From what I see in the code, you "hold on" by making kthread to=
+=20
+>>>> spin in
+>>>> a busy-loop while caps_inflight >=3D SYNCPT_FIFO_DEPTH. So some change
+>>>> should be needed to prevent this.
+>>>>
+>>>> The wait_event_interruptible seems should be okay.
+>>> We don't want to prevent that as we already have buffers available for
+>>> capture so as soon as VI HW issuing single shot is done and when min 1
+>>> slot is empty we should continue with issuing for another capture.
 >>>
->>> Just want to close on this part of feedback. Hope above explanation is
->>> clear regarding triggering/issuing at max 2 frame capture to VI HW and
->>> also regarding capture threads where they use wait_event_interruptible
->>> to prevent blocking waiting for buffers to be available for captures.
+>>> As long as buffers are available, we should continue to capture and
+>>> should not hold
 >>>
->>> So no changes related to this part are needed in v7.
->>  From what I see in the code, you "hold on" by making kthread to spin in
->> a busy-loop while caps_inflight >= SYNCPT_FIFO_DEPTH. So some change
->> should be needed to prevent this.
->>
->> The wait_event_interruptible seems should be okay.
-> 
-> We don't want to prevent that as we already have buffers available for
-> capture so as soon as VI HW issuing single shot is done and when min 1
-> slot is empty we should continue with issuing for another capture.
-> 
-> As long as buffers are available, we should continue to capture and
-> should not hold
-> 
-
-I suppose that taking a shot takes at least few milliseconds, which
-should be unacceptable to waste.
+>> I suppose that taking a shot takes at least few milliseconds, which
+>> should be unacceptable to waste.
+> As long as buffers are in queue we have to keep processing each buffer=20
+> and between buffers obviously we have to wait for previous frames to=20
+> finish and this why we have separate thread for frame finish where we=20
+> can have next buffer capture ready and issue while previous frame=20
+> memory write happens
