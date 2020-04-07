@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Tue, 7 Apr 2020 15:22:05 -0700
-Message-ID: <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
+Date: Wed, 8 Apr 2020 02:12:26 +0300
+Message-ID: <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
  <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
  <200bb96e-2d07-764f-9e14-55538dc742fd@gmail.com>
@@ -19,43 +19,49 @@ References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
  <97b35910-4c93-123a-43a0-eb14476ed0f3@nvidia.com>
  <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
  <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
+ <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <0c425505-347f-7418-af7e-d121fe0d06dc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 4/7/20 3:08 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 08.04.2020 00:08, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
->>>> I think you need a semaphore with resource count =3D 2.
->>> we hold on to issuing capture if more than 2 buffers are queued and it
->>> continues only after fifo has min 1 slot empty
+08.04.2020 01:22, Sowjanya Komatineni пишет:
+> 
+> On 4/7/20 3:08 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
 >>
->> Just want to close on this part of feedback. Hope above explanation is
->> clear regarding triggering/issuing at max 2 frame capture to VI HW and
->> also regarding capture threads where they use wait_event_interruptible
->> to prevent blocking waiting for buffers to be available for captures.
 >>
->> So no changes related to this part are needed in v7.
->  From what I see in the code, you "hold on" by making kthread to spin in
-> a busy-loop while caps_inflight >=3D SYNCPT_FIFO_DEPTH. So some change
-> should be needed to prevent this.
->
-> The wait_event_interruptible seems should be okay.
+>> 08.04.2020 00:08, Sowjanya Komatineni пишет:
+>> ...
+>>>>> I think you need a semaphore with resource count = 2.
+>>>> we hold on to issuing capture if more than 2 buffers are queued and it
+>>>> continues only after fifo has min 1 slot empty
+>>>
+>>> Just want to close on this part of feedback. Hope above explanation is
+>>> clear regarding triggering/issuing at max 2 frame capture to VI HW and
+>>> also regarding capture threads where they use wait_event_interruptible
+>>> to prevent blocking waiting for buffers to be available for captures.
+>>>
+>>> So no changes related to this part are needed in v7.
+>>  From what I see in the code, you "hold on" by making kthread to spin in
+>> a busy-loop while caps_inflight >= SYNCPT_FIFO_DEPTH. So some change
+>> should be needed to prevent this.
+>>
+>> The wait_event_interruptible seems should be okay.
+> 
+> We don't want to prevent that as we already have buffers available for
+> capture so as soon as VI HW issuing single shot is done and when min 1
+> slot is empty we should continue with issuing for another capture.
+> 
+> As long as buffers are available, we should continue to capture and
+> should not hold
+> 
 
-We don't want to prevent that as we already have buffers available for=20
-capture so as soon as VI HW issuing single shot is done and when min 1=20
-slot is empty we should continue with issuing for another capture.
-
-As long as buffers are available, we should continue to capture and=20
-should not hold
+I suppose that taking a shot takes at least few milliseconds, which
+should be unacceptable to waste.
