@@ -1,147 +1,139 @@
-From: sumitg <sumitg@nvidia.com>
-Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
-Date: Tue, 7 Apr 2020 23:48:22 +0530
-Message-ID: <3ab4136c-8cca-c2f9-d286-b82dac23e720@nvidia.com>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
- <20200326115023.xy3n5bl7uetuw7mx@vireshk-i7>
- <d233b26b-6b50-7d41-9f33-a5dc151e0e7d@nvidia.com>
- <20200406025549.qfwzlk3745y3r274@vireshk-i7>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200406025549.qfwzlk3745y3r274@vireshk-i7>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: rjw@rjwysocki.net, catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bbasu@nvidia.com, mperttunen@nvidia.com, sumitg@nvidia.com
+From: Joerg Roedel <joro@8bytes.org>
+Subject: [RFC PATCH 00/34] iommu: Move iommu_group setup to IOMMU core code
+Date: Tue,  7 Apr 2020 20:37:08 +0200
+Message-ID: <20200407183742.4344-1-joro@8bytes.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org, virtualization@lists.linux-foundation.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
 
+here is a patch-set to remove all calls of iommu_group_get_for_dev() from
+the IOMMU drivers and move the per-device group setup and default domain
+allocation into the IOMMU core code.
 
-On 06/04/20 8:25 AM, Viresh Kumar wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 05-04-20, 00:08, sumitg wrote:
->>
->>
->> On 26/03/20 5:20 PM, Viresh Kumar wrote:
->>> On 03-12-19, 23:02, Sumit Gupta wrote:
->>>> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
->>>> +enum cluster {
->>>> +     CLUSTER0,
->>>> +     CLUSTER1,
->>>> +     CLUSTER2,
->>>> +     CLUSTER3,
->>>
->>> All these have same CPUs ? Or big little kind of stuff ? How come they
->>> have different frequency tables ?
->>>
->> T194 SOC has homogeneous architecture where each cluster has two symmetric
->> Carmel cores and and not big little. LUT's are per cluster and all LUT's
->> have same values currently. Future SOC's may have different LUT values per
->> cluster.
-> 
-> LUT ?
->
-LUT is "Lookup Table" which provides "hardware frequency request" as a 
-function of voltage. For each frequency, the table can have multiple 
-voltages based on temperature. The table is maintained in "BPMP R5".
+This eliminates some ugly back and forth between IOMMU core code and the
+IOMMU drivers, where the driver called iommu_group_get_for_dev() which itself
+called back into the driver.
 
->>>> +     MAX_CLUSTERS,
->>>> +};
-> 
->>>> +static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
->>>> +{
->>>> +     struct read_counters_work read_counters_work;
->>>> +     struct tegra_cpu_ctr c;
->>>> +     u32 delta_refcnt;
->>>> +     u32 delta_ccnt;
->>>> +     u32 rate_mhz;
->>>> +
->>>> +     read_counters_work.c.cpu = cpu;
->>>> +     read_counters_work.c.delay = delay;
->>>> +     INIT_WORK_ONSTACK(&read_counters_work.work, tegra_read_counters);
->>>> +     queue_work_on(cpu, read_counters_wq, &read_counters_work.work);
->>>> +     flush_work(&read_counters_work.work);
->>>
->>> Why can't this be done in current context ?
->>>
->> We used work queue instead of smp_call_function_single() to have long delay.
-> 
-> Please explain completely, you have raised more questions than you
-> answered :)
-> 
-> Why do you want to have long delays ?
-> 
-Long delay value is used to have the observation window long enough for 
-correctly reconstructing the CPU frequency considering noise.
-In next patch version, changed delay value to 500us which in our tests 
-is considered reliable.
+The patch-set started as a "quick" Friday afternoon project to split the
+IOMMU group creation and the allocation of the default domain, so that the
+default domain is not allocated before all devices are added to the group.
+In the end it took 1.5 weeks to get this in a reasonable shape, but now the
+code (during bus probing) first adds all devices to their respective IOMMU
+group before it determines the default domain type and then allocates it for
+the group.
 
->>>> +static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
->>>> +{
->>>> +     struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
->>>> +     int cluster = get_cpu_cluster(policy->cpu);
->>>> +
->>>> +     if (cluster >= data->num_clusters)
->>>> +             return -EINVAL;
->>>> +
->>>> +     policy->cur = tegra194_fast_get_speed(policy->cpu); /* boot freq */
->>>> +
->>>> +     /* set same policy for all cpus */
->>>> +     cpumask_copy(policy->cpus, cpu_possible_mask);
->>>
->>> You are copying cpu_possible_mask mask here, and so this routine will
->>> get called only once.
->>>
->>> I still don't understand the logic behind clusters and frequency
->>> tables.
->>>
->> Currently, we use same policy for all CPU's to maximize throughput. Will add
->> separate patch later to set policy as per cluster. But we are not using that
->> in T194 due to perf reasons.
-> 
-> You can't misrepresent the hardware this way, sorry.
-> 
-ok. Updated the policy to be per cluster now.
+It turned out that this required to remove the calls of
+iommu_group_get_for_dev() from the IOMMU drivers. While at it, the calls to
+iommu_device_link()/unlink() where also moved out of the drivers, which
+required a different interface than add_device()/remove_device(). The result
+is the new probe_device()/release_device() interface, where the driver just
+does its own setup and then returns the iommu_device which belongs to the
+device being probed.
 
-> Again few questions, I understand that you have multiple clusters
-> here:
-> 
-> - All clusters will always have the frequency table ?
-Yes, frequency table is per cluster.
+There is certainly more room for cleanups, but I think this is a good start
+to simplify the code flow during IOMMU device probing.  It is also a more
+robust base for the pending patch-sets which implement per-group default
+domain types and the removal of the private domains from the Intel VT-d
+driver.
 
-> - All clusters are capable of having a different frequency at any
->    point of time ? Or they will always run at same freq ?
->
-Yes, all clusters are capable to run at different frequencies.
+With regards to testing, I verified this code works on three IOMMUs:
 
->>>> +     freqs.old = policy->cur;
->>>> +     freqs.new = tbl->frequency;
->>>> +
->>>> +     cpufreq_freq_transition_begin(policy, &freqs);
->>>> +     on_each_cpu_mask(policy->cpus, set_cpu_ndiv, tbl, true);
->>>
->>> When CPUs share clock line, why is this required for every CPU ?
->>> Per core NVFREQ_REQ system register is written to make frequency
->> requests for the core. Cluster h/w then forwards the max(core0, core1)
->> request to cluster NAFLL.
-> 
-> You mean that each cluster can set frequency independently ?
-> 
-Yes.
+	- AMD-Vi
+	- Intel VT-d (but there might be breakages on some hardware, the
+	  patches to remove the private domain handling from the VT-d driver
+	  should be rebased to these patches)
+	- ARM-SMMU-v3 (as emulated by QEMU)
 
-> If all the clusters can run at independent frequencies but you still
-> want them to run at same frequency, then that can be done with a
-> single set of governor tunables, which is the default anyway. So this
-> should just work for you.
-> 
-> I will not be reviewing the v2 version you sent for now as that is
-> most likely wrong anyway.
-> 
-> --
-> viresh
-> 
+Most driver conversions to the probe_device()/release_device() interface
+were trivial, but there were also some hard nuts, which I am not sure still
+work. The more difficult drivers were:
+
+	- ARM-SMMU-v2
+	- OMAP
+	- Renesas
+	- Mediatek IOMMU v1
+	- Exynos
+
+It would be great if the changes could be tested (and possibly fixed) on
+those IOMMUs, as I can't do testing on them.
+
+The patches are based on the current iommu/next branch, I will rebase them
+to v5.7-rc1 when it comes out. A branch with these patches applied can be
+found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git/log/?h=iommu-probe-device
+
+Please review and test these changes and let me know what breaks.
+
+Thanks,
+
+	Joerg
+
+Joerg Roedel (33):
+  iommu: Move default domain allocation to separate function
+  iommu/amd: Implement iommu_ops->def_domain_type call-back
+  iommu/vt-d: Wire up iommu_ops->def_domain_type
+  iommu/amd: Remove dma_mask check from check_device()
+  iommu/amd: Return -ENODEV in add_device when device is not handled by
+    IOMMU
+  iommu: Add probe_device() and remove_device() call-backs
+  iommu: Move default domain allocation to iommu_probe_device()
+  iommu: Keep a list of allocated groups in __iommu_probe_device()
+  iommu: Move new probe_device path to separate function
+  iommu: Split off default domain allocation from group assignment
+  iommu: Move iommu_group_create_direct_mappings() out of
+    iommu_group_add_device()
+  iommu: Export bus_iommu_probe() and make is safe for re-probing
+  iommu/amd: Remove dev_data->passthrough
+  iommu/amd: Convert to probe/release_device() call-backs
+  iommu/vt-d: Convert to probe/release_device() call-backs
+  iommu/arm-smmu: Store device instead of group in arm_smmu_s2cr
+  iommu/arm-smmu: Convert to probe/release_device() call-backs
+  iommu/pamu: Convert to probe/release_device() call-backs
+  iommu/s390: Convert to probe/release_device() call-backs
+  iommu/virtio: Convert to probe/release_device() call-backs
+  iommu/msm: Convert to probe/release_device() call-backs
+  iommu/mediatek: Convert to probe/release_device() call-backs
+  iommu/mediatek-v1 Convert to probe/release_device() call-backs
+  iommu/qcom: Convert to probe/release_device() call-backs
+  iommu/rockchip: Convert to probe/release_device() call-backs
+  iommu/tegra: Convert to probe/release_device() call-backs
+  iommu/renesas: Convert to probe/release_device() call-backs
+  iommu/omap: Remove orphan_dev tracking
+  iommu/omap: Convert to probe/release_device() call-backs
+  iommu/exynos: Create iommu_device in struct exynos_iommu_owner
+  iommu/exynos: Convert to probe/release_device() call-backs
+  iommu: Remove add_device()/remove_device() code-paths
+  iommu: Unexport iommu_group_get_for_dev()
+
+Sai Praneeth Prakhya (1):
+  iommu: Add def_domain_type() callback in iommu_ops
+
+ drivers/iommu/amd_iommu.c       |  97 ++++----
+ drivers/iommu/amd_iommu_types.h |   1 -
+ drivers/iommu/arm-smmu-v3.c     |  42 +---
+ drivers/iommu/arm-smmu.c        |  44 ++--
+ drivers/iommu/exynos-iommu.c    | 113 ++++++---
+ drivers/iommu/fsl_pamu_domain.c |  22 +-
+ drivers/iommu/intel-iommu.c     |  68 +-----
+ drivers/iommu/iommu.c           | 391 +++++++++++++++++++++++++-------
+ drivers/iommu/ipmmu-vmsa.c      |  60 ++---
+ drivers/iommu/msm_iommu.c       |  34 +--
+ drivers/iommu/mtk_iommu.c       |  24 +-
+ drivers/iommu/mtk_iommu_v1.c    |  50 ++--
+ drivers/iommu/omap-iommu.c      |  99 ++------
+ drivers/iommu/qcom_iommu.c      |  24 +-
+ drivers/iommu/rockchip-iommu.c  |  26 +--
+ drivers/iommu/s390-iommu.c      |  22 +-
+ drivers/iommu/tegra-gart.c      |  24 +-
+ drivers/iommu/tegra-smmu.c      |  31 +--
+ drivers/iommu/virtio-iommu.c    |  41 +---
+ include/linux/iommu.h           |  21 +-
+ 20 files changed, 600 insertions(+), 634 deletions(-)
+
+-- 
+2.17.1
