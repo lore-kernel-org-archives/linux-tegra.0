@@ -1,57 +1,168 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 6/6] ARM: tegra_defconfig: Enable options useful for
- Nexus 7 and Acer A500
-Date: Tue, 7 Apr 2020 12:08:29 +0200
-Message-ID: <20200407100829.GB1720957@ulmo>
+Subject: Re: [PATCH v2 1/6] ARM: tegra: Add device-tree for Acer Iconia Tab
+ A500
+Date: Tue, 7 Apr 2020 12:41:09 +0200
+Message-ID: <20200407104109.GC1720957@ulmo>
 References: <20200406194110.21283-1-digetx@gmail.com>
- <20200406194110.21283-7-digetx@gmail.com>
+ <20200406194110.21283-2-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4bRzO86E/ozDv8r1"
+        protocol="application/pgp-signature"; boundary="Qbvjkv9qwOGw/5Fx"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200406194110.21283-7-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200406194110.21283-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pedro =?utf-8?Q?=C3=82ngelo?= <pangelo-yxaQD43p5Qo@public.gmane.org>, Matt Merhar <mattmerhar-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---4bRzO86E/ozDv8r1
+--Qbvjkv9qwOGw/5Fx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 06, 2020 at 10:41:10PM +0300, Dmitry Osipenko wrote:
-> Enable several drivers for hardware that is found on Nexus 7 and Acer A500
-> tablet devices. Please note that some drivers may require firmware files
-> extracted from original Android image.
->=20
-> Link: https://github.com/digetx/linux-firmware
+On Mon, Apr 06, 2020 at 10:41:05PM +0300, Dmitry Osipenko wrote:
+[...]
+> diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/b=
+oot/dts/tegra20-acer-a500-picasso.dts
+[...]
+> +	host1x@50000000 {
+> +		dc@54200000 {
+> +			rgb {
+> +				status =3D "okay";
+> +				nvidia,panel =3D <&panel>;
+> +
+> +				port@0 {
+> +					lvds_output: endpoint {
+> +						remote-endpoint =3D <&lvds_encoder_input>;
+> +						bus-width =3D <18>;
+> +					};
+> +				};
+> +			};
+> +		};
 
-What's the license for these files? Can they be made available through
-the official linux-firmware repository?
+This seems a little strange to me, though, admittedly, I've never worked
+with these types of bridges before, so I may be misunderstanding this. I
+was under the impression that we could obtain the panel by traversing an
+OF graph, so that we didn't have to have that extra nvidia,panel
+property. As it is, you seem to describe two different paths, one that
+goes from the RGB output to the panel directly, and another that goes
+=66rom the RGB output to the LVDS encoder and then to the panel.
+
+It doesn't seem to me like a direct link from RGB output to panel does
+actually exist in this setup.
+
+[...]
+> +	pwm: pwm@7000a000 {
+> +		status =3D "okay";
+> +		power-supply =3D <&vdd_3v3_sys>;
+> +	};
+
+I don't see power-supply defined as a property for the PWM controller.
+Why do you need this?
+
+[...]
+> +	sdhci@c8000000 {
+> +		status =3D "okay";
+> +
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		max-frequency =3D <25000000>;
+> +		keep-power-in-suspend;
+> +		bus-width =3D <4>;
+> +		non-removable;
+> +
+> +		mmc-pwrseq =3D <&brcm_wifi_pwrseq>;
+> +		vmmc-supply =3D <&vdd_3v3_sys>;
+> +		vqmmc-supply =3D <&vdd_3v3_sys>;
+> +
+> +		/* Azurewave AW-NH611 BCM4329 */
+> +		WiFi@1 {
+
+I think these names are supposed to be lowercase.
+
+> +			reg =3D <1>;
+> +			compatible =3D "brcm,bcm4329-fmac";
+> +			interrupt-parent =3D <&gpio>;
+> +			interrupts =3D <TEGRA_GPIO(S, 0) IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names =3D "host-wake";
+> +		};
+> +	};
+[...]
+> +	clocks {
+> +		compatible =3D "simple-bus";
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		clk32k_in: clock@0 {
+> +			compatible =3D "fixed-clock";
+> +			reg =3D <0>;
+> +			#clock-cells =3D <0>;
+> +			clock-frequency =3D <32768>;
+> +			clock-output-names =3D "tps658621-out32k";
+> +		};
+> +
+> +		rtc_32k_wifi: clock@1 {
+> +			compatible =3D "fixed-clock";
+> +			reg =3D <1>;
+> +			#clock-cells =3D <0>;
+> +			clock-frequency =3D <32768>;
+> +			clock-output-names =3D "kk3270032";
+> +		};
+> +	};
+
+Are these clocks going to the PMIC and RTC, or are they generated by the
+chips? If they are generated by the chips, which sounds like they might
+be, wouldn't it be better to represent them as children of the
+corresponding chips?
+
+There's probably no infrastructure to do this, so maybe that would be
+overkill. But for clarity it might be worth documenting here where
+exactly these clocks come from.
+
+[...]
+> +	memory-controller@7000f400 {
+> +		nvidia,use-ram-code;
+> +
+> +		emc-tables@elpida-8gb {
+
+I don't think unit-addresses are supposed to be freeform text like
+above. These should always reflect the value of the "reg" property,
+though in this case we don't have one...
+
+> +			nvidia,ram-code =3D <0>;
+
+In retrospect it might have been better to just reuse the reg property
+for this.
+
+I think in this case it might be best to reflect the RAM code in the
+unit-address. At least that way we conceptually get things right since
+it's the RAM code that selects which of these tables is used, much like
+a register, I2C slave address, or SPI chip select would select which of
+the subdevices are targetted.
 
 Thierry
 
---4bRzO86E/ozDv8r1
+--Qbvjkv9qwOGw/5Fx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6MUR0ACgkQ3SOs138+
-s6GEow/+PCRBWMRHZqrLzXaBLfVmbh6Jl87RzDZcnbNzyKRyQvcbBcaPWsXf9tLh
-LlXh/OInkWgYIfU+Skqi0BmHHATWq+XfHzLzQfkkujSAa8QafRKVtGTV0e+beQFD
-2BrixFkH0TllbiYxaDdu9iZXxW0+/Bx5s/9AZYQFNerWoQ3NqqqrFhXNcyAbbVUO
-Y46sRJy0uCNObGlyUdKCupug8fbyciPSzbhYIE2ZWmjSIKzJNPCgk/FlJrQRcyRu
-5bcWkS7uwedPwmuzQMQrOW2m0FYOZ+UU01aMur7s7mPNp0cFY4dZlI/hzO3JDh4W
-oTOvtjnlJodHnaQlDQijCQtukKDiTfiOlU4ZfXna6cN1T2fzaYNaCLRPWzhu4K23
-1F3UTp6+UXGF2+H83jeAgcpKHGmkXrNjn4KNIDt6rIMyEnz2RJ8II4wYhJH/Oza1
-Lbf+26X650r2CwOAUhSyDtAgo2Mt58GTDztVMIJStpap3A+UT+clWmoG+eYOZGMR
-mVBL9UWowL1dkvjrjXmlOsqcN0OfWtmazA2rQAurS0NU2Aq1hoffcx73gWCJE5B/
-9z0RHHQUUVMGFNSYQiZxpTIKsBIu+iTHZ99q29RPBK5wye5sIKjFTogylTvzh6wk
-78XF5M1Ndf+6LQaxvgNXHZsGkb1sdjAgbz1f2JMQmDrtSH7RNoc=
-=kOsC
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6MWMMACgkQ3SOs138+
+s6GytQ//ZZ3c5eWdkrzwNHUhF5xtBVLu/a9zvBw0MdzqVso74mZps2WOLQf0jM71
+ke7Wd3iRqOYZRqP2XraP+uJekAcnGwORDmme8rKYvdXetOgpowCG0izz1b4toqRj
+4j2WLMcB4/UJ2ZfC4HgsmXlSUITfWrH3P5XACli+RhApBT7mpk+f7NpnPNp1/3kB
+c0gEEjVvNHwIY75IkdXWVblpVKKRsrzgRCUQQVKq9uEoUZW2DwOd0ZkDuefAelVn
+P9MwdZ/Vd2lf4O6Doh4HApZo2oBW0UwQr8ZpGy7ALisAjwHtDoCqXntQY77Q3BUD
+1+9a3yfDNJf2etfEKP7hUTp8AnUYqfcSgH7H8WscRr1fIFDKefEzZRKHtsFDYsIh
+DVREr/Y8vnErTnrSDhkAonmDisZGbFOv3QFAPQWz6WSLpqZ6Y868tqUK65L51W7G
+pzVSBJvCBTnxZrKUvBIR2dRDhgnqcVuGnxhhHyPzI+xQD4xiDO1CIoXUTivKwLI0
+hclweROsRf7XPvcBVbqvkgPfD3Vmtqali7jylhaCJxicNeAKiHCrpPVSz+Je7fh9
+7lihBH1OrmxJhX7mA725U7M3kIFE16VQkHVnn85SQQ8bVZyUyr3D8j8NlXI8IvZx
+gnyd2tiHpEY64UeNo75wFwGR6PZzDPNqHVSFyehw0A4G3nnRo2g=
+=JDmV
 -----END PGP SIGNATURE-----
 
---4bRzO86E/ozDv8r1--
+--Qbvjkv9qwOGw/5Fx--
