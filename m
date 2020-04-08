@@ -1,41 +1,100 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 5/6] dt-bindings: ARM: tegra: Add ASUS Google Nexus 7
-Date: Wed,  8 Apr 2020 23:39:44 +0300
-Message-ID: <20200408203945.10329-6-digetx@gmail.com>
-References: <20200408203945.10329-1-digetx@gmail.com>
+Subject: [PATCH v1] drm/tegra: output: Support DRM bridges
+Date: Wed,  8 Apr 2020 23:49:20 +0300
+Message-ID: <20200408204920.19142-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200408203945.10329-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Pedro=20=C3=82ngelo?= <pangelo-yxaQD43p5Qo@public.gmane.org>, Matt Merhar <mattmerhar-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a binding for the Tegra30-based ASUS Google Nexus 7 tablet device.
+Newer Tegra device-trees will define a video output graph which involves
+a bridge. This patch adds support for the DRM bridges to the Tegra's DRM
+output.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/tegra/drm.h    |  2 ++
+ drivers/gpu/drm/tegra/output.c | 25 ++++++++++++++++++++++++-
+ 2 files changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index 7fd0b66c69b2..fb3bbf7a5fb4 100644
---- a/Documentation/devicetree/bindings/arm/tegra.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -62,6 +62,13 @@ properties:
-               - toradex,colibri_t30-eval-v3
-           - const: toradex,colibri_t30
-           - const: nvidia,tegra30
-+      - items:
-+          - const: asus,grouper
-+          - const: nvidia,tegra30
-+      - items:
-+          - const: asus,tilapia
-+          - const: asus,grouper
-+          - const: nvidia,tegra30
-       - items:
-           - enum:
-               - nvidia,dalmore
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index ed99b67deb29..9ca11989679c 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -16,6 +16,7 @@
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_fixed.h>
++#include <drm/drm_of.h>
+ #include <drm/drm_probe_helper.h>
+ #include <uapi/drm/tegra_drm.h>
+ 
+@@ -116,6 +117,7 @@ struct tegra_output {
+ 	struct device_node *of_node;
+ 	struct device *dev;
+ 
++	struct drm_bridge *bridge;
+ 	struct drm_panel *panel;
+ 	struct i2c_adapter *ddc;
+ 	const struct edid *edid;
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index a264259b97a2..6b8fae4659b4 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -96,13 +96,28 @@ static irqreturn_t hpd_irq(int irq, void *data)
+ 
+ int tegra_output_probe(struct tegra_output *output)
+ {
+-	struct device_node *ddc, *panel;
++	struct device_node *ddc, *panel, *port;
+ 	unsigned long flags;
+ 	int err, size;
+ 
+ 	if (!output->of_node)
+ 		output->of_node = output->dev->of_node;
+ 
++	/* newer device-trees may utilize output graph */
++	port = of_get_child_by_name(output->of_node, "port");
++	if (port) {
++		err = drm_of_find_panel_or_bridge(output->of_node, 0, 0,
++						  &output->panel,
++						  &output->bridge);
++		of_node_put(port);
++		if (err)
++			return err;
++	}
++
++	if (output->panel || output->bridge)
++		goto edid_property;
++
++	/* for older device-trees we fall back to nvidia,panel */
+ 	panel = of_parse_phandle(output->of_node, "nvidia,panel", 0);
+ 	if (panel) {
+ 		output->panel = of_drm_find_panel(panel);
+@@ -112,6 +127,7 @@ int tegra_output_probe(struct tegra_output *output)
+ 		of_node_put(panel);
+ 	}
+ 
++edid_property:
+ 	output->edid = of_get_property(output->of_node, "nvidia,edid", &size);
+ 
+ 	ddc = of_parse_phandle(output->of_node, "nvidia,ddc-i2c-bus", 0);
+@@ -189,6 +205,13 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
+ 		err = drm_panel_attach(output->panel, &output->connector);
+ 		if (err < 0)
+ 			return err;
++	} else if (output->bridge) {
++		err = drm_bridge_attach(&output->encoder, output->bridge,
++					NULL, 0);
++		if (err) {
++			dev_err(drm->dev, "cannot connect bridge: %d\n", err);
++			return err;
++		}
+ 	}
+ 
+ 	/*
 -- 
 2.25.1
