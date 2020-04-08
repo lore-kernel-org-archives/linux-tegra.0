@@ -1,76 +1,122 @@
-From: sumitg <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
-Date: Wed, 8 Apr 2020 16:54:07 +0530
-Message-ID: <08307e54-0e14-14a3-7d6a-d59e1e04a683@nvidia.com>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
- <20200326115023.xy3n5bl7uetuw7mx@vireshk-i7>
- <d233b26b-6b50-7d41-9f33-a5dc151e0e7d@nvidia.com>
- <20200406025549.qfwzlk3745y3r274@vireshk-i7>
- <3ab4136c-8cca-c2f9-d286-b82dac23e720@nvidia.com>
- <20200408055301.jhvu5bc2luu3b5qr@vireshk-i7>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [RFC PATCH 17/34] iommu/arm-smmu: Store device instead of group
+ in arm_smmu_s2cr
+Date: Wed, 8 Apr 2020 13:09:40 +0100
+Message-ID: <98c10a41-d223-e375-9742-b6471c3dc33c@arm.com>
+References: <20200407183742.4344-1-joro@8bytes.org>
+ <20200407183742.4344-18-joro@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200408055301.jhvu5bc2luu3b5qr@vireshk-i7>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20200407183742.4344-18-joro@8bytes.org>
+Content-Language: en-GB
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org, virtualization@lists.linux-foundation.org, Joerg Roedel <jroedel@suse.de>
 List-Id: linux-tegra@vger.kernel.org
 
+On 2020-04-07 7:37 pm, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
+> 
+> This is required to convert the arm-smmu driver to the
+> probe/release_device() interface.
+> 
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>   drivers/iommu/arm-smmu.c | 14 +++++++++-----
+>   1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index a6a5796e9c41..3493501d8b2c 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -69,7 +69,7 @@ MODULE_PARM_DESC(disable_bypass,
+>   	"Disable bypass streams such that incoming transactions from devices that are not attached to an iommu domain will report an abort back to the device and will not be allowed to pass through the SMMU.");
+>   
+>   struct arm_smmu_s2cr {
+> -	struct iommu_group		*group;
+> +	struct device			*dev;
+>   	int				count;
+>   	enum arm_smmu_s2cr_type		type;
+>   	enum arm_smmu_s2cr_privcfg	privcfg;
+> @@ -1100,7 +1100,7 @@ static int arm_smmu_master_alloc_smes(struct device *dev)
+>   	/* It worked! Now, poke the actual hardware */
+>   	for_each_cfg_sme(cfg, fwspec, i, idx) {
+>   		arm_smmu_write_sme(smmu, idx);
+> -		smmu->s2crs[idx].group = group;
+> +		smmu->s2crs[idx].dev = dev;
+>   	}
+>   
+>   	mutex_unlock(&smmu->stream_map_mutex);
+> @@ -1495,11 +1495,15 @@ static struct iommu_group *arm_smmu_device_group(struct device *dev)
+>   	int i, idx;
+>   
+>   	for_each_cfg_sme(cfg, fwspec, i, idx) {
+> -		if (group && smmu->s2crs[idx].group &&
+> -		    group != smmu->s2crs[idx].group)
+> +		struct iommu_group *idx_grp = NULL;
+> +
+> +		if (smmu->s2crs[idx].dev)
+> +			idx_grp = smmu->s2crs[idx].dev->iommu_group;
 
+For a hot-pluggable bus where logical devices may share Stream IDs (like 
+fsl-mc), this could happen:
 
-On 08/04/20 11:23 AM, Viresh Kumar wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 07-04-20, 23:48, sumitg wrote:
->> On 06/04/20 8:25 AM, Viresh Kumar wrote:
->>> On 05-04-20, 00:08, sumitg wrote:
->>>> On 26/03/20 5:20 PM, Viresh Kumar wrote:
->>>>> On 03-12-19, 23:02, Sumit Gupta wrote:
->>>>>> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
->>>>>> +static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
->>>>>> +{
->>>>>> +     struct read_counters_work read_counters_work;
->>>>>> +     struct tegra_cpu_ctr c;
->>>>>> +     u32 delta_refcnt;
->>>>>> +     u32 delta_ccnt;
->>>>>> +     u32 rate_mhz;
->>>>>> +
->>>>>> +     read_counters_work.c.cpu = cpu;
->>>>>> +     read_counters_work.c.delay = delay;
->>>>>> +     INIT_WORK_ONSTACK(&read_counters_work.work, tegra_read_counters);
->>>>>> +     queue_work_on(cpu, read_counters_wq, &read_counters_work.work);
->>>>>> +     flush_work(&read_counters_work.work);
->>>>>
->>>>> Why can't this be done in current context ?
->>>>>
->>>> We used work queue instead of smp_call_function_single() to have long delay.
->>>
->>> Please explain completely, you have raised more questions than you
->>> answered :)
->>>
->>> Why do you want to have long delays ?
->>>
->> Long delay value is used to have the observation window long enough for
->> correctly reconstructing the CPU frequency considering noise.
->> In next patch version, changed delay value to 500us which in our tests is
->> considered reliable.
-> 
-> I understand that you need to put a udelay() while reading the freq from
-> hardware, that is fine, but why do you need a workqueue for that? Why can't you
-> just read the values directly from the same context ?
-> 
-The register to read frequency is per core and not accessible to other 
-cores. So, we have to execute the function remotely as the target core 
-to read frequency might be different from current.
-The functions for that are smp_call_function_single or queue_work_on.
-We used queue_work_on() to avoid long delay inside ipi interrupt context 
-with interrupts disabled.
+   create device A
+   iommu_probe_device(A)
+     iommu_device_group(A) -> alloc group X
+   create device B
+   iommu_probe_device(B)
+     iommu_device_group(A) -> lookup returns group X
+   ...
+   iommu_remove_device(A)
+   delete device A
+   create device C
+   iommu_probe_device(C)
+     iommu_device_group(C) -> use-after-free of A
 
-> --
-> viresh
-> 
+Preserving the logical behaviour here would probably look *something* 
+like the mangled diff below, but I haven't thought it through 100%.
+
+Robin.
+
+----->8-----
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 16c4b87af42b..e88612ee47fe 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -1100,10 +1100,8 @@ static int arm_smmu_master_alloc_smes(struct 
+device *dev)
+         iommu_group_put(group);
+
+         /* It worked! Now, poke the actual hardware */
+-       for_each_cfg_sme(fwspec, i, idx) {
++       for_each_cfg_sme(fwspec, i, idx)
+                 arm_smmu_write_sme(smmu, idx);
+-               smmu->s2crs[idx].group = group;
+-       }
+
+         mutex_unlock(&smmu->stream_map_mutex);
+         return 0;
+@@ -1500,15 +1498,17 @@ static struct iommu_group 
+*arm_smmu_device_group(struct device *dev)
+         }
+
+         if (group)
+-               return iommu_group_ref_get(group);
+-
+-       if (dev_is_pci(dev))
++               iommu_group_ref_get(group);
++       else if (dev_is_pci(dev))
+                 group = pci_device_group(dev);
+         else if (dev_is_fsl_mc(dev))
+                 group = fsl_mc_device_group(dev);
+         else
+                 group = generic_device_group(dev);
+
++       for_each_cfg_sme(fwspec, i, idx)
++               smmu->s2crs[idx].group = group;
++
+         return group;
+  }
