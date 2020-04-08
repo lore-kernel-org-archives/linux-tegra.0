@@ -1,59 +1,54 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [PATCH] usb: host: ehci-tegra: Remove superfluous dev_err()
- message
-Date: Wed, 8 Apr 2020 09:05:22 +0200
-Message-ID: <23c90343-3398-a475-650e-a7bae9aa5675@web.de>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 5.6 00/30] 5.6.3-rc2 review
+Date: Wed, 8 Apr 2020 09:10:21 +0200
+Message-ID: <20200408071021.GC1019278@kroah.com>
+References: <20200407154752.006506420@linuxfoundation.org>
+ <f5ca935a-22f8-a342-af07-6ed9923e912e@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tang Bin <tangbin@cmss.chinamobile.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <f5ca935a-22f8-a342-af07-6ed9923e912e-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> The platform_get_irq() can print error message,so remove the redundant
-> dev_err() here.
+On Tue, Apr 07, 2020 at 08:02:57PM +0100, Jon Hunter wrote:
+> 
+> On 07/04/2020 17:39, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.6.3 release.
+> > There are 30 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 09 Apr 2020 15:46:32 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.6.3-rc2.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.6.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.6:
+>     13 builds:	13 pass, 0 fail
+>     24 boots:	24 pass, 0 fail
+>     40 tests:	40 pass, 0 fail
+> 
+> Linux version:	5.6.3-rc2-gf106acd0db7c
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
+> 
 
-I suggest to adjust the commit message.
+Thanks for testing all of these again :)
 
-* How do you think about to use the text =E2=80=9Cusb: host: ehci-tegra:
-  Remove an error message in tegra_ehci_probe()=E2=80=9D as the commit sub=
-ject?
-
-* Would a wording like the following be nicer?
-
-  The function =E2=80=9Cplatform_get_irq=E2=80=9D can log an error already=
-.
-  Thus remove a redundant message for the exception handling in the
-  calling function.
-
-
-=E2=80=A6
-> +++ b/drivers/usb/host/ehci-tegra.c
-> @@ -480,7 +480,6 @@ static int tegra_ehci_probe(struct platform_device *=
-pdev)
->
->  	irq =3D platform_get_irq(pdev, 0);
->  	if (!irq) {
-> -		dev_err(&pdev->dev, "Failed to get IRQ\n");
->  		err =3D -ENODEV;
->  		goto cleanup_phy;
-
-I find another implementation detail questionable here.
-The software documentation is providing the following information
-for the used programming interface.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dr=
-ivers/base/platform.c?id=3Df5e94d10e4c468357019e5c28d48499f677b284f#n221
-https://elixir.bootlin.com/linux/v5.6.2/source/drivers/base/platform.c#L20=
-2
-
-=E2=80=9C=E2=80=A6
- * Return: IRQ number on success, negative error number on failure.
-=E2=80=A6=E2=80=9D
-
-Would you like to reconsider the shown condition check?
-
-Regards,
-Markus
+greg k-h
