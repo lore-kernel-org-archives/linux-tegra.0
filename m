@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v6 03/14] of: reserved-memory: Support multiple regions per device
-Date: Thu,  9 Apr 2020 19:52:27 +0200
-Message-ID: <20200409175238.3586487-4-thierry.reding@gmail.com>
+Subject: [PATCH v6 02/14] of: reserved-memory: Support lookup of regions by name
+Date: Thu,  9 Apr 2020 19:52:26 +0200
+Message-ID: <20200409175238.3586487-3-thierry.reding@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,57 +14,75 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-While the lookup/initialization code already supports multiple memory
-regions per device, the release code will only ever release the first
-matching memory region.
-
-Enhance the code to release all matching regions. Each attachment of
-a region to a device is uniquely identifiable using a struct device
-pointer and a pointer to the memory region's struct reserved_mem.
+Add support for looking up memory regions by name. This looks up the
+given name in the newly introduced memory-region-names property and
+returns the memory region at the corresponding index in the memory-
+region(s) property.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/of/of_reserved_mem.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ drivers/of/of_reserved_mem.c    | 19 +++++++++++++++++++
+ include/linux/of_reserved_mem.h | 11 +++++++++++
+ 2 files changed, 30 insertions(+)
 
 diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index ed2ff6f01d32..f61e8739502a 100644
+index 1a84bc0d5fa8..ed2ff6f01d32 100644
 --- a/drivers/of/of_reserved_mem.c
 +++ b/drivers/of/of_reserved_mem.c
-@@ -385,24 +385,22 @@ EXPORT_SYMBOL_GPL(of_reserved_mem_device_init_by_name);
-  */
- void of_reserved_mem_device_release(struct device *dev)
- {
--	struct rmem_assigned_device *rd;
--	struct reserved_mem *rmem = NULL;
-+	struct rmem_assigned_device *rd, *tmp;
-+	LIST_HEAD(release_list);
- 
- 	mutex_lock(&of_rmem_assigned_device_mutex);
--	list_for_each_entry(rd, &of_rmem_assigned_device_list, list) {
--		if (rd->dev == dev) {
--			rmem = rd->rmem;
--			list_del(&rd->list);
--			kfree(rd);
--			break;
--		}
-+	list_for_each_entry_safe(rd, tmp, &of_rmem_assigned_device_list, list) {
-+		if (rd->dev == dev)
-+			list_move_tail(&rd->list, &release_list);
- 	}
- 	mutex_unlock(&of_rmem_assigned_device_mutex);
- 
--	if (!rmem || !rmem->ops || !rmem->ops->device_release)
--		return;
-+	list_for_each_entry_safe(rd, tmp, &release_list, list) {
-+		if (rd->rmem && rd->rmem->ops && rd->rmem->ops->device_release)
-+			rd->rmem->ops->device_release(rd->rmem, dev);
- 
--	rmem->ops->device_release(rmem, dev);
-+		kfree(rd);
-+	}
+@@ -357,6 +357,25 @@ int of_reserved_mem_device_init_by_idx(struct device *dev,
  }
- EXPORT_SYMBOL_GPL(of_reserved_mem_device_release);
+ EXPORT_SYMBOL_GPL(of_reserved_mem_device_init_by_idx);
  
++/**
++ * of_reserved_mem_device_init_by_name() - assign named reserved memory region
++ *					   to given device
++ * @dev: pointer to the device to configure
++ * @np: pointer to the device node with 'memory-region' property
++ * @name: name of the selected memory region
++ *
++ * Returns: 0 on success or a negative error-code on failure.
++ */
++int of_reserved_mem_device_init_by_name(struct device *dev,
++					struct device_node *np,
++					const char *name)
++{
++	int idx = of_property_match_string(np, "memory-region-names", name);
++
++	return of_reserved_mem_device_init_by_idx(dev, np, idx);
++}
++EXPORT_SYMBOL_GPL(of_reserved_mem_device_init_by_name);
++
+ /**
+  * of_reserved_mem_device_release() - release reserved memory device structures
+  * @dev:	Pointer to the device to deconfigure
+diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reserved_mem.h
+index 60f541912ccf..a1b427ac291b 100644
+--- a/include/linux/of_reserved_mem.h
++++ b/include/linux/of_reserved_mem.h
+@@ -33,6 +33,9 @@ typedef int (*reservedmem_of_init_fn)(struct reserved_mem *rmem);
+ 
+ int of_reserved_mem_device_init_by_idx(struct device *dev,
+ 				       struct device_node *np, int idx);
++int of_reserved_mem_device_init_by_name(struct device *dev,
++					struct device_node *np,
++					const char *name);
+ void of_reserved_mem_device_release(struct device *dev);
+ 
+ void fdt_init_reserved_mem(void);
+@@ -45,6 +48,14 @@ static inline int of_reserved_mem_device_init_by_idx(struct device *dev,
+ {
+ 	return -ENOSYS;
+ }
++
++static inline int of_reserved_mem_device_init_by_name(struct device *dev,
++						      struct device_node *np,
++						      const char *name)
++{
++	return -ENOSYS;
++}
++
+ static inline void of_reserved_mem_device_release(struct device *pdev) { }
+ 
+ static inline void fdt_init_reserved_mem(void) { }
 -- 
 2.24.1
