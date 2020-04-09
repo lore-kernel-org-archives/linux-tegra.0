@@ -1,84 +1,44 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
-Date: Thu, 9 Apr 2020 13:14:15 +0530
-Message-ID: <20200409074415.twpzu2n4frqlde7b@vireshk-i7>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
- <20200326115023.xy3n5bl7uetuw7mx@vireshk-i7>
- <d233b26b-6b50-7d41-9f33-a5dc151e0e7d@nvidia.com>
- <20200406025549.qfwzlk3745y3r274@vireshk-i7>
- <3ab4136c-8cca-c2f9-d286-b82dac23e720@nvidia.com>
- <20200408055301.jhvu5bc2luu3b5qr@vireshk-i7>
- <08307e54-0e14-14a3-7d6a-d59e1e04a683@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] arm64: defconfig: Re-enable Tegra PCIe Host driver
+Date: Thu, 9 Apr 2020 10:55:30 +0100
+Message-ID: <20200409095530.12004-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <08307e54-0e14-14a3-7d6a-d59e1e04a683-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: sumitg <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08-04-20, 16:54, sumitg wrote:
-> 
-> 
-> On 08/04/20 11:23 AM, Viresh Kumar wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On 07-04-20, 23:48, sumitg wrote:
-> > > On 06/04/20 8:25 AM, Viresh Kumar wrote:
-> > > > On 05-04-20, 00:08, sumitg wrote:
-> > > > > On 26/03/20 5:20 PM, Viresh Kumar wrote:
-> > > > > > On 03-12-19, 23:02, Sumit Gupta wrote:
-> > > > > > > diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-> > > > > > > +static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
-> > > > > > > +{
-> > > > > > > +     struct read_counters_work read_counters_work;
-> > > > > > > +     struct tegra_cpu_ctr c;
-> > > > > > > +     u32 delta_refcnt;
-> > > > > > > +     u32 delta_ccnt;
-> > > > > > > +     u32 rate_mhz;
-> > > > > > > +
-> > > > > > > +     read_counters_work.c.cpu = cpu;
-> > > > > > > +     read_counters_work.c.delay = delay;
-> > > > > > > +     INIT_WORK_ONSTACK(&read_counters_work.work, tegra_read_counters);
+Commit c57247f940e8 ("PCI: tegra: Add support for PCIe endpoint mode in
+Tegra194") updated the Tegra PCIe Kconfig symbol for building the Tegra
+PCIe host controller driver. Following this change the Tegra PCIe host
+controller driver is no longer built by default and so no works without
+updating the arm64 defconfig. Fix this by updating the Kconfig symbol
+in the arm64 for the Tegra PCIe host controller so that again it is
+built by default.
 
-Initialize the work only once from init routine.
+Fixes: c57247f940e8 ("PCI: tegra: Add support for PCIe endpoint mode in Tegra194")
 
-> > > > > > > +     queue_work_on(cpu, read_counters_wq, &read_counters_work.work);
-> > > > > > > +     flush_work(&read_counters_work.work);
-> > > > > > 
-> > > > > > Why can't this be done in current context ?
-> > > > > > 
-> > > > > We used work queue instead of smp_call_function_single() to have long delay.
-> > > > 
-> > > > Please explain completely, you have raised more questions than you
-> > > > answered :)
-> > > > 
-> > > > Why do you want to have long delays ?
-> > > > 
-> > > Long delay value is used to have the observation window long enough for
-> > > correctly reconstructing the CPU frequency considering noise.
-> > > In next patch version, changed delay value to 500us which in our tests is
-> > > considered reliable.
-> > 
-> > I understand that you need to put a udelay() while reading the freq from
-> > hardware, that is fine, but why do you need a workqueue for that? Why can't you
-> > just read the values directly from the same context ?
-> > 
-> The register to read frequency is per core and not accessible to other
-> cores. So, we have to execute the function remotely as the target core to
-> read frequency might be different from current.
-> The functions for that are smp_call_function_single or queue_work_on.
-> We used queue_work_on() to avoid long delay inside ipi interrupt context
-> with interrupts disabled.
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Please note that this is needed as a fix for v5.7.
 
-Okay, I understand this now, finally :)
+ arch/arm64/configs/defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But if the interrupts are disabled during some call, won't workqueues face the
-same problem ?
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 24e534d85045..266ad7b5ce91 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -208,7 +208,7 @@ CONFIG_PCIE_QCOM=y
+ CONFIG_PCIE_ARMADA_8K=y
+ CONFIG_PCIE_KIRIN=y
+ CONFIG_PCIE_HISI_STB=y
+-CONFIG_PCIE_TEGRA194=m
++CONFIG_PCIE_TEGRA194_HOST=m
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_FW_LOADER_USER_HELPER=y
 -- 
-viresh
+2.17.1
