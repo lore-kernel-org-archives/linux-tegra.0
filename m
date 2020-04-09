@@ -1,87 +1,70 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6 00/14] Add EMC scaling support for Tegra210
-Date: Thu,  9 Apr 2020 19:52:24 +0200
-Message-ID: <20200409175238.3586487-1-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v6 03/14] of: reserved-memory: Support multiple regions per device
+Date: Thu,  9 Apr 2020 19:52:27 +0200
+Message-ID: <20200409175238.3586487-4-thierry.reding@gmail.com>
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20200409175238.3586487-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-This series introduces the EMC clock scaling support for Tegra210. The
-EMC table of supported frequencies is passed to the kernel via a device
-tree reserved memory region.
+While the lookup/initialization code already supports multiple memory
+regions per device, the release code will only ever release the first
+matching memory region.
 
-Joseph posted the v4 of this series[0] about a year ago. I've dusted it
-off a bit and tried to address all of the comments that Dmitry had made
-in response to v4.
+Enhance the code to release all matching regions. Each attachment of
+a region to a device is uniquely identifiable using a struct device
+pointer and a pointer to the memory region's struct reserved_mem.
 
-Changes in v6:
-- add support for derated tables which are used under high temperatures
-- add patches to support memory-region-names property in DT
-- address review comments
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/of/of_reserved_mem.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-Changes in v5:
-- major rework to split this into a clk driver and an EMC driver
-- refactored some code to remove duplication and improve readability
-- removed some unused code and variables
-
-Thierry
-
-[0]: https://lore.kernel.org/linux-arm-kernel/20190529082139.5581-1-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org/
-
-Joseph Lo (8):
-  clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
-  clk: tegra: Export functions for EMC clock scaling
-  clk: tegra: Implement Tegra210 EMC clock
-  dt-bindings: memory: tegra: Add external memory controller binding for
-    Tegra210
-  memory: tegra: Add EMC scaling support code for Tegra210
-  memory: tegra: Add EMC scaling sequence code for Tegra210
-  arm64: tegra: Add external memory controller node for Tegra210
-  clk: tegra: Remove the old emc_mux clock for Tegra210
-
-Thierry Reding (6):
-  dt-bindings: reserved-memory: Introduce memory-region-names
-  of: reserved-memory: Support lookup of regions by name
-  of: reserved-memory: Support multiple regions per device
-  clk: tegra: Rename Tegra124 EMC clock source file
-  memory: tegra: Support derated timings on Tegra210
-  arm64: tegra: Hook up EMC cooling device
-
- .../nvidia,tegra210-emc.yaml                  |   82 +
- .../reserved-memory/reserved-memory.txt       |    2 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi      |   37 +-
- drivers/clk/tegra/Makefile                    |    3 +-
- .../tegra/{clk-emc.c => clk-tegra124-emc.c}   |    0
- drivers/clk/tegra/clk-tegra210-emc.c          |  369 +++
- drivers/clk/tegra/clk-tegra210.c              |   87 +-
- drivers/clk/tegra/clk.h                       |    3 +
- drivers/memory/tegra/Kconfig                  |   14 +
- drivers/memory/tegra/Makefile                 |    4 +
- drivers/memory/tegra/mc.h                     |    1 +
- drivers/memory/tegra/tegra210-emc-cc-r21021.c | 1744 ++++++++++++++
- drivers/memory/tegra/tegra210-emc-core.c      | 2099 +++++++++++++++++
- drivers/memory/tegra/tegra210-emc-table.c     |   94 +
- drivers/memory/tegra/tegra210-emc.h           | 1023 ++++++++
- drivers/memory/tegra/tegra210-mc.h            |   49 +
- drivers/of/of_reserved_mem.c                  |   41 +-
- include/dt-bindings/clock/tegra210-car.h      |    4 +-
- include/linux/clk/tegra.h                     |   27 +
- include/linux/of_reserved_mem.h               |   11 +
- 20 files changed, 5656 insertions(+), 38 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
- rename drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} (100%)
- create mode 100644 drivers/clk/tegra/clk-tegra210-emc.c
- create mode 100644 drivers/memory/tegra/tegra210-emc-cc-r21021.c
- create mode 100644 drivers/memory/tegra/tegra210-emc-core.c
- create mode 100644 drivers/memory/tegra/tegra210-emc-table.c
- create mode 100644 drivers/memory/tegra/tegra210-emc.h
- create mode 100644 drivers/memory/tegra/tegra210-mc.h
-
+diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+index ed2ff6f01d32..f61e8739502a 100644
+--- a/drivers/of/of_reserved_mem.c
++++ b/drivers/of/of_reserved_mem.c
+@@ -385,24 +385,22 @@ EXPORT_SYMBOL_GPL(of_reserved_mem_device_init_by_name);
+  */
+ void of_reserved_mem_device_release(struct device *dev)
+ {
+-	struct rmem_assigned_device *rd;
+-	struct reserved_mem *rmem = NULL;
++	struct rmem_assigned_device *rd, *tmp;
++	LIST_HEAD(release_list);
+ 
+ 	mutex_lock(&of_rmem_assigned_device_mutex);
+-	list_for_each_entry(rd, &of_rmem_assigned_device_list, list) {
+-		if (rd->dev == dev) {
+-			rmem = rd->rmem;
+-			list_del(&rd->list);
+-			kfree(rd);
+-			break;
+-		}
++	list_for_each_entry_safe(rd, tmp, &of_rmem_assigned_device_list, list) {
++		if (rd->dev == dev)
++			list_move_tail(&rd->list, &release_list);
+ 	}
+ 	mutex_unlock(&of_rmem_assigned_device_mutex);
+ 
+-	if (!rmem || !rmem->ops || !rmem->ops->device_release)
+-		return;
++	list_for_each_entry_safe(rd, tmp, &release_list, list) {
++		if (rd->rmem && rd->rmem->ops && rd->rmem->ops->device_release)
++			rd->rmem->ops->device_release(rd->rmem, dev);
+ 
+-	rmem->ops->device_release(rmem, dev);
++		kfree(rd);
++	}
+ }
+ EXPORT_SYMBOL_GPL(of_reserved_mem_device_release);
+ 
 -- 
 2.24.1
