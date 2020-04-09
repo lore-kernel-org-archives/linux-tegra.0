@@ -1,88 +1,52 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v6 02/14] of: reserved-memory: Support lookup of regions by name
-Date: Thu,  9 Apr 2020 19:52:26 +0200
-Message-ID: <20200409175238.3586487-3-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v6 04/14] clk: tegra: Rename Tegra124 EMC clock source file
+Date: Thu,  9 Apr 2020 19:52:28 +0200
+Message-ID: <20200409175238.3586487-5-thierry.reding@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20200409175238.3586487-1-thierry.reding@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200409175238.3586487-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add support for looking up memory regions by name. This looks up the
-given name in the newly introduced memory-region-names property and
-returns the memory region at the corresponding index in the memory-
-region(s) property.
+This code is only used on Tegra124, so rename it accordingly to make it
+more consistent with other file names.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/of/of_reserved_mem.c    | 19 +++++++++++++++++++
- include/linux/of_reserved_mem.h | 11 +++++++++++
- 2 files changed, 30 insertions(+)
+ drivers/clk/tegra/Makefile                          | 2 +-
+ drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} (100%)
 
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index 1a84bc0d5fa8..ed2ff6f01d32 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -357,6 +357,25 @@ int of_reserved_mem_device_init_by_idx(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(of_reserved_mem_device_init_by_idx);
- 
-+/**
-+ * of_reserved_mem_device_init_by_name() - assign named reserved memory region
-+ *					   to given device
-+ * @dev: pointer to the device to configure
-+ * @np: pointer to the device node with 'memory-region' property
-+ * @name: name of the selected memory region
-+ *
-+ * Returns: 0 on success or a negative error-code on failure.
-+ */
-+int of_reserved_mem_device_init_by_name(struct device *dev,
-+					struct device_node *np,
-+					const char *name)
-+{
-+	int idx = of_property_match_string(np, "memory-region-names", name);
-+
-+	return of_reserved_mem_device_init_by_idx(dev, np, idx);
-+}
-+EXPORT_SYMBOL_GPL(of_reserved_mem_device_init_by_name);
-+
- /**
-  * of_reserved_mem_device_release() - release reserved memory device structures
-  * @dev:	Pointer to the device to deconfigure
-diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reserved_mem.h
-index 60f541912ccf..a1b427ac291b 100644
---- a/include/linux/of_reserved_mem.h
-+++ b/include/linux/of_reserved_mem.h
-@@ -33,6 +33,9 @@ typedef int (*reservedmem_of_init_fn)(struct reserved_mem *rmem);
- 
- int of_reserved_mem_device_init_by_idx(struct device *dev,
- 				       struct device_node *np, int idx);
-+int of_reserved_mem_device_init_by_name(struct device *dev,
-+					struct device_node *np,
-+					const char *name);
- void of_reserved_mem_device_release(struct device *dev);
- 
- void fdt_init_reserved_mem(void);
-@@ -45,6 +48,14 @@ static inline int of_reserved_mem_device_init_by_idx(struct device *dev,
- {
- 	return -ENOSYS;
- }
-+
-+static inline int of_reserved_mem_device_init_by_name(struct device *dev,
-+						      struct device_node *np,
-+						      const char *name)
-+{
-+	return -ENOSYS;
-+}
-+
- static inline void of_reserved_mem_device_release(struct device *pdev) { }
- 
- static inline void fdt_init_reserved_mem(void) { }
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index 1f7c30f87ece..dec508ef2ada 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -14,7 +14,6 @@ obj-y					+= clk-tegra-audio.o
+ obj-y					+= clk-tegra-periph.o
+ obj-y					+= clk-tegra-fixed.o
+ obj-y					+= clk-tegra-super-gen4.o
+-obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+@@ -22,6 +21,7 @@ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+ obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
+ obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
++obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-tegra124-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+ obj-y					+= cvb.o
+ obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+similarity index 100%
+rename from drivers/clk/tegra/clk-emc.c
+rename to drivers/clk/tegra/clk-tegra124-emc.c
 -- 
 2.24.1
