@@ -1,66 +1,70 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Thu, 9 Apr 2020 11:28:15 -0700
-Message-ID: <77c88717-618f-b366-2b6a-f8b4abaa66cc@nvidia.com>
-References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <fea4f0a1-4a20-34d4-9eda-e4a599eeeffc@nvidia.com>
- <760d071e-0cbc-b3eb-9231-fb9f9ecb44a6@nvidia.com>
- <9e317f65-8a02-3b15-cfec-8e0d8374130e@gmail.com>
- <97b35910-4c93-123a-43a0-eb14476ed0f3@nvidia.com>
- <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
- <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
- <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
- <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
- <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
- <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
- <7895b9c6-f27d-8939-73d7-67d785e1a8b7@nvidia.com>
- <ea60b489-990e-4b15-e215-d93381a1371e@nvidia.com>
- <b2405c2a-73c0-ad69-ccea-0388caf8045c@gmail.com>
- <15d8b525-67b5-b437-f7fd-89f80cd0d9f6@nvidia.com>
- <a638bb8e-bb50-7aa5-05a0-8de1c6207ba7@nvidia.com>
- <ced73258-6f4b-e970-4ca5-ecdf1808a4c3@nvidia.com>
- <ad646fde-2eed-eeeb-4d85-ec36d6613eb1@nvidia.com>
- <7288cacd-badc-cb01-1f4c-286dd024ca10@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
+ Tegra210
+Date: Thu, 9 Apr 2020 22:00:13 +0300
+Message-ID: <7b2f8a7c-94f1-08d0-b0ce-c61f4eb0a436@gmail.com>
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-10-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7288cacd-badc-cb01-1f4c-286dd024ca10@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20200409175238.3586487-10-thierry.reding@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+09.04.2020 20:52, Thierry Reding пишет:
+...
+> +static void tegra210_emc_debugfs_init(struct tegra210_emc *emc)
+> +{
+> +	struct device *dev = emc->dev;
+> +	unsigned int i;
+> +	int err;
+> +
+> +	emc->debugfs.min_rate = ULONG_MAX;
+> +	emc->debugfs.max_rate = 0;
+> +
+> +	for (i = 0; i < emc->num_timings; i++) {
+> +		if (emc->timings[i].rate * 1000UL < emc->debugfs.min_rate)
+> +			emc->debugfs.min_rate = emc->timings[i].rate * 1000UL;
+> +
+> +		if (emc->timings[i].rate * 1000UL > emc->debugfs.max_rate)
+> +			emc->debugfs.max_rate = emc->timings[i].rate * 1000UL;
+> +	}
+> +
+> +	if (!emc->num_timings) {
+> +		emc->debugfs.min_rate = clk_get_rate(emc->clk);
+> +		emc->debugfs.max_rate = emc->debugfs.min_rate;
+> +	}
+> +
+> +	err = clk_set_rate_range(emc->clk, emc->debugfs.min_rate,
+> +				 emc->debugfs.max_rate);
+> +	if (err < 0) {
+> +		dev_err(dev, "failed to set rate range [%lu-%lu] for %pC\n",
+> +			emc->debugfs.min_rate, emc->debugfs.max_rate,
+> +			emc->clk);
+> +		return;
+> +	}
+> +
+> +	emc->debugfs.root = debugfs_create_dir("emc", NULL);
+> +	if (!emc->debugfs.root) {
+> +		dev_err(dev, "failed to create debugfs directory\n");
+> +		return;
+> +	}
+> +
+> +	debugfs_create_file("available_rates", S_IRUGO, emc->debugfs.root, emc,
+> +			    &tegra210_emc_debug_available_rates_fops);
+> +	debugfs_create_file("min_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
+> +			    emc, &tegra210_emc_debug_min_rate_fops);
+> +	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
+> +			    emc, &tegra210_emc_debug_max_rate_fops);
 
-On 4/9/20 7:50 AM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 09.04.2020 06:38, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
->> Tested with 3 buffers and by checking outstanding buffers in process by
->> VI hw and holding to start capture till one outstanding buffer in
->> process by HW.
->> Also tested with 2 buffers without checking for outstanding buffers.
->>
->> In both cases, I see same %CPU for the kthreads and is < 1%
->>
-> I don't see where buffers queue max limit is set to 3 in the code, but
-> should be okay if CPU isn't getting hogged. Looking forward to v7.
-Sorry, correction I meant to say pre-queued buffers before streaming not=20
-num_buffers.
-vb2 queue min_buffers_needed was set to 3 as part of one of the issue=20
-debug in earlier version which actually was irrelevant to that issue and=20
-should have been removed. Will remove min_buffers_needed in v7.
+I assume you used the checkpatch before sending the patches, no?
 
-I added checking for outstanding requests by hardware just to be safer=20
-although we may not hit this case of issuing more than 1 outstanding=20
-frame capture to VI hardware as capture_frame() waits till it sees frame=20
-start event through HW syncpt increment before proceeding for memory=20
-write and issuing next frame capture.
+I sent out a patch recently to make the permissions readable, please
+take a look if you haven't seen it yet.
 
-So issuing frame captures are synchronized with frame start and frame end.
-
-Will remove min_buffers_needed and also explicit check for outstanding=20
-buffers in v7.
+https://patchwork.ozlabs.org/patch/1254301/
