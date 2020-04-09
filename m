@@ -1,42 +1,46 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH] iommu/exynos: Get rid of 'struct exynos_iommu_owner'
- exynos_iommu_owner
-Date: Thu, 9 Apr 2020 16:30:59 +0200
-Message-ID: <20200409143059.GP3103@8bytes.org>
-References: <20200407183742.4344-1-joro@8bytes.org>
- <CGME20200407184501eucas1p25407bc96e4345df406cf6ba061ae6a82@eucas1p2.samsung.com>
- <20200407183742.4344-32-joro@8bytes.org>
- <449e7f16-e719-9617-ec92-63b82c0bc33f@samsung.com>
- <f59b0bb3-8c08-9cc9-bb1a-e69b7b226f60@samsung.com>
- <20200409114620.GA16298@8bytes.org>
- <40af831b-d00c-0cf9-0a06-e60c048a9ab8@samsung.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
+Date: Thu, 9 Apr 2020 17:50:39 +0300
+Message-ID: <7288cacd-badc-cb01-1f4c-286dd024ca10@gmail.com>
+References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
+ <dd16c560-ba8f-e7df-5dc4-5227e0043196@nvidia.com>
+ <fea4f0a1-4a20-34d4-9eda-e4a599eeeffc@nvidia.com>
+ <760d071e-0cbc-b3eb-9231-fb9f9ecb44a6@nvidia.com>
+ <9e317f65-8a02-3b15-cfec-8e0d8374130e@gmail.com>
+ <97b35910-4c93-123a-43a0-eb14476ed0f3@nvidia.com>
+ <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
+ <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
+ <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
+ <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
+ <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
+ <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
+ <7895b9c6-f27d-8939-73d7-67d785e1a8b7@nvidia.com>
+ <ea60b489-990e-4b15-e215-d93381a1371e@nvidia.com>
+ <b2405c2a-73c0-ad69-ccea-0388caf8045c@gmail.com>
+ <15d8b525-67b5-b437-f7fd-89f80cd0d9f6@nvidia.com>
+ <a638bb8e-bb50-7aa5-05a0-8de1c6207ba7@nvidia.com>
+ <ced73258-6f4b-e970-4ca5-ecdf1808a4c3@nvidia.com>
+ <ad646fde-2eed-eeeb-4d85-ec36d6613eb1@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <40af831b-d00c-0cf9-0a06-e60c048a9ab8@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-rockchi
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <ad646fde-2eed-eeeb-4d85-ec36d6613eb1@nvidia.com>
+Content-Language: en-US
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Marek,
+09.04.2020 06:38, Sowjanya Komatineni пишет:
+...
+> Tested with 3 buffers and by checking outstanding buffers in process by
+> VI hw and holding to start capture till one outstanding buffer in
+> process by HW.
+> Also tested with 2 buffers without checking for outstanding buffers.
+> 
+> In both cases, I see same %CPU for the kthreads and is < 1%
+> 
 
-On Thu, Apr 09, 2020 at 03:58:00PM +0200, Marek Szyprowski wrote:
-> The main problem after your conversion is the fact that ->probe_device() 
-> is called very early, before any other platform device (thus IOMMU 
-> controller) is is probed. It doesn't handle EPROBE_DEFER too.
-
-I don't quite understand why probe_device() is called too early, as it
-is called at the same time add_device() was called before. But anyway,
-I have seen a similar problem on OMAP. If the SYSMMU for a master is not
-probed yet when probe_device() is called, it can just return -ENODEV and
-in your driver you just call but_iommu_probe() when a new SYSMMU got
-initialized to re-probe uninitialized masters on the bus. This patch-set
-contains a change to export bus_iommu_probe() for exactly that reason.
-
-What do you think?
-
-Regards,
-
-	Joerg
+I don't see where buffers queue max limit is set to 3 in the code, but
+should be okay if CPU isn't getting hogged. Looking forward to v7.
