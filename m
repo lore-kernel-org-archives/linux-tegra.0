@@ -1,52 +1,97 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6 04/14] clk: tegra: Rename Tegra124 EMC clock source file
-Date: Thu,  9 Apr 2020 19:52:28 +0200
-Message-ID: <20200409175238.3586487-5-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v6 06/14] clk: tegra: Export functions for EMC clock scaling
+Date: Thu,  9 Apr 2020 19:52:30 +0200
+Message-ID: <20200409175238.3586487-7-thierry.reding@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200409175238.3586487-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20200409175238.3586487-1-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Joseph Lo <josephl@nvidia.com>
 
-This code is only used on Tegra124, so rename it accordingly to make it
-more consistent with other file names.
+Export functions to allow accessing the CAR register required by EMC
+clock scaling. These functions will be used to access the CAR register
+as part of the scaling sequence.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/clk/tegra/Makefile                          | 2 +-
- drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} (100%)
+Changes in v5:
+- remove tegra210_clk_emc_get_setting() which is no longer needed
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index 1f7c30f87ece..dec508ef2ada 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -14,7 +14,6 @@ obj-y					+= clk-tegra-audio.o
- obj-y					+= clk-tegra-periph.o
- obj-y					+= clk-tegra-fixed.o
- obj-y					+= clk-tegra-super-gen4.o
--obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
-@@ -22,6 +21,7 @@ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
- obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
- obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
-+obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-tegra124-emc.o
- obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
- obj-y					+= cvb.o
- obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
-similarity index 100%
-rename from drivers/clk/tegra/clk-emc.c
-rename to drivers/clk/tegra/clk-tegra124-emc.c
+ drivers/clk/tegra/clk-tegra210.c | 26 ++++++++++++++++++++++++++
+ include/linux/clk/tegra.h        |  3 +++
+ 2 files changed, 29 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 57d97e87d870..798920ec50e9 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -37,6 +37,7 @@
+ #define CLK_SOURCE_LA 0x1f8
+ #define CLK_SOURCE_SDMMC2 0x154
+ #define CLK_SOURCE_SDMMC4 0x164
++#define CLK_SOURCE_EMC_DLL 0x664
+ 
+ #define PLLC_BASE 0x80
+ #define PLLC_OUT 0x84
+@@ -227,6 +228,10 @@
+ #define RST_DFLL_DVCO 0x2f4
+ #define DVFS_DFLL_RESET_SHIFT 0
+ 
++#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET	0x284
++#define CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR	0x288
++#define CLK_OUT_ENB_X_CLK_ENB_EMC_DLL		BIT(14)
++
+ #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+ #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+ #define CPU_SOFTRST_CTRL 0x380
+@@ -555,6 +560,27 @@ void tegra210_set_sata_pll_seq_sw(bool state)
+ }
+ EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
+ 
++void tegra210_clk_emc_dll_enable(bool flag)
++{
++	u32 offset = flag ? CLK_RST_CONTROLLER_CLK_OUT_ENB_X_SET :
++		     CLK_RST_CONTROLLER_CLK_OUT_ENB_X_CLR;
++
++	writel_relaxed(CLK_OUT_ENB_X_CLK_ENB_EMC_DLL, clk_base + offset);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_enable);
++
++void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value)
++{
++	writel_relaxed(emc_dll_src_value, clk_base + CLK_SOURCE_EMC_DLL);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_dll_update_setting);
++
++void tegra210_clk_emc_update_setting(u32 emc_src_value)
++{
++	writel_relaxed(emc_src_value, clk_base + CLK_SOURCE_EMC);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
++
+ static void tegra210_generic_mbist_war(struct tegra210_domain_mbist_war *mbist)
+ {
+ 	u32 val;
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index 2b1b35240074..5b0bdb413460 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -131,6 +131,9 @@ extern void tegra210_set_sata_pll_seq_sw(bool state);
+ extern void tegra210_put_utmipll_in_iddq(void);
+ extern void tegra210_put_utmipll_out_iddq(void);
+ extern int tegra210_clk_handle_mbist_war(unsigned int id);
++extern void tegra210_clk_emc_dll_enable(bool flag);
++extern void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value);
++extern void tegra210_clk_emc_update_setting(u32 emc_src_value);
+ 
+ struct clk;
+ 
 -- 
 2.24.1
