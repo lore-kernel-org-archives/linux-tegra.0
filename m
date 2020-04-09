@@ -1,70 +1,79 @@
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
  Tegra210
-Date: Thu, 9 Apr 2020 22:00:13 +0300
-Message-ID: <7b2f8a7c-94f1-08d0-b0ce-c61f4eb0a436@gmail.com>
+Date: Thu, 9 Apr 2020 22:16:46 +0300
+Message-ID: <a9afb1b5-3141-4923-c7fa-194228081e1b@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
  <20200409175238.3586487-10-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20200409175238.3586487-10-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200409175238.3586487-10-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 09.04.2020 20:52, Thierry Reding пишет:
 ...
-> +static void tegra210_emc_debugfs_init(struct tegra210_emc *emc)
+> +static int tegra210_emc_set_rate(struct device *dev,
+> +				 const struct tegra210_clk_emc_config *config)
 > +{
-> +	struct device *dev = emc->dev;
+> +	struct tegra210_emc *emc = dev_get_drvdata(dev);
+> +	struct tegra210_emc_timing *timing = NULL;
+> +	unsigned long rate = config->rate;
+> +	s64 last_change_delay;
+> +	unsigned long flags;
 > +	unsigned int i;
-> +	int err;
 > +
-> +	emc->debugfs.min_rate = ULONG_MAX;
-> +	emc->debugfs.max_rate = 0;
-> +
+> +	if (rate == emc->last->rate * 1000UL)
+> +		return 0;
+
+Couldn't all the rates be expressed in Hz? Then you won't need all these
+multiplications by 1000.
+
 > +	for (i = 0; i < emc->num_timings; i++) {
-> +		if (emc->timings[i].rate * 1000UL < emc->debugfs.min_rate)
-> +			emc->debugfs.min_rate = emc->timings[i].rate * 1000UL;
-> +
-> +		if (emc->timings[i].rate * 1000UL > emc->debugfs.max_rate)
-> +			emc->debugfs.max_rate = emc->timings[i].rate * 1000UL;
+> +		if (emc->timings[i].rate * 1000UL == rate) {
+> +			timing = &emc->timings[i];
+> +			break;
+> +		}
 > +	}
 > +
-> +	if (!emc->num_timings) {
-> +		emc->debugfs.min_rate = clk_get_rate(emc->clk);
-> +		emc->debugfs.max_rate = emc->debugfs.min_rate;
-> +	}
+> +	if (!timing)
+> +		return -EINVAL;
 > +
-> +	err = clk_set_rate_range(emc->clk, emc->debugfs.min_rate,
-> +				 emc->debugfs.max_rate);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to set rate range [%lu-%lu] for %pC\n",
-> +			emc->debugfs.min_rate, emc->debugfs.max_rate,
-> +			emc->clk);
-> +		return;
-> +	}
+> +	if (rate > 204000000 && !timing->trained)
+> +		return -EINVAL;
 > +
-> +	emc->debugfs.root = debugfs_create_dir("emc", NULL);
-> +	if (!emc->debugfs.root) {
-> +		dev_err(dev, "failed to create debugfs directory\n");
-> +		return;
-> +	}
+> +	emc->next = timing;
+> +	last_change_delay = ktime_us_delta(ktime_get(), emc->clkchange_time);
 > +
-> +	debugfs_create_file("available_rates", S_IRUGO, emc->debugfs.root, emc,
-> +			    &tegra210_emc_debug_available_rates_fops);
-> +	debugfs_create_file("min_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
-> +			    emc, &tegra210_emc_debug_min_rate_fops);
-> +	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
-> +			    emc, &tegra210_emc_debug_max_rate_fops);
+> +	/* XXX use non-busy-looping sleep? */
+> +	if ((last_change_delay >= 0) &&
+> +	    (last_change_delay < emc->clkchange_delay))
+> +		udelay(emc->clkchange_delay - (int)last_change_delay);
+> +
+> +	spin_lock_irqsave(&emc->lock, flags);
+> +	tegra210_emc_set_clock(emc, config->value);
+> +	emc->clkchange_time = ktime_get();
+> +	emc->last = timing;
+> +	spin_unlock_irqrestore(&emc->lock, flags);
+> +
+> +	return 0;
+> +}
 
-I assume you used the checkpatch before sending the patches, no?
+I'd suggest to check how much time invocation of ktime_get() takes, at
+least it came to a surprise to me in a case of the tegra-cpuidle driver.
 
-I sent out a patch recently to make the permissions readable, please
-take a look if you haven't seen it yet.
+It may be well over the emc->clkchange_delay.
 
-https://patchwork.ozlabs.org/patch/1254301/
+...
+> +static int tegra210_emc_probe(struct platform_device *pdev)
+> +{
+...
+> +	emc->clkchange_delay = 100;
+> +	emc->training_interval = 100;
+
+Not sure why these aren't a constant with the code.. ?
