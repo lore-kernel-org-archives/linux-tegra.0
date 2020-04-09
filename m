@@ -1,131 +1,42 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v6 14/14] clk: tegra: Remove the old emc_mux clock for Tegra210
-Date: Thu,  9 Apr 2020 19:52:38 +0200
-Message-ID: <20200409175238.3586487-15-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 07/14] clk: tegra: Implement Tegra210 EMC clock
+Date: Thu, 9 Apr 2020 21:24:31 +0300
+Message-ID: <8dc000fb-8867-cf8f-8204-a9e1e79a4811@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-8-thierry.reding@gmail.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20200409175238.3586487-1-thierry.reding@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200409175238.3586487-8-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Joseph Lo <josephl@nvidia.com>
+09.04.2020 20:52, Thierry Reding пишет:
+...
+> +static long tegra210_clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
+> +					unsigned long *prate)
+> +{
+> +	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
+> +	struct tegra210_clk_emc_provider *provider = emc->provider;
+> +	unsigned int i;
+> +
+> +	if (!provider || !provider->configs || provider->num_configs == 0)
+> +		return clk_hw_get_rate(hw);
 
-Remove the old emc_mux clock and don't use the common EMC clock
-definition. This will be replaced by a new clock defined in the
-EMC driver.
+This still looks wrong to me. Nobody should be able to get EMC clock
+until provider is registered.
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 50 ++++++++++++++++++++------------
- 1 file changed, 31 insertions(+), 19 deletions(-)
+This is troublesome, especially given that you're allowing the EMC
+driver to be compiled as a loadable module. For example, this won't work
+with the current ACTMON driver because it builds OPP table based on the
+clk-rate rounding during the driver's probe, so it won't be able to do
+it properly if provider is "temporarily" missing.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 798920ec50e9..f2bb188fbc6a 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -319,12 +319,6 @@ static unsigned long tegra210_input_freq[] = {
- 	[8] = 12000000,
- };
- 
--static const char *mux_pllmcp_clkm[] = {
--	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
--	"pll_p",
--};
--#define mux_pllmcp_clkm_idx NULL
--
- #define PLL_ENABLE			(1 << 30)
- 
- #define PLLCX_MISC1_IDDQ		(1 << 27)
-@@ -2336,7 +2330,6 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_i2c2] = { .dt_id = TEGRA210_CLK_I2C2, .present = true },
- 	[tegra_clk_uartc_8] = { .dt_id = TEGRA210_CLK_UARTC, .present = true },
- 	[tegra_clk_mipi_cal] = { .dt_id = TEGRA210_CLK_MIPI_CAL, .present = true },
--	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = true },
- 	[tegra_clk_usb2] = { .dt_id = TEGRA210_CLK_USB2, .present = true },
- 	[tegra_clk_bsev] = { .dt_id = TEGRA210_CLK_BSEV, .present = true },
- 	[tegra_clk_uartd_8] = { .dt_id = TEGRA210_CLK_UARTD, .present = true },
-@@ -2979,6 +2972,27 @@ static const char * const sor1_parents[] = {
- 
- static u32 sor1_parents_idx[] = { 0, 2, 5, 6 };
- 
-+static const struct clk_div_table mc_div_table_tegra210[] = {
-+	{ .val = 0, .div = 2 },
-+	{ .val = 1, .div = 4 },
-+	{ .val = 2, .div = 1 },
-+	{ .val = 3, .div = 2 },
-+	{ .val = 0, .div = 0 },
-+};
-+
-+static void tegra210_clk_register_mc(const char *name,
-+				     const char *parent_name)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_divider_table(NULL, name, parent_name,
-+					 CLK_IS_CRITICAL,
-+					 clk_base + CLK_SOURCE_EMC,
-+					 15, 2, CLK_DIVIDER_READ_ONLY,
-+					 mc_div_table_tegra210, &emc_lock);
-+	clks[TEGRA210_CLK_MC] = clk;
-+}
-+
- static const char * const sor1_out_parents[] = {
- 	/*
- 	 * Bit 0 of the mux selects sor1_pad_clkout, irrespective of bit 1, so
-@@ -3021,7 +3035,8 @@ static const char * const la_parents[] = {
- static struct tegra_clk_periph tegra210_la =
- 	TEGRA_CLK_PERIPH(29, 7, 9, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, 76, 0, NULL, NULL);
- 
--static __init void tegra210_periph_clk_init(void __iomem *clk_base,
-+static __init void tegra210_periph_clk_init(struct device_node *np,
-+					    void __iomem *clk_base,
- 					    void __iomem *pmc_base)
- {
- 	struct clk *clk;
-@@ -3067,16 +3082,6 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 			CLK_SOURCE_LA, 0);
- 	clks[TEGRA210_CLK_LA] = clk;
- 
--	/* emc mux */
--	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
--			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
--			       clk_base + CLK_SOURCE_EMC,
--			       29, 3, 0, &emc_lock);
--
--	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
--				    &emc_lock);
--	clks[TEGRA210_CLK_MC] = clk;
--
- 	/* cml0 */
- 	clk = clk_register_gate(NULL, "cml0", "pll_e", 0, clk_base + PLLE_AUX,
- 				0, 0, &pll_e_lock);
-@@ -3119,6 +3124,13 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 	}
- 
- 	tegra_periph_clk_init(clk_base, pmc_base, tegra210_clks, &pll_p_params);
-+
-+	/* emc */
-+	clk = tegra210_clk_register_emc(np, clk_base);
-+	clks[TEGRA210_CLK_EMC] = clk;
-+
-+	/* mc */
-+	tegra210_clk_register_mc("mc", "emc");
- }
- 
- static void __init tegra210_pll_init(void __iomem *clk_base,
-@@ -3717,7 +3729,7 @@ static void __init tegra210_clock_init(struct device_node *np)
- 
- 	tegra_fixed_clk_init(tegra210_clks);
- 	tegra210_pll_init(clk_base, pmc_base);
--	tegra210_periph_clk_init(clk_base, pmc_base);
-+	tegra210_periph_clk_init(np, clk_base, pmc_base);
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra210_clks,
- 			     tegra210_audio_plls,
- 			     ARRAY_SIZE(tegra210_audio_plls), 24576000);
--- 
-2.24.1
+... I think that in a longer run we should stop manually building the
+ACTMON's OPP table and instead define a proper OPP table (per-HW Speedo
+ID, with voltages) in a device-tree. But this is just a vague plans for
+the future for now.
