@@ -1,9 +1,8 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Fri, 10 Apr 2020 11:59:09 -0700
-Message-ID: <ab010164-e8ea-89e9-a7e9-d7213841fa90@nvidia.com>
+Date: Fri, 10 Apr 2020 22:45:27 +0300
+Message-ID: <34d9baa0-fa1e-0b67-fb9b-343b3cba0066@gmail.com>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <9e317f65-8a02-3b15-cfec-8e0d8374130e@gmail.com>
  <97b35910-4c93-123a-43a0-eb14476ed0f3@nvidia.com>
  <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
  <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
@@ -21,71 +20,39 @@ References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
  <7288cacd-badc-cb01-1f4c-286dd024ca10@gmail.com>
  <77c88717-618f-b366-2b6a-f8b4abaa66cc@nvidia.com>
  <00708f34-cf45-e248-c6b0-c3d2286671ca@gmail.com>
+ <ab010164-e8ea-89e9-a7e9-d7213841fa90@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <00708f34-cf45-e248-c6b0-c3d2286671ca-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <ab010164-e8ea-89e9-a7e9-d7213841fa90@nvidia.com>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+10.04.2020 21:59, Sowjanya Komatineni пишет:
+...
+>> It's still not clear to me how the "pre-queued buffers" will be limited.
+>> I'll take another look at the v7.
+> 
+> OK, but I don't understand what you mean by limit on pre-queued buffers.
+> 
+> I was saying vb2 queue has min_buffers_needed which was set to 3 where
+> streaming will start only after 3 buffers got queued up.
+> 
+> Regarding outstanding condition check to make sure no more than 2 syncpt
+> trigger requests are in FIFO I added it to be safe where mostly we may
+> not hit and also I only see capture start thread holding for it during
+> initial frame capture as it issues single shot for 1st 2 buffers capture
+> and holds 3 buffers which is already queued till at least one of those 2
+> issued capture is done to make sure of not triggering syncpt condition
+> when fifo already has 2 pending.
+> 
+> In v7, will remove setting min_buffers_needed and also outstanding
+> syncpt trigger check.
 
-On 4/10/20 11:47 AM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 09.04.2020 21:28, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 4/9/20 7:50 AM, Dmitry Osipenko wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> 09.04.2020 06:38, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> ...
->>>> Tested with 3 buffers and by checking outstanding buffers in process b=
-y
->>>> VI hw and holding to start capture till one outstanding buffer in
->>>> process by HW.
->>>> Also tested with 2 buffers without checking for outstanding buffers.
->>>>
->>>> In both cases, I see same %CPU for the kthreads and is < 1%
->>>>
->>> I don't see where buffers queue max limit is set to 3 in the code, but
->>> should be okay if CPU isn't getting hogged. Looking forward to v7.
->> Sorry, correction I meant to say pre-queued buffers before streaming not
->> num_buffers.
->> vb2 queue min_buffers_needed was set to 3 as part of one of the issue
->> debug in earlier version which actually was irrelevant to that issue and
->> should have been removed. Will remove min_buffers_needed in v7.
->>
->> I added checking for outstanding requests by hardware just to be safer
->> although we may not hit this case of issuing more than 1 outstanding
->> frame capture to VI hardware as capture_frame() waits till it sees frame
->> start event through HW syncpt increment before proceeding for memory
->> write and issuing next frame capture.
->>
->> So issuing frame captures are synchronized with frame start and frame en=
-d.
->>
->> Will remove min_buffers_needed and also explicit check for outstanding
->> buffers in v7.
-> It's still not clear to me how the "pre-queued buffers" will be limited.
-> I'll take another look at the v7.
-
-OK, but I don't understand what you mean by limit on pre-queued buffers.
-
-I was saying vb2 queue has min_buffers_needed which was set to 3 where=20
-streaming will start only after 3 buffers got queued up.
-
-Regarding outstanding condition check to make sure no more than 2 syncpt=20
-trigger requests are in FIFO I added it to be safe where mostly we may=20
-not hit and also I only see capture start thread holding for it during=20
-initial frame capture as it issues single shot for 1st 2 buffers capture=20
-and holds 3 buffers which is already queued till at least one of those 2=20
-issued capture is done to make sure of not triggering syncpt condition=20
-when fifo already has 2 pending.
-
-In v7, will remove setting min_buffers_needed and also outstanding=20
-syncpt trigger check.
+Okay, seems I got what you're saying. Yes, the check should be removed.
+It's impossible to get the frame-start event while capture of the
+previous buffer is in-progress.
