@@ -1,267 +1,72 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFC PATCH 33/34] iommu: Remove add_device()/remove_device()
- code-paths
-Date: Fri, 10 Apr 2020 12:39:38 +0200
-Message-ID: <1a88547f-ac90-825e-e529-a56c2c4e0391@samsung.com>
-References: <20200407183742.4344-1-joro@8bytes.org>
-        <CGME20200407183806eucas1p2cf45fbce5a43a6b4fe3a623b28da0606@eucas1p2.samsung.com>
-        <20200407183742.4344-34-joro@8bytes.org>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 10/14] memory: tegra: Add EMC scaling sequence code for
+ Tegra210
+Date: Fri, 10 Apr 2020 17:18:51 +0300
+Message-ID: <682c661d-ea3a-7b9a-42f0-d5473b969aa2@gmail.com>
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-11-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200407183742.4344-34-joro@8bytes.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200409175238.3586487-11-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org, virtualization@lists.linux-foundation.org, Joerg Roedel <jroedel@suse.de>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Joerg
-
-On 07.04.2020 20:37, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
->
-> All drivers are converted to use the probe/release_device()
-> call-backs, so the add_device/remove_device() pointers are unused and
-> the code using them can be removed.
->
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->   drivers/iommu/iommu.c | 145 ++++++++----------------------------------
->   include/linux/iommu.h |   4 --
->   2 files changed, 27 insertions(+), 122 deletions(-)
->
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index cf25c1e48830..d9032f9d597c 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -220,7 +220,7 @@ static int __iommu_probe_device(struct device *dev, struct list_head *group_list
->   	return ret;
->   }
->   
-> -static int __iommu_probe_device_helper(struct device *dev)
-> +int iommu_probe_device(struct device *dev)
->   {
->   	const struct iommu_ops *ops = dev->bus->iommu_ops;
->   	struct iommu_group *group;
-> @@ -264,70 +264,17 @@ static int __iommu_probe_device_helper(struct device *dev)
->   
->   }
->   
-> -int iommu_probe_device(struct device *dev)
-> +void iommu_release_device(struct device *dev)
->   {
->   	const struct iommu_ops *ops = dev->bus->iommu_ops;
-> -	struct iommu_group *group;
-> -	int ret;
-> -
-> -	WARN_ON(dev->iommu_group);
-> -
-> -	if (!ops)
-> -		return -EINVAL;
-> -
-> -	if (!dev_iommu_get(dev))
-> -		return -ENOMEM;
-> -
-> -	if (!try_module_get(ops->owner)) {
-> -		ret = -EINVAL;
-> -		goto err_free_dev_param;
-> -	}
-> -
-> -	if (ops->probe_device)
-> -		return __iommu_probe_device_helper(dev);
-> -
-> -	ret = ops->add_device(dev);
-> -	if (ret)
-> -		goto err_module_put;
->   
-> -	group = iommu_group_get(dev);
-> -	iommu_create_device_direct_mappings(group, dev);
-> -	iommu_group_put(group);
-> -
-> -	if (ops->probe_finalize)
-> -		ops->probe_finalize(dev);
-> -
-> -	return 0;
-> -
-> -err_module_put:
-> -	module_put(ops->owner);
-> -err_free_dev_param:
-> -	dev_iommu_free(dev);
-> -	return ret;
-> -}
-> -
-> -static void __iommu_release_device(struct device *dev)
-> -{
-> -	const struct iommu_ops *ops = dev->bus->iommu_ops;
-> +	if (!dev->iommu)
-> +		return;
->   
->   	iommu_device_unlink(dev->iommu->iommu_dev, dev);
-> -
->   	iommu_group_remove_device(dev);
->   
->   	ops->release_device(dev);
-> -}
-> -
-> -void iommu_release_device(struct device *dev)
-> -{
-> -	const struct iommu_ops *ops = dev->bus->iommu_ops;
-> -
-> -	if (!dev->iommu)
-> -		return;
-> -
-> -	if (ops->release_device)
-> -		__iommu_release_device(dev);
-> -	else if (dev->iommu_group)
-> -		ops->remove_device(dev);
->   
->   	module_put(ops->owner);
->   	dev_iommu_free(dev);
-> @@ -1560,23 +1507,6 @@ struct iommu_group *iommu_group_get_for_dev(struct device *dev)
->   	if (ret)
->   		goto out_put_group;
->   
-> -	/*
-> -	 * Try to allocate a default domain - needs support from the
-> -	 * IOMMU driver. There are still some drivers which don't support
-> -	 * default domains, so the return value is not yet checked. Only
-> -	 * allocate the domain here when the driver still has the
-> -	 * add_device/remove_device call-backs implemented.
-> -	 */
-> -	if (!ops->probe_device) {
-> -		iommu_alloc_default_domain(dev);
-> -
-> -		if (group->default_domain)
-> -			ret = __iommu_attach_device(group->default_domain, dev);
-> -
-> -		if (ret)
-> -			goto out_put_group;
-> -	}
-> -
->   	return group;
->   
->   out_put_group:
-> @@ -1591,21 +1521,6 @@ struct iommu_domain *iommu_group_default_domain(struct iommu_group *group)
->   	return group->default_domain;
->   }
->   
-> -static int add_iommu_group(struct device *dev, void *data)
-> -{
-> -	int ret = iommu_probe_device(dev);
-> -
-> -	/*
-> -	 * We ignore -ENODEV errors for now, as they just mean that the
-> -	 * device is not translated by an IOMMU. We still care about
-> -	 * other errors and fail to initialize when they happen.
-> -	 */
-> -	if (ret == -ENODEV)
-> -		ret = 0;
-> -
-> -	return ret;
-> -}
-> -
->   static int probe_iommu_group(struct device *dev, void *data)
->   {
->   	const struct iommu_ops *ops = dev->bus->iommu_ops;
-> @@ -1789,45 +1704,39 @@ static int iommu_group_create_direct_mappings(struct iommu_group *group)
->   
->   int bus_iommu_probe(struct bus_type *bus)
->   {
-> -	const struct iommu_ops *ops = bus->iommu_ops;
-> +	struct iommu_group *group, *next;
-> +	LIST_HEAD(group_list);
->   	int ret;
->   
-> -	if (ops->probe_device) {
-> -		struct iommu_group *group, *next;
-> -		LIST_HEAD(group_list);
-> -
-> -		/*
-> -		 * This code-path does not allocate the default domain when
-> -		 * creating the iommu group, so do it after the groups are
-> -		 * created.
-> -		 */
-> -		ret = bus_for_each_dev(bus, NULL, &group_list, probe_iommu_group);
-> -		if (ret)
-> -			return ret;
+09.04.2020 20:52, Thierry Reding пишет:
+...
+> +static void tegra210_emc_r21021_set_clock(struct tegra210_emc *emc, u32 clksrc)
+> +{
 > +	/*
-> +	 * This code-path does not allocate the default domain when
-> +	 * creating the iommu group, so do it after the groups are
-> +	 * created.
+> +	 * This is the timing table for the source frequency. It does _not_
+> +	 * necessarily correspond to the actual timing values in the EMC at the
+> +	 * moment. If the boot BCT differs from the table then this can happen.
+> +	 * However, we need it for accessing the dram_timings (which are not
+> +	 * really registers) array for the current frequency.
 > +	 */
-> +	ret = bus_for_each_dev(bus, NULL, &group_list, probe_iommu_group);
-> +	if (ret)
-> +		return ret;
->   
-> -		list_for_each_entry_safe(group, next, &group_list, entry) {
-> -			/* Remove item from the list */
-> -			list_del_init(&group->entry);
-> +	list_for_each_entry_safe(group, next, &group_list, entry) {
-> +		/* Remove item from the list */
-> +		list_del_init(&group->entry);
->   
-> -			mutex_lock(&group->mutex);
-> +		mutex_lock(&group->mutex);
->   
-> -			/* Try to allocate default domain */
-> -			probe_alloc_default_domain(bus, group);
-> +		/* Try to allocate default domain */
-> +		probe_alloc_default_domain(bus, group);
->   
-> -			if (!group->default_domain)
-> -				continue;
-> +		if (!group->default_domain)
-> +			continue;
+> +	u32 tmp, cya_allow_ref_cc = 0, ref_b4_sref_en = 0, cya_issue_pc_ref = 0;
+> +	struct tegra210_emc_timing *fake, *last = emc->last, *next = emc->next;
+> +	u32 bg_regulator_switch_complete_wait_clks, bg_regulator_mode_change;
+> +	u32 opt_zcal_en_cc, opt_do_sw_qrst = 1, opt_dvfs_mode, opt_dll_mode;
+> +	u32 emc_zcal_wait_cnt_old, emc_zcal_wait_cnt_new, emc_dbg_active;
+> +	u32 opt_cc_short_zcal = 1, opt_short_zcal = 1, opt_war_200024907;
+> +	u32 tRTM, RP_war, R2P_war, TRPab_war, deltaTWATM, W2P_war, tRPST;
+> +	u32 adel = 0, compensate_trimmer_applicable = 0, mrw_req, value;
+> +	unsigned long next_timing_rate_mhz = next->rate / 1000, delay;
+> +	u32 tZQCAL_lpddr4 = 1000000, zq_wait_long, shared_zq_resistor;
+> +	s32 zq_latch_dvfs_wait_time, tZQCAL_lpddr4_fc_adj, nRTP;
+> +	u32 tFC_lpddr4 = 1000 * next->dram_timings[T_FC_LPDDR4];
+> +	u32 emc_auto_cal_config, auto_cal_en, mr13_catr_enable;
+> +	u32 zq_op, zcal_wait_time_clocks, zcal_wait_time_ps;
+> +	u32 emc_cfg, emc_sel_dpd_ctrl, emc_zcal_interval;
+> +	int next_push, next_dq_e_ivref, next_dqs_e_ivref;
+> +	u32 mr13_flip_fspwr, mr13_flip_fspop, is_lpddr3;
+> +	u32 enable_bglp_regulator, enable_bg_regulator;
+> +	u32 emc_dbg_o, emc_cfg_pipe_clk_o, emc_pin_o;
+> +	u32 ramp_up_wait = 0, ramp_down_wait = 0;
+> +	u32 save_restore_clkstop_pd = 1, dll_out;
+> +	u32 ref_delay_mult, ref_delay, dram_type;
+> +	static u32 fsp_for_next_freq;
+> +	/* In picoseconds. */
+> +	u32 source_clock_period, destination_clock_period;
+> +	u32 zqcal_before_cc_cutoff = 2400;
+> +	unsigned int i;
 
-It doesn't look straight from the above diff, but this continue leaks 
-group->lock taken.
+What about to try to replace this massive egyptian construction with a
+single "u32 val;" ?
 
->   
-> -			iommu_group_create_direct_mappings(group);
-> +		iommu_group_create_direct_mappings(group);
->   
-> -			ret = __iommu_group_dma_attach(group);
-> +		ret = __iommu_group_dma_attach(group);
->   
-> -			mutex_unlock(&group->mutex);
-> +		mutex_unlock(&group->mutex);
->   
-> -			if (ret)
-> -				break;
-> -		}
-> -	} else {
-> -		ret = bus_for_each_dev(bus, NULL, NULL, add_iommu_group);
-> +		if (ret)
-> +			break;
->   	}
->   
->   	return ret;
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index fea1622408ad..dd076366383f 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -223,8 +223,6 @@ struct iommu_iotlb_gather {
->    * @iotlb_sync: Flush all queued ranges from the hardware TLBs and empty flush
->    *            queue
->    * @iova_to_phys: translate iova to physical address
-> - * @add_device: add device to iommu grouping
-> - * @remove_device: remove device from iommu grouping
->    * @probe_device: Add device to iommu driver handling
->    * @release_device: Remove device from iommu driver handling
->    * @probe_finalize: Do final setup work after the device is added to an IOMMU
-> @@ -277,8 +275,6 @@ struct iommu_ops {
->   	void (*iotlb_sync)(struct iommu_domain *domain,
->   			   struct iommu_iotlb_gather *iotlb_gather);
->   	phys_addr_t (*iova_to_phys)(struct iommu_domain *domain, dma_addr_t iova);
-> -	int (*add_device)(struct device *dev);
-> -	void (*remove_device)(struct device *dev);
->   	struct iommu_device *(*probe_device)(struct device *dev);
->   	void (*release_device)(struct device *dev);
->   	void (*probe_finalize)(struct device *dev);
+...
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> +	emc_readl(emc, EMC_CFG);
+> +	emc_auto_cal_config = emc_readl(emc, EMC_AUTO_CAL_CONFIG);
+
+And remove all the "dummy" variable assigns in the code?
+
+...
+> emc_auto_cal_config = next->emc_auto_cal_config;
+...> +	emc_zcal_interval = 0;
+
+And replace all "constant" variables with a raw value in place in the code?
