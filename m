@@ -1,26 +1,42 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Fri, 10 Apr 2020 22:47:10 +0300
-Message-ID: <775fa216-a010-4785-d6f8-28ac7c39333f@gmail.com>
-References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
+ Tegra210
+Date: Fri, 10 Apr 2020 23:46:25 +0300
+Message-ID: <fae8e1f5-753b-b2ce-d14f-c6e8b2061fdd@gmail.com>
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-10-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200409175238.3586487-10-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-04.04.2020 04:25, Sowjanya Komatineni пишет:
-> +	/* wait for syncpt counter to reach frame start event threshold */
-> +	err = host1x_syncpt_wait(chan->frame_start_sp, thresh,
-> +				 TEGRA_VI_SYNCPT_WAIT_TIMEOUT, &value);
-> +	if (err) {
-> +		dev_err(&chan->video.dev,
-> +			"frame start syncpt timeout: %d\n", err);
+09.04.2020 20:52, Thierry Reding пишет:
+...
+> ---
+> Changes in v6:
+> - use __maybe_unused instead of #ifdef'ery for suspend/resume callbacks
+> - take exclusive control of EMC clock during suspend/resume
+> - move EMC driver changes from clk patch to this patch
+> - make the driver buildable as a module
+> - remove unnecessary suspend tracking
+> - remove duplicate register defines
+> - add tegra210-emc.h for Tegra210-specific registers
+> - detect number of channels, number of devices and DRAM type at probe
+>   time and store them in struct tegra210_emc, remove the corresponding
+>   function parameters where no longer needed
+> - properly clean up on failure
+> 
+> Changes in v5:
+> - major rework and cleanup
 
-I guess this and the other timeout should be dev_err_ratelimited().
+I happened to notice that the patches have an individual changelog only
+by accident :)
+
+Next time will be nice if at least you could mention about this in the
+cover-letter, or move (or duplicate) the whole log in the cover-letter.
