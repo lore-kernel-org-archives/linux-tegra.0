@@ -1,183 +1,27 @@
 From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 05/22] dt-bindings: host1x: Document new interconnect
- properties
-Date: Fri, 10 Apr 2020 12:09:29 -0500
-Message-ID: <20200410170929.GA1498@bogus>
+Subject: Re: [PATCH v2 07/22] dt-bindings: memory: tegra30: Add memory client
+ IDs
+Date: Fri, 10 Apr 2020 12:10:44 -0500
+Message-ID: <20200410171044.GA6675@bogus>
 References: <20200330010904.27643-1-digetx@gmail.com>
- <20200330010904.27643-6-digetx@gmail.com>
+ <20200330010904.27643-8-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200330010904.27643-6-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20200330010904.27643-8-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 04:08:47AM +0300, Dmitry Osipenko wrote:
-> Most of Host1x devices have at least one memory client. These clients
-> are directly connected to the memory controller. The new interconnect
-> properties represent the memory client's connection to the memory
-> controller.
+On Mon, 30 Mar 2020 04:08:49 +0300, Dmitry Osipenko wrote:
+> Each memory client have a unique hardware ID, this patch adds these IDs.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  .../display/tegra/nvidia,tegra20-host1x.txt   | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
+>  include/dt-bindings/memory/tegra30-mc.h | 67 +++++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> index 9999255ac5b6..d92d4e814d77 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> @@ -20,6 +20,10 @@ Required properties:
->  - reset-names: Must include the following entries:
->    - host1x
->  
-> +Each host1x client module having to perform DMA through the Memory Controller
-> +should have the interconnect endpoints set to the Memory Client and External
-> +Memory respectively.
-> +
->  The host1x top-level node defines a number of children, each representing one
->  of the following host1x client modules:
->  
-> @@ -36,6 +40,12 @@ of the following host1x client modules:
->    - reset-names: Must include the following entries:
->      - mpe
->  
-> +  Optional properties:
-> +  - interconnects: Must contain entry for the MPE memory clients.
-> +  - interconnect-names: Must include name of the interconnect path for each
-> +    interconnect entry. Consult TRM documentation for information about
-> +    available memory clients.
 
-Is the TRM public? Perhaps refer to the header.
-
-> +
->  - vi: video input
->  
->    Required properties:
-> @@ -49,6 +59,12 @@ of the following host1x client modules:
->    - reset-names: Must include the following entries:
->      - vi
->  
-> +  Optional properties:
-> +  - interconnects: Must contain entry for the VI memory clients.
-> +  - interconnect-names: Must include name of the interconnect path for each
-> +    interconnect entry. Consult TRM documentation for information about
-> +    available memory clients.
-> +
->  - epp: encoder pre-processor
->  
->    Required properties:
-> @@ -62,6 +78,12 @@ of the following host1x client modules:
->    - reset-names: Must include the following entries:
->      - epp
->  
-> +  Optional properties:
-> +  - interconnects: Must contain entry for the EPP memory clients.
-> +  - interconnect-names: Must include name of the interconnect path for each
-> +    interconnect entry. Consult TRM documentation for information about
-> +    available memory clients.
-> +
->  - isp: image signal processor
->  
->    Required properties:
-> @@ -75,6 +97,12 @@ of the following host1x client modules:
->    - reset-names: Must include the following entries:
->      - isp
->  
-> +  Optional properties:
-> +  - interconnects: Must contain entry for the ISP memory clients.
-> +  - interconnect-names: Must include name of the interconnect path for each
-> +    interconnect entry. Consult TRM documentation for information about
-> +    available memory clients.
-> +
->  - gr2d: 2D graphics engine
->  
->    Required properties:
-> @@ -88,6 +116,12 @@ of the following host1x client modules:
->    - reset-names: Must include the following entries:
->      - 2d
->  
-> +  Optional properties:
-> +  - interconnects: Must contain entry for the GR2D memory clients.
-> +  - interconnect-names: Must include name of the interconnect path for each
-> +    interconnect entry. Consult TRM documentation for information about
-> +    available memory clients.
-> +
->  - gr3d: 3D graphics engine
->  
->    Required properties:
-> @@ -106,6 +140,12 @@ of the following host1x client modules:
->      - 3d
->      - 3d2 (Only required on SoCs with two 3D clocks)
->  
-> +  Optional properties:
-> +  - interconnects: Must contain entry for the GR3D memory clients.
-> +  - interconnect-names: Must include name of the interconnect path for each
-> +    interconnect entry. Consult TRM documentation for information about
-> +    available memory clients.
-> +
->  - dc: display controller
->  
->    Required properties:
-> @@ -133,6 +173,10 @@ of the following host1x client modules:
->    - nvidia,hpd-gpio: specifies a GPIO used for hotplug detection
->    - nvidia,edid: supplies a binary EDID blob
->    - nvidia,panel: phandle of a display panel
-> +  - interconnects: Must contain entry for the DC memory clients.
-> +  - interconnect-names: Must include name of the interconnect path for each
-> +    interconnect entry. Consult TRM documentation for information about
-> +    available memory clients.
->  
->  - hdmi: High Definition Multimedia Interface
->  
-> @@ -281,6 +325,12 @@ of the following host1x client modules:
->    - reset-names: Must include the following entries:
->      - vic
->  
-> +  Optional properties:
-> +  - interconnects: Must contain entry for the VIC memory clients.
-> +  - interconnect-names: Must include name of the interconnect path for each
-> +    interconnect entry. Consult TRM documentation for information about
-> +    available memory clients.
-> +
->  Example:
->  
->  / {
-> @@ -363,6 +413,15 @@ Example:
->  			resets = <&tegra_car 27>;
->  			reset-names = "dc";
->  
-> +			interconnects = <&mc TEGRA20_MC_DISPLAY0A &emc>,
-> +					<&mc TEGRA20_MC_DISPLAY0B &emc>,
-> +					<&mc TEGRA20_MC_DISPLAY0C &emc>,
-> +					<&mc TEGRA20_MC_DISPLAY1B &emc>;
-> +			interconnect-names = "display0a",
-> +					     "display0b",
-> +					     "display0c",
-> +					     "display1b";
-> +
->  			rgb {
->  				status = "disabled";
->  			};
-> @@ -378,6 +437,15 @@ Example:
->  			resets = <&tegra_car 26>;
->  			reset-names = "dc";
->  
-> +			interconnects = <&mc TEGRA20_MC_DISPLAY0AB &emc>,
-> +					<&mc TEGRA20_MC_DISPLAY0BB &emc>,
-> +					<&mc TEGRA20_MC_DISPLAY0CB &emc>,
-> +					<&mc TEGRA20_MC_DISPLAY1BB &emc>;
-> +			interconnect-names = "display0a",
-> +					     "display0b",
-> +					     "display0c",
-> +					     "display1b";
-> +
->  			rgb {
->  				status = "disabled";
->  			};
-> -- 
-> 2.25.1
-> 
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
