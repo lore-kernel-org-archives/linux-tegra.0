@@ -1,58 +1,267 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.6 12/68] usb: phy: tegra: Include proper GPIO consumer header to fix compile testing
-Date: Thu,  9 Apr 2020 23:45:37 -0400
-Message-ID: <20200410034634.7731-12-sashal@kernel.org>
-References: <20200410034634.7731-1-sashal@kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [RFC PATCH 33/34] iommu: Remove add_device()/remove_device()
+ code-paths
+Date: Fri, 10 Apr 2020 12:39:38 +0200
+Message-ID: <1a88547f-ac90-825e-e529-a56c2c4e0391@samsung.com>
+References: <20200407183742.4344-1-joro@8bytes.org>
+        <CGME20200407183806eucas1p2cf45fbce5a43a6b4fe3a623b28da0606@eucas1p2.samsung.com>
+        <20200407183742.4344-34-joro@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20200410034634.7731-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Osipenko <digetx@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200407183742.4344-34-joro@8bytes.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org, virtualization@lists.linux-foundation.org, Joerg Roedel <jroedel@suse.de>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Hi Joerg
 
-[ Upstream commit 9cb9322a26ae84424c3e16e58617b3d8962fdbbb ]
+On 07.04.2020 20:37, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
+>
+> All drivers are converted to use the probe/release_device()
+> call-backs, so the add_device/remove_device() pointers are unused and
+> the code using them can be removed.
+>
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>   drivers/iommu/iommu.c | 145 ++++++++----------------------------------
+>   include/linux/iommu.h |   4 --
+>   2 files changed, 27 insertions(+), 122 deletions(-)
+>
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index cf25c1e48830..d9032f9d597c 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -220,7 +220,7 @@ static int __iommu_probe_device(struct device *dev, struct list_head *group_list
+>   	return ret;
+>   }
+>   
+> -static int __iommu_probe_device_helper(struct device *dev)
+> +int iommu_probe_device(struct device *dev)
+>   {
+>   	const struct iommu_ops *ops = dev->bus->iommu_ops;
+>   	struct iommu_group *group;
+> @@ -264,70 +264,17 @@ static int __iommu_probe_device_helper(struct device *dev)
+>   
+>   }
+>   
+> -int iommu_probe_device(struct device *dev)
+> +void iommu_release_device(struct device *dev)
+>   {
+>   	const struct iommu_ops *ops = dev->bus->iommu_ops;
+> -	struct iommu_group *group;
+> -	int ret;
+> -
+> -	WARN_ON(dev->iommu_group);
+> -
+> -	if (!ops)
+> -		return -EINVAL;
+> -
+> -	if (!dev_iommu_get(dev))
+> -		return -ENOMEM;
+> -
+> -	if (!try_module_get(ops->owner)) {
+> -		ret = -EINVAL;
+> -		goto err_free_dev_param;
+> -	}
+> -
+> -	if (ops->probe_device)
+> -		return __iommu_probe_device_helper(dev);
+> -
+> -	ret = ops->add_device(dev);
+> -	if (ret)
+> -		goto err_module_put;
+>   
+> -	group = iommu_group_get(dev);
+> -	iommu_create_device_direct_mappings(group, dev);
+> -	iommu_group_put(group);
+> -
+> -	if (ops->probe_finalize)
+> -		ops->probe_finalize(dev);
+> -
+> -	return 0;
+> -
+> -err_module_put:
+> -	module_put(ops->owner);
+> -err_free_dev_param:
+> -	dev_iommu_free(dev);
+> -	return ret;
+> -}
+> -
+> -static void __iommu_release_device(struct device *dev)
+> -{
+> -	const struct iommu_ops *ops = dev->bus->iommu_ops;
+> +	if (!dev->iommu)
+> +		return;
+>   
+>   	iommu_device_unlink(dev->iommu->iommu_dev, dev);
+> -
+>   	iommu_group_remove_device(dev);
+>   
+>   	ops->release_device(dev);
+> -}
+> -
+> -void iommu_release_device(struct device *dev)
+> -{
+> -	const struct iommu_ops *ops = dev->bus->iommu_ops;
+> -
+> -	if (!dev->iommu)
+> -		return;
+> -
+> -	if (ops->release_device)
+> -		__iommu_release_device(dev);
+> -	else if (dev->iommu_group)
+> -		ops->remove_device(dev);
+>   
+>   	module_put(ops->owner);
+>   	dev_iommu_free(dev);
+> @@ -1560,23 +1507,6 @@ struct iommu_group *iommu_group_get_for_dev(struct device *dev)
+>   	if (ret)
+>   		goto out_put_group;
+>   
+> -	/*
+> -	 * Try to allocate a default domain - needs support from the
+> -	 * IOMMU driver. There are still some drivers which don't support
+> -	 * default domains, so the return value is not yet checked. Only
+> -	 * allocate the domain here when the driver still has the
+> -	 * add_device/remove_device call-backs implemented.
+> -	 */
+> -	if (!ops->probe_device) {
+> -		iommu_alloc_default_domain(dev);
+> -
+> -		if (group->default_domain)
+> -			ret = __iommu_attach_device(group->default_domain, dev);
+> -
+> -		if (ret)
+> -			goto out_put_group;
+> -	}
+> -
+>   	return group;
+>   
+>   out_put_group:
+> @@ -1591,21 +1521,6 @@ struct iommu_domain *iommu_group_default_domain(struct iommu_group *group)
+>   	return group->default_domain;
+>   }
+>   
+> -static int add_iommu_group(struct device *dev, void *data)
+> -{
+> -	int ret = iommu_probe_device(dev);
+> -
+> -	/*
+> -	 * We ignore -ENODEV errors for now, as they just mean that the
+> -	 * device is not translated by an IOMMU. We still care about
+> -	 * other errors and fail to initialize when they happen.
+> -	 */
+> -	if (ret == -ENODEV)
+> -		ret = 0;
+> -
+> -	return ret;
+> -}
+> -
+>   static int probe_iommu_group(struct device *dev, void *data)
+>   {
+>   	const struct iommu_ops *ops = dev->bus->iommu_ops;
+> @@ -1789,45 +1704,39 @@ static int iommu_group_create_direct_mappings(struct iommu_group *group)
+>   
+>   int bus_iommu_probe(struct bus_type *bus)
+>   {
+> -	const struct iommu_ops *ops = bus->iommu_ops;
+> +	struct iommu_group *group, *next;
+> +	LIST_HEAD(group_list);
+>   	int ret;
+>   
+> -	if (ops->probe_device) {
+> -		struct iommu_group *group, *next;
+> -		LIST_HEAD(group_list);
+> -
+> -		/*
+> -		 * This code-path does not allocate the default domain when
+> -		 * creating the iommu group, so do it after the groups are
+> -		 * created.
+> -		 */
+> -		ret = bus_for_each_dev(bus, NULL, &group_list, probe_iommu_group);
+> -		if (ret)
+> -			return ret;
+> +	/*
+> +	 * This code-path does not allocate the default domain when
+> +	 * creating the iommu group, so do it after the groups are
+> +	 * created.
+> +	 */
+> +	ret = bus_for_each_dev(bus, NULL, &group_list, probe_iommu_group);
+> +	if (ret)
+> +		return ret;
+>   
+> -		list_for_each_entry_safe(group, next, &group_list, entry) {
+> -			/* Remove item from the list */
+> -			list_del_init(&group->entry);
+> +	list_for_each_entry_safe(group, next, &group_list, entry) {
+> +		/* Remove item from the list */
+> +		list_del_init(&group->entry);
+>   
+> -			mutex_lock(&group->mutex);
+> +		mutex_lock(&group->mutex);
+>   
+> -			/* Try to allocate default domain */
+> -			probe_alloc_default_domain(bus, group);
+> +		/* Try to allocate default domain */
+> +		probe_alloc_default_domain(bus, group);
+>   
+> -			if (!group->default_domain)
+> -				continue;
+> +		if (!group->default_domain)
+> +			continue;
 
-The driver uses only GPIO Descriptor Consumer Interface so include
-proper header.  This fixes compile test failures (e.g. on i386):
+It doesn't look straight from the above diff, but this continue leaks 
+group->lock taken.
 
-    drivers/usb/phy/phy-tegra-usb.c: In function ‘ulpi_phy_power_on’:
-    drivers/usb/phy/phy-tegra-usb.c:695:2: error:
-        implicit declaration of function ‘gpiod_set_value_cansleep’ [-Werror=implicit-function-declaration]
-    drivers/usb/phy/phy-tegra-usb.c: In function ‘tegra_usb_phy_probe’:
-    drivers/usb/phy/phy-tegra-usb.c:1167:11: error:
-        implicit declaration of function ‘devm_gpiod_get_from_of_node’ [-Werror=implicit-function-declaration]
+>   
+> -			iommu_group_create_direct_mappings(group);
+> +		iommu_group_create_direct_mappings(group);
+>   
+> -			ret = __iommu_group_dma_attach(group);
+> +		ret = __iommu_group_dma_attach(group);
+>   
+> -			mutex_unlock(&group->mutex);
+> +		mutex_unlock(&group->mutex);
+>   
+> -			if (ret)
+> -				break;
+> -		}
+> -	} else {
+> -		ret = bus_for_each_dev(bus, NULL, NULL, add_iommu_group);
+> +		if (ret)
+> +			break;
+>   	}
+>   
+>   	return ret;
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index fea1622408ad..dd076366383f 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -223,8 +223,6 @@ struct iommu_iotlb_gather {
+>    * @iotlb_sync: Flush all queued ranges from the hardware TLBs and empty flush
+>    *            queue
+>    * @iova_to_phys: translate iova to physical address
+> - * @add_device: add device to iommu grouping
+> - * @remove_device: remove device from iommu grouping
+>    * @probe_device: Add device to iommu driver handling
+>    * @release_device: Remove device from iommu driver handling
+>    * @probe_finalize: Do final setup work after the device is added to an IOMMU
+> @@ -277,8 +275,6 @@ struct iommu_ops {
+>   	void (*iotlb_sync)(struct iommu_domain *domain,
+>   			   struct iommu_iotlb_gather *iotlb_gather);
+>   	phys_addr_t (*iova_to_phys)(struct iommu_domain *domain, dma_addr_t iova);
+> -	int (*add_device)(struct device *dev);
+> -	void (*remove_device)(struct device *dev);
+>   	struct iommu_device *(*probe_device)(struct device *dev);
+>   	void (*release_device)(struct device *dev);
+>   	void (*probe_finalize)(struct device *dev);
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Link: https://lore.kernel.org/r/1583234960-24909-1-git-send-email-krzk@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/usb/phy/phy-tegra-usb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 6153cc35aba0d..cffe2aced4884 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -12,12 +12,11 @@
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/export.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/of_gpio.h>
- #include <linux/platform_device.h>
- #include <linux/resource.h>
- #include <linux/slab.h>
+Best regards
 -- 
-2.20.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
