@@ -1,31 +1,70 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 05/22] dt-bindings: host1x: Document new interconnect
- properties
-Date: Fri, 10 Apr 2020 21:28:22 +0300
-Message-ID: <98d28983-0c50-1155-adc0-8ddbd15cc701@gmail.com>
-References: <20200330010904.27643-1-digetx@gmail.com>
- <20200330010904.27643-6-digetx@gmail.com> <20200410170929.GA1498@bogus>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
+Date: Fri, 10 Apr 2020 21:47:50 +0300
+Message-ID: <00708f34-cf45-e248-c6b0-c3d2286671ca@gmail.com>
+References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
+ <760d071e-0cbc-b3eb-9231-fb9f9ecb44a6@nvidia.com>
+ <9e317f65-8a02-3b15-cfec-8e0d8374130e@gmail.com>
+ <97b35910-4c93-123a-43a0-eb14476ed0f3@nvidia.com>
+ <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
+ <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
+ <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
+ <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
+ <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
+ <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
+ <7895b9c6-f27d-8939-73d7-67d785e1a8b7@nvidia.com>
+ <ea60b489-990e-4b15-e215-d93381a1371e@nvidia.com>
+ <b2405c2a-73c0-ad69-ccea-0388caf8045c@gmail.com>
+ <15d8b525-67b5-b437-f7fd-89f80cd0d9f6@nvidia.com>
+ <a638bb8e-bb50-7aa5-05a0-8de1c6207ba7@nvidia.com>
+ <ced73258-6f4b-e970-4ca5-ecdf1808a4c3@nvidia.com>
+ <ad646fde-2eed-eeeb-4d85-ec36d6613eb1@nvidia.com>
+ <7288cacd-badc-cb01-1f4c-286dd024ca10@gmail.com>
+ <77c88717-618f-b366-2b6a-f8b4abaa66cc@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200410170929.GA1498@bogus>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <77c88717-618f-b366-2b6a-f8b4abaa66cc@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-10.04.2020 20:09, Rob Herring пишет:
-...
->> +  Optional properties:
->> +  - interconnects: Must contain entry for the MPE memory clients.
->> +  - interconnect-names: Must include name of the interconnect path for each
->> +    interconnect entry. Consult TRM documentation for information about
->> +    available memory clients.
+09.04.2020 21:28, Sowjanya Komatineni пишет:
 > 
-> Is the TRM public? Perhaps refer to the header.
+> On 4/9/20 7:50 AM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 09.04.2020 06:38, Sowjanya Komatineni пишет:
+>> ...
+>>> Tested with 3 buffers and by checking outstanding buffers in process by
+>>> VI hw and holding to start capture till one outstanding buffer in
+>>> process by HW.
+>>> Also tested with 2 buffers without checking for outstanding buffers.
+>>>
+>>> In both cases, I see same %CPU for the kthreads and is < 1%
+>>>
+>> I don't see where buffers queue max limit is set to 3 in the code, but
+>> should be okay if CPU isn't getting hogged. Looking forward to v7.
+> Sorry, correction I meant to say pre-queued buffers before streaming not
+> num_buffers.
+> vb2 queue min_buffers_needed was set to 3 as part of one of the issue
+> debug in earlier version which actually was irrelevant to that issue and
+> should have been removed. Will remove min_buffers_needed in v7.
+> 
+> I added checking for outstanding requests by hardware just to be safer
+> although we may not hit this case of issuing more than 1 outstanding
+> frame capture to VI hardware as capture_frame() waits till it sees frame
+> start event through HW syncpt increment before proceeding for memory
+> write and issuing next frame capture.
+> 
+> So issuing frame captures are synchronized with frame start and frame end.
+> 
+> Will remove min_buffers_needed and also explicit check for outstanding
+> buffers in v7.
 
-Yes, you can download it from NVIDIA website (after registration).
-
-I'll add "Consult Memory Controller section of TRM..." in the next version.
+It's still not clear to me how the "pre-queued buffers" will be limited.
+I'll take another look at the v7.
