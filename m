@@ -1,8 +1,8 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
  Tegra210
-Date: Fri, 10 Apr 2020 17:25:06 +0300
-Message-ID: <e015e35b-3f82-56e1-2d86-ebc467eb92f7@gmail.com>
+Date: Fri, 10 Apr 2020 17:26:23 +0300
+Message-ID: <14cfd13a-5fde-f167-64cb-a61cba119a97@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
  <20200409175238.3586487-10-thierry.reding@gmail.com>
 Mime-Version: 1.0
@@ -17,16 +17,19 @@ Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turq
 List-Id: linux-tegra@vger.kernel.org
 
 09.04.2020 20:52, Thierry Reding пишет:
-...
-> +static int tegra210_emc_remove(struct platform_device *pdev)
+> +static int tegra210_emc_table_device_init(struct reserved_mem *rmem,
+> +					  struct device *dev)
 > +{
-> +	struct tegra210_emc *emc = platform_get_drvdata(pdev);
+> +	struct tegra210_emc *emc = dev_get_drvdata(dev);
+> +	unsigned int i;
+> +	void *table;
 > +
-> +	debugfs_remove_recursive(emc->debugfs.root);
-> +	tegra210_clk_emc_detach(emc->clk);
+> +	table = memremap(rmem->base, rmem->size, MEMREMAP_WB);
+> +	if (!table) {
+> +		dev_err(dev, "failed to map EMC table\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	emc->timings = (struct tegra210_emc_timing *)table;
 
-It's great that you want to make this driver modular, but I don't think
-that it's a good idea to suddenly rip off the EMC clock from the users.
-
-It should be better to simply disallow unloading of this driver once
-it's loaded.
+No need to cast the void.
