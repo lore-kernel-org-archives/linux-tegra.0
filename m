@@ -1,15 +1,14 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
- Tegra210
-Date: Fri, 10 Apr 2020 23:46:25 +0300
-Message-ID: <fae8e1f5-753b-b2ce-d14f-c6e8b2061fdd@gmail.com>
+Subject: Re: [PATCH v6 07/14] clk: tegra: Implement Tegra210 EMC clock
+Date: Fri, 10 Apr 2020 23:49:18 +0300
+Message-ID: <0e040cf9-56cf-dd44-3523-ff4c82fb1f2c@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-10-thierry.reding@gmail.com>
+ <20200409175238.3586487-8-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200409175238.3586487-10-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200409175238.3586487-8-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
@@ -18,25 +17,20 @@ List-Id: linux-tegra@vger.kernel.org
 
 09.04.2020 20:52, Thierry Reding пишет:
 ...
-> ---
-> Changes in v6:
-> - use __maybe_unused instead of #ifdef'ery for suspend/resume callbacks
-> - take exclusive control of EMC clock during suspend/resume
-> - move EMC driver changes from clk patch to this patch
-> - make the driver buildable as a module
-> - remove unnecessary suspend tracking
-> - remove duplicate register defines
-> - add tegra210-emc.h for Tegra210-specific registers
-> - detect number of channels, number of devices and DRAM type at probe
->   time and store them in struct tegra210_emc, remove the corresponding
->   function parameters where no longer needed
-> - properly clean up on failure
-> 
-> Changes in v5:
-> - major rework and cleanup
+> +int tegra210_clk_emc_attach(struct clk *clk,
+> +			    struct tegra210_clk_emc_provider *provider)
+> +{
+> +	struct clk_hw *hw = __clk_get_hw(clk);
+> +	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
+> +	struct device *dev = provider->dev;
+> +	unsigned int i;
+> +	int err;
+> +
+> +	if (!try_module_get(provider->owner))
+> +		return -ENODEV;
 
-I happened to notice that the patches have an individual changelog only
-by accident :)
+Is the EMC driver module bumping its own refcount by itself?
 
-Next time will be nice if at least you could mention about this in the
-cover-letter, or move (or duplicate) the whole log in the cover-letter.
+In the other patch I already suggested that the EMC module should be
+disallowed to be unloaded once it has been loaded, seems you're already
+doing it. Correct?
