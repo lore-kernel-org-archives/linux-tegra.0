@@ -1,51 +1,52 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] phy: tegra: fix USB dependencies
-Date: Sat, 11 Apr 2020 11:01:08 +0200
-Message-ID: <CAK8P3a0Ktmt_9VLaQfm98ZzRnB9LnnjriHeJ+7O5aE=eMXk7oQ@mail.gmail.com>
-References: <20200408200828.124139-1-arnd@arndb.de> <20200409132435.GA3263479@ulmo>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
+ Tegra210
+Date: Sat, 11 Apr 2020 23:39:08 +0300
+Message-ID: <6976796c-6972-328e-3e9f-60c1737cf0e2@gmail.com>
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-10-thierry.reding@gmail.com>
+ <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200409132435.GA3263479@ulmo>
+In-Reply-To: <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Corentin Labbe <clabbe-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Apr 9, 2020 at 3:24 PM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> On Wed, Apr 08, 2020 at 10:08:14PM +0200, Arnd Bergmann wrote:
-> > Without CONFIG_USB_SUPPORT, we can get a couple of warnings for
-> > missing dependencies:
-> >
-> > WARNING: unmet direct dependencies detected for USB_PHY
-> >   Depends on [n]: USB_SUPPORT [=n]
-> >   Selected by [m]:
-> >   - PHY_TEGRA_XUSB [=m] && ARCH_TEGRA [=y]
-> >
-> > WARNING: unmet direct dependencies detected for USB_CONN_GPIO
-> >   Depends on [n]: USB_SUPPORT [=n] && GPIOLIB [=y]
-> >   Selected by [m]:
-> >   - PHY_TEGRA_XUSB [=m] && ARCH_TEGRA [=y]
-> >
-> > Fixes: 6835bdc99580 ("phy: tegra: Select USB_PHY")
-> > Fixes: f67213cee2b3 ("phy: tegra: xusb: Add usb-role-switch support")
-> > Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> > ---
-> >  drivers/phy/tegra/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> I sent a similar patch a couple of days ago:
->
->         http://patchwork.ozlabs.org/patch/1263865/
->
-> This should be applied by Greg on top of the PR that I sent for USB. I
-> did get the semi-automated "we're in the merge window" reply from Greg,
-> but I was under the impression that he still applied fixes during the
-> merge window. It seems like he didn't pick this up yet, though.
->
-> Greg, anything I should've done differently for you to notice this?
+> ...
+>> +#define TRIM_REG(chan, rank, reg, byte)					\
+>> +	(((EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+>> +	   _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _MASK &	\
+>> +	   next->trim_regs[EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ##		\
+>> +				 rank ## _ ## reg ## _INDEX]) >>	\
+>> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+>> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _SHIFT)	\
+>> +	 +								\
+>> +	 (((EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
+>> +	    byte ## _DATA_BRLSHFT_MASK &				\
+>> +	    next->trim_perch_regs[EMC ## chan ##			\
+>> +			      _EMC_DATA_BRLSHFT_ ## rank ## _INDEX]) >>	\
+>> +	   EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
+>> +	   byte ## _DATA_BRLSHFT_SHIFT) * 64))
+>> +
+>> +#define CALC_TEMP(rank, reg, byte1, byte2, n)				\
+>> +	(((new[n] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##	\
+>> +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _SHIFT) & \
+>> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+>> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _MASK)	\
+>> +	 |								\
+>> +	 ((new[n + 1] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##\
+>> +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _SHIFT) & \
+>> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+>> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _MASK))
 
-FWIW, your patch is correct, mine was wrong as I forgot the "select USB_COMMON".
+What about replacing those barely readable concatenated macros with a
+raw values?
 
-       Arnd
+Like:
+
+TRIM_REG(brlshft_idx, ob_ddll_long_dq_rank_mask, ...)
