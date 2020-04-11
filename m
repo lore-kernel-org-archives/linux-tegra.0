@@ -1,52 +1,52 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
- Tegra210
-Date: Sat, 11 Apr 2020 23:39:08 +0300
-Message-ID: <6976796c-6972-328e-3e9f-60c1737cf0e2@gmail.com>
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-10-thierry.reding@gmail.com>
- <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61@gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 031/149] drm/tegra: dc: Release PM and RGB output when client's registration fails
+Date: Sat, 11 Apr 2020 19:01:48 -0400
+Message-ID: <20200411230347.22371-31-sashal@kernel.org>
+References: <20200411230347.22371-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200411230347.22371-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-> ...
->> +#define TRIM_REG(chan, rank, reg, byte)					\
->> +	(((EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
->> +	   _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _MASK &	\
->> +	   next->trim_regs[EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ##		\
->> +				 rank ## _ ## reg ## _INDEX]) >>	\
->> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
->> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _SHIFT)	\
->> +	 +								\
->> +	 (((EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
->> +	    byte ## _DATA_BRLSHFT_MASK &				\
->> +	    next->trim_perch_regs[EMC ## chan ##			\
->> +			      _EMC_DATA_BRLSHFT_ ## rank ## _INDEX]) >>	\
->> +	   EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
->> +	   byte ## _DATA_BRLSHFT_SHIFT) * 64))
->> +
->> +#define CALC_TEMP(rank, reg, byte1, byte2, n)				\
->> +	(((new[n] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##	\
->> +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _SHIFT) & \
->> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
->> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _MASK)	\
->> +	 |								\
->> +	 ((new[n + 1] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##\
->> +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _SHIFT) & \
->> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
->> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _MASK))
+From: Dmitry Osipenko <digetx@gmail.com>
 
-What about replacing those barely readable concatenated macros with a
-raw values?
+[ Upstream commit 0411ea89a689531e1829fdf8af3747646c02c721 ]
 
-Like:
+Runtime PM and RGB output need to be released when host1x client
+registration fails. The releasing is missed in the code, let's correct it.
 
-TRIM_REG(brlshft_idx, ob_ddll_long_dq_rank_mask, ...)
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/tegra/dc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 7c70fd31a4c24..870f9a68ad2c5 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2588,10 +2588,16 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to register host1x client: %d\n",
+ 			err);
+-		return err;
++		goto disable_pm;
+ 	}
+ 
+ 	return 0;
++
++disable_pm:
++	pm_runtime_disable(&pdev->dev);
++	tegra_dc_rgb_remove(dc);
++
++	return err;
+ }
+ 
+ static int tegra_dc_remove(struct platform_device *pdev)
+-- 
+2.20.1
