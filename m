@@ -1,36 +1,51 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 07/14] clk: tegra: Implement Tegra210 EMC clock
-Date: Fri, 10 Apr 2020 23:49:18 +0300
-Message-ID: <0e040cf9-56cf-dd44-3523-ff4c82fb1f2c@gmail.com>
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-8-thierry.reding@gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] phy: tegra: fix USB dependencies
+Date: Sat, 11 Apr 2020 11:01:08 +0200
+Message-ID: <CAK8P3a0Ktmt_9VLaQfm98ZzRnB9LnnjriHeJ+7O5aE=eMXk7oQ@mail.gmail.com>
+References: <20200408200828.124139-1-arnd@arndb.de> <20200409132435.GA3263479@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200409175238.3586487-8-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <20200409132435.GA3263479@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Corentin Labbe <clabbe-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-09.04.2020 20:52, Thierry Reding пишет:
-...
-> +int tegra210_clk_emc_attach(struct clk *clk,
-> +			    struct tegra210_clk_emc_provider *provider)
-> +{
-> +	struct clk_hw *hw = __clk_get_hw(clk);
-> +	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
-> +	struct device *dev = provider->dev;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	if (!try_module_get(provider->owner))
-> +		return -ENODEV;
+On Thu, Apr 9, 2020 at 3:24 PM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+> On Wed, Apr 08, 2020 at 10:08:14PM +0200, Arnd Bergmann wrote:
+> > Without CONFIG_USB_SUPPORT, we can get a couple of warnings for
+> > missing dependencies:
+> >
+> > WARNING: unmet direct dependencies detected for USB_PHY
+> >   Depends on [n]: USB_SUPPORT [=n]
+> >   Selected by [m]:
+> >   - PHY_TEGRA_XUSB [=m] && ARCH_TEGRA [=y]
+> >
+> > WARNING: unmet direct dependencies detected for USB_CONN_GPIO
+> >   Depends on [n]: USB_SUPPORT [=n] && GPIOLIB [=y]
+> >   Selected by [m]:
+> >   - PHY_TEGRA_XUSB [=m] && ARCH_TEGRA [=y]
+> >
+> > Fixes: 6835bdc99580 ("phy: tegra: Select USB_PHY")
+> > Fixes: f67213cee2b3 ("phy: tegra: xusb: Add usb-role-switch support")
+> > Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> > ---
+> >  drivers/phy/tegra/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> I sent a similar patch a couple of days ago:
+>
+>         http://patchwork.ozlabs.org/patch/1263865/
+>
+> This should be applied by Greg on top of the PR that I sent for USB. I
+> did get the semi-automated "we're in the merge window" reply from Greg,
+> but I was under the impression that he still applied fixes during the
+> merge window. It seems like he didn't pick this up yet, though.
+>
+> Greg, anything I should've done differently for you to notice this?
 
-Is the EMC driver module bumping its own refcount by itself?
+FWIW, your patch is correct, mine was wrong as I forgot the "select USB_COMMON".
 
-In the other patch I already suggested that the EMC module should be
-disallowed to be unloaded once it has been loaded, seems you're already
-doing it. Correct?
+       Arnd
