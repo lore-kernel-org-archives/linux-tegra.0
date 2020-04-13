@@ -1,14 +1,15 @@
 From: Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 11/22] memory: tegra: Register as interconnect provider
-Date: Mon, 13 Apr 2020 15:43:26 +0300
-Message-ID: <70f724d6-5cb2-0ebe-ffc1-5dbb77d9dc74@linaro.org>
+Subject: Re: [PATCH v2 17/22] memory: tegra30-emc: Register as interconnect
+ provider
+Date: Mon, 13 Apr 2020 15:44:26 +0300
+Message-ID: <d8e39d8b-b3f3-4a30-cb5a-67fcbe18a957@linaro.org>
 References: <20200330010904.27643-1-digetx@gmail.com>
- <20200330010904.27643-12-digetx@gmail.com>
+ <20200330010904.27643-18-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200330010904.27643-12-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200330010904.27643-18-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -17,35 +18,85 @@ List-Id: linux-tegra@vger.kernel.org
 
 Hi Dmitry,
 
-Thank you for the patchset!
-
 On 3/30/20 04:08, Dmitry Osipenko wrote:
-> Now memory controller is a memory interconnection provider. This allows us
-> to use interconnect API in order to change memory configuration.
+> Now external memory controller is a memory interconnection provider.
+> This allows us to use interconnect API to change memory configuration.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/memory/tegra/mc.c | 118 ++++++++++++++++++++++++++++++++++++++
->  drivers/memory/tegra/mc.h |   8 +++
->  include/soc/tegra/mc.h    |   3 +
->  3 files changed, 129 insertions(+)
+>  drivers/memory/tegra/tegra30-emc.c | 115 +++++++++++++++++++++++++++++
+>  1 file changed, 115 insertions(+)
 > 
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index ec8403557ed4..bcf0478c5f5a 100644
-> --- a/drivers/memory/tegra/mc.c
-> +++ b/drivers/memory/tegra/mc.c
-> @@ -591,6 +591,117 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
->  	return IRQ_HANDLED;
+> diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+> index 69698665d431..5a4106173a75 100644
+> --- a/drivers/memory/tegra/tegra30-emc.c
+> +++ b/drivers/memory/tegra/tegra30-emc.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/debugfs.h>
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+> +#include <linux/interconnect-provider.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
+> @@ -327,6 +328,7 @@ struct tegra_emc {
+>  	struct device *dev;
+>  	struct tegra_mc *mc;
+>  	struct notifier_block clk_nb;
+> +	struct icc_provider provider;
+>  	struct clk *clk;
+>  	void __iomem *regs;
+>  	unsigned int irq;
+> @@ -1264,6 +1266,112 @@ static void tegra_emc_debugfs_init(struct tegra_emc *emc)
+>  			    emc, &tegra_emc_debug_max_rate_fops);
 >  }
 >  
-> +static int tegra_mc_icc_set(struct icc_node *src, struct icc_node *dst)
+> +static inline struct tegra_emc *
+> +to_tegra_emc_provider(struct icc_provider *provider)
 > +{
+> +	return container_of(provider, struct tegra_emc, provider);
+> +}
+> +
+> +static struct icc_node *
+> +emc_of_icc_xlate_onecell(struct of_phandle_args *spec, void *data)
+> +{
+> +	struct icc_provider *provider = data;
+> +	struct icc_node *node;
+> +
+> +	/* External Memory is the only possible ICC route */
+> +	list_for_each_entry(node, &provider->nodes, node_list) {
+> +		if (node->id == TEGRA_ICC_EMEM)
+> +			return node;
+> +	}
+> +
+> +	return ERR_PTR(-EINVAL);
+> +}
+> +
+> +static int emc_icc_set(struct icc_node *src, struct icc_node *dst)
+> +{
+> +	struct tegra_emc *emc = to_tegra_emc_provider(dst->provider);
+> +	unsigned long long rate = icc_units_to_bps(dst->avg_bw);
+> +	unsigned int dram_data_bus_width_bytes = 4;
+> +	unsigned int ddr = 2;
+> +	int err;
+> +
+> +	do_div(rate, ddr * dram_data_bus_width_bytes);
+> +	rate = min_t(u64, rate, U32_MAX);
+> +
+> +	err = clk_set_min_rate(emc->clk, rate);
+> +	if (err)
+> +		return err;
+> +
+> +	err = clk_set_rate(emc->clk, rate);
+> +	if (err)
+> +		return err;
+> +
 > +	return 0;
 > +}
 > +
-> +static int tegra_mc_icc_aggregate(struct icc_node *node,
-> +				  u32 tag, u32 avg_bw, u32 peak_bw,
-> +				  u32 *agg_avg, u32 *agg_peak)
+> +static int emc_icc_aggregate(struct icc_node *node,
+> +			     u32 tag, u32 avg_bw, u32 peak_bw,
+> +			     u32 *agg_avg, u32 *agg_peak)
 > +{
 > +	*agg_avg = min((u64)avg_bw + (*agg_avg), (u64)U32_MAX);
 > +	*agg_peak = max(*agg_peak, peak_bw);
@@ -53,116 +104,76 @@ On 3/30/20 04:08, Dmitry Osipenko wrote:
 > +	return 0;
 > +}
 > +
-> +/*
-> + * Memory Controller (MC) has few Memory Clients that are issuing memory
-> + * bandwidth allocation requests to the MC interconnect provider. The MC
-> + * provider aggregates the requests and then sends the aggregated request
-> + * up to the External Memory Controller (EMC) interconnect provider which
-> + * re-configures hardware interface to External Memory (EMEM) in accordance
-> + * to the required bandwidth. Each MC interconnect node represents an
-> + * individual Memory Client.
-> + *
-> + * Memory interconnect topology:
-> + *
-> + *               +----+
-> + * +--------+    |    |
-> + * | TEXSRD +--->+    |
-> + * +--------+    |    |
-> + *               |    |    +-----+    +------+
-> + *    ...        | MC +--->+ EMC +--->+ EMEM |
-> + *               |    |    +-----+    +------+
-> + * +--------+    |    |
-> + * | DISP.. +--->+    |
-> + * +--------+    |    |
-> + *               +----+
-> + */
-> +static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+> +static int tegra_emc_interconnect_init(struct tegra_emc *emc)
 > +{
-> +	struct icc_onecell_data *data;
 > +	struct icc_node *node;
-> +	unsigned int num_nodes;
-> +	unsigned int i;
 > +	int err;
 > +
 > +	/* older device-trees don't have interconnect properties */
-> +	if (!of_find_property(mc->dev->of_node, "#interconnect-cells", NULL))
+> +	if (!of_find_property(emc->dev->of_node, "#interconnect-cells", NULL))
 > +		return 0;
 > +
-> +	num_nodes = mc->soc->num_clients;
+> +	emc->provider.dev = emc->dev;
+> +	emc->provider.set = emc_icc_set;
+> +	emc->provider.data = &emc->provider;
+> +	emc->provider.xlate = emc_of_icc_xlate_onecell;
+> +	emc->provider.aggregate = emc_icc_aggregate;
 > +
-> +	data = devm_kzalloc(mc->dev, struct_size(data, nodes, num_nodes),
-> +			    GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	mc->provider.dev = mc->dev;
-> +	mc->provider.set = tegra_mc_icc_set;
-> +	mc->provider.data = data;
-> +	mc->provider.xlate = of_icc_xlate_onecell;
-> +	mc->provider.aggregate = tegra_mc_icc_aggregate;
-> +
-> +	err = icc_provider_add(&mc->provider);
+> +	err = icc_provider_add(&emc->provider);
 > +	if (err)
 > +		return err;
 > +
-> +	/* create Memory Controller node */
-> +	node = icc_node_create(TEGRA_ICC_MC);
+> +	/* create External Memory Controller node */
+> +	node = icc_node_create(TEGRA_ICC_EMC);
 > +	err = PTR_ERR_OR_ZERO(node);
 > +	if (err)
 > +		goto del_provider;
 > +
-> +	node->name = "Memory Controller";
-> +	icc_node_add(node, &mc->provider);
+> +	node->name = "External Memory Controller";
+> +	icc_node_add(node, &emc->provider);
 > +
-> +	/* link Memory Controller to External Memory Controller */
-> +	err = icc_link_create(node, TEGRA_ICC_EMC);
+> +	/* link External Memory Controller to External Memory (DRAM) */
+> +	err = icc_link_create(node, TEGRA_ICC_EMEM);
 > +	if (err)
 > +		goto remove_nodes;
 > +
-> +	for (i = 0; i < num_nodes; i++) {
-> +		/* create MC client node */
-> +		node = icc_node_create(mc->soc->clients[i].id);
-> +		err = PTR_ERR_OR_ZERO(node);
-> +		if (err)
-> +			goto remove_nodes;
+> +	/* create External Memory node */
+> +	node = icc_node_create(TEGRA_ICC_EMEM);
+> +	err = PTR_ERR_OR_ZERO(node);
+> +	if (err)
+> +		goto remove_nodes;
 > +
-> +		node->name = mc->soc->clients[i].name;
-> +		icc_node_add(node, &mc->provider);
-> +
-> +		/* link Memory Client to Memory Controller */
-> +		err = icc_link_create(node, TEGRA_ICC_MC);
-> +		if (err)
-> +			goto remove_nodes;
-> +
-> +		data->nodes[i] = node;
-> +	}
-> +	data->num_nodes = num_nodes;
+> +	node->name = "External Memory (DRAM)";
+> +	icc_node_add(node, &emc->provider);
 > +
 > +	return 0;
 > +
 > +remove_nodes:
-> +	icc_nodes_remove(&mc->provider);
+> +	icc_nodes_remove(&emc->provider);
 > +
 > +del_provider:
-> +	icc_provider_del(&mc->provider);
+> +	icc_provider_del(&emc->provider);
 > +
 > +	return err;
 > +}
+
+All the above seems like a duplicate of what we already have in the previous
+patch for tegra20-emc. Can we have a single driver for both? Maybe extract the
+above as a separate interconnect provider driver.
+
 > +
->  static int tegra_mc_probe(struct platform_device *pdev)
+>  static int tegra_emc_probe(struct platform_device *pdev)
 >  {
->  	struct resource *res;
-> @@ -699,6 +810,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
->  		}
->  	}
+>  	struct platform_device *mc;
+> @@ -1344,6 +1452,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, emc);
+>  	tegra_emc_debugfs_init(emc);
 >  
 > +	if (IS_ENABLED(CONFIG_INTERCONNECT)) {
+> +		err = tegra_emc_interconnect_init(emc);
 
-The interconnect framework can be also a module and the then the build will fail.
-
-> +		err = tegra_mc_interconnect_setup(mc);
-
-Maybe register the interconnect provider as a platform sub-device instead?
+How about registering a platform device that will use the same driver to handle
+the interconnect functionality for both tegra20 and tegra30?
 
 Thanks,
 Georgi
