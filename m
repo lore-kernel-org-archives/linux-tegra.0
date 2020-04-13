@@ -1,52 +1,72 @@
-From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 5.4 022/108] drm/tegra: dc: Release PM and RGB output when client's registration fails
-Date: Sat, 11 Apr 2020 19:08:17 -0400
-Message-ID: <20200411230943.24951-22-sashal@kernel.org>
-References: <20200411230943.24951-1-sashal@kernel.org>
+From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
+Date: Mon, 13 Apr 2020 11:51:41 +0530
+Message-ID: <20200413062141.a6hmwipexhv3sctq@vireshk-i7>
+References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
+ <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
+ <20200326115023.xy3n5bl7uetuw7mx@vireshk-i7>
+ <d233b26b-6b50-7d41-9f33-a5dc151e0e7d@nvidia.com>
+ <20200406025549.qfwzlk3745y3r274@vireshk-i7>
+ <3ab4136c-8cca-c2f9-d286-b82dac23e720@nvidia.com>
+ <20200408055301.jhvu5bc2luu3b5qr@vireshk-i7>
+ <08307e54-0e14-14a3-7d6a-d59e1e04a683@nvidia.com>
+ <20200409074415.twpzu2n4frqlde7b@vireshk-i7>
+ <00390070-38a1-19aa-ca59-42c4658bee7e@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200411230943.24951-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <00390070-38a1-19aa-ca59-42c4658bee7e-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On 09-04-20, 16:51, Sumit Gupta wrote:
+> We are using "read_counters_work" as local variable. So every invocation the
+> function will have its own copy of counters for corresponding cpu. That's
+> why are doing INIT_WORK_ONSTACK here.
 
-[ Upstream commit 0411ea89a689531e1829fdf8af3747646c02c721 ]
+Why? To support parallel calls to reading the freq ?
 
-Runtime PM and RGB output need to be released when host1x client
-registration fails. The releasing is missed in the code, let's correct it.
+> > > > > > > > > +     queue_work_on(cpu, read_counters_wq, &read_counters_work.work);
+> > > > > > > > > +     flush_work(&read_counters_work.work);
+> > > > > > > > 
+> > > > > > > > Why can't this be done in current context ?
+> > > > > > > > 
+> > > > > > > We used work queue instead of smp_call_function_single() to have long delay.
+> > > > > > 
+> > > > > > Please explain completely, you have raised more questions than you
+> > > > > > answered :)
+> > > > > > 
+> > > > > > Why do you want to have long delays ?
+> > > > > > 
+> > > > > Long delay value is used to have the observation window long enough for
+> > > > > correctly reconstructing the CPU frequency considering noise.
+> > > > > In next patch version, changed delay value to 500us which in our tests is
+> > > > > considered reliable.
+> > > > 
+> > > > I understand that you need to put a udelay() while reading the freq from
+> > > > hardware, that is fine, but why do you need a workqueue for that? Why can't you
+> > > > just read the values directly from the same context ?
+> > > > 
+> > > The register to read frequency is per core and not accessible to other
+> > > cores. So, we have to execute the function remotely as the target core to
+> > > read frequency might be different from current.
+> > > The functions for that are smp_call_function_single or queue_work_on.
+> > > We used queue_work_on() to avoid long delay inside ipi interrupt context
+> > > with interrupts disabled.
+> > 
+> > Okay, I understand this now, finally :)
+> > 
+> > But if the interrupts are disabled during some call, won't workqueues face the
+> > same problem ?
+> > 
+> Yes, we are trying to minimize the case.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- drivers/gpu/drm/tegra/dc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+But how do you know workqueues will perform better than
+smp_call_function_single() ? Just asking for clarity on this as normally
+everyone tries to do smp_call_function_single().
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index fbf57bc3cdaba..6dbbd238f60be 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2496,10 +2496,16 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to register host1x client: %d\n",
- 			err);
--		return err;
-+		goto disable_pm;
- 	}
- 
- 	return 0;
-+
-+disable_pm:
-+	pm_runtime_disable(&pdev->dev);
-+	tegra_dc_rgb_remove(dc);
-+
-+	return err;
- }
- 
- static int tegra_dc_remove(struct platform_device *pdev)
 -- 
-2.20.1
+viresh
