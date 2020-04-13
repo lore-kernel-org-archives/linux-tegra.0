@@ -1,87 +1,168 @@
-From: Sumit Gupta <sumitg@nvidia.com>
-Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
-Date: Mon, 13 Apr 2020 17:50:00 +0530
-Message-ID: <64b609f1-efb1-425f-a91a-27a492bd3ec4@nvidia.com>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
- <20200326115023.xy3n5bl7uetuw7mx@vireshk-i7>
- <d233b26b-6b50-7d41-9f33-a5dc151e0e7d@nvidia.com>
- <20200406025549.qfwzlk3745y3r274@vireshk-i7>
- <3ab4136c-8cca-c2f9-d286-b82dac23e720@nvidia.com>
- <20200408055301.jhvu5bc2luu3b5qr@vireshk-i7>
- <08307e54-0e14-14a3-7d6a-d59e1e04a683@nvidia.com>
- <20200409074415.twpzu2n4frqlde7b@vireshk-i7>
- <00390070-38a1-19aa-ca59-42c4658bee7e@nvidia.com>
- <20200413062141.a6hmwipexhv3sctq@vireshk-i7>
+From: Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 11/22] memory: tegra: Register as interconnect provider
+Date: Mon, 13 Apr 2020 15:43:26 +0300
+Message-ID: <70f724d6-5cb2-0ebe-ffc1-5dbb77d9dc74@linaro.org>
+References: <20200330010904.27643-1-digetx@gmail.com>
+ <20200330010904.27643-12-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200413062141.a6hmwipexhv3sctq@vireshk-i7>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200330010904.27643-12-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: rjw@rjwysocki.net, catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bbasu@nvidia.com, mperttunen@nvidia.com
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Dmitry,
 
+Thank you for the patchset!
 
-On 13/04/20 11:51 AM, Viresh Kumar wrote:
-> External email: Use caution opening links or attachments
+On 3/30/20 04:08, Dmitry Osipenko wrote:
+> Now memory controller is a memory interconnection provider. This allows us
+> to use interconnect API in order to change memory configuration.
 > 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/memory/tegra/mc.c | 118 ++++++++++++++++++++++++++++++++++++++
+>  drivers/memory/tegra/mc.h |   8 +++
+>  include/soc/tegra/mc.h    |   3 +
+>  3 files changed, 129 insertions(+)
 > 
-> On 09-04-20, 16:51, Sumit Gupta wrote:
->> We are using "read_counters_work" as local variable. So every invocation the
->> function will have its own copy of counters for corresponding cpu. That's
->> why are doing INIT_WORK_ONSTACK here.
-> 
-> Why? To support parallel calls to reading the freq ?
-> 
-Yes.
+> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> index ec8403557ed4..bcf0478c5f5a 100644
+> --- a/drivers/memory/tegra/mc.c
+> +++ b/drivers/memory/tegra/mc.c
+> @@ -591,6 +591,117 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static int tegra_mc_icc_set(struct icc_node *src, struct icc_node *dst)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int tegra_mc_icc_aggregate(struct icc_node *node,
+> +				  u32 tag, u32 avg_bw, u32 peak_bw,
+> +				  u32 *agg_avg, u32 *agg_peak)
+> +{
+> +	*agg_avg = min((u64)avg_bw + (*agg_avg), (u64)U32_MAX);
+> +	*agg_peak = max(*agg_peak, peak_bw);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Memory Controller (MC) has few Memory Clients that are issuing memory
+> + * bandwidth allocation requests to the MC interconnect provider. The MC
+> + * provider aggregates the requests and then sends the aggregated request
+> + * up to the External Memory Controller (EMC) interconnect provider which
+> + * re-configures hardware interface to External Memory (EMEM) in accordance
+> + * to the required bandwidth. Each MC interconnect node represents an
+> + * individual Memory Client.
+> + *
+> + * Memory interconnect topology:
+> + *
+> + *               +----+
+> + * +--------+    |    |
+> + * | TEXSRD +--->+    |
+> + * +--------+    |    |
+> + *               |    |    +-----+    +------+
+> + *    ...        | MC +--->+ EMC +--->+ EMEM |
+> + *               |    |    +-----+    +------+
+> + * +--------+    |    |
+> + * | DISP.. +--->+    |
+> + * +--------+    |    |
+> + *               +----+
+> + */
+> +static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+> +{
+> +	struct icc_onecell_data *data;
+> +	struct icc_node *node;
+> +	unsigned int num_nodes;
+> +	unsigned int i;
+> +	int err;
+> +
+> +	/* older device-trees don't have interconnect properties */
+> +	if (!of_find_property(mc->dev->of_node, "#interconnect-cells", NULL))
+> +		return 0;
+> +
+> +	num_nodes = mc->soc->num_clients;
+> +
+> +	data = devm_kzalloc(mc->dev, struct_size(data, nodes, num_nodes),
+> +			    GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	mc->provider.dev = mc->dev;
+> +	mc->provider.set = tegra_mc_icc_set;
+> +	mc->provider.data = data;
+> +	mc->provider.xlate = of_icc_xlate_onecell;
+> +	mc->provider.aggregate = tegra_mc_icc_aggregate;
+> +
+> +	err = icc_provider_add(&mc->provider);
+> +	if (err)
+> +		return err;
+> +
+> +	/* create Memory Controller node */
+> +	node = icc_node_create(TEGRA_ICC_MC);
+> +	err = PTR_ERR_OR_ZERO(node);
+> +	if (err)
+> +		goto del_provider;
+> +
+> +	node->name = "Memory Controller";
+> +	icc_node_add(node, &mc->provider);
+> +
+> +	/* link Memory Controller to External Memory Controller */
+> +	err = icc_link_create(node, TEGRA_ICC_EMC);
+> +	if (err)
+> +		goto remove_nodes;
+> +
+> +	for (i = 0; i < num_nodes; i++) {
+> +		/* create MC client node */
+> +		node = icc_node_create(mc->soc->clients[i].id);
+> +		err = PTR_ERR_OR_ZERO(node);
+> +		if (err)
+> +			goto remove_nodes;
+> +
+> +		node->name = mc->soc->clients[i].name;
+> +		icc_node_add(node, &mc->provider);
+> +
+> +		/* link Memory Client to Memory Controller */
+> +		err = icc_link_create(node, TEGRA_ICC_MC);
+> +		if (err)
+> +			goto remove_nodes;
+> +
+> +		data->nodes[i] = node;
+> +	}
+> +	data->num_nodes = num_nodes;
+> +
+> +	return 0;
+> +
+> +remove_nodes:
+> +	icc_nodes_remove(&mc->provider);
+> +
+> +del_provider:
+> +	icc_provider_del(&mc->provider);
+> +
+> +	return err;
+> +}
+> +
+>  static int tegra_mc_probe(struct platform_device *pdev)
+>  {
+>  	struct resource *res;
+> @@ -699,6 +810,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> +	if (IS_ENABLED(CONFIG_INTERCONNECT)) {
 
->>>>>>>>>> +     queue_work_on(cpu, read_counters_wq, &read_counters_work.work);
->>>>>>>>>> +     flush_work(&read_counters_work.work);
->>>>>>>>>
->>>>>>>>> Why can't this be done in current context ?
->>>>>>>>>
->>>>>>>> We used work queue instead of smp_call_function_single() to have long delay.
->>>>>>>
->>>>>>> Please explain completely, you have raised more questions than you
->>>>>>> answered :)
->>>>>>>
->>>>>>> Why do you want to have long delays ?
->>>>>>>
->>>>>> Long delay value is used to have the observation window long enough for
->>>>>> correctly reconstructing the CPU frequency considering noise.
->>>>>> In next patch version, changed delay value to 500us which in our tests is
->>>>>> considered reliable.
->>>>>
->>>>> I understand that you need to put a udelay() while reading the freq from
->>>>> hardware, that is fine, but why do you need a workqueue for that? Why can't you
->>>>> just read the values directly from the same context ?
->>>>>
->>>> The register to read frequency is per core and not accessible to other
->>>> cores. So, we have to execute the function remotely as the target core to
->>>> read frequency might be different from current.
->>>> The functions for that are smp_call_function_single or queue_work_on.
->>>> We used queue_work_on() to avoid long delay inside ipi interrupt context
->>>> with interrupts disabled.
->>>
->>> Okay, I understand this now, finally :)
->>>
->>> But if the interrupts are disabled during some call, won't workqueues face the
->>> same problem ?
->>>
->> Yes, we are trying to minimize the case.
-> 
-> But how do you know workqueues will perform better than
-> smp_call_function_single() ? Just asking for clarity on this as normally
-> everyone tries to do smp_call_function_single().
-> 
-This was done considering long delay value as explained previously.
-Do you think that smp_call_function_single() would be better than work 
-queue here?
+The interconnect framework can be also a module and the then the build will fail.
 
-> --
-> viresh
-> 
+> +		err = tegra_mc_interconnect_setup(mc);
+
+Maybe register the interconnect provider as a platform sub-device instead?
+
+Thanks,
+Georgi
