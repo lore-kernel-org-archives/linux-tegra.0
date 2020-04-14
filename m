@@ -1,87 +1,131 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Applied "ASoC: tegra: tegra_wm8903: Support nvidia, headset property" to the asoc tree
-Date: Tue, 14 Apr 2020 15:47:18 +0100
-Message-ID: <applied-20200330204011.18465-3-digetx@gmail.com>
-References: <20200330204011.18465-3-digetx@gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200330204011.18465-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
+ Tegra210
+Date: Tue, 14 Apr 2020 16:54:42 +0200
+Message-ID: <20200414145442.GJ3593749@ulmo>
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-10-thierry.reding@gmail.com>
+ <a9afb1b5-3141-4923-c7fa-194228081e1b@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="QxN5xOWGsmh5a4wb"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <a9afb1b5-3141-4923-c7fa-194228081e1b-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The patch
 
-   ASoC: tegra: tegra_wm8903: Support nvidia, headset property
+--QxN5xOWGsmh5a4wb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the asoc tree at
+On Thu, Apr 09, 2020 at 10:16:46PM +0300, Dmitry Osipenko wrote:
+> 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+> > +static int tegra210_emc_set_rate(struct device *dev,
+> > +				 const struct tegra210_clk_emc_config *config)
+> > +{
+> > +	struct tegra210_emc *emc =3D dev_get_drvdata(dev);
+> > +	struct tegra210_emc_timing *timing =3D NULL;
+> > +	unsigned long rate =3D config->rate;
+> > +	s64 last_change_delay;
+> > +	unsigned long flags;
+> > +	unsigned int i;
+> > +
+> > +	if (rate =3D=3D emc->last->rate * 1000UL)
+> > +		return 0;
+>=20
+> Couldn't all the rates be expressed in Hz? Then you won't need all these
+> multiplications by 1000.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+The EMC table is generated with kHz and I'd rather not change the values
+in those entries. There's only a few cases where we need to convert from
+one to the other, and they are always only when we compare a CCF rate to
+the EMC rate, so I think it's fairly explicit when it's needed.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> > +	for (i =3D 0; i < emc->num_timings; i++) {
+> > +		if (emc->timings[i].rate * 1000UL =3D=3D rate) {
+> > +			timing =3D &emc->timings[i];
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	if (!timing)
+> > +		return -EINVAL;
+> > +
+> > +	if (rate > 204000000 && !timing->trained)
+> > +		return -EINVAL;
+> > +
+> > +	emc->next =3D timing;
+> > +	last_change_delay =3D ktime_us_delta(ktime_get(), emc->clkchange_time=
+);
+> > +
+> > +	/* XXX use non-busy-looping sleep? */
+> > +	if ((last_change_delay >=3D 0) &&
+> > +	    (last_change_delay < emc->clkchange_delay))
+> > +		udelay(emc->clkchange_delay - (int)last_change_delay);
+> > +
+> > +	spin_lock_irqsave(&emc->lock, flags);
+> > +	tegra210_emc_set_clock(emc, config->value);
+> > +	emc->clkchange_time =3D ktime_get();
+> > +	emc->last =3D timing;
+> > +	spin_unlock_irqrestore(&emc->lock, flags);
+> > +
+> > +	return 0;
+> > +}
+>=20
+> I'd suggest to check how much time invocation of ktime_get() takes, at
+> least it came to a surprise to me in a case of the tegra-cpuidle driver.
+>=20
+> It may be well over the emc->clkchange_delay.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I assume that at least each invocation would take roughly the same
+amount of time? Since we only use the value to compute the time since
+the last clock change the result should always be valid. In the worst
+case if ktime_get() really takes that long we may be waiting longer
+than we need to, but that wouldn't be all that bad either. Changing
+the EMC clock rate isn't something that you want to do a lot.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> ...
+> > +static int tegra210_emc_probe(struct platform_device *pdev)
+> > +{
+> ...
+> > +	emc->clkchange_delay =3D 100;
+> > +	emc->training_interval =3D 100;
+>=20
+> Not sure why these aren't a constant with the code.. ?
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+The idea is to make them easily tunable without having to go hunt for
+them later on. We don't use them in a lot of computations, so making
+them constants isn't going to buy us a lot. Also, none of these code
+paths are really hot, so I like the flexibility that this gives us in
+being able to quickly tweak if we ever need to without having to worry
+that we'll forget a location.
 
-Thanks,
-Mark
+Thierry
 
-From 3ef9d5073b552d56bd6daf2af1e89b7e8d4df183 Mon Sep 17 00:00:00 2001
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Date: Mon, 30 Mar 2020 23:40:11 +0300
-Subject: [PATCH] ASoC: tegra: tegra_wm8903: Support nvidia, headset property
+--QxN5xOWGsmh5a4wb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The microphone-jack state needs to be masked in a case of a 4-pin jack
-when microphone and ground pins are shorted. Presence of nvidia,headset
-tells that WM8903 CODEC driver should mask microphone's status if short
-circuit is detected, i.e headphones are inserted.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Link: https://lore.kernel.org/r/20200330204011.18465-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- sound/soc/tegra/tegra_wm8903.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6VzrIACgkQ3SOs138+
+s6FSURAAuHIkM76l/aW376GVZabPFaDTft8S6fSnvsPAacz3OhBF4M0kAK/SjSoq
+ce97F/3HY63ernpSMN5gvmnWUi9KU7xdFYUrn3xdRGMk9art6jtN4yzut8Q8oaec
+iu6lXrNqDGY9NzngDbmz0GBLjQSxg8oA67TJ5Cl4mL8TWwFFfkUO8+VZzO/xkc3k
+rNQgmFbMOKKMecFlDRSHHXBEVOFzLfduRplsi+7bm6S2Qb0Cw2KQvAFBCgKEXgRi
+zfz17e3hP03jD3wkmW58MswKBnqvj2aDunaU+rbSxYKQVwen4M81KKt7pryc2V+z
+XzBD9DJDjmkW5Cn4AGs3oYuDfzgojT9eoS/I3HshHbACqeIIpIauUpLxtYMEsF2A
+KCcHLwZ1G8XUDG1uD8f54eJkL7VidI+vecLpiR069NfDpF6wg1jq4RFWKorUeUd9
+05wT5ZfHmzy+aOHh738jOfI6ddmNUTygueMzQKmKCUCLPeq+lxL3Yg5FVkYiQVQu
+/rqOlEZNolYcfU2x5C32i0qf0Tx4Dwzsad66wgvC0QpJmMqrVWKEXySGHF76tvvQ
+7VdSm6ThYSQNQ4Xhz71+g2hCNNu2/1U+gkpBarP+crQ7nt8zAxR6jZl9hgfDfYq5
+S0hZ8vQvEwGMLv/qXWdlQzycOFUl0dNe81DcENQGt7HMCAdRXBs=
+=NhUM
+-----END PGP SIGNATURE-----
 
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index 9b5651502f12..3aca354f9e08 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -177,6 +177,7 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
- 	struct snd_soc_component *component = codec_dai->component;
- 	struct snd_soc_card *card = rtd->card;
- 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
-+	int shrt = 0;
- 
- 	if (gpio_is_valid(machine->gpio_hp_det)) {
- 		tegra_wm8903_hp_jack_gpio.gpio = machine->gpio_hp_det;
-@@ -189,12 +190,15 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
- 					&tegra_wm8903_hp_jack_gpio);
- 	}
- 
-+	if (of_property_read_bool(card->dev->of_node, "nvidia,headset"))
-+		shrt = SND_JACK_MICROPHONE;
-+
- 	snd_soc_card_jack_new(rtd->card, "Mic Jack", SND_JACK_MICROPHONE,
- 			      &tegra_wm8903_mic_jack,
- 			      tegra_wm8903_mic_jack_pins,
- 			      ARRAY_SIZE(tegra_wm8903_mic_jack_pins));
- 	wm8903_mic_detect(component, &tegra_wm8903_mic_jack, SND_JACK_MICROPHONE,
--				0);
-+				shrt);
- 
- 	snd_soc_dapm_force_enable_pin(&card->dapm, "MICBIAS");
- 
--- 
-2.20.1
+--QxN5xOWGsmh5a4wb--
