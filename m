@@ -1,160 +1,91 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 07/14] clk: tegra: Implement Tegra210 EMC clock
-Date: Tue, 14 Apr 2020 19:10:10 +0200
-Message-ID: <20200414171010.GB15932@ulmo>
+Subject: Re: [PATCH v6 04/14] clk: tegra: Rename Tegra124 EMC clock source
+ file
+Date: Tue, 14 Apr 2020 19:14:29 +0200
+Message-ID: <20200414171429.GC15932@ulmo>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-8-thierry.reding@gmail.com>
- <8dc000fb-8867-cf8f-8204-a9e1e79a4811@gmail.com>
- <20200414143424.GG3593749@ulmo>
- <92eb73ba-73e4-f9f1-bb22-9b515e32cee6@gmail.com>
+ <20200409175238.3586487-5-thierry.reding@gmail.com>
+ <a7209708-6e67-5885-5935-2db3d92174e8@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Bn2rw/3z4jIqBvZU"
+        protocol="application/pgp-signature"; boundary="5G06lTa6Jq83wMTw"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <92eb73ba-73e4-f9f1-bb22-9b515e32cee6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <a7209708-6e67-5885-5935-2db3d92174e8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---Bn2rw/3z4jIqBvZU
+--5G06lTa6Jq83wMTw
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 14, 2020 at 06:18:29PM +0300, Dmitry Osipenko wrote:
-> 14.04.2020 17:34, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Thu, Apr 09, 2020 at 09:24:31PM +0300, Dmitry Osipenko wrote:
-> >> 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> ...
-> >>> +static long tegra210_clk_emc_round_rate(struct clk_hw *hw, unsigned =
-long rate,
-> >>> +					unsigned long *prate)
-> >>> +{
-> >>> +	struct tegra210_clk_emc *emc =3D to_tegra210_clk_emc(hw);
-> >>> +	struct tegra210_clk_emc_provider *provider =3D emc->provider;
-> >>> +	unsigned int i;
-> >>> +
-> >>> +	if (!provider || !provider->configs || provider->num_configs =3D=3D=
- 0)
-> >>> +		return clk_hw_get_rate(hw);
-> >>
-> >> This still looks wrong to me. Nobody should be able to get EMC clock
-> >> until provider is registered.
+On Tue, Apr 14, 2020 at 07:48:12PM +0300, Dmitry Osipenko wrote:
+> 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > >=20
-> > The EMC clock is mostly orthogonal to the provider. The provider really
-> > only allows you to actually change the frequency. The clock will still
-> > remain even if the provider goes away, it just will loose the ability to
-> > change rate.
->=20
-> It's not only about changing the clock rate, but also about rounding the
-> rate and etc.
-
-The code will currently just return the configured rate when no provider
-is available. It's going to always round to that one rate and it will
-refuse to set another one. The EMC clock is basically going to function
-as a fixed clock while no provider is attached.
-
-> Besides, you won't be able to change the rate until provider is
-> registered, which might be a quite big problem by itself.
-
-Until the provider is registered, there's just no way to change the
-rate. You always need to write MC and EMC registers in order to change
-the rate, so trying to change it when the MC/EMC drivers aren't
-available isn't going to work.
-
-> >> This is troublesome, especially given that you're allowing the EMC
-> >> driver to be compiled as a loadable module. For example, this won't wo=
-rk
-> >> with the current ACTMON driver because it builds OPP table based on the
-> >> clk-rate rounding during the driver's probe, so it won't be able to do
-> >> it properly if provider is "temporarily" missing.
-> >>
-> >> ... I think that in a longer run we should stop manually building the
-> >> ACTMON's OPP table and instead define a proper OPP table (per-HW Speedo
-> >> ID, with voltages) in a device-tree. But this is just a vague plans for
-> >> the future for now.
+> > This code is only used on Tegra124, so rename it accordingly to make it
+> > more consistent with other file names.
 > >=20
-> > This code only applies to Tegra210 and we don't currently support ACTMON
-> > on Tegra210. I'm also not sure we'll ever do because using interconnects
-> > to describe paths to system memory and then using ICC requests for each
-> > driver to submit memory bandwidth requests seems like a better way of
-> > dealing with this problem than using ACTMON to monitor activity because
-> > that only allows you to react, whereas we really want to be able to
-> > allocate memory bandwidth upfront.
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/clk/tegra/Makefile                          | 2 +-
+> >  drivers/clk/tegra/{clk-emc.c =3D> clk-tegra124-emc.c} | 0
+> >  2 files changed, 1 insertion(+), 1 deletion(-)
+> >  rename drivers/clk/tegra/{clk-emc.c =3D> clk-tegra124-emc.c} (100%)
+> >=20
+> > diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> > index 1f7c30f87ece..dec508ef2ada 100644
+> > --- a/drivers/clk/tegra/Makefile
+> > +++ b/drivers/clk/tegra/Makefile
+> > @@ -14,7 +14,6 @@ obj-y					+=3D clk-tegra-audio.o
+> >  obj-y					+=3D clk-tegra-periph.o
+> >  obj-y					+=3D clk-tegra-fixed.o
+> >  obj-y					+=3D clk-tegra-super-gen4.o
+> > -obj-$(CONFIG_TEGRA_CLK_EMC)		+=3D clk-emc.o
+> >  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         +=3D clk-tegra20.o
+> >  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+=3D clk-tegra20-emc.o
+> >  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         +=3D clk-tegra30.o
+> > @@ -22,6 +21,7 @@ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+=3D clk-tegra20-emc=
+=2Eo
+> >  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+=3D clk-tegra114.o
+> >  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+=3D clk-tegra124.o
+> >  obj-$(CONFIG_TEGRA_CLK_DFLL)		+=3D clk-tegra124-dfll-fcpu.o
+> > +obj-$(CONFIG_TEGRA_CLK_EMC)		+=3D clk-tegra124-emc.o
 >=20
-> You absolutely have to have the ACTMON support if you want to provide a
-> good user experience because interconnect won't take into account the
-> dynamic CPU memory traffic. Without ACTMON support CPU will turn into a
-> "turtle" if memory runs on a lowest freq, while CPU needs the highest.
+> What about to rename CONFIG_TEGRA_CLK_EMC to CONFIG_TEGRA124_CLK_EMC as
+> well?
 
-Can we not guess a bandwidth based on the CPU frequency? Yes, that's
-perhaps going to be an overestimation if the CPU doesn't actually access
-memory, but that's better than nothing at all.
+Yeah, I could do that.
 
-Also, at this point I'm less worried about power consumption rather than
-making Tegra210 devices perform useful tasks. Yes, eventually we'll want
-to fine-tune power consumption, but it's going to take a bit of work to
-get there. In the meantime, giving people a way to set an EMC frequency
-other than that set on boot is going to make them very happy.
+> Also.. maybe the CONFIG_TEGRA_CLK_EMC isn't really needed at all and the
+> TEGRA124_EMC of memory/tegra could be re-used here?
 
-> Secondly, the interconnect could underestimate the memory BW requirement
-> because memory performance depends quite a lot on the memory-accessing
-> patterns and it's not possible to predict it properly. Otherwise you may
-> need to always overestimate the BW, which perhaps is not what anyone
-> would really want to have.
-
-Overestimating might be a good starting point, though. At this point I'm
-mostly concerned about being able to change the memory frequency at all
-because many systems are mostly unusable at the boot EMC frequency.
-
-Like I said, if ACTMON really does prove to be useful I'm all for adding
-support on Tegra210, but I don't think trying to do everything all at
-once is a very good plan. So I'm trying to get there in incremental
-steps.
-
-> I'm not sure why you're resisting to do it all properly from the start,
-> it looks to me that it will take you just a few lines of code (like in a
-> case of the T20/30 EMC).
-
-I'm not trying to resist anything. I'm just saying that all of the
-issues that you're bringing up aren't an immediate concern.
-
-My main concerns right now are to: a) allow people to change the EMC
-frequency (and hopefully soon also allow the EMC frequency to be changed
-based on bandwidth demands by memory client drivers) and b) not bloat
-the kernel more than it has to (while my configuration isn't tweaked,
-it's pretty standard and the resulting image is roughly 20 MiB; adding
-the Tegra210 EMC driver adds another 64 KiB).
-
-And if we really do want to add ACTMON support later on, you already
-suggested a better way of moving forward, so it sounds to me like that
-would be a nice incremental improvement, certainly much better than
-bloating the kernel even further by requiring this to be built-in and
-preventing it from being unloaded.
+Sounds like that should work... let me see what I can do.
 
 Thierry
 
---Bn2rw/3z4jIqBvZU
+--5G06lTa6Jq83wMTw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6V7m4ACgkQ3SOs138+
-s6Em4w/9FNIpaqlBNPaffejDRoFi8gSCtTpS700LImB1P8xffbHSrrAGNzhnUN6h
-NK9mJp5ZtIxNawa+OgVyTqLMBvEhLnlbqNXypj2v0KjMEnWldZNO0i6kZ0B74WDx
-j3LHJyhnap8VZYdxGafGCn3mx91XRfmfkXpt/RXR4AFhBCh+tS6MLXm9oKYVElRq
-vydnkirSA55jAZaLObaTfji9z+UdkjQQOXr8D49Ef4qfFPXTSCfCLGrrNCBV8RMb
-AjbIRCNPsJ0JMb99wEc/3iR82MkLFOqQZ/W76iYFpKZjqzOgePoENndse6VFa710
-E4lZ1iG/Mu+FT38tKDFpgfScTTJq8sGLdgPbCbIjDl2ltlX+JoM8qCuEvSrAQq9i
-P1BTYXS7LR5n74BqMSB+s1TS9/KvDOe0rZb91JmrpSPrNZJsN0NKCZwJXrdftAQu
-RL7HombQdmrSdmv9fqLK7JdDOaWr0K/2PyuUyX0Zd6SsdxtvpW6hZKye+Ca05QCe
-N3lcZnJVAlSGGF/wcp6NkY1lXr9AtqTyJoXpHra0yu1QyCTZgqK0ZPJdVC4ot7/N
-SOx0/tp2tWaMJr5xVud7JeUnrM5wgIMK09bOkE9Dsh3DM52EB5s2DgeE7cLCzuzL
-JH0FgfsIyx9Fb+fwUnJmLoRvA/1uadd6LOZErg8nqtZyvFksA/M=
-=XN3P
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6V73QACgkQ3SOs138+
+s6GEsg/+IZcdQCLTqDBB8dWq8+IHcYR4MKibWV3/XPcYJ29XjUgSohR1ne4jlJrB
+7WeB32SUULUOpmRtHw45hF5htbJYHa2Mxwpqv6NGAyXf+A2Xxls2mKzfqNcujijj
+J9ewU0PuBJfvWLjSKGYQtYmIyj73M68NUCJVUaDZ3hbv5INljFNyUN2wuwMzo1L1
+jFOfe+O2YBBr157WZlMZLqIDInAEvZUSVYF80KtOdJUw8jU1uh2zP8ufgD6S6ZGt
+TuMdHIUyEy9qwFldgwEy2nXBIAIiHWtDDHUDatdn/A8PWw+Auqd0v2XKktucqv4S
++Lq3BG3jCNk54vOWiBjJIDTxF/CrAP03myqF19tNO3OfRLffTjLah1qp//sj//lU
+hbq/XEslGhwOzCUvKXawY8RO8yuSGgKDuwV6aSEDNW6Oo0sbCHrMcLFWu2dNR3Gk
+KdwiyZFeo0xLH8/P+pIJ+V7xpMnRJpKhYlRrnHl94qt6Gum2LSlQXVATklZHcBoE
+1eV5NBovcpH9Eq4FJWFlkkT2VWcLrWam0UF1LG6gBHllWJBXhBvX95k2Yfb3gF4m
+Zh2V92hkPa0ZzU3pdNEu8Qlcbm78yAMYHSrN+oNnV7bbbnePkYEiJCauKt+uihB8
+UhUFxei8DW+O9tT1MI0QFaPln6dXzUdhr102o4CevKkD9kDft4U=
+=ednv
 -----END PGP SIGNATURE-----
 
---Bn2rw/3z4jIqBvZU--
+--5G06lTa6Jq83wMTw--
