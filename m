@@ -1,8 +1,8 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
  Tegra210
-Date: Tue, 14 Apr 2020 23:39:42 +0300
-Message-ID: <385ad42b-ebed-1783-0dd2-dc3693aeaf6b@gmail.com>
+Date: Tue, 14 Apr 2020 23:46:18 +0300
+Message-ID: <5616bbe7-d185-1a6a-1fc5-e4ee5d2f65e6@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
  <20200409175238.3586487-10-thierry.reding@gmail.com>
 Mime-Version: 1.0
@@ -18,18 +18,39 @@ List-Id: linux-tegra@vger.kernel.org
 
 09.04.2020 20:52, Thierry Reding пишет:
 ...
-> +static int tegra210_emc_set_rate(struct device *dev,
-> +				 const struct tegra210_clk_emc_config *config)
+> +static void tegra210_change_dll_src(struct tegra210_emc *emc,
+> +				    u32 clksrc)
 > +{
-> +	struct tegra210_emc *emc = dev_get_drvdata(dev);
-> +	struct tegra210_emc_timing *timing = NULL;
-> +	unsigned long rate = config->rate;
-> +	s64 last_change_delay;
-> +	unsigned long flags;
-> +	unsigned int i;
+> +	u32 dll_setting = emc->next->dll_clk_src;
+> +	u32 emc_clk_src;
+> +	u32 emc_clk_div;
 > +
-> +	if (rate == emc->last->rate * 1000UL)
-> +		return 0;
+> +	emc_clk_src = (clksrc & EMC_CLK_EMC_2X_CLK_SRC_MASK) >>
+> +		       EMC_CLK_EMC_2X_CLK_SRC_SHIFT;
+> +	emc_clk_div = (clksrc & EMC_CLK_EMC_2X_CLK_DIVISOR_MASK) >>
+> +		       EMC_CLK_EMC_2X_CLK_DIVISOR_SHIFT;
+> +
+> +	dll_setting &= ~(DLL_CLK_EMC_DLL_CLK_SRC_MASK |
+> +			 DLL_CLK_EMC_DLL_CLK_DIVISOR_MASK);
+> +	dll_setting |= emc_clk_src << DLL_CLK_EMC_DLL_CLK_SRC_SHIFT;
+> +	dll_setting |= emc_clk_div << DLL_CLK_EMC_DLL_CLK_DIVISOR_SHIFT;
+> +
+> +	dll_setting &= ~DLL_CLK_EMC_DLL_DDLL_CLK_SEL_MASK;
+> +	if (emc_clk_src == EMC_CLK_SOURCE_PLLMB_LJ)
+> +		dll_setting |= (PLLM_VCOB <<
+> +				DLL_CLK_EMC_DLL_DDLL_CLK_SEL_SHIFT);
+> +	else if (emc_clk_src == EMC_CLK_SOURCE_PLLM_LJ)
+> +		dll_setting |= (PLLM_VCOA <<
+> +				DLL_CLK_EMC_DLL_DDLL_CLK_SEL_SHIFT);
+> +	else
+> +		dll_setting |= (EMC_DLL_SWITCH_OUT <<
+> +				DLL_CLK_EMC_DLL_DDLL_CLK_SEL_SHIFT);
+> +
+> +	tegra210_clk_emc_dll_update_setting(dll_setting);
+> +
+> +	if (emc->next->clk_out_enb_x_0_clk_enb_emc_dll)
+> +		tegra210_clk_emc_dll_enable(true);
+> +	else
+> +		tegra210_clk_emc_dll_enable(false);
 
-Isn't it possible that parent is changed, while the rate is not? I think
-the clock change should proceed in this case.
+Isn't something like fence_udelay(1) needed after touching clk registers?
