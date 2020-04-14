@@ -1,54 +1,44 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 04/14] clk: tegra: Rename Tegra124 EMC clock source
- file
-Date: Tue, 14 Apr 2020 19:48:12 +0300
-Message-ID: <a7209708-6e67-5885-5935-2db3d92174e8@gmail.com>
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-5-thierry.reding@gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] dt-bindings: Fix dtc warnings on reg and ranges in
+ examples
+Date: Tue, 14 Apr 2020 18:06:18 +0100
+Message-ID: <20200414170618.GG5412@sirena.org.uk>
+References: <20200409202458.24509-1-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kjpMrWxdCilgNbo1"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200409175238.3586487-5-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200409202458.24509-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, Jean Delvare <jdelvare-IBi9RG/b67k@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>, Nicolas Saenz Julienne <nsaenzjulienne-l3A5Bk7waGM@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux
 List-Id: linux-tegra@vger.kernel.org
 
-09.04.2020 20:52, Thierry Reding пишет:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This code is only used on Tegra124, so rename it accordingly to make it
-> more consistent with other file names.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/Makefile                          | 2 +-
->  drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} | 0
->  2 files changed, 1 insertion(+), 1 deletion(-)
->  rename drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} (100%)
-> 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index 1f7c30f87ece..dec508ef2ada 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -14,7 +14,6 @@ obj-y					+= clk-tegra-audio.o
->  obj-y					+= clk-tegra-periph.o
->  obj-y					+= clk-tegra-fixed.o
->  obj-y					+= clk-tegra-super-gen4.o
-> -obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
->  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
-> @@ -22,6 +21,7 @@ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
->  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
-> +obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-tegra124-emc.o
 
-What about to rename CONFIG_TEGRA_CLK_EMC to CONFIG_TEGRA124_CLK_EMC as
-well?
+--kjpMrWxdCilgNbo1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also.. maybe the CONFIG_TEGRA_CLK_EMC isn't really needed at all and the
-TEGRA124_EMC of memory/tegra could be re-used here?
+On Thu, Apr 09, 2020 at 02:24:58PM -0600, Rob Herring wrote:
+> A recent update to dtc and changes to the default warnings introduced
+> some new warnings in the DT binding examples:
+
+Acked-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+--kjpMrWxdCilgNbo1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6V7YkACgkQJNaLcl1U
+h9C0nggAgbznZBSepYyVohp/1H4rCte0Z/wk6K7EfPvfDL1M/M+F5oW6AU4YZ7Kq
+lnSn9hweJBFpxBwrrAv0lHakge/LpEQZ1Aqig/t9jd9NgwKqJWJ8Y2aKPx+Oli9k
+mdb6G44fbxVgVruXHd1n2XzJwpISNXksvKBTYWY63Gb7DRAfzSqlexWfysRbtI/O
+NgdIihQ9ti6mjE0Nxso/6KeZbooinBxVRntCOiinYSHraOWbfTn24MQXa70JtuVC
+m7cod5i1+C4PiKb+3m5aYIEQxvzN08qRxnnZFrnknqj+N0GcA1N9wVkJ06JhXrzn
+a84u535dpkRwCg+2Nf9leoevVqXUqw==
+=wm8m
+-----END PGP SIGNATURE-----
+
+--kjpMrWxdCilgNbo1--
