@@ -1,108 +1,71 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
- Tegra210
-Date: Tue, 14 Apr 2020 16:45:25 +0200
-Message-ID: <20200414144525.GI3593749@ulmo>
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-10-thierry.reding@gmail.com>
- <7b2f8a7c-94f1-08d0-b0ce-c61f4eb0a436@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VaKJWhUROU/xPxjb"
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Applied "ASoC: tegra-wm8903: Document new nvidia, headset property" to the asoc tree
+Date: Tue, 14 Apr 2020 15:47:13 +0100
+Message-ID: <applied-20200330204011.18465-2-digetx@gmail.com>
+References: <20200330204011.18465-2-digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <7b2f8a7c-94f1-08d0-b0ce-c61f4eb0a436-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200330204011.18465-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The patch
 
---VaKJWhUROU/xPxjb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   ASoC: tegra-wm8903: Document new nvidia, headset property
 
-On Thu, Apr 09, 2020 at 10:00:13PM +0300, Dmitry Osipenko wrote:
-> 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
-> > +static void tegra210_emc_debugfs_init(struct tegra210_emc *emc)
-> > +{
-> > +	struct device *dev =3D emc->dev;
-> > +	unsigned int i;
-> > +	int err;
-> > +
-> > +	emc->debugfs.min_rate =3D ULONG_MAX;
-> > +	emc->debugfs.max_rate =3D 0;
-> > +
-> > +	for (i =3D 0; i < emc->num_timings; i++) {
-> > +		if (emc->timings[i].rate * 1000UL < emc->debugfs.min_rate)
-> > +			emc->debugfs.min_rate =3D emc->timings[i].rate * 1000UL;
-> > +
-> > +		if (emc->timings[i].rate * 1000UL > emc->debugfs.max_rate)
-> > +			emc->debugfs.max_rate =3D emc->timings[i].rate * 1000UL;
-> > +	}
-> > +
-> > +	if (!emc->num_timings) {
-> > +		emc->debugfs.min_rate =3D clk_get_rate(emc->clk);
-> > +		emc->debugfs.max_rate =3D emc->debugfs.min_rate;
-> > +	}
-> > +
-> > +	err =3D clk_set_rate_range(emc->clk, emc->debugfs.min_rate,
-> > +				 emc->debugfs.max_rate);
-> > +	if (err < 0) {
-> > +		dev_err(dev, "failed to set rate range [%lu-%lu] for %pC\n",
-> > +			emc->debugfs.min_rate, emc->debugfs.max_rate,
-> > +			emc->clk);
-> > +		return;
-> > +	}
-> > +
-> > +	emc->debugfs.root =3D debugfs_create_dir("emc", NULL);
-> > +	if (!emc->debugfs.root) {
-> > +		dev_err(dev, "failed to create debugfs directory\n");
-> > +		return;
-> > +	}
-> > +
-> > +	debugfs_create_file("available_rates", S_IRUGO, emc->debugfs.root, em=
-c,
-> > +			    &tegra210_emc_debug_available_rates_fops);
-> > +	debugfs_create_file("min_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
-> > +			    emc, &tegra210_emc_debug_min_rate_fops);
-> > +	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
-> > +			    emc, &tegra210_emc_debug_max_rate_fops);
->=20
-> I assume you used the checkpatch before sending the patches, no?
+has been applied to the asoc tree at
 
-I have a pre-commit hook that runs checkpatch, but for some reason it
-was disabled. Fixed these to be numeric now.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> I sent out a patch recently to make the permissions readable, please
-> take a look if you haven't seen it yet.
->=20
-> https://patchwork.ozlabs.org/patch/1254301/
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-I've applied this now.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Thierry
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---VaKJWhUROU/xPxjb
-Content-Type: application/pgp-signature; name="signature.asc"
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+Mark
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6VzIUACgkQ3SOs138+
-s6FpRRAAk0TEKZBPjG+SsTHg1xIN9BMOUI9LqXdMGnagdaP0yEi/mTRNkmrsImxZ
-awLe6BQXHKI9FGW/mrjyB1d3Ly+FQSerx04N5iwg6imigOmaTXRyuy4gXuEH6+D1
-R4U84Jnx74lntZsS3aqcg/P1gNborKoirVl1xkcvn/mJ4K+BhFBq3NqbgyKJ7xGa
-51izgm0mPVSldljky86GBwHfYiyirLXF4K6+Qg3Is1m40p01z3jhrUGYXtnD0cOr
-29VnWLSpJs+Qrzs0Fy9Q66C3h5f+ZeshjDCdQJorVDbaiXp8+7YIUW1LPCZcwUrI
-tCBxKuzyi7KpFpZmno/li8nOEv+ByqEcg3fF0SrDton95JKMuK/WplZJsVisQ/lN
-8SQePeIzU005hN5GwnPfoQVMqLsMqans4M0lh+qRtdzqX4JlH1aBjHsG6UHPcwQb
-7ePg54J49LruLhrDaipx5YMZ+zfRuidiat4l5lxvtgxoKImx2iKXRS+w0X1kNVX5
-byOLywrBi5wNbAz5G4nsCwA67f3JuB+M5m6VA48MoY3NANz4AdRtE3gcsmmgK2Ac
-rM+asAhZyI3p+b1iQujqDdRBE5FvOBFEkS3CwZzZ5kl+wdFTdWPXVDwGYbCKS7NR
-bH9mSiKbX48G/8pq6m4xFteYGr91cstkAwv1o7Km4Pe1vsOZN54=
-=WHMF
------END PGP SIGNATURE-----
+From 8240fe6c91b884b5f1f861a8c22721d6ea4c53c9 Mon Sep 17 00:00:00 2001
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Date: Mon, 30 Mar 2020 23:40:10 +0300
+Subject: [PATCH] ASoC: tegra-wm8903: Document new nvidia, headset property
 
---VaKJWhUROU/xPxjb--
+Some devices have a 4-pin headset jack instead of 3-pin microphone jack.
+The new boolean nvidia,headset property tells that the Mic Jack represents
+the state of a headset microphone. This additional hardware description is
+needed because microphone detection procedure differs in a case of a 4-pin
+jack from a 3-pin jack.
+
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Link: https://lore.kernel.org/r/20200330204011.18465-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ .../devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt      | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt
+index a8f2b0c56c79..bbd581a8c5bc 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt
+@@ -29,6 +29,7 @@ Optional properties:
+ - nvidia,hp-det-gpios : The GPIO that detect headphones are plugged in
+ - nvidia,int-mic-en-gpios : The GPIO that enables the internal microphone
+ - nvidia,ext-mic-en-gpios : The GPIO that enables the external microphone
++- nvidia,headset : The Mic Jack represents state of the headset microphone pin
+ 
+ Example:
+ 
+-- 
+2.20.1
