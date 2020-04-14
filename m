@@ -1,104 +1,95 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] of: Rework and simplify phandle cache to use a fixed size
-Date: Tue, 14 Apr 2020 10:00:36 -0500
-Message-ID: <CAL_JsqL84LvUrNy095E_sC2UJnB3SFBgsw6wjOKmFM249BHMOA@mail.gmail.com>
-References: <20191211232345.24810-1-robh@kernel.org> <5386e959-f9c4-2748-ed08-34ab361aee2c@nvidia.com>
- <CAL_JsqLmth0bYcG2VnxU-jk_VoC4TgvWD8_e6r1_8WqVwYGq0g@mail.gmail.com> <93314ff5-aa89-cd99-393c-f75f31d9d6e5@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
+ Tegra210
+Date: Tue, 14 Apr 2020 17:02:19 +0200
+Message-ID: <20200414150219.GK3593749@ulmo>
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-10-thierry.reding@gmail.com>
+ <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fLj60tP2PZ34xyqD"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <93314ff5-aa89-cd99-393c-f75f31d9d6e5-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Karol Herbst <karolherbst-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, Segher Boessenkool <segher-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-+Karol
 
-On Mon, Jan 13, 2020 at 5:12 AM Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
->
-> On 10/01/2020 23:50, Rob Herring wrote:
-> > On Tue, Jan 7, 2020 at 4:22 AM Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> >>
-> >> Hi Rob,
-> >>
-> >> On 11/12/2019 23:23, Rob Herring wrote:
-> >>> The phandle cache was added to speed up of_find_node_by_phandle() by
-> >>> avoiding walking the whole DT to find a matching phandle. The
-> >>> implementation has several shortcomings:
-> >>>
-> >>>   - The cache is designed to work on a linear set of phandle values.
-> >>>     This is true for dtc generated DTs, but not for other cases such as
-> >>>     Power.
-> >>>   - The cache isn't enabled until of_core_init() and a typical system
-> >>>     may see hundreds of calls to of_find_node_by_phandle() before that
-> >>>     point.
-> >>>   - The cache is freed and re-allocated when the number of phandles
-> >>>     changes.
-> >>>   - It takes a raw spinlock around a memory allocation which breaks on
-> >>>     RT.
-> >>>
-> >>> Change the implementation to a fixed size and use hash_32() as the
-> >>> cache index. This greatly simplifies the implementation. It avoids
-> >>> the need for any re-alloc of the cache and taking a reference on nodes
-> >>> in the cache. We only have a single source of removing cache entries
-> >>> which is of_detach_node().
-> >>>
-> >>> Using hash_32() removes any assumption on phandle values improving
-> >>> the hit rate for non-linear phandle values. The effect on linear values
-> >>> using hash_32() is about a 10% collision. The chances of thrashing on
-> >>> colliding values seems to be low.
-> >>>
-> >>> To compare performance, I used a RK3399 board which is a pretty typical
-> >>> system. I found that just measuring boot time as done previously is
-> >>> noisy and may be impacted by other things. Also bringing up secondary
-> >>> cores causes some issues with measuring, so I booted with 'nr_cpus=1'.
-> >>> With no caching, calls to of_find_node_by_phandle() take about 20124 us
-> >>> for 1248 calls. There's an additional 288 calls before time keeping is
-> >>> up. Using the average time per hit/miss with the cache, we can calculate
-> >>> these calls to take 690 us (277 hit / 11 miss) with a 128 entry cache
-> >>> and 13319 us with no cache or an uninitialized cache.
-> >>>
-> >>> Comparing the 3 implementations the time spent in
-> >>> of_find_node_by_phandle() is:
-> >>>
-> >>> no cache:        20124 us (+ 13319 us)
-> >>> 128 entry cache:  5134 us (+ 690 us)
-> >>> current cache:     819 us (+ 13319 us)
-> >>>
-> >>> We could move the allocation of the cache earlier to improve the
-> >>> current cache, but that just further complicates the situation as it
-> >>> needs to be after slab is up, so we can't do it when unflattening (which
-> >>> uses memblock).
-> >>>
-> >>> Reported-by: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-> >>> Cc: Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>
-> >>> Cc: Segher Boessenkool <segher-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
-> >>> Cc: Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >>> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> >>
-> >> With next-20200106 I have noticed a regression on Tegra210 where it
-> >> appears that only one of the eMMC devices is being registered. Bisect is
-> >> pointing to this patch and reverting on top of next fixes the problem.
-> >> That is as far as I have got so far, so if you have any ideas, please
-> >> let me know. Unfortunately, there do not appear to be any obvious errors
-> >> from the bootlog.
-> >
-> > I guess that's tegra210-p2371-2180.dts because none of the others have
-> > 2 SD hosts enabled. I don't see anything obvious though. Are you doing
-> > any runtime mods to the DT?
->
-> I have noticed that the bootloader is doing some runtime mods and so
-> checking if this is the cause. I will let you know, but most likely,
-> seeing as I cannot find anything wrong with this change itself.
+--fLj60tP2PZ34xyqD
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Did you figure out the problem here? Karol sees a similar problem on
-Tegra210 with the gpu node regulator.
+On Fri, Apr 10, 2020 at 02:56:53AM +0300, Dmitry Osipenko wrote:
+> 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+> > +#define CLK_RST_CONTROLLER_CLK_SOURCE_EMC		0x19c
+> ...
+> > +#define CLK_RST_CONTROLLER_CLK_SOURCE_EMC_DLL		0x664
+>=20
+> I'd suggest to double check all the macros and remove everything unused,
+> to not pollute the code.
 
-It looks like /external-memory-controller@7001b000 has a duplicate
-phandle. Comparing the dtb in the filesystem with what the kernel
-gets, that node is added by the bootloader. So the bootloader is
-definitely creating a broken dtb.
+I recall checking most of these, but I'll make another pass to see if I
+can spot more that I can drop.
 
-Rob
+> ...
+> > +#define TRIM_REG(chan, rank, reg, byte)					\
+> > +	(((EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+> > +	   _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _MASK &	\
+> > +	   next->trim_regs[EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ##		\
+> > +				 rank ## _ ## reg ## _INDEX]) >>	\
+> > +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+> > +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _SHIFT)	\
+> > +	 +								\
+> > +	 (((EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
+> > +	    byte ## _DATA_BRLSHFT_MASK &				\
+> > +	    next->trim_perch_regs[EMC ## chan ##			\
+> > +			      _EMC_DATA_BRLSHFT_ ## rank ## _INDEX]) >>	\
+> > +	   EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
+> > +	   byte ## _DATA_BRLSHFT_SHIFT) * 64))
+> > +
+> > +#define CALC_TEMP(rank, reg, byte1, byte2, n)				\
+> > +	(((new[n] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##	\
+> > +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _SHIFT) =
+& \
+> > +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+> > +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _MASK)	\
+> > +	 |								\
+> > +	 ((new[n + 1] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##\
+> > +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _SHIFT) =
+& \
+> > +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+> > +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _MASK))
+>=20
+> My eyes.. :P
+
+Heh... yes, this is pretty bad. At least the code at the callsites is
+clean.
+
+Thierry
+
+--fLj60tP2PZ34xyqD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6V0HsACgkQ3SOs138+
+s6FXCg/7B0bMQSGWtJXVBNJfMTn8M0O+JF56fTgGvLoz+9OjrduZ3flJ5t1MVTvp
+o+MoMG4zK2JjlnMcMLG5o/6hSbLU0kAKJ7BlHbwgV252liWGABe3h0xV8923aWRi
+vbm8f1v9sab2U/KJGUdZxeSZ9NfrVzCzGzBlZmynLF6fKhnymS1usyKChKqwlvv2
+PZAZKF4hNDizXxy1ZpmSJHoZRsZ94qSj2NuAvLxMjx0Hmv6jJ8D7AZuY/GKeCZPN
+ByuGMahGXXaE8JaOzgxsfHx0TEC1hKb4Y017xgHpZzMU50ck4eqFJb/nHXBVddPH
+KjYmaDzYIfSqtYRrmPVmloUBVjb9Y1EDspe+5TbQvpSwSLjNFPeM0z5dZXrZU4w0
+W4bvghLzaZvgvC9thmTZur7QTcOOco3BRTIxv8hzA/2FO/oWX9p1CGbR6Ddsg/ly
+SzhUu5CUKCrKdob6YRTpfT+5CN+zCzR7dt+XJ2LcR1lg0UnCCMnmyf2kJUNdkwZp
+lWQQTm4pFrHNRv0a8DNN6ma4fK0yyS//7bJQVM/sGJZ8hnloT6skT8hUyfre9d9f
+AzpQypnVyqMv2PTFYthPYkF6CaLHHgE/NU4yUyQHyNIBCQT4OHZZZXBlS42azM10
+6/79zjdxTiIR6C0mHgIWY6kgTNiL7RiU9ctwpI9vnCrp+YzPfy0=
+=SSdO
+-----END PGP SIGNATURE-----
+
+--fLj60tP2PZ34xyqD--
