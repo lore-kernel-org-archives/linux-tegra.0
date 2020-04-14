@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 2/2] drm/tegra: output: rgb: Don't register connector if bridge is used
-Date: Wed, 15 Apr 2020 01:20:07 +0300
-Message-ID: <20200414222007.31306-3-digetx@gmail.com>
+Subject: [PATCH v2 1/2] drm/tegra: output: Support DRM bridges
+Date: Wed, 15 Apr 2020 01:20:06 +0300
+Message-ID: <20200414222007.31306-2-digetx@gmail.com>
 References: <20200414222007.31306-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,56 +12,91 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-We rely on the connector that is created by the bridge, and thus, the
-Tegra's output connector is not needed in this case because it will be
-an unused connector.
+Newer Tegra device-trees will define a video output graph which involves
+a bridge. This patch adds support for the DRM bridges to the Tegra's DRM
+output.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/rgb.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/tegra/drm.h    |  2 ++
+ drivers/gpu/drm/tegra/output.c | 25 ++++++++++++++++++++++++-
+ 2 files changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-index 4be4dfd4a68a..6e6b3fee1d87 100644
---- a/drivers/gpu/drm/tegra/rgb.c
-+++ b/drivers/gpu/drm/tegra/rgb.c
-@@ -275,21 +275,32 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
- 	if (!dc->rgb)
- 		return -ENODEV;
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index ed99b67deb29..9ca11989679c 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -16,6 +16,7 @@
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_fixed.h>
++#include <drm/drm_of.h>
+ #include <drm/drm_probe_helper.h>
+ #include <uapi/drm/tegra_drm.h>
  
-+	drm_encoder_init(drm, &output->encoder, &tegra_rgb_encoder_funcs,
-+			 DRM_MODE_ENCODER_LVDS, NULL);
-+	drm_encoder_helper_add(&output->encoder,
-+			       &tegra_rgb_encoder_helper_funcs);
+@@ -116,6 +117,7 @@ struct tegra_output {
+ 	struct device_node *of_node;
+ 	struct device *dev;
+ 
++	struct drm_bridge *bridge;
+ 	struct drm_panel *panel;
+ 	struct i2c_adapter *ddc;
+ 	const struct edid *edid;
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index a264259b97a2..6b8fae4659b4 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -96,13 +96,28 @@ static irqreturn_t hpd_irq(int irq, void *data)
+ 
+ int tegra_output_probe(struct tegra_output *output)
+ {
+-	struct device_node *ddc, *panel;
++	struct device_node *ddc, *panel, *port;
+ 	unsigned long flags;
+ 	int err, size;
+ 
+ 	if (!output->of_node)
+ 		output->of_node = output->dev->of_node;
+ 
++	/* newer device-trees may utilize output graph */
++	port = of_get_child_by_name(output->of_node, "port");
++	if (port) {
++		err = drm_of_find_panel_or_bridge(output->of_node, 0, 0,
++						  &output->panel,
++						  &output->bridge);
++		of_node_put(port);
++		if (err)
++			return err;
++	}
 +
-+	/*
-+	 * We don't create a parent "output bridge" that sets the
-+	 * DRM_BRIDGE_ATTACH_NO_CONNECTOR flag for drm_bridge_attach(),
-+	 * and thus, the bridge creates connector for us in this case.
-+	 * The output's connector is unused and not needed if bridge is
-+	 * used, so skip the connector's registration in this case.
-+	 */
-+	if (output->bridge)
-+		goto init_output;
++	if (output->panel || output->bridge)
++		goto edid_property;
 +
- 	drm_connector_init(drm, &output->connector, &tegra_rgb_connector_funcs,
- 			   DRM_MODE_CONNECTOR_LVDS);
- 	drm_connector_helper_add(&output->connector,
- 				 &tegra_rgb_connector_helper_funcs);
- 	output->connector.dpms = DRM_MODE_DPMS_OFF;
++	/* for older device-trees we fall back to nvidia,panel */
+ 	panel = of_parse_phandle(output->of_node, "nvidia,panel", 0);
+ 	if (panel) {
+ 		output->panel = of_drm_find_panel(panel);
+@@ -112,6 +127,7 @@ int tegra_output_probe(struct tegra_output *output)
+ 		of_node_put(panel);
+ 	}
  
--	drm_encoder_init(drm, &output->encoder, &tegra_rgb_encoder_funcs,
--			 DRM_MODE_ENCODER_LVDS, NULL);
--	drm_encoder_helper_add(&output->encoder,
--			       &tegra_rgb_encoder_helper_funcs);
--
- 	drm_connector_attach_encoder(&output->connector,
- 					  &output->encoder);
- 	drm_connector_register(&output->connector);
++edid_property:
+ 	output->edid = of_get_property(output->of_node, "nvidia,edid", &size);
  
-+init_output:
- 	err = tegra_output_init(drm, output);
- 	if (err < 0) {
- 		dev_err(output->dev, "failed to initialize output: %d\n", err);
+ 	ddc = of_parse_phandle(output->of_node, "nvidia,ddc-i2c-bus", 0);
+@@ -189,6 +205,13 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
+ 		err = drm_panel_attach(output->panel, &output->connector);
+ 		if (err < 0)
+ 			return err;
++	} else if (output->bridge) {
++		err = drm_bridge_attach(&output->encoder, output->bridge,
++					NULL, 0);
++		if (err) {
++			dev_err(drm->dev, "cannot connect bridge: %d\n", err);
++			return err;
++		}
+ 	}
+ 
+ 	/*
 -- 
 2.26.0
