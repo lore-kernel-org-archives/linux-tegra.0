@@ -1,98 +1,80 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
- Tegra210
-Date: Tue, 14 Apr 2020 17:08:15 +0200
-Message-ID: <20200414150815.GM3593749@ulmo>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 07/14] clk: tegra: Implement Tegra210 EMC clock
+Date: Tue, 14 Apr 2020 18:18:29 +0300
+Message-ID: <92eb73ba-73e4-f9f1-bb22-9b515e32cee6@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-10-thierry.reding@gmail.com>
- <e015e35b-3f82-56e1-2d86-ebc467eb92f7@gmail.com>
+ <20200409175238.3586487-8-thierry.reding@gmail.com>
+ <8dc000fb-8867-cf8f-8204-a9e1e79a4811@gmail.com>
+ <20200414143424.GG3593749@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============9169072578923982654=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
-In-Reply-To: <e015e35b-3f82-56e1-2d86-ebc467eb92f7@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200414143424.GG3593749@ulmo>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+14.04.2020 17:34, Thierry Reding пишет:
+> On Thu, Apr 09, 2020 at 09:24:31PM +0300, Dmitry Osipenko wrote:
+>> 09.04.2020 20:52, Thierry Reding пишет:
+>> ...
+>>> +static long tegra210_clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
+>>> +					unsigned long *prate)
+>>> +{
+>>> +	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
+>>> +	struct tegra210_clk_emc_provider *provider = emc->provider;
+>>> +	unsigned int i;
+>>> +
+>>> +	if (!provider || !provider->configs || provider->num_configs == 0)
+>>> +		return clk_hw_get_rate(hw);
+>>
+>> This still looks wrong to me. Nobody should be able to get EMC clock
+>> until provider is registered.
+> 
+> The EMC clock is mostly orthogonal to the provider. The provider really
+> only allows you to actually change the frequency. The clock will still
+> remain even if the provider goes away, it just will loose the ability to
+> change rate.
 
---===============9169072578923982654==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="75WsOQSofUOhcSOp"
-Content-Disposition: inline
+It's not only about changing the clock rate, but also about rounding the
+rate and etc.
 
+Besides, you won't be able to change the rate until provider is
+registered, which might be a quite big problem by itself.
 
---75WsOQSofUOhcSOp
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> This is troublesome, especially given that you're allowing the EMC
+>> driver to be compiled as a loadable module. For example, this won't work
+>> with the current ACTMON driver because it builds OPP table based on the
+>> clk-rate rounding during the driver's probe, so it won't be able to do
+>> it properly if provider is "temporarily" missing.
+>>
+>> ... I think that in a longer run we should stop manually building the
+>> ACTMON's OPP table and instead define a proper OPP table (per-HW Speedo
+>> ID, with voltages) in a device-tree. But this is just a vague plans for
+>> the future for now.
+> 
+> This code only applies to Tegra210 and we don't currently support ACTMON
+> on Tegra210. I'm also not sure we'll ever do because using interconnects
+> to describe paths to system memory and then using ICC requests for each
+> driver to submit memory bandwidth requests seems like a better way of
+> dealing with this problem than using ACTMON to monitor activity because
+> that only allows you to react, whereas we really want to be able to
+> allocate memory bandwidth upfront.
 
-On Fri, Apr 10, 2020 at 05:25:06PM +0300, Dmitry Osipenko wrote:
-> 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
-> > +static int tegra210_emc_remove(struct platform_device *pdev)
-> > +{
-> > +	struct tegra210_emc *emc =3D platform_get_drvdata(pdev);
-> > +
-> > +	debugfs_remove_recursive(emc->debugfs.root);
-> > +	tegra210_clk_emc_detach(emc->clk);
->=20
-> It's great that you want to make this driver modular, but I don't think
-> that it's a good idea to suddenly rip off the EMC clock from the users.
->=20
-> It should be better to simply disallow unloading of this driver once
-> it's loaded.
+You absolutely have to have the ACTMON support if you want to provide a
+good user experience because interconnect won't take into account the
+dynamic CPU memory traffic. Without ACTMON support CPU will turn into a
+"turtle" if memory runs on a lowest freq, while CPU needs the highest.
 
-That's not what we're doing. The clock is going to stay around and users
-will be able to access it. The only thing that the above does is take
-away the possibility to change the rate of the EMC clock.
+Secondly, the interconnect could underestimate the memory BW requirement
+because memory performance depends quite a lot on the memory-accessing
+patterns and it's not possible to predict it properly. Otherwise you may
+need to always overestimate the BW, which perhaps is not what anyone
+would really want to have.
 
-So I think this actually makes this really nice both for testing that
-unload/reload works and it also gives users an easy way to disable EMC
-frequency scaling by simply blacklisting the module.
-
-Thierry
-
---75WsOQSofUOhcSOp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6V0d4ACgkQ3SOs138+
-s6GsWw/+M5/HCC6YVqevVHN5rlOJp1Ymn8G8PfobgyJaQ+IQ5YBian1VcklzBhNx
-jqEPh0NaQTMm8Lq30si3Es6lnPugjOhhsYpGP2PVQ8Fpgr33hqoileVYzHYe4uMP
-uk7SUYzZMoBAdO936koxzvfVIS86NGqzVciHH7xDQqndF1PoRShxkHA+Fmg7FuwA
-BNKrTPyYObiEZD0KO45fHkyWxrBl7lfk6Qm9gMyM5wpp80JHI/gGkmE3kUocMW/w
-zYXnGLES5NcrDgBDv1aRAlt8pafa1TrFtZIpADX2Y3q533/TEojbb3f9BtYkLCAP
-8cfmAfFdHK9gOo68OGpPFePzFZRYdxEH3xCGOsISgMoE5PRIKpLhVZW1/zlaVGHG
-yQUuKR2c/G+qlPgD1vb42B7b7cPmA3DU7KGZn7aUhDTuR8ovDd29Xzzqzvf9Gq52
-CKZFYirYrVuNF4Yu81JCQejfoOy3dah1EILZ/H4rwsIZGbNmzNt8uMPJ9/b0UAht
-9aCgJJC05SNFFeWT7PYgleJHLLl5zpdStTbZgSHdjyS7az2+hTCU/ZxEFVUbfARp
-yMauGoTgjC+Tmlo2i8u/TO91xvVVLx0jnhAT9QETnjYkTZtr1T5h8jh9u2EIguHb
-oFtPdGtkf4+73XZxomkd6XA3sThbRwKYCuzJUIupCz+fwe2ByZQ=
-=UtAs
------END PGP SIGNATURE-----
-
---75WsOQSofUOhcSOp--
-
-
---===============9169072578923982654==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============9169072578923982654==--
+I'm not sure why you're resisting to do it all properly from the start,
+it looks to me that it will take you just a few lines of code (like in a
+case of the T20/30 EMC).
