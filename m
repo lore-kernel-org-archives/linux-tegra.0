@@ -1,32 +1,27 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC PATCH v6 5/9] dt-binding: tegra: Add VI and CSI bindings
-Date: Tue, 14 Apr 2020 13:14:44 -0500
-Message-ID: <20200414181444.GA17346@bogus>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH v6 8/9] dt-bindings: reset: Add ID for Tegra210 VI
+ reset
+Date: Tue, 14 Apr 2020 13:14:58 -0500
+Message-ID: <20200414181458.GA18112@bogus>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <1585963507-12610-6-git-send-email-skomatineni@nvidia.com>
+ <1585963507-12610-9-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1585963507-12610-6-git-send-email-skomatineni@nvidia.com>
-Sender: linux-media-owner@vger.kernel.org
-Cc: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1585963507-12610-9-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 3 Apr 2020 18:25:03 -0700, Sowjanya Komatineni wrote:
-> Tegra contains VI controller which can support up to 6 MIPI CSI
-> camera sensors.
+On Fri, 3 Apr 2020 18:25:06 -0700, Sowjanya Komatineni wrote:
+> This patch adds ID for Tegra210 VI controller reset to use with
+> device tree.
 > 
-> Each Tegra CSI port from CSI unit can be one-to-one mapper to
-> VI channel and can capture from an external camera sensor or
-> from built-in test pattern generator.
-> 
-> This patch adds dt-bindings for Tegra VI and CSI.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  .../display/tegra/nvidia,tegra20-host1x.txt        | 73 ++++++++++++++++++----
->  1 file changed, 60 insertions(+), 13 deletions(-)
+>  include/dt-bindings/reset/tegra210-car.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
