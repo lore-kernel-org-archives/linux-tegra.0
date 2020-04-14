@@ -1,16 +1,15 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
  Tegra210
-Date: Tue, 14 Apr 2020 17:05:16 +0200
-Message-ID: <20200414150516.GL3593749@ulmo>
+Date: Tue, 14 Apr 2020 17:08:15 +0200
+Message-ID: <20200414150815.GM3593749@ulmo>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
  <20200409175238.3586487-10-thierry.reding@gmail.com>
- <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61@gmail.com>
- <6976796c-6972-328e-3e9f-60c1737cf0e2@gmail.com>
+ <e015e35b-3f82-56e1-2d86-ebc467eb92f7@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6817736749206469243=="
+Content-Type: multipart/mixed; boundary="===============9169072578923982654=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
-In-Reply-To: <6976796c-6972-328e-3e9f-60c1737cf0e2@gmail.com>
+In-Reply-To: <e015e35b-3f82-56e1-2d86-ebc467eb92f7@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -25,87 +24,67 @@ Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Michael Turquet
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============6817736749206469243==
+--===============9169072578923982654==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Ms5iOKSBOB9YS8zC"
+	protocol="application/pgp-signature"; boundary="75WsOQSofUOhcSOp"
 Content-Disposition: inline
 
 
---Ms5iOKSBOB9YS8zC
-Content-Type: text/plain; charset=us-ascii
+--75WsOQSofUOhcSOp
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 11, 2020 at 11:39:08PM +0300, Dmitry Osipenko wrote:
-> > ...
-> >> +#define TRIM_REG(chan, rank, reg, byte)					\
-> >> +	(((EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
-> >> +	   _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _MASK &	\
-> >> +	   next->trim_regs[EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ##		\
-> >> +				 rank ## _ ## reg ## _INDEX]) >>	\
-> >> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
-> >> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _SHIFT)	\
-> >> +	 +								\
-> >> +	 (((EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
-> >> +	    byte ## _DATA_BRLSHFT_MASK &				\
-> >> +	    next->trim_perch_regs[EMC ## chan ##			\
-> >> +			      _EMC_DATA_BRLSHFT_ ## rank ## _INDEX]) >>	\
-> >> +	   EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
-> >> +	   byte ## _DATA_BRLSHFT_SHIFT) * 64))
-> >> +
-> >> +#define CALC_TEMP(rank, reg, byte1, byte2, n)				\
-> >> +	(((new[n] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##	\
-> >> +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _SHIFT)=
- & \
-> >> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
-> >> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _MASK)	\
-> >> +	 |								\
-> >> +	 ((new[n + 1] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##\
-> >> +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _SHIFT)=
- & \
-> >> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
-> >> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _MASK))
+On Fri, Apr 10, 2020 at 05:25:06PM +0300, Dmitry Osipenko wrote:
+> 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+> > +static int tegra210_emc_remove(struct platform_device *pdev)
+> > +{
+> > +	struct tegra210_emc *emc =3D platform_get_drvdata(pdev);
+> > +
+> > +	debugfs_remove_recursive(emc->debugfs.root);
+> > +	tegra210_clk_emc_detach(emc->clk);
 >=20
-> What about replacing those barely readable concatenated macros with a
-> raw values?
+> It's great that you want to make this driver modular, but I don't think
+> that it's a good idea to suddenly rip off the EMC clock from the users.
 >=20
-> Like:
->=20
-> TRIM_REG(brlshft_idx, ob_ddll_long_dq_rank_mask, ...)
+> It should be better to simply disallow unloading of this driver once
+> it's loaded.
 
-That's just going to move the complexity from the macros to the
-callsites, isn't it?
+That's not what we're doing. The clock is going to stay around and users
+will be able to access it. The only thing that the above does is take
+away the possibility to change the rate of the EMC clock.
 
-I suppose I could spend a few cycles trying to make this a little more
-readable, but to be frank, the complexity in this driver is already so
-high that this doesn't really make much of a difference, in my opinion.
+So I think this actually makes this really nice both for testing that
+unload/reload works and it also gives users an easy way to disable EMC
+frequency scaling by simply blacklisting the module.
 
 Thierry
 
---Ms5iOKSBOB9YS8zC
+--75WsOQSofUOhcSOp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6V0SwACgkQ3SOs138+
-s6Ef9w//fxlmCh7FtrH73REQqtD+jRwwLCO5WMC+EHjBY4EUR5lv5mZnrA0uIaBc
-FNV4X8OExlN0dMsbYdRTp9CJO7Q8IPggLgaGJQOrR55cT+K8EUXhUPuRPyt83PNY
-2x5zUNxRJzxmVqH8OUrknejB/2bedly4MvLNz2rDo9orQVzGRCW05kl9sQmLTl+k
-ieyYqweSPPRMw/tgomH2tAz5SaQqnXvv6OK/7JD0Ic9eFBjm2R526wNThK5Tmmzm
-jpKuyQv6tksZ5QqLouZHvJIBxN54gF55p57v5SY1LFoj+8Aas1GtdbO9ioKvM86L
-OveTWkfYxQUHMDITXcpvnCP3UJOWygeuqxb1azRphChylfgtcppQN/od2ms0AJ0t
-femDyT/oDOUbNtwau0hUpckUD3Iag0IkBxu5RKa0aOzQwtxqy0uAL1Oi6qbmYJnN
-gzy0PfSnDJqUsIuVxt+S1fKZwnMsCFeGvvqe8IH04drmxLbg1z3OqbCJeBV3xNyg
-mK1tsOoFIBnr8nf7ZHODgp5etjxFofaSHV5Ox8oFhNutC+hpmLi5/rQ90P5Jxu/L
-3qUkOEGo+MzCMXiUEgJmKjWFLdTxlAQxH3Kq8KnjaedTBgU9NVKvJr97aTWMo/NI
-hq9dUvpBJcU01rW0hwcuoeEFOO0ntQo4RzH9ugOBZLQ/Wx1/24A=
-=ktP9
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6V0d4ACgkQ3SOs138+
+s6GsWw/+M5/HCC6YVqevVHN5rlOJp1Ymn8G8PfobgyJaQ+IQ5YBian1VcklzBhNx
+jqEPh0NaQTMm8Lq30si3Es6lnPugjOhhsYpGP2PVQ8Fpgr33hqoileVYzHYe4uMP
+uk7SUYzZMoBAdO936koxzvfVIS86NGqzVciHH7xDQqndF1PoRShxkHA+Fmg7FuwA
+BNKrTPyYObiEZD0KO45fHkyWxrBl7lfk6Qm9gMyM5wpp80JHI/gGkmE3kUocMW/w
+zYXnGLES5NcrDgBDv1aRAlt8pafa1TrFtZIpADX2Y3q533/TEojbb3f9BtYkLCAP
+8cfmAfFdHK9gOo68OGpPFePzFZRYdxEH3xCGOsISgMoE5PRIKpLhVZW1/zlaVGHG
+yQUuKR2c/G+qlPgD1vb42B7b7cPmA3DU7KGZn7aUhDTuR8ovDd29Xzzqzvf9Gq52
+CKZFYirYrVuNF4Yu81JCQejfoOy3dah1EILZ/H4rwsIZGbNmzNt8uMPJ9/b0UAht
+9aCgJJC05SNFFeWT7PYgleJHLLl5zpdStTbZgSHdjyS7az2+hTCU/ZxEFVUbfARp
+yMauGoTgjC+Tmlo2i8u/TO91xvVVLx0jnhAT9QETnjYkTZtr1T5h8jh9u2EIguHb
+oFtPdGtkf4+73XZxomkd6XA3sThbRwKYCuzJUIupCz+fwe2ByZQ=
+=UtAs
 -----END PGP SIGNATURE-----
 
---Ms5iOKSBOB9YS8zC--
+--75WsOQSofUOhcSOp--
 
 
---===============6817736749206469243==
+--===============9169072578923982654==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -116,4 +95,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============6817736749206469243==--
+--===============9169072578923982654==--
