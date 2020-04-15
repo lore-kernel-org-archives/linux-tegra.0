@@ -1,300 +1,471 @@
-From: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] pwm: tegra: dynamic clk freq configuration by PWM driver
-Date: Wed, 15 Apr 2020 09:03:35 +0000
-Message-ID: <BYAPR12MB3014C0178A7360662C6FA8B7ADDB0@BYAPR12MB3014.namprd12.prod.outlook.com>
-References: <1585917303-10573-1-git-send-email-spatra@nvidia.com>
- <20200403151050.nh2mrffkqdqtkozq@pengutronix.de>
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 3/4] media: move CEC platform drivers to a separate directory
+Date: Wed, 15 Apr 2020 11:49:26 +0200
+Message-ID: <c3f6462dc782c7416c9df982f61119a067b11a37.1586944045.git.mchehab+huawei@kernel.org>
+References: <cover.1586944045.git.mchehab+huawei@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200403151050.nh2mrffkqdqtkozq-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <cover.1586944045.git.mchehab+huawei@kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Ettore Chimenti <ek5.chimenti@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Thank you Uwe for reviewing the changes.
-And sorry for the delay in my response.
-Please find the responses inline.
+As CEC support doesn't depend on MEDIA_SUPPORT, let's
+place the platform drivers outside the media menu.
 
+As a side effect, instead of depends on PCI, seco driver
+can select it (and DMI).
 
-Thanks & Regards,
-Sandipan
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ drivers/media/cec/Kconfig                     |   6 +-
+ drivers/media/cec/Makefile                    |   2 +-
+ drivers/media/cec/platform/Kconfig            | 121 ++++++++++++++++++
+ drivers/media/cec/platform/Makefile           |  11 ++
+ .../{ => cec}/platform/cec-gpio/Makefile      |   0
+ .../{ => cec}/platform/cec-gpio/cec-gpio.c    |   0
+ .../s5p-cec => cec/platform/s5p}/Makefile     |   0
+ .../platform/s5p}/exynos_hdmi_cec.h           |   0
+ .../platform/s5p}/exynos_hdmi_cecctrl.c       |   0
+ .../s5p-cec => cec/platform/s5p}/regs-cec.h   |   0
+ .../s5p-cec => cec/platform/s5p}/s5p_cec.c    |   0
+ .../s5p-cec => cec/platform/s5p}/s5p_cec.h    |   0
+ .../seco-cec => cec/platform/seco}/Makefile   |   0
+ .../seco-cec => cec/platform/seco}/seco-cec.c |   0
+ .../seco-cec => cec/platform/seco}/seco-cec.h |   0
+ .../sti/cec => cec/platform/sti}/Makefile     |   0
+ .../sti/cec => cec/platform/sti}/stih-cec.c   |   0
+ .../tegra-cec => cec/platform/tegra}/Makefile |   0
+ .../platform/tegra}/tegra_cec.c               |   0
+ .../platform/tegra}/tegra_cec.h               |   0
+ drivers/media/platform/Kconfig                | 121 ------------------
+ drivers/media/platform/Makefile               |   8 --
+ 22 files changed, 138 insertions(+), 131 deletions(-)
+ create mode 100644 drivers/media/cec/platform/Kconfig
+ create mode 100644 drivers/media/cec/platform/Makefile
+ rename drivers/media/{ => cec}/platform/cec-gpio/Makefile (100%)
+ rename drivers/media/{ => cec}/platform/cec-gpio/cec-gpio.c (100%)
+ rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/Makefile (100%)
+ rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/exynos_hdmi_cec.h (100%)
+ rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/exynos_hdmi_cecctrl.c (100%)
+ rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/regs-cec.h (100%)
+ rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/s5p_cec.c (100%)
+ rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/s5p_cec.h (100%)
+ rename drivers/media/{platform/seco-cec => cec/platform/seco}/Makefile (100%)
+ rename drivers/media/{platform/seco-cec => cec/platform/seco}/seco-cec.c (100%)
+ rename drivers/media/{platform/seco-cec => cec/platform/seco}/seco-cec.h (100%)
+ rename drivers/media/{platform/sti/cec => cec/platform/sti}/Makefile (100%)
+ rename drivers/media/{platform/sti/cec => cec/platform/sti}/stih-cec.c (100%)
+ rename drivers/media/{platform/tegra-cec => cec/platform/tegra}/Makefile (100%)
+ rename drivers/media/{platform/tegra-cec => cec/platform/tegra}/tegra_cec.c (100%)
+ rename drivers/media/{platform/tegra-cec => cec/platform/tegra}/tegra_cec.h (100%)
 
-> -----Original Message-----
-> From: Uwe Kleine-K=F6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> Sent: Friday, April 3, 2020 8:41 PM
-> To: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org; Jonathan
-> Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; Laxman
-> Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
-> kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Subject: Re: [PATCH] pwm: tegra: dynamic clk freq configuration by PWM dr=
-iver
->=20
-> External email: Use caution opening links or attachments
->=20
->=20
-> On Fri, Apr 03, 2020 at 06:05:03PM +0530, Sandipan Patra wrote:
-> > Added support for dynamic clock freq configuration in pwm kernel driver=
-.
-> > Earlier the pwm driver used to cache boot time clock rate by pwm clock
-> > parent during probe. Hence dynamically changing pwm frequency was not
-> > possible for all the possible ranges. With this change, dynamic
-> > calculation is enabled and it is able to set the requested period from
-> > sysfs knob provided the value is supported by clock source.
->=20
-> Without having looked closely at the patch (yet), just for my
-> understanding: If the PWM is running and the frequency changes, the outpu=
-t
-> changes, too, right? If so, do we need a notifier that prevents a frequen=
-cy
-> change when the PWM is running?
-Yes, frequency can be changed anytime but by the same process who has=20
-acquired the channel. So if a process is already running/using the channel,
-same process can only modify the frequency.
-
->=20
-> And slightly orthogonal to this patch: The tegra driver needs some love t=
-o make
-> it use the atomic callback .apply() instead of
-> .config()/.enable()/.disable() and a .get_state() implementation.
-Understood to upgrade pwm-tegra driver with using .apply()
-I will work on this with a new change request soon.
->=20
-> > Changes mainly have 2 parts:
-> >   - T186 and later chips [1]
-> >   - T210 and prior chips [2]
-> >
-> > For [1] - Changes implemented to set pwm period dynamically and
-> >           also checks added to allow only if requested period(ns) is
-> >           below or equals to higher range.
-> >
-> > For [2] - Only checks if the requested period(ns) is below or equals
-> >           to higher range defined by max clock limit. The limitation
-> >           in T210 or prior chips are due to the reason of having only
-> >           one pwm-controller supporting multiple channels. But later
-> >           chips have multiple pwm controller instances each having
-> >         single channel support.
-> >
-> > Signed-off-by: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/pwm/pwm-tegra.c | 45
-> > +++++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 43 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c index
-> > aa12fb3..d3ba33c 100644
-> > --- a/drivers/pwm/pwm-tegra.c
-> > +++ b/drivers/pwm/pwm-tegra.c
-> > @@ -4,7 +4,7 @@
-> >   *
-> >   * Tegra pulse-width-modulation controller driver
-> >   *
-> > - * Copyright (c) 2010, NVIDIA Corporation.
-> > + * Copyright (c) 2010-2020, NVIDIA Corporation.
-> >   * Based on arch/arm/plat-mxc/pwm.c by Sascha Hauer
-> <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> >   */
-> >
-> > @@ -83,10 +83,51 @@ static int tegra_pwm_config(struct pwm_chip *chip,
-> struct pwm_device *pwm,
-> >       val =3D (u32)c << PWM_DUTY_SHIFT;
-> >
-> >       /*
-> > +      * Its okay to ignore the fraction part since we will be trying t=
-o set
-> > +      * slightly lower value to rate than the actual required rate
->=20
-> s/actual/actually/
-Noted. I will update in the follow up patch.
-
->=20
-> You round down the rate, that results in rounding up period and duty_cycl=
-e,
-> right? If so, that's wrong. (Note that if the driver would use the atomic=
- callbacks,
-> the just introduced debug checks would tell you this.)
->=20
-> > +      */
-> > +     rate =3D NSEC_PER_SEC/period_ns;
->=20
-> space around / please.
-Noted. I will update in the follow up patch.
-
->=20
-> > +
-> > +     /*
-> > +      *  Period in nano second has to be <=3D highest allowed period
-> > +      *  based on the max clock rate of the pwm controller.
-> > +      *
-> > +      *  higher limit =3D max clock limit >> PWM_DUTY_WIDTH
-> > +      */
-> > +     if (rate > (pc->soc->max_frequency >> PWM_DUTY_WIDTH))
-> > +             return -EINVAL;
->=20
-> Related to my question above: What happens if the rate increases after th=
-is
-> check?
-Discussed above with my understanding. Please help me understand if=20
-you are referring to any other possibilities that rate can be changed.=20
-
->=20
-> Also the division above is just done to compare the requested period valu=
-e with
-> the allowed range.
->=20
-> Your check is:
->=20
->         NSEC_PER_SEC / period_ns > (max_frequency >> PWM_DUTY_WIDTH)
->=20
-> This is equivalent to
->=20
->         period_ns <=3D NSEC_PER_SEC / (max_frequency >> PWM_DUTY_WIDTH)
->=20
-> where the right side is constant per PWM type. (Rounding might need
-> addressing.)
-I will update this calculation in the probe since max_frequency value is
-Different for each chip. Also please note that at this point the rate is no=
-t
-the actual pwm output rate. It's just a reference for what should be the
-source clock rate and then requested with clk_set_rate();
-Actual rounding is required while setting pwm controller output rate is
-done later down in same function.=20
-
->=20
-> > +
-> > +     /*
-> >        * Compute the prescaler value for which (1 << PWM_DUTY_WIDTH)
-> >        * cycles at the PWM clock rate will take period_ns nanoseconds.
-> >        */
-> > -     rate =3D pc->clk_rate >> PWM_DUTY_WIDTH;
-> > +     if (pc->soc->num_channels =3D=3D 1) {
-> > +             /*
-> > +              * Rate is multiplied with 2^PWM_DUTY_WIDTH so that it ma=
-tches
-> > +              * with the hieghest applicable rate that the controller
-> > + can
->=20
-> typo: s/hieghest/highest/
-Noted. I will update in the follow up patch.=20
-
->=20
-> > +              * provide. Any further lower value can be derived by set=
-ting
-> > +              * PFM bits[0:12].
-> > +              * Higher mark is taken since BPMP has round-up mechanism
-> > +              * implemented.
-> > +              */
-> > +             rate =3D rate << PWM_DUTY_WIDTH;
-> > +
-> > +             err =3D clk_set_rate(pc->clk, rate);
-> > +             if (err < 0)
-> > +                     return -EINVAL;
-> > +
-> > +             rate =3D clk_get_rate(pc->clk) >> PWM_DUTY_WIDTH;
-> > +     } else {
-> > +             /*
-> > +              * This is the case for SoCs who support multiple channel=
-s:
->=20
-> s/who/that/
-Noted. I will update in the follow up patch.
-
->=20
-> > +              *
-> > +              * clk_set_rate() can not be called again in config becau=
-se
-> > +              * T210 or any prior chip supports one pwm-controller and
-> > +              * multiple channels. Hence in this case cached clock rat=
-e
-> > +              * will be considered which was stored during probe.
->=20
-> I don't understand that. If
-The if part is for SoCs which have single channel per pwm instance. i.e. T1=
-86,=20
-T194 etc. For controllers with single channel, dynamic clock rate configura=
-tion
-is possible. The other part is for legacy controller which has multiple cha=
-nnels
-for single pwm instance. The pwm controllers having multiple channels share
-the source clock. So it does not allow dynamic clock configuration since it
-will affect users on the other channels.
-
-> > +              */
-> > +             rate =3D pc->clk_rate >> PWM_DUTY_WIDTH;
-> > +     }
-> >
-> >       /* Consider precision in PWM_SCALE_WIDTH rate calculation */
-> >       hz =3D DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
->=20
-> I took a deeper look into the driver now. Just to ensure, I understood th=
-e PWMs
-> behaviour right:
->=20
-> There is an ENABLE bit (with obvious semantics), a 13-bit SCALE value and=
- an 8-
-> bit DUTY value. There is an internal counter incrementing by one each (SC=
-ALE +
-> 1) clock cycles and resets at 256. The counter going from 0 to 256 define=
-s the
-> period length. On counter reset the output gets active and on reaching DU=
-TY the
-> output gets inactive.
->=20
-> So we have:
->=20
->         .period =3D 256 * (SCALE + 1) / clkrate
->         .duty_cycle =3D DUTY * (SCALE + 1) / clkrate
->=20
-> Right?
-Yes. Right.
-
->=20
-> There are a few things that could be improved in the driver:
->=20
->  - .config() does quite some divisions. This could be reduced which
->    probably even reduces rounding effects.
-Explained above and will move the calculation to probe.=20
->=20
->  - When .duty_ns =3D=3D .period the assignment of DUTY overflows.
->    (Can the PWM provide 100% duty cycle at all?)
-Yes, PWM controller is capable to provide 100% duty cycle.
-Bits 30:16 are dedicated for pulse width out of which only 24:16 (9 bits)
-are used. Only 8 bits are usable [23:16] for varying pulse width.
-To achieve 100% duty cycle, Bit [24] needs to be programmed of this
-register to 1'b1.
-
->=20
->  - The comment "Since the actual PWM divider is the register's frequency
->    divider field minus 1, we need to decrement to get the correct value
->    to write to the register." seems wrong. If I understand correctly, we
->    need to do s/minus/plus/. If the register holds a 0, the divider
->    isn't -1 for sure?!
-Yes, you are right. The comment needs a correction. It will be plus 1=20
-instead of minus 1. I will update the comment in the follow up patch.
-Otherwise the calculation is correct.
-rate =3D DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
-here rate is the divider value to be set.
-
->=20
-> How does the PWM behave when it gets disabled? Does it complete the
-> currently running period? Does the output stop at the inactive level, or =
-where it
-> just happens to be? How does a running PWM behave when the register is
-> updated? Does it complete the currently running period?
-Yes, it allows to write the bit during any active and inactive time of the
-width. Hence the pwm gets disabled as soon as the enable bit is set to 0.
-
->=20
-> Best regards
-> Uwe
->=20
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=F6nig          =
-  |
-> Industrial Linux Solutions                 | https://www.pengutronix.de/ =
-|
+diff --git a/drivers/media/cec/Kconfig b/drivers/media/cec/Kconfig
+index 1586dd899302..7b1fb70066bd 100644
+--- a/drivers/media/cec/Kconfig
++++ b/drivers/media/cec/Kconfig
+@@ -21,7 +21,7 @@ config CEC_PIN_ERROR_INJ
+ 	help
+ 	  This option enables CEC error injection using debugfs.
+ 
+-config MEDIA_CEC_SUPPORT
++menuconfig MEDIA_CEC_SUPPORT
+ 	bool
+ 	prompt "HDMI CEC drivers"
+ 	default y if !MEDIA_SUPPORT_FILTER
+@@ -31,3 +31,7 @@ config MEDIA_CEC_SUPPORT
+ 
+ 	  Say Y when you have an HDMI receiver, transmitter or a USB CEC
+ 	  adapter that supports HDMI CEC.
++
++if MEDIA_CEC_SUPPORT
++source "drivers/media/cec/platform/Kconfig"
++endif
+diff --git a/drivers/media/cec/Makefile b/drivers/media/cec/Makefile
+index 3fdbc22b1530..8c6448bee386 100644
+--- a/drivers/media/cec/Makefile
++++ b/drivers/media/cec/Makefile
+@@ -1,2 +1,2 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-y += core/
++obj-y += core/ platform/
+diff --git a/drivers/media/cec/platform/Kconfig b/drivers/media/cec/platform/Kconfig
+new file mode 100644
+index 000000000000..6a8bb8b68344
+--- /dev/null
++++ b/drivers/media/cec/platform/Kconfig
+@@ -0,0 +1,121 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# Platform drivers
++
++config VIDEO_CROS_EC_CEC
++	tristate "ChromeOS EC CEC driver"
++	depends on CROS_EC
++	select CEC_CORE
++	select CEC_NOTIFIER
++	select CROS_EC_PROTO
++	help
++	  If you say yes here you will get support for the
++	  ChromeOS Embedded Controller's CEC.
++	  The CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
++
++config VIDEO_MESON_AO_CEC
++	tristate "Amlogic Meson AO CEC driver"
++	depends on ARCH_MESON || COMPILE_TEST
++	select CEC_CORE
++	select CEC_NOTIFIER
++	help
++	  This is a driver for Amlogic Meson SoCs AO CEC interface. It uses the
++	  generic CEC framework interface.
++	  CEC bus is present in the HDMI connector and enables communication
++
++config VIDEO_MESON_G12A_AO_CEC
++	tristate "Amlogic Meson G12A AO CEC driver"
++	depends on ARCH_MESON || COMPILE_TEST
++	depends on COMMON_CLK && OF
++	select REGMAP
++	select REGMAP_MMIO
++	select CEC_CORE
++	select CEC_NOTIFIER
++	---help---
++	  This is a driver for Amlogic Meson G12A SoCs AO CEC interface.
++	  This driver if for the new AO-CEC module found in G12A SoCs,
++	  usually named AO_CEC_B in documentation.
++	  It uses the generic CEC framework interface.
++	  CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
++
++config CEC_GPIO
++	tristate "Generic GPIO-based CEC driver"
++	depends on PREEMPTION || COMPILE_TEST
++	select CEC_CORE
++	select CEC_PIN
++	select CEC_NOTIFIER
++	select GPIOLIB
++	help
++	  This is a generic GPIO-based CEC driver.
++	  The CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
++
++config VIDEO_SAMSUNG_S5P_CEC
++	tristate "Samsung S5P CEC driver"
++	depends on ARCH_EXYNOS || COMPILE_TEST
++	select CEC_CORE
++	select CEC_NOTIFIER
++	help
++	  This is a driver for Samsung S5P HDMI CEC interface. It uses the
++	  generic CEC framework interface.
++	  CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
++
++config VIDEO_STI_HDMI_CEC
++	tristate "STMicroelectronics STiH4xx HDMI CEC driver"
++	depends on ARCH_STI || COMPILE_TEST
++	select CEC_CORE
++	select CEC_NOTIFIER
++	help
++	  This is a driver for STIH4xx HDMI CEC interface. It uses the
++	  generic CEC framework interface.
++	  CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
++
++config VIDEO_STM32_HDMI_CEC
++	tristate "STMicroelectronics STM32 HDMI CEC driver"
++	depends on ARCH_STM32 || COMPILE_TEST
++	select REGMAP
++	select REGMAP_MMIO
++	select CEC_CORE
++	help
++	  This is a driver for STM32 interface. It uses the
++	  generic CEC framework interface.
++	  CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
++
++config VIDEO_TEGRA_HDMI_CEC
++	tristate "Tegra HDMI CEC driver"
++	depends on ARCH_TEGRA || COMPILE_TEST
++	select CEC_CORE
++	select CEC_NOTIFIER
++	help
++	  This is a driver for the Tegra HDMI CEC interface. It uses the
++	  generic CEC framework interface.
++	  The CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
++
++config VIDEO_SECO_CEC
++	tristate "SECO Boards HDMI CEC driver"
++	depends on (X86 || IA64) || COMPILE_TEST
++	select PCI
++	select DMI
++	select CEC_CORE
++	select CEC_NOTIFIER
++	help
++	  This is a driver for SECO Boards integrated CEC interface.
++	  Selecting it will enable support for this device.
++	  CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
++
++config VIDEO_SECO_RC
++	bool "SECO Boards IR RC5 support"
++	depends on VIDEO_SECO_CEC
++	depends on RC_CORE=y || RC_CORE = VIDEO_SECO_CEC
++	help
++	  If you say yes here you will get support for the
++	  SECO Boards Consumer-IR in seco-cec driver.
++	  The embedded controller supports RC5 protocol only, default mapping
++	  is set to rc-hauppauge.
+diff --git a/drivers/media/cec/platform/Makefile b/drivers/media/cec/platform/Makefile
+new file mode 100644
+index 000000000000..3c103fb364ba
+--- /dev/null
++++ b/drivers/media/cec/platform/Makefile
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Makefile for the CEC platform device drivers.
++#
++
++obj-$(CONFIG_CEC_GPIO)			+= cec-gpio/
++obj-$(CONFIG_VIDEO_SAMSUNG_S5P_CEC)	+= s5p/
++obj-$(CONFIG_VIDEO_STI_HDMI_CEC)	+= sti/
++obj-$(CONFIG_VIDEO_TEGRA_HDMI_CEC)	+= tegra/
++obj-$(CONFIG_VIDEO_SECO_CEC)		+= seco/
++
+diff --git a/drivers/media/platform/cec-gpio/Makefile b/drivers/media/cec/platform/cec-gpio/Makefile
+similarity index 100%
+rename from drivers/media/platform/cec-gpio/Makefile
+rename to drivers/media/cec/platform/cec-gpio/Makefile
+diff --git a/drivers/media/platform/cec-gpio/cec-gpio.c b/drivers/media/cec/platform/cec-gpio/cec-gpio.c
+similarity index 100%
+rename from drivers/media/platform/cec-gpio/cec-gpio.c
+rename to drivers/media/cec/platform/cec-gpio/cec-gpio.c
+diff --git a/drivers/media/platform/s5p-cec/Makefile b/drivers/media/cec/platform/s5p/Makefile
+similarity index 100%
+rename from drivers/media/platform/s5p-cec/Makefile
+rename to drivers/media/cec/platform/s5p/Makefile
+diff --git a/drivers/media/platform/s5p-cec/exynos_hdmi_cec.h b/drivers/media/cec/platform/s5p/exynos_hdmi_cec.h
+similarity index 100%
+rename from drivers/media/platform/s5p-cec/exynos_hdmi_cec.h
+rename to drivers/media/cec/platform/s5p/exynos_hdmi_cec.h
+diff --git a/drivers/media/platform/s5p-cec/exynos_hdmi_cecctrl.c b/drivers/media/cec/platform/s5p/exynos_hdmi_cecctrl.c
+similarity index 100%
+rename from drivers/media/platform/s5p-cec/exynos_hdmi_cecctrl.c
+rename to drivers/media/cec/platform/s5p/exynos_hdmi_cecctrl.c
+diff --git a/drivers/media/platform/s5p-cec/regs-cec.h b/drivers/media/cec/platform/s5p/regs-cec.h
+similarity index 100%
+rename from drivers/media/platform/s5p-cec/regs-cec.h
+rename to drivers/media/cec/platform/s5p/regs-cec.h
+diff --git a/drivers/media/platform/s5p-cec/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
+similarity index 100%
+rename from drivers/media/platform/s5p-cec/s5p_cec.c
+rename to drivers/media/cec/platform/s5p/s5p_cec.c
+diff --git a/drivers/media/platform/s5p-cec/s5p_cec.h b/drivers/media/cec/platform/s5p/s5p_cec.h
+similarity index 100%
+rename from drivers/media/platform/s5p-cec/s5p_cec.h
+rename to drivers/media/cec/platform/s5p/s5p_cec.h
+diff --git a/drivers/media/platform/seco-cec/Makefile b/drivers/media/cec/platform/seco/Makefile
+similarity index 100%
+rename from drivers/media/platform/seco-cec/Makefile
+rename to drivers/media/cec/platform/seco/Makefile
+diff --git a/drivers/media/platform/seco-cec/seco-cec.c b/drivers/media/cec/platform/seco/seco-cec.c
+similarity index 100%
+rename from drivers/media/platform/seco-cec/seco-cec.c
+rename to drivers/media/cec/platform/seco/seco-cec.c
+diff --git a/drivers/media/platform/seco-cec/seco-cec.h b/drivers/media/cec/platform/seco/seco-cec.h
+similarity index 100%
+rename from drivers/media/platform/seco-cec/seco-cec.h
+rename to drivers/media/cec/platform/seco/seco-cec.h
+diff --git a/drivers/media/platform/sti/cec/Makefile b/drivers/media/cec/platform/sti/Makefile
+similarity index 100%
+rename from drivers/media/platform/sti/cec/Makefile
+rename to drivers/media/cec/platform/sti/Makefile
+diff --git a/drivers/media/platform/sti/cec/stih-cec.c b/drivers/media/cec/platform/sti/stih-cec.c
+similarity index 100%
+rename from drivers/media/platform/sti/cec/stih-cec.c
+rename to drivers/media/cec/platform/sti/stih-cec.c
+diff --git a/drivers/media/platform/tegra-cec/Makefile b/drivers/media/cec/platform/tegra/Makefile
+similarity index 100%
+rename from drivers/media/platform/tegra-cec/Makefile
+rename to drivers/media/cec/platform/tegra/Makefile
+diff --git a/drivers/media/platform/tegra-cec/tegra_cec.c b/drivers/media/cec/platform/tegra/tegra_cec.c
+similarity index 100%
+rename from drivers/media/platform/tegra-cec/tegra_cec.c
+rename to drivers/media/cec/platform/tegra/tegra_cec.c
+diff --git a/drivers/media/platform/tegra-cec/tegra_cec.h b/drivers/media/cec/platform/tegra/tegra_cec.h
+similarity index 100%
+rename from drivers/media/platform/tegra-cec/tegra_cec.h
+rename to drivers/media/cec/platform/tegra/tegra_cec.h
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index 3df0d789d452..19282b8343e2 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -556,127 +556,6 @@ menuconfig CEC_PLATFORM_DRIVERS
+ 	bool "CEC platform devices"
+ 	depends on MEDIA_CEC_SUPPORT
+ 
+-if CEC_PLATFORM_DRIVERS
+-
+-config VIDEO_CROS_EC_CEC
+-	tristate "ChromeOS EC CEC driver"
+-	depends on CROS_EC
+-	select CEC_CORE
+-	select CEC_NOTIFIER
+-	select CROS_EC_PROTO
+-	help
+-	  If you say yes here you will get support for the
+-	  ChromeOS Embedded Controller's CEC.
+-	  The CEC bus is present in the HDMI connector and enables communication
+-	  between compatible devices.
+-
+-config VIDEO_MESON_AO_CEC
+-	tristate "Amlogic Meson AO CEC driver"
+-	depends on ARCH_MESON || COMPILE_TEST
+-	select CEC_CORE
+-	select CEC_NOTIFIER
+-	help
+-	  This is a driver for Amlogic Meson SoCs AO CEC interface. It uses the
+-	  generic CEC framework interface.
+-	  CEC bus is present in the HDMI connector and enables communication
+-
+-config VIDEO_MESON_G12A_AO_CEC
+-	tristate "Amlogic Meson G12A AO CEC driver"
+-	depends on ARCH_MESON || COMPILE_TEST
+-	depends on COMMON_CLK && OF
+-	select REGMAP
+-	select REGMAP_MMIO
+-	select CEC_CORE
+-	select CEC_NOTIFIER
+-	---help---
+-	  This is a driver for Amlogic Meson G12A SoCs AO CEC interface.
+-	  This driver if for the new AO-CEC module found in G12A SoCs,
+-	  usually named AO_CEC_B in documentation.
+-	  It uses the generic CEC framework interface.
+-	  CEC bus is present in the HDMI connector and enables communication
+-	  between compatible devices.
+-
+-config CEC_GPIO
+-	tristate "Generic GPIO-based CEC driver"
+-	depends on PREEMPTION || COMPILE_TEST
+-	select CEC_CORE
+-	select CEC_PIN
+-	select CEC_NOTIFIER
+-	select GPIOLIB
+-	help
+-	  This is a generic GPIO-based CEC driver.
+-	  The CEC bus is present in the HDMI connector and enables communication
+-	  between compatible devices.
+-
+-config VIDEO_SAMSUNG_S5P_CEC
+-	tristate "Samsung S5P CEC driver"
+-	depends on ARCH_EXYNOS || COMPILE_TEST
+-	select CEC_CORE
+-	select CEC_NOTIFIER
+-	help
+-	  This is a driver for Samsung S5P HDMI CEC interface. It uses the
+-	  generic CEC framework interface.
+-	  CEC bus is present in the HDMI connector and enables communication
+-	  between compatible devices.
+-
+-config VIDEO_STI_HDMI_CEC
+-	tristate "STMicroelectronics STiH4xx HDMI CEC driver"
+-	depends on ARCH_STI || COMPILE_TEST
+-	select CEC_CORE
+-	select CEC_NOTIFIER
+-	help
+-	  This is a driver for STIH4xx HDMI CEC interface. It uses the
+-	  generic CEC framework interface.
+-	  CEC bus is present in the HDMI connector and enables communication
+-	  between compatible devices.
+-
+-config VIDEO_STM32_HDMI_CEC
+-	tristate "STMicroelectronics STM32 HDMI CEC driver"
+-	depends on ARCH_STM32 || COMPILE_TEST
+-	select REGMAP
+-	select REGMAP_MMIO
+-	select CEC_CORE
+-	help
+-	  This is a driver for STM32 interface. It uses the
+-	  generic CEC framework interface.
+-	  CEC bus is present in the HDMI connector and enables communication
+-	  between compatible devices.
+-
+-config VIDEO_TEGRA_HDMI_CEC
+-	tristate "Tegra HDMI CEC driver"
+-	depends on ARCH_TEGRA || COMPILE_TEST
+-	select CEC_CORE
+-	select CEC_NOTIFIER
+-	help
+-	  This is a driver for the Tegra HDMI CEC interface. It uses the
+-	  generic CEC framework interface.
+-	  The CEC bus is present in the HDMI connector and enables communication
+-	  between compatible devices.
+-
+-config VIDEO_SECO_CEC
+-	tristate "SECO Boards HDMI CEC driver"
+-	depends on (X86 || IA64) || COMPILE_TEST
+-	depends on PCI && DMI
+-	select CEC_CORE
+-	select CEC_NOTIFIER
+-	help
+-	  This is a driver for SECO Boards integrated CEC interface.
+-	  Selecting it will enable support for this device.
+-	  CEC bus is present in the HDMI connector and enables communication
+-	  between compatible devices.
+-
+-config VIDEO_SECO_RC
+-	bool "SECO Boards IR RC5 support"
+-	depends on VIDEO_SECO_CEC
+-	depends on RC_CORE=y || RC_CORE = VIDEO_SECO_CEC
+-	help
+-	  If you say yes here you will get support for the
+-	  SECO Boards Consumer-IR in seco-cec driver.
+-	  The embedded controller supports RC5 protocol only, default mapping
+-	  is set to rc-hauppauge.
+-
+-endif #CEC_PLATFORM_DRIVERS
+-
+ menuconfig SDR_PLATFORM_DRIVERS
+ 	bool "SDR platform devices"
+ 	depends on MEDIA_SDR_SUPPORT
+diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+index a0194ef1211f..512dcc6e710a 100644
+--- a/drivers/media/platform/Makefile
++++ b/drivers/media/platform/Makefile
+@@ -23,8 +23,6 @@ obj-$(CONFIG_VIDEO_IMX_PXP)		+= imx-pxp.o
+ 
+ obj-$(CONFIG_VIDEO_SH_VEU)		+= sh_veu.o
+ 
+-obj-$(CONFIG_CEC_GPIO)			+= cec-gpio/
+-
+ obj-$(CONFIG_VIDEO_MEM2MEM_DEINTERLACE)	+= m2m-deinterlace.o
+ 
+ obj-$(CONFIG_VIDEO_MUX)			+= video-mux.o
+@@ -35,22 +33,16 @@ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_JPEG)	+= s5p-jpeg/
+ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_MFC)	+= s5p-mfc/
+ 
+ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_G2D)	+= s5p-g2d/
+-obj-$(CONFIG_VIDEO_SAMSUNG_S5P_CEC)	+= s5p-cec/
+ obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC)	+= exynos-gsc/
+ 
+ obj-$(CONFIG_VIDEO_STI_BDISP)		+= sti/bdisp/
+ obj-$(CONFIG_VIDEO_STI_HVA)		+= sti/hva/
+ obj-$(CONFIG_DVB_C8SECTPFE)		+= sti/c8sectpfe/
+-obj-$(CONFIG_VIDEO_STI_HDMI_CEC)	+= sti/cec/
+ 
+ obj-$(CONFIG_VIDEO_STI_DELTA)		+= sti/delta/
+ 
+-obj-$(CONFIG_VIDEO_TEGRA_HDMI_CEC)	+= tegra-cec/
+-
+ obj-y					+= stm32/
+ 
+-obj-$(CONFIG_VIDEO_SECO_CEC)		+= seco-cec/
+-
+ obj-y					+= davinci/
+ 
+ obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
+-- 
+2.25.2
