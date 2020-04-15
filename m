@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 02/14] clk: tegra: Fix Tegra PMC clock out parents
-Date: Wed, 15 Apr 2020 07:48:02 -0400
-Message-ID: <20200415114814.15954-2-sashal@kernel.org>
-References: <20200415114814.15954-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 03/21] clk: tegra: Fix Tegra PMC clock out parents
+Date: Wed, 15 Apr 2020 07:47:30 -0400
+Message-ID: <20200415114748.15713-3-sashal@kernel.org>
+References: <20200415114748.15713-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20200415114814.15954-1-sashal@kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200415114748.15713-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
