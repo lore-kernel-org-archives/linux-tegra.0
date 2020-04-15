@@ -1,39 +1,71 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v7 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Wed, 15 Apr 2020 17:22:26 +0300
-Message-ID: <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
-References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
- <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH v2 0/2] Support DRM bridges on NVIDIA Tegra
+Date: Wed, 15 Apr 2020 19:00:31 +0300
+Message-ID: <c7567d52-4d42-4e70-4cc5-92311c53da04@gmail.com>
+References: <20200414222007.31306-1-digetx@gmail.com>
+ <20200415095324.GB30444@ravnborg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1586919463-30542-7-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200415095324.GB30444-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-15.04.2020 05:57, Sowjanya Komatineni пишет:
-> +static int tegra_csi_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_csi *csi = platform_get_drvdata(pdev);
-> +	int err;
-> +
-> +	err = host1x_client_unregister(&csi->client);
-> +	if (err < 0) {
-> +		dev_err(csi->dev,
-> +			"failed to unregister host1x client: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	pm_runtime_disable(csi->dev);
-> +	kfree(csi);
+15.04.2020 12:53, Sam Ravnborg пишет:
+> Hi Dimitry.
+> 
+> Added Laurent that is the arthitecht behind the new bridge model
+> briefly explained below.
+> 
+> On Wed, Apr 15, 2020 at 01:20:05AM +0300, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> This small series adds initial support for the DRM bridges to NVIDIA Tegra
+>> DRM driver. This is required by newer device-trees where we model the LVDS
+>> encoder bridge properly.
+>>
+>> Please note that the first "Support DRM bridges" patch was previously sent
+>> out as a standalone v1 change.
+>>
+>> Changelog:
+>>
+>> v2: - Added the new "rgb: Don't register connector if bridge is used"
+>>       patch, which hides the unused connector provided by the Tegra DRM
+>>       driver when bridge is used, since bridge provides its own connector
+>>       to us.
+> 
+> We are moving to a model where the display driver have the
+> responsibility to create the connector - not the bridge.
+> 
+> The flags argument to:
+> 
+>     drm_bridge_attach(encoder, bridge, previous, flags);
+> 
+> is used to tell if the brigde shall create the connector or the display
+> driver does it - DRM_BRIDGE_ATTACH_NO_CONNECTOR.
+> 
+> It would be preferred that we moved the relevant bridge drivers to the
+> new model no so you did not need to support the old model in the driver.
 
-IIRC, the driver removal is invoked on the unbinding. Hence, I'm not
-sure how moving away from the resource-managed API helps here. Could you
-please explain in a more details?
+Hello Sam,
 
-Have you tried to test this driver under KASAN? I suspect that you just
-masked the problem, instead of fixing it.
+Thank you very much for the clarification! To be honest, I was a bit
+confused by the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
+
+Perhaps would be nice if the code told explicitly that drivers should
+use the new flag because it appeared to me that adding bridge functions
+to the DRM driver is a step backwards since looks like it involves
+writing some more code :)
+
+> If you help identify the bridge drivers we could migrate them to the new
+> model and you could help testing?
+> 
+> What bridge drivers will be used for tegra?
+
+It's lvds-encoder of bridge/lvds-codec.c, which supports the new model.
+
+I'll try to move to the new model in v3. Thanks again!
