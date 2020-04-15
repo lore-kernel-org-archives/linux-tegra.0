@@ -1,39 +1,51 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 0/2] Support DRM bridges on NVIDIA Tegra
-Date: Wed, 15 Apr 2020 01:20:05 +0300
-Message-ID: <20200414222007.31306-1-digetx@gmail.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC PATCH v7 1/9] arm64: tegra: Fix sor powergate clocks and reset
+Date: Tue, 14 Apr 2020 19:57:35 -0700
+Message-ID: <1586919463-30542-2-git-send-email-skomatineni@nvidia.com>
+References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1586919463-30542-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+Tegra210 device tree lists csi clock and reset under SOR powergate
+node.
 
-This small series adds initial support for the DRM bridges to NVIDIA Tegra
-DRM driver. This is required by newer device-trees where we model the LVDS
-encoder bridge properly.
+But Tegra210 has csicil in SOR partition and csi in VENC partition.
 
-Please note that the first "Support DRM bridges" patch was previously sent
-out as a standalone v1 change.
+So, this patch includes fix for sor powergate node.
 
-Changelog:
+Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-v2: - Added the new "rgb: Don't register connector if bridge is used"
-      patch, which hides the unused connector provided by the Tegra DRM
-      driver when bridge is used, since bridge provides its own connector
-      to us.
-
-Dmitry Osipenko (2):
-  drm/tegra: output: Support DRM bridges
-  drm/tegra: output: rgb: Don't register connector if bridge is used
-
- drivers/gpu/drm/tegra/drm.h    |  2 ++
- drivers/gpu/drm/tegra/output.c | 25 ++++++++++++++++++++++++-
- drivers/gpu/drm/tegra/rgb.c    | 21 ++++++++++++++++-----
- 3 files changed, 42 insertions(+), 6 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 64c46ce..d0eff92 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -796,7 +796,9 @@
+ 			pd_sor: sor {
+ 				clocks = <&tegra_car TEGRA210_CLK_SOR0>,
+ 					 <&tegra_car TEGRA210_CLK_SOR1>,
+-					 <&tegra_car TEGRA210_CLK_CSI>,
++					 <&tegra_car TEGRA210_CLK_CILAB>,
++					 <&tegra_car TEGRA210_CLK_CILCD>,
++					 <&tegra_car TEGRA210_CLK_CILE>,
+ 					 <&tegra_car TEGRA210_CLK_DSIA>,
+ 					 <&tegra_car TEGRA210_CLK_DSIB>,
+ 					 <&tegra_car TEGRA210_CLK_DPAUX>,
+@@ -804,7 +806,6 @@
+ 					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
+ 				resets = <&tegra_car TEGRA210_CLK_SOR0>,
+ 					 <&tegra_car TEGRA210_CLK_SOR1>,
+-					 <&tegra_car TEGRA210_CLK_CSI>,
+ 					 <&tegra_car TEGRA210_CLK_DSIA>,
+ 					 <&tegra_car TEGRA210_CLK_DSIB>,
+ 					 <&tegra_car TEGRA210_CLK_DPAUX>,
 -- 
-2.26.0
+2.7.4
