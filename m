@@ -1,41 +1,107 @@
-From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH v2 07/33] iommu: Add probe_device() and remove_device()
- call-backs
-Date: Wed, 15 Apr 2020 14:31:40 +0200
-Message-ID: <20200415123140.GC21899@suse.de>
-References: <20200414131542.25608-1-joro@8bytes.org>
- <20200414131542.25608-8-joro@8bytes.org>
- <0ad37581-b464-30ac-c503-4c0daaf43867@linux.intel.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH] drm/tegra: Clean up GPIO includes
+Date: Wed, 15 Apr 2020 14:43:05 +0200
+Message-ID: <20200415124305.GC3456981@phenom.ffwll.local>
+References: <20200415122427.111769-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <0ad37581-b464-30ac-c503-4c0daaf43867-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+In-Reply-To: <20200415122427.111769-1-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lu Baolu <baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean-Philippe Brucker <jean-philippe-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-med
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 02:36:20PM +0800, Lu Baolu wrote:
-> On 2020/4/14 21:15, Joerg Roedel wrote:
-> > From: Joerg Roedel<jroedel-l3A5Bk7waGM@public.gmane.org>
-> > 
-> > Add call-backs to 'struct iommu_ops' as an alternative to the
-> > add_device() and remove_device() call-backs, which will be removed when
-> > all drivers are converted.
-> > 
-> > The new call-backs will not setupt IOMMU groups and domains anymore,
-> > so also add a probe_finalize() call-back where the IOMMU driver can do
-> > per-device setup work which require the device to be set up with a
-> > group and a domain.
+On Wed, Apr 15, 2020 at 02:24:27PM +0200, Linus Walleij wrote:
+> The Tegra DRM drivers includes the legacy GPIO headers
+> <linux/gpio.h> and <linux/of_gpio.h> but what it really
+> uses is <linux/gpio/consumer.h> since only gpio_desc
+> structs are ever referenced.
 > 
-> The subject is inaccurate. probe_device() and release_device() are
-> added to replace the add and remove pair.
+> Include the right header on the top level tegra/drm.h
+> file and drop all the surplus includes.
+> 
+> Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-This patch does not replace them yet, it just adds the new call-backs.
-The removal of add_device()/remove_device() happens later in the
-patch-set when all drivers are converted.
+Hm, I wonder whether we should do similar splits for drm_bridge and
+drm_panel, so that drivers don't pick the wrong interfaces ...
 
-Regards,
+Anyway this looks neat, I spent a bit of time looking at how this is done,
+fwiw (not much) and assuming it compiles:
 
-	Joerg
+Acked-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+
+> ---
+>  drivers/gpu/drm/tegra/dpaux.c | 2 --
+>  drivers/gpu/drm/tegra/drm.h   | 2 +-
+>  drivers/gpu/drm/tegra/hdmi.c  | 1 -
+>  drivers/gpu/drm/tegra/sor.c   | 1 -
+>  4 files changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+> index 7dfb50f65067..105fb9cdbb3b 100644
+> --- a/drivers/gpu/drm/tegra/dpaux.c
+> +++ b/drivers/gpu/drm/tegra/dpaux.c
+> @@ -5,12 +5,10 @@
+>  
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> -#include <linux/gpio.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+> -#include <linux/of_gpio.h>
+>  #include <linux/pinctrl/pinconf-generic.h>
+>  #include <linux/pinctrl/pinctrl.h>
+>  #include <linux/pinctrl/pinmux.h>
+> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+> index ed99b67deb29..bf0512177e8f 100644
+> --- a/drivers/gpu/drm/tegra/drm.h
+> +++ b/drivers/gpu/drm/tegra/drm.h
+> @@ -9,7 +9,7 @@
+>  
+>  #include <linux/host1x.h>
+>  #include <linux/iova.h>
+> -#include <linux/of_gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  
+>  #include <drm/drm_atomic.h>
+>  #include <drm/drm_edid.h>
+> diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+> index 38252c0f068d..94fb0193fa3d 100644
+> --- a/drivers/gpu/drm/tegra/hdmi.c
+> +++ b/drivers/gpu/drm/tegra/hdmi.c
+> @@ -7,7 +7,6 @@
+>  #include <linux/clk.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/delay.h>
+> -#include <linux/gpio.h>
+>  #include <linux/hdmi.h>
+>  #include <linux/math64.h>
+>  #include <linux/module.h>
+> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+> index 81226a4953c1..b010826e86da 100644
+> --- a/drivers/gpu/drm/tegra/sor.c
+> +++ b/drivers/gpu/drm/tegra/sor.c
+> @@ -6,7 +6,6 @@
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/debugfs.h>
+> -#include <linux/gpio.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+> -- 
+> 2.25.2
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
