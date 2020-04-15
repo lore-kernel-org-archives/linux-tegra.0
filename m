@@ -1,64 +1,84 @@
-From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 4.19 03/40] clk: tegra: Fix Tegra PMC clock out parents
-Date: Wed, 15 Apr 2020 07:45:46 -0400
-Message-ID: <20200415114623.14972-3-sashal@kernel.org>
-References: <20200415114623.14972-1-sashal@kernel.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] drm/tegra: Clean up GPIO includes
+Date: Wed, 15 Apr 2020 14:24:27 +0200
+Message-ID: <20200415122427.111769-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200415114623.14972-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The Tegra DRM drivers includes the legacy GPIO headers
+<linux/gpio.h> and <linux/of_gpio.h> but what it really
+uses is <linux/gpio/consumer.h> since only gpio_desc
+structs are ever referenced.
 
-[ Upstream commit 6fe38aa8cac3a5db38154331742835a4d9740788 ]
+Include the right header on the top level tegra/drm.h
+file and drop all the surplus includes.
 
-Tegra PMC clocks clk_out_1, clk_out_2, and clk_out_3 supported parents
-are osc, osc_div2, osc_div4 and extern clock.
-
-Clock driver is using incorrect parents clk_m, clk_m_div2, clk_m_div4
-for PMC clocks.
-
-This patch fixes this.
-
-Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- drivers/clk/tegra/clk-tegra-pmc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/tegra/dpaux.c | 2 --
+ drivers/gpu/drm/tegra/drm.h   | 2 +-
+ drivers/gpu/drm/tegra/hdmi.c  | 1 -
+ drivers/gpu/drm/tegra/sor.c   | 1 -
+ 4 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
-index a35579a3f884f..476dab494c44d 100644
---- a/drivers/clk/tegra/clk-tegra-pmc.c
-+++ b/drivers/clk/tegra/clk-tegra-pmc.c
-@@ -60,16 +60,16 @@ struct pmc_clk_init_data {
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 7dfb50f65067..105fb9cdbb3b 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -5,12 +5,10 @@
  
- static DEFINE_SPINLOCK(clk_out_lock);
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+-#include <linux/of_gpio.h>
+ #include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index ed99b67deb29..bf0512177e8f 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -9,7 +9,7 @@
  
--static const char *clk_out1_parents[] = { "clk_m", "clk_m_div2",
--	"clk_m_div4", "extern1",
-+static const char *clk_out1_parents[] = { "osc", "osc_div2",
-+	"osc_div4", "extern1",
- };
+ #include <linux/host1x.h>
+ #include <linux/iova.h>
+-#include <linux/of_gpio.h>
++#include <linux/gpio/consumer.h>
  
--static const char *clk_out2_parents[] = { "clk_m", "clk_m_div2",
--	"clk_m_div4", "extern2",
-+static const char *clk_out2_parents[] = { "osc", "osc_div2",
-+	"osc_div4", "extern2",
- };
- 
--static const char *clk_out3_parents[] = { "clk_m", "clk_m_div2",
--	"clk_m_div4", "extern3",
-+static const char *clk_out3_parents[] = { "osc", "osc_div2",
-+	"osc_div4", "extern3",
- };
- 
- static struct pmc_clk_init_data pmc_clks[] = {
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_edid.h>
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 38252c0f068d..94fb0193fa3d 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -7,7 +7,6 @@
+ #include <linux/clk.h>
+ #include <linux/debugfs.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
+ #include <linux/hdmi.h>
+ #include <linux/math64.h>
+ #include <linux/module.h>
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 81226a4953c1..b010826e86da 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -6,7 +6,6 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/debugfs.h>
+-#include <linux/gpio.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
 -- 
-2.20.1
+2.25.2
