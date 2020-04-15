@@ -1,40 +1,36 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v7 3/9] dt-bindings: clock: tegra: Add clk id for CSI TPG clock
-Date: Tue, 14 Apr 2020 19:57:37 -0700
-Message-ID: <1586919463-30542-4-git-send-email-skomatineni@nvidia.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC PATCH v7 8/9] dt-bindings: reset: Add ID for Tegra210 VI reset
+Date: Tue, 14 Apr 2020 19:57:42 -0700
+Message-ID: <1586919463-30542-9-git-send-email-skomatineni@nvidia.com>
 References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-media-owner@vger.kernel.org
-To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1586919463-30542-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 uses PLLD out internally for CSI TPG.
+This patch adds ID for Tegra210 VI controller reset to use with
+device tree.
 
-This patch adds clk id for this CSI TPG clock from PLLD.
-
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- include/dt-bindings/clock/tegra210-car.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/reset/tegra210-car.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 7a8f10b..d8909e0 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -351,7 +351,7 @@
- #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
- #define TEGRA210_CLK_XUSB_SSP_SRC 318
- #define TEGRA210_CLK_PLL_RE_OUT1 319
--/* 320 */
-+#define TEGRA210_CLK_CSI_TPG 320
- /* 321 */
- #define TEGRA210_CLK_ISP 322
- #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
+diff --git a/include/dt-bindings/reset/tegra210-car.h b/include/dt-bindings/reset/tegra210-car.h
+index 9dc84ec..8755946 100644
+--- a/include/dt-bindings/reset/tegra210-car.h
++++ b/include/dt-bindings/reset/tegra210-car.h
+@@ -10,5 +10,6 @@
+ #define TEGRA210_RESET(x)		(7 * 32 + (x))
+ #define TEGRA210_RST_DFLL_DVCO		TEGRA210_RESET(0)
+ #define TEGRA210_RST_ADSP		TEGRA210_RESET(1)
++#define TEGRA210_RST_VI			20
+ 
+ #endif	/* _DT_BINDINGS_RESET_TEGRA210_CAR_H */
 -- 
 2.7.4
