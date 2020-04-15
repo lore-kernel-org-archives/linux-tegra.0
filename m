@@ -1,56 +1,183 @@
 From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 0/8] Tegra XUSB charger detect support
-Date: Wed, 15 Apr 2020 13:55:00 +0530
-Message-ID: <1586939108-10075-1-git-send-email-nkristam@nvidia.com>
+Subject: [PATCH V2 5/8] phy: tegra: xusb: Add soc ops API to enable UTMI PAD protection
+Date: Wed, 15 Apr 2020 13:55:05 +0530
+Message-ID: <1586939108-10075-6-git-send-email-nkristam@nvidia.com>
+References: <1586939108-10075-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1586939108-10075-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series adds charger detect support on XUSB hardware used in
-Tegra210 and Tegra186 SoCs.
+When USB charger is enabled, UTMI PAD needs to be protected according
+to the direction and current level. Add support for the same on Tegra210
+and Tegra186.
 
-This patchset is composed with :
- - dt bindings of XUSB Pad Controller
- - Tegra XUSB device mode driver to add vbus_draw support 
- - Tegra PHY driver for charger detect support
-
-Tests done:
- - Connect USB cable from ubuntu host to micro-B port of DUT to detect
-   SDP_TYPE charger
- - Connect USB cable from external powered USB hub(which inturn connects
-   to ubuntu host) to micro-B port of DUT to detect CDP_TYPE charger.
- - Connect USB cable from USB charger to micro-B port of DUT to detect
-   DCP_TYPE charger.
-DUT: Jetson-tx1, Jetson tx2.
-
+Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 V2:
- - Added ACKed-by details for DT patches.
- - All patches rebased.
+ - Commit message coorected.
+ - Patch re-based.
+---
+ drivers/phy/tegra/xusb-tegra186.c | 40 +++++++++++++++++++++++++++++++++++++++
+ drivers/phy/tegra/xusb-tegra210.c | 31 ++++++++++++++++++++++++++++++
+ drivers/phy/tegra/xusb.h          | 13 +++++++++++++
+ 3 files changed, 84 insertions(+)
 
-Nagarjuna Kristam (8):
-  dt-bindings: phy: tegra-xusb: Add charger-detect property
-  usb: gadget: tegra-xudc: Add vbus_draw support
-  phy: tegra: xusb: Add support for UTMI pad power control
-  phy: tegra: xusb: Add USB2 pad power control support for Tegra210
-  phy: tegra: xusb: Add soc ops API to enable UTMI PAD protection
-  phy: tegra: xusb: Add support for charger detect
-  phy: tegra: xusb: Enable charger detect for Tegra186
-  phy: tegra: xusb: Enable charger detect for Tegra210
-
- .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   |   4 +
- drivers/phy/tegra/Makefile                         |   2 +-
- drivers/phy/tegra/xusb-tegra-cd.c                  | 300 +++++++++++++++++++++
- drivers/phy/tegra/xusb-tegra186.c                  |  92 +++++--
- drivers/phy/tegra/xusb-tegra210.c                  | 222 +++++++++++----
- drivers/phy/tegra/xusb.c                           |  80 ++++++
- drivers/phy/tegra/xusb.h                           |  22 ++
- drivers/usb/gadget/udc/tegra-xudc.c                |  16 ++
- 8 files changed, 653 insertions(+), 85 deletions(-)
- create mode 100644 drivers/phy/tegra/xusb-tegra-cd.c
-
+diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+index f862254..03bdb5b 100644
+--- a/drivers/phy/tegra/xusb-tegra186.c
++++ b/drivers/phy/tegra/xusb-tegra186.c
+@@ -68,6 +68,13 @@
+ #define   PORTX_SPEED_SUPPORT_MASK		(0x3)
+ #define     PORT_SPEED_SUPPORT_GEN1		(0x0)
+ 
++#define USB2_BATTERY_CHRG_OTGPADX_CTL1(x)       (0x84 + (x) * 0x40)
++#define  PD_VREG                                (1 << 6)
++#define  VREG_LEV(x)                            (((x) & 0x3) << 7)
++#define  VREG_DIR(x)                            (((x) & 0x3) << 11)
++#define  VREG_DIR_IN                            VREG_DIR(1)
++#define  VREG_DIR_OUT                           VREG_DIR(2)
++
+ #define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x)	(0x88 + (x) * 0x40)
+ #define  HS_CURR_LEVEL(x)			((x) & 0x3f)
+ #define  TERM_SEL				BIT(25)
+@@ -289,6 +296,37 @@ static void tegra_phy_xusb_utmi_pad_power_down(struct phy *phy)
+ 	usb2->powered_on = false;
+ }
+ 
++static void tegra186_xusb_padctl_utmi_pad_set_protection_level(
++				struct tegra_xusb_port *port, int level,
++				enum tegra_vbus_dir dir)
++{
++	u32 value;
++	struct tegra_xusb_padctl *padctl = port->padctl;
++	unsigned int index = port->index;
++
++	value = padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
++
++	if (level < 0) {
++		/* disable pad protection */
++		value |= PD_VREG;
++		value &= ~VREG_LEV(~0);
++		value &= ~VREG_DIR(~0);
++	} else {
++		if (dir == TEGRA_VBUS_SOURCE)
++			value |= VREG_DIR_OUT;
++		else if (dir == TEGRA_VBUS_SINK)
++			value |= VREG_DIR_IN;
++
++		value &= ~PD_VREG;
++		value &= ~VREG_DIR(~0);
++		value &= ~VREG_LEV(~0);
++		value |= VREG_LEV(level);
++	}
++
++	padctl_writel(padctl, value, USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
++}
++
++
+ static int tegra186_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
+ 					       bool status)
+ {
+@@ -935,6 +973,8 @@ static const struct tegra_xusb_padctl_ops tegra186_xusb_padctl_ops = {
+ 	.vbus_override = tegra186_xusb_padctl_vbus_override,
+ 	.utmi_pad_power_on = tegra_phy_xusb_utmi_pad_power_on,
+ 	.utmi_pad_power_down = tegra_phy_xusb_utmi_pad_power_down,
++	.utmi_pad_set_protection_level =
++			tegra186_xusb_padctl_utmi_pad_set_protection_level,
+ };
+ 
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index caf0890..7d84f1a 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -74,6 +74,8 @@
+ #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_MASK 0x3
+ #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_VAL 0x1
+ #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_FIX18 (1 << 6)
++#define USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(x) (((x) & 0x3) << 7)
++#define USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_DIR(x) (((x) & 0x3) << 11)
+ 
+ #define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x) (0x088 + (x) * 0x40)
+ #define XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD_ZI (1 << 29)
+@@ -1116,6 +1118,33 @@ void tegra210_usb2_pad_power_down(struct phy *phy)
+ 	usb2->powered_on = false;
+ }
+ 
++static void tegra210_xusb_padctl_utmi_pad_set_protection_level(
++				struct tegra_xusb_port *port, int level,
++				enum tegra_vbus_dir dir)
++{
++	u32 value;
++	struct tegra_xusb_padctl *padctl = port->padctl;
++	unsigned int index = port->index;
++
++	value = padctl_readl(padctl,
++			     XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
++
++	if (level < 0) {
++		/* disable pad protection */
++		value |= XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_FIX18;
++		value &= USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(~0);
++		value &= ~USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_DIR(~0);
++	} else {
++		value &= ~XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_FIX18;
++		value &= ~USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_DIR(~0);
++		value &= USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(~0);
++		value |= USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(level);
++	}
++
++	padctl_writel(padctl, value,
++		      XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
++}
++
+ static int tegra210_usb2_phy_set_mode(struct phy *phy, enum phy_mode mode,
+ 				      int submode)
+ {
+@@ -2291,6 +2320,8 @@ static const struct tegra_xusb_padctl_ops tegra210_xusb_padctl_ops = {
+ 	.utmi_port_reset = tegra210_utmi_port_reset,
+ 	.utmi_pad_power_on = tegra210_usb2_pad_power_on,
+ 	.utmi_pad_power_down = tegra210_usb2_pad_power_down,
++	.utmi_pad_set_protection_level =
++			tegra210_xusb_padctl_utmi_pad_set_protection_level,
+ };
+ 
+ static const char * const tegra210_xusb_padctl_supply_names[] = {
+diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+index 6995fc4..79e96b0 100644
+--- a/drivers/phy/tegra/xusb.h
++++ b/drivers/phy/tegra/xusb.h
+@@ -259,6 +259,17 @@ to_sata_pad(struct tegra_xusb_pad *pad)
+  */
+ struct tegra_xusb_port_ops;
+ 
++/*
++ * Tegra OTG port VBUS direction:
++ * default (based on port capability) or
++ * as source or sink
++ */
++enum tegra_vbus_dir {
++	TEGRA_VBUS_DEFAULT,
++	TEGRA_VBUS_SOURCE,
++	TEGRA_VBUS_SINK
++};
++
+ struct tegra_xusb_port {
+ 	struct tegra_xusb_padctl *padctl;
+ 	struct tegra_xusb_lane *lane;
+@@ -398,6 +409,8 @@ struct tegra_xusb_padctl_ops {
+ 	int (*utmi_port_reset)(struct phy *phy);
+ 	void (*utmi_pad_power_on)(struct phy *phy);
+ 	void (*utmi_pad_power_down)(struct phy *phy);
++	void (*utmi_pad_set_protection_level)(struct tegra_xusb_port *port,
++					int max_ua, enum tegra_vbus_dir dir);
+ };
+ 
+ struct tegra_xusb_padctl_soc {
 -- 
 2.7.4
