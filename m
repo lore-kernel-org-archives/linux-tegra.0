@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 03/21] clk: tegra: Fix Tegra PMC clock out parents
-Date: Wed, 15 Apr 2020 07:47:30 -0400
-Message-ID: <20200415114748.15713-3-sashal@kernel.org>
-References: <20200415114748.15713-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 03/30] clk: tegra: Fix Tegra PMC clock out parents
+Date: Wed, 15 Apr 2020 07:46:44 -0400
+Message-ID: <20200415114711.15381-3-sashal@kernel.org>
+References: <20200415114711.15381-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20200415114748.15713-1-sashal@kernel.org>
+In-Reply-To: <20200415114711.15381-1-sashal@kernel.org>
 Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
@@ -34,7 +34,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
-index 91377abfefa19..17a04300f93bf 100644
+index a35579a3f884f..476dab494c44d 100644
 --- a/drivers/clk/tegra/clk-tegra-pmc.c
 +++ b/drivers/clk/tegra/clk-tegra-pmc.c
 @@ -60,16 +60,16 @@ struct pmc_clk_init_data {
