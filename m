@@ -1,114 +1,64 @@
-From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 5.5 017/106] arm64: tegra: Fix Tegra194 PCIe compatible string
-Date: Wed, 15 Apr 2020 07:40:57 -0400
-Message-ID: <20200415114226.13103-17-sashal@kernel.org>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 015/106] clk: tegra: Fix Tegra PMC clock out parents
+Date: Wed, 15 Apr 2020 07:40:55 -0400
+Message-ID: <20200415114226.13103-15-sashal@kernel.org>
 References: <20200415114226.13103-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200415114226.13103-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200415114226.13103-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-[ Upstream commit f9f711efd441ad0d22874be49986d92121862335 ]
+[ Upstream commit 6fe38aa8cac3a5db38154331742835a4d9740788 ]
 
-If the kernel configuration option CONFIG_PCIE_DW_PLAT_HOST is enabled
-then this can cause the kernel to incorrectly probe the generic
-designware PCIe platform driver instead of the Tegra194 designware PCIe
-driver. This causes a boot failure on Tegra194 because the necessary
-configuration to access the hardware is not performed.
+Tegra PMC clocks clk_out_1, clk_out_2, and clk_out_3 supported parents
+are osc, osc_div2, osc_div4 and extern clock.
 
-The order in which the compatible strings are populated in Device-Tree
-is not relevant in this case, because the kernel will attempt to probe
-the device as soon as a driver is loaded and if the generic designware
-PCIe driver is loaded first, then this driver will be probed first.
-Therefore, to fix this problem, remove the "snps,dw-pcie" string from
-the compatible string as we never want this driver to be probe on
-Tegra194.
+Clock driver is using incorrect parents clk_m, clk_m_div2, clk_m_div4
+for PMC clocks.
 
-Fixes: 2602c32f15e7 ("arm64: tegra: Add P2U and PCIe controller nodes to Tegra194 DT")
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+This patch fixes this.
+
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt |  2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi             | 12 ++++++------
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/clk/tegra/clk-tegra-pmc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-index b739f92da58e5..1f90eb39870be 100644
---- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-@@ -118,7 +118,7 @@ Tegra194:
- --------
+diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
+index bec3e008335f3..5e044ba1ae364 100644
+--- a/drivers/clk/tegra/clk-tegra-pmc.c
++++ b/drivers/clk/tegra/clk-tegra-pmc.c
+@@ -49,16 +49,16 @@ struct pmc_clk_init_data {
  
- 	pcie@14180000 {
--		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
-+		compatible = "nvidia,tegra194-pcie";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
- 		reg = <0x00 0x14180000 0x0 0x00020000   /* appl registers (128K)      */
- 		       0x00 0x38000000 0x0 0x00040000   /* configuration space (256K) */
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 2c8fae854a23e..2b6f0b9aaf902 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1152,7 +1152,7 @@
- 	};
+ static DEFINE_SPINLOCK(clk_out_lock);
  
- 	pcie@14100000 {
--		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
-+		compatible = "nvidia,tegra194-pcie";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX1A>;
- 		reg = <0x00 0x14100000 0x0 0x00020000   /* appl registers (128K)      */
- 		       0x00 0x30000000 0x0 0x00040000   /* configuration space (256K) */
-@@ -1197,7 +1197,7 @@
- 	};
+-static const char *clk_out1_parents[] = { "clk_m", "clk_m_div2",
+-	"clk_m_div4", "extern1",
++static const char *clk_out1_parents[] = { "osc", "osc_div2",
++	"osc_div4", "extern1",
+ };
  
- 	pcie@14120000 {
--		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
-+		compatible = "nvidia,tegra194-pcie";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX1A>;
- 		reg = <0x00 0x14120000 0x0 0x00020000   /* appl registers (128K)      */
- 		       0x00 0x32000000 0x0 0x00040000   /* configuration space (256K) */
-@@ -1242,7 +1242,7 @@
- 	};
+-static const char *clk_out2_parents[] = { "clk_m", "clk_m_div2",
+-	"clk_m_div4", "extern2",
++static const char *clk_out2_parents[] = { "osc", "osc_div2",
++	"osc_div4", "extern2",
+ };
  
- 	pcie@14140000 {
--		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
-+		compatible = "nvidia,tegra194-pcie";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX1A>;
- 		reg = <0x00 0x14140000 0x0 0x00020000   /* appl registers (128K)      */
- 		       0x00 0x34000000 0x0 0x00040000   /* configuration space (256K) */
-@@ -1287,7 +1287,7 @@
- 	};
+-static const char *clk_out3_parents[] = { "clk_m", "clk_m_div2",
+-	"clk_m_div4", "extern3",
++static const char *clk_out3_parents[] = { "osc", "osc_div2",
++	"osc_div4", "extern3",
+ };
  
- 	pcie@14160000 {
--		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
-+		compatible = "nvidia,tegra194-pcie";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX4A>;
- 		reg = <0x00 0x14160000 0x0 0x00020000   /* appl registers (128K)      */
- 		       0x00 0x36000000 0x0 0x00040000   /* configuration space (256K) */
-@@ -1332,7 +1332,7 @@
- 	};
- 
- 	pcie@14180000 {
--		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
-+		compatible = "nvidia,tegra194-pcie";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
- 		reg = <0x00 0x14180000 0x0 0x00020000   /* appl registers (128K)      */
- 		       0x00 0x38000000 0x0 0x00040000   /* configuration space (256K) */
-@@ -1377,7 +1377,7 @@
- 	};
- 
- 	pcie@141a0000 {
--		compatible = "nvidia,tegra194-pcie", "snps,dw-pcie";
-+		compatible = "nvidia,tegra194-pcie";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8A>;
- 		reg = <0x00 0x141a0000 0x0 0x00020000   /* appl registers (128K)      */
- 		       0x00 0x3a000000 0x0 0x00040000   /* configuration space (256K) */
+ static struct pmc_clk_init_data pmc_clks[] = {
 -- 
 2.20.1
