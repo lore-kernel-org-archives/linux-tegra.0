@@ -1,87 +1,99 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH v7 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Wed, 15 Apr 2020 16:28:42 -0700
-Message-ID: <c95cd2b6-8036-8c0a-25f3-6ea3fe35334a@nvidia.com>
-References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
- <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
- <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
- <a69a8b34-beea-3ad0-e08e-f7df8b9e7047@nvidia.com>
- <6afa951e-d904-f3c0-053f-82a02fb18979@nvidia.com>
- <b1c78827-13ea-0c94-a575-97b5afc0ede1@nvidia.com>
- <5954a7e1-910e-7f48-56d3-e671b56ead74@nvidia.com>
- <d6a9e07c-474a-a076-8313-32f5f4ca8d64@nvidia.com>
- <786949a9-8507-7723-f29b-b91a216bfd28@nvidia.com>
- <f831408b-bbf4-3047-20e3-5bebfa9fc1ad@gmail.com>
- <2ad9352f-cb65-1643-e540-a21f9c570266@nvidia.com>
- <31924f2b-8f85-d28d-4f5d-4e232bff94a5@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v6 02/14] of: reserved-memory: Support lookup of regions
+ by name
+Date: Thu, 16 Apr 2020 01:35:32 +0200
+Message-ID: <20200415233532.GA211822@ulmo>
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-3-thierry.reding@gmail.com>
+ <20200415162449.GA1842@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <31924f2b-8f85-d28d-4f5d-4e232bff94a5-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============7093004101106947435=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
+In-Reply-To: <20200415162449.GA1842@bogus>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Jon Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Sorry please ignore.
 
-We can't free vi during v4l2 device release as when no device nodes are=20
-opened, vi free happens right away during host1x_video_remove.
-
-With this tegra-video driver unbind ->bind will not work as vi memory=20
-allocated during vi_probe gets freed during v4l2 device release so=20
-during bind init() callback execution will crash as vi got freed while=20
-vi driver is still bound to device.
-
-Will wait for Hans/Thierry comments as I see dependency depending on=20
-where unbind/bind happens.
+--===============7093004101106947435==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Disposition: inline
 
 
-On 4/15/20 4:08 PM, Sowjanya Komatineni wrote:
-> With minor change of not using vi reference after=20
-> host1x_client_unregister and freeing vi during v4l2 device release works.
->
-> For csi, we can use devm_kzalloc for now untill we decide later if we=20
-> want to expose async subdev nodes during sensor support.
->
-> Will have this fix in v8 with a comment in vi_remove to make sure not=20
-> to use vi reference after host1x_client_unregister.
->
-> Will test more and will release v8 with above fix to allow direct=20
-> host1x client driver unbind.
->
-> Thanks
->
-> sowjanya
->
->
-> On 4/15/20 12:51 PM, Sowjanya Komatineni wrote:
->>
->> On 4/15/20 12:21 PM, Dmitry Osipenko wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> 15.04.2020 21:53, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> ...
->>>>>>>>>> Have you tried to test this driver under KASAN? I suspect that
->>>>>>>>>> you just
->>>>>>>>>> masked the problem, instead of fixing it.
->>>> Tested with kmemleak scan and did not see any memory leaks
->>> You should get use-after-free and not memleak.
->> I don't see use-after-free bugs during the testing.
->>
->> But as mentioned when direct vi/csi client driver unbind happens=20
->> while video device node is kept opened, vi driver remove will free vi=20
->> structure memory but actual video device memory which is part of=20
->> channels remains but list head gets lost when vi structure is freed.
->>
->> So, when device node is released and executes release callback as=20
->> list head is lost it can't free allocated channels which is not good.
->>
->> This happens only with direct host1x client vi/csi driver unbind.
->>
->> Need to find better place to free host1x client driver data structure=20
->> to allow direct client driver unbind->bind.
->>
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Apr 15, 2020 at 11:24:49AM -0500, Rob Herring wrote:
+> On Thu,  9 Apr 2020 19:52:26 +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Add support for looking up memory regions by name. This looks up the
+> > given name in the newly introduced memory-region-names property and
+> > returns the memory region at the corresponding index in the memory-
+> > region(s) property.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  drivers/of/of_reserved_mem.c    | 19 +++++++++++++++++++
+> >  include/linux/of_reserved_mem.h | 11 +++++++++++
+> >  2 files changed, 30 insertions(+)
+> >=20
+>=20
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+Hi Rob,
+
+thanks for the review. Do you want me to apply this and patch 3/14 to a
+stable branch and send to you as a pull request? That way I could use
+that same branch to resolve the dependency in the Tegra tree for the
+memory controller driver patches.
+
+Thierry
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6XmkEACgkQ3SOs138+
+s6Ez0hAAhoJ+N1kIOrfHX3YiD1o4HnSvBdA5fzev2mOBfWSzcbDQtQuO7PYw6yCq
+IeyEbUuehKpQL/OQASwHkJ4m3iRr8tH5PddGl1DF36Vu3bqAxr8opKZIi1S2hXHE
+2iXFY48PzN9aDvLIilAylO12RtZoTD0yI30BpucJYhATovmkzvzNuhaJ8CDYjf07
+4OJ0HoH7hOn9rhjHNQVq755OESyUTtRIqHxEw0150PJG33O1cjruRc9WgI5GVjO7
+4MQSqFHmyOcfNWZZTins29E9Cnd/zy2nkj+YXsp7eBRG2QFjrlN+y7evCduhOdbP
+moJzOF+e4dqEOZDwlVeqPni6UVFu4Zr5HWJw790osuG1oOCwB4NVpNRz34VjM7kD
+nYoZaqIm9X5Foeus0Rl94cBreI0Bg1lCsM8CCoANE42t2NOlumnMsJoLWt4T+cBb
+F5JoiSCC4JKIbuYedHI00W/9U6LcPqBcd/NZ2ZxYSVAibApDfG/APsy8a5gRLRgZ
+460CNbf4e7p7lyN5c4l58DLJvEsT/jYd/ap09KZnUZmQgcfxAHmCVQUMFq+VIb2k
+1gePNObVfuvOC6Q1KwGEcbgYlNKd/e6uGwn2FP5jzWYQr9Co8R8L+kRvIaHkuVl5
+o7TOw5dujpA6zalLJnecmj8XrL5uGRTvE6AwpGujw1UgN4QTGVs=
+=W/7i
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
+
+
+--===============7093004101106947435==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============7093004101106947435==--
