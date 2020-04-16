@@ -1,121 +1,106 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] drm/tegra: output: rgb: Support LVDS encoder
- bridge
-Date: Fri, 17 Apr 2020 01:22:57 +0300
-Message-ID: <481f003b-78d2-51b4-ce7a-b917abea8ac7@gmail.com>
-References: <20200416172405.5051-1-digetx@gmail.com>
- <20200416172405.5051-3-digetx@gmail.com>
- <20200416174112.GS4796@pendragon.ideasonboard.com>
- <6275bcd3-c0b2-4c1c-1817-9e713d3747c7@gmail.com>
- <7cf27640-4fdc-8617-01cb-85f4c5847bb8@gmail.com>
- <20200416205012.GA28162@pendragon.ideasonboard.com>
- <fbafa641-f2ed-22b5-eaeb-bd2726b53d0a@gmail.com>
- <20200416213919.GB28162@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v10 0/2] Panel rotation patches
+Date: Fri, 17 Apr 2020 02:03:29 +0300
+Message-ID: <736ad1d2-4a28-87e8-62f7-28a5582c9fcf@gmail.com>
+References: <20200306002112.255361-1-dbasehore@chromium.org>
+ <ecbfb5f8-615a-4a88-5dac-de17158125bf@gmail.com>
+ <CAGAzgsqpjZxh7PEL_Dy7HrFeFGm7+=F6cL3QG9KmK9CHvDWZ9g@mail.gmail.com>
+ <6dc9ef16-9671-6ce8-27e6-aa1f4c009ee2@gmail.com>
+ <CAGAzgsrNrq+S+-5KEFVnJn6S5DRn1fKkToD5=KR911T9AOAF-w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200416213919.GB28162-N3hz7ZxfLydczECFQUw77jytWr6r+dGw0E9HWUfgJXw@public.gmane.org>
+In-Reply-To: <CAGAzgsrNrq+S+-5KEFVnJn6S5DRn1fKkToD5=KR911T9AOAF-w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "dbasehore ." <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>
+Cc: linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-17.04.2020 00:39, Laurent Pinchart пишет:
-> Hi Dmitry,
-> 
-> On Fri, Apr 17, 2020 at 12:15:33AM +0300, Dmitry Osipenko wrote:
->> 16.04.2020 23:50, Laurent Pinchart пишет:
->>> On Thu, Apr 16, 2020 at 11:21:40PM +0300, Dmitry Osipenko wrote:
->>>> 16.04.2020 21:52, Dmitry Osipenko пишет:
->>>> ...
->>>>>> May I also recommend switching to the DRM panel bridge helper ? It will
->>>>>> simplify the code.
->>>>>
->>>>> Could you please clarify what is the "DRM panel bridge helper"?
->>>>>
->>>>> I think we won't need any additional helpers after switching to the
->>>>> bridge connector helper, no?
+15.04.2020 00:32, dbasehore . пишет:
+> On Tue, Apr 14, 2020 at 2:18 PM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>
+>> 14.04.2020 22:32, dbasehore . пишет:
+>>> Hi Dmitry, sorry for the late reply.
+>>>
+>>> On Sun, Mar 8, 2020 at 12:25 PM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 >>>>
->>>> Actually, I now see that the panel needs to be manually attached to the
->>>> connector.
+>>>> 06.03.2020 03:21, Derek Basehore пишет:
+>>>>> This adds the plumbing for reading panel rotation from the devicetree
+>>>>> and sets up adding a panel property for the panel orientation on
+>>>>> Mediatek SoCs when a rotation is present.
+>>>>
+>>>> Hello Derek and everyone,
+>>>>
+>>>> I'm looking at adding display rotation support to NVIDIA Tegra DRM
+>>>> driver because some devices have display panel physically mounted
+>>>> upside-down, and thus, display controller's scan-out needs to be rotated
+>>>> by 180° in this case.
+>>>>
+>>>> Derek, yours panel-rotation patches add support for assigning panel's
+>>>> orientation to the connector, but then only primary display plane
+>>>> receives rotation value in [1], while rotation needs to be applied to
+>>>> all available overlay/cursor planes and this should happen in other
+>>>> places than [1] as well.
 >>>
->>> The DRM panel bridge helper creates a bridge from a panel (with
->>> devm_drm_panel_bridge_add()). You can then attach that bridge to the
->>> chain, like any other bridge, and the enable/disable operations will be
->>> called automatically without any need to call the panel enable/disable
->>> manually as done currently.
+>>> This is intended. We don't correct the output in the kernel. We
+>>> instead rely on notifying userspace that the panel is rotated, then we
+>>> handle it there.
 >>>
->>>> Still it's not apparent to me how to get panel out of the bridge. It
->>>> looks like there is no such "panel helper" for the bridge API or I just
->>>> can't find it.
+>>>>
+>>>> [1] drm_client_modeset_commit_atomic()
+>>>>
+>>>> Please also note that in a case of the scan-out rotation, plane's
+>>>> coordinates need to be changed in accordance to the display's rotation.
+>>>>
+>>>> I looked briefly through the DRM code and my understanding that the DRM
+>>>> core currently doesn't support use-case where scan-out needs to rotated
+>>>> based on a panel's orientation, correct? Is it the use-case you're
+>>>> working on for the Mediatek driver?
 >>>
->>> You don't need to get a panel out of the bridge. You should get the
->>> bridge as done today,
->>
->> You mean "get the panel", correct?
-> 
-> Yes, sorry.
-> 
->>> and wrap it in a bridge with
->>> devm_drm_panel_bridge_add().
+>>> Yes, we rely on userspace to rotate the output. The major reason for
+>>> this is because there may not be a "free" hardware rotation that can
+>>> be applied to the overlay. Sean Paul and others also preferred that
+>>> userspace control what is output to the screen instead of the kernel
+>>> taking care of it. This code just adds the drm property to the panel.
 >>>
 >>
->> The lvds-codec already wraps panel into the bridge using
->> devm_drm_panel_bridge_add() and chains it for us, please see
->> lvds_codec_probe() / lvds_codec_attach().
->>
->> Does it mean that lvds-codec is not supporting the new model?
+>> Could you please explain what that userspace is?
 > 
-> No, that *is* the new model :-) As I think I've commented during review,
-> when you have an LVDS encoder and a panel, you don't need to handle the
-> panel at all. When you have an RGB panel connected directly to the RGB
-> output, you need to wrap it in a bridge, exactly the same way as
-> lvds-codec does for its panel.
-> 
->> Everything works nicely using the old model, where bridge creates
->> connector and attaches panel to it for us.
->>
->> [I'm still not sure what is the point to use the new model in a case of
->> a simple chain of bridges]
->>
->> Using the new model, the connector isn't created by the bridge, so I
->> need to duplicate that creation effort in the driver. Once the bridge
->> connector is manually created, I need to attach panel to this connector,
->> but panel is reachable only via the remote bridge (which wraps the panel).
->>
->> driver connector -> LVDS bridge -> panel bridge -> panel
-> 
-> With the new model,
-> 
-> 1. The display driver and the bridge drivers need to get hold of the
->    bridge directly connected to their output (for instance with
->    of_drm_find_panel()). If the output is connected to a panel, they
->    need to wrap that panel in a bridge (with
->    devm_drm_panel_bridge_add()). I plan, in the future, to make creation
->    of panel bridges automatic, so drivers won't have to care.
-> 
-> 2. The display driver needs to create a dummy drm_encoder for each of
->    its outputs (for instance with drm_simple_encoder_init()).
-> 
-> 3. The display driver needs to create a drm_connector for each of its
->    outputs, and implement connector operations by delegating them to the
->    bridges in the pipeline. Unless there's a good reason not to do so,
->    this should be done with drm_bridge_connector_init().
-> 
-> That's it. Every driver then focusses on its own needs, bridge drivers
-> handle only the device they're associated with, and the DRM core and DRM
-> bridge connector helper will handle all the rest.
+> This was added for Chrome OS, which uses its own graphics stack,
+> Ozone, instead of Xorg.
 > 
 
-Thank you very much for the clarification again! :)
+Thank you very much for the clarification.
 
-Now I realized what was the missing part.. in my case display panel is
-mounted upside-down and display output needs to be rotated by 180°. I
-have a local patch (hack) that adds orientation-property support to the
-panel-lvds driver and previously the panel's orientation was assigned to
-the connector using drm_panel_attach(), but now this attachment doesn't
-happen and I found that panel_lvds_get_modes() missed
-drm_connector_set_panel_orientation() in my patch. Everything is okay
-once the panel_lvds_get_modes() is corrected. I'll prepare the v4.
+It's probably not a big problem for something monolithic and customized
+like ChromeOS to issue a software update in order to take into account
+all specifics of a particular device, but this doesn't work nicely for a
+generic software, like a usual Linux distro.
+
+>> AFAIK, things like Xorg modesetting don't support that orientation property.
+
+In my case it's not only the display panel which is upside-down, but
+also the touchscreen. Hence both display output and touchscreen input
+need to be rotated at once, otherwise you'll end up with either display
+or input being upside-down.
+
+The 180° rotation should be free on NVIDIA Tegra. There are no known
+limitations for the planes and BSP kernel video driver handles the
+plane's coordinates/framebuffer rotation within the driver.
+
+The kernel's input subsystem allows us to transparently (for userspace)
+remap the touchscreen input (by specifying generic touchscreen
+device-tree properties), while this is not the case for the DRM subsystem.
+
+@Thierry, @Sean, @Daniel, could you please help me to understand how a
+coordinated display / input rotation could be implemented, making the
+rotation transparent to the user (i.e. avoiding xorg.conf hacking and
+etc)? It should be nice if display's output could be flipped within the
+DRM driver, hiding this fact from userspace.
+
+Will it be okay if we'll add a transparent-rotation support specifically
+to the Tegra DRM driver? For example if device-tree contains
+nvidia,display-flip-y property, then the Tegra DRM driver will take care
+of rotating coordinates/framebuffer of the display planes.
