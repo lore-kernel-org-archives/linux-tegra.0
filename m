@@ -1,47 +1,51 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 02/14] of: reserved-memory: Support lookup of regions
- by name
-Date: Wed, 15 Apr 2020 19:58:33 -0500
-Message-ID: <CAL_JsqK6Ku3woyc+9kxzjN_fih_ygWWnt3EFdVRi6UBd7=2iFw@mail.gmail.com>
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-3-thierry.reding@gmail.com> <20200415162449.GA1842@bogus>
- <20200415233532.GA211822@ulmo>
+From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
+Date: Thu, 16 Apr 2020 09:07:15 +0530
+Message-ID: <20200416033715.hscztwkxie2o5i3r@vireshk-i7>
+References: <20200406025549.qfwzlk3745y3r274@vireshk-i7>
+ <3ab4136c-8cca-c2f9-d286-b82dac23e720@nvidia.com>
+ <20200408055301.jhvu5bc2luu3b5qr@vireshk-i7>
+ <08307e54-0e14-14a3-7d6a-d59e1e04a683@nvidia.com>
+ <20200409074415.twpzu2n4frqlde7b@vireshk-i7>
+ <00390070-38a1-19aa-ca59-42c4658bee7e@nvidia.com>
+ <20200413062141.a6hmwipexhv3sctq@vireshk-i7>
+ <64b609f1-efb1-425f-a91a-27a492bd3ec4@nvidia.com>
+ <20200414054504.e3qn2cnxqur4sclw@vireshk-i7>
+ <d6e0eed6-4267-fca9-59e1-02d16e17ff34@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200415233532.GA211822@ulmo>
+Content-Disposition: inline
+In-Reply-To: <d6e0eed6-4267-fca9-59e1-02d16e17ff34-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 6:35 PM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> On Wed, Apr 15, 2020 at 11:24:49AM -0500, Rob Herring wrote:
-> > On Thu,  9 Apr 2020 19:52:26 +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >
-> > > Add support for looking up memory regions by name. This looks up the
-> > > given name in the newly introduced memory-region-names property and
-> > > returns the memory region at the corresponding index in the memory-
-> > > region(s) property.
-> > >
-> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >  drivers/of/of_reserved_mem.c    | 19 +++++++++++++++++++
-> > >  include/linux/of_reserved_mem.h | 11 +++++++++++
-> > >  2 files changed, 30 insertions(+)
-> > >
-> >
-> > Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->
-> Hi Rob,
->
-> thanks for the review. Do you want me to apply this and patch 3/14 to a
-> stable branch and send to you as a pull request? That way I could use
-> that same branch to resolve the dependency in the Tegra tree for the
-> memory controller driver patches.
+On 15-04-20, 16:55, Sumit Gupta wrote:
+> 
+> 
+> On 14/04/20 11:15 AM, Viresh Kumar wrote:
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On 13-04-20, 17:50, Sumit Gupta wrote:
+> > > This was done considering long delay value as explained previously.
+> > > Do you think that smp_call_function_single() would be better than work queue
+> > > here?
+> > 
+> > Don't work with assumptions, you should test both and see which one
+> > works better. Workqueue should never be faster than
+> > smp_call_function_single() with my understanding.
+> Checked the time taken and its almost same in both cases.
+> Earlier we used smp_call_function_single(), but delay time period was small
+> in that SOC. In T194, the time period was more. So, this is an optimization
+> done because using work queue has advantage as interrupts will not be
+> disabled for that period.
 
-I think it is fine for you to just take the patches.
+Hmm, okay, keep the workqueue and mention the required details in a
+comment for everyone to understand why the implementation is done that
+way.
 
-Rob
+-- 
+viresh
