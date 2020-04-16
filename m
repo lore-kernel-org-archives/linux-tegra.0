@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 4/6] dt-bindings: ARM: tegra: Add Acer Iconia Tab A500
-Date: Thu, 16 Apr 2020 19:09:54 +0300
-Message-ID: <20200416160956.16468-5-digetx@gmail.com>
+Subject: [PATCH v5 5/6] dt-bindings: ARM: tegra: Add ASUS Google Nexus 7
+Date: Thu, 16 Apr 2020 19:09:55 +0300
+Message-ID: <20200416160956.16468-6-digetx@gmail.com>
 References: <20200416160956.16468-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,26 +12,30 @@ To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Redin
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a binding for the Tegra20-based Acer Iconia Tab A500 tablet device.
+Add a binding for the Tegra30-based ASUS Google Nexus 7 tablet device.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/arm/tegra.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index 60b38eb5c61a..7fd0b66c69b2 100644
+index 7fd0b66c69b2..fb3bbf7a5fb4 100644
 --- a/Documentation/devicetree/bindings/arm/tegra.yaml
 +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -34,6 +34,9 @@ properties:
-               - toradex,colibri_t20-iris
-           - const: toradex,colibri_t20
-           - const: nvidia,tegra20
+@@ -62,6 +62,13 @@ properties:
+               - toradex,colibri_t30-eval-v3
+           - const: toradex,colibri_t30
+           - const: nvidia,tegra30
 +      - items:
-+          - const: acer,picasso
-+          - const: nvidia,tegra20
++          - const: asus,grouper
++          - const: nvidia,tegra30
++      - items:
++          - const: asus,tilapia
++          - const: asus,grouper
++          - const: nvidia,tegra30
        - items:
            - enum:
-               - nvidia,beaver
+               - nvidia,dalmore
 -- 
 2.26.0
