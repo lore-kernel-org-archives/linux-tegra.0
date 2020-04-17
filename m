@@ -1,44 +1,65 @@
-From: "Derrick, Jonathan" <jonathan.derrick-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core
- code
-Date: Fri, 17 Apr 2020 01:14:30 +0000
-Message-ID: <aafed865c0254934986528b3ce9c4d34ff2fccad.camel@intel.com>
-References: <20200414131542.25608-1-joro@8bytes.org>
-         <20200417010335.31739-1-drake@endlessm.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] arm: tegra: dts: Kill off "simple-panel" compatibles
+Date: Fri, 17 Apr 2020 09:07:55 +0200
+Message-ID: <20200417070755.GA1573554@ulmo>
+References: <20200117230855.25567-1-robh@kernel.org>
+ <CAL_JsqLDsoJteGC6BRMFvPZ0pekOU71eUNQUqh74we_BB7RZ_g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200417010335.31739-1-drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>
-Content-Language: en-US
-Content-ID: <B8851D46B4E5F2468CD8AA858DAC2199-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqLDsoJteGC6BRMFvPZ0pekOU71eUNQUqh74we_BB7RZ_g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org" <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>
-Cc: "heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org" <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, "kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "robin.murphy-5wv7dgnIgG8@public.gmane.org" <robin.murphy-5wv7dgnIgG8@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGFuaWVsLA0KDQpPbiBGcmksIDIwMjAtMDQtMTcgYXQgMDk6MDMgKzA4MDAsIERhbmllbCBE
-cmFrZSB3cm90ZToNCj4gSGkgSm9lcmcsDQo+IA0KPiA+IEhpLA0KPiA+IA0KPiA+IGhlcmUgaXMg
-dGhlIHNlY29uZCB2ZXJzaW9uIG9mIHRoaXMgcGF0Y2gtc2V0LiBUaGUgZmlyc3QgdmVyc2lvbiB3
-aXRoDQo+ID4gc29tZSBtb3JlIGludHJvZHVjdG9yeSB0ZXh0IGNhbiBiZSBmb3VuZCBoZXJlOg0K
-PiA+IA0KPiA+IAlodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzIwMjAwNDA3MTgzNzQyLjQz
-NDQtMS1qb3JvQDhieXRlcy5vcmcvDQo+IA0KPiBUaGFua3MgZm9yIHRoZSBjb250aW51ZWQgaW1w
-cm92ZW1lbnRzIGluIHRoaXMgYXJlYSENCj4gDQo+IEkgbWF5IGhhdmUgc3BvdHRlZCBhIHByb2Js
-ZW0gd2l0aCBzZXR1cHMgbGlrZSBWTUQuDQo+IA0KPiBUaGUgY29yZSBQQ0kgYnVzIGlzIHNldCB1
-cCBkdXJpbmcgZWFybHkgYm9vdC4NCj4gVGhlbiwgZm9yIHRoZSBQQ0kgYnVzLCB3ZSByZWFjaCBp
-b21tdV9idXNfaW5pdCgpIC0+IGJ1c19pb21tdV9wcm9iZSgpLg0KPiBJbiB0aGVyZSwgd2UgY2Fs
-bCBwcm9iZV9pb21tdV9ncm91cCgpIC0+IGRldl9pb21tdV9nZXQoKSBmb3IgZWFjaCBQQ0kNCj4g
-ZGV2aWNlLCB3aGljaCBhbGxvY2F0ZXMgZGV2LT5pb21tdSBpbiBlYWNoIGNhc2UuIFNvIGZhciBz
-byBnb29kLg0KPiANCj4gVGhlIHByb2JsZW0gaXMgdGhhdCB0aGlzIGlzIHRoZSBsYXN0IHRpbWUg
-dGhhdCB3ZSdsbCBjYWxsIGRldl9pb21tdV9nZXQoKS4NCj4gSWYgYW55IFBDSSBidXMgZGV2aWNl
-cyBnZXQgYWRkZWQgYWZ0ZXIgdGhpcyBwb2ludCwgdGhleSBkbyBub3QgZ2V0IHBhc3NlZA0KPiB0
-byBkZXZfaW9tbXVfZ2V0KCkuDQo+IA0KPiBTbyB3aGVuIHRoZSB2bWQgbW9kdWxlIGdldHMgbG9h
-ZGVkIGxhdGVyLCBhbmQgY3JlYXRlcyBtb3JlIFBDSSBkZXZpY2VzLA0KPiB3ZSBlbmQgdXAgaW4g
-aW9tbXVfYnVzX25vdGlmaWVyKCkgLT4gaW9tbXVfcHJvYmVfZGV2aWNlKCkNCj4gLT4gX19pb21t
-dV9wcm9iZV9kZXZpY2UoKSB3aGljaCBkb2VzOg0KPiANCj4gCWRldi0+aW9tbXUtPmlvbW11X2Rl
-diA9IGlvbW11X2RldjsNCj4gDQo+IGRldi0+aW9tbXUtPiBpcyBhIE5VTEwgZGVyZWZlcmVuY2Ug
-YmVjYXVzZSBkZXZfaW9tbXVfZ2V0KCkgd2FzIG5ldmVyDQo+IGNhbGxlZCBmb3IgdGhpcyBuZXcg
-ZGV2aWNlLg0KPiANCj4gRGFuaWVsDQo+IA0KDQpJIHNob3VsZCBoYXZlIENDZWQgeW91IG9uIHRo
-aXMsIGJ1dCBpdCBzaG91bGQgdGVtcG9yYXJpbHkgcmVzb2x2ZSB0aGF0DQppc3N1ZToNCmh0dHBz
-Oi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9waXBlcm1haWwvaW9tbXUvMjAyMC1BcHJpbC8w
-NDMyNTMuaHRtbA0KDQo=
+
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Apr 16, 2020 at 04:02:58PM -0500, Rob Herring wrote:
+> On Fri, Jan 17, 2020 at 5:08 PM Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> >
+> > "simple-panel" is a Linux driver and has never been an accepted upstream
+> > compatible string, so remove it.
+> >
+> > Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> > Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>=20
+> Ping. This never got picked up.
+
+Indeed, I somehow missed this. Applied now, thanks.
+
+I did take the liberty of splitting up the patch for 32-bit ARM and
+64-bit ARM but reused the same commit message and authorship, so I hope
+you don't mind.
+
+Thierry
+
+--BOKacYhQ+x31HxR3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6ZVckACgkQ3SOs138+
+s6G7ig//Sa5UUxsU1rQzbWSzOABzwUMTFWwoEOr17cFjrHwxV06b/jUYICr3yKDn
+Qdyr4e4PNRYiDZUWwM5FpY6/Xa0tmqKY+zCv8/Q0KE2RhB1lZFFTkjLSiZ4Eg25A
+ge8urVNALc4Z8pCJElYGFL7LCcDPEXcOsNFjCjrUaie4Jivd62A0rQsjb1Ib7VSf
+QF/156ZMz67iURk7ssKHy0jOdoimXX7e9se96TghvL9CH10RBcJehU/lWnls3S0X
+HhcEt/scIk9CYePhxb+XxdJgy79PJoCImqf17tmsRWq00405BA9PL/lbqmLYlJha
+7A9wXu1pHcU8W5SPNtefWCTT0QBTbE8vx4mqa51pnjDvKzntz7WTaiQsMot1SoKO
+g4WP4QFLqLRK4dEA4nZU9Yer+jnubOYy9LEV+R8Xtcp4gX5YEEBHd1ZZpSxBPTX3
+lZtaaIsNCCwMYfwCaWK/MA13sJPBK8aIga3EE4Nc+QYuWig0vdrfyEcg0kAxPpeL
+1MG+oYdU5COwgxxeGVv+LbTLWGMJ8KQR7jBuYGviaxPEd5trk6KolT4bK3ALIRsY
+LD1AZB6GdWEjEXc109WmB8yu8av3IpKl879JDl3rK0SuuyvKHOlAr20yuoS1GPdG
+qkO7AUVbe4YbXsrTsH2hVyYjPIF6VK694bc6NvJlQIimqxtkqT4=
+=pkFW
+-----END PGP SIGNATURE-----
+
+--BOKacYhQ+x31HxR3--
