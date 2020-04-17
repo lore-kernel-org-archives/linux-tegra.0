@@ -1,52 +1,58 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/2] arm64: tegra: Make the RTC a wakeup source on Jetson TX2
-Date: Fri, 17 Apr 2020 19:11:17 +0200
-Message-ID: <20200417171117.2556374-2-thierry.reding@gmail.com>
-References: <20200417171117.2556374-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v4 1/3] drm/tegra: output: Don't leak OF node on error
+Date: Fri, 17 Apr 2020 20:52:36 +0300
+Message-ID: <20200417175238.27154-2-digetx@gmail.com>
+References: <20200417175238.27154-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200417171117.2556374-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200417175238.27154-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The OF node should be put before returning error in tegra_output_probe(),
+otherwise node's refcount will be leaked.
 
-The RTC found on the MAX77620 PMIC can be used as a wakeup source on
-Jetson TX2, which is useful to wake the system from suspend at a given
-time.
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/output.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-index da96de04d003..7a0fa157f48c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-@@ -221,7 +221,8 @@ pmic: pmic@3c {
- 				compatible = "maxim,max77620";
- 				reg = <0x3c>;
- 
--				interrupts = <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-parent = <&pmc>;
-+				interrupts = <24 IRQ_TYPE_LEVEL_LOW>;
- 				#interrupt-cells = <2>;
- 				interrupt-controller;
- 
-@@ -379,6 +380,10 @@ vdd_pex: ldo8 {
- 						regulator-max-microvolt = <1050000>;
- 					};
- 				};
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index e36e5e7c2f69..a6a711d54e88 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -102,10 +102,10 @@ int tegra_output_probe(struct tegra_output *output)
+ 	panel = of_parse_phandle(output->of_node, "nvidia,panel", 0);
+ 	if (panel) {
+ 		output->panel = of_drm_find_panel(panel);
++		of_node_put(panel);
 +
-+				rtc {
-+					wakeup-source;
-+				};
- 			};
- 		};
- 	};
+ 		if (IS_ERR(output->panel))
+ 			return PTR_ERR(output->panel);
+-
+-		of_node_put(panel);
+ 	}
+ 
+ 	output->edid = of_get_property(output->of_node, "nvidia,edid", &size);
+@@ -113,13 +113,12 @@ int tegra_output_probe(struct tegra_output *output)
+ 	ddc = of_parse_phandle(output->of_node, "nvidia,ddc-i2c-bus", 0);
+ 	if (ddc) {
+ 		output->ddc = of_find_i2c_adapter_by_node(ddc);
++		of_node_put(ddc);
++
+ 		if (!output->ddc) {
+ 			err = -EPROBE_DEFER;
+-			of_node_put(ddc);
+ 			return err;
+ 		}
+-
+-		of_node_put(ddc);
+ 	}
+ 
+ 	output->hpd_gpio = devm_gpiod_get_from_of_node(output->dev,
 -- 
-2.24.1
+2.26.0
