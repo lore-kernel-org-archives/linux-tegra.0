@@ -1,81 +1,43 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 2/2] soc/tegra: fuse: Trivial clean-up of tegra_init_revision()
-Date: Fri, 17 Apr 2020 13:39:49 +0100
-Message-ID: <20200417123949.26288-2-jonathanh@nvidia.com>
-References: <20200417123949.26288-1-jonathanh@nvidia.com>
+Subject: [PATCH] soc/tegra: fuse: Update the SoC revision attribute to display a name
+Date: Fri, 17 Apr 2020 13:40:46 +0100
+Message-ID: <20200417124046.26400-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200417123949.26288-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Clean-up the tegra_init_revision() function by removing the 'rev'
-variable which is not needed and use the newly added helper function
-tegra_get_minor_rev() to get the minor revision.
+Currently the SoC revision attribute for Tegra devices displays the
+value of the enum associated with a particular revision. This is not
+very useful because to obtain the actual revision you need to
+use the tegra_revision enumeration to translate the value.
+
+It is more meaningful to display a name for the revision, such as
+'A01', than the enumarated value and therefore, update the revision
+attribute to display a name. This change does alter the ABI, which
+is unfortunate, but this is more meaningful and maintable.
 
 Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes since V2:
-- None
+ drivers/soc/tegra/fuse/fuse-tegra.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changes since V1:
-- Added this change in V2 of the series
-
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index 44a154ca16b5..3cdd69d1bd4d 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -75,36 +75,32 @@ static const struct of_device_id apbmisc_match[] __initconst = {
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index db65ddb6a5d2..d1f8dd0289e6 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -363,7 +363,8 @@ struct device * __init tegra_soc_device_register(void)
+ 		return NULL;
  
- void __init tegra_init_revision(void)
- {
--	u32 id, chip_id, minor_rev;
--	int rev;
-+	u8 chip_id, minor_rev;
- 
--	id = tegra_read_chipid();
--	chip_id = (id >> 8) & 0xff;
--	minor_rev = (id >> 16) & 0xf;
-+	chip_id = tegra_get_chip_id();
-+	minor_rev = tegra_get_minor_rev();
- 
- 	switch (minor_rev) {
- 	case 1:
--		rev = TEGRA_REVISION_A01;
-+		tegra_sku_info.revision = TEGRA_REVISION_A01;
- 		break;
- 	case 2:
--		rev = TEGRA_REVISION_A02;
-+		tegra_sku_info.revision = TEGRA_REVISION_A02;
- 		break;
- 	case 3:
- 		if (chip_id == TEGRA20 && (tegra_fuse_read_spare(18) ||
- 					   tegra_fuse_read_spare(19)))
--			rev = TEGRA_REVISION_A03p;
-+			tegra_sku_info.revision = TEGRA_REVISION_A03p;
- 		else
--			rev = TEGRA_REVISION_A03;
-+			tegra_sku_info.revision = TEGRA_REVISION_A03;
- 		break;
- 	case 4:
--		rev = TEGRA_REVISION_A04;
-+		tegra_sku_info.revision = TEGRA_REVISION_A04;
- 		break;
- 	default:
--		rev = TEGRA_REVISION_UNKNOWN;
-+		tegra_sku_info.revision = TEGRA_REVISION_UNKNOWN;
- 	}
- 
--	tegra_sku_info.revision = rev;
--
- 	tegra_sku_info.sku_id = tegra_fuse_read_early(FUSE_SKU_INFO);
- }
+ 	attr->family = kasprintf(GFP_KERNEL, "Tegra");
+-	attr->revision = kasprintf(GFP_KERNEL, "%d", tegra_sku_info.revision);
++	attr->revision = kasprintf(GFP_KERNEL, "%s",
++		tegra_revision_name[tegra_sku_info.revision]);
+ 	attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
+ 	attr->custom_attr_group = fuse->soc->soc_attr_group;
  
 -- 
 2.17.1
