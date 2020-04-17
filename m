@@ -1,44 +1,46 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 2/3] drm/tegra: output: Support DRM bridges
-Date: Fri, 17 Apr 2020 22:41:59 +0300
-Message-ID: <0acc35fd-a74b-e726-7a16-55db13265c39@gmail.com>
+Subject: Re: [PATCH v4 3/3] drm/tegra: output: rgb: Support LVDS encoder
+ bridge
+Date: Fri, 17 Apr 2020 23:11:06 +0300
+Message-ID: <598c81ef-ba22-a832-0822-e08023f3dff6@gmail.com>
 References: <20200417175238.27154-1-digetx@gmail.com>
- <20200417175238.27154-3-digetx@gmail.com>
- <20200417193018.GI5861@pendragon.ideasonboard.com>
+ <20200417175238.27154-4-digetx@gmail.com>
+ <20200417192453.GH5861@pendragon.ideasonboard.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200417193018.GI5861-N3hz7ZxfLydczECFQUw77jytWr6r+dGw0E9HWUfgJXw@public.gmane.org>
+In-Reply-To: <20200417192453.GH5861-N3hz7ZxfLydczECFQUw77jytWr6r+dGw0E9HWUfgJXw@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Laurent,
-
-17.04.2020 22:30, Laurent Pinchart пишет:
+17.04.2020 22:24, Laurent Pinchart пишет:
 ...
->>  #include <drm/drm_atomic.h>
->> +#include <drm/drm_bridge.h>
+> As I tried to explain before, if you wrap the panel in a bridge with
+> drm_panel_bridge_add() (or the devm_ variant), you will always have a
+> bridge associated with the output, and will be able to remove your
+> custom connector implementation. I thus recommend converting to
+> drm_panel_bridge_add() either as part of this patch series, or just
+> after it, to get full benefits.
 > 
-> You could add a forward declaration of struct drm_bridge instead, that
-> can lower the compilation time a little bit.
-
-This include is not only for the struct, but also for the
-drm_bridge_attach(). It looks to me that it should be nicer to keep the
-include here.
-
-...
->> +	port = of_get_child_by_name(output->of_node, "port");
+> With the assumption that this will be handled,
 > 
-> Do you need to check for the presence of a port node first ? Can you
-> just check the return value of drm_of_find_panel_or_bridge(), and fall
-> back to "nvidia,panel" if it returns -ENODEV ?
+> Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 
-Without the check, the drm_of_find_panel_or_bridge() prints a very noisy
-error message about missing port node for every output that doesn't have
-a graph specified in a device-tree (HDMI, DSI and etc).
+Thanks you very much!
 
-https://elixir.bootlin.com/linux/v5.7-rc1/source/drivers/of/property.c#L621
+Yes, I got yours point about wrapping panel into the bridge. But I don't
+think that it's worth the effort right now because each Tegra output has
+it's own implantation of the connector and it should be cleaner not to
+touch that code.
+
+Secondly, I don't have hardware to test all available panel output types
+on Tegra and the benefits of messing with all that code are a bit dim to me.
+
+I can make a patch to wrap the RGB panel into a bridge, but this should
+make code a bit inconsistent in regards to not having a common code path
+for the "legacy" nvidia,panel. So perhaps it's better to leave it all
+as-is for now.
