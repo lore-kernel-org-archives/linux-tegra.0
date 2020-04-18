@@ -1,78 +1,66 @@
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: Re: [PATCH v4 2/3] drm/tegra: output: Support DRM bridges
-Date: Fri, 17 Apr 2020 23:58:28 +0300
-Message-ID: <20200417205828.GM5861@pendragon.ideasonboard.com>
-References: <20200417175238.27154-1-digetx@gmail.com>
- <20200417175238.27154-3-digetx@gmail.com>
- <20200417193018.GI5861@pendragon.ideasonboard.com>
- <0acc35fd-a74b-e726-7a16-55db13265c39@gmail.com>
- <20200417203154.GK5861@pendragon.ideasonboard.com>
- <15002e6e-de36-899f-0d28-896c67a29a49@gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH] pwm: tegra: dynamic clk freq configuration by PWM driver
+Date: Sat, 18 Apr 2020 10:23:00 +0200
+Message-ID: <20200418082300.mucrg2srysvvjbfn@pengutronix.de>
+References: <1585917303-10573-1-git-send-email-spatra@nvidia.com>
+ <20200403151050.nh2mrffkqdqtkozq@pengutronix.de>
+ <BYAPR12MB3014C0178A7360662C6FA8B7ADDB0@BYAPR12MB3014.namprd12.prod.outlook.com>
+ <20200415141856.ck3w3gtae4bsxyfl@pengutronix.de>
+ <BYAPR12MB30149D2715DC575A030A7F59ADD90@BYAPR12MB3014.namprd12.prod.outlook.com>
+ <20200417135027.wkj6bxiplnehsa5s@pengutronix.de>
+ <BYAPR12MB3014041BFFC43AF5EB3BC27CADD90@BYAPR12MB3014.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <15002e6e-de36-899f-0d28-896c67a29a49-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <BYAPR12MB3014041BFFC43AF5EB3BC27CADD90-ZGDeBxoHBPnJoSvCh4fbtgdYzm3356FpvxpqHgZTriW3zl9H0oFU5g@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+Hello,
 
-On Fri, Apr 17, 2020 at 11:52:11PM +0300, Dmitry Osipenko wrote:
-> 17.04.2020 23:31, Laurent Pinchart пишет:
-> > On Fri, Apr 17, 2020 at 10:41:59PM +0300, Dmitry Osipenko wrote:
-> >> 17.04.2020 22:30, Laurent Pinchart пишет:
-> >> ...
-> >>>>  #include <drm/drm_atomic.h>
-> >>>> +#include <drm/drm_bridge.h>
-> >>>
-> >>> You could add a forward declaration of struct drm_bridge instead, that
-> >>> can lower the compilation time a little bit.
-> >>
-> >> This include is not only for the struct, but also for the
-> >> drm_bridge_attach(). It looks to me that it should be nicer to keep the
-> >> include here.
+On Fri, Apr 17, 2020 at 02:53:22PM +0000, Sandipan Patra wrote:
+> > To put my expression in words: pick the maximum of the possible periods that
+> > are less or equal to the requested value.  Maybe this is better
+> > understandable:
 > > 
-> > drm_bridge_attach() is called from .c files. In the .h file you can use
-> > a forward declaration. It's entirely up to you, but as a general rule, I
-> > personally try to use forward structure declarations in .h files as much
-> > as possible.
-> 
-> The current Tegra DRM code is a bit inconsistent in regards to having
-> forward declarations, it doesn't have them more than have.
-> 
-> I'll add a forward declaration if there will be need to make a v5, ok?
-
-It's up to you, you don't have to use a forward declaration if you don't
-want to, I was just pointing out what I think is a best practice rule
-:-)
-
-> >> ...
-> >>>> +	port = of_get_child_by_name(output->of_node, "port");
-> >>>
-> >>> Do you need to check for the presence of a port node first ? Can you
-> >>> just check the return value of drm_of_find_panel_or_bridge(), and fall
-> >>> back to "nvidia,panel" if it returns -ENODEV ?
-> >>
-> >> Without the check, the drm_of_find_panel_or_bridge() prints a very noisy
-> >> error message about missing port node for every output that doesn't have
-> >> a graph specified in a device-tree (HDMI, DSI and etc).
-> >>
-> >> https://elixir.bootlin.com/linux/v5.7-rc1/source/drivers/of/property.c#L621
+> >         max { x ∊ implementablePeriods | x <= requestedPeriod }
 > > 
-> > Ah yes indeed. That's not very nice.
+> > ?
 > 
-> Please let me know if you'll have a better idea about how this could be
-> handled.
+> I think I got your question.
+> Should tegra_pwm_config() not return error (EINVAL) when the requested period is
+> invalid but it should configure to a nearest possible value?
 
-It should be good enough as-is I think. You may however want to support
-both "port" and "ports", as even when there's a single port node, it
-could be put inside a ports node.
+If you cannot configure according to the above rule, yes, return an
+error code. EINVAL is the usual one I think (some also return ERANGE).
+
+> > > Yes, the output stops as soon as the PWM_ENABLE bit is cleared in
+> > > hardware. Then The output is set to 0 (which is inactive).
+> > > Once .disable() => tegra_pwm_disable() gets invoked, enable bit is
+> > > cleared and hence PWM will possess no output signal.
+> > > tegra_pwm_config() will be invoked for any new configuration request.
+> > 
+> > Some drivers already have a "Limitations" section in their header.
+> > Please take a look at the existing examples and provide something similar. (Note
+> > you still didn't answer "How does a running PWM behave when the register is
+> > updated? Does it complete the currently running period?". I assume the answer
+> > to the second question is "No" (and the first is only there for rhetoric reasons).)
+> >
+>  
+> 1. I will add the below comments as Limitations:
+> -	When PWM is disabled, the output is driven to 0 and
+
+In fact, this is a good property. So the only problem is, that for both
+stop and reconfiguration the currently running period isn't completed.
+
+Best regards
+Uwe
 
 -- 
-Regards,
-
-Laurent Pinchart
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
