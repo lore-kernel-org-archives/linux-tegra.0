@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 2/6] drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
-Date: Sat, 18 Apr 2020 20:06:59 +0300
-Message-ID: <20200418170703.1583-3-digetx@gmail.com>
+Subject: [PATCH v5 5/6] drm/tegra: output: rgb: Support LVDS encoder bridge
+Date: Sat, 18 Apr 2020 20:07:02 +0300
+Message-ID: <20200418170703.1583-6-digetx@gmail.com>
 References: <20200418170703.1583-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,46 +12,100 @@ To: Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-When graph isn't defined in a device-tree, the of_graph_get_remote_node()
-prints a noisy error message, telling that port node is not found. This is
-undesirable behaviour in our case because absence of a panel/bridge graph
-is a valid case. Let's check presence of the local port in a device-tree
-before proceeding with parsing the graph.
+Newer Tegra device-trees will specify a video output graph, which involves
+LVDS encoder bridge. This patch adds support for the LVDS encoder bridge
+to the RGB output, allowing us to model the display hardware properly.
 
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/drm_of.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/rgb.c | 58 +++++++++++++++++++++++++++++++------
+ 1 file changed, 49 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-index b50b44e76279..e0652c38f357 100644
---- a/drivers/gpu/drm/drm_of.c
-+++ b/drivers/gpu/drm/drm_of.c
-@@ -239,13 +239,24 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
- 				struct drm_bridge **bridge)
+diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+index 0562a7eb793f..9a7024ec96bc 100644
+--- a/drivers/gpu/drm/tegra/rgb.c
++++ b/drivers/gpu/drm/tegra/rgb.c
+@@ -7,6 +7,7 @@
+ #include <linux/clk.h>
+ 
+ #include <drm/drm_atomic_helper.h>
++#include <drm/drm_bridge_connector.h>
+ #include <drm/drm_panel.h>
+ #include <drm/drm_simple_kms_helper.h>
+ 
+@@ -267,24 +268,63 @@ int tegra_dc_rgb_remove(struct tegra_dc *dc)
+ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
  {
- 	int ret = -EPROBE_DEFER;
--	struct device_node *remote;
-+	struct device_node *local, *remote;
+ 	struct tegra_output *output = dc->rgb;
++	struct drm_connector *connector;
+ 	int err;
  
- 	if (!panel && !bridge)
- 		return -EINVAL;
- 	if (panel)
- 		*panel = NULL;
- 
-+	/*
-+	 * of_graph_get_remote_node() produces a noisy error message if port
-+	 * node isn't found and the absence of the port is a legit case here,
-+	 * so at first we silently check presence of the local port.
-+	 */
-+	local = of_graph_get_local_port(np);
-+	if (!local)
-+		return -ENODEV;
-+
-+	of_node_put(local);
-+
- 	remote = of_graph_get_remote_node(np, port, endpoint);
- 	if (!remote)
+ 	if (!dc->rgb)
  		return -ENODEV;
+ 
+-	drm_connector_init(drm, &output->connector, &tegra_rgb_connector_funcs,
+-			   DRM_MODE_CONNECTOR_LVDS);
+-	drm_connector_helper_add(&output->connector,
+-				 &tegra_rgb_connector_helper_funcs);
+-	output->connector.dpms = DRM_MODE_DPMS_OFF;
+-
+ 	drm_simple_encoder_init(drm, &output->encoder, DRM_MODE_ENCODER_LVDS);
+ 	drm_encoder_helper_add(&output->encoder,
+ 			       &tegra_rgb_encoder_helper_funcs);
+ 
+-	drm_connector_attach_encoder(&output->connector,
+-					  &output->encoder);
+-	drm_connector_register(&output->connector);
++	/*
++	 * Tegra devices that have LVDS panel utilize LVDS encoder bridge
++	 * for converting up to 28 LCD LVTTL lanes into 5/4 LVDS lanes that
++	 * go to display panel's receiver.
++	 *
++	 * Encoder usually have a power-down control which needs to be enabled
++	 * in order to transmit data to the panel.  Historically devices that
++	 * use an older device-tree version didn't model the bridge, assuming
++	 * that encoder is turned ON by default, while today's DRM allows us
++	 * to model LVDS encoder properly.
++	 *
++	 * Newer device-trees utilize LVDS encoder bridge, which provides
++	 * us with a connector and handles the display panel.
++	 *
++	 * For older device-trees we fall back to our own connector and use
++	 * nvidia,panel phandle.
++	 */
++	if (output->bridge) {
++		err = drm_bridge_attach(&output->encoder, output->bridge,
++					NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
++		if (err) {
++			dev_err(output->dev, "failed to attach bridge: %d\n",
++				err);
++			return err;
++		}
++
++		connector = drm_bridge_connector_init(drm, &output->encoder);
++		if (IS_ERR(connector)) {
++			dev_err(output->dev,
++				"failed to initialize bridge connector: %pe\n",
++				connector);
++			return PTR_ERR(connector);
++		}
++
++		drm_connector_attach_encoder(connector, &output->encoder);
++	} else {
++		drm_connector_init(drm, &output->connector,
++				   &tegra_rgb_connector_funcs,
++				   DRM_MODE_CONNECTOR_LVDS);
++		drm_connector_helper_add(&output->connector,
++					 &tegra_rgb_connector_helper_funcs);
++		output->connector.dpms = DRM_MODE_DPMS_OFF;
++
++		drm_connector_attach_encoder(&output->connector,
++					     &output->encoder);
++		drm_connector_register(&output->connector);
++	}
+ 
+ 	err = tegra_output_init(drm, output);
+ 	if (err < 0) {
 -- 
 2.26.0
