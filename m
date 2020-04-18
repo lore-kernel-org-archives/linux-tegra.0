@@ -1,30 +1,89 @@
-From: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
-Date: Sat, 18 Apr 2020 14:44:53 +0200
-Message-ID: <20200418124452.GE6113@8bytes.org>
-References: <20200414131542.25608-1-joro@8bytes.org>
- <20200417010335.31739-1-drake@endlessm.com>
- <aafed865c0254934986528b3ce9c4d34ff2fccad.camel@intel.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 2/3] drm/tegra: output: Support DRM bridges
+Date: Sat, 18 Apr 2020 17:16:35 +0300
+Message-ID: <7978ed3b-7dcc-2219-c42d-740e3ce64189@gmail.com>
+References: <20200417175238.27154-1-digetx@gmail.com>
+ <20200417175238.27154-3-digetx@gmail.com>
+ <20200417193018.GI5861@pendragon.ideasonboard.com>
+ <0acc35fd-a74b-e726-7a16-55db13265c39@gmail.com>
+ <20200417203154.GK5861@pendragon.ideasonboard.com>
+ <15002e6e-de36-899f-0d28-896c67a29a49@gmail.com>
+ <20200417205828.GM5861@pendragon.ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <aafed865c0254934986528b3ce9c4d34ff2fccad.camel-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200417205828.GM5861-N3hz7ZxfLydczECFQUw77jytWr6r+dGw0E9HWUfgJXw@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Derrick, Jonathan" <jonathan.derrick-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: "drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org" <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>, "heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org" <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, "kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "robin.murphy-5wv7dgnIgG8@public.gmane.org" <robin.murphy-5wv7dgnIgG8@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-ker>
+To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jonathan, Hi Daniel,
+17.04.2020 23:58, Laurent Pinchart пишет:
+> Hi Dmitry,
+> 
+> On Fri, Apr 17, 2020 at 11:52:11PM +0300, Dmitry Osipenko wrote:
+>> 17.04.2020 23:31, Laurent Pinchart пишет:
+>>> On Fri, Apr 17, 2020 at 10:41:59PM +0300, Dmitry Osipenko wrote:
+>>>> 17.04.2020 22:30, Laurent Pinchart пишет:
+>>>> ...
+>>>>>>  #include <drm/drm_atomic.h>
+>>>>>> +#include <drm/drm_bridge.h>
+>>>>>
+>>>>> You could add a forward declaration of struct drm_bridge instead, that
+>>>>> can lower the compilation time a little bit.
+>>>>
+>>>> This include is not only for the struct, but also for the
+>>>> drm_bridge_attach(). It looks to me that it should be nicer to keep the
+>>>> include here.
+>>>
+>>> drm_bridge_attach() is called from .c files. In the .h file you can use
+>>> a forward declaration. It's entirely up to you, but as a general rule, I
+>>> personally try to use forward structure declarations in .h files as much
+>>> as possible.
+>>
+>> The current Tegra DRM code is a bit inconsistent in regards to having
+>> forward declarations, it doesn't have them more than have.
+>>
+>> I'll add a forward declaration if there will be need to make a v5, ok?
+> 
+> It's up to you, you don't have to use a forward declaration if you don't
+> want to, I was just pointing out what I think is a best practice rule
+> :-)
 
-On Fri, Apr 17, 2020 at 01:14:30AM +0000, Derrick, Jonathan wrote:
-> Hi Daniel> I should have CCed you on this, but it should temporarily resolve that
-> issue:
-> https://lists.linuxfoundation.org/pipermail/iommu/2020-April/043253.html
+Alright, then I'll leave the include as-is in this patch since it should
+be better to keep the code consistent even if it's a bit less optimal
+than it could be, IMO.
 
-Yes, this is an issue in the hotplug handling path which I already fixed
-in my branch. With next post of this series it should work.
+We may return to cleaning up of driver includes later on.
 
-Regards,
+>>>> ...
+>>>>>> +	port = of_get_child_by_name(output->of_node, "port");
+>>>>>
+>>>>> Do you need to check for the presence of a port node first ? Can you
+>>>>> just check the return value of drm_of_find_panel_or_bridge(), and fall
+>>>>> back to "nvidia,panel" if it returns -ENODEV ?
+>>>>
+>>>> Without the check, the drm_of_find_panel_or_bridge() prints a very noisy
+>>>> error message about missing port node for every output that doesn't have
+>>>> a graph specified in a device-tree (HDMI, DSI and etc).
+>>>>
+>>>> https://elixir.bootlin.com/linux/v5.7-rc1/source/drivers/of/property.c#L621
+>>>
+>>> Ah yes indeed. That's not very nice.
+>>
+>> Please let me know if you'll have a better idea about how this could be
+>> handled.
+> 
+> It should be good enough as-is I think. You may however want to support
+> both "port" and "ports", as even when there's a single port node, it
+> could be put inside a ports node.
+> 
 
-	Joerg
+I'll make a v5 that will have additional patches for making
+drm_of_find_panel_or_bridge() to better handle that case.
+
+While at it, I'll also add a patch that will wrap RGB panel into bridge.
+
+Thank you very much for the reviews!
