@@ -1,450 +1,71 @@
-From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] of_device: removed #include that caused a recursion
- in included headers
-Date: Sat, 18 Apr 2020 16:34:56 +0100
-Message-ID: <20200418163456.7c82d087@archlinux>
-References: <1587030553-5990-1-git-send-email-hadar.gat@arm.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v5 0/6] Support DRM bridges on NVIDIA Tegra
+Date: Sat, 18 Apr 2020 20:06:57 +0300
+Message-ID: <20200418170703.1583-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1587030553-5990-1-git-send-email-hadar.gat-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
- <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
- <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-To: Hadar Gat <hadar.gat-5wv7dgnIgG8@public.gmane.org>
-Cc: Jose Abreu <joabreu-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Heiko =?UTF-8?B?U3Q=?= =?UTF-8?B?w7xibmVy?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Miquel Raynal <miquel.raynal-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vignesh Raghavendra <vigneshr-l0cyMroinI0@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 16 Apr 2020 12:49:03 +0300
-Hadar Gat <hadar.gat-5wv7dgnIgG8@public.gmane.org> wrote:
+Hello,
 
-> Both of_platform.h and of_device.h were included each other.
-> In of_device.h, removed unneeded #include to of_platform.h
-> and added include to of_platform.h in the files that needs it.
-> 
-> Signed-off-by: Hadar Gat <hadar.gat-5wv7dgnIgG8@public.gmane.org>
+This series adds initial support for the DRM bridges to NVIDIA Tegra DRM
+driver. This is required by newer device-trees where we model the LVDS
+encoder bridge properly.
 
-Hmm.  I guess the chances of this causing merge problems are fairly low so
-perhaps not worth doing additions of headers via individual subsystems and
-actually dropping the header include after another cycle.
+Changelog:
 
-So on that basis
+v5: - Added new patches that make drm_of_find_panel_or_bridge() more usable
+      if graph isn't defined in a device-tree:
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron-hv44wF8Li93QT0dZR+AlfA@public.gmane.org> #for-iio
+        of_graph: add of_graph_get_local_port()
+        drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
 
-> ---
-> v2: add include to of_platform.h in more files. (reported due other builds)
-> 
->  arch/sparc/mm/io-unit.c                           | 1 +
->  arch/sparc/mm/iommu.c                             | 1 +
->  drivers/base/platform.c                           | 1 +
->  drivers/bus/imx-weim.c                            | 1 +
->  drivers/bus/vexpress-config.c                     | 1 +
->  drivers/clk/mediatek/clk-mt7622-aud.c             | 1 +
->  drivers/dma/at_hdmac.c                            | 1 +
->  drivers/dma/stm32-dmamux.c                        | 1 +
->  drivers/dma/ti/dma-crossbar.c                     | 1 +
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c             | 1 +
->  drivers/gpu/drm/msm/hdmi/hdmi.c                   | 1 +
->  drivers/gpu/drm/msm/msm_drv.c                     | 1 +
->  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 1 +
->  drivers/gpu/drm/sun4i/sun4i_tcon.c                | 1 +
->  drivers/iio/adc/stm32-adc-core.c                  | 1 +
->  drivers/iio/adc/stm32-dfsdm-adc.c                 | 1 +
->  drivers/iio/adc/stm32-dfsdm-core.c                | 1 +
->  drivers/iommu/tegra-smmu.c                        | 1 +
->  drivers/memory/atmel-ebi.c                        | 1 +
->  drivers/mfd/palmas.c                              | 1 +
->  drivers/mfd/ssbi.c                                | 1 +
->  drivers/mtd/nand/raw/omap2.c                      | 1 +
->  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 1 +
->  drivers/net/ethernet/ti/cpsw.c                    | 1 +
->  drivers/phy/tegra/xusb.c                          | 1 +
->  drivers/pinctrl/freescale/pinctrl-imx1-core.c     | 1 +
->  drivers/pinctrl/nomadik/pinctrl-nomadik.c         | 1 +
->  drivers/soc/samsung/exynos-pmu.c                  | 1 +
->  drivers/soc/sunxi/sunxi_sram.c                    | 1 +
->  include/linux/of_device.h                         | 2 --
->  lib/genalloc.c                                    | 1 +
->  31 files changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/sparc/mm/io-unit.c b/arch/sparc/mm/io-unit.c
-> index 289276b..5638399 100644
-> --- a/arch/sparc/mm/io-unit.c
-> +++ b/arch/sparc/mm/io-unit.c
-> @@ -15,6 +15,7 @@
->  #include <linux/dma-mapping.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  
->  #include <asm/pgalloc.h>
->  #include <asm/pgtable.h>
-> diff --git a/arch/sparc/mm/iommu.c b/arch/sparc/mm/iommu.c
-> index b00dde1..9cbb2e7 100644
-> --- a/arch/sparc/mm/iommu.c
-> +++ b/arch/sparc/mm/iommu.c
-> @@ -16,6 +16,7 @@
->  #include <linux/dma-mapping.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  
->  #include <asm/pgalloc.h>
->  #include <asm/pgtable.h>
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 5255550..f549274b 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -12,6 +12,7 @@
->  #include <linux/string.h>
->  #include <linux/platform_device.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_irq.h>
->  #include <linux/module.h>
->  #include <linux/init.h>
-> diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
-> index 28bb65a..8c786da 100644
-> --- a/drivers/bus/imx-weim.c
-> +++ b/drivers/bus/imx-weim.c
-> @@ -11,6 +11,7 @@
->  #include <linux/clk.h>
->  #include <linux/io.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
->  #include <linux/regmap.h>
-> diff --git a/drivers/bus/vexpress-config.c b/drivers/bus/vexpress-config.c
-> index ff70575..12b8b0b 100644
-> --- a/drivers/bus/vexpress-config.c
-> +++ b/drivers/bus/vexpress-config.c
-> @@ -8,6 +8,7 @@
->  #include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/vexpress.h>
->  
->  
-> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-> index 2bd4295..8cbb68f 100644
-> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
-> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-> @@ -9,6 +9,7 @@
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  
->  #include "clk-mtk.h"
-> diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
-> index 73a2078..388f8e10 100644
-> --- a/drivers/dma/at_hdmac.c
-> +++ b/drivers/dma/at_hdmac.c
-> @@ -20,6 +20,7 @@
->  #include <linux/slab.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_dma.h>
->  
->  #include "at_hdmac_regs.h"
-> diff --git a/drivers/dma/stm32-dmamux.c b/drivers/dma/stm32-dmamux.c
-> index 12f7637..b704896 100644
-> --- a/drivers/dma/stm32-dmamux.c
-> +++ b/drivers/dma/stm32-dmamux.c
-> @@ -16,6 +16,7 @@
->  #include <linux/init.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_dma.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
-> diff --git a/drivers/dma/ti/dma-crossbar.c b/drivers/dma/ti/dma-crossbar.c
-> index 4ba8fa5..2c0fd44 100644
-> --- a/drivers/dma/ti/dma-crossbar.c
-> +++ b/drivers/dma/ti/dma-crossbar.c
-> @@ -10,6 +10,7 @@
->  #include <linux/io.h>
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_dma.h>
->  
->  #define TI_XBAR_DRA7		0
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> index c4e71ab..f523254 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> @@ -6,6 +6,7 @@
->  #include <linux/interconnect.h>
->  #include <linux/pm_domain.h>
->  #include <linux/pm_opp.h>
-> +#include <linux/of_platform.h>
->  #include <soc/qcom/cmd-db.h>
->  
->  #include "a6xx_gpu.h"
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
-> index 737453b..5034d40 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
-> @@ -7,6 +7,7 @@
->  
->  #include <linux/of_irq.h>
->  #include <linux/of_gpio.h>
-> +#include <linux/of_platform.h>
->  
->  #include <sound/hdmi-codec.h>
->  #include "hdmi.h"
-> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-> index 29295de..ddc9e85 100644
-> --- a/drivers/gpu/drm/msm/msm_drv.c
-> +++ b/drivers/gpu/drm/msm/msm_drv.c
-> @@ -8,6 +8,7 @@
->  #include <linux/dma-mapping.h>
->  #include <linux/kthread.h>
->  #include <linux/uaccess.h>
-> +#include <linux/of_platform.h>
->  #include <uapi/linux/sched/types.h>
->  
->  #include <drm/drm_drv.h>
-> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> index 6e1270e..d038bae 100644
-> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-> @@ -12,6 +12,7 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/phy/phy.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index 624437b..aa35757 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -11,6 +11,7 @@
->  #include <linux/module.h>
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_irq.h>
->  #include <linux/regmap.h>
->  #include <linux/reset.h>
-> diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
-> index 2df88d2..3dc3453 100644
-> --- a/drivers/iio/adc/stm32-adc-core.c
-> +++ b/drivers/iio/adc/stm32-adc-core.c
-> @@ -17,6 +17,7 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
-> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
-> index 76a60d9..e83848cb 100644
-> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
-> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-> @@ -20,6 +20,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/iio/adc/stm32-dfsdm-core.c b/drivers/iio/adc/stm32-dfsdm-core.c
-> index 26e2011..f6a53ab 100644
-> --- a/drivers/iio/adc/stm32-dfsdm-core.c
-> +++ b/drivers/iio/adc/stm32-dfsdm-core.c
-> @@ -12,6 +12,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 63a147b..3797caa 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -10,6 +10,7 @@
->  #include <linux/kernel.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/dma-mapping.h>
-> diff --git a/drivers/memory/atmel-ebi.c b/drivers/memory/atmel-ebi.c
-> index 14386d0..272b1a8 100644
-> --- a/drivers/memory/atmel-ebi.c
-> +++ b/drivers/memory/atmel-ebi.c
-> @@ -13,6 +13,7 @@
->  #include <linux/mfd/syscon/atmel-smc.h>
->  #include <linux/init.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/regmap.h>
->  #include <soc/at91/atmel-sfr.h>
->  
-> diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
-> index f5b3fa9..cca44bc 100644
-> --- a/drivers/mfd/palmas.c
-> +++ b/drivers/mfd/palmas.c
-> @@ -19,6 +19,7 @@
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/palmas.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  
->  static const struct regmap_config palmas_regmap_config[PALMAS_NUM_CLIENTS] = {
->  	{
-> diff --git a/drivers/mfd/ssbi.c b/drivers/mfd/ssbi.c
-> index 94f60df..72cd45a 100644
-> --- a/drivers/mfd/ssbi.c
-> +++ b/drivers/mfd/ssbi.c
-> @@ -20,6 +20,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  
->  /* SSBI 2.0 controller registers */
->  #define SSBI2_CMD			0x0008
-> diff --git a/drivers/mtd/nand/raw/omap2.c b/drivers/mtd/nand/raw/omap2.c
-> index ad77c11..d851ec7 100644
-> --- a/drivers/mtd/nand/raw/omap2.c
-> +++ b/drivers/mtd/nand/raw/omap2.c
-> @@ -22,6 +22,7 @@
->  #include <linux/slab.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  
->  #include <linux/mtd/nand_bch.h>
->  #include <linux/platform_data/elm.h>
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-> index 58e0511..d704d57 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-> @@ -12,6 +12,7 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_mdio.h>
->  #include <linux/of_net.h>
->  #include <linux/phy.h>
-> diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-> index c2c5bf8..6932945 100644
-> --- a/drivers/net/ethernet/ti/cpsw.c
-> +++ b/drivers/net/ethernet/ti/cpsw.c
-> @@ -28,6 +28,7 @@
->  #include <linux/of_mdio.h>
->  #include <linux/of_net.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/if_vlan.h>
->  #include <linux/kmemleak.h>
->  #include <linux/sys_soc.h>
-> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> index de4a46f..0eac1b8 100644
-> --- a/drivers/phy/tegra/xusb.c
-> +++ b/drivers/phy/tegra/xusb.c
-> @@ -9,6 +9,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/phy/phy.h>
->  #include <linux/phy/tegra/xusb.h>
->  #include <linux/platform_device.h>
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx1-core.c b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-> index c00d002..d1c171e 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-> @@ -16,6 +16,7 @@
->  #include <linux/io.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/pinctrl/machine.h>
->  #include <linux/pinctrl/pinconf.h>
->  #include <linux/pinctrl/pinctrl.h>
-> diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-> index ca7bbe4..44974ac 100644
-> --- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-> +++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-> @@ -19,6 +19,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/slab.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_address.h>
->  #include <linux/bitops.h>
->  #include <linux/pinctrl/machine.h>
-> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-> index 17304fa..25129b0 100644
-> --- a/drivers/soc/samsung/exynos-pmu.c
-> +++ b/drivers/soc/samsung/exynos-pmu.c
-> @@ -8,6 +8,7 @@
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/platform_device.h>
->  #include <linux/delay.h>
-> diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
-> index 1b0d50f..423cec3 100644
-> --- a/drivers/soc/sunxi/sunxi_sram.c
-> +++ b/drivers/soc/sunxi/sunxi_sram.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  
-> diff --git a/include/linux/of_device.h b/include/linux/of_device.h
-> index 8d31e39..752999b 100644
-> --- a/include/linux/of_device.h
-> +++ b/include/linux/of_device.h
-> @@ -4,8 +4,6 @@
->  
->  #include <linux/cpu.h>
->  #include <linux/platform_device.h>
-> -#include <linux/of_platform.h> /* temporary until merge */
-> -
->  #include <linux/of.h>
->  #include <linux/mod_devicetable.h>
->  
-> diff --git a/lib/genalloc.c b/lib/genalloc.c
-> index 7f1244b..08e21eeb 100644
-> --- a/lib/genalloc.c
-> +++ b/lib/genalloc.c
-> @@ -33,6 +33,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/genalloc.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/vmalloc.h>
->  
->  static inline size_t chunk_size(const struct gen_pool_chunk *chunk)
+    - Updated "Support DRM bridges" patch to use drm_of_find_panel_or_bridge()
+      directly and added WARN_ON(output->panel || output->bridge) sanity-check.
+
+    - Added new "Wrap directly-connected panel into DRM bridge" patch, as
+      was suggested by Laurent Pinchart.
+
+v4: - Following review comments that were made by Laurent Pinchart to the v3,
+      we now create and use the "bridge connector".
+
+v3: - Following recommendation from Sam Ravnborg, the new bridge attachment
+      model is now being used, i.e. we ask bridge to *not* create a connector
+      using the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
+
+    - The bridge is now created only for the RGB (LVDS) output, and only
+      when necessary. For now we don't need bridges for HDMI or DSI outputs.
+
+    - I noticed that we're leaking OF node in the panel's error code path,
+      this is fixed now by the new patch "Don't leak OF node on error".
+
+v2: - Added the new "rgb: Don't register connector if bridge is used"
+      patch, which hides the unused connector provided by the Tegra DRM
+      driver when bridge is used, since bridge provides its own connector
+      to us.
+
+    - Please notice that the first "Support DRM bridges" patch was previously
+      sent out as a standalone v1 change.
+
+Dmitry Osipenko (6):
+  of_graph: add of_graph_get_local_port()
+  drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+  drm/tegra: output: Don't leak OF node on error
+  drm/tegra: output: Support DRM bridges
+  drm/tegra: output: rgb: Support LVDS encoder bridge
+  drm/tegra: output: rgb: Wrap directly-connected panel into DRM bridge
+
+ drivers/gpu/drm/drm_of.c       | 13 +++++-
+ drivers/gpu/drm/tegra/drm.h    |  2 +
+ drivers/gpu/drm/tegra/output.c | 21 +++++++--
+ drivers/gpu/drm/tegra/rgb.c    | 85 +++++++++++++++++++++-------------
+ drivers/of/property.c          | 32 +++++++++----
+ include/linux/of_graph.h       |  7 +++
+ 6 files changed, 114 insertions(+), 46 deletions(-)
+
+-- 
+2.26.0
