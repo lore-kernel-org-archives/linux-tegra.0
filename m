@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 1/6] of_graph: add of_graph_get_local_port()
-Date: Sat, 18 Apr 2020 20:06:58 +0300
-Message-ID: <20200418170703.1583-2-digetx@gmail.com>
+Subject: [PATCH v5 4/6] drm/tegra: output: Support DRM bridges
+Date: Sat, 18 Apr 2020 20:07:01 +0300
+Message-ID: <20200418170703.1583-5-digetx@gmail.com>
 References: <20200418170703.1583-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,94 +12,67 @@ To: Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-In some case, like a DRM display code for example, it's useful to silently
-check whether port node exists at all in a device-tree before proceeding
-with parsing the graph.
-
-This patch adds of_graph_get_local_port() which returns pointer to a local
-port node, or NULL if graph isn't specified in a device-tree for a given
-device node.
+Newer Tegra device-trees will specify a video output graph which involves
+a bridge. This patch adds initial support for the DRM bridges to the Tegra
+DRM output.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/of/property.c    | 32 +++++++++++++++++++++++---------
- include/linux/of_graph.h |  7 +++++++
- 2 files changed, 30 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/tegra/drm.h    |  2 ++
+ drivers/gpu/drm/tegra/output.c | 12 ++++++++++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 252e4f600155..5dbeccaabb86 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -608,15 +608,7 @@ struct device_node *of_graph_get_next_endpoint(const struct device_node *parent,
- 	 * parent port node.
- 	 */
- 	if (!prev) {
--		struct device_node *node;
--
--		node = of_get_child_by_name(parent, "ports");
--		if (node)
--			parent = node;
--
--		port = of_get_child_by_name(parent, "port");
--		of_node_put(node);
--
-+		port = of_graph_get_local_port(parent);
- 		if (!port) {
- 			pr_err("graph: no port node found in %pOF\n", parent);
- 			return NULL;
-@@ -765,6 +757,28 @@ struct device_node *of_graph_get_remote_port(const struct device_node *node)
- }
- EXPORT_SYMBOL(of_graph_get_remote_port);
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index 804869799305..cccd368b6752 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -12,6 +12,7 @@
+ #include <linux/of_gpio.h>
  
-+/**
-+ * of_graph_get_local_port() - get local port node
-+ * @node: pointer to a local endpoint device_node
-+ *
-+ * Return: First local port node associated with local endpoint node linked
-+ *	   to @node. Use of_node_put() on it when done.
-+ */
-+struct device_node *of_graph_get_local_port(const struct device_node *node)
-+{
-+	struct device_node *ports, *port;
-+
-+	ports = of_get_child_by_name(node, "ports");
-+	if (ports)
-+		node = ports;
-+
-+	port = of_get_child_by_name(node, "port");
-+	of_node_put(ports);
-+
-+	return port;
-+}
-+EXPORT_SYMBOL(of_graph_get_local_port);
-+
- int of_graph_get_endpoint_count(const struct device_node *np)
- {
- 	struct device_node *endpoint;
-diff --git a/include/linux/of_graph.h b/include/linux/of_graph.h
-index 01038a6aade0..1fdeb72c7765 100644
---- a/include/linux/of_graph.h
-+++ b/include/linux/of_graph.h
-@@ -54,6 +54,7 @@ struct device_node *of_graph_get_remote_port_parent(
- struct device_node *of_graph_get_remote_port(const struct device_node *node);
- struct device_node *of_graph_get_remote_node(const struct device_node *node,
- 					     u32 port, u32 endpoint);
-+struct device_node *of_graph_get_local_port(const struct device_node *node);
- #else
+ #include <drm/drm_atomic.h>
++#include <drm/drm_bridge.h>
+ #include <drm/drm_edid.h>
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_fb_helper.h>
+@@ -116,6 +117,7 @@ struct tegra_output {
+ 	struct device_node *of_node;
+ 	struct device *dev;
  
- static inline int of_graph_parse_endpoint(const struct device_node *node,
-@@ -116,6 +117,12 @@ static inline struct device_node *of_graph_get_remote_node(
- 	return NULL;
- }
++	struct drm_bridge *bridge;
+ 	struct drm_panel *panel;
+ 	struct i2c_adapter *ddc;
+ 	const struct edid *edid;
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index a6a711d54e88..ccd1421f1b24 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -5,6 +5,7 @@
+  */
  
-+static inline struct device_node *of_graph_get_local_port(
-+					const struct device_node *node)
-+{
-+	return NULL;
-+}
+ #include <drm/drm_atomic_helper.h>
++#include <drm/drm_of.h>
+ #include <drm/drm_panel.h>
+ #include <drm/drm_simple_kms_helper.h>
+ 
+@@ -99,8 +100,19 @@ int tegra_output_probe(struct tegra_output *output)
+ 	if (!output->of_node)
+ 		output->of_node = output->dev->of_node;
+ 
++	err = drm_of_find_panel_or_bridge(output->of_node, -1, -1,
++					  &output->panel, &output->bridge);
++	if (err && err != -ENODEV)
++		return err;
 +
- #endif /* CONFIG_OF */
+ 	panel = of_parse_phandle(output->of_node, "nvidia,panel", 0);
+ 	if (panel) {
++		/*
++		 * Don't mix nvidia,panel phandle with the graph in a
++		 * device-tree.
++		 */
++		WARN_ON(output->panel || output->bridge);
++
+ 		output->panel = of_drm_find_panel(panel);
+ 		of_node_put(panel);
  
- #endif /* __LINUX_OF_GRAPH_H */
 -- 
 2.26.0
