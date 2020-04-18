@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 3/6] drm/tegra: output: Don't leak OF node on error
-Date: Sat, 18 Apr 2020 20:07:00 +0300
-Message-ID: <20200418170703.1583-4-digetx@gmail.com>
+Subject: [PATCH v5 2/6] drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+Date: Sat, 18 Apr 2020 20:06:59 +0300
+Message-ID: <20200418170703.1583-3-digetx@gmail.com>
 References: <20200418170703.1583-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,47 +12,46 @@ To: Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The OF node should be put before returning error in tegra_output_probe(),
-otherwise node's refcount will be leaked.
+When graph isn't defined in a device-tree, the of_graph_get_remote_node()
+prints a noisy error message, telling that port node is not found. This is
+undesirable behaviour in our case because absence of a panel/bridge graph
+is a valid case. Let's check presence of the local port in a device-tree
+before proceeding with parsing the graph.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/output.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/drm_of.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index e36e5e7c2f69..a6a711d54e88 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -102,10 +102,10 @@ int tegra_output_probe(struct tegra_output *output)
- 	panel = of_parse_phandle(output->of_node, "nvidia,panel", 0);
- 	if (panel) {
- 		output->panel = of_drm_find_panel(panel);
-+		of_node_put(panel);
-+
- 		if (IS_ERR(output->panel))
- 			return PTR_ERR(output->panel);
--
--		of_node_put(panel);
- 	}
+diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+index b50b44e76279..e0652c38f357 100644
+--- a/drivers/gpu/drm/drm_of.c
++++ b/drivers/gpu/drm/drm_of.c
+@@ -239,13 +239,24 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 				struct drm_bridge **bridge)
+ {
+ 	int ret = -EPROBE_DEFER;
+-	struct device_node *remote;
++	struct device_node *local, *remote;
  
- 	output->edid = of_get_property(output->of_node, "nvidia,edid", &size);
-@@ -113,13 +113,12 @@ int tegra_output_probe(struct tegra_output *output)
- 	ddc = of_parse_phandle(output->of_node, "nvidia,ddc-i2c-bus", 0);
- 	if (ddc) {
- 		output->ddc = of_find_i2c_adapter_by_node(ddc);
-+		of_node_put(ddc);
-+
- 		if (!output->ddc) {
- 			err = -EPROBE_DEFER;
--			of_node_put(ddc);
- 			return err;
- 		}
--
--		of_node_put(ddc);
- 	}
+ 	if (!panel && !bridge)
+ 		return -EINVAL;
+ 	if (panel)
+ 		*panel = NULL;
  
- 	output->hpd_gpio = devm_gpiod_get_from_of_node(output->dev,
++	/*
++	 * of_graph_get_remote_node() produces a noisy error message if port
++	 * node isn't found and the absence of the port is a legit case here,
++	 * so at first we silently check presence of the local port.
++	 */
++	local = of_graph_get_local_port(np);
++	if (!local)
++		return -ENODEV;
++
++	of_node_put(local);
++
+ 	remote = of_graph_get_remote_node(np, port, endpoint);
+ 	if (!remote)
+ 		return -ENODEV;
 -- 
 2.26.0
