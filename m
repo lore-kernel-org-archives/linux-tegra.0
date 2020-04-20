@@ -1,79 +1,105 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] of_device: removed #include that caused a
- recursion in included headers
-Date: Mon, 20 Apr 2020 15:36:47 -0500
-Message-ID: <20200420203647.GA23189@bogus>
-References: <1586784960-22692-1-git-send-email-hadar.gat@arm.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
+ for a long time
+Date: Tue, 21 Apr 2020 01:11:51 +0300
+Message-ID: <f59ba318-8e99-c486-fa4d-1ee28a7b203d@gmail.com>
+References: <20200324191217.1829-1-digetx@gmail.com>
+ <20200324191217.1829-2-digetx@gmail.com>
+ <1e259e22-c300-663a-e537-18d854e0f478@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1586784960-22692-1-git-send-email-hadar.gat-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Hadar Gat <hadar.gat-5wv7dgnIgG8@public.gmane.org>
-Cc: Jose Abreu <joabreu-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Sandy Huang <hjc-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Miquel Raynal <miquel.raynal-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, Vignesh Raghavendra <vigneshr-l0cyMroinI0@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1e259e22-c300-663a-e537-18d854e0f478-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 13, 2020 at 04:35:53PM +0300, Hadar Gat wrote:
-> Both of_platform.h and of_device.h were included each other.
-> In of_device.h, removed unneeded #include to of_platform.h
-> and added include to of_platform.h in the files that needs it.
+Hello Jon,
 
-Guess we forgot about that temporary comment!
-
-Both of these headers have a lot of things we don't want 'normal' 
-drivers calling. The most common thing needed from of_device.h is 
-of_match_device/of_device_get_match_data. A good number are only for 
-ibmebus. Maybe the header should be split or the former just moved 
-to of.h.
-
-For of_platform.h, it seems we have a bunch of unneeded includes:
-
-$ git grep 'of_platform\.h' drivers/ | wc
-    560    1120   36049
-$ git grep -E 'of_(platform_(pop|def)|find_device)' drivers/ | wc
-    248    1215   20630
-
-Would nice to drop those (or switch to of_device.h?) too.
-
-Be sure to build on Sparc. It's the oddball.
-
+20.04.2020 22:53, Jon Hunter пишет:
+> Hi Dmitry,
 > 
-> Signed-off-by: Hadar Gat <hadar.gat-5wv7dgnIgG8@public.gmane.org>
-> ---
->  drivers/base/platform.c                           | 1 +
->  drivers/bus/vexpress-config.c                     | 1 +
->  drivers/dma/at_hdmac.c                            | 1 +
->  drivers/dma/stm32-dmamux.c                        | 1 +
->  drivers/dma/ti/dma-crossbar.c                     | 1 +
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c             | 1 +
->  drivers/gpu/drm/msm/hdmi/hdmi.c                   | 1 +
->  drivers/gpu/drm/msm/msm_drv.c                     | 1 +
->  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 1 +
->  drivers/gpu/drm/sun4i/sun4i_tcon.c                | 1 +
->  drivers/iio/adc/stm32-adc-core.c                  | 1 +
->  drivers/iio/adc/stm32-dfsdm-adc.c                 | 1 +
->  drivers/iio/adc/stm32-dfsdm-core.c                | 1 +
->  drivers/iommu/tegra-smmu.c                        | 1 +
->  drivers/memory/atmel-ebi.c                        | 1 +
->  drivers/mfd/palmas.c                              | 1 +
->  drivers/mfd/ssbi.c                                | 1 +
->  drivers/mtd/nand/raw/omap2.c                      | 1 +
->  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 1 +
->  drivers/net/ethernet/ti/cpsw.c                    | 1 +
->  drivers/phy/tegra/xusb.c                          | 1 +
->  drivers/pinctrl/nomadik/pinctrl-nomadik.c         | 1 +
->  drivers/soc/samsung/exynos-pmu.c                  | 1 +
->  drivers/soc/sunxi/sunxi_sram.c                    | 1 +
->  include/linux/of_device.h                         | 2 --
->  lib/genalloc.c                                    | 1 +
->  26 files changed, 25 insertions(+), 2 deletions(-)
+> On 24/03/2020 19:12, Dmitry Osipenko wrote:
+>> Boot CPU0 always handle I2C interrupt and under some rare circumstances
+>> (like running KASAN + NFS root) it may stuck in uninterruptible state for
+>> a significant time. In this case we will get timeout if I2C transfer is
+>> running on a sibling CPU, despite of IRQ being raised. In order to handle
+>> this rare condition, the IRQ status needs to be checked after completion
+>> timeout.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  drivers/i2c/busses/i2c-tegra.c | 27 +++++++++++++++------------
+>>  1 file changed, 15 insertions(+), 12 deletions(-)
+> 
+> 
+> I have noticed a regression on tegra30-cardhu-a04 when testing system
+> suspend. Git bisect is pointing to this commit and reverting it fixes
+> the problem. In the below console log I2C fails to resume ...
+> 
+...
+> [   60.690035] PM: Device 3000.pcie failed to resume noirq: error -16
+
+...
+> [   60.696859] tegra-mc 7000f000.memory-controller: fdcdwr2: write @0x877e8400: EMEM address decode error (SMMU translation error [--S])
+> 
+> [   60.708876] tegra-mc 7000f000.memory-controller: fdcdwr2: write @0x877e8400: Page fault (SMMU translation error [--S])
+
+This looks very wrong, the error tells that 3d hardware is active and
+doing something odd. Are you running some 3d tests?
+
+...
+> Have you seen this?
+
+No, I haven't seen that. I'm not using PCIE and it looks like it's the
+problem.
+
+Looking at the PCIE driver code, seems it's not syncing the RPM state on
+suspend/resume.
+
+Please try this change:
+
+--- >8 ---
+diff --git a/drivers/pci/controller/pci-tegra.c
+b/drivers/pci/controller/pci-tegra.c
+index 3e64ba6a36a8..b1fcbae4109c 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2870,8 +2870,8 @@ static int __maybe_unused
+tegra_pcie_pm_resume(struct device *dev)
+
+ static const struct dev_pm_ops tegra_pcie_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_pcie_pm_suspend, tegra_pcie_pm_resume, NULL)
+-	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_pcie_pm_suspend,
+-				      tegra_pcie_pm_resume)
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				      pm_runtime_force_resume)
+ };
+
+
+ static struct platform_driver tegra_pcie_driver = {
+--- >8 ---
+
+Secondly, I2C driver suspends on NOIRQ level, while APBDMA driver
+suspends on default level. This is also wrong, please try to apply this
+hunk as well:
+
+--- >8 ---
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index f6a2f42ffc51..e682ac86bd27 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -1653,7 +1653,7 @@ static int __maybe_unused
+tegra_dma_dev_resume(struct device *dev)
+ static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_dma_runtime_suspend, tegra_dma_runtime_resume,
+ 			   NULL)
+-	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_dev_suspend, tegra_dma_dev_resume)
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_dma_dev_suspend, tegra_dma_dev_resume)
+ };
+
+ static const struct of_device_id tegra_dma_of_match[] = {
+--- >8 ---
