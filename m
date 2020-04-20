@@ -1,67 +1,62 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 4.19.113 0/3] Fix for long operation cmds busy detection
-Date: Mon, 20 Apr 2020 09:01:35 +0200
-Message-ID: <CAPDyKFrdCip_r0fq2=FswsR8iRtC-Gqv2gbvT6PqFXYcaZyBkw@mail.gmail.com>
-References: <1587150844-12003-1-git-send-email-skomatineni@nvidia.com>
- <20200419072030.GB3544449@kroah.com> <6911ee08-1376-a515-9393-1ebc6cc6a255@nvidia.com>
- <20200419165204.GA3697430@kroah.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] usb: gadget: tegra-xudc: Fix idle suspend/resume
+Date: Mon, 20 Apr 2020 15:32:41 +0100
+Message-ID: <60250b1f-f721-0631-59bf-513576473f44@nvidia.com>
+References: <20200417170537.2540914-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20200419165204.GA3697430@kroah.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, "(Exiting) Baolin Wang" <baolin.wang@linaro.org>, Kate Stewart <kstewart@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Bradley Bolen <bradleybolen@gmail.com>, Faiz Abbas <faiz_abbas@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, Aniruddha Tvs Rao <anrao@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200417170537.2540914-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, 19 Apr 2020 at 18:52, Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Sun, Apr 19, 2020 at 09:23:39AM -0700, Sowjanya Komatineni wrote:
-> >
-> > On 4/19/20 12:20 AM, Greg KH wrote:
-> > > External email: Use caution opening links or attachments
-> > >
-> > >
-> > > On Fri, Apr 17, 2020 at 12:14:01PM -0700, Sowjanya Komatineni wrote:
-> > > > This series includes manually backported changes that implements Tegra
-> > > > specific timeout callback to switch between finite and infinite HW busy
-> > > > detection wait modes.
-> > > >
-> > > > sdhci-tegra driver patch implements set_timeout callback based on one of
-> > > > the sdhci host driver patch that refactors sdhci_set_timeout and allows
-> > > > drivers to call __sdhci_set_timeout with their timeout callback
-> > > > implementation.
-> > > >
-> > > > Both of these patches are manually backported in this series.
-> > > Is this a bugfix or a new feature?  I can't tell, but it feels like it's
-> > > a new feature.  What's wrong with just using the 5.4.y kernel tree?
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> > Ulf recent patches for increased timeout adds capability
-> > MMC_CAP_NEED_RSP_BUSY for sdhci-tegra as well.
-> >
-> > So, it will always use R1B for R1B type commands so there are no known bugs
-> > or failures with mmc devices we use on our platforms.
->
-> I have no idea what this means, sorry.
->
-> > So, we can treat this patch as an improvement for long operation commands
-> > where HW will wait as long as device is busy.
->
-> Ok, so this isn't a regression and can't match the stable kernel rules,
-> sorry.
 
-Let me help to clarify. This isn't a regression, correct. However, the
-patch fixes a long outstanding bug for sdhci-tegra.
+On 17/04/2020 18:05, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> When the XUDC device is idle (i.e. powergated), care must be taken not
+> to access any registers because that would lead to a crash.
+> 
+> Move the call to tegra_xudc_device_mode_off() into the same conditional
+> as the tegra_xudc_powergate() call to make sure we only force device
+> mode off if the XUDC is actually powered up.
+> 
+> Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB device mode controller")
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/usb/gadget/udc/tegra-xudc.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+> index 52a6add961f4..dfabc54cdc27 100644
+> --- a/drivers/usb/gadget/udc/tegra-xudc.c
+> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
+> @@ -3840,11 +3840,11 @@ static int __maybe_unused tegra_xudc_suspend(struct device *dev)
+>  
+>  	flush_work(&xudc->usb_role_sw_work);
+>  
+> -	/* Forcibly disconnect before powergating. */
+> -	tegra_xudc_device_mode_off(xudc);
+> -
+> -	if (!pm_runtime_status_suspended(dev))
+> +	if (!pm_runtime_status_suspended(dev)) {
+> +		/* Forcibly disconnect before powergating. */
+> +		tegra_xudc_device_mode_off(xudc);
+>  		tegra_xudc_powergate(xudc);
+> +	}
+>  
+>  	pm_runtime_disable(dev);
 
-For some SD/MMC commands, the mmc core may provide a long busy timeout
-trusting the mmc host to cope with it. It has turned out that
-sdhci-tegra didn't, thus it may report a cmd-timeout error, while in
-fact it shouldn't.
 
-I believe that is what the small series of patches should be addressing.
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Kind regards
-Uffe
+Cheers
+Jon
+
+-- 
+nvpublic
