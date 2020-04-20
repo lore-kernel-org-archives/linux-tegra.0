@@ -1,75 +1,74 @@
-From: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] pwm: tegra: dynamic clk freq configuration by PWM driver
-Date: Mon, 20 Apr 2020 16:04:03 +0000
-Message-ID: <BYAPR12MB3014BF7668051E085B2844C9ADD40@BYAPR12MB3014.namprd12.prod.outlook.com>
-References: <1585917303-10573-1-git-send-email-spatra@nvidia.com>
- <20200403151050.nh2mrffkqdqtkozq@pengutronix.de>
- <BYAPR12MB3014C0178A7360662C6FA8B7ADDB0@BYAPR12MB3014.namprd12.prod.outlook.com>
- <20200415141856.ck3w3gtae4bsxyfl@pengutronix.de>
- <BYAPR12MB30149D2715DC575A030A7F59ADD90@BYAPR12MB3014.namprd12.prod.outlook.com>
- <20200417135027.wkj6bxiplnehsa5s@pengutronix.de>
- <BYAPR12MB3014041BFFC43AF5EB3BC27CADD90@BYAPR12MB3014.namprd12.prod.outlook.com>
- <20200418082300.mucrg2srysvvjbfn@pengutronix.de>
+From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [RFC] PCI: tegra: Revert raw_violation_fixup for tegra124
+Date: Mon, 20 Apr 2020 18:43:04 +0200
+Message-ID: <20200420164304.28810-1-kwizart@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200418082300.mucrg2srysvvjbfn-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgVXdlLA0KDQpUaGFua3MgZm9yIHJldmlld2luZyBhbmQgcHJvdmlkaW5nIHlvdXIgaW5wdXRz
-IHRvIHRoZSBjaGFuZ2VzLg0KDQpUaGUgcmV2aWV3IGNvbW1lbnRzIGFyZSBhZGRyZXNzZWQgaW4g
-dGhlIG5ldyBwYXRjaC4NClBhdGNoIChWMikgaXMgcmVhZHkgdG8gYmUgcmV2aWV3ZWQgYXQ6DQpo
-dHRwczovL3BhdGNod29yay5vemxhYnMub3JnL3Byb2plY3QvbGludXgtcHdtL3BhdGNoLzE1ODcz
-OTgwNDMtMTg3NjctMS1naXQtc2VuZC1lbWFpbC1zcGF0cmFAbnZpZGlhLmNvbS8NClBsZWFzZSBo
-ZWxwIHJldmlld2luZyBmdXJ0aGVyLg0KDQoNClRoYW5rcyAmIFJlZ2FyZHMsDQpTYW5kaXBhbg0K
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogVXdlIEtsZWluZS1Lw7Zu
-aWcgPHUua2xlaW5lLWtvZW5pZ0BwZW5ndXRyb25peC5kZT4NCj4gU2VudDogU2F0dXJkYXksIEFw
-cmlsIDE4LCAyMDIwIDE6NTMgUE0NCj4gVG86IFNhbmRpcGFuIFBhdHJhIDxzcGF0cmFAbnZpZGlh
-LmNvbT4NCj4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+OyByb2JoK2R0
-QGtlcm5lbC5vcmc7IEpvbmF0aGFuDQo+IEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+OyBC
-aWJlayBCYXN1IDxiYmFzdUBudmlkaWEuY29tPjsgTGF4bWFuDQo+IERld2FuZ2FuIDxsZGV3YW5n
-YW5AbnZpZGlhLmNvbT47IGxpbnV4LXB3bUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGRldmljZXRyZWVA
-dmdlci5rZXJuZWwub3JnOyBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBr
-ZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIHB3bTogdGVncmE6
-IGR5bmFtaWMgY2xrIGZyZXEgY29uZmlndXJhdGlvbiBieSBQV00gZHJpdmVyDQo+IA0KPiBFeHRl
-cm5hbCBlbWFpbDogVXNlIGNhdXRpb24gb3BlbmluZyBsaW5rcyBvciBhdHRhY2htZW50cw0KPiAN
-Cj4gDQo+IEhlbGxvLA0KPiANCj4gT24gRnJpLCBBcHIgMTcsIDIwMjAgYXQgMDI6NTM6MjJQTSAr
-MDAwMCwgU2FuZGlwYW4gUGF0cmEgd3JvdGU6DQo+ID4gPiBUbyBwdXQgbXkgZXhwcmVzc2lvbiBp
-biB3b3JkczogcGljayB0aGUgbWF4aW11bSBvZiB0aGUgcG9zc2libGUNCj4gPiA+IHBlcmlvZHMg
-dGhhdCBhcmUgbGVzcyBvciBlcXVhbCB0byB0aGUgcmVxdWVzdGVkIHZhbHVlLiAgTWF5YmUgdGhp
-cw0KPiA+ID4gaXMgYmV0dGVyDQo+ID4gPiB1bmRlcnN0YW5kYWJsZToNCj4gPiA+DQo+ID4gPiAg
-ICAgICAgIG1heCB7IHgg4oiKIGltcGxlbWVudGFibGVQZXJpb2RzIHwgeCA8PSByZXF1ZXN0ZWRQ
-ZXJpb2QgfQ0KPiA+ID4NCj4gPiA+ID8NCj4gPg0KPiA+IEkgdGhpbmsgSSBnb3QgeW91ciBxdWVz
-dGlvbi4NCj4gPiBTaG91bGQgdGVncmFfcHdtX2NvbmZpZygpIG5vdCByZXR1cm4gZXJyb3IgKEVJ
-TlZBTCkgd2hlbiB0aGUgcmVxdWVzdGVkDQo+ID4gcGVyaW9kIGlzIGludmFsaWQgYnV0IGl0IHNo
-b3VsZCBjb25maWd1cmUgdG8gYSBuZWFyZXN0IHBvc3NpYmxlIHZhbHVlPw0KPiANCj4gSWYgeW91
-IGNhbm5vdCBjb25maWd1cmUgYWNjb3JkaW5nIHRvIHRoZSBhYm92ZSBydWxlLCB5ZXMsIHJldHVy
-biBhbiBlcnJvciBjb2RlLg0KPiBFSU5WQUwgaXMgdGhlIHVzdWFsIG9uZSBJIHRoaW5rIChzb21l
-IGFsc28gcmV0dXJuIEVSQU5HRSkuDQo+IA0KPiA+ID4gPiBZZXMsIHRoZSBvdXRwdXQgc3RvcHMg
-YXMgc29vbiBhcyB0aGUgUFdNX0VOQUJMRSBiaXQgaXMgY2xlYXJlZCBpbg0KPiA+ID4gPiBoYXJk
-d2FyZS4gVGhlbiBUaGUgb3V0cHV0IGlzIHNldCB0byAwICh3aGljaCBpcyBpbmFjdGl2ZSkuDQo+
-ID4gPiA+IE9uY2UgLmRpc2FibGUoKSA9PiB0ZWdyYV9wd21fZGlzYWJsZSgpIGdldHMgaW52b2tl
-ZCwgZW5hYmxlIGJpdCBpcw0KPiA+ID4gPiBjbGVhcmVkIGFuZCBoZW5jZSBQV00gd2lsbCBwb3Nz
-ZXNzIG5vIG91dHB1dCBzaWduYWwuDQo+ID4gPiA+IHRlZ3JhX3B3bV9jb25maWcoKSB3aWxsIGJl
-IGludm9rZWQgZm9yIGFueSBuZXcgY29uZmlndXJhdGlvbiByZXF1ZXN0Lg0KPiA+ID4NCj4gPiA+
-IFNvbWUgZHJpdmVycyBhbHJlYWR5IGhhdmUgYSAiTGltaXRhdGlvbnMiIHNlY3Rpb24gaW4gdGhl
-aXIgaGVhZGVyLg0KPiA+ID4gUGxlYXNlIHRha2UgYSBsb29rIGF0IHRoZSBleGlzdGluZyBleGFt
-cGxlcyBhbmQgcHJvdmlkZSBzb21ldGhpbmcNCj4gPiA+IHNpbWlsYXIuIChOb3RlIHlvdSBzdGls
-bCBkaWRuJ3QgYW5zd2VyICJIb3cgZG9lcyBhIHJ1bm5pbmcgUFdNDQo+ID4gPiBiZWhhdmUgd2hl
-biB0aGUgcmVnaXN0ZXIgaXMgdXBkYXRlZD8gRG9lcyBpdCBjb21wbGV0ZSB0aGUgY3VycmVudGx5
-DQo+ID4gPiBydW5uaW5nIHBlcmlvZD8iLiBJIGFzc3VtZSB0aGUgYW5zd2VyIHRvIHRoZSBzZWNv
-bmQgcXVlc3Rpb24gaXMgIk5vIg0KPiA+ID4gKGFuZCB0aGUgZmlyc3QgaXMgb25seSB0aGVyZSBm
-b3IgcmhldG9yaWMgcmVhc29ucykuKQ0KPiA+ID4NCj4gPg0KPiA+IDEuIEkgd2lsbCBhZGQgdGhl
-IGJlbG93IGNvbW1lbnRzIGFzIExpbWl0YXRpb25zOg0KPiA+IC0gICAgIFdoZW4gUFdNIGlzIGRp
-c2FibGVkLCB0aGUgb3V0cHV0IGlzIGRyaXZlbiB0byAwIGFuZA0KPiANCj4gSW4gZmFjdCwgdGhp
-cyBpcyBhIGdvb2QgcHJvcGVydHkuIFNvIHRoZSBvbmx5IHByb2JsZW0gaXMsIHRoYXQgZm9yIGJv
-dGggc3RvcCBhbmQNCj4gcmVjb25maWd1cmF0aW9uIHRoZSBjdXJyZW50bHkgcnVubmluZyBwZXJp
-b2QgaXNuJ3QgY29tcGxldGVkLg0KPiANCj4gQmVzdCByZWdhcmRzDQo+IFV3ZQ0KPiANCj4gLS0N
-Cj4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgVXdlIEtsZWlu
-ZS1Lw7ZuaWcgICAgICAgICAgICB8DQo+IEluZHVzdHJpYWwgTGludXggU29sdXRpb25zICAgICAg
-ICAgICAgICAgICB8IGh0dHBzOi8vd3d3LnBlbmd1dHJvbml4LmRlLyB8DQo=
+As reported in https://bugzilla.kernel.org/206217 , raw_violation_fixup
+is causing more harm than good in some common use-cases.
+
+This patch as RFC is a partial revert of the 191cd6fb5 commit:
+ "PCI: tegra: Add SW fixup for RAW violations" 
+that was first introduced in 5.3 kernel.
+This fix the following regression since then.
+
+
+When using both the network NIC and I/O on MMC this can lead to the
+following message on jetson-tk1:
+
+ NETDEV WATCHDOG: enp1s0 (r8169): transmit queue 0 timed out
+
+and
+
+ pcieport 0000:00:02.0: AER: Uncorrected (Non-Fatal) error received: 0000:01:00.0
+ r8169 0000:01:00.0: AER: PCIe Bus Error: severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Requester ID)
+ r8169 0000:01:00.0: AER:   device [10ec:8168] error status/mask=00004000/00400000
+ r8169 0000:01:00.0: AER:    [14] CmpltTO                (First)
+ r8169 0000:01:00.0: AER: can't recover (no error_detected callback)
+ pcieport 0000:00:02.0: AER: device recovery failed
+
+
+After that, the ethernet NIC isn't functional anymore even after reloading
+the module.
+After a reboot, this is reproducible by copying a large file over the
+ethernet NIC to the MMC.
+For some reasons this cannot be reproduced when the same file is copied
+to a tmpfs.
+
+
+This patch is RFC because it requires more understanding from Nvidia.
+ - Is the fixup (available in l4t downstrem) still needed for upstream ?
+ - Is there a need to update the fixup values for upstream ?
+ - If the fixup is reverted, does the hw bug can still be seen with
+   upstream ?
+
+Others can also provides more understanding:
+ - Conditions to reproduce the bug (or not)...
+
+
+Signed-off-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/pci/controller/pci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 3e64ba6a36a8..4027e074094a 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2470,7 +2470,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+ 	.program_uphy = true,
+ 	.update_clamp_threshold = true,
+ 	.program_deskew_time = false,
+-	.raw_violation_fixup = true,
++	.raw_violation_fixup = false,
+ 	.update_fc_timer = false,
+ 	.has_cache_bars = false,
+ 	.ectl.enable = false,
+-- 
+2.25.2
