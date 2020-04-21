@@ -1,63 +1,93 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v8 5/9] dt-binding: tegra: Add VI and CSI bindings
-Date: Tue, 21 Apr 2020 22:46:46 +0200
-Message-ID: <20200421204646.GA3233341@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC PATCH v8 6/9] media: tegra: Add Tegra210 Video input driver
+Date: Tue, 21 Apr 2020 22:47:05 +0200
+Message-ID: <20200421204705.GB3233341@ulmo>
 References: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
- <1587427874-3291-6-git-send-email-skomatineni@nvidia.com>
+ <1587427874-3291-7-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="OwLcNYc0lM97+oe1"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1587427874-3291-6-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1587427874-3291-7-git-send-email-skomatineni@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---5vNYLRcllDrimb99
+--OwLcNYc0lM97+oe1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 20, 2020 at 05:11:10PM -0700, Sowjanya Komatineni wrote:
-> Tegra contains VI controller which can support up to 6 MIPI CSI
-> camera sensors.
+On Mon, Apr 20, 2020 at 05:11:11PM -0700, Sowjanya Komatineni wrote:
+> Tegra210 contains a powerful Video Input (VI) hardware controller
+> which can support up to 6 MIPI CSI camera sensors.
 >=20
-> Each Tegra CSI port from CSI unit can be one-to-one mapper to
-> VI channel and can capture from an external camera sensor or
-> from built-in test pattern generator.
+> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+> capture from an external camera sensor connected to CSI or from
+> built-in test pattern generator.
 >=20
-> This patch adds dt-bindings for Tegra VI and CSI.
+> Tegra210 supports built-in test pattern generator from CSI to VI.
 >=20
-> Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> This patch adds a v4l2 capture driver with media interface for
+> Tegra210 built-in CSI to VI test pattern generator.
+>=20
+> This patch includes TPG support only and all the video pipeline
+> configuration happens through the video device node.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  .../display/tegra/nvidia,tegra20-host1x.txt        | 73 ++++++++++++++++=
-++----
->  1 file changed, 60 insertions(+), 13 deletions(-)
+>  drivers/staging/media/Kconfig          |    2 +
+>  drivers/staging/media/Makefile         |    1 +
+>  drivers/staging/media/tegra/Kconfig    |   13 +
+>  drivers/staging/media/tegra/Makefile   |    8 +
+>  drivers/staging/media/tegra/TODO       |   10 +
+>  drivers/staging/media/tegra/common.h   |  262 ++++++++
+>  drivers/staging/media/tegra/csi.c      |  605 +++++++++++++++++
+>  drivers/staging/media/tegra/csi.h      |  149 +++++
+>  drivers/staging/media/tegra/tegra210.c |  709 ++++++++++++++++++++
+>  drivers/staging/media/tegra/tegra210.h |  190 ++++++
+>  drivers/staging/media/tegra/vi.c       | 1123 ++++++++++++++++++++++++++=
+++++++
+>  drivers/staging/media/tegra/vi.h       |   85 +++
+>  drivers/staging/media/tegra/video.c    |  151 +++++
+>  drivers/staging/media/tegra/video.h    |   31 +
+>  14 files changed, 3339 insertions(+)
+>  create mode 100644 drivers/staging/media/tegra/Kconfig
+>  create mode 100644 drivers/staging/media/tegra/Makefile
+>  create mode 100644 drivers/staging/media/tegra/TODO
+>  create mode 100644 drivers/staging/media/tegra/common.h
+>  create mode 100644 drivers/staging/media/tegra/csi.c
+>  create mode 100644 drivers/staging/media/tegra/csi.h
+>  create mode 100644 drivers/staging/media/tegra/tegra210.c
+>  create mode 100644 drivers/staging/media/tegra/tegra210.h
+>  create mode 100644 drivers/staging/media/tegra/vi.c
+>  create mode 100644 drivers/staging/media/tegra/vi.h
+>  create mode 100644 drivers/staging/media/tegra/video.c
+>  create mode 100644 drivers/staging/media/tegra/video.h
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---5vNYLRcllDrimb99
+--OwLcNYc0lM97+oe1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6fW7MACgkQ3SOs138+
-s6GcPQ/9FNBtMbNYeZe7HR8tmPr1TQ7xTJ21ncNt7vGdlFWn0F7TXycPiWu86+V6
-Zc2pIGZjSk2uhHKbvYUvA9IXkAY0mxtzZrJeXIU+vAADOjAc6+rYYKcf0zuRr28g
-AAgcnaAZPIsxWCdIM/G4l+Bir8kw82HGIpK45J2m4aWmgBF9c1vMVO4yzj5FALzj
-F7nqa2Iiufghax5P7n/9yKWLeQroDPqsrWCWqVh9ILOn52l/qIDfRPAsEjuoCy3s
-FaDQQQRRSoyYTRg8iNLF6t2H8yI89Suyia4ZcN+YzuhwtEc/DlSvIWFW9BVgyXxH
-N6AdkZzFID0me3ij0xAGJWD2bmUlhQVPMPAJZq52t6vdH+0k9WReRUuBp1D0P7nC
-FYuwttry5BJiXXceFOR29KKAe2qO3IMl3/cpLvcDVPSbMi38Zyd3VvhNbvFD+fn+
-hTa3S+5xLhbQxLZsSDnaPA1Phl4EGGNSWo08Nn5mwU+H/oCO11i/Luy4+usaYgor
-lfa9//chWihgxUnpa0fN4nUdgmaRWxymLiJL3bY8twgvEWlzn7cbtf6EacXY5Yzt
-jUE+kPSEAYy0jjuWANsQJUe2BQiLHIRJEEQSt6EsSgLmV2P+5utoIuAjUQWAiF1V
-fE8pGGlhXJza9q7fbW62lHW/c7agPohXsRsq59UytdnjJtnzTz0=
-=FTJX
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6fW8gACgkQ3SOs138+
+s6FelRAAs4R2//XI/InkuB2gn+oXihgPqbXskXdym+k+JEyLU97w8L64/i25yIQf
+/eCEE/fTZfGjTJy60PYVYMcai5sq2Kd9uT6iosuX6Z651yZOEAuQ52bRvS7oo9Pn
+hTN2jCa6U9NQFrGXLyhLU5gAyN8lyuDAsOO8VB6ZU3BXcVlcfgPD2QX+CT15fW3r
+UvpFWvyvwJDfZK8ndognGlxQ4ALBuUJOlRGWgcTPHqX1puxQC4aj8U7Edjxvy87D
+3zC9vbhSKshhMKC3DPatFGzfVkX/mKsXSHIcbIeGbaAECWLBuEHe9GZBb5IcZR14
+o6OE+o5vY3iLbbgpKsUvDH3uWy9W7KANO5LsiE3gzE9c49wzZ09ckwmY/oStFTEf
+1wHXoKEnemDvXtQ4GsMWcjuI3c/uxU8nWSSNvQW2cSFdAy3R4O+i2anjaVqsGYnb
+X0MfrmXZoLZg/cEVb9OCw0c3PGbQkvtxOCIWqqMKL8pKZMN5Hy6pAqnIvsmY4rEO
+Q58bftmMOLaF0LS3YTRbnZR2wHIpWCrb+zOM77otioRSlt1xGfUKjlqtrogckuMU
+3UwlCmOjns1TsWCIaDQuv32UxKfL02Megzr4vB4qRnBVdY4sJRZUavDeeF1UjhM7
+Ll1Rl/+jeTjZIwUeLk0HV/PEBhKmNvspHZvb62Bz5nLSAAAaiqs=
+=WO+F
 -----END PGP SIGNATURE-----
 
---5vNYLRcllDrimb99--
+--OwLcNYc0lM97+oe1--
