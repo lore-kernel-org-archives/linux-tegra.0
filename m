@@ -1,64 +1,80 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drm/tegra: Clean up GPIO includes
-Date: Wed, 22 Apr 2020 00:15:03 +0200
-Message-ID: <20200421221503.GA3445172@ulmo>
-References: <20200415122427.111769-1-linus.walleij@linaro.org>
+Subject: Re: [PATCH V3 1/2] soc/tegra: fuse: Add custom SoC attributes
+Date: Wed, 22 Apr 2020 00:15:38 +0200
+Message-ID: <20200421221538.GB3445172@ulmo>
+References: <20200417123949.26288-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
+        protocol="application/pgp-signature"; boundary="hQiwHBbRI9kgIhsi"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200415122427.111769-1-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20200417123949.26288-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---rwEMma7ioTxnRzrJ
+--hQiwHBbRI9kgIhsi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 15, 2020 at 02:24:27PM +0200, Linus Walleij wrote:
-> The Tegra DRM drivers includes the legacy GPIO headers
-> <linux/gpio.h> and <linux/of_gpio.h> but what it really
-> uses is <linux/gpio/consumer.h> since only gpio_desc
-> structs are ever referenced.
+On Fri, Apr 17, 2020 at 01:39:48PM +0100, Jon Hunter wrote:
+> Add a custom SoC attribute for Tegra to expose the HIDREV register
+> fields to userspace via the sysfs. This register provides additional
+> details about the type of device (eg, silicon, FPGA, etc) as well as
+> revision. Exposing this information is useful for identifying the
+> exact device revision and device type.
 >=20
-> Include the right header on the top level tegra/drm.h
-> file and drop all the surplus includes.
+> For Tegra devices up until Tegra186, the majorrev and minorrev fields of
+> the HIDREV register are used to determine the device revision and device
+> type. For Tegra194, the majorrev and minorrev fields only determine the
+> revision. Starting with Tegra194, there is an additional field,
+> pre_si_platform (which occupies bits 20-23), that now determines device
+> type. Therefore, for all Tegra devices, add a custom SoC attribute for
+> the majorrev and minorrev fields and for Tegra194 add an additional
+> attribute for the pre_si_platform field.
 >=20
-> Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/gpu/drm/tegra/dpaux.c | 2 --
->  drivers/gpu/drm/tegra/drm.h   | 2 +-
->  drivers/gpu/drm/tegra/hdmi.c  | 1 -
->  drivers/gpu/drm/tegra/sor.c   | 1 -
->  4 files changed, 1 insertion(+), 5 deletions(-)
+> Changes since V2:
+> - Renamed attributes
+> - Fix checkpatch warnings
+> - Simplified code by using DEVICE_ATTR_RO
+>=20
+> Changes since V1:
+> - Exported individual fields of the HIDREV register
+>=20
+>  drivers/soc/tegra/fuse/fuse-tegra.c    | 54 ++++++++++++++++++++++++++
+>  drivers/soc/tegra/fuse/fuse-tegra20.c  |  1 +
+>  drivers/soc/tegra/fuse/fuse-tegra30.c  |  6 +++
+>  drivers/soc/tegra/fuse/fuse.h          |  8 ++++
+>  drivers/soc/tegra/fuse/tegra-apbmisc.c | 10 +++++
+>  5 files changed, 79 insertions(+)
 
 Applied, thanks.
 
 Thierry
 
---rwEMma7ioTxnRzrJ
+--hQiwHBbRI9kgIhsi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6fcGQACgkQ3SOs138+
-s6HLkhAAu4iEB6DmFiY8mIfbg5zlR+Zh1clXUkIPGTDhEGEQjmNF+j3mjMs+Ij6k
-fJZapANopEijtJpoAYpr8mDOAQ1gcdWLAaeKfGKWLyW/r3aoDO1ZxsaLQBQIeimN
-oIrDycRU0d2r5wbg1bHQfOq0wwaUS1YuHEMx4v2RGSvK/E5IrDB/O3Td7E1ols6l
-K8zZFHvvAvTUaecYHwVKac2NqRJVDHjDqvu9YIvaXbJ2VbXDy5kY33MjX8nfBewK
-HBsnQ/r8nUpAjSBx9SRZy3lxBiFXfYOiWQwNvvBF+GSO/za5RTWzSJP8WQKvn2eo
-gw4Foxqp+5xBEqLmRzjPya1y3y2pno3WKTzLTYPcUjBwu8SnUJ1eAmxj8JQpdRPx
-FYeEaka89Ip5fX+NJ89N/pTmRfSYH5zkKecTMbloafmXcbsLP79YsYSEFuiC8pUW
-Tot7yRErxDXuCgfeqUwfx/pcuuYHTIolYBGzJkzX/Kylw6tD1kgg3ChngveZjPTz
-GS49BeviCSSAELi/B51+vHaQa4um9SSClAlqW1Rp4VI+d16lQsIgO48cUhEUC6X2
-2g/BBScvZ5Kl+QBJmDriMHaa6/n4UkU5J2wgnNgcwuPbLJLqsmrkPjHaUr4S+Om7
-s0jglCkeo/U/naAYZrQu+M9pkhY+PE9BWWBhWgqiW3C6SNnZyKg=
-=S/Uu
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6fcIoACgkQ3SOs138+
+s6HqSQ/8Ce2MbHuw0lLNqNQYqrIExlw4tXEFdJYralJSe4UYsJgrw6YODCCxwL7N
+IyMWNAD4w0zw1dK6bIOiwRfI2hx6UzM3W1j2868X/qTvureTJ8k5fGMFqA7kLM7h
+5iTNjwtT/IWpBXU0sVO8hQuHHh8PWV9PpgU1ALUWQzekbSuo8Xd8jJzwWyYcqpn9
+C9zCxa71Y6+mzEVHoHby0NSBMmhHl7bLcPkGqrFxySTWNLm9XtNVxkd9XXfKd5R9
+iMffnZCL0Y2seM/Ug+axHu8hdqU+VXbAHdwxHAI6gSFmzx1kVQdM6iamr8bu0kkj
+7wWWf/Pjx5G+y4VKFp2peGW4GIqmOUkJpvp/g1hC7gLztCyZ5mOdCmhfWLLogpG8
+hP/nuaHaHADwY6s5YbMfjNCChyuJJMYTjajcpAVcvK6WzWbf8J9A+kI9AlGyOtBn
+0cT4T1DxlJc5hf0TfJzsiziEDp0JQk9UhYZvfyxDlgY2HcvfOC1dYGAGs3rkOzOr
+muXUkg1MF9p4OrQxoVpxqIQqBQZ5LisbnMg0nfaWC/fMoEIovM4iOlRfzere45Ln
+WNAbLB3Wpy3kXHVIbmTTbovAslOpv3+3+pZ5GgOpQkdqK4XLgW3d2F8D/5OFs8JS
+lpHYnosUl0zJPdr7RelvHSovvZrl88g+MDSDtO7SZpUjpUCZNss=
+=huHJ
 -----END PGP SIGNATURE-----
 
---rwEMma7ioTxnRzrJ--
+--hQiwHBbRI9kgIhsi--
