@@ -1,64 +1,104 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] soc/tegra: fuse: Update the SoC revision attribute to
- display a name
-Date: Wed, 22 Apr 2020 00:16:06 +0200
-Message-ID: <20200421221606.GD3445172@ulmo>
-References: <20200417124046.26400-1-jonathanh@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v6 0/6] Support NVIDIA Tegra-based Acer A500 and Nexus 7 devices
+Date: Wed, 22 Apr 2020 02:59:37 +0300
+Message-ID: <20200421235943.13627-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4zI0WCX1RcnW9Hbu"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200417124046.26400-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, =?UTF-8?q?Pedro=20=C3=82ngelo?= <pangelo@void.io>, Matt Merhar <mattmerhar@protonmail.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
---4zI0WCX1RcnW9Hbu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series introduces upstream kernel support for Acer Iconia Tab A500
+and ASUS Google Nexus 7 tablet devices. Please review and apply, thanks
+in advance.
 
-On Fri, Apr 17, 2020 at 01:40:46PM +0100, Jon Hunter wrote:
-> Currently the SoC revision attribute for Tegra devices displays the
-> value of the enum associated with a particular revision. This is not
-> very useful because to obtain the actual revision you need to
-> use the tegra_revision enumeration to translate the value.
->=20
-> It is more meaningful to display a name for the revision, such as
-> 'A01', than the enumarated value and therefore, update the revision
-> attribute to display a name. This change does alter the ABI, which
-> is unfortunate, but this is more meaningful and maintable.
->=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/soc/tegra/fuse/fuse-tegra.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Changelog:
 
-Applied, thanks.
+v6: - Corrected PMIC's RTC alias in the DTs. Sometime ago I renamed the
+      PMIC's node to match the modern upstream styling, but forgot to change
+      the RTC alias. Now PMIC RTC alias uses node's handle instead of string.
 
-Thierry
+    - Removed "panel: " handle from device trees, which became unused after
+      v5 and I just missed to remove it.
 
---4zI0WCX1RcnW9Hbu
-Content-Type: application/pgp-signature; name="signature.asc"
+v5: - After spending some more time on adding LVDS encoder bridge support
+      to the Tegra DRM driver, I'm now having a second thought and agree
+      with Thierry Reding that in a longer run it should be better not to
+      mix old nvidia,panel with new output graph in device-tree. So the
+      nvidia,panel phandle is removed now in both A500 and Nexus 7 DTs.
 
------BEGIN PGP SIGNATURE-----
+v4: - Corrected CPU's thermal zone on both A500 and Nexus 7, which
+      should use the remote thermal sensor (Tegra chip) instead of the
+      local ("skin" temperature).
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6fcKYACgkQ3SOs138+
-s6G0mg/+P+8Rot7VDNd1EWJMIktuk2Nb3qJ9o0Cu31aSzy7qjODcc7qKB2duHkh4
-D96kUWvGLMYVn2c13uaU97TnmSPbruadM8+oxBqFkKnUcfO6G80ExLHE6pebhhUV
-7Ot7T9EESV1dh0wtrcEGH2wuOUyvOpzZDV09cKb7FdezEyiGDQ5hKHBarHdeTWXd
-eYDEMeTJ54edTMSrdbCxD3GJ0Lw26gIkWbEPZTwE1oZ8iwDhSvaqvm9MbwSl8cns
-y3ReXdrlnlchWMY8+QvQsrQLz80+T2U4wt1VGelr/xwttS3buQLsB0erSLJuRTTE
-OgrcZrN8HH2db/pO2s8nr1hgao7N6GAe7OWaDpHQCM7DVFcgOfwIJeffRfod51Nt
-ue/2Au0eVoXDEcZrlesENgtoCazK3ePaHVOuORjmndZi4afmruVwiI3Qc0LFRzOR
-v9U1cMOTcIzoT7wcMlJ5maXPHsovK58mWLZ5KkIEgmaBps6By9+4vdI9liSQ+3FS
-PnQ/tBrQx1ESKYV/j9UqnIvbn9qrXq9EmuGxCyPjXUZ22seYiMsW0MhFPbuuddFm
-E6fxlK9N5+udDepUBCJr0vfdr1mKxyR+qpKa9uBrwc1cJZbMB+nmhFzomvB8xsdI
-EUIdY5Ylqa7SzqrO2a+/Mwz2+Vxaop2G0k49K62e0MLy/vmseKg=
-=Ibkn
------END PGP SIGNATURE-----
+    - Added default PMIC pinmux state on Nexus 7, for completeness.
 
---4zI0WCX1RcnW9Hbu--
+    - Added PMIC cpu_pwr_req GPIO hog on Nexus 7, for completeness.
+
+    - Renamed thermal sensor node label to NCT72 on Nexus 7 to match the
+      actual hardware (NCT72 is compatible with NCT1008). For completeness.
+
+    - Added always-on USB AVDD regulator on Nexus 7, which is controlled by
+      the PMIC GPIO. For completeness.
+
+    - Added PMIC GPIO enable-control to the 3v3_sys regulator on Nexus 7,
+      for completeness.
+
+    - Added CONFIG_NAMESPACES, CONFIG_USER_NS, CONFIG_SECCOMP and
+      CONFIG_PINCTRL_MAX77620 to the tegra_defconfig. The first three
+      options are must-have for the modern userspace, the last is somewhat
+      actual now since the default PMIC pinmux state is added to the N7 DT.
+
+v3: - Improved device-tree node-names in accordance to review comments that
+      were made by Thierry Reding to v2.
+
+    - Corrected LVDS encoder powerdown-GPIO polarity on both A500 and Nexus 7
+      because I implemented the DRM bridges support in the Tegra DRM driver
+      and found that there was a mistake in the device-trees. The updated
+      polarity also matches the boards schematics. Now DRM bridges support
+      becomes mandatory since LVDS is getting disabled during of the encoder
+      driver probing. I'll send the DRM patch separately from this series.
+
+    - Replaced recently deprecated CONFIG_DRM_LVDS_ENCODER with the new
+      CONFIG_DRM_LVDS_CODEC in tegra_defconfig.
+
+    - Added more config options to tegra_defconfig, like pstore and thermal.
+
+    - Added atmel,cfg_name to the A500 DT, which is a new upcoming property
+      in 5.8+ that allows to specify the per-board hardware config file name.
+
+v2: - Corrected "volume down" key-label in the grouper's device-tree and
+      improved some other names in device-trees.
+
+    - Added optional (upcoming in 5.8+) VDD/AVDD regulators to the touchscreen
+      node in A500 device-tree.
+
+Dmitry Osipenko (6):
+  ARM: tegra: Add device-tree for Acer Iconia Tab A500
+  ARM: tegra: Add device-tree for ASUS Google Nexus 7
+  dt-bindings: Add vendor prefix for Acer Inc.
+  dt-bindings: ARM: tegra: Add Acer Iconia Tab A500
+  dt-bindings: ARM: tegra: Add ASUS Google Nexus 7
+  ARM: tegra_defconfig: Enable options useful for Nexus 7 and Acer A500
+
+ .../devicetree/bindings/arm/tegra.yaml        |   10 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ arch/arm/boot/dts/Makefile                    |    3 +
+ .../boot/dts/tegra20-acer-a500-picasso.dts    | 1457 +++++++++
+ .../tegra30-asus-nexus7-grouper-common.dtsi   | 2679 +++++++++++++++++
+ .../boot/dts/tegra30-asus-nexus7-grouper.dts  |  463 +++
+ .../boot/dts/tegra30-asus-nexus7-tilapia.dts  |  549 ++++
+ arch/arm/configs/tegra_defconfig              |   42 +
+ 8 files changed, 5205 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dts
+
+-- 
+2.26.0
