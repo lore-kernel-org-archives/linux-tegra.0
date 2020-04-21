@@ -1,105 +1,50 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
- for a long time
-Date: Tue, 21 Apr 2020 01:11:51 +0300
-Message-ID: <f59ba318-8e99-c486-fa4d-1ee28a7b203d@gmail.com>
-References: <20200324191217.1829-1-digetx@gmail.com>
- <20200324191217.1829-2-digetx@gmail.com>
- <1e259e22-c300-663a-e537-18d854e0f478@nvidia.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC PATCH v8 4/9] clk: tegra: Add Tegra210 CSI TPG clock gate
+Date: Mon, 20 Apr 2020 17:11:09 -0700
+Message-ID: <1587427874-3291-5-git-send-email-skomatineni@nvidia.com>
+References: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1e259e22-c300-663a-e537-18d854e0f478-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1587427874-3291-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Jon,
+Tegra210 CSI hardware internally uses PLLD for internal test pattern
+generator logic.
 
-20.04.2020 22:53, Jon Hunter пишет:
-> Hi Dmitry,
-> 
-> On 24/03/2020 19:12, Dmitry Osipenko wrote:
->> Boot CPU0 always handle I2C interrupt and under some rare circumstances
->> (like running KASAN + NFS root) it may stuck in uninterruptible state for
->> a significant time. In this case we will get timeout if I2C transfer is
->> running on a sibling CPU, despite of IRQ being raised. In order to handle
->> this rare condition, the IRQ status needs to be checked after completion
->> timeout.
->>
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/i2c/busses/i2c-tegra.c | 27 +++++++++++++++------------
->>  1 file changed, 15 insertions(+), 12 deletions(-)
-> 
-> 
-> I have noticed a regression on tegra30-cardhu-a04 when testing system
-> suspend. Git bisect is pointing to this commit and reverting it fixes
-> the problem. In the below console log I2C fails to resume ...
-> 
-...
-> [   60.690035] PM: Device 3000.pcie failed to resume noirq: error -16
+PLLD_BASE register in CAR has a bit CSI_CLK_SOURCE to enable PLLD
+out to CSI during TPG mode.
 
-...
-> [   60.696859] tegra-mc 7000f000.memory-controller: fdcdwr2: write @0x877e8400: EMEM address decode error (SMMU translation error [--S])
-> 
-> [   60.708876] tegra-mc 7000f000.memory-controller: fdcdwr2: write @0x877e8400: Page fault (SMMU translation error [--S])
+This patch adds this CSI TPG clock gate to Tegra210 clock driver
+to allow Tegra video driver to ungate CSI TPG clock during TPG mode
+and gate during non TPG mode.
 
-This looks very wrong, the error tells that 3d hardware is active and
-doing something odd. Are you running some 3d tests?
+Acked-by: Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra210.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-...
-> Have you seen this?
-
-No, I haven't seen that. I'm not using PCIE and it looks like it's the
-problem.
-
-Looking at the PCIE driver code, seems it's not syncing the RPM state on
-suspend/resume.
-
-Please try this change:
-
---- >8 ---
-diff --git a/drivers/pci/controller/pci-tegra.c
-b/drivers/pci/controller/pci-tegra.c
-index 3e64ba6a36a8..b1fcbae4109c 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2870,8 +2870,8 @@ static int __maybe_unused
-tegra_pcie_pm_resume(struct device *dev)
-
- static const struct dev_pm_ops tegra_pcie_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_pcie_pm_suspend, tegra_pcie_pm_resume, NULL)
--	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_pcie_pm_suspend,
--				      tegra_pcie_pm_resume)
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				      pm_runtime_force_resume)
- };
-
-
- static struct platform_driver tegra_pcie_driver = {
---- >8 ---
-
-Secondly, I2C driver suspends on NOIRQ level, while APBDMA driver
-suspends on default level. This is also wrong, please try to apply this
-hunk as well:
-
---- >8 ---
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index f6a2f42ffc51..e682ac86bd27 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1653,7 +1653,7 @@ static int __maybe_unused
-tegra_dma_dev_resume(struct device *dev)
- static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_dma_runtime_suspend, tegra_dma_runtime_resume,
- 			   NULL)
--	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_dev_suspend, tegra_dma_dev_resume)
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_dma_dev_suspend, tegra_dma_dev_resume)
- };
-
- static const struct of_device_id tegra_dma_of_match[] = {
---- >8 ---
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index defe3b7..81a879b 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3035,6 +3035,13 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 					     periph_clk_enb_refcnt);
+ 	clks[TEGRA210_CLK_DSIB] = clk;
+ 
++	/* csi_tpg */
++	clk = clk_register_gate(NULL, "csi_tpg", "pll_d",
++				CLK_SET_RATE_PARENT, clk_base + PLLD_BASE,
++				23, 0, &pll_d_lock);
++	clk_register_clkdev(clk, "csi_tpg", NULL);
++	clks[TEGRA210_CLK_CSI_TPG] = clk;
++
+ 	/* la */
+ 	clk = tegra_clk_register_periph("la", la_parents,
+ 			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
+-- 
+2.7.4
