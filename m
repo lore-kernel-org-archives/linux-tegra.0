@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v8 1/9] arm64: tegra: Fix sor powergate clocks and reset
-Date: Mon, 20 Apr 2020 17:11:06 -0700
-Message-ID: <1587427874-3291-2-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v8 8/9] dt-bindings: reset: Add ID for Tegra210 VI reset
+Date: Mon, 20 Apr 2020 17:11:13 -0700
+Message-ID: <1587427874-3291-9-git-send-email-skomatineni@nvidia.com>
 References: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,40 +12,25 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, fran
 Cc: digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 device tree lists csi clock and reset under SOR powergate
-node.
+This patch adds ID for Tegra210 VI controller reset to use with
+device tree.
 
-But Tegra210 has csicil in SOR partition and csi in VENC partition.
-
-So, this patch includes fix for sor powergate node.
-
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/dt-bindings/reset/tegra210-car.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 64c46ce..d0eff92 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -796,7 +796,9 @@
- 			pd_sor: sor {
- 				clocks = <&tegra_car TEGRA210_CLK_SOR0>,
- 					 <&tegra_car TEGRA210_CLK_SOR1>,
--					 <&tegra_car TEGRA210_CLK_CSI>,
-+					 <&tegra_car TEGRA210_CLK_CILAB>,
-+					 <&tegra_car TEGRA210_CLK_CILCD>,
-+					 <&tegra_car TEGRA210_CLK_CILE>,
- 					 <&tegra_car TEGRA210_CLK_DSIA>,
- 					 <&tegra_car TEGRA210_CLK_DSIB>,
- 					 <&tegra_car TEGRA210_CLK_DPAUX>,
-@@ -804,7 +806,6 @@
- 					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
- 				resets = <&tegra_car TEGRA210_CLK_SOR0>,
- 					 <&tegra_car TEGRA210_CLK_SOR1>,
--					 <&tegra_car TEGRA210_CLK_CSI>,
- 					 <&tegra_car TEGRA210_CLK_DSIA>,
- 					 <&tegra_car TEGRA210_CLK_DSIB>,
- 					 <&tegra_car TEGRA210_CLK_DPAUX>,
+diff --git a/include/dt-bindings/reset/tegra210-car.h b/include/dt-bindings/reset/tegra210-car.h
+index 9dc84ec..8755946 100644
+--- a/include/dt-bindings/reset/tegra210-car.h
++++ b/include/dt-bindings/reset/tegra210-car.h
+@@ -10,5 +10,6 @@
+ #define TEGRA210_RESET(x)		(7 * 32 + (x))
+ #define TEGRA210_RST_DFLL_DVCO		TEGRA210_RESET(0)
+ #define TEGRA210_RST_ADSP		TEGRA210_RESET(1)
++#define TEGRA210_RST_VI			20
+ 
+ #endif	/* _DT_BINDINGS_RESET_TEGRA210_CAR_H */
 -- 
 2.7.4
