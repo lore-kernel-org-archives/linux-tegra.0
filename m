@@ -1,77 +1,67 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH v8 0/9] Add Tegra driver for video capture
-Date: Tue, 21 Apr 2020 22:50:32 +0200
-Message-ID: <20200421205032.GD3233341@ulmo>
-References: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
- <5c44beca-4016-6e4f-01bb-e38480bfc34b@xs4all.nl>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] ASoC: tegra: Fixes for v5.7-rc3
+Date: Tue, 21 Apr 2020 23:21:21 +0200
+Message-ID: <20200421212121.3286517-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mSxgbZZZvrAyzONB"
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5c44beca-4016-6e4f-01bb-e38480bfc34b@xs4all.nl>
-Sender: linux-clk-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Liam, Mark,
 
---mSxgbZZZvrAyzONB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
-On Tue, Apr 21, 2020 at 01:09:50PM +0200, Hans Verkuil wrote:
-> Hi Sowjanya,
->=20
-> On 21/04/2020 02:11, Sowjanya Komatineni wrote:
-> > This series adds Tegra210 VI and CSI driver for built-in test pattern
-> > generator (TPG) capture.
-> >=20
-> > Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
-> > CSI port is one-to-one mapped to VI channel for video capture.
-> >=20
-> > This series has TPG support only where it creates hard media links
-> > between CSI subdevice and VI video device without device graphs.
-> >=20
-> > v4l2-compliance results are available below the patch diff.
->=20
-> I'm ready to merge this v8. Looking at the series I should only merge
-> patches 6 and 7, all other patches go through different subsystems, right?
+  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
 
-You could also pick up patch 5 because it adds the bindings that are
-implemented by the driver in patch 6. But I can also pick that up into
-the Tegra tree. In fact, I do have a set of patches to convert some
-Tegra bindings to the new json-schema format and the host1x file is
-among them. If I do get around to finish those up for v5.8 it might be
-better for me to pick up patch 5 so that I can base my conversion patch
-on top of that.
+are available in the Git repository at:
 
-Either way is fine with me, so I've acked the three patches. Take which
-ones you want and I'll pick up the rest.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.7-asoc
 
-Thanks again for your guidance on this patch set!
+for you to fetch changes up to ff5d18cb04f4ecccbcf05b7f83ab6df2a0d95c16:
 
+  ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init() (2020-04-21 16:53:15 +0200)
+
+This is a set of patches that I was supposed to send out during the
+merge window[0], but I somehow messed up my scripts and then didn't
+notice that this was missing. I've rebased these patches on top of
+v5.7-rc1.
+
+The lack of these are now causing some issues with unbalanced clock
+reference counts.
+
+Is there any chance you can pick these up for v5.7-rc3?
+
+Thanks,
 Thierry
 
---mSxgbZZZvrAyzONB
-Content-Type: application/pgp-signature; name="signature.asc"
+[0]: https://lore.kernel.org/lkml/20200327154506.GF4437-GFdadSzt00ze9xe1eoZjHA@public.gmane.org/
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+ASoC: tegra: Fixes for v5.7-rc3
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6fXJcACgkQ3SOs138+
-s6FBjg/9FimcqXOseP9+byIOz8utrw/aQW03bxfp+khGtSfVES8b9+2uyWnlc+IM
-qW2Kc56/5wDuBs2nXSxzJAadqov9o5381zJiiacxwuW84/SHA2csj5UVz8ymb/Uw
-/Sfmk6RDZUb6y+TK4SWzWpwJmsvElhnxAidTh1Q2yDs7nyvqmBC1itkZOLHXibRL
-u5/V7VVeIpEiqIoluxlj5pS9o54KJRNZwDknrXbzkgEzOnYMH9cuGpMsqwdUbFAb
-74dKbjgYMzKcdlf8jz0oo1MBYisCemp760JQnWeI/Grp26xgDPCwU9nmPaapmpMP
-+yAYWCg6Nj51sdwiU1/EsTDVXlP3tUjGB2l5IxkepGKGyc7KydbX9+WUXD7b8m/P
-39Olhf1/jswjtwBPgitwSEX66ZheWbNwIykJo6RiRnu9F1Vnc8aJPbnJMuxqERix
-TqCN2cIKWPJNr9TGOnuHfADbsCNWUpFBIaRxgqM1hTmSYeoMTwgYRCDLkVbK6q58
-LTdMKeYu3iS4QpW0VwQ1JBZwzM8EezsUO63THUXKn+HUj0SiLpTE+5S7OmQvYf1K
-Yo2liZF7SC45LCPFY1UvlbU3/1k6QpDMLIF923iGBRk6NebcHrIqBaJTjaum08uq
-M/tFejv+n6cXergSPcHXgy4/oPyzEUrCJEt/ZfjLuldZuV2ZeKw=
-=qERF
------END PGP SIGNATURE-----
+This contains a couple of fixes that are needed to properly reconfigure
+the audio clocks on older Tegra devices.
 
---mSxgbZZZvrAyzONB--
+----------------------------------------------------------------
+Sowjanya Komatineni (4):
+      ASoC: tegra: Use device managed resource APIs to get the clock
+      ASoC: nau8825: Change Tegra clk_out_2 provider to PMC
+      ASoC: tegra: Add audio mclk parent configuration
+      ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init()
+
+ .../devicetree/bindings/sound/nau8825.txt          |   2 +-
+ sound/soc/tegra/tegra_alc5632.c                    |   7 +-
+ sound/soc/tegra/tegra_asoc_utils.c                 | 113 ++++++++++-----------
+ sound/soc/tegra/tegra_asoc_utils.h                 |   1 -
+ sound/soc/tegra/tegra_max98090.c                   |  22 ++--
+ sound/soc/tegra/tegra_rt5640.c                     |  22 ++--
+ sound/soc/tegra/tegra_rt5677.c                     |   7 +-
+ sound/soc/tegra/tegra_sgtl5000.c                   |   7 +-
+ sound/soc/tegra/tegra_wm8753.c                     |  22 ++--
+ sound/soc/tegra/tegra_wm8903.c                     |  22 ++--
+ sound/soc/tegra/tegra_wm9712.c                     |   8 +-
+ sound/soc/tegra/trimslice.c                        |  18 +---
+ 12 files changed, 90 insertions(+), 161 deletions(-)
