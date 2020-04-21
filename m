@@ -1,54 +1,77 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v8 7/9] MAINTAINERS: Add Tegra Video driver section
-Date: Tue, 21 Apr 2020 22:47:24 +0200
-Message-ID: <20200421204724.GC3233341@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC PATCH v8 0/9] Add Tegra driver for video capture
+Date: Tue, 21 Apr 2020 22:50:32 +0200
+Message-ID: <20200421205032.GD3233341@ulmo>
 References: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
- <1587427874-3291-8-git-send-email-skomatineni@nvidia.com>
+ <5c44beca-4016-6e4f-01bb-e38480bfc34b@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GPJrCs/72TxItFYR"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="mSxgbZZZvrAyzONB"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1587427874-3291-8-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <5c44beca-4016-6e4f-01bb-e38480bfc34b@xs4all.nl>
+Sender: linux-clk-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---GPJrCs/72TxItFYR
+--mSxgbZZZvrAyzONB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 20, 2020 at 05:11:12PM -0700, Sowjanya Komatineni wrote:
-> Add maintainers and mailing list entries to Tegra Video driver section.
+On Tue, Apr 21, 2020 at 01:09:50PM +0200, Hans Verkuil wrote:
+> Hi Sowjanya,
 >=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  MAINTAINERS | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> On 21/04/2020 02:11, Sowjanya Komatineni wrote:
+> > This series adds Tegra210 VI and CSI driver for built-in test pattern
+> > generator (TPG) capture.
+> >=20
+> > Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+> > CSI port is one-to-one mapped to VI channel for video capture.
+> >=20
+> > This series has TPG support only where it creates hard media links
+> > between CSI subdevice and VI video device without device graphs.
+> >=20
+> > v4l2-compliance results are available below the patch diff.
+>=20
+> I'm ready to merge this v8. Looking at the series I should only merge
+> patches 6 and 7, all other patches go through different subsystems, right?
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+You could also pick up patch 5 because it adds the bindings that are
+implemented by the driver in patch 6. But I can also pick that up into
+the Tegra tree. In fact, I do have a set of patches to convert some
+Tegra bindings to the new json-schema format and the host1x file is
+among them. If I do get around to finish those up for v5.8 it might be
+better for me to pick up patch 5 so that I can base my conversion patch
+on top of that.
 
---GPJrCs/72TxItFYR
+Either way is fine with me, so I've acked the three patches. Take which
+ones you want and I'll pick up the rest.
+
+Thanks again for your guidance on this patch set!
+
+Thierry
+
+--mSxgbZZZvrAyzONB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6fW9wACgkQ3SOs138+
-s6Fgug/+ICPSXT6M9xolS3jX25tiXb3++ZZ1MNufNhKLjeo4SWcdN9Ny55unMCP5
-HsAT8RdD1vpdiQp3/5n5djCS2+Cq9lRQX1YiVxfmgT9fmllRgRWRmRG56yO0bGc9
-GPphxhknJJHL33xdfJUiKYfTTyHmI46l8PzU1D8VaAzdl3NTLZ2lnemMX/Evt6m3
-MC42fqGIO8uEU8ZBDk/RgRB9lGpVw6OmrrjjA5Vk+4vYmM1xo+RJSapsre4ovXK5
-HDKhGJ4hO7pzC37cPMr4cJ8/Jk2+hJFufROZ7SwKTc2MShhn2nzzzBPLsgLZvntI
-igI8+gr+RH/cFuu4HLGuHLcPvbbHyLviouLYIkEfz8DUSUAr75Mo64JYhsH4n4fF
-biFNDyLfydo+d4b+OAIuLwNpoGPOl+JiXClJYIs+6Z1ExDvE4nWetraFApXBkK2i
-L6Y7u9ZgLh2vowGd3yWeu5dtTxM+LzJdqZT4ejEw0qspr+NJpenh2HGDd41lsrgQ
-zbaefYyDgWKd7ns/4Yvys+LEpfb8ZjQW/CynZO7DEl3trASR/z9bT/BA6MYWRNTf
-zpBQk3XVu1ZmBHc9HEfAlFevzesaNsV7ieFEo9OK7XMLMq4gwsQqgtaAG+kS77zG
-ol6XX78lfWc5RCBZeO7xRvioulujpOQk8V2pJ2igD5Grm1Mjwg4=
-=MMno
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6fXJcACgkQ3SOs138+
+s6FBjg/9FimcqXOseP9+byIOz8utrw/aQW03bxfp+khGtSfVES8b9+2uyWnlc+IM
+qW2Kc56/5wDuBs2nXSxzJAadqov9o5381zJiiacxwuW84/SHA2csj5UVz8ymb/Uw
+/Sfmk6RDZUb6y+TK4SWzWpwJmsvElhnxAidTh1Q2yDs7nyvqmBC1itkZOLHXibRL
+u5/V7VVeIpEiqIoluxlj5pS9o54KJRNZwDknrXbzkgEzOnYMH9cuGpMsqwdUbFAb
+74dKbjgYMzKcdlf8jz0oo1MBYisCemp760JQnWeI/Grp26xgDPCwU9nmPaapmpMP
++yAYWCg6Nj51sdwiU1/EsTDVXlP3tUjGB2l5IxkepGKGyc7KydbX9+WUXD7b8m/P
+39Olhf1/jswjtwBPgitwSEX66ZheWbNwIykJo6RiRnu9F1Vnc8aJPbnJMuxqERix
+TqCN2cIKWPJNr9TGOnuHfADbsCNWUpFBIaRxgqM1hTmSYeoMTwgYRCDLkVbK6q58
+LTdMKeYu3iS4QpW0VwQ1JBZwzM8EezsUO63THUXKn+HUj0SiLpTE+5S7OmQvYf1K
+Yo2liZF7SC45LCPFY1UvlbU3/1k6QpDMLIF923iGBRk6NebcHrIqBaJTjaum08uq
+M/tFejv+n6cXergSPcHXgy4/oPyzEUrCJEt/ZfjLuldZuV2ZeKw=
+=qERF
 -----END PGP SIGNATURE-----
 
---GPJrCs/72TxItFYR--
+--mSxgbZZZvrAyzONB--
