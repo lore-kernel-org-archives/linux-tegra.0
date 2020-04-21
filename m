@@ -1,55 +1,87 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
- for a long time
-Date: Tue, 21 Apr 2020 16:34:27 +0100
-Message-ID: <61c9f5a7-3a48-8200-1cfe-d5d0524511f7@nvidia.com>
-References: <20200324191217.1829-1-digetx@gmail.com>
- <20200324191217.1829-2-digetx@gmail.com>
- <1e259e22-c300-663a-e537-18d854e0f478@nvidia.com>
- <f59ba318-8e99-c486-fa4d-1ee28a7b203d@gmail.com>
- <b01cec76-bb39-9fb5-8f6e-4023c075e6b3@gmail.com>
- <8cd085e1-f9fd-6ec0-9f7a-d5463f176a63@nvidia.com>
- <db1132ce-53a8-371c-98e0-cb7cd91d5c7d@gmail.com>
- <fa344989-4cce-0d2c-dc93-4ca546823160@nvidia.com>
- <93b738f2-ccf2-68ed-3ca5-30945bd40521@gmail.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4.19.113 0/3] Fix for long operation cmds busy detection
+Date: Tue, 21 Apr 2020 10:04:40 -0700
+Message-ID: <13eb79ee-726f-3863-2dec-9318d109602c@nvidia.com>
+References: <1587150844-12003-1-git-send-email-skomatineni@nvidia.com>
+ <20200419072030.GB3544449@kroah.com>
+ <6911ee08-1376-a515-9393-1ebc6cc6a255@nvidia.com>
+ <20200419165204.GA3697430@kroah.com>
+ <CAPDyKFrdCip_r0fq2=FswsR8iRtC-Gqv2gbvT6PqFXYcaZyBkw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <93b738f2-ccf2-68ed-3ca5-30945bd40521-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CAPDyKFrdCip_r0fq2=FswsR8iRtC-Gqv2gbvT6PqFXYcaZyBkw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "(Exiting) Baolin Wang" <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Bradley Bolen <bradleybolen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Faiz Abbas <faiz_abbas-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aniruddha Tvs Rao <anrao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 21/04/2020 16:18, Dmitry Osipenko wrote:
-> 21.04.2020 17:40, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->> On 21/04/2020 14:25, Dmitry Osipenko wrote:
->>> 21.04.2020 12:49, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> ...
->>>> I can try the above, but I agree it would be best to avoid messing wit=
-h
->>>> the suspend levels if possible.
+On 4/20/20 12:01 AM, Ulf Hansson wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On Sun, 19 Apr 2020 at 18:52, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
+>> On Sun, Apr 19, 2020 at 09:23:39AM -0700, Sowjanya Komatineni wrote:
+>>> On 4/19/20 12:20 AM, Greg KH wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> On Fri, Apr 17, 2020 at 12:14:01PM -0700, Sowjanya Komatineni wrote:
+>>>>> This series includes manually backported changes that implements Tegra
+>>>>> specific timeout callback to switch between finite and infinite HW busy
+>>>>> detection wait modes.
+>>>>>
+>>>>> sdhci-tegra driver patch implements set_timeout callback based on one of
+>>>>> the sdhci host driver patch that refactors sdhci_set_timeout and allows
+>>>>> drivers to call __sdhci_set_timeout with their timeout callback
+>>>>> implementation.
+>>>>>
+>>>>> Both of these patches are manually backported in this series.
+>>>> Is this a bugfix or a new feature?  I can't tell, but it feels like it's
+>>>> a new feature.  What's wrong with just using the 5.4.y kernel tree?
+>>>>
+>>>> thanks,
+>>>>
+>>>> greg k-h
+>>> Ulf recent patches for increased timeout adds capability
+>>> MMC_CAP_NEED_RSP_BUSY for sdhci-tegra as well.
 >>>
->>> Will be awesome if you could try it and report back the result.
->>>
+>>> So, it will always use R1B for R1B type commands so there are no known bugs
+>>> or failures with mmc devices we use on our platforms.
+>> I have no idea what this means, sorry.
 >>
->> I gave it a try but suspend still fails.
->=20
-> Is this regulator error gone with my changes?
->=20
-> [   60.450346] WARNING: CPU: 0 PID: 653 at
-> /home/jonathanh/workdir/tegra/mlt-linux_next/kernel/drivers/regulator/cor=
-e.c:2603
-> _regulator_disable+0xb8/0x1b4
-> [   60.463959] unbalanced disables for vdd_pexa,vdd_pexb
+>>> So, we can treat this patch as an improvement for long operation commands
+>>> where HW will wait as long as device is busy.
+>> Ok, so this isn't a regression and can't match the stable kernel rules,
+>> sorry.
+> Let me help to clarify. This isn't a regression, correct. However, the
+> patch fixes a long outstanding bug for sdhci-tegra.
+>
+> For some SD/MMC commands, the mmc core may provide a long busy timeout
+> trusting the mmc host to cope with it. It has turned out that
+> sdhci-tegra didn't, thus it may report a cmd-timeout error, while in
+> fact it shouldn't.
+>
+> I believe that is what the small series of patches should be addressing.
+>
+> Kind regards
+> Uffe
 
-The above is still there with your changes.
+Hi Greg,
 
-Jon
+Yes, we we don't have failure as of today with mmc devices we are using 
+on our platforms.
 
---=20
-nvpublic
+But this is something thats missing from the beginning to handle 
+commands that takes longer than max host timeout and it may fail if any 
+operation takes more than max host timeout limit.
+
+So, can we please have this applied to 4.19.113? I will also send 
+patches to backport for 5.4 and 5.5?
+
+Thanks
+
+Sowjanya
