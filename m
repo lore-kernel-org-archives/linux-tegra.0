@@ -1,8 +1,8 @@
 From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
  for a long time
-Date: Tue, 21 Apr 2020 18:08:57 +0300
-Message-ID: <bba0a93a-8ec4-eda6-97f3-fb2ab0b9b503@gmail.com>
+Date: Tue, 21 Apr 2020 18:18:46 +0300
+Message-ID: <93b738f2-ccf2-68ed-3ca5-30945bd40521@gmail.com>
 References: <20200324191217.1829-1-digetx@gmail.com>
  <20200324191217.1829-2-digetx@gmail.com>
  <1e259e22-c300-663a-e537-18d854e0f478@nvidia.com>
@@ -35,17 +35,9 @@ List-Id: linux-tegra@vger.kernel.org
 > 
 > I gave it a try but suspend still fails.
 
-Perhaps the RPM's -EACCES is returned from here:
+Is this regulator error gone with my changes?
 
-https://elixir.free-electrons.com/linux/v5.7-rc2/source/drivers/base/power/runtime.c#L723
-
-Which suggests that I2C is accessed after being suspended. I guess the
-PCIe driver suspends after the I2C and somehow my change affected the
-suspension order, although not sure how.
-
-Jon, could you please try to enable PM logging and post the log? Please
-also post log of the working kernel version, so that we could compare
-the PM sequence.
-
-Something like this should enable the logging: "echo 1 >
-/sys/power/pm_trace" + there is RPM tracing.
+[   60.450346] WARNING: CPU: 0 PID: 653 at
+/home/jonathanh/workdir/tegra/mlt-linux_next/kernel/drivers/regulator/core.c:2603
+_regulator_disable+0xb8/0x1b4
+[   60.463959] unbalanced disables for vdd_pexa,vdd_pexb
