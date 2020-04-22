@@ -1,43 +1,27 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH 5.4.33 2/2] sdhci: tegra: Enable MMC_CAP_WAIT_WHILE_BUSY host capability
-Date: Wed, 22 Apr 2020 09:32:29 -0700
-Message-ID: <1587573149-30269-3-git-send-email-skomatineni@nvidia.com>
-References: <1587573149-30269-1-git-send-email-skomatineni@nvidia.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 5.5.18 0/2] Fix for long operation cmds busy detection
+Date: Wed, 22 Apr 2020 09:32:56 -0700
+Message-ID: <1587573178-30326-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1587573149-30269-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org, baolin.wang@linaro.org, kstewart@linuxfoundation.org, tglx@linutronix.de, bradleybolen@gmail.com, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, skomatineni@nvidia.com
-Cc: anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, bradleybolen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: anrao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-commit ff124c31ccd7
-("sdhci: tegra: Enable MMC_CAP_WAIT_WHILE_BUSY host capability")
+This series is to backport the upstream patches that fixes busy detection
+for long operation mmc commands by implementing Tegra specific timeout
+callback to switch between finite and infinite HW busy detection wait
+modes.
 
-Tegra sdhci host supports HW busy detection of the device busy
-signaling over data0 lane.
 
-So, this patch enables host capability MMC_CAP_wAIT_WHILE_BUSY.
+Sowjanya Komatineni (2):
+  sdhci: tegra: Implement Tegra specific set_timeout callback
+  sdhci: tegra: Enable MMC_CAP_WAIT_WHILE_BUSY host capability
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mmc/host/sdhci-tegra.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index fa8f6a4..1c381f8 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1580,6 +1580,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	if (rc)
- 		goto err_parse_dt;
- 
-+	host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
-+
- 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
- 
 -- 
 2.7.4
