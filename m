@@ -1,127 +1,135 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [RFC PATCH v9 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Fri, 24 Apr 2020 02:03:20 +0300
-Message-ID: <42820cd8-e157-4cbe-9e3a-25afb7deb0cf@gmail.com>
+Date: Fri, 24 Apr 2020 02:14:16 +0300
+Message-ID: <a4f5a84f-b893-cade-adeb-23637ea133c2@gmail.com>
 References: <1587536339-4030-1-git-send-email-skomatineni@nvidia.com>
  <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
  <ae6dfd6b-4b0b-db73-54cf-a16e59476f38@xs4all.nl>
  <3115a959-045e-7b27-94fb-a11a8b5f4a6a@nvidia.com>
  <db413479-1557-3c40-ecb2-5a0c657065b6@gmail.com>
  <843d1276-1281-7f02-ce08-d0dad52bb681@nvidia.com>
+ <42820cd8-e157-4cbe-9e3a-25afb7deb0cf@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <843d1276-1281-7f02-ce08-d0dad52bb681-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <42820cd8-e157-4cbe-9e3a-25afb7deb0cf@gmail.com>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, Hans Verkuil <hverkuil@xs4all.nl>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-24.04.2020 01:59, Sowjanya Komatineni пишет:
-> 
-> On 4/23/20 3:55 PM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
+24.04.2020 02:03, Dmitry Osipenko пишет:
+> 24.04.2020 01:59, Sowjanya Komatineni пишет:
 >>
+>> On 4/23/20 3:55 PM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 23.04.2020 19:50, Sowjanya Komatineni пишет:
+>>>> On 4/23/20 12:48 AM, Hans Verkuil wrote:
+>>>>> External email: Use caution opening links or attachments
+>>>>>
+>>>>>
+>>>>> On 22/04/2020 08:18, Sowjanya Komatineni wrote:
+>>>>>> Tegra210 contains a powerful Video Input (VI) hardware controller
+>>>>>> which can support up to 6 MIPI CSI camera sensors.
+>>>>>>
+>>>>>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+>>>>>> capture from an external camera sensor connected to CSI or from
+>>>>>> built-in test pattern generator.
+>>>>>>
+>>>>>> Tegra210 supports built-in test pattern generator from CSI to VI.
+>>>>>>
+>>>>>> This patch adds a v4l2 capture driver with media interface for
+>>>>>> Tegra210 built-in CSI to VI test pattern generator.
+>>>>>>
+>>>>>> This patch includes TPG support only and all the video pipeline
+>>>>>> configuration happens through the video device node.
+>>>>>>
+>>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>> ---
+>>>>>>    drivers/staging/media/Kconfig          |    2 +
+>>>>>>    drivers/staging/media/Makefile         |    1 +
+>>>>>>    drivers/staging/media/tegra/Kconfig    |   13 +
+>>>>>>    drivers/staging/media/tegra/Makefile   |    8 +
+>>>>>>    drivers/staging/media/tegra/TODO       |   10 +
+>>>>>>    drivers/staging/media/tegra/common.h   |  262 ++++++++
+>>>>>>    drivers/staging/media/tegra/csi.c      |  606 +++++++++++++++++
+>>>>>>    drivers/staging/media/tegra/csi.h      |  149 +++++
+>>>>>>    drivers/staging/media/tegra/tegra210.c |  709 ++++++++++++++++++++
+>>>>>>    drivers/staging/media/tegra/tegra210.h |  190 ++++++
+>>>>>>    drivers/staging/media/tegra/vi.c       | 1132
+>>>>>> ++++++++++++++++++++++++++++++++
+>>>>>>    drivers/staging/media/tegra/vi.h       |   83 +++
+>>>>>>    drivers/staging/media/tegra/video.c    |  153 +++++
+>>>>>>    drivers/staging/media/tegra/video.h    |   34 +
+>>>>>>    14 files changed, 3352 insertions(+)
+>>>>>>    create mode 100644 drivers/staging/media/tegra/Kconfig
+>>>>>>    create mode 100644 drivers/staging/media/tegra/Makefile
+>>>>>>    create mode 100644 drivers/staging/media/tegra/TODO
+>>>>>>    create mode 100644 drivers/staging/media/tegra/common.h
+>>>>>>    create mode 100644 drivers/staging/media/tegra/csi.c
+>>>>>>    create mode 100644 drivers/staging/media/tegra/csi.h
+>>>>>>    create mode 100644 drivers/staging/media/tegra/tegra210.c
+>>>>>>    create mode 100644 drivers/staging/media/tegra/tegra210.h
+>>>>>>    create mode 100644 drivers/staging/media/tegra/vi.c
+>>>>>>    create mode 100644 drivers/staging/media/tegra/vi.h
+>>>>>>    create mode 100644 drivers/staging/media/tegra/video.c
+>>>>>>    create mode 100644 drivers/staging/media/tegra/video.h
+>>>>> With 'make menuconfig' I get this:
+>>>>>
+>>>>> scripts/kconfig/mconf  Kconfig
+>>>>>
+>>>>> WARNING: unmet direct dependencies detected for TEGRA_HOST1X
+>>>>>     Depends on [n]: HAS_IOMEM [=y] && (ARCH_TEGRA || ARM &&
+>>>>> COMPILE_TEST [=y])
+>>>>>     Selected by [y]:
+>>>>>     - VIDEO_TEGRA [=y] && STAGING [=y] && STAGING_MEDIA [=y] &&
+>>>>> MEDIA_SUPPORT [=y] && (ARCH_TEGRA || COMPILE_TEST [=y])
+>>>>>
+>>>>> This is an x86_64 build with COMPILE_TEST set. I can provide my full
+>>>>> .config if you need it.
+>>>>>
+>>>>> CONFIG_TEGRA_HOST1X=y
+>>>>> CONFIG_VIDEO_TEGRA=y
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>>           Hans
+>>>> Hi Hans,
+>>>>
+>>>> In v7, changed Kconfig to remove ARM. But looks like we should limit
+>>>>
+>>>> TEGRA_HOST1X also limits compile to ARM only so running VIDEO_TEGRA on
+>>>> x86_64 shows above warning.
+>>>>
+>>>> We should limit compile to ARM for CONFIG_VIDEO_TEGRA.
+>>>>
+>>>> Will update CONFIG_VIDEO_TEGRA dependency to use ARM && COMPILE_TEST
+>>>> like I had in previous version. Sorry about this.
+>>>>
+>>>>
+>>>> Also, I see some changes went into latest linux-next staging media
+>>>> Kconfig, So, will have my patches on top of today's linux-next.
+>>> VIDEO_TEGRA should depend on TEGRA_HOST1X and not select it.
+>>>
+>>> depends on (ARCH_TEGRA && TEGRA_HOST1X) || COMPILE_TEST
 >>
->> 23.04.2020 19:50, Sowjanya Komatineni пишет:
->>> On 4/23/20 12:48 AM, Hans Verkuil wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> On 22/04/2020 08:18, Sowjanya Komatineni wrote:
->>>>> Tegra210 contains a powerful Video Input (VI) hardware controller
->>>>> which can support up to 6 MIPI CSI camera sensors.
->>>>>
->>>>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
->>>>> capture from an external camera sensor connected to CSI or from
->>>>> built-in test pattern generator.
->>>>>
->>>>> Tegra210 supports built-in test pattern generator from CSI to VI.
->>>>>
->>>>> This patch adds a v4l2 capture driver with media interface for
->>>>> Tegra210 built-in CSI to VI test pattern generator.
->>>>>
->>>>> This patch includes TPG support only and all the video pipeline
->>>>> configuration happens through the video device node.
->>>>>
->>>>> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>> ---
->>>>>    drivers/staging/media/Kconfig          |    2 +
->>>>>    drivers/staging/media/Makefile         |    1 +
->>>>>    drivers/staging/media/tegra/Kconfig    |   13 +
->>>>>    drivers/staging/media/tegra/Makefile   |    8 +
->>>>>    drivers/staging/media/tegra/TODO       |   10 +
->>>>>    drivers/staging/media/tegra/common.h   |  262 ++++++++
->>>>>    drivers/staging/media/tegra/csi.c      |  606 +++++++++++++++++
->>>>>    drivers/staging/media/tegra/csi.h      |  149 +++++
->>>>>    drivers/staging/media/tegra/tegra210.c |  709 ++++++++++++++++++++
->>>>>    drivers/staging/media/tegra/tegra210.h |  190 ++++++
->>>>>    drivers/staging/media/tegra/vi.c       | 1132
->>>>> ++++++++++++++++++++++++++++++++
->>>>>    drivers/staging/media/tegra/vi.h       |   83 +++
->>>>>    drivers/staging/media/tegra/video.c    |  153 +++++
->>>>>    drivers/staging/media/tegra/video.h    |   34 +
->>>>>    14 files changed, 3352 insertions(+)
->>>>>    create mode 100644 drivers/staging/media/tegra/Kconfig
->>>>>    create mode 100644 drivers/staging/media/tegra/Makefile
->>>>>    create mode 100644 drivers/staging/media/tegra/TODO
->>>>>    create mode 100644 drivers/staging/media/tegra/common.h
->>>>>    create mode 100644 drivers/staging/media/tegra/csi.c
->>>>>    create mode 100644 drivers/staging/media/tegra/csi.h
->>>>>    create mode 100644 drivers/staging/media/tegra/tegra210.c
->>>>>    create mode 100644 drivers/staging/media/tegra/tegra210.h
->>>>>    create mode 100644 drivers/staging/media/tegra/vi.c
->>>>>    create mode 100644 drivers/staging/media/tegra/vi.h
->>>>>    create mode 100644 drivers/staging/media/tegra/video.c
->>>>>    create mode 100644 drivers/staging/media/tegra/video.h
->>>> With 'make menuconfig' I get this:
->>>>
->>>> scripts/kconfig/mconf  Kconfig
->>>>
->>>> WARNING: unmet direct dependencies detected for TEGRA_HOST1X
->>>>     Depends on [n]: HAS_IOMEM [=y] && (ARCH_TEGRA || ARM &&
->>>> COMPILE_TEST [=y])
->>>>     Selected by [y]:
->>>>     - VIDEO_TEGRA [=y] && STAGING [=y] && STAGING_MEDIA [=y] &&
->>>> MEDIA_SUPPORT [=y] && (ARCH_TEGRA || COMPILE_TEST [=y])
->>>>
->>>> This is an x86_64 build with COMPILE_TEST set. I can provide my full
->>>> .config if you need it.
->>>>
->>>> CONFIG_TEGRA_HOST1X=y
->>>> CONFIG_VIDEO_TEGRA=y
->>>>
->>>> Regards,
->>>>
->>>>           Hans
->>> Hi Hans,
->>>
->>> In v7, changed Kconfig to remove ARM. But looks like we should limit
->>>
->>> TEGRA_HOST1X also limits compile to ARM only so running VIDEO_TEGRA on
->>> x86_64 shows above warning.
->>>
->>> We should limit compile to ARM for CONFIG_VIDEO_TEGRA.
->>>
->>> Will update CONFIG_VIDEO_TEGRA dependency to use ARM && COMPILE_TEST
->>> like I had in previous version. Sorry about this.
->>>
->>>
->>> Also, I see some changes went into latest linux-next staging media
->>> Kconfig, So, will have my patches on top of today's linux-next.
->> VIDEO_TEGRA should depend on TEGRA_HOST1X and not select it.
+>> Was selecting it to auto-select Tegra host1x when video_tegra is enabled.
 >>
->> depends on (ARCH_TEGRA && TEGRA_HOST1X) || COMPILE_TEST
+>> Yes, can use depends on
+>>
 > 
-> Was selecting it to auto-select Tegra host1x when video_tegra is enabled.
+> BTW, perhaps ARCH_TEGRA and COMPILE_TEST aren't needed since
+> TEGRA_HOST1X already depends on them, so just:
 > 
-> Yes, can use depends on
+> depends on TEGRA_HOST1X
 > 
 
-BTW, perhaps ARCH_TEGRA and COMPILE_TEST aren't needed since
-TEGRA_HOST1X already depends on them, so just:
+Although, I guess TEGRA_HOST1X isn't really needed for compile-testing,
+and thus, it won't hurt to drop that dependency for testing:
 
-depends on TEGRA_HOST1X
+depends on TEGRA_HOST1X || COMPILE_TEST
