@@ -1,81 +1,52 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [RFC PATCH v9 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Thu, 23 Apr 2020 09:48:11 +0200
-Message-ID: <ae6dfd6b-4b0b-db73-54cf-a16e59476f38@xs4all.nl>
-References: <1587536339-4030-1-git-send-email-skomatineni@nvidia.com>
- <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4.4 000/100] 4.4.220-rc1 review
+Date: Thu, 23 Apr 2020 11:20:00 +0100
+Message-ID: <f37865f7-f90e-f092-172d-56903c0cd219@nvidia.com>
+References: <20200422095022.476101261@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200422095022.476101261-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 22/04/2020 08:18, Sowjanya Komatineni wrote:
-> Tegra210 contains a powerful Video Input (VI) hardware controller
-> which can support up to 6 MIPI CSI camera sensors.
+
+On 22/04/2020 10:55, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.220 release.
+> There are 100 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Each Tegra CSI port can be one-to-one mapped to VI channel and can
-> capture from an external camera sensor connected to CSI or from
-> built-in test pattern generator.
+> Responses should be made by Fri, 24 Apr 2020 09:48:23 +0000.
+> Anything received after that time might be too late.
 > 
-> Tegra210 supports built-in test pattern generator from CSI to VI.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.220-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
 > 
-> This patch adds a v4l2 capture driver with media interface for
-> Tegra210 built-in CSI to VI test pattern generator.
+> thanks,
 > 
-> This patch includes TPG support only and all the video pipeline
-> configuration happens through the video device node.
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/staging/media/Kconfig          |    2 +
->  drivers/staging/media/Makefile         |    1 +
->  drivers/staging/media/tegra/Kconfig    |   13 +
->  drivers/staging/media/tegra/Makefile   |    8 +
->  drivers/staging/media/tegra/TODO       |   10 +
->  drivers/staging/media/tegra/common.h   |  262 ++++++++
->  drivers/staging/media/tegra/csi.c      |  606 +++++++++++++++++
->  drivers/staging/media/tegra/csi.h      |  149 +++++
->  drivers/staging/media/tegra/tegra210.c |  709 ++++++++++++++++++++
->  drivers/staging/media/tegra/tegra210.h |  190 ++++++
->  drivers/staging/media/tegra/vi.c       | 1132 ++++++++++++++++++++++++++++++++
->  drivers/staging/media/tegra/vi.h       |   83 +++
->  drivers/staging/media/tegra/video.c    |  153 +++++
->  drivers/staging/media/tegra/video.h    |   34 +
->  14 files changed, 3352 insertions(+)
->  create mode 100644 drivers/staging/media/tegra/Kconfig
->  create mode 100644 drivers/staging/media/tegra/Makefile
->  create mode 100644 drivers/staging/media/tegra/TODO
->  create mode 100644 drivers/staging/media/tegra/common.h
->  create mode 100644 drivers/staging/media/tegra/csi.c
->  create mode 100644 drivers/staging/media/tegra/csi.h
->  create mode 100644 drivers/staging/media/tegra/tegra210.c
->  create mode 100644 drivers/staging/media/tegra/tegra210.h
->  create mode 100644 drivers/staging/media/tegra/vi.c
->  create mode 100644 drivers/staging/media/tegra/vi.h
->  create mode 100644 drivers/staging/media/tegra/video.c
->  create mode 100644 drivers/staging/media/tegra/video.h
+> greg k-h
 
-With 'make menuconfig' I get this:
+All tests are passing for Tegra
 
-scripts/kconfig/mconf  Kconfig
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    16 tests:	16 pass, 0 fail
 
-WARNING: unmet direct dependencies detected for TEGRA_HOST1X
-  Depends on [n]: HAS_IOMEM [=y] && (ARCH_TEGRA || ARM && COMPILE_TEST [=y])
-  Selected by [y]:
-  - VIDEO_TEGRA [=y] && STAGING [=y] && STAGING_MEDIA [=y] && MEDIA_SUPPORT [=y] && (ARCH_TEGRA || COMPILE_TEST [=y])
+Linux version:	4.4.220-rc1-gacb152478366
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
 
-This is an x86_64 build with COMPILE_TEST set. I can provide my full .config if you need it.
+Cheers
+Jon
 
-CONFIG_TEGRA_HOST1X=y
-CONFIG_VIDEO_TEGRA=y
-
-Regards,
-
-	Hans
+-- 
+nvpublic
