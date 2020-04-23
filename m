@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4.19 00/64] 4.19.118-rc1 review
-Date: Thu, 23 Apr 2020 11:22:09 +0100
-Message-ID: <994d756a-3659-c22d-e056-f739a35ff677@nvidia.com>
-References: <20200422095008.799686511@linuxfoundation.org>
+Subject: Re: [PATCH 5.4 000/118] 5.4.35-rc1 review
+Date: Thu, 23 Apr 2020 11:22:47 +0100
+Message-ID: <e9a49908-7244-e975-368e-0d5d0ccbc674@nvidia.com>
+References: <20200422095031.522502705@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200422095008.799686511-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20200422095031.522502705-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -16,8 +16,8 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 22/04/2020 10:56, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.118 release.
-> There are 64 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 5.4.35 release.
+> There are 118 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,26 +25,27 @@ On 22/04/2020 10:56, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.118-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.35-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
 > and the diffstat can be found below.
 > 
 > thanks,
 > 
 > greg k-h
 
-All tests are passing for Tegra ...
+All tests are passing for Tegra
 
-Test results for stable-v4.19:
-    11 builds:	11 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+Test results for stable-v5.4:
+    13 builds:	13 pass, 0 fail
+    24 boots:	24 pass, 0 fail
+    40 tests:	40 pass, 0 fail
 
-Linux version:	4.19.118-rc1-gb5f03cd61ab6
+Linux version:	5.4.35-rc1-g186764443bf3
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
 Cheers
 Jon
