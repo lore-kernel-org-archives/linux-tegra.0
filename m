@@ -1,74 +1,78 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC PATCH v9 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Thu, 23 Apr 2020 16:50:36 -0700
-Message-ID: <a2672be9-93c1-8363-6c0e-6d43c2bd59bc@nvidia.com>
+Date: Fri, 24 Apr 2020 03:42:05 +0300
+Message-ID: <492dafac-42aa-3caf-4d32-ba0e434b19c3@gmail.com>
 References: <1587536339-4030-1-git-send-email-skomatineni@nvidia.com>
  <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
  <7e473fa9-0409-d868-e818-2e7928a8acca@gmail.com>
  <a83bfc89-35de-85b5-fe5f-71e62456f5e9@nvidia.com>
  <3691c4b5-1ecc-2ad3-23ed-72ef6b8d25fa@nvidia.com>
  <fce6dfbb-0b8d-319b-2d6f-976953a3c36c@gmail.com>
+ <a2672be9-93c1-8363-6c0e-6d43c2bd59bc@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <fce6dfbb-0b8d-319b-2d6f-976953a3c36c-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <a2672be9-93c1-8363-6c0e-6d43c2bd59bc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
 Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+24.04.2020 02:50, Sowjanya Komatineni пишет:
+> 
+> On 4/23/20 4:25 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 24.04.2020 02:20, Sowjanya Komatineni пишет:
+>>> On 4/23/20 4:19 PM, Sowjanya Komatineni wrote:
+>>>> On 4/23/20 4:16 PM, Dmitry Osipenko wrote:
+>>>>> External email: Use caution opening links or attachments
+>>>>>
+>>>>>
+>>>>> 22.04.2020 09:18, Sowjanya Komatineni пишет:
+>>>>>> +static int chan_capture_kthread_start(void *data)
+>>>>>> +{
+>>>>>> +     struct tegra_vi_channel *chan = data;
+>>>>>> +     struct tegra_channel_buffer *buf;
+>>>>>> +     int err = 0;
+>>>>>> +
+>>>>>> +     set_freezable();
+>>>>>> +
+>>>>>> +     while (1) {
+>>>>>> +             try_to_freeze();
+>>>>>> +
+>>>>>> +             wait_event_interruptible(chan->start_wait,
+>>>>>> + !list_empty(&chan->capture) ||
+>>>>>> +                                      kthread_should_stop());
+>>>>>> +
+>>>>>> +             if (kthread_should_stop())
+>>>>>> +                     break;
+>>>>>> +
+>>>>>> +             /*
+>>>>>> +              * Source is not streaming if error is non-zero.
+>>>>>> +              * So, do not dequeue buffers on capture error.
+>>>>>> +              */
+>>>>>> +             if (err)
+>>>>>> +                     continue;
+>>>>> This will result in an endless loop, I suppose it wasn't the
+>>>>> intention.
+>>>> no it will not. on error we report vb2_queue_error which will do
+>>>> streaming stop request.
+>>>>
+>>>> So thread will be stopped on streaming stop request thru kthread stop
+>>>> signal
+>>> To be clear on error it reports vb2 queue error and waits for stop
+>>> streaming to happen
+>> If thread should exit on error, then it should do it on the actual
+>> error. Otherwise it looks very error-prone.
+> When v4l2 drivers indicate fatal error through vb2_queue_error, queue
+> error flag  is set and wakes up all processes waiting on queue along
+> with polling reporting  EPOLLERR and also reporting error for queuing
+> and dequeuing buffers. Stream stop will surely happen which stops the
+> thread.
 
-On 4/23/20 4:25 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 24.04.2020 02:20, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 4/23/20 4:19 PM, Sowjanya Komatineni wrote:
->>> On 4/23/20 4:16 PM, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 22.04.2020 09:18, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> +static int chan_capture_kthread_start(void *data)
->>>>> +{
->>>>> +     struct tegra_vi_channel *chan =3D data;
->>>>> +     struct tegra_channel_buffer *buf;
->>>>> +     int err =3D 0;
->>>>> +
->>>>> +     set_freezable();
->>>>> +
->>>>> +     while (1) {
->>>>> +             try_to_freeze();
->>>>> +
->>>>> +             wait_event_interruptible(chan->start_wait,
->>>>> + !list_empty(&chan->capture) ||
->>>>> +                                      kthread_should_stop());
->>>>> +
->>>>> +             if (kthread_should_stop())
->>>>> +                     break;
->>>>> +
->>>>> +             /*
->>>>> +              * Source is not streaming if error is non-zero.
->>>>> +              * So, do not dequeue buffers on capture error.
->>>>> +              */
->>>>> +             if (err)
->>>>> +                     continue;
->>>> This will result in an endless loop, I suppose it wasn't the intention=
-.
->>> no it will not. on error we report vb2_queue_error which will do
->>> streaming stop request.
->>>
->>> So thread will be stopped on streaming stop request thru kthread stop
->>> signal
->> To be clear on error it reports vb2 queue error and waits for stop
->> streaming to happen
-> If thread should exit on error, then it should do it on the actual
-> error. Otherwise it looks very error-prone.
-When v4l2 drivers indicate fatal error through vb2_queue_error, queue=20
-error flag=C2=A0 is set and wakes up all processes waiting on queue along=20
-with polling reporting=C2=A0 EPOLLERR and also reporting error for queuing=
-=20
-and dequeuing buffers. Stream stop will surely happen which stops the=20
-thread.
+This doesn't explain what is the point of continuing to loop instead of
+exiting immediately on error.
