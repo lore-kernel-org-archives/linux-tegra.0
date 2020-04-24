@@ -1,63 +1,53 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [RFC PATCH v8 0/9] Add Tegra driver for video capture
-Date: Fri, 24 Apr 2020 14:02:58 +0200
-Message-ID: <928b9b1d-b977-a281-ef5e-128b63cce94d@xs4all.nl>
-References: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
- <5c44beca-4016-6e4f-01bb-e38480bfc34b@xs4all.nl>
- <20200421205032.GD3233341@ulmo>
+From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH AUTOSEL 5.6 31/38] i2c: tegra: Synchronize DMA before termination
+Date: Fri, 24 Apr 2020 08:22:29 -0400
+Message-ID: <20200424122237.9831-31-sashal@kernel.org>
+References: <20200424122237.9831-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200421205032.GD3233341@ulmo>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200424122237.9831-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-On 21/04/2020 22:50, Thierry Reding wrote:
-> On Tue, Apr 21, 2020 at 01:09:50PM +0200, Hans Verkuil wrote:
->> Hi Sowjanya,
->>
->> On 21/04/2020 02:11, Sowjanya Komatineni wrote:
->>> This series adds Tegra210 VI and CSI driver for built-in test pattern
->>> generator (TPG) capture.
->>>
->>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
->>> CSI port is one-to-one mapped to VI channel for video capture.
->>>
->>> This series has TPG support only where it creates hard media links
->>> between CSI subdevice and VI video device without device graphs.
->>>
->>> v4l2-compliance results are available below the patch diff.
->>
->> I'm ready to merge this v8. Looking at the series I should only merge
->> patches 6 and 7, all other patches go through different subsystems, right?
-> 
-> You could also pick up patch 5 because it adds the bindings that are
-> implemented by the driver in patch 6. But I can also pick that up into
-> the Tegra tree. In fact, I do have a set of patches to convert some
-> Tegra bindings to the new json-schema format and the host1x file is
-> among them. If I do get around to finish those up for v5.8 it might be
-> better for me to pick up patch 5 so that I can base my conversion patch
-> on top of that.
-> 
-> Either way is fine with me, so I've acked the three patches. Take which
-> ones you want and I'll pick up the rest.
+[ Upstream commit 8814044fe0fa182abc9ff818d3da562de98bc9a7 ]
 
-I've decided to take only patches 6 and 7. Just let me know if for some
-reason you want me to merge patch 5 as well, but I think it makes more
-sense if you pick that one up.
+DMA transfer could be completed, but CPU (which handles DMA interrupt)
+may get too busy and can't handle the interrupt in a timely manner,
+despite of DMA IRQ being raised. In this case the DMA state needs to
+synchronized before terminating DMA transfer in order not to miss the
+DMA transfer completion.
 
-> 
-> Thanks again for your guidance on this patch set!
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-My pleasure, and it's nice to see this driver going in. Looking forward
-to the next phase when sensor support is added!
-
-Regards,
-
-	Hans
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 0daa863fb26f2..0c6dac770fc3a 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1223,6 +1223,15 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		time_left = tegra_i2c_wait_completion_timeout(
+ 				i2c_dev, &i2c_dev->dma_complete, xfer_time);
+ 
++		/*
++		 * Synchronize DMA first, since dmaengine_terminate_sync()
++		 * performs synchronization after the transfer's termination
++		 * and we want to get a completion if transfer succeeded.
++		 */
++		dmaengine_synchronize(i2c_dev->msg_read ?
++				      i2c_dev->rx_dma_chan :
++				      i2c_dev->tx_dma_chan);
++
+ 		dmaengine_terminate_sync(i2c_dev->msg_read ?
+ 					 i2c_dev->rx_dma_chan :
+ 					 i2c_dev->tx_dma_chan);
+-- 
+2.20.1
