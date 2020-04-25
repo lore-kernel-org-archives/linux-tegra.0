@@ -1,37 +1,44 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 6/6] drm/tegra: output: rgb: Wrap directly-connected
- panel into DRM bridge
-Date: Sun, 26 Apr 2020 00:51:58 +0300
-Message-ID: <f03c260b-54ae-93ed-69e8-de434e74ed82@gmail.com>
-References: <20200418170703.1583-1-digetx@gmail.com>
- <20200418170703.1583-7-digetx@gmail.com>
- <20200425170237.GA20498@ravnborg.org>
+Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
+Date: Sun, 26 Apr 2020 01:08:02 +0300
+Message-ID: <e5602c48-a73e-8e71-188d-6a53ebf8e4a4@gmail.com>
+References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
+ <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
+ <3155e0d2-94b0-6e0a-bf35-b3560c201039@gmail.com>
+ <fffc09d1-a25f-2d6e-83bd-f7657dd2ff16@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200425170237.GA20498-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <fffc09d1-a25f-2d6e-83bd-f7657dd2ff16-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-25.04.2020 20:02, Sam Ravnborg пишет:
-> Hi Dmitry
+25.04.2020 01:00, Sowjanya Komatineni пишет:
 > 
-> On Sat, Apr 18, 2020 at 08:07:03PM +0300, Dmitry Osipenko wrote:
->> Currently Tegra DRM driver manually manages display panel, but this
->> management could be moved out into DRM core if we'll wrap panel into
->> DRM bridge. This patch wraps RGB panel into a DRM bridge and removes
->> manual handling of the panel from the RGB output code.
+> On 4/24/20 8:07 AM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
 >>
->> Suggested-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> 
-> This resulted in the expected simplifications - good.
-> Acked-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+>>
+>> 24.04.2020 06:55, Sowjanya Komatineni пишет:
+>>
+>> Is this driver compiled as a single kernel module file?
+>>
+>>> +MODULE_AUTHOR("Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+>>> +MODULE_DESCRIPTION("NVIDIA Tegra CSI Device Driver");
+>>> +MODULE_LICENSE("GPL v2");
+>> ...
+>>> +MODULE_AUTHOR("Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+>>> +MODULE_DESCRIPTION("NVIDIA Tegra Video Input Device Driver");
+>>> +MODULE_LICENSE("GPL v2");
+>> I don't think that these macros are needed in that case.
+>> The video.c should be enough, isn't it?
+> yes these can be removed
 
-Hello Sam,
-
-Thank you for taking a look at this patch! :)
+It will be nice to factor out the Tegra210-specific VI/CSI OPS into a
+separate driver module (say tegra210-vi) to ease supporting of other
+Tegra versions. Of course this could be done later on, although I
+suppose the amount of hassle could be reduced if it's done from the start.
