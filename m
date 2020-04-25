@@ -1,69 +1,62 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Sat, 25 Apr 2020 16:44:04 -0700
-Message-ID: <f3a122b9-3600-b1eb-be4f-39be79d979a5@nvidia.com>
+Date: Sun, 26 Apr 2020 02:44:58 +0300
+Message-ID: <3f2916eb-dcd4-58c3-4d45-7f88620d4a83@gmail.com>
 References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
  <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
- <3155e0d2-94b0-6e0a-bf35-b3560c201039@gmail.com>
- <fffc09d1-a25f-2d6e-83bd-f7657dd2ff16@nvidia.com>
- <e5602c48-a73e-8e71-188d-6a53ebf8e4a4@gmail.com>
- <f6d62dde-9ab5-7001-0ff4-93ed70cb207f@nvidia.com>
- <6568af00-3d65-4ddb-f003-7a4161d751a0@gmail.com>
+ <fd5300fd-33af-babe-95d0-9669b66a8c06@gmail.com>
+ <2983577f-fec9-f24c-0563-6d1f0e1dd5d8@gmail.com>
+ <32e30b7f-865b-282e-5e19-e4c8cf217e63@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <6568af00-3d65-4ddb-f003-7a4161d751a0@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <32e30b7f-865b-282e-5e19-e4c8cf217e63-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 4/25/20 4:40 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 26.04.2020 01:11, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 4/25/20 3:08 PM, Dmitry Osipenko wrote:
->>> External email: Use caution opening links or attachments
+26.04.2020 02:27, Sowjanya Komatineni пишет:
+> 
+> On 4/25/20 4:25 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 26.04.2020 02:13, Dmitry Osipenko пишет:
+>>> 24.04.2020 06:55, Sowjanya Komatineni пишет:
+>>>> +static int __maybe_unused vi_runtime_resume(struct device *dev)
+>>>> +{
+>>>> +    struct tegra_vi *vi = dev_get_drvdata(dev);
+>>>> +    int ret;
+>>>> +
+>>>> +    ret = regulator_enable(vi->vdd);
+>>>> +    if (ret) {
+>>>> +            dev_err(dev, "failed to enable VDD supply: %d\n", ret);
+>>>> +            return ret;
+>>>> +    }
+>>>> +
+>>>> +    ret = clk_set_rate(vi->clk, vi->soc->vi_max_clk_hz);
+>>>> +    if (ret) {
+>>>> +            dev_err(dev, "failed to set vi clock rate: %d\n", ret);
+>>>> +            goto disable_vdd;
+>>>> +    }
+>>> Isn't setting clock rate using assigned-clocks in a device-tree enough?
+>>> Could you please clarify why this vi_max_clk_hz is needed?
 >>>
->>>
->>> 25.04.2020 01:00, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> On 4/24/20 8:07 AM, Dmitry Osipenko wrote:
->>>>> External email: Use caution opening links or attachments
->>>>>
->>>>>
->>>>> 24.04.2020 06:55, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>
->>>>> Is this driver compiled as a single kernel module file?
->>>>>
->>>>>> +MODULE_AUTHOR("Sowjanya Komatineni <skomatineni@nvidia.com>");
->>>>>> +MODULE_DESCRIPTION("NVIDIA Tegra CSI Device Driver");
->>>>>> +MODULE_LICENSE("GPL v2");
->>>>> ...
->>>>>> +MODULE_AUTHOR("Sowjanya Komatineni <skomatineni@nvidia.com>");
->>>>>> +MODULE_DESCRIPTION("NVIDIA Tegra Video Input Device Driver");
->>>>>> +MODULE_LICENSE("GPL v2");
->>>>> I don't think that these macros are needed in that case.
->>>>> The video.c should be enough, isn't it?
->>>> yes these can be removed
->>> It will be nice to factor out the Tegra210-specific VI/CSI OPS into a
->>> separate driver module (say tegra210-vi) to ease supporting of other
->>> Tegra versions. Of course this could be done later on, although I
->>> suppose the amount of hassle could be reduced if it's done from the
->>> start.
->> vi/csi.c are common drivers for all Tegras. All Tegra chip specific
->> related programming for both vi and csi were already moved to Tegra210.c
->> based on prior feedbacks.
-> Judging by the code's structure the VI/CSI drivers aren't planned to be
-> reused by older pre-Terga210 SoCs, correct?
->
-> How much of the T210 code could be reused by T186/194?
+>> In that case it should be wrong to set the clock rate in the RPM
+>> callback because RPM works asynchronously and RPM may not be suspended
+>> on TGP -> sensor source switch.
+> 
+> Driver will not do TPG and Sensor switch dynamically.
+> 
+> Based on kconfig, it will only do TPG or Sensor and sensor will be
+> default all the time once sensor support is added in next series.
+> 
 
-vi/csi are common driver where soc structure should be populated for=20
-T186/T194
+Doesn't V4L have a native support for the capture source selection? Why
+it needs to be a compile-time option?
 
-Tegra210.c can't be reused for Tegra186/t194 as programming seq is a=20
-whole lot diff
+I think other drivers use a generic V4L "Image Processing Controls" with
+a configurable test_pattern option.
