@@ -1,37 +1,31 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Fri, 24 Apr 2020 15:00:42 -0700
-Message-ID: <fffc09d1-a25f-2d6e-83bd-f7657dd2ff16@nvidia.com>
-References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
- <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
- <3155e0d2-94b0-6e0a-bf35-b3560c201039@gmail.com>
+From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 5.4.33 0/2] Fix for long operation cmds busy detection
+Date: Fri, 24 Apr 2020 21:45:56 -0400
+Message-ID: <20200425014556.GD13035@sasha-vm>
+References: <1587758766-3274-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <3155e0d2-94b0-6e0a-bf35-b3560c201039@gmail.com>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1587758766-3274-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, bradleybolen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, anrao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Apr 24, 2020 at 01:06:04PM -0700, Sowjanya Komatineni wrote:
+>This series is to backport the upstream patches that fixes busy detection
+>for long operation mmc commands by implementing Tegra specific timeout
+>callback to switch between finite and infinite HW busy detection wait
+>modes.
+>
+>
+>Sowjanya Komatineni (2):
+>  sdhci: tegra: Implement Tegra specific set_timeout callback
+>  sdhci: tegra: Enable MMC_CAP_WAIT_WHILE_BUSY host capability
 
-On 4/24/20 8:07 AM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 24.04.2020 06:55, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->
-> Is this driver compiled as a single kernel module file?
->
->> +MODULE_AUTHOR("Sowjanya Komatineni <skomatineni@nvidia.com>");
->> +MODULE_DESCRIPTION("NVIDIA Tegra CSI Device Driver");
->> +MODULE_LICENSE("GPL v2");
-> ...
->> +MODULE_AUTHOR("Sowjanya Komatineni <skomatineni@nvidia.com>");
->> +MODULE_DESCRIPTION("NVIDIA Tegra Video Input Device Driver");
->> +MODULE_LICENSE("GPL v2");
-> I don't think that these macros are needed in that case.
-> The video.c should be enough, isn't it?
-yes these can be removed
+What regression do these patches fix?
+
+-- 
+Thanks,
+Sasha
