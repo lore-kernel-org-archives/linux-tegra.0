@@ -1,69 +1,157 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Sat, 25 Apr 2020 11:36:19 +0200
-Message-ID: <62546d1f-eca5-06be-2bc2-e45ccd53830a@xs4all.nl>
-References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
- <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
- <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
+From: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 6/6] drm/tegra: output: rgb: Wrap directly-connected
+ panel into DRM bridge
+Date: Sat, 25 Apr 2020 19:02:37 +0200
+Message-ID: <20200425170237.GA20498@ravnborg.org>
+References: <20200418170703.1583-1-digetx@gmail.com>
+ <20200418170703.1583-7-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6ca93ff9-ca59-544f-767c-4355d01a5c20-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200418170703.1583-7-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 24/04/2020 17:11, Dmitry Osipenko wrote:
-> 24.04.2020 06:55, Sowjanya Komatineni пишет:
->> Tegra210 contains a powerful Video Input (VI) hardware controller
->> which can support up to 6 MIPI CSI camera sensors.
->>
->> Each Tegra CSI port can be one-to-one mapped to VI channel and can
->> capture from an external camera sensor connected to CSI or from
->> built-in test pattern generator.
->>
->> Tegra210 supports built-in test pattern generator from CSI to VI.
->>
->> This patch adds a v4l2 capture driver with media interface for
->> Tegra210 built-in CSI to VI test pattern generator.
->>
->> This patch includes TPG support only and all the video pipeline
->> configuration happens through the video device node.
->>
->> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/staging/media/Kconfig          |    2 +
->>  drivers/staging/media/Makefile         |    1 +
->>  drivers/staging/media/tegra/Kconfig    |   12 +
->>  drivers/staging/media/tegra/Makefile   |    8 +
->>  drivers/staging/media/tegra/TODO       |   10 +
->>  drivers/staging/media/tegra/common.h   |  259 ++++++++
->>  drivers/staging/media/tegra/csi.c      |  604 +++++++++++++++++
->>  drivers/staging/media/tegra/csi.h      |  144 ++++
->>  drivers/staging/media/tegra/tegra210.c |  708 ++++++++++++++++++++
->>  drivers/staging/media/tegra/tegra210.h |  190 ++++++
->>  drivers/staging/media/tegra/vi.c       | 1127 ++++++++++++++++++++++++++++++++
->>  drivers/staging/media/tegra/vi.h       |   72 ++
->>  drivers/staging/media/tegra/video.c    |  153 +++++
->>  drivers/staging/media/tegra/video.h    |   29 +
+Hi Dmitry
+
+On Sat, Apr 18, 2020 at 08:07:03PM +0300, Dmitry Osipenko wrote:
+> Currently Tegra DRM driver manually manages display panel, but this
+> management could be moved out into DRM core if we'll wrap panel into
+> DRM bridge. This patch wraps RGB panel into a DRM bridge and removes
+> manual handling of the panel from the RGB output code.
 > 
-> The media/tegra/ sounds a bit too generic, the media/tegra-vi/ path
-> should better reflect the driver, IMO.
+> Suggested-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+
+This resulted in the expected simplifications - good.
+Acked-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+
+> ---
+>  drivers/gpu/drm/tegra/rgb.c | 53 +++++++++++++------------------------
+>  1 file changed, 18 insertions(+), 35 deletions(-)
 > 
-> It also should be better to name the compiled kernel module as tegra-vi,
-> IMO.
+> diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+> index 9a7024ec96bc..a4c5a6066c54 100644
+> --- a/drivers/gpu/drm/tegra/rgb.c
+> +++ b/drivers/gpu/drm/tegra/rgb.c
+> @@ -8,7 +8,6 @@
+>  
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_bridge_connector.h>
+> -#include <drm/drm_panel.h>
+>  #include <drm/drm_simple_kms_helper.h>
+>  
+>  #include "drm.h"
+> @@ -86,15 +85,6 @@ static void tegra_dc_write_regs(struct tegra_dc *dc,
+>  		tegra_dc_writel(dc, table[i].value, table[i].offset);
+>  }
+>  
+> -static const struct drm_connector_funcs tegra_rgb_connector_funcs = {
+> -	.reset = drm_atomic_helper_connector_reset,
+> -	.detect = tegra_output_connector_detect,
+> -	.fill_modes = drm_helper_probe_single_connector_modes,
+> -	.destroy = tegra_output_connector_destroy,
+> -	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> -	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> -};
+> -
+>  static enum drm_mode_status
+>  tegra_rgb_connector_mode_valid(struct drm_connector *connector,
+>  			       struct drm_display_mode *mode)
+> @@ -117,14 +107,8 @@ static void tegra_rgb_encoder_disable(struct drm_encoder *encoder)
+>  	struct tegra_output *output = encoder_to_output(encoder);
+>  	struct tegra_rgb *rgb = to_rgb(output);
+>  
+> -	if (output->panel)
+> -		drm_panel_disable(output->panel);
+> -
+>  	tegra_dc_write_regs(rgb->dc, rgb_disable, ARRAY_SIZE(rgb_disable));
+>  	tegra_dc_commit(rgb->dc);
+> -
+> -	if (output->panel)
+> -		drm_panel_unprepare(output->panel);
+>  }
+>  
+>  static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
+> @@ -133,9 +117,6 @@ static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
+>  	struct tegra_rgb *rgb = to_rgb(output);
+>  	u32 value;
+>  
+> -	if (output->panel)
+> -		drm_panel_prepare(output->panel);
+> -
+>  	tegra_dc_write_regs(rgb->dc, rgb_enable, ARRAY_SIZE(rgb_enable));
+>  
+>  	value = DE_SELECT_ACTIVE | DE_CONTROL_NORMAL;
+> @@ -157,9 +138,6 @@ static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
+>  	tegra_dc_writel(rgb->dc, value, DC_DISP_SHIFT_CLOCK_OPTIONS);
+>  
+>  	tegra_dc_commit(rgb->dc);
+> -
+> -	if (output->panel)
+> -		drm_panel_enable(output->panel);
+>  }
+>  
+>  static int
+> @@ -278,6 +256,23 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
+>  	drm_encoder_helper_add(&output->encoder,
+>  			       &tegra_rgb_encoder_helper_funcs);
+>  
+> +	/*
+> +	 * Wrap directly-connected panel into DRM bridge in order to let
+> +	 * DRM core to handle panel for us.
+> +	 */
+> +	if (output->panel) {
+> +		output->bridge = devm_drm_panel_bridge_add(output->dev,
+> +							   output->panel);
+> +		if (IS_ERR(output->bridge)) {
+> +			dev_err(output->dev,
+> +				"failed to wrap panel into bridge: %pe\n",
+> +				output->bridge);
+> +			return PTR_ERR(output->bridge);
+> +		}
+> +
+> +		output->panel = NULL;
+> +	}
+> +
+>  	/*
+>  	 * Tegra devices that have LVDS panel utilize LVDS encoder bridge
+>  	 * for converting up to 28 LCD LVTTL lanes into 5/4 LVDS lanes that
+> @@ -292,8 +287,7 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
+>  	 * Newer device-trees utilize LVDS encoder bridge, which provides
+>  	 * us with a connector and handles the display panel.
+>  	 *
+> -	 * For older device-trees we fall back to our own connector and use
+> -	 * nvidia,panel phandle.
+> +	 * For older device-trees we wrapped panel into the panel-bridge.
+>  	 */
+>  	if (output->bridge) {
+>  		err = drm_bridge_attach(&output->encoder, output->bridge,
+> @@ -313,17 +307,6 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
+>  		}
+>  
+>  		drm_connector_attach_encoder(connector, &output->encoder);
+> -	} else {
+> -		drm_connector_init(drm, &output->connector,
+> -				   &tegra_rgb_connector_funcs,
+> -				   DRM_MODE_CONNECTOR_LVDS);
+> -		drm_connector_helper_add(&output->connector,
+> -					 &tegra_rgb_connector_helper_funcs);
+> -		output->connector.dpms = DRM_MODE_DPMS_OFF;
+> -
+> -		drm_connector_attach_encoder(&output->connector,
+> -					     &output->encoder);
+> -		drm_connector_register(&output->connector);
+>  	}
+>  
+>  	err = tegra_output_init(drm, output);
+> -- 
+> 2.26.0
 > 
-
-The driver name and the directory should be in sync, so either tegra-video
-or tegra-vi for both. I have no preference myself, as long as they are the
-same.
-
-This can be done as a follow-up patch.
-
-Regards,
-
-	Hans
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
