@@ -1,42 +1,56 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Sun, 26 Apr 2020 01:27:18 -0700
-Message-ID: <78bc2a89-d570-34b0-87b5-78d161d11315@nvidia.com>
-References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
- <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
- <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
- <62546d1f-eca5-06be-2bc2-e45ccd53830a@xs4all.nl>
- <50fd1016-ca8b-ec5d-e5a8-f257138b152e@gmail.com>
- <658c4232-94d9-3051-8c93-bff7046cf5f2@nvidia.com>
- <03426915-25ea-69b4-bc64-f87f3046d33f@nvidia.com>
- <aabaecc4-3494-0137-7d2b-853304bfa68b@gmail.com>
- <09f20441-fec6-7496-2edc-c69db535e441@nvidia.com>
- <61799fab-858c-8b0d-ba7d-846cd041e044@gmail.com>
- <7dfca778-e402-3a6f-617c-dd8448187a13@gmail.com>
- <be48a991-3047-6ee3-8d6f-85979752d86f@nvidia.com>
- <edad2953-ff4c-7c3c-4550-a3638a714c65@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1] dmaengine: tegra-apb: Ensure that clock is enabled during of DMA synchronization
+Date: Sun, 26 Apr 2020 22:08:35 +0300
+Message-ID: <20200426190835.21950-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <edad2953-ff4c-7c3c-4550-a3638a714c65@gmail.com>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+DMA synchronization hook checks whether interrupt is raised by testing
+corresponding bit in a hardware status register, and thus, clock should
+be enabled in this case, otherwise CPU may hang if synchronization is
+invoked while Runtime PM is in suspended state. This patch resumes the RPM
+during of the DMA synchronization process in order to avoid potential
+problems. It is a minor clean up of a previous commit, no real problem is
+fixed by this patch because currently RPM is always in a resumed state
+while DMA is synchronized, although this may change in the future.
 
-On 4/25/20 10:51 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 26.04.2020 07:47, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> So, probably what we have regarding structure is ok except video formats
->> I will move to Tegra210 and change defines to use Tegra210 prefix.
-> If those defines aren't reusable by T186, then you could move them all
-> to t210.c.
+Fixes: 6697255f239f ("dmaengine: tegra-apb: Improve DMA synchronization")
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/dma/tegra20-apb-dma.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-ok, will combine defines and soc specific programming into tegra210.c
-
-Also will then get rid of common.h with video formats moving to tegra210
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index a42c0b4d14ac..55fc7400f717 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -816,6 +816,13 @@ static bool tegra_dma_eoc_interrupt_deasserted(struct tegra_dma_channel *tdc)
+ static void tegra_dma_synchronize(struct dma_chan *dc)
+ {
+ 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
++	int err;
++
++	err = pm_runtime_get_sync(tdc->tdma->dev);
++	if (err < 0) {
++		dev_err(tdc2dev(tdc), "Failed to synchronize DMA: %d\n", err);
++		return;
++	}
+ 
+ 	/*
+ 	 * CPU, which handles interrupt, could be busy in
+@@ -825,6 +832,8 @@ static void tegra_dma_synchronize(struct dma_chan *dc)
+ 	wait_event(tdc->wq, tegra_dma_eoc_interrupt_deasserted(tdc));
+ 
+ 	tasklet_kill(&tdc->tasklet);
++
++	pm_runtime_put(tdc->tdma->dev);
+ }
+ 
+ static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_channel *tdc,
+-- 
+2.26.0
