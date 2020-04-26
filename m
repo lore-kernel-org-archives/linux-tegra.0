@@ -1,62 +1,53 @@
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Sun, 26 Apr 2020 03:38:47 +0300
-Message-ID: <a9948c5e-4b12-fbf5-a096-fa7a64e3877b@gmail.com>
+Date: Sat, 25 Apr 2020 17:41:44 -0700
+Message-ID: <658c4232-94d9-3051-8c93-bff7046cf5f2@nvidia.com>
 References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
  <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
- <3155e0d2-94b0-6e0a-bf35-b3560c201039@gmail.com>
- <fffc09d1-a25f-2d6e-83bd-f7657dd2ff16@nvidia.com>
- <e5602c48-a73e-8e71-188d-6a53ebf8e4a4@gmail.com>
- <f6d62dde-9ab5-7001-0ff4-93ed70cb207f@nvidia.com>
- <6568af00-3d65-4ddb-f003-7a4161d751a0@gmail.com>
- <f3a122b9-3600-b1eb-be4f-39be79d979a5@nvidia.com>
- <5a6f61c6-2049-fb61-3a80-e729708b3fb8@gmail.com>
- <94d6d159-950a-ee78-05a2-c37fb8fb9873@nvidia.com>
+ <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
+ <62546d1f-eca5-06be-2bc2-e45ccd53830a@xs4all.nl>
+ <50fd1016-ca8b-ec5d-e5a8-f257138b152e@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <94d6d159-950a-ee78-05a2-c37fb8fb9873@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50fd1016-ca8b-ec5d-e5a8-f257138b152e-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-26.04.2020 03:24, Sowjanya Komatineni пишет:
-> 
-> On 4/25/20 5:19 PM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 26.04.2020 02:44, Sowjanya Komatineni пишет:
->> ...
->>>> How much of the T210 code could be reused by T186/194?
->>> vi/csi are common driver where soc structure should be populated for
->>> T186/T194
->>>
->>> Tegra210.c can't be reused for Tegra186/t194 as programming seq is a
->>> whole lot diff
->>>
->> How are you going to separate Tegra210/186/194 drivers from each other?
->> I don't think you'll want to have one "fat" driver that covers all those
->> SoCs, won't you?
->>
->> In the end it should be three modules: tegra210-video.ko
->> tegra186-video.ko tegra194-video.ko.
->>
->> Using a per-SoC OPS doesn't allow you to do that because the "root"
->> driver will have to lookup OPS' code symbols of every SoC, and thus, the
->> unwanted driver modules will get auto-loaded if you'll try to factor out
->> the OPS into a separate driver modules.
-> 
-> tegra-video driver will be common for t210/186/194
 
-Oh, well.
+On 4/25/20 5:36 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 25.04.2020 12:36, Hans Verkuil =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+>>> The media/tegra/ sounds a bit too generic, the media/tegra-vi/ path
+>>> should better reflect the driver, IMO.
+>>>
+>>> It also should be better to name the compiled kernel module as tegra-vi=
+,
+>>> IMO.
+>>>
+>> The driver name and the directory should be in sync, so either tegra-vid=
+eo
+>> or tegra-vi for both. I have no preference myself, as long as they are t=
+he
+>> same.
+>>
+>> This can be done as a follow-up patch.
+> Given that this driver isn't going to be reused by older pre-Tegra210
+> SoCs, perhaps it will also be worthwhile to name it as tegra210-vi or
+> tegra210-video.
 
-> we add corresponding compatibles to tegra-video and vi/csi drivers along
-> with that need to add tegra186_vi_soc, tegra194_vi_soc and implement
-> tegra186.c/tegra194.c
-> 
-> tegra-video driver updated for later tegra include updating drivers list
-> and subdevs list to add t186/t194 compatibles
+Can you explain what do you meant by can't be reused for pre-tegra210 or=20
+for tegra186/194?
+
+support for other tegra's can be added to same tegra-video driver.=20
+tegra-video host1x driver can be updated to add other tegra's vi and csi=20
+compatibles to host1x subdevs and vi and csi driver can be updated to=20
+add other tegra soc data and need to add coresponding tegra186/194/xxx.c=20
+file with tegra specific prog sequence
