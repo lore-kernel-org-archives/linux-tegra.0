@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Sat, 25 Apr 2020 21:47:29 -0700
-Message-ID: <be48a991-3047-6ee3-8d6f-85979752d86f@nvidia.com>
+Date: Sun, 26 Apr 2020 08:04:32 +0300
+Message-ID: <5410cdf5-6379-36f5-21c1-028097e9e9d7@gmail.com>
 References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
  <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
  <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
@@ -13,57 +13,36 @@ References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
  <09f20441-fec6-7496-2edc-c69db535e441@nvidia.com>
  <61799fab-858c-8b0d-ba7d-846cd041e044@gmail.com>
  <7dfca778-e402-3a6f-617c-dd8448187a13@gmail.com>
+ <be48a991-3047-6ee3-8d6f-85979752d86f@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7dfca778-e402-3a6f-617c-dd8448187a13-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <be48a991-3047-6ee3-8d6f-85979752d86f-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
 Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+26.04.2020 07:47, Sowjanya Komatineni пишет:
+...
+>> Although, you're right that tegra_drm is compiled as a single module.
+>> That's not good, I'm actually not sure now whether it is possible to
+>> modularize host1x drivers properly without changing the whole host1x bus.
+> 
+> We already went thru driver structure changes during earlier versions
+> and internal feedbacks.
+> 
+> Not sure of restructuring again now. Also reg wastage of space, tegra
+> specific implementation is not huge also for T186 and later we have
+> RTCPU firmware that driver communicates with and it light weight. Based
+> on internal discussion, no upstream support for prior Tegra210.
 
-On 4/25/20 9:42 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 26.04.2020 05:10, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> 26.04.2020 04:43, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> ...
->>>> It looks to me that at least all those hardcoded HW format IDs do not
->>>> match the older SoCs.
->>> TPG hard coded formats are supported on prior Tegra.
->>>
->>> Other supported formats are SoC dependent and  part of soc data in the
->>> driver already.
->> But I don't see where that SoC-dependent definition is made in
->> terga210.c. That tegra_image_format enum looks T210-specific, isn't it?
->>
->> ...
->>>> The driver will need to have a bit better separation if it's supposed =
-to
->>>> have a common core for all SoCs. Each incompatible VI/CSI hardware
->>>> version should have its own kernel module.
->>> currently other Tegra host1x driver (drm) also does similar. Single
->>> module for all Tegra SoCs.
->> DRM driver has a proper separation of the sub-drivers where sub-driver
->> won't load on unsupported hardware. The tegra-video driver should do the
->> same, i.e. VI and CSI should be individual drivers (and not OPS). There
->> could be a some common core, but for now it's not obvious to me what
->> that core should be, maybe just the video.c.
-> Although, you're right that tegra_drm is compiled as a single module.
-> That's not good, I'm actually not sure now whether it is possible to
-> modularize host1x drivers properly without changing the whole host1x bus.
+NVIDIA doesn't support older SoCs in downstream, but this doesn't apply
+to the upstream where anyone could write a driver.
 
-We already went thru driver structure changes during earlier versions=20
-and internal feedbacks.
+> So, probably what we have regarding structure is ok except video formats
+> I will move to Tegra210 and change defines to use Tegra210 prefix.
 
-Not sure of restructuring again now. Also reg wastage of space, tegra=20
-specific implementation is not huge also for T186 and later we have=20
-RTCPU firmware that driver communicates with and it light weight. Based=20
-on internal discussion, no upstream support for prior Tegra210.
-
-So, probably what we have regarding structure is ok except video formats=20
-I will move to Tegra210 and change defines to use Tegra210 prefix.
+Seems so.
