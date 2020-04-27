@@ -1,77 +1,108 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH AUTOSEL 5.6 30/38] i2c: tegra: Better handle case where
- CPU0 is busy for a long time
-Date: Mon, 27 Apr 2020 09:22:33 +0200
-Message-ID: <20200427072233.GB3451400@ulmo>
-References: <20200424122237.9831-1-sashal@kernel.org>
- <20200424122237.9831-30-sashal@kernel.org>
+Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
+ for a long time
+Date: Mon, 27 Apr 2020 09:48:37 +0200
+Message-ID: <20200427074837.GC3451400@ulmo>
+References: <bba0a93a-8ec4-eda6-97f3-fb2ab0b9b503@gmail.com>
+ <6f07e5c8-7916-7ea2-2fe7-d05f8f011471@nvidia.com>
+ <77a31b2f-f525-ba9e-f1ae-2b474465bde4@gmail.com>
+ <470b4de4-e98a-1bdc-049e-6259ad603507@nvidia.com>
+ <d2531fc1-b452-717d-af71-19497e14ef00@gmail.com>
+ <a5198024-7273-74c4-b4f4-3a29d042bc36@nvidia.com>
+ <f8fb1f7f-2497-033e-ff2c-c86c6caa9706@gmail.com>
+ <fd1ca178-1ea3-851f-20a6-10bf00453ce3@nvidia.com>
+ <a5734f19-254e-b6bc-e791-fa1ac63f11a4@gmail.com>
+ <79f6560e-dbb5-0ae1-49f8-cf1cd95396ec@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="A6N2fC+uXW/VQSAv"
+        protocol="application/pgp-signature"; boundary="4ZLFUWh1odzi/v6L"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200424122237.9831-30-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <79f6560e-dbb5-0ae1-49f8-cf1cd95396ec-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---A6N2fC+uXW/VQSAv
-Content-Type: text/plain; charset=us-ascii
+--4ZLFUWh1odzi/v6L
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 24, 2020 at 08:22:28AM -0400, Sasha Levin wrote:
-> From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Fri, Apr 24, 2020 at 04:19:25PM +0100, Jon Hunter wrote:
 >=20
-> [ Upstream commit a900aeac253729411cf33c6cb598c152e9e4137f ]
+> On 24/04/2020 15:45, Dmitry Osipenko wrote:
+> > 24.04.2020 10:10, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > ...
+> >>> Could you please clarify why pm_runtime_get_sync() can't be used by t=
+he
+> >>> I2C driver's in NOIRQ phase?
+> >>
+> >> Yes take a look at commit 1e2ef05bb8cf ("PM: Limit race conditions
+> >> between runtime PM and system sleep (v2)").
+> >=20
+> > I2C driver now uses irq-safe RPM since ede2299f7 ("i2c: tegra: Support
+> > atomic transfers"), and thus, the RPM's workqueue shouldn't be a
+> > problem. I guess RPM should work fine in this case, don't you think so?
 >=20
-> Boot CPU0 always handle I2C interrupt and under some rare circumstances
-> (like running KASAN + NFS root) it may stuck in uninterruptible state for
-> a significant time. In this case we will get timeout if I2C transfer is
-> running on a sibling CPU, despite of IRQ being raised. In order to handle
-> this rare condition, the IRQ status needs to be checked after completion
-> timeout.
+> I was testing, and I did not see it using atomic transfers. I can
+> confirm if the RPM callbacks are called or not, but I did not think so.
+> However, let me confirm.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-> Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 27 +++++++++++++++------------
->  1 file changed, 15 insertions(+), 12 deletions(-)
+> >>> Yes, keeping PCI regulators always-enabled should be a good immediate
+> >>> solution.
+> >>
+> >> I was thinking about that, and I am not sure it is. I don't think that
+> >> the failure to send the I2C command should break suspend.
+> >=20
+> > It shouldn't, but looks like it should be a separate problem.
+>=20
+> Maybe but all these other problems appear to have existed for sometime
+> now. We need to fix all, but for the moment we need to figure out what's
+> best for v5.7.
 
-Hi Sasha,
+To me it doesn't sound like we have a good handle on what exactly is
+going on here and we're mostly just poking around.
 
-can you drop this from the v5.6 stable queue please? Jon discovered that
-this patch introduces a regression in v5.7, and since we don't have a
-good understanding of why this is breaking things I think it'd be best
-if we reverted it for v5.7 until we come up with a good fix.
+And even if things weren't working quite properly before, it sounds to
+me like this patch actually made things worse.
 
-I think the same applies for the other i2c/tegra patch that's 31/38 of
-this series.
+Given all that, I think the best course of action at this point is to
+revert for v5.7 and prevent this from spreading[0]. After that we need
+to look at fixing the regulator issues and make sure that suspend/resume
+actually works properly and without errors. After that we should have a
+better chance of isolating why exactly this patch fails.
+
+Wolfram, can you revert the following two patches for v5.7, please?
+
+	8814044fe0fa i2c: tegra: Synchronize DMA before termination
+	a900aeac2537 i2c: tegra: Better handle case where CPU0 is busy for a long =
+time
 
 Thanks,
 Thierry
 
---A6N2fC+uXW/VQSAv
+[0]: https://lkml.org/lkml/2020/4/24/498
+
+--4ZLFUWh1odzi/v6L
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6miDkACgkQ3SOs138+
-s6HFbhAAkw4kw0wOkZzY/9qlB+gSAit5MKAPOvPoPQ+f4LjUlhNdKDu3XysVK0dS
-sKAk/f2CHLCm7SMgEATxuVw5agM5I33ufzlr8Jc5zUPpmlIuoOKkV3R433s9O9lC
-9sUMHWDn34zJagJKLZ9KIMMpwf4cWD4wp29u/TrZgqhfC2JQSIi72uyk3CzKJxtI
-3y0383+ju7JYQ+1iyaJPSsZ5F/Dbmk2cViZC+X2oxe9LozVIM2PAP9GkSx6HXgU7
-WJhn92GDamvh1AuOD+K7XRHY+7QqVaK2vAPjPAof3DH0Tn3MH3kStt1P9AuO+IyO
-5kdFaJXrbrspmmViYpC/QHdW6IxRlpYnjYDOJJ0ZCrqSDgUH2UfI4zCX0bkBilpZ
-qVGqXnnPWhtOAK2hpMxJnZ2T7DCcyldLQKhgaQs+sYRrgS0pDXWsQyiInCUMEgsh
-W9dM9rHcWkVNaEJyYlpXb5SAvv5tA0ctcidaCr/LXBfBiwWbDjSxHMBbUxLnfGmD
-5EZNx49+q7M4y6E8YO3+iUY83aHx60zUivwElPx2kg7Y8nAeUWVy7QRUGaH1Uk6o
-e96D8cHiswWsUV1C2xDakAMdFCLw3w/XXRDuVsZGpq/Y2XYOpQG/2NiBtLJMFqCb
-ywW3eBGTPuKlnB7CF9yF/0+3UuyEA69wkUfMvFPSv2A9furafpc=
-=W6uU
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6mjlEACgkQ3SOs138+
+s6GuPA//YCI4iiRaXv/ZB4BV/jq0WNLoCvWW1RIunKE3zf6VZ6DTdT29DXUZXEx+
+5e0ruCZPLzlF5m2hF5TGYlRJcsimli2K5QolOi2Mn0ROxPF2Lso1FKwtFrGhJwdB
+22oUXuUDjeIPdTl7EQHEoaVcGPSVfxIWJOJoyQKK3WSpirU1NFkWJLIx5S8xpcMd
+E5MdrQVZVvVjFYETLy3e8cbvW8AzwA+TBsls03/UszuORf4GJXCjQHEQKRrb8Ouw
+Av4zI4C3pIgdlj5pEsUCbkAQOMtwEgiezoiedZKVj3RpQtLVR3ntmB7S9Em1ra0N
++4MkeSKcoPULYZgnmikrtY2H+ok14axoqN2aQROiGNcytggWEbsqyaKErrHzlq72
+RCNAeplgBsy9h2AoeWEfIqTy+bApoMX4QkVlOCxyCIn4Z0nbSta1MGjN+QHbX1L3
+atmaTITY2aGc6G74tMMkPBgvIYY2hgLoZc05jBY8P3fKNgj56tAAwCJ4Bx9OLMsS
+k5VchUOnHoCS5MefRBpQh4ikFOzXgpFzqYNphBxOk1YeRGZU9Xg6Vm4be31aRHdY
+hf1QocwpWOuhdNjzL/mCU+TiIDJv8/27YTXE/lMFRRhCyZ4oXcIq0VUMFyCerDgH
+K7RmwFiB54pxeOBHBRYFOfgSi51TCv4du9+AHL7J+7IXEkjf/MM=
+=MOEg
 -----END PGP SIGNATURE-----
 
---A6N2fC+uXW/VQSAv--
+--4ZLFUWh1odzi/v6L--
