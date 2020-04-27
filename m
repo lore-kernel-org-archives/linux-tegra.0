@@ -1,63 +1,74 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] backlight: lp855x: Ensure regulators are disabled on
- probe failure
-Date: Mon, 27 Apr 2020 14:17:12 +0100
-Message-ID: <b57f3ef0-8d14-c0bf-524c-9ec0d6334e0c@nvidia.com>
-References: <20200224140748.2182-1-jonathanh@nvidia.com>
- <20200224143732.rreev3ypou26hvx3@holly.lan>
- <6ec74817-968b-ab5e-6566-56bbb9b67599@nvidia.com>
- <20200316090546.5eufi423ahstz6v3@holly.lan>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
+ for a long time
+Date: Mon, 27 Apr 2020 17:13:56 +0300
+Message-ID: <5fc71168-e4ac-11f6-dbf1-e80f4fae8d1a@gmail.com>
+References: <20200324191217.1829-1-digetx@gmail.com>
+ <20200324191217.1829-2-digetx@gmail.com>
+ <1e259e22-c300-663a-e537-18d854e0f478@nvidia.com>
+ <f59ba318-8e99-c486-fa4d-1ee28a7b203d@gmail.com>
+ <b01cec76-bb39-9fb5-8f6e-4023c075e6b3@gmail.com>
+ <8cd085e1-f9fd-6ec0-9f7a-d5463f176a63@nvidia.com>
+ <db1132ce-53a8-371c-98e0-cb7cd91d5c7d@gmail.com>
+ <fa344989-4cce-0d2c-dc93-4ca546823160@nvidia.com>
+ <bba0a93a-8ec4-eda6-97f3-fb2ab0b9b503@gmail.com>
+ <6f07e5c8-7916-7ea2-2fe7-d05f8f011471@nvidia.com>
+ <77a31b2f-f525-ba9e-f1ae-2b474465bde4@gmail.com>
+ <470b4de4-e98a-1bdc-049e-6259ad603507@nvidia.com>
+ <d2531fc1-b452-717d-af71-19497e14ef00@gmail.com>
+ <a5198024-7273-74c4-b4f4-3a29d042bc36@nvidia.com>
+ <da5985f4-44b3-336d-207d-4c0388806f95@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200316090546.5eufi423ahstz6v3@holly.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <da5985f4-44b3-336d-207d-4c0388806f95-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>, Lee Jones <lee.jones@linaro.org>
-Cc: Milo Kim <milo.kim@ti.com>, Jingoo Han <jingoohan1@gmail.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lee,
-
-On 16/03/2020 09:05, Daniel Thompson wrote:
-> On Fri, Mar 13, 2020 at 02:16:16PM +0000, Jon Hunter wrote:
->> Hi Lee, Daniel,
+27.04.2020 15:46, Dmitry Osipenko пишет:
+> 23.04.2020 13:56, Jon Hunter пишет:
+>>>> So I think that part of the problem already existed prior to these
+>>>> patches. Without your patches I see ...
+>>>>
+>>>> [   59.543528] tegra-i2c 7000d000.i2c: i2c transfer timed out
+>>>> [   59.549036] vdd_sata,avdd_plle: failed to disable
+>>>> [   59.553778] Failed to disable avdd-plle: -110
+>>>> [   59.558150] tegra-pcie 3000.pcie: failed to disable regulators: -110
+>>> Does this I2C timeout happen with my patches? Could you please post full
+>>> logs of an older and the recent kernel versions?
+>> I believe that it does, but I need to check.
 >>
->> On 24/02/2020 14:37, Daniel Thompson wrote:
->>> On Mon, Feb 24, 2020 at 02:07:48PM +0000, Jon Hunter wrote:
->>>> If probing the LP885x backlight fails after the regulators have been
->>>> enabled, then the following warning is seen when releasing the
->>>> regulators ...
->>>>
->>>>  WARNING: CPU: 1 PID: 289 at drivers/regulator/core.c:2051 _regulator_put.part.28+0x158/0x160
->>>>  Modules linked in: tegra_xudc lp855x_bl(+) host1x pwm_tegra ip_tables x_tables ipv6 nf_defrag_ipv6
->>>>  CPU: 1 PID: 289 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200224 #1
->>>>  Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
->>>>
->>>>  ...
->>>>
->>>> Fix this by ensuring that the regulators are disabled, if enabled, on
->>>> probe failure.
->>>>
->>>> Finally, ensure that the vddio regulator is disabled in the driver
->>>> remove handler.
->>>>
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>
->>> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
->> I received a bounce from Milo's email and so I am not sure that his
->> email address is still valid.
->>
->> Can either of you pick this up?
 > 
-> Lee generally starts to hoover up patches about this stage in the dev
-> cycle so I'd expect this to move fairly soon.
+> Jon, could you please confirm that you're seeing those regulator-disable
+> errors with my patch? I don't see those errors in yours original log [1].
+> 
+> [1]
+> https://lore.kernel.org/lkml/1e259e22-c300-663a-e537-18d854e0f478-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org/
+> 
+> Again, could you please post the *full* logs?
+> 
+> If regulator's disabling was "failing" before without my patch because
+> of the I2C interrupt being force-disabled during of NOIRQ phase, and now
+> regulator's disabling succeeds with my patch because IRQ is manually
+> handled after the timeout, then this could be bad. It means that
+> regulator was actually getting disabled, but I2C driver was timing out
+> because interrupt couldn't be handled in NOIRQ phase, which should
+> result in a dead PCIe on a resume from suspend since regulator's core
+> thinks that regulator is enabled (I2C said it failed to disable), while
+> it is actually disabled.
+> 
+> Do you have anything plugged into the PCIe slot in yours testing farm?
+> It wouldn't surprise me if the plugged card isn't functional after
+> resume from suspend on a stable kernels.
+> 
 
-Does not look like this ever got picked up. Please let me know if you
-can queue this one. Note it still applies cleanly to -next.
+I actually now see that interrupt is not allowed to be enabled during
+the NOIRQ phase:
 
-Jon
+https://elixir.bootlin.com/linux/v5.7-rc3/source/kernel/irq/manage.c#L640
 
--- 
-nvpublic
+it should be worthwhile to turn it into a WARN_ON.
