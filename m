@@ -1,106 +1,75 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Dmitry Osipenko <digetx@gmail.com>
 Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
  for a long time
-Date: Mon, 27 Apr 2020 18:38:02 +0300
-Message-ID: <9a3d283c-d4ff-c55a-3ebf-4e08d35792ec@gmail.com>
-References: <20200324191217.1829-1-digetx@gmail.com>
- <20200324191217.1829-2-digetx@gmail.com>
- <1e259e22-c300-663a-e537-18d854e0f478@nvidia.com>
- <f59ba318-8e99-c486-fa4d-1ee28a7b203d@gmail.com>
- <b01cec76-bb39-9fb5-8f6e-4023c075e6b3@gmail.com>
- <8cd085e1-f9fd-6ec0-9f7a-d5463f176a63@nvidia.com>
- <db1132ce-53a8-371c-98e0-cb7cd91d5c7d@gmail.com>
- <fa344989-4cce-0d2c-dc93-4ca546823160@nvidia.com>
- <bba0a93a-8ec4-eda6-97f3-fb2ab0b9b503@gmail.com>
- <6f07e5c8-7916-7ea2-2fe7-d05f8f011471@nvidia.com>
- <77a31b2f-f525-ba9e-f1ae-2b474465bde4@gmail.com>
- <470b4de4-e98a-1bdc-049e-6259ad603507@nvidia.com>
- <d2531fc1-b452-717d-af71-19497e14ef00@gmail.com>
- <a5198024-7273-74c4-b4f4-3a29d042bc36@nvidia.com>
- <da5985f4-44b3-336d-207d-4c0388806f95@gmail.com>
- <5fc71168-e4ac-11f6-dbf1-e80f4fae8d1a@gmail.com>
- <090241c4-e026-aea4-e1e9-a2a661b2c27e@gmail.com>
+Date: Mon, 27 Apr 2020 19:02:05 +0300
+Message-ID: <127a2c32-e5fb-2944-3062-361b276490c0@gmail.com>
+References: <a5198024-7273-74c4-b4f4-3a29d042bc36@nvidia.com>
+ <f8fb1f7f-2497-033e-ff2c-c86c6caa9706@gmail.com>
+ <fd1ca178-1ea3-851f-20a6-10bf00453ce3@nvidia.com>
+ <a5734f19-254e-b6bc-e791-fa1ac63f11a4@gmail.com>
+ <79f6560e-dbb5-0ae1-49f8-cf1cd95396ec@nvidia.com>
+ <20200427074837.GC3451400@ulmo> <20200427084424.GA28817@kunai>
+ <820200ce-17f3-18c0-6f79-3e582f45492d@gmail.com>
+ <20200427103553.GA24446@kunai> <20200427105029.GB3464906@ulmo>
+ <20200427153244.GF3464906@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <090241c4-e026-aea4-e1e9-a2a661b2c27e-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <20200427153244.GF3464906@ulmo>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-27.04.2020 17:45, Dmitry Osipenko пишет:
-> 27.04.2020 17:13, Dmitry Osipenko пишет:
->> 27.04.2020 15:46, Dmitry Osipenko пишет:
->>> 23.04.2020 13:56, Jon Hunter пишет:
->>>>>> So I think that part of the problem already existed prior to these
->>>>>> patches. Without your patches I see ...
+27.04.2020 18:32, Thierry Reding пишет:
+> On Mon, Apr 27, 2020 at 12:50:29PM +0200, Thierry Reding wrote:
+>> On Mon, Apr 27, 2020 at 12:35:53PM +0200, Wolfram Sang wrote:
+>>> On Mon, Apr 27, 2020 at 12:07:19PM +0300, Dmitry Osipenko wrote:
+>>>> 27.04.2020 11:44, Wolfram Sang пишет:
+>>>>>
+>>>>>> Wolfram, can you revert the following two patches for v5.7, please?
 >>>>>>
->>>>>> [   59.543528] tegra-i2c 7000d000.i2c: i2c transfer timed out
->>>>>> [   59.549036] vdd_sata,avdd_plle: failed to disable
->>>>>> [   59.553778] Failed to disable avdd-plle: -110
->>>>>> [   59.558150] tegra-pcie 3000.pcie: failed to disable regulators: -110
->>>>> Does this I2C timeout happen with my patches? Could you please post full
->>>>> logs of an older and the recent kernel versions?
->>>> I believe that it does, but I need to check.
+>>>>>> 	8814044fe0fa i2c: tegra: Synchronize DMA before termination
 >>>>
+>>>> This patch has nothing to do with your trouble, why do you want to
+>>>> revert it?
 >>>
->>> Jon, could you please confirm that you're seeing those regulator-disable
->>> errors with my patch? I don't see those errors in yours original log [1].
->>>
->>> [1]
->>> https://lore.kernel.org/lkml/1e259e22-c300-663a-e537-18d854e0f478-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org/
->>>
->>> Again, could you please post the *full* logs?
->>>
->>> If regulator's disabling was "failing" before without my patch because
->>> of the I2C interrupt being force-disabled during of NOIRQ phase, and now
->>> regulator's disabling succeeds with my patch because IRQ is manually
->>> handled after the timeout, then this could be bad. It means that
->>> regulator was actually getting disabled, but I2C driver was timing out
->>> because interrupt couldn't be handled in NOIRQ phase, which should
->>> result in a dead PCIe on a resume from suspend since regulator's core
->>> thinks that regulator is enabled (I2C said it failed to disable), while
->>> it is actually disabled.
->>>
->>> Do you have anything plugged into the PCIe slot in yours testing farm?
->>> It wouldn't surprise me if the plugged card isn't functional after
->>> resume from suspend on a stable kernels.
->>>
+>>> I'll wait some more before pushing out, so you can discuss it.
 >>
->> I actually now see that interrupt is not allowed to be enabled during
->> the NOIRQ phase:
->>
->> https://elixir.bootlin.com/linux/v5.7-rc3/source/kernel/irq/manage.c#L640
->>
->> it should be worthwhile to turn it into a WARN_ON.
->>
+>> Okay, let me run a quick test with that second patch still applied to
+>> make sure it really is harmless.
 > 
-> Oh, wait! There is already a warning there.. hmm.
+> Alright, I tested v5.7-rc3 with this patch reverted:
 > 
+> 	a900aeac2537 i2c: tegra: Better handle case where CPU0 is busy for a long time
+> 
+> and the results came back positive, so I think we can leave patch:
+> 
+> 	8814044fe0fa i2c: tegra: Synchronize DMA before termination
+> 
+> in. But then again, I see that Dmitry posted this yesterday:
+> 
+> 	https://lkml.org/lkml/2020/4/26/481
+> 
+> which seems like it would be related to this and potentially be a
+> follow-up fix for some corner cases?
 
-Aha, the disable depth for the I2C interrupt is 2 after
-suspend_device_irq(), that's why there is no warning.
+This is a follow-up to my previous message in this thread:
 
-This should catch the bug and trigger the warning:
+https://lkml.org/lkml/2020/4/23/792
 
---- >8 ---
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 453a8a0f4804..fe25104d8b22 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -653,6 +653,8 @@ void __enable_irq(struct irq_desc *desc)
- 		break;
- 	}
- 	default:
-+		if (desc->istate & IRQS_SUSPENDED)
-+			goto err_out;
- 		desc->depth--;
- 	}
- }
---- >8 ---
+> So I'm not sure how well this whole set has been tested yet.
 
-Jon could you please give it a try? Will this change produce a warning
-for the I2C driver on a PCIe suspend for the v5.6 kernel?
+It depends on what you're meaning by the testing. We have some
+yet-out-of-tree real-world devices that are using APBDMA for Bluetooth,
+Audio, I2C (touchscreens) and etc peripherals. These devices were using
+the DMA patches before they were posted to the ML.
+
+> Maybe a better solution would be for the DMA synchronization patch to go
+> into the 5.8 queue instead to make sure we get more testing cycles.
+
+It should be fine to re-queue the patches for 5.8. I'm just a bit afraid
+that if patches are simply dropped now, then you won't get back to it
+for a year or so ;)
