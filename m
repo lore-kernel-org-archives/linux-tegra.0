@@ -1,8 +1,8 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
  for a long time
-Date: Mon, 27 Apr 2020 10:44:24 +0200
-Message-ID: <20200427084424.GA28817@kunai>
+Date: Mon, 27 Apr 2020 12:07:19 +0300
+Message-ID: <820200ce-17f3-18c0-6f79-3e582f45492d@gmail.com>
 References: <6f07e5c8-7916-7ea2-2fe7-d05f8f011471@nvidia.com>
  <77a31b2f-f525-ba9e-f1ae-2b474465bde4@gmail.com>
  <470b4de4-e98a-1bdc-049e-6259ad603507@nvidia.com>
@@ -12,52 +12,28 @@ References: <6f07e5c8-7916-7ea2-2fe7-d05f8f011471@nvidia.com>
  <fd1ca178-1ea3-851f-20a6-10bf00453ce3@nvidia.com>
  <a5734f19-254e-b6bc-e791-fa1ac63f11a4@gmail.com>
  <79f6560e-dbb5-0ae1-49f8-cf1cd95396ec@nvidia.com>
- <20200427074837.GC3451400@ulmo>
+ <20200427074837.GC3451400@ulmo> <20200427084424.GA28817@kunai>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200427074837.GC3451400@ulmo>
+In-Reply-To: <20200427084424.GA28817@kunai>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+27.04.2020 11:44, Wolfram Sang пишет:
+> 
+>> Wolfram, can you revert the following two patches for v5.7, please?
+>>
+>> 	8814044fe0fa i2c: tegra: Synchronize DMA before termination
 
---EVF5PPMfhYS0aIcm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch has nothing to do with your trouble, why do you want to
+revert it?
 
-
-> Wolfram, can you revert the following two patches for v5.7, please?
->=20
-> 	8814044fe0fa i2c: tegra: Synchronize DMA before termination
-> 	a900aeac2537 i2c: tegra: Better handle case where CPU0 is busy for a lon=
-g time
-
-Sure, will do!
-
-
---EVF5PPMfhYS0aIcm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl6mm2QACgkQFA3kzBSg
-KbZKvA//T8VF+I+iFRYvMUP35zvYy0e2X+hF4RVng1lOryMdvyvXMYsvHyGwfSUo
-7sENz8AbjNMJs1fXWCR/foCEzIEBcg6XX9S1DJSVHXi+v+7P8sZ+ND0FyVo/W54F
-CzLXFEsty3RcBEOTKIycIe3p5tGz4Wb66cGJgMgJG1t6Mvn9/drjySdAUiosHH7O
-hKiKV1x1EiQJR0r9s6drkUgVv2hSq2SzW5yoQUn6Hm9vRqoawOO+ruVWBDETZOCz
-6A+9Ctxmo5oqhDXOI5otUK43ueuDDIZPmxhz3Piaq8BRCwqz2ej1gZq9hNky8/NY
-3UxIs9/Iw7TCyeAhLfdFNE+jSKzVlcrPK3nIHL+HhXnrSakYdt4DuWf0emTIMaoJ
-D2a7BC78rYF+znZgUMhXEssiKVx0g9KdG6MKVW4X+LU+pqYc0a3LVse8R6T8vU62
-Mom3ztoB1NQ0VFffwgq3i+Nx03N0l6u3P+sqOEa6iJcvnjqypB3BNYT12Vb9v0zc
-bb0NBYgzEAz7PnpP3ZxrdCu/AGHel25WbcAo3/erIphDJUHcl7te/WpEKig+HUob
-3asgO/41xAEB9LfogMNndxT+XnG1qS/fy4UJ2e1Un+JVI0iJ93PCew0LB2EZ/FN5
-L1q1bUi+wtPqY/leZydAvVrlGuIgPQBmtyybiTYRQAbhlVeyFvc=
-=gV9r
------END PGP SIGNATURE-----
-
---EVF5PPMfhYS0aIcm--
+>> 	a900aeac2537 i2c: tegra: Better handle case where CPU0 is busy for a long time
+> 
+> Sure, will do!
+> 
