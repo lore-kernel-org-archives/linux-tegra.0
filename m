@@ -1,33 +1,76 @@
-From: Chun-Hung Wu <chun-hung.wu@mediatek.com>
-Subject: [PATCH v5 5/5] dt-bindings: mmc: mediatek: Add document for mt6779
-Date: Tue, 28 Apr 2020 07:56:08 +0800
-Message-ID: <1588031768-23677-6-git-send-email-chun-hung.wu@mediatek.com>
-References: <1588031768-23677-1-git-send-email-chun-hung.wu@mediatek.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [RFC PATCH v1 0/5] media: tegra: Tegra video driver follow-up patches
+Date: Mon, 27 Apr 2020 21:20:45 -0700
+Message-ID: <1588047650-29402-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1588031768-23677-1-git-send-email-chun-hung.wu@mediatek.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: mirq-linux@rere.qmqm.pl, Jonathan Hunter <jonathanh@nvidia.com>, Al Cooper <alcooperx@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Thierry Reding <thierry.reding@gmail.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Martin
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, wsd_upstream@mediatek.com, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, Chun-Hung Wu <chun-hung.wu@mediatek.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl
+Cc: digetx@gmail.com, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-QWRkIGNvbXBhdGlibGUgbm9kZSBmb3IgbXQ2Nzc5IG1tYw0KDQpTaWduZWQtb2ZmLWJ5OiBDaHVu
-LUh1bmcgV3UgPGNodW4taHVuZy53dUBtZWRpYXRlay5jb20+DQpBY2tlZC1ieTogUm9iIEhlcnJp
-bmcgPHJvYmhAa2VybmVsLm9yZz4NCi0tLQ0KIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9tbWMvbXRrLXNkLnR4dCB8IDEgKw0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
-KQ0KDQpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9t
-dGstc2QudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9tdGstc2Qu
-dHh0DQppbmRleCA4YTUzMmY0Li4wYzljZjZhIDEwMDY0NA0KLS0tIGEvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9tdGstc2QudHh0DQorKysgYi9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvbW1jL210ay1zZC50eHQNCkBAIC0xMiw2ICsxMiw3IEBAIFJlcXVp
-cmVkIHByb3BlcnRpZXM6DQogCSJtZWRpYXRlayxtdDgxNzMtbW1jIjogZm9yIG1tYyBob3N0IGlw
-IGNvbXBhdGlibGUgd2l0aCBtdDgxNzMNCiAJIm1lZGlhdGVrLG10ODE4My1tbWMiOiBmb3IgbW1j
-IGhvc3QgaXAgY29tcGF0aWJsZSB3aXRoIG10ODE4Mw0KIAkibWVkaWF0ZWssbXQ4NTE2LW1tYyI6
-IGZvciBtbWMgaG9zdCBpcCBjb21wYXRpYmxlIHdpdGggbXQ4NTE2DQorCSJtZWRpYXRlayxtdDY3
-NzktbW1jIjogZm9yIG1tYyBob3N0IGlwIGNvbXBhdGlibGUgd2l0aCBtdDY3NzkNCiAJIm1lZGlh
-dGVrLG10MjcwMS1tbWMiOiBmb3IgbW1jIGhvc3QgaXAgY29tcGF0aWJsZSB3aXRoIG10MjcwMQ0K
-IAkibWVkaWF0ZWssbXQyNzEyLW1tYyI6IGZvciBtbWMgaG9zdCBpcCBjb21wYXRpYmxlIHdpdGgg
-bXQyNzEyDQogCSJtZWRpYXRlayxtdDc2MjItbW1jIjogZm9yIE1UNzYyMiBTb0MNCi0tIA0KMi42
-LjQNCg==
+This is a fllow-up to some last feedback received for Tegra VI driver RFC
+v10 patches.
+https://patchwork.linuxtv.org/cover/63334/
+
+
+Sowjanya Komatineni (5):
+  MAINTAINERS: Rename Tegra Video driver path
+  media: tegra: Rename driver path to tegra-video
+  media: tegra-video: Move PM runtime handle to streaming
+  media: tegra-video: Rearrange SoC specific to Tegra210 and cleanup
+    files
+  media: tegra-video: Remove module macros for vi and csi driver
+
+ MAINTAINERS                                  |    2 +-
+ drivers/staging/media/Kconfig                |    2 +-
+ drivers/staging/media/Makefile               |    2 +-
+ drivers/staging/media/tegra-video/Kconfig    |   12 +
+ drivers/staging/media/tegra-video/Makefile   |    8 +
+ drivers/staging/media/tegra-video/TODO       |   10 +
+ drivers/staging/media/tegra-video/csi.c      |  536 ++++++++++++
+ drivers/staging/media/tegra-video/csi.h      |  146 ++++
+ drivers/staging/media/tegra-video/tegra210.c | 1080 ++++++++++++++++++++++++
+ drivers/staging/media/tegra-video/vi.c       | 1082 +++++++++++++++++++++++++
+ drivers/staging/media/tegra-video/vi.h       |  258 ++++++
+ drivers/staging/media/tegra-video/video.c    |  155 ++++
+ drivers/staging/media/tegra-video/video.h    |   29 +
+ drivers/staging/media/tegra/Kconfig          |   12 -
+ drivers/staging/media/tegra/Makefile         |    8 -
+ drivers/staging/media/tegra/TODO             |   10 -
+ drivers/staging/media/tegra/common.h         |  259 ------
+ drivers/staging/media/tegra/csi.c            |  604 --------------
+ drivers/staging/media/tegra/csi.h            |  144 ----
+ drivers/staging/media/tegra/tegra210.c       |  708 ----------------
+ drivers/staging/media/tegra/tegra210.h       |  190 -----
+ drivers/staging/media/tegra/vi.c             | 1127 --------------------------
+ drivers/staging/media/tegra/vi.h             |   72 --
+ drivers/staging/media/tegra/video.c          |  153 ----
+ drivers/staging/media/tegra/video.h          |   29 -
+ 25 files changed, 3319 insertions(+), 3319 deletions(-)
+ create mode 100644 drivers/staging/media/tegra-video/Kconfig
+ create mode 100644 drivers/staging/media/tegra-video/Makefile
+ create mode 100644 drivers/staging/media/tegra-video/TODO
+ create mode 100644 drivers/staging/media/tegra-video/csi.c
+ create mode 100644 drivers/staging/media/tegra-video/csi.h
+ create mode 100644 drivers/staging/media/tegra-video/tegra210.c
+ create mode 100644 drivers/staging/media/tegra-video/vi.c
+ create mode 100644 drivers/staging/media/tegra-video/vi.h
+ create mode 100644 drivers/staging/media/tegra-video/video.c
+ create mode 100644 drivers/staging/media/tegra-video/video.h
+ delete mode 100644 drivers/staging/media/tegra/Kconfig
+ delete mode 100644 drivers/staging/media/tegra/Makefile
+ delete mode 100644 drivers/staging/media/tegra/TODO
+ delete mode 100644 drivers/staging/media/tegra/common.h
+ delete mode 100644 drivers/staging/media/tegra/csi.c
+ delete mode 100644 drivers/staging/media/tegra/csi.h
+ delete mode 100644 drivers/staging/media/tegra/tegra210.c
+ delete mode 100644 drivers/staging/media/tegra/tegra210.h
+ delete mode 100644 drivers/staging/media/tegra/vi.c
+ delete mode 100644 drivers/staging/media/tegra/vi.h
+ delete mode 100644 drivers/staging/media/tegra/video.c
+ delete mode 100644 drivers/staging/media/tegra/video.h
+
+-- 
+2.7.4
