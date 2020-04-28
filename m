@@ -1,99 +1,169 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
- for a long time
-Date: Tue, 28 Apr 2020 15:37:57 +0300
-Message-ID: <c56acfc2-c87c-7ed7-2cd0-ef31553d910f@gmail.com>
-References: <d2531fc1-b452-717d-af71-19497e14ef00@gmail.com>
- <a5198024-7273-74c4-b4f4-3a29d042bc36@nvidia.com>
- <f8fb1f7f-2497-033e-ff2c-c86c6caa9706@gmail.com>
- <fd1ca178-1ea3-851f-20a6-10bf00453ce3@nvidia.com>
- <a5734f19-254e-b6bc-e791-fa1ac63f11a4@gmail.com>
- <79f6560e-dbb5-0ae1-49f8-cf1cd95396ec@nvidia.com>
- <20200427074837.GC3451400@ulmo>
- <c1190858-eaea-8e94-b4d1-1cf28076c330@gmail.com>
- <20200427110033.GC3464906@ulmo>
- <3a06811c-02dc-ce72-ebef-78c3fc3f4f7c@gmail.com>
- <20200427151234.GE3464906@ulmo>
- <1ab276cf-c2b0-e085-49d8-b8ce3dba8fbe@gmail.com>
- <4981d7eb-b41e-c597-04ff-3d3295804d5a@nvidia.com>
+From: "yong.mao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org" <yong.mao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v5 4/5] mmc: mediatek: command queue support
+Date: Tue, 28 Apr 2020 21:02:27 +0800
+Message-ID: <1588078947.730.11.camel@mhfsdcap03>
+References: <1588031768-23677-1-git-send-email-chun-hung.wu@mediatek.com>
+         <1588031768-23677-5-git-send-email-chun-hung.wu@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4981d7eb-b41e-c597-04ff-3d3295804d5a-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1588031768-23677-5-git-send-email-chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>M
 List-Id: linux-tegra@vger.kernel.org
 
-28.04.2020 11:01, Jon Hunter пишет:
-> 
-> On 27/04/2020 16:18, Dmitry Osipenko wrote:
->> 27.04.2020 18:12, Thierry Reding пишет:
->>> On Mon, Apr 27, 2020 at 05:21:30PM +0300, Dmitry Osipenko wrote:
->>>> 27.04.2020 14:00, Thierry Reding пишет:
->>>>> On Mon, Apr 27, 2020 at 12:52:10PM +0300, Dmitry Osipenko wrote:
->>>>>> 27.04.2020 10:48, Thierry Reding пишет:
->>>>>> ...
->>>>>>>> Maybe but all these other problems appear to have existed for sometime
->>>>>>>> now. We need to fix all, but for the moment we need to figure out what's
->>>>>>>> best for v5.7.
->>>>>>>
->>>>>>> To me it doesn't sound like we have a good handle on what exactly is
->>>>>>> going on here and we're mostly just poking around.
->>>>>>>
->>>>>>> And even if things weren't working quite properly before, it sounds to
->>>>>>> me like this patch actually made things worse.
->>>>>>
->>>>>> There is a plenty of time to work on the proper fix now. To me it sounds
->>>>>> like you're giving up on fixing the root of the problem, sorry.
->>>>>
->>>>> We're at -rc3 now and I haven't seen any promising progress in the last
->>>>> week. All the while suspend/resume is now broken on at least one board
->>>>> and that may end up hiding any other issues that could creep in in the
->>>>> meantime.
->>>>>
->>>>> Furthermore we seem to have a preexisting issue that may very well
->>>>> interfere with this patch, so I think the cautious thing is to revert
->>>>> for now and then fix the original issue first. We can always come back
->>>>> to this once everything is back to normal.
->>>>>
->>>>> Also, people are now looking at backporting this to v5.6. Unless we
->>>>> revert this from v5.7 it may get picked up for backports to other
->>>>> kernels and then I have to notify stable kernel maintainers that they
->>>>> shouldn't and they have to back things out again. That's going to cause
->>>>> a lot of wasted time for a lot of people.
->>>>>
->>>>> So, sorry, I disagree. I don't think we have "plenty of time".
->>>>
->>>> There is about a month now before the 5.7 release. It's a bit too early
->>>> to start the panic, IMO :)
->>>
->>> There's no panic. A patch got merged and it broken something, so we
->>> revert it and try again. It's very much standard procedure.
->>>
->>>> Jon already proposed a reasonable simple solution: to keep PCIe
->>>> regulators always-ON. In a longer run we may want to have I2C atomic
->>>> transfers supported for a late suspend phase.
->>>
->>> That's not really a solution, though, is it? It's just papering over
->>> an issue that this patch introduced or uncovered. I'm much more in
->>> favour of fixing problems at the root rather than keep papering over
->>> until we loose track of what the actual problems are.
->>
->> It's not "papering over an issue". The bug can't be fixed properly
->> without introducing I2C atomic transfers support for a late suspend
->> phase, I don't see any other solutions for now. Stable kernels do not
->> support atomic transfers at all, that proper solution won't be backportable.
-> 
-> 
-> There are a few issues here, but the issue Thierry and I are referring
-> to is the regression introduced by this change. Yes this exposes other
-> problems, but we first need to understand why this breaks resume in
-> general, regardless of what the PCIe driver is doing. I will look at
-> this a bit more later this week.
-
-Let's postpone the reverting by 1-3 weeks then. Likely that there will
-be a proper (and trivial) solution by that time, otherwise it should be
-okay to revert the I2C patch.
+T24gVHVlLCAyMDIwLTA0LTI4IGF0IDA3OjU2ICswODAwLCBDaHVuLUh1bmcgV3Ugd3JvdGU6DQo+
+IFN1cHBvcnQgY29tbWFuZCBxdWV1ZSBmb3IgbXQ2Nzc5IHBsYXRmb3JtLg0KPiBhLiBBZGQgbXNk
+Y19zZXRfYnVzeV90aW1lb3V0KCkgdG8gY2FsY3VsYXRlIGVtbWMgd3JpdGUgdGltZW91dA0KPiBi
+LiBDb25uZWN0IG10ayBtc2RjIGRyaXZlciB0byBjcWhjaSBkcml2ZXIgdGhyb3VnaA0KPiAgICBo
+b3N0LT5jcV9ob3N0LT5vcHMgPSAmbXNkY19jbWRxX29wczsNCj4gYy4gbXNkY19jbWRxX2lycSgp
+IHdpbGwgbGluayB1cCB3aXRoIGNxY2hpX2lycSgpLiBCZXNpZGVzLCBpdCBwcm92aWRlcw0KPiAg
+ICBtb3JlIGlycSBlcnJvciBtZXNzYWdlcyBsaWtlIFJTUENSQ0VSUi9DTURUTy9EQVRBQ1JDRVJS
+L0RBVFRNTy4NCj4gZC4gVXNlIHRoZSBvcHRpb25zIGJlbG93IHRvIHNlcGFyYXRlIHN1cHBvcnQg
+Zm9yIENRSENJIG9yIG5vdCwgYmVjYXVzZQ0KPiAgICBzb21lIG9mIG91ciBwbGF0Zm9ybSBkb2Vz
+IG5vdCBzdXBwb3J0IENRSENJIGhlbmNlIG5vIGtlcm5lbCBvcHRpb246DQo+ICAgIENPTkZJR19N
+TUNfQ1FIQ0kuDQo+ICAgICNpZiBJU19FTkFCTEVEKENPTkZJR19NTUNfQ1FIQ0kpDQo+ICAgIFhY
+WCAvL1N1cHBvcnQgQ1FIQ0kNCj4gICAgI2Vsc2UNCj4gICAgWFhYIC8vTm90IHN1cHBvcnQgQ1FI
+Q0kNCj4gICAgI2VuZGlmDQo+IA0KUGxlYXNlIHNwbGl0IHRoaXMgcGF0Y2ggaW50byBmb2xsb3dp
+bmcgcGF0Y2hlcw0KMS4gc3VwcG9ydCBtdDY3NzkgaW4gbXRrLXNkLmMNCjIuIGFkZCBuZXcgQVBJ
+IGZvciBjYWxjdWxhdGUgdGltZW91dA0KMy4gc3VwcG9ydCBjbWRxIGZlYXR1cmUNCg0KPiBTaWdu
+ZWQtb2ZmLWJ5OiBDaHVuLUh1bmcgV3UgPGNodW4taHVuZy53dUBtZWRpYXRlay5jb20+DQo+IC0t
+LQ0KPiAgZHJpdmVycy9tbWMvaG9zdC9tdGstc2QuYyB8IDExOSArKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICAxIGZpbGUgY2hhbmdlZCwgMTE5IGluc2Vy
+dGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9ob3N0L210ay1zZC5jIGIv
+ZHJpdmVycy9tbWMvaG9zdC9tdGstc2QuYw0KPiBpbmRleCBhMjMyOGZiLi44NTE2ODg4IDEwMDY0
+NA0KPiAtLS0gYS9kcml2ZXJzL21tYy9ob3N0L210ay1zZC5jDQo+ICsrKyBiL2RyaXZlcnMvbW1j
+L2hvc3QvbXRrLXNkLmMNCj4gQEAgLTMxLDYgKzMxLDggQEANCj4gICNpbmNsdWRlIDxsaW51eC9t
+bWMvc2Rpby5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L21tYy9zbG90LWdwaW8uaD4NCj4gIA0KPiAr
+I2luY2x1ZGUgImNxaGNpLmgiDQo+ICsNCj4gICNkZWZpbmUgTUFYX0JEX05VTSAgICAgICAgICAx
+MDI0DQo+ICANCj4gIC8qLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0qLw0KPiBAQCAtMTUxLDYgKzE1Myw3IEBA
+DQo+ICAjZGVmaW5lIE1TRENfSU5UX0RNQV9CRENTRVJSICAgICgweDEgPDwgMTcpCS8qIFcxQyAq
+Lw0KPiAgI2RlZmluZSBNU0RDX0lOVF9ETUFfR1BEQ1NFUlIgICAoMHgxIDw8IDE4KQkvKiBXMUMg
+Ki8NCj4gICNkZWZpbmUgTVNEQ19JTlRfRE1BX1BST1RFQ1QgICAgKDB4MSA8PCAxOSkJLyogVzFD
+ICovDQo+ICsjZGVmaW5lIE1TRENfSU5UX0NNRFEgICAgICAgICAgICgweDEgPDwgMjgpCS8qIFcx
+QyAqLw0KPiAgDQo+ICAvKiBNU0RDX0lOVEVOIG1hc2sgKi8NCj4gICNkZWZpbmUgTVNEQ19JTlRF
+Tl9NTUNJUlEgICAgICAgKDB4MSA8PCAwKQkvKiBSVyAqLw0KPiBAQCAtMTgxLDYgKzE4NCw3IEBA
+DQo+ICAvKiBTRENfQ0ZHIG1hc2sgKi8NCj4gICNkZWZpbmUgU0RDX0NGR19TRElPSU5UV0tVUCAg
+ICAgKDB4MSA8PCAwKQkvKiBSVyAqLw0KPiAgI2RlZmluZSBTRENfQ0ZHX0lOU1dLVVAgICAgICAg
+ICAoMHgxIDw8IDEpCS8qIFJXICovDQo+ICsjZGVmaW5lIFNEQ19DRkdfV1JEVE9DICAgICAgICAg
+ICgweDFmZmYgIDw8IDIpICAvKiBSVyAqLw0KPiAgI2RlZmluZSBTRENfQ0ZHX0JVU1dJRFRIICAg
+ICAgICAoMHgzIDw8IDE2KQkvKiBSVyAqLw0KPiAgI2RlZmluZSBTRENfQ0ZHX1NESU8gICAgICAg
+ICAgICAoMHgxIDw8IDE5KQkvKiBSVyAqLw0KPiAgI2RlZmluZSBTRENfQ0ZHX1NESU9JREUgICAg
+ICAgICAoMHgxIDw8IDIwKQkvKiBSVyAqLw0KPiBAQCAtMjI5LDYgKzIzMyw3IEBADQo+ICAjZGVm
+aW5lIE1TRENfUEFUQ0hfQklUX0RFQ1JDVE1PICAgKDB4MSA8PCAzMCkJLyogUlcgKi8NCj4gIA0K
+PiAgI2RlZmluZSBNU0RDX1BBVENIX0JJVDFfQ01EVEEgICAgICgweDcgPDwgMykgICAgLyogUlcg
+Ki8NCj4gKyNkZWZpbmUgTVNEQ19QQjFfQlVTWV9DSEVDS19TRUwgICAoMHgxIDw8IDcpICAgIC8q
+IFJXICovDQo+ICAjZGVmaW5lIE1TRENfUEFUQ0hfQklUMV9TVE9QX0RMWSAgKDB4ZiA8PCA4KSAg
+ICAvKiBSVyAqLw0KPiAgDQo+ICAjZGVmaW5lIE1TRENfUEFUQ0hfQklUMl9DRkdSRVNQICAgKDB4
+MSA8PCAxNSkgICAvKiBSVyAqLw0KPiBAQCAtNDMyLDYgKzQzNyw3IEBAIHN0cnVjdCBtc2RjX2hv
+c3Qgew0KPiAgCXN0cnVjdCBtc2RjX3NhdmVfcGFyYSBzYXZlX3BhcmE7IC8qIHVzZWQgd2hlbiBn
+YXRlIEhDTEsgKi8NCj4gIAlzdHJ1Y3QgbXNkY190dW5lX3BhcmEgZGVmX3R1bmVfcGFyYTsgLyog
+ZGVmYXVsdCB0dW5lIHNldHRpbmcgKi8NCj4gIAlzdHJ1Y3QgbXNkY190dW5lX3BhcmEgc2F2ZWRf
+dHVuZV9wYXJhOyAvKiB0dW5lIHJlc3VsdCBvZiBDTUQyMS9DTUQxOSAqLw0KPiArCXN0cnVjdCBj
+cWhjaV9ob3N0ICpjcV9ob3N0Ow0KPiAgfTsNCj4gIA0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBt
+dGtfbW1jX2NvbXBhdGlibGUgbXQ4MTM1X2NvbXBhdCA9IHsNCj4gQEAgLTUyOCw2ICs1MzQsMTgg
+QEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtdGtfbW1jX2NvbXBhdGlibGUgbXQ3NjIwX2NvbXBhdCA9
+IHsNCj4gIAkudXNlX2ludGVybmFsX2NkID0gdHJ1ZSwNCj4gIH07DQo+ICANCj4gK3N0YXRpYyBj
+b25zdCBzdHJ1Y3QgbXRrX21tY19jb21wYXRpYmxlIG10Njc3OV9jb21wYXQgPSB7DQo+ICsJLmNs
+a19kaXZfYml0cyA9IDEyLA0KPiArCS5oczQwMF90dW5lID0gZmFsc2UsDQo+ICsJLnBhZF90dW5l
+X3JlZyA9IE1TRENfUEFEX1RVTkUwLA0KPiArCS5hc3luY19maWZvID0gdHJ1ZSwNCj4gKwkuZGF0
+YV90dW5lID0gdHJ1ZSwNCj4gKwkuYnVzeV9jaGVjayA9IHRydWUsDQo+ICsJLnN0b3BfY2xrX2Zp
+eCA9IHRydWUsDQo+ICsJLmVuaGFuY2VfcnggPSB0cnVlLA0KPiArCS5zdXBwb3J0XzY0ZyA9IHRy
+dWUsDQo+ICt9Ow0KPiArDQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBtc2Rj
+X29mX2lkc1tdID0gew0KPiAgCXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ4MTM1LW1tYyIs
+IC5kYXRhID0gJm10ODEzNV9jb21wYXR9LA0KPiAgCXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWss
+bXQ4MTczLW1tYyIsIC5kYXRhID0gJm10ODE3M19jb21wYXR9LA0KPiBAQCAtNTM3LDYgKzU1NSw3
+IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIG1zZGNfb2ZfaWRzW10gPSB7DQo+
+ICAJeyAuY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDc2MjItbW1jIiwgLmRhdGEgPSAmbXQ3NjIy
+X2NvbXBhdH0sDQo+ICAJeyAuY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDg1MTYtbW1jIiwgLmRh
+dGEgPSAmbXQ4NTE2X2NvbXBhdH0sDQo+ICAJeyAuY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDc2
+MjAtbW1jIiwgLmRhdGEgPSAmbXQ3NjIwX2NvbXBhdH0sDQo+ICsJeyAuY29tcGF0aWJsZSA9ICJt
+ZWRpYXRlayxtdDY3NzktbW1jIiwgLmRhdGEgPSAmbXQ2Nzc5X2NvbXBhdH0sDQo+ICAJe30NCj4g
+IH07DQo+ICBNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBtc2RjX29mX2lkcyk7DQo+IEBAIC03NDAs
+NiArNzU5LDE1IEBAIHN0YXRpYyB2b2lkIG1zZGNfc2V0X3RpbWVvdXQoc3RydWN0IG1zZGNfaG9z
+dCAqaG9zdCwgdTY0IG5zLCB1NjQgY2xrcykNCj4gIAkJICAgICAgKHUzMikodGltZW91dCA+IDI1
+NSA/IDI1NSA6IHRpbWVvdXQpKTsNCj4gIH0NCj4gIA0KPiArc3RhdGljIHZvaWQgbXNkY19zZXRf
+YnVzeV90aW1lb3V0KHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QsIHU2NCBucywgdTY0IGNsa3MpDQo+
+ICt7DQo+ICsJdTY0IHRpbWVvdXQ7DQo+ICsNCj4gKwl0aW1lb3V0ID0gbXNkY190aW1lb3V0X2Nh
+bChob3N0LCBucywgY2xrcyk7DQo+ICsJc2RyX3NldF9maWVsZChob3N0LT5iYXNlICsgU0RDX0NG
+RywgU0RDX0NGR19XUkRUT0MsDQo+ICsJCSAgICAgICh1MzIpKHRpbWVvdXQgPiA4MTkxID8gODE5
+MSA6IHRpbWVvdXQpKTsNCj4gK30NCj4gKw0KPiAgc3RhdGljIHZvaWQgbXNkY19nYXRlX2Nsb2Nr
+KHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QpDQo+ICB7DQo+ICAJY2xrX2Rpc2FibGVfdW5wcmVwYXJl
+KGhvc3QtPnNyY19jbGtfY2cpOw0KPiBAQCAtMTQyNiw2ICsxNDU0LDM2IEBAIHN0YXRpYyB2b2lk
+IG1zZGNfZW5hYmxlX3NkaW9faXJxKHN0cnVjdCBtbWNfaG9zdCAqbW1jLCBpbnQgZW5iKQ0KPiAg
+CQlwbV9ydW50aW1lX3B1dF9ub2lkbGUoaG9zdC0+ZGV2KTsNCj4gIH0NCj4gIA0KPiArI2lmIElT
+X0VOQUJMRUQoQ09ORklHX01NQ19DUUhDSSkNCj4gK3N0YXRpYyBpcnFyZXR1cm5fdCBtc2RjX2Nt
+ZHFfaXJxKHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QsIHUzMiBpbnRzdHMpDQo+ICt7DQo+ICsJaW50
+IGNtZF9lcnIgPSAwLCBkYXRfZXJyID0gMDsNCj4gKw0KPiArCWlmIChpbnRzdHMgJiBNU0RDX0lO
+VF9SU1BDUkNFUlIpIHsNCj4gKwkJY21kX2VyciA9ICh1bnNpZ25lZCBpbnQpLUVJTFNFUTsNCj4g
+KwkJZGV2X2Vycihob3N0LT5kZXYsICIlczogQ01EIENSQyBFUlIiLCBfX2Z1bmNfXyk7DQo+ICsJ
+fSBlbHNlIGlmIChpbnRzdHMgJiBNU0RDX0lOVF9DTURUTU8pIHsNCj4gKwkJY21kX2VyciA9ICh1
+bnNpZ25lZCBpbnQpLUVUSU1FRE9VVDsNCj4gKwkJZGV2X2Vycihob3N0LT5kZXYsICIlczogQ01E
+IFRJTUVPVVQgRVJSIiwgX19mdW5jX18pOw0KPiArCX0NCj4gKw0KPiArCWlmIChpbnRzdHMgJiBN
+U0RDX0lOVF9EQVRDUkNFUlIpIHsNCj4gKwkJZGF0X2VyciA9ICh1bnNpZ25lZCBpbnQpLUVJTFNF
+UTsNCj4gKwkJZGV2X2Vycihob3N0LT5kZXYsICIlczogREFUQSBDUkMgRVJSIiwgX19mdW5jX18p
+Ow0KPiArCX0gZWxzZSBpZiAoaW50c3RzICYgTVNEQ19JTlRfREFUVE1PKSB7DQo+ICsJCWRhdF9l
+cnIgPSAodW5zaWduZWQgaW50KS1FVElNRURPVVQ7DQo+ICsJCWRldl9lcnIoaG9zdC0+ZGV2LCAi
+JXM6IERBVEEgVElNRU9VVCBFUlIiLCBfX2Z1bmNfXyk7DQo+ICsJfQ0KPiArDQo+ICsJaWYgKGNt
+ZF9lcnIgfHwgZGF0X2Vycikgew0KPiArCQlkZXZfZXJyKGhvc3QtPmRldiwgImNtZF9lcnIgPSAl
+ZCwgZGF0X2VyciA9JWQsIGludHN0cyA9IDB4JXgiLA0KPiArCQkJY21kX2VyciwgZGF0X2Vyciwg
+aW50c3RzKTsNCj4gKwl9DQo+ICsNCj4gKwlyZXR1cm4gY3FoY2lfaXJxKGhvc3QtPm1tYywgMCwg
+Y21kX2VyciwgZGF0X2Vycik7DQo+ICt9DQo+ICsjZW5kaWYNCj4gKw0KPiAgc3RhdGljIGlycXJl
+dHVybl90IG1zZGNfaXJxKGludCBpcnEsIHZvaWQgKmRldl9pZCkNCj4gIHsNCj4gIAlzdHJ1Y3Qg
+bXNkY19ob3N0ICpob3N0ID0gKHN0cnVjdCBtc2RjX2hvc3QgKikgZGV2X2lkOw0KPiBAQCAtMTQ2
+Miw2ICsxNTIwLDE2IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBtc2RjX2lycShpbnQgaXJxLCB2b2lk
+ICpkZXZfaWQpDQo+ICAJCWlmICghKGV2ZW50cyAmIChldmVudF9tYXNrICYgfk1TRENfSU5UX1NE
+SU9JUlEpKSkNCj4gIAkJCWJyZWFrOw0KPiAgDQo+ICsjaWYgSVNfRU5BQkxFRChDT05GSUdfTU1D
+X0NRSENJKQ0KPiArCQlpZiAoKGhvc3QtPm1tYy0+Y2FwczIgJiBNTUNfQ0FQMl9DUUUpICYmDQo+
+ICsJCSAgICAoZXZlbnRzICYgTVNEQ19JTlRfQ01EUSkpIHsNCj4gKwkJCW1zZGNfY21kcV9pcnEo
+aG9zdCwgZXZlbnRzKTsNCj4gKwkJCS8qIGNsZWFyIGludGVycnVwdHMgKi8NCj4gKwkJCXdyaXRl
+bChldmVudHMsIGhvc3QtPmJhc2UgKyBNU0RDX0lOVCk7DQo+ICsJCQlyZXR1cm4gSVJRX0hBTkRM
+RUQ7DQo+ICsJCX0NCj4gKyNlbmRpZg0KPiArDQo+ICAJCWlmICghbXJxKSB7DQo+ICAJCQlkZXZf
+ZXJyKGhvc3QtPmRldiwNCj4gIAkJCQkiJXM6IE1SUT1OVUxMOyBldmVudHM9JTA4WDsgZXZlbnRf
+bWFzaz0lMDhYXG4iLA0KPiBAQCAtMjE0Niw2ICsyMjE0LDM2IEBAIHN0YXRpYyBpbnQgbXNkY19n
+ZXRfY2Qoc3RydWN0IG1tY19ob3N0ICptbWMpDQo+ICAJCXJldHVybiAhdmFsOw0KPiAgfQ0KPiAg
+DQo+ICtzdGF0aWMgdm9pZCBtc2RjX2NxZV9lbmFibGUoc3RydWN0IG1tY19ob3N0ICptbWMpDQo+
+ICt7DQo+ICsJc3RydWN0IG1zZGNfaG9zdCAqaG9zdCA9IG1tY19wcml2KG1tYyk7DQo+ICsNCj4g
+KwkvKiBlbmFibGUgY21kcSBpcnEgKi8NCj4gKwl3cml0ZWwoTVNEQ19JTlRfQ01EUSwgaG9zdC0+
+YmFzZSArIE1TRENfSU5URU4pOw0KPiArCS8qIGVuYWJsZSBidXN5IGNoZWNrICovDQo+ICsJc2Ry
+X3NldF9iaXRzKGhvc3QtPmJhc2UgKyBNU0RDX1BBVENIX0JJVDEsIE1TRENfUEIxX0JVU1lfQ0hF
+Q0tfU0VMKTsNCj4gKwkvKiBkZWZhdWx0IHdyaXRlIGRhdGEgLyBidXN5IHRpbWVvdXQgMjBzICov
+DQo+ICsJbXNkY19zZXRfYnVzeV90aW1lb3V0KGhvc3QsIDIwICogMTAwMDAwMDAwMFVMTCwgMCk7
+DQo+ICsJLyogZGVmYXVsdCByZWFkIGRhdGEgdGltZW91dCAxcyAqLw0KPiArCW1zZGNfc2V0X3Rp
+bWVvdXQoaG9zdCwgMTAwMDAwMDAwMFVMTCwgMCk7DQo+ICt9DQo+ICsNCj4gK3ZvaWQgbXNkY19j
+cWVfZGlzYWJsZShzdHJ1Y3QgbW1jX2hvc3QgKm1tYywgYm9vbCByZWNvdmVyeSkNCj4gK3sNCj4g
+KwlzdHJ1Y3QgbXNkY19ob3N0ICpob3N0ID0gbW1jX3ByaXYobW1jKTsNCj4gKw0KPiArCS8qIGRp
+c2FibGUgY21kcSBpcnEgKi8NCj4gKwlzZHJfY2xyX2JpdHMoaG9zdC0+YmFzZSArIE1TRENfSU5U
+RU4sIE1TRENfSU5UX0NNRFEpOw0KPiArCS8qIGRpc2FibGUgYnVzeSBjaGVjayAqLw0KPiArCXNk
+cl9jbHJfYml0cyhob3N0LT5iYXNlICsgTVNEQ19QQVRDSF9CSVQxLCBNU0RDX1BCMV9CVVNZX0NI
+RUNLX1NFTCk7DQo+ICsNCj4gKwlpZiAocmVjb3ZlcnkpIHsNCj4gKwkJc2RyX3NldF9maWVsZCho
+b3N0LT5iYXNlICsgTVNEQ19ETUFfQ1RSTCwNCj4gKwkJCSAgICAgIE1TRENfRE1BX0NUUkxfU1RP
+UCwgMSk7DQo+ICsJCW1zZGNfcmVzZXRfaHcoaG9zdCk7DQo+ICsJfQ0KPiArfQ0KPiArDQo+ICBz
+dGF0aWMgY29uc3Qgc3RydWN0IG1tY19ob3N0X29wcyBtdF9tc2RjX29wcyA9IHsNCj4gIAkucG9z
+dF9yZXEgPSBtc2RjX3Bvc3RfcmVxLA0KPiAgCS5wcmVfcmVxID0gbXNkY19wcmVfcmVxLA0KPiBA
+QCAtMjE2Miw2ICsyMjYwLDExIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbW1jX2hvc3Rfb3BzIG10
+X21zZGNfb3BzID0gew0KPiAgCS5od19yZXNldCA9IG1zZGNfaHdfcmVzZXQsDQo+ICB9Ow0KPiAg
+DQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGNxaGNpX2hvc3Rfb3BzIG1zZGNfY21kcV9vcHMgPSB7
+DQo+ICsJLmVuYWJsZSAgICAgICAgID0gbXNkY19jcWVfZW5hYmxlLA0KPiArCS5kaXNhYmxlICAg
+ICAgICA9IG1zZGNfY3FlX2Rpc2FibGUsDQo+ICt9Ow0KPiArDQo+ICBzdGF0aWMgdm9pZCBtc2Rj
+X29mX3Byb3BlcnR5X3BhcnNlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYsDQo+ICAJCQkJ
+ICAgc3RydWN0IG1zZGNfaG9zdCAqaG9zdCkNCj4gIHsNCj4gQEAgLTIzMTIsNiArMjQxNSwyMiBA
+QCBzdGF0aWMgaW50IG1zZGNfZHJ2X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
+DQo+ICAJCWhvc3QtPmRtYV9tYXNrID0gRE1BX0JJVF9NQVNLKDMyKTsNCj4gIAltbWNfZGV2KG1t
+YyktPmRtYV9tYXNrID0gJmhvc3QtPmRtYV9tYXNrOw0KPiAgDQo+ICsjaWYgSVNfRU5BQkxFRChD
+T05GSUdfTU1DX0NRSENJKQ0KPiArCWlmIChtbWMtPmNhcHMyICYgTU1DX0NBUDJfQ1FFKSB7DQo+
+ICsJCWhvc3QtPmNxX2hvc3QgPSBkZXZtX2t6YWxsb2MoaG9zdC0+bW1jLT5wYXJlbnQsDQo+ICsJ
+CQkJCSAgICAgc2l6ZW9mKCpob3N0LT5jcV9ob3N0KSwNCj4gKwkJCQkJICAgICBHRlBfS0VSTkVM
+KTsNCnNob3VsZCBmcmVlIHRoaXMgbWVtb3J5IGlmIGl0IGlzIG5vdCB1c2VkIGFueSBtb3JlLg0K
+PiArCQlob3N0LT5jcV9ob3N0LT5jYXBzIHw9IENRSENJX1RBU0tfREVTQ19TWl8xMjg7DQo+ICsJ
+CWhvc3QtPmNxX2hvc3QtPm1taW8gPSBob3N0LT5iYXNlICsgMHg4MDA7DQo+ICsJCWhvc3QtPmNx
+X2hvc3QtPm9wcyA9ICZtc2RjX2NtZHFfb3BzOw0KPiArCQljcWhjaV9pbml0KGhvc3QtPmNxX2hv
+c3QsIG1tYywgdHJ1ZSk7DQo+ICsJCW1tYy0+bWF4X3NlZ3MgPSAxMjg7DQo+ICsJCS8qIGNxaGNp
+IDE2Yml0IGxlbmd0aCAqLw0KPiArCQkvKiAwIHNpemUsIG1lYW5zIDY1NTM2IHNvIHdlIGRvbid0
+IGhhdmUgdG8gLTEgaGVyZSAqLw0KPiArCQltbWMtPm1heF9zZWdfc2l6ZSA9IDY0ICogMTAyNDsN
+Cj4gKwl9DQo+ICsjZW5kaWYNCj4gKw0KPiAgCWhvc3QtPnRpbWVvdXRfY2xrcyA9IDMgKiAxMDQ4
+NTc2Ow0KPiAgCWhvc3QtPmRtYS5ncGQgPSBkbWFfYWxsb2NfY29oZXJlbnQoJnBkZXYtPmRldiwN
+Cj4gIAkJCQkyICogc2l6ZW9mKHN0cnVjdCBtdF9ncGRtYV9kZXNjKSwNCg0K
