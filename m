@@ -1,74 +1,89 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] backlight: lp855x: Ensure regulators are disabled on
- probe failure
-Date: Tue, 28 Apr 2020 08:09:53 +0100
-Message-ID: <20200428070953.GI3559@dell>
-References: <20200224140748.2182-1-jonathanh@nvidia.com>
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: Re: [RFC PATCH v1 0/5] media: tegra: Tegra video driver follow-up
+ patches
+Date: Tue, 28 Apr 2020 09:38:07 +0200
+Message-ID: <5f065fc5-0f45-6b9e-068c-28d0a2e4684e@xs4all.nl>
+References: <1588047650-29402-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200224140748.2182-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1588047650-29402-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Milo Kim <milo.kim-l0cyMroinI0@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 24 Feb 2020, Jon Hunter wrote:
+On 28/04/2020 06:20, Sowjanya Komatineni wrote:
+> This is a fllow-up to some last feedback received for Tegra VI driver RFC
+> v10 patches.
+> https://patchwork.linuxtv.org/cover/63334/
+> 
+> 
+> Sowjanya Komatineni (5):
+>   MAINTAINERS: Rename Tegra Video driver path
+>   media: tegra: Rename driver path to tegra-video
+>   media: tegra-video: Move PM runtime handle to streaming
+>   media: tegra-video: Rearrange SoC specific to Tegra210 and cleanup
+>     files
+>   media: tegra-video: Remove module macros for vi and csi driver
+> 
+>  MAINTAINERS                                  |    2 +-
+>  drivers/staging/media/Kconfig                |    2 +-
+>  drivers/staging/media/Makefile               |    2 +-
+>  drivers/staging/media/tegra-video/Kconfig    |   12 +
+>  drivers/staging/media/tegra-video/Makefile   |    8 +
+>  drivers/staging/media/tegra-video/TODO       |   10 +
+>  drivers/staging/media/tegra-video/csi.c      |  536 ++++++++++++
+>  drivers/staging/media/tegra-video/csi.h      |  146 ++++
+>  drivers/staging/media/tegra-video/tegra210.c | 1080 ++++++++++++++++++++++++
+>  drivers/staging/media/tegra-video/vi.c       | 1082 +++++++++++++++++++++++++
+>  drivers/staging/media/tegra-video/vi.h       |  258 ++++++
+>  drivers/staging/media/tegra-video/video.c    |  155 ++++
+>  drivers/staging/media/tegra-video/video.h    |   29 +
+>  drivers/staging/media/tegra/Kconfig          |   12 -
+>  drivers/staging/media/tegra/Makefile         |    8 -
+>  drivers/staging/media/tegra/TODO             |   10 -
+>  drivers/staging/media/tegra/common.h         |  259 ------
+>  drivers/staging/media/tegra/csi.c            |  604 --------------
+>  drivers/staging/media/tegra/csi.h            |  144 ----
+>  drivers/staging/media/tegra/tegra210.c       |  708 ----------------
+>  drivers/staging/media/tegra/tegra210.h       |  190 -----
+>  drivers/staging/media/tegra/vi.c             | 1127 --------------------------
+>  drivers/staging/media/tegra/vi.h             |   72 --
+>  drivers/staging/media/tegra/video.c          |  153 ----
+>  drivers/staging/media/tegra/video.h          |   29 -
+>  25 files changed, 3319 insertions(+), 3319 deletions(-)
 
-> If probing the LP885x backlight fails after the regulators have been
-> enabled, then the following warning is seen when releasing the
-> regulators ...
-> 
->  WARNING: CPU: 1 PID: 289 at drivers/regulator/core.c:2051 _regulator_put.part.28+0x158/0x160
->  Modules linked in: tegra_xudc lp855x_bl(+) host1x pwm_tegra ip_tables x_tables ipv6 nf_defrag_ipv6
->  CPU: 1 PID: 289 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200224 #1
->  Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
-> 
->  ...
-> 
->  Call trace:
->   _regulator_put.part.28+0x158/0x160
->   regulator_put+0x34/0x50
->   devm_regulator_release+0x10/0x18
->   release_nodes+0x12c/0x230
->   devres_release_all+0x34/0x50
->   really_probe+0x1c0/0x370
->   driver_probe_device+0x58/0x100
->   device_driver_attach+0x6c/0x78
->   __driver_attach+0xb0/0xf0
->   bus_for_each_dev+0x68/0xc8
->   driver_attach+0x20/0x28
->   bus_add_driver+0x160/0x1f0
->   driver_register+0x60/0x110
->   i2c_register_driver+0x40/0x80
->   lp855x_driver_init+0x20/0x1000 [lp855x_bl]
->   do_one_initcall+0x58/0x1a0
->   do_init_module+0x54/0x1d0
->   load_module+0x1d80/0x21c8
->   __do_sys_finit_module+0xe8/0x100
->   __arm64_sys_finit_module+0x18/0x20
->   el0_svc_common.constprop.3+0xb0/0x168
->   do_el0_svc+0x20/0x98
->   el0_sync_handler+0xf4/0x1b0
->   el0_sync+0x140/0x180
-> 
-> Fix this by ensuring that the regulators are disabled, if enabled, on
-> probe failure.
-> 
-> Finally, ensure that the vddio regulator is disabled in the driver
-> remove handler.
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/video/backlight/lp855x_bl.c | 20 ++++++++++++++++----
->  1 file changed, 16 insertions(+), 4 deletions(-)
+I thought that the follow-up series was just a rename of a directory
+and perhaps one or two smaller changes, but this is too much change.
+I prefer to have a v11 instead with all these changes incorporated.
 
-Applied, thanks.
+Sorry about that,
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+	Hans
+
+>  create mode 100644 drivers/staging/media/tegra-video/Kconfig
+>  create mode 100644 drivers/staging/media/tegra-video/Makefile
+>  create mode 100644 drivers/staging/media/tegra-video/TODO
+>  create mode 100644 drivers/staging/media/tegra-video/csi.c
+>  create mode 100644 drivers/staging/media/tegra-video/csi.h
+>  create mode 100644 drivers/staging/media/tegra-video/tegra210.c
+>  create mode 100644 drivers/staging/media/tegra-video/vi.c
+>  create mode 100644 drivers/staging/media/tegra-video/vi.h
+>  create mode 100644 drivers/staging/media/tegra-video/video.c
+>  create mode 100644 drivers/staging/media/tegra-video/video.h
+>  delete mode 100644 drivers/staging/media/tegra/Kconfig
+>  delete mode 100644 drivers/staging/media/tegra/Makefile
+>  delete mode 100644 drivers/staging/media/tegra/TODO
+>  delete mode 100644 drivers/staging/media/tegra/common.h
+>  delete mode 100644 drivers/staging/media/tegra/csi.c
+>  delete mode 100644 drivers/staging/media/tegra/csi.h
+>  delete mode 100644 drivers/staging/media/tegra/tegra210.c
+>  delete mode 100644 drivers/staging/media/tegra/tegra210.h
+>  delete mode 100644 drivers/staging/media/tegra/vi.c
+>  delete mode 100644 drivers/staging/media/tegra/vi.h
+>  delete mode 100644 drivers/staging/media/tegra/video.c
+>  delete mode 100644 drivers/staging/media/tegra/video.h
+> 
