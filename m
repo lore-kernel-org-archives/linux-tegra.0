@@ -1,169 +1,164 @@
-From: "yong.mao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org" <yong.mao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v5 4/5] mmc: mediatek: command queue support
-Date: Tue, 28 Apr 2020 21:02:27 +0800
-Message-ID: <1588078947.730.11.camel@mhfsdcap03>
-References: <1588031768-23677-1-git-send-email-chun-hung.wu@mediatek.com>
-         <1588031768-23677-5-git-send-email-chun-hung.wu@mediatek.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
+ for a long time
+Date: Tue, 28 Apr 2020 16:43:12 +0300
+Message-ID: <9c6a358e-3334-faa9-d198-55a8aed88922@gmail.com>
+References: <20200324191217.1829-1-digetx@gmail.com>
+ <20200324191217.1829-2-digetx@gmail.com>
+ <1e259e22-c300-663a-e537-18d854e0f478@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1588031768-23677-5-git-send-email-chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>M
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1e259e22-c300-663a-e537-18d854e0f478@nvidia.com>
+Content-Language: en-US
+Sender: linux-i2c-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDIwLTA0LTI4IGF0IDA3OjU2ICswODAwLCBDaHVuLUh1bmcgV3Ugd3JvdGU6DQo+
-IFN1cHBvcnQgY29tbWFuZCBxdWV1ZSBmb3IgbXQ2Nzc5IHBsYXRmb3JtLg0KPiBhLiBBZGQgbXNk
-Y19zZXRfYnVzeV90aW1lb3V0KCkgdG8gY2FsY3VsYXRlIGVtbWMgd3JpdGUgdGltZW91dA0KPiBi
-LiBDb25uZWN0IG10ayBtc2RjIGRyaXZlciB0byBjcWhjaSBkcml2ZXIgdGhyb3VnaA0KPiAgICBo
-b3N0LT5jcV9ob3N0LT5vcHMgPSAmbXNkY19jbWRxX29wczsNCj4gYy4gbXNkY19jbWRxX2lycSgp
-IHdpbGwgbGluayB1cCB3aXRoIGNxY2hpX2lycSgpLiBCZXNpZGVzLCBpdCBwcm92aWRlcw0KPiAg
-ICBtb3JlIGlycSBlcnJvciBtZXNzYWdlcyBsaWtlIFJTUENSQ0VSUi9DTURUTy9EQVRBQ1JDRVJS
-L0RBVFRNTy4NCj4gZC4gVXNlIHRoZSBvcHRpb25zIGJlbG93IHRvIHNlcGFyYXRlIHN1cHBvcnQg
-Zm9yIENRSENJIG9yIG5vdCwgYmVjYXVzZQ0KPiAgICBzb21lIG9mIG91ciBwbGF0Zm9ybSBkb2Vz
-IG5vdCBzdXBwb3J0IENRSENJIGhlbmNlIG5vIGtlcm5lbCBvcHRpb246DQo+ICAgIENPTkZJR19N
-TUNfQ1FIQ0kuDQo+ICAgICNpZiBJU19FTkFCTEVEKENPTkZJR19NTUNfQ1FIQ0kpDQo+ICAgIFhY
-WCAvL1N1cHBvcnQgQ1FIQ0kNCj4gICAgI2Vsc2UNCj4gICAgWFhYIC8vTm90IHN1cHBvcnQgQ1FI
-Q0kNCj4gICAgI2VuZGlmDQo+IA0KUGxlYXNlIHNwbGl0IHRoaXMgcGF0Y2ggaW50byBmb2xsb3dp
-bmcgcGF0Y2hlcw0KMS4gc3VwcG9ydCBtdDY3NzkgaW4gbXRrLXNkLmMNCjIuIGFkZCBuZXcgQVBJ
-IGZvciBjYWxjdWxhdGUgdGltZW91dA0KMy4gc3VwcG9ydCBjbWRxIGZlYXR1cmUNCg0KPiBTaWdu
-ZWQtb2ZmLWJ5OiBDaHVuLUh1bmcgV3UgPGNodW4taHVuZy53dUBtZWRpYXRlay5jb20+DQo+IC0t
-LQ0KPiAgZHJpdmVycy9tbWMvaG9zdC9tdGstc2QuYyB8IDExOSArKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICAxIGZpbGUgY2hhbmdlZCwgMTE5IGluc2Vy
-dGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9ob3N0L210ay1zZC5jIGIv
-ZHJpdmVycy9tbWMvaG9zdC9tdGstc2QuYw0KPiBpbmRleCBhMjMyOGZiLi44NTE2ODg4IDEwMDY0
-NA0KPiAtLS0gYS9kcml2ZXJzL21tYy9ob3N0L210ay1zZC5jDQo+ICsrKyBiL2RyaXZlcnMvbW1j
-L2hvc3QvbXRrLXNkLmMNCj4gQEAgLTMxLDYgKzMxLDggQEANCj4gICNpbmNsdWRlIDxsaW51eC9t
-bWMvc2Rpby5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L21tYy9zbG90LWdwaW8uaD4NCj4gIA0KPiAr
-I2luY2x1ZGUgImNxaGNpLmgiDQo+ICsNCj4gICNkZWZpbmUgTUFYX0JEX05VTSAgICAgICAgICAx
-MDI0DQo+ICANCj4gIC8qLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0qLw0KPiBAQCAtMTUxLDYgKzE1Myw3IEBA
-DQo+ICAjZGVmaW5lIE1TRENfSU5UX0RNQV9CRENTRVJSICAgICgweDEgPDwgMTcpCS8qIFcxQyAq
-Lw0KPiAgI2RlZmluZSBNU0RDX0lOVF9ETUFfR1BEQ1NFUlIgICAoMHgxIDw8IDE4KQkvKiBXMUMg
-Ki8NCj4gICNkZWZpbmUgTVNEQ19JTlRfRE1BX1BST1RFQ1QgICAgKDB4MSA8PCAxOSkJLyogVzFD
-ICovDQo+ICsjZGVmaW5lIE1TRENfSU5UX0NNRFEgICAgICAgICAgICgweDEgPDwgMjgpCS8qIFcx
-QyAqLw0KPiAgDQo+ICAvKiBNU0RDX0lOVEVOIG1hc2sgKi8NCj4gICNkZWZpbmUgTVNEQ19JTlRF
-Tl9NTUNJUlEgICAgICAgKDB4MSA8PCAwKQkvKiBSVyAqLw0KPiBAQCAtMTgxLDYgKzE4NCw3IEBA
-DQo+ICAvKiBTRENfQ0ZHIG1hc2sgKi8NCj4gICNkZWZpbmUgU0RDX0NGR19TRElPSU5UV0tVUCAg
-ICAgKDB4MSA8PCAwKQkvKiBSVyAqLw0KPiAgI2RlZmluZSBTRENfQ0ZHX0lOU1dLVVAgICAgICAg
-ICAoMHgxIDw8IDEpCS8qIFJXICovDQo+ICsjZGVmaW5lIFNEQ19DRkdfV1JEVE9DICAgICAgICAg
-ICgweDFmZmYgIDw8IDIpICAvKiBSVyAqLw0KPiAgI2RlZmluZSBTRENfQ0ZHX0JVU1dJRFRIICAg
-ICAgICAoMHgzIDw8IDE2KQkvKiBSVyAqLw0KPiAgI2RlZmluZSBTRENfQ0ZHX1NESU8gICAgICAg
-ICAgICAoMHgxIDw8IDE5KQkvKiBSVyAqLw0KPiAgI2RlZmluZSBTRENfQ0ZHX1NESU9JREUgICAg
-ICAgICAoMHgxIDw8IDIwKQkvKiBSVyAqLw0KPiBAQCAtMjI5LDYgKzIzMyw3IEBADQo+ICAjZGVm
-aW5lIE1TRENfUEFUQ0hfQklUX0RFQ1JDVE1PICAgKDB4MSA8PCAzMCkJLyogUlcgKi8NCj4gIA0K
-PiAgI2RlZmluZSBNU0RDX1BBVENIX0JJVDFfQ01EVEEgICAgICgweDcgPDwgMykgICAgLyogUlcg
-Ki8NCj4gKyNkZWZpbmUgTVNEQ19QQjFfQlVTWV9DSEVDS19TRUwgICAoMHgxIDw8IDcpICAgIC8q
-IFJXICovDQo+ICAjZGVmaW5lIE1TRENfUEFUQ0hfQklUMV9TVE9QX0RMWSAgKDB4ZiA8PCA4KSAg
-ICAvKiBSVyAqLw0KPiAgDQo+ICAjZGVmaW5lIE1TRENfUEFUQ0hfQklUMl9DRkdSRVNQICAgKDB4
-MSA8PCAxNSkgICAvKiBSVyAqLw0KPiBAQCAtNDMyLDYgKzQzNyw3IEBAIHN0cnVjdCBtc2RjX2hv
-c3Qgew0KPiAgCXN0cnVjdCBtc2RjX3NhdmVfcGFyYSBzYXZlX3BhcmE7IC8qIHVzZWQgd2hlbiBn
-YXRlIEhDTEsgKi8NCj4gIAlzdHJ1Y3QgbXNkY190dW5lX3BhcmEgZGVmX3R1bmVfcGFyYTsgLyog
-ZGVmYXVsdCB0dW5lIHNldHRpbmcgKi8NCj4gIAlzdHJ1Y3QgbXNkY190dW5lX3BhcmEgc2F2ZWRf
-dHVuZV9wYXJhOyAvKiB0dW5lIHJlc3VsdCBvZiBDTUQyMS9DTUQxOSAqLw0KPiArCXN0cnVjdCBj
-cWhjaV9ob3N0ICpjcV9ob3N0Ow0KPiAgfTsNCj4gIA0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBt
-dGtfbW1jX2NvbXBhdGlibGUgbXQ4MTM1X2NvbXBhdCA9IHsNCj4gQEAgLTUyOCw2ICs1MzQsMTgg
-QEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtdGtfbW1jX2NvbXBhdGlibGUgbXQ3NjIwX2NvbXBhdCA9
-IHsNCj4gIAkudXNlX2ludGVybmFsX2NkID0gdHJ1ZSwNCj4gIH07DQo+ICANCj4gK3N0YXRpYyBj
-b25zdCBzdHJ1Y3QgbXRrX21tY19jb21wYXRpYmxlIG10Njc3OV9jb21wYXQgPSB7DQo+ICsJLmNs
-a19kaXZfYml0cyA9IDEyLA0KPiArCS5oczQwMF90dW5lID0gZmFsc2UsDQo+ICsJLnBhZF90dW5l
-X3JlZyA9IE1TRENfUEFEX1RVTkUwLA0KPiArCS5hc3luY19maWZvID0gdHJ1ZSwNCj4gKwkuZGF0
-YV90dW5lID0gdHJ1ZSwNCj4gKwkuYnVzeV9jaGVjayA9IHRydWUsDQo+ICsJLnN0b3BfY2xrX2Zp
-eCA9IHRydWUsDQo+ICsJLmVuaGFuY2VfcnggPSB0cnVlLA0KPiArCS5zdXBwb3J0XzY0ZyA9IHRy
-dWUsDQo+ICt9Ow0KPiArDQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBtc2Rj
-X29mX2lkc1tdID0gew0KPiAgCXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ4MTM1LW1tYyIs
-IC5kYXRhID0gJm10ODEzNV9jb21wYXR9LA0KPiAgCXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWss
-bXQ4MTczLW1tYyIsIC5kYXRhID0gJm10ODE3M19jb21wYXR9LA0KPiBAQCAtNTM3LDYgKzU1NSw3
-IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIG1zZGNfb2ZfaWRzW10gPSB7DQo+
-ICAJeyAuY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDc2MjItbW1jIiwgLmRhdGEgPSAmbXQ3NjIy
-X2NvbXBhdH0sDQo+ICAJeyAuY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDg1MTYtbW1jIiwgLmRh
-dGEgPSAmbXQ4NTE2X2NvbXBhdH0sDQo+ICAJeyAuY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDc2
-MjAtbW1jIiwgLmRhdGEgPSAmbXQ3NjIwX2NvbXBhdH0sDQo+ICsJeyAuY29tcGF0aWJsZSA9ICJt
-ZWRpYXRlayxtdDY3NzktbW1jIiwgLmRhdGEgPSAmbXQ2Nzc5X2NvbXBhdH0sDQo+ICAJe30NCj4g
-IH07DQo+ICBNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBtc2RjX29mX2lkcyk7DQo+IEBAIC03NDAs
-NiArNzU5LDE1IEBAIHN0YXRpYyB2b2lkIG1zZGNfc2V0X3RpbWVvdXQoc3RydWN0IG1zZGNfaG9z
-dCAqaG9zdCwgdTY0IG5zLCB1NjQgY2xrcykNCj4gIAkJICAgICAgKHUzMikodGltZW91dCA+IDI1
-NSA/IDI1NSA6IHRpbWVvdXQpKTsNCj4gIH0NCj4gIA0KPiArc3RhdGljIHZvaWQgbXNkY19zZXRf
-YnVzeV90aW1lb3V0KHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QsIHU2NCBucywgdTY0IGNsa3MpDQo+
-ICt7DQo+ICsJdTY0IHRpbWVvdXQ7DQo+ICsNCj4gKwl0aW1lb3V0ID0gbXNkY190aW1lb3V0X2Nh
-bChob3N0LCBucywgY2xrcyk7DQo+ICsJc2RyX3NldF9maWVsZChob3N0LT5iYXNlICsgU0RDX0NG
-RywgU0RDX0NGR19XUkRUT0MsDQo+ICsJCSAgICAgICh1MzIpKHRpbWVvdXQgPiA4MTkxID8gODE5
-MSA6IHRpbWVvdXQpKTsNCj4gK30NCj4gKw0KPiAgc3RhdGljIHZvaWQgbXNkY19nYXRlX2Nsb2Nr
-KHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QpDQo+ICB7DQo+ICAJY2xrX2Rpc2FibGVfdW5wcmVwYXJl
-KGhvc3QtPnNyY19jbGtfY2cpOw0KPiBAQCAtMTQyNiw2ICsxNDU0LDM2IEBAIHN0YXRpYyB2b2lk
-IG1zZGNfZW5hYmxlX3NkaW9faXJxKHN0cnVjdCBtbWNfaG9zdCAqbW1jLCBpbnQgZW5iKQ0KPiAg
-CQlwbV9ydW50aW1lX3B1dF9ub2lkbGUoaG9zdC0+ZGV2KTsNCj4gIH0NCj4gIA0KPiArI2lmIElT
-X0VOQUJMRUQoQ09ORklHX01NQ19DUUhDSSkNCj4gK3N0YXRpYyBpcnFyZXR1cm5fdCBtc2RjX2Nt
-ZHFfaXJxKHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QsIHUzMiBpbnRzdHMpDQo+ICt7DQo+ICsJaW50
-IGNtZF9lcnIgPSAwLCBkYXRfZXJyID0gMDsNCj4gKw0KPiArCWlmIChpbnRzdHMgJiBNU0RDX0lO
-VF9SU1BDUkNFUlIpIHsNCj4gKwkJY21kX2VyciA9ICh1bnNpZ25lZCBpbnQpLUVJTFNFUTsNCj4g
-KwkJZGV2X2Vycihob3N0LT5kZXYsICIlczogQ01EIENSQyBFUlIiLCBfX2Z1bmNfXyk7DQo+ICsJ
-fSBlbHNlIGlmIChpbnRzdHMgJiBNU0RDX0lOVF9DTURUTU8pIHsNCj4gKwkJY21kX2VyciA9ICh1
-bnNpZ25lZCBpbnQpLUVUSU1FRE9VVDsNCj4gKwkJZGV2X2Vycihob3N0LT5kZXYsICIlczogQ01E
-IFRJTUVPVVQgRVJSIiwgX19mdW5jX18pOw0KPiArCX0NCj4gKw0KPiArCWlmIChpbnRzdHMgJiBN
-U0RDX0lOVF9EQVRDUkNFUlIpIHsNCj4gKwkJZGF0X2VyciA9ICh1bnNpZ25lZCBpbnQpLUVJTFNF
-UTsNCj4gKwkJZGV2X2Vycihob3N0LT5kZXYsICIlczogREFUQSBDUkMgRVJSIiwgX19mdW5jX18p
-Ow0KPiArCX0gZWxzZSBpZiAoaW50c3RzICYgTVNEQ19JTlRfREFUVE1PKSB7DQo+ICsJCWRhdF9l
-cnIgPSAodW5zaWduZWQgaW50KS1FVElNRURPVVQ7DQo+ICsJCWRldl9lcnIoaG9zdC0+ZGV2LCAi
-JXM6IERBVEEgVElNRU9VVCBFUlIiLCBfX2Z1bmNfXyk7DQo+ICsJfQ0KPiArDQo+ICsJaWYgKGNt
-ZF9lcnIgfHwgZGF0X2Vycikgew0KPiArCQlkZXZfZXJyKGhvc3QtPmRldiwgImNtZF9lcnIgPSAl
-ZCwgZGF0X2VyciA9JWQsIGludHN0cyA9IDB4JXgiLA0KPiArCQkJY21kX2VyciwgZGF0X2Vyciwg
-aW50c3RzKTsNCj4gKwl9DQo+ICsNCj4gKwlyZXR1cm4gY3FoY2lfaXJxKGhvc3QtPm1tYywgMCwg
-Y21kX2VyciwgZGF0X2Vycik7DQo+ICt9DQo+ICsjZW5kaWYNCj4gKw0KPiAgc3RhdGljIGlycXJl
-dHVybl90IG1zZGNfaXJxKGludCBpcnEsIHZvaWQgKmRldl9pZCkNCj4gIHsNCj4gIAlzdHJ1Y3Qg
-bXNkY19ob3N0ICpob3N0ID0gKHN0cnVjdCBtc2RjX2hvc3QgKikgZGV2X2lkOw0KPiBAQCAtMTQ2
-Miw2ICsxNTIwLDE2IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBtc2RjX2lycShpbnQgaXJxLCB2b2lk
-ICpkZXZfaWQpDQo+ICAJCWlmICghKGV2ZW50cyAmIChldmVudF9tYXNrICYgfk1TRENfSU5UX1NE
-SU9JUlEpKSkNCj4gIAkJCWJyZWFrOw0KPiAgDQo+ICsjaWYgSVNfRU5BQkxFRChDT05GSUdfTU1D
-X0NRSENJKQ0KPiArCQlpZiAoKGhvc3QtPm1tYy0+Y2FwczIgJiBNTUNfQ0FQMl9DUUUpICYmDQo+
-ICsJCSAgICAoZXZlbnRzICYgTVNEQ19JTlRfQ01EUSkpIHsNCj4gKwkJCW1zZGNfY21kcV9pcnEo
-aG9zdCwgZXZlbnRzKTsNCj4gKwkJCS8qIGNsZWFyIGludGVycnVwdHMgKi8NCj4gKwkJCXdyaXRl
-bChldmVudHMsIGhvc3QtPmJhc2UgKyBNU0RDX0lOVCk7DQo+ICsJCQlyZXR1cm4gSVJRX0hBTkRM
-RUQ7DQo+ICsJCX0NCj4gKyNlbmRpZg0KPiArDQo+ICAJCWlmICghbXJxKSB7DQo+ICAJCQlkZXZf
-ZXJyKGhvc3QtPmRldiwNCj4gIAkJCQkiJXM6IE1SUT1OVUxMOyBldmVudHM9JTA4WDsgZXZlbnRf
-bWFzaz0lMDhYXG4iLA0KPiBAQCAtMjE0Niw2ICsyMjE0LDM2IEBAIHN0YXRpYyBpbnQgbXNkY19n
-ZXRfY2Qoc3RydWN0IG1tY19ob3N0ICptbWMpDQo+ICAJCXJldHVybiAhdmFsOw0KPiAgfQ0KPiAg
-DQo+ICtzdGF0aWMgdm9pZCBtc2RjX2NxZV9lbmFibGUoc3RydWN0IG1tY19ob3N0ICptbWMpDQo+
-ICt7DQo+ICsJc3RydWN0IG1zZGNfaG9zdCAqaG9zdCA9IG1tY19wcml2KG1tYyk7DQo+ICsNCj4g
-KwkvKiBlbmFibGUgY21kcSBpcnEgKi8NCj4gKwl3cml0ZWwoTVNEQ19JTlRfQ01EUSwgaG9zdC0+
-YmFzZSArIE1TRENfSU5URU4pOw0KPiArCS8qIGVuYWJsZSBidXN5IGNoZWNrICovDQo+ICsJc2Ry
-X3NldF9iaXRzKGhvc3QtPmJhc2UgKyBNU0RDX1BBVENIX0JJVDEsIE1TRENfUEIxX0JVU1lfQ0hF
-Q0tfU0VMKTsNCj4gKwkvKiBkZWZhdWx0IHdyaXRlIGRhdGEgLyBidXN5IHRpbWVvdXQgMjBzICov
-DQo+ICsJbXNkY19zZXRfYnVzeV90aW1lb3V0KGhvc3QsIDIwICogMTAwMDAwMDAwMFVMTCwgMCk7
-DQo+ICsJLyogZGVmYXVsdCByZWFkIGRhdGEgdGltZW91dCAxcyAqLw0KPiArCW1zZGNfc2V0X3Rp
-bWVvdXQoaG9zdCwgMTAwMDAwMDAwMFVMTCwgMCk7DQo+ICt9DQo+ICsNCj4gK3ZvaWQgbXNkY19j
-cWVfZGlzYWJsZShzdHJ1Y3QgbW1jX2hvc3QgKm1tYywgYm9vbCByZWNvdmVyeSkNCj4gK3sNCj4g
-KwlzdHJ1Y3QgbXNkY19ob3N0ICpob3N0ID0gbW1jX3ByaXYobW1jKTsNCj4gKw0KPiArCS8qIGRp
-c2FibGUgY21kcSBpcnEgKi8NCj4gKwlzZHJfY2xyX2JpdHMoaG9zdC0+YmFzZSArIE1TRENfSU5U
-RU4sIE1TRENfSU5UX0NNRFEpOw0KPiArCS8qIGRpc2FibGUgYnVzeSBjaGVjayAqLw0KPiArCXNk
-cl9jbHJfYml0cyhob3N0LT5iYXNlICsgTVNEQ19QQVRDSF9CSVQxLCBNU0RDX1BCMV9CVVNZX0NI
-RUNLX1NFTCk7DQo+ICsNCj4gKwlpZiAocmVjb3ZlcnkpIHsNCj4gKwkJc2RyX3NldF9maWVsZCho
-b3N0LT5iYXNlICsgTVNEQ19ETUFfQ1RSTCwNCj4gKwkJCSAgICAgIE1TRENfRE1BX0NUUkxfU1RP
-UCwgMSk7DQo+ICsJCW1zZGNfcmVzZXRfaHcoaG9zdCk7DQo+ICsJfQ0KPiArfQ0KPiArDQo+ICBz
-dGF0aWMgY29uc3Qgc3RydWN0IG1tY19ob3N0X29wcyBtdF9tc2RjX29wcyA9IHsNCj4gIAkucG9z
-dF9yZXEgPSBtc2RjX3Bvc3RfcmVxLA0KPiAgCS5wcmVfcmVxID0gbXNkY19wcmVfcmVxLA0KPiBA
-QCAtMjE2Miw2ICsyMjYwLDExIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbW1jX2hvc3Rfb3BzIG10
-X21zZGNfb3BzID0gew0KPiAgCS5od19yZXNldCA9IG1zZGNfaHdfcmVzZXQsDQo+ICB9Ow0KPiAg
-DQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGNxaGNpX2hvc3Rfb3BzIG1zZGNfY21kcV9vcHMgPSB7
-DQo+ICsJLmVuYWJsZSAgICAgICAgID0gbXNkY19jcWVfZW5hYmxlLA0KPiArCS5kaXNhYmxlICAg
-ICAgICA9IG1zZGNfY3FlX2Rpc2FibGUsDQo+ICt9Ow0KPiArDQo+ICBzdGF0aWMgdm9pZCBtc2Rj
-X29mX3Byb3BlcnR5X3BhcnNlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYsDQo+ICAJCQkJ
-ICAgc3RydWN0IG1zZGNfaG9zdCAqaG9zdCkNCj4gIHsNCj4gQEAgLTIzMTIsNiArMjQxNSwyMiBA
-QCBzdGF0aWMgaW50IG1zZGNfZHJ2X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
-DQo+ICAJCWhvc3QtPmRtYV9tYXNrID0gRE1BX0JJVF9NQVNLKDMyKTsNCj4gIAltbWNfZGV2KG1t
-YyktPmRtYV9tYXNrID0gJmhvc3QtPmRtYV9tYXNrOw0KPiAgDQo+ICsjaWYgSVNfRU5BQkxFRChD
-T05GSUdfTU1DX0NRSENJKQ0KPiArCWlmIChtbWMtPmNhcHMyICYgTU1DX0NBUDJfQ1FFKSB7DQo+
-ICsJCWhvc3QtPmNxX2hvc3QgPSBkZXZtX2t6YWxsb2MoaG9zdC0+bW1jLT5wYXJlbnQsDQo+ICsJ
-CQkJCSAgICAgc2l6ZW9mKCpob3N0LT5jcV9ob3N0KSwNCj4gKwkJCQkJICAgICBHRlBfS0VSTkVM
-KTsNCnNob3VsZCBmcmVlIHRoaXMgbWVtb3J5IGlmIGl0IGlzIG5vdCB1c2VkIGFueSBtb3JlLg0K
-PiArCQlob3N0LT5jcV9ob3N0LT5jYXBzIHw9IENRSENJX1RBU0tfREVTQ19TWl8xMjg7DQo+ICsJ
-CWhvc3QtPmNxX2hvc3QtPm1taW8gPSBob3N0LT5iYXNlICsgMHg4MDA7DQo+ICsJCWhvc3QtPmNx
-X2hvc3QtPm9wcyA9ICZtc2RjX2NtZHFfb3BzOw0KPiArCQljcWhjaV9pbml0KGhvc3QtPmNxX2hv
-c3QsIG1tYywgdHJ1ZSk7DQo+ICsJCW1tYy0+bWF4X3NlZ3MgPSAxMjg7DQo+ICsJCS8qIGNxaGNp
-IDE2Yml0IGxlbmd0aCAqLw0KPiArCQkvKiAwIHNpemUsIG1lYW5zIDY1NTM2IHNvIHdlIGRvbid0
-IGhhdmUgdG8gLTEgaGVyZSAqLw0KPiArCQltbWMtPm1heF9zZWdfc2l6ZSA9IDY0ICogMTAyNDsN
-Cj4gKwl9DQo+ICsjZW5kaWYNCj4gKw0KPiAgCWhvc3QtPnRpbWVvdXRfY2xrcyA9IDMgKiAxMDQ4
-NTc2Ow0KPiAgCWhvc3QtPmRtYS5ncGQgPSBkbWFfYWxsb2NfY29oZXJlbnQoJnBkZXYtPmRldiwN
-Cj4gIAkJCQkyICogc2l6ZW9mKHN0cnVjdCBtdF9ncGRtYV9kZXNjKSwNCg0K
+20.04.2020 22:53, Jon Hunter пишет:
+> Hi Dmitry,
+> 
+> On 24/03/2020 19:12, Dmitry Osipenko wrote:
+>> Boot CPU0 always handle I2C interrupt and under some rare circumstances
+>> (like running KASAN + NFS root) it may stuck in uninterruptible state for
+>> a significant time. In this case we will get timeout if I2C transfer is
+>> running on a sibling CPU, despite of IRQ being raised. In order to handle
+>> this rare condition, the IRQ status needs to be checked after completion
+>> timeout.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/i2c/busses/i2c-tegra.c | 27 +++++++++++++++------------
+>>  1 file changed, 15 insertions(+), 12 deletions(-)
+> 
+> 
+> I have noticed a regression on tegra30-cardhu-a04 when testing system
+> suspend. Git bisect is pointing to this commit and reverting it fixes
+> the problem. In the below console log I2C fails to resume ...
+>> [   40.888512] usb1_vbus: supplied by 5v0
+> [   40.892408] vddio_sdmmc,avdd_vdac: supplied by 5v0
+> [   40.897401] cam_1v8: disabling
+> [   40.900548] modem_3v3: disabling
+> [   40.903875] vdd_cam1_ldo: disabling
+> [   40.907501] vdd_cam2_ldo: disabling
+> [   40.911092] vdd_cam3_ldo: disabling
+> [   40.914714] vdd_fuse_3v3: disabling
+> [   40.918305] vddio_vid: disabling
+> [   40.921623] usb1_vbus: disabling
+> [   59.445032] PM: suspend entry (deep)
+> [   59.448852] Filesystems sync: 0.000 seconds
+> [   59.456161] Freezing user space processes ... (elapsed 0.001 seconds) done.
+> [   59.457645] OOM killer disabled.
+> [   59.457649] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+
+1. Previously, without my patch, I2C was failing here:
+
+[   59.543528] tegra-i2c 7000d000.i2c: i2c transfer timed out
+[   59.549036] vdd_sata,avdd_plle: failed to disable
+[   59.553778] Failed to disable avdd-plle: -110
+[   59.558150] tegra-pcie 3000.pcie: failed to disable regulators: -110
+
+The I2C was failing because interrupts are force-disabled in the NOIRQ
+suspend phase. This means that the regulator_bulk_disable() of the PCIe
+driver failed on suspend and regulators were kept to the "enabled" state.
+
+https://elixir.bootlin.com/linux/v5.7-rc3/source/drivers/regulator/core.c#L4526
+
+Although, the vdd_sata,avdd_plle should be disabled actually, since I2C
+returned a spurious error.
+
+2. Now, with my patch, the I2C also times out, but I2C interrupt is
+manually handled by the I2C driver after the timeout. Hence regulators
+are getting disabled successfully on the PCIe suspend.
+
+> [   59.764926] Disabling non-boot CPUs ...
+> [   59.769540] IRQ 18: no longer affine to CPU1
+> [   59.789070] IRQ 19: no longer affine to CPU2
+> [   59.808049] IRQ 20: no longer affine to CPU3
+> [   59.827113] Entering suspend state LP1
+> [   59.827163] Enabling non-boot CPUs ...
+> [   59.834797] CPU1 is up
+> [   59.840943] CPU2 is up
+> [   59.847378] CPU3 is up
+> [   59.850577] tegra-i2c 7000d000.i2c: runtime resume failed -13
+> [   59.856432] tegra-i2c 7000d000.i2c: runtime resume failed -13
+> [   59.862231] tegra-i2c 7000d000.i2c: runtime resume failed -13
+> [   59.868070] vdd_pexa,vdd_pexb: is_enabled() failed: -13
+> [   59.873334] tegra-i2c 7000d000.i2c: runtime resume failed -13
+> [   59.879143] vdd_pexa,vdd_pexb: is_enabled() failed: -13
+> [   59.884420] Failed to enable avdd-pex-pll: -13
+> [   59.888877] Failed to enable avdd-plle: -13
+> [   59.893061] Failed to enable avdd-pexb: -13
+> [   59.897279] Failed to enable vdd-pexb: -13
+
+3. This error didn't happen before because regulators were in the
+enabled state on resume from suspend. Hence on each resume from suspend
+the PCIe regulator's use-count should be bumped by one.
+
+4. Now, the regulators are in the disabled state on resume from suspend.
+Hence regulator_bulk_enable() of PCIe tries to enable them on resume,
+but fails because I2C RPM can't be resumed by that time.
+
+I'm not sure why RPM enable/disable behavior is inconsistent for
+suspend/resume. Apparently the I2C RPM is getting disabled late on
+suspend and also getting enabled late on resume. This needs a clarification.
+
+> [   59.901383] tegra-pcie 3000.pcie: failed to enable regulators: -13
+> [   60.434185] clk_plle_training: timeout waiting for PLLE
+> [   60.439565] tegra-pcie 3000.pcie: failed to enable CML clock: -16
+
+5. The PCIe driver ignores the regulator_bulk_enable/disable() errors,
+hence hardware can't power up properly.
+
+https://elixir.bootlin.com/linux/v5.7-rc3/source/drivers/pci/controller/pci-tegra.c#L1231
+
+> [   60.445700] ------------[ cut here ]------------
+> [   60.450346] WARNING: CPU: 0 PID: 653 at /home/jonathanh/workdir/tegra/mlt-linux_next/kernel/drivers/regulator/core.c:2603 _regulator_disable+0xb8/0x1b4
+> [   60.463959] unbalanced disables for vdd_pexa,vdd_pexb
+
+6. The CML clock failed to enable and PCIe tries to disable regulators.
+
+https://elixir.bootlin.com/linux/v5.7-rc3/source/drivers/pci/controller/pci-tegra.c#L1258
+
+But regulators failed to be enabled before and that error was ignored!
+Hence now there is the unbalanced disable error.
+
+> [   60.469038] Modules linked in:
+> [   60.472107] CPU: 0 PID: 653 Comm: rtcwake Tainted: G        W         5.7.0-rc2-next-20200420 #2
+> [   60.480892] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [   60.487190] [<c0111b68>] (unwind_backtrace) from [<c010bc00>] (show_stack+0x10/0x14)
+> [   60.494951] [<c010bc00>] (show_stack) from [<c0480f14>] (dump_stack+0xc0/0xd4)
+> [   60.502189] [<c0480f14>] (dump_stack) from [<c01234a4>] (__warn+0xe0/0xf8)
+> [   60.509073] [<c01234a4>] (__warn) from [<c0123530>] (warn_slowpath_fmt+0x74/0xb8)
+> [   60.516568] [<c0123530>] (warn_slowpath_fmt) from [<c0516714>] (_regulator_disable+0xb8/0x1b4)
+> [   60.525191] [<c0516714>] (_regulator_disable) from [<c0516844>] (regulator_disable+0x34/0xd0)
+> [   60.533729] [<c0516844>] (regulator_disable) from [<c0518488>] (regulator_bulk_disable+0x28/0xb4)
+> [   60.542619] [<c0518488>] (regulator_bulk_disable) from [<c04dbc84>] (tegra_pcie_pm_resume+0xbb0/0x107c)
+> [   60.552032] [<c04dbc84>] (tegra_pcie_pm_resume) from [<c05f7e44>] (dpm_run_callback+0x38/0x1d4)
+> [   60.560741] [<c05f7e44>] (dpm_run_callback) from [<c05f8af8>] (device_resume_noirq+0x110/0x248)
+> [   60.569451] [<c05f8af8>] (device_resume_noirq) from [<c05f93e0>] (dpm_resume_noirq+0x10c/0x36c)
+> [   60.578162] [<c05f93e0>] (dpm_resume_noirq) from [<c017dd74>] (suspend_devices_and_enter+0x27c/0x9dc)
+> [   60.587393] [<c017dd74>] (suspend_devices_and_enter) from [<c017e7dc>] (pm_suspend+0x308/0x370)
+> [   60.596110] [<c017e7dc>] (pm_suspend) from [<c017cb30>] (state_store+0x6c/0xc8)
+> [   60.603440] [<c017cb30>] (state_store) from [<c03138e4>] (kernfs_fop_write+0xf8/0x210)
+> [   60.611379] [<c03138e4>] (kernfs_fop_write) from [<c0286c44>] (__vfs_write+0x2c/0x1c4)
+> [   60.619310] [<c0286c44>] (__vfs_write) from [<c02886e8>] (vfs_write+0xa4/0x188)
+> [   60.626632] [<c02886e8>] (vfs_write) from [<c028898c>] (ksys_write+0xa4/0xd4)
+> [   60.633778] [<c028898c>] (ksys_write) from [<c01000c0>] (ret_fast_syscall+0x0/0x54)
+> [   60.641437] Exception stack(0xeda91fa8 to 0xeda91ff0)
+> [   60.646497] 1fa0:                   0000006c 00498438 00000004 00498438 00000004 00000000
+> [   60.654683] 1fc0: 0000006c 00498438 00497228 00000004 00000004 00000004 0048478c 00497228
+> [   60.662866] 1fe0: 00000004 be9029b8 b6ec8c0b b6e53206
+> [   60.668007] ---[ end trace 5453317048e46ae9 ]---
+> [   60.672632] Failed to disable vdd-pexb: -5
+> [   60.676761] tegra-pcie 3000.pcie: tegra pcie power on fail: -16
+> [   60.682694] PM: dpm_run_callback(): tegra_pcie_pm_resume+0x0/0x107c returns -16
+> [   60.690035] PM: Device 3000.pcie failed to resume noirq: error -16
+> [   60.696859] tegra-mc 7000f000.memory-controller: fdcdwr2: write @0x877e8400: EMEM address decode error (SMMU translation error [--S])
+> [   60.708876] tegra-mc 7000f000.memory-controller: fdcdwr2: write @0x877e8400: Page fault (SMMU translation error [--S])
+
+7. This MC error may happen because the PCIe regulators were not enabled
+during the resume process and then ungating PCIe powerdomain and clocks
+caused the SoC hardware malfunction.
