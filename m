@@ -1,72 +1,61 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V1 4/4] usb: gadget: tegra-xudc: add port_speed_quirk
-Date: Tue, 28 Apr 2020 14:25:12 +0200
-Message-ID: <20200428122512.GN3592148@ulmo>
-References: <1587022460-31988-1-git-send-email-nkristam@nvidia.com>
- <1587022460-31988-5-git-send-email-nkristam@nvidia.com>
+From: "yong.mao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org" <yong.mao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v5 3/5] mmc: mediatek: refine msdc timeout api
+Date: Tue, 28 Apr 2020 20:28:47 +0800
+Message-ID: <1588076927.730.2.camel@mhfsdcap03>
+References: <1588031768-23677-1-git-send-email-chun-hung.wu@mediatek.com>
+         <1588031768-23677-4-git-send-email-chun-hung.wu@mediatek.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NJSRbAqOy4NeGDns"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1587022460-31988-5-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1588031768-23677-4-git-send-email-chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>M
 List-Id: linux-tegra@vger.kernel.org
 
-
---NJSRbAqOy4NeGDns
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Apr 16, 2020 at 01:04:20PM +0530, Nagarjuna Kristam wrote:
-> Add port_speed_quirk that modify below registers to limit/restore OTG
-> port speed to GEN1/GEN2.
-> SSPX_CORE_CNT56
-> SSPX_CORE_CNT57
-> SSPX_CORE_CNT65
-> SSPX_CORE_CNT66
-> SSPX_CORE_CNT67
-> SSPX_CORE_CNT72
->=20
-> The basic idea is to make SCD intentionally fail, reduce SCD timeout and
-> force device transit to TSEQ. Enable this flag to only Tegra194.
->=20
-> Based on work by WayneChang <waynec-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/usb/gadget/udc/tegra-xudc.c | 106 ++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 106 insertions(+)
-
-You're telling readers what you're doing, but after reading the commit
-message, I have no idea why this is being done. Can you provide more
-information on why exactly is this needed? Why do we have to limit the
-OTG port speed?
-
-Thierry
-
---NJSRbAqOy4NeGDns
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6oIKgACgkQ3SOs138+
-s6H1XRAAgIkN+EUOOO1bRRCqdItpBhUzAnXz56qxx16NpYjpIjJPHwPtCDwb2XhK
-NK6gSk93H07QtoJtWLRt74q5c/exqcYbFDpP1Zx1tnPaK9IlTi0x450TBO6cW5QC
-NDeOAyRwckbJT16Iab59ZOM6uSIW2VnB2eHHmEiq46mKPm/TQb2aE3lJMjkNskE7
-ZzW7SCNwfkJu7r8WcDq/+4jYjg+/0viQ/jd8gyZCJ+WqQu+G6qlPws2D7sVlta6Z
-PjC4lWFddArpC6W1Xvhq+I0cDJ4ActilTeIeOnSPF60T52S1Uso4cJRBn0AwGcaG
-Eoab3z2D9s1HkbvCwbteWpMnXWuscXasxKonQ71Z4ifwcQFxoXRtNLBFKrX+Zdxy
-azEmdmu/6WF5AY28LvmM36UzWvQgPcXimOE2Bb+fOUOb7jW4qtqTNbBPtSJg8zqP
-NlzMxQ5JDfxhdG7W/A9MzV31cuDjLSWCI59BGSEOcoKjN3ehapybAHxfacvpqarz
-VoEvo/KG2AykqH8Xx5DJU7eLyOHZKSTF86mHKCucU2G+7NcdMi+j8kQwhzY41rDH
-2G4Jh8ycg/HpjIdQLXebWLZh+afh2M0LxX9ShM6MJ4KrTph0hbnzf72mCHhmRzFk
-C5g1JrwbmRR+tdwsfbSUHOnK7S4J+kG65VCCuyKexREetPWzeY0=
-=KTH2
------END PGP SIGNATURE-----
-
---NJSRbAqOy4NeGDns--
+T24gVHVlLCAyMDIwLTA0LTI4IGF0IDA3OjU2ICswODAwLCBDaHVuLUh1bmcgV3Ugd3JvdGU6DQo+
+IEV4dHJhY3QgbXNkYyB0aW1lb3V0IGFwaSBjb21tb24gcGFydCB0byBoYXZlDQo+IGJldHRlciBj
+b2RlIGFyY2hpdGVjdHVyZSBhbmQgYXZvaWQgcmVkdW5kZW50DQpwbGVhc2UgY29ycmVjdCB0aGUg
+d29yZCAicmVkdW5kYW50IiBpbiBuZXh0IHZlcnNpb24NCj4gY29kZS4NCj4gDQo+IFNpZ25lZC1v
+ZmYtYnk6IENodW4tSHVuZyBXdSA8Y2h1bi1odW5nLnd1QG1lZGlhdGVrLmNvbT4NCkFja2VkLWJ5
+OiBZb25nIE1hbyA8eW9uZy5tYW9AbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbW1j
+L2hvc3QvbXRrLXNkLmMgfCAzMiArKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLQ0KPiAg
+MSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQ0KPiANCj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2hvc3QvbXRrLXNkLmMgYi9kcml2ZXJzL21tYy9ob3N0
+L210ay1zZC5jDQo+IGluZGV4IDc3MjZkY2YuLmEyMzI4ZmIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
+cnMvbW1jL2hvc3QvbXRrLXNkLmMNCj4gKysrIGIvZHJpdmVycy9tbWMvaG9zdC9tdGstc2QuYw0K
+PiBAQCAtNjk5LDIxICs2OTksMjEgQEAgc3RhdGljIHZvaWQgbXNkY191bnByZXBhcmVfZGF0YShz
+dHJ1Y3QgbXNkY19ob3N0ICpob3N0LCBzdHJ1Y3QgbW1jX3JlcXVlc3QgKm1ycSkNCj4gIAl9DQo+
+ICB9DQo+ICANCj4gLS8qIGNsb2NrIGNvbnRyb2wgcHJpbWl0aXZlcyAqLw0KPiAtc3RhdGljIHZv
+aWQgbXNkY19zZXRfdGltZW91dChzdHJ1Y3QgbXNkY19ob3N0ICpob3N0LCB1MzIgbnMsIHUzMiBj
+bGtzKQ0KPiArc3RhdGljIHU2NCBtc2RjX3RpbWVvdXRfY2FsKHN0cnVjdCBtc2RjX2hvc3QgKmhv
+c3QsIHU2NCBucywgdTY0IGNsa3MpDQo+ICB7DQo+IC0JdTMyIHRpbWVvdXQsIGNsa19uczsNCj4g
+Kwl1NjQgdGltZW91dCwgY2xrX25zOw0KPiAgCXUzMiBtb2RlID0gMDsNCj4gIA0KPiAtCWhvc3Qt
+PnRpbWVvdXRfbnMgPSBuczsNCj4gLQlob3N0LT50aW1lb3V0X2Nsa3MgPSBjbGtzOw0KPiAgCWlm
+IChob3N0LT5tbWMtPmFjdHVhbF9jbG9jayA9PSAwKSB7DQo+ICAJCXRpbWVvdXQgPSAwOw0KPiAg
+CX0gZWxzZSB7DQo+IC0JCWNsa19ucyAgPSAxMDAwMDAwMDAwVUwgLyBob3N0LT5tbWMtPmFjdHVh
+bF9jbG9jazsNCj4gLQkJdGltZW91dCA9IChucyArIGNsa19ucyAtIDEpIC8gY2xrX25zICsgY2xr
+czsNCj4gKwkJY2xrX25zICA9IDEwMDAwMDAwMDBVTEw7DQo+ICsJCWRvX2RpdihjbGtfbnMsIGhv
+c3QtPm1tYy0+YWN0dWFsX2Nsb2NrKTsNCj4gKwkJdGltZW91dCA9IG5zICsgY2xrX25zIC0gMTsN
+Cj4gKwkJZG9fZGl2KHRpbWVvdXQsIGNsa19ucyk7DQo+ICsJCXRpbWVvdXQgKz0gY2xrczsNCj4g
+IAkJLyogaW4gMTA0ODU3NiBzY2xrIGN5Y2xlIHVuaXQgKi8NCj4gLQkJdGltZW91dCA9ICh0aW1l
+b3V0ICsgKDB4MSA8PCAyMCkgLSAxKSA+PiAyMDsNCj4gKwkJdGltZW91dCA9IERJVl9ST1VORF9V
+UCh0aW1lb3V0LCAoMHgxIDw8IDIwKSk7DQo+ICAJCWlmIChob3N0LT5kZXZfY29tcC0+Y2xrX2Rp
+dl9iaXRzID09IDgpDQo+ICAJCQlzZHJfZ2V0X2ZpZWxkKGhvc3QtPmJhc2UgKyBNU0RDX0NGRywN
+Cj4gIAkJCQkgICAgICBNU0RDX0NGR19DS01PRCwgJm1vZGUpOw0KPiBAQCAtNzIzLDkgKzcyMywy
+MSBAQCBzdGF0aWMgdm9pZCBtc2RjX3NldF90aW1lb3V0KHN0cnVjdCBtc2RjX2hvc3QgKmhvc3Qs
+IHUzMiBucywgdTMyIGNsa3MpDQo+ICAJCS8qRERSIG1vZGUgd2lsbCBkb3VibGUgdGhlIGNsayBj
+eWNsZXMgZm9yIGRhdGEgdGltZW91dCAqLw0KPiAgCQl0aW1lb3V0ID0gbW9kZSA+PSAyID8gdGlt
+ZW91dCAqIDIgOiB0aW1lb3V0Ow0KPiAgCQl0aW1lb3V0ID0gdGltZW91dCA+IDEgPyB0aW1lb3V0
+IC0gMSA6IDA7DQo+IC0JCXRpbWVvdXQgPSB0aW1lb3V0ID4gMjU1ID8gMjU1IDogdGltZW91dDsN
+Cj4gIAl9DQo+IC0Jc2RyX3NldF9maWVsZChob3N0LT5iYXNlICsgU0RDX0NGRywgU0RDX0NGR19E
+VE9DLCB0aW1lb3V0KTsNCj4gKwlyZXR1cm4gdGltZW91dDsNCj4gK30NCj4gKw0KPiArLyogY2xv
+Y2sgY29udHJvbCBwcmltaXRpdmVzICovDQo+ICtzdGF0aWMgdm9pZCBtc2RjX3NldF90aW1lb3V0
+KHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QsIHU2NCBucywgdTY0IGNsa3MpDQo+ICt7DQo+ICsJdTY0
+IHRpbWVvdXQ7DQo+ICsNCj4gKwlob3N0LT50aW1lb3V0X25zID0gbnM7DQo+ICsJaG9zdC0+dGlt
+ZW91dF9jbGtzID0gY2xrczsNCj4gKw0KPiArCXRpbWVvdXQgPSBtc2RjX3RpbWVvdXRfY2FsKGhv
+c3QsIG5zLCBjbGtzKTsNCj4gKwlzZHJfc2V0X2ZpZWxkKGhvc3QtPmJhc2UgKyBTRENfQ0ZHLCBT
+RENfQ0ZHX0RUT0MsDQo+ICsJCSAgICAgICh1MzIpKHRpbWVvdXQgPiAyNTUgPyAyNTUgOiB0aW1l
+b3V0KSk7DQo+ICB9DQo+ICANCj4gIHN0YXRpYyB2b2lkIG1zZGNfZ2F0ZV9jbG9jayhzdHJ1Y3Qg
+bXNkY19ob3N0ICpob3N0KQ0KDQo=
