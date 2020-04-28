@@ -1,95 +1,66 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH v1 0/5] media: tegra: Tegra video driver follow-up
- patches
-Date: Tue, 28 Apr 2020 07:52:39 -0700
-Message-ID: <8ae1bfca-e4bf-ed67-8945-646a6121875a@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH v1 3/5] media: tegra-video: Move PM runtime handle to
+ streaming
+Date: Tue, 28 Apr 2020 17:59:13 +0300
+Message-ID: <2b334095-fadb-bf0a-f7a8-62fc798c2bd2@gmail.com>
 References: <1588047650-29402-1-git-send-email-skomatineni@nvidia.com>
- <5f065fc5-0f45-6b9e-068c-28d0a2e4684e@xs4all.nl>
+ <1588047650-29402-4-git-send-email-skomatineni@nvidia.com>
+ <631390cb-9aff-0e3f-6c39-81d6c565987e@gmail.com>
+ <3ef69413-a606-b475-f530-d5534760b73b@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5f065fc5-0f45-6b9e-068c-28d0a2e4684e-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+In-Reply-To: <3ef69413-a606-b475-f530-d5534760b73b-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+28.04.2020 17:51, Sowjanya Komatineni пишет:
+> 
+> On 4/28/20 6:59 AM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 28.04.2020 07:20, Sowjanya Komatineni пишет:
+>>> diff --git a/drivers/staging/media/tegra-video/csi.c
+>>> b/drivers/staging/media/tegra-video/csi.c
+>>> index b3dd0c3..29ccdae 100644
+>>> --- a/drivers/staging/media/tegra-video/csi.c
+>>> +++ b/drivers/staging/media/tegra-video/csi.c
+>>> @@ -272,8 +272,25 @@ static int tegra_csi_s_stream(struct v4l2_subdev
+>>> *subdev, int enable)
+>>>        struct tegra_vi_channel *chan = v4l2_get_subdev_hostdata(subdev);
+>>>        struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
+>>>        struct tegra_csi *csi = csi_chan->csi;
+>>> +     int ret;
+>>> +
+>>> +     if (enable && atomic_add_return(1, &csi->clk_refcnt) == 1) {
+>>> +             ret = pm_runtime_get_sync(csi->dev);
+>>> +             if (ret < 0) {
+>>> +                     dev_err(csi->dev,
+>>> +                             "failed to get runtime PM: %d\n", ret);
+>>> +                     pm_runtime_put_noidle(csi->dev);
+>>> +                     atomic_dec(&csi->clk_refcnt);
+>>> +                     return ret;
+>>> +             }
+>>> +     }
+>>> +
+>>> +     ret = csi->ops->csi_streaming(csi_chan, chan->pg_mode, enable);
+>>>
+>>> -     return csi->ops->csi_streaming(csi_chan, chan->pg_mode, enable);
+>>> +     if ((ret < 0 || !enable) && atomic_dec_and_test(&csi->clk_refcnt))
+>>> +             pm_runtime_put_sync(csi->dev);
+>> Runtime PM maintains its own refcount, why these
+>> clk_refcnt/power_on_refcnt are needed?
+> 
+> Streaming is per channel and we can't turn power/clocks off while other
+> channels may still be running.
+> 
 
-On 4/28/20 12:38 AM, Hans Verkuil wrote:
-> External email: Use caution opening links or attachments
->
->
-> On 28/04/2020 06:20, Sowjanya Komatineni wrote:
->> This is a fllow-up to some last feedback received for Tegra VI driver RFC
->> v10 patches.
->> https://patchwork.linuxtv.org/cover/63334/
->>
->>
->> Sowjanya Komatineni (5):
->>    MAINTAINERS: Rename Tegra Video driver path
->>    media: tegra: Rename driver path to tegra-video
->>    media: tegra-video: Move PM runtime handle to streaming
->>    media: tegra-video: Rearrange SoC specific to Tegra210 and cleanup
->>      files
->>    media: tegra-video: Remove module macros for vi and csi driver
->>
->>   MAINTAINERS                                  |    2 +-
->>   drivers/staging/media/Kconfig                |    2 +-
->>   drivers/staging/media/Makefile               |    2 +-
->>   drivers/staging/media/tegra-video/Kconfig    |   12 +
->>   drivers/staging/media/tegra-video/Makefile   |    8 +
->>   drivers/staging/media/tegra-video/TODO       |   10 +
->>   drivers/staging/media/tegra-video/csi.c      |  536 ++++++++++++
->>   drivers/staging/media/tegra-video/csi.h      |  146 ++++
->>   drivers/staging/media/tegra-video/tegra210.c | 1080 ++++++++++++++++++++++++
->>   drivers/staging/media/tegra-video/vi.c       | 1082 +++++++++++++++++++++++++
->>   drivers/staging/media/tegra-video/vi.h       |  258 ++++++
->>   drivers/staging/media/tegra-video/video.c    |  155 ++++
->>   drivers/staging/media/tegra-video/video.h    |   29 +
->>   drivers/staging/media/tegra/Kconfig          |   12 -
->>   drivers/staging/media/tegra/Makefile         |    8 -
->>   drivers/staging/media/tegra/TODO             |   10 -
->>   drivers/staging/media/tegra/common.h         |  259 ------
->>   drivers/staging/media/tegra/csi.c            |  604 --------------
->>   drivers/staging/media/tegra/csi.h            |  144 ----
->>   drivers/staging/media/tegra/tegra210.c       |  708 ----------------
->>   drivers/staging/media/tegra/tegra210.h       |  190 -----
->>   drivers/staging/media/tegra/vi.c             | 1127 --------------------------
->>   drivers/staging/media/tegra/vi.h             |   72 --
->>   drivers/staging/media/tegra/video.c          |  153 ----
->>   drivers/staging/media/tegra/video.h          |   29 -
->>   25 files changed, 3319 insertions(+), 3319 deletions(-)
-> I thought that the follow-up series was just a rename of a directory
-> and perhaps one or two smaller changes, but this is too much change.
-> I prefer to have a v11 instead with all these changes incorporated.
->
-> Sorry about that,
->
->          Hans
-OK Will send v11. Thanks Hans
->
->>   create mode 100644 drivers/staging/media/tegra-video/Kconfig
->>   create mode 100644 drivers/staging/media/tegra-video/Makefile
->>   create mode 100644 drivers/staging/media/tegra-video/TODO
->>   create mode 100644 drivers/staging/media/tegra-video/csi.c
->>   create mode 100644 drivers/staging/media/tegra-video/csi.h
->>   create mode 100644 drivers/staging/media/tegra-video/tegra210.c
->>   create mode 100644 drivers/staging/media/tegra-video/vi.c
->>   create mode 100644 drivers/staging/media/tegra-video/vi.h
->>   create mode 100644 drivers/staging/media/tegra-video/video.c
->>   create mode 100644 drivers/staging/media/tegra-video/video.h
->>   delete mode 100644 drivers/staging/media/tegra/Kconfig
->>   delete mode 100644 drivers/staging/media/tegra/Makefile
->>   delete mode 100644 drivers/staging/media/tegra/TODO
->>   delete mode 100644 drivers/staging/media/tegra/common.h
->>   delete mode 100644 drivers/staging/media/tegra/csi.c
->>   delete mode 100644 drivers/staging/media/tegra/csi.h
->>   delete mode 100644 drivers/staging/media/tegra/tegra210.c
->>   delete mode 100644 drivers/staging/media/tegra/tegra210.h
->>   delete mode 100644 drivers/staging/media/tegra/vi.c
->>   delete mode 100644 drivers/staging/media/tegra/vi.h
->>   delete mode 100644 drivers/staging/media/tegra/video.c
->>   delete mode 100644 drivers/staging/media/tegra/video.h
->>
+All channels use the same CSI device. You should remove the custom
+refcounting.
+
+BTW, next time you'll really need to do refcounting, use the generic kref.
