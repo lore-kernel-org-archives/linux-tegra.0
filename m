@@ -1,61 +1,99 @@
-From: "yong.mao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org" <yong.mao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v5 3/5] mmc: mediatek: refine msdc timeout api
-Date: Tue, 28 Apr 2020 20:28:47 +0800
-Message-ID: <1588076927.730.2.camel@mhfsdcap03>
-References: <1588031768-23677-1-git-send-email-chun-hung.wu@mediatek.com>
-         <1588031768-23677-4-git-send-email-chun-hung.wu@mediatek.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
+ for a long time
+Date: Tue, 28 Apr 2020 15:37:57 +0300
+Message-ID: <c56acfc2-c87c-7ed7-2cd0-ef31553d910f@gmail.com>
+References: <d2531fc1-b452-717d-af71-19497e14ef00@gmail.com>
+ <a5198024-7273-74c4-b4f4-3a29d042bc36@nvidia.com>
+ <f8fb1f7f-2497-033e-ff2c-c86c6caa9706@gmail.com>
+ <fd1ca178-1ea3-851f-20a6-10bf00453ce3@nvidia.com>
+ <a5734f19-254e-b6bc-e791-fa1ac63f11a4@gmail.com>
+ <79f6560e-dbb5-0ae1-49f8-cf1cd95396ec@nvidia.com>
+ <20200427074837.GC3451400@ulmo>
+ <c1190858-eaea-8e94-b4d1-1cf28076c330@gmail.com>
+ <20200427110033.GC3464906@ulmo>
+ <3a06811c-02dc-ce72-ebef-78c3fc3f4f7c@gmail.com>
+ <20200427151234.GE3464906@ulmo>
+ <1ab276cf-c2b0-e085-49d8-b8ce3dba8fbe@gmail.com>
+ <4981d7eb-b41e-c597-04ff-3d3295804d5a@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1588031768-23677-4-git-send-email-chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>M
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4981d7eb-b41e-c597-04ff-3d3295804d5a-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDIwLTA0LTI4IGF0IDA3OjU2ICswODAwLCBDaHVuLUh1bmcgV3Ugd3JvdGU6DQo+
-IEV4dHJhY3QgbXNkYyB0aW1lb3V0IGFwaSBjb21tb24gcGFydCB0byBoYXZlDQo+IGJldHRlciBj
-b2RlIGFyY2hpdGVjdHVyZSBhbmQgYXZvaWQgcmVkdW5kZW50DQpwbGVhc2UgY29ycmVjdCB0aGUg
-d29yZCAicmVkdW5kYW50IiBpbiBuZXh0IHZlcnNpb24NCj4gY29kZS4NCj4gDQo+IFNpZ25lZC1v
-ZmYtYnk6IENodW4tSHVuZyBXdSA8Y2h1bi1odW5nLnd1QG1lZGlhdGVrLmNvbT4NCkFja2VkLWJ5
-OiBZb25nIE1hbyA8eW9uZy5tYW9AbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbW1j
-L2hvc3QvbXRrLXNkLmMgfCAzMiArKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLQ0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQ0KPiANCj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2hvc3QvbXRrLXNkLmMgYi9kcml2ZXJzL21tYy9ob3N0
-L210ay1zZC5jDQo+IGluZGV4IDc3MjZkY2YuLmEyMzI4ZmIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
-cnMvbW1jL2hvc3QvbXRrLXNkLmMNCj4gKysrIGIvZHJpdmVycy9tbWMvaG9zdC9tdGstc2QuYw0K
-PiBAQCAtNjk5LDIxICs2OTksMjEgQEAgc3RhdGljIHZvaWQgbXNkY191bnByZXBhcmVfZGF0YShz
-dHJ1Y3QgbXNkY19ob3N0ICpob3N0LCBzdHJ1Y3QgbW1jX3JlcXVlc3QgKm1ycSkNCj4gIAl9DQo+
-ICB9DQo+ICANCj4gLS8qIGNsb2NrIGNvbnRyb2wgcHJpbWl0aXZlcyAqLw0KPiAtc3RhdGljIHZv
-aWQgbXNkY19zZXRfdGltZW91dChzdHJ1Y3QgbXNkY19ob3N0ICpob3N0LCB1MzIgbnMsIHUzMiBj
-bGtzKQ0KPiArc3RhdGljIHU2NCBtc2RjX3RpbWVvdXRfY2FsKHN0cnVjdCBtc2RjX2hvc3QgKmhv
-c3QsIHU2NCBucywgdTY0IGNsa3MpDQo+ICB7DQo+IC0JdTMyIHRpbWVvdXQsIGNsa19uczsNCj4g
-Kwl1NjQgdGltZW91dCwgY2xrX25zOw0KPiAgCXUzMiBtb2RlID0gMDsNCj4gIA0KPiAtCWhvc3Qt
-PnRpbWVvdXRfbnMgPSBuczsNCj4gLQlob3N0LT50aW1lb3V0X2Nsa3MgPSBjbGtzOw0KPiAgCWlm
-IChob3N0LT5tbWMtPmFjdHVhbF9jbG9jayA9PSAwKSB7DQo+ICAJCXRpbWVvdXQgPSAwOw0KPiAg
-CX0gZWxzZSB7DQo+IC0JCWNsa19ucyAgPSAxMDAwMDAwMDAwVUwgLyBob3N0LT5tbWMtPmFjdHVh
-bF9jbG9jazsNCj4gLQkJdGltZW91dCA9IChucyArIGNsa19ucyAtIDEpIC8gY2xrX25zICsgY2xr
-czsNCj4gKwkJY2xrX25zICA9IDEwMDAwMDAwMDBVTEw7DQo+ICsJCWRvX2RpdihjbGtfbnMsIGhv
-c3QtPm1tYy0+YWN0dWFsX2Nsb2NrKTsNCj4gKwkJdGltZW91dCA9IG5zICsgY2xrX25zIC0gMTsN
-Cj4gKwkJZG9fZGl2KHRpbWVvdXQsIGNsa19ucyk7DQo+ICsJCXRpbWVvdXQgKz0gY2xrczsNCj4g
-IAkJLyogaW4gMTA0ODU3NiBzY2xrIGN5Y2xlIHVuaXQgKi8NCj4gLQkJdGltZW91dCA9ICh0aW1l
-b3V0ICsgKDB4MSA8PCAyMCkgLSAxKSA+PiAyMDsNCj4gKwkJdGltZW91dCA9IERJVl9ST1VORF9V
-UCh0aW1lb3V0LCAoMHgxIDw8IDIwKSk7DQo+ICAJCWlmIChob3N0LT5kZXZfY29tcC0+Y2xrX2Rp
-dl9iaXRzID09IDgpDQo+ICAJCQlzZHJfZ2V0X2ZpZWxkKGhvc3QtPmJhc2UgKyBNU0RDX0NGRywN
-Cj4gIAkJCQkgICAgICBNU0RDX0NGR19DS01PRCwgJm1vZGUpOw0KPiBAQCAtNzIzLDkgKzcyMywy
-MSBAQCBzdGF0aWMgdm9pZCBtc2RjX3NldF90aW1lb3V0KHN0cnVjdCBtc2RjX2hvc3QgKmhvc3Qs
-IHUzMiBucywgdTMyIGNsa3MpDQo+ICAJCS8qRERSIG1vZGUgd2lsbCBkb3VibGUgdGhlIGNsayBj
-eWNsZXMgZm9yIGRhdGEgdGltZW91dCAqLw0KPiAgCQl0aW1lb3V0ID0gbW9kZSA+PSAyID8gdGlt
-ZW91dCAqIDIgOiB0aW1lb3V0Ow0KPiAgCQl0aW1lb3V0ID0gdGltZW91dCA+IDEgPyB0aW1lb3V0
-IC0gMSA6IDA7DQo+IC0JCXRpbWVvdXQgPSB0aW1lb3V0ID4gMjU1ID8gMjU1IDogdGltZW91dDsN
-Cj4gIAl9DQo+IC0Jc2RyX3NldF9maWVsZChob3N0LT5iYXNlICsgU0RDX0NGRywgU0RDX0NGR19E
-VE9DLCB0aW1lb3V0KTsNCj4gKwlyZXR1cm4gdGltZW91dDsNCj4gK30NCj4gKw0KPiArLyogY2xv
-Y2sgY29udHJvbCBwcmltaXRpdmVzICovDQo+ICtzdGF0aWMgdm9pZCBtc2RjX3NldF90aW1lb3V0
-KHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QsIHU2NCBucywgdTY0IGNsa3MpDQo+ICt7DQo+ICsJdTY0
-IHRpbWVvdXQ7DQo+ICsNCj4gKwlob3N0LT50aW1lb3V0X25zID0gbnM7DQo+ICsJaG9zdC0+dGlt
-ZW91dF9jbGtzID0gY2xrczsNCj4gKw0KPiArCXRpbWVvdXQgPSBtc2RjX3RpbWVvdXRfY2FsKGhv
-c3QsIG5zLCBjbGtzKTsNCj4gKwlzZHJfc2V0X2ZpZWxkKGhvc3QtPmJhc2UgKyBTRENfQ0ZHLCBT
-RENfQ0ZHX0RUT0MsDQo+ICsJCSAgICAgICh1MzIpKHRpbWVvdXQgPiAyNTUgPyAyNTUgOiB0aW1l
-b3V0KSk7DQo+ICB9DQo+ICANCj4gIHN0YXRpYyB2b2lkIG1zZGNfZ2F0ZV9jbG9jayhzdHJ1Y3Qg
-bXNkY19ob3N0ICpob3N0KQ0KDQo=
+28.04.2020 11:01, Jon Hunter пишет:
+> 
+> On 27/04/2020 16:18, Dmitry Osipenko wrote:
+>> 27.04.2020 18:12, Thierry Reding пишет:
+>>> On Mon, Apr 27, 2020 at 05:21:30PM +0300, Dmitry Osipenko wrote:
+>>>> 27.04.2020 14:00, Thierry Reding пишет:
+>>>>> On Mon, Apr 27, 2020 at 12:52:10PM +0300, Dmitry Osipenko wrote:
+>>>>>> 27.04.2020 10:48, Thierry Reding пишет:
+>>>>>> ...
+>>>>>>>> Maybe but all these other problems appear to have existed for sometime
+>>>>>>>> now. We need to fix all, but for the moment we need to figure out what's
+>>>>>>>> best for v5.7.
+>>>>>>>
+>>>>>>> To me it doesn't sound like we have a good handle on what exactly is
+>>>>>>> going on here and we're mostly just poking around.
+>>>>>>>
+>>>>>>> And even if things weren't working quite properly before, it sounds to
+>>>>>>> me like this patch actually made things worse.
+>>>>>>
+>>>>>> There is a plenty of time to work on the proper fix now. To me it sounds
+>>>>>> like you're giving up on fixing the root of the problem, sorry.
+>>>>>
+>>>>> We're at -rc3 now and I haven't seen any promising progress in the last
+>>>>> week. All the while suspend/resume is now broken on at least one board
+>>>>> and that may end up hiding any other issues that could creep in in the
+>>>>> meantime.
+>>>>>
+>>>>> Furthermore we seem to have a preexisting issue that may very well
+>>>>> interfere with this patch, so I think the cautious thing is to revert
+>>>>> for now and then fix the original issue first. We can always come back
+>>>>> to this once everything is back to normal.
+>>>>>
+>>>>> Also, people are now looking at backporting this to v5.6. Unless we
+>>>>> revert this from v5.7 it may get picked up for backports to other
+>>>>> kernels and then I have to notify stable kernel maintainers that they
+>>>>> shouldn't and they have to back things out again. That's going to cause
+>>>>> a lot of wasted time for a lot of people.
+>>>>>
+>>>>> So, sorry, I disagree. I don't think we have "plenty of time".
+>>>>
+>>>> There is about a month now before the 5.7 release. It's a bit too early
+>>>> to start the panic, IMO :)
+>>>
+>>> There's no panic. A patch got merged and it broken something, so we
+>>> revert it and try again. It's very much standard procedure.
+>>>
+>>>> Jon already proposed a reasonable simple solution: to keep PCIe
+>>>> regulators always-ON. In a longer run we may want to have I2C atomic
+>>>> transfers supported for a late suspend phase.
+>>>
+>>> That's not really a solution, though, is it? It's just papering over
+>>> an issue that this patch introduced or uncovered. I'm much more in
+>>> favour of fixing problems at the root rather than keep papering over
+>>> until we loose track of what the actual problems are.
+>>
+>> It's not "papering over an issue". The bug can't be fixed properly
+>> without introducing I2C atomic transfers support for a late suspend
+>> phase, I don't see any other solutions for now. Stable kernels do not
+>> support atomic transfers at all, that proper solution won't be backportable.
+> 
+> 
+> There are a few issues here, but the issue Thierry and I are referring
+> to is the regression introduced by this change. Yes this exposes other
+> problems, but we first need to understand why this breaks resume in
+> general, regardless of what the PCIe driver is doing. I will look at
+> this a bit more later this week.
+
+Let's postpone the reverting by 1-3 weeks then. Likely that there will
+be a proper (and trivial) solution by that time, otherwise it should be
+okay to revert the I2C patch.
