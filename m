@@ -1,75 +1,27 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v1 3/5] media: tegra-video: Move PM runtime handle to
- streaming
-Date: Tue, 28 Apr 2020 19:04:41 +0300
-Message-ID: <f6e34203-3e4b-b804-30a5-bf78445ab366@gmail.com>
-References: <1588047650-29402-1-git-send-email-skomatineni@nvidia.com>
- <1588047650-29402-4-git-send-email-skomatineni@nvidia.com>
- <631390cb-9aff-0e3f-6c39-81d6c565987e@gmail.com>
- <3ef69413-a606-b475-f530-d5534760b73b@nvidia.com>
- <2b334095-fadb-bf0a-f7a8-62fc798c2bd2@gmail.com>
- <18a7b095-7f0f-7819-c786-7e011cfd14ed@nvidia.com>
- <ce31e273-f424-f13e-5cd6-0db2589a2a10@gmail.com>
- <5741d5d3-e474-e23c-4841-809df5760067@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V1 1/4] dt-bindings: usb: tegra-xudc: Add Tegra194 XUSB
+ controller support
+Date: Tue, 28 Apr 2020 11:39:16 -0500
+Message-ID: <20200428163916.GA26582@bogus>
+References: <1587022460-31988-1-git-send-email-nkristam@nvidia.com>
+ <1587022460-31988-2-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5741d5d3-e474-e23c-4841-809df5760067-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1587022460-31988-2-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-28.04.2020 18:22, Sowjanya Komatineni пишет:
+On Thu, 16 Apr 2020 13:04:17 +0530, Nagarjuna Kristam wrote:
+> Extend the Tegra XUSB controller device tree binding with Tegra194
+> support.
 > 
-> On 4/28/20 8:15 AM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 28.04.2020 18:08, Sowjanya Komatineni пишет:
->>> On 4/28/20 7:59 AM, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 28.04.2020 17:51, Sowjanya Komatineni пишет:
->>>>> On 4/28/20 6:59 AM, Dmitry Osipenko wrote:
->>>>>> External email: Use caution opening links or attachments
+> Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Is it possible to disable this corporate-email message?
-
->>>>>>
->>>>>>
->>>>>> 28.04.2020 07:20, Sowjanya Komatineni пишет:
->>>>>>> diff --git a/drivers/staging/media/tegra-video/csi.c
->>>>>>> b/drivers/staging/media/tegra-video/csi.c
->>>>>>> index b3dd0c3..29ccdae 100644
->>>>>>> --- a/drivers/staging/media/tegra-video/csi.c
->>>>>>> +++ b/drivers/staging/media/tegra-video/csi.c
->>>>>>> @@ -272,8 +272,25 @@ static int tegra_csi_s_stream(struct
->>>>>>> v4l2_subdev
->>>>>>> *subdev, int enable)
->>>>>>>          struct tegra_vi_channel *chan =
->>>>>>> v4l2_get_subdev_hostdata(subdev);
->>>>>>>          struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
->>>>>>>          struct tegra_csi *csi = csi_chan->csi;
->>>>>>> +     int ret;
->>>>>>> +
->>>>>>> +     if (enable && atomic_add_return(1, &csi->clk_refcnt) == 1) {
->>>>>>> +             ret = pm_runtime_get_sync(csi->dev);
->>>>>>> +             if (ret < 0) {
->>>>>>> +                     dev_err(csi->dev,
->>>>>>> +                             "failed to get runtime PM: %d\n",
->>>>>>> ret);
->>>>>>> +                     pm_runtime_put_noidle(csi->dev);
->> Why this pm_runtime_put_noidle() is needed? This should be wrong, please
->> remove it.
-> 
-> pm_runtime_get_sync() increments power.usage_count prior to rpm_resume
-> 
-> if rpm_resume fails it does not decrement usage_count.
-> 
-> So to balance count on failure, calling pm_runtime_put_noidle()
-
-Hmm.. maybe you're right. I'll need to take a more detailed look.
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
