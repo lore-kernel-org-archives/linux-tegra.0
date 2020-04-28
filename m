@@ -1,66 +1,63 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 3/8] phy: tegra: xusb: Add support for UTMI pad power
- control
-Date: Tue, 28 Apr 2020 12:16:21 +0200
-Message-ID: <20200428101621.GF3592148@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 4/8] phy: tegra: xusb: Add USB2 pad power control
+ support for Tegra210
+Date: Tue, 28 Apr 2020 12:17:40 +0200
+Message-ID: <20200428101740.GG3592148@ulmo>
 References: <1586939108-10075-1-git-send-email-nkristam@nvidia.com>
- <1586939108-10075-4-git-send-email-nkristam@nvidia.com>
+ <1586939108-10075-5-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="juZjCTNxrMaZdGZC"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="DWg365Y4B18r8evw"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1586939108-10075-4-git-send-email-nkristam@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nagarjuna Kristam <nkristam@nvidia.com>
-Cc: balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org, kishon@ti.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1586939108-10075-5-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---juZjCTNxrMaZdGZC
+--DWg365Y4B18r8evw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 15, 2020 at 01:55:03PM +0530, Nagarjuna Kristam wrote:
-> Add support for UTMI pad power on and off API's via soc ops. These API
-> can be used by operations like charger detect to power on and off UTMI
-> pad if needed. Update powered_on flag in the pad power control API's.
+On Wed, Apr 15, 2020 at 01:55:04PM +0530, Nagarjuna Kristam wrote:
+> Add USB2 pad power on and off API's for TEgra210 and provide its control
+> via soc ops. It can be used by operations like charger detect to power on
+> and off USB2 pad if needed.
 >=20
-> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 > V2:
 >  - Patch re-based.
 > ---
->  drivers/phy/tegra/xusb-tegra186.c | 51 ++++++++++++++++++---------------=
+>  drivers/phy/tegra/xusb-tegra210.c | 190 ++++++++++++++++++++++++++------=
 ------
->  drivers/phy/tegra/xusb.h          |  2 ++
->  2 files changed, 26 insertions(+), 27 deletions(-)
+>  1 file changed, 133 insertions(+), 57 deletions(-)
 
-Nevermind my prior comments, for some reason I thought this was adding a
-custom API for driver interoperability, but I see now that this is just
-a means of splitting out SoC-specific code, so:
+Ignore that previous comment, I was making wrong assumptions:
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---juZjCTNxrMaZdGZC
+--DWg365Y4B18r8evw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6oAnUACgkQ3SOs138+
-s6GllhAAqj0KLe0kZLc4UCJ+esPO9vr0YEg1APWbfONIUbkNfgOkAwK2Zzwb2PAG
-ieVffoOuvphSiOMWhuweuFea8TwaSdenBPQJjrB/kKLCWIBdOAuFPMiwtZA/eXGQ
-YNg1MllVAQuUiniCXWGxCD785DgGeozdONGvDM5YuhZlvizQ4X2hGve/Hp9i9Jk3
-9LR5ZI2uHAent7wzGpFTAAvI487Vik+fnacrtMddvU4u0qhdVrdGEIWUa8yRsJT+
-MUVbOicbJD5Uw5EOZie+VuW+3FG6XJTPjc7efdm+z2CQWTEDSDWCd2HOyPqmUlHg
-U4lN2TPVCTiEEzGmBRCqPmyzsKhWgfxrHAbkpIL88C+/grqUW9rpLv+TxbFY/2zj
-3meHPMkePB+yKGZtqAkyYemx8QGWUs0vaqw8ptlBiNd+H5hVPINvnsg1cQJdb4P3
-lqxr+BCpBHbA/1+QekcW2QnUcKbEyGwDq2e0rkWYusZPfbYwsEvoHBkN1SgirSjM
-q/RtxiWUm03inP8IQWFIhbULJSS5n848MpBNryBu7IhVASEeICEJ9R3OLY4zc1Bv
-l3P1UqrxAEfn+H7YnMN6xWP0T5TJB02Bj6GWPBTngXEgM/Oo2sgcvu29864ZipKt
-xeRrSOjA9n/cEdeyXrh3etD3DZ2AgvFRa93w9TNPu535nAEv/88=
-=h33Z
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6oAsQACgkQ3SOs138+
+s6HgRRAAkKBpdIifr13ah+O4pd7JwhNKw9JYwDfzVCGukWCrfD8Y/gZovptA53ww
+MtcogouhBKZgyH9D0qRFPhDJGOBSgSn+MwQRfIXzsYVXrllvCACvhD7iFs1ACJ+L
+wFGllBYVRByCUnXrGB6fZAe2my9D2+gzOtDjDjC7fZZE20jYewyVwG1TL3F1fMCd
+arkdvSki+qOmwEgjaYfOypgZmj9Lgn0ty9q/XCYg48oStgFOutFDEL/au6ncBfv6
+L+/bOwwJ63o+Fa6P8p70Sx+dPjjWkHAgqrD09BAHCG9Xi9qosL/T7XHTw8odQoPA
+FRFnHnh/TEexCInco3nBGE77opKnsl/Jrdnd7YgK2F+O31vcrQ4LKYPefTKwR7se
+oxvHjodo6PIS2hKzn4pKqUX7D6KGVZXwXEGipvdWRTZcx7zewOMmcUF6dPbMuzvk
+6J/YRh2zcbidu/FmExilZK7RSehzORSSTcvvlRHN4aoH07tWCMzFOYBCmbwDjEYj
+syMOBDw83hPdwbYHAQae1sKiKGciRQmHyORwjwT2RR6fNq0Zr3ssq+q6ZVZybjGT
+Bu+O/i670oGR9Nn7OKi/LKM+v4dJS17KrJNn66j/mqVTgRGO5blIFySlSqYPNN5t
+hkA8fz67jresVycjbbWe0qUHiYp7N9hn4eEntxMih7YgSf1gvtI=
+=76s1
 -----END PGP SIGNATURE-----
 
---juZjCTNxrMaZdGZC--
+--DWg365Y4B18r8evw--
