@@ -1,45 +1,37 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v11 7/9] MAINTAINERS: Add Tegra Video driver section
-Date: Wed, 29 Apr 2020 15:00:04 -0700
-Message-ID: <1588197606-32124-8-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v11 2/9] arm64: tegra: Add reset-cells to mc
+Date: Wed, 29 Apr 2020 14:59:59 -0700
+Message-ID: <1588197606-32124-3-git-send-email-skomatineni@nvidia.com>
 References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-clk-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
 Cc: digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add maintainers and mailing list entries to Tegra Video driver section.
+Tegra210 device tree is missing reset-cells property for mc node.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+This patch fixes it.
+
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 973b7db..795b201 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16644,6 +16644,16 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
- S:	Supported
- F:	drivers/spi/spi-tegra*
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index d0eff92..5b1dfd8 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -894,6 +894,7 @@
+ 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
  
-+TEGRA VIDEO DRIVER
-+M:	Thierry Reding <thierry.reding@gmail.com>
-+M:	Jonathan Hunter <jonathanh@nvidia.com>
-+M:	Sowjanya Komatineni <skomatineni@nvidia.com>
-+L:	linux-media@vger.kernel.org
-+L:	linux-tegra@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+F:	drivers/staging/media/tegra/
-+
- TEGRA XUSB PADCTL DRIVER
- M:	JC Kuo <jckuo@nvidia.com>
- S:	Supported
+ 		#iommu-cells = <1>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 	sata@70020000 {
 -- 
 2.7.4
