@@ -1,46 +1,82 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Thu, 30 Apr 2020 17:13:37 +0300
-Message-ID: <c6d54885-6f23-f60c-a17b-3481fc4d6adf@gmail.com>
-References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
- <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
- <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
- <4da289e6-036f-853b-beb4-379d6462adb0@gmail.com>
+From: Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/3] dt-bindings: mfd: Document the RTC present on
+ MAX77620
+Date: Thu, 30 Apr 2020 16:15:20 +0200
+Message-ID: <20200430141520.GA101194@piout.net>
+References: <20200417170825.2551367-1-thierry.reding@gmail.com>
+ <20200430140701.GA21776@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4da289e6-036f-853b-beb4-379d6462adb0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200430140701.GA21776@bogus>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rtc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-30.04.2020 17:02, Dmitry Osipenko пишет:
-> 30.04.2020 16:56, Dmitry Osipenko пишет:
->> 30.04.2020 01:00, Sowjanya Komatineni пишет:
->>> +static int chan_capture_kthread_finish(void *data)
->>> +{
->>> +	struct tegra_vi_channel *chan = data;
->>> +	struct tegra_channel_buffer *buf;
->>> +
->>> +	set_freezable();
->>> +
->>> +	while (1) {
->>> +		try_to_freeze();
->>
->> I guess it won't be great to freeze in the middle of a capture process, so:
->> 		if (list_empty(&chan->done))
->> 			try_to_freeze();
+On 30/04/2020 09:07:01-0500, Rob Herring wrote:
+> On Fri, Apr 17, 2020 at 07:08:23PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > The RTC present on MAX77620 can be used to generate an alarm at a given
+> > time, which in turn can be used as a wakeup source for the system if it
+> > is properly wired up.
+> > 
+> > Document how to enable the RTC to act as a wakeup source.
+> > 
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  .../devicetree/bindings/mfd/max77620.txt          | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+> > index 5a642a51d58e..f05005b0993e 100644
+> > --- a/Documentation/devicetree/bindings/mfd/max77620.txt
+> > +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+> > @@ -125,6 +125,17 @@ MAX77663 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
+> >  			control) then, GPIO1/nRST_IO goes LOW.
+> >  			this property is valid for max20024 only.
+> >  
+> > +Realtime Clock
+> > +--------------
+> > +The MAX77620 family of power management ICs contain a realtime clock block
+> > +that can be used to keep track of time even when the system is powered off.
+> > +
+> > +The realtime clock can also be programmed to trigger alerts, which can be
+> > +used to wake the system up from sleep. In order to configure the RTC to act
+> > +as a wakeup source, add an "rtc" child node and add the "wakeup-source"
+> > +property.
+> > +
+> > +
+> >  For DT binding details of different sub modules like GPIO, pincontrol,
+> >  regulator, power, please refer respective device-tree binding document
+> >  under their respective sub-system directories.
+> > @@ -159,4 +170,8 @@ max77620@3c {
+> >  			maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_SW>;
+> >  		};
+> >  	};
+> > +
+> > +	rtc {
+> > +		wakeup-source;
 > 
-> And here should be some locking protection in order not race with the
-> chan_capture_kthread_start because kthread_finish could freeze before
-> kthread_start.
+> Is the RTC really the only thing that could wake the system in this 
+> PMIC?
+> 
+> I don't think it's really valid to have 'wakeup-source' without 
+> 'interrupts' unless the wakeup mechanism is somehow not an interrupt. So 
+> I think this belongs in the parent node.
+> 
 
-Or maybe both start / finish threads should simply be allowed to freeze
-only when both capture and done lists are empty.
+I don't think this is true because in the case of a discrete RTC, its
+interrupt pin can be connected directly to a PMIC to power up a board
+instead of being connected to the SoC. In that case we don't have an
+interrupt property but the RTC is still a wakeup source. This is the
+usual use case for wakeup-source in the RTC subsystem. Else, if there is
+an interrupt, then we assume the RTC is a wakeup source and there is no
+need to have the wakeup-source property.
 
-if (list_empty(&chan->capture) &&
-    list_empty(&chan->done))
-	try_to_freeze();
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
