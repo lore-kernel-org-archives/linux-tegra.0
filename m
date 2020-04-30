@@ -1,49 +1,36 @@
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Thu, 30 Apr 2020 16:34:50 +0300
-Message-ID: <18d457dd-17cb-633e-cdec-e0abfe73b0b0@gmail.com>
+Date: Thu, 30 Apr 2020 16:38:37 +0300
+Message-ID: <34a49a30-71f2-5b24-20a4-7d98ae37cefa@gmail.com>
 References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
  <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1588197606-32124-7-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 30.04.2020 01:00, Sowjanya Komatineni пишет:
-> +static int tegra_csi_init(struct host1x_client *client)
-> +{
-> +	struct tegra_csi *csi = host1x_client_to_csi(client);
-> +	struct tegra_video_device *vid = dev_get_drvdata(client->host);
-> +	int ret;
-> +
-> +	INIT_LIST_HEAD(&csi->csi_chans);
-> +
-> +	ret = tegra_csi_tpg_channels_alloc(csi);
-> +	if (ret < 0) {
-> +		dev_err(csi->dev,
-> +			"failed to allocate tpg channels: %d\n", ret);
-> +		goto cleanup;
-> +	}
-> +
-> +	ret = tegra_csi_channels_init(csi);
-> +	if (ret < 0)
-> +		goto cleanup;
-> +
-> +	vid->csi = csi;
-> +
-> +	return 0;
-> +
-> +cleanup:
-> +	tegra_csi_channels_cleanup(csi);
-> +	pm_runtime_put_sync(csi->dev);
+> +/**
+> + * struct tegra_csi_ops - Tegra CSI operations
+> + *
+> + * @csi_streaming: programs csi hardware to enable or disable streaming.
+> + * @csi_err_recover: csi hardware block recovery in case of any capture errors
+> + *		due to missing source stream or due to improper csi input from
+> + *		the external source.
+> + */
+> +struct tegra_csi_ops {
+> +	int (*csi_streaming)(struct tegra_csi_channel *csi_chan, u8 pg_mode,
+> +			     int enable);
 
-This pm_runtime_put_sync() should be removed.
+What about to split csi_streaming() into csi_start_streaming() /
+csi_stop_streaming()?
 
-> +	return ret;
-> +}
+This will make tegra_csi_ops to be consistent with the tegra_ve_ops. A
+separated start/stop operations are somewhat more natural to have in
+general.
