@@ -1,146 +1,54 @@
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v3 16/34] iommu/vt-d: Convert to probe/release_device()
- call-backs
-Date: Thu, 30 Apr 2020 08:07:57 +0800
-Message-ID: <7ceca31f-cf24-d4f8-04fd-74691dd3c11a@linux.intel.com>
-References: <20200429133712.31431-1-joro@8bytes.org>
- <20200429133712.31431-17-joro@8bytes.org>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 5.6 000/167] 5.6.8-rc1 review
+Date: Thu, 30 Apr 2020 08:40:02 +0200
+Message-ID: <20200430064002.GB2377651@kroah.com>
+References: <20200428182225.451225420@linuxfoundation.org>
+ <aa146242-b3f0-c7f8-9540-5f90e1473896@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20200429133712.31431-17-joro@8bytes.org>
-Content-Language: en-US
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc: baolu.lu@linux.intel.com, Daniel Drake <drake@endlessm.com>, jonathan.derrick@intel.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org, virtualization@lists.linux-foundation.org, Joerg Roedel <jroedel@suse.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <aa146242-b3f0-c7f8-9540-5f90e1473896-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2020/4/29 21:36, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
+On Wed, Apr 29, 2020 at 11:17:35AM +0100, Jon Hunter wrote:
 > 
-> Convert the Intel IOMMU driver to use the probe_device() and
-> release_device() call-backs of iommu_ops, so that the iommu core code
-> does the group and sysfs setup.
+> On 28/04/2020 19:22, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.6.8 release.
+> > There are 167 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 30 Apr 2020 18:20:42 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.6.8-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.6.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.6:
+>     13 builds:	13 pass, 0 fail
+>     24 boots:	24 pass, 0 fail
+>     40 tests:	40 pass, 0 fail
+> 
+> Linux version:	5.6.8-rc1-g853ae83af7cc
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
+> 
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Thanks for testing all of these and letting me know.
 
-Best regards,
-baolu
-
-> ---
->   drivers/iommu/intel-iommu.c | 67 ++++---------------------------------
->   1 file changed, 6 insertions(+), 61 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index b9f905a55dda..b906727f5b85 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -5781,78 +5781,27 @@ static bool intel_iommu_capable(enum iommu_cap cap)
->   	return false;
->   }
->   
-> -static int intel_iommu_add_device(struct device *dev)
-> +static struct iommu_device *intel_iommu_probe_device(struct device *dev)
->   {
-> -	struct dmar_domain *dmar_domain;
-> -	struct iommu_domain *domain;
->   	struct intel_iommu *iommu;
-> -	struct iommu_group *group;
->   	u8 bus, devfn;
-> -	int ret;
->   
->   	iommu = device_to_iommu(dev, &bus, &devfn);
->   	if (!iommu)
-> -		return -ENODEV;
-> -
-> -	iommu_device_link(&iommu->iommu, dev);
-> +		return ERR_PTR(-ENODEV);
->   
->   	if (translation_pre_enabled(iommu))
->   		dev->archdata.iommu = DEFER_DEVICE_DOMAIN_INFO;
->   
-> -	group = iommu_group_get_for_dev(dev);
-> -
-> -	if (IS_ERR(group)) {
-> -		ret = PTR_ERR(group);
-> -		goto unlink;
-> -	}
-> -
-> -	iommu_group_put(group);
-> -
-> -	domain = iommu_get_domain_for_dev(dev);
-> -	dmar_domain = to_dmar_domain(domain);
-> -	if (domain->type == IOMMU_DOMAIN_DMA) {
-> -		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY) {
-> -			ret = iommu_request_dm_for_dev(dev);
-> -			if (ret) {
-> -				dmar_remove_one_dev_info(dev);
-> -				dmar_domain->flags |= DOMAIN_FLAG_LOSE_CHILDREN;
-> -				domain_add_dev_info(si_domain, dev);
-> -				dev_info(dev,
-> -					 "Device uses a private identity domain.\n");
-> -			}
-> -		}
-> -	} else {
-> -		if (device_def_domain_type(dev) == IOMMU_DOMAIN_DMA) {
-> -			ret = iommu_request_dma_domain_for_dev(dev);
-> -			if (ret) {
-> -				dmar_remove_one_dev_info(dev);
-> -				dmar_domain->flags |= DOMAIN_FLAG_LOSE_CHILDREN;
-> -				if (!get_private_domain_for_dev(dev)) {
-> -					dev_warn(dev,
-> -						 "Failed to get a private domain.\n");
-> -					ret = -ENOMEM;
-> -					goto unlink;
-> -				}
-> -
-> -				dev_info(dev,
-> -					 "Device uses a private dma domain.\n");
-> -			}
-> -		}
-> -	}
-> -
->   	if (device_needs_bounce(dev)) {
->   		dev_info(dev, "Use Intel IOMMU bounce page dma_ops\n");
->   		set_dma_ops(dev, &bounce_dma_ops);
->   	}
->   
-> -	return 0;
-> -
-> -unlink:
-> -	iommu_device_unlink(&iommu->iommu, dev);
-> -	return ret;
-> +	return &iommu->iommu;
->   }
->   
-> -static void intel_iommu_remove_device(struct device *dev)
-> +static void intel_iommu_release_device(struct device *dev)
->   {
->   	struct intel_iommu *iommu;
->   	u8 bus, devfn;
-> @@ -5863,10 +5812,6 @@ static void intel_iommu_remove_device(struct device *dev)
->   
->   	dmar_remove_one_dev_info(dev);
->   
-> -	iommu_group_remove_device(dev);
-> -
-> -	iommu_device_unlink(&iommu->iommu, dev);
-> -
->   	if (device_needs_bounce(dev))
->   		set_dma_ops(dev, NULL);
->   }
-> @@ -6198,8 +6143,8 @@ const struct iommu_ops intel_iommu_ops = {
->   	.map			= intel_iommu_map,
->   	.unmap			= intel_iommu_unmap,
->   	.iova_to_phys		= intel_iommu_iova_to_phys,
-> -	.add_device		= intel_iommu_add_device,
-> -	.remove_device		= intel_iommu_remove_device,
-> +	.probe_device		= intel_iommu_probe_device,
-> +	.release_device		= intel_iommu_release_device,
->   	.get_resv_regions	= intel_iommu_get_resv_regions,
->   	.put_resv_regions	= generic_iommu_put_resv_regions,
->   	.apply_resv_region	= intel_iommu_apply_resv_region,
-> 
+greg k-h
