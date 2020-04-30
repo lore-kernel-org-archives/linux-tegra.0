@@ -1,56 +1,68 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Thu, 30 Apr 2020 17:02:19 +0300
-Message-ID: <4da289e6-036f-853b-beb4-379d6462adb0@gmail.com>
-References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
- <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
- <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: mfd: Document the RTC present on
+ MAX77620
+Date: Thu, 30 Apr 2020 09:07:01 -0500
+Message-ID: <20200430140701.GA21776@bogus>
+References: <20200417170825.2551367-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <bacc4308-4b95-f566-b80e-096ff96407b5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20200417170825.2551367-1-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-30.04.2020 16:56, Dmitry Osipenko пишет:
-> 30.04.2020 01:00, Sowjanya Komatineni пишет:
->> +static int chan_capture_kthread_finish(void *data)
->> +{
->> +	struct tegra_vi_channel *chan = data;
->> +	struct tegra_channel_buffer *buf;
->> +
->> +	set_freezable();
->> +
->> +	while (1) {
->> +		try_to_freeze();
+On Fri, Apr 17, 2020 at 07:08:23PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> I guess it won't be great to freeze in the middle of a capture process, so:
-> 		if (list_empty(&chan->done))
-> 			try_to_freeze();
-
-And here should be some locking protection in order not race with the
-chan_capture_kthread_start because kthread_finish could freeze before
-kthread_start.
-
->> +		wait_event_interruptible(chan->done_wait,
->> +					 !list_empty(&chan->done) ||
->> +					 kthread_should_stop());
->> +
->> +		/* dequeue buffers and finish capture */
->> +		buf = dequeue_buf_done(chan);
->> +		while (buf) {
->> +			tegra_channel_capture_done(chan, buf);
->> +			buf = dequeue_buf_done(chan);
->> +		}
->> +
->> +		if (kthread_should_stop())
->> +			break;
->> +	}
->> +
->> +	return 0;
->> +}
+> The RTC present on MAX77620 can be used to generate an alarm at a given
+> time, which in turn can be used as a wakeup source for the system if it
+> is properly wired up.
 > 
+> Document how to enable the RTC to act as a wakeup source.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../devicetree/bindings/mfd/max77620.txt          | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+> index 5a642a51d58e..f05005b0993e 100644
+> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
+> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+> @@ -125,6 +125,17 @@ MAX77663 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
+>  			control) then, GPIO1/nRST_IO goes LOW.
+>  			this property is valid for max20024 only.
+>  
+> +Realtime Clock
+> +--------------
+> +The MAX77620 family of power management ICs contain a realtime clock block
+> +that can be used to keep track of time even when the system is powered off.
+> +
+> +The realtime clock can also be programmed to trigger alerts, which can be
+> +used to wake the system up from sleep. In order to configure the RTC to act
+> +as a wakeup source, add an "rtc" child node and add the "wakeup-source"
+> +property.
+> +
+> +
+>  For DT binding details of different sub modules like GPIO, pincontrol,
+>  regulator, power, please refer respective device-tree binding document
+>  under their respective sub-system directories.
+> @@ -159,4 +170,8 @@ max77620@3c {
+>  			maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_SW>;
+>  		};
+>  	};
+> +
+> +	rtc {
+> +		wakeup-source;
+
+Is the RTC really the only thing that could wake the system in this 
+PMIC?
+
+I don't think it's really valid to have 'wakeup-source' without 
+'interrupts' unless the wakeup mechanism is somehow not an interrupt. So 
+I think this belongs in the parent node.
+
+Rob
