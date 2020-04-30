@@ -1,48 +1,49 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v1 3/5] media: tegra-video: Move PM runtime handle to
- streaming
-Date: Thu, 30 Apr 2020 16:24:19 +0300
-Message-ID: <6a676161-e948-9afc-296b-ccd1df202e36@gmail.com>
-References: <1588047650-29402-1-git-send-email-skomatineni@nvidia.com>
- <1588047650-29402-4-git-send-email-skomatineni@nvidia.com>
- <631390cb-9aff-0e3f-6c39-81d6c565987e@gmail.com>
- <3ef69413-a606-b475-f530-d5534760b73b@nvidia.com>
- <2b334095-fadb-bf0a-f7a8-62fc798c2bd2@gmail.com>
- <18a7b095-7f0f-7819-c786-7e011cfd14ed@nvidia.com>
- <ce31e273-f424-f13e-5cd6-0db2589a2a10@gmail.com>
- <5741d5d3-e474-e23c-4841-809df5760067@nvidia.com>
- <f6e34203-3e4b-b804-30a5-bf78445ab366@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+Date: Thu, 30 Apr 2020 16:34:50 +0300
+Message-ID: <18d457dd-17cb-633e-cdec-e0abfe73b0b0@gmail.com>
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f6e34203-3e4b-b804-30a5-bf78445ab366-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-28.04.2020 19:04, Dmitry Osipenko пишет:
-...
->>>>>>>> +             ret = pm_runtime_get_sync(csi->dev);
->>>>>>>> +             if (ret < 0) {
->>>>>>>> +                     dev_err(csi->dev,
->>>>>>>> +                             "failed to get runtime PM: %d\n",
->>>>>>>> ret);
->>>>>>>> +                     pm_runtime_put_noidle(csi->dev);
->>> Why this pm_runtime_put_noidle() is needed? This should be wrong, please
->>> remove it.
->>
->> pm_runtime_get_sync() increments power.usage_count prior to rpm_resume
->>
->> if rpm_resume fails it does not decrement usage_count.
->>
->> So to balance count on failure, calling pm_runtime_put_noidle()
-> 
-> Hmm.. maybe you're right. I'll need to take a more detailed look.
-> 
+30.04.2020 01:00, Sowjanya Komatineni пишет:
+> +static int tegra_csi_init(struct host1x_client *client)
+> +{
+> +	struct tegra_csi *csi = host1x_client_to_csi(client);
+> +	struct tegra_video_device *vid = dev_get_drvdata(client->host);
+> +	int ret;
+> +
+> +	INIT_LIST_HEAD(&csi->csi_chans);
+> +
+> +	ret = tegra_csi_tpg_channels_alloc(csi);
+> +	if (ret < 0) {
+> +		dev_err(csi->dev,
+> +			"failed to allocate tpg channels: %d\n", ret);
+> +		goto cleanup;
+> +	}
+> +
+> +	ret = tegra_csi_channels_init(csi);
+> +	if (ret < 0)
+> +		goto cleanup;
+> +
+> +	vid->csi = csi;
+> +
+> +	return 0;
+> +
+> +cleanup:
+> +	tegra_csi_channels_cleanup(csi);
+> +	pm_runtime_put_sync(csi->dev);
 
-I checked the RPM's use-count after error condition and yours variant is
-correct. Perhaps we should start correcting all other Tegra drivers that
-do not handle the RPM error properly.
+This pm_runtime_put_sync() should be removed.
+
+> +	return ret;
+> +}
