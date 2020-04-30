@@ -1,7 +1,7 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Thu, 30 Apr 2020 14:26:24 -0700
-Message-ID: <668d9b65-9590-cc97-41c3-2c1a5cfbbe61@nvidia.com>
+Date: Thu, 30 Apr 2020 14:37:00 -0700
+Message-ID: <289d9c92-383f-3257-de7b-46179724285a@nvidia.com>
 References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
  <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
  <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
@@ -17,166 +17,185 @@ References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
  <298187f6-2425-4813-1ae1-f256c179623e@nvidia.com>
  <9c942bc9-703e-3bbb-eeab-f37e69dc1ded@nvidia.com>
  <b72b9d5c-7d02-1b58-20f7-30f94e230d58@gmail.com>
+ <668d9b65-9590-cc97-41c3-2c1a5cfbbe61@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <b72b9d5c-7d02-1b58-20f7-30f94e230d58-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <668d9b65-9590-cc97-41c3-2c1a5cfbbe61@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-clk-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 4/30/20 2:17 PM, Dmitry Osipenko wrote:
-> 30.04.2020 23:02, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 4/30/20 12:53 PM, Sowjanya Komatineni wrote:
->>> On 4/30/20 12:46 PM, Sowjanya Komatineni wrote:
->>>> On 4/30/20 12:33 PM, Dmitry Osipenko wrote:
->>>>> 30.04.2020 22:09, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>> On 4/30/20 11:18 AM, Sowjanya Komatineni wrote:
->>>>>>> On 4/30/20 10:06 AM, Sowjanya Komatineni wrote:
->>>>>>>> On 4/30/20 9:29 AM, Sowjanya Komatineni wrote:
->>>>>>>>> On 4/30/20 9:04 AM, Sowjanya Komatineni wrote:
->>>>>>>>>> On 4/30/20 7:13 AM, Dmitry Osipenko wrote:
->>>>>>>>>>> 30.04.2020 17:02, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=
+On 4/30/20 2:26 PM, Sowjanya Komatineni wrote:
+>
+> On 4/30/20 2:17 PM, Dmitry Osipenko wrote:
+>> 30.04.2020 23:02, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> On 4/30/20 12:53 PM, Sowjanya Komatineni wrote:
+>>>> On 4/30/20 12:46 PM, Sowjanya Komatineni wrote:
+>>>>> On 4/30/20 12:33 PM, Dmitry Osipenko wrote:
+>>>>>> 30.04.2020 22:09, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
+:
+>>>>>>> On 4/30/20 11:18 AM, Sowjanya Komatineni wrote:
+>>>>>>>> On 4/30/20 10:06 AM, Sowjanya Komatineni wrote:
+>>>>>>>>> On 4/30/20 9:29 AM, Sowjanya Komatineni wrote:
+>>>>>>>>>> On 4/30/20 9:04 AM, Sowjanya Komatineni wrote:
+>>>>>>>>>>> On 4/30/20 7:13 AM, Dmitry Osipenko wrote:
+>>>>>>>>>>>> 30.04.2020 17:02, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=
 =82:
->>>>>>>>>>>> 30.04.2020 16:56, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=
+>>>>>>>>>>>>> 30.04.2020 16:56, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=
 =82:
->>>>>>>>>>>>> 30.04.2020 01:00, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=
+>>>>>>>>>>>>>> 30.04.2020 01:00, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=
 =B5=D1=82:
->>>>>>>>>>>>>> +static int chan_capture_kthread_finish(void *data)
->>>>>>>>>>>>>> +{
->>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct tegra_vi_channel *chan =3D data;
->>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct tegra_channel_buffer *buf;
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 set_freezable();
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 while (1) {
->>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 try_to_freeze();
->>>>>>>>>>>>> I guess it won't be great to freeze in the middle of a captur=
-e
->>>>>>>>>>>>> process, so:
->>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (list_em=
-pty(&chan->done))
->>>>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 try_to_freeze();
->>>>>>>>>>>> And here should be some locking protection in order not race
->>>>>>>>>>>> with
->>>>>>>>>>>> the
->>>>>>>>>>>> chan_capture_kthread_start because kthread_finish could freeze
->>>>>>>>>>>> before
->>>>>>>>>>>> kthread_start.
->>>>>>>>>>> Or maybe both start / finish threads should simply be allowed t=
-o
->>>>>>>>>>> freeze
->>>>>>>>>>> only when both capture and done lists are empty.
+>>>>>>>>>>>>>>> +static int chan_capture_kthread_finish(void *data)
+>>>>>>>>>>>>>>> +{
+>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct tegra_vi_channel *chan =3D data;
+>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 struct tegra_channel_buffer *buf;
+>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 set_freezable();
+>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 while (1) {
+>>>>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 try_to_freeze()=
+;
+>>>>>>>>>>>>>> I guess it won't be great to freeze in the middle of a=20
+>>>>>>>>>>>>>> capture
+>>>>>>>>>>>>>> process, so:
+>>>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (l=
+ist_empty(&chan->done))
+>>>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 try_to_freeze();
+>>>>>>>>>>>>> And here should be some locking protection in order not race
+>>>>>>>>>>>>> with
+>>>>>>>>>>>>> the
+>>>>>>>>>>>>> chan_capture_kthread_start because kthread_finish could=20
+>>>>>>>>>>>>> freeze
+>>>>>>>>>>>>> before
+>>>>>>>>>>>>> kthread_start.
+>>>>>>>>>>>> Or maybe both start / finish threads should simply be=20
+>>>>>>>>>>>> allowed to
+>>>>>>>>>>>> freeze
+>>>>>>>>>>>> only when both capture and done lists are empty.
+>>>>>>>>>>>>
+>>>>>>>>>>>> if (list_empty(&chan->capture) &&
+>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list_empty(&chan->done))
+>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0try_to_freeze();
+>>>>>>>>>>> good to freeze when not in middle of the frame capture but why
+>>>>>>>>>>> should we not allow freeze in between captures?
 >>>>>>>>>>>
->>>>>>>>>>> if (list_empty(&chan->capture) &&
->>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list_empty(&chan->done))
->>>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0try_to_freeze();
->>>>>>>>>> good to freeze when not in middle of the frame capture but why
->>>>>>>>>> should we not allow freeze in between captures?
->>>>>>>>>>
->>>>>>>>>> Other drivers do allow freeze in between frame captures.
->>>>>>>>>>
->>>>>>>>>> I guess we can freeze before dequeue for capture and in finish
->>>>>>>>>> thread we can freeze after capture done. This also don't need to
->>>>>>>>>> check for list_empty with freeze to allow between frame captures=
-.
->>>>>>>>>>
->>>>>>>>> Also if we add check for both lists empty, freeze is not allowed =
-as
->>>>>>>>> long as streaming is going on and in case of continuous streaming
->>>>>>>>> freeze will never happen.
->>>>>>> To allow freeze b/w frames (but not in middle of a frame),
->>>>>>>
->>>>>>> for capture_start thread, probably we can do unconditional
->>>>>>> try_to_freeze()
->>>>> Is it possible to use wait_event_freezable()?
+>>>>>>>>>>> Other drivers do allow freeze in between frame captures.
+>>>>>>>>>>>
+>>>>>>>>>>> I guess we can freeze before dequeue for capture and in finish
+>>>>>>>>>>> thread we can freeze after capture done. This also don't=20
+>>>>>>>>>>> need to
+>>>>>>>>>>> check for list_empty with freeze to allow between frame=20
+>>>>>>>>>>> captures.
+>>>>>>>>>>>
+>>>>>>>>>> Also if we add check for both lists empty, freeze is not=20
+>>>>>>>>>> allowed as
+>>>>>>>>>> long as streaming is going on and in case of continuous=20
+>>>>>>>>>> streaming
+>>>>>>>>>> freeze will never happen.
+>>>>>>>> To allow freeze b/w frames (but not in middle of a frame),
+>>>>>>>>
+>>>>>>>> for capture_start thread, probably we can do unconditional
+>>>>>>>> try_to_freeze()
+>>>>>> Is it possible to use wait_event_freezable()?
+>>>>>>
+>>>>>> https://www.kernel.org/doc/Documentation/power/freezing-of-tasks.txt
+>>>>>>
+>>>>>> Will the wait_event_interruptible() be woken up when system freezes?
+>>>>> Based on wait_event_freezable implementation, looks like it similar
+>>>>> to wait_event_interruptible + try_to_free() as it does
+>>>>> freezable_schedule unlike schedule with wait_event_interruptible.
 >>>>>
->>>>> https://www.kernel.org/doc/Documentation/power/freezing-of-tasks.txt
+>>>>> So using this for capture_start may be ok to allow freeze before
+>>>>> start of frame. But can't use for capture_finish as this is same as
+>>>>> wait_event_interruptible followed by unconditional try_to_freeze.
 >>>>>
->>>>> Will the wait_event_interruptible() be woken up when system freezes?
->>>> Based on wait_event_freezable implementation, looks like it similar
->>>> to wait_event_interruptible + try_to_free() as it does
->>>> freezable_schedule unlike schedule with wait_event_interruptible.
+>>>>>>>> for capture_finish thread, at end of capture done we can do
+>>>>>>>> try_to_freeze() only when done list is empty
+>>>>>> This doesn't prevent situation where the done-list is empty and the
+>>>>>> "finish" thread freezes, in the same time the "start" thread=20
+>>>>>> issues new
+>>>>>> capture and then freezes too.
+>>>>>>
+>>>>>> 1. "start" thread issues capture
+>>>>>>
+>>>>>> 2. "finish" thread wakes and waits for the capture to complete
+>>>>>>
+>>>>>> 3. "start" thread begins another capture, waits for FRAME_START
+>>>>>>
+>>>>>> 4. system freezing activates
+>>>>>>
+>>>>>> 5. "finish" thread completes the capture and freezes because=20
+>>>>>> done-list
+>>>>>> is empty
+>>>>>>
+>>>>>> 6. "start" thread gets FRAME_START, issues another capture and=20
+>>>>>> freezes
+>>>>> This will not happen as we allow double buffering done list will not
+>>>>> be empty till stream stop happens
+>>>>>
+>>>>> There will always be 1 outstanding frame in done list
+>>>> Correction, there will always be 1 outstanding buffer except beginning
+>>>> during beginning of stream.
 >>>>
->>>> So using this for capture_start may be ok to allow freeze before
->>>> start of frame. But can't use for capture_finish as this is same as
->>>> wait_event_interruptible followed by unconditional try_to_freeze.
->>>>
->>>>>>> for capture_finish thread, at end of capture done we can do
->>>>>>> try_to_freeze() only when done list is empty
->>>>> This doesn't prevent situation where the done-list is empty and the
->>>>> "finish" thread freezes, in the same time the "start" thread issues n=
-ew
->>>>> capture and then freezes too.
->>>>>
->>>>> 1. "start" thread issues capture
->>>>>
->>>>> 2. "finish" thread wakes and waits for the capture to complete
->>>>>
->>>>> 3. "start" thread begins another capture, waits for FRAME_START
->>>>>
->>>>> 4. system freezing activates
->>>>>
->>>>> 5. "finish" thread completes the capture and freezes because done-lis=
-t
->>>>> is empty
->>>>>
->>>>> 6. "start" thread gets FRAME_START, issues another capture and freeze=
-s
->>>> This will not happen as we allow double buffering done list will not
->>>> be empty till stream stop happens
->>>>
->>>> There will always be 1 outstanding frame in done list
->>> Correction, there will always be 1 outstanding buffer except beginning
->>> during beginning of stream.
->>>
->>> Except during beginning frames, done list will not be empty for all
->>> subsequent streaming process
->> Also to be clear, hardware sees next frame start event prior to previous
->> frame mw_ack event as mw_ack event happens after frame end. So once
->> initial buffer got queued to done list to finish processes, while
->> waiting for mw_ack next frame start happens and pushes next buffer to
->> done list.
-> What about this variant:
+>>>> Except during beginning frames, done list will not be empty for all
+>>>> subsequent streaming process
+>>> Also to be clear, hardware sees next frame start event prior to=20
+>>> previous
+>>> frame mw_ack event as mw_ack event happens after frame end. So once
+>>> initial buffer got queued to done list to finish processes, while
+>>> waiting for mw_ack next frame start happens and pushes next buffer to
+>>> done list.
+>> What about this variant:
+>>
+>> 1. "start" thread wakes up to start capture
+>>
+>> 2. system freezing activates
+>>
+>> 3. "finish" thread wakes up and freezes
 >
-> 1. "start" thread wakes up to start capture
+> finish thread will wake up only when done list is not=20
+> empty/kthread_stop/wake even from capture start thread.
 >
-> 2. system freezing activates
+> Also when I said will allow try_to_free when done list is empty I=20
+> meant to have this at end of capture_done() in finish thread
 >
-> 3. "finish" thread wakes up and freezes
-
-finish thread will wake up only when done list is not=20
-empty/kthread_stop/wake even from capture start thread.
-
-Also when I said will allow try_to_free when done list is empty I meant=20
-to have this at end of capture_done() in finish thread
-
+>>
+>> 4. "start" thread issues capture and freezes
+>>
+>> And again, I assume that system's freezing should wake
+>> wait_event_interruptible(), otherwise it won't be possible to freeze
+>> idling threads at all and freezing should fail (IIUC).
 >
-> 4. "start" thread issues capture and freezes
+> Based on kernel doc on freezing, looks like when we mark thread as=20
+> freezable, freeze state happens when we explicitly call try_to_freeze.
 >
-> And again, I assume that system's freezing should wake
-> wait_event_interruptible(), otherwise it won't be possible to freeze
-> idling threads at all and freezing should fail (IIUC).
+> I don't think its other way where freeze causes=20
+> wait_event_interruptible to wake up.
+>
+>> And in this case synchronization between start/finish threads should be
+>> needed in regards to freezing.
+>
+> Was thinking to have counter to track outstanding frame w.r.t single=20
+> shot issue b/w start and finish and allow to freeze only when no=20
+> outstanding frames in process.
+>
+> This will make sure freeze will not happen when any buffers are in=20
+> progress
+>
+>> Note that this could be a wrong assumption, I'm not closely familiar
+>> with how freezer works.
 
-Based on kernel doc on freezing, looks like when we mark thread as=20
-freezable, freeze state happens when we explicitly call try_to_freeze.
+kthread_start can unconditionally allow try_to_freeze before start of=20
+frame capture
 
-I don't think its other way where freeze causes wait_event_interruptible=20
-to wake up.
+We can compute captures inflight w.r.t single shot issued during capture=20
+start and finished frames by kthread_finish and allow kthread_finish to=20
+freeze only when captures inflight is 0.
 
-> And in this case synchronization between start/finish threads should be
-> needed in regards to freezing.
-
-Was thinking to have counter to track outstanding frame w.r.t single=20
-shot issue b/w start and finish and allow to freeze only when no=20
-outstanding frames in process.
-
-This will make sure freeze will not happen when any buffers are in progress
-
-> Note that this could be a wrong assumption, I'm not closely familiar
-> with how freezer works.
+This allows freeze to happen b/w frames but not in middle of frame
