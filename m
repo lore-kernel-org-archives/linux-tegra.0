@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5.4 00/83] 5.4.37-rc1 review
-Date: Fri, 1 May 2020 16:17:19 +0100
-Message-ID: <8cf5160c-2056-6a64-0e1b-ddf78187826a@nvidia.com>
-References: <20200501131524.004332640@linuxfoundation.org>
+Subject: Re: [PATCH 5.6 000/106] 5.6.9-rc1 review
+Date: Fri, 1 May 2020 16:17:41 +0100
+Message-ID: <0d85912b-9bea-91c1-0eaf-f029d82166a1@nvidia.com>
+References: <20200501131543.421333643@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20200501131524.004332640@linuxfoundation.org>
+In-Reply-To: <20200501131543.421333643@linuxfoundation.org>
 Content-Language: en-US
 Sender: stable-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
@@ -16,8 +16,8 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 01/05/2020 14:22, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.37 release.
-> There are 83 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 5.6.9 release.
+> There are 106 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 01/05/2020 14:22, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.37-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.6.9-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.6.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,12 +36,12 @@ On 01/05/2020 14:22, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v5.4:
+Test results for stable-v5.6:
     13 builds:	13 pass, 0 fail
     24 boots:	24 pass, 0 fail
     40 tests:	40 pass, 0 fail
 
-Linux version:	5.4.37-rc1-gbecd7d89321d
+Linux version:	5.6.9-rc1-g96c73ff08986
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra210-p3450-0000,
