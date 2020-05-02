@@ -1,59 +1,232 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
- for a long time
-Date: Sat, 2 May 2020 16:43:21 +0200
-Message-ID: <20200502144320.GA17811@ninjato>
-References: <fd1ca178-1ea3-851f-20a6-10bf00453ce3@nvidia.com>
- <a5734f19-254e-b6bc-e791-fa1ac63f11a4@gmail.com>
- <79f6560e-dbb5-0ae1-49f8-cf1cd95396ec@nvidia.com>
- <20200427074837.GC3451400@ulmo>
- <c1190858-eaea-8e94-b4d1-1cf28076c330@gmail.com>
- <20200427103851.GB24446@kunai>
- <dc2de966-81d6-6ad5-0c51-16dd28ca4165@gmail.com>
- <20200427141922.GD3464906@ulmo>
- <20200427153106.GA8113@kunai>
- <e5a3dd07-97f5-29f1-974e-3037a01cc89c@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+Date: Sat, 2 May 2020 18:16:45 +0300
+Message-ID: <f9073b28-f1f1-636c-be53-764fb0a531a1@gmail.com>
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <71532440-f455-cc24-74f7-9ccad5947099@gmail.com>
+ <b3238987-5e8a-32f2-7ce7-924e86bc6e9e@nvidia.com>
+ <298187f6-2425-4813-1ae1-f256c179623e@nvidia.com>
+ <9c942bc9-703e-3bbb-eeab-f37e69dc1ded@nvidia.com>
+ <b72b9d5c-7d02-1b58-20f7-30f94e230d58@gmail.com>
+ <668d9b65-9590-cc97-41c3-2c1a5cfbbe61@nvidia.com>
+ <289d9c92-383f-3257-de7b-46179724285a@nvidia.com>
+ <9aa64f21-7b23-7228-b5eb-d2ff092682ad@nvidia.com>
+ <668cc4a0-2c81-0d87-b801-9fbf64e19137@nvidia.com>
+ <bf3f654e-b8f8-d560-fc5e-03d73cb7eab0@nvidia.com>
+ <525e481b-9137-6fdd-bbf9-3779a5704e6b@nvidia.com>
+ <fe7ebad6-0368-b1f0-4f58-648baa5e3f79@nvidia.com>
+ <4f095181-2338-3b71-316c-f8bbfc7865cc@nvidia.com>
+ <50e872bb-913a-7b47-3264-af6b1cedb0e2@nvidia.com>
+ <e17a8a49-be53-465d-f64c-3f4c77391d98@nvidia.com>
+ <da5154b4-85f9-3e56-a440-f75debaec3a8@nvidia.com>
+ <cbb047ae-97dc-8b9a-a5ba-8e2a5dab3771@nvidia.com>
+ <6ae2d00d-7955-d12b-5b56-955ef72ece26@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <e5a3dd07-97f5-29f1-974e-3037a01cc89c-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6ae2d00d-7955-d12b-5b56-955ef72ece26-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+02.05.2020 06:55, Sowjanya Komatineni пишет:
+> 
+> On 5/1/20 8:39 PM, Sowjanya Komatineni wrote:
+>>
+>>
+>> On 5/1/20 2:05 PM, Sowjanya Komatineni wrote:
+>>>
+>>>
+>>> On 5/1/20 1:58 PM, Sowjanya Komatineni wrote:
+>>>>
+>>>>
+>>>> On 5/1/20 1:44 PM, Sowjanya Komatineni wrote:
+>>>>>
+>>>>>
+>>>>> On 5/1/20 11:03 AM, Sowjanya Komatineni wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 4/30/20 4:33 PM, Sowjanya Komatineni wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 4/30/20 4:14 PM, Sowjanya Komatineni wrote:
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>> And in this case synchronization between start/finish
+>>>>>>>>>>>>>> threads should be
+>>>>>>>>>>>>>> needed in regards to freezing.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Was thinking to have counter to track outstanding frame
+>>>>>>>>>>>>> w.r.t single shot issue b/w start and finish and allow to
+>>>>>>>>>>>>> freeze only when no outstanding frames in process.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> This will make sure freeze will not happen when any buffers
+>>>>>>>>>>>>> are in progress
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Note that this could be a wrong assumption, I'm not
+>>>>>>>>>>>>>> closely familiar
+>>>>>>>>>>>>>> with how freezer works.
+>>>>>>>>>>>>
+>>>>>>>>>>>> kthread_start can unconditionally allow try_to_freeze before
+>>>>>>>>>>>> start of frame capture
+>>>>>>>>>>>>
+>>>>>>>>>>>> We can compute captures inflight w.r.t single shot issued
+>>>>>>>>>>>> during capture start and finished frames by kthread_finish
+>>>>>>>>>>>> and allow kthread_finish to freeze only when captures
+>>>>>>>>>>>> inflight is 0.
+>>>>>>>>>>>>
+>>>>>>>>>>>> This allows freeze to happen b/w frames but not in middle of
+>>>>>>>>>>>> frame
+>>>>>>>>> will have caps inflight check in v12 to allow freeze finish
+>>>>>>>>> thread only when no captures are in progress
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> try_to_freeze() returns thread frozen state and looks like we
+>>>>>>>> can use this in kthread finish to allow finish thread to freeze
+>>>>>>>> only when kthread_start is already frozen and no buffers in
+>>>>>>>> progress/initiated for capture.
+>>>>>>>>
+>>>>>>> chan->capture_frozen holds frozen state returned from
+>>>>>>> try_to_freeze() in start kthread
+>>>>>>>
+>>>>>>> chan->capture_reqs increments after every single shot issued.
+>>>>>>>
+>>>>>>>
+>>>>>>> static int chan_capture_kthread_finish(void *data)
+>>>>>>>
+>>>>>>> {
+>>>>>>>     struct tegra_vi_channel *chan = data;
+>>>>>>>     struct tegra_channel_buffer *buf;
+>>>>>>>     int caps_inflight;
+>>>>>>>
+>>>>>>>     set_freezable();
+>>>>>>>
+>>>>>>>     while (1) {
+>>>>>>>         wait_event_interruptible(chan->done_wait,
+>>>>>>>                      !list_empty(&chan->done) ||
+>>>>>>>                      kthread_should_stop());
+>>>>>>>
+>>>>>>>         /* dequeue buffers and finish capture */
+>>>>>>>         buf = dequeue_buf_done(chan);
+>>>>>>>         while (buf) {
+>>>>>>>             tegra_channel_capture_done(chan, buf);
+>>>>>>>             buf = dequeue_buf_done(chan);
+>>>>>>>         }
+>>>>>>>
+>>>>>>>         if (kthread_should_stop())
+>>>>>>>             break;
+>>>>>>>
+>>>>>>>         caps_inflight = chan->capture_reqs - chan->sequence;
+>>>>>>>         if (chan->capture_frozen && !caps_inflight)
+>>>>>>>             try_to_freeze();
+>>>>>>>     }
+>>>>>>>
+>>>>>>>     return 0;
+>>>>>>> }
+>>>>>>
+>>>>>>
+>>>>>> Freezing happens prior to suspend() during suspend entry and when
+>>>>>> we implement suspend/resume during suspend we stop streaming where
+>>>>>> we stop threads anyway.
+>>>>>>
+>>>>>> So, was thinking why we need these threads freezable here?
+>>>>>>
+>>>>>>
+>>>>> Hi Dmitry,
+>>>>>
+>>>>> Did some testing and below are latest observation and fix I tested.
+>>>>>
+>>>>> wait_event_interruptible() uses schedule() which blocks the freezer.
+>>>>> When I do suspend while keeping streaming active in background, I
+>>>>> see freezing of these threads fail and call trace shows __schedule
+>>>>> -> __switch_to from these kthreads.
+>>>>>
+>>>>> wait_event_freezable() uses freezable_schedule() which should not
+>>>>> block the freezer but we can't use this here as we need conditional
+>>>>> try_to_freeze().
+>>>>>
+>>>>>
+>>>>> So, doing below sequence works where we set PF_FREEZER_SKIP flag
+>>>>> thru freezer_not_count() before wait_event which calls schedule()
+>>>>> and remove PF_FREEZER_SKIP after schedule allows try_to_freeze to
+>>>>> work and also conditional try_to_freeze below prevents freezing
+>>>>> thread in middle of capture.
+>>>>>
+>>>>> while (1) {
+>>>>>     freezer_not_count()
+>>>>>     wait_event_interruptible()
+>>>>>     freezer_count()
+>>>>>     ...
+>>>>>     ...
+>>>>>     if (chan->capture_frozen && !caps_inflight)
+>>>>>         try_to_freeze()
+>>>>> }
+>>>>>
+>>>>> Please comment if you agree with above sequence. Will include this
+>>>>> in v12.
+>>>>>
+>>> sorry, freezer_count() does try_to_freeze after clearing skip flag.
+>>> So, dont think we can use this as we need conditional try_to_freeze.
+>>> Please ignore above sequence.
+>>>>>
+>>>> Or probably we can take closer look on this later when we add
+>>>> suspend/resume support as it need more testing as well.
+>>>>
+>>>> As this is initial series which has TPG only I think we shouldn't
+>>>> get blocked on this now. Series-2 and 3 will be for sensor support
+>>>> and on next series when we add suspend/resume will look into this.
+>>>>
+>>>>
+>> When freeze activity starts and in case if finish thread freezes prior
+>> to start thread issuing capture, its the VI hardware writes data to
+>> the allocated buffer address.
+>>
+>> finish thread just checks for the event from the hardware and we don't
+>> handle/process directly on memory in this driver.
+>>
+>> So even we freeze done thread when single shot is issued frame buffer
+>> gets updated.
+>>
+>> In case if capture thread is frozen there will not buffers queued to
+>> process by finish thread. So, this will not be an issue.
+>>
+>> So, probably we don't need to do conditional try_to_freeze and what we
+>> have should work good in this corner case.
+>>
+> I still need to change wait_event_interruptible() to
+> wait_event_freezable() but no need to synchronize finish thread freeze
+> with start thread as even on issuing capture start its vi hardware that
+> does frame buffer update and finish thread just checks for mw_ack event
+> and returns buffer to application.
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The problem we are primarily trying to avoid is to have suspending being
+done in the middle of IO.
 
+IIUC, even if system will be suspended in the middle of VI IO, it won't
+be fatal. In worst case the buffer capture should fail on resume from
+suspend. Could you please try to simulate this potential issue and see
+what result will be on suspending in the middle of VI IO?
 
-> I'll try not to forget about these patches to resubmit them later on,
-> once the problem will be resolved :)
+We don't want to suspend system / stop streaming in the middle of IO, so
+this problem of a proper threads tear-down still exists. It should
+become easier to resolve the problem in a case of a proper suspending
+callback because the "start" thread could be turned down at any time, so
+it should be easier to maintain a proper tear-down order when threads
+are fully controlled by the driver, i.e. the "start" thread goes down
+first and the "finish" is second, blocking until the capture is completed.
 
-Don't worry, I'll keep an eye on these issues, too :)
+I think yours suggestion about dropping the freezing from the threads
+for now and returning back to it later on (once a proper suspend/resume
+support will be added) sounds reasonable.
 
+But if you'd want to keep the freezing, then the easy solution could be
+like that:
 
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
+  1. "start" thread could freeze at any time
+  2. "finish" thread could freeze only when the "start" thread is frozen
+and capture isn't in-progress. Use frozen(kthread_start_capture) to
+check the freezing state.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl6thwUACgkQFA3kzBSg
-KbZiYhAApixyl6FkKtu8ETEtCJm49fxzZ0RJO0lacziIdSScoj7RwIwDxSHMcZqX
-w9y9dcI4og9T+d3qTOy1D4ikR9c0/QZvkBWxBpY54P+xbmHixUPX00SdPtvgI23q
-GdmeSyNsFyuUM4+6+p86vss86Emz827yXF2km6ao3PLExCdGAbgYDlnTkc4R/oLn
-/2BDEt6pQghsJd8i1mlWreU9vXPDb1Zw8UVIJsi0g0LHEPPcda4KY9LJ+RNeW2PY
-h/Sg/cC2ZKZDbqHVRNIO+dkjfLvVtBDnHcg6qOhzd7pGQIyl23DQNI1+vO5DlJ73
-ffp3ZD0rqajbs0m0BvGVqRR20mJQdbh2uaagsyNZJzssEkHc2Hx9KvwJT3mpaWJf
-7T0amY9R7Em0Wex2TTPNXJvIMm/neJiAmmI+5+0E0rg91KX+XTrXHaKsH0Xs0c3u
-Eal37gTelNqz8+jDdWZfURKiZ4+uZYpiFhDIpkxn/KhowKe/WOYqo2bhAnhZZLXw
-o53kZQ3tFaPXMYbtVNy9o1pt1lZDj00lkO9TOJFFW1vnq+kaC8161e8hUpFX5lHH
-jRTVR3CZdB3CpKAcrBOel17OwDVxZVB4F8WxbxJCvGS7NczkKlnRgtFPj1VEhX16
-9QWk5r+5AX+c4AvZaeD+Fh459d8pjl6IXjQ3UZXx/8II45wQom4=
-=quWy
------END PGP SIGNATURE-----
-
---ZPt4rx8FFjLCG7dd--
+https://elixir.bootlin.com/linux/v5.7-rc3/source/include/linux/freezer.h#L25
