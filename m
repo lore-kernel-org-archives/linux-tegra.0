@@ -1,46 +1,40 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
-Date: Mon, 4 May 2020 10:44:17 +0300
-Message-ID: <f1cbb602-163e-a539-aaa5-c7e947a8945b@gmail.com>
-References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
- <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/3] Tegra194 HW Fixes
+Date: Mon, 4 May 2020 13:46:13 +0530
+Message-ID: <1588580176-2801-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc: sboyd@kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-30.04.2020 01:00, Sowjanya Komatineni пишет:
-> +/*
-> + * VI channel input data type enum.
-> + * These data type enum value gets programmed into corresponding Tegra VI
-> + * channel register bits.
-> + */
-> +enum tegra_image_dt {
-> +	TEGRA_IMAGE_DT_YUV420_8 = 24,
-> +	TEGRA_IMAGE_DT_YUV420_10,
-> +
-> +	TEGRA_IMAGE_DT_YUV420CSPS_8 = 28,
-> +	TEGRA_IMAGE_DT_YUV420CSPS_10,
-> +	TEGRA_IMAGE_DT_YUV422_8,
-> +	TEGRA_IMAGE_DT_YUV422_10,
-> +	TEGRA_IMAGE_DT_RGB444,
-> +	TEGRA_IMAGE_DT_RGB555,
-> +	TEGRA_IMAGE_DT_RGB565,
-> +	TEGRA_IMAGE_DT_RGB666,
-> +	TEGRA_IMAGE_DT_RGB888,
-> +
-> +	TEGRA_IMAGE_DT_RAW6 = 40,
-> +	TEGRA_IMAGE_DT_RAW7,
-> +	TEGRA_IMAGE_DT_RAW8,
-> +	TEGRA_IMAGE_DT_RAW10,
-> +	TEGRA_IMAGE_DT_RAW12,
-> +	TEGRA_IMAGE_DT_RAW14,
-> +};
+This series proposes SW workarounds for Tegra194 HDA HW bugs.
+Following are the two issues seen:
+ 1. GCAP register does not reflect true capability.
+    The actual number of SDO lines is "4", where as it reflects "2".
+ 2. With 4 SDO line configuration playback fails for,
+    44.1K/48K, 2-channel, 16-bps audio stream.
 
-Are these format IDs common to all Tegra SoCs or they unique to T210?
+After fixing [1], issue [2] is uncovered.
+As per recommendation by Tegra HW team the workarounds are pushed.
+
+Testing done
+============
+ * Verify GCAP register after registering HDA sound card
+ * Verify audio playback for 44.1K/48K, 2-channel, 16-bps.
+
+Sameer Pujar (3):
+  ALSA: hda/tegra: correct number of SDO lines for Tegra194
+  ALSA: hda: add member to store ratio for stripe control
+  ALSA: hda/tegra: workaround playback failure on Tegra194
+
+ include/sound/hdaudio.h     |  3 +++
+ sound/hda/hdac_controller.c | 11 ++++++++++
+ sound/hda/hdac_stream.c     |  2 +-
+ sound/pci/hda/hda_tegra.c   | 50 +++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 65 insertions(+), 1 deletion(-)
+
+-- 
+2.7.4
