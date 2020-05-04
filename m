@@ -1,7 +1,7 @@
 From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 1/3] dt-bindings: usb: tegra-xudc: Add Tegra194 XUSB controller support
-Date: Mon, 4 May 2020 12:04:39 +0530
-Message-ID: <1588574081-23160-2-git-send-email-nkristam@nvidia.com>
+Subject: [PATCH V2 2/3] usb: gadget: tegra-xudc: Add Tegra194 support
+Date: Mon, 4 May 2020 12:04:40 +0530
+Message-ID: <1588574081-23160-3-git-send-email-nkristam@nvidia.com>
 References: <1588574081-23160-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,38 +12,54 @@ To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8A
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Extend the Tegra XUSB controller device tree binding with Tegra194
-support.
+This commit adds support for XUSB device mode controller support on
+Tegra194 SoC. This is very similar to the existing Tegra186 XUDC, with lpm
+support added in addition.
 
 Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
 V2:
  - Added Acked-by updates to commit message.
+ - Re-used T186 clock names for T194 SoC data.
 ---
- Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/gadget/udc/tegra-xudc.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-index b84ed8e..75ea946 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-@@ -21,6 +21,7 @@ properties:
-       - enum:
-           - nvidia,tegra210-xudc # For Tegra210
-           - nvidia,tegra186-xudc # For Tegra186
-+          - nvidia,tegra194-xudc # For Tegra194
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index 52a6add..04c6a06 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -3522,6 +3522,19 @@ static struct tegra_xudc_soc tegra186_xudc_soc_data = {
+ 	.has_ipfs = false,
+ };
  
-   reg:
-     minItems: 2
-@@ -144,6 +145,7 @@ allOf:
-           contains:
-             enum:
-               - nvidia,tegra186-xudc
-+              - nvidia,tegra194-xudc
-     then:
-       properties:
-         reg:
++static struct tegra_xudc_soc tegra194_xudc_soc_data = {
++	.clock_names = tegra186_xudc_clock_names,
++	.num_clks = ARRAY_SIZE(tegra186_xudc_clock_names),
++	.num_phys = 4,
++	.u1_enable = true,
++	.u2_enable = true,
++	.lpm_enable = true,
++	.invalid_seq_num = false,
++	.pls_quirk = false,
++	.port_reset_quirk = false,
++	.has_ipfs = false,
++};
++
+ static const struct of_device_id tegra_xudc_of_match[] = {
+ 	{
+ 		.compatible = "nvidia,tegra210-xudc",
+@@ -3531,6 +3544,10 @@ static const struct of_device_id tegra_xudc_of_match[] = {
+ 		.compatible = "nvidia,tegra186-xudc",
+ 		.data = &tegra186_xudc_soc_data
+ 	},
++	{
++		.compatible = "nvidia,tegra194-xudc",
++		.data = &tegra194_xudc_soc_data
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, tegra_xudc_of_match);
 -- 
 2.7.4
