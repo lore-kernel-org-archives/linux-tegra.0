@@ -1,14 +1,15 @@
 From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 0/3] Tegra194 HW Fixes
-Date: Mon, 4 May 2020 14:05:07 +0530
-Message-ID: <124d4a5c-e198-d8c0-5fb7-65d008852e32@nvidia.com>
+Date: Mon, 4 May 2020 14:18:46 +0530
+Message-ID: <2828495a-d27a-a69b-37f5-fd3fb714188b@nvidia.com>
 References: <1588580176-2801-1-git-send-email-spujar@nvidia.com>
  <s5ho8r4f6hx.wl-tiwai@suse.de>
+ <124d4a5c-e198-d8c0-5fb7-65d008852e32@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <s5ho8r4f6hx.wl-tiwai-l3A5Bk7waGM@public.gmane.org>
+In-Reply-To: <124d4a5c-e198-d8c0-5fb7-65d008852e32-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
@@ -17,44 +18,54 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 5/4/2020 1:59 PM, Takashi Iwai wrote:
-> External email: Use caution opening links or attachments
+On 5/4/2020 2:05 PM, Sameer Pujar wrote:
 >
 >
-> On Mon, 04 May 2020 10:16:13 +0200,
-> Sameer Pujar wrote:
->> This series proposes SW workarounds for Tegra194 HDA HW bugs.
->> Following are the two issues seen:
->>   1. GCAP register does not reflect true capability.
->>      The actual number of SDO lines is "4", where as it reflects "2".
->>   2. With 4 SDO line configuration playback fails for,
->>      44.1K/48K, 2-channel, 16-bps audio stream.
+> On 5/4/2020 1:59 PM, Takashi Iwai wrote:
+>> External email: Use caution opening links or attachments
 >>
->> After fixing [1], issue [2] is uncovered.
->> As per recommendation by Tegra HW team the workarounds are pushed.
 >>
->> Testing done
->> ============
->>   * Verify GCAP register after registering HDA sound card
->>   * Verify audio playback for 44.1K/48K, 2-channel, 16-bps.
+>> On Mon, 04 May 2020 10:16:13 +0200,
+>> Sameer Pujar wrote:
+>>> This series proposes SW workarounds for Tegra194 HDA HW bugs.
+>>> Following are the two issues seen:
+>>> =C2=A0 1. GCAP register does not reflect true capability.
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 The actual number of SDO lines is "4", where a=
+s it reflects "2".
+>>> =C2=A0 2. With 4 SDO line configuration playback fails for,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 44.1K/48K, 2-channel, 16-bps audio stream.
+>>>
+>>> After fixing [1], issue [2] is uncovered.
+>>> As per recommendation by Tegra HW team the workarounds are pushed.
+>>>
+>>> Testing done
+>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>> =C2=A0 * Verify GCAP register after registering HDA sound card
+>>> =C2=A0 * Verify audio playback for 44.1K/48K, 2-channel, 16-bps.
+>>>
+>>> Sameer Pujar (3):
+>>> =C2=A0=C2=A0 ALSA: hda/tegra: correct number of SDO lines for Tegra194
+>>> =C2=A0=C2=A0 ALSA: hda: add member to store ratio for stripe control
+>>> =C2=A0=C2=A0 ALSA: hda/tegra: workaround playback failure on Tegra194
+>> Through a quick glance, all changes look good.
 >>
->> Sameer Pujar (3):
->>    ALSA: hda/tegra: correct number of SDO lines for Tegra194
->>    ALSA: hda: add member to store ratio for stripe control
->>    ALSA: hda/tegra: workaround playback failure on Tegra194
-> Through a quick glance, all changes look good.
+>> Is the device already in market, i.e. it had hit users?=C2=A0 If yes, I'=
+m
+>> going to merge for 5.7, otherwise for 5.8.
 >
-> Is the device already in market, i.e. it had hit users?  If yes, I'm
-> going to merge for 5.7, otherwise for 5.8.
+> Yes the device is in the market. But has not been reported by end users.
+> During internal resting this has been discovered. I am fine with=20
+> merging this to 5.8.
 
-Yes the device is in the market. But has not been reported by end users.
-During internal resting this has been discovered. I am fine with merging 
-this to 5.8.
-
-Thanks,
-Sameer.
+To add, end users currently won't see this problem because things work=20
+fine with 2-SDO lines. The issue is seen when Tegra194 is allowed to=20
+utilize its actual capability of 4-SDO lines.
 >
+> Thanks,
+> Sameer.
+>>
+>>
+>> thanks,
+>>
+>> Takashi
 >
-> thanks,
->
-> Takashi
