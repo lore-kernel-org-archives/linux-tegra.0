@@ -1,40 +1,94 @@
 From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/3] Tegra194 HW Fixes
-Date: Mon, 4 May 2020 13:46:13 +0530
-Message-ID: <1588580176-2801-1-git-send-email-spujar@nvidia.com>
+Subject: [PATCH 1/3] ALSA: hda/tegra: correct number of SDO lines for Tegra194
+Date: Mon, 4 May 2020 13:46:14 +0530
+Message-ID: <1588580176-2801-2-git-send-email-spujar@nvidia.com>
+References: <1588580176-2801-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1588580176-2801-1-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This series proposes SW workarounds for Tegra194 HDA HW bugs.
-Following are the two issues seen:
- 1. GCAP register does not reflect true capability.
-    The actual number of SDO lines is "4", where as it reflects "2".
- 2. With 4 SDO line configuration playback fails for,
-    44.1K/48K, 2-channel, 16-bps audio stream.
+Tegra194 supports 4 SDO lines but GCAP register indicates 2 lines. Thus it
+does not reflect the true capability of the HW. This patch presents a
+workaround by updating NSDO value accordingly in T_AZA_DBG_CFG_2 register.
 
-After fixing [1], issue [2] is uncovered.
-As per recommendation by Tegra HW team the workarounds are pushed.
+Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ sound/pci/hda/hda_tegra.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-Testing done
-============
- * Verify GCAP register after registering HDA sound card
- * Verify audio playback for 44.1K/48K, 2-channel, 16-bps.
-
-Sameer Pujar (3):
-  ALSA: hda/tegra: correct number of SDO lines for Tegra194
-  ALSA: hda: add member to store ratio for stripe control
-  ALSA: hda/tegra: workaround playback failure on Tegra194
-
- include/sound/hdaudio.h     |  3 +++
- sound/hda/hdac_controller.c | 11 ++++++++++
- sound/hda/hdac_stream.c     |  2 +-
- sound/pci/hda/hda_tegra.c   | 50 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 65 insertions(+), 1 deletion(-)
-
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index 773992a..45dc544 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -52,10 +52,21 @@
+ #define HDA_IPFS_INTR_MASK        0x188
+ #define HDA_IPFS_EN_INTR          (1 << 16)
+ 
++/* FPCI */
++#define FPCI_DBG_CFG_2		  0x10F4
++#define FPCI_GCAP_NSDO_SHIFT	  18
++#define FPCI_GCAP_NSDO_MASK	  (0x3 << FPCI_GCAP_NSDO_SHIFT)
++
+ /* max number of SDs */
+ #define NUM_CAPTURE_SD 1
+ #define NUM_PLAYBACK_SD 1
+ 
++/*
++ * Tegra194 does not reflect correct number of SDO lines. Below macro
++ * is used to update the GCAP register to workaround the issue.
++ */
++#define TEGRA194_NUM_SDO_LINES	  4
++
+ struct hda_tegra {
+ 	struct azx chip;
+ 	struct device *dev;
+@@ -275,6 +286,7 @@ static int hda_tegra_init_clk(struct hda_tegra *hda)
+ 
+ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+ {
++	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
+ 	struct hdac_bus *bus = azx_bus(chip);
+ 	struct snd_card *card = chip->card;
+ 	int err;
+@@ -298,6 +310,26 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+ 	bus->irq = irq_id;
+ 	card->sync_irq = bus->irq;
+ 
++	/*
++	 * Tegra194 has 4 SDO lines and the STRIPE can be used to
++	 * indicate how many of the SDO lines the stream should be
++	 * striped. But GCAP register does not reflect the true
++	 * capability of HW. Below workaround helps to fix this.
++	 *
++	 * GCAP_NSDO is bits 19:18 in T_AZA_DBG_CFG_2,
++	 * 0 for 1 SDO, 1 for 2 SDO, 2 for 4 SDO lines.
++	 */
++	if (of_device_is_compatible(np, "nvidia,tegra194-hda")) {
++		u32 val;
++
++		dev_info(card->dev, "Override SDO lines to %u\n",
++			 TEGRA194_NUM_SDO_LINES);
++
++		val = readl(hda->regs + FPCI_DBG_CFG_2) & ~FPCI_GCAP_NSDO_MASK;
++		val |= (TEGRA194_NUM_SDO_LINES >> 1) << FPCI_GCAP_NSDO_SHIFT;
++		writel(val, hda->regs + FPCI_DBG_CFG_2);
++	}
++
+ 	gcap = azx_readw(chip, GCAP);
+ 	dev_dbg(card->dev, "chipset global capabilities = 0x%x\n", gcap);
+ 
+@@ -408,6 +440,7 @@ static int hda_tegra_create(struct snd_card *card,
+ 
+ static const struct of_device_id hda_tegra_match[] = {
+ 	{ .compatible = "nvidia,tegra30-hda" },
++	{ .compatible = "nvidia,tegra194-hda" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, hda_tegra_match);
 -- 
 2.7.4
