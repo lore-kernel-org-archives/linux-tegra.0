@@ -1,122 +1,49 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 6/8] phy: tegra: xusb: Add support for charger detect
-Date: Mon, 4 May 2020 17:50:29 +0200
-Message-ID: <20200504155029.GB614153@ulmo>
-References: <1586939108-10075-1-git-send-email-nkristam@nvidia.com>
- <1586939108-10075-7-git-send-email-nkristam@nvidia.com>
- <20200428105510.GH3592148@ulmo>
- <ea0f5906-4681-8b84-a55a-e959ce40aece@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+Date: Mon, 4 May 2020 18:53:13 +0300
+Message-ID: <23520fa4-4d8f-b083-0ad3-b249339ee032@gmail.com>
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+ <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
+ <4da289e6-036f-853b-beb4-379d6462adb0@gmail.com>
+ <c6d54885-6f23-f60c-a17b-3481fc4d6adf@gmail.com>
+ <b14b9dc5-7ac9-7735-d98d-eebc7e151cba@nvidia.com>
+ <7d31d24f-f353-7e82-3ff9-cdba8b773d1e@nvidia.com>
+ <06a4a067-8d54-4322-b2a6-14e82eaeda29@nvidia.com>
+ <47873bbd-cf90-4595-5a99-7e9113327ecc@nvidia.com>
+ <f6088e0f-4ac7-a6be-3ede-0233dc88ef2c@nvidia.com>
+ <71532440-f455-cc24-74f7-9ccad5947099@gmail.com>
+ <960d2715-a717-0cc3-df19-ff78dc426535@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <ea0f5906-4681-8b84-a55a-e959ce40aece-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <960d2715-a717-0cc3-df19-ff78dc426535-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+04.05.2020 17:53, Sowjanya Komatineni пишет:
+> 
+> On 4/30/20 12:33 PM, Dmitry Osipenko wrote:
+>>>>> Hi Dmitry,
+>>>>>
+>>>>> Will update in v12 to not allow freeze in middle of a frame capture.
+>>>>>
+>>>>> Can you please confirm on above if you agree to allow freeze to
+>>>>> happen in b/w frame captures?
+>>>>>
+>>>>> Also as most feedback has been received from you by now, appreciate
+>>>>> if you can provide all in this v11 if you have anything else so we
+>>>>> will not have any new changes after v12.
+>> I'll take another look tomorrow / during weekend and let you know.
+> 
+> Hi Dmitry,
+> 
+> Will send v12 if there is no more feedback. Please let me know.
 
---6sX45UoQRIJXqkqR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Sowjanya,
 
-On Mon, May 04, 2020 at 02:32:51PM +0530, Nagarjuna Kristam wrote:
-> >On 28-04-2020 16:25, Thierry Reding wrote:
-> > > On Wed, Apr 15, 2020 at 01:55:06PM +0530, Nagarjuna Kristam wrote:
-[...]
-> > > diff --git a/drivers/phy/tegra/xusb-tegra-cd.c b/drivers/phy/tegra/xu=
-sb-tegra-cd.c
-> > > +static void tegra_xusb_padctl_utmi_pad_dcd(struct tegra_xusb_padctl =
-*padctl,
-> > > +					      u32 index)
-> > > +{
-> > > +	u32 value;
-> > > +	int dcd_timeout_ms =3D 0;
-> > > +	bool ret =3D false;
-> > > +
-> > > +	/* Turn on IDP_SRC */
-> > > +	value =3D padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL0(index=
-));
-> > > +	value |=3D OP_I_SRC_EN;
-> > > +	padctl_writel(padctl, value, USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
-> > > +
-> > > +	/* Turn on D- pull-down resistor */
-> > > +	value =3D padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL1(index=
-));
-> > > +	value |=3D USBON_RPD_OVRD_VAL;
-> > > +	padctl_writel(padctl, value, USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
-> > > +
-> > > +	/* Wait for TDCD_DBNC */
-> > > +	usleep_range(10000, 120000);
-> >  From the comment this looks like we're waiting for some hardware
-> > condition. Can we somehow obtain this rather than implementing a fixed
-> > sleep? Especially since the range here is so large.
-> >=20
-> As per data sheet we need to wait for 10 micro seconds as settle time.
-
-Okay, so TDCD_DBNC is a value that comes from a timing diagram in a
-datasheet? Seems fine to leave it as-is then. Perhaps add parentheses
-and mention which exact datasheet that's from, and perhaps which figure
-so that people can more easily reference it. Provided there is a
-publicly available datasheet, of course.
-
-Actually, one other thing: If the data sheet says to wait 10 us, why do
-you use an upper range of 120 us? Shouldn't a range of 10-20 us be good
-enough?
-
-> > > +	/* Wait for TVDPSRC_ON */
-> > > +	msleep(40);
-> > Again, is this a hardware condition that we can wait on by polling a
-> > register?
-> >=20
-> It HW settle time before reading registers.
-
-Again, perhaps link to the datasheet, or alternatively describe in the
-comment what this is waiting for. That is, something like:
-
-	/* wait for TVDPSRC_ON (wait for hardware to settle) */
-
-or similar.
-
-> > > +		if (tegra_xusb_padctl_utmi_pad_secondary_charger_detect(padctl,
-> > > +									index))
-> > > +			chrg_type =3D CDP_TYPE;
-> > > +		else
-> > > +			chrg_type =3D DCP_TYPE;
-> > > +	} else {
-> > > +		chrg_type =3D SDP_TYPE;
-> > > +	}
-> > > +
-> > > +	dev_dbg(&port->dev, "charger detected of type %d", chrg_type);
-> > Do we have a string representation of this?
-> >=20
-> No String representation available. Shall i add one for wasy reading ?
-
-Yeah, I think that'd be nice.
-
-Thierry
-
---6sX45UoQRIJXqkqR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6wOcQACgkQ3SOs138+
-s6Gczw/8DmZ+CrTXiEWQGprlWVnXJRhLbaMmN3d2ncl3kdUo2Me244NGxLhb2lvj
-IsO26k9RgdiXF0gfwWIK1J7swxrrczwbR6Y4xqRcZ1uKL4qDj3WLSZXqRBZs2ZeX
-T58TaRJDoN8CQcN+2EV0lLVL5nWYBxR8NJGsN6Gfh9T2DUeZ5Yyx10an/ircSPoY
-wQuHi991cScgvK+y0poOFTs2p74T2/YRZ1fEFRmJLVzSuACpHLypBRbafUdz3wNE
-NS4dgf+OE05fI2OfW4gugPirVzrxOl76WEQ5HGb/eYBXBT5EOp/dLxiJPf9T8zHj
-L8qDO7BJY/Fwa1067zXsukpvTUTOoryRjXF3dwoHT3/Iix+WvU9Rq8pVc0zrxGYl
-0vWPaPNtZ+r5C2iQZtfQO/IjGSPIo+DU/lQkjvUKSYyZCVWjiJnjiM674wbSNzVT
-N3bPf3F7W4XXYYjVD5LzEBKPBEWXgfrocrcYf4rjzpm26UZd9mO52ASJiH4jvE4e
-tYNSjE2FgJuR4ZRAfgsYTxiTlsx6Nh7hVaID9esAENxxHDl4hzVFnxJA2q5FhE+K
-JVA+3dL5gL+WtQsRbUiu8aYttGKMUfJNUqrYGHDUklQwgzdXkot0thPLV8zHBu95
-RsKP9+USnAiI3QYo89cZnnnkn5UXpE51rSVEh18RwCM7vpTfja0=
-=j6Ma
------END PGP SIGNATURE-----
-
---6sX45UoQRIJXqkqR--
+I don't have any more comments to add, looking forward to v12.
