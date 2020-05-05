@@ -1,57 +1,52 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5.7] clk: tegra: Fix initial rate for pll_a on Tegra124
-Date: Tue,  5 May 2020 09:16:55 +0200
-Message-ID: <20200505071655.644773-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 00/18] 4.4.222-rc1 review
+Date: Tue, 5 May 2020 09:36:33 +0100
+Message-ID: <779ededd-d368-95fd-bd26-70447775df77@nvidia.com>
+References: <20200504165441.533160703@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200504165441.533160703@linuxfoundation.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-pll_a_out0 and the I2S clocks are already configured to default to rates
-corresponding to a 44.1 kHz sampling rate, but the pll_a configuration
-was set to a default that is not listed in the frequency table, which
-caused the PLL code to compute an invalid configuration. As a result of
-this invalid configuration, Jetson TK1 fails to resume from suspend.
+On 04/05/2020 18:56, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.222 release.
+> There are 18 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 06 May 2020 16:52:55 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.222-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-This used to get papered over because the ASoC driver would force audio
-clocks to a 44.1 kHz configuration on boot. However, that's not really
-necessary and was hence removed in commit ff5d18cb04f4 ("ASoC: tegra:
-Enable audio mclk during tegra_asoc_utils_init()").
+All tests are passing for Tegra ...
 
-Fix the initial rate for pll_a so that it matches the 44.1 kHz entry in
-the pll_a frequency table.
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
 
-Fixes: ff5d18cb04f4 ("ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init()")
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Mike, Stephen,
+Linux version:	4.4.222-rc1-g2f5149253281
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
 
-this fixes a regression in v5.7, so it'd be great if you could queue it
-up in your fixes branch.
+Cheers
+Jon
 
-Thanks,
-Thierry
-
- drivers/clk/tegra/clk-tegra124.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 64e229ddf2a5..e931319dcc9d 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1292,7 +1292,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_UARTB, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA124_CLK_UARTC, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA124_CLK_UARTD, TEGRA124_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 282240000, 0 },
- 	{ TEGRA124_CLK_PLL_A_OUT0, TEGRA124_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S0, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S1, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
 -- 
-2.24.1
+nvpublic
