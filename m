@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v7 5/6] dt-bindings: ARM: tegra: Add ASUS Google Nexus 7
-Date: Tue,  5 May 2020 05:25:16 +0300
-Message-ID: <20200505022517.30523-6-digetx@gmail.com>
+Subject: [PATCH v7 4/6] dt-bindings: ARM: tegra: Add Acer Iconia Tab A500
+Date: Tue,  5 May 2020 05:25:15 +0300
+Message-ID: <20200505022517.30523-5-digetx@gmail.com>
 References: <20200505022517.30523-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,30 +12,26 @@ To: Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a binding for the Tegra30-based ASUS Google Nexus 7 tablet device.
+Add a binding for the Tegra20-based Acer Iconia Tab A500 tablet device.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/arm/tegra.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index 7fd0b66c69b2..fb3bbf7a5fb4 100644
+index 60b38eb5c61a..7fd0b66c69b2 100644
 --- a/Documentation/devicetree/bindings/arm/tegra.yaml
 +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -62,6 +62,13 @@ properties:
-               - toradex,colibri_t30-eval-v3
-           - const: toradex,colibri_t30
-           - const: nvidia,tegra30
+@@ -34,6 +34,9 @@ properties:
+               - toradex,colibri_t20-iris
+           - const: toradex,colibri_t20
+           - const: nvidia,tegra20
 +      - items:
-+          - const: asus,grouper
-+          - const: nvidia,tegra30
-+      - items:
-+          - const: asus,tilapia
-+          - const: asus,grouper
-+          - const: nvidia,tegra30
++          - const: acer,picasso
++          - const: nvidia,tegra20
        - items:
            - enum:
-               - nvidia,dalmore
+               - nvidia,beaver
 -- 
 2.26.0
