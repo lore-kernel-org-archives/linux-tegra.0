@@ -1,85 +1,124 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] i2c: tegra: Better handle case where CPU0 is busy
- for a long time
-Date: Mon, 4 May 2020 23:55:09 +0300
-Message-ID: <fb261f0c-157c-b97c-b58f-057b053f8444@gmail.com>
-References: <fd1ca178-1ea3-851f-20a6-10bf00453ce3@nvidia.com>
- <a5734f19-254e-b6bc-e791-fa1ac63f11a4@gmail.com>
- <79f6560e-dbb5-0ae1-49f8-cf1cd95396ec@nvidia.com>
- <20200427074837.GC3451400@ulmo>
- <c1190858-eaea-8e94-b4d1-1cf28076c330@gmail.com>
- <20200427103851.GB24446@kunai>
- <dc2de966-81d6-6ad5-0c51-16dd28ca4165@gmail.com>
- <20200427141922.GD3464906@ulmo> <20200427153106.GA8113@kunai>
- <e5a3dd07-97f5-29f1-974e-3037a01cc89c@gmail.com>
- <20200504154226.GA614153@ulmo>
+Subject: [PATCH v7 0/6] Support NVIDIA Tegra-based Acer A500 and Nexus 7 devices
+Date: Tue,  5 May 2020 05:25:11 +0300
+Message-ID: <20200505022517.30523-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200504154226.GA614153@ulmo>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Pedro=20=C3=82ngelo?= <pangelo-yxaQD43p5Qo@public.gmane.org>, Matt Merhar <mattmerhar-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>, Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-04.05.2020 18:42, Thierry Reding пишет:
-> On Sat, May 02, 2020 at 05:40:35PM +0300, Dmitry Osipenko wrote:
->> 27.04.2020 18:31, Wolfram Sang пишет:
->>>
->>>> Yes, that bug should be fixed anyway. But that doesn't justify breaking
->>>> suspend/resume completely, which *is* a regression.
->>>>
->>>> Look, I'm not saying that we should drop this patch altogether. All I'm
->>>> saying is that we should postpone it so that we can: a) get suspend and
->>>> resume working again (and by doing so make sure no other suspend/resume
->>>> regressions silently creep in, because that always seems to happen when
->>>> you're not looking) and b) fix any preexisting issues without possibly
->>>> scrambling the result with this perhaps unrelated fix.
->>>>
->>>> So, again, I think the safest road forward is to back this one out for
->>>> now, fix whatever this other bug is and once suspend/resume is working
->>>> properly again we can revisit this patch based on a known-good baseline.
->>>
->>> I am with you here. I want to add that the proper fix should be
->>> developed without thinking too much about stable in the first place.
->>> *When* we have a proper working fix, then we can think about making it
->>> "more" suitable for backporting. Yet, it may also be a result that older
->>> kernels need a different solution. Or have no solution at all, in case
->>> they can't do atomic_transfers and this is needed.
->>>
->>> D'accord?
->>>
->>
->> I saw that you submitted the revert of the patches for 5.7, hopefully it
->> won't result in putting the PCIe driver problem into the back burner.
->> I'll try not to forget about these patches to resubmit them later on,
->> once the problem will be resolved :)
-> 
-> I can put these two patches into a local development branch to keep
-> track of them. From what I said earlier, it looks like it would be fine
-> to apply these if we also make that runtime PM change (i.e. drop force
-> runtime PM and instead manually invoke runtime PM callbacks, which seems
-> to be in line with what the PM maintainers suggest, as pointed out
-> elsewhere in this thread).
-> 
-> How about if I put all of that into a branch and push it to linux-next
-> so that we can get some broader testing? I've already run it through our
-> internal test system, which, while not perfect, is the broadest system I
-> am aware of, and all tests came back positive.
-Will be great.
+Hello,
 
-> I'm not exactly sure I see a real issue with the PCIe driver after those
-> patches are applied. The regulator errors are gone (presumably because
-> the regulators now do get turned off properly) and I don't observe any
-> other issues.
+This series introduces upstream kernel support for Acer Iconia Tab A500
+and ASUS Google Nexus 7 tablet devices. Please review and apply, thanks
+in advance.
 
-That's probably because this I2C patch removed the "completion done
-after timeout" message. You may try to re-add the message, it should pop
-up on the PCIe driver's suspension. The IRQF_NO_SUSPEND flag should fix it.
+Changelog:
 
-My assumption was that it should be always fine handle interrupt after
-timeout, and thus, the message isn't really needed. But this wasn't a
-correct assumption as we see now, so it should be better to keep the
-message for the debugging purposes, maybe turn it into dev_info_once().
+v7: - This version brings support for a Nexus 7 variant that uses Ti PMIC
+      instead of the Maxim PMIC. Previously we assumed that variant with
+      the Ti PMIC doesn't exist in a wild, but turned out that it was a
+      wrong assumption. In a result the device-trees are separated into
+      more DTSI pieces, which combined together form the final device-tree.
+      Thanks to Zack Pearsall for testing the Ti version!
+
+    - The camera voltage regulator is now preset to a correct 1.8v in the
+      Nexus 7 device-tree.
+
+v6: - Corrected PMIC's RTC alias in the DTs. Sometime ago I renamed the
+      PMIC's node to match the modern upstream styling, but forgot to change
+      the RTC alias. Now PMIC RTC alias uses node's handle instead of string.
+
+    - Removed "panel: " handle from device trees, which became unused after
+      v5 and I just missed to remove it.
+
+v5: - After spending some more time on adding LVDS encoder bridge support
+      to the Tegra DRM driver, I'm now having a second thought and agree
+      with Thierry Reding that in a longer run it should be better not to
+      mix old nvidia,panel with new output graph in device-tree. So the
+      nvidia,panel phandle is removed now in both A500 and Nexus 7 DTs.
+
+v4: - Corrected CPU's thermal zone on both A500 and Nexus 7, which
+      should use the remote thermal sensor (Tegra chip) instead of the
+      local ("skin" temperature).
+
+    - Added default PMIC pinmux state on Nexus 7, for completeness.
+
+    - Added PMIC cpu_pwr_req GPIO hog on Nexus 7, for completeness.
+
+    - Renamed thermal sensor node label to NCT72 on Nexus 7 to match the
+      actual hardware (NCT72 is compatible with NCT1008). For completeness.
+
+    - Added always-on USB AVDD regulator on Nexus 7, which is controlled by
+      the PMIC GPIO. For completeness.
+
+    - Added PMIC GPIO enable-control to the 3v3_sys regulator on Nexus 7,
+      for completeness.
+
+    - Added CONFIG_NAMESPACES, CONFIG_USER_NS, CONFIG_SECCOMP and
+      CONFIG_PINCTRL_MAX77620 to the tegra_defconfig. The first three
+      options are must-have for the modern userspace, the last is somewhat
+      actual now since the default PMIC pinmux state is added to the N7 DT.
+
+v3: - Improved device-tree node-names in accordance to review comments that
+      were made by Thierry Reding to v2.
+
+    - Corrected LVDS encoder powerdown-GPIO polarity on both A500 and Nexus 7
+      because I implemented the DRM bridges support in the Tegra DRM driver
+      and found that there was a mistake in the device-trees. The updated
+      polarity also matches the boards schematics. Now DRM bridges support
+      becomes mandatory since LVDS is getting disabled during of the encoder
+      driver probing. I'll send the DRM patch separately from this series.
+
+    - Replaced recently deprecated CONFIG_DRM_LVDS_ENCODER with the new
+      CONFIG_DRM_LVDS_CODEC in tegra_defconfig.
+
+    - Added more config options to tegra_defconfig, like pstore and thermal.
+
+    - Added atmel,cfg_name to the A500 DT, which is a new upcoming property
+      in 5.8+ that allows to specify the per-board hardware config file name.
+
+v2: - Corrected "volume down" key-label in the grouper's device-tree and
+      improved some other names in device-trees.
+
+    - Added optional (upcoming in 5.8+) VDD/AVDD regulators to the touchscreen
+      node in A500 device-tree.
+
+Dmitry Osipenko (6):
+  ARM: tegra: Add device-tree for Acer Iconia Tab A500
+  ARM: tegra: Add device-tree for ASUS Google Nexus 7
+  dt-bindings: Add vendor prefix for Acer Inc.
+  dt-bindings: ARM: tegra: Add Acer Iconia Tab A500
+  dt-bindings: ARM: tegra: Add ASUS Google Nexus 7
+  ARM: tegra_defconfig: Enable options useful for Nexus 7 and Acer A500
+
+ .../devicetree/bindings/arm/tegra.yaml        |   10 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ arch/arm/boot/dts/Makefile                    |    4 +
+ .../boot/dts/tegra20-acer-a500-picasso.dts    | 1457 ++++++++++
+ .../dts/tegra30-asus-nexus7-grouper-E1565.dts |    9 +
+ .../dts/tegra30-asus-nexus7-grouper-PM269.dts |    9 +
+ .../tegra30-asus-nexus7-grouper-common.dtsi   | 2503 +++++++++++++++++
+ ...egra30-asus-nexus7-grouper-maxim-pmic.dtsi |  187 ++
+ .../tegra30-asus-nexus7-grouper-ti-pmic.dtsi  |  150 +
+ .../boot/dts/tegra30-asus-nexus7-grouper.dtsi |  462 +++
+ .../dts/tegra30-asus-nexus7-tilapia-E1565.dts |    9 +
+ .../boot/dts/tegra30-asus-nexus7-tilapia.dtsi |  548 ++++
+ arch/arm/configs/tegra_defconfig              |   42 +
+ 13 files changed, 5392 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-E1565.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-PM269.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-tilapia-E1565.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
+
+-- 
+2.26.0
