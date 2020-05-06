@@ -1,42 +1,44 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 4/4] arm64: tegra: Enable VI I2C on Jetson Nano
-Date: Wed,  6 May 2020 21:15:11 +0200
-Message-ID: <20200506191511.2791107-5-thierry.reding@gmail.com>
-References: <20200506191511.2791107-1-thierry.reding@gmail.com>
+Subject: [PATCH 0/5] i2c: tegra: Various fixes and improvements
+Date: Wed,  6 May 2020 21:33:53 +0200
+Message-ID: <20200506193358.2807244-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200506191511.2791107-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Enable the VI I2C so that the peripherals connected to it (such as the
-camera connector, an INA3221 power monitor and the USB 3.1 4-port hub)
-can be accessed.
+Hi Wolfram, Dmitry,
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+here's the full set of patches that I've been running local tests on and
+which looks like it has no other issues. I'm going to run this through
+our internal test system to make sure there aren't any regressions. I
+can carry these in the Tegra tree for a little bit until we're
+reasonable sure that these patches are all safe to apply and then send a
+pull request sometime next week.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index 21ed1756b889..374ce58b2b38 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -90,6 +90,10 @@ sor@54580000 {
- 		dpaux@545c0000 {
- 			status = "okay";
- 		};
-+
-+		i2c@546c0000 {
-+			status = "okay";
-+		};
- 	};
- 
- 	gpu@57000000 {
+I've also included a patch as suggested by Dmitry to keep I2C interrupts
+enabled during suspend/resume and I'm currently checking if that may be
+a fix for a suspend/resume issue that I've seen on Jetson Nano where we
+don't have working suspend/resume yet.
+
+Thierry
+
+Dmitry Osipenko (2):
+  i2c: tegra: Better handle case where CPU0 is busy for a long time
+  i2c: tegra: Synchronize DMA before termination
+
+Thierry Reding (3):
+  Revert "i2c: tegra: Fix suspending in active runtime PM state"
+  i2c: tegra: Restore pinmux on system resume
+  i2c: tegra: Keep IRQs enabled during suspend/resume
+
+ drivers/i2c/busses/i2c-tegra.c | 61 +++++++++++++++++++---------------
+ 1 file changed, 35 insertions(+), 26 deletions(-)
+
 -- 
 2.24.1
