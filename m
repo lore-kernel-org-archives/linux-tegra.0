@@ -1,65 +1,121 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1] ARM: tegra: Correct PL310 Auxiliary Control Register
- initialization
-Date: Wed, 6 May 2020 18:44:56 +0200
-Message-ID: <20200506164456.GC2723987@ulmo>
-References: <20200313090104.20750-1-digetx@gmail.com>
+From: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 5/6] drm/tegra: output: rgb: Support LVDS encoder
+ bridge
+Date: Wed, 6 May 2020 18:45:17 +0200
+Message-ID: <20200506164517.GE19296@ravnborg.org>
+References: <20200418170703.1583-1-digetx@gmail.com>
+ <20200418170703.1583-6-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nmemrqcdn5VTmUEE"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200313090104.20750-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200418170703.1583-6-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, g@ravnborg.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---nmemrqcdn5VTmUEE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 13, 2020 at 12:01:04PM +0300, Dmitry Osipenko wrote:
-> The PL310 Auxiliary Control Register shouldn't have the "Full line of
-> zero" optimization bit being set before L2 cache is enabled. The L2X0
-> driver takes care of enabling the optimization by itself.
->=20
-> This patch fixes a noisy error message on Tegra20 and Tegra30 telling
-> that cache optimization is erroneously enabled without enabling it for
-> the CPU:
->=20
-> 	L2C-310: enabling full line of zeros but not enabled in Cortex-A9
->=20
-> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+On Sat, Apr 18, 2020 at 08:07:02PM +0300, Dmitry Osipenko wrote:
+> Newer Tegra device-trees will specify a video output graph, which involves
+> LVDS encoder bridge. This patch adds support for the LVDS encoder bridge
+> to the RGB output, allowing us to model the display hardware properly.
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
 > ---
->  arch/arm/mach-tegra/tegra.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Applied to for-5.8/arm/core, thanks.
-
-Thierry
-
---nmemrqcdn5VTmUEE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6y6YcACgkQ3SOs138+
-s6GD/A/+NzmvjIPJ34uaTNbvaUoVRNP+HMuGLoEmhzzf+wTDrT0UwTVlz0nKSh7F
-6vwI05FUgT3FRozK65BE0DtYYjTCLQhISvMBn7tJ/LfHOGiXVuZeSLuKKzfkrleZ
-wTuPkYj4v0lHtOncYNWDKzxHKYYbsoRKDVxyPnH3hLFbsxyG392xzcOgsegiv0Fk
-EFED3VkVMoS3zSU2amy0m8BNDhQFojA2yYIAb76+fO/amRpFGhyi/cbU3diylCuY
-RiOGX2hrfnkC21zMYl8vLE07QCAnm9ZiFU2O2hjp8l9fDIBdGo8UvT6xv4OKuo/b
-lMWuO7z+tk+f8BovUQ6W4PSrL4xEvjKBoGLQzyDTTfpMWrQ9cJuFufg9FkskjGwD
-oJV5IJdy5DgFmbcWHhkNveCLSE3CO4/NfNuWQQAXE1yfsP4m+rn3KQqzfCkiKnUL
-SU4FwucPNnR7BwrdeIZ5kP1F9Fi0toiOuzZv2EgmtjAomlX7JYJy8Usi60NUptX5
-UYV55WiDmRpVavBOTzuKLnqOXYfNpdzkQOuWzjjJE4+LjinqtTJcP8Oc3gBQyMaS
-9fxR4LtKLBnBMPCA12+E71prlZZnMqUQcy2CwU1iSqdrR577AjPQsEtIY6LNYzCE
-ogWFdne+JAry3+gwbAPxmYkAx4SLVvHrpCfOAlZl5mI8M3KwXc0=
-=1shP
------END PGP SIGNATURE-----
-
---nmemrqcdn5VTmUEE--
+>  drivers/gpu/drm/tegra/rgb.c | 58 +++++++++++++++++++++++++++++++------
+>  1 file changed, 49 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+> index 0562a7eb793f..9a7024ec96bc 100644
+> --- a/drivers/gpu/drm/tegra/rgb.c
+> +++ b/drivers/gpu/drm/tegra/rgb.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/clk.h>
+>  
+>  #include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_bridge_connector.h>
+>  #include <drm/drm_panel.h>
+>  #include <drm/drm_simple_kms_helper.h>
+>  
+> @@ -267,24 +268,63 @@ int tegra_dc_rgb_remove(struct tegra_dc *dc)
+>  int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
+>  {
+>  	struct tegra_output *output = dc->rgb;
+> +	struct drm_connector *connector;
+>  	int err;
+>  
+>  	if (!dc->rgb)
+>  		return -ENODEV;
+>  
+> -	drm_connector_init(drm, &output->connector, &tegra_rgb_connector_funcs,
+> -			   DRM_MODE_CONNECTOR_LVDS);
+> -	drm_connector_helper_add(&output->connector,
+> -				 &tegra_rgb_connector_helper_funcs);
+> -	output->connector.dpms = DRM_MODE_DPMS_OFF;
+> -
+>  	drm_simple_encoder_init(drm, &output->encoder, DRM_MODE_ENCODER_LVDS);
+>  	drm_encoder_helper_add(&output->encoder,
+>  			       &tegra_rgb_encoder_helper_funcs);
+>  
+> -	drm_connector_attach_encoder(&output->connector,
+> -					  &output->encoder);
+> -	drm_connector_register(&output->connector);
+> +	/*
+> +	 * Tegra devices that have LVDS panel utilize LVDS encoder bridge
+> +	 * for converting up to 28 LCD LVTTL lanes into 5/4 LVDS lanes that
+> +	 * go to display panel's receiver.
+> +	 *
+> +	 * Encoder usually have a power-down control which needs to be enabled
+> +	 * in order to transmit data to the panel.  Historically devices that
+> +	 * use an older device-tree version didn't model the bridge, assuming
+> +	 * that encoder is turned ON by default, while today's DRM allows us
+> +	 * to model LVDS encoder properly.
+> +	 *
+> +	 * Newer device-trees utilize LVDS encoder bridge, which provides
+> +	 * us with a connector and handles the display panel.
+> +	 *
+> +	 * For older device-trees we fall back to our own connector and use
+> +	 * nvidia,panel phandle.
+> +	 */
+> +	if (output->bridge) {
+> +		err = drm_bridge_attach(&output->encoder, output->bridge,
+> +					NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> +		if (err) {
+> +			dev_err(output->dev, "failed to attach bridge: %d\n",
+> +				err);
+> +			return err;
+> +		}
+> +
+> +		connector = drm_bridge_connector_init(drm, &output->encoder);
+> +		if (IS_ERR(connector)) {
+> +			dev_err(output->dev,
+> +				"failed to initialize bridge connector: %pe\n",
+> +				connector);
+> +			return PTR_ERR(connector);
+> +		}
+> +
+> +		drm_connector_attach_encoder(connector, &output->encoder);
+> +	} else {
+> +		drm_connector_init(drm, &output->connector,
+> +				   &tegra_rgb_connector_funcs,
+> +				   DRM_MODE_CONNECTOR_LVDS);
+> +		drm_connector_helper_add(&output->connector,
+> +					 &tegra_rgb_connector_helper_funcs);
+> +		output->connector.dpms = DRM_MODE_DPMS_OFF;
+> +
+> +		drm_connector_attach_encoder(&output->connector,
+> +					     &output->encoder);
+> +		drm_connector_register(&output->connector);
+> +	}
+>  
+>  	err = tegra_output_init(drm, output);
+>  	if (err < 0) {
+> -- 
+> 2.26.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
