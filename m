@@ -1,70 +1,69 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1 2/3] firmware: trusted_foundations: Different way of
- L2 cache enabling after LP2 suspend
-Date: Wed, 6 May 2020 18:34:47 +0200
-Message-ID: <20200506163447.GC2723057@ulmo>
-References: <20200324224335.5825-1-digetx@gmail.com>
- <20200324224335.5825-3-digetx@gmail.com>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 1/5] mmc: core: Extend mmc_of_parse() to parse CQE bindings
+Date: Wed, 6 May 2020 18:36:12 +0200
+Message-ID: <CAPDyKFq7ffHeWg-S41tLvScg_BXCUULig=G=EzD_to1TG0NhVg@mail.gmail.com>
+References: <1588031768-23677-1-git-send-email-chun-hung.wu@mediatek.com>
+ <1588031768-23677-2-git-send-email-chun-hung.wu@mediatek.com> <9bc2454f-0b42-e256-7927-2564b56f369f@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lMM8JwqTlfDpEaS6"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200324224335.5825-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <9bc2454f-0b42-e256-7927-2564b56f369f-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Veerabhadrarao Badiganti <vbadigan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, BCM Kernel Feedback <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, 6 May 2020 at 15:01, Veerabhadrarao Badiganti
+<vbadigan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
+>
+>
+> On 4/28/2020 5:26 AM, Chun-Hung Wu wrote:
+> > Parse CQE bindings "supports-cqe" and "disable-cqe-dcmd"
+> > in mmc_of_parse().
+> >
+> > Signed-off-by: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> > ---
+> >   drivers/mmc/core/host.c | 5 +++++
+> >   1 file changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> > index c876872..47521c6 100644
+> > --- a/drivers/mmc/core/host.c
+> > +++ b/drivers/mmc/core/host.c
+> > @@ -302,6 +302,11 @@ int mmc_of_parse(struct mmc_host *host)
+> >               host->caps2 |= MMC_CAP2_NO_SD;
+> >       if (device_property_read_bool(dev, "no-mmc"))
+> >               host->caps2 |= MMC_CAP2_NO_MMC;
+> > +     if (device_property_read_bool(dev, "supports-cqe"))
+> > +             host->caps2 |= MMC_CAP2_CQE;
+>
+> This change is breaking emmc driver on qcom platforms where this dt
+> property is defined.
+>
+> [    1.543453]  cqhci_deactivate+0xc/0x38
+> [    1.545627]  sdhci_msm_reset+0x40/0x58
+> [    1.549447]  sdhci_do_reset+0x48/0x7c
+> [    1.553180]  __sdhci_read_caps+0x7c/0x214
+> [    1.556913]  sdhci_setup_host+0x58/0xce8
+> [    1.560905]  sdhci_msm_probe+0x588/0x8a4
+> [    1.564900]  platform_drv_probe+0x4c/0xb0
+>
+> So, we cant have this flag defined before sdhci_setup_host().
+>
+> I will have to clear this cap and re-enable it in our initialization.
 
---lMM8JwqTlfDpEaS6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for reporting! I have dropped all the four patches from
+Chun-Hung, so we can figure out how to fix this.
 
-On Wed, Mar 25, 2020 at 01:43:34AM +0300, Dmitry Osipenko wrote:
-> ASUS TF300T device may not work properly if firmware is asked to fully
-> re-initialize L2 cache after resume from LP2 suspend. The downstream
-> kernel of TF300T uses different opcode to enable cache after resuming
-> from LP2, this opcode also works fine on Nexus 7 and Ouya devices.
-> Supposedly, this may be needed by an older firmware versions.
->=20
-> Reported-by: Micha=C5=82 Miros=C5=82aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-> Tested-by: Micha=C5=82 Miros=C5=82aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-> Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
-> Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/pm.c                     |  4 ++++
->  drivers/firmware/trusted_foundations.c       | 21 ++++++++++++++++++--
->  include/linux/firmware/trusted_foundations.h |  1 +
->  3 files changed, 24 insertions(+), 2 deletions(-)
+Please help to review the next version of the series.
 
-I split this up and applied it to for-5.8/firmware and for-5.8/arm/core,
-respectively.
+>
+> > +     if (!device_property_read_bool(dev, "disable-cqe-dcmd")) {
+> > +             host->caps2 |= MMC_CAP2_CQE_DCMD;
+> > +     }
+> >
+> >       /* Must be after "non-removable" check */
+> >       if (device_property_read_u32(dev, "fixed-emmc-driver-type", &drv_type) == 0) {
 
-Thanks,
-Thierry
-
---lMM8JwqTlfDpEaS6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6y5ycACgkQ3SOs138+
-s6FCSRAAh02WAmouPtmya248FjU/uaRY3IDf6ewTOb0PsVokeZQB4biQYVvIN7CW
-l15w6+90Ni3RTxe6g3GewA8IIxmRYet1RGeRIFYo2ZhLCL5SurzOcQp1V7NO3Jg3
-UrgHSCOlmZM3W55qOwucjdolZINuXvhqbgscHdDHn3hbfJ7vciHSAVvKR+eDijU7
-xL+UZJ72i2UVgFwnu0ecREIPLDzzRSbwTP7z5Aedelr6RyNpjJFpwXL1ARRIpV+B
-f5AVWvyn4PqKrHgav+N7mPAccVXu3NImsa6e+GlPq6JJCMt2bD8a7FBXha0Xp+z9
-LcF3Fwv3H7ZWfGiqqtTrhBADXUaj3fkJ8zQzbeHR5W5DvYJFkaZtIuAtH4/Rissh
-Fnk0j3kJ+WRUD3/CdAKpOdMEcqmQW4eU5JWHFrEqXtwICE51tKiF7qnLtgwNsrll
-m/Y4dCq7l4KsKAHQSU4/H53PuJkyAlQW5UKCIdOzizqjMtRQCjvQFsq46WSYD9uK
-b7WW44l8UpUHfKGT7hSQfHhi5OHucY5otFCx81rTj3Dyv6ckLbd5igPAZk8cylMg
-HXfxegHGR0f1Tb8HfUsBbs/fNUFnhPNsWgM0nMvbmxNbpKH9LCeOlKSdY1y/WpWy
-OEJiuem6uaohDNwOC+tUOEBhRn06wZcOpGkQOBNm3qswQkXecos=
-=+mgt
------END PGP SIGNATURE-----
-
---lMM8JwqTlfDpEaS6--
+Kind regards
+Uffe
