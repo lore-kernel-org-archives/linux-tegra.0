@@ -1,122 +1,66 @@
-From: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v5 1/6] of_graph: add of_graph_get_local_port()
-Date: Wed, 6 May 2020 18:32:37 +0200
-Message-ID: <20200506163237.GA19296@ravnborg.org>
-References: <20200418170703.1583-1-digetx@gmail.com>
- <20200418170703.1583-2-digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 3/3] cpuidle: tegra: Support CPU cluster power-down
+ state on Tegra30
+Date: Wed, 6 May 2020 18:33:41 +0200
+Message-ID: <20200506163341.GA2723057@ulmo>
+References: <20200324224335.5825-1-digetx@gmail.com>
+ <20200324224335.5825-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200418170703.1583-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200324224335.5825-4-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry
 
-On Sat, Apr 18, 2020 at 08:06:58PM +0300, Dmitry Osipenko wrote:
-> In some case, like a DRM display code for example, it's useful to silently
-> check whether port node exists at all in a device-tree before proceeding
-> with parsing the graph.
-> 
-> This patch adds of_graph_get_local_port() which returns pointer to a local
-> port node, or NULL if graph isn't specified in a device-tree for a given
-> device node.
-> 
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Mar 25, 2020 at 01:43:35AM +0300, Dmitry Osipenko wrote:
+> The new Tegra CPU Idle driver now has a unified code path for the coupled
+> CC6 (LP2) state, this allows to enable the deepest idling state on Tegra30
+> SoC where the whole CPU cluster is power-gated.
+>=20
+> Tested-by: Micha=C5=82 Miros=C5=82aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+> Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
+> Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Nice little helper function.
-Reviewed-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-
-Rob - OK to commit to drm-misc-next?
-
-	Sam
-
 > ---
->  drivers/of/property.c    | 32 +++++++++++++++++++++++---------
->  include/linux/of_graph.h |  7 +++++++
->  2 files changed, 30 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/of/property.c b/drivers/of/property.c
-> index 252e4f600155..5dbeccaabb86 100644
-> --- a/drivers/of/property.c
-> +++ b/drivers/of/property.c
-> @@ -608,15 +608,7 @@ struct device_node *of_graph_get_next_endpoint(const struct device_node *parent,
->  	 * parent port node.
->  	 */
->  	if (!prev) {
-> -		struct device_node *node;
-> -
-> -		node = of_get_child_by_name(parent, "ports");
-> -		if (node)
-> -			parent = node;
-> -
-> -		port = of_get_child_by_name(parent, "port");
-> -		of_node_put(node);
-> -
-> +		port = of_graph_get_local_port(parent);
->  		if (!port) {
->  			pr_err("graph: no port node found in %pOF\n", parent);
->  			return NULL;
-> @@ -765,6 +757,28 @@ struct device_node *of_graph_get_remote_port(const struct device_node *node)
->  }
->  EXPORT_SYMBOL(of_graph_get_remote_port);
->  
-> +/**
-> + * of_graph_get_local_port() - get local port node
-> + * @node: pointer to a local endpoint device_node
-> + *
-> + * Return: First local port node associated with local endpoint node linked
-> + *	   to @node. Use of_node_put() on it when done.
-> + */
-> +struct device_node *of_graph_get_local_port(const struct device_node *node)
-> +{
-> +	struct device_node *ports, *port;
-> +
-> +	ports = of_get_child_by_name(node, "ports");
-> +	if (ports)
-> +		node = ports;
-> +
-> +	port = of_get_child_by_name(node, "port");
-> +	of_node_put(ports);
-> +
-> +	return port;
-> +}
-> +EXPORT_SYMBOL(of_graph_get_local_port);
-> +
->  int of_graph_get_endpoint_count(const struct device_node *np)
->  {
->  	struct device_node *endpoint;
-> diff --git a/include/linux/of_graph.h b/include/linux/of_graph.h
-> index 01038a6aade0..1fdeb72c7765 100644
-> --- a/include/linux/of_graph.h
-> +++ b/include/linux/of_graph.h
-> @@ -54,6 +54,7 @@ struct device_node *of_graph_get_remote_port_parent(
->  struct device_node *of_graph_get_remote_port(const struct device_node *node);
->  struct device_node *of_graph_get_remote_node(const struct device_node *node,
->  					     u32 port, u32 endpoint);
-> +struct device_node *of_graph_get_local_port(const struct device_node *node);
->  #else
->  
->  static inline int of_graph_parse_endpoint(const struct device_node *node,
-> @@ -116,6 +117,12 @@ static inline struct device_node *of_graph_get_remote_node(
->  	return NULL;
->  }
->  
-> +static inline struct device_node *of_graph_get_local_port(
-> +					const struct device_node *node)
-> +{
-> +	return NULL;
-> +}
-> +
->  #endif /* CONFIG_OF */
->  
->  #endif /* __LINUX_OF_GRAPH_H */
-> -- 
-> 2.26.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>  drivers/cpuidle/cpuidle-tegra.c | 1 -
+>  1 file changed, 1 deletion(-)
+
+Daniel,
+
+do you mind if I pick this up into the Tegra tree because of the runtime
+dependencies on the firmware and ARM core changes in patches 1 & 2?
+
+Thierry
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6y5uIACgkQ3SOs138+
+s6ELSg/+ODvaAUgkUW/e00mnp5rjl66/K9AQ6QUsvJwNoMl/3hKUNb2YOSIsiLck
+h0POrtB4ShVEuibgWQqHanbVX90LC45500sxKDSpEz7ypUiuj+WyRLcsoV1PxEIK
+SluqiHdGV+hELIlD3OiZSayTrWefPrzVTBotXomJWiEBhsL4333gvhiFQJmRvQAL
+MKV1XBC1ay7FG2cdww33YpW8JAYgQnO1+ABVbI/d8LKbEXJFKxIOtpUOMWRc2AGH
+MV/60S4fnebPWrF0psf6kGka5z0BDgxwYD5Cs2KjARpefJ5U6VQyW9k+B16F3Ul3
+ID6C/EhM/uGwVvERaFI7TbJEaNGCaNdhC1c1Qm7b+Ez5p/iWBzZ/o72OV4gnXkqr
+CSWVS7323VtouMc+Rd0sXNnZkOtBFrRPJkdC/Pjt9lfbfYwFbigDlbAmWuQ8PvLS
+eXOH3JiSnrYHgjximbzLjcq4GHP20wMC6CImAb9xrHj2sndAvuBXMwaOw2TKKYY8
+lXZSG/k3OACXIMzU1+FGvG4MHeBq/vcz9cRxduTMMI1gwcnRof5fXBJyDtxf/Q6Z
+Sa1/Jpvw5Hd7hPHb44AyGoc+CEZpbnRFG89oLAzu/bPIbu5rqiA2eHF2zyUL/h2s
+/68FiSsJiX2agbiyxrACmlJgn7HXPNnfql/i9Zhre4HA2my/kRo=
+=EK7n
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
