@@ -1,116 +1,76 @@
-From: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [RFC] DPCM for Tegra
-Date: Wed, 06 May 2020 16:47:09 +0200
-Message-ID: <1jwo5pf7de.fsf@starbuckisacylon.baylibre.com>
-References: <1588250483-10014-1-git-send-email-spujar@nvidia.com> <1jzhalffhh.fsf@starbuckisacylon.baylibre.com> <fe842d81-22da-fbbe-b5e2-9872cefb9d8b@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] phy: tegra: Use PTR_ERR_OR_ZERO() to simplify code
+Date: Wed, 6 May 2020 18:40:25 +0300
+Message-ID: <d3397bc6-099e-591a-ff60-5e67da478526@gmail.com>
+References: <20200505150058.17674-1-aishwaryarj100@gmail.com>
+ <be185976-3d12-f49d-6131-39f5075e0190@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <fe842d81-22da-fbbe-b5e2-9872cefb9d8b-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <be185976-3d12-f49d-6131-39f5075e0190-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org
-Cc: nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aishwarya Ramakrishnan <aishwaryarj100-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-MZpvjPyXg2s@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On Wed 06 May 2020 at 16:12, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-
->>>
->>> |     Front End PCMs     |  SoC DSP   |     Back End DAIs    |
->>>
->>>                           *************
->>> ADMAIF<0> <------------> *           * <----DAI<0>-----> I2S
->>>                           *           *
->>> ADMAIF<1> <------------> *           * <----DAI<1>-----> DMIC
->>>                           *    XBAR   *
->>> ADMAIF<2> <------------> *           * <----DAI<2>-----> DSPK
->>>                           *           *
->>> ADMAIF<N> <------------> *           * <----DAI<3>-----> SFC (Resampler)
->>>                           *           *
->>>                           *           * <----DAI<4>-----> MIXER
->>>                           *           *
->>>                           *           * <----DAI<N>-----> ...
->>>                           *************
->>>
->>>
->>> Follow up queries
->>> =================
->>> Based on the above experience I do have few follow up queries and request
->>> for your inputs on this.
->>>
->>>   a) Can I use a DAPM Mux control to activate a BE path? This in turn can
->>>      program required switch in XBAR.
->> My 2 cents:
->
->> DPCM should activate any BE which has:
->> * a valid DAPM path from the current FE
->> * a valid BE stream (ex: can handle the stream direction)
->
-> Yes, this is taken care.
+06.05.2020 14:47, Vidya Sagar пишет:
+> Thanks for pushing this change.
+> I'm fine with this change as it is attempting to change only the last
+> occurrence of the (IS_ERR(...)) + PTR_ERR combination.
+> But, this code was initially written with PTR_ERR_OR_ZERO() itself but
+> later changed to use (IS_ERR(...)) + PTR_ERR based on the review comment
+> from Dmitry Osipenko ( https://lkml.org/lkml/2019/6/20/1457 )
+> 
+> Adding Dmitry as well to review the change.
+> 
+> I'm fine with this change.
+> Reviewed-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> On 05-May-20 8:30 PM, Aishwarya Ramakrishnan wrote:
+>> External email: Use caution opening links or attachments
 >>
->> AFAIK, you can use any combination of DAPM elements to model your
->> components, including the XBAR. Then, it is the job of the card driver to
->> link the DAPM widgets of the different components together and bring the
->> system to life.
->
-> XBAR currently exports all routing widgets which can be used to
-> interconnect multiple components and thus implements Mux widgets. Fixing
-> the routing paths in driver would limit anyone to try a different
-> combination as per the need, unless driver is modified.
-
-I did not mean that you should restrict the routing ability of your SoC,
-quite the opposite actually.
-
-You should just expose it correctly
-
-From the diagram above, each comp (ASMAIFs, BE even the XBAR) should
-export AIF_IN/AIF_OUT widgets. Think of those as the interfaces of your
-components.
-
-The connections between those interfaces are fixed, the
-represent what the HW is (IOW, the wires). They could possibly be
-described in DT (audio-routing prop)
-
-The XBAR should implement the N to M MUX and export all the necessary
-kcontrols to act it. The routing magic happens in this component.
-There is no limit to the flexibility this provides, unless you set one
-;)
-
-> Device tree (DT)
-> can be one of the solutions here, but currently static paths can only be
-> added AFAIK. Even if this is extended to include routes with Mux widgets,
-> still it won't give the real flexibility.
-> I cannot re-use a component for a
-> different routing path, unless DT is modified again.
-
-If you implement the XBAR capability in the comp, not a use case, there
-is no reason to change it.
-
-DT describes the HW, changing it to describe a use case means something
-is wrong, usually.
-
->
-> Hence a Mux widget with user space control could offer required
-> flexibility.
-
-Exactly, your XBAR comp should provide the widget(s) and related
-kcontrol(s).
-
 >>
->> If your XBAR is widgets are not provided by a component which also
->> provides a dai_link in the sound card, you'll need to add the component
->> to the auxiliary device list of the card for the widget to be available
->> in the card.
->
-> I registered XBAR device as a component having a dummy DAI just to allow
-> routing paths to be available
+>> PTR_ERR_OR_ZERO contains if(IS_ERR(...)) + PTR_ERR.
+>>
+>> Generated by: scripts/coccinelle/api/ptr_ret.cocci
+>>
+>> Signed-off-by: Aishwarya Ramakrishnan <aishwaryarj100-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>   drivers/phy/tegra/phy-tegra194-p2u.c | 5 +----
+>>   1 file changed, 1 insertion(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c
+>> b/drivers/phy/tegra/phy-tegra194-p2u.c
+>> index 7042bed9feaa..42394d27f4cb 100644
+>> --- a/drivers/phy/tegra/phy-tegra194-p2u.c
+>> +++ b/drivers/phy/tegra/phy-tegra194-p2u.c
+>> @@ -92,10 +92,7 @@ static int tegra_p2u_probe(struct platform_device
+>> *pdev)
+>>          phy_set_drvdata(generic_phy, phy);
+>>
+>>          phy_provider = devm_of_phy_provider_register(dev,
+>> of_phy_simple_xlate);
+>> -       if (IS_ERR(phy_provider))
+>> -               return PTR_ERR(phy_provider);
+>> -
+>> -       return 0;
+>> +       return PTR_ERR_OR_ZERO(phy_provider);
+>>   }
 
-From you description, you XBAR should not have DAIs, just DAPM widgets
-and kcontrols
+Quite some people think that such a change doesn't bring any benefits,
+it doesn't help readability of the code, it even makes harder to read
+the code for a human being.
 
-> for the given sound card. Are you suggesting
-> I can register XBAR as an auxiliary device so that all the routing paths
-> are available?
+IIRC, there were some requests in the past to remove that cocci rule to
+stop such auto-generated patches to re-occur over and over again.
 
-Precisely.
-I have been using the same method on Amlogic cards.
+The PTR_ERR_OR_ZERO is good to use in a cases where it's not returned
+directly, like this:
+
+phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+err = PTR_ERR_OR_ZERO(phy_provider);
+if (err)
+	return err;
+
+return 0;
