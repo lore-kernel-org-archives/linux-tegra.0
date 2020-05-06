@@ -1,63 +1,63 @@
 From: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v5 2/6] drm/of: Make drm_of_find_panel_or_bridge() to
- check graph's presence
-Date: Wed, 6 May 2020 18:41:33 +0200
-Message-ID: <20200506164133.GB19296@ravnborg.org>
+Subject: Re: [PATCH v5 3/6] drm/tegra: output: Don't leak OF node on error
+Date: Wed, 6 May 2020 18:42:15 +0200
+Message-ID: <20200506164215.GC19296@ravnborg.org>
 References: <20200418170703.1583-1-digetx@gmail.com>
- <20200418170703.1583-3-digetx@gmail.com>
+ <20200418170703.1583-4-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200418170703.1583-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20200418170703.1583-4-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Apr 18, 2020 at 08:06:59PM +0300, Dmitry Osipenko wrote:
-> When graph isn't defined in a device-tree, the of_graph_get_remote_node()
-> prints a noisy error message, telling that port node is not found. This is
-> undesirable behaviour in our case because absence of a panel/bridge graph
-> is a valid case. Let's check presence of the local port in a device-tree
-> before proceeding with parsing the graph.
+On Sat, Apr 18, 2020 at 08:07:00PM +0300, Dmitry Osipenko wrote:
+> The OF node should be put before returning error in tegra_output_probe(),
+> otherwise node's refcount will be leaked.
 > 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Reviewed-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
 > ---
->  drivers/gpu/drm/drm_of.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/tegra/output.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-> index b50b44e76279..e0652c38f357 100644
-> --- a/drivers/gpu/drm/drm_of.c
-> +++ b/drivers/gpu/drm/drm_of.c
-> @@ -239,13 +239,24 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
->  				struct drm_bridge **bridge)
->  {
->  	int ret = -EPROBE_DEFER;
-> -	struct device_node *remote;
-> +	struct device_node *local, *remote;
->  
->  	if (!panel && !bridge)
->  		return -EINVAL;
->  	if (panel)
->  		*panel = NULL;
->  
-> +	/*
-> +	 * of_graph_get_remote_node() produces a noisy error message if port
-> +	 * node isn't found and the absence of the port is a legit case here,
-> +	 * so at first we silently check presence of the local port.
-> +	 */
-> +	local = of_graph_get_local_port(np);
-> +	if (!local)
-> +		return -ENODEV;
+> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+> index e36e5e7c2f69..a6a711d54e88 100644
+> --- a/drivers/gpu/drm/tegra/output.c
+> +++ b/drivers/gpu/drm/tegra/output.c
+> @@ -102,10 +102,10 @@ int tegra_output_probe(struct tegra_output *output)
+>  	panel = of_parse_phandle(output->of_node, "nvidia,panel", 0);
+>  	if (panel) {
+>  		output->panel = of_drm_find_panel(panel);
+> +		of_node_put(panel);
 > +
-> +	of_node_put(local);
+>  		if (IS_ERR(output->panel))
+>  			return PTR_ERR(output->panel);
+> -
+> -		of_node_put(panel);
+>  	}
+>  
+>  	output->edid = of_get_property(output->of_node, "nvidia,edid", &size);
+> @@ -113,13 +113,12 @@ int tegra_output_probe(struct tegra_output *output)
+>  	ddc = of_parse_phandle(output->of_node, "nvidia,ddc-i2c-bus", 0);
+>  	if (ddc) {
+>  		output->ddc = of_find_i2c_adapter_by_node(ddc);
+> +		of_node_put(ddc);
 > +
->  	remote = of_graph_get_remote_node(np, port, endpoint);
->  	if (!remote)
->  		return -ENODEV;
+>  		if (!output->ddc) {
+>  			err = -EPROBE_DEFER;
+> -			of_node_put(ddc);
+>  			return err;
+>  		}
+> -
+> -		of_node_put(ddc);
+>  	}
+>  
+>  	output->hpd_gpio = devm_gpiod_get_from_of_node(output->dev,
 > -- 
 > 2.26.0
 > 
