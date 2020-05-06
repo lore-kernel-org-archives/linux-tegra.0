@@ -1,45 +1,122 @@
-From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Re: [RFC] DPCM for Tegra
-Date: Wed, 6 May 2020 21:39:58 +0530
-Message-ID: <74e724ec-72c9-e06a-cada-85110c9b145b@nvidia.com>
-References: <1588250483-10014-1-git-send-email-spujar@nvidia.com>
- <1jzhalffhh.fsf@starbuckisacylon.baylibre.com>
- <fe842d81-22da-fbbe-b5e2-9872cefb9d8b@nvidia.com>
- <1jwo5pf7de.fsf@starbuckisacylon.baylibre.com>
- <20200506155311.GG5299@sirena.org.uk>
+From: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 1/6] of_graph: add of_graph_get_local_port()
+Date: Wed, 6 May 2020 18:32:37 +0200
+Message-ID: <20200506163237.GA19296@ravnborg.org>
+References: <20200418170703.1583-1-digetx@gmail.com>
+ <20200418170703.1583-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200506155311.GG5299-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <20200418170703.1583-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Dmitry
 
+On Sat, Apr 18, 2020 at 08:06:58PM +0300, Dmitry Osipenko wrote:
+> In some case, like a DRM display code for example, it's useful to silently
+> check whether port node exists at all in a device-tree before proceeding
+> with parsing the graph.
+> 
+> This patch adds of_graph_get_local_port() which returns pointer to a local
+> port node, or NULL if graph isn't specified in a device-tree for a given
+> device node.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Nice little helper function.
+Reviewed-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
 
-On 5/6/2020 9:23 PM, Mark Brown wrote:
-> On Wed, May 06, 2020 at 04:47:09PM +0200, Jerome Brunet wrote:
->> On Wed 06 May 2020 at 16:12, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> XBAR currently exports all routing widgets which can be used to
->>> interconnect multiple components and thus implements Mux widgets. Fixing
->>> the routing paths in driver would limit anyone to try a different
->>> combination as per the need, unless driver is modified.
->> I did not mean that you should restrict the routing ability of your SoC,
->> quite the opposite actually.
+Rob - OK to commit to drm-misc-next?
 
->> You should just expose it correctly
-> Yes, it's going to be less effort in the long run if nothing else.
+	Sam
 
-This is what below reference tried to achieve in the original series, 
-where all Mux widgets and corresponding kcontrols were exposed.
-[1] 
-http://patchwork.ozlabs.org/project/linux-tegra/patch/1582180492-25297-6-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org/
-
-However it has DAI declarations too, that was mainly because 
-codec-to-codec links were used to connect multiple components. DT would 
-expose all these links (please note that machine driver was not sent as 
-part of the original series). May be with DPCM these additional DAIs can 
-be avoided, but it comes with few challenges highlighted in this RFC patch.
+> ---
+>  drivers/of/property.c    | 32 +++++++++++++++++++++++---------
+>  include/linux/of_graph.h |  7 +++++++
+>  2 files changed, 30 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index 252e4f600155..5dbeccaabb86 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -608,15 +608,7 @@ struct device_node *of_graph_get_next_endpoint(const struct device_node *parent,
+>  	 * parent port node.
+>  	 */
+>  	if (!prev) {
+> -		struct device_node *node;
+> -
+> -		node = of_get_child_by_name(parent, "ports");
+> -		if (node)
+> -			parent = node;
+> -
+> -		port = of_get_child_by_name(parent, "port");
+> -		of_node_put(node);
+> -
+> +		port = of_graph_get_local_port(parent);
+>  		if (!port) {
+>  			pr_err("graph: no port node found in %pOF\n", parent);
+>  			return NULL;
+> @@ -765,6 +757,28 @@ struct device_node *of_graph_get_remote_port(const struct device_node *node)
+>  }
+>  EXPORT_SYMBOL(of_graph_get_remote_port);
+>  
+> +/**
+> + * of_graph_get_local_port() - get local port node
+> + * @node: pointer to a local endpoint device_node
+> + *
+> + * Return: First local port node associated with local endpoint node linked
+> + *	   to @node. Use of_node_put() on it when done.
+> + */
+> +struct device_node *of_graph_get_local_port(const struct device_node *node)
+> +{
+> +	struct device_node *ports, *port;
+> +
+> +	ports = of_get_child_by_name(node, "ports");
+> +	if (ports)
+> +		node = ports;
+> +
+> +	port = of_get_child_by_name(node, "port");
+> +	of_node_put(ports);
+> +
+> +	return port;
+> +}
+> +EXPORT_SYMBOL(of_graph_get_local_port);
+> +
+>  int of_graph_get_endpoint_count(const struct device_node *np)
+>  {
+>  	struct device_node *endpoint;
+> diff --git a/include/linux/of_graph.h b/include/linux/of_graph.h
+> index 01038a6aade0..1fdeb72c7765 100644
+> --- a/include/linux/of_graph.h
+> +++ b/include/linux/of_graph.h
+> @@ -54,6 +54,7 @@ struct device_node *of_graph_get_remote_port_parent(
+>  struct device_node *of_graph_get_remote_port(const struct device_node *node);
+>  struct device_node *of_graph_get_remote_node(const struct device_node *node,
+>  					     u32 port, u32 endpoint);
+> +struct device_node *of_graph_get_local_port(const struct device_node *node);
+>  #else
+>  
+>  static inline int of_graph_parse_endpoint(const struct device_node *node,
+> @@ -116,6 +117,12 @@ static inline struct device_node *of_graph_get_remote_node(
+>  	return NULL;
+>  }
+>  
+> +static inline struct device_node *of_graph_get_local_port(
+> +					const struct device_node *node)
+> +{
+> +	return NULL;
+> +}
+> +
+>  #endif /* CONFIG_OF */
+>  
+>  #endif /* __LINUX_OF_GRAPH_H */
+> -- 
+> 2.26.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
