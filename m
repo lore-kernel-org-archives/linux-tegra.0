@@ -1,65 +1,70 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1 1/3] ARM: tegra: Initialize r0 register for firmware
- wake-up
-Date: Wed, 6 May 2020 18:34:00 +0200
-Message-ID: <20200506163400.GB2723057@ulmo>
+Subject: Re: [PATCH v1 2/3] firmware: trusted_foundations: Different way of
+ L2 cache enabling after LP2 suspend
+Date: Wed, 6 May 2020 18:34:47 +0200
+Message-ID: <20200506163447.GC2723057@ulmo>
 References: <20200324224335.5825-1-digetx@gmail.com>
- <20200324224335.5825-2-digetx@gmail.com>
+ <20200324224335.5825-3-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
+        protocol="application/pgp-signature"; boundary="lMM8JwqTlfDpEaS6"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200324224335.5825-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200324224335.5825-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---NMuMz9nt05w80d4+
+--lMM8JwqTlfDpEaS6
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 25, 2020 at 01:43:33AM +0300, Dmitry Osipenko wrote:
-> Downstream kernel of ASUS TF300T sets r0 to #3. There is no explanation in
-> downstream code whether this is really needed and some of T30 downstream
-> kernels have and explicit comment telling that all arguments are ignored
-> by firmware. Let's take a safe side by replicating behavior of the TF300T
-> downstream kernel. This change works fine on Ouya and Nexus 7 devices.
+On Wed, Mar 25, 2020 at 01:43:34AM +0300, Dmitry Osipenko wrote:
+> ASUS TF300T device may not work properly if firmware is asked to fully
+> re-initialize L2 cache after resume from LP2 suspend. The downstream
+> kernel of TF300T uses different opcode to enable cache after resuming
+> from LP2, this opcode also works fine on Nexus 7 and Ouya devices.
+> Supposedly, this may be needed by an older firmware versions.
 >=20
+> Reported-by: Micha=C5=82 Miros=C5=82aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 > Tested-by: Micha=C5=82 Miros=C5=82aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 > Tested-by: Jasper Korten <jja2000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > Tested-by: David Heidelberg <david-W22tF5X+A20@public.gmane.org>
 > Tested-by: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  arch/arm/mach-tegra/reset-handler.S | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+>  arch/arm/mach-tegra/pm.c                     |  4 ++++
+>  drivers/firmware/trusted_foundations.c       | 21 ++++++++++++++++++--
+>  include/linux/firmware/trusted_foundations.h |  1 +
+>  3 files changed, 24 insertions(+), 2 deletions(-)
 
-Applied to for-5.8/arm/core, thanks.
+I split this up and applied it to for-5.8/firmware and for-5.8/arm/core,
+respectively.
 
+Thanks,
 Thierry
 
---NMuMz9nt05w80d4+
+--lMM8JwqTlfDpEaS6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6y5vgACgkQ3SOs138+
-s6FeZw//bsTtyKAUaZPjgynbaktNBPBlZ19Zn+dT5GDNmvazxZUBprVCYl3AY1Qj
-OJ1v65x2LXKFcPmJ4xRMk/M8mnZLchWeIfHIWRtMjUepgQ7Y4VlVB5U6GjuQfNa2
-BJxCoW/XyLLYFp9Pz1lfrpcsaVAMZ9YI5zk4XfKoFvWLlLbO0FHkg4pF62uZ/+sy
-rSYWNF5X9Cteqjm6R0LddQmx2ari9nFr2UqYv2jX86OaalBgoh4UfSu/cuYSu5bH
-3B/6GUNLWh5tIiMpCa7+mn5FvCYXrF38HWQdIvZm2QBM0TDIDWaGfC0VyQFppu0H
-QxDOtpxiXqDVGYZ820XApvM/pqULDdeEyGxUgX7kdlR6ecUPQUaivIleEYvWMrkH
-RphS2Ddf4tCc+KPt64bX+emiEX2yNDiqnj1ow99pPq+UqTtCmbbpSsePFPyujAyC
-KmHS7j8zbJvXG8MpHF2JVNjcH1pcmQ39r0r/97YMH86iS69sdpAkvOVr1I7uHyJH
-kwmPLu2n8XvzDpqWCMm3OCfqF5xApGlaac3zy2hfwd3YJzmoOduRVNmZMVxCMcmn
-G/905hO8upsMCvFOFkAO2gGqnzAhg7A4nYWVMqdTM6dMPJ4jEyVKCVdTq8yLS6z4
-xvJd7HDSbY2p2ETt79uQe7hSGzacHO34JBBxkqLYTsOMb7/oFkE=
-=kqr0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6y5ycACgkQ3SOs138+
+s6FCSRAAh02WAmouPtmya248FjU/uaRY3IDf6ewTOb0PsVokeZQB4biQYVvIN7CW
+l15w6+90Ni3RTxe6g3GewA8IIxmRYet1RGeRIFYo2ZhLCL5SurzOcQp1V7NO3Jg3
+UrgHSCOlmZM3W55qOwucjdolZINuXvhqbgscHdDHn3hbfJ7vciHSAVvKR+eDijU7
+xL+UZJ72i2UVgFwnu0ecREIPLDzzRSbwTP7z5Aedelr6RyNpjJFpwXL1ARRIpV+B
+f5AVWvyn4PqKrHgav+N7mPAccVXu3NImsa6e+GlPq6JJCMt2bD8a7FBXha0Xp+z9
+LcF3Fwv3H7ZWfGiqqtTrhBADXUaj3fkJ8zQzbeHR5W5DvYJFkaZtIuAtH4/Rissh
+Fnk0j3kJ+WRUD3/CdAKpOdMEcqmQW4eU5JWHFrEqXtwICE51tKiF7qnLtgwNsrll
+m/Y4dCq7l4KsKAHQSU4/H53PuJkyAlQW5UKCIdOzizqjMtRQCjvQFsq46WSYD9uK
+b7WW44l8UpUHfKGT7hSQfHhi5OHucY5otFCx81rTj3Dyv6ckLbd5igPAZk8cylMg
+HXfxegHGR0f1Tb8HfUsBbs/fNUFnhPNsWgM0nMvbmxNbpKH9LCeOlKSdY1y/WpWy
+OEJiuem6uaohDNwOC+tUOEBhRn06wZcOpGkQOBNm3qswQkXecos=
+=+mgt
 -----END PGP SIGNATURE-----
 
---NMuMz9nt05w80d4+--
+--lMM8JwqTlfDpEaS6--
