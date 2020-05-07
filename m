@@ -1,123 +1,96 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/5] i2c: tegra: Restore pinmux on system resume
-Date: Thu, 7 May 2020 12:03:15 +0200
-Message-ID: <20200507100315.GA2890327@ulmo>
-References: <20200506193358.2807244-1-thierry.reding@gmail.com>
- <20200506193358.2807244-3-thierry.reding@gmail.com>
- <20200506224336.GA23423@qmqm.qmqm.pl>
+Subject: Re: [PATCH] arm64: tegra: Fix ethernet phy-mode for Jetson Xavier
+Date: Thu, 7 May 2020 12:05:02 +0200
+Message-ID: <20200507100502.GB2890327@ulmo>
+References: <20200501072756.25348-1-jonathanh@nvidia.com>
+ <20200506234218.4E11D2082E@mail.kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+        protocol="application/pgp-signature"; boundary="f2QGlHpHGjS2mn6Y"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200506224336.GA23423-cHozx32mtrEEUmgCuDUIdw@public.gmane.org>
+In-Reply-To: <20200506234218.4E11D2082E-+nuXSHJNwjE76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: mirq-test-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---pWyiEgJYm5f9v55/
+--f2QGlHpHGjS2mn6Y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 07, 2020 at 12:43:36AM +0200, mirq-test-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org wrote:
-> On Wed, May 06, 2020 at 09:33:55PM +0200, Thierry Reding wrote:
-> [...]
-> > --- a/drivers/i2c/busses/i2c-tegra.c
-> > +++ b/drivers/i2c/busses/i2c-tegra.c
-> > @@ -1769,10 +1769,14 @@ static int tegra_i2c_remove(struct platform_dev=
-ice *pdev)
-> >  static int __maybe_unused tegra_i2c_suspend(struct device *dev)
-> >  {
-> >  	struct tegra_i2c_dev *i2c_dev =3D dev_get_drvdata(dev);
-> > +	int err =3D 0;
-> > =20
-> >  	i2c_mark_adapter_suspended(&i2c_dev->adapter);
-> > =20
-> > -	return 0;
-> > +	if (!pm_runtime_status_suspended(dev))
-> > +		err =3D tegra_i2c_runtime_suspend(dev);
-> > +
-> > +	return err;
-> >  }
-> > =20
-> >  static int __maybe_unused tegra_i2c_resume(struct device *dev)
-> > @@ -1788,9 +1792,11 @@ static int __maybe_unused tegra_i2c_resume(struc=
-t device *dev)
-> >  	if (err)
-> >  		return err;
-> > =20
-> > -	err =3D tegra_i2c_runtime_suspend(dev);
-> > -	if (err)
-> > -		return err;
-> > +	if (pm_runtime_status_suspended(dev)) {
-> [...]
-> Shouldn't this be negated as in suspend? I would assume that inbetween
-> suspend and resume nothing changes the stored state.
+On Wed, May 06, 2020 at 11:42:17PM +0000, Sasha Levin wrote:
+> Hi
+>=20
+> [This is an automated email]
+>=20
+> This commit has been processed because it contains a -stable tag.
+> The stable tag indicates that it's relevant for the following trees: all
+>=20
+> The bot has tested the following trees: v5.6.8, v5.4.36, v4.19.119, v4.14=
+=2E177, v4.9.220, v4.4.220.
+>=20
+> v5.6.8: Build OK!
+> v5.4.36: Build OK!
+> v4.19.119: Build OK!
+> v4.14.177: Failed to apply! Possible dependencies:
+>     5425fb15d8ee ("arm64: tegra: Add Tegra194 chip device tree")
+>     b8656c673a6b ("arm64: tegra: Add device tree for the Tegra194 P2972-0=
+000 board")
+>     f69ce393ec48 ("arm64: tegra: Add GPIO controller on Tegra194")
+>     f89b58ce71a9 ("arm64: tegra: Add ethernet controller on Tegra194")
+>=20
+> v4.9.220: Failed to apply! Possible dependencies:
+>     5425fb15d8ee ("arm64: tegra: Add Tegra194 chip device tree")
+>     99575bceebd6 ("arm64: tegra: Add NVIDIA P2771 board support")
+>     b8656c673a6b ("arm64: tegra: Add device tree for the Tegra194 P2972-0=
+000 board")
+>     f69ce393ec48 ("arm64: tegra: Add GPIO controller on Tegra194")
+>     f89b58ce71a9 ("arm64: tegra: Add ethernet controller on Tegra194")
+>=20
+> v4.4.220: Failed to apply! Possible dependencies:
+>     0f279ebdf3ce ("arm64: tegra: Add NVIDIA Tegra132 Norrin support")
+>     2cc85bd90337 ("arm64: tegra: Add NVIDIA P2571 board support")
+>     34b4f6d0599e ("arm64: tegra: Add Tegra132 support")
+>     5425fb15d8ee ("arm64: tegra: Add Tegra194 chip device tree")
+>     5d17ba6e638e ("arm64: tegra: Add support for Google Pixel C")
+>     63023e95bec0 ("arm64: tegra: Add NVIDIA P2371 board support")
+>     99575bceebd6 ("arm64: tegra: Add NVIDIA P2771 board support")
+>     b8656c673a6b ("arm64: tegra: Add device tree for the Tegra194 P2972-0=
+000 board")
+>     f69ce393ec48 ("arm64: tegra: Add GPIO controller on Tegra194")
+>     f89b58ce71a9 ("arm64: tegra: Add ethernet controller on Tegra194")
+>=20
+>=20
+> NOTE: The patch will not be queued to stable trees until it is upstream.
+>=20
+> How should we proceed with this patch?
 
-I know this is confusing because I have now twice had the same doubts
-after looking at the patch after I sent it out and thought I had sent
-out a wrong version.
-
-However, I think it starts to make more sense when you look at the
-resulting code, which I'll reproduce below:
-
-	static int __maybe_unused tegra_i2c_resume(struct device *dev)
-	{
-		struct tegra_i2c_dev *i2c_dev =3D dev_get_drvdata(dev);
-		int err;
-
-		err =3D tegra_i2c_runtime_resume(dev);
-		if (err)
-			return err;
-
-		err =3D tegra_i2c_init(i2c_dev, false);
-		if (err)
-			return err;
-
-		if (pm_runtime_status_suspended(dev)) {
-			err =3D tegra_i2c_runtime_suspend(dev);
-			if (err)
-				return err;
-		}
-
-		i2c_mark_adapter_resumed(&i2c_dev->adapter);
-
-		return 0;
-	}
-
-So the purpose here is to runtime resume the I2C controller temporarily
-so that the register context can be reprogrammed because it was lost
-during suspend. Now, if the controller was runtime suspended prior to
-system suspend, we want to put it back into suspend after the context
-was loaded again. Conversely, if it was not runtime suspended, then we
-want to keep it on.
-
-If it helps I can sprinkle some comments throughout this function to try
-and explain why exactly this is being done.
+Tegra194 support was merged into v4.17, so it doesn't make backport this
+to any stable kernels prior to that.
 
 Thierry
 
---pWyiEgJYm5f9v55/
+--f2QGlHpHGjS2mn6Y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6z3OAACgkQ3SOs138+
-s6EuehAAogxFDT5rRRkKex6Gppi0OnhVKA91lY8Rayw8JdkFPmcaIuNdIW4N+16T
-eQdVwiWAIh3lXJLfXzGHg8wiL9HTO2z04tc4KeeFATCQbFVmfQMKiQRgifJIn9qI
-8IdRUdRv75fc1MjpWcJqp5Mb2KiOUplopPmwUmdAZjYhJ45BQr/O4/a1sQJd0hvL
-RWCXmbDPAiqO/ssmCXudkCmAUTN4fcP9Tk2eaYRAs73nt8VjPnJ4eg1DN3DdeZxk
-BngPeMHHPP4RjTCyJ54xHz7iSbymSCaV2C1aIJ3ahYomuX/lelWpYdkgUjo9AS+A
-ieEWYTlbHaHSVgVRSj5GyON86ph9JAF3TnaJvdHMlzvIvGyIplcHrjcHTWcE2AJr
-zglMh5EnhfO+ILOTUa279lVCc5SQMDFYAtuc66zhJHoFXsv0NnCB6KunqeUw4KYW
-DGvzVmGrXJZ8x/cWelSXwInlzVDqqQxF8RFtG0peO8/tnNSNVRx33qFSHUxeIfEf
-VTiuc3GUuDoOlw9EHmFVII3+EsZ9PHcfPUDlwRTAEq8Xl9tc5OKiqMLhfpAiiFj7
-7Er34qUNL5lIXaLnc4W9jDO3jRfekhVx2xJB43OM/jRuPQ2VwTphhd8TmoZr1xFy
-8dJta3tH0OLDX0hOtvTVivc7F2nt9fdwexfdGCPc2CKwUoJ1YXU=
-=12NZ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6z3U4ACgkQ3SOs138+
+s6ERdQ/+M8e+Pq//sHoBLsVfspJENeX9JUSLVqTVsXEnHTxnv0Ri/qKuRYOzWcgU
+zktBmBWHxJt8UPlgxRqL9rcRHBf2mXRu7QsRSvBozLOuszdbp2pDq8dKGO1TgBKm
+ZQJekFzhEeWm8JAQiDlHjMfqwtPNXhRefl+gyRvWjOsTlROipbcm7Qr/RmztNmWJ
+73p4lkUcZ6BuRQoZgn9JDIBhDK3v02DwlJHAUjdYjRt6n4Wh39D4bllyi0JAw6FG
+4zV9fLL+PY9ie6ZtRiA3ACmjc9I28UiCMs4/VXnXVxGK+L9UjjrKvONaZtQ+aPDS
+wP9P9jihX6wcYOEPSoIvNBw4ne1eyWIOCdDjM0PjtYVov73xoseYv1OQGPfFdR6T
+77SWjnbppJNjA1IuV1adwWBJrY8w8jxdXLTXNehURSAc+ve6WOQ725kxIRZ2HAeL
+AVZb7nUI/+TiAZVYP4dntzk6rzZsQx4JhyKgYF9yVQ1NANw6QAog+RIc+4KOW+Ee
+0bLJeNRNoCvAlJdwaynn6gVXNmgF3jQeMHoLpVWPwDu2ARN1vhcwYmoVC4xtdPaY
+V0Eb1gORelEyYb1HwVN446IjAse8ex9wvAMPKu59l7PrbonEO8ismM2tx+8/7bkJ
+9ChG18/p+Ln1yUybHvHR+FGTYdBJriPZ33rcLZ1wSkzmbnFAcA4=
+=+6E+
 -----END PGP SIGNATURE-----
 
---pWyiEgJYm5f9v55/--
+--f2QGlHpHGjS2mn6Y--
