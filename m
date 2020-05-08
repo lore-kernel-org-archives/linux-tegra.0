@@ -1,44 +1,59 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] drm/tegra: Fixes for v5.7
-Date: Fri,  8 May 2020 12:13:55 +0200
-Message-ID: <20200508101355.3031268-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH] gpu: host1x: Clean up debugfs in error handling path in
+ 'host1x_probe()'
+Date: Fri, 8 May 2020 12:26:31 +0200
+Message-ID: <20200508102631.GA3030605@ulmo>
+References: <20200426191630.41290-1-christophe.jaillet@wanadoo.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200426191630.41290-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dave,
 
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+On Sun, Apr 26, 2020 at 09:16:30PM +0200, Christophe JAILLET wrote:
+> 'host1x_debug_init()' must be reverted in an error handling path.
+>=20
+> This is already fixed in the remove function since commit 44156eee91ba
+> ("gpu: host1x: Clean up debugfs on removal")
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+> ---
+>  drivers/gpu/host1x/dev.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-are available in the Git repository at:
+Applied, thanks.
 
-  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-5.7-fixes
-
-for you to fetch changes up to 4010e729349fcab69183f338fe3743df17a473a0:
-
-  gpu: host1x: Use SMMU on Tegra124 and Tegra210 (2020-04-28 11:44:07 +0200)
-
-Thanks,
 Thierry
 
-----------------------------------------------------------------
-drm/tegra: Fixes for v5.7
+--pWyiEgJYm5f9v55/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This contains a pair of patches which fix SMMU support on Tegra124 and
-Tegra210 for host1x and the Tegra DRM driver.
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Thierry Reding (2):
-      drm/tegra: Fix SMMU support on Tegra124 and Tegra210
-      gpu: host1x: Use SMMU on Tegra124 and Tegra210
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl61M9QACgkQ3SOs138+
+s6E5qA/+MmoiWrLTVaFdEnFgY568ldpbMKJel9y+2djQ7IncLvkQt+g/Z6o0ghVD
+OkhEvQfWM6rdYUehLaFfN9k1VJ+8VaNqrvDPa+SEfivIS0lDAF5dU4x6rOxN8gFf
+t6VHONMlhZsHhPI8jlMvIW+v3OczrbDzXmo5P9o6iKPFDfkqEpbS8FAqlzhpXGPY
+qVSmowOZtNJcvF1754ssJFb95uz0kl0XZ6LNa5Pgl1YFHgBAZrUKHtu5ekmvs2hU
+tXJB6Z/nyJs8/38HWqQD6+6MjOsPVD3hBEf/Mz6PE3TLSQlTxUoGGvECjU4NNnnl
+HrdBPXIOCNYC5a8KAEyaFg9I4jUcpnhwfB7RwXZeFUmUMdl0DZx4m6jckCbD13pV
+Qax13ypm7mUuTAh1ZpzI01Vb193QG5Zx3YpSb/cFlFeoe12YXZH+j9lawuoCI83s
+TfcwxTaPtYhUd3UnxpW21SKmun49sL12lilKyLhydEWCVcMozaYJUyz7wkJPEoU5
+Jkpnu8M1YhW6W3nFa/hOBXdcEHg+LG14DRaGZ/Dfv+9oMRNcOEoW+p7WZSSDODs1
+84p1Ec/NedIcB9XJjtaB6RLkwu5PbPk5g7uBEZLl6hVSZfUnXW7/wg/zcuedwkO4
+p7GYMpqt2vRfQ7iM4VXH60fqlN3lF1GDj0T5JZsMrclFInwK2dw=
+=zg/O
+-----END PGP SIGNATURE-----
 
- drivers/gpu/drm/tegra/drm.c |  3 ++-
- drivers/gpu/host1x/dev.c    | 59 ++++++++++++++++++++++++++++++++++++++++++---
- include/linux/host1x.h      |  3 +++
- 3 files changed, 60 insertions(+), 5 deletions(-)
+--pWyiEgJYm5f9v55/--
