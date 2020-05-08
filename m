@@ -1,92 +1,110 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 1/5] mmc: core: Extend mmc_of_parse() to parse CQE bindings
-Date: Fri, 8 May 2020 07:05:29 +0200
-Message-ID: <CAPDyKFoAa3=Rg77Af7nNQOZN13m9NQYERosrqiK_kuL3s-YECA@mail.gmail.com>
-References: <1588031768-23677-1-git-send-email-chun-hung.wu@mediatek.com>
- <1588031768-23677-2-git-send-email-chun-hung.wu@mediatek.com>
- <9bc2454f-0b42-e256-7927-2564b56f369f@codeaurora.org> <CAPDyKFq7ffHeWg-S41tLvScg_BXCUULig=G=EzD_to1TG0NhVg@mail.gmail.com>
- <f9fa0232-3945-4e47-9238-0b51f6531199@codeaurora.org>
+From: Mian Yousaf Kaukab <ykaukab-l3A5Bk7waGM@public.gmane.org>
+Subject: arm64: tegra186: bpmp: kernel crash while decompressing initrd
+Date: Fri,  8 May 2020 10:40:41 +0200
+Message-ID: <20200508084041.23366-1-ykaukab@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f9fa0232-3945-4e47-9238-0b51f6531199-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Veerabhadrarao Badiganti <vbadigan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, BCM Kernel Feedback <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG8Xa4x6EXUF0@public.gmane.org>
+To: talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, Mian Yousaf Kaukab <ykaukab-l3A5Bk7waGM@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 7 May 2020 at 18:33, Veerabhadrarao Badiganti
-<vbadigan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
->
->
-> On 5/6/2020 10:06 PM, Ulf Hansson wrote:
-> > On Wed, 6 May 2020 at 15:01, Veerabhadrarao Badiganti
-> > <vbadigan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
-> >>
-> >> On 4/28/2020 5:26 AM, Chun-Hung Wu wrote:
-> >>> Parse CQE bindings "supports-cqe" and "disable-cqe-dcmd"
-> >>> in mmc_of_parse().
-> >>>
-> >>> Signed-off-by: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> >>> ---
-> >>>    drivers/mmc/core/host.c | 5 +++++
-> >>>    1 file changed, 5 insertions(+)
-> >>>
-> >>> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-> >>> index c876872..47521c6 100644
-> >>> --- a/drivers/mmc/core/host.c
-> >>> +++ b/drivers/mmc/core/host.c
-> >>> @@ -302,6 +302,11 @@ int mmc_of_parse(struct mmc_host *host)
-> >>>                host->caps2 |= MMC_CAP2_NO_SD;
-> >>>        if (device_property_read_bool(dev, "no-mmc"))
-> >>>                host->caps2 |= MMC_CAP2_NO_MMC;
-> >>> +     if (device_property_read_bool(dev, "supports-cqe"))
-> >>> +             host->caps2 |= MMC_CAP2_CQE;
-> >> This change is breaking emmc driver on qcom platforms where this dt
-> >> property is defined.
-> >>
-> >> [    1.543453]  cqhci_deactivate+0xc/0x38
-> >> [    1.545627]  sdhci_msm_reset+0x40/0x58
-> >> [    1.549447]  sdhci_do_reset+0x48/0x7c
-> >> [    1.553180]  __sdhci_read_caps+0x7c/0x214
-> >> [    1.556913]  sdhci_setup_host+0x58/0xce8
-> >> [    1.560905]  sdhci_msm_probe+0x588/0x8a4
-> >> [    1.564900]  platform_drv_probe+0x4c/0xb0
-> >>
-> >> So, we cant have this flag defined before sdhci_setup_host().
-> >>
-> >> I will have to clear this cap and re-enable it in our initialization.
-> > Thanks for reporting! I have dropped all the four patches from
-> > Chun-Hung, so we can figure out how to fix this.
-> >
-> > Please help to review the next version of the series.
->
-> Thanks Ulf.
->
-> Hi Chun-Hung,
->
-> On qcom controller CQE also gets reset when SDHC is reset. So we have to
-> explicitly disable CQE
-> by invoking  cqhci_deactivate() during sdhc reset
->
-> SDHC gets reset in sdhci_setup_host() even before cqe is initialized.
-> With MMC_CAP2_CQE_DCMD cap set even before sdhci_set_host(), we are
-> getting null pointer access with cqhci_deactivate().
->
-> If CQE getting reset with SDHC reset is generic (applicable to other
-> controllers) then you have revisit your logic.
-> If its not the case then only qcom driver would get affected.
+I am seeing following kernel crash on Jetson TX2. Board is flashed with
+firmware bits from L4T R32.4.2 with upstream u-boot. Crash always
+happens while decompressing initrd. Initrd is approximately 80 MiB in
+size and compressed with xz (xz --check=crc32 --lzma2=dict=32MiB).
+Crash is not observed if the same initrd is compressed with gzip.
+[1] was a previous attempt to workaround the same issue.
 
-Thanks for clarifying the problem, much appreciated.
+[    0.651168] Trying to unpack rootfs image as initramfs...
+[    2.890171] SError Interrupt on CPU0, code 0xbf40c000 -- SError
+[    2.890174] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G S                5.7.0-rc4-next-20200505 #22
+[    2.890175] Hardware name: nvidia p2771-0000/p2771-0000, BIOS 2020.04-rc3 03/25/2020
+[    2.890176] pstate: 20000005 (nzCv daif -PAN -UAO BTYPE=--)
+[    2.890177] pc : lzma_main+0x648/0x908
+[    2.890178] lr : lzma_main+0x330/0x908
+[    2.890179] sp : ffff80001003bb70
+[    2.890180] x29: ffff80001003bb70 x28: 0000000004d794a4
+[    2.890183] x27: 0000000004769941 x26: ffff0001eb064000
+[    2.890185] x25: ffff0001eb060028 x24: 0000000000000002
+[    2.890187] x23: 0000000000000003 x22: 0000000000000007
+[    2.890189] x21: 0000000000611f4b x20: ffff0001eb060000
+[    2.890192] x19: ffff80001003bcb8 x18: 0000000000000068
+[    2.890194] x17: 00000000000000c0 x16: fffffe00076b2108
+[    2.890196] x15: 0000000000000800 x14: 0000000000ffffff
+[    2.890198] x13: 0000000000000001 x12: ffff0001eb060000
+[    2.890200] x11: 0000000000000600 x10: ffff0001eb060028
+[    2.890202] x9 : 00000000ffbb2a08 x8 : 0000000000000ed0
+[    2.890204] x7 : 00000000011553ec x6 : 0000000000000000
+[    2.890206] x5 : 0000000000000000 x4 : 0000000000000006
+[    2.890208] x3 : 00000000015a29e4 x2 : ffff0001eb062d0c
+[    2.890210] x1 : 000000000000000c x0 : 000000000263de44
 
-To me, it looks like the DT parsing of the CQE properties are better
-suited to be managed by each sdhci variant, to continue to leave some
-room for flexibility.
+With some debugging aid ported from Nvidia downstream kernel [2] the
+actual cause was found:
 
-Chun-Hung, can you please drop patch 1 and patch2 from the series and
-adapt to this change in the mediatek variant?
+[    0.761525] Trying to unpack rootfs image as initramfs...
+[    2.955499] CPU0: SError: mpidr=0x80000100, esr=0xbf40c000
+[    2.955502] CPU1: SError: mpidr=0x80000000, esr=0xbe000000
+[    2.955505] CPU2: SError: mpidr=0x80000001, esr=0xbe000000
+[    2.955506] CPU3: SError: mpidr=0x80000101, esr=0xbf40c000
+[    2.955507] ROC:CCE Machine Check Error:
+[    2.955508] ROC:CCE Registers:
+[    2.955509]  STAT: 0xb400000000400415
+[    2.955510]  ADDR: 0x400c00e7a00c
+[    2.955511]  MSC1: 0x80ffc
+[    2.955512]  MSC2: 0x3900000000800
+[    2.955513] --------------------------------------
+[    2.955514] Decoded ROC:CCE Machine Check:
+[    2.955515]  Uncorrected (this is fatal)
+[    2.955516]  Error reporting enabled when error arrived
+[    2.955517]  Error Code = 0x415
+[    2.955518]  Poison Error
+[    2.955518]  Command = NCRd (0xc)
+[    2.955519]  Address Type = Non-Secure DRAM
+[    2.955521]  Address = 0x30039e80 -- 30000000.sysram + 0x39e80
+[    2.955521]  TLimit = 0x3ff
+[    2.955522]  Poison Error Mask = 0x80
+[    2.955523]  More Info = 0x800
+[    2.955524]  Timeout Info = 0x0
+[    2.955525]          Poison Info = 0x800
+[    2.955526]          Read Request failed GSC checks
+[    2.955527]  Source = L2_1 (A57) (0x1)
+[    2.955528]  TID = 0xe
 
-[...]
+IIUC, there was read request for 0x30039e80 from EL1/2 which failed.
+This address falls in the sysram security aperture and hence a read
+from normal mode failed.
 
-Kind regards
-Uffe
+sysram is mapped at 0x3000_0000 to 0x3004_ffff and is managed by the
+sram driver (drivers/misc/sram.c). There are two reserved pools for
+BPMP driver communication at 0x3004_e000 and 0x3004_f000 of 0x1000
+bytes each.
+
+sram driver maps complete 0x3000_0000 to 0x3004_ffff range as normal
+memory. However, only the BPMP reserved pools (0x3004_e000 - 0x3004_ffff)
+are accessible from the kernel. Address 0x3003_9e80 is inaccessible
+from the kernel and a read to it (which I believe is speculative)
+causes the SError. Only driver which uses sysram is not initialized at
+this point (rootfs_initcall level). As since
+commit d70f5e541ab3 ("firmware: tegra: Make BPMP a regular driver")
+bpmp driver is initialized at device_initcall level.
+
+If none of the drivers on the kernel side using 0x3003_9e80 address
+range. Why a read to it occurs even speculatively? Could it be that
+some EL3 software didn’t cleanup after itself properly? Any
+suggestions on debugging this issue further?
+
+Another solution suggested in [1] was to add no-memory-wc in sysram
+node in device-tree so that sysram is mapped as device-memory. Thus
+preventing any speculative access. However, it causes another set of
+issues with the bpmp driver. That's may be a discussion for another
+time.
+
+BR,
+Yousaf
+
+[1]: https://lore.kernel.org/patchwork/patch/1132429/
+[2]: git://nv-tegra.nvidia.com/linux-4.9.git
