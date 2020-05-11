@@ -1,46 +1,41 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] PCI: tegra: Fix reporting GPIO error value
-Date: Mon, 11 May 2020 10:47:27 +0100
-Message-ID: <20200511094727.GA24149@e121166-lin.cambridge.arm.com>
-References: <20200414102512.27506-1-pali@kernel.org>
+From: Samuel Zou <zou_wei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH -next] media: tegra: Make tegra210_video_formats static
+Date: Mon, 11 May 2020 19:20:15 +0800
+Message-ID: <1589196015-8945-1-git-send-email-zou_wei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20200414102512.27506-1-pali@kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Andrew Murray <amurray@thegoodpenguin.co.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Samuel Zou <zou_wei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 12:25:12PM +0200, Pali Rohár wrote:
-> Error code is stored in rp->reset_gpio and not in err variable.
-> 
-> Signed-off-by: Pali Rohár <pali@kernel.org>
-> ---
->  drivers/pci/controller/pci-tegra.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Fix the following sparse warning:
 
-Applied to pci/tegra, thanks.
+drivers/staging/media/tegra-video/tegra210.c:589:33: warning: symbol 'tegra210_video_formats' was not declared.
 
-Lorenzo
+The tegra210_video_formats has only call site within tegra210.c
+It should be static
 
-> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> index 0e03cef72840..378d5a8773c7 100644
-> --- a/drivers/pci/controller/pci-tegra.c
-> +++ b/drivers/pci/controller/pci-tegra.c
-> @@ -2314,8 +2314,8 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
->  			if (PTR_ERR(rp->reset_gpio) == -ENOENT) {
->  				rp->reset_gpio = NULL;
->  			} else {
-> -				dev_err(dev, "failed to get reset GPIO: %d\n",
-> -					err);
-> +				dev_err(dev, "failed to get reset GPIO: %ld\n",
-> +					PTR_ERR(rp->reset_gpio));
->  				return PTR_ERR(rp->reset_gpio);
->  			}
->  		}
-> -- 
-> 2.20.1
-> 
+Fixes: 423d10a99b30 ("media: tegra: Add Tegra210 Video input driver")
+Reported-by: Hulk Robot <hulkci-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Samuel Zou <zou_wei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+---
+ drivers/staging/media/tegra-video/tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+index 2045609..3baa4e3 100644
+--- a/drivers/staging/media/tegra-video/tegra210.c
++++ b/drivers/staging/media/tegra-video/tegra210.c
+@@ -586,7 +586,7 @@ enum tegra210_image_format {
+ }
+ 
+ /* Tegra210 supported video formats */
+-const struct tegra_video_format tegra210_video_formats[] = {
++static const struct tegra_video_format tegra210_video_formats[] = {
+ 	/* RAW 8 */
+ 	TEGRA210_VIDEO_FMT(RAW8, 8, SRGGB8_1X8, 1, T_L8, SRGGB8),
+ 	TEGRA210_VIDEO_FMT(RAW8, 8, SGRBG8_1X8, 1, T_L8, SGRBG8),
+-- 
+2.6.2
