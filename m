@@ -1,41 +1,46 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] mfd: max77620: Use single-byte writes on MAX77620
-Date: Mon, 11 May 2020 08:41:20 +0100
-Message-ID: <20200511074120.GB3548@dell>
-References: <20200417170913.2552327-1-thierry.reding@gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] PCI: tegra: Fix reporting GPIO error value
+Date: Mon, 11 May 2020 10:47:27 +0100
+Message-ID: <20200511094727.GA24149@e121166-lin.cambridge.arm.com>
+References: <20200414102512.27506-1-pali@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20200417170913.2552327-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20200414102512.27506-1-pali@kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Andrew Murray <amurray@thegoodpenguin.co.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 17 Apr 2020, Thierry Reding wrote:
-
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Apr 14, 2020 at 12:25:12PM +0200, Pali Roh�r wrote:
+> Error code is stored in rp->reset_gpio and not in err variable.
 > 
-> The MAX77620 doesn't support bulk writes, so make sure the regmap code
-> breaks bulk writes into multiple single-byte writes.
-> 
-> Note that this is mostly cosmetic because currently only the RTC sub-
-> driver uses bulk writes and the RTC driver ends up using a different
-> regmap on the MAX77620 anyway. However, it seems like a good idea to
-> make this change now in order to avoid running into issues if bulk
-> writes are ever used by other sub-drivers sometime down the road.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Pali Roh�r <pali@kernel.org>
 > ---
->  drivers/mfd/max77620.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/pci/controller/pci-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks.
+Applied to pci/tegra, thanks.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Lorenzo
+
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index 0e03cef72840..378d5a8773c7 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -2314,8 +2314,8 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+>  			if (PTR_ERR(rp->reset_gpio) == -ENOENT) {
+>  				rp->reset_gpio = NULL;
+>  			} else {
+> -				dev_err(dev, "failed to get reset GPIO: %d\n",
+> -					err);
+> +				dev_err(dev, "failed to get reset GPIO: %ld\n",
+> +					PTR_ERR(rp->reset_gpio));
+>  				return PTR_ERR(rp->reset_gpio);
+>  			}
+>  		}
+> -- 
+> 2.20.1
+> 
