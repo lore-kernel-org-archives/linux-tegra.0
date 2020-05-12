@@ -1,108 +1,124 @@
-From: Chun-Hung Wu <chun-hung.wu@mediatek.com>
-Subject: Re: [PATCH v5 1/5] mmc: core: Extend mmc_of_parse() to parse CQE
- bindings
-Date: Tue, 12 May 2020 09:16:38 +0800
-Message-ID: <1589246198.612.1.camel@mtkswgap22>
-References: <1588031768-23677-1-git-send-email-chun-hung.wu@mediatek.com>
- <1588031768-23677-2-git-send-email-chun-hung.wu@mediatek.com>
- <9bc2454f-0b42-e256-7927-2564b56f369f@codeaurora.org>
- <CAPDyKFq7ffHeWg-S41tLvScg_BXCUULig=G=EzD_to1TG0NhVg@mail.gmail.com>
- <f9fa0232-3945-4e47-9238-0b51f6531199@codeaurora.org>
- <CAPDyKFoAa3=Rg77Af7nNQOZN13m9NQYERosrqiK_kuL3s-YECA@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 28/38] drm: host1x: fix common struct sg_table related
+ issues
+Date: Tue, 12 May 2020 11:00:48 +0200
+Message-ID: <20200512090058.14910-28-m.szyprowski@samsung.com>
+References: <20200512085710.14688-1-m.szyprowski@samsung.com>
+ <20200512090058.14910-1-m.szyprowski@samsung.com>
+ <CGME20200512090123eucas1p25758ba07ba913e5a3eeca13c7f386fdb@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
-In-Reply-To: <CAPDyKFoAa3=Rg77Af7nNQOZN13m9NQYERosrqiK_kuL3s-YECA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Kate Stewart <kstewart@linuxfoundation.org>, wsd_upstream <wsd_upstream@mediatek.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Al Cooper <alcooperx@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-tegra <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Pavel Machek <pavel@ucw.cz>, Florian Fainelli <f.fainelli@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, Andy Gross <agross@kernel.org>, BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, Allison Randal <allison@lohutok.net>, Android Kernel Team <kernel-team@android.com>, Pan Bian <bianpan2016@163.com>, Veerabhadrarao Badiganti <vbadigan@codeaurora.org>, DTML <devicetree@vger.kernel.org>, Martin Blumenstingl <martin.blumenstingl@goog>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20200512090058.14910-1-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2020-05-08 at 13:05 +0800, Ulf Hansson wrote:
-> On Thu, 7 May 2020 at 18:33, Veerabhadrarao Badiganti
-> <vbadigan@codeaurora.org> wrote:
-> >
-> >
-> > On 5/6/2020 10:06 PM, Ulf Hansson wrote:
-> > > On Wed, 6 May 2020 at 15:01, Veerabhadrarao Badiganti
-> > > <vbadigan@codeaurora.org> wrote:
-> > >>
-> > >> On 4/28/2020 5:26 AM, Chun-Hung Wu wrote:
-> > >>> Parse CQE bindings "supports-cqe" and "disable-cqe-dcmd"
-> > >>> in mmc_of_parse().
-> > >>>
-> > >>> Signed-off-by: Chun-Hung Wu <chun-hung.wu@mediatek.com>
-> > >>> ---
-> > >>>    drivers/mmc/core/host.c | 5 +++++
-> > >>>    1 file changed, 5 insertions(+)
-> > >>>
-> > >>> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-> > >>> index c876872..47521c6 100644
-> > >>> --- a/drivers/mmc/core/host.c
-> > >>> +++ b/drivers/mmc/core/host.c
-> > >>> @@ -302,6 +302,11 @@ int mmc_of_parse(struct mmc_host *host)
-> > >>>                host->caps2 |= MMC_CAP2_NO_SD;
-> > >>>        if (device_property_read_bool(dev, "no-mmc"))
-> > >>>                host->caps2 |= MMC_CAP2_NO_MMC;
-> > >>> +     if (device_property_read_bool(dev, "supports-cqe"))
-> > >>> +             host->caps2 |= MMC_CAP2_CQE;
-> > >> This change is breaking emmc driver on qcom platforms where this dt
-> > >> property is defined.
-> > >>
-> > >> [    1.543453]  cqhci_deactivate+0xc/0x38
-> > >> [    1.545627]  sdhci_msm_reset+0x40/0x58
-> > >> [    1.549447]  sdhci_do_reset+0x48/0x7c
-> > >> [    1.553180]  __sdhci_read_caps+0x7c/0x214
-> > >> [    1.556913]  sdhci_setup_host+0x58/0xce8
-> > >> [    1.560905]  sdhci_msm_probe+0x588/0x8a4
-> > >> [    1.564900]  platform_drv_probe+0x4c/0xb0
-> > >>
-> > >> So, we cant have this flag defined before sdhci_setup_host().
-> > >>
-> > >> I will have to clear this cap and re-enable it in our initialization.
-> > > Thanks for reporting! I have dropped all the four patches from
-> > > Chun-Hung, so we can figure out how to fix this.
-> > >
-> > > Please help to review the next version of the series.
-> >
-> > Thanks Ulf.
-> >
-> > Hi Chun-Hung,
-> >
-> > On qcom controller CQE also gets reset when SDHC is reset. So we have to
-> > explicitly disable CQE
-> > by invoking  cqhci_deactivate() during sdhc reset
-> >
-> > SDHC gets reset in sdhci_setup_host() even before cqe is initialized.
-> > With MMC_CAP2_CQE_DCMD cap set even before sdhci_set_host(), we are
-> > getting null pointer access with cqhci_deactivate().
-> >
-> > If CQE getting reset with SDHC reset is generic (applicable to other
-> > controllers) then you have revisit your logic.
-> > If its not the case then only qcom driver would get affected.
-> 
-> Thanks for clarifying the problem, much appreciated.
-> 
-> To me, it looks like the DT parsing of the CQE properties are better
-> suited to be managed by each sdhci variant, to continue to leave some
-> room for flexibility.
-> 
-> Chun-Hung, can you please drop patch 1 and patch2 from the series and
-> adapt to this change in the mediatek variant?
-Ok, I will rollback patch1 and patch2 from series and keep DT parsing
-of the CQE properties by each sdhci/msdc variant.
-CQE properties will move to mediatek variant.
-> 
-> [...]
-> 
-> Kind regards
-> Uffe
+The Documentation/DMA-API-HOWTO.txt states that the dma_map_sg() function
+returns the number of the created entries in the DMA address space.
+However the subsequent calls to the dma_sync_sg_for_{device,cpu}() and
+dma_unmap_sg must be called with the original number of the entries
+passed to the dma_map_sg().
+
+struct sg_table is a common structure used for describing a non-contiguous
+memory buffer, used commonly in the DRM and graphics subsystems. It
+consists of a scatterlist with memory pages and DMA addresses (sgl entry),
+as well as the number of scatterlist entries: CPU pages (orig_nents entry)
+and DMA mapped pages (nents entry).
+
+It turned out that it was a common mistake to misuse nents and orig_nents
+entries, calling DMA-mapping functions with a wrong number of entries or
+ignoring the number of mapped entries returned by the dma_map_sg()
+function.
+
+To avoid such issues, lets use a common dma-mapping wrappers operating
+directly on the struct sg_table objects and use scatterlist page
+iterators where possible. This, almost always, hides references to the
+nents and orig_nents entries, making the code robust, easier to follow
+and copy/paste safe.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+For more information, see '[PATCH v4 00/38] DRM: fix struct sg_table nents
+vs. orig_nents misuse' thread:
+https://lore.kernel.org/dri-devel/20200512085710.14688-1-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org/T/
+---
+ drivers/gpu/host1x/job.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index a10643a..4832b57 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -166,11 +166,9 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+ 				goto unpin;
+ 			}
+ 
+-			err = dma_map_sg(dev, sgt->sgl, sgt->nents, dir);
+-			if (!err) {
+-				err = -ENOMEM;
++			err = dma_map_sgtable(dev, sgt, dir, 0);
++			if (err)
+ 				goto unpin;
+-			}
+ 
+ 			job->unpins[job->num_unpins].dev = dev;
+ 			job->unpins[job->num_unpins].dir = dir;
+@@ -217,7 +215,7 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+ 		}
+ 
+ 		if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL) && host->domain) {
+-			for_each_sg(sgt->sgl, sg, sgt->nents, j)
++			for_each_sgtable_sg(sgt, sg, j)
+ 				gather_size += sg->length;
+ 			gather_size = iova_align(&host->iova, gather_size);
+ 
+@@ -229,9 +227,9 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+ 				goto unpin;
+ 			}
+ 
+-			err = iommu_map_sg(host->domain,
++			err = iommu_map_sgtable(host->domain,
+ 					iova_dma_addr(&host->iova, alloc),
+-					sgt->sgl, sgt->nents, IOMMU_READ);
++					sgt, IOMMU_READ);
+ 			if (err == 0) {
+ 				__free_iova(&host->iova, alloc);
+ 				err = -EINVAL;
+@@ -241,12 +239,9 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+ 			job->unpins[job->num_unpins].size = gather_size;
+ 			phys_addr = iova_dma_addr(&host->iova, alloc);
+ 		} else if (sgt) {
+-			err = dma_map_sg(host->dev, sgt->sgl, sgt->nents,
+-					 DMA_TO_DEVICE);
+-			if (!err) {
+-				err = -ENOMEM;
++			err = dma_map_sgtable(host->dev, sgt, DMA_TO_DEVICE, 0);
++			if (err)
+ 				goto unpin;
+-			}
+ 
+ 			job->unpins[job->num_unpins].dir = DMA_TO_DEVICE;
+ 			job->unpins[job->num_unpins].dev = host->dev;
+@@ -647,8 +642,7 @@ void host1x_job_unpin(struct host1x_job *job)
+ 		}
+ 
+ 		if (unpin->dev && sgt)
+-			dma_unmap_sg(unpin->dev, sgt->sgl, sgt->nents,
+-				     unpin->dir);
++			dma_unmap_sgtable(unpin->dev, sgt, unpin->dir, 0);
+ 
+ 		host1x_bo_unpin(dev, unpin->bo, sgt);
+ 		host1x_bo_put(unpin->bo);
+-- 
+1.9.1
