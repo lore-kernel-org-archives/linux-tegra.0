@@ -1,17 +1,26 @@
 From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v5 33/38] staging: tegra-vde: fix common struct sg_table
- related issues
-Date: Wed, 13 May 2020 15:32:40 +0200
-Message-ID: <20200513133245.6408-33-m.szyprowski@samsung.com>
+Subject: [PATCH v5 23/38] drm: tegra: fix common struct sg_table related issues
+Date: Wed, 13 May 2020 15:32:30 +0200
+Message-ID: <20200513133245.6408-23-m.szyprowski@samsung.com>
 References: <20200513132114.6046-1-m.szyprowski@samsung.com>
-        <20200513133245.6408-1-m.szyprowski@samsung.com>
-        <CGME20200513133321eucas1p13acea3aa6219ce5f7076c7677ef9eae3@eucas1p1.samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+ <20200513133245.6408-1-m.szyprowski@samsung.com>
+ <CGME20200513133313eucas1p1fa06e23680b6d983578f598166e64cd0@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 In-Reply-To: <20200513133245.6408-1-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 The Documentation/DMA-API-HOWTO.txt states that the dma_map_sg() function
@@ -43,23 +52,145 @@ For more information, see '[PATCH v5 00/38] DRM: fix struct sg_table nents
 vs. orig_nents misuse' thread:
 https://lore.kernel.org/linux-iommu/20200513132114.6046-1-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org/T/
 ---
- drivers/staging/media/tegra-vde/iommu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/tegra/gem.c   | 27 ++++++++++-----------------
+ drivers/gpu/drm/tegra/plane.c | 15 +++++----------
+ 2 files changed, 15 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-vde/iommu.c b/drivers/staging/media/tegra-vde/iommu.c
-index 6af863d..adf8dc7 100644
---- a/drivers/staging/media/tegra-vde/iommu.c
-+++ b/drivers/staging/media/tegra-vde/iommu.c
-@@ -36,8 +36,8 @@ int tegra_vde_iommu_map(struct tegra_vde *vde,
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 6237681..2169130 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -98,8 +98,8 @@ static struct sg_table *tegra_bo_pin(struct device *dev, struct host1x_bo *bo,
+ 		 * the SG table needs to be copied to avoid overwriting any
+ 		 * other potential users of the original SG table.
+ 		 */
+-		err = sg_alloc_table_from_sg(sgt, obj->sgt->sgl, obj->sgt->nents,
+-					     GFP_KERNEL);
++		err = sg_alloc_table_from_sg(sgt, obj->sgt->sgl,
++					     obj->sgt->orig_nents, GFP_KERNEL);
+ 		if (err < 0)
+ 			goto free;
+ 	} else {
+@@ -196,8 +196,7 @@ static int tegra_bo_iommu_map(struct tegra_drm *tegra, struct tegra_bo *bo)
  
- 	addr = iova_dma_addr(&vde->iova, iova);
+ 	bo->iova = bo->mm->start;
  
--	size = iommu_map_sg(vde->domain, addr, sgt->sgl, sgt->nents,
--			    IOMMU_READ | IOMMU_WRITE);
-+	size = iommu_map_sgtable(vde->domain, addr, sgt,
-+				 IOMMU_READ | IOMMU_WRITE);
- 	if (!size) {
- 		__free_iova(&vde->iova, iova);
- 		return -ENXIO;
+-	bo->size = iommu_map_sg(tegra->domain, bo->iova, bo->sgt->sgl,
+-				bo->sgt->nents, prot);
++	bo->size = iommu_map_sgtable(tegra->domain, bo->iova, bo->sgt, prot);
+ 	if (!bo->size) {
+ 		dev_err(tegra->drm->dev, "failed to map buffer\n");
+ 		err = -ENOMEM;
+@@ -264,8 +263,7 @@ static struct tegra_bo *tegra_bo_alloc_object(struct drm_device *drm,
+ static void tegra_bo_free(struct drm_device *drm, struct tegra_bo *bo)
+ {
+ 	if (bo->pages) {
+-		dma_unmap_sg(drm->dev, bo->sgt->sgl, bo->sgt->nents,
+-			     DMA_FROM_DEVICE);
++		dma_unmap_sgtable(drm->dev, bo->sgt, DMA_FROM_DEVICE, 0);
+ 		drm_gem_put_pages(&bo->gem, bo->pages, true, true);
+ 		sg_free_table(bo->sgt);
+ 		kfree(bo->sgt);
+@@ -290,12 +288,9 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
+ 		goto put_pages;
+ 	}
+ 
+-	err = dma_map_sg(drm->dev, bo->sgt->sgl, bo->sgt->nents,
+-			 DMA_FROM_DEVICE);
+-	if (err == 0) {
+-		err = -EFAULT;
++	err = dma_map_sgtable(drm->dev, bo->sgt, DMA_FROM_DEVICE, 0);
++	if (err)
+ 		goto free_sgt;
+-	}
+ 
+ 	return 0;
+ 
+@@ -571,7 +566,7 @@ int tegra_drm_mmap(struct file *file, struct vm_area_struct *vma)
+ 			goto free;
+ 	}
+ 
+-	if (dma_map_sg(attach->dev, sgt->sgl, sgt->nents, dir) == 0)
++	if (dma_map_sgtable(attach->dev, sgt, dir, 0))
+ 		goto free;
+ 
+ 	return sgt;
+@@ -590,7 +585,7 @@ static void tegra_gem_prime_unmap_dma_buf(struct dma_buf_attachment *attach,
+ 	struct tegra_bo *bo = to_tegra_bo(gem);
+ 
+ 	if (bo->pages)
+-		dma_unmap_sg(attach->dev, sgt->sgl, sgt->nents, dir);
++		dma_unmap_sgtable(attach->dev, sgt, dir, 0);
+ 
+ 	sg_free_table(sgt);
+ 	kfree(sgt);
+@@ -609,8 +604,7 @@ static int tegra_gem_prime_begin_cpu_access(struct dma_buf *buf,
+ 	struct drm_device *drm = gem->dev;
+ 
+ 	if (bo->pages)
+-		dma_sync_sg_for_cpu(drm->dev, bo->sgt->sgl, bo->sgt->nents,
+-				    DMA_FROM_DEVICE);
++		dma_sync_sgtable_for_cpu(drm->dev, bo->sgt, DMA_FROM_DEVICE);
+ 
+ 	return 0;
+ }
+@@ -623,8 +617,7 @@ static int tegra_gem_prime_end_cpu_access(struct dma_buf *buf,
+ 	struct drm_device *drm = gem->dev;
+ 
+ 	if (bo->pages)
+-		dma_sync_sg_for_device(drm->dev, bo->sgt->sgl, bo->sgt->nents,
+-				       DMA_TO_DEVICE);
++		dma_sync_sgtable_for_device(drm->dev, bo->sgt, DMA_TO_DEVICE);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index 9ccfb56..0d2ef16 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -130,12 +130,9 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
+ 		}
+ 
+ 		if (sgt) {
+-			err = dma_map_sg(dc->dev, sgt->sgl, sgt->nents,
+-					 DMA_TO_DEVICE);
+-			if (err == 0) {
+-				err = -ENOMEM;
++			err = dma_map_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
++			if (err)
+ 				goto unpin;
+-			}
+ 
+ 			/*
+ 			 * The display controller needs contiguous memory, so
+@@ -143,7 +140,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
+ 			 * map its SG table to a single contiguous chunk of
+ 			 * I/O virtual memory.
+ 			 */
+-			if (err > 1) {
++			if (sgt->nents > 1) {
+ 				err = -EINVAL;
+ 				goto unpin;
+ 			}
+@@ -165,8 +162,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
+ 		struct sg_table *sgt = state->sgt[i];
+ 
+ 		if (sgt)
+-			dma_unmap_sg(dc->dev, sgt->sgl, sgt->nents,
+-				     DMA_TO_DEVICE);
++			dma_unmap_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
+ 
+ 		host1x_bo_unpin(dc->dev, &bo->base, sgt);
+ 		state->iova[i] = DMA_MAPPING_ERROR;
+@@ -185,8 +181,7 @@ static void tegra_dc_unpin(struct tegra_dc *dc, struct tegra_plane_state *state)
+ 		struct sg_table *sgt = state->sgt[i];
+ 
+ 		if (sgt)
+-			dma_unmap_sg(dc->dev, sgt->sgl, sgt->nents,
+-				     DMA_TO_DEVICE);
++			dma_unmap_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
+ 
+ 		host1x_bo_unpin(dc->dev, &bo->base, sgt);
+ 		state->iova[i] = DMA_MAPPING_ERROR;
 -- 
 1.9.1
