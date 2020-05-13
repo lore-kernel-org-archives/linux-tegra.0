@@ -1,38 +1,40 @@
-From: Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5.7] clk: tegra: Fix initial rate for pll_a on Tegra124
-Date: Tue, 12 May 2020 16:26:21 -0700
-Message-ID: <158932598121.215346.2534633370744131523@swboyd.mtv.corp.google.com>
-References: <20200505071655.644773-1-thierry.reding@gmail.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] iommu: Do not probe devices on IOMMU-less busses
+Date: Wed, 13 May 2020 10:42:50 +0200
+Message-ID: <20200513084250.GC9820@8bytes.org>
+References: <20200511161000.3853342-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200505071655.644773-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200511161000.3853342-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Thierry Reding (2020-05-05 00:16:55)
+On Mon, May 11, 2020 at 06:10:00PM +0200, Thierry Reding wrote:
 > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> pll_a_out0 and the I2S clocks are already configured to default to rates
-> corresponding to a 44.1 kHz sampling rate, but the pll_a configuration
-> was set to a default that is not listed in the frequency table, which
-> caused the PLL code to compute an invalid configuration. As a result of
-> this invalid configuration, Jetson TK1 fails to resume from suspend.
->=20
-> This used to get papered over because the ASoC driver would force audio
-> clocks to a 44.1 kHz configuration on boot. However, that's not really
-> necessary and was hence removed in commit ff5d18cb04f4 ("ASoC: tegra:
-> Enable audio mclk during tegra_asoc_utils_init()").
->=20
-> Fix the initial rate for pll_a so that it matches the 44.1 kHz entry in
-> the pll_a frequency table.
->=20
-> Fixes: ff5d18cb04f4 ("ASoC: tegra: Enable audio mclk during tegra_asoc_ut=
-ils_init()")
+> 
+> The host1x bus implemented on Tegra SoCs is primarily an abstraction to
+> create logical device from multiple platform devices. Since the devices
+> in such a setup are typically hierarchical, DMA setup still needs to be
+> done so that DMA masks can be properly inherited, but we don't actually
+> want to attach the host1x logical devices to any IOMMU. The platform
+> devices that make up the logical device are responsible for memory bus
+> transactions, so it is them that will need to be attached to the IOMMU.
+> 
+> Add a check to __iommu_probe_device() that aborts IOMMU setup early for
+> busses that don't have the IOMMU operations pointer set since they will
+> cause a crash otherwise.
+> 
 > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
+> Note that this is probably also required for the BCMA bus implemented in
+> drivers/bcma/main.c since no IOMMU operations are ever assigned to that
+> either.
+> 
+>  drivers/iommu/iommu.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Applied to clk-fixes
+Applied, thanks.
