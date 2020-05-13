@@ -1,58 +1,62 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5.4.33 0/2] Fix for long operation cmds busy detection
-Date: Wed, 13 May 2020 11:37:51 +0200
-Message-ID: <20200513093751.GA831267@kroah.com>
-References: <1587758766-3274-1-git-send-email-skomatineni@nvidia.com>
- <20200425014556.GD13035@sasha-vm>
- <81be9ca0-5c61-6e94-8398-85354764b429@nvidia.com>
- <20200425070408.GB2042217@kroah.com>
+From: Mian Yousaf Kaukab <ykaukab-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [PATCH 2/4] dt-bindings: sram: add documentation for
+ reserved-only flag
+Date: Wed, 13 May 2020 12:41:27 +0200
+Message-ID: <20200513104127.GA2309@suse.de>
+References: <20200512144803.24344-1-ykaukab@suse.de>
+ <20200512144803.24344-2-ykaukab@suse.de>
+ <52f099e4-5c03-2141-f049-cd3adeb04c5b@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200425070408.GB2042217@kroah.com>
-Sender: stable-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: Sasha Levin <sashal@kernel.org>, adrian.hunter@intel.com, ulf.hansson@linaro.org, baolin.wang@linaro.org, kstewart@linuxfoundation.org, tglx@linutronix.de, bradleybolen@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, anrao@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <52f099e4-5c03-2141-f049-cd3adeb04c5b-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Apr 25, 2020 at 09:04:08AM +0200, Greg KH wrote:
-> On Fri, Apr 24, 2020 at 07:42:16PM -0700, Sowjanya Komatineni wrote:
-> > 
-> > On 4/24/20 6:45 PM, Sasha Levin wrote:
-> > > External email: Use caution opening links or attachments
-> > > 
-> > > 
-> > > On Fri, Apr 24, 2020 at 01:06:04PM -0700, Sowjanya Komatineni wrote:
-> > > > This series is to backport the upstream patches that fixes busy
-> > > > detection
-> > > > for long operation mmc commands by implementing Tegra specific timeout
-> > > > callback to switch between finite and infinite HW busy detection wait
-> > > > modes.
-> > > > 
-> > > > 
-> > > > Sowjanya Komatineni (2):
-> > > >  sdhci: tegra: Implement Tegra specific set_timeout callback
-> > > >  sdhci: tegra: Enable MMC_CAP_WAIT_WHILE_BUSY host capability
-> > > 
-> > > What regression do these patches fix?
-> > > 
-> > This isn't a regression as we don't have any known failures as of today with
-> > the specific mmc devices we are using on our platforms.
+On Tue, May 12, 2020 at 01:45:28PM -0600, Stephen Warren wrote:
+> On 5/12/20 8:48 AM, Mian Yousaf Kaukab wrote:
+> > Add documentation for the new optional flag added for SRAM driver.
 > 
-> Have you read:
->     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> ?
+> > diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
 > 
-> > But this patch fixes a long outstanding bug for sdhci-tegra to handle long
-> > busy wait for mmc command operations that may take longer than host max busy
-> > timeout. So, this is something that's missing from the beginning and good to
-> > have.
+> > +  reserved-only:
+> > +    description:
+> > +      The flag indicating, that only SRAM reserved regions have to be remapped.
+> > +      remapping type is selected depending upon no-memory-wc as usual.
+> > +    type: boolean
 > 
-> So it's a new feature?
-> 
+> This feels a bit like a SW flag rather than a HW description, so I'm not
+> sure it's appropriate to put it into DT.
 
-Dropped from my queues due to lack of response.
+Reserved regions themselves are software descriptions, no? Then we have 'pool'
+flag which is again a software flag and so on. This flag falls into same
+category and nothing out of ordinary.
+> 
+> Are there any cases where the SW should map all of the SRAM, i.e. where
+> we wouldn't expect to set reserved-only? [...]
 
-greg k-h
+Yes, here are a few examples:
+arch/arm/boot/dts/aspeed-g*.dtsi
+arch/arm/boot/dts/at91*.dtsi
+arch/arm/boot/dts/bcm7445.dtsi
+Then arch/arm/boot/dts/dra7.dtsi is an example where we should map everything
+except the reserved region.
+
+> [...] I'd expect reserved-only to be
+> the default, and perhaps only, mode of operation for the SRAM driver.
+
+It will break compatibility with existing dtbs.
+
+> If we can't do that because some SW currently expects to be able to map
+> arbitrary portions of the SRAM, shouldn't that SW be fixed to tell the
+> SRAM driver which parts it's using, hence still allowing the driver to
+> only map in-use portions?
+
+User doesnâ€™t need sram driver in that case. It can use genalloc api directly.
+
+BR,
+Yousaf
