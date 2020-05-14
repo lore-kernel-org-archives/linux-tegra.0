@@ -1,62 +1,48 @@
 From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 0/8] Tegra XUSB charger detect support
-Date: Thu, 14 May 2020 11:52:35 +0530
-Message-ID: <1589437363-16727-1-git-send-email-nkristam@nvidia.com>
+Subject: [PATCH V3 1/8] dt-bindings: phy: tegra-xusb: Add charger-detect property
+Date: Thu, 14 May 2020 11:52:36 +0530
+Message-ID: <1589437363-16727-2-git-send-email-nkristam@nvidia.com>
+References: <1589437363-16727-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1589437363-16727-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series adds charger detect support on XUSB hardware used in
-Tegra210 and Tegra186 SoCs.
+Add nvidia,charger-detect boolean property for Tegra210 and Tegra186
+platforms. This property is used to inform driver to perform charger
+detection on corresponding USB 2 port.
 
-This patchset is composed with :
- - dt bindings of XUSB Pad Controller
- - Tegra XUSB device mode driver to add vbus_draw support 
- - Tegra PHY driver for charger detect support
-
-Tests done:
- - Connect USB cable from ubuntu host to micro-B port of DUT to detect
-   SDP_TYPE charger
- - Connect USB cable from external powered USB hub(which inturn connects
-   to ubuntu host) to micro-B port of DUT to detect CDP_TYPE charger.
- - Connect USB cable from USB charger to micro-B port of DUT to detect
-   DCP_TYPE charger.
-DUT: Jetson-tx1, Jetson tx2.
-
+Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 V3:
- - Added ACKed-by details for PHY driver and DT changes.
- - Functions and its arguments are aligned.
- - Tabs are used for alignment of MACRO's
- - For vbus_draw USDC callback, usb_phy set_power error is propogated.
- - Fixed various comments given by thierry.
+ - Added Acked-by updates to commit message.
+---
 V2:
- - Added ACKed-by details for DT patches.
- - All patches rebased.
+ - Added Acked-by updates to commit message.
+---
+ Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Nagarjuna Kristam (8):
-  dt-bindings: phy: tegra-xusb: Add charger-detect property
-  usb: gadget: tegra-xudc: Add vbus_draw support
-  phy: tegra: xusb: Add support for UTMI pad power control
-  phy: tegra: xusb: Add USB2 pad power control support for Tegra210
-  phy: tegra: xusb: Add soc ops API to enable UTMI PAD protection
-  phy: tegra: xusb: Add support for charger detect
-  phy: tegra: xusb: Enable charger detect for Tegra186
-  phy: tegra: xusb: Enable charger detect for Tegra210
-
- .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   |   4 +
- drivers/phy/tegra/Makefile                         |   2 +-
- drivers/phy/tegra/cd.c                             | 283 +++++++++++++++++++++
- drivers/phy/tegra/xusb-tegra186.c                  |  92 +++++--
- drivers/phy/tegra/xusb-tegra210.c                  | 223 +++++++++++-----
- drivers/phy/tegra/xusb.c                           |  80 ++++++
- drivers/phy/tegra/xusb.h                           |  22 ++
- drivers/usb/gadget/udc/tegra-xudc.c                |  17 ++
- 8 files changed, 638 insertions(+), 85 deletions(-)
- create mode 100644 drivers/phy/tegra/cd.c
-
+diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+index 38c5fa2..9b2d2dd 100644
+--- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
++++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+@@ -190,6 +190,10 @@ Required properties for OTG/Peripheral capable USB2 ports:
+   and peripheral roles. Connector should be added as subnode.
+   See usb/usb-conn-gpio.txt.
+ 
++Optional properties for OTG/Peripheral capable USB2 ports:
++- nvidia,charger-detect: A boolean property whose presence inform driver to
++  perform charger-detect activity.
++
+ Optional properties:
+ - nvidia,internal: A boolean property whose presence determines that a port
+   is internal. In the absence of this property the port is considered to be
 -- 
 2.7.4
