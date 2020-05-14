@@ -1,60 +1,50 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH net/next] r8152: Use MAC address from device tree if available
-Date: Thu, 14 May 2020 14:38:48 +0200
-Message-ID: <20200514123848.933199-1-thierry.reding@gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 06/31] phy: tegra: Select USB_COMMON for usb_get_maximum_speed()
+Date: Thu, 14 May 2020 14:53:48 -0400
+Message-ID: <20200514185413.20755-6-sashal@kernel.org>
+References: <20200514185413.20755-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
-Cc: Hayes Wang <hayeswang-Rasf1IRRPZFBDgjK7y7TUQ@public.gmane.org>, Jakub Kicinski <kuba-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200514185413.20755-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Thierry Reding <treding@nvidia.com>, kbuild test robot <lkp@intel.com>, Nathan Chancellor <natechancellor@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-If a MAC address was passed via the device tree node for the r8152
-device, use it and fall back to reading from EEPROM otherwise. This is
-useful for devices where the r8152 EEPROM was not programmed with a
-valid MAC address, or if users want to explicitly set a MAC address in
-the bootloader and pass that to the kernel.
+[ Upstream commit 0d5c9bc7c68009af04bbadf22306467674c6fb90 ]
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The usb_get_maximum_speed() function is part of the usb-common module,
+so enable it by selecting the corresponding Kconfig symbol.
+
+While at it, also make sure to depend on USB_SUPPORT because USB_PHY
+requires that. This can lead to Kconfig conflicts if USB_SUPPORT is not
+enabled while attempting to enable PHY_TEGRA_XUSB.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20200330101038.2422389-1-thierry.reding@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/r8152.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ drivers/phy/tegra/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 8f8d9883d363..1af72ec284ca 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -1504,15 +1504,19 @@ static int determine_ethernet_addr(struct r8152 *tp, struct sockaddr *sa)
+diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+index a3b1de953fb70..bf4e93b835e91 100644
+--- a/drivers/phy/tegra/Kconfig
++++ b/drivers/phy/tegra/Kconfig
+@@ -1,6 +1,7 @@
+ config PHY_TEGRA_XUSB
+ 	tristate "NVIDIA Tegra XUSB pad controller driver"
+-	depends on ARCH_TEGRA
++	depends on ARCH_TEGRA && USB_SUPPORT
++	select USB_COMMON
+ 	help
+ 	  Choose this option if you have an NVIDIA Tegra SoC.
  
- 	sa->sa_family = dev->type;
- 
--	if (tp->version == RTL_VER_01) {
--		ret = pla_ocp_read(tp, PLA_IDR, 8, sa->sa_data);
--	} else {
--		/* if device doesn't support MAC pass through this will
--		 * be expected to be non-zero
--		 */
--		ret = vendor_mac_passthru_addr_read(tp, sa);
--		if (ret < 0)
--			ret = pla_ocp_read(tp, PLA_BACKUP, 8, sa->sa_data);
-+	ret = eth_platform_get_mac_address(&dev->dev, sa->sa_data);
-+	if (ret < 0) {
-+		if (tp->version == RTL_VER_01) {
-+			ret = pla_ocp_read(tp, PLA_IDR, 8, sa->sa_data);
-+		} else {
-+			/* if device doesn't support MAC pass through this will
-+			 * be expected to be non-zero
-+			 */
-+			ret = vendor_mac_passthru_addr_read(tp, sa);
-+			if (ret < 0)
-+				ret = pla_ocp_read(tp, PLA_BACKUP, 8,
-+						   sa->sa_data);
-+		}
- 	}
- 
- 	if (ret < 0) {
 -- 
-2.24.1
+2.20.1
