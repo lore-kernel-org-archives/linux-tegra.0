@@ -1,32 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH net/next] r8152: Use MAC address from device tree if
- available
-Date: Thu, 14 May 2020 13:16:55 -0700 (PDT)
-Message-ID: <20200514.131655.249413798024922962.davem@davemloft.net>
-References: <20200514123848.933199-1-thierry.reding@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1] mfd: tps65910: Correct power-off programming sequence
+Date: Thu, 14 May 2020 23:50:21 +0300
+Message-ID: <20200514205022.7024-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20200514123848.933199-1-thierry.reding@gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: thierry.reding@gmail.com
-Cc: hayeswang@realtek.com, kuba@kernel.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Thu, 14 May 2020 14:38:48 +0200
+This patch fixes system shutdown on a devices that use TPS65910 as a
+system's power controller. In accordance to the TPS65910 datasheet, the
+PMIC's state-machine transitions into the OFF state only when DEV_OFF
+bit of DEVCTRL_REG is set. The ON / SLEEP states also should be cleared,
+otherwise PMIC won't get into a proper state on shutdown. Devices like
+Nexus 7 tablet and Ouya game console are now shutting down properly.
 
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> If a MAC address was passed via the device tree node for the r8152
-> device, use it and fall back to reading from EEPROM otherwise. This is
-> useful for devices where the r8152 EEPROM was not programmed with a
-> valid MAC address, or if users want to explicitly set a MAC address in
-> the bootloader and pass that to the kernel.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+Tested-by: Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/mfd/tps65910.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Yep, that looks good, applied.
-
-Thank you.
+diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+index 11959021b50a..22116cee411d 100644
+--- a/drivers/mfd/tps65910.c
++++ b/drivers/mfd/tps65910.c
+@@ -440,8 +440,16 @@ static void tps65910_power_off(void)
+ 			DEVCTRL_PWR_OFF_MASK) < 0)
+ 		return;
+ 
+-	tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+-			DEVCTRL_DEV_ON_MASK);
++	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
++			DEVCTRL_DEV_SLP_MASK) < 0)
++		return;
++
++	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
++			DEVCTRL_DEV_ON_MASK) < 0)
++		return;
++
++	tps65910_reg_set_bits(tps65910, TPS65910_DEVCTRL,
++			DEVCTRL_DEV_OFF_MASK);
+ }
+ 
+ static int tps65910_i2c_probe(struct i2c_client *i2c,
+-- 
+2.26.0
