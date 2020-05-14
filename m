@@ -1,53 +1,62 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH 5.6 000/118] 5.6.13-rc1 review
-Date: Wed, 13 May 2020 15:54:27 +0200
-Message-ID: <20200513135427.GB1309267@kroah.com>
-References: <20200513094417.618129545@linuxfoundation.org>
- <12592104-9a83-5b19-be42-5bbf92198ad7@nvidia.com>
+From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 0/8] Tegra XUSB charger detect support
+Date: Thu, 14 May 2020 11:52:35 +0530
+Message-ID: <1589437363-16727-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <12592104-9a83-5b19-be42-5bbf92198ad7-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 13, 2020 at 02:46:31PM +0100, Jon Hunter wrote:
-> 
-> On 13/05/2020 10:43, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.6.13 release.
-> > There are 118 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Fri, 15 May 2020 09:41:20 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.6.13-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.6.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.6:
->     13 builds:	13 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     42 tests:	42 pass, 0 fail
-> 
-> Linux version:	5.6.13-rc1-gf1d28d1c7608
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
+This patch series adds charger detect support on XUSB hardware used in
+Tegra210 and Tegra186 SoCs.
 
-Wonderful, thanks for testing all of these and letting me know.
+This patchset is composed with :
+ - dt bindings of XUSB Pad Controller
+ - Tegra XUSB device mode driver to add vbus_draw support 
+ - Tegra PHY driver for charger detect support
 
-greg k-h
+Tests done:
+ - Connect USB cable from ubuntu host to micro-B port of DUT to detect
+   SDP_TYPE charger
+ - Connect USB cable from external powered USB hub(which inturn connects
+   to ubuntu host) to micro-B port of DUT to detect CDP_TYPE charger.
+ - Connect USB cable from USB charger to micro-B port of DUT to detect
+   DCP_TYPE charger.
+DUT: Jetson-tx1, Jetson tx2.
+
+V3:
+ - Added ACKed-by details for PHY driver and DT changes.
+ - Functions and its arguments are aligned.
+ - Tabs are used for alignment of MACRO's
+ - For vbus_draw USDC callback, usb_phy set_power error is propogated.
+ - Fixed various comments given by thierry.
+V2:
+ - Added ACKed-by details for DT patches.
+ - All patches rebased.
+
+Nagarjuna Kristam (8):
+  dt-bindings: phy: tegra-xusb: Add charger-detect property
+  usb: gadget: tegra-xudc: Add vbus_draw support
+  phy: tegra: xusb: Add support for UTMI pad power control
+  phy: tegra: xusb: Add USB2 pad power control support for Tegra210
+  phy: tegra: xusb: Add soc ops API to enable UTMI PAD protection
+  phy: tegra: xusb: Add support for charger detect
+  phy: tegra: xusb: Enable charger detect for Tegra186
+  phy: tegra: xusb: Enable charger detect for Tegra210
+
+ .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   |   4 +
+ drivers/phy/tegra/Makefile                         |   2 +-
+ drivers/phy/tegra/cd.c                             | 283 +++++++++++++++++++++
+ drivers/phy/tegra/xusb-tegra186.c                  |  92 +++++--
+ drivers/phy/tegra/xusb-tegra210.c                  | 223 +++++++++++-----
+ drivers/phy/tegra/xusb.c                           |  80 ++++++
+ drivers/phy/tegra/xusb.h                           |  22 ++
+ drivers/usb/gadget/udc/tegra-xudc.c                |  17 ++
+ 8 files changed, 638 insertions(+), 85 deletions(-)
+ create mode 100644 drivers/phy/tegra/cd.c
+
+-- 
+2.7.4
