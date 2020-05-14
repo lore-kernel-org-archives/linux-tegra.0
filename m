@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 4.14 08/39] phy: tegra: Select USB_COMMON for usb_get_maximum_speed()
-Date: Thu, 14 May 2020 14:54:25 -0400
-Message-ID: <20200514185456.21060-8-sashal@kernel.org>
-References: <20200514185456.21060-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 08/49] phy: tegra: Select USB_COMMON for usb_get_maximum_speed()
+Date: Thu, 14 May 2020 14:52:29 -0400
+Message-ID: <20200514185311.20294-8-sashal@kernel.org>
+References: <20200514185311.20294-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200514185456.21060-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20200514185311.20294-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Nathan Chancellor <natechancellor-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -34,10 +34,11 @@ Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
-index a3b1de953fb70..bf4e93b835e91 100644
+index f9817c3ae85f0..2e66a123f5a2c 100644
 --- a/drivers/phy/tegra/Kconfig
 +++ b/drivers/phy/tegra/Kconfig
-@@ -1,6 +1,7 @@
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
  config PHY_TEGRA_XUSB
  	tristate "NVIDIA Tegra XUSB pad controller driver"
 -	depends on ARCH_TEGRA
