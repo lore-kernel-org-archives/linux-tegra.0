@@ -1,43 +1,83 @@
-From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 8/8] phy: tegra: xusb: Enable charger detect for Tegra210
-Date: Thu, 14 May 2020 11:52:43 +0530
-Message-ID: <1589437363-16727-9-git-send-email-nkristam@nvidia.com>
+From: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH V3 6/8] phy: tegra: xusb: Add support for charger detect
+Date: Thu, 14 May 2020 15:02:22 +0800
+Message-ID: <1589439742.5899.2.camel@mhfsdcap03>
 References: <1589437363-16727-1-git-send-email-nkristam@nvidia.com>
+         <1589437363-16727-7-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1589437363-16727-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1589437363-16727-7-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 SoC supports charger detect, set corresponding soc flag.
-
-Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V3:
- - Used supports_charger_detect name instead of charger_detect.
- - Added Acked-by updates to commit message.
----
-V2:
- - Patch re-based.
----
- drivers/phy/tegra/xusb-tegra210.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index 80c4349..db2a1ab 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -2353,6 +2353,7 @@ const struct tegra_xusb_padctl_soc tegra210_xusb_padctl_soc = {
- 	.supply_names = tegra210_xusb_padctl_supply_names,
- 	.num_supplies = ARRAY_SIZE(tegra210_xusb_padctl_supply_names),
- 	.need_fake_usb3_port = true,
-+	.supports_charger_detect = true,
- };
- EXPORT_SYMBOL_GPL(tegra210_xusb_padctl_soc);
- 
--- 
-2.7.4
+T24gVGh1LCAyMDIwLTA1LTE0IGF0IDExOjUyICswNTMwLCBOYWdhcmp1bmEgS3Jpc3RhbSB3cm90
+ZToNCj4gUGVyZm9ybSBjaGFyZ2VyLWRldGVjdCBvcGVyYXRpb24gaWYgY29ycmVzcG9uZGluZyBk
+dCBwcm9wZXJ0eSBpcyBlbmFibGVkLg0KPiBVcGRhdGUgdXNiLXBoeSB3aXRoIHRoZSBkZXRlY3Rl
+ZCBjaGFyZ2VyIHN0YXRlIGFuZCBtYXggY3VycmVudCB2YWx1ZXMuDQo+IFJlZ2lzdGVyIGNoYXJn
+ZXItZGV0ZWN0IEFQSSdzIG9mIHVzYi1waHkgdG8gcHJvdmlkZSBuZWVkZWQgZnVuY3Rpb25hbGl0
+aWVzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTmFnYXJqdW5hIEtyaXN0YW0gPG5rcmlzdGFtQG52
+aWRpYS5jb20+DQo+IC0tLQ0KPiBWMzoNCj4gIC0gQWxsaWdoZWQgZnVuY3Rpb25zIGFuZCBpdHMg
+YXJndW1lbnRzLg0KPiAgLSByZXBsYWNlZCBzcGFjZWQgYnkgdGFicyBmb3IgTUFDUk8gZGVmaW5p
+dGlvbiBhbGxpZ25tZW50cy4NCj4gIC0gVW5pZmllZCBwcmltYXJ5IGFuZCBzZWNvbmRhcnkgY2hh
+cmdlciBkZXRlY3QgQVBJJ3MuDQo+ICAtIFVzZWQgcmVhZGxfcG9sbF90aW1lb3V0IGluc3RlYWQg
+b2Ygd2hpbGUgbG9vcCBjb25kaXRpb24gY2hlY2sgZm9yIHJlZ2lzdGVyLg0KPiAgLSBGaXhlZCBv
+dGhlciBjb21tZW50cyBhcyBwZXIgaW5wdXRzIGZyb20gVGhpZXJyeS4NCj4gLS0tDQo+IFYyOg0K
+PiAgLSBQYXRjaCByZS1iYXNlZC4NCj4gLS0tDQo+ICBkcml2ZXJzL3BoeS90ZWdyYS9NYWtlZmls
+ZSB8ICAgMiArLQ0KPiAgZHJpdmVycy9waHkvdGVncmEvY2QuYyAgICAgfCAyODMgKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICBkcml2ZXJzL3BoeS90ZWdy
+YS94dXNiLmMgICB8ICA4MCArKysrKysrKysrKysrDQo+ICBkcml2ZXJzL3BoeS90ZWdyYS94dXNi
+LmggICB8ICAgNyArKw0KPiAgNCBmaWxlcyBjaGFuZ2VkLCAzNzEgaW5zZXJ0aW9ucygrKSwgMSBk
+ZWxldGlvbigtKQ0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcGh5L3RlZ3JhL2NkLmMN
+Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BoeS90ZWdyYS9NYWtlZmlsZSBiL2RyaXZlcnMv
+cGh5L3RlZ3JhL01ha2VmaWxlDQo+IGluZGV4IDg5Yjg0MDYuLmJlZmRmYzQgMTAwNjQ0DQo+IC0t
+LSBhL2RyaXZlcnMvcGh5L3RlZ3JhL01ha2VmaWxlDQo+ICsrKyBiL2RyaXZlcnMvcGh5L3RlZ3Jh
+L01ha2VmaWxlDQo+IEBAIC0xLDcgKzEsNyBAQA0KPiAgIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmll
+cjogR1BMLTIuMC1vbmx5DQo+ICBvYmotJChDT05GSUdfUEhZX1RFR1JBX1hVU0IpICs9IHBoeS10
+ZWdyYS14dXNiLm8NCj4gIA0KPiAtcGh5LXRlZ3JhLXh1c2IteSArPSB4dXNiLm8NCj4gK3BoeS10
+ZWdyYS14dXNiLXkgKz0geHVzYi5vIGNkLm8NCj4gIHBoeS10ZWdyYS14dXNiLSQoQ09ORklHX0FS
+Q0hfVEVHUkFfMTI0X1NPQykgKz0geHVzYi10ZWdyYTEyNC5vDQo+ICBwaHktdGVncmEteHVzYi0k
+KENPTkZJR19BUkNIX1RFR1JBXzEzMl9TT0MpICs9IHh1c2ItdGVncmExMjQubw0KPiAgcGh5LXRl
+Z3JhLXh1c2ItJChDT05GSUdfQVJDSF9URUdSQV8yMTBfU09DKSArPSB4dXNiLXRlZ3JhMjEwLm8N
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGh5L3RlZ3JhL2NkLmMgYi9kcml2ZXJzL3BoeS90ZWdy
+YS9jZC5jDQo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+IGluZGV4IDAwMDAwMDAuLmZkZGJlNGMN
+Cj4gLS0tIC9kZXYvbnVsbA0KPiArKysgYi9kcml2ZXJzL3BoeS90ZWdyYS9jZC5jDQo+IEBAIC0w
+LDAgKzEsMjgzIEBADQo+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiAr
+LyoNCj4gKyAqIENvcHlyaWdodCAoYykgMjAyMCwgTlZJRElBIENPUlBPUkFUSU9OLiAgQWxsIHJp
+Z2h0cyByZXNlcnZlZC4NCj4gKyAqLw0KPiArDQo+ICsjaW5jbHVkZSA8bGludXgvZGVsYXkuaD4N
+Cj4gKyNpbmNsdWRlIDxsaW51eC9pb3BvbGwuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9tb2R1bGUu
+aD4NCj4gKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4gKyNpbmNsdWRlIDxs
+aW51eC9waHkvcGh5Lmg+DQo+ICsNCj4gKyNpbmNsdWRlICJ4dXNiLmgiDQo+ICsNCj4gKy8qIERh
+dGEgY29udGFjdCBkZXRlY3Rpb24gdGltZW91dCAqLw0KPiArI2RlZmluZSBURENEX1RJTUVPVVRf
+TVMJCQkJNDAwDQo+ICsNCj4gKyNkZWZpbmUgVVNCMl9CQVRURVJZX0NIUkdfT1RHUEFEWF9DVEww
+KHgpCSgweDgwICsgKHgpICogMHg0MCkNCj4gKyNkZWZpbmUgIFBEX0NIRwkJCQkJKDEgPDwgMCkN
+Cj4gKyNkZWZpbmUgIFZEQ0RfREVUX0ZJTFRFUl9FTgkJCSgxIDw8IDQpDQo+ICsjZGVmaW5lICBW
+REFUX0RFVAkJCQkoMSA8PCA1KQ0KPiArI2RlZmluZSAgVkRBVF9ERVRfRklMVEVSX0VOCQkJKDEg
+PDwgOCkNCj4gKyNkZWZpbmUgIE9QX1NJTktfRU4JCQkJKDEgPDwgOSkNCj4gKyNkZWZpbmUgIE9Q
+X1NSQ19FTgkJCQkoMSA8PCAxMCkNCj4gKyNkZWZpbmUgIE9OX1NJTktfRU4JCQkJKDEgPDwgMTEp
+DQo+ICsjZGVmaW5lICBPTl9TUkNfRU4JCQkJKDEgPDwgMTIpDQo+ICsjZGVmaW5lICBPUF9JX1NS
+Q19FTgkJCQkoMSA8PCAxMykNCj4gKyNkZWZpbmUgIFpJUF9GSUxURVJfRU4JCQkJKDEgPDwgMjEp
+DQo+ICsjZGVmaW5lICBaSU5fRklMVEVSX0VOCQkJCSgxIDw8IDI1KQ0KPiArI2RlZmluZSAgRENE
+X0RFVEVDVEVECQkJCSgxIDw8IDI2KQ0KVXNlIEJJVCgpID8NCj4gKw0KPiArI2RlZmluZSBVU0Iy
+X0JBVFRFUllfQ0hSR19PVEdQQURYX0NUTDEoeCkJKDB4ODQgKyAoeCkgKiAweDQwKQ0KPiArI2Rl
+ZmluZSAgUERfVlJFRwkJCQkoMSA8PCA2KQ0KPiArI2RlZmluZSAgVlJFR19MRVYoeCkJCQkJKCgo
+eCkgJiAweDMpIDw8IDcpDQo+ICsjZGVmaW5lICBWUkVHX0RJUih4KQkJCQkoKCh4KSAmIDB4Mykg
+PDwgMTEpDQo+ICsjZGVmaW5lICBWUkVHX0RJUl9JTgkJCQlWUkVHX0RJUigxKQ0KPiArI2RlZmlu
+ZSAgVlJFR19ESVJfT1VUCQkJCVZSRUdfRElSKDIpDQo+ICsjZGVmaW5lICBVU0JPUF9SUERfT1ZS
+RAkJCQkoMSA8PCAxNikNCj4gKyNkZWZpbmUgIFVTQk9QX1JQRF9PVlJEX1ZBTAkJCSgxIDw8IDE3
+KQ0KPiArI2RlZmluZSAgVVNCT1BfUlBVX09WUkQJCQkJKDEgPDwgMTgpDQo+ICsjZGVmaW5lICBV
+U0JPUF9SUFVfT1ZSRF9WQUwJCQkoMSA8PCAxOSkNCj4gKyNkZWZpbmUgIFVTQk9OX1JQRF9PVlJE
+CQkJCSgxIDw8IDIwKQ0KPiArI2RlZmluZSAgVVNCT05fUlBEX09WUkRfVkFMCQkJKDEgPDwgMjEp
+DQo+ICsjZGVmaW5lICBVU0JPTl9SUFVfT1ZSRAkJCQkoMSA8PCAyMikNCj4gKyNkZWZpbmUgIFVT
+Qk9OX1JQVV9PVlJEX1ZBTAkJCSgxIDw8IDIzKQ0KPiArDQo+ICsjZGVmaW5lIFhVU0JfUEFEQ1RM
+X1VTQjJfT1RHX1BBRFhfQ1RMMCh4KQkoMHg4OCArICh4KSAqIDB4NDApDQo+ICsjZGVmaW5lICBV
+U0IyX09UR19QRDIJCQkJKDEgPDwgMjcpDQo+ICsjZGVmaW5lICBVU0IyX09UR19QRDJfT1ZSRF9F
+TgkJCSgxIDw8IDI4KQ0KPiArI2RlZmluZSAgVVNCMl9PVEdfUERfWkkJCQkJKDEgPDwgMjkpDQo+
+ICsNCj4gKyNkZWZpbmUgWFVTQl9QQURDVExfVVNCMl9CQVRURVJZX0NIUkdfVERDRF9EQk5DX1RJ
+TUVSXzAgKDB4MjgwKQ0KPiArI2RlZmluZSAgIFREQ0RfREJOQyh4KQkJCQkoKCh4KSAmIDB4N2Zm
+KSA8PCAwKQ0KPiArDQo+ICtzdGF0aWMgdm9pZA0KPiArdGVncmFfeHVzYl9wYWRjdGxfc2V0X2Rl
+Ym91bmNlX3RpbWUoc3RydWN0IHRlZ3JhX3h1c2JfcGFkY3RsICpwYWRjdGwsDQo+ICsJCQkJICAg
+IHUzMiBkZWJvdW5jZSkNCg0K
