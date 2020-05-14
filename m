@@ -1,75 +1,137 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 3/4] media: staging: tegra-vde: Turn ON power domain on shutdown
-Date: Fri, 15 May 2020 00:08:46 +0300
-Message-ID: <20200514210847.9269-4-digetx@gmail.com>
-References: <20200514210847.9269-1-digetx@gmail.com>
+Subject: [PATCH v8 0/6] Support NVIDIA Tegra-based Acer A500 and Nexus 7 devices
+Date: Fri, 15 May 2020 00:36:48 +0300
+Message-ID: <20200514213654.12834-1-digetx@gmail.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200514210847.9269-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Pedro=20=C3=82ngelo?= <pangelo-yxaQD43p5Qo@public.gmane.org>, Matt Merhar <mattmerhar-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>, Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On some devices bootloader isn't ready to a clamped VDE power, and thus,
-machine hangs on a warm reboot (CPU reset). The VDE power partition is
-turned ON by default on a cold boot, hence VDE driver should keep power
-partition enabled on system's reboot too. This fixes hang on a warm reboot
-on a Tegra20 Acer A500 device, which is handy if Embedded Controller
-driver is unavailable, i.e. cold reboot can't be performed.
+Hello,
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/staging/media/tegra-vde/vde.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+This series introduces upstream kernel support for Acer Iconia Tab A500
+and ASUS Google Nexus 7 tablet devices. Please review and apply, thanks
+in advance.
 
-diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-index 85cbbc8f70d3..b64e35b86fb4 100644
---- a/drivers/staging/media/tegra-vde/vde.c
-+++ b/drivers/staging/media/tegra-vde/vde.c
-@@ -1085,9 +1085,17 @@ static int tegra_vde_remove(struct platform_device *pdev)
- 	struct tegra_vde *vde = platform_get_drvdata(pdev);
- 	struct device *dev = &pdev->dev;
- 
-+	pm_runtime_get_sync(dev);
- 	pm_runtime_dont_use_autosuspend(dev);
- 	pm_runtime_disable(dev);
- 
-+	/*
-+	 * Balance RPM state, the VDE power domain is left ON and hardware
-+	 * is clock-gated. It's safe to reboot machine now.
-+	 */
-+	pm_runtime_put_noidle(dev);
-+	clk_disable_unprepare(vde->clk);
-+
- 	misc_deregister(&vde->miscdev);
- 
- 	tegra_vde_dmabuf_cache_unmap_all(vde);
-@@ -1099,6 +1107,16 @@ static int tegra_vde_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void tegra_vde_shutdown(struct platform_device *pdev)
-+{
-+	/*
-+	 * On some devices bootloader isn't ready to a power-gated VDE on
-+	 * a warm-reboot, machine will hang in that case.
-+	 */
-+	if (pm_runtime_status_suspended(&pdev->dev))
-+		tegra_vde_runtime_resume(&pdev->dev);
-+}
-+
- static __maybe_unused int tegra_vde_pm_suspend(struct device *dev)
- {
- 	struct tegra_vde *vde = dev_get_drvdata(dev);
-@@ -1144,6 +1162,7 @@ MODULE_DEVICE_TABLE(of, tegra_vde_of_match);
- static struct platform_driver tegra_vde_driver = {
- 	.probe		= tegra_vde_probe,
- 	.remove		= tegra_vde_remove,
-+	.shutdown	= tegra_vde_shutdown,
- 	.driver		= {
- 		.name		= "tegra-vde",
- 		.of_match_table = tegra_vde_of_match,
+Changelog:
+
+v8: - The eMMC voltage regulator is now marked as always-ON in all
+      device-trees because turned out that some bootloader versions have
+      assumption about the enabled regulator at a boot time. This fixes
+      machine hanging on a warm reboot, it's also matching the downstream
+      kernel regulator configuration.
+
+    - The core regulator of the Ti PMIC Nexus 7 variant is now limited
+      to a 1.35V, which is a more realistic limit than 1.5V that was borrowed
+      from the Cardhu device-tree. Now both Maxim and Ti variants have the
+      common limits.
+
+    - Added acks from Rob Herring.
+
+v7: - This version brings support for a Nexus 7 variant that uses Ti PMIC
+      instead of the Maxim PMIC. Previously we assumed that variant with
+      the Ti PMIC doesn't exist in a wild, but turned out that it was a
+      wrong assumption. In a result the device-trees are separated into
+      more DTSI pieces, which combined together form the final device-tree.
+      Thanks to Zack Pearsall for testing the Ti version!
+
+    - The camera voltage regulator is now preset to a correct 1.8v in the
+      Nexus 7 device-tree.
+
+v6: - Corrected PMIC's RTC alias in the DTs. Sometime ago I renamed the
+      PMIC's node to match the modern upstream styling, but forgot to change
+      the RTC alias. Now PMIC RTC alias uses node's handle instead of string.
+
+    - Removed "panel: " handle from device trees, which became unused after
+      v5 and I just missed to remove it.
+
+v5: - After spending some more time on adding LVDS encoder bridge support
+      to the Tegra DRM driver, I'm now having a second thought and agree
+      with Thierry Reding that in a longer run it should be better not to
+      mix old nvidia,panel with new output graph in device-tree. So the
+      nvidia,panel phandle is removed now in both A500 and Nexus 7 DTs.
+
+v4: - Corrected CPU's thermal zone on both A500 and Nexus 7, which
+      should use the remote thermal sensor (Tegra chip) instead of the
+      local ("skin" temperature).
+
+    - Added default PMIC pinmux state on Nexus 7, for completeness.
+
+    - Added PMIC cpu_pwr_req GPIO hog on Nexus 7, for completeness.
+
+    - Renamed thermal sensor node label to NCT72 on Nexus 7 to match the
+      actual hardware (NCT72 is compatible with NCT1008). For completeness.
+
+    - Added always-on USB AVDD regulator on Nexus 7, which is controlled by
+      the PMIC GPIO. For completeness.
+
+    - Added PMIC GPIO enable-control to the 3v3_sys regulator on Nexus 7,
+      for completeness.
+
+    - Added CONFIG_NAMESPACES, CONFIG_USER_NS, CONFIG_SECCOMP and
+      CONFIG_PINCTRL_MAX77620 to the tegra_defconfig. The first three
+      options are must-have for the modern userspace, the last is somewhat
+      actual now since the default PMIC pinmux state is added to the N7 DT.
+
+v3: - Improved device-tree node-names in accordance to review comments that
+      were made by Thierry Reding to v2.
+
+    - Corrected LVDS encoder powerdown-GPIO polarity on both A500 and Nexus 7
+      because I implemented the DRM bridges support in the Tegra DRM driver
+      and found that there was a mistake in the device-trees. The updated
+      polarity also matches the boards schematics. Now DRM bridges support
+      becomes mandatory since LVDS is getting disabled during of the encoder
+      driver probing. I'll send the DRM patch separately from this series.
+
+    - Replaced recently deprecated CONFIG_DRM_LVDS_ENCODER with the new
+      CONFIG_DRM_LVDS_CODEC in tegra_defconfig.
+
+    - Added more config options to tegra_defconfig, like pstore and thermal.
+
+    - Added atmel,cfg_name to the A500 DT, which is a new upcoming property
+      in 5.8+ that allows to specify the per-board hardware config file name.
+
+v2: - Corrected "volume down" key-label in the grouper's device-tree and
+      improved some other names in device-trees.
+
+    - Added optional (upcoming in 5.8+) VDD/AVDD regulators to the touchscreen
+      node in A500 device-tree.
+
+Dmitry Osipenko (6):
+  ARM: tegra: Add device-tree for Acer Iconia Tab A500
+  ARM: tegra: Add device-tree for ASUS Google Nexus 7
+  dt-bindings: Add vendor prefix for Acer Inc.
+  dt-bindings: ARM: tegra: Add Acer Iconia Tab A500
+  dt-bindings: ARM: tegra: Add ASUS Google Nexus 7
+  ARM: tegra_defconfig: Enable options useful for Nexus 7 and Acer A500
+
+ .../devicetree/bindings/arm/tegra.yaml        |   10 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ arch/arm/boot/dts/Makefile                    |    4 +
+ .../boot/dts/tegra20-acer-a500-picasso.dts    | 1458 ++++++++++
+ .../dts/tegra30-asus-nexus7-grouper-E1565.dts |    9 +
+ .../dts/tegra30-asus-nexus7-grouper-PM269.dts |    9 +
+ .../tegra30-asus-nexus7-grouper-common.dtsi   | 2503 +++++++++++++++++
+ ...egra30-asus-nexus7-grouper-maxim-pmic.dtsi |  188 ++
+ .../tegra30-asus-nexus7-grouper-ti-pmic.dtsi  |  151 +
+ .../boot/dts/tegra30-asus-nexus7-grouper.dtsi |  462 +++
+ .../dts/tegra30-asus-nexus7-tilapia-E1565.dts |    9 +
+ .../boot/dts/tegra30-asus-nexus7-tilapia.dtsi |  548 ++++
+ arch/arm/configs/tegra_defconfig              |   42 +
+ 13 files changed, 5395 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-E1565.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-PM269.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-tilapia-E1565.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
+
 -- 
 2.26.0
