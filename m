@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v8 4/6] dt-bindings: ARM: tegra: Add Acer Iconia Tab A500
-Date: Fri, 15 May 2020 00:36:52 +0300
-Message-ID: <20200514213654.12834-5-digetx@gmail.com>
+Subject: [PATCH v8 3/6] dt-bindings: Add vendor prefix for Acer Inc.
+Date: Fri, 15 May 2020 00:36:51 +0300
+Message-ID: <20200514213654.12834-4-digetx@gmail.com>
 References: <20200514213654.12834-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,29 @@ To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Redin
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a binding for the Tegra20-based Acer Iconia Tab A500 tablet device.
+Acer is a hardware and electronics corporation, specializing in advanced
+electronics technology. Acer's products include desktop PCs, laptop PCs,
+tablets, servers, displays, storage devices, virtual reality devices,
+smartphones and peripherals. Their web site is http://www.acer.com/.
 
 Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index 60b38eb5c61a..7fd0b66c69b2 100644
---- a/Documentation/devicetree/bindings/arm/tegra.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -34,6 +34,9 @@ properties:
-               - toradex,colibri_t20-iris
-           - const: toradex,colibri_t20
-           - const: nvidia,tegra20
-+      - items:
-+          - const: acer,picasso
-+          - const: nvidia,tegra20
-       - items:
-           - enum:
-               - nvidia,beaver
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index a43ad3f9ff59..ce71327cce11 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -27,6 +27,8 @@ patternProperties:
+     description: Abilis Systems
+   "^abracon,.*":
+     description: Abracon Corporation
++  "^acer,.*":
++    description: Acer Inc.
+   "^acme,.*":
+     description: Acme Systems srl
+   "^actions,.*":
 -- 
 2.26.0
