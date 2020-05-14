@@ -1,63 +1,60 @@
-From: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 0/8] Tegra XUSB charger detect support
-Date: Thu, 14 May 2020 15:16:48 +0530
-Message-ID: <de31ad94-6884-cf83-36c4-0a865bc01753@nvidia.com>
-References: <1589437363-16727-1-git-send-email-nkristam@nvidia.com>
- <87wo5e4zzi.fsf@kernel.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH net/next] r8152: Use MAC address from device tree if available
+Date: Thu, 14 May 2020 14:38:48 +0200
+Message-ID: <20200514123848.933199-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87wo5e4zzi.fsf-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Cc: Hayes Wang <hayeswang-Rasf1IRRPZFBDgjK7y7TUQ@public.gmane.org>, Jakub Kicinski <kuba-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+If a MAC address was passed via the device tree node for the r8152
+device, use it and fall back to reading from EEPROM otherwise. This is
+useful for devices where the r8152 EEPROM was not programmed with a
+valid MAC address, or if users want to explicitly set a MAC address in
+the bootloader and pass that to the kernel.
 
-On 14-05-2020 15:09, Felipe Balbi wrote:
-> Nagarjuna Kristam<nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>  writes:
-> 
->> This patch series adds charger detect support on XUSB hardware used in
->> Tegra210 and Tegra186 SoCs.
->>
->> This patchset is composed with :
->>   - dt bindings of XUSB Pad Controller
->>   - Tegra XUSB device mode driver to add vbus_draw support
->>   - Tegra PHY driver for charger detect support
->>
->> Tests done:
->>   - Connect USB cable from ubuntu host to micro-B port of DUT to detect
->>     SDP_TYPE charger
->>   - Connect USB cable from external powered USB hub(which inturn connects
->>     to ubuntu host) to micro-B port of DUT to detect CDP_TYPE charger.
->>   - Connect USB cable from USB charger to micro-B port of DUT to detect
->>     DCP_TYPE charger.
->> DUT: Jetson-tx1, Jetson tx2.
->>
->> V3:
->>   - Added ACKed-by details for PHY driver and DT changes.
->>   - Functions and its arguments are aligned.
->>   - Tabs are used for alignment of MACRO's
->>   - For vbus_draw USDC callback, usb_phy set_power error is propogated.
->>   - Fixed various comments given by thierry.
->> V2:
->>   - Added ACKed-by details for DT patches.
->>   - All patches rebased.
->>
->> Nagarjuna Kristam (8):
->>    dt-bindings: phy: tegra-xusb: Add charger-detect property
->>    usb: gadget: tegra-xudc: Add vbus_draw support
->>    phy: tegra: xusb: Add support for UTMI pad power control
->>    phy: tegra: xusb: Add USB2 pad power control support for Tegra210
->>    phy: tegra: xusb: Add soc ops API to enable UTMI PAD protection
->>    phy: tegra: xusb: Add support for charger detect
->>    phy: tegra: xusb: Enable charger detect for Tegra186
->>    phy: tegra: xusb: Enable charger detect for Tegra210
-> Is there a hard-dependency between gadget and phy patches?
-> 
-> -- balbiNo dependency. They can be merged independently.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/net/usb/r8152.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-- Nagarjuna
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index 8f8d9883d363..1af72ec284ca 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -1504,15 +1504,19 @@ static int determine_ethernet_addr(struct r8152 *tp, struct sockaddr *sa)
+ 
+ 	sa->sa_family = dev->type;
+ 
+-	if (tp->version == RTL_VER_01) {
+-		ret = pla_ocp_read(tp, PLA_IDR, 8, sa->sa_data);
+-	} else {
+-		/* if device doesn't support MAC pass through this will
+-		 * be expected to be non-zero
+-		 */
+-		ret = vendor_mac_passthru_addr_read(tp, sa);
+-		if (ret < 0)
+-			ret = pla_ocp_read(tp, PLA_BACKUP, 8, sa->sa_data);
++	ret = eth_platform_get_mac_address(&dev->dev, sa->sa_data);
++	if (ret < 0) {
++		if (tp->version == RTL_VER_01) {
++			ret = pla_ocp_read(tp, PLA_IDR, 8, sa->sa_data);
++		} else {
++			/* if device doesn't support MAC pass through this will
++			 * be expected to be non-zero
++			 */
++			ret = vendor_mac_passthru_addr_read(tp, sa);
++			if (ret < 0)
++				ret = pla_ocp_read(tp, PLA_BACKUP, 8,
++						   sa->sa_data);
++		}
+ 	}
+ 
+ 	if (ret < 0) {
+-- 
+2.24.1
