@@ -1,34 +1,108 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 4/6] partitions/efi: Support GPT entry lookup at a
- non-standard location
-Date: Fri, 15 May 2020 18:52:53 +0300
-Message-ID: <2633429b-f014-15ea-c08c-d2157b0177b1@gmail.com>
-References: <20200515014143.12984-1-digetx@gmail.com>
- <20200515014143.12984-5-digetx@gmail.com>
- <20200515100320.GB30674@tack.einval.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200515100320.GB30674-RWaXQMOneMVkKwkEErXb8g@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Steve McIntyre <steve-nt0JYOx6u4DQT0dZR+AlfA@public.gmane.org>
-Cc: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Nils_=c3=96stlund?= <nils-ElENwYY5mljQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Davidlohr Bueso <dave-h16yJtLeMjHk1uMJSBkQmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan@ed>
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Subject: [PATCHv2 0/7] Support inhibiting input devices
+Date: Fri, 15 May 2020 18:49:43 +0200
+Message-ID: <20200515164943.28480-1-andrzej.p@collabora.com>
+References: <20200506002746.GB89269@dtor-ws>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20200506002746.GB89269@dtor-ws>
+Sender: linux-acpi-owner@vger.kernel.org
+To: linux-input@vger.kernel.org, linux-acpi@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Barry
 List-Id: linux-tegra@vger.kernel.org
 
-15.05.2020 13:03, Steve McIntyre пишет:
-> On Fri, May 15, 2020 at 04:41:41AM +0300, Dmitry Osipenko wrote:
->> Most of consumer-grade NVIDIA Tegra devices use a proprietary bootloader
->> that can't be easily replaced because it's locked down using Secure Boot
->> cryptography singing and the crypto keys aren't given to a device owner.
->               ^^^^^^^ typo
->> These devices usually have eMMC storage that is partitioned using a custom
->> NVIDIA Tegra partition table format.  Of course bootloader and other
->> "special things" are stored on the eMMC storage, and thus, the partition
->> format can't be changed.
-> 
-> ...
-> 
+Userspace might want to implement a policy to temporarily disregard input
+from certain devices, including not treating them as wakeup sources.
 
-Thanks! I'll correct it in v5.
+An example use case is a laptop, whose keyboard can be folded under the
+screen to create tablet-like experience. The user then must hold the laptop
+in such a way that it is difficult to avoid pressing the keyboard keys. It
+is therefore desirable to temporarily disregard input from the keyboard,
+until it is folded back. This obviously is a policy which should be kept
+out of the kernel, but the kernel must provide suitable means to implement
+such a policy.
+
+Due to interactions with suspend/resume, a helper has been added for drivers
+to decide if the device is being used or not (PATCH 1/7) and it has been
+applied to relevant drivers (PATCH 2-5/7). Patches 2-5 are only being sent
+to relevant mailing lists and maintainers.
+
+PATCH 6/7 adds support for inhibiting input devices, while PATCH 7/7
+provides an example how to convert a driver to take advantage of this
+new feature. Patch 7/7 is only being sent to input mailing list and
+maintainer.
+
+This work is inspired by:
+
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/45c2d7bb398f74adfae0017e20b224152fde3822
+
+and
+
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/4ce0e8a3697edb8fd071110b3af65014512061c7
+
+v1..v2:
+- added input_device_enabled() helper and used it in drivers (Dmitry)
+- the fact of open() and close() being called in inhibit/uninhibit paths has
+been emphasized in the commit message of PATCH 6/7 (Dmitry)
+
+Andrzej Pietrasiewicz (5):
+  Input: add input_device_enabled()
+  Input: use input_device_enabled()
+  ACPI: button: Use input_device_enabled() helper
+  iio: adc: exynos: Use input_device_enabled()
+  platform/x86: thinkpad_acpi: Use input_device_enabled()
+
+Dmitry Torokhov (1):
+  Input: elan_i2c: Support inhibiting
+
+Patrik Fimml (1):
+  Input: Add "inhibited" property
+
+ drivers/acpi/button.c                       |   8 +-
+ drivers/iio/adc/exynos_adc.c                |  11 +-
+ drivers/input/input.c                       | 142 ++++++++++++++++++--
+ drivers/input/joystick/xpad.c               |   4 +-
+ drivers/input/keyboard/ep93xx_keypad.c      |   2 +-
+ drivers/input/keyboard/gpio_keys.c          |   4 +-
+ drivers/input/keyboard/imx_keypad.c         |   4 +-
+ drivers/input/keyboard/ipaq-micro-keys.c    |   2 +-
+ drivers/input/keyboard/lpc32xx-keys.c       |   4 +-
+ drivers/input/keyboard/pmic8xxx-keypad.c    |   4 +-
+ drivers/input/keyboard/pxa27x_keypad.c      |   2 +-
+ drivers/input/keyboard/samsung-keypad.c     |   4 +-
+ drivers/input/keyboard/spear-keyboard.c     |   8 +-
+ drivers/input/keyboard/st-keyscan.c         |   4 +-
+ drivers/input/keyboard/tegra-kbc.c          |   4 +-
+ drivers/input/misc/drv260x.c                |   4 +-
+ drivers/input/misc/drv2665.c                |   4 +-
+ drivers/input/misc/drv2667.c                |   4 +-
+ drivers/input/misc/gp2ap002a00f.c           |   4 +-
+ drivers/input/misc/kxtj9.c                  |   4 +-
+ drivers/input/misc/sirfsoc-onkey.c          |   2 +-
+ drivers/input/mouse/elan_i2c_core.c         | 112 +++++++++++----
+ drivers/input/mouse/navpoint.c              |   4 +-
+ drivers/input/touchscreen/ad7879.c          |   6 +-
+ drivers/input/touchscreen/atmel_mxt_ts.c    |   4 +-
+ drivers/input/touchscreen/auo-pixcir-ts.c   |   8 +-
+ drivers/input/touchscreen/bu21029_ts.c      |   4 +-
+ drivers/input/touchscreen/chipone_icn8318.c |   4 +-
+ drivers/input/touchscreen/cyttsp_core.c     |   4 +-
+ drivers/input/touchscreen/eeti_ts.c         |   4 +-
+ drivers/input/touchscreen/ektf2127.c        |   4 +-
+ drivers/input/touchscreen/imx6ul_tsc.c      |   4 +-
+ drivers/input/touchscreen/ipaq-micro-ts.c   |   2 +-
+ drivers/input/touchscreen/iqs5xx.c          |   4 +-
+ drivers/input/touchscreen/lpc32xx_ts.c      |   4 +-
+ drivers/input/touchscreen/melfas_mip4.c     |   4 +-
+ drivers/input/touchscreen/mms114.c          |   6 +-
+ drivers/input/touchscreen/pixcir_i2c_ts.c   |   8 +-
+ drivers/input/touchscreen/ucb1400_ts.c      |   4 +-
+ drivers/input/touchscreen/wm97xx-core.c     |  14 +-
+ drivers/input/touchscreen/zforce_ts.c       |   8 +-
+ drivers/platform/x86/thinkpad_acpi.c        |   4 +-
+ include/linux/input.h                       |  10 ++
+ 43 files changed, 336 insertions(+), 119 deletions(-)
+
+
+base-commit: 2ef96a5bb12be62ef75b5828c0aab838ebb29cb8
+-- 
+2.17.1
