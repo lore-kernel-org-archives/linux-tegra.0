@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 02/11] cpuidle: Changes for v5.8-rc1
-Date: Fri, 15 May 2020 16:53:02 +0200
-Message-ID: <20200515145311.1580134-3-thierry.reding@gmail.com>
+Subject: [GIT PULL 04/11] of: Changes for v5.8-rc1
+Date: Fri, 15 May 2020 16:53:04 +0200
+Message-ID: <20200515145311.1580134-5-thierry.reding@gmail.com>
 References: <20200515145311.1580134-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,36 +21,29 @@ The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-cpuidle
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-of
 
-for you to fetch changes up to fafd62e7688096dcfe4107d7a2f6c7c6eb6045de:
+for you to fetch changes up to 4a470f00e10e3336350ab60ec6c3206177093019:
 
-  cpuidle: tegra: Support CPU cluster power-down state on Tegra30 (2020-05-06 18:42:55 +0200)
+  of: Make <linux/of_reserved_mem.h> self-contained (2020-05-12 22:45:39 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-cpuidle: Changes for v5.8-rc1
+of: Changes for v5.8-rc1
 
-These changes add support for cluster power-down on Tegra30.
+These changes add support for multiple reserved-memory regions per
+device.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (4):
-      firmware: tf: Different way of L2 cache enabling after LP2 suspend
-      ARM: tegra: Initialize r0 register for firmware wake-up
-      ARM: tegra: Do not fully reinitialize L2 on resume
-      cpuidle: tegra: Support CPU cluster power-down state on Tegra30
+Geert Uytterhoeven (1):
+      of: Make <linux/of_reserved_mem.h> self-contained
 
-Thierry Reding (3):
-      firmware: tegra: Make BPMP a regular driver
-      Merge branch 'for-5.8/firmware' into for-5.8/arm/core
-      Merge branch 'for-5.8/arm/core' into for-5.8/cpuidle
+Thierry Reding (2):
+      of: reserved-memory: Support lookup of regions by name
+      of: reserved-memory: Support multiple regions per device
 
- arch/arm/mach-tegra/pm.c                     |  4 ++++
- arch/arm/mach-tegra/reset-handler.S          |  7 ++++++-
- drivers/cpuidle/cpuidle-tegra.c              |  1 -
- drivers/firmware/tegra/bpmp.c                |  9 +++------
- drivers/firmware/trusted_foundations.c       | 21 +++++++++++++++++++--
- include/linux/firmware/trusted_foundations.h |  1 +
- 6 files changed, 33 insertions(+), 10 deletions(-)
+ drivers/of/of_reserved_mem.c    | 41 +++++++++++++++++++++++++++++------------
+ include/linux/of_reserved_mem.h | 12 ++++++++++++
+ 2 files changed, 41 insertions(+), 12 deletions(-)
