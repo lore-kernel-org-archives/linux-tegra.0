@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 08/11] soc/tegra: Changes for v5.8-rc1
-Date: Fri, 15 May 2020 16:53:08 +0200
-Message-ID: <20200515145311.1580134-9-thierry.reding@gmail.com>
+Subject: [GIT PULL 11/11] arm64: tegra: Device tree changes for v5.8-rc1
+Date: Fri, 15 May 2020 16:53:11 +0200
+Message-ID: <20200515145311.1580134-12-thierry.reding@gmail.com>
 References: <20200515145311.1580134-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,43 +21,55 @@ The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-arm64-dt
 
-for you to fetch changes up to e4cc4f54be01b91b3e1b55430709d2a113f4e08f:
+for you to fetch changes up to 74265112c60be0209817c682ba68661c05da1d38:
 
-  soc: tegra: Fix tegra_pmc_get_suspend_mode definition (2020-05-07 22:03:10 +0200)
+  arm64: tegra: Enable VI I2C on Jetson Nano (2020-05-15 16:28:58 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v5.8-rc1
+arm64: tegra: Device tree changes for v5.8-rc1
 
-Enables Tegra186 and Tegra194 to be woken from suspend by the PMIC and
-exports a bit more information about SoCs via sysfs.
+This contains a couple of fixes for minor issues, enables XUDC support
+on Tegra194, and enables EMC frequency scaling and video capture on
+Tegra210.
 
 ----------------------------------------------------------------
-Arnd Bergmann (1):
-      soc: tegra: Fix tegra_pmc_get_suspend_mode definition
+Jon Hunter (2):
+      arm64: tegra: Fix ethernet phy-mode for Jetson Xavier
+      arm64: tegra: Allow the PMIC RTC to wakeup Jetson Xavier
 
-Corentin Labbe (1):
-      soc/tegra: pmc: Select GENERIC_PINCONF
+Joseph Lo (1):
+      arm64: tegra: Add external memory controller node for Tegra210
 
-Jon Hunter (4):
-      soc/tegra: fuse: Add custom SoC attributes
-      soc/tegra: fuse: Trivial clean-up of tegra_init_revision()
-      soc/tegra: fuse: Update the SoC revision attribute to display a name
-      soc/tegra: pmc: Enable PMIC wake event on Tegra194
+Nagarjuna Kristam (1):
+      arm64: tegra: Add XUDC node on Tegra194
 
-Thierry Reding (1):
-      soc/tegra: pmc: Enable PMIC wake event on Tegra186
+Rob Herring (1):
+      arm64: tegra: Kill off "simple-panel" compatibles
 
- drivers/soc/tegra/Kconfig              |  1 +
- drivers/soc/tegra/fuse/fuse-tegra.c    | 57 +++++++++++++++++++++++++++++++++-
- drivers/soc/tegra/fuse/fuse-tegra20.c  |  1 +
- drivers/soc/tegra/fuse/fuse-tegra30.c  |  6 ++++
- drivers/soc/tegra/fuse/fuse.h          |  8 +++++
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 32 +++++++++++--------
- drivers/soc/tegra/pmc.c                |  2 ++
- include/soc/tegra/pmc.h                | 15 +++++----
- 8 files changed, 102 insertions(+), 20 deletions(-)
+Sowjanya Komatineni (4):
+      dt-bindings: clock: tegra: Add clock ID for CSI TPG clock
+      arm64: tegra: Fix SOR powergate clocks and reset
+      arm64: tegra: Add reset-cells to memory controller
+      arm64: tegra: Add Tegra VI CSI support in device tree
+
+Thierry Reding (3):
+      Merge branch 'for-5.8/dt-bindings' into for-5.8/arm64/dt
+      arm64: tegra: Hook up EMC cooling device
+      arm64: tegra: Enable VI I2C on Jetson Nano
+
+Vidya Sagar (1):
+      arm64: tegra: Fix flag for 64-bit resources in 'ranges' property
+
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts     |  2 +-
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |  5 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 30 ++++++--
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     | 10 +++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  4 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 89 ++++++++++++++++++++--
+ include/dt-bindings/clock/tegra210-car.h           |  2 +-
+ 7 files changed, 125 insertions(+), 17 deletions(-)
