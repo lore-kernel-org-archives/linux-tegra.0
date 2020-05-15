@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 5/6] partitions/tegra: Support gpt_sector= command line option
-Date: Fri, 15 May 2020 04:41:42 +0300
-Message-ID: <20200515014143.12984-6-digetx@gmail.com>
+Subject: [PATCH v4 4/6] partitions/efi: Support GPT entry lookup at a non-standard location
+Date: Fri, 15 May 2020 04:41:41 +0300
+Message-ID: <20200515014143.12984-5-digetx@gmail.com>
 References: <20200515014143.12984-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,112 +12,78 @@ To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jon
 Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The gpt_sector=<sector> causes the GPT partition parser to look at the
-specified sector for a valid GPT header if the GPT is not found at the
-beginning or the end of a block device.  This is needed by Tegra-based
-devices that have TegraPT and GPT placed in inaccessible by kernel
-locations.  The GPT entry duplicates TegraPT partitions.
+Most of consumer-grade NVIDIA Tegra devices use a proprietary bootloader
+that can't be easily replaced because it's locked down using Secure Boot
+cryptography singing and the crypto keys aren't given to a device owner.
+These devices usually have eMMC storage that is partitioned using a custom
+NVIDIA Tegra partition table format.  Of course bootloader and other
+"special things" are stored on the eMMC storage, and thus, the partition
+format can't be changed.
+
+The Tegra partition format has been reverse-engineered, but NVIDIA did
+another odd thing by merging "boot" and "main" eMMC HW partitions into a
+single virtual partition in theirs bootloader.  This is not supported by
+Linux kernel and can't be easily implemented.  Hence partition table entry
+isn't accessible by kernel if it's located at the "boot" eMMC partition.
+Luckily this is a rare case in practice and even if it's the case, likely
+that the proprietary bootloader will supply kernel with a non-standard
+gpt_sector= cmdline option.  This gpt_sector= argument points at a GPT
+entry that is placed at a non-standard location on the eMMC storage.
+
+This patch allows to support the non-standard cmdline option for NVIDIA
+Tegra devices without bothering any other platforms.  The force_gpt_sector
+variable should be set before invoking efi_partition() and be unset after
+the invocation completion.  This variable, if set, instructs GPT parser
+to look up GPT entry at the given sector in addition to the standard GPT
+locations.
+
+This patch is based on the original work done by Colin Cross for the
+downstream Android kernel.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- block/partitions/check.h |  1 +
- block/partitions/core.c  |  1 +
- block/partitions/efi.c   |  6 ++++++
- block/partitions/tegra.c | 38 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 46 insertions(+)
+ block/partitions/efi.c | 10 ++++++++++
+ block/partitions/efi.h |  2 ++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/block/partitions/check.h b/block/partitions/check.h
-index ffa01cc4b0b0..ff07435b3ac3 100644
---- a/block/partitions/check.h
-+++ b/block/partitions/check.h
-@@ -67,5 +67,6 @@ int osf_partition(struct parsed_partitions *state);
- int sgi_partition(struct parsed_partitions *state);
- int sun_partition(struct parsed_partitions *state);
- int sysv68_partition(struct parsed_partitions *state);
-+int tegra_partition_gpt(struct parsed_partitions *state);
- int tegra_partition(struct parsed_partitions *state);
- int ultrix_partition(struct parsed_partitions *state);
-diff --git a/block/partitions/core.c b/block/partitions/core.c
-index 0b4720372f07..ece70f15f24d 100644
---- a/block/partitions/core.c
-+++ b/block/partitions/core.c
-@@ -83,6 +83,7 @@ static int (*check_part[])(struct parsed_partitions *) = {
- 	sysv68_partition,
- #endif
- #ifdef CONFIG_TEGRA_PARTITION
-+	tegra_partition_gpt,
- 	tegra_partition,
- #endif
- 	NULL
 diff --git a/block/partitions/efi.c b/block/partitions/efi.c
-index 48e4c2aeeded..f3b26be2bd6e 100644
+index b64bfdd4326c..48e4c2aeeded 100644
 --- a/block/partitions/efi.c
 +++ b/block/partitions/efi.c
-@@ -98,6 +98,12 @@ static int force_gpt;
- static int __init
- force_gpt_fn(char *str)
- {
-+	/* This check allows to parse "gpt gpt_sector=" properly since
-+	 * "gpt" overlaps with "gpt_sector", see tegra_gpt_sector_fn().
-+	 */
-+	if (force_gpt)
-+		return 0;
-+
- 	force_gpt = 1;
- 	return 1;
+@@ -103,6 +103,12 @@ force_gpt_fn(char *str)
  }
-diff --git a/block/partitions/tegra.c b/block/partitions/tegra.c
-index d1b84fff362c..c2dae0f32c2a 100644
---- a/block/partitions/tegra.c
-+++ b/block/partitions/tegra.c
-@@ -30,6 +30,7 @@
- #include <soc/tegra/common.h>
- #include <soc/tegra/partition.h>
+ __setup("gpt", force_gpt_fn);
  
-+#include "efi.h"
- #include "check.h"
- 
- #define TEGRA_PT_SECTOR_SIZE(ptp)	((ptp)->logical_sector_size / SZ_512)
-@@ -563,3 +564,40 @@ int tegra_partition(struct parsed_partitions *state)
- 
- 	return ret;
- }
-+
-+/*
-+ * This allows a kernel command line option 'gpt_sector=<sector>' to
-+ * enable GPT header lookup at a non-standard location. This option
-+ * is given to kernel by a proprietary bootloader, which is used by
-+ * *most* (but not all) of NVIDIA Tegra-based devices.
++/* Used by NVIDIA Tegra partition parser in order to convey a non-standard
++ * location of the GPT entry for lookup. This variable should be set before
++ * efi_partition() invocation for instructing parser to look up GPT entry at
++ * the given sector, and it should be unset after completion of the invocation.
 + */
-+static sector_t tegra_gpt_sector;
-+static int __init tegra_gpt_sector_fn(char *str)
-+{
-+	WARN_ON(kstrtoull(str, 10, &tegra_gpt_sector) < 0);
-+	return 1;
-+}
-+__setup("gpt_sector=", tegra_gpt_sector_fn);
++sector_t force_gpt_sector;
+ 
+ /**
+  * efi_crc32() - EFI version of crc32 function
+@@ -621,6 +627,10 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
+         if (!good_agpt && force_gpt)
+                 good_agpt = is_gpt_valid(state, lastlba, &agpt, &aptes);
+ 
++	if (!good_agpt && force_gpt && force_gpt_sector)
++		good_agpt = is_gpt_valid(state, force_gpt_sector,
++					 &agpt, &aptes);
 +
-+int tegra_partition_gpt(struct parsed_partitions *state)
-+{
-+	int ret = 0;
+         /* The obviously unsuccessful case */
+         if (!good_pgpt && !good_agpt)
+                 goto fail;
+diff --git a/block/partitions/efi.h b/block/partitions/efi.h
+index 8cc2b88d0aa8..630cf21439af 100644
+--- a/block/partitions/efi.h
++++ b/block/partitions/efi.h
+@@ -113,4 +113,6 @@ typedef struct _legacy_mbr {
+ 	__le16 signature;
+ } __packed legacy_mbr;
+ 
++extern sector_t force_gpt_sector;
 +
-+#ifdef CONFIG_EFI_PARTITION
-+	struct tegra_partition_table_parser ptp = {};
-+
-+	if (!soc_is_tegra() || !tegra_boot_sdmmc || !tegra_gpt_sector)
-+		return 0;
-+
-+	ptp.state = state;
-+
-+	ptp.boot_offset = tegra_partition_table_emmc_boot_offset(&ptp);
-+	if (ptp.boot_offset < 0)
-+		return 0;
-+
-+	force_gpt_sector = tegra_gpt_sector;
-+	ret = efi_partition(ptp.state);
-+	force_gpt_sector = 0;
-+#endif
-+	return ret;
-+}
+ #endif
 -- 
 2.26.0
