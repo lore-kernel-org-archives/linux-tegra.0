@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 01/11] cpufreq: Changes for v5.8-rc1
-Date: Fri, 15 May 2020 16:53:01 +0200
-Message-ID: <20200515145311.1580134-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 02/11] cpuidle: Changes for v5.8-rc1
+Date: Fri, 15 May 2020 16:53:02 +0200
+Message-ID: <20200515145311.1580134-3-thierry.reding@gmail.com>
 References: <20200515145311.1580134-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,25 +21,36 @@ The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-cpufreq
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-cpuidle
 
-for you to fetch changes up to 9ce274630495c731257fb1b569dd7b84a2fdba14:
+for you to fetch changes up to fafd62e7688096dcfe4107d7a2f6c7c6eb6045de:
 
-  cpufreq: tegra20: Use generic cpufreq-dt driver (Tegra30 supported now) (2020-05-06 18:59:38 +0200)
+  cpuidle: tegra: Support CPU cluster power-down state on Tegra30 (2020-05-06 18:42:55 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-cpufreq: Changes for v5.8-rc1
+cpuidle: Changes for v5.8-rc1
 
-This change move Tegra20 and Tegra30 to the generic DT CPU frequency
-scaling driver.
+These changes add support for cluster power-down on Tegra30.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (1):
-      cpufreq: tegra20: Use generic cpufreq-dt driver (Tegra30 supported now)
+Dmitry Osipenko (4):
+      firmware: tf: Different way of L2 cache enabling after LP2 suspend
+      ARM: tegra: Initialize r0 register for firmware wake-up
+      ARM: tegra: Do not fully reinitialize L2 on resume
+      cpuidle: tegra: Support CPU cluster power-down state on Tegra30
 
- drivers/cpufreq/Kconfig.arm       |   6 +-
- drivers/cpufreq/tegra20-cpufreq.c | 217 ++++++++++----------------------------
- 2 files changed, 59 insertions(+), 164 deletions(-)
+Thierry Reding (3):
+      firmware: tegra: Make BPMP a regular driver
+      Merge branch 'for-5.8/firmware' into for-5.8/arm/core
+      Merge branch 'for-5.8/arm/core' into for-5.8/cpuidle
+
+ arch/arm/mach-tegra/pm.c                     |  4 ++++
+ arch/arm/mach-tegra/reset-handler.S          |  7 ++++++-
+ drivers/cpuidle/cpuidle-tegra.c              |  1 -
+ drivers/firmware/tegra/bpmp.c                |  9 +++------
+ drivers/firmware/trusted_foundations.c       | 21 +++++++++++++++++++--
+ include/linux/firmware/trusted_foundations.h |  1 +
+ 6 files changed, 33 insertions(+), 10 deletions(-)
