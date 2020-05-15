@@ -1,89 +1,45 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 4/6] partitions/efi: Support GPT entry lookup at a non-standard location
-Date: Fri, 15 May 2020 04:41:41 +0300
-Message-ID: <20200515014143.12984-5-digetx@gmail.com>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH v4 3/6] partitions: Introduce NVIDIA Tegra Partition Table
+Date: Thu, 14 May 2020 18:58:05 -0700
+Message-ID: <055fc187-6181-6ccb-04a8-ab4324270ed7@infradead.org>
 References: <20200515014143.12984-1-digetx@gmail.com>
+ <20200515014143.12984-4-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200515014143.12984-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>, =?UTF-8?q?Nils=20=C3=96stlund?= <nils@naltan.com>, Christoph Hellwig <hch@infradead.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200515014143.12984-4-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Nils_=c3=96stlund?= <nils-ElENwYY5mljQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Davidlohr Bueso <dave-h16yJtLeMjHk1uMJSBkQmQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-efi <linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Most of consumer-grade NVIDIA Tegra devices use a proprietary bootloader
-that can't be easily replaced because it's locked down using Secure Boot
-cryptography singing and the crypto keys aren't given to a device owner.
-These devices usually have eMMC storage that is partitioned using a custom
-NVIDIA Tegra partition table format.  Of course bootloader and other
-"special things" are stored on the eMMC storage, and thus, the partition
-format can't be changed.
+On 5/14/20 6:41 PM, Dmitry Osipenko wrote:
+> diff --git a/block/partitions/Kconfig b/block/partitions/Kconfig
+> index 702689a628f0..2c1408cba1a6 100644
+> --- a/block/partitions/Kconfig
+> +++ b/block/partitions/Kconfig
+> @@ -268,3 +268,11 @@ config CMDLINE_PARTITION
+>  	help
+>  	  Say Y here if you want to read the partition table from bootargs.
+>  	  The format for the command line is just like mtdparts.
+> +
+> +config TEGRA_PARTITION
+> +	bool "NVIDIA Tegra Partition support" if PARTITION_ADVANCED
+> +	default y if ARCH_TEGRA
+> +	depends on (ARCH_TEGRA && MMC_BLOCK) || COMPILE_TEST
 
-The Tegra partition format has been reverse-engineered, but NVIDIA did
-another odd thing by merging "boot" and "main" eMMC HW partitions into a
-single virtual partition in theirs bootloader.  This is not supported by
-Linux kernel and can't be easily implemented.  Hence partition table entry
-isn't accessible by kernel if it's located at the "boot" eMMC partition.
-Luckily this is a rare case in practice and even if it's the case, likely
-that the proprietary bootloader will supply kernel with a non-standard
-gpt_sector= cmdline option.  This gpt_sector= argument points at a GPT
-entry that is placed at a non-standard location on the eMMC storage.
+That looks odd. Such depends are more often like:
+	depends on MMC_BLOCK && (ARCH_TEGRA || COMPILE_TEST)
 
-This patch allows to support the non-standard cmdline option for NVIDIA
-Tegra devices without bothering any other platforms.  The force_gpt_sector
-variable should be set before invoking efi_partition() and be unset after
-the invocation completion.  This variable, if set, instructs GPT parser
-to look up GPT entry at the given sector in addition to the standard GPT
-locations.
+but that's just my experience. If this works when ARCH_TEGRA and MMC_BLOCK
+are not set and COMPILE_TEST is set, that's fine.
 
-This patch is based on the original work done by Colin Cross for the
-downstream Android kernel.
+> +	help
+> +	  Say Y here if you would like to be able to read the hard disk
+> +	  partition table format used by NVIDIA Tegra machines.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- block/partitions/efi.c | 10 ++++++++++
- block/partitions/efi.h |  2 ++
- 2 files changed, 12 insertions(+)
-
-diff --git a/block/partitions/efi.c b/block/partitions/efi.c
-index b64bfdd4326c..48e4c2aeeded 100644
---- a/block/partitions/efi.c
-+++ b/block/partitions/efi.c
-@@ -103,6 +103,12 @@ force_gpt_fn(char *str)
- }
- __setup("gpt", force_gpt_fn);
- 
-+/* Used by NVIDIA Tegra partition parser in order to convey a non-standard
-+ * location of the GPT entry for lookup. This variable should be set before
-+ * efi_partition() invocation for instructing parser to look up GPT entry at
-+ * the given sector, and it should be unset after completion of the invocation.
-+ */
-+sector_t force_gpt_sector;
- 
- /**
-  * efi_crc32() - EFI version of crc32 function
-@@ -621,6 +627,10 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
-         if (!good_agpt && force_gpt)
-                 good_agpt = is_gpt_valid(state, lastlba, &agpt, &aptes);
- 
-+	if (!good_agpt && force_gpt && force_gpt_sector)
-+		good_agpt = is_gpt_valid(state, force_gpt_sector,
-+					 &agpt, &aptes);
-+
-         /* The obviously unsuccessful case */
-         if (!good_pgpt && !good_agpt)
-                 goto fail;
-diff --git a/block/partitions/efi.h b/block/partitions/efi.h
-index 8cc2b88d0aa8..630cf21439af 100644
---- a/block/partitions/efi.h
-+++ b/block/partitions/efi.h
-@@ -113,4 +113,6 @@ typedef struct _legacy_mbr {
- 	__le16 signature;
- } __packed legacy_mbr;
- 
-+extern sector_t force_gpt_sector;
-+
- #endif
+thanks.
 -- 
-2.26.0
+~Randy
