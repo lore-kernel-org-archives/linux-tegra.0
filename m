@@ -1,10 +1,9 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 6/6] soc/tegra: Expose Boot Configuration Table via sysfs
-Date: Fri, 15 May 2020 04:41:43 +0300
-Message-ID: <20200515014143.12984-7-digetx@gmail.com>
+Subject: [PATCH v4 5/6] partitions/tegra: Support gpt_sector= command line option
+Date: Fri, 15 May 2020 04:41:42 +0300
+Message-ID: <20200515014143.12984-6-digetx@gmail.com>
 References: <20200515014143.12984-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20200515014143.12984-1-digetx@gmail.com>
@@ -13,188 +12,112 @@ To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jon
 Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-It's quite useful to have unencrypted BCT exposed to userspace for
-debugging purposes, so let's expose it via sysfs. The BCT data will
-present in /sys/tegra/boot_config_table binary file if BCT is available.
+The gpt_sector=<sector> causes the GPT partition parser to look at the
+specified sector for a valid GPT header if the GPT is not found at the
+beginning or the end of a block device.  This is needed by Tegra-based
+devices that have TegraPT and GPT placed in inaccessible by kernel
+locations.  The GPT entry duplicates TegraPT partitions.
 
-Suggested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/tegra.c  |  4 +++
- drivers/soc/tegra/Makefile   |  1 +
- drivers/soc/tegra/bootdata.c | 51 ++++++++++++++++++++++++++++++++++++
- drivers/soc/tegra/common.c   | 17 ++++++++++++
- include/soc/tegra/bootdata.h |  2 ++
- include/soc/tegra/common.h   |  3 +++
- 6 files changed, 78 insertions(+)
- create mode 100644 drivers/soc/tegra/bootdata.c
+ block/partitions/check.h |  1 +
+ block/partitions/core.c  |  1 +
+ block/partitions/efi.c   |  6 ++++++
+ block/partitions/tegra.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 46 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index da6bcd85398b..5f40463f1b97 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -72,6 +72,7 @@ static void __init tegra_boot_config_table_init(void)
- 	u32 iram_end   = TEGRA_IRAM_BASE + TEGRA_IRAM_SIZE;
- 	u32 iram_start = TEGRA_IRAM_BASE;
- 	u32 pt_addr, pt_size, bct_size;
-+	void __iomem *bct_ptr;
- 
- 	t20_bit = IO_ADDRESS(TEGRA_IRAM_BASE);
- 
-@@ -90,6 +91,7 @@ static void __init tegra_boot_config_table_init(void)
- 
- 		pt_addr = t20_bct->partition_table_logical_sector_address;
- 		pt_size = t20_bct->partition_table_num_logical_sectors;
-+		bct_ptr = t20_bct;
- 
- 	} else if (of_machine_is_compatible("nvidia,tegra30")) {
- 		bct_size = sizeof(*t30_bct);
-@@ -106,12 +108,14 @@ static void __init tegra_boot_config_table_init(void)
- 
- 		pt_addr = t30_bct->partition_table_logical_sector_address;
- 		pt_size = t30_bct->partition_table_num_logical_sectors;
-+		bct_ptr = t30_bct;
- 	} else {
- 		return;
- 	}
- 
- 	pr_info("%s: BCT found in IRAM\n", __func__);
- 
-+	tegra_bootdata_bct_setup(bct_ptr, bct_size);
- 	tegra_partition_table_setup(pt_addr, pt_size);
+diff --git a/block/partitions/check.h b/block/partitions/check.h
+index ffa01cc4b0b0..ff07435b3ac3 100644
+--- a/block/partitions/check.h
++++ b/block/partitions/check.h
+@@ -67,5 +67,6 @@ int osf_partition(struct parsed_partitions *state);
+ int sgi_partition(struct parsed_partitions *state);
+ int sun_partition(struct parsed_partitions *state);
+ int sysv68_partition(struct parsed_partitions *state);
++int tegra_partition_gpt(struct parsed_partitions *state);
+ int tegra_partition(struct parsed_partitions *state);
+ int ultrix_partition(struct parsed_partitions *state);
+diff --git a/block/partitions/core.c b/block/partitions/core.c
+index 0b4720372f07..ece70f15f24d 100644
+--- a/block/partitions/core.c
++++ b/block/partitions/core.c
+@@ -83,6 +83,7 @@ static int (*check_part[])(struct parsed_partitions *) = {
+ 	sysv68_partition,
+ #endif
+ #ifdef CONFIG_TEGRA_PARTITION
++	tegra_partition_gpt,
+ 	tegra_partition,
+ #endif
+ 	NULL
+diff --git a/block/partitions/efi.c b/block/partitions/efi.c
+index 48e4c2aeeded..f3b26be2bd6e 100644
+--- a/block/partitions/efi.c
++++ b/block/partitions/efi.c
+@@ -98,6 +98,12 @@ static int force_gpt;
+ static int __init
+ force_gpt_fn(char *str)
+ {
++	/* This check allows to parse "gpt gpt_sector=" properly since
++	 * "gpt" overlaps with "gpt_sector", see tegra_gpt_sector_fn().
++	 */
++	if (force_gpt)
++		return 0;
++
+ 	force_gpt = 1;
+ 	return 1;
  }
+diff --git a/block/partitions/tegra.c b/block/partitions/tegra.c
+index d1b84fff362c..c2dae0f32c2a 100644
+--- a/block/partitions/tegra.c
++++ b/block/partitions/tegra.c
+@@ -30,6 +30,7 @@
+ #include <soc/tegra/common.h>
+ #include <soc/tegra/partition.h>
  
-diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
-index 9c809c1814bd..8be2bfb4d95d 100644
---- a/drivers/soc/tegra/Makefile
-+++ b/drivers/soc/tegra/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-y += fuse/
++#include "efi.h"
+ #include "check.h"
  
-+obj-y += bootdata.o
- obj-y += common.o
- obj-$(CONFIG_SOC_TEGRA_FLOWCTRL) += flowctrl.o
- obj-$(CONFIG_SOC_TEGRA_PMC) += pmc.o
-diff --git a/drivers/soc/tegra/bootdata.c b/drivers/soc/tegra/bootdata.c
-new file mode 100644
-index 000000000000..e18a27b74023
---- /dev/null
-+++ b/drivers/soc/tegra/bootdata.c
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/sizes.h>
-+#include <linux/slab.h>
-+#include <linux/sysfs.h>
-+#include <linux/types.h>
-+
-+#include <soc/tegra/bootdata.h>
-+#include <soc/tegra/common.h>
+ #define TEGRA_PT_SECTOR_SIZE(ptp)	((ptp)->logical_sector_size / SZ_512)
+@@ -563,3 +564,40 @@ int tegra_partition(struct parsed_partitions *state)
+ 
+ 	return ret;
+ }
 +
 +/*
-+ * spare_bct[] will be released once kernel is booted, hence not wasting
-+ * kernel space if BCT is missing. The tegra_bct can't be allocated during
-+ * of BCT setting up because it's too early for the slab allocator.
++ * This allows a kernel command line option 'gpt_sector=<sector>' to
++ * enable GPT header lookup at a non-standard location. This option
++ * is given to kernel by a proprietary bootloader, which is used by
++ * *most* (but not all) of NVIDIA Tegra-based devices.
 + */
-+static u8 spare_bct[SZ_8K] __initdata;
-+static u8 *tegra_bct;
-+
-+static ssize_t boot_config_table_read(struct file *filp,
-+				      struct kobject *kobj,
-+				      struct bin_attribute *bin_attr,
-+				      char *buf, loff_t off, size_t count)
++static sector_t tegra_gpt_sector;
++static int __init tegra_gpt_sector_fn(char *str)
 +{
-+	memcpy(buf, tegra_bct + off, count);
-+	return count;
++	WARN_ON(kstrtoull(str, 10, &tegra_gpt_sector) < 0);
++	return 1;
 +}
-+static BIN_ATTR_RO(boot_config_table, 0);
++__setup("gpt_sector=", tegra_gpt_sector_fn);
 +
-+static int __init tegra_bootdata_bct_sysfs_init(void)
++int tegra_partition_gpt(struct parsed_partitions *state)
 +{
-+	if (!bin_attr_boot_config_table.size)
++	int ret = 0;
++
++#ifdef CONFIG_EFI_PARTITION
++	struct tegra_partition_table_parser ptp = {};
++
++	if (!soc_is_tegra() || !tegra_boot_sdmmc || !tegra_gpt_sector)
 +		return 0;
 +
-+	tegra_bct = kmalloc(GFP_KERNEL, bin_attr_boot_config_table.size);
-+	if (!tegra_bct)
-+		return -ENOMEM;
++	ptp.state = state;
 +
-+	memcpy(tegra_bct, spare_bct, bin_attr_boot_config_table.size);
-+
-+	return sysfs_create_bin_file(tegra_soc_kobj,
-+				     &bin_attr_boot_config_table);
-+}
-+late_initcall(tegra_bootdata_bct_sysfs_init)
-+
-+void __init tegra_bootdata_bct_setup(void __iomem *bct_ptr, size_t bct_size)
-+{
-+	memcpy_fromio(spare_bct, bct_ptr, bct_size);
-+	bin_attr_boot_config_table.size = bct_size;
-+}
-diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-index 3dc54f59cafe..2b4b49eacb2e 100644
---- a/drivers/soc/tegra/common.c
-+++ b/drivers/soc/tegra/common.c
-@@ -3,10 +3,15 @@
-  * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
-+#include <linux/init.h>
-+#include <linux/kernel.h>
- #include <linux/of.h>
-+#include <linux/sysfs.h>
- 
- #include <soc/tegra/common.h>
- 
-+struct kobject *tegra_soc_kobj;
-+
- static const struct of_device_id tegra_machine_match[] = {
- 	{ .compatible = "nvidia,tegra20", },
- 	{ .compatible = "nvidia,tegra30", },
-@@ -31,3 +36,15 @@ bool soc_is_tegra(void)
- 
- 	return match != NULL;
- }
-+
-+static int __init tegra_soc_sysfs_init(void)
-+{
-+	if (!soc_is_tegra())
++	ptp.boot_offset = tegra_partition_table_emmc_boot_offset(&ptp);
++	if (ptp.boot_offset < 0)
 +		return 0;
 +
-+	tegra_soc_kobj = kobject_create_and_add("tegra", NULL);
-+	WARN_ON(!tegra_soc_kobj);
-+
-+	return 0;
++	force_gpt_sector = tegra_gpt_sector;
++	ret = efi_partition(ptp.state);
++	force_gpt_sector = 0;
++#endif
++	return ret;
 +}
-+arch_initcall(tegra_soc_sysfs_init)
-diff --git a/include/soc/tegra/bootdata.h b/include/soc/tegra/bootdata.h
-index 7be207cb2519..d5c7a251517d 100644
---- a/include/soc/tegra/bootdata.h
-+++ b/include/soc/tegra/bootdata.h
-@@ -43,4 +43,6 @@ struct tegra30_boot_config_table {
- 	u32 unused_data[3];
- } __packed;
- 
-+void tegra_bootdata_bct_setup(void __iomem *bct_ptr, size_t bct_size);
-+
- #endif /* __SOC_TEGRA_BOOTDATA_H__ */
-diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
-index 744280ecab5f..0bc11b45c98e 100644
---- a/include/soc/tegra/common.h
-+++ b/include/soc/tegra/common.h
-@@ -7,8 +7,11 @@
- #define __SOC_TEGRA_COMMON_H__
- 
- #include <linux/types.h>
-+#include <linux/sysfs.h>
- 
- #ifdef CONFIG_ARCH_TEGRA
-+extern struct kobject *tegra_soc_kobj;
-+
- bool soc_is_tegra(void);
- #else
- static inline bool soc_is_tegra(void)
 -- 
 2.26.0
