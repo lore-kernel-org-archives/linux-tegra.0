@@ -1,34 +1,57 @@
-From: Steve McIntyre <steve@einval.com>
-Subject: Re: [PATCH v4 4/6] partitions/efi: Support GPT entry lookup at a
- non-standard location
-Date: Fri, 15 May 2020 11:03:30 +0100
-Message-ID: <20200515100320.GB30674@tack.einval.com>
-References: <20200515014143.12984-1-digetx@gmail.com>
- <20200515014143.12984-5-digetx@gmail.com>
+From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Subject: Re: [PATCH v1] mfd: tps65910: Correct power-off programming sequence
+Date: Fri, 15 May 2020 15:30:11 +0200
+Message-ID: <20200515110754.GB20564@qmqm.qmqm.pl>
+References: <20200514205022.7024-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200515014143.12984-5-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>, Nils =?iso-8859-1?Q?=D6stlund?= <nils@naltan.com>, Christoph Hellwig <hch@infradead.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Davidlohr Bueso <dave@stgolabs.net>, linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@>
+In-Reply-To: <20200514205022.7024-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 15, 2020 at 04:41:41AM +0300, Dmitry Osipenko wrote:
->Most of consumer-grade NVIDIA Tegra devices use a proprietary bootloader
->that can't be easily replaced because it's locked down using Secure Boot
->cryptography singing and the crypto keys aren't given to a device owner.
-              ^^^^^^^ typo
->These devices usually have eMMC storage that is partitioned using a custom
->NVIDIA Tegra partition table format.  Of course bootloader and other
->"special things" are stored on the eMMC storage, and thus, the partition
->format can't be changed.
+On Thu, May 14, 2020 at 11:50:21PM +0300, Dmitry Osipenko wrote:
+> This patch fixes system shutdown on a devices that use TPS65910 as a
+> system's power controller. In accordance to the TPS65910 datasheet, the
+> PMIC's state-machine transitions into the OFF state only when DEV_OFF
+> bit of DEVCTRL_REG is set. The ON / SLEEP states also should be cleared,
+> otherwise PMIC won't get into a proper state on shutdown. Devices like
+> Nexus 7 tablet and Ouya game console are now shutting down properly.
+> 
+> Tested-by: Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/mfd/tps65910.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+> index 11959021b50a..22116cee411d 100644
+> --- a/drivers/mfd/tps65910.c
+> +++ b/drivers/mfd/tps65910.c
+> @@ -440,8 +440,16 @@ static void tps65910_power_off(void)
+>  			DEVCTRL_PWR_OFF_MASK) < 0)
+>  		return;
+>  
+> -	tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+> -			DEVCTRL_DEV_ON_MASK);
+> +	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+> +			DEVCTRL_DEV_SLP_MASK) < 0)
+> +		return;
+> +
+> +	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+> +			DEVCTRL_DEV_ON_MASK) < 0)
+> +		return;
+> +
+> +	tps65910_reg_set_bits(tps65910, TPS65910_DEVCTRL,
+> +			DEVCTRL_DEV_OFF_MASK);
+>  }
 
-...
+Isn't it enough to update the DEVCTRL with just one
+tps65910_reg_update_bits()?
 
--- 
-Steve McIntyre, Cambridge, UK.                                steve@einval.com
-"Further comment on how I feel about IBM will appear once I've worked out
- whether they're being malicious or incompetent. Capital letters are forecast."
- Matthew Garrett, http://www.livejournal.com/users/mjg59/30675.html
+Best Regards
+Micha³ Miros³aw
