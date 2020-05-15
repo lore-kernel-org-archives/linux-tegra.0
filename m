@@ -1,57 +1,75 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
-Subject: Re: [PATCH v1] mfd: tps65910: Correct power-off programming sequence
-Date: Fri, 15 May 2020 15:30:11 +0200
-Message-ID: <20200515110754.GB20564@qmqm.qmqm.pl>
-References: <20200514205022.7024-1-digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] clk: tegra: Changes for v5.8-rc1
+Date: Fri, 15 May 2020 16:27:30 +0200
+Message-ID: <20200515142730.1573945-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200514205022.7024-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 14, 2020 at 11:50:21PM +0300, Dmitry Osipenko wrote:
-> This patch fixes system shutdown on a devices that use TPS65910 as a
-> system's power controller. In accordance to the TPS65910 datasheet, the
-> PMIC's state-machine transitions into the OFF state only when DEV_OFF
-> bit of DEVCTRL_REG is set. The ON / SLEEP states also should be cleared,
-> otherwise PMIC won't get into a proper state on shutdown. Devices like
-> Nexus 7 tablet and Ouya game console are now shutting down properly.
-> 
-> Tested-by: Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/mfd/tps65910.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-> index 11959021b50a..22116cee411d 100644
-> --- a/drivers/mfd/tps65910.c
-> +++ b/drivers/mfd/tps65910.c
-> @@ -440,8 +440,16 @@ static void tps65910_power_off(void)
->  			DEVCTRL_PWR_OFF_MASK) < 0)
->  		return;
->  
-> -	tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
-> -			DEVCTRL_DEV_ON_MASK);
-> +	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
-> +			DEVCTRL_DEV_SLP_MASK) < 0)
-> +		return;
-> +
-> +	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
-> +			DEVCTRL_DEV_ON_MASK) < 0)
-> +		return;
-> +
-> +	tps65910_reg_set_bits(tps65910, TPS65910_DEVCTRL,
-> +			DEVCTRL_DEV_OFF_MASK);
->  }
+Hi Mike, Stephen,
 
-Isn't it enough to update the DEVCTRL with just one
-tps65910_reg_update_bits()?
+The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
-Best Regards
-Micha³ Miros³aw
+  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.8-clk
+
+for you to fetch changes up to dec396322d25ca5ce2f307b6da897060fdf9a782:
+
+  clk: tegra: Add Tegra210 CSI TPG clock gate (2020-05-12 22:48:43 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk: tegra: Changes for v5.8-rc1
+
+Thise are a couple of changes to implement EMC frequency scaling on
+Tegra210, CPU frequency scaling on Tegra20 and Tegra30 as well as a
+special clock gate for the CSI test pattern generator on Tegra210.
+
+----------------------------------------------------------------
+Dmitry Osipenko (5):
+      clk: tegra: Add custom CCLK implementation
+      clk: tegra: pll: Add pre/post rate-change hooks
+      clk: tegra: cclk: Add helpers for handling PLLX rate changes
+      clk: tegra20: Use custom CCLK implementation
+      clk: tegra30: Use custom CCLK implementation
+
+Joseph Lo (4):
+      clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
+      clk: tegra: Export functions for EMC clock scaling
+      clk: tegra: Implement Tegra210 EMC clock
+      clk: tegra: Remove the old emc_mux clock for Tegra210
+
+Sowjanya Komatineni (2):
+      dt-bindings: clock: tegra: Add clock ID for CSI TPG clock
+      clk: tegra: Add Tegra210 CSI TPG clock gate
+
+Thierry Reding (2):
+      Merge branch 'for-5.8/dt-bindings' into for-5.8/clk
+      clk: tegra: Rename Tegra124 EMC clock source file
+
+ drivers/clk/tegra/Kconfig                          |   4 -
+ drivers/clk/tegra/Makefile                         |   4 +-
+ drivers/clk/tegra/clk-pll.c                        |  12 +-
+ drivers/clk/tegra/clk-tegra-super-cclk.c           | 212 ++++++++++++
+ .../clk/tegra/{clk-emc.c => clk-tegra124-emc.c}    |   0
+ drivers/clk/tegra/clk-tegra20.c                    |   7 +-
+ drivers/clk/tegra/clk-tegra210-emc.c               | 369 +++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra210.c                   |  94 ++++--
+ drivers/clk/tegra/clk-tegra30.c                    |   6 +-
+ drivers/clk/tegra/clk.h                            |  24 +-
+ include/dt-bindings/clock/tegra210-car.h           |   6 +-
+ include/linux/clk/tegra.h                          |  27 ++
+ 12 files changed, 730 insertions(+), 35 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-cclk.c
+ rename drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} (100%)
+ create mode 100644 drivers/clk/tegra/clk-tegra210-emc.c
