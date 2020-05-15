@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 04/11] of: Changes for v5.8-rc1
-Date: Fri, 15 May 2020 16:53:04 +0200
-Message-ID: <20200515145311.1580134-5-thierry.reding@gmail.com>
+Subject: [GIT PULL 03/11] dt-bindings: Changes for v5.8-rc1
+Date: Fri, 15 May 2020 16:53:03 +0200
+Message-ID: <20200515145311.1580134-4-thierry.reding@gmail.com>
 References: <20200515145311.1580134-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,29 +21,48 @@ The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-of
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-dt-bindings
 
-for you to fetch changes up to 4a470f00e10e3336350ab60ec6c3206177093019:
+for you to fetch changes up to 4e79691d050e6d06ee7fa09002c52dd1ce9ac6e6:
 
-  of: Make <linux/of_reserved_mem.h> self-contained (2020-05-12 22:45:39 +0200)
+  dt-bindings: i2c: tegra: Document Tegra210 VI I2C (2020-05-12 22:47:36 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-of: Changes for v5.8-rc1
+dt-bindings: Changes for v5.8-rc1
 
-These changes add support for multiple reserved-memory regions per
-device.
+This adds bindings for the CSI TPG clock on Tegra210, moves various
+clocks from the clock and reset controller to the PMC where their
+controls really are, adds bindings for the external memory controller
+and video capture controller on Tegra210, as well as CPU frequency
+scaling on Tegra20 and Tegra30.
 
 ----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      of: Make <linux/of_reserved_mem.h> self-contained
+Dmitry Osipenko (1):
+      dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
 
-Thierry Reding (2):
-      of: reserved-memory: Support lookup of regions by name
-      of: reserved-memory: Support multiple regions per device
+Joseph Lo (1):
+      dt-bindings: memory: tegra: Add external memory controller binding for Tegra210
 
- drivers/of/of_reserved_mem.c    | 41 +++++++++++++++++++++++++++++------------
- include/linux/of_reserved_mem.h | 12 ++++++++++++
- 2 files changed, 41 insertions(+), 12 deletions(-)
+Sowjanya Komatineni (3):
+      dt-bindings: clock: tegra: Add clock ID for CSI TPG clock
+      dt-bindings: clock: tegra: Remove PMC clock IDs
+      dt-bindings: tegra: Add VI and CSI bindings
+
+Thierry Reding (1):
+      dt-bindings: i2c: tegra: Document Tegra210 VI I2C
+
+ .../bindings/cpufreq/nvidia,tegra20-cpufreq.txt    | 56 +++++++++++++++
+ .../display/tegra/nvidia,tegra20-host1x.txt        | 73 +++++++++++++++----
+ .../devicetree/bindings/i2c/nvidia,tegra20-i2c.txt |  6 ++
+ .../memory-controllers/nvidia,tegra210-emc.yaml    | 82 ++++++++++++++++++++++
+ include/dt-bindings/clock/tegra114-car.h           | 14 ++--
+ include/dt-bindings/clock/tegra124-car-common.h    | 14 ++--
+ include/dt-bindings/clock/tegra20-car.h            |  2 +-
+ include/dt-bindings/clock/tegra210-car.h           | 16 ++---
+ include/dt-bindings/clock/tegra30-car.h            | 14 ++--
+ 9 files changed, 234 insertions(+), 43 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
