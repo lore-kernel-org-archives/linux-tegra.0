@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 11/11] arm64: tegra: Device tree changes for v5.8-rc1
-Date: Fri, 15 May 2020 16:53:11 +0200
-Message-ID: <20200515145311.1580134-12-thierry.reding@gmail.com>
+Subject: [GIT PULL 10/11] ARM: tegra: Device tree changes for v5.8-rc1
+Date: Fri, 15 May 2020 16:53:10 +0200
+Message-ID: <20200515145311.1580134-11-thierry.reding@gmail.com>
 References: <20200515145311.1580134-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,55 +21,41 @@ The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-arm64-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.8-arm-dt
 
-for you to fetch changes up to 74265112c60be0209817c682ba68661c05da1d38:
+for you to fetch changes up to 94ea9681a9f5c7a72ae63c015e44a02530927b61:
 
-  arm64: tegra: Enable VI I2C on Jetson Nano (2020-05-15 16:28:58 +0200)
+  ARM: dts: tegra30: beaver: Add CPU Operating Performance Points (2020-05-06 19:02:40 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Device tree changes for v5.8-rc1
+ARM: tegra: Device tree changes for v5.8-rc1
 
-This contains a couple of fixes for minor issues, enables XUDC support
-on Tegra194, and enables EMC frequency scaling and video capture on
-Tegra210.
+This contains a bit of cleanup and CPU frequency scaling support for the
+Tegra30 Beaver board.
 
 ----------------------------------------------------------------
-Jon Hunter (2):
-      arm64: tegra: Fix ethernet phy-mode for Jetson Xavier
-      arm64: tegra: Allow the PMIC RTC to wakeup Jetson Xavier
-
-Joseph Lo (1):
-      arm64: tegra: Add external memory controller node for Tegra210
-
-Nagarjuna Kristam (1):
-      arm64: tegra: Add XUDC node on Tegra194
+Dmitry Osipenko (2):
+      ARM: dts: tegra30: beaver: Set up voltage regulators for DVFS
+      ARM: dts: tegra30: beaver: Add CPU Operating Performance Points
 
 Rob Herring (1):
-      arm64: tegra: Kill off "simple-panel" compatibles
+      ARM: tegra: Kill off "simple-panel" compatibles
 
-Sowjanya Komatineni (4):
-      dt-bindings: clock: tegra: Add clock ID for CSI TPG clock
-      arm64: tegra: Fix SOR powergate clocks and reset
-      arm64: tegra: Add reset-cells to memory controller
-      arm64: tegra: Add Tegra VI CSI support in device tree
-
-Thierry Reding (3):
-      Merge branch 'for-5.8/dt-bindings' into for-5.8/arm64/dt
-      arm64: tegra: Hook up EMC cooling device
-      arm64: tegra: Enable VI I2C on Jetson Nano
-
-Vidya Sagar (1):
-      arm64: tegra: Fix flag for 64-bit resources in 'ranges' property
-
- arch/arm64/boot/dts/nvidia/tegra132-norrin.dts     |  2 +-
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |  5 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 30 ++++++--
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     | 10 +++
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  4 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 89 ++++++++++++++++++++--
- include/dt-bindings/clock/tegra210-car.h           |  2 +-
- 7 files changed, 125 insertions(+), 17 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts         |  3 +-
+ arch/arm/boot/dts/tegra124-venice2.dts         |  2 +-
+ arch/arm/boot/dts/tegra20-colibri-eval-v3.dts  |  2 +-
+ arch/arm/boot/dts/tegra20-colibri-iris.dts     |  2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts          |  2 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts      |  2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts            |  2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts         |  2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts          |  2 +-
+ arch/arm/boot/dts/tegra30-apalis-eval.dts      |  2 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts |  2 +-
+ arch/arm/boot/dts/tegra30-beaver.dts           | 40 ++++++++++++++++++++++++--
+ arch/arm/boot/dts/tegra30-cardhu.dtsi          |  2 +-
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts  |  2 +-
+ 14 files changed, 50 insertions(+), 17 deletions(-)
