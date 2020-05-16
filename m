@@ -1,35 +1,41 @@
-From: Stefano <pessina-eshH1AjLspA@public.gmane.org>
-Subject: =?utf-8?q?HERZLICHEN_GL=C3=9CCKWUNSCH_=E2=82=AC_2=2C000=2E000=2C00_wurde_?=
- =?utf-8?q?an_Sie_gespendet?=
-Date: Sat, 16 May 2020 04:55:35 -0700
-Message-ID: <E1jZvQU-0004vu-Tz@srv01.fortnetprovedor.com.br>
-Reply-To: pessinastefa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+Subject: [PATCH] dmaengine: tegra210-adma: Fix an error handling path in 'tegra_adma_probe()'
+Date: Sat, 16 May 2020 23:42:05 +0200
+Message-ID: <20200516214205.276266-1-christophe.jaillet@wanadoo.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Description: Mail message body
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Recipients <pessina-eshH1AjLspA@public.gmane.org>
+To: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hallo,
+Commit b53611fb1ce9 ("dmaengine: tegra210-adma: Fix crash during probe")
+has moved some code in the probe function and reordered the error handling
+path accordingly.
+However, a goto has been missed.
 
-Ich bin Stefano Pessina, ein italienischer Wirtschaftsmagnat, Investor und
-philanthropist.the stellvertretende Vorsitzende, Chief Executive
-Officer (CEO), und
-der größte Einzelaktionär der Walgreens Boots Alliance. ich gab
-25 Prozent meines persönlichen Vermögens für wohltätige Zwecke
-wegbringen. Und ich habe auch zugesagt
-den Rest von 25% in diesem Jahr 2020 an Einzelpersonen zu verschenken
-Ich habe beschlossen, Ihnen €1.000.000,00EURO zu spenden. Wenn Sie an meiner
-Spende interessiert sind, kontaktieren Sie mich
-für mehr Informationen
+Fix it and goto the right label if 'dma_async_device_register()' fails, so
+that all resources are released.
 
-Sie können auch mehr über mich über den unten stehenden Link lesen
+Fixes: b53611fb1ce9 ("dmaengine: tegra210-adma: Fix crash during probe")
+Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+---
+ drivers/dma/tegra210-adma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://en.wikipedia.org/wiki/Stefano_Pessina
-
-Herzlicher Gruss
-CEO Walgreens Boots Alliance
-Stefano Pessina
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index c4ce5dfb149b..db58d7e4f9fe 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -900,7 +900,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 	ret = dma_async_device_register(&tdma->dma_dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "ADMA registration failed: %d\n", ret);
+-		goto irq_dispose;
++		goto rpm_put;
+ 	}
+ 
+ 	ret = of_dma_controller_register(pdev->dev.of_node,
+-- 
+2.25.1
