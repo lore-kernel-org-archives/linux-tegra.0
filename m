@@ -1,82 +1,46 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1] sdhci: tegra: Remove warnings about missing device-tree properties
-Date: Sat, 16 May 2020 18:43:14 +0300
-Message-ID: <20200516154314.14769-1-digetx@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v5 4/6] partitions/efi: Support GPT entry lookup at a
+ non-standard location
+Date: Sat, 16 May 2020 08:51:58 -0700
+Message-ID: <2ae298ca-016a-8867-52dd-86d99b9e0f3b@infradead.org>
+References: <20200516153644.13748-1-digetx@gmail.com>
+ <20200516153644.13748-5-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-block-owner@vger.kernel.org>
+In-Reply-To: <20200516153644.13748-5-digetx@gmail.com>
+Content-Language: en-US
+Sender: linux-block-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>, =?UTF-8?Q?Nils_=c3=96stlund?= <nils@naltan.com>, Christoph Hellwig <hch@infradead.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Steve McIntyre <steve@einval.com>, linux-efi <linux-efi@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Several people asked me about the MMC warnings in the KMSG log and
-I had to tell to ignore them because these warning are irrelevant to
-pre-Tegra210 SoCs. It should be up to a board's device-tree writer to
-properly describe all the necessary properties. Secondly, eventually all
-device-tree bindings will be converted to YAML, which allows to validate
-board DT files, giving a warning about missing properties. Hence let's
-remove the noisy warnings to stop the confusion.
+On 5/16/20 8:36 AM, Dmitry Osipenko wrote:
+> diff --git a/block/partitions/efi.c b/block/partitions/efi.c
+> index b64bfdd4326c..3af4660bc11f 100644
+> --- a/block/partitions/efi.c
+> +++ b/block/partitions/efi.c
+> @@ -621,6 +621,14 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
+>          if (!good_agpt && force_gpt)
+>                  good_agpt = is_gpt_valid(state, lastlba, &agpt, &aptes);
+>  
+> +	/* The force_gpt_sector is used by NVIDIA Tegra partition parser in
+> +	 * order to convey a non-standard location of the GPT entry for lookup.
+> +	 * By default force_gpt_sector is set to 0 and has no effect.
+> +	 */
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/mmc/host/sdhci-tegra.c | 28 ++++------------------------
- 1 file changed, 4 insertions(+), 24 deletions(-)
+Please fix the multi-line comment format as described in
+Documentation/process/coding-style.rst.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 3e2c5101291d..83867629013d 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -607,46 +607,26 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-up-offset-3v3-timeout",
- 			&autocal->pull_up_3v3_timeout);
--	if (err) {
--		if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
--			(tegra_host->pinctrl_state_3v3_drv == NULL))
--			pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
--				mmc_hostname(host->mmc));
-+	if (err)
- 		autocal->pull_up_3v3_timeout = 0;
--	}
- 
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-down-offset-3v3-timeout",
- 			&autocal->pull_down_3v3_timeout);
--	if (err) {
--		if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
--			(tegra_host->pinctrl_state_3v3_drv == NULL))
--			pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
--				mmc_hostname(host->mmc));
-+	if (err)
- 		autocal->pull_down_3v3_timeout = 0;
--	}
- 
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-up-offset-1v8-timeout",
- 			&autocal->pull_up_1v8_timeout);
--	if (err) {
--		if (!IS_ERR(tegra_host->pinctrl_state_1v8) &&
--			(tegra_host->pinctrl_state_1v8_drv == NULL))
--			pr_warn("%s: Missing autocal timeout 1v8-pad drvs\n",
--				mmc_hostname(host->mmc));
-+	if (err)
- 		autocal->pull_up_1v8_timeout = 0;
--	}
- 
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-down-offset-1v8-timeout",
- 			&autocal->pull_down_1v8_timeout);
--	if (err) {
--		if (!IS_ERR(tegra_host->pinctrl_state_1v8) &&
--			(tegra_host->pinctrl_state_1v8_drv == NULL))
--			pr_warn("%s: Missing autocal timeout 1v8-pad drvs\n",
--				mmc_hostname(host->mmc));
-+	if (err)
- 		autocal->pull_down_1v8_timeout = 0;
--	}
- 
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-up-offset-sdr104",
+> +	if (!good_agpt && force_gpt && state->force_gpt_sector)
+> +		good_agpt = is_gpt_valid(state, state->force_gpt_sector,
+> +					 &agpt, &aptes);
+> +
+>          /* The obviously unsuccessful case */
+>          if (!good_pgpt && !good_agpt)
+>                  goto fail;
+
+thanks.
 -- 
-2.26.0
+~Randy
