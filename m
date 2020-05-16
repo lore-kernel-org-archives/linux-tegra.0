@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 1/6] mmc: core: Add raw_boot_mult field to mmc_ext_csd
-Date: Sat, 16 May 2020 18:36:39 +0300
-Message-ID: <20200516153644.13748-2-digetx@gmail.com>
+Subject: [PATCH v5 4/6] partitions/efi: Support GPT entry lookup at a non-standard location
+Date: Sat, 16 May 2020 18:36:42 +0300
+Message-ID: <20200516153644.13748-5-digetx@gmail.com>
 References: <20200516153644.13748-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,42 +12,70 @@ To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jon
 Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Steve McIntyre <steve@einval.com>, Randy Dunlap <rdunlap@infradead.org>, linux-efi <linux-efi@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-In order to support parsing of NVIDIA Tegra Partition Table format, we
-need to know the BOOT_SIZE_MULT value of the Extended CSD register because
-NVIDIA's bootloader linearizes the boot0/boot1/main partitions into a
-single virtual space, and thus, all partition addresses are shifted by
-the size of boot0 + boot1 partitions.
+Most of consumer-grade NVIDIA Tegra devices use a proprietary bootloader
+that can't be easily replaced because it's locked down using Secure Boot
+cryptography signing and the crypto keys aren't given to a device owner.
+These devices usually have eMMC storage that is partitioned using a custom
+NVIDIA Tegra partition table format.  Of course bootloader and other
+"special things" are stored on the eMMC storage, and thus, the partition
+format can't be changed.
+
+The Tegra partition format has been reverse-engineered, but NVIDIA uses
+a virtually merged "boot" and "main" eMMC HW partitions in theirs
+bootloader. This is not supported by Linux kernel and can't be easily
+implemented. Hence partition table entry isn't accessible by kernel if
+it's located at the "boot" eMMC partition. Luckily this is a rare case in
+practice and even if it's the case, likely that the proprietary bootloader
+will supply kernel with a non-standard gpt_sector= cmdline option.  This
+gpt_sector= argument points at a GPT entry which resides at a non-standard
+location on the eMMC storage.
+
+This patch allows to support the non-standard cmdline option for NVIDIA
+Tegra devices without bothering any other platforms.  The force_gpt_sector
+parser-state struct member should be set before invoking efi_partition()
+and it should be unset after the invocation completion.  This new parser
+member instructs GPT parser to look up GPT entry at the given sector if
+state->force_gpt_sector != 0.
+
+This patch is based on the original work done by Colin Cross for the
+downstream Android kernel.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/mmc/core/mmc.c   | 2 ++
- include/linux/mmc/card.h | 1 +
- 2 files changed, 3 insertions(+)
+ block/partitions/check.h | 1 +
+ block/partitions/efi.c   | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 4203303f946a..112edfb1eb1d 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -417,6 +417,8 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
- 		ext_csd[EXT_CSD_ERASE_TIMEOUT_MULT];
- 	card->ext_csd.raw_hc_erase_grp_size =
- 		ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE];
-+	card->ext_csd.raw_boot_mult =
-+		ext_csd[EXT_CSD_BOOT_MULT];
- 	if (card->ext_csd.rev >= 3) {
- 		u8 sa_shift = ext_csd[EXT_CSD_S_A_TIMEOUT];
- 		card->ext_csd.part_config = ext_csd[EXT_CSD_PART_CONFIG];
-diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-index 7d46411ffaa2..cd6b58b66010 100644
---- a/include/linux/mmc/card.h
-+++ b/include/linux/mmc/card.h
-@@ -109,6 +109,7 @@ struct mmc_ext_csd {
- 	u8			raw_hc_erase_gap_size;	/* 221 */
- 	u8			raw_erase_timeout_mult;	/* 223 */
- 	u8			raw_hc_erase_grp_size;	/* 224 */
-+	u8			raw_boot_mult;		/* 226 */
- 	u8			raw_sec_trim_mult;	/* 229 */
- 	u8			raw_sec_erase_mult;	/* 230 */
- 	u8			raw_sec_feature_support;/* 231 */
+diff --git a/block/partitions/check.h b/block/partitions/check.h
+index ffa01cc4b0b0..55acf6340e5b 100644
+--- a/block/partitions/check.h
++++ b/block/partitions/check.h
+@@ -22,6 +22,7 @@ struct parsed_partitions {
+ 	int limit;
+ 	bool access_beyond_eod;
+ 	char *pp_buf;
++	sector_t force_gpt_sector;
+ };
+ 
+ typedef struct {
+diff --git a/block/partitions/efi.c b/block/partitions/efi.c
+index b64bfdd4326c..3af4660bc11f 100644
+--- a/block/partitions/efi.c
++++ b/block/partitions/efi.c
+@@ -621,6 +621,14 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
+         if (!good_agpt && force_gpt)
+                 good_agpt = is_gpt_valid(state, lastlba, &agpt, &aptes);
+ 
++	/* The force_gpt_sector is used by NVIDIA Tegra partition parser in
++	 * order to convey a non-standard location of the GPT entry for lookup.
++	 * By default force_gpt_sector is set to 0 and has no effect.
++	 */
++	if (!good_agpt && force_gpt && state->force_gpt_sector)
++		good_agpt = is_gpt_valid(state, state->force_gpt_sector,
++					 &agpt, &aptes);
++
+         /* The obviously unsuccessful case */
+         if (!good_pgpt && !good_agpt)
+                 goto fail;
 -- 
 2.26.0
