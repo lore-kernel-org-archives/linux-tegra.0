@@ -1,64 +1,35 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v5 4/6] partitions/efi: Support GPT entry lookup at a
- non-standard location
-Date: Sat, 16 May 2020 09:58:25 -0700
-Message-ID: <4a0f6a9c-b652-598a-c8a0-580a3e98171b@infradead.org>
-References: <20200516153644.13748-1-digetx@gmail.com>
- <20200516153644.13748-5-digetx@gmail.com>
- <2ae298ca-016a-8867-52dd-86d99b9e0f3b@infradead.org>
- <595392b8-d950-4be6-f6cf-e274b4760b94@gmail.com>
+From: Stefano <pessina-eshH1AjLspA@public.gmane.org>
+Subject: =?utf-8?q?HERZLICHEN_GL=C3=9CCKWUNSCH_=E2=82=AC_2=2C000=2E000=2C00_wurde_?=
+ =?utf-8?q?an_Sie_gespendet?=
+Date: Sat, 16 May 2020 04:55:35 -0700
+Message-ID: <E1jZvQU-0004vu-Tz@srv01.fortnetprovedor.com.br>
+Reply-To: pessinastefa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <595392b8-d950-4be6-f6cf-e274b4760b94@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>, =?UTF-8?Q?Nils_=c3=96stlund?= <nils@naltan.com>, Christoph Hellwig <hch@infradead.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Steve McIntyre <steve@einval.com>, linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Description: Mail message body
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Recipients <pessina-eshH1AjLspA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/16/20 9:50 AM, Dmitry Osipenko wrote:
-> 16.05.2020 18:51, Randy Dunlap пишет:
->> On 5/16/20 8:36 AM, Dmitry Osipenko wrote:
->>> diff --git a/block/partitions/efi.c b/block/partitions/efi.c
->>> index b64bfdd4326c..3af4660bc11f 100644
->>> --- a/block/partitions/efi.c
->>> +++ b/block/partitions/efi.c
->>> @@ -621,6 +621,14 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
->>>          if (!good_agpt && force_gpt)
->>>                  good_agpt = is_gpt_valid(state, lastlba, &agpt, &aptes);
->>>  
->>> +	/* The force_gpt_sector is used by NVIDIA Tegra partition parser in
->>> +	 * order to convey a non-standard location of the GPT entry for lookup.
->>> +	 * By default force_gpt_sector is set to 0 and has no effect.
->>> +	 */
->>
->> Please fix the multi-line comment format as described in
->> Documentation/process/coding-style.rst.
->>
->>> +	if (!good_agpt && force_gpt && state->force_gpt_sector)
->>> +		good_agpt = is_gpt_valid(state, state->force_gpt_sector,
->>> +					 &agpt, &aptes);
->>> +
->>>          /* The obviously unsuccessful case */
->>>          if (!good_pgpt && !good_agpt)
->>>                  goto fail;
->>
->> thanks.
->>
-> 
-> Hello Randy,
-> 
-> I know that it's not a proper kernel-style formatting, but that's the
-> style used by the whole efi.c source code and I wanted to maintain the
-> same style, for consistency. Of course I can change to a proper style if
-> it's more desirable than the consistency. Thank you for the comment!
-> 
+Hallo,
 
-too bad. Sorry to hear that.
-It should have been "fixed" much earlier.
-It's probably too late now.
+Ich bin Stefano Pessina, ein italienischer Wirtschaftsmagnat, Investor und
+philanthropist.the stellvertretende Vorsitzende, Chief Executive
+Officer (CEO), und
+der größte Einzelaktionär der Walgreens Boots Alliance. ich gab
+25 Prozent meines persönlichen Vermögens für wohltätige Zwecke
+wegbringen. Und ich habe auch zugesagt
+den Rest von 25% in diesem Jahr 2020 an Einzelpersonen zu verschenken
+Ich habe beschlossen, Ihnen €1.000.000,00EURO zu spenden. Wenn Sie an meiner
+Spende interessiert sind, kontaktieren Sie mich
+für mehr Informationen
 
--- 
-~Randy
+Sie können auch mehr über mich über den unten stehenden Link lesen
+
+https://en.wikipedia.org/wiki/Stefano_Pessina
+
+Herzlicher Gruss
+CEO Walgreens Boots Alliance
+Stefano Pessina
