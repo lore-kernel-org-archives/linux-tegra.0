@@ -1,163 +1,200 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 0/7] Introduce NVIDIA Tegra Partition Table
-Date: Sun, 17 May 2020 05:12:18 +0300
-Message-ID: <20200517021225.22890-1-digetx@gmail.com>
+Subject: [PATCH v6 7/7] soc/tegra: Expose Boot Configuration Table via sysfs
+Date: Sun, 17 May 2020 05:12:25 +0300
+Message-ID: <20200517021225.22890-8-digetx@gmail.com>
+References: <20200517021225.22890-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20200517021225.22890-1-digetx@gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
 To: Jens Axboe <axboe@kernel.dk>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, Billy Laws <blaws05@gmail.com>, =?UTF-8?q?Nils=20=C3=96stlund?= <nils@naltan.com>, Christoph Hellwig <hch@infradead.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Davidlohr Bueso <dave@stgolabs.net>, Randy Dunlap <rdunlap@infradead.org>
 Cc: linux-tegra@vger.kernel.org, linux-block@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, Gilles Grandou <gilles@grandou.net>, Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Steve McIntyre <steve@einval.com>, linux-efi <linux-efi@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+It's quite useful to have unencrypted BCT exposed to userspace for
+debugging purposes, so let's expose it via sysfs.  The BCT data will be
+present in '/sys/tegra/boot_config_table' binary file if BCT is available.
 
-This series adds support for the NVIDIA Tegra Partition Table format,
-which is needed in order to support consumer-grade Tegra-based devices
-by the upstream kernel.  These devices have Secure Boot enabled and it
-can't be disabled, and thus, it's not possible to easily modify bootloader
-and eMMC storage partitioning.
-
-Big thanks to everyone who helped with figuring out the TegraPT format
-and with testing!
-
-Changelog:
-
-v6: - Now using a proper multi-line comments style in efi.c, thanks to
-      Randy Dunlap for the suggestion.
-
-    - Added new patch that improves coding style of partitions/efi.c
-
-    - Now both "gpt gpt_sector=<sector>" and "gpt_sector=<sector> gpt"
-      cmdline variants are parsed properly. I found that the second variant
-      wasn't working in v5.
-
-    - Fixed accidentally swapped GFP_KERNEL flag and allocation size passed
-      to kmalloc() in the patch "Expose Boot Configuration Table via sysfs".
-      Thanks to KASAN for reporting the problem.
-
-v5: - Corrected Kconfig dependency, like it was suggested by Randy Dunlap
-      in the review comment to v4.
-
-    - Corrected a typo in the commit message, which was spotted by
-      Steve McIntyre in v4.
-
-    - The new force_gpt_sector variable has been moved out to the common
-      parser state because I realized that multiple drives could be scanned
-      simultaneously, and thus, a global shared variable isn't a suitable
-      variant.
-
-    - The Tegra's enforced GPT-scan now supports older bootloader versions,
-      which do not provide the gpt_sector= command line option.  The gpt_sector
-      should be calculated using NVIDIA's algorithm in this case.
-
-v4: - Scanning of the eMMC boot partitions has been dropped because it
-      requires a bit too messy hacks in the kernel.  We can live without
-      this feature, at least for now it's not really needed.
-
-    - Instead of the dropped boot partitions scanning, the "gpt_sector="
-      command line option has been brought back [1].  But now it's done
-      in a different way, not bothering platforms other than Tegra and
-      not touching block devices other than eMMC, which was requested during
-      of the [1] review.  The "gpt_sector=" usage is needed when partition
-      table is inaccessible by kernel, which is the case for the Ouya game
-      console device for example.  Please note that "gpt_sector=" is not
-      available on all devices, such devices will fall back to the TegraPT,
-      Samsung Galaxy Tab 10.1 is an example of a such device.
-
-      [1] https://patchwork.ozlabs.org/project/linux-tegra/patch/20200219162339.16192-1-digetx@gmail.com/
-
-    - We got a bit more broad testing and discovered that Samsung Galaxy
-      Tab 10.1 uses 2K logical sectors instead of 4K.  So the 2K sectors
-      are supported now by the TegraPT parser.  Thanks to Nils Östlund for
-      the testing!
-
-    - TegraPT parser now utilizes "tegraboot=" cmdline option which is
-      passed to kernel by the NVIDIA's bootloader.  It's used for verifying
-      that SDMMC device is *the* boot source.
-
-    - Added patch that exposes Boot Configuration Table to userspace via
-      sysfs.  Thanks to Michał Mirosław for the suggestion!
-
-    - Misc changes:
-        - The EB2 (second bootloader) partition is added to the list of
-          known partitions.  Used by the Galaxy Tab 10.
-
-        - The blkdev logical sector size is checked now, for consistency.
-          It always should be 512 bytes on the supported/tested devices.
-
-        - Verbose error messages are replaced with pr_debug().
-
-v3: - Fixed "BUG: KASAN: slab-out-of-bounds in tegra_partition".  Thanks to
-      Peter Geis for noticing the problem.
-
-    - The MMC boot partitions scanning is now opt-in. See this patch:
-
-        mmc: block: Support partition-table scanning on boot partitions
-
-    - The found MMC boot partitions won't be assigned to the MMC boot
-      block device ever due to the new GENHD_FL_PART_SCAN_ONCE flag.
-
-      This makes us to ensure that the old behavior of the MMC core is
-      preserved for a non-Tegra MMC-block users.
-
-    New patches in v3:
-
-        block: Introduce GENHD_FL_PART_SCAN_ONCE
-        mmc: sdhci-tegra: Enable boot partitions scanning on Tegra20 and Tegra30
-
-v2: - Addressed v1 review comments from Stephen Warren by using BIT for
-      locating BCT position in IRAM.
-
-    - Added more validations to the TegraPT parser: partition type is
-      verified, eMMC instance ID is verified.
-
-    - TegraPT parser now doesn't touch any devices other than eMMC.
-
-    - EKS (encrypted keys) partition is blacklisted now.
-
-    - Implemented eMMC boot partitions scanning.  These new patches are
-      added in a result:
-
-        mmc: block: Add mmc_bdev_to_part_type() helper
-        mmc: block: Add mmc_bdev_to_area_type() helper
-        mmc: block: Add MMC_QUIRK_RESCAN_MAIN_BLKDEV
-        mmc: block: Enable partition-table scanning for boot partitions
-        partitions/tegra: Implement eMMC boot partitions scanning
-
-Dmitry Osipenko (7):
-  mmc: core: Add raw_boot_mult field to mmc_ext_csd
-  mmc: block: Add mmc_bdev_to_card() helper
-  partitions: Introduce NVIDIA Tegra Partition Table
-  partitions/efi: Support GPT entry lookup at a non-standard location
-  partitions/efi: Improve coding style
-  partitions/tegra: Support enforced GPT scanning
-  soc/tegra: Expose Boot Configuration Table via sysfs
-
- arch/arm/mach-tegra/tegra.c   |  58 ++++
- block/partitions/Kconfig      |   8 +
- block/partitions/Makefile     |   1 +
- block/partitions/check.h      |   3 +
- block/partitions/core.c       |   4 +
- block/partitions/efi.c        | 372 ++++++++++----------
- block/partitions/tegra.c      | 624 ++++++++++++++++++++++++++++++++++
- drivers/mmc/core/block.c      |  15 +
- drivers/mmc/core/mmc.c        |   2 +
- drivers/soc/tegra/Makefile    |   1 +
- drivers/soc/tegra/bootdata.c  |  51 +++
- drivers/soc/tegra/common.c    |  17 +
- include/linux/mmc/blkdev.h    |  13 +
- include/linux/mmc/card.h      |   1 +
- include/soc/tegra/bootdata.h  |  48 +++
- include/soc/tegra/common.h    |  12 +
- include/soc/tegra/partition.h |  84 +++++
- 17 files changed, 1135 insertions(+), 179 deletions(-)
- create mode 100644 block/partitions/tegra.c
+Suggested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/mach-tegra/tegra.c  |  4 +++
+ drivers/soc/tegra/Makefile   |  1 +
+ drivers/soc/tegra/bootdata.c | 51 ++++++++++++++++++++++++++++++++++++
+ drivers/soc/tegra/common.c   | 17 ++++++++++++
+ include/soc/tegra/bootdata.h |  2 ++
+ include/soc/tegra/common.h   |  3 +++
+ 6 files changed, 78 insertions(+)
  create mode 100644 drivers/soc/tegra/bootdata.c
- create mode 100644 include/linux/mmc/blkdev.h
- create mode 100644 include/soc/tegra/bootdata.h
- create mode 100644 include/soc/tegra/partition.h
 
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index da6bcd85398b..5f40463f1b97 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -72,6 +72,7 @@ static void __init tegra_boot_config_table_init(void)
+ 	u32 iram_end   = TEGRA_IRAM_BASE + TEGRA_IRAM_SIZE;
+ 	u32 iram_start = TEGRA_IRAM_BASE;
+ 	u32 pt_addr, pt_size, bct_size;
++	void __iomem *bct_ptr;
+ 
+ 	t20_bit = IO_ADDRESS(TEGRA_IRAM_BASE);
+ 
+@@ -90,6 +91,7 @@ static void __init tegra_boot_config_table_init(void)
+ 
+ 		pt_addr = t20_bct->partition_table_logical_sector_address;
+ 		pt_size = t20_bct->partition_table_num_logical_sectors;
++		bct_ptr = t20_bct;
+ 
+ 	} else if (of_machine_is_compatible("nvidia,tegra30")) {
+ 		bct_size = sizeof(*t30_bct);
+@@ -106,12 +108,14 @@ static void __init tegra_boot_config_table_init(void)
+ 
+ 		pt_addr = t30_bct->partition_table_logical_sector_address;
+ 		pt_size = t30_bct->partition_table_num_logical_sectors;
++		bct_ptr = t30_bct;
+ 	} else {
+ 		return;
+ 	}
+ 
+ 	pr_info("%s: BCT found in IRAM\n", __func__);
+ 
++	tegra_bootdata_bct_setup(bct_ptr, bct_size);
+ 	tegra_partition_table_setup(pt_addr, pt_size);
+ }
+ 
+diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
+index 9c809c1814bd..8be2bfb4d95d 100644
+--- a/drivers/soc/tegra/Makefile
++++ b/drivers/soc/tegra/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-y += fuse/
+ 
++obj-y += bootdata.o
+ obj-y += common.o
+ obj-$(CONFIG_SOC_TEGRA_FLOWCTRL) += flowctrl.o
+ obj-$(CONFIG_SOC_TEGRA_PMC) += pmc.o
+diff --git a/drivers/soc/tegra/bootdata.c b/drivers/soc/tegra/bootdata.c
+new file mode 100644
+index 000000000000..3d028e0d343d
+--- /dev/null
++++ b/drivers/soc/tegra/bootdata.c
+@@ -0,0 +1,51 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/sizes.h>
++#include <linux/slab.h>
++#include <linux/sysfs.h>
++#include <linux/types.h>
++
++#include <soc/tegra/bootdata.h>
++#include <soc/tegra/common.h>
++
++/*
++ * spare_bct[] will be released once kernel is booted, hence not wasting
++ * kernel space if BCT is missing. The tegra_bct can't be allocated during
++ * of BCT setting up because it's too early for the slab allocator.
++ */
++static u8 spare_bct[SZ_8K] __initdata;
++static u8 *tegra_bct;
++
++static ssize_t boot_config_table_read(struct file *filp,
++				      struct kobject *kobj,
++				      struct bin_attribute *bin_attr,
++				      char *buf, loff_t off, size_t count)
++{
++	memcpy(buf, tegra_bct + off, count);
++	return count;
++}
++static BIN_ATTR_RO(boot_config_table, 0);
++
++static int __init tegra_bootdata_bct_sysfs_init(void)
++{
++	if (!bin_attr_boot_config_table.size)
++		return 0;
++
++	tegra_bct = kmalloc(bin_attr_boot_config_table.size, GFP_KERNEL);
++	if (!tegra_bct)
++		return -ENOMEM;
++
++	memcpy(tegra_bct, spare_bct, bin_attr_boot_config_table.size);
++
++	return sysfs_create_bin_file(tegra_soc_kobj,
++				     &bin_attr_boot_config_table);
++}
++late_initcall(tegra_bootdata_bct_sysfs_init)
++
++void __init tegra_bootdata_bct_setup(void __iomem *bct_ptr, size_t bct_size)
++{
++	memcpy_fromio(spare_bct, bct_ptr, bct_size);
++	bin_attr_boot_config_table.size = bct_size;
++}
+diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+index 3dc54f59cafe..2b4b49eacb2e 100644
+--- a/drivers/soc/tegra/common.c
++++ b/drivers/soc/tegra/common.c
+@@ -3,10 +3,15 @@
+  * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
++#include <linux/init.h>
++#include <linux/kernel.h>
+ #include <linux/of.h>
++#include <linux/sysfs.h>
+ 
+ #include <soc/tegra/common.h>
+ 
++struct kobject *tegra_soc_kobj;
++
+ static const struct of_device_id tegra_machine_match[] = {
+ 	{ .compatible = "nvidia,tegra20", },
+ 	{ .compatible = "nvidia,tegra30", },
+@@ -31,3 +36,15 @@ bool soc_is_tegra(void)
+ 
+ 	return match != NULL;
+ }
++
++static int __init tegra_soc_sysfs_init(void)
++{
++	if (!soc_is_tegra())
++		return 0;
++
++	tegra_soc_kobj = kobject_create_and_add("tegra", NULL);
++	WARN_ON(!tegra_soc_kobj);
++
++	return 0;
++}
++arch_initcall(tegra_soc_sysfs_init)
+diff --git a/include/soc/tegra/bootdata.h b/include/soc/tegra/bootdata.h
+index 7be207cb2519..d5c7a251517d 100644
+--- a/include/soc/tegra/bootdata.h
++++ b/include/soc/tegra/bootdata.h
+@@ -43,4 +43,6 @@ struct tegra30_boot_config_table {
+ 	u32 unused_data[3];
+ } __packed;
+ 
++void tegra_bootdata_bct_setup(void __iomem *bct_ptr, size_t bct_size);
++
+ #endif /* __SOC_TEGRA_BOOTDATA_H__ */
+diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
+index 744280ecab5f..0bc11b45c98e 100644
+--- a/include/soc/tegra/common.h
++++ b/include/soc/tegra/common.h
+@@ -7,8 +7,11 @@
+ #define __SOC_TEGRA_COMMON_H__
+ 
+ #include <linux/types.h>
++#include <linux/sysfs.h>
+ 
+ #ifdef CONFIG_ARCH_TEGRA
++extern struct kobject *tegra_soc_kobj;
++
+ bool soc_is_tegra(void);
+ #else
+ static inline bool soc_is_tegra(void)
 -- 
 2.26.0
