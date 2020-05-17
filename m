@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6 6/7] partitions/tegra: Support enforced GPT scanning
-Date: Sun, 17 May 2020 05:12:24 +0300
-Message-ID: <20200517021225.22890-7-digetx@gmail.com>
+Subject: [PATCH v6 2/7] mmc: block: Add mmc_bdev_to_card() helper
+Date: Sun, 17 May 2020 05:12:20 +0300
+Message-ID: <20200517021225.22890-3-digetx@gmail.com>
 References: <20200517021225.22890-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,139 +12,72 @@ To: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles-4LeZiQkTMnPR7s880joybQ@public.gmane.org>, Ryan Grachek <ryan-JnT2LfGw4MD1P9xLtpHBDw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Steve McIntyre <steve-nt0JYOx6u4DQT0dZR+AlfA@public.gmane.org>, linux-efi <linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Downstream NVIDIA bootloader provides gpt_sector=<sector> kernel command
-line option to the kernel. This option should instruct the GPT partition
-parser to look at the specified sector for a valid GPT header if the GPT
-is not found at the beginning or the end of a block device. Support of
-this feature is needed by Tegra-based devices that have TegraPT and GPT
-placed in inaccessible by kernel locations.  The GPT entry duplicates
-TegraPT partitions.
-
-Secondly, some Tegra-based devices have bootloader that enforces the GPT
-scanning of the backup/alternative GPT entry by providing "gpt" cmdline
-option to the kernel, but doesn't provide the "gpt_sector" option.
-In this case GPT entry resides at a special offset from the end of eMMC
-storage.  It is a common situation for older bootloader versions.
-
-The offset is calculated as a total number of eMMC sectors minus number of
-eMMC boot sectors minus 1.  This equation is explicitly defined and used
-by the downstream Tegra kernels for locating GPT entry.
+NVIDIA Tegra Partition Table takes into account MMC card's BOOT_SIZE_MULT
+parameter, and thus, the partition parser needs to retrieve that EXT_CSD
+value from the block device.  There are also some other parts of struct
+mmc_card that are needed for the partition parser in order to calculate
+the eMMC offset and verify different things.  This patch introduces new
+helper which takes block device for the input argument and returns the
+corresponding MMC card.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- block/partitions/check.h |  1 +
- block/partitions/core.c  |  1 +
- block/partitions/efi.c   |  9 +++++++
- block/partitions/tegra.c | 57 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 68 insertions(+)
+ drivers/mmc/core/block.c   | 15 +++++++++++++++
+ include/linux/mmc/blkdev.h | 13 +++++++++++++
+ 2 files changed, 28 insertions(+)
+ create mode 100644 include/linux/mmc/blkdev.h
 
-diff --git a/block/partitions/check.h b/block/partitions/check.h
-index 55acf6340e5b..1ce445d1c7f0 100644
---- a/block/partitions/check.h
-+++ b/block/partitions/check.h
-@@ -68,5 +68,6 @@ int osf_partition(struct parsed_partitions *state);
- int sgi_partition(struct parsed_partitions *state);
- int sun_partition(struct parsed_partitions *state);
- int sysv68_partition(struct parsed_partitions *state);
-+int tegra_partition_forced_gpt(struct parsed_partitions *state);
- int tegra_partition(struct parsed_partitions *state);
- int ultrix_partition(struct parsed_partitions *state);
-diff --git a/block/partitions/core.c b/block/partitions/core.c
-index 0b4720372f07..1931647d9742 100644
---- a/block/partitions/core.c
-+++ b/block/partitions/core.c
-@@ -83,6 +83,7 @@ static int (*check_part[])(struct parsed_partitions *) = {
- 	sysv68_partition,
- #endif
- #ifdef CONFIG_TEGRA_PARTITION
-+	tegra_partition_forced_gpt,
- 	tegra_partition,
- #endif
- 	NULL
-diff --git a/block/partitions/efi.c b/block/partitions/efi.c
-index f0229e7a6894..f8036fd55501 100644
---- a/block/partitions/efi.c
-+++ b/block/partitions/efi.c
-@@ -101,6 +101,15 @@ static int force_gpt;
- static int __init
- force_gpt_fn(char *str)
- {
-+	/*
-+	 * This check allows to properly parse cmdline variants like
-+	 * "gpt gpt_sector=<sector>" and "gpt_sector=<sector> gpt" since
-+	 * "gpt" overlaps with the "gpt_sector=", see tegra_gpt_sector_fn().
-+	 * The argument should be absent for a boolean cmdline option.
-+	 */
-+	if (strlen(str))
-+		return 0;
-+
- 	force_gpt = 1;
- 	return 1;
- }
-diff --git a/block/partitions/tegra.c b/block/partitions/tegra.c
-index d3a00ade145a..831dedb9a11c 100644
---- a/block/partitions/tegra.c
-+++ b/block/partitions/tegra.c
-@@ -565,3 +565,60 @@ int tegra_partition(struct parsed_partitions *state)
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index c5367e2c8487..99298e888381 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -40,6 +40,7 @@
+ #include <linux/debugfs.h>
  
+ #include <linux/mmc/ioctl.h>
++#include <linux/mmc/blkdev.h>
+ #include <linux/mmc/card.h>
+ #include <linux/mmc/host.h>
+ #include <linux/mmc/mmc.h>
+@@ -305,6 +306,20 @@ static ssize_t force_ro_store(struct device *dev, struct device_attribute *attr,
  	return ret;
  }
+ 
++struct mmc_card *mmc_bdev_to_card(struct block_device *bdev)
++{
++	struct mmc_blk_data *md;
 +
++	if (bdev->bd_disk->major != MMC_BLOCK_MAJOR)
++		return NULL;
++
++	md = mmc_blk_get(bdev->bd_disk);
++	if (!md)
++		return NULL;
++
++	return md->queue.card;
++}
++
+ static int mmc_blk_open(struct block_device *bdev, fmode_t mode)
+ {
+ 	struct mmc_blk_data *md = mmc_blk_get(bdev->bd_disk);
+diff --git a/include/linux/mmc/blkdev.h b/include/linux/mmc/blkdev.h
+new file mode 100644
+index 000000000000..67608c58de70
+--- /dev/null
++++ b/include/linux/mmc/blkdev.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
-+ * This allows a kernel command line option 'gpt_sector=<sector>' to
-+ * enable GPT header lookup at a non-standard location. This option
-+ * is provided to kernel by NVIDIA's proprietary bootloader.
++ *  linux/include/linux/mmc/blkdev.h
 + */
-+static sector_t tegra_gpt_sector;
-+static int __init tegra_gpt_sector_fn(char *str)
-+{
-+	WARN_ON(kstrtoull(str, 10, &tegra_gpt_sector) < 0);
-+	return 1;
-+}
-+__setup("gpt_sector=", tegra_gpt_sector_fn);
++#ifndef LINUX_MMC_BLOCK_DEVICE_H
++#define LINUX_MMC_BLOCK_DEVICE_H
 +
-+int tegra_partition_forced_gpt(struct parsed_partitions *state)
-+{
-+	int ret = 0;
++struct block_device;
++struct mmc_card;
 +
-+#ifdef CONFIG_EFI_PARTITION
-+	struct tegra_partition_table_parser ptp = {};
++struct mmc_card *mmc_bdev_to_card(struct block_device *bdev);
 +
-+	if (!soc_is_tegra() || !tegra_boot_sdmmc)
-+		return 0;
-+
-+	ptp.state = state;
-+
-+	ptp.boot_offset = tegra_partition_table_emmc_boot_offset(&ptp);
-+	if (ptp.boot_offset < 0)
-+		return 0;
-+
-+	/*
-+	 * Some Tegra devices do not use gpt_sector=<sector> kernel command
-+	 * line option. In this case these devices usually have a GPT entry
-+	 * at the end of the block device and the GPT entry address is
-+	 * calculated this way for eMMC:
-+	 *
-+	 * gpt_sector = ext_csd.sectors_num - ext_csd.boot_sectors_num - 1
-+	 *
-+	 * This algorithm is defined and used by NVIDIA in the downstream
-+	 * kernel of those devices.
-+	 *
-+	 * Please note that bootloader supplies the "gpt" cmdline option
-+	 * which enforces the GPT scanning, meaning that the scanning will
-+	 * be a NO-OP on devices that do not use GPT.
-+	 */
-+	if (tegra_gpt_sector) {
-+		state->force_gpt_sector = tegra_gpt_sector;
-+	} else {
-+		state->force_gpt_sector  = get_capacity(state->bdev->bd_disk);
-+		state->force_gpt_sector -= ptp.boot_offset + 1;
-+	}
-+
-+	ret = efi_partition(state);
-+	state->force_gpt_sector = 0;
-+#endif
-+	return ret;
-+}
++#endif /* LINUX_MMC_BLOCK_DEVICE_H */
 -- 
 2.26.0
