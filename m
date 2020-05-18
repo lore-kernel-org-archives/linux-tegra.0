@@ -1,199 +1,126 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH V3 5/8] phy: tegra: xusb: Add soc ops API to enable UTMI
- PAD protection
-Date: Mon, 18 May 2020 17:54:03 +0530
-Message-ID: <db698a53-c5f6-d03f-edf0-f4fb38963e1f@ti.com>
-References: <1589437363-16727-1-git-send-email-nkristam@nvidia.com>
- <1589437363-16727-6-git-send-email-nkristam@nvidia.com>
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
+Date: Mon, 18 May 2020 15:49:09 +0200
+Message-ID: <09679de4-75d3-1f29-ec5f-8d42c84273dd@collabora.com>
+References: <20200506002746.GB89269@dtor-ws>
+ <20200515164943.28480-1-andrzej.p@collabora.com>
+ <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
+ <e6030957-97dc-5b04-7855-bc14a78164c8@collabora.com>
+ <6d9921fc-5c2f-beda-4dcd-66d6970a22fe@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1589437363-16727-6-git-send-email-nkristam@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <6d9921fc-5c2f-beda-4dcd-66d6970a22fe@redhat.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nagarjuna Kristam <nkristam@nvidia.com>, balbi@kernel.org, gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com, mark.rutland@arm.com, robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-acpi-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, linux-input@vger.kernel.org, linux-acpi@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Barry
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry,
+Hi Hans,
 
-On 5/14/2020 11:52 AM, Nagarjuna Kristam wrote:
-> When USB charger is enabled, UTMI PAD needs to be protected according
-> to the direction and current level. Add support for the same on Tegra210
-> and Tegra186.
+W dniu 18.05.2020 o 14:24, Hans de Goede pisze:
+> Hi,
 > 
-> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> On 5/18/20 12:48 PM, Andrzej Pietrasiewicz wrote:
+>> Hi Hans,
+>>
+>> W dniu 15.05.2020 o 20:19, Hans de Goede pisze:
+>>> Hi Andrezj,
+>>>
+>>> On 5/15/20 6:49 PM, Andrzej Pietrasiewicz wrote:
+>>>> Userspace might want to implement a policy to temporarily disregard input
+>>>> from certain devices, including not treating them as wakeup sources.
+>>>>
+>>>> An example use case is a laptop, whose keyboard can be folded under the
+>>>> screen to create tablet-like experience. The user then must hold the laptop
+>>>> in such a way that it is difficult to avoid pressing the keyboard keys. It
+>>>> is therefore desirable to temporarily disregard input from the keyboard,
+>>>> until it is folded back. This obviously is a policy which should be kept
+>>>> out of the kernel, but the kernel must provide suitable means to implement
+>>>> such a policy.
+>>>
+>>> Actually libinput already binds together (inside libinput) SW_TABLET_MODE
+>>> generating evdev nodes and e.g. internal keyboards on devices with 360°
+>>> hinges for this reason. libinput simply closes the /dev/input/event#
+>>> node when folded and re-opens it when the keyboard should become active
+>>> again. Thus not only suppresses events but allows e.g. touchpads to
+>>> enter runtime suspend mode which saves power. Typically closing the
+>>> /dev/input/event# node will also disable the device as wakeup source.
+>>>
+>>> So I wonder what this series actually adds for functionality for
+>>> userspace which can not already be achieved this way?
+>>>
+>>> I also noticed that you keep the device open (do not call the
+>>> input_device's close callback) when inhibited and just throw away
+>>
+>> I'm not sure if I understand you correctly, it is called:
+>>
+>> +static inline void input_stop(struct input_dev *dev)
+>> +{
+>> +    if (dev->poller)
+>> +        input_dev_poller_stop(dev->poller);
+>> +    if (dev->close)
+>> +        dev->close(dev);
+>>                  ^^^^^^^^^^^^^^^^
+>> +static int input_inhibit(struct input_dev *dev)
+>> +{
+>> +    int ret = 0;
+>> +
+>> +    mutex_lock(&dev->mutex);
+>> +
+>> +    if (dev->inhibited)
+>> +        goto out;
+>> +
+>> +    if (dev->users) {
+>> +        if (dev->inhibit) {
+>> +            ret = dev->inhibit(dev);
+>> +            if (ret)
+>> +                goto out;
+>> +        }
+>> +        input_stop(dev);
+>>                  ^^^^^^^^^^^^^^^^
+>>
+>> It will not be called when dev->users is zero, but if it is zero,
+>> then nobody has opened the device yet so there is nothing to close.
+> 
+> Ah, I missed that.
+> 
+> So if the device implements the inhibit call back then on
+> inhibit it will get both the inhibit and close callback called?
+> 
 
-Can you give your Acked by for pending patches in this series?
+That's right. And conversely, upon uninhibit open() and uninhibit()
+callbacks will be invoked. Please note that just as with open()/close(),
+providing inhibit()/uninhibit() is optional.
 
-Thanks
-Kishon
-> ---
-> V3:
->  - Alligned function and its arguments.
->  - Fixed other comments from Thierry.
-> ---
-> V2:
->  - Commit message coorected.
->  - Patch re-based.
-> ---
->  drivers/phy/tegra/xusb-tegra186.c | 40 +++++++++++++++++++++++++++++++++++++++
->  drivers/phy/tegra/xusb-tegra210.c | 32 +++++++++++++++++++++++++++++++
->  drivers/phy/tegra/xusb.h          | 13 +++++++++++++
->  3 files changed, 85 insertions(+)
+> And what happens if the last user goes away and the device
+> is not inhibited?
+
+close() is called as usually.
+
 > 
-> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-> index f862254..59b78a7 100644
-> --- a/drivers/phy/tegra/xusb-tegra186.c
-> +++ b/drivers/phy/tegra/xusb-tegra186.c
-> @@ -68,6 +68,13 @@
->  #define   PORTX_SPEED_SUPPORT_MASK		(0x3)
->  #define     PORT_SPEED_SUPPORT_GEN1		(0x0)
->  
-> +#define USB2_BATTERY_CHRG_OTGPADX_CTL1(x)       (0x84 + (x) * 0x40)
-> +#define  PD_VREG                                (1 << 6)
-> +#define  VREG_LEV(x)                            (((x) & 0x3) << 7)
-> +#define  VREG_DIR(x)                            (((x) & 0x3) << 11)
-> +#define  VREG_DIR_IN                            VREG_DIR(1)
-> +#define  VREG_DIR_OUT                           VREG_DIR(2)
-> +
->  #define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x)	(0x88 + (x) * 0x40)
->  #define  HS_CURR_LEVEL(x)			((x) & 0x3f)
->  #define  TERM_SEL				BIT(25)
-> @@ -289,6 +296,37 @@ static void tegra_phy_xusb_utmi_pad_power_down(struct phy *phy)
->  	usb2->powered_on = false;
->  }
->  
-> +static void
-> +tegra186_xusb_padctl_utmi_pad_set_protection(struct tegra_xusb_port *port,
-> +					     int level,
-> +					     enum tegra_vbus_dir dir)
-> +{
-> +	u32 value;
-> +	struct tegra_xusb_padctl *padctl = port->padctl;
-> +	unsigned int index = port->index;
-> +
-> +	value = padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
-> +
-> +	if (level < 0) {
-> +		/* disable pad protection */
-> +		value |= PD_VREG;
-> +		value &= ~VREG_LEV(~0);
-> +		value &= ~VREG_DIR(~0);
-> +	} else {
-> +		if (dir == TEGRA_VBUS_SOURCE)
-> +			value |= VREG_DIR_OUT;
-> +		else if (dir == TEGRA_VBUS_SINK)
-> +			value |= VREG_DIR_IN;
-> +
-> +		value &= ~PD_VREG;
-> +		value &= ~VREG_DIR(~0);
-> +		value &= ~VREG_LEV(~0);
-> +		value |= VREG_LEV(level);
-> +	}
-> +
-> +	padctl_writel(padctl, value, USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
-> +}
-> +
->  static int tegra186_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
->  					       bool status)
->  {
-> @@ -935,6 +973,8 @@ static const struct tegra_xusb_padctl_ops tegra186_xusb_padctl_ops = {
->  	.vbus_override = tegra186_xusb_padctl_vbus_override,
->  	.utmi_pad_power_on = tegra_phy_xusb_utmi_pad_power_on,
->  	.utmi_pad_power_down = tegra_phy_xusb_utmi_pad_power_down,
-> +	.utmi_pad_set_protection =
-> +			tegra186_xusb_padctl_utmi_pad_set_protection,
->  };
->  
->  #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
-> diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-> index caf0890..80c4349 100644
-> --- a/drivers/phy/tegra/xusb-tegra210.c
-> +++ b/drivers/phy/tegra/xusb-tegra210.c
-> @@ -74,6 +74,8 @@
->  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_MASK 0x3
->  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_VAL 0x1
->  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_FIX18 (1 << 6)
-> +#define USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(x) (((x) & 0x3) << 7)
-> +#define USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_DIR(x) (((x) & 0x3) << 11)
->  
->  #define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x) (0x088 + (x) * 0x40)
->  #define XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD_ZI (1 << 29)
-> @@ -1116,6 +1118,34 @@ void tegra210_usb2_pad_power_down(struct phy *phy)
->  	usb2->powered_on = false;
->  }
->  
-> +static void
-> +tegra210_xusb_padctl_utmi_pad_set_protection(struct tegra_xusb_port *port,
-> +					     int level,
-> +					     enum tegra_vbus_dir dir)
-> +{
-> +	u32 value;
-> +	struct tegra_xusb_padctl *padctl = port->padctl;
-> +	unsigned int index = port->index;
-> +
-> +	value = padctl_readl(padctl,
-> +			     XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
-> +
-> +	if (level < 0) {
-> +		/* disable pad protection */
-> +		value |= XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_FIX18;
-> +		value &= USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(~0);
-> +		value &= ~USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_DIR(~0);
-> +	} else {
-> +		value &= ~XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_FIX18;
-> +		value &= ~USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_DIR(~0);
-> +		value &= USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(~0);
-> +		value |= USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(level);
-> +	}
-> +
-> +	padctl_writel(padctl, value,
-> +		      XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
-> +}
-> +
->  static int tegra210_usb2_phy_set_mode(struct phy *phy, enum phy_mode mode,
->  				      int submode)
->  {
-> @@ -2291,6 +2321,8 @@ static const struct tegra_xusb_padctl_ops tegra210_xusb_padctl_ops = {
->  	.utmi_port_reset = tegra210_utmi_port_reset,
->  	.utmi_pad_power_on = tegra210_usb2_pad_power_on,
->  	.utmi_pad_power_down = tegra210_usb2_pad_power_down,
-> +	.utmi_pad_set_protection =
-> +			tegra210_xusb_padctl_utmi_pad_set_protection,
->  };
->  
->  static const char * const tegra210_xusb_padctl_supply_names[] = {
-> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-> index 6995fc4..475bcc6 100644
-> --- a/drivers/phy/tegra/xusb.h
-> +++ b/drivers/phy/tegra/xusb.h
-> @@ -259,6 +259,17 @@ to_sata_pad(struct tegra_xusb_pad *pad)
->   */
->  struct tegra_xusb_port_ops;
->  
-> +/*
-> + * Tegra OTG port VBUS direction:
-> + * default (based on port capability) or
-> + * as source or sink
-> + */
-> +enum tegra_vbus_dir {
-> +	TEGRA_VBUS_DEFAULT,
-> +	TEGRA_VBUS_SOURCE,
-> +	TEGRA_VBUS_SINK
-> +};
-> +
->  struct tegra_xusb_port {
->  	struct tegra_xusb_padctl *padctl;
->  	struct tegra_xusb_lane *lane;
-> @@ -398,6 +409,8 @@ struct tegra_xusb_padctl_ops {
->  	int (*utmi_port_reset)(struct phy *phy);
->  	void (*utmi_pad_power_on)(struct phy *phy);
->  	void (*utmi_pad_power_down)(struct phy *phy);
-> +	void (*utmi_pad_set_protection)(struct tegra_xusb_port *port,
-> +					int level, enum tegra_vbus_dir dir);
->  };
->  
->  struct tegra_xusb_padctl_soc {
+> I'm trying to understand here what the difference between the 2
+> is / what the goal of having a separate inhibit callback ?
 > 
+
+Drivers have very different ideas about what it means to suspend/resume
+and open/close. The optional inhibit/uninhibit callbacks are meant for
+the drivers to know that it is this particular action going on.
+
+For inhibit() there's one more argument: close() does not return a value,
+so its meaning is "do some last cleanup" and as such it is not allowed
+to fail - whatever its effect is, we must deem it successful. inhibit()
+does return a value and so it is allowed to fail.
+
+All in all, it is up to the drivers to decide which callback they
+provide. Based on my work so far I would say that there are tens
+of simple cases where open() and close() are sufficient, out of total
+~400 users of input_allocate_device():
+
+$ git grep "input_allocate_device(" | grep -v ^Documentation | \
+cut -f1 -d: | sort | uniq | wc
+     390     390   13496
+
+Andrzej
