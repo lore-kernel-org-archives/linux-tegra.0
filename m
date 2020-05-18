@@ -1,124 +1,134 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 2/7] mmc: block: Add mmc_bdev_to_card() helper
-Date: Mon, 18 May 2020 09:24:42 +0200
-Message-ID: <CAPDyKFrGbKSx=afZCNBN_r_6iNm_TX0tZVRLK05ZUTDBGvAuyA@mail.gmail.com>
-References: <20200517021225.22890-1-digetx@gmail.com> <20200517021225.22890-3-digetx@gmail.com>
- <7bddacf1-5fe0-5119-48ac-6a0cc65c5af0@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v10 0/2] Panel rotation patches
+Date: Mon, 18 May 2020 10:36:12 +0300
+Message-ID: <fa443308-7610-9060-68eb-e14e446dd4bf@gmail.com>
+References: <20200306002112.255361-1-dbasehore@chromium.org>
+ <ecbfb5f8-615a-4a88-5dac-de17158125bf@gmail.com>
+ <CAGAzgsqpjZxh7PEL_Dy7HrFeFGm7+=F6cL3QG9KmK9CHvDWZ9g@mail.gmail.com>
+ <6dc9ef16-9671-6ce8-27e6-aa1f4c009ee2@gmail.com>
+ <CAGAzgsrNrq+S+-5KEFVnJn6S5DRn1fKkToD5=KR911T9AOAF-w@mail.gmail.com>
+ <736ad1d2-4a28-87e8-62f7-28a5582c9fcf@gmail.com>
+ <CAMavQKJtbha_o==X+MX6GmjfAMYvdLyubvCFg48Tbn1mdgo40w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7bddacf1-5fe0-5119-48ac-6a0cc65c5af0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CAMavQKJtbha_o==X+MX6GmjfAMYvdLyubvCFg48Tbn1mdgo40w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, David Heidelberg <david-W22tF5X+A20@public.gmane.org>, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Billy Laws <blaws05-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Nils_=C3=96stlund?= <nils-ElENwYY5mljQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Davidlohr Bueso <dave-h16yJtLeMjHk1uMJSBkQmQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-block <linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Gilles Grandou <gilles@grandou>
+To: Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>
+Cc: "dbasehore ." <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 18 May 2020 at 01:55, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> 17.05.2020 05:12, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > NVIDIA Tegra Partition Table takes into account MMC card's BOOT_SIZE_MU=
-LT
-> > parameter, and thus, the partition parser needs to retrieve that EXT_CS=
-D
-> > value from the block device.  There are also some other parts of struct
-> > mmc_card that are needed for the partition parser in order to calculate
-> > the eMMC offset and verify different things.  This patch introduces new
-> > helper which takes block device for the input argument and returns the
-> > corresponding MMC card.
-> >
-> > Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> >  drivers/mmc/core/block.c   | 15 +++++++++++++++
-> >  include/linux/mmc/blkdev.h | 13 +++++++++++++
-> >  2 files changed, 28 insertions(+)
-> >  create mode 100644 include/linux/mmc/blkdev.h
-> >
-> > diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-> > index c5367e2c8487..99298e888381 100644
-> > --- a/drivers/mmc/core/block.c
-> > +++ b/drivers/mmc/core/block.c
-> > @@ -40,6 +40,7 @@
-> >  #include <linux/debugfs.h>
-> >
-> >  #include <linux/mmc/ioctl.h>
-> > +#include <linux/mmc/blkdev.h>
-> >  #include <linux/mmc/card.h>
-> >  #include <linux/mmc/host.h>
-> >  #include <linux/mmc/mmc.h>
-> > @@ -305,6 +306,20 @@ static ssize_t force_ro_store(struct device *dev, =
-struct device_attribute *attr,
-> >       return ret;
-> >  }
-> >
-> > +struct mmc_card *mmc_bdev_to_card(struct block_device *bdev)
-> > +{
-> > +     struct mmc_blk_data *md;
-> > +
-> > +     if (bdev->bd_disk->major !=3D MMC_BLOCK_MAJOR)
-> > +             return NULL;
-> > +
-> > +     md =3D mmc_blk_get(bdev->bd_disk);
-> > +     if (!md)
-> > +             return NULL;
-> > +
-> > +     return md->queue.card;
-> > +}
-> > +
-> >  static int mmc_blk_open(struct block_device *bdev, fmode_t mode)
-> >  {
-> >       struct mmc_blk_data *md =3D mmc_blk_get(bdev->bd_disk);
-> > diff --git a/include/linux/mmc/blkdev.h b/include/linux/mmc/blkdev.h
-> > new file mode 100644
-> > index 000000000000..67608c58de70
-> > --- /dev/null
-> > +++ b/include/linux/mmc/blkdev.h
-> > @@ -0,0 +1,13 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + *  linux/include/linux/mmc/blkdev.h
-> > + */
-> > +#ifndef LINUX_MMC_BLOCK_DEVICE_H
-> > +#define LINUX_MMC_BLOCK_DEVICE_H
-> > +
-> > +struct block_device;
-> > +struct mmc_card;
-> > +
-> > +struct mmc_card *mmc_bdev_to_card(struct block_device *bdev);
-> > +
-> > +#endif /* LINUX_MMC_BLOCK_DEVICE_H */
-> >
->
-> Hello Ulf / Jens and everyone,
+12.05.2020 23:59, Sean Paul пишет:
+> On Thu, Apr 16, 2020 at 7:03 PM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>
+>> 15.04.2020 00:32, dbasehore . пишет:
+>>> On Tue, Apr 14, 2020 at 2:18 PM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>>
+>>>> 14.04.2020 22:32, dbasehore . пишет:
+>>>>> Hi Dmitry, sorry for the late reply.
+>>>>>
+>>>>> On Sun, Mar 8, 2020 at 12:25 PM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>>>>
+>>>>>> 06.03.2020 03:21, Derek Basehore пишет:
+>>>>>>> This adds the plumbing for reading panel rotation from the devicetree
+>>>>>>> and sets up adding a panel property for the panel orientation on
+>>>>>>> Mediatek SoCs when a rotation is present.
+>>>>>>
+>>>>>> Hello Derek and everyone,
+>>>>>>
+>>>>>> I'm looking at adding display rotation support to NVIDIA Tegra DRM
+>>>>>> driver because some devices have display panel physically mounted
+>>>>>> upside-down, and thus, display controller's scan-out needs to be rotated
+>>>>>> by 180° in this case.
+>>>>>>
+>>>>>> Derek, yours panel-rotation patches add support for assigning panel's
+>>>>>> orientation to the connector, but then only primary display plane
+>>>>>> receives rotation value in [1], while rotation needs to be applied to
+>>>>>> all available overlay/cursor planes and this should happen in other
+>>>>>> places than [1] as well.
+>>>>>
+>>>>> This is intended. We don't correct the output in the kernel. We
+>>>>> instead rely on notifying userspace that the panel is rotated, then we
+>>>>> handle it there.
+>>>>>
+>>>>>>
+>>>>>> [1] drm_client_modeset_commit_atomic()
+>>>>>>
+>>>>>> Please also note that in a case of the scan-out rotation, plane's
+>>>>>> coordinates need to be changed in accordance to the display's rotation.
+>>>>>>
+>>>>>> I looked briefly through the DRM code and my understanding that the DRM
+>>>>>> core currently doesn't support use-case where scan-out needs to rotated
+>>>>>> based on a panel's orientation, correct? Is it the use-case you're
+>>>>>> working on for the Mediatek driver?
+>>>>>
+>>>>> Yes, we rely on userspace to rotate the output. The major reason for
+>>>>> this is because there may not be a "free" hardware rotation that can
+>>>>> be applied to the overlay. Sean Paul and others also preferred that
+>>>>> userspace control what is output to the screen instead of the kernel
+>>>>> taking care of it. This code just adds the drm property to the panel.
+>>>>>
+>>>>
+>>>> Could you please explain what that userspace is?
+>>>
+>>> This was added for Chrome OS, which uses its own graphics stack,
+>>> Ozone, instead of Xorg.
+>>>
+>>
+>> Thank you very much for the clarification.
+>>
+>> It's probably not a big problem for something monolithic and customized
+>> like ChromeOS to issue a software update in order to take into account
+>> all specifics of a particular device, but this doesn't work nicely for a
+>> generic software, like a usual Linux distro.
+>>
+>>>> AFAIK, things like Xorg modesetting don't support that orientation property.
+>>
+>> In my case it's not only the display panel which is upside-down, but
+>> also the touchscreen. Hence both display output and touchscreen input
+>> need to be rotated at once, otherwise you'll end up with either display
+>> or input being upside-down.
+>>
+>> The 180° rotation should be free on NVIDIA Tegra. There are no known
+>> limitations for the planes and BSP kernel video driver handles the
+>> plane's coordinates/framebuffer rotation within the driver.
+>>
+>> The kernel's input subsystem allows us to transparently (for userspace)
+>> remap the touchscreen input (by specifying generic touchscreen
+>> device-tree properties), while this is not the case for the DRM subsystem.
+>>
+>> @Thierry, @Sean, @Daniel, could you please help me to understand how a
+>> coordinated display / input rotation could be implemented, making the
+>> rotation transparent to the user (i.e. avoiding xorg.conf hacking and
+>> etc)? It should be nice if display's output could be flipped within the
+>> DRM driver, hiding this fact from userspace.
+> 
+> I think the right thing to do is to fix userspace to respect this
+> property, since that has the most communal benefit.
 
-Hi Dmitry,
+Hello Sean,
 
->
-> Guys, what do you think about this change?
+This will be ideal, but it's difficult to achieve in a loosely
+controlled userspace environment.
 
-As I stated in an earlier reply, I am deferring the review from mmc
-point of view, until I see some confirmation from Jens that he is okay
-with adding a new partition format.
+> However(!!) if you don't want to do that, how about inspecting the
+> info->panel_orientation value after drm_panel_attach in tegra driver
+> and then adjusting rotation values in the driver. Of course, you
+> wouldn't want to expose the panel orientation property since you don't
+> want userspaces to be double-rotating on you, but it's optional so
+> you'd be fine.
 
-Otherwise I may just waste my time on reviews. I hope you understand.
+Thank you very much for the suggestion, I'll be trying it out soon.
 
-Kind regards
-Uffe
+>>
+>> Will it be okay if we'll add a transparent-rotation support specifically
+>> to the Tegra DRM driver? For example if device-tree contains
+>> nvidia,display-flip-y property, then the Tegra DRM driver will take care
+>> of rotating coordinates/framebuffer of the display planes.
+> 
+> I don't think this is necessary, but it also wouldn't really be
+> appropriate to put software attributes into devicetree anyways.
 
->
-> Currently it's not allowed to compile MMC_BLOCK as a loadable kernel
-> module if TEGRA_PARTITION is enabled because it depends on MMC_BLOCK
-> presence. I'm curious if this situation could be improved by moving
-> mmc_bdev_to_card() to linux/mmc/blkdev.h and then:
->
-> 1. Moving all private mmc/core/block.c structs to the public
-> linux/mmc/blkdev.h.
->
-> 2. Or adding a "private opaque" pointer to a struct block_device and
-> setting it to md->queue.card, for example.
->
-> 3. I see that struct block_device already has some bd_private field, but
-> I'm not sure whether it could be used for what I'm trying to achieve.
-> Actually I don't see where bd_private is used in kernel at all.
->
-> I'd like get yours feedback, thanks in advance.
+Yes, I'm also not feeling very excited about this variant.
