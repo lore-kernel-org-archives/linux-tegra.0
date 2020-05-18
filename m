@@ -1,57 +1,101 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] dmaengine: tegra210-adma: Fix an error handling path in
- 'tegra_adma_probe()'
-Date: Mon, 18 May 2020 12:43:16 +0100
-Message-ID: <899a62c8-b4fa-b1cc-6e3a-bbfb680e5d41@nvidia.com>
-References: <20200516214205.276266-1-christophe.jaillet@wanadoo.fr>
+From: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
+Date: Mon, 18 May 2020 14:24:05 +0200
+Message-ID: <6d9921fc-5c2f-beda-4dcd-66d6970a22fe@redhat.com>
+References: <20200506002746.GB89269@dtor-ws>
+ <20200515164943.28480-1-andrzej.p@collabora.com>
+ <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
+ <e6030957-97dc-5b04-7855-bc14a78164c8@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200516214205.276266-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+In-Reply-To: <e6030957-97dc-5b04-7855-bc14a78164c8-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org, ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "Rafael J . Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Len Brown <lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Pengutronix Kernel Team <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>, Sylvain Lemieux <slemieux.tyco-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Barry
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
 
-On 16/05/2020 22:42, Christophe JAILLET wrote:
-> Commit b53611fb1ce9 ("dmaengine: tegra210-adma: Fix crash during probe")
-> has moved some code in the probe function and reordered the error handling
-> path accordingly.
-> However, a goto has been missed.
+On 5/18/20 12:48 PM, Andrzej Pietrasiewicz wrote:
+> Hi Hans,
 > 
-> Fix it and goto the right label if 'dma_async_device_register()' fails, so
-> that all resources are released.
+> W dniu 15.05.2020 o 20:19, Hans de Goede pisze:
+>> Hi Andrezj,
+>>
+>> On 5/15/20 6:49 PM, Andrzej Pietrasiewicz wrote:
+>>> Userspace might want to implement a policy to temporarily disregard input
+>>> from certain devices, including not treating them as wakeup sources.
+>>>
+>>> An example use case is a laptop, whose keyboard can be folded under the
+>>> screen to create tablet-like experience. The user then must hold the laptop
+>>> in such a way that it is difficult to avoid pressing the keyboard keys. It
+>>> is therefore desirable to temporarily disregard input from the keyboard,
+>>> until it is folded back. This obviously is a policy which should be kept
+>>> out of the kernel, but the kernel must provide suitable means to implement
+>>> such a policy.
+>>
+>> Actually libinput already binds together (inside libinput) SW_TABLET_MODE
+>> generating evdev nodes and e.g. internal keyboards on devices with 360°
+>> hinges for this reason. libinput simply closes the /dev/input/event#
+>> node when folded and re-opens it when the keyboard should become active
+>> again. Thus not only suppresses events but allows e.g. touchpads to
+>> enter runtime suspend mode which saves power. Typically closing the
+>> /dev/input/event# node will also disable the device as wakeup source.
+>>
+>> So I wonder what this series actually adds for functionality for
+>> userspace which can not already be achieved this way?
+>>
+>> I also noticed that you keep the device open (do not call the
+>> input_device's close callback) when inhibited and just throw away
 > 
-> Fixes: b53611fb1ce9 ("dmaengine: tegra210-adma: Fix crash during probe")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-> ---
->  drivers/dma/tegra210-adma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> I'm not sure if I understand you correctly, it is called:
 > 
-> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-> index c4ce5dfb149b..db58d7e4f9fe 100644
-> --- a/drivers/dma/tegra210-adma.c
-> +++ b/drivers/dma/tegra210-adma.c
-> @@ -900,7 +900,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
->  	ret = dma_async_device_register(&tdma->dma_dev);
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "ADMA registration failed: %d\n", ret);
-> -		goto irq_dispose;
-> +		goto rpm_put;
->  	}
->  
->  	ret = of_dma_controller_register(pdev->dev.of_node,
+> +static inline void input_stop(struct input_dev *dev)
+> +{
+> +    if (dev->poller)
+> +        input_dev_poller_stop(dev->poller);
+> +    if (dev->close)
+> +        dev->close(dev);
+>                  ^^^^^^^^^^^^^^^^
+> +static int input_inhibit(struct input_dev *dev)
+> +{
+> +    int ret = 0;
+> +
+> +    mutex_lock(&dev->mutex);
+> +
+> +    if (dev->inhibited)
+> +        goto out;
+> +
+> +    if (dev->users) {
+> +        if (dev->inhibit) {
+> +            ret = dev->inhibit(dev);
+> +            if (ret)
+> +                goto out;
+> +        }
+> +        input_stop(dev);
+>                  ^^^^^^^^^^^^^^^^
+> 
+> It will not be called when dev->users is zero, but if it is zero,
+> then nobody has opened the device yet so there is nothing to close.
 
+Ah, I missed that.
 
-Thanks for fixing this!
+So if the device implements the inhibit call back then on
+inhibit it will get both the inhibit and close callback called?
 
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+And what happens if the last user goes away and the device
+is not inhibited?
 
-Cheers
-Jon
+I'm trying to understand here what the difference between the 2
+is / what the goal of having a separate inhibit callback ?
 
--- 
-nvpublic
+IOW is there something which we want to do on close when
+the close is being done to inhibit the device, which we do
+not want to do on a normal close ?
+
+Regards,
+
+Hans
