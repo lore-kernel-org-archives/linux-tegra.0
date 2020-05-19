@@ -1,99 +1,53 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v1] sdhci: tegra: Remove warnings about missing
- device-tree properties
-Date: Tue, 19 May 2020 09:28:43 +0200
-Message-ID: <CAPDyKFo_Xp-zipqE26iMv4CFwUoMCQZy3Zr63Cp=uzePgWX7BA@mail.gmail.com>
-References: <20200516154314.14769-1-digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4.4 00/86] 4.4.224-rc1 review
+Date: Tue, 19 May 2020 09:49:05 +0100
+Message-ID: <20c46455-d403-89f2-9f5b-82a8f679d97c@nvidia.com>
+References: <20200518173450.254571947@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200516154314.14769-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200518173450.254571947-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, 16 May 2020 at 17:44, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> Several people asked me about the MMC warnings in the KMSG log and
-> I had to tell to ignore them because these warning are irrelevant to
-> pre-Tegra210 SoCs.
 
-Why are the warnings irrelevant?
+On 18/05/2020 18:35, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.224 release.
+> There are 86 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 20 May 2020 17:32:42 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.224-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-> It should be up to a board's device-tree writer to
-> properly describe all the necessary properties. Secondly, eventually all
-> device-tree bindings will be converted to YAML, which allows to validate
-> board DT files, giving a warning about missing properties. Hence let's
-> remove the noisy warnings to stop the confusion.
 
-Yep, makes sense. However, perhaps we should do this conversion then,
-rather than first drop the warnings?
+All tests are passing for Tegra ...
 
-Kind regards
-Uffe
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    19 tests:	19 pass, 0 fail
 
->
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 28 ++++------------------------
->  1 file changed, 4 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 3e2c5101291d..83867629013d 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -607,46 +607,26 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
->         err = device_property_read_u32(host->mmc->parent,
->                         "nvidia,pad-autocal-pull-up-offset-3v3-timeout",
->                         &autocal->pull_up_3v3_timeout);
-> -       if (err) {
-> -               if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
-> -                       (tegra_host->pinctrl_state_3v3_drv == NULL))
-> -                       pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
-> -                               mmc_hostname(host->mmc));
-> +       if (err)
->                 autocal->pull_up_3v3_timeout = 0;
-> -       }
->
->         err = device_property_read_u32(host->mmc->parent,
->                         "nvidia,pad-autocal-pull-down-offset-3v3-timeout",
->                         &autocal->pull_down_3v3_timeout);
-> -       if (err) {
-> -               if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
-> -                       (tegra_host->pinctrl_state_3v3_drv == NULL))
-> -                       pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
-> -                               mmc_hostname(host->mmc));
-> +       if (err)
->                 autocal->pull_down_3v3_timeout = 0;
-> -       }
->
->         err = device_property_read_u32(host->mmc->parent,
->                         "nvidia,pad-autocal-pull-up-offset-1v8-timeout",
->                         &autocal->pull_up_1v8_timeout);
-> -       if (err) {
-> -               if (!IS_ERR(tegra_host->pinctrl_state_1v8) &&
-> -                       (tegra_host->pinctrl_state_1v8_drv == NULL))
-> -                       pr_warn("%s: Missing autocal timeout 1v8-pad drvs\n",
-> -                               mmc_hostname(host->mmc));
-> +       if (err)
->                 autocal->pull_up_1v8_timeout = 0;
-> -       }
->
->         err = device_property_read_u32(host->mmc->parent,
->                         "nvidia,pad-autocal-pull-down-offset-1v8-timeout",
->                         &autocal->pull_down_1v8_timeout);
-> -       if (err) {
-> -               if (!IS_ERR(tegra_host->pinctrl_state_1v8) &&
-> -                       (tegra_host->pinctrl_state_1v8_drv == NULL))
-> -                       pr_warn("%s: Missing autocal timeout 1v8-pad drvs\n",
-> -                               mmc_hostname(host->mmc));
-> +       if (err)
->                 autocal->pull_down_1v8_timeout = 0;
-> -       }
->
->         err = device_property_read_u32(host->mmc->parent,
->                         "nvidia,pad-autocal-pull-up-offset-sdr104",
-> --
-> 2.26.0
->
+Linux version:	4.4.224-rc1-g4935dd6adfe2
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
