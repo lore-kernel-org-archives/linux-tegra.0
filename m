@@ -1,61 +1,83 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] dmaengine: tegra210-adma: Fix an error handling path in
- 'tegra_adma_probe()'
-Date: Tue, 19 May 2020 18:25:19 +0200
-Message-ID: <20200519162519.GE2113674@ulmo>
-References: <20200516214205.276266-1-christophe.jaillet@wanadoo.fr>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1] sdhci: tegra: Remove warnings about missing
+ device-tree properties
+Date: Tue, 19 May 2020 19:33:38 +0300
+Message-ID: <b4eb368e-adc2-7b77-3ae9-fefdcfddaf3d@gmail.com>
+References: <20200516154314.14769-1-digetx@gmail.com>
+ <CAPDyKFo_Xp-zipqE26iMv4CFwUoMCQZy3Zr63Cp=uzePgWX7BA@mail.gmail.com>
+ <b634e7a5-9a30-3bd1-126d-be62e4dd73e1@gmail.com>
+ <20200519162444.GD2113674@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5xSkJheCpeK0RUEJ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20200516214205.276266-1-christophe.jaillet@wanadoo.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: ldewangan@nvidia.com, jonathanh@nvidia.com, dan.j.williams@intel.com, vkoul@kernel.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20200519162444.GD2113674@ulmo>
+Content-Language: en-US
+Sender: linux-mmc-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+19.05.2020 19:24, Thierry Reding пишет:
+> On Tue, May 19, 2020 at 05:05:27PM +0300, Dmitry Osipenko wrote:
+>> 19.05.2020 10:28, Ulf Hansson пишет:
+>>> On Sat, 16 May 2020 at 17:44, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>>>
+>>>> Several people asked me about the MMC warnings in the KMSG log and
+>>>> I had to tell to ignore them because these warning are irrelevant to
+>>>> pre-Tegra210 SoCs.
+>>>
+>>> Why are the warnings irrelevant?
+>>
+>> That's what the DT binding doc says [1].
+>>
+>> [1]
+>> https://www.kernel.org/doc/Documentation/devicetree/bindings/mmc/nvidia%2Ctegra20-sdhci.txt
+>>
+>> Although, looking at the driver's code and TRM docs, it seems that all
+>> those properties are really irrelevant only to the older Terga20 SoC. So
+>> the binding doc is a bit misleading.
+>>
+>> Nevertheless, the binding explicitly says that the properties are
+>> optional, which is correct.
+> 
+> Optional only means that drivers must not fail if these properties
+> aren't found, it doesn't mean that the driver can't warn that they
+> are missing.
+> 
+> Quite possibly the only reason why they were made optional is because
+> they weren't part of the bindings since the beginning. Anything added
+> to a binding after the first public release has to be optional by
+> definition, otherwise DT ABI wouldn't be stable.
+> 
+> I think these warnings were added on purpose, though I also see that
+> there are only values for these in device tree for Tegra186 and Tegra194
+> but not Tegra210 where these should also be necessary.
+> 
+> Adding Sowjanya who wrote this code. Perhaps she can clarify why the
+> warnings were added. If these values /should/ be there on a subset of
+> Tegra, then I think we should keep them, or add them again, but perhaps
+> add a better way of identifying when they are necessary and when it is
+> safe to work without them.
+> 
+> That said, looking at those checks I wonder if they are perhaps just
+> wrong. Or at the very least they seem redundant. It looks to me like
+> they can just be:
+> 
+> 	if (tegra_host->pinctrl_state_XYZ == NULL) {
+> 		...
+> 	}
+> 
+> That !IS_ERR(...) doesn't seem to do anything. But in that case, it's
+> also obvious why we're warning about them on platforms where these
+> properties don't exist in DT.
+> 
+> So I think we either need to add those values where appropriate so that
+> the warning doesn't show, or we need to narrow down where they are
+> really needed and add a corresponding condition.
+> 
+> But again, perhaps Sowjanya can help clarify if these really are only
+> needed on Tegra210 and later or if these also apply to older chips.
 
---5xSkJheCpeK0RUEJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, May 16, 2020 at 11:42:05PM +0200, Christophe JAILLET wrote:
-> Commit b53611fb1ce9 ("dmaengine: tegra210-adma: Fix crash during probe")
-> has moved some code in the probe function and reordered the error handling
-> path accordingly.
-> However, a goto has been missed.
->=20
-> Fix it and goto the right label if 'dma_async_device_register()' fails, so
-> that all resources are released.
->=20
-> Fixes: b53611fb1ce9 ("dmaengine: tegra210-adma: Fix crash during probe")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/dma/tegra210-adma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---5xSkJheCpeK0RUEJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7ECG8ACgkQ3SOs138+
-s6HyGBAAtqw2Y28Sav7FpIgNdlgPeJGBIZ8WuLD4zojjs15UzXAuuHndZNzOR1xL
-dJSZvlK1T2GFmmtHmzjJJUtng+A9GDFJD8J6UeKOdpy6eLlmvtRT6hCueljrJGOb
-aKdGNRnFBoDZ/DqBArUILTkTgCdqHY66gacajY7p42DHGr7RxovPr/RNjzblE4Ae
-7uA1CEY9Hqs3Xu7P5Aty3UhFh0cubPGCtMRnW9Y9hvyv6XSWIVnzAUwMiPJGBNLg
-pn3D9WeK970Ef/QEvkRCWNW4mpM1dfiHmIjbjcFRwn1NvuTI4A1MukWzS3/Qbs9u
-SrLIquFBkk+AtGNF5pPW/RmKOFTq+6eDaMEArLVuN6G6MNrS2xCE2mN2hb1arBAH
-rV/7Sc+H/FfEWjXtRSnf0JwZmSKB/rObzOyPTAzERwKDNTVU1XDuCWSjlAv9A8e/
-7TLFcFueYmMZO48jvdw1NL4u+v2kf0rWWzcyNBVeukTSHrlNvT+jI50fJ9omb0Bp
-RqM5CktLjENleIelSb25TSFRjMB27w703QJdRb7Njr/iDw65wrasz+q8dqGCJLJQ
-AFqb5peekfnhyQcHiYqd9cU+FYXnk+UJNUv3uh1T+JWZM+ec8NbDJe7v1JpTtWIY
-2Yw4rtrkVHfL/mqnKkFzPLziFy72mrh7IQ1bHHx9CyTibg9B0dU=
-=TqZK
------END PGP SIGNATURE-----
-
---5xSkJheCpeK0RUEJ--
+Either way will be cleaner to convert the DT binding to YAML rather than
+clutter the driver, IMO.
