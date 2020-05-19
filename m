@@ -1,75 +1,92 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/5] i2c: tegra: Restore pinmux on system resume
-Date: Tue, 19 May 2020 18:07:35 +0200
-Message-ID: <20200519160735.GB2113674@ulmo>
-References: <20200506193358.2807244-1-thierry.reding@gmail.com>
- <20200506193358.2807244-3-thierry.reding@gmail.com>
- <2a0404ac-73bf-2f27-9147-8bef28ae995f@gmail.com>
- <20200508103130.GB3030605@ulmo>
- <f149bb64-e93b-364e-47bc-c851e9638a35@gmail.com>
- <86fee5a3-fe2f-05ab-bc05-1c441d2845e9@gmail.com>
+Subject: Re: [GIT PULL] i2c: tegra: Changes for v5.8-rc1
+Date: Tue, 19 May 2020 18:08:35 +0200
+Message-ID: <20200519160835.GC2113674@ulmo>
+References: <20200515143924.1579055-1-thierry.reding@gmail.com>
+ <314a292e-bcd9-bb30-4067-71dc7cc399d6@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yEPQxsgoJgBvi8ip"
+        protocol="application/pgp-signature"; boundary="qjNfmADvan18RZcF"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <86fee5a3-fe2f-05ab-bc05-1c441d2845e9-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <314a292e-bcd9-bb30-4067-71dc7cc399d6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---yEPQxsgoJgBvi8ip
-Content-Type: text/plain; charset=us-ascii
+--qjNfmADvan18RZcF
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 09, 2020 at 06:35:41PM +0300, Dmitry Osipenko wrote:
-> > 2. Could you please explain why I2C driver has to care about restoring
-> > the pinmux state? Why pinctrl driver isn't doing that for I2C and
-> > everything else?
+On Sat, May 16, 2020 at 10:45:32AM +0300, Dmitry Osipenko wrote:
+> 15.05.2020 17:39, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Hi,
+> >=20
+> > The following changes since commit 0e698dfa282211e414076f9dc7e83c1c2883=
+14fd:
+> >=20
+> >   Linux 5.7-rc4 (2020-05-03 14:56:04 -0700)
+> >=20
+> > are available in the Git repository at:
+> >=20
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/fo=
+r-5.8-i2c
+> >=20
+> > for you to fetch changes up to c73178b93754edd8449dccd3faf05baafd4d3f0e:
+> >=20
+> >   i2c: tegra: Add support for the VI I2C on Tegra210 (2020-05-12 22:47:=
+52 +0200)
+> >=20
+> > Thanks,
+> > Thierry
+> >=20
+> > ----------------------------------------------------------------
+> > i2c: tegra: Changes for v5.8-rc1
+> >=20
+> > This includes a few improvements to make the Tegra I2C controller behave
+> > properly on suspend/resume, does a bit of cleanup and adds support for
+> > the VI-variant of the I2C controller that is used primarily for video
+> > capture purposes.
+> >=20
+> > ----------------------------------------------------------------
+> > Dmitry Osipenko (2):
+> >       i2c: tegra: Better handle case where CPU0 is busy for a long time
+> >       i2c: tegra: Synchronize DMA before termination
+> >=20
+> > Thierry Reding (5):
+> >       Revert "i2c: tegra: Fix suspending in active runtime PM state"
 >=20
-> Although, now I see what you meant in the commit's message.
+> >       i2c: tegra: Restore pinmux on system resume
 >=20
-> Perhaps the "their I2C controllers may have lost the pinmux state in
-> hardware" paragraph should be removed from the commit's message because
-> it's irrelevant to this patch. The pinctrl state is changed once
-> tegra_i2c_runtime_resume() is invoked and it is not about the change
-> made by this patch.
+> In general this series is good to me, although I have some concerns
+> about this patch. Could you please answer the review comments?
 
-The pinctrl state is changed in tegra_i2c_runtime_resume() *only if*
-tegra_i2c_runtime_resume() has previously been called. So this patch
-does indeed cause the pinmux to be restored, even though it does so
-indirectly.
-
-I think that paragraph is necessary to explain that. It's the pinctrl
-that doesn't "notice" that the actual pinctrl state has changed from
-"I2C" to "idle", so on resume it still thinks we're at "I2C" and won't
-try to reapply the same state. Calling tegra_i2c_runtime_suspend() is
-making sure that pinctrl explicitly switches to "idle", so that during
-resume it will apply the "I2C" state since it is different from "idle".
+Sorry, those had been burried under too much email. I've answered your
+questions now.
 
 Thierry
 
---yEPQxsgoJgBvi8ip
+--qjNfmADvan18RZcF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7EBEUACgkQ3SOs138+
-s6GXww/8C5zoI1u4Lh6LK6fp1jeHnAkYeC+2cxleVMjjcxcuXuAmBVpWXuKemeDy
-XdSeO3FqXAQgfa+vY9FwkqFGbEHXIFfHSVQkQdHR8AtrAc4pGx81YIFiBTPxudFW
-hikeUdd72nvtVVDJvB5UjNTXtm9Rgn46bKAB6tg8DZ+DeZ5C2YFeiPH2isquWhgn
-OaUwU7Ycwovq2g6J4Na8RYdY5CbRdaS1O0jQ1RILYidbpVREQ67IaYDY+FVAamDZ
-GCgR+jJdiDERSQHnZ1mTkVa0dMBEkpS0+cGAFcfrScJWHYUPf4+C8bQJWOBUV1P4
-CfhIbAmyyObBLDpO6Jc9eWX7UIe2YHR1Ej9gM652I7NZHZBmJGMYyclLSoTj3acW
-9hFarojsGlg3s2Ibz4i8qL5dX+DWer8kvzBE/yv0N9k/79xWraKTtsr4QY+znuR8
-RUaSP1/sJUiDYjJ4P5Bs0lebNggu33+b0KjkXf2iotpnxQZSn90mT7FYHyi9O/oY
-jlBonjGOx5svBj9IEkoIsGUdC4G0dn6CaRq8t2gT3sNfTpa5U/By7MdLyVj+roK9
-rUg1aTogGrr2zahmMKgkwjtKnZy9DiSguj+hZ63i0BzNzuCQh/O46PLHAJjdokTh
-XoG9q8cVfbVFLWhP+ZbF9F4yHAL6NbnTpgX8UqM5D3mEqJy/EWg=
-=Knpt
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7EBIIACgkQ3SOs138+
+s6H9yA/+KiXPhxq4DKM2TKGlA1D80ApzNJeKnRVrHVqhxvjfR75Fu3uNEe3/5nSx
+lxcBhgr/izItLIaqI4Sn+JqmXrWF3OhzPYR4CuCadTZyKqI8gdVe4j2cGtlooN0G
+9l/9dWPDhHBmqyapu0TFVPrKHeRwt0ittIXE7FmjESu14Sk1fEbQCyf38GJpOaOJ
+KujHRXgvKJvGH/Ta1AQYaVM5NS7YQoRvO9hH5IPYhTjaWgE+DWUzTHDKUkZH0kMq
+qR3PDa4M+RkIRubEoXqJyTVx6hKP/uCl+3bzSZ1cT8Iph4uXmNP6x2swcfogEWJL
+1wQ+A0JIaG3dHg/SoCbpbqCnss1jCFKaiTa74HWAuBH3RVS+upJsjLd4lzwNcYEr
+Wb0nAtgnyKlqo+wM97f3lljRXHgu8c/0y1eX7UmL8utdVTiE5KnwDaG37ERDpsnS
+7ep4J0eZDA+WDkQ5w6AzjZM5dw8fXKt8Czxy1AExggTG+Y9G1R8wY002EDqAnycW
+tVEx/jgVvWZq1ESwGZMUHpVpE2U072p43qwlidnnlSW27QkCDeZ2Hx6JMFKZJ9bA
+k9igkSiDc+jtiihGkAz9kQPKIfGbUvEp3ZhOGHqqN/1iRDiwr4lIfbHT4oYqwMkc
+fcTBARUrorQrDGXGiKmOmSXmzb79zmcE9cESlYugNBzqYSSXYNU=
+=F1qQ
 -----END PGP SIGNATURE-----
 
---yEPQxsgoJgBvi8ip--
+--qjNfmADvan18RZcF--
