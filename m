@@ -1,77 +1,109 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/4] dt-bindings: sram: add documentation for
- reserved-only flag
-Date: Tue, 19 May 2020 10:16:43 -0600
-Message-ID: <efcc6b5e-423c-8ae1-8a46-d6a06c1a1bab@wwwdotorg.org>
-References: <20200512144803.24344-1-ykaukab@suse.de>
- <20200512144803.24344-2-ykaukab@suse.de>
- <52f099e4-5c03-2141-f049-cd3adeb04c5b@wwwdotorg.org>
- <20200513104127.GA2309@suse.de>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1] sdhci: tegra: Remove warnings about missing
+ device-tree properties
+Date: Tue, 19 May 2020 18:24:44 +0200
+Message-ID: <20200519162444.GD2113674@ulmo>
+References: <20200516154314.14769-1-digetx@gmail.com>
+ <CAPDyKFo_Xp-zipqE26iMv4CFwUoMCQZy3Zr63Cp=uzePgWX7BA@mail.gmail.com>
+ <b634e7a5-9a30-3bd1-126d-be62e4dd73e1@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Km1U/tdNT/EmXiR1"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200513104127.GA2309-l3A5Bk7waGM@public.gmane.org>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <b634e7a5-9a30-3bd1-126d-be62e4dd73e1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mian Yousaf Kaukab <ykaukab-l3A5Bk7waGM@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/13/20 4:41 AM, Mian Yousaf Kaukab wrote:
-> On Tue, May 12, 2020 at 01:45:28PM -0600, Stephen Warren wrote:
->> On 5/12/20 8:48 AM, Mian Yousaf Kaukab wrote:
->>> Add documentation for the new optional flag added for SRAM driver.
->>
->>> diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
->>
->>> +  reserved-only:
->>> +    description:
->>> +      The flag indicating, that only SRAM reserved regions have to be remapped.
->>> +      remapping type is selected depending upon no-memory-wc as usual.
->>> +    type: boolean
->>
->> This feels a bit like a SW flag rather than a HW description, so I'm not
->> sure it's appropriate to put it into DT.
-> 
-> Reserved regions themselves are software descriptions, no? Then we have 'pool'
-> flag which is again a software flag and so on. This flag falls into same
-> category and nothing out of ordinary.
 
-I suppose that's true to some extent. This is indeed a description of
-the system environment presented to the SW that consumes the DT, which
-is a bit more than pure HW description but still a description of
-something imposed externally rather than describing something that's up
-to the discretion of the consuming SW. So, go ahead.
+--Km1U/tdNT/EmXiR1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> Are there any cases where the SW should map all of the SRAM, i.e. where
->> we wouldn't expect to set reserved-only? [...]
-> 
-> Yes, here are a few examples:
-> arch/arm/boot/dts/aspeed-g*.dtsi
-> arch/arm/boot/dts/at91*.dtsi
-> arch/arm/boot/dts/bcm7445.dtsi
-> Then arch/arm/boot/dts/dra7.dtsi is an example where we should map everything
-> except the reserved region.
-> 
->> [...] I'd expect reserved-only to be
->> the default, and perhaps only, mode of operation for the SRAM driver.
-> 
-> It will break compatibility with existing dtbs.
-> 
->> If we can't do that because some SW currently expects to be able to map
->> arbitrary portions of the SRAM, shouldn't that SW be fixed to tell the
->> SRAM driver which parts it's using, hence still allowing the driver to
->> only map in-use portions?
-> 
-> User doesn’t need sram driver in that case. It can use genalloc api directly.
+On Tue, May 19, 2020 at 05:05:27PM +0300, Dmitry Osipenko wrote:
+> 19.05.2020 10:28, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Sat, 16 May 2020 at 17:44, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> >>
+> >> Several people asked me about the MMC warnings in the KMSG log and
+> >> I had to tell to ignore them because these warning are irrelevant to
+> >> pre-Tegra210 SoCs.
+> >=20
+> > Why are the warnings irrelevant?
+>=20
+> That's what the DT binding doc says [1].
+>=20
+> [1]
+> https://www.kernel.org/doc/Documentation/devicetree/bindings/mmc/nvidia%2=
+Ctegra20-sdhci.txt
+>=20
+> Although, looking at the driver's code and TRM docs, it seems that all
+> those properties are really irrelevant only to the older Terga20 SoC. So
+> the binding doc is a bit misleading.
+>=20
+> Nevertheless, the binding explicitly says that the properties are
+> optional, which is correct.
 
-This sounds a bit odd. Without a driver for the reserved region, nothing
-should be touching it, since otherwise there's no code that owns an
-manages the region. If any code needs to consume the region, it should
-obtain info about the region from some form of provider code that can
-handle both the allocation and mapping. Anything else sounds like some
-consumer code directly making use of DT nodes it doesn't own. But since
-I'm not familiar enough with the SRAM driver and genalloc code that you
-mention to fully understand the allocation paths I guess I won't object
-for now, although it does still sound fishy.
+Optional only means that drivers must not fail if these properties
+aren't found, it doesn't mean that the driver can't warn that they
+are missing.
+
+Quite possibly the only reason why they were made optional is because
+they weren't part of the bindings since the beginning. Anything added
+to a binding after the first public release has to be optional by
+definition, otherwise DT ABI wouldn't be stable.
+
+I think these warnings were added on purpose, though I also see that
+there are only values for these in device tree for Tegra186 and Tegra194
+but not Tegra210 where these should also be necessary.
+
+Adding Sowjanya who wrote this code. Perhaps she can clarify why the
+warnings were added. If these values /should/ be there on a subset of
+Tegra, then I think we should keep them, or add them again, but perhaps
+add a better way of identifying when they are necessary and when it is
+safe to work without them.
+
+That said, looking at those checks I wonder if they are perhaps just
+wrong. Or at the very least they seem redundant. It looks to me like
+they can just be:
+
+	if (tegra_host->pinctrl_state_XYZ =3D=3D NULL) {
+		...
+	}
+
+That !IS_ERR(...) doesn't seem to do anything. But in that case, it's
+also obvious why we're warning about them on platforms where these
+properties don't exist in DT.
+
+So I think we either need to add those values where appropriate so that
+the warning doesn't show, or we need to narrow down where they are
+really needed and add a corresponding condition.
+
+But again, perhaps Sowjanya can help clarify if these really are only
+needed on Tegra210 and later or if these also apply to older chips.
+
+Thierry
+
+--Km1U/tdNT/EmXiR1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7ECEkACgkQ3SOs138+
+s6EgNhAAqw1+R9dClbJN52qhX8PClRXnmElzmtGpuZf4cQ5wSG07AMfW5yk/9yGX
+bJ3et36KfT30XOALiGf40LN2AYU8kHbr2cwyazj58f5KlAGUCUkr/CVPVDrqwWZ+
+sVY5QmVZlJBZf5LTBzt7gowEtQ1eexQ3VtbgaHDxAHOJrc5n6k3JISNcYFGPs3Vn
+grAGoyhj1nObR3r/4AjHXpQANSYEUUkGcYikg0yWM3MW/ATcRyRpAIYdFrIQj/3k
+Q2i3lG8PCdBKhGtFom9doq+fkU72E0aBmOytJjhdxtqmWJAF0GpOgGE2hWd8o0cZ
+UrNBKvY0dvFgBjwtsGfZtSRiNzJU37V7vfSFNNfvl5LPhfvlmYlvbF1YNIScytK1
+/oa/sqHZygdwFJRxfuOAvat9q0v31LziUq8/eCGNGPJjxi+9TbQG1F7NBtbsXtBg
+YvV3m70VOF7tPtRbWiHyPju/DEgM3tytIE8EluOMOYc2hxCO1K1qeBR9ujgB5iVo
+cEUq/Ho4QvN9Taa+d/PrDb26PQiHKRPoU/z8W7Ni+S0VW1xm7Rf5XZ8pGnD2gwvp
+QrBbF/r5zzs+XNUIBwBHBrXHRvV5UqDX092lrR0kbBfXNhWQCXq9ZyR2gWqrevtl
+iGiH2A/0+xWGKXDZYVX2hT4ZfZD5YZztQqCP1KZ50m3k1h/7msg=
+=FLne
+-----END PGP SIGNATURE-----
+
+--Km1U/tdNT/EmXiR1--
