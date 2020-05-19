@@ -1,92 +1,77 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL] i2c: tegra: Changes for v5.8-rc1
-Date: Tue, 19 May 2020 18:08:35 +0200
-Message-ID: <20200519160835.GC2113674@ulmo>
-References: <20200515143924.1579055-1-thierry.reding@gmail.com>
- <314a292e-bcd9-bb30-4067-71dc7cc399d6@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/4] dt-bindings: sram: add documentation for
+ reserved-only flag
+Date: Tue, 19 May 2020 10:16:43 -0600
+Message-ID: <efcc6b5e-423c-8ae1-8a46-d6a06c1a1bab@wwwdotorg.org>
+References: <20200512144803.24344-1-ykaukab@suse.de>
+ <20200512144803.24344-2-ykaukab@suse.de>
+ <52f099e4-5c03-2141-f049-cd3adeb04c5b@wwwdotorg.org>
+ <20200513104127.GA2309@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qjNfmADvan18RZcF"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <314a292e-bcd9-bb30-4067-71dc7cc399d6-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200513104127.GA2309-l3A5Bk7waGM@public.gmane.org>
+Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mian Yousaf Kaukab <ykaukab-l3A5Bk7waGM@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 5/13/20 4:41 AM, Mian Yousaf Kaukab wrote:
+> On Tue, May 12, 2020 at 01:45:28PM -0600, Stephen Warren wrote:
+>> On 5/12/20 8:48 AM, Mian Yousaf Kaukab wrote:
+>>> Add documentation for the new optional flag added for SRAM driver.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
+>>
+>>> +  reserved-only:
+>>> +    description:
+>>> +      The flag indicating, that only SRAM reserved regions have to be remapped.
+>>> +      remapping type is selected depending upon no-memory-wc as usual.
+>>> +    type: boolean
+>>
+>> This feels a bit like a SW flag rather than a HW description, so I'm not
+>> sure it's appropriate to put it into DT.
+> 
+> Reserved regions themselves are software descriptions, no? Then we have 'pool'
+> flag which is again a software flag and so on. This flag falls into same
+> category and nothing out of ordinary.
 
---qjNfmADvan18RZcF
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I suppose that's true to some extent. This is indeed a description of
+the system environment presented to the SW that consumes the DT, which
+is a bit more than pure HW description but still a description of
+something imposed externally rather than describing something that's up
+to the discretion of the consuming SW. So, go ahead.
 
-On Sat, May 16, 2020 at 10:45:32AM +0300, Dmitry Osipenko wrote:
-> 15.05.2020 17:39, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Hi,
-> >=20
-> > The following changes since commit 0e698dfa282211e414076f9dc7e83c1c2883=
-14fd:
-> >=20
-> >   Linux 5.7-rc4 (2020-05-03 14:56:04 -0700)
-> >=20
-> > are available in the Git repository at:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/fo=
-r-5.8-i2c
-> >=20
-> > for you to fetch changes up to c73178b93754edd8449dccd3faf05baafd4d3f0e:
-> >=20
-> >   i2c: tegra: Add support for the VI I2C on Tegra210 (2020-05-12 22:47:=
-52 +0200)
-> >=20
-> > Thanks,
-> > Thierry
-> >=20
-> > ----------------------------------------------------------------
-> > i2c: tegra: Changes for v5.8-rc1
-> >=20
-> > This includes a few improvements to make the Tegra I2C controller behave
-> > properly on suspend/resume, does a bit of cleanup and adds support for
-> > the VI-variant of the I2C controller that is used primarily for video
-> > capture purposes.
-> >=20
-> > ----------------------------------------------------------------
-> > Dmitry Osipenko (2):
-> >       i2c: tegra: Better handle case where CPU0 is busy for a long time
-> >       i2c: tegra: Synchronize DMA before termination
-> >=20
-> > Thierry Reding (5):
-> >       Revert "i2c: tegra: Fix suspending in active runtime PM state"
->=20
-> >       i2c: tegra: Restore pinmux on system resume
->=20
-> In general this series is good to me, although I have some concerns
-> about this patch. Could you please answer the review comments?
+>> Are there any cases where the SW should map all of the SRAM, i.e. where
+>> we wouldn't expect to set reserved-only? [...]
+> 
+> Yes, here are a few examples:
+> arch/arm/boot/dts/aspeed-g*.dtsi
+> arch/arm/boot/dts/at91*.dtsi
+> arch/arm/boot/dts/bcm7445.dtsi
+> Then arch/arm/boot/dts/dra7.dtsi is an example where we should map everything
+> except the reserved region.
+> 
+>> [...] I'd expect reserved-only to be
+>> the default, and perhaps only, mode of operation for the SRAM driver.
+> 
+> It will break compatibility with existing dtbs.
+> 
+>> If we can't do that because some SW currently expects to be able to map
+>> arbitrary portions of the SRAM, shouldn't that SW be fixed to tell the
+>> SRAM driver which parts it's using, hence still allowing the driver to
+>> only map in-use portions?
+> 
+> User doesn’t need sram driver in that case. It can use genalloc api directly.
 
-Sorry, those had been burried under too much email. I've answered your
-questions now.
-
-Thierry
-
---qjNfmADvan18RZcF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7EBIIACgkQ3SOs138+
-s6H9yA/+KiXPhxq4DKM2TKGlA1D80ApzNJeKnRVrHVqhxvjfR75Fu3uNEe3/5nSx
-lxcBhgr/izItLIaqI4Sn+JqmXrWF3OhzPYR4CuCadTZyKqI8gdVe4j2cGtlooN0G
-9l/9dWPDhHBmqyapu0TFVPrKHeRwt0ittIXE7FmjESu14Sk1fEbQCyf38GJpOaOJ
-KujHRXgvKJvGH/Ta1AQYaVM5NS7YQoRvO9hH5IPYhTjaWgE+DWUzTHDKUkZH0kMq
-qR3PDa4M+RkIRubEoXqJyTVx6hKP/uCl+3bzSZ1cT8Iph4uXmNP6x2swcfogEWJL
-1wQ+A0JIaG3dHg/SoCbpbqCnss1jCFKaiTa74HWAuBH3RVS+upJsjLd4lzwNcYEr
-Wb0nAtgnyKlqo+wM97f3lljRXHgu8c/0y1eX7UmL8utdVTiE5KnwDaG37ERDpsnS
-7ep4J0eZDA+WDkQ5w6AzjZM5dw8fXKt8Czxy1AExggTG+Y9G1R8wY002EDqAnycW
-tVEx/jgVvWZq1ESwGZMUHpVpE2U072p43qwlidnnlSW27QkCDeZ2Hx6JMFKZJ9bA
-k9igkSiDc+jtiihGkAz9kQPKIfGbUvEp3ZhOGHqqN/1iRDiwr4lIfbHT4oYqwMkc
-fcTBARUrorQrDGXGiKmOmSXmzb79zmcE9cESlYugNBzqYSSXYNU=
-=F1qQ
------END PGP SIGNATURE-----
-
---qjNfmADvan18RZcF--
+This sounds a bit odd. Without a driver for the reserved region, nothing
+should be touching it, since otherwise there's no code that owns an
+manages the region. If any code needs to consume the region, it should
+obtain info about the region from some form of provider code that can
+handle both the allocation and mapping. Anything else sounds like some
+consumer code directly making use of DT nodes it doesn't own. But since
+I'm not familiar enough with the SRAM driver and genalloc code that you
+mention to fully understand the allocation paths I guess I won't object
+for now, although it does still sound fishy.
