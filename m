@@ -1,87 +1,75 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH 2/5] i2c: tegra: Restore pinmux on system resume
-Date: Tue, 19 May 2020 17:57:28 +0200
-Message-ID: <20200519155728.GA2113674@ulmo>
+Date: Tue, 19 May 2020 18:07:35 +0200
+Message-ID: <20200519160735.GB2113674@ulmo>
 References: <20200506193358.2807244-1-thierry.reding@gmail.com>
  <20200506193358.2807244-3-thierry.reding@gmail.com>
  <2a0404ac-73bf-2f27-9147-8bef28ae995f@gmail.com>
  <20200508103130.GB3030605@ulmo>
  <f149bb64-e93b-364e-47bc-c851e9638a35@gmail.com>
+ <86fee5a3-fe2f-05ab-bc05-1c441d2845e9@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
+        protocol="application/pgp-signature"; boundary="yEPQxsgoJgBvi8ip"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <f149bb64-e93b-364e-47bc-c851e9638a35-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <86fee5a3-fe2f-05ab-bc05-1c441d2845e9-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---dDRMvlgZJXvWKvBx
-Content-Type: text/plain; charset=utf-8
+--yEPQxsgoJgBvi8ip
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 08, 2020 at 06:00:57PM +0300, Dmitry Osipenko wrote:
-> 08.05.2020 13:31, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
-> >> Is it legal to touch DPAUX registers while DPAUX is in a suspended sta=
-te?
-> >=20
-> > DPAUX is never runtime suspended and the dependency from the I2C
-> > controller on DPAUX should ensure that they are suspended and resumed in
-> > the right order during system sleep.
+On Sat, May 09, 2020 at 06:35:41PM +0300, Dmitry Osipenko wrote:
+> > 2. Could you please explain why I2C driver has to care about restoring
+> > the pinmux state? Why pinctrl driver isn't doing that for I2C and
+> > everything else?
 >=20
-> 1. Could you please explain why DPAUX is never suspended? Isn't it a
-> problem?
+> Although, now I see what you meant in the commit's message.
 >=20
-> It looks a bit odd that driver is doing this [1][2]. RPM is supposed to
-> be used for the *dynamic* power management. Should we remove RPM usage
-> from the DPAUX driver?
->=20
-> [1]
-> https://elixir.bootlin.com/linux/v5.7-rc4/source/drivers/gpu/drm/tegra/dp=
-aux.c#L524
-> [2]
-> https://elixir.bootlin.com/linux/v5.7-rc4/source/drivers/gpu/drm/tegra/dp=
-aux.c#L591
+> Perhaps the "their I2C controllers may have lost the pinmux state in
+> hardware" paragraph should be removed from the commit's message because
+> it's irrelevant to this patch. The pinctrl state is changed once
+> tegra_i2c_runtime_resume() is invoked and it is not about the change
+> made by this patch.
 
-Looks more like the intention had been to eventually enable dynamic
-power management but I never got around to it. The runtime PM
-implementations are what's necessary to runtime suspend the device,
-so all that should be needed is hook up the pm_runtime_get() and
-pm_runtime_put() calls correctly.
+The pinctrl state is changed in tegra_i2c_runtime_resume() *only if*
+tegra_i2c_runtime_resume() has previously been called. So this patch
+does indeed cause the pinmux to be restored, even though it does so
+indirectly.
 
-> 2. Could you please explain why I2C driver has to care about restoring
-> the pinmux state? Why pinctrl driver isn't doing that for I2C and
-> everything else?
-
-We could probably do it either way. I did it this way because the
-runtime suspend/resume will get called either way, so might as well
-reuse the same code paths rather than add context save/restore.
+I think that paragraph is necessary to explain that. It's the pinctrl
+that doesn't "notice" that the actual pinctrl state has changed from
+"I2C" to "idle", so on resume it still thinks we're at "I2C" and won't
+try to reapply the same state. Calling tegra_i2c_runtime_suspend() is
+making sure that pinctrl explicitly switches to "idle", so that during
+resume it will apply the "I2C" state since it is different from "idle".
 
 Thierry
 
---dDRMvlgZJXvWKvBx
+--yEPQxsgoJgBvi8ip
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7EAeQACgkQ3SOs138+
-s6GxKA/9F1d7M5zu28FG0E8bt+oxWhTeupG07NNioVF1IUKq6TKzLAcMcRIiJ6tk
-QKxlEEEQJRdzGQ49rX0WZE6Qanqy3tf3id32rS6vbna4mIImdaWt1jAGLICubLus
-689DsfyFIGHiZCdcbsCC23Mpa3YkQm6fcet1ymObfV8WjMGgr8H2sCqkzC2xX//a
-KXlXUdA6GEXsrWx9NJIvk+U7+M0o7mraj6hM7lm4Qy6eNSu/NhvPibZ+IDGEBbJY
-daGf//ugxAp5/byoK6v09XJUniI2sXQhoMx8zBgnTitAOwiubNd3Mjd4hgiHRTu/
-+OBECb1vyTNizvSCb61qNqpMABTS+NymosVCTSwxDyqmlFwW9TKexO2Rsd31o05P
-s2oaMQjAdrcwXSbS6XImANfnUBfVhw0RQu0Nc3Gr21+oKnXyGnIEdUlY6nKYKWIg
-XckwfFytvCK51L/xdzDhsTUUCbcUxNMWwTDot3Ul5DPYrvzBK41Cya8Z8Ik+w7rf
-9KzJ9FBnnLs3TZ5c+7quEEGlUGNpyj5CNQvjXMW1ib9F44vH0BJ0bCtEPEWMlimO
-2JkI2iDdRQ1zQUV9gnvXI1WuwdoibNkDO1PAuQGvIY3XzsqzyKaDxW+DERTXeriZ
-AWjBe000xllVPEvZMYhcxDdgNvbbxgMLMJtVvICxKW50F7w9wRY=
-=Osjb
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7EBEUACgkQ3SOs138+
+s6GXww/8C5zoI1u4Lh6LK6fp1jeHnAkYeC+2cxleVMjjcxcuXuAmBVpWXuKemeDy
+XdSeO3FqXAQgfa+vY9FwkqFGbEHXIFfHSVQkQdHR8AtrAc4pGx81YIFiBTPxudFW
+hikeUdd72nvtVVDJvB5UjNTXtm9Rgn46bKAB6tg8DZ+DeZ5C2YFeiPH2isquWhgn
+OaUwU7Ycwovq2g6J4Na8RYdY5CbRdaS1O0jQ1RILYidbpVREQ67IaYDY+FVAamDZ
+GCgR+jJdiDERSQHnZ1mTkVa0dMBEkpS0+cGAFcfrScJWHYUPf4+C8bQJWOBUV1P4
+CfhIbAmyyObBLDpO6Jc9eWX7UIe2YHR1Ej9gM652I7NZHZBmJGMYyclLSoTj3acW
+9hFarojsGlg3s2Ibz4i8qL5dX+DWer8kvzBE/yv0N9k/79xWraKTtsr4QY+znuR8
+RUaSP1/sJUiDYjJ4P5Bs0lebNggu33+b0KjkXf2iotpnxQZSn90mT7FYHyi9O/oY
+jlBonjGOx5svBj9IEkoIsGUdC4G0dn6CaRq8t2gT3sNfTpa5U/By7MdLyVj+roK9
+rUg1aTogGrr2zahmMKgkwjtKnZy9DiSguj+hZ63i0BzNzuCQh/O46PLHAJjdokTh
+XoG9q8cVfbVFLWhP+ZbF9F4yHAL6NbnTpgX8UqM5D3mEqJy/EWg=
+=Knpt
 -----END PGP SIGNATURE-----
 
---dDRMvlgZJXvWKvBx--
+--yEPQxsgoJgBvi8ip--
