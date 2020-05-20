@@ -1,125 +1,110 @@
-From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [TEGRA194_CPUFREQ Patch 1/3] firmware: tegra: adding function to
- get BPMP data
-Date: Wed, 20 May 2020 08:43:03 -0600
-Message-ID: <CAL_Jsq+rMYAZ=ub0U7qdHSsWgbQugodhvigFCxrFm49HwrCmAQ@mail.gmail.com>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <20191203174229.GA1721849@ulmo> <9404232d-84ce-a117-89dd-f2d8de80993e@kapsi.fi>
- <20191204091703.d32to5omdm3eynon@vireshk-i7> <20191204093339.GA2784830@ulmo>
- <20191204095138.rrul5vxnkprfwmku@vireshk-i7> <20200407100520.GA1720957@ulmo>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] media: staging: tegra-vde: fix runtime pm imbalance on
+ error
+Date: Wed, 20 May 2020 18:02:30 +0300
+Message-ID: <20200520150230.GC30374@kadam>
+References: <20200520095148.10995-1-dinghao.liu@zju.edu.cn>
+ <2b5d64f5-825f-c081-5d03-02655c2d9491@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200407100520.GA1720957@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:THERMAL" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2b5d64f5-825f-c081-5d03-02655c2d9491@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Dinghao Liu <dinghao.liu@zju.edu.cn>, kjlu@umn.edu, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 7, 2020 at 4:05 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> On Wed, Dec 04, 2019 at 03:21:38PM +0530, Viresh Kumar wrote:
-> > On 04-12-19, 10:33, Thierry Reding wrote:
-> > > Yeah, the code that registers this device is in drivers/base/cpu.c in
-> > > register_cpu(). It even retrieves the device tree node for the CPU from
-> > > device tree and stores it in cpu->dev.of_node, so we should be able to
-> > > just pass &cpu->dev to tegra_bpmp_get() in order to retrieve a reference
-> > > to the BPMP.
-> > >
-> > > That said, I'm wondering if perhaps we could just add a compatible
-> > > string to the /cpus node for cases like this where we don't have an
-> > > actual device representing the CPU complex. There are a number of CPU
-> > > frequency drivers that register dummy devices just so that they have
-> > > something to bind a driver to.
-> > >
-> > > If we allow the /cpus node to represent the CPU complex (if no other
-> > > "device" does that yet), we can add a compatible string and have the
-> > > cpufreq driver match on that.
-> > >
-> > > Of course this would be slightly difficult to retrofit into existing
-> > > drivers because they'd need to remain backwards compatible with existing
-> > > device trees. But it would allow future drivers to do this a little more
-> > > elegantly. For some SoCs this may not matter, but especially once you
-> > > start depending on additional resources this would come in handy.
-> > >
-> > > Adding Rob and the device tree mailing list for feedback on this idea.
-> >
-> > Took some time to find this thread, but something around this was
-> > suggested by Rafael earlier.
-> >
-> > https://lore.kernel.org/lkml/8139001.Q4eV8YG1Il-sKB8Sp2ER+y1GS7QM15AGw@public.gmane.org/
->
-> I gave this a try and came up with the following:
->
-> --- >8 ---
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> index f4ede86e32b4..e4462f95f0b3 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -1764,6 +1764,9 @@ bpmp_thermal: thermal {
->         };
->
->         cpus {
-> +               compatible = "nvidia,tegra194-ccplex";
-> +               nvidia,bpmp = <&bpmp>;
+On Wed, May 20, 2020 at 01:15:44PM +0300, Dmitry Osipenko wrote:
+> 20.05.2020 12:51, Dinghao Liu пишет:
+> > pm_runtime_get_sync() increments the runtime PM usage counter even
+> > it returns an error code. Thus a pairing decrement is needed on
+> > the error handling path to keep the counter balanced.
+> > 
+> > Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+> > ---
+> >  drivers/staging/media/tegra-vde/vde.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
+> > index d3e63512a765..dd134a3a15c7 100644
+> > --- a/drivers/staging/media/tegra-vde/vde.c
+> > +++ b/drivers/staging/media/tegra-vde/vde.c
+> > @@ -777,7 +777,7 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+> >  
+> >  	ret = pm_runtime_get_sync(dev);
+> >  	if (ret < 0)
+> > -		goto unlock;
+> > +		goto put_runtime_pm;
+> >  
+> >  	/*
+> >  	 * We rely on the VDE registers reset value, otherwise VDE
+> > 
+> 
+> Hello Dinghao,
+> 
+> Thank you for the patch. I sent out a similar patch a week ago [1].
+> 
+> [1]
+> https://patchwork.ozlabs.org/project/linux-tegra/patch/20200514210847.9269-2-digetx@gmail.com/
+> 
+> The pm_runtime_put_noidle() should have the same effect as yours
+> variant, although my variant won't change the last_busy RPM time, which
+> I think is a bit more appropriate behavior.
 
-Is there more than 1 bpmp? If not you don't need this. Just lookup the
-node by compatible.
+I don't think either patch is correct.  The right thing to do is to fix
+__pm_runtime_resume() so it doesn't leak a reference count on error.
 
+The problem is that a lot of functions don't check the return so
+possibly we are relying on that behavior.  We may need to introduce a
+new function which cleans up properly instead of leaking reference
+counts?
 
-> +
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> --- >8 ---
->
-> Now I can do something rougly like this, although I have a more complete
-> patch locally that also gets rid of all the global variables because we
-> now actually have a struct platform_device that we can anchor everything
-> at:
->
-> --- >8 ---
-> static const struct of_device_id tegra194_cpufreq_of_match[] = {
->         { .compatible = "nvidia,tegra194-ccplex", },
->         { /* sentinel */ }
-> };
-> MODULE_DEVICE_TABLE(of, tegra194_cpufreq_of_match);
->
-> static struct platform_driver tegra194_ccplex_driver = {
->         .driver = {
->                 .name = "tegra194-cpufreq",
->                 .of_match_table = tegra194_cpufreq_of_match,
->         },
->         .probe = tegra194_cpufreq_probe,
->         .remove = tegra194_cpufreq_remove,
-> };
-> module_platform_driver(tegra194_ccplex_driver);
-> --- >8 ---
->
-> I don't think that's exactly what Rafael (Cc'ed) had in mind, since the
-> above thread seems to have mostly talked about binding a driver to each
-> individual CPU.
->
-> But this seems a lot better than having to instantiate a device from
-> scratch just so that a driver can bind to it and it allows additional
-> properties to be associated with the CCPLEX device.
+Also it's not documented that pm_runtime_get_sync() returns 1 sometimes
+on success so it leads to a few bugs.
 
-What additional properties? A continual stream of properties added 1
-by 1 would negatively affect my opinion of this.
+drivers/gpu/drm/stm/ltdc.c:             ret = pm_runtime_get_sync(ddev->dev);
+drivers/gpu/drm/stm/ltdc.c-             if (ret) {
+--
+drivers/gpu/drm/stm/ltdc.c:             ret = pm_runtime_get_sync(ddev->dev);
+drivers/gpu/drm/stm/ltdc.c-             if (ret) {
 
-> Rob, any thoughts on this from a device tree point of view? The /cpus
-> bindings don't mention the compatible property, but there doesn't seem
-> to be anything in the bindings that would prohibit its use.
+drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c:  ret = pm_runtime_get_sync(pm->dev);
+drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c-  if (ret)
 
-What happens when you have more than one cpu related driver in
-addition to cpufreq? You may still have to end up creating child
-platform devices and then gained very little.
+drivers/media/platform/ti-vpe/cal.c:    ret = pm_runtime_get_sync(&pdev->dev);
+drivers/media/platform/ti-vpe/cal.c-    if (ret)
 
-You could solve this without DT changes. You can bind on node names.
-The driver probe can then check the parent compatible and return if
-not matching. I'm not sure if you could get module auto loading to
-work in that case. It would have to be based on the root compatible
-(rather than the driver match table) and be able to load multiple
-matching modules.
+drivers/mfd/arizona-core.c:                     ret = pm_runtime_get_sync(arizona->dev);
+drivers/mfd/arizona-core.c-                     if (ret != 0)
 
-Rob
+drivers/remoteproc/qcom_q6v5_adsp.c:    ret = pm_runtime_get_sync(adsp->dev);
+drivers/remoteproc/qcom_q6v5_adsp.c-    if (ret)
+
+drivers/spi/spi-img-spfi.c:     ret = pm_runtime_get_sync(dev);
+drivers/spi/spi-img-spfi.c-     if (ret)
+
+drivers/usb/dwc3/dwc3-pci.c:    ret = pm_runtime_get_sync(&dwc3->dev);
+drivers/usb/dwc3/dwc3-pci.c-    if (ret)
+
+drivers/watchdog/rti_wdt.c:     ret = pm_runtime_get_sync(dev);
+drivers/watchdog/rti_wdt.c-     if (ret) {
+
+regards,
+dan carpenter
+
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index 99c7da112c95..e280991a977d 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1082,6 +1082,9 @@ int __pm_runtime_resume(struct device *dev, int rpmflags)
+ 	retval = rpm_resume(dev, rpmflags);
+ 	spin_unlock_irqrestore(&dev->power.lock, flags);
+ 
++	if (retval < 0 && rpmflags & RPM_GET_PUT)
++		atomic_dec(&dev->power.usage_count);
++
+ 	return retval;
+ }
+ EXPORT_SYMBOL_GPL(__pm_runtime_resume);
