@@ -1,238 +1,71 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v1] sdhci: tegra: Remove warnings about missing
- device-tree properties
-Date: Wed, 20 May 2020 13:26:53 +0200
-Message-ID: <CAPDyKFqdeGyQpXpM+xynd_rWbi0S6hCeQS1Dyiy6Hd2E_yfHpg@mail.gmail.com>
-References: <20200516154314.14769-1-digetx@gmail.com> <CAPDyKFo_Xp-zipqE26iMv4CFwUoMCQZy3Zr63Cp=uzePgWX7BA@mail.gmail.com>
- <b634e7a5-9a30-3bd1-126d-be62e4dd73e1@gmail.com> <20200519162444.GD2113674@ulmo>
- <b4eb368e-adc2-7b77-3ae9-fefdcfddaf3d@gmail.com> <11c93dac-f5ba-2193-6f44-63af27fdce09@nvidia.com>
- <aed72c87-0e16-6dea-a4e2-7fc6a97cd313@nvidia.com> <c7469c16-f6f1-f9c0-566f-3b1d3774f130@nvidia.com>
- <c712de1d-cfa4-2746-ec6b-54f318aeaac2@nvidia.com> <d2c71267-e696-c459-fbd6-dbb5fd312ed3@gmail.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [GIT PULL] i2c: tegra: Changes for v5.8-rc1
+Date: Wed, 20 May 2020 15:40:19 +0200
+Message-ID: <20200520134019.GD5759@ninjato>
+References: <20200515143924.1579055-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wLAMOaPNJ0fu1fTG"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d2c71267-e696-c459-fbd6-dbb5fd312ed3-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200515143924.1579055-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 20 May 2020 at 04:00, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> 19.05.2020 23:44, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >
-> > On 5/19/20 12:07 PM, Sowjanya Komatineni wrote:
-> >>
-> >> On 5/19/20 11:41 AM, Sowjanya Komatineni wrote:
-> >>>
-> >>> On 5/19/20 11:34 AM, Sowjanya Komatineni wrote:
-> >>>>
-> >>>> On 5/19/20 9:33 AM, Dmitry Osipenko wrote:
-> >>>>> 19.05.2020 19:24, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>>>> On Tue, May 19, 2020 at 05:05:27PM +0300, Dmitry Osipenko wrote:
-> >>>>>>> 19.05.2020 10:28, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>>>>>> On Sat, 16 May 2020 at 17:44, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >>>>>>>> wrote:
-> >>>>>>>>> Several people asked me about the MMC warnings in the KMSG log =
-and
-> >>>>>>>>> I had to tell to ignore them because these warning are
-> >>>>>>>>> irrelevant to
-> >>>>>>>>> pre-Tegra210 SoCs.
-> >>>>>>>> Why are the warnings irrelevant?
-> >>>>>>> That's what the DT binding doc says [1].
-> >>>>>>>
-> >>>>>>> [1]
-> >>>>>>> https://www.kernel.org/doc/Documentation/devicetree/bindings/mmc/=
-nvidia%2Ctegra20-sdhci.txt
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> Although, looking at the driver's code and TRM docs, it seems
-> >>>>>>> that all
-> >>>>>>> those properties are really irrelevant only to the older Terga20
-> >>>>>>> SoC. So
-> >>>>>>> the binding doc is a bit misleading.
-> >>>>>>>
-> >>>>>>> Nevertheless, the binding explicitly says that the properties are
-> >>>>>>> optional, which is correct.
-> >>>>>> Optional only means that drivers must not fail if these properties
-> >>>>>> aren't found, it doesn't mean that the driver can't warn that they
-> >>>>>> are missing.
-> >>>>>>
-> >>>>>> Quite possibly the only reason why they were made optional is beca=
-use
-> >>>>>> they weren't part of the bindings since the beginning. Anything ad=
-ded
-> >>>>>> to a binding after the first public release has to be optional by
-> >>>>>> definition, otherwise DT ABI wouldn't be stable.
-> >>>>>>
-> >>>>>> I think these warnings were added on purpose, though I also see th=
-at
-> >>>>>> there are only values for these in device tree for Tegra186 and
-> >>>>>> Tegra194
-> >>>>>> but not Tegra210 where these should also be necessary.
-> >>>>
-> >>>> dt binding doc we have is common for MMC, SD and SDIO of all Tegras.
-> >>>> Its not mandatory to have both 3v3 and 1v8 in device tree as based
-> >>>> on signal mode.
-> >>>>
-> >>>> As these driver strengths are SoC specific, they are part of Tegra
-> >>>> SoC specific device tree where same values will be applicable to all
-> >>>> Tegra SoC specific platforms.
-> >>>>
-> >>>> Based on interface usage on platform, we use one or both of them
-> >>>> like sdcard supports dual voltage and we use both 3V3 and 1V8 but if
-> >>>> same interface is used for WIFI SD we use 1V8 only.
-> >>>>
-> >>>> So made these dt properties as optional.
-> >>>>
-> >>>> Other reason they are optional is, Tegra210 and prior has drive
-> >>>> strength settings part of apb_misc and Tegra186 and later has driver
-> >>>> strengths part of SDMMC controller. So,
-> >>>>
-> >>>> - Pinctrls "sdmmc-3v3-drv" and "sdmmc-1v8-drv" for driver strengths
-> >>>> are applicable for Tegra210 and prior.
-> >>>> - dt properties pad-autocal-pull-up/down-offset-1v8/3v3-timeout are
-> >>>> for T186 onwards for driver strengths
-> >>>>
-> >>>> Looks like dt binding doc need fix to clearly document these based
-> >>>> on SoC or agree with Yaml we can conditionally specify pinctrl or dt
-> >>>> properties based on SoC dependent.
-> >>>>
-> >>>>
-> >>>>>> Adding Sowjanya who wrote this code. Perhaps she can clarify why t=
-he
-> >>>>>> warnings were added. If these values /should/ be there on a subset=
- of
-> >>>>>> Tegra, then I think we should keep them, or add them again, but
-> >>>>>> perhaps
-> >>>>>> add a better way of identifying when they are necessary and when
-> >>>>>> it is
-> >>>>>> safe to work without them.
-> >>>>>>
-> >>>>>> That said, looking at those checks I wonder if they are perhaps ju=
-st
-> >>>>>> wrong. Or at the very least they seem redundant. It looks to me li=
-ke
-> >>>>>> they can just be:
-> >>>>>>
-> >>>>>>     if (tegra_host->pinctrl_state_XYZ =3D=3D NULL) {
-> >>>>>>         ...
-> >>>>>>     }
-> >>>>>>
-> >>>>>> That !IS_ERR(...) doesn't seem to do anything. But in that case, i=
-t's
-> >>>>>> also obvious why we're warning about them on platforms where these
-> >>>>>> properties don't exist in DT.
-> >>>>
-> >>>> As drive strengths are through dt properties for T186 and later and
-> >>>> thru pinctrl for T210 and prior, driver first checks for dt autocal
-> >>>> timeout pull-up/down properties and if they are not found, it then
-> >>>> checks for presence of pinctrl_state_xyx_drv only when valid
-> >>>> pinctrl_state_xyz is present.
-> >>>>
-> >>>> Driver expects either pinctrl or dt properties and shows warning
-> >>>> when neither of them are present as its mandatory to use fixed
-> >>>> driver strengths when auto calibration fails.
-> >>>>
-> >>>>     err =3D device_property_read_u32(host->mmc->parent,
-> >>>>             "nvidia,pad-autocal-pull-down-offset-3v3-timeout",
-> >>>>             &autocal->pull_down_3v3_timeout);
-> >>>>     if (err) {
-> >>>>         if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
-> >>>>             (tegra_host->pinctrl_state_3v3_drv =3D=3D NULL))
-> >>>>             pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
-> >>>>                 mmc_hostname(host->mmc));
-> >>>>         autocal->pull_down_3v3_timeout =3D 0;
-> >>>>     }
-> >>>>
-> >>>>>>
-> >>>>>> So I think we either need to add those values where appropriate so
-> >>>>>> that
-> >>>>>> the warning doesn't show, or we need to narrow down where they are
-> >>>>>> really needed and add a corresponding condition.
-> >>>>>>
-> >>>>>> But again, perhaps Sowjanya can help clarify if these really are o=
-nly
-> >>>>>> needed on Tegra210 and later or if these also apply to older chips=
-.
-> >>>>> Either way will be cleaner to convert the DT binding to YAML rather
-> >>>>> than
-> >>>>> clutter the driver, IMO.
-> >>>>>
-> >>>>
-> >>>>
-> >>>>
-> >>> Auto calibration is present from Tegra30 onward and looking into
-> >>> change where autocalibration was added to sdhci driver somehow it was
-> >>> enabled only for T30/T210/T186/T194.
-> >>>
-> >>> tegra_sdhci_parse_pad_autocal_dt() was added when auto-calibration
-> >>> was added to driver and I see this dt parse is being done
-> >>> irrespective of NVQUIRK_HAS_PADCALIB quirk so even on platforms
-> >>> without auto cal enabled in driver, these messages shows up.
-> >>>
-> >>> This should be fixed in driver to allow
-> >>> tegra_sdhci_parse_pad_autocal_dt() only when NVQUIRK_HAS_PADCALIB is
-> >>> set to avoid dt parsing to happen on platforms that don't have auto
-> >>> cal enabled.
-> >>
-> >> Warning on missing drive strengths when auto cal is enabled should be
-> >> present as we should switch to fixed recommended drive strengths when
-> >> auto cal fails.
-> >>
-> >> So probably proper fix should be
-> >>
-> >> - allow tegra_sdhci_parse_pad_autocal_dt() only when
-> >> NVQUIRK_HAS_PADCALIB is set
-> >>
-> >> - current driver sets NVQUIRK_HAS_PADCALIB for T30 as well so need to
-> >> add pinctrls "sdmmc-3v3-drv" and "sdmmc-1v8-drv" to Tegra30 device tre=
-e.
-> > [Correction] T30 has same drive strengths to use irrespective of signal
-> > voltage and it doesn't have pad control. So for T3- we can update devic=
-e
-> > tree to specify "default" pinctrl with drvup/dn settings.
-> >>
-> >> - Keep warning message of missing auto cal timeouts as its mandatory
-> >> to use fixed recommended driver strengths when auto cal fails.
-> >>
-> > Regarding warnings, I guess simpler and easy fix is to remove warning
-> > message on missing 3v3/1v8 drive strengths as pinctrl/dt properties wer=
-e
-> > already added for T210/186/194 where we need and old device tree don't
-> > have them but the case where auto cal can fail is very rare.
-> >
-> > Otherwise should update driver to allow
-> > tegra_sdhci_parse_pad_autocal_dt() only when NVQUIRK_HAS_PADCALIB is se=
-t
-> > and also within tegra_sdhci_parse_pad_autocal_dt() show warning of
-> > missing 3v3/1v8 settings only when NVQUIRK_NEEDS_PAD_CONTROL is set.
-> >
-> > Thierry, please suggest if you prefer to removing warnings or fix drive=
-r
-> > to show warning based on PADCALIB and PAD_CONTROL quirks.
->
-> The SDIO PINCTRL drive-strengths are usually a part of the board's
-> default PINCTRL state, which is either preset by bootloader or by
-> PINCTRL driver early at a boot time.
->
-> The SDIO drive-strengths values should be board-specific and not
-> SoC-specific because they should depend on the electrical properties of
-> the board, IIUC.
->
-> If the SDIO PINCTRL states are mandatory for the SDHCI nodes in the
-> device-trees, then the DT binding is wrong since it says that all
-> properties are optional. But I think that the current binding is okay,
-> since today SDHCI PINCTRL drive-strengths are specified implicitly in
-> the device-trees, and thus, there is no real need to emit the noisy
-> warnings in this case.
 
-For now I will keep $subject patch applied, but please tell me if I
-should drop it so we can start over.
+--wLAMOaPNJ0fu1fTG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In any case, I would appreciate it if someone could have a stab at
-converting sdhci and tegra DT bindings to yaml.
+On Fri, May 15, 2020 at 04:39:24PM +0200, Thierry Reding wrote:
+> Hi,
+>=20
+> The following changes since commit 0e698dfa282211e414076f9dc7e83c1c288314=
+fd:
+>=20
+>   Linux 5.7-rc4 (2020-05-03 14:56:04 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
+5.8-i2c
+>=20
+> for you to fetch changes up to c73178b93754edd8449dccd3faf05baafd4d3f0e:
+>=20
+>   i2c: tegra: Add support for the VI I2C on Tegra210 (2020-05-12 22:47:52=
+ +0200)
+>=20
+> Thanks,
+> Thierry
+>=20
 
-Kind regards
-Uffe
+Thanks! I pulled it into my for-next branch to get some more testing of
+all this. I can merge updated branches if that should be needed, of
+course. I see there are still some on-going questions running but no
+real show stopper AFAICS.
+
+
+--wLAMOaPNJ0fu1fTG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl7FM0MACgkQFA3kzBSg
+KbbKhw/+McTqb5AJW+ELMZ2xetjclfwgsGpmm+xLQoKIlu+nfGiGsijLQnl554s2
+MKZo7xmtSbMAgYBP6zFeAPRxtZf2jOi9aNrPH0QSa/2pKEiFfbmjYoUBI9fAQN0u
+ur8t/Bswn8j2NyV1/ugaRfTuGk2anrtF2jnjGIXhSPZ/aRyo99s2UYh93aM39HfN
+r8bIY3ziLyrBuQAIPvYcYCa0LQLnKhHVYsUeJ30NsKhxQTWdct3MqmVJgwarBf2L
+cKHnDU0T8LNGlOXROpviwyZPP1805PicwsT/YuZvAB/tQkMT2ZB8+IZozdQFj4cq
+4sGn6Uolt93jEJru0JDTbCz/Y6G1PLl9WaRNdpngyfRMkNZzap3eMv6rkjOixr+o
+BOjuvD49h3bvfJlyIRCuNNyjtTvIpDKZeQdfBCfUk/XFd5YyCInGSbgslFg+75lk
+Fij+cROTqB7/DgYuR2a0zR4zDi28rJPMtrTjNHulyKScsruPsI5kXT1sitwJ+ZID
+0NxSbGOn0qJN9uvzU4nhzQTNO3jIVtqb8H+PFaMve1pAZciVpD9qC1LlmtGkqKHR
+AEsPjVgKZ8xTRt/+wB2SYZxV/OsKUnk8K1pKL/298S0UL5UweImY11QaltOCjrbu
+Li5zlmZX1eaSyZOzfM4swOUoKEPDPyApmV6Hiuhln8hWbwP5wsg=
+=fPzw
+-----END PGP SIGNATURE-----
+
+--wLAMOaPNJ0fu1fTG--
