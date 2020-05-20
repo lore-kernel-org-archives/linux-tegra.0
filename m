@@ -1,71 +1,93 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [GIT PULL] i2c: tegra: Changes for v5.8-rc1
-Date: Wed, 20 May 2020 15:40:19 +0200
-Message-ID: <20200520134019.GD5759@ninjato>
-References: <20200515143924.1579055-1-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [GIT PULL 11/11] arm64: tegra: Device tree changes for v5.8-rc1
+Date: Wed, 20 May 2020 15:43:35 +0200
+Message-ID: <20200520134335.GA2147362@ulmo>
+References: <20200515145311.1580134-1-thierry.reding@gmail.com>
+ <20200515145311.1580134-12-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wLAMOaPNJ0fu1fTG"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200515143924.1579055-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200515145311.1580134-12-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---wLAMOaPNJ0fu1fTG
+--45Z9DzgjV8m4Oswq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 15, 2020 at 04:39:24PM +0200, Thierry Reding wrote:
-> Hi,
+On Fri, May 15, 2020 at 04:53:11PM +0200, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
 >=20
-> The following changes since commit 0e698dfa282211e414076f9dc7e83c1c288314=
-fd:
+> The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f31=
+36:
 >=20
->   Linux 5.7-rc4 (2020-05-03 14:56:04 -0700)
+>   Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
-5.8-i2c
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
+a-for-5.8-arm64-dt
 >=20
-> for you to fetch changes up to c73178b93754edd8449dccd3faf05baafd4d3f0e:
+> for you to fetch changes up to 74265112c60be0209817c682ba68661c05da1d38:
 >=20
->   i2c: tegra: Add support for the VI I2C on Tegra210 (2020-05-12 22:47:52=
- +0200)
->=20
+>   arm64: tegra: Enable VI I2C on Jetson Nano (2020-05-15 16:28:58 +0200)
+
+Hi Arnd, Olof,
+
+Actually, can you hold off on merging this for a little bit? I'd like to
+send out a v2 of this because I noticed that...
+
 > Thanks,
 > Thierry
 >=20
+> ----------------------------------------------------------------
+> arm64: tegra: Device tree changes for v5.8-rc1
+>=20
+> This contains a couple of fixes for minor issues, enables XUDC support
+> on Tegra194, and enables EMC frequency scaling and video capture on
+> Tegra210.
+>=20
+> ----------------------------------------------------------------
+> Jon Hunter (2):
+>       arm64: tegra: Fix ethernet phy-mode for Jetson Xavier
+>       arm64: tegra: Allow the PMIC RTC to wakeup Jetson Xavier
+>=20
+> Joseph Lo (1):
+>       arm64: tegra: Add external memory controller node for Tegra210
 
-Thanks! I pulled it into my for-next branch to get some more testing of
-all this. I can merge updated branches if that should be needed, of
-course. I see there are still some on-going questions running but no
-real show stopper AFAICS.
+=2E.. this patch contains some leftover changelog notes that I forgot to
+remove.
 
+There's also one fix missing from this that I was meaning to apply for
+v5.8 which will enable suspend/resume on Tegra186.
 
---wLAMOaPNJ0fu1fTG
+Thanks,
+Thierry
+
+--45Z9DzgjV8m4Oswq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl7FM0MACgkQFA3kzBSg
-KbbKhw/+McTqb5AJW+ELMZ2xetjclfwgsGpmm+xLQoKIlu+nfGiGsijLQnl554s2
-MKZo7xmtSbMAgYBP6zFeAPRxtZf2jOi9aNrPH0QSa/2pKEiFfbmjYoUBI9fAQN0u
-ur8t/Bswn8j2NyV1/ugaRfTuGk2anrtF2jnjGIXhSPZ/aRyo99s2UYh93aM39HfN
-r8bIY3ziLyrBuQAIPvYcYCa0LQLnKhHVYsUeJ30NsKhxQTWdct3MqmVJgwarBf2L
-cKHnDU0T8LNGlOXROpviwyZPP1805PicwsT/YuZvAB/tQkMT2ZB8+IZozdQFj4cq
-4sGn6Uolt93jEJru0JDTbCz/Y6G1PLl9WaRNdpngyfRMkNZzap3eMv6rkjOixr+o
-BOjuvD49h3bvfJlyIRCuNNyjtTvIpDKZeQdfBCfUk/XFd5YyCInGSbgslFg+75lk
-Fij+cROTqB7/DgYuR2a0zR4zDi28rJPMtrTjNHulyKScsruPsI5kXT1sitwJ+ZID
-0NxSbGOn0qJN9uvzU4nhzQTNO3jIVtqb8H+PFaMve1pAZciVpD9qC1LlmtGkqKHR
-AEsPjVgKZ8xTRt/+wB2SYZxV/OsKUnk8K1pKL/298S0UL5UweImY11QaltOCjrbu
-Li5zlmZX1eaSyZOzfM4swOUoKEPDPyApmV6Hiuhln8hWbwP5wsg=
-=fPzw
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7FNAMACgkQ3SOs138+
+s6HMZA/+MDhiKjzKLTBXaFCViGhljWnkYbbcdtQ9879RRMEWQr2nvsaDt0gA5cgK
+iPfID6QX2ozJdm3frwXd+fetK9Q7bre/WBR6/mc8YvZ5wywG/AFGbp9u0Wfy5+KG
+6yLJHH56oyxZfl+eiKOkjo95ighOEpN5F2u5UCwDJDxMRSnzk5XjVRIJ+rzQUpMh
+Og5v7iW8HkIf+QGXOFKfj2gXOA4WQODFj+HEQ0NU84vQ0DQMEtcfuR+/zcd0NN17
+qSGwwXqSpOxEcrxo6xL3qmAZR8AQCW/ol1X3tSsFhIkIo/8HMiBcs6Ye+bLdjj6i
+G+HBcW8cOPYep8tpWDZEcYYQot1i9GQ+MSu5Bcf/2Lp3YIXlvUEUG/IGUpnrcUr+
+LDN9bPl2QbUCcBOomlH+JbwoFWzHbqY3vmn0SxokzSiOISzcEPAA1w3BdrNo/9Q8
+p/oPMb5sp/8WaS8VKOrDOSjFAOhT7GIee22DavViP5rOz51GhLdU+QR8JREkYEbU
+AJvNeTtq7bHxp1N4np6T19ecteoYi7GQd0PEp8r/v3lq5IifAV78aqrTN5zVSyfM
+J01Fbe9QylyVAltrfcjG4inIJKMaI6SvVObP9k98oeAG0/eR47yP1ClkA2tCgzBG
+pia81SqLe8vTmEqVjyH042JwIYjZSSpWFO1eWYtH7PaODZnCD1A=
+=AGae
 -----END PGP SIGNATURE-----
 
---wLAMOaPNJ0fu1fTG--
+--45Z9DzgjV8m4Oswq--
