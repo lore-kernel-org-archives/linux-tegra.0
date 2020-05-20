@@ -1,54 +1,215 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] arm64: tegra: Make the RTC a wakeup source on Jetson Nano and TX1
-Date: Wed, 20 May 2020 16:13:18 +0100
-Message-ID: <20200520151318.15493-2-jonathanh@nvidia.com>
-References: <20200520151318.15493-1-jonathanh@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [TEGRA194_CPUFREQ Patch 1/3] firmware: tegra: adding function to
+ get BPMP data
+Date: Wed, 20 May 2020 17:38:54 +0200
+Message-ID: <20200520153854.GA2154237@ulmo>
+References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
+ <20191203174229.GA1721849@ulmo>
+ <9404232d-84ce-a117-89dd-f2d8de80993e@kapsi.fi>
+ <20191204091703.d32to5omdm3eynon@vireshk-i7>
+ <20191204093339.GA2784830@ulmo>
+ <20191204095138.rrul5vxnkprfwmku@vireshk-i7>
+ <20200407100520.GA1720957@ulmo>
+ <CAL_Jsq+rMYAZ=ub0U7qdHSsWgbQugodhvigFCxrFm49HwrCmAQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200520151318.15493-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+rMYAZ=ub0U7qdHSsWgbQugodhvigFCxrFm49HwrCmAQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:THERMAL" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The RTC found on the MAX77620 PMIC can be used as a wakeup source on
-Jetson Nano and TX1, which is useful to wake the system from suspend
-at a given time.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     | 3 ++-
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index f87d2437d11c..cc6ed45a2b48 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -38,7 +38,8 @@
- 		pmic: pmic@3c {
- 			compatible = "maxim,max77620";
- 			reg = <0x3c>;
--			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-parent = <&tegra_pmc>;
-+			interrupts = <51 IRQ_TYPE_LEVEL_LOW>;
- 
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index 374ce58b2b38..9bc52fdb393c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -149,7 +149,8 @@
- 		pmic: pmic@3c {
- 			compatible = "maxim,max77620";
- 			reg = <0x3c>;
--			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-parent = <&tegra_pmc>;
-+			interrupts = <51 IRQ_TYPE_LEVEL_LOW>;
- 
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--- 
-2.17.1
+On Wed, May 20, 2020 at 08:43:03AM -0600, Rob Herring wrote:
+> On Tue, Apr 7, 2020 at 4:05 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> =
+wrote:
+> >
+> > On Wed, Dec 04, 2019 at 03:21:38PM +0530, Viresh Kumar wrote:
+> > > On 04-12-19, 10:33, Thierry Reding wrote:
+> > > > Yeah, the code that registers this device is in drivers/base/cpu.c =
+in
+> > > > register_cpu(). It even retrieves the device tree node for the CPU =
+=66rom
+> > > > device tree and stores it in cpu->dev.of_node, so we should be able=
+ to
+> > > > just pass &cpu->dev to tegra_bpmp_get() in order to retrieve a refe=
+rence
+> > > > to the BPMP.
+> > > >
+> > > > That said, I'm wondering if perhaps we could just add a compatible
+> > > > string to the /cpus node for cases like this where we don't have an
+> > > > actual device representing the CPU complex. There are a number of C=
+PU
+> > > > frequency drivers that register dummy devices just so that they have
+> > > > something to bind a driver to.
+> > > >
+> > > > If we allow the /cpus node to represent the CPU complex (if no other
+> > > > "device" does that yet), we can add a compatible string and have the
+> > > > cpufreq driver match on that.
+> > > >
+> > > > Of course this would be slightly difficult to retrofit into existing
+> > > > drivers because they'd need to remain backwards compatible with exi=
+sting
+> > > > device trees. But it would allow future drivers to do this a little=
+ more
+> > > > elegantly. For some SoCs this may not matter, but especially once y=
+ou
+> > > > start depending on additional resources this would come in handy.
+> > > >
+> > > > Adding Rob and the device tree mailing list for feedback on this id=
+ea.
+> > >
+> > > Took some time to find this thread, but something around this was
+> > > suggested by Rafael earlier.
+> > >
+> > > https://lore.kernel.org/lkml/8139001.Q4eV8YG1Il-sKB8Sp2ER+y1GS7QM15AGw@public.gmane.org/
+> >
+> > I gave this a try and came up with the following:
+> >
+> > --- >8 ---
+> > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot=
+/dts/nvidia/tegra194.dtsi
+> > index f4ede86e32b4..e4462f95f0b3 100644
+> > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> > @@ -1764,6 +1764,9 @@ bpmp_thermal: thermal {
+> >         };
+> >
+> >         cpus {
+> > +               compatible =3D "nvidia,tegra194-ccplex";
+> > +               nvidia,bpmp =3D <&bpmp>;
+>=20
+> Is there more than 1 bpmp? If not you don't need this. Just lookup the
+> node by compatible.
+
+There no SoCs currently than need to differentiate between multiple
+BPMPs, so yes, it would be possible to look up the node by compatible.
+But we also used to assume that PCs would only ever come with a single
+GPU or audio card and that's always caused a lot of work to clean up
+when it turned out to no longer be true.
+
+Also, we already have a couple of devices referencing the BPMP by
+phandle like this, so having this in a CCPLEX node would keep things
+consistent.
+
+One of the reasons why we initially did it this way was also so that we
+could make the dependencies explicit within device tree. If we look up
+by compatible string, then the driver is the only one with the knowledge
+about where to get at it. If we have the explicit reference we at least
+have a chance of determining the dependency by just looking at the
+device tree.
+
+> > +
+> >                 #address-cells =3D <1>;
+> >                 #size-cells =3D <0>;
+> >
+> > --- >8 ---
+> >
+> > Now I can do something rougly like this, although I have a more complete
+> > patch locally that also gets rid of all the global variables because we
+> > now actually have a struct platform_device that we can anchor everything
+> > at:
+> >
+> > --- >8 ---
+> > static const struct of_device_id tegra194_cpufreq_of_match[] =3D {
+> >         { .compatible =3D "nvidia,tegra194-ccplex", },
+> >         { /* sentinel */ }
+> > };
+> > MODULE_DEVICE_TABLE(of, tegra194_cpufreq_of_match);
+> >
+> > static struct platform_driver tegra194_ccplex_driver =3D {
+> >         .driver =3D {
+> >                 .name =3D "tegra194-cpufreq",
+> >                 .of_match_table =3D tegra194_cpufreq_of_match,
+> >         },
+> >         .probe =3D tegra194_cpufreq_probe,
+> >         .remove =3D tegra194_cpufreq_remove,
+> > };
+> > module_platform_driver(tegra194_ccplex_driver);
+> > --- >8 ---
+> >
+> > I don't think that's exactly what Rafael (Cc'ed) had in mind, since the
+> > above thread seems to have mostly talked about binding a driver to each
+> > individual CPU.
+> >
+> > But this seems a lot better than having to instantiate a device from
+> > scratch just so that a driver can bind to it and it allows additional
+> > properties to be associated with the CCPLEX device.
+>=20
+> What additional properties? A continual stream of properties added 1
+> by 1 would negatively affect my opinion of this.
+
+I don't expect there would be many. I think there's an earlier
+generation of Tegra that requires a regulator and I can imagine that's
+pretty common. But other than that I would expect this to be a fairly
+narrow set of properties.
+
+> > Rob, any thoughts on this from a device tree point of view? The /cpus
+> > bindings don't mention the compatible property, but there doesn't seem
+> > to be anything in the bindings that would prohibit its use.
+>=20
+> What happens when you have more than one cpu related driver in
+> addition to cpufreq? You may still have to end up creating child
+> platform devices and then gained very little.
+
+That's only if you absolutely want to stick with the "one driver per
+subsystem" model. I personally think that's completely obsolete these
+days. If you have a CPU complex device that can do both CPU frequency
+scaling and put the CPU into idle states, for example, then there is
+really no reason to artificially split that into two separate drivers
+just to match the subsystems that we have.
+
+Most subsystems that I've come across work just fine if a single driver
+registers with multiple subsystems.
+
+I also know that some people like it better when things are nicely split
+up into multiple drivers. But I really don't see how that simplifies
+things. In fact in my opinion that makes things only more complicated
+because you have additional boilerplate and then you need to be extra
+careful about how these different drivers are ordered, and you need to
+take extra precautions when sharing things like clocks and register
+regions.
+
+> You could solve this without DT changes. You can bind on node names.
+> The driver probe can then check the parent compatible and return if
+> not matching. I'm not sure if you could get module auto loading to
+> work in that case. It would have to be based on the root compatible
+> (rather than the driver match table) and be able to load multiple
+> matching modules.
+
+That sounds like it would get very complicated for something this
+simple. Having a compatible string in /cpus seemed like the most logical
+option because it would basically just work out of the box and the same
+way we're used to from other devices.
+
+Thierry
+
+--vtzGhvizbBRQ85DL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7FTwoACgkQ3SOs138+
+s6HtgRAAoeUk0qf8Bct3SQ/jQMddCSneyOM5x6zDbE8hKCketUK0TqO/qvpnY8/0
+Z6ADqowq4mqkubUF1BcpiMl9aCiitULrsL2B6I8Nk+bUPNFKFA/m0EFdQgK3ASKo
+yi0X+tzyi/jtlSrrjydYBtDoTenpcA2oEfjFADHJbeSCu4FAEjPHXRbAfyL/FzTB
+q2gqkpe+1Ghsns9S9bS3Mu2vh181EiqSkTSXy2LX63SQqWxkqcVlxBIxG6C/wvYe
+T0CAjytkCVHlTyIeI9cO3Yp8NKMBfP0TAnBA5q1FEdBhwEEmvBpKTe32BOZKxOcY
+Mhl5zII7+KfOLyCd1EUF0PJgTKlNlNiX3k4OwbChBucSkN2hLUEvh16aqSsawCZf
+kDed64TIPZRLqJL/83xoo1/o0lVDJ5OkqAgKgrX6tcM98RdwXb1rIsiweFoWzZHh
+ArNOlzOCxnXtzpTjo5Dw+IqBnzbL0dCiFZRcuqkFKdtYXh2RJAZVdsZfOCJdkKfF
+/HEy8rmfsC7NhWsJy5Ta3BDdlpCWzkcQGzib2vFMUWIjrjjHG4qMN/1PixQTpLfR
+L4/CP3w7iZyJS211bZPFME1Wkdi6KNk3HiOVJO9TrgV5jEvcYIlwsksxhiO1vepu
+tJ2nUmvo8NaZB3sTDFzs6xS6e0L4dMQbtphQxYpZDZkv0Oz2XWg=
+=FxLW
+-----END PGP SIGNATURE-----
+
+--vtzGhvizbBRQ85DL--
