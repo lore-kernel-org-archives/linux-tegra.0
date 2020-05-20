@@ -1,215 +1,255 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [TEGRA194_CPUFREQ Patch 1/3] firmware: tegra: adding function to
- get BPMP data
-Date: Wed, 20 May 2020 17:38:54 +0200
-Message-ID: <20200520153854.GA2154237@ulmo>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <20191203174229.GA1721849@ulmo>
- <9404232d-84ce-a117-89dd-f2d8de80993e@kapsi.fi>
- <20191204091703.d32to5omdm3eynon@vireshk-i7>
- <20191204093339.GA2784830@ulmo>
- <20191204095138.rrul5vxnkprfwmku@vireshk-i7>
- <20200407100520.GA1720957@ulmo>
- <CAL_Jsq+rMYAZ=ub0U7qdHSsWgbQugodhvigFCxrFm49HwrCmAQ@mail.gmail.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v1] sdhci: tegra: Remove warnings about missing
+ device-tree properties
+Date: Wed, 20 May 2020 09:09:33 -0700
+Message-ID: <96f917a3-d822-1c36-d088-3e4a322c1761@nvidia.com>
+References: <20200516154314.14769-1-digetx@gmail.com>
+ <CAPDyKFo_Xp-zipqE26iMv4CFwUoMCQZy3Zr63Cp=uzePgWX7BA@mail.gmail.com>
+ <b634e7a5-9a30-3bd1-126d-be62e4dd73e1@gmail.com>
+ <20200519162444.GD2113674@ulmo>
+ <b4eb368e-adc2-7b77-3ae9-fefdcfddaf3d@gmail.com>
+ <11c93dac-f5ba-2193-6f44-63af27fdce09@nvidia.com>
+ <aed72c87-0e16-6dea-a4e2-7fc6a97cd313@nvidia.com>
+ <c7469c16-f6f1-f9c0-566f-3b1d3774f130@nvidia.com>
+ <c712de1d-cfa4-2746-ec6b-54f318aeaac2@nvidia.com>
+ <d2c71267-e696-c459-fbd6-dbb5fd312ed3@gmail.com>
+ <CAPDyKFqdeGyQpXpM+xynd_rWbi0S6hCeQS1Dyiy6Hd2E_yfHpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+rMYAZ=ub0U7qdHSsWgbQugodhvigFCxrFm49HwrCmAQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CAPDyKFqdeGyQpXpM+xynd_rWbi0S6hCeQS1Dyiy6Hd2E_yfHpg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:THERMAL" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 5/20/20 4:26 AM, Ulf Hansson wrote:
+> On Wed, 20 May 2020 at 04:00, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> 19.05.2020 23:44, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> On 5/19/20 12:07 PM, Sowjanya Komatineni wrote:
+>>>> On 5/19/20 11:41 AM, Sowjanya Komatineni wrote:
+>>>>> On 5/19/20 11:34 AM, Sowjanya Komatineni wrote:
+>>>>>> On 5/19/20 9:33 AM, Dmitry Osipenko wrote:
+>>>>>>> 19.05.2020 19:24, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>>> On Tue, May 19, 2020 at 05:05:27PM +0300, Dmitry Osipenko wrote:
+>>>>>>>>> 19.05.2020 10:28, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>>> On Sat, 16 May 2020 at 17:44, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>>>>>>> wrote:
+>>>>>>>>>>> Several people asked me about the MMC warnings in the KMSG log =
+and
+>>>>>>>>>>> I had to tell to ignore them because these warning are
+>>>>>>>>>>> irrelevant to
+>>>>>>>>>>> pre-Tegra210 SoCs.
+>>>>>>>>>> Why are the warnings irrelevant?
+>>>>>>>>> That's what the DT binding doc says [1].
+>>>>>>>>>
+>>>>>>>>> [1]
+>>>>>>>>> https://www.kernel.org/doc/Documentation/devicetree/bindings/mmc/=
+nvidia%2Ctegra20-sdhci.txt
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Although, looking at the driver's code and TRM docs, it seems
+>>>>>>>>> that all
+>>>>>>>>> those properties are really irrelevant only to the older Terga20
+>>>>>>>>> SoC. So
+>>>>>>>>> the binding doc is a bit misleading.
+>>>>>>>>>
+>>>>>>>>> Nevertheless, the binding explicitly says that the properties are
+>>>>>>>>> optional, which is correct.
+>>>>>>>> Optional only means that drivers must not fail if these properties
+>>>>>>>> aren't found, it doesn't mean that the driver can't warn that they
+>>>>>>>> are missing.
+>>>>>>>>
+>>>>>>>> Quite possibly the only reason why they were made optional is beca=
+use
+>>>>>>>> they weren't part of the bindings since the beginning. Anything ad=
+ded
+>>>>>>>> to a binding after the first public release has to be optional by
+>>>>>>>> definition, otherwise DT ABI wouldn't be stable.
+>>>>>>>>
+>>>>>>>> I think these warnings were added on purpose, though I also see th=
+at
+>>>>>>>> there are only values for these in device tree for Tegra186 and
+>>>>>>>> Tegra194
+>>>>>>>> but not Tegra210 where these should also be necessary.
+>>>>>> dt binding doc we have is common for MMC, SD and SDIO of all Tegras.
+>>>>>> Its not mandatory to have both 3v3 and 1v8 in device tree as based
+>>>>>> on signal mode.
+>>>>>>
+>>>>>> As these driver strengths are SoC specific, they are part of Tegra
+>>>>>> SoC specific device tree where same values will be applicable to all
+>>>>>> Tegra SoC specific platforms.
+>>>>>>
+>>>>>> Based on interface usage on platform, we use one or both of them
+>>>>>> like sdcard supports dual voltage and we use both 3V3 and 1V8 but if
+>>>>>> same interface is used for WIFI SD we use 1V8 only.
+>>>>>>
+>>>>>> So made these dt properties as optional.
+>>>>>>
+>>>>>> Other reason they are optional is, Tegra210 and prior has drive
+>>>>>> strength settings part of apb_misc and Tegra186 and later has driver
+>>>>>> strengths part of SDMMC controller. So,
+>>>>>>
+>>>>>> - Pinctrls "sdmmc-3v3-drv" and "sdmmc-1v8-drv" for driver strengths
+>>>>>> are applicable for Tegra210 and prior.
+>>>>>> - dt properties pad-autocal-pull-up/down-offset-1v8/3v3-timeout are
+>>>>>> for T186 onwards for driver strengths
+>>>>>>
+>>>>>> Looks like dt binding doc need fix to clearly document these based
+>>>>>> on SoC or agree with Yaml we can conditionally specify pinctrl or dt
+>>>>>> properties based on SoC dependent.
+>>>>>>
+>>>>>>
+>>>>>>>> Adding Sowjanya who wrote this code. Perhaps she can clarify why t=
+he
+>>>>>>>> warnings were added. If these values /should/ be there on a subset=
+ of
+>>>>>>>> Tegra, then I think we should keep them, or add them again, but
+>>>>>>>> perhaps
+>>>>>>>> add a better way of identifying when they are necessary and when
+>>>>>>>> it is
+>>>>>>>> safe to work without them.
+>>>>>>>>
+>>>>>>>> That said, looking at those checks I wonder if they are perhaps ju=
+st
+>>>>>>>> wrong. Or at the very least they seem redundant. It looks to me li=
+ke
+>>>>>>>> they can just be:
+>>>>>>>>
+>>>>>>>>      if (tegra_host->pinctrl_state_XYZ =3D=3D NULL) {
+>>>>>>>>          ...
+>>>>>>>>      }
+>>>>>>>>
+>>>>>>>> That !IS_ERR(...) doesn't seem to do anything. But in that case, i=
+t's
+>>>>>>>> also obvious why we're warning about them on platforms where these
+>>>>>>>> properties don't exist in DT.
+>>>>>> As drive strengths are through dt properties for T186 and later and
+>>>>>> thru pinctrl for T210 and prior, driver first checks for dt autocal
+>>>>>> timeout pull-up/down properties and if they are not found, it then
+>>>>>> checks for presence of pinctrl_state_xyx_drv only when valid
+>>>>>> pinctrl_state_xyz is present.
+>>>>>>
+>>>>>> Driver expects either pinctrl or dt properties and shows warning
+>>>>>> when neither of them are present as its mandatory to use fixed
+>>>>>> driver strengths when auto calibration fails.
+>>>>>>
+>>>>>>      err =3D device_property_read_u32(host->mmc->parent,
+>>>>>>              "nvidia,pad-autocal-pull-down-offset-3v3-timeout",
+>>>>>>              &autocal->pull_down_3v3_timeout);
+>>>>>>      if (err) {
+>>>>>>          if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
+>>>>>>              (tegra_host->pinctrl_state_3v3_drv =3D=3D NULL))
+>>>>>>              pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
+>>>>>>                  mmc_hostname(host->mmc));
+>>>>>>          autocal->pull_down_3v3_timeout =3D 0;
+>>>>>>      }
+>>>>>>
+>>>>>>>> So I think we either need to add those values where appropriate so
+>>>>>>>> that
+>>>>>>>> the warning doesn't show, or we need to narrow down where they are
+>>>>>>>> really needed and add a corresponding condition.
+>>>>>>>>
+>>>>>>>> But again, perhaps Sowjanya can help clarify if these really are o=
+nly
+>>>>>>>> needed on Tegra210 and later or if these also apply to older chips=
+.
+>>>>>>> Either way will be cleaner to convert the DT binding to YAML rather
+>>>>>>> than
+>>>>>>> clutter the driver, IMO.
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>>> Auto calibration is present from Tegra30 onward and looking into
+>>>>> change where autocalibration was added to sdhci driver somehow it was
+>>>>> enabled only for T30/T210/T186/T194.
+>>>>>
+>>>>> tegra_sdhci_parse_pad_autocal_dt() was added when auto-calibration
+>>>>> was added to driver and I see this dt parse is being done
+>>>>> irrespective of NVQUIRK_HAS_PADCALIB quirk so even on platforms
+>>>>> without auto cal enabled in driver, these messages shows up.
+>>>>>
+>>>>> This should be fixed in driver to allow
+>>>>> tegra_sdhci_parse_pad_autocal_dt() only when NVQUIRK_HAS_PADCALIB is
+>>>>> set to avoid dt parsing to happen on platforms that don't have auto
+>>>>> cal enabled.
+>>>> Warning on missing drive strengths when auto cal is enabled should be
+>>>> present as we should switch to fixed recommended drive strengths when
+>>>> auto cal fails.
+>>>>
+>>>> So probably proper fix should be
+>>>>
+>>>> - allow tegra_sdhci_parse_pad_autocal_dt() only when
+>>>> NVQUIRK_HAS_PADCALIB is set
+>>>>
+>>>> - current driver sets NVQUIRK_HAS_PADCALIB for T30 as well so need to
+>>>> add pinctrls "sdmmc-3v3-drv" and "sdmmc-1v8-drv" to Tegra30 device tre=
+e.
+>>> [Correction] T30 has same drive strengths to use irrespective of signal
+>>> voltage and it doesn't have pad control. So for T3- we can update devic=
+e
+>>> tree to specify "default" pinctrl with drvup/dn settings.
+>>>> - Keep warning message of missing auto cal timeouts as its mandatory
+>>>> to use fixed recommended driver strengths when auto cal fails.
+>>>>
+>>> Regarding warnings, I guess simpler and easy fix is to remove warning
+>>> message on missing 3v3/1v8 drive strengths as pinctrl/dt properties wer=
+e
+>>> already added for T210/186/194 where we need and old device tree don't
+>>> have them but the case where auto cal can fail is very rare.
+>>>
+>>> Otherwise should update driver to allow
+>>> tegra_sdhci_parse_pad_autocal_dt() only when NVQUIRK_HAS_PADCALIB is se=
+t
+>>> and also within tegra_sdhci_parse_pad_autocal_dt() show warning of
+>>> missing 3v3/1v8 settings only when NVQUIRK_NEEDS_PAD_CONTROL is set.
+>>>
+>>> Thierry, please suggest if you prefer to removing warnings or fix drive=
+r
+>>> to show warning based on PADCALIB and PAD_CONTROL quirks.
+>> The SDIO PINCTRL drive-strengths are usually a part of the board's
+>> default PINCTRL state, which is either preset by bootloader or by
+>> PINCTRL driver early at a boot time.
+>>
+>> The SDIO drive-strengths values should be board-specific and not
+>> SoC-specific because they should depend on the electrical properties of
+>> the board, IIUC.
 
-On Wed, May 20, 2020 at 08:43:03AM -0600, Rob Herring wrote:
-> On Tue, Apr 7, 2020 at 4:05 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> =
-wrote:
-> >
-> > On Wed, Dec 04, 2019 at 03:21:38PM +0530, Viresh Kumar wrote:
-> > > On 04-12-19, 10:33, Thierry Reding wrote:
-> > > > Yeah, the code that registers this device is in drivers/base/cpu.c =
-in
-> > > > register_cpu(). It even retrieves the device tree node for the CPU =
-=66rom
-> > > > device tree and stores it in cpu->dev.of_node, so we should be able=
- to
-> > > > just pass &cpu->dev to tegra_bpmp_get() in order to retrieve a refe=
-rence
-> > > > to the BPMP.
-> > > >
-> > > > That said, I'm wondering if perhaps we could just add a compatible
-> > > > string to the /cpus node for cases like this where we don't have an
-> > > > actual device representing the CPU complex. There are a number of C=
-PU
-> > > > frequency drivers that register dummy devices just so that they have
-> > > > something to bind a driver to.
-> > > >
-> > > > If we allow the /cpus node to represent the CPU complex (if no other
-> > > > "device" does that yet), we can add a compatible string and have the
-> > > > cpufreq driver match on that.
-> > > >
-> > > > Of course this would be slightly difficult to retrofit into existing
-> > > > drivers because they'd need to remain backwards compatible with exi=
-sting
-> > > > device trees. But it would allow future drivers to do this a little=
- more
-> > > > elegantly. For some SoCs this may not matter, but especially once y=
-ou
-> > > > start depending on additional resources this would come in handy.
-> > > >
-> > > > Adding Rob and the device tree mailing list for feedback on this id=
-ea.
-> > >
-> > > Took some time to find this thread, but something around this was
-> > > suggested by Rafael earlier.
-> > >
-> > > https://lore.kernel.org/lkml/8139001.Q4eV8YG1Il-sKB8Sp2ER+y1GS7QM15AGw@public.gmane.org/
-> >
-> > I gave this a try and came up with the following:
-> >
-> > --- >8 ---
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot=
-/dts/nvidia/tegra194.dtsi
-> > index f4ede86e32b4..e4462f95f0b3 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > @@ -1764,6 +1764,9 @@ bpmp_thermal: thermal {
-> >         };
-> >
-> >         cpus {
-> > +               compatible =3D "nvidia,tegra194-ccplex";
-> > +               nvidia,bpmp =3D <&bpmp>;
->=20
-> Is there more than 1 bpmp? If not you don't need this. Just lookup the
-> node by compatible.
+Drive strengths we program here when auto calibration fails are=20
+recommended values based on pre-SI circuit analysis and characterized=20
+across PVT.
 
-There no SoCs currently than need to differentiate between multiple
-BPMPs, so yes, it would be possible to look up the node by compatible.
-But we also used to assume that PCs would only ever come with a single
-GPU or audio card and that's always caused a lot of work to clean up
-when it turned out to no longer be true.
+So,=C2=A0 these fail safe values are same for all boards of specific SoC as=
+=20
+all platform designs follow the design guidelines.
 
-Also, we already have a couple of devices referencing the BPMP by
-phandle like this, so having this in a CCPLEX node would keep things
-consistent.
+>> If the SDIO PINCTRL states are mandatory for the SDHCI nodes in the
+>> device-trees, then the DT binding is wrong since it says that all
+>> properties are optional. But I think that the current binding is okay,
+>> since today SDHCI PINCTRL drive-strengths are specified implicitly in
+>> the device-trees, and thus, there is no real need to emit the noisy
+>> warnings in this case.
+> For now I will keep $subject patch applied, but please tell me if I
+> should drop it so we can start over.
+>
+> In any case, I would appreciate it if someone could have a stab at
+> converting sdhci and tegra DT bindings to yaml.
+>
+> Kind regards
+> Uffe
 
-One of the reasons why we initially did it this way was also so that we
-could make the dependencies explicit within device tree. If we look up
-by compatible string, then the driver is the only one with the knowledge
-about where to get at it. If we have the explicit reference we at least
-have a chance of determining the dependency by just looking at the
-device tree.
+HI Uffe,
 
-> > +
-> >                 #address-cells =3D <1>;
-> >                 #size-cells =3D <0>;
-> >
-> > --- >8 ---
-> >
-> > Now I can do something rougly like this, although I have a more complete
-> > patch locally that also gets rid of all the global variables because we
-> > now actually have a struct platform_device that we can anchor everything
-> > at:
-> >
-> > --- >8 ---
-> > static const struct of_device_id tegra194_cpufreq_of_match[] =3D {
-> >         { .compatible =3D "nvidia,tegra194-ccplex", },
-> >         { /* sentinel */ }
-> > };
-> > MODULE_DEVICE_TABLE(of, tegra194_cpufreq_of_match);
-> >
-> > static struct platform_driver tegra194_ccplex_driver =3D {
-> >         .driver =3D {
-> >                 .name =3D "tegra194-cpufreq",
-> >                 .of_match_table =3D tegra194_cpufreq_of_match,
-> >         },
-> >         .probe =3D tegra194_cpufreq_probe,
-> >         .remove =3D tegra194_cpufreq_remove,
-> > };
-> > module_platform_driver(tegra194_ccplex_driver);
-> > --- >8 ---
-> >
-> > I don't think that's exactly what Rafael (Cc'ed) had in mind, since the
-> > above thread seems to have mostly talked about binding a driver to each
-> > individual CPU.
-> >
-> > But this seems a lot better than having to instantiate a device from
-> > scratch just so that a driver can bind to it and it allows additional
-> > properties to be associated with the CCPLEX device.
->=20
-> What additional properties? A continual stream of properties added 1
-> by 1 would negatively affect my opinion of this.
+Please drop $subject patch. Will send patch that allows parsing for=20
+these properties only for SoC where auto cal is enabled as that's where=20
+driver needs these properties.
 
-I don't expect there would be many. I think there's an earlier
-generation of Tegra that requires a regulator and I can imagine that's
-pretty common. But other than that I would expect this to be a fairly
-narrow set of properties.
+So with this fix, warning will not show up on systems where autocal is=20
+not enabled.
 
-> > Rob, any thoughts on this from a device tree point of view? The /cpus
-> > bindings don't mention the compatible property, but there doesn't seem
-> > to be anything in the bindings that would prohibit its use.
->=20
-> What happens when you have more than one cpu related driver in
-> addition to cpufreq? You may still have to end up creating child
-> platform devices and then gained very little.
+Thanks
 
-That's only if you absolutely want to stick with the "one driver per
-subsystem" model. I personally think that's completely obsolete these
-days. If you have a CPU complex device that can do both CPU frequency
-scaling and put the CPU into idle states, for example, then there is
-really no reason to artificially split that into two separate drivers
-just to match the subsystems that we have.
-
-Most subsystems that I've come across work just fine if a single driver
-registers with multiple subsystems.
-
-I also know that some people like it better when things are nicely split
-up into multiple drivers. But I really don't see how that simplifies
-things. In fact in my opinion that makes things only more complicated
-because you have additional boilerplate and then you need to be extra
-careful about how these different drivers are ordered, and you need to
-take extra precautions when sharing things like clocks and register
-regions.
-
-> You could solve this without DT changes. You can bind on node names.
-> The driver probe can then check the parent compatible and return if
-> not matching. I'm not sure if you could get module auto loading to
-> work in that case. It would have to be based on the root compatible
-> (rather than the driver match table) and be able to load multiple
-> matching modules.
-
-That sounds like it would get very complicated for something this
-simple. Having a compatible string in /cpus seemed like the most logical
-option because it would basically just work out of the box and the same
-way we're used to from other devices.
-
-Thierry
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7FTwoACgkQ3SOs138+
-s6HtgRAAoeUk0qf8Bct3SQ/jQMddCSneyOM5x6zDbE8hKCketUK0TqO/qvpnY8/0
-Z6ADqowq4mqkubUF1BcpiMl9aCiitULrsL2B6I8Nk+bUPNFKFA/m0EFdQgK3ASKo
-yi0X+tzyi/jtlSrrjydYBtDoTenpcA2oEfjFADHJbeSCu4FAEjPHXRbAfyL/FzTB
-q2gqkpe+1Ghsns9S9bS3Mu2vh181EiqSkTSXy2LX63SQqWxkqcVlxBIxG6C/wvYe
-T0CAjytkCVHlTyIeI9cO3Yp8NKMBfP0TAnBA5q1FEdBhwEEmvBpKTe32BOZKxOcY
-Mhl5zII7+KfOLyCd1EUF0PJgTKlNlNiX3k4OwbChBucSkN2hLUEvh16aqSsawCZf
-kDed64TIPZRLqJL/83xoo1/o0lVDJ5OkqAgKgrX6tcM98RdwXb1rIsiweFoWzZHh
-ArNOlzOCxnXtzpTjo5Dw+IqBnzbL0dCiFZRcuqkFKdtYXh2RJAZVdsZfOCJdkKfF
-/HEy8rmfsC7NhWsJy5Ta3BDdlpCWzkcQGzib2vFMUWIjrjjHG4qMN/1PixQTpLfR
-L4/CP3w7iZyJS211bZPFME1Wkdi6KNk3HiOVJO9TrgV5jEvcYIlwsksxhiO1vepu
-tJ2nUmvo8NaZB3sTDFzs6xS6e0L4dMQbtphQxYpZDZkv0Oz2XWg=
-=FxLW
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
+Sowjanya
