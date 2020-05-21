@@ -1,50 +1,45 @@
-From: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org
-Subject: Re: Re: [PATCH] PCI: tegra: fix runtime pm imbalance on error
-Date: Thu, 21 May 2020 11:06:26 +0800 (GMT+08:00)
-Message-ID: <54ce423c.b9436.172353245da.Coremail.dinghao.liu@zju.edu.cn>
-References: <20200520085231.32552-1-dinghao.liu@zju.edu.cn>
- <20200520095908.GD2136208@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+From: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+Subject: [PATCH] [v2] PCI: tegra194: Fix runtime PM imbalance on error
+Date: Thu, 21 May 2020 11:13:49 +0800
+Message-ID: <20200521031355.7022-1-dinghao.liu@zju.edu.cn>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200520095908.GD2136208@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: kjlu-OJFnDUYgAso@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Murray <amurray-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Murray <amurray-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-VGhhbmsgeW91IGZvciB5b3VyIGFkdmljZS4gSSB3aWxsIGZpeCB0aGVzZSBwcm9ibGVtcyBpbiB0
-aGUgbmV4dCBlZGl0aW9uIG9mIHBhdGNoLgoKJnF1b3Q7VGhpZXJyeSBSZWRpbmcmcXVvdDsgJmx0
-O3RoaWVycnkucmVkaW5nQGdtYWlsLmNvbSZndDvlhpnpgZPvvJoKPiBPbiBXZWQsIE1heSAyMCwg
-MjAyMCBhdCAwNDo1MjoyM1BNICswODAwLCBEaW5naGFvIExpdSB3cm90ZToNCj4gPiBwbV9ydW50
-aW1lX2dldF9zeW5jKCkgaW5jcmVtZW50cyB0aGUgcnVudGltZSBQTSB1c2FnZSBjb3VudGVyIGV2
-ZW4NCj4gPiBpdCByZXR1cm5zIGFuIGVycm9yIGNvZGUuIFRodXMgYSBwYWlyaW5nIGRlY3JlbWVu
-dCBpcyBuZWVkZWQgb24NCj4gDQo+IHMvZXZlbiBpdC9ldmVuIHdoZW4gaXQvDQo+IA0KPiBNaWdo
-dCBhbHNvIGJlIGEgZ29vZCBpZGVhIHRvIHVzZSBhIGRpZmZlcmVudCBzdWJqZWN0IHByZWZpeCBi
-ZWNhdXNlIEkNCj4gd2FzIGFsbW9zdCBub3QgZ29pbmcgdG8gbG9vayBhdCB0aGUgb3RoZXIgcGF0
-Y2gsIHRha2luZyB0aGlzIHRvIGJlIGENCj4gcmVwbGFjZW1lbnQgZm9yIGl0Lg0KPiANCj4gQWx0
-aG91Z2gsIGxvb2tpbmcgYXQgdGhlIGxvZyB3ZSBoYXZlIHVzZWQgdGhpcyBzYW1lIHByZWZpeCBm
-b3IgYm90aA0KPiBkcml2ZXJzIGluIHRoZSBwYXN0Li4uDQo+IA0KPiA+IHRoZSBlcnJvciBoYW5k
-bGluZyBwYXRoIHRvIGtlZXAgdGhlIGNvdW50ZXIgYmFsYW5jZWQuDQo+ID4gDQo+ID4gU2lnbmVk
-LW9mZi1ieTogRGluZ2hhbyBMaXUgPGRpbmdoYW8ubGl1QHpqdS5lZHUuY24+DQo+ID4gLS0tDQo+
-ID4gIGRyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtdGVncmExOTQuYyB8IDIgKy0NCj4g
-PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gDQo+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtdGVncmExOTQu
-YyBiL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtdGVncmExOTQuYw0KPiA+IGluZGV4
-IGFlMzBhMmZkMzcxNi4uYTY5ZjllNDlkY2I1IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcGNp
-L2NvbnRyb2xsZXIvZHdjL3BjaWUtdGVncmExOTQuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcGNpL2Nv
-bnRyb2xsZXIvZHdjL3BjaWUtdGVncmExOTQuYw0KPiA+IEBAIC0xNjUxLDggKzE2NTEsOCBAQCBz
-dGF0aWMgaW50IHRlZ3JhX3BjaWVfY29uZmlnX3JwKHN0cnVjdCB0ZWdyYV9wY2llX2R3ICpwY2ll
-KQ0KPiA+ICBmYWlsX2hvc3RfaW5pdDoNCj4gPiAgCXRlZ3JhX3BjaWVfZGVpbml0X2NvbnRyb2xs
-ZXIocGNpZSk7DQo+ID4gIGZhaWxfcGluY3RybDoNCj4gPiAtCXBtX3J1bnRpbWVfcHV0X3N5bmMo
-ZGV2KTsNCj4gPiAgZmFpbF9wbV9nZXRfc3luYzoNCj4gDQo+IEVpdGhlciBvZiB0aG9zZSB0d28g
-bGFiZWxzIGlzIG5vdyBubyBsb25nZXIgbmVlZGVkLiBPZiBjb3Vyc2UgaXQnbGwgbm93DQo+IGJl
-IG9kZCB0byBqdW1wIHRvIGZhaWxfcG1fZ2V0X3N5bmMgb24gcGluY3RybF9wbV9zZWxlY3RfZGVm
-YXVsdF9zdGF0ZSgpDQo+IGZhaWx1cmUsIGJ1dCB0aGF0J3Mgb25lIG9mIHRoZSByZWFzb25zIHdo
-eSBsYWJlbCBzaG91bGQgaGF2ZSBuYW1lcw0KPiBkZXNjcmliaW5nIHdoYXQgdGhleSBkbyByYXRo
-ZXIgdGhhbiBkZXNjcmliZSB0aGUgZmFpbHVyZSBsb2NhdGlvbi4gSQ0KPiBndWVzcyB3ZSBjYW4g
-bGl2ZSB3aXRoIHRoYXQgZm9yIG5vdy4gSSdsbCBtYWtlIGEgbm90ZSB0byBzZW5kIGEgY2xlYW51
-cA0KPiBwYXRjaCBmb3IgdGhhdCBsYXRlciBvbi4NCj4gDQo+IFdpdGggdGhlIGZpeHVwIGluIHRo
-ZSBjb21taXQgbWVzc2FnZSBhbmQgZWl0aGVyIG9mIHRoZSBsYWJlbHMgcmVtb3ZlZDoNCj4gDQo+
-IEFja2VkLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPg0K
+pm_runtime_get_sync() increments the runtime PM usage counter even
+when it returns an error code. Thus a pairing decrement is needed on
+the error handling path to keep the counter balanced.
+
+Signed-off-by: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index ae30a2fd3716..2c0d2ce16b47 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1623,7 +1623,7 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+ 	ret = pinctrl_pm_select_default_state(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to configure sideband pins: %d\n", ret);
+-		goto fail_pinctrl;
++		goto fail_pm_get_sync;
+ 	}
+ 
+ 	tegra_pcie_init_controller(pcie);
+@@ -1650,9 +1650,8 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+ 
+ fail_host_init:
+ 	tegra_pcie_deinit_controller(pcie);
+-fail_pinctrl:
+-	pm_runtime_put_sync(dev);
+ fail_pm_get_sync:
++	pm_runtime_put_sync(dev);
+ 	pm_runtime_disable(dev);
+ 	return ret;
+ }
+-- 
+2.17.1
