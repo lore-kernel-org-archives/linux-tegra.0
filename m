@@ -1,58 +1,36 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] spi: tegra20-slink: Fix runtime PM imbalance on error
-Date: Thu, 21 May 2020 09:46:48 +0100
-Message-ID: <046fe754-96d7-4530-2b70-e1991470ac0f@nvidia.com>
-References: <20200521074946.21799-1-dinghao.liu@zju.edu.cn>
- <CAHp75VfOeUaqRW2vRwyWaz3JJw41hX5jTgE+kZ8pB8E_HtHwqw@mail.gmail.com>
- <af91d97e-6367-996b-a925-a5c81f6fb182@nvidia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: Re: [PATCH] media: staging: tegra-vde: fix runtime pm imbalance
+ on error
+Date: Thu, 21 May 2020 12:15:05 +0300
+Message-ID: <20200521091505.GF30374@kadam>
+References: <20200520095148.10995-1-dinghao.liu@zju.edu.cn>
+ <2b5d64f5-825f-c081-5d03-02655c2d9491@gmail.com>
+ <20200520150230.GC30374@kadam>
+ <2a46539d.b977f.1723553aa81.Coremail.dinghao.liu@zju.edu.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <af91d97e-6367-996b-a925-a5c81f6fb182@nvidia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <2a46539d.b977f.1723553aa81.Coremail.dinghao.liu@zju.edu.cn>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Dinghao Liu <dinghao.liu@zju.edu.cn>
-Cc: Kangjie Lu <kjlu@umn.edu>, Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-spi <linux-spi@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: dinghao.liu@zju.edu.cn
+Cc: devel@driverdev.osuosl.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org, kjlu@umn.edu, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 21/05/2020 09:38, Jon Hunter wrote:
+On Thu, May 21, 2020 at 11:42:55AM +0800, dinghao.liu@zju.edu.cn wrote:
+> Hi, Dan,
 > 
-> On 21/05/2020 09:04, Andy Shevchenko wrote:
->> On Thu, May 21, 2020 at 10:50 AM Dinghao Liu <dinghao.liu@zju.edu.cn> wrote:
->>>
->>> pm_runtime_get_sync() increments the runtime PM usage counter even
->>> when it returns an error code. Thus a pairing decrement is needed on
->>> the error handling path to keep the counter balanced.
->>
->> ...
->>
->>>         ret = pm_runtime_get_sync(&pdev->dev);
->>>         if (ret < 0) {
->>>                 dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
->>
->>> +               pm_runtime_put(&pdev->dev);
->>
->> For all your patches, please, double check what you are proposing.
->>
->> Here, I believe, the correct one will be _put_noidle().
->>
->> AFAIU you are not supposed to actually suspend the device in case of error.
->> But I might be mistaken, thus see above.
->>
->>>                 goto exit_pm_disable;
->>>         }
+> I agree the best solution is to fix __pm_runtime_resume(). But there are also 
+> many cases that assume pm_runtime_get_sync() will change PM usage 
+> counter on error. According to my static analysis results, the number of these 
+> "right" cases are larger. Adjusting __pm_runtime_resume() directly will introduce 
+> more new bugs. Therefore I think we should resolve the "bug" cases individually.
 > 
-> 
-> Is there any reason why this is not handled in pm_runtime_get itself?
 
-Ah I see a response from Rafael here:
-https://lkml.org/lkml/2020/5/20/1100
+That's why I was saying that we may need to introduce a new replacement
+function for pm_runtime_get_sync() that works as expected.
 
-OK so this is intentional and needs to be fixed.
+There is no reason why we have to live with the old behavior.
 
-Jon
-
--- 
-nvpublic
+regards,
+dan carpenter
