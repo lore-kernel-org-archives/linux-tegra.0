@@ -1,45 +1,95 @@
-From: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
-Subject: [PATCH] [v2] PCI: tegra194: Fix runtime PM imbalance on error
-Date: Thu, 21 May 2020 11:13:49 +0800
-Message-ID: <20200521031355.7022-1-dinghao.liu@zju.edu.cn>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Murray <amurray-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: dinghao.liu@zju.edu.cn
+Subject: Re: Re: [PATCH] media: staging: tegra-vde: fix runtime pm imbalance
+ on error
+Date: Thu, 21 May 2020 11:42:55 +0800 (GMT+08:00)
+Message-ID: <2a46539d.b977f.1723553aa81.Coremail.dinghao.liu@zju.edu.cn>
+References: <20200520095148.10995-1-dinghao.liu@zju.edu.cn>
+ <2b5d64f5-825f-c081-5d03-02655c2d9491@gmail.com>
+ <20200520150230.GC30374@kadam>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200520150230.GC30374@kadam>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, kjlu@umn.edu, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-pm_runtime_get_sync() increments the runtime PM usage counter even
-when it returns an error code. Thus a pairing decrement is needed on
-the error handling path to keep the counter balanced.
-
-Signed-off-by: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
----
- drivers/pci/controller/dwc/pcie-tegra194.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index ae30a2fd3716..2c0d2ce16b47 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1623,7 +1623,7 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
- 	ret = pinctrl_pm_select_default_state(dev);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to configure sideband pins: %d\n", ret);
--		goto fail_pinctrl;
-+		goto fail_pm_get_sync;
- 	}
- 
- 	tegra_pcie_init_controller(pcie);
-@@ -1650,9 +1650,8 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
- 
- fail_host_init:
- 	tegra_pcie_deinit_controller(pcie);
--fail_pinctrl:
--	pm_runtime_put_sync(dev);
- fail_pm_get_sync:
-+	pm_runtime_put_sync(dev);
- 	pm_runtime_disable(dev);
- 	return ret;
- }
--- 
-2.17.1
+SGksIERhbiwKCkkgYWdyZWUgdGhlIGJlc3Qgc29sdXRpb24gaXMgdG8gZml4IF9fcG1fcnVudGlt
+ZV9yZXN1bWUoKS4gQnV0IHRoZXJlIGFyZSBhbHNvIAptYW55IGNhc2VzIHRoYXQgYXNzdW1lIHBt
+X3J1bnRpbWVfZ2V0X3N5bmMoKSB3aWxsIGNoYW5nZSBQTSB1c2FnZSAKY291bnRlciBvbiBlcnJv
+ci4gQWNjb3JkaW5nIHRvIG15IHN0YXRpYyBhbmFseXNpcyByZXN1bHRzLCB0aGUgbnVtYmVyIG9m
+IHRoZXNlIAoicmlnaHQiIGNhc2VzIGFyZSBsYXJnZXIuIEFkanVzdGluZyBfX3BtX3J1bnRpbWVf
+cmVzdW1lKCkgZGlyZWN0bHkgd2lsbCBpbnRyb2R1Y2UgCm1vcmUgbmV3IGJ1Z3MuIFRoZXJlZm9y
+ZSBJIHRoaW5rIHdlIHNob3VsZCByZXNvbHZlIHRoZSAiYnVnIiBjYXNlcyBpbmRpdmlkdWFsbHku
+CgpJIHRoaW5rIHRoYXQgRG1pdHJ5J3MgcGF0Y2ggaXMgbW9yZSByZWFzb25hYmxlIHRoYW4gbWlu
+ZS4gCgpEaW5naGFvCgomcXVvdDtEYW4gQ2FycGVudGVyJnF1b3Q7ICZsdDtkYW4uY2FycGVudGVy
+QG9yYWNsZS5jb20mZ3Q75YaZ6YGT77yaCj4gT24gV2VkLCBNYXkgMjAsIDIwMjAgYXQgMDE6MTU6
+NDRQTSArMDMwMCwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOg0KPiA+IDIwLjA1LjIwMjAgMTI6NTEs
+IERpbmdoYW8gTGl1INC/0LjRiNC10YI6DQo+ID4gPiBwbV9ydW50aW1lX2dldF9zeW5jKCkgaW5j
+cmVtZW50cyB0aGUgcnVudGltZSBQTSB1c2FnZSBjb3VudGVyIGV2ZW4NCj4gPiA+IGl0IHJldHVy
+bnMgYW4gZXJyb3IgY29kZS4gVGh1cyBhIHBhaXJpbmcgZGVjcmVtZW50IGlzIG5lZWRlZCBvbg0K
+PiA+ID4gdGhlIGVycm9yIGhhbmRsaW5nIHBhdGggdG8ga2VlcCB0aGUgY291bnRlciBiYWxhbmNl
+ZC4NCj4gPiA+IA0KPiA+ID4gU2lnbmVkLW9mZi1ieTogRGluZ2hhbyBMaXUgPGRpbmdoYW8ubGl1
+QHpqdS5lZHUuY24+DQo+ID4gPiAtLS0NCj4gPiA+ICBkcml2ZXJzL3N0YWdpbmcvbWVkaWEvdGVn
+cmEtdmRlL3ZkZS5jIHwgMiArLQ0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
+KSwgMSBkZWxldGlvbigtKQ0KPiA+ID4gDQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFn
+aW5nL21lZGlhL3RlZ3JhLXZkZS92ZGUuYyBiL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS90ZWdyYS12
+ZGUvdmRlLmMNCj4gPiA+IGluZGV4IGQzZTYzNTEyYTc2NS4uZGQxMzRhM2ExNWM3IDEwMDY0NA0K
+PiA+ID4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL21lZGlhL3RlZ3JhLXZkZS92ZGUuYw0KPiA+ID4g
+KysrIGIvZHJpdmVycy9zdGFnaW5nL21lZGlhL3RlZ3JhLXZkZS92ZGUuYw0KPiA+ID4gQEAgLTc3
+Nyw3ICs3NzcsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX3ZkZV9pb2N0bF9kZWNvZGVfaDI2NChzdHJ1
+Y3QgdGVncmFfdmRlICp2ZGUsDQo+ID4gPiAgDQo+ID4gPiAgCXJldCA9IHBtX3J1bnRpbWVfZ2V0
+X3N5bmMoZGV2KTsNCj4gPiA+ICAJaWYgKHJldCA8IDApDQo+ID4gPiAtCQlnb3RvIHVubG9jazsN
+Cj4gPiA+ICsJCWdvdG8gcHV0X3J1bnRpbWVfcG07DQo+ID4gPiAgDQo+ID4gPiAgCS8qDQo+ID4g
+PiAgCSAqIFdlIHJlbHkgb24gdGhlIFZERSByZWdpc3RlcnMgcmVzZXQgdmFsdWUsIG90aGVyd2lz
+ZSBWREUNCj4gPiA+IA0KPiA+IA0KPiA+IEhlbGxvIERpbmdoYW8sDQo+ID4gDQo+ID4gVGhhbmsg
+eW91IGZvciB0aGUgcGF0Y2guIEkgc2VudCBvdXQgYSBzaW1pbGFyIHBhdGNoIGEgd2VlayBhZ28g
+WzFdLg0KPiA+IA0KPiA+IFsxXQ0KPiA+IGh0dHBzOi8vcGF0Y2h3b3JrLm96bGFicy5vcmcvcHJv
+amVjdC9saW51eC10ZWdyYS9wYXRjaC8yMDIwMDUxNDIxMDg0Ny45MjY5LTItZGlnZXR4QGdtYWls
+LmNvbS8NCj4gPiANCj4gPiBUaGUgcG1fcnVudGltZV9wdXRfbm9pZGxlKCkgc2hvdWxkIGhhdmUg
+dGhlIHNhbWUgZWZmZWN0IGFzIHlvdXJzDQo+ID4gdmFyaWFudCwgYWx0aG91Z2ggbXkgdmFyaWFu
+dCB3b24ndCBjaGFuZ2UgdGhlIGxhc3RfYnVzeSBSUE0gdGltZSwgd2hpY2gNCj4gPiBJIHRoaW5r
+IGlzIGEgYml0IG1vcmUgYXBwcm9wcmlhdGUgYmVoYXZpb3IuDQo+IA0KPiBJIGRvbid0IHRoaW5r
+IGVpdGhlciBwYXRjaCBpcyBjb3JyZWN0LiAgVGhlIHJpZ2h0IHRoaW5nIHRvIGRvIGlzIHRvIGZp
+eA0KPiBfX3BtX3J1bnRpbWVfcmVzdW1lKCkgc28gaXQgZG9lc24ndCBsZWFrIGEgcmVmZXJlbmNl
+IGNvdW50IG9uIGVycm9yLg0KPiANCj4gVGhlIHByb2JsZW0gaXMgdGhhdCBhIGxvdCBvZiBmdW5j
+dGlvbnMgZG9uJ3QgY2hlY2sgdGhlIHJldHVybiBzbw0KPiBwb3NzaWJseSB3ZSBhcmUgcmVseWlu
+ZyBvbiB0aGF0IGJlaGF2aW9yLiAgV2UgbWF5IG5lZWQgdG8gaW50cm9kdWNlIGENCj4gbmV3IGZ1
+bmN0aW9uIHdoaWNoIGNsZWFucyB1cCBwcm9wZXJseSBpbnN0ZWFkIG9mIGxlYWtpbmcgcmVmZXJl
+bmNlDQo+IGNvdW50cz8NCj4gDQo+IEFsc28gaXQncyBub3QgZG9jdW1lbnRlZCB0aGF0IHBtX3J1
+bnRpbWVfZ2V0X3N5bmMoKSByZXR1cm5zIDEgc29tZXRpbWVzDQo+IG9uIHN1Y2Nlc3Mgc28gaXQg
+bGVhZHMgdG8gYSBmZXcgYnVncy4NCj4gDQo+IGRyaXZlcnMvZ3B1L2RybS9zdG0vbHRkYy5jOiAg
+ICAgICAgICAgICByZXQgPSBwbV9ydW50aW1lX2dldF9zeW5jKGRkZXYtPmRldik7DQo+IGRyaXZl
+cnMvZ3B1L2RybS9zdG0vbHRkYy5jLSAgICAgICAgICAgICBpZiAocmV0KSB7DQo+IC0tDQo+IGRy
+aXZlcnMvZ3B1L2RybS9zdG0vbHRkYy5jOiAgICAgICAgICAgICByZXQgPSBwbV9ydW50aW1lX2dl
+dF9zeW5jKGRkZXYtPmRldik7DQo+IGRyaXZlcnMvZ3B1L2RybS9zdG0vbHRkYy5jLSAgICAgICAg
+ICAgICBpZiAocmV0KSB7DQo+IA0KPiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL210ay12Y29kZWMv
+bXRrX3Zjb2RlY19kZWNfcG0uYzogIHJldCA9IHBtX3J1bnRpbWVfZ2V0X3N5bmMocG0tPmRldik7
+DQo+IGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vbXRrLXZjb2RlYy9tdGtfdmNvZGVjX2RlY19wbS5j
+LSAgaWYgKHJldCkNCj4gDQo+IGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vdGktdnBlL2NhbC5jOiAg
+ICByZXQgPSBwbV9ydW50aW1lX2dldF9zeW5jKCZwZGV2LT5kZXYpOw0KPiBkcml2ZXJzL21lZGlh
+L3BsYXRmb3JtL3RpLXZwZS9jYWwuYy0gICAgaWYgKHJldCkNCj4gDQo+IGRyaXZlcnMvbWZkL2Fy
+aXpvbmEtY29yZS5jOiAgICAgICAgICAgICAgICAgICAgIHJldCA9IHBtX3J1bnRpbWVfZ2V0X3N5
+bmMoYXJpem9uYS0+ZGV2KTsNCj4gZHJpdmVycy9tZmQvYXJpem9uYS1jb3JlLmMtICAgICAgICAg
+ICAgICAgICAgICAgaWYgKHJldCAhPSAwKQ0KPiANCj4gZHJpdmVycy9yZW1vdGVwcm9jL3Fjb21f
+cTZ2NV9hZHNwLmM6ICAgIHJldCA9IHBtX3J1bnRpbWVfZ2V0X3N5bmMoYWRzcC0+ZGV2KTsNCj4g
+ZHJpdmVycy9yZW1vdGVwcm9jL3Fjb21fcTZ2NV9hZHNwLmMtICAgIGlmIChyZXQpDQo+IA0KPiBk
+cml2ZXJzL3NwaS9zcGktaW1nLXNwZmkuYzogICAgIHJldCA9IHBtX3J1bnRpbWVfZ2V0X3N5bmMo
+ZGV2KTsNCj4gZHJpdmVycy9zcGkvc3BpLWltZy1zcGZpLmMtICAgICBpZiAocmV0KQ0KPiANCj4g
+ZHJpdmVycy91c2IvZHdjMy9kd2MzLXBjaS5jOiAgICByZXQgPSBwbV9ydW50aW1lX2dldF9zeW5j
+KCZkd2MzLT5kZXYpOw0KPiBkcml2ZXJzL3VzYi9kd2MzL2R3YzMtcGNpLmMtICAgIGlmIChyZXQp
+DQo+IA0KPiBkcml2ZXJzL3dhdGNoZG9nL3J0aV93ZHQuYzogICAgIHJldCA9IHBtX3J1bnRpbWVf
+Z2V0X3N5bmMoZGV2KTsNCj4gZHJpdmVycy93YXRjaGRvZy9ydGlfd2R0LmMtICAgICBpZiAocmV0
+KSB7DQo+IA0KPiByZWdhcmRzLA0KPiBkYW4gY2FycGVudGVyDQo+IA0KPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9iYXNlL3Bvd2VyL3J1bnRpbWUuYyBiL2RyaXZlcnMvYmFzZS9wb3dlci9ydW50aW1l
+LmMNCj4gaW5kZXggOTljN2RhMTEyYzk1Li5lMjgwOTkxYTk3N2QgMTAwNjQ0DQo+IC0tLSBhL2Ry
+aXZlcnMvYmFzZS9wb3dlci9ydW50aW1lLmMNCj4gKysrIGIvZHJpdmVycy9iYXNlL3Bvd2VyL3J1
+bnRpbWUuYw0KPiBAQCAtMTA4Miw2ICsxMDgyLDkgQEAgaW50IF9fcG1fcnVudGltZV9yZXN1bWUo
+c3RydWN0IGRldmljZSAqZGV2LCBpbnQgcnBtZmxhZ3MpDQo+ICAJcmV0dmFsID0gcnBtX3Jlc3Vt
+ZShkZXYsIHJwbWZsYWdzKTsNCj4gIAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZkZXYtPnBvd2Vy
+LmxvY2ssIGZsYWdzKTsNCj4gIA0KPiArCWlmIChyZXR2YWwgPCAwICYmIHJwbWZsYWdzICYgUlBN
+X0dFVF9QVVQpDQo+ICsJCWF0b21pY19kZWMoJmRldi0+cG93ZXIudXNhZ2VfY291bnQpOw0KPiAr
+DQo+ICAJcmV0dXJuIHJldHZhbDsNCj4gIH0NCj4gIEVYUE9SVF9TWU1CT0xfR1BMKF9fcG1fcnVu
+dGltZV9yZXN1bWUpOw0K
