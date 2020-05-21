@@ -1,36 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: Re: [PATCH] media: staging: tegra-vde: fix runtime pm imbalance
+From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] [v2] media: staging: tegra-vde: fix runtime pm imbalance
  on error
-Date: Thu, 21 May 2020 12:15:05 +0300
-Message-ID: <20200521091505.GF30374@kadam>
-References: <20200520095148.10995-1-dinghao.liu@zju.edu.cn>
- <2b5d64f5-825f-c081-5d03-02655c2d9491@gmail.com>
- <20200520150230.GC30374@kadam>
- <2a46539d.b977f.1723553aa81.Coremail.dinghao.liu@zju.edu.cn>
+Date: Thu, 21 May 2020 14:21:31 +0300
+Message-ID: <20200521112131.GG30374@kadam>
+References: <20200521062746.6656-1-dinghao.liu@zju.edu.cn>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <2a46539d.b977f.1723553aa81.Coremail.dinghao.liu@zju.edu.cn>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dinghao.liu@zju.edu.cn
-Cc: devel@driverdev.osuosl.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org, kjlu@umn.edu, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+In-Reply-To: <20200521062746.6656-1-dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+Cc: kjlu-OJFnDUYgAso@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 21, 2020 at 11:42:55AM +0800, dinghao.liu@zju.edu.cn wrote:
-> Hi, Dan,
+On Thu, May 21, 2020 at 02:27:45PM +0800, Dinghao Liu wrote:
+> pm_runtime_get_sync() increments the runtime PM usage counter even
+> the call returns an error code. Thus a pairing decrement is needed
+> on the error handling path to keep the counter balanced.
 > 
-> I agree the best solution is to fix __pm_runtime_resume(). But there are also 
-> many cases that assume pm_runtime_get_sync() will change PM usage 
-> counter on error. According to my static analysis results, the number of these 
-> "right" cases are larger. Adjusting __pm_runtime_resume() directly will introduce 
-> more new bugs. Therefore I think we should resolve the "bug" cases individually.
-> 
+> Signed-off-by: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
 
-That's why I was saying that we may need to introduce a new replacement
-function for pm_runtime_get_sync() that works as expected.
-
-There is no reason why we have to live with the old behavior.
+Let's stop working around the bug in pm_runtime_get_sync() and write
+a replacement for it instead.
 
 regards,
 dan carpenter
