@@ -1,13 +1,11 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 06/19] gpio: tegra: mask GPIO IRQs during IRQ shutdown
-Date: Fri, 22 May 2020 10:51:07 -0400
-Message-ID: <20200522145120.434921-6-sashal@kernel.org>
-References: <20200522145120.434921-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 1/8] gpio: tegra: mask GPIO IRQs during IRQ shutdown
+Date: Fri, 22 May 2020 10:51:50 -0400
+Message-ID: <20200522145157.435215-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20200522145120.434921-1-sashal@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Stephen Warren <swarren@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
@@ -32,12 +30,12 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 47dbd19751d0..57903501821e 100644
+index 05d3241ad20b..9d763557a105 100644
 --- a/drivers/gpio/gpio-tegra.c
 +++ b/drivers/gpio/gpio-tegra.c
-@@ -357,6 +357,7 @@ static void tegra_gpio_irq_shutdown(struct irq_data *d)
+@@ -341,6 +341,7 @@ static void tegra_gpio_irq_shutdown(struct irq_data *d)
  	struct tegra_gpio_info *tgi = bank->tgi;
- 	unsigned int gpio = d->hwirq;
+ 	int gpio = d->hwirq;
  
 +	tegra_gpio_irq_mask(d);
  	gpiochip_unlock_as_irq(&tgi->gc, gpio);
