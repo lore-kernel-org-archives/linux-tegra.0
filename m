@@ -1,51 +1,37 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] dmaengine: tegra210-adma: Fix runtime PM imbalance on
- error
-Date: Fri, 22 May 2020 11:43:59 +0100
-Message-ID: <967c17d2-6b57-27f0-7762-cd0835caaec9@nvidia.com>
+From: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org
+Subject: Re: Re: [PATCH] dmaengine: tegra210-adma: Fix runtime PM imbalance
+ on error
+Date: Fri, 22 May 2020 18:57:18 +0800 (GMT+08:00)
+Message-ID: <45d18e3c.bfdab.1723c07b7d3.Coremail.dinghao.liu@zju.edu.cn>
 References: <20200522075846.30706-1-dinghao.liu@zju.edu.cn>
+ <967c17d2-6b57-27f0-7762-cd0835caaec9@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200522075846.30706-1-dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <967c17d2-6b57-27f0-7762-cd0835caaec9-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>, kjlu-OJFnDUYgAso@public.gmane.org
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: kjlu-OJFnDUYgAso@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 22/05/2020 08:58, Dinghao Liu wrote:
-> pm_runtime_get_sync() increments the runtime PM usage counter even
-> when it returns an error code. Thus a pairing decrement is needed on
-> the error handling path to keep the counter balanced.
-> 
-> Signed-off-by: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
-> ---
->  drivers/dma/tegra210-adma.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-> index c4ce5dfb149b..803e1f4d5dac 100644
-> --- a/drivers/dma/tegra210-adma.c
-> +++ b/drivers/dma/tegra210-adma.c
-> @@ -658,6 +658,7 @@ static int tegra_adma_alloc_chan_resources(struct dma_chan *dc)
->  
->  	ret = pm_runtime_get_sync(tdc2dev(tdc));
->  	if (ret < 0) {
-> +		pm_runtime_put_sync(tdc2dev(tdc));
->  		free_irq(tdc->irq, tdc);
->  		return ret;
->  	}
-> 
-
-
-There is another place in probe that needs to be fixed as well. Can you
-correct this while you are at it?
-
-Thanks
-Jon
-
--- 
-nvpublic
+PiAKPiBPbiAyMi8wNS8yMDIwIDA4OjU4LCBEaW5naGFvIExpdSB3cm90ZToKPiA+IHBtX3J1bnRp
+bWVfZ2V0X3N5bmMoKSBpbmNyZW1lbnRzIHRoZSBydW50aW1lIFBNIHVzYWdlIGNvdW50ZXIgZXZl
+bgo+ID4gd2hlbiBpdCByZXR1cm5zIGFuIGVycm9yIGNvZGUuIFRodXMgYSBwYWlyaW5nIGRlY3Jl
+bWVudCBpcyBuZWVkZWQgb24KPiA+IHRoZSBlcnJvciBoYW5kbGluZyBwYXRoIHRvIGtlZXAgdGhl
+IGNvdW50ZXIgYmFsYW5jZWQuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IERpbmdoYW8gTGl1IDxk
+aW5naGFvLmxpdUB6anUuZWR1LmNuPgo+ID4gLS0tCj4gPiAgZHJpdmVycy9kbWEvdGVncmEyMTAt
+YWRtYS5jIHwgMSArCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCj4gPiAKPiA+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2RtYS90ZWdyYTIxMC1hZG1hLmMgYi9kcml2ZXJzL2RtYS90
+ZWdyYTIxMC1hZG1hLmMKPiA+IGluZGV4IGM0Y2U1ZGZiMTQ5Yi4uODAzZTFmNGQ1ZGFjIDEwMDY0
+NAo+ID4gLS0tIGEvZHJpdmVycy9kbWEvdGVncmEyMTAtYWRtYS5jCj4gPiArKysgYi9kcml2ZXJz
+L2RtYS90ZWdyYTIxMC1hZG1hLmMKPiA+IEBAIC02NTgsNiArNjU4LDcgQEAgc3RhdGljIGludCB0
+ZWdyYV9hZG1hX2FsbG9jX2NoYW5fcmVzb3VyY2VzKHN0cnVjdCBkbWFfY2hhbiAqZGMpCj4gPiAg
+Cj4gPiAgCXJldCA9IHBtX3J1bnRpbWVfZ2V0X3N5bmModGRjMmRldih0ZGMpKTsKPiA+ICAJaWYg
+KHJldCA8IDApIHsKPiA+ICsJCXBtX3J1bnRpbWVfcHV0X3N5bmModGRjMmRldih0ZGMpKTsKPiA+
+ICAJCWZyZWVfaXJxKHRkYy0+aXJxLCB0ZGMpOwo+ID4gIAkJcmV0dXJuIHJldDsKPiA+ICAJfQo+
+ID4gCj4gCj4gCj4gVGhlcmUgaXMgYW5vdGhlciBwbGFjZSBpbiBwcm9iZSB0aGF0IG5lZWRzIHRv
+IGJlIGZpeGVkIGFzIHdlbGwuIENhbiB5b3UKPiBjb3JyZWN0IHRoaXMgd2hpbGUgeW91IGFyZSBh
+dCBpdD8KPiAKPiBUaGFua3MKPiBKb24KPiAKPiAtLSAKPiBudnB1YmxpYwoKU3VyZS4gSSBoYXZl
+IHNlbnQgYSBwYXRjaCB0byBmaXggUE0gaW1iYWxhbmNlIGluIHRlZ3JhX2FkbWFfcHJvYmUoKS4K
+ClJlZ2FyZHMsCkRpbmdoYW8=
