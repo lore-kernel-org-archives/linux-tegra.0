@@ -1,60 +1,62 @@
-From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v5 5/5] arm64: tegra: enable SMMU for SDHCI and EQOS on T194
-Date: Thu, 21 May 2020 16:31:07 -0700
-Message-ID: <20200521233107.11968-6-vdumpa@nvidia.com>
-References: <20200521233107.11968-1-vdumpa@nvidia.com>
+From: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org
+Subject: Re: Re: [PATCH] [v2] PCI: tegra194: Fix runtime PM imbalance on
+ error
+Date: Fri, 22 May 2020 12:36:51 +0800 (GMT+08:00)
+Message-ID: <b626ea1.bdecf.1723aab689f.Coremail.dinghao.liu@zju.edu.cn>
+References: <20200521151620.GA1135365@bjorn-Precision-5520>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200521233107.11968-1-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200521151620.GA1135365@bjorn-Precision-5520>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: kjlu-OJFnDUYgAso@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Murray <amurray-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Enable SMMU translations for SDHCI and EQOS transactions on T194.
-
-Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts=
-/nvidia/tegra194.dtsi
-index f7c4399afb55..706bbb439dcd 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -59,6 +59,7 @@ ethernet@2490000 {
- 			clock-names =3D "master_bus", "slave_bus", "rx", "tx", "ptp_ref";
- 			resets =3D <&bpmp TEGRA194_RESET_EQOS>;
- 			reset-names =3D "eqos";
-+			iommus =3D <&smmu TEGRA194_SID_EQOS>;
- 			status =3D "disabled";
-=20
- 			snps,write-requests =3D <1>;
-@@ -457,6 +458,7 @@ sdmmc1: sdhci@3400000 {
- 			clock-names =3D "sdhci";
- 			resets =3D <&bpmp TEGRA194_RESET_SDMMC1>;
- 			reset-names =3D "sdhci";
-+			iommus =3D <&smmu TEGRA194_SID_SDMMC1>;
- 			nvidia,pad-autocal-pull-up-offset-3v3-timeout =3D
- 									<0x07>;
- 			nvidia,pad-autocal-pull-down-offset-3v3-timeout =3D
-@@ -479,6 +481,7 @@ sdmmc3: sdhci@3440000 {
- 			clock-names =3D "sdhci";
- 			resets =3D <&bpmp TEGRA194_RESET_SDMMC3>;
- 			reset-names =3D "sdhci";
-+			iommus =3D <&smmu TEGRA194_SID_SDMMC3>;
- 			nvidia,pad-autocal-pull-up-offset-1v8 =3D <0x00>;
- 			nvidia,pad-autocal-pull-down-offset-1v8 =3D <0x7a>;
- 			nvidia,pad-autocal-pull-up-offset-3v3-timeout =3D <0x07>;
-@@ -506,6 +509,7 @@ sdmmc4: sdhci@3460000 {
- 					  <&bpmp TEGRA194_CLK_PLLC4>;
- 			resets =3D <&bpmp TEGRA194_RESET_SDMMC4>;
- 			reset-names =3D "sdhci";
-+			iommus =3D <&smmu TEGRA194_SID_SDMMC4>;
- 			nvidia,pad-autocal-pull-up-offset-hs400 =3D <0x00>;
- 			nvidia,pad-autocal-pull-down-offset-hs400 =3D <0x00>;
- 			nvidia,pad-autocal-pull-up-offset-1v8-timeout =3D <0x0a>;
---=20
-2.26.2
+SGkgQmpvcm4sCgpJbiBmYWN0LCBtb3N0IHVzYWdlIG9mIHBtX3J1bnRpbWVfZ2V0X3N5bmMoKSBp
+cyBjb3JyZWN0LiBJIG1hZGUgCmEgc3RhdGljIGFuYWx5c2lzIHRvb2wgdG8gY2hlY2sgdGhpcyBp
+bWJhbGFuY2UgaW4ga2VybmVsIGFuZCAKZm91bmQgYWJvdXQgODAgYnVncyBpbiBkaXJ2ZXJzLiBT
+b21lIG9mIG15IHBhdGNoZXMgaGF2ZSBiZWVuIAphY2NlcHRlZCBhbmQgSSdtIHRyeWluZyB0byBw
+YXRjaCB0aGUgcmVzdCBhcyBzb29uIGFzIHBvc3NpYmxlLgoKUmVnYXJkcywKRGluZ2hhbyAKCj4g
+WytjYyBSYWZhZWwsIGxpbnV4LXBtXQo+IAo+IE9uIFRodSwgTWF5IDIxLCAyMDIwIGF0IDExOjEz
+OjQ5QU0gKzA4MDAsIERpbmdoYW8gTGl1IHdyb3RlOgo+ID4gcG1fcnVudGltZV9nZXRfc3luYygp
+IGluY3JlbWVudHMgdGhlIHJ1bnRpbWUgUE0gdXNhZ2UgY291bnRlciBldmVuCj4gPiB3aGVuIGl0
+IHJldHVybnMgYW4gZXJyb3IgY29kZS4gVGh1cyBhIHBhaXJpbmcgZGVjcmVtZW50IGlzIG5lZWRl
+ZCBvbgo+ID4gdGhlIGVycm9yIGhhbmRsaW5nIHBhdGggdG8ga2VlcCB0aGUgY291bnRlciBiYWxh
+bmNlZC4KPiAKPiBJIGRpZG4ndCByZWFsaXplIHRoZXJlIHdlcmUgc28gbWFueSBkcml2ZXJzIHdp
+dGggdGhlIGV4YWN0IHNhbWUgaXNzdWUuCj4gQ2FuIHdlIGp1c3Qgc3F1YXNoIHRoZXNlIGFsbCBp
+bnRvIGEgc2luZ2xlIHBhdGNoIHNvIHdlIGNhbiBzZWUgdGhlbQo+IGFsbCB0b2dldGhlcj8KPiAK
+PiBIbW0uICBUaGVyZSBhcmUgb3ZlciAxMzAwIGNhbGxlcnMgb2YgcG1fcnVudGltZV9nZXRfc3lu
+YygpLCBhbmQgaXQKPiBsb29rcyBsaWtlIG1hbnkgb2YgdGhlbSBoYXZlIHNpbWlsYXIgaXNzdWVz
+LCBpLmUuLCB0aGV5IGhhdmUgYSBwYXR0ZXJuCj4gbGlrZSB0aGlzCj4gCj4gICByZXQgPSBwbV9y
+dW50aW1lX2dldF9zeW5jKGRldik7Cj4gICBpZiAocmV0IDwgMCkKPiAgICAgcmV0dXJuOwo+IAo+
+ICAgcG1fcnVudGltZV9wdXQoZGV2KTsKPiAKPiB3aGVyZSB0aGVyZSBpcyBub3QgYSBwbV9ydW50
+aW1lX3B1dCgpIHRvIG1hdGNoIGV2ZXJ5Cj4gcG1fcnVudGltZV9nZXRfc3luYygpLiAgUmFuZG9t
+IHNhbXBsZToKPiAKPiAgIG5kczMyX3BtdV9yZXNlcnZlX2hhcmR3YXJlCj4gICBzYXRhX3JjYXJf
+cHJvYmUKPiAgIGV4eW5vc190cm5nX3Byb2JlCj4gICBrc19zYV9ybmdfcHJvYmUKPiAgIG9tYXBf
+YWVzX3Byb2JlCj4gICBzdW44aV9zc19wcm9iZQo+ICAgb21hcF9hZXNfcHJvYmUKPiAgIHp5bnFf
+Z3Bpb19wcm9iZQo+ICAgYW1kZ3B1X2h3bW9uX3Nob3dfcG93ZXJfYXZnCj4gICBtdGtfY3J0Y19k
+ZHBfaHdfaW5pdAo+ICAgLi4uCj4gCj4gU3VyZWx5IEknbSBtaXNzaW5nIHNvbWV0aGluZyBhbmQg
+dGhlc2UgYXJlbid0IGFsbCBicm9rZW4sIHJpZ2h0Pwo+IAo+IE1heWJlIHdlIGNvdWxkIHB1dCB0
+b2dldGhlciBhIGNvY2NpbmVsbGUgc2NyaXB0IHRvIHNjYW4gdGhlIHRyZWUgZm9yCj4gdGhpcyBp
+c3N1ZT8KPiAKPiA+IFNpZ25lZC1vZmYtYnk6IERpbmdoYW8gTGl1IDxkaW5naGFvLmxpdUB6anUu
+ZWR1LmNuPgo+ID4gLS0tCj4gPiAgZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpZS10ZWdy
+YTE5NC5jIHwgNSArKy0tLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDMg
+ZGVsZXRpb25zKC0pCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BjaS9jb250cm9sbGVy
+L2R3Yy9wY2llLXRlZ3JhMTk0LmMgYi9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLXRl
+Z3JhMTk0LmMKPiA+IGluZGV4IGFlMzBhMmZkMzcxNi4uMmMwZDJjZTE2YjQ3IDEwMDY0NAo+ID4g
+LS0tIGEvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpZS10ZWdyYTE5NC5jCj4gPiArKysg
+Yi9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLXRlZ3JhMTk0LmMKPiA+IEBAIC0xNjIz
+LDcgKzE2MjMsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX3BjaWVfY29uZmlnX3JwKHN0cnVjdCB0ZWdy
+YV9wY2llX2R3ICpwY2llKQo+ID4gIAlyZXQgPSBwaW5jdHJsX3BtX3NlbGVjdF9kZWZhdWx0X3N0
+YXRlKGRldik7Cj4gPiAgCWlmIChyZXQgPCAwKSB7Cj4gPiAgCQlkZXZfZXJyKGRldiwgIkZhaWxl
+ZCB0byBjb25maWd1cmUgc2lkZWJhbmQgcGluczogJWRcbiIsIHJldCk7Cj4gPiAtCQlnb3RvIGZh
+aWxfcGluY3RybDsKPiA+ICsJCWdvdG8gZmFpbF9wbV9nZXRfc3luYzsKPiA+ICAJfQo+ID4gIAo+
+ID4gIAl0ZWdyYV9wY2llX2luaXRfY29udHJvbGxlcihwY2llKTsKPiA+IEBAIC0xNjUwLDkgKzE2
+NTAsOCBAQCBzdGF0aWMgaW50IHRlZ3JhX3BjaWVfY29uZmlnX3JwKHN0cnVjdCB0ZWdyYV9wY2ll
+X2R3ICpwY2llKQo+ID4gIAo+ID4gIGZhaWxfaG9zdF9pbml0Ogo+ID4gIAl0ZWdyYV9wY2llX2Rl
+aW5pdF9jb250cm9sbGVyKHBjaWUpOwo+ID4gLWZhaWxfcGluY3RybDoKPiA+IC0JcG1fcnVudGlt
+ZV9wdXRfc3luYyhkZXYpOwo+ID4gIGZhaWxfcG1fZ2V0X3N5bmM6Cj4gPiArCXBtX3J1bnRpbWVf
+cHV0X3N5bmMoZGV2KTsKPiA+ICAJcG1fcnVudGltZV9kaXNhYmxlKGRldik7Cj4gPiAgCXJldHVy
+biByZXQ7Cj4gPiAgfQo+ID4gLS0gCj4gPiAyLjE3LjEKPiA+IAo=
