@@ -1,44 +1,43 @@
-From: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org
-Subject: Re: Re: Re: [PATCH] spi: tegra20-slink: Fix runtime PM imbalance on
- error
-Date: Sat, 23 May 2020 19:32:46 +0800 (GMT+08:00)
-Message-ID: <53722a45.c204d.172414e8ed8.Coremail.dinghao.liu@zju.edu.cn>
+From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: Re: Re: [PATCH] spi: tegra20-slink: Fix runtime PM imbalance on error
+Date: Sat, 23 May 2020 14:52:33 +0300
+Message-ID: <CAHp75VcfcE63KHbyokoBuBKDdTHiB8QiauL8XU=rRo0-=NL-Kg@mail.gmail.com>
 References: <20200521074946.21799-1-dinghao.liu@zju.edu.cn>
  <CAHp75VfOeUaqRW2vRwyWaz3JJw41hX5jTgE+kZ8pB8E_HtHwqw@mail.gmail.com>
  <5a8a6e7b.bef25.1723b588c7f.Coremail.dinghao.liu@zju.edu.cn>
  <CAHp75Vem1kQviLrobJ65aVOb_VCmLkAv=5U_iXAdWPNe7n0+Ng@mail.gmail.com>
- <CAHp75VexCBc6iCrd_VLj5jXE8cxxdzUUf6pMG6O8LjtNj0J1Aw@mail.gmail.com>
+ <CAHp75VexCBc6iCrd_VLj5jXE8cxxdzUUf6pMG6O8LjtNj0J1Aw@mail.gmail.com> <53722a45.c204d.172414e8ed8.Coremail.dinghao.liu@zju.edu.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHp75VexCBc6iCrd_VLj5jXE8cxxdzUUf6pMG6O8LjtNj0J1Aw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <53722a45.c204d.172414e8ed8.Coremail.dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
 Cc: Kangjie Lu <kjlu-OJFnDUYgAso@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBPbiBGcmksIE1heSAyMiwgMjAyMCBhdCA2OjIwIFBNIEFuZHkgU2hldmNoZW5rbwo+IDxhbmR5
-LnNoZXZjaGVua29AZ21haWwuY29tPiB3cm90ZToKPiA+IE9uIEZyaSwgTWF5IDIyLCAyMDIwIGF0
-IDEwOjQ2IEFNIDxkaW5naGFvLmxpdUB6anUuZWR1LmNuPiB3cm90ZToKPiAKPiAuLi4KPiAKPiA+
-IE1vcmVvdmVyLCBjb25zaWRlciBiZWxvdyBjYXNlCj4gPgo+ID4gQ1BVMTogLi4uc29tZXdoZXJl
-IGluIHRoZSBjb2RlLi4uCj4gPiBwbV9ydW50aW1lX2dldCgpIC8vIHdpdGggc3VjY2VzcyEKPiA+
-IC4uLnNlZSBiZWxvdy4uLgo+ID4gcG1fcnVudGltZV9wdXQoKQo+ID4KPiA+IENQVTI6IC4uLm9u
-IHBhcmFsbGVsIHRocmVhZC4uLgo+ID4gcmV0ID0gcG1fcnVudGltZV9nZXRfc3luYygpIC8vIGZh
-aWxlZCEKPiA+IGlmIChyZXQpCj4gPiAgIHBtX3J1bnRpbWVfcHV0KCkgLy8gb2kgdmVpLCB3ZSBw
-dXQgZGV2aWNlIGludG8gc2xlZXAKPiA+Cj4gPiBTbywgdGhlcmUgaXMgYSBwb3RlbnRpYWwgaXNz
-dWUuCj4gCj4gLi4uYW5kIGV2ZW4gaWYgaXQncyBpbXBvc3NpYmxlIChubyBidWdzIGluIHJ1bnRp
-bWUgUE0gY29yZSwgZXRjKSB0aGUKPiBjb2RlIHdpdGggcHV0KCkgbG9va3Mgc3VzcGljaW91cy4K
-PiAKCkkgbWF5IHVuZGVyc3RhbmQgd2hhdCB5b3UgYXJlIHdvcnJpZWQgYWJvdXQuIERvIHlvdSBt
-ZWFuIHRoYXQKZXhlY3V0aW5nIHBtX3J1bnRpbWVfcHV0KCkgd2lsbCBpbmZsdWVuY2Ugb3RoZXIg
-dGhyZWFkcyAoZS5nLiwKb25lIHBhcmFsbGVsIHRocmVhZCBjYW4gcHV0IHRoZSBkZXZpY2UgaW50
-byBzbGVlcCB3aGlsZSBvdGhlcgp0aHJlYWRzIGFyZSB1c2luZyB0aGlzIGRldmljZSk/CgpJIHRo
-aW5rIHRoaXMgd2lsbCBuZXZlciBoYXBwZW4uIEJlY2F1c2UgaW4gdGhpcyBjYXNlIHRoZSBQTSB1
-c2FnZQpjb3VudGVyIGNhbm5vdCBiZSBkZWNyZWFzZWQgdG8gemVybyBpZiB0aGVyZSBhcmUgc3Rp
-bGwgc29tZSB0aHJlYWRzCnVzaW5nIHRoaXMgZGV2aWNlLiBPdGhlcndpc2UsIHBtX3J1bnRpbWVf
-cHV0KCkgc2hvdWxkIG5ldmVyIGJlCnVzZWQgaW4gdGhlIGNhc2Ugb2YgbXVsdGl0aHJlYWRpbmcs
-IHdoaWNoIGlzIHN0cmFuZ2Ugc2luY2UgdGhpcwpBUEkgaXMgdXNlZCB3aWRlbHkuIAoKSSBhbHNv
-IGNoZWNrZWQgbWFueSBvdGhlciBpbXBsZW1lbnRhdGlvbiBvZiBwcm9iZSBpbiBkcml2ZXJzLgpJ
-dCBzZWVtcyB0aGF0IHVzaW5nIHBtX3J1bnRpbWVfcHV0KCkgaXMgb2suIElmIEkgbWlzdW5kZXJz
-dG9vZAp5b3VyIG9waW5pb24sIHBsZWFzZSBwb2ludCBpdCBvdXQsIHRoYW5rcy4KClJlZ2FyZHMs
-CkRpbmdoYW8KCj4gLS0gCj4gV2l0aCBCZXN0IFJlZ2FyZHMsCj4gQW5keSBTaGV2Y2hlbmtvCg==
+On Sat, May 23, 2020 at 2:32 PM <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org> wrote:
+>
+> > On Fri, May 22, 2020 at 6:20 PM Andy Shevchenko
+> > <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > > On Fri, May 22, 2020 at 10:46 AM <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org> wrote:
+
+...
+
+> I also checked many other implementation of probe in drivers.
+> It seems that using pm_runtime_put() is ok.
+
+In *error path* or normal path?
+
+> If I misunderstood
+> your opinion, please point it out, thanks.
+
+Bottom line is (for the *error path* case):
+pm_runtime_put_noidle() has no side effects
+pm_runtime_put() (potentially) might have side effects.
+
+You should choose one which is clearer about what it does.
+
+-- 
+With Best Regards,
+Andy Shevchenko
