@@ -1,7 +1,7 @@
 From: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
-Subject: [PATCH] [v2] spi: tegra20-sflash: Fix runtime PM imbalance on error
-Date: Sat, 23 May 2020 20:47:58 +0800
-Message-ID: <20200523124758.28604-1-dinghao.liu@zju.edu.cn>
+Subject: [PATCH] [v2] spi: tegra114: Fix runtime PM imbalance on error
+Date: Sat, 23 May 2020 20:57:04 +0800
+Message-ID: <20200523125704.30300-1-dinghao.liu@zju.edu.cn>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org
@@ -19,14 +19,14 @@ Changelog:
 
 v2: - Use pm_runtime_put_noidle() instead of pm_runtime_put().
 ---
- drivers/spi/spi-tegra20-sflash.c | 1 +
+ drivers/spi/spi-tegra114.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
-index 514429379206..02cf5f463ba6 100644
---- a/drivers/spi/spi-tegra20-sflash.c
-+++ b/drivers/spi/spi-tegra20-sflash.c
-@@ -491,6 +491,7 @@ static int tegra_sflash_probe(struct platform_device *pdev)
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 83edabdb41ad..c2c58871a947 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -1398,6 +1398,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
  	ret = pm_runtime_get_sync(&pdev->dev);
  	if (ret < 0) {
  		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
