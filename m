@@ -1,17 +1,16 @@
 From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
         <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 17/32] pwm: samsung: convert to
- devm_platform_ioremap_resource
-Date: Sat, 23 May 2020 19:21:49 +0200
-Message-ID: <20200523172149.wvv2u5gq2fanguax@pengutronix.de>
+Subject: Re: [PATCH 20/32] pwm: imx: convert to devm_platform_ioremap_resource
+Date: Sat, 23 May 2020 19:22:08 +0200
+Message-ID: <20200523172208.3ob7pdxsjmxnebva@pengutronix.de>
 References: <20191229080610.7597-1-tiny.windzz@gmail.com>
- <20191229080610.7597-17-tiny.windzz@gmail.com>
+ <20191229080610.7597-20-tiny.windzz@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-pwm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20191229080610.7597-17-tiny.windzz@gmail.com>
+In-Reply-To: <20191229080610.7597-20-tiny.windzz@gmail.com>
 Sender: linux-pwm-owner@vger.kernel.org
 To: Yangtao Li <tiny.windzz@gmail.com>
 Cc: claudiu.beznea@microchip.com, thierry.reding@gmail.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com, nsaenzjulienne@suse.de, shc_work@mail.ru, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, vz@mleia.com, slemieux.tyco@gmail.com, khilman@baylibre.com, matthias.bgg@gmail.com, heiko@sntech.de, palmer@dabbelt.com, paul.walmsley@sifive.com, mripard@kernel.org, wens@csie.org, jonathanh@nvidia.com, linux@prisktech.co.nz, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.
@@ -19,7 +18,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 Hello,
 
-On Sun, Dec 29, 2019 at 08:05:55AM +0000, Yangtao Li wrote:
+On Sun, Dec 29, 2019 at 08:05:58AM +0000, Yangtao Li wrote:
 > Use devm_platform_ioremap_resource() to simplify code.
 > 
 > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
