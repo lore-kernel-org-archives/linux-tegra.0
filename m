@@ -1,61 +1,44 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 06/15] PCI: tegra: Use pci_host_probe() to register host
-Date: Fri, 22 May 2020 17:48:23 -0600
-Message-ID: <20200522234832.954484-7-robh@kernel.org>
-References: <20200522234832.954484-1-robh@kernel.org>
+From: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org
+Subject: Re: Re: Re: [PATCH] spi: tegra20-slink: Fix runtime PM imbalance on
+ error
+Date: Sat, 23 May 2020 19:32:46 +0800 (GMT+08:00)
+Message-ID: <53722a45.c204d.172414e8ed8.Coremail.dinghao.liu@zju.edu.cn>
+References: <20200521074946.21799-1-dinghao.liu@zju.edu.cn>
+ <CAHp75VfOeUaqRW2vRwyWaz3JJw41hX5jTgE+kZ8pB8E_HtHwqw@mail.gmail.com>
+ <5a8a6e7b.bef25.1723b588c7f.Coremail.dinghao.liu@zju.edu.cn>
+ <CAHp75Vem1kQviLrobJ65aVOb_VCmLkAv=5U_iXAdWPNe7n0+Ng@mail.gmail.com>
+ <CAHp75VexCBc6iCrd_VLj5jXE8cxxdzUUf6pMG6O8LjtNj0J1Aw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200522234832.954484-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <CAHp75VexCBc6iCrd_VLj5jXE8cxxdzUUf6pMG6O8LjtNj0J1Aw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kangjie Lu <kjlu-OJFnDUYgAso@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra host driver does the same host registration and bus scanning
-calls as pci_host_probe, so let's use it instead.
-
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- drivers/pci/controller/pci-tegra.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index e3e917243e10..3cae96dfe75d 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2670,7 +2670,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct pci_host_bridge *host;
- 	struct tegra_pcie *pcie;
--	struct pci_bus *child;
- 	struct resource *bus;
- 	int err;
- 
-@@ -2721,20 +2720,12 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 	host->map_irq = tegra_pcie_map_irq;
- 	host->swizzle_irq = pci_common_swizzle;
- 
--	err = pci_scan_root_bus_bridge(host);
-+	err = pci_host_probe(host);
- 	if (err < 0) {
- 		dev_err(dev, "failed to register host: %d\n", err);
- 		goto pm_runtime_put;
- 	}
- 
--	pci_bus_size_bridges(host->bus);
--	pci_bus_assign_resources(host->bus);
--
--	list_for_each_entry(child, &host->bus->children, node)
--		pcie_bus_configure_settings(child);
--
--	pci_bus_add_devices(host->bus);
--
- 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
- 		err = tegra_pcie_debugfs_init(pcie);
- 		if (err < 0)
--- 
-2.25.1
+PiBPbiBGcmksIE1heSAyMiwgMjAyMCBhdCA2OjIwIFBNIEFuZHkgU2hldmNoZW5rbwo+IDxhbmR5
+LnNoZXZjaGVua29AZ21haWwuY29tPiB3cm90ZToKPiA+IE9uIEZyaSwgTWF5IDIyLCAyMDIwIGF0
+IDEwOjQ2IEFNIDxkaW5naGFvLmxpdUB6anUuZWR1LmNuPiB3cm90ZToKPiAKPiAuLi4KPiAKPiA+
+IE1vcmVvdmVyLCBjb25zaWRlciBiZWxvdyBjYXNlCj4gPgo+ID4gQ1BVMTogLi4uc29tZXdoZXJl
+IGluIHRoZSBjb2RlLi4uCj4gPiBwbV9ydW50aW1lX2dldCgpIC8vIHdpdGggc3VjY2VzcyEKPiA+
+IC4uLnNlZSBiZWxvdy4uLgo+ID4gcG1fcnVudGltZV9wdXQoKQo+ID4KPiA+IENQVTI6IC4uLm9u
+IHBhcmFsbGVsIHRocmVhZC4uLgo+ID4gcmV0ID0gcG1fcnVudGltZV9nZXRfc3luYygpIC8vIGZh
+aWxlZCEKPiA+IGlmIChyZXQpCj4gPiAgIHBtX3J1bnRpbWVfcHV0KCkgLy8gb2kgdmVpLCB3ZSBw
+dXQgZGV2aWNlIGludG8gc2xlZXAKPiA+Cj4gPiBTbywgdGhlcmUgaXMgYSBwb3RlbnRpYWwgaXNz
+dWUuCj4gCj4gLi4uYW5kIGV2ZW4gaWYgaXQncyBpbXBvc3NpYmxlIChubyBidWdzIGluIHJ1bnRp
+bWUgUE0gY29yZSwgZXRjKSB0aGUKPiBjb2RlIHdpdGggcHV0KCkgbG9va3Mgc3VzcGljaW91cy4K
+PiAKCkkgbWF5IHVuZGVyc3RhbmQgd2hhdCB5b3UgYXJlIHdvcnJpZWQgYWJvdXQuIERvIHlvdSBt
+ZWFuIHRoYXQKZXhlY3V0aW5nIHBtX3J1bnRpbWVfcHV0KCkgd2lsbCBpbmZsdWVuY2Ugb3RoZXIg
+dGhyZWFkcyAoZS5nLiwKb25lIHBhcmFsbGVsIHRocmVhZCBjYW4gcHV0IHRoZSBkZXZpY2UgaW50
+byBzbGVlcCB3aGlsZSBvdGhlcgp0aHJlYWRzIGFyZSB1c2luZyB0aGlzIGRldmljZSk/CgpJIHRo
+aW5rIHRoaXMgd2lsbCBuZXZlciBoYXBwZW4uIEJlY2F1c2UgaW4gdGhpcyBjYXNlIHRoZSBQTSB1
+c2FnZQpjb3VudGVyIGNhbm5vdCBiZSBkZWNyZWFzZWQgdG8gemVybyBpZiB0aGVyZSBhcmUgc3Rp
+bGwgc29tZSB0aHJlYWRzCnVzaW5nIHRoaXMgZGV2aWNlLiBPdGhlcndpc2UsIHBtX3J1bnRpbWVf
+cHV0KCkgc2hvdWxkIG5ldmVyIGJlCnVzZWQgaW4gdGhlIGNhc2Ugb2YgbXVsdGl0aHJlYWRpbmcs
+IHdoaWNoIGlzIHN0cmFuZ2Ugc2luY2UgdGhpcwpBUEkgaXMgdXNlZCB3aWRlbHkuIAoKSSBhbHNv
+IGNoZWNrZWQgbWFueSBvdGhlciBpbXBsZW1lbnRhdGlvbiBvZiBwcm9iZSBpbiBkcml2ZXJzLgpJ
+dCBzZWVtcyB0aGF0IHVzaW5nIHBtX3J1bnRpbWVfcHV0KCkgaXMgb2suIElmIEkgbWlzdW5kZXJz
+dG9vZAp5b3VyIG9waW5pb24sIHBsZWFzZSBwb2ludCBpdCBvdXQsIHRoYW5rcy4KClJlZ2FyZHMs
+CkRpbmdoYW8KCj4gLS0gCj4gV2l0aCBCZXN0IFJlZ2FyZHMsCj4gQW5keSBTaGV2Y2hlbmtvCg==
