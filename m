@@ -1,125 +1,78 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1] iommu/tegra-smmu: Add missing locks around mapping operations
-Date: Sun, 24 May 2020 21:37:55 +0300
-Message-ID: <20200524183755.3774-1-digetx@gmail.com>
+Subject: Re: [PATCH v5 0/6] Support DRM bridges on NVIDIA Tegra
+Date: Sun, 24 May 2020 21:41:16 +0300
+Message-ID: <65a9c464-7031-586d-3b5e-d29ec01934ab@gmail.com>
+References: <20200418170703.1583-1-digetx@gmail.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200418170703.1583-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The mapping operations of the Tegra SMMU driver are subjected to a race
-condition issues because SMMU Address Space isn't allocated and freed
-atomically, while it should be. This patch makes the mapping operations
-atomic, it fixes an accidentally released Host1x Address Space problem
-which happens while running multiple graphics tests in parallel on
-Tegra30, i.e. by having multiple threads racing with each other in the
-Host1x's submission and completion code paths, performing IOVA mappings
-and unmappings in parallel.
+18.04.2020 20:06, Dmitry Osipenko пишет:
+> Hello,
+> 
+> This series adds initial support for the DRM bridges to NVIDIA Tegra DRM
+> driver. This is required by newer device-trees where we model the LVDS
+> encoder bridge properly.
+> 
+> Changelog:
+> 
+> v5: - Added new patches that make drm_of_find_panel_or_bridge() more usable
+>       if graph isn't defined in a device-tree:
+> 
+>         of_graph: add of_graph_get_local_port()
+>         drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+> 
+>     - Updated "Support DRM bridges" patch to use drm_of_find_panel_or_bridge()
+>       directly and added WARN_ON(output->panel || output->bridge) sanity-check.
+> 
+>     - Added new "Wrap directly-connected panel into DRM bridge" patch, as
+>       was suggested by Laurent Pinchart.
+> 
+> v4: - Following review comments that were made by Laurent Pinchart to the v3,
+>       we now create and use the "bridge connector".
+> 
+> v3: - Following recommendation from Sam Ravnborg, the new bridge attachment
+>       model is now being used, i.e. we ask bridge to *not* create a connector
+>       using the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
+> 
+>     - The bridge is now created only for the RGB (LVDS) output, and only
+>       when necessary. For now we don't need bridges for HDMI or DSI outputs.
+> 
+>     - I noticed that we're leaking OF node in the panel's error code path,
+>       this is fixed now by the new patch "Don't leak OF node on error".
+> 
+> v2: - Added the new "rgb: Don't register connector if bridge is used"
+>       patch, which hides the unused connector provided by the Tegra DRM
+>       driver when bridge is used, since bridge provides its own connector
+>       to us.
+> 
+>     - Please notice that the first "Support DRM bridges" patch was previously
+>       sent out as a standalone v1 change.
+> 
+> Dmitry Osipenko (6):
+>   of_graph: add of_graph_get_local_port()
+>   drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+>   drm/tegra: output: Don't leak OF node on error
+>   drm/tegra: output: Support DRM bridges
+>   drm/tegra: output: rgb: Support LVDS encoder bridge
+>   drm/tegra: output: rgb: Wrap directly-connected panel into DRM bridge
+> 
+>  drivers/gpu/drm/drm_of.c       | 13 +++++-
+>  drivers/gpu/drm/tegra/drm.h    |  2 +
+>  drivers/gpu/drm/tegra/output.c | 21 +++++++--
+>  drivers/gpu/drm/tegra/rgb.c    | 85 +++++++++++++++++++++-------------
+>  drivers/of/property.c          | 32 +++++++++----
+>  include/linux/of_graph.h       |  7 +++
+>  6 files changed, 114 insertions(+), 46 deletions(-)
+> 
 
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c | 43 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 38 insertions(+), 5 deletions(-)
+Hello Thierry,
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 7426b7666e2b..4f956a797838 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -12,6 +12,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/spinlock.h>
- #include <linux/dma-mapping.h>
- 
- #include <soc/tegra/ahb.h>
-@@ -49,6 +50,7 @@ struct tegra_smmu_as {
- 	struct iommu_domain domain;
- 	struct tegra_smmu *smmu;
- 	unsigned int use_count;
-+	spinlock_t lock;
- 	u32 *count;
- 	struct page **pts;
- 	struct page *pd;
-@@ -308,6 +310,8 @@ static struct iommu_domain *tegra_smmu_domain_alloc(unsigned type)
- 		return NULL;
- 	}
- 
-+	spin_lock_init(&as->lock);
-+
- 	/* setup aperture */
- 	as->domain.geometry.aperture_start = 0;
- 	as->domain.geometry.aperture_end = 0xffffffff;
-@@ -578,7 +582,7 @@ static u32 *as_get_pte(struct tegra_smmu_as *as, dma_addr_t iova,
- 		struct page *page;
- 		dma_addr_t dma;
- 
--		page = alloc_page(GFP_KERNEL | __GFP_DMA | __GFP_ZERO);
-+		page = alloc_page(GFP_ATOMIC | __GFP_DMA | __GFP_ZERO);
- 		if (!page)
- 			return NULL;
- 
-@@ -655,8 +659,9 @@ static void tegra_smmu_set_pte(struct tegra_smmu_as *as, unsigned long iova,
- 	smmu_flush(smmu);
- }
- 
--static int tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
--			  phys_addr_t paddr, size_t size, int prot, gfp_t gfp)
-+static int
-+tegra_smmu_map_locked(struct iommu_domain *domain, unsigned long iova,
-+		      phys_addr_t paddr, size_t size, int prot, gfp_t gfp)
- {
- 	struct tegra_smmu_as *as = to_smmu_as(domain);
- 	dma_addr_t pte_dma;
-@@ -685,8 +690,9 @@ static int tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
- 	return 0;
- }
- 
--static size_t tegra_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
--			       size_t size, struct iommu_iotlb_gather *gather)
-+static size_t
-+tegra_smmu_unmap_locked(struct iommu_domain *domain, unsigned long iova,
-+			size_t size, struct iommu_iotlb_gather *gather)
- {
- 	struct tegra_smmu_as *as = to_smmu_as(domain);
- 	dma_addr_t pte_dma;
-@@ -702,6 +708,33 @@ static size_t tegra_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
- 	return size;
- }
- 
-+static int tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
-+			  phys_addr_t paddr, size_t size, int prot, gfp_t gfp)
-+{
-+	struct tegra_smmu_as *as = to_smmu_as(domain);
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&as->lock, flags);
-+	ret = tegra_smmu_map_locked(domain, iova, paddr, size, prot, gfp);
-+	spin_unlock_irqrestore(&as->lock, flags);
-+
-+	return ret;
-+}
-+
-+static size_t tegra_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
-+			       size_t size, struct iommu_iotlb_gather *gather)
-+{
-+	struct tegra_smmu_as *as = to_smmu_as(domain);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&as->lock, flags);
-+	size = tegra_smmu_unmap_locked(domain, iova, size, gather);
-+	spin_unlock_irqrestore(&as->lock, flags);
-+
-+	return size;
-+}
-+
- static phys_addr_t tegra_smmu_iova_to_phys(struct iommu_domain *domain,
- 					   dma_addr_t iova)
- {
--- 
-2.26.0
+Do you you have any objections to this series?
