@@ -1,78 +1,72 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 0/6] Support DRM bridges on NVIDIA Tegra
-Date: Sun, 24 May 2020 21:41:16 +0300
-Message-ID: <65a9c464-7031-586d-3b5e-d29ec01934ab@gmail.com>
-References: <20200418170703.1583-1-digetx@gmail.com>
+Subject: Re: [PATCH v1] mfd: tps65910: Correct power-off programming sequence
+Date: Sun, 24 May 2020 22:09:09 +0300
+Message-ID: <86d37179-53d1-e0df-6b30-62160351fa4d@gmail.com>
+References: <20200514205022.7024-1-digetx@gmail.com>
+ <20200515110754.GB20564@qmqm.qmqm.pl>
+ <7e1eaac5-34d1-f76e-e4c5-bc36f56a7064@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200418170703.1583-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <7e1eaac5-34d1-f76e-e4c5-bc36f56a7064-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-18.04.2020 20:06, Dmitry Osipenko пишет:
-> Hello,
+15.05.2020 20:30, Dmitry Osipenko пишет:
+> 15.05.2020 16:30, Michał Mirosław пишет:
+>> On Thu, May 14, 2020 at 11:50:21PM +0300, Dmitry Osipenko wrote:
+>>> This patch fixes system shutdown on a devices that use TPS65910 as a
+>>> system's power controller. In accordance to the TPS65910 datasheet, the
+>>> PMIC's state-machine transitions into the OFF state only when DEV_OFF
+>>> bit of DEVCTRL_REG is set. The ON / SLEEP states also should be cleared,
+>>> otherwise PMIC won't get into a proper state on shutdown. Devices like
+>>> Nexus 7 tablet and Ouya game console are now shutting down properly.
+>>>
+>>> Tested-by: Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
+>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> ---
+>>>  drivers/mfd/tps65910.c | 12 ++++++++++--
+>>>  1 file changed, 10 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+>>> index 11959021b50a..22116cee411d 100644
+>>> --- a/drivers/mfd/tps65910.c
+>>> +++ b/drivers/mfd/tps65910.c
+>>> @@ -440,8 +440,16 @@ static void tps65910_power_off(void)
+>>>  			DEVCTRL_PWR_OFF_MASK) < 0)
+>>>  		return;
+>>>  
+>>> -	tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+>>> -			DEVCTRL_DEV_ON_MASK);
+>>> +	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+>>> +			DEVCTRL_DEV_SLP_MASK) < 0)
+>>> +		return;
+>>> +
+>>> +	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+>>> +			DEVCTRL_DEV_ON_MASK) < 0)
+>>> +		return;
+>>> +
+>>> +	tps65910_reg_set_bits(tps65910, TPS65910_DEVCTRL,
+>>> +			DEVCTRL_DEV_OFF_MASK);
+>>>  }
+>>
+>> Isn't it enough to update the DEVCTRL with just one
+>> tps65910_reg_update_bits()?
 > 
-> This series adds initial support for the DRM bridges to NVIDIA Tegra DRM
-> driver. This is required by newer device-trees where we model the LVDS
-> encoder bridge properly.
-> 
-> Changelog:
-> 
-> v5: - Added new patches that make drm_of_find_panel_or_bridge() more usable
->       if graph isn't defined in a device-tree:
-> 
->         of_graph: add of_graph_get_local_port()
->         drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
-> 
->     - Updated "Support DRM bridges" patch to use drm_of_find_panel_or_bridge()
->       directly and added WARN_ON(output->panel || output->bridge) sanity-check.
-> 
->     - Added new "Wrap directly-connected panel into DRM bridge" patch, as
->       was suggested by Laurent Pinchart.
-> 
-> v4: - Following review comments that were made by Laurent Pinchart to the v3,
->       we now create and use the "bridge connector".
-> 
-> v3: - Following recommendation from Sam Ravnborg, the new bridge attachment
->       model is now being used, i.e. we ask bridge to *not* create a connector
->       using the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
-> 
->     - The bridge is now created only for the RGB (LVDS) output, and only
->       when necessary. For now we don't need bridges for HDMI or DSI outputs.
-> 
->     - I noticed that we're leaking OF node in the panel's error code path,
->       this is fixed now by the new patch "Don't leak OF node on error".
-> 
-> v2: - Added the new "rgb: Don't register connector if bridge is used"
->       patch, which hides the unused connector provided by the Tegra DRM
->       driver when bridge is used, since bridge provides its own connector
->       to us.
-> 
->     - Please notice that the first "Support DRM bridges" patch was previously
->       sent out as a standalone v1 change.
-> 
-> Dmitry Osipenko (6):
->   of_graph: add of_graph_get_local_port()
->   drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
->   drm/tegra: output: Don't leak OF node on error
->   drm/tegra: output: Support DRM bridges
->   drm/tegra: output: rgb: Support LVDS encoder bridge
->   drm/tegra: output: rgb: Wrap directly-connected panel into DRM bridge
-> 
->  drivers/gpu/drm/drm_of.c       | 13 +++++-
->  drivers/gpu/drm/tegra/drm.h    |  2 +
->  drivers/gpu/drm/tegra/output.c | 21 +++++++--
->  drivers/gpu/drm/tegra/rgb.c    | 85 +++++++++++++++++++++-------------
->  drivers/of/property.c          | 32 +++++++++----
->  include/linux/of_graph.h       |  7 +++
->  6 files changed, 114 insertions(+), 46 deletions(-)
+> IIRC, we've tried that variant and it didn't work. Although, maybe it
+> was affected by some other changes that we were trying simultaneously,
+> so could be worthwhile to re-check it. Thank you for the comment!
 > 
 
-Hello Thierry,
+We tried it once again and the variant with a single update_bits() for
+all bits doesn't work. The single update_bits() for the ON/OFF_MASK mask
+works, it's actually the same what downstream driver does [1].
 
-Do you you have any objections to this series?
+[1]
+https://android.googlesource.com/kernel/tegra/+/refs/heads/android-tegra3-grouper-3.1-lollipop-release/drivers/mfd/tps6591x.c#374
+
+I'll prepare a v2.
