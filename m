@@ -1,101 +1,53 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH 1/2] hwmon: pwm-fan: Add profile support and add remove
- module support
-Date: Tue, 26 May 2020 06:42:03 -0700
-Message-ID: <20200526134203.GA51584@roeck-us.net>
-References: <1590469565-14953-1-git-send-email-spatra@nvidia.com>
- <53619c02-8c0f-3eec-cccc-16e779b8c425@roeck-us.net>
- <BYAPR12MB30145EC4578F64EAD1233357ADB00@BYAPR12MB3014.namprd12.prod.outlook.com>
+From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Subject: Re: [PATCH v2] mfd: tps65910: Correct power-off programming sequence
+Date: Tue, 26 May 2020 17:01:01 +0200
+Message-ID: <20200526145952.GA2517@qmqm.qmqm.pl>
+References: <20200524192643.18207-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <BYAPR12MB30145EC4578F64EAD1233357ADB00-ZGDeBxoHBPnJoSvCh4fbtgdYzm3356FpvxpqHgZTriW3zl9H0oFU5g@public.gmane.org>
+In-Reply-To: <20200524192643.18207-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "kamil-MZ2JYD8fkKLYtjvyW6yDsg@public.gmane.org" <kamil-MZ2JYD8fkKLYtjvyW6yDsg@public.gmane.org>, "jdelvare-IBi9RG/b67k@public.gmane.org" <jdelvare-IBi9RG/b67k@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 26, 2020 at 12:08:14PM +0000, Sandipan Patra wrote:
-> Hi,
-> 
-> 
-> > -----Original Message-----
-> > From: Guenter Roeck <groeck7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> On Behalf Of Guenter Roeck
-> > Sent: Tuesday, May 26, 2020 5:12 PM
-> > To: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; Thierry Reding
-> > <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; u.kleine-
-> > koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org; kamil-MZ2JYD8fkKLYtjvyW6yDsg@public.gmane.org; jdelvare-IBi9RG/b67k@public.gmane.org;
-> > robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-> > Cc: Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>;
-> > linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> > devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
-> > kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > Subject: Re: [PATCH 1/2] hwmon: pwm-fan: Add profile support and add remove
-> > module support
-> > 
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On 5/25/20 10:06 PM, Sandipan Patra wrote:
-> > > This change has 2 parts:
-> > > 1. Add support for profiles mode settings.
-> > >     This allows different fan settings for trip point temp/hyst/pwm.
-> > >     T194 has multiple fan-profiles support.
-> > >
-> > > 2. Add pwm-fan remove support. This is essential since the config is
-> > >     tristate capable.
-> > >
-> > > Signed-off-by: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >  drivers/hwmon/pwm-fan.c | 112
-> > > ++++++++++++++++++++++++++++++++++++++++++------
-> > >  1 file changed, 100 insertions(+), 12 deletions(-)
-> > >
-> > > diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c index
-> > > 30b7b3e..26db589 100644
-> > > --- a/drivers/hwmon/pwm-fan.c
-> > > +++ b/drivers/hwmon/pwm-fan.c
-> > 
-> > [ ... ]
-> > 
-> > >
-> > > +static int pwm_fan_remove(struct platform_device *pdev) {
-> > > +     struct pwm_fan_ctx *ctx = platform_get_drvdata(pdev);
-> > > +     struct pwm_args args;
-> > > +
-> > > +     if (!ctx)
-> > > +             return -EINVAL;
-> > > +
-> > > +     if (IS_ENABLED(CONFIG_THERMAL))
-> > > +             thermal_cooling_device_unregister(ctx->cdev);
-> > > +
-> > > +     pwm_get_args(ctx->pwm, &args);
-> > > +     pwm_config(ctx->pwm, 0, args.period);
-> > > +     pwm_disable(ctx->pwm);
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > 
-> > I don't think you actually tested this. I would suggest to make yourself familiar
-> > with 'devm' functions and their use, and then resubmit.
-> > 
-> 
-> Thanks Guenter.
-> I missed to mention about devm while unregistering the cooling device.
-> That would definitely cause a mistake in code. I am noting it for further patch.
-> 
-For that part, I am extremely surprised that it is not handled by the
-thermal subsystem. Does each thermal driver need this kind of code ?
+On Sun, May 24, 2020 at 10:26:43PM +0300, Dmitry Osipenko wrote:
+> This patch fixes system shutdown on a devices that use TPS65910 as a
+> system's power controller. In accordance to the TPS65910 datasheet, the
+> PMIC's state-machine transitions into the OFF state only when DEV_OFF
+> bit of DEVCTRL_REG is set. The ON / SLEEP states also should be cleared,
+> otherwise PMIC won't get into a proper state on shutdown. Devices like
+> Nexus 7 tablet and Ouya game console are now shutting down properly.
 
-> For a better clarity, I will push next version of this patch to handle only multiple profiles support.
-> "remove fan module" will be supported by a separate patch altogether.
-> 
+The datasheets of 65910 and 65911 say that ON and SLP bits are cleared
+during OFF state. But I guess the hardware might work differently.
 
-I asked you to look into "devm" functionality. I ask you again.
-If you still think that a remove function is needed, I will require
-detailed reasoning. Please be prepared to explain why devm functions
-do not work for this driver.
+[...]
+> --- a/drivers/mfd/tps65910.c
+> +++ b/drivers/mfd/tps65910.c
+> @@ -440,8 +440,13 @@ static void tps65910_power_off(void)
+>  			DEVCTRL_PWR_OFF_MASK) < 0)
+>  		return;
+>  
+> -	tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+> -			DEVCTRL_DEV_ON_MASK);
+> +	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+> +			DEVCTRL_DEV_SLP_MASK) < 0)
+> +		return;
+> +
+> +	tps65910_reg_update_bits(tps65910, TPS65910_DEVCTRL,
+> +				 DEVCTRL_DEV_OFF_MASK | DEVCTRL_DEV_ON_MASK,
+> +				 DEVCTRL_DEV_OFF_MASK);
+>  }
 
-Guenter
+There is tps65910_reg_set_bits() at the start of function. I guess it
+doesn't work if your changes are needed. Maybe you can remove it?
+
+I would also include your observations about the chip's behaviour in the
+commit message so it doesn't get "fixed" later.
+
+Best Regards,
+Micha³ Miros³aw
