@@ -1,212 +1,65 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH 1/2] hwmon: pwm-fan: Add profile support and add remove
- module support
-Date: Tue, 26 May 2020 09:04:50 +0200
-Message-ID: <20200526070450.sackolk6m3qv7omy@pengutronix.de>
-References: <1590469565-14953-1-git-send-email-spatra@nvidia.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] mfd: tps65910: Correct power-off programming sequence
+Date: Tue, 26 May 2020 09:24:40 +0100
+Message-ID: <20200526082440.GI3628@dell>
+References: <20200524192643.18207-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1590469565-14953-1-git-send-email-spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200524192643.18207-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kamil-MZ2JYD8fkKLYtjvyW6yDsg@public.gmane.org, jdelvare-IBi9RG/b67k@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 26, 2020 at 10:36:04AM +0530, Sandipan Patra wrote:
-> This change has 2 parts:
-> 1. Add support for profiles mode settings.
->     This allows different fan settings for trip point temp/hyst/pwm.
->     T194 has multiple fan-profiles support.
+On Sun, 24 May 2020, Dmitry Osipenko wrote:
+
+> This patch fixes system shutdown on a devices that use TPS65910 as a
+> system's power controller. In accordance to the TPS65910 datasheet, the
+> PMIC's state-machine transitions into the OFF state only when DEV_OFF
+> bit of DEVCTRL_REG is set. The ON / SLEEP states also should be cleared,
+> otherwise PMIC won't get into a proper state on shutdown. Devices like
+> Nexus 7 tablet and Ouya game console are now shutting down properly.
 > 
-> 2. Add pwm-fan remove support. This is essential since the config is
->     tristate capable.
-
-These two are orthogonal, aren't they? So they belong in two patches.
-
-You have to expand the binding documentation.
-
-> Signed-off-by: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Zack Pearsall <zpearsall-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/hwmon/pwm-fan.c | 112 ++++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 100 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-> index 30b7b3e..26db589 100644
-> --- a/drivers/hwmon/pwm-fan.c
-> +++ b/drivers/hwmon/pwm-fan.c
-> @@ -3,8 +3,10 @@
->   * pwm-fan.c - Hwmon driver for fans connected to PWM lines.
->   *
->   * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + * Copyright (c) 2020, NVIDIA Corporation.
->   *
->   * Author: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> + * Author: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->   */
+> Changelog:
+> 
+> v2: - Now using a single tps65910_reg_update_bits() instead of set+clear.
+>       Thanks to Michał Mirosław for the suggestion.
+
+Michał should review.
+
+>  drivers/mfd/tps65910.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+> index 11959021b50a..3f4483dec871 100644
+> --- a/drivers/mfd/tps65910.c
+> +++ b/drivers/mfd/tps65910.c
+> @@ -440,8 +440,13 @@ static void tps65910_power_off(void)
+>  			DEVCTRL_PWR_OFF_MASK) < 0)
+>  		return;
 >  
->  #include <linux/hwmon.h>
-> @@ -21,6 +23,8 @@
->  #include <linux/timer.h>
->  
->  #define MAX_PWM 255
-> +/* Based on OF max device tree node name length */
-> +#define MAX_PROFILE_NAME_LENGTH	31
->  
->  struct pwm_fan_ctx {
->  	struct mutex lock;
-> @@ -38,6 +42,12 @@ struct pwm_fan_ctx {
->  	unsigned int pwm_fan_state;
->  	unsigned int pwm_fan_max_state;
->  	unsigned int *pwm_fan_cooling_levels;
+> -	tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+> -			DEVCTRL_DEV_ON_MASK);
+> +	if (tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
+> +			DEVCTRL_DEV_SLP_MASK) < 0)
+> +		return;
 > +
-> +	unsigned int pwm_fan_profiles;
-> +	const char **fan_profile_names;
-> +	unsigned int **fan_profile_cooling_levels;
-> +	unsigned int fan_current_profile;
-> +
->  	struct thermal_cooling_device *cdev;
->  };
->  
-> @@ -227,28 +237,86 @@ static int pwm_fan_of_get_cooling_data(struct device *dev,
->  				       struct pwm_fan_ctx *ctx)
->  {
->  	struct device_node *np = dev->of_node;
-> +	struct device_node *base_profile = NULL;
-> +	struct device_node *profile_np = NULL;
-> +	const char *default_profile = NULL;
->  	int num, i, ret;
->  
-> -	if (!of_find_property(np, "cooling-levels", NULL))
-> -		return 0;
-> +	num = of_property_count_u32_elems(np, "cooling-levels");
-> +	if (num <= 0) {
-> +		base_profile = of_get_child_by_name(np, "profiles");
-> +		if (!base_profile) {
-> +			dev_err(dev, "Wrong Data\n");
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	if (base_profile) {
-> +		ctx->pwm_fan_profiles =
-> +			of_get_available_child_count(base_profile);
-> +
-> +		if (ctx->pwm_fan_profiles <= 0) {
-> +			dev_err(dev, "Profiles used but not defined\n");
-> +			return -EINVAL;
-> +		}
->  
-> -	ret = of_property_count_u32_elems(np, "cooling-levels");
-> -	if (ret <= 0) {
-> -		dev_err(dev, "Wrong data!\n");
-> -		return ret ? : -EINVAL;
-> +		ctx->fan_profile_names = devm_kzalloc(dev,
-> +			sizeof(const char *) * ctx->pwm_fan_profiles,
-> +							GFP_KERNEL);
-> +		ctx->fan_profile_cooling_levels = devm_kzalloc(dev,
-> +			sizeof(int *) * ctx->pwm_fan_profiles,
-> +							GFP_KERNEL);
-> +
-> +		if (!ctx->fan_profile_names
-> +				|| !ctx->fan_profile_cooling_levels)
-> +			return -ENOMEM;
-> +
-> +		ctx->fan_current_profile = 0;
-> +		i = 0;
-> +		for_each_available_child_of_node(base_profile, profile_np) {
-> +			num = of_property_count_u32_elems(profile_np,
-> +							"cooling-levels");
-> +			if (num <= 0) {
-> +				dev_err(dev, "No data in cooling-levels inside profile node!\n");
-> +				return -EINVAL;
-> +			}
-> +
-> +			of_property_read_string(profile_np, "name",
-> +						&ctx->fan_profile_names[i]);
-> +			if (default_profile &&
-> +				!strncmp(default_profile,
-> +				ctx->fan_profile_names[i],
-> +				MAX_PROFILE_NAME_LENGTH))
-> +				ctx->fan_current_profile = i;
-> +
-> +			ctx->fan_profile_cooling_levels[i] =
-> +				devm_kzalloc(dev, sizeof(int) * num,
-> +							GFP_KERNEL);
-> +			if (!ctx->fan_profile_cooling_levels[i])
-> +				return -ENOMEM;
-> +
-> +			of_property_read_u32_array(profile_np, "cooling-levels",
-> +				ctx->fan_profile_cooling_levels[i], num);
-> +			i++;
-> +		}
->  	}
->  
-> -	num = ret;
->  	ctx->pwm_fan_cooling_levels = devm_kcalloc(dev, num, sizeof(u32),
->  						   GFP_KERNEL);
->  	if (!ctx->pwm_fan_cooling_levels)
->  		return -ENOMEM;
->  
-> -	ret = of_property_read_u32_array(np, "cooling-levels",
-> -					 ctx->pwm_fan_cooling_levels, num);
-> -	if (ret) {
-> -		dev_err(dev, "Property 'cooling-levels' cannot be read!\n");
-> -		return ret;
-> +	if (base_profile) {
-> +		memcpy(ctx->pwm_fan_cooling_levels,
-> +		  ctx->fan_profile_cooling_levels[ctx->fan_current_profile],
-> +						num);
-> +	} else {
-> +		ret = of_property_read_u32_array(np, "cooling-levels",
-> +				ctx->pwm_fan_cooling_levels, num);
-> +		if (ret) {
-> +			dev_err(dev, "Property 'cooling-levels' cannot be read!\n");
-> +			return -EINVAL;
-> +		}
->  	}
->  
->  	for (i = 0; i < num; i++) {
-> @@ -390,6 +458,25 @@ static int pwm_fan_probe(struct platform_device *pdev)
->  	return 0;
+> +	tps65910_reg_update_bits(tps65910, TPS65910_DEVCTRL,
+> +				 DEVCTRL_DEV_OFF_MASK | DEVCTRL_DEV_ON_MASK,
+> +				 DEVCTRL_DEV_OFF_MASK);
 >  }
 >  
-> +static int pwm_fan_remove(struct platform_device *pdev)
-> +{
-> +	struct pwm_fan_ctx *ctx = platform_get_drvdata(pdev);
-> +	struct pwm_args args;
-> +
-> +	if (!ctx)
-> +		return -EINVAL;
-> +
-> +	if (IS_ENABLED(CONFIG_THERMAL))
-> +		thermal_cooling_device_unregister(ctx->cdev);
-> +
-> +	pwm_get_args(ctx->pwm, &args);
-> +	pwm_config(ctx->pwm, 0, args.period);
-> +	pwm_disable(ctx->pwm);
-
-What is what you really here? Is it only that the PWM stops oscillating,
-or is it crucial that the output goes to its inactive level?
-
-(The intended semantic of pwm_disable includes that the output goes low,
-but not all implementations enforce this.)
-
-Also please don't introduce new users of pwm_config() and pwm_disable()
-use pwm_apply() instead.
-
-I wonder if this unregistration is "safe". When the driver is in use I'd
-expect that the hwmon device doesn't go away and so the devm
-unregistration callback that belongs to
-devm_hwmon_device_register_with_groups() blocks. But at this time the
-PWM is already stopped and so the device stops functioning earlier.
-
-Best regards
-Uwe
+>  static int tps65910_i2c_probe(struct i2c_client *i2c,
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-K�nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
