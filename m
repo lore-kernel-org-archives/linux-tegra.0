@@ -1,48 +1,38 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1] drm/tegra: gr2d: Add tiled PATBASE address register
-Date: Tue, 26 May 2020 23:57:53 +0300
-Message-ID: <20200526205753.14423-1-digetx@gmail.com>
+From: Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v5.8-rc1
+Date: Tue, 26 May 2020 14:59:44 -0700
+Message-ID: <159053038496.88029.2137294571210435375@swboyd.mtv.corp.google.com>
+References: <20200515142730.1573945-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200515142730.1573945-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-There are two PATBASE address registers, one for linear layout and other
-for tiled. The driver's address registers list misses the tiled PATBASE
-register.
+Quoting Thierry Reding (2020-05-15 07:27:30)
+> Hi Mike, Stephen,
+>=20
+> The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f31=
+36:
+>=20
+>   Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
+5.8-clk
+>=20
+> for you to fetch changes up to dec396322d25ca5ce2f307b6da897060fdf9a782:
+>=20
+>   clk: tegra: Add Tegra210 CSI TPG clock gate (2020-05-12 22:48:43 +0200)
+>=20
+> Thanks,
+> Thierry
+>=20
+> ----------------------------------------------------------------
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/gpu/drm/tegra/gr2d.c | 1 +
- drivers/gpu/drm/tegra/gr2d.h | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-index 48363f744bb9..1a0d3ba6e525 100644
---- a/drivers/gpu/drm/tegra/gr2d.c
-+++ b/drivers/gpu/drm/tegra/gr2d.c
-@@ -177,6 +177,7 @@ static const u32 gr2d_addr_regs[] = {
- 	GR2D_DSTC_BASE_ADDR,
- 	GR2D_SRCA_BASE_ADDR,
- 	GR2D_SRCB_BASE_ADDR,
-+	GR2D_PATBASE_ADDR,
- 	GR2D_SRC_BASE_ADDR_SB,
- 	GR2D_DSTA_BASE_ADDR_SB,
- 	GR2D_DSTB_BASE_ADDR_SB,
-diff --git a/drivers/gpu/drm/tegra/gr2d.h b/drivers/gpu/drm/tegra/gr2d.h
-index 2398486f0699..9b7d66e15b9f 100644
---- a/drivers/gpu/drm/tegra/gr2d.h
-+++ b/drivers/gpu/drm/tegra/gr2d.h
-@@ -14,6 +14,7 @@
- #define GR2D_DSTC_BASE_ADDR		0x2d
- #define GR2D_SRCA_BASE_ADDR		0x31
- #define GR2D_SRCB_BASE_ADDR		0x32
-+#define GR2D_PATBASE_ADDR		0x47
- #define GR2D_SRC_BASE_ADDR_SB		0x48
- #define GR2D_DSTA_BASE_ADDR_SB		0x49
- #define GR2D_DSTB_BASE_ADDR_SB		0x4a
--- 
-2.26.0
+Thanks. Pulled into clk-next
