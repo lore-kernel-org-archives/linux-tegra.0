@@ -1,195 +1,85 @@
-From: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3] pwm: tegra: dynamic clk freq configuration by PWM driver
-Date: Tue, 26 May 2020 16:55:35 +0530
-Message-ID: <1590492335-25857-1-git-send-email-spatra@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [GIT PULL 07/11] memory: tegra: Changes for v5.8-rc1
+Date: Tue, 26 May 2020 13:40:54 +0200
+Message-ID: <20200526114054.GA2935745@ulmo>
+References: <20200515145311.1580134-1-thierry.reding@gmail.com>
+ <20200515145311.1580134-8-thierry.reding@gmail.com>
+ <CAK8P3a0kqjt8UNxe2ruRDOJNedOcqWxP-i5y2uW6YsaMNJgejg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
-Cc: bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0kqjt8UNxe2ruRDOJNedOcqWxP-i5y2uW6YsaMNJgejg@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Added support for dynamic clock freq configuration in pwm kernel driver.
-Earlier the pwm driver used to cache boot time clock rate by pwm clock
-parent during probe. Hence dynamically changing pwm frequency was not
-possible for all the possible ranges. With this change, dynamic calculation
-is enabled and it is able to set the requested period from sysfs knob
-provided the value is supported by clock source.
 
-Changes mainly have 2 parts:
-  - T186 and later chips [1]
-  - T210 and prior chips [2]
+--45Z9DzgjV8m4Oswq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For [1] - Changes implemented to set pwm period dynamically and
-          also checks added to allow only if requested period(ns) is
-          below or equals to higher range.
+On Mon, May 25, 2020 at 11:52:30PM +0200, Arnd Bergmann wrote:
+> On Fri, May 15, 2020 at 4:53 PM Thierry Reding <thierry.reding@gmail.com>=
+ wrote:
+>=20
+> >
+> > ----------------------------------------------------------------
+> > memory: tegra: Changes for v5.8-rc1
+> >
+> > Contains a few cleanup patches and an implementation to scale the EMC
+> > frequency on Tegra210 systems.
+>=20
+> I don't mind taking the memory driver patches, but it seems odd that this
+> pull request has so many drivers/clk changes but does not mention that
+> in the pull request, and does not Cc the clk maintainers or include Acks
+> from them.
+>=20
+> I would assume that the reason for this is that you have based
+> the memory controller changes on a branch that was already
+> accepted by the clk maintainers in to their tree, but when you do that
+> please be more explicit so I know what is going on.
 
-For [2] - Only checks if the requested period(ns) is below or equals
-          to higher range defined by max clock limit. The limitation
-          in T210 or prior chips are due to the reason of having only
-          one pwm-controller supporting multiple channels. But later
-          chips have multiple pwm controller instances each having
-	  single channel support.
+So historically there's often a lot of dependencies, either build-time
+or runtime, between Tegra clock patches and other work. That's why we
+ended up with this model where I collect Tegra clock patches in the
+Tegra tree and it's not uncommon to end up with the clock branch being
+a dependency of one of the other branches.
 
-Signed-off-by: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+I did send this to Mike and Stephen about 1 1/2 weeks ago, but it does
+not look like they've pulled it into the clk tree yet.
 
-PATCH V3:
-1. Return -EINVAL if requested period does not fall inside limit.
-2. Store the new clock rate for further references.
-3. Varible name change reverted.
-4. Comments corrected and new comments are added.
+I typically highlight the dependencies in the pull request, but looks
+like I forgot to do that this time around.
 
- drivers/pwm/pwm-tegra.c | 85 +++++++++++++++++++++++++++++++++++++++++++++=
-+---
- 1 file changed, 80 insertions(+), 5 deletions(-)
+> Waiting for clarification before I can pull this.
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index d26ed8f..c6e5dcf 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -4,8 +4,35 @@
-  *
-  * Tegra pulse-width-modulation controller driver
-  *
-- * Copyright (c) 2010, NVIDIA Corporation.
-- * Based on arch/arm/plat-mxc/pwm.c by Sascha Hauer <s.hauer@pengutronix.d=
-e>
-+ * Copyright (c) 2010-2020, NVIDIA Corporation.
-+ *
-+ * Overview of Tegra Pulse Width Modulator Register:
-+ * 1. 13-bit: Frequency division (SCALE)
-+ * 2. 8-bit : Puls division (DUTY)
-+ * 3. 1-bit : Enable bit
-+ *
-+ * The PWM clock frequency is divided by 256 before subdividing it based
-+ * on the programmable frequency division value to generate the required
-+ * frequency for PWM output. The maximum output frequency that can be
-+ * achieved is (max rate of source clock) / 256.
-+ * e.g. if source clock rate is 408 MHz, maximum output frequency can be:
-+ * 408 MHz/256 =3D 1.6 MHz.
-+ * This 1.6 MHz frequency can further be divided using SCALE value in PWM.
-+ *
-+ * PWM pulse width: 8 bits are usable [23:16] for varying pulse width.
-+ * To achieve 100% duty cycle, program Bit [24] of this register to
-+ * 1=E2=80=99b1. In which case the other bits [23:16] are set to don't car=
-e.
-+ *
-+ * Limitations:
-+ * -	When PWM is disabled, the output is driven to inactive.
-+ * -	It does not allow the current PWM period to complete and
-+ *	stops abruptly.
-+ *
-+ * -	If the register is reconfigured while PWM is running,
-+ *	it does not complete the currently running period.
-+ *
-+ * -	If the user input duty is beyond acceptible limits,
-+ *	-EINVAL is returned.
-  */
-=20
- #include <linux/clk.h>
-@@ -41,6 +68,7 @@ struct tegra_pwm_chip {
- 	struct reset_control*rst;
-=20
- 	unsigned long clk_rate;
-+	unsigned long min_period_ns;
-=20
- 	void __iomem *regs;
-=20
-@@ -68,7 +96,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct=
- pwm_device *pwm,
- {
- 	struct tegra_pwm_chip *pc =3D to_tegra_pwm_chip(chip);
- 	unsigned long long c =3D duty_ns, hz;
--	unsigned long rate;
-+	unsigned long rate, required_clk_rate;
- 	u32 val =3D 0;
- 	int err;
-=20
-@@ -83,9 +111,51 @@ static int tegra_pwm_config(struct pwm_chip *chip, stru=
-ct pwm_device *pwm,
- 	val =3D (u32)c << PWM_DUTY_SHIFT;
-=20
- 	/*
-+	 *  Period in nano second has to be <=3D highest allowed period
-+	 *  based on max clock rate of the pwm controller.
-+	 *
-+	 *  higher limit =3D max clock limit >> PWM_DUTY_WIDTH
-+	 *  lower limit =3D min clock limit >> PWM_DUTY_WIDTH >> PWM_SCALE_WIDTH
-+	 */
-+	if (period_ns < pc->min_period_ns)
-+		return -EINVAL;
-+
-+	/*
- 	 * Compute the prescaler value for which (1 << PWM_DUTY_WIDTH)
- 	 * cycles at the PWM clock rate will take period_ns nanoseconds.
-+	 *
-+	 * num_channels: If single instance of PWM controller has multiple
-+	 * channels (e.g. Tegra210 or older) then it is not applicable to
-+	 * configure separate clock rates to each of the channels, in such
-+	 * case the value stored during probe will be referred.
-+	 *
-+	 * If every PWM controller instance has one channel respectively, i.e.
-+	 * nums_channels =3D=3D 1 then only the clock rate can be modified
-+	 * dynamically (e.g. Tegra186 or Tegra194).
- 	 */
-+	if (pc->soc->num_channels =3D=3D 1) {
-+		/*
-+		 * Rate is multiplied with 2^PWM_DUTY_WIDTH so that it matches
-+		 * with the highest applicable rate that the controller can
-+		 * provide. Any further lower value can be derived by setting
-+		 * PFM bits[0:12].
-+		 *
-+		 * required_clk_rate is a reference rate for source clock and
-+		 * it is derived based on user requested period. By setting the
-+		 * source clock rate as required_clk_rate, PWM controller will
-+		 * be able to configure the requested period.
-+		 */
-+		required_clk_rate =3D
-+			(NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
-+
-+		err =3D clk_set_rate(pc->clk, required_clk_rate);
-+		if (err < 0)
-+			return -EINVAL;
-+
-+		/* Store the new rate for further references */
-+		pc->clk_rate =3D clk_get_rate(pc->clk);
-+	}
-+
- 	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH;
-=20
- 	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
-@@ -94,7 +164,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, struc=
-t pwm_device *pwm,
-=20
- 	/*
- 	 * Since the actual PWM divider is the register's frequency divider
--	 * field minus 1, we need to decrement to get the correct value to
-+	 * field plus 1, we need to decrement to get the correct value to
- 	 * write to the register.
- 	 */
- 	if (rate > 0)
-@@ -205,6 +275,10 @@ static int tegra_pwm_probe(struct platform_device *pde=
-v)
- 	 */
- 	pwm->clk_rate =3D clk_get_rate(pwm->clk);
-=20
-+	/* Set minimum limit of PWM period for the IP */
-+	pwm->min_period_ns =3D
-+	    (NSEC_PER_SEC / (pwm->soc->max_frequency >> PWM_DUTY_WIDTH)) + 1;
-+
- 	pwm->rst =3D devm_reset_control_get_exclusive(&pdev->dev, "pwm");
- 	if (IS_ERR(pwm->rst)) {
- 		ret =3D PTR_ERR(pwm->rst);
-@@ -312,5 +386,6 @@ static struct platform_driver tegra_pwm_driver =3D {
- module_platform_driver(tegra_pwm_driver);
-=20
- MODULE_LICENSE("GPL");
--MODULE_AUTHOR("NVIDIA Corporation");
-+MODULE_AUTHOR("Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-+MODULE_DESCRIPTION("Tegra PWM controller driver");
- MODULE_ALIAS("platform:tegra-pwm");
---=20
-2.7.4
+Given the above, might be best to hold off on this for a bit until the
+clock branch was pulled by Mike or Stephen.
+
+Thierry
+
+--45Z9DzgjV8m4Oswq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7NAEEACgkQ3SOs138+
+s6Fv6w/8Cu4dQWtsRKUDrg20jXHqNhVoKWh9ZIqXfZLZ6kbRuNF1Fov+dDUNJujN
+QqPjGh5YyFb3pwIDXK+EKBnPMi4BIDm2khwlL1Y6IgiOpgssfMLdB0SLZRZdHDnf
+dxvR2/yvNC6kjv7kDmc//1QuU+5k/JjmP6Mvqm5NsccJBNpsnlqzN5oMtZVJOYXo
+TOLKcRg0iRwkBJeeL20Q0HgikZCRUpazlhX/6ec4dclFpi6IrVwCBwKMpas77nzf
+cfW6IDba/sygJw5Xhcbj0Tk+aBTJ0OPmrwopAYunLO6vykjzlf9bYpbwesbJ3cbN
+ra1yLxUPM0y0wdEmPpHxzUQrDnPvgDpn2N7wrQN0TFMWvoeII75kh2cB6nChVhaE
+Lx2R/4TupCwMQjUOyULNRN+2y9cNdVoOb34Jl/nXwHD6XlWywZhJKEo5+jTSkG3e
+dmaxZS1WfkrCHEAdRkXNNQTSBznXBu6+yiKEN4GQRvOeEHmSWSnT1cVChVh94KES
+XRnAabAIne4kTqpS2gNugj1DrRytD1k2i2ZCsj/gVy8Qe/AY0rLmjXMSQOLFxdkO
+z9BBuZSLpkOAVvfAFCXpkJFOF8VDd699oyppGOp3fJyqVGPC34qEmvXW6qHzyUFp
+DaB2C2HMPOU3/fCn3QlSoSga8yJgBIXLj9l32h3eJ6eGTa3iZ5I=
+=8dgG
+-----END PGP SIGNATURE-----
+
+--45Z9DzgjV8m4Oswq--
