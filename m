@@ -1,54 +1,48 @@
-From: John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC 0/2] iommu: arm-smmu: Add support for early direct mappings
-Date: Tue, 26 May 2020 13:34:45 -0700
-Message-ID: <CALAqxLVmomdKJCwh=e-PX+8-seDX0RXA81FzmG4sEyJmbXBh9A@mail.gmail.com>
-References: <20191209150748.2471814-1-thierry.reding@gmail.com>
- <20200228025700.GA856087@builder> <20200514193249.GE279327@builder.lan>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1] drm/tegra: gr2d: Add tiled PATBASE address register
+Date: Tue, 26 May 2020 23:57:53 +0300
+Message-ID: <20200526205753.14423-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200514193249.GE279327-Y7zrm0MriT3hXIiyNabO3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 14, 2020 at 12:34 PM <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->
-> On Thu 27 Feb 18:57 PST 2020, Bjorn Andersson wrote:
->
-> Rob, Will, we're reaching the point where upstream has enough
-> functionality that this is becoming a critical issue for us.
->
-> E.g. Lenovo Yoga C630 is lacking this and a single dts patch to boot
-> mainline with display, GPU, WiFi and audio working and the story is
-> similar on several devboards.
->
-> As previously described, the only thing I want is the stream mapping
-> related to the display controller in place, either with the CB with
-> translation disabled or possibly with a way to specify the framebuffer
-> region (although this turns out to mess things up in the display
-> driver...)
->
-> I did pick this up again recently and concluded that by omitting the
-> streams for the USB controllers causes an instability issue seen on one
-> of the controller to disappear. So I would prefer if we somehow could
-> have a mechanism to only pick the display streams and the context
-> allocation for this.
->
->
-> Can you please share some pointers/insights/wishes for how we can
-> conclude on this subject?
+There are two PATBASE address registers, one for linear layout and other
+for tiled. The driver's address registers list misses the tiled PATBASE
+register.
 
-Ping? I just wanted to follow up on this discussion as this small
-series is crucial for booting mainline on the Dragonboard 845c
-devboard. It would be really valuable to be able to get some solution
-upstream so we can test mainline w/o adding additional patches.
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/gr2d.c | 1 +
+ drivers/gpu/drm/tegra/gr2d.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-The rest of the db845c series has been moving forward smoothly, but
-this set seems to be very stuck with no visible progress since Dec.
-
-Are there any pointers for what folks would prefer to see?
-
-thanks
--john
+diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
+index 48363f744bb9..1a0d3ba6e525 100644
+--- a/drivers/gpu/drm/tegra/gr2d.c
++++ b/drivers/gpu/drm/tegra/gr2d.c
+@@ -177,6 +177,7 @@ static const u32 gr2d_addr_regs[] = {
+ 	GR2D_DSTC_BASE_ADDR,
+ 	GR2D_SRCA_BASE_ADDR,
+ 	GR2D_SRCB_BASE_ADDR,
++	GR2D_PATBASE_ADDR,
+ 	GR2D_SRC_BASE_ADDR_SB,
+ 	GR2D_DSTA_BASE_ADDR_SB,
+ 	GR2D_DSTB_BASE_ADDR_SB,
+diff --git a/drivers/gpu/drm/tegra/gr2d.h b/drivers/gpu/drm/tegra/gr2d.h
+index 2398486f0699..9b7d66e15b9f 100644
+--- a/drivers/gpu/drm/tegra/gr2d.h
++++ b/drivers/gpu/drm/tegra/gr2d.h
+@@ -14,6 +14,7 @@
+ #define GR2D_DSTC_BASE_ADDR		0x2d
+ #define GR2D_SRCA_BASE_ADDR		0x31
+ #define GR2D_SRCB_BASE_ADDR		0x32
++#define GR2D_PATBASE_ADDR		0x47
+ #define GR2D_SRC_BASE_ADDR_SB		0x48
+ #define GR2D_DSTA_BASE_ADDR_SB		0x49
+ #define GR2D_DSTB_BASE_ADDR_SB		0x4a
+-- 
+2.26.0
