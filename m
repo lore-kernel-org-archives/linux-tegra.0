@@ -1,85 +1,64 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [GIT PULL 07/11] memory: tegra: Changes for v5.8-rc1
-Date: Tue, 26 May 2020 13:40:54 +0200
-Message-ID: <20200526114054.GA2935745@ulmo>
-References: <20200515145311.1580134-1-thierry.reding@gmail.com>
- <20200515145311.1580134-8-thierry.reding@gmail.com>
- <CAK8P3a0kqjt8UNxe2ruRDOJNedOcqWxP-i5y2uW6YsaMNJgejg@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 1/2] hwmon: pwm-fan: Add profile support and add remove
+ module support
+Date: Tue, 26 May 2020 04:42:17 -0700
+Message-ID: <53619c02-8c0f-3eec-cccc-16e779b8c425@roeck-us.net>
+References: <1590469565-14953-1-git-send-email-spatra@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0kqjt8UNxe2ruRDOJNedOcqWxP-i5y2uW6YsaMNJgejg@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1590469565-14953-1-git-send-email-spatra@nvidia.com>
+Content-Language: en-US
+Sender: linux-pwm-owner@vger.kernel.org
+To: Sandipan Patra <spatra@nvidia.com>, treding@nvidia.com, jonathanh@nvidia.com, u.kleine-koenig@pengutronix.de, kamil@wypas.org, jdelvare@suse.com, robh+dt@kernel.org
+Cc: bbasu@nvidia.com, bbiswas@nvidia.com, linux-pwm@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 5/25/20 10:06 PM, Sandipan Patra wrote:
+> This change has 2 parts:
+> 1. Add support for profiles mode settings.
+>     This allows different fan settings for trip point temp/hyst/pwm.
+>     T194 has multiple fan-profiles support.
+> 
+> 2. Add pwm-fan remove support. This is essential since the config is
+>     tristate capable.
+> 
+> Signed-off-by: Sandipan Patra <spatra@nvidia.com>
+> ---
+>  drivers/hwmon/pwm-fan.c | 112 ++++++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 100 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> index 30b7b3e..26db589 100644
+> --- a/drivers/hwmon/pwm-fan.c
+> +++ b/drivers/hwmon/pwm-fan.c
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ ... ]
 
-On Mon, May 25, 2020 at 11:52:30PM +0200, Arnd Bergmann wrote:
-> On Fri, May 15, 2020 at 4:53 PM Thierry Reding <thierry.reding@gmail.com>=
- wrote:
->=20
-> >
-> > ----------------------------------------------------------------
-> > memory: tegra: Changes for v5.8-rc1
-> >
-> > Contains a few cleanup patches and an implementation to scale the EMC
-> > frequency on Tegra210 systems.
->=20
-> I don't mind taking the memory driver patches, but it seems odd that this
-> pull request has so many drivers/clk changes but does not mention that
-> in the pull request, and does not Cc the clk maintainers or include Acks
-> from them.
->=20
-> I would assume that the reason for this is that you have based
-> the memory controller changes on a branch that was already
-> accepted by the clk maintainers in to their tree, but when you do that
-> please be more explicit so I know what is going on.
+>  
+> +static int pwm_fan_remove(struct platform_device *pdev)
+> +{
+> +	struct pwm_fan_ctx *ctx = platform_get_drvdata(pdev);
+> +	struct pwm_args args;
+> +
+> +	if (!ctx)
+> +		return -EINVAL;
+> +
+> +	if (IS_ENABLED(CONFIG_THERMAL))
+> +		thermal_cooling_device_unregister(ctx->cdev);
+> +
+> +	pwm_get_args(ctx->pwm, &args);
+> +	pwm_config(ctx->pwm, 0, args.period);
+> +	pwm_disable(ctx->pwm);
+> +
+> +	return 0;
+> +}
+> +
 
-So historically there's often a lot of dependencies, either build-time
-or runtime, between Tegra clock patches and other work. That's why we
-ended up with this model where I collect Tegra clock patches in the
-Tegra tree and it's not uncommon to end up with the clock branch being
-a dependency of one of the other branches.
+I don't think you actually tested this. I would suggest to make
+yourself familiar with 'devm' functions and their use, and
+then resubmit.
 
-I did send this to Mike and Stephen about 1 1/2 weeks ago, but it does
-not look like they've pulled it into the clk tree yet.
-
-I typically highlight the dependencies in the pull request, but looks
-like I forgot to do that this time around.
-
-> Waiting for clarification before I can pull this.
-
-Given the above, might be best to hold off on this for a bit until the
-clock branch was pulled by Mike or Stephen.
-
-Thierry
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7NAEEACgkQ3SOs138+
-s6Fv6w/8Cu4dQWtsRKUDrg20jXHqNhVoKWh9ZIqXfZLZ6kbRuNF1Fov+dDUNJujN
-QqPjGh5YyFb3pwIDXK+EKBnPMi4BIDm2khwlL1Y6IgiOpgssfMLdB0SLZRZdHDnf
-dxvR2/yvNC6kjv7kDmc//1QuU+5k/JjmP6Mvqm5NsccJBNpsnlqzN5oMtZVJOYXo
-TOLKcRg0iRwkBJeeL20Q0HgikZCRUpazlhX/6ec4dclFpi6IrVwCBwKMpas77nzf
-cfW6IDba/sygJw5Xhcbj0Tk+aBTJ0OPmrwopAYunLO6vykjzlf9bYpbwesbJ3cbN
-ra1yLxUPM0y0wdEmPpHxzUQrDnPvgDpn2N7wrQN0TFMWvoeII75kh2cB6nChVhaE
-Lx2R/4TupCwMQjUOyULNRN+2y9cNdVoOb34Jl/nXwHD6XlWywZhJKEo5+jTSkG3e
-dmaxZS1WfkrCHEAdRkXNNQTSBznXBu6+yiKEN4GQRvOeEHmSWSnT1cVChVh94KES
-XRnAabAIne4kTqpS2gNugj1DrRytD1k2i2ZCsj/gVy8Qe/AY0rLmjXMSQOLFxdkO
-z9BBuZSLpkOAVvfAFCXpkJFOF8VDd699oyppGOp3fJyqVGPC34qEmvXW6qHzyUFp
-DaB2C2HMPOU3/fCn3QlSoSga8yJgBIXLj9l32h3eJ6eGTa3iZ5I=
-=8dgG
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
+Thanks,
+Guenter
