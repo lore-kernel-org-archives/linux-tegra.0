@@ -1,12 +1,12 @@
 From: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-Subject: [PATCH 2/2] drm/atomic-helper: reset vblank on crtc reset
-Date: Wed, 27 May 2020 11:47:57 +0200
-Message-ID: <20200527094757.1414174-2-daniel.vetter@ffwll.ch>
-References: <20200527094757.1414174-1-daniel.vetter@ffwll.ch>
+Subject: [PATCH] drm/atomic-helper: reset vblank on crtc reset
+Date: Wed, 27 May 2020 11:53:32 +0200
+Message-ID: <20200527095332.1439425-1-daniel.vetter@ffwll.ch>
+References: <20200527094757.1414174-2-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200527094757.1414174-1-daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+In-Reply-To: <20200527094757.1414174-2-daniel.vetter-/w4YWyX8dFk@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 Cc: Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Tetsuo Handa <penguin-kernel-JPay3/Yim36HaxMnTkn67Xf5DAMn2ifp@public.gmane.org>, syzbot+0871b14ca2e2fb64f6e3-Pl5Pbv+GP7P466ipTTIvnc23WoclnBCfAL8bYrjMMd8@public.gmane.org, "James (Qian) Wang" <james.qian.wang-5wv7dgnIgG8@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Mihail Atanassov <mihail.atanassov-5wv7dgnIgG8@public.gmane.org>, Brian Starkey <brian.starkey-5wv7dgnIgG8@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
@@ -46,6 +46,8 @@ drm_vblank_init. After the previous patch fixing mxsfb all atomic
 drivers do call drm_crtc_vblank_on/off as they should, the remaining
 drivers are either legacy kms or legacy dri1 drivers, so not affected
 by this change to atomic helpers.
+
+v2: Use the drm_dev_has_vblank() helper.
 
 Link: https://syzkaller.appspot.com/bug?id=0ba17d70d062b2595e1f061231474800f076c7cb
 Reported-by: Tetsuo Handa <penguin-kernel-JPay3/Yim36HaxMnTkn67Xf5DAMn2ifp@public.gmane.org>
@@ -151,7 +153,7 @@ index 10985134ce0b..ce246b96330b 100644
  	drm_mode_crtc_set_gamma_size(&crtc->base, ATMEL_HLCDC_CLUT_SIZE);
  	drm_crtc_enable_color_mgmt(&crtc->base, 0, false,
 diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-index 8fce6a115dfe..843964252239 100644
+index 8fce6a115dfe..9ad74045158e 100644
 --- a/drivers/gpu/drm/drm_atomic_state_helper.c
 +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
 @@ -32,6 +32,7 @@
@@ -166,7 +168,7 @@ index 8fce6a115dfe..843964252239 100644
  	if (crtc_state)
  		__drm_atomic_helper_crtc_state_reset(crtc_state, crtc);
  
-+	if (crtc->dev->num_crtcs)
++	if (drm_dev_has_vblank(crtc->dev))
 +		drm_crtc_vblank_reset(crtc);
 +
  	crtc->state = crtc_state;
