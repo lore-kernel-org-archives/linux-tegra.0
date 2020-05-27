@@ -1,7 +1,7 @@
 From: Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v1 2/5] clk: Introduce clk_round_rate_unboundly()
-Date: Tue, 26 May 2020 22:55:49 -0700
-Message-ID: <159055894944.88029.2029223648098859689@swboyd.mtv.corp.google.com>
+Date: Tue, 26 May 2020 22:57:13 -0700
+Message-ID: <159055903348.88029.4091179421954621221@swboyd.mtv.corp.google.com>
 References: <20200330231617.17079-1-digetx@gmail.com> <20200330231617.17079-3-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -17,14 +17,11 @@ Quoting Dmitry Osipenko (2020-03-30 16:16:14)
 > In same cases it may be desired to round clock's rate without taking into
 > account current min/max requests made by the clock's users. One example is
 > building up OPP table based on a possible clock rates.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/clk/clk.c   | 49 +++++++++++++++++++++++++++++++++++----------
+>  include/linux/clk.h | 18 +++++++++++++++++
 
-Shouldn't the OPP table come from firmware/DT? I don't quite understand
-why we're generating OPP tables on top of the rate rounding API.
-clk_round_rate() is supposed to tell us what rate we'll get if we call
-clk_set_rate() with the same arguments. An unboundly version of that
-doesn't make sense.=20
-
-I wonder if perhaps the clk provider should be populating OPP tables in
-this case? Or basically anything besides adding another clk consumer API
-to solve this problem. Who is the caller? Something later in this
-series?
+BTW, please run get_maintainers.pl patches. Russell maintains
+include/linux/clk.h (the clk API). CCF implements it.
