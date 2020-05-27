@@ -1,7 +1,7 @@
 From: "Mrs.Judith Rice" <hamurafujimi-7bQDu5LrMXIlekuKEZ3d8XgSJqDPrsil@public.gmane.org>
 Subject: Spende
-Date: Wed, 27 May 2020 22:08:05 +0900
-Message-ID: <20200527220805.CF82T.792.root__37366.1462262803$1590585525$gmane$org@mwebp13>
+Date: Wed, 27 May 2020 22:56:00 +0900
+Message-ID: <20200527225601.TMB3E.1015.root@mwebp13>
 Reply-To: jonesevansje-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-2022-jp
@@ -27,3 +27,5 @@ Herkunftsland:
 
 Gr&#252;&#223;e,
 Mrs. Judith Rice
+
+Spende
