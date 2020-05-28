@@ -1,259 +1,42 @@
 From: Tang Bin <tangbin-0p4V/sDNsUmm0O/7XYngnFaTQe2KTcn/@public.gmane.org>
-Subject: [PATCH] usb: phy: tegra: Remove unnecessary spaces and tables
-Date: Thu, 28 May 2020 19:28:59 +0800
-Message-ID: <20200528112859.6160-1-tangbin@cmss.chinamobile.com>
+Subject: [PATCH] usb: phy: tegra: Fix unnecessary check in tegra_usb_phy_probe()
+Date: Thu, 28 May 2020 19:47:17 +0800
+Message-ID: <20200528114717.21028-1-tangbin@cmss.chinamobile.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tang Bin <tangbin-0p4V/sDNsUmm0O/7XYngnFaTQe2KTcn/@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tang Bin <tangbin-0p4V/sDNsUmm0O/7XYngnFaTQe2KTcn/@public.gmane.org>, Zhang Shengju <zhangshengju-0p4V/sDNsUmm0O/7XYngnFaTQe2KTcn/@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The macros in phy-tegra-usb.c have inconsistent sapces between
-the macro name and the value. Thus sets all the macros to have
-a signal space between the name and value.
+In the function tegra_usb_phy_probe(), if usb_add_phy_dev() failed,
+the return value will be given to err, and if usb_add_phy_dev() succeed,
+the return value will be zero. Thus it is unnecessary to repeated check
+here.
 
+Signed-off-by: Zhang Shengju <zhangshengju-0p4V/sDNsUmm0O/7XYngnFaTQe2KTcn/@public.gmane.org>
 Signed-off-by: Tang Bin <tangbin-0p4V/sDNsUmm0O/7XYngnFaTQe2KTcn/@public.gmane.org>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 214 ++++++++++++++++----------------
- 1 file changed, 107 insertions(+), 107 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 6153cc35a..c294dc617 100644
+index c294dc617..27c2e9843 100644
 --- a/drivers/usb/phy/phy-tegra-usb.c
 +++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -30,124 +30,124 @@
- #include <linux/usb/tegra_usb_phy.h>
- #include <linux/usb/ulpi.h>
+@@ -1200,11 +1200,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
  
--#define ULPI_VIEWPORT				0x170
-+#define ULPI_VIEWPORT	0x170
+ 	platform_set_drvdata(pdev, tegra_phy);
  
- /* PORTSC PTS/PHCD bits, Tegra20 only */
--#define TEGRA_USB_PORTSC1			0x184
--#define TEGRA_USB_PORTSC1_PTS(x)		(((x) & 0x3) << 30)
--#define TEGRA_USB_PORTSC1_PHCD			BIT(23)
-+#define TEGRA_USB_PORTSC1	0x184
-+#define TEGRA_USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
-+#define TEGRA_USB_PORTSC1_PHCD	BIT(23)
+-	err = usb_add_phy_dev(&tegra_phy->u_phy);
+-	if (err)
+-		return err;
+-
+-	return 0;
++	return usb_add_phy_dev(&tegra_phy->u_phy);
+ }
  
- /* HOSTPC1 PTS/PHCD bits, Tegra30 and above */
--#define TEGRA_USB_HOSTPC1_DEVLC			0x1b4
--#define TEGRA_USB_HOSTPC1_DEVLC_PTS(x)		(((x) & 0x7) << 29)
--#define TEGRA_USB_HOSTPC1_DEVLC_PHCD		BIT(22)
-+#define TEGRA_USB_HOSTPC1_DEVLC	0x1b4
-+#define TEGRA_USB_HOSTPC1_DEVLC_PTS(x)	(((x) & 0x7) << 29)
-+#define TEGRA_USB_HOSTPC1_DEVLC_PHCD	BIT(22)
- 
- /* Bits of PORTSC1, which will get cleared by writing 1 into them */
- #define TEGRA_PORTSC1_RWC_BITS	(PORT_CSC | PORT_PEC | PORT_OCC)
- 
--#define USB_SUSP_CTRL				0x400
--#define   USB_WAKE_ON_CNNT_EN_DEV		BIT(3)
--#define   USB_WAKE_ON_DISCON_EN_DEV		BIT(4)
--#define   USB_SUSP_CLR				BIT(5)
--#define   USB_PHY_CLK_VALID			BIT(7)
--#define   UTMIP_RESET				BIT(11)
--#define   UHSIC_RESET				BIT(11)
--#define   UTMIP_PHY_ENABLE			BIT(12)
--#define   ULPI_PHY_ENABLE			BIT(13)
--#define   USB_SUSP_SET				BIT(14)
--#define   USB_WAKEUP_DEBOUNCE_COUNT(x)		(((x) & 0x7) << 16)
--
--#define USB1_LEGACY_CTRL			0x410
--#define   USB1_NO_LEGACY_MODE			BIT(0)
--#define   USB1_VBUS_SENSE_CTL_MASK		(3 << 1)
--#define   USB1_VBUS_SENSE_CTL_VBUS_WAKEUP	(0 << 1)
--#define   USB1_VBUS_SENSE_CTL_AB_SESS_VLD_OR_VBUS_WAKEUP \
-+#define USB_SUSP_CTRL	0x400
-+#define USB_WAKE_ON_CNNT_EN_DEV	BIT(3)
-+#define USB_WAKE_ON_DISCON_EN_DEV	BIT(4)
-+#define USB_SUSP_CLR	BIT(5)
-+#define USB_PHY_CLK_VALID	BIT(7)
-+#define UTMIP_RESET	BIT(11)
-+#define UHSIC_RESET	BIT(11)
-+#define UTMIP_PHY_ENABLE	BIT(12)
-+#define ULPI_PHY_ENABLE	BIT(13)
-+#define USB_SUSP_SET	BIT(14)
-+#define USB_WAKEUP_DEBOUNCE_COUNT(x)	(((x) & 0x7) << 16)
-+
-+#define USB1_LEGACY_CTRL	0x410
-+#define USB1_NO_LEGACY_MODE	BIT(0)
-+#define USB1_VBUS_SENSE_CTL_MASK	(3 << 1)
-+#define USB1_VBUS_SENSE_CTL_VBUS_WAKEUP	(0 << 1)
-+#define USB1_VBUS_SENSE_CTL_AB_SESS_VLD_OR_VBUS_WAKEUP \
- 						(1 << 1)
--#define   USB1_VBUS_SENSE_CTL_AB_SESS_VLD	(2 << 1)
--#define   USB1_VBUS_SENSE_CTL_A_SESS_VLD	(3 << 1)
--
--#define ULPI_TIMING_CTRL_0			0x424
--#define   ULPI_OUTPUT_PINMUX_BYP		BIT(10)
--#define   ULPI_CLKOUT_PINMUX_BYP		BIT(11)
--
--#define ULPI_TIMING_CTRL_1			0x428
--#define   ULPI_DATA_TRIMMER_LOAD		BIT(0)
--#define   ULPI_DATA_TRIMMER_SEL(x)		(((x) & 0x7) << 1)
--#define   ULPI_STPDIRNXT_TRIMMER_LOAD		BIT(16)
--#define   ULPI_STPDIRNXT_TRIMMER_SEL(x)		(((x) & 0x7) << 17)
--#define   ULPI_DIR_TRIMMER_LOAD			BIT(24)
--#define   ULPI_DIR_TRIMMER_SEL(x)		(((x) & 0x7) << 25)
--
--#define UTMIP_PLL_CFG1				0x804
--#define   UTMIP_XTAL_FREQ_COUNT(x)		(((x) & 0xfff) << 0)
--#define   UTMIP_PLLU_ENABLE_DLY_COUNT(x)	(((x) & 0x1f) << 27)
--
--#define UTMIP_XCVR_CFG0				0x808
--#define   UTMIP_XCVR_SETUP(x)			(((x) & 0xf) << 0)
--#define   UTMIP_XCVR_SETUP_MSB(x)		((((x) & 0x70) >> 4) << 22)
--#define   UTMIP_XCVR_LSRSLEW(x)			(((x) & 0x3) << 8)
--#define   UTMIP_XCVR_LSFSLEW(x)			(((x) & 0x3) << 10)
--#define   UTMIP_FORCE_PD_POWERDOWN		BIT(14)
--#define   UTMIP_FORCE_PD2_POWERDOWN		BIT(16)
--#define   UTMIP_FORCE_PDZI_POWERDOWN		BIT(18)
--#define   UTMIP_XCVR_LSBIAS_SEL			BIT(21)
--#define   UTMIP_XCVR_HSSLEW(x)			(((x) & 0x3) << 4)
--#define   UTMIP_XCVR_HSSLEW_MSB(x)		((((x) & 0x1fc) >> 2) << 25)
--
--#define UTMIP_BIAS_CFG0				0x80c
--#define   UTMIP_OTGPD				BIT(11)
--#define   UTMIP_BIASPD				BIT(10)
--#define   UTMIP_HSSQUELCH_LEVEL(x)		(((x) & 0x3) << 0)
--#define   UTMIP_HSDISCON_LEVEL(x)		(((x) & 0x3) << 2)
--#define   UTMIP_HSDISCON_LEVEL_MSB(x)		((((x) & 0x4) >> 2) << 24)
--
--#define UTMIP_HSRX_CFG0				0x810
--#define   UTMIP_ELASTIC_LIMIT(x)		(((x) & 0x1f) << 10)
--#define   UTMIP_IDLE_WAIT(x)			(((x) & 0x1f) << 15)
--
--#define UTMIP_HSRX_CFG1				0x814
--#define   UTMIP_HS_SYNC_START_DLY(x)		(((x) & 0x1f) << 1)
--
--#define UTMIP_TX_CFG0				0x820
--#define   UTMIP_FS_PREABMLE_J			BIT(19)
--#define   UTMIP_HS_DISCON_DISABLE		BIT(8)
--
--#define UTMIP_MISC_CFG0				0x824
--#define   UTMIP_DPDM_OBSERVE			BIT(26)
--#define   UTMIP_DPDM_OBSERVE_SEL(x)		(((x) & 0xf) << 27)
--#define   UTMIP_DPDM_OBSERVE_SEL_FS_J		UTMIP_DPDM_OBSERVE_SEL(0xf)
--#define   UTMIP_DPDM_OBSERVE_SEL_FS_K		UTMIP_DPDM_OBSERVE_SEL(0xe)
--#define   UTMIP_DPDM_OBSERVE_SEL_FS_SE1		UTMIP_DPDM_OBSERVE_SEL(0xd)
--#define   UTMIP_DPDM_OBSERVE_SEL_FS_SE0		UTMIP_DPDM_OBSERVE_SEL(0xc)
--#define   UTMIP_SUSPEND_EXIT_ON_EDGE		BIT(22)
--
--#define UTMIP_MISC_CFG1				0x828
--#define   UTMIP_PLL_ACTIVE_DLY_COUNT(x)		(((x) & 0x1f) << 18)
--#define   UTMIP_PLLU_STABLE_COUNT(x)		(((x) & 0xfff) << 6)
--
--#define UTMIP_DEBOUNCE_CFG0			0x82c
--#define   UTMIP_BIAS_DEBOUNCE_A(x)		(((x) & 0xffff) << 0)
--
--#define UTMIP_BAT_CHRG_CFG0			0x830
--#define   UTMIP_PD_CHRG				BIT(0)
--
--#define UTMIP_SPARE_CFG0			0x834
--#define   FUSE_SETUP_SEL			BIT(3)
--
--#define UTMIP_XCVR_CFG1				0x838
--#define   UTMIP_FORCE_PDDISC_POWERDOWN		BIT(0)
--#define   UTMIP_FORCE_PDCHRP_POWERDOWN		BIT(2)
--#define   UTMIP_FORCE_PDDR_POWERDOWN		BIT(4)
--#define   UTMIP_XCVR_TERM_RANGE_ADJ(x)		(((x) & 0xf) << 18)
--
--#define UTMIP_BIAS_CFG1				0x83c
--#define   UTMIP_BIAS_PDTRK_COUNT(x)		(((x) & 0x1f) << 3)
-+#define USB1_VBUS_SENSE_CTL_AB_SESS_VLD	(2 << 1)
-+#define USB1_VBUS_SENSE_CTL_A_SESS_VLD	(3 << 1)
-+
-+#define ULPI_TIMING_CTRL_0	0x424
-+#define ULPI_OUTPUT_PINMUX_BYP	BIT(10)
-+#define ULPI_CLKOUT_PINMUX_BYP	BIT(11)
-+
-+#define ULPI_TIMING_CTRL_1	0x428
-+#define ULPI_DATA_TRIMMER_LOAD	BIT(0)
-+#define ULPI_DATA_TRIMMER_SEL(x)	(((x) & 0x7) << 1)
-+#define ULPI_STPDIRNXT_TRIMMER_LOAD	BIT(16)
-+#define ULPI_STPDIRNXT_TRIMMER_SEL(x)	(((x) & 0x7) << 17)
-+#define ULPI_DIR_TRIMMER_LOAD	BIT(24)
-+#define ULPI_DIR_TRIMMER_SEL(x)	(((x) & 0x7) << 25)
-+
-+#define UTMIP_PLL_CFG1	0x804
-+#define UTMIP_XTAL_FREQ_COUNT(x)	(((x) & 0xfff) << 0)
-+#define UTMIP_PLLU_ENABLE_DLY_COUNT(x)	(((x) & 0x1f) << 27)
-+
-+#define UTMIP_XCVR_CFG0	0x808
-+#define UTMIP_XCVR_SETUP(x)	(((x) & 0xf) << 0)
-+#define UTMIP_XCVR_SETUP_MSB(x)	((((x) & 0x70) >> 4) << 22)
-+#define UTMIP_XCVR_LSRSLEW(x)	(((x) & 0x3) << 8)
-+#define UTMIP_XCVR_LSFSLEW(x)	(((x) & 0x3) << 10)
-+#define UTMIP_FORCE_PD_POWERDOWN	BIT(14)
-+#define UTMIP_FORCE_PD2_POWERDOWN	BIT(16)
-+#define UTMIP_FORCE_PDZI_POWERDOWN	BIT(18)
-+#define UTMIP_XCVR_LSBIAS_SEL	BIT(21)
-+#define UTMIP_XCVR_HSSLEW(x)	(((x) & 0x3) << 4)
-+#define UTMIP_XCVR_HSSLEW_MSB(x)	((((x) & 0x1fc) >> 2) << 25)
-+
-+#define UTMIP_BIAS_CFG0	0x80c
-+#define UTMIP_OTGPD	BIT(11)
-+#define UTMIP_BIASPD	BIT(10)
-+#define UTMIP_HSSQUELCH_LEVEL(x)	(((x) & 0x3) << 0)
-+#define UTMIP_HSDISCON_LEVEL(x)	(((x) & 0x3) << 2)
-+#define UTMIP_HSDISCON_LEVEL_MSB(x)	((((x) & 0x4) >> 2) << 24)
-+
-+#define UTMIP_HSRX_CFG0	0x810
-+#define UTMIP_ELASTIC_LIMIT(x)	(((x) & 0x1f) << 10)
-+#define UTMIP_IDLE_WAIT(x)	(((x) & 0x1f) << 15)
-+
-+#define UTMIP_HSRX_CFG1	0x814
-+#define UTMIP_HS_SYNC_START_DLY(x)	(((x) & 0x1f) << 1)
-+
-+#define UTMIP_TX_CFG0	0x820
-+#define UTMIP_FS_PREABMLE_J	BIT(19)
-+#define UTMIP_HS_DISCON_DISABLE	BIT(8)
-+
-+#define UTMIP_MISC_CFG0	0x824
-+#define UTMIP_DPDM_OBSERVE	BIT(26)
-+#define UTMIP_DPDM_OBSERVE_SEL(x)	(((x) & 0xf) << 27)
-+#define UTMIP_DPDM_OBSERVE_SEL_FS_J	UTMIP_DPDM_OBSERVE_SEL(0xf)
-+#define UTMIP_DPDM_OBSERVE_SEL_FS_K	UTMIP_DPDM_OBSERVE_SEL(0xe)
-+#define UTMIP_DPDM_OBSERVE_SEL_FS_SE1	UTMIP_DPDM_OBSERVE_SEL(0xd)
-+#define UTMIP_DPDM_OBSERVE_SEL_FS_SE0	UTMIP_DPDM_OBSERVE_SEL(0xc)
-+#define UTMIP_SUSPEND_EXIT_ON_EDGE	BIT(22)
-+
-+#define UTMIP_MISC_CFG1	0x828
-+#define UTMIP_PLL_ACTIVE_DLY_COUNT(x)	(((x) & 0x1f) << 18)
-+#define UTMIP_PLLU_STABLE_COUNT(x)	(((x) & 0xfff) << 6)
-+
-+#define UTMIP_DEBOUNCE_CFG0	0x82c
-+#define UTMIP_BIAS_DEBOUNCE_A(x)	(((x) & 0xffff) << 0)
-+
-+#define UTMIP_BAT_CHRG_CFG0	0x830
-+#define UTMIP_PD_CHRG	BIT(0)
-+
-+#define UTMIP_SPARE_CFG0	0x834
-+#define FUSE_SETUP_SEL	BIT(3)
-+
-+#define UTMIP_XCVR_CFG1	0x838
-+#define UTMIP_FORCE_PDDISC_POWERDOWN	BIT(0)
-+#define UTMIP_FORCE_PDCHRP_POWERDOWN	BIT(2)
-+#define UTMIP_FORCE_PDDR_POWERDOWN	BIT(4)
-+#define UTMIP_XCVR_TERM_RANGE_ADJ(x)	(((x) & 0xf) << 18)
-+
-+#define UTMIP_BIAS_CFG1	0x83c
-+#define UTMIP_BIAS_PDTRK_COUNT(x)	(((x) & 0x1f) << 3)
- 
- /* For Tegra30 and above only, the address is different in Tegra20 */
--#define USB_USBMODE				0x1f8
--#define   USB_USBMODE_MASK			(3 << 0)
--#define   USB_USBMODE_HOST			(3 << 0)
--#define   USB_USBMODE_DEVICE			(2 << 0)
-+#define USB_USBMODE	0x1f8
-+#define USB_USBMODE_MASK	(3 << 0)
-+#define USB_USBMODE_HOST	(3 << 0)
-+#define USB_USBMODE_DEVICE	(2 << 0)
- 
- static DEFINE_SPINLOCK(utmip_pad_lock);
- static unsigned int utmip_pad_count;
+ static int tegra_usb_phy_remove(struct platform_device *pdev)
 -- 
 2.20.1.windows.1
