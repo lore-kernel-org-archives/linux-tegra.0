@@ -1,16 +1,16 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] [v2] spi: tegra20-slink: Fix runtime PM imbalance on error
-Date: Thu, 28 May 2020 14:07:55 +0100
-Message-ID: <159067126729.55053.1525159932135385920.b4-ty@kernel.org>
-References: <20200523122909.25247-1-dinghao.liu@zju.edu.cn>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200523122909.25247-1-dinghao.liu@zju.edu.cn>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kjlu@umn.edu, Dinghao Liu <dinghao.liu@zju.edu.cn>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, linux-spi@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] [v2] spi: tegra20-sflash: Fix runtime PM imbalance on error
+Date: Thu, 28 May 2020 14:08:01 +0100
+Message-ID: <159067126729.55053.806727655776241848.b4-ty@kernel.org>
+References: <20200523124758.28604-1-dinghao.liu@zju.edu.cn>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200523124758.28604-1-dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kjlu-OJFnDUYgAso@public.gmane.org, Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, 23 May 2020 20:29:09 +0800, Dinghao Liu wrote:
+On Sat, 23 May 2020 20:47:58 +0800, Dinghao Liu wrote:
 > pm_runtime_get_sync() increments the runtime PM usage counter even
 > when it returns an error code. Thus a pairing decrement is needed on
 > the error handling path to keep the counter balanced.
@@ -21,8 +21,8 @@ Applied to
 
 Thanks!
 
-[1/1] spi: tegra20-slink: Fix runtime PM imbalance on error
-      commit: faedcc17ad183acfa5d74758ebc4f21aef341f11
+[1/1] spi: tegra20-sflash: Fix runtime PM imbalance on error
+      commit: 117858bd63fb2ebcdfcc27b09fd65cb44511ea4c
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
