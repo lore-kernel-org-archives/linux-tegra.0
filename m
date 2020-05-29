@@ -1,20 +1,22 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+From: Boris Brezillon <boris.brezillon-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Subject: Re: [PATCH 2/2] drm/atomic-helper: reset vblank on crtc reset
-Date: Fri, 29 May 2020 13:58:04 +0200
-Message-ID: <20200529115804.GD1630358@phenom.ffwll.local>
+Date: Fri, 29 May 2020 14:02:09 +0200
+Message-ID: <20200529140209.23457fad@collabora.com>
 References: <20200527094757.1414174-1-daniel.vetter@ffwll.ch>
- <20200527094757.1414174-2-daniel.vetter@ffwll.ch>
+        <20200527094757.1414174-2-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
 In-Reply-To: <20200527094757.1414174-2-daniel.vetter-/w4YWyX8dFk@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Cc: Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Tetsuo Handa <penguin-kernel-JPay3/Yim36HaxMnTkn67Xf5DAMn2ifp@public.gmane.org>, syzbot+0871b14ca2e2fb64f6e3-Pl5Pbv+GP7P466ipTTIvnc23WoclnBCfAL8bYrjMMd8@public.gmane.org, "James (Qian) Wang" <james.qian.wang-5wv7dgnIgG8@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Mihail Atanassov <mihail.atanassov-5wv7dgnIgG8@public.gmane.org>, Brian Starkey <brian.starkey-5wv7dgnIgG8@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+To: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+Cc: DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Tetsuo Handa <penguin-kernel-JPay3/Yim36HaxMnTkn67Xf5DAMn2ifp@public.gmane.org>, syzbot+0871b14ca2e2fb64f6e3-Pl5Pbv+GP7P466ipTTIvnc23WoclnBCfAL8bYrjMMd8@public.gmane.org, "James (Qian) Wang" <james.qian.wang-5wv7dgnIgG8@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Mihail Atanassov <mihail.atanassov-5wv7dgnIgG8@public.gmane.org>, Brian Starkey <brian.starkey-5wv7dgnIgG8@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, David Airlie <airlied@linux.>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 27, 2020 at 11:47:57AM +0200, Daniel Vetter wrote:
+On Wed, 27 May 2020 11:47:57 +0200
+Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org> wrote:
+
 > Only when vblanks are supported ofc.
 > 
 > Some drivers do this already, but most unfortunately missed it. This
@@ -49,10 +51,6 @@ On Wed, May 27, 2020 at 11:47:57AM +0200, Daniel Vetter wrote:
 > drivers do call drm_crtc_vblank_on/off as they should, the remaining
 > drivers are either legacy kms or legacy dri1 drivers, so not affected
 > by this change to atomic helpers.
-
-Note that mxsfb has accidentally totally broken vblank support, so doesn't
-need fixing at all. I'll update that paragraph when merging.
-
 > 
 > Link: https://syzkaller.appspot.com/bug?id=0ba17d70d062b2595e1f061231474800f076c7cb
 > Reported-by: Tetsuo Handa <penguin-kernel-JPay3/Yim36HaxMnTkn67Xf5DAMn2ifp@public.gmane.org>
@@ -84,15 +82,15 @@ need fixing at all. I'll update that paragraph when merging.
 > Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 > Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > Signed-off-by: Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-
-Ping for some more eyes and maybe testing on this patch here.
-
-Thanks, Daniel
-
 > ---
 >  drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 7 ++-----
 >  drivers/gpu/drm/arm/malidp_drv.c                 | 1 -
 >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c   | 7 ++-----
+
+For atmel-hlcdc:
+
+Reviewed-by: Boris Brezillon <boris.brezillon-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+
 >  drivers/gpu/drm/drm_atomic_state_helper.c        | 4 ++++
 >  drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c        | 2 --
 >  drivers/gpu/drm/tegra/dc.c                       | 1 -
@@ -238,11 +236,3 @@ Thanks, Daniel
 >  	drm_mode_config_reset(ddev);
 >  
 >  	dev_dbg(tidss->dev, "%s done\n", __func__);
-> -- 
-> 2.26.2
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
