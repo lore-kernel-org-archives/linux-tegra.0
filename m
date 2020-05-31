@@ -1,263 +1,94 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] drm/atomic-helper: reset vblank on crtc
- reset
-Date: Sat, 30 May 2020 06:22:58 +0300
-Message-ID: <20200530032258.GD5961@pendragon.ideasonboard.com>
-References: <20200527094757.1414174-2-daniel.vetter@ffwll.ch>
- <20200527095332.1439425-1-daniel.vetter@ffwll.ch>
+From: LABBE Corentin <clabbe@baylibre.com>
+Subject: Re: tegra124-jetson-tk1: sata doesnt work since 5.2
+Date: Sun, 31 May 2020 21:31:11 +0200
+Message-ID: <20200531193111.GA15331@Red>
+References: <20200319074401.GA4116@Red>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ide-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20200527095332.1439425-1-daniel.vetter@ffwll.ch>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, DRI Development <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@intel.com>, Mihail Atanassov <mihail.atanassov@arm.com>, Sam Ravnborg <sam@ravnborg.org>, Emil Velikov <emil.velikov@collabora.com>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Ludovic Desroches <ludovic.desroches@microchip.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "James (Qian) Wang" <james.qian.wang@arm.com>, syzbot+0871b14ca2e2fb64f6e3@syzkaller.appspotmail.com, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Jyri Sarha <jsarha@ti.com>, Sean Paul <seanpaul@chromium.org>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Boris Brezillon <bbrezillon@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, zhengbin <zhengbin>
+In-Reply-To: <20200319074401.GA4116@Red>
+Sender: linux-ide-owner@vger.kernel.org
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, pgaikwad@nvidia.com, pdeschrijver@nvidia.com, mturquette@baylibre.com, sboyd@kernel.org, axboe@kernel.dk
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-ide@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Daniel,
-
-Thank you for the patch.
-
-On Wed, May 27, 2020 at 11:53:32AM +0200, Daniel Vetter wrote:
-> Only when vblanks are supported ofc.
+On Thu, Mar 19, 2020 at 08:44:01AM +0100, LABBE Corentin wrote:
+> Hello
 > 
-> Some drivers do this already, but most unfortunately missed it. This
-> opens up bugs after driver load, before the crtc is enabled for the
-> first time. syzbot spotted this when loading vkms as a secondary
-> output. Given how many drivers are buggy it's best to solve this once
-> and for all in shared helper code.
+> sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
+> [    0.492810] +5V_SATA: supplied by +5V_SYS
+> [    0.493230] +12V_SATA: supplied by +VDD_MUX
+> [    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> [    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> [    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> [    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> [    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> [    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> [    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
+> [    5.310270] phy phy-sata.6: phy poweron failed --> -110
+> [    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
+> [    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
+> [   35.694269] +5V_SATA: disabling
+> [   35.697438] +12V_SATA: disabling
 > 
-> Aside from moving the few existing calls to drm_crtc_vblank_reset into
-> helpers (i915 doesn't use helpers, so keeps its own) I think the
-> regression risk is minimal: atomic helpers already rely on drivers
-> calling drm_crtc_vblank_on/off correctly in their hooks when they
-> support vblanks. And driver that's failing to handle vblanks after
-> this is missing those calls already, and vblanks could only work by
-> accident when enabling a CRTC for the first time right after boot.
+> I have bisected this problem:
+> git bisect start
+> # bad: [22c58fd70ca48a29505922b1563826593b08cc00] Merge tag 'armsoc-soc' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+> git bisect bad 22c58fd70ca48a29505922b1563826593b08cc00
+> # good: [67e38f578aaebf34fc1278bbe45a78ee8c73dd33] ARM: ep93xx: move pinctrl interfaces into include/linux/soc
+> git bisect good 67e38f578aaebf34fc1278bbe45a78ee8c73dd33
+> # good: [80f232121b69cc69a31ccb2b38c1665d770b0710] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
+> git bisect good 80f232121b69cc69a31ccb2b38c1665d770b0710
+> # good: [e57ccca1ba33e1d92cc3bbf8b6304a46948844b0] Merge tag 'sound-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+> git bisect good e57ccca1ba33e1d92cc3bbf8b6304a46948844b0
+> # bad: [983dfa4b6ee556563f7963348e4e2f97fc8a15b8] Merge tag 'for-linus-5.2-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/rw/uml
+> git bisect bad 983dfa4b6ee556563f7963348e4e2f97fc8a15b8
+> # good: [8e4ff713ce313dcabbb60e6ede1ffc193e67631f] Merge tag 'rtc-5.2' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux
+> git bisect good 8e4ff713ce313dcabbb60e6ede1ffc193e67631f
+> # bad: [b970afcfcabd63cd3832e95db096439c177c3592] Merge tag 'powerpc-5.2-1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+> git bisect bad b970afcfcabd63cd3832e95db096439c177c3592
+> # bad: [601e6bcc4ef02bda2831d5ac8133947b5edf597b] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
+> git bisect bad 601e6bcc4ef02bda2831d5ac8133947b5edf597b
+> # good: [7e9c62bdb41af76974d594da89854a6aba645e58] Merge branches 'clk-sa', 'clk-aspeed', 'clk-samsung', 'clk-ingenic' and 'clk-zynq' into clk-next
+> git bisect good 7e9c62bdb41af76974d594da89854a6aba645e58
+> # bad: [0caf000817353cfc5db22363ecdac63b83d3a3f9] Merge branch 'clk-ti' into clk-next
+> git bisect bad 0caf000817353cfc5db22363ecdac63b83d3a3f9
+> # good: [5816b74581b45cf086a84ab14e13354a65e8e22c] Merge branches 'clk-hisi', 'clk-lochnagar', 'clk-allwinner', 'clk-rockchip' and 'clk-qoriq' into clk-next
+> git bisect good 5816b74581b45cf086a84ab14e13354a65e8e22c
+> # good: [7b4c162e03d47e037f8ee773c3e300eefb599a83] clk: at91: Mark struct clk_range as const
+> git bisect good 7b4c162e03d47e037f8ee773c3e300eefb599a83
+> # bad: [e71f4d385878671991e200083c7d30eb4ca8e99a] clk: tegra: divider: Mark Memory Controller clock as read-only
+> git bisect bad e71f4d385878671991e200083c7d30eb4ca8e99a
+> # bad: [924ee3d551c9deb16090230b824988bd37e72aa8] clk: tegra: emc: Don't enable EMC clock manually
+> git bisect bad 924ee3d551c9deb16090230b824988bd37e72aa8
+> # bad: [40db569d6769ffa3864fd1b89616b1a7323568a8] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
+> git bisect bad 40db569d6769ffa3864fd1b89616b1a7323568a8
+> # bad: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
+> git bisect bad bff1cef5f23afbe49f5ebd766980dc612f5e9d0a
+> # first bad commit: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
 > 
-> Big thanks to Tetsuo for helping track down what's going wrong here.
-> 
-> There's only a few drivers which already had the necessary call and
-> needed some updating:
-> - komeda, atmel and tidss also needed to be changed to call
->   __drm_atomic_helper_crtc_reset() intead of open coding it
-> - tegra and msm even had it in the same place already, just code
->   motion, and malidp already uses __drm_atomic_helper_crtc_reset().
 
-Have you intentionally not touched drivers that use
-drm_crtc_vblank_off() at init time instead of drm_crtc_vblank_reset() ?
-I'm thinking about omapdrm and rcar-du that both call neither
-drm_crtc_vblank_reset() nor __drm_atomic_helper_crtc_reset() in their
-CRTC reset handler, and call drm_crtc_vblank_off() at init time. Should
-these (and likely other) drivers be updated ?
+Hello
 
-Other than that the patch looks good to me,
+I have digged a bit more and with the following "patch" I have now access to sata again
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 0b212cf2e794..b4e2020051d5 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1602,7 +1603,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+        unsigned long input_rate;
+ 
+        if (clk_pll_is_enabled(hw))
+-               return 0;
++               pr_info("%s %s\n", __func__, clk_hw_get_name(&pll->hw));
+ 
+        input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This patch lead to a probed ahci, and I can see "clk_plle_tegra114_enable pll_e" in messages.
 
-> Only call left is in i915, which doesn't use drm_mode_config_reset,
-> but has its own fastboot infrastructure. So that's the only case where
-> we actually want this in the driver still.
-> 
-> I've also reviewed all other drivers which set up vblank support with
-> drm_vblank_init. After the previous patch fixing mxsfb all atomic
-> drivers do call drm_crtc_vblank_on/off as they should, the remaining
-> drivers are either legacy kms or legacy dri1 drivers, so not affected
-> by this change to atomic helpers.
-> 
-> v2: Use the drm_dev_has_vblank() helper.
-> 
-> Link: https://syzkaller.appspot.com/bug?id=0ba17d70d062b2595e1f061231474800f076c7cb
-> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: syzbot+0871b14ca2e2fb64f6e3@syzkaller.appspotmail.com
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: "James (Qian) Wang" <james.qian.wang@arm.com>
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
-> Cc: Mihail Atanassov <mihail.atanassov@arm.com>
-> Cc: Brian Starkey <brian.starkey@arm.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Boris Brezillon <bbrezillon@kernel.org>
-> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Jyri Sarha <jsarha@ti.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: Rob Clark <robdclark@gmail.com>
-> Cc: Sean Paul <seanpaul@chromium.org>
-> Cc: Brian Masney <masneyb@onstation.org>
-> Cc: Emil Velikov <emil.velikov@collabora.com>
-> Cc: zhengbin <zhengbin13@huawei.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> ---
->  drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 7 ++-----
->  drivers/gpu/drm/arm/malidp_drv.c                 | 1 -
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c   | 7 ++-----
->  drivers/gpu/drm/drm_atomic_state_helper.c        | 4 ++++
->  drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c        | 2 --
->  drivers/gpu/drm/tegra/dc.c                       | 1 -
->  drivers/gpu/drm/tidss/tidss_crtc.c               | 3 +--
->  drivers/gpu/drm/tidss/tidss_kms.c                | 4 ----
->  8 files changed, 9 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> index 56bd938961ee..f33418d6e1a0 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> @@ -492,10 +492,8 @@ static void komeda_crtc_reset(struct drm_crtc *crtc)
->  	crtc->state = NULL;
->  
->  	state = kzalloc(sizeof(*state), GFP_KERNEL);
-> -	if (state) {
-> -		crtc->state = &state->base;
-> -		crtc->state->crtc = crtc;
-> -	}
-> +	if (state)
-> +		__drm_atomic_helper_crtc_reset(crtc, &state->base);
->  }
->  
->  static struct drm_crtc_state *
-> @@ -616,7 +614,6 @@ static int komeda_crtc_add(struct komeda_kms_dev *kms,
->  		return err;
->  
->  	drm_crtc_helper_add(crtc, &komeda_crtc_helper_funcs);
-> -	drm_crtc_vblank_reset(crtc);
->  
->  	crtc->port = kcrtc->master->of_output_port;
->  
-> diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-> index c2507b7d8512..02904392e370 100644
-> --- a/drivers/gpu/drm/arm/malidp_drv.c
-> +++ b/drivers/gpu/drm/arm/malidp_drv.c
-> @@ -870,7 +870,6 @@ static int malidp_bind(struct device *dev)
->  	drm->irq_enabled = true;
->  
->  	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
-> -	drm_crtc_vblank_reset(&malidp->crtc);
->  	if (ret < 0) {
->  		DRM_ERROR("failed to initialise vblank\n");
->  		goto vblank_fail;
-> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> index 10985134ce0b..ce246b96330b 100644
-> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> @@ -411,10 +411,8 @@ static void atmel_hlcdc_crtc_reset(struct drm_crtc *crtc)
->  	}
->  
->  	state = kzalloc(sizeof(*state), GFP_KERNEL);
-> -	if (state) {
-> -		crtc->state = &state->base;
-> -		crtc->state->crtc = crtc;
-> -	}
-> +	if (state)
-> +		__drm_atomic_helper_crtc_reset(crtc, &state->base);
->  }
->  
->  static struct drm_crtc_state *
-> @@ -528,7 +526,6 @@ int atmel_hlcdc_crtc_create(struct drm_device *dev)
->  	}
->  
->  	drm_crtc_helper_add(&crtc->base, &lcdc_crtc_helper_funcs);
-> -	drm_crtc_vblank_reset(&crtc->base);
->  
->  	drm_mode_crtc_set_gamma_size(&crtc->base, ATMEL_HLCDC_CLUT_SIZE);
->  	drm_crtc_enable_color_mgmt(&crtc->base, 0, false,
-> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-> index 8fce6a115dfe..9ad74045158e 100644
-> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-> @@ -32,6 +32,7 @@
->  #include <drm/drm_device.h>
->  #include <drm/drm_plane.h>
->  #include <drm/drm_print.h>
-> +#include <drm/drm_vblank.h>
->  #include <drm/drm_writeback.h>
->  
->  #include <linux/slab.h>
-> @@ -93,6 +94,9 @@ __drm_atomic_helper_crtc_reset(struct drm_crtc *crtc,
->  	if (crtc_state)
->  		__drm_atomic_helper_crtc_state_reset(crtc_state, crtc);
->  
-> +	if (drm_dev_has_vblank(crtc->dev))
-> +		drm_crtc_vblank_reset(crtc);
-> +
->  	crtc->state = crtc_state;
->  }
->  EXPORT_SYMBOL(__drm_atomic_helper_crtc_reset);
-> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> index ca3368c828d0..9606185c284b 100644
-> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> @@ -1117,8 +1117,6 @@ static void mdp5_crtc_reset(struct drm_crtc *crtc)
->  		mdp5_crtc_destroy_state(crtc, crtc->state);
->  
->  	__drm_atomic_helper_crtc_reset(crtc, &mdp5_cstate->base);
-> -
-> -	drm_crtc_vblank_reset(crtc);
->  }
->  
->  static const struct drm_crtc_funcs mdp5_crtc_funcs = {
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> index 83f31c6e891c..9b308b572eac 100644
-> --- a/drivers/gpu/drm/tegra/dc.c
-> +++ b/drivers/gpu/drm/tegra/dc.c
-> @@ -1168,7 +1168,6 @@ static void tegra_crtc_reset(struct drm_crtc *crtc)
->  		tegra_crtc_atomic_destroy_state(crtc, crtc->state);
->  
->  	__drm_atomic_helper_crtc_reset(crtc, &state->base);
-> -	drm_crtc_vblank_reset(crtc);
->  }
->  
->  static struct drm_crtc_state *
-> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
-> index 89a226912de8..4d01c4af61cd 100644
-> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
-> @@ -352,8 +352,7 @@ static void tidss_crtc_reset(struct drm_crtc *crtc)
->  		return;
->  	}
->  
-> -	crtc->state = &tcrtc->base;
-> -	crtc->state->crtc = crtc;
-> +	__drm_atomic_helper_crtc_reset(crtc, &tcrtc->base);
->  }
->  
->  static struct drm_crtc_state *tidss_crtc_duplicate_state(struct drm_crtc *crtc)
-> diff --git a/drivers/gpu/drm/tidss/tidss_kms.c b/drivers/gpu/drm/tidss/tidss_kms.c
-> index 4b99e9fa84a5..e6ab59eed259 100644
-> --- a/drivers/gpu/drm/tidss/tidss_kms.c
-> +++ b/drivers/gpu/drm/tidss/tidss_kms.c
-> @@ -278,10 +278,6 @@ int tidss_modeset_init(struct tidss_device *tidss)
->  	if (ret)
->  		return ret;
->  
-> -	/* Start with vertical blanking interrupt reporting disabled. */
-> -	for (i = 0; i < tidss->num_crtcs; ++i)
-> -		drm_crtc_vblank_reset(tidss->crtcs[i]);
-> -
->  	drm_mode_config_reset(ddev);
->  
->  	dev_dbg(tidss->dev, "%s done\n", __func__);
+So the bad part of bff1cef5f23afbe49f5ebd766980dc612f5e9d0a is found.
+As additional information, my previous kernel has CONFIG_PHY_TEGRA_XUSB=m (since firmware is on rootfs which is on sata)
+but with this sata fail the same, having CONFIG_PHY_TEGRA_XUSB=y (and so xusb firmware in kernel) seems "necessary" for having SATA working.
 
--- 
-Regards,
-
-Laurent Pinchart
+Regards
