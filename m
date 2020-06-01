@@ -1,51 +1,35 @@
-From: Sandipan Patra <spatra@nvidia.com>
-Subject: [PATCH V2 2/2] arm64: tegra: Add pwm-fan profile settings
-Date: Mon, 1 Jun 2020 11:49:14 +0530
-Message-ID: <1590992354-12623-2-git-send-email-spatra@nvidia.com>
-References: <1590992354-12623-1-git-send-email-spatra@nvidia.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] [v2] PCI: tegra: Fix runtime PM imbalance on error
+Date: Mon, 1 Jun 2020 10:05:36 +0100
+Message-ID: <20200601090536.GA4226@e121166-lin.cambridge.arm.com>
+References: <20200521024709.2368-1-dinghao.liu@zju.edu.cn>
+ <20200529180518.GA3078281@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <1590992354-12623-1-git-send-email-spatra@nvidia.com>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: treding@nvidia.com, jonathanh@nvidia.com, linux@roeck-us.net, kamil@wypas.org, jdelvare@suse.com, robh+dt@kernel.org, u.kleine-koenig@pengutronix.de
-Cc: bbasu@nvidia.com, bbiswas@nvidia.com, kyarlagadda@nvidia.com, linux-pwm@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sandipan Patra <spatra@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20200529180518.GA3078281@ulmo>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Dinghao Liu <dinghao.liu@zju.edu.cn>, kjlu@umn.edu, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for profiles in device tree to allow
-different fan settings for trip point temp/hyst/pwm.
+On Fri, May 29, 2020 at 08:05:18PM +0200, Thierry Reding wrote:
+> On Thu, May 21, 2020 at 10:47:09AM +0800, Dinghao Liu wrote:
+> > pm_runtime_get_sync() increments the runtime PM usage counter even
+> > when it returns an error code. Thus a pairing decrement is needed on
+> > the error handling path to keep the counter balanced.
+> > 
+> > Also, call pm_runtime_disable() when pm_runtime_get_sync() returns
+> > an error code.
+> > 
+> > Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+> > ---
+> >  drivers/pci/controller/pci-tegra.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Sandipan Patra <spatra@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Applied to pci/tegra, thanks !
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index e15d1ea..ff2b980 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -219,10 +219,19 @@
- 
- 	fan: fan {
- 		compatible = "pwm-fan";
--		pwms = <&pwm4 0 45334>;
--
--		cooling-levels = <0 64 128 255>;
- 		#cooling-cells = <2>;
-+		pwms = <&pwm4 0 45334>;
-+		profiles {
-+			default = "quiet";
-+			quiet {
-+				state_cap = <4>;
-+				cooling-levels = <0 77 120 160 255 255 255 255 255 255>;
-+			};
-+			cool {
-+				state_cap = <4>;
-+				cooling-levels = <0 77 120 160 255 255 255 255 255 255>;
-+			};
-+		};
- 	};
- 
- 	gpio-keys {
--- 
-2.7.4
+Lorenzo
