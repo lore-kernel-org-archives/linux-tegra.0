@@ -1,79 +1,32 @@
-From: Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
-Date: Mon, 1 Jun 2020 17:02:36 -0700
-Message-ID: <20200602000236.j4m3jvluzdhjngdc@cantor>
-References: <20200414131542.25608-1-joro@8bytes.org>
- <20200529221623.qc6twmpzryh7nkvb@cantor>
- <20200601104240.7f5xhz7gooqhaq4n@cantor>
- <47711845-98ee-95b8-aa95-423a36ed9741@linux.intel.com>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <47711845-98ee-95b8-aa95-423a36ed9741@linux.intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, virtualization@
+From: Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] spi: tegra20-sflash: call pm_runtime_put in case of pm_runtime_get failure
+Date: Mon,  1 Jun 2020 23:40:49 -0500
+Message-ID: <20200602044049.17378-1-navid.emamdoost@gmail.com>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: emamd001-OJFnDUYgAso@public.gmane.org, wu000273-OJFnDUYgAso@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org, smccaman-OJFnDUYgAso@public.gmane.org, Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue Jun 02 20, Lu Baolu wrote:
->Hi Jerry,
->
->On 6/1/20 6:42 PM, Jerry Snitselaar wrote:
->>>
->>>Hi Joerg,
->>>
->>>With this patchset, I have an epyc system where if I boot with
->>>iommu=nopt and force a dump I will see some io page faults for a nic
->>>on the system. The vmcore is harvested and the system reboots. I
->>>haven't reproduced it on other systems yet, but without the patchset I
->>>don't see the io page faults during the kdump.
->>>
->>>Regards,
->>>Jerry
->>
->>I just hit an issue on a separate intel based system (kdump iommu=nopt),
->>where it panics in during intel_iommu_attach_device, in is_aux_domain,
->>due to device_domain_info being DEFER_DEVICE_DOMAIN_INFO. That doesn't
->>get set to a valid address until the domain_add_dev_info call.
->>
->>Is it as simple as the following?
->
->I guess you won't hit this issue if you use iommu/next branch of Joerg's
->tree. We've changed to use a generic helper to retrieve the valid per
->device iommu data or NULL (if there's no).
->
->Best regards,
->baolu
->
+The counter is incremented via pm_runtime_get even in failure case.
+To correct the counter call pm_runtime_put in case of failure, too.
 
-Yeah, that will solve the panic. 
+Signed-off-by: Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/spi/spi-tegra20-sflash.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->>
->>diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->>index 29d3940847d3..f1bbeed46a4c 100644
->>--- a/drivers/iommu/intel-iommu.c
->>+++ b/drivers/iommu/intel-iommu.c
->>@@ -5053,8 +5053,8 @@ is_aux_domain(struct device *dev, struct 
->>iommu_domain *domain)
->>  {
->>         struct device_domain_info *info = dev->archdata.iommu;
->>
->>-       return info && info->auxd_enabled &&
->>-                       domain->type == IOMMU_DOMAIN_UNMANAGED;
->>+       return info && info != DEFER_DEVICE_DOMAIN_INFO &&
->>+               info->auxd_enabled && domain->type == 
->>IOMMU_DOMAIN_UNMANAGED;
->>  }
->>
->>  static void auxiliary_link_device(struct dmar_domain *domain,
->>
->>
->>Regards,
->>Jerry
->_______________________________________________
->iommu mailing list
->iommu@lists.linux-foundation.org
->https://lists.linuxfoundation.org/mailman/listinfo/iommu
+diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
+index 514429379206..33c34f9c2021 100644
+--- a/drivers/spi/spi-tegra20-sflash.c
++++ b/drivers/spi/spi-tegra20-sflash.c
+@@ -552,6 +552,7 @@ static int tegra_sflash_resume(struct device *dev)
+ 
+ 	ret = pm_runtime_get_sync(dev);
+ 	if (ret < 0) {
++		pm_runtime_put(dev);
+ 		dev_err(dev, "pm runtime failed, e = %d\n", ret);
+ 		return ret;
+ 	}
+-- 
+2.17.1
