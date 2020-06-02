@@ -1,9 +1,9 @@
 From: Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] spi: tegra20-slink: add missing pm_runtime_put if pm_runtime_get_sync fails
-Date: Tue,  2 Jun 2020 00:24:04 -0500
-Message-ID: <20200602052404.81041-1-navid.emamdoost@gmail.com>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Subject: [PATCH] spi: tegra20-slink: add missing pm_runtime_put
+Date: Tue,  2 Jun 2020 00:26:02 -0500
+Message-ID: <20200602052602.91374-1-navid.emamdoost@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: emamd001-OJFnDUYgAso@public.gmane.org, wu000273-OJFnDUYgAso@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org, smccaman-OJFnDUYgAso@public.gmane.org, Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
@@ -18,16 +18,16 @@ Signed-off-by: Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gm
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 7f4d932dade7..9509b7cb14e4 100644
+index 7f4d932dade7..0675b36d647b 100644
 --- a/drivers/spi/spi-tegra20-slink.c
 +++ b/drivers/spi/spi-tegra20-slink.c
-@@ -756,6 +756,7 @@ static int tegra_slink_setup(struct spi_device *spi)
- 	ret = pm_runtime_get_sync(tspi->dev);
+@@ -1192,6 +1192,7 @@ static int tegra_slink_resume(struct device *dev)
+ 	ret = pm_runtime_get_sync(dev);
  	if (ret < 0) {
- 		dev_err(tspi->dev, "pm runtime failed, e = %d\n", ret);
-+		pm_runtime_put(tspi->dev);
+ 		dev_err(dev, "pm runtime failed, e = %d\n", ret);
++		pm_runtime_put(dev);
  		return ret;
  	}
- 
+ 	tegra_slink_writel(tspi, tspi->command_reg, SLINK_COMMAND);
 -- 
 2.17.1
