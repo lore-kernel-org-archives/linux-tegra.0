@@ -1,33 +1,33 @@
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
-Subject: [PATCH] spi: tegra20-slink: call pm_runtime_put if pm_runtime_get_sync fails
-Date: Tue,  2 Jun 2020 00:22:14 -0500
-Message-ID: <20200602052214.70015-1-navid.emamdoost@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: emamd001@umn.edu, wu000273@umn.edu, kjlu@umn.edu, smccaman@umn.edu, Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] spi: tegra20-slink: add missing pm_runtime_put if pm_runtime_get_sync fails
+Date: Tue,  2 Jun 2020 00:24:04 -0500
+Message-ID: <20200602052404.81041-1-navid.emamdoost@gmail.com>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: emamd001-OJFnDUYgAso@public.gmane.org, wu000273-OJFnDUYgAso@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org, smccaman-OJFnDUYgAso@public.gmane.org, Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Call to pm_runtime_get_sync increments counter even in case of
 failure leading to incorrect ref count.
 Call pm_runtime_put if pm_runtime_get_sync fails.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
  drivers/spi/spi-tegra20-slink.c | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 7f4d932dade7..15361db00982 100644
+index 7f4d932dade7..9509b7cb14e4 100644
 --- a/drivers/spi/spi-tegra20-slink.c
 +++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1118,6 +1118,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	ret = pm_runtime_get_sync(&pdev->dev);
+@@ -756,6 +756,7 @@ static int tegra_slink_setup(struct spi_device *spi)
+ 	ret = pm_runtime_get_sync(tspi->dev);
  	if (ret < 0) {
- 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
-+		pm_runtime_put(&pdev->dev);
- 		goto exit_pm_disable;
+ 		dev_err(tspi->dev, "pm runtime failed, e = %d\n", ret);
++		pm_runtime_put(tspi->dev);
+ 		return ret;
  	}
- 	tspi->def_command_reg  = SLINK_M_S;
+ 
 -- 
 2.17.1
