@@ -1,59 +1,187 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
-Date: Tue, 2 Jun 2020 16:23:12 +0200
-Message-ID: <20200602142312.GJ14598__31048.2256625377$1591107818$gmane$org@8bytes.org>
-References: <20200414131542.25608-1-joro@8bytes.org>
- <20200529221623.qc6twmpzryh7nkvb@cantor>
- <20200601104240.7f5xhz7gooqhaq4n@cantor>
- <47711845-98ee-95b8-aa95-423a36ed9741@linux.intel.com>
- <20200602000236.j4m3jvluzdhjngdc@cantor>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] hwmon: pwm-fan: Add profile support and add
+ remove module support
+Date: Tue, 2 Jun 2020 07:28:13 -0700
+Message-ID: <20200602142813.GA54592@roeck-us.net>
+References: <1590992354-12623-1-git-send-email-spatra@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane-mx.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200602000236.j4m3jvluzdhjngdc@cantor>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane-mx.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Lu Baolu <baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean-Philippe Brucker <jean-philippe-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-mediatek@li
+In-Reply-To: <1590992354-12623-1-git-send-email-spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kamil-MZ2JYD8fkKLYtjvyW6yDsg@public.gmane.org, jdelvare-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jerry,
-
-On Mon, Jun 01, 2020 at 05:02:36PM -0700, Jerry Snitselaar wrote:
+On Mon, Jun 01, 2020 at 11:49:13AM +0530, Sandipan Patra wrote:
+> Add support for profiles mode settings.
+> This allows different fan settings for trip point temp/hyst/pwm.
+> Tegra194 has multiple fan-profiles support.
 > 
-> Yeah, that will solve the panic.
->
+> Signed-off-by: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-If you still see the kdump faults, can you please try with the attached
-diff? I was not able to reproduce them in my setup.
+The subject says "remove module support". What is this supposed to be
+about ?
 
-Regards,
+The code adds support for multiple cooling "profiles" but, unless I am
+really missing something, no means to actually select a profile.
+This adds a lot of complexity to the code with zero value.
 
-	Joerg
+Either case, and I may have mentioned this before, functionality like this
+should really reside in the thermal core and not in individual drivers.
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index b5ea203f6c68..5a6d509f72b6 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1680,8 +1680,12 @@ static void probe_alloc_default_domain(struct bus_type *bus,
- static int iommu_group_do_dma_attach(struct device *dev, void *data)
- {
- 	struct iommu_domain *domain = data;
-+	int ret = 0;
- 
--	return __iommu_attach_device(domain, dev);
-+	if (!iommu_is_attach_deferred(group->domain, dev))
-+		ret = __iommu_attach_device(group->domain, dev);
-+
-+	return ret;
- }
- 
- static int __iommu_group_dma_attach(struct iommu_group *group)
+> ---
+> 
+> PATCH V2:
+> 	Cleaned pwm_fan_remove support as it is not required.
+> 
+>  drivers/hwmon/pwm-fan.c | 92 ++++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 80 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> index 30b7b3e..1d2a416 100644
+> --- a/drivers/hwmon/pwm-fan.c
+> +++ b/drivers/hwmon/pwm-fan.c
+> @@ -3,8 +3,10 @@
+>   * pwm-fan.c - Hwmon driver for fans connected to PWM lines.
+>   *
+>   * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + * Copyright (c) 2020, NVIDIA Corporation.
+>   *
+>   * Author: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + * Author: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+You can not claim authorship for a driver by adding a few lines of code
+to it.
+
+>   */
+>  
+>  #include <linux/hwmon.h>
+> @@ -21,6 +23,8 @@
+>  #include <linux/timer.h>
+>  
+>  #define MAX_PWM 255
+> +/* Based on OF max device tree node name length */
+> +#define MAX_PROFILE_NAME_LENGTH	31
+>  
+>  struct pwm_fan_ctx {
+>  	struct mutex lock;
+> @@ -38,6 +42,12 @@ struct pwm_fan_ctx {
+>  	unsigned int pwm_fan_state;
+>  	unsigned int pwm_fan_max_state;
+>  	unsigned int *pwm_fan_cooling_levels;
+> +
+> +	unsigned int pwm_fan_profiles;
+> +	const char **fan_profile_names;
+> +	unsigned int **fan_profile_cooling_levels;
+> +	unsigned int fan_current_profile;
+> +
+>  	struct thermal_cooling_device *cdev;
+>  };
+>  
+> @@ -227,28 +237,86 @@ static int pwm_fan_of_get_cooling_data(struct device *dev,
+>  				       struct pwm_fan_ctx *ctx)
+>  {
+>  	struct device_node *np = dev->of_node;
+> +	struct device_node *base_profile = NULL;
+> +	struct device_node *profile_np = NULL;
+> +	const char *default_profile = NULL;
+>  	int num, i, ret;
+>  
+> -	if (!of_find_property(np, "cooling-levels", NULL))
+> -		return 0;
+> +	num = of_property_count_u32_elems(np, "cooling-levels");
+> +	if (num <= 0) {
+> +		base_profile = of_get_child_by_name(np, "profiles");
+
+You can not just add new properties like this without documenting it
+and getting approval by devicetree maintainers.
+
+Guenter
+
+> +		if (!base_profile) {
+> +			dev_err(dev, "Wrong Data\n");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	if (base_profile) {
+> +		ctx->pwm_fan_profiles =
+> +			of_get_available_child_count(base_profile);
+>  
+> -	ret = of_property_count_u32_elems(np, "cooling-levels");
+> -	if (ret <= 0) {
+> -		dev_err(dev, "Wrong data!\n");
+> -		return ret ? : -EINVAL;
+> +		if (ctx->pwm_fan_profiles <= 0) {
+> +			dev_err(dev, "Profiles used but not defined\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		ctx->fan_profile_names = devm_kzalloc(dev,
+> +			sizeof(const char *) * ctx->pwm_fan_profiles,
+> +							GFP_KERNEL);
+> +		ctx->fan_profile_cooling_levels = devm_kzalloc(dev,
+> +			sizeof(int *) * ctx->pwm_fan_profiles,
+> +							GFP_KERNEL);
+> +
+> +		if (!ctx->fan_profile_names
+> +				|| !ctx->fan_profile_cooling_levels)
+> +			return -ENOMEM;
+> +
+> +		ctx->fan_current_profile = 0;
+> +		i = 0;
+> +		for_each_available_child_of_node(base_profile, profile_np) {
+> +			num = of_property_count_u32_elems(profile_np,
+> +							"cooling-levels");
+> +			if (num <= 0) {
+> +				dev_err(dev, "No data in cooling-levels inside profile node!\n");
+> +				return -EINVAL;
+> +			}
+> +
+> +			of_property_read_string(profile_np, "name",
+> +						&ctx->fan_profile_names[i]);
+> +			if (default_profile &&
+> +				!strncmp(default_profile,
+> +				ctx->fan_profile_names[i],
+> +				MAX_PROFILE_NAME_LENGTH))
+> +				ctx->fan_current_profile = i;
+> +
+> +			ctx->fan_profile_cooling_levels[i] =
+> +				devm_kzalloc(dev, sizeof(int) * num,
+> +							GFP_KERNEL);
+> +			if (!ctx->fan_profile_cooling_levels[i])
+> +				return -ENOMEM;
+> +
+> +			of_property_read_u32_array(profile_np, "cooling-levels",
+> +				ctx->fan_profile_cooling_levels[i], num);
+> +			i++;
+> +		}
+>  	}
+>  
+> -	num = ret;
+>  	ctx->pwm_fan_cooling_levels = devm_kcalloc(dev, num, sizeof(u32),
+>  						   GFP_KERNEL);
+>  	if (!ctx->pwm_fan_cooling_levels)
+>  		return -ENOMEM;
+>  
+> -	ret = of_property_read_u32_array(np, "cooling-levels",
+> -					 ctx->pwm_fan_cooling_levels, num);
+> -	if (ret) {
+> -		dev_err(dev, "Property 'cooling-levels' cannot be read!\n");
+> -		return ret;
+> +	if (base_profile) {
+> +		memcpy(ctx->pwm_fan_cooling_levels,
+> +		  ctx->fan_profile_cooling_levels[ctx->fan_current_profile],
+> +						num);
+> +	} else {
+> +		ret = of_property_read_u32_array(np, "cooling-levels",
+> +				ctx->pwm_fan_cooling_levels, num);
+> +		if (ret) {
+> +			dev_err(dev, "Property 'cooling-levels' cannot be read!\n");
+> +			return -EINVAL;
+> +		}
+>  	}
+>  
+>  	for (i = 0; i < num; i++) {
