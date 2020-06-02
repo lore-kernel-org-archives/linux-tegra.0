@@ -1,167 +1,79 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
-Date: Tue, 2 Jun 2020 22:19:29 +0200
-Message-ID: <8f97d2e1-497a-495d-bc82-f46dbeba440c@redhat.com>
-References: <20200515164943.28480-1-andrzej.p@collabora.com>
- <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
- <e6030957-97dc-5b04-7855-bc14a78164c8@collabora.com>
- <6d9921fc-5c2f-beda-4dcd-66d6970a22fe@redhat.com>
- <09679de4-75d3-1f29-ec5f-8d42c84273dd@collabora.com>
- <f674ba4f-bd83-0877-c730-5dc6ea09ae4b@redhat.com>
- <2d224833-3a7e-bc7c-af15-1f803f466697@collabora.com>
- <aa2ce2ab-e5bc-9cb4-8b53-c1ef9348b646@redhat.com>
- <20200527063430.GJ89269@dtor-ws>
- <88f939cd-1518-d516-59f2-8f627a6a70d2@collabora.com>
- <20200602175241.GO89269@dtor-ws>
- <82e9f2ab-a16e-51ee-1413-bedf0122026a@collabora.com>
+From: Jerry Snitselaar <jsnitsel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
+Date: Tue, 2 Jun 2020 14:17:16 -0700
+Message-ID: <20200602211716.mcwacflxvh7kycya__32781.0749340401$1591132659$gmane$org@cantor>
+References: <20200414131542.25608-1-joro@8bytes.org>
+ <20200529221623.qc6twmpzryh7nkvb@cantor>
+ <20200601104240.7f5xhz7gooqhaq4n@cantor>
+ <47711845-98ee-95b8-aa95-423a36ed9741@linux.intel.com>
+ <20200602000236.j4m3jvluzdhjngdc@cantor>
+ <20200602142312.GJ14598@8bytes.org>
+ <20200602163806.o5dpj2tpemwdzyiw@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <82e9f2ab-a16e-51ee-1413-bedf0122026a@collabora.com>
-Content-Language: en-US
-Sender: linux-input-owner@vger.kernel.org
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-acpi@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20200602163806.o5dpj2tpemwdzyiw@cantor>
+Content-Disposition: inline
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Lu Baolu <baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean-Philippe Brucker <jean-philippe-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs+XwC/5MpYmKg@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On 6/2/20 8:50 PM, Andrzej Pietrasiewicz wrote:
-> Hi Dmitry,
-> 
-> W dniu 02.06.2020 o 19:52, Dmitry Torokhov pisze:
->> Hi Andrzej,
+On Tue Jun 02 20, Jerry Snitselaar wrote:
+>On Tue Jun 02 20, Joerg Roedel wrote:
+>>Hi Jerry,
 >>
->> On Tue, Jun 02, 2020 at 06:56:40PM +0200, Andrzej Pietrasiewicz wrote:
->>> Hi Dmitry,
+>>On Mon, Jun 01, 2020 at 05:02:36PM -0700, Jerry Snitselaar wrote:
 >>>
->>> W dniu 27.05.2020 o 08:34, Dmitry Torokhov pisze:
->>>> That said, I think the way we should handle inhibit/uninhibit, is that
->>>> if we have the callback defined, then we call it, and only call open and
->>>> close if uninhibit or inhibit are _not_ defined.
->>>>
+>>>Yeah, that will solve the panic.
 >>>
->>> If I understand you correctly you suggest to call either inhibit,
->>> if provided or close, if inhibit is not provided, but not both,
->>> that is, if both are provided then on the inhibit path only
->>> inhibit is called. And, consequently, you suggest to call either
->>> uninhibit or open, but not both. The rest of my mail makes this
->>> assumption, so kindly confirm if I understand you correctly.
 >>
->> Yes, that is correct. If a driver wants really fine-grained control, it
->> will provide inhibit (or both inhibit and close), otherwise it will rely
->> on close in place of inhibit.
+>>If you still see the kdump faults, can you please try with the attached
+>>diff? I was not able to reproduce them in my setup.
 >>
->>>
->>> In my opinion this idea will not work.
->>>
->>> The first question is should we be able to inhibit a device
->>> which is not opened? In my opinion we should, in order to be
->>> able to inhibit a device in anticipation without needing to
->>> open it first.
+>>Regards,
 >>
->> I agree.
+>>	Joerg
 >>
->>>
->>> Then what does opening (with input_open_device()) an inhibited
->>> device mean? Should it succeed or should it fail?
->>
->> It should succeed.
->>
->>> If it is not
->>> the first opening then effectively it boils down to increasing
->>> device's and handle's counters, so we can allow it to succeed.
->>> If, however, the device is being opened for the first time,
->>> the ->open() method wants to be called, but that somehow
->>> contradicts the device's inhibited state. So a logical thing
->>> to do is to either fail input_open_device() or postpone ->open()
->>> invocation to the moment of uninhibiting - and the latter is
->>> what the patches in this series currently do.
->>>
->>> Failing input_open_device() because of the inhibited state is
->>> not the right thing to do. Let me explain. Suppose that a device
->>> is already inhibited and then a new matching handler appears
->>> in the system. Most handlers (apm-power.c, evbug.c, input-leds.c,
->>> mac_hid.c, sysrq.c, vt/keyboard.c and rfkill/input.c) don't create
->>> any character devices (only evdev.c, joydev.c and mousedev.c do),
->>> so for them it makes no sense to delay calling input_open_device()
->>> and it is called in handler's ->connect(). If input_open_device()
->>> now fails, we have lost the only chance for this ->connect() to
->>> succeed.
->>>
->>> Summarizing, IMO the uninhibit path should be calling both
->>> ->open() and ->uninhibit() (if provided), and conversely, the inhibit
->>> path should be calling both ->inhibit() and ->close() (if provided).
->>
->> So what you are trying to say is that you see inhibit as something that
->> is done in addition to what happens in close. But what exactly do you
->> want to do in inhibit, in addition to what close is doing?
-> 
-> See below (*).
-> 
->>
->> In my view, if we want to have a dedicated inhibit callback, then it
->> will do everything that close does, they both are aware of each other
->> and can sort out the state transitions between them. For drivers that do
->> not have dedicated inhibit/uninhibit, we can use open and close
->> handlers, and have input core sort out when each should be called. That
->> means that we should not call dev->open() in input_open_device() when
->> device is inhibited (and same for dev->close() in input_close_device).
->> And when uninhibiting, we should not call dev->open() when there are no
->> users for the device, and no dev->close() when inhibiting with no users.
->>
->> Do you see any problems with this approach?
-> 
-> My concern is that if e.g. both ->open() and ->uninhibit() are provided,
-> then in certain circumstances ->open() won't be called:
-> 
-> 1. users == 0
-> 2. inhibit happens
-> 3. input_open_device() happens, ->open() not called
-> 4. uninhibit happens
-> 5. as part of uninhibit ->uninhibit() is only called, but ->open() is not.
-> 
-> They way I understand your answer is that we implicitly impose requirements
-> on drivers which choose to implement e.g. both ->open() and ->uninhibit():
-> in such a case ->uninhibit() should be doing exactly the same things as
-> ->open() does. Which leads to a conclusion that in practice no drivers
-> should choose to implement both, otherwise they must be aware that
-> ->uninhibit() can be sometimes called instead of ->open(). Then ->open()
-> becomes synonymous with ->uninhibit(), and ->close() with ->inhibit().
-> Or, maybe, then ->inhibit() can be a superset of ->close() and
-> ->uninhibit() a superset of ->open().
-> 
-> If such an approach is ok with you, it is ok with me, too.
-> 
-> (*)
-> Calling both ->inhibit() and ->close() (if they are provided) allows
-> drivers to go fancy and fail inhibiting (which is impossible using
-> only ->close() as it does not return a value, but ->inhibit() by design
-> does). Then ->uninhibit() is mostly for symmetry.
+>
+>I have another hp proliant server now, and reproduced. I will have the
+>patch below tested shortly. Minor change, I switched group->domain to
+>domain since group isn't an argument, and *data being passed in comes
+>from group->domain anyways.
+>
 
-All the complications discussed above are exactly why I still
-believe that there should be only open and close.
+Looks like it solves problem for both the epyc system, and the hp proliant
+server,
 
-If error propagation on inhibit is considered as something
-really important to have then we can make the input driver close
-callback return an error (*), note I'm talking about the
-driver close callback here, not the system call.
-
-If the close callback is called for actually closing the fd
-referring to the input node, then the new error return code
-can be ignored, as we already do for errors on close atm
-since the driver close callback returns void.
-
-I still have not seen a very convincing argument for having
-separate inhibit and close callbacks and as the messy discussion
-above shows, having 2 such very similar yet subtly different
-calls seems like a bad idea...
-
-Regards,
-
-Hans
-
-
-*) This will require a flag day where "return 0" is added
-to all current close handlers
+>>diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>>index b5ea203f6c68..5a6d509f72b6 100644
+>>--- a/drivers/iommu/iommu.c
+>>+++ b/drivers/iommu/iommu.c
+>>@@ -1680,8 +1680,12 @@ static void probe_alloc_default_domain(struct bus_type *bus,
+>>static int iommu_group_do_dma_attach(struct device *dev, void *data)
+>>{
+>>	struct iommu_domain *domain = data;
+>>+	int ret = 0;
+>>
+>>-	return __iommu_attach_device(domain, dev);
+>>+	if (!iommu_is_attach_deferred(group->domain, dev))
+>>+		ret = __iommu_attach_device(group->domain, dev);
+>>+
+>>+	return ret;
+>>}
+>>
+>>static int __iommu_group_dma_attach(struct iommu_group *group)
+>>_______________________________________________
+>>iommu mailing list
+>>iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+>>https://lists.linuxfoundation.org/mailman/listinfo/iommu
+>>
