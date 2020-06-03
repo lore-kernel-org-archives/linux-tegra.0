@@ -1,310 +1,225 @@
-From: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH 1/3] drm/atomic-helper: reset vblank on crtc reset
-Date: Wed, 3 Jun 2020 09:55:12 +0200
-Message-ID: <CAKMK7uEm7bfSpbYXH7SXLR4_+qAjf9OgmW7eqxGAmB0wMTefpg@mail.gmail.com>
-References: <20200602095140.36678-1-daniel.vetter@ffwll.ch> <20200603001900.GV6547@pendragon.ideasonboard.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 0/2] iommu: arm-smmu: Add support for early direct mappings
+Date: Wed, 3 Jun 2020 12:24:46 +0200
+Message-ID: <20200603102446.GA3478467@ulmo>
+References: <20191209150748.2471814-1-thierry.reding@gmail.com>
+ <20200228025700.GA856087@builder>
+ <20200514193249.GE279327@builder.lan>
+ <CALAqxLVmomdKJCwh=e-PX+8-seDX0RXA81FzmG4sEyJmbXBh9A@mail.gmail.com>
+ <20200527110343.GD11111@willie-the-truck>
+ <20200602110216.GA3354422@ulmo>
+ <20200602193249.GC1799770@builder.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200603001900.GV6547-N3hz7ZxfLydczECFQUw77jytWr6r+dGw0E9HWUfgJXw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Boris Brezillon <boris.brezillon-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tetsuo Handa <penguin-kernel-1yMVhJb1mP/7nzcFbJAaVXf5DAMn2ifp@public.gmane.org>, syzbot+0871b14ca2e2fb64f6e3-Pl5Pbv+GP7P466ipTTIvnc23WoclnBCfAL8bYrjMMd8@public.gmane.org, "James (Qian) Wang" <james.qian.wang-5wv7dgnIgG8@public.gmane.org>, Mihail Atanassov <mihail.atanassov-5wv7dgnIgG8@public.gmane.org>, Brian Starkey <brian.starkey-5wv7dgnIgG8@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Maxime Ripard <mrip>
+Content-Type: multipart/mixed; boundary="===============2235379621133914062=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20200602193249.GC1799770-Y7zrm0MriT3hXIiyNabO3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 3, 2020 at 2:19 AM Laurent Pinchart
-<laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org> wrote:
->
-> Hi Daniel,
->
-> Thank you for the patch.
->
-> May I remind you about the -v option to git-format-patch ? :-) Seriously
-> speaking, it really helps review.
->
-> On Tue, Jun 02, 2020 at 11:51:38AM +0200, Daniel Vetter wrote:
-> > Only when vblanks are supported ofc.
-> >
-> > Some drivers do this already, but most unfortunately missed it. This
-> > opens up bugs after driver load, before the crtc is enabled for the
-> > first time. syzbot spotted this when loading vkms as a secondary
-> > output. Given how many drivers are buggy it's best to solve this once
-> > and for all in shared helper code.
-> >
-> > Aside from moving the few existing calls to drm_crtc_vblank_reset into
-> > helpers (i915 doesn't use helpers, so keeps its own) I think the
-> > regression risk is minimal: atomic helpers already rely on drivers
-> > calling drm_crtc_vblank_on/off correctly in their hooks when they
-> > support vblanks. And driver that's failing to handle vblanks after
-> > this is missing those calls already, and vblanks could only work by
-> > accident when enabling a CRTC for the first time right after boot.
-> >
-> > Big thanks to Tetsuo for helping track down what's going wrong here.
-> >
-> > There's only a few drivers which already had the necessary call and
-> > needed some updating:
-> > - komeda, atmel and tidss also needed to be changed to call
-> >   __drm_atomic_helper_crtc_reset() intead of open coding it
-> > - tegra and msm even had it in the same place already, just code
-> >   motion, and malidp already uses __drm_atomic_helper_crtc_reset().
-> >
-> > Only call left is in i915, which doesn't use drm_mode_config_reset,
-> > but has its own fastboot infrastructure. So that's the only case where
-> > we actually want this in the driver still.
-> >
-> > I've also reviewed all other drivers which set up vblank support with
-> > drm_vblank_init. After the previous patch fixing mxsfb all atomic
-> > drivers do call drm_crtc_vblank_on/off as they should, the remaining
-> > drivers are either legacy kms or legacy dri1 drivers, so not affected
-> > by this change to atomic helpers.
-> >
-> > v2: Use the drm_dev_has_vblank() helper.
-> >
-> > v3: Laurent pointed out that omap and rcar-du used drm_crtc_vblank_off
-> > instead of drm_crtc_vblank_reset. Adjust them too.
-> >
-> > Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> > Reviewed-by: Boris Brezillon <boris.brezillon-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> > Acked-by: Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>
-> > Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Link: https://syzkaller.appspot.com/bug?id=0ba17d70d062b2595e1f061231474800f076c7cb
-> > Reported-by: Tetsuo Handa <penguin-kernel-JPay3/Yim36HaxMnTkn67Xf5DAMn2ifp@public.gmane.org>
-> > Reported-by: syzbot+0871b14ca2e2fb64f6e3-Pl5Pbv+GP7P466ipTTIvnc23WoclnBCfAL8bYrjMMd8@public.gmane.org
-> > Cc: Tetsuo Handa <penguin-kernel-JPay3/Yim36HaxMnTkn67Xf5DAMn2ifp@public.gmane.org>
-> > Cc: "James (Qian) Wang" <james.qian.wang-5wv7dgnIgG8@public.gmane.org>
-> > Cc: Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>
-> > Cc: Mihail Atanassov <mihail.atanassov-5wv7dgnIgG8@public.gmane.org>
-> > Cc: Brian Starkey <brian.starkey-5wv7dgnIgG8@public.gmane.org>
-> > Cc: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-> > Cc: Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > Cc: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> > Cc: Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-> > Cc: Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> > Cc: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> > Cc: Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > Cc: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
-> > Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
-> > Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-> > Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>
-> > Cc: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
-> > Cc: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > Cc: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> > Cc: Brian Masney <masneyb-1iNe0GrtECGEi8DpZVb4nw@public.gmane.org>
-> > Cc: Emil Velikov <emil.velikov-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> > Cc: zhengbin <zhengbin13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-> > Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-> > Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > Signed-off-by: Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> > ---
-> >  drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 7 ++-----
-> >  drivers/gpu/drm/arm/malidp_drv.c                 | 1 -
-> >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c   | 7 ++-----
-> >  drivers/gpu/drm/drm_atomic_state_helper.c        | 4 ++++
-> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c        | 2 --
-> >  drivers/gpu/drm/omapdrm/omap_drv.c               | 3 ---
-> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c           | 3 ---
-> >  drivers/gpu/drm/tegra/dc.c                       | 1 -
-> >  drivers/gpu/drm/tidss/tidss_crtc.c               | 3 +--
-> >  drivers/gpu/drm/tidss/tidss_kms.c                | 4 ----
-> >  10 files changed, 9 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > index 56bd938961ee..f33418d6e1a0 100644
-> > --- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > @@ -492,10 +492,8 @@ static void komeda_crtc_reset(struct drm_crtc *crtc)
-> >       crtc->state = NULL;
-> >
-> >       state = kzalloc(sizeof(*state), GFP_KERNEL);
-> > -     if (state) {
-> > -             crtc->state = &state->base;
-> > -             crtc->state->crtc = crtc;
-> > -     }
-> > +     if (state)
-> > +             __drm_atomic_helper_crtc_reset(crtc, &state->base);
-> >  }
-> >
-> >  static struct drm_crtc_state *
-> > @@ -616,7 +614,6 @@ static int komeda_crtc_add(struct komeda_kms_dev *kms,
-> >               return err;
-> >
-> >       drm_crtc_helper_add(crtc, &komeda_crtc_helper_funcs);
-> > -     drm_crtc_vblank_reset(crtc);
-> >
-> >       crtc->port = kcrtc->master->of_output_port;
-> >
-> > diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-> > index c2507b7d8512..02904392e370 100644
-> > --- a/drivers/gpu/drm/arm/malidp_drv.c
-> > +++ b/drivers/gpu/drm/arm/malidp_drv.c
-> > @@ -870,7 +870,6 @@ static int malidp_bind(struct device *dev)
-> >       drm->irq_enabled = true;
-> >
-> >       ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
-> > -     drm_crtc_vblank_reset(&malidp->crtc);
-> >       if (ret < 0) {
-> >               DRM_ERROR("failed to initialise vblank\n");
-> >               goto vblank_fail;
-> > diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> > index 10985134ce0b..ce246b96330b 100644
-> > --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> > +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> > @@ -411,10 +411,8 @@ static void atmel_hlcdc_crtc_reset(struct drm_crtc *crtc)
-> >       }
-> >
-> >       state = kzalloc(sizeof(*state), GFP_KERNEL);
-> > -     if (state) {
-> > -             crtc->state = &state->base;
-> > -             crtc->state->crtc = crtc;
-> > -     }
-> > +     if (state)
-> > +             __drm_atomic_helper_crtc_reset(crtc, &state->base);
-> >  }
-> >
-> >  static struct drm_crtc_state *
-> > @@ -528,7 +526,6 @@ int atmel_hlcdc_crtc_create(struct drm_device *dev)
-> >       }
-> >
-> >       drm_crtc_helper_add(&crtc->base, &lcdc_crtc_helper_funcs);
-> > -     drm_crtc_vblank_reset(&crtc->base);
-> >
-> >       drm_mode_crtc_set_gamma_size(&crtc->base, ATMEL_HLCDC_CLUT_SIZE);
-> >       drm_crtc_enable_color_mgmt(&crtc->base, 0, false,
-> > diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-> > index 8fce6a115dfe..9ad74045158e 100644
-> > --- a/drivers/gpu/drm/drm_atomic_state_helper.c
-> > +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-> > @@ -32,6 +32,7 @@
-> >  #include <drm/drm_device.h>
-> >  #include <drm/drm_plane.h>
-> >  #include <drm/drm_print.h>
-> > +#include <drm/drm_vblank.h>
-> >  #include <drm/drm_writeback.h>
-> >
-> >  #include <linux/slab.h>
-> > @@ -93,6 +94,9 @@ __drm_atomic_helper_crtc_reset(struct drm_crtc *crtc,
-> >       if (crtc_state)
-> >               __drm_atomic_helper_crtc_state_reset(crtc_state, crtc);
-> >
-> > +     if (drm_dev_has_vblank(crtc->dev))
-> > +             drm_crtc_vblank_reset(crtc);
-> > +
-> >       crtc->state = crtc_state;
-> >  }
-> >  EXPORT_SYMBOL(__drm_atomic_helper_crtc_reset);
-> > diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> > index ca3368c828d0..9606185c284b 100644
-> > --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> > +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> > @@ -1117,8 +1117,6 @@ static void mdp5_crtc_reset(struct drm_crtc *crtc)
-> >               mdp5_crtc_destroy_state(crtc, crtc->state);
-> >
-> >       __drm_atomic_helper_crtc_reset(crtc, &mdp5_cstate->base);
-> > -
-> > -     drm_crtc_vblank_reset(crtc);
-> >  }
-> >
-> >  static const struct drm_crtc_funcs mdp5_crtc_funcs = {
-> > diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
-> > index 242d28281784..7a7066cded79 100644
-> > --- a/drivers/gpu/drm/omapdrm/omap_drv.c
-> > +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-> > @@ -642,9 +642,6 @@ static int omapdrm_init(struct omap_drm_private *priv, struct device *dev)
-> >               goto err_cleanup_modeset;
-> >       }
-> >
-> > -     for (i = 0; i < priv->num_pipes; i++)
-> > -             drm_crtc_vblank_off(priv->pipes[i].crtc);
-> > -
-> >       omap_fbdev_init(ddev);
-> >
-> >       drm_kms_helper_poll_init(ddev);
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> > index d73e88ddecd0..e2959e32fd19 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> > @@ -1271,9 +1271,6 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
-> >
-> >       drm_crtc_helper_add(crtc, &crtc_helper_funcs);
-> >
-> > -     /* Start with vertical blanking interrupt reporting disabled. */
-> > -     drm_crtc_vblank_off(crtc);
-> > -
->
-> I'm sure I've added this code for a good reason, I would have sworn that
-> vblank would be either broken or would complain very loudly without this
-> call. I've however tested this patch, and haven't noticed any
-> regression. Has something changed since I've added the call to
-> drm_crtc_vblank_off() in the rcar-du driver ? It can't be
-> __drm_atomic_helper_crtc_reset() handling it, as the rcar-du driver has
-> a custom CRTC reset handler that doesn't call
-> __drm_atomic_helper_crtc_reset(). If it works without calling
-> drm_crtc_vblank_off() or drm_crtc_vblank_reset(), what's the purpose of
-> drm_crtc_vblank_reset() ?
->
-> /me is very puzzled
 
-Uh yeah this breaks stuff, I forgot to review the two drivers I've
-changed to make sure they're using the __drm_atomic_helper_crtc_reset
-function. Like they should. I'll respin.
--Daniel
-
-> >       /* Register the interrupt handler. */
-> >       if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CRTC_IRQ_CLOCK)) {
-> >               /* The IRQ's are associated with the CRTC (sw)index. */
-> > diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> > index 83f31c6e891c..9b308b572eac 100644
-> > --- a/drivers/gpu/drm/tegra/dc.c
-> > +++ b/drivers/gpu/drm/tegra/dc.c
-> > @@ -1168,7 +1168,6 @@ static void tegra_crtc_reset(struct drm_crtc *crtc)
-> >               tegra_crtc_atomic_destroy_state(crtc, crtc->state);
-> >
-> >       __drm_atomic_helper_crtc_reset(crtc, &state->base);
-> > -     drm_crtc_vblank_reset(crtc);
-> >  }
-> >
-> >  static struct drm_crtc_state *
-> > diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
-> > index 89a226912de8..4d01c4af61cd 100644
-> > --- a/drivers/gpu/drm/tidss/tidss_crtc.c
-> > +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
-> > @@ -352,8 +352,7 @@ static void tidss_crtc_reset(struct drm_crtc *crtc)
-> >               return;
-> >       }
-> >
-> > -     crtc->state = &tcrtc->base;
-> > -     crtc->state->crtc = crtc;
-> > +     __drm_atomic_helper_crtc_reset(crtc, &tcrtc->base);
-> >  }
-> >
-> >  static struct drm_crtc_state *tidss_crtc_duplicate_state(struct drm_crtc *crtc)
-> > diff --git a/drivers/gpu/drm/tidss/tidss_kms.c b/drivers/gpu/drm/tidss/tidss_kms.c
-> > index 4b99e9fa84a5..e6ab59eed259 100644
-> > --- a/drivers/gpu/drm/tidss/tidss_kms.c
-> > +++ b/drivers/gpu/drm/tidss/tidss_kms.c
-> > @@ -278,10 +278,6 @@ int tidss_modeset_init(struct tidss_device *tidss)
-> >       if (ret)
-> >               return ret;
-> >
-> > -     /* Start with vertical blanking interrupt reporting disabled. */
-> > -     for (i = 0; i < tidss->num_crtcs; ++i)
-> > -             drm_crtc_vblank_reset(tidss->crtcs[i]);
-> > -
-> >       drm_mode_config_reset(ddev);
-> >
-> >       dev_dbg(tidss->dev, "%s done\n", __func__);
->
-> --
-> Regards,
->
-> Laurent Pinchart
+--===============2235379621133914062==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
+Content-Disposition: inline
 
 
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+On Tue, Jun 02, 2020 at 12:32:49PM -0700, Bjorn Andersson wrote:
+> On Tue 02 Jun 04:02 PDT 2020, Thierry Reding wrote:
+>=20
+> > On Wed, May 27, 2020 at 12:03:44PM +0100, Will Deacon wrote:
+> > > Hi John, Bjorn,
+> > >=20
+> > > On Tue, May 26, 2020 at 01:34:45PM -0700, John Stultz wrote:
+> > > > On Thu, May 14, 2020 at 12:34 PM <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> > > > >
+> > > > > On Thu 27 Feb 18:57 PST 2020, Bjorn Andersson wrote:
+> > > > >
+> > > > > Rob, Will, we're reaching the point where upstream has enough
+> > > > > functionality that this is becoming a critical issue for us.
+> > > > >
+> > > > > E.g. Lenovo Yoga C630 is lacking this and a single dts patch to b=
+oot
+> > > > > mainline with display, GPU, WiFi and audio working and the story =
+is
+> > > > > similar on several devboards.
+> > > > >
+> > > > > As previously described, the only thing I want is the stream mapp=
+ing
+> > > > > related to the display controller in place, either with the CB wi=
+th
+> > > > > translation disabled or possibly with a way to specify the frameb=
+uffer
+> > > > > region (although this turns out to mess things up in the display
+> > > > > driver...)
+> > > > >
+> > > > > I did pick this up again recently and concluded that by omitting =
+the
+> > > > > streams for the USB controllers causes an instability issue seen =
+on one
+> > > > > of the controller to disappear. So I would prefer if we somehow c=
+ould
+> > > > > have a mechanism to only pick the display streams and the context
+> > > > > allocation for this.
+> > > > >
+> > > > >
+> > > > > Can you please share some pointers/insights/wishes for how we can
+> > > > > conclude on this subject?
+> > > >=20
+> > > > Ping? I just wanted to follow up on this discussion as this small
+> > > > series is crucial for booting mainline on the Dragonboard 845c
+> > > > devboard. It would be really valuable to be able to get some soluti=
+on
+> > > > upstream so we can test mainline w/o adding additional patches.
+> > >=20
+> > > Sorry, it's been insanely busy recently and I haven't had a chance to=
+ think
+> > > about this on top of everything else. We're also carrying a hack in A=
+ndroid
+> > > for you :)
+> > >=20
+> > > > The rest of the db845c series has been moving forward smoothly, but
+> > > > this set seems to be very stuck with no visible progress since Dec.
+> > > >=20
+> > > > Are there any pointers for what folks would prefer to see?
+> > >=20
+> > > I've had a chat with Robin about this. Originally, I was hoping that
+> > > people would all work together towards an idyllic future where firmwa=
+re
+> > > would be able to describe arbitrary pre-existing mappings for devices,
+> > > irrespective of the IOMMU through which they master and Linux could
+> > > inherit this configuration. However, that hasn't materialised (there =
+was
+> > > supposed to be an IORT update, but I don't know what happened to that)
+> > > and, in actual fact, the problem that you have on db845 is /far/ more
+> > > restricted than the general problem.
+> >=20
+> > It doesn't sound to me like implementing platform-specific workarounds
+> > is a good long-term solution (especially since, according to Bjorn, they
+> > aren't as trivial to implement as it sounds). And we already have all
+> > the infrastructure in place to implement what you describe, so I don't
+> > see why we shouldn't do that. This patchset uses standard device tree
+> > bindings that were designed for exactly this kind of use-case.
+> >=20
+>=20
+> I think my results would imply that we would have to end up with (at
+> least) some special case of your proposal (i.e. we need a context bank
+> allocated).
+
+I wasn't talking about implementation details, but rather about the
+surrounding infrastructure. It seemed like Will was suggesting that
+there's no way of conveying what memory regions to direct-map from
+the firmware to the kernel. But that really isn't the problem here,
+is it? What we're really looking for is how to take what we have in
+device tree and use it in the ARM SMMU driver to create an early
+mapping that will stay in place until a device has been properly
+attached to the IOMMU domain.
+
+> > So at least for device-tree based boot firmware can already describe
+> > these pre-existing mappings. If something standard materializes for ACPI
+> > eventually I'm sure we can find ways to integrate that into whatever we
+> > come up with now for DT.
+> >=20
+> > I think between Bjorn, John, Laurentiu and myself there's pretty broad
+> > consensus (correct me if I'm wrong, guys) that solving this via reserved
+> > memory regions is a good solution that works. So I think what's really
+> > missing is feedback on whether the changes proposed here or Laurentiu's
+> > updated proposal[0] are acceptable, and if not, what the preference is
+> > for getting something equivalent upstream.
+> >=20
+>=20
+> As described in my reply to your proposal, the one problem I ran into
+> was that I haven't figured out how to reliably "move" my display streams
+> from one mapping entry to another.
+>=20
+> With the current scheme I see that their will either be gaps in time
+> with no mapping for my display, or multiple mappings.
+
+I think you would inevitably end up with two mappings for a transitional
+period while you prepare the final mapping that you want to switch to.
+
+> The other thing I noticed in your proposal was that I have a whole bunch
+> of DT nodes with both iommus and memory-region properties that I really
+> don't care to set up mappings for, but I've not finalized my thoughts on
+> this causing actual problems...
+
+Can you be more specific? It'd be useful to understand all of the
+existing uses of reserved memory regions in order to make sure we
+accomodate all of them.
+
+I'd be surprised, though, if setting up mappings for any of these
+regions would actually cause breakage. If a device tree node has a
+memory-region property it means that this memory region is eventually
+going to be used by the device and if the device tree node also has an
+iommus property it means that it's meant to use the IOMMU for
+translating memory accesses. It's therefore very likely that the memory
+region will need to be mapped. Whether it needs to be a direct mapping
+or not might be worth having a discussion about.
+
+> > Just to highlight: the IOMMU framework already provides infrastructure
+> > to create direct mappings (via iommu_get_resv_regions(), called from
+> > iommu_create_device_direct_mappings()). I have patches that make use of
+> > this on Tegra210 and earlier where a non-ARM SMMU is used and where the
+> > IOMMU driver enables translations (and doesn't fault by default) only at
+> > device attachment time. That works perfectly using reserved-memory
+> > regions. Perhaps that infrastructure could be extended to cover the
+> > kinds of early mappings that we're discussing here. On the other hand it
+> > might be a bit premature at this point because the ARM SMMU is the only
+> > device that currently needs this, as far as I can tell.
+> >=20
+>=20
+> For Qualcomm we got patches picked up for 5.8 that will cause the
+> display controller to be attached with direct mapping, so I think all
+> missing now is the lack of stream mappings between arm-smmu probe and
+> display driver probe...
+
+Can you point me at those patches? I'd like to look at them and see if
+they match what I have planned for Tegra or if we can somehow converge
+on a common scheme.
+
+Thierry
+
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7XemsACgkQ3SOs138+
+s6FWZRAAoSuPu0jtfyFXzjuxfpxQzuTdqjCht0ISIMPA5WI1CBAvCHwLLxo5FS0z
+BPlOun2m9CGKwkAIxUF6UQxs4Do5VR0pS5PHEKkPdm21gJT993B3ZMXA2mNxsmti
+MOUwoTB3UKlVHiNjMCGpxHGRhf+1Kwhw21pBAK65Tq0HVbuZNGtH3wm6+YTJhn4R
+g7gZiV3u/Ecbp/4BW7oda3JJVgis2oiZpp0UuT6eNoWxj5cG4ERFXF2p8m+PLC4n
+guGOFRvU30Gu/kel2H5/YKZARUUuzn9raUZBuXR1X7JgW+jlZYy0bx5WGW4VWkKH
+ub7XyfenTZmtdaAznYQd2MqJSPJRvP6DZRIggUDU8IDHIpnYt9Ob/Hh5krfuwfRY
+c5tUZLAmJYHPbGWTQhoIAF3lYP2sNSuRxcyOe2HeRsNxeGQcpr1em8fOBiewhpMW
+klLGCq6WA9K5F4iJ8H3DlIex8M1dMSbnScp3kOEXA1Hl8jGqAbehUL1F+uh5Wuet
+MyfyIzOIqkFDzd1R4+o/u8IxNkZ/CbprZo62Jcck8WJ/6RkqQJV9w19lDXc7dX2S
+azyKgi024YcJlL8Y74GKhJ+1dR1WP8SzGx1VNxdlmPiqJOCfe4OXSHLk28PG3cpo
+0jDlClbWcpdRPTfUKNthZ3k1+uHR60QQ/2EloiEClvTQKzTABVM=
+=vUM4
+-----END PGP SIGNATURE-----
+
+--Q68bSM7Ycu6FN28Q--
+
+--===============2235379621133914062==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============2235379621133914062==--
