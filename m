@@ -1,209 +1,204 @@
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH V4] pwm: tegra: dynamic clk freq configuration by PWM
- driver
-Date: Wed, 3 Jun 2020 18:29:06 +0200
-Message-ID: <20200603162906.vyfynqtxa7mpjxxv@taurus.defre.kleine-koenig.org>
-References: <1590988836-11308-1-git-send-email-spatra@nvidia.com>
+From: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC 0/2] iommu: arm-smmu: Add support for early direct mappings
+Date: Wed, 3 Jun 2020 10:17:17 -0700
+Message-ID: <20200603171717.GV11847@yoga>
+References: <20191209150748.2471814-1-thierry.reding@gmail.com>
+ <20200228025700.GA856087@builder>
+ <20200514193249.GE279327@builder.lan>
+ <CALAqxLVmomdKJCwh=e-PX+8-seDX0RXA81FzmG4sEyJmbXBh9A@mail.gmail.com>
+ <20200527110343.GD11111@willie-the-truck>
+ <20200602110216.GA3354422@ulmo>
+ <20200602193249.GC1799770@builder.lan>
+ <20200603102446.GA3478467@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aolxn5mvfn62f3oc"
-Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1590988836-11308-1-git-send-email-spatra@nvidia.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Sandipan Patra <spatra@nvidia.com>
-Cc: treding@nvidia.com, jonathanh@nvidia.com, bbasu@nvidia.com, ldewangan@nvidia.com, kyarlagadda@nvidia.com, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20200603102446.GA3478467@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Laurentiu Tudor <laurentiu.tudor-3arQi8VN3Tc@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed 03 Jun 03:24 PDT 2020, Thierry Reding wrote:
 
---aolxn5mvfn62f3oc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Tue, Jun 02, 2020 at 12:32:49PM -0700, Bjorn Andersson wrote:
+> > On Tue 02 Jun 04:02 PDT 2020, Thierry Reding wrote:
+> > 
+> > > On Wed, May 27, 2020 at 12:03:44PM +0100, Will Deacon wrote:
+> > > > Hi John, Bjorn,
+> > > > 
+> > > > On Tue, May 26, 2020 at 01:34:45PM -0700, John Stultz wrote:
+> > > > > On Thu, May 14, 2020 at 12:34 PM <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> > > > > >
+> > > > > > On Thu 27 Feb 18:57 PST 2020, Bjorn Andersson wrote:
+> > > > > >
+> > > > > > Rob, Will, we're reaching the point where upstream has enough
+> > > > > > functionality that this is becoming a critical issue for us.
+> > > > > >
+> > > > > > E.g. Lenovo Yoga C630 is lacking this and a single dts patch to boot
+> > > > > > mainline with display, GPU, WiFi and audio working and the story is
+> > > > > > similar on several devboards.
+> > > > > >
+> > > > > > As previously described, the only thing I want is the stream mapping
+> > > > > > related to the display controller in place, either with the CB with
+> > > > > > translation disabled or possibly with a way to specify the framebuffer
+> > > > > > region (although this turns out to mess things up in the display
+> > > > > > driver...)
+> > > > > >
+> > > > > > I did pick this up again recently and concluded that by omitting the
+> > > > > > streams for the USB controllers causes an instability issue seen on one
+> > > > > > of the controller to disappear. So I would prefer if we somehow could
+> > > > > > have a mechanism to only pick the display streams and the context
+> > > > > > allocation for this.
+> > > > > >
+> > > > > >
+> > > > > > Can you please share some pointers/insights/wishes for how we can
+> > > > > > conclude on this subject?
+> > > > > 
+> > > > > Ping? I just wanted to follow up on this discussion as this small
+> > > > > series is crucial for booting mainline on the Dragonboard 845c
+> > > > > devboard. It would be really valuable to be able to get some solution
+> > > > > upstream so we can test mainline w/o adding additional patches.
+> > > > 
+> > > > Sorry, it's been insanely busy recently and I haven't had a chance to think
+> > > > about this on top of everything else. We're also carrying a hack in Android
+> > > > for you :)
+> > > > 
+> > > > > The rest of the db845c series has been moving forward smoothly, but
+> > > > > this set seems to be very stuck with no visible progress since Dec.
+> > > > > 
+> > > > > Are there any pointers for what folks would prefer to see?
+> > > > 
+> > > > I've had a chat with Robin about this. Originally, I was hoping that
+> > > > people would all work together towards an idyllic future where firmware
+> > > > would be able to describe arbitrary pre-existing mappings for devices,
+> > > > irrespective of the IOMMU through which they master and Linux could
+> > > > inherit this configuration. However, that hasn't materialised (there was
+> > > > supposed to be an IORT update, but I don't know what happened to that)
+> > > > and, in actual fact, the problem that you have on db845 is /far/ more
+> > > > restricted than the general problem.
+> > > 
+> > > It doesn't sound to me like implementing platform-specific workarounds
+> > > is a good long-term solution (especially since, according to Bjorn, they
+> > > aren't as trivial to implement as it sounds). And we already have all
+> > > the infrastructure in place to implement what you describe, so I don't
+> > > see why we shouldn't do that. This patchset uses standard device tree
+> > > bindings that were designed for exactly this kind of use-case.
+> > > 
+> > 
+> > I think my results would imply that we would have to end up with (at
+> > least) some special case of your proposal (i.e. we need a context bank
+> > allocated).
+> 
+> I wasn't talking about implementation details, but rather about the
+> surrounding infrastructure. It seemed like Will was suggesting that
+> there's no way of conveying what memory regions to direct-map from
+> the firmware to the kernel. But that really isn't the problem here,
+> is it? What we're really looking for is how to take what we have in
+> device tree and use it in the ARM SMMU driver to create an early
+> mapping that will stay in place until a device has been properly
+> attached to the IOMMU domain.
+> 
 
-Hello,
+I agree.
 
-On Mon, Jun 01, 2020 at 10:50:36AM +0530, Sandipan Patra wrote:
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> index d26ed8f..1daf591 100644
-> --- a/drivers/pwm/pwm-tegra.c
-> +++ b/drivers/pwm/pwm-tegra.c
-> @@ -4,8 +4,36 @@
->   *
->   * Tegra pulse-width-modulation controller driver
->   *
-> - * Copyright (c) 2010, NVIDIA Corporation.
-> + * Copyright (c) 2010-2020, NVIDIA Corporation.
->   * Based on arch/arm/plat-mxc/pwm.c by Sascha Hauer <s.hauer@pengutronix=
-=2Ede>
-> + *
-> + * Overview of Tegra Pulse Width Modulator Register:
-> + * 1. 13-bit: Frequency division (SCALE)
-> + * 2. 8-bit : Pulse division (DUTY)
-> + * 3. 1-bit : Enable bit
-> + *
-> + * The PWM clock frequency is divided by 256 before subdividing it based
-> + * on the programmable frequency division value to generate the required
-> + * frequency for PWM output. The maximum output frequency that can be
-> + * achieved is (max rate of source clock) / 256.
-> + * e.g. if source clock rate is 408 MHz, maximum output frequency can be:
-> + * 408 MHz/256 =3D 1.6 MHz.
-> + * This 1.6 MHz frequency can further be divided using SCALE value in PW=
-M.
-> + *
-> + * PWM pulse width: 8 bits are usable [23:16] for varying pulse width.
-> + * To achieve 100% duty cycle, program Bit [24] of this register to
-> + * 1=E2=80=99b1. In which case the other bits [23:16] are set to don't c=
-are.
-> + *
-> + * Limitations:
-> + * -	When PWM is disabled, the output is driven to inactive.
-> + * -	It does not allow the current PWM period to complete and
-> + *	stops abruptly.
-> + *
+We do have the iommu properties from our display node and we typically
+do have a reserved-memory region for the existing framebuffer that we
+want to associate with those properties.
 
-I'd prefer to have no empty lines in the in Limitations paragraph to be
-able to get all infos using something like:
+The one exception is on devices targeted to run Windows, where the
+memory region is passed to the kernel using UEFI GOP.
 
-	sed -rn '/\* Limitations:/,/^ \*\/?$/p' drivers/pwm/pwm-tegra.c
+But as you say, the information is available to the kernel already.
 
-> + * -	If the register is reconfigured while PWM is running,
-> + *	it does not complete the currently running period.
-> + *
-> + * -	If the user input duty is beyond acceptible limits,
-> + *	-EINVAL is returned.
+> > > So at least for device-tree based boot firmware can already describe
+> > > these pre-existing mappings. If something standard materializes for ACPI
+> > > eventually I'm sure we can find ways to integrate that into whatever we
+> > > come up with now for DT.
+> > > 
+> > > I think between Bjorn, John, Laurentiu and myself there's pretty broad
+> > > consensus (correct me if I'm wrong, guys) that solving this via reserved
+> > > memory regions is a good solution that works. So I think what's really
+> > > missing is feedback on whether the changes proposed here or Laurentiu's
+> > > updated proposal[0] are acceptable, and if not, what the preference is
+> > > for getting something equivalent upstream.
+> > > 
+> > 
+> > As described in my reply to your proposal, the one problem I ran into
+> > was that I haven't figured out how to reliably "move" my display streams
+> > from one mapping entry to another.
+> > 
+> > With the current scheme I see that their will either be gaps in time
+> > with no mapping for my display, or multiple mappings.
+> 
+> I think you would inevitably end up with two mappings for a transitional
+> period while you prepare the final mapping that you want to switch to.
+> 
 
-s/acceptible/acceptable/ (but in fact this isn't a limitation, so I'd
-drop this here, as pointed out in v2).
+I think that's fine, I saw that there's a bit to configure if multiple
+SMR matches is considered a fault or not, so I will verify if this is
+what causes the faults I saw on one of my platforms and if I can change
+it.
 
-In v2 I mentioned a few things to add here.
+I still would need that we ensure that we don't have lapses in time
+where we're lacking mappings among the SMRs.
 
->   */
-> =20
->  #include <linux/clk.h>
-> @@ -41,6 +69,7 @@ struct tegra_pwm_chip {
->  	struct reset_control*rst;
-> =20
->  	unsigned long clk_rate;
-> +	unsigned long min_period_ns;
-> =20
->  	void __iomem *regs;
-> =20
-> @@ -68,7 +97,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, stru=
-ct pwm_device *pwm,
->  {
->  	struct tegra_pwm_chip *pc =3D to_tegra_pwm_chip(chip);
->  	unsigned long long c =3D duty_ns, hz;
-> -	unsigned long rate;
-> +	unsigned long rate, required_clk_rate;
+> > The other thing I noticed in your proposal was that I have a whole bunch
+> > of DT nodes with both iommus and memory-region properties that I really
+> > don't care to set up mappings for, but I've not finalized my thoughts on
+> > this causing actual problems...
+> 
+> Can you be more specific? It'd be useful to understand all of the
+> existing uses of reserved memory regions in order to make sure we
+> accomodate all of them.
+> 
 
-In v2 I requested to move this into the if block below. You replied to
-want to move it accordingly.
+I have reserved-memory regions for a number of co-processors, to
+facilitate static access configuration, as such I ended up with having
+100+MB of various DSP memory mapped into the temporary context.
 
->  	u32 val =3D 0;
->  	int err;
-> =20
-> @@ -83,9 +112,47 @@ static int tegra_pwm_config(struct pwm_chip *chip, st=
-ruct pwm_device *pwm,
->  	val =3D (u32)c << PWM_DUTY_SHIFT;
-> =20
->  	/*
-> +	 *  min period =3D max clock limit >> PWM_DUTY_WIDTH
-> +	 */
-> +	if (period_ns < pc->min_period_ns)
-> +		return -EINVAL;
-> +
-> +	/*
->  	 * Compute the prescaler value for which (1 << PWM_DUTY_WIDTH)
->  	 * cycles at the PWM clock rate will take period_ns nanoseconds.
-> +	 *
-> +	 * num_channels: If single instance of PWM controller has multiple
-> +	 * channels (e.g. Tegra210 or older) then it is not possible to
-> +	 * configure separate clock rates to each of the channels, in such
-> +	 * case the value stored during probe will be referred.
-> +	 *
-> +	 * If every PWM controller instance has one channel respectively, i.e.
-> +	 * nums_channels =3D=3D 1 then only the clock rate can be modified
-> +	 * dynamically (e.g. Tegra186 or Tegra194).
->  	 */
-> +	if (pc->soc->num_channels =3D=3D 1) {
-> +		/*
-> +		 * Rate is multiplied with 2^PWM_DUTY_WIDTH so that it matches
-> +		 * with the maximum possible rate that the controller can
-> +		 * provide. Any further lower value can be derived by setting
-> +		 * PFM bits[0:12].
+> I'd be surprised, though, if setting up mappings for any of these
+> regions would actually cause breakage. If a device tree node has a
+> memory-region property it means that this memory region is eventually
+> going to be used by the device and if the device tree node also has an
+> iommus property it means that it's meant to use the IOMMU for
+> translating memory accesses. It's therefore very likely that the memory
+> region will need to be mapped. Whether it needs to be a direct mapping
+> or not might be worth having a discussion about.
+> 
 
-It looks a bit strange that the algorithm to calculate the clock
-settings depends on the number of channels. Looks like a wrong
-abstraction.
+Right, I think that before any of these are actually used we will have a
+device attached and the region properly mapped (as is done today
+already).
 
-> +		 *
-> +		 * required_clk_rate is a reference rate for source clock and
-> +		 * it is derived based on user requested period. By setting the
-> +		 * source clock rate as required_clk_rate, PWM controller will
-> +		 * be able to configure the requested period.
-> +		 */
-> +		required_clk_rate =3D
-> +			(NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
-> +
-> +		err =3D clk_set_rate(pc->clk, required_clk_rate);
-> +		if (err < 0)
-> +			return -EINVAL;
-> +
-> +		/* Store the new rate for further references */
-> +		pc->clk_rate =3D clk_get_rate(pc->clk);
-> +	}
-> +
->  	rate =3D pc->clk_rate >> PWM_DUTY_WIDTH;
-> =20
->  	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
-> @@ -94,7 +161,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, str=
-uct pwm_device *pwm,
-> =20
->  	/*
->  	 * Since the actual PWM divider is the register's frequency divider
-> -	 * field minus 1, we need to decrement to get the correct value to
-> +	 * field plus 1, we need to decrement to get the correct value to
+> > > Just to highlight: the IOMMU framework already provides infrastructure
+> > > to create direct mappings (via iommu_get_resv_regions(), called from
+> > > iommu_create_device_direct_mappings()). I have patches that make use of
+> > > this on Tegra210 and earlier where a non-ARM SMMU is used and where the
+> > > IOMMU driver enables translations (and doesn't fault by default) only at
+> > > device attachment time. That works perfectly using reserved-memory
+> > > regions. Perhaps that infrastructure could be extended to cover the
+> > > kinds of early mappings that we're discussing here. On the other hand it
+> > > might be a bit premature at this point because the ARM SMMU is the only
+> > > device that currently needs this, as far as I can tell.
+> > > 
+> > 
+> > For Qualcomm we got patches picked up for 5.8 that will cause the
+> > display controller to be attached with direct mapping, so I think all
+> > missing now is the lack of stream mappings between arm-smmu probe and
+> > display driver probe...
+> 
+> Can you point me at those patches? I'd like to look at them and see if
+> they match what I have planned for Tegra or if we can somehow converge
+> on a common scheme.
+> 
 
-I would have put this in a separate change.
+You can find this in:
 
->  	 * write to the register.
->  	 */
->  	if (rate > 0)
-> @@ -205,6 +272,10 @@ static int tegra_pwm_probe(struct platform_device *p=
-dev)
->  	 */
->  	pwm->clk_rate =3D clk_get_rate(pwm->clk);
-> =20
-> +	/* Set minimum limit of PWM period for the IP */
-> +	pwm->min_period_ns =3D
-> +	    (NSEC_PER_SEC / (pwm->soc->max_frequency >> PWM_DUTY_WIDTH)) + 1;
+0e764a01015d ("iommu/arm-smmu: Allow client devices to select direct mapping")
 
-To ensure that required_clk_rate in tegra_pwm_config doesn't get bigger
-than pwm->soc->max_frequency this isn't the right formula I think. I'd
-use
+Which conceptually follows what is done on x86 machines.
 
-	pwm->min_period_ns =3D DIV_ROUNDUP(NSEC_PER_SEC, pwm->soc->max_frequency >=
-> PWM_DUTY_WIDTH);
-
-=2E Can you confirm?
-
-Best regards
-Uwe
-
---aolxn5mvfn62f3oc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl7Xz88ACgkQwfwUeK3K
-7AlrAAf/aYBSEFxW/wXZ2OQi20KmCo1gebNdYjqppcGWBHFcslo+Zy//4zemJatL
-/zx40sFn60GynifMqDb3vGsgAtt3DCZsb9+MC3H8PQLXa70yaWeJ1n9oEapQ5UIk
-tD5GGH8Pa/dBdM7cH5bWjcziQ1elZZXDV8q7X5G/IJF79hHvoDYTnSJbeO1RVxG6
-XBopnHUquZladbAMRLK6mXUdiU1d0dRVcDCdMGqoypAkFbUNgVWXnVq6SpQqvice
-m+BUzT7ekqJ/0vE54NRJeudBnGkjmkuGMuX14+GJJqbO0NZVKPyi5XREm+eqlzvq
-1rD4TCb2n45vagAbws+IpFaRWueWkg==
-=t6tJ
------END PGP SIGNATURE-----
-
---aolxn5mvfn62f3oc--
+Regards,
+Bjorn
