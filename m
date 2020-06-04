@@ -1,47 +1,42 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra: Use noirq suspend/resume callbacks
-Date: Thu, 4 Jun 2020 21:00:06 +0300
-Message-ID: <70a740d5-05b2-b8a6-fea6-da192f9411f3@gmail.com>
-References: <20200604174935.26560-1-vidyas@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] dmaengine: tegra210-adma: handle pm_runtime_get_sync failure cases
+Date: Thu,  4 Jun 2020 15:10:58 -0500
+Message-ID: <20200604201058.86457-1-navid.emamdoost@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200604174935.26560-1-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: emamd001-OJFnDUYgAso@public.gmane.org, wu000273-OJFnDUYgAso@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org, mccamant-k0Ej6N9cQa43uPMLIKxrzw@public.gmane.org, Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-04.06.2020 20:49, Vidya Sagar пишет:
-> Use noirq suspend/resume callbacks as other drivers which implement
-> noirq suspend/resume callbacks (Ex:- PCIe) depend on pinctrl driver to
-> configure the signals used by their respective devices in the noirq phase.
-> 
-> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index 21661f6490d6..195cfe557511 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -731,8 +731,8 @@ static int tegra_pinctrl_resume(struct device *dev)
->  }
->  
->  const struct dev_pm_ops tegra_pinctrl_pm = {
-> -	.suspend = &tegra_pinctrl_suspend,
-> -	.resume = &tegra_pinctrl_resume
-> +	.suspend_noirq = &tegra_pinctrl_suspend,
-> +	.resume_noirq = &tegra_pinctrl_resume
->  };
->  
->  static bool tegra_pinctrl_gpio_node_has_range(struct tegra_pmx *pmx)
-> 
+Calling pm_runtime_get_sync increments the counter even in case of
+failure, causing incorrect ref count. Call pm_runtime_put if
+pm_runtime_get_sync fails.
 
-That's a good catch! Perhaps I2C on later Tegra SoCs also should suffer
-similarly to the PCIe.
+Signed-off-by: Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/dma/tegra210-adma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index c4ce5dfb149b..899eaaf9fc48 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -659,6 +659,7 @@ static int tegra_adma_alloc_chan_resources(struct dma_chan *dc)
+ 	ret = pm_runtime_get_sync(tdc2dev(tdc));
+ 	if (ret < 0) {
+ 		free_irq(tdc->irq, tdc);
++		pm_runtime_put(tdc2dev(tdc));
+ 		return ret;
+ 	}
+ 
+@@ -870,7 +871,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 
+ 	ret = pm_runtime_get_sync(&pdev->dev);
+ 	if (ret < 0)
+-		goto rpm_disable;
++		goto rpm_put;
+ 
+ 	ret = tegra_adma_init(tdma);
+ 	if (ret)
+-- 
+2.17.1
