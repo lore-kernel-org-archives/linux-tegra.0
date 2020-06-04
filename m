@@ -1,73 +1,63 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 6/8] phy: tegra: xusb: Add support for charger detect
-Date: Thu, 4 Jun 2020 15:56:06 +0200
-Message-ID: <20200604135606.GC1138399@ulmo>
+Subject: Re: [PATCH V3 5/8] phy: tegra: xusb: Add soc ops API to enable UTMI
+ PAD protection
+Date: Thu, 4 Jun 2020 15:58:46 +0200
+Message-ID: <20200604135846.GD1138399@ulmo>
 References: <1589437363-16727-1-git-send-email-nkristam@nvidia.com>
- <1589437363-16727-7-git-send-email-nkristam@nvidia.com>
+ <1589437363-16727-6-git-send-email-nkristam@nvidia.com>
+ <db698a53-c5f6-d03f-edf0-f4fb38963e1f@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="3Gf/FFewwPeBMqCJ"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1589437363-16727-7-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <db698a53-c5f6-d03f-edf0-f4fb38963e1f-l0cyMroinI0@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Cc: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---4jXrM3lyYWu4nBt5
+--3Gf/FFewwPeBMqCJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 14, 2020 at 11:52:41AM +0530, Nagarjuna Kristam wrote:
-> Perform charger-detect operation if corresponding dt property is enabled.
-> Update usb-phy with the detected charger state and max current values.
-> Register charger-detect API's of usb-phy to provide needed functionalitie=
-s.
+On Mon, May 18, 2020 at 05:54:03PM +0530, Kishon Vijay Abraham I wrote:
+> Thierry,
 >=20
-> Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V3:
->  - Allighed functions and its arguments.
->  - replaced spaced by tabs for MACRO definition allignments.
->  - Unified primary and secondary charger detect API's.
->  - Used readl_poll_timeout instead of while loop condition check for regi=
-ster.
->  - Fixed other comments as per inputs from Thierry.
-> ---
-> V2:
->  - Patch re-based.
-> ---
->  drivers/phy/tegra/Makefile |   2 +-
->  drivers/phy/tegra/cd.c     | 283 +++++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/phy/tegra/xusb.c   |  80 +++++++++++++
->  drivers/phy/tegra/xusb.h   |   7 ++
->  4 files changed, 371 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/phy/tegra/cd.c
+> On 5/14/2020 11:52 AM, Nagarjuna Kristam wrote:
+> > When USB charger is enabled, UTMI PAD needs to be protected according
+> > to the direction and current level. Add support for the same on Tegra210
+> > and Tegra186.
+> >=20
+> > Signed-off-by: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Can you give your Acked by for pending patches in this series?
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+I went through these patches one more time and I think they're all good
+now. I've acked the ones that didn't have my Acked-by yet.
 
---4jXrM3lyYWu4nBt5
+Thierry
+
+--3Gf/FFewwPeBMqCJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7Y/XYACgkQ3SOs138+
-s6F9wA//c1AJ3FHM0Hd0rv+zsl52J25fXL900vW2xXJen+Y78K4WsUeU0DrOVWLL
-Jb1uuFoKiiGvOfRKIPK986xWqECWMz9E/dz7GTgsngBiu5db3Ndc3gPBYDu2FfNu
-B4ZV5yY11shrWHNxahITTivyGfJLOtCFQh18BjhJOjJ5vLwlj/FWdvWVMY7s+rbU
-0mURwNp7bHTajE+mKN58eY3AxY6RZ8+083I3hWXW3TreGxCMvVVNFRB1D8+Mk+X1
-nvwWziAugYRnlLMt5L2vvEeiPDiQjbzGqfP6vxgRXZrEL/TLoQK2MC3c6v3ZQYsY
-9ms7ZmQUTAHh4omhYJPaldWPYTQ95Dqw5lAHEaers7MkqPSGOedfLBsINCtBt6f1
-iwJY6YOkAG9q8adHZN8RWTtdirqOhLH2o29RUCqD5vv9Oqg9zhrF+bJHQmwOJix8
-+Rs8KwndDSwuEuR8KF646FgLJH5LOODFMSLl7cB0/N+MRLehAfn/ItuwtujDXGln
-EIwpS3rd45U5rslitfsr3J491GFJyF8dEeUTnNFJjRUoOR8vSKYo0ckDLwLY5xHc
-yl/ufE2sFqLcAuU/9T8yxTGElnyQ1B18Og5QwZYUtE5BnzF22r3jbWc3TkmOXtTI
-yCKcLMH0fWkTb0tA3JLq6ps09ATBjQbv3koCi6hmcLfnh04NvFY=
-=+q6H
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7Y/hYACgkQ3SOs138+
+s6HnyA/9Fj2LLU1HqZfshnRjI3aQgaPbxFFuL1xOjZMMWSLk0qZ9BkE+knzQ9/c2
+G0EfbsP+Z0tp3HFRK37yT6YL2xNwciVYEQow+y0TMzwVCQdBY+ChdcL4M7Da/iNp
+VjJsEsmp7kWn2AApkN3CqZsrtYp+rzWTFoh7DPZfJr1Ny21gKaa7CHI72b/PXYoS
+sNnJvHwYBYZ9KofaSKteV+LyueAMuOxvQHA8CTWP9qgG5rpPb9n3lbv0D6BGOjSP
+xbt2Q1I5mxrTOVkpUpTjXDpVKglC3TCwUC9FLkDHOrfzjoF3pJFG1x97EuU2aH5Y
+E2xbIA7kSniYH+ZtxlL6f+iYmWqFyNsm6H6dWF3m/j5sryhLzwoa3KYSCdH2QSoc
+L/sW43agd+HcUKsHKk0mH1K1cVgGO2grnTQdSwbNRn8tlhchy0gikuCM1Ecs3Ehc
+bfSRDHVsV75gQtOxavNEdKfIwz9ExOKGolDsazpgLJ32c57lwGLHHGxPTmI5PmTo
+NgwrE40zXoC5fG3XuWg/Iel3zXvUZSHn/rfk+d41wZXN2CpDjESOkK+RTiSeherg
+UHYPTk5jGBFw9WVZFImkI+791yWp8cWpJej73wKj3bhoCcFpIXgFvV7R+iKvPxkp
+WqFTPpsaCZVq1WB2vzCxKhiYe1U6IuN+uhvNaoCCKFtZiq1NI1g=
+=91er
 -----END PGP SIGNATURE-----
 
---4jXrM3lyYWu4nBt5--
+--3Gf/FFewwPeBMqCJ--
