@@ -1,62 +1,53 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] media: staging: tegra-vde: add missing
- pm_runtime_put_autosuspend
-Date: Fri, 5 Jun 2020 17:05:46 +0300
-Message-ID: <b03670e5-2718-062e-0f53-d596434fe9a4@gmail.com>
-References: <20200602054841.15746-1-navid.emamdoost@gmail.com>
- <7061eb81-c00c-9978-5e4b-f9896c0ffd5e@nvidia.com>
+From: =?UTF-8?q?Randolph=20Maa=C3=9Fen?= <gaireg-a1pNmjaJ30GzQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH] serial: serial-tegra: reduce irq-latency after rx errors
+Date: Fri,  5 Jun 2020 16:57:14 +0200
+Message-ID: <20200605145714.9964-1-gaireg@gaireg.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7061eb81-c00c-9978-5e4b-f9896c0ffd5e-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: emamd001-OJFnDUYgAso@public.gmane.org, wu000273-OJFnDUYgAso@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org, smccaman-OJFnDUYgAso@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Randolph=20Maa=C3=9Fen?= <gaireg-a1pNmjaJ30GzQB+pC5nmwQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-05.06.2020 09:00, Jon Hunter пишет:
-> 
-> On 02/06/2020 06:48, Navid Emamdoost wrote:
->> Call to pm_runtime_get_sync increments counter even in case of
->> failure leading to incorrect ref count.
->> Call pm_runtime_put_autosuspend if pm_runtime_get_sync fails.
->>
->> Signed-off-by: Navid Emamdoost <navid.emamdoost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/staging/media/tegra-vde/vde.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
->> index d3e63512a765..52cdd4a91e93 100644
->> --- a/drivers/staging/media/tegra-vde/vde.c
->> +++ b/drivers/staging/media/tegra-vde/vde.c
->> @@ -776,8 +776,10 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
->>  		goto release_dpb_frames;
->>  
->>  	ret = pm_runtime_get_sync(dev);
->> -	if (ret < 0)
->> +	if (ret < 0) {
->> +		pm_runtime_put_autosuspend(dev);
->>  		goto unlock;
->> +	}
->>  
->>  	/*
->>  	 * We rely on the VDE registers reset value, otherwise VDE
-> 
-> Please use the put in the error path.
+Since dev_err() calls can lead to synchronous writes to another serial
+console these calls can provide significant latency during irq-handling
+in tegra_uart_isr(). With this latency another interrupt is likely to
+apper during handling of the first interrupt, which might lock up the
+kernel completely.
 
-This is a third version of the patch [1][2].
+These errors are reported to the error counters so converting the
+dev_err() to dev_dbg() is appropriate.
 
-[1]
-https://patchwork.ozlabs.org/project/linux-tegra/patch/20200514210847.9269-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org/
-[2]
-https://patchwork.ozlabs.org/project/linux-tegra/patch/20200520095148.10995-1-dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org/
+Signed-off-by: Randolph Maaßen <gaireg-a1pNmjaJ30GzQB+pC5nmwQ@public.gmane.org>
+---
+ drivers/tty/serial/serial-tegra.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I'd prefer to stick with my variant of the patch [1] because in my
-opinion it's most straightforward variant and I actually tested that it
-works properly.
-
-Navid, anyways thank you for the patch. Next time please check if
-somebody else already sent similar patches before you.
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index 8de8bac9c6c7..d3fef5ab289a 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -439,16 +439,16 @@ static char tegra_uart_decode_rx_error(struct tegra_uart_port *tup,
+ 			/* Overrrun error */
+ 			flag = TTY_OVERRUN;
+ 			tup->uport.icount.overrun++;
+-			dev_err(tup->uport.dev, "Got overrun errors\n");
++			dev_dbg(tup->uport.dev, "Got overrun errors\n");
+ 		} else if (lsr & UART_LSR_PE) {
+ 			/* Parity error */
+ 			flag = TTY_PARITY;
+ 			tup->uport.icount.parity++;
+-			dev_err(tup->uport.dev, "Got Parity errors\n");
++			dev_dbg(tup->uport.dev, "Got Parity errors\n");
+ 		} else if (lsr & UART_LSR_FE) {
+ 			flag = TTY_FRAME;
+ 			tup->uport.icount.frame++;
+-			dev_err(tup->uport.dev, "Got frame errors\n");
++			dev_dbg(tup->uport.dev, "Got frame errors\n");
+ 		} else if (lsr & UART_LSR_BI) {
+ 			/*
+ 			 * Break error
+-- 
+2.11.0
