@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 01/39] clk: Export clk_hw_reparent()
-Date: Sun,  7 Jun 2020 21:54:52 +0300
-Message-ID: <20200607185530.18113-2-digetx@gmail.com>
+Subject: [PATCH v3 04/39] memory: tegra20-emc: Make driver modular
+Date: Sun,  7 Jun 2020 21:54:55 +0300
+Message-ID: <20200607185530.18113-5-digetx@gmail.com>
 References: <20200607185530.18113-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,27 +12,66 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-We're going to turn Tegra124 Memory Controller driver into a loadable
-kernel module. The driver uses clk_hw_reparent(), which isn't an exported
-kernel symbol. Let's export that function in order to allow modularization
-of the Tegra driver.
+This patch adds modularization support to the Tegra20 EMC driver. Driver
+now can be compiled as a loadable kernel module.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/clk/clk.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/memory/tegra/Kconfig       |  2 +-
+ drivers/memory/tegra/tegra20-emc.c | 16 +++++++++++-----
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 3f588ed06ce3..2fa6394d9a1b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2439,6 +2439,7 @@ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent)
+diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+index 9f0a96bf9ccc..7e0e1ef87763 100644
+--- a/drivers/memory/tegra/Kconfig
++++ b/drivers/memory/tegra/Kconfig
+@@ -8,7 +8,7 @@ config TEGRA_MC
+ 	  NVIDIA Tegra SoCs.
  
- 	clk_core_reparent(hw->core, !new_parent ? NULL : new_parent->core);
- }
-+EXPORT_SYMBOL_GPL(clk_hw_reparent);
+ config TEGRA20_EMC
+-	bool "NVIDIA Tegra20 External Memory Controller driver"
++	tristate "NVIDIA Tegra20 External Memory Controller driver"
+ 	default y
+ 	depends on ARCH_TEGRA_2x_SOC
+ 	help
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index 027f46287dbf..035d9251e28a 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -724,6 +724,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, emc);
+ 	tegra_emc_debugfs_init(emc);
  
- /**
-  * clk_has_parent - check if a clock is a possible parent for another
++	/*
++	 * Don't allow the kernel module to be unloaded. Unloading adds some
++	 * extra complexity which doesn't really worth the effort in a case of
++	 * this driver.
++	 */
++	try_module_get(THIS_MODULE);
++
+ 	return 0;
+ 
+ unset_cb:
+@@ -736,6 +743,7 @@ static const struct of_device_id tegra_emc_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-emc", },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, tegra_emc_of_match);
+ 
+ static struct platform_driver tegra_emc_driver = {
+ 	.probe = tegra_emc_probe,
+@@ -745,9 +753,7 @@ static struct platform_driver tegra_emc_driver = {
+ 		.suppress_bind_attrs = true,
+ 	},
+ };
++module_platform_driver(tegra_emc_driver);
+ 
+-static int __init tegra_emc_init(void)
+-{
+-	return platform_driver_register(&tegra_emc_driver);
+-}
+-subsys_initcall(tegra_emc_init);
++MODULE_DESCRIPTION("NVIDIA Tegra20 EMC driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.26.0
