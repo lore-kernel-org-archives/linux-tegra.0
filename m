@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 20/39] dt-bindings: memory: tegra30: mc: Document new interconnect property
-Date: Sun,  7 Jun 2020 21:55:11 +0300
-Message-ID: <20200607185530.18113-21-digetx@gmail.com>
+Subject: [PATCH v3 18/39] dt-bindings: memory: tegra20: mc: Document new interconnect property
+Date: Sun,  7 Jun 2020 21:55:09 +0300
+Message-ID: <20200607185530.18113-19-digetx@gmail.com>
 References: <20200607185530.18113-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -19,38 +19,29 @@ turns memory controller into interconnect provider.
 Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- .../bindings/memory-controllers/nvidia,tegra30-mc.yaml       | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/memory-controllers/nvidia,tegra20-mc.txt          | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
-index 84fd57bcf0dc..5436e6d420bc 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
-@@ -57,6 +57,9 @@ properties:
-   "#iommu-cells":
-     const: 1
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+index e55328237df4..739b7c6f2e26 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+@@ -16,6 +16,8 @@ Required properties:
+   IOMMU specifier needed to encode an address. GART supports only a single
+   address space that is shared by all devices, therefore no additional
+   information needed for the address encoding.
++- #interconnect-cells : Should be 1. This cell represents memory client.
++  The assignments may be found in header file <dt-bindings/memory/tegra20-mc.h>.
  
-+  "#interconnect-cells":
-+    const: 1
-+
- patternProperties:
-   "^emc-timings-[0-9]+$":
-     type: object
-@@ -120,6 +123,7 @@ required:
-   - clock-names
-   - "#reset-cells"
-   - "#iommu-cells"
-+  - "#interconnect-cells"
+ Example:
+ 	mc: memory-controller@7000f000 {
+@@ -27,6 +29,7 @@ Example:
+ 		interrupts = <GIC_SPI 77 0x04>;
+ 		#reset-cells = <1>;
+ 		#iommu-cells = <0>;
++		#interconnect-cells = <1>;
+ 	};
  
- additionalProperties: false
- 
-@@ -135,6 +139,7 @@ examples:
- 
-         #iommu-cells = <1>;
-         #reset-cells = <1>;
-+        #interconnect-cells = <1>;
- 
-         emc-timings-1 {
-             nvidia,ram-code = <1>;
+ 	video-codec@6001a000 {
 -- 
 2.26.0
