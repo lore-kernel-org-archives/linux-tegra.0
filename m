@@ -1,85 +1,175 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 23/39] dt-bindings: memory: tegra20: Add memory client IDs
-Date: Sun,  7 Jun 2020 21:55:14 +0300
-Message-ID: <20200607185530.18113-24-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3 22/39] dt-bindings: host1x: Document new interconnect properties
+Date: Sun,  7 Jun 2020 21:55:13 +0300
+Message-ID: <20200607185530.18113-23-digetx@gmail.com>
 References: <20200607185530.18113-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200607185530.18113-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200607185530.18113-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mikko Perttunen <cyndis@kapsi.fi>
+Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Each memory client have a unique hardware ID, this patch adds these IDs.
+Most of Host1x devices have at least one memory client. These clients
+are directly connected to the memory controller. The new interconnect
+properties represent the memory client's connection to the memory
+controller.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- include/dt-bindings/memory/tegra20-mc.h | 53 +++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ .../display/tegra/nvidia,tegra20-host1x.txt   | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-diff --git a/include/dt-bindings/memory/tegra20-mc.h b/include/dt-bindings/memory/tegra20-mc.h
-index 35e131eee198..6f8829508ad0 100644
---- a/include/dt-bindings/memory/tegra20-mc.h
-+++ b/include/dt-bindings/memory/tegra20-mc.h
-@@ -18,4 +18,57 @@
- #define TEGRA20_MC_RESET_VDE		13
- #define TEGRA20_MC_RESET_VI		14
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+index 47319214b5f6..ab4fbee7bccf 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+@@ -20,6 +20,10 @@ Required properties:
+ - reset-names: Must include the following entries:
+   - host1x
  
-+#define TEGRA20_MC_DISPLAY0A		0
-+#define TEGRA20_MC_DISPLAY0AB		1
-+#define TEGRA20_MC_DISPLAY0B		2
-+#define TEGRA20_MC_DISPLAY0BB		3
-+#define TEGRA20_MC_DISPLAY0C		4
-+#define TEGRA20_MC_DISPLAY0CB		5
-+#define TEGRA20_MC_DISPLAY1B		6
-+#define TEGRA20_MC_DISPLAY1BB		7
-+#define TEGRA20_MC_EPPUP		8
-+#define TEGRA20_MC_G2PR			9
-+#define TEGRA20_MC_G2SR			10
-+#define TEGRA20_MC_MPEUNIFBR		11
-+#define TEGRA20_MC_VIRUV		12
-+#define TEGRA20_MC_AVPCARM7R		13
-+#define TEGRA20_MC_DISPLAYHC		14
-+#define TEGRA20_MC_DISPLAYHCB		15
-+#define TEGRA20_MC_FDCDRD		16
-+#define TEGRA20_MC_G2DR			17
-+#define TEGRA20_MC_HOST1XDMAR		18
-+#define TEGRA20_MC_HOST1XR		19
-+#define TEGRA20_MC_IDXSRD		20
-+#define TEGRA20_MC_MPCORER		21
-+#define TEGRA20_MC_MPE_IPRED		22
-+#define TEGRA20_MC_MPEAMEMRD		23
-+#define TEGRA20_MC_MPECSRD		24
-+#define TEGRA20_MC_PPCSAHBDMAR		25
-+#define TEGRA20_MC_PPCSAHBSLVR		26
-+#define TEGRA20_MC_TEXSRD		27
-+#define TEGRA20_MC_VDEBSEVR		28
-+#define TEGRA20_MC_VDEMBER		29
-+#define TEGRA20_MC_VDEMCER		30
-+#define TEGRA20_MC_VDETPER		31
-+#define TEGRA20_MC_EPPU			32
-+#define TEGRA20_MC_EPPV			33
-+#define TEGRA20_MC_EPPY			34
-+#define TEGRA20_MC_MPEUNIFBW		35
-+#define TEGRA20_MC_VIWSB		36
-+#define TEGRA20_MC_VIWU			37
-+#define TEGRA20_MC_VIWV			38
-+#define TEGRA20_MC_VIWY			39
-+#define TEGRA20_MC_G2DW			40
-+#define TEGRA20_MC_AVPCARM7W		41
-+#define TEGRA20_MC_FDCDWR		42
-+#define TEGRA20_MC_HOST1XW		43
-+#define TEGRA20_MC_ISPW			44
-+#define TEGRA20_MC_MPCOREW		45
-+#define TEGRA20_MC_MPECSWR		46
-+#define TEGRA20_MC_PPCSAHBDMAW		47
-+#define TEGRA20_MC_PPCSAHBSLVW		48
-+#define TEGRA20_MC_VDEBSEVW		49
-+#define TEGRA20_MC_VDEMBEW		50
-+#define TEGRA20_MC_VDETPMW		51
++Each host1x client module having to perform DMA through the Memory Controller
++should have the interconnect endpoints set to the Memory Client and External
++Memory respectively.
 +
- #endif
+ The host1x top-level node defines a number of children, each representing one
+ of the following host1x client modules:
+ 
+@@ -36,6 +40,12 @@ of the following host1x client modules:
+   - reset-names: Must include the following entries:
+     - mpe
+ 
++  Optional properties:
++  - interconnects: Must contain entry for the MPE memory clients.
++  - interconnect-names: Must include name of the interconnect path for each
++    interconnect entry. Consult TRM documentation for information about
++    available memory clients, see MEMORY CONTROLLER section.
++
+ - vi: video input
+ 
+   Required properties:
+@@ -65,6 +75,12 @@ of the following host1x client modules:
+       - power-domains: Must include sor powergate node as csicil is in
+         SOR partition.
+ 
++  Optional properties:
++  - interconnects: Must contain entry for the VI memory clients.
++  - interconnect-names: Must include name of the interconnect path for each
++    interconnect entry. Consult TRM documentation for information about
++    available memory clients, see MEMORY CONTROLLER section.
++
+ - epp: encoder pre-processor
+ 
+   Required properties:
+@@ -78,6 +94,12 @@ of the following host1x client modules:
+   - reset-names: Must include the following entries:
+     - epp
+ 
++  Optional properties:
++  - interconnects: Must contain entry for the EPP memory clients.
++  - interconnect-names: Must include name of the interconnect path for each
++    interconnect entry. Consult TRM documentation for information about
++    available memory clients, see MEMORY CONTROLLER section.
++
+ - isp: image signal processor
+ 
+   Required properties:
+@@ -91,6 +113,12 @@ of the following host1x client modules:
+   - reset-names: Must include the following entries:
+     - isp
+ 
++  Optional properties:
++  - interconnects: Must contain entry for the ISP memory clients.
++  - interconnect-names: Must include name of the interconnect path for each
++    interconnect entry. Consult TRM documentation for information about
++    available memory clients, see MEMORY CONTROLLER section.
++
+ - gr2d: 2D graphics engine
+ 
+   Required properties:
+@@ -104,6 +132,12 @@ of the following host1x client modules:
+   - reset-names: Must include the following entries:
+     - 2d
+ 
++  Optional properties:
++  - interconnects: Must contain entry for the GR2D memory clients.
++  - interconnect-names: Must include name of the interconnect path for each
++    interconnect entry. Consult TRM documentation for information about
++    available memory clients, see MEMORY CONTROLLER section.
++
+ - gr3d: 3D graphics engine
+ 
+   Required properties:
+@@ -122,6 +156,12 @@ of the following host1x client modules:
+     - 3d
+     - 3d2 (Only required on SoCs with two 3D clocks)
+ 
++  Optional properties:
++  - interconnects: Must contain entry for the GR3D memory clients.
++  - interconnect-names: Must include name of the interconnect path for each
++    interconnect entry. Consult TRM documentation for information about
++    available memory clients, see MEMORY CONTROLLER section.
++
+ - dc: display controller
+ 
+   Required properties:
+@@ -149,6 +189,10 @@ of the following host1x client modules:
+   - nvidia,hpd-gpio: specifies a GPIO used for hotplug detection
+   - nvidia,edid: supplies a binary EDID blob
+   - nvidia,panel: phandle of a display panel
++  - interconnects: Must contain entry for the DC memory clients.
++  - interconnect-names: Must include name of the interconnect path for each
++    interconnect entry. Consult TRM documentation for information about
++    available memory clients, see MEMORY CONTROLLER section.
+ 
+ - hdmi: High Definition Multimedia Interface
+ 
+@@ -297,6 +341,12 @@ of the following host1x client modules:
+   - reset-names: Must include the following entries:
+     - vic
+ 
++  Optional properties:
++  - interconnects: Must contain entry for the VIC memory clients.
++  - interconnect-names: Must include name of the interconnect path for each
++    interconnect entry. Consult TRM documentation for information about
++    available memory clients, see MEMORY CONTROLLER section.
++
+ Example:
+ 
+ / {
+@@ -410,6 +460,15 @@ Example:
+ 			resets = <&tegra_car 27>;
+ 			reset-names = "dc";
+ 
++			interconnects = <&mc TEGRA20_MC_DISPLAY0A &emc>,
++					<&mc TEGRA20_MC_DISPLAY0B &emc>,
++					<&mc TEGRA20_MC_DISPLAY0C &emc>,
++					<&mc TEGRA20_MC_DISPLAY1B &emc>;
++			interconnect-names = "display0a",
++					     "display0b",
++					     "display0c",
++					     "display1b";
++
+ 			rgb {
+ 				status = "disabled";
+ 			};
+@@ -425,6 +484,15 @@ Example:
+ 			resets = <&tegra_car 26>;
+ 			reset-names = "dc";
+ 
++			interconnects = <&mc TEGRA20_MC_DISPLAY0AB &emc>,
++					<&mc TEGRA20_MC_DISPLAY0BB &emc>,
++					<&mc TEGRA20_MC_DISPLAY0CB &emc>,
++					<&mc TEGRA20_MC_DISPLAY1BB &emc>;
++			interconnect-names = "display0a",
++					     "display0b",
++					     "display0c",
++					     "display1b";
++
+ 			rgb {
+ 				status = "disabled";
+ 			};
 -- 
 2.26.0
