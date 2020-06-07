@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 12/39] PM / devfreq: tegra20: Use MC timings for building OPP table
-Date: Sun,  7 Jun 2020 21:55:03 +0300
-Message-ID: <20200607185530.18113-13-digetx@gmail.com>
+Subject: [PATCH v3 13/39] PM / devfreq: tegra30: Use MC timings for building OPP table
+Date: Sun,  7 Jun 2020 21:55:04 +0300
+Message-ID: <20200607185530.18113-14-digetx@gmail.com>
 References: <20200607185530.18113-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -23,45 +23,166 @@ rate, this patch implements this idea.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/devfreq/tegra20-devfreq.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 98 ++++++++++++++++++++++---------
+ 1 file changed, 70 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
-index 6469dc69c5e0..bf504ca4dea2 100644
---- a/drivers/devfreq/tegra20-devfreq.c
-+++ b/drivers/devfreq/tegra20-devfreq.c
-@@ -123,8 +123,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 423dd35c95b3..13f93c6038ab 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -19,6 +19,8 @@
+ #include <linux/reset.h>
+ #include <linux/workqueue.h>
+ 
++#include <soc/tegra/mc.h>
++
+ #include "governor.h"
+ 
+ #define ACTMON_GLB_STATUS					0x0
+@@ -153,6 +155,18 @@ struct tegra_devfreq_device {
+ 	unsigned long target_freq;
+ };
+ 
++struct tegra_devfreq_soc_data {
++	const char *mc_compatible;
++};
++
++static const struct tegra_devfreq_soc_data tegra30_soc = {
++	.mc_compatible = "nvidia,tegra30-mc",
++};
++
++static const struct tegra_devfreq_soc_data tegra124_soc = {
++	.mc_compatible = "nvidia,tegra124-mc",
++};
++
+ struct tegra_devfreq {
+ 	struct devfreq		*devfreq;
+ 
+@@ -771,15 +785,44 @@ static struct devfreq_governor tegra_devfreq_governor = {
+ 	.interrupt_driven = true,
+ };
+ 
++static struct tegra_mc *tegra_get_memory_controller(const char *compatible)
++{
++	struct platform_device *pdev;
++	struct device_node *np;
++	struct tegra_mc *mc;
++
++	np = of_find_compatible_node(NULL, NULL, compatible);
++	if (!np)
++		return ERR_PTR(-ENOENT);
++
++	pdev = of_find_device_by_node(np);
++	of_node_put(np);
++	if (!pdev)
++		return ERR_PTR(-ENODEV);
++
++	mc = platform_get_drvdata(pdev);
++	if (!mc)
++		return ERR_PTR(-EPROBE_DEFER);
++
++	return mc;
++}
++
+ static int tegra_devfreq_probe(struct platform_device *pdev)
  {
++	const struct tegra_devfreq_soc_data *soc_data;
+ 	struct tegra_devfreq_device *dev;
  	struct tegra_devfreq *tegra;
- 	struct tegra_mc *mc;
--	unsigned long max_rate;
--	unsigned long rate;
-+	unsigned int i;
+ 	struct devfreq *devfreq;
++	struct tegra_mc *mc;
+ 	unsigned int i;
+-	long rate;
  	int err;
  
- 	mc = tegra_get_memory_controller();
-@@ -151,12 +150,17 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
++	soc_data = of_device_get_match_data(&pdev->dev);
++
++	mc = tegra_get_memory_controller(soc_data->mc_compatible);
++	if (IS_ERR(mc))
++		return PTR_ERR(mc);
++
+ 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+ 	if (!tegra)
+ 		return -ENOMEM;
+@@ -825,6 +868,30 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
  
- 	tegra->regs = mc->regs;
- 
--	max_rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
--
--	for (rate = 0; rate <= max_rate; rate++) {
--		rate = clk_round_rate(tegra->emc_clock, rate);
 +	if (!mc->num_timings) {
-+		err = dev_pm_opp_add(&pdev->dev,
-+				     clk_get_rate(tegra->emc_clock), 0);
++		tegra->max_freq = clk_get_rate(tegra->clock) / KHZ;
++
++		err = dev_pm_opp_add(&pdev->dev, tegra->max_freq, 0);
 +		if (err) {
-+			dev_err(&pdev->dev, "failed to add OPP: %d\n", err);
++			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
 +			return err;
 +		}
 +	}
- 
--		err = dev_pm_opp_add(&pdev->dev, rate, 0);
++
 +	for (i = 0; i < mc->num_timings; i++) {
-+		err = dev_pm_opp_add(&pdev->dev, mc->timings[i].rate, 0);
- 		if (err) {
- 			dev_err(&pdev->dev, "failed to add opp: %d\n", err);
- 			goto remove_opps;
++		/*
++		 * Memory Controller timings are sorted in ascending clock
++		 * rate order, so the last timing will be the max freq.
++		 */
++		tegra->max_freq = mc->timings[i].rate / KHZ;
++
++		err = dev_pm_opp_add(&pdev->dev, tegra->max_freq, 0);
++		if (err) {
++			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
++			goto remove_opps;
++		}
++	}
++
+ 	reset_control_assert(tegra->reset);
+ 
+ 	err = clk_prepare_enable(tegra->clock);
+@@ -836,37 +903,12 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 
+ 	reset_control_deassert(tegra->reset);
+ 
+-	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+-	if (rate < 0) {
+-		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+-		return rate;
+-	}
+-
+-	tegra->max_freq = rate / KHZ;
+-
+ 	for (i = 0; i < ARRAY_SIZE(actmon_device_configs); i++) {
+ 		dev = tegra->devices + i;
+ 		dev->config = actmon_device_configs + i;
+ 		dev->regs = tegra->regs + dev->config->offset;
+ 	}
+ 
+-	for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
+-		rate = clk_round_rate(tegra->emc_clock, rate);
+-
+-		if (rate < 0) {
+-			dev_err(&pdev->dev,
+-				"Failed to round clock rate: %ld\n", rate);
+-			err = rate;
+-			goto remove_opps;
+-		}
+-
+-		err = dev_pm_opp_add(&pdev->dev, rate / KHZ, 0);
+-		if (err) {
+-			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
+-			goto remove_opps;
+-		}
+-	}
+-
+ 	platform_set_drvdata(pdev, tegra);
+ 
+ 	tegra->clk_rate_change_nb.notifier_call = tegra_actmon_clk_notify_cb;
+@@ -921,8 +963,8 @@ static int tegra_devfreq_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id tegra_devfreq_of_match[] = {
+-	{ .compatible = "nvidia,tegra30-actmon" },
+-	{ .compatible = "nvidia,tegra124-actmon" },
++	{ .compatible = "nvidia,tegra30-actmon",  .data = &tegra30_soc, },
++	{ .compatible = "nvidia,tegra124-actmon", .data = &tegra124_soc, },
+ 	{ },
+ };
+ 
 -- 
 2.26.0
