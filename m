@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 33/39] memory: tegra30-emc: Continue probing if timings are missing in device-tree
-Date: Sun,  7 Jun 2020 21:55:24 +0300
-Message-ID: <20200607185530.18113-34-digetx@gmail.com>
+Subject: [PATCH v3 30/39] memory: tegra20-emc: Continue probing if timings are missing in device-tree
+Date: Sun,  7 Jun 2020 21:55:21 +0300
+Message-ID: <20200607185530.18113-31-digetx@gmail.com>
 References: <20200607185530.18113-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -19,14 +19,14 @@ Thus make EMC driver to probe even if timings are missing in device-tree.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra30-emc.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ drivers/memory/tegra/tegra20-emc.c | 34 ++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 205d8053fa75..76586edb34ee 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -988,6 +988,11 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index 79fdae042b57..8d1967f4b4aa 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -386,6 +386,11 @@ tegra_emc_find_node_by_ram_code(struct device *dev)
  	u32 value, ram_code;
  	int err;
  
@@ -35,10 +35,10 @@ index 205d8053fa75..76586edb34ee 100644
 +		return NULL;
 +	}
 +
- 	ram_code = tegra_read_ram_code();
+ 	if (!of_property_read_bool(dev->of_node, "nvidia,use-ram-code"))
+ 		return of_node_get(dev->of_node);
  
- 	for_each_child_of_node(dev->of_node, np) {
-@@ -1057,6 +1062,9 @@ static long emc_round_rate(unsigned long rate,
+@@ -454,6 +459,9 @@ static long emc_round_rate(unsigned long rate,
  	struct tegra_emc *emc = arg;
  	unsigned int i;
  
@@ -48,41 +48,45 @@ index 205d8053fa75..76586edb34ee 100644
  	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
  
  	for (i = 0; i < emc->num_timings; i++) {
-@@ -1263,12 +1271,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+@@ -691,13 +699,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
  	struct tegra_emc *emc;
- 	int err;
+ 	int irq, err;
  
+-	/* driver has nothing to do in a case of memory timing absence */
 -	if (of_get_child_count(pdev->dev.of_node) == 0) {
 -		dev_info(&pdev->dev,
--			 "device-tree node doesn't have memory timings\n");
--		return -ENODEV;
+-			 "EMC device tree node doesn't have memory timings\n");
+-		return 0;
 -	}
 -
- 	np = of_parse_phandle(pdev->dev.of_node, "nvidia,memory-controller", 0);
- 	if (!np) {
- 		dev_err(&pdev->dev, "could not get memory controller node\n");
-@@ -1280,10 +1282,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	if (!mc)
- 		return -ENOENT;
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "interrupt not specified\n");
+@@ -705,23 +706,20 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 		return irq;
+ 	}
  
--	np = emc_find_node_by_ram_code(&pdev->dev);
+-	np = tegra_emc_find_node_by_ram_code(&pdev->dev);
 -	if (!np)
 -		return -EINVAL;
 -
  	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
- 	if (!emc) {
- 		of_node_put(np);
-@@ -1297,10 +1295,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	emc->clk_nb.notifier_call = emc_clk_change_notify;
+-	if (!emc) {
+-		of_node_put(np);
++	if (!emc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	emc->clk_nb.notifier_call = tegra_emc_clk_change_notify;
  	emc->dev = &pdev->dev;
  
--	err = emc_load_timings_from_dt(emc, np);
+-	err = tegra_emc_load_timings_from_dt(emc, np);
 -	of_node_put(np);
 -	if (err)
 -		return err;
-+	np = emc_find_node_by_ram_code(&pdev->dev);
++	np = tegra_emc_find_node_by_ram_code(&pdev->dev);
 +	if (np) {
-+		err = emc_load_timings_from_dt(emc, np);
++		err = tegra_emc_load_timings_from_dt(emc, np);
 +		of_node_put(np);
 +		if (err)
 +			return err;
