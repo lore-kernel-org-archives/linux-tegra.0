@@ -1,46 +1,46 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 31/39] memory: tegra20-emc: Register as interconnect provider
-Date: Sun,  7 Jun 2020 21:55:22 +0300
-Message-ID: <20200607185530.18113-32-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3 34/39] memory: tegra30-emc: Register as interconnect provider
+Date: Sun,  7 Jun 2020 21:55:25 +0300
+Message-ID: <20200607185530.18113-35-digetx@gmail.com>
 References: <20200607185530.18113-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200607185530.18113-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200607185530.18113-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mikko Perttunen <cyndis@kapsi.fi>
+Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Now memory controller is a memory interconnection provider. This allows us
-to use interconnect API in order to change memory configuration.
+Now external memory controller is a memory interconnection provider.
+This allows us to use interconnect API to change memory configuration.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 115 +++++++++++++++++++++++++++++
+ drivers/memory/tegra/tegra30-emc.c | 115 +++++++++++++++++++++++++++++
  1 file changed, 115 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 8d1967f4b4aa..2281bf9b784b 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -9,6 +9,7 @@
- #include <linux/clk/tegra.h>
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index 76586edb34ee..096ec5265084 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -14,6 +14,7 @@
  #include <linux/debugfs.h>
+ #include <linux/delay.h>
  #include <linux/err.h>
 +#include <linux/interconnect-provider.h>
  #include <linux/interrupt.h>
  #include <linux/io.h>
  #include <linux/iopoll.h>
-@@ -148,6 +149,7 @@ struct emc_timing {
- struct tegra_emc {
+@@ -327,6 +328,7 @@ struct tegra_emc {
  	struct device *dev;
+ 	struct tegra_mc *mc;
  	struct notifier_block clk_nb;
 +	struct icc_provider provider;
  	struct clk *clk;
  	void __iomem *regs;
- 
-@@ -661,6 +663,112 @@ static void tegra_emc_debugfs_init(struct tegra_emc *emc)
+ 	unsigned int irq;
+@@ -1264,6 +1266,112 @@ static void tegra_emc_debugfs_init(struct tegra_emc *emc)
  			    emc, &tegra_emc_debug_max_rate_fops);
  }
  
@@ -150,10 +150,10 @@ index 8d1967f4b4aa..2281bf9b784b 100644
 +	return err;
 +}
 +
- static int tegra_emc_init_mc_timings(struct tegra_emc *emc)
+ static int tegra_emc_probe(struct platform_device *pdev)
  {
- 	struct tegra_mc_timing *timing;
-@@ -767,6 +875,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	struct platform_device *mc;
+@@ -1344,6 +1452,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
  	platform_set_drvdata(pdev, emc);
  	tegra_emc_debugfs_init(emc);
  
