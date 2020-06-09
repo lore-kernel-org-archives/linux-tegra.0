@@ -1,56 +1,46 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 20/37] dt-bindings: memory: tegra30: mc: Document new interconnect property
-Date: Tue,  9 Jun 2020 16:13:47 +0300
-Message-ID: <20200609131404.17523-21-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v4 19/37] dt-bindings: memory: tegra20: emc: Document new interconnect property
+Date: Tue,  9 Jun 2020 16:13:46 +0300
+Message-ID: <20200609131404.17523-20-digetx@gmail.com>
 References: <20200609131404.17523-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200609131404.17523-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200609131404.17523-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mikko Perttunen <cyndis@kapsi.fi>
+Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Memory controller is interconnected with memory clients and with the
-external memory controller. Document new interconnect property which
-turns memory controller into interconnect provider.
+External memory controller is interconnected with memory controller and
+with external memory. Document new interconnect property which turns
+external memory controller into interconnect provider.
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../bindings/memory-controllers/nvidia,tegra30-mc.yaml       | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/memory-controllers/nvidia,tegra20-emc.txt          | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
-index 84fd57bcf0dc..5436e6d420bc 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
-@@ -57,6 +57,9 @@ properties:
-   "#iommu-cells":
-     const: 1
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+index add95367640b..f51da7662de4 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+@@ -12,6 +12,7 @@ Properties:
+   irrespective of ram-code configuration.
+ - interrupts : Should contain EMC General interrupt.
+ - clocks : Should contain EMC clock.
++- #interconnect-cells : Should be 0.
  
-+  "#interconnect-cells":
-+    const: 1
-+
- patternProperties:
-   "^emc-timings-[0-9]+$":
-     type: object
-@@ -120,6 +123,7 @@ required:
-   - clock-names
-   - "#reset-cells"
-   - "#iommu-cells"
-+  - "#interconnect-cells"
+ Child device nodes describe the memory settings for different configurations and clock rates.
  
- additionalProperties: false
- 
-@@ -135,6 +139,7 @@ examples:
- 
-         #iommu-cells = <1>;
-         #reset-cells = <1>;
-+        #interconnect-cells = <1>;
- 
-         emc-timings-1 {
-             nvidia,ram-code = <1>;
+@@ -20,6 +21,7 @@ Example:
+ 	memory-controller@7000f400 {
+ 		#address-cells = < 1 >;
+ 		#size-cells = < 0 >;
++		#interconnect-cells = < 0 >;
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f4000 0x200>;
+ 		interrupts = <0 78 0x04>;
 -- 
 2.26.0
