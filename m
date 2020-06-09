@@ -1,39 +1,64 @@
-From: Chun-Hung Wu <chun-hung.wu@mediatek.com>
-Subject: [PATCH v6 4/4] dt-bindings: mmc: mediatek: Add document for mt6779
-Date: Tue, 9 Jun 2020 09:18:22 +0800
-Message-ID: <1591665502-6573-5-git-send-email-chun-hung.wu@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v6 1/4] mmc: mediatek: add MT6779 MMC driver support
+Date: Tue, 9 Jun 2020 13:25:03 +0200
+Message-ID: <a95eae56-4011-a9c8-90b4-7a906ffd7e6c@gmail.com>
 References: <1591665502-6573-1-git-send-email-chun-hung.wu@mediatek.com>
+ <1591665502-6573-2-git-send-email-chun-hung.wu@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1591665502-6573-1-git-send-email-chun-hung.wu@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: mirq-linux@rere.qmqm.pl, Jonathan Hunter <jonathanh@nvidia.com>, Al Cooper <alcooperx@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Thierry Reding <thierry.reding@gmail.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Martin
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, wsd_upstream@mediatek.com, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, Chun-Hung Wu <chun-hung.wu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1591665502-6573-2-git-send-email-chun-hung.wu@mediatek.com>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Chun-Hung Wu <chun-hung.wu@mediatek.com>, mirq-linux@rere.qmqm.pl, Jonathan Hunter <jonathanh@nvidia.com>, Al Cooper <alcooperx@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Thierry Reding <thierry.reding@gmail.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Martin
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, wsd_upstream@mediatek.com, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-QWRkIGNvbXBhdGlibGUgbm9kZSBmb3IgbXQ2Nzc5IG1tYyBhbmQgSFcgY21kcSBzZWxlY3Rpb24N
-Cm5vZGUgIm1lZGlhdGVrLGNxaGNpIi4NCg0KU2lnbmVkLW9mZi1ieTogQ2h1bi1IdW5nIFd1IDxj
-aHVuLWh1bmcud3VAbWVkaWF0ZWsuY29tPg0KLS0tDQogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL21tYy9tdGstc2QudHh0IHwgNCArKysrDQogMSBmaWxlIGNoYW5nZWQsIDQgaW5z
-ZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL21tYy9tdGstc2QudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21t
-Yy9tdGstc2QudHh0DQppbmRleCA4YTUzMmY0Li5kNGQyMGI5IDEwMDY0NA0KLS0tIGEvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9tdGstc2QudHh0DQorKysgYi9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbW1jL210ay1zZC50eHQNCkBAIC0xMiw2ICsxMiw3
-IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6DQogCSJtZWRpYXRlayxtdDgxNzMtbW1jIjogZm9yIG1t
-YyBob3N0IGlwIGNvbXBhdGlibGUgd2l0aCBtdDgxNzMNCiAJIm1lZGlhdGVrLG10ODE4My1tbWMi
-OiBmb3IgbW1jIGhvc3QgaXAgY29tcGF0aWJsZSB3aXRoIG10ODE4Mw0KIAkibWVkaWF0ZWssbXQ4
-NTE2LW1tYyI6IGZvciBtbWMgaG9zdCBpcCBjb21wYXRpYmxlIHdpdGggbXQ4NTE2DQorCSJtZWRp
-YXRlayxtdDY3NzktbW1jIjogZm9yIG1tYyBob3N0IGlwIGNvbXBhdGlibGUgd2l0aCBtdDY3NzkN
-CiAJIm1lZGlhdGVrLG10MjcwMS1tbWMiOiBmb3IgbW1jIGhvc3QgaXAgY29tcGF0aWJsZSB3aXRo
-IG10MjcwMQ0KIAkibWVkaWF0ZWssbXQyNzEyLW1tYyI6IGZvciBtbWMgaG9zdCBpcCBjb21wYXRp
-YmxlIHdpdGggbXQyNzEyDQogCSJtZWRpYXRlayxtdDc2MjItbW1jIjogZm9yIE1UNzYyMiBTb0MN
-CkBAIC00OSw2ICs1MCw5IEBAIE9wdGlvbmFsIHByb3BlcnRpZXM6DQogCQkgICAgIGVycm9yIGNh
-dXNlZCBieSBzdG9wIGNsb2NrKGZpZm8gZnVsbCkNCiAJCSAgICAgVmFsaWQgcmFuZ2UgPSBbMDow
-eDddLiBpZiBub3QgcHJlc2VudCwgZGVmYXVsdCB2YWx1ZSBpcyAwLg0KIAkJICAgICBhcHBsaWVk
-IHRvIGNvbXBhdGlibGUgIm1lZGlhdGVrLG10MjcwMS1tbWMiLg0KKy0gbWVkaWF0ZWssY3FoY2k6
-IEhXIGNtZHEgc2VsZWN0aW9uDQorCQkgIElmIHByZXNlbnQsIGh3IGNvbW1hbmQgcXVldWUgaXMg
-ZW5hYmxlZC4NCisJCSAgSWYgbm90IHByZXNlbnQsIGh3IGNvbW1hbmQgcXVldWUgaXMgZGlzYWJs
-ZWQuDQogDQogRXhhbXBsZXM6DQogbW1jMDogbW1jQDExMjMwMDAwIHsNCi0tIA0KMS45LjENCg==
+
+
+On 09/06/2020 03:18, Chun-Hung Wu wrote:
+> MT6779 add cqhci support, so need to add new code
+> to support it.
+> 
+
+Please work on the commit message. For example it mentions cqhci while the code
+does not. Better describe what technical specification the controller has etc
+
+> Signed-off-by: Chun-Hung Wu <chun-hung.wu@mediatek.com>
+> ---
+>  drivers/mmc/host/mtk-sd.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index b221c02..8ada675 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -538,6 +538,18 @@ struct msdc_host {
+>  	.use_internal_cd = true,
+>  };
+>  
+> +static const struct mtk_mmc_compatible mt6779_compat = {
+> +	.clk_div_bits = 12,
+> +	.hs400_tune = false,
+> +	.pad_tune_reg = MSDC_PAD_TUNE0,
+> +	.async_fifo = true,
+> +	.data_tune = true,
+> +	.busy_check = true,
+> +	.stop_clk_fix = true,
+> +	.enhance_rx = true,
+> +	.support_64g = true,
+> +};
+> +
+>  static const struct of_device_id msdc_of_ids[] = {
+>  	{ .compatible = "mediatek,mt8135-mmc", .data = &mt8135_compat},
+>  	{ .compatible = "mediatek,mt8173-mmc", .data = &mt8173_compat},
+> @@ -547,6 +559,7 @@ struct msdc_host {
+>  	{ .compatible = "mediatek,mt7622-mmc", .data = &mt7622_compat},
+>  	{ .compatible = "mediatek,mt8516-mmc", .data = &mt8516_compat},
+>  	{ .compatible = "mediatek,mt7620-mmc", .data = &mt7620_compat},
+> +	{ .compatible = "mediatek,mt6779-mmc", .data = &mt6779_compat},
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, msdc_of_ids);
+> 
