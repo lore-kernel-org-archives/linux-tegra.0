@@ -1,64 +1,59 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 16/37] PM / devfreq: tegra20: Adjust clocks conversion ratio and polling interval
-Date: Tue,  9 Jun 2020 16:13:43 +0300
-Message-ID: <20200609131404.17523-17-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v4 27/37] interconnect: Relax requirement in of_icc_get_from_provider()
+Date: Tue,  9 Jun 2020 16:13:54 +0300
+Message-ID: <20200609131404.17523-28-digetx@gmail.com>
 References: <20200609131404.17523-1-digetx@gmail.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200609131404.17523-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mikko Perttunen <cyndis@kapsi.fi>
-Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200609131404.17523-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The current conversion ratio results in a higher frequency than needed,
-that is not very actual now since the Display Controller driver got
-support for memory bandwidth management and hence memory frequency can
-go lower now without bad consequences. Since memory freq now goes to a
-lower rates, the responsiveness of interactive applications become worse
-due to a quite high polling interval value that is currently set to 500ms.
-Changing polling interval to 30ms results in a good responsiveness of the
-system.
+From: Artur Świgoń <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+This patch relaxes the condition in of_icc_get_from_provider() so that it
+is no longer required to set #interconnect-cells = <1> in the DT. In case
+of the devfreq driver for exynos-bus, #interconnect-cells is always zero.
+
+Signed-off-by: Artur Świgoń <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+[digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org: added cells_num checking for of_icc_xlate_onecell()]
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/devfreq/tegra20-devfreq.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/interconnect/core.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
-index 249d0dc44f6c..7cdea4ba38f7 100644
---- a/drivers/devfreq/tegra20-devfreq.c
-+++ b/drivers/devfreq/tegra20-devfreq.c
-@@ -79,16 +79,12 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index e5f998744501..cb143421ca67 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -339,7 +339,7 @@ static struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
+ 	struct icc_node *node = ERR_PTR(-EPROBE_DEFER);
+ 	struct icc_provider *provider;
  
- 	/*
- 	 * EMC_COUNT returns number of memory events, that number is lower
--	 * than the number of clocks. Conversion ratio of 1/8 results in a
--	 * bit higher bandwidth than actually needed, it is good enough for
--	 * the time being because drivers don't support requesting minimum
--	 * needed memory bandwidth yet.
--	 *
--	 * TODO: adjust the ratio value once relevant drivers will support
--	 * memory bandwidth management.
-+	 * than the number of total EMC clocks over the sampling period.
-+	 * The clocks number is converted to maximum possible number of
-+	 * memory events using the ratio of 1/4.
- 	 */
- 	stat->busy_time = readl_relaxed(tegra->regs + MC_STAT_EMC_COUNT);
--	stat->total_time = readl_relaxed(tegra->regs + MC_STAT_EMC_CLOCKS) / 8;
-+	stat->total_time = readl_relaxed(tegra->regs + MC_STAT_EMC_CLOCKS) / 4;
- 	stat->current_frequency = clk_get_rate(tegra->emc_clock);
+-	if (!spec || spec->args_count != 1)
++	if (!spec)
+ 		return ERR_PTR(-EINVAL);
  
- 	writel_relaxed(EMC_GATHER_CLEAR, tegra->regs + MC_STAT_CONTROL);
-@@ -98,7 +94,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
- }
- 
- static struct devfreq_dev_profile tegra_devfreq_profile = {
--	.polling_ms	= 500,
-+	.polling_ms	= 30,
- 	.target		= tegra_devfreq_target,
- 	.get_dev_status	= tegra_devfreq_get_dev_status,
- };
+ 	mutex_lock(&icc_lock);
+@@ -967,6 +967,15 @@ EXPORT_SYMBOL_GPL(icc_nodes_remove);
+  */
+ int icc_provider_add(struct icc_provider *provider)
+ {
++	struct device_node *np = provider->dev->of_node;
++	u32 cells_num;
++	int err;
++
++	err = of_property_read_u32(np, "#interconnect-cells", &cells_num);
++	if (WARN_ON(err))
++		return err;
++	if (WARN_ON(provider->xlate == of_icc_xlate_onecell && cells_num != 1))
++		return -EINVAL;
+ 	if (WARN_ON(!provider->set))
+ 		return -EINVAL;
+ 	if (WARN_ON(!provider->xlate))
 -- 
 2.26.0
