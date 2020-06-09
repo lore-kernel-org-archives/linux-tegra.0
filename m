@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 36/37] drm/tegra: dc: Tune up high priority request controls for Tegra20
-Date: Tue,  9 Jun 2020 16:14:03 +0300
-Message-ID: <20200609131404.17523-37-digetx@gmail.com>
+Subject: [PATCH v4 33/37] memory: tegra30-emc: Continue probing if timings are missing in device-tree
+Date: Tue,  9 Jun 2020 16:14:00 +0300
+Message-ID: <20200609131404.17523-34-digetx@gmail.com>
 References: <20200609131404.17523-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,42 +12,83 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra20 has a high-priority-request control that allows to configure
-when display's memory client should perform read requests with a higher
-priority (Tegra30+ uses other means like Latency Allowance).
-
-This patch changes the controls configuration in order to get a more
-aggressive memory prefetching, which allows to reliably avoid FIFO
-underflow when running on a lower memory frequency. This allow us
-safely drop the memory bandwidth requirement by about two times in a
-most popular use-cases (only one display active, video overlay inactive,
-no scaling is done).
+EMC driver will become mandatory after turning it into interconnect
+provider because interconnect users, like display controller driver, will
+fail to probe using newer device-trees that have interconnect properties.
+Thus make EMC driver to probe even if timings are missing in device-tree.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/memory/tegra/tegra30-emc.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 12b318bb8475..48dad375b470 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1971,12 +1971,12 @@ static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
- 		tegra_dc_writel(dc, value, DC_CMD_INT_POLARITY);
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index 85d4effb8e6f..f6c688bfe41f 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -988,6 +988,11 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
+ 	u32 value, ram_code;
+ 	int err;
  
- 		/* initialize timer */
--		value = CURSOR_THRESHOLD(0) | WINDOW_A_THRESHOLD(0x20) |
--			WINDOW_B_THRESHOLD(0x20) | WINDOW_C_THRESHOLD(0x20);
-+		value = CURSOR_THRESHOLD(0) | WINDOW_A_THRESHOLD(0x70) |
-+			WINDOW_B_THRESHOLD(0x30) | WINDOW_C_THRESHOLD(0x70);
- 		tegra_dc_writel(dc, value, DC_DISP_DISP_MEM_HIGH_PRIORITY);
++	if (of_get_child_count(dev->of_node) == 0) {
++		dev_info(dev, "device-tree doesn't have memory timings\n");
++		return NULL;
++	}
++
+ 	ram_code = tegra_read_ram_code();
  
--		value = CURSOR_THRESHOLD(0) | WINDOW_A_THRESHOLD(1) |
--			WINDOW_B_THRESHOLD(1) | WINDOW_C_THRESHOLD(1);
-+		value = CURSOR_THRESHOLD(0) | WINDOW_A_THRESHOLD(0) |
-+			WINDOW_B_THRESHOLD(0) | WINDOW_C_THRESHOLD(0);
- 		tegra_dc_writel(dc, value, DC_DISP_DISP_MEM_HIGH_PRIORITY_TIMER);
+ 	for_each_child_of_node(dev->of_node, np) {
+@@ -1057,6 +1062,9 @@ static long emc_round_rate(unsigned long rate,
+ 	struct tegra_emc *emc = arg;
+ 	unsigned int i;
  
- 		value = VBLANK_INT | WIN_A_UF_INT | WIN_B_UF_INT | WIN_C_UF_INT |
++	if (!emc->num_timings)
++		return clk_get_rate(emc->clk);
++
+ 	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
+ 
+ 	for (i = 0; i < emc->num_timings; i++) {
+@@ -1263,12 +1271,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	struct tegra_emc *emc;
+ 	int err;
+ 
+-	if (of_get_child_count(pdev->dev.of_node) == 0) {
+-		dev_info(&pdev->dev,
+-			 "device-tree node doesn't have memory timings\n");
+-		return -ENODEV;
+-	}
+-
+ 	np = of_parse_phandle(pdev->dev.of_node, "nvidia,memory-controller", 0);
+ 	if (!np) {
+ 		dev_err(&pdev->dev, "could not get memory controller node\n");
+@@ -1280,10 +1282,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	if (!mc)
+ 		return -ENOENT;
+ 
+-	np = emc_find_node_by_ram_code(&pdev->dev);
+-	if (!np)
+-		return -EINVAL;
+-
+ 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+ 	if (!emc) {
+ 		of_node_put(np);
+@@ -1297,10 +1295,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	emc->clk_nb.notifier_call = emc_clk_change_notify;
+ 	emc->dev = &pdev->dev;
+ 
+-	err = emc_load_timings_from_dt(emc, np);
+-	of_node_put(np);
+-	if (err)
+-		return err;
++	np = emc_find_node_by_ram_code(&pdev->dev);
++	if (np) {
++		err = emc_load_timings_from_dt(emc, np);
++		of_node_put(np);
++		if (err)
++			return err;
++	}
+ 
+ 	emc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(emc->regs))
 -- 
 2.26.0
