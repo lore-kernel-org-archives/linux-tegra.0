@@ -1,146 +1,72 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 02/37] clk: tegra: Remove Memory Controller lock
-Date: Tue,  9 Jun 2020 16:13:29 +0300
-Message-ID: <20200609131404.17523-3-digetx@gmail.com>
-References: <20200609131404.17523-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v6 0/6] Support DRM bridges on NVIDIA Tegra
+Date: Tue,  9 Jun 2020 16:28:49 +0300
+Message-ID: <20200609132855.20975-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200609131404.17523-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Georgi Djakov <georgi.djakov@linaro.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mikko Perttunen <cyndis@kapsi.fi>
-Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The shared Memory Controller lock isn't needed since the time when
-Memory Clock was made read-only. The lock could be removed safely now.
-Hence let's remove it, this will help a tad to make further patches
-cleaner.
+Hello,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-divider.c  | 4 ++--
- drivers/clk/tegra/clk-tegra114.c | 6 ++----
- drivers/clk/tegra/clk-tegra124.c | 7 ++-----
- drivers/clk/tegra/clk-tegra20.c  | 3 +--
- drivers/clk/tegra/clk-tegra30.c  | 3 +--
- drivers/clk/tegra/clk.h          | 2 +-
- 6 files changed, 9 insertions(+), 16 deletions(-)
+This series adds initial support for the DRM bridges to NVIDIA Tegra DRM
+driver. This is required by newer device-trees where we model the LVDS
+encoder bridge properly.
 
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 38daf483ddf1..56adb01638cc 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -177,10 +177,10 @@ static const struct clk_div_table mc_div_table[] = {
- };
- 
- struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
--				  void __iomem *reg, spinlock_t *lock)
-+				  void __iomem *reg)
- {
- 	return clk_register_divider_table(NULL, name, parent_name,
- 					  CLK_IS_CRITICAL,
- 					  reg, 16, 1, CLK_DIVIDER_READ_ONLY,
--					  mc_div_table, lock);
-+					  mc_div_table, NULL);
- }
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index bc9e47a4cb60..ca8d9737d301 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -134,7 +134,6 @@ static DEFINE_SPINLOCK(pll_d_lock);
- static DEFINE_SPINLOCK(pll_d2_lock);
- static DEFINE_SPINLOCK(pll_u_lock);
- static DEFINE_SPINLOCK(pll_re_lock);
--static DEFINE_SPINLOCK(emc_lock);
- 
- static struct div_nmp pllxc_nmp = {
- 	.divm_shift = 0,
-@@ -1050,10 +1049,9 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
- 			       CLK_SET_RATE_NO_REPARENT,
- 			       clk_base + CLK_SOURCE_EMC,
--			       29, 3, 0, &emc_lock);
-+			       29, 3, 0, NULL);
- 
--	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
--				    &emc_lock);
-+	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC);
- 	clks[TEGRA114_CLK_MC] = clk;
- 
- 	clk = tegra_clk_register_periph_gate("mipi-cal", "clk_m", 0, clk_base,
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index e931319dcc9d..0c956e14b9ca 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -126,7 +126,6 @@ static DEFINE_SPINLOCK(pll_d_lock);
- static DEFINE_SPINLOCK(pll_e_lock);
- static DEFINE_SPINLOCK(pll_re_lock);
- static DEFINE_SPINLOCK(pll_u_lock);
--static DEFINE_SPINLOCK(emc_lock);
- static DEFINE_SPINLOCK(sor0_lock);
- 
- /* possible OSC frequencies in Hz */
-@@ -1050,8 +1049,7 @@ static __init void tegra124_periph_clk_init(void __iomem *clk_base,
- 					     periph_clk_enb_refcnt);
- 	clks[TEGRA124_CLK_DSIB] = clk;
- 
--	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
--				    &emc_lock);
-+	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC);
- 	clks[TEGRA124_CLK_MC] = clk;
- 
- 	/* cml0 */
-@@ -1518,8 +1516,7 @@ static void __init tegra124_132_clock_init_post(struct device_node *np)
- 				  tegra124_reset_deassert);
- 	tegra_add_of_provider(np, of_clk_src_onecell_get);
- 
--	clks[TEGRA124_CLK_EMC] = tegra_clk_register_emc(clk_base, np,
--							&emc_lock);
-+	clks[TEGRA124_CLK_EMC] = tegra_clk_register_emc(clk_base, np, NULL);
- 
- 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
- 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 3efc651b42e3..2f8b6de4198f 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -802,8 +802,7 @@ static void __init tegra20_periph_clk_init(void)
- 
- 	clks[TEGRA20_CLK_EMC] = clk;
- 
--	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
--				    NULL);
-+	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC);
- 	clks[TEGRA20_CLK_MC] = clk;
- 
- 	/* dsi */
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 37244a7e68c2..88e8c485f8ae 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1042,8 +1042,7 @@ static void __init tegra30_periph_clk_init(void)
- 
- 	clks[TEGRA30_CLK_EMC] = clk;
- 
--	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
--				    NULL);
-+	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC);
- 	clks[TEGRA30_CLK_MC] = clk;
- 
- 	/* cml0 */
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 6b565f6b5f66..5ed8b95d331c 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -136,7 +136,7 @@ struct clk *tegra_clk_register_divider(const char *name,
- 		unsigned long flags, u8 clk_divider_flags, u8 shift, u8 width,
- 		u8 frac_width, spinlock_t *lock);
- struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
--				  void __iomem *reg, spinlock_t *lock);
-+				  void __iomem *reg);
- 
- /*
-  * Tegra PLL:
+Changelog:
+
+v6: - Added r-b and acks from Rob Herring and Sam Ravnborg.
+
+    - Rebased on a recent linux-next, patches now apply without fuzz.
+
+v5: - Added new patches that make drm_of_find_panel_or_bridge() more usable
+      if graph isn't defined in a device-tree:
+
+        of_graph: add of_graph_get_local_port()
+        drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+
+    - Updated "Support DRM bridges" patch to use drm_of_find_panel_or_bridge()
+      directly and added WARN_ON(output->panel || output->bridge) sanity-check.
+
+    - Added new "Wrap directly-connected panel into DRM bridge" patch, as
+      was suggested by Laurent Pinchart.
+
+v4: - Following review comments that were made by Laurent Pinchart to the v3,
+      we now create and use the "bridge connector".
+
+v3: - Following recommendation from Sam Ravnborg, the new bridge attachment
+      model is now being used, i.e. we ask bridge to *not* create a connector
+      using the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
+
+    - The bridge is now created only for the RGB (LVDS) output, and only
+      when necessary. For now we don't need bridges for HDMI or DSI outputs.
+
+    - I noticed that we're leaking OF node in the panel's error code path,
+      this is fixed now by the new patch "Don't leak OF node on error".
+
+v2: - Added the new "rgb: Don't register connector if bridge is used"
+      patch, which hides the unused connector provided by the Tegra DRM
+      driver when bridge is used, since bridge provides its own connector
+      to us.
+
+Dmitry Osipenko (6):
+  of_graph: add of_graph_get_local_port()
+  drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+  drm/tegra: output: Don't leak OF node on error
+  drm/tegra: output: Support DRM bridges
+  drm/tegra: output: rgb: Support LVDS encoder bridge
+  drm/tegra: output: rgb: Wrap directly-connected panel into DRM bridge
+
+ drivers/gpu/drm/drm_of.c       | 13 +++++-
+ drivers/gpu/drm/tegra/drm.h    |  2 +
+ drivers/gpu/drm/tegra/output.c | 21 +++++++--
+ drivers/gpu/drm/tegra/rgb.c    | 85 +++++++++++++++++++++-------------
+ drivers/of/property.c          | 32 +++++++++----
+ include/linux/of_graph.h       |  7 +++
+ 6 files changed, 114 insertions(+), 46 deletions(-)
+
 -- 
 2.26.0
