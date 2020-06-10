@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 5.6 00/41] 5.6.18-rc1 review
-Date: Wed, 10 Jun 2020 12:30:02 +0100
-Message-ID: <1b13360b-b956-2ac6-e683-c7965cf11f81@nvidia.com>
-References: <20200609174112.129412236@linuxfoundation.org>
+Subject: Re: [PATCH 5.7 00/24] 5.7.2-rc1 review
+Date: Wed, 10 Jun 2020 12:30:28 +0100
+Message-ID: <7208a2cc-c439-57bc-f154-a23e6ac683f5@nvidia.com>
+References: <20200609174149.255223112@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200609174112.129412236-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20200609174149.255223112-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -16,18 +16,18 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 On 09/06/2020 18:45, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.6.18 release.
-> There are 41 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 5.7.2 release.
+> There are 24 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Thu, 11 Jun 2020 17:40:51 +0000.
+> Responses should be made by Thu, 11 Jun 2020 17:41:38 +0000.
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.6.18-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.7.2-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.6.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.7.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,12 +36,12 @@ On 09/06/2020 18:45, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v5.6:
+Test results for stable-v5.7:
     11 builds:	11 pass, 0 fail
     26 boots:	26 pass, 0 fail
     50 tests:	50 pass, 0 fail
 
-Linux version:	5.6.18-rc1-g1bece508f6a9
+Linux version:	5.7.2-rc1-g00f7cc67908b
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra210-p3450-0000,
