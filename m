@@ -1,54 +1,80 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 5.7 00/24] 5.7.2-rc1 review
-Date: Wed, 10 Jun 2020 12:30:28 +0100
-Message-ID: <7208a2cc-c439-57bc-f154-a23e6ac683f5@nvidia.com>
-References: <20200609174149.255223112@linuxfoundation.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drm/tegra: Add zpos property for cursor planes
+Date: Wed, 10 Jun 2020 13:30:59 +0200
+Message-ID: <20200610113059.2164132-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200609174149.255223112-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On 09/06/2020 18:45, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.7.2 release.
-> There are 24 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 11 Jun 2020 17:41:38 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.7.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.7.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+As of commit 4dc55525b095 ("drm: plane: Verify that no or all planes
+have a zpos property") a warning is emitted if there's a mix of planes
+with and without a zpos property.
 
-All tests are passing for Tegra ...
+On Tegra, cursor planes are always composited on top of all other
+planes, which is why they never had a zpos property attached to them.
+However, since the composition order is fixed, this is trivial to
+remedy by simply attaching an immutable zpos property to them.
 
-Test results for stable-v5.7:
-    11 builds:	11 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    50 tests:	50 pass, 0 fail
+Reported-by: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dc.c  | 10 ++++++++--
+ drivers/gpu/drm/tegra/hub.c |  2 +-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-Linux version:	5.7.2-rc1-g00f7cc67908b
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Cheers
-Jon
-
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 83f31c6e891c..e7a6eb952ece 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -787,7 +787,7 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
+-	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
++	drm_plane_create_zpos_property(&plane->base, 1 + plane->index, 1, 255);
+ 
+ 	err = drm_plane_create_rotation_property(&plane->base,
+ 						 DRM_MODE_ROTATE_0,
+@@ -957,6 +957,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(&plane->base, &tegra_cursor_plane_helper_funcs);
++	drm_plane_create_zpos_immutable_property(&plane->base, 0);
+ 
+ 	return &plane->base;
+ }
+@@ -1074,7 +1075,12 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
+-	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
++
++	if (!cursor)
++		drm_plane_create_zpos_property(&plane->base, 1 + plane->index,
++					       1, 255);
++	else
++		drm_plane_create_zpos_immutable_property(&plane->base, 0);
+ 
+ 	err = drm_plane_create_rotation_property(&plane->base,
+ 						 DRM_MODE_ROTATE_0,
+diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+index a2ef8f218d4e..697d75bbb9fa 100644
+--- a/drivers/gpu/drm/tegra/hub.c
++++ b/drivers/gpu/drm/tegra/hub.c
+@@ -590,7 +590,7 @@ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(p, &tegra_shared_plane_helper_funcs);
+-	drm_plane_create_zpos_property(p, 0, 0, 255);
++	drm_plane_create_zpos_property(p, 1 + index, 1, 255);
+ 
+ 	return p;
+ }
 -- 
-nvpublic
+2.24.1
