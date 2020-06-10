@@ -1,79 +1,82 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [RFC PATCH v1 05/18] i2c: tegra: Fix runtime resume to re-init VI
- I2C
-Date: Wed, 10 Jun 2020 09:58:28 -0700
-Message-ID: <dc310c94-ae8d-fcf5-be9f-6236f3615dd7@nvidia.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH v1 13/18] gpu: host1x: mipi: Add
+ of_tegra_mipi_request() API
+Date: Wed, 10 Jun 2020 10:00:13 -0700
+Message-ID: <ef909904-9d21-c124-73fc-79c9ae7ac75b@nvidia.com>
 References: <1591768960-31648-1-git-send-email-skomatineni@nvidia.com>
- <1591768960-31648-6-git-send-email-skomatineni@nvidia.com>
- <fcced8cd-d80d-b09c-b657-cb413ec418f9@gmail.com>
+ <1591768960-31648-14-git-send-email-skomatineni@nvidia.com>
+ <e84c6723-e94a-3fcf-8b38-eb680c88de25@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <fcced8cd-d80d-b09c-b657-cb413ec418f9@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <e84c6723-e94a-3fcf-8b38-eb680c88de25-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-i2c-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
-Cc: sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 6/10/20 6:14 AM, Dmitry Osipenko wrote:
+On 6/10/20 6:33 AM, Dmitry Osipenko wrote:
 > 10.06.2020 09:02, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> VI I2C is on host1x bus and is part of VE power domain.
+>> This patch adds an API of_tegra_mipi_request() to allow creating
+>> mipi device for specific device node rather than a device so Tegra
+>> CSI driver can use it for calibrating MIPI pads for each stream
+>> independently.
 >>
->> During suspend/resume VE power domain goes through power off/on.
->>
->> So, controller reset followed by i2c re-initialization is required
->> after the domain power up.
->>
->> This patch fixes it.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >> ---
->>   drivers/i2c/busses/i2c-tegra.c | 16 ++++++++++++++++
->>   1 file changed, 16 insertions(+)
+>>   drivers/gpu/host1x/mipi.c | 10 ++++++++--
+>>   include/linux/host1x.h    |  2 ++
+>>   2 files changed, 10 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-teg=
-ra.c
->> index dba38a5..650240d 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -293,6 +293,8 @@ struct tegra_i2c_dev {
->>   	bool is_curr_atomic_xfer;
->>   };
->>  =20
->> +static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reini=
-t);
->> +
->>   static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
->>   		       unsigned long reg)
->>   {
->> @@ -679,8 +681,22 @@ static int __maybe_unused tegra_i2c_runtime_resume(=
-struct device *dev)
->>   		goto disable_slow_clk;
->>   	}
->>  =20
->> +	/*
->> +	 * VI I2C device is attached to VE power domain which goes through
->> +	 * power ON/OFF during PM runtime resume/suspend. So, controller
->> +	 * should go through reset and need to re-initialize after power
->> +	 * domain ON.
->> +	 */
->> +	if (i2c_dev->is_vi) {
->> +		ret =3D tegra_i2c_init(i2c_dev, true);
->> +		if (ret)
->> +			goto disable_div_clk;
->> +	}
->> +
+>> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+>> index e00809d..f51fe69 100644
+>> --- a/drivers/gpu/host1x/mipi.c
+>> +++ b/drivers/gpu/host1x/mipi.c
+>> @@ -206,9 +206,9 @@ static int tegra_mipi_power_down(struct tegra_mipi *=
+mipi)
 >>   	return 0;
+>>   }
 >>  =20
->> +disable_div_clk:
->> +	clk_disable(i2c_dev->div_clk);
->>   disable_slow_clk:
->>   	if (i2c_dev->slow_clk)
->>   		clk_disable(i2c_dev->slow_clk);
->>
-> The clk_disable() can cope with a NULL argument. Won't it be cleaner to
-> remove the conditions?
-will remove in v2
+>> -struct tegra_mipi_device *tegra_mipi_request(struct device *device)
+>> +struct tegra_mipi_device *of_tegra_mipi_request(struct device *device,
+>> +						struct device_node *np)
+>>   {
+>> -	struct device_node *np =3D device->of_node;
+>>   	struct tegra_mipi_device *dev;
+>>   	struct of_phandle_args args;
+>>   	int err;
+>> @@ -252,6 +252,12 @@ struct tegra_mipi_device *tegra_mipi_request(struct=
+ device *device)
+>>   	of_node_put(args.np);
+>>   	return ERR_PTR(err);
+>>   }
+>> +EXPORT_SYMBOL(of_tegra_mipi_request);
+>> +
+>> +struct tegra_mipi_device *tegra_mipi_request(struct device *device)
+>> +{
+>> +	return of_tegra_mipi_request(device, device->of_node);
+>> +}
+>>   EXPORT_SYMBOL(tegra_mipi_request);
+>>  =20
+>>   void tegra_mipi_free(struct tegra_mipi_device *device)
+>> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+>> index c230b4e..a61ca52 100644
+>> --- a/include/linux/host1x.h
+>> +++ b/include/linux/host1x.h
+>> @@ -325,6 +325,8 @@ int host1x_client_resume(struct host1x_client *clien=
+t);
+>>  =20
+>>   struct tegra_mipi_device;
+>>  =20
+>> +struct tegra_mipi_device *of_tegra_mipi_request(struct device *device,
+>> +						struct device_node *np);
+> Looks like adding a new function here is a bit of overkill. What about
+> to change tegra_mipi_request() to take the node argument?
+
+thought to avoid changes to existing usage of that function in other=20
+drivers.
+
+Will update in v2.
