@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4.14 00/46] 4.14.184-rc2 review
-Date: Wed, 10 Jun 2020 12:28:54 +0100
-Message-ID: <f5e53bed-e7f3-4f45-5f8b-6460540e6069@nvidia.com>
-References: <20200609190050.275446645@linuxfoundation.org>
+Subject: Re: [PATCH 4.19 00/25] 4.19.128-rc1 review
+Date: Wed, 10 Jun 2020 12:29:21 +0100
+Message-ID: <45eb2e54-1d7a-5efe-be25-4dc68e05fb41@nvidia.com>
+References: <20200609174048.576094775@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200609190050.275446645-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20200609174048.576094775-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -15,19 +15,19 @@ Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JL
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 09/06/2020 20:18, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.184 release.
-> There are 46 patches in this series, all will be posted as a response
+On 09/06/2020 18:44, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.128 release.
+> There are 25 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Thu, 11 Jun 2020 19:00:37 +0000.
+> Responses should be made by Thu, 11 Jun 2020 17:40:24 +0000.
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.184-rc2.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.128-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,13 +36,14 @@ On 09/06/2020 20:18, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    28 tests:	28 pass, 0 fail
+Test results for stable-v4.19:
+    11 builds:	11 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    36 tests:	36 pass, 0 fail
 
-Linux version:	4.14.184-rc2-g9817cdae1b62
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+Linux version:	4.19.128-rc2-gf6c346f2d42d
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra30-cardhu-a04
 
 Cheers
