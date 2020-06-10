@@ -1,162 +1,53 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [RFC PATCH v1 10/18] dt-bindings: tegra: Document VI and CSI
- port nodes
-Date: Wed, 10 Jun 2020 14:23:03 +0300
-Message-ID: <20200610112303.GB805@valkosipuli.retiisi.org.uk>
-References: <1591768960-31648-1-git-send-email-skomatineni@nvidia.com>
- <1591768960-31648-11-git-send-email-skomatineni@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 00/36] 4.4.227-rc2 review
+Date: Wed, 10 Jun 2020 12:28:07 +0100
+Message-ID: <36f2ca95-cdbf-14c9-87dc-d6746ff696ce@nvidia.com>
+References: <20200609190211.793882726@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1591768960-31648-11-git-send-email-skomatineni@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, robh+dt@kernel.org, helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200609190211.793882726@linuxfoundation.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Sowjanya,
 
-Thanks for the patchset.
-
-On Tue, Jun 09, 2020 at 11:02:32PM -0700, Sowjanya Komatineni wrote:
-> This patch documents Tegra VI and CSI port and endpoint nodes along
-> with the other required properties.
+On 09/06/2020 20:18, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.227 release.
+> There are 36 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  .../display/tegra/nvidia,tegra20-host1x.txt        | 87 ++++++++++++++++++++++
->  1 file changed, 87 insertions(+)
+> Responses should be made by Thu, 11 Jun 2020 19:02:00 +0000.
+> Anything received after that time might be too late.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> index 4731921..f70a838 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> @@ -65,6 +65,48 @@ of the following host1x client modules:
->        - power-domains: Must include sor powergate node as csicil is in
->          SOR partition.
->  
-> +      Optional properties for csi node:
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.227-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-What hardware does the csi node represent? A CSI-2 receiver? Something
-else?
 
-If you have two connections, you need two ports. The example isn't quite
-clear on this; it would appear to represent a single physical interface.
+All tests are passing for Tegra ...
 
-> +
-> +      - channel nodes: Max upto 6 channels/streams are supported with each CSI
-> +	brick can as either x4 or x2 based on hw connectivity to sensor.
-> +
-> +	Required properties:
-> +	- reg: channel/stream index
-> +	- nvidia,mipi-calibrate: Should contain a phandle and a specifier
-> +	  specifying which pads are used by this CSI port and need to be
-> +	  calibrated. See also ../display/tegra/nvidia,tegra114-mipi.txt.
-> +
-> +	- port: CSI port node and its endpoint nodes as per device graph
-> +          bindings defined in Documentation/devicetree/bindings/graph.txt.
-> +	  Required properties:
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    23 tests:	23 pass, 0 fail
 
-You have both properties and nodes here. Same for the above (port is a
-node).
+Linux version:	4.4.227-rc2-g61ef7e7aaf1d
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
 
-> +	  - reg: csi port index based on hw csi lanes connectivity to the
-> +	    sensor.
-> +	  - bus-width: number of lanes used by this port. Supported lanes
-> +	    are 1/2/4.
-
-bus-width belongs to the endpoint. Note that this is for parallel busses
-only. If you need the number of lanes, the property is called data-lanes.
-
-> +	  - endpoint@0: sink node
-> +	    Required properties:
-> +	    - reg: endpoint id. This is used to retrieve pad for creating
-> +	      media link
-> +	    - remote-endpoint: phandle to sensor endpoint
-> +	  - endpoint@1: source node
-> +	    - reg: endpoint id. This is used to retrieve pad for creating
-> +	      media link
-> +	    - remote-endpoint: phandle to vi port endpoint
-> +
-> +  Optional properties for vi node:
-> +  - ports: Video port nodes and endpoint nodes as per device graph bindings
-> +    defined in Documentation/devicetree/bindings/graph.txt
-> +    Max 6 ports are supported and each port should have one endpoint node.
-> +
-> +    Required properties:
-> +    - port: VI port node and its sink endpoint node
-> +      Required properties:
-> +    - reg: should match port index
-> +    - endpoint@0: sink node
-> +      Required properties:
-> +      - reg: endpoint id must be 0
-> +      - remote-endpoint: phandle to CSI endpoint node.
-> +
->  - epp: encoder pre-processor
->  
->    Required properties:
-> @@ -340,6 +382,22 @@ Example:
->  
->  			ranges = <0x0 0x0 0x54080000 0x2000>;
->  
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					imx219_vi_in0: endpoint@0 {
-> +						reg = <0>;
-> +						remote-endpoint = <&imx219_csi_out0>;
-> +					};
-> +				};
-> +			};
-> +
->  			csi@838 {
->  				compatible = "nvidia,tegra210-csi";
->  				reg = <0x838 0x1300>;
-> @@ -362,6 +420,35 @@ Example:
->  					 <&tegra_car TEGRA210_CLK_CSI_TPG>;
->  				clock-names = "csi", "cilab", "cilcd", "cile", "csi_tpg";
->  				power-domains = <&pd_sor>;
-> +
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				channel@0 {
-> +					reg = <0>;
-> +					nvidia,mipi-calibrate = <&mipi 0x001>;
-> +
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +						bus-width = <2>;
-> +
-> +						#address-cells = <1>;
-> +						#size-cells = <0>;
-> +
-> +						imx219_csi_in0: endpoint@0 {
-> +							reg = <0>;
-> +							remote-endpoint = <&imx219_out0>;
-> +						};
-> +
-> +						imx219_csi_out0: endpoint@1 {
-> +							reg = <1>;
-> +							remote-endpoint = <&imx219_vi_in0>;
-> +						};
-> +					};
-> +				};
->  			};
->  		};
->  
+Cheers
+Jon
 
 -- 
-Kind regards,
-
-Sakari Ailus
+nvpublic
