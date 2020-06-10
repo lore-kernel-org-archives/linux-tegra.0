@@ -1,48 +1,26 @@
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Subject: [FIXED PATCH v4 5/7] iio: adc: exynos: Use input_device_enabled()
-Date: Wed, 10 Jun 2020 09:52:30 +0200
-Message-ID: <20200610075230.14172-1-andrzej.p@collabora.com>
-References: <20200610012801.GA11530@qmqm.qmqm.pl>
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20200610012801.GA11530@qmqm.qmqm.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Barry
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: tegra: Use noirq suspend/resume callbacks
+Date: Wed, 10 Jun 2020 10:47:51 +0200
+Message-ID: <CACRpkdYnwYFr2NEfGmCRYCEr7J0fdT1L5jkuPrkPQGJmudMgJw@mail.gmail.com>
+References: <20200604174935.26560-1-vidyas@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200604174935.26560-1-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-A new helper is available, so use it. Inspecting 'users' member of
-input_dev requires taking device's mutex.
+On Thu, Jun 4, 2020 at 7:49 PM Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
----
- drivers/iio/adc/exynos_adc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> Use noirq suspend/resume callbacks as other drivers which implement
+> noirq suspend/resume callbacks (Ex:- PCIe) depend on pinctrl driver to
+> configure the signals used by their respective devices in the noirq phase.
+>
+> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 22131a677445..2761c3aea2c6 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -633,7 +633,9 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
- 	bool pressed;
- 	int ret;
- 
--	while (info->input->users) {
-+	mutex_lock(&info->input->mutex);
-+	while (input_device_enabled(info->input)) {
-+		mutex_unlock(&info->input->mutex);
- 		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
- 		if (ret == -ETIMEDOUT)
- 			break;
-@@ -651,7 +653,10 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
- 		input_sync(info->input);
- 
- 		usleep_range(1000, 1100);
-+
-+		mutex_lock(&info->input->mutex);
- 	}
-+	mutex_unlock(&info->input->mutex);
- 
- 	writel(0, ADC_V1_CLRINTPNDNUP(info->regs));
- 
--- 
-2.17.1
+Patch applied for fixes.
+
+Yours,
+Linus Walleij
