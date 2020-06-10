@@ -1,73 +1,33 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v1 05/18] i2c: tegra: Fix runtime resume to re-init VI
- I2C
-Date: Wed, 10 Jun 2020 16:14:49 +0300
-Message-ID: <fcced8cd-d80d-b09c-b657-cb413ec418f9@gmail.com>
-References: <1591768960-31648-1-git-send-email-skomatineni@nvidia.com>
- <1591768960-31648-6-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH] drm/tegra: Add zpos property for cursor planes
+Date: Wed, 10 Jun 2020 16:16:14 +0300
+Message-ID: <ca53d82f-1fd0-b2da-cfbf-7183a977e1d1@gmail.com>
+References: <20200610113059.2164132-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1591768960-31648-6-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200610113059.2164132-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-10.06.2020 09:02, Sowjanya Komatineni пишет:
-> VI I2C is on host1x bus and is part of VE power domain.
+10.06.2020 14:30, Thierry Reding пишет:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> During suspend/resume VE power domain goes through power off/on.
+> As of commit 4dc55525b095 ("drm: plane: Verify that no or all planes
+> have a zpos property") a warning is emitted if there's a mix of planes
+> with and without a zpos property.
 > 
-> So, controller reset followed by i2c re-initialization is required
-> after the domain power up.
+> On Tegra, cursor planes are always composited on top of all other
+> planes, which is why they never had a zpos property attached to them.
+> However, since the composition order is fixed, this is trivial to
+> remedy by simply attaching an immutable zpos property to them.
 > 
-> This patch fixes it.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reported-by: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index dba38a5..650240d 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -293,6 +293,8 @@ struct tegra_i2c_dev {
->  	bool is_curr_atomic_xfer;
->  };
->  
-> +static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit);
-> +
->  static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
->  		       unsigned long reg)
->  {
-> @@ -679,8 +681,22 @@ static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
->  		goto disable_slow_clk;
->  	}
->  
-> +	/*
-> +	 * VI I2C device is attached to VE power domain which goes through
-> +	 * power ON/OFF during PM runtime resume/suspend. So, controller
-> +	 * should go through reset and need to re-initialize after power
-> +	 * domain ON.
-> +	 */
-> +	if (i2c_dev->is_vi) {
-> +		ret = tegra_i2c_init(i2c_dev, true);
-> +		if (ret)
-> +			goto disable_div_clk;
-> +	}
-> +
->  	return 0;
->  
-> +disable_div_clk:
-> +	clk_disable(i2c_dev->div_clk);
->  disable_slow_clk:
->  	if (i2c_dev->slow_clk)
->  		clk_disable(i2c_dev->slow_clk);
-> 
 
-The clk_disable() can cope with a NULL argument. Won't it be cleaner to
-remove the conditions?
+What problem does it solve?
