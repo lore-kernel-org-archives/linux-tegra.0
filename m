@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH v1 06/18] i2c: tegra: Avoid tegra_i2c_init_dma() for Tegra210 vi i2c
-Date: Tue, 9 Jun 2020 23:02:28 -0700
-Message-ID: <1591768960-31648-7-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v1 05/18] i2c: tegra: Fix runtime resume to re-init VI I2C
+Date: Tue, 9 Jun 2020 23:02:27 -0700
+Message-ID: <1591768960-31648-6-git-send-email-skomatineni@nvidia.com>
 References: <1591768960-31648-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,28 +12,55 @@ To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQ
 Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-VI I2C is on host1x bus so APB DMA can't be used for Tegra210 VI
-I2C and there are no tx and rx dma channels for VI I2C.
+VI I2C is on host1x bus and is part of VE power domain.
 
-So, avoid attempt of requesting DMA channels.
+During suspend/resume VE power domain goes through power off/on.
+
+So, controller reset followed by i2c re-initialization is required
+after the domain power up.
+
+This patch fixes it.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/i2c/busses/i2c-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-tegra.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 650240d..ed99dfe 100644
+index dba38a5..650240d 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -421,7 +421,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 	dma_addr_t dma_phys;
- 	int err;
+@@ -293,6 +293,8 @@ struct tegra_i2c_dev {
+ 	bool is_curr_atomic_xfer;
+ };
  
--	if (!i2c_dev->hw->has_apb_dma)
-+	if (!i2c_dev->hw->has_apb_dma || i2c_dev->is_vi)
- 		return 0;
++static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit);
++
+ static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+ 		       unsigned long reg)
+ {
+@@ -679,8 +681,22 @@ static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
+ 		goto disable_slow_clk;
+ 	}
  
- 	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)) {
++	/*
++	 * VI I2C device is attached to VE power domain which goes through
++	 * power ON/OFF during PM runtime resume/suspend. So, controller
++	 * should go through reset and need to re-initialize after power
++	 * domain ON.
++	 */
++	if (i2c_dev->is_vi) {
++		ret = tegra_i2c_init(i2c_dev, true);
++		if (ret)
++			goto disable_div_clk;
++	}
++
+ 	return 0;
+ 
++disable_div_clk:
++	clk_disable(i2c_dev->div_clk);
+ disable_slow_clk:
+ 	if (i2c_dev->slow_clk)
+ 		clk_disable(i2c_dev->slow_clk);
 -- 
 2.7.4
