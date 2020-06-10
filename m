@@ -1,53 +1,79 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1] clk: tegra: pll: Improve PLLM enable-state detection
-Date: Wed, 10 Jun 2020 19:37:38 +0300
-Message-ID: <20200610163738.29304-1-digetx@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [RFC PATCH v1 05/18] i2c: tegra: Fix runtime resume to re-init VI
+ I2C
+Date: Wed, 10 Jun 2020 09:58:28 -0700
+Message-ID: <dc310c94-ae8d-fcf5-be9f-6236f3615dd7@nvidia.com>
+References: <1591768960-31648-1-git-send-email-skomatineni@nvidia.com>
+ <1591768960-31648-6-git-send-email-skomatineni@nvidia.com>
+ <fcced8cd-d80d-b09c-b657-cb413ec418f9@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <fcced8cd-d80d-b09c-b657-cb413ec418f9@gmail.com>
+Content-Language: en-US
+Sender: linux-i2c-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
+Cc: sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Power Management Controller (PMC) can override the PLLM clock settings,
-including the enable-state. Although PMC could only act as a second level
-gate, meaning that PLLM needs to be enabled by the Clock and Reset
-Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
-overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
-order to be functional. Please note that this patch doesn't fix any known
-problem, and thus, it's merely a minor improvement.
 
-Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@ulmo/T/
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/clk/tegra/clk-pll.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 0b212cf2e794..4fd1edba8caf 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -330,17 +330,18 @@ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
- static int clk_pll_is_enabled(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	bool pllm_enabled = true;
- 	u32 val;
- 
- 	if (pll->params->flags & TEGRA_PLLM) {
- 		val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
- 		if (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)
--			return val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE ? 1 : 0;
-+			pllm_enabled = !!(val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE);
- 	}
- 
- 	val = pll_readl_base(pll);
- 
--	return val & PLL_BASE_ENABLE ? 1 : 0;
-+	return pllm_enabled && (val & PLL_BASE_ENABLE);
- }
- 
- static void _clk_pll_enable(struct clk_hw *hw)
--- 
-2.26.0
+On 6/10/20 6:14 AM, Dmitry Osipenko wrote:
+> 10.06.2020 09:02, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> VI I2C is on host1x bus and is part of VE power domain.
+>>
+>> During suspend/resume VE power domain goes through power off/on.
+>>
+>> So, controller reset followed by i2c re-initialization is required
+>> after the domain power up.
+>>
+>> This patch fixes it.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/i2c/busses/i2c-tegra.c | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-teg=
+ra.c
+>> index dba38a5..650240d 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -293,6 +293,8 @@ struct tegra_i2c_dev {
+>>   	bool is_curr_atomic_xfer;
+>>   };
+>>  =20
+>> +static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reini=
+t);
+>> +
+>>   static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+>>   		       unsigned long reg)
+>>   {
+>> @@ -679,8 +681,22 @@ static int __maybe_unused tegra_i2c_runtime_resume(=
+struct device *dev)
+>>   		goto disable_slow_clk;
+>>   	}
+>>  =20
+>> +	/*
+>> +	 * VI I2C device is attached to VE power domain which goes through
+>> +	 * power ON/OFF during PM runtime resume/suspend. So, controller
+>> +	 * should go through reset and need to re-initialize after power
+>> +	 * domain ON.
+>> +	 */
+>> +	if (i2c_dev->is_vi) {
+>> +		ret =3D tegra_i2c_init(i2c_dev, true);
+>> +		if (ret)
+>> +			goto disable_div_clk;
+>> +	}
+>> +
+>>   	return 0;
+>>  =20
+>> +disable_div_clk:
+>> +	clk_disable(i2c_dev->div_clk);
+>>   disable_slow_clk:
+>>   	if (i2c_dev->slow_clk)
+>>   		clk_disable(i2c_dev->slow_clk);
+>>
+> The clk_disable() can cope with a NULL argument. Won't it be cleaner to
+> remove the conditions?
+will remove in v2
