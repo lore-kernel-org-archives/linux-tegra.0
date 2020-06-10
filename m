@@ -1,127 +1,72 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v4 0/7] Support inhibiting input devices
-Date: Wed, 10 Jun 2020 15:21:34 +0200
-Message-ID: <3e61c9c1-b211-da9f-c55b-b44eb6522f2a@redhat.com>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <964ca07a-3da5-101f-7edf-64bdeec98a4b@redhat.com>
- <CAJZ5v0hB2ra2K=dd9ZjVyy1V2b1PmFHm79uDO2HtHU1D_4YUbw@mail.gmail.com>
- <6136f26c-e090-e025-af55-4c5f3a6aec92@collabora.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH v1 13/18] gpu: host1x: mipi: Add
+ of_tegra_mipi_request() API
+Date: Wed, 10 Jun 2020 16:33:44 +0300
+Message-ID: <e84c6723-e94a-3fcf-8b38-eb680c88de25@gmail.com>
+References: <1591768960-31648-1-git-send-email-skomatineni@nvidia.com>
+ <1591768960-31648-14-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
-In-Reply-To: <6136f26c-e090-e025-af55-4c5f3a6aec92@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1591768960-31648-14-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Collabora Kernel ML <kernel@collabora.com>, Nick Dyer <nick@shmanahar.org>, linux-iio@vger.kernel.org, Platform Driver <platform-driver-x86@vger.kernel.org>, ibm-acpi-devel@lists.sourceforge.net, Laxman Dewangan <ldewangan@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Peter Hutterer <peter.hutterer@redhat.com>, Fabio Estevam <festevam@gmail.com>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, linux-input@vger.kernel.org, Len Brown <lenb@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, Linux PM <linux-pm@vger.kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGksCgpPbiA2LzEwLzIwIDM6MTIgUE0sIEFuZHJ6ZWogUGlldHJhc2lld2ljeiB3cm90ZToKPiBI
-aSBBbGwsCj4gCj4gVyBkbml1IDEwLjA2LjIwMjAgb8KgMTI6MzgsIFJhZmFlbCBKLiBXeXNvY2tp
-IHBpc3plOgo+PiBPbiBXZWQsIEp1biAxMCwgMjAyMCBhdCAxMTo1MCBBTSBIYW5zIGRlIEdvZWRl
-IDxoZGVnb2VkZUByZWRoYXQuY29tPiB3cm90ZToKPj4+Cj4+PiBIaSBBbGwsCj4+Pgo+Pj4gT24g
-Ni84LzIwIDE6MjIgUE0sIEFuZHJ6ZWogUGlldHJhc2lld2ljeiB3cm90ZToKPj4+PiBUaGlzIGlz
-IGEgcXVpY2sgcmVzcGluIG9mIHYzLCB3aXRoIGp1c3QgdHdvIHNtYWxsIGNoYW5nZXMsIHBsZWFz
-ZSBzZWUKPj4+PiB0aGUgY2hhbmdlbG9nIGJlbG93Lgo+Pj4+Cj4+Pj4gVXNlcnNwYWNlIG1pZ2h0
-IHdhbnQgdG8gaW1wbGVtZW50IGEgcG9saWN5IHRvIHRlbXBvcmFyaWx5IGRpc3JlZ2FyZCBpbnB1
-dAo+Pj4+IGZyb20gY2VydGFpbiBkZXZpY2VzLgo+Pj4+Cj4+Pj4gQW4gZXhhbXBsZSB1c2UgY2Fz
-ZSBpcyBhIGNvbnZlcnRpYmxlIGxhcHRvcCwgd2hvc2Uga2V5Ym9hcmQgY2FuIGJlIGZvbGRlZAo+
-Pj4+IHVuZGVyIHRoZSBzY3JlZW4gdG8gY3JlYXRlIHRhYmxldC1saWtlIGV4cGVyaWVuY2UuIFRo
-ZSB1c2VyIHRoZW4gbXVzdCBob2xkCj4+Pj4gdGhlIGxhcHRvcCBpbiBzdWNoIGEgd2F5IHRoYXQg
-aXQgaXMgZGlmZmljdWx0IHRvIGF2b2lkIHByZXNzaW5nIHRoZSBrZXlib2FyZAo+Pj4+IGtleXMu
-IEl0IGlzIHRoZXJlZm9yZSBkZXNpcmFibGUgdG8gdGVtcG9yYXJpbHkgZGlzcmVnYXJkIGlucHV0
-IGZyb20gdGhlCj4+Pj4ga2V5Ym9hcmQsIHVudGlsIGl0IGlzIGZvbGRlZCBiYWNrLiBUaGlzIG9i
-dmlvdXNseSBpcyBhIHBvbGljeSB3aGljaCBzaG91bGQKPj4+PiBiZSBrZXB0IG91dCBvZiB0aGUg
-a2VybmVsLCBidXQgdGhlIGtlcm5lbCBtdXN0IHByb3ZpZGUgc3VpdGFibGUgbWVhbnMgdG8KPj4+
-PiBpbXBsZW1lbnQgc3VjaCBhIHBvbGljeS4KPj4+Cj4+PiBGaXJzdCBvZiBhbGwgc29ycnkgdG8g
-c3RhcnQgYSBzb21ld2hhdCBuZXcgZGlzY3Vzc2lvbiBhYm91dCB0aGlzCj4+PiB3aGlsZSB0aGlz
-IHBhdGNoIHNldCBpcyBhbHNvIHNvbWV3aGF0IGZhciBhbG9uZyBpbiB0aGUgcmV2aWV3IHByb2Nl
-c3MsCj4+PiBidXQgSSBiZWxpZXZlIHdoYXQgSSBkaXNjdXNzIGJlbG93IG5lZWRzIHRvIGJlIHRh
-a2VuIGludG8gYWNjb3VudC4KPj4+Cj4+PiBZZXN0ZXJkYXkgSSBoYXZlIGJlZW4gbG9va2luZyBp
-bnRvIHdoeSBhbiBBc3VzIFQxMDFIQSB3b3VsZCBub3Qgc3RheQo+Pj4gc3VzcGVuZGVkIHdoZW4g
-dGhlIExJRCBpcyBjbG9zZWQuIFRoZSBjYXVzZSBpcyB0aGF0IHRoZSBVU0IgSElEIG11bHRpLXRv
-dWNoCj4+PiB0b3VjaHBhZCBpbiB0aGUgYmFzZSBvZiB0aGUgZGV2aWNlIHN0YXJ0cyBzZW5kaW5n
-IGV2ZW50cyB3aGVuIHRoZSBzY3JlZW4KPj4+IGdldHMgY2xvc2UgdG8gdGhlIHRvdWNocGFkIChz
-byB3aGVuIHRoZSBMSUQgaXMgZnVsbHkgY2xvc2VkKSBhbmQgdGhlc2UKPj4+IGV2ZW50cyBhcmUg
-Y2F1c2luZyBhIHdha2V1cCBmcm9tIHN1c3BlbmQuIEhJRCBtdWx0aS10b3VjaCBkZXZpY2VzCj4+
-PiBkbyBoYXZlIGEgd2F5IHRvIHRlbGwgdGhlbSB0byBmdWxseSBzdG9wIHNlbmRpbmcgZXZlbnRz
-LCBhbHNvIGRpc2FibGluZwo+Pj4gdGhlIFVTQiByZW1vdGUgd2FrZXVwIHRoZSBkZXZpY2UgaXMg
-ZG9pbmcuIFRoZSBxdWVzdGlvbiBpcyB3aGVuIHRvIHRlbGwKPj4+IGl0IHRvIG5vdCBzZW5kIGV2
-ZW50cyB0aG91Z2ggLi4uCj4+Pgo+Pj4gU28gbm93IEkndmUgYmVlbiB0aGlua2luZyBhYm91dCBo
-b3cgdG8gZml4IHRoaXMgYW5kIEkgYmVsaWV2ZSB0aGF0IHRoZXJlCj4+PiBpcyBzb21lIGludGVy
-YWN0aW9uIGJldHdlZW4gdGhpcyBwcm9ibGVtIGFuZCB0aGlzIHBhdGNoLXNldC4KPj4+Cj4+PiBU
-aGUgcHJvYmxlbSBJJ20gc2VlaW5nIG9uIHRoZSBUMTAxSEEgaXMgYWJvdXQgd2FrZXVwcywgc28g
-dGhlIHF1ZXN0aW9uCj4+PiB3aGljaCBJIHdhbnQgdG8gZGlzY3VzcyBpczoKPj4+Cj4+PiAxLiBI
-b3cgZG9lcyBpbmhpYml0aW5nIGludGVyYWN0IHdpdGggZW5hYmxpbmcgLwo+Pj4gZGlzYWJsaW5n
-IHRoZSBkZXZpY2UgYXMgYSB3YWtldXAgc291cmNlID8KPj4+Cj4+PiAyLiBTaW5jZSB3ZSBoYXZl
-IG5vdyBtYWRlIGluaGliaXRpbmcgZXF1YWwgb3Blbi9jbG9zZSBob3cgZG9lcyBvcGVuL2Nsb3Nl
-Cj4+PiBpbnRlcmFjdCB3aXRoIGEgZGV2aWNlIGJlaW5nIGEgd2FrZXVwIHNvdXJjZSA/Cj4+Pgo+
-Pj4gQW5kIG15IG93biBpbml0aWFsICh0byBiZSBkaXNjdXNzZWQpIGFuc3dlcnMgdG8gdGhlc2Ug
-cXVlc3Rpb25zOgo+Pj4KPj4+IDEuIEl0IHNlZW1zIHRvIG1lIHRoYXQgd2hlbiBhIGRldmljZSBp
-cyBpbmhpYml0ZWQgaXQgc2hvdWxkIG5vdCBiZSBhCj4+PiB3YWtldXAgc291cmNlLCBzbyB3aGVy
-ZSBwb3NzaWJsZSBhIGlucHV0LWRldmljZS1kcml2ZXIgc2hvdWxkIGRpc2FibGUKPj4+IGEgZGV2
-aWNlJ3Mgd2FrZXVwIGNhcGFiaWxpdGllcyBvbiBzdXNwZW5kIGlmIGluaGliaXRlZAo+Pgo+PiBJ
-ZiAiaW5oaWJpdCIgbWVhbnMgImRvIG5vdCBnZW5lcmF0ZSBhbnkgZXZlbnRzIGdvaW5nIGZvcndh
-cmQiLCB0aGVuCj4+IHRoaXMgbXVzdCBhbHNvIGNvdmVyIHdha2V1cCBldmVudHMsIHNvIEkgYWdy
-ZWUuCj4gCj4gSSBhZ3JlZSwgdG9vLgo+IAo+Pgo+Pj4gMi4gVGhpcyBvbmUgaXMgdHJpY2tpZXIg
-SSBkb24ndCB0aGluayB3ZSBoYXZlIHJlYWxseSBjbGVhcmx5IHNwZWNpZmllZAo+Pj4gYW55IGJl
-aGF2aW9yIGhlcmUuIFRoZSBkZWZhdWx0IGJlaGF2aW9yIG9mIG1vc3QgZHJpdmVycyBzZWVtcyB0
-byBiZQo+Pj4gdXNpbmcgc29tZXRoaW5nIGxpa2UgdGhpcyBpbiB0aGVpciBzdXNwZW5kIGNhbGxi
-YWNrOgo+Pj4KPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoZGV2aWNlX21heV93YWtldXAoZGV2
-KSkKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZW5hYmxlX2lycV93YWtl
-KGRhdGEtPmlycSk7Cj4+PiDCoMKgwqDCoMKgwqDCoMKgwqAgZWxzZSBpZiAoaW5wdXQtPnVzZXJz
-KQo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmb29fc3RvcF9yZWNlaXZp
-bmdfZXZlbnRzKGRhdGEpOwo+Pj4KPj4+IFNpbmNlIHRoaXMgaXMgd2hhdCBtb3N0IGRyaXZlcnMg
-c2VlbSB0byBkbyBJIGJlbGlldmUgd2Ugc2hvdWxkIGtlZXAKPj4+IHRoaXMgYXMgaXMgYW5kIHRo
-YXQgd2Ugc2hvdWxkIGp1c3QgY2xlYXJseSBkb2N1bWVudCB0aGF0IGlmIHRoZQo+Pj4gaW5wdXRf
-ZGV2aWNlIGhhcyB1c2VycyAoaGFzIGJlZW4gb3BlbmVkKSBvciBub3QgZG9lcyBub3QgbWF0dGVy
-Cj4+PiBmb3IgaXRzIHdha2V1cCBiZWhhdmlvci4KPj4+Cj4+PiBDb21iaW5pbmcgdGhlc2UgMiBh
-bnN3ZXJzIGxlYWRzIHRvIHRoaXMgbmV3IHBzZXVkbyBjb2RlIHRlbXBsYXRlCj4+PiBmb3IgYW4g
-aW5wdXQtZGV2aWNlJ3Mgc3VzcGVuZCBtZXRob2Q6Cj4+Pgo+Pj4gwqDCoMKgwqDCoMKgwqDCoCAv
-Kgo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgICogSWYgaW5oaWJpdGVkIHdlIGhhdmUgYWxyZWFkeSBk
-aXNhYmxlZCBldmVudHMgYW5kCj4+PiDCoMKgwqDCoMKgwqDCoMKgwqAgKiB3ZSBkbyBOT1Qgd2Fu
-dCB0byBzZXR1cCB0aGUgZGV2aWNlIGFzIHdha2Ugc291cmNlLgo+Pj4gwqDCoMKgwqDCoMKgwqDC
-oMKgICovCj4+PiDCoMKgwqDCoMKgwqDCoMKgIGlmIChpbnB1dC0+aW5oaWJpdGVkKQo+Pj4gwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIDA7Cj4gCj4gUmlnaHQsIGlmIGEg
-ZGV2aWNlIGlzIGluaGliaXRlZCBpdCBzaG91bGRuJ3QgYmVjb21lIGEgd2FrZXVwIHNvdXJjZSwK
-PiBiZWNhdXNlIHRoYXQgd291bGQgY29udHJhZGljdCB0aGUgcHVycG9zZSBvZiBiZWluZyBpbmhp
-Yml0ZWQuCgpBY2suIE5vdGUgSSBkbyB0aGluayB0aGF0IHdlIG5lZWQgdG8gZG9jdW1lbnQgdGhp
-cyAoYW5kIG1vcmUKaW4gZ2VuZXJhbCB0aGUgYW5zd2VyIHRvIGJvdGggcXVlc3Rpb25zIGZyb20g
-YWJvdmUpIGNsZWFybHkgc28KdGhhdCBnb2luZyBmb3J3YXJkIGlmIHRoZXJlIGFyZSBhbnkgcXVl
-c3Rpb25zIGFib3V0IGhvdyB0aGlzIGlzCnN1cHBvc2VkIHRvIHdvcmsgd2UgY2FuIGp1c3QgcG9p
-bnQgdG8gdGhlIGRvY3MuCgpDYW4geW91IGRvIGEgZm9sbG93LXVwIHBhdGNoLCBvciBpbmNsdWRl
-IGEgcGF0Y2ggaW4geW91ciBuZXh0CnZlcnNpb24gd2hpY2ggZG9jdW1lbnRzIHRoaXMgKG9uY2Ug
-d2UgYWdyZWUgb24gd2hhdCAidGhpcyIKZXhhY3RseSBpcykgPwoKPj4+Cj4+PiDCoMKgwqDCoMKg
-wqDCoMKgwqAgaWYgKGRldmljZV9tYXlfd2FrZXVwKGRldikpCj4+PiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIGVuYWJsZV9pcnFfd2FrZShkYXRhLT5pcnEpOwo+IAo+IFdoYXQg
-d291bGQgaXQgbWVhbiB0byBiZWNvbWUgYSB3YWtldXAgc291cmNlIGlmIHRoZXJlIGFyZSBubyB1
-c2VycywKPiBvciBub2JvZHkgaGFzIGV2ZXIgb3BlbmVkIHRoZSBkZXZpY2U/IFRoZXJlIGFyZSBu
-byBpbnRlcmVzdGVkCj4gaW5wdXQgaGFuZGxlcnMgKHVzZXJzKSBzbyB3aGF0J3MgdGhlIHBvaW50
-IG9mIGJlY29taW5nIGEgd2FrZXVwCj4gc291cmNlPyBXaHkgd291bGQgdGhlIHN5c3RlbSBuZWVk
-IHRvIHdha2UgdXA/CgpXZWxsIHRoaXMgaXMgd2hhdCB3ZSBoYXZlIGJlZW4gZG9pbmcgc28gZmFy
-LCBzbyBhcmd1YWJseSB3ZQpuZWVkIHRvIGtlZXAgZG9pbmcgaXQgdG8gYXZvaWQgcmVncmVzc2lv
-bnMgLyBicmVha2luZyBvdXIgQUJJLgoKTGV0cyBmb3IgZXhhbXBsZSB0YWtlIGEgbGFwdG9wLCB3
-aGVyZSB3aGVuIHN1c3BlbmRlZCB0aGUKcG93ZXItYnV0dG9uIGlzIHRoZSBvbmx5IHZhbGlkIHdh
-a2V1cC1zb3VyY2UgYW5kIHRoaXMgaXMKcnVubmluZyBnb29kIG9sZCBzbGFja3dhcmUgd2l0aCBm
-dndtMiBvciB3aW5kb3dtYWtlciBhcwoiZGVza3RvcCBlbnZpcm9ubWVudCIsIHRoZW4gbGlrZWx5
-IG5vIHByb2Nlc3Mgd2lsbCBoYXZlCnRoZSBwb3dlci1idXR0b24gaW5wdXQgZXZkZXYgbm9kZSBv
-cGVuLiAgU3RpbGwgd2Ugc2hvdWxkCndha2V1cCB0aGUgbGFwdG9wIG9uIHRoZSBwb3dlci1idXR0
-b24gcHJlc3MsIG90aGVyd2lzZQppdCB3aWxsIG5ldmVyIHdha2V1cC4KCk5vdGUgSSBhZ3JlZSB3
-aXRoIHlvdSB0aGF0IHRoZSB3YXkgdGhpcyB3b3JrcyBpcyBub3QKaWRlYWwsIEkganVzdCBkbyBu
-b3QgdGhpbmsgdGhhdCB3ZSBjYW4gY2hhbmdlIGl0LgoKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBl
-bHNlIGlmIChpbnB1dC0+dXNlcnMpCj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIGZvb19zdG9wX3JlY2VpdmluZ19ldmVudHMoZGF0YSk7Cj4+Pgo+Pj4gIyMjCgo8c25pcD4K
-ClJlZ2FyZHMsCgpIYW5zCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBs
-aXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlz
-dGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+10.06.2020 09:02, Sowjanya Komatineni пишет:
+> This patch adds an API of_tegra_mipi_request() to allow creating
+> mipi device for specific device node rather than a device so Tegra
+> CSI driver can use it for calibrating MIPI pads for each stream
+> independently.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/host1x/mipi.c | 10 ++++++++--
+>  include/linux/host1x.h    |  2 ++
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+> index e00809d..f51fe69 100644
+> --- a/drivers/gpu/host1x/mipi.c
+> +++ b/drivers/gpu/host1x/mipi.c
+> @@ -206,9 +206,9 @@ static int tegra_mipi_power_down(struct tegra_mipi *mipi)
+>  	return 0;
+>  }
+>  
+> -struct tegra_mipi_device *tegra_mipi_request(struct device *device)
+> +struct tegra_mipi_device *of_tegra_mipi_request(struct device *device,
+> +						struct device_node *np)
+>  {
+> -	struct device_node *np = device->of_node;
+>  	struct tegra_mipi_device *dev;
+>  	struct of_phandle_args args;
+>  	int err;
+> @@ -252,6 +252,12 @@ struct tegra_mipi_device *tegra_mipi_request(struct device *device)
+>  	of_node_put(args.np);
+>  	return ERR_PTR(err);
+>  }
+> +EXPORT_SYMBOL(of_tegra_mipi_request);
+> +
+> +struct tegra_mipi_device *tegra_mipi_request(struct device *device)
+> +{
+> +	return of_tegra_mipi_request(device, device->of_node);
+> +}
+>  EXPORT_SYMBOL(tegra_mipi_request);
+>  
+>  void tegra_mipi_free(struct tegra_mipi_device *device)
+> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+> index c230b4e..a61ca52 100644
+> --- a/include/linux/host1x.h
+> +++ b/include/linux/host1x.h
+> @@ -325,6 +325,8 @@ int host1x_client_resume(struct host1x_client *client);
+>  
+>  struct tegra_mipi_device;
+>  
+> +struct tegra_mipi_device *of_tegra_mipi_request(struct device *device,
+> +						struct device_node *np);
+
+Looks like adding a new function here is a bit of overkill. What about
+to change tegra_mipi_request() to take the node argument?
