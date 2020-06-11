@@ -1,265 +1,37 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH v1 10/18] dt-bindings: tegra: Document VI and CSI port
- nodes
-Date: Wed, 10 Jun 2020 14:11:50 -0700
-Message-ID: <d0c7a45a-2d84-7f6c-b1dd-496098f91c49@nvidia.com>
-References: <1591768960-31648-1-git-send-email-skomatineni@nvidia.com>
- <1591768960-31648-11-git-send-email-skomatineni@nvidia.com>
- <20200610112303.GB805@valkosipuli.retiisi.org.uk>
- <075d9d2e-eaa8-1895-8759-64c682fee1c4@nvidia.com>
+From: Daniel Stone <daniel-rLtY4a/8tF1rovVCs/uTlw@public.gmane.org>
+Subject: Re: [PATCH] drm/tegra: Add zpos property for cursor planes
+Date: Thu, 11 Jun 2020 09:17:51 +0100
+Message-ID: <CAPj87rMcXQozYX90wGYbv_vNnQ0-fLLnEdH3Lzio+B1L7xZuYg@mail.gmail.com>
+References: <20200610113059.2164132-1-thierry.reding@gmail.com> <ca53d82f-1fd0-b2da-cfbf-7183a977e1d1@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <075d9d2e-eaa8-1895-8759-64c682fee1c4-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <ca53d82f-1fd0-b2da-cfbf-7183a977e1d1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Dmitry,
 
-On 6/10/20 8:15 AM, Sowjanya Komatineni wrote:
+On Thu, 11 Jun 2020 at 08:54, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> 10.06.2020 14:30, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > As of commit 4dc55525b095 ("drm: plane: Verify that no or all planes
+> > have a zpos property") a warning is emitted if there's a mix of planes
+> > with and without a zpos property.
 >
-> On 6/10/20 4:23 AM, Sakari Ailus wrote:
->> Hi Sowjanya,
->>
->> Thanks for the patchset.
->>
->> On Tue, Jun 09, 2020 at 11:02:32PM -0700, Sowjanya Komatineni wrote:
->>> This patch documents Tegra VI and CSI port and endpoint nodes along
->>> with the other required properties.
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>> =C2=A0 .../display/tegra/nvidia,tegra20-host1x.txt=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 87=20
->>> ++++++++++++++++++++++
->>> =C2=A0 1 file changed, 87 insertions(+)
->>>
->>> diff --git=20
->>> a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x=
-.txt=20
->>> b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x=
-.txt=20
->>>
->>> index 4731921..f70a838 100644
->>> ---=20
->>> a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x=
-.txt
->>> +++=20
->>> b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x=
-.txt
->>> @@ -65,6 +65,48 @@ of the following host1x client modules:
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - power-domains: Must includ=
-e sor powergate node as csicil=20
->>> is in
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SOR partition.
->>> =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Optional properties for csi node=
-:
->> What hardware does the csi node represent? A CSI-2 receiver? Something
->> else?
->>
->> If you have two connections, you need two ports. The example isn't quite
->> clear on this; it would appear to represent a single physical interface.
->
-> CS-2 receiver with 2 connections. one for sink with sensor to csi and=20
-> other as source with csi to Tegra vi.
->
-> Was using separate port for sink and source and then I misunderstood=20
-> device graph document and changed to have multiple endpoints in same=20
-> port.
->
-> Will update this in v2 to have separate port for each sink and source=20
-> endpoint in csi in dt and also in driver implementation.
->
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - channel nodes: Max upto 6 channels/st=
-reams are supported=20
->>> with each CSI
->>> +=C2=A0=C2=A0=C2=A0 brick can as either x4 or x2 based on hw connectivi=
-ty to sensor.
->>> +
->>> +=C2=A0=C2=A0=C2=A0 Required properties:
->>> +=C2=A0=C2=A0=C2=A0 - reg: channel/stream index
->>> +=C2=A0=C2=A0=C2=A0 - nvidia,mipi-calibrate: Should contain a phandle a=
-nd a specifier
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 specifying which pads are used by this =
-CSI port and need to be
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 calibrated. See also ../display/tegra/n=
-vidia,tegra114-mipi.txt.
->>> +
->>> +=C2=A0=C2=A0=C2=A0 - port: CSI port node and its endpoint nodes as per=
- device graph
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bindings define=
-d in=20
->>> Documentation/devicetree/bindings/graph.txt.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Required properties:
->> You have both properties and nodes here. Same for the above (port is a
->> node).
-> Will update document to separate out port node from properties
->>
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - reg: csi port index based on hw csi l=
-anes connectivity to the
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sensor.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - bus-width: number of lanes used by th=
-is port. Supported lanes
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 are 1/2/4.
->> bus-width belongs to the endpoint. Note that this is for parallel busses
->> only. If you need the number of lanes, the property is called=20
->> data-lanes.
-> Will update in v2 for having separate ports for sink and source=20
-> endpoints will move bus-width to endpoint.
-Thanks Sakari. Will switch to use data-lanes property in csi ports end=20
-points in v2.
->>
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - endpoint@0: sink node
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Required properties:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - reg: endpoint id. This is=
- used to retrieve pad for creating
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media link
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - remote-endpoint: phandle =
-to sensor endpoint
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - endpoint@1: source node
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - reg: endpoint id. This is=
- used to retrieve pad for creating
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media link
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - remote-endpoint: phandle =
-to vi port endpoint
->>> +
->>> +=C2=A0 Optional properties for vi node:
->>> +=C2=A0 - ports: Video port nodes and endpoint nodes as per device grap=
-h=20
->>> bindings
->>> +=C2=A0=C2=A0=C2=A0 defined in Documentation/devicetree/bindings/graph.=
-txt
->>> +=C2=A0=C2=A0=C2=A0 Max 6 ports are supported and each port should have=
- one=20
->>> endpoint node.
->>> +
->>> +=C2=A0=C2=A0=C2=A0 Required properties:
->>> +=C2=A0=C2=A0=C2=A0 - port: VI port node and its sink endpoint node
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Required properties:
->>> +=C2=A0=C2=A0=C2=A0 - reg: should match port index
->>> +=C2=A0=C2=A0=C2=A0 - endpoint@0: sink node
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Required properties:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - reg: endpoint id must be 0
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - remote-endpoint: phandle to CSI endpo=
-int node.
->>> +
->>> =C2=A0 - epp: encoder pre-processor
->>> =C2=A0 =C2=A0=C2=A0=C2=A0 Required properties:
->>> @@ -340,6 +382,22 @@ Example:
->>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 ranges =3D <0x0 0x0 0x54080000 0x2000>;
->>> =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 ports {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 port@0 {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 imx219_vi_in0: endpoint@0 {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =
-=3D <0>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 remot=
-e-endpoint =3D <&imx219_csi_out0>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 };
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->>> +
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 csi@838 {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "nvidia,tegra210-csi";
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x838 0x1300>;
->>> @@ -362,6 +420,35 @@ Example:
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <&tegra_car=
- TEGRA210_CLK_CSI_TPG>;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names =3D "csi", "cilab", "cilcd", =
-"cile",=20
->>> "csi_tpg";
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 power-domains =3D <&pd_sor>;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 channel@0 {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nvidia,mipi-calibrate =3D <&m=
-ipi 0x001>;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 port@0 {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =
-=3D <0>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bus-w=
-idth =3D <2>;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #addr=
-ess-cells =3D <1>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size=
--cells =3D <0>;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 imx21=
-9_csi_in0: endpoint@0 {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 reg =3D <0>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 remote-endpoint =3D <&imx219_out0>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 imx21=
-9_csi_out0: endpoint@1 {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 reg =3D <1>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 remote-endpoint =3D <&imx219_vi_in0>;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 };
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 };
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+> What problem does it solve?
+
+Well, it fixes the WARN_ON, which asserts that either no planes have
+the zpos property attached, or all planes have the zpos property
+attached. When only _some_ planes have the property, the property is
+pretty much useless: zpos exists to guarantee to userspace the
+relative ordering between planes, defined by the value of the
+property. If not all planes have the property, then userspace cannot
+reason about the ordering, since some of the planes have undefined
+ordering.
+
+Cheers,
+Daniel
