@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 01/38] dt-bindings: interrupt-controller: arm,gic: Add compatible for Tegra186 AGIC
-Date: Fri, 12 Jun 2020 16:18:26 +0200
-Message-ID: <20200612141903.2391044-2-thierry.reding@gmail.com>
+Subject: [PATCH 02/38] dt-bindings: memory: nvidia: Mark memory controller as interconnect provider
+Date: Fri, 12 Jun 2020 16:18:27 +0200
+Message-ID: <20200612141903.2391044-3-thierry.reding@gmail.com>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,34 +14,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The AGIC variant of GIC found in the audio subsystem of NVIDIA Tegra186
-SoCs is mostly compatible with the version found on Tegra210. Provide a
-Tegra210 compatible as a fallback compatible, but also require a
-Tegra186 specific compatible for forwards compatibility in case there's
-ever a need to implement instantiation-specific quirks.
-
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/interrupt-controller/arm,gic.yaml  | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../memory-controllers/nvidia,tegra186-mc.yaml         | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
-index 96f8803ff4e6..becc4364e419 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
-@@ -53,6 +53,13 @@ properties:
-           - const: brcm,brahma-b15-gic
-           - const: arm,cortex-a15-gic
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+index 611bda38d187..581572fe3077 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+@@ -38,6 +38,16 @@ properties:
+   interrupts:
+     maxItems: 1
  
-+      - items:
-+          - enum:
-+              - nvidia,tegra186-agic
-+              - nvidia,tegra194-agic
-+          - enum:
-+              - nvidia,tegra210-agic
++  "#interconnect-cells":
++    const: 1
++    description:
++      Each interconnect node for the memory controller takes a phandle to the
++      memory controller and a single cell as the specifier, identifying the
++      memory client by its ID.
 +
-   interrupt-controller: true
- 
++      For a list of valid IDs, see dt-bindings/memory/tegra186-mc.h and
++      dt-bindings/memory/tegra194-mc.h.
++
    "#address-cells":
+     const: 2
+ 
 -- 
 2.24.1
