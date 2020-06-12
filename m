@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 16/38] dt-bindings: sound: tegra: hda: Document interconnect paths
-Date: Fri, 12 Jun 2020 16:18:41 +0200
-Message-ID: <20200612141903.2391044-17-thierry.reding@gmail.com>
+Subject: [PATCH 17/38] dt-bindings: usb: tegra-xusb: Convert to json-schema
+Date: Fri, 12 Jun 2020 16:18:42 +0200
+Message-ID: <20200612141903.2391044-18-thierry.reding@gmail.com>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,34 +14,520 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+Convert the Tegra XUSB controller bindings from the free-form text
+format to json-schema.
+
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/sound/nvidia,tegra30-hda.yaml          | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ .../bindings/usb/nvidia,tegra124-xusb.txt     | 132 -------
+ .../bindings/usb/nvidia,tegra124-xusb.yaml    | 360 ++++++++++++++++++
+ 2 files changed, 360 insertions(+), 132 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.yaml
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-index ea8e39934945..15043c896c54 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-@@ -90,6 +90,19 @@ properties:
-   iommus:
-     $ref: "/schemas/types.yaml#/definitions/phandle-array"
- 
-+  interconnects:
-+    description: Description of the interconnect paths for the HDA controller;
-+      see ../interconnect/interconnect.txt for details.
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+deleted file mode 100644
+index 5bfcc0b4d6b9..000000000000
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
++++ /dev/null
+@@ -1,132 +0,0 @@
+-NVIDIA Tegra xHCI controller
+-============================
+-
+-The Tegra xHCI controller supports both USB2 and USB3 interfaces exposed by
+-the Tegra XUSB pad controller.
+-
+-Required properties:
+---------------------
+-- compatible: Must be:
+-  - Tegra124: "nvidia,tegra124-xusb"
+-  - Tegra132: "nvidia,tegra132-xusb", "nvidia,tegra124-xusb"
+-  - Tegra210: "nvidia,tegra210-xusb"
+-  - Tegra186: "nvidia,tegra186-xusb"
+-- reg: Must contain the base and length of the xHCI host registers, XUSB FPCI
+-  registers and XUSB IPFS registers.
+-- reg-names: Must contain the following entries:
+-  - "hcd"
+-  - "fpci"
+-  - "ipfs"
+-- interrupts: Must contain the xHCI host interrupt and the mailbox interrupt.
+-- clocks: Must contain an entry for each entry in clock-names.
+-  See ../clock/clock-bindings.txt for details.
+-- clock-names: Must include the following entries:
+-   - xusb_host
+-   - xusb_host_src
+-   - xusb_falcon_src
+-   - xusb_ss
+-   - xusb_ss_src
+-   - xusb_ss_div2
+-   - xusb_hs_src
+-   - xusb_fs_src
+-   - pll_u_480m
+-   - clk_m
+-   - pll_e
+-- resets: Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names: Must include the following entries:
+-  - xusb_host
+-  - xusb_ss
+-  - xusb_src
+-  Note that xusb_src is the shared reset for xusb_{ss,hs,fs,falcon,host}_src.
+-- nvidia,xusb-padctl: phandle to the XUSB pad controller that is used to
+-  configure the USB pads used by the XHCI controller
+-
+-For Tegra124 and Tegra132:
+-- avddio-pex-supply: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
+-- dvddio-pex-supply: PCIe/USB3 digital logic power supply. Must supply 1.05 V.
+-- avdd-usb-supply: USB controller power supply. Must supply 3.3 V.
+-- avdd-pll-utmip-supply: UTMI PLL power supply. Must supply 1.8 V.
+-- avdd-pll-erefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
+-- avdd-usb-ss-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+-- hvdd-usb-ss-supply: High-voltage PCIe/USB3 power supply. Must supply 3.3 V.
+-- hvdd-usb-ss-pll-e-supply: High-voltage PLLE power supply. Must supply 3.3 V.
+-
+-For Tegra210:
+-- dvddio-pex-supply: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
+-- hvddio-pex-supply: High-voltage PCIe/USB3 power supply. Must supply 1.8 V.
+-- avdd-usb-supply: USB controller power supply. Must supply 3.3 V.
+-- avdd-pll-utmip-supply: UTMI PLL power supply. Must supply 1.8 V.
+-- avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
+-- dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+-- hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
+-
+-For Tegra210 and Tegra186:
+-- power-domains: A list of PM domain specifiers that reference each power-domain
+-  used by the xHCI controller. This list must comprise of a specifier for the
+-  XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
+-  ../arm/tegra/nvidia,tegra20-pmc.txt for details.
+-- power-domain-names: A list of names that represent each of the specifiers in
+-  the 'power-domains' property. Must include 'xusb_ss' and 'xusb_host' which
+-  represent the power-domains XUSBA and XUSBC, respectively. See
+-  ../power/power_domain.txt for details.
+-
+-Optional properties:
+---------------------
+-- phys: Must contain an entry for each entry in phy-names.
+-  See ../phy/phy-bindings.txt for details.
+-- phy-names: Should include an entry for each PHY used by the controller. The
+-  following PHYs are available:
+-  - Tegra124: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
+-  - Tegra132: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
+-  - Tegra210: usb2-0, usb2-1, usb2-2, usb2-3, hsic-0, usb3-0, usb3-1, usb3-2,
+-              usb3-3
+-  - Tegra186: usb2-0, usb2-1, usb2-2, hsic-0, usb3-0, usb3-1, usb3-2
+-
+-Example:
+---------
+-
+-	usb@0,70090000 {
+-		compatible = "nvidia,tegra124-xusb";
+-		reg = <0x0 0x70090000 0x0 0x8000>,
+-		      <0x0 0x70098000 0x0 0x1000>,
+-		      <0x0 0x70099000 0x0 0x1000>;
+-		reg-names = "hcd", "fpci", "ipfs";
+-
+-		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+-
+-		clocks = <&tegra_car TEGRA124_CLK_XUSB_HOST>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_HOST_SRC>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_FALCON_SRC>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_SS>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_SS_DIV2>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_SS_SRC>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_HS_SRC>,
+-			 <&tegra_car TEGRA124_CLK_XUSB_FS_SRC>,
+-			 <&tegra_car TEGRA124_CLK_PLL_U_480M>,
+-			 <&tegra_car TEGRA124_CLK_CLK_M>,
+-			 <&tegra_car TEGRA124_CLK_PLL_E>;
+-		clock-names = "xusb_host", "xusb_host_src", "xusb_falcon_src",
+-			      "xusb_ss", "xusb_ss_div2", "xusb_ss_src",
+-			      "xusb_hs_src", "xusb_fs_src", "pll_u_480m",
+-			      "clk_m", "pll_e";
+-		resets = <&tegra_car 89>, <&tegra_car 156>, <&tegra_car 143>;
+-		reset-names = "xusb_host", "xusb_ss", "xusb_src";
+-
+-		nvidia,xusb-padctl = <&padctl>;
+-
+-		phys = <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-1}>, /* mini-PCIe USB */
+-		       <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-2}>, /* USB A */
+-		       <&{/padctl@0,7009f000/pads/pcie/lanes/pcie-0}>; /* USB A */
+-		phy-names = "usb2-1", "usb2-2", "usb3-0";
+-
+-		avddio-pex-supply = <&vdd_1v05_run>;
+-		dvddio-pex-supply = <&vdd_1v05_run>;
+-		avdd-usb-supply = <&vdd_3v3_lp0>;
+-		avdd-pll-utmip-supply = <&vddio_1v8>;
+-		avdd-pll-erefe-supply = <&avdd_1v05_run>;
+-		avdd-usb-ss-pll-supply = <&vdd_1v05_run>;
+-		hvdd-usb-ss-supply = <&vdd_3v3_lp0>;
+-		hvdd-usb-ss-pll-e-supply = <&vdd_3v3_lp0>;
+-	};
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.yaml
+new file mode 100644
+index 000000000000..4d9e4cfc459a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.yaml
+@@ -0,0 +1,360 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/nvidia,tegra124-xusb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra xHCI controller
++
++maintainers:
++  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
++  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++
++description: |
++  The Tegra xHCI controller supports both USB2 and USB3 interfaces exposed by
++  the Tegra XUSB pad controller.
++
++properties:
++  compatible:
++    oneOf:
++      - description: NVIDIA Tegra124
++        const: nvidia,tegra124-xusb
++
++      - description: NVIDIA Tegra132
++        items:
++          - const: nvidia,tegra132-xusb
++          - const: nvidia,tegra124-xusb
++
++      - description: NVIDIA Tegra210
++        const: nvidia,tegra210-xusb
++
++      - description: NVIDIA Tegra186
++        const: nvidia,tegra186-xusb
++
++      - description: NVIDIA Tegra194
++        const: nvidia,tegra194-xusb
++
++  reg:
++    minItems: 1
++    maxItems: 3
++
++  reg-names:
++    minItems: 1
++    maxItems: 3
++
++  interrupts:
++    items:
++      - description: xHCI host interrupt
++      - description: mailbox interrupt
++
++  clocks:
++    minItems: 9
++    maxItems: 11
++
++  clock-names:
++    minItems: 9
++    maxItems: 11
++
++  nvidia,xusb-padctl:
++    description: phandle to the XUSB pad controller that is used to configure
++      the USB pads used by the XHCI controller
++    $ref: "/schemas/types.yaml#/definitions/phandle"
++
++  # optional
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  resets:
++    items:
++      - description: reset for the XUSB host controller
++      - description: reset for the SuperSpeed logic
++      - description: shared reset for xusb_{ss,hs,fs,falcon,host}_src.
++
++  reset-names:
++    items:
++      - const: xusb_host
++      - const: xusb_ss
++      - const: xusb_src
++
++  iommus:
 +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
 +
-+  interconnect-names:
-+    description: A list of names identifying each entry listed in the
-+      "interconnects" property.
-+    $ref: "/schemas/types.yaml#/definitions/string-array"
-+    items:
-+      - const: dma-mem # read
-+      - const: write
++  phys:
++    description: Must contain an entry for each entry in phy-names. See
++      ../phy/phy-bindings.txt for details.
 +
-   nvidia,model:
-     description: The user-visible name of this sound complex. Since the
-       property is optional, legacy boards can use default name provided in HDA
++  phy-names:
++    description: Should include an entry for each PHY used by the controller.
++
++  power-domains:
++    description: A list of PM domain specifiers that reference each
++      power-domain used by the xHCI controller. This list must comprise
++      of a specifier for the XUSBA and XUSBC power-domains. See
++      ../power/power_domain.txt and ../arm/tegra/nvidia,tegra20-pmc.txt
++      for details.
++
++  power-domain-names:
++    description: A list of names that represent each of the specifiers
++      in the 'power-domains' property. See ../power/power_domain.txt for
++      details.
++
++patternProperties:
++  # USB device nodes can have arbitrary names, but always need a unit-address
++  "^.*@[0-9]+$":
++    type: object
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - clocks
++  - clock-names
++  - nvidia,xusb-padctl
++
++unevaluatedProperties: false
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra124-xusb
++    then:
++      properties:
++        reg:
++          items:
++            - description: base and length of the xHCI host registers
++            - description: base and length of the XUSB FPCI registers
++            - description: base and length of the XUSB IPFS registers
++
++        reg-names:
++          items:
++            - const: hcd
++            - const: fpci
++            - const: ipfs
++
++        clocks:
++          minItems: 11
++
++        clock-names:
++          items:
++            - const: xusb_host
++            - const: xusb_host_src
++            - const: xusb_falcon_src
++            - const: xusb_ss
++            - const: xusb_ss_src
++            - const: xusb_ss_div2
++            - const: xusb_hs_src
++            - const: xusb_fs_src
++            - const: pll_u_480m
++            - const: clk_m
++            - const: pll_e
++
++        phy-names:
++          contains:
++            anyOf:
++              - const: usb2-0
++              - const: usb2-1
++              - const: usb2-2
++              - const: hsic-0
++              - const: hsic-1
++              - const: usb3-0
++              - const: usb3-1
++
++        avddio-pex-supply:
++          description: PCIe/USB3 analog logic power supply. Must supply
++            1.05 V.
++
++        dvddio-pex-supply:
++          description: PCIe/USB3 digital logic power supply. Must supply
++            1.05 V.
++
++        avdd-usb-supply:
++          description: USB controller power supply. Must supply 3.3 V.
++
++        hvdd-usb-ss-supply:
++          description: High-voltage PCIe/USB3 power supply. Must supply 3.3 V.
++
++      required:
++        - resets
++        - reset-names
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra210-xusb
++    then:
++      properties:
++        reg:
++          items:
++            - description: base and length of the xHCI host registers
++            - description: base and length of the XUSB FPCI registers
++            - description: base and length of the XUSB IPFS registers
++
++        reg-names:
++          items:
++            - const: hcd
++            - const: fpci
++            - const: ipfs
++
++        clocks:
++          minItems: 11
++
++        clock-names:
++          items:
++            - const: xusb_host
++            - const: xusb_host_src
++            - const: xusb_falcon_src
++            - const: xusb_ss
++            - const: xusb_ss_src
++            - const: xusb_ss_div2
++            - const: xusb_hs_src
++            - const: xusb_fs_src
++            - const: pll_u_480m
++            - const: clk_m
++            - const: pll_e
++
++        phy-names:
++          contains:
++            anyOf:
++              - const: usb2-0
++              - const: usb2-1
++              - const: usb2-2
++              - const: usb2-3
++              - const: hsic-0
++              - const: usb3-0
++              - const: usb3-1
++              - const: usb3-2
++              - const: usb3-3
++
++        dvddio-pex-supply:
++          description: PCIe/USB3 analog logic power supply. Must supply
++            1.05 V.
++
++        hvddio-pex-supply:
++          description: High-voltage PCIe/USB3 power supply. Must supply 1.8 V.
++
++        avdd-usb-supply:
++          description: USB controller power supply. Must supply 3.3 V.
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - nvidia,tegra210-xusb
++              - nvidia,tegra186-xusb
++              - nvidia,tegra194-xusb
++    then:
++      properties:
++        power-domain-names:
++          items:
++            - description: the XUSBC power domain
++              const: xusb_host
++            - description: the XUSBA power domain
++              const: xusb_ss
++
++      required:
++        - power-domains
++        - power-domain-names
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - nvidia,tegra186-xusb
++              - nvidia,tegra194-xusb
++    then:
++      properties:
++        # Tegra186 doesn't have the IPFS registers
++        reg:
++          items:
++            - description: base and length of the xHCI host registers
++            - description: base and length of the XUSB FPCI registers
++
++        reg-names:
++          items:
++            - const: hcd
++            - const: fpci
++
++        clocks:
++          maxItems: 9
++
++        clock-names:
++          items:
++            - const: xusb_host
++            - const: xusb_falcon_src
++            - const: xusb_ss
++            - const: xusb_ss_src
++            - const: xusb_hs_src
++            - const: xusb_fs_src
++            - const: pll_u_480m
++            - const: clk_m
++            - const: pll_e
++
++        phy-names:
++          contains:
++            anyOf:
++              - const: usb2-0
++              - const: usb2-1
++              - const: usb2-2
++              - const: hsic-0
++              - const: usb3-0
++              - const: usb3-1
++              - const: usb3-2
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/tegra124-car.h>
++
++    usb@0,70090000 {
++        compatible = "nvidia,tegra124-xusb";
++        reg = <0x0 0x70090000 0x0 0x8000>,
++              <0x0 0x70098000 0x0 0x1000>,
++              <0x0 0x70099000 0x0 0x1000>;
++        reg-names = "hcd", "fpci", "ipfs";
++
++        interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++
++        clocks = <&tegra_car TEGRA124_CLK_XUSB_HOST>,
++                 <&tegra_car TEGRA124_CLK_XUSB_HOST_SRC>,
++                 <&tegra_car TEGRA124_CLK_XUSB_FALCON_SRC>,
++                 <&tegra_car TEGRA124_CLK_XUSB_SS>,
++                 <&tegra_car TEGRA124_CLK_XUSB_SS_DIV2>,
++                 <&tegra_car TEGRA124_CLK_XUSB_SS_SRC>,
++                 <&tegra_car TEGRA124_CLK_XUSB_HS_SRC>,
++                 <&tegra_car TEGRA124_CLK_XUSB_FS_SRC>,
++                 <&tegra_car TEGRA124_CLK_PLL_U_480M>,
++                 <&tegra_car TEGRA124_CLK_CLK_M>,
++                 <&tegra_car TEGRA124_CLK_PLL_E>;
++        clock-names = "xusb_host", "xusb_host_src", "xusb_falcon_src",
++                      "xusb_ss", "xusb_ss_div2", "xusb_ss_src",
++                      "xusb_hs_src", "xusb_fs_src", "pll_u_480m",
++                      "clk_m", "pll_e";
++        resets = <&tegra_car 89>, <&tegra_car 156>, <&tegra_car 143>;
++        reset-names = "xusb_host", "xusb_ss", "xusb_src";
++
++        nvidia,xusb-padctl = <&padctl>;
++
++        phys = <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-1}>, /* mini-PCIe USB */
++               <&{/padctl@0,7009f000/pads/usb2/lanes/usb2-2}>, /* USB A */
++               <&{/padctl@0,7009f000/pads/pcie/lanes/pcie-0}>; /* USB A */
++        phy-names = "usb2-1", "usb2-2", "usb3-0";
++
++        avddio-pex-supply = <&vdd_1v05_run>;
++        dvddio-pex-supply = <&vdd_1v05_run>;
++        avdd-usb-supply = <&vdd_3v3_lp0>;
++        avdd-pll-utmip-supply = <&vddio_1v8>;
++        avdd-pll-erefe-supply = <&avdd_1v05_run>;
++        avdd-usb-ss-pll-supply = <&vdd_1v05_run>;
++        hvdd-usb-ss-supply = <&vdd_3v3_lp0>;
++        hvdd-usb-ss-pll-e-supply = <&vdd_3v3_lp0>;
++    };
 -- 
 2.24.1
