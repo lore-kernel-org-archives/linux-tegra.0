@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 35/38] dt-bindings: memory: Update Tegra210 EMC bindings
-Date: Fri, 12 Jun 2020 16:19:00 +0200
-Message-ID: <20200612141903.2391044-36-thierry.reding@gmail.com>
+Subject: [PATCH 36/38] dt-bindings: power: supply: sbs-battery: Document TI BQ20Z45 compatible
+Date: Fri, 12 Jun 2020 16:19:01 +0200
+Message-ID: <20200612141903.2391044-37-thierry.reding@gmail.com>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,92 +14,43 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Tegra210 EMC is a cooling device because it can throttle the EMC
-frequency if the chip gets too hot. The device tree node therefore needs
-to contain the "#cooling-cells" property. Furthermore, multiple reserved
-memory regions can now be attached to the EMC device tree node, and the
-new memory-region-names property can be used to differentiate between
-them.
+The TI BQ20Z45 battery is used for example on Tegra114 Dalmore but was
+never documented. Add the missing compatible string.
 
-While at it, update the example to make it more fully-featured.
+While at it, also pull in the power-supply.yaml core bindings so that
+the standard power-supplies property is properly validated. Also switch
+to unevaluatedProperties to make sure the power-supply.yaml snippet is
+properly validated against (additionalProperties doesn't have visibility
+across a $ref).
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../nvidia,tegra210-emc.yaml                  | 34 ++++++++++++++-----
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/power/supply/sbs,sbs-battery.yaml   | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-index 49ab09252e52..4e8f659f1a7c 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-@@ -34,16 +34,25 @@ properties:
-       - description: EMC general interrupt
- 
-   memory-region:
--    $ref: /schemas/types.yaml#/definitions/phandle
--    description:
--      phandle to a reserved memory region describing the table of EMC
--      frequencies trained by the firmware
-+    description: List of phandles to reserved memory regions describing the
-+      nominal and derated tables of EMC frequencies trained by the firmware.
-+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-+
-+  memory-region-names:
-+    $ref: "/schemas/types.yaml#/definitions/string-array"
-+    items:
-+      - const: nominal
-+      - const: derated
- 
-   nvidia,memory-controller:
--    $ref: /schemas/types.yaml#/definitions/phandle
-+    $ref: "/schemas/types.yaml#/definitions/phandle"
-     description:
-       phandle of the memory controller node
- 
-+  "#cooling-cells":
-+    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    const: 2
-+
- required:
+diff --git a/Documentation/devicetree/bindings/power/supply/sbs,sbs-battery.yaml b/Documentation/devicetree/bindings/power/supply/sbs,sbs-battery.yaml
+index 205bc826bd20..bb2803850ea6 100644
+--- a/Documentation/devicetree/bindings/power/supply/sbs,sbs-battery.yaml
++++ b/Documentation/devicetree/bindings/power/supply/sbs,sbs-battery.yaml
+@@ -18,6 +18,7 @@ properties:
+     oneOf:
+       - items:
+           - enum:
++              - ti,bq20z45
+               - ti,bq20z65
+               - ti,bq20z75
+           - enum:
+@@ -62,7 +63,10 @@ required:
    - compatible
    - reg
-@@ -51,7 +60,10 @@ required:
-   - clock-names
-   - nvidia,memory-controller
  
 -additionalProperties: false
-+dependencies:
-+  memory-region-names: [ memory-region ]
++allOf:
++  - $ref: power-supply.yaml#
 +
 +unevaluatedProperties: false
  
  examples:
    - |
-@@ -63,10 +75,15 @@ examples:
-         #size-cells = <1>;
-         ranges;
- 
--        emc_table: emc-table@83400000 {
-+        nominal: emc-table@83400000 {
-             compatible = "nvidia,tegra210-emc-table";
-             reg = <0x83400000 0x10000>;
-         };
-+
-+        derated: emc-table@83410000 {
-+            compatible = "nvidia,tegar210-emc-table";
-+            reg = <0x83410000 0x10000>;
-+        };
-     };
- 
-     external-memory-controller@7001b000 {
-@@ -77,6 +94,7 @@ examples:
-         clocks = <&tegra_car TEGRA210_CLK_EMC>;
-         clock-names = "emc";
-         interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
--        memory-region = <&emc_table>;
-+        memory-region-names = "nominal", "derated";
-+        memory-region = <&nominal>, <&derated>;
-         nvidia,memory-controller = <&mc>;
-     };
 -- 
 2.24.1
