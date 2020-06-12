@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 34/38] dt-bindings: memory-controller: Fix "reg" entries on Tegra194
-Date: Fri, 12 Jun 2020 16:18:59 +0200
-Message-ID: <20200612141903.2391044-35-thierry.reding@gmail.com>
+Subject: [PATCH 35/38] dt-bindings: memory: Update Tegra210 EMC bindings
+Date: Fri, 12 Jun 2020 16:19:00 +0200
+Message-ID: <20200612141903.2391044-36-thierry.reding@gmail.com>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,99 +14,92 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Tegra194 memory controller needs a couple more "reg" entries.
-Document this properly so that device trees can be validated.
+The Tegra210 EMC is a cooling device because it can throttle the EMC
+frequency if the chip gets too hot. The device tree node therefore needs
+to contain the "#cooling-cells" property. Furthermore, multiple reserved
+memory regions can now be attached to the EMC device tree node, and the
+new memory-region-names property can be used to differentiate between
+them.
+
+While at it, update the example to make it more fully-featured.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../nvidia,tegra186-mc.yaml                   | 39 ++++++++++++++-----
- 1 file changed, 29 insertions(+), 10 deletions(-)
+ .../nvidia,tegra210-emc.yaml                  | 34 ++++++++++++++-----
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-index 774b04d0da0d..b04485c5cf5f 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-@@ -27,13 +27,15 @@ properties:
-     pattern: "^memory-controller@[0-9a-f]+$"
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+index 49ab09252e52..4e8f659f1a7c 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+@@ -34,16 +34,25 @@ properties:
+       - description: EMC general interrupt
  
-   compatible:
--    items:
--      - enum:
--          - nvidia,tegra186-mc
--          - nvidia,tegra194-mc
-+    oneOf:
-+      - description: NVIDIA Tegra186 memory controller
-+        const: nvidia,tegra186-mc
-+      - description: NVIDIA Tegra194 memory controller
-+        const: nvidia,tegra194-mc
- 
-   reg:
--    maxItems: 1
-+    minItems: 1
-+    maxItems: 3
- 
-   interrupts:
-     maxItems: 1
-@@ -74,12 +76,13 @@ patternProperties:
-               - nvidia,tegra186-emc
-               - nvidia,tegra194-emc
- 
--      reg:
--        maxItems: 1
--
-       interrupts:
-         maxItems: 1
- 
-+      reg:
-+        minItems: 1
-+        maxItems: 2
+   memory-region:
+-    $ref: /schemas/types.yaml#/definitions/phandle
+-    description:
+-      phandle to a reserved memory region describing the table of EMC
+-      frequencies trained by the firmware
++    description: List of phandles to reserved memory regions describing the
++      nominal and derated tables of EMC frequencies trained by the firmware.
++    $ref: "/schemas/types.yaml#/definitions/phandle-array"
 +
-       clocks:
-         items:
-           - description: external memory clock
-@@ -107,11 +110,18 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: nvidia,tegra194-mc
-+            anyOf:
-+              - const: nvidia,tegra194-mc
-     then:
-       properties:
-         reg:
-+          minItems: 3
-           maxItems: 3
-+    else:
-+      properties:
-+        reg:
-+          minItems: 1
-+          maxItems: 1
++  memory-region-names:
++    $ref: "/schemas/types.yaml#/definitions/string-array"
++    items:
++      - const: nominal
++      - const: derated
  
-   - if:
-       patternProperties:
-@@ -119,13 +129,22 @@ allOf:
-           properties:
-             compatible:
-               contains:
--                const: nvidia,tegra194-emc
-+                anyOf:
-+                  - const: nvidia,tegra194-emc
-     then:
-       patternProperties:
-         "^external-memory-controller@[0-9a-f]+$":
-           properties:
-             reg:
-+              minItems: 2
-               maxItems: 2
-+    else:
-+      patternProperties:
-+        "^external-memory-controller@[0-9a-f]+$":
-+          properties:
-+            reg:
-+              minItems: 1
-+              maxItems: 1
+   nvidia,memory-controller:
+-    $ref: /schemas/types.yaml#/definitions/phandle
++    $ref: "/schemas/types.yaml#/definitions/phandle"
+     description:
+       phandle of the memory controller node
+ 
++  "#cooling-cells":
++    $ref: "/schemas/types.yaml#/definitions/uint32"
++    const: 2
++
+ required:
+   - compatible
+   - reg
+@@ -51,7 +60,10 @@ required:
+   - clock-names
+   - nvidia,memory-controller
+ 
+-additionalProperties: false
++dependencies:
++  memory-region-names: [ memory-region ]
++
++unevaluatedProperties: false
  
  examples:
    - |
+@@ -63,10 +75,15 @@ examples:
+         #size-cells = <1>;
+         ranges;
+ 
+-        emc_table: emc-table@83400000 {
++        nominal: emc-table@83400000 {
+             compatible = "nvidia,tegra210-emc-table";
+             reg = <0x83400000 0x10000>;
+         };
++
++        derated: emc-table@83410000 {
++            compatible = "nvidia,tegar210-emc-table";
++            reg = <0x83410000 0x10000>;
++        };
+     };
+ 
+     external-memory-controller@7001b000 {
+@@ -77,6 +94,7 @@ examples:
+         clocks = <&tegra_car TEGRA210_CLK_EMC>;
+         clock-names = "emc";
+         interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+-        memory-region = <&emc_table>;
++        memory-region-names = "nominal", "derated";
++        memory-region = <&nominal>, <&derated>;
+         nvidia,memory-controller = <&mc>;
+     };
 -- 
 2.24.1
