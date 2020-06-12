@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 21/38] dt-bindings: sound: sgtl5000: Convert to json-schema
-Date: Fri, 12 Jun 2020 16:18:46 +0200
-Message-ID: <20200612141903.2391044-22-thierry.reding@gmail.com>
+Subject: [PATCH 23/38] dt-bindings: gpio: tegra186: Convert to json-schema
+Date: Fri, 12 Jun 2020 16:18:48 +0200
+Message-ID: <20200612141903.2391044-24-thierry.reding@gmail.com>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,205 +14,408 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Convert the Freescale SGTL5000 device tree bindings from free-form text
-format to json-schema.
+Convert the Tegra186 GPIO controller device tree bindings from free-form
+text format to json-schema.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/sound/sgtl5000.txt    |  60 ----------
- .../devicetree/bindings/sound/sgtl5000.yaml   | 103 ++++++++++++++++++
- .../devicetree/bindings/trivial-devices.yaml  |   2 -
- 3 files changed, 103 insertions(+), 62 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/sgtl5000.txt
- create mode 100644 Documentation/devicetree/bindings/sound/sgtl5000.yaml
+ .../bindings/gpio/nvidia,tegra186-gpio.txt    | 165 --------------
+ .../bindings/gpio/nvidia,tegra186-gpio.yaml   | 215 ++++++++++++++++++
+ 2 files changed, 215 insertions(+), 165 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
 
-diff --git a/Documentation/devicetree/bindings/sound/sgtl5000.txt b/Documentation/devicetree/bindings/sound/sgtl5000.txt
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
 deleted file mode 100644
-index 9d9ff5184939..000000000000
---- a/Documentation/devicetree/bindings/sound/sgtl5000.txt
+index adff16c71d21..000000000000
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
 +++ /dev/null
-@@ -1,60 +0,0 @@
--* Freescale SGTL5000 Stereo Codec
+@@ -1,165 +0,0 @@
+-NVIDIA Tegra186 GPIO controllers
+-
+-Tegra186 contains two GPIO controllers; a main controller and an "AON"
+-controller. This binding document applies to both controllers. The register
+-layouts for the controllers share many similarities, but also some significant
+-differences. Hence, this document describes closely related but different
+-bindings and compatible values.
+-
+-The Tegra186 GPIO controller allows software to set the IO direction of, and
+-read/write the value of, numerous GPIO signals. Routing of GPIO signals to
+-package balls is under the control of a separate pin controller HW block. Two
+-major sets of registers exist:
+-
+-a) Security registers, which allow configuration of allowed access to the GPIO
+-register set. These registers exist in a single contiguous block of physical
+-address space. The size of this block, and the security features available,
+-varies between the different GPIO controllers.
+-
+-Access to this set of registers is not necessary in all circumstances. Code
+-that wishes to configure access to the GPIO registers needs access to these
+-registers to do so. Code which simply wishes to read or write GPIO data does not
+-need access to these registers.
+-
+-b) GPIO registers, which allow manipulation of the GPIO signals. In some GPIO
+-controllers, these registers are exposed via multiple "physical aliases" in
+-address space, each of which access the same underlying state. See the hardware
+-documentation for rationale. Any particular GPIO client is expected to access
+-just one of these physical aliases.
+-
+-Tegra HW documentation describes a unified naming convention for all GPIOs
+-implemented by the SoC. Each GPIO is assigned to a port, and a port may control
+-a number of GPIOs. Thus, each GPIO is named according to an alphabetical port
+-name and an integer GPIO name within the port. For example, GPIO_PA0, GPIO_PN6,
+-or GPIO_PCC3.
+-
+-The number of ports implemented by each GPIO controller varies. The number of
+-implemented GPIOs within each port varies. GPIO registers within a controller
+-are grouped and laid out according to the port they affect.
+-
+-The mapping from port name to the GPIO controller that implements that port, and
+-the mapping from port name to register offset within a controller, are both
+-extremely non-linear. The header file <dt-bindings/gpio/tegra186-gpio.h>
+-describes the port-level mapping. In that file, the naming convention for ports
+-matches the HW documentation. The values chosen for the names are alphabetically
+-sorted within a particular controller. Drivers need to map between the DT GPIO
+-IDs and HW register offsets using a lookup table.
+-
+-Each GPIO controller can generate a number of interrupt signals. Each signal
+-represents the aggregate status for all GPIOs within a set of ports. Thus, the
+-number of interrupt signals generated by a controller varies as a rough function
+-of the number of ports it implements. Note that the HW documentation refers to
+-both the overall controller HW module and the sets-of-ports as "controllers".
+-
+-Each GPIO controller in fact generates multiple interrupts signals for each set
+-of ports. Each GPIO may be configured to feed into a specific one of the
+-interrupt signals generated by a set-of-ports. The intent is for each generated
+-signal to be routed to a different CPU, thus allowing different CPUs to each
+-handle subsets of the interrupts within a port. The status of each of these
+-per-port-set signals is reported via a separate register. Thus, a driver needs
+-to know which status register to observe. This binding currently defines no
+-configuration mechanism for this. By default, drivers should use register
+-GPIO_${port}_INTERRUPT_STATUS_G1_0. Future revisions to the binding could
+-define a property to configure this.
 -
 -Required properties:
--- compatible : "fsl,sgtl5000".
--
--- reg : the I2C address of the device
--
--- #sound-dai-cells: must be equal to 0
--
--- clocks : the clock provider of SYS_MCLK
--
--- VDDA-supply : the regulator provider of VDDA
--
--- VDDIO-supply: the regulator provider of VDDIO
--
--Optional properties:
--
--- VDDD-supply : the regulator provider of VDDD
--
--- micbias-resistor-k-ohms : the bias resistor to be used in kOhms
--	The resistor can take values of 2k, 4k or 8k.
--	If set to 0 it will be off.
--	If this node is not mentioned or if the value is unknown, then
--	micbias	resistor is set to 4K.
--
--- micbias-voltage-m-volts : the bias voltage to be used in mVolts
--	The voltage can take values from 1.25V to 3V by 250mV steps
--	If this node is not mentioned or the value is unknown, then
--	the value is set to 1.25V.
--
--- lrclk-strength: the LRCLK pad strength. Possible values are:
--0, 1, 2 and 3 as per the table below:
--
--VDDIO		1.8V		2.5V		3.3V
--0 = 		Disable
--1 =		1.66 mA		2.87 mA		4.02  mA
--2 =		3.33 mA		5.74 mA		8.03  mA
--3 =		4.99 mA		8.61 mA		12.05 mA
--
--- sclk-strength: the SCLK pad strength. Possible values are:
--0, 1, 2 and 3 as per the table below:
--
--VDDIO		1.8V		2.5V		3.3V
--0 = 		Disable
--1 =		1.66 mA		2.87 mA		4.02  mA
--2 =		3.33 mA		5.74 mA		8.03  mA
--3 =		4.99 mA		8.61 mA		12.05 mA
+-- compatible
+-    Array of strings.
+-    One of:
+-    - "nvidia,tegra186-gpio".
+-    - "nvidia,tegra186-gpio-aon".
+-    - "nvidia,tegra194-gpio".
+-    - "nvidia,tegra194-gpio-aon".
+-- reg-names
+-    Array of strings.
+-    Contains a list of names for the register spaces described by the reg
+-    property. May contain the following entries, in any order:
+-    - "gpio": Mandatory. GPIO control registers. This may cover either:
+-        a) The single physical alias that this OS should use.
+-        b) All physical aliases that exist in the controller. This is
+-           appropriate when the OS is responsible for managing assignment of
+-           the physical aliases.
+-    - "security": Optional. Security configuration registers.
+-    Users of this binding MUST look up entries in the reg property by name,
+-    using this reg-names property to do so.
+-- reg
+-    Array of (physical base address, length) tuples.
+-    Must contain one entry per entry in the reg-names property, in a matching
+-    order.
+-- interrupts
+-    Array of interrupt specifiers.
+-    The interrupt outputs from the HW block, one per set of ports, in the
+-    order the HW manual describes them. The number of entries required varies
+-    depending on compatible value:
+-    - "nvidia,tegra186-gpio": 6 entries.
+-    - "nvidia,tegra186-gpio-aon": 1 entry.
+-    - "nvidia,tegra194-gpio": 6 entries.
+-    - "nvidia,tegra194-gpio-aon": 1 entry.
+-- gpio-controller
+-    Boolean.
+-    Marks the device node as a GPIO controller/provider.
+-- #gpio-cells
+-    Single-cell integer.
+-    Must be <2>.
+-    Indicates how many cells are used in a consumer's GPIO specifier.
+-    In the specifier:
+-    - The first cell is the pin number.
+-        See <dt-bindings/gpio/tegra186-gpio.h>.
+-    - The second cell contains flags:
+-        - Bit 0 specifies polarity
+-            - 0: Active-high (normal).
+-            - 1: Active-low (inverted).
+-- interrupt-controller
+-    Boolean.
+-    Marks the device node as an interrupt controller/provider.
+-- #interrupt-cells
+-    Single-cell integer.
+-    Must be <2>.
+-    Indicates how many cells are used in a consumer's interrupt specifier.
+-    In the specifier:
+-    - The first cell is the GPIO number.
+-        See <dt-bindings/gpio/tegra186-gpio.h>.
+-    - The second cell is contains flags:
+-        - Bits [3:0] indicate trigger type and level:
+-            - 1: Low-to-high edge triggered.
+-            - 2: High-to-low edge triggered.
+-            - 4: Active high level-sensitive.
+-            - 8: Active low level-sensitive.
+-            Valid combinations are 1, 2, 3, 4, 8.
 -
 -Example:
 -
--sgtl5000: codec@a {
--	compatible = "fsl,sgtl5000";
--	reg = <0x0a>;
--	#sound-dai-cells = <0>;
--	clocks = <&clks 150>;
--	micbias-resistor-k-ohms = <2>;
--	micbias-voltage-m-volts = <2250>;
--	VDDA-supply = <&reg_3p3v>;
--	VDDIO-supply = <&reg_3p3v>;
+-#include <dt-bindings/interrupt-controller/irq.h>
+-
+-gpio@2200000 {
+-	compatible = "nvidia,tegra186-gpio";
+-	reg-names = "security", "gpio";
+-	reg =
+-		<0x0 0x2200000 0x0 0x10000>,
+-		<0x0 0x2210000 0x0 0x10000>;
+-	interrupts =
+-		<0 47 IRQ_TYPE_LEVEL_HIGH>,
+-		<0 50 IRQ_TYPE_LEVEL_HIGH>,
+-		<0 53 IRQ_TYPE_LEVEL_HIGH>,
+-		<0 56 IRQ_TYPE_LEVEL_HIGH>,
+-		<0 59 IRQ_TYPE_LEVEL_HIGH>,
+-		<0 180 IRQ_TYPE_LEVEL_HIGH>;
+-	gpio-controller;
+-	#gpio-cells = <2>;
+-	interrupt-controller;
+-	#interrupt-cells = <2>;
 -};
-diff --git a/Documentation/devicetree/bindings/sound/sgtl5000.yaml b/Documentation/devicetree/bindings/sound/sgtl5000.yaml
+-
+-gpio@c2f0000 {
+-	compatible = "nvidia,tegra186-gpio-aon";
+-	reg-names = "security", "gpio";
+-	reg =
+-		<0x0 0xc2f0000 0x0 0x1000>,
+-		<0x0 0xc2f1000 0x0 0x1000>;
+-	interrupts =
+-		<0 60 IRQ_TYPE_LEVEL_HIGH>;
+-	gpio-controller;
+-	#gpio-cells = <2>;
+-	interrupt-controller;
+-	#interrupt-cells = <2>;
+-};
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
 new file mode 100644
-index 000000000000..4f29b63c54d3
+index 000000000000..94cf164c9abf
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/sgtl5000.yaml
-@@ -0,0 +1,103 @@
-+# SPDX-License-Identifier: GPL-2.0-only
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+@@ -0,0 +1,215 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/sound/sgtl5000.yaml#
++$id: http://devicetree.org/schemas/gpio/nvidia,tegra186-gpio.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Freescale SGTL5000 Stereo Codec
++title: NVIDIA Tegra GPIO Controller (Tegra186 and later)
 +
 +maintainers:
-+  - Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
++  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
++  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++
++description: |
++  Tegra186 contains two GPIO controllers; a main controller and an "AON"
++  controller. This binding document applies to both controllers. The register
++  layouts for the controllers share many similarities, but also some
++  significant differences. Hence, this document describes closely related but
++  different bindings and compatible values.
++
++  The Tegra186 GPIO controller allows software to set the IO direction of,
++  and read/write the value of, numerous GPIO signals. Routing of GPIO signals
++  to package balls is under the control of a separate pin controller hardware
++  block. Two major sets of registers exist:
++
++    a) Security registers, which allow configuration of allowed access to the
++       GPIO register set. These registers exist in a single contiguous block
++       of physical address space. The size of this block, and the security
++       features available, varies between the different GPIO controllers.
++
++       Access to this set of registers is not necessary in all circumstances.
++       Code that wishes to configure access to the GPIO registers needs access
++       to these registers to do so. Code which simply wishes to read or write
++       GPIO data does not need access to these registers.
++
++    b) GPIO registers, which allow manipulation of the GPIO signals. In some
++       GPIO controllers, these registers are exposed via multiple "physical
++       aliases" in address space, each of which access the same underlying
++       state. See the hardware documentation for rationale. Any particular
++       GPIO client is expected to access just one of these physical aliases.
++
++    Tegra HW documentation describes a unified naming convention for all GPIOs
++    implemented by the SoC. Each GPIO is assigned to a port, and a port may
++    control a number of GPIOs. Thus, each GPIO is named according to an
++    alphabetical port name and an integer GPIO name within the port. For
++    example, GPIO_PA0, GPIO_PN6, or GPIO_PCC3.
++
++    The number of ports implemented by each GPIO controller varies. The number
++    of implemented GPIOs within each port varies. GPIO registers within a
++    controller are grouped and laid out according to the port they affect.
++
++    The mapping from port name to the GPIO controller that implements that
++    port, and the mapping from port name to register offset within a
++    controller, are both extremely non-linear. The header file
++    <dt-bindings/gpio/tegra186-gpio.h> describes the port-level mapping. In
++    that file, the naming convention for ports matches the HW documentation.
++    The values chosen for the names are alphabetically sorted within a
++    particular controller. Drivers need to map between the DT GPIO IDs and HW
++    register offsets using a lookup table.
++
++    Each GPIO controller can generate a number of interrupt signals. Each
++    signal represents the aggregate status for all GPIOs within a set of
++    ports. Thus, the number of interrupt signals generated by a controller
++    varies as a rough function of the number of ports it implements. Note
++    that the HW documentation refers to both the overall controller HW
++    module and the sets-of-ports as "controllers".
++
++    Each GPIO controller in fact generates multiple interrupts signals for
++    each set of ports. Each GPIO may be configured to feed into a specific
++    one of the interrupt signals generated by a set-of-ports. The intent is
++    for each generated signal to be routed to a different CPU, thus allowing
++    different CPUs to each handle subsets of the interrupts within a port.
++    The status of each of these per-port-set signals is reported via a
++    separate register. Thus, a driver needs to know which status register to
++    observe. This binding currently defines no configuration mechanism for
++    this. By default, drivers should use register
++    GPIO_${port}_INTERRUPT_STATUS_G1_0. Future revisions to the binding could
++    define a property to configure this.
 +
 +properties:
 +  compatible:
-+    const: fsl,sgtl5000
++    enum:
++      - nvidia,tegra186-gpio
++      - nvidia,tegra186-gpio-aon
++      - nvidia,tegra194-gpio
++      - nvidia,tegra194-gpio-aon
++
++  reg-names:
++    items:
++      - const: security
++      - const: gpio
++    minItems: 1
++    maxItems: 2
 +
 +  reg:
-+    maxItems: 1
-+
-+  "#sound-dai-cells":
-+    const: 0
-+
-+  clocks:
 +    items:
-+      - description: the clock provider of SYS_MCLK
++      - description: |
++          GPIO control registers. This may cover either:
 +
-+  VDDA-supply:
-+    description: the regulator provider of VDDA
++            a) The single physical alias that this OS should use.
++            b) All physical aliases that exist in the controller. This is
++               appropriate when the OS is responsible for managing assignment
++               of the physical aliases.
++      - description: Security configuration registers.
++    minItems: 1
++    maxItems: 2
 +
-+  VDDIO-supply:
-+    description: the regulator provider of VDDIO
++  interrupts:
++    description: The interrupt outputs from the HW block, one per set of
++      ports, in the order the HW manual describes them. The number of entries
++      required varies depending on compatible value.
 +
-+  VDDD-supply:
-+    description: the regulator provider of VDDD
++  gpio-controller:
++    description: Marks the device node as a GPIO controller/provider.
++    type: boolean
 +
-+  micbias-resistor-k-ohms:
-+    description: The bias resistor to be used in kOhms. The resistor can take
-+      values of 2k, 4k or 8k. If set to 0 it will be off. If this node is not
-+      mentioned or if the value is unknown, then micbias resistor is set to
-+      4k.
-+    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    enum: [ 0, 2, 4, 8 ]
-+
-+  micbias-voltage-m-volts:
-+    description: The bias voltage to be used in mVolts. The voltage can take
-+      values from 1.25V to 3V by 250mV steps. If this node is not mentioned
-+      or the value is unknown, then the value is set to 1.25V.
-+    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    enum: [ 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000 ]
-+
-+  lrclk-strength:
++  "#gpio-cells":
 +    description: |
-+      The LRCLK pad strength. Possible values are: 0, 1, 2 and 3 as per the
-+      table below:
++      Indicates how many cells are used in a consumer's GPIO specifier. In the
++      specifier:
 +
-+        VDDIO		1.8V		2.5V		3.3V
-+        0 =		Disable
-+        1 =		1.66 mA		2.87 mA		4.02  mA
-+        2 =		3.33 mA		5.74 mA		8.03  mA
-+        3 =		4.99 mA		8.61 mA		12.05 mA
-+    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    enum: [ 0, 1, 2, 3 ]
++        - The first cell is the pin number.
++          See <dt-bindings/gpio/tegra186-gpio.h>.
++        - The second cell contains flags:
++          - Bit 0 specifies polarity
++            - 0: Active-high (normal).
++            - 1: Active-low (inverted).
++    const: 2
 +
-+  sclk-strength:
++  interrupt-controller:
++    description: Marks the device node as an interrupt controller/provider.
++    type: boolean
++
++  "#interrupt-cells":
 +    description: |
-+      The SCLK pad strength. Possible values are: 0, 1, 2 and 3 as per the
-+      table below:
++      Indicates how many cells are used in a consumer's interrupt specifier.
++      In the specifier:
 +
-+        VDDIO		1.8V		2.5V		3.3V
-+        0 =		Disable
-+        1 =		1.66 mA		2.87 mA		4.02  mA
-+        2 =		3.33 mA		5.74 mA		8.03  mA
-+        3 =		4.99 mA		8.61 mA		12.05 mA
-+    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    enum: [ 0, 1, 2, 3 ]
++        - The first cell is the GPIO number.
++          See <dt-bindings/gpio/tegra186-gpio.h>.
++        - The second cell is contains flags:
++          - Bits [3:0] indicate trigger type and level:
++            - 1: Low-to-high edge triggered.
++            - 2: High-to-low edge triggered.
++            - 4: Active high level-sensitive.
++            - 8: Active low level-sensitive.
++
++            Valid combinations are 1, 2, 3, 4, 8.
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - nvidia,tegra186-gpio
++              - nvidia,tegra194-gpio
++    then:
++      properties:
++        interrupts:
++          minItems: 6
++          maxItems: 6
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - nvidia,tegra186-gpio-aon
++              - nvidia,tegra194-gpio-aon
++    then:
++      properties:
++        interrupts:
++          minItems: 1
++          maxItems: 1
 +
 +required:
 +  - compatible
 +  - reg
-+  - "#sound-dai-cells"
-+  - clocks
-+  - VDDA-supply
-+  - VDDIO-supply
++  - reg-names
++  - interrupts
 +
-+additionalProperties: false
++unevaluatedProperties: false
 +
 +examples:
 +  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++    #include <dt-bindings/interrupt-controller/irq.h>
 +
-+        codec@a {
-+            compatible = "fsl,sgtl5000";
-+            reg = <0x0a>;
-+            #sound-dai-cells = <0>;
-+            clocks = <&clks 150>;
-+            micbias-resistor-k-ohms = <2>;
-+            micbias-voltage-m-volts = <2250>;
-+            VDDA-supply = <&reg_3p3v>;
-+            VDDIO-supply = <&reg_3p3v>;
-+        };
++    gpio@2200000 {
++        compatible = "nvidia,tegra186-gpio";
++        reg-names = "security", "gpio";
++        reg = <0x0 0x2200000 0x0 0x10000>,
++              <0x0 0x2210000 0x0 0x10000>;
++        interrupts = <0 47 IRQ_TYPE_LEVEL_HIGH>,
++                     <0 50 IRQ_TYPE_LEVEL_HIGH>,
++                     <0 53 IRQ_TYPE_LEVEL_HIGH>,
++                     <0 56 IRQ_TYPE_LEVEL_HIGH>,
++                     <0 59 IRQ_TYPE_LEVEL_HIGH>,
++                     <0 180 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
 +    };
-+...
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 4165352a590a..b7e94fe8643f 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -80,8 +80,6 @@ properties:
-           - fsl,mpl3115
-             # MPR121: Proximity Capacitive Touch Sensor Controller
-           - fsl,mpr121
--            # SGTL5000: Ultra Low-Power Audio Codec
--          - fsl,sgtl5000
-             # G751: Digital Temperature Sensor and Thermal Watchdog with Two-Wire Interface
-           - gmt,g751
-             # Infineon IR38064 Voltage Regulator
++
++    gpio@c2f0000 {
++        compatible = "nvidia,tegra186-gpio-aon";
++        reg-names = "security", "gpio";
++        reg = <0x0 0xc2f0000 0x0 0x1000>,
++              <0x0 0xc2f1000 0x0 0x1000>;
++        interrupts = <0 60 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++    };
 -- 
 2.24.1
