@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 25/38] dt-bindings: gpio: tegra: Convert to json-schema
-Date: Fri, 12 Jun 2020 16:18:50 +0200
-Message-ID: <20200612141903.2391044-26-thierry.reding@gmail.com>
+Subject: [PATCH 27/38] dt-bindings: tegra: Add missing compatible strings
+Date: Fri, 12 Jun 2020 16:18:52 +0200
+Message-ID: <20200612141903.2391044-28-thierry.reding@gmail.com>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,179 +14,87 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Convert the NVIDIA Tegra GPIO controller device tree bindings from
-free-form text format to json-schema.
+The Nyan Blaze and Nyan Big, as well as Jetson Nano (P3450-0000), Darcy
+(P2894-0050-A08) and Pixel C (Smaug) were never mentioned. Add them.
+
+While at it, also fix a typo in the compatible string for Apalis Tegra30
+v1.1 evaluation board.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/gpio/nvidia,tegra20-gpio.txt     |  40 -------
- .../bindings/gpio/nvidia,tegra20-gpio.yaml    | 111 ++++++++++++++++++
- 2 files changed, 111 insertions(+), 40 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
+ .../devicetree/bindings/arm/tegra.yaml        | 46 ++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt
-deleted file mode 100644
-index 023c9526e5f8..000000000000
---- a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt
-+++ /dev/null
-@@ -1,40 +0,0 @@
--NVIDIA Tegra GPIO controller
--
--Required properties:
--- compatible : "nvidia,tegra<chip>-gpio"
--- reg : Physical base address and length of the controller's registers.
--- interrupts : The interrupt outputs from the controller. For Tegra20,
--  there should be 7 interrupts specified, and for Tegra30, there should
--  be 8 interrupts specified.
--- #gpio-cells : Should be two. The first cell is the pin number and the
--  second cell is used to specify optional parameters:
--  - bit 0 specifies polarity (0 for normal, 1 for inverted)
--- gpio-controller : Marks the device node as a GPIO controller.
--- #interrupt-cells : Should be 2.
--  The first cell is the GPIO number.
--  The second cell is used to specify flags:
--    bits[3:0] trigger type and level flags:
--      1 = low-to-high edge triggered.
--      2 = high-to-low edge triggered.
--      4 = active high level-sensitive.
--      8 = active low level-sensitive.
--      Valid combinations are 1, 2, 3, 4, 8.
--- interrupt-controller : Marks the device node as an interrupt controller.
--
--Example:
--
--gpio: gpio@6000d000 {
--	compatible = "nvidia,tegra20-gpio";
--	reg = < 0x6000d000 0x1000 >;
--	interrupts = < 0 32 0x04
--		       0 33 0x04
--		       0 34 0x04
--		       0 35 0x04
--		       0 55 0x04
--		       0 87 0x04
--		       0 89 0x04 >;
--	#gpio-cells = <2>;
--	gpio-controller;
--	#interrupt-cells = <2>;
--	interrupt-controller;
--};
-diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
-new file mode 100644
-index 000000000000..b2debdb0caff
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
-@@ -0,0 +1,111 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/nvidia,tegra20-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra GPIO Controller (Tegra20 - Tegra210)
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: nvidia,tegra20-gpio
-+      - const: nvidia,tegra30-gpio
+diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+index 60b38eb5c61a..043ca543be8c 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+@@ -49,7 +49,7 @@ properties:
+           - const: toradex,apalis_t30
+           - const: nvidia,tegra30
+       - items:
+-          - const: toradex,apalis_t30-eval-v1.1
++          - const: toradex,apalis_t30-v1.1-eval
+           - const: toradex,apalis_t30-eval
+           - const: toradex,apalis_t30-v1.1
+           - const: toradex,apalis_t30
+@@ -80,6 +80,33 @@ properties:
+           - const: toradex,apalis-tk1-v1.2
+           - const: toradex,apalis-tk1
+           - const: nvidia,tegra124
 +      - items:
-+          - enum:
-+              - nvidia,tegra114-gpio
-+              - nvidia,tegra124-gpio
-+              - nvidia,tegra210-gpio
-+          - const: nvidia,tegra30-gpio
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    description: The interrupt outputs from the controller. For Tegra20,
-+      there should be 7 interrupts specified, and for Tegra30, there should
-+      be 8 interrupts specified.
-+
-+  "#gpio-cells":
-+    description: The first cell is the pin number and the second cell is used
-+      to specify the GPIO polarity (0 = active high, 1 = active low).
-+    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    const: 2
-+
-+  gpio-controller:
-+    description: Marks the device node as a GPIO controller.
-+    type: boolean
-+
-+  "#interrupt-cells":
-+    description: |
-+      Should be 2. The first cell is the GPIO number. The second cell is
-+      used to specify flags:
-+
-+        bits[3:0] trigger type and level flags:
-+          1 = low-to-high edge triggered.
-+          2 = high-to-low edge triggered.
-+          4 = active high level-sensitive.
-+          8 = active low level-sensitive.
-+
-+      Valid combinations are 1, 2, 3, 4, 8.
-+    const: 2
-+
-+  interrupt-controller:
-+    description: Marks the device node as an interrupt controller.
-+
-+patternProperties:
-+  # GPIO hogs; /schemas/gpio/gpio-hog.yaml will match
-+  "^gpios(-[a-zA-Z0-9-]+)?$":
-+    type: object
-+    required:
-+      - gpio-hog
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra30-gpio
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 8
-+          maxItems: 8
-+    else:
-+      properties:
-+        interrupts:
-+          minItems: 7
-+          maxItems: 7
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - "#gpio-cells"
-+  - gpio-controller
-+  - "#interrupt-cells"
-+  - interrupt-controller
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    gpio: gpio@6000d000 {
-+        compatible = "nvidia,tegra20-gpio";
-+        reg = <0x6000d000 0x1000>;
-+        interrupts = <0 32 0x04>,
-+                     <0 33 0x04>,
-+                     <0 34 0x04>,
-+                     <0 35 0x04>,
-+                     <0 55 0x04>,
-+                     <0 87 0x04>,
-+                     <0 89 0x04>;
-+        #gpio-cells = <2>;
-+        gpio-controller;
-+        #interrupt-cells = <2>;
-+        interrupt-controller;
-+    };
++          - const: google,nyan-big-rev7
++          - const: google,nyan-big-rev6
++          - const: google,nyan-big-rev5
++          - const: google,nyan-big-rev4
++          - const: google,nyan-big-rev3
++          - const: google,nyan-big-rev2
++          - const: google,nyan-big-rev1
++          - const: google,nyan-big-rev0
++          - const: google,nyan-big
++          - const: google,nyan
++          - const: nvidia,tegra124
++      - items:
++          - const: google,nyan-blaze-rev10
++          - const: google,nyan-blaze-rev9
++          - const: google,nyan-blaze-rev8
++          - const: google,nyan-blaze-rev7
++          - const: google,nyan-blaze-rev6
++          - const: google,nyan-blaze-rev5
++          - const: google,nyan-blaze-rev4
++          - const: google,nyan-blaze-rev3
++          - const: google,nyan-blaze-rev2
++          - const: google,nyan-blaze-rev1
++          - const: google,nyan-blaze-rev0
++          - const: google,nyan-blaze
++          - const: google,nyan
++          - const: nvidia,tegra124
+       - items:
+           - enum:
+               - nvidia,norrin
+@@ -91,7 +118,22 @@ properties:
+               - nvidia,p2371-0000
+               - nvidia,p2371-2180
+               - nvidia,p2571
+-              - nvidia,p2894-0050-a08
++              - nvidia,p3450-0000
++          - const: nvidia,tegra210
++      - items:
++          - const: nvidia,p2894-0050-a08
++          - const: nvidia,darcy
++          - const: nvidia,tegra210
++      - items:
++          - const: google,smaug-rev8
++          - const: google,smaug-rev7
++          - const: google,smaug-rev6
++          - const: google,smaug-rev5
++          - const: google,smaug-rev4
++          - const: google,smaug-rev3
++          - const: google,smaug-rev2
++          - const: google,smaug-rev1
++          - const: google,smaug
+           - const: nvidia,tegra210
+       - items:
+           - enum:
 -- 
 2.24.1
