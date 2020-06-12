@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 32/38] dt-bindings: leds: Document rfkill* trigger
-Date: Fri, 12 Jun 2020 16:18:57 +0200
-Message-ID: <20200612141903.2391044-33-thierry.reding@gmail.com>
+Subject: [PATCH 34/38] dt-bindings: memory-controller: Fix "reg" entries on Tegra194
+Date: Fri, 12 Jun 2020 16:18:59 +0200
+Message-ID: <20200612141903.2391044-35-thierry.reding@gmail.com>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,51 +14,99 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-LEDs can use rfkill events as a trigger source, so document these in the
-device tree bindings.
+The Tegra194 memory controller needs a couple more "reg" entries.
+Document this properly so that device trees can be validated.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/leds/common.yaml        | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ .../nvidia,tegra186-mc.yaml                   | 39 ++++++++++++++-----
+ 1 file changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-index a2a541bca73c..6619d1ff1031 100644
---- a/Documentation/devicetree/bindings/leds/common.yaml
-+++ b/Documentation/devicetree/bindings/leds/common.yaml
-@@ -79,24 +79,25 @@ properties:
-       the LED.
-     $ref: /schemas/types.yaml#definitions/string
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+index 774b04d0da0d..b04485c5cf5f 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+@@ -27,13 +27,15 @@ properties:
+     pattern: "^memory-controller@[0-9a-f]+$"
  
--    enum:
+   compatible:
+-    items:
+-      - enum:
+-          - nvidia,tegra186-mc
+-          - nvidia,tegra194-mc
 +    oneOf:
-         # LED will act as a back-light, controlled by the framebuffer system
--      - backlight
-+      - const: backlight
-         # LED will turn on (but for leds-gpio see "default-state" property in
-         # Documentation/devicetree/bindings/leds/leds-gpio.yaml)
--      - default-on
-+      - const: default-on
-         # LED "double" flashes at a load average based rate
--      - heartbeat
-+      - const: heartbeat
-         # LED indicates disk activity
--      - disk-activity
-+      - const: disk-activity
-         # LED indicates IDE disk activity (deprecated), in new implementations
-         # use "disk-activity"
--      - ide-disk
-+      - const: ide-disk
-         # LED flashes at a fixed, configurable rate
--      - timer
-+      - const: timer
-         # LED alters the brightness for the specified duration with one software
-         # timer (requires "led-pattern" property)
--      - pattern
-+      - const: pattern
-+      - pattern: "^rfkill[0-9]+$"
++      - description: NVIDIA Tegra186 memory controller
++        const: nvidia,tegra186-mc
++      - description: NVIDIA Tegra194 memory controller
++        const: nvidia,tegra194-mc
  
-   led-pattern:
-     description: |
+   reg:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 3
+ 
+   interrupts:
+     maxItems: 1
+@@ -74,12 +76,13 @@ patternProperties:
+               - nvidia,tegra186-emc
+               - nvidia,tegra194-emc
+ 
+-      reg:
+-        maxItems: 1
+-
+       interrupts:
+         maxItems: 1
+ 
++      reg:
++        minItems: 1
++        maxItems: 2
++
+       clocks:
+         items:
+           - description: external memory clock
+@@ -107,11 +110,18 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: nvidia,tegra194-mc
++            anyOf:
++              - const: nvidia,tegra194-mc
+     then:
+       properties:
+         reg:
++          minItems: 3
+           maxItems: 3
++    else:
++      properties:
++        reg:
++          minItems: 1
++          maxItems: 1
+ 
+   - if:
+       patternProperties:
+@@ -119,13 +129,22 @@ allOf:
+           properties:
+             compatible:
+               contains:
+-                const: nvidia,tegra194-emc
++                anyOf:
++                  - const: nvidia,tegra194-emc
+     then:
+       patternProperties:
+         "^external-memory-controller@[0-9a-f]+$":
+           properties:
+             reg:
++              minItems: 2
+               maxItems: 2
++    else:
++      patternProperties:
++        "^external-memory-controller@[0-9a-f]+$":
++          properties:
++            reg:
++              minItems: 1
++              maxItems: 1
+ 
+ examples:
+   - |
 -- 
 2.24.1
