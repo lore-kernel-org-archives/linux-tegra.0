@@ -1,52 +1,183 @@
-From: "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Subject: AMD IOMMU + SME + amdgpu regression
-Date: Thu, 11 Jun 2020 19:05:21 -0400
-Message-ID: <1591915710.rakbpzst8h.none@localhost>
-References: <1591915710.rakbpzst8h.none.ref@localhost>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v4 0/7] Support inhibiting input devices
+Date: Fri, 12 Jun 2020 10:14:17 +0200
+Message-ID: <2e4bd050-117c-cc5f-8cf0-055b5304717f@redhat.com>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
+ <964ca07a-3da5-101f-7edf-64bdeec98a4b@redhat.com>
+ <CAJZ5v0hB2ra2K=dd9ZjVyy1V2b1PmFHm79uDO2HtHU1D_4YUbw@mail.gmail.com>
+ <20200610182836.GA248110@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>, Christoph Hellwig <hch@lst.de>
-Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, Daniel Drake <drake@endlessm.com>, jonathan.derrick@intel.com, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.orglinux
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20200610182836.GA248110@dtor-ws>
+Content-Language: en-US
+Sender: linux-input-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, Linux PM <linux-pm@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-input@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, Platform Driver <platform-driver-x86@vger.kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kuk
 List-Id: linux-tegra@vger.kernel.org
 
 Hi,
 
-amdgpu + IOMMU + SME is now working for me on 5.7, yay! But, it is=20
-broken on torvalds master, boo. On boot, depending on which exact commit=20
-I test, it either hangs immediately (with built-in driver, before=20
-starting initramfs), displays some errors then hangs, or spams the=20
-screen with many amdgpu errors.
+On 6/10/20 8:28 PM, Dmitry Torokhov wrote:
+> On Wed, Jun 10, 2020 at 12:38:30PM +0200, Rafael J. Wysocki wrote:
+>> On Wed, Jun 10, 2020 at 11:50 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>>>
+>>> Hi All,
+>>>
+>>> On 6/8/20 1:22 PM, Andrzej Pietrasiewicz wrote:
+>>>> This is a quick respin of v3, with just two small changes, please see
+>>>> the changelog below.
+>>>>
+>>>> Userspace might want to implement a policy to temporarily disregard input
+>>>> from certain devices.
+>>>>
+>>>> An example use case is a convertible laptop, whose keyboard can be folded
+>>>> under the screen to create tablet-like experience. The user then must hold
+>>>> the laptop in such a way that it is difficult to avoid pressing the keyboard
+>>>> keys. It is therefore desirable to temporarily disregard input from the
+>>>> keyboard, until it is folded back. This obviously is a policy which should
+>>>> be kept out of the kernel, but the kernel must provide suitable means to
+>>>> implement such a policy.
+>>>
+>>> First of all sorry to start a somewhat new discussion about this
+>>> while this patch set is also somewhat far along in the review process,
+>>> but I believe what I discuss below needs to be taken into account.
+>>>
+>>> Yesterday I have been looking into why an Asus T101HA would not stay
+>>> suspended when the LID is closed. The cause is that the USB HID multi-touch
+>>> touchpad in the base of the device starts sending events when the screen
+>>> gets close to the touchpad (so when the LID is fully closed) and these
+>>> events are causing a wakeup from suspend. HID multi-touch devices
+>>> do have a way to tell them to fully stop sending events, also disabling
+>>> the USB remote wakeup the device is doing. The question is when to tell
+>>> it to not send events though ...
+>>>
+>>> So now I've been thinking about how to fix this and I believe that there
+>>> is some interaction between this problem and this patch-set.
+>>>
+>>> The problem I'm seeing on the T101HA is about wakeups, so the question
+>>> which I want to discuss is:
+>>>
+>>> 1. How does inhibiting interact with enabling /
+>>> disabling the device as a wakeup source ?
+> 
+> One should not affect the other.
+> 
+>>>
+>>> 2. Since we have now made inhibiting equal open/close how does open/close
+>>> interact with a device being a wakeup source ?
+> 
+> One did not affect another, and it should not.
+> 
+>>>
+>>> And my own initial (to be discussed) answers to these questions:
+>>>
+>>> 1. It seems to me that when a device is inhibited it should not be a
+>>> wakeup source, so where possible a input-device-driver should disable
+>>> a device's wakeup capabilities on suspend if inhibited
+>>
+>> If "inhibit" means "do not generate any events going forward", then
+>> this must also cover wakeup events, so I agree.
+> 
+> Why? These are separate concepts. Do we disable wake on lan when
+> bringing network interface down? Do we update power/wakeup when device
+> is inhibited? Do we restore it afterwards? Do we un-inhibit if we
+> reenable wakeup after device is inhibited? Do we return error? How?
+> 
+> Inhibit works on logical level, i.e. if I have several input interfaces
+> on the same hardware device, I cam inhibit one leaving others intact.
+> This does not mean that the device should stop generating wakeup events.
+> We can't even guarantee this for composite devices.
 
-I bisected the black screen hang to:
+After thinking more about this I believe you are right and we should
+keep these as 2 separate, completely independent settings.
 
-commit dce8d6964ebdb333383bacf5e7ab8c27df151218
-Author: Joerg Roedel <jroedel@suse.de>
-Date:   Wed Apr 29 15:36:53 2020 +0200
+Especially since the wakeup setting typically is a setting of the
+parent device, where as the inhibit is done on the actual input-dev.
 
-    iommu/amd: Convert to probe/release_device() call-backs
+###
 
-    Convert the AMD IOMMU Driver to use the probe_device() and
-    release_device() call-backs of iommu_ops, so that the iommu core code
-    does the group and sysfs setup.
+Some quick background info on my original thoughts here, as mentioned
+I started thinking about this because of spurious wakeups from suspend
+when the lid of an asus t101ha is "touching" its touchpad. The HID
+multi-touch protocol has a setting where we can ask the device to
+stop sending events. So even though the kbd + touchpad are a
+single composite USB device, we can disable wakeup (in a way)
+for just the touchpad at the hid-multitouch level.
 
-    Signed-off-by: Joerg Roedel <jroedel@suse.de>
-    Link: https://lore.kernel.org/r/20200429133712.31431-16-joro@8bytes.org
-    Signed-off-by: Joerg Roedel <jroedel@suse.de>
+So I was thinking maybe adding a separate wakeup setting to the
+input device itself for this. But thinking more about it, when
+the lid is closed we can just disable wakeup on the entire USB
+device, since the keyboard is covered by the lid too.
 
-Testing torvalds master (623f6dc593) with the containing merge=20
-(98bdc74b36) plus the DMA mapping merge (4e94d08734) reverted allows=20
-amdgpu + IOMMU + SME to once again work.
+And then on suspend the hid-multitouch driver can detect that its
+parent (or parents parent in the case of USB) has wakeup disabled
+and also tell the device to stop scanning for fingers to save some
+power.
 
-I think that nobody is really working on amdgpu + SME, but it would be a=20
-shame if it was supported and then incidentally broken by a small=20
-change.
+We probably also need a close and open callbacks add the HID-driver
+level, so that if there are no touchpad users we can also use
+the same option to put the HID multi-touch device in a low power mode
+where it does not scan for fingers.
 
-I am using an ASRock B450 Pro4 with Ryzen 1600 and ASUS RX 480. I don't=20
-understand this code at all, but let me know what I can do to=20
-troubleshoot.
+<snip>
 
-Thanks,
-Alex.
+>>> A different, but related issue is how to make devices actually use the
+>>> new inhibit support on the builtin keyboard + touchpad when say the lid
+>>> is closed.   Arguably this is an userspace problem, but it is a tricky
+>>> one. Currently on most modern Linux distributions suspend-on-lid-close
+>>> is handled by systemd-logind and most modern desktop-environments are
+>>> happy to have logind handle this for them.
+>>>
+>>> But most knowledge about input devices and e.g. heurisitics to decide
+>>> if a touchpad is internal or external are part of libinput. Now we could
+>>> have libinput use the new inhibit support (1), but then when the lid
+>>> closes we get race between whatever process is using libinput trying
+>>> to inhibit the touchpad (which must be done before to suspend to disable
+>>> it as wakeup source) and logind trying to suspend the system.
+>>>
+>>> One solution here would be to move the setting of the inhibit sysfs
+>>> attr into logind, but that requires adding a whole bunch of extra
+>>> knowledge to logind which does not really belong there IMHO.
+> 
+> You do not need to push the knowledge into logind, you just need to
+> communicate to logind what devices can be wakeup sources and which ones
+> should not. Chrome OS uses udev tags/properties for that.
+
+True, I did not think of doing the tag thingie + letting logind do
+the inhibit on LID close based on that. logind could also disable
+wakeup (to save power while suspended) on devices which are tagged
+for it to do that (should probably be a separate tag from the
+inhibit tag).
+
+>>> I've been thinking a bit about this and to me it seems that the kernel
+>>> is in the ideal position to automatically inhibit some devices when
+>>> some EV_SW transitions from 0->1 (and uninhibit again on 1->0). The
+>>> issue here is to chose on which devices to enable this. I believe
+>>> that the auto inhibit on some switches mechanism is best done inside
+>>> the kernel (disabled by default) and then we can have a sysfs
+>>> attr called auto_inhibit_ev_sw_mask which can be set to e.g.
+>>> (1 << SW_LID) to make the kernel auto-inhibit the input-device whenever
+>>> the lid is closed, or to ((1 << SW_LID) | (1 << SW_TABLET_MODE)) to
+>>> inhibit both when the lid is closed or when switched to tablet mode.
+> 
+> This is a policy and should be kept out of the kernel. Yes, we had it
+> implemented with rfkill input handler, but it caused quite a few issues.
+> As far as I know it is not being used anymore and we should not try with
+> SW_LID->inhibit either.
+> 
+> I know it is faster to patch the kernel than to roll out proper
+> userspace because everyone updates kernel regularly, but it does not
+> mean it is the right solution.
+
+Agreed, I just could not come up with a clean userspace solution, but
+using udev+hwdb to set a tag for logind instead of having the write
+to a new auto_inhibit_ev_sw_mask will work nicely.
+
+So I think this is all resolved now (or at least we have a plan for it).
+
+Regards,
+
+Hans
