@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 27/38] dt-bindings: tegra: Add missing compatible strings
-Date: Fri, 12 Jun 2020 16:18:52 +0200
-Message-ID: <20200612141903.2391044-28-thierry.reding@gmail.com>
+Subject: [PATCH 26/38] dt-bindings: pci: iommu: Convert to json-schema
+Date: Fri, 12 Jun 2020 16:18:51 +0200
+Message-ID: <20200612141903.2391044-27-thierry.reding@gmail.com>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,87 +14,367 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Nyan Blaze and Nyan Big, as well as Jetson Nano (P3450-0000), Darcy
-(P2894-0050-A08) and Pixel C (Smaug) were never mentioned. Add them.
-
-While at it, also fix a typo in the compatible string for Apalis Tegra30
-v1.1 evaluation board.
+Convert the PCI IOMMU device tree bindings from free-form text format to
+json-schema.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/arm/tegra.yaml        | 46 ++++++++++++++++++-
- 1 file changed, 44 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/pci/pci-iommu.txt     | 171 ------------------
+ .../devicetree/bindings/pci/pci-iommu.yaml    | 168 +++++++++++++++++
+ 2 files changed, 168 insertions(+), 171 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pci/pci-iommu.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/pci-iommu.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index 60b38eb5c61a..043ca543be8c 100644
---- a/Documentation/devicetree/bindings/arm/tegra.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -49,7 +49,7 @@ properties:
-           - const: toradex,apalis_t30
-           - const: nvidia,tegra30
-       - items:
--          - const: toradex,apalis_t30-eval-v1.1
-+          - const: toradex,apalis_t30-v1.1-eval
-           - const: toradex,apalis_t30-eval
-           - const: toradex,apalis_t30-v1.1
-           - const: toradex,apalis_t30
-@@ -80,6 +80,33 @@ properties:
-           - const: toradex,apalis-tk1-v1.2
-           - const: toradex,apalis-tk1
-           - const: nvidia,tegra124
-+      - items:
-+          - const: google,nyan-big-rev7
-+          - const: google,nyan-big-rev6
-+          - const: google,nyan-big-rev5
-+          - const: google,nyan-big-rev4
-+          - const: google,nyan-big-rev3
-+          - const: google,nyan-big-rev2
-+          - const: google,nyan-big-rev1
-+          - const: google,nyan-big-rev0
-+          - const: google,nyan-big
-+          - const: google,nyan
-+          - const: nvidia,tegra124
-+      - items:
-+          - const: google,nyan-blaze-rev10
-+          - const: google,nyan-blaze-rev9
-+          - const: google,nyan-blaze-rev8
-+          - const: google,nyan-blaze-rev7
-+          - const: google,nyan-blaze-rev6
-+          - const: google,nyan-blaze-rev5
-+          - const: google,nyan-blaze-rev4
-+          - const: google,nyan-blaze-rev3
-+          - const: google,nyan-blaze-rev2
-+          - const: google,nyan-blaze-rev1
-+          - const: google,nyan-blaze-rev0
-+          - const: google,nyan-blaze
-+          - const: google,nyan
-+          - const: nvidia,tegra124
-       - items:
-           - enum:
-               - nvidia,norrin
-@@ -91,7 +118,22 @@ properties:
-               - nvidia,p2371-0000
-               - nvidia,p2371-2180
-               - nvidia,p2571
--              - nvidia,p2894-0050-a08
-+              - nvidia,p3450-0000
-+          - const: nvidia,tegra210
-+      - items:
-+          - const: nvidia,p2894-0050-a08
-+          - const: nvidia,darcy
-+          - const: nvidia,tegra210
-+      - items:
-+          - const: google,smaug-rev8
-+          - const: google,smaug-rev7
-+          - const: google,smaug-rev6
-+          - const: google,smaug-rev5
-+          - const: google,smaug-rev4
-+          - const: google,smaug-rev3
-+          - const: google,smaug-rev2
-+          - const: google,smaug-rev1
-+          - const: google,smaug
-           - const: nvidia,tegra210
-       - items:
-           - enum:
+diff --git a/Documentation/devicetree/bindings/pci/pci-iommu.txt b/Documentation/devicetree/bindings/pci/pci-iommu.txt
+deleted file mode 100644
+index 0def586fdcdf..000000000000
+--- a/Documentation/devicetree/bindings/pci/pci-iommu.txt
++++ /dev/null
+@@ -1,171 +0,0 @@
+-This document describes the generic device tree binding for describing the
+-relationship between PCI(e) devices and IOMMU(s).
+-
+-Each PCI(e) device under a root complex is uniquely identified by its Requester
+-ID (AKA RID). A Requester ID is a triplet of a Bus number, Device number, and
+-Function number.
+-
+-For the purpose of this document, when treated as a numeric value, a RID is
+-formatted such that:
+-
+-* Bits [15:8] are the Bus number.
+-* Bits [7:3] are the Device number.
+-* Bits [2:0] are the Function number.
+-* Any other bits required for padding must be zero.
+-
+-IOMMUs may distinguish PCI devices through sideband data derived from the
+-Requester ID. While a given PCI device can only master through one IOMMU, a
+-root complex may split masters across a set of IOMMUs (e.g. with one IOMMU per
+-bus).
+-
+-The generic 'iommus' property is insufficient to describe this relationship,
+-and a mechanism is required to map from a PCI device to its IOMMU and sideband
+-data.
+-
+-For generic IOMMU bindings, see
+-Documentation/devicetree/bindings/iommu/iommu.txt.
+-
+-
+-PCI root complex
+-================
+-
+-Optional properties
+--------------------
+-
+-- iommu-map: Maps a Requester ID to an IOMMU and associated IOMMU specifier
+-  data.
+-
+-  The property is an arbitrary number of tuples of
+-  (rid-base,iommu,iommu-base,length).
+-
+-  Any RID r in the interval [rid-base, rid-base + length) is associated with
+-  the listed IOMMU, with the IOMMU specifier (r - rid-base + iommu-base).
+-
+-- iommu-map-mask: A mask to be applied to each Requester ID prior to being
+-  mapped to an IOMMU specifier per the iommu-map property.
+-
+-
+-Example (1)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	iommu: iommu@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the IOMMU is the RID,
+-		 * identity-mapped.
+-		 */
+-		iommu-map = <0x0 &iommu 0x0 0x10000>;
+-	};
+-};
+-
+-
+-Example (2)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	iommu: iommu@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the IOMMU is the RID with the
+-		 * function bits masked out.
+-		 */
+-		iommu-map = <0x0 &iommu 0x0 0x10000>;
+-		iommu-map-mask = <0xfff8>;
+-	};
+-};
+-
+-
+-Example (3)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	iommu: iommu@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the IOMMU is the RID,
+-		 * but the high bits of the bus number are flipped.
+-		 */
+-		iommu-map = <0x0000 &iommu 0x8000 0x8000>,
+-			    <0x8000 &iommu 0x0000 0x8000>;
+-	};
+-};
+-
+-
+-Example (4)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	iommu_a: iommu@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	iommu_b: iommu@b {
+-		reg = <0xb 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	iommu_c: iommu@c {
+-		reg = <0xc 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * Devices with bus number 0-127 are mastered via IOMMU
+-		 * a, with sideband data being RID[14:0].
+-		 * Devices with bus number 128-255 are mastered via
+-		 * IOMMU b, with sideband data being RID[14:0].
+-		 * No devices master via IOMMU c.
+-		 */
+-		iommu-map = <0x0000 &iommu_a 0x0000 0x8000>,
+-			    <0x8000 &iommu_b 0x0000 0x8000>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/pci/pci-iommu.yaml b/Documentation/devicetree/bindings/pci/pci-iommu.yaml
+new file mode 100644
+index 000000000000..8aaa8e657559
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/pci-iommu.yaml
+@@ -0,0 +1,168 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/pci-iommu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: PCI IOMMU bindings
++
++maintainers:
++  - Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
++
++description: |
++  This document describes the generic device tree binding for describing the
++  relationship between PCI(e) devices and IOMMU(s).
++
++  Each PCI(e) device under a root complex is uniquely identified by its
++  Requester ID (AKA RID). A Requester ID is a triplet of a Bus number, Device
++  number, and Function number.
++
++  For the purpose of this document, when treated as a numeric value, a RID is
++  formatted such that:
++
++    * Bits [15:8] are the Bus number.
++    * Bits [7:3] are the Device number.
++    * Bits [2:0] are the Function number.
++    * Any other bits required for padding must be zero.
++
++  IOMMUs may distinguish PCI devices through sideband data derived from the
++  Requester ID. While a given PCI device can only master through one IOMMU, a
++  root complex may split masters across a set of IOMMUs (e.g. with one IOMMU
++  per bus).
++
++  The generic 'iommus' property is insufficient to describe this relationship,
++  and a mechanism is required to map from a PCI device to its IOMMU and
++  sideband data.
++
++  For generic IOMMU bindings, see
++  Documentation/devicetree/bindings/iommu/iommu.txt.
++
++properties:
++  iommu-map:
++    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    description: |
++      Maps a Requester ID to an IOMMU and associated IOMMU specifier data.
++
++      The property is an arbitrary number of tuples of (rid-base, iommu,
++      iommu-base, length).
++
++      Any RID r in the interval [rid-base, rid-base + length) is associated
++      with the listed IOMMU, with the IOMMU specifier (r - rid-base +
++      iommu-base).
++
++  iommu-map-mask:
++    $ref: "/schemas/types.yaml#/definitions/uint32"
++    description:
++      A mask to be applied to each Requester ID prior to being mapped to an
++      IOMMU specifier per the iommu-map property.
++
++examples:
++  - |
++    iommu0: iommu@a {
++        reg = <0xa 0x1>;
++        compatible = "vendor,some-iommu";
++        #iommu-cells = <1>;
++    };
++
++    pci@f {
++        reg = <0xf 0x1>;
++        compatible = "vendor,pcie-root-complex";
++        device_type = "pci";
++
++        #address-cells = <3>;
++        #size-cells = <2>;
++        ranges = <0x02000000 0 0x00000000 0x00000000 0 0x00000000>;
++
++        /*
++         * The sideband data provided to the IOMMU is the RID,
++         * identity-mapped.
++         */
++        iommu-map = <0x0 &iommu0 0x0 0x10000>;
++    };
++
++  - |
++    iommu1: iommu@a {
++        reg = <0xa 0x1>;
++        compatible = "vendor,some-iommu";
++        #iommu-cells = <1>;
++    };
++
++    pci@f {
++        reg = <0xf 0x1>;
++        compatible = "vendor,pcie-root-complex";
++        device_type = "pci";
++
++        #address-cells = <3>;
++        #size-cells = <2>;
++        ranges = <0x02000000 0 0x00000000 0x00000000 0 0x00000000>;
++
++        /*
++         * The sideband data provided to the IOMMU is the RID with the
++         * function bits masked out.
++         */
++        iommu-map = <0x0 &iommu 0x0 0x10000>;
++        iommu-map-mask = <0xfff8>;
++    };
++
++  - |
++    iommu2: iommu@a {
++        reg = <0xa 0x1>;
++        compatible = "vendor,some-iommu";
++        #iommu-cells = <1>;
++    };
++
++    pci@f {
++        reg = <0xf 0x1>;
++        compatible = "vendor,pcie-root-complex";
++        device_type = "pci";
++
++        #address-cells = <3>;
++        #size-cells = <2>;
++        ranges = <0x02000000 0 0x00000000 0x00000000 0 0x00000000>;
++
++        /*
++         * The sideband data provided to the IOMMU is the RID,
++         * but the high bits of the bus number are flipped.
++         */
++        iommu-map = <0x0000 &iommu2 0x8000 0x8000>,
++                    <0x8000 &iommu2 0x0000 0x8000>;
++    };
++
++  - |
++    iommu_a: iommu@a {
++        reg = <0xa 0x1>;
++        compatible = "vendor,some-iommu";
++        #iommu-cells = <1>;
++    };
++
++    iommu_b: iommu@b {
++        reg = <0xb 0x1>;
++        compatible = "vendor,some-iommu";
++        #iommu-cells = <1>;
++    };
++
++    iommu_c: iommu@c {
++        reg = <0xc 0x1>;
++        compatible = "vendor,some-iommu";
++        #iommu-cells = <1>;
++    };
++
++    pci@f {
++        reg = <0xf 0x1>;
++        compatible = "vendor,pcie-root-complex";
++        device_type = "pci";
++
++        #address-cells = <3>;
++        #size-cells = <2>;
++        ranges = <0x02000000 0 0x00000000 0x00000000 0 0x00000000>;
++
++        /*
++         * Devices with bus number 0-127 are mastered via IOMMU
++         * a, with sideband data being RID[14:0].
++         * Devices with bus number 128-255 are mastered via
++         * IOMMU b, with sideband data being RID[14:0].
++         * No devices master via IOMMU c.
++         */
++        iommu-map = <0x0000 &iommu_a 0x0000 0x8000>,
++                    <0x8000 &iommu_b 0x0000 0x8000>;
++    };
 -- 
 2.24.1
