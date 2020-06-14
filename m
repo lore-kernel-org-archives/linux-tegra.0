@@ -1,59 +1,158 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v7 3/6] drm/tegra: output: Don't leak OF node on error
-Date: Sun, 14 Jun 2020 20:22:31 +0300
-Message-ID: <20200614172234.8856-4-digetx@gmail.com>
+Subject: [PATCH v7 6/6] drm/tegra: output: rgb: Wrap directly-connected panel into DRM bridge
+Date: Sun, 14 Jun 2020 20:22:34 +0300
+Message-ID: <20200614172234.8856-7-digetx@gmail.com>
 References: <20200614172234.8856-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20200614172234.8856-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The OF node should be put before returning error in tegra_output_probe(),
-otherwise node's refcount will be leaked.
+Currently Tegra DRM driver manually manages display panel, but this
+management could be moved out into DRM core if we'll wrap panel into
+DRM bridge. This patch wraps RGB panel into a DRM bridge and removes
+manual handling of the panel from the RGB output code.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Reviewed-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+Suggested-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Acked-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/output.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/tegra/rgb.c | 70 ++++++++++---------------------------
+ 1 file changed, 18 insertions(+), 52 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index e36e5e7c2f69..a6a711d54e88 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -102,10 +102,10 @@ int tegra_output_probe(struct tegra_output *output)
- 	panel = of_parse_phandle(output->of_node, "nvidia,panel", 0);
- 	if (panel) {
- 		output->panel = of_drm_find_panel(panel);
-+		of_node_put(panel);
-+
- 		if (IS_ERR(output->panel))
- 			return PTR_ERR(output->panel);
--
--		of_node_put(panel);
- 	}
+diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+index 9a7024ec96bc..4142a56ca764 100644
+--- a/drivers/gpu/drm/tegra/rgb.c
++++ b/drivers/gpu/drm/tegra/rgb.c
+@@ -8,7 +8,6 @@
  
- 	output->edid = of_get_property(output->of_node, "nvidia,edid", &size);
-@@ -113,13 +113,12 @@ int tegra_output_probe(struct tegra_output *output)
- 	ddc = of_parse_phandle(output->of_node, "nvidia,ddc-i2c-bus", 0);
- 	if (ddc) {
- 		output->ddc = of_find_i2c_adapter_by_node(ddc);
-+		of_node_put(ddc);
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge_connector.h>
+-#include <drm/drm_panel.h>
+ #include <drm/drm_simple_kms_helper.h>
+ 
+ #include "drm.h"
+@@ -86,45 +85,13 @@ static void tegra_dc_write_regs(struct tegra_dc *dc,
+ 		tegra_dc_writel(dc, table[i].value, table[i].offset);
+ }
+ 
+-static const struct drm_connector_funcs tegra_rgb_connector_funcs = {
+-	.reset = drm_atomic_helper_connector_reset,
+-	.detect = tegra_output_connector_detect,
+-	.fill_modes = drm_helper_probe_single_connector_modes,
+-	.destroy = tegra_output_connector_destroy,
+-	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+-	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+-};
+-
+-static enum drm_mode_status
+-tegra_rgb_connector_mode_valid(struct drm_connector *connector,
+-			       struct drm_display_mode *mode)
+-{
+-	/*
+-	 * FIXME: For now, always assume that the mode is okay. There are
+-	 * unresolved issues with clk_round_rate(), which doesn't always
+-	 * reliably report whether a frequency can be set or not.
+-	 */
+-	return MODE_OK;
+-}
+-
+-static const struct drm_connector_helper_funcs tegra_rgb_connector_helper_funcs = {
+-	.get_modes = tegra_output_connector_get_modes,
+-	.mode_valid = tegra_rgb_connector_mode_valid,
+-};
+-
+ static void tegra_rgb_encoder_disable(struct drm_encoder *encoder)
+ {
+ 	struct tegra_output *output = encoder_to_output(encoder);
+ 	struct tegra_rgb *rgb = to_rgb(output);
+ 
+-	if (output->panel)
+-		drm_panel_disable(output->panel);
+-
+ 	tegra_dc_write_regs(rgb->dc, rgb_disable, ARRAY_SIZE(rgb_disable));
+ 	tegra_dc_commit(rgb->dc);
+-
+-	if (output->panel)
+-		drm_panel_unprepare(output->panel);
+ }
+ 
+ static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
+@@ -133,9 +100,6 @@ static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
+ 	struct tegra_rgb *rgb = to_rgb(output);
+ 	u32 value;
+ 
+-	if (output->panel)
+-		drm_panel_prepare(output->panel);
+-
+ 	tegra_dc_write_regs(rgb->dc, rgb_enable, ARRAY_SIZE(rgb_enable));
+ 
+ 	value = DE_SELECT_ACTIVE | DE_CONTROL_NORMAL;
+@@ -157,9 +121,6 @@ static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
+ 	tegra_dc_writel(rgb->dc, value, DC_DISP_SHIFT_CLOCK_OPTIONS);
+ 
+ 	tegra_dc_commit(rgb->dc);
+-
+-	if (output->panel)
+-		drm_panel_enable(output->panel);
+ }
+ 
+ static int
+@@ -278,6 +239,23 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
+ 	drm_encoder_helper_add(&output->encoder,
+ 			       &tegra_rgb_encoder_helper_funcs);
+ 
++	/*
++	 * Wrap directly-connected panel into DRM bridge in order to let
++	 * DRM core to handle panel for us.
++	 */
++	if (output->panel) {
++		output->bridge = devm_drm_panel_bridge_add(output->dev,
++							   output->panel);
++		if (IS_ERR(output->bridge)) {
++			dev_err(output->dev,
++				"failed to wrap panel into bridge: %pe\n",
++				output->bridge);
++			return PTR_ERR(output->bridge);
++		}
 +
- 		if (!output->ddc) {
- 			err = -EPROBE_DEFER;
--			of_node_put(ddc);
- 			return err;
++		output->panel = NULL;
++	}
++
+ 	/*
+ 	 * Tegra devices that have LVDS panel utilize LVDS encoder bridge
+ 	 * for converting up to 28 LCD LVTTL lanes into 5/4 LVDS lanes that
+@@ -292,8 +270,7 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
+ 	 * Newer device-trees utilize LVDS encoder bridge, which provides
+ 	 * us with a connector and handles the display panel.
+ 	 *
+-	 * For older device-trees we fall back to our own connector and use
+-	 * nvidia,panel phandle.
++	 * For older device-trees we wrapped panel into the panel-bridge.
+ 	 */
+ 	if (output->bridge) {
+ 		err = drm_bridge_attach(&output->encoder, output->bridge,
+@@ -313,17 +290,6 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
  		}
+ 
+ 		drm_connector_attach_encoder(connector, &output->encoder);
+-	} else {
+-		drm_connector_init(drm, &output->connector,
+-				   &tegra_rgb_connector_funcs,
+-				   DRM_MODE_CONNECTOR_LVDS);
+-		drm_connector_helper_add(&output->connector,
+-					 &tegra_rgb_connector_helper_funcs);
+-		output->connector.dpms = DRM_MODE_DPMS_OFF;
 -
--		of_node_put(ddc);
+-		drm_connector_attach_encoder(&output->connector,
+-					     &output->encoder);
+-		drm_connector_register(&output->connector);
  	}
  
- 	output->hpd_gpio = devm_gpiod_get_from_of_node(output->dev,
+ 	err = tegra_output_init(drm, output);
 -- 
 2.26.0
