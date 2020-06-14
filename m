@@ -1,49 +1,36 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 3/6] drm/panel: lvds: Set up panel orientation
-Date: Sun, 14 Jun 2020 22:03:45 +0300
-Message-ID: <20200614190348.12193-4-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 2/6] drm/panel: Set display info in panel attach
+Date: Sun, 14 Jun 2020 22:36:27 +0300
+Message-ID: <81b3ed4b-5cf1-0b61-1457-b07e8d8a2de3@gmail.com>
 References: <20200614190348.12193-1-digetx@gmail.com>
+ <20200614190348.12193-3-digetx@gmail.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200614190348.12193-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, Derek Basehore <dbasehore@chromium.org>, Sam Ravnborg <sam@ravnborg.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sean Paul <sean@poorly.run>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200614190348.12193-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The panel orientation needs to parsed from a device-tree and assigned to
-the panel's connector in order to make orientation property available to
-userspace. That's what this patch does for the generic LVDS panel.
+14.06.2020 22:03, Dmitry Osipenko пишет:
+> From: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> 
+> Devicetree systems can set panel orientation via a panel binding, but
+> there's no way, as is, to propagate this setting to the connector,
+> where the property need to be added.
+> To address this, this patch sets orientation, as well as other fixed
+> values for the panel, in the drm_panel_attach function. These values
+> are stored from probe in the drm_panel struct.
+> 
+> Signed-off-by: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Reviewed-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+> Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/panel/panel-lvds.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
-index 5ce3f4a2b7a1..9421246ac80f 100644
---- a/drivers/gpu/drm/panel/panel-lvds.c
-+++ b/drivers/gpu/drm/panel/panel-lvds.c
-@@ -99,6 +99,7 @@ static int panel_lvds_get_modes(struct drm_panel *panel,
- 	connector->display_info.bus_flags = lvds->data_mirror
- 					  ? DRM_BUS_FLAG_DATA_LSB_TO_MSB
- 					  : DRM_BUS_FLAG_DATA_MSB_TO_LSB;
-+	drm_connector_set_panel_orientation(connector, lvds->panel.orientation);
- 
- 	return 1;
- }
-@@ -223,6 +224,11 @@ static int panel_lvds_probe(struct platform_device *pdev)
- 	drm_panel_init(&lvds->panel, lvds->dev, &panel_lvds_funcs,
- 		       DRM_MODE_CONNECTOR_LVDS);
- 
-+	ret = of_drm_get_panel_orientation(lvds->dev->of_node,
-+					   &lvds->panel.orientation);
-+	if (ret)
-+		return ret;
-+
- 	ret = drm_panel_of_backlight(&lvds->panel);
- 	if (ret)
- 		return ret;
--- 
-2.26.0
+Ah, I just realized that this patch is obsolete now! I also got email
+bounces saying that some email servers didn't like the UTF symbol in
+name of the first email, so will make a v2 shortly.
