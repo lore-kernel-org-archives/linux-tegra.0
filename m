@@ -1,56 +1,76 @@
-From: wu000273-OJFnDUYgAso@public.gmane.org
-Subject: [PATCH] ASoC: tegra: Fix reference count leaks.
-Date: Sat, 13 Jun 2020 15:44:19 -0500
-Message-ID: <20200613204422.24484-1-wu000273@umn.edu>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v7 0/6] Support DRM bridges on NVIDIA Tegra
+Date: Sun, 14 Jun 2020 20:22:28 +0300
+Message-ID: <20200614172234.8856-1-digetx@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kjlu-OJFnDUYgAso@public.gmane.org
-Cc: wu000273-OJFnDUYgAso@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Qiushi Wu <wu000273-OJFnDUYgAso@public.gmane.org>
+Hello,
 
-Calling pm_runtime_get_sync increments the counter even in case of
-failure, causing incorrect ref count if pm_runtime_put is not called in
-error handling paths. Call pm_runtime_put if pm_runtime_get_sync fails.
+This series adds initial support for the DRM bridges to NVIDIA Tegra DRM
+driver. This is required by newer device-trees where we model the LVDS
+encoder bridge properly.
 
-Signed-off-by: Qiushi Wu <wu000273-OJFnDUYgAso@public.gmane.org>
----
- sound/soc/tegra/tegra30_ahub.c | 4 +++-
- sound/soc/tegra/tegra30_i2s.c  | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+Changelog:
 
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 635eacbd28d4..156e3b9d613c 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -643,8 +643,10 @@ static int tegra30_ahub_resume(struct device *dev)
- 	int ret;
- 
- 	ret = pm_runtime_get_sync(dev);
--	if (ret < 0)
-+	if (ret < 0) {
-+		pm_runtime_put(dev);
- 		return ret;
-+	}
- 	ret = regcache_sync(ahub->regmap_ahub);
- 	ret |= regcache_sync(ahub->regmap_apbif);
- 	pm_runtime_put(dev);
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index d59882ec48f1..db5a8587bfa4 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -567,8 +567,10 @@ static int tegra30_i2s_resume(struct device *dev)
- 	int ret;
- 
- 	ret = pm_runtime_get_sync(dev);
--	if (ret < 0)
-+	if (ret < 0) {
-+		pm_runtime_put(dev);
- 		return ret;
-+	}
- 	ret = regcache_sync(i2s->regmap);
- 	pm_runtime_put(dev);
- 
+v7: - Removed the obscure unused structs (which GCC doesn't detect, but CLANG
+      does) in the patch "Wrap directly-connected panel into DRM bridge",
+      which was reported by kernel test robot for v6.
+
+v6: - Added r-b and acks from Rob Herring and Sam Ravnborg.
+
+    - Rebased on a recent linux-next, patches now apply without fuzz.
+
+v5: - Added new patches that make drm_of_find_panel_or_bridge() more usable
+      if graph isn't defined in a device-tree:
+
+        of_graph: add of_graph_get_local_port()
+        drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+
+    - Updated "Support DRM bridges" patch to use drm_of_find_panel_or_bridge()
+      directly and added WARN_ON(output->panel || output->bridge) sanity-check.
+
+    - Added new "Wrap directly-connected panel into DRM bridge" patch, as
+      was suggested by Laurent Pinchart.
+
+v4: - Following review comments that were made by Laurent Pinchart to the v3,
+      we now create and use the "bridge connector".
+
+v3: - Following recommendation from Sam Ravnborg, the new bridge attachment
+      model is now being used, i.e. we ask bridge to *not* create a connector
+      using the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
+
+    - The bridge is now created only for the RGB (LVDS) output, and only
+      when necessary. For now we don't need bridges for HDMI or DSI outputs.
+
+    - I noticed that we're leaking OF node in the panel's error code path,
+      this is fixed now by the new patch "Don't leak OF node on error".
+
+v2: - Added the new "rgb: Don't register connector if bridge is used"
+      patch, which hides the unused connector provided by the Tegra DRM
+      driver when bridge is used, since bridge provides its own connector
+      to us.
+
+Dmitry Osipenko (6):
+  of_graph: add of_graph_get_local_port()
+  drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+  drm/tegra: output: Don't leak OF node on error
+  drm/tegra: output: Support DRM bridges
+  drm/tegra: output: rgb: Support LVDS encoder bridge
+  drm/tegra: output: rgb: Wrap directly-connected panel into DRM bridge
+
+ drivers/gpu/drm/drm_of.c       |  13 ++++-
+ drivers/gpu/drm/tegra/drm.h    |   2 +
+ drivers/gpu/drm/tegra/output.c |  21 +++++--
+ drivers/gpu/drm/tegra/rgb.c    | 102 +++++++++++++++++----------------
+ drivers/of/property.c          |  32 ++++++++---
+ include/linux/of_graph.h       |   7 +++
+ 6 files changed, 114 insertions(+), 63 deletions(-)
+
 -- 
-2.17.1
+2.26.0
