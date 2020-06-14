@@ -1,112 +1,116 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v7 5/6] drm/tegra: output: rgb: Support LVDS encoder bridge
-Date: Sun, 14 Jun 2020 20:22:33 +0300
-Message-ID: <20200614172234.8856-6-digetx@gmail.com>
-References: <20200614172234.8856-1-digetx@gmail.com>
+Subject: [PATCH v1 1/6] drm/panel: Add helper for reading DT rotation
+Date: Sun, 14 Jun 2020 22:03:43 +0300
+Message-ID: <20200614190348.12193-2-digetx@gmail.com>
+References: <20200614190348.12193-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200614172234.8856-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200614190348.12193-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Newer Tegra device-trees will specify a video output graph, which involves
-LVDS encoder bridge. This patch adds support for the LVDS encoder bridge
-to the RGB output, allowing us to model the display hardware properly.
+From: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Acked-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+This adds a helper function for reading the rotation (panel
+orientation) from the device tree.
+
+Signed-off-by: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Reviewed-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/rgb.c | 58 +++++++++++++++++++++++++++++++------
- 1 file changed, 49 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/drm_panel.c | 43 +++++++++++++++++++++++++++++++++++++
+ include/drm/drm_panel.h     |  9 ++++++++
+ 2 files changed, 52 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-index 0562a7eb793f..9a7024ec96bc 100644
---- a/drivers/gpu/drm/tegra/rgb.c
-+++ b/drivers/gpu/drm/tegra/rgb.c
-@@ -7,6 +7,7 @@
- #include <linux/clk.h>
- 
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_bridge_connector.h>
- #include <drm/drm_panel.h>
- #include <drm/drm_simple_kms_helper.h>
- 
-@@ -267,24 +268,63 @@ int tegra_dc_rgb_remove(struct tegra_dc *dc)
- int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
- {
- 	struct tegra_output *output = dc->rgb;
-+	struct drm_connector *connector;
- 	int err;
- 
- 	if (!dc->rgb)
- 		return -ENODEV;
- 
--	drm_connector_init(drm, &output->connector, &tegra_rgb_connector_funcs,
--			   DRM_MODE_CONNECTOR_LVDS);
--	drm_connector_helper_add(&output->connector,
--				 &tegra_rgb_connector_helper_funcs);
--	output->connector.dpms = DRM_MODE_DPMS_OFF;
--
- 	drm_simple_encoder_init(drm, &output->encoder, DRM_MODE_ENCODER_LVDS);
- 	drm_encoder_helper_add(&output->encoder,
- 			       &tegra_rgb_encoder_helper_funcs);
- 
--	drm_connector_attach_encoder(&output->connector,
--					  &output->encoder);
--	drm_connector_register(&output->connector);
-+	/*
-+	 * Tegra devices that have LVDS panel utilize LVDS encoder bridge
-+	 * for converting up to 28 LCD LVTTL lanes into 5/4 LVDS lanes that
-+	 * go to display panel's receiver.
-+	 *
-+	 * Encoder usually have a power-down control which needs to be enabled
-+	 * in order to transmit data to the panel.  Historically devices that
-+	 * use an older device-tree version didn't model the bridge, assuming
-+	 * that encoder is turned ON by default, while today's DRM allows us
-+	 * to model LVDS encoder properly.
-+	 *
-+	 * Newer device-trees utilize LVDS encoder bridge, which provides
-+	 * us with a connector and handles the display panel.
-+	 *
-+	 * For older device-trees we fall back to our own connector and use
-+	 * nvidia,panel phandle.
-+	 */
-+	if (output->bridge) {
-+		err = drm_bridge_attach(&output->encoder, output->bridge,
-+					NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-+		if (err) {
-+			dev_err(output->dev, "failed to attach bridge: %d\n",
-+				err);
-+			return err;
-+		}
+diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+index 8c7bac85a793..5557c75301f1 100644
+--- a/drivers/gpu/drm/drm_panel.c
++++ b/drivers/gpu/drm/drm_panel.c
+@@ -300,6 +300,49 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
+ 	return ERR_PTR(-EPROBE_DEFER);
+ }
+ EXPORT_SYMBOL(of_drm_find_panel);
 +
-+		connector = drm_bridge_connector_init(drm, &output->encoder);
-+		if (IS_ERR(connector)) {
-+			dev_err(output->dev,
-+				"failed to initialize bridge connector: %pe\n",
-+				connector);
-+			return PTR_ERR(connector);
-+		}
++/**
++ * of_drm_get_panel_orientation - look up the orientation of the panel through
++ * the "rotation" binding from a device tree node
++ * @np: device tree node of the panel
++ * @orientation: orientation enum to be filled in
++ *
++ * Looks up the rotation of a panel in the device tree. The orientation of the
++ * panel is expressed as a property name "rotation" in the device tree. The
++ * rotation in the device tree is counter clockwise.
++ *
++ * Return: 0 when a valid rotation value (0, 90, 180, or 270) is read or the
++ * rotation property doesn't exist. -EERROR otherwise.
++ */
++int of_drm_get_panel_orientation(const struct device_node *np,
++				 enum drm_panel_orientation *orientation)
++{
++	int rotation, ret;
 +
-+		drm_connector_attach_encoder(connector, &output->encoder);
-+	} else {
-+		drm_connector_init(drm, &output->connector,
-+				   &tegra_rgb_connector_funcs,
-+				   DRM_MODE_CONNECTOR_LVDS);
-+		drm_connector_helper_add(&output->connector,
-+					 &tegra_rgb_connector_helper_funcs);
-+		output->connector.dpms = DRM_MODE_DPMS_OFF;
-+
-+		drm_connector_attach_encoder(&output->connector,
-+					     &output->encoder);
-+		drm_connector_register(&output->connector);
++	ret = of_property_read_u32(np, "rotation", &rotation);
++	if (ret == -EINVAL) {
++		/* Don't return an error if there's no rotation property. */
++		*orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
++		return 0;
 +	}
++
++	if (ret < 0)
++		return ret;
++
++	if (rotation == 0)
++		*orientation = DRM_MODE_PANEL_ORIENTATION_NORMAL;
++	else if (rotation == 90)
++		*orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP;
++	else if (rotation == 180)
++		*orientation = DRM_MODE_PANEL_ORIENTATION_BOTTOM_UP;
++	else if (rotation == 270)
++		*orientation = DRM_MODE_PANEL_ORIENTATION_LEFT_UP;
++	else
++		return -EINVAL;
++
++	return 0;
++}
++EXPORT_SYMBOL(of_drm_get_panel_orientation);
+ #endif
  
- 	err = tegra_output_init(drm, output);
- 	if (err < 0) {
+ #if IS_REACHABLE(CONFIG_BACKLIGHT_CLASS_DEVICE)
+diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+index 6193cb555acc..781c735f0f9b 100644
+--- a/include/drm/drm_panel.h
++++ b/include/drm/drm_panel.h
+@@ -35,6 +35,8 @@ struct drm_device;
+ struct drm_panel;
+ struct display_timing;
+ 
++enum drm_panel_orientation;
++
+ /**
+  * struct drm_panel_funcs - perform operations on a given panel
+  *
+@@ -191,11 +193,18 @@ int drm_panel_get_modes(struct drm_panel *panel, struct drm_connector *connector
+ 
+ #if defined(CONFIG_OF) && defined(CONFIG_DRM_PANEL)
+ struct drm_panel *of_drm_find_panel(const struct device_node *np);
++int of_drm_get_panel_orientation(const struct device_node *np,
++				 enum drm_panel_orientation *orientation);
+ #else
+ static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
+ {
+ 	return ERR_PTR(-ENODEV);
+ }
++static inline int of_drm_get_panel_orientation(const struct device_node *np,
++		enum drm_panel_orientation *orientation)
++{
++	return -ENODEV;
++}
+ #endif
+ 
+ #if IS_ENABLED(CONFIG_DRM_PANEL) && (IS_BUILTIN(CONFIG_BACKLIGHT_CLASS_DEVICE) || \
 -- 
 2.26.0
