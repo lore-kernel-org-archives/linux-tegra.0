@@ -1,9 +1,10 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 1/6] drm/panel: Add helper for reading DT rotation
-Date: Sun, 14 Jun 2020 22:03:43 +0300
-Message-ID: <20200614190348.12193-2-digetx@gmail.com>
+Subject: [PATCH v1 6/6] =?UTF-8?q?drm/tegra:=20plane:=20Support=20180?= =?UTF-8?q?=C2=B0=20rotation?=
+Date: Sun, 14 Jun 2020 22:03:48 +0300
+Message-ID: <20200614190348.12193-7-digetx@gmail.com>
 References: <20200614190348.12193-1-digetx@gmail.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20200614190348.12193-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,105 +13,65 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tho
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Combining horizontal and vertical reflections gives us 180 degrees of
+rotation.
 
-This adds a helper function for reading the rotation (panel
-orientation) from the device tree.
-
-Signed-off-by: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Reviewed-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/drm_panel.c | 43 +++++++++++++++++++++++++++++++++++++
- include/drm/drm_panel.h     |  9 ++++++++
- 2 files changed, 52 insertions(+)
+ drivers/gpu/drm/tegra/dc.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-index 8c7bac85a793..5557c75301f1 100644
---- a/drivers/gpu/drm/drm_panel.c
-+++ b/drivers/gpu/drm/drm_panel.c
-@@ -300,6 +300,49 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
- 	return ERR_PTR(-EPROBE_DEFER);
- }
- EXPORT_SYMBOL(of_drm_find_panel);
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index f31bca27cde4..ddd9b88f8fce 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -608,6 +608,7 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ {
+ 	struct tegra_plane_state *plane_state = to_tegra_plane_state(state);
+ 	unsigned int rotation = DRM_MODE_ROTATE_0 |
++				DRM_MODE_ROTATE_180 |
+ 				DRM_MODE_REFLECT_X |
+ 				DRM_MODE_REFLECT_Y;
+ 	struct tegra_bo_tiling *tiling = &plane_state->tiling;
+@@ -659,6 +660,14 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ 	else
+ 		plane_state->reflect_y = false;
+ 
++	if (tegra_fb_is_bottom_up(state->fb))
++		plane_state->reflect_y = true;
 +
-+/**
-+ * of_drm_get_panel_orientation - look up the orientation of the panel through
-+ * the "rotation" binding from a device tree node
-+ * @np: device tree node of the panel
-+ * @orientation: orientation enum to be filled in
-+ *
-+ * Looks up the rotation of a panel in the device tree. The orientation of the
-+ * panel is expressed as a property name "rotation" in the device tree. The
-+ * rotation in the device tree is counter clockwise.
-+ *
-+ * Return: 0 when a valid rotation value (0, 90, 180, or 270) is read or the
-+ * rotation property doesn't exist. -EERROR otherwise.
-+ */
-+int of_drm_get_panel_orientation(const struct device_node *np,
-+				 enum drm_panel_orientation *orientation)
-+{
-+	int rotation, ret;
-+
-+	ret = of_property_read_u32(np, "rotation", &rotation);
-+	if (ret == -EINVAL) {
-+		/* Don't return an error if there's no rotation property. */
-+		*orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
-+		return 0;
++	if (rotation & DRM_MODE_ROTATE_180) {
++		plane_state->reflect_x = !plane_state->reflect_x;
++		plane_state->reflect_y = !plane_state->reflect_y;
 +	}
 +
-+	if (ret < 0)
-+		return ret;
-+
-+	if (rotation == 0)
-+		*orientation = DRM_MODE_PANEL_ORIENTATION_NORMAL;
-+	else if (rotation == 90)
-+		*orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP;
-+	else if (rotation == 180)
-+		*orientation = DRM_MODE_PANEL_ORIENTATION_BOTTOM_UP;
-+	else if (rotation == 270)
-+		*orientation = DRM_MODE_PANEL_ORIENTATION_LEFT_UP;
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(of_drm_get_panel_orientation);
- #endif
+ 	/*
+ 	 * Tegra doesn't support different strides for U and V planes so we
+ 	 * error out if the user tries to display a framebuffer with such a
+@@ -720,7 +729,7 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 	window.dst.h = drm_rect_height(&plane->state->dst);
+ 	window.bits_per_pixel = fb->format->cpp[0] * 8;
+ 	window.reflect_x = state->reflect_x;
+-	window.reflect_y = tegra_fb_is_bottom_up(fb) || state->reflect_y;
++	window.reflect_y = state->reflect_y;
  
- #if IS_REACHABLE(CONFIG_BACKLIGHT_CLASS_DEVICE)
-diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index 6193cb555acc..781c735f0f9b 100644
---- a/include/drm/drm_panel.h
-+++ b/include/drm/drm_panel.h
-@@ -35,6 +35,8 @@ struct drm_device;
- struct drm_panel;
- struct display_timing;
- 
-+enum drm_panel_orientation;
-+
- /**
-  * struct drm_panel_funcs - perform operations on a given panel
-  *
-@@ -191,11 +193,18 @@ int drm_panel_get_modes(struct drm_panel *panel, struct drm_connector *connector
- 
- #if defined(CONFIG_OF) && defined(CONFIG_DRM_PANEL)
- struct drm_panel *of_drm_find_panel(const struct device_node *np);
-+int of_drm_get_panel_orientation(const struct device_node *np,
-+				 enum drm_panel_orientation *orientation);
- #else
- static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
- {
- 	return ERR_PTR(-ENODEV);
- }
-+static inline int of_drm_get_panel_orientation(const struct device_node *np,
-+		enum drm_panel_orientation *orientation)
-+{
-+	return -ENODEV;
-+}
- #endif
- 
- #if IS_ENABLED(CONFIG_DRM_PANEL) && (IS_BUILTIN(CONFIG_BACKLIGHT_CLASS_DEVICE) || \
+ 	/* copy from state */
+ 	window.zpos = plane->state->normalized_zpos;
+@@ -806,6 +815,7 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
+ 	err = drm_plane_create_rotation_property(&plane->base,
+ 						 DRM_MODE_ROTATE_0,
+ 						 DRM_MODE_ROTATE_0 |
++						 DRM_MODE_ROTATE_180 |
+ 						 DRM_MODE_REFLECT_X |
+ 						 DRM_MODE_REFLECT_Y);
+ 	if (err < 0)
+@@ -1094,6 +1104,7 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
+ 	err = drm_plane_create_rotation_property(&plane->base,
+ 						 DRM_MODE_ROTATE_0,
+ 						 DRM_MODE_ROTATE_0 |
++						 DRM_MODE_ROTATE_180 |
+ 						 DRM_MODE_REFLECT_X |
+ 						 DRM_MODE_REFLECT_Y);
+ 	if (err < 0)
 -- 
 2.26.0
