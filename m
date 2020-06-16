@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 68/73] arm64: tegra: Fix indentation in Tegra194 device tree
-Date: Tue, 16 Jun 2020 15:52:33 +0200
-Message-ID: <20200616135238.3001888-69-thierry.reding@gmail.com>
+Subject: [PATCH 69/73] arm64: tegra: Rename agic -> interrupt-controller
+Date: Tue, 16 Jun 2020 15:52:34 +0200
+Message-ID: <20200616135238.3001888-70-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,25 +14,54 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Properly indent subsequent lines so that they align with the first line.
+Device tree nodes for interrupt controllers should be named "interrupt-
+controller", so rename the AGIC accordingly.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index e0aa6c74073a..307f999edbf9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1669,7 +1669,7 @@ pcie@141a0000 {
- 		pinctrl-0 = <&pex_rst_c5_out_state>, <&clkreq_c5_bi_dir_state>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+index 0c0d51c23975..0ccb62606bef 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+@@ -119,7 +119,7 @@ dma@702e2000 {
+ 			status = "okay";
+ 		};
  
- 		clocks = <&bpmp TEGRA194_CLK_PEX1_CORE_5>,
--			<&bpmp TEGRA194_CLK_PEX1_CORE_5M>;
-+			 <&bpmp TEGRA194_CLK_PEX1_CORE_5M>;
- 		clock-names = "core", "core_m";
+-		agic@702f9000 {
++		interrupt-controller@702f9000 {
+ 			status = "okay";
+ 		};
+ 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index cc0d7b4a5834..f7840e5e069a 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1717,7 +1717,7 @@ dma@702e2000 {
+ 			status = "okay";
+ 		};
  
- 		resets = <&bpmp TEGRA194_RESET_PEX1_CORE_5_APB>,
+-		agic@702f9000 {
++		interrupt-controller@702f9000 {
+ 			status = "okay";
+ 		};
+ 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 02a02ed1b264..c265211f8a84 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1355,7 +1355,7 @@ adma: dma@702e2000 {
+ 			status = "disabled";
+ 		};
+ 
+-		agic: agic@702f9000 {
++		agic: interrupt-controller@702f9000 {
+ 			compatible = "nvidia,tegra210-agic";
+ 			#interrupt-cells = <3>;
+ 			interrupt-controller;
 -- 
 2.24.1
