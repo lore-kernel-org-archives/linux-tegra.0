@@ -1,140 +1,70 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 03/73] ARM: tegra: Remove simple regulators bus
-Date: Tue, 16 Jun 2020 20:24:11 +0100
-Message-ID: <cf8eb9d4-70d5-400f-ecc8-2139c25563a9@nvidia.com>
-References: <20200616135238.3001888-1-thierry.reding@gmail.com>
- <20200616135238.3001888-4-thierry.reding@gmail.com>
+Subject: Re: [PATCH] ASoC: tegra: Fix reference count leaks.
+Date: Tue, 16 Jun 2020 20:42:50 +0100
+Message-ID: <9492fa91-067b-f74f-1a52-a2622d8f28d6@nvidia.com>
+References: <20200613204422.24484-1-wu000273@umn.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200616135238.3001888-4-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200613204422.24484-1-wu000273-OJFnDUYgAso@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: wu000273-OJFnDUYgAso@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-
-On 16/06/2020 14:51, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 13/06/2020 21:44, wu000273-OJFnDUYgAso@public.gmane.org wrote:
+> From: Qiushi Wu <wu000273-OJFnDUYgAso@public.gmane.org>
 > 
-> The standard way to do this is to list out the regulators at the top
-> level. Adopt the standard way to fix validation.
+> Calling pm_runtime_get_sync increments the counter even in case of
+> failure, causing incorrect ref count if pm_runtime_put is not called in
+> error handling paths. Call pm_runtime_put if pm_runtime_get_sync fails.
 > 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Qiushi Wu <wu000273-OJFnDUYgAso@public.gmane.org>
 > ---
->  arch/arm/boot/dts/tegra114-dalmore.dts    | 129 +++++------
->  arch/arm/boot/dts/tegra114-roth.dts       | 120 +++++-----
->  arch/arm/boot/dts/tegra114-tn7.dts        |  65 +++---
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 238 +++++++++----------
->  arch/arm/boot/dts/tegra124-nyan.dtsi      | 259 ++++++++++-----------
->  arch/arm/boot/dts/tegra124-venice2.dts    | 265 ++++++++++------------
->  arch/arm/boot/dts/tegra20-harmony.dts     | 121 +++++-----
->  arch/arm/boot/dts/tegra20-medcom-wide.dts |  66 +++---
->  arch/arm/boot/dts/tegra20-paz00.dts       |  38 ++--
->  arch/arm/boot/dts/tegra20-plutux.dts      |  66 +++---
->  arch/arm/boot/dts/tegra20-seaboard.dts    | 125 +++++-----
->  arch/arm/boot/dts/tegra20-tamonten.dtsi   |  39 +---
->  arch/arm/boot/dts/tegra20-tec.dts         |  66 +++---
->  arch/arm/boot/dts/tegra20-trimslice.dts   |  85 +++----
->  arch/arm/boot/dts/tegra20-ventana.dts     |  85 +++----
->  arch/arm/boot/dts/tegra30-beaver.dts      | 193 ++++++++--------
->  arch/arm/boot/dts/tegra30-cardhu-a02.dts  | 128 +++++------
->  arch/arm/boot/dts/tegra30-cardhu-a04.dts  | 149 ++++++------
->  arch/arm/boot/dts/tegra30-cardhu.dtsi     | 261 ++++++++++-----------
->  19 files changed, 1130 insertions(+), 1368 deletions(-)
-
-...
-
-> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-> index 6a7a31c831c5..effdb303c7f7 100644
-> --- a/arch/arm/boot/dts/tegra124-venice2.dts
-> +++ b/arch/arm/boot/dts/tegra124-venice2.dts
-> @@ -1077,164 +1077,145 @@ power {
+>  sound/soc/tegra/tegra30_ahub.c | 4 +++-
+>  sound/soc/tegra/tegra30_i2s.c  | 4 +++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
+> index 635eacbd28d4..156e3b9d613c 100644
+> --- a/sound/soc/tegra/tegra30_ahub.c
+> +++ b/sound/soc/tegra/tegra30_ahub.c
+> @@ -643,8 +643,10 @@ static int tegra30_ahub_resume(struct device *dev)
+>  	int ret;
 >  
->  	panel: panel {
->  		compatible = "lg,lp129qe";
-> -
-> +		power-supply = <&vdd_3v3_panel>;
->  		backlight = <&backlight>;
->  		ddc-i2c-bus = <&dpaux>;
->  	};
-
-Is this meant to be in this patch?
-
-> diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> index 20137fc578b1..95e6bccdb4f6 100644
-> --- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> +++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-> @@ -495,40 +495,25 @@ usb-phy@c5008000 {
->  		status = "okay";
->  	};
+>  	ret = pm_runtime_get_sync(dev);
+> -	if (ret < 0)
+> +	if (ret < 0) {
+> +		pm_runtime_put(dev);
+>  		return ret;
+> +	}
+>  	ret = regcache_sync(ahub->regmap_ahub);
+>  	ret |= regcache_sync(ahub->regmap_apbif);
+>  	pm_runtime_put(dev);
+> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+> index d59882ec48f1..db5a8587bfa4 100644
+> --- a/sound/soc/tegra/tegra30_i2s.c
+> +++ b/sound/soc/tegra/tegra30_i2s.c
+> @@ -567,8 +567,10 @@ static int tegra30_i2s_resume(struct device *dev)
+>  	int ret;
 >  
-> -	sdhci@c8000600 {
-> +	mmc@c8000600 {
->  		cd-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_LOW>;
->  		wp-gpios = <&gpio TEGRA_GPIO(H, 3) GPIO_ACTIVE_HIGH>;
->  		bus-width = <4>;
->  		status = "okay";
->  	};
->  
-> -	clocks {
-> -		compatible = "simple-bus";
-> -		#address-cells = <1>;
-> -		#size-cells = <0>;
-> -
-> -		clk32k_in: clock@0 {
-> -			compatible = "fixed-clock";
-> -			reg = <0>;
-> -			#clock-cells = <0>;
-> -			clock-frequency = <32768>;
-> -		};
-> +	clk32k_in: clock@0 {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <32768>;
-> +		#clock-cells = <0>;
->  	};
+>  	ret = pm_runtime_get_sync(dev);
+> -	if (ret < 0)
+> +	if (ret < 0) {
+> +		pm_runtime_put(dev);
+>  		return ret;
+> +	}
+>  	ret = regcache_sync(i2s->regmap);
+>  	pm_runtime_put(dev);
 
-The above appears in to be in the wrong patch.
+Thanks.
 
-> diff --git a/arch/arm/boot/dts/tegra30-cardhu-a02.dts b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
-> index a02ec5082287..4899e05a0d9c 100644
-> --- a/arch/arm/boot/dts/tegra30-cardhu-a02.dts
-> +++ b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
-> @@ -9,87 +9,75 @@ / {
->  	model = "NVIDIA Tegra30 Cardhu A02 evaluation board";
->  	compatible = "nvidia,cardhu-a02", "nvidia,cardhu", "nvidia,tegra30";
->  
-> -	sdhci@78000400 {
-> +	mmc@78000400 {
->  		status = "okay";
->  		power-gpios = <&gpio TEGRA_GPIO(D, 4) GPIO_ACTIVE_HIGH>;
->  		bus-width = <4>;
->  		keep-power-in-suspend;
->  	};
+Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-And here.
-
-> diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-> index 9234988624ec..c1c0ca628af1 100644
-> --- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-> +++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-> @@ -11,99 +11,86 @@ / {
->  	model = "NVIDIA Tegra30 Cardhu A04 (A05, A06, A07) evaluation board";
->  	compatible = "nvidia,cardhu-a04", "nvidia,cardhu", "nvidia,tegra30";
->  
-> -	sdhci@78000400 {
-> +	mmc@78000400 {
->  		status = "okay";
->  		power-gpios = <&gpio TEGRA_GPIO(D, 3) GPIO_ACTIVE_HIGH>;
->  		bus-width = <4>;
->  		keep-power-in-suspend;
->  	};
-
-And here.
-
+Cheers
 Jon
 
 -- 
