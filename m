@@ -1,27 +1,26 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v2 0/5] 180 degrees rotation support for NVIDIA Tegra DRM
-Date: Wed, 17 Jun 2020 00:16:26 +0300
-Message-ID: <fe845434-cbf6-29d4-eeb6-8868d628fd04@gmail.com>
+Date: Wed, 17 Jun 2020 00:25:38 +0300
+Message-ID: <2862a842-322e-34d6-6826-3b3352f98230@gmail.com>
 References: <20200614200121.14147-1-digetx@gmail.com>
  <CACvgo51QuXMgWhFk4C=3rGvUZDX1_W0RZtVb5RtRPiHTpMebWQ@mail.gmail.com>
  <8f789ef5-bebf-c869-784d-afda70fc1fb8@gmail.com>
  <CACvgo50oSMbgXw1vHwVT4hhGe6g3YzKQEohCLJdfDq+0UaN1jw@mail.gmail.com>
  <646b3f37-0f72-7f3b-388f-f71dbcdd5c84@gmail.com>
- <CACvgo50BFH5qsPyWx9a1aZ4k5bzjSN-3KTU0BvnZ-nG-hfzKOQ@mail.gmail.com>
+ <20200616174558.GA913@pendragon.ideasonboard.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACvgo50BFH5qsPyWx9a1aZ4k5bzjSN-3KTU0BvnZ-nG-hfzKOQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20200616174558.GA913-N3hz7ZxfLydczECFQUw77jytWr6r+dGw0E9HWUfgJXw@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-16.06.2020 21:54, Emil Velikov пишет:
-> On Tue, 16 Jun 2020 at 18:20, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>
+16.06.2020 20:45, Laurent Pinchart пишет:
+> On Tue, Jun 16, 2020 at 08:20:57PM +0300, Dmitry Osipenko wrote:
 >> 16.06.2020 18:48, Emil Velikov пишет:
 >>> On Tue, 16 Jun 2020 at 12:40, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 >>>>
@@ -114,65 +113,10 @@ List-Id: linux-tegra@vger.kernel.org
 >> Interesting.. my understanding that the rotation property is supposed to
 >> be a generic property which represents physical orientation of a display
 >> panel and hence it should be applicable to all panels.
->>
-> You're spot on - it is/should be a generic property.
 > 
-> I believe that in general many panels were mounted in the correct
-> orientation so the property, kernel and userspace were slow to catch
-> up. In some cases panels will use flip x+y to denote 180 rotation, yet
-> lacking the rotation property.
-> The s6e8aa0 is an example of the last oddity. To make it better, the
-> two dts in-tree always set both flip x and y.
-> 
-> Tl;Dr: Hysterical raisins
-> 
->>> Sam seems like you've done most of the YAML conversion. IMHO it would
->>> make sense to revisit the patches and inherit common properties only
->>> as applicable.
+> Adding a bit more food for thoughts, the DT rotation property for camera
+> sensor modules has recently been documented with lots of details. See
+> https://lore.kernel.org/linux-media/20200509090456.3496481-3-jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org/,
+> part of the documentation may be useful for panels.
 
-It looks to me that the conversion was done properly because rotation
-property was added as a common panel property from the start.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=b60c1be747418a07fbe04f8533394a64b27b6181
-
->>>> I don't think that it makes sense to wire up rotation property to all
->>>> panel drivers at once because those drivers will be untested, at least I
->>>> don't know anything about those other panels and can't test them. It
->>>> will be much better to support the rotation on by as-needed basis for
->>>> each panel driver individually.
->>>
->>> How about CCing the author and reviewer asking them to test the patch?
->>> The only place where the patches might cause an issue is with tiny,
->>> although patches would still be appreciated.
->>
->> There are quite a lot of panel drivers and I'm a bit doubtful that at
->> least half of devices that use those panels have any real use for the
->> rotation property. I could write the patches.. but in the end it could
->> be a wasted effort if nobody needs it, so I'd prefer not to do it.
-> 
-> That's why I mentioned the rotation introduction or "confusion" if I
-> may. Skimming through the pre/post YAML device tree bindings and grep
-> through the panel themselves will greatly reduce the list.
-> In other words: if neither binding documentation/in-tree dts nor panel
-> mentions rotation - omit it.
-
-I looked through the DT bindings and only those few tiny-DRM drivers use
-the DT rotation property. The parsed rotation value passed to the MIPI
-DBI core where it's validated and utilized further. I don't feel that
-it's worthwhile to touch that code because switching it to the common
-DRM helper for reading out DT orientation won't bring any real benefits.
-
-The samsung-s6e8aa0 panel driver indeed uses the non-standard flip-x/y
-DT properties in order to achieve the 180 rotation, but I'm not sure
-whether it's worthwhile to touch this driver as well because it will
-require the board's DT change.
-
-The panel's orientation could be parsed by any panel driver and then
-assigned as the connector's property in order to allow userspace/FB-core
-to decide what to do with the rotated display. Apparently upstream
-kernel supports only that one Samsung device which has display panel
-mounted upside-down and it already uses the custom DT properties for
-achieving the 180 rotation. So I don't quite see any panel drivers that
-instantly could benefit from using the rotation property. Perhaps I can
-add the orientation support to the panel-simple driver, but will it be
-useful to anyone?
+Thanks!
