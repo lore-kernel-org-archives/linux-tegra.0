@@ -1,89 +1,132 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 07/38] dt-bindings: display: tegra: Convert to json-schema
-Date: Tue, 16 Jun 2020 16:51:08 +0200
-Message-ID: <20200616145108.GD3000485@ulmo>
-References: <20200612141903.2391044-1-thierry.reding@gmail.com>
- <20200612141903.2391044-8-thierry.reding@gmail.com>
- <b20cede8-a9ee-c70d-913d-d0a05d7826b0@gmail.com>
+From: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 0/5] 180 degrees rotation support for NVIDIA Tegra DRM
+Date: Tue, 16 Jun 2020 16:48:34 +0100
+Message-ID: <CACvgo50oSMbgXw1vHwVT4hhGe6g3YzKQEohCLJdfDq+0UaN1jw@mail.gmail.com>
+References: <20200614200121.14147-1-digetx@gmail.com> <CACvgo51QuXMgWhFk4C=3rGvUZDX1_W0RZtVb5RtRPiHTpMebWQ@mail.gmail.com>
+ <8f789ef5-bebf-c869-784d-afda70fc1fb8@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EY/WZ/HvNxOox07X"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <b20cede8-a9ee-c70d-913d-d0a05d7826b0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <8f789ef5-bebf-c869-784d-afda70fc1fb8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, 16 Jun 2020 at 12:40, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+> 16.06.2020 01:26, Emil Velikov =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Hi Dmitry,
+> >
+> > On Mon, 15 Jun 2020 at 08:28, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> >>
+> >> Hello!
+> >>
+> >> This series adds 180=C2=B0 display plane rotation support to the NVIDI=
+A Tegra
+> >> DRM driver which is needed for devices that have display panel physica=
+lly
+> >> mounted upside-down, like Nexus 7 tablet device for example [1]. Since
+> >> DRM panel rotation is a new thing for a userspace, currently only
+> >> Opentegra Xorg driver handles the rotated display panel [2], but this
+> >> is good enough for the start.
+> >>
+> >> Note that later on it should be possible to implement a transparent 18=
+0=C2=B0
+> >> display rotation for Tegra DRM driver which will remove the need to ha=
+ve
+> >> a bleeding edge userspace that knows how to rotate display planes and =
+I'm
+> >> slowly working on it. For the starter we can go with the minimal rotat=
+ion
+> >> support, so it's not a blocker.
+> >>
+> >> This series is based on the work that was made by Derek Basehore for t=
+he
+> >> Mediatek driver [3], his patch is included into this patchset. I added
+> >> my tested-by tag to the Derek's patch.
+> >>
+> >> Please review and apply, thanks in advance!
+> >>
+> >> [1] https://patchwork.ozlabs.org/project/linux-tegra/patch/20200607154=
+327.18589-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org/
+> >> [2] https://github.com/grate-driver/xf86-video-opentegra/commit/28eb20=
+a3959bbe5bc3a3b67e55977093fd5114ca
+> >> [3] https://lkml.org/lkml/2020/3/5/1119
+> >>
+> >> Changelog:
+> >>
+> >> v2: - Dropped "drm/panel: Set display info in panel attach" patch, whi=
+ch
+> >>       turned out to be obsolete now.
+> >>
+> >>     - Renamed the cover-latter, hopefully this will fix the bouncing e=
+mails.
+> >>
+> >> Derek Basehore (1):
+> >>   drm/panel: Add helper for reading DT rotation
+> >>
+> >> Dmitry Osipenko (4):
+> >>   drm/panel: lvds: Set up panel orientation
+> >
+> > IMHO it's perfectly reasonable to report the panel orientation to
+> > userspace, which can apply plane rotation as needed.
+> >
+> > Although I see that this series, alike Derek's, has a couple of issues:
+> >  - only a single panel driver is updated
+> >  - rotation is _not_ listed as supported property, in said panel
+> > driver device-tree bindings
+> >
+> > My personal inclination is that we should aim for a comprehensive solut=
+ion:
+> >  - wire all panel drivers, as currently documented (quick grep list bel=
+ow)
+> >  - document and wire-up the lvds and boe panels - as proposed by you
+> > and Derek respectively
+> >
+> > HTH
+> > Emil
+> >
+> > Documentation/devicetree/bindings/display/himax,hx8357d.txt:2
+> > Documentation/devicetree/bindings/display/ilitek,ili9225.txt:2
+> > Documentation/devicetree/bindings/display/ilitek,ili9341.txt:2
+> > Documentation/devicetree/bindings/display/ilitek,ili9486.yaml:2
+> > Documentation/devicetree/bindings/display/multi-inno,mi0283qt.txt:2
+> > Documentation/devicetree/bindings/display/panel/panel-common.yaml:2
+> > Documentation/devicetree/bindings/display/sitronix,st7586.txt:1
+> > Documentation/devicetree/bindings/display/sitronix,st7735r.yaml:2
+>
+> Rotation is a common DT panel property that is described in the
+> panel-common.yaml.
+The property was introduced almost exclusively for tiny drm panels.
+Those ones are a bit different from the rest (in panel/) -
+MIPI-DBI/SPI w/o (not connected at least) an actual GPU.
 
---EY/WZ/HvNxOox07X
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To make it a bit better, the rotation is seemingly performed in the
+tiny driver itself ouch.
 
-On Fri, Jun 12, 2020 at 06:54:45PM +0300, Dmitry Osipenko wrote:
-> 12.06.2020 17:18, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Convert the Tegra host1x controller bindings from the free-form text
-> > format to json-schema.
-> >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> ...
-> > +  memory-controllers:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +
-> > +required:
-> > +  - compatible
-> > +  - interrupts
-> > +  - interrupt-names
-> > +  - '#address-cells'
-> > +  - '#size-cells'
-> > +  - ranges
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +  - resets
-> > +  - reset-names
->=20
-> This memory-controllers property didn't exist before the conversion. So
-> this is not a pure conversion, which makes it a bit difficult to review
-> the changes. Could you please factor out the addition of new properties
-> into a separate patch?
+> This property is supported by all panel bindings
+> because these bindings inherent the common properties from the
+> panel-common.yaml.
+>
+Seems like that was an unintentional change with the conversion to YAML.
+Beforehand only a few selected panels had rotation. Upon closer look -
+some panels do have follow-up fixes, to remove/limit the implicit
+inclusion.
 
-The memory-controllers property was from an earlier draft of this series
-and is no longer needed. I'll remove it.
+Sam seems like you've done most of the YAML conversion. IMHO it would
+make sense to revisit the patches and inherit common properties only
+as applicable.
 
-In my opinion, these schema conversion patches are difficult to review
-in general, especially the likes of this one for host1x because they are
-fairly complex to begin with. All existing Tegra-based device trees do
-pass validation (although there's a small patch needed to support the
-unevaluatedProperties keyword that's new in json-schema draft-08), which
-gives me some confidence that they are at least correct from a content
-point of view.
+> I don't think that it makes sense to wire up rotation property to all
+> panel drivers at once because those drivers will be untested, at least I
+> don't know anything about those other panels and can't test them. It
+> will be much better to support the rotation on by as-needed basis for
+> each panel driver individually.
 
-Thierry
+How about CCing the author and reviewer asking them to test the patch?
+The only place where the patches might cause an issue is with tiny,
+although patches would still be appreciated.
 
---EY/WZ/HvNxOox07X
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7o3FsACgkQ3SOs138+
-s6E+Fg/7B2Mg67amrSqKm2vNSvOzWyYs2Z/D6ReeV771HsvqioHA9WtYx/jGyuTd
-SZkOLaMO2Rx7S+LbR/Vybq930SGzX4syeMvB9ZQvQPBLxiYeHsbuMRjAxIfoX9F3
-fN5vD+0h0ateIPUPB7KnoBxZOkPLoaILXAd5TG9dRRjoyq3hoQonprlF5NbcSP6Z
-HkP5qo+4ImX7cCknNpAiIkYtIlbECmK2R8z0euX9p8qbIYJ3WmlNQZnB8csHdSLI
-PDKSICspFkZUuzS1bL2Q7W8qtXOGa+goFa5In8ncI1JONL8U/mAgSmdRTe5JWaN4
-xMFs2Yy1lJVcAbcMzH25hzaFulm1/s55JMDeIthE+/ucB5YrSDTUUfTPkknJT9oG
-RKz+HyKHnel8o6kPupt/B5sVCrVdUMyGxZUUv0gjZdq2VfqAjIUtjre2G4kV45jN
-HWzH51XPVefxocdcBUjp8xlHC9HSYr8CcGZAhd/kdTC6zgsEUBWYe+HS98vsjqf0
-gkdwVDe3dPkydvCM16cY5ZHYf0em7nR02vb4kVA4F5JHg2pctiMxxXvM6MgJU3Ae
-RnSYXLjmZtU00qOWP+GwF3Na+1N/6DN44c/uZk9As9sen+ipNeFmmmNQwjsiSi+m
-mmEATY3V1PXPCN5aYqOyhdgct0rXa3d3iGlYE9gDgcLJljJ+Ci8=
-=BqQz
------END PGP SIGNATURE-----
-
---EY/WZ/HvNxOox07X--
+-Emil
