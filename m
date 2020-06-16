@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 65/73] arm64: tegra: Do not mark display hub as simple bus
-Date: Tue, 16 Jun 2020 15:52:30 +0200
-Message-ID: <20200616135238.3001888-66-thierry.reding@gmail.com>
+Subject: [PATCH 66/73] arm64: tegra: Use standard names for SRAM nodes
+Date: Tue, 16 Jun 2020 15:52:31 +0200
+Message-ID: <20200616135238.3001888-67-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,40 +14,76 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The display hub on Tegra186 and Tegra194 is not a simple bus, so drop
-the corresponding compatible string.
+SRAM nodes should be named sram@<unit-address> to match the bindings.
+
+While at it, also remove the unneeded, custom compatible string for
+SRAM partition nodes.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 8 +++-----
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 8 +++-----
+ 2 files changed, 6 insertions(+), 10 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index a73050ec61a7..3a41203deba2 100644
+index 3a41203deba2..d92eea1ddac7 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -990,7 +990,7 @@ i2c-bus {
+@@ -1262,22 +1262,20 @@ gpu@17000000 {
+ 		interconnect-names = "dma-mem", "write-0", "read-1", "write-1";
+ 	};
+ 
+-	sysram@30000000 {
++	sram@30000000 {
+ 		compatible = "nvidia,tegra186-sysram", "mmio-sram";
+ 		reg = <0x0 0x30000000 0x0 0x50000>;
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0x0 0x30000000 0x50000>;
+ 
+-		cpu_bpmp_tx: shmem@4e000 {
+-			compatible = "nvidia,tegra186-bpmp-shmem";
++		cpu_bpmp_tx: sram@4e000 {
+ 			reg = <0x4e000 0x1000>;
+ 			label = "cpu-bpmp-tx";
+ 			pool;
  		};
  
- 		display-hub@15200000 {
--			compatible = "nvidia,tegra186-display", "simple-bus";
-+			compatible = "nvidia,tegra186-display";
- 			reg = <0x15200000 0x00040000>;
- 			resets = <&bpmp TEGRA186_RESET_NVDISPLAY0_MISC>,
- 				 <&bpmp TEGRA186_RESET_NVDISPLAY0_WGRP0>,
+-		cpu_bpmp_rx: shmem@4f000 {
+-			compatible = "nvidia,tegra186-bpmp-shmem";
++		cpu_bpmp_rx: sram@4f000 {
+ 			reg = <0x4f000 0x1000>;
+ 			label = "cpu-bpmp-rx";
+ 			pool;
 diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 4d6f2127dd4a..3089ebecfbef 100644
+index 3089ebecfbef..2ecb80e1b09d 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1055,7 +1055,7 @@ host1x@13e00000 {
- 			interconnect-names = "dma-mem";
+@@ -1803,22 +1803,20 @@ pcie_ep@141a0000 {
+ 		nvidia,aspm-l0s-entrance-latency-us = <3>;
+ 	};
  
- 			display-hub@15200000 {
--				compatible = "nvidia,tegra194-display", "simple-bus";
-+				compatible = "nvidia,tegra194-display";
- 				reg = <0x15200000 0x00040000>;
- 				resets = <&bpmp TEGRA194_RESET_NVDISPLAY0_MISC>,
- 					 <&bpmp TEGRA194_RESET_NVDISPLAY0_WGRP0>,
+-	sysram@40000000 {
++	sram@40000000 {
+ 		compatible = "nvidia,tegra194-sysram", "mmio-sram";
+ 		reg = <0x0 0x40000000 0x0 0x50000>;
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0x0 0x40000000 0x50000>;
+ 
+-		cpu_bpmp_tx: shmem@4e000 {
+-			compatible = "nvidia,tegra194-bpmp-shmem";
++		cpu_bpmp_tx: sram@4e000 {
+ 			reg = <0x4e000 0x1000>;
+ 			label = "cpu-bpmp-tx";
+ 			pool;
+ 		};
+ 
+-		cpu_bpmp_rx: shmem@4f000 {
+-			compatible = "nvidia,tegra194-bpmp-shmem";
++		cpu_bpmp_rx: sram@4f000 {
+ 			reg = <0x4f000 0x1000>;
+ 			label = "cpu-bpmp-rx";
+ 			pool;
 -- 
 2.24.1
