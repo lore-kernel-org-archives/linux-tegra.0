@@ -1,54 +1,178 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 5.7 000/162] 5.7.3-rc2 review
-Date: Tue, 16 Jun 2020 21:21:09 +0100
-Message-ID: <77015800-d0a2-38f7-e70a-e6dcbc6325f9@nvidia.com>
-References: <20200616172615.453746383@linuxfoundation.org>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 0/5] 180 degrees rotation support for NVIDIA Tegra DRM
+Date: Wed, 17 Jun 2020 00:16:26 +0300
+Message-ID: <fe845434-cbf6-29d4-eeb6-8868d628fd04@gmail.com>
+References: <20200614200121.14147-1-digetx@gmail.com>
+ <CACvgo51QuXMgWhFk4C=3rGvUZDX1_W0RZtVb5RtRPiHTpMebWQ@mail.gmail.com>
+ <8f789ef5-bebf-c869-784d-afda70fc1fb8@gmail.com>
+ <CACvgo50oSMbgXw1vHwVT4hhGe6g3YzKQEohCLJdfDq+0UaN1jw@mail.gmail.com>
+ <646b3f37-0f72-7f3b-388f-f71dbcdd5c84@gmail.com>
+ <CACvgo50BFH5qsPyWx9a1aZ4k5bzjSN-3KTU0BvnZ-nG-hfzKOQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200616172615.453746383-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+In-Reply-To: <CACvgo50BFH5qsPyWx9a1aZ4k5bzjSN-3KTU0BvnZ-nG-hfzKOQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 16/06/2020 18:27, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.7.3 release.
-> There are 162 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+16.06.2020 21:54, Emil Velikov пишет:
+> On Tue, 16 Jun 2020 at 18:20, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>
+>> 16.06.2020 18:48, Emil Velikov пишет:
+>>> On Tue, 16 Jun 2020 at 12:40, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>>
+>>>> 16.06.2020 01:26, Emil Velikov пишет:
+>>>>> Hi Dmitry,
+>>>>>
+>>>>> On Mon, 15 Jun 2020 at 08:28, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>>>>
+>>>>>> Hello!
+>>>>>>
+>>>>>> This series adds 180° display plane rotation support to the NVIDIA Tegra
+>>>>>> DRM driver which is needed for devices that have display panel physically
+>>>>>> mounted upside-down, like Nexus 7 tablet device for example [1]. Since
+>>>>>> DRM panel rotation is a new thing for a userspace, currently only
+>>>>>> Opentegra Xorg driver handles the rotated display panel [2], but this
+>>>>>> is good enough for the start.
+>>>>>>
+>>>>>> Note that later on it should be possible to implement a transparent 180°
+>>>>>> display rotation for Tegra DRM driver which will remove the need to have
+>>>>>> a bleeding edge userspace that knows how to rotate display planes and I'm
+>>>>>> slowly working on it. For the starter we can go with the minimal rotation
+>>>>>> support, so it's not a blocker.
+>>>>>>
+>>>>>> This series is based on the work that was made by Derek Basehore for the
+>>>>>> Mediatek driver [3], his patch is included into this patchset. I added
+>>>>>> my tested-by tag to the Derek's patch.
+>>>>>>
+>>>>>> Please review and apply, thanks in advance!
+>>>>>>
+>>>>>> [1] https://patchwork.ozlabs.org/project/linux-tegra/patch/20200607154327.18589-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org/
+>>>>>> [2] https://github.com/grate-driver/xf86-video-opentegra/commit/28eb20a3959bbe5bc3a3b67e55977093fd5114ca
+>>>>>> [3] https://lkml.org/lkml/2020/3/5/1119
+>>>>>>
+>>>>>> Changelog:
+>>>>>>
+>>>>>> v2: - Dropped "drm/panel: Set display info in panel attach" patch, which
+>>>>>>       turned out to be obsolete now.
+>>>>>>
+>>>>>>     - Renamed the cover-latter, hopefully this will fix the bouncing emails.
+>>>>>>
+>>>>>> Derek Basehore (1):
+>>>>>>   drm/panel: Add helper for reading DT rotation
+>>>>>>
+>>>>>> Dmitry Osipenko (4):
+>>>>>>   drm/panel: lvds: Set up panel orientation
+>>>>>
+>>>>> IMHO it's perfectly reasonable to report the panel orientation to
+>>>>> userspace, which can apply plane rotation as needed.
+>>>>>
+>>>>> Although I see that this series, alike Derek's, has a couple of issues:
+>>>>>  - only a single panel driver is updated
+>>>>>  - rotation is _not_ listed as supported property, in said panel
+>>>>> driver device-tree bindings
+>>>>>
+>>>>> My personal inclination is that we should aim for a comprehensive solution:
+>>>>>  - wire all panel drivers, as currently documented (quick grep list below)
+>>>>>  - document and wire-up the lvds and boe panels - as proposed by you
+>>>>> and Derek respectively
+>>>>>
+>>>>> HTH
+>>>>> Emil
+>>>>>
+>>>>> Documentation/devicetree/bindings/display/himax,hx8357d.txt:2
+>>>>> Documentation/devicetree/bindings/display/ilitek,ili9225.txt:2
+>>>>> Documentation/devicetree/bindings/display/ilitek,ili9341.txt:2
+>>>>> Documentation/devicetree/bindings/display/ilitek,ili9486.yaml:2
+>>>>> Documentation/devicetree/bindings/display/multi-inno,mi0283qt.txt:2
+>>>>> Documentation/devicetree/bindings/display/panel/panel-common.yaml:2
+>>>>> Documentation/devicetree/bindings/display/sitronix,st7586.txt:1
+>>>>> Documentation/devicetree/bindings/display/sitronix,st7735r.yaml:2
+>>>>
+>>>> Rotation is a common DT panel property that is described in the
+>>>> panel-common.yaml.
+>>> The property was introduced almost exclusively for tiny drm panels.
+>>> Those ones are a bit different from the rest (in panel/) -
+>>> MIPI-DBI/SPI w/o (not connected at least) an actual GPU.
+>>>
+>>> To make it a bit better, the rotation is seemingly performed in the
+>>> tiny driver itself ouch.
+>>>
+>>>> This property is supported by all panel bindings
+>>>> because these bindings inherent the common properties from the
+>>>> panel-common.yaml.
+>>>>
+>>> Seems like that was an unintentional change with the conversion to YAML.
+>>> Beforehand only a few selected panels had rotation. Upon closer look -
+>>> some panels do have follow-up fixes, to remove/limit the implicit
+>>> inclusion.
+>>
+>> Interesting.. my understanding that the rotation property is supposed to
+>> be a generic property which represents physical orientation of a display
+>> panel and hence it should be applicable to all panels.
+>>
+> You're spot on - it is/should be a generic property.
 > 
-> Responses should be made by Thu, 18 Jun 2020 17:25:43 +0000.
-> Anything received after that time might be too late.
+> I believe that in general many panels were mounted in the correct
+> orientation so the property, kernel and userspace were slow to catch
+> up. In some cases panels will use flip x+y to denote 180 rotation, yet
+> lacking the rotation property.
+> The s6e8aa0 is an example of the last oddity. To make it better, the
+> two dts in-tree always set both flip x and y.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.7.3-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.7.y
-> and the diffstat can be found below.
+> Tl;Dr: Hysterical raisins
 > 
-> thanks,
+>>> Sam seems like you've done most of the YAML conversion. IMHO it would
+>>> make sense to revisit the patches and inherit common properties only
+>>> as applicable.
+
+It looks to me that the conversion was done properly because rotation
+property was added as a common panel property from the start.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=b60c1be747418a07fbe04f8533394a64b27b6181
+
+>>>> I don't think that it makes sense to wire up rotation property to all
+>>>> panel drivers at once because those drivers will be untested, at least I
+>>>> don't know anything about those other panels and can't test them. It
+>>>> will be much better to support the rotation on by as-needed basis for
+>>>> each panel driver individually.
+>>>
+>>> How about CCing the author and reviewer asking them to test the patch?
+>>> The only place where the patches might cause an issue is with tiny,
+>>> although patches would still be appreciated.
+>>
+>> There are quite a lot of panel drivers and I'm a bit doubtful that at
+>> least half of devices that use those panels have any real use for the
+>> rotation property. I could write the patches.. but in the end it could
+>> be a wasted effort if nobody needs it, so I'd prefer not to do it.
 > 
-> greg k-h
+> That's why I mentioned the rotation introduction or "confusion" if I
+> may. Skimming through the pre/post YAML device tree bindings and grep
+> through the panel themselves will greatly reduce the list.
+> In other words: if neither binding documentation/in-tree dts nor panel
+> mentions rotation - omit it.
 
-All tests are passing for Tegra ...
+I looked through the DT bindings and only those few tiny-DRM drivers use
+the DT rotation property. The parsed rotation value passed to the MIPI
+DBI core where it's validated and utilized further. I don't feel that
+it's worthwhile to touch that code because switching it to the common
+DRM helper for reading out DT orientation won't bring any real benefits.
 
-Test results for stable-v5.7:
-    11 builds:	11 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    56 tests:	56 pass, 0 fail
+The samsung-s6e8aa0 panel driver indeed uses the non-standard flip-x/y
+DT properties in order to achieve the 180 rotation, but I'm not sure
+whether it's worthwhile to touch this driver as well because it will
+require the board's DT change.
 
-Linux version:	5.7.3-rc2-g55b987cbccd9
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+The panel's orientation could be parsed by any panel driver and then
+assigned as the connector's property in order to allow userspace/FB-core
+to decide what to do with the rotated display. Apparently upstream
+kernel supports only that one Samsung device which has display panel
+mounted upside-down and it already uses the custom DT properties for
+achieving the 180 rotation. So I don't quite see any panel drivers that
+instantly could benefit from using the rotation property. Perhaps I can
+add the orientation support to the panel-simple driver, but will it be
+useful to anyone?
