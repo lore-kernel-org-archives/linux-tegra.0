@@ -1,80 +1,75 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 30/38] dt-bindings: panel: Allow reg property for DSI
- panels
-Date: Tue, 16 Jun 2020 16:35:24 +0200
-Message-ID: <20200616143524.GB3000485@ulmo>
-References: <20200612141903.2391044-1-thierry.reding@gmail.com>
- <20200612141903.2391044-31-thierry.reding@gmail.com>
- <CAL_JsqL4wMN3+cd=WEUegGU9xwpj9DTXeKT6EwTRfqiS+y6fMw@mail.gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v7 2/6] drm/of: Make drm_of_find_panel_or_bridge() to
+ check graph's presence
+Date: Tue, 16 Jun 2020 17:42:48 +0300
+Message-ID: <4f0bb2e8-3522-4a3e-4ebd-32f9d5bc2da5@gmail.com>
+References: <20200614172234.8856-1-digetx@gmail.com>
+ <20200614172234.8856-3-digetx@gmail.com>
+ <20200616012652.GG1629@pendragon.ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s2ZSL+KKDSLx8OML"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqL4wMN3+cd=WEUegGU9xwpj9DTXeKT6EwTRfqiS+y6fMw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200616012652.GG1629@pendragon.ideasonboard.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+16.06.2020 04:26, Laurent Pinchart пишет:
+> Hi Dmitry,
+> 
+> Thank you for the patch.
+> 
+> On Sun, Jun 14, 2020 at 08:22:30PM +0300, Dmitry Osipenko wrote:
+>> When graph isn't defined in a device-tree, the of_graph_get_remote_node()
+>> prints a noisy error message, telling that port node is not found. This is
+>> undesirable behaviour in our case because absence of a panel/bridge graph
+>> is a valid case. Let's check presence of the local port in a device-tree
+>> before proceeding with parsing the graph.
+>>
+>> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/gpu/drm/drm_of.c | 13 ++++++++++++-
+>>  1 file changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+>> index b50b44e76279..e0652c38f357 100644
+>> --- a/drivers/gpu/drm/drm_of.c
+>> +++ b/drivers/gpu/drm/drm_of.c
+>> @@ -239,13 +239,24 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
+>>  				struct drm_bridge **bridge)
+>>  {
+>>  	int ret = -EPROBE_DEFER;
+>> -	struct device_node *remote;
+>> +	struct device_node *local, *remote;
+>>  
+>>  	if (!panel && !bridge)
+>>  		return -EINVAL;
+>>  	if (panel)
+>>  		*panel = NULL;
+>>  
+>> +	/*
+>> +	 * of_graph_get_remote_node() produces a noisy error message if port
+>> +	 * node isn't found and the absence of the port is a legit case here,
+>> +	 * so at first we silently check presence of the local port.
+>> +	 */
+>> +	local = of_graph_get_local_port(np);
+>> +	if (!local)
+>> +		return -ENODEV;
+>> +
+>> +	of_node_put(local);
+>> +
+> 
+> The code looks fine, but you may want to take into account my proposal
+> in 1/7 to instead create a of_graph_has_port() function. The could would
+> be simpler here.
+> 
+>>  	remote = of_graph_get_remote_node(np, port, endpoint);
+>>  	if (!remote)
+>>  		return -ENODEV;
+> 
 
---s2ZSL+KKDSLx8OML
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jun 12, 2020 at 08:29:35AM -0600, Rob Herring wrote:
-> On Fri, Jun 12, 2020 at 8:20 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>=
- wrote:
-> >
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> > For DSI panels the "reg" property is needed to represent the virtual
-> > channel of the given panel.
-> >
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  .../devicetree/bindings/display/panel/panel-simple.yaml        | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/panel/panel-simp=
-le.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-> > index d6cca1479633..34fe3d42b829 100644
-> > --- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-> > +++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-> > @@ -267,6 +267,9 @@ properties:
-> >          # Winstar Display Corporation 3.5" QVGA (320x240) TFT LCD panel
-> >        - winstar,wf35ltiacd
-> >
-> > +  reg:
-> > +    description: virtual channel for DSI panels
-> > +
->=20
-> panel-simple-dsi.yaml?
-
-Heh... I had completely missed that. I've now replaced this patch with
-one that moves the lg,lh500wx1-sd03 compatible string to the DSI schema.
-
-Thierry
-
---s2ZSL+KKDSLx8OML
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7o2KwACgkQ3SOs138+
-s6HG9g/+PX0Xjkon9vFxMTkYjjJ7yg1KDrHTwi6omDpt7goanb39WXqanIC8rrDi
-VxB3rcws6TcsgLzMkjY/mxtEu2eG/71ERDkiLKmGbbzQ6/sE80iqc5FUD9EGjeyU
-u37A1yWgeby3wyDdCmi9aGO+IXBGMF6MtX7Fjl5MG67HLJL6+NeN7uPOybNS1ege
-x/YuaQCX4DkL+GTTCXyqwoPA3kbK3o+JBDdwoHt29ECWk9FeMWKiBQJnDP4TA3zN
-SKj/zhlEfckOHyTqBR52bI3j9gUznzFXHC7ToOZy7kxjxIkYLEXdYDo4/OKs2GkE
-7eJ9xZs5PSEP6jjmItKlMAkhE4kivZPJGhTWquVPOkGA6Trq5m98ZY0XgVGqywLo
-zuHZV45GWkJNjw8ULu0grhszYjSGEMNp3rfoeW1CVcwzwa9641PQ1ljW3Kl2tOSh
-syRskBn8vRDjvt91wficpHNa+tv+5XGs2FtE/axID0LNGm/Z9x1MgvI86KMhL4eV
-GzraTWwYks5itO9iLE3f9LaROy2NvGzS7Z0pMp/XF7dVx3Lx+8O9Ebaz3SZn3Pzc
-zcceED4jzTOgfCPR+uHOY3aqcRmqVPe6CDd/2xDRs+gOxbLpQa0Y4huKidlklVYc
-zy9IRXmJGKdQEBA1vyIKIrZCDO61EpAM9sax/aTF1QdjyRzDGYE=
-=2xCw
------END PGP SIGNATURE-----
-
---s2ZSL+KKDSLx8OML--
+I like yours proposals and will prepare v8 based on them, thanks!
