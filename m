@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 69/73] arm64: tegra: Rename agic -> interrupt-controller
-Date: Tue, 16 Jun 2020 15:52:34 +0200
-Message-ID: <20200616135238.3001888-70-thierry.reding@gmail.com>
+Subject: [PATCH 71/73] arm64: tegra: Sort nodes by unit-address on Jetson Nano
+Date: Tue, 16 Jun 2020 15:52:36 +0200
+Message-ID: <20200616135238.3001888-72-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,54 +14,47 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Device tree nodes for interrupt controllers should be named "interrupt-
-controller", so rename the AGIC accordingly.
+Move the usb@700d0000 node to the correct place in the device tree,
+ordered by unit-address.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 2 +-
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      | 2 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ .../boot/dts/nvidia/tegra210-p3450-0000.dts      | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 0c0d51c23975..0ccb62606bef 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -119,7 +119,7 @@ dma@702e2000 {
- 			status = "okay";
- 		};
- 
--		agic@702f9000 {
-+		interrupt-controller@702f9000 {
- 			status = "okay";
- 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index beec6aab2157..4eb51e5eef3a 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -545,14 +545,6 @@ mmc@700b0000 {
+ 		vmmc-supply = <&vdd_3v3_sd>;
  	};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index cc0d7b4a5834..f7840e5e069a 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1717,7 +1717,7 @@ dma@702e2000 {
- 			status = "okay";
- 		};
  
--		agic@702f9000 {
-+		interrupt-controller@702f9000 {
- 			status = "okay";
- 		};
+-	usb@700d0000 {
+-		status = "okay";
+-		phys = <&micro_b>;
+-		phy-names = "usb2-0";
+-		avddio-usb-supply = <&vdd_3v3_sys>;
+-		hvdd-usb-supply = <&vdd_1v8>;
+-	};
+-
+ 	mmc@700b0400 {
+ 		status = "okay";
+ 		bus-width = <4>;
+@@ -566,6 +558,14 @@ mmc@700b0400 {
+ 		wakeup-source;
  	};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 02a02ed1b264..c265211f8a84 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1355,7 +1355,7 @@ adma: dma@702e2000 {
- 			status = "disabled";
- 		};
  
--		agic: agic@702f9000 {
-+		agic: interrupt-controller@702f9000 {
- 			compatible = "nvidia,tegra210-agic";
- 			#interrupt-cells = <3>;
- 			interrupt-controller;
++	usb@700d0000 {
++		status = "okay";
++		phys = <&micro_b>;
++		phy-names = "usb2-0";
++		avddio-usb-supply = <&vdd_3v3_sys>;
++		hvdd-usb-supply = <&vdd_1v8>;
++	};
++
+ 	clk32k_in: clock@0 {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
 -- 
 2.24.1
