@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 12/73] ARM: tegra: Drop display controller parent clocks on Tegra114
-Date: Tue, 16 Jun 2020 15:51:37 +0200
-Message-ID: <20200616135238.3001888-13-thierry.reding@gmail.com>
+Subject: [PATCH 14/73] ARM: tegra: Tegra114 SDHCI is not backwards-compatible
+Date: Tue, 16 Jun 2020 15:51:39 +0200
+Message-ID: <20200616135238.3001888-15-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,129 +14,54 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The parent clocks are determined by the output that will be used, not by
-the display controller that drives the output. Drop the parent clocks
-from the display controller device tree nodes.
+The SDHCI controller instantiated on Tegra114 is not backwards-
+compatible with the version on Tegra30, so remove the corresponding
+compatible string.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra114.dtsi | 10 ++++------
- arch/arm/boot/dts/tegra124.dtsi | 10 ++++------
- arch/arm/boot/dts/tegra20.dtsi  | 10 ++++------
- arch/arm/boot/dts/tegra30.dtsi  | 10 ++++------
- 4 files changed, 16 insertions(+), 24 deletions(-)
+ arch/arm/boot/dts/tegra114.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index a06b88b01ef3..23df7a5f37d3 100644
+index 69e0e3eeffb4..88632d8d0bde 100644
 --- a/arch/arm/boot/dts/tegra114.dtsi
 +++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -59,9 +59,8 @@ dc@54200000 {
- 			compatible = "nvidia,tegra114-dc";
- 			reg = <0x54200000 0x00040000>;
- 			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&tegra_car TEGRA114_CLK_DISP1>,
--				 <&tegra_car TEGRA114_CLK_PLL_P>;
--			clock-names = "dc", "parent";
-+			clocks = <&tegra_car TEGRA114_CLK_DISP1>;
-+			clock-names = "dc";
- 			resets = <&tegra_car 27>;
- 			reset-names = "dc";
+@@ -645,7 +645,7 @@ mipi: mipi@700e3000 {
+ 	};
  
-@@ -78,9 +77,8 @@ dc@54240000 {
- 			compatible = "nvidia,tegra114-dc";
- 			reg = <0x54240000 0x00040000>;
- 			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&tegra_car TEGRA114_CLK_DISP2>,
--				 <&tegra_car TEGRA114_CLK_PLL_P>;
--			clock-names = "dc", "parent";
-+			clocks = <&tegra_car TEGRA114_CLK_DISP2>;
-+			clock-names = "dc";
- 			resets = <&tegra_car 26>;
- 			reset-names = "dc";
+ 	mmc@78000000 {
+-		compatible = "nvidia,tegra114-sdhci", "nvidia,tegra30-sdhci";
++		compatible = "nvidia,tegra114-sdhci";
+ 		reg = <0x78000000 0x200>;
+ 		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA114_CLK_SDMMC1>;
+@@ -656,7 +656,7 @@ mmc@78000000 {
+ 	};
  
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 1afed8496c95..2c992e8e3594 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -105,9 +105,8 @@ dc@54200000 {
- 			compatible = "nvidia,tegra124-dc";
- 			reg = <0x0 0x54200000 0x0 0x00040000>;
- 			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&tegra_car TEGRA124_CLK_DISP1>,
--				 <&tegra_car TEGRA124_CLK_PLL_P>;
--			clock-names = "dc", "parent";
-+			clocks = <&tegra_car TEGRA124_CLK_DISP1>;
-+			clock-names = "dc";
- 			resets = <&tegra_car 27>;
- 			reset-names = "dc";
+ 	mmc@78000200 {
+-		compatible = "nvidia,tegra114-sdhci", "nvidia,tegra30-sdhci";
++		compatible = "nvidia,tegra114-sdhci";
+ 		reg = <0x78000200 0x200>;
+ 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA114_CLK_SDMMC2>;
+@@ -667,7 +667,7 @@ mmc@78000200 {
+ 	};
  
-@@ -120,9 +119,8 @@ dc@54240000 {
- 			compatible = "nvidia,tegra124-dc";
- 			reg = <0x0 0x54240000 0x0 0x00040000>;
- 			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&tegra_car TEGRA124_CLK_DISP2>,
--				 <&tegra_car TEGRA124_CLK_PLL_P>;
--			clock-names = "dc", "parent";
-+			clocks = <&tegra_car TEGRA124_CLK_DISP2>;
-+			clock-names = "dc";
- 			resets = <&tegra_car 26>;
- 			reset-names = "dc";
+ 	mmc@78000400 {
+-		compatible = "nvidia,tegra114-sdhci", "nvidia,tegra30-sdhci";
++		compatible = "nvidia,tegra114-sdhci";
+ 		reg = <0x78000400 0x200>;
+ 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA114_CLK_SDMMC3>;
+@@ -678,7 +678,7 @@ mmc@78000400 {
+ 	};
  
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index f0a172c61b26..8b6909839f59 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -103,9 +103,8 @@ dc@54200000 {
- 			compatible = "nvidia,tegra20-dc";
- 			reg = <0x54200000 0x00040000>;
- 			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&tegra_car TEGRA20_CLK_DISP1>,
--				 <&tegra_car TEGRA20_CLK_PLL_P>;
--			clock-names = "dc", "parent";
-+			clocks = <&tegra_car TEGRA20_CLK_DISP1>;
-+			clock-names = "dc";
- 			resets = <&tegra_car 27>;
- 			reset-names = "dc";
- 
-@@ -120,9 +119,8 @@ dc@54240000 {
- 			compatible = "nvidia,tegra20-dc";
- 			reg = <0x54240000 0x00040000>;
- 			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&tegra_car TEGRA20_CLK_DISP2>,
--				 <&tegra_car TEGRA20_CLK_PLL_P>;
--			clock-names = "dc", "parent";
-+			clocks = <&tegra_car TEGRA20_CLK_DISP2>;
-+			clock-names = "dc";
- 			resets = <&tegra_car 26>;
- 			reset-names = "dc";
- 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 27000f0ba35b..23fedb76e5ae 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -200,9 +200,8 @@ dc@54200000 {
- 			compatible = "nvidia,tegra30-dc", "nvidia,tegra20-dc";
- 			reg = <0x54200000 0x00040000>;
- 			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&tegra_car TEGRA30_CLK_DISP1>,
--				 <&tegra_car TEGRA30_CLK_PLL_P>;
--			clock-names = "dc", "parent";
-+			clocks = <&tegra_car TEGRA30_CLK_DISP1>;
-+			clock-names = "dc";
- 			resets = <&tegra_car 27>;
- 			reset-names = "dc";
- 
-@@ -219,9 +218,8 @@ dc@54240000 {
- 			compatible = "nvidia,tegra30-dc";
- 			reg = <0x54240000 0x00040000>;
- 			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&tegra_car TEGRA30_CLK_DISP2>,
--				 <&tegra_car TEGRA30_CLK_PLL_P>;
--			clock-names = "dc", "parent";
-+			clocks = <&tegra_car TEGRA30_CLK_DISP2>;
-+			clock-names = "dc";
- 			resets = <&tegra_car 26>;
- 			reset-names = "dc";
- 
+ 	mmc@78000600 {
+-		compatible = "nvidia,tegra114-sdhci", "nvidia,tegra30-sdhci";
++		compatible = "nvidia,tegra114-sdhci";
+ 		reg = <0x78000600 0x200>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA114_CLK_SDMMC4>;
 -- 
 2.24.1
