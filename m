@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 05/73] ARM: tegra: roth: Use the correct DSI/CSI supply
-Date: Tue, 16 Jun 2020 15:51:30 +0200
-Message-ID: <20200616135238.3001888-6-thierry.reding@gmail.com>
+Subject: [PATCH 06/73] ARM: tegra: tn7: Use the correct DSI/CSI supply
+Date: Tue, 16 Jun 2020 15:51:31 +0200
+Message-ID: <20200616135238.3001888-7-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -19,13 +19,13 @@ that instead of the wrong vdd-supply property.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra114-roth.dts | 2 +-
+ arch/arm/boot/dts/tegra114-tn7.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
-index 5249afdca577..7378b5d6f2fa 100644
---- a/arch/arm/boot/dts/tegra114-roth.dts
-+++ b/arch/arm/boot/dts/tegra114-roth.dts
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 90935db591a5..0e520ae1109d 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
 @@ -37,7 +37,7 @@ host1x@50000000 {
  		dsi@54300000 {
  			status = "okay";
@@ -34,6 +34,6 @@ index 5249afdca577..7378b5d6f2fa 100644
 +			avdd-dsi-csi-supply = <&vdd_1v2_ap>;
  
  			panel@0 {
- 				compatible = "lg,lh500wx1-sd03";
+ 				compatible = "lg,ld070wx3-sl01";
 -- 
 2.24.1
