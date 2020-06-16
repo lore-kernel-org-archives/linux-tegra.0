@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 63/73] arm64: tegra: Remove XUSB pad controller interrupt from XUSB node
-Date: Tue, 16 Jun 2020 15:52:28 +0200
-Message-ID: <20200616135238.3001888-64-thierry.reding@gmail.com>
+Subject: [PATCH 64/73] arm64: tegra: Fix {clock,reset}-names ordering
+Date: Tue, 16 Jun 2020 15:52:29 +0200
+Message-ID: <20200616135238.3001888-65-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,42 +14,41 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The XUSB controller doesn't need the XUSB pad controller's interrupt, so
-remove it.
+It's very difficult to describe string lists that can be in arbitrary
+order using the json-schema based validation tooling. Since the OS is
+not going to care either way, take the easy way out and reorder these
+entries to match the order defined in the bindings.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 3 +--
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index b4150d8cccf5..1cd369ac48d2 100644
+index 1cd369ac48d2..a73050ec61a7 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -568,8 +568,7 @@ usb@3530000 {
- 		      <0x0 0x03538000 0x0 0x1000>;
- 		reg-names = "hcd", "fpci";
- 		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_XUSB_HOST>,
- 			 <&bpmp TEGRA186_CLK_XUSB_FALCON>,
- 			 <&bpmp TEGRA186_CLK_XUSB_SS>,
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index bf696ada856c..4d6f2127dd4a 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -688,8 +688,7 @@ usb@3610000 {
- 			reg-names = "hcd", "fpci";
+@@ -799,15 +799,15 @@ pcie@10003000 {
+ 			 <0x02000000 0 0x50100000 0x0 0x50100000 0 0x07f00000>, /* non-prefetchable memory (127 MiB) */
+ 			 <0x42000000 0 0x58000000 0x0 0x58000000 0 0x28000000>; /* prefetchable memory (640 MiB) */
  
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&bpmp TEGRA186_CLK_AFI>,
+-			 <&bpmp TEGRA186_CLK_PCIE>,
++		clocks = <&bpmp TEGRA186_CLK_PCIE>,
++			 <&bpmp TEGRA186_CLK_AFI>,
+ 			 <&bpmp TEGRA186_CLK_PLLE>;
+-		clock-names = "afi", "pex", "pll_e";
++		clock-names = "pex", "afi", "pll_e";
  
- 			clocks = <&bpmp TEGRA194_CLK_XUSB_CORE_HOST>,
- 				 <&bpmp TEGRA194_CLK_XUSB_FALCON>,
+-		resets = <&bpmp TEGRA186_RESET_AFI>,
+-			 <&bpmp TEGRA186_RESET_PCIE>,
++		resets = <&bpmp TEGRA186_RESET_PCIE>,
++			 <&bpmp TEGRA186_RESET_AFI>,
+ 			 <&bpmp TEGRA186_RESET_PCIEXCLK>;
+-		reset-names = "afi", "pex", "pcie_x";
++		reset-names = "pex", "afi", "pcie_x";
+ 
+ 		interconnects = <&mc TEGRA186_MEMORY_CLIENT_AFIR &emc>,
+ 				<&mc TEGRA186_MEMORY_CLIENT_AFIW &emc>;
 -- 
 2.24.1
