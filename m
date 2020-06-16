@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 38/73] arm64: tegra: Use standard notation for interrupts
-Date: Tue, 16 Jun 2020 15:52:03 +0200
-Message-ID: <20200616135238.3001888-39-thierry.reding@gmail.com>
+Subject: [PATCH 39/73] arm64: tegra: Remove extra compatible for Tegra194 SDHCI
+Date: Tue, 16 Jun 2020 15:52:04 +0200
+Message-ID: <20200616135238.3001888-40-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,28 +14,44 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-It is customary to use angle brackets around each tuple in the
-interrupts property.
+The SDHCI on Tegra194 is in fact not compatible with the one found on
+Tegra186. Remove the extra compatible string to reflect that.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 373f575b8678..50b56168fc97 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1199,8 +1199,8 @@ gpu@17000000 {
- 		compatible = "nvidia,gp10b";
- 		reg = <0x0 0x17000000 0x0 0x1000000>,
- 		      <0x0 0x18000000 0x0 0x1000000>;
--		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH
--			      GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "stall", "nonstall";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 4bc187a4eacd..ae438b2c4dd9 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -450,7 +450,7 @@ pwm8: pwm@32f0000 {
+ 		};
  
- 		clocks = <&bpmp TEGRA186_CLK_GPCCLK>,
+ 		sdmmc1: sdhci@3400000 {
+-			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
++			compatible = "nvidia,tegra194-sdhci";
+ 			reg = <0x03400000 0x10000>;
+ 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA194_CLK_SDMMC1>;
+@@ -472,7 +472,7 @@ sdmmc1: sdhci@3400000 {
+ 		};
+ 
+ 		sdmmc3: sdhci@3440000 {
+-			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
++			compatible = "nvidia,tegra194-sdhci";
+ 			reg = <0x03440000 0x10000>;
+ 			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA194_CLK_SDMMC3>;
+@@ -495,7 +495,7 @@ sdmmc3: sdhci@3440000 {
+ 		};
+ 
+ 		sdmmc4: sdhci@3460000 {
+-			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
++			compatible = "nvidia,tegra194-sdhci";
+ 			reg = <0x03460000 0x10000>;
+ 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA194_CLK_SDMMC4>;
 -- 
 2.24.1
