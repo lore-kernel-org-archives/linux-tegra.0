@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 47/73] arm64: tegra: Fixup I/O and PLL supply names for HDMI/DP
-Date: Tue, 16 Jun 2020 15:52:12 +0200
-Message-ID: <20200616135238.3001888-48-thierry.reding@gmail.com>
+Subject: [PATCH 48/73] arm64: tegra: Add unit-address to memory node
+Date: Tue, 16 Jun 2020 15:52:13 +0200
+Message-ID: <20200616135238.3001888-49-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,76 +14,97 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The I/O and PLL supplies used for HDMI/DP have alternative names. Use
-the names that are given in the hardware documentation for consistency.
+The memory node requires a unit-address. For some boards the bootloader,
+which is usually locked down, uses a hard-coded name for the memory node
+without a unit-address, so we can't fix it on those boards.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 4 ++--
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 4 ++--
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     | 4 ++--
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts     | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi     | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi     | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 1af7f9ffb7b6..f35b0ba29cb5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -286,8 +286,8 @@ sor@15540000 {
- 		sor@15580000 {
- 			status = "okay";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+index 9f3206c63900..d0d03cc30197 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+@@ -18,7 +18,7 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
--			avdd-io-supply = <&vdd_hdmi_1v05>;
--			vdd-pll-supply = <&vdd_1v8_ap>;
-+			avdd-io-hdmi-dp-supply = <&vdd_hdmi_1v05>;
-+			vdd-hdmi-dp-pll-supply = <&vdd_1v8_ap>;
- 			hdmi-supply = <&vdd_hdmi>;
+-	memory {
++	memory@80000000 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+index de049d8d458a..7b5b9bb332cf 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+@@ -27,7 +27,7 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
- 			nvidia,ddc-i2c-bus = <&ddc>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index e15d1eac05f5..9a7d136b467f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -145,8 +145,8 @@ sor@15b40000 {
- 			sor@15b80000 {
- 				status = "okay";
+-	memory {
++	memory@80000000 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x2 0x00000000>;
+ 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index cc6ed45a2b48..751775357d51 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -17,7 +17,7 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
--				avdd-io-supply = <&vdd_1v0>;
--				vdd-pll-supply = <&vdd_1v8hs>;
-+				avdd-io-hdmi-dp-supply = <&vdd_1v0>;
-+				vdd-hdmi-dp-pll-supply = <&vdd_1v8hs>;
- 				hdmi-supply = <&vdd_hdmi>;
+-	memory {
++	memory@80000000 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x1 0x0>;
+ 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi
+index d0dc03923723..9ace2d9ea085 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi
+@@ -14,7 +14,7 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
- 				nvidia,ddc-i2c-bus = <&ddc>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index 5c3771e8d683..f72afdf547ee 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -27,8 +27,8 @@ csi@838 {
- 		sor@54580000 {
- 			status = "okay";
+-	memory {
++	memory@80000000 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0xc0000000>;
+ 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+index 88a4b9333d84..615a8f5a6cf2 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+@@ -16,7 +16,7 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
--			avdd-io-supply = <&avdd_1v05>;
--			vdd-pll-supply = <&vdd_1v8>;
-+			avdd-io-hdmi-dp-supply = <&avdd_1v05>;
-+			vdd-hdmi-dp-pll-supply = <&vdd_1v8>;
- 			hdmi-supply = <&vdd_hdmi>;
- 
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+-	memory {
++	memory@80000000 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0xc0000000>;
+ 	};
 diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index ced01d15e457..e7ebf1afeb7a 100644
+index e7ebf1afeb7a..e6f4a36efa73 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
 +++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -74,8 +74,8 @@ sor@54540000 {
- 		sor@54580000 {
- 			status = "okay";
+@@ -22,7 +22,7 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
--			avdd-io-supply = <&avdd_1v05>;
--			vdd-pll-supply = <&vdd_1v8>;
-+			avdd-io-hdmi-dp-supply = <&avdd_1v05>;
-+			vdd-hdmi-dp-pll-supply = <&vdd_1v8>;
- 			hdmi-supply = <&vdd_hdmi>;
- 
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+-	memory {
++	memory@80000000 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x1 0x0>;
+ 	};
 -- 
 2.24.1
