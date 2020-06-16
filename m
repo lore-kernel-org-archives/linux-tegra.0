@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 30/73] ARM: tegra: Use standard names for SRAM nodes
-Date: Tue, 16 Jun 2020 15:51:55 +0200
-Message-ID: <20200616135238.3001888-31-thierry.reding@gmail.com>
+Subject: [PATCH 29/73] ARM: tegra: seaboard: Use standard battery bindings
+Date: Tue, 16 Jun 2020 15:51:54 +0200
+Message-ID: <20200616135238.3001888-30-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,55 +14,32 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-SRAM nodes should be named sram@<unit-address> to match the bindings.
+Seaboard uses a non-existing, possibly obsoleted, binding for the
+battery. Move to the standard binding which seems to be a super-
+set of the odl binding.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 4 ++--
- arch/arm/boot/dts/tegra30.dtsi | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra20-seaboard.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index ccd2995aef83..2568236284ad 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -17,14 +17,14 @@ memory@0 {
- 		reg = <0 0>;
- 	};
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index f1baf16c5010..c24d4a37613e 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -394,10 +394,10 @@ lvds_ddc: i2c@1 {
+ 			#size-cells = <0>;
  
--	iram@40000000 {
-+	sram@40000000 {
- 		compatible = "mmio-sram";
- 		reg = <0x40000000 0x40000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0 0x40000000 0x40000>;
- 
--		vde_pool: vde@400 {
-+		vde_pool: sram@400 {
- 			reg = <0x400 0x3fc00>;
- 			pool;
- 		};
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index f838e4775cf6..690e1628860f 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -97,14 +97,14 @@ pci@3,0 {
+ 			smart-battery@b {
+-				compatible = "ti,bq20z75", "smart-battery-1.1";
++				compatible = "ti,bq20z75", "sbs,sbs-battery";
+ 				reg = <0xb>;
+-				ti,i2c-retry-count = <2>;
+-				ti,poll-retry-count = <10>;
++				sbs,i2c-retry-count = <2>;
++				sbs,poll-retry-count = <10>;
+ 			};
  		};
  	};
- 
--	iram@40000000 {
-+	sram@40000000 {
- 		compatible = "mmio-sram";
- 		reg = <0x40000000 0x40000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0 0x40000000 0x40000>;
- 
--		vde_pool: vde@400 {
-+		vde_pool: sram@400 {
- 			reg = <0x400 0x3fc00>;
- 			pool;
- 		};
 -- 
 2.24.1
