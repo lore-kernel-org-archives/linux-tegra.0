@@ -1,132 +1,74 @@
-From: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 0/5] 180 degrees rotation support for NVIDIA Tegra DRM
-Date: Tue, 16 Jun 2020 16:48:34 +0100
-Message-ID: <CACvgo50oSMbgXw1vHwVT4hhGe6g3YzKQEohCLJdfDq+0UaN1jw@mail.gmail.com>
-References: <20200614200121.14147-1-digetx@gmail.com> <CACvgo51QuXMgWhFk4C=3rGvUZDX1_W0RZtVb5RtRPiHTpMebWQ@mail.gmail.com>
- <8f789ef5-bebf-c869-784d-afda70fc1fb8@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] drm/tegra: Add zpos property for cursor planes
+Date: Tue, 16 Jun 2020 18:54:35 +0300
+Message-ID: <c34c97ab-08de-341e-05e5-77e2651d956f@gmail.com>
+References: <20200616121713.2983627-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <8f789ef5-bebf-c869-784d-afda70fc1fb8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200616121713.2983627-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Daniel Stone <daniel-rLtY4a/8tF1rovVCs/uTlw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 16 Jun 2020 at 12:40, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> 16.06.2020 01:26, Emil Velikov =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Hi Dmitry,
-> >
-> > On Mon, 15 Jun 2020 at 08:28, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> >>
-> >> Hello!
-> >>
-> >> This series adds 180=C2=B0 display plane rotation support to the NVIDI=
-A Tegra
-> >> DRM driver which is needed for devices that have display panel physica=
-lly
-> >> mounted upside-down, like Nexus 7 tablet device for example [1]. Since
-> >> DRM panel rotation is a new thing for a userspace, currently only
-> >> Opentegra Xorg driver handles the rotated display panel [2], but this
-> >> is good enough for the start.
-> >>
-> >> Note that later on it should be possible to implement a transparent 18=
-0=C2=B0
-> >> display rotation for Tegra DRM driver which will remove the need to ha=
-ve
-> >> a bleeding edge userspace that knows how to rotate display planes and =
-I'm
-> >> slowly working on it. For the starter we can go with the minimal rotat=
-ion
-> >> support, so it's not a blocker.
-> >>
-> >> This series is based on the work that was made by Derek Basehore for t=
-he
-> >> Mediatek driver [3], his patch is included into this patchset. I added
-> >> my tested-by tag to the Derek's patch.
-> >>
-> >> Please review and apply, thanks in advance!
-> >>
-> >> [1] https://patchwork.ozlabs.org/project/linux-tegra/patch/20200607154=
-327.18589-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org/
-> >> [2] https://github.com/grate-driver/xf86-video-opentegra/commit/28eb20=
-a3959bbe5bc3a3b67e55977093fd5114ca
-> >> [3] https://lkml.org/lkml/2020/3/5/1119
-> >>
-> >> Changelog:
-> >>
-> >> v2: - Dropped "drm/panel: Set display info in panel attach" patch, whi=
-ch
-> >>       turned out to be obsolete now.
-> >>
-> >>     - Renamed the cover-latter, hopefully this will fix the bouncing e=
-mails.
-> >>
-> >> Derek Basehore (1):
-> >>   drm/panel: Add helper for reading DT rotation
-> >>
-> >> Dmitry Osipenko (4):
-> >>   drm/panel: lvds: Set up panel orientation
-> >
-> > IMHO it's perfectly reasonable to report the panel orientation to
-> > userspace, which can apply plane rotation as needed.
-> >
-> > Although I see that this series, alike Derek's, has a couple of issues:
-> >  - only a single panel driver is updated
-> >  - rotation is _not_ listed as supported property, in said panel
-> > driver device-tree bindings
-> >
-> > My personal inclination is that we should aim for a comprehensive solut=
-ion:
-> >  - wire all panel drivers, as currently documented (quick grep list bel=
-ow)
-> >  - document and wire-up the lvds and boe panels - as proposed by you
-> > and Derek respectively
-> >
-> > HTH
-> > Emil
-> >
-> > Documentation/devicetree/bindings/display/himax,hx8357d.txt:2
-> > Documentation/devicetree/bindings/display/ilitek,ili9225.txt:2
-> > Documentation/devicetree/bindings/display/ilitek,ili9341.txt:2
-> > Documentation/devicetree/bindings/display/ilitek,ili9486.yaml:2
-> > Documentation/devicetree/bindings/display/multi-inno,mi0283qt.txt:2
-> > Documentation/devicetree/bindings/display/panel/panel-common.yaml:2
-> > Documentation/devicetree/bindings/display/sitronix,st7586.txt:1
-> > Documentation/devicetree/bindings/display/sitronix,st7735r.yaml:2
->
-> Rotation is a common DT panel property that is described in the
-> panel-common.yaml.
-The property was introduced almost exclusively for tiny drm panels.
-Those ones are a bit different from the rest (in panel/) -
-MIPI-DBI/SPI w/o (not connected at least) an actual GPU.
+16.06.2020 15:17, Thierry Reding пишет:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> As of commit 4dc55525b095 ("drm: plane: Verify that no or all planes
+> have a zpos property") a warning is emitted if there's a mix of planes
+> with and without a zpos property.
+> 
+> On Tegra, cursor planes are always composited on top of all other
+> planes, which is why they never had a zpos property attached to them.
+> However, since the composition order is fixed, this is trivial to
+> remedy by simply attaching an immutable zpos property to them.
+> 
+> Changes in v2:
+> - hardcode cursor plane zpos to 255 instead of 0 (Ville)
+> 
+> Reported-by: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/dc.c  | 9 +++++++--
+>  drivers/gpu/drm/tegra/hub.c | 2 +-
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index 83f31c6e891c..85408eed4685 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -787,7 +787,7 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
+>  	}
+>  
+>  	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
+> -	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
+> +	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 254);
+>  
+>  	err = drm_plane_create_rotation_property(&plane->base,
+>  						 DRM_MODE_ROTATE_0,
+> @@ -957,6 +957,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+>  	}
+>  
+>  	drm_plane_helper_add(&plane->base, &tegra_cursor_plane_helper_funcs);
+> +	drm_plane_create_zpos_immutable_property(&plane->base, 255);
+>  
+>  	return &plane->base;
+>  }
+> @@ -1074,7 +1075,11 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
+>  	}
+>  
+>  	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
+> -	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
+> +
+> +	if (!cursor)
+> +		drm_plane_create_zpos_property(&plane->base, plane->index, 0, 254);
+> +	else
+> +		drm_plane_create_zpos_immutable_property(&plane->base, 255);
 
-To make it a bit better, the rotation is seemingly performed in the
-tiny driver itself ouch.
-
-> This property is supported by all panel bindings
-> because these bindings inherent the common properties from the
-> panel-common.yaml.
->
-Seems like that was an unintentional change with the conversion to YAML.
-Beforehand only a few selected panels had rotation. Upon closer look -
-some panels do have follow-up fixes, to remove/limit the implicit
-inclusion.
-
-Sam seems like you've done most of the YAML conversion. IMHO it would
-make sense to revisit the patches and inherit common properties only
-as applicable.
-
-> I don't think that it makes sense to wire up rotation property to all
-> panel drivers at once because those drivers will be untested, at least I
-> don't know anything about those other panels and can't test them. It
-> will be much better to support the rotation on by as-needed basis for
-> each panel driver individually.
-
-How about CCing the author and reviewer asking them to test the patch?
-The only place where the patches might cause an issue is with tiny,
-although patches would still be appreciated.
-
--Emil
+On T20/30 we're are setting the plane's type to CURSOR because we want
+to use one overlay plane for the mouse cursor. Nevertheless, it's still
+a generic overlay plane that can change its z-position, and thus, it's
+wrong to make zpos immutable here.
