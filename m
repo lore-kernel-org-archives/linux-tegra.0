@@ -1,68 +1,51 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: Fix reference count leaks.
-Date: Tue, 16 Jun 2020 20:42:50 +0100
-Message-ID: <9492fa91-067b-f74f-1a52-a2622d8f28d6@nvidia.com>
-References: <20200613204422.24484-1-wu000273@umn.edu>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 5.4 000/131] 5.4.47-rc2 review
+Date: Tue, 16 Jun 2020 21:20:03 +0100
+Message-ID: <dcc826f2-a9c9-4870-f1da-76bda0bb767b@nvidia.com>
+References: <20200616172616.044174583@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200613204422.24484-1-wu000273-OJFnDUYgAso@public.gmane.org>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200616172616.044174583@linuxfoundation.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: wu000273-OJFnDUYgAso@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Edward Cragg <edward.cragg-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 13/06/2020 21:44, wu000273-OJFnDUYgAso@public.gmane.org wrote:
-> From: Qiushi Wu <wu000273-OJFnDUYgAso@public.gmane.org>
+On 16/06/2020 18:27, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.47 release.
+> There are 131 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Calling pm_runtime_get_sync increments the counter even in case of
-> failure, causing incorrect ref count if pm_runtime_put is not called in
-> error handling paths. Call pm_runtime_put if pm_runtime_get_sync fails.
+> Responses should be made by Thu, 18 Jun 2020 17:25:49 +0000.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Qiushi Wu <wu000273-OJFnDUYgAso@public.gmane.org>
-> ---
->  sound/soc/tegra/tegra30_ahub.c | 4 +++-
->  sound/soc/tegra/tegra30_i2s.c  | 4 +++-
->  2 files changed, 6 insertions(+), 2 deletions(-)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.47-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-> index 635eacbd28d4..156e3b9d613c 100644
-> --- a/sound/soc/tegra/tegra30_ahub.c
-> +++ b/sound/soc/tegra/tegra30_ahub.c
-> @@ -643,8 +643,10 @@ static int tegra30_ahub_resume(struct device *dev)
->  	int ret;
->  
->  	ret = pm_runtime_get_sync(dev);
-> -	if (ret < 0)
-> +	if (ret < 0) {
-> +		pm_runtime_put(dev);
->  		return ret;
-> +	}
->  	ret = regcache_sync(ahub->regmap_ahub);
->  	ret |= regcache_sync(ahub->regmap_apbif);
->  	pm_runtime_put(dev);
-> diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-> index d59882ec48f1..db5a8587bfa4 100644
-> --- a/sound/soc/tegra/tegra30_i2s.c
-> +++ b/sound/soc/tegra/tegra30_i2s.c
-> @@ -567,8 +567,10 @@ static int tegra30_i2s_resume(struct device *dev)
->  	int ret;
->  
->  	ret = pm_runtime_get_sync(dev);
-> -	if (ret < 0)
-> +	if (ret < 0) {
-> +		pm_runtime_put(dev);
->  		return ret;
-> +	}
->  	ret = regcache_sync(i2s->regmap);
->  	pm_runtime_put(dev);
+> thanks,
+> 
+> greg k-h
 
-Thanks.
 
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+All tests are passing for Tegra ...
+
+Test results for stable-v5.4:
+    11 builds:	11 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    56 tests:	56 pass, 0 fail
+
+Linux version:	5.4.47-rc2-ga7debb64f8b4
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
 Cheers
 Jon
