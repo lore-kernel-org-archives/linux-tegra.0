@@ -1,63 +1,54 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v2_5/5=5d_drm/tegra=3a_plane=3a_Support_18?=
- =?UTF-8?Q?0=c2=b0_rotation?=
-Date: Tue, 16 Jun 2020 14:25:38 +0300
-Message-ID: <e21404bd-49c9-039e-4aef-c4912a9c0640@gmail.com>
-References: <20200614200121.14147-1-digetx@gmail.com>
- <20200614200121.14147-6-digetx@gmail.com>
- <CACvgo50P5i2jX6ZrMD=UuGr_bA=8MbFhYBWBNvkMcdCyJKS5xg@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] sdhci: tegra: Add comment for PADCALIB and PAD_CONTROL NVQUIRKS
+Date: Tue, 16 Jun 2020 13:32:27 +0200
+Message-ID: <CAPDyKFpscyQXYF+WQ98_sRvonCL+ZbddX+ctw3umQ8HLAqvxmA@mail.gmail.com>
+References: <1591326240-28928-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACvgo50P5i2jX6ZrMD=UuGr_bA=8MbFhYBWBNvkMcdCyJKS5xg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1591326240-28928-1-git-send-email-skomatineni@nvidia.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-16.06.2020 00:47, Emil Velikov пишет:
-> Hi all,
-> 
-> Perhaps a silly question:
-> 
-> On Mon, 15 Jun 2020 at 08:28, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>
->> Combining horizontal and vertical reflections gives us 180 degrees of
->> rotation.
->>
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/gpu/drm/tegra/dc.c | 13 ++++++++++++-
->>  1 file changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
->> index f31bca27cde4..ddd9b88f8fce 100644
->> --- a/drivers/gpu/drm/tegra/dc.c
->> +++ b/drivers/gpu/drm/tegra/dc.c
-> 
->> +       if (rotation & DRM_MODE_ROTATE_180) {
->> +               plane_state->reflect_x = !plane_state->reflect_x;
->> +               plane_state->reflect_y = !plane_state->reflect_y;
->> +       }
->> +
-> As mentioned by Ville the above is already handled by
-> drm_rotation_simplify() ... although it makes me wonder:
-> 
-> 
->>         err = drm_plane_create_rotation_property(&plane->base,
->>                                                  DRM_MODE_ROTATE_0,
->>                                                  DRM_MODE_ROTATE_0 |
->> +                                                DRM_MODE_ROTATE_180 |
->>                                                  DRM_MODE_REFLECT_X |
->>                                                  DRM_MODE_REFLECT_Y);
-> 
-> Would it make sense for drm_plane_create_rotation_property() itself,
-> to add DRM_MODE_ROTATE_180, when both reflections are supported?
+On Fri, 5 Jun 2020 at 05:04, Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
+>
+> This patch adds comments about NVQUIRKS HAS_PADCALIB and NEEDS_PAD_CONTROL.
+>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Hello Emil,
+Applied for next, thanks!
 
-That's a good point! All DRM_MODE_ROTATE_180 should be removed because
-Tegra can't do 180° + reflected-x. The DRM core takes care of 180°
-rotation when both x/y reflections are supported.
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 3a372ab..0a3f9d0 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -96,7 +96,16 @@
+>  #define NVQUIRK_ENABLE_SDR50                           BIT(3)
+>  #define NVQUIRK_ENABLE_SDR104                          BIT(4)
+>  #define NVQUIRK_ENABLE_DDR50                           BIT(5)
+> +/*
+> + * HAS_PADCALIB NVQUIRK is for SoC's supporting auto calibration of pads
+> + * drive strength.
+> + */
+>  #define NVQUIRK_HAS_PADCALIB                           BIT(6)
+> +/*
+> + * NEEDS_PAD_CONTROL NVQUIRK is for SoC's having separate 3V3 and 1V8 pads.
+> + * 3V3/1V8 pad selection happens through pinctrl state selection depending
+> + * on the signaling mode.
+> + */
+>  #define NVQUIRK_NEEDS_PAD_CONTROL                      BIT(7)
+>  #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP                        BIT(8)
+>  #define NVQUIRK_CQHCI_DCMD_R1B_CMD_TIMING              BIT(9)
+> --
+> 2.7.4
+>
