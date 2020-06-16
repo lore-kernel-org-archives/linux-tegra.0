@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 60/73] arm64: tegra: Remove unneeded power supplies
-Date: Tue, 16 Jun 2020 15:52:25 +0200
-Message-ID: <20200616135238.3001888-61-thierry.reding@gmail.com>
+Subject: [PATCH 59/73] arm64: tegra: Add missing #phy-cells property to USB PHYs
+Date: Tue, 16 Jun 2020 15:52:24 +0200
+Message-ID: <20200616135238.3001888-60-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,29 +14,41 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Tegra186 and later, the BPMP is responsible for enabling/disabling
-the PCIe related power supplies of the pad controller and there is no
-need for the operating system to control them, so they can be removed.
+USB PHYs must have a #phy-cells property, so add one to the Tegra USB
+PHYs which don't have one.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 43b8d643e7a1..482ed7b0fcff 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -119,10 +119,6 @@ padctl@3520000 {
- 
- 		avdd-pll-erefeut-supply = <&vdd_1v8_pll>;
- 		avdd-usb-supply = <&vdd_3v3_sys>;
--		dvdd-pex-supply = <&vdd_pex>;
--		dvdd-pex-pll-supply = <&vdd_pex>;
--		hvdd-pex-supply = <&vdd_1v8>;
--		hvdd-pex-pll-supply = <&vdd_1v8>;
- 		vclamp-usb-supply = <&vdd_1v8>;
- 		vddio-hsic-supply = <&gnd>;
- 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 0425e584791b..9d1dd021a2cb 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -1113,6 +1113,7 @@ phy1: usb-phy@7d000000 {
+ 		clock-names = "reg", "pll_u", "utmi-pads";
+ 		resets = <&tegra_car 22>, <&tegra_car 22>;
+ 		reset-names = "usb", "utmi-pads";
++		#phy-cells = <0>;
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+@@ -1151,6 +1152,7 @@ phy2: usb-phy@7d004000 {
+ 		clock-names = "reg", "pll_u", "utmi-pads";
+ 		resets = <&tegra_car 58>, <&tegra_car 22>;
+ 		reset-names = "usb", "utmi-pads";
++		#phy-cells = <0>;
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+@@ -1188,6 +1190,7 @@ phy3: usb-phy@7d008000 {
+ 		clock-names = "reg", "pll_u", "utmi-pads";
+ 		resets = <&tegra_car 59>, <&tegra_car 22>;
+ 		reset-names = "usb", "utmi-pads";
++		#phy-cells = <0>;
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
 -- 
 2.24.1
