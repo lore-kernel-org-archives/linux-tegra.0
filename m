@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 67/73] arm64: tegra: Remove unused interrupts from Tegra194 AON GPIO
-Date: Tue, 16 Jun 2020 15:52:32 +0200
-Message-ID: <20200616135238.3001888-68-thierry.reding@gmail.com>
+Subject: [PATCH 68/73] arm64: tegra: Fix indentation in Tegra194 device tree
+Date: Tue, 16 Jun 2020 15:52:33 +0200
+Message-ID: <20200616135238.3001888-69-thierry.reding@gmail.com>
 References: <20200616135238.3001888-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,29 +14,25 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The AON GPIO controller on Tegra194 currently only uses a single
-interrupt, so remove the extra ones.
+Properly indent subsequent lines so that they align with the first line.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 2ecb80e1b09d..e0aa6c74073a 100644
+index e0aa6c74073a..307f999edbf9 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -999,10 +999,7 @@ gpio_aon: gpio@c2f0000 {
- 			reg-names = "security", "gpio";
- 			reg = <0xc2f0000 0x1000>,
- 			      <0xc2f1000 0x1000>;
--			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
+@@ -1669,7 +1669,7 @@ pcie@141a0000 {
+ 		pinctrl-0 = <&pex_rst_c5_out_state>, <&clkreq_c5_bi_dir_state>;
+ 
+ 		clocks = <&bpmp TEGRA194_CLK_PEX1_CORE_5>,
+-			<&bpmp TEGRA194_CLK_PEX1_CORE_5M>;
++			 <&bpmp TEGRA194_CLK_PEX1_CORE_5M>;
+ 		clock-names = "core", "core_m";
+ 
+ 		resets = <&bpmp TEGRA194_RESET_PEX1_CORE_5_APB>,
 -- 
 2.24.1
