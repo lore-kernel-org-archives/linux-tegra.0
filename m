@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v8 5/7] drm/tegra: output: rgb: Support LVDS encoder bridge
-Date: Thu, 18 Jun 2020 01:27:01 +0300
-Message-ID: <20200617222703.17080-6-digetx@gmail.com>
+Subject: [PATCH v8 7/7] drm/panel-simple: Add missing connector type for some panels
+Date: Thu, 18 Jun 2020 01:27:03 +0300
+Message-ID: <20200617222703.17080-8-digetx@gmail.com>
 References: <20200617222703.17080-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,101 +12,93 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Newer Tegra device-trees will specify a video output graph, which involves
-LVDS encoder bridge. This patch adds support for the LVDS encoder bridge
-to the RGB output, allowing us to model the display hardware properly.
+The DRM panel bridge core requires connector type to be set up properly,
+otherwise it rejects the panel. The missing connector type problem popped
+up while I was trying to wrap CLAA070WP03XG panel into a DRM bridge in
+order to test whether panel's rotation property work properly using
+panel-simple driver on NVIDIA Tegra30 Nexus 7 tablet device, which uses
+CLAA070WP03XG display panel.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Acked-by: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+The NVIDIA Tegra DRM driver recently gained DRM bridges support for the
+RGB output and now driver wraps directly-connected panels into DRM bridge.
+Hence all panels should have connector type set properly now, otherwise
+the panel's wrapping fails.
+
+This patch adds missing connector types for the LVDS panels that are found
+on NVIDIA Tegra devices:
+
+  1. AUO B101AW03
+  2. Chunghwa CLAA070WP03XG
+  3. Chunghwa CLAA101WA01A
+  4. Chunghwa CLAA101WB01
+  5. EDT ET057090DHU
+  6. Innolux N156BGE L21
+  7. Samsung LTN101NT05
+
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/rgb.c | 58 +++++++++++++++++++++++++++++++------
- 1 file changed, 49 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/panel/panel-simple.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-index 0562a7eb793f..9a7024ec96bc 100644
---- a/drivers/gpu/drm/tegra/rgb.c
-+++ b/drivers/gpu/drm/tegra/rgb.c
-@@ -7,6 +7,7 @@
- #include <linux/clk.h>
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 6764ac630e22..9eb2dbb7bfa6 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -687,6 +687,7 @@ static const struct panel_desc auo_b101aw03 = {
+ 		.width = 223,
+ 		.height = 125,
+ 	},
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
  
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_bridge_connector.h>
- #include <drm/drm_panel.h>
- #include <drm/drm_simple_kms_helper.h>
+ static const struct display_timing auo_b101ean01_timing = {
+@@ -1340,6 +1341,7 @@ static const struct panel_desc chunghwa_claa070wp03xg = {
+ 		.width = 94,
+ 		.height = 150,
+ 	},
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
  
-@@ -267,24 +268,63 @@ int tegra_dc_rgb_remove(struct tegra_dc *dc)
- int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
- {
- 	struct tegra_output *output = dc->rgb;
-+	struct drm_connector *connector;
- 	int err;
+ static const struct drm_display_mode chunghwa_claa101wa01a_mode = {
+@@ -1362,6 +1364,7 @@ static const struct panel_desc chunghwa_claa101wa01a = {
+ 		.width = 220,
+ 		.height = 120,
+ 	},
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
  
- 	if (!dc->rgb)
- 		return -ENODEV;
+ static const struct drm_display_mode chunghwa_claa101wb01_mode = {
+@@ -1384,6 +1387,7 @@ static const struct panel_desc chunghwa_claa101wb01 = {
+ 		.width = 223,
+ 		.height = 125,
+ 	},
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
  
--	drm_connector_init(drm, &output->connector, &tegra_rgb_connector_funcs,
--			   DRM_MODE_CONNECTOR_LVDS);
--	drm_connector_helper_add(&output->connector,
--				 &tegra_rgb_connector_helper_funcs);
--	output->connector.dpms = DRM_MODE_DPMS_OFF;
--
- 	drm_simple_encoder_init(drm, &output->encoder, DRM_MODE_ENCODER_LVDS);
- 	drm_encoder_helper_add(&output->encoder,
- 			       &tegra_rgb_encoder_helper_funcs);
+ static const struct drm_display_mode dataimage_scf0700c48ggu18_mode = {
+@@ -1573,6 +1577,7 @@ static const struct panel_desc edt_et057090dhu = {
+ 	},
+ 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+ 	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
  
--	drm_connector_attach_encoder(&output->connector,
--					  &output->encoder);
--	drm_connector_register(&output->connector);
-+	/*
-+	 * Tegra devices that have LVDS panel utilize LVDS encoder bridge
-+	 * for converting up to 28 LCD LVTTL lanes into 5/4 LVDS lanes that
-+	 * go to display panel's receiver.
-+	 *
-+	 * Encoder usually have a power-down control which needs to be enabled
-+	 * in order to transmit data to the panel.  Historically devices that
-+	 * use an older device-tree version didn't model the bridge, assuming
-+	 * that encoder is turned ON by default, while today's DRM allows us
-+	 * to model LVDS encoder properly.
-+	 *
-+	 * Newer device-trees utilize LVDS encoder bridge, which provides
-+	 * us with a connector and handles the display panel.
-+	 *
-+	 * For older device-trees we fall back to our own connector and use
-+	 * nvidia,panel phandle.
-+	 */
-+	if (output->bridge) {
-+		err = drm_bridge_attach(&output->encoder, output->bridge,
-+					NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-+		if (err) {
-+			dev_err(output->dev, "failed to attach bridge: %d\n",
-+				err);
-+			return err;
-+		}
-+
-+		connector = drm_bridge_connector_init(drm, &output->encoder);
-+		if (IS_ERR(connector)) {
-+			dev_err(output->dev,
-+				"failed to initialize bridge connector: %pe\n",
-+				connector);
-+			return PTR_ERR(connector);
-+		}
-+
-+		drm_connector_attach_encoder(connector, &output->encoder);
-+	} else {
-+		drm_connector_init(drm, &output->connector,
-+				   &tegra_rgb_connector_funcs,
-+				   DRM_MODE_CONNECTOR_LVDS);
-+		drm_connector_helper_add(&output->connector,
-+					 &tegra_rgb_connector_helper_funcs);
-+		output->connector.dpms = DRM_MODE_DPMS_OFF;
-+
-+		drm_connector_attach_encoder(&output->connector,
-+					     &output->encoder);
-+		drm_connector_register(&output->connector);
-+	}
+ static const struct drm_display_mode edt_etm0700g0dh6_mode = {
+@@ -2055,6 +2060,7 @@ static const struct panel_desc innolux_n156bge_l21 = {
+ 		.width = 344,
+ 		.height = 193,
+ 	},
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
  
- 	err = tegra_output_init(drm, output);
- 	if (err < 0) {
+ static const struct drm_display_mode innolux_p120zdg_bf1_mode = {
+@@ -3001,6 +3007,7 @@ static const struct panel_desc samsung_ltn101nt05 = {
+ 		.width = 223,
+ 		.height = 125,
+ 	},
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
+ 
+ static const struct drm_display_mode samsung_ltn140at29_301_mode = {
 -- 
 2.26.0
