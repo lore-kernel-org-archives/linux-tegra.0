@@ -1,66 +1,36 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v2 05/18] i2c: tegra: Fix runtime resume to re-init VI I2C
-Date: Tue, 16 Jun 2020 18:41:21 -0700
-Message-ID: <1592358094-23459-6-git-send-email-skomatineni@nvidia.com>
-References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 25/38] dt-bindings: gpio: tegra: Convert to json-schema
+Date: Wed, 17 Jun 2020 07:24:16 +0300
+Message-ID: <186ceadd-317c-a7b2-d4ab-32473f857545@gmail.com>
+References: <20200612141903.2391044-1-thierry.reding@gmail.com>
+ <20200612141903.2391044-26-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
-Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200612141903.2391044-26-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-VI I2C is on host1x bus and is part of VE power domain.
+12.06.2020 17:18, Thierry Reding пишет:
+...
+> +patternProperties:
+> +  # GPIO hogs; /schemas/gpio/gpio-hog.yaml will match
+> +  "^gpios(-[a-zA-Z0-9-]+)?$":
+> +    type: object
+> +    required:
+> +      - gpio-hog
 
-During suspend/resume VE power domain goes through power off/on.
+There are two problems here:
 
-So, controller reset followed by i2c re-initialization is required
-after the domain power up.
+1. This naming limitation didn't exist before this patch, so it's not a
+part of the conversion.
 
-This patch fixes it.
+2. GPIO core uses the node's name for the hog's name. Hence by imposing
+the "gpios-" prefix, you're forcing all hogs to be named as gpios-xxx,
+which doesn't make much sense to me.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 1b459ca..e7aad64 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -293,6 +293,8 @@ struct tegra_i2c_dev {
- 	bool is_curr_atomic_xfer;
- };
- 
-+static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit);
-+
- static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
- 		       unsigned long reg)
- {
-@@ -679,8 +681,22 @@ static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
- 		goto disable_slow_clk;
- 	}
- 
-+	/*
-+	 * VI I2C device is attached to VE power domain which goes through
-+	 * power ON/OFF during PM runtime resume/suspend. So, controller
-+	 * should go through reset and need to re-initialize after power
-+	 * domain ON.
-+	 */
-+	if (i2c_dev->is_vi) {
-+		ret = tegra_i2c_init(i2c_dev, true);
-+		if (ret)
-+			goto disable_div_clk;
-+	}
-+
- 	return 0;
- 
-+disable_div_clk:
-+	clk_disable(i2c_dev->div_clk);
- disable_slow_clk:
- 	clk_disable(i2c_dev->slow_clk);
- disable_fast_clk:
--- 
-2.7.4
+Please explain the rationale of this change.
