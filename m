@@ -1,46 +1,47 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 09/73] ARM: tegra: gr2d is not backwards-compatible
-Date: Wed, 17 Jun 2020 19:21:30 +0300
-Message-ID: <9f56be9a-1a79-07cc-371f-f3abcd20701e@gmail.com>
-References: <20200616135238.3001888-1-thierry.reding@gmail.com>
- <20200616135238.3001888-10-thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 0/5] 180 degrees rotation support for NVIDIA Tegra DRM
+Date: Wed, 17 Jun 2020 19:27:18 +0300
+Message-ID: <36496bd6-b18a-de97-1afb-f2f8aeb3feaf@gmail.com>
+References: <20200614200121.14147-1-digetx@gmail.com>
+ <CACvgo51QuXMgWhFk4C=3rGvUZDX1_W0RZtVb5RtRPiHTpMebWQ@mail.gmail.com>
+ <8f789ef5-bebf-c869-784d-afda70fc1fb8@gmail.com>
+ <CACvgo50oSMbgXw1vHwVT4hhGe6g3YzKQEohCLJdfDq+0UaN1jw@mail.gmail.com>
+ <646b3f37-0f72-7f3b-388f-f71dbcdd5c84@gmail.com>
+ <CACvgo50BFH5qsPyWx9a1aZ4k5bzjSN-3KTU0BvnZ-nG-hfzKOQ@mail.gmail.com>
+ <fe845434-cbf6-29d4-eeb6-8868d628fd04@gmail.com>
+ <CAPj87rPwwHWtYpuZfiTMyELvr3D+UAY8CVnH3v6+Lo1-UMRRVA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200616135238.3001888-10-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CAPj87rPwwHWtYpuZfiTMyELvr3D+UAY8CVnH3v6+Lo1-UMRRVA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Daniel Stone <daniel-rLtY4a/8tF1rovVCs/uTlw@public.gmane.org>
+Cc: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-16.06.2020 16:51, Thierry Reding пишет:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+17.06.2020 12:34, Daniel Stone пишет:
+> Hi,
 > 
-> The instantiation of gr2d in Tegra114 is not backwards-compatible with
-> the version found on earlier chips. Remove the misleading compatible
-> string.
+> On Tue, 16 Jun 2020 at 22:16, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> The panel's orientation could be parsed by any panel driver and then
+>> assigned as the connector's property in order to allow userspace/FB-core
+>> to decide what to do with the rotated display. Apparently upstream
+>> kernel supports only that one Samsung device which has display panel
+>> mounted upside-down and it already uses the custom DT properties for
+>> achieving the 180 rotation. So I don't quite see any panel drivers that
+>> instantly could benefit from using the rotation property. Perhaps I can
+>> add the orientation support to the panel-simple driver, but will it be
+>> useful to anyone?
 > 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra114.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-> index a0ac9ea9ec9d..d583dfba688f 100644
-> --- a/arch/arm/boot/dts/tegra114.dtsi
-> +++ b/arch/arm/boot/dts/tegra114.dtsi
-> @@ -35,7 +35,7 @@ host1x@50000000 {
->  		ranges = <0x54000000 0x54000000 0x01000000>;
->  
->  		gr2d@54140000 {
-> -			compatible = "nvidia,tegra114-gr2d", "nvidia,tegra20-gr2d";
-> +			compatible = "nvidia,tegra114-gr2d";
->  			reg = <0x54140000 0x00040000>;
->  			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&tegra_car TEGRA114_CLK_GR2D>;
-> 
+> Yes, exposing it to userspace is helpful, since Weston at least will
+> parse the property and then apply the correct transform:
+> https://gitlab.freedesktop.org/wayland/weston/-/merge_requests/315
 
-Could you please explain what's the difference? AFAIK, the 2D HW is
-identical on T20/30/114.
+Hello Daniel,
+
+Thank you very much for the pointer! I missed that Weston now uses the
+panel's orientation. I gave a quick test to the recent Weston and indeed
+it applies the transform in accordance to the connector's orientation
+property.
