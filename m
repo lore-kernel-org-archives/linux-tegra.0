@@ -1,72 +1,53 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v2_5/5=5d_drm/tegra=3a_plane=3a_Support_18?=
- =?UTF-8?Q?0=c2=b0_rotation?=
-Date: Wed, 17 Jun 2020 21:50:41 +0300
-Message-ID: <2a004826-a505-75e4-b922-c74618404166@gmail.com>
-References: <20200614200121.14147-1-digetx@gmail.com>
- <20200614200121.14147-6-digetx@gmail.com>
- <CACvgo50P5i2jX6ZrMD=UuGr_bA=8MbFhYBWBNvkMcdCyJKS5xg@mail.gmail.com>
- <e21404bd-49c9-039e-4aef-c4912a9c0640@gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 4/4] dt-bindings: mmc: mediatek: Add document for
+ mt6779
+Date: Wed, 17 Jun 2020 15:02:47 -0600
+Message-ID: <20200617210247.GA2800817@bogus>
+References: <1591665502-6573-1-git-send-email-chun-hung.wu@mediatek.com>
+ <1591665502-6573-5-git-send-email-chun-hung.wu@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e21404bd-49c9-039e-4aef-c4912a9c0640-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1591665502-6573-5-git-send-email-chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.c>
 List-Id: linux-tegra@vger.kernel.org
 
-16.06.2020 14:25, Dmitry Osipenko пишет:
-> 16.06.2020 00:47, Emil Velikov пишет:
->> Hi all,
->>
->> Perhaps a silly question:
->>
->> On Mon, 15 Jun 2020 at 08:28, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>>
->>> Combining horizontal and vertical reflections gives us 180 degrees of
->>> rotation.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>>  drivers/gpu/drm/tegra/dc.c | 13 ++++++++++++-
->>>  1 file changed, 12 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
->>> index f31bca27cde4..ddd9b88f8fce 100644
->>> --- a/drivers/gpu/drm/tegra/dc.c
->>> +++ b/drivers/gpu/drm/tegra/dc.c
->>
->>> +       if (rotation & DRM_MODE_ROTATE_180) {
->>> +               plane_state->reflect_x = !plane_state->reflect_x;
->>> +               plane_state->reflect_y = !plane_state->reflect_y;
->>> +       }
->>> +
->> As mentioned by Ville the above is already handled by
->> drm_rotation_simplify() ... although it makes me wonder:
->>
->>
->>>         err = drm_plane_create_rotation_property(&plane->base,
->>>                                                  DRM_MODE_ROTATE_0,
->>>                                                  DRM_MODE_ROTATE_0 |
->>> +                                                DRM_MODE_ROTATE_180 |
->>>                                                  DRM_MODE_REFLECT_X |
->>>                                                  DRM_MODE_REFLECT_Y);
->>
->> Would it make sense for drm_plane_create_rotation_property() itself,
->> to add DRM_MODE_ROTATE_180, when both reflections are supported?
+On Tue, Jun 09, 2020 at 09:18:22AM +0800, Chun-Hung Wu wrote:
+> Add compatible node for mt6779 mmc and HW cmdq selection
+> node "mediatek,cqhci".
 > 
-> Hello Emil,
+> Signed-off-by: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/mmc/mtk-sd.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> That's a good point! All DRM_MODE_ROTATE_180 should be removed because
-> Tegra can't do 180° + reflected-x. The DRM core takes care of 180°
-> rotation when both x/y reflections are supported.
-> 
+> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.txt b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+> index 8a532f4..d4d20b9 100644
+> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+> @@ -12,6 +12,7 @@ Required properties:
+>  	"mediatek,mt8173-mmc": for mmc host ip compatible with mt8173
+>  	"mediatek,mt8183-mmc": for mmc host ip compatible with mt8183
+>  	"mediatek,mt8516-mmc": for mmc host ip compatible with mt8516
+> +	"mediatek,mt6779-mmc": for mmc host ip compatible with mt6779
+>  	"mediatek,mt2701-mmc": for mmc host ip compatible with mt2701
+>  	"mediatek,mt2712-mmc": for mmc host ip compatible with mt2712
+>  	"mediatek,mt7622-mmc": for MT7622 SoC
+> @@ -49,6 +50,9 @@ Optional properties:
+>  		     error caused by stop clock(fifo full)
+>  		     Valid range = [0:0x7]. if not present, default value is 0.
+>  		     applied to compatible "mediatek,mt2701-mmc".
+> +- mediatek,cqhci: HW cmdq selection
+> +		  If present, hw command queue is enabled.
+> +		  If not present, hw command queue is disabled.
 
-I just found out that I forgot to drop the WIP patches which added
-transparent rotation support while was checking whether these plane
-DRM_MODE_ROTATE_180 could be dropped and it's actually need to be set
-for the planes, otherwise 180 rotation support is filtered out by the
-atomic check.
+'supports-cqe' does the same thing.
+
+>  
+>  Examples:
+>  mmc0: mmc@11230000 {
+> -- 
+> 1.9.1
