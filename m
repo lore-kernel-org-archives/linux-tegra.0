@@ -1,53 +1,183 @@
 From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 4/4] dt-bindings: mmc: mediatek: Add document for
- mt6779
-Date: Wed, 17 Jun 2020 15:02:47 -0600
-Message-ID: <20200617210247.GA2800817@bogus>
-References: <1591665502-6573-1-git-send-email-chun-hung.wu@mediatek.com>
- <1591665502-6573-5-git-send-email-chun-hung.wu@mediatek.com>
+Subject: Re: [PATCH v4 22/37] dt-bindings: host1x: Document new interconnect
+ properties
+Date: Wed, 17 Jun 2020 15:37:26 -0600
+Message-ID: <20200617213726.GA2837398@bogus>
+References: <20200609131404.17523-1-digetx@gmail.com>
+ <20200609131404.17523-23-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1591665502-6573-5-git-send-email-chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kate Stewart <kstewart-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.c>
+In-Reply-To: <20200609131404.17523-23-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 09, 2020 at 09:18:22AM +0800, Chun-Hung Wu wrote:
-> Add compatible node for mt6779 mmc and HW cmdq selection
-> node "mediatek,cqhci".
+On Tue, Jun 09, 2020 at 04:13:49PM +0300, Dmitry Osipenko wrote:
+> Most of Host1x devices have at least one memory client. These clients
+> are directly connected to the memory controller. The new interconnect
+> properties represent the memory client's connection to the memory
+> controller.
 > 
-> Signed-off-by: Chun-Hung Wu <chun-hung.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  Documentation/devicetree/bindings/mmc/mtk-sd.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+>  .../display/tegra/nvidia,tegra20-host1x.txt   | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.txt b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-> index 8a532f4..d4d20b9 100644
-> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-> @@ -12,6 +12,7 @@ Required properties:
->  	"mediatek,mt8173-mmc": for mmc host ip compatible with mt8173
->  	"mediatek,mt8183-mmc": for mmc host ip compatible with mt8183
->  	"mediatek,mt8516-mmc": for mmc host ip compatible with mt8516
-> +	"mediatek,mt6779-mmc": for mmc host ip compatible with mt6779
->  	"mediatek,mt2701-mmc": for mmc host ip compatible with mt2701
->  	"mediatek,mt2712-mmc": for mmc host ip compatible with mt2712
->  	"mediatek,mt7622-mmc": for MT7622 SoC
-> @@ -49,6 +50,9 @@ Optional properties:
->  		     error caused by stop clock(fifo full)
->  		     Valid range = [0:0x7]. if not present, default value is 0.
->  		     applied to compatible "mediatek,mt2701-mmc".
-> +- mediatek,cqhci: HW cmdq selection
-> +		  If present, hw command queue is enabled.
-> +		  If not present, hw command queue is disabled.
-
-'supports-cqe' does the same thing.
-
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> index 47319214b5f6..ab4fbee7bccf 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> @@ -20,6 +20,10 @@ Required properties:
+>  - reset-names: Must include the following entries:
+>    - host1x
 >  
->  Examples:
->  mmc0: mmc@11230000 {
+> +Each host1x client module having to perform DMA through the Memory Controller
+> +should have the interconnect endpoints set to the Memory Client and External
+> +Memory respectively.
+> +
+>  The host1x top-level node defines a number of children, each representing one
+>  of the following host1x client modules:
+>  
+> @@ -36,6 +40,12 @@ of the following host1x client modules:
+>    - reset-names: Must include the following entries:
+>      - mpe
+>  
+> +  Optional properties:
+> +  - interconnects: Must contain entry for the MPE memory clients.
+> +  - interconnect-names: Must include name of the interconnect path for each
+> +    interconnect entry. Consult TRM documentation for information about
+> +    available memory clients, see MEMORY CONTROLLER section.
+> +
+>  - vi: video input
+>  
+>    Required properties:
+> @@ -65,6 +75,12 @@ of the following host1x client modules:
+>        - power-domains: Must include sor powergate node as csicil is in
+>          SOR partition.
+>  
+> +  Optional properties:
+> +  - interconnects: Must contain entry for the VI memory clients.
+> +  - interconnect-names: Must include name of the interconnect path for each
+> +    interconnect entry. Consult TRM documentation for information about
+> +    available memory clients, see MEMORY CONTROLLER section.
+> +
+>  - epp: encoder pre-processor
+>  
+>    Required properties:
+> @@ -78,6 +94,12 @@ of the following host1x client modules:
+>    - reset-names: Must include the following entries:
+>      - epp
+>  
+> +  Optional properties:
+> +  - interconnects: Must contain entry for the EPP memory clients.
+> +  - interconnect-names: Must include name of the interconnect path for each
+> +    interconnect entry. Consult TRM documentation for information about
+> +    available memory clients, see MEMORY CONTROLLER section.
+> +
+>  - isp: image signal processor
+>  
+>    Required properties:
+> @@ -91,6 +113,12 @@ of the following host1x client modules:
+>    - reset-names: Must include the following entries:
+>      - isp
+>  
+> +  Optional properties:
+> +  - interconnects: Must contain entry for the ISP memory clients.
+> +  - interconnect-names: Must include name of the interconnect path for each
+> +    interconnect entry. Consult TRM documentation for information about
+> +    available memory clients, see MEMORY CONTROLLER section.
+> +
+>  - gr2d: 2D graphics engine
+>  
+>    Required properties:
+> @@ -104,6 +132,12 @@ of the following host1x client modules:
+>    - reset-names: Must include the following entries:
+>      - 2d
+>  
+> +  Optional properties:
+> +  - interconnects: Must contain entry for the GR2D memory clients.
+> +  - interconnect-names: Must include name of the interconnect path for each
+> +    interconnect entry. Consult TRM documentation for information about
+> +    available memory clients, see MEMORY CONTROLLER section.
+> +
+>  - gr3d: 3D graphics engine
+>  
+>    Required properties:
+> @@ -122,6 +156,12 @@ of the following host1x client modules:
+>      - 3d
+>      - 3d2 (Only required on SoCs with two 3D clocks)
+>  
+> +  Optional properties:
+> +  - interconnects: Must contain entry for the GR3D memory clients.
+> +  - interconnect-names: Must include name of the interconnect path for each
+> +    interconnect entry. Consult TRM documentation for information about
+> +    available memory clients, see MEMORY CONTROLLER section.
+> +
+>  - dc: display controller
+>  
+>    Required properties:
+> @@ -149,6 +189,10 @@ of the following host1x client modules:
+>    - nvidia,hpd-gpio: specifies a GPIO used for hotplug detection
+>    - nvidia,edid: supplies a binary EDID blob
+>    - nvidia,panel: phandle of a display panel
+> +  - interconnects: Must contain entry for the DC memory clients.
+> +  - interconnect-names: Must include name of the interconnect path for each
+> +    interconnect entry. Consult TRM documentation for information about
+> +    available memory clients, see MEMORY CONTROLLER section.
+>  
+>  - hdmi: High Definition Multimedia Interface
+>  
+> @@ -297,6 +341,12 @@ of the following host1x client modules:
+>    - reset-names: Must include the following entries:
+>      - vic
+>  
+> +  Optional properties:
+> +  - interconnects: Must contain entry for the VIC memory clients.
+> +  - interconnect-names: Must include name of the interconnect path for each
+> +    interconnect entry. Consult TRM documentation for information about
+> +    available memory clients, see MEMORY CONTROLLER section.
+> +
+>  Example:
+>  
+>  / {
+> @@ -410,6 +460,15 @@ Example:
+>  			resets = <&tegra_car 27>;
+>  			reset-names = "dc";
+>  
+> +			interconnects = <&mc TEGRA20_MC_DISPLAY0A &emc>,
+> +					<&mc TEGRA20_MC_DISPLAY0B &emc>,
+> +					<&mc TEGRA20_MC_DISPLAY0C &emc>,
+> +					<&mc TEGRA20_MC_DISPLAY1B &emc>;
+
+This looks odd or wrong. Each entry has 2 phandles? 
+
+> +			interconnect-names = "display0a",
+> +					     "display0b",
+> +					     "display0c",
+> +					     "display1b";
+> +
+>  			rgb {
+>  				status = "disabled";
+>  			};
+> @@ -425,6 +484,15 @@ Example:
+>  			resets = <&tegra_car 26>;
+>  			reset-names = "dc";
+>  
+> +			interconnects = <&mc TEGRA20_MC_DISPLAY0AB &emc>,
+> +					<&mc TEGRA20_MC_DISPLAY0BB &emc>,
+> +					<&mc TEGRA20_MC_DISPLAY0CB &emc>,
+> +					<&mc TEGRA20_MC_DISPLAY1BB &emc>;
+> +			interconnect-names = "display0a",
+> +					     "display0b",
+> +					     "display0c",
+> +					     "display1b";
+> +
+>  			rgb {
+>  				status = "disabled";
+>  			};
 > -- 
-> 1.9.1
+> 2.26.0
+> 
