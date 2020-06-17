@@ -1,108 +1,162 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 1/3] drm/tegra: plane: Rename bottom_up to reflect_y
-Date: Thu, 18 Jun 2020 02:40:38 +0300
-Message-ID: <20200617234040.1094-2-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3 2/3] drm/tegra: plane: Support horizontal reflection
+Date: Thu, 18 Jun 2020 02:40:39 +0300
+Message-ID: <20200617234040.1094-3-digetx@gmail.com>
 References: <20200617234040.1094-1-digetx@gmail.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200617234040.1094-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Stone <daniel-rLtY4a/8tF1rovVCs/uTlw@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200617234040.1094-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, Derek Basehore <dbasehore@chromium.org>, Sam Ravnborg <sam@ravnborg.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Emil Velikov <emil.l.velikov@gmail.com>, Daniel Stone <daniel@fooishbar.org>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This makes the naming consistent with the DRM core.
+Support horizontal reflection mode which will allow to support 180°
+rotation mode when combined with the vertical reflection.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c    | 10 +++++-----
- drivers/gpu/drm/tegra/dc.h    |  2 +-
- drivers/gpu/drm/tegra/plane.c |  2 +-
- drivers/gpu/drm/tegra/plane.h |  2 +-
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/tegra/dc.c    | 38 +++++++++++++++++++++++++++++------
+ drivers/gpu/drm/tegra/dc.h    |  1 +
+ drivers/gpu/drm/tegra/plane.c |  1 +
+ drivers/gpu/drm/tegra/plane.h |  1 +
+ 4 files changed, 35 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 04d6848d19fc..bb92c1ed44e9 100644
+index bb92c1ed44e9..f8149dc3b1b4 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -404,7 +404,7 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
+@@ -368,6 +368,12 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
+ 	h_size = window->src.w * bpp;
+ 	v_size = window->src.h;
+ 
++	if (window->reflect_x)
++		h_offset += (window->src.w - 1) * bpp;
++
++	if (window->reflect_y)
++		v_offset += window->src.h - 1;
++
+ 	value = V_PRESCALED_SIZE(v_size) | H_PRESCALED_SIZE(h_size);
+ 	tegra_plane_writel(plane, value, DC_WIN_PRESCALED_SIZE);
+ 
+@@ -404,9 +410,6 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
  		tegra_plane_writel(plane, window->stride[0], DC_WIN_LINE_STRIDE);
  	}
  
--	if (window->bottom_up)
-+	if (window->reflect_y)
- 		v_offset += window->src.h - 1;
- 
+-	if (window->reflect_y)
+-		v_offset += window->src.h - 1;
+-
  	tegra_plane_writel(plane, h_offset, DC_WINBUF_ADDR_H_OFFSET);
-@@ -470,7 +470,7 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
+ 	tegra_plane_writel(plane, v_offset, DC_WINBUF_ADDR_V_OFFSET);
+ 
+@@ -470,6 +473,9 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
  		value |= COLOR_EXPAND;
  	}
  
--	if (window->bottom_up)
-+	if (window->reflect_y)
++	if (window->reflect_x)
++		value |= H_DIRECTION;
++
+ 	if (window->reflect_y)
  		value |= V_DIRECTION;
  
- 	if (tegra_plane_use_horizontal_filtering(plane, window)) {
-@@ -642,9 +642,9 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 	rotation = drm_rotation_simplify(state->rotation, rotation);
+@@ -601,7 +607,10 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ 				    struct drm_plane_state *state)
+ {
+ 	struct tegra_plane_state *plane_state = to_tegra_plane_state(state);
+-	unsigned int rotation = DRM_MODE_ROTATE_0 | DRM_MODE_REFLECT_Y;
++	unsigned int supported_rotation = DRM_MODE_ROTATE_0 |
++					  DRM_MODE_REFLECT_X |
++					  DRM_MODE_REFLECT_Y;
++	unsigned int rotation = state->rotation;
+ 	struct tegra_bo_tiling *tiling = &plane_state->tiling;
+ 	struct tegra_plane *tegra = to_tegra_plane(plane);
+ 	struct tegra_dc *dc = to_tegra_dc(state->crtc);
+@@ -639,7 +648,21 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ 		return -EINVAL;
+ 	}
+ 
+-	rotation = drm_rotation_simplify(state->rotation, rotation);
++	/*
++	 * Older userspace used custom BO flag in order to specify the Y
++	 * reflection, while modern userspace uses the generic DRM rotation
++	 * property in order to achieve the same result.  The legacy BO flag
++	 * duplicates the DRM rotation property when both are set.
++	 */
++	if (tegra_fb_is_bottom_up(state->fb))
++		rotation |= DRM_MODE_REFLECT_Y;
++
++	rotation = drm_rotation_simplify(rotation, supported_rotation);
++
++	if (rotation & DRM_MODE_REFLECT_X)
++		plane_state->reflect_x = true;
++	else
++		plane_state->reflect_x = false;
  
  	if (rotation & DRM_MODE_REFLECT_Y)
--		plane_state->bottom_up = true;
-+		plane_state->reflect_y = true;
- 	else
--		plane_state->bottom_up = false;
-+		plane_state->reflect_y = false;
- 
- 	/*
- 	 * Tegra doesn't support different strides for U and V planes so we
-@@ -706,7 +706,7 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 		plane_state->reflect_y = true;
+@@ -706,7 +729,8 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
  	window.dst.w = drm_rect_width(&plane->state->dst);
  	window.dst.h = drm_rect_height(&plane->state->dst);
  	window.bits_per_pixel = fb->format->cpp[0] * 8;
--	window.bottom_up = tegra_fb_is_bottom_up(fb) || state->bottom_up;
-+	window.reflect_y = tegra_fb_is_bottom_up(fb) || state->reflect_y;
+-	window.reflect_y = tegra_fb_is_bottom_up(fb) || state->reflect_y;
++	window.reflect_x = state->reflect_x;
++	window.reflect_y = state->reflect_y;
  
  	/* copy from state */
  	window.zpos = plane->state->normalized_zpos;
+@@ -792,6 +816,7 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
+ 	err = drm_plane_create_rotation_property(&plane->base,
+ 						 DRM_MODE_ROTATE_0,
+ 						 DRM_MODE_ROTATE_0 |
++						 DRM_MODE_REFLECT_X |
+ 						 DRM_MODE_REFLECT_Y);
+ 	if (err < 0)
+ 		dev_err(dc->dev, "failed to create rotation property: %d\n",
+@@ -1080,6 +1105,7 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
+ 	err = drm_plane_create_rotation_property(&plane->base,
+ 						 DRM_MODE_ROTATE_0,
+ 						 DRM_MODE_ROTATE_0 |
++						 DRM_MODE_REFLECT_X |
+ 						 DRM_MODE_REFLECT_Y);
+ 	if (err < 0)
+ 		dev_err(dc->dev, "failed to create rotation property: %d\n",
 diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 3d8ddccd758f..98e1b625168e 100644
+index 98e1b625168e..051d03dcb9b0 100644
 --- a/drivers/gpu/drm/tegra/dc.h
 +++ b/drivers/gpu/drm/tegra/dc.h
-@@ -136,7 +136,7 @@ struct tegra_dc_window {
+@@ -136,6 +136,7 @@ struct tegra_dc_window {
  	unsigned int stride[2];
  	unsigned long base[3];
  	unsigned int zpos;
--	bool bottom_up;
-+	bool reflect_y;
++	bool reflect_x;
+ 	bool reflect_y;
  
  	struct tegra_bo_tiling tiling;
- 	u32 format;
 diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index 9ccfb56e9b01..e05ef6013a97 100644
+index e05ef6013a97..4cd0461cc508 100644
 --- a/drivers/gpu/drm/tegra/plane.c
 +++ b/drivers/gpu/drm/tegra/plane.c
-@@ -61,7 +61,7 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
+@@ -61,6 +61,7 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
  	copy->tiling = state->tiling;
  	copy->format = state->format;
  	copy->swap = state->swap;
--	copy->bottom_up = state->bottom_up;
-+	copy->reflect_y = state->reflect_y;
++	copy->reflect_x = state->reflect_x;
+ 	copy->reflect_y = state->reflect_y;
  	copy->opaque = state->opaque;
  
- 	for (i = 0; i < 2; i++)
 diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
-index a158a915109a..8047fc916d8c 100644
+index 8047fc916d8c..c691dd79b27b 100644
 --- a/drivers/gpu/drm/tegra/plane.h
 +++ b/drivers/gpu/drm/tegra/plane.h
-@@ -46,7 +46,7 @@ struct tegra_plane_state {
+@@ -46,6 +46,7 @@ struct tegra_plane_state {
  	u32 format;
  	u32 swap;
  
--	bool bottom_up;
-+	bool reflect_y;
++	bool reflect_x;
+ 	bool reflect_y;
  
  	/* used for legacy blending support only */
- 	struct tegra_plane_legacy_blending_state blending[2];
 -- 
 2.26.0
