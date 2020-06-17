@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH v2 02/18] arm64: tegra: Add missing clocks and power-domains to Tegra210 VI I2C
-Date: Tue, 16 Jun 2020 18:41:18 -0700
-Message-ID: <1592358094-23459-3-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v2 03/18] i2c: tegra: Don't mark VI I2C as IRQ safe runtime PM
+Date: Tue, 16 Jun 2020 18:41:19 -0700
+Message-ID: <1592358094-23459-4-git-send-email-skomatineni@nvidia.com>
 References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,35 +12,43 @@ To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQ
 Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 VI I2C is in VE power domain and i2c-vi node should have
-power-domains property.
+Tegra VI I2C is part of VE power domain and typically used for
+camera usecases.
 
-Current Tegra210 i2c-vi device node is missing both VI I2C clocks
-and power-domains property.
+VE power domain is not always on and is non-IRQ safe. So, IRQ safe
+device cannot be attached to a non-IRQ safe domain as it prevents
+powering off the PM domain and generic power domain driver will warn.
 
-This patch adds them.
+Current driver marks all I2C devices as IRQ safe and VI I2C device
+does not require IRQ safe as it will not be used for atomic transfers.
+
+This patch has fix to make VI I2C as non-IRQ safe.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/i2c/busses/i2c-tegra.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 0865508..3a4ed10 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -376,6 +376,12 @@
- 			compatible = "nvidia,tegra210-i2c-vi";
- 			reg = <0x0 0x546c0000 0x0 0x00040000>;
- 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA210_CLK_VI_I2C>,
-+				 <&tegra_car TEGRA210_CLK_I2CSLOW>;
-+			clock-names = "div-clk", "slow";
-+			resets = <&tegra_car TEGRA210_CLK_VI_I2C>;
-+			reset-names = "i2c";
-+			power-domains = <&pd_venc>;
- 			status = "disabled";
- 		};
- 	};
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 1577296..3be1018 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1750,7 +1750,15 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 		goto unprepare_slow_clk;
+ 	}
+ 
+-	pm_runtime_irq_safe(&pdev->dev);
++	/*
++	 * VI I2C is in VE power domain which is not always on and not
++	 * an IRQ safe. So, IRQ safe device can't be attached to a non-IRQ
++	 * safe domain as it prevents powering off the PM domain.
++	 * Also, VI I2C device don't need to use runtime IRQ safe as it will
++	 * not be used for atomic transfers.
++	 */
++	if (!i2c_dev->is_vi)
++		pm_runtime_irq_safe(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 	if (!pm_runtime_enabled(&pdev->dev)) {
+ 		ret = tegra_i2c_runtime_resume(&pdev->dev);
 -- 
 2.7.4
