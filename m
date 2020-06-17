@@ -1,102 +1,36 @@
-From: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] Input: document inhibiting
-Date: Wed, 17 Jun 2020 09:44:34 +0200
-Message-ID: <f9007f37-c526-5fa4-3188-a554d2434177@redhat.com>
-References: <40988408-8f36-3a52-6439-34084de6b129@redhat.com>
- <20200616172909.21625-1-andrzej.p@collabora.com>
+From: Daniel Stone <daniel-rLtY4a/8tF1rovVCs/uTlw@public.gmane.org>
+Subject: Re: [PATCH v2 0/5] 180 degrees rotation support for NVIDIA Tegra DRM
+Date: Wed, 17 Jun 2020 10:34:41 +0100
+Message-ID: <CAPj87rPwwHWtYpuZfiTMyELvr3D+UAY8CVnH3v6+Lo1-UMRRVA@mail.gmail.com>
+References: <20200614200121.14147-1-digetx@gmail.com> <CACvgo51QuXMgWhFk4C=3rGvUZDX1_W0RZtVb5RtRPiHTpMebWQ@mail.gmail.com>
+ <8f789ef5-bebf-c869-784d-afda70fc1fb8@gmail.com> <CACvgo50oSMbgXw1vHwVT4hhGe6g3YzKQEohCLJdfDq+0UaN1jw@mail.gmail.com>
+ <646b3f37-0f72-7f3b-388f-f71dbcdd5c84@gmail.com> <CACvgo50BFH5qsPyWx9a1aZ4k5bzjSN-3KTU0BvnZ-nG-hfzKOQ@mail.gmail.com>
+ <fe845434-cbf6-29d4-eeb6-8868d628fd04@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200616172909.21625-1-andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Content-Language: en-US
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org, ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: "Rafael J . Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Len Brown <lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Pengutronix Kernel Team <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>, Sylvain Lemieux <slemieux.tyco-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Barry
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <fe845434-cbf6-29d4-eeb6-8868d628fd04-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Hi,
 
-On 6/16/20 7:29 PM, Andrzej Pietrasiewicz wrote:
-> Document inhibiting input devices and its relation to being
-> a wakeup source.
-> 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> ---
-> 
-> @Hans, @Dmitry,
-> 
-> My fist attempt at documenting inhibiting. Kindly look at it to see if I haven't got anything
-> wrong.
-> 
-> Andrzej
-> 
->   Documentation/input/input-programming.rst | 36 +++++++++++++++++++++++
->   1 file changed, 36 insertions(+)
-> 
-> diff --git a/Documentation/input/input-programming.rst b/Documentation/input/input-programming.rst
-> index 45a4c6e05e39..0cd1ad4504fb 100644
-> --- a/Documentation/input/input-programming.rst
-> +++ b/Documentation/input/input-programming.rst
-> @@ -164,6 +164,42 @@ disconnects. Calls to both callbacks are serialized.
->   The open() callback should return a 0 in case of success or any nonzero value
->   in case of failure. The close() callback (which is void) must always succeed.
->   
-> +Inhibiting input devices
-> +~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Inhibiting a device means ignoring input events from it. As such it is about maintaining
-> +relationships with input handlers - either an already existing relationships, or
-> +relationships to be established while the device is in inhibited state.
-> +
-> +If a device is inhibited, no input handler will receive events from it.
-> +
-> +The fact that nobody wants events from the device is exploited further, by calling device's
-> +close() (if there are users) and open() (if there are users) on inhibit and uninhibit
-> +operations, respectively. Indeed, the meaning of close() is to stop providing events
-> +to the input core and that of open() is to start providing events to the input core.
+On Tue, 16 Jun 2020 at 22:16, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> The panel's orientation could be parsed by any panel driver and then
+> assigned as the connector's property in order to allow userspace/FB-core
+> to decide what to do with the rotated display. Apparently upstream
+> kernel supports only that one Samsung device which has display panel
+> mounted upside-down and it already uses the custom DT properties for
+> achieving the 180 rotation. So I don't quite see any panel drivers that
+> instantly could benefit from using the rotation property. Perhaps I can
+> add the orientation support to the panel-simple driver, but will it be
+> useful to anyone?
 
-Maybe add the following here? :
+Yes, exposing it to userspace is helpful, since Weston at least will
+parse the property and then apply the correct transform:
+https://gitlab.freedesktop.org/wayland/weston/-/merge_requests/315
 
-Calling the device's close() method on inhibit (if there are users) allows the driver
-to save power. Either by directly powering down the device or by releasing the
-runtime-pm reference it got in open() when the driver is using runtime-pm.
-
-Otherwise this looks good to me. Thank you for doing this, we (including myself)
-really need to get better at doucmenting all sorts of kernel things. Often we have
-these long discussions about something on the mailinglist and then everyone is
-expected to just know what was decided from the on, which really doesn't work all
-that well.
-
-> +
-> +Inhibiting and uninhibiting is orthogonal to opening and closing the device by input
-> +handlers. Userspace might want to inhibit a device in anticipation before any handler is
-> +positively matched against it.
-> +
-> +Inhibiting and uninhibiting is orthogonal to device's being a wakeup source, too. Being a
-> +wakeup source plays a role when the system is sleeping, not when the system is operating.
-> +How drivers should program their interaction between inhibiting, sleeping and being a wakeup
-> +source is driver-specific.
-> +
-> +Taking the analogy with the network devices - bringing a network interface down doesn't mean
-> +that it should be impossible to be wake the system up on LAN through this interface. So, there
-> +may be input drivers which should be considered wakeup sources even when inhibited. Actually,
-> +in many i2c input devices their interrupt is declared a wakeup interrupt and its handling
-> +happens in driver's core, which is not aware of input-specific inhibit (nor should it be).
-> +Composite devices containing several interfaces can be inhibited on a per-interface basis and
-> +e.g. inhibiting one interface shouldn't affect the device's capability of being a wakeup source.
-> +
-> +If a device is to be considered a wakeup source while inhibited, special care must be taken when
-> +programming its suspend(), as it might need to call device's open(). Depending on what close()
-> +means for the device in question not opening() it before going to sleep might make it impossible
-> +to provide any wakeup events. The device is going to sleep anyway.
-> +
->   Basic event types
->   ~~~~~~~~~~~~~~~~~
->   
-> 
-
-
-Regards,
-
-Hans
+Cheers,
+Daniel
