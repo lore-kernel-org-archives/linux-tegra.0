@@ -1,98 +1,103 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2] Input: document inhibiting
-Date: Wed, 17 Jun 2020 09:52:30 -0700
-Message-ID: <8ebf502e-855d-6a6b-9c7b-d96d5e519d82@infradead.org>
-References: <f9007f37-c526-5fa4-3188-a554d2434177@redhat.com>
- <20200617101822.8558-1-andrzej.p@collabora.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3] drm/tegra: Add zpos property for cursor planes
+Date: Wed, 17 Jun 2020 20:14:06 +0300
+Message-ID: <fcb11625-b17c-752b-de12-29f916ade7cb@gmail.com>
+References: <20200616181449.3147258-1-thierry.reding@gmail.com>
+ <8e45b425-b667-433e-2074-7a058329f5c2@gmail.com>
+ <20200617141015.GB3536291@ulmo>
+ <cef8e371-03a8-455e-561d-fca9d0b88309@gmail.com>
+ <20200617163724.GA3547875@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org>
-In-Reply-To: <20200617101822.8558-1-andrzej.p@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200617163724.GA3547875@ulmo>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane-mx.org@lists.infradead.org
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org
-Cc: kernel@collabora.com, Nick Dyer <nick@shmanahar.org>, Laxman Dewangan <ldewangan@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Peter Hutterer <peter.hutterer@redhat.com>, Fabio Estevam <festevam@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Len Brown <lenb@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, Sascha Hauer <s.hauer@pengutronix.de>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Vladimir Zapolskiy <vz@mleia.com>, Hans de Goede <hdegoede@redhat.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, Barry Song <baohua@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Thierry
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Daniel Stone <daniel-rLtY4a/8tF1rovVCs/uTlw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/17/20 3:18 AM, Andrzej Pietrasiewicz wrote:
-> Document inhibiting input devices and its relation to being
-> a wakeup source.
+17.06.2020 19:37, Thierry Reding пишет:
+> On Wed, Jun 17, 2020 at 05:20:14PM +0300, Dmitry Osipenko wrote:
+>> 17.06.2020 17:10, Thierry Reding пишет:
+>>> On Tue, Jun 16, 2020 at 09:39:19PM +0300, Dmitry Osipenko wrote:
+>>>> 16.06.2020 21:14, Thierry Reding пишет:
+>>>>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>
+>>>>> As of commit 4dc55525b095 ("drm: plane: Verify that no or all planes
+>>>>> have a zpos property") a warning is emitted if there's a mix of planes
+>>>>> with and without a zpos property.
+>>>>>
+>>>>> On Tegra, cursor planes are always composited on top of all other
+>>>>> planes, which is why they never had a zpos property attached to them.
+>>>>> However, since the composition order is fixed, this is trivial to
+>>>>> remedy by simply attaching an immutable zpos property to them.
+>>>>>
+>>>>> v3: do not hardcode zpos for overlay planes used as cursor (Dmitry)
+>>>>> v2: hardcode cursor plane zpos to 255 instead of 0 (Ville)
+>>>>>
+>>>>> Reported-by: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>> ---
+>>>>>  drivers/gpu/drm/tegra/dc.c | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+>>>>> index 83f31c6e891c..04d6848d19fc 100644
+>>>>> --- a/drivers/gpu/drm/tegra/dc.c
+>>>>> +++ b/drivers/gpu/drm/tegra/dc.c
+>>>>> @@ -957,6 +957,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+>>>>>  	}
+>>>>>  
+>>>>>  	drm_plane_helper_add(&plane->base, &tegra_cursor_plane_helper_funcs);
+>>>>> +	drm_plane_create_zpos_immutable_property(&plane->base, 255);
+>>>>>  
+>>>>>  	return &plane->base;
+>>>>>  }
+>>>>>
+>>>>
+>>>> Looks nice, thanks! Since you dropped all other zpos changes for other
+>>>> planes and given that the other planes have 255 for the max zpos, what
+>>>> about to set the cursor's zpos to 256?
+>>>
+>>> I'd prefer to have all of the planes' zpos within the same range. By
+>>> default the other planes will be on the very bottom end of that range
+>>> and the atomic core will normalize the zpos for all planes anyway, so
+>>> the cursor plane will end up with a very small normalized zpos in the
+>>> end.
+>>>
+>>> The zpos documentation already mentions that the behaviour is undefined
+>>> if two planes have the same zpos value, so I think userspace is going to
+>>> know how to set these anyway.
+>>>
+>>> It might be worth to do a follow-up patch that is smarter about setting
+>>> the range of valid values. 0-255 is true on later chips where we
+>>> actually have a proper "layer depth" register field and I wanted this to
+>>> be uniform across all generations. Other drivers seem to set the upper
+>>> limit on the zpos range to be equal to the number of planes available,
+>>> so that there aren't potentially big gaps in the numbering. That said,
+>>> since the core already normalizes the zpos for us, I don't see a big
+>>> benefit in explicitly clipping the range.
+>>
+>> But the cursor plane doesn't use the "layer depth" register, doesn't it?
+>> So the zpos over 255 shouldn't matter in this case.
+>>
+>> I know that DRM should normalizes the given zpos, but still it makes me
+>> a bit uncomfortable knowing that there are the ranges overlap visible to
+>> userspace :)
 > 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> ---
-> v1..v2:
+> Userspace has to be able to deal with this anyway because it can't make
+> any assumptions about what hardware supports underneath. A cursor on a
+> different platform may very well be stackable anywhere in the layout so
+> it must ensure that the cursor always has the highest zpos (provided
+> that that's what it wants). Immutable 255 basically just says that the
+> cursor is always going to be at the top. /If/ userspace then decides to
+> set some other plane's zpos = 255, then we're in the "undefined"
+> behaviour case that the documentation mentions, in which case the
+> behaviour on Tegra would still be sane in showing the cursor on top.
 > 
-> - Addressed editorial comments from Randy
-> - Added a paragraph by Hans
-> 
->  Documentation/input/input-programming.rst | 40 +++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/Documentation/input/input-programming.rst b/Documentation/input/input-programming.rst
-> index 45a4c6e05e39..7432315cc829 100644
-> --- a/Documentation/input/input-programming.rst
-> +++ b/Documentation/input/input-programming.rst
-> @@ -164,6 +164,46 @@ disconnects. Calls to both callbacks are serialized.
->  The open() callback should return a 0 in case of success or any nonzero value
->  in case of failure. The close() callback (which is void) must always succeed.
->  
-> +Inhibiting input devices
-> +~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Inhibiting a device means ignoring input events from it. As such it is about maintaining
-> +relationships with input handlers - either already existing relationships, or relationships
-> +to be established while the device is in inhibited state.
-> +
-> +If a device is inhibited, no input handler will receive events from it.
-> +
-> +The fact that nobody wants events from the device is exploited further, by calling device's
-> +close() (if there are users) and open() (if there are users) on inhibit and uninhibit
-> +operations, respectively. Indeed, the meaning of close() is to stop providing events
-> +to the input core and that of open() is to start providing events to the input core.
-> +
-> +Calling the device's close() method on inhibit (if there are users) allows the driver
-> +to save power. Either by directly powering down the device or by releasing the
-> +runtime-pm reference it got in open() when the driver is using runtime-pm.
-> +
-> +Inhibiting and uninhibiting are orthogonal to opening and closing the device by input
-> +handlers. Userspace might want to inhibit a device in anticipation before any handler is
-> +positively matched against it.
-> +
-> +Inhibiting and uninhibiting are orthogonal to device's being a wakeup source, too. Being a
-> +wakeup source plays a role when the system is sleeping, not when the system is operating.
-> +How drivers should program their interaction between inhibiting, sleeping and being a wakeup
-> +source is driver-specific.
-> +
-> +Taking the analogy with the network devices - bringing a network interface down doesn't mean
-> +that it should be impossible be wake the system up on LAN through this interface. So, there
-> +may be input drivers which should be considered wakeup sources even when inhibited. Actually,
-> +in many I2C input devices their interrupt is declared a wakeup interrupt and its handling
-> +happens in driver's core, which is not aware of input-specific inhibit (nor should it be).
-> +Composite devices containing several interfaces can be inhibited on a per-interface basis and
-> +e.g. inhibiting one interface shouldn't affect the device's capability of being a wakeup source.
-> +
-> +If a device is to be considered a wakeup source while inhibited, special care must be taken when
-> +programming its suspend(), as it might need to call device's open(). Depending on what close()
-> +means for the device in question, not opening() it before going to sleep might make it
-> +impossible to provide any wakeup events. The device is going to sleep anyway.
-> +
->  Basic event types
->  ~~~~~~~~~~~~~~~~~
->  
-> 
+> So I don't think there's really an issue with the overlap.
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
--- 
-~Randy
+It should work okay, but if cursor had zpos set to 256 then it would
+lower the chance for userspace to create the undefined behavior situation.
