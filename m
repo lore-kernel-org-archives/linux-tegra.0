@@ -1,58 +1,66 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH v2 04/18] i2c: tegra: Fix the error path in tegra_i2c_runtime_resume
-Date: Tue, 16 Jun 2020 18:41:20 -0700
-Message-ID: <1592358094-23459-5-git-send-email-skomatineni@nvidia.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [RFC PATCH v2 05/18] i2c: tegra: Fix runtime resume to re-init VI I2C
+Date: Tue, 16 Jun 2020 18:41:21 -0700
+Message-ID: <1592358094-23459-6-git-send-email-skomatineni@nvidia.com>
 References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1592358094-23459-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
+Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-tegra_i2c_runtime_resume does not disable prior enabled clocks
-properly.
+VI I2C is on host1x bus and is part of VE power domain.
+
+During suspend/resume VE power domain goes through power off/on.
+
+So, controller reset followed by i2c re-initialization is required
+after the domain power up.
 
 This patch fixes it.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 3be1018..1b459ca 100644
+index 1b459ca..e7aad64 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -668,7 +668,7 @@ static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
- 		ret = clk_enable(i2c_dev->slow_clk);
- 		if (ret < 0) {
- 			dev_err(dev, "failed to enable slow clock: %d\n", ret);
--			return ret;
-+			goto disable_fast_clk;
- 		}
- 	}
+@@ -293,6 +293,8 @@ struct tegra_i2c_dev {
+ 	bool is_curr_atomic_xfer;
+ };
  
-@@ -676,11 +676,16 @@ static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
- 	if (ret < 0) {
- 		dev_err(i2c_dev->dev,
- 			"Enabling div clk failed, err %d\n", ret);
--		clk_disable(i2c_dev->fast_clk);
--		return ret;
-+		goto disable_slow_clk;
- 	}
- 
- 	return 0;
++static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit);
 +
-+disable_slow_clk:
-+	clk_disable(i2c_dev->slow_clk);
-+disable_fast_clk:
-+	clk_disable(i2c_dev->fast_clk);
-+	return ret;
- }
+ static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+ 		       unsigned long reg)
+ {
+@@ -679,8 +681,22 @@ static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
+ 		goto disable_slow_clk;
+ 	}
  
- static int __maybe_unused tegra_i2c_runtime_suspend(struct device *dev)
++	/*
++	 * VI I2C device is attached to VE power domain which goes through
++	 * power ON/OFF during PM runtime resume/suspend. So, controller
++	 * should go through reset and need to re-initialize after power
++	 * domain ON.
++	 */
++	if (i2c_dev->is_vi) {
++		ret = tegra_i2c_init(i2c_dev, true);
++		if (ret)
++			goto disable_div_clk;
++	}
++
+ 	return 0;
+ 
++disable_div_clk:
++	clk_disable(i2c_dev->div_clk);
+ disable_slow_clk:
+ 	clk_disable(i2c_dev->slow_clk);
+ disable_fast_clk:
 -- 
 2.7.4
