@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v2 09/18] media: tegra-video: Update format lookup to offset based
-Date: Tue, 16 Jun 2020 18:41:25 -0700
-Message-ID: <1592358094-23459-10-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v2 14/18] gpu: host1x: mipi: Split tegra_mipi_calibrate and tegra_mipi_wait
+Date: Tue, 16 Jun 2020 18:41:30 -0700
+Message-ID: <1592358094-23459-15-git-send-email-skomatineni@nvidia.com>
 References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,55 +12,122 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, fran
 Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra VI supported video formats are more for non TPG and there
-can be multiple pixel formats for the same media bus format.
+SW can trigger MIPI pads calibration any time after power on
+but calibration results will be latched and applied to the pads
+by MIPI CAL unit only when the link is in LP-11 state and then
+status register will be updated.
 
-This patch updates the helper function for format lookup based on
-mbus code from pre-defined Tegra supported format list to look from
-the specified list index offset.
+For CSI, trigger of pads calibration happen during CSI stream
+enable where CSI receiver is kept ready prior to sensor or CSI
+transmitter stream start.
 
-Offset based look up is used with sensor device graph (non TPG)
-where format enumeration can list all supported formats for the
-specific sensor mbus codes.
+So, pads may not be in LP-11 at this time and waiting for the
+calibration to be done immediate after calibration start will
+result in timeout.
+
+This patch splits tegra_mipi_calibrate() and tegra_mipi_wait()
+so triggering for calibration and waiting for it to complete can
+happen at different stages.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/tegra/dsi.c |  7 ++++++-
+ drivers/gpu/host1x/mipi.c   | 23 +++++++++++++++++------
+ include/linux/host1x.h      |  1 +
+ 3 files changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 0197f4e..52d751f 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -53,11 +53,12 @@ to_tegra_channel_buffer(struct vb2_v4l2_buffer *vb)
- }
- 
- static int tegra_get_format_idx_by_code(struct tegra_vi *vi,
--					unsigned int code)
-+					unsigned int code,
-+					unsigned int offset)
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index 0443589..93e9d85 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -670,6 +670,7 @@ static int tegra_dsi_pad_enable(struct tegra_dsi *dsi)
+ static int tegra_dsi_pad_calibrate(struct tegra_dsi *dsi)
  {
- 	unsigned int i;
+ 	u32 value;
++	int ret;
  
--	for (i = 0; i < vi->soc->nformats; ++i) {
-+	for (i = offset; i < vi->soc->nformats; ++i) {
- 		if (vi->soc->video_formats[i].code == code)
- 			return i;
- 	}
-@@ -598,11 +599,12 @@ static void vi_tpg_fmts_bitmap_init(struct tegra_vi_channel *chan)
- 	bitmap_zero(chan->tpg_fmts_bitmap, MAX_FORMAT_NUM);
+ 	/*
+ 	 * XXX Is this still needed? The module reset is deasserted right
+@@ -693,7 +694,11 @@ static int tegra_dsi_pad_calibrate(struct tegra_dsi *dsi)
+ 		DSI_PAD_PREEMP_PD(0x03) | DSI_PAD_PREEMP_PU(0x3);
+ 	tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_3);
  
- 	index = tegra_get_format_idx_by_code(chan->vi,
--					     MEDIA_BUS_FMT_SRGGB10_1X10);
-+					     MEDIA_BUS_FMT_SRGGB10_1X10, 0);
- 	bitmap_set(chan->tpg_fmts_bitmap, index, 1);
- 
- 	index = tegra_get_format_idx_by_code(chan->vi,
--					     MEDIA_BUS_FMT_RGB888_1X32_PADHI);
-+					     MEDIA_BUS_FMT_RGB888_1X32_PADHI,
-+					     0);
- 	bitmap_set(chan->tpg_fmts_bitmap, index, 1);
+-	return tegra_mipi_calibrate(dsi->mipi);
++	ret = tegra_mipi_calibrate(dsi->mipi);
++	if (ret < 0)
++		return ret;
++
++	return tegra_mipi_wait(dsi->mipi);
  }
  
+ static void tegra_dsi_set_timeout(struct tegra_dsi *dsi, unsigned long bclk,
+diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+index 93b354b..99ea36f 100644
+--- a/drivers/gpu/host1x/mipi.c
++++ b/drivers/gpu/host1x/mipi.c
+@@ -296,22 +296,35 @@ int tegra_mipi_disable(struct tegra_mipi_device *dev)
+ }
+ EXPORT_SYMBOL(tegra_mipi_disable);
+ 
+-static int tegra_mipi_wait(struct tegra_mipi *mipi)
++int tegra_mipi_wait(struct tegra_mipi_device *device)
+ {
++	struct tegra_mipi *mipi = device->mipi;
+ 	unsigned long timeout = jiffies + msecs_to_jiffies(250);
+ 	u32 value;
++	int err;
++
++	err = clk_enable(device->mipi->clk);
++	if (err < 0)
++		return err;
++
++	mutex_lock(&device->mipi->lock);
+ 
+ 	while (time_before(jiffies, timeout)) {
+ 		value = tegra_mipi_readl(mipi, MIPI_CAL_STATUS);
+ 		if ((value & MIPI_CAL_STATUS_ACTIVE) == 0 &&
+ 		    (value & MIPI_CAL_STATUS_DONE) != 0)
+-			return 0;
++			goto done;
+ 
+ 		usleep_range(10, 50);
+ 	}
+ 
+-	return -ETIMEDOUT;
++	err = -ETIMEDOUT;
++done:
++	mutex_unlock(&device->mipi->lock);
++	clk_disable(device->mipi->clk);
++	return err;
+ }
++EXPORT_SYMBOL(tegra_mipi_wait);
+ 
+ int tegra_mipi_calibrate(struct tegra_mipi_device *device)
+ {
+@@ -377,12 +390,10 @@ int tegra_mipi_calibrate(struct tegra_mipi_device *device)
+ 	value |= MIPI_CAL_CTRL_START;
+ 	tegra_mipi_writel(device->mipi, value, MIPI_CAL_CTRL);
+ 
+-	err = tegra_mipi_wait(device->mipi);
+-
+ 	mutex_unlock(&device->mipi->lock);
+ 	clk_disable(device->mipi->clk);
+ 
+-	return err;
++	return 0;
+ }
+ EXPORT_SYMBOL(tegra_mipi_calibrate);
+ 
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 61dc577..cf45ec2 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -331,5 +331,6 @@ void tegra_mipi_free(struct tegra_mipi_device *device);
+ int tegra_mipi_enable(struct tegra_mipi_device *device);
+ int tegra_mipi_disable(struct tegra_mipi_device *device);
+ int tegra_mipi_calibrate(struct tegra_mipi_device *device);
++int tegra_mipi_wait(struct tegra_mipi_device *device);
+ 
+ #endif
 -- 
 2.7.4
