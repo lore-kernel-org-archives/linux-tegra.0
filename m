@@ -1,158 +1,239 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v8 6/7] drm/tegra: output: rgb: Wrap directly-connected panel into DRM bridge
-Date: Thu, 18 Jun 2020 01:27:02 +0300
-Message-ID: <20200617222703.17080-7-digetx@gmail.com>
-References: <20200617222703.17080-1-digetx@gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 04/38] dt-bindings: firmware: Convert Tegra186 BPMP
+ bindings to json-schema
+Date: Wed, 17 Jun 2020 16:49:15 -0600
+Message-ID: <20200617224915.GA2975260@bogus>
+References: <20200612141903.2391044-1-thierry.reding@gmail.com>
+ <20200612141903.2391044-5-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200617222703.17080-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200612141903.2391044-5-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Currently Tegra DRM driver manually manages display panel, but this
-management could be moved out into DRM core if we'll wrap panel into
-DRM bridge. This patch wraps RGB panel into a DRM bridge and removes
-manual handling of the panel from the RGB output code.
+On Fri, Jun 12, 2020 at 04:18:29PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Convert the Tegra186 BPMP bindings from the free-form text format to a
+> json-schema and fix things up so that existing device trees properly
+> validate.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../firmware/nvidia,tegra186-bpmp.txt         | 107 -----------
+>  .../firmware/nvidia,tegra186-bpmp.yaml        | 180 ++++++++++++++++++
+>  2 files changed, 180 insertions(+), 107 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+>  create mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
 
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/tegra/rgb.c | 70 ++++++++++---------------------------
- 1 file changed, 18 insertions(+), 52 deletions(-)
+[...]
 
-diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-index 9a7024ec96bc..4142a56ca764 100644
---- a/drivers/gpu/drm/tegra/rgb.c
-+++ b/drivers/gpu/drm/tegra/rgb.c
-@@ -8,7 +8,6 @@
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge_connector.h>
--#include <drm/drm_panel.h>
- #include <drm/drm_simple_kms_helper.h>
- 
- #include "drm.h"
-@@ -86,45 +85,13 @@ static void tegra_dc_write_regs(struct tegra_dc *dc,
- 		tegra_dc_writel(dc, table[i].value, table[i].offset);
- }
- 
--static const struct drm_connector_funcs tegra_rgb_connector_funcs = {
--	.reset = drm_atomic_helper_connector_reset,
--	.detect = tegra_output_connector_detect,
--	.fill_modes = drm_helper_probe_single_connector_modes,
--	.destroy = tegra_output_connector_destroy,
--	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
--	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
--};
--
--static enum drm_mode_status
--tegra_rgb_connector_mode_valid(struct drm_connector *connector,
--			       struct drm_display_mode *mode)
--{
--	/*
--	 * FIXME: For now, always assume that the mode is okay. There are
--	 * unresolved issues with clk_round_rate(), which doesn't always
--	 * reliably report whether a frequency can be set or not.
--	 */
--	return MODE_OK;
--}
--
--static const struct drm_connector_helper_funcs tegra_rgb_connector_helper_funcs = {
--	.get_modes = tegra_output_connector_get_modes,
--	.mode_valid = tegra_rgb_connector_mode_valid,
--};
--
- static void tegra_rgb_encoder_disable(struct drm_encoder *encoder)
- {
- 	struct tegra_output *output = encoder_to_output(encoder);
- 	struct tegra_rgb *rgb = to_rgb(output);
- 
--	if (output->panel)
--		drm_panel_disable(output->panel);
--
- 	tegra_dc_write_regs(rgb->dc, rgb_disable, ARRAY_SIZE(rgb_disable));
- 	tegra_dc_commit(rgb->dc);
--
--	if (output->panel)
--		drm_panel_unprepare(output->panel);
- }
- 
- static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
-@@ -133,9 +100,6 @@ static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
- 	struct tegra_rgb *rgb = to_rgb(output);
- 	u32 value;
- 
--	if (output->panel)
--		drm_panel_prepare(output->panel);
--
- 	tegra_dc_write_regs(rgb->dc, rgb_enable, ARRAY_SIZE(rgb_enable));
- 
- 	value = DE_SELECT_ACTIVE | DE_CONTROL_NORMAL;
-@@ -157,9 +121,6 @@ static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
- 	tegra_dc_writel(rgb->dc, value, DC_DISP_SHIFT_CLOCK_OPTIONS);
- 
- 	tegra_dc_commit(rgb->dc);
--
--	if (output->panel)
--		drm_panel_enable(output->panel);
- }
- 
- static int
-@@ -278,6 +239,23 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
- 	drm_encoder_helper_add(&output->encoder,
- 			       &tegra_rgb_encoder_helper_funcs);
- 
-+	/*
-+	 * Wrap directly-connected panel into DRM bridge in order to let
-+	 * DRM core to handle panel for us.
-+	 */
-+	if (output->panel) {
-+		output->bridge = devm_drm_panel_bridge_add(output->dev,
-+							   output->panel);
-+		if (IS_ERR(output->bridge)) {
-+			dev_err(output->dev,
-+				"failed to wrap panel into bridge: %pe\n",
-+				output->bridge);
-+			return PTR_ERR(output->bridge);
-+		}
-+
-+		output->panel = NULL;
-+	}
-+
- 	/*
- 	 * Tegra devices that have LVDS panel utilize LVDS encoder bridge
- 	 * for converting up to 28 LCD LVTTL lanes into 5/4 LVDS lanes that
-@@ -292,8 +270,7 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
- 	 * Newer device-trees utilize LVDS encoder bridge, which provides
- 	 * us with a connector and handles the display panel.
- 	 *
--	 * For older device-trees we fall back to our own connector and use
--	 * nvidia,panel phandle.
-+	 * For older device-trees we wrapped panel into the panel-bridge.
- 	 */
- 	if (output->bridge) {
- 		err = drm_bridge_attach(&output->encoder, output->bridge,
-@@ -313,17 +290,6 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
- 		}
- 
- 		drm_connector_attach_encoder(connector, &output->encoder);
--	} else {
--		drm_connector_init(drm, &output->connector,
--				   &tegra_rgb_connector_funcs,
--				   DRM_MODE_CONNECTOR_LVDS);
--		drm_connector_helper_add(&output->connector,
--					 &tegra_rgb_connector_helper_funcs);
--		output->connector.dpms = DRM_MODE_DPMS_OFF;
--
--		drm_connector_attach_encoder(&output->connector,
--					     &output->encoder);
--		drm_connector_register(&output->connector);
- 	}
- 
- 	err = tegra_output_init(drm, output);
--- 
-2.26.0
+> diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+> new file mode 100644
+> index 000000000000..0e4d51ba7aa1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+> @@ -0,0 +1,180 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/firmware/nvidia,tegra186-bpmp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra186 (and later) Boot and Power Management Processor (BPMP)
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> +  - Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +
+> +description: |
+> +  The BPMP is a specific processor in Tegra chip, which is designed for
+> +  booting process handling and offloading the power management, clock
+> +  management, and reset control tasks from the CPU. The binding document
+> +  defines the resources that would be used by the BPMP firmware driver,
+> +  which can create the interprocessor communication (IPC) between the
+> +  CPU and BPMP.
+> +
+> +  The BPMP implements some services which must be represented by separate
+> +  nodes. For example, it can provide access to certain I2C controllers, and
+> +  the I2C bindings represent each I2C controller as a device tree node. Such
+> +  nodes should be nested directly inside the main BPMP node.
+> +
+> +  Software can determine whether a child node of the BPMP node represents a
+> +  device by checking for a compatible property. Any node with a compatible
+> +  property represents a device that can be instantiated. Nodes without a
+> +  compatible property may be used to provide configuration information
+> +  regarding the BPMP itself, although no such configuration nodes are
+> +  currently defined by this binding.
+> +
+> +  The BPMP firmware defines no single global name-/numbering-space for such
+> +  services. Put another way, the numbering scheme for I2C buses is distinct
+> +  from the numbering scheme for any other service the BPMP may provide (e.g.
+> +  a future hypothetical SPI bus service). As such, child device nodes will
+> +  have no "reg" property, and the BPMP node will have no "#address-cells" or
+> +  "#size-cells" property.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - nvidia,tegra186-bpmp
+> +
+> +  iommus:
+> +    description: |
+> +      The phandle of the IOMMU and the IOMMU specifier. See ../iommu/iommu.txt
+> +      for details.
+> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+
+Standard property, don't need a type. Just 'maxItems: 1' if 1 entry or 
+an 'items' list if more than 1.
+
+> +
+> +  mboxes:
+> +    description: |
+> +      The phandle of the mailbox controller and the mailbox specifier. See
+> +      ../mailbox/mailbox.txt and ../mailbox/nvidia,tegra186-hsp.txt for
+> +      details.
+> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+
+Same here.
+
+> +
+> +  shmem:
+> +    description: |
+> +      List of phandles for the TX and RX shared memory areas used for
+> +      interprocess communication between the CPU and the BPMP.
+> +
+> +      The shared memory area for the IPC TX and RX between CPU and BPMP are
+> +      predefined and work on top of sysram, which is an SRAM inside the chip.
+> +
+> +      See ../sram/sram.yaml for the bindings.
+> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#power-domain-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  i2c:
+> +    type: object
+> +    description: |
+> +      The BPMP can provide serialized access to I2C controllers that have
+> +      been assigned to it.
+
+Should have a $ref to i2c-controller.yaml
+
+> +
+> +    properties:
+> +      compatible:
+> +        items:
+> +          - enum:
+> +              - nvidia,tegra186-bpmp-i2c
+> +
+> +      "#address-cells":
+> +        const: 1
+> +
+> +      "#size-cells":
+> +        const: 0
+> +
+> +      nvidia,bpmp-bus-id:
+> +        description: The bus ID of the I2C controller.
+> +        $ref: "/schemas/types.yaml#/definitions/uint32"
+> +
+> +    required:
+> +      - compatible
+> +      - "#address-cells"
+> +      - "#size-cells"
+> +      - nvidia,bpmp-bus-id
+> +
+> +    patternProperties:
+> +      "^.*@[0-9a-f]+$":
+> +        type: object
+> +        description: I2C slave
+> +        properties:
+> +          reg:
+> +            maxItems: 1
+> +            description: I2C address of the slave
+> +
+> +        required:
+> +          - reg
+
+And child node schema can be dropped.
+
+> +
+> +    additionalProperties: false
+> +
+> +  thermal:
+> +    type: object
+> +    description:
+> +      The BPMP provides functionality that exposes system temperature sensors
+> +      and which can be used to trigger a system shutdown if the temperature
+> +      for a given zone exceeds the specified thresholds.
+> +
+> +    properties:
+> +      compatible:
+> +        items:
+> +          - enum:
+> +              - nvidia,tegra186-bpmp-thermal
+> +
+> +      "#thermal-sensor-cells":
+> +        description: The ID of the thermal zone.
+> +        const: 1
+> +
+> +    required:
+> +      - compatible
+> +      - "#thermal-sensor-cells"
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - mboxes
+> +  - shmem
+> +  - "#clock-cells"
+> +  - "#power-domain-cells"
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/mailbox/tegra186-hsp.h>
+> +    #include <dt-bindings/memory/tegra186-mc.h>
+> +
+> +    bpmp {
+> +        compatible = "nvidia,tegra186-bpmp";
+> +        iommus = <&smmu TEGRA186_SID_BPMP>;
+> +        mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB TEGRA_HSP_DB_MASTER_BPMP>;
+> +        shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
+> +        #clock-cells = <1>;
+> +        #power-domain-cells = <1>;
+> +        #reset-cells = <1>;
+> +
+> +        i2c {
+> +            compatible = "nvidia,tegra186-bpmp-i2c";
+> +            nvidia,bpmp-bus-id = <5>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            status = "disabled";
+
+Don't show status in examples.
+
+> +        };
+> +
+> +        thermal {
+> +            compatible = "nvidia,tegra186-bpmp-thermal";
+> +            #thermal-sensor-cells = <1>;
+> +        };
+> +    };
+> -- 
+> 2.24.1
+> 
