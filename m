@@ -1,182 +1,452 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 20/36] drm: tegra: fix common struct sg_table related
- issues
-Date: Thu, 18 Jun 2020 17:39:41 +0200
-Message-ID: <20200618153956.29558-21-m.szyprowski@samsung.com>
-References: <20200618153956.29558-1-m.szyprowski@samsung.com>
-        <CGME20200618154027eucas1p2aad00de9752e396ee41babaf78285e68@eucas1p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 06/38] dt-bindings: display: tegra: Document display-hub
+Date: Thu, 18 Jun 2020 12:17:36 -0600
+Message-ID: <CAL_JsqKgJa0iEfnJO9KfS=sB23bT0E0szB7SwShh2kxWEsxgdA@mail.gmail.com>
+References: <20200612141903.2391044-1-thierry.reding@gmail.com>
+ <20200612141903.2391044-7-thierry.reding@gmail.com> <20200617225506.GC2975260@bogus>
+ <20200618102736.GA3659851@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200618153956.29558-1-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <20200618102736.GA3659851@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Documentation/DMA-API-HOWTO.txt states that the dma_map_sg() function
-returns the number of the created entries in the DMA address space.
-However the subsequent calls to the dma_sync_sg_for_{device,cpu}() and
-dma_unmap_sg must be called with the original number of the entries
-passed to the dma_map_sg().
+On Thu, Jun 18, 2020 at 4:27 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+> On Wed, Jun 17, 2020 at 04:55:06PM -0600, Rob Herring wrote:
+> > On Fri, Jun 12, 2020 at 04:18:31PM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >
+> > > Tegra186 and later have an additional component in the display pipeline
+> > > called the display hub. Document the bindings which were missing.
+> >
+> > I'd rather this be after the conversion or I'm reviewing it twice.
+>
+> Okay, I'll reorder the patches accordingly.
+>
+> > >
+> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > >  .../display/tegra/nvidia,tegra20-host1x.txt   | 50 +++++++++++++++++++
+> > >  1 file changed, 50 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> > > index 47319214b5f6..2cf3cc4893da 100644
+> > > --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> > > @@ -297,6 +297,56 @@ of the following host1x client modules:
+> > >    - reset-names: Must include the following entries:
+> > >      - vic
+> > >
+> > > +- display-hub: display controller hub
+> > > +  Required properties:
+> > > +  - compatible: "nvidia,tegra<chip>-display"
+> > > +  - reg: Physical base address and length of the controller's registers.
+> > > +  - interrupts: The interrupt outputs from the controller.
+> > > +  - clocks: Must contain an entry for each entry in clock-names.
+> > > +    See ../clocks/clock-bindings.txt for details.
+> > > +  - clock-names: Must include the following entries:
+> > > +    - disp
+> > > +    - dsc
+> > > +    - hub
+> > > +  - resets: Must contain an entry for each entry in reset-names.
+> > > +    See ../reset/reset.txt for details.
+> > > +  - reset-names: Must include the following entries:
+> > > +    - misc
+> > > +    - wgrp0
+> > > +    - wgrp1
+> > > +    - wgrp2
+> > > +    - wgrp3
+> > > +    - wgrp4
+> > > +    - wgrp5
+> > > +  - power-domains: A list of phandle and specifiers identifying the power
+> > > +    domains that the display hub is part of.
+> > > +  - ranges: Range of registers used for the display controllers.
+> > > +
+> > > +  Each subnode of the display hub represents one of the display controllers
+> > > +  available:
+> > > +
+> > > +  - display: display controller
+> > > +    - compatible: "nvidia,tegra<chip>-dc"
+> > > +    - reg: Physical base address and length of the controller's registers.
+> > > +    - interrupts: The interrupt outputs from the controller.
+> > > +    - clocks: Must contain an entry for each entry in clock-names.
+> > > +      See ../clocks/clock-bindings.txt for details.
+> > > +    - clock-names: Must include the following entries:
+> > > +      - dc
+> > > +    - resets: Must contain an entry for each entry in reset-names.
+> > > +      See ../reset/reset.txt for details.
+> > > +    - reset-names: Must include the following entries:
+> > > +      - dc
+> > > +    - power-domains: A list of phandle and specifiers that identify the power
+> > > +      domains that this display controller is part of.
+> > > +    - iommus: A phandle and specifier identifying the SMMU master interface of
+> > > +      this display controller.
+> > > +    - nvidia,outputs: A list of phandles of outputs that this display
+> > > +      controller can drive.
+> >
+> > Seems like an OF graph should describe this?
+>
+> The above documents the current state of affairs. I don't recall exactly
+> why we never merged the bindings, but we've been using this
+> nvidia,outputs property for almost three years now. Changing this would
+> break ABI, although I guess you could say that since this was never
+> documented it can't be ABI. Still, changing this is going to cause old
+> device trees to fail with new kernels. Unless of course if we add some
+> backwards-compatibility mechanism in the driver. But in that case, what
+> exactly do we gain by switching to an OF graph?
 
-struct sg_table is a common structure used for describing a non-contiguous
-memory buffer, used commonly in the DRM and graphics subsystems. It
-consists of a scatterlist with memory pages and DMA addresses (sgl entry),
-as well as the number of scatterlist entries: CPU pages (orig_nents entry)
-and DMA mapped pages (nents entry).
+Probably nothing at this point. More I was just curious how we ended
+up with something different.
 
-It turned out that it was a common mistake to misuse nents and orig_nents
-entries, calling DMA-mapping functions with a wrong number of entries or
-ignoring the number of mapped entries returned by the dma_map_sg()
-function.
+> Historically, I think nvidia,outputs was introduced before OF graphs
+> were "a thing", at least in DRM. According to the git log, the helpers
+> for graphs were introduced a couple of years before nvidia,outputs was
+> used, but I guess they must not have been widespread enough for me to
+> have been aware of them.
 
-To avoid such issues, lets use a common dma-mapping wrappers operating
-directly on the struct sg_table objects and use scatterlist page
-iterators where possible. This, almost always, hides references to the
-nents and orig_nents entries, making the code robust, easier to follow
-and copy/paste safe.
+There was a period display subsystem bindings were pretty much un-reviewed...
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/gpu/drm/tegra/gem.c   | 27 ++++++++++-----------------
- drivers/gpu/drm/tegra/plane.c | 15 +++++----------
- 2 files changed, 15 insertions(+), 27 deletions(-)
+> Anyway, irrespective of the compatibility issues, I tried to use an OF
+> graph to describe this and here's what I came up with:
+>
+> --- >8 ---
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 170 ++++++++++++++++++++++++++++++-
+>  drivers/gpu/drm/tegra/dc.c               |  15 +--
+>  drivers/gpu/drm/tegra/dc.h               |   1 -
+>  drivers/gpu/drm/tegra/output.c           |  12 +--
+>  4 files changed, 172 insertions(+), 26 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> index 58100fb9cd8b..a3dcf2437976 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> @@ -994,8 +994,38 @@ display@15200000 {
+>                                 power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
+>                                 iommus = <&smmu TEGRA186_SID_NVDISPLAY>;
+>
+> -                               nvidia,outputs = <&dsia &dsib &sor0 &sor1>;
+>                                 nvidia,head = <0>;
+> +
+> +                               ports {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +
+> +                                       dc0_out: port@0 {
+> +                                               #address-cells = <1>;
+> +                                               #size-cells = <0>;
+> +                                               reg = <0>;
+> +
+> +                                               dc0_out_dsia: endpoint@0 {
+> +                                                       reg = <0>;
+> +                                                       remote-endpoint = <&dsia_in_dc0>;
+> +                                               };
+> +
+> +                                               dc0_out_dsib: endpoint@1 {
+> +                                                       reg = <1>;
+> +                                                       remote-endpoint = <&dsib_in_dc0>;
+> +                                               };
+> +
+> +                                               dc0_out_sor0: endpoint@2 {
+> +                                                       reg = <2>;
+> +                                                       remote-endpoint = <&sor0_in_dc0>;
+> +                                               };
+> +
+> +                                               dc0_out_sor1: endpoint@3 {
+> +                                                       reg = <3>;
+> +                                                       remote-endpoint = <&sor1_in_dc0>;
+> +                                               };
+> +                                       };
+> +                               };
+>                         };
+>
+>                         display@15210000 {
+> @@ -1010,8 +1040,38 @@ display@15210000 {
+>                                 power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISPB>;
+>                                 iommus = <&smmu TEGRA186_SID_NVDISPLAY>;
+>
+> -                               nvidia,outputs = <&dsia &dsib &sor0 &sor1>;
+>                                 nvidia,head = <1>;
+> +
+> +                               ports {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +
+> +                                       dc1_out: port@0 {
+> +                                               #address-cells = <1>;
+> +                                               #size-cells = <0>;
+> +                                               reg = <0>;
+> +
+> +                                               dc1_out_dsia: endpoint@0 {
+> +                                                       reg = <0>;
+> +                                                       remote-endpoint = <&dsia_in_dc1>;
+> +                                               };
+> +
+> +                                               dc1_out_dsib: endpoint@1 {
+> +                                                       reg = <1>;
+> +                                                       remote-endpoint = <&dsib_in_dc1>;
+> +                                               };
+> +
+> +                                               dc1_out_sor0: endpoint@2 {
+> +                                                       reg = <2>;
+> +                                                       remote-endpoint = <&sor0_in_dc1>;
+> +                                               };
+> +
+> +                                               dc1_out_sor1: endpoint@3 {
+> +                                                       reg = <3>;
+> +                                                       remote-endpoint = <&sor1_in_dc1>;
+> +                                               };
+> +                                       };
+> +                               };
+>                         };
+>
+>                         display@15220000 {
+> @@ -1026,8 +1086,28 @@ display@15220000 {
+>                                 power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISPC>;
+>                                 iommus = <&smmu TEGRA186_SID_NVDISPLAY>;
+>
+> -                               nvidia,outputs = <&sor0 &sor1>;
+>                                 nvidia,head = <2>;
+> +
+> +                               ports {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +
+> +                                       dc2_out: port@0 {
+> +                                               #address-cells = <1>;
+> +                                               #size-cells = <0>;
+> +                                               reg = <0>;
+> +
+> +                                               dc2_out_sor0: endpoint@0 {
+> +                                                       reg = <0>;
+> +                                                       remote-endpoint = <&sor0_in_dc2>;
+> +                                               };
+> +
+> +                                               dc2_out_sor1: endpoint@1 {
+> +                                                       reg = <1>;
+> +                                                       remote-endpoint = <&sor1_in_dc2>;
+> +                                               };
+> +                                       };
+> +                               };
+>                         };
+>                 };
+>
+> @@ -1044,6 +1124,25 @@ dsia: dsi@15300000 {
+>                         status = "disabled";
+>
+>                         power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               dsia_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       dsia_in_dc0: endpoint@0 {
+> +                                               remote-endpoint = <&dc0_out_dsia>;
+> +                                       };
+> +
+> +                                       dsia_in_dc1: endpoint@1 {
+> +                                               remote-endpoint = <&dc1_out_dsia>;
+> +                                       };
+> +                               };
+> +                       };
+>                 };
+>
+>                 vic@15340000 {
+> @@ -1072,6 +1171,25 @@ dsib: dsi@15400000 {
+>                         status = "disabled";
+>
+>                         power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               dsib_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       dsib_in_dc0: endpoint@0 {
+> +                                               remote-endpoint = <&dc0_out_dsib>;
+> +                                       };
+> +
+> +                                       dsib_in_dc1: endpoint@1 {
+> +                                               remote-endpoint = <&dc1_out_dsib>;
+> +                                       };
+> +                               };
+> +                       };
+>                 };
+>
+>                 sor0: sor@15540000 {
+> @@ -1096,6 +1214,29 @@ sor0: sor@15540000 {
+>
+>                         power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
+>                         nvidia,interface = <0>;
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               sor0_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       sor0_in_dc0: endpoint@0 {
+> +                                               remote-endpoint = <&dc0_out_sor0>;
+> +                                       };
+> +
+> +                                       sor0_in_dc1: endpoint@1 {
+> +                                               remote-endpoint = <&dc1_out_sor0>;
+> +                                       };
+> +
+> +                                       sor0_in_dc2: endpoint@2 {
+> +                                               remote-endpoint = <&dc2_out_sor0>;
+> +                                       };
+> +                               };
+> +                       };
+>                 };
+>
+>                 sor1: sor@15580000 {
+> @@ -1120,6 +1261,29 @@ sor1: sor@15580000 {
+>
+>                         power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
+>                         nvidia,interface = <1>;
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               sor1_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       sor1_in_dc0: endpoint@0 {
+> +                                               remote-endpoint = <&dc0_out_sor1>;
+> +                                       };
+> +
+> +                                       sor1_in_dc1: endpoint@1 {
+> +                                               remote-endpoint = <&dc1_out_sor1>;
+> +                                       };
+> +
+> +                                       sor1_in_dc2: endpoint@2 {
+> +                                               remote-endpoint = <&dc2_out_sor1>;
+> +                                       };
+> +                               };
+> +                       };
+>                 };
+>
+>                 dpaux: dpaux@155c0000 {
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index 04d6848d19fc..4adb64c083c8 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+> +#include <linux/of_graph.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/reset.h>
+>
+> @@ -86,19 +87,6 @@ static inline void tegra_plane_writel(struct tegra_plane *plane, u32 value,
+>         tegra_dc_writel(plane->dc, value, tegra_plane_offset(plane, offset));
+>  }
+>
+> -bool tegra_dc_has_output(struct tegra_dc *dc, struct device *dev)
+> -{
+> -       struct device_node *np = dc->dev->of_node;
+> -       struct of_phandle_iterator it;
+> -       int err;
+> -
+> -       of_for_each_phandle(&it, err, np, "nvidia,outputs", NULL, 0)
+> -               if (it.node == dev->of_node)
+> -                       return true;
+> -
+> -       return false;
+> -}
+> -
+>  /*
+>   * Double-buffered registers have two copies: ASSEMBLY and ACTIVE. When the
+>   * *_ACT_REQ bits are set the ASSEMBLY copy is latched into the ACTIVE copy.
+> @@ -2061,6 +2049,7 @@ static int tegra_dc_init(struct host1x_client *client)
+>         if (err < 0)
+>                 goto cleanup;
+>
+> +       dc->base.port = of_graph_get_port_by_id(dc->dev->of_node, 0);
+>         drm_crtc_helper_add(&dc->base, &tegra_crtc_helper_funcs);
+>
+>         /*
+> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+> index 3d8ddccd758f..9e4ae77e6270 100644
+> --- a/drivers/gpu/drm/tegra/dc.h
+> +++ b/drivers/gpu/drm/tegra/dc.h
+> @@ -144,7 +144,6 @@ struct tegra_dc_window {
+>  };
+>
+>  /* from dc.c */
+> -bool tegra_dc_has_output(struct tegra_dc *dc, struct device *dev);
+>  void tegra_dc_commit(struct tegra_dc *dc);
+>  int tegra_dc_state_setup_clock(struct tegra_dc *dc,
+>                                struct drm_crtc_state *crtc_state,
+> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+> index e36e5e7c2f69..b09935cdf397 100644
+> --- a/drivers/gpu/drm/tegra/output.c
+> +++ b/drivers/gpu/drm/tegra/output.c
+> @@ -5,6 +5,7 @@
+>   */
+>
+>  #include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_of.h>
+>  #include <drm/drm_panel.h>
+>  #include <drm/drm_simple_kms_helper.h>
+>
+> @@ -229,16 +230,9 @@ void tegra_output_find_possible_crtcs(struct tegra_output *output,
+>                                       struct drm_device *drm)
+>  {
+>         struct device *dev = output->dev;
+> -       struct drm_crtc *crtc;
+> -       unsigned int mask = 0;
+> -
+> -       drm_for_each_crtc(crtc, drm) {
+> -               struct tegra_dc *dc = to_tegra_dc(crtc);
+> -
+> -               if (tegra_dc_has_output(dc, dev))
+> -                       mask |= drm_crtc_mask(crtc);
+> -       }
+> +       u32 mask;
+>
+> +       mask = drm_of_find_possible_crtcs(drm, dev->of_node);
+>         if (mask == 0) {
+>                 dev_warn(dev, "missing output definition for heads in DT\n");
+>                 mask = 0x3;
+> --- >8 ---
+>
+> I do see the benefit of using standard bindings where available, but in
+> this case I think that's hardly an improvement over the current binding,
+> even though it's undocumented.
+>
+> > > +    - nvidia,head: The number of the display controller head. This is used to
+> > > +      setup the various types of output to receive video data from the given
+> > > +      head.
+> >
+> > Not really clear what this is...
+>
+> This is the same as for the display controller in older Tegra devices.
+> The value is the index of the display controller head, or the instance
+> number of the IP, if that's any clearer. We need this in some places
+> for register programming. We can't always safely derive it in some
+> other way.
 
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 723df142a981..01d94befab11 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -98,8 +98,8 @@ static struct sg_table *tegra_bo_pin(struct device *dev, struct host1x_bo *bo,
- 		 * the SG table needs to be copied to avoid overwriting any
- 		 * other potential users of the original SG table.
- 		 */
--		err = sg_alloc_table_from_sg(sgt, obj->sgt->sgl, obj->sgt->nents,
--					     GFP_KERNEL);
-+		err = sg_alloc_table_from_sg(sgt, obj->sgt->sgl,
-+					     obj->sgt->orig_nents, GFP_KERNEL);
- 		if (err < 0)
- 			goto free;
- 	} else {
-@@ -196,8 +196,7 @@ static int tegra_bo_iommu_map(struct tegra_drm *tegra, struct tegra_bo *bo)
- 
- 	bo->iova = bo->mm->start;
- 
--	bo->size = iommu_map_sg(tegra->domain, bo->iova, bo->sgt->sgl,
--				bo->sgt->nents, prot);
-+	bo->size = iommu_map_sgtable(tegra->domain, bo->iova, bo->sgt, prot);
- 	if (!bo->size) {
- 		dev_err(tegra->drm->dev, "failed to map buffer\n");
- 		err = -ENOMEM;
-@@ -264,8 +263,7 @@ static struct tegra_bo *tegra_bo_alloc_object(struct drm_device *drm,
- static void tegra_bo_free(struct drm_device *drm, struct tegra_bo *bo)
- {
- 	if (bo->pages) {
--		dma_unmap_sg(drm->dev, bo->sgt->sgl, bo->sgt->nents,
--			     DMA_FROM_DEVICE);
-+		dma_unmap_sgtable(drm->dev, bo->sgt, DMA_FROM_DEVICE, 0);
- 		drm_gem_put_pages(&bo->gem, bo->pages, true, true);
- 		sg_free_table(bo->sgt);
- 		kfree(bo->sgt);
-@@ -290,12 +288,9 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
- 		goto put_pages;
- 	}
- 
--	err = dma_map_sg(drm->dev, bo->sgt->sgl, bo->sgt->nents,
--			 DMA_FROM_DEVICE);
--	if (err == 0) {
--		err = -EFAULT;
-+	err = dma_map_sgtable(drm->dev, bo->sgt, DMA_FROM_DEVICE, 0);
-+	if (err)
- 		goto free_sgt;
--	}
- 
- 	return 0;
- 
-@@ -571,7 +566,7 @@ tegra_gem_prime_map_dma_buf(struct dma_buf_attachment *attach,
- 			goto free;
- 	}
- 
--	if (dma_map_sg(attach->dev, sgt->sgl, sgt->nents, dir) == 0)
-+	if (dma_map_sgtable(attach->dev, sgt, dir, 0))
- 		goto free;
- 
- 	return sgt;
-@@ -590,7 +585,7 @@ static void tegra_gem_prime_unmap_dma_buf(struct dma_buf_attachment *attach,
- 	struct tegra_bo *bo = to_tegra_bo(gem);
- 
- 	if (bo->pages)
--		dma_unmap_sg(attach->dev, sgt->sgl, sgt->nents, dir);
-+		dma_unmap_sgtable(attach->dev, sgt, dir, 0);
- 
- 	sg_free_table(sgt);
- 	kfree(sgt);
-@@ -609,8 +604,7 @@ static int tegra_gem_prime_begin_cpu_access(struct dma_buf *buf,
- 	struct drm_device *drm = gem->dev;
- 
- 	if (bo->pages)
--		dma_sync_sg_for_cpu(drm->dev, bo->sgt->sgl, bo->sgt->nents,
--				    DMA_FROM_DEVICE);
-+		dma_sync_sgtable_for_cpu(drm->dev, bo->sgt, DMA_FROM_DEVICE);
- 
- 	return 0;
- }
-@@ -623,8 +617,7 @@ static int tegra_gem_prime_end_cpu_access(struct dma_buf *buf,
- 	struct drm_device *drm = gem->dev;
- 
- 	if (bo->pages)
--		dma_sync_sg_for_device(drm->dev, bo->sgt->sgl, bo->sgt->nents,
--				       DMA_TO_DEVICE);
-+		dma_sync_sgtable_for_device(drm->dev, bo->sgt, DMA_TO_DEVICE);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index 9ccfb56e9b01..0d2ef1662a39 100644
---- a/drivers/gpu/drm/tegra/plane.c
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -130,12 +130,9 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
- 		}
- 
- 		if (sgt) {
--			err = dma_map_sg(dc->dev, sgt->sgl, sgt->nents,
--					 DMA_TO_DEVICE);
--			if (err == 0) {
--				err = -ENOMEM;
-+			err = dma_map_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
-+			if (err)
- 				goto unpin;
--			}
- 
- 			/*
- 			 * The display controller needs contiguous memory, so
-@@ -143,7 +140,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
- 			 * map its SG table to a single contiguous chunk of
- 			 * I/O virtual memory.
- 			 */
--			if (err > 1) {
-+			if (sgt->nents > 1) {
- 				err = -EINVAL;
- 				goto unpin;
- 			}
-@@ -165,8 +162,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
- 		struct sg_table *sgt = state->sgt[i];
- 
- 		if (sgt)
--			dma_unmap_sg(dc->dev, sgt->sgl, sgt->nents,
--				     DMA_TO_DEVICE);
-+			dma_unmap_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
- 
- 		host1x_bo_unpin(dc->dev, &bo->base, sgt);
- 		state->iova[i] = DMA_MAPPING_ERROR;
-@@ -185,8 +181,7 @@ static void tegra_dc_unpin(struct tegra_dc *dc, struct tegra_plane_state *state)
- 		struct sg_table *sgt = state->sgt[i];
- 
- 		if (sgt)
--			dma_unmap_sg(dc->dev, sgt->sgl, sgt->nents,
--				     DMA_TO_DEVICE);
-+			dma_unmap_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
- 
- 		host1x_bo_unpin(dc->dev, &bo->base, sgt);
- 		state->iova[i] = DMA_MAPPING_ERROR;
--- 
-2.17.1
+Index, humm. I'll pretend I didn't ask...
+
+Rob
