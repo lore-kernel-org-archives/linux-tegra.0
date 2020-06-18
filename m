@@ -1,57 +1,62 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v2 14/18] gpu: host1x: mipi: Split
- tegra_mipi_calibrate and tegra_mipi_wait
-Date: Thu, 18 Jun 2020 03:35:20 +0300
-Message-ID: <457e3754-c783-0ec4-068c-8b5f5ff8de0a@gmail.com>
-References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
- <1592358094-23459-15-git-send-email-skomatineni@nvidia.com>
+From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH AUTOSEL 5.7 004/388] ASoC: tegra: tegra_wm8903: Support nvidia, headset property
+Date: Wed, 17 Jun 2020 21:01:41 -0400
+Message-ID: <20200618010805.600873-4-sashal@kernel.org>
+References: <20200618010805.600873-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1592358094-23459-15-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200618010805.600873-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-17.06.2020 04:41, Sowjanya Komatineni пишет:
-...
-> -static int tegra_mipi_wait(struct tegra_mipi *mipi)
-> +int tegra_mipi_wait(struct tegra_mipi_device *device)
->  {
-> +	struct tegra_mipi *mipi = device->mipi;
->  	unsigned long timeout = jiffies + msecs_to_jiffies(250);
->  	u32 value;
-> +	int err;
-> +
-> +	err = clk_enable(device->mipi->clk);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	mutex_lock(&device->mipi->lock);
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-The timeout variable should be assigned *after* taking the lock.
+[ Upstream commit 3ef9d5073b552d56bd6daf2af1e89b7e8d4df183 ]
 
-It will be better if you could use the read_poll_timeout() or
-readl_relaxed_poll_timeout() here.
+The microphone-jack state needs to be masked in a case of a 4-pin jack
+when microphone and ground pins are shorted. Presence of nvidia,headset
+tells that WM8903 CODEC driver should mask microphone's status if short
+circuit is detected, i.e headphones are inserted.
 
->  	while (time_before(jiffies, timeout)) {
->  		value = tegra_mipi_readl(mipi, MIPI_CAL_STATUS);
->  		if ((value & MIPI_CAL_STATUS_ACTIVE) == 0 &&
->  		    (value & MIPI_CAL_STATUS_DONE) != 0)
-> -			return 0;
-> +			goto done;
->  
->  		usleep_range(10, 50);
->  	}
->  
-> -	return -ETIMEDOUT;
-> +	err = -ETIMEDOUT;
-> +done:
-> +	mutex_unlock(&device->mipi->lock);
-> +	clk_disable(device->mipi->clk);
-> +	return err;
->  }
-> +EXPORT_SYMBOL(tegra_mipi_wait);
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Link: https://lore.kernel.org/r/20200330204011.18465-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ sound/soc/tegra/tegra_wm8903.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index 9b5651502f12..3aca354f9e08 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -177,6 +177,7 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
+ 	struct snd_soc_component *component = codec_dai->component;
+ 	struct snd_soc_card *card = rtd->card;
+ 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
++	int shrt = 0;
+ 
+ 	if (gpio_is_valid(machine->gpio_hp_det)) {
+ 		tegra_wm8903_hp_jack_gpio.gpio = machine->gpio_hp_det;
+@@ -189,12 +190,15 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
+ 					&tegra_wm8903_hp_jack_gpio);
+ 	}
+ 
++	if (of_property_read_bool(card->dev->of_node, "nvidia,headset"))
++		shrt = SND_JACK_MICROPHONE;
++
+ 	snd_soc_card_jack_new(rtd->card, "Mic Jack", SND_JACK_MICROPHONE,
+ 			      &tegra_wm8903_mic_jack,
+ 			      tegra_wm8903_mic_jack_pins,
+ 			      ARRAY_SIZE(tegra_wm8903_mic_jack_pins));
+ 	wm8903_mic_detect(component, &tegra_wm8903_mic_jack, SND_JACK_MICROPHONE,
+-				0);
++				shrt);
+ 
+ 	snd_soc_dapm_force_enable_pin(&card->dapm, "MICBIAS");
+ 
+-- 
+2.25.1
