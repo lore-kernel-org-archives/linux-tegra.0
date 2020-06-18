@@ -1,60 +1,52 @@
-From: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
-Subject: [PATCH] [v3] dmaengine: tegra210-adma: Fix runtime PM imbalance on error
-Date: Thu, 18 Jun 2020 18:57:27 +0800
-Message-ID: <20200618105727.14669-1-dinghao.liu@zju.edu.cn>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH AUTOSEL 5.7 004/388] ASoC: tegra: tegra_wm8903: Support
+ nvidia, headset property
+Date: Thu, 18 Jun 2020 12:00:23 +0100
+Message-ID: <20200618110023.GB5789@sirena.org.uk>
+References: <20200618010805.600873-1-sashal@kernel.org>
+ <20200618010805.600873-4-sashal@kernel.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mojUlQ0s9EVzWg2t"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20200618010805.600873-4-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-pm_runtime_get_sync() increments the runtime PM usage counter even
-when it returns an error code. Thus a pairing decrement is needed on
-the error handling path to keep the counter balanced.
 
-Signed-off-by: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
----
+--mojUlQ0s9EVzWg2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changelog:
+On Wed, Jun 17, 2020 at 09:01:41PM -0400, Sasha Levin wrote:
+> From: Dmitry Osipenko <digetx@gmail.com>
+>=20
+> [ Upstream commit 3ef9d5073b552d56bd6daf2af1e89b7e8d4df183 ]
+>=20
+> The microphone-jack state needs to be masked in a case of a 4-pin jack
+> when microphone and ground pins are shorted. Presence of nvidia,headset
+> tells that WM8903 CODEC driver should mask microphone's status if short
+> circuit is detected, i.e headphones are inserted.
 
-v2: - Merge two patches that fix runtime PM imbalance in
-      tegra_adma_probe() and tegra_adma_alloc_chan_resources()
-      respectively.
+This is a new feature not a bugfix.
 
-v3: - Use pm_runtime_put_noidle() instead of pm_runtime_put_sync()
-      in tegra_adma_alloc_chan_resources().
----
- drivers/dma/tegra210-adma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--mojUlQ0s9EVzWg2t
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index db58d7e4f9fe..bfa8800dfb4c 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -658,6 +658,7 @@ static int tegra_adma_alloc_chan_resources(struct dma_chan *dc)
- 
- 	ret = pm_runtime_get_sync(tdc2dev(tdc));
- 	if (ret < 0) {
-+		pm_runtime_put_noidle(tdc2dev(tdc));
- 		free_irq(tdc->irq, tdc);
- 		return ret;
- 	}
-@@ -870,7 +871,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 
- 	ret = pm_runtime_get_sync(&pdev->dev);
- 	if (ret < 0)
--		goto rpm_disable;
-+		goto rpm_put;
- 
- 	ret = tegra_adma_init(tdma);
- 	if (ret)
-@@ -921,7 +922,6 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	dma_async_device_unregister(&tdma->dma_dev);
- rpm_put:
- 	pm_runtime_put_sync(&pdev->dev);
--rpm_disable:
- 	pm_runtime_disable(&pdev->dev);
- irq_dispose:
- 	while (--i >= 0)
--- 
-2.17.1
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl7rSUYACgkQJNaLcl1U
+h9A3vQf/WXhR7I7AHZ2vrSHUiTEBwIC375nL3wtLMM3A9X0B0jomIhmyFDZxYaNS
+dw633sHw9HlgWyTTyx07S1iNlk2hHjOGMi/HzrTbSyK9zivf9QN6K8CIfNFzQn52
+ynhCFORe0eQEP5gGqZF3bghKDzGSLwzYDq12GzJJPgibuoUk/nEq3hQblqQZj5ZZ
+abqeBpm2aI5QAesPDCqYIFfqxo2pdhc39lSgHAw23df1mtuaKGn5MDPU6B/VDCiG
+oHrUfwTkTc4HM06aKEUYnkkoY/y/2fxbI/wRmpHauweXn0PiWmUYeDtr8DrNJINh
+uTQy4zb22IVORBEEJd7xHQg7TsL+Ug==
+=2QST
+-----END PGP SIGNATURE-----
+
+--mojUlQ0s9EVzWg2t--
