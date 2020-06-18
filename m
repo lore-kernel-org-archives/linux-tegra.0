@@ -1,118 +1,71 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 35/38] dt-bindings: memory: Update Tegra210 EMC bindings
-Date: Thu, 18 Jun 2020 09:36:56 -0600
-Message-ID: <20200618153656.GA389512@bogus>
-References: <20200612141903.2391044-1-thierry.reding@gmail.com>
- <20200612141903.2391044-36-thierry.reding@gmail.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v6 30/36] staging: tegra-vde: fix common struct sg_table
+ related issues
+Date: Thu, 18 Jun 2020 17:39:51 +0200
+Message-ID: <20200618153956.29558-31-m.szyprowski@samsung.com>
+References: <20200618153956.29558-1-m.szyprowski@samsung.com>
+ <CGME20200618154035eucas1p24774788a08a2d2a0a7e24c8755c885ed@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200612141903.2391044-36-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20200618153956.29558-1-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 04:19:00PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The Tegra210 EMC is a cooling device because it can throttle the EMC
-> frequency if the chip gets too hot. The device tree node therefore needs
-> to contain the "#cooling-cells" property. Furthermore, multiple reserved
-> memory regions can now be attached to the EMC device tree node, and the
-> new memory-region-names property can be used to differentiate between
-> them.
-> 
-> While at it, update the example to make it more fully-featured.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../nvidia,tegra210-emc.yaml                  | 34 ++++++++++++++-----
->  1 file changed, 26 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-> index 49ab09252e52..4e8f659f1a7c 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-> @@ -34,16 +34,25 @@ properties:
->        - description: EMC general interrupt
->  
->    memory-region:
-> -    $ref: /schemas/types.yaml#/definitions/phandle
-> -    description:
-> -      phandle to a reserved memory region describing the table of EMC
-> -      frequencies trained by the firmware
-> +    description: List of phandles to reserved memory regions describing the
-> +      nominal and derated tables of EMC frequencies trained by the firmware.
-> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-> +
-> +  memory-region-names:
-> +    $ref: "/schemas/types.yaml#/definitions/string-array"
+The Documentation/DMA-API-HOWTO.txt states that the dma_map_sg() function
+returns the number of the created entries in the DMA address space.
+However the subsequent calls to the dma_sync_sg_for_{device,cpu}() and
+dma_unmap_sg must be called with the original number of the entries
+passed to the dma_map_sg().
 
-*-names has a type, so can be dropped.
+struct sg_table is a common structure used for describing a non-contiguous
+memory buffer, used commonly in the DRM and graphics subsystems. It
+consists of a scatterlist with memory pages and DMA addresses (sgl entry),
+as well as the number of scatterlist entries: CPU pages (orig_nents entry)
+and DMA mapped pages (nents entry).
 
-> +    items:
-> +      - const: nominal
-> +      - const: derated
->  
->    nvidia,memory-controller:
-> -    $ref: /schemas/types.yaml#/definitions/phandle
-> +    $ref: "/schemas/types.yaml#/definitions/phandle"
+It turned out that it was a common mistake to misuse nents and orig_nents
+entries, calling DMA-mapping functions with a wrong number of entries or
+ignoring the number of mapped entries returned by the dma_map_sg()
+function.
 
-Quotes aren't needed here. (We haven't been consistent on this).
+To avoid such issues, lets use a common dma-mapping wrappers operating
+directly on the struct sg_table objects and use scatterlist page
+iterators where possible. This, almost always, hides references to the
+nents and orig_nents entries, making the code robust, easier to follow
+and copy/paste safe.
 
->      description:
->        phandle of the memory controller node
->  
-> +  "#cooling-cells":
-> +    $ref: "/schemas/types.yaml#/definitions/uint32"
-> +    const: 2
-> +
->  required:
->    - compatible
->    - reg
-> @@ -51,7 +60,10 @@ required:
->    - clock-names
->    - nvidia,memory-controller
->  
-> -additionalProperties: false
-> +dependencies:
-> +  memory-region-names: [ memory-region ]
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/staging/media/tegra-vde/iommu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The core schema should handle this (probably needs to be added).
-
-> +
-> +unevaluatedProperties: false
->  
->  examples:
->    - |
-> @@ -63,10 +75,15 @@ examples:
->          #size-cells = <1>;
->          ranges;
->  
-> -        emc_table: emc-table@83400000 {
-> +        nominal: emc-table@83400000 {
->              compatible = "nvidia,tegra210-emc-table";
->              reg = <0x83400000 0x10000>;
->          };
-> +
-> +        derated: emc-table@83410000 {
-> +            compatible = "nvidia,tegar210-emc-table";
-> +            reg = <0x83410000 0x10000>;
-> +        };
->      };
->  
->      external-memory-controller@7001b000 {
-> @@ -77,6 +94,7 @@ examples:
->          clocks = <&tegra_car TEGRA210_CLK_EMC>;
->          clock-names = "emc";
->          interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-> -        memory-region = <&emc_table>;
-> +        memory-region-names = "nominal", "derated";
-> +        memory-region = <&nominal>, <&derated>;
->          nvidia,memory-controller = <&mc>;
->      };
-> -- 
-> 2.24.1
-> 
+diff --git a/drivers/staging/media/tegra-vde/iommu.c b/drivers/staging/media/tegra-vde/iommu.c
+index 6af863d92123..adf8dc7ee25c 100644
+--- a/drivers/staging/media/tegra-vde/iommu.c
++++ b/drivers/staging/media/tegra-vde/iommu.c
+@@ -36,8 +36,8 @@ int tegra_vde_iommu_map(struct tegra_vde *vde,
+ 
+ 	addr = iova_dma_addr(&vde->iova, iova);
+ 
+-	size = iommu_map_sg(vde->domain, addr, sgt->sgl, sgt->nents,
+-			    IOMMU_READ | IOMMU_WRITE);
++	size = iommu_map_sgtable(vde->domain, addr, sgt,
++				 IOMMU_READ | IOMMU_WRITE);
+ 	if (!size) {
+ 		__free_iova(&vde->iova, iova);
+ 		return -ENXIO;
+-- 
+2.17.1
