@@ -1,64 +1,60 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v1 10/18] dt-bindings: tegra: Document VI and CSI
- port nodes
-Date: Thu, 18 Jun 2020 12:50:07 +0200
-Message-ID: <20200618105007.GA3663225@ulmo>
-References: <1591768960-31648-1-git-send-email-skomatineni@nvidia.com>
- <1591768960-31648-11-git-send-email-skomatineni@nvidia.com>
- <20200617221411.GB2923473@bogus>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200617221411.GB2923473@bogus>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+Subject: [PATCH] [v3] dmaengine: tegra210-adma: Fix runtime PM imbalance on error
+Date: Thu, 18 Jun 2020 18:57:27 +0800
+Message-ID: <20200618105727.14669-1-dinghao.liu@zju.edu.cn>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+pm_runtime_get_sync() increments the runtime PM usage counter even
+when it returns an error code. Thus a pairing decrement is needed on
+the error handling path to keep the counter balanced.
 
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+---
 
-On Wed, Jun 17, 2020 at 04:14:11PM -0600, Rob Herring wrote:
-> On Tue, Jun 09, 2020 at 11:02:32PM -0700, Sowjanya Komatineni wrote:
-> > This patch documents Tegra VI and CSI port and endpoint nodes along
-> > with the other required properties.
-> >=20
-> > Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  .../display/tegra/nvidia,tegra20-host1x.txt        | 87 ++++++++++++++=
-++++++++
-> >  1 file changed, 87 insertions(+)
->=20
-> This is getting converted to schema by Thierry.
+Changelog:
 
-Yeah, once this has settled it probably makes sense for me to pick this
-up into the json-schema series on top of the initial conversion.
+v2: - Merge two patches that fix runtime PM imbalance in
+      tegra_adma_probe() and tegra_adma_alloc_chan_resources()
+      respectively.
 
-Thierry
+v3: - Use pm_runtime_put_noidle() instead of pm_runtime_put_sync()
+      in tegra_adma_alloc_chan_resources().
+---
+ drivers/dma/tegra210-adma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7rRt0ACgkQ3SOs138+
-s6GjeQ//V5z5HHU3AGAEhkRvK5MxJwjbKjLteO/qr7SoHUcB0259EJUCo+M/Sj9r
-fhPbTuepd7NldeZBKTTHO+nwYVsl09ztvRAEdHHOZ9Nir6xToHYmr8i9t8bJH0Da
-Z1zueXUCBK+XWvodw0qzW6vLAZKAPgXk9ZyWXE2QcdiKTi/nq//ND3Wl2m1f8qdc
-IeoReqDLMJZEkig5HdDjkDcX0DnYhWaiN6TlYTN0gFt0P9n/3vrys6A3UnKQHcAt
-/vKgw5YKUfk4MHhKVZqWAeOVhRHxpef+2Q5atXqxWCwAQtcbrANXKA2UQMZ/fiux
-7xs8MhOOhkfVrH67N8qU/qzS00k8V+5CW1XVBfMQs2qfwRFSXlpBj5ONXPWLzbKs
-5/LXp/y+A+L0U7SykbfD8lT6SsCxabI5jF6jF/zlExc4gpqlL0gjVEaNpMcFje1/
-40ZwDxxQZHtSamkuOET5flEgDbe/uTc07Susmee5tBP3I91C7zikZZJvvKJ6sZnO
-HuQ3Yq67LFLl/q+pjyHPXoxx7+OsY1Z7Zm/3WWjfnprR+Y2IjUJ70nqxvlx/FZ03
-HrTf1iReuKRJMB1uDJT9YHxkAELACQql2hxCs1pa+X3GV/G5C0sMxN4rmmZQeQnm
-dzqM9ZVaXqmHopcGVfsAXF3/nyLKVPYVTdjngoP1fxcIqv9rEV4=
-=gbuv
------END PGP SIGNATURE-----
-
---ew6BAiZeqk4r7MaW--
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index db58d7e4f9fe..bfa8800dfb4c 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -658,6 +658,7 @@ static int tegra_adma_alloc_chan_resources(struct dma_chan *dc)
+ 
+ 	ret = pm_runtime_get_sync(tdc2dev(tdc));
+ 	if (ret < 0) {
++		pm_runtime_put_noidle(tdc2dev(tdc));
+ 		free_irq(tdc->irq, tdc);
+ 		return ret;
+ 	}
+@@ -870,7 +871,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 
+ 	ret = pm_runtime_get_sync(&pdev->dev);
+ 	if (ret < 0)
+-		goto rpm_disable;
++		goto rpm_put;
+ 
+ 	ret = tegra_adma_init(tdma);
+ 	if (ret)
+@@ -921,7 +922,6 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 	dma_async_device_unregister(&tdma->dma_dev);
+ rpm_put:
+ 	pm_runtime_put_sync(&pdev->dev);
+-rpm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+ irq_dispose:
+ 	while (--i >= 0)
+-- 
+2.17.1
