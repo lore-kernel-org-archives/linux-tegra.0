@@ -1,152 +1,189 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 25/38] dt-bindings: gpio: tegra: Convert to json-schema
-Date: Thu, 18 Jun 2020 18:07:14 +0300
-Message-ID: <66767af4-748e-733e-65b2-1a5df9781a5e@gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 07/38] dt-bindings: display: tegra: Convert to json-schema
+Date: Thu, 18 Jun 2020 09:23:58 -0600
+Message-ID: <CAL_JsqLfpSgJxRMNTFdAsSEVOTU6a7bzD8v8Sg1LPXHdgEmdAQ@mail.gmail.com>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
- <20200612141903.2391044-26-thierry.reding@gmail.com>
- <186ceadd-317c-a7b2-d4ab-32473f857545@gmail.com>
- <20200617141706.GC3536291@ulmo>
- <c0cfa39b-054c-8e88-7e5a-233c24f5d5e9@gmail.com>
- <a14c2791-83af-1cd0-1d15-0544a4bf490b@gmail.com>
- <20200617165008.GB3547875@ulmo>
+ <20200612141903.2391044-8-thierry.reding@gmail.com> <20200617231326.GD2975260@bogus>
+ <20200618141630.GB3663225@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200617165008.GB3547875@ulmo>
-Content-Language: en-US
+In-Reply-To: <20200618141630.GB3663225@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-17.06.2020 19:50, Thierry Reding пишет:
-> On Wed, Jun 17, 2020 at 05:33:00PM +0300, Dmitry Osipenko wrote:
->> 17.06.2020 17:24, Dmitry Osipenko пишет:
->>> 17.06.2020 17:17, Thierry Reding пишет:
->>>> On Wed, Jun 17, 2020 at 07:24:16AM +0300, Dmitry Osipenko wrote:
->>>>> 12.06.2020 17:18, Thierry Reding пишет:
->>>>> ...
->>>>>> +patternProperties:
->>>>>> +  # GPIO hogs; /schemas/gpio/gpio-hog.yaml will match
->>>>>> +  "^gpios(-[a-zA-Z0-9-]+)?$":
->>>>>> +    type: object
->>>>>> +    required:
->>>>>> +      - gpio-hog
->>>>>
->>>>> There are two problems here:
->>>>>
->>>>> 1. This naming limitation didn't exist before this patch, so it's not a
->>>>> part of the conversion.
->>>>>
->>>>> 2. GPIO core uses the node's name for the hog's name. Hence by imposing
->>>>> the "gpios-" prefix, you're forcing all hogs to be named as gpios-xxx,
->>>>> which doesn't make much sense to me.
->>>>>
->>>>> Please explain the rationale of this change.
->>>>
->>>> We could probably do without this if we didn't enforce additional or
->>>> unevaluated properties. Because if we don't match on a pattern here then
->>>> all of those GPIO hog nodes would show up as "extra" properties and they
->>>> are currently not allowed. If we do allow them, then we can drop this,
->>>> but we then have no way to fail validation for whatever else somebody
->>>> might want to put into these device tree nodes.
->>>>
->>>> That said, I think additionalProperties can be a schema in itself, so
->>>> maybe there's a way to only allow additional properties if they are of
->>>> type object and have a gpio-hog property. I'll look into that.
->>>
->>> Isn't it possible to validate the additional properties by checking what
->>> properties they have?
->>>
->>> For example, if sub-node has a gpio-hog property then this sub-node is
->>> okay, otherwise fail.
->>>
->>
->> Ah, I haven't finished reading yours last sentence before started to
->> type :) Yes, it will be nice if we could avoid the naming limitation, or
->> at least change it to something like xxx-hog.
-> 
-> So according to the json-schema specification, both additionalProperties
-> and unevaluatedProperties must be a valid JSON schema, which means they
-> can be objects rather than just booleans. Unfortunately, dt-schema tools
-> don't allow these to be objects, so the below currently fails with these
-> tools at the moment.
-> 
-> I can make it work with the following patch against dt-schema.git:
-> 
-> --- >8 ---
-> diff --git a/meta-schemas/keywords.yaml b/meta-schemas/keywords.yaml
-> index ed543235d7e7..aa88f726ea3b 100644
-> --- a/meta-schemas/keywords.yaml
-> +++ b/meta-schemas/keywords.yaml
-> @@ -79,7 +79,11 @@ properties:
->    additionalItems:
->      type: boolean
->    additionalProperties:
-> -    type: boolean
-> +    oneOf:
-> +      - type: object
-> +        allOf:
-> +          - $ref: "#/definitions/sub-schemas"
-> +      - type: boolean
->    allOf:
->      items:
->        $ref: "#/definitions/sub-schemas"
-> @@ -140,7 +144,11 @@ properties:
->    type: true
->    typeSize: true
->    unevaluatedProperties:
-> -    type: boolean
-> +    oneOf:
-> +      - type: object
-> +        allOf:
-> +          - $ref: "#/definitions/sub-schemas"
-> +      - type: boolean
->    uniqueItems:
->      type: boolean
->  
-> --- >8 ---
-> 
-> With that applied, I can make validation of gpio-hog nodes work without
-> requiring the names to change, which incidentally will allow me to drop
-> one of the fixup patches from the ARM/arm64 DTS series.
-> 
-> Here's a hunk that applies on top of this patch and makes this work.
-> I'll squash it in for the next version.
-> 
-> --- >8 ---
-> diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
-> index b2debdb0caff..3f8a9c988305 100644
-> --- a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
-> @@ -57,13 +57,6 @@ properties:
->    interrupt-controller:
->      description: Marks the device node as an interrupt controller.
->  
-> -patternProperties:
-> -  # GPIO hogs; /schemas/gpio/gpio-hog.yaml will match
-> -  "^gpios(-[a-zA-Z0-9-]+)?$":
-> -    type: object
-> -    required:
-> -      - gpio-hog
-> -
->  allOf:
->    - if:
->        properties:
-> @@ -90,7 +83,10 @@ required:
->    - "#interrupt-cells"
->    - interrupt-controller
->  
-> -unevaluatedProperties: false
-> +unevaluatedProperties:
-> +  type: object
-> +  required:
-> +    - gpio-hog
->  
->  examples:
->    - |
-> --- >8 ---
+On Thu, Jun 18, 2020 at 8:16 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+> On Wed, Jun 17, 2020 at 05:13:26PM -0600, Rob Herring wrote:
+> > On Fri, Jun 12, 2020 at 04:18:32PM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >
+> > > Convert the Tegra host1x controller bindings from the free-form text
+> > > format to json-schema.
+> > >
+> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > >  .../display/tegra/nvidia,tegra20-host1x.txt   |  516 ------
+> > >  .../display/tegra/nvidia,tegra20-host1x.yaml  | 1418 +++++++++++++++++
+> > >  2 files changed, 1418 insertions(+), 516 deletions(-)
+> > >  delete mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
 
-Thank you for figuring this out! I see that the dt-schema tool is
-already updated in the git, very nice!
+[...]
+
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - nvidia,tegra124-host1x
+> > > +              - nvidia,tegra210-host1x
+> > > +              - nvidia,tegra186-host1x
+> > > +              - nvidia,tegra194-host1x
+> > > +    then:
+> > > +      patternProperties:
+> > > +        "^sor@[0-9a-f]+$":
+> > > +          description: |
+> > > +            The Serial Output Resource (SOR) can be used to drive HDMI, LVDS,
+> > > +            eDP and DP outputs.
+> > > +
+> > > +            See ../pinctrl/nvidia,tegra124-dpaux-padctl.txt for information
+> > > +            regarding the DPAUX pad controller bindings.
+> > > +          type: object
+> > > +          properties:
+> > > +            # required
+> > > +            compatible:
+> > > +              oneOf:
+> > > +                - const: nvidia,tegra124-sor
+> > > +                - items:
+> > > +                    - const: nvidia,tegra132-sor
+> > > +                    - const: nvidia,tegra124-sor
+> > > +                - const: nvidia,tegra210-sor
+> > > +                - const: nvidia,tegra210-sor1
+> > > +                - const: nvidia,tegra186-sor
+> > > +                - const: nvidia,tegra186-sor1
+> > > +                - const: nvidia,tegra194-sor
+> > > +
+> > > +            reg:
+> > > +              maxItems: 1
+> > > +
+> > > +            interrupts:
+> > > +              maxItems: 1
+> > > +
+> > > +            resets:
+> > > +              items:
+> > > +                - description: module reset
+> > > +
+> > > +            reset-names:
+> > > +              items:
+> > > +                - const: sor
+> > > +
+> > > +            status:
+> > > +              $ref: "/schemas/dt-core.yaml#/properties/status"
+> >
+> > 'status' should never need to be listed.
+>
+> This seems to be needed at least when I try to validate against a single
+> binding, like so:
+>
+>         $ make DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml dtbs_check
+>
+> I assume that that somehow prevents the tooling from looking at any of
+> the other bindings, which in turn then causes status and other standard
+> properties to never be defined and then it flags them as extra and
+> causes a failure.
+
+I'm surprised using DT_SCHEMA_FILES makes a difference. I'm guessing
+that has your 'unevaluatedProperties' support. If so, that means
+there's an unintended side effect that any common schema property
+becomes always allowed. That's good for 'status' and 'phandle', but
+not so much for 'reg', '*-gpios, '*-names', etc.
+
+> I think I've even seen this trigger on dt_binding_check if I happened to
+> have status in there. Now, you've mentioned elsewhere that we shouldn't
+> use "status" in examples, so that would work around this. However, I
+> think I've seen this happen as well in examples that referenced some
+> node via phandle, and then dt_binding_check would emit an error about
+> phandle being undefined.
+>
+> Perhaps this is a problem with the tooling? Should we instruct the
+> scripts to always include the core schema even if we're only testing a
+> single YAML file via DT_SCHEMA_FILES?
+
+The purpose of DT_SCHEMA_FILES is to see warnings just from that
+schema file. If the core schema was warning free, we could add that,
+but it's not. Plus that wouldn't solve the problem here. 'status' and
+'phandle' are added to each schema by the tooling (along with other
+things), not by another schema file (well, they are in another schema
+file, but they are added to each schema so that 'additionalProperties:
+false' works).
+
+This is certainly a limitation in the tooling in that what you have is
+a bit different from the expected form. Generally it is expected that
+everything is defined under the top-level 'properties' and then any
+'if/then' schema only add further constraints. However, you have the
+child nodes only defined under an if/then. We could fix that, but I'm
+not sure I want to. IMO, extensive use of if/then is a sign the schema
+should be split up. More on that below.
+
+
+> > > +            pinctrl-names: true
+> > > +            phandle:
+> > > +              $ref: "/schemas/types.yaml#/definitions/uint32"
+> >
+> > 'phandle' shouldn't need to be listed.
+> >
+> > > +
+> > > +          patternProperties:
+> > > +            "^pinctrl-[0-9]+$": true
+> >
+> > pinctrl properties are automatically added, but maybe not if under an
+> > 'if' schema. Really, I think probably either this should be split
+> > into multiple schema files or all of these child nodes should be
+> > described at the top-level. I'm not sure it's really important to define
+> > which set of child nodes belong or not for each chip.
+>
+> I'm not too worried about the set of child nodes for each chip, but I
+> think having this all in one file underlines the importance of the
+> hierarchy. If these were discrete bindings for each of the compatible
+> strings it'd be easy for someone to create them as standalone nodes in
+> device tree, but that's not something that would work. All of these
+> devices are children of host1x and they do depend on host1x for a lot
+> of the functionality, so the hierarchy must be respected.
+
+I'm not saying don't describe the hierarchy.
+
+The first option is 1 host1x schema file per SoC (roughly) and the
+'host1x' parent node would be duplicated in each one. That doesn't
+worry me too much as it's all standard properties and not that many of
+them. Though you could have a common 'host1x-bus.yaml' just describing
+the parent node properties that each <soc>-host1x.yaml references.
+
+The 2nd option is keep this as a single file, but just move every
+child node definition under the top-level 'patternProperties'. This
+option has the limitation that you can't enforce which child nodes are
+valid per SoC.
+
+> > I'm stopping there. I think the rest is more of the same comments.
+>
+> I've made a pass over the whole file and fixed the issues that you
+> pointed out above in other places.
+>
+> Sounds like the biggest remaining issue is with the duplicated standard
+> properties. I'm not a huge fan of giving up on doing the right thing
+> because the tooling can't deal with it. I think we should fix the
+> tooling to do the right thing. So if there's something in the core DT
+> schema then it should apply regardless of what mode we run in. Much of
+> the above issues should go away once that's fixed.
+>
+> Any thoughts on making some of the schema files "always included"? I
+> haven't looked at this side of the tooling at all yet, so I'm not sure
+> how difficult that would be, but if you're okay with it conceptually I
+> can take a closer look.
+
+Hopefully, it's clear why that doesn't help here. But don't worry,
+there's plenty of other work to do on the tooling. :)
+
+Rob
