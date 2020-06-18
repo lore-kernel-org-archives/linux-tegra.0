@@ -1,62 +1,152 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH AUTOSEL 5.7 004/388] ASoC: tegra: tegra_wm8903: Support
- nvidia, headset property
-Date: Thu, 18 Jun 2020 15:39:30 +0100
-Message-ID: <20200618143930.GI5789@sirena.org.uk>
-References: <20200618010805.600873-1-sashal@kernel.org>
- <20200618010805.600873-4-sashal@kernel.org>
- <20200618110023.GB5789@sirena.org.uk>
- <20200618143046.GT1931@sasha-vm>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 25/38] dt-bindings: gpio: tegra: Convert to json-schema
+Date: Thu, 18 Jun 2020 18:07:14 +0300
+Message-ID: <66767af4-748e-733e-65b2-1a5df9781a5e@gmail.com>
+References: <20200612141903.2391044-1-thierry.reding@gmail.com>
+ <20200612141903.2391044-26-thierry.reding@gmail.com>
+ <186ceadd-317c-a7b2-d4ab-32473f857545@gmail.com>
+ <20200617141706.GC3536291@ulmo>
+ <c0cfa39b-054c-8e88-7e5a-233c24f5d5e9@gmail.com>
+ <a14c2791-83af-1cd0-1d15-0544a4bf490b@gmail.com>
+ <20200617165008.GB3547875@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dMdWWqg3F2Dv/qfw"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200618143046.GT1931@sasha-vm>
+In-Reply-To: <20200617165008.GB3547875@ulmo>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+17.06.2020 19:50, Thierry Reding пишет:
+> On Wed, Jun 17, 2020 at 05:33:00PM +0300, Dmitry Osipenko wrote:
+>> 17.06.2020 17:24, Dmitry Osipenko пишет:
+>>> 17.06.2020 17:17, Thierry Reding пишет:
+>>>> On Wed, Jun 17, 2020 at 07:24:16AM +0300, Dmitry Osipenko wrote:
+>>>>> 12.06.2020 17:18, Thierry Reding пишет:
+>>>>> ...
+>>>>>> +patternProperties:
+>>>>>> +  # GPIO hogs; /schemas/gpio/gpio-hog.yaml will match
+>>>>>> +  "^gpios(-[a-zA-Z0-9-]+)?$":
+>>>>>> +    type: object
+>>>>>> +    required:
+>>>>>> +      - gpio-hog
+>>>>>
+>>>>> There are two problems here:
+>>>>>
+>>>>> 1. This naming limitation didn't exist before this patch, so it's not a
+>>>>> part of the conversion.
+>>>>>
+>>>>> 2. GPIO core uses the node's name for the hog's name. Hence by imposing
+>>>>> the "gpios-" prefix, you're forcing all hogs to be named as gpios-xxx,
+>>>>> which doesn't make much sense to me.
+>>>>>
+>>>>> Please explain the rationale of this change.
+>>>>
+>>>> We could probably do without this if we didn't enforce additional or
+>>>> unevaluated properties. Because if we don't match on a pattern here then
+>>>> all of those GPIO hog nodes would show up as "extra" properties and they
+>>>> are currently not allowed. If we do allow them, then we can drop this,
+>>>> but we then have no way to fail validation for whatever else somebody
+>>>> might want to put into these device tree nodes.
+>>>>
+>>>> That said, I think additionalProperties can be a schema in itself, so
+>>>> maybe there's a way to only allow additional properties if they are of
+>>>> type object and have a gpio-hog property. I'll look into that.
+>>>
+>>> Isn't it possible to validate the additional properties by checking what
+>>> properties they have?
+>>>
+>>> For example, if sub-node has a gpio-hog property then this sub-node is
+>>> okay, otherwise fail.
+>>>
+>>
+>> Ah, I haven't finished reading yours last sentence before started to
+>> type :) Yes, it will be nice if we could avoid the naming limitation, or
+>> at least change it to something like xxx-hog.
+> 
+> So according to the json-schema specification, both additionalProperties
+> and unevaluatedProperties must be a valid JSON schema, which means they
+> can be objects rather than just booleans. Unfortunately, dt-schema tools
+> don't allow these to be objects, so the below currently fails with these
+> tools at the moment.
+> 
+> I can make it work with the following patch against dt-schema.git:
+> 
+> --- >8 ---
+> diff --git a/meta-schemas/keywords.yaml b/meta-schemas/keywords.yaml
+> index ed543235d7e7..aa88f726ea3b 100644
+> --- a/meta-schemas/keywords.yaml
+> +++ b/meta-schemas/keywords.yaml
+> @@ -79,7 +79,11 @@ properties:
+>    additionalItems:
+>      type: boolean
+>    additionalProperties:
+> -    type: boolean
+> +    oneOf:
+> +      - type: object
+> +        allOf:
+> +          - $ref: "#/definitions/sub-schemas"
+> +      - type: boolean
+>    allOf:
+>      items:
+>        $ref: "#/definitions/sub-schemas"
+> @@ -140,7 +144,11 @@ properties:
+>    type: true
+>    typeSize: true
+>    unevaluatedProperties:
+> -    type: boolean
+> +    oneOf:
+> +      - type: object
+> +        allOf:
+> +          - $ref: "#/definitions/sub-schemas"
+> +      - type: boolean
+>    uniqueItems:
+>      type: boolean
+>  
+> --- >8 ---
+> 
+> With that applied, I can make validation of gpio-hog nodes work without
+> requiring the names to change, which incidentally will allow me to drop
+> one of the fixup patches from the ARM/arm64 DTS series.
+> 
+> Here's a hunk that applies on top of this patch and makes this work.
+> I'll squash it in for the next version.
+> 
+> --- >8 ---
+> diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
+> index b2debdb0caff..3f8a9c988305 100644
+> --- a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
+> @@ -57,13 +57,6 @@ properties:
+>    interrupt-controller:
+>      description: Marks the device node as an interrupt controller.
+>  
+> -patternProperties:
+> -  # GPIO hogs; /schemas/gpio/gpio-hog.yaml will match
+> -  "^gpios(-[a-zA-Z0-9-]+)?$":
+> -    type: object
+> -    required:
+> -      - gpio-hog
+> -
+>  allOf:
+>    - if:
+>        properties:
+> @@ -90,7 +83,10 @@ required:
+>    - "#interrupt-cells"
+>    - interrupt-controller
+>  
+> -unevaluatedProperties: false
+> +unevaluatedProperties:
+> +  type: object
+> +  required:
+> +    - gpio-hog
+>  
+>  examples:
+>    - |
+> --- >8 ---
 
---dMdWWqg3F2Dv/qfw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jun 18, 2020 at 10:30:46AM -0400, Sasha Levin wrote:
-> On Thu, Jun 18, 2020 at 12:00:23PM +0100, Mark Brown wrote:
-> > On Wed, Jun 17, 2020 at 09:01:41PM -0400, Sasha Levin wrote:
-> > > From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > >=20
-> > > [ Upstream commit 3ef9d5073b552d56bd6daf2af1e89b7e8d4df183 ]
-> > >=20
-> > > The microphone-jack state needs to be masked in a case of a 4-pin jack
-> > > when microphone and ground pins are shorted. Presence of nvidia,heads=
-et
-> > > tells that WM8903 CODEC driver should mask microphone's status if sho=
-rt
-> > > circuit is detected, i.e headphones are inserted.
-
-> > This is a new feature not a bugfix.
-
-> I saw this patch more as a hardware quirk.
-
-Pretty much any DT property is a hardware quirk :(
-
---dMdWWqg3F2Dv/qfw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl7rfKEACgkQJNaLcl1U
-h9D4egf9GAyUHzaf4lnzptpzMRgqOKL3WVybRfxzlzkgBkgbNNF3Rxgl2TGJpoPu
-DQIe6X4ijMZ/LNocdFZi+BWCr/rh9ml0dUly5TEXbwjHQ1Im5SBdJgy9tLq1yjPD
-OY1sD5faXc2gH1A+z3LQ7xYFpNnpRwug4G+SbyiPtfkPXhIXKnx+cF+tdcqYw8hz
-dDcihB9jR8gPEYGqPBQOacSjd969ocvYYj2npO9TztHNXfwvFwNxErrg7pebwrI5
-7NbFOUdEU7aLAPIx2AfHoHTD9FzDGvqY37Q/UZZYqqFxRQ46ZluGN1cyuOet3sEb
-83lXKDitdxTNZOmNGYNNCEZL/dcdTA==
-=Ja8t
------END PGP SIGNATURE-----
-
---dMdWWqg3F2Dv/qfw--
+Thank you for figuring this out! I see that the dt-schema tool is
+already updated in the git, very nice!
