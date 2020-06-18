@@ -1,162 +1,69 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 2/3] drm/tegra: plane: Support horizontal reflection
-Date: Thu, 18 Jun 2020 02:40:39 +0300
-Message-ID: <20200617234040.1094-3-digetx@gmail.com>
-References: <20200617234040.1094-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH v2 13/18] gpu: host1x: mipi: Update
+ tegra_mipi_request() to be node based
+Date: Thu, 18 Jun 2020 03:27:37 +0300
+Message-ID: <9a0a0a02-0d02-15ae-85de-e752ecdd0ae1@gmail.com>
+References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
+ <1592358094-23459-14-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200617234040.1094-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, Derek Basehore <dbasehore@chromium.org>, Sam Ravnborg <sam@ravnborg.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, Emil Velikov <emil.l.velikov@gmail.com>, Daniel Stone <daniel@fooishbar.org>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1592358094-23459-14-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Support horizontal reflection mode which will allow to support 180°
-rotation mode when combined with the vertical reflection.
+17.06.2020 04:41, Sowjanya Komatineni пишет:
+> Tegra CSI driver need a separate MIPI device for each channel as
+> calibration of corresponding MIPI pads for each channel should
+> happen independently.
+> 
+> So, this patch updates tegra_mipi_request() API to add a device_node
+> pointer argument to allow creating mipi device for specific device
+> node rather than a device.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/dsi.c | 2 +-
+>  drivers/gpu/host1x/mipi.c   | 7 +++++--
+>  include/linux/host1x.h      | 3 ++-
+>  3 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+> index 38beab9..0443589 100644
+> --- a/drivers/gpu/drm/tegra/dsi.c
+> +++ b/drivers/gpu/drm/tegra/dsi.c
+> @@ -1618,7 +1618,7 @@ static int tegra_dsi_probe(struct platform_device *pdev)
+>  	if (IS_ERR(dsi->regs))
+>  		return PTR_ERR(dsi->regs);
+>  
+> -	dsi->mipi = tegra_mipi_request(&pdev->dev);
+> +	dsi->mipi = tegra_mipi_request(&pdev->dev, NULL);
+>  	if (IS_ERR(dsi->mipi))
+>  		return PTR_ERR(dsi->mipi);
+>  
+> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+> index e00809d..93b354b 100644
+> --- a/drivers/gpu/host1x/mipi.c
+> +++ b/drivers/gpu/host1x/mipi.c
+> @@ -206,13 +206,16 @@ static int tegra_mipi_power_down(struct tegra_mipi *mipi)
+>  	return 0;
+>  }
+>  
+> -struct tegra_mipi_device *tegra_mipi_request(struct device *device)
+> +struct tegra_mipi_device *tegra_mipi_request(struct device *device,
+> +					     struct device_node *np)
+>  {
+> -	struct device_node *np = device->of_node;
+>  	struct tegra_mipi_device *dev;
+>  	struct of_phandle_args args;
+>  	int err;
+>  
+> +	if (!np)
+> +		np = device->of_node;
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/tegra/dc.c    | 38 +++++++++++++++++++++++++++++------
- drivers/gpu/drm/tegra/dc.h    |  1 +
- drivers/gpu/drm/tegra/plane.c |  1 +
- drivers/gpu/drm/tegra/plane.h |  1 +
- 4 files changed, 35 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index bb92c1ed44e9..f8149dc3b1b4 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -368,6 +368,12 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
- 	h_size = window->src.w * bpp;
- 	v_size = window->src.h;
- 
-+	if (window->reflect_x)
-+		h_offset += (window->src.w - 1) * bpp;
-+
-+	if (window->reflect_y)
-+		v_offset += window->src.h - 1;
-+
- 	value = V_PRESCALED_SIZE(v_size) | H_PRESCALED_SIZE(h_size);
- 	tegra_plane_writel(plane, value, DC_WIN_PRESCALED_SIZE);
- 
-@@ -404,9 +410,6 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
- 		tegra_plane_writel(plane, window->stride[0], DC_WIN_LINE_STRIDE);
- 	}
- 
--	if (window->reflect_y)
--		v_offset += window->src.h - 1;
--
- 	tegra_plane_writel(plane, h_offset, DC_WINBUF_ADDR_H_OFFSET);
- 	tegra_plane_writel(plane, v_offset, DC_WINBUF_ADDR_V_OFFSET);
- 
-@@ -470,6 +473,9 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
- 		value |= COLOR_EXPAND;
- 	}
- 
-+	if (window->reflect_x)
-+		value |= H_DIRECTION;
-+
- 	if (window->reflect_y)
- 		value |= V_DIRECTION;
- 
-@@ -601,7 +607,10 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 				    struct drm_plane_state *state)
- {
- 	struct tegra_plane_state *plane_state = to_tegra_plane_state(state);
--	unsigned int rotation = DRM_MODE_ROTATE_0 | DRM_MODE_REFLECT_Y;
-+	unsigned int supported_rotation = DRM_MODE_ROTATE_0 |
-+					  DRM_MODE_REFLECT_X |
-+					  DRM_MODE_REFLECT_Y;
-+	unsigned int rotation = state->rotation;
- 	struct tegra_bo_tiling *tiling = &plane_state->tiling;
- 	struct tegra_plane *tegra = to_tegra_plane(plane);
- 	struct tegra_dc *dc = to_tegra_dc(state->crtc);
-@@ -639,7 +648,21 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 		return -EINVAL;
- 	}
- 
--	rotation = drm_rotation_simplify(state->rotation, rotation);
-+	/*
-+	 * Older userspace used custom BO flag in order to specify the Y
-+	 * reflection, while modern userspace uses the generic DRM rotation
-+	 * property in order to achieve the same result.  The legacy BO flag
-+	 * duplicates the DRM rotation property when both are set.
-+	 */
-+	if (tegra_fb_is_bottom_up(state->fb))
-+		rotation |= DRM_MODE_REFLECT_Y;
-+
-+	rotation = drm_rotation_simplify(rotation, supported_rotation);
-+
-+	if (rotation & DRM_MODE_REFLECT_X)
-+		plane_state->reflect_x = true;
-+	else
-+		plane_state->reflect_x = false;
- 
- 	if (rotation & DRM_MODE_REFLECT_Y)
- 		plane_state->reflect_y = true;
-@@ -706,7 +729,8 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
- 	window.dst.w = drm_rect_width(&plane->state->dst);
- 	window.dst.h = drm_rect_height(&plane->state->dst);
- 	window.bits_per_pixel = fb->format->cpp[0] * 8;
--	window.reflect_y = tegra_fb_is_bottom_up(fb) || state->reflect_y;
-+	window.reflect_x = state->reflect_x;
-+	window.reflect_y = state->reflect_y;
- 
- 	/* copy from state */
- 	window.zpos = plane->state->normalized_zpos;
-@@ -792,6 +816,7 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
- 	err = drm_plane_create_rotation_property(&plane->base,
- 						 DRM_MODE_ROTATE_0,
- 						 DRM_MODE_ROTATE_0 |
-+						 DRM_MODE_REFLECT_X |
- 						 DRM_MODE_REFLECT_Y);
- 	if (err < 0)
- 		dev_err(dc->dev, "failed to create rotation property: %d\n",
-@@ -1080,6 +1105,7 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
- 	err = drm_plane_create_rotation_property(&plane->base,
- 						 DRM_MODE_ROTATE_0,
- 						 DRM_MODE_ROTATE_0 |
-+						 DRM_MODE_REFLECT_X |
- 						 DRM_MODE_REFLECT_Y);
- 	if (err < 0)
- 		dev_err(dc->dev, "failed to create rotation property: %d\n",
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 98e1b625168e..051d03dcb9b0 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -136,6 +136,7 @@ struct tegra_dc_window {
- 	unsigned int stride[2];
- 	unsigned long base[3];
- 	unsigned int zpos;
-+	bool reflect_x;
- 	bool reflect_y;
- 
- 	struct tegra_bo_tiling tiling;
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index e05ef6013a97..4cd0461cc508 100644
---- a/drivers/gpu/drm/tegra/plane.c
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -61,6 +61,7 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
- 	copy->tiling = state->tiling;
- 	copy->format = state->format;
- 	copy->swap = state->swap;
-+	copy->reflect_x = state->reflect_x;
- 	copy->reflect_y = state->reflect_y;
- 	copy->opaque = state->opaque;
- 
-diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
-index 8047fc916d8c..c691dd79b27b 100644
---- a/drivers/gpu/drm/tegra/plane.h
-+++ b/drivers/gpu/drm/tegra/plane.h
-@@ -46,6 +46,7 @@ struct tegra_plane_state {
- 	u32 format;
- 	u32 swap;
- 
-+	bool reflect_x;
- 	bool reflect_y;
- 
- 	/* used for legacy blending support only */
--- 
-2.26.0
+Will be nicer if DSI panel could pass the device's node directly,
+instead of this.
