@@ -1,191 +1,211 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v7 20/36] drm: tegra: fix common struct sg_table related issues
-Date: Fri, 19 Jun 2020 12:36:20 +0200
-Message-ID: <20200619103636.11974-21-m.szyprowski@samsung.com>
-References: <20200619103636.11974-1-m.szyprowski@samsung.com>
- <CGME20200619103706eucas1p2b9a9926941e812db1111ec46a97695cd@eucas1p2.samsung.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 37/38] dt-bindings: pwm: Explicitly include pwm.yaml
+Date: Fri, 19 Jun 2020 12:05:59 -0600
+Message-ID: <CAL_JsqKMu3YypAo0NTPpLK+dwXQqn_tai-mpewRp=fWd-V3Jtw@mail.gmail.com>
+References: <20200612141903.2391044-1-thierry.reding@gmail.com>
+ <20200612141903.2391044-38-thierry.reding@gmail.com> <20200618025140.GB3378010@bogus>
+ <20200619074654.GD3704347@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20200619103636.11974-1-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
- <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
- <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200619074654.GD3704347@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Documentation/DMA-API-HOWTO.txt states that the dma_map_sg() function
-returns the number of the created entries in the DMA address space.
-However the subsequent calls to the dma_sync_sg_for_{device,cpu}() and
-dma_unmap_sg must be called with the original number of the entries
-passed to the dma_map_sg().
+On Fri, Jun 19, 2020 at 1:47 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+> On Wed, Jun 17, 2020 at 08:51:40PM -0600, Rob Herring wrote:
+> > On Fri, Jun 12, 2020 at 04:19:02PM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >
+> > > For PWM controller device tree bindings, make sure that they include the
+> > > pwm.yaml controller core bindings explicitly. This prevents the tooling
+> > > from matching on the $nodename pattern, which can falsely match things
+> > > like pinmux nodes, etc.
+> >
+> > My preference here is to clean-up the mess that is pinmux nodes.
+>
+> Any suggestions on how to do that? Do you just want to rename the
+> problematic nodes? Or do you want to introduce a standard naming scheme?
 
-struct sg_table is a common structure used for describing a non-contiguous
-memory buffer, used commonly in the DRM and graphics subsystems. It
-consists of a scatterlist with memory pages and DMA addresses (sgl entry),
-as well as the number of scatterlist entries: CPU pages (orig_nents entry)
-and DMA mapped pages (nents entry).
+.*-pins$ is what I've been using/proposing. Doing that also helps
+writing pinctrl schemas.
 
-It turned out that it was a common mistake to misuse nents and orig_nents
-entries, calling DMA-mapping functions with a wrong number of entries or
-ignoring the number of mapped entries returned by the dma_map_sg()
-function.
+> As an example, I was running into the issue with this node:
+>
+>         pinmux@70000014 {
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&state_default>;
+>
+>                 state_default: pinmux {
+>                         ...
+>
+>                         pwm-a-b {
+>                                 nvidia,pins = "sdc";
+>                                 nvidia,function = "pwm";
+>                                 nvidia,tristate = <TEGRA_PIN_ENABLE>;
+>                         };
+>
+>                         ...
+>                 };
+>         };
+>
+> My first instinct was to just add some sort of prefix to this, but then
+> I realized that might not be the best option because there could be
+> countless other nodes whose names might start with "pwm-" but that had
+> nothing to do with PWM controllers whatsoever.
+>
+> You could for example have some node named "pwm-fan" and then these
+> standard bindings will require that to be have a #pwm-cells property.
 
-To avoid such issues, lets use a common dma-mapping wrappers operating
-directly on the struct sg_table objects and use scatterlist page
-iterators where possible. This, almost always, hides references to the
-nents and orig_nents entries, making the code robust, easier to follow
-and copy/paste safe.
+Pretty sure we only allow pwm@.* or pwm-[0-9a-f]+, so this would not match.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/gpu/drm/tegra/gem.c   | 27 ++++++++++-----------------
- drivers/gpu/drm/tegra/plane.c | 15 +++++----------
- 2 files changed, 15 insertions(+), 27 deletions(-)
+Plus shouldn't it be just 'fan' to be what the class is, not how it is
+implemented/controlled.
 
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 723df142a981..01d94befab11 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -98,8 +98,8 @@ static struct sg_table *tegra_bo_pin(struct device *dev, struct host1x_bo *bo,
- 		 * the SG table needs to be copied to avoid overwriting any
- 		 * other potential users of the original SG table.
- 		 */
--		err = sg_alloc_table_from_sg(sgt, obj->sgt->sgl, obj->sgt->nents,
--					     GFP_KERNEL);
-+		err = sg_alloc_table_from_sg(sgt, obj->sgt->sgl,
-+					     obj->sgt->orig_nents, GFP_KERNEL);
- 		if (err < 0)
- 			goto free;
- 	} else {
-@@ -196,8 +196,7 @@ static int tegra_bo_iommu_map(struct tegra_drm *tegra, struct tegra_bo *bo)
- 
- 	bo->iova = bo->mm->start;
- 
--	bo->size = iommu_map_sg(tegra->domain, bo->iova, bo->sgt->sgl,
--				bo->sgt->nents, prot);
-+	bo->size = iommu_map_sgtable(tegra->domain, bo->iova, bo->sgt, prot);
- 	if (!bo->size) {
- 		dev_err(tegra->drm->dev, "failed to map buffer\n");
- 		err = -ENOMEM;
-@@ -264,8 +263,7 @@ static struct tegra_bo *tegra_bo_alloc_object(struct drm_device *drm,
- static void tegra_bo_free(struct drm_device *drm, struct tegra_bo *bo)
- {
- 	if (bo->pages) {
--		dma_unmap_sg(drm->dev, bo->sgt->sgl, bo->sgt->nents,
--			     DMA_FROM_DEVICE);
-+		dma_unmap_sgtable(drm->dev, bo->sgt, DMA_FROM_DEVICE, 0);
- 		drm_gem_put_pages(&bo->gem, bo->pages, true, true);
- 		sg_free_table(bo->sgt);
- 		kfree(bo->sgt);
-@@ -290,12 +288,9 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
- 		goto put_pages;
- 	}
- 
--	err = dma_map_sg(drm->dev, bo->sgt->sgl, bo->sgt->nents,
--			 DMA_FROM_DEVICE);
--	if (err == 0) {
--		err = -EFAULT;
-+	err = dma_map_sgtable(drm->dev, bo->sgt, DMA_FROM_DEVICE, 0);
-+	if (err)
- 		goto free_sgt;
--	}
- 
- 	return 0;
- 
-@@ -571,7 +566,7 @@ tegra_gem_prime_map_dma_buf(struct dma_buf_attachment *attach,
- 			goto free;
- 	}
- 
--	if (dma_map_sg(attach->dev, sgt->sgl, sgt->nents, dir) == 0)
-+	if (dma_map_sgtable(attach->dev, sgt, dir, 0))
- 		goto free;
- 
- 	return sgt;
-@@ -590,7 +585,7 @@ static void tegra_gem_prime_unmap_dma_buf(struct dma_buf_attachment *attach,
- 	struct tegra_bo *bo = to_tegra_bo(gem);
- 
- 	if (bo->pages)
--		dma_unmap_sg(attach->dev, sgt->sgl, sgt->nents, dir);
-+		dma_unmap_sgtable(attach->dev, sgt, dir, 0);
- 
- 	sg_free_table(sgt);
- 	kfree(sgt);
-@@ -609,8 +604,7 @@ static int tegra_gem_prime_begin_cpu_access(struct dma_buf *buf,
- 	struct drm_device *drm = gem->dev;
- 
- 	if (bo->pages)
--		dma_sync_sg_for_cpu(drm->dev, bo->sgt->sgl, bo->sgt->nents,
--				    DMA_FROM_DEVICE);
-+		dma_sync_sgtable_for_cpu(drm->dev, bo->sgt, DMA_FROM_DEVICE);
- 
- 	return 0;
- }
-@@ -623,8 +617,7 @@ static int tegra_gem_prime_end_cpu_access(struct dma_buf *buf,
- 	struct drm_device *drm = gem->dev;
- 
- 	if (bo->pages)
--		dma_sync_sg_for_device(drm->dev, bo->sgt->sgl, bo->sgt->nents,
--				       DMA_TO_DEVICE);
-+		dma_sync_sgtable_for_device(drm->dev, bo->sgt, DMA_TO_DEVICE);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index 9ccfb56e9b01..0d2ef1662a39 100644
---- a/drivers/gpu/drm/tegra/plane.c
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -130,12 +130,9 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
- 		}
- 
- 		if (sgt) {
--			err = dma_map_sg(dc->dev, sgt->sgl, sgt->nents,
--					 DMA_TO_DEVICE);
--			if (err == 0) {
--				err = -ENOMEM;
-+			err = dma_map_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
-+			if (err)
- 				goto unpin;
--			}
- 
- 			/*
- 			 * The display controller needs contiguous memory, so
-@@ -143,7 +140,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
- 			 * map its SG table to a single contiguous chunk of
- 			 * I/O virtual memory.
- 			 */
--			if (err > 1) {
-+			if (sgt->nents > 1) {
- 				err = -EINVAL;
- 				goto unpin;
- 			}
-@@ -165,8 +162,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
- 		struct sg_table *sgt = state->sgt[i];
- 
- 		if (sgt)
--			dma_unmap_sg(dc->dev, sgt->sgl, sgt->nents,
--				     DMA_TO_DEVICE);
-+			dma_unmap_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
- 
- 		host1x_bo_unpin(dc->dev, &bo->base, sgt);
- 		state->iova[i] = DMA_MAPPING_ERROR;
-@@ -185,8 +181,7 @@ static void tegra_dc_unpin(struct tegra_dc *dc, struct tegra_plane_state *state)
- 		struct sg_table *sgt = state->sgt[i];
- 
- 		if (sgt)
--			dma_unmap_sg(dc->dev, sgt->sgl, sgt->nents,
--				     DMA_TO_DEVICE);
-+			dma_unmap_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
- 
- 		host1x_bo_unpin(dc->dev, &bo->base, sgt);
- 		state->iova[i] = DMA_MAPPING_ERROR;
--- 
-2.17.1
+> So I think the solution of only explicitly "activating" PWM controller
+> bindings would work well in this particular case because it would only
+> apply the bindings where explicitly requested. That way it doesn't
+> matter what nodes are named.
+>
+> > This has the side effect of no longer checking pwm nodes that didn't
+> > have explicit schema. Perhaps that's of somewhat limited value.
+>
+> There are two easy solutions to this: 1) convert all PWM bindings to
+> YAML so that they have an explicit schema or 2) consider the presence of
+> the #pwm-cells property as a marker that the node represents a PWM
+> controller/provider, irrespective of the name. The latter would be much
+> like gpio-controller or interrupt-controller, though less redundant.
+
+There's only 2 things we can generically check, #pwm-cells and the
+node name. If we match on one, then we're really only checking the
+other one. We could match on #pwm-cells presence and then check its
+value is 2 or 3, but then we can do that without a select (i.e. always
+apply the schema).
+
+So I guess I'm convinced there's not much value here and we should
+just do 1). Patches welcome. :) (BTW, I do think we should do some
+mass conversions by class. That I think would be a bit more efficient
+in both converting and reviewing. My calculation is something like 6
+years to finish (3K bindings left and doing 100-150 a cycle).)
+
+> We could even go as far as using #pwm-cells as the definitive marker and
+> then require that it has a certain name, like we do for other types of
+> nodes. I did a quick audit and came up with the following results. These
+> are all the PWM controller nodes that I could find that don't follow the
+> "^pwm(@.*)?$" pattern. The files are only one example of where I found
+> them and there were often others that used the same pattern.
+>
+>  - arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi
+>      - ec-pwm
+>
+>        It should be trivial to rename these to just "pwm" since I don't
+>        see the cros-ec driver relying on the exact name.
+>
+>  - arch/arm/boot/dts/am5729-beagleboneai.dts
+>      - stmpe_pwm
+>
+>        The stmpe MFD driver actually relies on this name, so not sure if
+>        there's a lot we can do about that.
+
+That's unfortunate...
+
+The question is how do we allow this, but at the same time prevent more cases.
+
+>  - arch/arm/boot/dts/armada-38x.dtsi
+>      - gpio@...
+>
+>        This is both a GPIO and PWM controller, so can't really do much
+>        about the name.
+
+In general, we need some solution for the more than 1 function nodes.
+Combo clock and reset controllers are a common one.
+
+>  - arch/arm/boot/dts/at91-kizbox.dts
+>      - pwm
+>
+>        Actually also matches the pattern because the '@.*' part is
+>        optional.
+>
+>  - arch/arm/boot/dts/at91sam9n12.dtsi
+>      - hlcdc-pwm
+>
+>        The MFD driver matches on the compatible string, so we should be
+>        able to just rename this to "pwm".
+>
+>  - arch/arm/boot/dts/da850.dtsi
+>     - ecap@...
+>
+>       No matching on the name as far as I can tell, so we should be able
+>       to rename this 'pwm@...'.
+>
+>  - arch/arm/boot/dts/logicpd-torpedo-baseboard.dtsi
+>     - dmtimer-pwm
+>
+>       Could probably be renamed 'pwm'.
+>
+>  - arch/arm/boot/dts/lpc32xx.dtsi
+>     - mpwm@...
+>
+>       Could probably be renamed 'pwm'.
+>
+>  - arch/arm/boot/dts/motorola-mapphone-common.dtsi
+>     - dmtimer-pwm-*
+>
+>       Maybe these should be renamed 'pwm@*' instead?
+>
+>  - arch/arm/boot/dts/s3c24xx.dtsi
+>     - timer@...
+>
+>       This is a variant similar to dmtimer-pwm above and is driven by a
+>       timer that can run in PWM mode. I think this is the same category
+>       as the GPIO/PWM controller hybrid above.
+>
+>       Not much we can do about the name.
+>
+>  - arch/arm/boot/dts/stm32f429.dtsi
+>     - pwm
+>
+>       Matches the pattern.
+>
+>  - arch/arm/boot/dts/twl4030.dtsi
+>     - pwm
+>
+>       Matches the pattern.
+>
+>     - pwmled
+>
+>       Perhaps both of the above should be named 'pwm@*'? There doesn't
+>       seem to be any matching on the name.
+>
+> For many of the above it should be possible to rename them. But then we
+> will always have exceptions where we can't do that because then it might
+> conflict with other bindings.
+>
+> Two interesting things I gathered from the above are that:
+>
+>   1) nothing in the above actually matches the pwm-* variant that's part
+>      of the current pattern defined in pwm.yaml and which is causing the
+>      problem for the pinmux nodes, so an easy solution would be to
+>      simply drop that part of the pattern since it is useless anyway.
+>
+>   2) There are actually quite a few PWM controllers that currently are
+>      not checked because of the name matching. Now I haven't actually
+>      checked the reverse, i.e. to see if all nodes matching the pattern
+>      actually have a #pwm-cells property, but given that we miss a
+>      number of controller because they don't match the pattern makes me
+>      think that that aspect isn't actually very helpful.
+>
+> All of the above makes me think even more that we should just abandon
+> the idea of matching on the names for PWM controller because in some
+> instances we can't change the name for backwards-compatibility or
+> because the names would then conflict with other bindings.
+
+Yes. :(
+
+Maybe node name checks can be an optional thing to enable until we
+come up with a more general way to opt-in/out of specific checks.
+
+Rob
