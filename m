@@ -1,206 +1,241 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 37/38] dt-bindings: pwm: Explicitly include pwm.yaml
-Date: Fri, 19 Jun 2020 09:46:54 +0200
-Message-ID: <20200619074654.GD3704347@ulmo>
+Subject: Re: [PATCH 07/38] dt-bindings: display: tegra: Convert to json-schema
+Date: Fri, 19 Jun 2020 10:08:39 +0200
+Message-ID: <20200619080839.GE3704347@ulmo>
 References: <20200612141903.2391044-1-thierry.reding@gmail.com>
- <20200612141903.2391044-38-thierry.reding@gmail.com>
- <20200618025140.GB3378010@bogus>
+ <20200612141903.2391044-8-thierry.reding@gmail.com>
+ <20200617231326.GD2975260@bogus>
+ <20200618141630.GB3663225@ulmo>
+ <CAL_JsqLfpSgJxRMNTFdAsSEVOTU6a7bzD8v8Sg1LPXHdgEmdAQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TybLhxa8M7aNoW+V"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="idY8LE8SD6/8DnRI"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200618025140.GB3378010@bogus>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <CAL_JsqLfpSgJxRMNTFdAsSEVOTU6a7bzD8v8Sg1LPXHdgEmdAQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---TybLhxa8M7aNoW+V
+--idY8LE8SD6/8DnRI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 17, 2020 at 08:51:40PM -0600, Rob Herring wrote:
-> On Fri, Jun 12, 2020 at 04:19:02PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > For PWM controller device tree bindings, make sure that they include the
-> > pwm.yaml controller core bindings explicitly. This prevents the tooling
-> > from matching on the $nodename pattern, which can falsely match things
-> > like pinmux nodes, etc.
+On Thu, Jun 18, 2020 at 09:23:58AM -0600, Rob Herring wrote:
+> On Thu, Jun 18, 2020 at 8:16 AM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>=
+ wrote:
+> >
+> > On Wed, Jun 17, 2020 at 05:13:26PM -0600, Rob Herring wrote:
+> > > On Fri, Jun 12, 2020 at 04:18:32PM +0200, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > >
+> > > > Convert the Tegra host1x controller bindings from the free-form text
+> > > > format to json-schema.
+> > > >
+> > > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > > ---
+> > > >  .../display/tegra/nvidia,tegra20-host1x.txt   |  516 ------
+> > > >  .../display/tegra/nvidia,tegra20-host1x.yaml  | 1418 +++++++++++++=
+++++
+> > > >  2 files changed, 1418 insertions(+), 516 deletions(-)
+> > > >  delete mode 100644 Documentation/devicetree/bindings/display/tegra=
+/nvidia,tegra20-host1x.txt
+> > > >  create mode 100644 Documentation/devicetree/bindings/display/tegra=
+/nvidia,tegra20-host1x.yaml
 >=20
-> My preference here is to clean-up the mess that is pinmux nodes.
+> [...]
+>=20
+> > > > +  - if:
+> > > > +      properties:
+> > > > +        compatible:
+> > > > +          contains:
+> > > > +            enum:
+> > > > +              - nvidia,tegra124-host1x
+> > > > +              - nvidia,tegra210-host1x
+> > > > +              - nvidia,tegra186-host1x
+> > > > +              - nvidia,tegra194-host1x
+> > > > +    then:
+> > > > +      patternProperties:
+> > > > +        "^sor@[0-9a-f]+$":
+> > > > +          description: |
+> > > > +            The Serial Output Resource (SOR) can be used to drive =
+HDMI, LVDS,
+> > > > +            eDP and DP outputs.
+> > > > +
+> > > > +            See ../pinctrl/nvidia,tegra124-dpaux-padctl.txt for in=
+formation
+> > > > +            regarding the DPAUX pad controller bindings.
+> > > > +          type: object
+> > > > +          properties:
+> > > > +            # required
+> > > > +            compatible:
+> > > > +              oneOf:
+> > > > +                - const: nvidia,tegra124-sor
+> > > > +                - items:
+> > > > +                    - const: nvidia,tegra132-sor
+> > > > +                    - const: nvidia,tegra124-sor
+> > > > +                - const: nvidia,tegra210-sor
+> > > > +                - const: nvidia,tegra210-sor1
+> > > > +                - const: nvidia,tegra186-sor
+> > > > +                - const: nvidia,tegra186-sor1
+> > > > +                - const: nvidia,tegra194-sor
+> > > > +
+> > > > +            reg:
+> > > > +              maxItems: 1
+> > > > +
+> > > > +            interrupts:
+> > > > +              maxItems: 1
+> > > > +
+> > > > +            resets:
+> > > > +              items:
+> > > > +                - description: module reset
+> > > > +
+> > > > +            reset-names:
+> > > > +              items:
+> > > > +                - const: sor
+> > > > +
+> > > > +            status:
+> > > > +              $ref: "/schemas/dt-core.yaml#/properties/status"
+> > >
+> > > 'status' should never need to be listed.
+> >
+> > This seems to be needed at least when I try to validate against a single
+> > binding, like so:
+> >
+> >         $ make DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/disp=
+lay/tegra/nvidia,tegra20-host1x.yaml dtbs_check
+> >
+> > I assume that that somehow prevents the tooling from looking at any of
+> > the other bindings, which in turn then causes status and other standard
+> > properties to never be defined and then it flags them as extra and
+> > causes a failure.
+>=20
+> I'm surprised using DT_SCHEMA_FILES makes a difference. I'm guessing
+> that has your 'unevaluatedProperties' support. If so, that means
+> there's an unintended side effect that any common schema property
+> becomes always allowed. That's good for 'status' and 'phandle', but
+> not so much for 'reg', '*-gpios, '*-names', etc.
 
-Any suggestions on how to do that? Do you just want to rename the
-problematic nodes? Or do you want to introduce a standard naming scheme?
-As an example, I was running into the issue with this node:
+I don't think that's an unintended side-effect. If the property
+validates against a schema it counts as evaluated, doesn't it? In order
+to avoid that we would somehow have to restrict which schemas contribute
+to the evaluatedProperties annotation and I don't think there's a way to
+do that because we don't know which out of all the schemas is relevant.
 
-	pinmux@70000014 {
-		pinctrl-names =3D "default";
-		pinctrl-0 =3D <&state_default>;
+> > I think I've even seen this trigger on dt_binding_check if I happened to
+> > have status in there. Now, you've mentioned elsewhere that we shouldn't
+> > use "status" in examples, so that would work around this. However, I
+> > think I've seen this happen as well in examples that referenced some
+> > node via phandle, and then dt_binding_check would emit an error about
+> > phandle being undefined.
+> >
+> > Perhaps this is a problem with the tooling? Should we instruct the
+> > scripts to always include the core schema even if we're only testing a
+> > single YAML file via DT_SCHEMA_FILES?
+>=20
+> The purpose of DT_SCHEMA_FILES is to see warnings just from that
+> schema file. If the core schema was warning free, we could add that,
+> but it's not. Plus that wouldn't solve the problem here. 'status' and
+> 'phandle' are added to each schema by the tooling (along with other
+> things), not by another schema file (well, they are in another schema
+> file, but they are added to each schema so that 'additionalProperties:
+> false' works).
+>=20
+> This is certainly a limitation in the tooling in that what you have is
+> a bit different from the expected form. Generally it is expected that
+> everything is defined under the top-level 'properties' and then any
+> 'if/then' schema only add further constraints. However, you have the
+> child nodes only defined under an if/then. We could fix that, but I'm
+> not sure I want to. IMO, extensive use of if/then is a sign the schema
+> should be split up. More on that below.
 
-		state_default: pinmux {
-			...
+Okay, I see your point.
 
-			pwm-a-b {
-				nvidia,pins =3D "sdc";
-				nvidia,function =3D "pwm";
-				nvidia,tristate =3D <TEGRA_PIN_ENABLE>;
-			};
+> > > > +            pinctrl-names: true
+> > > > +            phandle:
+> > > > +              $ref: "/schemas/types.yaml#/definitions/uint32"
+> > >
+> > > 'phandle' shouldn't need to be listed.
+> > >
+> > > > +
+> > > > +          patternProperties:
+> > > > +            "^pinctrl-[0-9]+$": true
+> > >
+> > > pinctrl properties are automatically added, but maybe not if under an
+> > > 'if' schema. Really, I think probably either this should be split
+> > > into multiple schema files or all of these child nodes should be
+> > > described at the top-level. I'm not sure it's really important to def=
+ine
+> > > which set of child nodes belong or not for each chip.
+> >
+> > I'm not too worried about the set of child nodes for each chip, but I
+> > think having this all in one file underlines the importance of the
+> > hierarchy. If these were discrete bindings for each of the compatible
+> > strings it'd be easy for someone to create them as standalone nodes in
+> > device tree, but that's not something that would work. All of these
+> > devices are children of host1x and they do depend on host1x for a lot
+> > of the functionality, so the hierarchy must be respected.
+>=20
+> I'm not saying don't describe the hierarchy.
+>=20
+> The first option is 1 host1x schema file per SoC (roughly) and the
+> 'host1x' parent node would be duplicated in each one. That doesn't
+> worry me too much as it's all standard properties and not that many of
+> them. Though you could have a common 'host1x-bus.yaml' just describing
+> the parent node properties that each <soc>-host1x.yaml references.
+>=20
+> The 2nd option is keep this as a single file, but just move every
+> child node definition under the top-level 'patternProperties'. This
+> option has the limitation that you can't enforce which child nodes are
+> valid per SoC.
 
-			...
-		};
-	};
+Okay, I'll give the first option a try and see where I end up.
 
-My first instinct was to just add some sort of prefix to this, but then
-I realized that might not be the best option because there could be
-countless other nodes whose names might start with "pwm-" but that had
-nothing to do with PWM controllers whatsoever.
+> > > I'm stopping there. I think the rest is more of the same comments.
+> >
+> > I've made a pass over the whole file and fixed the issues that you
+> > pointed out above in other places.
+> >
+> > Sounds like the biggest remaining issue is with the duplicated standard
+> > properties. I'm not a huge fan of giving up on doing the right thing
+> > because the tooling can't deal with it. I think we should fix the
+> > tooling to do the right thing. So if there's something in the core DT
+> > schema then it should apply regardless of what mode we run in. Much of
+> > the above issues should go away once that's fixed.
+> >
+> > Any thoughts on making some of the schema files "always included"? I
+> > haven't looked at this side of the tooling at all yet, so I'm not sure
+> > how difficult that would be, but if you're okay with it conceptually I
+> > can take a closer look.
+>=20
+> Hopefully, it's clear why that doesn't help here. But don't worry,
+> there's plenty of other work to do on the tooling. :)
 
-You could for example have some node named "pwm-fan" and then these
-standard bindings will require that to be have a #pwm-cells property.
-
-So I think the solution of only explicitly "activating" PWM controller
-bindings would work well in this particular case because it would only
-apply the bindings where explicitly requested. That way it doesn't
-matter what nodes are named.
-
-> This has the side effect of no longer checking pwm nodes that didn't=20
-> have explicit schema. Perhaps that's of somewhat limited value.
-
-There are two easy solutions to this: 1) convert all PWM bindings to
-YAML so that they have an explicit schema or 2) consider the presence of
-the #pwm-cells property as a marker that the node represents a PWM
-controller/provider, irrespective of the name. The latter would be much
-like gpio-controller or interrupt-controller, though less redundant.
-
-We could even go as far as using #pwm-cells as the definitive marker and
-then require that it has a certain name, like we do for other types of
-nodes. I did a quick audit and came up with the following results. These
-are all the PWM controller nodes that I could find that don't follow the
-"^pwm(@.*)?$" pattern. The files are only one example of where I found
-them and there were often others that used the same pattern.
-
- - arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi
-     - ec-pwm
-
-       It should be trivial to rename these to just "pwm" since I don't
-       see the cros-ec driver relying on the exact name.
-
- - arch/arm/boot/dts/am5729-beagleboneai.dts
-     - stmpe_pwm
-
-       The stmpe MFD driver actually relies on this name, so not sure if
-       there's a lot we can do about that.
-
- - arch/arm/boot/dts/armada-38x.dtsi
-     - gpio@...
-
-       This is both a GPIO and PWM controller, so can't really do much
-       about the name.
-
- - arch/arm/boot/dts/at91-kizbox.dts
-     - pwm
-
-       Actually also matches the pattern because the '@.*' part is
-       optional.
-
- - arch/arm/boot/dts/at91sam9n12.dtsi
-     - hlcdc-pwm
-
-       The MFD driver matches on the compatible string, so we should be
-       able to just rename this to "pwm".
-
- - arch/arm/boot/dts/da850.dtsi
-    - ecap@...
-
-      No matching on the name as far as I can tell, so we should be able
-      to rename this 'pwm@...'.
-
- - arch/arm/boot/dts/logicpd-torpedo-baseboard.dtsi
-    - dmtimer-pwm
-
-      Could probably be renamed 'pwm'.
-
- - arch/arm/boot/dts/lpc32xx.dtsi
-    - mpwm@...
-
-      Could probably be renamed 'pwm'.
-
- - arch/arm/boot/dts/motorola-mapphone-common.dtsi
-    - dmtimer-pwm-*
-
-      Maybe these should be renamed 'pwm@*' instead?
-
- - arch/arm/boot/dts/s3c24xx.dtsi
-    - timer@...
-
-      This is a variant similar to dmtimer-pwm above and is driven by a
-      timer that can run in PWM mode. I think this is the same category
-      as the GPIO/PWM controller hybrid above.
-
-      Not much we can do about the name.
-
- - arch/arm/boot/dts/stm32f429.dtsi
-    - pwm
-
-      Matches the pattern.
-
- - arch/arm/boot/dts/twl4030.dtsi
-    - pwm
-
-      Matches the pattern.
-
-    - pwmled
-
-      Perhaps both of the above should be named 'pwm@*'? There doesn't
-      seem to be any matching on the name.
-
-For many of the above it should be possible to rename them. But then we
-will always have exceptions where we can't do that because then it might
-conflict with other bindings.
-
-Two interesting things I gathered from the above are that:
-
-  1) nothing in the above actually matches the pwm-* variant that's part
-     of the current pattern defined in pwm.yaml and which is causing the
-     problem for the pinmux nodes, so an easy solution would be to
-     simply drop that part of the pattern since it is useless anyway.
-
-  2) There are actually quite a few PWM controllers that currently are
-     not checked because of the name matching. Now I haven't actually
-     checked the reverse, i.e. to see if all nodes matching the pattern
-     actually have a #pwm-cells property, but given that we miss a
-     number of controller because they don't match the pattern makes me
-     think that that aspect isn't actually very helpful.
-
-All of the above makes me think even more that we should just abandon
-the idea of matching on the names for PWM controller because in some
-instances we can't change the name for backwards-compatibility or
-because the names would then conflict with other bindings.
+Yes, I think I understand now.
 
 Thierry
 
---TybLhxa8M7aNoW+V
+--idY8LE8SD6/8DnRI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7sbWwACgkQ3SOs138+
-s6EkUQ/8CfobSw5tN7kHV27Up2nPbtgxT0JzwhC+iMatGJJglEb/0HvmG/T4HgEl
-q2ky225l4PxEBQ8VjCm7vnQxQQ2IGn2dYtuj99n9mRjOKI49EMCPK6b1rZuV2cgQ
-1F8oDpq3vchobyvvT2RnoBo/+mvIC77Jas7nppUcFIPQJOorG7wZFCq1W4U+fIoI
-ozX51pXr3/XeoIBKsng3eikM44hNvlDmrtt53FPaSZqQm2G8mS2KHJtOVttLoFsf
-uhu5TShU+xesO2XG/5i+dN65y5Dw+ExabqJbgSfDxhsPXxGCDkbPnsZVEgEWUwFy
-g9BgVzv0yP34nHsBN38WlU3lVCiM5BzB+HHg0UHgzzzAfgFv6nnjd23ii4PAT68B
-V+qDyDKYm1IaBGnF34kZ3IpSqr/snYNHhdTNZ+yucHos3gY6z04ExsoOUpZmGDln
-Qr1ly9J6DF1luwN5mxIyOdoCD+l03owo6oOnf+xLZv8yHra/IPNG9andBHr/u7Y9
-BinKNHS7cxjAKf9p5e5Ar0k+5NPbICzRi0WyAwM/zqkfneaAQWW07d/9X1hMxQx4
-KsJE6TWpt5nq1xboPaHaHc5kgPhbhgn8/7zbOdDDtGrttU3lwU1rC7x5LJO+ezr1
-GWHzs5tekqEuqKX+jtOq8laXCH7zHOCYBs4/SBMVDJesNP2HAQc=
-=ZZ89
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7scoUACgkQ3SOs138+
+s6H0Kg//ZHQi745W1fmIq8PKL13plA54Nuav4gYArM/r/LjWt9rKVBRvxolDDCTJ
+Fyq8e1xGpanTFeaaLtvgoMA7CoFg1/7MXiI1sM+MiN+ttY0Cc2Kx8TP7NC/tvY3U
+szb+zKlB01BqDcD7h+LY81h3VnB7oGiL+Fi04zuhcjWetCJbW0qzFET5LihM+3gv
+HWHCxF/gkJz9EqWe7EKyVbswJ/k9pZRLPgVU9UInU1luIH9l8Rv0MTPaTanFzrjs
+SFwCjMtjQX4huTLTRkwhzhhiF33KRKT7QsG69z++fhv0sLy+lohiIA7CZVeK5WsT
+smlhr19idPQPsB3liSWd9pCJUHl94u1hEDKXzSitzMwYL0tb3Y89zt2FR1FIulS4
+nQKD0JAhJX2H7VI46Gfw4qTNjEuBVlvoyJWAo9pLIRFLNSRxdrqsUP90POkGVRCf
+/ldop8VIapx4ugeCCxPbBEC99+w7I0+QgSw0efF3VOSAyc/iZrK+Hw1hRsP2aI0A
+s/93bdzMXfB6RrsLdCDAEn5b8OpxvbhjxDlce+slvvO47azuoLmXVGs7XpXg7o9T
+WwZMPouMMEL0v81TcUpR/pMyKAQAjRrpO0b7Q7QLqLQxhJN1mFpIClI36MSSD+vV
+BfrxG5azGwSHd3slBg7b3Q7nyY+DUFORoxonJPsODab8mduRDk4=
+=u19W
 -----END PGP SIGNATURE-----
 
---TybLhxa8M7aNoW+V--
+--idY8LE8SD6/8DnRI--
