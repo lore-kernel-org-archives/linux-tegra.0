@@ -1,35 +1,122 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] [v3] dmaengine: tegra210-adma: Fix runtime PM imbalance
- on error
-Date: Sat, 20 Jun 2020 10:53:20 +0100
-Message-ID: <f4034e16-e720-57c4-eb9d-733786212a4a@nvidia.com>
-References: <20200618105727.14669-1-dinghao.liu@zju.edu.cn>
- <9f7684d9-7a75-497d-db1c-75cf0991a072@nvidia.com>
- <24ea1ef1.10213.172ca4d45be.Coremail.dinghao.liu@zju.edu.cn>
+From: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v8 7/7] drm/panel-simple: Add missing connector type for
+ some panels
+Date: Sat, 20 Jun 2020 13:21:32 +0200
+Message-ID: <20200620112132.GB16901@ravnborg.org>
+References: <20200617222703.17080-1-digetx@gmail.com>
+ <20200617222703.17080-8-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <24ea1ef1.10213.172ca4d45be.Coremail.dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200617222703.17080-8-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org
-Cc: kjlu-OJFnDUYgAso@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Dmitry
 
-On 19/06/2020 02:59, dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org wrote:
->>
->> Why noidle?
->>
+On Thu, Jun 18, 2020 at 01:27:03AM +0300, Dmitry Osipenko wrote:
+> The DRM panel bridge core requires connector type to be set up properly,
+> otherwise it rejects the panel. The missing connector type problem popped
+> up while I was trying to wrap CLAA070WP03XG panel into a DRM bridge in
+> order to test whether panel's rotation property work properly using
+> panel-simple driver on NVIDIA Tegra30 Nexus 7 tablet device, which uses
+> CLAA070WP03XG display panel.
 > 
-> _noidle is enough for fixing this bug. _sync may suspend
-> the device beyond expectation.
+> The NVIDIA Tegra DRM driver recently gained DRM bridges support for the
+> RGB output and now driver wraps directly-connected panels into DRM bridge.
+> Hence all panels should have connector type set properly now, otherwise
+> the panel's wrapping fails.
+> 
+> This patch adds missing connector types for the LVDS panels that are found
+> on NVIDIA Tegra devices:
+> 
+>   1. AUO B101AW03
+>   2. Chunghwa CLAA070WP03XG
+>   3. Chunghwa CLAA101WA01A
+>   4. Chunghwa CLAA101WB01
+>   5. EDT ET057090DHU
+>   6. Innolux N156BGE L21
+>   7. Samsung LTN101NT05
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-In that case, then the other instance you are fixing with this patch is
-not correct.
+Very good to have this fixed.
+I went ahead and pushed this commit to drm-misc-next as it is really
+independent from the rest of the series.
 
-Jon
+	Sam
 
--- 
-nvpublic
+> ---
+>  drivers/gpu/drm/panel/panel-simple.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index 6764ac630e22..9eb2dbb7bfa6 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -687,6 +687,7 @@ static const struct panel_desc auo_b101aw03 = {
+>  		.width = 223,
+>  		.height = 125,
+>  	},
+> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+>  };
+>  
+>  static const struct display_timing auo_b101ean01_timing = {
+> @@ -1340,6 +1341,7 @@ static const struct panel_desc chunghwa_claa070wp03xg = {
+>  		.width = 94,
+>  		.height = 150,
+>  	},
+> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+>  };
+>  
+>  static const struct drm_display_mode chunghwa_claa101wa01a_mode = {
+> @@ -1362,6 +1364,7 @@ static const struct panel_desc chunghwa_claa101wa01a = {
+>  		.width = 220,
+>  		.height = 120,
+>  	},
+> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+>  };
+>  
+>  static const struct drm_display_mode chunghwa_claa101wb01_mode = {
+> @@ -1384,6 +1387,7 @@ static const struct panel_desc chunghwa_claa101wb01 = {
+>  		.width = 223,
+>  		.height = 125,
+>  	},
+> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+>  };
+>  
+>  static const struct drm_display_mode dataimage_scf0700c48ggu18_mode = {
+> @@ -1573,6 +1577,7 @@ static const struct panel_desc edt_et057090dhu = {
+>  	},
+>  	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+>  	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
+> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+>  };
+>  
+>  static const struct drm_display_mode edt_etm0700g0dh6_mode = {
+> @@ -2055,6 +2060,7 @@ static const struct panel_desc innolux_n156bge_l21 = {
+>  		.width = 344,
+>  		.height = 193,
+>  	},
+> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+>  };
+>  
+>  static const struct drm_display_mode innolux_p120zdg_bf1_mode = {
+> @@ -3001,6 +3007,7 @@ static const struct panel_desc samsung_ltn101nt05 = {
+>  		.width = 223,
+>  		.height = 125,
+>  	},
+> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+>  };
+>  
+>  static const struct drm_display_mode samsung_ltn140at29_301_mode = {
+> -- 
+> 2.26.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
