@@ -1,28 +1,39 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 0/2] Improve descriptions of a few simple-panels
-Date: Mon, 22 Jun 2020 01:27:40 +0300
-Message-ID: <20200621222742.25695-1-digetx@gmail.com>
+Subject: [PATCH v1 1/2] drm/panel-simple: Correct EDT ET057090DHU connector type
+Date: Mon, 22 Jun 2020 01:27:41 +0300
+Message-ID: <20200621222742.25695-2-digetx@gmail.com>
+References: <20200621222742.25695-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200621222742.25695-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+The EDT ET057090DHU panel has a DPI connector and not LVDS. This patch
+corrects the panel's description.
 
-This is a follow up to [1], which was already applied to drm-misc and then
-Laurent Pinchart spotted some problems. This series addresses those problems.
+Reported-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Fixes: 94f07917ebe8 ("drm/panel-simple: Add missing connector type for some panels")
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/gpu/drm/panel/panel-simple.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1] https://patchwork.ozlabs.org/project/linux-tegra/patch/20200617222703.17080-8-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org/
-
-Dmitry Osipenko (2):
-  drm/panel-simple: Correct EDT ET057090DHU connector type
-  drm/panel-simple: Add missing BUS descriptions for some panels
-
- drivers/gpu/drm/panel/panel-simple.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index ea6973d5cf54..87edd2bdf09a 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -1588,7 +1588,7 @@ static const struct panel_desc edt_et057090dhu = {
+ 	},
+ 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+ 	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
+-	.connector_type = DRM_MODE_CONNECTOR_LVDS,
++	.connector_type = DRM_MODE_CONNECTOR_DPI,
+ };
+ 
+ static const struct drm_display_mode edt_etm0700g0dh6_mode = {
 -- 
 2.26.0
