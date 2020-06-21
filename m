@@ -1,53 +1,44 @@
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: Re: [PATCH v1 1/2] drm/panel-simple: Correct EDT ET057090DHU
- connector type
-Date: Mon, 22 Jun 2020 01:29:22 +0300
-Message-ID: <20200621222922.GA25355@pendragon.ideasonboard.com>
-References: <20200621222742.25695-1-digetx@gmail.com>
- <20200621222742.25695-2-digetx@gmail.com>
+From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH AUTOSEL 5.7 004/388] ASoC: tegra: tegra_wm8903: Support
+ nvidia, headset property
+Date: Sun, 21 Jun 2020 19:33:52 -0400
+Message-ID: <20200621233352.GA1931@sasha-vm>
+References: <20200618010805.600873-1-sashal@kernel.org>
+ <20200618010805.600873-4-sashal@kernel.org>
+ <20200618110023.GB5789@sirena.org.uk>
+ <20200618143046.GT1931@sasha-vm>
+ <20200618143930.GI5789@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200621222742.25695-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200618143930.GI5789-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+On Thu, Jun 18, 2020 at 03:39:30PM +0100, Mark Brown wrote:
+>On Thu, Jun 18, 2020 at 10:30:46AM -0400, Sasha Levin wrote:
+>> On Thu, Jun 18, 2020 at 12:00:23PM +0100, Mark Brown wrote:
+>> > On Wed, Jun 17, 2020 at 09:01:41PM -0400, Sasha Levin wrote:
+>> > > From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> > >
+>> > > [ Upstream commit 3ef9d5073b552d56bd6daf2af1e89b7e8d4df183 ]
+>> > >
+>> > > The microphone-jack state needs to be masked in a case of a 4-pin jack
+>> > > when microphone and ground pins are shorted. Presence of nvidia,headset
+>> > > tells that WM8903 CODEC driver should mask microphone's status if short
+>> > > circuit is detected, i.e headphones are inserted.
+>
+>> > This is a new feature not a bugfix.
+>
+>> I saw this patch more as a hardware quirk.
+>
+>Pretty much any DT property is a hardware quirk :(
 
-Thank you for the patch.
-
-On Mon, Jun 22, 2020 at 01:27:41AM +0300, Dmitry Osipenko wrote:
-> The EDT ET057090DHU panel has a DPI connector and not LVDS. This patch
-> corrects the panel's description.
-> 
-> Reported-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> Fixes: 94f07917ebe8 ("drm/panel-simple: Add missing connector type for some panels")
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-
-> ---
->  drivers/gpu/drm/panel/panel-simple.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index ea6973d5cf54..87edd2bdf09a 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -1588,7 +1588,7 @@ static const struct panel_desc edt_et057090dhu = {
->  	},
->  	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
->  	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
-> -	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-> +	.connector_type = DRM_MODE_CONNECTOR_DPI,
->  };
->  
->  static const struct drm_display_mode edt_etm0700g0dh6_mode = {
+Which is why we're taking most of them :)
 
 -- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+Sasha
