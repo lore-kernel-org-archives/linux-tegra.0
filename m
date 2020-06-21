@@ -1,71 +1,24 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v7 31/36] staging: tegra-vde: fix common struct sg_table
- related issues
-Date: Sun, 21 Jun 2020 07:00:15 +0300
-Message-ID: <20200621070015.0cf833ab@dimatab>
-References: <20200619103636.11974-1-m.szyprowski@samsung.com>
- <CGME20200619103714eucas1p18db6efd1a380fc0bdb16174ee85036fa@eucas1p1.samsung.com>
- <20200619103636.11974-32-m.szyprowski@samsung.com>
+From: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org
+Subject: Re: Re: [PATCH] [v3] dmaengine: tegra210-adma: Fix runtime PM
+ imbalance on error
+Date: Sun, 21 Jun 2020 13:27:24 +0800 (GMT+08:00)
+Message-ID: <711c004d.1832d.172d55876c5.Coremail.dinghao.liu@zju.edu.cn>
+References: <20200618105727.14669-1-dinghao.liu@zju.edu.cn>
+ <9f7684d9-7a75-497d-db1c-75cf0991a072@nvidia.com>
+ <24ea1ef1.10213.172ca4d45be.Coremail.dinghao.liu@zju.edu.cn>
+ <f4034e16-e720-57c4-eb9d-733786212a4a@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: base64
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20200619103636.11974-32-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
- <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
- <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <f4034e16-e720-57c4-eb9d-733786212a4a-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: kjlu-OJFnDUYgAso@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-0JIgRnJpLCAxOSBKdW4gMjAyMCAxMjozNjozMSArMDIwMApNYXJlayBTenlwcm93c2tpIDxtLnN6
-eXByb3dza2lAc2Ftc3VuZy5jb20+INC/0LjRiNC10YI6Cgo+IFRoZSBEb2N1bWVudGF0aW9uL0RN
-QS1BUEktSE9XVE8udHh0IHN0YXRlcyB0aGF0IHRoZSBkbWFfbWFwX3NnKCkKPiBmdW5jdGlvbiBy
-ZXR1cm5zIHRoZSBudW1iZXIgb2YgdGhlIGNyZWF0ZWQgZW50cmllcyBpbiB0aGUgRE1BIGFkZHJl
-c3MKPiBzcGFjZS4gSG93ZXZlciB0aGUgc3Vic2VxdWVudCBjYWxscyB0byB0aGUKPiBkbWFfc3lu
-Y19zZ19mb3Jfe2RldmljZSxjcHV9KCkgYW5kIGRtYV91bm1hcF9zZyBtdXN0IGJlIGNhbGxlZCB3
-aXRoCj4gdGhlIG9yaWdpbmFsIG51bWJlciBvZiB0aGUgZW50cmllcyBwYXNzZWQgdG8gdGhlIGRt
-YV9tYXBfc2coKS4KPiAKPiBzdHJ1Y3Qgc2dfdGFibGUgaXMgYSBjb21tb24gc3RydWN0dXJlIHVz
-ZWQgZm9yIGRlc2NyaWJpbmcgYQo+IG5vbi1jb250aWd1b3VzIG1lbW9yeSBidWZmZXIsIHVzZWQg
-Y29tbW9ubHkgaW4gdGhlIERSTSBhbmQgZ3JhcGhpY3MKPiBzdWJzeXN0ZW1zLiBJdCBjb25zaXN0
-cyBvZiBhIHNjYXR0ZXJsaXN0IHdpdGggbWVtb3J5IHBhZ2VzIGFuZCBETUEKPiBhZGRyZXNzZXMg
-KHNnbCBlbnRyeSksIGFzIHdlbGwgYXMgdGhlIG51bWJlciBvZiBzY2F0dGVybGlzdCBlbnRyaWVz
-Ogo+IENQVSBwYWdlcyAob3JpZ19uZW50cyBlbnRyeSkgYW5kIERNQSBtYXBwZWQgcGFnZXMgKG5l
-bnRzIGVudHJ5KS4KPiAKPiBJdCB0dXJuZWQgb3V0IHRoYXQgaXQgd2FzIGEgY29tbW9uIG1pc3Rh
-a2UgdG8gbWlzdXNlIG5lbnRzIGFuZAo+IG9yaWdfbmVudHMgZW50cmllcywgY2FsbGluZyBETUEt
-bWFwcGluZyBmdW5jdGlvbnMgd2l0aCBhIHdyb25nIG51bWJlcgo+IG9mIGVudHJpZXMgb3IgaWdu
-b3JpbmcgdGhlIG51bWJlciBvZiBtYXBwZWQgZW50cmllcyByZXR1cm5lZCBieSB0aGUKPiBkbWFf
-bWFwX3NnKCkgZnVuY3Rpb24uCj4gCj4gVG8gYXZvaWQgc3VjaCBpc3N1ZXMsIGxldHMgdXNlIGEg
-Y29tbW9uIGRtYS1tYXBwaW5nIHdyYXBwZXJzIG9wZXJhdGluZwo+IGRpcmVjdGx5IG9uIHRoZSBz
-dHJ1Y3Qgc2dfdGFibGUgb2JqZWN0cyBhbmQgdXNlIHNjYXR0ZXJsaXN0IHBhZ2UKPiBpdGVyYXRv
-cnMgd2hlcmUgcG9zc2libGUuIFRoaXMsIGFsbW9zdCBhbHdheXMsIGhpZGVzIHJlZmVyZW5jZXMg
-dG8gdGhlCj4gbmVudHMgYW5kIG9yaWdfbmVudHMgZW50cmllcywgbWFraW5nIHRoZSBjb2RlIHJv
-YnVzdCwgZWFzaWVyIHRvIGZvbGxvdwo+IGFuZCBjb3B5L3Bhc3RlIHNhZmUuCj4gCj4gU2lnbmVk
-LW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IFJl
-dmlld2VkLWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5jb20+Cj4gLS0tCj4gIGRy
-aXZlcnMvc3RhZ2luZy9tZWRpYS90ZWdyYS12ZGUvaW9tbXUuYyB8IDQgKystLQo+ICAxIGZpbGUg
-Y2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvdGVncmEtdmRlL2lvbW11LmMKPiBiL2RyaXZlcnMvc3Rh
-Z2luZy9tZWRpYS90ZWdyYS12ZGUvaW9tbXUuYyBpbmRleAo+IDZhZjg2M2Q5MjEyMy4uYWRmOGRj
-N2VlMjVjIDEwMDY0NCAtLS0KPiBhL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS90ZWdyYS12ZGUvaW9t
-bXUuYyArKysKPiBiL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS90ZWdyYS12ZGUvaW9tbXUuYyBAQCAt
-MzYsOCArMzYsOCBAQCBpbnQKPiB0ZWdyYV92ZGVfaW9tbXVfbWFwKHN0cnVjdCB0ZWdyYV92ZGUg
-KnZkZSwgCj4gIAlhZGRyID0gaW92YV9kbWFfYWRkcigmdmRlLT5pb3ZhLCBpb3ZhKTsKPiAgCj4g
-LQlzaXplID0gaW9tbXVfbWFwX3NnKHZkZS0+ZG9tYWluLCBhZGRyLCBzZ3QtPnNnbCwgc2d0LT5u
-ZW50cywKPiAtCQkJICAgIElPTU1VX1JFQUQgfCBJT01NVV9XUklURSk7Cj4gKwlzaXplID0gaW9t
-bXVfbWFwX3NndGFibGUodmRlLT5kb21haW4sIGFkZHIsIHNndCwKPiArCQkJCSBJT01NVV9SRUFE
-IHwgSU9NTVVfV1JJVEUpOwo+ICAJaWYgKCFzaXplKSB7Cj4gIAkJX19mcmVlX2lvdmEoJnZkZS0+
-aW92YSwgaW92YSk7Cj4gIAkJcmV0dXJuIC1FTlhJTzsKCkFoaCwgSSBzYXcgdGhlIGJ1aWxkIGZh
-aWx1cmUgcmVwb3J0LiBZb3UncmUgY2hhbmdpbmcgdGhlIERNQSBBUEkgaW4KdGhpcyBzZXJpZXMs
-IHdoaWxlIERNQSBBUEkgaXNuJ3QgdXNlZCBieSB0aGlzIGRyaXZlciwgaXQgdXNlcyBJT01NVQpB
-UEkuIEhlbmNlIHRoZXJlIGlzIG5vIG5lZWQgdG8gdG91Y2ggdGhpcyBjb2RlLiBTaW1pbGFyIHBy
-b2JsZW0gaW4gdGhlCmhvc3QxeCBkcml2ZXIgcGF0Y2guCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmlvbW11IG1haWxpbmcgbGlzdAppb21tdUBsaXN0cy5s
-aW51eC1mb3VuZGF0aW9uLm9yZwpodHRwczovL2xpc3RzLmxpbnV4Zm91bmRhdGlvbi5vcmcvbWFp
-bG1hbi9saXN0aW5mby9pb21tdQ==
+Cgo+ID4+Cj4gPj4gV2h5IG5vaWRsZT8KPiA+Pgo+ID4gCj4gPiBfbm9pZGxlIGlzIGVub3VnaCBm
+b3IgZml4aW5nIHRoaXMgYnVnLiBfc3luYyBtYXkgc3VzcGVuZAo+ID4gdGhlIGRldmljZSBiZXlv
+bmQgZXhwZWN0YXRpb24uCj4gCj4gSW4gdGhhdCBjYXNlLCB0aGVuIHRoZSBvdGhlciBpbnN0YW5j
+ZSB5b3UgYXJlIGZpeGluZyB3aXRoIHRoaXMgcGF0Y2ggaXMKPiBub3QgY29ycmVjdC4KPiAKCkZp
+bmUuIEkgd2lsbCBmaXggdGhpcyBzb29uLgoKUmVnYXJkcywKRGluZ2hhbwo=
