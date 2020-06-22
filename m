@@ -1,62 +1,34 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 09/73] ARM: tegra: gr2d is not backwards-compatible
-Date: Mon, 22 Jun 2020 18:29:04 +0300
-Message-ID: <d11a1b87-6f00-3477-9402-310a402dc8d5@gmail.com>
-References: <20200616135238.3001888-1-thierry.reding@gmail.com>
- <20200616135238.3001888-10-thierry.reding@gmail.com>
- <9f56be9a-1a79-07cc-371f-f3abcd20701e@gmail.com>
- <20200622152209.GA4008275@ulmo>
+From: "Alex Xu (Hello71)" <alex_y_xu-FFYn/CNdgSA@public.gmane.org>
+Subject: Re: AMD IOMMU + SME + amdgpu regression
+Date: Mon, 22 Jun 2020 11:30:04 -0400
+Message-ID: <1592839701.mxvvths2x9.none@localhost>
+References: <1591915710.rakbpzst8h.none.ref@localhost>
+        <1591915710.rakbpzst8h.none@localhost> <20200622100257.GD31822@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200622152209.GA4008275@ulmo>
-Content-Language: en-US
+In-Reply-To: <20200622100257.GD31822-l3A5Bk7waGM@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+Cc: Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lu Baolu <baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Drake <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Jean-Philippe Brucker <jean-philippe-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, jonathan.derrick-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matt>
 List-Id: linux-tegra@vger.kernel.org
 
-22.06.2020 18:22, Thierry Reding пишет:
-> On Wed, Jun 17, 2020 at 07:21:30PM +0300, Dmitry Osipenko wrote:
->> 16.06.2020 16:51, Thierry Reding пишет:
->>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> The instantiation of gr2d in Tegra114 is not backwards-compatible with
->>> the version found on earlier chips. Remove the misleading compatible
->>> string.
->>>
->>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  arch/arm/boot/dts/tegra114.dtsi | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
->>> index a0ac9ea9ec9d..d583dfba688f 100644
->>> --- a/arch/arm/boot/dts/tegra114.dtsi
->>> +++ b/arch/arm/boot/dts/tegra114.dtsi
->>> @@ -35,7 +35,7 @@ host1x@50000000 {
->>>  		ranges = <0x54000000 0x54000000 0x01000000>;
->>>  
->>>  		gr2d@54140000 {
->>> -			compatible = "nvidia,tegra114-gr2d", "nvidia,tegra20-gr2d";
->>> +			compatible = "nvidia,tegra114-gr2d";
->>>  			reg = <0x54140000 0x00040000>;
->>>  			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
->>>  			clocks = <&tegra_car TEGRA114_CLK_GR2D>;
->>>
->>
->> Could you please explain what's the difference? AFAIK, the 2D HW is
->> identical on T20/30/114.
-> 
-> My understanding is that the IP core itself is identical. However, the
-> compatible string really describes the integration of the IP, which in
-> case of Tegra114 is slightly different in that it's part of the HEG
-> power partition, whereas it wasn't previously.
-> 
-> That means that without knowledge of the power partition we won't be
-> able to access the gr2d IP on Tegra114 at all and hence it isn't
-> backwards compatible with Tegra20.
+Excerpts from Joerg Roedel's message of June 22, 2020 6:02 am:
+> Hi Alex,
+>=20
+> On Thu, Jun 11, 2020 at 07:05:21PM -0400, Alex Xu (Hello71) wrote:
+>> I am using an ASRock B450 Pro4 with Ryzen 1600 and ASUS RX 480. I don't=20
+>> understand this code at all, but let me know what I can do to=20
+>> troubleshoot.
+>=20
+> Does it boot without SME enabled?
+>=20
+>=20
+> Regards,
+>=20
+> 	Joerg
+>=20
 
-Thank you very much for the clarification! Will nice if this could be
-added into the commit's description.
+Yes, it works with SME off with dbed452a078 ("dma-pool: decouple=20
+DMA_REMAP from DMA_COHERENT_POOL") applied.
