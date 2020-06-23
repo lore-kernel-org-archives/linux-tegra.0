@@ -1,88 +1,46 @@
-From: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [TEGRA194_CPUFREQ Patch v3 1/4] dt-bindings: arm: Add t194 ccplex
- compatible and bpmp property
-Date: Tue, 23 Jun 2020 11:35:27 +0530
-Message-ID: <3ef570ec-1a55-5449-58fb-4e0039350299@nvidia.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [TEGRA194_CPUFREQ Patch v3 3/4] cpufreq: Add Tegra194 cpufreq
+ driver
+Date: Tue, 23 Jun 2020 11:50:20 +0530
+Message-ID: <20200623062020.weg6h4uygelkih7d@vireshk-i7>
 References: <1592775274-27513-1-git-send-email-sumitg@nvidia.com>
- <1592775274-27513-2-git-send-email-sumitg@nvidia.com>
- <20200622072247.agrvmw6sl3jwgjkz@vireshk-i7>
+ <1592775274-27513-4-git-send-email-sumitg@nvidia.com>
+ <20200622072052.uryxo4hri6gzrkku@vireshk-i7>
+ <ed6956a3-3f77-2943-6387-5affc25b59d2@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200622072247.agrvmw6sl3jwgjkz@vireshk-i7>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <ed6956a3-3f77-2943-6387-5affc25b59d2@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rjw@rjwysocki.net, catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com, robh+dt@kernel.org, devicetree@vger.kernel.org, jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bbasu@nvidia.com, mperttunen@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
+On 23-06-20, 10:49, Sumit Gupta wrote:
+> Hi Viresh,
+> 
+> Thank you for the review. please find my reply inline.
+> 
+> 
+> > > +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> > > @@ -0,0 +1,403 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved
+> > 
+> >                      2020
 
+You missed this ?
 
-On 22/06/20 12:52 PM, Viresh Kumar wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 22-06-20, 03:04, Sumit Gupta wrote:
->> To do frequency scaling on all CPUs within T194 CPU Complex, we need
->> to query BPMP for data on valid operating points. Document a compatible
->> string under 'cpus' node to represent the CPU Complex for binding drivers
->> like cpufreq which don't have their node or CPU Complex node to bind to.
->> Also, document a property to point to the BPMP device that can be queried
->> for all CPUs.
-> 
-> You shouldn't be putting how linux is going to use this information and entries
-> shouldn't be made just so cpufreq can bind to a driver.
-> 
-> Though I see that this is a real hardware register which you can use to interact
-> with the firmware ? And so it makes sense to have it, maybe in different form
-> though.
-> 
-CPUFREQ driver doesn't communicate directly with BPMP firmware. It uses 
-BPMP node's reference to call api's exported by BPMP driver which 
-communicates with BPMP firmware.
+> T194 supports four CPU clusters, each with two cores. Each CPU cluster is
+> capable of running at a specific frequency sourced by respective NAFLL to
+> provide cluster specific clocks. Individual cores within a cluster write
+> freq in per core register. Cluster h/w forwards the max(core0, core1)
+> request to per cluster NAFLL.
 
-> I will let Rob explain what would be the right way of doing this though.
-> 
-This is already discussed by Thierry with Rob.
-Please refer https://marc.info/?l=linux-arm-kernel&m=158999171528418&w=2
+Okay, this is clear now. Add a comment about this max thing in the
+target routine to show why you need to do this on all CPUs.
 
->>
->> Signed-off-by: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   Documentation/devicetree/bindings/arm/cpus.yaml | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
->> index a018147..737b55e 100644
->> --- a/Documentation/devicetree/bindings/arm/cpus.yaml
->> +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
->> @@ -162,6 +162,7 @@ properties:
->>         - nvidia,tegra132-denver
->>         - nvidia,tegra186-denver
->>         - nvidia,tegra194-carmel
->> +      - nvidia,tegra194-ccplex
->>         - qcom,krait
->>         - qcom,kryo
->>         - qcom,kryo260
->> @@ -255,6 +256,14 @@ properties:
->>
->>         where voltage is in V, frequency is in MHz.
->>
->> +  nvidia,bpmp:
->> +    $ref: '/schemas/types.yaml#/definitions/phandle'
->> +    descrption: |
->> +      Specifies the bpmp node that needs to be queried to get
->> +      operating point data for all CPUs.
->> +
->> +      Optional for NVIDIA Tegra194 Carmel CPUs
->> +
->>     power-domains:
->>       $ref: '/schemas/types.yaml#/definitions/phandle-array'
->>       description:
->> --
->> 2.7.4
-> 
-> --
-> viresh
-> 
+-- 
+viresh
