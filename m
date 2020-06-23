@@ -1,55 +1,73 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2] Input: document inhibiting
-Date: Tue, 23 Jun 2020 15:35:12 +0200
-Message-ID: <20200623133512.GA2783@bug>
-References: <f9007f37-c526-5fa4-3188-a554d2434177@redhat.com>
- <20200617101822.8558-1-andrzej.p@collabora.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 1/2] dt-bindings: pci: tegra: Remove PLL power supplies
+Date: Tue, 23 Jun 2020 16:55:27 +0200
+Message-ID: <20200623145528.1658337-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20200617101822.8558-1-andrzej.p@collabora.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi!
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> +Inhibiting input devices
-> +~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Inhibiting a device means ignoring input events from it. As such it is about maintaining
-> +relationships with input handlers - either already existing relationships, or relationships
-> +to be established while the device is in inhibited state.
-> +
-> +If a device is inhibited, no input handler will receive events from it.
-> +
-> +The fact that nobody wants events from the device is exploited further, by calling device's
-> +close() (if there are users) and open() (if there are users) on inhibit and uninhibit
-> +operations, respectively. Indeed, the meaning of close() is to stop providing events
-> +to the input core and that of open() is to start providing events to the input core.
-> +
-> +Calling the device's close() method on inhibit (if there are users) allows the driver
-> +to save power. Either by directly powering down the device or by releasing the
-> +runtime-pm reference it got in open() when the driver is using runtime-pm.
-> +
-> +Inhibiting and uninhibiting are orthogonal to opening and closing the device by input
-> +handlers. Userspace might want to inhibit a device in anticipation before any handler is
-> +positively matched against it.
+The XUSB pad controller, which provides access to various USB, PCI and
+SATA pads (or PHYs), needs to bring up the PLLs associated with these
+pads. In order to properly do so, it needs to control the power supplied
+to these PLLs.
 
-Ok.
+Remove the PLL power supplies from the PCIe controller because it does
+not need direct access to them. Instead it will only use the configured
+pads provided by the XUSB pad controller.
 
-> +Inhibiting and uninhibiting are orthogonal to device's being a wakeup source, too. 
-> Being a +wakeup source plays a role when the system is sleeping, not when the system is 
-> operating. +How drivers should program their interaction between inhibiting, sleeping 
-> and being a wakeup +source is driver-specific. + +Taking the analogy with the network 
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Hi Rob,
 
-I don't believe making interaction driver-specific is good idea. We should decide
-what reasonable behaviour is and then make drivers implement that...
+I already made this change as part of the conversion series, but wanted
+to send this out as part of this subseries since it addresses a fairly
+long-standing issue that I'd like to clean up irrespective of the DT
+binding conversion. Since it looks like the conversion series will take
+a bit longer, I think it makes sense to send this out separately.
 
-Best regards,
-									Pavel
+Thierry
+
+ .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt  | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+index 7939bca47861..d099f3476ccc 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+@@ -112,28 +112,16 @@ Power supplies for Tegra124:
+ - Required:
+   - avddio-pex-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
+   - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
+-  - avdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
+-    supply 1.05 V.
+   - hvdd-pex-supply: High-voltage supply for PCIe I/O and PCIe output clocks.
+     Must supply 3.3 V.
+-  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
+-    Must supply 3.3 V.
+   - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
+     supply 2.8-3.3 V.
+-  - avdd-pll-erefe-supply: Power supply for PLLE (shared with USB3). Must
+-    supply 1.05 V.
+ 
+ Power supplies for Tegra210:
+ - Required:
+-  - avdd-pll-uerefe-supply: Power supply for PLLE (shared with USB3). Must
+-    supply 1.05 V.
+   - hvddio-pex-supply: High-voltage supply for PCIe I/O and PCIe output
+     clocks. Must supply 1.8 V.
+   - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
+-  - dvdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
+-    supply 1.05 V.
+-  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
+-    Must supply 3.3 V.
+   - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
+     supply 1.8 V.
+ 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+2.27.0
