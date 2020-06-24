@@ -1,48 +1,77 @@
-From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 5.7 14/28] pinctrl: tegra: Use noirq suspend/resume callbacks
-Date: Tue, 23 Jun 2020 13:35:09 -0400
-Message-ID: <20200623173523.1355411-14-sashal@kernel.org>
-References: <20200623173523.1355411-1-sashal@kernel.org>
+From: Felipe Balbi <balbi@kernel.org>
+Subject: Re: [PATCH] usb: phy: tegra: Remove unnecessary spaces and tables
+Date: Wed, 24 Jun 2020 09:45:20 +0300
+Message-ID: <87zh8tvu67.fsf@kernel.org>
+References: <20200528112859.6160-1-tangbin@cmss.chinamobile.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200623173523.1355411-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200528112859.6160-1-tangbin@cmss.chinamobile.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-[ Upstream commit 782b6b69847f34dda330530493ea62b7de3fd06a ]
 
-Use noirq suspend/resume callbacks as other drivers which implement
-noirq suspend/resume callbacks (Ex:- PCIe) depend on pinctrl driver to
-configure the signals used by their respective devices in the noirq phase.
+Hi,
 
-Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Link: https://lore.kernel.org/r/20200604174935.26560-1-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- drivers/pinctrl/tegra/pinctrl-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Tang Bin <tangbin@cmss.chinamobile.com> writes:
+> The macros in phy-tegra-usb.c have inconsistent sapces between
+> the macro name and the value. Thus sets all the macros to have
+> a signal space between the name and value.
+>
+> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+> ---
+>  drivers/usb/phy/phy-tegra-usb.c | 214 ++++++++++++++++----------------
+>  1 file changed, 107 insertions(+), 107 deletions(-)
+>
+> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-=
+usb.c
+> index 6153cc35a..c294dc617 100644
+> --- a/drivers/usb/phy/phy-tegra-usb.c
+> +++ b/drivers/usb/phy/phy-tegra-usb.c
+> @@ -30,124 +30,124 @@
+>  #include <linux/usb/tegra_usb_phy.h>
+>  #include <linux/usb/ulpi.h>
+>=20=20
+> -#define ULPI_VIEWPORT				0x170
+> +#define ULPI_VIEWPORT	0x170
+>=20=20
+>  /* PORTSC PTS/PHCD bits, Tegra20 only */
+> -#define TEGRA_USB_PORTSC1			0x184
+> -#define TEGRA_USB_PORTSC1_PTS(x)		(((x) & 0x3) << 30)
+> -#define TEGRA_USB_PORTSC1_PHCD			BIT(23)
+> +#define TEGRA_USB_PORTSC1	0x184
+> +#define TEGRA_USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
+> +#define TEGRA_USB_PORTSC1_PHCD	BIT(23)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 21661f6490d68..195cfe557511b 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -731,8 +731,8 @@ static int tegra_pinctrl_resume(struct device *dev)
- }
- 
- const struct dev_pm_ops tegra_pinctrl_pm = {
--	.suspend = &tegra_pinctrl_suspend,
--	.resume = &tegra_pinctrl_resume
-+	.suspend_noirq = &tegra_pinctrl_suspend,
-+	.resume_noirq = &tegra_pinctrl_resume
- };
- 
- static bool tegra_pinctrl_gpio_node_has_range(struct tegra_pmx *pmx)
--- 
-2.25.1
+the idea was the line up the definitions. I'm not taking this, sorry.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl7y9oEACgkQzL64meEa
+mQbi1w/+MTIv4tIMgZim0yPtzrtJUSjxtFHBZzzmIj9J2W6LiwfvtfkDiX7Sww9o
+KXfigdY2/GQRFZHLTOtlnK/VBmXBoM/W3OF6lZv6/QtJ4DbYmAY/LwXdOAA4VRg6
+vtwzYUJ0rnCv6jFU2CBKCyL5gNmWreFUXF4elbrFLHhjggGxmz3wBgXeGGSPTmF6
+qmL8qo95kjyP1DuPsWWLtsEzZb4mCm/c4xps5u+Ig8g3eKTYAMn2TPqTj/0LZrZH
+ZR1Blcinzv42j6jK8R30HlrRZUxKhsf85G2uzGoUQsRoipZwPtBqka0bVyudpBUZ
+ZpvWKLmx9DuCysKTIpd7PXhwgQhTQwigauEQIzg5rlkaZ6TWH5iQsCij1v9piSA8
+swtgqN6sEvnCtQ6/mtrlSGzzRilxIIf2rEm3cCHIdVyHx2b9x49jTAS0RrFibJHI
+Qfp0e1MscQRW3cCmrtBHZ9BLGPTXxyTZBIyACduW3/TB3jTQTbCipOxeBmnO34km
+ggzzI/e41b8BfI6Aeo35ktZjiOCJiJ6ZWLAdi9pXpD8mohwk/wuP+rGM0OnHXKqZ
+yRLJTs7tPfCR7x3N9Pkbu49DW31AAPhL0Hw7CNIQ7yV6NsYTysQgtK+E9e/HsMkv
+LWh7rOVFaEnWNLTLNpgituZalVT1p1V5zVrMpsxhRJYlU/QXD1Y=
+=SZhD
+-----END PGP SIGNATURE-----
+--=-=-=--
