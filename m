@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC] Host1x/TegraDRM UAPI
-Date: Thu, 25 Jun 2020 01:33:34 +0300
-Message-ID: <7cc0d47b-024a-263e-3b63-1d1184b462b3@gmail.com>
+Date: Thu, 25 Jun 2020 02:11:21 +0300
+Message-ID: <c6642ebd-c9f1-eab0-ff6d-109698af73e0@gmail.com>
 References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -15,36 +15,21 @@ Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29
 List-Id: linux-tegra@vger.kernel.org
 
 23.06.2020 15:09, Mikko Perttunen пишет:
-> struct drm_tegra_submit_relocation {
->         /* [in] Index of GATHER or GATHER_UPTR command in commands. */
->         __u32 gather_command_index;
-> 
->         /*
->          * [in] Mapping handle (obtained through CHANNEL_MAP) of the memory
->          *   the address of which will be patched in.
->          */
->         __u32 mapping_id;
-> 
->         /*
->          * [in] Offset in the gather that will be patched.
->          */
->         __u64 gather_offset;
-> 
->         /*
->          * [in] Offset in target buffer whose paddr/IOVA will be written
->          *   to the gather.
->          */
->         __u64 target_offset;
-> 
->         /*
->          * [in] Number of bits the resulting address will be logically
->          *   shifted right before writing to gather.
->          */
->         __u32 shift;
-> 
->         __u32 reserved[1];
-> };
+> /* Command is an opcode gather from a GEM handle */
+> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER             0
+> /* Command is an opcode gather from a user pointer */
+> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER_UPTR        1
 
-We will also need read/write direction flag here for the
-DMA-reservations set up, it will be used for the implicit BO fencing by
-the job's scheduler.
+I'm a bit dubious about whether we really need to retain the non-UPTR
+variant. The memory-copying overhead is negligible because cmdstream's
+data usually is hot in CPU's cache
+
+IIRC, the most (if not all) of the modern DRM drivers drivers use the
+usrptr-only for the cmdstream.
+
+At least there is no any real-world userspace example today that could
+benefit from a non-UPTR variant.
+
+I'm suggesting to leave out the non-UPTR gather variant for now, keeping
+it in mind as a potential future extension of the submission UAPI. Any
+objections?
