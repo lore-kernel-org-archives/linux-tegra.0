@@ -1,58 +1,39 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v4 3/7] ACPI: button: Access input device's users under
- appropriate mutex
-Date: Wed, 24 Jun 2020 17:00:09 +0200
-Message-ID: <CAJZ5v0j7e9TzDtEiDXmj3fLAQ7CvFHoe7Q3aYKKas3PEXrsUuw@mail.gmail.com>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com> <20200608112211.12125-4-andrzej.p@collabora.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 0/4] Tegra Video Decoder driver power management corrections
+Date: Wed, 24 Jun 2020 18:08:43 +0300
+Message-ID: <20200624150847.22672-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200608112211.12125-4-andrzej.p@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc: Linux PM <linux-pm@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-input@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, Platform Driver <platform-driver-x86@vger.kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kukjin Kim <kgene@kernel.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 8, 2020 at 1:22 PM Andrzej Pietrasiewicz
-<andrzej.p@collabora.com> wrote:
->
-> Inspecting input device's 'users' member should be done under device's
-> mutex, so add appropriate invocations.
->
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Hello,
 
-This looks like a fix that might be applied independently of the other
-patches in the series.
+This small series addresses a Runtime PM issue that was discovered during
+of Tegra VI driver reviewing by balancing RPM usage count on RPM resume
+failure. Secondly it fixes reboot on some Tegra devices due to bootloader
+expecting VDE power partition to be ON at the boot time, which wasn't
+happening in case of a warm re-booting (i.e. by PMC resetting).
 
-Do you want me to pick it up?
+Changelog:
 
-> ---
->  drivers/acpi/button.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-> index 78cfc70cb320..ff7ab291f678 100644
-> --- a/drivers/acpi/button.c
-> +++ b/drivers/acpi/button.c
-> @@ -456,13 +456,16 @@ static int acpi_button_resume(struct device *dev)
->  {
->         struct acpi_device *device = to_acpi_device(dev);
->         struct acpi_button *button = acpi_driver_data(device);
-> +       struct input_dev *input = button->input;
->
->         button->suspended = false;
-> -       if (button->type == ACPI_BUTTON_TYPE_LID && button->input->users) {
-> +       mutex_lock(&input->mutex);
-> +       if (button->type == ACPI_BUTTON_TYPE_LID && input->users) {
->                 button->last_state = !!acpi_lid_evaluate_state(device);
->                 button->last_time = ktime_get();
->                 acpi_lid_initialize_state(device);
->         }
-> +       mutex_unlock(&input->mutex);
->         return 0;
->  }
->  #endif
-> --
-> 2.17.1
->
+v2: - Extended the commit's message of the "Balance runtime PM use-count on
+      resume failure" patch.
+
+    - Re-send for 5.9 inclusion.
+
+Dmitry Osipenko (4):
+  media: staging: tegra-vde: Balance runtime PM use-count on resume
+    failure
+  media: staging: tegra-vde: Runtime PM is always available on Tegra
+  media: staging: tegra-vde: Turn ON power domain on shutdown
+  media: staging: tegra-vde: Power-cycle hardware on probe
+
+ drivers/staging/media/tegra-vde/vde.c | 45 +++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 16 deletions(-)
+
+-- 
+2.26.0
