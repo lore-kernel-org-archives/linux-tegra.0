@@ -1,77 +1,62 @@
-From: Felipe Balbi <balbi@kernel.org>
-Subject: Re: [PATCH] usb: phy: tegra: Remove unnecessary spaces and tables
-Date: Wed, 24 Jun 2020 09:45:20 +0300
-Message-ID: <87zh8tvu67.fsf@kernel.org>
-References: <20200528112859.6160-1-tangbin@cmss.chinamobile.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200528112859.6160-1-tangbin@cmss.chinamobile.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Tang Bin <tangbin@cmss.chinamobile.com>
+From: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+Subject: [PATCH] [v5] dmaengine: tegra210-adma: Fix runtime PM imbalance on error
+Date: Wed, 24 Jun 2020 14:46:26 +0800
+Message-ID: <20200624064626.19855-1-dinghao.liu@zju.edu.cn>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org, kjlu-OJFnDUYgAso@public.gmane.org
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+pm_runtime_get_sync() increments the runtime PM usage counter even
+when it returns an error code. Thus a pairing decrement is needed on
+the error handling path to keep the counter balanced.
 
+Signed-off-by: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
+---
 
-Hi,
+Changelog:
 
-Tang Bin <tangbin@cmss.chinamobile.com> writes:
-> The macros in phy-tegra-usb.c have inconsistent sapces between
-> the macro name and the value. Thus sets all the macros to have
-> a signal space between the name and value.
->
-> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
-> ---
->  drivers/usb/phy/phy-tegra-usb.c | 214 ++++++++++++++++----------------
->  1 file changed, 107 insertions(+), 107 deletions(-)
->
-> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-=
-usb.c
-> index 6153cc35a..c294dc617 100644
-> --- a/drivers/usb/phy/phy-tegra-usb.c
-> +++ b/drivers/usb/phy/phy-tegra-usb.c
-> @@ -30,124 +30,124 @@
->  #include <linux/usb/tegra_usb_phy.h>
->  #include <linux/usb/ulpi.h>
->=20=20
-> -#define ULPI_VIEWPORT				0x170
-> +#define ULPI_VIEWPORT	0x170
->=20=20
->  /* PORTSC PTS/PHCD bits, Tegra20 only */
-> -#define TEGRA_USB_PORTSC1			0x184
-> -#define TEGRA_USB_PORTSC1_PTS(x)		(((x) & 0x3) << 30)
-> -#define TEGRA_USB_PORTSC1_PHCD			BIT(23)
-> +#define TEGRA_USB_PORTSC1	0x184
-> +#define TEGRA_USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
-> +#define TEGRA_USB_PORTSC1_PHCD	BIT(23)
+v2: - Merge two patches that fix runtime PM imbalance in
+      tegra_adma_probe() and tegra_adma_alloc_chan_resources()
+      respectively.
 
-the idea was the line up the definitions. I'm not taking this, sorry.
+v3: - Use pm_runtime_put_noidle() instead of pm_runtime_put_sync()
+      in tegra_adma_alloc_chan_resources(). _noidle() is the simplest
+      one and it is sufficient for fixing this bug.
 
-=2D-=20
-balbi
+v4: - Use pm_runtime_put_noidle() instead of pm_runtime_put_sync()
+      in tegra_adma_probe(). _noidle() is the simplest one and it is
+      sufficient for fixing this bug.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+v5: - Refine commit message.
+---
+ drivers/dma/tegra210-adma.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl7y9oEACgkQzL64meEa
-mQbi1w/+MTIv4tIMgZim0yPtzrtJUSjxtFHBZzzmIj9J2W6LiwfvtfkDiX7Sww9o
-KXfigdY2/GQRFZHLTOtlnK/VBmXBoM/W3OF6lZv6/QtJ4DbYmAY/LwXdOAA4VRg6
-vtwzYUJ0rnCv6jFU2CBKCyL5gNmWreFUXF4elbrFLHhjggGxmz3wBgXeGGSPTmF6
-qmL8qo95kjyP1DuPsWWLtsEzZb4mCm/c4xps5u+Ig8g3eKTYAMn2TPqTj/0LZrZH
-ZR1Blcinzv42j6jK8R30HlrRZUxKhsf85G2uzGoUQsRoipZwPtBqka0bVyudpBUZ
-ZpvWKLmx9DuCysKTIpd7PXhwgQhTQwigauEQIzg5rlkaZ6TWH5iQsCij1v9piSA8
-swtgqN6sEvnCtQ6/mtrlSGzzRilxIIf2rEm3cCHIdVyHx2b9x49jTAS0RrFibJHI
-Qfp0e1MscQRW3cCmrtBHZ9BLGPTXxyTZBIyACduW3/TB3jTQTbCipOxeBmnO34km
-ggzzI/e41b8BfI6Aeo35ktZjiOCJiJ6ZWLAdi9pXpD8mohwk/wuP+rGM0OnHXKqZ
-yRLJTs7tPfCR7x3N9Pkbu49DW31AAPhL0Hw7CNIQ7yV6NsYTysQgtK+E9e/HsMkv
-LWh7rOVFaEnWNLTLNpgituZalVT1p1V5zVrMpsxhRJYlU/QXD1Y=
-=SZhD
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index db58d7e4f9fe..c5fa2ef74abc 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -658,6 +658,7 @@ static int tegra_adma_alloc_chan_resources(struct dma_chan *dc)
+ 
+ 	ret = pm_runtime_get_sync(tdc2dev(tdc));
+ 	if (ret < 0) {
++		pm_runtime_put_noidle(tdc2dev(tdc));
+ 		free_irq(tdc->irq, tdc);
+ 		return ret;
+ 	}
+@@ -869,8 +870,10 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	ret = pm_runtime_get_sync(&pdev->dev);
+-	if (ret < 0)
++	if (ret < 0) {
++		pm_runtime_put_noidle(&pdev->dev);
+ 		goto rpm_disable;
++	}
+ 
+ 	ret = tegra_adma_init(tdma);
+ 	if (ret)
+-- 
+2.17.1
