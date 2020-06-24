@@ -1,53 +1,159 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH 5.7 000/474] 5.7.6-rc2 review
-Date: Wed, 24 Jun 2020 18:05:36 +0200
-Message-ID: <20200624160536.GA2097866@kroah.com>
-References: <20200624055938.609070954@linuxfoundation.org>
- <f21cfef6-78a6-af8b-86a0-f278f5e5eda8@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 12/73] ARM: tegra: Drop display controller parent clocks
+ on Tegra114
+Date: Wed, 24 Jun 2020 19:19:26 +0300
+Message-ID: <0bc2ec0e-f863-207a-d61b-058503598139@gmail.com>
+References: <20200616135238.3001888-1-thierry.reding@gmail.com>
+ <20200616135238.3001888-13-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <f21cfef6-78a6-af8b-86a0-f278f5e5eda8-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200616135238.3001888-13-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 24, 2020 at 11:32:40AM +0100, Jon Hunter wrote:
+16.06.2020 16:51, Thierry Reding пишет:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> On 24/06/2020 07:10, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.7.6 release.
-> > There are 474 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Fri, 26 Jun 2020 05:58:09 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.7.6-rc2.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.7.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+> The parent clocks are determined by the output that will be used, not by
+> the display controller that drives the output. Drop the parent clocks
+> from the display controller device tree nodes.
 > 
-> All tests are passing for Tegra ...
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra114.dtsi | 10 ++++------
+>  arch/arm/boot/dts/tegra124.dtsi | 10 ++++------
+>  arch/arm/boot/dts/tegra20.dtsi  | 10 ++++------
+>  arch/arm/boot/dts/tegra30.dtsi  | 10 ++++------
+>  4 files changed, 16 insertions(+), 24 deletions(-)
 > 
-> Test results for stable-v5.7:
->     11 builds:	11 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     56 tests:	56 pass, 0 fail
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+> index a06b88b01ef3..23df7a5f37d3 100644
+> --- a/arch/arm/boot/dts/tegra114.dtsi
+> +++ b/arch/arm/boot/dts/tegra114.dtsi
+> @@ -59,9 +59,8 @@ dc@54200000 {
+>  			compatible = "nvidia,tegra114-dc";
+>  			reg = <0x54200000 0x00040000>;
+>  			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA114_CLK_DISP1>,
+> -				 <&tegra_car TEGRA114_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA114_CLK_DISP1>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 27>;
+>  			reset-names = "dc";
+>  
+> @@ -78,9 +77,8 @@ dc@54240000 {
+>  			compatible = "nvidia,tegra114-dc";
+>  			reg = <0x54240000 0x00040000>;
+>  			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA114_CLK_DISP2>,
+> -				 <&tegra_car TEGRA114_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA114_CLK_DISP2>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 26>;
+>  			reset-names = "dc";
+>  
+> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+> index 1afed8496c95..2c992e8e3594 100644
+> --- a/arch/arm/boot/dts/tegra124.dtsi
+> +++ b/arch/arm/boot/dts/tegra124.dtsi
+> @@ -105,9 +105,8 @@ dc@54200000 {
+>  			compatible = "nvidia,tegra124-dc";
+>  			reg = <0x0 0x54200000 0x0 0x00040000>;
+>  			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA124_CLK_DISP1>,
+> -				 <&tegra_car TEGRA124_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA124_CLK_DISP1>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 27>;
+>  			reset-names = "dc";
+>  
+> @@ -120,9 +119,8 @@ dc@54240000 {
+>  			compatible = "nvidia,tegra124-dc";
+>  			reg = <0x0 0x54240000 0x0 0x00040000>;
+>  			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA124_CLK_DISP2>,
+> -				 <&tegra_car TEGRA124_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA124_CLK_DISP2>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 26>;
+>  			reset-names = "dc";
+>  
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index f0a172c61b26..8b6909839f59 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -103,9 +103,8 @@ dc@54200000 {
+>  			compatible = "nvidia,tegra20-dc";
+>  			reg = <0x54200000 0x00040000>;
+>  			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA20_CLK_DISP1>,
+> -				 <&tegra_car TEGRA20_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA20_CLK_DISP1>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 27>;
+>  			reset-names = "dc";
+>  
+> @@ -120,9 +119,8 @@ dc@54240000 {
+>  			compatible = "nvidia,tegra20-dc";
+>  			reg = <0x54240000 0x00040000>;
+>  			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA20_CLK_DISP2>,
+> -				 <&tegra_car TEGRA20_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA20_CLK_DISP2>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 26>;
+>  			reset-names = "dc";
+>  
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+> index 27000f0ba35b..23fedb76e5ae 100644
+> --- a/arch/arm/boot/dts/tegra30.dtsi
+> +++ b/arch/arm/boot/dts/tegra30.dtsi
+> @@ -200,9 +200,8 @@ dc@54200000 {
+>  			compatible = "nvidia,tegra30-dc", "nvidia,tegra20-dc";
+>  			reg = <0x54200000 0x00040000>;
+>  			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA30_CLK_DISP1>,
+> -				 <&tegra_car TEGRA30_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA30_CLK_DISP1>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 27>;
+>  			reset-names = "dc";
+>  
+> @@ -219,9 +218,8 @@ dc@54240000 {
+>  			compatible = "nvidia,tegra30-dc";
+>  			reg = <0x54240000 0x00040000>;
+>  			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA30_CLK_DISP2>,
+> -				 <&tegra_car TEGRA30_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA30_CLK_DISP2>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 26>;
+>  			reset-names = "dc";
+>  
 > 
-> Linux version:	5.7.6-rc2-ga5e7ca280376
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
 
-Thanks for testing all of these and letting me know.
+Hello Thierry,
 
-greg k-h
+Tegra DRM fails to probe after this change using next-20200624 on T20/30
+(T124 also should be broken):
+
+ tegra-dc 54200000.dc: failed to get parent clock
+ tegra-dc 54200000.dc: failed to probe RGB output: -2
+
+BTW, the commit's title is misleading since the patch touches all SoCs
+and not only the T114.
+
+Please correct or drop this patch, thanks in advance.
