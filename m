@@ -1,53 +1,58 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: Tree for Jun 24 [build failure on arm64]
-Date: Wed, 24 Jun 2020 13:29:00 +0100
-Message-ID: <a7ebe7c1-49ae-5bc9-9c4f-fcc693ca3834@nvidia.com>
-References: <20200624165323.3dffcde5@canb.auug.org.au>
- <7a7e31a8-9a7b-2428-ad83-2264f20bdc2d@hisilicon.com>
- <20200624105528.GB6134@willie-the-truck>
- <b561e663-a9aa-d600-e23b-09793199141e@nvidia.com>
- <20200624122242.GA6270@willie-the-truck>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v4 3/7] ACPI: button: Access input device's users under
+ appropriate mutex
+Date: Wed, 24 Jun 2020 17:00:09 +0200
+Message-ID: <CAJZ5v0j7e9TzDtEiDXmj3fLAQ7CvFHoe7Q3aYKKas3PEXrsUuw@mail.gmail.com>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com> <20200608112211.12125-4-andrzej.p@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200624122242.GA6270@willie-the-truck>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Shaokun Zhang <zhangshaokun-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Linux Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200608112211.12125-4-andrzej.p@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-input@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, Platform Driver <platform-driver-x86@vger.kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Jun 8, 2020 at 1:22 PM Andrzej Pietrasiewicz
+<andrzej.p@collabora.com> wrote:
+>
+> Inspecting input device's 'users' member should be done under device's
+> mutex, so add appropriate invocations.
+>
+> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 
-On 24/06/2020 13:22, Will Deacon wrote:
-> On Wed, Jun 24, 2020 at 12:57:23PM +0100, Jon Hunter wrote:
->> On 24/06/2020 11:55, Will Deacon wrote:
->>> diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
->>> index 1e5a940532da..97d3d3632093 100644
->>> --- a/arch/arm64/kernel/vdso/Makefile
->>> +++ b/arch/arm64/kernel/vdso/Makefile
->>> @@ -23,8 +23,9 @@ btildflags-$(CONFIG_ARM64_BTI_KERNEL) += -z force-bti
->>>  # potential future proofing if we end up with internal calls to the exported
->>>  # routines, as x86 does (see 6f121e548f83 ("x86, vdso: Reimplement vdso.so
->>>  # preparation in build-time C")).
->>> -ldflags-y := -shared -nostdlib -soname=linux-vdso.so.1 --hash-style=sysv \
->>> -               -Bsymbolic --no-eh-frame-hdr --build-id -n $(btildflags-y) -T
->>> +ldflags-y := -shared -nostdlib -soname=linux-vdso.so.1 --hash-style=sysv       \
->>> +            -Bsymbolic $(call ld-option, --no-eh-frame-hdr) --build-id -n      \
->>> +            $(btildflags-y) -T
->>>  
->>>  ccflags-y := -fno-common -fno-builtin -fno-stack-protector -ffixed-x18
->>>  ccflags-y += -DDISABLE_BRANCH_PROFILING
->>>
->>
->>
->> I am seeing the same build failure and the above does fix it for me.
-> 
-> Cheers, Jon. I'll get this into -next with your Tested-by.
+This looks like a fix that might be applied independently of the other
+patches in the series.
 
-Thanks, that will be great.
+Do you want me to pick it up?
 
-Jon
-
--- 
-nvpublic
+> ---
+>  drivers/acpi/button.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+> index 78cfc70cb320..ff7ab291f678 100644
+> --- a/drivers/acpi/button.c
+> +++ b/drivers/acpi/button.c
+> @@ -456,13 +456,16 @@ static int acpi_button_resume(struct device *dev)
+>  {
+>         struct acpi_device *device = to_acpi_device(dev);
+>         struct acpi_button *button = acpi_driver_data(device);
+> +       struct input_dev *input = button->input;
+>
+>         button->suspended = false;
+> -       if (button->type == ACPI_BUTTON_TYPE_LID && button->input->users) {
+> +       mutex_lock(&input->mutex);
+> +       if (button->type == ACPI_BUTTON_TYPE_LID && input->users) {
+>                 button->last_state = !!acpi_lid_evaluate_state(device);
+>                 button->last_time = ktime_get();
+>                 acpi_lid_initialize_state(device);
+>         }
+> +       mutex_unlock(&input->mutex);
+>         return 0;
+>  }
+>  #endif
+> --
+> 2.17.1
+>
