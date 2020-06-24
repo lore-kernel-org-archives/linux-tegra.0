@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC] Host1x/TegraDRM UAPI
-Date: Thu, 25 Jun 2020 02:11:21 +0300
-Message-ID: <c6642ebd-c9f1-eab0-ff6d-109698af73e0@gmail.com>
+Date: Thu, 25 Jun 2020 02:18:47 +0300
+Message-ID: <f85f3fa0-ba18-ddd5-2bac-158dfed9b792@gmail.com>
 References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -15,21 +15,32 @@ Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29
 List-Id: linux-tegra@vger.kernel.org
 
 23.06.2020 15:09, Mikko Perttunen пишет:
-> /* Command is an opcode gather from a GEM handle */
-> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER             0
-> /* Command is an opcode gather from a user pointer */
-> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER_UPTR        1
+> struct drm_tegra_channel_submit {
+>         __u32 channel_id;
+>         __u32 flags;
+> 
+>         /**
+>          * [in] Timeout in microseconds after which the kernel may
+>          *   consider the job to have hung and may reap it and
+>          *   fast-forward its syncpoint increments.
+>          *
+>          *   The value may be capped by the kernel.
+>          */
+>         __u32 timeout;
+> 
+>         __u32 num_syncpt_incrs;
+>         __u32 num_relocations;
+>         __u32 num_commands;
+> 
+>         __u64 syncpt_incrs;
+>         __u64 relocations;
+>         __u64 commands;
 
-I'm a bit dubious about whether we really need to retain the non-UPTR
-variant. The memory-copying overhead is negligible because cmdstream's
-data usually is hot in CPU's cache
+Do we really need to retain the multi-gather support? The code-bloat
+(both userspace and kernel driver) is very significant just for
+preparing and patching of the multi-buffer cmdstreams.
 
-IIRC, the most (if not all) of the modern DRM drivers drivers use the
-usrptr-only for the cmdstream.
+If userspace runs out of a free space within the pushbuffer, then it
+should simply reallocate a larger pushbuffer.
 
-At least there is no any real-world userspace example today that could
-benefit from a non-UPTR variant.
-
-I'm suggesting to leave out the non-UPTR gather variant for now, keeping
-it in mind as a potential future extension of the submission UAPI. Any
-objections?
+I'm suggesting that we should have a single gather per-job, any objections?
