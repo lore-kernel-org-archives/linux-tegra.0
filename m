@@ -1,159 +1,57 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 12/73] ARM: tegra: Drop display controller parent clocks
- on Tegra114
-Date: Wed, 24 Jun 2020 19:19:26 +0300
-Message-ID: <0bc2ec0e-f863-207a-d61b-058503598139@gmail.com>
-References: <20200616135238.3001888-1-thierry.reding@gmail.com>
- <20200616135238.3001888-13-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] drm/tegra: Fixes for v5.8-rc3
+Date: Wed, 24 Jun 2020 18:52:54 +0200
+Message-ID: <20200624165254.2763104-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200616135238.3001888-13-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-16.06.2020 16:51, Thierry Reding пишет:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The parent clocks are determined by the output that will be used, not by
-> the display controller that drives the output. Drop the parent clocks
-> from the display controller device tree nodes.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra114.dtsi | 10 ++++------
->  arch/arm/boot/dts/tegra124.dtsi | 10 ++++------
->  arch/arm/boot/dts/tegra20.dtsi  | 10 ++++------
->  arch/arm/boot/dts/tegra30.dtsi  | 10 ++++------
->  4 files changed, 16 insertions(+), 24 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-> index a06b88b01ef3..23df7a5f37d3 100644
-> --- a/arch/arm/boot/dts/tegra114.dtsi
-> +++ b/arch/arm/boot/dts/tegra114.dtsi
-> @@ -59,9 +59,8 @@ dc@54200000 {
->  			compatible = "nvidia,tegra114-dc";
->  			reg = <0x54200000 0x00040000>;
->  			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&tegra_car TEGRA114_CLK_DISP1>,
-> -				 <&tegra_car TEGRA114_CLK_PLL_P>;
-> -			clock-names = "dc", "parent";
-> +			clocks = <&tegra_car TEGRA114_CLK_DISP1>;
-> +			clock-names = "dc";
->  			resets = <&tegra_car 27>;
->  			reset-names = "dc";
->  
-> @@ -78,9 +77,8 @@ dc@54240000 {
->  			compatible = "nvidia,tegra114-dc";
->  			reg = <0x54240000 0x00040000>;
->  			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&tegra_car TEGRA114_CLK_DISP2>,
-> -				 <&tegra_car TEGRA114_CLK_PLL_P>;
-> -			clock-names = "dc", "parent";
-> +			clocks = <&tegra_car TEGRA114_CLK_DISP2>;
-> +			clock-names = "dc";
->  			resets = <&tegra_car 26>;
->  			reset-names = "dc";
->  
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-> index 1afed8496c95..2c992e8e3594 100644
-> --- a/arch/arm/boot/dts/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/tegra124.dtsi
-> @@ -105,9 +105,8 @@ dc@54200000 {
->  			compatible = "nvidia,tegra124-dc";
->  			reg = <0x0 0x54200000 0x0 0x00040000>;
->  			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&tegra_car TEGRA124_CLK_DISP1>,
-> -				 <&tegra_car TEGRA124_CLK_PLL_P>;
-> -			clock-names = "dc", "parent";
-> +			clocks = <&tegra_car TEGRA124_CLK_DISP1>;
-> +			clock-names = "dc";
->  			resets = <&tegra_car 27>;
->  			reset-names = "dc";
->  
-> @@ -120,9 +119,8 @@ dc@54240000 {
->  			compatible = "nvidia,tegra124-dc";
->  			reg = <0x0 0x54240000 0x0 0x00040000>;
->  			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&tegra_car TEGRA124_CLK_DISP2>,
-> -				 <&tegra_car TEGRA124_CLK_PLL_P>;
-> -			clock-names = "dc", "parent";
-> +			clocks = <&tegra_car TEGRA124_CLK_DISP2>;
-> +			clock-names = "dc";
->  			resets = <&tegra_car 26>;
->  			reset-names = "dc";
->  
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-> index f0a172c61b26..8b6909839f59 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -103,9 +103,8 @@ dc@54200000 {
->  			compatible = "nvidia,tegra20-dc";
->  			reg = <0x54200000 0x00040000>;
->  			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&tegra_car TEGRA20_CLK_DISP1>,
-> -				 <&tegra_car TEGRA20_CLK_PLL_P>;
-> -			clock-names = "dc", "parent";
-> +			clocks = <&tegra_car TEGRA20_CLK_DISP1>;
-> +			clock-names = "dc";
->  			resets = <&tegra_car 27>;
->  			reset-names = "dc";
->  
-> @@ -120,9 +119,8 @@ dc@54240000 {
->  			compatible = "nvidia,tegra20-dc";
->  			reg = <0x54240000 0x00040000>;
->  			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&tegra_car TEGRA20_CLK_DISP2>,
-> -				 <&tegra_car TEGRA20_CLK_PLL_P>;
-> -			clock-names = "dc", "parent";
-> +			clocks = <&tegra_car TEGRA20_CLK_DISP2>;
-> +			clock-names = "dc";
->  			resets = <&tegra_car 26>;
->  			reset-names = "dc";
->  
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-> index 27000f0ba35b..23fedb76e5ae 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
-> @@ -200,9 +200,8 @@ dc@54200000 {
->  			compatible = "nvidia,tegra30-dc", "nvidia,tegra20-dc";
->  			reg = <0x54200000 0x00040000>;
->  			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&tegra_car TEGRA30_CLK_DISP1>,
-> -				 <&tegra_car TEGRA30_CLK_PLL_P>;
-> -			clock-names = "dc", "parent";
-> +			clocks = <&tegra_car TEGRA30_CLK_DISP1>;
-> +			clock-names = "dc";
->  			resets = <&tegra_car 27>;
->  			reset-names = "dc";
->  
-> @@ -219,9 +218,8 @@ dc@54240000 {
->  			compatible = "nvidia,tegra30-dc";
->  			reg = <0x54240000 0x00040000>;
->  			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&tegra_car TEGRA30_CLK_DISP2>,
-> -				 <&tegra_car TEGRA30_CLK_PLL_P>;
-> -			clock-names = "dc", "parent";
-> +			clocks = <&tegra_car TEGRA30_CLK_DISP2>;
-> +			clock-names = "dc";
->  			resets = <&tegra_car 26>;
->  			reset-names = "dc";
->  
-> 
+Hi Dave,
 
-Hello Thierry,
+The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
 
-Tegra DRM fails to probe after this change using next-20200624 on T20/30
-(T124 also should be broken):
+  Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
 
- tegra-dc 54200000.dc: failed to get parent clock
- tegra-dc 54200000.dc: failed to probe RGB output: -2
+are available in the Git repository at:
 
-BTW, the commit's title is misleading since the patch touches all SoCs
-and not only the T114.
+  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-5.8-rc3
 
-Please correct or drop this patch, thanks in advance.
+for you to fetch changes up to fce3a51d9b31312aa12ecb72ffabfc4c7b40bdc6:
+
+  drm/tegra: Add zpos property for cursor planes (2020-06-16 19:03:25 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+drm/tegra: Fixes for v5.8-rc3
+
+This contains a fairly random assortment of fixes for various minor
+issues.
+
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      gpu: host1x: Clean up debugfs in error handling path
+
+Colton Lewis (1):
+      gpu: host1x: Correct trivial kernel-doc inconsistencies
+
+Nicolin Chen (1):
+      drm/tegra: hub: Do not enable orphaned window group
+
+Thierry Reding (4):
+      gpu: host1x: Register child devices
+      drm/tegra: hub: Register child devices
+      gpu: host1x: Detach driver on unregister
+      drm/tegra: Add zpos property for cursor planes
+
+ drivers/gpu/drm/tegra/dc.c  |  1 +
+ drivers/gpu/drm/tegra/hub.c | 17 +++++++++++++++--
+ drivers/gpu/host1x/bus.c    |  9 +++++++++
+ drivers/gpu/host1x/dev.c    | 11 +++++++++--
+ include/linux/host1x.h      |  3 +++
+ 5 files changed, 37 insertions(+), 4 deletions(-)
