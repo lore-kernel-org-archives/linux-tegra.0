@@ -1,61 +1,53 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 2/4] media: staging: tegra-vde: Runtime PM is always available on Tegra
-Date: Wed, 24 Jun 2020 18:08:45 +0300
-Message-ID: <20200624150847.22672-3-digetx@gmail.com>
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: Re: [PATCH v2 0/4] Tegra Video Decoder driver power management
+ corrections
+Date: Wed, 24 Jun 2020 17:16:55 +0200
+Message-ID: <90323aa6-38b5-0a45-69a7-ccf380690a78@xs4all.nl>
 References: <20200624150847.22672-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20200624150847.22672-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Runtime PM is always available on Tegra nowadays since commit 40b2bb1b132a
-("ARM: tegra: enforce PM requirement"), hence the case of unavailable RPM
-doesn't need to be handled.
+On 24/06/2020 17:08, Dmitry Osipenko wrote:
+> Hello,
+> 
+> This small series addresses a Runtime PM issue that was discovered during
+> of Tegra VI driver reviewing by balancing RPM usage count on RPM resume
+> failure. Secondly it fixes reboot on some Tegra devices due to bootloader
+> expecting VDE power partition to be ON at the boot time, which wasn't
+> happening in case of a warm re-booting (i.e. by PMC resetting).
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/staging/media/tegra-vde/vde.c | 16 ----------------
- 1 file changed, 16 deletions(-)
+Can you rebase this on top of the media_tree master branch? I think a variant
+of patch 1 has already been applied. I found a mail today where you mentioned
+that you preferred your version (it looks like I missed that) so you'll need to
+rework patch 1.
 
-diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-index 803e5dda4bb5..85cbbc8f70d3 100644
---- a/drivers/staging/media/tegra-vde/vde.c
-+++ b/drivers/staging/media/tegra-vde/vde.c
-@@ -1068,17 +1068,8 @@ static int tegra_vde_probe(struct platform_device *pdev)
- 	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_set_autosuspend_delay(dev, 300);
- 
--	if (!pm_runtime_enabled(dev)) {
--		err = tegra_vde_runtime_resume(dev);
--		if (err)
--			goto err_misc_unreg;
--	}
--
- 	return 0;
- 
--err_misc_unreg:
--	misc_deregister(&vde->miscdev);
--
- err_deinit_iommu:
- 	tegra_vde_iommu_deinit(vde);
- 
-@@ -1093,13 +1084,6 @@ static int tegra_vde_remove(struct platform_device *pdev)
- {
- 	struct tegra_vde *vde = platform_get_drvdata(pdev);
- 	struct device *dev = &pdev->dev;
--	int err;
--
--	if (!pm_runtime_enabled(dev)) {
--		err = tegra_vde_runtime_suspend(dev);
--		if (err)
--			return err;
--	}
- 
- 	pm_runtime_dont_use_autosuspend(dev);
- 	pm_runtime_disable(dev);
--- 
-2.26.0
+Sorry about this,
+
+	Hans
+
+> 
+> Changelog:
+> 
+> v2: - Extended the commit's message of the "Balance runtime PM use-count on
+>       resume failure" patch.
+> 
+>     - Re-send for 5.9 inclusion.
+> 
+> Dmitry Osipenko (4):
+>   media: staging: tegra-vde: Balance runtime PM use-count on resume
+>     failure
+>   media: staging: tegra-vde: Runtime PM is always available on Tegra
+>   media: staging: tegra-vde: Turn ON power domain on shutdown
+>   media: staging: tegra-vde: Power-cycle hardware on probe
+> 
+>  drivers/staging/media/tegra-vde/vde.c | 45 +++++++++++++++++----------
+>  1 file changed, 29 insertions(+), 16 deletions(-)
+> 
