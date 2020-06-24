@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC] Host1x/TegraDRM UAPI
-Date: Thu, 25 Jun 2020 02:18:47 +0300
-Message-ID: <f85f3fa0-ba18-ddd5-2bac-158dfed9b792@gmail.com>
+Date: Thu, 25 Jun 2020 02:23:13 +0300
+Message-ID: <3703cf87-457a-0e71-7693-5644735e438a@gmail.com>
 References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -15,6 +15,7 @@ Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29
 List-Id: linux-tegra@vger.kernel.org
 
 23.06.2020 15:09, Mikko Perttunen пишет:
+> 
 > struct drm_tegra_channel_submit {
 >         __u32 channel_id;
 >         __u32 flags;
@@ -27,7 +28,9 @@ List-Id: linux-tegra@vger.kernel.org
 >          *   The value may be capped by the kernel.
 >          */
 >         __u32 timeout;
-> 
+
+What about to rename this to timeout_us? For clarity.
+
 >         __u32 num_syncpt_incrs;
 >         __u32 num_relocations;
 >         __u32 num_commands;
@@ -36,11 +39,6 @@ List-Id: linux-tegra@vger.kernel.org
 >         __u64 relocations;
 >         __u64 commands;
 
-Do we really need to retain the multi-gather support? The code-bloat
-(both userspace and kernel driver) is very significant just for
-preparing and patching of the multi-buffer cmdstreams.
+Let's also add "_ptr" postfix to all usrptr names, again for clarity.
 
-If userspace runs out of a free space within the pushbuffer, then it
-should simply reallocate a larger pushbuffer.
-
-I'm suggesting that we should have a single gather per-job, any objections?
+It's always nice to have meaningful names :)
