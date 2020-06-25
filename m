@@ -1,72 +1,72 @@
-From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v6 1/4] iommu/arm-smmu: add NVIDIA implementation for dual
- ARM MMU-500 usage
-Date: Thu, 25 Jun 2020 23:13:24 +0000
-Message-ID: <BYAPR12MB2822B1D5791811EDAF35C5B2B3920@BYAPR12MB2822.namprd12.prod.outlook.com>
-References: <20200604234414.21912-1-vdumpa@nvidia.com>
- <20200604234414.21912-2-vdumpa@nvidia.com> <20200623102927.GD4098287@ulmo>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] Host1x/TegraDRM UAPI
+Date: Fri, 26 Jun 2020 02:24:26 +0300
+Message-ID: <c96af3cb-a15c-dd3f-ac5b-b0a56d2ed6d9@gmail.com>
+References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
+ <c6642ebd-c9f1-eab0-ff6d-109698af73e0@gmail.com>
+ <5c0aa939-d722-5034-6328-4df5be8ee3c6@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200623102927.GD4098287@ulmo>
+In-Reply-To: <5c0aa939-d722-5034-6328-4df5be8ee3c6-/1wQRMveznE@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bryan Huntsman <bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Nicolin Chen <nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "robin.murphy-5wv7dgnIgG8@public.gmane.org" <robin.murphy-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
->Should NVIDIA_TEGRA194_SMMU be a separate value for smmu->model, perhaps? =
-That way we avoid this somewhat odd check here.
+25.06.2020 12:16, Mikko Perttunen пишет:
+> On 6/25/20 2:11 AM, Dmitry Osipenko wrote:
+>> 23.06.2020 15:09, Mikko Perttunen пишет:
+>>> /* Command is an opcode gather from a GEM handle */
+>>> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER             0
+>>> /* Command is an opcode gather from a user pointer */
+>>> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER_UPTR        1
+>>
+>> I'm a bit dubious about whether we really need to retain the non-UPTR
+>> variant. The memory-copying overhead is negligible because cmdstream's
+>> data usually is hot in CPU's cache
+>>
+>> IIRC, the most (if not all) of the modern DRM drivers drivers use the
+>> usrptr-only for the cmdstream.
+>>
+>> At least there is no any real-world userspace example today that could
+>> benefit from a non-UPTR variant.
+>>
+>> I'm suggesting to leave out the non-UPTR gather variant for now, keeping
+>> it in mind as a potential future extension of the submission UAPI. Any
+>> objections?
+>>
+> 
+> Sure, we should be able to drop it. Downstream userspace is using it,
+> but we should be able to fix that. I was thinking that we can directly
+> map the user pages and point the gather to them without copying - that
+> way we wouldn't need to make DMA allocations inside the driver for every
+> submit.
 
-NVIDIA haven't made any changes to arm,mmu-500. It is only used in differen=
-t topology.  New model would be mis-leading here.
-As suggested by Robin, It can just be moved to end of function.
+We will need to create a Host1x DMA pool and then the dynamic
+allocations will be cheap. This is an implementation detail that we can
+discuss separately.
 
->> diff --git a/drivers/iommu/arm-smmu-nvidia.c=20
->> b/drivers/iommu/arm-smmu-nvidia.c
->I wonder if it would be better to name this arm-smmu-tegra.c to make it cl=
-earer that this is for a Tegra chip. We do have regular expressions in MAIN=
-TAINERS that catch anything with "tegra" in it to make this easier.
->Also, the nsmmu_ prefix looks somewhat odd here. You already use struct nv=
-idia_smmu as the name of the structure, so why not be consistent and contin=
-ue to use nvidia_smmu_ as the prefix for function names?
->Or perhaps even use tegra_smmu_ as the prefix to match the filename change=
- I suggested earlier.
+We will need the UPTR anyways for the older Tergas because we need to
+validate the cmdstreams and it's much more efficient to copy from UPTR
+than from the uncacheable memory.
 
-Prefix can be updated to nvidia_smmu as we seem to be okay for now to keep =
-file name as arm-smmu-nvidia.c after the vendor name. =20
+The non-UPTR variant will be fine to add if you'll have a realworld
+example that demonstrates a noticeable performance difference.
 
->> +#define TLB_LOOP_TIMEOUT		1000000	/* 1s! */
->USEC_PER_SEC?
+Previously, I thought that there will be some perf difference if GR3D
+shaders are moved into the "insert-opcode" gather, but it was negligible
+once I implemented it and it should be even more negligible on a modern
+hardware.
 
-It is not meant for a conversion. Reused Timeout variable from arm-smmu.c f=
-or tlb_sync implementation.  Can rename it to TLB_LOOP_TIMEOUT_IN_US.
+> (On early Tegras we could just copy into the pushbuffer but that
+> won't work for newer ones).
 
+Yes, we should copy data into a gather and then push it into channel's
+pushbuffer. Just like it works with the current upstream driver.
 
->> +	}
->> +	dev_err_ratelimited(smmu->dev,
->> +			    "TLB sync timed out -- SMMU may be deadlocked\n");
->Same here.
->Also, is there anything we can do when this happens?
-
-This is never expected to happen on Silicon. This code and message is reuse=
-d from arm-smmu.c.
-
-
->> +#define nsmmu_page(smmu, inst, page) \
->> +	(((inst) ? to_nvidia_smmu(smmu)->bases[(inst)] : smmu->base) + \
->> +	((page) << smmu->pgshift))
-
->Can we simply define to_nvidia_smmu(smmu)->bases[0] =3D smmu->base in nvid=
-ia_smmu_impl_init()? Then this would become just:
->	to_nvidia_smmu(smmu)->bases[inst] + ((page) << (smmu)->pgshift)
-> +
->Maybe add this here to simplify the nsmmu_page() macro above:
->	nsmmu->bases[0] =3D smmu->base;
-
-This preferred to avoid the check in nsmmu_page(). But, smmu->base is not y=
-et populated when nvidia_smmu_impl_init() is called. =20
-Let me look at the alternative place to set it.
-
--KR
+Once all the UAPI will be settled, we'll also need to discuss the
+pushbuffer's implementation because the current driver has some problems
+with it.
