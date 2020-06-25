@@ -1,52 +1,75 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI
-Date: Thu, 25 Jun 2020 03:59:27 +0300
-Message-ID: <c695bb1a-28d3-963f-868c-483005e3dd1d@gmail.com>
-References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <f85f3fa0-ba18-ddd5-2bac-158dfed9b792@gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v4 3/7] ACPI: button: Access input device's users under
+ appropriate mutex
+Date: Wed, 24 Jun 2020 22:23:18 -0700
+Message-ID: <20200625052318.GE248110@dtor-ws>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
+ <20200608112211.12125-4-andrzej.p@collabora.com>
+ <CAJZ5v0j7e9TzDtEiDXmj3fLAQ7CvFHoe7Q3aYKKas3PEXrsUuw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f85f3fa0-ba18-ddd5-2bac-158dfed9b792-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0j7e9TzDtEiDXmj3fLAQ7CvFHoe7Q3aYKKas3PEXrsUuw@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, Linux PM <linux-pm@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-input@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, Platform Driver <platform-driver-x86@vger.kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kuk
 List-Id: linux-tegra@vger.kernel.org
 
-25.06.2020 02:18, Dmitry Osipenko пишет:
-> 23.06.2020 15:09, Mikko Perttunen пишет:
->> struct drm_tegra_channel_submit {
->>         __u32 channel_id;
->>         __u32 flags;
->>
->>         /**
->>          * [in] Timeout in microseconds after which the kernel may
->>          *   consider the job to have hung and may reap it and
->>          *   fast-forward its syncpoint increments.
->>          *
->>          *   The value may be capped by the kernel.
->>          */
->>         __u32 timeout;
->>
->>         __u32 num_syncpt_incrs;
->>         __u32 num_relocations;
->>         __u32 num_commands;
->>
->>         __u64 syncpt_incrs;
->>         __u64 relocations;
->>         __u64 commands;
+On Wed, Jun 24, 2020 at 05:00:09PM +0200, Rafael J. Wysocki wrote:
+> On Mon, Jun 8, 2020 at 1:22 PM Andrzej Pietrasiewicz
+> <andrzej.p@collabora.com> wrote:
+> >
+> > Inspecting input device's 'users' member should be done under device's
+> > mutex, so add appropriate invocations.
+> >
+> > Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 > 
-> Do we really need to retain the multi-gather support? The code-bloat
-> (both userspace and kernel driver) is very significant just for
-> preparing and patching of the multi-buffer cmdstreams.
+> This looks like a fix that might be applied independently of the other
+> patches in the series.
 > 
-> If userspace runs out of a free space within the pushbuffer, then it
-> should simply reallocate a larger pushbuffer.
-> 
-> I'm suggesting that we should have a single gather per-job, any objections?
-> 
+> Do you want me to pick it up?
 
-Oh, I just recalled that the later Host1x versions do not allow  to
-switch class from gather! Let me think a bit more about it..
+If you pick it we'll have to have a dance with this series. Can I apply
+instead?
+
+I do not think this change has any practical effect as nobody
+attaches/detached input handlers or opening/closing input devices when
+system goes through device resume phase.
+
+> 
+> > ---
+> >  drivers/acpi/button.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+> > index 78cfc70cb320..ff7ab291f678 100644
+> > --- a/drivers/acpi/button.c
+> > +++ b/drivers/acpi/button.c
+> > @@ -456,13 +456,16 @@ static int acpi_button_resume(struct device *dev)
+> >  {
+> >         struct acpi_device *device = to_acpi_device(dev);
+> >         struct acpi_button *button = acpi_driver_data(device);
+> > +       struct input_dev *input = button->input;
+> >
+> >         button->suspended = false;
+> > -       if (button->type == ACPI_BUTTON_TYPE_LID && button->input->users) {
+> > +       mutex_lock(&input->mutex);
+> > +       if (button->type == ACPI_BUTTON_TYPE_LID && input->users) {
+> >                 button->last_state = !!acpi_lid_evaluate_state(device);
+> >                 button->last_time = ktime_get();
+> >                 acpi_lid_initialize_state(device);
+> >         }
+> > +       mutex_unlock(&input->mutex);
+> >         return 0;
+> >  }
+> >  #endif
+> > --
+> > 2.17.1
+> >
+
+Thanks.
+
+-- 
+Dmitry
