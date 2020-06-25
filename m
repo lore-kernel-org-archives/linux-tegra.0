@@ -1,47 +1,56 @@
 From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
 Subject: Re: [RFC] Host1x/TegraDRM UAPI
-Date: Thu, 25 Jun 2020 12:16:10 +0300
-Message-ID: <5c0aa939-d722-5034-6328-4df5be8ee3c6@kapsi.fi>
+Date: Thu, 25 Jun 2020 12:17:19 +0300
+Message-ID: <e04c02f0-b034-6e5b-51bf-0a142f3138a6@kapsi.fi>
 References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <c6642ebd-c9f1-eab0-ff6d-109698af73e0@gmail.com>
+ <867dea06-8741-82e8-3e26-9a017ad9057a@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <c6642ebd-c9f1-eab0-ff6d-109698af73e0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <867dea06-8741-82e8-3e26-9a017ad9057a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/25/20 2:11 AM, Dmitry Osipenko wrote:
+On 6/24/20 11:55 PM, Dmitry Osipenko wrote:
 > 23.06.2020 15:09, Mikko Perttunen пишет:
->> /* Command is an opcode gather from a GEM handle */
->> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER             0
->> /* Command is an opcode gather from a user pointer */
->> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER_UPTR        1
+> ...
+>> * Previously present GEM IOCTLs (GEM_CREATE, GEM_MMAP) are not present.
+>> Not sure if they are still needed.
 > 
-> I'm a bit dubious about whether we really need to retain the non-UPTR
-> variant. The memory-copying overhead is negligible because cmdstream's
-> data usually is hot in CPU's cache
+> Hello Mikko!
 > 
-> IIRC, the most (if not all) of the modern DRM drivers drivers use the
-> usrptr-only for the cmdstream.
+> A quick comment for the starter. Switching away from the Tegra-specific
+> GEM IOCTLs to the dma-buf heaps is a such radical change! But I like it!
 > 
-> At least there is no any real-world userspace example today that could
-> benefit from a non-UPTR variant.
+> Previously I was curious about whether we could have multiple CMA
+> regions (one shared/reusable and other private, for example) for the
+> Tegra DRM driver and at a quick glance the dma-buf heaps could be a nice
+> solution that avoids re-inventing a driver-specific things for that.
 > 
-> I'm suggesting to leave out the non-UPTR gather variant for now, keeping
-> it in mind as a potential future extension of the submission UAPI. Any
-> objections?
+> I'm instantly foreseeing these types of heaps:
+> 
+> 1. Large reusable CMA heap.
+> 2. Smaller non-reusable common CMA that could be used when allocation
+> from a reusable CMA fails. Or vice versa, when we want to reduce the
+> chance to block for a long time on allocation, for example.
+> 3. Sparse (system) memory heap.
+> 
+> It's the first time I'm looking at the dma-buf heaps and it sounds like
+> a very nice idea to utilize them!
+> 
+> The https://lkml.org/lkml/2019/11/18/787 says that the system-contiguous
+> and carveout heaps we not added because they were not needed, but they
+> will be needed for the Tegra20 drivers and for the case where IOMMU is
+> disabled. It shouldn't be difficult to add these types of heaps.
+> 
+> I'll continue to examine the dma-buf heaps in a more details.
 > 
 
-Sure, we should be able to drop it. Downstream userspace is using it, 
-but we should be able to fix that. I was thinking that we can directly 
-map the user pages and point the gather to them without copying - that 
-way we wouldn't need to make DMA allocations inside the driver for every 
-submit. (On early Tegras we could just copy into the pushbuffer but that 
-won't work for newer ones).
+Sure, let's go with this for now. We can anyway add GEM IOCTLs later if 
+they are needed, without any compatibility issues.
 
 Mikko
