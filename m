@@ -1,64 +1,96 @@
-From: B K Karthik <bkkarthik-c/eoPpTPil72fBVCVOL8/A@public.gmane.org>
-Subject: [PATCH] staging: nvec: changed coding style, line should not end
- with a (
-Date: Thu, 25 Jun 2020 09:50:51 -0400
-Message-ID: <20200625135051.msl37vuz5fbgiuz4@pesu-pes-edu>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 12/73] ARM: tegra: Drop display controller parent clocks
+ on Tegra114
+Date: Thu, 25 Jun 2020 17:18:58 +0300
+Message-ID: <89c432a9-11ad-8f8c-46b5-9df9779467db@gmail.com>
+References: <20200616135238.3001888-1-thierry.reding@gmail.com>
+ <20200616135238.3001888-13-thierry.reding@gmail.com>
+ <0bc2ec0e-f863-207a-d61b-058503598139@gmail.com>
+ <20200625073736.GA2800220@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rewokx577v3vntjb"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <20200625073736.GA2800220@ulmo>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+25.06.2020 10:37, Thierry Reding пишет:
+> On Wed, Jun 24, 2020 at 07:19:26PM +0300, Dmitry Osipenko wrote:
+>> 16.06.2020 16:51, Thierry Reding пишет:
+>>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> The parent clocks are determined by the output that will be used, not by
+>>> the display controller that drives the output. Drop the parent clocks
+>>> from the display controller device tree nodes.
+>>>
+>>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+...
+>> Hello Thierry,
+>>
+>> Tegra DRM fails to probe after this change using next-20200624 on T20/30
+>> (T124 also should be broken):
+>>
+>>  tegra-dc 54200000.dc: failed to get parent clock
+>>  tegra-dc 54200000.dc: failed to probe RGB output: -2
+> 
+> Indeed. I had completely missed that we used to have this RGB output on
+> prior chips and therefore do need the parent clock. As of Tegra124 that
+> RGB output is no longer present, so this isn't needed anymore.
+> 
+>> BTW, the commit's title is misleading since the patch touches all SoCs
+>> and not only the T114.
+> 
+> Good catch. I've replaced this with the following:
+> 
+> --- >8 ---
+> commit afd92390fcaa784a6d064f3b07c8d8124e43e5d1
+> Author: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Date:   Thu Jun 11 19:09:36 2020 +0200
+> 
+>     ARM: tegra: Drop display controller parent clocks on Tegra124
+>     
+>     The parent clocks are determined by the output that will be used, not by
+>     the display controller that drives the output. On previous generations a
+>     simple RGB output used to be part of the display controller and hence an
+>     explicit parent clock needed to be assigned to the display controller to
+>     drive the RGB output. Starting with Tegra124, that RGB output has been
+>     dropped and the parent clock can therefore be removed from the display
+>     controller device tree nodes.
+>     
+>     Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+> index 1afed8496c95..2c992e8e3594 100644
+> --- a/arch/arm/boot/dts/tegra124.dtsi
+> +++ b/arch/arm/boot/dts/tegra124.dtsi
+> @@ -105,9 +105,8 @@ dc@54200000 {
+>  			compatible = "nvidia,tegra124-dc";
+>  			reg = <0x0 0x54200000 0x0 0x00040000>;
+>  			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA124_CLK_DISP1>,
+> -				 <&tegra_car TEGRA124_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA124_CLK_DISP1>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 27>;
+>  			reset-names = "dc";
+>  
+> @@ -120,9 +119,8 @@ dc@54240000 {
+>  			compatible = "nvidia,tegra124-dc";
+>  			reg = <0x0 0x54240000 0x0 0x00040000>;
+>  			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&tegra_car TEGRA124_CLK_DISP2>,
+> -				 <&tegra_car TEGRA124_CLK_PLL_P>;
+> -			clock-names = "dc", "parent";
+> +			clocks = <&tegra_car TEGRA124_CLK_DISP2>;
+> +			clock-names = "dc";
+>  			resets = <&tegra_car 26>;
+>  			reset-names = "dc";
+> --- >8 ---
 
---rewokx577v3vntjb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Signed-off-by: B K Karthik <karthik.bk2000-EMRzualFZlQ@public.gmane.org>
----
- drivers/staging/nvec/nvec.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 360ec0407740..16afbe1dfdeb 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -382,8 +382,8 @@ static void nvec_request_master(struct work_struct *wor=
-k)
- 		msg =3D list_first_entry(&nvec->tx_data, struct nvec_msg, node);
- 		spin_unlock_irqrestore(&nvec->tx_lock, flags);
- 		nvec_gpio_set_value(nvec, 0);
--		err =3D wait_for_completion_interruptible_timeout(
--				&nvec->ec_transfer, msecs_to_jiffies(5000));
-+		err =3D wait_for_completion_interruptible_timeout(&nvec->ec_transfer,
-+						msecs_to_jiffies(5000));
-=20
- 		if (err =3D=3D 0) {
- 			dev_warn(nvec->dev, "timeout waiting for ec transfer\n");
---=20
-2.20.1
-
-
---rewokx577v3vntjb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAEBCgAdFiEEpIrzAt4LvWLJmKjp471Q5AHeZ2oFAl70q7oACgkQ471Q5AHe
-Z2oxxQv+OOy01Ou3vqU5dN75Df6fs0uJzKJ4lacNDjmMVI7YZvO95FHX6uw2W2ZE
-1QIRzE43pNJ9IGkAOr88VNZPddYk9YIf+pQ/0N5P8Ey1l6HpjfzXLsYmkJ7sh/kR
-lYUZFLnlzHDSeQWN/GWyYm6is9AKCV7wz566vDg/8ttx7+XRgoyMurqYZeHLT+0B
-EHaMLNbnW1HAS++UYxKyZ2+G2VwgTbM5Mb/k08C15t0Op19XwxAHTyEhPFPBYedR
-i5oSli2HjK/zFOf8GfnztOtd0E65JNnsPkzlUxADw6OgAvpQlwVkhOb99qwTMQ7c
-CZgoM0zhwGmnypFC5nFyMFjAyD8LjBfxU6JoJaWrEsILl+ZLNrG6ruCiZBfAaIwV
-BVXKkTfSU7YKZeBVZM2rIvZOnUjWJSKXPd2mnrfvdv/1y0iFx3Dz/EP4l/NDr8sl
-81r1GaaE/qwPF2GGPj7bHgTkL3vRZrrxsvYbucY+NQofp/qkbt7olHd4ic8eSE28
-uZZcI5eN
-=6J1G
------END PGP SIGNATURE-----
-
---rewokx577v3vntjb--
+Looks good, thank you!
