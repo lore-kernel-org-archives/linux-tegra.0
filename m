@@ -1,83 +1,52 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC] Host1x/TegraDRM UAPI
-Date: Thu, 25 Jun 2020 03:47:53 +0300
-Message-ID: <10f9a8e5-9972-76bc-f60a-1bf1211e55e1@gmail.com>
+Date: Thu, 25 Jun 2020 03:59:27 +0300
+Message-ID: <c695bb1a-28d3-963f-868c-483005e3dd1d@gmail.com>
 References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
+ <f85f3fa0-ba18-ddd5-2bac-158dfed9b792@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9b06b7ec-f952-2561-7afb-5653514cd5d3-/1wQRMveznE@public.gmane.org>
+In-Reply-To: <f85f3fa0-ba18-ddd5-2bac-158dfed9b792-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-23.06.2020 15:09, Mikko Perttunen пишет:
-> #define DRM_TEGRA_SUBMIT_CREATE_POST_SYNC_FILE      (1<<0)
-> #define DRM_TEGRA_SUBMIT_CREATE_POST_SYNCOBJ        (1<<1)
+25.06.2020 02:18, Dmitry Osipenko пишет:
+> 23.06.2020 15:09, Mikko Perttunen пишет:
+>> struct drm_tegra_channel_submit {
+>>         __u32 channel_id;
+>>         __u32 flags;
+>>
+>>         /**
+>>          * [in] Timeout in microseconds after which the kernel may
+>>          *   consider the job to have hung and may reap it and
+>>          *   fast-forward its syncpoint increments.
+>>          *
+>>          *   The value may be capped by the kernel.
+>>          */
+>>         __u32 timeout;
+>>
+>>         __u32 num_syncpt_incrs;
+>>         __u32 num_relocations;
+>>         __u32 num_commands;
+>>
+>>         __u64 syncpt_incrs;
+>>         __u64 relocations;
+>>         __u64 commands;
+> 
+> Do we really need to retain the multi-gather support? The code-bloat
+> (both userspace and kernel driver) is very significant just for
+> preparing and patching of the multi-buffer cmdstreams.
+> 
+> If userspace runs out of a free space within the pushbuffer, then it
+> should simply reallocate a larger pushbuffer.
+> 
+> I'm suggesting that we should have a single gather per-job, any objections?
+> 
 
-The sync object shouldn't be created by the kernel driver and we
-shouldn't need the sync-file FD.
-
-Please consider this example of how syncobj may be used:
-
-  1. Syncobj is created by userspace.
-
-  2. Syncobj's handle (post_fence) is passed with the job to the kernel
-driver.
-
-  3. Userspace waits on syncobj for the job's submission.
-
-  4. Kernel driver attaches job-completion dma-fence(s) to the syncobj
-after starting to execute the job.
-
-  5. Userspace waits on syncobj for the job's completion.
-
-Syncobj is a superset of the sync-file fence:
-
-  a) Syncobj doesn't have a backing file descriptor when it's created.
-For example, why would you need an FD if you're not going to share fence
-with other processes. It's possible to get FD out of syncobj later on,
-please see [1][2].
-
-  b) Syncobj is designed to be used with a GPU jobs. For example,
-userspace passes job to the GPU driver's scheduler and then waits until
-job has been started to execute on hardware, this is already supported
-by syncobj.
-
-  c) It is possible to attach sync-file's fence to a syncobj [1][2][3]
-and now:
-
-  - Userspace may attach sync-file's fence to a syncobj.
-
-  - Userspace may use this syncobj for the job's pre-fence.
-
-  - Kernel driver will take out the pre-fence from the syncobj during of
-the job's submission and reset the syncobj's fence to NULL.
-
-  - Job's scheduler will wait on this pre-fence before starting to
-execute job.
-
-  - Once the job is started to execute, the job's scheduler will attach
-the job's completion-fence to the syncobj. Now syncobj has a post-fence!
-
-  d) It is possible to get sync-file FD out of syncobj [1][2][4].
-
-[1]
-https://elixir.bootlin.com/linux/v5.7.2/source/include/uapi/drm/drm.h#L730
-[2]
-https://elixir.bootlin.com/linux/v5.7.2/source/include/uapi/drm/drm.h#L933
-[3]
-https://elixir.bootlin.com/linux/v5.7.2/source/drivers/gpu/drm/drm_syncobj.c#L653
-[4]
-https://elixir.bootlin.com/linux/v5.7.2/source/drivers/gpu/drm/drm_syncobj.c#L674
-
-===
-
-So, sync object can carry both pre-fence and post-fence, and they could
-be sync-file FDs!
-
-The corollary is that we can get away by using a single syncobj handle
-for the job's submission IOCTL.
+Oh, I just recalled that the later Host1x versions do not allow  to
+switch class from gather! Let me think a bit more about it..
