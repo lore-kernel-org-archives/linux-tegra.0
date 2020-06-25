@@ -1,64 +1,52 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI
-Date: Thu, 25 Jun 2020 12:27:11 +0300
-Message-ID: <8d60baf4-45e8-296a-279e-dc105966361c@kapsi.fi>
-References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <7cc0d47b-024a-263e-3b63-1d1184b462b3@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v4 3/7] ACPI: button: Access input device's users under
+ appropriate mutex
+Date: Thu, 25 Jun 2020 12:55:29 +0200
+Message-ID: <CAJZ5v0hgQt-amMn8xiF_0kyVZ-9pQxgm5H-VcFpinVQGKnYhwQ@mail.gmail.com>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com> <20200608112211.12125-4-andrzej.p@collabora.com>
+ <CAJZ5v0j7e9TzDtEiDXmj3fLAQ7CvFHoe7Q3aYKKas3PEXrsUuw@mail.gmail.com> <20200625052318.GE248110@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7cc0d47b-024a-263e-3b63-1d1184b462b3-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20200625052318.GE248110@dtor-ws>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Andrzej Pietrasiewicz <andrzej.p@collabora.com>, Linux PM <linux-pm@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-input@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>, patches@opensource.cirrus.com, ibm-acpi-devel@lists.sourceforge.net, Platform Driver <platform-driver-x86@vger.kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>Peter
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/25/20 1:33 AM, Dmitry Osipenko wrote:
-> 23.06.2020 15:09, Mikko Perttunen пишет:
->> struct drm_tegra_submit_relocation {
->>          /* [in] Index of GATHER or GATHER_UPTR command in commands. */
->>          __u32 gather_command_index;
->>
->>          /*
->>           * [in] Mapping handle (obtained through CHANNEL_MAP) of the memory
->>           *   the address of which will be patched in.
->>           */
->>          __u32 mapping_id;
->>
->>          /*
->>           * [in] Offset in the gather that will be patched.
->>           */
->>          __u64 gather_offset;
->>
->>          /*
->>           * [in] Offset in target buffer whose paddr/IOVA will be written
->>           *   to the gather.
->>           */
->>          __u64 target_offset;
->>
->>          /*
->>           * [in] Number of bits the resulting address will be logically
->>           *   shifted right before writing to gather.
->>           */
->>          __u32 shift;
->>
->>          __u32 reserved[1];
->> };
-> 
-> We will also need read/write direction flag here for the
-> DMA-reservations set up, it will be used for the implicit BO fencing by
-> the job's scheduler.
-> 
+On Thu, Jun 25, 2020 at 7:23 AM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> On Wed, Jun 24, 2020 at 05:00:09PM +0200, Rafael J. Wysocki wrote:
+> > On Mon, Jun 8, 2020 at 1:22 PM Andrzej Pietrasiewicz
+> > <andrzej.p@collabora.com> wrote:
+> > >
+> > > Inspecting input device's 'users' member should be done under device's
+> > > mutex, so add appropriate invocations.
+> > >
+> > > Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+> >
+> > This looks like a fix that might be applied independently of the other
+> > patches in the series.
+> >
+> > Do you want me to pick it up?
+>
+> If you pick it we'll have to have a dance with this series. Can I apply
+> instead?
 
-Ideally on newer chips with context isolation, we no longer know what 
-DMA-BUFs are being used by the job at submit time - they would just be 
-pointers after being MAPped.
+Yes, please.
 
-Do you know how other GPUs deal with DMA reservations - I expect 
-separate MAP and SUBMIT steps would be pretty common? Do you have to 
-pass the DMA-BUF to both steps (i.e. do IOMMU mapping during MAP, and 
-manage reservations at SUBMIT)?
+Also feel free to add
 
-Mikko
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+to it.
+
+> I do not think this change has any practical effect as nobody
+> attaches/detached input handlers or opening/closing input devices when
+> system goes through device resume phase.
+
+Indeed.
+
+Thanks!
