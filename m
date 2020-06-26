@@ -1,57 +1,49 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH] soc/tegra: Add Tegra Soc Version support
-Date: Fri, 26 Jun 2020 13:50:13 +0300
-Message-ID: <64d65736-62c2-de17-5657-389475fff6e2@kapsi.fi>
+From: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] soc/tegra: Add Tegra Soc Version support
+Date: Fri, 26 Jun 2020 10:58:31 +0000
+Message-ID: <BYAPR12MB3014E02C6146B87221E7923FAD930@BYAPR12MB3014.namprd12.prod.outlook.com>
 References: <1593167369-25901-1-git-send-email-spatra@nvidia.com>
+ <64d65736-62c2-de17-5657-389475fff6e2@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1593167369-25901-1-git-send-email-spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <64d65736-62c2-de17-5657-389475fff6e2-/1wQRMveznE@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/26/20 1:29 PM, Sandipan Patra wrote:
-> Add the chip IDs for NVIDIA Tegra186, Tegra194 and Tegra234
-> SoC family.
-
-families
-
-> 
-> Signed-off-by: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   include/soc/tegra/fuse.h | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-> index 252ea20..4a5236b 100644
-> --- a/include/soc/tegra/fuse.h
-> +++ b/include/soc/tegra/fuse.h
-> @@ -1,6 +1,6 @@
->   /* SPDX-License-Identifier: GPL-2.0-only */
->   /*
-> - * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-> + * Copyright (c) 2012-2020, NVIDIA CORPORATION.  All rights reserved.
->    */
->   
->   #ifndef __SOC_TEGRA_FUSE_H__
-> @@ -12,6 +12,9 @@
->   #define TEGRA124	0x40
->   #define TEGRA132	0x13
->   #define TEGRA210	0x21
-> +#define TEGRA186	0x18
-> +#define TEGRA194	0x19
-> +#define TEGRA234	0x23
->   
->   #define TEGRA_FUSE_SKU_CALIB_0	0xf0
->   #define TEGRA30_FUSE_SATA_CALIB	0x124
-> 
-
-Also, can you make the commit message something like "soc/tegra: Add 
-defines for Tegra186+ chip IDs"?
-
-thanks,
-Mikko
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWlra28gUGVydHR1bmVu
+IDxjeW5kaXNAa2Fwc2kuZmk+DQo+IFNlbnQ6IEZyaWRheSwgSnVuZSAyNiwgMjAyMCA0OjIwIFBN
+DQo+IFRvOiBTYW5kaXBhbiBQYXRyYSA8c3BhdHJhQG52aWRpYS5jb20+OyBUaGllcnJ5IFJlZGlu
+Zw0KPiA8dHJlZGluZ0BudmlkaWEuY29tPjsgSm9uYXRoYW4gSHVudGVyIDxqb25hdGhhbmhAbnZp
+ZGlhLmNvbT4NCj4gQ2M6IEJpYmVrIEJhc3UgPGJiYXN1QG52aWRpYS5jb20+OyBLcmlzaG5hIFlh
+cmxhZ2FkZGENCj4gPGt5YXJsYWdhZGRhQG52aWRpYS5jb20+OyBsaW51eC10ZWdyYUB2Z2VyLmtl
+cm5lbC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJl
+OiBbUEFUQ0hdIHNvYy90ZWdyYTogQWRkIFRlZ3JhIFNvYyBWZXJzaW9uIHN1cHBvcnQNCj4gDQo+
+IEV4dGVybmFsIGVtYWlsOiBVc2UgY2F1dGlvbiBvcGVuaW5nIGxpbmtzIG9yIGF0dGFjaG1lbnRz
+DQo+IA0KPiANCj4gT24gNi8yNi8yMCAxOjI5IFBNLCBTYW5kaXBhbiBQYXRyYSB3cm90ZToNCj4g
+PiBBZGQgdGhlIGNoaXAgSURzIGZvciBOVklESUEgVGVncmExODYsIFRlZ3JhMTk0IGFuZCBUZWdy
+YTIzNCBTb0MNCj4gPiBmYW1pbHkuDQo+IA0KPiBmYW1pbGllcw0KPiANCj4gPg0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IFNhbmRpcGFuIFBhdHJhIDxzcGF0cmFAbnZpZGlhLmNvbT4NCj4gPiAtLS0NCj4g
+PiAgIGluY2x1ZGUvc29jL3RlZ3JhL2Z1c2UuaCB8IDUgKysrKy0NCj4gPiAgIDEgZmlsZSBjaGFu
+Z2VkLCA0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQg
+YS9pbmNsdWRlL3NvYy90ZWdyYS9mdXNlLmggYi9pbmNsdWRlL3NvYy90ZWdyYS9mdXNlLmggaW5k
+ZXgNCj4gPiAyNTJlYTIwLi40YTUyMzZiIDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvc29jL3Rl
+Z3JhL2Z1c2UuaA0KPiA+ICsrKyBiL2luY2x1ZGUvc29jL3RlZ3JhL2Z1c2UuaA0KPiA+IEBAIC0x
+LDYgKzEsNiBAQA0KPiA+ICAgLyogU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAtb25s
+eSAqLw0KPiA+ICAgLyoNCj4gPiAtICogQ29weXJpZ2h0IChjKSAyMDEyLCBOVklESUEgQ09SUE9S
+QVRJT04uICBBbGwgcmlnaHRzIHJlc2VydmVkLg0KPiA+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTIt
+MjAyMCwgTlZJRElBIENPUlBPUkFUSU9OLiAgQWxsIHJpZ2h0cyByZXNlcnZlZC4NCj4gPiAgICAq
+Lw0KPiA+DQo+ID4gICAjaWZuZGVmIF9fU09DX1RFR1JBX0ZVU0VfSF9fDQo+ID4gQEAgLTEyLDYg
+KzEyLDkgQEANCj4gPiAgICNkZWZpbmUgVEVHUkExMjQgICAgMHg0MA0KPiA+ICAgI2RlZmluZSBU
+RUdSQTEzMiAgICAweDEzDQo+ID4gICAjZGVmaW5lIFRFR1JBMjEwICAgIDB4MjENCj4gPiArI2Rl
+ZmluZSBURUdSQTE4NiAgICAgMHgxOA0KPiA+ICsjZGVmaW5lIFRFR1JBMTk0ICAgICAweDE5DQo+
+ID4gKyNkZWZpbmUgVEVHUkEyMzQgICAgIDB4MjMNCj4gPg0KPiA+ICAgI2RlZmluZSBURUdSQV9G
+VVNFX1NLVV9DQUxJQl8wICAgICAgMHhmMA0KPiA+ICAgI2RlZmluZSBURUdSQTMwX0ZVU0VfU0FU
+QV9DQUxJQiAgICAgMHgxMjQNCj4gPg0KPiANCj4gQWxzbywgY2FuIHlvdSBtYWtlIHRoZSBjb21t
+aXQgbWVzc2FnZSBzb21ldGhpbmcgbGlrZSAic29jL3RlZ3JhOiBBZGQgZGVmaW5lcw0KPiBmb3Ig
+VGVncmExODYrIGNoaXAgSURzIj8NCg0KT2ssIHdpbGwgcGxhY2UgdGhpcyBleGFjdGx5Lg0KDQpU
+aGFua3MgJiBSZWdhcmRzLA0KU2FuZGlwYW4NCg0KPiANCj4gdGhhbmtzLA0KPiBNaWtrbw0K
