@@ -1,46 +1,56 @@
-From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC] PCI: tegra: Revert raw_violation_fixup for tegra124
-Date: Fri, 26 Jun 2020 15:22:47 +0200
-Message-ID: <CABr+WT=Gy6vmB-GdCeR_q8ogB4b19LDqQV5mjNh5VvZ0BUJKig@mail.gmail.com>
-References: <20200420164304.28810-1-kwizart@gmail.com> <680b456a-b1ed-45f6-aa38-6ec49783af6d@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 0/4] Tegra Video Decoder driver power management
+ corrections
+Date: Fri, 26 Jun 2020 16:23:14 +0300
+Message-ID: <3adf74ea-3aba-ad93-977a-8b42ab653ee9@gmail.com>
+References: <20200624150847.22672-1-digetx@gmail.com>
+ <90323aa6-38b5-0a45-69a7-ccf380690a78@xs4all.nl>
+ <23cbaa18-9461-8f72-3d43-aa14cd0c1095@gmail.com>
+ <0e14df05-8299-52d6-df8f-0dd476f4109d@gmail.com>
+ <e41ff660-6c6c-d603-c767-34e7f4b4a23d@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <680b456a-b1ed-45f6-aa38-6ec49783af6d-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <e41ff660-6c6c-d603-c767-34e7f4b4a23d-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Le lun. 20 avr. 2020 =C3=A0 20:16, Manikanta Maddireddy
-<mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> a =C3=A9crit :
->
-> Thank you Nicolas for identifying the patch which caused the CmpltTO.
->
-> Little background on the fixup,
->  In the internal testing with dGPU on Tegra124, CmplTO is reported by
-> dGPU. This happened because FIFO queue in AFI(AXI to PCIe) module
-> get full by upstream posted writes. Back to back upstream writes
-> interleaved with infrequent reads, triggers RAW violation and CmpltTO.
-> This is fixed by reducing the posted write credits and by changing
-> updateFC timer frequency. These settings are fixed after stress test.
->
-> In the current case, RTL NIC is also reporting CmplTO. These settings
-> seems to be aggravating the issue instead of fixing it.
+26.06.2020 09:58, Hans Verkuil пишет:
+> On 26/06/2020 02:17, Dmitry Osipenko wrote:
+>> 24.06.2020 18:23, Dmitry Osipenko пишет:
+>>> 24.06.2020 18:16, Hans Verkuil пишет:
+>>>> On 24/06/2020 17:08, Dmitry Osipenko wrote:
+>>>>> Hello,
+>>>>>
+>>>>> This small series addresses a Runtime PM issue that was discovered during
+>>>>> of Tegra VI driver reviewing by balancing RPM usage count on RPM resume
+>>>>> failure. Secondly it fixes reboot on some Tegra devices due to bootloader
+>>>>> expecting VDE power partition to be ON at the boot time, which wasn't
+>>>>> happening in case of a warm re-booting (i.e. by PMC resetting).
+>>>>
+>>>> Can you rebase this on top of the media_tree master branch? I think a variant
+>>>> of patch 1 has already been applied. I found a mail today where you mentioned
+>>>> that you preferred your version (it looks like I missed that) so you'll need to
+>>>> rework patch 1.
+>>>
+>>> Hello Hans,
+>>>
+>>> I'll take a look at what patches has been applied, my bad for sending
+>>> the v2 too late. Thank you for the heads up!
+>>>
+>>
+>> I tested the already-applied variant of the patch 1 and it has the same
+>> behaviour as my variant, so it's okay.
+>>
+>> Would you want me to send a v3 without the conflicting patch 1 or you
+>> could apply the patches 2-4 from this series?
+>>
+> 
+> I'll mark 1/4 as superseded and will apply patches 2-4. No need for you
+> to do anything.
 
-Seems I've lost track of this  issue.
-
-@Manikanta Maddireddy  Do you plan to have some time to work on this ?
-
-If going with the revert I wonder if I need to revert more completely
-the original patch ? Since only tegra124 used the raw_violation_fixup,
-should I remove this case and the related function completely or leave
-the code as is ? (there will be few unused functions maybe). Given
-other fixup have been added at a later time, the full revert is less
-trivial.
-
-Right now this partial revert is enough to work reliably with the device.
-
-Thanks for your advice.
-I will send a non-RFC version then.
+Thank you!
