@@ -1,61 +1,46 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2] soc/tegra: Add defines for Tegra186+ chip IDs
-Date: Fri, 26 Jun 2020 13:21:49 +0100
-Message-ID: <bb9ae015-4fe8-59d4-48fd-6a99a7ae8bc9@nvidia.com>
-References: <1593171922-30632-1-git-send-email-spatra@nvidia.com>
+From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] PCI: tegra: Revert raw_violation_fixup for tegra124
+Date: Fri, 26 Jun 2020 15:22:47 +0200
+Message-ID: <CABr+WT=Gy6vmB-GdCeR_q8ogB4b19LDqQV5mjNh5VvZ0BUJKig@mail.gmail.com>
+References: <20200420164304.28810-1-kwizart@gmail.com> <680b456a-b1ed-45f6-aa38-6ec49783af6d@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1593171922-30632-1-git-send-email-spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <680b456a-b1ed-45f6-aa38-6ec49783af6d-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Le lun. 20 avr. 2020 =C3=A0 20:16, Manikanta Maddireddy
+<mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> a =C3=A9crit :
+>
+> Thank you Nicolas for identifying the patch which caused the CmpltTO.
+>
+> Little background on the fixup,
+>  In the internal testing with dGPU on Tegra124, CmplTO is reported by
+> dGPU. This happened because FIFO queue in AFI(AXI to PCIe) module
+> get full by upstream posted writes. Back to back upstream writes
+> interleaved with infrequent reads, triggers RAW violation and CmpltTO.
+> This is fixed by reducing the posted write credits and by changing
+> updateFC timer frequency. These settings are fixed after stress test.
+>
+> In the current case, RTL NIC is also reporting CmplTO. These settings
+> seems to be aggravating the issue instead of fixing it.
 
-On 26/06/2020 12:45, Sandipan Patra wrote:
-> Add the chip IDs for NVIDIA Tegra186, Tegra194 and Tegra234
-> SoC families.
-> 
-> Signed-off-by: Sandipan Patra <spatra-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V2:
->   - Precise commit message
-> 
->  include/soc/tegra/fuse.h | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-> index 252ea20..4a5236b 100644
-> --- a/include/soc/tegra/fuse.h
-> +++ b/include/soc/tegra/fuse.h
-> @@ -1,6 +1,6 @@
->  /* SPDX-License-Identifier: GPL-2.0-only */
->  /*
-> - * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-> + * Copyright (c) 2012-2020, NVIDIA CORPORATION.  All rights reserved.
->   */
->  
->  #ifndef __SOC_TEGRA_FUSE_H__
-> @@ -12,6 +12,9 @@
->  #define TEGRA124	0x40
->  #define TEGRA132	0x13
->  #define TEGRA210	0x21
-> +#define TEGRA186	0x18
-> +#define TEGRA194	0x19
-> +#define TEGRA234	0x23
->  
->  #define TEGRA_FUSE_SKU_CALIB_0	0xf0
->  #define TEGRA30_FUSE_SATA_CALIB	0x124
+Seems I've lost track of this  issue.
 
+@Manikanta Maddireddy  Do you plan to have some time to work on this ?
 
-Thanks. Looks good to me.
+If going with the revert I wonder if I need to revert more completely
+the original patch ? Since only tegra124 used the raw_violation_fixup,
+should I remove this case and the related function completely or leave
+the code as is ? (there will be few unused functions maybe). Given
+other fixup have been added at a later time, the full revert is less
+trivial.
 
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Right now this partial revert is enough to work reliably with the device.
 
-Jon
-
--- 
-nvpublic
+Thanks for your advice.
+I will send a non-RFC version then.
