@@ -1,64 +1,54 @@
-From: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC] PCI: tegra: Revert raw_violation_fixup for tegra124
-Date: Fri, 26 Jun 2020 20:00:13 +0530
-Message-ID: <4acabca8-e2fc-b660-0c37-c5f332b99084@nvidia.com>
-References: <20200420164304.28810-1-kwizart@gmail.com>
- <680b456a-b1ed-45f6-aa38-6ec49783af6d@nvidia.com>
- <CABr+WT=Gy6vmB-GdCeR_q8ogB4b19LDqQV5mjNh5VvZ0BUJKig@mail.gmail.com>
+From: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [TEGRA194_CPUFREQ PATCH v4 0/4] Add cpufreq driver for Tegra194
+Date: Fri, 26 Jun 2020 21:13:52 +0530
+Message-ID: <1593186236-12760-1-git-send-email-sumitg@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CABr+WT=Gy6vmB-GdCeR_q8ogB4b19LDqQV5mjNh5VvZ0BUJKig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+The patch series adds cpufreq driver for Tegra194 SOC.
+Incorporated the feedback on previous version patchset.
+Please consider this patch series for merging in 5.9.
 
-On 26-Jun-20 6:52 PM, Nicolas Chauvet wrote:
-> External email: Use caution opening links or attachments
->
->
-> Le lun. 20 avr. 2020 =C3=A0 20:16, Manikanta Maddireddy
-> <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> a =C3=A9crit :
->> Thank you Nicolas for identifying the patch which caused the CmpltTO.
->>
->> Little background on the fixup,
->>  In the internal testing with dGPU on Tegra124, CmplTO is reported by
->> dGPU. This happened because FIFO queue in AFI(AXI to PCIe) module
->> get full by upstream posted writes. Back to back upstream writes
->> interleaved with infrequent reads, triggers RAW violation and CmpltTO.
->> This is fixed by reducing the posted write credits and by changing
->> updateFC timer frequency. These settings are fixed after stress test.
->>
->> In the current case, RTL NIC is also reporting CmplTO. These settings
->> seems to be aggravating the issue instead of fixing it.
-> Seems I've lost track of this  issue.
->
-> @Manikanta Maddireddy  Do you plan to have some time to work on this ?
+v3[3] -> v4
+- Open code LOOP_FOR_EACH_CPU_OF_CLUSTER macro[Viresh]
+- Delete unused funciton map_freq_to_ndiv[Viresh, kernel test bot]
+- Remove flush_workqueue from free_resources[Viresh]
 
-Unfortunately, I don't have access to T124 platform because of lock down.
+v2[2] -> v3
+- Set same policy for all cpus in a cluster[Viresh].
+- Add compatible string for CPU Complex under cpus node[Thierry].
+- Add reference to bpmp node under cpus node[Thierry].
+- Bind cpufreq driver to CPU Complex compatible string[Thierry].
+- Remove patch to get bpmp data as now using cpus node to get that[Thierry].
 
-> If going with the revert I wonder if I need to revert more completely
-> the original patch ? Since only tegra124 used the raw_violation_fixup,
-> should I remove this case and the related function completely or leave
-> the code as is ? (there will be few unused functions maybe). Given
-> other fixup have been added at a later time, the full revert is less
-> trivial.
+v1[1] -> v2:
+- Remove cpufreq_lock mutex from tegra194_cpufreq_set_target [Viresh].
+- Remove CPUFREQ_ASYNC_NOTIFICATION flag [Viresh].
+- Remove redundant _begin|end() call from tegra194_cpufreq_set_target.
+- Rename opp_table to freq_table [Viresh].
 
-There are no unused functions, small piece of code under raw_violation_fixu=
-p
-check will become redundant. Yes, revert will give conflicts.
-I may not get a chance to work on this bug in coming months. If possible,
-please do complete revert. Once I get a chance to work on this bug, I will
-send out new patch.
+Sumit Gupta (4):
+  dt-bindings: arm: Add t194 ccplex compatible and bpmp property
+  arm64: tegra: Add t194 ccplex compatible and bpmp property
+  cpufreq: Add Tegra194 cpufreq driver
+  arm64: defconfig: Enable CONFIG_ARM_TEGRA194_CPUFREQ
 
--Manikanta
+ Documentation/devicetree/bindings/arm/cpus.yaml |   9 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi        |   2 +
+ arch/arm64/configs/defconfig                    |   1 +
+ drivers/cpufreq/Kconfig.arm                     |   6 +
+ drivers/cpufreq/Makefile                        |   1 +
+ drivers/cpufreq/tegra194-cpufreq.c              | 396 ++++++++++++++++++++++++
+ 6 files changed, 415 insertions(+)
+ create mode 100644 drivers/cpufreq/tegra194-cpufreq.c
 
->
-> Right now this partial revert is enough to work reliably with the device.
->
-> Thanks for your advice.
-> I will send a non-RFC version then.
+[1] https://marc.info/?t=157539452300001&r=1&w=2
+[2] https://marc.info/?l=linux-tegra&m=158602857106213&w=2
+[3] https://marc.info/?l=linux-pm&m=159283376010084&w=2
+-- 
+2.7.4
