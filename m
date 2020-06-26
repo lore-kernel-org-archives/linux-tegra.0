@@ -1,56 +1,72 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 0/4] Tegra Video Decoder driver power management
- corrections
-Date: Fri, 26 Jun 2020 16:23:14 +0300
-Message-ID: <3adf74ea-3aba-ad93-977a-8b42ab653ee9@gmail.com>
-References: <20200624150847.22672-1-digetx@gmail.com>
- <90323aa6-38b5-0a45-69a7-ccf380690a78@xs4all.nl>
- <23cbaa18-9461-8f72-3d43-aa14cd0c1095@gmail.com>
- <0e14df05-8299-52d6-df8f-0dd476f4109d@gmail.com>
- <e41ff660-6c6c-d603-c767-34e7f4b4a23d@xs4all.nl>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [RFC] Host1x/TegraDRM UAPI
+Date: Fri, 26 Jun 2020 15:38:37 +0200
+Message-ID: <20200626133837.GE3278063@phenom.ffwll.local>
+References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
+ <CACO55ttfwQDwnO8ep=YKBgo+HYBg=zLDLfBKtH67MrqKzMWw_w@mail.gmail.com>
+ <20200626114040.GA3143884@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e41ff660-6c6c-d603-c767-34e7f4b4a23d-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200626114040.GA3143884@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Karol Herbst <kherbst-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-26.06.2020 09:58, Hans Verkuil пишет:
-> On 26/06/2020 02:17, Dmitry Osipenko wrote:
->> 24.06.2020 18:23, Dmitry Osipenko пишет:
->>> 24.06.2020 18:16, Hans Verkuil пишет:
->>>> On 24/06/2020 17:08, Dmitry Osipenko wrote:
->>>>> Hello,
->>>>>
->>>>> This small series addresses a Runtime PM issue that was discovered during
->>>>> of Tegra VI driver reviewing by balancing RPM usage count on RPM resume
->>>>> failure. Secondly it fixes reboot on some Tegra devices due to bootloader
->>>>> expecting VDE power partition to be ON at the boot time, which wasn't
->>>>> happening in case of a warm re-booting (i.e. by PMC resetting).
->>>>
->>>> Can you rebase this on top of the media_tree master branch? I think a variant
->>>> of patch 1 has already been applied. I found a mail today where you mentioned
->>>> that you preferred your version (it looks like I missed that) so you'll need to
->>>> rework patch 1.
->>>
->>> Hello Hans,
->>>
->>> I'll take a look at what patches has been applied, my bad for sending
->>> the v2 too late. Thank you for the heads up!
->>>
->>
->> I tested the already-applied variant of the patch 1 and it has the same
->> behaviour as my variant, so it's okay.
->>
->> Would you want me to send a v3 without the conflicting patch 1 or you
->> could apply the patches 2-4 from this series?
->>
+On Fri, Jun 26, 2020 at 01:40:40PM +0200, Thierry Reding wrote:
+> On Fri, Jun 26, 2020 at 01:06:58PM +0200, Karol Herbst wrote:
+> > On Tue, Jun 23, 2020 at 3:03 PM Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org> wrote:
+> > >
+> > > # Host1x/TegraDRM UAPI proposal
+> > >
+> > > This is a proposal for a stable UAPI for Host1x and TegraDRM, to replace
+> > > the current TegraDRM UAPI that is behind `STAGING` and quite obsolete in
+> > > many ways.
+> > >
+> > > I haven't written any implementation yet -- I'll do that once there is
+> > > some agreement on the high-level design.
+> > >
+> > > Current open items:
+> > >
+> > > * The syncpoint UAPI allows userspace to create sync_file FDs with
+> > > arbitrary syncpoint fences. dma_fence code currently seems to assume all
+> > > fences will be signaled, which would not necessarily be the case with
+> > > this interface.
+> > > * Previously present GEM IOCTLs (GEM_CREATE, GEM_MMAP) are not present.
+> > > Not sure if they are still needed.
+> > >
+> > 
+> > Hi, as this wasn't addressed here (and sorry if I missed it): is there
+> > an open source userspace making use of this UAPI? Because this is
+> > something which needs to be seen before it can be included at all.
 > 
-> I'll mark 1/4 as superseded and will apply patches 2-4. No need for you
-> to do anything.
+> There's a set of commits that implement an earlier draft here:
+> 
+>     https://github.com/thierryreding/linux/tree/for-5.6/drm-tegra-destage-abi
+> 
+> and corresponding changes to libdrm to make use of that and implement
+> tests using the various generations of VIC here:
+> 
+>     https://cgit.freedesktop.org/~tagr/drm/log/
+> 
+> Before actually jumping to an implementation we wanted to go over the
+> design a bit more to avoid wasting a lot of work, like we've done in
+> the past. Turns out it isn't easy to get everyone to agree on a good
+> ABI. Who would've thought? =)
+> 
+> I expect that once the discussion around the ABI settles Mikko will
+> start on implementing this ABI in the kernel and we'll update the
+> libdrm patches to make use of the new ABI as well.
 
-Thank you!
+Do we have more than libdrm and tests for this, like something somewhat
+functional? Since tegradrm landed years ago we've refined the criteria a
+bit in this regard, latest version is explicit in that it needs to be
+something that's functional (for end-users in some form), not just
+infrastructure and tests.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
