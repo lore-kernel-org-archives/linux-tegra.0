@@ -1,89 +1,82 @@
 From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI (drm_tegra_submit_relocation)
-Date: Fri, 26 Jun 2020 12:01:00 +0300
-Message-ID: <9486b5c7-7588-34fd-bb60-a3b0f252f113@kapsi.fi>
+Subject: Re: [RFC] Host1x/TegraDRM UAPI
+Date: Fri, 26 Jun 2020 12:05:08 +0300
+Message-ID: <5e5fcd38-cc41-a3e8-6688-2b38d6476326@kapsi.fi>
 References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <7cc0d47b-024a-263e-3b63-1d1184b462b3@gmail.com>
- <8d60baf4-45e8-296a-279e-dc105966361c@kapsi.fi>
- <eb3cac23-cd8c-732b-684c-c2d531de00a2@gmail.com>
+ <c6642ebd-c9f1-eab0-ff6d-109698af73e0@gmail.com>
+ <5c0aa939-d722-5034-6328-4df5be8ee3c6@kapsi.fi>
+ <c96af3cb-a15c-dd3f-ac5b-b0a56d2ed6d9@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <eb3cac23-cd8c-732b-684c-c2d531de00a2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <c96af3cb-a15c-dd3f-ac5b-b0a56d2ed6d9-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/26/20 1:50 AM, Dmitry Osipenko wrote:
-> 25.06.2020 12:27, Mikko Perttunen пишет:
->> On 6/25/20 1:33 AM, Dmitry Osipenko wrote:
+On 6/26/20 2:24 AM, Dmitry Osipenko wrote:
+> 25.06.2020 12:16, Mikko Perttunen пишет:
+>> On 6/25/20 2:11 AM, Dmitry Osipenko wrote:
 >>> 23.06.2020 15:09, Mikko Perttunen пишет:
->>>> struct drm_tegra_submit_relocation {
->>>>           /* [in] Index of GATHER or GATHER_UPTR command in commands. */
->>>>           __u32 gather_command_index;
->>>>
->>>>           /*
->>>>            * [in] Mapping handle (obtained through CHANNEL_MAP) of the
->>>> memory
->>>>            *   the address of which will be patched in.
->>>>            */
->>>>           __u32 mapping_id;
->>>>
->>>>           /*
->>>>            * [in] Offset in the gather that will be patched.
->>>>            */
->>>>           __u64 gather_offset;
->>>>
->>>>           /*
->>>>            * [in] Offset in target buffer whose paddr/IOVA will be
->>>> written
->>>>            *   to the gather.
->>>>            */
->>>>           __u64 target_offset;
->>>>
->>>>           /*
->>>>            * [in] Number of bits the resulting address will be logically
->>>>            *   shifted right before writing to gather.
->>>>            */
->>>>           __u32 shift;
->>>>
->>>>           __u32 reserved[1];
->>>> };
+>>>> /* Command is an opcode gather from a GEM handle */
+>>>> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER             0
+>>>> /* Command is an opcode gather from a user pointer */
+>>>> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER_UPTR        1
 >>>
->>> We will also need read/write direction flag here for the
->>> DMA-reservations set up, it will be used for the implicit BO fencing by
->>> the job's scheduler.
+>>> I'm a bit dubious about whether we really need to retain the non-UPTR
+>>> variant. The memory-copying overhead is negligible because cmdstream's
+>>> data usually is hot in CPU's cache
+>>>
+>>> IIRC, the most (if not all) of the modern DRM drivers drivers use the
+>>> usrptr-only for the cmdstream.
+>>>
+>>> At least there is no any real-world userspace example today that could
+>>> benefit from a non-UPTR variant.
+>>>
+>>> I'm suggesting to leave out the non-UPTR gather variant for now, keeping
+>>> it in mind as a potential future extension of the submission UAPI. Any
+>>> objections?
 >>>
 >>
->> Ideally on newer chips with context isolation, we no longer know what
->> DMA-BUFs are being used by the job at submit time - they would just be
->> pointers after being MAPped.
+>> Sure, we should be able to drop it. Downstream userspace is using it,
+>> but we should be able to fix that. I was thinking that we can directly
+>> map the user pages and point the gather to them without copying - that
+>> way we wouldn't need to make DMA allocations inside the driver for every
+>> submit.
 > 
-> The DMA-BUFs themselves shouldn't be needed, but GEMs should.
-
-Yes, I meant to say GEM instead of DMA-BUF.
-
+> We will need to create a Host1x DMA pool and then the dynamic
+> allocations will be cheap. This is an implementation detail that we can
+> discuss separately.
 > 
->> Do you know how other GPUs deal with DMA reservations - I expect
->> separate MAP and SUBMIT steps would be pretty common?
+> We will need the UPTR anyways for the older Tergas because we need to
+> validate the cmdstreams and it's much more efficient to copy from UPTR
+> than from the uncacheable memory.
 > 
-> I can't instantly recall what other drivers do, could be worthwhile to
-> take a closer look.
+> The non-UPTR variant will be fine to add if you'll have a realworld
+> example that demonstrates a noticeable performance difference.
+> 
+> Previously, I thought that there will be some perf difference if GR3D
+> shaders are moved into the "insert-opcode" gather, but it was negligible
+> once I implemented it and it should be even more negligible on a modern
+> hardware.
+> 
+>> (On early Tegras we could just copy into the pushbuffer but that
+>> won't work for newer ones).
+> 
+> Yes, we should copy data into a gather and then push it into channel's
+> pushbuffer. Just like it works with the current upstream driver.
+> 
+> Once all the UAPI will be settled, we'll also need to discuss the
+> pushbuffer's implementation because the current driver has some problems
+> with it.
+> 
 
-I'll see if I can find some similar situations in other drivers.
+True, for earlier Tegras we'll need to copy anyway. So let's just 
+implement copying for now, while making sure that extending to directly 
+mapping pages will be possible later (don't know why it wouldn't be), 
+and implement direct mapping or GEM gathers later if needed.
 
 Mikko
-
-> 
->> Do you have to
->> pass the DMA-BUF to both steps (i.e. do IOMMU mapping during MAP, and
->> manage reservations at SUBMIT)?
-> 
-> Yes, this sounds good to me if DMA-BUF part is replaced with a GEM.
-> 
-> Please see my other reply regarding the MAP IOCTL where I'm suggesting
-> to back mapping IDs with a GEM.
->
