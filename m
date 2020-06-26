@@ -1,72 +1,67 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI
-Date: Fri, 26 Jun 2020 15:38:37 +0200
-Message-ID: <20200626133837.GE3278063@phenom.ffwll.local>
-References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <CACO55ttfwQDwnO8ep=YKBgo+HYBg=zLDLfBKtH67MrqKzMWw_w@mail.gmail.com>
- <20200626114040.GA3143884@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 4/4] media: staging: tegra-vde: Power-cycle hardware on
+ probe
+Date: Fri, 26 Jun 2020 16:42:35 +0300
+Message-ID: <1c306d0a-571b-dc7c-3a61-0149dfb0e2be@gmail.com>
+References: <20200624150847.22672-1-digetx@gmail.com>
+ <20200624150847.22672-5-digetx@gmail.com> <20200626074818.GD3109062@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200626114040.GA3143884@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Karol Herbst <kherbst-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200626074818.GD3109062@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 01:40:40PM +0200, Thierry Reding wrote:
-> On Fri, Jun 26, 2020 at 01:06:58PM +0200, Karol Herbst wrote:
-> > On Tue, Jun 23, 2020 at 3:03 PM Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org> wrote:
-> > >
-> > > # Host1x/TegraDRM UAPI proposal
-> > >
-> > > This is a proposal for a stable UAPI for Host1x and TegraDRM, to replace
-> > > the current TegraDRM UAPI that is behind `STAGING` and quite obsolete in
-> > > many ways.
-> > >
-> > > I haven't written any implementation yet -- I'll do that once there is
-> > > some agreement on the high-level design.
-> > >
-> > > Current open items:
-> > >
-> > > * The syncpoint UAPI allows userspace to create sync_file FDs with
-> > > arbitrary syncpoint fences. dma_fence code currently seems to assume all
-> > > fences will be signaled, which would not necessarily be the case with
-> > > this interface.
-> > > * Previously present GEM IOCTLs (GEM_CREATE, GEM_MMAP) are not present.
-> > > Not sure if they are still needed.
-> > >
-> > 
-> > Hi, as this wasn't addressed here (and sorry if I missed it): is there
-> > an open source userspace making use of this UAPI? Because this is
-> > something which needs to be seen before it can be included at all.
+26.06.2020 10:48, Thierry Reding пишет:
+> On Wed, Jun 24, 2020 at 06:08:47PM +0300, Dmitry Osipenko wrote:
+>> VDE partition is left turned ON after bootloader on most devices, hence
+>> let's ensure that it's turned OFF in order to lower power leakage while
+>> hardware is idling by turning it ON and OFF during of the driver's probe.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/staging/media/tegra-vde/vde.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
+>> index b64e35b86fb4..3be96c36bf43 100644
+>> --- a/drivers/staging/media/tegra-vde/vde.c
+>> +++ b/drivers/staging/media/tegra-vde/vde.c
+>> @@ -1068,6 +1068,14 @@ static int tegra_vde_probe(struct platform_device *pdev)
+>>  	pm_runtime_use_autosuspend(dev);
+>>  	pm_runtime_set_autosuspend_delay(dev, 300);
+>>  
+>> +	/*
+>> +	 * VDE partition may be left ON after bootloader, hence let's
+>> +	 * power-cycle it in order to put hardware into a predictable lower
+>> +	 * power state.
+>> +	 */
+>> +	pm_runtime_get_sync(dev);
+>> +	pm_runtime_put(dev);
+>> +
+>>  	return 0;
+>>  
+>>  err_deinit_iommu:
 > 
-> There's a set of commits that implement an earlier draft here:
-> 
->     https://github.com/thierryreding/linux/tree/for-5.6/drm-tegra-destage-abi
-> 
-> and corresponding changes to libdrm to make use of that and implement
-> tests using the various generations of VIC here:
-> 
->     https://cgit.freedesktop.org/~tagr/drm/log/
-> 
-> Before actually jumping to an implementation we wanted to go over the
-> design a bit more to avoid wasting a lot of work, like we've done in
-> the past. Turns out it isn't easy to get everyone to agree on a good
-> ABI. Who would've thought? =)
-> 
-> I expect that once the discussion around the ABI settles Mikko will
-> start on implementing this ABI in the kernel and we'll update the
-> libdrm patches to make use of the new ABI as well.
+> Shouldn't this happen automatically? My understanding is that power
+> domains are turned on automatically before ->probe() and then unless a
+> runtime PM reference is taken during ->probe() it will get turned off
+> again after ->probe()?
 
-Do we have more than libdrm and tests for this, like something somewhat
-functional? Since tegradrm landed years ago we've refined the criteria a
-bit in this regard, latest version is explicit in that it needs to be
-something that's functional (for end-users in some form), not just
-infrastructure and tests.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Older Tegra SoCs haven't been converted to use the generic power-domain
+API and today's VDE driver supports only T20 and T30 SoCs.
+
+> Is that not happening? Is auto-suspend perhaps getting in the way
+> somehow?
+
+We're manually toggling the PD using legacy Tegra-PD API in the driver's
+RPM callbacks, that's why the RPM needs to be toggled manually as well.
+
+Perhaps this hunk could be removed if older Tergas would get a genpd
+support. I guess it shouldn't be difficult to implement the genpd
+support, but then there will be a compatibility trouble with older DTs,
+so perhaps it's not really worth the effort.
