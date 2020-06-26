@@ -1,72 +1,46 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI
-Date: Fri, 26 Jun 2020 02:24:26 +0300
-Message-ID: <c96af3cb-a15c-dd3f-ac5b-b0a56d2ed6d9@gmail.com>
-References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <c6642ebd-c9f1-eab0-ff6d-109698af73e0@gmail.com>
- <5c0aa939-d722-5034-6328-4df5be8ee3c6@kapsi.fi>
+Subject: Re: [PATCH v2 0/4] Tegra Video Decoder driver power management
+ corrections
+Date: Fri, 26 Jun 2020 03:17:21 +0300
+Message-ID: <0e14df05-8299-52d6-df8f-0dd476f4109d@gmail.com>
+References: <20200624150847.22672-1-digetx@gmail.com>
+ <90323aa6-38b5-0a45-69a7-ccf380690a78@xs4all.nl>
+ <23cbaa18-9461-8f72-3d43-aa14cd0c1095@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5c0aa939-d722-5034-6328-4df5be8ee3c6-/1wQRMveznE@public.gmane.org>
+In-Reply-To: <23cbaa18-9461-8f72-3d43-aa14cd0c1095-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-25.06.2020 12:16, Mikko Perttunen пишет:
-> On 6/25/20 2:11 AM, Dmitry Osipenko wrote:
->> 23.06.2020 15:09, Mikko Perttunen пишет:
->>> /* Command is an opcode gather from a GEM handle */
->>> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER             0
->>> /* Command is an opcode gather from a user pointer */
->>> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER_UPTR        1
+24.06.2020 18:23, Dmitry Osipenko пишет:
+> 24.06.2020 18:16, Hans Verkuil пишет:
+>> On 24/06/2020 17:08, Dmitry Osipenko wrote:
+>>> Hello,
+>>>
+>>> This small series addresses a Runtime PM issue that was discovered during
+>>> of Tegra VI driver reviewing by balancing RPM usage count on RPM resume
+>>> failure. Secondly it fixes reboot on some Tegra devices due to bootloader
+>>> expecting VDE power partition to be ON at the boot time, which wasn't
+>>> happening in case of a warm re-booting (i.e. by PMC resetting).
 >>
->> I'm a bit dubious about whether we really need to retain the non-UPTR
->> variant. The memory-copying overhead is negligible because cmdstream's
->> data usually is hot in CPU's cache
->>
->> IIRC, the most (if not all) of the modern DRM drivers drivers use the
->> usrptr-only for the cmdstream.
->>
->> At least there is no any real-world userspace example today that could
->> benefit from a non-UPTR variant.
->>
->> I'm suggesting to leave out the non-UPTR gather variant for now, keeping
->> it in mind as a potential future extension of the submission UAPI. Any
->> objections?
->>
+>> Can you rebase this on top of the media_tree master branch? I think a variant
+>> of patch 1 has already been applied. I found a mail today where you mentioned
+>> that you preferred your version (it looks like I missed that) so you'll need to
+>> rework patch 1.
 > 
-> Sure, we should be able to drop it. Downstream userspace is using it,
-> but we should be able to fix that. I was thinking that we can directly
-> map the user pages and point the gather to them without copying - that
-> way we wouldn't need to make DMA allocations inside the driver for every
-> submit.
+> Hello Hans,
+> 
+> I'll take a look at what patches has been applied, my bad for sending
+> the v2 too late. Thank you for the heads up!
+> 
 
-We will need to create a Host1x DMA pool and then the dynamic
-allocations will be cheap. This is an implementation detail that we can
-discuss separately.
+I tested the already-applied variant of the patch 1 and it has the same
+behaviour as my variant, so it's okay.
 
-We will need the UPTR anyways for the older Tergas because we need to
-validate the cmdstreams and it's much more efficient to copy from UPTR
-than from the uncacheable memory.
-
-The non-UPTR variant will be fine to add if you'll have a realworld
-example that demonstrates a noticeable performance difference.
-
-Previously, I thought that there will be some perf difference if GR3D
-shaders are moved into the "insert-opcode" gather, but it was negligible
-once I implemented it and it should be even more negligible on a modern
-hardware.
-
-> (On early Tegras we could just copy into the pushbuffer but that
-> won't work for newer ones).
-
-Yes, we should copy data into a gather and then push it into channel's
-pushbuffer. Just like it works with the current upstream driver.
-
-Once all the UAPI will be settled, we'll also need to discuss the
-pushbuffer's implementation because the current driver has some problems
-with it.
+Would you want me to send a v3 without the conflicting patch 1 or you
+could apply the patches 2-4 from this series?
