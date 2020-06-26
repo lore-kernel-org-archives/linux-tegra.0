@@ -1,87 +1,89 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 4/4] media: staging: tegra-vde: Power-cycle hardware
- on probe
-Date: Fri, 26 Jun 2020 09:48:18 +0200
-Message-ID: <20200626074818.GD3109062@ulmo>
-References: <20200624150847.22672-1-digetx@gmail.com>
- <20200624150847.22672-5-digetx@gmail.com>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [RFC] Host1x/TegraDRM UAPI (drm_tegra_submit_relocation)
+Date: Fri, 26 Jun 2020 12:01:00 +0300
+Message-ID: <9486b5c7-7588-34fd-bb60-a3b0f252f113@kapsi.fi>
+References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
+ <7cc0d47b-024a-263e-3b63-1d1184b462b3@gmail.com>
+ <8d60baf4-45e8-296a-279e-dc105966361c@kapsi.fi>
+ <eb3cac23-cd8c-732b-684c-c2d531de00a2@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VMt1DrMGOVs3KQwf"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20200624150847.22672-5-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <eb3cac23-cd8c-732b-684c-c2d531de00a2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 6/26/20 1:50 AM, Dmitry Osipenko wrote:
+> 25.06.2020 12:27, Mikko Perttunen пишет:
+>> On 6/25/20 1:33 AM, Dmitry Osipenko wrote:
+>>> 23.06.2020 15:09, Mikko Perttunen пишет:
+>>>> struct drm_tegra_submit_relocation {
+>>>>           /* [in] Index of GATHER or GATHER_UPTR command in commands. */
+>>>>           __u32 gather_command_index;
+>>>>
+>>>>           /*
+>>>>            * [in] Mapping handle (obtained through CHANNEL_MAP) of the
+>>>> memory
+>>>>            *   the address of which will be patched in.
+>>>>            */
+>>>>           __u32 mapping_id;
+>>>>
+>>>>           /*
+>>>>            * [in] Offset in the gather that will be patched.
+>>>>            */
+>>>>           __u64 gather_offset;
+>>>>
+>>>>           /*
+>>>>            * [in] Offset in target buffer whose paddr/IOVA will be
+>>>> written
+>>>>            *   to the gather.
+>>>>            */
+>>>>           __u64 target_offset;
+>>>>
+>>>>           /*
+>>>>            * [in] Number of bits the resulting address will be logically
+>>>>            *   shifted right before writing to gather.
+>>>>            */
+>>>>           __u32 shift;
+>>>>
+>>>>           __u32 reserved[1];
+>>>> };
+>>>
+>>> We will also need read/write direction flag here for the
+>>> DMA-reservations set up, it will be used for the implicit BO fencing by
+>>> the job's scheduler.
+>>>
+>>
+>> Ideally on newer chips with context isolation, we no longer know what
+>> DMA-BUFs are being used by the job at submit time - they would just be
+>> pointers after being MAPped.
+> 
+> The DMA-BUFs themselves shouldn't be needed, but GEMs should.
 
---VMt1DrMGOVs3KQwf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, I meant to say GEM instead of DMA-BUF.
 
-On Wed, Jun 24, 2020 at 06:08:47PM +0300, Dmitry Osipenko wrote:
-> VDE partition is left turned ON after bootloader on most devices, hence
-> let's ensure that it's turned OFF in order to lower power leakage while
-> hardware is idling by turning it ON and OFF during of the driver's probe.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/staging/media/tegra-vde/vde.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/medi=
-a/tegra-vde/vde.c
-> index b64e35b86fb4..3be96c36bf43 100644
-> --- a/drivers/staging/media/tegra-vde/vde.c
-> +++ b/drivers/staging/media/tegra-vde/vde.c
-> @@ -1068,6 +1068,14 @@ static int tegra_vde_probe(struct platform_device =
-*pdev)
->  	pm_runtime_use_autosuspend(dev);
->  	pm_runtime_set_autosuspend_delay(dev, 300);
-> =20
-> +	/*
-> +	 * VDE partition may be left ON after bootloader, hence let's
-> +	 * power-cycle it in order to put hardware into a predictable lower
-> +	 * power state.
-> +	 */
-> +	pm_runtime_get_sync(dev);
-> +	pm_runtime_put(dev);
-> +
->  	return 0;
-> =20
->  err_deinit_iommu:
+> 
+>> Do you know how other GPUs deal with DMA reservations - I expect
+>> separate MAP and SUBMIT steps would be pretty common?
+> 
+> I can't instantly recall what other drivers do, could be worthwhile to
+> take a closer look.
 
-Shouldn't this happen automatically? My understanding is that power
-domains are turned on automatically before ->probe() and then unless a
-runtime PM reference is taken during ->probe() it will get turned off
-again after ->probe()?
+I'll see if I can find some similar situations in other drivers.
 
-Is that not happening? Is auto-suspend perhaps getting in the way
-somehow?
+Mikko
 
-Thierry
-
---VMt1DrMGOVs3KQwf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl71qEIACgkQ3SOs138+
-s6F2BRAAqITs8YO7f90qNTucc+6aVUaPhcOoeLRSA384Hh4M4RfzKwKV1ivLrL4H
-VkMWU+BB4N5ABiJxNbLnwuvh6O7y9vg1l7ovi/lg4qHTj96GmdZAuXpEFsqG2VWY
-WMUX60Wc3x6vqhJPVnroCRj++WmA74nlzieWnzrR36wF91p7lpisLNjlGY90VrOq
-nSatzzNO2Na9BEQnVzGqxYU7OThPB/MHJOviY5X21SXWCluc40tb0Qz4d8pbDUqB
-aXQ0uMNrf8kgX0YyARa+R+U8op8R9oRTkgRCf1SHwifbb2dlnjIw2sw27ORyfzr8
-h87kcTOlkTZhxehUG7eIHpyIUmgCWpXtBwt+Blww0o28LxW0+yEQHymenMlUNtY6
-18mSdMQGO2k6dwgWa2znsETezLrv1lYX2nT6FxZ6niTzYZRPiA2WJ4YTa79h5yDJ
-KtbvBz9b2kKzMl6R5084U2P8fh7tZH2oTs3W6n3f/NnA5+eGIBeCKu1wLQrh1M9u
-2bTTPOrJOhAQMZiJCq6CJ4Bmr5+X7Cmp5bTkNOiY9lBweTpWcJHAWqgybEHCajEf
-0dTnrWm4BVwGmfYUDNsm8rffkO/avUUvYBC21kZr2ATYWkrYQyheooiYC5qNLJFL
-lJClO+wrkJuTqWiyB0BdOJ90jHnFMolBZOjTN/Ot7BkPCgWo8uE=
-=0TFC
------END PGP SIGNATURE-----
-
---VMt1DrMGOVs3KQwf--
+> 
+>> Do you have to
+>> pass the DMA-BUF to both steps (i.e. do IOMMU mapping during MAP, and
+>> manage reservations at SUBMIT)?
+> 
+> Yes, this sounds good to me if DMA-BUF part is replaced with a GEM.
+> 
+> Please see my other reply regarding the MAP IOCTL where I'm suggesting
+> to back mapping IDs with a GEM.
+>
