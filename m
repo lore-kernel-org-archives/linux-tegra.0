@@ -1,45 +1,40 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI (drm_tegra_submit_syncpt_incr)
-Date: Sun, 28 Jun 2020 00:47:13 +0300
-Message-ID: <9ddfedff-f465-b22d-5d6f-c7ba01731455@gmail.com>
-References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
+From: lookman joe <mrlookmanjoe-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: (unknown)
+Date: Sat, 27 Jun 2020 22:58:17 +0100
+Message-ID: <CAG9X5Hfvk-fmbqs9+RtHRqyUu35f9-A5+EbwjPrw9eVNH09ftg__22795.0408517913$1593295432$gmane$org@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9b06b7ec-f952-2561-7afb-5653514cd5d3-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-23.06.2020 15:09, Mikko Perttunen пишет:
-> struct drm_tegra_submit_syncpt_incr {
->         /*
->          * [in] Syncpoint FD of the syncpoint that the job will
->          *   increment.
->          */
->         __s32 syncpt_fd;
-> 
->         /*
->          * [in] Number of increments that the job will do.
->          */
->         __u32 num_incrs;
-> 
->         /*
->          * [out] Value the syncpoint will have once all increments have
->          *   executed.
->          */
->         __u32 fence_value;
-> 
->         __u32 reserved[1];
-> };
+MONEY-GRAM TRANSFERRED PAYMENT INFO:
 
-The job should be considered executed once the final sync point is
-incremented.
+Below is the sender=E2=80=99s information
 
-Hence, there should be only one sync point per-job for increment, why
-would you ever need more than one?
 
-Could you please explain what this submit_syncpt_incr is about?
+
+1. MG. REFERENCE NO#: 36360857
+
+2. SENDER'S NAME: Johnson Williams
+
+3. AMOUNT TO PICKUP: US$10,000
+
+
+
+Go to any Money Gram office near you and pick up the payment Track the
+
+Reference Number by visiting and click the link below
+
+(https://secure.moneygram.com/embed/track) and enter the Reference
+
+Number: 36360857 and the Last Name: Williams, you will find the payment
+
+available for pickup instantly.
+
+Yours Sincerely,
+
+Mrs. Helen Marvis
+United Nations Liaison Office
+Directorate for International Payments
