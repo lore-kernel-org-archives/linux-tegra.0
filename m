@@ -1,7 +1,7 @@
 From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 12/23] ASoC: simple-card: Support DPCM DAI link with multiple Codecs
-Date: Sat, 27 Jun 2020 10:23:34 +0530
-Message-ID: <1593233625-14961-13-git-send-email-spujar@nvidia.com>
+Subject: [PATCH v4 13/23] ASoC: simple-card: DPCM DAI link direction as per DAI capability
+Date: Sat, 27 Jun 2020 10:23:35 +0530
+Message-ID: <1593233625-14961-14-git-send-email-spujar@nvidia.com>
 References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,84 +12,92 @@ To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gm
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The simple-card driver supports multiple CPU and single Codec entries
-for DPCM DAI links. In some cases it is required to have multiple
-CPU/Codecs. Currently parsing logic for DPCM link loops over all
-children of DAI link but assumes that there is a single Codec entry.
-When DAI link has multiple Codecs it considers only the first Codec
-entry and remaining Codecs are wrongly treated as CPU. This happens
-because first Codec is used as reference for parsing all other child
-nodes.
+The soc_new_pcm() fails for DAI link having DAI which supports a
+single stream direction of either PLAYBACK or CAPTURE. For example
+it fails for Microphone which can support CAPTURE stream only. This
+happens because simple-card driver by default populates both stream
+directions.
 
-This is fixed by using string comparisons of child node names instead
-of node pointer reference in simple_dai_link_of_dpcm(). So All CPU
-get parsed in first run and all Codecs in subsequent run. After this
-simple_dai_link_of_dpcm() does not required 'codec' argument and hence
-is removed.
+This can be fixed by populating directions based on DAI capability.
+For 'CPU<->Dummy' DAI links CPU is used to setup the direction and
+similarly Codec is used for 'Dummy<->Codec' DAI links.
 
 Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/generic/simple-card.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ sound/soc/generic/simple-card.c | 27 +++++++++++++++++++++++++--
+ sound/soc/soc-dai.c             |  1 +
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 02d6295..15c4388 100644
+index 15c4388..62f2978 100644
 --- a/sound/soc/generic/simple-card.c
 +++ b/sound/soc/generic/simple-card.c
-@@ -116,7 +116,6 @@ static void simple_parse_mclk_fs(struct device_node *top,
+@@ -114,6 +114,23 @@ static void simple_parse_mclk_fs(struct device_node *top,
+ 	of_node_put(node);
+ }
  
++static int simple_parse_dpcm_dir(const struct snd_soc_dai_link_component *dlc,
++				 struct snd_soc_dai_link *dai_link)
++{
++	struct snd_soc_dai *dai = snd_soc_find_dai(dlc);
++
++	if (!dai)
++		return -EINVAL;
++
++	dai_link->dpcm_playback =
++		snd_soc_dai_stream_valid(dai, SNDRV_PCM_STREAM_PLAYBACK);
++
++	dai_link->dpcm_capture =
++		snd_soc_dai_stream_valid(dai, SNDRV_PCM_STREAM_CAPTURE);
++
++	return 0;
++}
++
  static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
  				   struct device_node *np,
--				   struct device_node *codec,
  				   struct link_info *li,
- 				   bool is_top)
- {
-@@ -137,8 +136,13 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 	 * Codec |return|Pass
- 	 * np
- 	 */
--	if (li->cpu == (np == codec))
--		return 0;
-+	if (li->cpu) {
-+		if (!strcmp(np->name, "codec"))
-+			return 0;
-+	} else {
-+		if (!strcmp(np->name, "cpu"))
-+			return 0;
-+	}
+@@ -183,6 +200,10 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+ 			goto out_put_node;
  
- 	dev_dbg(dev, "link_of DPCM (%pOF)\n", np);
+ 		asoc_simple_canonicalize_cpu(dai_link, is_single_links);
++
++		ret = simple_parse_dpcm_dir(cpus, dai_link);
++		if (ret < 0)
++			goto out_put_node;
+ 	} else {
+ 		struct snd_soc_codec_conf *cconf;
  
-@@ -354,7 +358,6 @@ static int simple_for_each_link(struct asoc_simple_priv *priv,
- 					 struct link_info *li, bool is_top),
- 			int (*func_dpcm)(struct asoc_simple_priv *priv,
- 					 struct device_node *np,
--					 struct device_node *codec,
- 					 struct link_info *li, bool is_top))
- {
- 	struct device *dev = simple_priv_to_dev(priv);
-@@ -407,7 +410,7 @@ static int simple_for_each_link(struct asoc_simple_priv *priv,
- 			if (dpcm_selectable &&
- 			    (num > 2 ||
- 			     adata.convert_rate || adata.convert_channels))
--				ret = func_dpcm(priv, np, codec, li, is_top);
-+				ret = func_dpcm(priv, np, li, is_top);
- 			/* else normal sound */
- 			else
- 				ret = func_noml(priv, np, codec, li, is_top);
-@@ -527,12 +530,11 @@ static int simple_count_noml(struct asoc_simple_priv *priv,
+@@ -223,6 +244,10 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+ 					     "prefix");
+ 		snd_soc_of_parse_node_prefix(np, cconf, codecs->of_node,
+ 					     "prefix");
++
++		ret = simple_parse_dpcm_dir(codecs, dai_link);
++		if (ret < 0)
++			goto out_put_node;
+ 	}
  
- static int simple_count_dpcm(struct asoc_simple_priv *priv,
- 			     struct device_node *np,
--			     struct device_node *codec,
- 			     struct link_info *li, bool is_top)
- {
- 	li->dais++; /* CPU or Codec */
- 	li->link++; /* CPU-dummy or dummy-Codec */
--	if (np == codec)
-+	if (!strcmp(np->name, "codec"))
- 		li->conf++;
+ 	simple_parse_convert(dev, np, &dai_props->adata);
+@@ -239,8 +264,6 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+ 	if (ret < 0)
+ 		goto out_put_node;
  
- 	return 0;
+-	dai_link->dpcm_playback		= 1;
+-	dai_link->dpcm_capture		= 1;
+ 	dai_link->ops			= &simple_ops;
+ 	dai_link->init			= asoc_simple_dai_init;
+ 
+diff --git a/sound/soc/soc-dai.c b/sound/soc/soc-dai.c
+index b05e18b..bd4465f 100644
+--- a/sound/soc/soc-dai.c
++++ b/sound/soc/soc-dai.c
+@@ -390,6 +390,7 @@ bool snd_soc_dai_stream_valid(struct snd_soc_dai *dai, int dir)
+ 	/* If the codec specifies any channels at all, it supports the stream */
+ 	return stream->channels_min;
+ }
++EXPORT_SYMBOL_GPL(snd_soc_dai_stream_valid);
+ 
+ void snd_soc_dai_action(struct snd_soc_dai *dai,
+ 			int stream, int action)
 -- 
 2.7.4
