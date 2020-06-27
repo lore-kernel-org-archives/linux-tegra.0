@@ -1,102 +1,55 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v4 15/23] ASoC: soc-core: Identify 'no_pcm' DAI links for DPCM
-Date: Sat, 27 Jun 2020 10:23:37 +0530
-Message-ID: <1593233625-14961-16-git-send-email-spujar@nvidia.com>
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v4 16/23] ASoC: soc-pcm: Get all BEs along DAPM path
+Date: Sat, 27 Jun 2020 10:23:38 +0530
+Message-ID: <1593233625-14961-17-git-send-email-spujar@nvidia.com>
 References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, perex@perex.cz, tiwai@suse.com, kuninori.morimoto.gx@renesas.com, robh+dt@kernel.org, lgirdwood@gmail.com
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com, nwartikar@nvidia.com, swarren@nvidia.com, nicoleotsuka@gmail.com, Sameer Pujar <spujar@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1593233625-14961-1-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PCM devices are created for dai links with 'no-pcm' flag as '0'.
-Such DAI links have CPU component which implement pcm_construct()
-and pcm_destruct() callbacks. Based on this, current patch exposes
-a helper function to identify such components and populate 'no_pcm'
-flag for DPCM DAI link.
+dpcm_end_walk_at_be() stops the graph walk when first BE is found for
+the given FE component. In a component model we may want to connect
+multiple DAIs from different components. A new flag is introduced in
+'snd_soc_card', which when set allows DAI/component chaining. Later
+PCM operations can be called for all these listed components for a
+valid DAPM path.
 
-This helps to have BE<->BE component links where PCM devices need
-not be created for CPU components involved in the links.
-
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- include/sound/soc.h             |  2 ++
- sound/soc/generic/simple-card.c |  3 +++
- sound/soc/soc-core.c            | 25 +++++++++++++++++++++++++
- 3 files changed, 30 insertions(+)
+ include/sound/soc.h | 1 +
+ sound/soc/soc-pcm.c | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/include/sound/soc.h b/include/sound/soc.h
-index 33acead..1e0376f 100644
+index 1e0376f..95e02a7 100644
 --- a/include/sound/soc.h
 +++ b/include/sound/soc.h
-@@ -397,6 +397,7 @@ struct snd_soc_dai_driver;
- struct snd_soc_dai_link;
- struct snd_soc_component;
- struct snd_soc_component_driver;
-+struct snd_soc_dai_link_component;
- struct soc_enum;
- struct snd_soc_jack;
- struct snd_soc_jack_zone;
-@@ -437,6 +438,7 @@ int snd_soc_add_component(struct device *dev,
- 		const struct snd_soc_component_driver *component_driver,
- 		struct snd_soc_dai_driver *dai_drv,
- 		int num_dai);
-+bool soc_component_is_pcm(struct snd_soc_dai_link_component *dlc);
- int snd_soc_register_component(struct device *dev,
- 			 const struct snd_soc_component_driver *component_driver,
- 			 struct snd_soc_dai_driver *dai_drv, int num_dai);
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 62f2978..f19030b 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -188,6 +188,9 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 		if (ret)
- 			goto out_put_node;
+@@ -1069,6 +1069,7 @@ struct snd_soc_card {
+ 	int num_of_dapm_widgets;
+ 	const struct snd_soc_dapm_route *of_dapm_routes;
+ 	int num_of_dapm_routes;
++	bool component_chaining;
  
-+		if (!soc_component_is_pcm(cpus))
-+			dai_link->no_pcm = 1;
-+
- 		ret = asoc_simple_parse_clk_cpu(dev, np, dai_link, dai);
- 		if (ret < 0)
- 			goto out_put_node;
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 9041a03..d2a47c3 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -259,6 +259,31 @@ static inline void snd_soc_debugfs_exit(void)
+ 	/* lists of probed devices belonging to this card */
+ 	struct list_head component_dev_list;
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 6dc21b6..7f612e3 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1322,7 +1322,8 @@ int dpcm_path_get(struct snd_soc_pcm_runtime *fe,
  
- #endif
+ 	/* get number of valid DAI paths and their widgets */
+ 	paths = snd_soc_dapm_dai_get_connected_widgets(cpu_dai, stream, list,
+-			dpcm_end_walk_at_be);
++			fe->card->component_chaining ?
++				NULL : dpcm_end_walk_at_be);
  
-+bool soc_component_is_pcm(struct snd_soc_dai_link_component *dlc)
-+{
-+	struct snd_soc_component *component;
-+	struct snd_soc_dai *dai;
-+
-+	for_each_component(component) {
-+		if (!component->driver)
-+			continue;
-+
-+		for_each_component_dais(component, dai) {
-+			if (!dai->name || !dlc->dai_name)
-+				continue;
-+
-+			if (strcmp(dai->name, dlc->dai_name))
-+				continue;
-+
-+			if (component->driver->pcm_construct)
-+				return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(soc_component_is_pcm);
-+
- static int snd_soc_rtd_add_component(struct snd_soc_pcm_runtime *rtd,
- 				     struct snd_soc_component *component)
- {
+ 	dev_dbg(fe->dev, "ASoC: found %d audio %s paths\n", paths,
+ 			stream ? "capture" : "playback");
 -- 
 2.7.4
