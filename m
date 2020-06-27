@@ -1,109 +1,45 @@
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: Re: [PATCH v1 2/2] drm/panel-simple: Add missing BUS descriptions
- for some panels
-Date: Sat, 27 Jun 2020 23:43:38 +0300
-Message-ID: <20200627204338.GL5966@pendragon.ideasonboard.com>
-References: <20200621222742.25695-1-digetx@gmail.com>
- <20200621222742.25695-3-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] Host1x/TegraDRM UAPI (drm_tegra_submit_syncpt_incr)
+Date: Sun, 28 Jun 2020 00:47:13 +0300
+Message-ID: <9ddfedff-f465-b22d-5d6f-c7ba01731455@gmail.com>
+References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200621222742.25695-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <9b06b7ec-f952-2561-7afb-5653514cd5d3-/1wQRMveznE@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
-
-Thank you for the patch.
-
-On Mon, Jun 22, 2020 at 01:27:42AM +0300, Dmitry Osipenko wrote:
-> This patch adds missing BUS fields to the display panel descriptions of
-> the panels which are found on NVIDIA Tegra devices:
+23.06.2020 15:09, Mikko Perttunen пишет:
+> struct drm_tegra_submit_syncpt_incr {
+>         /*
+>          * [in] Syncpoint FD of the syncpoint that the job will
+>          *   increment.
+>          */
+>         __s32 syncpt_fd;
 > 
->   1. AUO B101AW03
->   2. Chunghwa CLAA070WP03XG
->   3. Chunghwa CLAA101WA01A
->   4. Chunghwa CLAA101WB01
->   5. Innolux N156BGE L21
->   6. Samsung LTN101NT05
+>         /*
+>          * [in] Number of increments that the job will do.
+>          */
+>         __u32 num_incrs;
 > 
-> Suggested-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/gpu/drm/panel/panel-simple.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>         /*
+>          * [out] Value the syncpoint will have once all increments have
+>          *   executed.
+>          */
+>         __u32 fence_value;
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 87edd2bdf09a..986df9937650 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -698,6 +698,8 @@ static const struct panel_desc auo_b101aw03 = {
->  		.width = 223,
->  		.height = 125,
->  	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE,
+>         __u32 reserved[1];
+> };
 
-Does DRM_BUS_FLAG_PIXDATA_DRIVE_* make sense for LVDS ?
+The job should be considered executed once the final sync point is
+incremented.
 
-The rest looks good, except the Samsung panel for which I haven't been
-able to locate a datasheet.
+Hence, there should be only one sync point per-job for increment, why
+would you ever need more than one?
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-
->  	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->  };
->  
-> @@ -1352,6 +1354,8 @@ static const struct panel_desc chunghwa_claa070wp03xg = {
->  		.width = 94,
->  		.height = 150,
->  	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE,
->  	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->  };
->  
-> @@ -1375,6 +1379,8 @@ static const struct panel_desc chunghwa_claa101wa01a = {
->  		.width = 220,
->  		.height = 120,
->  	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE,
->  	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->  };
->  
-> @@ -1398,6 +1404,8 @@ static const struct panel_desc chunghwa_claa101wb01 = {
->  		.width = 223,
->  		.height = 125,
->  	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE,
->  	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->  };
->  
-> @@ -2071,6 +2079,8 @@ static const struct panel_desc innolux_n156bge_l21 = {
->  		.width = 344,
->  		.height = 193,
->  	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE,
->  	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->  };
->  
-> @@ -3018,6 +3028,8 @@ static const struct panel_desc samsung_ltn101nt05 = {
->  		.width = 223,
->  		.height = 125,
->  	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE,
->  	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->  };
->  
-
--- 
-Regards,
-
-Laurent Pinchart
+Could you please explain what this submit_syncpt_incr is about?
