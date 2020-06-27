@@ -1,7 +1,7 @@
 From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 16/23] ASoC: soc-pcm: Get all BEs along DAPM path
-Date: Sat, 27 Jun 2020 10:23:38 +0530
-Message-ID: <1593233625-14961-17-git-send-email-spujar@nvidia.com>
+Subject: [PATCH v4 17/23] ASoC: dt-bindings: simple-card: Add compatible for component chaining
+Date: Sat, 27 Jun 2020 10:23:39 +0530
+Message-ID: <1593233625-14961-18-git-send-email-spujar@nvidia.com>
 References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,44 +12,26 @@ To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gm
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-dpcm_end_walk_at_be() stops the graph walk when first BE is found for
-the given FE component. In a component model we may want to connect
-multiple DAIs from different components. A new flag is introduced in
-'snd_soc_card', which when set allows DAI/component chaining. Later
-PCM operations can be called for all these listed components for a
-valid DAPM path.
+New compatible "simple-cc-audio-card" is exposed for simple-card driver
+which allows usage of DAI link chaining and thus connects multiple
+components together in a system.
 
 Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- include/sound/soc.h | 1 +
- sound/soc/soc-pcm.c | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/sound/simple-card.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index 1e0376f..95e02a7 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -1069,6 +1069,7 @@ struct snd_soc_card {
- 	int num_of_dapm_widgets;
- 	const struct snd_soc_dapm_route *of_dapm_routes;
- 	int num_of_dapm_routes;
-+	bool component_chaining;
+diff --git a/Documentation/devicetree/bindings/sound/simple-card.yaml b/Documentation/devicetree/bindings/sound/simple-card.yaml
+index 8132d0c..fcd0fd3 100644
+--- a/Documentation/devicetree/bindings/sound/simple-card.yaml
++++ b/Documentation/devicetree/bindings/sound/simple-card.yaml
+@@ -145,6 +145,7 @@ properties:
+       enum:
+         - simple-audio-card
+         - simple-scu-audio-card
++        - simple-cc-audio-card
  
- 	/* lists of probed devices belonging to this card */
- 	struct list_head component_dev_list;
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 6dc21b6..7f612e3 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1322,7 +1322,8 @@ int dpcm_path_get(struct snd_soc_pcm_runtime *fe,
- 
- 	/* get number of valid DAI paths and their widgets */
- 	paths = snd_soc_dapm_dai_get_connected_widgets(cpu_dai, stream, list,
--			dpcm_end_walk_at_be);
-+			fe->card->component_chaining ?
-+				NULL : dpcm_end_walk_at_be);
- 
- 	dev_dbg(fe->dev, "ASoC: found %d audio %s paths\n", paths,
- 			stream ? "capture" : "playback");
+   "#address-cells":
+     const: 1
 -- 
 2.7.4
