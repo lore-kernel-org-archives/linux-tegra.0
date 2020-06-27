@@ -1,7 +1,7 @@
 From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 10/23] ASoC: simple-card: Wrong daifmt for CPU end of DPCM DAI link
-Date: Sat, 27 Jun 2020 10:23:32 +0530
-Message-ID: <1593233625-14961-11-git-send-email-spujar@nvidia.com>
+Subject: [PATCH v4 11/23] ASoC: simple-card: Loop over all children for 'mclk-fs'
+Date: Sat, 27 Jun 2020 10:23:33 +0530
+Message-ID: <1593233625-14961-12-git-send-email-spujar@nvidia.com>
 References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,54 +12,40 @@ To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gm
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Consider following DPCM DAI link for example:
-
- simple-audio-card,dai-link@xxx {
-     format = "i2s";
-     bitclock-master=<&cpu1>;
-     frame-master=<&cpu1>;
-
-     cpu1: cpu@0 {
-         ...
-     };
-
-     codec@0 {
-         ...
-     };
-
-     ...
- };
-
-In above case CPU is expected to be configured as a master and Codec as
-a slave device. But both CPU/Codec are being configured as slave devices.
-This happens because asoc_simple_parse_daifmt() uses Codec reference and
-sets up the 'dai_link->dai_fmt' accordingly while parsing both CPU and
-Codec. Though populating 'non_legacy_dai_naming' flag as true for CPU
-component can address above issue in simple cases, but with multiple
-CPU/Codecs with DPCM DAI link it becomes tricky because right now the
-first Codec in the DAI link is used as reference.
-
-This is fixed by passing current DAI link child node reference to
-asoc_simple_parse_daifmt(). It parses a CPU/Codec node independently and
-sets daifmt as per 'bitcloclk/frame-master' property.
+CPU/Codec in DPCM DAI links are connected as CPU<->Dummy and Dummy<->Codec.
+Though mostly CPU won't use/require 'mclk-fs' property, looping over
+'np' (current child node in a DAI link) can help in cases where multiple
+Codecs are defined. This further helps to get rid of 'codec' argument
+from simple_dai_link_of_dpcm() function, which gets called for DPCM links.
 
 Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/generic/simple-card.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/generic/simple-card.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 0f443c0..39cdc71 100644
+index 39cdc71..02d6295 100644
 --- a/sound/soc/generic/simple-card.c
 +++ b/sound/soc/generic/simple-card.c
-@@ -228,7 +228,7 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 	if (ret)
- 		goto out_put_node;
+@@ -107,7 +107,9 @@ static void simple_parse_mclk_fs(struct device_node *top,
+ 	snprintf(prop, sizeof(prop), "%smclk-fs", prefix);
+ 	of_property_read_u32(node,	prop, &props->mclk_fs);
+ 	of_property_read_u32(cpu,	prop, &props->mclk_fs);
+-	of_property_read_u32(codec,	prop, &props->mclk_fs);
++
++	if (cpu != codec)
++		of_property_read_u32(codec, prop, &props->mclk_fs);
  
--	ret = asoc_simple_parse_daifmt(dev, node, codec,
-+	ret = asoc_simple_parse_daifmt(dev, node, np,
- 				       prefix, &dai_link->dai_fmt);
- 	if (ret < 0)
- 		goto out_put_node;
+ 	of_node_put(node);
+ }
+@@ -220,7 +222,7 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+ 	}
+ 
+ 	simple_parse_convert(dev, np, &dai_props->adata);
+-	simple_parse_mclk_fs(top, np, codec, dai_props, prefix);
++	simple_parse_mclk_fs(top, np, np, dai_props, prefix);
+ 
+ 	asoc_simple_canonicalize_platform(dai_link);
+ 
 -- 
 2.7.4
