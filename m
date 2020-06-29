@@ -1,55 +1,82 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 5/6] gpu: host1x: debug: Fix multiple channels emitting messages simultaneously
-Date: Mon, 29 Jun 2020 06:18:41 +0300
-Message-ID: <20200629031842.32463-6-digetx@gmail.com>
-References: <20200629031842.32463-1-digetx@gmail.com>
+From: Sameer Pujar <spujar@nvidia.com>
+Subject: Re: [PATCH v4 08/23] ASoC: soc-core: Fix component name_prefix parsing
+Date: Mon, 29 Jun 2020 21:16:26 +0530
+Message-ID: <5ad958bb-a736-2391-31fa-c32e13750322@nvidia.com>
+References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
+ <1593233625-14961-9-git-send-email-spujar@nvidia.com>
+ <878sg61zcf.wl-kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200629031842.32463-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <878sg61zcf.wl-kuninori.morimoto.gx@renesas.com>
+Content-Language: en-GB
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: jonathanh@nvidia.com, nicoleotsuka@gmail.com, alsa-devel@alsa-project.org, atalambedu@nvidia.com, swarren@nvidia.com, linux-kernel@vger.kernel.org, spujar@nvidia.com, nwartikar@nvidia.com, lgirdwood@gmail.com, robh+dt@kernel.org, tiwai@suse.com, viswanathl@nvidia.com, sharadg@nvidia.com, broonie@kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, digetx@gmail.com, rlokhande@nvidia.com, mkumard@nvidia.com, dramesh@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Once channel's job is hung, it dumps the channel's state into KMSG before
-tearing down the offending job. If multiple channels hang at once, then
-they dump messages simultaneously, making the debug info unreadable, and
-thus, useless. This patch adds mutex which allows only one channel to emit
-debug messages at a time.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/gpu/host1x/debug.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
-index c0392672a842..1b4997bda1c7 100644
---- a/drivers/gpu/host1x/debug.c
-+++ b/drivers/gpu/host1x/debug.c
-@@ -16,6 +16,8 @@
- #include "debug.h"
- #include "channel.h"
- 
-+static DEFINE_MUTEX(debug_lock);
-+
- unsigned int host1x_debug_trace_cmdbuf;
- 
- static pid_t host1x_debug_force_timeout_pid;
-@@ -52,12 +54,14 @@ static int show_channel(struct host1x_channel *ch, void *data, bool show_fifo)
- 	struct output *o = data;
- 
- 	mutex_lock(&ch->cdma.lock);
-+	mutex_lock(&debug_lock);
- 
- 	if (show_fifo)
- 		host1x_hw_show_channel_fifo(m, ch, o);
- 
- 	host1x_hw_show_channel_cdma(m, ch, o);
- 
-+	mutex_unlock(&debug_lock);
- 	mutex_unlock(&ch->cdma.lock);
- 
- 	return 0;
--- 
-2.26.0
+On 6/29/2020 6:08 AM, Kuninori Morimoto wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> Hi Sameer
+>
+> Thank you for your patch
+>
+> # I guess there was ML registering magic until v3 ?
+> # This is 1st time for me to get this patch series...
+
+Until v3 the series was mostly about registering ASoC components. Based 
+on the discussions in the previous series and threads, I have updated 
+drivers to work with DPCM and added patches for simple-card driver to 
+test complete audio path. Yes, simple-card driver patches are new and 
+were not part of earlier series. Sorry if I was not clear in the cover 
+letter.
+
+Thank you for the review.
+>
+>> The "prefix" can be defined in DAI link node or it can be specified as
+>> part of the component node itself. Currently "sound-name-prefix" defined
+>> in a component is not taking effect. Actually the property is not getting
+>> parsed. It can be fixed by parsing "sound-name-prefix" property whenever
+>> "prefix" is missing in DAI link Codec node.
+>>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> (snip)
+>> @@ -1111,8 +1111,10 @@ static void soc_set_name_prefix(struct snd_soc_card *card,
+>>                struct snd_soc_codec_conf *map = &card->codec_conf[i];
+>>
+>>                if (snd_soc_is_matching_component(&map->dlc, component)) {
+>> -                     component->name_prefix = map->name_prefix;
+>> -                     return;
+>> +                     if (map->name_prefix) {
+>> +                             component->name_prefix = map->name_prefix;
+>> +                             return;
+>> +                     }
+>>                }
+>>        }
+> This is nit-pick but it can be like this ?
+>
+>                  if (snd_soc_is_matching_component(&map->dlc, component) &&
+>                      map->name_prefix) {
+>                          ...
+>                  }
+
+Sounds fine. Will update.
+>
+> Thank you for your help !!
+>
+> Best regards
+> ---
+> Kuninori Morimoto
