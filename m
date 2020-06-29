@@ -1,16 +1,15 @@
 From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH v4 15/23] ASoC: soc-core: Identify 'no_pcm' DAI links for
- DPCM
-Date: Mon, 29 Jun 2020 22:49:16 +0530
-Message-ID: <83b6cee2-8254-477c-cb65-7e05a9fdbacf@nvidia.com>
+Subject: Re: [PATCH v4 16/23] ASoC: soc-pcm: Get all BEs along DAPM path
+Date: Mon, 29 Jun 2020 22:59:15 +0530
+Message-ID: <d45bf2fc-3baa-fd68-4d96-345ab7b99df9@nvidia.com>
 References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
- <1593233625-14961-16-git-send-email-spujar@nvidia.com>
- <87366e1wkb.wl-kuninori.morimoto.gx@renesas.com>
+ <1593233625-14961-17-git-send-email-spujar@nvidia.com>
+ <871rly1wem.wl-kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <87366e1wkb.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <871rly1wem.wl-kuninori.morimoto.gx@renesas.com>
 Content-Language: en-GB
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
@@ -27,40 +26,28 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 6/29/2020 7:08 AM, Kuninori Morimoto wrote:
+On 6/29/2020 7:11 AM, Kuninori Morimoto wrote:
 > External email: Use caution opening links or attachments
 >
 >
 > Hi Sameer
 >
->> PCM devices are created for dai links with 'no-pcm' flag as '0'.
->> Such DAI links have CPU component which implement pcm_construct()
->> and pcm_destruct() callbacks. Based on this, current patch exposes
->> a helper function to identify such components and populate 'no_pcm'
->> flag for DPCM DAI link.
+>> dpcm_end_walk_at_be() stops the graph walk when first BE is found for
+>> the given FE component. In a component model we may want to connect
+>> multiple DAIs from different components. A new flag is introduced in
+>> 'snd_soc_card', which when set allows DAI/component chaining. Later
+>> PCM operations can be called for all these listed components for a
+>> valid DAPM path.
 > (snip)
->> +bool soc_component_is_pcm(struct snd_soc_dai_link_component *dlc)
->> +{
->> +     struct snd_soc_component *component;
->> +     struct snd_soc_dai *dai;
->> +
->> +     for_each_component(component) {
->> +             if (!component->driver)
->> +                     continue;
->> +
->> +             for_each_component_dais(component, dai) {
->> +                     if (!dai->name || !dlc->dai_name)
->> +                             continue;
->> +
->> +                     if (strcmp(dai->name, dlc->dai_name))
->> +                             continue;
->
-> We can/should NULL poinster check for "dlc->dai_name" on top of
-> this function instead of inside loop ?
-> And then, we can remove "dai->name" check because next strcmp()
-> automatically fail if dai->name was NULL.
+>> @@ -1069,6 +1069,7 @@ struct snd_soc_card {
+>>        int num_of_dapm_widgets;
+>>        const struct snd_soc_dapm_route *of_dapm_routes;
+>>        int num_of_dapm_routes;
+>> +     bool component_chaining;
+> snd_soc_card has many /* bit field */ variables.
+> Please use it instead of bool.
 
-Sounds good, will update.
+OK, will use.
 >
 > Thank you for your help !!
 >
