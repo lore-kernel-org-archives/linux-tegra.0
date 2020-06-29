@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC] Host1x/TegraDRM UAPI (sync points)
-Date: Mon, 29 Jun 2020 22:28:45 +0300
-Message-ID: <e117a4a3-5a7d-6fc2-af63-9614cf6f9280@gmail.com>
+Date: Mon, 29 Jun 2020 22:33:23 +0300
+Message-ID: <8e78c18a-59da-a72f-e04a-ef6c23a49830@gmail.com>
 References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
  <5b1edaad-ba36-7b0f-5b02-457ae5b6d91e@gmail.com>
  <62859775-514c-2941-75ed-6905e9282a6f@kapsi.fi>
@@ -20,16 +20,20 @@ List-Id: linux-tegra@vger.kernel.org
 
 29.06.2020 13:27, Mikko Perttunen пишет:
 ...
->> We don't need a dedicated sync point FD for all kinds of jobs, don't we?
->> For example, I don't see why a sync point FD may be needed in a case of
->> Opentegra jobs.
-> 
-> I think it's cleaner if we have just one way to allocate syncpoints, and
-> then those syncpoints can be passed to different things depending on the
-> situation.
-> 
-> If we want to protect direct incrementing while a job is submitted, we
-> could have a locking API where an ongoing job can take a lock refcount
-> in the syncpoint, and incrementing would return -EBUSY.
+>>>> 3. Sync points should be properly refcounted. Job's sync points
+>>>> shouldn't be re-used while job is alive.
+>>>>
+>>>> 4. The job's sync point can't be re-used after job's submission (UAPI
+>>>> constraint!). Userspace must free sync point and allocate a new one for
+>>>> the next job submission. And now we:
+>>>>
+>>>>     - Know that job's sync point is always in a healthy state!
+>>>>
+>>>>     - We're not limited by a number of physically available hardware
+>>>> sync
+>>>> points! Allocation should block until free sync point is available.
 
-Okay, let's go with this for now.
+It also occurred to me that if allocation is blocking and if there is a
+need to allocate multiple sync points for a job, then the IOCTL should
+be able to allocate multiple sync points at once. This will prevent
+interlock situation where two context could block on each other.
