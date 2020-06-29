@@ -1,13 +1,11 @@
 From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v7 2/3] dt-bindings: arm-smmu: Add binding for Tegra194 SMMU
-Date: Sun, 28 Jun 2020 19:28:37 -0700
-Message-ID: <20200629022838.29628-3-vdumpa@nvidia.com>
-References: <20200629022838.29628-1-vdumpa@nvidia.com>
+Subject: [PATCH v7 0/3] Nvidia Arm SMMUv2 Implementation
+Date: Sun, 28 Jun 2020 19:28:35 -0700
+Message-ID: <20200629022838.29628-1-vdumpa@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20200629022838.29628-1-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
  <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
@@ -20,29 +18,33 @@ Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@publi
 Cc: snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add binding for NVIDIA's Tegra194 SoC SMMU topology that is based
-on ARM MMU-500.
+Changes in v7:
+Incorporated the review feedback from Nicolin Chen, Robin Murphy and Thierry Reding.
+Rebased and validated patches on top of git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
 
-Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+v6- https://lkml.org/lkml/2020/6/4/1018
+v5 - https://lkml.org/lkml/2020/5/21/1114
+v4 - https://lkml.org/lkml/2019/10/30/1054
+v3 - https://lkml.org/lkml/2019/10/18/1601
+v2 - https://lkml.org/lkml/2019/9/2/980
+v1 - https://lkml.org/lkml/2019/8/29/1588
 
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-index d7ceb4c34423b..5b2586ac715ed 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-@@ -38,6 +38,11 @@ properties:
-               - qcom,sc7180-smmu-500
-               - qcom,sdm845-smmu-500
-           - const: arm,mmu-500
-+      - description: NVIDIA SoCs that use more than one "arm,mmu-500"
-+        items:
-+          - enum:
-+              - nvdia,tegra194-smmu
-+          - const: arm,mmu-500
-       - items:
-           - const: arm,mmu-500
-           - const: arm,smmu-v2
+Krishna Reddy (3):
+  iommu/arm-smmu: add NVIDIA implementation for dual ARM MMU-500 usage
+  dt-bindings: arm-smmu: Add binding for Tegra194 SMMU
+  iommu/arm-smmu: Add global/context fault implementation hooks
+
+ .../devicetree/bindings/iommu/arm,smmu.yaml   |   5 +
+ MAINTAINERS                                   |   2 +
+ drivers/iommu/Makefile                        |   2 +-
+ drivers/iommu/arm-smmu-impl.c                 |   3 +
+ drivers/iommu/arm-smmu-nvidia.c               | 294 ++++++++++++++++++
+ drivers/iommu/arm-smmu.c                      |  17 +-
+ drivers/iommu/arm-smmu.h                      |   4 +
+ 7 files changed, 324 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/iommu/arm-smmu-nvidia.c
+
+
+base-commit: 48f0bcfb7aad2c6eb4c1e66476b58475aa14393e
 -- 
 2.26.2
