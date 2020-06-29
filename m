@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 1/6] drm/tegra: gr3d: Assert reset before power-gating
-Date: Mon, 29 Jun 2020 06:18:37 +0300
-Message-ID: <20200629031842.32463-2-digetx@gmail.com>
+Subject: [PATCH v2 3/6] gpu: host1x: Optimize BOs usage when firewall is enabled
+Date: Mon, 29 Jun 2020 06:18:39 +0300
+Message-ID: <20200629031842.32463-4-digetx@gmail.com>
 References: <20200629031842.32463-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,31 +12,56 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra TRM documentation states that hardware should be in a default state
-when power partition is turned off, i.e. reset should be asserted. This
-patch adds the missing reset assertions.
+We don't need to hold and pin original BOs of the gathers in a case of
+enabled firewall because in this case gather's content is copied and the
+copy is used by the executed job.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/gr3d.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/host1x/job.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index c0a528be0369..b0b8154e8104 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -381,10 +381,12 @@ static int gr3d_remove(struct platform_device *pdev)
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index a10643aa89aa..a954bd41aa79 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -27,10 +27,13 @@ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
+ 				    u32 num_cmdbufs, u32 num_relocs)
+ {
+ 	struct host1x_job *job = NULL;
+-	unsigned int num_unpins = num_cmdbufs + num_relocs;
++	unsigned int num_unpins = num_relocs;
+ 	u64 total;
+ 	void *mem;
+ 
++	if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
++		num_unpins += num_cmdbufs;
++
+ 	/* Check that we're not going to overflow */
+ 	total = sizeof(struct host1x_job) +
+ 		(u64)num_relocs * sizeof(struct host1x_reloc) +
+@@ -183,6 +186,13 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+ 		job->num_unpins++;
  	}
  
- 	if (gr3d->clk_secondary) {
-+		reset_control_assert(gr3d->rst_secondary);
- 		tegra_powergate_power_off(TEGRA_POWERGATE_3D1);
- 		clk_disable_unprepare(gr3d->clk_secondary);
- 	}
++	/*
++	 * We will copy gathers BO content later, so there is no need to
++	 * hold and pin them.
++	 */
++	if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
++		return 0;
++
+ 	for (i = 0; i < job->num_gathers; i++) {
+ 		struct host1x_job_gather *g = &job->gathers[i];
+ 		size_t gather_size = 0;
+@@ -216,7 +226,7 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+ 			goto unpin;
+ 		}
  
-+	reset_control_assert(gr3d->rst);
- 	tegra_powergate_power_off(TEGRA_POWERGATE_3D);
- 	clk_disable_unprepare(gr3d->clk);
- 
+-		if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL) && host->domain) {
++		if (host->domain) {
+ 			for_each_sg(sgt->sgl, sg, sgt->nents, j)
+ 				gather_size += sg->length;
+ 			gather_size = iova_align(&host->iova, gather_size);
 -- 
 2.26.0
