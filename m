@@ -1,56 +1,39 @@
-From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH v4 16/23] ASoC: soc-pcm: Get all BEs along DAPM path
-Date: Mon, 29 Jun 2020 22:59:15 +0530
-Message-ID: <d45bf2fc-3baa-fd68-4d96-345ab7b99df9@nvidia.com>
-References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
- <1593233625-14961-17-git-send-email-spujar@nvidia.com>
- <871rly1wem.wl-kuninori.morimoto.gx@renesas.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 1/2] arm64: tegra: Re-order PCIe aperture mappings to
+ support ACPI boot
+Date: Mon, 29 Jun 2020 14:31:38 +0100
+Message-ID: <d52db35b-dbf8-a706-9611-95448cf6a69e@nvidia.com>
+References: <20200106082709.14370-1-vidyas@nvidia.com>
+ <20200110191500.9538-1-vidyas@nvidia.com>
+ <20200110191500.9538-2-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <871rly1wem.wl-kuninori.morimoto.gx@renesas.com>
-Content-Language: en-GB
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: jonathanh@nvidia.com, nicoleotsuka@gmail.com, alsa-devel@alsa-project.org, atalambedu@nvidia.com, swarren@nvidia.com, linux-kernel@vger.kernel.org, spujar@nvidia.com, nwartikar@nvidia.com, lgirdwood@gmail.com, robh+dt@kernel.org, tiwai@suse.com, viswanathl@nvidia.com, sharadg@nvidia.com, broonie@kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, digetx@gmail.com, rlokhande@nvidia.com, mkumard@nvidia.com, dramesh@nvidia.com
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20200110191500.9538-2-vidyas@nvidia.com>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
+To: Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, lenb@kernel.org, andrew.murray@arm.com, treding@nvidia.com
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Sagar,
 
+On 10/01/2020 19:14, Vidya Sagar wrote:
+> Re-order Tegra194's PCIe aperture mappings to have IO window moved to
+> 64-bit aperture and have the entire 32-bit aperture used for accessing
+> the configuration space. This makes it to use the entire 32MB of the 32-bit
+> aperture for ECAM purpose while booting through ACPI.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 
-On 6/29/2020 7:11 AM, Kuninori Morimoto wrote:
-> External email: Use caution opening links or attachments
->
->
-> Hi Sameer
->
->> dpcm_end_walk_at_be() stops the graph walk when first BE is found for
->> the given FE component. In a component model we may want to connect
->> multiple DAIs from different components. A new flag is introduced in
->> 'snd_soc_card', which when set allows DAI/component chaining. Later
->> PCM operations can be called for all these listed components for a
->> valid DAPM path.
-> (snip)
->> @@ -1069,6 +1069,7 @@ struct snd_soc_card {
->>        int num_of_dapm_widgets;
->>        const struct snd_soc_dapm_route *of_dapm_routes;
->>        int num_of_dapm_routes;
->> +     bool component_chaining;
-> snd_soc_card has many /* bit field */ variables.
-> Please use it instead of bool.
+Any reason why we should not merge this change, even if patch 2/2 is not
+accepted? If there is no harm in us merging this, this would be one less
+change for us to carry out-of-tree. If so, can you update and re-post
+for 5.9?
 
-OK, will use.
->
-> Thank you for your help !!
->
-> Best regards
-> ---
-> Kuninori Morimoto
+Cheers
+Jon
+
+-- 
+nvpublic
