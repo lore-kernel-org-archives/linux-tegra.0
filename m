@@ -1,127 +1,35 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] cpuidle: change enter_s2idle() prototype
-Date: Mon, 29 Jun 2020 17:17:28 +0200
-Message-ID: <9963896.lEaLCsxmBZ@kreacher>
-References: <1593421540-7397-1-git-send-email-neal.liu@mediatek.com> <1593421540-7397-2-git-send-email-neal.liu@mediatek.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] Host1x/TegraDRM UAPI (sync points)
+Date: Mon, 29 Jun 2020 22:28:45 +0300
+Message-ID: <e117a4a3-5a7d-6fc2-af63-9614cf6f9280@gmail.com>
+References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
+ <5b1edaad-ba36-7b0f-5b02-457ae5b6d91e@gmail.com>
+ <62859775-514c-2941-75ed-6905e9282a6f@kapsi.fi>
+ <623c1eaa-31fb-8dff-f6c0-d8cd0be60070@gmail.com>
+ <827c92a6-7fed-a81c-ba8e-6c69416c4ab9@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1593421540-7397-2-git-send-email-neal.liu@mediatek.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Neal Liu <neal.liu@mediatek.com>
-Cc: Len Brown <lenb@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sami Tolvanen <samitolvanen@google.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <827c92a6-7fed-a81c-ba8e-6c69416c4ab9-/1wQRMveznE@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, June 29, 2020 11:05:40 AM CEST Neal Liu wrote:
-> Control Flow Integrity(CFI) is a security mechanism that disallows
-> changes to the original control flow graph of a compiled binary,
-> making it significantly harder to perform such attacks.
+29.06.2020 13:27, Mikko Perttunen пишет:
+...
+>> We don't need a dedicated sync point FD for all kinds of jobs, don't we?
+>> For example, I don't see why a sync point FD may be needed in a case of
+>> Opentegra jobs.
 > 
-> init_state_node() assigns same function pointer to idle_state->enter
-> and idle_state->enter_s2idle. This definitely causes CFI failure
-> when calling either enter() or enter_s2idle().
+> I think it's cleaner if we have just one way to allocate syncpoints, and
+> then those syncpoints can be passed to different things depending on the
+> situation.
 > 
-> Align enter_s2idle() with enter() function prototype to fix CFI
-> failure.
+> If we want to protect direct incrementing while a job is submitted, we
+> could have a locking API where an ongoing job can take a lock refcount
+> in the syncpoint, and incrementing would return -EBUSY.
 
-That needs to be documented somewhere close to the definition of the
-callbacks in question.
-
-Otherwise it is completely unclear why this is a good idea.
-
-> Signed-off-by: Neal Liu <neal.liu@mediatek.com>
-> ---
->  drivers/acpi/processor_idle.c   |    6 ++++--
->  drivers/cpuidle/cpuidle-tegra.c |    8 +++++---
->  drivers/idle/intel_idle.c       |    6 ++++--
->  include/linux/cpuidle.h         |    6 +++---
->  4 files changed, 16 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-> index 75534c5..6ffb6c9 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -655,8 +655,8 @@ static int acpi_idle_enter(struct cpuidle_device *dev,
->  	return index;
->  }
->  
-> -static void acpi_idle_enter_s2idle(struct cpuidle_device *dev,
-> -				   struct cpuidle_driver *drv, int index)
-> +static int acpi_idle_enter_s2idle(struct cpuidle_device *dev,
-> +				  struct cpuidle_driver *drv, int index)
->  {
->  	struct acpi_processor_cx *cx = per_cpu(acpi_cstate[index], dev->cpu);
->  
-> @@ -674,6 +674,8 @@ static void acpi_idle_enter_s2idle(struct cpuidle_device *dev,
->  		}
->  	}
->  	acpi_idle_do_entry(cx);
-> +
-> +	return 0;
->  }
->  
->  static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
-> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-> index 1500458..a12fb14 100644
-> --- a/drivers/cpuidle/cpuidle-tegra.c
-> +++ b/drivers/cpuidle/cpuidle-tegra.c
-> @@ -253,11 +253,13 @@ static int tegra_cpuidle_enter(struct cpuidle_device *dev,
->  	return err ? -1 : index;
->  }
->  
-> -static void tegra114_enter_s2idle(struct cpuidle_device *dev,
-> -				  struct cpuidle_driver *drv,
-> -				  int index)
-> +static int tegra114_enter_s2idle(struct cpuidle_device *dev,
-> +				 struct cpuidle_driver *drv,
-> +				 int index)
->  {
->  	tegra_cpuidle_enter(dev, drv, index);
-> +
-> +	return 0;
->  }
->  
->  /*
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index f449584..b178da3 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -175,13 +175,15 @@ static __cpuidle int intel_idle(struct cpuidle_device *dev,
->   * Invoked as a suspend-to-idle callback routine with frozen user space, frozen
->   * scheduler tick and suspended scheduler clock on the target CPU.
->   */
-> -static __cpuidle void intel_idle_s2idle(struct cpuidle_device *dev,
-> -					struct cpuidle_driver *drv, int index)
-> +static __cpuidle int intel_idle_s2idle(struct cpuidle_device *dev,
-> +				       struct cpuidle_driver *drv, int index)
->  {
->  	unsigned long eax = flg2MWAIT(drv->states[index].flags);
->  	unsigned long ecx = 1; /* break on interrupt flag */
->  
->  	mwait_idle_with_hints(eax, ecx);
-> +
-> +	return 0;
->  }
->  
->  /*
-> diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-> index ec2ef63..bee10c0 100644
-> --- a/include/linux/cpuidle.h
-> +++ b/include/linux/cpuidle.h
-> @@ -66,9 +66,9 @@ struct cpuidle_state {
->  	 * suspended, so it must not re-enable interrupts at any point (even
->  	 * temporarily) or attempt to change states of clock event devices.
->  	 */
-> -	void (*enter_s2idle) (struct cpuidle_device *dev,
-> -			      struct cpuidle_driver *drv,
-> -			      int index);
-> +	int (*enter_s2idle)(struct cpuidle_device *dev,
-> +			    struct cpuidle_driver *drv,
-> +			    int index);
->  };
->  
->  /* Idle State Flags */
-> -- 
-> 1.7.9.5
-> 
+Okay, let's go with this for now.
