@@ -1,15 +1,16 @@
 From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH v4 08/23] ASoC: soc-core: Fix component name_prefix parsing
-Date: Mon, 29 Jun 2020 21:16:26 +0530
-Message-ID: <5ad958bb-a736-2391-31fa-c32e13750322@nvidia.com>
+Subject: Re: [PATCH v4 10/23] ASoC: simple-card: Wrong daifmt for CPU end of
+ DPCM DAI link
+Date: Mon, 29 Jun 2020 21:36:49 +0530
+Message-ID: <6e27daa5-331e-968b-4027-2e30aeb7d382@nvidia.com>
 References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
- <1593233625-14961-9-git-send-email-spujar@nvidia.com>
- <878sg61zcf.wl-kuninori.morimoto.gx@renesas.com>
+ <1593233625-14961-11-git-send-email-spujar@nvidia.com>
+ <877dvq1yhy.wl-kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <878sg61zcf.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <877dvq1yhy.wl-kuninori.morimoto.gx@renesas.com>
 Content-Language: en-GB
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
@@ -26,54 +27,63 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 6/29/2020 6:08 AM, Kuninori Morimoto wrote:
+On 6/29/2020 6:26 AM, Kuninori Morimoto wrote:
 > External email: Use caution opening links or attachments
 >
 >
 > Hi Sameer
 >
-> Thank you for your patch
->
-> # I guess there was ML registering magic until v3 ?
-> # This is 1st time for me to get this patch series...
-
-Until v3 the series was mostly about registering ASoC components. Based 
-on the discussions in the previous series and threads, I have updated 
-drivers to work with DPCM and added patches for simple-card driver to 
-test complete audio path. Yes, simple-card driver patches are new and 
-were not part of earlier series. Sorry if I was not clear in the cover 
-letter.
-
-Thank you for the review.
->
->> The "prefix" can be defined in DAI link node or it can be specified as
->> part of the component node itself. Currently "sound-name-prefix" defined
->> in a component is not taking effect. Actually the property is not getting
->> parsed. It can be fixed by parsing "sound-name-prefix" property whenever
->> "prefix" is missing in DAI link Codec node.
+>>   simple-audio-card,dai-link@xxx {
+>>       format = "i2s";
+>>       bitclock-master=<&cpu1>;
+>>       frame-master=<&cpu1>;
 >>
->> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> (snip)
->> @@ -1111,8 +1111,10 @@ static void soc_set_name_prefix(struct snd_soc_card *card,
->>                struct snd_soc_codec_conf *map = &card->codec_conf[i];
+>>       cpu1: cpu@0 {
+>>           ...
+>>       };
 >>
->>                if (snd_soc_is_matching_component(&map->dlc, component)) {
->> -                     component->name_prefix = map->name_prefix;
->> -                     return;
->> +                     if (map->name_prefix) {
->> +                             component->name_prefix = map->name_prefix;
->> +                             return;
->> +                     }
->>                }
->>        }
-> This is nit-pick but it can be like this ?
+>>       codec@0 {
+>>           ...
+>>       };
+>>
+>>       ...
+>>   };
+>>
+>> In above case CPU is expected to be configured as a master and Codec as
+>> a slave device. But both CPU/Codec are being configured as slave devices.
+>> This happens because asoc_simple_parse_daifmt() uses Codec reference and
+>> sets up the 'dai_link->dai_fmt' accordingly while parsing both CPU and
+>> Codec.
+> I'm sorry but I don't 100% understand about this case...
+> asoc_simple_parse_daifmt() should work in this case
 >
->                  if (snd_soc_is_matching_component(&map->dlc, component) &&
->                      map->name_prefix) {
->                          ...
->                  }
+> The reason why it needs codec node is that
+> SND_SOC_DAIFMT_CBx_CFx are "Codec" base Master/Slave.
 
-Sounds fine. Will update.
+Currently soc-core has following code snippet,
+
+/snd_soc_runtime_set_dai_fmt() {//
+//     ...//
+//
+//     if (cpu_dai->component->driver->non_legacy_dai_naming)//
+//         fmt = inv_dai_fmt;//
+//
+//     ...//
+// }/
+
+Above flips polarity for 'cpu_dai' if 'non_legacy_dai_naming' flag is set.
+
+1. Hence example mentioned in the commit message does not work if my 
+'cpu_dai' driver does not have this flag set.
+
+2. While it is true that we consider reference of 'Codec' mode for 
+simple CPU<->Codec DAI links, for DPCM this does not seem flexible. For 
+DPCM links CPU and Codec are not directly connected (CPU<->Dummy or 
+Dummy<->Codec). Please consider, for example, if the DAI link has 
+multiple CPU/Codecs. Which 'Codec' reference needs to be considered? 
+Isn't it better if we explicitly mention which DAI we want to operate as 
+'Master'?
+
 >
 > Thank you for your help !!
 >
