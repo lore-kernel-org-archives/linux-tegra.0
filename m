@@ -1,16 +1,16 @@
 From: Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH v4 10/23] ASoC: simple-card: Wrong daifmt for CPU end of
- DPCM DAI link
-Date: Mon, 29 Jun 2020 21:36:49 +0530
-Message-ID: <6e27daa5-331e-968b-4027-2e30aeb7d382@nvidia.com>
+Subject: Re: [PATCH v4 11/23] ASoC: simple-card: Loop over all children for
+ 'mclk-fs'
+Date: Mon, 29 Jun 2020 22:02:24 +0530
+Message-ID: <58000bd3-861c-bbc2-75e1-128cf0199a76@nvidia.com>
 References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
- <1593233625-14961-11-git-send-email-spujar@nvidia.com>
- <877dvq1yhy.wl-kuninori.morimoto.gx@renesas.com>
+ <1593233625-14961-12-git-send-email-spujar@nvidia.com>
+ <875zba1y28.wl-kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <877dvq1yhy.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <875zba1y28.wl-kuninori.morimoto.gx@renesas.com>
 Content-Language: en-GB
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
@@ -27,63 +27,38 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 6/29/2020 6:26 AM, Kuninori Morimoto wrote:
+On 6/29/2020 6:35 AM, Kuninori Morimoto wrote:
 > External email: Use caution opening links or attachments
 >
 >
 > Hi Sameer
 >
->>   simple-audio-card,dai-link@xxx {
->>       format = "i2s";
->>       bitclock-master=<&cpu1>;
->>       frame-master=<&cpu1>;
+>> CPU/Codec in DPCM DAI links are connected as CPU<->Dummy and Dummy<->Codec.
+>> Though mostly CPU won't use/require 'mclk-fs' property, looping over
+>> 'np' (current child node in a DAI link) can help in cases where multiple
+>> Codecs are defined. This further helps to get rid of 'codec' argument
+>> from simple_dai_link_of_dpcm() function, which gets called for DPCM links.
 >>
->>       cpu1: cpu@0 {
->>           ...
->>       };
->>
->>       codec@0 {
->>           ...
->>       };
->>
->>       ...
->>   };
->>
->> In above case CPU is expected to be configured as a master and Codec as
->> a slave device. But both CPU/Codec are being configured as slave devices.
->> This happens because asoc_simple_parse_daifmt() uses Codec reference and
->> sets up the 'dai_link->dai_fmt' accordingly while parsing both CPU and
->> Codec.
-> I'm sorry but I don't 100% understand about this case...
-> asoc_simple_parse_daifmt() should work in this case
->
-> The reason why it needs codec node is that
-> SND_SOC_DAIFMT_CBx_CFx are "Codec" base Master/Slave.
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>> ---
+> (snip)
+>> diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+>> index 39cdc71..02d6295 100644
+>> --- a/sound/soc/generic/simple-card.c
+>> +++ b/sound/soc/generic/simple-card.c
+>> @@ -107,7 +107,9 @@ static void simple_parse_mclk_fs(struct device_node *top,
+>>        snprintf(prop, sizeof(prop), "%smclk-fs", prefix);
+>>        of_property_read_u32(node,      prop, &props->mclk_fs);
+>>        of_property_read_u32(cpu,       prop, &props->mclk_fs);
+>> -     of_property_read_u32(codec,     prop, &props->mclk_fs);
+>> +
+>> +     if (cpu != codec)
+>> +             of_property_read_u32(codec, prop, &props->mclk_fs);
+> Maybe we want to have "cpu" in simple_dai_link_of_dpcm() side
+> without using magical code in simple_parse_mclk_fs() side ?
 
-Currently soc-core has following code snippet,
-
-/snd_soc_runtime_set_dai_fmt() {//
-//     ...//
-//
-//     if (cpu_dai->component->driver->non_legacy_dai_naming)//
-//         fmt = inv_dai_fmt;//
-//
-//     ...//
-// }/
-
-Above flips polarity for 'cpu_dai' if 'non_legacy_dai_naming' flag is set.
-
-1. Hence example mentioned in the commit message does not work if my 
-'cpu_dai' driver does not have this flag set.
-
-2. While it is true that we consider reference of 'Codec' mode for 
-simple CPU<->Codec DAI links, for DPCM this does not seem flexible. For 
-DPCM links CPU and Codec are not directly connected (CPU<->Dummy or 
-Dummy<->Codec). Please consider, for example, if the DAI link has 
-multiple CPU/Codecs. Which 'Codec' reference needs to be considered? 
-Isn't it better if we explicitly mention which DAI we want to operate as 
-'Master'?
-
+Are you suggesting if we should simplify simple_parse_mclk_fs() by 
+either passing 'cpu' or 'codec'?
 >
 > Thank you for your help !!
 >
