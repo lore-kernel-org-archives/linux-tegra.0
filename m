@@ -1,169 +1,290 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI (sync points)
-Date: Mon, 29 Jun 2020 22:42:46 +0300
-Message-ID: <f1a88006-ab3e-9068-e220-15eee17aeba0@gmail.com>
-References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <5b1edaad-ba36-7b0f-5b02-457ae5b6d91e@gmail.com>
- <62859775-514c-2941-75ed-6905e9282a6f@kapsi.fi>
- <623c1eaa-31fb-8dff-f6c0-d8cd0be60070@gmail.com>
- <827c92a6-7fed-a81c-ba8e-6c69416c4ab9@kapsi.fi>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [RFC PATCH v2 08/18] media: tegra-video: Enable TPG based on
+ kernel config
+Date: Mon, 29 Jun 2020 07:48:43 -0700
+Message-ID: <91c70ed2-2a86-e99f-8dcb-73501a25b3d8@nvidia.com>
+References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
+ <1592358094-23459-9-git-send-email-skomatineni@nvidia.com>
+ <f0f362e2-3748-5efe-b4a2-4ad344ae6a1e@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <827c92a6-7fed-a81c-ba8e-6c69416c4ab9-/1wQRMveznE@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f0f362e2-3748-5efe-b4a2-4ad344ae6a1e@xs4all.nl>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
+Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-29.06.2020 13:27, Mikko Perttunen пишет:
-...
->>>> 4. The job's sync point can't be re-used after job's submission (UAPI
->>>> constraint!). Userspace must free sync point and allocate a new one for
->>>> the next job submission. And now we:
->>>>
->>>>     - Know that job's sync point is always in a healthy state!
->>>>
->>>>     - We're not limited by a number of physically available hardware
->>>> sync
->>>> points! Allocation should block until free sync point is available.
->>>>
->>>>     - The logical number of job's sync point increments matches the SP
->>>> hardware state! Which is handy for a job's debugging.
->>>>
->>>> Optionally, the job's sync point could be auto-removed from the DRM's
->>>> context after job's submission, avoiding a need for an extra SYNCPT_PUT
->>>> IOCTL invocation to be done by userspace after the job's submission.
->>>> Could be a job's flag.
->>>
->>> I think this would cause problems where after a job completes but before
->>> the fence has been waited, the syncpoint is already recycled (especially
->>> if the syncpoint is reset into some clean state).
+
+On 6/29/20 2:28 AM, Hans Verkuil wrote:
+> On 17/06/2020 03:41, Sowjanya Komatineni wrote:
+>> Tegra internal TPG mode is only for Tegra vi and csi testing
+>> without a real sensor and driver should default support real
+>> sensor.
 >>
->> Exactly, good point! The dma-fence shouldn't be hardwired to the sync
->> point in order to avoid this situation :)
+>> So, This patch adds CONFIG_VIDEO_TEGRA_TPG and enables Tegra
+>> internal TPG mode only when this config is selected.
 >>
->> Please take a look at the fence implementation that I made for the
->> grate-driver [3]. The host1x-fence is a dma-fence [4] that is attached
->> to a sync point by host1x_fence_create(). Once job is completed, the
->> host1x-fence is detached from the sync point [5][6] and sync point could
->> be recycled safely!
-> 
-> What if the fence has been programmed as a prefence to another channel
-> (that is getting delayed), or to the GPU, or some other accelerator like
-> DLA, or maybe some other VM? Those don't know the dma_fence has been
-> signaled, they can only rely on the syncpoint ID/threshold pair.
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/staging/media/tegra-video/Kconfig    |  6 +++++
+>>   drivers/staging/media/tegra-video/csi.c      | 38 +++++++++++++++++++++++-----
+>>   drivers/staging/media/tegra-video/tegra210.c |  6 +++++
+>>   drivers/staging/media/tegra-video/vi.c       | 13 +++++++---
+>>   drivers/staging/media/tegra-video/video.c    | 23 +++++++++--------
+>>   5 files changed, 65 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/staging/media/tegra-video/Kconfig b/drivers/staging/media/tegra-video/Kconfig
+>> index f6c61ec..566da62 100644
+>> --- a/drivers/staging/media/tegra-video/Kconfig
+>> +++ b/drivers/staging/media/tegra-video/Kconfig
+>> @@ -10,3 +10,9 @@ config VIDEO_TEGRA
+>>   
+>>   	  To compile this driver as a module, choose M here: the module
+>>   	  will be called tegra-video.
+>> +
+>> +config VIDEO_TEGRA_TPG
+>> +	bool "NVIDIA Tegra VI driver TPG mode"
+>> +	depends on VIDEO_TEGRA
+>> +	help
+>> +	  Say yes here to enable Tegra internal TPG mode
+> This is not clear: if this is enabled, will the driver use TPG for
+> ALL CSI ports? Or just for those that are not connected to anything?
+> (i.e. the unused ports).
+>
+> I always assumed that the latter was intended, but it kind of looks from
+> the code that this switches to TPG completely.
+>
+> It would also be nice if you can still use the TPG even for connected
+> CSI ports by just setting the TEST_PATTERN control. I believe that's also what
+> happens in the driver that is in the L4T tree.
+>
+> In any case, it is definitely not clear from this config description what
+> it does.
+>
+> Regards,
+>
+> 	Hans
 
-The explicit job's fence is always just a dma-fence, it's not tied to a
-host1x-fence and it should be waited for a signal on CPU.
+Same v4l2 test pattern control is used by sensor subdevices as well and 
+we can't differentiate between Tegra Vs Sensor test patterns.
 
-If you want to make job to wait for a sync point on hardware, then you
-should use the drm_tegra_submit_command wait-command.
+Current patches are based on our prior discussions where Tegra internal 
+TPG is enabled for all channels/ports only when TPG Kconfig is set 
+otherwise it will be for sensor capture based on the device graph.
 
-Again, please notice that DRM scheduler supports the job-submitted
-fence! This dma-fence will signal once job is pushed to hardware for
-execution, so it shouldn't be a problem to maintain jobs order for a
-complex jobs without much hassle. We'll need to write some userspace to
-check how it works in practice :) For now I really had experience with a
-simple jobs only.
+To be clear, will update Kconfig description specifying all channels 
+will be in TPG mode only when TPG Kconfig is set otherwise media links 
+are purely based on the device graph from DT.
 
-Secondly, I suppose neither GPU, nor DLA could wait on a host1x sync
-point, correct? Or are they integrated with Host1x HW?
+Thanks
 
-Anyways, it shouldn't be difficult to resolve dma-fence into
-host1x-fence, get SP ID and maintain the SP's liveness. Please see more
-below.
+Sowjanya
 
-In the grate-driver I made all sync points refcounted, so sync point
-won't be recycled while it has active users [1][2][3] in kernel (or
-userspace).
-
-[1]
-https://github.com/grate-driver/linux/blob/master/include/linux/host1x.h#L428
-[2]
-https://github.com/grate-driver/linux/blob/master/include/linux/host1x.h#L1206
-[3]
-https://github.com/grate-driver/linux/blob/master/drivers/gpu/host1x/soc/syncpoints.c#L163
-
-Now, grate-kernel isn't a 100% complete implementation, as I already
-mentioned before. The host1x-fence doesn't have a reference to a sync
-point as you may see in the code, this is because the userspace sync
-points are not implemented in the grate-driver.
-
-But nothing stops us to add that SP reference and then we could simply
-do the following in the code:
-
-struct dma_fence *host1x_fence_create(syncpt,...)
-{
-	...
-	fence->sp = syncpt;
-	...
-	return &fence->base;
-}
-
-void host1x_syncpt_signal_fence(struct host1x_fence *fence)
-{
-	...
-	fence->sp = NULL;
-}
-
-irqreturn_t host1x_hw_syncpt_isr()
-{
-	spin_lock(&host1x_syncpts_lock);
-	...
-	host1x_syncpt_signal_fence(sp->fence);
-	...
-	spin_unlock(&host1x_syncpts_lock);
-}
-
-void host1x_submit_job(job)
-{
-	...
-	spin_lock_irqsave(&host1x_syncpts_lock);
-	sp = host1x_syncpt_get(host1x_fence->sp);
-	spin_unlock_irqrestore(&host1x_syncpts_lock);
-	...
-	if (sp) {
-		push(WAIT(sp->id, host1x_fence->threshold));
-		job->sync_points = sp;
-	}
-}
-
-void host1x_free_job(job)
-{
-	host1x_syncpt_put(job->sync_points);
-	...
-}
-
-For example: if you'll share host1-fence (dma-fence) with a GPU context,
-then the fence's SP won't be released until GPU's context will be done
-with the SP. The GPU's job will be timed out if shared SP won't get
-incremented, and this is totally okay situation.
-
-Does this answer yours question?
-
-===
-
-I'm not familiar with the Host1x VMs, so please let me use my
-imagination here:
-
-In a case of VM we could have a special VM-shared sync point type. The
-userspace will allocate this special VM SP using ALLOCATE_SYNCPOINT and
-this SP won't be used for a job(!). This is the case where job will need
-to increment multiple sync points, its own SP + VM's SP. If job hangs,
-then there should be a way to tell VM to release the SP and try again
-next time with a freshly-allocated SP. The shared SP should stay alive
-as long as VM uses it, so there should be a way for VM to tell that it's
-done with SP.
-
-Alternatively, we could add a SP recovery (or whatever is needed) for
-the VM, but this should be left specific to T194+. Older Tegras
-shouldn't ever need this complexity if I'm not missing anything.
-
-Please provide a detailed information about the VM's workflow if the
-above doesn't sound good.
-
-Perhaps we shouldn't focus on the VM support for now, but may left some
-room for a potential future expansion if necessary.
+>
+>> diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+>> index 40ea195..fb667df 100644
+>> --- a/drivers/staging/media/tegra-video/csi.c
+>> +++ b/drivers/staging/media/tegra-video/csi.c
+>> @@ -62,6 +62,9 @@ static int csi_enum_bus_code(struct v4l2_subdev *subdev,
+>>   			     struct v4l2_subdev_pad_config *cfg,
+>>   			     struct v4l2_subdev_mbus_code_enum *code)
+>>   {
+>> +	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>> +		return -ENOIOCTLCMD;
+>> +
+>>   	if (code->index >= ARRAY_SIZE(tegra_csi_tpg_fmts))
+>>   		return -EINVAL;
+>>   
+>> @@ -76,6 +79,9 @@ static int csi_get_format(struct v4l2_subdev *subdev,
+>>   {
+>>   	struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
+>>   
+>> +	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>> +		return -ENOIOCTLCMD;
+>> +
+>>   	fmt->format = csi_chan->format;
+>>   
+>>   	return 0;
+>> @@ -121,6 +127,9 @@ static int csi_enum_framesizes(struct v4l2_subdev *subdev,
+>>   {
+>>   	unsigned int i;
+>>   
+>> +	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>> +		return -ENOIOCTLCMD;
+>> +
+>>   	if (fse->index >= ARRAY_SIZE(tegra_csi_tpg_sizes))
+>>   		return -EINVAL;
+>>   
+>> @@ -148,6 +157,9 @@ static int csi_enum_frameintervals(struct v4l2_subdev *subdev,
+>>   	const struct tpg_framerate *frmrate = csi->soc->tpg_frmrate_table;
+>>   	int index;
+>>   
+>> +	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>> +		return -ENOIOCTLCMD;
+>> +
+>>   	/* one framerate per format and resolution */
+>>   	if (fie->index > 0)
+>>   		return -EINVAL;
+>> @@ -172,6 +184,9 @@ static int csi_set_format(struct v4l2_subdev *subdev,
+>>   	const struct v4l2_frmsize_discrete *sizes;
+>>   	unsigned int i;
+>>   
+>> +	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>> +		return -ENOIOCTLCMD;
+>> +
+>>   	sizes = v4l2_find_nearest_size(tegra_csi_tpg_sizes,
+>>   				       ARRAY_SIZE(tegra_csi_tpg_sizes),
+>>   				       width, height,
+>> @@ -208,6 +223,9 @@ static int tegra_csi_g_frame_interval(struct v4l2_subdev *subdev,
+>>   {
+>>   	struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
+>>   
+>> +	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>> +		return -ENOIOCTLCMD;
+>> +
+>>   	vfi->interval.numerator = 1;
+>>   	vfi->interval.denominator = csi_chan->framerate;
+>>   
+>> @@ -311,8 +329,12 @@ static int tegra_csi_channel_init(struct tegra_csi_channel *chan)
+>>   	subdev = &chan->subdev;
+>>   	v4l2_subdev_init(subdev, &tegra_csi_ops);
+>>   	subdev->dev = csi->dev;
+>> -	snprintf(subdev->name, V4L2_SUBDEV_NAME_SIZE, "%s-%d", "tpg",
+>> -		 chan->csi_port_num);
+>> +	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>> +		snprintf(subdev->name, V4L2_SUBDEV_NAME_SIZE, "%s-%d", "tpg",
+>> +			 chan->csi_port_num);
+>> +	else
+>> +		snprintf(subdev->name, V4L2_SUBDEV_NAME_SIZE, "%s",
+>> +			 kbasename(chan->of_node->full_name));
+>>   
+>>   	v4l2_set_subdevdata(subdev, chan);
+>>   	subdev->fwnode = of_fwnode_handle(chan->of_node);
+>> @@ -405,11 +427,13 @@ static int tegra_csi_init(struct host1x_client *client)
+>>   
+>>   	INIT_LIST_HEAD(&csi->csi_chans);
+>>   
+>> -	ret = tegra_csi_tpg_channels_alloc(csi);
+>> -	if (ret < 0) {
+>> -		dev_err(csi->dev,
+>> -			"failed to allocate tpg channels: %d\n", ret);
+>> -		goto cleanup;
+>> +	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)) {
+>> +		ret = tegra_csi_tpg_channels_alloc(csi);
+>> +		if (ret < 0) {
+>> +			dev_err(csi->dev,
+>> +				"failed to allocate tpg channels: %d\n", ret);
+>> +			goto cleanup;
+>> +		}
+>>   	}
+>>   
+>>   	ret = tegra_csi_channels_init(csi);
+>> diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+>> index 3baa4e3..3492a8a 100644
+>> --- a/drivers/staging/media/tegra-video/tegra210.c
+>> +++ b/drivers/staging/media/tegra-video/tegra210.c
+>> @@ -631,7 +631,11 @@ const struct tegra_vi_soc tegra210_vi_soc = {
+>>   	.ops = &tegra210_vi_ops,
+>>   	.hw_revision = 3,
+>>   	.vi_max_channels = 6,
+>> +#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
+>>   	.vi_max_clk_hz = 499200000,
+>> +#else
+>> +	.vi_max_clk_hz = 998400000,
+>> +#endif
+>>   };
+>>   
+>>   /* Tegra210 CSI PHY registers accessors */
+>> @@ -957,7 +961,9 @@ static const char * const tegra210_csi_cil_clks[] = {
+>>   	"cilab",
+>>   	"cilcd",
+>>   	"cile",
+>> +#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
+>>   	"csi_tpg",
+>> +#endif
+>>   };
+>>   
+>>   /* Tegra210 CSI operations */
+>> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+>> index d621ebc..0197f4e 100644
+>> --- a/drivers/staging/media/tegra-video/vi.c
+>> +++ b/drivers/staging/media/tegra-video/vi.c
+>> @@ -565,6 +565,7 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+>>   {
+>>   	int ret;
+>>   
+>> +#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
+>>   	/* add test pattern control handler to v4l2 device */
+>>   	v4l2_ctrl_new_std_menu_items(&chan->ctrl_handler, &vi_ctrl_ops,
+>>   				     V4L2_CID_TEST_PATTERN,
+>> @@ -576,6 +577,7 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+>>   		v4l2_ctrl_handler_free(&chan->ctrl_handler);
+>>   		return chan->ctrl_handler.error;
+>>   	}
+>> +#endif
+>>   
+>>   	/* setup the controls */
+>>   	ret = v4l2_ctrl_handler_setup(&chan->ctrl_handler);
+>> @@ -918,10 +920,13 @@ static int tegra_vi_init(struct host1x_client *client)
+>>   
+>>   	INIT_LIST_HEAD(&vi->vi_chans);
+>>   
+>> -	ret = tegra_vi_tpg_channels_alloc(vi);
+>> -	if (ret < 0) {
+>> -		dev_err(vi->dev, "failed to allocate tpg channels: %d\n", ret);
+>> -		goto free_chans;
+>> +	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)) {
+>> +		ret = tegra_vi_tpg_channels_alloc(vi);
+>> +		if (ret < 0) {
+>> +			dev_err(vi->dev,
+>> +				"failed to allocate tpg channels: %d\n", ret);
+>> +			goto free_chans;
+>> +		}
+>>   	}
+>>   
+>>   	ret = tegra_vi_channels_init(vi);
+>> diff --git a/drivers/staging/media/tegra-video/video.c b/drivers/staging/media/tegra-video/video.c
+>> index 30816aa..e50bd70 100644
+>> --- a/drivers/staging/media/tegra-video/video.c
+>> +++ b/drivers/staging/media/tegra-video/video.c
+>> @@ -60,15 +60,17 @@ static int host1x_video_probe(struct host1x_device *dev)
+>>   	if (ret < 0)
+>>   		goto unregister_v4l2;
+>>   
+>> -	/*
+>> -	 * Both vi and csi channels are available now.
+>> -	 * Register v4l2 nodes and create media links for TPG.
+>> -	 */
+>> -	ret = tegra_v4l2_nodes_setup_tpg(vid);
+>> -	if (ret < 0) {
+>> -		dev_err(&dev->dev,
+>> -			"failed to setup tpg graph: %d\n", ret);
+>> -		goto device_exit;
+>> +	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)) {
+>> +		/*
+>> +		 * Both vi and csi channels are available now.
+>> +		 * Register v4l2 nodes and create media links for TPG.
+>> +		 */
+>> +		ret = tegra_v4l2_nodes_setup_tpg(vid);
+>> +		if (ret < 0) {
+>> +			dev_err(&dev->dev,
+>> +				"failed to setup tpg graph: %d\n", ret);
+>> +			goto device_exit;
+>> +		}
+>>   	}
+>>   
+>>   	return 0;
+>> @@ -91,7 +93,8 @@ static int host1x_video_remove(struct host1x_device *dev)
+>>   {
+>>   	struct tegra_video_device *vid = dev_get_drvdata(&dev->dev);
+>>   
+>> -	tegra_v4l2_nodes_cleanup_tpg(vid);
+>> +	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>> +		tegra_v4l2_nodes_cleanup_tpg(vid);
+>>   
+>>   	host1x_device_exit(dev);
+>>   
+>>
