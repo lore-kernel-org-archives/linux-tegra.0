@@ -1,214 +1,67 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [RFC PATCH v2 00/18] Support for Tegra video capture from
- external sensor
-Date: Tue, 30 Jun 2020 17:13:33 +0200
-Message-ID: <a60d8f80-312d-fce3-61f5-328e7f2a7a64@xs4all.nl>
-References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
- <b3f63f3f-50b2-e818-2c59-8009c31a9825@xs4all.nl>
- <f5c84071-46ad-aa6f-0820-1813d4a907c9@nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 11/23] ASoC: simple-card: Loop over all children for
+ 'mclk-fs'
+Date: Tue, 30 Jun 2020 11:55:32 +0100
+Message-ID: <20200630105532.GG5272@sirena.org.uk>
+References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
+ <1593233625-14961-12-git-send-email-spujar@nvidia.com>
+ <875zba1y28.wl-kuninori.morimoto.gx@renesas.com>
+ <58000bd3-861c-bbc2-75e1-128cf0199a76@nvidia.com>
+ <87lfk5z4ov.wl-kuninori.morimoto.gx@renesas.com>
+ <b33d5a1b-ecd5-3618-4894-c3ab0f4b077d@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f5c84071-46ad-aa6f-0820-1813d4a907c9@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
-Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="64j1qyTOoGvYcHb1"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <b33d5a1b-ecd5-3618-4894-c3ab0f4b077d-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 30/06/2020 16:58, Sowjanya Komatineni wrote:
-> 
-> On 6/30/20 2:21 AM, Hans Verkuil wrote:
->> On 17/06/2020 03:41, Sowjanya Komatineni wrote:
->>> This series adds support for video capture from external camera sensor to
->>> Tegra video driver.
->>>
->>> Jetson TX1 has camera expansion connector and supports custom camera module
->>> designed as per TX1 design specification.
->>>
->>> This series also enables camera capture support for Jetson Nano which has
->>> Raspberry PI camera header.
->>>
->>> This series is tested with IMX219 camera sensor.
->> Which tree did you base this on? The media_tree master? Or the mainline kernel?
-> These patches are with linux-next base at the time I sent them out which 
-> are on 20200616
->>
->> I now have the imx219 detected, but if I try to stream I get this:
->>
->> $ v4l2-ctl --stream-mmap
->> <[  512.840944] video4linux video0: MW_ACK_DONE syncpt timeout: -11
->> [  512.972975] video4linux video0: frame start syncpt timeout: -11
->> <VIDIOC_DQBUF: failed: Input/output error
->> [  513.180770] video4linux video0: MW_ACK_DONE syncpt timeout: -11
->>
->> And then everything hangs and I need to reset.
->>
->> I'm testing with the media_tree master with your patches on top.
->>
->> Regards,
->>
->> 	Hans
-> 
-> Are you using same device tree as I sent offline? It uses CSI A for IMX219.
-> 
-> Does you setup also uses CSI-A as x2 for IMX219?
-> 
-> I tested them on Jetson Nano + IMX219 rasp PI module and also on Jetson 
-> TX1 + IMX274.
-> 
-> I did not see any issue and am able to capture from both.
-> 
-> Will try again on my side with today's latest linux-next and update result.
 
-Please use the media_tree master, that's what I use as well.
+--64j1qyTOoGvYcHb1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I did some more testing and there is something weird going on.
+On Tue, Jun 30, 2020 at 09:53:13AM +0530, Sameer Pujar wrote:
+> On 6/30/2020 7:38 AM, Kuninori Morimoto wrote:
+> > External email: Use caution opening links or attachments
 
-I have a Leopard Imaging camera expansion board (LI-JTX1-MIPI-ADPT) with
-three camera connectors. See here for the datasheet:
+> > > > > +     if (cpu != codec)
+> > > > > +             of_property_read_u32(codec, prop, &props->mclk_fs);
 
-https://www.leopardimaging.com/uploads/LI-TX1-KIT-IMX274M12-T_datasheet.pdf
+> Sorry if I was not clear before.
 
-The first connector (with an IMX274) causes this error:
+I agree with Moromito-san that the new code (especially the above bit)
+is very confusing, I'm not sure how the reader is supposed to figure out
+what the purpose of the check is or how the CPU could ever be the CODEC.
 
-$ v4l2-ctl -d1 --stream-mmap
-[  599.265885] video4linux video1: MW_ACK_DONE syncpt timeout: -11
-[  599.473883] video4linux video1: MW_ACK_DONE syncpt timeout: -11
-[  599.681904] video4linux video1: frame start syncpt timeout: -11
-[  599.681909] video4linux video1: MW_ACK_DONE syncpt timeout: -11
-<VIDIOC_DQBUF: failed: Input/output error
-[  599.897884] video4linux video1: MW_ACK_DONE syncpt timeout: -11
+> simple_parse_mclk_fs() is used by both simple_dai_link_of_dpcm() and
+> simple_dai_link_of(). To make the same API work for both the cases, I had to
+> use (A) in DPCM function. Now (B) does not get used for
+> simple_dai_link_of_dpcm(), but will get used by simple_dai_link_of().
 
-Similar to the test above where I had an IMX219 connected. Except it didn't
-hang with the IMX274 (I'm beginning to suspect a locking issue in the imx219
-driver that is causing the hang, I'll look at that tomorrow).
+> If it is simpler I will just avoid 'cpu != codec' check and keep the
+> function simple_parse_mclk_fs() as it is.
 
-If I connect the IMX219 to the middle camera connector, then it works fine.
-I think I tested this with the IMX274 as well, but I'm not 100% certain, also
-something to double check tomorrow.
+That'd definitely be simpler, or supporting this with a CPU node as
+well.
 
-If I connect the IMX219 or IMX274 to the third camera connector, then I get this:
+--64j1qyTOoGvYcHb1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-$ v4l2-ctl -d0 --stream-mmap
-[  820.513866] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
+-----BEGIN PGP SIGNATURE-----
 
-[  820.525354] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl77GiQACgkQJNaLcl1U
+h9ARuwf9F6cRaR8lFHxz06jNWSZeUUWjcGZNbZVTPkDMRXKH+RKTvtX5ac3/WiX1
+NjQFs+TK8LV6s36/D9pbDL+8tWytYKpmU5R4T82nWEl2QJLpcn+baR5mZ74u5ZUH
+HyUKVyPr/xujUOBmFCLBZkLexA+f8pICIwqskTUefJe9yJwvTj2wTtj9zD85PaMz
+2Mu+EtDEvw1/2bvn1jaHvpYHmhDqHALoExw6AIRiuWSdOBNESBMksOE0Cn/qBuwA
+BsOQz+jwqyAGR0K8VpGGhFnt7xXCRK0eFWzD95FIxpQnq3CqLrphjK6wA5nL+vV1
+4n4ZkVcumkebzoPUrfnpt3DSzYCwbg==
+=gAuw
+-----END PGP SIGNATURE-----
 
-[  820.536780] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-
-[  820.548222] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-
-[  820.559639] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-<[  820.646931] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  820.658355] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  820.669797] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  820.681216] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  820.692601] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-<<<<<<<<<<<<<<< 14.50 fps
-<<<<<<<<<<<<<<< 14.75 fps
-<<<<<<<<<<<<<<< 14.73 fps
-<<<<<<<<<<<<<<< 14.80 fps
-<<<<<<<<<<<<<[  825.517854] tegra_mc_irq: 133437 callbacks suppressed
-[  825.517874] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  825.534395] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  825.545833] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  825.557280] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  825.579346] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  825.590764] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  825.602188] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  825.613649] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  825.625075] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-[  825.645983] tegra-mc 70019000.memory-controller: viw: write @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
-< 14.64 fps
-<<<<<<<<<<<<<<<< 14.87 fps
-<<<<<<<<<<<<<<< 14.89 fps
-
-Something is producing EMEM address decode errors. But it is streaming.
-
-If I enable the TPG then everything is fine.
-
-So I have currently three different behaviors for three camera connectors.
-
-Do you have a datasheet for your Jetson TX1 camera board? It could be useful
-to compare the two.
-
-Regards,
-
-	Hans
-
-> 
->>
->>> This series include,
->>>
->>> VI I2C related fixes
->>> - Camera sensor programming happens through VI I2C which is on host1x bus.
->>> - These patches includes device tree and I2C driver fixes for VI I2C.
->>>
->>> Tegra video driver updates
->>> - TPG Vs Non-TPG based on Kconfig
->>> - Support for external sensor video capture based on device graph from DT.
->>> - Support for selection ioctl operations
->>> - Tegra MIPI CSI pads calibration
->>> - CSI T-CLK and T-HS settle time computation based on clock rates.
->>>
->>> Host1x driver updates
->>> - Adds API to allow creating mipi device for specific device node.
->>> - Splits MIPI pads calibrate start and waiting for calibration to be done.
->>>
->>> Device tree updates
->>> - Adds camera connector 2V8, 1V8, 1V2 regulator supplies to Jetson TX1 DT.
->>> - Enabled VI and CSI support in Jetson Nano DT.
->>>
->>>
->>> Delta between patch versions:
->>>
->>> [v2]:	Includes below changes based on v1 feedback
->>> 	- dt-binding document and the driver update for device graph to use
->>> 	  separate ports for sink endpoint and source endpoint for csi.
->>> 	- Use data-lanes endpoint property for csi.
->>> 	- Update tegra_mipi_request() to take device node pointer argument
->>> 	  rather than adding extra API.
->>> 	- Remove checking for clk pointer before clk_disable.
->>>
->>>
->>> Sowjanya Komatineni (18):
->>>    dt-bindings: i2c: tegra: Document Tegra210 VI I2C clocks and
->>>      power-domains
->>>    arm64: tegra: Add missing clocks and power-domains to Tegra210 VI I2C
->>>    i2c: tegra: Don't mark VI I2C as IRQ safe runtime PM
->>>    i2c: tegra: Fix the error path in tegra_i2c_runtime_resume
->>>    i2c: tegra: Fix runtime resume to re-init VI I2C
->>>    i2c: tegra: Avoid tegra_i2c_init_dma() for Tegra210 vi i2c
->>>    media: tegra-video: Fix channel format alignment
->>>    media: tegra-video: Enable TPG based on kernel config
->>>    media: tegra-video: Update format lookup to offset based
->>>    dt-bindings: tegra: Update VI and CSI bindings with port info
->>>    media: tegra-video: Add support for external sensor capture
->>>    media: tegra-video: Add support for selection ioctl ops
->>>    gpu: host1x: mipi: Update tegra_mipi_request() to be node based
->>>    gpu: host1x: mipi: Split tegra_mipi_calibrate and tegra_mipi_wait
->>>    media: tegra-video: Add CSI MIPI pads calibration
->>>    media: tegra-video: Compute settle times based on the clock rate
->>>    arm64: tegra: jetson-tx1: Add camera supplies
->>>    arm64: tegra: Enable Tegra VI CSI support for Jetson Nano
->>>
->>>   .../display/tegra/nvidia,tegra20-host1x.txt        |  92 ++-
->>>   .../devicetree/bindings/i2c/nvidia,tegra20-i2c.txt |  19 +-
->>>   arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |  41 ++
->>>   arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  10 +
->>>   arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +
->>>   drivers/gpu/drm/tegra/dsi.c                        |   9 +-
->>>   drivers/gpu/host1x/mipi.c                          |  30 +-
->>>   drivers/i2c/busses/i2c-tegra.c                     |  39 +-
->>>   drivers/staging/media/tegra-video/Kconfig          |   7 +
->>>   drivers/staging/media/tegra-video/csi.c            | 245 ++++++-
->>>   drivers/staging/media/tegra-video/csi.h            |   8 +
->>>   drivers/staging/media/tegra-video/tegra210.c       |  25 +-
->>>   drivers/staging/media/tegra-video/vi.c             | 770 +++++++++++++++++++--
->>>   drivers/staging/media/tegra-video/vi.h             |  23 +-
->>>   drivers/staging/media/tegra-video/video.c          |  23 +-
->>>   include/linux/host1x.h                             |   4 +-
->>>   16 files changed, 1251 insertions(+), 100 deletions(-)
->>>
+--64j1qyTOoGvYcHb1--
