@@ -1,85 +1,77 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v7 31/36] staging: tegra-vde: fix common struct sg_table
- related issues
-Date: Tue, 30 Jun 2020 12:07:26 +0200
-Message-ID: <559970b6-e80f-90ec-7fb0-1fab742d99de@samsung.com>
-References: <20200619103636.11974-1-m.szyprowski@samsung.com>
-        <CGME20200619103714eucas1p18db6efd1a380fc0bdb16174ee85036fa@eucas1p1.samsung.com>
-        <20200619103636.11974-32-m.szyprowski@samsung.com>
-        <20200621070015.0cf833ab@dimatab>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v8 1/3] iommu/arm-smmu: add NVIDIA implementation for dual
+ ARM MMU-500 usage
+Date: Tue, 30 Jun 2020 11:17:38 +0100
+Message-ID: <e6da9661-4e62-6e34-ac21-63ff993ca8bc@nvidia.com>
+References: <20200630001051.12350-1-vdumpa@nvidia.com>
+ <20200630001051.12350-2-vdumpa@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20200621070015.0cf833ab@dimatab>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200630001051.12350-2-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-media-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org, linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 21.06.2020 06:00, Dmitry Osipenko wrote:
-> В Fri, 19 Jun 2020 12:36:31 +0200
-> Marek Szyprowski <m.szyprowski@samsung.com> пишет:
->
->> The Documentation/DMA-API-HOWTO.txt states that the dma_map_sg()
->> function returns the number of the created entries in the DMA address
->> space. However the subsequent calls to the
->> dma_sync_sg_for_{device,cpu}() and dma_unmap_sg must be called with
->> the original number of the entries passed to the dma_map_sg().
->>
->> struct sg_table is a common structure used for describing a
->> non-contiguous memory buffer, used commonly in the DRM and graphics
->> subsystems. It consists of a scatterlist with memory pages and DMA
->> addresses (sgl entry), as well as the number of scatterlist entries:
->> CPU pages (orig_nents entry) and DMA mapped pages (nents entry).
->>
->> It turned out that it was a common mistake to misuse nents and
->> orig_nents entries, calling DMA-mapping functions with a wrong number
->> of entries or ignoring the number of mapped entries returned by the
->> dma_map_sg() function.
->>
->> To avoid such issues, lets use a common dma-mapping wrappers operating
->> directly on the struct sg_table objects and use scatterlist page
->> iterators where possible. This, almost always, hides references to the
->> nents and orig_nents entries, making the code robust, easier to follow
->> and copy/paste safe.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>   drivers/staging/media/tegra-vde/iommu.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/staging/media/tegra-vde/iommu.c
->> b/drivers/staging/media/tegra-vde/iommu.c index
->> 6af863d92123..adf8dc7ee25c 100644 ---
->> a/drivers/staging/media/tegra-vde/iommu.c +++
->> b/drivers/staging/media/tegra-vde/iommu.c @@ -36,8 +36,8 @@ int
->> tegra_vde_iommu_map(struct tegra_vde *vde,
->>   	addr = iova_dma_addr(&vde->iova, iova);
->>   
->> -	size = iommu_map_sg(vde->domain, addr, sgt->sgl, sgt->nents,
->> -			    IOMMU_READ | IOMMU_WRITE);
->> +	size = iommu_map_sgtable(vde->domain, addr, sgt,
->> +				 IOMMU_READ | IOMMU_WRITE);
->>   	if (!size) {
->>   		__free_iova(&vde->iova, iova);
->>   		return -ENXIO;
-> Ahh, I saw the build failure report. You're changing the DMA API in
-> this series, while DMA API isn't used by this driver, it uses IOMMU
-> API. Hence there is no need to touch this code. Similar problem in the
-> host1x driver patch.
 
-The issue is caused by the lack of iommu_map_sgtable() stub when no 
-IOMMU support is configured. I've posted a patch for this:
+On 30/06/2020 01:10, Krishna Reddy wrote:
+> NVIDIA's Tegra194 SoC uses two ARM MMU-500s together to interleave
+> IOVA accesses across them.
+> Add NVIDIA implementation for dual ARM MMU-500s and add new compatible
+> string for Tegra194 SoC SMMU topology.
+> 
+> Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  MAINTAINERS                     |   2 +
+>  drivers/iommu/Makefile          |   2 +-
+>  drivers/iommu/arm-smmu-impl.c   |   3 +
+>  drivers/iommu/arm-smmu-nvidia.c | 196 ++++++++++++++++++++++++++++++++
+>  drivers/iommu/arm-smmu.h        |   1 +
+>  5 files changed, 203 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/iommu/arm-smmu-nvidia.c
 
-https://lore.kernel.org/lkml/20200630081756.18526-1-m.szyprowski@samsung.com/
+...
 
-The patch for this driver is fine, we have to wait until the above fix 
-gets merged and then it can be applied during the next release cycle.
+> +struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
+> +{
+> +	unsigned int i;
+> +	struct nvidia_smmu *nvidia_smmu;
+> +	struct platform_device *pdev = to_platform_device(smmu->dev);
+> +
+> +	nvidia_smmu = devm_kzalloc(smmu->dev, sizeof(*nvidia_smmu), GFP_KERNEL);
+> +	if (!nvidia_smmu)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	nvidia_smmu->smmu = *smmu;
+> +	/* Instance 0 is ioremapped by arm-smmu.c after this function returns */
+> +	nvidia_smmu->num_inst = 1;
+> +
+> +	for (i = 1; i < MAX_SMMU_INSTANCES; i++) {
+> +		struct resource *res;
+> +
+> +		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+> +		if (!res)
+> +			break;
 
-Best regards
+Currently this driver is only supported for Tegra194 which I understand
+has 3 SMMUs. Therefore, I don't feel that we should fail silently here,
+I think it is better to return an error if all 3 cannot be initialised.
+In the future if there is an SoC that has less (hopefully not more) than
+Tegra194 then we should handle this via the DT compatible string. In
+other words, we should always know how many SMMUs there are for a given
+SoC and how many we should initialise.
+
+> +
+> +		nvidia_smmu->bases[i] = devm_ioremap_resource(smmu->dev, res);
+> +		if (IS_ERR(nvidia_smmu->bases[i]))
+> +			return ERR_CAST(nvidia_smmu->bases[i]);
+
+You want to use PTR_ERR() here.
+
+Jon
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+nvpublic
