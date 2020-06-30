@@ -1,82 +1,71 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v8 1/7] of_graph: add of_graph_presents()
-Date: Tue, 30 Jun 2020 20:02:04 +0300
-Message-ID: <1ef25775-1f37-25ce-f534-54cc995a5658@gmail.com>
-References: <20200617222703.17080-1-digetx@gmail.com>
- <20200617222703.17080-2-digetx@gmail.com> <20200629231211.GA3142766@bogus>
+From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v8 1/3] iommu/arm-smmu: add NVIDIA implementation for dual
+ ARM MMU-500 usage
+Date: Tue, 30 Jun 2020 17:04:14 +0000
+Message-ID: <BYAPR12MB2822A100F2BE2D8141F0B585B36F0@BYAPR12MB2822.namprd12.prod.outlook.com>
+References: <20200630001051.12350-1-vdumpa@nvidia.com>
+ <20200630001051.12350-2-vdumpa@nvidia.com>
+ <53bfa5c8-c32d-6fa3-df60-a18ab33ca1c2@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200629231211.GA3142766@bogus>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <53bfa5c8-c32d-6fa3-df60-a18ab33ca1c2-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+ <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+To: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bryan Huntsman <bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Nicolin Chen <nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "robin.murphy-5wv7dgnIgG8@public.gmane.org" <robin.murphy-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-30.06.2020 02:12, Rob Herring пишет:
-> On Thu, Jun 18, 2020 at 01:26:57AM +0300, Dmitry Osipenko wrote:
->> In some case, like a DRM display code for example, it's useful to silently
->> check whether port node exists at all in a device-tree before proceeding
->> with parsing of the graph.
->>
->> This patch adds of_graph_presents() that returns true if given device-tree
->> node contains OF graph port.
->>
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/of/property.c    | 52 +++++++++++++++++++++++++++++++++-------
->>  include/linux/of_graph.h |  6 +++++
->>  2 files changed, 49 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/of/property.c b/drivers/of/property.c
->> index 1f2086f4e7ce..b84ed6a7cf50 100644
->> --- a/drivers/of/property.c
->> +++ b/drivers/of/property.c
->> @@ -29,6 +29,48 @@
->>  
->>  #include "of_private.h"
->>  
->> +/**
->> + * of_graph_get_first_local_port() - get first local port node
->> + * @node: pointer to a local endpoint device_node
->> + *
->> + * Return: First local port node associated with local endpoint node linked
->> + *	   to @node. Use of_node_put() on it when done.
->> + */
->> +static struct device_node *
->> +of_graph_get_first_local_port(const struct device_node *node)
->> +{
->> +	struct device_node *ports, *port;
->> +
->> +	ports = of_get_child_by_name(node, "ports");
->> +	if (ports)
->> +		node = ports;
->> +
->> +	port = of_get_child_by_name(node, "port");
->> +	of_node_put(ports);
->> +
->> +	return port;
->> +}
->> +
->> +/**
->> + * of_graph_presents() - check graph's presence
->> + * @node: pointer to a device_node checked for the graph's presence
->> + *
->> + * Return: True if @node has a port or ports sub-node, false otherwise.
->> + */
->> +bool of_graph_presents(const struct device_node *node)
-> 
-> of_graph_is_present
-> 
-> Otherwise,
-> 
-> Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> 
+>> NVIDIA's Tegra194 SoC uses two ARM MMU-500s together to interleave 
+>> IOVA accesses across them.
+>> Add NVIDIA implementation for dual ARM MMU-500s and add new compatible 
+>> string for Tegra194 SoC SMMU topology.
 
-Thanks!
+>There is no description here of the 3rd SMMU that you mention below.
+>I think that we should describe the full picture here.
 
-I'll address the comment and then factor out this and the
-drm_of_find_panel_or_bridge() changes into a separate series in v9,
-since the Tegra DRM patches could be applied separately by Thierry.
+This driver is primarily for dual SMMU config.  So, It is avoided in the commit message.
+However, Implementation supports option to configure 3 instances identically with one SMMU DT node
+and is documented in the implementation.
+
+>> +
+>> +static inline void __iomem *nvidia_smmu_page(struct arm_smmu_device *smmu,
+>> +			       unsigned int inst, int page)
+
+>If you run checkpatch --strict on these you will get a lot of ...
+
+>CHECK: Alignment should match open parenthesis
+>#116: FILE: drivers/iommu/arm-smmu-nvidia.c:46:
+>+static inline void __iomem *nvidia_smmu_page(struct arm_smmu_device *smmu,
+>+			       unsigned int inst, int page)
+
+>We should fix these.
+
+I will fix these if I need to push a new patch set.
+
+>> +static void nvidia_smmu_write_reg(struct arm_smmu_device *smmu,
+>> +			    int page, int offset, u32 val) {
+>> +	unsigned int i;
+>> +	struct nvidia_smmu *nvidia_smmu = to_nvidia_smmu(smmu);
+>> +
+>> +	for (i = 0; i < nvidia_smmu->num_inst; i++) {
+>> +		void __iomem *reg = nvidia_smmu_page(smmu, i, page) + offset;
+
+>Personally, I would declare 'reg' outside of the loop as I feel it will make the code cleaner and easier to read.
+
+It was like that before and is updated to its current form to limit the scope of variables as per Thierry's comments in v6. 
+We can just leave it as it is as there is no technical issue here.
+
+-KR
+
+--
+nvpublic
