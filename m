@@ -1,65 +1,58 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 53/73] arm64: tegra: Remove simple regulators bus
-Date: Tue, 30 Jun 2020 12:16:15 +0100
-Message-ID: <608faebb-3497-baac-354a-25261915af73@nvidia.com>
-References: <20200616135238.3001888-1-thierry.reding@gmail.com>
- <20200616135238.3001888-54-thierry.reding@gmail.com>
- <fe583ea8-6a66-f78e-b926-5d0ed775361f@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v8 2/3] dt-bindings: arm-smmu: Add binding for Tegra194
+ SMMU
+Date: Tue, 30 Jun 2020 13:27:36 +0100
+Message-ID: <3e655881-bac4-f083-44ed-cfa0a61298d0@arm.com>
+References: <20200630001051.12350-1-vdumpa@nvidia.com>
+ <20200630001051.12350-3-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <fe583ea8-6a66-f78e-b926-5d0ed775361f-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200630001051.12350-3-vdumpa@nvidia.com>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krishna Reddy <vdumpa@nvidia.com>
+Cc: joro@8bytes.org, will@kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com, snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com, bbiswas@nvidia.com, mperttunen@nvidia.com, nicolinc@nvidia.com, bhuntsman@nvidia.com, nicoleotsuka@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
+On 2020-06-30 01:10, Krishna Reddy wrote:
+> Add binding for NVIDIA's Tegra194 SoC SMMU topology that is based
+> on ARM MMU-500.
+> 
+> Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
+> ---
+>   Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> index d7ceb4c34423b..5b2586ac715ed 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> @@ -38,6 +38,11 @@ properties:
+>                 - qcom,sc7180-smmu-500
+>                 - qcom,sdm845-smmu-500
+>             - const: arm,mmu-500
+> +      - description: NVIDIA SoCs that use more than one "arm,mmu-500"
 
-On 30/06/2020 12:11, Jon Hunter wrote:
-> 
-> On 16/06/2020 14:52, Thierry Reding wrote:
->> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> The standard way to do this is to list out the regulators at the top-
->> level. Adopt the standard way to fix validation.
->>
->> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  .../arm64/boot/dts/nvidia/tegra132-norrin.dts | 247 ++++++------
->>  .../boot/dts/nvidia/tegra186-p2771-0000.dts   |  81 ++--
->>  .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  60 ++-
->>  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  96 ++---
->>  .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  23 +-
->>  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 274 +++++++------
->>  .../arm64/boot/dts/nvidia/tegra210-p2894.dtsi | 361 ++++++++----------
->>  .../boot/dts/nvidia/tegra210-p3450-0000.dts   | 177 ++++-----
->>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 137 +++----
->>  9 files changed, 671 insertions(+), 785 deletions(-)
-> 
-> 
-> After this patch is applied I see the following build breakage ...
-> 
->   DTC     arch/arm64/boot/dts/nvidia/tegra210-p2894-0050-a08.dtb
-> arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi:1646.23-1656.4: ERROR
-> (phandle_references): /regulator@1: Reference to non-existent node or
-> label "pmic"
-> 
-> arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi:1658.30-1670.4: ERROR
-> (phandle_references): /regulator@2: Reference to non-existent node or
-> label "pmic"
-> 
-> arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi:1705.29-1715.4: ERROR
-> (phandle_references): /regulator@6: Reference to non-existent node or
-> label "pmic"
+Hmm, there must be a better way to word that to express that it only 
+applies to the sets of SMMUs that must be programmed identically, and 
+not any other independent MMU-500s that might also happen to be in the 
+same SoC.
 
+> +        items:
+> +          - enum:
+> +              - nvdia,tegra194-smmu
+> +          - const: arm,mmu-500
 
-Actually it might not be this patch. However, I noticed that builds were
-getting skipped when bisecting other issues. So we may need to ensure
-all of these build OK.
+Is the fallback compatible appropriate here? If software treats this as 
+a standard MMU-500 it will only program the first instance (because the 
+second isn't presented as a separate MMU-500) - is there any way that 
+isn't going to blow up?
 
-Jon
+Robin.
 
--- 
-nvpublic
+>         - items:
+>             - const: arm,mmu-500
+>             - const: arm,smmu-v2
+> 
