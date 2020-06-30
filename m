@@ -1,31 +1,44 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: Re: [PATCH v7 1/3] iommu/arm-smmu: add NVIDIA implementation for
- dual ARM MMU-500 usage
-Date: Mon, 29 Jun 2020 16:52:20 -0700
-Message-ID: <20200629235219.GA14616@Asurada-Nvidia>
-References: <20200629022838.29628-1-vdumpa@nvidia.com>
- <20200629022838.29628-2-vdumpa@nvidia.com>
- <20200629215124.GD27967@Asurada-Nvidia>
- <BYAPR12MB2822B08564C7BD7212DCCEFEB36E0@BYAPR12MB2822.namprd12.prod.outlook.com>
+From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v8 0/3] Nvidia Arm SMMUv2 Implementation
+Date: Mon, 29 Jun 2020 17:10:48 -0700
+Message-ID: <20200630001051.12350-1-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB2822B08564C7BD7212DCCEFEB36E0@BYAPR12MB2822.namprd12.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krishna Reddy <vdumpa@nvidia.com>
-Cc: "joro@8bytes.org" <joro@8bytes.org>, "will@kernel.org" <will@kernel.org>, "robin.murphy@arm.com" <robin.murphy@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, Yu-Huan Hsu <YHsu@nvidia.com>, Sachin Nikam <Snikam@nvidia.com>, Pritesh Raithatha <praithatha@nvidia.com>, Timo Alho <talho@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Nicolin Chen <nicolinc@nvidia.com>, Bryan Huntsman <bhuntsman@nvidia.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 10:49:31PM +0000, Krishna Reddy wrote:
-> >> +     if (!nvidia_smmu->bases[0])
-> >> +             nvidia_smmu->bases[0] = smmu->base;
-> >> +
-> >> +     return nvidia_smmu->bases[inst] + (page << smmu->pgshift); }
-> 
-> >Not critical -- just a nit: why not put the bases[0] in init()?
-> 
-> smmu->base is not available during nvidia_smmu_impl_init() call. It is set afterwards in arm-smmu.c.
-> It can't be avoided without changing the devm_ioremap() and impl_init() call order in arm-smmu.c. 
+Changes in v8:
+Fixed incorrect CB_FSR read issue during context bank fault.
+Rebased and validated patches on top of git://git.kernel.org/pub/scm/linux/=
+kernel/git/joro/iommu.git next
 
-I see...just checked arm_ssmu_impl_init().
+v7 - https://lkml.org/lkml/2020/6/28/347
+v6 - https://lkml.org/lkml/2020/6/4/1018
+v5 - https://lkml.org/lkml/2020/5/21/1114
+v4 - https://lkml.org/lkml/2019/10/30/1054
+v3 - https://lkml.org/lkml/2019/10/18/1601
+v2 - https://lkml.org/lkml/2019/9/2/980
+v1 - https://lkml.org/lkml/2019/8/29/1588
+
+Krishna Reddy (3):
+  iommu/arm-smmu: add NVIDIA implementation for dual ARM MMU-500 usage
+  dt-bindings: arm-smmu: Add binding for Tegra194 SMMU
+  iommu/arm-smmu: Add global/context fault implementation hooks
+
+ .../devicetree/bindings/iommu/arm,smmu.yaml   |   5 +
+ MAINTAINERS                                   |   2 +
+ drivers/iommu/Makefile                        |   2 +-
+ drivers/iommu/arm-smmu-impl.c                 |   3 +
+ drivers/iommu/arm-smmu-nvidia.c               | 294 ++++++++++++++++++
+ drivers/iommu/arm-smmu.c                      |  17 +-
+ drivers/iommu/arm-smmu.h                      |   4 +
+ 7 files changed, 324 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/iommu/arm-smmu-nvidia.c
+
+
+base-commit: 48f0bcfb7aad2c6eb4c1e66476b58475aa14393e
+--=20
+2.26.2
