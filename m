@@ -1,18 +1,18 @@
 From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 10/23] ASoC: simple-card: Wrong daifmt for CPU end of
- DPCM DAI link
-Date: Tue, 30 Jun 2020 09:17:59 +0530
-Message-ID: <841ac69f-1c3f-2b13-17f9-6f196811ce52@nvidia.com>
+Subject: Re: [PATCH v4 12/23] ASoC: simple-card: Support DPCM DAI link with
+ multiple Codecs
+Date: Tue, 30 Jun 2020 09:38:22 +0530
+Message-ID: <1d7888c7-a8cc-e891-01aa-016e31cc9113@nvidia.com>
 References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
- <1593233625-14961-11-git-send-email-spujar@nvidia.com>
- <877dvq1yhy.wl-kuninori.morimoto.gx@renesas.com>
- <6e27daa5-331e-968b-4027-2e30aeb7d382@nvidia.com>
- <87o8p1z81b.wl-kuninori.morimoto.gx@renesas.com>
+ <1593233625-14961-13-git-send-email-spujar@nvidia.com>
+ <874kqu1x70.wl-kuninori.morimoto.gx@renesas.com>
+ <1e0cf6d1-bf4e-8808-5390-c8a3b7c7fe7e@nvidia.com>
+ <87mu4lz6pt.wl-kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87o8p1z81b.wl-kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <87mu4lz6pt.wl-kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
 Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
@@ -21,41 +21,45 @@ List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 6/30/2020 6:26 AM, Kuninori Morimoto wrote:
+On 6/30/2020 6:54 AM, Kuninori Morimoto wrote:
 > External email: Use caution opening links or attachments
 >
 >
 > Hi Sameer
 >
->>   snd_soc_runtime_set_dai_fmt() {
->>       ...
->>
->>       if (cpu_dai->component->driver->non_legacy_dai_naming)
->>           fmt = inv_dai_fmt;
->>
->>       ...
->>   }
->>
->> Above flips polarity for 'cpu_dai' if 'non_legacy_dai_naming' flag is set.
->>
->> 1. Hence example mentioned in the commit message does not work if my 'cpu_dai'
->> driver does not have this flag set.
-> ?
-> Do you want fo flip it ? or don't flip?
-> It is for Codec <-> Codec connection.
+>>> Maybe base issue for multiple codec support
+>>> is that simple_for_each_link() is caring first codec only ?
+> (snip)
+>> Ideally I wanted to remove above two lines and allow empty codec
+>> list. But some users may expect the parsing to fail if no 'Codec' is
+>> found in the DAI link, hence did not remove above. If it is fine to
+>> remove above two lines it would be simpler. The loop inside
+>> simple_for_each_link() would anyway loop for each child node of DAI
+>> link and simple_dai_link_of_dpcm() can parse each 'np'.
 
-For DPCM links I don't want to flip based on one Codec reference. My 
-goal was to make the binding work for multiple CPU/Codec link. Hence I 
-thought it would be better to explicitly describe the 'Master' DAI. We 
-can eventually get rid of 'codec' argument from simple_dai_link_of_dpcm().
->> 2. While it is true that we consider reference of 'Codec' mode for simple CPU<->
->> Codec DAI links, for DPCM this does not seem flexible. For DPCM links CPU and
->> Codec are not directly connected (CPU<->Dummy or Dummy<->Codec). Please
->> consider, for example, if the DAI link has multiple CPU/Codecs. Which 'Codec'
->> reference needs to be considered? Isn't it better if we explicitly mention which
->> DAI we want to operate as 'Master'?
-> I think Lars-Peter has (had ?) plan for this SND_SOC_DAIFMT_CBx_CFx
-> flag flexibility ? Yes maybe it is needed for multi CPU/Codec system.
+> Current simple-card is not assuming multi Codec,
+> thus, we need to update it correctly, not quick-hack.
+>
+> I'm not sure how to do it, but it seems we need to update
+> many functions to support it, not only simple-card driver.
+> For example, simple-card-utils, soc-core, etc, etc...
+>
+> I'm not sure, this is just my guess.
+> I'm happy if we can support it more easily :)
+Right now I am trying re-use simple-card driver as much as possible and 
+still make it work for flexible sound cards. I will be happy to discuss 
+and improve the patch wherever necessary. Please help me understand 
+which part you think looks to be hacky.
+
+> But, if it was difficult to keep compatibility on simple-card,
+> we/you need to have new one.
+Patch 17/23 and 18/23 introduce new compatible 'simple-cc-audio-card'. 
+Idea was to use component chaining which allows connection of FE<->BE 
+and multiple BE<->BE components along the DAPM path (patch 16/23). Do 
+you think it would be fine?
+
+> Actually, I had a plan to create more flexible sound card
+> driver, but it is not hi priority for me in these days.
 >
 > Thank you for your help !!
 >
