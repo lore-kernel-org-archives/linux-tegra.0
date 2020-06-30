@@ -1,66 +1,64 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: Re: [PATCH v4 12/23] ASoC: simple-card: Support DPCM DAI link
- with multiple Codecs
-Date: Tue, 30 Jun 2020 16:32:20 +0100
-Message-ID: <20200630153220.GL5272@sirena.org.uk>
-References: <1593233625-14961-1-git-send-email-spujar@nvidia.com>
- <1593233625-14961-13-git-send-email-spujar@nvidia.com>
- <874kqu1x70.wl-kuninori.morimoto.gx@renesas.com>
- <1e0cf6d1-bf4e-8808-5390-c8a3b7c7fe7e@nvidia.com>
- <87mu4lz6pt.wl-kuninori.morimoto.gx@renesas.com>
- <1d7888c7-a8cc-e891-01aa-016e31cc9113@nvidia.com>
- <87ftadyrec.wl-kuninori.morimoto.gx@renesas.com>
- <492079e9-4518-78ba-a227-859d31594369@nvidia.com>
- <20200630110100.GH5272@sirena.org.uk>
- <81d106c0-e1c8-a79a-8caf-1f3be0d61f0c@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 52/73] arm64: tegra: Remove simple clocks bus
+Date: Tue, 30 Jun 2020 12:16:59 +0100
+Message-ID: <c090f7f3-a3ae-07e9-1ce3-f5340347ae92@nvidia.com>
+References: <20200616135238.3001888-1-thierry.reding@gmail.com>
+ <20200616135238.3001888-53-thierry.reding@gmail.com>
+ <46e907c8-6fd5-73ff-9ca4-bcf3ee19d716@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="9/GiYV45wF7IL3Iq"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <81d106c0-e1c8-a79a-8caf-1f3be0d61f0c@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sameer Pujar <spujar@nvidia.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, perex@perex.cz, tiwai@suse.com, robh+dt@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com, nwartikar@nvidia.com, swarren@nvidia.com, nicoleotsuka@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <46e907c8-6fd5-73ff-9ca4-bcf3ee19d716-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---9/GiYV45wF7IL3Iq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 30/06/2020 12:13, Jon Hunter wrote:
+> 
+> On 16/06/2020 14:52, Thierry Reding wrote:
+>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> The standard way to do this is to list out the clocks at the top-level.
+>> Adopt the standard way to fix validation.
+>>
+>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  arch/arm64/boot/dts/nvidia/tegra132-norrin.dts    | 15 ++++-----------
+>>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi    | 15 ++++-----------
+>>  arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi    | 15 ++++-----------
+>>  arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi    | 15 ++++-----------
+>>  .../arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 15 ++++-----------
+>>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts     | 15 ++++-----------
+>>  6 files changed, 24 insertions(+), 66 deletions(-)
+> 
+> After applying this patch I see the following build breakage ...
+> 
+>   DTC     arch/arm64/boot/dts/nvidia/tegra132-norrin.dtb
+> arch/arm64/boot/dts/nvidia/tegra132.dtsi:649.15-682.4: ERROR
+> (phandle_references): /usb@70090000: Reference to non-existent node or
+> label "vdd_3v3_lp0"
+> 
+>   also defined at
+> arch/arm64/boot/dts/nvidia/tegra132-norrin.dts:895.15-909.4
+> arch/arm64/boot/dts/nvidia/tegra132.dtsi:649.15-682.4: ERROR
+> (phandle_references): /usb@70090000: Reference to non-existent node or
+> label "vdd_3v3_lp0"
+> 
+>   also defined at
+> arch/arm64/boot/dts/nvidia/tegra132-norrin.dts:895.15-909.4
+> arch/arm64/boot/dts/nvidia/tegra132.dtsi:684.26-812.4: ERROR
+> (phandle_references): /padctl@7009f000: Reference to non-existent node
+> or label "vdd_3v3_lp0"
 
-On Tue, Jun 30, 2020 at 06:23:49PM +0530, Sameer Pujar wrote:
-> On 6/30/2020 4:31 PM, Mark Brown wrote:
 
-> > Why simple-card and not audio-graph-card?
+Same here is might not be this patch, but somewhere during this series I
+see a few build breakages.
 
-> Frankly speaking I have not used audio-graph-card before. I had a brief look
-> at the related binding. It seems it can use similar DT properties that
-> simple-card uses, although the binding style appears to be different.
-> However I am not sure if it offers better solutions to the problems I am
-> facing. For example, the ability to connect or form a chain of components to
-> realize more complicated use cases with DPCM, some of which were discussed
-> in [0]. Can you please help me understand why it could be preferred?
+Jon
 
-> [0] https://lkml.org/lkml/2020/4/30/519
-
-It's the more modern thing which covers everything simple-card does and
-more, I'd expect new development to go into that rather than
-simple-card.
-
---9/GiYV45wF7IL3Iq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl77WwMACgkQJNaLcl1U
-h9BoOgf8CqlyK9s07Hb+/KSOYbf63ZpZ3dwuHoWv8+gtnKh+DZIH3KN07uHzVHXw
-q3NUE8wJkGfYijU49aUjB5lRw4KNjXtAUMUHNAKlzmjQM+cxlEj6nZOGWAFrHyYo
-0rzPMLRbmsHTp9dcKdr7c/AXqYB8vgW+aYo6j76+W7fNvgW3thQllyW9ZKkvzQmz
-7TePVknBmz5ov6rTQSau7p314ZBcJEYL74ANMr0LxKKe5TSv/xHLQM9WeEDdkMUE
-kELoYHwZrWvOFUfy1nCl+uPqvUr+ciJD5gW5+PQvKnV0nAaVA2jW0RE3KMWKRu/S
-PZJLfFNr7vFTIsIU0YMidjDYelIA0A==
-=8bSR
------END PGP SIGNATURE-----
-
---9/GiYV45wF7IL3Iq--
+-- 
+nvpublic
