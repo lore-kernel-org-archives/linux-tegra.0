@@ -1,96 +1,224 @@
 From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI (sync points)
-Date: Tue, 30 Jun 2020 13:26:16 +0300
-Message-ID: <3b058989-a93a-6796-8d94-f60ce39e3fba@kapsi.fi>
+Subject: Re: [RFC] Host1x/TegraDRM UAPI (drm_tegra_submit_command)
+Date: Tue, 30 Jun 2020 13:40:34 +0300
+Message-ID: <0faa8cf4-b002-11c1-b372-442d0af8f244@kapsi.fi>
 References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <5b1edaad-ba36-7b0f-5b02-457ae5b6d91e@gmail.com>
- <62859775-514c-2941-75ed-6905e9282a6f@kapsi.fi>
- <623c1eaa-31fb-8dff-f6c0-d8cd0be60070@gmail.com>
- <827c92a6-7fed-a81c-ba8e-6c69416c4ab9@kapsi.fi>
- <f1a88006-ab3e-9068-e220-15eee17aeba0@gmail.com>
+ <f31fbe3b-3fc5-2ece-4c2c-9ff4e99995d6@gmail.com>
+ <19b7b295-30fa-8897-02f3-3c3b8f2a0e53@kapsi.fi>
+ <3f0d2e08-aa0b-9048-c22d-8f3d3106cdff@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f1a88006-ab3e-9068-e220-15eee17aeba0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <3f0d2e08-aa0b-9048-c22d-8f3d3106cdff-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/29/20 10:42 PM, Dmitry Osipenko wrote:
+On 6/29/20 3:00 AM, Dmitry Osipenko wrote:
+> 28.06.2020 13:28, Mikko Perttunen пишет:
+>> On 6/28/20 1:32 AM, Dmitry Osipenko wrote:
+>>> 23.06.2020 15:09, Mikko Perttunen пишет:
+>>>> /* Command is an opcode gather from a GEM handle */
+>>>> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER             0
+>>>> /* Command is an opcode gather from a user pointer */
+>>>> #define DRM_TEGRA_SUBMIT_COMMAND_GATHER_UPTR        1
+>>>> /* Command is a wait for syncpt fence completion */
+>>>> #define DRM_TEGRA_SUBMIT_COMMAND_WAIT_SYNCPT        2
+>>>> /* Command is a wait for SYNC_FILE FD completion */
+>>>> #define DRM_TEGRA_SUBMIT_COMMAND_WAIT_SYNC_FILE     3
+>>>> /* Command is a wait for DRM syncobj completion */
+>>>> #define DRM_TEGRA_SUBMIT_COMMAND_WAIT_SYNCOBJ       4
+>>>>
+>>>> /*
+>>>>    * Allow driver to skip command execution if engine
+>>>>    * was not accessed by another channel between
+>>>>    * submissions.
+>>>>    */
+>>>> #define DRM_TEGRA_SUBMIT_CONTEXT_SETUP                        (1<<0)
+>>>>
+>>>> struct drm_tegra_submit_command {
+>>>>           __u16 type;
+>>>>           __u16 flags;
+>>>
+>>> Shouldn't the "packed" attribute be needed if a non-32bit aligned fields
+>>> are used?
+>>
+>> I guess we should change these to u32 for consistency.
+>>
+>>>
+>>>>           union {
+>>>>                   struct {
+>>>>                       /* GEM handle */
+>>>>                       __u32 handle;
+>>>>
+>>>>                       /*
+>>>>                        * Offset into GEM object in bytes.
+>>>>                        * Must be aligned by 4.
+>>>>                        */
+>>>>                       __u64 offset;
+>>>
+>>> 64bits for a gather offset is a bit too much, in most cases gathers are
+>>> under 4K.
+>>>
+>>> u32 should be more than enough (maybe even u16 if offset is given in a
+>>> dword granularity).
+>>
+>> I guess this can be changed to u32, though I don't think there is any
+>> particularly pressing reason not to use u64.
+>>
+>> In any case, I think we concluded that we'll drop the GEM gather command
+>> for now.
 > 
-> Secondly, I suppose neither GPU, nor DLA could wait on a host1x sync
-> point, correct? Or are they integrated with Host1x HW?
+> Sure, I commented this just in a case, for the future :)
+
+Yep, OK :)
+
+> 
+>>>
+>>>>                       /*
+>>>>                        * Length of gather in bytes.
+>>>>                        * Must be aligned by 4.
+>>>>                        */
+>>>>                       __u64 length;
+>>>
+>>> u32/16
+>>>
+>>>>                   } gather;
+>>>
+>>>>                   struct {
+>>>>                           __u32 reserved[1];
+>>>>
+>>>>                           /*
+>>>>                            * Pointer to gather data.
+>>>>                            * Must be aligned by 4 bytes.
+>>>>                            */
+>>>>                           __u64 base;
+>>>>                           /*
+>>>>                            * Length of gather in bytes.
+>>>>                            * Must be aligned by 4.
+>>>>                            */
+>>>>                           __u64 length;
+>>>>                   } gather_uptr;
+>>>
+>>> What about to inline the UPTR gather data and relocs into the
+>>> drm_tegra_submit_command[] buffer:
+>>>
+>>> struct drm_tegra_submit_command {
+>>>      struct {
+>>>          u16 num_words;
+>>>          u16 num_relocs;
+>>>
+>>>          gather_data[];
+>>>          drm_tegra_submit_relocation relocs[];
+>>>      } gather_uptr;
+>>> };
+>>>
+>>> struct drm_tegra_channel_submit {
+>>>           __u32 num_syncpt_incrs;
+>>>           __u32 syncpt_idx;
+>>>
+>>>           __u64 commands_ptr;
+>>>      __u32 commands_size;
+>>> ...
+>>> };
+>>>
+>>> struct drm_tegra_submit_command example[] = {
+>>>      cmd.gather_uptr{},
+>>>      ...
+>>>      gather_data[],
+>>>      gather_relocs[],
+>>>      cmd.wait_syncpt{},
+>>>      ...
+>>> };
+>>>
+>>> This way we will have only a single copy_from_user() for the whole
+>>> cmdstream, which should be more efficient to do and nicer from both
+>>> userspace and kernel perspectives in regards to forming and parsing the
+>>> commands.
+>>>
+>>
+>> I'm not sure I agree it being nicer with regard to forming and parsing
+>> - Can you actually place multiple unsized arrays in a struct without
+>> pointers?
+> 
+> No :) But there are no unsized arrays here. The parser will read first
+> command and then move pointer to the next command based on size of the
+> parsed command.
+> 
+>> - gather_data's length is a multiple of 4, and so since we have u64's in
+>> drm_tegra_submit_relocation, alignment needs to be taken care of
+>> manually, both when forming and kernel needs to validate it while
+>> parsing. Depending on number of words in the gather, padding would need
+>> to be inserted. We could swap the two around but it still feels more
+>> brittle.
+> 
+> Yes, there will be unaligned reads on ARM64, but I don't think it's a
+> problem. Isn't it?
+
+It's not a big problem, but I think it would be less error-prone to have 
+naturally aligned data.
+
+> 
+>> Also, if we read the gather from a separate address, userspace doesn't
+>> necessarily need to know the length of the gather (and number of relocs)
+>> upfront, so it's easier to have a builder pattern without needing to
+>> copy things later.
+> 
+> Usually there are 2-3 relocs per gather, so userspace could simply
+> maintain a fixed-sized static buffer for the relocs (say 32 relocs).
+> Once gather is sliced by userspace, the stashed relocs will be appended
+> to the comands buffer and next gather will be formed.
+> 
+> The relocs copying doesn't really costs anything for userspace, the
+> price is incomparable with the cost of UPTR copying of each gather for
+> the kernel.
+> 
+> Well, the UPTR copying isn't expensive, but if there is a single copy
+> for the whole IOCTL, then it's even much better!
+> 
+>> If we allow direct page mappings for gathers later, a separate address
+>> would make things also a little bit easier. For direct page mappings
+>> userspace would need to keep the opcode data unchanged while the job is
+>> being executed, so userspace could keep an arena where the gathers are
+>> placed, and refer to segments of that, instead of having to keep the
+>> drm_tegra_submit_commands alive.
+> 
+> Okay, what about to have a single UPTR buffer for all gathers of a job?
+> 
+> struct drm_tegra_channel_submit {
+> 	u64 commands_ptr;
+> 	u64 gathers_ptr;
+> 
+> 	u32 commands_size;
+> 	u32 gathers_size;
+> 	...
+> };
+> 
+> struct drm_tegra_submit_command {
+> 	...
+>          union {
+>                  struct {
+>                          /*
+>                           * Length of gather in bytes.
+>                           * Must be aligned by 4.
+>                           */
+>                          __u32 length;
+>                  } gather_uptr;
+> 	};
+> };
+> 
+> Now we have a single UPTR gather that could be sliced into sub-gathers
+> during of job's submission and also the whole data could be copied at
+> once by kernel driver for the parsing purposes.
+> 
+> The userspace will have to preallocate a large-enough buffer upfront for
+> the gathers. If it runs out of space in the buffer, then it should
+> reallocate a larger buffer. Nice and simple :)
 > 
 
-They can access syncpoints directly. (That's what I alluded to in the 
-"Introduction to the hardware" section :) all those things have hardware 
-access to syncpoints)
-
- >
- > .. rest ..
- >
-
-Let me try to summarize once more for my own understanding:
-
-* When submitting a job, you would allocate new syncpoints for the job
-* After submitting the job, those syncpoints are not usable anymore
-* Postfences of that job would keep references to those syncpoints so 
-they aren't freed and cleared before the fences have been released
-* Once postfences have been released, syncpoints would be returned to 
-the pool and reset to zero
-
-The advantage of this would be that at any point in time, there would be 
-a 1:1 correspondence between allocated syncpoints and jobs; so you could 
-  shuffle the jobs around channels or reorder them.
-
-Please correct if I got that wrong :)
-
----
-
-I have two concerns:
-
-* A lot of churn on syncpoints - any time you submit a job you might not 
-get a syncpoint for an indefinite time. If we allocate syncpoints 
-up-front at least you know beforehand, and then you have the syncpoint 
-as long as you need it.
-* Plumbing the dma-fence/sync_file everywhere, and keeping it alive 
-until waits on it have completed, is more work than just having the 
-ID/threshold. This is probably mainly a problem for downstream, where 
-updating code for this would be difficult. I know that's not a proper 
-argument but I hope we can reach something that works for both worlds.
-
-Here's a proposal in between:
-
-* Keep syncpoint allocation and submission in jobs as in my original 
-proposal
-* Don't attempt to recover user channel contexts. What this means:
-   * If we have a hardware channel per context (MLOCKing), just tear 
-down the channel
-   * Otherwise, we can just remove (either by patching or by full 
-teardown/resubmit of the channel) all jobs submitted by the user channel 
-context that submitted the hanging job. Jobs of other contexts would be 
-undisturbed (though potentially delayed, which could be taken into 
-account and timeouts adjusted)
-* If this happens, we can set removed jobs' post-fences to error status 
-and user will have to resubmit them.
-* We should be able to keep the syncpoint refcounting based on fences.
-
-This can be made more fine-grained by not caring about the user channel 
-context, but tearing down all jobs with the same syncpoint. I think the 
-result would be that we can get either what you described (or how I 
-understood it in the summary in the beginning of the message), or a more 
-traditional syncpoint-per-userctx workflow, depending on how the 
-userspace decides to allocate syncpoints.
-
-If needed, the kernel can still do e.g. reordering (you mentioned job 
-priorities) at syncpoint granularity, which, if the userspace followed 
-the model you described, would be the same thing as job granularity.
-
-(Maybe it would be more difficult with current drm_scheduler, sorry, 
-haven't had the time yet to read up on that. Dealing with clearing work 
-stuff up before summer vacation)
+I think that would work fine for the usecases that I can think of.
 
 Mikko
