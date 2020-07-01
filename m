@@ -1,55 +1,45 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v10 0/2] Silence missing-graph error for DRM bridges
-Date: Wed, 1 Jul 2020 12:31:56 +0300
-Message-ID: <f4d50b9f-06e8-b6f7-ea5c-7a71f27ae953@gmail.com>
-References: <20200701074232.13632-1-digetx@gmail.com>
- <20200701090240.GA22218@ravnborg.org>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v3 00/34] iommu: Move iommu_group setup to IOMMU core code
+Date: Wed, 1 Jul 2020 11:53:07 +0100
+Message-ID: <9b0ef27a-f249-a90b-9899-e53b946f83cc@arm.com>
+References: <20200429133712.31431-1-joro@8bytes.org>
+ <20200701004020.GA6221@lca.pw>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200701090240.GA22218-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <20200701004020.GA6221-J5quhbR+WMc@public.gmane.org>
+Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Qian Cai <cai-J5quhbR+WMc@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Drake <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jean-Philippe Brucker <jean-philippe-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, jonathan.derrick-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, David Woodhouse <dwmw>
 List-Id: linux-tegra@vger.kernel.org
 
-01.07.2020 12:02, Sam Ravnborg пишет:
-> Hi Dmitry
-> On Wed, Jul 01, 2020 at 10:42:30AM +0300, Dmitry Osipenko wrote:
->> Hi!
->>
->> This small series improves DRM bridges code by silencing a noisy error
->> coming from of-graph code for the device-trees that are missing a
->> display bridge graph.
->>
->>   graph: no port node found in ...
->>
->> One example where this error happens is an older bridge-less DTB used
->> in conjunction with a newer kernel which has a display controller driver
->> that supports DRM bridges.
->>
->> Changelog:
->>
->> v10:- Corrected doc-comment, unbroke the of_graph_get_next_endpoint() and
->>       improved commit's message in the "add of_graph_is_present()" patch.
->>       Thanks to Laurent Pinchart for spotting the problems!
->>
->> v9: - These two patches are factored out from [1] in order to ease applying
->>       of the patches.
->>
->>     - The of_graph_presents() is renamed to of_graph_is_present() like it
->>       was requested by Rob Herring in the review comment to [1].
->>
->>     - Added Rob's r-b.
->>
->>     [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=184102
->>
->> Dmitry Osipenko (2):
->>   of_graph: add of_graph_is_present()
->>   drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+On 2020-07-01 01:40, Qian Cai wrote:
+> Looks like this patchset introduced an use-after-free on arm-smmu-v3.
 > 
-> Thanks for your patience with these - applied to drm-misc-next now.
+> Reproduced using mlx5,
+> 
+> # echo 1 > /sys/class/net/enp11s0f1np1/device/sriov_numvfs
+> # echo 0 > /sys/class/net/enp11s0f1np1/device/sriov_numvfs
+> 
+> The .config,
+> https://github.com/cailca/linux-mm/blob/master/arm64.config
+> 
+> Looking at the free stack,
+> 
+> iommu_release_device->iommu_group_remove_device
+> 
+> was introduced in 07/34 ("iommu: Add probe_device() and release_device()
+> call-backs").
 
-Thanks to you and Laurent!
+Right, iommu_group_remove_device can tear down the group and call 
+->domain_free before the driver has any knowledge of the last device 
+going away via the ->release_device call.
+
+I guess the question is do we simply flip the call order in 
+iommu_release_device() so drivers can easily clean up their internal 
+per-device state first, or do we now want them to be robust against 
+freeing domains with devices still nominally attached?
+
+Robin.
