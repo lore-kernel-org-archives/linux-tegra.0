@@ -1,112 +1,143 @@
-From: Neal Liu <neal.liu@mediatek.com>
-Subject: Re: [PATCH] cpuidle: change enter_s2idle() prototype
-Date: Wed, 1 Jul 2020 10:39:41 +0800
-Message-ID: <1593571181.7383.5.camel@mtkswgap22>
-References: <1593421540-7397-1-git-send-email-neal.liu@mediatek.com>
-         <1593421540-7397-2-git-send-email-neal.liu@mediatek.com>
-         <9963896.lEaLCsxmBZ@kreacher>
+From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Subject: Re: [PATCH v9 1/2] of_graph: add of_graph_is_present()
+Date: Wed, 1 Jul 2020 08:45:43 +0300
+Message-ID: <20200701054543.GA5963@pendragon.ideasonboard.com>
+References: <20200701021617.12030-1-digetx@gmail.com>
+ <20200701021617.12030-2-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <9963896.lEaLCsxmBZ@kreacher>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Neal Liu <neal.liu@mediatek.com>, Len Brown <lenb@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sami Tolvanen <samitolvanen@google.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200701021617.12030-2-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCAyMDIwLTA2LTI5IGF0IDE3OjE3ICswMjAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90
-ZToNCj4gT24gTW9uZGF5LCBKdW5lIDI5LCAyMDIwIDExOjA1OjQwIEFNIENFU1QgTmVhbCBMaXUg
-d3JvdGU6DQo+ID4gQ29udHJvbCBGbG93IEludGVncml0eShDRkkpIGlzIGEgc2VjdXJpdHkgbWVj
-aGFuaXNtIHRoYXQgZGlzYWxsb3dzDQo+ID4gY2hhbmdlcyB0byB0aGUgb3JpZ2luYWwgY29udHJv
-bCBmbG93IGdyYXBoIG9mIGEgY29tcGlsZWQgYmluYXJ5LA0KPiA+IG1ha2luZyBpdCBzaWduaWZp
-Y2FudGx5IGhhcmRlciB0byBwZXJmb3JtIHN1Y2ggYXR0YWNrcy4NCj4gPiANCj4gPiBpbml0X3N0
-YXRlX25vZGUoKSBhc3NpZ25zIHNhbWUgZnVuY3Rpb24gcG9pbnRlciB0byBpZGxlX3N0YXRlLT5l
-bnRlcg0KPiA+IGFuZCBpZGxlX3N0YXRlLT5lbnRlcl9zMmlkbGUuIFRoaXMgZGVmaW5pdGVseSBj
-YXVzZXMgQ0ZJIGZhaWx1cmUNCj4gPiB3aGVuIGNhbGxpbmcgZWl0aGVyIGVudGVyKCkgb3IgZW50
-ZXJfczJpZGxlKCkuDQo+ID4gDQo+ID4gQWxpZ24gZW50ZXJfczJpZGxlKCkgd2l0aCBlbnRlcigp
-IGZ1bmN0aW9uIHByb3RvdHlwZSB0byBmaXggQ0ZJDQo+ID4gZmFpbHVyZS4NCj4gDQo+IFRoYXQg
-bmVlZHMgdG8gYmUgZG9jdW1lbnRlZCBzb21ld2hlcmUgY2xvc2UgdG8gdGhlIGRlZmluaXRpb24g
-b2YgdGhlDQo+IGNhbGxiYWNrcyBpbiBxdWVzdGlvbi4NCj4gDQo+IE90aGVyd2lzZSBpdCBpcyBj
-b21wbGV0ZWx5IHVuY2xlYXIgd2h5IHRoaXMgaXMgYSBnb29kIGlkZWEuDQo+IA0KDQpUaGUgcHJv
-YmxlbSBpcywgaW5pdF9zdGF0ZV9tb2RlKCkgYXNzaWduIHNhbWUgZnVuY3Rpb24gY2FsbGJhY2sg
-dG8NCmRpZmZlcmVudCBmdW5jdGlvbiBwb2ludGVyIGRlY2xhcmF0aW9ucy4NCg0Kc3RhdGljIGlu
-dCBpbml0X3N0YXRlX25vZGUoc3RydWN0IGNwdWlkbGVfc3RhdGUgKmlkbGVfc3RhdGUsDQogICAg
-ICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkICptYXRjaGVz
-LA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpzdGF0ZV9u
-b2RlKQ0Kew0KLi4uDQogICAgICAgIGlkbGVfc3RhdGUtPmVudGVyID0gbWF0Y2hfaWQtPmRhdGE7
-DQouLi4NCiAgICAgICAgaWRsZV9zdGF0ZS0+ZW50ZXJfczJpZGxlID0gbWF0Y2hfaWQtPmRhdGE7
-DQp9DQoNCkZ1bmN0aW9uIGRlY2xhcmF0aW9uczoNCg0Kc3RydWN0IGNwdWlkbGVfc3RhdGUgew0K
-Li4uDQogICAgICAgIGludCAoKmVudGVyKSAgICAoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYs
-DQogICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwNCiAg
-ICAgICAgICAgICAgICAgICAgICAgIGludCBpbmRleCk7DQoNCiAgICAgICAgdm9pZCAoKmVudGVy
-X3MyaWRsZSkgKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0KICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsDQogICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBpbnQgaW5kZXgpOw0KfTsNCg0KSW4gdGhpcyBjYXNlLCBlaXRoZXIgZW50
-ZXIoKSBvciBlbnRlcl9zMmlkbGUoKSB3b3VsZCBjYXVzZSBDRkkgY2hlY2sNCmZhaWxlZCBzaW5j
-ZSB0aGV5IHVzZSBzYW1lIGNhbGxlZS4NCg0KV2UgdHJ5IHRvIGFsaWduIGZ1bmN0aW9uIHByb3Rv
-dHlwZSBvZiBlbnRlcigpIHNpbmNlIGl0IG5lZWRzIHJldHVybg0KdmFsdWUgZm9yIHNvbWUgdXNl
-IGNhc2VzLiBUaGUgcmV0dXJuIHZhbHVlIG9mIGVudGVyX3MyaWRsZSgpIGlzIG5vIG5lZWQNCmN1
-cnJlbnRseS4NCg0KDQo+ID4gU2lnbmVkLW9mZi1ieTogTmVhbCBMaXUgPG5lYWwubGl1QG1lZGlh
-dGVrLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9hY3BpL3Byb2Nlc3Nvcl9pZGxlLmMgICB8
-ICAgIDYgKysrKy0tDQo+ID4gIGRyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLXRlZ3JhLmMgfCAgICA4
-ICsrKysrLS0tDQo+ID4gIGRyaXZlcnMvaWRsZS9pbnRlbF9pZGxlLmMgICAgICAgfCAgICA2ICsr
-KystLQ0KPiA+ICBpbmNsdWRlL2xpbnV4L2NwdWlkbGUuaCAgICAgICAgIHwgICAgNiArKystLS0N
-Cj4gPiAgNCBmaWxlcyBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkN
-Cj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9hY3BpL3Byb2Nlc3Nvcl9pZGxlLmMgYi9k
-cml2ZXJzL2FjcGkvcHJvY2Vzc29yX2lkbGUuYw0KPiA+IGluZGV4IDc1NTM0YzUuLjZmZmI2Yzkg
-MTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9hY3BpL3Byb2Nlc3Nvcl9pZGxlLmMNCj4gPiArKysg
-Yi9kcml2ZXJzL2FjcGkvcHJvY2Vzc29yX2lkbGUuYw0KPiA+IEBAIC02NTUsOCArNjU1LDggQEAg
-c3RhdGljIGludCBhY3BpX2lkbGVfZW50ZXIoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+
-ID4gIAlyZXR1cm4gaW5kZXg7DQo+ID4gIH0NCj4gPiAgDQo+ID4gLXN0YXRpYyB2b2lkIGFjcGlf
-aWRsZV9lbnRlcl9zMmlkbGUoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+ID4gLQkJCQkg
-ICBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwgaW50IGluZGV4KQ0KPiA+ICtzdGF0aWMgaW50
-IGFjcGlfaWRsZV9lbnRlcl9zMmlkbGUoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+ID4g
-KwkJCQkgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LCBpbnQgaW5kZXgpDQo+ID4gIHsNCj4g
-PiAgCXN0cnVjdCBhY3BpX3Byb2Nlc3Nvcl9jeCAqY3ggPSBwZXJfY3B1KGFjcGlfY3N0YXRlW2lu
-ZGV4XSwgZGV2LT5jcHUpOw0KPiA+ICANCj4gPiBAQCAtNjc0LDYgKzY3NCw4IEBAIHN0YXRpYyB2
-b2lkIGFjcGlfaWRsZV9lbnRlcl9zMmlkbGUoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+
-ID4gIAkJfQ0KPiA+ICAJfQ0KPiA+ICAJYWNwaV9pZGxlX2RvX2VudHJ5KGN4KTsNCj4gPiArDQo+
-ID4gKwlyZXR1cm4gMDsNCj4gPiAgfQ0KPiA+ICANCj4gPiAgc3RhdGljIGludCBhY3BpX3Byb2Nl
-c3Nvcl9zZXR1cF9jcHVpZGxlX2N4KHN0cnVjdCBhY3BpX3Byb2Nlc3NvciAqcHIsDQo+ID4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLXRlZ3JhLmMgYi9kcml2ZXJzL2NwdWlk
-bGUvY3B1aWRsZS10ZWdyYS5jDQo+ID4gaW5kZXggMTUwMDQ1OC4uYTEyZmIxNCAxMDA2NDQNCj4g
-PiAtLS0gYS9kcml2ZXJzL2NwdWlkbGUvY3B1aWRsZS10ZWdyYS5jDQo+ID4gKysrIGIvZHJpdmVy
-cy9jcHVpZGxlL2NwdWlkbGUtdGVncmEuYw0KPiA+IEBAIC0yNTMsMTEgKzI1MywxMyBAQCBzdGF0
-aWMgaW50IHRlZ3JhX2NwdWlkbGVfZW50ZXIoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+
-ID4gIAlyZXR1cm4gZXJyID8gLTEgOiBpbmRleDsNCj4gPiAgfQ0KPiA+ICANCj4gPiAtc3RhdGlj
-IHZvaWQgdGVncmExMTRfZW50ZXJfczJpZGxlKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0K
-PiA+IC0JCQkJICBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwNCj4gPiAtCQkJCSAgaW50IGlu
-ZGV4KQ0KPiA+ICtzdGF0aWMgaW50IHRlZ3JhMTE0X2VudGVyX3MyaWRsZShzdHJ1Y3QgY3B1aWRs
-ZV9kZXZpY2UgKmRldiwNCj4gPiArCQkJCSBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwNCj4g
-PiArCQkJCSBpbnQgaW5kZXgpDQo+ID4gIHsNCj4gPiAgCXRlZ3JhX2NwdWlkbGVfZW50ZXIoZGV2
-LCBkcnYsIGluZGV4KTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gMDsNCj4gPiAgfQ0KPiA+ICANCj4g
-PiAgLyoNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pZGxlL2ludGVsX2lkbGUuYyBiL2RyaXZl
-cnMvaWRsZS9pbnRlbF9pZGxlLmMNCj4gPiBpbmRleCBmNDQ5NTg0Li5iMTc4ZGEzIDEwMDY0NA0K
-PiA+IC0tLSBhL2RyaXZlcnMvaWRsZS9pbnRlbF9pZGxlLmMNCj4gPiArKysgYi9kcml2ZXJzL2lk
-bGUvaW50ZWxfaWRsZS5jDQo+ID4gQEAgLTE3NSwxMyArMTc1LDE1IEBAIHN0YXRpYyBfX2NwdWlk
-bGUgaW50IGludGVsX2lkbGUoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+ID4gICAqIElu
-dm9rZWQgYXMgYSBzdXNwZW5kLXRvLWlkbGUgY2FsbGJhY2sgcm91dGluZSB3aXRoIGZyb3plbiB1
-c2VyIHNwYWNlLCBmcm96ZW4NCj4gPiAgICogc2NoZWR1bGVyIHRpY2sgYW5kIHN1c3BlbmRlZCBz
-Y2hlZHVsZXIgY2xvY2sgb24gdGhlIHRhcmdldCBDUFUuDQo+ID4gICAqLw0KPiA+IC1zdGF0aWMg
-X19jcHVpZGxlIHZvaWQgaW50ZWxfaWRsZV9zMmlkbGUoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpk
-ZXYsDQo+ID4gLQkJCQkJc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsIGludCBpbmRleCkNCj4g
-PiArc3RhdGljIF9fY3B1aWRsZSBpbnQgaW50ZWxfaWRsZV9zMmlkbGUoc3RydWN0IGNwdWlkbGVf
-ZGV2aWNlICpkZXYsDQo+ID4gKwkJCQkgICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYs
-IGludCBpbmRleCkNCj4gPiAgew0KPiA+ICAJdW5zaWduZWQgbG9uZyBlYXggPSBmbGcyTVdBSVQo
-ZHJ2LT5zdGF0ZXNbaW5kZXhdLmZsYWdzKTsNCj4gPiAgCXVuc2lnbmVkIGxvbmcgZWN4ID0gMTsg
-LyogYnJlYWsgb24gaW50ZXJydXB0IGZsYWcgKi8NCj4gPiAgDQo+ID4gIAltd2FpdF9pZGxlX3dp
-dGhfaGludHMoZWF4LCBlY3gpOw0KPiA+ICsNCj4gPiArCXJldHVybiAwOw0KPiA+ICB9DQo+ID4g
-IA0KPiA+ICAvKg0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2NwdWlkbGUuaCBiL2lu
-Y2x1ZGUvbGludXgvY3B1aWRsZS5oDQo+ID4gaW5kZXggZWMyZWY2My4uYmVlMTBjMCAxMDA2NDQN
-Cj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2NwdWlkbGUuaA0KPiA+ICsrKyBiL2luY2x1ZGUvbGlu
-dXgvY3B1aWRsZS5oDQo+ID4gQEAgLTY2LDkgKzY2LDkgQEAgc3RydWN0IGNwdWlkbGVfc3RhdGUg
-ew0KPiA+ICAJICogc3VzcGVuZGVkLCBzbyBpdCBtdXN0IG5vdCByZS1lbmFibGUgaW50ZXJydXB0
-cyBhdCBhbnkgcG9pbnQgKGV2ZW4NCj4gPiAgCSAqIHRlbXBvcmFyaWx5KSBvciBhdHRlbXB0IHRv
-IGNoYW5nZSBzdGF0ZXMgb2YgY2xvY2sgZXZlbnQgZGV2aWNlcy4NCj4gPiAgCSAqLw0KPiA+IC0J
-dm9pZCAoKmVudGVyX3MyaWRsZSkgKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0KPiA+IC0J
-CQkgICAgICBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwNCj4gPiAtCQkJICAgICAgaW50IGlu
-ZGV4KTsNCj4gPiArCWludCAoKmVudGVyX3MyaWRsZSkoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpk
-ZXYsDQo+ID4gKwkJCSAgICBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwNCj4gPiArCQkJICAg
-IGludCBpbmRleCk7DQo+ID4gIH07DQo+ID4gIA0KPiA+ICAvKiBJZGxlIFN0YXRlIEZsYWdzICov
-DQo+ID4gLS0gDQo+ID4gMS43LjkuNQ0KPiA+IA0KPiANCj4gDQo+IA0KPiANCg0K
+Hi Dmitry,
+
+Thank you for the patch.
+
+On Wed, Jul 01, 2020 at 05:16:16AM +0300, Dmitry Osipenko wrote:
+> In some case, like a DRM display code for example, it's useful to silently
+> check whether port node exists at all in a device-tree before proceeding
+> with parsing of the graph.
+> 
+> This patch adds of_graph_is_present() which returns true if given
+> device-tree node contains OF graph port.
+> 
+> Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/of/property.c    | 52 +++++++++++++++++++++++++++++++++-------
+>  include/linux/of_graph.h |  6 +++++
+>  2 files changed, 49 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index 6a5760f0d6cd..e12b8b491837 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -29,6 +29,48 @@
+>  
+>  #include "of_private.h"
+>  
+> +/**
+> + * of_graph_get_first_local_port() - get first local port node
+> + * @node: pointer to a local endpoint device_node
+
+It's not an endpoint.
+
+> + *
+> + * Return: First local port node associated with local endpoint node linked
+> + *	   to @node. Use of_node_put() on it when done.
+> + */
+> +static struct device_node *
+> +of_graph_get_first_local_port(const struct device_node *node)
+> +{
+> +	struct device_node *ports, *port;
+> +
+> +	ports = of_get_child_by_name(node, "ports");
+> +	if (ports)
+> +		node = ports;
+> +
+> +	port = of_get_child_by_name(node, "port");
+> +	of_node_put(ports);
+> +
+> +	return port;
+> +}
+> +
+> +/**
+> + * of_graph_is_present() - check graph's presence
+> + * @node: pointer to a device_node checked for the graph's presence
+> + *
+> + * Return: True if @node has a port or ports sub-node, false otherwise.
+> + */
+> +bool of_graph_is_present(const struct device_node *node)
+> +{
+> +	struct device_node *local;
+> +
+> +	local = of_graph_get_first_local_port(node);
+> +	if (!local)
+> +		return false;
+> +
+> +	of_node_put(local);
+> +
+> +	return true;
+> +}
+> +EXPORT_SYMBOL(of_graph_is_present);
+> +
+>  /**
+>   * of_property_count_elems_of_size - Count the number of elements in a property
+>   *
+> @@ -608,15 +650,7 @@ struct device_node *of_graph_get_next_endpoint(const struct device_node *parent,
+>  	 * parent port node.
+>  	 */
+>  	if (!prev) {
+> -		struct device_node *node;
+> -
+> -		node = of_get_child_by_name(parent, "ports");
+> -		if (node)
+> -			parent = node;
+> -
+> -		port = of_get_child_by_name(parent, "port");
+> -		of_node_put(node);
+> -
+> +		port = of_graph_get_first_local_port(parent);
+
+I think this introduces a bug below in the function, where parent is
+used and is expected to point to the ports node if available. I'd leave
+this part of the change out, and inline +of_graph_get_first_local_port()
+in of_graph_is_present().
+
+>  		if (!port) {
+>  			pr_err("graph: no port node found in %pOF\n", parent);
+>  			return NULL;
+> diff --git a/include/linux/of_graph.h b/include/linux/of_graph.h
+> index 01038a6aade0..4d7756087b6b 100644
+> --- a/include/linux/of_graph.h
+> +++ b/include/linux/of_graph.h
+> @@ -38,6 +38,7 @@ struct of_endpoint {
+>  	     child = of_graph_get_next_endpoint(parent, child))
+>  
+>  #ifdef CONFIG_OF
+> +bool of_graph_is_present(const struct device_node *node);
+>  int of_graph_parse_endpoint(const struct device_node *node,
+>  				struct of_endpoint *endpoint);
+>  int of_graph_get_endpoint_count(const struct device_node *np);
+> @@ -56,6 +57,11 @@ struct device_node *of_graph_get_remote_node(const struct device_node *node,
+>  					     u32 port, u32 endpoint);
+>  #else
+>  
+> +static inline bool of_graph_is_present(const struct device_node *node)
+> +{
+> +	return false;
+> +}
+> +
+>  static inline int of_graph_parse_endpoint(const struct device_node *node,
+>  					struct of_endpoint *endpoint)
+>  {
+
+-- 
+Regards,
+
+Laurent Pinchart
