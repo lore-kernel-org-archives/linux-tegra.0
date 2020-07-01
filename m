@@ -1,48 +1,53 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v8 2/3] dt-bindings: arm-smmu: Add binding for Tegra194
- SMMU
-Date: Wed, 1 Jul 2020 19:47:36 +0100
-Message-ID: <0d4f46d6-6a4e-bca0-bcf3-0e22a950e57b@nvidia.com>
+From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v8 3/3] iommu/arm-smmu: Add global/context fault
+ implementation hooks
+Date: Wed, 1 Jul 2020 18:48:22 +0000
+Message-ID: <BYAPR12MB282244D2B008E1C8CA57916BB36C0@BYAPR12MB2822.namprd12.prod.outlook.com>
 References: <20200630001051.12350-1-vdumpa@nvidia.com>
- <20200630001051.12350-3-vdumpa@nvidia.com>
- <3e655881-bac4-f083-44ed-cfa0a61298d0@arm.com>
- <BYAPR12MB28222D6ADEBA966AA27FA9ECB36C0@BYAPR12MB2822.namprd12.prod.outlook.com>
+ <20200630001051.12350-4-vdumpa@nvidia.com>
+ <4b4b20af-7baa-0987-e40d-af74235153f6@nvidia.com>
+ <6c2ce909-c71b-351f-79f5-b1a4b4c0e4ac@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <BYAPR12MB28222D6ADEBA966AA27FA9ECB36C0-ZGDeBxoHBPlXmIuPQoPGkAdYzm3356FpvxpqHgZTriW3zl9H0oFU5g@public.gmane.org>
+In-Reply-To: <6c2ce909-c71b-351f-79f5-b1a4b4c0e4ac-5wv7dgnIgG8@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
-Cc: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Nicolin Chen <nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bryan Huntsman <bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bryan Huntsman <bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Nicolin Chen <nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 01/07/2020 19:28, Krishna Reddy wrote:
->>> +      - description: NVIDIA SoCs that use more than one "arm,mmu-500"
->> Hmm, there must be a better way to word that to express that it only applies to the sets of SMMUs that must be programmed identically, and not any other independent MMU-500s that might also happen to be in the same SoC.
-> 
-> Let me reword it to "NVIDIA SoCs that must program multiple MMU-500s identically".
-> 
->>> +        items:
->>> +          - enum:
->>> +              - nvdia,tegra194-smmu
->>> +          - const: arm,mmu-500
-> 
->> Is the fallback compatible appropriate here? If software treats this as a standard MMU-500 it will only program the first instance (because the second isn't presented as a separate MMU-500) - is there any way that isn't going to blow up?
-> 
-> When compatible is set to both nvidia,tegra194-smmu and arm,mmu-500, implementation override ensure that both instances are programmed. Isn't it? I am not sure I follow your comment fully.
-
-The problem is, if for some reason someone had a Tegra194, but only set
-the compatible string to 'arm,mmu-500' it would assume that it was a
-normal arm,mmu-500 and only one instance would be programmed. We always
-want at least 2 of the 3 instances programmed and so we should only
-match 'nvidia,tegra194-smmu'. In fact, I think that we also need to
-update the arm_smmu_of_match table to add 'nvidia,tegra194-smmu' with
-the data set to &arm_mmu500.
-
-Jon
-
--- 
-nvpublic
+Pj4+ICsgICAgZm9yIChpbnN0ID0gMDsgaW5zdCA8IG52aWRpYV9zbW11LT5udW1faW5zdDsgaW5z
+dCsrKSB7DQo+Pj4gKyAgICAgICAgICAgIGlycV9yZXQgPSBudmlkaWFfc21tdV9nbG9iYWxfZmF1
+bHRfaW5zdChpcnEsIHNtbXUsIGluc3QpOw0KPj4+ICsgICAgICAgICAgICBpZiAoaXJxX3JldCA9
+PSBJUlFfSEFORExFRCkNCj4+PiArICAgICAgICAgICAgICAgICAgICByZXR1cm4gaXJxX3JldDsN
+Cj4+DQo+PiBBbnkgY2hhbmNlIHRoZXJlIGNvdWxkIGJlIG1vcmUgdGhhbiBvbmUgU01NVSBmYXVs
+dGluZyBieSB0aGUgdGltZSB3ZSANCj4+IHNlcnZpY2UgdGhlIGludGVycnVwdD8NCg0KPkl0IGNl
+cnRhaW5seSBzZWVtcyBwbGF1c2libGUgaWYgdGhlIGludGVyY29ubmVjdCBpcyBhdXRvbWF0aWNh
+bGx5IGxvYWQtYmFsYW5jaW5nIHJlcXVlc3RzIGFjcm9zcyB0aGUgU01NVSBpbnN0YW5jZXMgLSBz
+YXkgYSBkcml2ZXIgYnVnIGNhdXNlZCBhIGJ1ZmZlciB0byBiZSB1bm1hcHBlZCB0b28gZWFybHks
+IHRoZXJlIGNvdWxkIGJlIG1hbnkgaW4tZmxpZ2h0IGFjY2Vzc2VzIHRvIHBhcnRzIG9mIHRoYXQg
+YnVmZmVyIHRoYXQgYXJlbid0IGFsbCB0YWtpbmcgdGhlIHNhbWUgcGF0aCBhbmQgdGh1cyBjb3Vs
+ZCBub3cgZmF1bHQgaW4gcGFyYWxsZWwuDQo+WyBBbmQgYW55b25lIGluY2xpbmVkIHRvIG5pdHBp
+Y2sgZ2xvYmFsIHZzLiBjb250ZXh0IGZhdWx0cywgcy91bm1hcCBhIGJ1ZmZlci90ZWFyIGRvd24g
+YSBkb21haW4vIDspIF0NCj5FaXRoZXIgd2F5IEkgdGhpbmsgaXQgd291bGQgYmUgZWFzaWVyIHRv
+IHJlYXNvbiBhYm91dCBpZiB3ZSBqdXN0IGhhbmRsZWQgdGhlc2UgbGlrZSBhIHR5cGljYWwgc2hh
+cmVkIGludGVycnVwdCBhbmQgYWx3YXlzIGNoZWNrZWQgYWxsIHRoZSBpbnN0YW5jZXMuDQoNCkl0
+IHdvdWxkIGJlIG9wdGltYWwgdG8gY2hlY2sgYXQgdGhlIHNhbWUgdGltZSBhY3Jvc3MgYWxsIGlu
+c3RhbmNlcy4gDQoNCj4+PiArICAgICAgICAgICAgZm9yIChpZHggPSAwOyBpZHggPCBzbW11LT5u
+dW1fY29udGV4dF9iYW5rczsgaWR4KyspIHsNCj4+PiArICAgICAgICAgICAgICAgICAgICBpcnFf
+cmV0ID0gbnZpZGlhX3NtbXVfY29udGV4dF9mYXVsdF9iYW5rKGlycSwgc21tdSwNCj4+PiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGlkeCwgDQo+Pj4gKyBpbnN0KTsNCj4+PiArDQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgaWYg
+KGlycV9yZXQgPT0gSVJRX0hBTkRMRUQpDQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICByZXR1cm4gaXJxX3JldDsNCj4+DQo+PiBBbnkgcmVhc29uIHdoeSB3ZSBkb24ndCBjaGVjayBh
+bGwgYmFua3M/DQoNCj5BcyBhYm92ZSwgd2UgY2VydGFpbmx5IHNob3VsZG4ndCBiYWlsIG91dCB3
+aXRob3V0IGNoZWNraW5nIHRoZSBiYW5rIGZvciB0aGUgb2ZmZW5kaW5nIGRvbWFpbiBhY3Jvc3Mg
+YWxsIG9mIGl0cyBpbnN0YW5jZXMsIGFuZCBJIGd1ZXNzIHRoZSB3YXkgdGhpcyB3b3JrcyBtZWFu
+cyB0aGF0IHdlIHdvdWxkIGhhdmUgdG8gaXRlcmF0ZSBhbGwgdGhlIGJhbmtzIHRvIGFjaGlldmUg
+dGhhdC4NCg0KV2l0aCBzaGFyZWQgaXJxIGxpbmUsIHRoZSBjb250ZXh0IGZhdWx0IGlkZW50aWZp
+Y2F0aW9uIGlzIG5vdCBvcHRpbWFsIGFscmVhZHkuICBSZWFkaW5nIGFsbCB0aGUgY29udGV4dCBi
+YW5rcyBhbGwgdGhlIHRpbWUgY2FuIGJlIGFkZGl0aW9uYWwgbW1pbyByZWFkIG92ZXJoZWFkLiBC
+dXQsIGl0IG1heSBub3QgaHVydCB0aGUgcmVhbCB1c2UgY2FzZXMgYXMgdGhlc2UgaGFwcGVuIG9u
+bHkgd2hlbiB0aGVyZSBhcmUgYnVncy4gDQoNCi1LUg0K
