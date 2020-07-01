@@ -1,46 +1,56 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v8 2/3] dt-bindings: arm-smmu: Add binding for Tegra194
+From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v8 2/3] dt-bindings: arm-smmu: Add binding for Tegra194
  SMMU
-Date: Wed, 1 Jul 2020 20:31:23 +0100
-Message-ID: <b10673f6-2a01-b9e5-0948-9684ffbe1813@nvidia.com>
+Date: Wed, 1 Jul 2020 19:39:51 +0000
+Message-ID: <BYAPR12MB2822EE99210BFA984ECB954AB36C0@BYAPR12MB2822.namprd12.prod.outlook.com>
 References: <20200630001051.12350-1-vdumpa@nvidia.com>
  <20200630001051.12350-3-vdumpa@nvidia.com>
  <3e655881-bac4-f083-44ed-cfa0a61298d0@arm.com>
  <BYAPR12MB28222D6ADEBA966AA27FA9ECB36C0@BYAPR12MB2822.namprd12.prod.outlook.com>
  <0d4f46d6-6a4e-bca0-bcf3-0e22a950e57b@nvidia.com>
  <BYAPR12MB282245DD6BB50ECA700AC69EB36C0@BYAPR12MB2822.namprd12.prod.outlook.com>
+ <b10673f6-2a01-b9e5-0948-9684ffbe1813@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <BYAPR12MB282245DD6BB50ECA700AC69EB36C0-ZGDeBxoHBPlXmIuPQoPGkAdYzm3356FpvxpqHgZTriW3zl9H0oFU5g@public.gmane.org>
+In-Reply-To: <b10673f6-2a01-b9e5-0948-9684ffbe1813-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+To: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 Cc: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Nicolin Chen <nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bryan Huntsman <bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 01/07/2020 20:00, Krishna Reddy wrote:
->>>>> +        items:
->>>>> +          - enum:
->>>>> +              - nvdia,tegra194-smmu
->>>>> +          - const: arm,mmu-500
->>>
->>>> Is the fallback compatible appropriate here? If software treats this as a standard MMU-500 it will only program the first instance (because the second isn't presented as a separate MMU-500) - is there any way that isn't going to blow up?
->>>
->>> When compatible is set to both nvidia,tegra194-smmu and arm,mmu-500, implementation override ensure that both instances are programmed. Isn't it? I am not sure I follow your comment fully.
-> 
->> The problem is, if for some reason someone had a Tegra194, but only set the compatible string to 'arm,mmu-500' it would assume that it was a normal arm,mmu-500 and only one instance would be programmed. We always want at least 2 of the 3 instances >programmed and so we should only match 'nvidia,tegra194-smmu'. In fact, I think that we also need to update the arm_smmu_of_match table to add 'nvidia,tegra194-smmu' with the data set to &arm_mmu500.
-> 
-> In that case, new binding "nvidia,smmu-v2" can be added with data set to &arm_mmu500 and enumeration would have nvidia,tegra194-smmu and another variant for next generation SoC in future. 
-
-I think you would be better off with nvidia,smmu-500 as smmu-v2 appears
-to be something different. I see others have a smmu-v2 but I am not sure
-if that is legacy. We have an smmu-500 and so that would seem more
-appropriate.
-
-Jon
-
--- 
-nvpublic
+T24gMDEvMDcvMjAyMCAyMDowMCwgS3Jpc2huYSBSZWRkeSB3cm90ZToNCj4+Pj4+PiArICAgICAg
+ICBpdGVtczoNCj4+Pj4+PiArICAgICAgICAgIC0gZW51bToNCj4+Pj4+PiArICAgICAgICAgICAg
+ICAtIG52ZGlhLHRlZ3JhMTk0LXNtbXUNCj4+Pj4+PiArICAgICAgICAgIC0gY29uc3Q6IGFybSxt
+bXUtNTAwDQo+Pj4+DQo+Pj4+PiBJcyB0aGUgZmFsbGJhY2sgY29tcGF0aWJsZSBhcHByb3ByaWF0
+ZSBoZXJlPyBJZiBzb2Z0d2FyZSB0cmVhdHMgdGhpcyBhcyBhIHN0YW5kYXJkIE1NVS01MDAgaXQg
+d2lsbCBvbmx5IHByb2dyYW0gdGhlIGZpcnN0IGluc3RhbmNlIChiZWNhdXNlIHRoZSBzZWNvbmQg
+aXNuJ3QgcHJlc2VudGVkIGFzIGEgc2VwYXJhdGUgTU1VLTUwMCkgLSBpcyB0aGVyZSBhbnkgd2F5
+IHRoYXQgaXNuJ3QgZ29pbmcgdG8gYmxvdyB1cD8NCj4+Pj4NCj4+Pj4gV2hlbiBjb21wYXRpYmxl
+IGlzIHNldCB0byBib3RoIG52aWRpYSx0ZWdyYTE5NC1zbW11IGFuZCBhcm0sbW11LTUwMCwgaW1w
+bGVtZW50YXRpb24gb3ZlcnJpZGUgZW5zdXJlIHRoYXQgYm90aCBpbnN0YW5jZXMgYXJlIHByb2dy
+YW1tZWQuIElzbid0IGl0PyBJIGFtIG5vdCBzdXJlIEkgZm9sbG93IHlvdXIgY29tbWVudCBmdWxs
+eS4NCj4+IA0KPj4+IFRoZSBwcm9ibGVtIGlzLCBpZiBmb3Igc29tZSByZWFzb24gc29tZW9uZSBo
+YWQgYSBUZWdyYTE5NCwgYnV0IG9ubHkgc2V0IHRoZSBjb21wYXRpYmxlIHN0cmluZyB0byAnYXJt
+LG1tdS01MDAnIGl0IHdvdWxkIGFzc3VtZSB0aGF0IGl0IHdhcyBhIG5vcm1hbCBhcm0sbW11LTUw
+MCBhbmQgb25seSBvbmUgaW5zdGFuY2Ugd291bGQgYmUgcHJvZ3JhbW1lZC4gV2UgYWx3YXlzIHdh
+bnQgYXQgbGVhc3QgMiBvZiB0aGUgMyBpbnN0YW5jZXMgPj5wcm9ncmFtbWVkIGFuZCBzbyB3ZSBz
+aG91bGQgb25seSBtYXRjaCAnbnZpZGlhLHRlZ3JhMTk0LXNtbXUnLiBJbiBmYWN0LCBJIHRoaW5r
+IHRoYXQgd2UgYWxzbyBuZWVkIHRvIHVwZGF0ZSB0aGUgYXJtX3NtbXVfb2ZfbWF0Y2ggdGFibGUg
+dG8gYWRkICdudmlkaWEsdGVncmExOTQtc21tdScgd2l0aCB0aGUgZGF0YSBzZXQgdG8gJmFybV9t
+bXU1MDAuDQo+PiANCj4+IEluIHRoYXQgY2FzZSwgbmV3IGJpbmRpbmcgIm52aWRpYSxzbW11LXYy
+IiBjYW4gYmUgYWRkZWQgd2l0aCBkYXRhIHNldCB0byAmYXJtX21tdTUwMCBhbmQgZW51bWVyYXRp
+b24gd291bGQgaGF2ZSBudmlkaWEsdGVncmExOTQtc21tdSBhbmQgYW5vdGhlciB2YXJpYW50IGZv
+ciBuZXh0IGdlbmVyYXRpb24gU29DIGluIGZ1dHVyZS4gDQoNCj5JIHRoaW5rIHlvdSB3b3VsZCBi
+ZSBiZXR0ZXIgb2ZmIHdpdGggbnZpZGlhLHNtbXUtNTAwIGFzIHNtbXUtdjIgYXBwZWFycyB0byBi
+ZSBzb21ldGhpbmcgZGlmZmVyZW50LiBJIHNlZSBvdGhlcnMgaGF2ZSBhIHNtbXUtdjIgYnV0IEkg
+YW0gbm90IHN1cmUgaWYgdGhhdCBpcyBsZWdhY3kuIFdlIGhhdmUgYW4gc21tdS01MDAgYW5kIHNv
+IHRoYXQgd291bGQgc2VlbSBtb3JlIGFwcHJvcHJpYXRlLg0KDQpJIHRyaWVkIHRvIHVzZSB0aGUg
+YmluZGluZyBzeW5vbnltb3VzIHRvIG90aGVyIHZlbmRvcnMuIA0KVjIgaXMgdGhlIGFyY2hpdGVj
+dHVyZSB2ZXJzaW9uLiAgTU1VLTUwMCBpcyB0aGUgYWN0dWFsIGltcGxlbWVudGF0aW9uIGZyb20g
+QVJNIGJhc2VkIG9uIFYyIGFyY2guICBBcyB3ZSBqdXN0IHVzZSB0aGUgTU1VLTUwMCBJUCBhcyBp
+dCBpcywgSXQgY2FuIGJlIG5hbWVkIGFzIG52aWRpYSxzbW11LTUwMCBvciBzaW1pbGFyIGFzIHdl
+bGwuDQpPdGhlcnMgcHJvYmFibHkgaGF2aW5nIHRoZWlyIG93biBpbXBsZW1lbnRhdGlvbiBiYXNl
+ZCBvbiBWMiBhcmNoLg0KDQpLUg0KLS0NCm52cHVibGljDQo=
