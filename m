@@ -1,99 +1,57 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v1] cpuidle: tegra: Correctly handle result of
- arm_cpuidle_simple_enter()
-Date: Wed, 1 Jul 2020 14:56:27 +0100
-Message-ID: <a55f74fd-1105-1576-8f73-d6d3062541ef@nvidia.com>
-References: <20200629222625.674-1-digetx@gmail.com>
- <d9efb0f5-d6ab-f3db-540e-c6ae1b42e45e@nvidia.com>
- <4bae133b-1b51-281c-1759-ca0d259b18ca@gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 5.7 000/265] 5.7.7-rc1 review
+Date: Wed, 1 Jul 2020 10:41:50 -0400
+Message-ID: <20200701144150.GE2687961@sasha-vm>
+References: <20200629151818.2493727-1-sashal@kernel.org>
+ <58ac88f8-bb04-2aa0-58da-5eb43c8fc175@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4bae133b-1b51-281c-1759-ca0d259b18ca-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <58ac88f8-bb04-2aa0-58da-5eb43c8fc175@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 30/06/2020 19:54, Dmitry Osipenko wrote:
-> 30.06.2020 12:02, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+On Tue, Jun 30, 2020 at 10:15:31AM +0100, Jon Hunter wrote:
+>
+>On 29/06/2020 16:13, Sasha Levin wrote:
 >>
->> On 29/06/2020 23:26, Dmitry Osipenko wrote:
->>> The arm_cpuidle_simple_enter() returns the entered idle-index and not a
->>> error code. It happened that TEGRA_C1=3Dindex=3Derr=3D0, and hence this=
- typo
->>> was difficult to notice in the code since everything happened to work
->>> properly. This patch fixes the minor typo, it doesn't fix any problem.
+>> This is the start of the stable review cycle for the 5.7.7 release.
+>> There are 265 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
 >>
->> I guess that is dependent on if CPUIDLE is enabled ...
+>> Responses should be made by Wed 01 Jul 2020 03:14:48 PM UTC.
+>> Anything received after that time might be too late.
 >>
->> #ifdef CONFIG_CPU_IDLE
->> extern int arm_cpuidle_simple_enter(struct cpuidle_device *dev,
->>                 struct cpuidle_driver *drv, int index);
->> #else
->> static inline int arm_cpuidle_simple_enter(struct cpuidle_device *dev,
->>                  struct cpuidle_driver *drv, int index) { return -ENODEV=
-; }
->> #endif
+>> The whole patch series can be found in one patch at:
+>> 	https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/patch/?id=linux-5.7.y&id2=v5.7.6
 >>
->> Looks like it could return an error.
->=20
-> Hello Jon!
->=20
-> The cpuidle's enter() callback returns an index of the entered state on
-> success, on negative value on failure.
-
-Yes, however, when I read the first sentence of the changelog it seemed
-to suggested it would never return and error code. Perhaps you meant in
-the context of the Tegra CPUIdle driver because CPU_IDLE is always enabled?
-
-> The negative number *could be* a proper error code, but in the same time
-> it also doesn't matter what's the exact negative value is for the
-> cpuidle's core code. Please see more below!
->=20
->>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>>  drivers/cpuidle/cpuidle-tegra.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-=
-tegra.c
->>> index 150045849d78..9e9a9cccd755 100644
->>> --- a/drivers/cpuidle/cpuidle-tegra.c
->>> +++ b/drivers/cpuidle/cpuidle-tegra.c
->>> @@ -236,14 +236,14 @@ static int tegra_cpuidle_enter(struct cpuidle_dev=
-ice *dev,
->>>  			       int index)
->>>  {
->>>  	unsigned int cpu =3D cpu_logical_map(dev->cpu);
->>> -	int err;
->>> +	int err =3D 0;
->>> =20
->>>  	index =3D tegra_cpuidle_adjust_state_index(index, cpu);
->>>  	if (dev->states_usage[index].disable)
->>>  		return -1;
->>> =20
->>>  	if (index =3D=3D TEGRA_C1)
->>> -		err =3D arm_cpuidle_simple_enter(dev, drv, index);
->>> +		index =3D arm_cpuidle_simple_enter(dev, drv, index);
->>>  	else
->>>  		err =3D tegra_cpuidle_state_enter(dev, index, cpu);
->>> =20
->>>
+>> or in the git tree and branch at:
+>>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.7.y
+>> and the diffstat can be found below.
 >>
->> However, I do think that there is something not right in the error handl=
-ing
->> here. Would also be nice to get rid of these -1.
->=20
-> IIRC, the -1 was borrowed from some other cpuidle driver, for example
-> cpuidle-psci[1] and coupled.c[2] are returning -1 on a failure.
+>> --
+>> Thanks,
+>> Sasha
+>
+>All tests are passing for Tegra ...
+>
+>Test results for stable-v5.7:
+>    11 builds:	11 pass, 0 fail
+>    26 boots:	26 pass, 0 fail
+>    56 tests:	56 pass, 0 fail
+>
+>Linux version:	5.7.7-rc1-g97943c6d41ef
+>Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                tegra194-p2972-0000, tegra20-ventana,
+>                tegra210-p2371-2180, tegra210-p3450-0000,
+>                tegra30-cardhu-a04
 
-Indeed. Maybe we just let sleeping dogs lie in this case.
+Thanks for the testing Jon!
 
-Jon
-
---=20
-nvpublic
+-- 
+Thanks,
+Sasha
