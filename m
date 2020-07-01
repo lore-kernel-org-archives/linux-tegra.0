@@ -1,228 +1,42 @@
-From: Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 28/37] memory: tegra: Register as interconnect provider
-Date: Wed, 1 Jul 2020 20:12:22 +0300
-Message-ID: <aec831a6-a7ad-6bcc-4e15-c44582f7568e@linaro.org>
-References: <20200609131404.17523-1-digetx@gmail.com>
- <20200609131404.17523-29-digetx@gmail.com>
+From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v8 1/3] iommu/arm-smmu: add NVIDIA implementation for dual
+ ARM MMU-500 usage
+Date: Wed, 1 Jul 2020 18:18:22 +0000
+Message-ID: <BYAPR12MB2822FC263456303302EF30BEB36C0@BYAPR12MB2822.namprd12.prod.outlook.com>
+References: <20200630001051.12350-1-vdumpa@nvidia.com>
+ <20200630001051.12350-2-vdumpa@nvidia.com>
+ <53bfa5c8-c32d-6fa3-df60-a18ab33ca1c2@nvidia.com>
+ <d59b7220-168c-419f-db16-194307e11065@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200609131404.17523-29-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <d59b7220-168c-419f-db16-194307e11065-5wv7dgnIgG8@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bryan Huntsman <bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Nicolin Chen <nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
-
-Thank you for updating the patches!
-
-On 6/9/20 16:13, Dmitry Osipenko wrote:
-> Now memory controller is a memory interconnection provider. This allows us
-> to use interconnect API in order to change memory configuration.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/memory/tegra/Kconfig |   1 +
->  drivers/memory/tegra/mc.c    | 114 +++++++++++++++++++++++++++++++++++
->  drivers/memory/tegra/mc.h    |   8 +++
->  include/soc/tegra/mc.h       |   3 +
->  4 files changed, 126 insertions(+)
-> 
-> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-> index 5bf75b316a2f..7055fdef2c32 100644
-> --- a/drivers/memory/tegra/Kconfig
-> +++ b/drivers/memory/tegra/Kconfig
-> @@ -3,6 +3,7 @@ config TEGRA_MC
->  	bool "NVIDIA Tegra Memory Controller support"
->  	default y
->  	depends on ARCH_TEGRA
-> +	select INTERCONNECT
->  	help
->  	  This driver supports the Memory Controller (MC) hardware found on
->  	  NVIDIA Tegra SoCs.
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index 772aa021b5f6..7ef7ac9e103e 100644
-> --- a/drivers/memory/tegra/mc.c
-> +++ b/drivers/memory/tegra/mc.c
-> @@ -594,6 +594,118 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
->  	return IRQ_HANDLED;
->  }
->  
-> +static int tegra_mc_icc_set(struct icc_node *src, struct icc_node *dst)
-> +{
-> +	return 0;
-> +}
-> +
-> +static int tegra_mc_icc_aggregate(struct icc_node *node,
-> +				  u32 tag, u32 avg_bw, u32 peak_bw,
-> +				  u32 *agg_avg, u32 *agg_peak)
-> +{
-> +	*agg_avg = min((u64)avg_bw + (*agg_avg), (u64)U32_MAX);
-> +	*agg_peak = max(*agg_peak, peak_bw);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Memory Controller (MC) has few Memory Clients that are issuing memory
-> + * bandwidth allocation requests to the MC interconnect provider. The MC
-> + * provider aggregates the requests and then sends the aggregated request
-> + * up to the External Memory Controller (EMC) interconnect provider which
-> + * re-configures hardware interface to External Memory (EMEM) in accordance
-> + * to the required bandwidth. Each MC interconnect node represents an
-> + * individual Memory Client.
-> + *
-> + * Memory interconnect topology:
-> + *
-> + *               +----+
-> + * +--------+    |    |
-> + * | TEXSRD +--->+    |
-> + * +--------+    |    |
-> + *               |    |    +-----+    +------+
-> + *    ...        | MC +--->+ EMC +--->+ EMEM |
-> + *               |    |    +-----+    +------+
-> + * +--------+    |    |
-> + * | DISP.. +--->+    |
-> + * +--------+    |    |
-> + *               +----+
-> + */
-> +static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
-> +{
-> +	struct icc_onecell_data *data;
-> +	struct icc_node *node;
-> +	unsigned int num_nodes;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	/* older device-trees don't have interconnect properties */
-> +	if (!of_find_property(mc->dev->of_node, "#interconnect-cells", NULL))
-> +		return 0;
-> +
-> +	num_nodes = mc->soc->num_clients;
-> +
-> +	data = devm_kzalloc(mc->dev, struct_size(data, nodes, num_nodes),
-> +			    GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	mc->provider.dev = mc->dev;
-> +	mc->provider.set = tegra_mc_icc_set;
-
-Hmm, maybe the core should not require a set() implementation and we can
-just make it optional instead. Then the dummy function would not be needed.
-
-> +	mc->provider.data = data;
-> +	mc->provider.xlate = of_icc_xlate_onecell;
-> +	mc->provider.aggregate = tegra_mc_icc_aggregate;
-> +
-> +	err = icc_provider_add(&mc->provider);
-> +	if (err)
-> +		goto err_msg;
-
-Nit: I am planning to re-organize some of the existing drivers to call
-icc_provider_add() after the topology is populated. Could you please move
-this after the nodes are created and linked.
-
-> +
-> +	/* create Memory Controller node */
-> +	node = icc_node_create(TEGRA_ICC_MC);
-> +	err = PTR_ERR_OR_ZERO(node);
-> +	if (err)
-> +		goto del_provider;
-> +
-> +	node->name = "Memory Controller";
-> +	icc_node_add(node, &mc->provider);
-> +
-> +	/* link Memory Controller to External Memory Controller */
-> +	err = icc_link_create(node, TEGRA_ICC_EMC);
-> +	if (err)
-> +		goto remove_nodes;
-> +
-> +	for (i = 0; i < num_nodes; i++) {
-> +		/* create MC client node */
-> +		node = icc_node_create(mc->soc->clients[i].id);
-> +		err = PTR_ERR_OR_ZERO(node);
-> +		if (err)
-> +			goto remove_nodes;
-> +
-> +		node->name = mc->soc->clients[i].name;
-> +		icc_node_add(node, &mc->provider);
-> +
-> +		/* link Memory Client to Memory Controller */
-> +		err = icc_link_create(node, TEGRA_ICC_MC);
-> +		if (err)
-> +			goto remove_nodes;
-> +
-> +		data->nodes[i] = node;
-> +	}
-> +	data->num_nodes = num_nodes;
-> +
-> +	return 0;
-> +
-> +remove_nodes:
-> +	icc_nodes_remove(&mc->provider);
-> +del_provider:
-> +	icc_provider_del(&mc->provider);
-> +err_msg:
-> +	dev_err(mc->dev, "failed to initialize ICC: %d\n", err);
-> +
-> +	return err;
-> +}
-> +
->  static int tegra_mc_probe(struct platform_device *pdev)
->  {
->  	struct resource *res;
-> @@ -702,6 +814,8 @@ static int tegra_mc_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> +	tegra_mc_interconnect_setup(mc);
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-> index afa3ba45c9e6..abeb6a2cc36a 100644
-> --- a/drivers/memory/tegra/mc.h
-> +++ b/drivers/memory/tegra/mc.h
-> @@ -115,4 +115,12 @@ extern const struct tegra_mc_soc tegra132_mc_soc;
->  extern const struct tegra_mc_soc tegra210_mc_soc;
->  #endif
->  
-> +/*
-> + * These IDs are for internal use of Tegra's ICC, the values are chosen
-> + * such that they don't conflict with the device-tree ICC node IDs.
-> + */
-> +#define TEGRA_ICC_EMC		1000
-> +#define TEGRA_ICC_EMEM		2000
-> +#define TEGRA_ICC_MC		3000
-> +
->  #endif /* MEMORY_TEGRA_MC_H */
-> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-> index 1238e35653d1..71de023f9f47 100644
-> --- a/include/soc/tegra/mc.h
-> +++ b/include/soc/tegra/mc.h
-> @@ -7,6 +7,7 @@
->  #define __SOC_TEGRA_MC_H__
->  
->  #include <linux/err.h>
-> +#include <linux/interconnect-provider.h>
->  #include <linux/reset-controller.h>
->  #include <linux/types.h>
->  
-> @@ -178,6 +179,8 @@ struct tegra_mc {
->  
->  	struct reset_controller_dev reset;
->  
-> +	struct icc_provider provider;
-> +
->  	spinlock_t lock;
->  };
-
-The rest looks good to me!
-
-Thanks,
-Georgi
+Pj4gKyAqIFdoZW4gTGludXgga2VybmVsIHN1cHBvcnRzIG11bHRpcGxlIFNNTVUgZGV2aWNlcywg
+dGhlIFNNTVUgZGV2aWNlIA0KPj4gK3VzZWQgZm9yDQo+PiArICogaXNvY2hvcm5vdXMgSFcgZGV2
+aWNlcyBzaG91bGQgYmUgYWRkZWQgYXMgYSBzZXBhcmF0ZSBBUk0gTU1VLTUwMCANCj4+ICtkZXZp
+Y2UNCj4+ICsgKiBpbiBEVCBhbmQgYmUgcHJvZ3JhbW1lZCBpbmRlcGVuZGVudGx5IGZvciBlZmZp
+Y2llbnQgVExCIGludmFsaWRhdGVzLg0KDQo+SSBkb24ndCB1bmRlcnN0YW5kIHRoZSAiV2hlbiIg
+dGhlcmUgLSB0aGUgZHJpdmVyIGhhcyBhbHdheXMgc3VwcG9ydGVkIG11bHRpcGxlIGluZGVwZW5k
+ZW50IFNNTVVzLCBhbmQgaXQncyBub3Qgc29tZXRoaW5nIHRoYXQgY291bGQgYmUgY29uZmlndXJl
+ZCBvdXQgb3Igb3RoZXJ3aXNlIGRpc2FibGVkLiBQbHVzIEkgcmVhbGx5IGRvbid0IHNlZSB3aHkg
+eW91IHdvdWxkIGV2ZXIgd2FudCB0byBmb3JjZSB1bnJlbGF0ZWQgU01NVXMgdG8gYmUgPnByb2dy
+YW1tZWQgdG9nZXRoZXIgLSBiZXlvbmQgdGhlIFRMQiB0aGluZyBtZW50aW9uZWQgaXQgd291bGQg
+YWxzbyB3YXN0ZSBwcmVjaW91cyBjb250ZXh0IGJhbmsgcmVzb3VyY2VzIGFuZCBtaWdodCBsZWFk
+IHRvIHdlaXJkIGRldmljZSBncm91cGluZyB2aWEgZmFsc2Ugc3RyZWFtIElEIGFsaWFzaW5nLCB3
+aXRoIG5vIG9idmlvdXMgdXBzaWRlIGF0IGFsbC4NCg0KU29ycnksIEkgbWlzc2VkIHRoaXMgY29t
+bWVudC4NCkR1cmluZyB0aGUgaW5pdGlhbCBwYXRjaGVzLCB3aGVuIHRoZSBpb21tdV9vcHMgd2Vy
+ZSBkaWZmZXJlbnQgYmV0d2Vlbiwgc3VwcG9ydCBtdWx0aXBsZSBTTU1VIGRyaXZlcnMgYXQgdGhl
+IHNhbWUgaXMgbm90IHBvc3NpYmxlIGFzIG9uZSBvZiB0aGVtKHRoYXQgZ2V0cyBwcm9iZWQgbGFz
+dCkgb3ZlcndyaXRlcyB0aGUgcGxhdGZvcm0gYnVzIG9wcy4gDQpPbiByZXZpc2l0aW5nIHRoZSBv
+cmlnaW5hbCBpc3N1ZSwgVGhpcyBwcm9ibGVtIGlzIG5vIGxvbmdlciByZWxldmFudC4gQXQgdGhp
+cyBwb2ludCwgSXQgbWFrZXMgbW9yZSBzZW5zZSB0byBqdXN0IGdldCByaWQgb2YgM3JkIGluc3Rh
+bmNlIHByb2dyYW1taW5nIGluIGFybS1zbW11LW52aWRpYS5jIGFuZCBqdXN0IGxpbWl0IGl0IHRv
+IHRoZSBTTU1VIGluc3RhbmNlcyB0aGF0IG5lZWQgaWRlbnRpY2FsIHByb2dyYW1taW5nLg0KDQot
+S1INCg0KDQoNCg==
