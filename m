@@ -1,96 +1,112 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v9 0/4] Support DRM bridges on NVIDIA Tegra
-Date: Wed,  1 Jul 2020 05:21:24 +0300
-Message-ID: <20200701022128.12968-1-digetx@gmail.com>
+Subject: [PATCH v9 3/4] drm/tegra: output: rgb: Support LVDS encoder bridge
+Date: Wed,  1 Jul 2020 05:21:27 +0300
+Message-ID: <20200701022128.12968-4-digetx@gmail.com>
+References: <20200701022128.12968-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200701022128.12968-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+Newer Tegra device-trees will specify a video output graph, which involves
+LVDS encoder bridge. This patch adds support for the LVDS encoder bridge
+to the RGB output, allowing us to model the display hardware properly.
 
-This series adds initial support for the DRM bridges to NVIDIA Tegra DRM
-driver. This is required by newer device-trees where we model the LVDS
-encoder bridge properly.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/drm/tegra/rgb.c | 58 +++++++++++++++++++++++++++++++------
+ 1 file changed, 49 insertions(+), 9 deletions(-)
 
-Changelog:
-
-v9: - Dropped the of-graph/drm-of patches from this series because they
-      are now factored out into a standalone series [1].
-
-      [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=186813
-
-    - The "drm/panel-simple: Add missing connector type for some panels"
-      patch of v8 was already applied.
-
-v8: - The new of_graph_get_local_port() helper is replaced with the
-      of_graph_presents(), which simply checks the graph presence in a
-      given DT node. Thank to Laurent Pinchart for the suggestion!
-
-    - The of_graph_get_local_port() is still there, but now it isn't a public
-      function anymore. In the review to v7 Laurent Pinchart suggested that
-      the function's doc-comments and name could be improved and I implemented
-      these suggestions in v8.
-
-    - A day ago I discovered that devm_drm_panel_bridge_add() requires
-      panel to have connector type to be properly set, otherwise function
-      rejects panels with the incomplete description. So, I checked what
-      LVDS panels are used on Tegra and fixed the missing connector types
-      in this new patch:
-
-        drm/panel-simple: Add missing connector type for some panels
-
-v7: - Removed the obscure unused structs (which GCC doesn't detect, but CLANG
-      does) in the patch "Wrap directly-connected panel into DRM bridge",
-      which was reported by kernel test robot for v6.
-
-v6: - Added r-b and acks from Rob Herring and Sam Ravnborg.
-
-    - Rebased on a recent linux-next, patches now apply without fuzz.
-
-v5: - Added new patches that make drm_of_find_panel_or_bridge() more usable
-      if graph isn't defined in a device-tree:
-
-        of_graph: add of_graph_get_local_port()
-        drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
-
-    - Updated "Support DRM bridges" patch to use drm_of_find_panel_or_bridge()
-      directly and added WARN_ON(output->panel || output->bridge) sanity-check.
-
-    - Added new "Wrap directly-connected panel into DRM bridge" patch, as
-      was suggested by Laurent Pinchart.
-
-v4: - Following review comments that were made by Laurent Pinchart to the v3,
-      we now create and use the "bridge connector".
-
-v3: - Following recommendation from Sam Ravnborg, the new bridge attachment
-      model is now being used, i.e. we ask bridge to *not* create a connector
-      using the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
-
-    - The bridge is now created only for the RGB (LVDS) output, and only
-      when necessary. For now we don't need bridges for HDMI or DSI outputs.
-
-    - I noticed that we're leaking OF node in the panel's error code path,
-      this is fixed now by the new patch "Don't leak OF node on error".
-
-v2: - Added the new "rgb: Don't register connector if bridge is used"
-      patch, which hides the unused connector provided by the Tegra DRM
-      driver when bridge is used, since bridge provides its own connector
-      to us.
-
-Dmitry Osipenko (4):
-  drm/tegra: output: Don't leak OF node on error
-  drm/tegra: output: Support DRM bridges
-  drm/tegra: output: rgb: Support LVDS encoder bridge
-  drm/tegra: output: rgb: Wrap directly-connected panel into DRM bridge
-
- drivers/gpu/drm/tegra/drm.h    |   2 +
- drivers/gpu/drm/tegra/output.c |  21 +++++--
- drivers/gpu/drm/tegra/rgb.c    | 102 +++++++++++++++++----------------
- 3 files changed, 72 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+index 0562a7eb793f..9a7024ec96bc 100644
+--- a/drivers/gpu/drm/tegra/rgb.c
++++ b/drivers/gpu/drm/tegra/rgb.c
+@@ -7,6 +7,7 @@
+ #include <linux/clk.h>
+ 
+ #include <drm/drm_atomic_helper.h>
++#include <drm/drm_bridge_connector.h>
+ #include <drm/drm_panel.h>
+ #include <drm/drm_simple_kms_helper.h>
+ 
+@@ -267,24 +268,63 @@ int tegra_dc_rgb_remove(struct tegra_dc *dc)
+ int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
+ {
+ 	struct tegra_output *output = dc->rgb;
++	struct drm_connector *connector;
+ 	int err;
+ 
+ 	if (!dc->rgb)
+ 		return -ENODEV;
+ 
+-	drm_connector_init(drm, &output->connector, &tegra_rgb_connector_funcs,
+-			   DRM_MODE_CONNECTOR_LVDS);
+-	drm_connector_helper_add(&output->connector,
+-				 &tegra_rgb_connector_helper_funcs);
+-	output->connector.dpms = DRM_MODE_DPMS_OFF;
+-
+ 	drm_simple_encoder_init(drm, &output->encoder, DRM_MODE_ENCODER_LVDS);
+ 	drm_encoder_helper_add(&output->encoder,
+ 			       &tegra_rgb_encoder_helper_funcs);
+ 
+-	drm_connector_attach_encoder(&output->connector,
+-					  &output->encoder);
+-	drm_connector_register(&output->connector);
++	/*
++	 * Tegra devices that have LVDS panel utilize LVDS encoder bridge
++	 * for converting up to 28 LCD LVTTL lanes into 5/4 LVDS lanes that
++	 * go to display panel's receiver.
++	 *
++	 * Encoder usually have a power-down control which needs to be enabled
++	 * in order to transmit data to the panel.  Historically devices that
++	 * use an older device-tree version didn't model the bridge, assuming
++	 * that encoder is turned ON by default, while today's DRM allows us
++	 * to model LVDS encoder properly.
++	 *
++	 * Newer device-trees utilize LVDS encoder bridge, which provides
++	 * us with a connector and handles the display panel.
++	 *
++	 * For older device-trees we fall back to our own connector and use
++	 * nvidia,panel phandle.
++	 */
++	if (output->bridge) {
++		err = drm_bridge_attach(&output->encoder, output->bridge,
++					NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
++		if (err) {
++			dev_err(output->dev, "failed to attach bridge: %d\n",
++				err);
++			return err;
++		}
++
++		connector = drm_bridge_connector_init(drm, &output->encoder);
++		if (IS_ERR(connector)) {
++			dev_err(output->dev,
++				"failed to initialize bridge connector: %pe\n",
++				connector);
++			return PTR_ERR(connector);
++		}
++
++		drm_connector_attach_encoder(connector, &output->encoder);
++	} else {
++		drm_connector_init(drm, &output->connector,
++				   &tegra_rgb_connector_funcs,
++				   DRM_MODE_CONNECTOR_LVDS);
++		drm_connector_helper_add(&output->connector,
++					 &tegra_rgb_connector_helper_funcs);
++		output->connector.dpms = DRM_MODE_DPMS_OFF;
++
++		drm_connector_attach_encoder(&output->connector,
++					     &output->encoder);
++		drm_connector_register(&output->connector);
++	}
+ 
+ 	err = tegra_output_init(drm, output);
+ 	if (err < 0) {
 -- 
 2.26.0
