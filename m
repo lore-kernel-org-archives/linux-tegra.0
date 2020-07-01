@@ -1,84 +1,47 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v7 31/36] staging: tegra-vde: fix common struct sg_table
- related issues
-Date: Wed, 1 Jul 2020 04:45:46 +0300
-Message-ID: <60aacf07-e263-85e0-9d45-1edb8ba3b954@gmail.com>
-References: <20200619103636.11974-1-m.szyprowski@samsung.com>
- <CGME20200619103714eucas1p18db6efd1a380fc0bdb16174ee85036fa@eucas1p1.samsung.com>
- <20200619103636.11974-32-m.szyprowski@samsung.com>
- <20200621070015.0cf833ab@dimatab>
- <559970b6-e80f-90ec-7fb0-1fab742d99de@samsung.com>
+Subject: [PATCH v9 0/2] Silence missing-graph error for DRM bridges
+Date: Wed,  1 Jul 2020 05:16:15 +0300
+Message-ID: <20200701021617.12030-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <559970b6-e80f-90ec-7fb0-1fab742d99de-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
- <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
- <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Sender: "iommu" <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-MzAuMDYuMjAyMCAxMzowNywgTWFyZWsgU3p5cHJvd3NraSDQv9C40YjQtdGCOgo+IE9uIDIxLjA2
-LjIwMjAgMDY6MDAsIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPj4g0JIgRnJpLCAxOSBKdW4gMjAy
-MCAxMjozNjozMSArMDIwMAo+PiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3Vu
-Zy5jb20+INC/0LjRiNC10YI6Cj4+Cj4+PiBUaGUgRG9jdW1lbnRhdGlvbi9ETUEtQVBJLUhPV1RP
-LnR4dCBzdGF0ZXMgdGhhdCB0aGUgZG1hX21hcF9zZygpCj4+PiBmdW5jdGlvbiByZXR1cm5zIHRo
-ZSBudW1iZXIgb2YgdGhlIGNyZWF0ZWQgZW50cmllcyBpbiB0aGUgRE1BIGFkZHJlc3MKPj4+IHNw
-YWNlLiBIb3dldmVyIHRoZSBzdWJzZXF1ZW50IGNhbGxzIHRvIHRoZQo+Pj4gZG1hX3N5bmNfc2df
-Zm9yX3tkZXZpY2UsY3B1fSgpIGFuZCBkbWFfdW5tYXBfc2cgbXVzdCBiZSBjYWxsZWQgd2l0aAo+
-Pj4gdGhlIG9yaWdpbmFsIG51bWJlciBvZiB0aGUgZW50cmllcyBwYXNzZWQgdG8gdGhlIGRtYV9t
-YXBfc2coKS4KPj4+Cj4+PiBzdHJ1Y3Qgc2dfdGFibGUgaXMgYSBjb21tb24gc3RydWN0dXJlIHVz
-ZWQgZm9yIGRlc2NyaWJpbmcgYQo+Pj4gbm9uLWNvbnRpZ3VvdXMgbWVtb3J5IGJ1ZmZlciwgdXNl
-ZCBjb21tb25seSBpbiB0aGUgRFJNIGFuZCBncmFwaGljcwo+Pj4gc3Vic3lzdGVtcy4gSXQgY29u
-c2lzdHMgb2YgYSBzY2F0dGVybGlzdCB3aXRoIG1lbW9yeSBwYWdlcyBhbmQgRE1BCj4+PiBhZGRy
-ZXNzZXMgKHNnbCBlbnRyeSksIGFzIHdlbGwgYXMgdGhlIG51bWJlciBvZiBzY2F0dGVybGlzdCBl
-bnRyaWVzOgo+Pj4gQ1BVIHBhZ2VzIChvcmlnX25lbnRzIGVudHJ5KSBhbmQgRE1BIG1hcHBlZCBw
-YWdlcyAobmVudHMgZW50cnkpLgo+Pj4KPj4+IEl0IHR1cm5lZCBvdXQgdGhhdCBpdCB3YXMgYSBj
-b21tb24gbWlzdGFrZSB0byBtaXN1c2UgbmVudHMgYW5kCj4+PiBvcmlnX25lbnRzIGVudHJpZXMs
-IGNhbGxpbmcgRE1BLW1hcHBpbmcgZnVuY3Rpb25zIHdpdGggYSB3cm9uZyBudW1iZXIKPj4+IG9m
-IGVudHJpZXMgb3IgaWdub3JpbmcgdGhlIG51bWJlciBvZiBtYXBwZWQgZW50cmllcyByZXR1cm5l
-ZCBieSB0aGUKPj4+IGRtYV9tYXBfc2coKSBmdW5jdGlvbi4KPj4+Cj4+PiBUbyBhdm9pZCBzdWNo
-IGlzc3VlcywgbGV0cyB1c2UgYSBjb21tb24gZG1hLW1hcHBpbmcgd3JhcHBlcnMgb3BlcmF0aW5n
-Cj4+PiBkaXJlY3RseSBvbiB0aGUgc3RydWN0IHNnX3RhYmxlIG9iamVjdHMgYW5kIHVzZSBzY2F0
-dGVybGlzdCBwYWdlCj4+PiBpdGVyYXRvcnMgd2hlcmUgcG9zc2libGUuIFRoaXMsIGFsbW9zdCBh
-bHdheXMsIGhpZGVzIHJlZmVyZW5jZXMgdG8gdGhlCj4+PiBuZW50cyBhbmQgb3JpZ19uZW50cyBl
-bnRyaWVzLCBtYWtpbmcgdGhlIGNvZGUgcm9idXN0LCBlYXNpZXIgdG8gZm9sbG93Cj4+PiBhbmQg
-Y29weS9wYXN0ZSBzYWZlLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kg
-PG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPj4+IFJldmlld2VkLWJ5OiBEbWl0cnkgT3NpcGVu
-a28gPGRpZ2V0eEBnbWFpbC5jb20+Cj4+PiAtLS0KPj4+ICAgZHJpdmVycy9zdGFnaW5nL21lZGlh
-L3RlZ3JhLXZkZS9pb21tdS5jIHwgNCArKy0tCj4+PiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2Vy
-dGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3Rh
-Z2luZy9tZWRpYS90ZWdyYS12ZGUvaW9tbXUuYwo+Pj4gYi9kcml2ZXJzL3N0YWdpbmcvbWVkaWEv
-dGVncmEtdmRlL2lvbW11LmMgaW5kZXgKPj4+IDZhZjg2M2Q5MjEyMy4uYWRmOGRjN2VlMjVjIDEw
-MDY0NCAtLS0KPj4+IGEvZHJpdmVycy9zdGFnaW5nL21lZGlhL3RlZ3JhLXZkZS9pb21tdS5jICsr
-Kwo+Pj4gYi9kcml2ZXJzL3N0YWdpbmcvbWVkaWEvdGVncmEtdmRlL2lvbW11LmMgQEAgLTM2LDgg
-KzM2LDggQEAgaW50Cj4+PiB0ZWdyYV92ZGVfaW9tbXVfbWFwKHN0cnVjdCB0ZWdyYV92ZGUgKnZk
-ZSwKPj4+ICAgCWFkZHIgPSBpb3ZhX2RtYV9hZGRyKCZ2ZGUtPmlvdmEsIGlvdmEpOwo+Pj4gICAK
-Pj4+IC0Jc2l6ZSA9IGlvbW11X21hcF9zZyh2ZGUtPmRvbWFpbiwgYWRkciwgc2d0LT5zZ2wsIHNn
-dC0+bmVudHMsCj4+PiAtCQkJICAgIElPTU1VX1JFQUQgfCBJT01NVV9XUklURSk7Cj4+PiArCXNp
-emUgPSBpb21tdV9tYXBfc2d0YWJsZSh2ZGUtPmRvbWFpbiwgYWRkciwgc2d0LAo+Pj4gKwkJCQkg
-SU9NTVVfUkVBRCB8IElPTU1VX1dSSVRFKTsKPj4+ICAgCWlmICghc2l6ZSkgewo+Pj4gICAJCV9f
-ZnJlZV9pb3ZhKCZ2ZGUtPmlvdmEsIGlvdmEpOwo+Pj4gICAJCXJldHVybiAtRU5YSU87Cj4+IEFo
-aCwgSSBzYXcgdGhlIGJ1aWxkIGZhaWx1cmUgcmVwb3J0LiBZb3UncmUgY2hhbmdpbmcgdGhlIERN
-QSBBUEkgaW4KPj4gdGhpcyBzZXJpZXMsIHdoaWxlIERNQSBBUEkgaXNuJ3QgdXNlZCBieSB0aGlz
-IGRyaXZlciwgaXQgdXNlcyBJT01NVQo+PiBBUEkuIEhlbmNlIHRoZXJlIGlzIG5vIG5lZWQgdG8g
-dG91Y2ggdGhpcyBjb2RlLiBTaW1pbGFyIHByb2JsZW0gaW4gdGhlCj4+IGhvc3QxeCBkcml2ZXIg
-cGF0Y2guCj4gCj4gVGhlIGlzc3VlIGlzIGNhdXNlZCBieSB0aGUgbGFjayBvZiBpb21tdV9tYXBf
-c2d0YWJsZSgpIHN0dWIgd2hlbiBubyAKPiBJT01NVSBzdXBwb3J0IGlzIGNvbmZpZ3VyZWQuIEkn
-dmUgcG9zdGVkIGEgcGF0Y2ggZm9yIHRoaXM6Cj4gCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcv
-bGttbC8yMDIwMDYzMDA4MTc1Ni4xODUyNi0xLW0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbS8KPiAK
-PiBUaGUgcGF0Y2ggZm9yIHRoaXMgZHJpdmVyIGlzIGZpbmUsIHdlIGhhdmUgdG8gd2FpdCB1bnRp
-bCB0aGUgYWJvdmUgZml4IAo+IGdldHMgbWVyZ2VkIGFuZCB0aGVuIGl0IGNhbiBiZSBhcHBsaWVk
-IGR1cmluZyB0aGUgbmV4dCByZWxlYXNlIGN5Y2xlLgoKVGhhbmsgeW91IGZvciB0aGUgY2xhcmlm
-aWNhdGlvbiEKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-aW9tbXUgbWFpbGluZyBsaXN0CmlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBz
-Oi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11
+Hi!
+
+This small series improves DRM bridges code by silencing a noisy error
+coming from of-graph code for the device-trees that are missing a
+display bridge graph.
+
+  graph: no port node found in ...
+
+One example where this error happens is an older bridge-less DTB used
+in conjunction with a newer kernel which has a display controller driver
+that supports DRM bridges.
+
+Changelog:
+
+v9: - These two patches are factored out from [1] in order to ease applying
+      of the patches.
+
+    - The of_graph_presents() is renamed to of_graph_is_present() like it
+      was requested by Rob Herring in the review comment to [1].
+
+    - Added Rob's r-b.
+
+    [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=184102
+
+Dmitry Osipenko (2):
+  of_graph: add of_graph_is_present()
+  drm/of: Make drm_of_find_panel_or_bridge() to check graph's presence
+
+ drivers/gpu/drm/drm_of.c |  9 +++++++
+ drivers/of/property.c    | 52 +++++++++++++++++++++++++++++++++-------
+ include/linux/of_graph.h |  6 +++++
+ 3 files changed, 58 insertions(+), 9 deletions(-)
+
+-- 
+2.26.0
