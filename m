@@ -1,98 +1,157 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1] cpuidle: tegra: Correctly handle result of
- arm_cpuidle_simple_enter()
-Date: Thu, 2 Jul 2020 01:49:02 +0300
-Message-ID: <de1d5c68-0714-3b50-9d39-9351950308e7@gmail.com>
-References: <20200629222625.674-1-digetx@gmail.com>
- <d9efb0f5-d6ab-f3db-540e-c6ae1b42e45e@nvidia.com>
- <4bae133b-1b51-281c-1759-ca0d259b18ca@gmail.com>
- <a55f74fd-1105-1576-8f73-d6d3062541ef@nvidia.com>
+Subject: Re: [PATCH v4 28/37] memory: tegra: Register as interconnect provider
+Date: Thu, 2 Jul 2020 02:36:40 +0300
+Message-ID: <82d27a47-f189-6609-a584-c9ca1b35a76c@gmail.com>
+References: <20200609131404.17523-1-digetx@gmail.com>
+ <20200609131404.17523-29-digetx@gmail.com>
+ <aec831a6-a7ad-6bcc-4e15-c44582f7568e@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a55f74fd-1105-1576-8f73-d6d3062541ef-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <aec831a6-a7ad-6bcc-4e15-c44582f7568e-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-01.07.2020 16:56, Jon Hunter пишет:
+01.07.2020 20:12, Georgi Djakov пишет:
+> Hi Dmitry,
 > 
-> On 30/06/2020 19:54, Dmitry Osipenko wrote:
->> 30.06.2020 12:02, Jon Hunter пишет:
->>>
->>> On 29/06/2020 23:26, Dmitry Osipenko wrote:
->>>> The arm_cpuidle_simple_enter() returns the entered idle-index and not a
->>>> error code. It happened that TEGRA_C1=index=err=0, and hence this typo
->>>> was difficult to notice in the code since everything happened to work
->>>> properly. This patch fixes the minor typo, it doesn't fix any problem.
->>>
->>> I guess that is dependent on if CPUIDLE is enabled ...
->>>
->>> #ifdef CONFIG_CPU_IDLE
->>> extern int arm_cpuidle_simple_enter(struct cpuidle_device *dev,
->>>                 struct cpuidle_driver *drv, int index);
->>> #else
->>> static inline int arm_cpuidle_simple_enter(struct cpuidle_device *dev,
->>>                  struct cpuidle_driver *drv, int index) { return -ENODEV; }
->>> #endif
->>>
->>> Looks like it could return an error.
+> Thank you for updating the patches!
+
+Hello, Georgi!
+
+Thank you for the review!
+
+> On 6/9/20 16:13, Dmitry Osipenko wrote:
+>> Now memory controller is a memory interconnection provider. This allows us
+>> to use interconnect API in order to change memory configuration.
 >>
->> Hello Jon!
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  drivers/memory/tegra/Kconfig |   1 +
+>>  drivers/memory/tegra/mc.c    | 114 +++++++++++++++++++++++++++++++++++
+>>  drivers/memory/tegra/mc.h    |   8 +++
+>>  include/soc/tegra/mc.h       |   3 +
+>>  4 files changed, 126 insertions(+)
 >>
->> The cpuidle's enter() callback returns an index of the entered state on
->> success, on negative value on failure.
+>> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+>> index 5bf75b316a2f..7055fdef2c32 100644
+>> --- a/drivers/memory/tegra/Kconfig
+>> +++ b/drivers/memory/tegra/Kconfig
+>> @@ -3,6 +3,7 @@ config TEGRA_MC
+>>  	bool "NVIDIA Tegra Memory Controller support"
+>>  	default y
+>>  	depends on ARCH_TEGRA
+>> +	select INTERCONNECT
+>>  	help
+>>  	  This driver supports the Memory Controller (MC) hardware found on
+>>  	  NVIDIA Tegra SoCs.
+>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>> index 772aa021b5f6..7ef7ac9e103e 100644
+>> --- a/drivers/memory/tegra/mc.c
+>> +++ b/drivers/memory/tegra/mc.c
+>> @@ -594,6 +594,118 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
+>>  	return IRQ_HANDLED;
+>>  }
+>>  
+>> +static int tegra_mc_icc_set(struct icc_node *src, struct icc_node *dst)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_mc_icc_aggregate(struct icc_node *node,
+>> +				  u32 tag, u32 avg_bw, u32 peak_bw,
+>> +				  u32 *agg_avg, u32 *agg_peak)
+>> +{
+>> +	*agg_avg = min((u64)avg_bw + (*agg_avg), (u64)U32_MAX);
+>> +	*agg_peak = max(*agg_peak, peak_bw);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>> + * Memory Controller (MC) has few Memory Clients that are issuing memory
+>> + * bandwidth allocation requests to the MC interconnect provider. The MC
+>> + * provider aggregates the requests and then sends the aggregated request
+>> + * up to the External Memory Controller (EMC) interconnect provider which
+>> + * re-configures hardware interface to External Memory (EMEM) in accordance
+>> + * to the required bandwidth. Each MC interconnect node represents an
+>> + * individual Memory Client.
+>> + *
+>> + * Memory interconnect topology:
+>> + *
+>> + *               +----+
+>> + * +--------+    |    |
+>> + * | TEXSRD +--->+    |
+>> + * +--------+    |    |
+>> + *               |    |    +-----+    +------+
+>> + *    ...        | MC +--->+ EMC +--->+ EMEM |
+>> + *               |    |    +-----+    +------+
+>> + * +--------+    |    |
+>> + * | DISP.. +--->+    |
+>> + * +--------+    |    |
+>> + *               +----+
+>> + */
+>> +static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+>> +{
+>> +	struct icc_onecell_data *data;
+>> +	struct icc_node *node;
+>> +	unsigned int num_nodes;
+>> +	unsigned int i;
+>> +	int err;
+>> +
+>> +	/* older device-trees don't have interconnect properties */
+>> +	if (!of_find_property(mc->dev->of_node, "#interconnect-cells", NULL))
+>> +		return 0;
+>> +
+>> +	num_nodes = mc->soc->num_clients;
+>> +
+>> +	data = devm_kzalloc(mc->dev, struct_size(data, nodes, num_nodes),
+>> +			    GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	mc->provider.dev = mc->dev;
+>> +	mc->provider.set = tegra_mc_icc_set;
 > 
-> Yes, however, when I read the first sentence of the changelog it seemed
-> to suggested it would never return and error code. Perhaps you meant in
-> the context of the Tegra CPUIdle driver because CPU_IDLE is always enabled?
+> Hmm, maybe the core should not require a set() implementation and we can
+> just make it optional instead. Then the dummy function would not be needed.
 
-Yes, the commit message could be improved in regards to the error
-condition clarification. I'll update it in v2, thank you for the suggestion!
+Eventually this dummy function might become populated with a memory
+latency allowness programming. I could add a comment into that function
+in the next version, saying that it's to-be-done for now.
 
->> The negative number *could be* a proper error code, but in the same time
->> it also doesn't matter what's the exact negative value is for the
->> cpuidle's core code. Please see more below!
->>
->>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>> ---
->>>>  drivers/cpuidle/cpuidle-tegra.c | 4 ++--
->>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
->>>> index 150045849d78..9e9a9cccd755 100644
->>>> --- a/drivers/cpuidle/cpuidle-tegra.c
->>>> +++ b/drivers/cpuidle/cpuidle-tegra.c
->>>> @@ -236,14 +236,14 @@ static int tegra_cpuidle_enter(struct cpuidle_device *dev,
->>>>  			       int index)
->>>>  {
->>>>  	unsigned int cpu = cpu_logical_map(dev->cpu);
->>>> -	int err;
->>>> +	int err = 0;
->>>>  
->>>>  	index = tegra_cpuidle_adjust_state_index(index, cpu);
->>>>  	if (dev->states_usage[index].disable)
->>>>  		return -1;
->>>>  
->>>>  	if (index == TEGRA_C1)
->>>> -		err = arm_cpuidle_simple_enter(dev, drv, index);
->>>> +		index = arm_cpuidle_simple_enter(dev, drv, index);
->>>>  	else
->>>>  		err = tegra_cpuidle_state_enter(dev, index, cpu);
->>>>  
->>>>
->>>
->>> However, I do think that there is something not right in the error handling
->>> here. Would also be nice to get rid of these -1.
->>
->> IIRC, the -1 was borrowed from some other cpuidle driver, for example
->> cpuidle-psci[1] and coupled.c[2] are returning -1 on a failure.
+>> +	mc->provider.data = data;
+>> +	mc->provider.xlate = of_icc_xlate_onecell;
+>> +	mc->provider.aggregate = tegra_mc_icc_aggregate;
+>> +
+>> +	err = icc_provider_add(&mc->provider);
+>> +	if (err)
+>> +		goto err_msg;
 > 
-> Indeed. Maybe we just let sleeping dogs lie in this case.
+> Nit: I am planning to re-organize some of the existing drivers to call
+> icc_provider_add() after the topology is populated. Could you please move
+> this after the nodes are created and linked.
 
-+1
+Are you planning to remove the provider's list-head initialization from
+the icc_provider_add() [1] and move it to the individual provider
+drivers, correct?
 
-We could always return to this later on, once there will be a real need.
+[1]
+https://elixir.bootlin.com/linux/v5.8-rc3/source/drivers/interconnect/core.c#L977
+
+If yes, then it should be easy to move the icc_provider_add() in the
+case of this driver. Otherwise, please give some more clarification.
+
+Please notice that the same "node" variable is used for both creation
+and linking of the nodes to the provider here, making code nice and
+clean. And thus, the provider's list-head should be initialized before
+the linking.
+
+...
+> The rest looks good to me!
+
+Thanks!
