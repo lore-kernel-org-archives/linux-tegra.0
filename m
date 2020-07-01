@@ -1,245 +1,275 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI (sync points)
-Date: Wed, 1 Jul 2020 03:22:10 +0300
-Message-ID: <2190fe9d-6381-0b5e-39d8-a04daca9a1bf@gmail.com>
-References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <5b1edaad-ba36-7b0f-5b02-457ae5b6d91e@gmail.com>
- <62859775-514c-2941-75ed-6905e9282a6f@kapsi.fi>
- <623c1eaa-31fb-8dff-f6c0-d8cd0be60070@gmail.com>
- <827c92a6-7fed-a81c-ba8e-6c69416c4ab9@kapsi.fi>
- <f1a88006-ab3e-9068-e220-15eee17aeba0@gmail.com>
- <3b058989-a93a-6796-8d94-f60ce39e3fba@kapsi.fi>
+From: Qian Cai <cai-J5quhbR+WMc@public.gmane.org>
+Subject: Re: [PATCH v3 00/34] iommu: Move iommu_group setup to IOMMU core code
+Date: Tue, 30 Jun 2020 20:40:20 -0400
+Message-ID: <20200701004020.GA6221@lca.pw>
+References: <20200429133712.31431-1-joro@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3b058989-a93a-6796-8d94-f60ce39e3fba-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200429133712.31431-1-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Lu Baolu <baolu.lu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean-Philippe Brucker <jean-philippe-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel
 List-Id: linux-tegra@vger.kernel.org
 
-30.06.2020 13:26, Mikko Perttunen пишет:
-> On 6/29/20 10:42 PM, Dmitry Osipenko wrote:
->>
->> Secondly, I suppose neither GPU, nor DLA could wait on a host1x sync
->> point, correct? Or are they integrated with Host1x HW?
->>
+On Wed, Apr 29, 2020 at 03:36:38PM +0200, Joerg Roedel wrote:
+> Hi,
 > 
-> They can access syncpoints directly. (That's what I alluded to in the
-> "Introduction to the hardware" section :) all those things have hardware
-> access to syncpoints)
-
-Should we CC all the Nouveau developers then, or is it a bit too early? :)
-
->>
->> .. rest ..
->>
+> here is the third version of this patch-set. Older versions can be found
+> here:
 > 
-> Let me try to summarize once more for my own understanding:
+> 	v1: https://lore.kernel.org/lkml/20200407183742.4344-1-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org/
+> 	    (Has some more introductory text)
 > 
-> * When submitting a job, you would allocate new syncpoints for the job
-
-- Yes
-
-> * After submitting the job, those syncpoints are not usable anymore
-
-- Yes
-
-Although, thinking a bit more about it, this needs to be relaxed.
-
-It should be a userspace agreement/policy how to utilize sync points.
-
-For example, if we know that userspace will have multiple application
-instances all using Tegra DRM UAPI, like a mesa or VDPAU drivers, then
-this userspace should consider to return sync points into the pool for
-sharing them with others. While something like an Opentegra Xorg driver,
-which usually has a single instance, could keep sync points pre-allocated.
-
-The job's sync point counter will be reset to 0 by the kernel driver
-during of the submission process for each job, so we won't have the sync
-point recovery problem.
-
-> * Postfences of that job would keep references to those syncpoints so
-> they aren't freed and cleared before the fences have been released
-
-- No
-
-I suggested that fence shouldn't refcount the sync point and *only* have
-a reference to it, this reference will be invalidated once fence is
-signaled by sync point reaching the threshold or once sync point is
-released.
-
-The sync point will have a reference to every active fence (waiting for
-the signal) that is using this sync point until the threshold is reached.
-
-So fence could detach itself from the sync point + sync point could
-detach all the fences from itself.
-
-There will be more about this below, please see example with a dead
-process in the end of this email.
-
-> * Once postfences have been released, syncpoints would be returned to
-> the pool and reset to zero
-
-- No
-
-I'm suggesting that sync point should be returned to the pool once its
-usage refcount reaches 0. This means that both userspace that created
-this sync point + the executed job will both keep the sync point alive
-until it is closed by userspace + job is completed.
-
-> The advantage of this would be that at any point in time, there would be
-> a 1:1 correspondence between allocated syncpoints and jobs; so you could
->  shuffle the jobs around channels or reorder them.
-
-- Yes
-
-> Please correct if I got that wrong :)
+> 	v2: https://lore.kernel.org/lkml/20200414131542.25608-1-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org/
 > 
-> ---
+> Changes v2 -> v3:
 > 
-> I have two concerns:
+> 	* Rebased v5.7-rc3
 > 
-> * A lot of churn on syncpoints - any time you submit a job you might not
-> get a syncpoint for an indefinite time. If we allocate syncpoints
-> up-front at least you know beforehand, and then you have the syncpoint
-> as long as you need it.
-
-If you'll have a lot of active application instances all allocating sync
-points, then inevitably the sync points pool will be exhausted.
-
-But my proposal doesn't differ from yours in this regards, correct?
-
-And maybe there is a nice solution, please see more below!
-
-> * Plumbing the dma-fence/sync_file everywhere, and keeping it alive
-> until waits on it have completed, is more work than just having the
-> ID/threshold. This is probably mainly a problem for downstream, where
-> updating code for this would be difficult. I know that's not a proper
-> argument but I hope we can reach something that works for both worlds.
-
-You could have ID/threshold! :)
-
-But, you can't use the *job's* ID/threshold because you won't know them
-until kernel driver scheduler will *complete(!)* the job's execution!
-The job may be re-pushed multiple times by the scheduler to recovered
-channel if a previous jobs hang!
-
-Now, you could allocate *two* sync points:
-
-  1. For the job itself (job's sync point).
-
-  2. For the userspace to wait (user's sync point).
-
-The job will have to increment both these sync points (example of
-multiple sync points usage) and you know the user's sync point ID/threshold!
-
-If job times out, you *could* increment the user's sync point on CPU
-from userspace!
-
-The counter of the user's sync point won't be touched by the kernel
-driver if job hangs!
-
-> Here's a proposal in between:
+> 	* Added a missing iommu_group_put() as reported by Lu Baolu.
 > 
-> * Keep syncpoint allocation and submission in jobs as in my original
-> proposal
-
-Yes, we could keep it.
-
-But, as I suggested in my other email, we may want to extend the
-allocation IOCTL for the multi-syncpoint allocation support.
-
-Secondly, if we'll want to have the multi-syncpoint support for the job,
-then we may want improve the SUBMIT IOCTL like this:
-
-struct drm_tegra_channel_submit {
-        __u32 num_usr_syncpt_incrs;
-        __u64 usr_sync_points_ptr;
-
-        __u32 num_job_syncpt_incrs;
-        __u32 job_syncpt_handle;
-};
-
-If job doesn't need to increment user's sync points, then there is no
-need to copy them from userspace, hence num_usr_syncpt_incrs should be
-0. I.e. one less copy_from_user() operation.
-
-> * Don't attempt to recover user channel contexts. What this means:
->   * If we have a hardware channel per context (MLOCKing), just tear down
-> the channel
-
-!!!
-
-Hmm, we actually should be able to have a one sync point per-channel for
-the job submission, similarly to what the current driver does!
-
-I'm keep forgetting about the waitbase existence!
-
-Please read more below.
-
->   * Otherwise, we can just remove (either by patching or by full
-> teardown/resubmit of the channel) all jobs submitted by the user channel
-> context that submitted the hanging job. Jobs of other contexts would be
-> undisturbed (though potentially delayed, which could be taken into
-> account and timeouts adjusted)
-
-The DRM scheduler itself has an assumption/requirement that when channel
-hangs, it must be fully reset. The hanged job will be killed by the
-scheduler (maybe dependent jobs will be killed too, but I don't remember
-details right now) and then scheduler will re-submit jobs to the
-recovered channel [1].
-
-[1]
-https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/uapi/scheduler.c#L206
-
-Hence, if we could assign a sync point per-channel, then during of the
-channel's recovery, the channel's sync point will be reset as well! Only
-the waitbases of the re-submitted jobs will differ!
-
-It also means that userspace won't need to allocate sync point for each job!
-
-So far it sounds great! I'll try to think more thoroughly about this.
-
-> * If this happens, we can set removed jobs' post-fences to error status
-> and user will have to resubmit them.
-> * We should be able to keep the syncpoint refcounting based on fences.
-
-The fence doesn't need the sync point itself, it only needs to get a
-signal when the threshold is reached or when sync point is ceased.
-
-Imagine:
-
-  - Process A creates sync point
-  - Process A creates dma-fence from this sync point
-  - Process A exports dma-fence to process B
-  - Process A dies
-
-What should happen to process B?
-
-  - Should dma-fence of the process B get a error signal when process A
-dies?
-  - Should process B get stuck waiting endlessly for the dma-fence?
-
-This is one example of why I'm proposing that fence shouldn't be coupled
-tightly to a sync point.
-
-> This can be made more fine-grained by not caring about the user channel
-> context, but tearing down all jobs with the same syncpoint. I think the
-> result would be that we can get either what you described (or how I
-> understood it in the summary in the beginning of the message), or a more
-> traditional syncpoint-per-userctx workflow, depending on how the
-> userspace decides to allocate syncpoints.
+> 	* Added a patch to consolidate more initialization work in
+> 	  __iommu_probe_device(), fixing a bug where no 'struct
+> 	  device_iommu' was allocated in the hotplug path.
 > 
-> If needed, the kernel can still do e.g. reordering (you mentioned job
-> priorities) at syncpoint granularity, which, if the userspace followed
-> the model you described, would be the same thing as job granularity.
+> There is also a git-branch available with these patches applied:
 > 
-> (Maybe it would be more difficult with current drm_scheduler, sorry,
-> haven't had the time yet to read up on that. Dealing with clearing work
-> stuff up before summer vacation)
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git/log/?h=iommu-probe-device-v3
+> 
+> Please review. If there are no objections I plan to put these patches
+> into the IOMMU tree early next week.
 
-Please take yours time! You definitely will need take a closer look at
-the DRM scheduler.
+Looks like this patchset introduced an use-after-free on arm-smmu-v3.
+
+Reproduced using mlx5,
+
+# echo 1 > /sys/class/net/enp11s0f1np1/device/sriov_numvfs
+# echo 0 > /sys/class/net/enp11s0f1np1/device/sriov_numvfs 
+
+The .config,
+https://github.com/cailca/linux-mm/blob/master/arm64.config
+
+Looking at the free stack,
+
+iommu_release_device->iommu_group_remove_device
+
+was introduced in 07/34 ("iommu: Add probe_device() and release_device()
+call-backs").
+
+[ 9426.724641][ T3356] pci 0000:0b:01.2: Removing from iommu group 3
+[ 9426.731347][ T3356] ==================================================================
+[ 9426.739263][ T3356] BUG: KASAN: use-after-free in __lock_acquire+0x3458/0x4440
+__lock_acquire at kernel/locking/lockdep.c:4250
+[ 9426.746477][ T3356] Read of size 8 at addr ffff0089df1a6f68 by task bash/3356
+[ 9426.753601][ T3356]
+[ 9426.755782][ T3356] CPU: 5 PID: 3356 Comm: bash Not tainted 5.8.0-rc3-next-20200630 #2
+[ 9426.763687][ T3356] Hardware name: HPE Apollo 70             /C01_APACHE_MB         , BIOS L50_5.13_1.11 06/18/2019
+[ 9426.774111][ T3356] Call trace:
+[ 9426.777245][ T3356]  dump_backtrace+0x0/0x398
+[ 9426.781593][ T3356]  show_stack+0x14/0x20
+[ 9426.785596][ T3356]  dump_stack+0x140/0x1b8
+[ 9426.789772][ T3356]  print_address_description.isra.12+0x54/0x4a8
+[ 9426.795855][ T3356]  kasan_report+0x134/0x1b8
+[ 9426.800203][ T3356]  __asan_report_load8_noabort+0x2c/0x50
+[ 9426.805679][ T3356]  __lock_acquire+0x3458/0x4440
+[ 9426.810373][ T3356]  lock_acquire+0x204/0xf10
+[ 9426.814722][ T3356]  _raw_spin_lock_irqsave+0xf8/0x180
+[ 9426.819853][ T3356]  arm_smmu_detach_dev+0xd8/0x4a0
+arm_smmu_detach_dev at drivers/iommu/arm-smmu-v3.c:2776
+[ 9426.824721][ T3356]  arm_smmu_release_device+0xb4/0x1c8
+arm_smmu_disable_pasid at drivers/iommu/arm-smmu-v3.c:2754
+(inlined by) arm_smmu_release_device at drivers/iommu/arm-smmu-v3.c:3000
+[ 9426.829937][ T3356]  iommu_release_device+0xc0/0x178
+iommu_release_device at drivers/iommu/iommu.c:302
+[ 9426.834892][ T3356]  iommu_bus_notifier+0x118/0x160
+[ 9426.839762][ T3356]  notifier_call_chain+0xa4/0x128
+[ 9426.844630][ T3356]  __blocking_notifier_call_chain+0x70/0xa8
+[ 9426.850367][ T3356]  blocking_notifier_call_chain+0x14/0x20
+[ 9426.855929][ T3356]  device_del+0x618/0xa00
+[ 9426.860105][ T3356]  pci_remove_bus_device+0x108/0x2d8
+[ 9426.865233][ T3356]  pci_stop_and_remove_bus_device+0x1c/0x28
+[ 9426.870972][ T3356]  pci_iov_remove_virtfn+0x228/0x368
+[ 9426.876100][ T3356]  sriov_disable+0x8c/0x348
+[ 9426.880447][ T3356]  pci_disable_sriov+0x5c/0x70
+[ 9426.885117][ T3356]  mlx5_core_sriov_configure+0xd8/0x260 [mlx5_core]
+[ 9426.891549][ T3356]  sriov_numvfs_store+0x240/0x318
+[ 9426.896417][ T3356]  dev_attr_store+0x38/0x68
+[ 9426.900766][ T3356]  sysfs_kf_write+0xdc/0x128
+[ 9426.905200][ T3356]  kernfs_fop_write+0x23c/0x448
+[ 9426.909897][ T3356]  __vfs_write+0x54/0xe8
+[ 9426.913984][ T3356]  vfs_write+0x124/0x3f0
+[ 9426.918070][ T3356]  ksys_write+0xe8/0x1b8
+[ 9426.922157][ T3356]  __arm64_sys_write+0x68/0x98
+[ 9426.926766][ T3356]  do_el0_svc+0x124/0x220
+[ 9426.930941][ T3356]  el0_sync_handler+0x260/0x408
+[ 9426.935634][ T3356]  el0_sync+0x140/0x180
+[ 9426.939633][ T3356]
+[ 9426.941810][ T3356] Allocated by task 3356:
+[ 9426.945985][ T3356]  save_stack+0x24/0x50
+[ 9426.949986][ T3356]  __kasan_kmalloc.isra.13+0xc4/0xe0
+[ 9426.955114][ T3356]  kasan_kmalloc+0xc/0x18
+[ 9426.959288][ T3356]  kmem_cache_alloc_trace+0x1ec/0x318
+[ 9426.964503][ T3356]  arm_smmu_domain_alloc+0x54/0x148
+[ 9426.969545][ T3356]  iommu_group_alloc_default_domain+0xc0/0x440
+[ 9426.975541][ T3356]  iommu_probe_device+0x1c0/0x308
+[ 9426.980409][ T3356]  iort_iommu_configure+0x434/0x518
+[ 9426.985452][ T3356]  acpi_dma_configure+0xf0/0x128
+[ 9426.990235][ T3356]  pci_dma_configure+0x114/0x160
+[ 9426.995017][ T3356]  really_probe+0x124/0x6d8
+[ 9426.999364][ T3356]  driver_probe_device+0xc4/0x180
+[ 9427.004232][ T3356]  __device_attach_driver+0x184/0x1e8
+[ 9427.009447][ T3356]  bus_for_each_drv+0x114/0x1a0
+[ 9427.014142][ T3356]  __device_attach+0x19c/0x2a8
+[ 9427.018749][ T3356]  device_attach+0x10/0x18
+[ 9427.023009][ T3356]  pci_bus_add_device+0x70/0xf8
+[ 9427.027704][ T3356]  pci_iov_add_virtfn+0x7b4/0xb40
+[ 9427.032571][ T3356]  sriov_enable+0x5c8/0xc30
+[ 9427.036918][ T3356]  pci_enable_sriov+0x64/0x80
+[ 9427.041485][ T3356]  mlx5_core_sriov_configure+0x58/0x260 [mlx5_core]
+[ 9427.047917][ T3356]  sriov_numvfs_store+0x1c0/0x318
+[ 9427.052784][ T3356]  dev_attr_store+0x38/0x68
+[ 9427.057131][ T3356]  sysfs_kf_write+0xdc/0x128
+[ 9427.061565][ T3356]  kernfs_fop_write+0x23c/0x448
+[ 9427.066260][ T3356]  __vfs_write+0x54/0xe8
+[ 9427.070346][ T3356]  vfs_write+0x124/0x3f0
+[ 9427.074433][ T3356]  ksys_write+0xe8/0x1b8
+[ 9427.078519][ T3356]  __arm64_sys_write+0x68/0x98
+[ 9427.083127][ T3356]  do_el0_svc+0x124/0x220
+[ 9427.087300][ T3356]  el0_sync_handler+0x260/0x408
+[ 9427.091994][ T3356]  el0_sync+0x140/0x180
+[ 9427.095992][ T3356]
+[ 9427.098168][ T3356] Freed by task 3356:
+[ 9427.101995][ T3356]  save_stack+0x24/0x50
+[ 9427.105996][ T3356]  __kasan_slab_free+0x124/0x198
+[ 9427.110777][ T3356]  kasan_slab_free+0x10/0x18
+[ 9427.115210][ T3356]  slab_free_freelist_hook+0x110/0x298
+[ 9427.120512][ T3356]  kfree+0x128/0x668
+[ 9427.124252][ T3356]  arm_smmu_domain_free+0xf4/0x1a0
+[ 9427.129206][ T3356]  iommu_group_release+0xec/0x160
+[ 9427.134074][ T3356]  kobject_put+0xf4/0x238
+[ 9427.138247][ T3356]  kobject_del+0x110/0x190
+[ 9427.142507][ T3356]  kobject_put+0x1e4/0x238
+[ 9427.146767][ T3356]  iommu_group_remove_device+0x394/0x938
+[ 9427.152242][ T3356]  iommu_release_device+0x9c/0x178
+iommu_release_device at drivers/iommu/iommu.c:300
+[ 9427.157196][ T3356]  iommu_bus_notifier+0x118/0x160
+[ 9427.162065][ T3356]  notifier_call_chain+0xa4/0x128
+[ 9427.166934][ T3356]  __blocking_notifier_call_chain+0x70/0xa8
+[ 9427.172670][ T3356]  blocking_notifier_call_chain+0x14/0x20
+[ 9427.178233][ T3356]  device_del+0x618/0xa00
+[ 9427.182406][ T3356]  pci_remove_bus_device+0x108/0x2d8
+[ 9427.187535][ T3356]  pci_stop_and_remove_bus_device+0x1c/0x28
+[ 9427.193271][ T3356]  pci_iov_remove_virtfn+0x228/0x368
+[ 9427.198399][ T3356]  sriov_disable+0x8c/0x348
+[ 9427.202746][ T3356]  pci_disable_sriov+0x5c/0x70
+[ 9427.207398][ T3356]  mlx5_core_sriov_configure+0xd8/0x260 [mlx5_core]
+[ 9427.213830][ T3356]  sriov_numvfs_store+0x240/0x318
+[ 9427.218698][ T3356]  dev_attr_store+0x38/0x68
+[ 9427.223045][ T3356]  sysfs_kf_write+0xdc/0x128
+[ 9427.227478][ T3356]  kernfs_fop_write+0x23c/0x448
+[ 9427.232173][ T3356]  __vfs_write+0x54/0xe8
+[ 9427.236259][ T3356]  vfs_write+0x124/0x3f0
+[ 9427.240346][ T3356]  ksys_write+0xe8/0x1b8
+[ 9427.244433][ T3356]  __arm64_sys_write+0x68/0x98
+[ 9427.249041][ T3356]  do_el0_svc+0x124/0x220
+[ 9427.253215][ T3356]  el0_sync_handler+0x260/0x408
+[ 9427.257908][ T3356]  el0_sync+0x140/0x180
+[ 9427.261907][ T3356]
+[ 9427.264084][ T3356] The buggy address belongs to the object at ffff0089df1a6e00
+[ 9427.264084][ T3356]  which belongs to the cache kmalloc-512 of size 512
+[ 9427.277980][ T3356] The buggy address is located 360 bytes inside of
+[ 9427.277980][ T3356]  512-byte region [ffff0089df1a6e00, ffff0089df1a7000)
+[ 9427.291094][ T3356] The buggy address belongs to the page:
+[ 9427.296571][ T3356] page:ffffffe02257c680 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff0089df1a1400
+[ 9427.306823][ T3356] flags: 0x7ffff800000200(slab)
+[ 9427.311520][ T3356] raw: 007ffff800000200 ffffffe02246b8c8 ffffffe02257ff88 ffff000000320680
+[ 9427.319949][ T3356] raw: ffff0089df1a1400 00000000002a000e 00000001ffffffff ffff0089df1a5001
+[ 9427.328374][ T3356] page dumped because: kasan: bad access detected
+[ 9427.334630][ T3356] page->mem_cgroup:ffff0089df1a5001
+[ 9427.339670][ T3356]
+[ 9427.341846][ T3356] Memory state around the buggy address:
+[ 9427.347322][ T3356]  ffff0089df1a6e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 9427.355228][ T3356]  ffff0089df1a6e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 9427.363133][ T3356] >ffff0089df1a6f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 9427.371038][ T3356]                                                           ^
+[ 9427.378337][ T3356]  ffff0089df1a6f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 9427.386242][ T3356]  ffff0089df1a7000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[ 9427.394146][ T3356] ==================================================================
+[ 9427.402052][ T3356] Disabling lock debugging due to kernel taint
+
+> 
+> Thanks,
+> 
+> 	Joerg
+> 
+> Joerg Roedel (33):
+>   iommu: Move default domain allocation to separate function
+>   iommu/amd: Implement iommu_ops->def_domain_type call-back
+>   iommu/vt-d: Wire up iommu_ops->def_domain_type
+>   iommu/amd: Remove dma_mask check from check_device()
+>   iommu/amd: Return -ENODEV in add_device when device is not handled by
+>     IOMMU
+>   iommu: Add probe_device() and release_device() call-backs
+>   iommu: Move default domain allocation to iommu_probe_device()
+>   iommu: Keep a list of allocated groups in __iommu_probe_device()
+>   iommu: Move new probe_device path to separate function
+>   iommu: Split off default domain allocation from group assignment
+>   iommu: Move iommu_group_create_direct_mappings() out of
+>     iommu_group_add_device()
+>   iommu: Export bus_iommu_probe() and make is safe for re-probing
+>   iommu/amd: Remove dev_data->passthrough
+>   iommu/amd: Convert to probe/release_device() call-backs
+>   iommu/vt-d: Convert to probe/release_device() call-backs
+>   iommu/arm-smmu: Convert to probe/release_device() call-backs
+>   iommu/pamu: Convert to probe/release_device() call-backs
+>   iommu/s390: Convert to probe/release_device() call-backs
+>   iommu/virtio: Convert to probe/release_device() call-backs
+>   iommu/msm: Convert to probe/release_device() call-backs
+>   iommu/mediatek: Convert to probe/release_device() call-backs
+>   iommu/mediatek-v1 Convert to probe/release_device() call-backs
+>   iommu/qcom: Convert to probe/release_device() call-backs
+>   iommu/rockchip: Convert to probe/release_device() call-backs
+>   iommu/tegra: Convert to probe/release_device() call-backs
+>   iommu/renesas: Convert to probe/release_device() call-backs
+>   iommu/omap: Remove orphan_dev tracking
+>   iommu/omap: Convert to probe/release_device() call-backs
+>   iommu/exynos: Use first SYSMMU in controllers list for IOMMU core
+>   iommu/exynos: Convert to probe/release_device() call-backs
+>   iommu: Remove add_device()/remove_device() code-paths
+>   iommu: Move more initialization to __iommu_probe_device()
+>   iommu: Unexport iommu_group_get_for_dev()
+> 
+> Sai Praneeth Prakhya (1):
+>   iommu: Add def_domain_type() callback in iommu_ops
+> 
+>  drivers/iommu/amd_iommu.c       |  97 ++++----
+>  drivers/iommu/amd_iommu_types.h |   1 -
+>  drivers/iommu/arm-smmu-v3.c     |  38 +---
+>  drivers/iommu/arm-smmu.c        |  39 ++--
+>  drivers/iommu/exynos-iommu.c    |  24 +-
+>  drivers/iommu/fsl_pamu_domain.c |  22 +-
+>  drivers/iommu/intel-iommu.c     |  68 +-----
+>  drivers/iommu/iommu.c           | 387 +++++++++++++++++++++++++-------
+>  drivers/iommu/ipmmu-vmsa.c      |  60 ++---
+>  drivers/iommu/msm_iommu.c       |  34 +--
+>  drivers/iommu/mtk_iommu.c       |  24 +-
+>  drivers/iommu/mtk_iommu_v1.c    |  50 ++---
+>  drivers/iommu/omap-iommu.c      |  99 ++------
+>  drivers/iommu/qcom_iommu.c      |  24 +-
+>  drivers/iommu/rockchip-iommu.c  |  26 +--
+>  drivers/iommu/s390-iommu.c      |  22 +-
+>  drivers/iommu/tegra-gart.c      |  24 +-
+>  drivers/iommu/tegra-smmu.c      |  31 +--
+>  drivers/iommu/virtio-iommu.c    |  41 +---
+>  include/linux/iommu.h           |  21 +-
+>  20 files changed, 531 insertions(+), 601 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
+> _______________________________________________
+> iommu mailing list
+> iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
