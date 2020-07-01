@@ -1,53 +1,57 @@
-From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v8 3/3] iommu/arm-smmu: Add global/context fault
- implementation hooks
-Date: Wed, 1 Jul 2020 18:48:22 +0000
-Message-ID: <BYAPR12MB282244D2B008E1C8CA57916BB36C0@BYAPR12MB2822.namprd12.prod.outlook.com>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v8 1/3] iommu/arm-smmu: add NVIDIA implementation for dual
+ ARM MMU-500 usage
+Date: Wed, 1 Jul 2020 19:56:17 +0100
+Message-ID: <9ae6b6e6-bd64-9c89-49ca-1f5785ef3f0c@arm.com>
 References: <20200630001051.12350-1-vdumpa@nvidia.com>
- <20200630001051.12350-4-vdumpa@nvidia.com>
- <4b4b20af-7baa-0987-e40d-af74235153f6@nvidia.com>
- <6c2ce909-c71b-351f-79f5-b1a4b4c0e4ac@arm.com>
+ <20200630001051.12350-2-vdumpa@nvidia.com>
+ <53bfa5c8-c32d-6fa3-df60-a18ab33ca1c2@nvidia.com>
+ <d59b7220-168c-419f-db16-194307e11065@arm.com>
+ <BYAPR12MB2822FC263456303302EF30BEB36C0@BYAPR12MB2822.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6c2ce909-c71b-351f-79f5-b1a4b4c0e4ac-5wv7dgnIgG8@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <BYAPR12MB2822FC263456303302EF30BEB36C0-ZGDeBxoHBPlXmIuPQoPGkAdYzm3356FpvxpqHgZTriW3zl9H0oFU5g@public.gmane.org>
+Content-Language: en-GB
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bryan Huntsman <bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Nicolin Chen <nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Pj4+ICsgICAgZm9yIChpbnN0ID0gMDsgaW5zdCA8IG52aWRpYV9zbW11LT5udW1faW5zdDsgaW5z
-dCsrKSB7DQo+Pj4gKyAgICAgICAgICAgIGlycV9yZXQgPSBudmlkaWFfc21tdV9nbG9iYWxfZmF1
-bHRfaW5zdChpcnEsIHNtbXUsIGluc3QpOw0KPj4+ICsgICAgICAgICAgICBpZiAoaXJxX3JldCA9
-PSBJUlFfSEFORExFRCkNCj4+PiArICAgICAgICAgICAgICAgICAgICByZXR1cm4gaXJxX3JldDsN
-Cj4+DQo+PiBBbnkgY2hhbmNlIHRoZXJlIGNvdWxkIGJlIG1vcmUgdGhhbiBvbmUgU01NVSBmYXVs
-dGluZyBieSB0aGUgdGltZSB3ZSANCj4+IHNlcnZpY2UgdGhlIGludGVycnVwdD8NCg0KPkl0IGNl
-cnRhaW5seSBzZWVtcyBwbGF1c2libGUgaWYgdGhlIGludGVyY29ubmVjdCBpcyBhdXRvbWF0aWNh
-bGx5IGxvYWQtYmFsYW5jaW5nIHJlcXVlc3RzIGFjcm9zcyB0aGUgU01NVSBpbnN0YW5jZXMgLSBz
-YXkgYSBkcml2ZXIgYnVnIGNhdXNlZCBhIGJ1ZmZlciB0byBiZSB1bm1hcHBlZCB0b28gZWFybHks
-IHRoZXJlIGNvdWxkIGJlIG1hbnkgaW4tZmxpZ2h0IGFjY2Vzc2VzIHRvIHBhcnRzIG9mIHRoYXQg
-YnVmZmVyIHRoYXQgYXJlbid0IGFsbCB0YWtpbmcgdGhlIHNhbWUgcGF0aCBhbmQgdGh1cyBjb3Vs
-ZCBub3cgZmF1bHQgaW4gcGFyYWxsZWwuDQo+WyBBbmQgYW55b25lIGluY2xpbmVkIHRvIG5pdHBp
-Y2sgZ2xvYmFsIHZzLiBjb250ZXh0IGZhdWx0cywgcy91bm1hcCBhIGJ1ZmZlci90ZWFyIGRvd24g
-YSBkb21haW4vIDspIF0NCj5FaXRoZXIgd2F5IEkgdGhpbmsgaXQgd291bGQgYmUgZWFzaWVyIHRv
-IHJlYXNvbiBhYm91dCBpZiB3ZSBqdXN0IGhhbmRsZWQgdGhlc2UgbGlrZSBhIHR5cGljYWwgc2hh
-cmVkIGludGVycnVwdCBhbmQgYWx3YXlzIGNoZWNrZWQgYWxsIHRoZSBpbnN0YW5jZXMuDQoNCkl0
-IHdvdWxkIGJlIG9wdGltYWwgdG8gY2hlY2sgYXQgdGhlIHNhbWUgdGltZSBhY3Jvc3MgYWxsIGlu
-c3RhbmNlcy4gDQoNCj4+PiArICAgICAgICAgICAgZm9yIChpZHggPSAwOyBpZHggPCBzbW11LT5u
-dW1fY29udGV4dF9iYW5rczsgaWR4KyspIHsNCj4+PiArICAgICAgICAgICAgICAgICAgICBpcnFf
-cmV0ID0gbnZpZGlhX3NtbXVfY29udGV4dF9mYXVsdF9iYW5rKGlycSwgc21tdSwNCj4+PiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IGlkeCwgDQo+Pj4gKyBpbnN0KTsNCj4+PiArDQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgaWYg
-KGlycV9yZXQgPT0gSVJRX0hBTkRMRUQpDQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICByZXR1cm4gaXJxX3JldDsNCj4+DQo+PiBBbnkgcmVhc29uIHdoeSB3ZSBkb24ndCBjaGVjayBh
-bGwgYmFua3M/DQoNCj5BcyBhYm92ZSwgd2UgY2VydGFpbmx5IHNob3VsZG4ndCBiYWlsIG91dCB3
-aXRob3V0IGNoZWNraW5nIHRoZSBiYW5rIGZvciB0aGUgb2ZmZW5kaW5nIGRvbWFpbiBhY3Jvc3Mg
-YWxsIG9mIGl0cyBpbnN0YW5jZXMsIGFuZCBJIGd1ZXNzIHRoZSB3YXkgdGhpcyB3b3JrcyBtZWFu
-cyB0aGF0IHdlIHdvdWxkIGhhdmUgdG8gaXRlcmF0ZSBhbGwgdGhlIGJhbmtzIHRvIGFjaGlldmUg
-dGhhdC4NCg0KV2l0aCBzaGFyZWQgaXJxIGxpbmUsIHRoZSBjb250ZXh0IGZhdWx0IGlkZW50aWZp
-Y2F0aW9uIGlzIG5vdCBvcHRpbWFsIGFscmVhZHkuICBSZWFkaW5nIGFsbCB0aGUgY29udGV4dCBi
-YW5rcyBhbGwgdGhlIHRpbWUgY2FuIGJlIGFkZGl0aW9uYWwgbW1pbyByZWFkIG92ZXJoZWFkLiBC
-dXQsIGl0IG1heSBub3QgaHVydCB0aGUgcmVhbCB1c2UgY2FzZXMgYXMgdGhlc2UgaGFwcGVuIG9u
-bHkgd2hlbiB0aGVyZSBhcmUgYnVncy4gDQoNCi1LUg0K
+On 2020-07-01 19:18, Krishna Reddy wrote:
+>>> + * When Linux kernel supports multiple SMMU devices, the SMMU
+>>> device +used for + * isochornous HW devices should be added as a
+>>> separate ARM MMU-500 +device + * in DT and be programmed
+>>> independently for efficient TLB invalidates.
+> 
+>> I don't understand the "When" there - the driver has always
+>> supported multiple independent SMMUs, and it's not something that
+>> could be configured out or otherwise disabled. Plus I really don't
+>> see why you would ever want to force unrelated SMMUs to be
+>> >programmed together - beyond the TLB thing mentioned it would also
+>> waste precious context bank resources and might lead to weird
+>> device grouping via false stream ID aliasing, with no obvious
+>> upside at all.
+> 
+> Sorry, I missed this comment. During the initial patches, when the
+> iommu_ops were different between, support multiple SMMU drivers at
+> the same is not possible as one of them(that gets probed last)
+> overwrites the platform bus ops. On revisiting the original issue,
+> This problem is no longer relevant. At this point, It makes more
+> sense to just get rid of 3rd instance programming in
+> arm-smmu-nvidia.c and just limit it to the SMMU instances that need
+> identical programming.
+
+Yeah, I realised later last night that this probably originated from 
+forking the whole driver downstream. But even then you could have 
+treated the other one as a separate nsmmu with a single instance ;)
+
+Since it does add a bit of confusion to the code and comments, let's 
+just keep things simple. I do like Jon's suggestion of actually 
+enforcing that the number of "reg" regions exactly matches the number 
+expected for the given compatible - I guess for now that means just 
+hard-coding 2 and hoping the hardware folks don't cook up any more of 
+these...
+
+Robin.
