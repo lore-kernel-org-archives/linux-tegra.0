@@ -1,260 +1,99 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [RFC PATCH v2 00/18] Support for Tegra video capture from
- external sensor
-Date: Thu, 2 Jul 2020 12:49:50 +0200
-Message-ID: <7aaba7d2-56b5-8498-a677-8c59c5edc2dd@xs4all.nl>
-References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
- <b3f63f3f-50b2-e818-2c59-8009c31a9825@xs4all.nl>
- <f5c84071-46ad-aa6f-0820-1813d4a907c9@nvidia.com>
- <a60d8f80-312d-fce3-61f5-328e7f2a7a64@xs4all.nl>
- <72ca3b09-7ca6-7421-4a9d-98326d1af087@nvidia.com>
- <e8a8a678-e9e8-e941-8dcb-0e747616ba59@nvidia.com>
- <a606ac84-e0bc-aa85-5799-eeeb544d130d@nvidia.com>
- <92f25457-f4e5-78ea-d453-2b5cf8f272e8@xs4all.nl>
+From: Marilis Mannik <mariliis.manniik-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Urgent From Hospital
+Date: Thu, 2 Jul 2020 11:17:05 +0000 (UTC)
+Message-ID: <1351281970.158395.1593688625919@mail.yahoo.com>
+References: <1351281970.158395.1593688625919.ref@mail.yahoo.com>
+Reply-To: manniik.mariliis-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <92f25457-f4e5-78ea-d453-2b5cf8f272e8@xs4all.nl>
-Content-Language: en-US
-Sender: linux-i2c-owner@vger.kernel.org
-To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
-Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/07/2020 18:54, Hans Verkuil wrote:
-> On 30/06/2020 18:34, Sowjanya Komatineni wrote:
->>
->> On 6/30/20 9:17 AM, Sowjanya Komatineni wrote:
->>>
->>> On 6/30/20 8:44 AM, Sowjanya Komatineni wrote:
->>>>
->>>> On 6/30/20 8:13 AM, Hans Verkuil wrote:
->>>>> On 30/06/2020 16:58, Sowjanya Komatineni wrote:
->>>>>> On 6/30/20 2:21 AM, Hans Verkuil wrote:
->>>>>>> On 17/06/2020 03:41, Sowjanya Komatineni wrote:
->>>>>>>> This series adds support for video capture from external camera 
->>>>>>>> sensor to
->>>>>>>> Tegra video driver.
->>>>>>>>
->>>>>>>> Jetson TX1 has camera expansion connector and supports custom 
->>>>>>>> camera module
->>>>>>>> designed as per TX1 design specification.
->>>>>>>>
->>>>>>>> This series also enables camera capture support for Jetson Nano 
->>>>>>>> which has
->>>>>>>> Raspberry PI camera header.
->>>>>>>>
->>>>>>>> This series is tested with IMX219 camera sensor.
->>>>>>> Which tree did you base this on? The media_tree master? Or the 
->>>>>>> mainline kernel?
->>>>>> These patches are with linux-next base at the time I sent them out 
->>>>>> which
->>>>>> are on 20200616
->>>>>>> I now have the imx219 detected, but if I try to stream I get this:
->>>>>>>
->>>>>>> $ v4l2-ctl --stream-mmap
->>>>>>> <[  512.840944] video4linux video0: MW_ACK_DONE syncpt timeout: -11
->>>>>>> [  512.972975] video4linux video0: frame start syncpt timeout: -11
->>>>>>> <VIDIOC_DQBUF: failed: Input/output error
->>>>>>> [  513.180770] video4linux video0: MW_ACK_DONE syncpt timeout: -11
->>>>>>>
->>>>>>> And then everything hangs and I need to reset.
->>>>>>>
->>>>>>> I'm testing with the media_tree master with your patches on top.
->>>>>>>
->>>>>>> Regards,
->>>>>>>
->>>>>>>     Hans
->>>>>> Are you using same device tree as I sent offline? It uses CSI A for 
->>>>>> IMX219.
->>>>>>
->>>>>> Does you setup also uses CSI-A as x2 for IMX219?
->>>>>>
->>>>>> I tested them on Jetson Nano + IMX219 rasp PI module and also on 
->>>>>> Jetson
->>>>>> TX1 + IMX274.
->>>>>>
->>>>>> I did not see any issue and am able to capture from both.
->>>>>>
->>>>>> Will try again on my side with today's latest linux-next and update 
->>>>>> result.
->>>>> Please use the media_tree master, that's what I use as well.
->>>>>
->>>>> I did some more testing and there is something weird going on.
->>>>>
->>>>> I have a Leopard Imaging camera expansion board (LI-JTX1-MIPI-ADPT) 
->>>>> with
->>>>> three camera connectors. See here for the datasheet:
->>>>>
->>>>> https://www.leopardimaging.com/uploads/LI-TX1-KIT-IMX274M12-T_datasheet.pdf 
->>>>>
->>>>>
->>>>> The first connector (with an IMX274) causes this error:
->>>>>
->>>>> $ v4l2-ctl -d1 --stream-mmap
->>>>> [  599.265885] video4linux video1: MW_ACK_DONE syncpt timeout: -11
->>>>> [  599.473883] video4linux video1: MW_ACK_DONE syncpt timeout: -11
->>>>> [  599.681904] video4linux video1: frame start syncpt timeout: -11
->>>>> [  599.681909] video4linux video1: MW_ACK_DONE syncpt timeout: -11
->>>>> <VIDIOC_DQBUF: failed: Input/output error
->>>>> [  599.897884] video4linux video1: MW_ACK_DONE syncpt timeout: -11
->>>>>
->>>>> Similar to the test above where I had an IMX219 connected. Except it 
->>>>> didn't
->>>>> hang with the IMX274 (I'm beginning to suspect a locking issue in 
->>>>> the imx219
->>>>> driver that is causing the hang, I'll look at that tomorrow).
->>>>>
->>>>> If I connect the IMX219 to the middle camera connector, then it 
->>>>> works fine.
->>>>> I think I tested this with the IMX274 as well, but I'm not 100% 
->>>>> certain, also
->>>>> something to double check tomorrow.
->>>>>
->>>>> If I connect the IMX219 or IMX274 to the third camera connector, 
->>>>> then I get this:
->>>>
->>>> Would like to know CSI port mapping to connectors as mipi calibrate 
->>>> pads cells need to be updated in device tree based on CSI port in use.
->>>>
->>>> Will see if I can find that from DS link you sent above.
->>>>
->>>>>
->>>>> $ v4l2-ctl -d0 --stream-mmap
->>>>> [  820.513866] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>>
->>>>> [  820.525354] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>>
->>>>> [  820.536780] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>>
->>>>> [  820.548222] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>>
->>>>> [  820.559639] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> <[  820.646931] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  820.658355] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  820.669797] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  820.681216] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  820.692601] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> <<<<<<<<<<<<<<< 14.50 fps
->>>>> <<<<<<<<<<<<<<< 14.75 fps
->>>>> <<<<<<<<<<<<<<< 14.73 fps
->>>>> <<<<<<<<<<<<<<< 14.80 fps
->>>>> <<<<<<<<<<<<<[ 825.517854] tegra_mc_irq: 133437 callbacks suppressed
->>>>> [  825.517874] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  825.534395] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  825.545833] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  825.557280] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  825.579346] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  825.590764] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  825.602188] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  825.613649] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  825.625075] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> [  825.645983] tegra-mc 70019000.memory-controller: viw: write 
->>>>> @0x00000001b5fd08c0: EMEM address decode error (EMEM decode error)
->>>>> < 14.64 fps
->>>>> <<<<<<<<<<<<<<<< 14.87 fps
->>>>> <<<<<<<<<<<<<<< 14.89 fps
->>>>>
->>>>> Something is producing EMEM address decode errors. But it is streaming.
->>>>
->>>> above memory controller errors may be due to access faults and not 
->>>> sure why these show up on your setup. I never have these with my 
->>>> testing.
->>>>
->>>> Also I am using CMA alloc of 256MB and not sure if low CMA alloc size 
->>>> is causing this. Can you try with CMA alloc size of 256MB?
->>>>
->>>>>
->>>>> If I enable the TPG then everything is fine.
->>>>>
->>>>> So I have currently three different behaviors for three camera 
->>>>> connectors.
->>>>>
->>>>> Do you have a datasheet for your Jetson TX1 camera board? It could 
->>>>> be useful
->>>>> to compare the two.
->>>>
->>>> Yeah we have and will send it offline.
->>>>
->>>> Also based on connector mapping to corresponding CSI port, 
->>>> mipi-calibrate pad cell value also need to be changed.
->>>>
->>>> Below is for CSI-A
->>>>
->>>> nvidia,mipi-calibrate = <&mipi 0x001>
->>>>> Regards,
->>>>>
->>>>>     Hans
->>> Connector-1 is CSI-AB where you had timeouts.
->>>
->>> Connector-2 is CSI-CD and this works for you.
->>>
->>> Connector-3 is CSI-EF and this works for streaming from above but 
->>> there's memory access fault errors (EMEM address decode errors)
->>>
->>> These EMEM decode errors are not related to connector but its just 
->>> they showed up during connector-3 testing I believe. Can you also keep 
->>> CMA size to 256MB and try?
->>>
->>> Not sure if CSI-AB issue with FS and MW_ACK sp timeouts are due to 
->>> some HW/setup issue. Streaming should work on CSI-AB ports as well 
->>> just like CSI-CD/EF with proper device tree change for port index and 
->>> mipi calibrate cells for corresponding ports.
->>>
->>> On my setup that I tested IMX274 is on CSI-AB.
->>>
->>> Will update my side test results with today's linux-next
->>
->> Hans,
->>
->> We have this module as well. Will try to get this today for testing and 
->> will update just to make sure of this combo as well on my side.
-> 
-> Sowjanya,
-> 
-> A quick update: I had to update my u-boot and I ended up reinstalling everything.
-> 
-> And now the problems I described just disappeared. Very strange.
-> 
-> I have yet to verify if the issue with the third camera connector is also solved,
-> I'll do that tomorrow.
 
-I've now verified the third camera connector with the imx274, and that too works
-fine.
 
-I did find a few compliance issues in several places, so expect to see some
-patches (mostly in the sensor drivers).
+Hello=C2=A0My=C2=A0Beloved
+this=C2=A0is=C2=A0Ms=C2=A0Marilis=C2=A0Mannik=C2=A0from=C2=A0Estonia=C2=A0w=
+riting=C2=A0from=C2=A0the=C2=A0hospital=C2=A0here=C2=A0in=C2=A0Ivory=C2=A0C=
+oast;Dear=C2=A0I=C2=A0want=C2=A0you=C2=A0to=C2=A0know=C2=A0that=C2=A0I'm=C2=
+=A0dying=C2=A0here=C2=A0in=C2=A0this=C2=A0hospital=C2=A0right=C2=A0now=C2=
+=A0which=C2=A0i=C2=A0don't=C2=A0know=C2=A0if=C2=A0i=C2=A0will=C2=A0see=C2=
+=A0some=C2=A0few=C2=A0days=C2=A0to=C2=A0come.
 
-It's all looking pretty good, so thank you for working on this!
+My=C2=A0Beloved,=C2=A0i=C2=A0was=C2=A0informed=C2=A0by=C2=A0my=C2=A0doctor=
+=C2=A0that=C2=A0i=C2=A0got=C2=A0poisoned=C2=A0and=C2=A0it=C2=A0affected=C2=
+=A0my=C2=A0liver=C2=A0and=C2=A0i=C2=A0can=C2=A0only=C2=A0live=C2=A0for=C2=
+=A0some=C2=A0days.=C2=A0The=C2=A0reason=C2=A0why=C2=A0i=C2=A0contacted=C2=
+=A0you=C2=A0today=C2=A0is=C2=A0because=C2=A0i=C2=A0know=C2=A0that=C2=A0my=
+=C2=A0step=C2=A0mother=C2=A0wanted=C2=A0to=C2=A0kill=C2=A0me=C2=A0and=C2=A0=
+take=C2=A0my=C2=A0inheritance=C2=A0from=C2=A0my=C2=A0late=C2=A0Father.=C2=
+=A0I=C2=A0have=C2=A0a=C2=A0little=C2=A0adopted=C2=A0child=C2=A0named=C2=A0A=
+ndrew=C2=A0C.=C2=A0Mannik=C2=A0that=C2=A0i=C2=A0adopted=C2=A0in=C2=A0this=
+=C2=A0Country=C2=A0when=C2=A0my=C2=A0late=C2=A0Father=C2=A0was=C2=A0alive=
+=C2=A0and=C2=A0$3.5=C2=A0million=C2=A0Dollars=C2=A0i=C2=A0inherited=C2=A0fr=
+om=C2=A0my=C2=A0late=C2=A0father.=C2=A0My=C2=A0step=C2=A0mother=C2=A0and=C2=
+=A0her=C2=A0children=C2=A0they=C2=A0are=C2=A0after=C2=A0Andrew=C2=A0right=
+=C2=A0now=C2=A0because=C2=A0they=C2=A0found=C2=A0out=C2=A0that=C2=A0Andrew=
+=C2=A0was=C2=A0aware=C2=A0of=C2=A0the=C2=A0poison,=C2=A0and=C2=A0because=C2=
+=A0i=C2=A0handed=C2=A0the=C2=A0documents=C2=A0of=C2=A0the=C2=A0fund=C2=A0ov=
+er=C2=A0to=C2=A0him=C2=A0the=C2=A0day=C2=A0my=C2=A0step=C2=A0Mother=C2=A0po=
+isoned=C2=A0my=C2=A0food,=C2=A0for=C2=A0that=C2=A0reason=C2=A0they=C2=A0do=
+=C2=A0not=C2=A0want=C2=A0Andrew=C2=A0to=C2=A0expose=C2=A0them,=C2=A0so=C2=
+=A0they=C2=A0are=C2=A0doing=C2=A0everything=C2=A0possible=C2=A0to=C2=A0kill=
+=C2=A0him.
 
-Regards,
+My=C2=A0Beloved,=C2=A0please=C2=A0i=C2=A0want=C2=A0you=C2=A0to=C2=A0help=C2=
+=A0him=C2=A0out=C2=A0of=C2=A0this=C2=A0country=C2=A0with=C2=A0the=C2=A0mone=
+y,=C2=A0he=C2=A0is=C2=A0the=C2=A0only=C2=A0one=C2=A0taking=C2=A0good=C2=A0c=
+are=C2=A0of=C2=A0me=C2=A0here=C2=A0in=C2=A0this=C2=A0hospital=C2=A0right=C2=
+=A0now=C2=A0and=C2=A0even=C2=A0this=C2=A0email=C2=A0you=C2=A0are=C2=A0readi=
+ng=C2=A0now=C2=A0he=C2=A0is=C2=A0the=C2=A0one=C2=A0helping=C2=A0me=C2=A0out=
+.=C2=A0I=C2=A0want=C2=A0you=C2=A0to=C2=A0get=C2=A0back=C2=A0to=C2=A0me=C2=
+=A0so=C2=A0that=C2=A0he=C2=A0will=C2=A0give=C2=A0you=C2=A0the=C2=A0document=
+s=C2=A0of=C2=A0the=C2=A0fund=C2=A0and=C2=A0he=C2=A0will=C2=A0direct=C2=A0yo=
+u=C2=A0to=C2=A0a=C2=A0well=C2=A0known=C2=A0lawyer=C2=A0that=C2=A0i=C2=A0hav=
+e=C2=A0appointed,=C2=A0the=C2=A0lawyer=C2=A0will=C2=A0assist=C2=A0you=C2=A0=
+to=C2=A0change=C2=A0the=C2=A0documents=C2=A0of=C2=A0the=C2=A0fund=C2=A0to=
+=C2=A0your=C2=A0name=C2=A0to=C2=A0enable=C2=A0the=C2=A0bank=C2=A0transfer=
+=C2=A0the=C2=A0money=C2=A0to=C2=A0you..
 
-	Hans
+This=C2=A0is=C2=A0the=C2=A0favor=C2=A0i=C2=A0need=C2=A0when=C2=A0you=C2=A0h=
+ave=C2=A0gotten=C2=A0the=C2=A0fund:
 
-> 
-> But for now you don't have to take any action.
-> 
-> Regards,
-> 
-> 	Hans
-> 
+(1)=C2=A0Keep=C2=A030%=C2=A0of=C2=A0the=C2=A0money=C2=A0for=C2=A0Andrew=C2=
+=A0until=C2=A0he=C2=A0finish=C2=A0his=C2=A0studies=C2=A0to=C2=A0become=C2=
+=A0a=C2=A0man=C2=A0as=C2=A0he=C2=A0has=C2=A0been=C2=A0there=C2=A0for=C2=A0m=
+e=C2=A0as=C2=A0my=C2=A0lovely=C2=A0Son=C2=A0and=C2=A0i=C2=A0promised=C2=A0t=
+o=C2=A0support=C2=A0him=C2=A0in=C2=A0life=C2=A0to=C2=A0become=C2=A0a=C2=A0m=
+edical=C2=A0Doctor=C2=A0because=C2=A0he=C2=A0always=C2=A0desire=C2=A0for=C2=
+=A0it=C2=A0with=C2=A0the=C2=A0scholarship=C2=A0he=C2=A0had=C2=A0won=C2=A0so=
+=C2=A0far.=C2=A0I=C2=A0want=C2=A0you=C2=A0to=C2=A0take=C2=A0him=C2=A0along=
+=C2=A0with=C2=A0you=C2=A0to=C2=A0your=C2=A0country=C2=A0and=C2=A0establish=
+=C2=A0him=C2=A0as=C2=A0your=C2=A0son.
+
+(2)=C2=A0Give=C2=A020%=C2=A0of=C2=A0the=C2=A0money=C2=A0to=C2=A0handicap=C2=
+=A0people=C2=A0and=C2=A0charity=C2=A0organization.=C2=A0The=C2=A0remaining=
+=C2=A050%=C2=A0should=C2=A0be=C2=A0yours=C2=A0for=C2=A0your=C2=A0help=C2=A0=
+to=C2=A0Andrew.
+
+Note;=C2=A0This=C2=A0should=C2=A0be=C2=A0a=C2=A0code=C2=A0between=C2=A0you=
+=C2=A0and=C2=A0my=C2=A0son=C2=A0Andrew=C2=A0in=C2=A0this=C2=A0transaction=
+=C2=A0"Hospital"=C2=A0any=C2=A0mail=C2=A0from=C2=A0him,=C2=A0the=C2=A0Lawye=
+r=C2=A0he=C2=A0will=C2=A0direct=C2=A0you=C2=A0to,=C2=A0without=C2=A0this=C2=
+=A0code=C2=A0"Hospital"=C2=A0is=C2=A0not=C2=A0from=C2=A0the=C2=A0Andrew,=C2=
+=A0the=C2=A0Lawyer=C2=A0or=C2=A0myself=C2=A0as=C2=A0i=C2=A0don't=C2=A0know=
+=C2=A0what=C2=A0will=C2=A0happen=C2=A0to=C2=A0me=C2=A0in=C2=A0the=C2=A0next=
+=C2=A0few=C2=A0hours.
+
+Finally,=C2=A0write=C2=A0me=C2=A0back=C2=A0so=C2=A0that=C2=A0Andrew=C2=A0wi=
+ll=C2=A0send=C2=A0you=C2=A0his=C2=A0pictures=C2=A0to=C2=A0be=C2=A0sure=C2=
+=A0of=C2=A0whom=C2=A0you=C2=A0are=C2=A0dealing=C2=A0with.=C2=A0Andrew=C2=A0=
+is=C2=A014years=C2=A0now,=C2=A0therefore=C2=A0guide=C2=A0him.=C2=A0And=C2=
+=A0if=C2=A0i=C2=A0don't=C2=A0hear=C2=A0from=C2=A0you=C2=A0i=C2=A0will=C2=A0=
+look=C2=A0for=C2=A0another=C2=A0person=C2=A0or=C2=A0any=C2=A0organization.
+
+May=C2=A0Almighty=C2=A0God=C2=A0bless=C2=A0you=C2=A0and=C2=A0use=C2=A0you=
+=C2=A0to=C2=A0accomplish=C2=A0my=C2=A0wish.=C2=A0Pray=C2=A0for=C2=A0me=C2=
+=A0always.
+Ms=C2=A0Marilis=C2=A0Mannik
