@@ -1,63 +1,51 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.7 10/53] gpu: host1x: Detach driver on unregister
-Date: Wed,  1 Jul 2020 21:21:19 -0400
-Message-ID: <20200702012202.2700645-10-sashal@kernel.org>
+From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH AUTOSEL 5.7 08/53] gpu: host1x: Clean up debugfs in error handling path
+Date: Wed,  1 Jul 2020 21:21:17 -0400
+Message-ID: <20200702012202.2700645-8-sashal@kernel.org>
 References: <20200702012202.2700645-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20200702012202.2700645-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Sasha Levin <sashal@kernel.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200702012202.2700645-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-[ Upstream commit d9a0a05bf8c76e6dc79230669a8b5d685b168c30 ]
+[ Upstream commit 109be8b23fb2ec8e2d309325ee3b7a49eab63961 ]
 
-Currently when a host1x device driver is unregistered, it is not
-detached from the host1x controller, which means that the device
-will stay around and when the driver is registered again, it may
-bind to the old, stale device rather than the new one that was
-created from scratch upon driver registration. This in turn can
-cause various weird crashes within the driver core because it is
-confronted with a device that was already deleted.
+host1x_debug_init() must be reverted in an error handling path.
 
-Fix this by detaching the driver from the host1x controller when
-it is unregistered. This ensures that the deleted device also is
-no longer present in the device list that drivers will bind to.
+This is already fixed in the remove function since commit 44156eee91ba
+("gpu: host1x: Clean up debugfs on removal")
 
-Reported-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Tested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- drivers/gpu/host1x/bus.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/host1x/dev.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 6a995db51d6d8..e201f62d62c0c 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -686,8 +686,17 @@ EXPORT_SYMBOL(host1x_driver_register_full);
-  */
- void host1x_driver_unregister(struct host1x_driver *driver)
- {
-+	struct host1x *host1x;
-+
- 	driver_unregister(&driver->driver);
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index d24344e919227..3c0f151847bae 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -468,11 +468,12 @@ static int host1x_probe(struct platform_device *pdev)
  
-+	mutex_lock(&devices_lock);
-+
-+	list_for_each_entry(host1x, &devices, list)
-+		host1x_detach_driver(host1x, driver);
-+
-+	mutex_unlock(&devices_lock);
-+
- 	mutex_lock(&drivers_lock);
- 	list_del_init(&driver->list);
- 	mutex_unlock(&drivers_lock);
+ 	err = host1x_register(host);
+ 	if (err < 0)
+-		goto deinit_intr;
++		goto deinit_debugfs;
+ 
+ 	return 0;
+ 
+-deinit_intr:
++deinit_debugfs:
++	host1x_debug_deinit(host);
+ 	host1x_intr_deinit(host);
+ deinit_syncpt:
+ 	host1x_syncpt_deinit(host);
 -- 
 2.25.1
