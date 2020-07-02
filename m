@@ -1,71 +1,60 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 11/37] PM / devfreq: tegra30: Silence deferred probe
- error
-Date: Thu, 2 Jul 2020 04:20:55 +0300
-Message-ID: <fda8aa80-04f1-af00-7a0d-f9b589cdb37e@gmail.com>
-References: <20200609131404.17523-1-digetx@gmail.com>
- <CGME20200609131843epcas1p3a5b06308559ff03ef1b27521f412b656@epcas1p3.samsung.com>
- <20200609131404.17523-12-digetx@gmail.com>
- <136b430d-2097-7b2b-d7dd-b438deee8f5d@samsung.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 09/53] drm/tegra: hub: Do not enable orphaned window group
+Date: Wed,  1 Jul 2020 21:21:18 -0400
+Message-ID: <20200702012202.2700645-9-sashal@kernel.org>
+References: <20200702012202.2700645-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <136b430d-2097-7b2b-d7dd-b438deee8f5d-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200702012202.2700645-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Nicolin Chen <nicoleotsuka@gmail.com>, Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@kernel.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-02.07.2020 03:59, Chanwoo Choi пишет:
-> Hi,
-> 
-> On 6/9/20 10:13 PM, Dmitry Osipenko wrote:
->> Tegra EMC driver was turned into a regular kernel driver, it also could
->> be compiled as a loadable kernel module now. Hence EMC clock isn't
->> guaranteed to be available and clk_get("emc") may return -EPROBE_DEFER and
->> there is no good reason to spam KMSG with a error about missing EMC clock
->> in this case, so let's silence the deferred probe error.
->>
->> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 9 ++++++---
->>  1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index e94a27804c20..423dd35c95b3 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -801,9 +801,12 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>  	}
->>  
->>  	tegra->emc_clock = devm_clk_get(&pdev->dev, "emc");
->> -	if (IS_ERR(tegra->emc_clock)) {
->> -		dev_err(&pdev->dev, "Failed to get emc clock\n");
->> -		return PTR_ERR(tegra->emc_clock);
->> +	err = PTR_ERR_OR_ZERO(tegra->emc_clock);
->> +	if (err) {
->> +		if (err != -EPROBE_DEFER)
->> +			dev_err(&pdev->dev, "Failed to get emc clock: %d\n",
->> +				err);
->> +		return err;
->>  	}
->>  
->>  	err = platform_get_irq(pdev, 0);
->>
-> 
-> As I commented on patch10, I recommend that you add the Tegra EMC driver
-> commit information into patch description and Looks good to me.
-> 
+From: Nicolin Chen <nicoleotsuka@gmail.com>
 
-Hello, Chanwoo!
+[ Upstream commit ef4e417eb3ec7fe657928f10ac1d2154d8a5fb38 ]
 
-This patch11 and patch10 are depending on the patches 4/5 (the Tegra EMC
-driver patches) of *this* series, hence there is no commit information.
-I'm expecting that this whole series will go via tegra tree once all the
-patches will be reviewed and collect all the necessary acks from you,
-ICC and CLK subsystem maintainers.
+Though the unconditional enable/disable code is not a final solution,
+we don't want to run into a NULL pointer situation when window group
+doesn't link to its DC parent if the DC is disabled in Device Tree.
 
-Please feel free to give yours ack to the patches 10/11 if they are good
-to you :)
+So this patch simply adds a check to make sure that window group has
+a valid parent before running into tegra_windowgroup_enable/disable.
+
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/tegra/hub.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+index 8183e617bf6b8..a2ef8f218d4ec 100644
+--- a/drivers/gpu/drm/tegra/hub.c
++++ b/drivers/gpu/drm/tegra/hub.c
+@@ -149,7 +149,9 @@ int tegra_display_hub_prepare(struct tegra_display_hub *hub)
+ 	for (i = 0; i < hub->soc->num_wgrps; i++) {
+ 		struct tegra_windowgroup *wgrp = &hub->wgrps[i];
+ 
+-		tegra_windowgroup_enable(wgrp);
++		/* Skip orphaned window group whose parent DC is disabled */
++		if (wgrp->parent)
++			tegra_windowgroup_enable(wgrp);
+ 	}
+ 
+ 	return 0;
+@@ -166,7 +168,9 @@ void tegra_display_hub_cleanup(struct tegra_display_hub *hub)
+ 	for (i = 0; i < hub->soc->num_wgrps; i++) {
+ 		struct tegra_windowgroup *wgrp = &hub->wgrps[i];
+ 
+-		tegra_windowgroup_disable(wgrp);
++		/* Skip orphaned window group whose parent DC is disabled */
++		if (wgrp->parent)
++			tegra_windowgroup_disable(wgrp);
+ 	}
+ }
+ 
+-- 
+2.25.1
