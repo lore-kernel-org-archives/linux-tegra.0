@@ -1,276 +1,62 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI (sync points)
-Date: Thu, 2 Jul 2020 15:10:57 +0300
-Message-ID: <a1d6c789-4935-110f-f4fd-db86ae0e4fef@kapsi.fi>
-References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <5b1edaad-ba36-7b0f-5b02-457ae5b6d91e@gmail.com>
- <62859775-514c-2941-75ed-6905e9282a6f@kapsi.fi>
- <623c1eaa-31fb-8dff-f6c0-d8cd0be60070@gmail.com>
- <827c92a6-7fed-a81c-ba8e-6c69416c4ab9@kapsi.fi>
- <f1a88006-ab3e-9068-e220-15eee17aeba0@gmail.com>
- <3b058989-a93a-6796-8d94-f60ce39e3fba@kapsi.fi>
- <2190fe9d-6381-0b5e-39d8-a04daca9a1bf@gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: Re: Re: [PATCH v4 12/23] ASoC: simple-card: Support DPCM DAI
+ link with multiple Codecs
+Date: Thu, 2 Jul 2020 13:26:05 +0100
+Message-ID: <20200702122605.GE4483@sirena.org.uk>
+References: <874kqu1x70.wl-kuninori.morimoto.gx@renesas.com>
+ <1e0cf6d1-bf4e-8808-5390-c8a3b7c7fe7e@nvidia.com>
+ <87mu4lz6pt.wl-kuninori.morimoto.gx@renesas.com>
+ <1d7888c7-a8cc-e891-01aa-016e31cc9113@nvidia.com>
+ <87ftadyrec.wl-kuninori.morimoto.gx@renesas.com>
+ <492079e9-4518-78ba-a227-859d31594369@nvidia.com>
+ <20200630110100.GH5272@sirena.org.uk>
+ <81d106c0-e1c8-a79a-8caf-1f3be0d61f0c@nvidia.com>
+ <20200630153220.GL5272@sirena.org.uk>
+ <fb286ab7-21f2-43ad-2751-c76b7b6e4cf2@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="84ND8YJRMFlzkrP4"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2190fe9d-6381-0b5e-39d8-a04daca9a1bf-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <fb286ab7-21f2-43ad-2751-c76b7b6e4cf2-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 7/1/20 3:22 AM, Dmitry Osipenko wrote:
-> 30.06.2020 13:26, Mikko Perttunen пишет:
->> On 6/29/20 10:42 PM, Dmitry Osipenko wrote:
->>>
->>> Secondly, I suppose neither GPU, nor DLA could wait on a host1x sync
->>> point, correct? Or are they integrated with Host1x HW?
->>>
->>
->> They can access syncpoints directly. (That's what I alluded to in the
->> "Introduction to the hardware" section :) all those things have hardware
->> access to syncpoints)
-> 
-> Should we CC all the Nouveau developers then, or is it a bit too early? :)
 
-I think we have a few other issues still to resolve before that :)
+--84ND8YJRMFlzkrP4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
->>>
->>> .. rest ..
->>>
->>
->> Let me try to summarize once more for my own understanding:
->>
->> * When submitting a job, you would allocate new syncpoints for the job
-> 
-> - Yes
-> 
->> * After submitting the job, those syncpoints are not usable anymore
-> 
-> - Yes
-> 
-> Although, thinking a bit more about it, this needs to be relaxed.
-> 
-> It should be a userspace agreement/policy how to utilize sync points.
-> 
-> For example, if we know that userspace will have multiple application
-> instances all using Tegra DRM UAPI, like a mesa or VDPAU drivers, then
-> this userspace should consider to return sync points into the pool for
-> sharing them with others. While something like an Opentegra Xorg driver,
-> which usually has a single instance, could keep sync points pre-allocated.
-> 
-> The job's sync point counter will be reset to 0 by the kernel driver
-> during of the submission process for each job, so we won't have the sync
-> point recovery problem.
-> 
->> * Postfences of that job would keep references to those syncpoints so
->> they aren't freed and cleared before the fences have been released
-> 
-> - No
-> 
-> I suggested that fence shouldn't refcount the sync point and *only* have
-> a reference to it, this reference will be invalidated once fence is
-> signaled by sync point reaching the threshold or once sync point is
-> released.
-> 
-> The sync point will have a reference to every active fence (waiting for
-> the signal) that is using this sync point until the threshold is reached.
-> 
-> So fence could detach itself from the sync point + sync point could
-> detach all the fences from itself.
-> 
-> There will be more about this below, please see example with a dead
-> process in the end of this email.
-> 
->> * Once postfences have been released, syncpoints would be returned to
->> the pool and reset to zero
-> 
-> - No
-> 
-> I'm suggesting that sync point should be returned to the pool once its
-> usage refcount reaches 0. This means that both userspace that created
-> this sync point + the executed job will both keep the sync point alive
-> until it is closed by userspace + job is completed.
-> 
->> The advantage of this would be that at any point in time, there would be
->> a 1:1 correspondence between allocated syncpoints and jobs; so you could
->>   shuffle the jobs around channels or reorder them.
-> 
-> - Yes
-> 
->> Please correct if I got that wrong :)
->>
->> ---
->>
->> I have two concerns:
->>
->> * A lot of churn on syncpoints - any time you submit a job you might not
->> get a syncpoint for an indefinite time. If we allocate syncpoints
->> up-front at least you know beforehand, and then you have the syncpoint
->> as long as you need it.
-> 
-> If you'll have a lot of active application instances all allocating sync
-> points, then inevitably the sync points pool will be exhausted.
-> 
-> But my proposal doesn't differ from yours in this regards, correct?
-> 
-> And maybe there is a nice solution, please see more below!
-> 
->> * Plumbing the dma-fence/sync_file everywhere, and keeping it alive
->> until waits on it have completed, is more work than just having the
->> ID/threshold. This is probably mainly a problem for downstream, where
->> updating code for this would be difficult. I know that's not a proper
->> argument but I hope we can reach something that works for both worlds.
-> 
-> You could have ID/threshold! :)
-> 
-> But, you can't use the *job's* ID/threshold because you won't know them
-> until kernel driver scheduler will *complete(!)* the job's execution!
-> The job may be re-pushed multiple times by the scheduler to recovered
-> channel if a previous jobs hang!
-> 
-> Now, you could allocate *two* sync points:
-> 
->    1. For the job itself (job's sync point).
-> 
->    2. For the userspace to wait (user's sync point).
-> 
-> The job will have to increment both these sync points (example of
-> multiple sync points usage) and you know the user's sync point ID/threshold!
-> 
-> If job times out, you *could* increment the user's sync point on CPU
-> from userspace!
-> 
-> The counter of the user's sync point won't be touched by the kernel
-> driver if job hangs!
+On Thu, Jul 02, 2020 at 04:06:14PM +0530, Sameer Pujar wrote:
 
-Ok, so we would have two kinds of syncpoints for the job; one for kernel 
-job tracking; and one that userspace can manipulate as it wants to.
+> For the HW I am using, there are no fixed endpoints and I am not sure if it
+> is allowed to have empty endpoints in audio-graph-card. Crossbar/router
+> provides the flexibility to connect the components in any required order.
+> Patch [05/23] exposes required graph and MUX controls for the flexible
+> configurations. Mostly, in DT, I am trying to model the component itself and
+> finally router can help me specify the audio path to interconnect various
+> components. Hence I was trying to understand if it is really necessary to
+> represent the links using audio-graph-card. Kindly help me understand what
+> more it offers. If simple-card works fine, are we allowed to use it?
 
-Could we handle the job tracking syncpoint completely inside the kernel, 
-i.e. allocate it in kernel during job submission, and add an increment 
-for it at the end of the job (with condition OP_DONE)? For MLOCKing, the 
-kernel already needs to insert a SYNCPT_INCR(OP_DONE) + WAIT + 
-MLOCK_RELEASE sequence at the end of each job.
+The links in the graph card should be the physical links at the edge of
+the devices, those must be fixed no matter what.
 
-> 
->> Here's a proposal in between:
->>
->> * Keep syncpoint allocation and submission in jobs as in my original
->> proposal
-> 
-> Yes, we could keep it.
-> 
-> But, as I suggested in my other email, we may want to extend the
-> allocation IOCTL for the multi-syncpoint allocation support.
-> 
-> Secondly, if we'll want to have the multi-syncpoint support for the job,
-> then we may want improve the SUBMIT IOCTL like this:
-> 
-> struct drm_tegra_channel_submit {
->          __u32 num_usr_syncpt_incrs;
->          __u64 usr_sync_points_ptr;
-> 
->          __u32 num_job_syncpt_incrs;
->          __u32 job_syncpt_handle;
-> };
-> 
-> If job doesn't need to increment user's sync points, then there is no
-> need to copy them from userspace, hence num_usr_syncpt_incrs should be
-> 0. I.e. one less copy_from_user() operation.
-> 
->> * Don't attempt to recover user channel contexts. What this means:
->>    * If we have a hardware channel per context (MLOCKing), just tear down
->> the channel
-> 
-> !!!
-> 
-> Hmm, we actually should be able to have a one sync point per-channel for
-> the job submission, similarly to what the current driver does!
-> 
-> I'm keep forgetting about the waitbase existence!
+--84ND8YJRMFlzkrP4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Tegra194 doesn't have waitbases, but if we are resubmitting all the jobs 
-anyway, can't we just recalculate wait thresholds at that time?
+-----BEGIN PGP SIGNATURE-----
 
-Maybe a more detailed sequence list or diagram of what happens during 
-submission and recovery would be useful.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl790lwACgkQJNaLcl1U
+h9BPigf+JRDzmC/OXZU6GO+RPto06SdJhbNhvLjXQA6BqKzqFg9qNRwNxEK38qz/
+nBq43rOuPFzPkX8j9qxChkJ7pIyhNHx+Vkqo3fRnulH3afFxAiCLKq0IkFph+A0q
+vOOpNX/7HPZHTXzCWDrSF/pkQvgf+ou9X+K6johBzn/Wtd36X1okIf4LCkmrrhzs
+/HXd6bGFbGzUC86c2F2Vqbq9aFWhxRMBWGnV5LTGz1I+Y1RiAqUE7yE2whTTGRhv
+WdrHBrGkXU2R1mtjoecmZ5k86iY8Ho2PQ6ropR7AHRZXmlEYor7T0ViwjXETvQie
+m0fVcHg7vi04mLyDdmy2dUZwC7oo/Q==
+=lgFt
+-----END PGP SIGNATURE-----
 
-> 
-> Please read more below.
-> 
->>    * Otherwise, we can just remove (either by patching or by full
->> teardown/resubmit of the channel) all jobs submitted by the user channel
->> context that submitted the hanging job. Jobs of other contexts would be
->> undisturbed (though potentially delayed, which could be taken into
->> account and timeouts adjusted)
-> 
-> The DRM scheduler itself has an assumption/requirement that when channel
-> hangs, it must be fully reset. The hanged job will be killed by the
-> scheduler (maybe dependent jobs will be killed too, but I don't remember
-> details right now) and then scheduler will re-submit jobs to the
-> recovered channel [1].
-> 
-> [1]
-> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/uapi/scheduler.c#L206
-> 
-> Hence, if we could assign a sync point per-channel, then during of the
-> channel's recovery, the channel's sync point will be reset as well! Only
-> the waitbases of the re-submitted jobs will differ!
-> 
-> It also means that userspace won't need to allocate sync point for each job!
-> 
-> So far it sounds great! I'll try to think more thoroughly about this.
-> 
->> * If this happens, we can set removed jobs' post-fences to error status
->> and user will have to resubmit them.
->> * We should be able to keep the syncpoint refcounting based on fences.
-> 
-> The fence doesn't need the sync point itself, it only needs to get a
-> signal when the threshold is reached or when sync point is ceased.
-> 
-> Imagine:
-> 
->    - Process A creates sync point
->    - Process A creates dma-fence from this sync point
->    - Process A exports dma-fence to process B
->    - Process A dies
-> 
-> What should happen to process B?
-> 
->    - Should dma-fence of the process B get a error signal when process A
-> dies?
->    - Should process B get stuck waiting endlessly for the dma-fence?
-> 
-> This is one example of why I'm proposing that fence shouldn't be coupled
-> tightly to a sync point.
-
-As a baseline, we should consider process B to get stuck endlessly 
-(until a timeout of its choosing) for the fence. In this case it is 
-avoidable, but if the ID/threshold pair is exported out of the fence and 
-is waited for otherwise, it is unavoidable. I.e. once the ID/threshold 
-are exported out of a fence, the waiter can only see the fence being 
-signaled by the threshold being reached, not by the syncpoint getting freed.
-
-> 
->> This can be made more fine-grained by not caring about the user channel
->> context, but tearing down all jobs with the same syncpoint. I think the
->> result would be that we can get either what you described (or how I
->> understood it in the summary in the beginning of the message), or a more
->> traditional syncpoint-per-userctx workflow, depending on how the
->> userspace decides to allocate syncpoints.
->>
->> If needed, the kernel can still do e.g. reordering (you mentioned job
->> priorities) at syncpoint granularity, which, if the userspace followed
->> the model you described, would be the same thing as job granularity.
->>
->> (Maybe it would be more difficult with current drm_scheduler, sorry,
->> haven't had the time yet to read up on that. Dealing with clearing work
->> stuff up before summer vacation)
-> 
-> Please take yours time! You definitely will need take a closer look at
-> the DRM scheduler.
-> 
+--84ND8YJRMFlzkrP4--
