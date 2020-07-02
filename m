@@ -1,18 +1,16 @@
-From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 4.14 02/17] gpu: host1x: Detach driver on unregister
-Date: Wed,  1 Jul 2020 21:26:34 -0400
-Message-ID: <20200702012649.2701799-2-sashal@kernel.org>
-References: <20200702012649.2701799-1-sashal@kernel.org>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 01/13] gpu: host1x: Detach driver on unregister
+Date: Wed,  1 Jul 2020 21:27:00 -0400
+Message-ID: <20200702012712.2701986-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200702012649.2701799-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Thierry Reding <treding@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Sasha Levin <sashal@kernel.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
 [ Upstream commit d9a0a05bf8c76e6dc79230669a8b5d685b168c30 ]
 
@@ -28,21 +26,21 @@ Fix this by detaching the driver from the host1x controller when
 it is unregistered. This ensures that the deleted device also is
 no longer present in the device list that drivers will bind to.
 
-Reported-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Reported-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Tested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
  drivers/gpu/host1x/bus.c | 9 +++++++++
  1 file changed, 9 insertions(+)
 
 diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index f9cde03030fd9..c2a9dcf6f4907 100644
+index c27858ae05529..6ef89e8a515a9 100644
 --- a/drivers/gpu/host1x/bus.c
 +++ b/drivers/gpu/host1x/bus.c
-@@ -615,8 +615,17 @@ EXPORT_SYMBOL(host1x_driver_register_full);
-  */
+@@ -542,8 +542,17 @@ EXPORT_SYMBOL(host1x_driver_register_full);
+ 
  void host1x_driver_unregister(struct host1x_driver *driver)
  {
 +	struct host1x *host1x;
