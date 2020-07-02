@@ -1,384 +1,276 @@
-From: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH 1/8] drm/atomic-helper: reset vblank on crtc reset
-Date: Thu, 2 Jul 2020 13:40:04 +0200
-Message-ID: <CAKMK7uGny5Kssrusr5JQSV29WJE62iigD+hx8bgWYAYqhJAiYw@mail.gmail.com>
-References: <20200612160056.2082681-1-daniel.vetter@ffwll.ch> <20200702112722.GA18036@pendragon.ideasonboard.com>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [RFC] Host1x/TegraDRM UAPI (sync points)
+Date: Thu, 2 Jul 2020 15:10:57 +0300
+Message-ID: <a1d6c789-4935-110f-f4fd-db86ae0e4fef@kapsi.fi>
+References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
+ <5b1edaad-ba36-7b0f-5b02-457ae5b6d91e@gmail.com>
+ <62859775-514c-2941-75ed-6905e9282a6f@kapsi.fi>
+ <623c1eaa-31fb-8dff-f6c0-d8cd0be60070@gmail.com>
+ <827c92a6-7fed-a81c-ba8e-6c69416c4ab9@kapsi.fi>
+ <f1a88006-ab3e-9068-e220-15eee17aeba0@gmail.com>
+ <3b058989-a93a-6796-8d94-f60ce39e3fba@kapsi.fi>
+ <2190fe9d-6381-0b5e-39d8-a04daca9a1bf@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200702112722.GA18036-N3hz7ZxfLydczECFQUw77jytWr6r+dGw0E9HWUfgJXw@public.gmane.org>
+In-Reply-To: <2190fe9d-6381-0b5e-39d8-a04daca9a1bf-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Boris Brezillon <boris.brezillon-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tetsuo Handa <penguin-kernel-1yMVhJb1mP/7nzcFbJAaVXf5DAMn2ifp@public.gmane.org>, syzbot+0871b14ca2e2fb64f6e3-Pl5Pbv+GP7P466ipTTIvnc23WoclnBCfAL8bYrjMMd8@public.gmane.org, "James (Qian) Wang" <james.qian.wang-5wv7dgnIgG8@public.gmane.org>, Mihail Atanassov <mihail.atanassov-5wv7dgnIgG8@public.gmane.org>, Brian Starkey <brian.starkey-5wv7dgnIgG8@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Maxime Ripard <mrip>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 2, 2020 at 1:27 PM Laurent Pinchart
-<laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org> wrote:
->
-> Hi Daniel,
->
-> Thank you for the patch.
->
-> On Fri, Jun 12, 2020 at 06:00:49PM +0200, Daniel Vetter wrote:
-> > Only when vblanks are supported ofc.
-> >
-> > Some drivers do this already, but most unfortunately missed it. This
-> > opens up bugs after driver load, before the crtc is enabled for the
-> > first time. syzbot spotted this when loading vkms as a secondary
-> > output. Given how many drivers are buggy it's best to solve this once
-> > and for all in shared helper code.
-> >
-> > Aside from moving the few existing calls to drm_crtc_vblank_reset into
-> > helpers (i915 doesn't use helpers, so keeps its own) I think the
-> > regression risk is minimal: atomic helpers already rely on drivers
-> > calling drm_crtc_vblank_on/off correctly in their hooks when they
-> > support vblanks. And driver that's failing to handle vblanks after
-> > this is missing those calls already, and vblanks could only work by
-> > accident when enabling a CRTC for the first time right after boot.
-> >
-> > Big thanks to Tetsuo for helping track down what's going wrong here.
-> >
-> > There's only a few drivers which already had the necessary call and
-> > needed some updating:
-> > - komeda, atmel and tidss also needed to be changed to call
-> >   __drm_atomic_helper_crtc_reset() intead of open coding it
-> > - tegra and msm even had it in the same place already, just code
-> >   motion, and malidp already uses __drm_atomic_helper_crtc_reset().
->
-> Should you mention rcar-du and omapdrm here ?
+On 7/1/20 3:22 AM, Dmitry Osipenko wrote:
+> 30.06.2020 13:26, Mikko Perttunen пишет:
+>> On 6/29/20 10:42 PM, Dmitry Osipenko wrote:
+>>>
+>>> Secondly, I suppose neither GPU, nor DLA could wait on a host1x sync
+>>> point, correct? Or are they integrated with Host1x HW?
+>>>
+>>
+>> They can access syncpoints directly. (That's what I alluded to in the
+>> "Introduction to the hardware" section :) all those things have hardware
+>> access to syncpoints)
+> 
+> Should we CC all the Nouveau developers then, or is it a bit too early? :)
 
-Uh yes need to mention them too here, and how exactly they're a bit
-different. Will shuffle that from the v4: block below when applying.
+I think we have a few other issues still to resolve before that :)
 
-> > Only call left is in i915, which doesn't use drm_mode_config_reset,
-> > but has its own fastboot infrastructure. So that's the only case where
-> > we actually want this in the driver still.
-> >
-> > I've also reviewed all other drivers which set up vblank support with
-> > drm_vblank_init. After the previous patch fixing mxsfb all atomic
-> > drivers do call drm_crtc_vblank_on/off as they should, the remaining
-> > drivers are either legacy kms or legacy dri1 drivers, so not affected
-> > by this change to atomic helpers.
-> >
-> > v2: Use the drm_dev_has_vblank() helper.
-> >
-> > v3: Laurent pointed out that omap and rcar-du used drm_crtc_vblank_off
-> > instead of drm_crtc_vblank_reset. Adjust them too.
-> >
-> > v4: Laurent noticed that rcar-du and omap open-code their crtc reset
-> > and hence would actually be broken by this patch now. So fix them up
-> > by reusing the helpers, which brings the drm_crtc_vblank_reset() back.
-> >
-> > Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> > Reviewed-by: Boris Brezillon <boris.brezillon-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> > Acked-by: Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>
-> > Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Link: https://syzkaller.appspot.com/bug?id=0ba17d70d062b2595e1f061231474800f076c7cb
-> > Reported-by: Tetsuo Handa <penguin-kernel-JPay3/Yim36HaxMnTkn67Xf5DAMn2ifp@public.gmane.org>
-> > Reported-by: syzbot+0871b14ca2e2fb64f6e3-Pl5Pbv+GP7P466ipTTIvnc23WoclnBCfAL8bYrjMMd8@public.gmane.org
-> > Cc: Tetsuo Handa <penguin-kernel-JPay3/Yim36HaxMnTkn67Xf5DAMn2ifp@public.gmane.org>
-> > Cc: "James (Qian) Wang" <james.qian.wang-5wv7dgnIgG8@public.gmane.org>
-> > Cc: Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>
-> > Cc: Mihail Atanassov <mihail.atanassov-5wv7dgnIgG8@public.gmane.org>
-> > Cc: Brian Starkey <brian.starkey-5wv7dgnIgG8@public.gmane.org>
-> > Cc: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-> > Cc: Boris Brezillon <bbrezillon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > Cc: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> > Cc: Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-> > Cc: Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> > Cc: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> > Cc: Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > Cc: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
-> > Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
-> > Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-> > Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>
-> > Cc: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
-> > Cc: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > Cc: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> > Cc: Brian Masney <masneyb-1iNe0GrtECGEi8DpZVb4nw@public.gmane.org>
-> > Cc: Emil Velikov <emil.velikov-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> > Cc: zhengbin <zhengbin13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-> > Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-> > Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > Cc: Kieran Bingham <kieran.bingham+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> > Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> > Cc: linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > Signed-off-by: Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> > ---
-> >  drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 7 ++-----
-> >  drivers/gpu/drm/arm/malidp_drv.c                 | 1 -
-> >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c   | 7 ++-----
-> >  drivers/gpu/drm/drm_atomic_state_helper.c        | 4 ++++
-> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c        | 2 --
-> >  drivers/gpu/drm/omapdrm/omap_crtc.c              | 8 +++++---
-> >  drivers/gpu/drm/omapdrm/omap_drv.c               | 4 ----
-> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c           | 6 +-----
-> >  drivers/gpu/drm/tegra/dc.c                       | 1 -
-> >  drivers/gpu/drm/tidss/tidss_crtc.c               | 3 +--
-> >  drivers/gpu/drm/tidss/tidss_kms.c                | 4 ----
-> >  11 files changed, 15 insertions(+), 32 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > index 56bd938961ee..f33418d6e1a0 100644
-> > --- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > @@ -492,10 +492,8 @@ static void komeda_crtc_reset(struct drm_crtc *crtc)
-> >       crtc->state = NULL;
-> >
-> >       state = kzalloc(sizeof(*state), GFP_KERNEL);
-> > -     if (state) {
-> > -             crtc->state = &state->base;
-> > -             crtc->state->crtc = crtc;
-> > -     }
-> > +     if (state)
-> > +             __drm_atomic_helper_crtc_reset(crtc, &state->base);
-> >  }
-> >
-> >  static struct drm_crtc_state *
-> > @@ -616,7 +614,6 @@ static int komeda_crtc_add(struct komeda_kms_dev *kms,
-> >               return err;
-> >
-> >       drm_crtc_helper_add(crtc, &komeda_crtc_helper_funcs);
-> > -     drm_crtc_vblank_reset(crtc);
-> >
-> >       crtc->port = kcrtc->master->of_output_port;
-> >
-> > diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-> > index 6feda7cb37a6..c9e1ee84b4e8 100644
-> > --- a/drivers/gpu/drm/arm/malidp_drv.c
-> > +++ b/drivers/gpu/drm/arm/malidp_drv.c
-> > @@ -861,7 +861,6 @@ static int malidp_bind(struct device *dev)
-> >       drm->irq_enabled = true;
-> >
-> >       ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
-> > -     drm_crtc_vblank_reset(&malidp->crtc);
-> >       if (ret < 0) {
-> >               DRM_ERROR("failed to initialise vblank\n");
-> >               goto vblank_fail;
-> > diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> > index 10985134ce0b..ce246b96330b 100644
-> > --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> > +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> > @@ -411,10 +411,8 @@ static void atmel_hlcdc_crtc_reset(struct drm_crtc *crtc)
-> >       }
-> >
-> >       state = kzalloc(sizeof(*state), GFP_KERNEL);
-> > -     if (state) {
-> > -             crtc->state = &state->base;
-> > -             crtc->state->crtc = crtc;
-> > -     }
-> > +     if (state)
-> > +             __drm_atomic_helper_crtc_reset(crtc, &state->base);
-> >  }
-> >
-> >  static struct drm_crtc_state *
-> > @@ -528,7 +526,6 @@ int atmel_hlcdc_crtc_create(struct drm_device *dev)
-> >       }
-> >
-> >       drm_crtc_helper_add(&crtc->base, &lcdc_crtc_helper_funcs);
-> > -     drm_crtc_vblank_reset(&crtc->base);
-> >
-> >       drm_mode_crtc_set_gamma_size(&crtc->base, ATMEL_HLCDC_CLUT_SIZE);
-> >       drm_crtc_enable_color_mgmt(&crtc->base, 0, false,
-> > diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-> > index 8fce6a115dfe..9ad74045158e 100644
-> > --- a/drivers/gpu/drm/drm_atomic_state_helper.c
-> > +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-> > @@ -32,6 +32,7 @@
-> >  #include <drm/drm_device.h>
-> >  #include <drm/drm_plane.h>
-> >  #include <drm/drm_print.h>
-> > +#include <drm/drm_vblank.h>
-> >  #include <drm/drm_writeback.h>
-> >
-> >  #include <linux/slab.h>
-> > @@ -93,6 +94,9 @@ __drm_atomic_helper_crtc_reset(struct drm_crtc *crtc,
-> >       if (crtc_state)
-> >               __drm_atomic_helper_crtc_state_reset(crtc_state, crtc);
-> >
-> > +     if (drm_dev_has_vblank(crtc->dev))
-> > +             drm_crtc_vblank_reset(crtc);
-> > +
-> >       crtc->state = crtc_state;
-> >  }
-> >  EXPORT_SYMBOL(__drm_atomic_helper_crtc_reset);
-> > diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> > index e152016a6a7d..c39dad151bb6 100644
-> > --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> > +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-> > @@ -1117,8 +1117,6 @@ static void mdp5_crtc_reset(struct drm_crtc *crtc)
-> >               mdp5_crtc_destroy_state(crtc, crtc->state);
-> >
-> >       __drm_atomic_helper_crtc_reset(crtc, &mdp5_cstate->base);
-> > -
-> > -     drm_crtc_vblank_reset(crtc);
-> >  }
-> >
-> >  static const struct drm_crtc_funcs mdp5_crtc_funcs = {
-> > diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdrm/omap_crtc.c
-> > index fce7e944a280..6d40914675da 100644
-> > --- a/drivers/gpu/drm/omapdrm/omap_crtc.c
-> > +++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
-> > @@ -697,14 +697,16 @@ static int omap_crtc_atomic_get_property(struct drm_crtc *crtc,
-> >
-> >  static void omap_crtc_reset(struct drm_crtc *crtc)
-> >  {
-> > +     struct omap_crtc_state *state;
-> > +
-> >       if (crtc->state)
-> >               __drm_atomic_helper_crtc_destroy_state(crtc->state);
-> >
-> >       kfree(crtc->state);
-> > -     crtc->state = kzalloc(sizeof(struct omap_crtc_state), GFP_KERNEL);
-> >
-> > -     if (crtc->state)
-> > -             crtc->state->crtc = crtc;
-> > +     state = kzalloc(sizeof(*state), GFP_KERNEL);
-> > +     if (state)
-> > +             __drm_atomic_helper_crtc_reset(crtc, &state->base);
-> >  }
-> >
-> >  static struct drm_crtc_state *
-> > diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
-> > index 242d28281784..4526967978b7 100644
-> > --- a/drivers/gpu/drm/omapdrm/omap_drv.c
-> > +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-> > @@ -595,7 +595,6 @@ static int omapdrm_init(struct omap_drm_private *priv, struct device *dev)
-> >  {
-> >       const struct soc_device_attribute *soc;
-> >       struct drm_device *ddev;
-> > -     unsigned int i;
-> >       int ret;
-> >
-> >       DBG("%s", dev_name(dev));
-> > @@ -642,9 +641,6 @@ static int omapdrm_init(struct omap_drm_private *priv, struct device *dev)
-> >               goto err_cleanup_modeset;
-> >       }
-> >
-> > -     for (i = 0; i < priv->num_pipes; i++)
-> > -             drm_crtc_vblank_off(priv->pipes[i].crtc);
-> > -
-> >       omap_fbdev_init(ddev);
-> >
-> >       drm_kms_helper_poll_init(ddev);
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> > index d73e88ddecd0..fe86a3e67757 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> > @@ -975,8 +975,7 @@ static void rcar_du_crtc_reset(struct drm_crtc *crtc)
-> >       state->crc.source = VSP1_DU_CRC_NONE;
-> >       state->crc.index = 0;
-> >
-> > -     crtc->state = &state->state;
-> > -     crtc->state->crtc = crtc;
-> > +     __drm_atomic_helper_crtc_reset(crtc, &state->state);
-> >  }
-> >
-> >  static int rcar_du_crtc_enable_vblank(struct drm_crtc *crtc)
-> > @@ -1271,9 +1270,6 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
-> >
-> >       drm_crtc_helper_add(crtc, &crtc_helper_funcs);
-> >
-> > -     /* Start with vertical blanking interrupt reporting disabled. */
-> > -     drm_crtc_vblank_off(crtc);
-> > -
->
-> Could this cause an issue, as the interrupt handler can now be
-> registered with the interrupt left enabled in the hardware after a
-> reboot, while drm_crtc_vblank_off() would disable it ? It's something
-> that should likely be handled elsewhere in the driver, with all
-> interrupts disabled explicitly early in probe, and I don't think the
-> driver handles enabled interrupts very well today, so it's not a blocker
-> for me:
+> 
+>>>
+>>> .. rest ..
+>>>
+>>
+>> Let me try to summarize once more for my own understanding:
+>>
+>> * When submitting a job, you would allocate new syncpoints for the job
+> 
+> - Yes
+> 
+>> * After submitting the job, those syncpoints are not usable anymore
+> 
+> - Yes
+> 
+> Although, thinking a bit more about it, this needs to be relaxed.
+> 
+> It should be a userspace agreement/policy how to utilize sync points.
+> 
+> For example, if we know that userspace will have multiple application
+> instances all using Tegra DRM UAPI, like a mesa or VDPAU drivers, then
+> this userspace should consider to return sync points into the pool for
+> sharing them with others. While something like an Opentegra Xorg driver,
+> which usually has a single instance, could keep sync points pre-allocated.
+> 
+> The job's sync point counter will be reset to 0 by the kernel driver
+> during of the submission process for each job, so we won't have the sync
+> point recovery problem.
+> 
+>> * Postfences of that job would keep references to those syncpoints so
+>> they aren't freed and cleared before the fences have been released
+> 
+> - No
+> 
+> I suggested that fence shouldn't refcount the sync point and *only* have
+> a reference to it, this reference will be invalidated once fence is
+> signaled by sync point reaching the threshold or once sync point is
+> released.
+> 
+> The sync point will have a reference to every active fence (waiting for
+> the signal) that is using this sync point until the threshold is reached.
+> 
+> So fence could detach itself from the sync point + sync point could
+> detach all the fences from itself.
+> 
+> There will be more about this below, please see example with a dead
+> process in the end of this email.
+> 
+>> * Once postfences have been released, syncpoints would be returned to
+>> the pool and reset to zero
+> 
+> - No
+> 
+> I'm suggesting that sync point should be returned to the pool once its
+> usage refcount reaches 0. This means that both userspace that created
+> this sync point + the executed job will both keep the sync point alive
+> until it is closed by userspace + job is completed.
+> 
+>> The advantage of this would be that at any point in time, there would be
+>> a 1:1 correspondence between allocated syncpoints and jobs; so you could
+>>   shuffle the jobs around channels or reorder them.
+> 
+> - Yes
+> 
+>> Please correct if I got that wrong :)
+>>
+>> ---
+>>
+>> I have two concerns:
+>>
+>> * A lot of churn on syncpoints - any time you submit a job you might not
+>> get a syncpoint for an indefinite time. If we allocate syncpoints
+>> up-front at least you know beforehand, and then you have the syncpoint
+>> as long as you need it.
+> 
+> If you'll have a lot of active application instances all allocating sync
+> points, then inevitably the sync points pool will be exhausted.
+> 
+> But my proposal doesn't differ from yours in this regards, correct?
+> 
+> And maybe there is a nice solution, please see more below!
+> 
+>> * Plumbing the dma-fence/sync_file everywhere, and keeping it alive
+>> until waits on it have completed, is more work than just having the
+>> ID/threshold. This is probably mainly a problem for downstream, where
+>> updating code for this would be difficult. I know that's not a proper
+>> argument but I hope we can reach something that works for both worlds.
+> 
+> You could have ID/threshold! :)
+> 
+> But, you can't use the *job's* ID/threshold because you won't know them
+> until kernel driver scheduler will *complete(!)* the job's execution!
+> The job may be re-pushed multiple times by the scheduler to recovered
+> channel if a previous jobs hang!
+> 
+> Now, you could allocate *two* sync points:
+> 
+>    1. For the job itself (job's sync point).
+> 
+>    2. For the userspace to wait (user's sync point).
+> 
+> The job will have to increment both these sync points (example of
+> multiple sync points usage) and you know the user's sync point ID/threshold!
+> 
+> If job times out, you *could* increment the user's sync point on CPU
+> from userspace!
+> 
+> The counter of the user's sync point won't be touched by the kernel
+> driver if job hangs!
 
-Atomic helpers, specifically the reset helpers I'm adjusting here
-assume that at driver load time everything is completely off. They
-_only_ reset the sw state.
+Ok, so we would have two kinds of syncpoints for the job; one for kernel 
+job tracking; and one that userspace can manipulate as it wants to.
 
-If you want to have more smooth takeover (flicker-free boot eventually
-even), or have some hw that's not getting reset as part of power-up or
-driver load, then that would be for the driver to handle. I think we
-recently had a discussion about what would need to be added to make
-atomic helpers support take-over of actual hw state at driver load.
-And yes if that's the case, then you'd need a different flow here to
-make sure vblank state is matching crtc state (e.g. i915 does that).
+Could we handle the job tracking syncpoint completely inside the kernel, 
+i.e. allocate it in kernel during job submission, and add an increment 
+for it at the end of the job (with condition OP_DONE)? For MLOCKing, the 
+kernel already needs to insert a SYNCPT_INCR(OP_DONE) + WAIT + 
+MLOCK_RELEASE sequence at the end of each job.
 
-Wrt this case here specifically drm_handle_vblank needs to handle
-races anyway, so it's robust against being called when the vblanks are
-disabled in software. So I don't think you'll have any serious problem
-here.
+> 
+>> Here's a proposal in between:
+>>
+>> * Keep syncpoint allocation and submission in jobs as in my original
+>> proposal
+> 
+> Yes, we could keep it.
+> 
+> But, as I suggested in my other email, we may want to extend the
+> allocation IOCTL for the multi-syncpoint allocation support.
+> 
+> Secondly, if we'll want to have the multi-syncpoint support for the job,
+> then we may want improve the SUBMIT IOCTL like this:
+> 
+> struct drm_tegra_channel_submit {
+>          __u32 num_usr_syncpt_incrs;
+>          __u64 usr_sync_points_ptr;
+> 
+>          __u32 num_job_syncpt_incrs;
+>          __u32 job_syncpt_handle;
+> };
+> 
+> If job doesn't need to increment user's sync points, then there is no
+> need to copy them from userspace, hence num_usr_syncpt_incrs should be
+> 0. I.e. one less copy_from_user() operation.
+> 
+>> * Don't attempt to recover user channel contexts. What this means:
+>>    * If we have a hardware channel per context (MLOCKing), just tear down
+>> the channel
+> 
+> !!!
+> 
+> Hmm, we actually should be able to have a one sync point per-channel for
+> the job submission, similarly to what the current driver does!
+> 
+> I'm keep forgetting about the waitbase existence!
 
-Actual hw irq enable/disable is only done around drm_vblank_get/put
-(well with some delay), so I don't think that would have changed
-anything for you wrt actually getting an interrupt or not.
+Tegra194 doesn't have waitbases, but if we are resubmitting all the jobs 
+anyway, can't we just recalculate wait thresholds at that time?
 
-So tldr; I think just drm_vblank_reset here fits the best with overall
-helpers we have.
+Maybe a more detailed sequence list or diagram of what happens during 
+submission and recovery would be useful.
 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
->
-> I would however appreciate your thoughts on this topic, to know if my
-> understanding is correct (and if this issue could affect other drivers).
+> 
+> Please read more below.
+> 
+>>    * Otherwise, we can just remove (either by patching or by full
+>> teardown/resubmit of the channel) all jobs submitted by the user channel
+>> context that submitted the hanging job. Jobs of other contexts would be
+>> undisturbed (though potentially delayed, which could be taken into
+>> account and timeouts adjusted)
+> 
+> The DRM scheduler itself has an assumption/requirement that when channel
+> hangs, it must be fully reset. The hanged job will be killed by the
+> scheduler (maybe dependent jobs will be killed too, but I don't remember
+> details right now) and then scheduler will re-submit jobs to the
+> recovered channel [1].
+> 
+> [1]
+> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/uapi/scheduler.c#L206
+> 
+> Hence, if we could assign a sync point per-channel, then during of the
+> channel's recovery, the channel's sync point will be reset as well! Only
+> the waitbases of the re-submitted jobs will differ!
+> 
+> It also means that userspace won't need to allocate sync point for each job!
+> 
+> So far it sounds great! I'll try to think more thoroughly about this.
+> 
+>> * If this happens, we can set removed jobs' post-fences to error status
+>> and user will have to resubmit them.
+>> * We should be able to keep the syncpoint refcounting based on fences.
+> 
+> The fence doesn't need the sync point itself, it only needs to get a
+> signal when the threshold is reached or when sync point is ceased.
+> 
+> Imagine:
+> 
+>    - Process A creates sync point
+>    - Process A creates dma-fence from this sync point
+>    - Process A exports dma-fence to process B
+>    - Process A dies
+> 
+> What should happen to process B?
+> 
+>    - Should dma-fence of the process B get a error signal when process A
+> dies?
+>    - Should process B get stuck waiting endlessly for the dma-fence?
+> 
+> This is one example of why I'm proposing that fence shouldn't be coupled
+> tightly to a sync point.
 
-Thanks a lot for your review, I'll apply the entire bunch later today.
--Daniel
+As a baseline, we should consider process B to get stuck endlessly 
+(until a timeout of its choosing) for the fence. In this case it is 
+avoidable, but if the ID/threshold pair is exported out of the fence and 
+is waited for otherwise, it is unavoidable. I.e. once the ID/threshold 
+are exported out of a fence, the waiter can only see the fence being 
+signaled by the threshold being reached, not by the syncpoint getting freed.
 
->
-> >       /* Register the interrupt handler. */
-> >       if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CRTC_IRQ_CLOCK)) {
-> >               /* The IRQ's are associated with the CRTC (sw)index. */
-> > diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> > index 83f31c6e891c..9b308b572eac 100644
-> > --- a/drivers/gpu/drm/tegra/dc.c
-> > +++ b/drivers/gpu/drm/tegra/dc.c
-> > @@ -1168,7 +1168,6 @@ static void tegra_crtc_reset(struct drm_crtc *crtc)
-> >               tegra_crtc_atomic_destroy_state(crtc, crtc->state);
-> >
-> >       __drm_atomic_helper_crtc_reset(crtc, &state->base);
-> > -     drm_crtc_vblank_reset(crtc);
-> >  }
-> >
-> >  static struct drm_crtc_state *
-> > diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
-> > index 89a226912de8..4d01c4af61cd 100644
-> > --- a/drivers/gpu/drm/tidss/tidss_crtc.c
-> > +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
-> > @@ -352,8 +352,7 @@ static void tidss_crtc_reset(struct drm_crtc *crtc)
-> >               return;
-> >       }
-> >
-> > -     crtc->state = &tcrtc->base;
-> > -     crtc->state->crtc = crtc;
-> > +     __drm_atomic_helper_crtc_reset(crtc, &tcrtc->base);
-> >  }
-> >
-> >  static struct drm_crtc_state *tidss_crtc_duplicate_state(struct drm_crtc *crtc)
-> > diff --git a/drivers/gpu/drm/tidss/tidss_kms.c b/drivers/gpu/drm/tidss/tidss_kms.c
-> > index 4b99e9fa84a5..e6ab59eed259 100644
-> > --- a/drivers/gpu/drm/tidss/tidss_kms.c
-> > +++ b/drivers/gpu/drm/tidss/tidss_kms.c
-> > @@ -278,10 +278,6 @@ int tidss_modeset_init(struct tidss_device *tidss)
-> >       if (ret)
-> >               return ret;
-> >
-> > -     /* Start with vertical blanking interrupt reporting disabled. */
-> > -     for (i = 0; i < tidss->num_crtcs; ++i)
-> > -             drm_crtc_vblank_reset(tidss->crtcs[i]);
-> > -
-> >       drm_mode_config_reset(ddev);
-> >
-> >       dev_dbg(tidss->dev, "%s done\n", __func__);
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> 
+>> This can be made more fine-grained by not caring about the user channel
+>> context, but tearing down all jobs with the same syncpoint. I think the
+>> result would be that we can get either what you described (or how I
+>> understood it in the summary in the beginning of the message), or a more
+>> traditional syncpoint-per-userctx workflow, depending on how the
+>> userspace decides to allocate syncpoints.
+>>
+>> If needed, the kernel can still do e.g. reordering (you mentioned job
+>> priorities) at syncpoint granularity, which, if the userspace followed
+>> the model you described, would be the same thing as job granularity.
+>>
+>> (Maybe it would be more difficult with current drm_scheduler, sorry,
+>> haven't had the time yet to read up on that. Dealing with clearing work
+>> stuff up before summer vacation)
+> 
+> Please take yours time! You definitely will need take a closer look at
+> the DRM scheduler.
+> 
