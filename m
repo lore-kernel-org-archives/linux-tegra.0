@@ -1,72 +1,64 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2] cpuidle: tegra: Correctly handle result of arm_cpuidle_simple_enter()
-Date: Thu,  2 Jul 2020 03:13:54 +0300
-Message-ID: <20200702001354.27056-1-digetx@gmail.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 10/37] PM / devfreq: tegra20: Silence deferred probe
+ error
+Date: Thu, 2 Jul 2020 09:56:13 +0900
+Message-ID: <14271aed-5fb6-14e1-3fe9-ef8d0c5013c4@samsung.com>
+References: <20200609131404.17523-1-digetx@gmail.com>
+        <CGME20200609131843epcas1p352d1dfcbca81988d3363036d762dd47f@epcas1p3.samsung.com>
+        <20200609131404.17523-11-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200609131404.17523-11-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The enter() callback of CPUIDLE drivers returns index of the entered idle
-state on success or a negative value on failure. The negative value could
-any negative value, i.e. it doesn't necessarily needs to be a error code.
-That's because CPUIDLE core only cares about the fact of failure and not
-about the reason of the enter() failure.
+Hi Dmitry,
 
-Like every other enter() callback, the arm_cpuidle_simple_enter() returns
-the entered idle-index on success. Unlike some of other drivers, it never
-fails. It happened that TEGRA_C1=index=err=0 in the code of cpuidle-tegra
-driver, and thus, there is no problem for the cpuidle-tegra driver created
-by the typo in the code which assumes that the arm_cpuidle_simple_enter()
-returns a error code.
+On 6/9/20 10:13 PM, Dmitry Osipenko wrote:
+> Tegra EMC driver was turned into a regular kernel driver, it also could
+> be compiled as a loadable kernel module now. Hence EMC clock isn't
 
-The arm_cpuidle_simple_enter() also may return a -ENODEV error if CPU_IDLE
-is disabled in a kernel's config, but all CPUIDLE drivers are disabled if
-CPU_IDLE is disabled, including the cpuidle-tegra driver. So we can't ever
-see the error code from arm_cpuidle_simple_enter() today.
+Looks good to me. But, you better to add the commit information
+about Tegra EMC driver with commit-id ("patch title") format
+into patch descritpion.
 
-Of course the code may get some changes in the future and then the typo
-may transform into a real bug, so let's correct the typo in the code by
-making tegra_cpuidle_enter() to directly return the index returned by the
-arm_cpuidle_simple_enter().
+> guaranteed to be available and clk_get("emc") may return -EPROBE_DEFER and
+> there is no good reason to spam KMSG with a error about missing EMC clock
+> in this case, so let's silence the deferred probe error.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/devfreq/tegra20-devfreq.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
+> index ff82bac9ee4e..6469dc69c5e0 100644
+> --- a/drivers/devfreq/tegra20-devfreq.c
+> +++ b/drivers/devfreq/tegra20-devfreq.c
+> @@ -141,9 +141,11 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  
+>  	/* EMC is a system-critical clock that is always enabled */
+>  	tegra->emc_clock = devm_clk_get(&pdev->dev, "emc");
+> -	if (IS_ERR(tegra->emc_clock)) {
+> -		err = PTR_ERR(tegra->emc_clock);
+> -		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
+> +	err = PTR_ERR_OR_ZERO(tegra->emc_clock);
+> +	if (err) {
+> +		if (err != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "failed to get emc clock: %d\n",
+> +				err);
+>  		return err;
+>  	}
+>  
+> 
 
-This patch fixes a minor typo in the code, it doesn't fix any bugs.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-
-Changelog:
-
-v2: Improved commit message by clarifying what values are returned by
-    arm_cpuidle_simple_enter() and when. Thanks to Jon Hunter for the
-    suggestion!
-
- drivers/cpuidle/cpuidle-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index 150045849d78..9e9a9cccd755 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -236,14 +236,14 @@ static int tegra_cpuidle_enter(struct cpuidle_device *dev,
- 			       int index)
- {
- 	unsigned int cpu = cpu_logical_map(dev->cpu);
--	int err;
-+	int err = 0;
- 
- 	index = tegra_cpuidle_adjust_state_index(index, cpu);
- 	if (dev->states_usage[index].disable)
- 		return -1;
- 
- 	if (index == TEGRA_C1)
--		err = arm_cpuidle_simple_enter(dev, drv, index);
-+		index = arm_cpuidle_simple_enter(dev, drv, index);
- 	else
- 		err = tegra_cpuidle_state_enter(dev, index, cpu);
- 
 -- 
-2.26.0
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
