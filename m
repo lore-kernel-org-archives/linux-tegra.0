@@ -1,62 +1,153 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: Re: Re: [PATCH v4 12/23] ASoC: simple-card: Support DPCM DAI
- link with multiple Codecs
-Date: Thu, 2 Jul 2020 13:26:05 +0100
-Message-ID: <20200702122605.GE4483@sirena.org.uk>
-References: <874kqu1x70.wl-kuninori.morimoto.gx@renesas.com>
- <1e0cf6d1-bf4e-8808-5390-c8a3b7c7fe7e@nvidia.com>
- <87mu4lz6pt.wl-kuninori.morimoto.gx@renesas.com>
- <1d7888c7-a8cc-e891-01aa-016e31cc9113@nvidia.com>
- <87ftadyrec.wl-kuninori.morimoto.gx@renesas.com>
- <492079e9-4518-78ba-a227-859d31594369@nvidia.com>
- <20200630110100.GH5272@sirena.org.uk>
- <81d106c0-e1c8-a79a-8caf-1f3be0d61f0c@nvidia.com>
- <20200630153220.GL5272@sirena.org.uk>
- <fb286ab7-21f2-43ad-2751-c76b7b6e4cf2@nvidia.com>
+From: Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 28/37] memory: tegra: Register as interconnect provider
+Date: Thu, 2 Jul 2020 15:36:07 +0300
+Message-ID: <05cb459d-fc10-1537-eaea-df06f7566b6a@linaro.org>
+References: <20200609131404.17523-1-digetx@gmail.com>
+ <20200609131404.17523-29-digetx@gmail.com>
+ <aec831a6-a7ad-6bcc-4e15-c44582f7568e@linaro.org>
+ <82d27a47-f189-6609-a584-c9ca1b35a76c@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="84ND8YJRMFlzkrP4"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <fb286ab7-21f2-43ad-2751-c76b7b6e4cf2-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <82d27a47-f189-6609-a584-c9ca1b35a76c-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Dmitry,
 
---84ND8YJRMFlzkrP4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 7/2/20 02:36, Dmitry Osipenko wrote:
+> 01.07.2020 20:12, Georgi Djakov пишет:
+>> Hi Dmitry,
+>>
+>> Thank you for updating the patches!
+> 
+> Hello, Georgi!
+> 
+> Thank you for the review!
+> 
+>> On 6/9/20 16:13, Dmitry Osipenko wrote:
+>>> Now memory controller is a memory interconnection provider. This allows us
+>>> to use interconnect API in order to change memory configuration.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> ---
+>>>  drivers/memory/tegra/Kconfig |   1 +
+>>>  drivers/memory/tegra/mc.c    | 114 +++++++++++++++++++++++++++++++++++
+>>>  drivers/memory/tegra/mc.h    |   8 +++
+>>>  include/soc/tegra/mc.h       |   3 +
+>>>  4 files changed, 126 insertions(+)
+>>>
+>>> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+>>> index 5bf75b316a2f..7055fdef2c32 100644
+>>> --- a/drivers/memory/tegra/Kconfig
+>>> +++ b/drivers/memory/tegra/Kconfig
+>>> @@ -3,6 +3,7 @@ config TEGRA_MC
+>>>  	bool "NVIDIA Tegra Memory Controller support"
+>>>  	default y
+>>>  	depends on ARCH_TEGRA
+>>> +	select INTERCONNECT
+>>>  	help
+>>>  	  This driver supports the Memory Controller (MC) hardware found on
+>>>  	  NVIDIA Tegra SoCs.
+>>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>>> index 772aa021b5f6..7ef7ac9e103e 100644
+>>> --- a/drivers/memory/tegra/mc.c
+>>> +++ b/drivers/memory/tegra/mc.c
+>>> @@ -594,6 +594,118 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
+>>>  	return IRQ_HANDLED;
+>>>  }
+>>>  
+>>> +static int tegra_mc_icc_set(struct icc_node *src, struct icc_node *dst)
+>>> +{
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int tegra_mc_icc_aggregate(struct icc_node *node,
+>>> +				  u32 tag, u32 avg_bw, u32 peak_bw,
+>>> +				  u32 *agg_avg, u32 *agg_peak)
+>>> +{
+>>> +	*agg_avg = min((u64)avg_bw + (*agg_avg), (u64)U32_MAX);
+>>> +	*agg_peak = max(*agg_peak, peak_bw);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +/*
+>>> + * Memory Controller (MC) has few Memory Clients that are issuing memory
+>>> + * bandwidth allocation requests to the MC interconnect provider. The MC
+>>> + * provider aggregates the requests and then sends the aggregated request
+>>> + * up to the External Memory Controller (EMC) interconnect provider which
+>>> + * re-configures hardware interface to External Memory (EMEM) in accordance
+>>> + * to the required bandwidth. Each MC interconnect node represents an
+>>> + * individual Memory Client.
+>>> + *
+>>> + * Memory interconnect topology:
+>>> + *
+>>> + *               +----+
+>>> + * +--------+    |    |
+>>> + * | TEXSRD +--->+    |
+>>> + * +--------+    |    |
+>>> + *               |    |    +-----+    +------+
+>>> + *    ...        | MC +--->+ EMC +--->+ EMEM |
+>>> + *               |    |    +-----+    +------+
+>>> + * +--------+    |    |
+>>> + * | DISP.. +--->+    |
+>>> + * +--------+    |    |
+>>> + *               +----+
+>>> + */
+>>> +static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+>>> +{
+>>> +	struct icc_onecell_data *data;
+>>> +	struct icc_node *node;
+>>> +	unsigned int num_nodes;
+>>> +	unsigned int i;
+>>> +	int err;
+>>> +
+>>> +	/* older device-trees don't have interconnect properties */
+>>> +	if (!of_find_property(mc->dev->of_node, "#interconnect-cells", NULL))
+>>> +		return 0;
+>>> +
+>>> +	num_nodes = mc->soc->num_clients;
+>>> +
+>>> +	data = devm_kzalloc(mc->dev, struct_size(data, nodes, num_nodes),
+>>> +			    GFP_KERNEL);
+>>> +	if (!data)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	mc->provider.dev = mc->dev;
+>>> +	mc->provider.set = tegra_mc_icc_set;
+>>
+>> Hmm, maybe the core should not require a set() implementation and we can
+>> just make it optional instead. Then the dummy function would not be needed.
+> 
+> Eventually this dummy function might become populated with a memory
+> latency allowness programming. I could add a comment into that function
+> in the next version, saying that it's to-be-done for now.
 
-On Thu, Jul 02, 2020 at 04:06:14PM +0530, Sameer Pujar wrote:
+Ah ok! Sounds good, thanks for clarifying!
 
-> For the HW I am using, there are no fixed endpoints and I am not sure if it
-> is allowed to have empty endpoints in audio-graph-card. Crossbar/router
-> provides the flexibility to connect the components in any required order.
-> Patch [05/23] exposes required graph and MUX controls for the flexible
-> configurations. Mostly, in DT, I am trying to model the component itself and
-> finally router can help me specify the audio path to interconnect various
-> components. Hence I was trying to understand if it is really necessary to
-> represent the links using audio-graph-card. Kindly help me understand what
-> more it offers. If simple-card works fine, are we allowed to use it?
+>>> +	mc->provider.data = data;
+>>> +	mc->provider.xlate = of_icc_xlate_onecell;
+>>> +	mc->provider.aggregate = tegra_mc_icc_aggregate;
+>>> +
+>>> +	err = icc_provider_add(&mc->provider);
+>>> +	if (err)
+>>> +		goto err_msg;
+>>
+>> Nit: I am planning to re-organize some of the existing drivers to call
+>> icc_provider_add() after the topology is populated. Could you please move
+>> this after the nodes are created and linked.
+> 
+> Are you planning to remove the provider's list-head initialization from
+> the icc_provider_add() [1] and move it to the individual provider
+> drivers, correct?
 
-The links in the graph card should be the physical links at the edge of
-the devices, those must be fixed no matter what.
+Yes, that would be the first step, but i need to post some patches first,
+so let's keep it as-is for now. Sorry for the confusion.
 
---84ND8YJRMFlzkrP4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl790lwACgkQJNaLcl1U
-h9BPigf+JRDzmC/OXZU6GO+RPto06SdJhbNhvLjXQA6BqKzqFg9qNRwNxEK38qz/
-nBq43rOuPFzPkX8j9qxChkJ7pIyhNHx+Vkqo3fRnulH3afFxAiCLKq0IkFph+A0q
-vOOpNX/7HPZHTXzCWDrSF/pkQvgf+ou9X+K6johBzn/Wtd36X1okIf4LCkmrrhzs
-/HXd6bGFbGzUC86c2F2Vqbq9aFWhxRMBWGnV5LTGz1I+Y1RiAqUE7yE2whTTGRhv
-WdrHBrGkXU2R1mtjoecmZ5k86iY8Ho2PQ6ropR7AHRZXmlEYor7T0ViwjXETvQie
-m0fVcHg7vi04mLyDdmy2dUZwC7oo/Q==
-=lgFt
------END PGP SIGNATURE-----
-
---84ND8YJRMFlzkrP4--
+Thanks,
+Georgi
