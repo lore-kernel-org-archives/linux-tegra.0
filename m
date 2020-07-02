@@ -1,61 +1,76 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 01/13] gpu: host1x: Detach driver on unregister
-Date: Wed,  1 Jul 2020 21:27:00 -0400
-Message-ID: <20200702012712.2701986-1-sashal@kernel.org>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 16/37] PM / devfreq: tegra20: Adjust clocks
+ conversion ratio and polling interval
+Date: Thu, 2 Jul 2020 10:37:34 +0900
+Message-ID: <fef085ec-62e6-58e1-d34c-bfbc7a6a2e71@samsung.com>
+References: <20200609131404.17523-1-digetx@gmail.com>
+        <CGME20200609131504epcas1p1069393852a0d53f5ea31ded7aff34a93@epcas1p1.samsung.com>
+        <20200609131404.17523-17-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Sasha Levin <sashal@kernel.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200609131404.17523-17-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Georgi Djakov <georgi.djakov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 6/9/20 10:13 PM, Dmitry Osipenko wrote:
+> The current conversion ratio results in a higher frequency than needed,
+> that is not very actual now since the Display Controller driver got
+> support for memory bandwidth management and hence memory frequency can
+> go lower now without bad consequences. Since memory freq now goes to a
+> lower rates, the responsiveness of interactive applications become worse
+> due to a quite high polling interval value that is currently set to 500ms.
+> Changing polling interval to 30ms results in a good responsiveness of the
+> system.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/devfreq/tegra20-devfreq.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
+> index 249d0dc44f6c..7cdea4ba38f7 100644
+> --- a/drivers/devfreq/tegra20-devfreq.c
+> +++ b/drivers/devfreq/tegra20-devfreq.c
+> @@ -79,16 +79,12 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>  
+>  	/*
+>  	 * EMC_COUNT returns number of memory events, that number is lower
+> -	 * than the number of clocks. Conversion ratio of 1/8 results in a
+> -	 * bit higher bandwidth than actually needed, it is good enough for
+> -	 * the time being because drivers don't support requesting minimum
+> -	 * needed memory bandwidth yet.
+> -	 *
+> -	 * TODO: adjust the ratio value once relevant drivers will support
+> -	 * memory bandwidth management.
+> +	 * than the number of total EMC clocks over the sampling period.
+> +	 * The clocks number is converted to maximum possible number of
+> +	 * memory events using the ratio of 1/4.
+>  	 */
+>  	stat->busy_time = readl_relaxed(tegra->regs + MC_STAT_EMC_COUNT);
+> -	stat->total_time = readl_relaxed(tegra->regs + MC_STAT_EMC_CLOCKS) / 8;
+> +	stat->total_time = readl_relaxed(tegra->regs + MC_STAT_EMC_CLOCKS) / 4;
+>  	stat->current_frequency = clk_get_rate(tegra->emc_clock);
+>  
+>  	writel_relaxed(EMC_GATHER_CLEAR, tegra->regs + MC_STAT_CONTROL);
+> @@ -98,7 +94,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>  }
+>  
+>  static struct devfreq_dev_profile tegra_devfreq_profile = {
+> -	.polling_ms	= 500,
+> +	.polling_ms	= 30,
+>  	.target		= tegra_devfreq_target,
+>  	.get_dev_status	= tegra_devfreq_get_dev_status,
+>  };
+> 
 
-[ Upstream commit d9a0a05bf8c76e6dc79230669a8b5d685b168c30 ]
+Ackded-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Currently when a host1x device driver is unregistered, it is not
-detached from the host1x controller, which means that the device
-will stay around and when the driver is registered again, it may
-bind to the old, stale device rather than the new one that was
-created from scratch upon driver registration. This in turn can
-cause various weird crashes within the driver core because it is
-confronted with a device that was already deleted.
-
-Fix this by detaching the driver from the host1x controller when
-it is unregistered. This ensures that the deleted device also is
-no longer present in the device list that drivers will bind to.
-
-Reported-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Tested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/host1x/bus.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index c27858ae05529..6ef89e8a515a9 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -542,8 +542,17 @@ EXPORT_SYMBOL(host1x_driver_register_full);
- 
- void host1x_driver_unregister(struct host1x_driver *driver)
- {
-+	struct host1x *host1x;
-+
- 	driver_unregister(&driver->driver);
- 
-+	mutex_lock(&devices_lock);
-+
-+	list_for_each_entry(host1x, &devices, list)
-+		host1x_detach_driver(host1x, driver);
-+
-+	mutex_unlock(&devices_lock);
-+
- 	mutex_lock(&drivers_lock);
- 	list_del_init(&driver->list);
- 	mutex_unlock(&drivers_lock);
 -- 
-2.25.1
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
