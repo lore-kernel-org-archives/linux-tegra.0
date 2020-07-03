@@ -1,121 +1,79 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH v2 00/18] Support for Tegra video capture from
- external sensor
-Date: Thu, 2 Jul 2020 14:21:32 -0700
-Message-ID: <f7e82e1a-30db-a7cf-f559-499decc11c44@nvidia.com>
-References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
- <68d5b863-2ff1-203c-bd30-9ad0dcdf76f7@xs4all.nl>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2] PM / devfreq: tegra: Add Dmitry as a maintainer
+Date: Fri, 3 Jul 2020 09:44:22 +0900
+Message-ID: <a08f16bc-df90-2199-91c8-f2acfe0f94ad@samsung.com>
+References: <CGME20200402222006epcas1p4027cd509b32ba2d2bdf90e9e84cf4bec@epcas1p4.samsung.com>
+        <20200402221723.6064-1-digetx@gmail.com>
+        <921abb5e-8c12-db8b-b345-fbe49080dc1c@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <68d5b863-2ff1-203c-bd30-9ad0dcdf76f7-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <921abb5e-8c12-db8b-b345-fbe49080dc1c@samsung.com>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Dear all,
 
-On 7/2/20 7:08 AM, Hans Verkuil wrote:
-> Hi Sowjanya,
->
-> On 17/06/2020 03:41, Sowjanya Komatineni wrote:
->> This series adds support for video capture from external camera sensor to
->> Tegra video driver.
+On 5/8/20 1:04 PM, Chanwoo Choi wrote:
+> Hi Rafael,
+> 
+> Could you please apply it to linux-pm directly?
+> 
+> I think that it is better to be applied directly
+> for preventing the possible merge conflict of MAINTAINERS file.
+> 
+> Best Regards,
+> Chanwoo Choi
+> 
+> On 4/3/20 7:17 AM, Dmitry Osipenko wrote:
+>> I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
+>> want to help keep them working and evolving in the future.
 >>
->> Jetson TX1 has camera expansion connector and supports custom camera module
->> designed as per TX1 design specification.
+>> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
 >>
->> This series also enables camera capture support for Jetson Nano which has
->> Raspberry PI camera header.
+>> Changelog:
 >>
->> This series is tested with IMX219 camera sensor.
+>> v2: - Addressed review comments made by Chanwoo Choi to v1 by correcting
+>>       git's address, making this patch standalone and adding Rafael Wysocki
+>>       to the list of email recipients.
 >>
->> This series include,
+>>  MAINTAINERS | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
 >>
->> VI I2C related fixes
->> - Camera sensor programming happens through VI I2C which is on host1x bus.
->> - These patches includes device tree and I2C driver fixes for VI I2C.
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 245a96316636..0a694e20ea19 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -10922,6 +10922,15 @@ F:	include/linux/memblock.h
+>>  F:	mm/memblock.c
+>>  F:	Documentation/core-api/boot-time-mm.rst
+>>  
+>> +MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
+>> +M:	Dmitry Osipenko <digetx@gmail.com>
+>> +L:	linux-pm@vger.kernel.org
+>> +L:	linux-tegra@vger.kernel.org
+>> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+>> +S:	Maintained
+>> +F:	drivers/devfreq/tegra20-devfreq.c
+>> +F:	drivers/devfreq/tegra30-devfreq.c
+>> +
+>>  MEMORY MANAGEMENT
+>>  M:	Andrew Morton <akpm@linux-foundation.org>
+>>  L:	linux-mm@kvack.org
 >>
->> Tegra video driver updates
->> - TPG Vs Non-TPG based on Kconfig
->> - Support for external sensor video capture based on device graph from DT.
->> - Support for selection ioctl operations
->> - Tegra MIPI CSI pads calibration
->> - CSI T-CLK and T-HS settle time computation based on clock rates.
->>
->> Host1x driver updates
->> - Adds API to allow creating mipi device for specific device node.
->> - Splits MIPI pads calibrate start and waiting for calibration to be done.
->>
->> Device tree updates
->> - Adds camera connector 2V8, 1V8, 1V2 regulator supplies to Jetson TX1 DT.
->> - Enabled VI and CSI support in Jetson Nano DT.
-> I tested all this with imx219 and imx274. It all looks good. I'll do a last
-> code review on Monday.
->
-> I posted a few imx219 and imx274 patches to fix v4l2-compliance issues (also
-> updated that tool itself since it had a bug).
->
-> There is one remaining compliance failure with the imx274, but that is also
-> due to a bug in the imx274: it's missing a bunch of enum ops and it is doing
-> weird things with the COMPOSE selection. I think that's completely wrong, but
-> I need more time to dig into that.
->
-> Regards,
->
-> 	Hans
-Thanks Hans.
->
->>
->> Delta between patch versions:
->>
->> [v2]:	Includes below changes based on v1 feedback
->> 	- dt-binding document and the driver update for device graph to use
->> 	  separate ports for sink endpoint and source endpoint for csi.
->> 	- Use data-lanes endpoint property for csi.
->> 	- Update tegra_mipi_request() to take device node pointer argument
->> 	  rather than adding extra API.
->> 	- Remove checking for clk pointer before clk_disable.
->>
->>
->> Sowjanya Komatineni (18):
->>    dt-bindings: i2c: tegra: Document Tegra210 VI I2C clocks and
->>      power-domains
->>    arm64: tegra: Add missing clocks and power-domains to Tegra210 VI I2C
->>    i2c: tegra: Don't mark VI I2C as IRQ safe runtime PM
->>    i2c: tegra: Fix the error path in tegra_i2c_runtime_resume
->>    i2c: tegra: Fix runtime resume to re-init VI I2C
->>    i2c: tegra: Avoid tegra_i2c_init_dma() for Tegra210 vi i2c
->>    media: tegra-video: Fix channel format alignment
->>    media: tegra-video: Enable TPG based on kernel config
->>    media: tegra-video: Update format lookup to offset based
->>    dt-bindings: tegra: Update VI and CSI bindings with port info
->>    media: tegra-video: Add support for external sensor capture
->>    media: tegra-video: Add support for selection ioctl ops
->>    gpu: host1x: mipi: Update tegra_mipi_request() to be node based
->>    gpu: host1x: mipi: Split tegra_mipi_calibrate and tegra_mipi_wait
->>    media: tegra-video: Add CSI MIPI pads calibration
->>    media: tegra-video: Compute settle times based on the clock rate
->>    arm64: tegra: jetson-tx1: Add camera supplies
->>    arm64: tegra: Enable Tegra VI CSI support for Jetson Nano
->>
->>   .../display/tegra/nvidia,tegra20-host1x.txt        |  92 ++-
->>   .../devicetree/bindings/i2c/nvidia,tegra20-i2c.txt |  19 +-
->>   arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |  41 ++
->>   arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  10 +
->>   arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +
->>   drivers/gpu/drm/tegra/dsi.c                        |   9 +-
->>   drivers/gpu/host1x/mipi.c                          |  30 +-
->>   drivers/i2c/busses/i2c-tegra.c                     |  39 +-
->>   drivers/staging/media/tegra-video/Kconfig          |   7 +
->>   drivers/staging/media/tegra-video/csi.c            | 245 ++++++-
->>   drivers/staging/media/tegra-video/csi.h            |   8 +
->>   drivers/staging/media/tegra-video/tegra210.c       |  25 +-
->>   drivers/staging/media/tegra-video/vi.c             | 770 +++++++++++++++++++--
->>   drivers/staging/media/tegra-video/vi.h             |  23 +-
->>   drivers/staging/media/tegra-video/video.c          |  23 +-
->>   include/linux/host1x.h                             |   4 +-
->>   16 files changed, 1251 insertions(+), 100 deletions(-)
->>
+> 
+> 
+
+I applied it to devfreq-next branch. Thanks.
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
