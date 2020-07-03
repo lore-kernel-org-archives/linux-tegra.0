@@ -1,77 +1,43 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] PM / devfreq: tegra: Add Dmitry as a maintainer
-Date: Fri, 3 Jul 2020 11:21:03 +0300
-Message-ID: <33a4df9d-7642-2f64-e073-ef6091f1ca33@gmail.com>
-References: <CGME20200402222006epcas1p4027cd509b32ba2d2bdf90e9e84cf4bec@epcas1p4.samsung.com>
- <20200402221723.6064-1-digetx@gmail.com>
- <921abb5e-8c12-db8b-b345-fbe49080dc1c@samsung.com>
- <a08f16bc-df90-2199-91c8-f2acfe0f94ad@samsung.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 28/37] memory: tegra: Register as interconnect provider
+Date: Fri, 3 Jul 2020 11:41:14 +0300
+Message-ID: <31565962-a25c-324f-8319-b3e3ea66b4f1@gmail.com>
+References: <20200609131404.17523-1-digetx@gmail.com>
+ <20200609131404.17523-29-digetx@gmail.com>
+ <aec831a6-a7ad-6bcc-4e15-c44582f7568e@linaro.org>
+ <82d27a47-f189-6609-a584-c9ca1b35a76c@gmail.com>
+ <05cb459d-fc10-1537-eaea-df06f7566b6a@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a08f16bc-df90-2199-91c8-f2acfe0f94ad-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <05cb459d-fc10-1537-eaea-df06f7566b6a@linaro.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mikko Perttunen <cyndis@kapsi.fi>, =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-03.07.2020 03:44, Chanwoo Choi пишет:
-> Dear all,
+02.07.2020 15:36, Georgi Djakov пишет:
+...
+>>>> +	mc->provider.data = data;
+>>>> +	mc->provider.xlate = of_icc_xlate_onecell;
+>>>> +	mc->provider.aggregate = tegra_mc_icc_aggregate;
+>>>> +
+>>>> +	err = icc_provider_add(&mc->provider);
+>>>> +	if (err)
+>>>> +		goto err_msg;
+>>>
+>>> Nit: I am planning to re-organize some of the existing drivers to call
+>>> icc_provider_add() after the topology is populated. Could you please move
+>>> this after the nodes are created and linked.
+>>
+>> Are you planning to remove the provider's list-head initialization from
+>> the icc_provider_add() [1] and move it to the individual provider
+>> drivers, correct?
 > 
-> On 5/8/20 1:04 PM, Chanwoo Choi wrote:
->> Hi Rafael,
->>
->> Could you please apply it to linux-pm directly?
->>
->> I think that it is better to be applied directly
->> for preventing the possible merge conflict of MAINTAINERS file.
->>
->> Best Regards,
->> Chanwoo Choi
->>
->> On 4/3/20 7:17 AM, Dmitry Osipenko wrote:
->>> I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
->>> want to help keep them working and evolving in the future.
->>>
->>> Acked-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>>
->>> Changelog:
->>>
->>> v2: - Addressed review comments made by Chanwoo Choi to v1 by correcting
->>>       git's address, making this patch standalone and adding Rafael Wysocki
->>>       to the list of email recipients.
->>>
->>>  MAINTAINERS | 9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 245a96316636..0a694e20ea19 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -10922,6 +10922,15 @@ F:	include/linux/memblock.h
->>>  F:	mm/memblock.c
->>>  F:	Documentation/core-api/boot-time-mm.rst
->>>  
->>> +MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
->>> +M:	Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> +L:	linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>> +L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
->>> +S:	Maintained
->>> +F:	drivers/devfreq/tegra20-devfreq.c
->>> +F:	drivers/devfreq/tegra30-devfreq.c
->>> +
->>>  MEMORY MANAGEMENT
->>>  M:	Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
->>>  L:	linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org
->>>
->>
->>
-> 
-> I applied it to devfreq-next branch. Thanks.
+> Yes, that would be the first step, but i need to post some patches first,
+> so let's keep it as-is for now. Sorry for the confusion.
 
-Hello, Chanwoo! Thank you very much! :)
+No problems, I'll keep an eye on the ICC core changes!
+Please feel free to the CC me on the patches, I may give them a whirl.
