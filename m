@@ -1,60 +1,96 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: Re: [RFC PATCH v2 11/18] media: tegra-video: Add support for external
- sensor capture
-Date: Mon, 6 Jul 2020 13:49:45 +0200
-Message-ID: <0e25a523-c911-0973-65ba-49883d2383fd@xs4all.nl>
-References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
- <1592358094-23459-12-git-send-email-skomatineni@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [qemu] boot failed: Unable to handle kernel NULL pointer
+ dereference at virtual address 0000000000000000
+Date: Mon, 6 Jul 2020 14:53:15 +0200
+Message-ID: <CAK8P3a1Lda8HhsDvDREf-cOgb4RkCgEKK5Q-Zj+UhK8tsAaBLw@mail.gmail.com>
+References: <CA+G9fYvqW-RQxt3kSoNkh5Y2REoe0QQB_dTz_KPzhJzcwiM5OA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1592358094-23459-12-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CA+G9fYvqW-RQxt3kSoNkh5Y2REoe0QQB_dTz_KPzhJzcwiM5OA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naresh Kamboju <naresh.kamboju-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, jirislaby-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Andy Gross <agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Qian Cai <cai-J5quhbR+WMc@public.gmane.org>, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Dave Jiang <dave.jiang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 17/06/2020 03:41, Sowjanya Komatineni wrote:
-> This patch adds support to capture from the external sensor
-> based on device graph in the device tree.
-> 
-> Driver walks through the device graph to create media links
-> between the entities and registers and unregisters video devices
-> when the corresponding sub-devices are bound and unbound.
-> 
-> Channel formats are enumerated based on available formats from
-> the sensor and the corresponding matched formats from the Tegra
-> supported video formats list.
-> 
-> Each Tegra CSI instance can be configured as 4-lane or 2-lane
-> based on supported lane configuration from the sensor through
-> the device tree.
-> 
-> Currently this driver supports V4L2 video node centric only.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/staging/media/tegra-video/Kconfig    |   1 +
->  drivers/staging/media/tegra-video/csi.c      | 128 +++++-
->  drivers/staging/media/tegra-video/csi.h      |   1 +
->  drivers/staging/media/tegra-video/tegra210.c |   2 +-
->  drivers/staging/media/tegra-video/vi.c       | 623 +++++++++++++++++++++++++--
->  drivers/staging/media/tegra-video/vi.h       |  23 +-
->  6 files changed, 726 insertions(+), 52 deletions(-)
-> 
+On Mon, Jul 6, 2020 at 1:03 PM Naresh Kamboju <naresh.kamboju-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>
+> While booting qemu_arm64 and qemu_arm with Linux version 5.8.0-rc3-next-20200706
+> the kernel panic noticed due to kernel NULL pointer dereference.
+>
+> metadata:
+>   git branch: master
+>   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>   git commit: 5680d14d59bddc8bcbc5badf00dbbd4374858497
+>   git describe: next-20200706
+>   make_kernelversion: 5.8.0-rc3
+>   kernel-config:
+> https://builds.tuxbuild.com/Glr-Ql1wbp3qN3cnHogyNA/kernel.config
+>
+> qemu arm64 boot crash log,
+>
+> [    0.972053] Unable to handle kernel NULL pointer dereference at
+> virtual address 0000000000000000
+> [    0.975301] Mem abort info:
+> [    0.976316]   ESR = 0x96000004
+> [    0.977378]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    0.979363]   SET = 0, FnV = 0
+> [    0.980458]   EA = 0, S1PTW = 0
+> [    0.981583] Data abort info:
+> [    0.982634]   ISV = 0, ISS = 0x00000004
+> [    0.984213]   CM = 0, WnR = 0
+> [    0.985260] [0000000000000000] user address but active_mm is swapper
+> [    0.987600] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+> [    0.989557] Modules linked in:
+> [    0.990671] CPU: 2 PID: 1 Comm: swapper/0 Not tainted
+> 5.8.0-rc3-next-20200706 #1
+> [    0.993711] Hardware name: linux,dummy-virt (DT)
+> [    0.995708] pstate: 00000005 (nzcv daif -PAN -UAO BTYPE=--)
+> [    0.998168] pc : pl011_dma_probe+0x90/0x360
 
-<snip>
+This is the code from you vmlinux file:
 
-> +static int tegra_csi_channels_alloc(struct tegra_csi *csi)
-> +{
-> +	struct device_node *node = csi->dev->of_node;
-> +	struct v4l2_fwnode_endpoint v4l2_ep = { .bus_type = 0 };
+ffff8000107233e4:       b90087e2        str     w2, [sp, #132]
+ffff8000107233e8:       97fcf14c        bl      ffff80001065f918
+<dma_request_chan>
+ffff8000107233ec:       aa0003f4        mov     x20, x0
+ffff8000107233f0:       b140041f        cmn     x0, #0x1, lsl #12
+ffff8000107233f4:       54000488        b.hi    ffff800010723484
+<pl011_dma_probe+0x11c>  // b.pmore
+ffff8000107233f8:       f9400280        ldr     x0, [x20]
+ffff8000107233fc:       f9409c02        ldr     x2, [x0, #312]
+ffff800010723400:       b4000082        cbz     x2, ffff800010723410
+<pl011_dma_probe+0xa8>
 
-A bus_type value of 0 is deprecated, this should be set to a valid
-bus_type (probably V4L2_MBUS_CSI2_DPHY).
+It's the "ldr     x0, [x20]" dereferencing 'chan' in pl011_dma_probe() after
+checking it for an error value. However it's a NULL pointer, not an
+error pointer, indicating that there is a bug in the dmaengine driver
+that you use here, or in the dmaengine core code.
 
-Regards,
+I don't see anything suspicious in dmaengine drivers, but there is a
+recent series
+from Dave Jiang that might explain it. Could you try reverting  commit
+deb9541f5052 ("dmaengine: check device and channel list for empty")?
 
-	Hans
+I think the broken change is this one:
+
+@@ -819,6 +850,11 @@ struct dma_chan *dma_request_chan(struct device
+*dev, const char *name)
+
+        /* Try to find the channel via the DMA filter map(s) */
+        mutex_lock(&dma_list_mutex);
++       if (list_empty(&dma_device_list)) {
++               mutex_unlock(&dma_list_mutex);
++               return NULL;
++       }
++
+        list_for_each_entry_safe(d, _d, &dma_device_list, global_node) {
+                dma_cap_mask_t mask;
+                const struct dma_slave_map *map = dma_filter_match(d,
+name, dev);
+
+which needs to return an error code like -ENODEV instead of NULL. There
+may be other changes in the same patch that introduce the same bug
+elsewhere.
+
+     Arnd
