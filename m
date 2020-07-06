@@ -1,120 +1,54 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] arm64: tegra: Re-order PCIe aperture mappings
-Date: Mon, 6 Jul 2020 19:09:17 +0100
-Message-ID: <d7e37f3c-9d4c-a12d-bd29-df12f5ffb26d@nvidia.com>
-References: <20200706171454.11316-1-vidyas@nvidia.com>
+From: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: Chainloading U-Boot from Fastboot on Tegra30
+Date: Mon, 6 Jul 2020 15:48:12 -0400
+Message-ID: <CAMdYzYpkg9SqcJyDMA0rm9kp-1whT2KQ7+YoebwDHCQpZy2hiA@mail.gmail.com>
+References: <CAMdYzYo1je6cjSEm4i0pbNYfq1L549--n_SZDq19Xy35_y4Kkw@mail.gmail.com>
+ <dda406a7-8199-f2ad-b64a-35791aa1033b@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200706171454.11316-1-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <dda406a7-8199-f2ad-b64a-35791aa1033b-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, amurray-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Jul 6, 2020 at 1:04 PM Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>
+> On 7/3/20 6:32 AM, Peter Geis wrote:
+> > Good Morning,
+> >
+> > I am attempting to expand on the work for chainloading U-Boot on the
+> > nyan-big in order to chainload U-Boot on the Ouya Tegra30 device from fastboot.
+> > I have so far been unsuccessful at getting any output from U-Boot
+> > through this method.
+>
+> I assume that fastboot executes the loaded code on the main CPU not on
+> the boot CPU (AVP). U-Boot SPL on Tegra30 expects to start running on
+> the AVP though; you would have to disable SPL to make this all work, and
+> perhaps fix U-Boot to work without SPL present. I'm not sure what, if
+> any, changes would be required to support that.
+>
+> For background, see:
+> https://http.download.nvidia.com/tegra-public-appnotes/index.html
 
-On 06/07/2020 18:14, Vidya Sagar wrote:
-> Re-order Tegra194's PCIe aperture mappings to have IO window moved to
-> 64-bit aperture and have the entire 32-bit aperture used for accessing
-> the configuration space. This makes it to use the entire 32MB of the 32-bit
-> aperture for ECAM purpose while booting through ACPI.
-> 
-> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 36 ++++++++++++------------
->  1 file changed, 18 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> index 4bc187a4eacd..2b378fa06d19 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -1404,9 +1404,9 @@
->  		nvidia,aspm-l0s-entrance-latency-us = <3>;
->  
->  		bus-range = <0x0 0xff>;
-> -		ranges = <0x81000000 0x0  0x30100000 0x0  0x30100000 0x0 0x00100000   /* downstream I/O (1MB) */
-> -			  0xc3000000 0x12 0x00000000 0x12 0x00000000 0x0 0x30000000   /* prefetchable memory (768MB) */
-> -			  0x82000000 0x0  0x40000000 0x12 0x30000000 0x0 0x10000000>; /* non-prefetchable memory (256MB) */
-> +		ranges = <0xc3000000 0x12 0x00000000 0x12 0x00000000 0x0 0x30000000   /* prefetchable memory (768MB) */
-> +			  0x82000000 0x00 0x40000000 0x12 0x30000000 0x0 0x0fff0000   /* non-prefetchable memory (256MB - 64KB) */
-> +			  0x81000000 0x00 0x00000000 0x12 0x3fff0000 0x0 0x00010000>; /* downstream I/O (64KB) */
->  	};
->  
->  	pcie@14120000 {
-> @@ -1449,9 +1449,9 @@
->  		nvidia,aspm-l0s-entrance-latency-us = <3>;
->  
->  		bus-range = <0x0 0xff>;
-> -		ranges = <0x81000000 0x0  0x32100000 0x0  0x32100000 0x0 0x00100000   /* downstream I/O (1MB) */
-> -			  0xc3000000 0x12 0x40000000 0x12 0x40000000 0x0 0x30000000   /* prefetchable memory (768MB) */
-> -			  0x82000000 0x0  0x40000000 0x12 0x70000000 0x0 0x10000000>; /* non-prefetchable memory (256MB) */
-> +		ranges = <0xc3000000 0x12 0x40000000 0x12 0x40000000 0x0 0x30000000   /* prefetchable memory (768MB) */
-> +			  0x82000000 0x00 0x40000000 0x12 0x70000000 0x0 0x0fff0000   /* non-prefetchable memory (256MB - 64KB) */
-> +			  0x81000000 0x00 0x00000000 0x12 0x7fff0000 0x0 0x00010000>; /* downstream I/O (64KB) */
->  	};
->  
->  	pcie@14140000 {
-> @@ -1494,9 +1494,9 @@
->  		nvidia,aspm-l0s-entrance-latency-us = <3>;
->  
->  		bus-range = <0x0 0xff>;
-> -		ranges = <0x81000000 0x0  0x34100000 0x0  0x34100000 0x0 0x00100000   /* downstream I/O (1MB) */
-> -			  0xc3000000 0x12 0x80000000 0x12 0x80000000 0x0 0x30000000   /* prefetchable memory (768MB) */
-> -			  0x82000000 0x0  0x40000000 0x12 0xb0000000 0x0 0x10000000>; /* non-prefetchable memory (256MB) */
-> +		ranges = <0xc3000000 0x12 0x80000000 0x12 0x80000000 0x0 0x30000000   /* prefetchable memory (768MB) */
-> +			  0x82000000 0x00 0x40000000 0x12 0xb0000000 0x0 0x0fff0000   /* non-prefetchable memory (256MB - 64KB) */
-> +			  0x81000000 0x00 0x00000000 0x12 0xbfff0000 0x0 0x00010000>; /* downstream I/O (64KB) */
->  	};
->  
->  	pcie@14160000 {
-> @@ -1539,9 +1539,9 @@
->  		nvidia,aspm-l0s-entrance-latency-us = <3>;
->  
->  		bus-range = <0x0 0xff>;
-> -		ranges = <0x81000000 0x0  0x36100000 0x0  0x36100000 0x0 0x00100000   /* downstream I/O (1MB) */
-> -			  0xc3000000 0x14 0x00000000 0x14 0x00000000 0x3 0x40000000   /* prefetchable memory (13GB) */
-> -			  0x82000000 0x0  0x40000000 0x17 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
-> +		ranges = <0xc3000000 0x14 0x00000000 0x14 0x00000000 0x3 0x40000000   /* prefetchable memory (13GB) */
-> +			  0x82000000 0x00 0x40000000 0x17 0x40000000 0x0 0xbfff0000   /* non-prefetchable memory (3GB - 64KB) */
-> +			  0x81000000 0x00 0x00000000 0x17 0xffff0000 0x0 0x00010000>; /* downstream I/O (64KB) */
->  	};
->  
->  	pcie@14180000 {
-> @@ -1584,9 +1584,9 @@
->  		nvidia,aspm-l0s-entrance-latency-us = <3>;
->  
->  		bus-range = <0x0 0xff>;
-> -		ranges = <0x81000000 0x0  0x38100000 0x0  0x38100000 0x0 0x00100000   /* downstream I/O (1MB) */
-> -			  0xc3000000 0x18 0x00000000 0x18 0x00000000 0x3 0x40000000   /* prefetchable memory (13GB) */
-> -			  0x82000000 0x0  0x40000000 0x1b 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
-> +		ranges = <0xc3000000 0x18 0x00000000 0x18 0x00000000 0x3 0x40000000   /* prefetchable memory (13GB) */
-> +			  0x82000000 0x00 0x40000000 0x1b 0x40000000 0x0 0xbfff0000   /* non-prefetchable memory (3GB - 64KB) */
-> +			  0x81000000 0x00 0x00000000 0x1b 0xffff0000 0x0 0x00010000>; /* downstream I/O (64KB) */
->  	};
->  
->  	pcie@141a0000 {
-> @@ -1633,9 +1633,9 @@
->  		nvidia,aspm-l0s-entrance-latency-us = <3>;
->  
->  		bus-range = <0x0 0xff>;
-> -		ranges = <0x81000000 0x0  0x3a100000 0x0  0x3a100000 0x0 0x00100000   /* downstream I/O (1MB) */
-> -			  0xc3000000 0x1c 0x00000000 0x1c 0x00000000 0x3 0x40000000   /* prefetchable memory (13GB) */
-> -			  0x82000000 0x0  0x40000000 0x1f 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
-> +		ranges = <0xc3000000 0x1c 0x00000000 0x1c 0x00000000 0x3 0x40000000   /* prefetchable memory (13GB) */
-> +			  0x82000000 0x00 0x40000000 0x1f 0x40000000 0x0 0xbfff0000   /* non-prefetchable memory (3GB - 64KB) */
-> +			  0x81000000 0x00 0x00000000 0x1f 0xffff0000 0x0 0x00010000>; /* downstream I/O (64KB) */
->  	};
->  
->  	pcie_ep@14160000 {
-> 
+Apologies for the resend, I realized I didn't reply to the list.
 
+I admit I'm still extremely new to U-Boot, but this is the way I
+understand the boot flow.
+ROM does extremely low level init, then loads U-boot SPL.
+U-Boot SPL does basic init, ram, cpu and required peripherals, then
+loads U-Boot.bin.
+U-Boot.bin is U-Boot proper, with the full interface.
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+By loading U-Boot.bin as the nyan instructions indicated, I'm
+bypassing the SPL code as if it was already complete.
+The issue I have is I'm not sure what modifications were done to the
+T124 code to allow nyan to do this.
+I've compared the nyan configs to the cardhu configs and I don't see
+anything that sticks out to me.
+I've also dug through the nyan git log and I don't see anything that
+was specifically changed to allow chainloading on T124.
 
-Cheers!
-Jon
-
--- 
-nvpublic
+I also am unsure of where fastboot is loading the kernel in order to
+set the text base correctly.
