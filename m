@@ -1,83 +1,20 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: Chainloading U-Boot from Fastboot on Tegra30
-Date: Sun, 5 Jul 2020 09:35:16 -0600
-Message-ID: <CAPnjgZ3S+sic-FcHU=1jW-9A=W-+HjjJ_UF50j9khvm5CUxGRA@mail.gmail.com>
-References: <CAMdYzYo1je6cjSEm4i0pbNYfq1L549--n_SZDq19Xy35_y4Kkw@mail.gmail.com>
- <CAPnjgZ2NxmsXUSNQtaLFxp3Qnx2O1ZqtQGQ5-9-z6vbb8ykW0g@mail.gmail.com> <CAMdYzYraKVxsE0NLvqRXXfP=oxw+fGZrrJC2aFQ4hp4hfAkrqQ@mail.gmail.com>
+From: Neal Liu <neal.liu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v2] cpuidle: Fix CFI failure
+Date: Mon, 6 Jul 2020 11:13:15 +0800
+Message-ID: <1594005196-16327-1-git-send-email-neal.liu@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMdYzYraKVxsE0NLvqRXXfP=oxw+fGZrrJC2aFQ4hp4hfAkrqQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Len Brown <lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jacob Pan <jacob.jun.pan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sami Tolvanen <samitolvanen-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Neal Liu <neal.liu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, wsd_upstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
-
-On Sun, 5 Jul 2020 at 05:33, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> On Sat, Jul 4, 2020 at 3:53 PM Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> >
-> > Hi Peter,
-> >
-> > On Fri, 3 Jul 2020 at 06:33, Peter Geis <pgwipeout-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > >
-> > > Good Morning,
-> > >
-> > > I am attempting to expand on the work for chainloading U-Boot on the
-> > > nyan-big in order to chainload U-Boot on the Ouya Tegra30 device from fastboot.
-> > > I have so far been unsuccessful at getting any output from U-Boot
-> > > through this method.
-> > >
-> > > I'm building the cardhu board with tweaks for Ouya's specifications
-> > > similar to my work for the linux kernel.
-> > > I build the image using mkbootimg --kernel u-boot.bin --ramdisk
-> > > /dev/null --output u-boot-android.bin.
-> > > I then fastboot boot u-boot-android.bin.
-> > >
-> > > I've tried tweaking the text base and tried both standard debug and
-> > > low level debug.
-> > >
-> > > Do you think you could give me some insight into where I'm going wrong?
-> >
-> > Is it possible that fastboot expects a relocatable image? If you set
-> > up the debug UART very early you might be able to output a character
-> > in start.S ?
->
-> Yes, fastboot expects a relocatable image.
-> As I understand it though, if I get the text base correct, U-boot will
-> not need to relocate.
->
-> The debug UART is already set up when it fastboot jumps to the loaded kernel,
-> So I should be able to dump data to the expected raw address and it
-> will show up?
-
-Yes, so long as you know the address. Is the MMU turned off? Cache?
-
->
-> >
-> > BTW does U-Boot have support for the fastboot protocol? Perhaps you
-> > could just use U-Boot?
->
-> The Ouya is locked with a signed boot loader, like most consumer
-> android devices.
-> Unlike most other devices, it does not have a hardware method for
-> entering the bootloader in case of a brick.
-> We are currently using a hacked kernel that stores another kernel in
-> "safe" ram via kexec and hard resets the board, but a proper
-> bootloader would be much more preferable.
-
-OK. Maybe there is someone on this list with a bit more Android
-booting experienec?
-
->
-> I found one example of where fastboot chainloaded u-boot successfully
-> on the galaxy nexus, from 2013.
-> https://forum.xda-developers.com/galaxy-nexus/bootloader-boot-multi-boot-support-t2201146
-
-OK, I'm sure it is possible. Do you have the source code for the
-fastboot code that boots U-Boot?
-
-Regards,
-Simon
+Y2hhbmdlcyBzaW5jZSB2MToNCi0gYWRkIG1vcmUgZGVzY3JpcHRpb24gaW4gY29tbWl0IG1lc3Nh
+Z2UuDQoNCioqKiBCTFVSQiBIRVJFICoqKg0KDQpOZWFsIExpdSAoMSk6DQogIGNwdWlkbGU6IGNo
+YW5nZSBlbnRlcl9zMmlkbGUoKSBwcm90b3R5cGUNCg0KIGRyaXZlcnMvYWNwaS9wcm9jZXNzb3Jf
+aWRsZS5jICAgfCA2ICsrKystLQ0KIGRyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLXRlZ3JhLmMgfCA4
+ICsrKysrLS0tDQogZHJpdmVycy9pZGxlL2ludGVsX2lkbGUuYyAgICAgICB8IDYgKysrKy0tDQog
+aW5jbHVkZS9saW51eC9jcHVpZGxlLmggICAgICAgICB8IDYgKysrLS0tDQogNCBmaWxlcyBjaGFu
+Z2VkLCAxNiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkNCg0KLS0gDQoyLjE4LjANCg==
