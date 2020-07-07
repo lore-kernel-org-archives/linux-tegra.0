@@ -1,116 +1,149 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] dt-bindings: mfd: max77620: Convert to json-schema
-Date: Tue, 7 Jul 2020 13:28:44 +0200
-Message-ID: <CACRpkdY=rVH03i+JsLuiDKa_BSU57ZNdBNHGv6avuC-AkPZkMQ@mail.gmail.com>
-References: <20200609162621.1769610-1-thierry.reding@gmail.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Subject: Re: [PATCH v2] cpuidle: change enter_s2idle() prototype
+Date: Tue, 7 Jul 2020 09:43:25 -0700
+Message-ID: <20200707164325.GA2525978@google.com>
+References: <1594005196-16327-1-git-send-email-neal.liu@mediatek.com>
+ <1594005196-16327-2-git-send-email-neal.liu@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200609162621.1769610-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1594005196-16327-2-git-send-email-neal.liu@mediatek.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Neal Liu <neal.liu@mediatek.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, lkml <linux-kernel@vger.kernel.org>, wsd_upstream@mediatek.com
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-thanks for doing this!
-
-On Tue, Jun 9, 2020 at 6:26 PM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-
->  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-max77620.txt
->  delete mode 100644 Documentation/devicetree/bindings/mfd/max77620.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/max77620.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
->  delete mode 100644 Documentation/devicetree/bindings/regulator/regulator-max77620.txt
->  delete mode 100644 Documentation/devicetree/bindings/thermal/max77620_thermal.txt
-
-So everything goes in under the MFD node now I suppose (why not).
-
-> diff --git a/Documentation/devicetree/bindings/mfd/max77620.yaml b/Documentation/devicetree/bindings/mfd/max77620.yaml
-(...)
-> +patternProperties:
-> +  "^gpio(@[0-9]+)?$":
-> +    type: object
-> +    properties:
-> +      gpio-hog:
-> +        $ref: "/schemas/types.yaml#/definitions/flag"
+On Mon, Jul 06, 2020 at 11:13:16AM +0800, Neal Liu wrote:
+> Control Flow Integrity(CFI) is a security mechanism that disallows
+> changes to the original control flow graph of a compiled binary,
+> making it significantly harder to perform such attacks.
+> 
+> init_state_node() assign same function callback to different
+> function pointer declarations.
+> 
+> static int init_state_node(struct cpuidle_state *idle_state,
+>                            const struct of_device_id *matches,
+>                            struct device_node *state_node) { ...
+>         idle_state->enter = match_id->data; ...
+>         idle_state->enter_s2idle = match_id->data; }
+> 
+> Function declarations:
+> 
+> struct cpuidle_state { ...
+>         int (*enter) (struct cpuidle_device *dev,
+>                       struct cpuidle_driver *drv,
+>                       int index);
+> 
+>         void (*enter_s2idle) (struct cpuidle_device *dev,
+>                               struct cpuidle_driver *drv,
+>                               int index); };
+> 
+> In this case, either enter() or enter_s2idle() would cause CFI check
+> failed since they use same callee.
+> 
+> Align function prototype of enter() since it needs return value for
+> some use cases. The return value of enter_s2idle() is no
+> need currently.
+> 
+> Signed-off-by: Neal Liu <neal.liu@mediatek.com>
+> ---
+>  drivers/acpi/processor_idle.c   |    6 ++++--
+>  drivers/cpuidle/cpuidle-tegra.c |    8 +++++---
+>  drivers/idle/intel_idle.c       |    6 ++++--
+>  include/linux/cpuidle.h         |    6 +++---
+>  4 files changed, 16 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+> index 75534c5..6ffb6c9 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -655,8 +655,8 @@ static int acpi_idle_enter(struct cpuidle_device *dev,
+>  	return index;
+>  }
+>  
+> -static void acpi_idle_enter_s2idle(struct cpuidle_device *dev,
+> -				   struct cpuidle_driver *drv, int index)
+> +static int acpi_idle_enter_s2idle(struct cpuidle_device *dev,
+> +				  struct cpuidle_driver *drv, int index)
+>  {
+>  	struct acpi_processor_cx *cx = per_cpu(acpi_cstate[index], dev->cpu);
+>  
+> @@ -674,6 +674,8 @@ static void acpi_idle_enter_s2idle(struct cpuidle_device *dev,
+>  		}
+>  	}
+>  	acpi_idle_do_entry(cx);
 > +
-> +      output-high:
-> +        $ref: "/schemas/types.yaml#/definitions/flag"
+> +	return 0;
+>  }
+>  
+>  static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+> index 1500458..a12fb14 100644
+> --- a/drivers/cpuidle/cpuidle-tegra.c
+> +++ b/drivers/cpuidle/cpuidle-tegra.c
+> @@ -253,11 +253,13 @@ static int tegra_cpuidle_enter(struct cpuidle_device *dev,
+>  	return err ? -1 : index;
+>  }
+>  
+> -static void tegra114_enter_s2idle(struct cpuidle_device *dev,
+> -				  struct cpuidle_driver *drv,
+> -				  int index)
+> +static int tegra114_enter_s2idle(struct cpuidle_device *dev,
+> +				 struct cpuidle_driver *drv,
+> +				 int index)
+>  {
+>  	tegra_cpuidle_enter(dev, drv, index);
 > +
-> +      gpios:
-> +        $ref: "/schemas/types.yaml#/definitions/uint32-matrix"
-
-This looks strange. ^gpio(@[0-9]+)?$ seems like the node for
-the gpio-controller per se, and that should have a subnode for
-the hog, but this makes it look like that hog is directly in the
-gpio controller node.
-
-The current gpio.txt lists this example:
-
-        qe_pio_a: gpio-controller@1400 {
-                compatible = "fsl,qe-pario-bank-a", "fsl,qe-pario-bank";
-                reg = <0x1400 0x18>;
-                gpio-controller;
-                #gpio-cells = <2>;
-
-                line_b {
-                        gpio-hog;
-                        gpios = <6 0>;
-                        output-low;
-                        line-name = "foo-bar-gpio";
-                };
-        };
-
-I know I should make a generic gpio.yaml include you can just
-use for all of this but you know ... time. (Volunteers welcome!)
-
-> +  "^pinmux(@[0-9]+)?$":
-> +    type: object
-> +    patternProperties:
-> +      "^gpio[0-7_]+$":
-> +        type: object
-> +        properties:
-> +          pins:
-> +            items:
-> +              pattern: "^gpio[0-7]$"
-> +            minItems: 1
-> +            maxItems: 8
+> +	return 0;
+>  }
+>  
+>  /*
+> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+> index f449584..b178da3 100644
+> --- a/drivers/idle/intel_idle.c
+> +++ b/drivers/idle/intel_idle.c
+> @@ -175,13 +175,15 @@ static __cpuidle int intel_idle(struct cpuidle_device *dev,
+>   * Invoked as a suspend-to-idle callback routine with frozen user space, frozen
+>   * scheduler tick and suspended scheduler clock on the target CPU.
+>   */
+> -static __cpuidle void intel_idle_s2idle(struct cpuidle_device *dev,
+> -					struct cpuidle_driver *drv, int index)
+> +static __cpuidle int intel_idle_s2idle(struct cpuidle_device *dev,
+> +				       struct cpuidle_driver *drv, int index)
+>  {
+>  	unsigned long eax = flg2MWAIT(drv->states[index].flags);
+>  	unsigned long ecx = 1; /* break on interrupt flag */
+>  
+>  	mwait_idle_with_hints(eax, ecx);
 > +
-> +          function:
-> +            $ref: "/schemas/types.yaml#/definitions/string"
-> +            enum:
-> +              - gpio
-> +              - lpm-control-in
-> +              - fps-out
-> +              - 32k-out1
-> +              - sd0-dvs-in
-> +              - sd1-dvs-in
-> +              - reference-out
-> +
-> +          drive-push-pull:
-> +            $ref: "/schemas/types.yaml#/definitions/uint32"
-> +            enum: [ 0, 1 ]
-> +
-> +          drive-open-drain:
-> +            $ref: "/schemas/types.yaml#/definitions/uint32"
-> +            enum: [ 0, 1 ]
-> +
-> +          bias-pull-up:
-> +            $ref: "/schemas/types.yaml#/definitions/uint32"
-> +            enum: [ 0, 1 ]
-> +
-> +          bias-pull-down:
-> +            $ref: "/schemas/types.yaml#/definitions/uint32"
-> +            enum: [ 0, 1 ]
+> +	return 0;
+>  }
+>  
+>  /*
+> diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+> index ec2ef63..bee10c0 100644
+> --- a/include/linux/cpuidle.h
+> +++ b/include/linux/cpuidle.h
+> @@ -66,9 +66,9 @@ struct cpuidle_state {
+>  	 * suspended, so it must not re-enable interrupts at any point (even
+>  	 * temporarily) or attempt to change states of clock event devices.
+>  	 */
+> -	void (*enter_s2idle) (struct cpuidle_device *dev,
+> -			      struct cpuidle_driver *drv,
+> -			      int index);
+> +	int (*enter_s2idle)(struct cpuidle_device *dev,
+> +			    struct cpuidle_driver *drv,
+> +			    int index);
+>  };
+>  
+>  /* Idle State Flags */
+> -- 
+> 1.7.9.5
 
-This seems to reinvent large parts of Rob's already provided:
-Documentation/devicetree/bindings/pinctrl/pinmux-node.yaml
-Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
+This looks good to me, thank you for sending the patch! Please feel free
+to add:
 
-So just $ref-include these instead. See other bindings for examples.
-Since this is placed in mfd you might need some ../pinctrl... path.
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
 
-Yours,
-Linus Walleij
+Sami
