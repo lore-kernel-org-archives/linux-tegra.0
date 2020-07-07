@@ -1,43 +1,74 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: [PATCH v3 04/13] ASoC: tegra: tegra20_das: remove always-true comparison
-Date: Tue,  7 Jul 2020 14:06:03 -0500
-Message-ID: <20200707190612.97799-5-pierre-louis.bossart@linux.intel.com>
-References: <20200707190612.97799-1-pierre-louis.bossart@linux.intel.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [RFC PATCH v2 11/18] media: tegra-video: Add support for external
+ sensor capture
+Date: Tue, 7 Jul 2020 21:35:12 +0200
+Message-ID: <af11cb24-57b2-7326-ca29-e168dcbb8006@xs4all.nl>
+References: <1592358094-23459-1-git-send-email-skomatineni@nvidia.com>
+ <1592358094-23459-12-git-send-email-skomatineni@nvidia.com>
+ <50deca28-c198-703c-96e2-82c53f48cd65@xs4all.nl>
+ <6ee18b4d-b63b-8053-1b7e-c3ec7c1d4956@nvidia.com>
+ <6846e5bb-db1d-c2ff-c52c-70a2094c5b50@nvidia.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200707190612.97799-1-pierre-louis.bossart-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
-Cc: tiwai-l3A5Bk7waGM@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pierre-Louis Bossart <pierre-louis.bossart-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, YueHaibing <yuehaibing-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <6846e5bb-db1d-c2ff-c52c-70a2094c5b50@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
+Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix W=1 warning:
+On 07/07/2020 21:25, Sowjanya Komatineni wrote:
+> 
+> On 7/7/20 12:01 PM, Sowjanya Komatineni wrote:
+>>
+>>
+>> On 7/6/20 2:10 AM, Hans Verkuil wrote:
+>>>> +static void tegra_vi_graph_cleanup(struct tegra_vi *vi)
+>>>> +{
+>>>> +	struct tegra_vi_channel *chan;
+>>>> +
+>>>> +	list_for_each_entry(chan, &vi->vi_chans, list) {
+>>>> +		video_unregister_device(&chan->video);
+>>>> +		mutex_lock(&chan->video_lock);
+>>>> +		vb2_queue_release(&chan->queue);
+>>> No need for this since this is done in vb2_fop_release().
+>>>
+>>> In fact, vb2_queue_release should never be called by drivers. Just using
+>>> vb2_fop_release or __vb2_fop_release is sufficient.
+>>>
+>>> The confusion is due to the fact that the name suggests that vb2_queue_release
+>>> has to be balanced with vb2_queue_init, but that's not the case. Perhaps
+>>> vb2_queue_stop or something like that might be a better name. I'll have to
+>>> think about this since I see that a lot of drivers do this wrong.
+>>>
+>>>> +		mutex_unlock(&chan->video_lock);
+>>>> +		v4l2_async_notifier_unregister(&chan->notifier);
+>>>> +		v4l2_async_notifier_cleanup(&chan->notifier);
+>>>> +	}
+>>>> +}
+>>>> +
+>>
+>> vb2_queue_release() here is called to stop streaming a head before media links are removed in case of when driver unbind happens while
+>> userspace application holds video device with active streaming in progress.
+>>
+>> Without vb2_queue_release() here streaming will be active during the driver unbind and by the time vb2_queue_release() happens from
+>> vb2_fop_release(), async notifiers gets unregistered and media links will be removed which causes channel stop stream to crash as we can't
+>> retrieve sensor subdev  thru media entity pads to execute s_stream on subdev.
+>>
+> I think we don't need async notifier unbind. Currently media links are removed during unbind so during notifier unregister all subdevs gets
+> unbind and links removed.
+> 
+> media_device_unregister during video device release callback takes care of media entity unregister and removing links.
+> 
+> So, will try by removing notifier unbind along with removing vb2_queue_release during cleanup.
+> 
 
-sound/soc//tegra/tegra20_das.c:101:11: warning:
-comparison of unsigned expression >= 0 is always true [-Wtype-limits]
-  101 |  if ((reg >= TEGRA20_DAS_DAP_CTRL_SEL) &&
-      |           ^~
+I actually wonder if vb2_queue_release shouldn't be called from video_unregister_device.
 
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
----
- sound/soc/tegra/tegra20_das.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I'll look into this tomorrow.
 
-diff --git a/sound/soc/tegra/tegra20_das.c b/sound/soc/tegra/tegra20_das.c
-index 1070b2710d5e..79dba878d854 100644
---- a/sound/soc/tegra/tegra20_das.c
-+++ b/sound/soc/tegra/tegra20_das.c
-@@ -98,8 +98,7 @@ EXPORT_SYMBOL_GPL(tegra20_das_connect_dac_to_dap);
- 
- static bool tegra20_das_wr_rd_reg(struct device *dev, unsigned int reg)
- {
--	if ((reg >= TEGRA20_DAS_DAP_CTRL_SEL) &&
--	    (reg <= LAST_REG(DAP_CTRL_SEL)))
-+	if (reg <= LAST_REG(DAP_CTRL_SEL))
- 		return true;
- 	if ((reg >= TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL) &&
- 	    (reg <= LAST_REG(DAC_INPUT_DATA_CLK_SEL)))
--- 
-2.25.1
+Regards,
+
+	Hans
