@@ -1,73 +1,31 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3] clk: tegra: pll: Improve PLLM enable-state detection
-Date: Wed,  8 Jul 2020 10:54:18 +0300
-Message-ID: <20200708075418.25295-1-digetx@gmail.com>
+Subject: [PATCH v1 0/5] Improvements for MAX77620 GPIO driver
+Date: Wed,  8 Jul 2020 11:26:29 +0300
+Message-ID: <20200708082634.30191-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Power Management Controller (PMC) can override the PLLM clock settings,
-including the enable-state. Although PMC could only act as a second level
-gate, meaning that PLLM needs to be enabled by the Clock and Reset
-Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
-overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
-order to be functional. Please note that this patch doesn't fix any known
-problem, and thus, it's merely a minor improvement.
+Hello!
 
-Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@ulmo/T/
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
+This series addresses a problem that I discovered on Nexus 7 device where
+GPIO interrupts may be left enabled after bootloader and the driver isn't
+prepared to this. Secondly, I made few very minor cleanup improvements to
+the code.
 
-Changelog:
+Dmitry Osipenko (5):
+  gpio: max77620: Initialize interrupts state
+  gpio: max77620: Replace 8 with MAX77620_GPIO_NR
+  gpio: max77620: Replace interrupt-enable array with bitmap
+  gpio: max77620: Don't handle disabled interrupts
+  gpio: max77620: Move variable declaration
 
-v3: - Dropped unintended code change that was accidentally added to v2.
+ drivers/gpio/gpio-max77620.c | 44 ++++++++++++++++++++++++++++--------
+ 1 file changed, 34 insertions(+), 10 deletions(-)
 
-v2: - Added clarifying comment to the code.
-
-    - Prettified the code.
-
- drivers/clk/tegra/clk-pll.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index b2d39a66f0fa..37cfcd6836c9 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -327,16 +327,26 @@ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
- 	return clk_pll_wait_for_lock(pll);
- }
- 
-+static bool pllm_pmc_clk_enabled(struct tegra_clk_pll *pll)
-+{
-+	u32 val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
-+
-+	return !(val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) ||
-+		(val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE);
-+}
-+
- static int clk_pll_is_enabled(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	u32 val;
- 
--	if (pll->params->flags & TEGRA_PLLM) {
--		val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
--		if (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)
--			return val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE ? 1 : 0;
--	}
-+	/*
-+	 * Power Management Controller (PMC) can override the PLLM clock
-+	 * settings, including the enable-state. The PLLM is enabled when
-+	 * PLLM's CaR state is ON and when PLLM isn't disabled by PMC.
-+	 */
-+	if ((pll->params->flags & TEGRA_PLLM) && !pllm_pmc_clk_enabled(pll))
-+		return 0;
- 
- 	val = pll_readl_base(pll);
- 
 -- 
 2.26.0
