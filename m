@@ -1,49 +1,53 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 2/5] gpio: max77620: Replace 8 with MAX77620_GPIO_NR
-Date: Wed,  8 Jul 2020 11:26:31 +0300
-Message-ID: <20200708082634.30191-3-digetx@gmail.com>
-References: <20200708082634.30191-1-digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4.4 00/19] 4.4.230-rc1 review
+Date: Wed, 8 Jul 2020 09:39:55 +0100
+Message-ID: <4d2606a1-1a35-31db-3440-11793103e2ec@nvidia.com>
+References: <20200707145747.493710555@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20200708082634.30191-1-digetx@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200707145747.493710555-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The MAX77620_GPIO_NR enum value represents the total number of GPIOs,
-let's use it instead of a raw value in order to improve the code's
-readability a tad.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpio/gpio-max77620.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 07/07/2020 16:10, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.230 release.
+> There are 19 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 09 Jul 2020 14:57:34 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.230-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 473b4e900bbb..6a7ede6b8b74 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -19,8 +19,8 @@ struct max77620_gpio {
- 	struct regmap		*rmap;
- 	struct device		*dev;
- 	struct mutex		buslock; /* irq_bus_lock */
--	unsigned int		irq_type[8];
--	bool			irq_enabled[8];
-+	unsigned int		irq_type[MAX77620_GPIO_NR];
-+	bool			irq_enabled[MAX77620_GPIO_NR];
- };
- 
- static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
-@@ -38,7 +38,7 @@ static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
- 
- 	pending = value;
- 
--	for_each_set_bit(offset, &pending, 8) {
-+	for_each_set_bit(offset, &pending, MAX77620_GPIO_NR) {
- 		unsigned int virq;
- 
- 		virq = irq_find_mapping(gpio->gpio_chip.irq.domain, offset);
+
+All tests are passing for Tegra ...
+
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    25 tests:	25 pass, 0 fail
+
+Linux version:	4.4.230-rc1-gc19eba6b3434
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.26.0
+nvpublic
