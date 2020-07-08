@@ -1,74 +1,72 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 5/6] gpio: max77620: Use irqchip template
-Date: Wed,  8 Jul 2020 23:23:54 +0300
-Message-ID: <20200708202355.28507-6-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 6/6] gpio: max77620: Initialize hardware state of interrupts
+Date: Wed,  8 Jul 2020 23:23:55 +0300
+Message-ID: <20200708202355.28507-7-digetx@gmail.com>
 References: <20200708202355.28507-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200708202355.28507-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200708202355.28507-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This change addresses one of the GPIO-core TODOs for the MAX77620 driver
-which requires modern drivers to use the irqchip template. Instead of
-using the GPIO's irqchip-helpers for creating the IRQ domain, the
-gpio_irq_chip structure is now filled by the driver itself and then
-gpiochip_add_data() takes care of instantiating the IRQ domain for us.
+I noticed on Nexus 7 that after rebooting from downstream kernel to
+upstream, the GPIO interrupt is triggering non-stop despite interrupts
+being disabled for all of GPIOs. This happens because Nexus 7 uses a
+soft-reboot, meaning that bootloader should take care of resetting
+hardware, but the bootloader doesn't do it well. As a result, GPIO
+interrupt may be left ON at a boot time. Let's mask all GPIO interrupts
+at the driver's initialization time in order to resolve the issue.
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpio/gpio-max77620.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/gpio/gpio-max77620.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
 diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 9121d2507f60..6c516aa7732d 100644
+index 6c516aa7732d..e090979659eb 100644
 --- a/drivers/gpio/gpio-max77620.c
 +++ b/drivers/gpio/gpio-max77620.c
-@@ -277,6 +277,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	if (!mgpio)
- 		return -ENOMEM;
- 
-+	mutex_init(&mgpio->buslock);
- 	mgpio->rmap = chip->rmap;
- 	mgpio->dev = &pdev->dev;
- 
-@@ -291,6 +292,11 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	mgpio->gpio_chip.can_sleep = 1;
- 	mgpio->gpio_chip.base = -1;
- 
-+	mgpio->gpio_chip.irq.chip = &max77620_gpio_irqchip;
-+	mgpio->gpio_chip.irq.default_type = IRQ_TYPE_NONE;
-+	mgpio->gpio_chip.irq.handler = handle_edge_irq;
-+	mgpio->gpio_chip.irq.threaded = true;
-+
- 	platform_set_drvdata(pdev, mgpio);
- 
- 	ret = devm_gpiochip_add_data(&pdev->dev, &mgpio->gpio_chip, mgpio);
-@@ -299,11 +305,6 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	mutex_init(&mgpio->buslock);
--
--	gpiochip_irqchip_add_nested(&mgpio->gpio_chip, &max77620_gpio_irqchip,
--				    0, handle_edge_irq, IRQ_TYPE_NONE);
--
- 	ret = devm_request_threaded_irq(&pdev->dev, gpio_irq, NULL,
- 					max77620_gpio_irqhandler, IRQF_ONESHOT,
- 					"max77620-gpio", mgpio);
-@@ -312,9 +313,6 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	gpiochip_set_nested_irqchip(&mgpio->gpio_chip, &max77620_gpio_irqchip,
--				    gpio_irq);
--
- 	return 0;
+@@ -260,6 +260,30 @@ static int max77620_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+ 	return -ENOTSUPP;
  }
  
++static int max77620_gpio_irq_init_hw(struct gpio_chip *gc)
++{
++	struct max77620_gpio *gpio = gpiochip_get_data(gc);
++	unsigned int i;
++	int err;
++
++	/*
++	 * GPIO interrupts may be left ON after bootloader, hence let's
++	 * pre-initialize hardware to the expected state by disabling all
++	 * the interrupts.
++	 */
++	for (i = 0; i < MAX77620_GPIO_NR; i++) {
++		err = regmap_update_bits(gpio->rmap, GPIO_REG_ADDR(i),
++					 MAX77620_CNFG_GPIO_INT_MASK, 0);
++		if (err < 0) {
++			dev_err(gpio->dev,
++				"failed to disable interrupt: %d\n", err);
++			return err;
++		}
++	}
++
++	return 0;
++}
++
+ static int max77620_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct max77620_chip *chip =  dev_get_drvdata(pdev->dev.parent);
+@@ -295,6 +319,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+ 	mgpio->gpio_chip.irq.chip = &max77620_gpio_irqchip;
+ 	mgpio->gpio_chip.irq.default_type = IRQ_TYPE_NONE;
+ 	mgpio->gpio_chip.irq.handler = handle_edge_irq;
++	mgpio->gpio_chip.irq.init_hw = max77620_gpio_irq_init_hw,
+ 	mgpio->gpio_chip.irq.threaded = true;
+ 
+ 	platform_set_drvdata(pdev, mgpio);
 -- 
 2.26.0
