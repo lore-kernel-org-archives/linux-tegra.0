@@ -1,50 +1,28 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 1/6] gpio: max77620: Replace 8 with MAX77620_GPIO_NR
-Date: Wed,  8 Jul 2020 23:23:50 +0300
-Message-ID: <20200708202355.28507-2-digetx@gmail.com>
-References: <20200708202355.28507-1-digetx@gmail.com>
+From: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v10 5/5] iommu/arm-smmu: Add global/context fault
+ implementation hooks
+Date: Wed, 8 Jul 2020 13:36:17 -0700
+Message-ID: <20200708203616.GA28080@Asurada-Nvidia>
+References: <20200708050017.31563-1-vdumpa@nvidia.com>
+ <20200708050017.31563-6-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200708202355.28507-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200708050017.31563-6-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The MAX77620_GPIO_NR enum value represents the total number of GPIOs,
-let's use it instead of a raw value in order to improve the code's
-readability a tad.
+On Tue, Jul 07, 2020 at 10:00:17PM -0700, Krishna Reddy wrote:
+> Add global/context fault hooks to allow vendor specific implementations
+> override default fault interrupt handlers.
+> 
+> Update NVIDIA implementation to override the default global/context fault
+> interrupt handlers and handle interrupts across the two ARM MMU-500s that
+> are programmed identically.
+> 
+> Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpio/gpio-max77620.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 313bd02dd893..4c0c9ec2587d 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -19,8 +19,8 @@ struct max77620_gpio {
- 	struct regmap		*rmap;
- 	struct device		*dev;
- 	struct mutex		buslock; /* irq_bus_lock */
--	unsigned int		irq_type[8];
--	bool			irq_enabled[8];
-+	unsigned int		irq_type[MAX77620_GPIO_NR];
-+	bool			irq_enabled[MAX77620_GPIO_NR];
- };
- 
- static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
-@@ -38,7 +38,7 @@ static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
- 
- 	pending = value;
- 
--	for_each_set_bit(offset, &pending, 8) {
-+	for_each_set_bit(offset, &pending, MAX77620_GPIO_NR) {
- 		unsigned int virq;
- 
- 		virq = irq_find_mapping(gpio->gpio_chip.irq.domain, offset);
--- 
-2.26.0
+Reviewed-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
