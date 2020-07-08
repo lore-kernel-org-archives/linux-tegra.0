@@ -1,39 +1,39 @@
-From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1 4/5] gpio: max77620: Don't handle disabled interrupts
-Date: Wed, 8 Jul 2020 18:31:21 +0300
-Message-ID: <CAHp75VcsvvsmcW_hSRv-mg3v5Z_7c0S-r7WNVOVi-70dE_LvmQ@mail.gmail.com>
-References: <20200708082634.30191-1-digetx@gmail.com> <20200708082634.30191-5-digetx@gmail.com>
- <CAHp75VcqkmywShtOVQhEw3qwbDCHjPKeQDYWxZiq+Cvx2_QCwA@mail.gmail.com>
- <68df4805-daf9-91c5-d755-53abc8823654@gmail.com> <CAHp75VcEqTJxPj1pETC9eUsZCLwpv8tyZ7EjKvzzJTQ4wfKJyg@mail.gmail.com>
- <d39caa8f-816c-5d4d-6f54-99baea3e0d5a@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2 0/2] Improvements for MAX77620 GPIO driver
+Date: Wed,  8 Jul 2020 18:58:32 +0300
+Message-ID: <20200708155834.19762-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d39caa8f-816c-5d4d-6f54-99baea3e0d5a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 8, 2020 at 1:54 PM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> 08.07.2020 13:11, Andy Shevchenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+Hello!
 
-...
+This series addresses a problem that I discovered on Nexus 7 device where
+GPIO interrupts may be left enabled after bootloader and the driver isn't
+prepared to this, it also makes a small improvement to the code.
 
-> It should be unnecessary since we now see that the handle_nested_irq()
-> checks whether interrupt was requested and if it wasn't, then particular
-> GPIO interrupt will be treated as spurious [1]. The pending =3D=3D 0
-> condition is an extreme case, I don't think that there is a need to
-> optimize it without any good reason.
->
-> [1] https://elixir.bootlin.com/linux/v5.8-rc3/source/kernel/irq/chip.c#L4=
-85
->
-> Hence it should be better to drop this patch.
+Changelog:
 
-Fine with me, thanks!
+v2: - Addressed review comment that were made by Andy Shevchenko to v1:
 
---=20
-With Best Regards,
-Andy Shevchenko
+        - Generic init_hw() callback is used now for resetting interrupts.
+
+        - These v1 patches are dropped:
+
+           gpio: max77620: Replace interrupt-enable array with bitmap
+           gpio: max77620: Don't handle disabled interrupts
+           gpio: max77620: Move variable declaration
+
+Dmitry Osipenko (2):
+  gpio: max77620: Initialize interrupts state
+  gpio: max77620: Replace 8 with MAX77620_GPIO_NR
+
+ drivers/gpio/gpio-max77620.c | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
+
+-- 
+2.26.0
