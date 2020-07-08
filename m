@@ -1,34 +1,36 @@
-From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v1 3/5] gpio: max77620: Replace interrupt-enable array
- with bitmap
-Date: Wed, 8 Jul 2020 11:44:08 +0300
-Message-ID: <CAHp75Vc56D5QeL2WArUj4OGGk4XgkiK37FnFr=5+XsisLpng1A@mail.gmail.com>
-References: <20200708082634.30191-1-digetx@gmail.com> <20200708082634.30191-4-digetx@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v1 4/5] gpio: max77620: Don't handle disabled interrupts
+Date: Wed, 8 Jul 2020 11:46:09 +0300
+Message-ID: <CAHp75VcqkmywShtOVQhEw3qwbDCHjPKeQDYWxZiq+Cvx2_QCwA@mail.gmail.com>
+References: <20200708082634.30191-1-digetx@gmail.com> <20200708082634.30191-5-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200708082634.30191-4-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20200708082634.30191-5-digetx@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 8, 2020 at 11:30 AM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Wed, Jul 8, 2020 at 11:29 AM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> There is no need to dedicate an array where a bitmap could be used.
-> Let's replace the interrupt's enable-array with the enable-mask in order
-> to improve the code a tad.
+> Check whether GPIO IRQ is enabled before proceeding with handling the
+> interrupt request. The interrupt handler now returns IRQ_NONE if none
+> of interrupts were handled, which is usually a sign of a problem.
 
 ...
 
-> +#include <linux/bitops.h>
+> -       pending = value;
+> +       pending = value & gpio->irq_enb_mask;
 
->         unsigned int            irq_type[MAX77620_GPIO_NR];
-> -       bool                    irq_enabled[MAX77620_GPIO_NR];
-> +       unsigned long           irq_enb_mask;
+> +       if (!pending)
+> +               return IRQ_NONE;
 
-I would rather to move to DECLARE_BITMAP()
-(the macro is defined in types.h IIRC)
+for_each_set_bit() should take care of it, no?
+(and probably return with IRQ_RETVAL() macro)
+
+>         for_each_set_bit(offset, &pending, MAX77620_GPIO_NR) {
+>                 unsigned int virq;
 
 -- 
 With Best Regards,
