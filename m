@@ -1,54 +1,53 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] cpuidle: tegra: Correctly handle result of
- arm_cpuidle_simple_enter()
-Date: Wed, 8 Jul 2020 17:32:18 +0300
-Message-ID: <3bc2064e-e94d-984c-edab-50b4dc2fd2dd@gmail.com>
-References: <20200702001354.27056-1-digetx@gmail.com>
- <4ffff3d8-2d41-3fb2-ed16-c9662d18d261@nvidia.com>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 5.4 00/65] 5.4.51-rc1 review
+Date: Wed, 8 Jul 2020 17:15:00 +0200
+Message-ID: <20200708151500.GA710412@kroah.com>
+References: <20200707145752.417212219@linuxfoundation.org>
+ <6fbcdd30-68d3-e8c5-d762-7b8a8c48d112@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4ffff3d8-2d41-3fb2-ed16-c9662d18d261-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <6fbcdd30-68d3-e8c5-d762-7b8a8c48d112-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-08.07.2020 15:34, Jon Hunter пишет:
+On Wed, Jul 08, 2020 at 09:41:33AM +0100, Jon Hunter wrote:
 > 
-> On 02/07/2020 01:13, Dmitry Osipenko wrote:
->> The enter() callback of CPUIDLE drivers returns index of the entered idle
->> state on success or a negative value on failure. The negative value could
->> any negative value, i.e. it doesn't necessarily needs to be a error code.
->> That's because CPUIDLE core only cares about the fact of failure and not
->> about the reason of the enter() failure.
->>
->> Like every other enter() callback, the arm_cpuidle_simple_enter() returns
->> the entered idle-index on success. Unlike some of other drivers, it never
->> fails. It happened that TEGRA_C1=index=err=0 in the code of cpuidle-tegra
->> driver, and thus, there is no problem for the cpuidle-tegra driver created
->> by the typo in the code which assumes that the arm_cpuidle_simple_enter()
->> returns a error code.
->>
->> The arm_cpuidle_simple_enter() also may return a -ENODEV error if CPU_IDLE
->> is disabled in a kernel's config, but all CPUIDLE drivers are disabled if
->> CPU_IDLE is disabled, including the cpuidle-tegra driver. So we can't ever
->> see the error code from arm_cpuidle_simple_enter() today.
->>
->> Of course the code may get some changes in the future and then the typo
->> may transform into a real bug, so let's correct the typo in the code by
->> making tegra_cpuidle_enter() to directly return the index returned by the
->> arm_cpuidle_simple_enter().
+> On 07/07/2020 16:16, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.51 release.
+> > There are 65 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 09 Jul 2020 14:57:34 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.51-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Are you suggesting that arm_cpuidle_simple_enter() could be updated to
-> actually return an error? Sorry it is not clear to me what you are implying.
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v5.4:
+>     11 builds:	11 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     56 tests:	56 pass, 0 fail
+> 
+> Linux version:	5.4.51-rc1-g47d410b54275
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
 
-Hello, Jon!
+Thanks for testing all of these and letting me know.
 
-Yes, I'm saying that *potentially* arm_cpuidle_simple_enter() could be
-updated to actually return error.
-
-The implication is that the current code is wrong and it may strike back
-in the future if we won't fix it. Is this more clear? :)
+greg k-h
