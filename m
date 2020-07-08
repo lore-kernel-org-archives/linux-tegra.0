@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v3 2/6] gpio: max77620: Fix missing release of interrupt
-Date: Wed,  8 Jul 2020 23:23:51 +0300
-Message-ID: <20200708202355.28507-3-digetx@gmail.com>
+Subject: [PATCH v3 4/6] gpio: max77620: Don't shadow error code of platform_get_irq()
+Date: Wed,  8 Jul 2020 23:23:53 +0300
+Message-ID: <20200708202355.28507-5-digetx@gmail.com>
 References: <20200708202355.28507-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,30 +12,39 @@ To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The requested interrupt is never released by the driver. Fix this by
-using the resource-managed variant of request_threaded_irq().
+The platform_get_irq() returns a positive interrupt number on success and
+negative error code on failure (zero shouldn't ever happen in practice, it
+would produce a noisy warning). Hence let's return the error code directly
+instead of overriding it with -ENODEV.
 
-Fixes: ab3dd9cc24d4 ("gpio: max77620: Fix interrupt handling")
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpio/gpio-max77620.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-max77620.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 4c0c9ec2587d..7f7e8d4bf0d3 100644
+index 39d431da2dbc..9121d2507f60 100644
 --- a/drivers/gpio/gpio-max77620.c
 +++ b/drivers/gpio/gpio-max77620.c
-@@ -305,8 +305,9 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	gpiochip_irqchip_add_nested(&mgpio->gpio_chip, &max77620_gpio_irqchip,
- 				    0, handle_edge_irq, IRQ_TYPE_NONE);
+@@ -264,12 +264,14 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct max77620_chip *chip =  dev_get_drvdata(pdev->dev.parent);
+ 	struct max77620_gpio *mgpio;
+-	int gpio_irq;
++	unsigned int gpio_irq;
+ 	int ret;
  
--	ret = request_threaded_irq(gpio_irq, NULL, max77620_gpio_irqhandler,
--				   IRQF_ONESHOT, "max77620-gpio", mgpio);
-+	ret = devm_request_threaded_irq(&pdev->dev, gpio_irq, NULL,
-+					max77620_gpio_irqhandler, IRQF_ONESHOT,
-+					"max77620-gpio", mgpio);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to request IRQ: %d\n", ret);
- 		return ret;
+-	gpio_irq = platform_get_irq(pdev, 0);
+-	if (gpio_irq <= 0)
+-		return -ENODEV;
++	ret = platform_get_irq(pdev, 0);
++	if (ret < 0)
++		return ret;
++
++	gpio_irq = ret;
+ 
+ 	mgpio = devm_kzalloc(&pdev->dev, sizeof(*mgpio), GFP_KERNEL);
+ 	if (!mgpio)
 -- 
 2.26.0
