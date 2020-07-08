@@ -1,56 +1,76 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 1/2] gpio: max77620: Initialize interrupts state
-Date: Wed, 8 Jul 2020 19:58:03 +0300
-Message-ID: <CAHp75VcFG3oK7C8Y7RZKoEvwPo9+hKMMucnDhtpqLDmLGoPmJw@mail.gmail.com>
-References: <20200708155834.19762-1-digetx@gmail.com> <20200708155834.19762-2-digetx@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 5.4 00/65] 5.4.51-rc1 review
+Date: Wed, 8 Jul 2020 17:58:27 +0100
+Message-ID: <14d23282-c871-3f9d-372c-06da693666e1@nvidia.com>
+References: <20200707145752.417212219@linuxfoundation.org>
+ <6fbcdd30-68d3-e8c5-d762-7b8a8c48d112@nvidia.com>
+ <20200708151500.GA710412@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20200708155834.19762-2-digetx@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200708151500.GA710412-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 8, 2020 at 6:58 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> I noticed on Nexus 7 that after rebooting from downstream kernel to
-> upstream, the GPIO interrupt is triggering non-stop despite of interrupts
 
-despite interrupts
+On 08/07/2020 16:15, Greg Kroah-Hartman wrote:
+> On Wed, Jul 08, 2020 at 09:41:33AM +0100, Jon Hunter wrote:
+>>
+>> On 07/07/2020 16:16, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 5.4.51 release.
+>>> There are 65 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Thu, 09 Jul 2020 14:57:34 +0000.
+>>> Anything received after that time might be too late.
+>>>
+>>> The whole patch series can be found in one patch at:
+>>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.51-rc1.gz
+>>> or in the git tree and branch at:
+>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+>>> and the diffstat can be found below.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>> All tests are passing for Tegra ...
+>>
+>> Test results for stable-v5.4:
+>>     11 builds:	11 pass, 0 fail
+>>     26 boots:	26 pass, 0 fail
+>>     56 tests:	56 pass, 0 fail
+>>
+>> Linux version:	5.4.51-rc1-g47d410b54275
+>> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>>                 tegra194-p2972-0000, tegra20-ventana,
+>>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>>                 tegra30-cardhu-a04
+> 
+> Thanks for testing all of these and letting me know.
 
-> being disabled for all of GPIOs. This happens because Nexus 7 uses a
-> soft-reboot, meaning that bootloader should take care of resetting
-> hardware, but bootloader doesn't do it well. In a result, GPIO interrupt
+No problem. For some reason the v5.7 review email never made it to my
+inbox AFAICT. Who knows if it will show up tomorrow, but anyway it all
+looks good to Tegra ...
 
-but the bootloader
+Test results for stable-v5.7:
+    11 builds:	11 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    56 tests:	56 pass, 0 fail
 
-As a result
+Linux version:	5.7.8-rc1-gb371afd12a48
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-> may be left ON at a boot time. Let's mask all GPIO interrupts at the
-> driver's initialization time in order to resolve the issue.
-
-...
-
->         mgpio->gpio_chip.ngpio = MAX77620_GPIO_NR;
->         mgpio->gpio_chip.can_sleep = 1;
->         mgpio->gpio_chip.base = -1;
-> +       mgpio->gpio_chip.irq.init_hw = max77620_gpio_irq_init_hw,
-
-Now this seems a bit awkward. Perhaps you need first to switch to use
-GPIO IRQ chip structure?
-It's also in the TODO of the GPIO subsystem ;-)
-
-...
-
->  #ifdef CONFIG_OF_GPIO
->         mgpio->gpio_chip.of_node = pdev->dev.parent->of_node;
->  #endif
-
-This seems to be done by GPIO library.
-
-Also point to improve: don't shadow error from platform_get_irq().
+Cheers
+Jon
 
 -- 
-With Best Regards,
-Andy Shevchenko
+nvpublic
