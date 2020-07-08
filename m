@@ -1,47 +1,50 @@
-From: "Mrs. Safitaou Zoungrana" <richardlaurentdr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: My Dear Beloved One,
-Date: Wed, 8 Jul 2020 12:33:28 +0000
-Message-ID: <CALJAiTVXhrKZYOHVoupnx6hmXXD0i2k4MOSO6HW+mj1BAydXhA__36095.5616504484$1594211629$gmane$org@mail.gmail.com>
-Reply-To: mmsafiatou057-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2] cpuidle: tegra: Correctly handle result of
+ arm_cpuidle_simple_enter()
+Date: Wed, 8 Jul 2020 13:34:45 +0100
+Message-ID: <4ffff3d8-2d41-3fb2-ed16-c9662d18d261@nvidia.com>
+References: <20200702001354.27056-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200702001354.27056-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-My Dear Beloved One,
 
-I greet you in the name of God almighty the givers of all good things
-in life. Please kindly pardon me for any inconvenience this letter may
-cost you because I know it may come to you as a surprise as we have no
-previous correspondence.  I sent this mail praying for it to reach you
-in good health, since I myself are in a very critical health condition
-in which I sleep every night without knowing if I may be alive to see
-the next day.
+On 02/07/2020 01:13, Dmitry Osipenko wrote:
+> The enter() callback of CPUIDLE drivers returns index of the entered idle
+> state on success or a negative value on failure. The negative value could
+> any negative value, i.e. it doesn't necessarily needs to be a error code.
+> That's because CPUIDLE core only cares about the fact of failure and not
+> about the reason of the enter() failure.
+> 
+> Like every other enter() callback, the arm_cpuidle_simple_enter() returns
+> the entered idle-index on success. Unlike some of other drivers, it never
+> fails. It happened that TEGRA_C1=index=err=0 in the code of cpuidle-tegra
+> driver, and thus, there is no problem for the cpuidle-tegra driver created
+> by the typo in the code which assumes that the arm_cpuidle_simple_enter()
+> returns a error code.
+> 
+> The arm_cpuidle_simple_enter() also may return a -ENODEV error if CPU_IDLE
+> is disabled in a kernel's config, but all CPUIDLE drivers are disabled if
+> CPU_IDLE is disabled, including the cpuidle-tegra driver. So we can't ever
+> see the error code from arm_cpuidle_simple_enter() today.
+> 
+> Of course the code may get some changes in the future and then the typo
+> may transform into a real bug, so let's correct the typo in the code by
+> making tegra_cpuidle_enter() to directly return the index returned by the
+> arm_cpuidle_simple_enter().
 
-I am Mrs. Safiatou Zoungrana,  the wife of late Engineer Ralph
-Alphonso Zoungrana from Paris France but based here in Burkina Faso
-West Africa since eight years ago as a business woman dealing with
-gold exportation and Sales. We have been married for years before his
-sudden death although we were childless. I have been diagnosed with
-ovarian cancer and I have been battling with the sickness when my late
-lovely husband of a blessed memory was alive. May his soul rest in
-peace, Amen.
+Are you suggesting that arm_cpuidle_simple_enter() could be updated to
+actually return an error? Sorry it is not clear to me what you are implying.
 
-My late Husband left the sum of =E2=82=AC7.900.000.00 Seven Million Nine
-Hundred Thousand Euros in a fix/suspense account in one of the prime
-bank here in Burkina Faso. Recently, my Doctor told me that I have few
-days to live due to the cancer problem. The one that disturbs me most
-is my blood pressure sickness.
+Cheers
+Jon
 
-Having known my health condition I decided to seek for your kind
-assistance to transfer this fund into your account and you will use it
-to establish an orphanage home in my name. I will give you more
-details about the project as soon as I receive your reply in my
-private email (mmsafiatou057-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org) to handle this project because
-I do not want to state all here until I see your reply, desire and
-commitment to handle this project.
-
-My Regards to your family.
-Mrs. Safiatou Zoungrana.
+-- 
+nvpublic
