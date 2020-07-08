@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 6/6] gpio: max77620: Initialize hardware state of interrupts
-Date: Wed,  8 Jul 2020 23:23:55 +0300
-Message-ID: <20200708202355.28507-7-digetx@gmail.com>
+Subject: [PATCH v3 3/6] gpio: max77620: Don't set of_node
+Date: Wed,  8 Jul 2020 23:23:52 +0300
+Message-ID: <20200708202355.28507-4-digetx@gmail.com>
 References: <20200708202355.28507-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,61 +12,39 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I noticed on Nexus 7 that after rebooting from downstream kernel to
-upstream, the GPIO interrupt is triggering non-stop despite interrupts
-being disabled for all of GPIOs. This happens because Nexus 7 uses a
-soft-reboot, meaning that bootloader should take care of resetting
-hardware, but the bootloader doesn't do it well. As a result, GPIO
-interrupt may be left ON at a boot time. Let's mask all GPIO interrupts
-at the driver's initialization time in order to resolve the issue.
+The gpiochip_add_data() takes care of setting the of_node to the parent's
+device of_node, hence there is no need to do it manually in the driver's
+code. This patch corrects the parent's device pointer and removes the
+unnecessary setting of the of_node.
 
+Suggested-by: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpio/gpio-max77620.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/gpio/gpio-max77620.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 6c516aa7732d..e090979659eb 100644
+index 7f7e8d4bf0d3..39d431da2dbc 100644
 --- a/drivers/gpio/gpio-max77620.c
 +++ b/drivers/gpio/gpio-max77620.c
-@@ -260,6 +260,30 @@ static int max77620_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 	return -ENOTSUPP;
- }
+@@ -279,7 +279,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+ 	mgpio->dev = &pdev->dev;
  
-+static int max77620_gpio_irq_init_hw(struct gpio_chip *gc)
-+{
-+	struct max77620_gpio *gpio = gpiochip_get_data(gc);
-+	unsigned int i;
-+	int err;
-+
-+	/*
-+	 * GPIO interrupts may be left ON after bootloader, hence let's
-+	 * pre-initialize hardware to the expected state by disabling all
-+	 * the interrupts.
-+	 */
-+	for (i = 0; i < MAX77620_GPIO_NR; i++) {
-+		err = regmap_update_bits(gpio->rmap, GPIO_REG_ADDR(i),
-+					 MAX77620_CNFG_GPIO_INT_MASK, 0);
-+		if (err < 0) {
-+			dev_err(gpio->dev,
-+				"failed to disable interrupt: %d\n", err);
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int max77620_gpio_probe(struct platform_device *pdev)
- {
- 	struct max77620_chip *chip =  dev_get_drvdata(pdev->dev.parent);
-@@ -295,6 +319,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	mgpio->gpio_chip.irq.chip = &max77620_gpio_irqchip;
- 	mgpio->gpio_chip.irq.default_type = IRQ_TYPE_NONE;
- 	mgpio->gpio_chip.irq.handler = handle_edge_irq;
-+	mgpio->gpio_chip.irq.init_hw = max77620_gpio_irq_init_hw,
- 	mgpio->gpio_chip.irq.threaded = true;
+ 	mgpio->gpio_chip.label = pdev->name;
+-	mgpio->gpio_chip.parent = &pdev->dev;
++	mgpio->gpio_chip.parent = pdev->dev.parent;
+ 	mgpio->gpio_chip.direction_input = max77620_gpio_dir_input;
+ 	mgpio->gpio_chip.get = max77620_gpio_get;
+ 	mgpio->gpio_chip.direction_output = max77620_gpio_dir_output;
+@@ -288,9 +288,6 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+ 	mgpio->gpio_chip.ngpio = MAX77620_GPIO_NR;
+ 	mgpio->gpio_chip.can_sleep = 1;
+ 	mgpio->gpio_chip.base = -1;
+-#ifdef CONFIG_OF_GPIO
+-	mgpio->gpio_chip.of_node = pdev->dev.parent->of_node;
+-#endif
  
  	platform_set_drvdata(pdev, mgpio);
+ 
 -- 
 2.26.0
