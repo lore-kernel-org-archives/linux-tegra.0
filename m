@@ -1,7 +1,7 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v1 4/5] gpio: max77620: Don't handle disabled interrupts
-Date: Wed,  8 Jul 2020 11:26:33 +0300
-Message-ID: <20200708082634.30191-5-digetx@gmail.com>
+Subject: [PATCH v1 5/5] gpio: max77620: Move variable declaration
+Date: Wed,  8 Jul 2020 11:26:34 +0300
+Message-ID: <20200708082634.30191-6-digetx@gmail.com>
 References: <20200708082634.30191-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,29 +12,35 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Check whether GPIO IRQ is enabled before proceeding with handling the
-interrupt request. The interrupt handler now returns IRQ_NONE if none
-of interrupts were handled, which is usually a sign of a problem.
+Let's move the virq variable declaration to a top-level scope just to
+make the code a bit more visually appealing.
 
 Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpio/gpio-max77620.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-max77620.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index dd83c16a1ec6..8d54bc4307c2 100644
+index 8d54bc4307c2..6861980da0d8 100644
 --- a/drivers/gpio/gpio-max77620.c
 +++ b/drivers/gpio/gpio-max77620.c
-@@ -37,7 +37,9 @@ static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
- 		return IRQ_NONE;
- 	}
+@@ -27,7 +27,7 @@ struct max77620_gpio {
+ static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
+ {
+ 	struct max77620_gpio *gpio = data;
+-	unsigned int value, offset;
++	unsigned int value, offset, virq;
+ 	unsigned long pending;
+ 	int err;
  
--	pending = value;
-+	pending = value & gpio->irq_enb_mask;
-+	if (!pending)
-+		return IRQ_NONE;
+@@ -42,8 +42,6 @@ static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
+ 		return IRQ_NONE;
  
  	for_each_set_bit(offset, &pending, MAX77620_GPIO_NR) {
- 		unsigned int virq;
+-		unsigned int virq;
+-
+ 		virq = irq_find_mapping(gpio->gpio_chip.irq.domain, offset);
+ 		handle_nested_irq(virq);
+ 	}
 -- 
 2.26.0
