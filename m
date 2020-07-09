@@ -1,60 +1,107 @@
-From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 3/6] gpio: max77620: Don't set of_node
-Date: Thu, 9 Jul 2020 12:07:44 +0300
-Message-ID: <CAHp75Vd89QpwaGvkpzG+pxnLd8S2guPCARLW5xPwhxXL8ZRfFw@mail.gmail.com>
-References: <20200708202355.28507-1-digetx@gmail.com> <20200708202355.28507-4-digetx@gmail.com>
- <CAHp75VejftNuSqdYvd1YE1SdRON6=mQ_iD2dEr4K9D8YGgeRBQ@mail.gmail.com> <675c4691-d372-4fe1-d515-c86fdba2f588@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] Host1x/TegraDRM UAPI (sync points)
+Date: Thu, 9 Jul 2020 12:28:47 +0300
+Message-ID: <7feec6b2-3d00-04ac-92d0-dcc40751f9fa@gmail.com>
+References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
+ <5b1edaad-ba36-7b0f-5b02-457ae5b6d91e@gmail.com>
+ <62859775-514c-2941-75ed-6905e9282a6f@kapsi.fi>
+ <623c1eaa-31fb-8dff-f6c0-d8cd0be60070@gmail.com>
+ <827c92a6-7fed-a81c-ba8e-6c69416c4ab9@kapsi.fi>
+ <f1a88006-ab3e-9068-e220-15eee17aeba0@gmail.com>
+ <3b058989-a93a-6796-8d94-f60ce39e3fba@kapsi.fi>
+ <2190fe9d-6381-0b5e-39d8-a04daca9a1bf@gmail.com>
+ <a1d6c789-4935-110f-f4fd-db86ae0e4fef@kapsi.fi>
+ <a2b1f9cf-cc0b-1a0f-d0ac-addcb1f28502@gmail.com>
+ <d3a6c005-0d85-e7b9-41a2-3d86595efbc1@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <675c4691-d372-4fe1-d515-c86fdba2f588-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <d3a6c005-0d85-e7b9-41a2-3d86595efbc1-/1wQRMveznE@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 9, 2020 at 12:44 AM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> 08.07.2020 23:57, Andy Shevchenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Wednesday, July 8, 2020, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-> > <mailto:digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>> wrote:
+08.07.2020 13:06, Mikko Perttunen пишет:
+> On 7/7/20 2:06 PM, Dmitry Osipenko wrote:
+>> 02.07.2020 15:10, Mikko Perttunen пишет:
+>>> Ok, so we would have two kinds of syncpoints for the job; one
+>>> for kernel job tracking; and one that userspace can
+>>> manipulate as it wants to.
+>>>
+>>> Could we handle the job tracking syncpoint completely inside the kernel,
+>>> i.e. allocate it in kernel during job submission, and add an increment
+>>> for it at the end of the job (with condition OP_DONE)? For MLOCKing, the
+>>> kernel already needs to insert a SYNCPT_INCR(OP_DONE) + WAIT +
+>>> MLOCK_RELEASE sequence at the end of each job.
+>>
+>> If sync point is allocated within kernel, then we'll need to always
+>> patch all job's sync point increments with the ID of the allocated sync
+>> point, regardless of whether firewall enabled or not.
+> 
+> The idea was that the job tracking increment would also be added to the
+> pushbuffer in the kernel, so gathers would only have increments for the
+> "user syncpoints", if any. I think this should work for THI-based
+> engines (e.g. VIC), you probably have better information about
+> GR2D/GR3D. On newer Tegras we could use CHANNEL/APPID protection to
+> prevent the gathers from incrementing these job tracking syncpoints.
 
-...
+Could you please clarify what is THI?
 
-> > I gave a second look and I think my suggestion is wrong. Here is an
-> > interesting propagation of the parent device node to its grand son,
-> > leaving son=E2=80=99s one untouched. Original code has intentions to do=
- that way.
->
-> The [1] says that gpio_chip.parent should point at the "device providing
-> the GPIOs".
+>> Secondly, I'm now recalling that only one sync point could be assigned
+>> to a channel at a time on newer Tegras which support sync point
+>> protection. So it sounds like we don't really have variants other than
+>> to allocate one sync point per channel for the jobs usage if we want to
+>> be able to push multiple jobs into channel's pushbuffer, correct?
+>>
+> 
+> The other way around; each syncpoint can be assigned to one channel. One
+> channel may have multiple syncpoints.
 
-Yes, physical device I believe.
+Okay! So we actually could use a single sync point per-job for user
+increments + job tracking, correct?
 
-> That's the pdev->dev.parent in the case of this driver.
-> MAX77620 is an MFD PMIC device that has virtual sub-devices like GPIO
-> controller, PINCTRL and RTC. The MFD is the parent device that provides
-> the GPIOs [2].
->
-> [1]
-> https://elixir.bootlin.com/linux/v5.8-rc3/source/include/linux/gpio/drive=
-r.h#L276
->
-> [2]
-> https://elixir.bootlin.com/linux/v5.8-rc3/source/arch/arm64/boot/dts/nvid=
-ia/tegra210-p2180.dtsi#L48
->
-> I think the old code was wrong and this patch is correct, please correct
-> me if I'm missing something.
+>> ...
+>>>> Hmm, we actually should be able to have a one sync point per-channel
+>>>> for
+>>>> the job submission, similarly to what the current driver does!
+>>>>
+>>>> I'm keep forgetting about the waitbase existence!
+>>>
+>>> Tegra194 doesn't have waitbases, but if we are resubmitting all the jobs
+>>> anyway, can't we just recalculate wait thresholds at that time?
+>>
+>> Yes, thresholds could be recalculated + job should be re-formed at the
+>> push-time then.
+>>
+>> It also means that jobs always should be formed only at the push-time if
+>> wait-command is utilized by cmdstream since the waits always need to be
+>> patched because we won't know the thresholds until scheduler actually
+>> runs the job.
+> 
+> Could we keep the job tracking syncpoints entirely within the kernel,
+> and have all wait commands and other stuff that userspace does use the
+> user syncpoints? Then kernel job tracking and userspace activity would
+> be separate from each other.
 
-Hmm... I have checked through GPIO drivers I have knowledge of / care
-about and PMIC ones do like you suggested in this patch, the rest
-(which are instantiated from MFD) take a virtual platform device.
+I think this should work, but it's not clear to me what benefits this
+brings to us if we could re-use the same user-allocated sync point for
+both user increments + kernel job tracking.
 
-Looking at DT excerpt I think you're rather right than wrong, so I
-leave it to you and maintainers.
-Thanks!
+Is the idea to protect from userspace incrementing sync point too much?
+I.e. job could be treated as completed before CDMA is actually done with
+it.
 
---=20
-With Best Regards,
-Andy Shevchenko
+> Alternatively, if we know that jobs can only be removed from the middle
+> of pushbuffers, and not added, we could replace any removed jobs with
+> syncpoint increments in the pushbuffer and any thresholds would stay
+> intact.
+
+A bit unlikely that jobs could ever be removed from the middle of
+hardware queue by the DRM scheduler.
+
+Anyways, it should be nicer to shoot down everything and restart with a
+clean slate when necessary, like it's already supposed to happen by the
+scheduler.
