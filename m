@@ -1,71 +1,93 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3] clk: tegra: pll: Improve PLLM enable-state detection
-Date: Thu, 9 Jul 2020 10:49:28 +0100
-Message-ID: <3755bfe4-c7db-f9ac-0a02-b59b5dee401d@nvidia.com>
-References: <20200708075418.25295-1-digetx@gmail.com>
+Subject: Re: [PATCH v2] cpuidle: tegra: Correctly handle result of
+ arm_cpuidle_simple_enter()
+Date: Thu, 9 Jul 2020 10:51:07 +0100
+Message-ID: <fb6370d9-cae9-15dd-a19b-c3116256b471@nvidia.com>
+References: <20200702001354.27056-1-digetx@gmail.com>
+ <4ffff3d8-2d41-3fb2-ed16-c9662d18d261@nvidia.com>
+ <3bc2064e-e94d-984c-edab-50b4dc2fd2dd@gmail.com>
+ <be99caca-b50a-0e12-29dc-2da0d924af43@nvidia.com>
+ <55744bfb-af5e-ed2e-654c-d6de9b26b696@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200708075418.25295-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <55744bfb-af5e-ed2e-654c-d6de9b26b696-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 08/07/2020 08:54, Dmitry Osipenko wrote:
-> Power Management Controller (PMC) can override the PLLM clock settings,
-> including the enable-state. Although PMC could only act as a second level
-> gate, meaning that PLLM needs to be enabled by the Clock and Reset
-> Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
-> overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
-> order to be functional. Please note that this patch doesn't fix any known
-> problem, and thus, it's merely a minor improvement.
-> 
-> Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@ulmo/T/
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
-> 
-> Changelog:
-> 
-> v3: - Dropped unintended code change that was accidentally added to v2.
-> 
-> v2: - Added clarifying comment to the code.
-> 
->     - Prettified the code.
-> 
->  drivers/clk/tegra/clk-pll.c | 20 +++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index b2d39a66f0fa..37cfcd6836c9 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -327,16 +327,26 @@ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
->  	return clk_pll_wait_for_lock(pll);
->  }
->  
-> +static bool pllm_pmc_clk_enabled(struct tegra_clk_pll *pll)
-> +{
-> +	u32 val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
-> +
-> +	return !(val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) ||
-> +		(val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE);
-> +}
-> +
 
+On 09/07/2020 10:48, Dmitry Osipenko wrote:
+> 09.07.2020 12:06, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>> On 08/07/2020 15:32, Dmitry Osipenko wrote:
+>>> 08.07.2020 15:34, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>
+>>>> On 02/07/2020 01:13, Dmitry Osipenko wrote:
+>>>>> The enter() callback of CPUIDLE drivers returns index of the entered =
+idle
+>>>>> state on success or a negative value on failure. The negative value c=
+ould
+>>>>> any negative value, i.e. it doesn't necessarily needs to be a error c=
+ode.
+>>>>> That's because CPUIDLE core only cares about the fact of failure and =
+not
+>>>>> about the reason of the enter() failure.
+>>>>>
+>>>>> Like every other enter() callback, the arm_cpuidle_simple_enter() ret=
+urns
+>>>>> the entered idle-index on success. Unlike some of other drivers, it n=
+ever
+>>>>> fails. It happened that TEGRA_C1=3Dindex=3Derr=3D0 in the code of cpu=
+idle-tegra
+>>>>> driver, and thus, there is no problem for the cpuidle-tegra driver cr=
+eated
+>>>>> by the typo in the code which assumes that the arm_cpuidle_simple_ent=
+er()
+>>>>> returns a error code.
+>>>>>
+>>>>> The arm_cpuidle_simple_enter() also may return a -ENODEV error if CPU=
+_IDLE
+>>>>> is disabled in a kernel's config, but all CPUIDLE drivers are disable=
+d if
+>>>>> CPU_IDLE is disabled, including the cpuidle-tegra driver. So we can't=
+ ever
+>>>>> see the error code from arm_cpuidle_simple_enter() today.
+>>>>>
+>>>>> Of course the code may get some changes in the future and then the ty=
+po
+>>>>> may transform into a real bug, so let's correct the typo in the code =
+by
+>>>>> making tegra_cpuidle_enter() to directly return the index returned by=
+ the
+>>>>> arm_cpuidle_simple_enter().
+>>>>
+>>>> Are you suggesting that arm_cpuidle_simple_enter() could be updated to
+>>>> actually return an error? Sorry it is not clear to me what you are imp=
+lying.
+>>>
+>>> Hello, Jon!
+>>>
+>>> Yes, I'm saying that *potentially* arm_cpuidle_simple_enter() could be
+>>> updated to actually return error.
+>>
+>>
+>> OK, then I am confused, because after your change, we would now ignore
+>> any error that could be returned in the future. Yes the current code
+>> does not set the variable 'index' correctly, but before we set the value
+>> of 'index' shouldn't we check that the value being returned is not a
+>> negative error code first?
+>=20
+> Could you please clarify what do you mean by "ignore any error"? Do you
+> mean the error message?
 
-I am not sure that the name of the above function really reflects what
-it is doing. If it was enabled, isn't it the AND of these bits?
-
-Futhermore, what we really want to know is if the override is enabled,
-but the PMC PLLM enable is not set. In other words, the PMC is gating
-the clock. So maybe we should have a function that is called something
-like pllm_clk_is_gated_by_pmc().
+Yes exactly. We would skip that, which seems a bit odd.
 
 Jon
 
--- 
+--=20
 nvpublic
