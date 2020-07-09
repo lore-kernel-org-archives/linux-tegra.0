@@ -1,52 +1,76 @@
 From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4 3/6] gpio: max77620: Don't set of_node
-Date: Thu,  9 Jul 2020 20:12:00 +0300
-Message-ID: <20200709171203.12950-4-digetx@gmail.com>
-References: <20200709171203.12950-1-digetx@gmail.com>
+Subject: [PATCH v4] clk: tegra: pll: Improve PLLM enable-state detection
+Date: Thu,  9 Jul 2020 20:20:57 +0300
+Message-ID: <20200709172057.13951-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20200709171203.12950-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The gpiochip_add_data() takes care of setting the of_node to the parent's
-device of_node, hence there is no need to do it manually in the driver's
-code. This patch corrects the parent's device pointer and removes the
-unnecessary setting of the of_node.
+Power Management Controller (PMC) can override the PLLM clock settings,
+including the enable-state. Although PMC could only act as a second level
+gate, meaning that PLLM needs to be enabled by the Clock and Reset
+Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
+overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
+order to be functional. Please note that this patch doesn't fix any known
+problem, and thus, it's merely a minor improvement.
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@ulmo/T/
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpio/gpio-max77620.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 7f7e8d4bf0d3..39d431da2dbc 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -279,7 +279,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	mgpio->dev = &pdev->dev;
+Changelog:
+
+v4: - Renamed pllm_pmc_clk_enabled() to pllm_clk_is_gated_by_pmc() as
+      it was suggested by Jon Hunter in the review comment to v3.
+
+v3: - Dropped unintended code change that was accidentally added to v2.
+
+v2: - Added clarifying comment to the code.
+
+    - Prettified the code.
+
+ drivers/clk/tegra/clk-pll.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b2d39a66f0fa..ff13b371e176 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -327,16 +327,26 @@ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
+ 	return clk_pll_wait_for_lock(pll);
+ }
  
- 	mgpio->gpio_chip.label = pdev->name;
--	mgpio->gpio_chip.parent = &pdev->dev;
-+	mgpio->gpio_chip.parent = pdev->dev.parent;
- 	mgpio->gpio_chip.direction_input = max77620_gpio_dir_input;
- 	mgpio->gpio_chip.get = max77620_gpio_get;
- 	mgpio->gpio_chip.direction_output = max77620_gpio_dir_output;
-@@ -288,9 +288,6 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	mgpio->gpio_chip.ngpio = MAX77620_GPIO_NR;
- 	mgpio->gpio_chip.can_sleep = 1;
- 	mgpio->gpio_chip.base = -1;
--#ifdef CONFIG_OF_GPIO
--	mgpio->gpio_chip.of_node = pdev->dev.parent->of_node;
--#endif
++static bool pllm_clk_is_gated_by_pmc(struct tegra_clk_pll *pll)
++{
++	u32 val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
++
++	return (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) &&
++	      !(val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE);
++}
++
+ static int clk_pll_is_enabled(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	u32 val;
  
- 	platform_set_drvdata(pdev, mgpio);
+-	if (pll->params->flags & TEGRA_PLLM) {
+-		val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
+-		if (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)
+-			return val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE ? 1 : 0;
+-	}
++	/*
++	 * Power Management Controller (PMC) can override the PLLM clock
++	 * settings, including the enable-state. The PLLM is enabled when
++	 * PLLM's CaR state is ON and when PLLM isn't gated by PMC.
++	 */
++	if ((pll->params->flags & TEGRA_PLLM) && pllm_clk_is_gated_by_pmc(pll))
++		return 0;
+ 
+ 	val = pll_readl_base(pll);
  
 -- 
 2.26.0
