@@ -1,84 +1,62 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] cpuidle: tegra: Correctly handle result of
- arm_cpuidle_simple_enter()
-Date: Thu, 9 Jul 2020 13:21:03 +0300
-Message-ID: <afe84878-495d-0037-eb5a-ce067235ff6f@gmail.com>
-References: <20200702001354.27056-1-digetx@gmail.com>
- <4ffff3d8-2d41-3fb2-ed16-c9662d18d261@nvidia.com>
- <3bc2064e-e94d-984c-edab-50b4dc2fd2dd@gmail.com>
- <be99caca-b50a-0e12-29dc-2da0d924af43@nvidia.com>
- <55744bfb-af5e-ed2e-654c-d6de9b26b696@gmail.com>
- <fb6370d9-cae9-15dd-a19b-c3116256b471@nvidia.com>
+Subject: Re: [PATCH v3 3/6] gpio: max77620: Don't set of_node
+Date: Thu, 9 Jul 2020 13:38:26 +0300
+Message-ID: <ff7985a4-58be-b466-62c2-abce9ae1c0f0@gmail.com>
+References: <20200708202355.28507-1-digetx@gmail.com>
+ <20200708202355.28507-4-digetx@gmail.com>
+ <CAHp75VejftNuSqdYvd1YE1SdRON6=mQ_iD2dEr4K9D8YGgeRBQ@mail.gmail.com>
+ <675c4691-d372-4fe1-d515-c86fdba2f588@gmail.com>
+ <CAHp75Vd89QpwaGvkpzG+pxnLd8S2guPCARLW5xPwhxXL8ZRfFw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <fb6370d9-cae9-15dd-a19b-c3116256b471-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAHp75Vd89QpwaGvkpzG+pxnLd8S2guPCARLW5xPwhxXL8ZRfFw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-09.07.2020 12:51, Jon Hunter пишет:
+09.07.2020 12:07, Andy Shevchenko пишет:
+> On Thu, Jul 9, 2020 at 12:44 AM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> 08.07.2020 23:57, Andy Shevchenko пишет:
+>>> On Wednesday, July 8, 2020, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+>>> <mailto:digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>> wrote:
 > 
+> ...
 > 
-> On 09/07/2020 10:48, Dmitry Osipenko wrote:
->> 09.07.2020 12:06, Jon Hunter пишет:
->>>
->>> On 08/07/2020 15:32, Dmitry Osipenko wrote:
->>>> 08.07.2020 15:34, Jon Hunter пишет:
->>>>>
->>>>> On 02/07/2020 01:13, Dmitry Osipenko wrote:
->>>>>> The enter() callback of CPUIDLE drivers returns index of the entered idle
->>>>>> state on success or a negative value on failure. The negative value could
->>>>>> any negative value, i.e. it doesn't necessarily needs to be a error code.
->>>>>> That's because CPUIDLE core only cares about the fact of failure and not
->>>>>> about the reason of the enter() failure.
->>>>>>
->>>>>> Like every other enter() callback, the arm_cpuidle_simple_enter() returns
->>>>>> the entered idle-index on success. Unlike some of other drivers, it never
->>>>>> fails. It happened that TEGRA_C1=index=err=0 in the code of cpuidle-tegra
->>>>>> driver, and thus, there is no problem for the cpuidle-tegra driver created
->>>>>> by the typo in the code which assumes that the arm_cpuidle_simple_enter()
->>>>>> returns a error code.
->>>>>>
->>>>>> The arm_cpuidle_simple_enter() also may return a -ENODEV error if CPU_IDLE
->>>>>> is disabled in a kernel's config, but all CPUIDLE drivers are disabled if
->>>>>> CPU_IDLE is disabled, including the cpuidle-tegra driver. So we can't ever
->>>>>> see the error code from arm_cpuidle_simple_enter() today.
->>>>>>
->>>>>> Of course the code may get some changes in the future and then the typo
->>>>>> may transform into a real bug, so let's correct the typo in the code by
->>>>>> making tegra_cpuidle_enter() to directly return the index returned by the
->>>>>> arm_cpuidle_simple_enter().
->>>>>
->>>>> Are you suggesting that arm_cpuidle_simple_enter() could be updated to
->>>>> actually return an error? Sorry it is not clear to me what you are implying.
->>>>
->>>> Hello, Jon!
->>>>
->>>> Yes, I'm saying that *potentially* arm_cpuidle_simple_enter() could be
->>>> updated to actually return error.
->>>
->>>
->>> OK, then I am confused, because after your change, we would now ignore
->>> any error that could be returned in the future. Yes the current code
->>> does not set the variable 'index' correctly, but before we set the value
->>> of 'index' shouldn't we check that the value being returned is not a
->>> negative error code first?
+>>> I gave a second look and I think my suggestion is wrong. Here is an
+>>> interesting propagation of the parent device node to its grand son,
+>>> leaving son’s one untouched. Original code has intentions to do that way.
 >>
->> Could you please clarify what do you mean by "ignore any error"? Do you
->> mean the error message?
+>> The [1] says that gpio_chip.parent should point at the "device providing
+>> the GPIOs".
 > 
-> Yes exactly. We would skip that, which seems a bit odd.
+> Yes, physical device I believe.
+> 
+>> That's the pdev->dev.parent in the case of this driver.
+>> MAX77620 is an MFD PMIC device that has virtual sub-devices like GPIO
+>> controller, PINCTRL and RTC. The MFD is the parent device that provides
+>> the GPIOs [2].
+>>
+>> [1]
+>> https://elixir.bootlin.com/linux/v5.8-rc3/source/include/linux/gpio/driver.h#L276
+>>
+>> [2]
+>> https://elixir.bootlin.com/linux/v5.8-rc3/source/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi#L48
+>>
+>> I think the old code was wrong and this patch is correct, please correct
+>> me if I'm missing something.
+> 
+> Hmm... I have checked through GPIO drivers I have knowledge of / care
+> about and PMIC ones do like you suggested in this patch, the rest
+> (which are instantiated from MFD) take a virtual platform device.
+> 
+> Looking at DT excerpt I think you're rather right than wrong, so I
+> leave it to you and maintainers.
+> Thanks!
 
-Yeah.. well, I was a bit doubtful about the error message, maybe
-arm_cpuidle_simple_enter() could have its own message? :)
+Okay, waiting for the maintainers then :)
 
-But since you're asking about it now, then perhaps it should be better
-and more clear to everyone not to skip the error message.
-
-Alright, I'll prepare the v3.
-
-Thank you for the review!
+Thank you very much for the review!
