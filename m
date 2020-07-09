@@ -1,51 +1,44 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 1/6] gpio: max77620: Replace 8 with MAX77620_GPIO_NR
-Date: Thu,  9 Jul 2020 20:11:58 +0300
-Message-ID: <20200709171203.12950-2-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v4 2/6] gpio: max77620: Fix missing release of interrupt
+Date: Thu,  9 Jul 2020 20:11:59 +0300
+Message-ID: <20200709171203.12950-3-digetx@gmail.com>
 References: <20200709171203.12950-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200709171203.12950-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20200709171203.12950-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The MAX77620_GPIO_NR enum value represents the total number of GPIOs,
-let's use it instead of a raw value in order to improve the code's
-readability a tad.
+The requested interrupt is never released by the driver. Fix this by
+using the resource-managed variant of request_threaded_irq().
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Acked-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Fixes: ab3dd9cc24d4 ("gpio: max77620: Fix interrupt handling")
+Cc: <stable@vger.kernel.org> # 5.5+
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpio/gpio-max77620.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-max77620.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 313bd02dd893..4c0c9ec2587d 100644
+index 4c0c9ec2587d..7f7e8d4bf0d3 100644
 --- a/drivers/gpio/gpio-max77620.c
 +++ b/drivers/gpio/gpio-max77620.c
-@@ -19,8 +19,8 @@ struct max77620_gpio {
- 	struct regmap		*rmap;
- 	struct device		*dev;
- 	struct mutex		buslock; /* irq_bus_lock */
--	unsigned int		irq_type[8];
--	bool			irq_enabled[8];
-+	unsigned int		irq_type[MAX77620_GPIO_NR];
-+	bool			irq_enabled[MAX77620_GPIO_NR];
- };
+@@ -305,8 +305,9 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+ 	gpiochip_irqchip_add_nested(&mgpio->gpio_chip, &max77620_gpio_irqchip,
+ 				    0, handle_edge_irq, IRQ_TYPE_NONE);
  
- static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
-@@ -38,7 +38,7 @@ static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
- 
- 	pending = value;
- 
--	for_each_set_bit(offset, &pending, 8) {
-+	for_each_set_bit(offset, &pending, MAX77620_GPIO_NR) {
- 		unsigned int virq;
- 
- 		virq = irq_find_mapping(gpio->gpio_chip.irq.domain, offset);
+-	ret = request_threaded_irq(gpio_irq, NULL, max77620_gpio_irqhandler,
+-				   IRQF_ONESHOT, "max77620-gpio", mgpio);
++	ret = devm_request_threaded_irq(&pdev->dev, gpio_irq, NULL,
++					max77620_gpio_irqhandler, IRQF_ONESHOT,
++					"max77620-gpio", mgpio);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to request IRQ: %d\n", ret);
+ 		return ret;
 -- 
 2.26.0
