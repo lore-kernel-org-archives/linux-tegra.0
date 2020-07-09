@@ -1,76 +1,146 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v4] clk: tegra: pll: Improve PLLM enable-state detection
-Date: Thu,  9 Jul 2020 20:20:57 +0300
-Message-ID: <20200709172057.13951-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3] cpuidle: tegra: Correctly handle result of arm_cpuidle_simple_enter()
+Date: Thu,  9 Jul 2020 20:35:32 +0300
+Message-ID: <20200709173532.15431-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Power Management Controller (PMC) can override the PLLM clock settings,
-including the enable-state. Although PMC could only act as a second level
-gate, meaning that PLLM needs to be enabled by the Clock and Reset
-Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
-overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
-order to be functional. Please note that this patch doesn't fix any known
-problem, and thus, it's merely a minor improvement.
+The enter() callback of CPUIDLE drivers returns index of the entered idle
+state on success or a negative value on failure. The negative value could
+any negative value, i.e. it doesn't necessarily needs to be a error code.
+That's because CPUIDLE core only cares about the fact of failure and not
+about the reason of the enter() failure.
 
-Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@ulmo/T/
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Like every other enter() callback, the arm_cpuidle_simple_enter() returns
+the entered idle-index on success. Unlike some of other drivers, it never
+fails. It happened that TEGRA_C1=index=err=0 in the code of cpuidle-tegra
+driver, and thus, there is no problem for the cpuidle-tegra driver created
+by the typo in the code which assumes that the arm_cpuidle_simple_enter()
+returns a error code.
+
+The arm_cpuidle_simple_enter() also may return a -ENODEV error if CPU_IDLE
+is disabled in a kernel's config, but all CPUIDLE drivers are disabled if
+CPU_IDLE is disabled, including the cpuidle-tegra driver. So we can't ever
+see the error code from arm_cpuidle_simple_enter() today.
+
+Of course the code may get some changes in the future and then the
+typo may transform into a real bug, so let's correct the typo! The
+tegra_cpuidle_state_enter() is now changed to make it return the entered
+idle-index on success and negative error code on fail, which puts it on
+par with the arm_cpuidle_simple_enter(), making code consistent in regards
+to the error handling.
+
+This patch fixes a minor typo in the code, it doesn't fix any bugs.
+
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
 
 Changelog:
 
-v4: - Renamed pllm_pmc_clk_enabled() to pllm_clk_is_gated_by_pmc() as
-      it was suggested by Jon Hunter in the review comment to v3.
+v3: The tegra_cpuidle_state_enter() now returns entered idle-index on
+    success instead of 0. Hence the error message will be shown by the
+    tegra-cpuidle driver if arm_cpuidle_simple_enter() will ever fail.
+    Again thanks to Jon Hunter!
 
-v3: - Dropped unintended code change that was accidentally added to v2.
+v2: Improved commit message by clarifying what values are returned by
+    arm_cpuidle_simple_enter() and when. Thanks to Jon Hunter for the
+    suggestion!
 
-v2: - Added clarifying comment to the code.
+ drivers/cpuidle/cpuidle-tegra.c | 34 +++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
 
-    - Prettified the code.
-
- drivers/clk/tegra/clk-pll.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index b2d39a66f0fa..ff13b371e176 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -327,16 +327,26 @@ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
- 	return clk_pll_wait_for_lock(pll);
+diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+index 150045849d78..30e6816c6737 100644
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -172,7 +172,7 @@ static int tegra_cpuidle_coupled_barrier(struct cpuidle_device *dev)
+ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
+ 				     int index, unsigned int cpu)
+ {
+-	int ret;
++	int err;
+ 
+ 	/*
+ 	 * CC6 state is the "CPU cluster power-off" state.  In order to
+@@ -183,9 +183,9 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
+ 	 * CPU cores, GIC and L2 cache).
+ 	 */
+ 	if (index == TEGRA_CC6) {
+-		ret = tegra_cpuidle_coupled_barrier(dev);
+-		if (ret)
+-			return ret;
++		err = tegra_cpuidle_coupled_barrier(dev);
++		if (err)
++			return err;
+ 	}
+ 
+ 	local_fiq_disable();
+@@ -194,15 +194,15 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
+ 
+ 	switch (index) {
+ 	case TEGRA_C7:
+-		ret = tegra_cpuidle_c7_enter();
++		err = tegra_cpuidle_c7_enter();
+ 		break;
+ 
+ 	case TEGRA_CC6:
+-		ret = tegra_cpuidle_cc6_enter(cpu);
++		err = tegra_cpuidle_cc6_enter(cpu);
+ 		break;
+ 
+ 	default:
+-		ret = -EINVAL;
++		err = -EINVAL;
+ 		break;
+ 	}
+ 
+@@ -210,7 +210,7 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
+ 	tegra_pm_clear_cpu_in_lp2();
+ 	local_fiq_enable();
+ 
+-	return ret;
++	return err ?: index;
  }
  
-+static bool pllm_clk_is_gated_by_pmc(struct tegra_clk_pll *pll)
-+{
-+	u32 val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
-+
-+	return (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) &&
-+	      !(val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE);
-+}
-+
- static int clk_pll_is_enabled(struct clk_hw *hw)
+ static int tegra_cpuidle_adjust_state_index(int index, unsigned int cpu)
+@@ -236,21 +236,27 @@ static int tegra_cpuidle_enter(struct cpuidle_device *dev,
+ 			       int index)
  {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	u32 val;
+ 	unsigned int cpu = cpu_logical_map(dev->cpu);
+-	int err;
++	int ret;
  
--	if (pll->params->flags & TEGRA_PLLM) {
--		val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
--		if (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)
--			return val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE ? 1 : 0;
--	}
-+	/*
-+	 * Power Management Controller (PMC) can override the PLLM clock
-+	 * settings, including the enable-state. The PLLM is enabled when
-+	 * PLLM's CaR state is ON and when PLLM isn't gated by PMC.
-+	 */
-+	if ((pll->params->flags & TEGRA_PLLM) && pllm_clk_is_gated_by_pmc(pll))
-+		return 0;
+ 	index = tegra_cpuidle_adjust_state_index(index, cpu);
+ 	if (dev->states_usage[index].disable)
+ 		return -1;
  
- 	val = pll_readl_base(pll);
+ 	if (index == TEGRA_C1)
+-		err = arm_cpuidle_simple_enter(dev, drv, index);
++		ret = arm_cpuidle_simple_enter(dev, drv, index);
+ 	else
+-		err = tegra_cpuidle_state_enter(dev, index, cpu);
++		ret = tegra_cpuidle_state_enter(dev, index, cpu);
  
+-	if (err && (err != -EINTR || index != TEGRA_CC6))
+-		pr_err_once("failed to enter state %d err: %d\n", index, err);
++	if (ret < 0) {
++		if (ret != -EINTR || index != TEGRA_CC6)
++			pr_err_once("failed to enter state %d err: %d\n",
++				    index, ret);
++		index = -1;
++	} else {
++		index = ret;
++	}
+ 
+-	return err ? -1 : index;
++	return index;
+ }
+ 
+ static void tegra114_enter_s2idle(struct cpuidle_device *dev,
 -- 
 2.26.0
