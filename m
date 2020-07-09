@@ -1,107 +1,77 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC] Host1x/TegraDRM UAPI (sync points)
-Date: Thu, 9 Jul 2020 12:28:47 +0300
-Message-ID: <7feec6b2-3d00-04ac-92d0-dcc40751f9fa@gmail.com>
-References: <9b06b7ec-f952-2561-7afb-5653514cd5d3@kapsi.fi>
- <5b1edaad-ba36-7b0f-5b02-457ae5b6d91e@gmail.com>
- <62859775-514c-2941-75ed-6905e9282a6f@kapsi.fi>
- <623c1eaa-31fb-8dff-f6c0-d8cd0be60070@gmail.com>
- <827c92a6-7fed-a81c-ba8e-6c69416c4ab9@kapsi.fi>
- <f1a88006-ab3e-9068-e220-15eee17aeba0@gmail.com>
- <3b058989-a93a-6796-8d94-f60ce39e3fba@kapsi.fi>
- <2190fe9d-6381-0b5e-39d8-a04daca9a1bf@gmail.com>
- <a1d6c789-4935-110f-f4fd-db86ae0e4fef@kapsi.fi>
- <a2b1f9cf-cc0b-1a0f-d0ac-addcb1f28502@gmail.com>
- <d3a6c005-0d85-e7b9-41a2-3d86595efbc1@kapsi.fi>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 5.4 00/65] 5.4.51-rc1 review
+Date: Thu, 9 Jul 2020 11:30:12 +0200
+Message-ID: <20200709093012.GB46127@kroah.com>
+References: <20200707145752.417212219@linuxfoundation.org>
+ <6fbcdd30-68d3-e8c5-d762-7b8a8c48d112@nvidia.com>
+ <20200708151500.GA710412@kroah.com>
+ <14d23282-c871-3f9d-372c-06da693666e1@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d3a6c005-0d85-e7b9-41a2-3d86595efbc1-/1wQRMveznE@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <14d23282-c871-3f9d-372c-06da693666e1-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, sumit.semwal-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gustavo-THi1TnShQwVAfugRpC6u6w@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, shuah-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, patches-ssFOTAMYnuFg9hUCZPvPmw@public.gmane.org, ben.hutchings-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org, lkft-triage-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-08.07.2020 13:06, Mikko Perttunen пишет:
-> On 7/7/20 2:06 PM, Dmitry Osipenko wrote:
->> 02.07.2020 15:10, Mikko Perttunen пишет:
->>> Ok, so we would have two kinds of syncpoints for the job; one
->>> for kernel job tracking; and one that userspace can
->>> manipulate as it wants to.
->>>
->>> Could we handle the job tracking syncpoint completely inside the kernel,
->>> i.e. allocate it in kernel during job submission, and add an increment
->>> for it at the end of the job (with condition OP_DONE)? For MLOCKing, the
->>> kernel already needs to insert a SYNCPT_INCR(OP_DONE) + WAIT +
->>> MLOCK_RELEASE sequence at the end of each job.
->>
->> If sync point is allocated within kernel, then we'll need to always
->> patch all job's sync point increments with the ID of the allocated sync
->> point, regardless of whether firewall enabled or not.
+On Wed, Jul 08, 2020 at 05:58:27PM +0100, Jon Hunter wrote:
 > 
-> The idea was that the job tracking increment would also be added to the
-> pushbuffer in the kernel, so gathers would only have increments for the
-> "user syncpoints", if any. I think this should work for THI-based
-> engines (e.g. VIC), you probably have better information about
-> GR2D/GR3D. On newer Tegras we could use CHANNEL/APPID protection to
-> prevent the gathers from incrementing these job tracking syncpoints.
-
-Could you please clarify what is THI?
-
->> Secondly, I'm now recalling that only one sync point could be assigned
->> to a channel at a time on newer Tegras which support sync point
->> protection. So it sounds like we don't really have variants other than
->> to allocate one sync point per channel for the jobs usage if we want to
->> be able to push multiple jobs into channel's pushbuffer, correct?
->>
+> On 08/07/2020 16:15, Greg Kroah-Hartman wrote:
+> > On Wed, Jul 08, 2020 at 09:41:33AM +0100, Jon Hunter wrote:
+> >>
+> >> On 07/07/2020 16:16, Greg Kroah-Hartman wrote:
+> >>> This is the start of the stable review cycle for the 5.4.51 release.
+> >>> There are 65 patches in this series, all will be posted as a response
+> >>> to this one.  If anyone has any issues with these being applied, please
+> >>> let me know.
+> >>>
+> >>> Responses should be made by Thu, 09 Jul 2020 14:57:34 +0000.
+> >>> Anything received after that time might be too late.
+> >>>
+> >>> The whole patch series can be found in one patch at:
+> >>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.51-rc1.gz
+> >>> or in the git tree and branch at:
+> >>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> >>> and the diffstat can be found below.
+> >>>
+> >>> thanks,
+> >>>
+> >>> greg k-h
+> >>
+> >> All tests are passing for Tegra ...
+> >>
+> >> Test results for stable-v5.4:
+> >>     11 builds:	11 pass, 0 fail
+> >>     26 boots:	26 pass, 0 fail
+> >>     56 tests:	56 pass, 0 fail
+> >>
+> >> Linux version:	5.4.51-rc1-g47d410b54275
+> >> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> >>                 tegra194-p2972-0000, tegra20-ventana,
+> >>                 tegra210-p2371-2180, tegra210-p3450-0000,
+> >>                 tegra30-cardhu-a04
+> > 
+> > Thanks for testing all of these and letting me know.
 > 
-> The other way around; each syncpoint can be assigned to one channel. One
-> channel may have multiple syncpoints.
-
-Okay! So we actually could use a single sync point per-job for user
-increments + job tracking, correct?
-
->> ...
->>>> Hmm, we actually should be able to have a one sync point per-channel
->>>> for
->>>> the job submission, similarly to what the current driver does!
->>>>
->>>> I'm keep forgetting about the waitbase existence!
->>>
->>> Tegra194 doesn't have waitbases, but if we are resubmitting all the jobs
->>> anyway, can't we just recalculate wait thresholds at that time?
->>
->> Yes, thresholds could be recalculated + job should be re-formed at the
->> push-time then.
->>
->> It also means that jobs always should be formed only at the push-time if
->> wait-command is utilized by cmdstream since the waits always need to be
->> patched because we won't know the thresholds until scheduler actually
->> runs the job.
+> No problem. For some reason the v5.7 review email never made it to my
+> inbox AFAICT. Who knows if it will show up tomorrow, but anyway it all
+> looks good to Tegra ...
 > 
-> Could we keep the job tracking syncpoints entirely within the kernel,
-> and have all wait commands and other stuff that userspace does use the
-> user syncpoints? Then kernel job tracking and userspace activity would
-> be separate from each other.
+> Test results for stable-v5.7:
+>     11 builds:	11 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     56 tests:	56 pass, 0 fail
+> 
+> Linux version:	5.7.8-rc1-gb371afd12a48
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
 
-I think this should work, but it's not clear to me what benefits this
-brings to us if we could re-use the same user-allocated sync point for
-both user increments + kernel job tracking.
+Oh, nice, I was wondering why you didn't respond for that.
 
-Is the idea to protect from userspace incrementing sync point too much?
-I.e. job could be treated as completed before CDMA is actually done with
-it.
+thanks for letting me know.
 
-> Alternatively, if we know that jobs can only be removed from the middle
-> of pushbuffers, and not added, we could replace any removed jobs with
-> syncpoint increments in the pushbuffer and any thresholds would stay
-> intact.
-
-A bit unlikely that jobs could ever be removed from the middle of
-hardware queue by the DRM scheduler.
-
-Anyways, it should be nicer to shoot down everything and restart with a
-clean slate when necessary, like it's already supposed to happen by the
-scheduler.
+greg k-h
