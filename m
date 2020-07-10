@@ -1,64 +1,132 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v10 4/5] dt-bindings: arm-smmu: add binding for Tegra194
- SMMU
-Date: Thu, 9 Jul 2020 14:13:48 -0600
-Message-ID: <20200709201348.GA808454@bogus>
-References: <20200708050017.31563-1-vdumpa@nvidia.com>
- <20200708050017.31563-5-vdumpa@nvidia.com>
+From: Neal Liu <neal.liu@mediatek.com>
+Subject: Re: [PATCH v2] cpuidle: change enter_s2idle() prototype
+Date: Fri, 10 Jul 2020 11:08:55 +0800
+Message-ID: <1594350535.4670.13.camel@mtkswgap22>
+References: <1594005196-16327-1-git-send-email-neal.liu@mediatek.com>
+         <1594005196-16327-2-git-send-email-neal.liu@mediatek.com>
+         <CAJZ5v0ihB5AJwSRpjaOnXAmciregzxARL5xfudu1h+=_LXaE_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200708050017.31563-5-vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CAJZ5v0ihB5AJwSRpjaOnXAmciregzxARL5xfudu1h+=_LXaE_w@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Neal Liu <neal.liu@mediatek.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sami Tolvanen <samitolvanen@google.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, wsd_upstream@mediatek.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 07, 2020 at 10:00:16PM -0700, Krishna Reddy wrote:
-> Add binding for NVIDIA's Tegra194 SoC SMMU.
-> 
-> Signed-off-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../devicetree/bindings/iommu/arm,smmu.yaml    | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> index d7ceb4c34423..ac1f526c3424 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> @@ -38,6 +38,11 @@ properties:
->                - qcom,sc7180-smmu-500
->                - qcom,sdm845-smmu-500
->            - const: arm,mmu-500
-> +      - description: NVIDIA SoCs that program two ARM MMU-500s identically
-> +        items:
-> +          - enum:
-> +              - nvidia,tegra194-smmu
-> +          - const: nvidia,smmu-500
->        - items:
->            - const: arm,mmu-500
->            - const: arm,smmu-v2
-> @@ -138,6 +143,19 @@ required:
->  
->  additionalProperties: false
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra194-smmu
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +          maxItems: 2
-
-This doesn't work. The main part of the schema already said there's only 
-1 reg region. This part is ANDed with that, not an override. You need to 
-add an else clause with 'maxItems: 1' and change the base schema to 
-{minItems: 1, maxItems: 2}.
-
-Rob
+T24gVGh1LCAyMDIwLTA3LTA5IGF0IDE0OjE4ICswMjAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90
+ZToNCj4gT24gTW9uLCBKdWwgNiwgMjAyMCBhdCA1OjEzIEFNIE5lYWwgTGl1IDxuZWFsLmxpdUBt
+ZWRpYXRlay5jb20+IHdyb3RlOg0KPiA+DQo+ID4gQ29udHJvbCBGbG93IEludGVncml0eShDRkkp
+IGlzIGEgc2VjdXJpdHkgbWVjaGFuaXNtIHRoYXQgZGlzYWxsb3dzDQo+ID4gY2hhbmdlcyB0byB0
+aGUgb3JpZ2luYWwgY29udHJvbCBmbG93IGdyYXBoIG9mIGEgY29tcGlsZWQgYmluYXJ5LA0KPiA+
+IG1ha2luZyBpdCBzaWduaWZpY2FudGx5IGhhcmRlciB0byBwZXJmb3JtIHN1Y2ggYXR0YWNrcy4N
+Cj4gPg0KPiA+IGluaXRfc3RhdGVfbm9kZSgpIGFzc2lnbiBzYW1lIGZ1bmN0aW9uIGNhbGxiYWNr
+IHRvIGRpZmZlcmVudA0KPiA+IGZ1bmN0aW9uIHBvaW50ZXIgZGVjbGFyYXRpb25zLg0KPiA+DQo+
+ID4gc3RhdGljIGludCBpbml0X3N0YXRlX25vZGUoc3RydWN0IGNwdWlkbGVfc3RhdGUgKmlkbGVf
+c3RhdGUsDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0IG9mX2Rl
+dmljZV9pZCAqbWF0Y2hlcywNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3Qg
+ZGV2aWNlX25vZGUgKnN0YXRlX25vZGUpIHsgLi4uDQo+ID4gICAgICAgICBpZGxlX3N0YXRlLT5l
+bnRlciA9IG1hdGNoX2lkLT5kYXRhOyAuLi4NCj4gPiAgICAgICAgIGlkbGVfc3RhdGUtPmVudGVy
+X3MyaWRsZSA9IG1hdGNoX2lkLT5kYXRhOyB9DQo+ID4NCj4gPiBGdW5jdGlvbiBkZWNsYXJhdGlv
+bnM6DQo+ID4NCj4gPiBzdHJ1Y3QgY3B1aWRsZV9zdGF0ZSB7IC4uLg0KPiA+ICAgICAgICAgaW50
+ICgqZW50ZXIpIChzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAg
+ICAgICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsDQo+ID4gICAgICAgICAgICAgICAg
+ICAgICAgIGludCBpbmRleCk7DQo+ID4NCj4gPiAgICAgICAgIHZvaWQgKCplbnRlcl9zMmlkbGUp
+IChzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwNCj4gPiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBpbnQgaW5kZXgpOyB9Ow0KPiA+DQo+ID4gSW4gdGhpcyBjYXNlLCBlaXRo
+ZXIgZW50ZXIoKSBvciBlbnRlcl9zMmlkbGUoKSB3b3VsZCBjYXVzZSBDRkkgY2hlY2sNCj4gPiBm
+YWlsZWQgc2luY2UgdGhleSB1c2Ugc2FtZSBjYWxsZWUuDQo+IA0KPiBDYW4geW91IHBsZWFzZSBl
+eHBsYWluIHRoaXMgaW4gYSBiaXQgbW9yZSBkZXRhaWw/DQo+IA0KPiBBcyBpdCBzdGFuZHMsIEkg
+ZG9uJ3QgdW5kZXJzdGFuZCB0aGUgcHJvYmxlbSBzdGF0ZW1lbnQgZW5vdWdoIHRvIGFwcGx5DQo+
+IHRoZSBwYXRjaC4NCj4gDQoNCk9rYXksIExldCdzIG1lIHRyeSB0byBleHBsYWluIG1vcmUgZGV0
+YWlscy4NCkNvbnRyb2wgRmxvdyBJbnRlZ3JpdHkoQ0ZJKSBpcyBhIHNlY3VyaXR5IG1lY2hhbmlz
+bSB0aGF0IGRpc2FsbG93cw0KY2hhbmdlcyB0byB0aGUgb3JpZ2luYWwgY29udHJvbCBmbG93IGdy
+YXBoIG9mIGEgY29tcGlsZWQgYmluYXJ5LCBtYWtpbmcNCml0IHNpZ25pZmljYW50bHkgaGFyZGVy
+IHRvIHBlcmZvcm0gc3VjaCBhdHRhY2tzLg0KDQpUaGVyZSBhcmUgbXVsdGlwbGUgY29udHJvbCBm
+bG93IGluc3RydWN0aW9ucyB0aGF0IGNvdWxkIGJlIG1hbmlwdWxhdGVkDQpieSB0aGUgYXR0YWNr
+ZXIgYW5kIHN1YnZlcnQgY29udHJvbCBmbG93LiBUaGUgdGFyZ2V0IGluc3RydWN0aW9ucyB0aGF0
+DQp1c2UgZGF0YSB0byBkZXRlcm1pbmUgdGhlIGFjdHVhbCBkZXN0aW5hdGlvbi4NCi0gaW5kaXJl
+Y3QganVtcA0KLSBpbmRpcmVjdCBjYWxsDQotIHJldHVybg0KDQpJbiB0aGlzIGNhc2UsIGZ1bmN0
+aW9uIHByb3RvdHlwZSBiZXR3ZWVuIGNhbGxlciBhbmQgY2FsbGVlIGFyZSBtaXNtYXRjaC4NCkNh
+bGxlcjogKHR5cGUgQSlmdW5jQQ0KQ2FsbGVlOiAodHlwZSBBKWZ1bmNCDQpDYWxsZWU6ICh0eXBl
+IEMpZnVuY0MNCg0KZnVuY0EgY2FsbHMgZnVuY0IgLT4gbm8gcHJvYmxlbQ0KZnVuY0EgY2FsbHMg
+ZnVuY0MgLT4gQ0ZJIGNoZWNrIGZhaWxlZA0KDQpUaGF0J3Mgd2h5IHdlIHRyeSB0byBhbGlnbiBm
+dW5jdGlvbiBwcm90b3R5cGUuDQpQbGVhc2UgZmVlbCBmcmVlIHRvIGZlZWRiYWNrIGlmIHlvdSBo
+YXZlIGFueSBxdWVzdGlvbnMuDQoNCj4gPiBBbGlnbiBmdW5jdGlvbiBwcm90b3R5cGUgb2YgZW50
+ZXIoKSBzaW5jZSBpdCBuZWVkcyByZXR1cm4gdmFsdWUgZm9yDQo+ID4gc29tZSB1c2UgY2FzZXMu
+IFRoZSByZXR1cm4gdmFsdWUgb2YgZW50ZXJfczJpZGxlKCkgaXMgbm8NCj4gPiBuZWVkIGN1cnJl
+bnRseS4NCj4gDQo+IFNvIGxhc3QgdGltZSBJIHJlcXVlc3RlZCB5b3UgdG8gZG9jdW1lbnQgd2h5
+IC0+ZW50ZXJfczJpZGxlIG5lZWRzIHRvDQo+IHJldHVybiBhbiBpbnQgaW4gdGhlIGNvZGUsIHdo
+aWNoIGhhcyBub3QgYmVlbiBkb25lLiAgUGxlYXNlIGRvIHRoYXQuDQo+IA0KPiA+IFNpZ25lZC1v
+ZmYtYnk6IE5lYWwgTGl1IDxuZWFsLmxpdUBtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGRy
+aXZlcnMvYWNwaS9wcm9jZXNzb3JfaWRsZS5jICAgfCAgICA2ICsrKystLQ0KPiA+ICBkcml2ZXJz
+L2NwdWlkbGUvY3B1aWRsZS10ZWdyYS5jIHwgICAgOCArKysrKy0tLQ0KPiA+ICBkcml2ZXJzL2lk
+bGUvaW50ZWxfaWRsZS5jICAgICAgIHwgICAgNiArKysrLS0NCj4gPiAgaW5jbHVkZS9saW51eC9j
+cHVpZGxlLmggICAgICAgICB8ICAgIDYgKysrLS0tDQo+ID4gIDQgZmlsZXMgY2hhbmdlZCwgMTYg
+aW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9hY3BpL3Byb2Nlc3Nvcl9pZGxlLmMgYi9kcml2ZXJzL2FjcGkvcHJvY2Vzc29yX2lkbGUu
+Yw0KPiA+IGluZGV4IDc1NTM0YzUuLjZmZmI2YzkgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9h
+Y3BpL3Byb2Nlc3Nvcl9pZGxlLmMNCj4gPiArKysgYi9kcml2ZXJzL2FjcGkvcHJvY2Vzc29yX2lk
+bGUuYw0KPiA+IEBAIC02NTUsOCArNjU1LDggQEAgc3RhdGljIGludCBhY3BpX2lkbGVfZW50ZXIo
+c3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+ID4gICAgICAgICByZXR1cm4gaW5kZXg7DQo+
+ID4gIH0NCj4gPg0KPiA+IC1zdGF0aWMgdm9pZCBhY3BpX2lkbGVfZW50ZXJfczJpZGxlKHN0cnVj
+dCBjcHVpZGxlX2RldmljZSAqZGV2LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsIGludCBpbmRleCkNCj4gPiArc3RhdGlj
+IGludCBhY3BpX2lkbGVfZW50ZXJfczJpZGxlKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgY3B1aWRsZV9kcml2
+ZXIgKmRydiwgaW50IGluZGV4KQ0KPiA+ICB7DQo+ID4gICAgICAgICBzdHJ1Y3QgYWNwaV9wcm9j
+ZXNzb3JfY3ggKmN4ID0gcGVyX2NwdShhY3BpX2NzdGF0ZVtpbmRleF0sIGRldi0+Y3B1KTsNCj4g
+Pg0KPiA+IEBAIC02NzQsNiArNjc0LDggQEAgc3RhdGljIHZvaWQgYWNwaV9pZGxlX2VudGVyX3My
+aWRsZShzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAgICAgfQ0K
+PiA+ICAgICAgICAgfQ0KPiA+ICAgICAgICAgYWNwaV9pZGxlX2RvX2VudHJ5KGN4KTsNCj4gPiAr
+DQo+ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiAgfQ0KPiA+DQo+ID4gIHN0YXRpYyBpbnQgYWNw
+aV9wcm9jZXNzb3Jfc2V0dXBfY3B1aWRsZV9jeChzdHJ1Y3QgYWNwaV9wcm9jZXNzb3IgKnByLA0K
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NwdWlkbGUvY3B1aWRsZS10ZWdyYS5jIGIvZHJpdmVy
+cy9jcHVpZGxlL2NwdWlkbGUtdGVncmEuYw0KPiA+IGluZGV4IDE1MDA0NTguLmExMmZiMTQgMTAw
+NjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jcHVpZGxlL2NwdWlkbGUtdGVncmEuYw0KPiA+ICsrKyBi
+L2RyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLXRlZ3JhLmMNCj4gPiBAQCAtMjUzLDExICsyNTMsMTMg
+QEAgc3RhdGljIGludCB0ZWdyYV9jcHVpZGxlX2VudGVyKHN0cnVjdCBjcHVpZGxlX2RldmljZSAq
+ZGV2LA0KPiA+ICAgICAgICAgcmV0dXJuIGVyciA/IC0xIDogaW5kZXg7DQo+ID4gIH0NCj4gPg0K
+PiA+IC1zdGF0aWMgdm9pZCB0ZWdyYTExNF9lbnRlcl9zMmlkbGUoc3RydWN0IGNwdWlkbGVfZGV2
+aWNlICpkZXYsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBj
+cHVpZGxlX2RyaXZlciAqZHJ2LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBpbnQgaW5kZXgpDQo+ID4gK3N0YXRpYyBpbnQgdGVncmExMTRfZW50ZXJfczJpZGxlKHN0cnVj
+dCBjcHVpZGxlX2RldmljZSAqZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIGludCBpbmRleCkNCj4gPiAgew0KPiA+ICAgICAgICAgdGVncmFfY3B1aWRs
+ZV9lbnRlcihkZXYsIGRydiwgaW5kZXgpOw0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiAwOw0K
+PiA+ICB9DQo+ID4NCj4gPiAgLyoNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pZGxlL2ludGVs
+X2lkbGUuYyBiL2RyaXZlcnMvaWRsZS9pbnRlbF9pZGxlLmMNCj4gPiBpbmRleCBmNDQ5NTg0Li5i
+MTc4ZGEzIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvaWRsZS9pbnRlbF9pZGxlLmMNCj4gPiAr
+KysgYi9kcml2ZXJzL2lkbGUvaW50ZWxfaWRsZS5jDQo+ID4gQEAgLTE3NSwxMyArMTc1LDE1IEBA
+IHN0YXRpYyBfX2NwdWlkbGUgaW50IGludGVsX2lkbGUoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpk
+ZXYsDQo+ID4gICAqIEludm9rZWQgYXMgYSBzdXNwZW5kLXRvLWlkbGUgY2FsbGJhY2sgcm91dGlu
+ZSB3aXRoIGZyb3plbiB1c2VyIHNwYWNlLCBmcm96ZW4NCj4gPiAgICogc2NoZWR1bGVyIHRpY2sg
+YW5kIHN1c3BlbmRlZCBzY2hlZHVsZXIgY2xvY2sgb24gdGhlIHRhcmdldCBDUFUuDQo+ID4gICAq
+Lw0KPiA+IC1zdGF0aWMgX19jcHVpZGxlIHZvaWQgaW50ZWxfaWRsZV9zMmlkbGUoc3RydWN0IGNw
+dWlkbGVfZGV2aWNlICpkZXYsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LCBpbnQgaW5kZXgpDQo+ID4gK3N0YXRp
+YyBfX2NwdWlkbGUgaW50IGludGVsX2lkbGVfczJpZGxlKHN0cnVjdCBjcHVpZGxlX2RldmljZSAq
+ZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBj
+cHVpZGxlX2RyaXZlciAqZHJ2LCBpbnQgaW5kZXgpDQo+ID4gIHsNCj4gPiAgICAgICAgIHVuc2ln
+bmVkIGxvbmcgZWF4ID0gZmxnMk1XQUlUKGRydi0+c3RhdGVzW2luZGV4XS5mbGFncyk7DQo+ID4g
+ICAgICAgICB1bnNpZ25lZCBsb25nIGVjeCA9IDE7IC8qIGJyZWFrIG9uIGludGVycnVwdCBmbGFn
+ICovDQo+ID4NCj4gPiAgICAgICAgIG13YWl0X2lkbGVfd2l0aF9oaW50cyhlYXgsIGVjeCk7DQo+
+ID4gKw0KPiA+ICsgICAgICAgcmV0dXJuIDA7DQo+ID4gIH0NCj4gPg0KPiA+ICAvKg0KPiA+IGRp
+ZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2NwdWlkbGUuaCBiL2luY2x1ZGUvbGludXgvY3B1aWRs
+ZS5oDQo+ID4gaW5kZXggZWMyZWY2My4uYmVlMTBjMCAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRl
+L2xpbnV4L2NwdWlkbGUuaA0KPiA+ICsrKyBiL2luY2x1ZGUvbGludXgvY3B1aWRsZS5oDQo+ID4g
+QEAgLTY2LDkgKzY2LDkgQEAgc3RydWN0IGNwdWlkbGVfc3RhdGUgew0KPiA+ICAgICAgICAgICog
+c3VzcGVuZGVkLCBzbyBpdCBtdXN0IG5vdCByZS1lbmFibGUgaW50ZXJydXB0cyBhdCBhbnkgcG9p
+bnQgKGV2ZW4NCj4gPiAgICAgICAgICAqIHRlbXBvcmFyaWx5KSBvciBhdHRlbXB0IHRvIGNoYW5n
+ZSBzdGF0ZXMgb2YgY2xvY2sgZXZlbnQgZGV2aWNlcy4NCj4gPiAgICAgICAgICAqLw0KPiA+IC0g
+ICAgICAgdm9pZCAoKmVudGVyX3MyaWRsZSkgKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0K
+PiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAq
+ZHJ2LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIGludCBpbmRleCk7DQo+ID4g
+KyAgICAgICBpbnQgKCplbnRlcl9zMmlkbGUpKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRy
+diwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50IGluZGV4KTsNCj4gPiAgfTsN
+Cj4gPg0KPiA+ICAvKiBJZGxlIFN0YXRlIEZsYWdzICovDQo+ID4gLS0NCj4gPiAxLjcuOS41DQoN
+Cg==
