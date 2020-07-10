@@ -1,132 +1,252 @@
-From: Neal Liu <neal.liu@mediatek.com>
-Subject: Re: [PATCH v2] cpuidle: change enter_s2idle() prototype
-Date: Fri, 10 Jul 2020 11:08:55 +0800
-Message-ID: <1594350535.4670.13.camel@mtkswgap22>
-References: <1594005196-16327-1-git-send-email-neal.liu@mediatek.com>
-         <1594005196-16327-2-git-send-email-neal.liu@mediatek.com>
-         <CAJZ5v0ihB5AJwSRpjaOnXAmciregzxARL5xfudu1h+=_LXaE_w@mail.gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 15/23] seq_file: switch over direct seq_read method calls
+ to seq_read_iter
+Date: Fri, 10 Jul 2020 13:55:29 +0100
+Message-ID: <5a2a97f1-58b5-8068-3c69-bb06130ffb35@nvidia.com>
+References: <20200707174801.4162712-1-hch@lst.de>
+ <20200707174801.4162712-16-hch@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAJZ5v0ihB5AJwSRpjaOnXAmciregzxARL5xfudu1h+=_LXaE_w@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Neal Liu <neal.liu@mediatek.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sami Tolvanen <samitolvanen@google.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, wsd_upstream@mediatek.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200707174801.4162712-16-hch-jcswGhMUV9g@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Luis Chamberlain <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Iurii Zaikin <yzaikin-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCAyMDIwLTA3LTA5IGF0IDE0OjE4ICswMjAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90
-ZToNCj4gT24gTW9uLCBKdWwgNiwgMjAyMCBhdCA1OjEzIEFNIE5lYWwgTGl1IDxuZWFsLmxpdUBt
-ZWRpYXRlay5jb20+IHdyb3RlOg0KPiA+DQo+ID4gQ29udHJvbCBGbG93IEludGVncml0eShDRkkp
-IGlzIGEgc2VjdXJpdHkgbWVjaGFuaXNtIHRoYXQgZGlzYWxsb3dzDQo+ID4gY2hhbmdlcyB0byB0
-aGUgb3JpZ2luYWwgY29udHJvbCBmbG93IGdyYXBoIG9mIGEgY29tcGlsZWQgYmluYXJ5LA0KPiA+
-IG1ha2luZyBpdCBzaWduaWZpY2FudGx5IGhhcmRlciB0byBwZXJmb3JtIHN1Y2ggYXR0YWNrcy4N
-Cj4gPg0KPiA+IGluaXRfc3RhdGVfbm9kZSgpIGFzc2lnbiBzYW1lIGZ1bmN0aW9uIGNhbGxiYWNr
-IHRvIGRpZmZlcmVudA0KPiA+IGZ1bmN0aW9uIHBvaW50ZXIgZGVjbGFyYXRpb25zLg0KPiA+DQo+
-ID4gc3RhdGljIGludCBpbml0X3N0YXRlX25vZGUoc3RydWN0IGNwdWlkbGVfc3RhdGUgKmlkbGVf
-c3RhdGUsDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0IG9mX2Rl
-dmljZV9pZCAqbWF0Y2hlcywNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3Qg
-ZGV2aWNlX25vZGUgKnN0YXRlX25vZGUpIHsgLi4uDQo+ID4gICAgICAgICBpZGxlX3N0YXRlLT5l
-bnRlciA9IG1hdGNoX2lkLT5kYXRhOyAuLi4NCj4gPiAgICAgICAgIGlkbGVfc3RhdGUtPmVudGVy
-X3MyaWRsZSA9IG1hdGNoX2lkLT5kYXRhOyB9DQo+ID4NCj4gPiBGdW5jdGlvbiBkZWNsYXJhdGlv
-bnM6DQo+ID4NCj4gPiBzdHJ1Y3QgY3B1aWRsZV9zdGF0ZSB7IC4uLg0KPiA+ICAgICAgICAgaW50
-ICgqZW50ZXIpIChzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAg
-ICAgICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsDQo+ID4gICAgICAgICAgICAgICAg
-ICAgICAgIGludCBpbmRleCk7DQo+ID4NCj4gPiAgICAgICAgIHZvaWQgKCplbnRlcl9zMmlkbGUp
-IChzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwNCj4gPiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBpbnQgaW5kZXgpOyB9Ow0KPiA+DQo+ID4gSW4gdGhpcyBjYXNlLCBlaXRo
-ZXIgZW50ZXIoKSBvciBlbnRlcl9zMmlkbGUoKSB3b3VsZCBjYXVzZSBDRkkgY2hlY2sNCj4gPiBm
-YWlsZWQgc2luY2UgdGhleSB1c2Ugc2FtZSBjYWxsZWUuDQo+IA0KPiBDYW4geW91IHBsZWFzZSBl
-eHBsYWluIHRoaXMgaW4gYSBiaXQgbW9yZSBkZXRhaWw/DQo+IA0KPiBBcyBpdCBzdGFuZHMsIEkg
-ZG9uJ3QgdW5kZXJzdGFuZCB0aGUgcHJvYmxlbSBzdGF0ZW1lbnQgZW5vdWdoIHRvIGFwcGx5DQo+
-IHRoZSBwYXRjaC4NCj4gDQoNCk9rYXksIExldCdzIG1lIHRyeSB0byBleHBsYWluIG1vcmUgZGV0
-YWlscy4NCkNvbnRyb2wgRmxvdyBJbnRlZ3JpdHkoQ0ZJKSBpcyBhIHNlY3VyaXR5IG1lY2hhbmlz
-bSB0aGF0IGRpc2FsbG93cw0KY2hhbmdlcyB0byB0aGUgb3JpZ2luYWwgY29udHJvbCBmbG93IGdy
-YXBoIG9mIGEgY29tcGlsZWQgYmluYXJ5LCBtYWtpbmcNCml0IHNpZ25pZmljYW50bHkgaGFyZGVy
-IHRvIHBlcmZvcm0gc3VjaCBhdHRhY2tzLg0KDQpUaGVyZSBhcmUgbXVsdGlwbGUgY29udHJvbCBm
-bG93IGluc3RydWN0aW9ucyB0aGF0IGNvdWxkIGJlIG1hbmlwdWxhdGVkDQpieSB0aGUgYXR0YWNr
-ZXIgYW5kIHN1YnZlcnQgY29udHJvbCBmbG93LiBUaGUgdGFyZ2V0IGluc3RydWN0aW9ucyB0aGF0
-DQp1c2UgZGF0YSB0byBkZXRlcm1pbmUgdGhlIGFjdHVhbCBkZXN0aW5hdGlvbi4NCi0gaW5kaXJl
-Y3QganVtcA0KLSBpbmRpcmVjdCBjYWxsDQotIHJldHVybg0KDQpJbiB0aGlzIGNhc2UsIGZ1bmN0
-aW9uIHByb3RvdHlwZSBiZXR3ZWVuIGNhbGxlciBhbmQgY2FsbGVlIGFyZSBtaXNtYXRjaC4NCkNh
-bGxlcjogKHR5cGUgQSlmdW5jQQ0KQ2FsbGVlOiAodHlwZSBBKWZ1bmNCDQpDYWxsZWU6ICh0eXBl
-IEMpZnVuY0MNCg0KZnVuY0EgY2FsbHMgZnVuY0IgLT4gbm8gcHJvYmxlbQ0KZnVuY0EgY2FsbHMg
-ZnVuY0MgLT4gQ0ZJIGNoZWNrIGZhaWxlZA0KDQpUaGF0J3Mgd2h5IHdlIHRyeSB0byBhbGlnbiBm
-dW5jdGlvbiBwcm90b3R5cGUuDQpQbGVhc2UgZmVlbCBmcmVlIHRvIGZlZWRiYWNrIGlmIHlvdSBo
-YXZlIGFueSBxdWVzdGlvbnMuDQoNCj4gPiBBbGlnbiBmdW5jdGlvbiBwcm90b3R5cGUgb2YgZW50
-ZXIoKSBzaW5jZSBpdCBuZWVkcyByZXR1cm4gdmFsdWUgZm9yDQo+ID4gc29tZSB1c2UgY2FzZXMu
-IFRoZSByZXR1cm4gdmFsdWUgb2YgZW50ZXJfczJpZGxlKCkgaXMgbm8NCj4gPiBuZWVkIGN1cnJl
-bnRseS4NCj4gDQo+IFNvIGxhc3QgdGltZSBJIHJlcXVlc3RlZCB5b3UgdG8gZG9jdW1lbnQgd2h5
-IC0+ZW50ZXJfczJpZGxlIG5lZWRzIHRvDQo+IHJldHVybiBhbiBpbnQgaW4gdGhlIGNvZGUsIHdo
-aWNoIGhhcyBub3QgYmVlbiBkb25lLiAgUGxlYXNlIGRvIHRoYXQuDQo+IA0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IE5lYWwgTGl1IDxuZWFsLmxpdUBtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGRy
-aXZlcnMvYWNwaS9wcm9jZXNzb3JfaWRsZS5jICAgfCAgICA2ICsrKystLQ0KPiA+ICBkcml2ZXJz
-L2NwdWlkbGUvY3B1aWRsZS10ZWdyYS5jIHwgICAgOCArKysrKy0tLQ0KPiA+ICBkcml2ZXJzL2lk
-bGUvaW50ZWxfaWRsZS5jICAgICAgIHwgICAgNiArKysrLS0NCj4gPiAgaW5jbHVkZS9saW51eC9j
-cHVpZGxlLmggICAgICAgICB8ICAgIDYgKysrLS0tDQo+ID4gIDQgZmlsZXMgY2hhbmdlZCwgMTYg
-aW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9hY3BpL3Byb2Nlc3Nvcl9pZGxlLmMgYi9kcml2ZXJzL2FjcGkvcHJvY2Vzc29yX2lkbGUu
-Yw0KPiA+IGluZGV4IDc1NTM0YzUuLjZmZmI2YzkgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9h
-Y3BpL3Byb2Nlc3Nvcl9pZGxlLmMNCj4gPiArKysgYi9kcml2ZXJzL2FjcGkvcHJvY2Vzc29yX2lk
-bGUuYw0KPiA+IEBAIC02NTUsOCArNjU1LDggQEAgc3RhdGljIGludCBhY3BpX2lkbGVfZW50ZXIo
-c3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+ID4gICAgICAgICByZXR1cm4gaW5kZXg7DQo+
-ID4gIH0NCj4gPg0KPiA+IC1zdGF0aWMgdm9pZCBhY3BpX2lkbGVfZW50ZXJfczJpZGxlKHN0cnVj
-dCBjcHVpZGxlX2RldmljZSAqZGV2LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsIGludCBpbmRleCkNCj4gPiArc3RhdGlj
-IGludCBhY3BpX2lkbGVfZW50ZXJfczJpZGxlKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0K
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgY3B1aWRsZV9kcml2
-ZXIgKmRydiwgaW50IGluZGV4KQ0KPiA+ICB7DQo+ID4gICAgICAgICBzdHJ1Y3QgYWNwaV9wcm9j
-ZXNzb3JfY3ggKmN4ID0gcGVyX2NwdShhY3BpX2NzdGF0ZVtpbmRleF0sIGRldi0+Y3B1KTsNCj4g
-Pg0KPiA+IEBAIC02NzQsNiArNjc0LDggQEAgc3RhdGljIHZvaWQgYWNwaV9pZGxlX2VudGVyX3My
-aWRsZShzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAgICAgfQ0K
-PiA+ICAgICAgICAgfQ0KPiA+ICAgICAgICAgYWNwaV9pZGxlX2RvX2VudHJ5KGN4KTsNCj4gPiAr
-DQo+ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiAgfQ0KPiA+DQo+ID4gIHN0YXRpYyBpbnQgYWNw
-aV9wcm9jZXNzb3Jfc2V0dXBfY3B1aWRsZV9jeChzdHJ1Y3QgYWNwaV9wcm9jZXNzb3IgKnByLA0K
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NwdWlkbGUvY3B1aWRsZS10ZWdyYS5jIGIvZHJpdmVy
-cy9jcHVpZGxlL2NwdWlkbGUtdGVncmEuYw0KPiA+IGluZGV4IDE1MDA0NTguLmExMmZiMTQgMTAw
-NjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jcHVpZGxlL2NwdWlkbGUtdGVncmEuYw0KPiA+ICsrKyBi
-L2RyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLXRlZ3JhLmMNCj4gPiBAQCAtMjUzLDExICsyNTMsMTMg
-QEAgc3RhdGljIGludCB0ZWdyYV9jcHVpZGxlX2VudGVyKHN0cnVjdCBjcHVpZGxlX2RldmljZSAq
-ZGV2LA0KPiA+ICAgICAgICAgcmV0dXJuIGVyciA/IC0xIDogaW5kZXg7DQo+ID4gIH0NCj4gPg0K
-PiA+IC1zdGF0aWMgdm9pZCB0ZWdyYTExNF9lbnRlcl9zMmlkbGUoc3RydWN0IGNwdWlkbGVfZGV2
-aWNlICpkZXYsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBj
-cHVpZGxlX2RyaXZlciAqZHJ2LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBpbnQgaW5kZXgpDQo+ID4gK3N0YXRpYyBpbnQgdGVncmExMTRfZW50ZXJfczJpZGxlKHN0cnVj
-dCBjcHVpZGxlX2RldmljZSAqZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIGludCBpbmRleCkNCj4gPiAgew0KPiA+ICAgICAgICAgdGVncmFfY3B1aWRs
-ZV9lbnRlcihkZXYsIGRydiwgaW5kZXgpOw0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiAwOw0K
-PiA+ICB9DQo+ID4NCj4gPiAgLyoNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pZGxlL2ludGVs
-X2lkbGUuYyBiL2RyaXZlcnMvaWRsZS9pbnRlbF9pZGxlLmMNCj4gPiBpbmRleCBmNDQ5NTg0Li5i
-MTc4ZGEzIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvaWRsZS9pbnRlbF9pZGxlLmMNCj4gPiAr
-KysgYi9kcml2ZXJzL2lkbGUvaW50ZWxfaWRsZS5jDQo+ID4gQEAgLTE3NSwxMyArMTc1LDE1IEBA
-IHN0YXRpYyBfX2NwdWlkbGUgaW50IGludGVsX2lkbGUoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpk
-ZXYsDQo+ID4gICAqIEludm9rZWQgYXMgYSBzdXNwZW5kLXRvLWlkbGUgY2FsbGJhY2sgcm91dGlu
-ZSB3aXRoIGZyb3plbiB1c2VyIHNwYWNlLCBmcm96ZW4NCj4gPiAgICogc2NoZWR1bGVyIHRpY2sg
-YW5kIHN1c3BlbmRlZCBzY2hlZHVsZXIgY2xvY2sgb24gdGhlIHRhcmdldCBDUFUuDQo+ID4gICAq
-Lw0KPiA+IC1zdGF0aWMgX19jcHVpZGxlIHZvaWQgaW50ZWxfaWRsZV9zMmlkbGUoc3RydWN0IGNw
-dWlkbGVfZGV2aWNlICpkZXYsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LCBpbnQgaW5kZXgpDQo+ID4gK3N0YXRp
-YyBfX2NwdWlkbGUgaW50IGludGVsX2lkbGVfczJpZGxlKHN0cnVjdCBjcHVpZGxlX2RldmljZSAq
-ZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBj
-cHVpZGxlX2RyaXZlciAqZHJ2LCBpbnQgaW5kZXgpDQo+ID4gIHsNCj4gPiAgICAgICAgIHVuc2ln
-bmVkIGxvbmcgZWF4ID0gZmxnMk1XQUlUKGRydi0+c3RhdGVzW2luZGV4XS5mbGFncyk7DQo+ID4g
-ICAgICAgICB1bnNpZ25lZCBsb25nIGVjeCA9IDE7IC8qIGJyZWFrIG9uIGludGVycnVwdCBmbGFn
-ICovDQo+ID4NCj4gPiAgICAgICAgIG13YWl0X2lkbGVfd2l0aF9oaW50cyhlYXgsIGVjeCk7DQo+
-ID4gKw0KPiA+ICsgICAgICAgcmV0dXJuIDA7DQo+ID4gIH0NCj4gPg0KPiA+ICAvKg0KPiA+IGRp
-ZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2NwdWlkbGUuaCBiL2luY2x1ZGUvbGludXgvY3B1aWRs
-ZS5oDQo+ID4gaW5kZXggZWMyZWY2My4uYmVlMTBjMCAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRl
-L2xpbnV4L2NwdWlkbGUuaA0KPiA+ICsrKyBiL2luY2x1ZGUvbGludXgvY3B1aWRsZS5oDQo+ID4g
-QEAgLTY2LDkgKzY2LDkgQEAgc3RydWN0IGNwdWlkbGVfc3RhdGUgew0KPiA+ICAgICAgICAgICog
-c3VzcGVuZGVkLCBzbyBpdCBtdXN0IG5vdCByZS1lbmFibGUgaW50ZXJydXB0cyBhdCBhbnkgcG9p
-bnQgKGV2ZW4NCj4gPiAgICAgICAgICAqIHRlbXBvcmFyaWx5KSBvciBhdHRlbXB0IHRvIGNoYW5n
-ZSBzdGF0ZXMgb2YgY2xvY2sgZXZlbnQgZGV2aWNlcy4NCj4gPiAgICAgICAgICAqLw0KPiA+IC0g
-ICAgICAgdm9pZCAoKmVudGVyX3MyaWRsZSkgKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0K
-PiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAq
-ZHJ2LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIGludCBpbmRleCk7DQo+ID4g
-KyAgICAgICBpbnQgKCplbnRlcl9zMmlkbGUpKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0K
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRy
-diwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50IGluZGV4KTsNCj4gPiAgfTsN
-Cj4gPg0KPiA+ICAvKiBJZGxlIFN0YXRlIEZsYWdzICovDQo+ID4gLS0NCj4gPiAxLjcuOS41DQoN
-Cg==
+Hi Christoph,
+
+On 07/07/2020 18:47, Christoph Hellwig wrote:
+> Switch over all instances used directly as methods using these sed
+> expressions:
+> 
+> sed -i -e 's/\.read\(\s*=\s*\)seq_read/\.read_iter\1seq_read_iter/g'
+> 
+> Signed-off-by: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+> ---
+>  Documentation/filesystems/seq_file.rst        |  2 +-
+>  Documentation/process/clang-format.rst        |  4 +-
+>  .../it_IT/process/clang-format.rst            |  4 +-
+>  arch/arm/mm/ptdump_debugfs.c                  |  2 +-
+>  arch/arm64/kvm/vgic/vgic-debug.c              |  2 +-
+>  arch/c6x/platforms/pll.c                      |  2 +-
+>  arch/mips/cavium-octeon/oct_ilm.c             |  2 +-
+>  arch/mips/kernel/segment.c                    |  2 +-
+>  arch/mips/ralink/bootrom.c                    |  2 +-
+>  arch/powerpc/kvm/book3s_xive_native.c         |  2 +-
+>  arch/powerpc/kvm/timing.c                     |  2 +-
+>  arch/powerpc/mm/ptdump/bats.c                 |  2 +-
+>  arch/powerpc/mm/ptdump/hashpagetable.c        |  2 +-
+>  arch/powerpc/mm/ptdump/ptdump.c               |  2 +-
+>  arch/powerpc/mm/ptdump/segment_regs.c         |  2 +-
+>  arch/powerpc/platforms/cell/spufs/file.c      |  8 ++--
+>  arch/powerpc/platforms/pseries/hvCall_inst.c  |  2 +-
+>  arch/s390/kernel/diag.c                       |  2 +-
+>  arch/s390/mm/dump_pagetables.c                |  2 +-
+>  arch/s390/pci/pci_debug.c                     |  2 +-
+>  arch/sh/mm/asids-debugfs.c                    |  2 +-
+>  arch/sh/mm/cache-debugfs.c                    |  2 +-
+>  arch/sh/mm/pmb.c                              |  2 +-
+>  arch/sh/mm/tlb-debugfs.c                      |  2 +-
+>  arch/x86/kernel/cpu/mce/severity.c            |  2 +-
+>  arch/x86/mm/pat/memtype.c                     |  2 +-
+>  arch/x86/mm/pat/set_memory.c                  |  2 +-
+>  arch/x86/xen/p2m.c                            |  2 +-
+>  block/blk-mq-debugfs.c                        |  2 +-
+>  drivers/base/power/wakeup.c                   |  2 +-
+>  drivers/block/aoe/aoeblk.c                    |  2 +-
+>  drivers/block/drbd/drbd_debugfs.c             | 10 ++---
+>  drivers/block/nbd.c                           |  4 +-
+>  drivers/block/pktcdvd.c                       |  2 +-
+>  drivers/block/rsxx/core.c                     |  4 +-
+>  drivers/bus/mvebu-mbus.c                      |  4 +-
+>  drivers/char/tpm/eventlog/common.c            |  2 +-
+>  .../crypto/allwinner/sun8i-ce/sun8i-ce-core.c |  2 +-
+>  .../crypto/allwinner/sun8i-ss/sun8i-ss-core.c |  2 +-
+>  drivers/crypto/amlogic/amlogic-gxl-core.c     |  2 +-
+>  drivers/crypto/caam/dpseci-debugfs.c          |  2 +-
+>  drivers/crypto/cavium/zip/zip_main.c          |  6 +--
+>  drivers/crypto/hisilicon/qm.c                 |  2 +-
+>  drivers/crypto/qat/qat_common/adf_cfg.c       |  2 +-
+>  .../qat/qat_common/adf_transport_debug.c      |  4 +-
+>  drivers/firmware/tegra/bpmp-debugfs.c         |  2 +-
+>  drivers/gpio/gpiolib.c                        |  2 +-
+>  drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c      |  4 +-
+>  .../gpu/drm/arm/display/komeda/komeda_dev.c   |  2 +-
+>  drivers/gpu/drm/arm/malidp_drv.c              |  2 +-
+>  drivers/gpu/drm/armada/armada_debugfs.c       |  2 +-
+>  drivers/gpu/drm/drm_debugfs.c                 |  6 +--
+>  drivers/gpu/drm/drm_debugfs_crc.c             |  2 +-
+>  drivers/gpu/drm/drm_mipi_dbi.c                |  2 +-
+>  .../drm/i915/display/intel_display_debugfs.c  | 16 ++++----
+>  drivers/gpu/drm/i915/gt/debugfs_gt.h          |  2 +-
+>  drivers/gpu/drm/i915/i915_debugfs_params.c    | 12 +++---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c  |  2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      |  4 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c   |  2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |  4 +-
+>  drivers/gpu/drm/msm/msm_debugfs.c             |  2 +-
+>  drivers/gpu/drm/nouveau/nouveau_debugfs.c     |  2 +-
+>  drivers/gpu/drm/omapdrm/dss/dss.c             |  2 +-
+>  drivers/gpu/host1x/debug.c                    |  4 +-
+>  drivers/gpu/vga/vga_switcheroo.c              |  2 +-
+>  drivers/hid/hid-picolcd_debugfs.c             |  2 +-
+>  drivers/hid/hid-wiimote-debug.c               |  2 +-
+>  drivers/ide/ide-proc.c                        |  2 +-
+>  drivers/infiniband/hw/cxgb4/device.c          |  4 +-
+>  drivers/infiniband/hw/qib/qib_debugfs.c       |  2 +-
+>  drivers/infiniband/ulp/ipoib/ipoib_fs.c       |  4 +-
+>  drivers/md/bcache/closure.c                   |  2 +-
+>  drivers/media/cec/core/cec-core.c             |  2 +-
+>  drivers/media/pci/saa7164/saa7164-core.c      |  2 +-
+>  drivers/memory/emif.c                         |  4 +-
+>  drivers/memory/tegra/tegra124-emc.c           |  2 +-
+>  drivers/memory/tegra/tegra186-emc.c           |  2 +-
+>  drivers/memory/tegra/tegra20-emc.c            |  2 +-
+>  drivers/memory/tegra/tegra30-emc.c            |  2 +-
+>  drivers/mfd/ab3100-core.c                     |  2 +-
+>  drivers/mfd/ab3100-otp.c                      |  2 +-
+>  drivers/mfd/ab8500-debugfs.c                  | 14 +++----
+>  drivers/mfd/tps65010.c                        |  2 +-
+>  drivers/misc/habanalabs/debugfs.c             |  2 +-
+>  drivers/mmc/core/mmc_test.c                   |  2 +-
+>  drivers/mtd/mtdcore.c                         |  4 +-
+>  drivers/mtd/ubi/debug.c                       |  2 +-
+>  .../ethernet/chelsio/cxgb4/cxgb4_debugfs.c    | 38 +++++++++----------
+>  drivers/net/ethernet/chelsio/cxgb4/l2t.c      |  2 +-
+>  .../ethernet/chelsio/cxgb4vf/cxgb4vf_main.c   |  8 ++--
+>  .../freescale/dpaa2/dpaa2-eth-debugfs.c       |  6 +--
+>  .../net/ethernet/intel/fm10k/fm10k_debugfs.c  |  2 +-
+>  .../marvell/octeontx2/af/rvu_debugfs.c        |  2 +-
+>  drivers/net/wireless/ath/ath5k/debug.c        |  2 +-
+>  drivers/net/wireless/ath/wil6210/debugfs.c    | 14 +++----
+>  .../broadcom/brcm80211/brcmsmac/debug.c       |  2 +-
+>  .../net/wireless/intel/iwlwifi/fw/debugfs.c   |  2 +-
+>  .../net/wireless/intel/iwlwifi/pcie/trans.c   |  2 +-
+>  .../wireless/mediatek/mt76/mt7603/debugfs.c   |  2 +-
+>  .../wireless/mediatek/mt76/mt7615/debugfs.c   |  2 +-
+>  .../wireless/mediatek/mt76/mt76x02_debugfs.c  |  4 +-
+>  .../wireless/mediatek/mt76/mt7915/debugfs.c   |  4 +-
+>  .../net/wireless/mediatek/mt7601u/debugfs.c   |  4 +-
+>  drivers/net/wireless/realtek/rtlwifi/debug.c  |  2 +-
+>  drivers/net/wireless/realtek/rtw88/debug.c    |  4 +-
+>  drivers/net/wireless/rsi/rsi_91x_debugfs.c    |  4 +-
+>  drivers/net/xen-netback/xenbus.c              |  2 +-
+>  drivers/nvme/host/fabrics.c                   |  2 +-
+>  drivers/pci/controller/pci-tegra.c            |  2 +-
+>  drivers/platform/x86/asus-wmi.c               |  2 +-
+>  drivers/platform/x86/intel_pmc_core.c         |  2 +-
+>  .../platform/x86/intel_telemetry_debugfs.c    |  4 +-
+>  drivers/power/supply/da9030_battery.c         |  2 +-
+>  drivers/pwm/core.c                            |  2 +-
+>  drivers/ras/cec.c                             |  2 +-
+>  drivers/ras/debugfs.c                         |  2 +-
+>  drivers/s390/block/dasd.c                     |  2 +-
+>  drivers/s390/cio/qdio_debug.c                 |  2 +-
+>  drivers/scsi/hisi_sas/hisi_sas_main.c         | 32 ++++++++--------
+>  drivers/scsi/qedf/qedf_dbg.h                  |  2 +-
+>  drivers/scsi/qedi/qedi_dbg.h                  |  2 +-
+>  drivers/scsi/qla2xxx/qla_dfs.c                | 12 +++---
+>  drivers/scsi/snic/snic_debugfs.c              |  4 +-
+>  drivers/sh/intc/virq-debugfs.c                |  2 +-
+>  drivers/soc/qcom/cmd-db.c                     |  2 +-
+>  drivers/soc/qcom/socinfo.c                    |  4 +-
+>  drivers/soc/ti/knav_dma.c                     |  2 +-
+>  drivers/soc/ti/knav_qmss_queue.c              |  2 +-
+>  .../interface/vchiq_arm/vchiq_debugfs.c       |  4 +-
+>  drivers/usb/chipidea/debug.c                  |  4 +-
+>  drivers/usb/dwc2/debugfs.c                    |  2 +-
+>  drivers/usb/dwc3/debugfs.c                    |  8 ++--
+>  drivers/usb/gadget/udc/lpc32xx_udc.c          |  2 +-
+>  drivers/usb/gadget/udc/renesas_usb3.c         |  2 +-
+>  drivers/usb/host/xhci-debugfs.c               |  6 +--
+>  drivers/usb/mtu3/mtu3_debugfs.c               |  8 ++--
+>  drivers/usb/musb/musb_debugfs.c               |  4 +-
+>  drivers/visorbus/visorbus_main.c              |  2 +-
+>  drivers/xen/xenfs/xensyms.c                   |  2 +-
+>  fs/debugfs/file.c                             |  4 +-
+>  fs/dlm/debug_fs.c                             |  8 ++--
+>  fs/gfs2/glock.c                               |  6 +--
+>  fs/nfsd/nfs4state.c                           |  4 +-
+>  fs/nfsd/nfsctl.c                              | 10 ++---
+>  fs/ocfs2/cluster/netdebug.c                   |  6 +--
+>  fs/ocfs2/dlm/dlmdebug.c                       |  2 +-
+>  fs/ocfs2/dlmglue.c                            |  2 +-
+>  fs/openpromfs/inode.c                         |  2 +-
+>  fs/orangefs/orangefs-debugfs.c                |  2 +-
+>  fs/proc/array.c                               |  2 +-
+>  fs/proc/base.c                                | 24 ++++++------
+>  fs/proc/fd.c                                  |  2 +-
+>  fs/proc/task_mmu.c                            |  8 ++--
+>  fs/proc/task_nommu.c                          |  2 +-
+>  fs/proc_namespace.c                           |  6 +--
+>  include/linux/seq_file.h                      |  4 +-
+>  kernel/bpf/inode.c                            |  2 +-
+>  kernel/fail_function.c                        |  2 +-
+>  kernel/gcov/fs.c                              |  2 +-
+>  kernel/irq/debugfs.c                          |  2 +-
+>  kernel/kcsan/debugfs.c                        |  2 +-
+>  kernel/sched/debug.c                          |  2 +-
+>  kernel/time/test_udelay.c                     |  2 +-
+>  kernel/trace/ftrace.c                         | 16 ++++----
+>  kernel/trace/trace.c                          | 20 +++++-----
+>  kernel/trace/trace_dynevent.c                 |  2 +-
+>  kernel/trace/trace_events.c                   | 10 ++---
+>  kernel/trace/trace_events_hist.c              |  4 +-
+>  kernel/trace/trace_events_synth.c             |  2 +-
+>  kernel/trace/trace_events_trigger.c           |  2 +-
+>  kernel/trace/trace_kprobe.c                   |  4 +-
+>  kernel/trace/trace_printk.c                   |  2 +-
+>  kernel/trace/trace_stack.c                    |  4 +-
+>  kernel/trace/trace_stat.c                     |  2 +-
+>  kernel/trace/trace_uprobe.c                   |  4 +-
+>  lib/debugobjects.c                            |  2 +-
+>  lib/dynamic_debug.c                           |  2 +-
+>  lib/error-inject.c                            |  2 +-
+>  lib/kunit/debugfs.c                           |  2 +-
+>  mm/kmemleak.c                                 |  2 +-
+>  net/6lowpan/debugfs.c                         |  2 +-
+>  net/batman-adv/debugfs.c                      |  4 +-
+>  net/bluetooth/6lowpan.c                       |  2 +-
+>  net/hsr/hsr_debugfs.c                         |  2 +-
+>  net/l2tp/l2tp_debugfs.c                       |  2 +-
+>  net/sunrpc/cache.c                            |  2 +-
+>  net/sunrpc/debugfs.c                          |  4 +-
+>  net/sunrpc/rpc_pipe.c                         |  2 +-
+>  security/apparmor/apparmorfs.c                | 10 ++---
+>  security/integrity/ima/ima_fs.c               |  6 +--
+>  security/selinux/selinuxfs.c                  |  2 +-
+>  security/smack/smackfs.c                      | 20 +++++-----
+>  193 files changed, 375 insertions(+), 375 deletions(-)
+
+
+Following this change, I have noticed that several debugfs entries can
+no longer be read on some Tegra platforms. For example ...
+
+$ sudo cat /sys/kernel/debug/usb/xhci/3530000.usb/event-ring/cycle
+cat: /sys/kernel/debug/usb/xhci/3530000.usb/event-ring/cycle: Invalid
+argument
+
+$ sudo cat /sys/kernel/debug/emc/available_rates
+
+
+cat: /sys/kernel/debug/emc/available_rates: Invalid argument
+
+$ sudo cat /sys/kernel/debug/bpmp/debug/proc/testint
+cat: /sys/kernel/debug/bpmp/debug/proc/testint: Invalid argument
+
+$ sudo cat /sys/kernel/debug/pcie/ports
+
+
+cat: /sys/kernel/debug/pcie/ports: Invalid argument
+
+I have reverted the above drivers to use seq_read() instead of
+seq_read_iter() and they work again. Have you seen any problems with this?
+
+Cheers
+Jon
+
+-- 
+nvpublic
