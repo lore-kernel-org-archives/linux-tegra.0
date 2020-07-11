@@ -1,47 +1,61 @@
-From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v10 4/5] dt-bindings: arm-smmu: add binding for Tegra194
- SMMU
-Date: Fri, 10 Jul 2020 20:29:55 +0000
-Message-ID: <BYAPR12MB2822514F93F831507A811EE9B3650@BYAPR12MB2822.namprd12.prod.outlook.com>
-References: <20200708050017.31563-1-vdumpa@nvidia.com>
- <20200708050017.31563-5-vdumpa@nvidia.com> <20200709201348.GA808454@bogus>
+From: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+Subject: Re: [PATCH 15/23] seq_file: switch over direct seq_read method
+ calls to seq_read_iter
+Date: Sat, 11 Jul 2020 08:48:57 +0200
+Message-ID: <20200711064857.GA29078@lst.de>
+References: <20200707174801.4162712-1-hch@lst.de> <20200707174801.4162712-16-hch@lst.de> <5a2a97f1-58b5-8068-3c69-bb06130ffb35@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200709201348.GA808454@bogus>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <5a2a97f1-58b5-8068-3c69-bb06130ffb35-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "robin.murphy-5wv7dgnIgG8@public.gmane.org" <robin.murphy-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Luis Chamberlain <mcgrof-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Iurii Zaikin <yzaikin-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks Rob. One question on setting "minItems: ". Please see below.
+Please try this one:
 
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - nvidia,tegra194-smmu
->> +    then:
->> +      properties:
->> +        reg:
->> +          minItems: 2
->> +          maxItems: 2
+---
+From 5e86146296fbcd7593da1d9d39b9685a5e6b83be Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+Date: Sat, 11 Jul 2020 08:46:10 +0200
+Subject: debugfs: add a proxy stub for ->read_iter
 
->This doesn't work. The main part of the schema already said there's only
->1 reg region. This part is ANDed with that, not an override. You need to a=
-dd an else clause with 'maxItems: 1' and change the base schema to
->{minItems: 1, maxItems: 2}.
+debugfs registrations typically go through a set of proxy ops to deal
+with refcounting, which need to support every method that can be
+supported.  Add ->read_iter to the proxy ops to prepare for seq_file to
+be switch to ->read_iter.
 
-As the earlier version of base schema doesn't have "minItems: " set, should=
- it be set to 0 for backward compatibility?  Or can it just be omitted sett=
-ing in base schema as before?
+Reported-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+---
+ fs/debugfs/file.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-"else" part to set "maxItems: 1" and setting "maxItems: 2" in base schema i=
-s clear to me.
-
-
--KR
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index 8ba32c2feb1b73..dcd7bdaf67417f 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -231,6 +231,10 @@ FULL_PROXY_FUNC(read, ssize_t, filp,
+ 			loff_t *ppos),
+ 		ARGS(filp, buf, size, ppos));
+ 
++FULL_PROXY_FUNC(read_iter, ssize_t, iocb->ki_filp,
++		PROTO(struct kiocb *iocb, struct iov_iter *iter),
++		ARGS(iocb, iter));
++
+ FULL_PROXY_FUNC(write, ssize_t, filp,
+ 		PROTO(struct file *filp, const char __user *buf, size_t size,
+ 			loff_t *ppos),
+@@ -286,6 +290,8 @@ static void __full_proxy_fops_init(struct file_operations *proxy_fops,
+ 		proxy_fops->llseek = full_proxy_llseek;
+ 	if (real_fops->read)
+ 		proxy_fops->read = full_proxy_read;
++	if (real_fops->read_iter)
++		proxy_fops->read_iter = full_proxy_read_iter;
+ 	if (real_fops->write)
+ 		proxy_fops->write = full_proxy_write;
+ 	if (real_fops->poll)
+-- 
+2.26.2
