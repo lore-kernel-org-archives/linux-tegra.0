@@ -1,42 +1,44 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/3] arm64: tegra: Populate VBUS for USB3 on Jetson TX2
-Date: Sun, 12 Jul 2020 11:25:06 +0100
-Message-ID: <20200712102506.23686-4-jonathanh@nvidia.com>
-References: <20200712102506.23686-1-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 1/2] usb: tegra: Fix allocation for the FPCI context
+Date: Sun, 12 Jul 2020 11:28:36 +0100
+Message-ID: <20200712102837.24340-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200712102506.23686-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The VBUS for USB3 connector on the Jetson TX2 is connected to the
-vdd_usb1 supply and although this is populated for the USB2 port
-on the USB3 connector it is not populated for the USB3 port and
-causes the following warning to be seen on boot ...
+Commit 5c4e8d3781bc ("usb: host: xhci-tegra: Add support for XUSB
+context save/restore") is using the IPFS 'num_offsets' value when
+allocating memory for FPCI context instead of the FPCI 'num_offsets'.
+We have not observed any specific issues because of this, but could
+cause too much memory or too little memory to be allocated. Fix this
+by using the FPCI 'num_offsets' for allocating the FPCI memory for
+storing the FPCI state.
 
- usb3-0: supply vbus not found, using dummy regulator
+Cc: stable@vger.kernel.org
 
-Fix this by also adding the VBUS supply to the USB3 port.
+Fixes: 5c4e8d3781bc ("usb: host: xhci-tegra: Add support for XUSB context save/restore")
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/host/xhci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index a70fd4e86840..802b8c52489a 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -194,6 +194,7 @@
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 9ce28ab47f4b..014d79334f50 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -856,7 +856,7 @@ static int tegra_xusb_init_context(struct tegra_xusb *tegra)
+ 	if (!tegra->context.ipfs)
+ 		return -ENOMEM;
  
- 			usb3-0 {
- 				nvidia,usb2-companion = <1>;
-+				vbus-supply = <&vdd_usb1>;
- 				status = "okay";
- 			};
- 		};
+-	tegra->context.fpci = devm_kcalloc(tegra->dev, soc->ipfs.num_offsets,
++	tegra->context.fpci = devm_kcalloc(tegra->dev, soc->fpci.num_offsets,
+ 					   sizeof(u32), GFP_KERNEL);
+ 	if (!tegra->context.fpci)
+ 		return -ENOMEM;
 -- 
 2.17.1
