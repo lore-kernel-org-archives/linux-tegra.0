@@ -1,47 +1,36 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] cpufreq: tegra186: Simplify probe return path
-Date: Sun, 12 Jul 2020 11:06:45 +0100
-Message-ID: <20200712100645.13927-2-jonathanh@nvidia.com>
-References: <20200712100645.13927-1-jonathanh@nvidia.com>
+Subject: [PATCH 0/3] arm64: tegra: A few DT updates for Tegra
+Date: Sun, 12 Jul 2020 11:25:03 +0100
+Message-ID: <20200712102506.23686-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200712100645.13927-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "Rafael J . Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-We always put the reference to BPMP device on exit of the Tegra186
-CPUFREQ driver and so there is no need to have separate exit paths
-for success and failure. Therefore, simplify the probe return path
-in the Tegra186 CPUFREQ driver by combining the success and failure
-paths.
+This series adds ...
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/cpufreq/tegra186-cpufreq.c | 6 ------
- 1 file changed, 6 deletions(-)
+1. Support for Tegra19 Jetson Xavier NX
+2. Support for the DFLL on Tegra210 Jetson Nano
+3. Fixes VBUS supply for Tegra186 Jetson TX2
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index c44190ce3f03..bf8cab357277 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -231,15 +231,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	tegra_bpmp_put(bpmp);
--
- 	tegra186_cpufreq_driver.driver_data = data;
- 
- 	err = cpufreq_register_driver(&tegra186_cpufreq_driver);
--	if (err)
--		return err;
--
--	return 0;
- 
- put_bpmp:
- 	tegra_bpmp_put(bpmp);
+Jon Hunter (2):
+  arm64: tegra: Enable DFLL support on Jetson Nano
+  arm64: tegra: Populate VBUS for USB3 on Jetson TX2
+
+Thierry Reding (1):
+  arm64: tegra: Add support for Jetson Xavier NX
+
+ arch/arm64/boot/dts/nvidia/Makefile           |   1 +
+ .../boot/dts/nvidia/tegra186-p2771-0000.dts   |   1 +
+ .../nvidia/tegra194-p3509-0000+p3668-0000.dts | 343 ++++++++++++++++++
+ .../boot/dts/nvidia/tegra194-p3668-0000.dtsi  | 296 +++++++++++++++
+ .../boot/dts/nvidia/tegra210-p3450-0000.dts   |  37 ++
+ 5 files changed, 678 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi
+
 -- 
 2.17.1
