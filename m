@@ -1,60 +1,110 @@
-From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] arm64: tlb: Use the TLBI RANGE feature in arm64
-Date: Mon, 13 Jul 2020 18:21:59 +0100
-Message-ID: <20200713172158.GE15829@gaia>
-References: <20200710094420.517-1-yezhenyu2@huawei.com>
- <20200710094420.517-3-yezhenyu2@huawei.com>
- <4040f429-21c8-0825-2ad4-97786c3fe7c1@nvidia.com>
- <cee60718-ced2-069f-8dad-48941c6fc09b@huawei.com>
- <7237888d-2168-cd8b-c83d-c8e54871793d@nvidia.com>
+From: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 1/2] remoteproc: qcom: Add per subsystem SSR
+ notification
+Date: Mon, 13 Jul 2020 12:09:11 -0700
+Message-ID: <20200713190911.GC388985@builder.lan>
+References: <1592965408-16908-1-git-send-email-rishabhb@codeaurora.org>
+ <1592965408-16908-2-git-send-email-rishabhb@codeaurora.org>
+ <98e3a18e-1491-6f20-6507-d6e6817b76fe@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <7237888d-2168-cd8b-c83d-c8e54871793d-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <98e3a18e-1491-6f20-6507-d6e6817b76fe-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Zhenyu Ye <yezhenyu2-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, suzuki.poulose-5wv7dgnIgG8@public.gmane.org, maz-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, steven.price-5wv7dgnIgG8@public.gmane.org, guohanjun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, xiexiangyou-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, prime.zeng-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, zhangshaokun-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, kuhn.chenqun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Rishabh Bhatnagar <rishabhb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-remoteproc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tsoni-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, psodagud-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, sidgup-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, elder-EkmVulN54Sk@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 03:44:16PM +0100, Jon Hunter wrote:
-> On 13/07/2020 15:39, Zhenyu Ye wrote:
-> > On 2020/7/13 22:27, Jon Hunter wrote:
-> >> After this change I am seeing the following build errors ...
-> >>
-> >> /tmp/cckzq3FT.s: Assembler messages:
-> >> /tmp/cckzq3FT.s:854: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-> >> /tmp/cckzq3FT.s:870: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-> >> /tmp/cckzq3FT.s:1095: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-> >> /tmp/cckzq3FT.s:1111: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-> >> /tmp/cckzq3FT.s:1964: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-> >> /tmp/cckzq3FT.s:1980: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-> >> /tmp/cckzq3FT.s:2286: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-> >> /tmp/cckzq3FT.s:2302: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-> >> /tmp/cckzq3FT.s:4833: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
-> >> /tmp/cckzq3FT.s:4849: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
-> >> /tmp/cckzq3FT.s:5090: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
-> >> /tmp/cckzq3FT.s:5106: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
-> >> /tmp/cckzq3FT.s:874: Error: attempt to move .org backwards
-> >> /tmp/cckzq3FT.s:1115: Error: attempt to move .org backwards
-> >> /tmp/cckzq3FT.s:1984: Error: attempt to move .org backwards
-> >> /tmp/cckzq3FT.s:2306: Error: attempt to move .org backwards
-> >> /tmp/cckzq3FT.s:4853: Error: attempt to move .org backwards
-> >> /tmp/cckzq3FT.s:5110: Error: attempt to move .org backwards
-> >> scripts/Makefile.build:280: recipe for target 'arch/arm64/mm/hugetlbpage.o' failed
-> >> make[3]: *** [arch/arm64/mm/hugetlbpage.o] Error 1
-> >> scripts/Makefile.build:497: recipe for target 'arch/arm64/mm' failed
-> >> make[2]: *** [arch/arm64/mm] Error 2
-> > 
-> > The code must be built with binutils >= 2.30.
-> > Maybe I should add  a check on whether binutils supports ARMv8.4-a instructions...
+On Mon 13 Jul 09:26 PDT 2020, Jon Hunter wrote:
+
 > 
-> Yes I believe so.
+> On 24/06/2020 03:23, Rishabh Bhatnagar wrote:
+> > Currently there is a single notification chain which is called whenever any
+> > remoteproc shuts down. This leads to all the listeners being notified, and
+> > is not an optimal design as kernel drivers might only be interested in
+> > listening to notifications from a particular remoteproc. Create a global
+> > list of remoteproc notification info data structures. This will hold the
+> > name and notifier_list information for a particular remoteproc. The API
+> > to register for notifications will use name argument to retrieve the
+> > notification info data structure and the notifier block will be added to
+> > that data structure's notification chain. Also move from blocking notifier
+> > to srcu notifer based implementation to support dynamic notifier head
+> > creation.
+> > 
+> > Signed-off-by: Siddharth Gupta <sidgup-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> > Signed-off-by: Rishabh Bhatnagar <rishabhb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> > ---
+> >  drivers/remoteproc/qcom_common.c      | 90 ++++++++++++++++++++++++++++++-----
+> >  drivers/remoteproc/qcom_common.h      |  5 +-
+> >  include/linux/remoteproc/qcom_rproc.h | 20 ++++++--
+> >  3 files changed, 95 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> > index 9028cea..7a7384c 100644
+> > --- a/drivers/remoteproc/qcom_common.c
+> > +++ b/drivers/remoteproc/qcom_common.c
+> > @@ -12,6 +12,7 @@
+> >  #include <linux/module.h>
+> >  #include <linux/notifier.h>
+> >  #include <linux/remoteproc.h>
+> > +#include <linux/remoteproc/qcom_rproc.h>
+> >  #include <linux/rpmsg/qcom_glink.h>
+> >  #include <linux/rpmsg/qcom_smd.h>
+> >  #include <linux/soc/qcom/mdt_loader.h>
+> > @@ -23,7 +24,14 @@
+> >  #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
+> >  #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
+> >  
+> > -static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
+> > +struct qcom_ssr_subsystem {
+> > +	const char *name;
+> > +	struct srcu_notifier_head notifier_list;
+> > +	struct list_head list;
+> > +};
+> > +
+> > +static LIST_HEAD(qcom_ssr_subsystem_list);
+> > +static DEFINE_MUTEX(qcom_ssr_subsys_lock);
+> >  
+> >  static int glink_subdev_start(struct rproc_subdev *subdev)
+> >  {
+> > @@ -189,37 +197,83 @@ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
+> >  }
+> >  EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
+> >  
+> > +static struct qcom_ssr_subsystem *qcom_ssr_get_subsys(const char *name)
+> > +{
+> > +	struct qcom_ssr_subsystem *info;
+> > +
+> > +	mutex_lock(&qcom_ssr_subsys_lock);
+> > +	/* Match in the global qcom_ssr_subsystem_list with name */
+> > +	list_for_each_entry(info, &qcom_ssr_subsystem_list, list)
+> > +		if (!strcmp(info->name, name))
+> > +			goto out;
+> > +
+> > +	info = kzalloc(sizeof(*info), GFP_KERNEL);
+> > +	if (!info) {
+> > +		info = ERR_PTR(-ENOMEM);
+> > +		goto out;
+> > +	}
+> 
+> 
+> The above appears to be breaking the ARM64 build on the latest -next
+> when building the modules  ...
+>  
+>   CC [M]  drivers/remoteproc/qcom_common.o
+> drivers/remoteproc/qcom_common.c: In function 'qcom_ssr_get_subsys':
+> remoteproc/qcom_common.c:210:9: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
+>   info = kzalloc(sizeof(*info), GFP_KERNEL);
+>          ^~~~~~~
+> drivers/remoteproc/qcom_common.c:210:7: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+>   info = kzalloc(sizeof(*info), GFP_KERNEL);
+> 
 
-The binutils guys in Arm confirmed that assembling "tlbi rvae1is"
-without -march=armv8.4-a is a bug. When it gets fixed, checking for the
-binutils version is not sufficient without passing -march. I think we
-are better off with a manual encoding of the instruction.
+You're right, not sure why the test build completes successfully for
+me...
 
--- 
-Catalin
+I've applied a fix from Kefeng Wang for this, sorry for the disruption.
+
+Regards,
+Bjorn
