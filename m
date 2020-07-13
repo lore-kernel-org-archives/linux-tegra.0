@@ -1,78 +1,70 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] arm64: tlb: Use the TLBI RANGE feature in arm64
-Date: Mon, 13 Jul 2020 15:27:50 +0100
-Message-ID: <4040f429-21c8-0825-2ad4-97786c3fe7c1@nvidia.com>
-References: <20200710094420.517-1-yezhenyu2@huawei.com>
- <20200710094420.517-3-yezhenyu2@huawei.com>
+From: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [TEGRA194_CPUFREQ PATCH v4 3/4] cpufreq: Add Tegra194 cpufreq
+ driver
+Date: Mon, 13 Jul 2020 19:59:28 +0530
+Message-ID: <0d04d2c8-8f87-ecc7-9bd6-633d84b60e8b@nvidia.com>
+References: <1593186236-12760-1-git-send-email-sumitg@nvidia.com>
+ <1593186236-12760-4-git-send-email-sumitg@nvidia.com>
+ <20200629061639.7cwxfi64drkof6yu@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200710094420.517-3-yezhenyu2-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200629061639.7cwxfi64drkof6yu@vireshk-i7>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Zhenyu Ye <yezhenyu2-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, suzuki.poulose-5wv7dgnIgG8@public.gmane.org, maz-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, steven.price-5wv7dgnIgG8@public.gmane.org, guohanjun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, xiexiangyou-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, prime.zeng-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, zhangshaokun-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, kuhn.chenqun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 10/07/2020 10:44, Zhenyu Ye wrote:
-> Add __TLBI_VADDR_RANGE macro and rewrite __flush_tlb_range().
-> 
-> When cpu supports TLBI feature, the minimum range granularity is
-> decided by 'scale', so we can not flush all pages by one instruction
-> in some cases.
-> 
-> For example, when the pages = 0xe81a, let's start 'scale' from
-> maximum, and find right 'num' for each 'scale':
-> 
-> 1. scale = 3, we can flush no pages because the minimum range is
->    2^(5*3 + 1) = 0x10000.
-> 2. scale = 2, the minimum range is 2^(5*2 + 1) = 0x800, we can
->    flush 0xe800 pages this time, the num = 0xe800/0x800 - 1 = 0x1c.
->    Remaining pages is 0x1a;
-> 3. scale = 1, the minimum range is 2^(5*1 + 1) = 0x40, no page
->    can be flushed.
-> 4. scale = 0, we flush the remaining 0x1a pages, the num =
->    0x1a/0x2 - 1 = 0xd.
-> 
-> However, in most scenarios, the pages = 1 when flush_tlb_range() is
-> called. Start from scale = 3 or other proper value (such as scale =
-> ilog2(pages)), will incur extra overhead.
-> So increase 'scale' from 0 to maximum, the flush order is exactly
-> opposite to the example.
-> 
-> Signed-off-by: Zhenyu Ye <yezhenyu2-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 
+> 
+> On 26-06-20, 21:13, Sumit Gupta wrote:
+>> +static int tegra194_cpufreq_probe(struct platform_device *pdev)
+>> +{
+>> +     struct tegra194_cpufreq_data *data;
+>> +     struct tegra_bpmp *bpmp;
+>> +     int err, i;
+>> +
+>> +     data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+>> +     if (!data)
+>> +             return -ENOMEM;
+>> +
+>> +     data->num_clusters = MAX_CLUSTERS;
+>> +     data->tables = devm_kcalloc(&pdev->dev, data->num_clusters,
+>> +                                 sizeof(*data->tables), GFP_KERNEL);
+>> +     if (!data->tables)
+>> +             return -ENOMEM;
+>> +
+>> +     platform_set_drvdata(pdev, data);
+>> +
+>> +     bpmp = tegra_bpmp_get(&pdev->dev);
+>> +     if (IS_ERR(bpmp))
+>> +             return PTR_ERR(bpmp);
+>> +
+>> +     read_counters_wq = alloc_workqueue("read_counters_wq", __WQ_LEGACY, 1);
+>> +     if (!read_counters_wq) {
+>> +             dev_err(&pdev->dev, "fail to create_workqueue\n");
+>> +             err = -EINVAL;
+>> +             goto put_bpmp;
+> 
+> This will call destroy_workqueue() eventually and it will crash your
+> kernel.
+> 
+> Apart from this, this stuff looks okay. Don't resend the patch just
+> yet (and if required, send only this patch using --in-reply-to flag
+> for git send email). Lets wait for an Ack from Rob for the first two
+> patches.
+> 
+Sorry for the delayed response as i was on PTO.
+Thank you for the feedback.
 
-After this change I am seeing the following build errors ...
+Have posted a v5 based on v4 patch set.
 
-/tmp/cckzq3FT.s: Assembler messages:
-/tmp/cckzq3FT.s:854: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-/tmp/cckzq3FT.s:870: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-/tmp/cckzq3FT.s:1095: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-/tmp/cckzq3FT.s:1111: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-/tmp/cckzq3FT.s:1964: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-/tmp/cckzq3FT.s:1980: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-/tmp/cckzq3FT.s:2286: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-/tmp/cckzq3FT.s:2302: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
-/tmp/cckzq3FT.s:4833: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
-/tmp/cckzq3FT.s:4849: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
-/tmp/cckzq3FT.s:5090: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
-/tmp/cckzq3FT.s:5106: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
-/tmp/cckzq3FT.s:874: Error: attempt to move .org backwards
-/tmp/cckzq3FT.s:1115: Error: attempt to move .org backwards
-/tmp/cckzq3FT.s:1984: Error: attempt to move .org backwards
-/tmp/cckzq3FT.s:2306: Error: attempt to move .org backwards
-/tmp/cckzq3FT.s:4853: Error: attempt to move .org backwards
-/tmp/cckzq3FT.s:5110: Error: attempt to move .org backwards
-scripts/Makefile.build:280: recipe for target 'arch/arm64/mm/hugetlbpage.o' failed
-make[3]: *** [arch/arm64/mm/hugetlbpage.o] Error 1
-scripts/Makefile.build:497: recipe for target 'arch/arm64/mm' failed
-make[2]: *** [arch/arm64/mm] Error 2
-
-Cheers
-Jon
-
--- 
-nvpublic
+>> +     }
+>> +
+> 
+> --
+> viresh
+> 
