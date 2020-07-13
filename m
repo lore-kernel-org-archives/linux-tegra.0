@@ -1,102 +1,59 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v6 1/2] remoteproc: qcom: Add per subsystem SSR
- notification
-Date: Mon, 13 Jul 2020 17:26:42 +0100
-Message-ID: <98e3a18e-1491-6f20-6507-d6e6817b76fe@nvidia.com>
-References: <1592965408-16908-1-git-send-email-rishabhb@codeaurora.org>
- <1592965408-16908-2-git-send-email-rishabhb@codeaurora.org>
+Subject: Re: [PATCH 1/2] cpufreq: tegra186: Fix initial frequency
+Date: Mon, 13 Jul 2020 17:37:36 +0100
+Message-ID: <3d6091f2-6b04-185f-6c23-e39a34b87877@nvidia.com>
+References: <20200712100645.13927-1-jonathanh@nvidia.com>
+ <20200713032554.cykywnygxln6ukrl@vireshk-i7>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1592965408-16908-2-git-send-email-rishabhb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+In-Reply-To: <20200713032554.cykywnygxln6ukrl@vireshk-i7>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rishabh Bhatnagar <rishabhb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-remoteproc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tsoni-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, psodagud-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, sidgup-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, elder-EkmVulN54Sk@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J . Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 24/06/2020 03:23, Rishabh Bhatnagar wrote:
-> Currently there is a single notification chain which is called whenever any
-> remoteproc shuts down. This leads to all the listeners being notified, and
-> is not an optimal design as kernel drivers might only be interested in
-> listening to notifications from a particular remoteproc. Create a global
-> list of remoteproc notification info data structures. This will hold the
-> name and notifier_list information for a particular remoteproc. The API
-> to register for notifications will use name argument to retrieve the
-> notification info data structure and the notifier block will be added to
-> that data structure's notification chain. Also move from blocking notifier
-> to srcu notifer based implementation to support dynamic notifier head
-> creation.
+On 13/07/2020 04:25, Viresh Kumar wrote:
+> On 12-07-20, 11:06, Jon Hunter wrote:
+>> Commit 6cc3d0e9a097 ("cpufreq: tegra186: add
+>> CPUFREQ_NEED_INITIAL_FREQ_CHECK flag") fixed CPUFREQ support for
+>> Tegra186 but as a consequence the following warnings are now seen on
+>> boot ...
+>>
+>>  cpufreq: cpufreq_online: CPU0: Running at unlisted freq: 0 KHz
+>>  cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed to: 2035200 KHz
+>>  cpufreq: cpufreq_online: CPU1: Running at unlisted freq: 0 KHz
+>>  cpufreq: cpufreq_online: CPU1: Unlisted initial frequency changed to: 2035200 KHz
+>>  cpufreq: cpufreq_online: CPU2: Running at unlisted freq: 0 KHz
+>>  cpufreq: cpufreq_online: CPU2: Unlisted initial frequency changed to: 2035200 KHz
+>>  cpufreq: cpufreq_online: CPU3: Running at unlisted freq: 0 KHz
+>>  cpufreq: cpufreq_online: CPU3: Unlisted initial frequency changed to: 2035200 KHz
+>>  cpufreq: cpufreq_online: CPU4: Running at unlisted freq: 0 KHz
+>>  cpufreq: cpufreq_online: CPU4: Unlisted initial frequency changed to: 2035200 KHz
+>>  cpufreq: cpufreq_online: CPU5: Running at unlisted freq: 0 KHz
+>>  cpufreq: cpufreq_online: CPU5: Unlisted initial frequency changed to: 2035200 KHz
+>>
+>> Although we could fix this by adding a 'get' operator for the Tegra186
+>> CPUFREQ driver, there is really little point because the CPUFREQ on
+>> Tegra186 is set by writing a value stored in the frequency table to a
+>> register and we just need to set the initial frequency.
 > 
-> Signed-off-by: Siddharth Gupta <sidgup-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Signed-off-by: Rishabh Bhatnagar <rishabhb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> ---
->  drivers/remoteproc/qcom_common.c      | 90 ++++++++++++++++++++++++++++++-----
->  drivers/remoteproc/qcom_common.h      |  5 +-
->  include/linux/remoteproc/qcom_rproc.h | 20 ++++++--
->  3 files changed, 95 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-> index 9028cea..7a7384c 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -12,6 +12,7 @@
->  #include <linux/module.h>
->  #include <linux/notifier.h>
->  #include <linux/remoteproc.h>
-> +#include <linux/remoteproc/qcom_rproc.h>
->  #include <linux/rpmsg/qcom_glink.h>
->  #include <linux/rpmsg/qcom_smd.h>
->  #include <linux/soc/qcom/mdt_loader.h>
-> @@ -23,7 +24,14 @@
->  #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
->  #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
->  
-> -static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
-> +struct qcom_ssr_subsystem {
-> +	const char *name;
-> +	struct srcu_notifier_head notifier_list;
-> +	struct list_head list;
-> +};
-> +
-> +static LIST_HEAD(qcom_ssr_subsystem_list);
-> +static DEFINE_MUTEX(qcom_ssr_subsys_lock);
->  
->  static int glink_subdev_start(struct rproc_subdev *subdev)
->  {
-> @@ -189,37 +197,83 @@ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
->  }
->  EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
->  
-> +static struct qcom_ssr_subsystem *qcom_ssr_get_subsys(const char *name)
-> +{
-> +	struct qcom_ssr_subsystem *info;
-> +
-> +	mutex_lock(&qcom_ssr_subsys_lock);
-> +	/* Match in the global qcom_ssr_subsystem_list with name */
-> +	list_for_each_entry(info, &qcom_ssr_subsystem_list, list)
-> +		if (!strcmp(info->name, name))
-> +			goto out;
-> +
-> +	info = kzalloc(sizeof(*info), GFP_KERNEL);
-> +	if (!info) {
-> +		info = ERR_PTR(-ENOMEM);
-> +		goto out;
-> +	}
+> The hardware still runs at the frequency requested by cpufreq core here, right ?
 
+Yes.
 
-The above appears to be breaking the ARM64 build on the latest -next
-when building the modules  ...
- 
-  CC [M]  drivers/remoteproc/qcom_common.o
-drivers/remoteproc/qcom_common.c: In function 'qcom_ssr_get_subsys':
-remoteproc/qcom_common.c:210:9: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
-  info = kzalloc(sizeof(*info), GFP_KERNEL);
-         ^~~~~~~
-drivers/remoteproc/qcom_common.c:210:7: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-  info = kzalloc(sizeof(*info), GFP_KERNEL);
+> It is better to provide the get() callback as it is also used to show the
+> current frequency in userspace.
+
+I looked at that and I saw that if the get() callback is not provided,
+the current frequency showed by userspace is policy->cur. For this
+device, policy->cur is accurate and so if we added the get() callback we
+essentially just going to return policy->cur. Therefore, given that we
+already know policy->cur, I did not see the point in adding a device
+specific handler to do the same thing.
 
 Cheers
 Jon
