@@ -1,71 +1,78 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] PM / devfreq: Add governor flags to clarify the
- features
-Date: Mon, 13 Jul 2020 17:26:43 +0300
-Message-ID: <3c327421-0533-c657-1887-9036e525960d@gmail.com>
-References: <20200713083113.5595-1-cw00.choi@samsung.com>
- <CGME20200713081944epcas1p22871b6d8a9455226e6cccd08ac0baa73@epcas1p2.samsung.com>
- <20200713083113.5595-3-cw00.choi@samsung.com>
- <746837bc-6734-3e52-453f-2b59bbca0230@gmail.com>
- <69ae2524-22d0-2444-da13-fae199392029@samsung.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] arm64: tlb: Use the TLBI RANGE feature in arm64
+Date: Mon, 13 Jul 2020 15:27:50 +0100
+Message-ID: <4040f429-21c8-0825-2ad4-97786c3fe7c1@nvidia.com>
+References: <20200710094420.517-1-yezhenyu2@huawei.com>
+ <20200710094420.517-3-yezhenyu2@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <69ae2524-22d0-2444-da13-fae199392029-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <20200710094420.517-3-yezhenyu2-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: leonard.crestez-3arQi8VN3Tc@public.gmane.org, lukasz.luba-5wv7dgnIgG8@public.gmane.org, enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, hl-TNX95d0MmH7DzftRWevZcw@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, abel.vesa-3arQi8VN3Tc@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Zhenyu Ye <yezhenyu2-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, suzuki.poulose-5wv7dgnIgG8@public.gmane.org, maz-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, steven.price-5wv7dgnIgG8@public.gmane.org, guohanjun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, xiexiangyou-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, prime.zeng-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, zhangshaokun-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, kuhn.chenqun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-13.07.2020 15:26, Chanwoo Choi пишет:
-...
->> BTW, I'm curious what do you think about hiding the unsupported debugfs
+
+On 10/07/2020 10:44, Zhenyu Ye wrote:
+> Add __TLBI_VADDR_RANGE macro and rewrite __flush_tlb_range().
 > 
-> Do you mean that sysfs?
-
-Yes, sysfs :)
-
->> attributes per-device instead of returning the -EACCES?
+> When cpu supports TLBI feature, the minimum range granularity is
+> decided by 'scale', so we can not flush all pages by one instruction
+> in some cases.
 > 
-> I considered the hiding of sysfs node too instead of -EACCES.
+> For example, when the pages = 0xe81a, let's start 'scale' from
+> maximum, and find right 'num' for each 'scale':
+> 
+> 1. scale = 3, we can flush no pages because the minimum range is
+>    2^(5*3 + 1) = 0x10000.
+> 2. scale = 2, the minimum range is 2^(5*2 + 1) = 0x800, we can
+>    flush 0xe800 pages this time, the num = 0xe800/0x800 - 1 = 0x1c.
+>    Remaining pages is 0x1a;
+> 3. scale = 1, the minimum range is 2^(5*1 + 1) = 0x40, no page
+>    can be flushed.
+> 4. scale = 0, we flush the remaining 0x1a pages, the num =
+>    0x1a/0x2 - 1 = 0xd.
+> 
+> However, in most scenarios, the pages = 1 when flush_tlb_range() is
+> called. Start from scale = 3 or other proper value (such as scale =
+> ilog2(pages)), will incur extra overhead.
+> So increase 'scale' from 0 to maximum, the flush order is exactly
+> opposite to the example.
+> 
+> Signed-off-by: Zhenyu Ye <yezhenyu2-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 
-If there is no real userspace (used by a non-developer crowd) that
-relies on the attributes presence, then it could be fine to change the
-behaviour, IMO.
 
-I know that PowerTOP utility uses the 'trans_stat' attribute, but not
-sure about the other attributes.
+After this change I am seeing the following build errors ...
 
-> But,
-> For a long time, devfreq showed the sysfs interface of all devfreq devices
-> regardless of the kind of devfreq governor. It means that devfreq keeps
-> the ABI interface. If devfreq hides the unsupported sysfs node
-> according to the type of governor, it will break the ABI.
+/tmp/cckzq3FT.s: Assembler messages:
+/tmp/cckzq3FT.s:854: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
+/tmp/cckzq3FT.s:870: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
+/tmp/cckzq3FT.s:1095: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
+/tmp/cckzq3FT.s:1111: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
+/tmp/cckzq3FT.s:1964: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
+/tmp/cckzq3FT.s:1980: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
+/tmp/cckzq3FT.s:2286: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
+/tmp/cckzq3FT.s:2302: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x7'
+/tmp/cckzq3FT.s:4833: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
+/tmp/cckzq3FT.s:4849: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
+/tmp/cckzq3FT.s:5090: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
+/tmp/cckzq3FT.s:5106: Error: unknown or missing operation name at operand 1 -- `tlbi rvae1is,x6'
+/tmp/cckzq3FT.s:874: Error: attempt to move .org backwards
+/tmp/cckzq3FT.s:1115: Error: attempt to move .org backwards
+/tmp/cckzq3FT.s:1984: Error: attempt to move .org backwards
+/tmp/cckzq3FT.s:2306: Error: attempt to move .org backwards
+/tmp/cckzq3FT.s:4853: Error: attempt to move .org backwards
+/tmp/cckzq3FT.s:5110: Error: attempt to move .org backwards
+scripts/Makefile.build:280: recipe for target 'arch/arm64/mm/hugetlbpage.o' failed
+make[3]: *** [arch/arm64/mm/hugetlbpage.o] Error 1
+scripts/Makefile.build:497: recipe for target 'arch/arm64/mm' failed
+make[2]: *** [arch/arm64/mm] Error 2
 
-I didn't notice that it's an ABI already [1]. Should be better not to
-change the ABI if there is userspace already relying on the old
-behaviour, otherwise it may be okay to make changes until it will be too
-late, also given that this is still a "testing" ABI.
+Cheers
+Jon
 
-[1] https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-class-devfreq
-
-Although, the doc doesn't say anything about -EACCES/-EINVAL, so isn't
-it an ABI change already? Doesn't doc need to be updated in order to
-reflect the ABI change?
-
-For example, doc says that userspace shouldn't care about attribute
-values which are irrelevant for a selected governor, like in the case of
-the 'polling_interval' attribute. The doc doesn't say that userspace may
-get a error.
-
-> Although I knew that maybe performance/powersave/userspace didn't use
-> the 'polling_interval' node, I just returned -EACCESS.
-
-The 'polling_interval', 'min/max_freq' and the new 'timer' attributes
-are all the governor attributes.
-
-Would be nice to have a per-device `governor/` directory containing all
-the governor-specific attributes (without the unrelated attributes), but
-perhaps it's a bit too late to change it now?
+-- 
+nvpublic
