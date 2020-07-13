@@ -1,53 +1,42 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] cpufreq: tegra186: Simplify probe return path
-Date: Mon, 13 Jul 2020 08:58:02 +0530
-Message-ID: <20200713032802.u4ubftfgwtixkaj3@vireshk-i7>
-References: <20200712100645.13927-1-jonathanh@nvidia.com>
- <20200712100645.13927-2-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Enable CPUFREQ userspace governor
+Date: Mon, 13 Jul 2020 09:27:28 +0100
+Message-ID: <5f777eab-5584-5e4b-ff81-2a9c6522ddad@nvidia.com>
+References: <20200712103114.24825-1-jonathanh@nvidia.com>
+ <857e47b0-e226-72b7-3855-f668c49c0739@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200712100645.13927-2-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <857e47b0-e226-72b7-3855-f668c49c0739-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J . Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12-07-20, 11:06, Jon Hunter wrote:
-> We always put the reference to BPMP device on exit of the Tegra186
-> CPUFREQ driver and so there is no need to have separate exit paths
-> for success and failure. Therefore, simplify the probe return path
-> in the Tegra186 CPUFREQ driver by combining the success and failure
-> paths.
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/cpufreq/tegra186-cpufreq.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-> index c44190ce3f03..bf8cab357277 100644
-> --- a/drivers/cpufreq/tegra186-cpufreq.c
-> +++ b/drivers/cpufreq/tegra186-cpufreq.c
-> @@ -231,15 +231,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	tegra_bpmp_put(bpmp);
-> -
->  	tegra186_cpufreq_driver.driver_data = data;
->  
->  	err = cpufreq_register_driver(&tegra186_cpufreq_driver);
-> -	if (err)
-> -		return err;
-> -
-> -	return 0;
->  
->  put_bpmp:
->  	tegra_bpmp_put(bpmp);
 
-Applied. Thanks.
+On 12/07/2020 11:48, Dmitry Osipenko wrote:
+> 12.07.2020 13:31, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> Enable the CPUFREQ userspace governor in the tegra_defconfig so that
+>> we can test CPUFREQ with the userspace governor with this configuration
+>> on 32-bit Tegra devices.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  The_Yellow_Theme_24-192.wav      | 0
+>>  arch/arm/configs/tegra_defconfig | 1 +
+>>  2 files changed, 1 insertion(+)
+>=20
+>>  create mode 100644 The_Yellow_Theme_24-192.wav
+>>
+>> diff --git a/The_Yellow_Theme_24-192.wav b/The_Yellow_Theme_24-192.wav
+>> new file mode 100644
+>=20
+> Hello, Jon! This looks like something unrelated to this patch :)
 
--- 
-viresh
+
+Ugh indeed. Thanks. I will fix this. Jon
+
+--=20
+nvpublic
