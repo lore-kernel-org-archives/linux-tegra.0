@@ -1,125 +1,66 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 22/25] pinctrl: tegra: pinctrl-tegra194: Do not
- initialise field twice
-Date: Tue, 14 Jul 2020 17:49:14 +0200
-Message-ID: <20200714154914.GA251696@ulmo>
-References: <20200713144930.1034632-1-lee.jones@linaro.org>
- <20200713144930.1034632-23-lee.jones@linaro.org>
+Subject: Re: [PATCH 1/2] serial: tegra: fix CREAD handling for PIO
+Date: Tue, 14 Jul 2020 17:52:00 +0200
+Message-ID: <20200714155200.GB251696@ulmo>
+References: <20200710135947.2737-1-johan@kernel.org>
+ <20200710135947.2737-2-johan@kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+        protocol="application/pgp-signature"; boundary="8GpibOaaTibBMecb"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200713144930.1034632-23-lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20200710135947.2737-2-johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=utf-8
+--8GpibOaaTibBMecb
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 13, 2020 at 03:49:27PM +0100, Lee Jones wrote:
-> Both PIN_PINGROUP_ENTRY_Y() and DRV_PINGROUP_ENTRY_Y() macros are
-> called for each of the 2 pin groups defined here, and both of them
-> initialise 'drv_reg', causing the compiler to complain.
+On Fri, Jul 10, 2020 at 03:59:46PM +0200, Johan Hovold wrote:
+> Commit 33ae787b74fc ("serial: tegra: add support to ignore read") added
+> support for dropping input in case CREAD isn't set, but for PIO the
+> ignore_status_mask wasn't checked until after the character had been
+> put in the receive buffer.
 >=20
-> Only initialise 'drv_reg' once.
+> Note that the NULL tty-port test is bogus and will be removed by a
+> follow-on patch.
 >=20
-> Fixes the following W=3D1 kernel build warning(s):
->=20
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:71:14: warning: initialized fie=
-ld overwritten [-Woverride-init]
->  71 | .drv_reg =3D ((r)), | ^
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:105:2: note: in expansion of ma=
-cro =E2=80=98DRV_PINGROUP_ENTRY_Y=E2=80=99
->  105 | DRV_PINGROUP_ENTRY_Y(0x14004, 12, 5, 20, 5, -1, -1, -1, -1, 0)
->  | ^~~~~~~~~~~~~~~~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:124:3: note: in expansion of ma=
-cro =E2=80=98drive_pex_l5_clkreq_n_pgg0=E2=80=99
->  124 | drive_##pg_name, | ^~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:128:2: note: in expansion of ma=
-cro =E2=80=98PINGROUP=E2=80=99
->  128 | PINGROUP(pex_l5_clkreq_n_pgg0, PE5, RSVD1, RSVD2, RSVD3, 0x14000, =
-0,
->  | ^~~~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:71:14: note: (near initializati=
-on for =E2=80=98tegra194_groups[0].drv_reg=E2=80=99)
->  71 | .drv_reg =3D ((r)), | ^
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:105:2: note: in expansion of ma=
-cro =E2=80=98DRV_PINGROUP_ENTRY_Y=E2=80=99
->  105 | DRV_PINGROUP_ENTRY_Y(0x14004, 12, 5, 20, 5, -1, -1, -1, -1, 0)
->  | ^~~~~~~~~~~~~~~~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:124:3: note: in expansion of ma=
-cro =E2=80=98drive_pex_l5_clkreq_n_pgg0=E2=80=99
->  124 | drive_##pg_name, | ^~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:128:2: note: in expansion of ma=
-cro =E2=80=98PINGROUP=E2=80=99
->  128 | PINGROUP(pex_l5_clkreq_n_pgg0, PE5, RSVD1, RSVD2, RSVD3, 0x14000, =
-0,
->  | ^~~~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:71:14: warning: initialized fie=
-ld overwritten [-Woverride-init]
->  71 | .drv_reg =3D ((r)), | ^
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:107:2: note: in expansion of ma=
-cro =E2=80=98DRV_PINGROUP_ENTRY_Y=E2=80=99
->  107 | DRV_PINGROUP_ENTRY_Y(0x1400c, 12, 5, 20, 5, -1, -1, -1, -1, 0)
->  | ^~~~~~~~~~~~~~~~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:124:3: note: in expansion of ma=
-cro =E2=80=98drive_pex_l5_rst_n_pgg1=E2=80=99
->  124 | drive_##pg_name, | ^~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:130:2: note: in expansion of ma=
-cro =E2=80=98PINGROUP=E2=80=99
->  130 | PINGROUP(pex_l5_rst_n_pgg1, PE5, RSVD1, RSVD2, RSVD3, 0x14008, 0,
->  | ^~~~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:71:14: note: (near initializati=
-on for =E2=80=98tegra194_groups[1].drv_reg=E2=80=99)
->  71 | .drv_reg =3D ((r)), | ^
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:107:2: note: in expansion of ma=
-cro =E2=80=98DRV_PINGROUP_ENTRY_Y=E2=80=99
->  107 | DRV_PINGROUP_ENTRY_Y(0x1400c, 12, 5, 20, 5, -1, -1, -1, -1, 0)
->  | ^~~~~~~~~~~~~~~~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:124:3: note: in expansion of ma=
-cro =E2=80=98drive_pex_l5_rst_n_pgg1=E2=80=99
->  124 | drive_##pg_name, | ^~~~~~
->  drivers/pinctrl/tegra/pinctrl-tegra194.c:130:2: note: in expansion of ma=
-cro =E2=80=98PINGROUP=E2=80=99
->  130 | PINGROUP(pex_l5_rst_n_pgg1, PE5, RSVD1, RSVD2, RSVD3, 0x14008, 0,
->  | ^~~~~~~~
->=20
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Fixes: 33ae787b74fc ("serial: tegra: add support to ignore read")
+> Cc: stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>     # 5.4
+> Cc: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 > ---
->  drivers/pinctrl/tegra/pinctrl-tegra194.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/tty/serial/serial-tegra.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 
-Indeed, looks correct to me:
+Looks good to me:
 
 Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---nFreZHaLTZJo0R7j
+--8GpibOaaTibBMecb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8N0/cACgkQ3SOs138+
-s6EyDg/8DvdSsh/xAJCs/CnR7MTGLh60dManNXVZn2FQihuEEXhDyqs7WC+JLmiw
-5mxbGiNt+0I6GsVizGeyuqtFUY0t4HpLLAY6mrMatr2lRnJ7+5VWnKhvj3ouRDqU
-Xmw96Gkc+aoQY2he1VyJ41OnZrdSNoaniDN7GUZ4rSg+oRYsv/7GzMcUGuH021oc
-MtOFXZZeaelUIE+AUqT7V4WBurTNW0EFmCC/l7n7ZWQBz4eZ1cbRS3XNZBDArqsv
-acF+a7W6RlgmiTYyQtVvew1KttdW8vXPLE4IvhibWe5EVW8x6ra7CeYDnsUZE7RY
-JuOImmlImnjwoJbRLuHcuOL9tGU6f5Lvchmt8moR/rADue3D0ltswJZE+jslleyp
-9aM4wtOOmymbbPLzNeNPwMU4FWmA3KR2DSa0GxLMuLOJR7s1bTyOb4ygWAPGnBUY
-gHxAjYLCTS+ZpLMEh0mHaSAxAt0pSq7j/wZVyEUe/QXTGrvq3D0LiL7jHJKcX46R
-x6mkVt7vFHlv4lhkUIpsE56BYws+9q1s5g63OHuJ+8VFkUwCaPFXX1MaLaBpXNTa
-9SmovIo0mG99ExVK1RZmba0Dd/SUF20cxK5NRtRTvEYMRAdzhNMHNa7vgDFlZLF2
-oplZw4k0f61kijz2+u8GF+gpyzEDsxJgBM1yOm+7JAy1L9OLQwg=
-=1tXh
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8N1KAACgkQ3SOs138+
+s6E5wxAAh7iJ8sJY9GOfgRgH+TfVpaOx9vthw1a+YaDJkl8WT7Y7pz9YaEru4OIJ
+eBLvyt+pMPkx7Tl495j7EbFwUmZGy7F+4pse9vx686+bAwsc9+SgYRgnQzMvwsY1
+UX6Kfaj+pfWcGvYz/Gq5zQEi23ZH6QrIkEZGWm408gXMz+NzRKxABTDJx5+FRdtu
+uB2b6BNnrQ/em1dY2NTtFoNbKZpoHRm5aDXiAb/9NO4sgmJHaKB4UpNdtMBe2mHA
+uCkPzhytPCl6gzyl+EMLsrkPZQpPRDEcCoeHj/Gv01F5FRXILUUb8dhCIvhQpXZ/
+vKiHVCN7o7IfMp+CVRDSwRrcLZ4D1hQl/wDw+k4ZSAhE5InotN6nDrpJIR4kDxII
+KWEkyWkrf8buSpdCFCY6XBPtC7FAHn/W28RaD4LDE9fpXFJWawxe0ebtH+M/bRxk
+CVbjYU6NxjpdbK0YCKNUzPNQJwBU1HWErGkMU7cnPdc+04t/jVx7023JrYaRzYak
+6+2O96GdpQEa97PthXw6xVamIwWjA3383/+inuztYSXduWajpx3A1RA38ihcU04I
+stG3Ft3FHvDjEu/iE8i/8k5nvs0S/s+lJYKkdyVaJcvUAwQt2kO24x8WPkV4tdvz
+w1AIMxx54zoT9n4CHdVhc3EINKoWirt8QgAfw37VSSa2vboL4yg=
+=0eYi
 -----END PGP SIGNATURE-----
 
---nFreZHaLTZJo0R7j--
+--8GpibOaaTibBMecb--
