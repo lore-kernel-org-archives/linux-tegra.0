@@ -1,70 +1,140 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] memory: tegra: Fix KCONFIG variables for Tegra186 and
- Tegra194
-Date: Tue, 14 Jul 2020 17:55:04 +0200
-Message-ID: <20200714155504.GD251696@ulmo>
-References: <20200712103347.25070-1-jonathanh@nvidia.com>
+From: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [TEGRA194_CPUFREQ PATCH v6 1/4] dt-bindings: arm: Add NVIDIA Tegra194 CPU Complex binding
+Date: Tue, 14 Jul 2020 21:37:50 +0530
+Message-ID: <1594742870-19957-1-git-send-email-sumitg@nvidia.com>
+References: <CAL_JsqL1CuumdT1CZiofEZw9j+3gsir8JwSrZVfcxFxEB=bavQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UoPmpPX/dBe4BELn"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200712103347.25070-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAL_JsqL1CuumdT1CZiofEZw9j+3gsir8JwSrZVfcxFxEB=bavQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Add device-tree binding documentation to represent Tegra194
+CPU Complex with compatible string under 'cpus' node. This
+can be used by drivers like cpufreq which don't have their
+node or CPU Complex node to bind to. Also, documenting
+'nvidia,bpmp' property which points to BPMP device.
 
---UoPmpPX/dBe4BELn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ .../bindings/arm/nvidia,tegra194-ccplex.yaml       | 106 +++++++++++++++++++++
+ 1 file changed, 106 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/nvidia,tegra194-ccplex.yaml
 
-On Sun, Jul 12, 2020 at 11:33:47AM +0100, Jon Hunter wrote:
-> Commit a127e690b051 ("memory: tegra: Add support for the Tegra194 memory
-> controller") and commit 4e04b88633ae ("memory: tegra: Only include
-> support for enabled SoCs") incorrectly added the KCONFIG variables
-> CONFIG_ARCH_TEGRA186_SOC and CONFIG_ARCH_TEGRA194_SOC to the Tegra EMC
-> driver. These KCONFIG variables do not exist and prevent the EMC driver
-> from being probed on Tegra186 and Tegra194. These KCONFIG variable
-> names are simply missing one underscore and so fix this by adding the
-> necessary underscore to the variable names.
->=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/memory/tegra/tegra186-emc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-I wonder why we didn't catch that earlier. I assume the EMC frequency
-scaling tests just don't run on these SoC generations with existing
-kernels, then?
-
-Oddly enough, I also vaguely recall testing EMC frequency scaling on
-both SoC generations, so I wonder where things went wrong. Anyway, this
-is obviously correct, so I've applied it.
-
-Thanks,
-Thierry
-
---UoPmpPX/dBe4BELn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8N1VgACgkQ3SOs138+
-s6GlNA//cJqrRg8Z7Nf0bX2HQ4lHFQVIg2gstpGGVwOX6SaCxKJEwhfYQdcVOwLf
-hs1ivuVVebF8328vVisijcbVhIokpCQZMrk3EMO+fZ6k2RltAc5UbgcAid4lg5gR
-D/YtTdSM0RPWAo7CCg3QlcGAsh3W3VfjD44e0N3TsFBk53rhdyxhIvw86ju7wJ//
-+6YfWmwlrxj/03MwWGqnUvhDo3r2v4kn5VB/gosBKs0o22K/Tp121T27fsAq0vzu
-b6a7sFppMStCMKgRwZM4sU00VMVW0Y4AI5+dXoTeDcYCCEHzG6n5Lq+/J3M7kR1u
-I40Zd8KoNGGM4TsokS5dOX6zOmR1gDCc9FyJOf+18MmbAMks4MD/rF1sDxbi7oB0
-8N0v3WuPJ2ZUqM3QCPW4cp/wnTZ88EIAaAXSPRhpaTB/sbbyBJlA1yKxbKa45NFb
-ubRr4mEJiCi9acjeprk81Kvn8lg7xDsI30X9kOWzmRzpgLTzY4HGc2nDM2q5zUmZ
-6SxNgWEeMuT7coJeTMwAa7Fm5MjVa84Gl7S3e+a5W3/kRfH2f8nO26UGo6SYOErx
-9ZBtVmcz0WUds5kn7uFEBeFR3CKfE3Y7yTzjM2WHV6RBQNuB4GwqFnjzCDN5GFjH
-FxWzdcusbdpNBSduost384bmk3i63Zcp/tcZRFgWcG4CCIUf110=
-=HX7y
------END PGP SIGNATURE-----
-
---UoPmpPX/dBe4BELn--
+diff --git a/Documentation/devicetree/bindings/arm/nvidia,tegra194-ccplex.yaml b/Documentation/devicetree/bindings/arm/nvidia,tegra194-ccplex.yaml
+new file mode 100644
+index 0000000..06dbdaa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/nvidia,tegra194-ccplex.yaml
+@@ -0,0 +1,106 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/arm/nvidia,tegra194-ccplex.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: NVIDIA Tegra194 CPU Complex device tree bindings
++
++maintainers:
++  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
++  - Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++  - Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++
++description: |+
++  Tegra194 SOC has homogeneous architecture where each cluster has two
++  symmetric cores. Compatible string in "cpus" node represents the CPU
++  Complex having all clusters.
++
++properties:
++  compatible:
++    enum:
++      - nvidia,tegra194-ccplex
++
++  nvidia,bpmp:
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    description: |
++      Specifies the bpmp node that needs to be queried to get
++      operating point data for all CPUs.
++
++      Optional for systems that have a "compatible"
++      property value of "nvidia,tegra194-ccplex".
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++dependencies:
++  nvidia,bpmp: [compatible]
++
++examples:
++  - |
++    cpus {
++      compatible = "nvidia,tegra194-ccplex";
++      nvidia,bpmp = <&bpmp>;
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      cpu0_0: cpu@0 {
++        compatible = "nvidia,tegra194-carmel";
++        device_type = "cpu";
++        reg = <0x0>;
++        enable-method = "psci";
++      };
++
++      cpu0_1: cpu@1 {
++        compatible = "nvidia,tegra194-carmel";
++        device_type = "cpu";
++        reg = <0x001>;
++        enable-method = "psci";
++      };
++
++      cpu1_0: cpu@100 {
++        compatible = "nvidia,tegra194-carmel";
++        device_type = "cpu";
++        reg = <0x100>;
++        enable-method = "psci";
++      };
++
++      cpu1_1: cpu@101 {
++        compatible = "nvidia,tegra194-carmel";
++        device_type = "cpu";
++        reg = <0x101>;
++        enable-method = "psci";
++      };
++
++      cpu2_0: cpu@200 {
++        compatible = "nvidia,tegra194-carmel";
++        device_type = "cpu";
++        reg = <0x200>;
++        enable-method = "psci";
++      };
++
++      cpu2_1: cpu@201 {
++        compatible = "nvidia,tegra194-carmel";
++        device_type = "cpu";
++        reg = <0x201>;
++        enable-method = "psci";
++      };
++
++      cpu3_0: cpu@300 {
++        compatible = "nvidia,tegra194-carmel";
++        device_type = "cpu";
++        reg = <0x300>;
++        enable-method = "psci";
++      };
++
++      cpu3_1: cpu@301 {
++        compatible = "nvidia,tegra194-carmel";
++        device_type = "cpu";
++        reg = <0x301>;
++        enable-method = "psci";
++       };
++    };
++...
+-- 
+2.7.4
