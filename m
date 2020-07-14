@@ -1,58 +1,62 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RESEND PATCH] ARM: tegra: Enable CPUFREQ userspace governor
-Date: Tue, 14 Jul 2020 10:32:04 +0200
-Message-ID: <20200714083204.GA141356@ulmo>
-References: <857e47b0-e226-72b7-3855-f668c49c0739@gmail.com>
- <20200713144134.24444-1-jonathanh@nvidia.com>
+Subject: Re: [PATCH] arm64: tegra: Re-order PCIe aperture mappings
+Date: Tue, 14 Jul 2020 10:55:11 +0200
+Message-ID: <20200714085511.GB141356@ulmo>
+References: <20200706171454.11316-1-vidyas@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+        protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200713144134.24444-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200706171454.11316-1-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, amurray-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---k+w/mQv8wyuph6w0
+--5/uDoXvLw7AC5HRs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 13, 2020 at 03:41:34PM +0100, Jon Hunter wrote:
-> Enable the CPUFREQ userspace governor in the tegra_defconfig so that
-> we can test CPUFREQ with the userspace governor with this configuration
-> on 32-bit Tegra devices.
+On Mon, Jul 06, 2020 at 10:44:54PM +0530, Vidya Sagar wrote:
+> Re-order Tegra194's PCIe aperture mappings to have IO window moved to
+> 64-bit aperture and have the entire 32-bit aperture used for accessing
+> the configuration space. This makes it to use the entire 32MB of the 32-b=
+it
+> aperture for ECAM purpose while booting through ACPI.
 >=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm/configs/tegra_defconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 36 ++++++++++++------------
+>  1 file changed, 18 insertions(+), 18 deletions(-)
 
-Applied, thanks.
+I've had to manually apply this because it conflicts with some of the
+cleanups I've been doing to the DTS files. I'll push it out later, so
+it'd be good if you could check that I've applied it correctly.
 
+Thanks,
 Thierry
 
---k+w/mQv8wyuph6w0
+--5/uDoXvLw7AC5HRs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8NbX8ACgkQ3SOs138+
-s6HISg/+JuiFw9nGbsOP/irKv8Vx0dMGLWMDijFAkC0sXWgaR5PUdV4FWNwteZ7X
-ufigQ6FZaWrjvR+o3AnrJ8GmKvJHogiD2vPKyMrODti3d3wbl66AzLhsY0LLvCb9
-+tqYZ4/Pvc2B9Sx6IvseaxUyAyAUwcBdZbEkeRW0UDS6fKaTsSEWKOxohWujgvEA
-zFvCFn/drOtx24D+bD87bNVlEdo9tvBr+U7X6CIsx2AI+a8cV486Ts43u4oZx0OM
-NzLO/UohuyDq946ad7kglhvQ4wBdJWTzxwYRQzjo86bR+v/2qeR+87C3ZVNNB3Eu
-EJ/Xg4ZCxIgZYdhOWC9jD4v3uDFRU6mmEDiehTk88Qu4oDB/gbhw+FL2SX+zfmo1
-y8hq6qI1qf9L9HBs21nm3d6JM4iiyGgNxNXpWKWmTEqOTM0vE+BgO2W+Uqcu9AFf
-k118RdGjNG19vuZO9LgZ+MG3zDPCLH6qAbP1Xmsv/mDWab+4Pb0uUEqjbHa3VeqA
-od+MBm/GRZWyOxmJCnqPdQ7h5Avbr/aB5pvlFF2p85dyAmaYQoon5wkDm+1x7mnr
-gcUex+EFaIdEHgFZor08R3J1ENf9awUYYcc5E0/aKE/kqyEJ5EUlxGCaCg5Yv+m9
-wZnK8uxgqlr44S6GUzqgKuH8eJYdFWCO792kdULuoS6vRk+TfAw=
-=nczi
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8Ncu0ACgkQ3SOs138+
+s6E9+w/+JjZPchwPj6idBmuMBbMOr4W0imsNtOOmtge31wagIjngpHj1pNYFjZ42
+qAgefyMb30w8IWMP8tkKHby4+UOXYE9mb6lqiertUynhPRCQDVu1+o3oWPRnmFd6
+ajnTN7/9ZhXJ83NmYm/h+0Zqk/2mvg6P2DjAdOkw2ioYGmfI9g6gBh6E5ypoC+sV
+Lr5VntibAYLU8+zGjkfg4yyMHHM/ljG4h6F/ybVdfkM0kqomUMkE7TcustiXXosy
+pdwUv53VDf2z1FRs7UbXzZSXY8G7Xo9ZarbUtjpf5+iOr1uys484/PU60qtAY0MC
+gaWp7qRtkYVDjJUNrWKGF8H0P5BNKRPQ8Nd9dyBP/QMhos8e78C6SaWHTbdCJhXr
+FHys9ND/Lvv9lBEq8zG+WvDuhZlbAzjYv0mQ0qn1lDQS45ObJsxnj2Ztg8q91K4W
+gWBmNyiltbRGlSYMFDeWSbvSK7PBNzrg0If3GOh2Ok5nQb3DlxQIBjmnTGeVPrv7
+lS5VjzyLQgxhsoTGURMBLqFICKV5gtNBhMc6FGMzK5QCcjgzdzlP6HeO/feXhYnn
+28gsh8VzOVdIkoyMLZljOp4XsNiQi2sEnG6jGJZjaIB/bt3di/hT0IZkSVt+EjK/
+ilRWmKI08vgWXbM+EnVILaUJDVHN50Zqi41IYhWhyEMaReFdf6s=
+=jJwZ
 -----END PGP SIGNATURE-----
 
---k+w/mQv8wyuph6w0--
+--5/uDoXvLw7AC5HRs--
