@@ -1,63 +1,66 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/3] arm64: tegra: Populate VBUS for USB3 on Jetson TX2
-Date: Tue, 14 Jul 2020 11:19:04 +0200
-Message-ID: <20200714091904.GE141356@ulmo>
-References: <20200712102506.23686-1-jonathanh@nvidia.com>
- <20200712102506.23686-4-jonathanh@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] usb: tegra: Fix allocation for the FPCI context
+Date: Tue, 14 Jul 2020 11:19:55 +0200
+Message-ID: <20200714091955.GF141356@ulmo>
+References: <20200712102837.24340-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AsxXAMtlQ5JHofzM"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="DEueqSqTbz/jWVG1"
+Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20200712102506.23686-4-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20200712102837.24340-1-jonathanh@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---AsxXAMtlQ5JHofzM
+--DEueqSqTbz/jWVG1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 12, 2020 at 11:25:06AM +0100, Jon Hunter wrote:
-> The VBUS for USB3 connector on the Jetson TX2 is connected to the
-> vdd_usb1 supply and although this is populated for the USB2 port
-> on the USB3 connector it is not populated for the USB3 port and
-> causes the following warning to be seen on boot ...
+On Sun, Jul 12, 2020 at 11:28:36AM +0100, Jon Hunter wrote:
+> Commit 5c4e8d3781bc ("usb: host: xhci-tegra: Add support for XUSB
+> context save/restore") is using the IPFS 'num_offsets' value when
+> allocating memory for FPCI context instead of the FPCI 'num_offsets'.
+> We have not observed any specific issues because of this, but could
+> cause too much memory or too little memory to be allocated. Fix this
+> by using the FPCI 'num_offsets' for allocating the FPCI memory for
+> storing the FPCI state.
 >=20
->  usb3-0: supply vbus not found, using dummy regulator
+> Cc: stable@vger.kernel.org
 >=20
-> Fix this by also adding the VBUS supply to the USB3 port.
+> Fixes: 5c4e8d3781bc ("usb: host: xhci-tegra: Add support for XUSB context=
+ save/restore")
 >=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/usb/host/xhci-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+Good catch!
 
-Thierry
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---AsxXAMtlQ5JHofzM
+--DEueqSqTbz/jWVG1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8NeIgACgkQ3SOs138+
-s6HO2Q//S1t82eIqMY8wElaMo6K1sX8e87Y8KZeSxeZJ/xlX60QK4bLCBCxe1ZVJ
-ZSlbS9+qta/I5n3JAv1RFUwQWXRqGB9Vyfjwif54RJaFZN0uwLz2q6uHHda8DhTo
-p6YxTREj1lRR2eQiYVI6WTG9orXDaxhUlvCMKcvwNiAf4wkViJaX3/vCk3+vFpEi
-/1TF19Us4bQvRcAxAnRpziqA9QFcz+zki9965dtRO830rQZBhlHr61i7hGI8RnwK
-IvfKu22iq6Pqtmke/uVOs697GDwNST72DuEX5DZY+KA1X1MH77mmSzhXBkXGYVxI
-GnrEnjw/KuuHKAbV6uA4ScKHlklmFjhQF+X7IKjaI9+3M4bAHMFUJBwvWY4wfDRi
-5guHPjl3XxMR3/oqrtUcWKSS3IXRpNxfq6m8fzp3mTuRsoNgIBB9fkknM2bnGCN9
-QQzs8enkuKq5qE+741CETQMx8+GxmD33VCU5GjjahBK5GGcsvwSaV5TwjC9dP+Pt
-9g9lAYWELGE61BvwxwuvxPsgpGIr0Ll2M1WgW0mV2TqmSnkKVn6lujtd6KRt5Q/O
-aK0S21yKFD5gyd+LVB10Bu6U6fGSwG3PNRa0F7RWk3NFTQ7r2jmf1AS0x/suz/eI
-nAA2nOep8CwkxrbObLgD2KHtAsJzxu7BAxDe//bwnpNr39k2qLs=
-=kgGu
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8NeLsACgkQ3SOs138+
+s6G7cg/9FTvsISm0svIWmK3kAgMVZkVea+cESYFM2UwbzPvCuznYAXuObClSzmKY
+/s7hMh3A5gUvn1Y0j1dYgb5oc8zrf9GHWr3T3aCODdBnQk6HrDyFBUP5sTYA+wfR
+684PfsyxG47Ei18zAWtSNlbgGdd0pk0uLRGsrKqxHA+bbooHwO4+Ci6AO242Wovr
+V7yBsNxTwgdLtZI2Bx70XSf9Kao4m+zRsaPorS96gnWoJKNtHXWTz4JUWHYSkBtw
+B1FJ+YjlBQEaXhdSXtU3VOXaFGJGAm/uPkAXU0pK3YuZvJXkzC224Tgi4BaYK9/c
+WDCaMgRhF5V7auBeDKt1xh+nxBAjG8eaMJHuBpKsN1dnRZdXjJG/c+evHFce9noM
+VR9jMR6cmg7EJBM9/QfvDA54MGsanmSrDit0Tg//Ba2BtiqQQv8jgl5bkPP8ZSBv
+1caFyAn74JoJd/tjPOYoDsgXbhjN64o5eez2z66fXLfvxesfEQMeLKykBnrwEJAE
+gXZ7OaOnHsjyWnf+Nd2zYVY8zc48P2NLb8GLYaWboNeVekWSkFK/+VmQ5J6ayDrn
+mNJfZ7eNijZlbPz2pkDah47Jta2NzHfjS/zYuiYT/pOa+6UbxsEV7wWOl28mneTO
+EpjAS3lJAFSZLiA/Px0WjNwYE+H/iJ8P3BP3RH9ghMu4zCo1Qvg=
+=Jwud
 -----END PGP SIGNATURE-----
 
---AsxXAMtlQ5JHofzM--
+--DEueqSqTbz/jWVG1--
