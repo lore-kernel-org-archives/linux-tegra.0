@@ -1,62 +1,94 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] arm64: tegra: Re-order PCIe aperture mappings
-Date: Tue, 14 Jul 2020 10:55:11 +0200
-Message-ID: <20200714085511.GB141356@ulmo>
-References: <20200706171454.11316-1-vidyas@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ALSA: hda: Enable sync-write operation as default for all
+ controllers
+Date: Tue, 14 Jul 2020 10:08:18 +0100
+Message-ID: <6f7a6d27-127d-9242-0638-abaf10e38410@nvidia.com>
+References: <20200618144051.7415-1-tiwai@suse.de>
+ <8fc9f086-9a34-4287-8f51-6e0ebc34928f@nvidia.com>
+ <s5hy2nmv6qv.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200706171454.11316-1-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <s5hy2nmv6qv.wl-tiwai-l3A5Bk7waGM@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, amurray-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sagar.tv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---5/uDoXvLw7AC5HRs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 14/07/2020 09:30, Takashi Iwai wrote:
+> On Tue, 14 Jul 2020 10:08:02 +0200,
+> Jon Hunter wrote:
+>>
+>> Hi Takashi,
+>>
+>> On 18/06/2020 15:40, Takashi Iwai wrote:
+>>> In the end we already enabled the sync-write mode for most of HD-audio
+>>> controllers including Intel, and it's no big merit to keep the async
+>>> write mode for the rest.  Let's make it as default and drop the
+>>> superfluous AZX_DCAPS_SYNC_WRITE bit flag.
+>>>
+>>> Also, avoid to set the allow_bus_reset flag, which is a quite unstable
+>>> and hackish behavior that was needed only for some early platforms
+>>> (decades ago).  The straight fallback to the single cmd mode is more
+>>> robust.
+>>>
+>>> Signed-off-by: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
+>>
+>>
+>> I have noticed a regression in HDA playback on our Tegra186 Jetson TX2
+>> platform. Bisect is pointing to this patch and reverting this does
+>> appear to fix it. Interestingly, I am not seeing any problems on other
+>> Tegra platforms, however, Tegra186 does have the IOMMU enabled for HDA
+>> which is one different between the other platforms.
+>>
+>> We can take a closer look at this for Tegra, but I am wondering if we
+>> revert this for Tegra for now.
+> 
+> It's a deja vu, we (or someone else in Nvidia?) discussed it in the
+> past?
+> 
+> The patch below should cure the problem temporarily, as it sets the
+> polling mode as default for Tegra.  But it'd be appreciated if you can
+> find the root cause.
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> --- a/sound/pci/hda/hda_tegra.c
+> +++ b/sound/pci/hda/hda_tegra.c
+> @@ -394,6 +394,7 @@ static int hda_tegra_create(struct snd_card *card,
+>  	if (err < 0)
+>  		return err;
+>  
+> +	chip->bus.core.polling = 1;
+>  	chip->bus.core.needs_damn_long_delay = 1;
+>  
+>  	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
+> 
 
-On Mon, Jul 06, 2020 at 10:44:54PM +0530, Vidya Sagar wrote:
-> Re-order Tegra194's PCIe aperture mappings to have IO window moved to
-> 64-bit aperture and have the entire 32-bit aperture used for accessing
-> the configuration space. This makes it to use the entire 32MB of the 32-b=
-it
-> aperture for ECAM purpose while booting through ACPI.
->=20
-> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 36 ++++++++++++------------
->  1 file changed, 18 insertions(+), 18 deletions(-)
+Did you mean ...
 
-I've had to manually apply this because it conflicts with some of the
-cleanups I've been doing to the DTS files. I'll push it out later, so
-it'd be good if you could check that I've applied it correctly.
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index 0cc5fad1af8a..5637f0129932 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -443,6 +443,7 @@ static int hda_tegra_create(struct snd_card *card,
+        if (err < 0)
+                return err;
 
-Thanks,
-Thierry
++       chip->bus.core.sync_write = 0;
+        chip->bus.core.needs_damn_long_delay = 1;
+        chip->bus.core.aligned_mmio = 1;
 
---5/uDoXvLw7AC5HRs
-Content-Type: application/pgp-signature; name="signature.asc"
+The above works for me.
 
------BEGIN PGP SIGNATURE-----
+Cheers
+Jon
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8Ncu0ACgkQ3SOs138+
-s6E9+w/+JjZPchwPj6idBmuMBbMOr4W0imsNtOOmtge31wagIjngpHj1pNYFjZ42
-qAgefyMb30w8IWMP8tkKHby4+UOXYE9mb6lqiertUynhPRCQDVu1+o3oWPRnmFd6
-ajnTN7/9ZhXJ83NmYm/h+0Zqk/2mvg6P2DjAdOkw2ioYGmfI9g6gBh6E5ypoC+sV
-Lr5VntibAYLU8+zGjkfg4yyMHHM/ljG4h6F/ybVdfkM0kqomUMkE7TcustiXXosy
-pdwUv53VDf2z1FRs7UbXzZSXY8G7Xo9ZarbUtjpf5+iOr1uys484/PU60qtAY0MC
-gaWp7qRtkYVDjJUNrWKGF8H0P5BNKRPQ8Nd9dyBP/QMhos8e78C6SaWHTbdCJhXr
-FHys9ND/Lvv9lBEq8zG+WvDuhZlbAzjYv0mQ0qn1lDQS45ObJsxnj2Ztg8q91K4W
-gWBmNyiltbRGlSYMFDeWSbvSK7PBNzrg0If3GOh2Ok5nQb3DlxQIBjmnTGeVPrv7
-lS5VjzyLQgxhsoTGURMBLqFICKV5gtNBhMc6FGMzK5QCcjgzdzlP6HeO/feXhYnn
-28gsh8VzOVdIkoyMLZljOp4XsNiQi2sEnG6jGJZjaIB/bt3di/hT0IZkSVt+EjK/
-ilRWmKI08vgWXbM+EnVILaUJDVHN50Zqi41IYhWhyEMaReFdf6s=
-=jJwZ
------END PGP SIGNATURE-----
-
---5/uDoXvLw7AC5HRs--
+-- 
+nvpublic
