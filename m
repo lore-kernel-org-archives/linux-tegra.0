@@ -1,39 +1,68 @@
-From: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [TEGRA194_CPUFREQ PATCH v5 1/4] dt-bindings: arm: Add t194 ccplex
- compatible and bpmp property
-Date: Tue, 14 Jul 2020 21:44:22 +0530
-Message-ID: <ebc98e4b-1f94-e9a5-cad4-0677f4e440f7@nvidia.com>
-References: <1594649209-29394-1-git-send-email-sumitg@nvidia.com>
- <1594649209-29394-2-git-send-email-sumitg@nvidia.com>
- <20200713164214.GA341271@bogus>
- <70a0a8ee-b79a-2a05-5150-2ee0faaf2730@nvidia.com>
- <CAL_JsqL1CuumdT1CZiofEZw9j+3gsir8JwSrZVfcxFxEB=bavQ@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/5] firmware: tegra: Add support for in-band debug
+Date: Tue, 14 Jul 2020 18:18:09 +0200
+Message-ID: <20200714161809.GE251696@ulmo>
+References: <20200712100118.13343-1-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Dzs2zDY0zgkG72+7"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL_JsqL1CuumdT1CZiofEZw9j+3gsir8JwSrZVfcxFxEB=bavQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200712100118.13343-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:THERMAL" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
->>>
->>> The cpus.yaml binding documents what's in 'cpu' nodes, not 'cpus'
->>> node. AIUI, the latter is what you want. You should do your own schema
->>> file here.
->>>
->> Do you mean to change existing file name from 'cpus.yaml' to 'cpu.yaml'
->> and create new 'cpus.yaml' file?
->> I think it's better to incorporate the change in existing 'cpus.yaml'
->> file to keep both cpu@X and cpus node details together. Please suggest.
-> 
-> No, I'm suggesting you create nvidia,tegra194-ccplex.yaml.
-> 
-Have posted new version of only this patch with new schema file.
-Please review.
+--Dzs2zDY0zgkG72+7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Sumit
+On Sun, Jul 12, 2020 at 11:01:13AM +0100, Jon Hunter wrote:
+> This series adds support for in-band debug messaging for the BPMP and
+> updates the BPMP ABI to align with the latest version.
+>=20
+> Jon Hunter (4):
+>   firmware: tegra: Use consistent return variable name
+>   firmware: tegra: Prepare for supporting in-band debugfs
+>   firmware: tegra: Add support for in-band debug
+>   firmware: tegra: Update BPMP ABI
+>=20
+> Timo Alho (1):
+>   firmware: tegra: add return code checks and increase debugfs size
+>=20
+>  drivers/firmware/tegra/bpmp-debugfs.c | 436 ++++++++++--
+>  drivers/firmware/tegra/bpmp.c         |   6 +-
+>  include/soc/tegra/bpmp-abi.h          | 913 ++++++++++++++++++--------
+>  3 files changed, 1038 insertions(+), 317 deletions(-)
+
+All applied, thanks. I had to tweak a couple of things to make
+checkpatch happy, though. checkpatch also wasn't happy with the ABI
+header update, but I left it as-is to make it easier to update in the
+future.
+
+Thierry
+
+--Dzs2zDY0zgkG72+7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8N2r8ACgkQ3SOs138+
+s6HKbQ/+OyWkNabkwaz2VIm+/UvhFTkpltTAO12a9bnuwIL0Gt4mTs2HF+aDlcnZ
+fxDfrDxElOe9OJzNGxrbaKoM9ADIllqkiAw9OAgyDJG5SfdIRcZmD0gucFzM0mrS
+uHPduH0SvnW8lZaRO89886bZeODiIZwlQyy4VxntIlnhX5D6cb8Rvxx3R3r2KuT5
+SrRE63hz2C6HNuuBgzn6VNRzwnnc8FZkTzI6o2Oy3Rl86hOXe0W7YQZrl8UVtKEM
+5u3GmJPaxNU8FTzaq2iOLyy+TfElwG2a3O/z/31OAtMJp30eBeL3o92hOl8QUdC3
+uhYWerRv1d6Ykxm/3/bWyXYkm8hoKCMSHZW464mtCLOMH0RNM0+ZGgOVVFIGJROE
+0wjTdj+Lf05IF67jgCYXLAAqbB2Cl4ZpOwH8Yv8EY3exoObwMWEMwbZiR35LZlLw
+xe0GwwYFyCQLMAMLiXmqYqouQD7hlHWPHGjJ9KqcTwcdRKzvuDM40Nsm3fviJ+X8
+6qV1UGva09j8KlbNnotMEpak9J4meQlubD2BgRBXnfEjNwm369+z0BgxFj36LwT8
++duclmGy9s5fTi+U4IbGD9i5kmHUQ/7bcRmmortkuR8LfNZ8bvL3C/yo3OSpVeKJ
+n6cMzHSArgZA6z1Qf6MTSsDOecytuH7K/htthYF0T3w8QNdkbjo=
+=k44N
+-----END PGP SIGNATURE-----
+
+--Dzs2zDY0zgkG72+7--
