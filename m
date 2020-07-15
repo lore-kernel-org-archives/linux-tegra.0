@@ -1,489 +1,151 @@
-From: Sumit Gupta <sumitg@nvidia.com>
-Subject: Re: [TEGRA194_CPUFREQ PATCH v6 3/3] cpufreq: Add Tegra194 cpufreq
- driver
-Date: Wed, 15 Jul 2020 20:57:57 +0530
-Message-ID: <78636522-c433-a015-e4f3-02843ce58139@nvidia.com>
-References: <1594819885-31016-1-git-send-email-sumitg@nvidia.com>
- <1594819885-31016-4-git-send-email-sumitg@nvidia.com>
- <d0a4a28a-f471-22bd-273a-dc5c62a79051@nvidia.com>
+From: Enric Balletbo Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RESEND RESEND PATCH] arm/arm64: defconfig: Update configs to use
+ the new CROS_EC options
+Date: Wed, 15 Jul 2020 23:30:04 +0200
+Message-ID: <CAFqH_52LhfV9AsnPRZi_ZPsgYX8WrUrKEsV-E7VHOw3ZZtHd-w@mail.gmail.com>
+References: <20200305111047.147355-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d0a4a28a-f471-22bd-273a-dc5c62a79051@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, rjw@rjwysocki.net, viresh.kumar@linaro.org, catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com, robh+dt@kernel.org, mirq-linux@rere.qmqm.pl, devicetree@vger.kernel.org, talho@nvidia.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: bbasu@nvidia.com, mperttunen@nvidia.com, Sumit Gupta <sumitg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200305111047.147355-1-enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Collabora Kernel ML <kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Guenter Roeck <groeck-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dmitry Torokhov <dtor-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marcin Juszkiewicz <marcin.juszkiewicz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Leonard Crestez <leonard.crestez-3arQi8VN3Tc@public.gmane.org>, linux-samsung-soc <linux-s>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi arm/arm64 maintainers,
 
->> Add support for CPU frequency scaling on Tegra194. The frequency
->> of each core can be adjusted by writing a clock divisor value to
->> a MSR on the core. The range of valid divisors is queried from
->> the BPMP.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->> ---
->>   drivers/cpufreq/Kconfig.arm        |   7 +
->>   drivers/cpufreq/Makefile           |   1 +
->>   drivers/cpufreq/tegra194-cpufreq.c | 397 +++++++++++++++++++++++++++++++++++++
->>   3 files changed, 405 insertions(+)
->>   create mode 100644 drivers/cpufreq/tegra194-cpufreq.c
->>
->> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
->> index 15c1a12..7e99a46 100644
->> --- a/drivers/cpufreq/Kconfig.arm
->> +++ b/drivers/cpufreq/Kconfig.arm
->> @@ -314,6 +314,13 @@ config ARM_TEGRA186_CPUFREQ
->>   	help
->>   	  This adds the CPUFreq driver support for Tegra186 SOCs.
->>   
->> +config ARM_TEGRA194_CPUFREQ
->> +	tristate "Tegra194 CPUFreq support"
->> +	depends on ARCH_TEGRA_194_SOC && TEGRA_BPMP
->> +	default y
->> +	help
->> +	  This adds CPU frequency driver support for Tegra194 SOCs.
->> +
->>   config ARM_TI_CPUFREQ
->>   	bool "Texas Instruments CPUFreq support"
->>   	depends on ARCH_OMAP2PLUS
->> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
->> index f6670c4..66b5563 100644
->> --- a/drivers/cpufreq/Makefile
->> +++ b/drivers/cpufreq/Makefile
->> @@ -83,6 +83,7 @@ obj-$(CONFIG_ARM_TANGO_CPUFREQ)		+= tango-cpufreq.o
->>   obj-$(CONFIG_ARM_TEGRA20_CPUFREQ)	+= tegra20-cpufreq.o
->>   obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
->>   obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
->> +obj-$(CONFIG_ARM_TEGRA194_CPUFREQ)	+= tegra194-cpufreq.o
->>   obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
->>   obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
->>   
->> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
->> new file mode 100644
->> index 0000000..b52a5e2
->> --- /dev/null
->> +++ b/drivers/cpufreq/tegra194-cpufreq.c
->> @@ -0,0 +1,397 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2020, NVIDIA CORPORATION. All rights reserved
->> + */
->> +
->> +#include <linux/cpu.h>
->> +#include <linux/cpufreq.h>
->> +#include <linux/delay.h>
->> +#include <linux/dma-mapping.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/slab.h>
->> +
->> +#include <asm/smp_plat.h>
->> +
->> +#include <soc/tegra/bpmp.h>
->> +#include <soc/tegra/bpmp-abi.h>
->> +
->> +#define KHZ                     1000
->> +#define REF_CLK_MHZ             408 /* 408 MHz */
->> +#define US_DELAY                500
->> +#define US_DELAY_MIN            2
->> +#define CPUFREQ_TBL_STEP_HZ     (50 * KHZ * KHZ)
->> +#define MAX_CNT                 ~0U
->> +
->> +/* cpufreq transisition latency */
->> +#define TEGRA_CPUFREQ_TRANSITION_LATENCY (300 * 1000) /* unit in nanoseconds */
->> +
->> +enum cluster {
->> +	CLUSTER0,
->> +	CLUSTER1,
->> +	CLUSTER2,
->> +	CLUSTER3,
->> +	MAX_CLUSTERS,
->> +};
->> +
->> +struct tegra194_cpufreq_data {
->> +	void __iomem *regs;
->> +	size_t num_clusters;
->> +	struct cpufreq_frequency_table **tables;
->> +};
->> +
->> +struct tegra_cpu_ctr {
->> +	u32 cpu;
->> +	u32 delay;
->> +	u32 coreclk_cnt, last_coreclk_cnt;
->> +	u32 refclk_cnt, last_refclk_cnt;
->> +};
->> +
->> +struct read_counters_work {
->> +	struct work_struct work;
->> +	struct tegra_cpu_ctr c;
->> +};
->> +
->> +static struct workqueue_struct *read_counters_wq;
->> +
->> +static enum cluster get_cpu_cluster(u8 cpu)
->> +{
->> +	return MPIDR_AFFINITY_LEVEL(cpu_logical_map(cpu), 1);
->> +}
->> +
->> +/*
->> + * Read per-core Read-only system register NVFREQ_FEEDBACK_EL1.
->> + * The register provides frequency feedback information to
->> + * determine the average actual frequency a core has run at over
->> + * a period of time.
->> + *	[31:0] PLLP counter: Counts at fixed frequency (408 MHz)
->> + *	[63:32] Core clock counter: counts on every core clock cycle
->> + *			where the core is architecturally clocking
->> + */
->> +static u64 read_freq_feedback(void)
->> +{
->> +	u64 val = 0;
->> +
->> +	asm volatile("mrs %0, s3_0_c15_c0_5" : "=r" (val) : );
->> +
->> +	return val;
->> +}
->> +
->> +static inline u32 map_ndiv_to_freq(struct mrq_cpu_ndiv_limits_response
->> +				   *nltbl, u16 ndiv)
->> +{
->> +	return nltbl->ref_clk_hz / KHZ * ndiv / (nltbl->pdiv * nltbl->mdiv);
->> +}
->> +
->> +static void tegra_read_counters(struct work_struct *work)
->> +{
->> +	struct read_counters_work *read_counters_work;
->> +	struct tegra_cpu_ctr *c;
->> +	u64 val;
->> +
->> +	/*
->> +	 * ref_clk_counter(32 bit counter) runs on constant clk,
->> +	 * pll_p(408MHz).
->> +	 * It will take = 2 ^ 32 / 408 MHz to overflow ref clk counter
->> +	 *              = 10526880 usec = 10.527 sec to overflow
->> +	 *
->> +	 * Like wise core_clk_counter(32 bit counter) runs on core clock.
->> +	 * It's synchronized to crab_clk (cpu_crab_clk) which runs at
->> +	 * freq of cluster. Assuming max cluster clock ~2000MHz,
->> +	 * It will take = 2 ^ 32 / 2000 MHz to overflow core clk counter
->> +	 *              = ~2.147 sec to overflow
->> +	 */
->> +	read_counters_work = container_of(work, struct read_counters_work,
->> +					  work);
->> +	c = &read_counters_work->c;
->> +
->> +	val = read_freq_feedback();
->> +	c->last_refclk_cnt = lower_32_bits(val);
->> +	c->last_coreclk_cnt = upper_32_bits(val);
->> +	udelay(c->delay);
->> +	val = read_freq_feedback();
->> +	c->refclk_cnt = lower_32_bits(val);
->> +	c->coreclk_cnt = upper_32_bits(val);
->> +}
->> +
->> +/*
->> + * Return instantaneous cpu speed
->> + * Instantaneous freq is calculated as -
->> + * -Takes sample on every query of getting the freq.
->> + *	- Read core and ref clock counters;
->> + *	- Delay for X us
->> + *	- Read above cycle counters again
->> + *	- Calculates freq by subtracting current and previous counters
->> + *	  divided by the delay time or eqv. of ref_clk_counter in delta time
->> + *	- Return Kcycles/second, freq in KHz
->> + *
->> + *	delta time period = x sec
->> + *			  = delta ref_clk_counter / (408 * 10^6) sec
->> + *	freq in Hz = cycles/sec
->> + *		   = (delta cycles / x sec
->> + *		   = (delta cycles * 408 * 10^6) / delta ref_clk_counter
->> + *	in KHz	   = (delta cycles * 408 * 10^3) / delta ref_clk_counter
->> + *
->> + * @cpu - logical cpu whose freq to be updated
->> + * Returns freq in KHz on success, 0 if cpu is offline
->> + */
->> +static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
->> +{
->> +	struct read_counters_work read_counters_work;
->> +	struct tegra_cpu_ctr c;
->> +	u32 delta_refcnt;
->> +	u32 delta_ccnt;
->> +	u32 rate_mhz;
->> +
->> +	/*
->> +	 * udelay() is required to reconstruct cpu frequency over an
->> +	 * observation window. Using workqueue to call udelay() with
->> +	 * interrupts enabled.
->> +	 */
->> +	read_counters_work.c.cpu = cpu;
->> +	read_counters_work.c.delay = delay;
->> +	INIT_WORK_ONSTACK(&read_counters_work.work, tegra_read_counters);
->> +	queue_work_on(cpu, read_counters_wq, &read_counters_work.work);
->> +	flush_work(&read_counters_work.work);
->> +	c = read_counters_work.c;
->> +
->> +	if (c.coreclk_cnt < c.last_coreclk_cnt)
->> +		delta_ccnt = c.coreclk_cnt + (MAX_CNT - c.last_coreclk_cnt);
->> +	else
->> +		delta_ccnt = c.coreclk_cnt - c.last_coreclk_cnt;
->> +	if (!delta_ccnt)
->> +		return 0;
->> +
->> +	/* ref clock is 32 bits */
->> +	if (c.refclk_cnt < c.last_refclk_cnt)
->> +		delta_refcnt = c.refclk_cnt + (MAX_CNT - c.last_refclk_cnt);
->> +	else
->> +		delta_refcnt = c.refclk_cnt - c.last_refclk_cnt;
->> +	if (!delta_refcnt) {
->> +		pr_debug("cpufreq: %d is idle, delta_refcnt: 0\n", cpu);
->> +		return 0;
->> +	}
->> +	rate_mhz = ((unsigned long)(delta_ccnt * REF_CLK_MHZ)) / delta_refcnt;
->> +
->> +	return (rate_mhz * KHZ); /* in KHz */
->> +}
->> +
->> +static unsigned int tegra194_get_speed(u32 cpu)
->> +{
->> +	return tegra194_get_speed_common(cpu, US_DELAY);
->> +}
->> +
->> +static unsigned int tegra194_fast_get_speed(u32 cpu)
->> +{
->> +	return tegra194_get_speed_common(cpu, US_DELAY_MIN);
->> +}
-> 
-> Personally, I would not bother with the above function as it is only
-> used in one place.
-> 
-Kept the function for better readability. Ok, will open code it.
+Missatge de Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> del
+dia dj., 5 de mar=C3=A7 2020 a les 12:11:
+>
+> We refactored the CrOS EC drivers moving part of the code from the MFD
+> subsystem to the platform chrome subsystem. During this change we needed
+> to rename some config options, so, update the defconfigs accordingly.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+> Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Reviewed-by: Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Tested-by: Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
 
->> +
->> +static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
->> +{
->> +	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
->> +	int cl = get_cpu_cluster(policy->cpu);
->> +	u32 cpu;
->> +
->> +	if (cl >= data->num_clusters)
->> +		return -EINVAL;
->> +
->> +	policy->cur = tegra194_fast_get_speed(policy->cpu); /* boot freq */
->> +
->> +	/* set same policy for all cpus in a cluster */
->> +	for (cpu = (cl * 2); cpu < ((cl + 1) * 2); cpu++)
->> +		cpumask_set_cpu(cpu, policy->cpus);
->> +
->> +	policy->freq_table = data->tables[cl];
->> +	policy->cpuinfo.transition_latency = TEGRA_CPUFREQ_TRANSITION_LATENCY;
->> +
->> +	return 0;
->> +}
->> +
->> +static void set_cpu_ndiv(void *data)
->> +{
->> +	struct cpufreq_frequency_table *tbl = data;
->> +	u64 ndiv_val = (u64)tbl->driver_data;
->> +
->> +	asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
->> +}
->> +
->> +static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
->> +				       unsigned int index)
->> +{
->> +	struct cpufreq_frequency_table *tbl = policy->freq_table + index;
->> +
->> +	/*
->> +	 * Each core writes frequency in per core register. Then both cores
->> +	 * in a cluster run at same frequency which is the maximum frequency
->> +	 * request out of the values requested by both cores in that cluster.
->> +	 */
->> +	on_each_cpu_mask(policy->cpus, set_cpu_ndiv, tbl, true);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct cpufreq_driver tegra194_cpufreq_driver = {
->> +	.name = "tegra194",
->> +	.flags = CPUFREQ_STICKY | CPUFREQ_CONST_LOOPS |
->> +		CPUFREQ_NEED_INITIAL_FREQ_CHECK,
->> +	.verify = cpufreq_generic_frequency_table_verify,
->> +	.target_index = tegra194_cpufreq_set_target,
->> +	.get = tegra194_get_speed,
->> +	.init = tegra194_cpufreq_init,
->> +	.attr = cpufreq_generic_attr,
->> +};
->> +
->> +static void tegra194_cpufreq_free_resources(void)
->> +{
->> +	destroy_workqueue(read_counters_wq);
->> +}
-> 
-> I would not bother with adding this function either.
-> 
-This function is used from remove call also.
+A gentle ping. I'd like to land this if is possible because that way I
+can remove some legacy code in platform/chrome subsystem.
 
->> +
->> +static struct cpufreq_frequency_table *
->> +init_freq_table(struct platform_device *pdev, struct tegra_bpmp *bpmp,
->> +		unsigned int cluster_id)
->> +{
->> +	struct cpufreq_frequency_table *freq_table;
->> +	struct mrq_cpu_ndiv_limits_response resp;
->> +	unsigned int num_freqs, ndiv, delta_ndiv;
->> +	struct mrq_cpu_ndiv_limits_request req;
->> +	struct tegra_bpmp_message msg;
->> +	u16 freq_table_step_size;
->> +	int err, index;
->> +
->> +	memset(&req, 0, sizeof(req));
->> +	req.cluster_id = cluster_id;
->> +
->> +	memset(&msg, 0, sizeof(msg));
->> +	msg.mrq = MRQ_CPU_NDIV_LIMITS;
->> +	msg.tx.data = &req;
->> +	msg.tx.size = sizeof(req);
->> +	msg.rx.data = &resp;
->> +	msg.rx.size = sizeof(resp);
->> +
->> +	err = tegra_bpmp_transfer(bpmp, &msg);
->> +	if (err)
->> +		return ERR_PTR(err);
->> +
->> +	/*
->> +	 * Make sure frequency table step is a multiple of mdiv to match
->> +	 * vhint table granularity.
->> +	 */
->> +	freq_table_step_size = resp.mdiv *
->> +			DIV_ROUND_UP(CPUFREQ_TBL_STEP_HZ, resp.ref_clk_hz);
->> +
->> +	dev_dbg(&pdev->dev, "cluster %d: frequency table step size: %d\n",
->> +		cluster_id, freq_table_step_size);
->> +
->> +	delta_ndiv = resp.ndiv_max - resp.ndiv_min;
->> +
->> +	if (unlikely(delta_ndiv == 0)) {
->> +		num_freqs = 1;
->> +	} else {
->> +		/* We store both ndiv_min and ndiv_max hence the +1 */
->> +		num_freqs = delta_ndiv / freq_table_step_size + 1;
->> +	}
->> +
->> +	num_freqs += (delta_ndiv % freq_table_step_size) ? 1 : 0;
->> +
->> +	freq_table = devm_kcalloc(&pdev->dev, num_freqs + 1,
->> +				  sizeof(*freq_table), GFP_KERNEL);
->> +	if (!freq_table)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	for (index = 0, ndiv = resp.ndiv_min;
->> +			ndiv < resp.ndiv_max;
->> +			index++, ndiv += freq_table_step_size) {
->> +		freq_table[index].driver_data = ndiv;
->> +		freq_table[index].frequency = map_ndiv_to_freq(&resp, ndiv);
->> +	}
->> +
->> +	freq_table[index].driver_data = resp.ndiv_max;
->> +	freq_table[index++].frequency = map_ndiv_to_freq(&resp, resp.ndiv_max);
->> +	freq_table[index].frequency = CPUFREQ_TABLE_END;
->> +
->> +	return freq_table;
->> +}
->> +
->> +static int tegra194_cpufreq_probe(struct platform_device *pdev)
->> +{
->> +	struct tegra194_cpufreq_data *data;
->> +	struct tegra_bpmp *bpmp;
->> +	int err, i;
->> +
->> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	data->num_clusters = MAX_CLUSTERS;
->> +	data->tables = devm_kcalloc(&pdev->dev, data->num_clusters,
->> +				    sizeof(*data->tables), GFP_KERNEL);
->> +	if (!data->tables)
->> +		return -ENOMEM;
->> +
->> +	platform_set_drvdata(pdev, data);
->> +
->> +	bpmp = tegra_bpmp_get(&pdev->dev);
->> +	if (IS_ERR(bpmp))
->> +		return PTR_ERR(bpmp);
->> +
->> +	read_counters_wq = alloc_workqueue("read_counters_wq", __WQ_LEGACY, 1);
->> +	if (!read_counters_wq) {
->> +		dev_err(&pdev->dev, "fail to create_workqueue\n");
->> +		err = -EINVAL;
->> +		goto put_bpmp;
->> +	}
->> +
->> +	for (i = 0; i < data->num_clusters; i++) {
->> +		data->tables[i] = init_freq_table(pdev, bpmp, i);
->> +		if (IS_ERR(data->tables[i])) {
->> +			err = PTR_ERR(data->tables[i]);
->> +			goto err_free_res;
->> +		}
->> +	}
->> +
->> +	tegra194_cpufreq_driver.driver_data = data;
->> +
->> +	err = cpufreq_register_driver(&tegra194_cpufreq_driver);
->> +	if (err)
->> +		goto err_free_res;
-> 
-> You don't need the above if statement now you added the below.
-> 
-Sorry, missed to remove this. Will wait if any other comments before 
-re-spin.
+Thanks,
+  Enric
 
->> +
->> +	if (!err)
->> +		goto put_bpmp;
->> +
->> +err_free_res:
->> +	tegra194_cpufreq_free_resources();
->> +put_bpmp:
->> +	tegra_bpmp_put(bpmp);
->> +	return err;
->> +}
->> +
->> +static int tegra194_cpufreq_remove(struct platform_device *pdev)
->> +{
->> +	cpufreq_unregister_driver(&tegra194_cpufreq_driver);
->> +	tegra194_cpufreq_free_resources();
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct of_device_id tegra194_cpufreq_of_match[] = {
->> +	{ .compatible = "nvidia,tegra194-ccplex", },
->> +	{ /* sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(of, tegra194_cpufreq_of_match);
->> +
->> +static struct platform_driver tegra194_ccplex_driver = {
->> +	.driver = {
->> +		.name = "tegra194-cpufreq",
->> +		.of_match_table = tegra194_cpufreq_of_match,
->> +	},
->> +	.probe = tegra194_cpufreq_probe,
->> +	.remove = tegra194_cpufreq_remove,
->> +};
->> +module_platform_driver(tegra194_ccplex_driver);
->> +
->> +MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
->> +MODULE_AUTHOR("Sumit Gupta <sumitg@nvidia.com>");
->> +MODULE_DESCRIPTION("NVIDIA Tegra194 cpufreq driver");
->> +MODULE_LICENSE("GPL v2");
->>
-> 
-> Cheers
-> Jon
-> 
+> Dear all,
+>
+> This is a resend of a resend patch [3]. In some previous discussions
+> maintainers would prefer to have this merged through the arm-soc tree
+> but wasn't merged yet and I forget to ping again, hence, sending a new
+> resend.
+>
+> To give some context to some discussions that can arise again (i.e
+> whether some symbols should be built-in or not) please look at the
+> previous resends [1] and [2].
+>
+> Thanks,
+>  Enric
+>
+> [1] https://lkml.org/lkml/2019/8/23/518
+> [2] https://lkml.org/lkml/2019/8/23/475
+> [3] https://patchwork.kernel.org/patch/11267741/
+>
+>  arch/arm/configs/exynos_defconfig   | 4 +++-
+>  arch/arm/configs/multi_v7_defconfig | 5 ++++-
+>  arch/arm/configs/pxa_defconfig      | 4 +++-
+>  arch/arm/configs/tegra_defconfig    | 2 +-
+>  arch/arm64/configs/defconfig        | 5 ++++-
+>  5 files changed, 15 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_=
+defconfig
+> index c8e0c14092e8..cb030549dd69 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -160,7 +160,9 @@ CONFIG_DEVFREQ_THERMAL=3Dy
+>  CONFIG_THERMAL_EMULATION=3Dy
+>  CONFIG_WATCHDOG=3Dy
+>  CONFIG_S3C2410_WATCHDOG=3Dy
+> -CONFIG_MFD_CROS_EC=3Dy
+> +CONFIG_MFD_CROS_EC_DEV=3Dy
+> +CONFIG_CHROME_PLATFORMS=3Dy
+> +CONFIG_CROS_EC=3Dy
+>  CONFIG_MFD_MAX14577=3Dy
+>  CONFIG_MFD_MAX77686=3Dy
+>  CONFIG_MFD_MAX77693=3Dy
+> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi=
+_v7_defconfig
+> index 017d65f86eba..9099787ccf70 100644
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@ -938,7 +938,7 @@ CONFIG_SERIO_NVEC_PS2=3Dy
+>  CONFIG_NVEC_POWER=3Dy
+>  CONFIG_NVEC_PAZ00=3Dy
+>  CONFIG_STAGING_BOARD=3Dy
+> -CONFIG_MFD_CROS_EC=3Dm
+> +CONFIG_MFD_CROS_EC_DEV=3Dm
+>  CONFIG_CROS_EC_I2C=3Dm
+>  CONFIG_CROS_EC_SPI=3Dm
+>  CONFIG_COMMON_CLK_MAX77686=3Dy
+> @@ -1118,3 +1118,6 @@ CONFIG_CMA_SIZE_MBYTES=3D64
+>  CONFIG_PRINTK_TIME=3Dy
+>  CONFIG_MAGIC_SYSRQ=3Dy
+>  CONFIG_DEBUG_FS=3Dy
+> +CONFIG_CHROME_PLATFORMS=3Dy
+> +CONFIG_CROS_EC=3Dm
+> +CONFIG_CROS_EC_CHARDEV=3Dm
+> diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defcon=
+fig
+> index b817c57f05f1..f1b084ace88d 100644
+> --- a/arch/arm/configs/pxa_defconfig
+> +++ b/arch/arm/configs/pxa_defconfig
+> @@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=3Dm
+>  CONFIG_MFD_AS3711=3Dy
+>  CONFIG_MFD_BCM590XX=3Dm
+>  CONFIG_MFD_AXP20X=3Dy
+> -CONFIG_MFD_CROS_EC=3Dm
+> +CONFIG_MFD_CROS_EC_DEV=3Dm
+> +CONFIG_CHROME_PLATFORMS=3Dy
+> +CONFIG_CROS_EC=3Dm
+>  CONFIG_CROS_EC_I2C=3Dm
+>  CONFIG_CROS_EC_SPI=3Dm
+>  CONFIG_MFD_ASIC3=3Dy
+> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_de=
+fconfig
+> index a27592d3b1fa..7bfae67d2016 100644
+> --- a/arch/arm/configs/tegra_defconfig
+> +++ b/arch/arm/configs/tegra_defconfig
+> @@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=3Dy
+>  CONFIG_WATCHDOG=3Dy
+>  CONFIG_TEGRA_WATCHDOG=3Dy
+>  CONFIG_MFD_AS3722=3Dy
+> -CONFIG_MFD_CROS_EC=3Dy
+> +CONFIG_MFD_CROS_EC_DEV=3Dy
+>  CONFIG_MFD_MAX8907=3Dy
+>  CONFIG_MFD_STMPE=3Dy
+>  CONFIG_MFD_PALMAS=3Dy
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 905109f6814f..2095e61c8665 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -705,9 +705,12 @@ CONFIG_VIRTIO_BALLOON=3Dy
+>  CONFIG_VIRTIO_MMIO=3Dy
+>  CONFIG_XEN_GNTDEV=3Dy
+>  CONFIG_XEN_GRANT_DEV_ALLOC=3Dy
+> -CONFIG_MFD_CROS_EC=3Dy
+> +CONFIG_MFD_CROS_EC_DEV=3Dy
+> +CONFIG_CHROME_PLATFORMS=3Dy
+> +CONFIG_CROS_EC=3Dy
+>  CONFIG_CROS_EC_I2C=3Dy
+>  CONFIG_CROS_EC_SPI=3Dy
+> +CONFIG_CROS_EC_CHARDEV=3Dm
+>  CONFIG_COMMON_CLK_RK808=3Dy
+>  CONFIG_COMMON_CLK_SCPI=3Dy
+>  CONFIG_COMMON_CLK_CS2000_CP=3Dy
+> --
+> 2.25.1
+>
