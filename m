@@ -1,180 +1,54 @@
-From: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [TEGRA194_CPUFREQ PATCH v6 1/4] dt-bindings: arm: Add NVIDIA
- Tegra194 CPU Complex binding
-Date: Wed, 15 Jul 2020 15:52:48 +0530
-Message-ID: <a5b83dc3-63b9-9140-a7fe-52841d079141@nvidia.com>
-References: <CAL_JsqL1CuumdT1CZiofEZw9j+3gsir8JwSrZVfcxFxEB=bavQ@mail.gmail.com>
- <1594742870-19957-1-git-send-email-sumitg@nvidia.com>
- <20200714204742.GA2875540@bogus>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.19 00/58] 4.19.133-rc1 review
+Date: Wed, 15 Jul 2020 11:49:49 +0100
+Message-ID: <71d26f05-089b-6dd5-8c61-ba343e83e1cb@nvidia.com>
+References: <20200714184056.149119318@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200714204742.GA2875540@bogus>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200714184056.149119318@linuxfoundation.org>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thank you for the review.
 
->> Add device-tree binding documentation to represent Tegra194
->> CPU Complex with compatible string under 'cpus' node. This
->> can be used by drivers like cpufreq which don't have their
->> node or CPU Complex node to bind to. Also, documenting
->> 'nvidia,bpmp' property which points to BPMP device.
->>
->> Signed-off-by: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   .../bindings/arm/nvidia,tegra194-ccplex.yaml       | 106 +++++++++++++++++++++
->>   1 file changed, 106 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/arm/nvidia,tegra194-ccplex.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/arm/nvidia,tegra194-ccplex.yaml b/Documentation/devicetree/bindings/arm/nvidia,tegra194-ccplex.yaml
->> new file mode 100644
->> index 0000000..06dbdaa
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/arm/nvidia,tegra194-ccplex.yaml
->> @@ -0,0 +1,106 @@
->> +# SPDX-License-Identifier: GPL-2.0
+On 14/07/2020 19:43, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.133 release.
+> There are 58 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Dual license please.
+> Responses should be made by Thu, 16 Jul 2020 18:40:38 +0000.
+> Anything received after that time might be too late.
 > 
-Ok.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.133-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
->> +%YAML 1.2
->> +---
->> +$id: "http://devicetree.org/schemas/arm/nvidia,tegra194-ccplex.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +title: NVIDIA Tegra194 CPU Complex device tree bindings
->> +
->> +maintainers:
->> +  - Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> +  - Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> +  - Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> +
->> +description: |+
->> +  Tegra194 SOC has homogeneous architecture where each cluster has two
->> +  symmetric cores. Compatible string in "cpus" node represents the CPU
->> +  Complex having all clusters.
->> +
->> +properties:
-> 
-> $nodename:
->    const: cpus
-> 
-Ok.
 
->> +  compatible:
->> +    enum:
->> +      - nvidia,tegra194-ccplex
->> +
->> +  nvidia,bpmp:
->> +    $ref: '/schemas/types.yaml#/definitions/phandle'
->> +    description: |
->> +      Specifies the bpmp node that needs to be queried to get
->> +      operating point data for all CPUs.
->> +
->> +      Optional for systems that have a "compatible"
->> +      property value of "nvidia,tegra194-ccplex".
-> 
-> The schema says this already.
-> 
-Removed this text from here.
+All tests are passing for Tegra ...
 
->> +
->> +  "#address-cells":
->> +    const: 1
-> 
-> This is wrong. The binding says it's 2 cells on aarch64 cpus though we
-> don't enforce that.
->Removed.
+Test results for stable-v4.19:
+    11 builds:	11 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	38 pass, 0 fail
 
->> +
->> +  "#size-cells":
->> +    const: 0
->> +
->> +dependencies:
->> +  nvidia,bpmp: [compatible]
-> 
-> This is kind of redundant as 'compatible' is required in order to apply
-> the schema.
->
-Removed this as well.
+Linux version:	4.19.133-rc1-g4e2a5cde3f03
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
->> +
->> +examples:
->> +  - |
->> +    cpus {
->> +      compatible = "nvidia,tegra194-ccplex";
->> +      nvidia,bpmp = <&bpmp>;
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +
->> +      cpu0_0: cpu@0 {
->> +        compatible = "nvidia,tegra194-carmel";
->> +        device_type = "cpu";
->> +        reg = <0x0>;
->> +        enable-method = "psci";
->> +      };
->> +
->> +      cpu0_1: cpu@1 {
->> +        compatible = "nvidia,tegra194-carmel";
->> +        device_type = "cpu";
->> +        reg = <0x001>;
->> +        enable-method = "psci";
->> +      };
->> +
->> +      cpu1_0: cpu@100 {
->> +        compatible = "nvidia,tegra194-carmel";
->> +        device_type = "cpu";
->> +        reg = <0x100>;
->> +        enable-method = "psci";
->> +      };
->> +
->> +      cpu1_1: cpu@101 {
->> +        compatible = "nvidia,tegra194-carmel";
->> +        device_type = "cpu";
->> +        reg = <0x101>;
->> +        enable-method = "psci";
->> +      };
->> +
->> +      cpu2_0: cpu@200 {
->> +        compatible = "nvidia,tegra194-carmel";
->> +        device_type = "cpu";
->> +        reg = <0x200>;
->> +        enable-method = "psci";
->> +      };
->> +
->> +      cpu2_1: cpu@201 {
->> +        compatible = "nvidia,tegra194-carmel";
->> +        device_type = "cpu";
->> +        reg = <0x201>;
->> +        enable-method = "psci";
->> +      };
->> +
->> +      cpu3_0: cpu@300 {
->> +        compatible = "nvidia,tegra194-carmel";
->> +        device_type = "cpu";
->> +        reg = <0x300>;
->> +        enable-method = "psci";
->> +      };
->> +
->> +      cpu3_1: cpu@301 {
->> +        compatible = "nvidia,tegra194-carmel";
->> +        device_type = "cpu";
->> +        reg = <0x301>;
->> +        enable-method = "psci";
->> +       };
-> 
-> Not really that useful describing all these cpus.
-> 
-Ok. Kept first four cpu nodes only.
+Cheers
+Jon
 
->> +    };
->> +...
->> --
->> 2.7.4
->>
+-- 
+nvpublic
