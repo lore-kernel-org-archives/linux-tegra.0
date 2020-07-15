@@ -1,74 +1,180 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v3 14/18] gpu: host1x: mipi: Update tegra_mipi_request() to be node based
-Date: Tue, 14 Jul 2020 21:20:51 -0700
-Message-ID: <1594786855-26506-15-git-send-email-skomatineni@nvidia.com>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC PATCH v3 17/18] media: tegra-video: Add CSI MIPI pads calibration
+Date: Tue, 14 Jul 2020 21:20:54 -0700
+Message-ID: <1594786855-26506-18-git-send-email-skomatineni@nvidia.com>
 References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-media-owner@vger.kernel.org
-To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
-Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1594786855-26506-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra CSI driver need a separate MIPI device for each channel as
-calibration of corresponding MIPI pads for each channel should
-happen independently.
+CSI MIPI pads need to be enabled and calibrated for capturing from
+the external sensor or transmitter.
 
-So, this patch updates tegra_mipi_request() API to add a device_node
-pointer argument to allow creating mipi device for specific device
-node rather than a device.
+MIPI CAL unit calibrates MIPI pads pull-up, pull-down and termination
+impedances. Calibration is done by co-work of MIPI BIAS pad and MIPI
+CAL control unit.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Triggering calibration start can happen any time after MIPI pads are
+enabled but calibration results will be latched and applied to MIPI
+pads by MIPI CAL unit only when the link is in LP11 state and then
+calibration status register gets updated.
+
+This patch enables CSI MIPI pads and calibrates them during streaming.
+
+Tegra CSI receiver is able to catch the very first clock transition.
+So, CSI receiver is always enabled prior to sensor streaming and
+trigger of calibration start is done during CSI subdev streaming and
+status of calibration is verified after sensor stream on.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dsi.c | 2 +-
- drivers/gpu/host1x/mipi.c   | 4 ++--
- include/linux/host1x.h      | 3 ++-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/staging/media/tegra-video/csi.c | 44 +++++++++++++++++++++++++++++++--
+ drivers/staging/media/tegra-video/csi.h |  2 ++
+ drivers/staging/media/tegra-video/vi.c  | 16 ++++++++++++
+ 3 files changed, 60 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index 38beab9..3c09e29 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -1618,7 +1618,7 @@ static int tegra_dsi_probe(struct platform_device *pdev)
- 	if (IS_ERR(dsi->regs))
- 		return PTR_ERR(dsi->regs);
+diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+index c21dd09..75c844d 100644
+--- a/drivers/staging/media/tegra-video/csi.c
++++ b/drivers/staging/media/tegra-video/csi.c
+@@ -252,15 +252,42 @@ static int tegra_csi_s_stream(struct v4l2_subdev *subdev, int enable)
+ 			return ret;
+ 		}
  
--	dsi->mipi = tegra_mipi_request(&pdev->dev);
-+	dsi->mipi = tegra_mipi_request(&pdev->dev, pdev->dev.of_node);
- 	if (IS_ERR(dsi->mipi))
- 		return PTR_ERR(dsi->mipi);
++		if (csi_chan->mipi) {
++			ret = tegra_mipi_enable(csi_chan->mipi);
++			if (ret < 0) {
++				dev_err(csi->dev,
++					"failed to enable MIPI pads: %d\n",
++					ret);
++				goto rpm_put;
++			}
++
++			/*
++			 * CSI MIPI pads PULLUP, PULLDN and TERM impedances
++			 * need to be calibrated after power on.
++			 * So, trigger the calibration start here and results
++			 * will be latched and applied to the pads when link is
++			 * in LP11 state during start of sensor streaming.
++			 */
++			tegra_mipi_calibrate(csi_chan->mipi);
++		}
++
+ 		ret = csi->ops->csi_start_streaming(csi_chan);
+ 		if (ret < 0)
+-			goto rpm_put;
++			goto disable_mipi;
  
-diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
-index e00809d..762d349 100644
---- a/drivers/gpu/host1x/mipi.c
-+++ b/drivers/gpu/host1x/mipi.c
-@@ -206,9 +206,9 @@ static int tegra_mipi_power_down(struct tegra_mipi *mipi)
+ 		return 0;
+ 	}
+ 
+ 	csi->ops->csi_stop_streaming(csi_chan);
+ 
++disable_mipi:
++	if (csi_chan->mipi) {
++		ret = tegra_mipi_disable(csi_chan->mipi);
++		if (ret < 0)
++			dev_err(csi->dev,
++				"failed to disable MIPI pads: %d\n", ret);
++	}
++
+ rpm_put:
+ 	pm_runtime_put(csi->dev);
+ 	return ret;
+@@ -294,6 +321,7 @@ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
+ 				   unsigned int num_pads)
+ {
+ 	struct tegra_csi_channel *chan;
++	int ret = 0;
+ 
+ 	chan = kzalloc(sizeof(*chan), GFP_KERNEL);
+ 	if (!chan)
+@@ -312,7 +340,16 @@ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
+ 		chan->pads[0].flags = MEDIA_PAD_FL_SOURCE;
+ 	}
+ 
+-	return 0;
++	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		return 0;
++
++	chan->mipi = tegra_mipi_request(csi->dev, node);
++	if (IS_ERR(chan->mipi)) {
++		ret = PTR_ERR(chan->mipi);
++		dev_err(csi->dev, "failed to get mipi device: %d\n", ret);
++	}
++
++	return ret;
+ }
+ 
+ static int tegra_csi_tpg_channels_alloc(struct tegra_csi *csi)
+@@ -475,6 +512,9 @@ static void tegra_csi_channels_cleanup(struct tegra_csi *csi)
+ 	struct tegra_csi_channel *chan, *tmp;
+ 
+ 	list_for_each_entry_safe(chan, tmp, &csi->csi_chans, list) {
++		if (chan->mipi)
++			tegra_mipi_free(chan->mipi);
++
+ 		subdev = &chan->subdev;
+ 		if (subdev->dev) {
+ 			if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+diff --git a/drivers/staging/media/tegra-video/csi.h b/drivers/staging/media/tegra-video/csi.h
+index 78a5110..0d50fc3 100644
+--- a/drivers/staging/media/tegra-video/csi.h
++++ b/drivers/staging/media/tegra-video/csi.h
+@@ -50,6 +50,7 @@ struct tegra_csi;
+  * @framerate: active framerate for TPG
+  * @h_blank: horizontal blanking for TPG active format
+  * @v_blank: vertical blanking for TPG active format
++ * @mipi: mipi device for corresponding csi channel pads
+  */
+ struct tegra_csi_channel {
+ 	struct list_head list;
+@@ -65,6 +66,7 @@ struct tegra_csi_channel {
+ 	unsigned int framerate;
+ 	unsigned int h_blank;
+ 	unsigned int v_blank;
++	struct tegra_mipi_device *mipi;
+ };
+ 
+ /**
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 676e24e2..58ad992 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -191,6 +191,7 @@ tegra_channel_get_remote_source_subdev(struct tegra_vi_channel *chan)
+ int tegra_channel_set_stream(struct tegra_vi_channel *chan, bool on)
+ {
+ 	struct v4l2_subdev *subdev, *csi_subdev, *src_subdev;
++	struct tegra_csi_channel *csi_chan;
+ 	int ret;
+ 
+ 	csi_subdev = tegra_channel_get_remote_csi_subdev(chan);
+@@ -213,6 +214,21 @@ int tegra_channel_set_stream(struct tegra_vi_channel *chan, bool on)
+ 	if (ret < 0 && ret != -ENOIOCTLCMD)
+ 		return ret;
+ 
++	/*
++	 * CSI subdev stream-on triggers start of MIPI pads calibration.
++	 * Calibration results are latched and applied to the pads when
++	 * link is in LP11 state which will happen during sensor stream-on.
++	 * So, wait for pads calibration to complete here.
++	 */
++	csi_chan = v4l2_get_subdevdata(csi_subdev);
++	if (on && csi_chan->mipi) {
++		ret = tegra_mipi_wait(csi_chan->mipi);
++		if (ret < 0)
++			dev_err(csi_chan->csi->dev,
++				"MIPI calibration failed: %d\n", ret);
++		return ret;
++	}
++
  	return 0;
  }
  
--struct tegra_mipi_device *tegra_mipi_request(struct device *device)
-+struct tegra_mipi_device *tegra_mipi_request(struct device *device,
-+					     struct device_node *np)
- {
--	struct device_node *np = device->of_node;
- 	struct tegra_mipi_device *dev;
- 	struct of_phandle_args args;
- 	int err;
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index a3a568b..9e67841 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -328,7 +328,8 @@ int host1x_client_resume(struct host1x_client *client);
- 
- struct tegra_mipi_device;
- 
--struct tegra_mipi_device *tegra_mipi_request(struct device *device);
-+struct tegra_mipi_device *tegra_mipi_request(struct device *device,
-+					     struct device_node *np);
- void tegra_mipi_free(struct tegra_mipi_device *device);
- int tegra_mipi_enable(struct tegra_mipi_device *device);
- int tegra_mipi_disable(struct tegra_mipi_device *device);
 -- 
 2.7.4
