@@ -1,54 +1,62 @@
-From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH v3 03/18] i2c: tegra: Don't mark VI I2C as IRQ safe runtime PM
-Date: Tue, 14 Jul 2020 21:20:40 -0700
-Message-ID: <1594786855-26506-4-git-send-email-skomatineni@nvidia.com>
-References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] usb: tegra: Fix zero length memory allocation
+Date: Wed, 15 Jul 2020 09:43:42 +0100
+Message-ID: <9c8ddf99-40fb-547f-81a9-05f0c64c9a5f@nvidia.com>
+References: <20200712102837.24340-1-jonathanh@nvidia.com>
+ <20200712102837.24340-2-jonathanh@nvidia.com> <20200714093256.GG141356@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1594786855-26506-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200714093256.GG141356@ulmo>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra VI I2C is part of VE power domain and typically used for
-camera usecases.
 
-VE power domain is not always on and is non-IRQ safe. So, IRQ safe
-device cannot be attached to a non-IRQ safe domain as it prevents
-powering off the PM domain and generic power domain driver will warn.
+On 14/07/2020 10:32, Thierry Reding wrote:
+> On Sun, Jul 12, 2020 at 11:28:37AM +0100, Jon Hunter wrote:
+>> After commit cad064f1bd52 ("devres: handle zero size in devm_kmalloc()")
+>> was added system suspend started failing on Tegra186. The kernel log
+>> showed that the Tegra XHCI driver was crashing on entry to suspend when
+>> attemptin the save the USB context. The problem is caused because we
+>> are trying to allocate a zero length array for the IPFS context on
+>> Tegra186 and following commit cad064f1bd52 ("devres: handle zero size
+>> in devm_kmalloc()") this now causes a NULL pointer deference crash
+>> when we try to access the memory. Fix this by only allocating memory
+>> for both the IPFS and FPCI contexts when required.
+>>
+>> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>
+>> Fixes: 5c4e8d3781bc ("usb: host: xhci-tegra: Add support for XUSB context save/restore")
+>>
+>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/usb/host/xhci-tegra.c | 22 ++++++++++++++--------
+>>  1 file changed, 14 insertions(+), 8 deletions(-)
+> 
+> Actually it would seem to me that this is no longer a bug after your fix
+> in patch 1. We only ever access tegra->context.ipfs if
+> tegra->soc->ipfs.num_offsets > 0, so the special ZERO_SIZE_PTR case will
+> not actually cause an issue anymore.
+> 
+> The reason why this was crashing was because tegra->context.fpci was
+> allocated with a zero size (because of the bug that you fixed in patch
+> 1) and then that zero-size pointer was dereferenced because the code was
+> correctly checking for tegra->soc->fpci.num_offsets > 0 in the context
+> save and restore.
+> 
+> So I don't think there's a bug here. It's not wrong to allocate a zero-
+> size buffer. It's only a bug to then go and dereference it. Are you
+> still seeing the issue if you leave out this patch and only apply patch
+> 1?
 
-Current driver marks all I2C devices as IRQ safe and VI I2C device
-does not require IRQ safe as it will not be used for atomic transfers.
+Ah yes you are right. OK, we can drop this. I will update the commit
+message to patch 1/1.
 
-This patch has fix to make VI I2C as non-IRQ safe.
+Jon
 
-Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/i2c/busses/i2c-tegra.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 1577296..3be1018 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1750,7 +1750,15 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		goto unprepare_slow_clk;
- 	}
- 
--	pm_runtime_irq_safe(&pdev->dev);
-+	/*
-+	 * VI I2C is in VE power domain which is not always on and not
-+	 * an IRQ safe. So, IRQ safe device can't be attached to a non-IRQ
-+	 * safe domain as it prevents powering off the PM domain.
-+	 * Also, VI I2C device don't need to use runtime IRQ safe as it will
-+	 * not be used for atomic transfers.
-+	 */
-+	if (!i2c_dev->is_vi)
-+		pm_runtime_irq_safe(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 	if (!pm_runtime_enabled(&pdev->dev)) {
- 		ret = tegra_i2c_runtime_resume(&pdev->dev);
 -- 
-2.7.4
+nvpublic
