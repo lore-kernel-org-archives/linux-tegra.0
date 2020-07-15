@@ -1,114 +1,46 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v3 00/18] Support for Tegra video capture from external sensor
-Date: Tue, 14 Jul 2020 21:20:37 -0700
-Message-ID: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v3 02/18] arm64: tegra: Add missing clocks and power-domains to Tegra210 VI I2C
+Date: Tue, 14 Jul 2020 21:20:39 -0700
+Message-ID: <1594786855-26506-3-git-send-email-skomatineni@nvidia.com>
+References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
+Sender: linux-media-owner@vger.kernel.org
 To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
 Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This series adds support for video capture from external camera sensor to
-Tegra video driver.
+Tegra210 VI I2C is in VE power domain and i2c-vi node should have
+power-domains property.
 
-Jetson TX1 has camera expansion connector and supports custom camera module
-designed as per TX1 design specification.
+Current Tegra210 i2c-vi device node is missing both VI I2C clocks
+and power-domains property.
 
-This series also enables camera capture support for Jetson Nano which has
-Raspberry PI camera header.
+This patch adds them.
 
-This series is tested with IMX219 camera sensor.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-This series include,
-
-VI I2C related fixes
-- Camera sensor programming happens through VI I2C which is on host1x bus.
-- These patches includes device tree and I2C driver fixes for VI I2C.
-
-Tegra video driver updates
-- TPG Vs Non-TPG based on Kconfig
-- Support for external sensor video capture based on device graph from DT.
-- Support for selection ioctl operations
-- Tegra MIPI CSI pads calibration
-- CSI T-CLK and T-HS settle time computation based on clock rates.
-
-Host1x driver updates
-- Adds API to allow creating mipi device for specific device node.
-- Splits MIPI pads calibrate start and waiting for calibration to be done.
-
-Device tree updates
-- Adds camera connector 2V8, 1V8, 1V2 regulator supplies to Jetson TX1 DT.
-- Enabled VI and CSI support in Jetson Nano DT.
-
-
-Delta between patch versions:
-
-[v3]:	Includes v2 feedback
-	- Uses separate helper function for retrieving remote csi subdevice
-	  and source subdevice.
-	- Added check for presence of subdevice ops set/get_selection
-	- dropped vb2_queue_release from driver and using
-	  vb2_video_unregister_device instead of video_unregister_device.
-	- video device register should happen in the last after all video
-	  device related setup is done in the driver. This is being addressed
-	  in below RFC patch. Once proper implementation of this is available
-	  will update Tegra video driver to use split APIs and do all setup
-	  prior to device register. Added this as TODO in the driver.
-	  https://www.spinics.net/lists/linux-media/msg172761.html
-
-	Note:
-	Patch-0012 has compilation dependency on
-	https://patchwork.kernel.org/patch/11659521/
-
-
-[v2]:	Includes below changes based on v1 feedback
-	- dt-binding document and the driver update for device graph to use
-	  separate ports for sink endpoint and source endpoint for csi.
-	- Use data-lanes endpoint property for csi.
-	- Update tegra_mipi_request() to take device node pointer argument
-	  rather than adding extra API.
-	- Remove checking for clk pointer before clk_disable.
-
-
-Sowjanya Komatineni (18):
-  dt-bindings: i2c: tegra: Document Tegra210 VI I2C clocks and
-    power-domains
-  arm64: tegra: Add missing clocks and power-domains to Tegra210 VI I2C
-  i2c: tegra: Don't mark VI I2C as IRQ safe runtime PM
-  i2c: tegra: Remove NULL pointer check before
-    clk_enable/disable/prepare/unprepare
-  i2c: tegra: Fix the error path in tegra_i2c_runtime_resume
-  i2c: tegra: Fix runtime resume to re-init VI I2C
-  i2c: tegra: Avoid tegra_i2c_init_dma() for Tegra210 vi i2c
-  media: tegra-video: Fix channel format alignment
-  media: tegra-video: Enable TPG based on kernel config
-  media: tegra-video: Update format lookup to offset based
-  dt-bindings: tegra: Update VI and CSI bindings with port info
-  media: tegra-video: Add support for external sensor capture
-  media: tegra-video: Add support for selection ioctl ops
-  gpu: host1x: mipi: Update tegra_mipi_request() to be node based
-  gpu: host1x: mipi: Use readl_relaxed_poll_timeout in tegra_mipi_wait
-  gpu: host1x: mipi: Split tegra_mipi_calibrate and tegra_mipi_wait
-  media: tegra-video: Add CSI MIPI pads calibration
-  media: tegra-video: Compute settle times based on the clock rate
-
- .../display/tegra/nvidia,tegra20-host1x.txt        |  92 ++-
- .../devicetree/bindings/i2c/nvidia,tegra20-i2c.txt |  19 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +
- drivers/gpu/drm/tegra/dsi.c                        |   9 +-
- drivers/gpu/host1x/mipi.c                          |  37 +-
- drivers/i2c/busses/i2c-tegra.c                     | 101 +--
- drivers/staging/media/tegra-video/Kconfig          |   7 +
- drivers/staging/media/tegra-video/csi.c            | 247 ++++++-
- drivers/staging/media/tegra-video/csi.h            |   8 +
- drivers/staging/media/tegra-video/tegra210.c       |  25 +-
- drivers/staging/media/tegra-video/vi.c             | 793 +++++++++++++++++++--
- drivers/staging/media/tegra-video/vi.h             |  25 +-
- drivers/staging/media/tegra-video/video.c          |  23 +-
- include/linux/host1x.h                             |   4 +-
- 14 files changed, 1242 insertions(+), 154 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index f4e0cc2..3827e43 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -375,6 +375,12 @@
+ 			compatible = "nvidia,tegra210-i2c-vi";
+ 			reg = <0x0 0x546c0000 0x0 0x00040000>;
+ 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&tegra_car TEGRA210_CLK_VI_I2C>,
++				 <&tegra_car TEGRA210_CLK_I2CSLOW>;
++			clock-names = "div-clk", "slow";
++			resets = <&tegra_car TEGRA210_CLK_VI_I2C>;
++			reset-names = "i2c";
++			power-domains = <&pd_venc>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
 2.7.4
