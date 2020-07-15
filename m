@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH v3 17/18] media: tegra-video: Add CSI MIPI pads calibration
-Date: Tue, 14 Jul 2020 21:20:54 -0700
-Message-ID: <1594786855-26506-18-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v3 18/18] media: tegra-video: Compute settle times based on the clock rate
+Date: Tue, 14 Jul 2020 21:20:55 -0700
+Message-ID: <1594786855-26506-19-git-send-email-skomatineni@nvidia.com>
 References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,169 +12,186 @@ To: skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQ
 Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-CSI MIPI pads need to be enabled and calibrated for capturing from
-the external sensor or transmitter.
+Settle time determines the number of cil clock cyles to wait after
+LP00 when moving from LP to HS.
 
-MIPI CAL unit calibrates MIPI pads pull-up, pull-down and termination
-impedances. Calibration is done by co-work of MIPI BIAS pad and MIPI
-CAL control unit.
+This patch computes T-CLK-SETTLE and T-HS-SETTLE times based on cil
+clock rate and pixel rate from the sensor and programs them during
+streaming.
 
-Triggering calibration start can happen any time after MIPI pads are
-enabled but calibration results will be latched and applied to MIPI
-pads by MIPI CAL unit only when the link is in LP11 state and then
-calibration status register gets updated.
+T-CLK-SETTLE time is the interval during which receiver will ignore
+any HS transitions on clock lane starting from the beginning of
+T-CLK-PREPARE.
 
-This patch enables CSI MIPI pads and calibrates them during streaming.
-
-Tegra CSI receiver is able to catch the very first clock transition.
-So, CSI receiver is always enabled prior to sensor streaming and
-trigger of calibration start is done during CSI subdev streaming and
-status of calibration is verified after sensor stream on.
+T-HS-SETTLE time is the interval during which recevier will ignore
+any HS transitions on data lane starting from the beginning of
+T-HS-PREPARE.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/staging/media/tegra-video/csi.c | 44 +++++++++++++++++++++++++++++++--
- drivers/staging/media/tegra-video/csi.h |  2 ++
- drivers/staging/media/tegra-video/vi.c  | 16 ++++++++++++
- 3 files changed, 60 insertions(+), 2 deletions(-)
+ drivers/staging/media/tegra-video/csi.c      | 55 ++++++++++++++++++++++++++++
+ drivers/staging/media/tegra-video/csi.h      |  5 +++
+ drivers/staging/media/tegra-video/tegra210.c | 17 ++++++++-
+ 3 files changed, 75 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
-index c21dd09..75c844d 100644
+index 75c844d..d9f9e3c 100644
 --- a/drivers/staging/media/tegra-video/csi.c
 +++ b/drivers/staging/media/tegra-video/csi.c
-@@ -252,15 +252,42 @@ static int tegra_csi_s_stream(struct v4l2_subdev *subdev, int enable)
- 			return ret;
- 		}
+@@ -19,6 +19,8 @@
+ #include "csi.h"
+ #include "video.h"
  
-+		if (csi_chan->mipi) {
-+			ret = tegra_mipi_enable(csi_chan->mipi);
-+			if (ret < 0) {
-+				dev_err(csi->dev,
-+					"failed to enable MIPI pads: %d\n",
-+					ret);
-+				goto rpm_put;
-+			}
++#define MHZ			1000000
 +
-+			/*
-+			 * CSI MIPI pads PULLUP, PULLDN and TERM impedances
-+			 * need to be calibrated after power on.
-+			 * So, trigger the calibration start here and results
-+			 * will be latched and applied to the pads when link is
-+			 * in LP11 state during start of sensor streaming.
-+			 */
-+			tegra_mipi_calibrate(csi_chan->mipi);
-+		}
-+
- 		ret = csi->ops->csi_start_streaming(csi_chan);
- 		if (ret < 0)
--			goto rpm_put;
-+			goto disable_mipi;
- 
- 		return 0;
- 	}
- 
- 	csi->ops->csi_stop_streaming(csi_chan);
- 
-+disable_mipi:
-+	if (csi_chan->mipi) {
-+		ret = tegra_mipi_disable(csi_chan->mipi);
-+		if (ret < 0)
-+			dev_err(csi->dev,
-+				"failed to disable MIPI pads: %d\n", ret);
-+	}
-+
- rpm_put:
- 	pm_runtime_put(csi->dev);
- 	return ret;
-@@ -294,6 +321,7 @@ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
- 				   unsigned int num_pads)
+ static inline struct tegra_csi *
+ host1x_client_to_csi(struct host1x_client *client)
  {
- 	struct tegra_csi_channel *chan;
-+	int ret = 0;
- 
- 	chan = kzalloc(sizeof(*chan), GFP_KERNEL);
- 	if (!chan)
-@@ -312,7 +340,16 @@ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
- 		chan->pads[0].flags = MEDIA_PAD_FL_SOURCE;
- 	}
- 
--	return 0;
-+	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
-+		return 0;
-+
-+	chan->mipi = tegra_mipi_request(csi->dev, node);
-+	if (IS_ERR(chan->mipi)) {
-+		ret = PTR_ERR(chan->mipi);
-+		dev_err(csi->dev, "failed to get mipi device: %d\n", ret);
-+	}
-+
-+	return ret;
- }
- 
- static int tegra_csi_tpg_channels_alloc(struct tegra_csi *csi)
-@@ -475,6 +512,9 @@ static void tegra_csi_channels_cleanup(struct tegra_csi *csi)
- 	struct tegra_csi_channel *chan, *tmp;
- 
- 	list_for_each_entry_safe(chan, tmp, &csi->csi_chans, list) {
-+		if (chan->mipi)
-+			tegra_mipi_free(chan->mipi);
-+
- 		subdev = &chan->subdev;
- 		if (subdev->dev) {
- 			if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
-diff --git a/drivers/staging/media/tegra-video/csi.h b/drivers/staging/media/tegra-video/csi.h
-index 78a5110..0d50fc3 100644
---- a/drivers/staging/media/tegra-video/csi.h
-+++ b/drivers/staging/media/tegra-video/csi.h
-@@ -50,6 +50,7 @@ struct tegra_csi;
-  * @framerate: active framerate for TPG
-  * @h_blank: horizontal blanking for TPG active format
-  * @v_blank: vertical blanking for TPG active format
-+ * @mipi: mipi device for corresponding csi channel pads
-  */
- struct tegra_csi_channel {
- 	struct list_head list;
-@@ -65,6 +66,7 @@ struct tegra_csi_channel {
- 	unsigned int framerate;
- 	unsigned int h_blank;
- 	unsigned int v_blank;
-+	struct tegra_mipi_device *mipi;
- };
- 
- /**
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 676e24e2..58ad992 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -191,6 +191,7 @@ tegra_channel_get_remote_source_subdev(struct tegra_vi_channel *chan)
- int tegra_channel_set_stream(struct tegra_vi_channel *chan, bool on)
- {
- 	struct v4l2_subdev *subdev, *csi_subdev, *src_subdev;
-+	struct tegra_csi_channel *csi_chan;
- 	int ret;
- 
- 	csi_subdev = tegra_channel_get_remote_csi_subdev(chan);
-@@ -213,6 +214,21 @@ int tegra_channel_set_stream(struct tegra_vi_channel *chan, bool on)
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
- 		return ret;
- 
-+	/*
-+	 * CSI subdev stream-on triggers start of MIPI pads calibration.
-+	 * Calibration results are latched and applied to the pads when
-+	 * link is in LP11 state which will happen during sensor stream-on.
-+	 * So, wait for pads calibration to complete here.
-+	 */
-+	csi_chan = v4l2_get_subdevdata(csi_subdev);
-+	if (on && csi_chan->mipi) {
-+		ret = tegra_mipi_wait(csi_chan->mipi);
-+		if (ret < 0)
-+			dev_err(csi_chan->csi->dev,
-+				"MIPI calibration failed: %d\n", ret);
-+		return ret;
-+	}
-+
+@@ -235,6 +237,59 @@ static int tegra_csi_g_frame_interval(struct v4l2_subdev *subdev,
  	return 0;
  }
  
++static unsigned int csi_get_pixel_rate(struct tegra_csi_channel *csi_chan)
++{
++	struct tegra_vi_channel *chan;
++	struct v4l2_subdev *src_subdev;
++	struct v4l2_ctrl *ctrl;
++
++	chan = v4l2_get_subdev_hostdata(&csi_chan->subdev);
++	src_subdev = tegra_channel_get_remote_source_subdev(chan);
++	ctrl = v4l2_ctrl_find(src_subdev->ctrl_handler, V4L2_CID_PIXEL_RATE);
++	if (ctrl)
++		return v4l2_ctrl_g_ctrl_int64(ctrl);
++
++	return 0;
++}
++
++void tegra_csi_calc_settle_time(struct tegra_csi_channel *csi_chan,
++				u8 *clk_settle_time,
++				u8 *ths_settle_time)
++{
++	struct tegra_csi *csi = csi_chan->csi;
++	unsigned int cil_clk_mhz;
++	unsigned int pix_clk_mhz;
++	int clk_idx = (csi_chan->csi_port_num >> 1) + 1;
++
++	cil_clk_mhz = clk_get_rate(csi->clks[clk_idx].clk) / MHZ;
++	pix_clk_mhz = csi_get_pixel_rate(csi_chan) / MHZ;
++
++	/*
++	 * CLK Settle time is the interval during which HS receiver should
++	 * ignore any clock lane HS transitions, starting from the beginning
++	 * of T-CLK-PREPARE.
++	 * Per DPHY specification, T-CLK-SETTLE should be between 95ns ~ 300ns
++	 *
++	 * 95ns < (clk-settle-programmed + 7) * lp clk period < 300ns
++	 * midpoint = 197.5 ns
++	 */
++	*clk_settle_time = ((95 + 300) * cil_clk_mhz - 14000) / 2000;
++
++	/*
++	 * THS Settle time is the interval during which HS receiver should
++	 * ignore any data lane HS transitions, starting from the beginning
++	 * of THS-PREPARE.
++	 *
++	 * Per DPHY specification, T-HS-SETTLE should be between 85ns + 6UI
++	 * and 145ns+10UI.
++	 * 85ns + 6UI < (Ths-settle-prog + 5) * lp_clk_period < 145ns + 10UI
++	 * midpoint = 115ns + 8UI
++	 */
++	if (pix_clk_mhz)
++		*ths_settle_time = (115 * cil_clk_mhz + 8000 * cil_clk_mhz
++				   / (2 * pix_clk_mhz) - 5000) / 1000;
++}
++
+ static int tegra_csi_s_stream(struct v4l2_subdev *subdev, int enable)
+ {
+ 	struct tegra_vi_channel *chan = v4l2_get_subdev_hostdata(subdev);
+diff --git a/drivers/staging/media/tegra-video/csi.h b/drivers/staging/media/tegra-video/csi.h
+index 0d50fc3..c65ff73 100644
+--- a/drivers/staging/media/tegra-video/csi.h
++++ b/drivers/staging/media/tegra-video/csi.h
+@@ -51,6 +51,7 @@ struct tegra_csi;
+  * @h_blank: horizontal blanking for TPG active format
+  * @v_blank: vertical blanking for TPG active format
+  * @mipi: mipi device for corresponding csi channel pads
++ * @pixel_rate: active pixel rate from the sensor on this channel
+  */
+ struct tegra_csi_channel {
+ 	struct list_head list;
+@@ -67,6 +68,7 @@ struct tegra_csi_channel {
+ 	unsigned int h_blank;
+ 	unsigned int v_blank;
+ 	struct tegra_mipi_device *mipi;
++	unsigned int pixel_rate;
+ };
+ 
+ /**
+@@ -147,4 +149,7 @@ extern const struct tegra_csi_soc tegra210_csi_soc;
+ #endif
+ 
+ void tegra_csi_error_recover(struct v4l2_subdev *subdev);
++void tegra_csi_calc_settle_time(struct tegra_csi_channel *csi_chan,
++				u8 *clk_settle_time,
++				u8 *ths_settle_time);
+ #endif
+diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+index 253bf33..ac066c0 100644
+--- a/drivers/staging/media/tegra-video/tegra210.c
++++ b/drivers/staging/media/tegra-video/tegra210.c
+@@ -7,6 +7,7 @@
+  * This source file contains Tegra210 supported video formats,
+  * VI and CSI SoC specific data, operations and registers accessors.
+  */
++#include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/clk/tegra.h>
+ #include <linux/delay.h>
+@@ -98,6 +99,8 @@
+ #define   BRICK_CLOCK_B_4X				(0x2 << 16)
+ #define TEGRA_CSI_CIL_PAD_CONFIG1                       0x004
+ #define TEGRA_CSI_CIL_PHY_CONTROL                       0x008
++#define   CLK_SETTLE_MASK				GENMASK(13, 8)
++#define   THS_SETTLE_MASK				GENMASK(5, 0)
+ #define TEGRA_CSI_CIL_INTERRUPT_MASK                    0x00c
+ #define TEGRA_CSI_CIL_STATUS                            0x010
+ #define TEGRA_CSI_CILX_STATUS                           0x014
+@@ -770,8 +773,14 @@ static int tegra210_csi_start_streaming(struct tegra_csi_channel *csi_chan)
+ {
+ 	struct tegra_csi *csi = csi_chan->csi;
+ 	unsigned int portno = csi_chan->csi_port_num;
++	u8 clk_settle_time = 0;
++	u8 ths_settle_time = 10;
+ 	u32 val;
+ 
++	if (!csi_chan->pg_mode)
++		tegra_csi_calc_settle_time(csi_chan, &clk_settle_time,
++					   &ths_settle_time);
++
+ 	csi_write(csi, portno, TEGRA_CSI_CLKEN_OVERRIDE, 0);
+ 
+ 	/* clean up status */
+@@ -782,7 +791,9 @@ static int tegra210_csi_start_streaming(struct tegra_csi_channel *csi_chan)
+ 
+ 	/* CIL PHY registers setup */
+ 	cil_write(csi, portno, TEGRA_CSI_CIL_PAD_CONFIG0, 0x0);
+-	cil_write(csi, portno, TEGRA_CSI_CIL_PHY_CONTROL, 0xa);
++	cil_write(csi, portno, TEGRA_CSI_CIL_PHY_CONTROL,
++		  FIELD_PREP(CLK_SETTLE_MASK, clk_settle_time) |
++		  FIELD_PREP(THS_SETTLE_MASK, ths_settle_time));
+ 
+ 	/*
+ 	 * The CSI unit provides for connection of up to six cameras in
+@@ -801,7 +812,9 @@ static int tegra210_csi_start_streaming(struct tegra_csi_channel *csi_chan)
+ 			  BRICK_CLOCK_A_4X);
+ 		cil_write(csi, portno + 1, TEGRA_CSI_CIL_PAD_CONFIG0, 0x0);
+ 		cil_write(csi, portno + 1, TEGRA_CSI_CIL_INTERRUPT_MASK, 0x0);
+-		cil_write(csi, portno + 1, TEGRA_CSI_CIL_PHY_CONTROL, 0xa);
++		cil_write(csi, portno + 1, TEGRA_CSI_CIL_PHY_CONTROL,
++			  FIELD_PREP(CLK_SETTLE_MASK, clk_settle_time) |
++			  FIELD_PREP(THS_SETTLE_MASK, ths_settle_time));
+ 		csi_write(csi, portno, TEGRA_CSI_PHY_CIL_COMMAND,
+ 			  CSI_A_PHY_CIL_ENABLE | CSI_B_PHY_CIL_ENABLE);
+ 	} else {
 -- 
 2.7.4
