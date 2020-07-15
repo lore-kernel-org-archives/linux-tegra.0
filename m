@@ -1,7 +1,7 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v3 13/18] media: tegra-video: Add support for selection ioctl ops
-Date: Tue, 14 Jul 2020 21:20:50 -0700
-Message-ID: <1594786855-26506-14-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v3 14/18] gpu: host1x: mipi: Update tegra_mipi_request() to be node based
+Date: Tue, 14 Jul 2020 21:20:51 -0700
+Message-ID: <1594786855-26506-15-git-send-email-skomatineni@nvidia.com>
 References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,159 +12,63 @@ To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, fran
 Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds selection v4l2 ioctl operations to allow configuring
-a selection rectangle in the sensor through the Tegra video device
-node.
+Tegra CSI driver need a separate MIPI device for each channel as
+calibration of corresponding MIPI pads for each channel should
+happen independently.
 
-Some sensor drivers supporting crop uses try_crop rectangle from
-v4l2_subdev_pad_config during try format for computing binning.
-
-So with selection ops support, this patch also updates try format
-to use try crop rectangle either from subdev frame size enumeration
-or from subdev crop boundary.
+So, this patch updates tegra_mipi_request() API to add a device_node
+pointer argument to allow creating mipi device for specific device
+node rather than a device.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 106 +++++++++++++++++++++++++++++++++
- 1 file changed, 106 insertions(+)
+ drivers/gpu/drm/tegra/dsi.c | 2 +-
+ drivers/gpu/host1x/mipi.c   | 4 ++--
+ include/linux/host1x.h      | 3 ++-
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 5e19bab..676e24e2 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -437,6 +437,13 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 	struct v4l2_subdev *subdev;
- 	struct v4l2_subdev_format fmt;
- 	struct v4l2_subdev_pad_config *pad_cfg;
-+	struct v4l2_subdev_frame_size_enum fse = {
-+		.which = V4L2_SUBDEV_FORMAT_TRY,
-+	};
-+	struct v4l2_subdev_selection sdsel = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.target = V4L2_SEL_TGT_CROP_BOUNDS,
-+	};
- 	int ret;
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index 38beab9..3c09e29 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -1618,7 +1618,7 @@ static int tegra_dsi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dsi->regs))
+ 		return PTR_ERR(dsi->regs);
  
- 	subdev = tegra_channel_get_remote_source_subdev(chan);
-@@ -462,6 +469,24 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 	fmt.which = V4L2_SUBDEV_FORMAT_TRY;
- 	fmt.pad = 0;
- 	v4l2_fill_mbus_format(&fmt.format, pix, fmtinfo->code);
-+
-+	/*
-+	 * Attempt to obtain the format size from subdev.
-+	 * If not available, try to get crop boundary from subdev.
-+	 */
-+	fse.code = fmtinfo->code;
-+	ret = v4l2_subdev_call(subdev, pad, enum_frame_size, pad_cfg, &fse);
-+	if (ret) {
-+		ret = v4l2_subdev_call(subdev, pad, get_selection, NULL, &sdsel);
-+		if (ret)
-+			return -EINVAL;
-+		pad_cfg->try_crop.width = sdsel.r.width;
-+		pad_cfg->try_crop.height = sdsel.r.height;
-+	} else {
-+		pad_cfg->try_crop.width = fse.max_width;
-+		pad_cfg->try_crop.height = fse.max_height;
-+	}
-+
- 	ret = v4l2_subdev_call(subdev, pad, set_fmt, pad_cfg, &fmt);
- 	if (ret < 0)
- 		return ret;
-@@ -551,6 +576,85 @@ static int tegra_channel_set_subdev_active_fmt(struct tegra_vi_channel *chan)
+-	dsi->mipi = tegra_mipi_request(&pdev->dev);
++	dsi->mipi = tegra_mipi_request(&pdev->dev, pdev->dev.of_node);
+ 	if (IS_ERR(dsi->mipi))
+ 		return PTR_ERR(dsi->mipi);
+ 
+diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+index e00809d..762d349 100644
+--- a/drivers/gpu/host1x/mipi.c
++++ b/drivers/gpu/host1x/mipi.c
+@@ -206,9 +206,9 @@ static int tegra_mipi_power_down(struct tegra_mipi *mipi)
  	return 0;
  }
  
-+static int tegra_channel_g_selection(struct file *file, void *priv,
-+				     struct v4l2_selection *sel)
-+{
-+	struct tegra_vi_channel *chan = video_drvdata(file);
-+	struct v4l2_subdev *subdev;
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	struct v4l2_subdev_selection sdsel = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.target = sel->target,
-+	};
-+	int ret;
-+
-+	subdev = tegra_channel_get_remote_source_subdev(chan);
-+	if (!v4l2_subdev_has_op(subdev, pad, get_selection))
-+		return -ENOTTY;
-+
-+	if (sel->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
-+		return -EINVAL;
-+	/*
-+	 * Try the get selection operation and fallback to get format if not
-+	 * implemented.
-+	 */
-+	ret = v4l2_subdev_call(subdev, pad, get_selection, NULL, &sdsel);
-+	if (!ret)
-+		sel->r = sdsel.r;
-+	if (ret != -ENOIOCTLCMD)
-+		return ret;
-+
-+	ret = v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
-+	if (ret < 0)
-+		return ret;
-+
-+	sel->r.left = 0;
-+	sel->r.top = 0;
-+	sel->r.width = fmt.format.width;
-+	sel->r.height = fmt.format.height;
-+
-+	return 0;
-+}
-+
-+static int tegra_channel_s_selection(struct file *file, void *fh,
-+				     struct v4l2_selection *sel)
-+{
-+	struct tegra_vi_channel *chan = video_drvdata(file);
-+	struct v4l2_subdev *subdev;
-+	int ret;
-+	struct v4l2_subdev_selection sdsel = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.target = sel->target,
-+		.flags = sel->flags,
-+		.r = sel->r,
-+	};
-+
-+	subdev = tegra_channel_get_remote_source_subdev(chan);
-+	if (!v4l2_subdev_has_op(subdev, pad, set_selection))
-+		return -ENOTTY;
-+
-+	if (sel->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
-+		return -EINVAL;
-+
-+	if (vb2_is_busy(&chan->queue))
-+		return -EBUSY;
-+
-+	ret = v4l2_subdev_call(subdev, pad, set_selection, NULL, &sdsel);
-+	if (!ret) {
-+		sel->r = sdsel.r;
-+		/*
-+		 * Subdev active format resolution may have changed during
-+		 * set selection operation. So, update channel format to
-+		 * the sub-device active format.
-+		 */
-+		return tegra_channel_set_subdev_active_fmt(chan);
-+	}
-+
-+	return ret;
-+}
-+
- static int tegra_channel_enum_input(struct file *file, void *fh,
- 				    struct v4l2_input *inp)
+-struct tegra_mipi_device *tegra_mipi_request(struct device *device)
++struct tegra_mipi_device *tegra_mipi_request(struct device *device,
++					     struct device_node *np)
  {
-@@ -608,6 +712,8 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
- 	.vidioc_streamoff		= vb2_ioctl_streamoff,
- 	.vidioc_subscribe_event		= v4l2_ctrl_subscribe_event,
- 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
-+	.vidioc_g_selection		= tegra_channel_g_selection,
-+	.vidioc_s_selection		= tegra_channel_s_selection,
- };
+-	struct device_node *np = device->of_node;
+ 	struct tegra_mipi_device *dev;
+ 	struct of_phandle_args args;
+ 	int err;
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index a3a568b..9e67841 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -328,7 +328,8 @@ int host1x_client_resume(struct host1x_client *client);
  
- /*
+ struct tegra_mipi_device;
+ 
+-struct tegra_mipi_device *tegra_mipi_request(struct device *device);
++struct tegra_mipi_device *tegra_mipi_request(struct device *device,
++					     struct device_node *np);
+ void tegra_mipi_free(struct tegra_mipi_device *device);
+ int tegra_mipi_enable(struct tegra_mipi_device *device);
+ int tegra_mipi_disable(struct tegra_mipi_device *device);
 -- 
 2.7.4
