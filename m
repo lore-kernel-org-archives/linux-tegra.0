@@ -1,13 +1,13 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 5.4 000/109] 5.4.52-rc1 review
-Date: Wed, 15 Jul 2020 11:50:11 +0100
-Message-ID: <84ad3c06-4d64-f0bf-da8c-d445e3f3ffe1@nvidia.com>
-References: <20200714184105.507384017@linuxfoundation.org>
+Subject: Re: [PATCH 5.7 000/166] 5.7.9-rc1 review
+Date: Wed, 15 Jul 2020 11:50:30 +0100
+Message-ID: <fc3af2c8-d6ca-0ad1-597e-3bba2292613c@nvidia.com>
+References: <20200714184115.844176932@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200714184105.507384017-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20200714184115.844176932-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -15,9 +15,9 @@ Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, akpm-de/tnXTf+JL
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 14/07/2020 19:43, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.52 release.
-> There are 109 patches in this series, all will be posted as a response
+On 14/07/2020 19:42, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.7.9 release.
+> There are 166 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -25,9 +25,9 @@ On 14/07/2020 19:43, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.52-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.7.9-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.7.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -36,16 +36,17 @@ On 14/07/2020 19:43, Greg Kroah-Hartman wrote:
 
 All tests are passing for Tegra ...
 
-Test results for stable-v5.4:
+Test results for stable-v5.7:
     11 builds:	11 pass, 0 fail
     26 boots:	26 pass, 0 fail
     56 tests:	56 pass, 0 fail
 
-Linux version:	5.4.52-rc1-ge41ac96492ed
+Linux version:	5.7.9-rc1-gc2fb28a4b6e4
 Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
                 tegra194-p2972-0000, tegra20-ventana,
                 tegra210-p2371-2180, tegra210-p3450-0000,
                 tegra30-cardhu-a04
+
 
 Cheers
 Jon
