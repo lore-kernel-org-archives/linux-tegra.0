@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 5/9] soc/tegra: fuse: Extract tegra_get_platform()
-Date: Thu, 16 Jul 2020 16:18:52 +0200
-Message-ID: <20200716141856.544718-6-thierry.reding@gmail.com>
+Subject: [PATCH 6/9] soc/tegra: fuse: Implement tegra_is_silicon()
+Date: Thu, 16 Jul 2020 16:18:53 +0200
+Message-ID: <20200716141856.544718-7-thierry.reding@gmail.com>
 References: <20200716141856.544718-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,57 +14,48 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This function extracts the PRE_SI_PLATFORM field from the HIDREV
-register and can be used to determine which platform the kernel runs on
-(silicon, simulation, ...). Note that while only Tegra194 and later
-define this field, it should be safe to call this on prior generations
-as well since this field should read as 0, indicating silicon.
+This function can be used by drivers to determine whether code is
+running on silicon or on a simulation platform.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c    | 2 +-
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 5 +++++
- include/soc/tegra/fuse.h               | 1 +
- 3 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 13 +++++++++++++
+ include/soc/tegra/fuse.h               |  1 +
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index d1f8dd0289e6..7e6b6ee59120 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -336,7 +336,7 @@ static ssize_t platform_show(struct device *dev, struct device_attribute *attr,
- 	 * platform type is silicon and all other non-zero values indicate
- 	 * the type of simulation platform is being used.
- 	 */
--	return sprintf(buf, "%d\n", (tegra_read_chipid() >> 20) & 0xf);
-+	return sprintf(buf, "%d\n", tegra_get_platform());
- }
- 
- static DEVICE_ATTR_RO(platform);
 diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index 3cdd69d1bd4d..89f1479b4d0e 100644
+index 89f1479b4d0e..be6b7fc169ca 100644
 --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
 +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -47,6 +47,11 @@ u8 tegra_get_minor_rev(void)
- 	return (tegra_read_chipid() >> 16) & 0xf;
+@@ -52,6 +52,19 @@ u8 tegra_get_platform(void)
+ 	return (tegra_read_chipid() >> 20) & 0xf;
  }
  
-+u8 tegra_get_platform(void)
++bool tegra_is_silicon(void)
 +{
-+	return (tegra_read_chipid() >> 20) & 0xf;
++	switch (tegra_get_chip_id()) {
++	case TEGRA194:
++		if (tegra_get_platform() == 0)
++			return true;
++
++		return false;
++	}
++
++	return false;
 +}
 +
  u32 tegra_read_straps(void)
  {
  	WARN(!chipid, "Tegra ABP MISC not yet available\n");
 diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index 1097feca41ed..214908fc5581 100644
+index 214908fc5581..a9db917a1d06 100644
 --- a/include/soc/tegra/fuse.h
 +++ b/include/soc/tegra/fuse.h
-@@ -23,6 +23,7 @@
- 
+@@ -24,6 +24,7 @@
  u32 tegra_read_chipid(void);
  u8 tegra_get_chip_id(void);
-+u8 tegra_get_platform(void);
+ u8 tegra_get_platform(void);
++bool tegra_is_silicon(void);
  
  enum tegra_revision {
  	TEGRA_REVISION_UNKNOWN = 0,
