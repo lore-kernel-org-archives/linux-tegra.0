@@ -1,211 +1,103 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v10 0/6] Support NVIDIA Tegra-based Acer A500 and Nexus 7
- devices
-Date: Thu, 16 Jul 2020 14:38:14 +0200
-Message-ID: <20200716123814.GB535268@ulmo>
-References: <20200629025456.28124-1-digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V4 0/7] Tegra XUSB charger detect support
+Date: Thu, 16 Jul 2020 14:48:09 +0200
+Message-ID: <20200716124809.GC535268@ulmo>
+References: <1593166742-23592-1-git-send-email-nkristam@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z6Eq5LdranGa6ru8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="L6iaP+gRLNZHKoI4"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200629025456.28124-1-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, David Heidelberg <david@ixit.cz>, Peter Geis <pgwipeout@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Chauvet <kwizart@gmail.com>, Pedro =?utf-8?Q?=C3=82ngelo?= <pangelo@void.io>, Matt Merhar <mattmerhar@protonmail.com>, Zack Pearsall <zpearsall@yahoo.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1593166742-23592-1-git-send-email-nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Nagarjuna Kristam <nkristam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---z6Eq5LdranGa6ru8
-Content-Type: text/plain; charset=utf-8
+--L6iaP+gRLNZHKoI4
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 29, 2020 at 05:54:50AM +0300, Dmitry Osipenko wrote:
-> Hello,
+On Fri, Jun 26, 2020 at 03:48:55PM +0530, Nagarjuna Kristam wrote:
+> This patch series adds charger detect support on XUSB hardware used in
+> Tegra210 and Tegra186 SoCs.
 >=20
-> This series introduces upstream kernel support for Acer Iconia Tab A500
-> and ASUS Google Nexus 7 tablet devices. Please review and apply, thanks
-> in advance.
+> This patchset is composed with :
+>  - dt bindings of XUSB Pad Controller
+>  - Tegra XUSB device mode driver to add vbus_draw support=20
+>  - Tegra PHY driver for charger detect support
 >=20
-> Changelog:
+> Tests done:
+>  - Connect USB cable from ubuntu host to micro-B port of DUT to detect
+>    SDP_TYPE charger
+>  - Connect USB cable from external powered USB hub(which inturn connects
+>    to ubuntu host) to micro-B port of DUT to detect CDP_TYPE charger.
+>  - Connect USB cable from USB charger to micro-B port of DUT to detect
+>    DCP_TYPE charger.
+> DUT: Jetson-tx1, Jetson tx2.
 >=20
-> v10:- Rebased on a recent linux-next which got some device-tree changes:
+> V4:
+>  - Added ACKed-by details for PHY driver.
+>  - Used BIT macro instead of (1 << index) usage as suggested by Chunfeng =
+Yun.
+> V3:
+>  - Added ACKed-by details for PHY driver and DT changes.
+>  - Functions and its arguments are aligned.
+>  - Tabs are used for alignment of MACRO's
+>  - For vbus_draw USDC callback, usb_phy set_power error is propogated.
+>  - Fixed various comments given by thierry.
+> V2:
+>  - Added ACKed-by details for DT patches.
+>  - All patches rebased.
 >=20
->         - Renamed sdhci@ DT nodes to mmc@
->         - Removed simple-busses from DTs
->         - Checked DTBs using upcoming YAML bindings from Thierry Reding
+> Nagarjuna Kristam (7):
+>   dt-bindings: phy: tegra-xusb: Add charger-detect property
+>   phy: tegra: xusb: Add support for UTMI pad power control
+>   phy: tegra: xusb: Add USB2 pad power control support for Tegra210
+>   phy: tegra: xusb: Add soc ops API to enable UTMI PAD protection
+>   phy: tegra: xusb: Add support for charger detect
+>   phy: tegra: xusb: Enable charger detect for Tegra186
+>   phy: tegra: xusb: Enable charger detect for Tegra210
 >=20
-> v9: - Nexus 7 memory timings are moved out to a separate dtsi file to ease
->       reviewing of the device-trees since the sparse definition of the ti=
-mings
->       within multiple DT files created some unnecessary confusion.
->       Thanks to Micha=C5=82 Miros=C5=82aw for the suggestion.
->=20
-> v8: - The eMMC voltage regulator is now marked as always-ON in all
->       device-trees because turned out that some bootloader versions have
->       assumption about the enabled regulator at a boot time. This fixes
->       machine hanging on a warm reboot, it's also matching the downstream
->       kernel regulator configuration.
->=20
->     - The core regulator of the Ti PMIC Nexus 7 variant is now limited
->       to a 1.35V, which is a more realistic limit than 1.5V that was borr=
-owed
->       from the Cardhu device-tree. Now both Maxim and Ti variants have the
->       common limits.
->=20
->     - Added acks from Rob Herring.
->=20
-> v7: - This version brings support for a Nexus 7 variant that uses Ti PMIC
->       instead of the Maxim PMIC. Previously we assumed that variant with
->       the Ti PMIC doesn't exist in a wild, but turned out that it was a
->       wrong assumption. In a result the device-trees are separated into
->       more DTSI pieces, which combined together form the final device-tre=
-e.
->       Thanks to Zack Pearsall for testing the Ti version!
->=20
->     - The camera voltage regulator is now preset to a correct 1.8v in the
->       Nexus 7 device-tree.
->=20
-> v6: - Corrected PMIC's RTC alias in the DTs. Sometime ago I renamed the
->       PMIC's node to match the modern upstream styling, but forgot to cha=
-nge
->       the RTC alias. Now PMIC RTC alias uses node's handle instead of str=
-ing.
->=20
->     - Removed "panel: " handle from device trees, which became unused aft=
-er
->       v5 and I just missed to remove it.
->=20
-> v5: - After spending some more time on adding LVDS encoder bridge support
->       to the Tegra DRM driver, I'm now having a second thought and agree
->       with Thierry Reding that in a longer run it should be better not to
->       mix old nvidia,panel with new output graph in device-tree. So the
->       nvidia,panel phandle is removed now in both A500 and Nexus 7 DTs.
->=20
-> v4: - Corrected CPU's thermal zone on both A500 and Nexus 7, which
->       should use the remote thermal sensor (Tegra chip) instead of the
->       local ("skin" temperature).
->=20
->     - Added default PMIC pinmux state on Nexus 7, for completeness.
->=20
->     - Added PMIC cpu_pwr_req GPIO hog on Nexus 7, for completeness.
->=20
->     - Renamed thermal sensor node label to NCT72 on Nexus 7 to match the
->       actual hardware (NCT72 is compatible with NCT1008). For completenes=
-s.
->=20
->     - Added always-on USB AVDD regulator on Nexus 7, which is controlled =
-by
->       the PMIC GPIO. For completeness.
->=20
->     - Added PMIC GPIO enable-control to the 3v3_sys regulator on Nexus 7,
->       for completeness.
->=20
->     - Added CONFIG_NAMESPACES, CONFIG_USER_NS, CONFIG_SECCOMP and
->       CONFIG_PINCTRL_MAX77620 to the tegra_defconfig. The first three
->       options are must-have for the modern userspace, the last is somewhat
->       actual now since the default PMIC pinmux state is added to the N7 D=
-T.
->=20
-> v3: - Improved device-tree node-names in accordance to review comments th=
-at
->       were made by Thierry Reding to v2.
->=20
->     - Corrected LVDS encoder powerdown-GPIO polarity on both A500 and Nex=
-us 7
->       because I implemented the DRM bridges support in the Tegra DRM driv=
-er
->       and found that there was a mistake in the device-trees. The updated
->       polarity also matches the boards schematics. Now DRM bridges support
->       becomes mandatory since LVDS is getting disabled during of the enco=
-der
->       driver probing. I'll send the DRM patch separately from this series.
->=20
->     - Replaced recently deprecated CONFIG_DRM_LVDS_ENCODER with the new
->       CONFIG_DRM_LVDS_CODEC in tegra_defconfig.
->=20
->     - Added more config options to tegra_defconfig, like pstore and therm=
-al.
->=20
->     - Added atmel,cfg_name to the A500 DT, which is a new upcoming proper=
-ty
->       in 5.8+ that allows to specify the per-board hardware config file n=
-ame.
->=20
-> v2: - Corrected "volume down" key-label in the grouper's device-tree and
->       improved some other names in device-trees.
->=20
->     - Added optional (upcoming in 5.8+) VDD/AVDD regulators to the touchs=
-creen
->       node in A500 device-tree.
->=20
-> Dmitry Osipenko (6):
->   ARM: tegra: Add device-tree for Acer Iconia Tab A500
->   ARM: tegra: Add device-tree for ASUS Google Nexus 7
->   dt-bindings: Add vendor prefix for Acer Inc.
->   dt-bindings: ARM: tegra: Add Acer Iconia Tab A500
->   dt-bindings: ARM: tegra: Add ASUS Google Nexus 7
->   ARM: tegra_defconfig: Enable options useful for Nexus 7 and Acer A500
->=20
->  .../devicetree/bindings/arm/tegra.yaml        |   10 +
->  .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
->  arch/arm/boot/dts/Makefile                    |    4 +
->  .../boot/dts/tegra20-acer-a500-picasso.dts    | 1438 +++++++++++++++
->  .../dts/tegra30-asus-nexus7-grouper-E1565.dts |    9 +
->  .../dts/tegra30-asus-nexus7-grouper-PM269.dts |    9 +
->  .../tegra30-asus-nexus7-grouper-common.dtsi   | 1232 +++++++++++++
->  ...egra30-asus-nexus7-grouper-maxim-pmic.dtsi |  185 ++
->  ...30-asus-nexus7-grouper-memory-timings.dtsi | 1565 +++++++++++++++++
->  .../tegra30-asus-nexus7-grouper-ti-pmic.dtsi  |  149 ++
->  .../boot/dts/tegra30-asus-nexus7-grouper.dtsi |  149 ++
->  .../dts/tegra30-asus-nexus7-tilapia-E1565.dts |    9 +
->  ...30-asus-nexus7-tilapia-memory-timings.dtsi |  325 ++++
->  .../boot/dts/tegra30-asus-nexus7-tilapia.dtsi |  235 +++
->  arch/arm/configs/tegra_defconfig              |   42 +
->  15 files changed, 5363 insertions(+)
->  create mode 100644 arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-E1565.d=
-ts
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-PM269.d=
-ts
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.=
-dtsi
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-p=
-mic.dtsi
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-memory-=
-timings.dtsi
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic=
-=2Edtsi
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-tilapia-E1565.d=
-ts
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-tilapia-memory-=
-timings.dtsi
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
+>  .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   |   4 +
+>  drivers/phy/tegra/Makefile                         |   2 +-
+>  drivers/phy/tegra/cd.c                             | 283 +++++++++++++++=
+++++++
+>  drivers/phy/tegra/xusb-tegra186.c                  |  92 +++++--
+>  drivers/phy/tegra/xusb-tegra210.c                  | 223 +++++++++++-----
+>  drivers/phy/tegra/xusb.c                           |  80 ++++++
+>  drivers/phy/tegra/xusb.h                           |  22 ++
+>  7 files changed, 621 insertions(+), 85 deletions(-)
+>  create mode 100644 drivers/phy/tegra/cd.c
 
-Applied, thanks.
+Hi Kishon, Vinod,
 
+did you have any further comments on this series or is it good to go
+into v5.9?
+
+Thanks,
 Thierry
 
---z6Eq5LdranGa6ru8
+--L6iaP+gRLNZHKoI4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8QSjYACgkQ3SOs138+
-s6EfUw//biPjXK8M9ypgA0pXxiTgljq+2TokuNQcd4/sD9EuB57e3mq6QLKbMu+U
-nb7fslhobWWnQ5vvqzY/bYkQKVsGTGvNucXe1Hi8xGKzD9OIgUIQAu1jXpOjyfoR
-9G8/iCcoTwPtpetmVlvJCHBQAL9ng1wwLWpvjYhuxsG6lwknup7YRgs/TkAEQBGR
-X9H4de1hygzy2OP1CDARsaYkb3WDsUykUN58EGET9+U4lEdYfZ8dT8kW3u3v2MrI
-OJRowcSItrfa53TrhBxzbRVeDQshSJ73lc1IN5qLJEQ2wgZXcjsO/mZ4xw1XTp7m
-2JU0WYYmxrhrqhMCWl0E5x6MBq3yjCydx+RaNvx/USdB5wWCGeWgAOooB0YIBXkD
-p4OCapyfdzWHRISnXD5Gl0HOgeBQ0SCXF2m7SwZVIHfZ37qvOfrGqNelO8xIRBCY
-XHnc810M7JC+P/uvS1+RHiwGZWH7wR9GbuC7U0BOpBpkJR6F2pJ2OgaGVUjwPMbt
-m/mfAlqp4WGd54LtoCMBYkIJc+a+5WYhduRmcseSrKsNFJ0BpIfFR+zDLSjL2W3n
-4x4jAWZCLLhjHjMKBiXhYEWj+RpBzx76kx8J1k20AGlD8iCVOtR6R76Z0spYftHx
-llIHlnzdnqY+VLKhxVRc0KjumZTIhSPkhdOOp+zHAZeox4u3L0k=
-=793C
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8QTIkACgkQ3SOs138+
+s6FW9RAAuZoijrJioV2HdJzgYh/9hgJR3ZM9aE8US3TQS4GJd8DgIEyQwhkA9Scs
+dr2zywAL2rfbOw08v+LjYHk5wDkOmEO47+U1by0Uni2114TnsfkQRhMOyLG/rcaU
+RIh5PVq2D7szCnjXm49To5kFEjtUnHlmjFiOdZAi2Y81/IygqdLzoKF1T5ZLfmBi
+gK/zxuPbHaPjpzuWWldK8c3n4Yys1upiiYNXslJbUCoeKjdi3ckMVqiwtYlFV5h5
+LFNuZWic1CYkhhbzbY5FEjEmI7e4TtJHgbPAhjdkQBEs88FYu787ZeO+zFLZNAAZ
+SApfrcEMKSDkqboHdTPfN398qQPOUqP88JE8QaFxvaUT3QN6hmwTw2sfYkHMovlJ
+qW9jzlNnQjX+oe83M/i/xZzCe39Wihp+E5jOQoJ/8tfXSocVDlPIfG+vqb4nrsz6
+dSZmq2m6UFQkJlvBiMRUlHkt38f+gvhV+sM4CuTPV4iJOCCh59YZ1ykQkWncFz8H
+ZI9rjD4BUwMxIgci5Fdp7v+sY3NIcdLrOzWXBeV38SkLraRheOM3QJTZzKosDxKJ
+XCbgyPf9kD4vbgCNr4QXTrWElkNwyDxz4DpXxqtgJ/xCwKFMHz4uBvM0Rfh7kp9e
+gSFR4ycZdy5Wsr3bOHDKoU4/PAoiDaVnJH/LEqXB+i28lP5QsAY=
+=xtfh
 -----END PGP SIGNATURE-----
 
---z6Eq5LdranGa6ru8--
+--L6iaP+gRLNZHKoI4--
