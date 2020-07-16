@@ -1,87 +1,63 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] PCI: tegra: Remove PLL power supplies
-Date: Thu, 16 Jul 2020 15:07:13 +0100
-Message-ID: <20200716140704.GA20249@e121166-lin.cambridge.arm.com>
-References: <20200623145528.1658337-1-thierry.reding@gmail.com>
- <20200623145528.1658337-2-thierry.reding@gmail.com>
- <20200716130034.GE535268@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 0/9] arm64: tegra: Initial Tegra234 VDK support
+Date: Thu, 16 Jul 2020 16:18:47 +0200
+Message-ID: <20200716141856.544718-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200716130034.GE535268@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 03:00:34PM +0200, Thierry Reding wrote:
-> On Tue, Jun 23, 2020 at 04:55:28PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > The Tegra PCI controller driver doesn't need to control the PLL power
-> > supplies directly, but rather uses the pads provided by the XUSB pad
-> > controller, which in turn is responsible for supplying power to the
-> > PLLs.
-> > 
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/pci/controller/pci-tegra.c | 10 ++--------
-> >  1 file changed, 2 insertions(+), 8 deletions(-)
-> 
-> Hi Lorenzo,
-> 
-> do you have any comments on this? Can we get this into v5.9?
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yes we can if Rob is happy with patch (1).
+This set of patches introduces support for the new Tegra234 SoC, also
+known as Orin. Currently no silicon of this chip is available, so the
+support added here is for a simulation platform known as VDK.
 
-Thanks,
-Lorenzo
+Note that this simulation platform is not available publicly. However
+the goal is to use the simulation platform as a way of upstreaming as
+much support as possible ahead of tapeout.
 
-> Thanks,
-> Thierry
-> 
-> > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> > index 235b456698fc..f87a09d21eb0 100644
-> > --- a/drivers/pci/controller/pci-tegra.c
-> > +++ b/drivers/pci/controller/pci-tegra.c
-> > @@ -2025,7 +2025,7 @@ static int tegra_pcie_get_regulators(struct tegra_pcie *pcie, u32 lane_mask)
-> >  		pcie->supplies[i++].supply = "hvdd-pex";
-> >  		pcie->supplies[i++].supply = "vddio-pexctl-aud";
-> >  	} else if (of_device_is_compatible(np, "nvidia,tegra210-pcie")) {
-> > -		pcie->num_supplies = 6;
-> > +		pcie->num_supplies = 3;
-> >  
-> >  		pcie->supplies = devm_kcalloc(pcie->dev, pcie->num_supplies,
-> >  					      sizeof(*pcie->supplies),
-> > @@ -2033,14 +2033,11 @@ static int tegra_pcie_get_regulators(struct tegra_pcie *pcie, u32 lane_mask)
-> >  		if (!pcie->supplies)
-> >  			return -ENOMEM;
-> >  
-> > -		pcie->supplies[i++].supply = "avdd-pll-uerefe";
-> >  		pcie->supplies[i++].supply = "hvddio-pex";
-> >  		pcie->supplies[i++].supply = "dvddio-pex";
-> > -		pcie->supplies[i++].supply = "dvdd-pex-pll";
-> > -		pcie->supplies[i++].supply = "hvdd-pex-pll-e";
-> >  		pcie->supplies[i++].supply = "vddio-pex-ctl";
-> >  	} else if (of_device_is_compatible(np, "nvidia,tegra124-pcie")) {
-> > -		pcie->num_supplies = 7;
-> > +		pcie->num_supplies = 4;
-> >  
-> >  		pcie->supplies = devm_kcalloc(dev, pcie->num_supplies,
-> >  					      sizeof(*pcie->supplies),
-> > @@ -2050,11 +2047,8 @@ static int tegra_pcie_get_regulators(struct tegra_pcie *pcie, u32 lane_mask)
-> >  
-> >  		pcie->supplies[i++].supply = "avddio-pex";
-> >  		pcie->supplies[i++].supply = "dvddio-pex";
-> > -		pcie->supplies[i++].supply = "avdd-pex-pll";
-> >  		pcie->supplies[i++].supply = "hvdd-pex";
-> > -		pcie->supplies[i++].supply = "hvdd-pex-pll-e";
-> >  		pcie->supplies[i++].supply = "vddio-pex-ctl";
-> > -		pcie->supplies[i++].supply = "avdd-pll-erefe";
-> >  	} else if (of_device_is_compatible(np, "nvidia,tegra30-pcie")) {
-> >  		bool need_pexa = false, need_pexb = false;
-> >  
-> > -- 
-> > 2.27.0
-> > 
+Once actual silicon becomes available, the plan is to stop supporting
+the simulation platform and shift focus to real hardware.
+
+Thierry
+
+Sandipan Patra (1):
+  soc/tegra: fuse: Add Tegra186 and Tegra194 SoC IDs
+
+Thierry Reding (8):
+  dt-bindings: tegra: Add Tegra234 VDK compatible
+  dt-bindings: fuse: tegra: Add missing compatible strings
+  dt-bindings: fuse: tegra: Document Tegra234 compatible string
+  soc/tegra: fuse: Extract tegra_get_platform()
+  soc/tegra: fuse: Implement tegra_is_silicon()
+  soc/tegra: fuse: Add Tegra234 support
+  firmware: tegra: Enable BPMP support on Tegra234
+  arm64: tegra: Initial Tegra234 VDK support
+
+ .../devicetree/bindings/arm/tegra.yaml        |   4 +
+ .../bindings/fuse/nvidia,tegra20-fuse.txt     |   6 +-
+ arch/arm64/boot/dts/nvidia/Makefile           |   1 +
+ .../boot/dts/nvidia/tegra234-sim-vdk.dts      |  40 ++++
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 191 ++++++++++++++++++
+ drivers/firmware/tegra/bpmp.c                 |   3 +-
+ drivers/mailbox/tegra-hsp.c                   |   9 +-
+ drivers/soc/tegra/Kconfig                     |  10 +
+ drivers/soc/tegra/fuse/fuse-tegra.c           |   8 +-
+ drivers/soc/tegra/fuse/fuse-tegra30.c         |  30 +++
+ drivers/soc/tegra/fuse/fuse.h                 |  10 +-
+ drivers/soc/tegra/fuse/tegra-apbmisc.c        |  19 ++
+ include/dt-bindings/clock/tegra234-clock.h    |  14 ++
+ include/dt-bindings/reset/tegra234-reset.h    |  10 +
+ include/soc/tegra/fuse.h                      |   5 +
+ 15 files changed, 353 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234.dtsi
+ create mode 100644 include/dt-bindings/clock/tegra234-clock.h
+ create mode 100644 include/dt-bindings/reset/tegra234-reset.h
+
+-- 
+2.27.0
