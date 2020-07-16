@@ -1,77 +1,128 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: VDE for tegra124 ?
-Date: Thu, 16 Jul 2020 15:04:46 +0200
-Message-ID: <20200716130446.GF535268@ulmo>
-References: <CABr+WTm79nGMahuudkZtB6nizP8mxwwi6o4r2LUuN8ykoTrONA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Add the GPU on Tegra194
+Date: Thu, 16 Jul 2020 15:17:53 +0200
+Message-ID: <20200716131753.GG535268@ulmo>
+References: <20200716120138.532906-1-thierry.reding@gmail.com>
+ <3748e071-4d08-8e77-43f6-de37f5a7eb1e@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9ADF8FXzFeE7X4jE"
+        protocol="application/pgp-signature"; boundary="doKZ0ri6bHmN2Q5y"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CABr+WTm79nGMahuudkZtB6nizP8mxwwi6o4r2LUuN8ykoTrONA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <3748e071-4d08-8e77-43f6-de37f5a7eb1e-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Debarshi Dutta <ddutta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---9ADF8FXzFeE7X4jE
+--doKZ0ri6bHmN2Q5y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 26, 2020 at 04:20:08PM +0200, Nicolas Chauvet wrote:
-> Hi,
+On Thu, Jul 16, 2020 at 01:59:33PM +0100, Jon Hunter wrote:
 >=20
-> I'm interested in having at least initial VDE support merged upstream
-> for tegra124 (not yet tested).
-> I was wondering if merging the dts part and the needed compatible
-> along with few fixes (2) would be enough to work with the current
-> userspace ? (libvdpau-tegra)
+> On 16/07/2020 13:01, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > The GPU found on NVIDIA Tegra194 SoCs is a Volta generation GPU called
+> > GV11B.
+> >=20
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 33 ++++++++++++++++++++++++
+> >  1 file changed, 33 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot=
+/dts/nvidia/tegra194.dtsi
+> > index 259e40469908..f559fe983ebe 100644
+> > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> > @@ -1395,6 +1395,39 @@ sor3: sor@15bc0000 {
+> >  				nvidia,interface =3D <3>;
+> >  			};
+> >  		};
+> > +
+> > +		gpu@17000000 {
+> > +			compatible =3D "nvidia,gv11b";
 >=20
-> I plan to have it tried after 5.18-rc3 land and report.
->=20
-> Thanks for your advice.
->=20
-> (1) https://github.com/thierryreding/linux/commits/for-4.22/vde
-> (2) currently testing patches:
-> ae8cd25401f9 ARM: tegra: Enable SMMU for VDE on Tegra124
-> 53e4822d773a staging: media: tegra-vde: Keep VDE in reset when unused
-> eb5b12a86651 staging: media: tegra-vde: Print out invalid FD
-> c28810efcb90 staging: media: tegra-vde: Support BSEV clock and reset
-> 55266929b386 staging: media: tegra-vde: Properly mark invalid entries
-> 3aae01ea407f ARM: tegra: Add BSEV clock and reset for VDE on Tegra30
-> f5e6a834c766 ARM: tegra: Add BSEV clock and reset for VDE on Tegra20
-> 615bf7bab259 ARM: tegra: Enable VDE on Tegra124
+> I think we also need to add the to binding doc.
 
-I don't think those patches are enough to make this work on Tegra124. I
-think you basically need all of the patches from that branch, at least
-up to the point where the V4L2 conversion starts.
+I've got a patch that converts the nvidia,gk20a.txt to the json-schema
+format and then a patch on top that adds this compatible string. Since
+that patch is part of a larger series that's a bit stalled, I'll add
+this to the existing bindings for now.
 
-Given that the V4L2 conversion has stalled, it might be worth reviving
-this relatively short series once more. I can look into rebasing only
-the VDE patches and see if they still work.
+> > +			reg =3D <0x17000000 0x10000000>,
+> > +			      <0x18000000 0x10000000>;
+> > +			interrupts =3D <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-names =3D "stall", "nonstall";
+> > +			clocks =3D <&bpmp TEGRA194_CLK_GPCCLK>,
+> > +				 <&bpmp TEGRA194_CLK_GPU_PWR>;
+> > +			clock-names =3D "gpu", "pwr";
+> > +			resets =3D <&bpmp TEGRA194_RESET_GPU>;
+> > +			reset-names =3D "gpu";
+> > +			status =3D "disabled";
+> > +
+> > +			power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_GPU>;
+> > +			interconnects =3D <&mc TEGRA194_MEMORY_CLIENT_NVL1R &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL1RHP &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL1W &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL2R &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL2RHP &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL2W &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL3R &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL3RHP &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL3W &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL4R &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL4RHP &emc>,
+> > +					<&mc TEGRA194_MEMORY_CLIENT_NVL4W &emc>;
+> > +			interconnect-names =3D "dma-mem", "read-0-hp", "write-0",
+> > +					     "read-1", "read-1-hp", "write-1",
+> > +					     "read-2", "read-2-hp", "write-2",
+> > +					     "read-3", "read-3-hp", "write-3";
+> > +		};
+> >  	};
+>=20
+> I also see that for gv11b we populate 'dma-coherent' and so we should
+> probably add this as well.
+
+Do we know for certain that the GPU is DMA coherent? I've only tested
+this (with local patches to Nouveau) without dma-coherent, so I have not
+actually verified that it works without.
+
+I vaguely recall reading that there are different apertures for sysmem,
+one for coherent sysmem and another for non-coherent sysmem. So I'm not
+sure if dma-coherent here will work without additional code in the
+driver to ensure that all memory is allocated from the coherent sysmem
+aperture.
+
+I'd suggest we leave this as-is for now until we're further along with
+GPU support and we can properly test this. Leaving out dma-coherent
+should be harmless and in the worst case unnecessarily flushes caches.
 
 Thierry
 
---9ADF8FXzFeE7X4jE
+--doKZ0ri6bHmN2Q5y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8QUG4ACgkQ3SOs138+
-s6HuZg//RS0OQdrycFOvXOVqLpr1RIVzf6SuFl4Q2L+vGOG7SHRih/fePo1aahjL
-oyJKyFWYsP8C+RRN2Lz53zBbdOpk5ibkJeCnHX4xr95qaxEyQD7rNOJEVY02n4vG
-AN/TrR1wItgTo0XIVXFKDdyVSaBd+PNZrxKQRzdblbQJd8MYkWIpqk1O05173TT+
-mRBR4JnhoQpJuYeVBuY1uJCqkluJISh3JsoFDrT7UcyamFecnE3u0spVZ46cdhlO
-i8leAlGhOBY/cjWZHkZimmFzOVeCvMD4K8OoBIIcej+uTLzaJctLc4Gc8vX/qTAo
-8tZ5qKAGq+dcWqBQACAMsPPjR7AgtxjszJ5cd06ouv0HH3IjTfwXUTDGUlMgHrnX
-413k/tKjQmYYKSzVD1ZUwu3G/6WZyGDECIOZvElHZqdf1RmBT7F+nPcSDQahX6s6
-1xdZ2CQlNXv3u44r/gKn7tYmijJb20N3dtY9JnkGN29/6/IuFM3+6zG88w7Fh1oO
-GNFH7SvyE4n7WQmEJIuDqNyhNuL0Tpfd2f50S9hxDVPw8sSGyOwQMS0L6tXGeWKt
-O1K1qWotjJ7+S8jIj7/gMERvIbQVjZSNBclZsPdSuc7IcHw1sA1rlXsSg5qthg8m
-YejRir7fHinM2Ovu2NaZ80ehcIQE6WwbmglJNAGDuamUnTtDCvM=
-=Vvaf
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8QU38ACgkQ3SOs138+
+s6G23A/+JGq1eXi2Wl1m1cgp1KNRfwUw1v3aZF4quY2ZYcPFiF8bYE2Eq8H3dBWb
+k4vo0mJyxoaLZ9IZI3QPEtFsNc5wbIAsAmHcW8u5OqSO5Z3oW1C/sLJqkX6GzVef
+E9c7k2+4GXsDVCb6YC/VqvR0shnQofg7EwFhqlfvxukrqA68Wem6y4KZoOnUs2WZ
+oDnKyaKU+fCiP8UexyD0bad9qGNeNvoVS3yV0Hj8Wv/XlTWpZChi3bpcyQ70n5Aj
+T+qyMq7DZ/tCEwVrFfNucEeDdxiwzch/QjEU/95ttDQFZ1QaXOHWENeBfNsS26fe
+BTw9mWnNJCBJhwtp4gFrf6Z8OeRMByccfAcgYSX388zQB7ZZNd4E9hGOuwQrppJx
+olr/gZqcjOPnsRynHL50T3rvQ1gtXKW2c19X67EBmi7cjg6x2RO3VPusCE1jVAAd
+SxyHa8D9zN+Nx0M6TCo751FBgF4/W7BNtBO00cU1nfb2mv8060nn38S7WRIAPEm9
+Dr6AGybIUR5rwl25p2Gev3E8aG9KrcV9i0V7T97+scsMMYHRIV4FknnghTSb4Lq9
+E0Y12VDV6W2wo3v25Ny9Br4YLO7lq60NaJD/4y07qHR7Ktw4widLkxGDDGnGKu9F
+5+qORB3Lh64Zfk/R8YjnyimGnW4y0F8kNs7fOuyXb01qdZguOQU=
+=heBN
 -----END PGP SIGNATURE-----
 
---9ADF8FXzFeE7X4jE--
+--doKZ0ri6bHmN2Q5y--
