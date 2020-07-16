@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 7/9] soc/tegra: fuse: Add Tegra234 support
-Date: Thu, 16 Jul 2020 16:18:54 +0200
-Message-ID: <20200716141856.544718-8-thierry.reding@gmail.com>
+Subject: [PATCH 8/9] firmware: tegra: Enable BPMP support on Tegra234
+Date: Thu, 16 Jul 2020 16:18:55 +0200
+Message-ID: <20200716141856.544718-9-thierry.reding@gmail.com>
 References: <20200716141856.544718-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,126 +14,61 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add support for FUSE block found on the Tegra234 SoC, which is largely
-similar to the IP found on previous generations.
+Enable support for the BPMP on Tegra234 to avoid relying on Tegra194
+being enabled to pull in the needed OF device ID table entry.
+
+On simulation platforms the BPMP hasn't booted up yet by the time we
+probe the BPMP driver and the BPMP hasn't had a chance to mark the
+doorbell as ringable by the CCPLEX. This corresponding check in the
+BPMP driver will therefore fail. Work around this by disabling the
+check on simulation platforms.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c    |  6 +++++-
- drivers/soc/tegra/fuse/fuse-tegra30.c  | 30 ++++++++++++++++++++++++++
- drivers/soc/tegra/fuse/fuse.h          | 10 ++++++++-
- drivers/soc/tegra/fuse/tegra-apbmisc.c |  1 +
- include/soc/tegra/fuse.h               |  1 +
- 5 files changed, 46 insertions(+), 2 deletions(-)
+ drivers/firmware/tegra/bpmp.c | 3 ++-
+ drivers/mailbox/tegra-hsp.c   | 9 ++++++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 7e6b6ee59120..94b60a692b51 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -49,6 +49,9 @@ static struct tegra_fuse *fuse = &(struct tegra_fuse) {
- };
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 4d93d8925e14..0742a90cb844 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -856,7 +856,8 @@ static const struct tegra_bpmp_soc tegra210_soc = {
  
- static const struct of_device_id tegra_fuse_match[] = {
-+#ifdef CONFIG_ARCH_TEGRA_234_SOC
-+	{ .compatible = "nvidia,tegra234-efuse", .data = &tegra234_fuse_soc },
-+#endif
- #ifdef CONFIG_ARCH_TEGRA_194_SOC
- 	{ .compatible = "nvidia,tegra194-efuse", .data = &tegra194_fuse_soc },
- #endif
-@@ -326,7 +329,8 @@ const struct attribute_group tegra_soc_attr_group = {
- 	.attrs = tegra_soc_attr,
- };
- 
--#ifdef CONFIG_ARCH_TEGRA_194_SOC
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
+ static const struct of_device_id tegra_bpmp_match[] = {
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
+-    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
++    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
 +    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
- static ssize_t platform_show(struct device *dev, struct device_attribute *attr,
- 			     char *buf)
- {
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index 85accef41fa1..9ea7f0168457 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra30.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -356,3 +356,33 @@ const struct tegra_fuse_soc tegra194_fuse_soc = {
- 	.soc_attr_group = &tegra194_soc_attr_group,
- };
+ 	{ .compatible = "nvidia,tegra186-bpmp", .data = &tegra186_soc },
  #endif
-+
-+#if defined(CONFIG_ARCH_TEGRA_234_SOC)
-+static const struct nvmem_cell_lookup tegra234_fuse_lookups[] = {
-+	{
-+		.nvmem_name = "fuse",
-+		.cell_name = "xusb-pad-calibration",
-+		.dev_id = "3520000.padctl",
-+		.con_id = "calibration",
-+	}, {
-+		.nvmem_name = "fuse",
-+		.cell_name = "xusb-pad-calibration-ext",
-+		.dev_id = "3520000.padctl",
-+		.con_id = "calibration-ext",
-+	},
-+};
-+
-+static const struct tegra_fuse_info tegra234_fuse_info = {
-+	.read = tegra30_fuse_read,
-+	.size = 0x300,
-+	.spare = 0x280,
-+};
-+
-+const struct tegra_fuse_soc tegra234_fuse_soc = {
-+	.init = tegra30_fuse_init,
-+	.info = &tegra234_fuse_info,
-+	.lookups = tegra234_fuse_lookups,
-+	.num_lookups = ARRAY_SIZE(tegra234_fuse_lookups),
-+	.soc_attr_group = &tegra194_soc_attr_group,
-+};
-+#endif
-diff --git a/drivers/soc/tegra/fuse/fuse.h b/drivers/soc/tegra/fuse/fuse.h
-index 9d4fc315a007..e057a58e2060 100644
---- a/drivers/soc/tegra/fuse/fuse.h
-+++ b/drivers/soc/tegra/fuse/fuse.h
-@@ -115,9 +115,17 @@ extern const struct tegra_fuse_soc tegra210_fuse_soc;
- extern const struct tegra_fuse_soc tegra186_fuse_soc;
- #endif
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 834b35dc3b13..e07091d71986 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -13,6 +13,8 @@
+ #include <linux/pm.h>
+ #include <linux/slab.h>
  
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
-+extern const struct attribute_group tegra194_soc_attr_group;
-+#endif
++#include <soc/tegra/fuse.h>
 +
- #ifdef CONFIG_ARCH_TEGRA_194_SOC
- extern const struct tegra_fuse_soc tegra194_fuse_soc;
--extern const struct attribute_group tegra194_soc_attr_group;
-+#endif
-+
-+#ifdef CONFIG_ARCH_TEGRA_234_SOC
-+extern const struct tegra_fuse_soc tegra234_fuse_soc;
- #endif
+ #include <dt-bindings/mailbox/tegra186-hsp.h>
  
- #endif
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index be6b7fc169ca..6aeac5ea2d70 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -56,6 +56,7 @@ bool tegra_is_silicon(void)
- {
- 	switch (tegra_get_chip_id()) {
- 	case TEGRA194:
-+	case TEGRA234:
- 		if (tegra_get_platform() == 0)
- 			return true;
+ #include "mailbox.h"
+@@ -322,7 +324,12 @@ static int tegra_hsp_doorbell_startup(struct mbox_chan *chan)
+ 	if (!ccplex)
+ 		return -ENODEV;
  
-diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index a9db917a1d06..c702bd2911bc 100644
---- a/include/soc/tegra/fuse.h
-+++ b/include/soc/tegra/fuse.h
-@@ -14,6 +14,7 @@
- #define TEGRA210	0x21
- #define TEGRA186	0x18
- #define TEGRA194	0x19
-+#define TEGRA234	0x23
+-	if (!tegra_hsp_doorbell_can_ring(db))
++	/*
++	 * On simulation platforms the BPMP hasn't had a chance yet to mark
++	 * the doorbell as ringable by the CCPLEX, so we want to skip extra
++	 * checks here.
++	 */
++	if (tegra_is_silicon() && !tegra_hsp_doorbell_can_ring(db))
+ 		return -ENODEV;
  
- #define TEGRA_FUSE_SKU_CALIB_0	0xf0
- #define TEGRA30_FUSE_SATA_CALIB	0x124
+ 	spin_lock_irqsave(&hsp->lock, flags);
 -- 
 2.27.0
