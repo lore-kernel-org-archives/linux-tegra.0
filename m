@@ -1,63 +1,59 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v3 02/18] arm64: tegra: Add missing clocks and
- power-domains to Tegra210 VI I2C
-Date: Thu, 16 Jul 2020 15:25:25 +0200
-Message-ID: <20200716132525.GI535268@ulmo>
-References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
- <1594786855-26506-3-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH -next] gpu: host1x: Convert to DEFINE_SHOW_ATTRIBUTE
+Date: Thu, 16 Jul 2020 15:34:50 +0200
+Message-ID: <20200716133450.GJ535268@ulmo>
+References: <20200716090323.13274-1-miaoqinglang@huawei.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J+eNKFoVC4T1DV3f"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="EVh9lyqKgK19OcEf"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1594786855-26506-3-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20200716090323.13274-1-miaoqinglang-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Qinglang Miao <miaoqinglang-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---J+eNKFoVC4T1DV3f
+--EVh9lyqKgK19OcEf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 14, 2020 at 09:20:39PM -0700, Sowjanya Komatineni wrote:
-> Tegra210 VI I2C is in VE power domain and i2c-vi node should have
-> power-domains property.
+On Thu, Jul 16, 2020 at 05:03:23PM +0800, Qinglang Miao wrote:
+> From: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 >=20
-> Current Tegra210 i2c-vi device node is missing both VI I2C clocks
-> and power-domains property.
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 >=20
-> This patch adds them.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  drivers/gpu/host1x/debug.c | 28 ++++------------------------
+>  1 file changed, 4 insertions(+), 24 deletions(-)
 
-Applied, thanks.
+This doesn't apply. Can you please resend, based on something like
+linux-next?
 
+Thanks,
 Thierry
 
---J+eNKFoVC4T1DV3f
+--EVh9lyqKgK19OcEf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8QVUUACgkQ3SOs138+
-s6F3SA//ZjtMB7xBZ6HBUcP64/WJge+YF7WI2y+H5sKJfBeM0U1C8alR16PQq11z
-F96RGmLb3MXmS7xe1GldWEsybS+L6p0earsr70YTyylfbH/n5Y7O/lGIIyuh+GI4
-uye1Mzg18tuNCdnc2M/b8guscVfhYYpKROQTEUGOipxUmvW+i0s2A323W6glfBEY
-Q2e02KK/6m1wm0YF8I4wwdOBUn0Crel/ojaFeAO/HL21prKj8a+inJPicD2GSn4X
-ADDWtoMfHkOaL5zcr8bC05QFZuSRvIajdKKeuJ5xtVGqrTCuLJR1LOfw0xLH7daV
-eLxTYcBWRJ/bkNBlUpnluibploP+2bVEHTRDQqhpTFMZoGn30hwL67amumDALk/4
-ytsF+tZyXr+ixMzA/iuv76T+GnkFWKm7/qe9bhnNgyV/GooJ26xMOog+m0BUQvbE
-D749ofyu7TlH08Y9vkGjXRztqLoXyisyTnNLHaifoUBoMY7W4xROUSScHIZWc6sI
-PEZlt+9JJt8uT+1GWWdzphv2Fr1OI1FoWQ645E3dM+GhlqTh/4qde0yAM3iA7MdK
-Ihp7UQXIbtiThykIrvMbrSxB0JpIyiXpol9HxXSlyk/HvRqstcc2DgbfDARkPlcb
-H4PXNn4diPdJp9ow+yyqHIsDAx6b9YpTO2YBO2aEMjA3CT1ivzY=
-=gsdR
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8QV3kACgkQ3SOs138+
+s6GieRAAjSgN0wLDgrWyzyjLy54sFADuaoAruNpwMPVnPG89QRmsEboAxzzDdZDD
+/zlTd/PJVCZVKWbIlLkP7Rna+jyUuhamF/BgQujzjbSYk76Gk1KCuhoZw86z8KGG
+Fh23wZ+zX1RP+URwJatUvhZUKKEVaQl8ldHWBQG32bChAJLf2EhOqrIsMA0v0FE7
+CQneC38MD9kT3m/LqV2yWyvGAP0Xy8/n0hqLSyZpPBvGLpZ/D4doXZb1Xs1PTQIp
+kMi+Ia4RKh4VHRxVTDovG9v/3aBY4jX8SqFqZBUM9CMJynezT4+iZtHSx7xxw7Ir
+9a1BO0r/xAMcgq5m4N8RTE5Q07kOCf/Hi4qTP5MQu1E3jYitOUB0AAuyvwFYa074
+NBx0kOJmJq/rL03WZ6RM/euMCQCDwh2e9zJfiXu2eLA8R73bW+kClRv4u7RstsKc
+rwQn3BjuJWY6Y183D6ZnAN7IRwZL/vxFoWvK5LhfnDTbNtHWGmZMvf3Q6FRk9U1r
+jUdSy8Ptc5ozFt2IGWzTePsYp6BCwRMQ0Ja6CpMiw4hMgRJDSHmk5woB8heUY6LK
+O8GbqeQ3vkz96MLjtoUxsdsPEz/Ebkh7GQXOzrQ9QyN+/jAgvE5QfGicXK+HbGrO
+TcTST7suEXl4F+LubMElfG7k87ZvgRTPYaKNBo3tTOKhaX8K9dM=
+=3yVO
 -----END PGP SIGNATURE-----
 
---J+eNKFoVC4T1DV3f--
+--EVh9lyqKgK19OcEf--
