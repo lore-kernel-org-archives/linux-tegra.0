@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/9] dt-bindings: tegra: Add Tegra234 VDK compatible
-Date: Thu, 16 Jul 2020 16:18:48 +0200
-Message-ID: <20200716141856.544718-2-thierry.reding@gmail.com>
+Subject: [PATCH 2/9] dt-bindings: fuse: tegra: Add missing compatible strings
+Date: Thu, 16 Jul 2020 16:18:49 +0200
+Message-ID: <20200716141856.544718-3-thierry.reding@gmail.com>
 References: <20200716141856.544718-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,26 +14,30 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The NVIDIA Tegra234 VDK is a simulation platform for the Orin SoC. It
-supports a subset of the peripherals that will be available in the final
-chip and serves as a bootstrapping platform.
+The Tegra FUSE device tree bindings haven't been updated in a while. Add
+compatible strings for the SoC generations that were released since the
+last update.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/fuse/nvidia,tegra20-fuse.txt         | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index 53845db64df1..5c781e6d8878 100644
---- a/Documentation/devicetree/bindings/arm/tegra.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -109,3 +109,7 @@ properties:
-         items:
-           - const: nvidia,p3509-0000+p3668-0000
-           - const: nvidia,tegra194
-+      - items:
-+          - enum:
-+              - nvidia,tegra234-vdk
-+          - const: nvidia,tegra234
+diff --git a/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.txt b/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.txt
+index 41372d441131..2aaf661c04ee 100644
+--- a/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.txt
++++ b/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.txt
+@@ -4,8 +4,9 @@ Required properties:
+ - compatible : For Tegra20, must contain "nvidia,tegra20-efuse".  For Tegra30,
+   must contain "nvidia,tegra30-efuse".  For Tegra114, must contain
+   "nvidia,tegra114-efuse".  For Tegra124, must contain "nvidia,tegra124-efuse".
+-  Otherwise, must contain "nvidia,<chip>-efuse", plus one of the above, where
+-  <chip> is tegra132.
++  For Tegra132 must contain "nvidia,tegra132-efuse", "nvidia,tegra124-efuse".
++  For Tegra210 must contain "nvidia,tegra210-efuse". For Tegra186 must contain
++  "nvidia,tegra186-efuse". For Tegra194 must contain "nvidia,tegra194-efuse".
+   Details:
+   nvidia,tegra20-efuse: Tegra20 requires using APB DMA to read the fuse data
+ 	due to a hardware bug. Tegra20 also lacks certain information which is
 -- 
 2.27.0
