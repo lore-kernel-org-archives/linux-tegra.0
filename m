@@ -1,59 +1,87 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH -next] gpu: host1x: Convert to DEFINE_SHOW_ATTRIBUTE
-Date: Thu, 16 Jul 2020 15:34:50 +0200
-Message-ID: <20200716133450.GJ535268@ulmo>
-References: <20200716090323.13274-1-miaoqinglang@huawei.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] PCI: tegra: Remove PLL power supplies
+Date: Thu, 16 Jul 2020 15:07:13 +0100
+Message-ID: <20200716140704.GA20249@e121166-lin.cambridge.arm.com>
+References: <20200623145528.1658337-1-thierry.reding@gmail.com>
+ <20200623145528.1658337-2-thierry.reding@gmail.com>
+ <20200716130034.GE535268@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EVh9lyqKgK19OcEf"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200716090323.13274-1-miaoqinglang-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200716130034.GE535268@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Qinglang Miao <miaoqinglang-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jul 16, 2020 at 03:00:34PM +0200, Thierry Reding wrote:
+> On Tue, Jun 23, 2020 at 04:55:28PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > The Tegra PCI controller driver doesn't need to control the PLL power
+> > supplies directly, but rather uses the pads provided by the XUSB pad
+> > controller, which in turn is responsible for supplying power to the
+> > PLLs.
+> > 
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/pci/controller/pci-tegra.c | 10 ++--------
+> >  1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> Hi Lorenzo,
+> 
+> do you have any comments on this? Can we get this into v5.9?
 
---EVh9lyqKgK19OcEf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jul 16, 2020 at 05:03:23PM +0800, Qinglang Miao wrote:
-> From: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
->=20
-> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
->=20
-> Signed-off-by: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/host1x/debug.c | 28 ++++------------------------
->  1 file changed, 4 insertions(+), 24 deletions(-)
-
-This doesn't apply. Can you please resend, based on something like
-linux-next?
+Yes we can if Rob is happy with patch (1).
 
 Thanks,
-Thierry
+Lorenzo
 
---EVh9lyqKgK19OcEf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8QV3kACgkQ3SOs138+
-s6GieRAAjSgN0wLDgrWyzyjLy54sFADuaoAruNpwMPVnPG89QRmsEboAxzzDdZDD
-/zlTd/PJVCZVKWbIlLkP7Rna+jyUuhamF/BgQujzjbSYk76Gk1KCuhoZw86z8KGG
-Fh23wZ+zX1RP+URwJatUvhZUKKEVaQl8ldHWBQG32bChAJLf2EhOqrIsMA0v0FE7
-CQneC38MD9kT3m/LqV2yWyvGAP0Xy8/n0hqLSyZpPBvGLpZ/D4doXZb1Xs1PTQIp
-kMi+Ia4RKh4VHRxVTDovG9v/3aBY4jX8SqFqZBUM9CMJynezT4+iZtHSx7xxw7Ir
-9a1BO0r/xAMcgq5m4N8RTE5Q07kOCf/Hi4qTP5MQu1E3jYitOUB0AAuyvwFYa074
-NBx0kOJmJq/rL03WZ6RM/euMCQCDwh2e9zJfiXu2eLA8R73bW+kClRv4u7RstsKc
-rwQn3BjuJWY6Y183D6ZnAN7IRwZL/vxFoWvK5LhfnDTbNtHWGmZMvf3Q6FRk9U1r
-jUdSy8Ptc5ozFt2IGWzTePsYp6BCwRMQ0Ja6CpMiw4hMgRJDSHmk5woB8heUY6LK
-O8GbqeQ3vkz96MLjtoUxsdsPEz/Ebkh7GQXOzrQ9QyN+/jAgvE5QfGicXK+HbGrO
-TcTST7suEXl4F+LubMElfG7k87ZvgRTPYaKNBo3tTOKhaX8K9dM=
-=3yVO
------END PGP SIGNATURE-----
-
---EVh9lyqKgK19OcEf--
+> Thanks,
+> Thierry
+> 
+> > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> > index 235b456698fc..f87a09d21eb0 100644
+> > --- a/drivers/pci/controller/pci-tegra.c
+> > +++ b/drivers/pci/controller/pci-tegra.c
+> > @@ -2025,7 +2025,7 @@ static int tegra_pcie_get_regulators(struct tegra_pcie *pcie, u32 lane_mask)
+> >  		pcie->supplies[i++].supply = "hvdd-pex";
+> >  		pcie->supplies[i++].supply = "vddio-pexctl-aud";
+> >  	} else if (of_device_is_compatible(np, "nvidia,tegra210-pcie")) {
+> > -		pcie->num_supplies = 6;
+> > +		pcie->num_supplies = 3;
+> >  
+> >  		pcie->supplies = devm_kcalloc(pcie->dev, pcie->num_supplies,
+> >  					      sizeof(*pcie->supplies),
+> > @@ -2033,14 +2033,11 @@ static int tegra_pcie_get_regulators(struct tegra_pcie *pcie, u32 lane_mask)
+> >  		if (!pcie->supplies)
+> >  			return -ENOMEM;
+> >  
+> > -		pcie->supplies[i++].supply = "avdd-pll-uerefe";
+> >  		pcie->supplies[i++].supply = "hvddio-pex";
+> >  		pcie->supplies[i++].supply = "dvddio-pex";
+> > -		pcie->supplies[i++].supply = "dvdd-pex-pll";
+> > -		pcie->supplies[i++].supply = "hvdd-pex-pll-e";
+> >  		pcie->supplies[i++].supply = "vddio-pex-ctl";
+> >  	} else if (of_device_is_compatible(np, "nvidia,tegra124-pcie")) {
+> > -		pcie->num_supplies = 7;
+> > +		pcie->num_supplies = 4;
+> >  
+> >  		pcie->supplies = devm_kcalloc(dev, pcie->num_supplies,
+> >  					      sizeof(*pcie->supplies),
+> > @@ -2050,11 +2047,8 @@ static int tegra_pcie_get_regulators(struct tegra_pcie *pcie, u32 lane_mask)
+> >  
+> >  		pcie->supplies[i++].supply = "avddio-pex";
+> >  		pcie->supplies[i++].supply = "dvddio-pex";
+> > -		pcie->supplies[i++].supply = "avdd-pex-pll";
+> >  		pcie->supplies[i++].supply = "hvdd-pex";
+> > -		pcie->supplies[i++].supply = "hvdd-pex-pll-e";
+> >  		pcie->supplies[i++].supply = "vddio-pex-ctl";
+> > -		pcie->supplies[i++].supply = "avdd-pll-erefe";
+> >  	} else if (of_device_is_compatible(np, "nvidia,tegra30-pcie")) {
+> >  		bool need_pexa = false, need_pexb = false;
+> >  
+> > -- 
+> > 2.27.0
+> > 
