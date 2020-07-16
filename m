@@ -1,70 +1,37 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 2/2] arm64: tegra: Add the GPU on Tegra194
-Date: Thu, 16 Jul 2020 16:33:41 +0200
-Message-ID: <20200716143341.545804-2-thierry.reding@gmail.com>
-References: <20200716143341.545804-1-thierry.reding@gmail.com>
+From: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] arm64: tegra: Add the GPU on Tegra194
+Date: Thu, 16 Jul 2020 08:05:24 -0700
+Message-ID: <4f9cfab5-2a5d-379c-ba17-1aca896b4110@nvidia.com>
+References: <20200716120138.532906-1-thierry.reding@gmail.com>
+ <3748e071-4d08-8e77-43f6-de37f5a7eb1e@nvidia.com>
+ <20200716131753.GG535268@ulmo>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200716143341.545804-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20200716131753.GG535268@ulmo>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Debarshi Dutta <ddutta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Debarshi Dutta <ddutta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 7/16/2020 6:17 AM, Thierry Reding wrote:
+> On Thu, Jul 16, 2020 at 01:59:33PM +0100, Jon Hunter wrote:
+>> I also see that for gv11b we populate 'dma-coherent' and so we should
+>> probably add this as well.
+> Do we know for certain that the GPU is DMA coherent? I've only tested
+> this (with local patches to Nouveau) without dma-coherent, so I have not
+> actually verified that it works without.
+>
+> I vaguely recall reading that there are different apertures for sysmem,
+> one for coherent sysmem and another for non-coherent sysmem. So I'm not
+> sure if dma-coherent here will work without additional code in the
+> driver to ensure that all memory is allocated from the coherent sysmem
+> aperture.
 
-The GPU found on NVIDIA Tegra194 SoCs is a Volta generation GPU called
-GV11B.
+We do have the choices of coherent and non-coherent memory accesses in 
+the iGPU via the two sysmem apertures. But in Tegra194 we're forcing 
+coherency from the memory subsystem side, so all accesses are coherent.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 33 ++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 98c366ab4aab..14da0793be69 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1395,6 +1395,39 @@ sor3: sor@15bc0000 {
- 				nvidia,interface = <3>;
- 			};
- 		};
-+
-+		gpu@17000000 {
-+			compatible = "nvidia,gv11b";
-+			reg = <0x17000000 0x10000000>,
-+			      <0x18000000 0x10000000>;
-+			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "stall", "nonstall";
-+			clocks = <&bpmp TEGRA194_CLK_GPCCLK>,
-+				 <&bpmp TEGRA194_CLK_GPU_PWR>;
-+			clock-names = "gpu", "pwr";
-+			resets = <&bpmp TEGRA194_RESET_GPU>;
-+			reset-names = "gpu";
-+			status = "disabled";
-+
-+			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_GPU>;
-+			interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVL1R &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL1RHP &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL1W &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL2R &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL2RHP &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL2W &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL3R &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL3RHP &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL3W &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL4R &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL4RHP &emc>,
-+					<&mc TEGRA194_MEMORY_CLIENT_NVL4W &emc>;
-+			interconnect-names = "dma-mem", "read-0-hp", "write-0",
-+					     "read-1", "read-1-hp", "write-1",
-+					     "read-2", "read-2-hp", "write-2",
-+					     "read-3", "read-3-hp", "write-3";
-+		};
- 	};
- 
- 	pcie@14100000 {
--- 
-2.27.0
+Terje
