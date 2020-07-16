@@ -1,15 +1,15 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v3 14/18] gpu: host1x: mipi: Update
- tegra_mipi_request() to be node based
-Date: Thu, 16 Jul 2020 23:26:34 +0300
-Message-ID: <5542c166-5a60-a8c3-281b-5560b7c2dfc6@gmail.com>
+Subject: Re: [RFC PATCH v3 16/18] gpu: host1x: mipi: Split
+ tegra_mipi_calibrate and tegra_mipi_wait
+Date: Thu, 16 Jul 2020 23:38:27 +0300
+Message-ID: <a06dec8f-7042-767b-545b-048685a7683d@gmail.com>
 References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
- <1594786855-26506-15-git-send-email-skomatineni@nvidia.com>
+ <1594786855-26506-17-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1594786855-26506-15-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1594786855-26506-17-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
@@ -17,17 +17,40 @@ Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0
 List-Id: linux-tegra@vger.kernel.org
 
 15.07.2020 07:20, Sowjanya Komatineni пишет:
-> Tegra CSI driver need a separate MIPI device for each channel as
-> calibration of corresponding MIPI pads for each channel should
-> happen independently.
+> SW can trigger MIPI pads calibration any time after power on
+> but calibration results will be latched and applied to the pads
+> by MIPI CAL unit only when the link is in LP-11 state and then
+> status register will be updated.
 > 
-> So, this patch updates tegra_mipi_request() API to add a device_node
-> pointer argument to allow creating mipi device for specific device
-> node rather than a device.
+> For CSI, trigger of pads calibration happen during CSI stream
+> enable where CSI receiver is kept ready prior to sensor or CSI
+> transmitter stream start.
+> 
+> So, pads may not be in LP-11 at this time and waiting for the
+> calibration to be done immediate after calibration start will
+> result in timeout.
+> 
+> This patch splits tegra_mipi_calibrate() and tegra_mipi_wait()
+> so triggering for calibration and waiting for it to complete can
+> happen at different stages.
 > 
 > Signed-off-by: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
+...
+>  int tegra_mipi_calibrate(struct tegra_mipi_device *device)
+>  {
+> @@ -370,12 +381,10 @@ int tegra_mipi_calibrate(struct tegra_mipi_device *device)
+>  	value |= MIPI_CAL_CTRL_START;
+>  	tegra_mipi_writel(device->mipi, value, MIPI_CAL_CTRL);
+>  
+> -	err = tegra_mipi_wait(device->mipi);
 
-Thanks!
+Doesn't MIPI clock need to be enabled during of the calibration process?
 
-Reviewed-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>  	mutex_unlock(&device->mipi->lock);
+>  	clk_disable(device->mipi->clk);
+>  
+> -	return err;
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(tegra_mipi_calibrate);
