@@ -1,90 +1,173 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: pci: tegra: Remove PLL power supplies
-Date: Fri, 17 Jul 2020 11:48:41 +0100
-Message-ID: <20200717104841.GB4353@e121166-lin.cambridge.arm.com>
-References: <20200623145528.1658337-1-thierry.reding@gmail.com>
- <20200716125945.GD535268@ulmo>
+From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Subject: Re: [RFC PATCH v3 00/18] Support for Tegra video capture from
+ external sensor
+Date: Fri, 17 Jul 2020 12:54:26 +0200
+Message-ID: <f03bdb89-df7c-e9e8-1512-d57e5d2332bf@xs4all.nl>
+References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200716125945.GD535268@ulmo>
+In-Reply-To: <1594786855-26506-1-git-send-email-skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 02:59:45PM +0200, Thierry Reding wrote:
-> On Tue, Jun 23, 2020 at 04:55:27PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > The XUSB pad controller, which provides access to various USB, PCI and
-> > SATA pads (or PHYs), needs to bring up the PLLs associated with these
-> > pads. In order to properly do so, it needs to control the power supplied
-> > to these PLLs.
-> > 
-> > Remove the PLL power supplies from the PCIe controller because it does
-> > not need direct access to them. Instead it will only use the configured
-> > pads provided by the XUSB pad controller.
-> > 
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Hi Rob,
-> > 
-> > I already made this change as part of the conversion series, but wanted
-> > to send this out as part of this subseries since it addresses a fairly
-> > long-standing issue that I'd like to clean up irrespective of the DT
-> > binding conversion. Since it looks like the conversion series will take
-> > a bit longer, I think it makes sense to send this out separately.
-> > 
-> > Thierry
-> > 
-> >  .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt  | 12 ------------
-> >  1 file changed, 12 deletions(-)
+Hi Sowjanya,
+
+On 15/07/2020 06:20, Sowjanya Komatineni wrote:
+> This series adds support for video capture from external camera sensor to
+> Tegra video driver.
 > 
-> Hi Rob, any feedback on this?
+> Jetson TX1 has camera expansion connector and supports custom camera module
+> designed as per TX1 design specification.
+> 
+> This series also enables camera capture support for Jetson Nano which has
+> Raspberry PI camera header.
+> 
+> This series is tested with IMX219 camera sensor.
+> 
+> This series include,
+> 
+> VI I2C related fixes
+> - Camera sensor programming happens through VI I2C which is on host1x bus.
+> - These patches includes device tree and I2C driver fixes for VI I2C.
+> 
+> Tegra video driver updates
+> - TPG Vs Non-TPG based on Kconfig
+> - Support for external sensor video capture based on device graph from DT.
+> - Support for selection ioctl operations
+> - Tegra MIPI CSI pads calibration
+> - CSI T-CLK and T-HS settle time computation based on clock rates.
+> 
+> Host1x driver updates
+> - Adds API to allow creating mipi device for specific device node.
+> - Splits MIPI pads calibrate start and waiting for calibration to be done.
+> 
+> Device tree updates
+> - Adds camera connector 2V8, 1V8, 1V2 regulator supplies to Jetson TX1 DT.
+> - Enabled VI and CSI support in Jetson Nano DT.
 
-Hi Rob,
+I'm doing a bit of stress testing with:
 
-I'd like to queue both patches, please let me know if that's OK with
-you.
+while true; do v4l2-ctl --stream-mmap --stream-count=1; done
 
-Thank you very much.
+and I see that the imx274 has often streaming failures:
 
-Lorenzo
+[  172.025144] IMX274 8-001a: s_stream failed
+[  179.025192] IMX274 8-001a: imx274_write_mbreg : i2c bulk write failed, 3132 = 870 (2 bytes)
+[  179.033575] IMX274 8-001a: s_stream failed
+[  226.525378] IMX274 8-001a: imx274_write_mbreg : i2c bulk write failed, 3130 = 878 (2 bytes)
+[  226.533761] IMX274 8-001a: s_stream failed
+[  227.029325] IMX274 8-001a: imx274_write_mbreg : i2c bulk write failed, 30f6 = 107 (2 bytes)
+[  227.037758] IMX274 8-001a: s_stream failed
+[  247.025218] IMX274 8-001a: imx274_write_mbreg : i2c bulk write failed, 30f6 = 107 (2 bytes)
+[  247.033658] IMX274 8-001a: s_stream failed
+[  293.025517] IMX274 8-001a: s_stream failed
+[  309.024727] IMX274 8-001a: imx274_write_mbreg : i2c bulk write failed, 30e0 = 0 (2 bytes)
+[  309.032969] IMX274 8-001a: s_stream failed
+[  309.529506] IMX274 8-001a: imx274_write_mbreg : i2c bulk write failed, 30f8 = 11d2 (3 bytes)
+[  309.538103] IMX274 8-001a: imx274_set_frame_length error = -121
+[  309.544102] IMX274 8-001a: imx274_set_frame_interval error = -121
+[  309.550243] IMX274 8-001a: s_stream failed
+[  314.025561] IMX274 8-001a: s_stream failed
+[  329.025586] IMX274 8-001a: s_stream failed
+[  340.529567] IMX274 8-001a: imx274_write_mbreg : i2c bulk write failed, 303a = f0c (2 bytes)
+[  340.538009] IMX274 8-001a: s_stream failed
+[  347.525627] IMX274 8-001a: imx274_write_mbreg : i2c bulk write failed, 30f6 = 107 (2 bytes)
+[  347.534008] IMX274 8-001a: s_stream failed
+[  365.033640] IMX274 8-001a: s_stream failed
+[  437.525788] IMX274 8-001a: imx274_write_mbreg : i2c bulk write failed, 3038 = c (2 bytes)
+[  437.533997] IMX274 8-001a: s_stream failed
+[  456.029780] IMX274 8-001a: s_stream failed
+[  472.025862] IMX274 8-001a: s_stream failed
+[  498.025861] IMX274 8-001a: s_stream failed
+[  500.025905] IMX274 8-001a: s_stream failed
 
-> > index 7939bca47861..d099f3476ccc 100644
-> > --- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> > @@ -112,28 +112,16 @@ Power supplies for Tegra124:
-> >  - Required:
-> >    - avddio-pex-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
-> >    - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
-> > -  - avdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
-> > -    supply 1.05 V.
-> >    - hvdd-pex-supply: High-voltage supply for PCIe I/O and PCIe output clocks.
-> >      Must supply 3.3 V.
-> > -  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
-> > -    Must supply 3.3 V.
-> >    - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
-> >      supply 2.8-3.3 V.
-> > -  - avdd-pll-erefe-supply: Power supply for PLLE (shared with USB3). Must
-> > -    supply 1.05 V.
-> >  
-> >  Power supplies for Tegra210:
-> >  - Required:
-> > -  - avdd-pll-uerefe-supply: Power supply for PLLE (shared with USB3). Must
-> > -    supply 1.05 V.
-> >    - hvddio-pex-supply: High-voltage supply for PCIe I/O and PCIe output
-> >      clocks. Must supply 1.8 V.
-> >    - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
-> > -  - dvdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
-> > -    supply 1.05 V.
-> > -  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
-> > -    Must supply 3.3 V.
-> >    - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
-> >      supply 1.8 V.
-> >  
-> > -- 
-> > 2.27.0
-> > 
+where v4l2-ctl returns:
+
+                VIDIOC_STREAMON returned -1 (Remote I/O error)
+
+I don't see this with the imx219.
+
+I also see this occasionally:
+
+[Fri Jul 17 12:51:42 2020] video4linux video1: failed to run capture start kthread: -4
+
+Something is not stable here.
+
+Regards,
+
+	Hans
+
+> 
+> 
+> Delta between patch versions:
+> 
+> [v3]:	Includes v2 feedback
+> 	- Uses separate helper function for retrieving remote csi subdevice
+> 	  and source subdevice.
+> 	- Added check for presence of subdevice ops set/get_selection
+> 	- dropped vb2_queue_release from driver and using
+> 	  vb2_video_unregister_device instead of video_unregister_device.
+> 	- video device register should happen in the last after all video
+> 	  device related setup is done in the driver. This is being addressed
+> 	  in below RFC patch. Once proper implementation of this is available
+> 	  will update Tegra video driver to use split APIs and do all setup
+> 	  prior to device register. Added this as TODO in the driver.
+> 	  https://www.spinics.net/lists/linux-media/msg172761.html
+> 
+> 	Note:
+> 	Patch-0012 has compilation dependency on
+> 	https://patchwork.kernel.org/patch/11659521/
+> 
+> 
+> [v2]:	Includes below changes based on v1 feedback
+> 	- dt-binding document and the driver update for device graph to use
+> 	  separate ports for sink endpoint and source endpoint for csi.
+> 	- Use data-lanes endpoint property for csi.
+> 	- Update tegra_mipi_request() to take device node pointer argument
+> 	  rather than adding extra API.
+> 	- Remove checking for clk pointer before clk_disable.
+> 
+> 
+> Sowjanya Komatineni (18):
+>   dt-bindings: i2c: tegra: Document Tegra210 VI I2C clocks and
+>     power-domains
+>   arm64: tegra: Add missing clocks and power-domains to Tegra210 VI I2C
+>   i2c: tegra: Don't mark VI I2C as IRQ safe runtime PM
+>   i2c: tegra: Remove NULL pointer check before
+>     clk_enable/disable/prepare/unprepare
+>   i2c: tegra: Fix the error path in tegra_i2c_runtime_resume
+>   i2c: tegra: Fix runtime resume to re-init VI I2C
+>   i2c: tegra: Avoid tegra_i2c_init_dma() for Tegra210 vi i2c
+>   media: tegra-video: Fix channel format alignment
+>   media: tegra-video: Enable TPG based on kernel config
+>   media: tegra-video: Update format lookup to offset based
+>   dt-bindings: tegra: Update VI and CSI bindings with port info
+>   media: tegra-video: Add support for external sensor capture
+>   media: tegra-video: Add support for selection ioctl ops
+>   gpu: host1x: mipi: Update tegra_mipi_request() to be node based
+>   gpu: host1x: mipi: Use readl_relaxed_poll_timeout in tegra_mipi_wait
+>   gpu: host1x: mipi: Split tegra_mipi_calibrate and tegra_mipi_wait
+>   media: tegra-video: Add CSI MIPI pads calibration
+>   media: tegra-video: Compute settle times based on the clock rate
+> 
+>  .../display/tegra/nvidia,tegra20-host1x.txt        |  92 ++-
+>  .../devicetree/bindings/i2c/nvidia,tegra20-i2c.txt |  19 +-
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +
+>  drivers/gpu/drm/tegra/dsi.c                        |   9 +-
+>  drivers/gpu/host1x/mipi.c                          |  37 +-
+>  drivers/i2c/busses/i2c-tegra.c                     | 101 +--
+>  drivers/staging/media/tegra-video/Kconfig          |   7 +
+>  drivers/staging/media/tegra-video/csi.c            | 247 ++++++-
+>  drivers/staging/media/tegra-video/csi.h            |   8 +
+>  drivers/staging/media/tegra-video/tegra210.c       |  25 +-
+>  drivers/staging/media/tegra-video/vi.c             | 793 +++++++++++++++++++--
+>  drivers/staging/media/tegra-video/vi.h             |  25 +-
+>  drivers/staging/media/tegra-video/video.c          |  23 +-
+>  include/linux/host1x.h                             |   4 +-
+>  14 files changed, 1242 insertions(+), 154 deletions(-)
+> 
