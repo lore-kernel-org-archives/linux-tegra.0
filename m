@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 2/7] firmware: tegra: Changes for v5.9-rc1
-Date: Fri, 17 Jul 2020 18:12:55 +0200
-Message-ID: <20200717161300.1661002-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/7] memory: tegra: Changes for v5.9-rc1
+Date: Fri, 17 Jul 2020 18:12:56 +0200
+Message-ID: <20200717161300.1661002-3-thierry.reding@gmail.com>
 References: <20200717161300.1661002-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,32 +21,67 @@ The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.9-firmware
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.9-memory
 
-for you to fetch changes up to 4e87189912bd2167998d82c95bb68f73185069e2:
+for you to fetch changes up to 46c019239fb263922d2881847dd6b614c814d867:
 
-  firmware: tegra: Update BPMP ABI (2020-07-14 18:03:45 +0200)
+  memory: tegra: Add Tegra132 compatible string match (2020-07-15 11:55:21 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-firmware: tegra: Changes for v5.9-rc1
+memory: tegra: Changes for v5.9-rc1
 
-This has a few cleanups and the addition of a new mechanism to query
-debug information from the BPMP.
+This contains the Tegra210 EMC frequency scaling support that didn't
+make it into v5.8. In addition there are a couple of cleanups and minor
+fixes.
 
 ----------------------------------------------------------------
-Jon Hunter (4):
-      firmware: tegra: Use consistent return variable name
-      firmware: tegra: Prepare for supporting in-band debugfs
-      firmware: tegra: Add support for in-band debug
-      firmware: tegra: Update BPMP ABI
+Arnd Bergmann (1):
+      memory: tegra: Avoid unused function warnings
 
-Timo Alho (1):
-      firmware: tegra: Add return code checks and increase debugfs size
+Christophe JAILLET (1):
+      memory: tegra: Fix an error handling path in tegra186_emc_probe()
 
- drivers/firmware/tegra/bpmp-debugfs.c | 436 ++++++++++++++--
- drivers/firmware/tegra/bpmp.c         |   6 +-
- include/soc/tegra/bpmp-abi.h          | 913 +++++++++++++++++++++++-----------
- 3 files changed, 1038 insertions(+), 317 deletions(-)
+Dan Carpenter (1):
+      memory: tegra: Delete some dead code
+
+Dmitry Osipenko (3):
+      memory: tegra: Make debugfs permissions human-readable
+      memory: tegra20-emc: Poll EMC-CaR handshake instead of waiting for interrupt
+      memory: tegra30-emc: Poll EMC-CaR handshake instead of waiting for interrupt
+
+Geert Uytterhoeven (1):
+      memory: tegra: Drop <linux/clk-provider.h>
+
+Jon Hunter (1):
+      memory: tegra: Fix KCONFIG variables for Tegra186 and Tegra194
+
+Joseph Lo (2):
+      memory: tegra: Add EMC scaling support code for Tegra210
+      memory: tegra: Add EMC scaling sequence code for Tegra210
+
+Thierry Reding (2):
+      memory: tegra: Support derated timings on Tegra210
+      memory: tegra: Add Tegra132 compatible string match
+
+ drivers/memory/tegra/Kconfig                  |   14 +
+ drivers/memory/tegra/Makefile                 |    4 +
+ drivers/memory/tegra/mc.h                     |    1 +
+ drivers/memory/tegra/tegra124-emc.c           |    7 +-
+ drivers/memory/tegra/tegra186-emc.c           |   25 +-
+ drivers/memory/tegra/tegra186.c               |    4 +-
+ drivers/memory/tegra/tegra20-emc.c            |   34 +-
+ drivers/memory/tegra/tegra210-emc-cc-r21021.c | 1775 +++++++++++++++++++++
+ drivers/memory/tegra/tegra210-emc-core.c      | 2100 +++++++++++++++++++++++++
+ drivers/memory/tegra/tegra210-emc-table.c     |   90 ++
+ drivers/memory/tegra/tegra210-emc.h           | 1016 ++++++++++++
+ drivers/memory/tegra/tegra210-mc.h            |   50 +
+ drivers/memory/tegra/tegra30-emc.c            |  122 +-
+ 13 files changed, 5130 insertions(+), 112 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra210-emc-cc-r21021.c
+ create mode 100644 drivers/memory/tegra/tegra210-emc-core.c
+ create mode 100644 drivers/memory/tegra/tegra210-emc-table.c
+ create mode 100644 drivers/memory/tegra/tegra210-emc.h
+ create mode 100644 drivers/memory/tegra/tegra210-mc.h
