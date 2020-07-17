@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 3/7] memory: tegra: Changes for v5.9-rc1
-Date: Fri, 17 Jul 2020 18:12:56 +0200
-Message-ID: <20200717161300.1661002-3-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/7] soc/tegra: Changes for v5.9-rc1
+Date: Fri, 17 Jul 2020 18:12:57 +0200
+Message-ID: <20200717161300.1661002-4-thierry.reding@gmail.com>
 References: <20200717161300.1661002-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,67 +21,28 @@ The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.9-memory
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.9-soc
 
-for you to fetch changes up to 46c019239fb263922d2881847dd6b614c814d867:
+for you to fetch changes up to eb8bb7abbb0b22238b844578970f14fa982fc2b0:
 
-  memory: tegra: Add Tegra132 compatible string match (2020-07-15 11:55:21 +0200)
+  soc/tegra: fuse: Fix typo in APB MISC warning (2020-07-17 15:47:35 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-memory: tegra: Changes for v5.9-rc1
+soc/tegra: Changes for v5.9-rc1
 
-This contains the Tegra210 EMC frequency scaling support that didn't
-make it into v5.8. In addition there are a couple of cleanups and minor
-fixes.
+This adds missing SoC IDs for Tegra186 and Tegra194 and fixes a typo in
+a warning message.
 
 ----------------------------------------------------------------
-Arnd Bergmann (1):
-      memory: tegra: Avoid unused function warnings
+Sandipan Patra (1):
+      soc/tegra: fuse: Add Tegra186 and Tegra194 SoC IDs
 
-Christophe JAILLET (1):
-      memory: tegra: Fix an error handling path in tegra186_emc_probe()
+Thierry Reding (1):
+      soc/tegra: fuse: Fix typo in APB MISC warning
 
-Dan Carpenter (1):
-      memory: tegra: Delete some dead code
-
-Dmitry Osipenko (3):
-      memory: tegra: Make debugfs permissions human-readable
-      memory: tegra20-emc: Poll EMC-CaR handshake instead of waiting for interrupt
-      memory: tegra30-emc: Poll EMC-CaR handshake instead of waiting for interrupt
-
-Geert Uytterhoeven (1):
-      memory: tegra: Drop <linux/clk-provider.h>
-
-Jon Hunter (1):
-      memory: tegra: Fix KCONFIG variables for Tegra186 and Tegra194
-
-Joseph Lo (2):
-      memory: tegra: Add EMC scaling support code for Tegra210
-      memory: tegra: Add EMC scaling sequence code for Tegra210
-
-Thierry Reding (2):
-      memory: tegra: Support derated timings on Tegra210
-      memory: tegra: Add Tegra132 compatible string match
-
- drivers/memory/tegra/Kconfig                  |   14 +
- drivers/memory/tegra/Makefile                 |    4 +
- drivers/memory/tegra/mc.h                     |    1 +
- drivers/memory/tegra/tegra124-emc.c           |    7 +-
- drivers/memory/tegra/tegra186-emc.c           |   25 +-
- drivers/memory/tegra/tegra186.c               |    4 +-
- drivers/memory/tegra/tegra20-emc.c            |   34 +-
- drivers/memory/tegra/tegra210-emc-cc-r21021.c | 1775 +++++++++++++++++++++
- drivers/memory/tegra/tegra210-emc-core.c      | 2100 +++++++++++++++++++++++++
- drivers/memory/tegra/tegra210-emc-table.c     |   90 ++
- drivers/memory/tegra/tegra210-emc.h           | 1016 ++++++++++++
- drivers/memory/tegra/tegra210-mc.h            |   50 +
- drivers/memory/tegra/tegra30-emc.c            |  122 +-
- 13 files changed, 5130 insertions(+), 112 deletions(-)
- create mode 100644 drivers/memory/tegra/tegra210-emc-cc-r21021.c
- create mode 100644 drivers/memory/tegra/tegra210-emc-core.c
- create mode 100644 drivers/memory/tegra/tegra210-emc-table.c
- create mode 100644 drivers/memory/tegra/tegra210-emc.h
- create mode 100644 drivers/memory/tegra/tegra210-mc.h
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 +-
+ include/soc/tegra/fuse.h               | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
