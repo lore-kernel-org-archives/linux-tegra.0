@@ -1,31 +1,58 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4] clk: tegra: pll: Improve PLLM enable-state detection
-Date: Fri, 17 Jul 2020 23:15:49 +0300
-Message-ID: <e713d98b-deab-f0e5-6224-6c1f13a37b46@gmail.com>
-References: <20200709172057.13951-1-digetx@gmail.com>
- <997361b8-4466-cdf0-beeb-eedcbeb48597@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [GIT PULL 6/7] ARM: tegra: Default configuration changes for v5.9-rc1
+Date: Fri, 17 Jul 2020 22:23:00 +0200
+Message-ID: <CAK8P3a3nSYfotK=0ZL9XqeMi-v0nqxFZnFKy4OAbvnc9qzN8Xw@mail.gmail.com>
+References: <20200717161300.1661002-1-thierry.reding@gmail.com>
+ <20200717161300.1661002-6-thierry.reding@gmail.com> <CAK8P3a1niUF7xK_bmz=8NJbRGxs7iFzNnRgRS9H=bXpMqarsWg@mail.gmail.com>
+ <a6f83a03-3a8f-47d0-6770-fe0e2595cde5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <997361b8-4466-cdf0-beeb-eedcbeb48597-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <a6f83a03-3a8f-47d0-6770-fe0e2595cde5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, arm-soc <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, SoC Team <soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-17.07.2020 19:55, Jon Hunter пишет:
-...
-> I have tested this on Jetson TK1 using u-boot to verify the behaviour
-> and it does indeed work as described here. I have also ran it through
-> the automated testing we have for Tegra and see no immediate issue.
-> Therefore ...
-> 
-> Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Thanks!
-> Jon
+On Fri, Jul 17, 2020 at 10:13 PM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> 17.07.2020 22:24, Arnd Bergmann пишет:
+> > On Fri, Jul 17, 2020 at 6:13 PM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> >> ARM: tegra: Default configuration changes for v5.9-rc1
+> >>
+> >> Enables a few new configuration options that are useful on the new Nexus
+> >> 7 and Acer A500 devices, as well as the userspace CPU frequency governor
+> >> that's mainly used for testing.
+> >
+> > I've pulled all the other branches, but I'm a little bit wary about
+> > this one since
+> > Dmitry's patch enables a number of options that would increase the kernel
+> > size, and I see no indication that it has been reviewed by anyone else.
+> >
+> > I think the changes all make sense, but I would prefer to have a wider
+> > audience for that patch and get some Acks. If you like, you can send the
+> > tegra specific changes in a new pull request in the meantime, and then
+> > send the remaining additions to the usual suspects as an RFC, with
+> > Cc:soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, so I can apply it later if everyone is happy enough
+> > with it.
+>
+> Hello, Arnd!
+>
+> But these are already the tegra specific changes. The patch changes
+> tegra_defconfig and not the multi_v7_defconfig.
+>
+> Could you please clarify from whom would you expect to get more Acks if
+> not from the tegra maintainers?
+>
+> In practice nobody uses upstream defconfig as-is, it's only used as
+> initial template. So I'm not sure why tegra-kernel size makes you to
+> worry. Could you please explain?
 
-Awesome, thank you!
+It was a mistake on my end, for some reason I thought you were
+changing the arm64 defconfig, which does not have per-platform
+files.
+
+The patch is good, and I'll pull the branch as soon as I get to it
+(it's a bit late for today).
+
+      Arnd
