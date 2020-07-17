@@ -1,78 +1,70 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH -next] gpu: host1x: Convert to DEFINE_SHOW_ATTRIBUTE
-Date: Fri, 17 Jul 2020 16:25:24 +0200
-Message-ID: <20200717142524.GA1218823@ulmo>
-References: <20200716090323.13274-1-miaoqinglang@huawei.com>
- <20200716133450.GJ535268@ulmo>
- <5684dcb3-c5a4-96c1-dd96-c44f5a94938f@huawei.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v11 0/4] Panel rotation patches
+Date: Fri, 17 Jul 2020 17:59:55 +0300
+Message-ID: <848a586a-060c-1244-e057-99f5b56baf09@gmail.com>
+References: <20200617231842.30671-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5684dcb3-c5a4-96c1-dd96-c44f5a94938f-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20200617231842.30671-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: miaoqinglang <miaoqinglang-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Stone <daniel-rLtY4a/8tF1rovVCs/uTlw@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+18.06.2020 02:18, Dmitry Osipenko пишет:
+> Hello!
+> 
+> This series adds support for display panel's DT rotation property. It's a
+> continuation of the work that was initially started by Derek Basehore for
+> the panel driver that is used by some Mediatek device [1]. I picked up the
+> Derek's patches and added my t-b and r-b tags to them, I also added
+> rotation support to the panel-lvds and panel-simple drivers.
+> 
+> We need the rotation support for the Nexus 7 tablet device which is pending
+> to become supported by upstream kernel, the device has display panel mounted
+> upside-down and it uses panel-lvds [2].
+> 
+> [1] https://lkml.org/lkml/2020/3/5/1119
+> [2] https://patchwork.ozlabs.org/project/linux-tegra/patch/20200607154327.18589-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org/
+> 
+> Changelog:
+> 
+> v11: - This series is factored out from this patchset [3] because these
+>        patches do not have hard dependency on the Tegra DRM patches and
+>        it should be nicer to review and apply the properly grouped patches.
+> 
+>      - Initially [3] only touched the panel-lvds driver and Emil Velikov
+>        suggested that it will be better to support more panels in the review
+>        comments to [3]. So I included the Derek's patch for the BOE panel
+>        and added rotation support to the panel-simple driver. I tested that
+>        panel-lvds and panel-simple work properly with the rotated panel using
+>        the Opentegra Xorg driver [4] and Wayland Weston [5].
+> 
+>      - The panel-lvds driver now prints a error message if rotation property
+>        fails to be parsed.
+> 
+> [3] https://lore.kernel.org/lkml/20200614200121.14147-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org/
+> [4] https://github.com/grate-driver/xf86-video-opentegra/commit/28eb20a3959bbe5bc3a3b67e55977093fd5114ca
+> [5] https://gitlab.freedesktop.org/wayland/weston/-/merge_requests/315
+> 
+> Derek Basehore (2):
+>   drm/panel: Add helper for reading DT rotation
+>   drm/panel: Read panel orientation for BOE TV101WUM-NL6
+> 
+> Dmitry Osipenko (2):
+>   drm/panel: lvds: Read panel orientation
+>   drm/panel-simple: Read panel orientation
+> 
+>  drivers/gpu/drm/drm_panel.c                   | 43 +++++++++++++++++++
+>  .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    |  6 +++
+>  drivers/gpu/drm/panel/panel-lvds.c            | 10 +++++
+>  drivers/gpu/drm/panel/panel-simple.c          | 11 +++++
+>  include/drm/drm_panel.h                       |  9 ++++
+>  5 files changed, 79 insertions(+)
+> 
 
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jul 17, 2020 at 09:32:21AM +0800, miaoqinglang wrote:
->=20
-> =E5=9C=A8 2020/7/16 21:34, Thierry Reding =E5=86=99=E9=81=93:
-> > On Thu, Jul 16, 2020 at 05:03:23PM +0800, Qinglang Miao wrote:
-> > > From: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-> > >=20
-> > > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
-> > >=20
-> > > Signed-off-by: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >   drivers/gpu/host1x/debug.c | 28 ++++------------------------
-> > >   1 file changed, 4 insertions(+), 24 deletions(-)
-> > This doesn't apply. Can you please resend, based on something like
-> > linux-next?
-> >=20
-> > Thanks,
-> > Thierry
-> Hi, Thierry
->=20
-> =C2=A0 Sorry I didn't mention it in commit log, but this patch is based on
-> linux-next where commit <4d4901c6d7> has switched over direct=C2=A0 seq_r=
-ead
-> method calls to seq_read_iter, this is why there's conflict in=C2=A0 your=
- apply.
->=20
-> =C2=A0 Do you think I should send a new patch based on 5.8rc?
-
-No need to. I'm about to send out the pull request for v5.9-rc1, so I'll
-just defer this to v5.10 since it doesn't look like it's anything
-urgent.
-
-Thierry
-
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8RtM8ACgkQ3SOs138+
-s6Hj6g/+MgjmNXDQakxoDHLk0m84f7i97cY0lrI0Z0XFp0ZsuZp4VHLS0Rzd2wt8
-3tb6OLbwu6Q456lBZIw/FKa7i4zJ3bRzV1+dnvZaXPWgVUzSRMEgo6AugBNGQqhy
-eQJH+5NfpN75sWFtXjhA/PscNW1v6oR/QkTKa2kcYFtP5xbSWHxVkdRUK/Xl5s15
-TGaYsskrZehPE8k+6xNH6c0RIpt6ERO1NxnjrapApW3w98IYen1X8ONjILhJhjny
-ZjUJN3WbTaZVo7WtxZWG9G5AMR+5LK8qByRzjf1VoWWpFbiuZaPae/ewRFm8CZeg
-jNS3PYpAuSW9Bv0j5o2EEXUK4LV9gAC8ET140dTMmupSLH73Eu1ML7+Lm0TAGkK0
-MPmJ8jLc0TMTERdA2Jt5s5sNZttMjaABxgPvl2igT+2zVA3yzyE1E3EO5qpyVQSF
-R2AWrcyc9gVdyCElBq5Z39td7OkL4ylG/sboo6xxudgW5gcYo2K2w541CEES9TKm
-JWeo5cf8YiBWcoF6ppg+OkTw61NILMjiMopyrd5ZDSOnwAi/oprOyGT7TfQJqazJ
-y78QPzi3GrAzlZzMovNWNw+7MIIuig0tYtxVMz1i5/uBAE89ngZjN+09a4G14q4z
-0giSD+1Iya4q2w/DBhCIwiyhT53pHp76KrCj/+Xy1+8FUVHUprU=
-=J7AY
------END PGP SIGNATURE-----
-
---UugvWAfsgieZRqgk--
+Hi! Does anyone have any comments to this patchset? Will be nice if it
+could get into 5.9 :) Thanks in advance!
