@@ -1,61 +1,32 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: Re: [RESEND RESEND PATCH] arm/arm64: defconfig: Update configs to use
- the new CROS_EC options
-Date: Fri, 17 Jul 2020 11:37:47 +0200
-Message-ID: <2c7a9b5f-968b-38a2-3f67-f731a8617e09@collabora.com>
-References: <20200305111047.147355-1-enric.balletbo@collabora.com>
- <CAFqH_52LhfV9AsnPRZi_ZPsgYX8WrUrKEsV-E7VHOw3ZZtHd-w@mail.gmail.com>
- <CAK8P3a0ScHe+ErEZr-x4Sj=3Yz7cppKDcemXemvwXMbPh-RVMQ@mail.gmail.com>
+From: Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v10 0/5] NVIDIA ARM SMMU Implementation
+Date: Fri, 17 Jul 2020 11:03:38 +0100
+Message-ID: <20200717100337.GA8673@willie-the-truck>
+References: <20200708050017.31563-1-vdumpa@nvidia.com>
+ <20200713135020.GD2739@willie-the-truck>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a0ScHe+ErEZr-x4Sj=3Yz7cppKDcemXemvwXMbPh-RVMQ@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Gwendal Grignou <gwendal@chromium.org>, Collabora Kernel ML <kernel@collabora.com>, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Amelie Delaunay <amelie.delaunay@st.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Guenter Roeck <groeck@chromium.org>, Dmitry Osipenko <digetx@gmail.com>, Leonard Crestez <leonard.crestez@nxp.com>, Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Anson Huang <Anson.Huang@nxp.com>, Lee Jones <lee.jones@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Russell
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20200713135020.GD2739@willie-the-truck>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Arnd,
-
-On 17/7/20 8:59, Arnd Bergmann wrote:
-> On Wed, Jul 15, 2020 at 11:31 PM Enric Balletbo Serra
-> <eballetbo@gmail.com> wrote:
->> Missatge de Enric Balletbo i Serra <enric.balletbo@collabora.com> del
->> dia dj., 5 de març 2020 a les 12:11:
->>>
->>> We refactored the CrOS EC drivers moving part of the code from the MFD
->>> subsystem to the platform chrome subsystem. During this change we needed
->>> to rename some config options, so, update the defconfigs accordingly.
->>>
->>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
->>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
->>> Acked-by: Lee Jones <lee.jones@linaro.org>
->>> ---
->>
->> A gentle ping. I'd like to land this if is possible because that way I
->> can remove some legacy code in platform/chrome subsystem.
->>
->> Thanks,
->>   Enric
->>
->>> Dear all,
->>>
->>> This is a resend of a resend patch [3]. In some previous discussions
->>> maintainers would prefer to have this merged through the arm-soc tree
->>> but wasn't merged yet and I forget to ping again, hence, sending a new
->>> resend.
+On Mon, Jul 13, 2020 at 02:50:20PM +0100, Will Deacon wrote:
+> On Tue, Jul 07, 2020 at 10:00:12PM -0700, Krishna Reddy wrote:
+> > Changes in v10:
+> > Perform SMMU base ioremap before calling implementation init.
+> > Check for Global faults across both ARM MMU-500s during global interrupt.
+> > Check for context faults across all contexts of both ARM MMU-500s during context fault interrupt.
+> > Add new DT binding nvidia,smmu-500 for NVIDIA implementation.
 > 
-> I've merged it into the arm/defconfig branch of the soc tree now.
-> If you have future platform specific changes to the defconfig files,
-> please just add soc@kernel.org to the recipients to get the patch
-> into patchwork.
+> Please repost based on my SMMU queue, as this doesn't currently apply.
 > 
+> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-joerg/arm-smmu/updates
 
-Many thanks! I'll take into account this next time.
+Any update on this, please? It would be a shame to miss 5.9 now that the
+patches look alright.
 
->      Arnd
-> 
+Will
