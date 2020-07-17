@@ -1,63 +1,164 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 6/7] ARM: tegra: Default configuration changes for
- v5.9-rc1
-Date: Fri, 17 Jul 2020 23:25:14 +0300
-Message-ID: <e89ba7b4-9711-3ddd-8eda-cf761e179c2b@gmail.com>
-References: <20200717161300.1661002-1-thierry.reding@gmail.com>
- <20200717161300.1661002-6-thierry.reding@gmail.com>
- <CAK8P3a1niUF7xK_bmz=8NJbRGxs7iFzNnRgRS9H=bXpMqarsWg@mail.gmail.com>
- <a6f83a03-3a8f-47d0-6770-fe0e2595cde5@gmail.com>
- <CAK8P3a3nSYfotK=0ZL9XqeMi-v0nqxFZnFKy4OAbvnc9qzN8Xw@mail.gmail.com>
+From: Nicolas Chauvet <kwizart@gmail.com>
+Subject: [PATCH] pci: tegra: Revert raw_violation_fixup for tegra124
+Date: Fri, 17 Jul 2020 23:35:10 +0200
+Message-ID: <20200717213510.171726-1-kwizart@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK8P3a3nSYfotK=0ZL9XqeMi-v0nqxFZnFKy4OAbvnc9qzN8Xw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, arm-soc <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, SoC Team <soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Bjorn Helgaas <helgaas@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-17.07.2020 23:23, Arnd Bergmann пишет:
-> On Fri, Jul 17, 2020 at 10:13 PM Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> 17.07.2020 22:24, Arnd Bergmann пишет:
->>> On Fri, Jul 17, 2020 at 6:13 PM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>>> ARM: tegra: Default configuration changes for v5.9-rc1
->>>>
->>>> Enables a few new configuration options that are useful on the new Nexus
->>>> 7 and Acer A500 devices, as well as the userspace CPU frequency governor
->>>> that's mainly used for testing.
->>>
->>> I've pulled all the other branches, but I'm a little bit wary about
->>> this one since
->>> Dmitry's patch enables a number of options that would increase the kernel
->>> size, and I see no indication that it has been reviewed by anyone else.
->>>
->>> I think the changes all make sense, but I would prefer to have a wider
->>> audience for that patch and get some Acks. If you like, you can send the
->>> tegra specific changes in a new pull request in the meantime, and then
->>> send the remaining additions to the usual suspects as an RFC, with
->>> Cc:soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, so I can apply it later if everyone is happy enough
->>> with it.
->>
->> Hello, Arnd!
->>
->> But these are already the tegra specific changes. The patch changes
->> tegra_defconfig and not the multi_v7_defconfig.
->>
->> Could you please clarify from whom would you expect to get more Acks if
->> not from the tegra maintainers?
->>
->> In practice nobody uses upstream defconfig as-is, it's only used as
->> initial template. So I'm not sure why tegra-kernel size makes you to
->> worry. Could you please explain?
-> 
-> It was a mistake on my end, for some reason I thought you were
-> changing the arm64 defconfig, which does not have per-platform
-> files.
-> 
-> The patch is good, and I'll pull the branch as soon as I get to it
-> (it's a bit late for today).
+As reported in https://bugzilla.kernel.org/206217 , raw_violation_fixup
+is causing more harm than good in some common use-cases.
 
-Awesome, thank you!
+This patch is a partial revert of the 191cd6fb5 commit:
+ "PCI: tegra: Add SW fixup for RAW violations"
+that was first introduced in 5.3-rc1 kernel.
+This fix the following regression since then.
+
+* Description:
+When both the NIC and MMC are used one can see the following message:
+
+NETDEV WATCHDOG: enp1s0 (r8169): transmit queue 0 timed out
+
+  and
+
+pcieport 0000:00:02.0: AER: Uncorrected (Non-Fatal) error received: 0000:01:00.0
+r8169 0000:01:00.0: AER: PCIe Bus Error: severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Requester ID)
+r8169 0000:01:00.0: AER:   device [10ec:8168] error status/mask=00004000/00400000
+r8169 0000:01:00.0: AER:    [14] CmpltTO                (First)
+r8169 0000:01:00.0: AER: can't recover (no error_detected callback)
+pcieport 0000:00:02.0: AER: device recovery failed
+
+After that, the ethernet NIC isn't functional anymore even after reloading
+the r8169 module.
+After a reboot, this is reproducible by copying a large file over the
+NIC to the MMC.
+
+For some reasons this cannot be reproduced when the same file is copied
+to a tmpfs.
+
+* Little background on the fixup, by Manikanta Maddireddy:
+  "In the internal testing with dGPU on Tegra124, CmplTO is reported by
+dGPU. This happened because FIFO queue in AFI(AXI to PCIe) module
+get full by upstream posted writes. Back to back upstream writes
+interleaved with infrequent reads, triggers RAW violation and CmpltTO.
+This is fixed by reducing the posted write credits and by changing
+updateFC timer frequency. These settings are fixed after stress test.
+
+In the current case, RTL NIC is also reporting CmplTO. These settings
+seems to be aggravating the issue instead of fixing it."
+
+v1: first non-RFC version
+ - Disable raw_violation_fixup and fully remove unused code and macros
+
+Signed-off-by: Nicolas Chauvet <kwizart@gmail.com>
+Reviewed-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: <stable@vger.kernel.org> # 5.4.x
+---
+ drivers/pci/controller/pci-tegra.c | 32 ------------------------------
+ 1 file changed, 32 deletions(-)
+
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 235b456698fc..b532d5082fb6 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -181,13 +181,6 @@
+ 
+ #define AFI_PEXBIAS_CTRL_0		0x168
+ 
+-#define RP_PRIV_XP_DL		0x00000494
+-#define  RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD	(0x1ff << 1)
+-
+-#define RP_RX_HDR_LIMIT		0x00000e00
+-#define  RP_RX_HDR_LIMIT_PW_MASK	(0xff << 8)
+-#define  RP_RX_HDR_LIMIT_PW		(0x0e << 8)
+-
+ #define RP_ECTL_2_R1	0x00000e84
+ #define  RP_ECTL_2_R1_RX_CTLE_1C_MASK		0xffff
+ 
+@@ -323,7 +316,6 @@ struct tegra_pcie_soc {
+ 	bool program_uphy;
+ 	bool update_clamp_threshold;
+ 	bool program_deskew_time;
+-	bool raw_violation_fixup;
+ 	bool update_fc_timer;
+ 	bool has_cache_bars;
+ 	struct {
+@@ -659,23 +651,6 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
+ 		writel(value, port->base + RP_VEND_CTL0);
+ 	}
+ 
+-	/* Fixup for read after write violation. */
+-	if (soc->raw_violation_fixup) {
+-		value = readl(port->base + RP_RX_HDR_LIMIT);
+-		value &= ~RP_RX_HDR_LIMIT_PW_MASK;
+-		value |= RP_RX_HDR_LIMIT_PW;
+-		writel(value, port->base + RP_RX_HDR_LIMIT);
+-
+-		value = readl(port->base + RP_PRIV_XP_DL);
+-		value |= RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD;
+-		writel(value, port->base + RP_PRIV_XP_DL);
+-
+-		value = readl(port->base + RP_VEND_XP);
+-		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
+-		value |= soc->update_fc_threshold;
+-		writel(value, port->base + RP_VEND_XP);
+-	}
+-
+ 	if (soc->update_fc_timer) {
+ 		value = readl(port->base + RP_VEND_XP);
+ 		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
+@@ -2416,7 +2391,6 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+ 	.program_uphy = true,
+ 	.update_clamp_threshold = false,
+ 	.program_deskew_time = false,
+-	.raw_violation_fixup = false,
+ 	.update_fc_timer = false,
+ 	.has_cache_bars = true,
+ 	.ectl.enable = false,
+@@ -2446,7 +2420,6 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+ 	.program_uphy = true,
+ 	.update_clamp_threshold = false,
+ 	.program_deskew_time = false,
+-	.raw_violation_fixup = false,
+ 	.update_fc_timer = false,
+ 	.has_cache_bars = false,
+ 	.ectl.enable = false,
+@@ -2459,8 +2432,6 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+ 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
+ 	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
+ 	.pads_refclk_cfg0 = 0x44ac44ac,
+-	/* FC threshold is bit[25:18] */
+-	.update_fc_threshold = 0x03fc0000,
+ 	.has_pex_clkreq_en = true,
+ 	.has_pex_bias_ctrl = true,
+ 	.has_intr_prsnt_sense = true,
+@@ -2470,7 +2441,6 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+ 	.program_uphy = true,
+ 	.update_clamp_threshold = true,
+ 	.program_deskew_time = false,
+-	.raw_violation_fixup = true,
+ 	.update_fc_timer = false,
+ 	.has_cache_bars = false,
+ 	.ectl.enable = false,
+@@ -2494,7 +2464,6 @@ static const struct tegra_pcie_soc tegra210_pcie = {
+ 	.program_uphy = true,
+ 	.update_clamp_threshold = true,
+ 	.program_deskew_time = true,
+-	.raw_violation_fixup = false,
+ 	.update_fc_timer = true,
+ 	.has_cache_bars = false,
+ 	.ectl = {
+@@ -2536,7 +2505,6 @@ static const struct tegra_pcie_soc tegra186_pcie = {
+ 	.program_uphy = false,
+ 	.update_clamp_threshold = false,
+ 	.program_deskew_time = false,
+-	.raw_violation_fixup = false,
+ 	.update_fc_timer = false,
+ 	.has_cache_bars = false,
+ 	.ectl.enable = false,
+-- 
+2.25.4
