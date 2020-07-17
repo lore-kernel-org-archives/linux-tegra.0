@@ -1,50 +1,43 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 6/7] ARM: tegra: Default configuration changes for
- v5.9-rc1
-Date: Fri, 17 Jul 2020 23:13:41 +0300
-Message-ID: <a6f83a03-3a8f-47d0-6770-fe0e2595cde5@gmail.com>
-References: <20200717161300.1661002-1-thierry.reding@gmail.com>
- <20200717161300.1661002-6-thierry.reding@gmail.com>
- <CAK8P3a1niUF7xK_bmz=8NJbRGxs7iFzNnRgRS9H=bXpMqarsWg@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 16/18] gpu: host1x: mipi: Split
+ tegra_mipi_calibrate and tegra_mipi_wait
+Date: Fri, 17 Jul 2020 23:14:52 +0300
+Message-ID: <ea3d2bb0-bf35-dfdf-ed1f-7656a9558072@gmail.com>
+References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
+ <1594786855-26506-17-git-send-email-skomatineni@nvidia.com>
+ <a06dec8f-7042-767b-545b-048685a7683d@gmail.com>
+ <20d63eca-4b2b-584e-a391-a4fb64a16b40@nvidia.com>
+ <c4945c77-5de1-e9b1-9f4f-cdd78bca18c7@gmail.com>
+ <ce0c5ffb-f859-0eab-1ea5-044623dff221@nvidia.com>
+ <a2b8169c-c4a3-4862-cd27-8c1a51ddc558@gmail.com>
+ <4690e682-8495-2327-87c7-c2f06a7a479d@nvidia.com>
+ <66812127-38cf-2af3-51c0-50edbe446e73@nvidia.com>
+ <9b4fbf9d-d651-aa35-c0a6-b8f16aeb0900@gmail.com>
+ <550f1796-67ca-5856-223d-c68360243954@nvidia.com>
+ <ca8f2184-de30-03ec-9caf-e20a22d96a77@nvidia.com>
+ <080b30c7-1dce-dd2f-dd96-40f6e25da4d6@gmail.com>
+ <b125deab-7900-6266-d405-4d7f029089b4@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK8P3a1niUF7xK_bmz=8NJbRGxs7iFzNnRgRS9H=bXpMqarsWg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <b125deab-7900-6266-d405-4d7f029089b4-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: arm-soc <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, SoC Team <soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-17.07.2020 22:24, Arnd Bergmann пишет:
-> On Fri, Jul 17, 2020 at 6:13 PM Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> ARM: tegra: Default configuration changes for v5.9-rc1
->>
->> Enables a few new configuration options that are useful on the new Nexus
->> 7 and Acer A500 devices, as well as the userspace CPU frequency governor
->> that's mainly used for testing.
+17.07.2020 18:41, Sowjanya Komatineni пишет:
+...
+>> Also, what about the auto-calibration? Isn't it needed to be enabled for
+>> CSI?
+> STARTCAL does one time calibration and with AUTOCAL calibration will be
+> triggered periodically.
 > 
-> I've pulled all the other branches, but I'm a little bit wary about
-> this one since
-> Dmitry's patch enables a number of options that would increase the kernel
-> size, and I see no indication that it has been reviewed by anyone else.
+> For pads PULLUP/PULLDN/TERM impedance calibration, we only need one-time
+> calibration on pads power up.
 > 
-> I think the changes all make sense, but I would prefer to have a wider
-> audience for that patch and get some Acks. If you like, you can send the
-> tegra specific changes in a new pull request in the meantime, and then
-> send the remaining additions to the usual suspects as an RFC, with
-> Cc:soc-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, so I can apply it later if everyone is happy enough
-> with it.
+> We always use one time pads calibration for CSI.
 
-Hello, Arnd!
-
-But these are already the tegra specific changes. The patch changes
-tegra_defconfig and not the multi_v7_defconfig.
-
-Could you please clarify from whom would you expect to get more Acks if
-not from the tegra maintainers?
-
-In practice nobody uses upstream defconfig as-is, it's only used as
-initial template. So I'm not sure why tegra-kernel size makes you to
-worry. Could you please explain?
+Alright, thank you for the clarification!
