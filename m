@@ -1,32 +1,90 @@
-From: Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v10 0/5] NVIDIA ARM SMMU Implementation
-Date: Fri, 17 Jul 2020 11:03:38 +0100
-Message-ID: <20200717100337.GA8673@willie-the-truck>
-References: <20200708050017.31563-1-vdumpa@nvidia.com>
- <20200713135020.GD2739@willie-the-truck>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: pci: tegra: Remove PLL power supplies
+Date: Fri, 17 Jul 2020 11:48:41 +0100
+Message-ID: <20200717104841.GB4353@e121166-lin.cambridge.arm.com>
+References: <20200623145528.1658337-1-thierry.reding@gmail.com>
+ <20200716125945.GD535268@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20200713135020.GD2739@willie-the-truck>
+In-Reply-To: <20200716125945.GD535268@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 02:50:20PM +0100, Will Deacon wrote:
-> On Tue, Jul 07, 2020 at 10:00:12PM -0700, Krishna Reddy wrote:
-> > Changes in v10:
-> > Perform SMMU base ioremap before calling implementation init.
-> > Check for Global faults across both ARM MMU-500s during global interrupt.
-> > Check for context faults across all contexts of both ARM MMU-500s during context fault interrupt.
-> > Add new DT binding nvidia,smmu-500 for NVIDIA implementation.
+On Thu, Jul 16, 2020 at 02:59:45PM +0200, Thierry Reding wrote:
+> On Tue, Jun 23, 2020 at 04:55:27PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > The XUSB pad controller, which provides access to various USB, PCI and
+> > SATA pads (or PHYs), needs to bring up the PLLs associated with these
+> > pads. In order to properly do so, it needs to control the power supplied
+> > to these PLLs.
+> > 
+> > Remove the PLL power supplies from the PCIe controller because it does
+> > not need direct access to them. Instead it will only use the configured
+> > pads provided by the XUSB pad controller.
+> > 
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > Hi Rob,
+> > 
+> > I already made this change as part of the conversion series, but wanted
+> > to send this out as part of this subseries since it addresses a fairly
+> > long-standing issue that I'd like to clean up irrespective of the DT
+> > binding conversion. Since it looks like the conversion series will take
+> > a bit longer, I think it makes sense to send this out separately.
+> > 
+> > Thierry
+> > 
+> >  .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt  | 12 ------------
+> >  1 file changed, 12 deletions(-)
 > 
-> Please repost based on my SMMU queue, as this doesn't currently apply.
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-joerg/arm-smmu/updates
+> Hi Rob, any feedback on this?
 
-Any update on this, please? It would be a shame to miss 5.9 now that the
-patches look alright.
+Hi Rob,
 
-Will
+I'd like to queue both patches, please let me know if that's OK with
+you.
+
+Thank you very much.
+
+Lorenzo
+
+> > index 7939bca47861..d099f3476ccc 100644
+> > --- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> > @@ -112,28 +112,16 @@ Power supplies for Tegra124:
+> >  - Required:
+> >    - avddio-pex-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
+> >    - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
+> > -  - avdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
+> > -    supply 1.05 V.
+> >    - hvdd-pex-supply: High-voltage supply for PCIe I/O and PCIe output clocks.
+> >      Must supply 3.3 V.
+> > -  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
+> > -    Must supply 3.3 V.
+> >    - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
+> >      supply 2.8-3.3 V.
+> > -  - avdd-pll-erefe-supply: Power supply for PLLE (shared with USB3). Must
+> > -    supply 1.05 V.
+> >  
+> >  Power supplies for Tegra210:
+> >  - Required:
+> > -  - avdd-pll-uerefe-supply: Power supply for PLLE (shared with USB3). Must
+> > -    supply 1.05 V.
+> >    - hvddio-pex-supply: High-voltage supply for PCIe I/O and PCIe output
+> >      clocks. Must supply 1.8 V.
+> >    - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
+> > -  - dvdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
+> > -    supply 1.05 V.
+> > -  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
+> > -    Must supply 3.3 V.
+> >    - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
+> >      supply 1.8 V.
+> >  
+> > -- 
+> > 2.27.0
+> > 
