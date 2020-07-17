@@ -1,89 +1,61 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] arm64: tegra: Add the GPU on Tegra194
-Date: Fri, 17 Jul 2020 09:40:57 +0100
-Message-ID: <65d7fa27-9b88-6af5-089f-60e97ecf3f12@nvidia.com>
-References: <20200717083609.557205-1-thierry.reding@gmail.com>
- <20200717083609.557205-2-thierry.reding@gmail.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [RESEND RESEND PATCH] arm/arm64: defconfig: Update configs to use
+ the new CROS_EC options
+Date: Fri, 17 Jul 2020 11:37:47 +0200
+Message-ID: <2c7a9b5f-968b-38a2-3f67-f731a8617e09@collabora.com>
+References: <20200305111047.147355-1-enric.balletbo@collabora.com>
+ <CAFqH_52LhfV9AsnPRZi_ZPsgYX8WrUrKEsV-E7VHOw3ZZtHd-w@mail.gmail.com>
+ <CAK8P3a0ScHe+ErEZr-x4Sj=3Yz7cppKDcemXemvwXMbPh-RVMQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200717083609.557205-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <CAK8P3a0ScHe+ErEZr-x4Sj=3Yz7cppKDcemXemvwXMbPh-RVMQ@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Debarshi Dutta <ddutta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Gwendal Grignou <gwendal@chromium.org>, Collabora Kernel ML <kernel@collabora.com>, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Amelie Delaunay <amelie.delaunay@st.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Guenter Roeck <groeck@chromium.org>, Dmitry Osipenko <digetx@gmail.com>, Leonard Crestez <leonard.crestez@nxp.com>, Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Anson Huang <Anson.Huang@nxp.com>, Lee Jones <lee.jones@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Russell
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Arnd,
 
-On 17/07/2020 09:36, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 17/7/20 8:59, Arnd Bergmann wrote:
+> On Wed, Jul 15, 2020 at 11:31 PM Enric Balletbo Serra
+> <eballetbo@gmail.com> wrote:
+>> Missatge de Enric Balletbo i Serra <enric.balletbo@collabora.com> del
+>> dia dj., 5 de març 2020 a les 12:11:
+>>>
+>>> We refactored the CrOS EC drivers moving part of the code from the MFD
+>>> subsystem to the platform chrome subsystem. During this change we needed
+>>> to rename some config options, so, update the defconfigs accordingly.
+>>>
+>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+>>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
+>>> Acked-by: Lee Jones <lee.jones@linaro.org>
+>>> ---
+>>
+>> A gentle ping. I'd like to land this if is possible because that way I
+>> can remove some legacy code in platform/chrome subsystem.
+>>
+>> Thanks,
+>>   Enric
+>>
+>>> Dear all,
+>>>
+>>> This is a resend of a resend patch [3]. In some previous discussions
+>>> maintainers would prefer to have this merged through the arm-soc tree
+>>> but wasn't merged yet and I forget to ping again, hence, sending a new
+>>> resend.
 > 
-> The GPU found on NVIDIA Tegra194 SoCs is a Volta generation GPU called
-> GV11B.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in v3:
-> - mark the GPU as DMA coherent because that's enforced by the MSS
-> - add FUSE clock which is needed during GPU initialization
-> - enable GPU by default
-> 
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 34 ++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> index 98c366ab4aab..48160f48003a 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -1395,6 +1395,40 @@ sor3: sor@15bc0000 {
->  				nvidia,interface = <3>;
->  			};
->  		};
-> +
-> +		gpu@17000000 {
-> +			compatible = "nvidia,gv11b";
-> +			reg = <0x17000000 0x10000000>,
-> +			      <0x18000000 0x10000000>;
-> +			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "stall", "nonstall";
-> +			clocks = <&bpmp TEGRA194_CLK_GPCCLK>,
-> +				 <&bpmp TEGRA194_CLK_GPU_PWR>,
-> +				 <&bpmp TEGRA194_CLK_FUSE>;
-> +			clock-names = "gpu", "pwr", "fuse";
-> +			resets = <&bpmp TEGRA194_RESET_GPU>;
-> +			reset-names = "gpu";
-> +			dma-coherent;
-> +
-> +			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_GPU>;
-> +			interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVL1R &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL1RHP &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL1W &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL2R &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL2RHP &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL2W &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL3R &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL3RHP &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL3W &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL4R &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL4RHP &emc>,
-> +					<&mc TEGRA194_MEMORY_CLIENT_NVL4W &emc>;
-> +			interconnect-names = "dma-mem", "read-0-hp", "write-0",
-> +					     "read-1", "read-1-hp", "write-1",
-> +					     "read-2", "read-2-hp", "write-2",
-> +					     "read-3", "read-3-hp", "write-3";
-> +		};
->  	};
->  
->  	pcie@14100000 {
+> I've merged it into the arm/defconfig branch of the soc tree now.
+> If you have future platform specific changes to the defconfig files,
+> please just add soc@kernel.org to the recipients to get the patch
+> into patchwork.
 > 
 
+Many thanks! I'll take into account this next time.
 
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Cheers
-Jon
-
--- 
-nvpublic
+>      Arnd
+> 
