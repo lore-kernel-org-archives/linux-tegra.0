@@ -1,128 +1,138 @@
-From: miaoqinglang <miaoqinglang-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH -next] bcache: Convert to DEFINE_SHOW_ATTRIBUTE
-Date: Fri, 17 Jul 2020 10:42:33 +0800
-Message-ID: <a5d11115-9b58-5ad0-b8d2-6d40bb7258d4@huawei.com>
-References: <20200716090313.13216-1-miaoqinglang@huawei.com>
- <a0f9b92b-d8f2-7c03-8c48-9e71e506361b@suse.de>
- <639a9561-2824-b668-42b3-b69f016f54e1@suse.de>
+From: Sowjanya Komatineni <skomatineni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH v3 16/18] gpu: host1x: mipi: Split
+ tegra_mipi_calibrate and tegra_mipi_wait
+Date: Thu, 16 Jul 2020 21:46:14 -0700
+Message-ID: <ca8f2184-de30-03ec-9caf-e20a22d96a77@nvidia.com>
+References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
+ <1594786855-26506-17-git-send-email-skomatineni@nvidia.com>
+ <a06dec8f-7042-767b-545b-048685a7683d@gmail.com>
+ <20d63eca-4b2b-584e-a391-a4fb64a16b40@nvidia.com>
+ <c4945c77-5de1-e9b1-9f4f-cdd78bca18c7@gmail.com>
+ <ce0c5ffb-f859-0eab-1ea5-044623dff221@nvidia.com>
+ <a2b8169c-c4a3-4862-cd27-8c1a51ddc558@gmail.com>
+ <4690e682-8495-2327-87c7-c2f06a7a479d@nvidia.com>
+ <66812127-38cf-2af3-51c0-50edbe446e73@nvidia.com>
+ <9b4fbf9d-d651-aa35-c0a6-b8f16aeb0900@gmail.com>
+ <550f1796-67ca-5856-223d-c68360243954@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <639a9561-2824-b668-42b3-b69f016f54e1-l3A5Bk7waGM@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Coly Li <colyli-l3A5Bk7waGM@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kent Overstreet <kent.overstreet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <550f1796-67ca-5856-223d-c68360243954-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, frankc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, helen.koike-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
+Cc: sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-
-在 2020/7/17 10:22, Coly Li 写道:
-> On 2020/7/16 17:54, Coly Li wrote:
->> On 2020/7/16 17:03, Qinglang Miao wrote:
->>> From: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+On 7/16/20 5:16 PM, Sowjanya Komatineni wrote:
+>
+> On 7/16/20 4:47 PM, Dmitry Osipenko wrote:
+>> 17.07.2020 02:09, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> On 7/16/20 4:06 PM, Sowjanya Komatineni wrote:
+>>>> On 7/16/20 4:01 PM, Dmitry Osipenko wrote:
+>>>>> 17.07.2020 01:49, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>>> What keeps MIPI clock enabled after completion of the
+>>>>>>> tegra_mipi_calibrate() invocation?
+>>>>>> MIPI clock is disabled at end of tegra_mipi_calibrate and is=20
+>>>>>> re-enabled
+>>>>>> during tegra_mipi_wait.
+>>>>>>
+>>>>>> I think I should fix this to keep the clock enabled till calibration
+>>>>>> results are latched.
+>>>>>>
+>>>>>> All consumers of tegra_mipi_calibrate() will call tegra_mipi_wait().
+>>>>>>
+>>>>>> So will remove clk_disable mipi clk at end of tegra_mipi_calibrate()
+>>>>>> and
+>>>>>> clk_enable mipi_clk at beginning of tegra_mipi_wait()
+>>>>> Isn't it possible to perform the calibration after enabling CSI and
+>>>>> before of starting the sensor streaming?
+>>>> Currently this is what I am doing. Triggering calibration start during
+>>>> CSI receiver being ready and then sensor streaming will happen where
+>>>> internal MIPI CAL detects for LP -> HS transition and applies results
+>>>> to pads. So checking for calibration results after sensor stream is
+>>>> enabled
+>>> 1. Calling tegra_mipi_calibrate() during CSI streaming where CSI pads
+>>> are enabled and receiver is kept ready
 >>>
->>
->> Hi Qianlang and Yongqiang,
->>
->>> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+>>> 2. Start Sensor stream
 >>>
->>> Signed-off-by: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
->>> ---
->>>   drivers/md/bcache/closure.c | 16 +++-------------
->>>   1 file changed, 3 insertions(+), 13 deletions(-)
+>>> 3. Calling tegra_mipi_wait() to check for MIPI Cal status.
 >>>
->>> diff --git a/drivers/md/bcache/closure.c b/drivers/md/bcache/closure.c
->>> index 99222aa5d..37b9c5d49 100644
->>> --- a/drivers/md/bcache/closure.c
->>> +++ b/drivers/md/bcache/closure.c
->>> @@ -159,7 +159,7 @@ void closure_debug_destroy(struct closure *cl)
->>>   
->>>   static struct dentry *closure_debug;
->>>   
->>> -static int debug_seq_show(struct seq_file *f, void *data)
->>> +static int debug_show(struct seq_file *f, void *data)
->>>   {
->>>   	struct closure *cl;
->>>   
->>> @@ -188,17 +188,7 @@ static int debug_seq_show(struct seq_file *f, void *data)
->>>   	return 0;
->>>   }
->>>   
->>> -static int debug_seq_open(struct inode *inode, struct file *file)
->>> -{
->>> -	return single_open(file, debug_seq_show, NULL);
->>> -}
->>> -
+>>> So as mipi cal clk need to be kept enabled till 3rd step, we can enable
+>>> clock during tegra_mipi_calibrate() and leave it enabled and disable it
+>>> in tegra_mipi_wait after status check.
+>> =C2=A0From TRM:
 >>
->> Here NULL is sent to single_open(), in DEFINE_SHOW_ATTRIBUTE()
->> inode->i_private is sent into single_open(). I don't see the commit log
->> mentions or estimates such change.
+>> The following sequence is recommended for capturing a single frame:
 >>
-> 
-> Still this change modifies original code logic, I need to know the exact
-> effect before taking this patch.I've noticed this diffrence and I'm testing bcache on a new qemu 
-environment with this patch applied.
-> 
+>> 1. Set up CSI registers for use case such as number of lanes, virtual
+>> channel, etc.
+>> 2. Initialize and power up CSI interface
+>> 3. Wait for initialization time or done signal from calibration logic
+>> 4. Power up camera through the I2C interface
+>> 5. All CSI data and clock lanes are in stop state, LP11
+>> 6. Initiate frame capture through the I2C
+>> 7. Frame done, CSI goes back to stop state, LP11
 >>
->>> -static const struct file_operations debug_ops = {
->>> -	.owner		= THIS_MODULE,
->>> -	.open		= debug_seq_open,
->>> -	.read_iter		= seq_read_iter,
->>
->> I doubt this patch applies to Linux v5.8-rc, this is how debug_ops is
->> defined in Linux v5.8-rc5,
->>
-> 
-> I realize your patch is against linux-next, which is ahead of both
-> linux-block and mainline tree. So this patch does not apply to
-> linux-block tree, which is my upstream for bcache going to upstream.
-> 
-> I suggest to generate the patch against latest mainline kernel, or
-> linux-block branch for next merge window (for 5.9 it is branch
-> remotes/origin/for-5.9/drivers).
-> 
-Yes you're right, this patch is based on linux-next with commit 
-<4d4901c6d7>. Sorry I didn't mention it in commit log.
-> 
->> 196 static const struct file_operations debug_ops = {
->> 197         .owner          = THIS_MODULE,
->> 198         .open           = debug_seq_open,
->> 199         .read           = seq_read,
->> 200         .release        = single_release
->> 201 };
->>
->>> -	.release	= single_release
->>> -};
->>> +DEFINE_SHOW_ATTRIBUTE(debug);
->>>   
->>>   void  __init closure_debug_init(void)
->>>   {
->>> @@ -209,7 +199,7 @@ void  __init closure_debug_init(void)
->>>   		 * about this.
->>>   		 */
->>>   		closure_debug = debugfs_create_file(
->>> -			"closures", 0400, bcache_debug, NULL, &debug_ops);
->>> +				"closures", 0400, bcache_debug, NULL, &debug_fops);
->>>   }
->>>   #endif
->>
->> Do you test your change with upstream kernel ? Or at least you should
->> try to apply and compile the patch with latest upstream kernel.
-> 
-> I withdraw the above wrong word, the -next tag in patch subject was
-> overlooked by me. Next time I will try to avoid such mistake.
-> 
-> Coly Li
-> 
-> 
-> .
-> 
-I will send a new patch based on 5.9 mainline after more detailed 
-analysis and test.
+>> Hence, is it really necessary to perform the manual calibration?
+>
+> done signal from calibration logic will happen only when it sees LP to=20
+> HS transition as thats when calibration results are applied to pads=20
+> and then done signal is set.
+>
+> Also MIPI Pads calibration need to be done on every power off/on. So=20
+> need to do calibration and trigger it along with CSI receiver=20
+> programming to keep it ready and then need to check/wait for status=20
+> only after sensor stream happens as thats where LP->HS transition happen.
+>
+Looks like sequence posted in TRM need to be updated clearly for proper=20
+MIPI CAL start and wait.
 
-Thanks.
+Correct steps should be like below
 
-Qinglang
+1. Set up CSI registers for use case such as number of lanes, virtual=C2=A0=
+=20
+channel, etc.
+2. Initialize and power up CSI CIL interface
+3. Program MIPI CAL bias pads, cal configs, cal control registers and=20
+enable calibration start
+4. Power up camera through the I2C interface and start sensor streaming=20
+through the I2C
 
-.
+Note: All sensors might not leave pads in LP-11 state as sensor may be=20
+power down when not in use.
+
+So start streaming prior to checking for calibration done status as=20
+LP-11 -> HS transition happens during sensor stream and calibration=20
+logic can apply results to pads and update done status,
+
+5. Wait for done signal from calibration logic
+
+6. perform frame capture thru VI
+7. Frame done, CSI goes back to stop state, LP11
+
+Will work internally to correct sequence in TRM ...
+
+
+In mipi driver will update as below to have mipi clk enabled till=20
+calibration status check is done.
+
+Always tegra_mipi_wait() followes tegra_mipi_calibrate() in both DSI and=20
+CSI. So below sequence should work good.
+
+tegra_mipi_calibrate()
+
+- clk_enable mipi cal
+- program mipi cal registers (bias pads cfgs, mipi cal ctrl and trigger=20
+calibration start)
+
+tegra_mipi_wait()
+- read mipi cal status and wait for active and done bits
+- clk_disable mipi cal
+
+Thanks
+
+Sowjanya
