@@ -1,54 +1,78 @@
-From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Re: Re: Re: [PATCH v4 12/23] ASoC: simple-card: Support DPCM DAI
- link with multiple Codecs
-Date: Fri, 17 Jul 2020 18:25:15 +0530
-Message-ID: <6194dad2-040b-c0f2-b269-571a303bbb08@nvidia.com>
-References: <874kqu1x70.wl-kuninori.morimoto.gx@renesas.com>
- <1e0cf6d1-bf4e-8808-5390-c8a3b7c7fe7e@nvidia.com>
- <87mu4lz6pt.wl-kuninori.morimoto.gx@renesas.com>
- <1d7888c7-a8cc-e891-01aa-016e31cc9113@nvidia.com>
- <87ftadyrec.wl-kuninori.morimoto.gx@renesas.com>
- <492079e9-4518-78ba-a227-859d31594369@nvidia.com>
- <20200630110100.GH5272@sirena.org.uk>
- <81d106c0-e1c8-a79a-8caf-1f3be0d61f0c@nvidia.com>
- <20200630153220.GL5272@sirena.org.uk>
- <fb286ab7-21f2-43ad-2751-c76b7b6e4cf2@nvidia.com>
- <20200702122605.GE4483@sirena.org.uk>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH -next] gpu: host1x: Convert to DEFINE_SHOW_ATTRIBUTE
+Date: Fri, 17 Jul 2020 16:25:24 +0200
+Message-ID: <20200717142524.GA1218823@ulmo>
+References: <20200716090323.13274-1-miaoqinglang@huawei.com>
+ <20200716133450.GJ535268@ulmo>
+ <5684dcb3-c5a4-96c1-dd96-c44f5a94938f@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200702122605.GE4483-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <5684dcb3-c5a4-96c1-dd96-c44f5a94938f-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: miaoqinglang <miaoqinglang-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark,
 
+--UugvWAfsgieZRqgk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 7/2/2020 5:56 PM, Mark Brown wrote:
-> On Thu, Jul 02, 2020 at 04:06:14PM +0530, Sameer Pujar wrote:
->
->> For the HW I am using, there are no fixed endpoints and I am not sure if it
->> is allowed to have empty endpoints in audio-graph-card. Crossbar/router
->> provides the flexibility to connect the components in any required order.
->> Patch [05/23] exposes required graph and MUX controls for the flexible
->> configurations. Mostly, in DT, I am trying to model the component itself and
->> finally router can help me specify the audio path to interconnect various
->> components. Hence I was trying to understand if it is really necessary to
->> represent the links using audio-graph-card. Kindly help me understand what
->> more it offers. If simple-card works fine, are we allowed to use it?
-> The links in the graph card should be the physical links at the edge of
-> the devices, those must be fixed no matter what.
+On Fri, Jul 17, 2020 at 09:32:21AM +0800, miaoqinglang wrote:
+>=20
+> =E5=9C=A8 2020/7/16 21:34, Thierry Reding =E5=86=99=E9=81=93:
+> > On Thu, Jul 16, 2020 at 05:03:23PM +0800, Qinglang Miao wrote:
+> > > From: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+> > >=20
+> > > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+> > >=20
+> > > Signed-off-by: Yongqiang Liu <liuyongqiang13-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > >   drivers/gpu/host1x/debug.c | 28 ++++------------------------
+> > >   1 file changed, 4 insertions(+), 24 deletions(-)
+> > This doesn't apply. Can you please resend, based on something like
+> > linux-next?
+> >=20
+> > Thanks,
+> > Thierry
+> Hi, Thierry
+>=20
+> =C2=A0 Sorry I didn't mention it in commit log, but this patch is based on
+> linux-next where commit <4d4901c6d7> has switched over direct=C2=A0 seq_r=
+ead
+> method calls to seq_read_iter, this is why there's conflict in=C2=A0 your=
+ apply.
+>=20
+> =C2=A0 Do you think I should send a new patch based on 5.8rc?
 
-I used graph-card and could get few things working with it. Based on the 
-feedback so far, I am planning to split the series as suggested and send 
-two series as below.
-[1] Tegra AHUB series and related DT bindings as V5.
-[2] Audio graph card enhancements and related DT bindings for Tegra 
-platforms as V1.
+No need to. I'm about to send out the pull request for v5.9-rc1, so I'll
+just defer this to v5.10 since it doesn't look like it's anything
+urgent.
 
-Thanks,
-Sameer.
+Thierry
+
+--UugvWAfsgieZRqgk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8RtM8ACgkQ3SOs138+
+s6Hj6g/+MgjmNXDQakxoDHLk0m84f7i97cY0lrI0Z0XFp0ZsuZp4VHLS0Rzd2wt8
+3tb6OLbwu6Q456lBZIw/FKa7i4zJ3bRzV1+dnvZaXPWgVUzSRMEgo6AugBNGQqhy
+eQJH+5NfpN75sWFtXjhA/PscNW1v6oR/QkTKa2kcYFtP5xbSWHxVkdRUK/Xl5s15
+TGaYsskrZehPE8k+6xNH6c0RIpt6ERO1NxnjrapApW3w98IYen1X8ONjILhJhjny
+ZjUJN3WbTaZVo7WtxZWG9G5AMR+5LK8qByRzjf1VoWWpFbiuZaPae/ewRFm8CZeg
+jNS3PYpAuSW9Bv0j5o2EEXUK4LV9gAC8ET140dTMmupSLH73Eu1ML7+Lm0TAGkK0
+MPmJ8jLc0TMTERdA2Jt5s5sNZttMjaABxgPvl2igT+2zVA3yzyE1E3EO5qpyVQSF
+R2AWrcyc9gVdyCElBq5Z39td7OkL4ylG/sboo6xxudgW5gcYo2K2w541CEES9TKm
+JWeo5cf8YiBWcoF6ppg+OkTw61NILMjiMopyrd5ZDSOnwAi/oprOyGT7TfQJqazJ
+y78QPzi3GrAzlZzMovNWNw+7MIIuig0tYtxVMz1i5/uBAE89ngZjN+09a4G14q4z
+0giSD+1Iya4q2w/DBhCIwiyhT53pHp76KrCj/+Xy1+8FUVHUprU=
+=J7AY
+-----END PGP SIGNATURE-----
+
+--UugvWAfsgieZRqgk--
