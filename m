@@ -1,70 +1,98 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v11 0/4] Panel rotation patches
-Date: Fri, 17 Jul 2020 17:59:55 +0300
-Message-ID: <848a586a-060c-1244-e057-99f5b56baf09@gmail.com>
-References: <20200617231842.30671-1-digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [RFC PATCH v3 16/18] gpu: host1x: mipi: Split
+ tegra_mipi_calibrate and tegra_mipi_wait
+Date: Fri, 17 Jul 2020 18:01:58 +0300
+Message-ID: <080b30c7-1dce-dd2f-dd96-40f6e25da4d6@gmail.com>
+References: <1594786855-26506-1-git-send-email-skomatineni@nvidia.com>
+ <1594786855-26506-17-git-send-email-skomatineni@nvidia.com>
+ <a06dec8f-7042-767b-545b-048685a7683d@gmail.com>
+ <20d63eca-4b2b-584e-a391-a4fb64a16b40@nvidia.com>
+ <c4945c77-5de1-e9b1-9f4f-cdd78bca18c7@gmail.com>
+ <ce0c5ffb-f859-0eab-1ea5-044623dff221@nvidia.com>
+ <a2b8169c-c4a3-4862-cd27-8c1a51ddc558@gmail.com>
+ <4690e682-8495-2327-87c7-c2f06a7a479d@nvidia.com>
+ <66812127-38cf-2af3-51c0-50edbe446e73@nvidia.com>
+ <9b4fbf9d-d651-aa35-c0a6-b8f16aeb0900@gmail.com>
+ <550f1796-67ca-5856-223d-c68360243954@nvidia.com>
+ <ca8f2184-de30-03ec-9caf-e20a22d96a77@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200617231842.30671-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <ca8f2184-de30-03ec-9caf-e20a22d96a77@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Stone <daniel-rLtY4a/8tF1rovVCs/uTlw@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-media-owner@vger.kernel.org
+To: Sowjanya Komatineni <skomatineni@nvidia.com>, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
+Cc: sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-18.06.2020 02:18, Dmitry Osipenko пишет:
-> Hello!
+17.07.2020 07:46, Sowjanya Komatineni пишет:
+...
+> Looks like sequence posted in TRM need to be updated clearly for proper
+> MIPI CAL start and wait.
 > 
-> This series adds support for display panel's DT rotation property. It's a
-> continuation of the work that was initially started by Derek Basehore for
-> the panel driver that is used by some Mediatek device [1]. I picked up the
-> Derek's patches and added my t-b and r-b tags to them, I also added
-> rotation support to the panel-lvds and panel-simple drivers.
+> Correct steps should be like below
 > 
-> We need the rotation support for the Nexus 7 tablet device which is pending
-> to become supported by upstream kernel, the device has display panel mounted
-> upside-down and it uses panel-lvds [2].
+> 1. Set up CSI registers for use case such as number of lanes, virtual 
+> channel, etc.
+> 2. Initialize and power up CSI CIL interface
+> 3. Program MIPI CAL bias pads, cal configs, cal control registers and
+> enable calibration start
+> 4. Power up camera through the I2C interface and start sensor streaming
+> through the I2C
 > 
-> [1] https://lkml.org/lkml/2020/3/5/1119
-> [2] https://patchwork.ozlabs.org/project/linux-tegra/patch/20200607154327.18589-3-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org/
+> Note: All sensors might not leave pads in LP-11 state as sensor may be
+> power down when not in use.
 > 
-> Changelog:
+> So start streaming prior to checking for calibration done status as
+> LP-11 -> HS transition happens during sensor stream and calibration
+> logic can apply results to pads and update done status,
 > 
-> v11: - This series is factored out from this patchset [3] because these
->        patches do not have hard dependency on the Tegra DRM patches and
->        it should be nicer to review and apply the properly grouped patches.
+> 5. Wait for done signal from calibration logic
 > 
->      - Initially [3] only touched the panel-lvds driver and Emil Velikov
->        suggested that it will be better to support more panels in the review
->        comments to [3]. So I included the Derek's patch for the BOE panel
->        and added rotation support to the panel-simple driver. I tested that
->        panel-lvds and panel-simple work properly with the rotated panel using
->        the Opentegra Xorg driver [4] and Wayland Weston [5].
+> 6. perform frame capture thru VI
+> 7. Frame done, CSI goes back to stop state, LP11
 > 
->      - The panel-lvds driver now prints a error message if rotation property
->        fails to be parsed.
-> 
-> [3] https://lore.kernel.org/lkml/20200614200121.14147-1-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org/
-> [4] https://github.com/grate-driver/xf86-video-opentegra/commit/28eb20a3959bbe5bc3a3b67e55977093fd5114ca
-> [5] https://gitlab.freedesktop.org/wayland/weston/-/merge_requests/315
-> 
-> Derek Basehore (2):
->   drm/panel: Add helper for reading DT rotation
->   drm/panel: Read panel orientation for BOE TV101WUM-NL6
-> 
-> Dmitry Osipenko (2):
->   drm/panel: lvds: Read panel orientation
->   drm/panel-simple: Read panel orientation
-> 
->  drivers/gpu/drm/drm_panel.c                   | 43 +++++++++++++++++++
->  .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    |  6 +++
->  drivers/gpu/drm/panel/panel-lvds.c            | 10 +++++
->  drivers/gpu/drm/panel/panel-simple.c          | 11 +++++
->  include/drm/drm_panel.h                       |  9 ++++
->  5 files changed, 79 insertions(+)
-> 
+> Will work internally to correct sequence in TRM ...
 
-Hi! Does anyone have any comments to this patchset? Will be nice if it
-could get into 5.9 :) Thanks in advance!
+Will be nice to have an updated TRM, thank you!
+
+Also, what about the auto-calibration? Isn't it needed to be enabled for
+CSI?
+
+> In mipi driver will update as below to have mipi clk enabled till
+> calibration status check is done.
+> 
+> Always tegra_mipi_wait() followes tegra_mipi_calibrate() in both DSI and
+> CSI. So below sequence should work good.
+> 
+> tegra_mipi_calibrate()
+> 
+> - clk_enable mipi cal
+> - program mipi cal registers (bias pads cfgs, mipi cal ctrl and trigger
+> calibration start)
+> 
+> tegra_mipi_wait()
+> - read mipi cal status and wait for active and done bits
+> - clk_disable mipi cal
+
+
+Maybe then it should be better to rename the functions like this:
+
+tegra_mipi_calibrate() -> tegra_mipi_start_calibration()
+tegra_mipi_wait()      -> tegra_mipi_finish_calibration().
+
+and there also should be tegra_mipi_cancel_calibration().
+
+
+Example:
+
+	tegra_mipi_start_calibration();
+
+	ret = v4l2_subdev_call(subdev, video, s_stream, on);
+	if (ret < 0) {
+		tegra_mipi_cancel_calibration();
+		goto err;
+	}
+
+	tegra_mipi_finish_calibration();
