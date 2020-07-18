@@ -1,41 +1,40 @@
-From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v10 0/5] NVIDIA ARM SMMU Implementation
-Date: Fri, 17 Jul 2020 22:36:26 +0000
-Message-ID: <BYAPR12MB282220FED958EED2AA6AA860B37C0@BYAPR12MB2822.namprd12.prod.outlook.com>
-References: <20200708050017.31563-1-vdumpa@nvidia.com>
- <20200713135020.GD2739@willie-the-truck>
- <20200717100337.GA8673@willie-the-truck>
+From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [TEGRA194_CPUFREQ PATCH v6 2/3] arm64: tegra: Add t194 ccplex
+ compatible and bpmp property
+Date: Sat, 18 Jul 2020 13:59:14 +0530
+Message-ID: <20200718082914.ecyngrsoir7j5q6y@vireshk-mac-ubuntu>
+References: <1594819885-31016-1-git-send-email-sumitg@nvidia.com>
+ <1594819885-31016-3-git-send-email-sumitg@nvidia.com>
+ <20200716123715.GA535268@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200717100337.GA8673@willie-the-truck>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20200716123715.GA535268@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Will Deacon <will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "robin.murphy-5wv7dgnIgG8@public.gmane.org" <robin.murphy-5wv7dgnIgG8@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yu-Huan Hsu <YHsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sachin Nikam <Snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bitan Biswas <bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Nicoli
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
->On Mon, Jul 13, 2020 at 02:50:20PM +0100, Will Deacon wrote:
->> On Tue, Jul 07, 2020 at 10:00:12PM -0700, Krishna Reddy wrote:
-> >> Changes in v10:
->> > Perform SMMU base ioremap before calling implementation init.
->> > Check for Global faults across both ARM MMU-500s during global interru=
-pt.
->> > Check for context faults across all contexts of both ARM MMU-500s duri=
-ng context fault interrupt.
-> >> Add new DT binding nvidia,smmu-500 for NVIDIA implementation.
->>
->> Please repost based on my SMMU queue, as this doesn't currently apply.
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=3D
->> for-joerg/arm-smmu/updates
+On 16-07-20, 14:37, Thierry Reding wrote:
+> On Wed, Jul 15, 2020 at 07:01:24PM +0530, Sumit Gupta wrote:
+> > On Tegra194, data on valid operating points for the CPUs needs to be
+> > queried from BPMP. In T194, there is no node representing CPU complex.
+> > So, add compatible string to the 'cpus' node instead of using dummy
+> > node to bind cpufreq driver. Also, add reference to the BPMP instance
+> > for the CPU complex.
+> > 
+> > Signed-off-by: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 ++
+> >  1 file changed, 2 insertions(+)
+> 
+> Looks like the DT bindings are now done so I've applied this for v5.9.
+> 
+> Viresh, are you going to pick up the other patches, or do you want me
+> to pick them up and send you a pull request?
 
->Any update on this, please? It would be a shame to miss 5.9 now that the p=
-atches look alright.
+Applied the other two patches, Thanks.
 
-Thanks for pinging.
-I have been out of the office this week. Just started working on reposting =
-patches.
-
-Will
+-- 
+viresh
