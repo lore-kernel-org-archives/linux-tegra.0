@@ -1,166 +1,59 @@
-From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] PCI: tegra: Revert tegra124 raw_violation_fixup
-Date: Sat, 18 Jul 2020 12:07:10 +0200
-Message-ID: <20200718100710.15398-1-kwizart@gmail.com>
+From: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v11 0/5] NVIDIA ARM SMMU Implementation
+Date: Sat, 18 Jul 2020 12:34:52 -0700
+Message-ID: <20200718193457.30046-1-vdumpa@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, will-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yhsu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, snikam-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bbiswas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicolinc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhuntsman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-As reported in https://bugzilla.kernel.org/206217 , raw_violation_fixup
-is causing more harm than good in some common use-cases.
+Changes in v11:
+Addressed Rob comment on DT binding patch to set min/maxItems of reg proper=
+ty in else part.
+Rebased on top of https://git.kernel.org/pub/scm/linux/kernel/git/will/linu=
+x.git/log/?h=3Dfor-joerg/arm-smmu/updates.
 
-This patch is a partial revert of commit:
- 191cd6fb5d2c ("PCI: tegra: Add SW fixup for RAW violations")
-that was first introduced in 5.3-rc1 kernel. This fix the following
-regression since then.
+Changes in v10:
+Perform SMMU base ioremap before calling implementation init.
+Check for Global faults across both ARM MMU-500s during global interrupt.
+Check for context faults across all contexts of both ARM MMU-500s during co=
+ntext fault interrupt.
+Add new DT binding nvidia,smmu-500 for NVIDIA implementation.
+https://lkml.org/lkml/2020/7/8/57
 
-* Description:
-When both the NIC and MMC are used one can see the following message:
+v9 - https://lkml.org/lkml/2020/6/30/1282
+v8 - https://lkml.org/lkml/2020/6/29/2385
+v7 - https://lkml.org/lkml/2020/6/28/347
+v6 - https://lkml.org/lkml/2020/6/4/1018
+v5 - https://lkml.org/lkml/2020/5/21/1114
+v4 - https://lkml.org/lkml/2019/10/30/1054
+v3 - https://lkml.org/lkml/2019/10/18/1601
+v2 - https://lkml.org/lkml/2019/9/2/980
+v1 - https://lkml.org/lkml/2019/8/29/1588
 
-  NETDEV WATCHDOG: enp1s0 (r8169): transmit queue 0 timed out
 
-and
+Krishna Reddy (5):
+  iommu/arm-smmu: move TLB timeout and spin count macros
+  iommu/arm-smmu: ioremap smmu mmio region before implementation init
+  iommu/arm-smmu: add NVIDIA implementation for ARM MMU-500 usage
+  dt-bindings: arm-smmu: add binding for Tegra194 SMMU
+  iommu/arm-smmu: Add global/context fault implementation hooks
 
-  pcieport 0000:00:02.0: AER: Uncorrected (Non-Fatal) error received: 0000:01:00.0
-  r8169 0000:01:00.0: AER: PCIe Bus Error: severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Requester ID)
-  r8169 0000:01:00.0: AER:   device [10ec:8168] error status/mask=00004000/00400000
-  r8169 0000:01:00.0: AER:    [14] CmpltTO                (First)
-  r8169 0000:01:00.0: AER: can't recover (no error_detected callback)
-  pcieport 0000:00:02.0: AER: device recovery failed
+ .../devicetree/bindings/iommu/arm,smmu.yaml   |  25 +-
+ MAINTAINERS                                   |   2 +
+ drivers/iommu/Makefile                        |   2 +-
+ drivers/iommu/arm-smmu-impl.c                 |   3 +
+ drivers/iommu/arm-smmu-nvidia.c               | 278 ++++++++++++++++++
+ drivers/iommu/arm-smmu.c                      |  29 +-
+ drivers/iommu/arm-smmu.h                      |   6 +
+ 7 files changed, 334 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/iommu/arm-smmu-nvidia.c
 
-After that, the ethernet NIC isn't functional anymore even after
-reloading the r8169 module. After a reboot, this is reproducible by
-copying a large file over the NIC to the MMC.
 
-For some reason this is not reproducible when files are copied to a tmpfs.
-
-* Little background on the fixup, by Manikanta Maddireddy:
-  "In the internal testing with dGPU on Tegra124, CmplTO is reported by
-dGPU. This happened because FIFO queue in AFI(AXI to PCIe) module
-get full by upstream posted writes. Back to back upstream writes
-interleaved with infrequent reads, triggers RAW violation and CmpltTO.
-This is fixed by reducing the posted write credits and by changing
-updateFC timer frequency. These settings are fixed after stress test.
-
-In the current case, RTL NIC is also reporting CmplTO. These settings
-seems to be aggravating the issue instead of fixing it."
-
-Fixes: 191cd6fb5d2c ("PCI: tegra: Add SW fixup for RAW violations")
-Signed-off-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Manikanta Maddireddy <mmaddireddy-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
----
-
-v1: first non-RFC version
-    Disable raw_violation_fixup and fully remove unused code and macros
-
-v2: Update the commit message
-
- drivers/pci/controller/pci-tegra.c | 32 ------------------------------
- 1 file changed, 32 deletions(-)
-
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 235b456698fc..b532d5082fb6 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -181,13 +181,6 @@
- 
- #define AFI_PEXBIAS_CTRL_0		0x168
- 
--#define RP_PRIV_XP_DL		0x00000494
--#define  RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD	(0x1ff << 1)
--
--#define RP_RX_HDR_LIMIT		0x00000e00
--#define  RP_RX_HDR_LIMIT_PW_MASK	(0xff << 8)
--#define  RP_RX_HDR_LIMIT_PW		(0x0e << 8)
--
- #define RP_ECTL_2_R1	0x00000e84
- #define  RP_ECTL_2_R1_RX_CTLE_1C_MASK		0xffff
- 
-@@ -323,7 +316,6 @@ struct tegra_pcie_soc {
- 	bool program_uphy;
- 	bool update_clamp_threshold;
- 	bool program_deskew_time;
--	bool raw_violation_fixup;
- 	bool update_fc_timer;
- 	bool has_cache_bars;
- 	struct {
-@@ -659,23 +651,6 @@ static void tegra_pcie_apply_sw_fixup(struct tegra_pcie_port *port)
- 		writel(value, port->base + RP_VEND_CTL0);
- 	}
- 
--	/* Fixup for read after write violation. */
--	if (soc->raw_violation_fixup) {
--		value = readl(port->base + RP_RX_HDR_LIMIT);
--		value &= ~RP_RX_HDR_LIMIT_PW_MASK;
--		value |= RP_RX_HDR_LIMIT_PW;
--		writel(value, port->base + RP_RX_HDR_LIMIT);
--
--		value = readl(port->base + RP_PRIV_XP_DL);
--		value |= RP_PRIV_XP_DL_GEN2_UPD_FC_TSHOLD;
--		writel(value, port->base + RP_PRIV_XP_DL);
--
--		value = readl(port->base + RP_VEND_XP);
--		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
--		value |= soc->update_fc_threshold;
--		writel(value, port->base + RP_VEND_XP);
--	}
--
- 	if (soc->update_fc_timer) {
- 		value = readl(port->base + RP_VEND_XP);
- 		value &= ~RP_VEND_XP_UPDATE_FC_THRESHOLD_MASK;
-@@ -2416,7 +2391,6 @@ static const struct tegra_pcie_soc tegra20_pcie = {
- 	.program_uphy = true,
- 	.update_clamp_threshold = false,
- 	.program_deskew_time = false,
--	.raw_violation_fixup = false,
- 	.update_fc_timer = false,
- 	.has_cache_bars = true,
- 	.ectl.enable = false,
-@@ -2446,7 +2420,6 @@ static const struct tegra_pcie_soc tegra30_pcie = {
- 	.program_uphy = true,
- 	.update_clamp_threshold = false,
- 	.program_deskew_time = false,
--	.raw_violation_fixup = false,
- 	.update_fc_timer = false,
- 	.has_cache_bars = false,
- 	.ectl.enable = false,
-@@ -2459,8 +2432,6 @@ static const struct tegra_pcie_soc tegra124_pcie = {
- 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
- 	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
- 	.pads_refclk_cfg0 = 0x44ac44ac,
--	/* FC threshold is bit[25:18] */
--	.update_fc_threshold = 0x03fc0000,
- 	.has_pex_clkreq_en = true,
- 	.has_pex_bias_ctrl = true,
- 	.has_intr_prsnt_sense = true,
-@@ -2470,7 +2441,6 @@ static const struct tegra_pcie_soc tegra124_pcie = {
- 	.program_uphy = true,
- 	.update_clamp_threshold = true,
- 	.program_deskew_time = false,
--	.raw_violation_fixup = true,
- 	.update_fc_timer = false,
- 	.has_cache_bars = false,
- 	.ectl.enable = false,
-@@ -2494,7 +2464,6 @@ static const struct tegra_pcie_soc tegra210_pcie = {
- 	.program_uphy = true,
- 	.update_clamp_threshold = true,
- 	.program_deskew_time = true,
--	.raw_violation_fixup = false,
- 	.update_fc_timer = true,
- 	.has_cache_bars = false,
- 	.ectl = {
-@@ -2536,7 +2505,6 @@ static const struct tegra_pcie_soc tegra186_pcie = {
- 	.program_uphy = false,
- 	.update_clamp_threshold = false,
- 	.program_deskew_time = false,
--	.raw_violation_fixup = false,
- 	.update_fc_timer = false,
- 	.has_cache_bars = false,
- 	.ectl.enable = false,
--- 
-2.25.4
+base-commit: 49fbb25030265c660de732513f18275d88ff99d3
+--=20
+2.26.2
