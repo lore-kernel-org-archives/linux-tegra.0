@@ -1,7 +1,7 @@
 From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 05/10] ASoC: audio-graph: Identify 'no_pcm' DAI links for DPCM
-Date: Sun, 19 Jul 2020 10:40:12 +0530
-Message-ID: <1595135417-16589-6-git-send-email-spujar@nvidia.com>
+Subject: [PATCH 06/10] ASoC: soc-pcm: Get all BEs along DAPM path
+Date: Sun, 19 Jul 2020 10:40:13 +0530
+Message-ID: <1595135417-16589-7-git-send-email-spujar@nvidia.com>
 References: <1595135417-16589-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,58 +12,44 @@ To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gm
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PCM devices are created for FE dai links with 'no-pcm' flag as '0'.
-Such DAI links have CPU component which implement either pcm_construct()
-or pcm_new() at component or dai level respectively. Based on this,
-current patch exposes a helper function to identify such components
-and populate 'no_pcm' flag for DPCM DAI link.
-
-This helps to have BE<->BE component links where PCM devices need
-not be created for CPU component involved in such links.
+dpcm_end_walk_at_be() stops the graph walk when first BE is found for
+the given FE component. In a component model we may want to connect
+multiple DAIs from different components. A new flag is introduced in
+'snd_soc_card', which when set allows DAI/component chaining. Later
+PCM operations can be called for all these listed components for a
+valid DAPM path.
 
 Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/generic/audio-graph-card.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ include/sound/soc.h | 1 +
+ sound/soc/soc-pcm.c | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index caa8a77..82d8c740 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -111,6 +111,17 @@ static int graph_get_dai_id(struct device_node *ep)
- 	return id;
- }
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index 59235e5..e1f2405 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -1051,6 +1051,7 @@ struct snd_soc_card {
+ 	int num_of_dapm_widgets;
+ 	const struct snd_soc_dapm_route *of_dapm_routes;
+ 	int num_of_dapm_routes;
++	bool component_chaining;
  
-+static bool soc_component_is_pcm(struct snd_soc_dai_link_component *dlc)
-+{
-+	struct snd_soc_dai *dai = snd_soc_find_dai(dlc);
-+
-+	if (dai && (dai->component->driver->pcm_construct ||
-+		    dai->driver->pcm_new))
-+		return true;
-+
-+	return false;
-+}
-+
- static int asoc_simple_parse_dai(struct device_node *ep,
- 				 struct snd_soc_dai_link_component *dlc,
- 				 int *is_single_link)
-@@ -262,6 +273,16 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 		if (ret < 0)
- 			goto out_put_node;
+ 	/* lists of probed devices belonging to this card */
+ 	struct list_head component_dev_list;
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index f2c7c85..9de3ec9 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1323,7 +1323,8 @@ int dpcm_path_get(struct snd_soc_pcm_runtime *fe,
  
-+		/*
-+		 * In BE<->BE connections it is not required to create
-+		 * PCM devices at CPU end of the dai link and thus 'no_pcm'
-+		 * flag needs to be set. It is useful when there are many
-+		 * BE components and some of these have to be connected to
-+		 * form a valid audio path.
-+		 */
-+		if (!soc_component_is_pcm(cpus))
-+			dai_link->no_pcm = 1;
-+
- 		/* card->num_links includes Codec */
- 		asoc_simple_canonicalize_cpu(dai_link, is_single_links);
- 	} else {
+ 	/* get number of valid DAI paths and their widgets */
+ 	paths = snd_soc_dapm_dai_get_connected_widgets(cpu_dai, stream, list,
+-			dpcm_end_walk_at_be);
++			fe->card->component_chaining ?
++				NULL : dpcm_end_walk_at_be);
+ 
+ 	dev_dbg(fe->dev, "ASoC: found %d audio %s paths\n", paths,
+ 			stream ? "capture" : "playback");
 -- 
 2.7.4
