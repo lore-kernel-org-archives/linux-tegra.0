@@ -1,57 +1,32 @@
-From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 5.7 09/40] dmaengine: tegra210-adma: Fix runtime PM imbalance on error
-Date: Mon, 20 Jul 2020 17:36:44 -0400
-Message-ID: <20200720213715.406997-9-sashal@kernel.org>
-References: <20200720213715.406997-1-sashal@kernel.org>
+From: "MOORE GATES LTD" <TEXT-NsOZlrMvkWM@public.gmane.org>
+Subject: FROM MR. MOORE
+Date: Sun, 19 Jul 20 12:09:37 GMT
+Message-ID: <qoap--$$2--7c-9c__16160.4585869767$1595301449$gmane$org@95ql.c.sm7vtdb>
+Reply-To: "MOORE GATES LTD" <TEXT-NsOZlrMvkWM@public.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/alternative;
+        boundary="D9F2D5A2__"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200720213715.406997-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-man-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
 
-[ Upstream commit 5b78fac4b1ba731cf4177fdbc1e3a4661521bcd0 ]
+--D9F2D5A2__
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-pm_runtime_get_sync() increments the runtime PM usage counter even
-when it returns an error code. Thus a pairing decrement is needed on
-the error handling path to keep the counter balanced.
+Dear Beloved,
+Peace of the Lord be with you and family, I am Fitzpatrick Moore a
+United Kingdom Citizen, I have ($ 25M) Twenty five Million united
+states dollars with a finance House in United State. I will want you
+to help me collect this deposit and dispatch it to charity
+organizations. You will take out 30% of these funds for your
+assistance to help ME disburse this fund to charities. I will like you
+to acknowledge the receipt of this e-mail as soon as possible and
+treats with absolute confidentiality and sincerity. Please reply to my
+Email: (moorefitzpatrick-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org)
+Yours Sincerely,
+Fitzpatrick Moore
 
-Signed-off-by: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Link: https://lore.kernel.org/r/20200624064626.19855-1-dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org
-Signed-off-by: Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- drivers/dma/tegra210-adma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index db58d7e4f9fec..c5fa2ef74abc7 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -658,6 +658,7 @@ static int tegra_adma_alloc_chan_resources(struct dma_chan *dc)
- 
- 	ret = pm_runtime_get_sync(tdc2dev(tdc));
- 	if (ret < 0) {
-+		pm_runtime_put_noidle(tdc2dev(tdc));
- 		free_irq(tdc->irq, tdc);
- 		return ret;
- 	}
-@@ -869,8 +870,10 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	pm_runtime_enable(&pdev->dev);
- 
- 	ret = pm_runtime_get_sync(&pdev->dev);
--	if (ret < 0)
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(&pdev->dev);
- 		goto rpm_disable;
-+	}
- 
- 	ret = tegra_adma_init(tdma);
- 	if (ret)
--- 
-2.25.1
+--D9F2D5A2__--
