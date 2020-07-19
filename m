@@ -1,7 +1,7 @@
 From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 08/10] ASoC: audio-graph: Add support for component chaining
-Date: Sun, 19 Jul 2020 10:40:15 +0530
-Message-ID: <1595135417-16589-9-git-send-email-spujar@nvidia.com>
+Subject: [PATCH 09/10] arm64: tegra: Audio graph header for Tegra210
+Date: Sun, 19 Jul 2020 10:40:16 +0530
+Message-ID: <1595135417-16589-10-git-send-email-spujar@nvidia.com>
 References: <1595135417-16589-1-git-send-email-spujar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,106 +12,142 @@ To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gm
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The audio-graph driver supports both normal and DPCM DAI links. The
-sound cards requiring DPCM DAI link support, use DPCM_SELECTABLE flag
-and DAI links are treated as DPCM links depending on the number of
-child nodes in a given DAI link.
-
-There is another requirement where multiple ASoC components need to
-be connected together in a chained fashion in a component model. This
-patch sets 'component_chaining' flag for such sound cards where FE<->BE
-and multiple BE<->BE component connections are required. Hence support
-for such sound cards is added under 'audio-graph-cc-card' compatible.
-All DAI links under this are treated as DPCM links.
+Expose a header which describes DT bindings required to use audio-graph
+based sound card. All Tegra210 based platforms can include this header
+and add platform specific information. Currently, from SoC point of view,
+all links are exposed for ADMAIF, AHUB, I2S and DMIC components.
 
 Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/generic/audio-graph-card.c | 32 +++++++++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 7 deletions(-)
+ .../boot/dts/nvidia/tegra210-audio-graph.dtsi      | 120 +++++++++++++++++++++
+ 1 file changed, 120 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-audio-graph.dtsi
 
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index 82d8c740..ccfcf5f 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -20,10 +20,13 @@
- #include <linux/string.h>
- #include <sound/simple_card_utils.h>
- 
--#define DPCM_SELECTABLE 1
--
- #define PREFIX	"audio-graph-card,"
- 
-+struct asoc_simple_soc_data {
-+	unsigned int dpcm_selectable:1;
-+	unsigned int component_chaining:1;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-audio-graph.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-audio-graph.dtsi
+new file mode 100644
+index 0000000..1cf2c87
+--- /dev/null
++++ b/arch/arm64/boot/dts/nvidia/tegra210-audio-graph.dtsi
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/ {
++	tegra_sound {
++		status = "disabled";
++
++		compatible = "audio-graph-cc-card";
++
++		clocks = <&tegra_car TEGRA210_CLK_PLL_A>,
++			 <&tegra_car TEGRA210_CLK_PLL_A_OUT0>,
++			 <&tegra_car TEGRA210_CLK_EXTERN1>;
++		clock-names = "pll_a", "plla_out0", "aud_mclk";
++
++		assigned-clocks = <&tegra_car TEGRA210_CLK_PLL_A>,
++				  <&tegra_car TEGRA210_CLK_PLL_A_OUT0>,
++				  <&tegra_car TEGRA210_CLK_EXTERN1>;
++		assigned-clock-parents = <0>, <0>, <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
++		assigned-clock-rates = <368640000>, <49152000>, <12288000>;
++	};
 +};
 +
- static int graph_outdrv_event(struct snd_soc_dapm_widget *w,
- 			      struct snd_kcontrol *kcontrol,
- 			      int event)
-@@ -449,7 +452,7 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
- 	struct device_node *codec_ep;
- 	struct device_node *codec_port;
- 	struct asoc_simple_data adata;
--	uintptr_t dpcm_selectable = (uintptr_t)of_device_get_match_data(dev);
-+	const struct asoc_simple_soc_data *data = of_device_get_match_data(dev);
- 	int rc, ret;
- 
- 	/* loop for all listed CPU port */
-@@ -476,10 +479,12 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
- 			 * It is DPCM
- 			 * if Codec port has many endpoints,
- 			 * or has convert-xxx property
-+			 * or component chaining is used
- 			 */
--			if (dpcm_selectable &&
-+			if (data && data->dpcm_selectable &&
- 			    ((of_get_child_count(codec_port) > 1) ||
--			     adata.convert_rate || adata.convert_channels))
-+			     adata.convert_rate || adata.convert_channels ||
-+			     data->component_chaining))
- 				ret = func_dpcm(priv, cpu_ep, codec_ep, li);
- 			/* else normal sound */
- 			else
-@@ -650,6 +655,7 @@ static int graph_probe(struct platform_device *pdev)
- {
- 	struct asoc_simple_priv *priv;
- 	struct device *dev = &pdev->dev;
-+	const struct asoc_simple_soc_data *data = of_device_get_match_data(dev);
- 	struct snd_soc_card *card;
- 	struct link_info li;
- 	int ret;
-@@ -666,6 +672,9 @@ static int graph_probe(struct platform_device *pdev)
- 	card->num_dapm_widgets	= ARRAY_SIZE(graph_dapm_widgets);
- 	card->probe		= graph_card_probe;
- 
-+	if (data)
-+		card->component_chaining = data->component_chaining;
-+
- 	memset(&li, 0, sizeof(li));
- 	graph_get_dais_count(priv, &li);
- 	if (!li.link || !li.dais)
-@@ -711,10 +720,19 @@ static int graph_remove(struct platform_device *pdev)
- 	return asoc_simple_clean_reference(card);
- }
- 
-+static const struct asoc_simple_soc_data scu_card_data = {
-+	.dpcm_selectable = 1,
++&tegra_admaif {
++	admaif_port: port {
++		admaif0: endpoint@0 {
++			remote-endpoint = <&xbar_admaif0>;
++		};
++		admaif1: endpoint@1 {
++			remote-endpoint = <&xbar_admaif1>;
++		};
++		admaif2: endpoint@2 {
++			remote-endpoint = <&xbar_admaif2>;
++		};
++		admaif3: endpoint@3 {
++			remote-endpoint = <&xbar_admaif3>;
++		};
++		admaif4: endpoint@4 {
++			remote-endpoint = <&xbar_admaif4>;
++		};
++		admaif5: endpoint@5 {
++			remote-endpoint = <&xbar_admaif5>;
++		};
++		admaif6: endpoint@6 {
++			remote-endpoint = <&xbar_admaif6>;
++		};
++		admaif7: endpoint@7 {
++			remote-endpoint = <&xbar_admaif7>;
++		};
++		admaif8: endpoint@8 {
++			remote-endpoint = <&xbar_admaif8>;
++		};
++		admaif9: endpoint@9 {
++			remote-endpoint = <&xbar_admaif9>;
++		};
++	};
 +};
 +
-+static const struct asoc_simple_soc_data cc_card_data = {
-+	.dpcm_selectable = 1,
-+	.component_chaining = 1,
-+};
++&tegra_ahub {
++	port@0 {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
- static const struct of_device_id graph_of_match[] = {
- 	{ .compatible = "audio-graph-card", },
--	{ .compatible = "audio-graph-scu-card",
--	  .data = (void *)DPCM_SELECTABLE },
-+	{ .compatible = "audio-graph-scu-card", .data = &scu_card_data, },
-+	{ .compatible = "audio-graph-cc-card", .data = &cc_card_data, },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, graph_of_match);
++		/*
++		 * Audio Crossbar Codec endpoints.
++		 * Connected with FE endpoints.
++		 */
++
++		xbar_admaif0: endpoint@0 {
++			reg = <0>;
++			remote-endpoint = <&admaif0>;
++		};
++		xbar_admaif1: endpoint@1 {
++			reg = <1>;
++			remote-endpoint = <&admaif1>;
++		};
++		xbar_admaif2: endpoint@2 {
++			reg = <2>;
++			remote-endpoint = <&admaif2>;
++		};
++		xbar_admaif3: endpoint@3 {
++			reg = <3>;
++			remote-endpoint = <&admaif3>;
++		};
++		xbar_admaif4: endpoint@4 {
++			reg = <4>;
++			remote-endpoint = <&admaif4>;
++		};
++		xbar_admaif5: endpoint@5 {
++			reg = <5>;
++			remote-endpoint = <&admaif5>;
++		};
++		xbar_admaif6: endpoint@6 {
++			reg = <6>;
++			remote-endpoint = <&admaif6>;
++		};
++		xbar_admaif7: endpoint@7 {
++			reg = <7>;
++			remote-endpoint = <&admaif7>;
++		};
++		xbar_admaif8: endpoint@8 {
++			reg = <8>;
++			remote-endpoint = <&admaif8>;
++		};
++		xbar_admaif9: endpoint@9 {
++			reg = <9>;
++			remote-endpoint = <&admaif9>;
++		};
++	};
++
++	xbar_port: port@1 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/*
++		 * Audio crossbar CPU endpoints:
++		 * Describe connections to HW accelerators (which will
++		 * be addded going forward) and I/O interfaces (which
++		 * are specified in Platform DT files).
++		 */
++	};
++};
 -- 
 2.7.4
