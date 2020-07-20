@@ -1,153 +1,32 @@
-From: Rajesh Gumasta <rgumasta@nvidia.com>
-Subject: [Patch v1 4/4] arm64: tegra: Add GPCDMA node in dt
-Date: Mon, 20 Jul 2020 12:04:16 +0530
-Message-ID: <1595226856-19241-5-git-send-email-rgumasta@nvidia.com>
-References: <1595226856-19241-1-git-send-email-rgumasta@nvidia.com>
+From: Nicolas Chauvet <kwizart@gmail.com>
+Subject: Re: [PATCH] pci: tegra: Revert raw_violation_fixup for tegra124
+Date: Mon, 20 Jul 2020 09:02:59 +0200
+Message-ID: <CABr+WTkJ8jZDkM_=-LYxpbrqrsPEb96YBRJvBjR5u+0Ck9R4CQ@mail.gmail.com>
+References: <20200717213510.171726-1-kwizart@gmail.com> <20200717215304.GA775582@bjorn-Precision-5520>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1595226856-19241-1-git-send-email-rgumasta@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: ldewangan@nvidia.com, jonathanh@nvidia.com, vkoul@kernel.org, dan.j.williams@intel.com, thierry.reding@gmail.com, p.zabel@pengutronix.de, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyarlagadda@nvidia.com, rgumasta@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20200717215304.GA775582@bjorn-Precision-5520>
+Sender: stable-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Manikanta Maddireddy <mmaddireddy@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add device tree node for GPCDMA controller on Tegra186 target
-and Tegra194 target.
+Le ven. 17 juil. 2020 =C3=A0 23:53, Bjorn Helgaas <helgaas@kernel.org> a =
+=C3=A9crit :
+>
+Thanks for the quick review. I've addressed all comments and I've
+resubmitted a v2 to
+https://www.spinics.net/lists/linux-pci/msg96863.html
+Unfortunately I've missed to modify the [Patch v2] tag. I hope this is
+fine. Let me know if I need to resend.
 
-Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  4 +++
- arch/arm64/boot/dts/nvidia/tegra186.dtsi       | 46 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 44 ++++++++++++++++++++++++
- 3 files changed, 94 insertions(+)
+> Is v5.4.x really the oldest kernel that should get this fix?  It looks
+> like 191cd6fb5d2c appeared in v5.3.
+The commit was introduced in 5.3 indeed. I've added 5.4.x since it's
+the last maintained kernel from long term branches.
+Now I'm using the Fixes: tag, I've dropped the version of the kernel
+for stable as it seems duplicate and less accurate.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-index 2fcaa2e..56ed8d8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-@@ -54,6 +54,10 @@
- 		};
- 	};
- 
-+	dma@2600000 {
-+		status = "okay";
-+	};
-+
- 	memory-controller@2c00000 {
- 		status = "okay";
- 	};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 58100fb..91bb17e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -70,6 +70,52 @@
- 		snps,rxpbl = <8>;
- 	};
- 
-+	gpcdma: dma@2600000 {
-+			compatible = "nvidia,tegra186-gpcdma";
-+			reg = <0x0 0x2600000 0x0 0x210000>;
-+			resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-+			reset-names = "gpcdma";
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
-+			dma-coherent;
-+			nvidia,start-dma-channel-index = <1>;
-+			dma-channels = <31>;
-+			status = "disabled";
-+		};
-+
- 	aconnect {
- 		compatible = "nvidia,tegra186-aconnect",
- 			     "nvidia,tegra210-aconnect";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 4bc187a..0bd67bd 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -68,6 +68,50 @@
- 			snps,rxpbl = <8>;
- 		};
- 
-+	gpcdma: dma@2600000 {
-+			compatible = "nvidia,tegra194-gpcdma";
-+			reg = <0x0 0x2600000 0x0 0x210000>;
-+			resets = <&bpmp TEGRA194_RESET_GPCDMA>;
-+			reset-names = "gpcdma";
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				      <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			nvidia,start-dma-channel-index = <1>;
-+			dma-channels = <31>;
-+			status = "disabled";
-+		};
-+
- 		aconnect@2900000 {
- 			compatible = "nvidia,tegra194-aconnect",
- 				     "nvidia,tegra210-aconnect";
--- 
-2.7.4
+Thanks.
