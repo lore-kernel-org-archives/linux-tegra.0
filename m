@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH AUTOSEL 5.4 05/34] dmaengine: tegra210-adma: Fix runtime PM imbalance on error
-Date: Mon, 20 Jul 2020 17:37:38 -0400
-Message-ID: <20200720213807.407380-5-sashal@kernel.org>
-References: <20200720213807.407380-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 09/40] dmaengine: tegra210-adma: Fix runtime PM imbalance on error
+Date: Mon, 20 Jul 2020 17:36:44 -0400
+Message-ID: <20200720213715.406997-9-sashal@kernel.org>
+References: <20200720213715.406997-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20200720213807.407380-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20200720213715.406997-1-sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: Dinghao Liu <dinghao.liu-Y5EWUtBUdg4nDS1+zs4M5A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -30,7 +30,7 @@ Signed-off-by: Sasha Levin <sashal-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 914901a680c8a..9068591bd684b 100644
+index db58d7e4f9fec..c5fa2ef74abc7 100644
 --- a/drivers/dma/tegra210-adma.c
 +++ b/drivers/dma/tegra210-adma.c
 @@ -658,6 +658,7 @@ static int tegra_adma_alloc_chan_resources(struct dma_chan *dc)
