@@ -1,140 +1,88 @@
-From: Neal Liu <neal.liu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v2] cpuidle: change enter_s2idle() prototype
-Date: Mon, 20 Jul 2020 16:21:34 +0800
-Message-ID: <1595233294.8055.0.camel@mtkswgap22>
-References: <1594005196-16327-1-git-send-email-neal.liu@mediatek.com>
-         <1594005196-16327-2-git-send-email-neal.liu@mediatek.com>
-         <CAJZ5v0ihB5AJwSRpjaOnXAmciregzxARL5xfudu1h+=_LXaE_w@mail.gmail.com>
-         <1594350535.4670.13.camel@mtkswgap22>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [Patch v1 0/4] Add Nvidia Tegra GPC-DMA driver
+Date: Mon, 20 Jul 2020 11:25:56 +0200
+Message-ID: <20200720092556.GA2141917@ulmo>
+References: <1595226856-19241-1-git-send-email-rgumasta@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1594350535.4670.13.camel@mtkswgap22>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Neal Liu <neal.liu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Len Brown <lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jacob Pan <jacob.jun.pan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sami Tolvanen <samitolvanen-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, ACPI Devel Maling List <linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux PM <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "moderated list:ARM/Mediatek SoC..." <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, wsd_upstream <wsd_upstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1595226856-19241-1-git-send-email-rgumasta@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rajesh Gumasta <rgumasta@nvidia.com>
+Cc: ldewangan@nvidia.com, jonathanh@nvidia.com, vkoul@kernel.org, dan.j.williams@intel.com, p.zabel@pengutronix.de, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kyarlagadda@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-R2VudGxlIHBpbmcgb24gdGhpcyBwYXRjaC4NCg0KDQpPbiBGcmksIDIwMjAtMDctMTAgYXQgMTE6
-MDggKzA4MDAsIE5lYWwgTGl1IHdyb3RlOg0KPiBPbiBUaHUsIDIwMjAtMDctMDkgYXQgMTQ6MTgg
-KzAyMDAsIFJhZmFlbCBKLiBXeXNvY2tpIHdyb3RlOg0KPiA+IE9uIE1vbiwgSnVsIDYsIDIwMjAg
-YXQgNToxMyBBTSBOZWFsIExpdSA8bmVhbC5saXVAbWVkaWF0ZWsuY29tPiB3cm90ZToNCj4gPiA+
-DQo+ID4gPiBDb250cm9sIEZsb3cgSW50ZWdyaXR5KENGSSkgaXMgYSBzZWN1cml0eSBtZWNoYW5p
-c20gdGhhdCBkaXNhbGxvd3MNCj4gPiA+IGNoYW5nZXMgdG8gdGhlIG9yaWdpbmFsIGNvbnRyb2wg
-ZmxvdyBncmFwaCBvZiBhIGNvbXBpbGVkIGJpbmFyeSwNCj4gPiA+IG1ha2luZyBpdCBzaWduaWZp
-Y2FudGx5IGhhcmRlciB0byBwZXJmb3JtIHN1Y2ggYXR0YWNrcy4NCj4gPiA+DQo+ID4gPiBpbml0
-X3N0YXRlX25vZGUoKSBhc3NpZ24gc2FtZSBmdW5jdGlvbiBjYWxsYmFjayB0byBkaWZmZXJlbnQN
-Cj4gPiA+IGZ1bmN0aW9uIHBvaW50ZXIgZGVjbGFyYXRpb25zLg0KPiA+ID4NCj4gPiA+IHN0YXRp
-YyBpbnQgaW5pdF9zdGF0ZV9ub2RlKHN0cnVjdCBjcHVpZGxlX3N0YXRlICppZGxlX3N0YXRlLA0K
-PiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0IG9mX2RldmljZV9p
-ZCAqbWF0Y2hlcywNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBkZXZp
-Y2Vfbm9kZSAqc3RhdGVfbm9kZSkgeyAuLi4NCj4gPiA+ICAgICAgICAgaWRsZV9zdGF0ZS0+ZW50
-ZXIgPSBtYXRjaF9pZC0+ZGF0YTsgLi4uDQo+ID4gPiAgICAgICAgIGlkbGVfc3RhdGUtPmVudGVy
-X3MyaWRsZSA9IG1hdGNoX2lkLT5kYXRhOyB9DQo+ID4gPg0KPiA+ID4gRnVuY3Rpb24gZGVjbGFy
-YXRpb25zOg0KPiA+ID4NCj4gPiA+IHN0cnVjdCBjcHVpZGxlX3N0YXRlIHsgLi4uDQo+ID4gPiAg
-ICAgICAgIGludCAoKmVudGVyKSAoc3RydWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+ID4gPiAg
-ICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsDQo+ID4gPiAg
-ICAgICAgICAgICAgICAgICAgICAgaW50IGluZGV4KTsNCj4gPiA+DQo+ID4gPiAgICAgICAgIHZv
-aWQgKCplbnRlcl9zMmlkbGUpIChzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiA+ICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LA0K
-PiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50IGluZGV4KTsgfTsNCj4gPiA+
-DQo+ID4gPiBJbiB0aGlzIGNhc2UsIGVpdGhlciBlbnRlcigpIG9yIGVudGVyX3MyaWRsZSgpIHdv
-dWxkIGNhdXNlIENGSSBjaGVjaw0KPiA+ID4gZmFpbGVkIHNpbmNlIHRoZXkgdXNlIHNhbWUgY2Fs
-bGVlLg0KPiA+IA0KPiA+IENhbiB5b3UgcGxlYXNlIGV4cGxhaW4gdGhpcyBpbiBhIGJpdCBtb3Jl
-IGRldGFpbD8NCj4gPiANCj4gPiBBcyBpdCBzdGFuZHMsIEkgZG9uJ3QgdW5kZXJzdGFuZCB0aGUg
-cHJvYmxlbSBzdGF0ZW1lbnQgZW5vdWdoIHRvIGFwcGx5DQo+ID4gdGhlIHBhdGNoLg0KPiA+IA0K
-PiANCj4gT2theSwgTGV0J3MgbWUgdHJ5IHRvIGV4cGxhaW4gbW9yZSBkZXRhaWxzLg0KPiBDb250
-cm9sIEZsb3cgSW50ZWdyaXR5KENGSSkgaXMgYSBzZWN1cml0eSBtZWNoYW5pc20gdGhhdCBkaXNh
-bGxvd3MNCj4gY2hhbmdlcyB0byB0aGUgb3JpZ2luYWwgY29udHJvbCBmbG93IGdyYXBoIG9mIGEg
-Y29tcGlsZWQgYmluYXJ5LCBtYWtpbmcNCj4gaXQgc2lnbmlmaWNhbnRseSBoYXJkZXIgdG8gcGVy
-Zm9ybSBzdWNoIGF0dGFja3MuDQo+IA0KPiBUaGVyZSBhcmUgbXVsdGlwbGUgY29udHJvbCBmbG93
-IGluc3RydWN0aW9ucyB0aGF0IGNvdWxkIGJlIG1hbmlwdWxhdGVkDQo+IGJ5IHRoZSBhdHRhY2tl
-ciBhbmQgc3VidmVydCBjb250cm9sIGZsb3cuIFRoZSB0YXJnZXQgaW5zdHJ1Y3Rpb25zIHRoYXQN
-Cj4gdXNlIGRhdGEgdG8gZGV0ZXJtaW5lIHRoZSBhY3R1YWwgZGVzdGluYXRpb24uDQo+IC0gaW5k
-aXJlY3QganVtcA0KPiAtIGluZGlyZWN0IGNhbGwNCj4gLSByZXR1cm4NCj4gDQo+IEluIHRoaXMg
-Y2FzZSwgZnVuY3Rpb24gcHJvdG90eXBlIGJldHdlZW4gY2FsbGVyIGFuZCBjYWxsZWUgYXJlIG1p
-c21hdGNoLg0KPiBDYWxsZXI6ICh0eXBlIEEpZnVuY0ENCj4gQ2FsbGVlOiAodHlwZSBBKWZ1bmNC
-DQo+IENhbGxlZTogKHR5cGUgQylmdW5jQw0KPiANCj4gZnVuY0EgY2FsbHMgZnVuY0IgLT4gbm8g
-cHJvYmxlbQ0KPiBmdW5jQSBjYWxscyBmdW5jQyAtPiBDRkkgY2hlY2sgZmFpbGVkDQo+IA0KPiBU
-aGF0J3Mgd2h5IHdlIHRyeSB0byBhbGlnbiBmdW5jdGlvbiBwcm90b3R5cGUuDQo+IFBsZWFzZSBm
-ZWVsIGZyZWUgdG8gZmVlZGJhY2sgaWYgeW91IGhhdmUgYW55IHF1ZXN0aW9ucy4NCj4gDQo+ID4g
-PiBBbGlnbiBmdW5jdGlvbiBwcm90b3R5cGUgb2YgZW50ZXIoKSBzaW5jZSBpdCBuZWVkcyByZXR1
-cm4gdmFsdWUgZm9yDQo+ID4gPiBzb21lIHVzZSBjYXNlcy4gVGhlIHJldHVybiB2YWx1ZSBvZiBl
-bnRlcl9zMmlkbGUoKSBpcyBubw0KPiA+ID4gbmVlZCBjdXJyZW50bHkuDQo+ID4gDQo+ID4gU28g
-bGFzdCB0aW1lIEkgcmVxdWVzdGVkIHlvdSB0byBkb2N1bWVudCB3aHkgLT5lbnRlcl9zMmlkbGUg
-bmVlZHMgdG8NCj4gPiByZXR1cm4gYW4gaW50IGluIHRoZSBjb2RlLCB3aGljaCBoYXMgbm90IGJl
-ZW4gZG9uZS4gIFBsZWFzZSBkbyB0aGF0Lg0KPiA+IA0KPiA+ID4gU2lnbmVkLW9mZi1ieTogTmVh
-bCBMaXUgPG5lYWwubGl1QG1lZGlhdGVrLmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gIGRyaXZlcnMv
-YWNwaS9wcm9jZXNzb3JfaWRsZS5jICAgfCAgICA2ICsrKystLQ0KPiA+ID4gIGRyaXZlcnMvY3B1
-aWRsZS9jcHVpZGxlLXRlZ3JhLmMgfCAgICA4ICsrKysrLS0tDQo+ID4gPiAgZHJpdmVycy9pZGxl
-L2ludGVsX2lkbGUuYyAgICAgICB8ICAgIDYgKysrKy0tDQo+ID4gPiAgaW5jbHVkZS9saW51eC9j
-cHVpZGxlLmggICAgICAgICB8ICAgIDYgKysrLS0tDQo+ID4gPiAgNCBmaWxlcyBjaGFuZ2VkLCAx
-NiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9hY3BpL3Byb2Nlc3Nvcl9pZGxlLmMgYi9kcml2ZXJzL2FjcGkvcHJvY2Vzc29y
-X2lkbGUuYw0KPiA+ID4gaW5kZXggNzU1MzRjNS4uNmZmYjZjOSAxMDA2NDQNCj4gPiA+IC0tLSBh
-L2RyaXZlcnMvYWNwaS9wcm9jZXNzb3JfaWRsZS5jDQo+ID4gPiArKysgYi9kcml2ZXJzL2FjcGkv
-cHJvY2Vzc29yX2lkbGUuYw0KPiA+ID4gQEAgLTY1NSw4ICs2NTUsOCBAQCBzdGF0aWMgaW50IGFj
-cGlfaWRsZV9lbnRlcihzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiA+ICAgICAgICAg
-cmV0dXJuIGluZGV4Ow0KPiA+ID4gIH0NCj4gPiA+DQo+ID4gPiAtc3RhdGljIHZvaWQgYWNwaV9p
-ZGxlX2VudGVyX3MyaWRsZShzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiA+IC0gICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYs
-IGludCBpbmRleCkNCj4gPiA+ICtzdGF0aWMgaW50IGFjcGlfaWRsZV9lbnRlcl9zMmlkbGUoc3Ry
-dWN0IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsIGludCBpbmRleCkNCj4gPiA+ICB7
-DQo+ID4gPiAgICAgICAgIHN0cnVjdCBhY3BpX3Byb2Nlc3Nvcl9jeCAqY3ggPSBwZXJfY3B1KGFj
-cGlfY3N0YXRlW2luZGV4XSwgZGV2LT5jcHUpOw0KPiA+ID4NCj4gPiA+IEBAIC02NzQsNiArNjc0
-LDggQEAgc3RhdGljIHZvaWQgYWNwaV9pZGxlX2VudGVyX3MyaWRsZShzdHJ1Y3QgY3B1aWRsZV9k
-ZXZpY2UgKmRldiwNCj4gPiA+ICAgICAgICAgICAgICAgICB9DQo+ID4gPiAgICAgICAgIH0NCj4g
-PiA+ICAgICAgICAgYWNwaV9pZGxlX2RvX2VudHJ5KGN4KTsNCj4gPiA+ICsNCj4gPiA+ICsgICAg
-ICAgcmV0dXJuIDA7DQo+ID4gPiAgfQ0KPiA+ID4NCj4gPiA+ICBzdGF0aWMgaW50IGFjcGlfcHJv
-Y2Vzc29yX3NldHVwX2NwdWlkbGVfY3goc3RydWN0IGFjcGlfcHJvY2Vzc29yICpwciwNCj4gPiA+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NwdWlkbGUvY3B1aWRsZS10ZWdyYS5jIGIvZHJpdmVycy9j
-cHVpZGxlL2NwdWlkbGUtdGVncmEuYw0KPiA+ID4gaW5kZXggMTUwMDQ1OC4uYTEyZmIxNCAxMDA2
-NDQNCj4gPiA+IC0tLSBhL2RyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLXRlZ3JhLmMNCj4gPiA+ICsr
-KyBiL2RyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLXRlZ3JhLmMNCj4gPiA+IEBAIC0yNTMsMTEgKzI1
-MywxMyBAQCBzdGF0aWMgaW50IHRlZ3JhX2NwdWlkbGVfZW50ZXIoc3RydWN0IGNwdWlkbGVfZGV2
-aWNlICpkZXYsDQo+ID4gPiAgICAgICAgIHJldHVybiBlcnIgPyAtMSA6IGluZGV4Ow0KPiA+ID4g
-IH0NCj4gPiA+DQo+ID4gPiAtc3RhdGljIHZvaWQgdGVncmExMTRfZW50ZXJfczJpZGxlKHN0cnVj
-dCBjcHVpZGxlX2RldmljZSAqZGV2LA0KPiA+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LA0KPiA+ID4gLSAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIGludCBpbmRleCkNCj4gPiA+ICtzdGF0aWMgaW50IHRlZ3JhMTE0
-X2VudGVyX3MyaWRsZShzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LA0KPiA+
-ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50IGluZGV4KQ0KPiA+ID4gIHsN
-Cj4gPiA+ICAgICAgICAgdGVncmFfY3B1aWRsZV9lbnRlcihkZXYsIGRydiwgaW5kZXgpOw0KPiA+
-ID4gKw0KPiA+ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiA+ICB9DQo+ID4gPg0KPiA+ID4gIC8q
-DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pZGxlL2ludGVsX2lkbGUuYyBiL2RyaXZlcnMv
-aWRsZS9pbnRlbF9pZGxlLmMNCj4gPiA+IGluZGV4IGY0NDk1ODQuLmIxNzhkYTMgMTAwNjQ0DQo+
-ID4gPiAtLS0gYS9kcml2ZXJzL2lkbGUvaW50ZWxfaWRsZS5jDQo+ID4gPiArKysgYi9kcml2ZXJz
-L2lkbGUvaW50ZWxfaWRsZS5jDQo+ID4gPiBAQCAtMTc1LDEzICsxNzUsMTUgQEAgc3RhdGljIF9f
-Y3B1aWRsZSBpbnQgaW50ZWxfaWRsZShzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCj4gPiA+
-ICAgKiBJbnZva2VkIGFzIGEgc3VzcGVuZC10by1pZGxlIGNhbGxiYWNrIHJvdXRpbmUgd2l0aCBm
-cm96ZW4gdXNlciBzcGFjZSwgZnJvemVuDQo+ID4gPiAgICogc2NoZWR1bGVyIHRpY2sgYW5kIHN1
-c3BlbmRlZCBzY2hlZHVsZXIgY2xvY2sgb24gdGhlIHRhcmdldCBDUFUuDQo+ID4gPiAgICovDQo+
-ID4gPiAtc3RhdGljIF9fY3B1aWRsZSB2b2lkIGludGVsX2lkbGVfczJpZGxlKHN0cnVjdCBjcHVp
-ZGxlX2RldmljZSAqZGV2LA0KPiA+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LCBpbnQgaW5kZXgpDQo+ID4gPiArc3Rh
-dGljIF9fY3B1aWRsZSBpbnQgaW50ZWxfaWRsZV9zMmlkbGUoc3RydWN0IGNwdWlkbGVfZGV2aWNl
-ICpkZXYsDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1
-Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwgaW50IGluZGV4KQ0KPiA+ID4gIHsNCj4gPiA+ICAgICAg
-ICAgdW5zaWduZWQgbG9uZyBlYXggPSBmbGcyTVdBSVQoZHJ2LT5zdGF0ZXNbaW5kZXhdLmZsYWdz
-KTsNCj4gPiA+ICAgICAgICAgdW5zaWduZWQgbG9uZyBlY3ggPSAxOyAvKiBicmVhayBvbiBpbnRl
-cnJ1cHQgZmxhZyAqLw0KPiA+ID4NCj4gPiA+ICAgICAgICAgbXdhaXRfaWRsZV93aXRoX2hpbnRz
-KGVheCwgZWN4KTsNCj4gPiA+ICsNCj4gPiA+ICsgICAgICAgcmV0dXJuIDA7DQo+ID4gPiAgfQ0K
-PiA+ID4NCj4gPiA+ICAvKg0KPiA+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvY3B1aWRs
-ZS5oIGIvaW5jbHVkZS9saW51eC9jcHVpZGxlLmgNCj4gPiA+IGluZGV4IGVjMmVmNjMuLmJlZTEw
-YzAgMTAwNjQ0DQo+ID4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2NwdWlkbGUuaA0KPiA+ID4gKysr
-IGIvaW5jbHVkZS9saW51eC9jcHVpZGxlLmgNCj4gPiA+IEBAIC02Niw5ICs2Niw5IEBAIHN0cnVj
-dCBjcHVpZGxlX3N0YXRlIHsNCj4gPiA+ICAgICAgICAgICogc3VzcGVuZGVkLCBzbyBpdCBtdXN0
-IG5vdCByZS1lbmFibGUgaW50ZXJydXB0cyBhdCBhbnkgcG9pbnQgKGV2ZW4NCj4gPiA+ICAgICAg
-ICAgICogdGVtcG9yYXJpbHkpIG9yIGF0dGVtcHQgdG8gY2hhbmdlIHN0YXRlcyBvZiBjbG9jayBl
-dmVudCBkZXZpY2VzLg0KPiA+ID4gICAgICAgICAgKi8NCj4gPiA+IC0gICAgICAgdm9pZCAoKmVu
-dGVyX3MyaWRsZSkgKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0KPiA+ID4gLSAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsDQo+ID4gPiAt
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbnQgaW5kZXgpOw0KPiA+ID4gKyAgICAgICBp
-bnQgKCplbnRlcl9zMmlkbGUpKHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0KPiA+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjcHVpZGxlX2RyaXZlciAqZHJ2LA0KPiA+
-ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgIGludCBpbmRleCk7DQo+ID4gPiAgfTsNCj4g
-PiA+DQo+ID4gPiAgLyogSWRsZSBTdGF0ZSBGbGFncyAqLw0KPiA+ID4gLS0NCj4gPiA+IDEuNy45
-LjUNCj4gDQo+IA0KDQo=
+
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 20, 2020 at 12:04:12PM +0530, Rajesh Gumasta wrote:
+> Add support for Nvida Tegra general purpose DMA driver for
+> Tegra186 and Tegra194 platform.
+>=20
+> Patch 1: Add dt-binding document for Tegra GPCDMA driver
+> Patch 2: Add Tegra GPCDMA driver
+> Patch 3: Enable Tegra GPCDMA as module
+> Patch 4: Add GPCDMA DT node for Tegra186 and Tegra194
+>=20
+> Rajesh Gumasta (4):
+>   dt-bindings: dma: Add DT binding document
+>   dma: tegra: Adding Tegra GPC DMA controller driver
+>   arm64: configs: enable tegra gpc dma
+>   arm64: tegra: Add GPCDMA node in dt
+>=20
+>  .../bindings/dma/nvidia,tegra-gpc-dma.yaml         |   99 ++
+>  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |    4 +
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   46 +
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   44 +
+>  arch/arm64/configs/defconfig                       |    1 +
+>  drivers/dma/Kconfig                                |   12 +
+>  drivers/dma/Makefile                               |    1 +
+>  drivers/dma/tegra-gpc-dma.c                        | 1512 ++++++++++++++=
+++++++
+>  8 files changed, 1719 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra-gp=
+c-dma.yaml
+>  create mode 100644 drivers/dma/tegra-gpc-dma.c
+
+Hi Rajesh,
+
+can you provide instructions on how to test that this driver does what
+it's supposed to? I could probably figure out how to run this with the
+kernel's built-in dmatest module, but if you could provide a set of
+parameters that you've used or other instructions on how to validate
+this it would greatly help.
+
+Thanks,
+Thierry
+
+>=20
+> --=20
+> 2.7.4
+>=20
+
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl8VYxcACgkQ3SOs138+
+s6HStBAAl7MTbsKWtMWdKW2SWSsxw6tyr1UuYJ1uhnbPdtFnBsmk41jHmQ28PUCC
+qaA5Vqrge9tK4CMvblYQWyZ0hCfa/19A0fq4S9naRX0JlyQuNgZlnBfTWdBdVof+
+kVTiTgJFmZ750fGEXR37aA3un0nXPrpai/Xn6ILBXxx0pyb6H1b5NaKbRAVys5lR
+9BwP72HAgbs9yAQmc3oo1Id0Uh2FJdUoLk2ZldVIbWcTLBzefGZxNQOaZyMQuE3d
+7yyzgQA6278biQhQjwKYfp6zdmEXl61BJKl8Jf5L99vgCLPvIw2+cLtlhGLX6svm
+kgICSknw1s+M7/f5Nh+6LqhgOVv/rMrMcSMwMGrLtaSIBLOHwGnmH/7/JFjGBEL6
+jZ91eo2XVZbRkNv73fp1xkbI6BKfgaFdZcLcjZPYIss3ZBfXCUiyAHPlE2B819cB
+fnDg1n71Vo99WKdt4OA79bE8TEIsAhnl3Kgl2KHzZaETmbKMblbZms7BguvcQbp9
+r3XNu0ZjNdRtMNm63wuHpKq8KsWgVGp5AMJnmygSQya6RmxtBbmVc5STVoDawQGu
+ffYfHXg8oBULPkqfSnIU4kUgi222MJ9SgtW9Rz5gGdtzafBWuzZyl+ivl/Y+/cYa
+QDLODVGYrtGhhmhIYeAfswQ0gx7U7yUrn8OZMqzIb3fkYCELC14=
+=sOy/
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
