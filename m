@@ -1,129 +1,36 @@
-From: Rajesh Gumasta <rgumasta@nvidia.com>
-Subject: [Patch v1 1/4] dt-bindings: dma: Add DT binding document
-Date: Mon, 20 Jul 2020 12:04:13 +0530
-Message-ID: <1595226856-19241-2-git-send-email-rgumasta@nvidia.com>
+From: Rajesh Gumasta <rgumasta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [Patch v1 3/4] arm64: configs: enable tegra gpc dma
+Date: Mon, 20 Jul 2020 12:04:15 +0530
+Message-ID: <1595226856-19241-4-git-send-email-rgumasta@nvidia.com>
 References: <1595226856-19241-1-git-send-email-rgumasta@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1595226856-19241-1-git-send-email-rgumasta@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: ldewangan@nvidia.com, jonathanh@nvidia.com, vkoul@kernel.org, dan.j.williams@intel.com, thierry.reding@gmail.com, p.zabel@pengutronix.de, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyarlagadda@nvidia.com, rgumasta@nvidia.com
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1595226856-19241-1-git-send-email-rgumasta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vkoul-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rgumasta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add DT binding document for Nvidia Tegra GPCDMA controller.
+Enable TEGRA_GPC_DMA in defconfig for Tegra186 and Tegra196 gpc
+dma controller driver
 
-Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
+Signed-off-by: Rajesh Gumasta <rgumasta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/dma/nvidia,tegra-gpc-dma.yaml         | 99 ++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra-gpc-dma.yaml
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra-gpc-dma.yaml
-new file mode 100644
-index 0000000..39827ab
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/nvidia,tegra-gpc-dma.yaml
-@@ -0,0 +1,99 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/nvidia,tegra-gpc-dma.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Nvidia Tegra GPC DMA Controller Device Tree Bindings
-+
-+description: |
-+  Tegra GPC DMA controller is a general purpose dma used for faster data
-+  transfers between memory to memory, memory to device and device to memory.
-+  Terms 'dma' and 'gpcdma' can be used interchangeably.
-+
-+maintainers:
-+  - Jon Hunter <jonathanh@nvidia.com>
-+  - Rajesh Gumasta <rgumasta@nvidia.com>
-+
-+allOf:
-+  - $ref: "dma-controller.yaml#"
-+
-+properties:
-+  "#dma-cells":
-+    const: 1
-+
-+  compatible:
-+    - enum:
-+      - nvidia,tegra186-gpcdma
-+      - nvidia,tegra194-gpcdma
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    const: gpcdma
-+
-+  iommus:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - resets
-+  - reset-names
-+  - "#dma-cells"
-+  - iommus
-+
-+examples:
-+  - |
-+    gpcdma: dma@2600000 {
-+	  compatible = "nvidia,tegra186-gpcdma";
-+	  reg = <0x0 0x2600000 0x0 0x210000>;
-+	  resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-+	  reset-names = "gpcdma";
-+	  interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH
-+	                GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH
-+					GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+       #dma-cells = <1>;
-+	   iommus = <&smmu TEGRA_SID_GPCDMA_0>;
-+	   dma-coherent;
-+	};
-+
-+...
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 883e8ba..600f568 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -775,6 +775,7 @@ CONFIG_MV_XOR_V2=y
+ CONFIG_OWL_DMA=y
+ CONFIG_PL330_DMA=y
+ CONFIG_TEGRA20_APB_DMA=y
++CONFIG_TEGRA_GPC_DMA=m
+ CONFIG_QCOM_BAM_DMA=y
+ CONFIG_QCOM_HIDMA_MGMT=y
+ CONFIG_QCOM_HIDMA=y
 -- 
 2.7.4
