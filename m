@@ -1,55 +1,60 @@
-From: Chun-Hung Wu <chun-hung.wu@mediatek.com>
-Subject: [PATCH v7 2/4] mmc: mediatek: refine msdc timeout api
-Date: Mon, 20 Jul 2020 08:42:37 +0800
-Message-ID: <1595205759-5825-3-git-send-email-chun-hung.wu@mediatek.com>
-References: <1595205759-5825-1-git-send-email-chun-hung.wu@mediatek.com>
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 03/10] ASoC: audio-graph: Support Codec with multiple
+ endpoints
+Date: Mon, 20 Jul 2020 09:44:02 +0530
+Message-ID: <870feaf2-3aa2-dbb8-f883-9b6cfcb36d82@nvidia.com>
+References: <1595135417-16589-1-git-send-email-spujar@nvidia.com>
+ <1595135417-16589-4-git-send-email-spujar@nvidia.com>
+ <87365n2i2z.wl-kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1595205759-5825-1-git-send-email-chun-hung.wu@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: mirq-linux@rere.qmqm.pl, Jonathan Hunter <jonathanh@nvidia.com>, Al Cooper <alcooperx@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Thierry Reding <thierry.reding@gmail.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, Kate Stewart <kstewart@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Martin
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, wsd_upstream@mediatek.com, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, Chun-Hung Wu <chun-hung.wu@mediatek.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <87365n2i2z.wl-kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Content-Language: en-GB
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Cc: spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-RXh0cmFjdCBtc2RjIHRpbWVvdXQgYXBpIGNvbW1vbiBwYXJ0IHRvIGhhdmUNCmJldHRlciBjb2Rl
-IGFyY2hpdGVjdHVyZSBhbmQgYXZvaWQgcmVkdW5kYW50IGNvZGUuDQoNClNpZ25lZC1vZmYtYnk6
-IENodW4tSHVuZyBXdSA8Y2h1bi1odW5nLnd1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMv
-bW1jL2hvc3QvbXRrLXNkLmMgfCAzMiArKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLQ0K
-IDEgZmlsZSBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkNCg0KZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2hvc3QvbXRrLXNkLmMgYi9kcml2ZXJzL21tYy9ob3N0L210
-ay1zZC5jDQppbmRleCBlZDM3YTNjLi4zNDdlZDcyIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9tbWMv
-aG9zdC9tdGstc2QuYw0KKysrIGIvZHJpdmVycy9tbWMvaG9zdC9tdGstc2QuYw0KQEAgLTcyMywy
-MSArNzIzLDIxIEBAIHN0YXRpYyB2b2lkIG1zZGNfdW5wcmVwYXJlX2RhdGEoc3RydWN0IG1zZGNf
-aG9zdCAqaG9zdCwgc3RydWN0IG1tY19yZXF1ZXN0ICptcnEpDQogCX0NCiB9DQogDQotLyogY2xv
-Y2sgY29udHJvbCBwcmltaXRpdmVzICovDQotc3RhdGljIHZvaWQgbXNkY19zZXRfdGltZW91dChz
-dHJ1Y3QgbXNkY19ob3N0ICpob3N0LCB1MzIgbnMsIHUzMiBjbGtzKQ0KK3N0YXRpYyB1NjQgbXNk
-Y190aW1lb3V0X2NhbChzdHJ1Y3QgbXNkY19ob3N0ICpob3N0LCB1NjQgbnMsIHU2NCBjbGtzKQ0K
-IHsNCi0JdTMyIHRpbWVvdXQsIGNsa19uczsNCisJdTY0IHRpbWVvdXQsIGNsa19uczsNCiAJdTMy
-IG1vZGUgPSAwOw0KIA0KLQlob3N0LT50aW1lb3V0X25zID0gbnM7DQotCWhvc3QtPnRpbWVvdXRf
-Y2xrcyA9IGNsa3M7DQogCWlmIChob3N0LT5tbWMtPmFjdHVhbF9jbG9jayA9PSAwKSB7DQogCQl0
-aW1lb3V0ID0gMDsNCiAJfSBlbHNlIHsNCi0JCWNsa19ucyAgPSAxMDAwMDAwMDAwVUwgLyBob3N0
-LT5tbWMtPmFjdHVhbF9jbG9jazsNCi0JCXRpbWVvdXQgPSAobnMgKyBjbGtfbnMgLSAxKSAvIGNs
-a19ucyArIGNsa3M7DQorCQljbGtfbnMgID0gMTAwMDAwMDAwMFVMTDsNCisJCWRvX2RpdihjbGtf
-bnMsIGhvc3QtPm1tYy0+YWN0dWFsX2Nsb2NrKTsNCisJCXRpbWVvdXQgPSBucyArIGNsa19ucyAt
-IDE7DQorCQlkb19kaXYodGltZW91dCwgY2xrX25zKTsNCisJCXRpbWVvdXQgKz0gY2xrczsNCiAJ
-CS8qIGluIDEwNDg1NzYgc2NsayBjeWNsZSB1bml0ICovDQotCQl0aW1lb3V0ID0gKHRpbWVvdXQg
-KyAoMHgxIDw8IDIwKSAtIDEpID4+IDIwOw0KKwkJdGltZW91dCA9IERJVl9ST1VORF9VUCh0aW1l
-b3V0LCAoMHgxIDw8IDIwKSk7DQogCQlpZiAoaG9zdC0+ZGV2X2NvbXAtPmNsa19kaXZfYml0cyA9
-PSA4KQ0KIAkJCXNkcl9nZXRfZmllbGQoaG9zdC0+YmFzZSArIE1TRENfQ0ZHLA0KIAkJCQkgICAg
-ICBNU0RDX0NGR19DS01PRCwgJm1vZGUpOw0KQEAgLTc0Nyw5ICs3NDcsMjEgQEAgc3RhdGljIHZv
-aWQgbXNkY19zZXRfdGltZW91dChzdHJ1Y3QgbXNkY19ob3N0ICpob3N0LCB1MzIgbnMsIHUzMiBj
-bGtzKQ0KIAkJLypERFIgbW9kZSB3aWxsIGRvdWJsZSB0aGUgY2xrIGN5Y2xlcyBmb3IgZGF0YSB0
-aW1lb3V0ICovDQogCQl0aW1lb3V0ID0gbW9kZSA+PSAyID8gdGltZW91dCAqIDIgOiB0aW1lb3V0
-Ow0KIAkJdGltZW91dCA9IHRpbWVvdXQgPiAxID8gdGltZW91dCAtIDEgOiAwOw0KLQkJdGltZW91
-dCA9IHRpbWVvdXQgPiAyNTUgPyAyNTUgOiB0aW1lb3V0Ow0KIAl9DQotCXNkcl9zZXRfZmllbGQo
-aG9zdC0+YmFzZSArIFNEQ19DRkcsIFNEQ19DRkdfRFRPQywgdGltZW91dCk7DQorCXJldHVybiB0
-aW1lb3V0Ow0KK30NCisNCisvKiBjbG9jayBjb250cm9sIHByaW1pdGl2ZXMgKi8NCitzdGF0aWMg
-dm9pZCBtc2RjX3NldF90aW1lb3V0KHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QsIHU2NCBucywgdTY0
-IGNsa3MpDQorew0KKwl1NjQgdGltZW91dDsNCisNCisJaG9zdC0+dGltZW91dF9ucyA9IG5zOw0K
-Kwlob3N0LT50aW1lb3V0X2Nsa3MgPSBjbGtzOw0KKw0KKwl0aW1lb3V0ID0gbXNkY190aW1lb3V0
-X2NhbChob3N0LCBucywgY2xrcyk7DQorCXNkcl9zZXRfZmllbGQoaG9zdC0+YmFzZSArIFNEQ19D
-RkcsIFNEQ19DRkdfRFRPQywNCisJCSAgICAgICh1MzIpKHRpbWVvdXQgPiAyNTUgPyAyNTUgOiB0
-aW1lb3V0KSk7DQogfQ0KIA0KIHN0YXRpYyB2b2lkIG1zZGNfZ2F0ZV9jbG9jayhzdHJ1Y3QgbXNk
-Y19ob3N0ICpob3N0KQ0KLS0gDQoxLjkuMQ0K
+
+
+On 7/20/2020 5:07 AM, Kuninori Morimoto wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> Hi Sameer
+>
+>> If a Codec port has multiple endpoints, only first endpoint gets parsed
+>> and remaining are ignored. This can be fixed by removing 'dup_codec' flag
+>> passed to graph_dai_link_of_dpcm() and thus it loops over all endpoints
+>> of Codec. Similarly graph_count_dpcm() is updated as well.
+>>
+>> Signed-off-by: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   sound/soc/generic/audio-graph-card.c | 28 +++++++++-------------------
+>>   1 file changed, 9 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+>> index 1e20562..b1903f9 100644
+>> --- a/sound/soc/generic/audio-graph-card.c
+>> +++ b/sound/soc/generic/audio-graph-card.c
+>> @@ -201,8 +201,7 @@ static void graph_parse_mclk_fs(struct device_node *top,
+>>   static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+>>                                  struct device_node *cpu_ep,
+>>                                  struct device_node *codec_ep,
+>> -                               struct link_info *li,
+>> -                               int dup_codec)
+>> +                               struct link_info *li)
+> This patch breaks DPCM connection which is used for MIXer
+
+Could you please elaborate a bit more as to what is broken with this? 
+The problem I am trying to solve here is to have multiple endpoints for 
+Codec port.
+
+>
+> Thank you for your help !!
+>
+> Best regards
+> ---
+> Kuninori Morimoto
