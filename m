@@ -1,43 +1,78 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v2] dt-bindings: thermal: Get rid of thermal.txt and
- replace references
-Date: Tue, 21 Jul 2020 10:29:13 +0200
-Message-ID: <8c7f5c41-746b-f26d-7b3e-4152c17c4812@linaro.org>
-References: <e9aacd33071a00568b67e110fa3bcc4d86d3e1e4.1595245166.git.amit.kucheria@linaro.org>
+From: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v5 00/11] Add ASoC AHUB components for Tegra210 and later
+Date: Tue, 21 Jul 2020 17:22:35 +0530
+Message-ID: <72d45476-7050-187b-19d6-2ddb9b0ba97a@nvidia.com>
+References: <1595134890-16470-1-git-send-email-spujar@nvidia.com>
+ <159525589435.6792.708136378511410418.b4-ty@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e9aacd33071a00568b67e110fa3bcc4d86d3e1e4.1595245166.git.amit.kucheria@linaro.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Kucheria <amit.kucheria@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, lukasz.luba@arm.com, Sudeep Holla <sudeep.holla@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Amit Kucheria <amit.kucheria@verdurent.com>, Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Talel Shenhar <talel@amazon.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Cc: Rob Herring <robh@kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <159525589435.6792.708136378511410418.b4-ty-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Language: en-GB
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org
+Cc: spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20/07/2020 13:53, Amit Kucheria wrote:
-> Now that we have yaml bindings for the thermal subsystem, get rid of the
-> old bindings (thermal.txt).
-> 
-> Replace all references to thermal.txt in the Documentation with a link
-> to the appropriate YAML bindings using the following search and replace
-> pattern:
->  - If the reference is specific to the thermal-sensor-cells property,
->  replace with a pointer to thermal-sensor.yaml
->  - If the reference is to the cooling-cells property, replace with a
->  pointer to thermal-cooling-devices.yaml
->  - If the reference is generic thermal bindings, replace with a
->  reference to thermal*.yaml.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Hi Mark,
 
-Applied, thanks
+On 7/20/2020 8:08 PM, Mark Brown wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On Sun, 19 Jul 2020 10:31:19 +0530, Sameer Pujar wrote:
+>> Overview
+>> ========
+>> Audio Processing Engine (APE) comprises of Audio DMA (ADMA) and Audio
+>> Hub (AHUB) unit. AHUB is a collection of hardware accelerators for audio
+>> pre-processing and post-processing. It also includes a programmable full
+>> crossbar for routing audio data across these accelerators.
+>>
+>> [...]
+> Applied to
+>
+>     https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+>
+> Thanks!
+>
+> [1/6] ASoC: dt-bindings: tegra: Add DT bindings for Tegra210
+>        commit: 665308c0b44a37339b9b3368f1dd61eb66acde87
+> [2/6] ASoC: tegra: Add support for CIF programming
+>        commit: 1c3b89fb7e4a78ddcd627e3f218a216e2136ae9b
+> [3/6] ASoC: tegra: Add Tegra210 based DMIC driver
+>        commit: 8c8ff982e9e2b2eb9255fc393f938915b0ddc127
+> [4/6] ASoC: tegra: Add Tegra210 based I2S driver
+>        commit: c0bfa98349d1796fe754dfac7f7f505bb60dcd83
+> [5/6] ASoC: tegra: Add Tegra210 based AHUB driver
+>        commit: 16e1bcc2caf446fa3e1daa040b59fd6f6272a766
+> [6/6] ASoC: tegra: Add Tegra186 based DSPK driver
+>        commit: 327ef64702668bb754eeea80ce402454d7a1302a
 
+I see that "[PATCH v5 07/11] ASoC: tegra: Add Tegra210 based ADMAIF 
+driver" is not applied as part of this. I wanted to understand if this 
+is because some more review comments are expected or there are other 
+reasons?
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Thanks,
+Sameer.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent to Linus during
+> the next merge window (or sooner if it is a bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.
+>
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+>
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+>
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
+>
+> Thanks,
+> Mark
