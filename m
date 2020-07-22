@@ -1,7 +1,7 @@
 From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 08/19] PCI: xilinx: Use pci_is_root_bus() to check if bus is root bus
-Date: Tue, 21 Jul 2020 20:25:03 -0600
-Message-ID: <20200722022514.1283916-9-robh@kernel.org>
+Subject: [PATCH 09/19] PCI: rockchip: Use pci_is_root_bus() to check if bus is root bus
+Date: Tue, 21 Jul 2020 20:25:04 -0600
+Message-ID: <20200722022514.1283916-10-robh@kernel.org>
 References: <20200722022514.1283916-1-robh@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -17,57 +17,110 @@ determine if the bus is the root bus or not. This removes storing
 duplicated data as well as the need for the host bridge driver to have
 to care about the bus numbers in most cases.
 
-There was also a bug that the root_busno is never set which means the
-root bus number is always 0 even if the DT said something else.
+Also, bridge->busnr is never set so effectively the root bus must be 0.
+This will be fixed by a subsequent commit.
 
+Cc: Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
 Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- drivers/pci/controller/pcie-xilinx.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/pci/controller/pcie-rockchip-host.c | 17 +++++++----------
+ drivers/pci/controller/pcie-rockchip.h      |  1 -
+ 2 files changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-xilinx.c b/drivers/pci/controller/pcie-xilinx.c
-index cce67cb8fb2b..7bf80f68efa9 100644
---- a/drivers/pci/controller/pcie-xilinx.c
-+++ b/drivers/pci/controller/pcie-xilinx.c
-@@ -98,7 +98,6 @@
-  * @reg_base: IO Mapped Register Base
-  * @irq: Interrupt number
-  * @msi_pages: MSI pages
-- * @root_busno: Root Bus number
-  * @dev: Device pointer
-  * @msi_domain: MSI IRQ domain pointer
-  * @leg_domain: Legacy IRQ domain pointer
-@@ -108,7 +107,6 @@ struct xilinx_pcie_port {
- 	void __iomem *reg_base;
- 	u32 irq;
- 	unsigned long msi_pages;
--	u8 root_busno;
- 	struct device *dev;
- 	struct irq_domain *msi_domain;
- 	struct irq_domain *leg_domain;
-@@ -162,14 +160,13 @@ static bool xilinx_pcie_valid_device(struct pci_bus *bus, unsigned int devfn)
- 	struct xilinx_pcie_port *port = bus->sysdata;
+diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
+index fb88030161f2..9a30d08976d8 100644
+--- a/drivers/pci/controller/pcie-rockchip-host.c
++++ b/drivers/pci/controller/pcie-rockchip-host.c
+@@ -72,14 +72,14 @@ static int rockchip_pcie_valid_device(struct rockchip_pcie *rockchip,
+ 				      struct pci_bus *bus, int dev)
+ {
+ 	/* access only one slot on each root port */
+-	if (bus->number == rockchip->root_bus_nr && dev > 0)
++	if (pci_is_root_bus(bus) && dev > 0)
+ 		return 0;
  
- 	/* Check if link is up when trying to access downstream ports */
--	if (bus->number != port->root_busno)
-+	if (!pci_is_root_bus(bus)) {
- 		if (!xilinx_pcie_link_up(port))
- 			return false;
--
--	/* Only one device down on each root port */
--	if (bus->number == port->root_busno && devfn > 0)
-+	} else if (devfn > 0) {
-+		/* Only one device down on each root port */
- 		return false;
--
-+	}
- 	return true;
- }
+ 	/*
+ 	 * do not read more than one device on the bus directly attached
+ 	 * to RC's downstream side.
+ 	 */
+-	if (bus->primary == rockchip->root_bus_nr && dev > 0)
++	if (pci_is_root_bus(bus->parent) && dev > 0)
+ 		return 0;
  
+ 	return 1;
+@@ -170,7 +170,7 @@ static int rockchip_pcie_rd_other_conf(struct rockchip_pcie *rockchip,
+ 		return PCIBIOS_BAD_REGISTER_NUMBER;
+ 	}
+ 
+-	if (bus->parent->number == rockchip->root_bus_nr)
++	if (pci_is_root_bus(bus->parent))
+ 		rockchip_pcie_cfg_configuration_accesses(rockchip,
+ 						AXI_WRAPPER_TYPE0_CFG);
+ 	else
+@@ -201,7 +201,7 @@ static int rockchip_pcie_wr_other_conf(struct rockchip_pcie *rockchip,
+ 	if (!IS_ALIGNED(busdev, size))
+ 		return PCIBIOS_BAD_REGISTER_NUMBER;
+ 
+-	if (bus->parent->number == rockchip->root_bus_nr)
++	if (pci_is_root_bus(bus->parent))
+ 		rockchip_pcie_cfg_configuration_accesses(rockchip,
+ 						AXI_WRAPPER_TYPE0_CFG);
+ 	else
+@@ -230,7 +230,7 @@ static int rockchip_pcie_rd_conf(struct pci_bus *bus, u32 devfn, int where,
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 	}
+ 
+-	if (bus->number == rockchip->root_bus_nr)
++	if (pci_is_root_bus(bus))
+ 		return rockchip_pcie_rd_own_conf(rockchip, where, size, val);
+ 
+ 	return rockchip_pcie_rd_other_conf(rockchip, bus, devfn, where, size,
+@@ -245,7 +245,7 @@ static int rockchip_pcie_wr_conf(struct pci_bus *bus, u32 devfn,
+ 	if (!rockchip_pcie_valid_device(rockchip, bus, PCI_SLOT(devfn)))
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 
+-	if (bus->number == rockchip->root_bus_nr)
++	if (pci_is_root_bus(bus))
+ 		return rockchip_pcie_wr_own_conf(rockchip, where, size, val);
+ 
+ 	return rockchip_pcie_wr_other_conf(rockchip, bus, devfn, where, size,
+@@ -950,7 +950,6 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+ 	struct rockchip_pcie *rockchip;
+ 	struct device *dev = &pdev->dev;
+ 	struct pci_host_bridge *bridge;
+-	struct resource *bus_res;
+ 	int err;
+ 
+ 	if (!dev->of_node)
+@@ -991,12 +990,10 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+ 		goto err_deinit_port;
+ 
+ 	err = pci_parse_request_of_pci_ranges(dev, &bridge->windows,
+-					      &bridge->dma_ranges, &bus_res);
++					      &bridge->dma_ranges, NULL);
+ 	if (err)
+ 		goto err_remove_irq_domain;
+ 
+-	rockchip->root_bus_nr = bus_res->start;
+-
+ 	err = rockchip_pcie_cfg_atu(rockchip);
+ 	if (err)
+ 		goto err_remove_irq_domain;
+diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
+index 4012543bafbe..c7d0178fc8c2 100644
+--- a/drivers/pci/controller/pcie-rockchip.h
++++ b/drivers/pci/controller/pcie-rockchip.h
+@@ -298,7 +298,6 @@ struct rockchip_pcie {
+ 	struct	gpio_desc *ep_gpio;
+ 	u32	lanes;
+ 	u8      lanes_map;
+-	u8	root_bus_nr;
+ 	int	link_gen;
+ 	struct	device *dev;
+ 	struct	irq_domain *irq_domain;
 -- 
 2.25.1
