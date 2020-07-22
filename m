@@ -1,7 +1,7 @@
 From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 06/19] PCI: mobiveil: Use pci_is_root_bus() to check if bus is root bus
-Date: Tue, 21 Jul 2020 20:25:01 -0600
-Message-ID: <20200722022514.1283916-7-robh@kernel.org>
+Subject: [PATCH 07/19] PCI: xilinx-nwl: Use pci_is_root_bus() to check if bus is root bus
+Date: Tue, 21 Jul 2020 20:25:02 -0600
+Message-ID: <20200722022514.1283916-8-robh@kernel.org>
 References: <20200722022514.1283916-1-robh@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -17,69 +17,54 @@ determine if the bus is the root bus or not. This removes storing
 duplicated data as well as the need for the host bridge driver to have
 to care about the bus numbers in most cases.
 
-Cc: Karthikeyan Mitran <m.karthikeyan-DTHOJn6Rh8lhmhkoCovsdw@public.gmane.org>
-Cc: Hou Zhiqiang <Zhiqiang.Hou-3arQi8VN3Tc@public.gmane.org>
+There was also a bug that the pci_host_bridge.busnr is set from
+root_busno, but root_busno is never set which means the root bus number
+is always 0 even if the DT said something else.
+
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
 Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- drivers/pci/controller/mobiveil/pcie-mobiveil-host.c | 10 +++-------
- drivers/pci/controller/mobiveil/pcie-mobiveil.h      |  1 -
- 2 files changed, 3 insertions(+), 8 deletions(-)
+ drivers/pci/controller/pcie-xilinx-nwl.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-index 705542b4bd21..7250b84a7efe 100644
---- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-+++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-@@ -29,18 +29,15 @@
+diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
+index 3c747aa4b6d1..566165c18fad 100644
+--- a/drivers/pci/controller/pcie-xilinx-nwl.c
++++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+@@ -166,7 +166,6 @@ struct nwl_pcie {
+ 	int irq_misc;
+ 	u32 ecam_value;
+ 	u8 last_busno;
+-	u8 root_busno;
+ 	struct nwl_msi msi;
+ 	struct irq_domain *legacy_irq_domain;
+ 	raw_spinlock_t leg_mask_lock;
+@@ -217,13 +216,11 @@ static bool nwl_pcie_valid_device(struct pci_bus *bus, unsigned int devfn)
+ 	struct nwl_pcie *pcie = bus->sysdata;
  
- static bool mobiveil_pcie_valid_device(struct pci_bus *bus, unsigned int devfn)
- {
--	struct mobiveil_pcie *pcie = bus->sysdata;
--	struct mobiveil_root_port *rp = &pcie->rp;
+ 	/* Check link before accessing downstream ports */
+-	if (bus->number != pcie->root_busno) {
++	if (!pci_is_root_bus(bus)) {
+ 		if (!nwl_pcie_link_up(pcie))
+ 			return false;
+-	}
 -
- 	/* Only one device down on each root port */
--	if ((bus->number == rp->root_bus_nr) && (devfn > 0))
-+	if (pci_is_root_bus(bus) && (devfn > 0))
- 		return false;
- 
- 	/*
- 	 * Do not read more than one device on the bus directly
- 	 * attached to RC
- 	 */
--	if ((bus->primary == rp->root_bus_nr) && (PCI_SLOT(devfn) > 0))
-+	if ((bus->primary == to_pci_host_bridge(bus->bridge)->busnr) && (PCI_SLOT(devfn) > 0))
+-	/* Only one device down on each root port */
+-	if (bus->number == pcie->root_busno && devfn > 0)
++	} else if (devfn > 0)
++		/* Only one device down on each root port */
  		return false;
  
  	return true;
-@@ -61,7 +58,7 @@ static void __iomem *mobiveil_pcie_map_bus(struct pci_bus *bus,
- 		return NULL;
+@@ -855,7 +852,6 @@ static int nwl_pcie_probe(struct platform_device *pdev)
+ 	}
  
- 	/* RC config access */
--	if (bus->number == rp->root_bus_nr)
-+	if (pci_is_root_bus(bus))
- 		return pcie->csr_axi_slave_base + where;
- 
- 	/*
-@@ -606,7 +603,6 @@ int mobiveil_pcie_host_probe(struct mobiveil_pcie *pcie)
- 
- 	/* Initialize bridge */
  	bridge->sysdata = pcie;
--	bridge->busnr = rp->root_bus_nr;
- 	bridge->ops = &mobiveil_pcie_ops;
+-	bridge->busnr = pcie->root_busno;
+ 	bridge->ops = &nwl_pcie_ops;
  	bridge->map_irq = of_irq_parse_and_map_pci;
  	bridge->swizzle_irq = pci_common_swizzle;
-diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-index 767e36a8522d..6082b8afbc31 100644
---- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-+++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-@@ -149,7 +149,6 @@ struct mobiveil_rp_ops {
- };
- 
- struct mobiveil_root_port {
--	char root_bus_nr;
- 	void __iomem *config_axi_slave_base;	/* endpoint config base */
- 	struct resource *ob_io_res;
- 	struct mobiveil_rp_ops *ops;
 -- 
 2.25.1
