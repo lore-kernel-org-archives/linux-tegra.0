@@ -1,47 +1,49 @@
 From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v5 00/11] Add ASoC AHUB components for Tegra210 and later
-Date: Tue, 21 Jul 2020 23:41:08 +0100
-Message-ID: <20200721224108.GG4845@sirena.org.uk>
+Date: Wed, 22 Jul 2020 01:56:49 +0100
+Message-ID: <159537940424.49432.12585025490958205269.b4-ty@kernel.org>
 References: <1595134890-16470-1-git-send-email-spujar@nvidia.com>
- <159525589435.6792.708136378511410418.b4-ty@kernel.org>
- <72d45476-7050-187b-19d6-2ddb9b0ba97a@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YH9Qf6Fh2G5kB/85"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <72d45476-7050-187b-19d6-2ddb9b0ba97a-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1595134890-16470-1-git-send-email-spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+To: kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, Sameer Pujar <spujar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sharadg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, atalambedu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mkumard-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, nwartikar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, viswanathl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rlokhande-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Sun, 19 Jul 2020 10:31:19 +0530, Sameer Pujar wrote:
+> Overview
+> ========
+> Audio Processing Engine (APE) comprises of Audio DMA (ADMA) and Audio
+> Hub (AHUB) unit. AHUB is a collection of hardware accelerators for audio
+> pre-processing and post-processing. It also includes a programmable full
+> crossbar for routing audio data across these accelerators.
+> 
+> [...]
 
---YH9Qf6Fh2G5kB/85
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to
 
-On Tue, Jul 21, 2020 at 05:22:35PM +0530, Sameer Pujar wrote:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> I see that "[PATCH v5 07/11] ASoC: tegra: Add Tegra210 based ADMAIF driver"
-> is not applied as part of this. I wanted to understand if this is because
-> some more review comments are expected or there are other reasons?
+Thanks!
 
-I just hadn't got that far through the patch series yet, looks fine.
+[1/1] ASoC: tegra: Add Tegra210 based ADMAIF driver
+      commit: f74028e159bb8e1de840d945af344bf93b59ada2
 
---YH9Qf6Fh2G5kB/85
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl8XbwMACgkQJNaLcl1U
-h9DtvQf/e8yERKcTlsxgN756R8KDhLh+qzlkWNW3GPS8vrJKP0kOaysI2CDcHvhS
-Z4dtbFFRCgzRhb+m7k42pnnjZ+kEggR2iBeof1kXKLzBybxcaujyULGvI6jtfYVd
-Nvo3rNBhwseVrVNWgS6HURCkfp2aDTDqnXZIQpXrd/eaPwZMajW5vsgkO4vucjRe
-bVopPMTErkT99QWK5XxSj1ZdOFUdbzqQawZvDF75+gh1ZWDp8M64GSttm96zS/rL
-AiiPPVTv1F8c4nxlotfQQ59P/MyW9G5pBYdon3plnVyqYI08k6bUZYMLcHwiFYLu
-HykGGaZPPnMO3stUy64AKKNZmZBxyA==
-=mT4+
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---YH9Qf6Fh2G5kB/85--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
