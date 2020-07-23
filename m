@@ -1,67 +1,61 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 6/7] i2c: tegra: DMA support for t186 and t194
-Date: Thu, 23 Jul 2020 16:38:28 +0300
-Message-ID: <18e4e5df-3d8f-3e52-b9b2-ff0558d6196c@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 5/7] i2c: tegra: enable second level clock gating
+Date: Thu, 23 Jul 2020 17:01:43 +0300
+Message-ID: <1f51823f-09ea-80d5-69dd-7772474a3fb1@gmail.com>
 References: <1595506733-10307-1-git-send-email-kyarlagadda@nvidia.com>
- <1595506733-10307-6-git-send-email-kyarlagadda@nvidia.com>
+ <1595506733-10307-5-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1595506733-10307-6-git-send-email-kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1595506733-10307-5-git-send-email-kyarlagadda@nvidia.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rgumasta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Sender: linux-i2c-owner@vger.kernel.org
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linux-i2c@vger.kernel.org, thierry.reding@gmail.com
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ldewangan@nvidia.com, smohammed@nvidia.com, rgumasta@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 23.07.2020 15:18, Krishna Yarlagadda пишет:
-> Enable GPC DMA support for Tegra186 and Tegra194
-> 
-> Signed-off-by: Rajesh Gumasta <rgumasta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 25 ++++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 8ab968e..77198fc 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -236,6 +236,7 @@ struct tegra_i2c_hw_feature {
->  	u32 setup_hold_time_hs_mode;
->  	bool has_interface_timing_reg;
->  	bool has_slcg_support;
-> +	bool has_gpc_dma;
->  };
+> Enable Second Level Clock Gating feature for supported chips.
+> With SLCG enabled, software need not control clocks anymore
+> and leave clocks enabled always on.
+
+What problem is solved by this patch? If there is no real problem, then
+I'm not sure that this is a worthwhile patch. Please explain.
+
+...
+> @@ -1932,7 +1946,8 @@ static int __maybe_unused tegra_i2c_suspend(struct device *dev)
+>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>  	int err = 0;
 >  
->  /**
-> @@ -432,11 +433,18 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
->  	dma_addr_t dma_phys;
->  	int err;
+> -	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+
+Why i2c_mark_adapter_suspended() is removed?
+
+> +	if (i2c_dev->is_clkon_always)
+> +		clk_disable(i2c_dev->div_clk);
+
+Why clk needs to be disabled on suspend?
+
+>  	if (!pm_runtime_status_suspended(dev))
+>  		err = tegra_i2c_runtime_suspend(dev);
+> @@ -1968,6 +1983,15 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
+>  			return err;
+>  	}
 >  
-> -	if (!i2c_dev->hw->has_apb_dma)
-> -		return 0;
-> -
-> -	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)) {
-> -		dev_dbg(i2c_dev->dev, "Support for APB DMA not enabled!\n");
-> +	if (i2c_dev->hw->has_gpc_dma) {
-> +		if (!IS_ENABLED(CONFIG_TEGRA_GPC_DMA)) {
-
-Single line, please.
-
-> +			dev_dbg(i2c_dev->dev, "Support for GPC DMA not enabled!\n");
-> +			return 0;
+> +	if (i2c_dev->is_clkon_always) {
+> +		err = clk_enable(i2c_dev->div_clk);
+> +		if (err < 0) {
+> +			dev_err(i2c_dev->dev, "clock enable failed %d\n",
+> +				err);
+> +			return err;
 > +		}
-> +	} else if (i2c_dev->hw->has_apb_dma) {
-> +		if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)) {
+> +	}
 
-Here too.
+Would be nice if it all could be wrapped into
+tegra_i2c_div_clk_enable/disable() helpers.
 
-> +			dev_dbg(i2c_dev->dev, "Support for APB DMA not enabled!\n");
-> +			return 0;
-> +		}
-> +	} else {
-> +		dev_dbg(i2c_dev->dev, "DMA is not enabled!\n");
-
-Also, please drop all the exclamation marks.
+>  	i2c_mark_adapter_resumed(&i2c_dev->adapter);
+>  
+>  	return 0;
+> 
