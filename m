@@ -1,62 +1,54 @@
 From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v4 06/14] media: tegra-video: Fix channel format alignment
-Date: Thu, 23 Jul 2020 16:51:04 -0700
-Message-ID: <1595548272-9809-7-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v4 01/14] i2c: tegra: Don't mark VI I2C as IRQ safe runtime PM
+Date: Thu, 23 Jul 2020 16:50:59 -0700
+Message-ID: <1595548272-9809-2-git-send-email-skomatineni@nvidia.com>
 References: <1595548272-9809-1-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1595548272-9809-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
 Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Pixel format width is mistakenly aligned to surface align bytes
-and altering width to aligned value may force sensor mode change
-other than the requested one and also cause mismatch in width
-programmed between sensor and vi which can lead to capture errors.
+Tegra VI I2C is part of VE power domain and typically used for
+camera usecases.
 
-This patch removes width alignment and clamps width as per Tegra
-minimum and maximum limits.
+VE power domain is not always on and is non-IRQ safe. So, IRQ safe
+device cannot be attached to a non-IRQ safe domain as it prevents
+powering off the PM domain and generic power domain driver will warn.
+
+Current driver marks all I2C devices as IRQ safe and VI I2C device
+does not require IRQ safe as it will not be used for atomic transfers.
+
+This patch has fix to make VI I2C as non-IRQ safe.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 1b5e660..d621ebc 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -359,25 +359,15 @@ static void tegra_channel_fmt_align(struct tegra_vi_channel *chan,
- 				    struct v4l2_pix_format *pix,
- 				    unsigned int bpp)
- {
--	unsigned int align;
--	unsigned int min_width;
--	unsigned int max_width;
--	unsigned int width;
- 	unsigned int min_bpl;
- 	unsigned int max_bpl;
- 	unsigned int bpl;
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 1577296..3be1018 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1750,7 +1750,15 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 		goto unprepare_slow_clk;
+ 	}
  
- 	/*
--	 * The transfer alignment requirements are expressed in bytes. Compute
--	 * minimum and maximum values, clamp the requested width and convert
--	 * it back to pixels. Use bytesperline to adjust the width.
-+	 * The transfer alignment requirements are expressed in bytes.
-+	 * Clamp the requested width and height to the limits.
- 	 */
--	align = lcm(SURFACE_ALIGN_BYTES, bpp);
--	min_width = roundup(TEGRA_MIN_WIDTH, align);
--	max_width = rounddown(TEGRA_MAX_WIDTH, align);
--	width = roundup(pix->width * bpp, align);
--
--	pix->width = clamp(width, min_width, max_width) / bpp;
-+	pix->width = clamp(pix->width, TEGRA_MIN_WIDTH, TEGRA_MAX_WIDTH);
- 	pix->height = clamp(pix->height, TEGRA_MIN_HEIGHT, TEGRA_MAX_HEIGHT);
- 
- 	/* Clamp the requested bytes per line value. If the maximum bytes per
+-	pm_runtime_irq_safe(&pdev->dev);
++	/*
++	 * VI I2C is in VE power domain which is not always on and not
++	 * an IRQ safe. So, IRQ safe device can't be attached to a non-IRQ
++	 * safe domain as it prevents powering off the PM domain.
++	 * Also, VI I2C device don't need to use runtime IRQ safe as it will
++	 * not be used for atomic transfers.
++	 */
++	if (!i2c_dev->is_vi)
++		pm_runtime_irq_safe(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 	if (!pm_runtime_enabled(&pdev->dev)) {
+ 		ret = tegra_i2c_runtime_resume(&pdev->dev);
 -- 
 2.7.4
