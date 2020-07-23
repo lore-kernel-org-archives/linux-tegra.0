@@ -1,108 +1,282 @@
-From: Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/7] i2c: tegra: add flag for register write buffering
-Date: Thu, 23 Jul 2020 17:48:49 +0530
-Message-ID: <1595506733-10307-3-git-send-email-kyarlagadda@nvidia.com>
+From: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: [PATCH 4/7] i2c: tegra: add high speed mode support
+Date: Thu, 23 Jul 2020 17:48:50 +0530
+Message-ID: <1595506733-10307-4-git-send-email-kyarlagadda@nvidia.com>
 References: <1595506733-10307-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1595506733-10307-1-git-send-email-kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rgumasta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1595506733-10307-1-git-send-email-kyarlagadda@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: digetx@gmail.com, linux-i2c@vger.kernel.org, thierry.reding@gmail.com
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ldewangan@nvidia.com, smohammed@nvidia.com, rgumasta@nvidia.com, Krishna Yarlagadda <kyarlagadda@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-In chips earlier to Tegra186, register write gets buffered. So to make
-sure register writes are completed, there is need to readback the
-register. Adding flag to disable this readback for Tegra186 and later
-chips.
+From: Shardar Shariff Md <smohammed@nvidia.com>
 
-Signed-off-by: Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Add high speed mode support
+
+Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 64 ++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 56 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a841d6c..bdbbca0 100644
+index bdbbca0..2f654ed 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -220,6 +220,7 @@ struct tegra_i2c_hw_feature {
+@@ -85,12 +85,14 @@
+ #define PACKET_HEADER0_PROTOCOL_I2C		1
+ #define PACKET_HEADER0_CONT_ID_MASK		0xF
+ 
++#define I2C_HEADER_HIGHSPEED_MODE		BIT(22)
+ #define I2C_HEADER_CONT_ON_NAK			BIT(21)
+ #define I2C_HEADER_READ				BIT(19)
+ #define I2C_HEADER_10BIT_ADDR			BIT(18)
+ #define I2C_HEADER_IE_ENABLE			BIT(17)
+ #define I2C_HEADER_REPEAT_START			BIT(16)
+ #define I2C_HEADER_CONTINUE_XFER		BIT(15)
++#define I2C_HEADER_MASTER_ADDR_SHIFT		12
+ #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
+ 
+ #define I2C_BUS_CLEAR_CNFG			0x084
+@@ -136,6 +138,7 @@
+ 
+ /* configuration load timeout in microseconds */
+ #define I2C_CONFIG_LOAD_TIMEOUT			1000000
++#define I2C_HS_MODE				3500000
+ 
+ /* Packet header size in bytes */
+ #define I2C_PACKET_HEADER_SIZE			12
+@@ -215,12 +218,14 @@ struct tegra_i2c_hw_feature {
+ 	int clk_divisor_std_mode;
+ 	int clk_divisor_fast_mode;
+ 	u16 clk_divisor_fast_plus_mode;
++	int clk_multiplier_hs_mode;
+ 	bool has_multi_master_mode;
+ 	bool has_slcg_override_reg;
  	bool has_mst_fifo;
  	const struct i2c_adapter_quirks *quirks;
  	bool supports_bus_clear;
-+	bool has_reg_write_buffering;
+ 	bool has_reg_write_buffering;
++	bool has_hs_mode_support;
  	bool has_apb_dma;
  	u8 tlow_std_mode;
  	u8 thigh_std_mode;
-@@ -325,8 +326,11 @@ static void i2c_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
- 	writel_relaxed(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
+@@ -293,6 +298,7 @@ struct tegra_i2c_dev {
+ 	bool is_curr_dma_xfer;
+ 	struct completion dma_complete;
+ 	bool is_curr_atomic_xfer;
++	int clk_divisor_hs_mode;
+ };
  
- 	/* Read back register to make sure that register writes completed */
--	if (reg != I2C_TX_FIFO)
--		readl_relaxed(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
-+	if (i2c_dev->hw->has_reg_write_buffering) {
-+		if (reg != I2C_TX_FIFO)
-+			readl_relaxed(i2c_dev->base +
-+				      tegra_i2c_reg_addr(i2c_dev, reg));
+ static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+@@ -778,8 +784,9 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
+ 	if (i2c_dev->is_dvc)
+ 		tegra_dvc_init(i2c_dev);
+ 
+-	val = I2C_CNFG_NEW_MASTER_FSM | I2C_CNFG_PACKET_MODE_EN |
+-	      FIELD_PREP(I2C_CNFG_DEBOUNCE_CNT, 2);
++	val = I2C_CNFG_NEW_MASTER_FSM | I2C_CNFG_PACKET_MODE_EN;
++	if (i2c_dev->bus_clk_rate != I2C_HS_MODE)
++		val |= FIELD_PREP(I2C_CNFG_DEBOUNCE_CNT, 0x2);
+ 
+ 	if (i2c_dev->hw->has_multi_master_mode)
+ 		val |= I2C_CNFG_MULTI_MASTER_MODE;
+@@ -791,6 +798,13 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
+ 		tegra_i2c_vi_init(i2c_dev);
+ 
+ 	/* Make sure clock divisor programmed correctly */
++	if (i2c_dev->bus_clk_rate == I2C_HS_MODE) {
++		i2c_dev->clk_divisor_hs_mode = i2c_dev->hw->clk_divisor_hs_mode;
++	} else {
++		val = i2c_readl(i2c_dev, I2C_CLK_DIVISOR);
++		i2c_dev->clk_divisor_hs_mode = FIELD_PREP(I2C_CLK_DIVISOR_HSMODE, val);
 +	}
- }
++
+ 	clk_divisor = FIELD_PREP(I2C_CLK_DIVISOR_HSMODE,
+ 				 i2c_dev->hw->clk_divisor_hs_mode) |
+ 		      FIELD_PREP(I2C_CLK_DIVISOR_STD_FAST_MODE,
+@@ -822,8 +836,13 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
+ 		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
  
- static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
-@@ -1450,6 +1454,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_mst_fifo = false,
+ 	if (!clk_reinit) {
+-		clk_multiplier = (tlow + thigh + 2);
+-		clk_multiplier *= (i2c_dev->clk_divisor_non_hs_mode + 1);
++		if (i2c_dev->bus_clk_rate == I2C_HS_MODE) {
++			clk_multiplier = i2c_dev->hw->clk_multiplier_hs_mode;
++			clk_multiplier *= (i2c_dev->clk_divisor_hs_mode + 1);
++		} else {
++			clk_multiplier = (tlow + thigh + 2);
++			clk_multiplier *= (i2c_dev->clk_divisor_non_hs_mode + 1);
++		}
+ 		err = clk_set_rate(i2c_dev->div_clk,
+ 				   i2c_dev->bus_clk_rate * clk_multiplier);
+ 		if (err) {
+@@ -1244,6 +1263,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		packet_header |= I2C_HEADER_CONT_ON_NAK;
+ 	if (msg->flags & I2C_M_RD)
+ 		packet_header |= I2C_HEADER_READ;
++	if (i2c_dev->bus_clk_rate == I2C_HS_MODE)
++		packet_header |= I2C_HEADER_HIGHSPEED_MODE;
+ 	if (dma && !i2c_dev->msg_read)
+ 		*buffer++ = packet_header;
+ 	else
+@@ -1448,6 +1469,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.clk_divisor_std_mode = 0,
+ 	.clk_divisor_fast_mode = 0,
+ 	.clk_divisor_fast_plus_mode = 0,
++	.clk_multiplier_hs_mode = 12,
+ 	.has_config_load_reg = false,
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+@@ -1455,6 +1477,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
  	.quirks = &tegra_i2c_quirks,
  	.supports_bus_clear = false,
-+	.has_reg_write_buffering = true,
+ 	.has_reg_write_buffering = true,
++	.has_hs_mode_support = false,
  	.has_apb_dma = true,
  	.tlow_std_mode = 0x4,
  	.thigh_std_mode = 0x2,
-@@ -1475,6 +1480,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_mst_fifo = false,
+@@ -1474,6 +1497,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.clk_divisor_std_mode = 0,
+ 	.clk_divisor_fast_mode = 0,
+ 	.clk_divisor_fast_plus_mode = 0,
++	.clk_multiplier_hs_mode = 12,
+ 	.has_config_load_reg = false,
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+@@ -1481,6 +1505,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
  	.quirks = &tegra_i2c_quirks,
  	.supports_bus_clear = false,
-+	.has_reg_write_buffering = true,
+ 	.has_reg_write_buffering = true,
++	.has_hs_mode_support = false,
  	.has_apb_dma = true,
  	.tlow_std_mode = 0x4,
  	.thigh_std_mode = 0x2,
-@@ -1500,6 +1506,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_mst_fifo = false,
+@@ -1500,6 +1525,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.clk_divisor_std_mode = 0x19,
+ 	.clk_divisor_fast_mode = 0x19,
+ 	.clk_divisor_fast_plus_mode = 0x10,
++	.clk_multiplier_hs_mode = 3,
+ 	.has_config_load_reg = false,
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = false,
+@@ -1507,6 +1533,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
  	.quirks = &tegra_i2c_quirks,
  	.supports_bus_clear = true,
-+	.has_reg_write_buffering = true,
+ 	.has_reg_write_buffering = true,
++	.has_hs_mode_support = false,
  	.has_apb_dma = true,
  	.tlow_std_mode = 0x4,
  	.thigh_std_mode = 0x2,
-@@ -1525,6 +1532,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_mst_fifo = false,
+@@ -1522,10 +1549,11 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.has_continue_xfer_support = true,
+ 	.has_per_pkt_xfer_complete_irq = true,
+ 	.has_single_clk_source = true,
+-	.clk_divisor_hs_mode = 1,
++	.clk_divisor_hs_mode = 2,
+ 	.clk_divisor_std_mode = 0x19,
+ 	.clk_divisor_fast_mode = 0x19,
+ 	.clk_divisor_fast_plus_mode = 0x10,
++	.clk_multiplier_hs_mode = 13,
+ 	.has_config_load_reg = true,
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = true,
+@@ -1533,6 +1561,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
  	.quirks = &tegra_i2c_quirks,
  	.supports_bus_clear = true,
-+	.has_reg_write_buffering = true,
+ 	.has_reg_write_buffering = true,
++	.has_hs_mode_support = false,
  	.has_apb_dma = true,
  	.tlow_std_mode = 0x4,
  	.thigh_std_mode = 0x2,
-@@ -1550,6 +1558,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_mst_fifo = false,
+@@ -1548,10 +1577,11 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_continue_xfer_support = true,
+ 	.has_per_pkt_xfer_complete_irq = true,
+ 	.has_single_clk_source = true,
+-	.clk_divisor_hs_mode = 1,
++	.clk_divisor_hs_mode = 2,
+ 	.clk_divisor_std_mode = 0x19,
+ 	.clk_divisor_fast_mode = 0x19,
+ 	.clk_divisor_fast_plus_mode = 0x10,
++	.clk_multiplier_hs_mode = 13,
+ 	.has_config_load_reg = true,
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = true,
+@@ -1559,6 +1589,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
  	.quirks = &tegra_i2c_quirks,
  	.supports_bus_clear = true,
-+	.has_reg_write_buffering = true,
+ 	.has_reg_write_buffering = true,
++	.has_hs_mode_support = false,
  	.has_apb_dma = true,
  	.tlow_std_mode = 0x4,
  	.thigh_std_mode = 0x2,
-@@ -1575,6 +1584,7 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
- 	.has_mst_fifo = false,
+@@ -1574,10 +1605,11 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
+ 	.has_continue_xfer_support = true,
+ 	.has_per_pkt_xfer_complete_irq = true,
+ 	.has_single_clk_source = true,
+-	.clk_divisor_hs_mode = 1,
++	.clk_divisor_hs_mode = 2,
+ 	.clk_divisor_std_mode = 0x16,
+ 	.clk_divisor_fast_mode = 0x19,
+ 	.clk_divisor_fast_plus_mode = 0x10,
++	.clk_multiplier_hs_mode = 13,
+ 	.has_config_load_reg = true,
+ 	.has_multi_master_mode = false,
+ 	.has_slcg_override_reg = true,
+@@ -1585,6 +1617,7 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
  	.quirks = &tegra_i2c_quirks,
  	.supports_bus_clear = true,
-+	.has_reg_write_buffering = false,
+ 	.has_reg_write_buffering = false,
++	.has_hs_mode_support = false,
  	.has_apb_dma = false,
  	.tlow_std_mode = 0x4,
  	.thigh_std_mode = 0x3,
-@@ -1600,6 +1610,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_mst_fifo = true,
+@@ -1600,10 +1633,11 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_continue_xfer_support = true,
+ 	.has_per_pkt_xfer_complete_irq = true,
+ 	.has_single_clk_source = true,
+-	.clk_divisor_hs_mode = 1,
++	.clk_divisor_hs_mode = 2,
+ 	.clk_divisor_std_mode = 0x4f,
+ 	.clk_divisor_fast_mode = 0x3c,
+ 	.clk_divisor_fast_plus_mode = 0x16,
++	.clk_multiplier_hs_mode = 13,
+ 	.has_config_load_reg = true,
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+@@ -1611,6 +1645,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
  	.quirks = &tegra194_i2c_quirks,
  	.supports_bus_clear = true,
-+	.has_reg_write_buffering = false,
+ 	.has_reg_write_buffering = false,
++	.has_hs_mode_support = true,
  	.has_apb_dma = false,
  	.tlow_std_mode = 0x8,
  	.thigh_std_mode = 0x7,
+@@ -1694,8 +1729,21 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
+ 	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
+ 						  "nvidia,tegra20-i2c-dvc");
++
++	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
+ 	i2c_dev->is_vi = of_device_is_compatible(dev->of_node,
+ 						 "nvidia,tegra210-i2c-vi");
++	if (i2c_dev->bus_clk_rate == I2C_HS_MODE &&
++	    !i2c_dev->hw->has_hs_mode_support) {
++		dev_info(i2c_dev->dev, "HS mode not supported\n");
++		i2c_dev->bus_clk_rate = 100000; /* default clock rate */
++	}
++
++	if (i2c_dev->is_multimaster_mode &&
++	    !i2c_dev->hw->has_multi_master_mode) {
++		dev_info(i2c_dev->dev, "multi-master mode not supported\n");
++		i2c_dev->is_multimaster_mode = false;
++	}
+ 	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
+ 	i2c_dev->dma_buf_size = i2c_dev->adapter.quirks->max_write_len +
+ 				I2C_PACKET_HEADER_SIZE;
 -- 
 2.7.4
