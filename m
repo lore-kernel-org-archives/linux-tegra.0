@@ -1,56 +1,50 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH V2] usb: tegra: Fix allocation for the FPCI context
-Date: Thu, 23 Jul 2020 13:19:34 +0200
-Message-ID: <20200723111934.GA1964033@kroah.com>
-References: <20200712102837.24340-1-jonathanh@nvidia.com>
- <20200715113842.30680-1-jonathanh@nvidia.com>
+From: Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/7] i2c: tegra: remove dead code
+Date: Thu, 23 Jul 2020 17:48:47 +0530
+Message-ID: <1595506733-10307-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20200715113842.30680-1-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rgumasta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 15, 2020 at 12:38:42PM +0100, Jon Hunter wrote:
-> Commit 5c4e8d3781bc ("usb: host: xhci-tegra: Add support for XUSB
-> context save/restore") is using the IPFS 'num_offsets' value when
-> allocating memory for FPCI context instead of the FPCI 'num_offsets'.
-> 
-> After commit cad064f1bd52 ("devres: handle zero size in devm_kmalloc()")
-> was added system suspend started failing on Tegra186. The kernel log
-> showed that the Tegra XHCI driver was crashing on entry to suspend when
-> attempting the save the USB context. On Tegra186, the IPFS context has a
-> zero length but the FPCI content has a non-zero length, and because of
-> the bug in the Tegra XHCI driver we are incorrectly allocating a zero
-> length array for the FPCI context. The crash seen on entering suspend
-> when we attempt to save the FPCI context and following commit
-> cad064f1bd52 ("devres: handle zero size in devm_kmalloc()") this now
-> causes a NULL pointer deference when we access the memory. Fix this by
-> correcting the amount of memory we are allocating for FPCI contexts.
-> 
-> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> 
-> Fixes: 5c4e8d3781bc ("usb: host: xhci-tegra: Add support for XUSB context save/restore")
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> 
-> Changes since V1:
-> - Corrected commit message
-> - Added Thierry's ACK
-> 
->  drivers/usb/host/xhci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-No cc: to linux-usb@vger?  :(
+When I2C_HEADER_CONT_ON_NAK bit in IO header is set then =E2=80=9CNo ACK
+from slave=E2=80=9D error is not reported (NACK is considered as ACK
+and transfer is continued). So if I2C_ERR_NO_ACK is set, it would
+imply I2C_M_IGNORE_NAK is not set and hence this code will never
+execute. When I2C_HEADER_CONT_ON_NAK bit in IO header is set then
+=E2=80=9CNo ACK from slave=E2=80=9D error is not reported.
+Condition (msg->flags & I2C_M_IGNORE_NAK) will never be hit
 
-I'll go queue this up, but I would have caught it sooner if you had done
-so...
+Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Krishna Yarlagadda <kyarlagadda-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-thanks,
-
-greg k-h
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.=
+c
+index 1577296..c6c870c 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1336,11 +1336,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *=
+i2c_dev,
+ 		return -EAGAIN;
+ 	}
+=20
+-	if (i2c_dev->msg_err =3D=3D I2C_ERR_NO_ACK) {
+-		if (msg->flags & I2C_M_IGNORE_NAK)
+-			return 0;
++	if (i2c_dev->msg_err =3D=3D I2C_ERR_NO_ACK)
+ 		return -EREMOTEIO;
+-	}
+=20
+ 	return -EIO;
+ }
+--=20
+2.7.4
