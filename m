@@ -2,169 +2,192 @@ Return-Path: <SRS0=jT6+=BD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7967C433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 08:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30D9C433E5
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 09:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF01620674
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 08:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCD1E206EB
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 09:43:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vaag5+kX"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="flyB4CY6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbgGXIfx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Jul 2020 04:35:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48260 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbgGXIfx (ORCPT
+        id S1726617AbgGXJnj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Jul 2020 05:43:39 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:47307 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726114AbgGXJnj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Jul 2020 04:35:53 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A6EC0619D3
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2020 01:35:53 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id z5so4843667pgb.6
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2020 01:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VakwdzTZbI2NrCcqrnEUNuPYEf7c6UvJxHXZ+U7HH4E=;
-        b=vaag5+kXqh0WoB5YdjhridcMexiFTp4DHEGtD16kRVcu3+qu0M3MT47HNoZihGGvNv
-         TyWGOZfT1NERXzL5ZDffLMeBm6e6lcwiEmOxvRCl3gkeXHaEaickWtz47D4z4ONUS3nh
-         TV60q6saBvHjLbPPvbvBm0RzYUJGN/QsgLLM1P7m4tsFGaKLEQ/AMQUobpsCefP0FAnD
-         r7znb5iHrKfixfHAgixO4u8mkqeh8qYeKuBKX5OlBrt+PBCNR34Ni/UtP6OqYwBhBlD+
-         GERR0sLUwWWgziMFlFzGectNCgX2UCYOl1691qcrJDRpp6awF1MjDnQdNB6d/svVUYW2
-         XZsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VakwdzTZbI2NrCcqrnEUNuPYEf7c6UvJxHXZ+U7HH4E=;
-        b=kIASQePye7J/VqjiOJ8DHQg4ymgHAjVOvoF/+DlTFdsX/tGcS2Y4XKcdDhmrwTF3jP
-         lNSstLUVS2ef2Foo66KJOXPxqUoF8uGljPt5kYFRfIytPjCWMXUrZht5dWw2GZQLq0kJ
-         g1YWmNy6hCTVlLn4rHKT4PiFcRufEkUF9iD5yI6J06e9chovbQlBR/bHOmm2YqSyF15/
-         HbmDzcGG2ng0eTQc2bY/5FRKKBUGxkuJDmA+V2H+fvUI9/tLt6f/FKGdJFyaRAfA0l9N
-         5aIb5aQfQ55isI+7KSN085db9j5Ef+oKXRyNw06AEim1HDrvf2P1VKD8121KZJqVlB9q
-         KnNw==
-X-Gm-Message-State: AOAM530Ih9zgFaQFTI9KiXuJQ4BF7X5tkuekDoNBS2+9qbigoobov1N5
-        2awz7bnqwoq8IzQqQjH8mJw=
-X-Google-Smtp-Source: ABdhPJzBefa0MLGwqncznAGtC+wzq8qw2xBQKiR3rn+mgB4J8bbDiglgqAPgbhnnAbm415CwvYFEsw==
-X-Received: by 2002:a62:8482:: with SMTP id k124mr7980683pfd.285.1595579752530;
-        Fri, 24 Jul 2020 01:35:52 -0700 (PDT)
-Received: from [192.168.0.109] ([1.186.115.27])
-        by smtp.gmail.com with ESMTPSA id x66sm5523500pgb.12.2020.07.24.01.35.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jul 2020 01:35:51 -0700 (PDT)
-Subject: Re: [PATCH v3] staging: nvec: change usage of slave to secondary
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     marvin24@gmx.de, p.zabel@pengutronix.de,
-        linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org,
-        ac100@lists.launchpad.net
-References: <20200723151511.22193-1-bharadwaj.rohit8@gmail.com>
- <20200724043633.7755-1-bharadwaj.rohit8@gmail.com>
- <ac0f2bb4-7fa1-26a8-a43b-2db427188d4e@gmail.com>
- <20200724082810.GA3977020@kroah.com>
-From:   Rohit Bharadwaj <bharadwaj.rohit8@gmail.com>
-Message-ID: <34e6c906-7def-816d-a45d-03d366f32c61@gmail.com>
-Date:   Fri, 24 Jul 2020 14:05:47 +0530
+        Fri, 24 Jul 2020 05:43:39 -0400
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id yuEojKP2FywL5yuEpjSoaW; Fri, 24 Jul 2020 11:43:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1595583816; bh=X/ey0vlyUrrkiB6fZ9SxASsWxncNKA0zs37XFPKq49A=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=flyB4CY6QOHBAHH0IRDamDkAtGR2gZi9J9WE3NlW8BbgihYnOMSSYAIbskZlznGqo
+         aJxKjPq1LOpgIevK9MCNnncq42dH2Hrvabn3feXSCVAr+ytLwlp0+d4PLR5SiKzZlI
+         wAp5BshiPXa1hpHrmBb9eZI6nu24BQBemm1bgaTqts0DImHQgReBu/FXSZABXLg9ES
+         2/yMIHdtOJdE0YWrsZpOg8hFbt5n1vHlFRwB7tbFQjTQSAHQOen20cx2zIuGd6UZ3o
+         NEHQ8vo3A+8jUqBsmoCxrWey9RkyTpULvYCESRabtYiJuB2o3HqG/yPx6hbys4Ts+l
+         k4t8ShT00IgCQ==
+Subject: Re: [RFC PATCH v4 00/14] Support for Tegra video capture from
+ external sensor
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
+Cc:     digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1595548272-9809-1-git-send-email-skomatineni@nvidia.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <cb080da3-5ae5-bb83-8f5c-65d1fe17cb67@xs4all.nl>
+Date:   Fri, 24 Jul 2020 11:43:34 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200724082810.GA3977020@kroah.com>
+In-Reply-To: <1595548272-9809-1-git-send-email-skomatineni@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfEMMYYD6g+CSrxjATIbU9TbOSrXG7nUV0lk+4TmcECLEqZfNcuERiA4QsKgnUV9l/bvWF3A234GJlHJ0G/nWQ0m5NTzlgam9RS0rby+x0EP7WgIhdPC6
+ Q31aCTIPiiOu8uXuXpqtkB8u3j71xcEbUlimy2syIgXILQdTM16PVGN5ADfSC9+X/cRxd9Fz474AJlmC3hOkR7x0vRS5D8FWzPS5E69IE/TLrbkuotxRNwFl
+ 07jZSalUTSJ+1v/vOtDtVlaWorHeEuvYy8fCZI2JDmITFjyuWtIY3gR4cTNYvDGVXW/HU/hfRtLwB0OUbhxP2yc6xItq1enCj8pBFmsQ6q3Y9rVGcZynqtoO
+ 2AXqjJMB5P0gmMM9SMhT7zCw76ONc+dXP5HIlCiqTX3HEaJv2SLjO/HHPXupSmU3lGMG2tesBjp2tbC5ipCArb11h6+kRuhyOqq12DP54YWEcEygMTxV4VJu
+ 0t/PwqzWH48wxifSpdsGIHgx1CW/wrNCLO84AqzddvhYmcZMPiY/9bslfTVjaGT9kVHvFUDDhZilTvwFmGpBA8WvWU2aw6RcyC1sObIQUYOnpqZO87+KTTwg
+ 14XiAWDxQNCR4fNGt31po35j/uqKFIbFFTdvwp/SZklqoyi8ainibTZlLOyxw+yCKaZ6tJx9GZlo8dpX4646BIKCVpLMIknh0CLo5YxlLDgQQhmQYul6X4aF
+ Y/ICDoOPCFrAEf391QbwNyds/TEeBDsgXFO2N2N/fAeUCfbOqXtWww==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 24/07/20 1:58 pm, Greg KH wrote:
-> On Fri, Jul 24, 2020 at 01:44:27PM +0530, Rohit Bharadwaj wrote:
->> On 24/07/20 10:06 am, Rohit K Bharadwaj wrote:
->>> changed usage of slave (deprecated) to secondary
->>>
->>> Signed-off-by: Rohit K Bharadwaj <bharadwaj.rohit8@gmail.com>
->>> ---
->>> v3: change patch subject, add version history
->>> v2: add changelog text in body of mail
->>> v1: fix style issues by changing usage of slave to secondary
->>>
->>>  drivers/staging/nvec/nvec.c | 12 ++++++------
->>>  1 file changed, 6 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
->>> index 360ec0407740..5d7b66719a39 100644
->>> --- a/drivers/staging/nvec/nvec.c
->>> +++ b/drivers/staging/nvec/nvec.c
->>> @@ -718,7 +718,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
->>>  	return IRQ_HANDLED;
->>>  }
->>>  
->>> -static void tegra_init_i2c_slave(struct nvec_chip *nvec)
->>> +static void tegra_init_i2c_secondary(struct nvec_chip *nvec)
->>>  {
->>>  	u32 val;
->>>  
->>> @@ -744,7 +744,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
->>>  }
->>>  
->>>  #ifdef CONFIG_PM_SLEEP
->>> -static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
->>> +static void nvec_disable_i2c_secondary(struct nvec_chip *nvec)
->>>  {
->>>  	disable_irq(nvec->irq);
->>>  	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
->>> @@ -784,7 +784,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
->>>  	platform_set_drvdata(pdev, nvec);
->>>  	nvec->dev = dev;
->>>  
->>> -	if (of_property_read_u32(dev->of_node, "slave-addr", &nvec->i2c_addr)) {
->>> +	if (of_property_read_u32(dev->of_node, "secondary-addr", &nvec->i2c_addr)) {
->>>  		dev_err(dev, "no i2c address specified");
->>>  		return -ENODEV;
->>>  	}
->>> @@ -839,7 +839,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
->>>  	}
->>>  	disable_irq(nvec->irq);
->>>  
->>> -	tegra_init_i2c_slave(nvec);
->>> +	tegra_init_i2c_secondary(nvec);
->>>  
->>>  	/* enable event reporting */
->>>  	nvec_toggle_global_events(nvec, true);
->>> @@ -913,7 +913,7 @@ static int nvec_suspend(struct device *dev)
->>>  	if (!err)
->>>  		nvec_msg_free(nvec, msg);
->>>  
->>> -	nvec_disable_i2c_slave(nvec);
->>> +	nvec_disable_i2c_secondary(nvec);
->>>  
->>>  	return 0;
->>>  }
->>> @@ -923,7 +923,7 @@ static int nvec_resume(struct device *dev)
->>>  	struct nvec_chip *nvec = dev_get_drvdata(dev);
->>>  
->>>  	dev_dbg(nvec->dev, "resuming\n");
->>> -	tegra_init_i2c_slave(nvec);
->>> +	tegra_init_i2c_secondary(nvec);
->>>  	nvec_toggle_global_events(nvec, true);
->>>  
->>>  	return 0;
->>>
->> Dear All, this message was not delivered to marvin24@gmx.de, I'm getting that The response from the remote server was:
->> 554 gmx.net (mxgmx016) Nemesis ESMTP Service not available No SMTP service Reject due to policy restrictions, 
+Thierry, Dmitry,
+
+I'm happy with this series from a media perspective. However, patches 1-5 fix
+various i2c-tegra.c issues and patch 12 changes mipi calibration functions in
+drivers/gpu that patch 13 relies on.
+
+I think the i2c-tegra.c patches can be merged independently into the i2c
+subsystem, but patch 12 needs to be merged with the media patches. So for patch
+12 I need an Acked-by from Thierry.
+
+I can also take the i2c-tegra patches if preferred, but there too I need Acks.
+Dmitry, can you either take these i2c patches, or reply with Acks if you want
+me to take it?
+
+Regards,
+
+	Hans
+
+
+On 24/07/2020 01:50, Sowjanya Komatineni wrote:
+> This series adds support for video capture from external camera sensor to
+> Tegra video driver.
 > 
-> Not a big deal, email address atrophy over time.  That's why you always
-> cc: a public mailing list for patches.
+> Jetson TX1 has camera expansion connector and supports custom camera module
+> designed as per TX1 design specification.
 > 
-> thanks,
+> This series also enables camera capture support for Jetson Nano which has
+> Raspberry PI camera header.
 > 
-> greg k-h
+> This series is tested with IMX219 camera sensor.
 > 
-Thank you so much for the reply sir, I hope this patch gets accepted.
+> This series include,
+> 
+> VI I2C related fixes
+> - Camera sensor programming happens through VI I2C which is on host1x bus.
+> - These patches includes device tree and I2C driver fixes for VI I2C.
+> 
+> Tegra video driver updates
+> - TPG Vs Non-TPG based on Kconfig
+> - Support for external sensor video capture based on device graph from DT.
+> - Support for selection ioctl operations
+> - Tegra MIPI CSI pads calibration
+> - CSI T-CLK and T-HS settle time computation based on clock rates.
+> 
+> Host1x driver updates
+> - Adds API to allow creating mipi device for specific device node.
+> - Splits MIPI pads calibrate start and waiting for calibration to be done.
+> 
+> Device tree updates
+> - Adds camera connector 2V8, 1V8, 1V2 regulator supplies to Jetson TX1 DT.
+> - Enabled VI and CSI support in Jetson Nano DT.
+> 
+> 
+> Delta between patch versions:
+> [v4]:	Includes below fix based on v3 feedback
+> 	- Patches are based on latest linux-next.
+> 	- With split of tegra_mipi_calibrate() and tegra_mipi_wait(), mipi
+> 	  clock is not left enabled till calibration done. This series adds
+> 	  a patch to fix this by keeping clock enabled till calibration is
+> 	  done.
+> 
+> 	Note:
+> 	Patch-0010 has compilation dependency on
+> 	https://patchwork.kernel.org/patch/11659521/
+> 
+> [v3]:	Includes v2 feedback
+> 	- Uses separate helper function for retrieving remote csi subdevice
+> 	  and source subdevice.
+> 	- Added check for presence of subdevice ops set/get_selection
+> 	- dropped vb2_queue_release from driver and using
+> 	  vb2_video_unregister_device instead of video_unregister_device.
+> 	- video device register should happen in the last after all video
+> 	  device related setup is done in the driver. This is being addressed
+> 	  in below RFC patch. Once proper implementation of this is available
+> 	  will update Tegra video driver to use split APIs and do all setup
+> 	  prior to device register. Added this as TODO in the driver.
+> 	  https://www.spinics.net/lists/linux-media/msg172761.html
+> 
+> 	Note:
+> 	Patch-0012 has compilation dependency on
+> 	https://patchwork.kernel.org/patch/11659521/
+> 
+> 
+> [v2]:	Includes below changes based on v1 feedback
+> 	- dt-binding document and the driver update for device graph to use
+> 	  separate ports for sink endpoint and source endpoint for csi.
+> 	- Use data-lanes endpoint property for csi.
+> 	- Update tegra_mipi_request() to take device node pointer argument
+> 	  rather than adding extra API.
+> 	- Remove checking for clk pointer before clk_disable.
+> 
+> 
+> Sowjanya Komatineni (14):
+>   i2c: tegra: Don't mark VI I2C as IRQ safe runtime PM
+>   i2c: tegra: Remove NULL pointer check before
+>     clk_enable/disable/prepare/unprepare
+>   i2c: tegra: Fix the error path in tegra_i2c_runtime_resume
+>   i2c: tegra: Fix runtime resume to re-init VI I2C
+>   i2c: tegra: Avoid tegra_i2c_init_dma() for Tegra210 vi i2c
+>   media: tegra-video: Fix channel format alignment
+>   media: tegra-video: Enable TPG based on kernel config
+>   media: tegra-video: Update format lookup to offset based
+>   dt-bindings: tegra: Update VI and CSI bindings with port info
+>   media: tegra-video: Add support for external sensor capture
+>   media: tegra-video: Add support for selection ioctl ops
+>   gpu: host1x: mipi: Keep MIPI clock enabled till calibration is done
+>   media: tegra-video: Add CSI MIPI pads calibration
+>   media: tegra-video: Compute settle times based on the clock rate
+> 
+>  .../display/tegra/nvidia,tegra20-host1x.txt        |  92 ++-
+>  drivers/gpu/drm/tegra/dsi.c                        |   4 +-
+>  drivers/gpu/host1x/mipi.c                          |  19 +-
+>  drivers/i2c/busses/i2c-tegra.c                     | 101 +--
+>  drivers/staging/media/tegra-video/Kconfig          |   7 +
+>  drivers/staging/media/tegra-video/csi.c            | 258 ++++++-
+>  drivers/staging/media/tegra-video/csi.h            |   8 +
+>  drivers/staging/media/tegra-video/tegra210.c       |  25 +-
+>  drivers/staging/media/tegra-video/vi.c             | 800 +++++++++++++++++++--
+>  drivers/staging/media/tegra-video/vi.h             |  25 +-
+>  drivers/staging/media/tegra-video/video.c          |  23 +-
+>  include/linux/host1x.h                             |   5 +-
+>  12 files changed, 1224 insertions(+), 143 deletions(-)
+> 
+
