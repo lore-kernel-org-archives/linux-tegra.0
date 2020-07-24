@@ -2,100 +2,141 @@ Return-Path: <SRS0=jT6+=BD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D90FBC433E1
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 19:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE9CC433E3
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 20:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A99452070B
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 19:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595618225;
-	bh=1Jq8jNeuEsHc+9ZAVYpD7ZWZg9rx9073ZC4wxzAB224=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Zjn4etrEGxhde+5N+8rxpIuXUJx3iwa8YpkTEDu4uJNCYd6Px89AFsJwmFl3cu9lH
-	 u15xunLOyTTISIIPveR4cugYTkwe0oJhtUoWUiSkfYpot2E4u3XnBzqDuUgsjLFL0s
-	 BZ4VlfbTxMvSRh3omTKd8KjBkftO8M8buP/pFhfo=
+	by mail.kernel.org (Postfix) with ESMTP id 3802B206C1
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 20:42:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="kFDFS6yL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726493AbgGXTRF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Jul 2020 15:17:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48552 "EHLO mail.kernel.org"
+        id S1726572AbgGXUmx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Jul 2020 16:42:53 -0400
+Received: from mout01.posteo.de ([185.67.36.65]:45610 "EHLO mout01.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726381AbgGXTRF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Jul 2020 15:17:05 -0400
-Received: from localhost (p54b3305c.dip0.t-ipconnect.de [84.179.48.92])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F8A7206F0;
-        Fri, 24 Jul 2020 19:17:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595618224;
-        bh=1Jq8jNeuEsHc+9ZAVYpD7ZWZg9rx9073ZC4wxzAB224=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UeOx/uowcd9aNoRjyHJQMB9q9YsrBnUBIEVkjOifuQpzolBXY0eKwDzWDuSb3XSc2
-         qEbc8ShfHWjbic9ICW80v38dIpl2qLsZZrlay7lJX3hse3Ug6bDK0GaSEq5L6pbXAX
-         hqAAJJmiL1E3YzlJWfc84AAkhEI4aoEjpa+dj4r0=
-Date:   Fri, 24 Jul 2020 21:16:55 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com,
-        digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [RFC PATCH v4 00/14] Support for Tegra video capture from
- external sensor
-Message-ID: <20200724191654.GA1227@ninjato>
-References: <1595548272-9809-1-git-send-email-skomatineni@nvidia.com>
- <cb080da3-5ae5-bb83-8f5c-65d1fe17cb67@xs4all.nl>
+        id S1726493AbgGXUmw (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 24 Jul 2020 16:42:52 -0400
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id 0BF9A16005C
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2020 22:42:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1595623370; bh=CFRrsybpNNeAyc4qnC2Tdbw8cOnA5BAgyVoXp0fPP0w=;
+        h=Date:From:To:cc:Subject:From;
+        b=kFDFS6yLy6Y5l6nPABSJnWBC17+oq9/8WFnMS8Ztq0/FPejbco5QQJ0iE4QXVSN9m
+         vkjlnpd3CWN9THss9xGYW/MkO2yQTv1RTtziBymFJee6yYs4IhGb/sOMZ3Mb6UOSK9
+         SbCR1aSVZqnaeFBWkEXm6ByGVda8LTlpp9/eJe53Lf5Yxi/8KT/Vc8hLGzMrXItjqa
+         HH3SyGhMUrSfT4KnTi5R4jrjTGjPmBHJ3wlozzyVr3KkrCw2WpIiRt6hg2DSsBc48v
+         L7RRH0G5D+thHdXC3LEE5TmQ+MxStiw3QyhCygxIP5+ndXph1s9nDvhdkT1QIfNBdb
+         dn/RujJVFVhiQ==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 4BD1Nn012jz9rxN;
+        Fri, 24 Jul 2020 22:42:48 +0200 (CEST)
+Date:   Fri, 24 Jul 2020 22:42:48 +0200 (CEST)
+From:   Marc Dietrich <marvin24@posteo.de>
+X-X-Sender: lucile@macbook-pro.fritz.box
+To:     Rohit K Bharadwaj <bharadwaj.rohit8@gmail.com>
+cc:     Marc Dietrich <marvin24@posteo.de>,
+        Greg KH <gregkh@linuxfoundation.org>, p.zabel@pengutronix.de,
+        linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: Re: [PATCH v3] staging: nvec: change usage of slave to secondary
+In-Reply-To: <365fd26d-94b1-760e-48f5-bf8a85a90399@gmail.com>
+Message-ID: <alpine.OSX.2.23.453.2007242238230.12486@macbook-pro.fritz.box>
+References: <20200723151511.22193-1-bharadwaj.rohit8@gmail.com> <20200724043633.7755-1-bharadwaj.rohit8@gmail.com> <ac0f2bb4-7fa1-26a8-a43b-2db427188d4e@gmail.com> <20200724082810.GA3977020@kroah.com> <34e6c906-7def-816d-a45d-03d366f32c61@gmail.com>
+ <alpine.OSX.2.23.453.2007241829180.9201@macbook-pro.fritz.box> <alpine.OSX.2.23.453.2007241835260.9201@macbook-pro.fritz.box> <365fd26d-94b1-760e-48f5-bf8a85a90399@gmail.com>
+User-Agent: Alpine 2.23 (OSX 453 2020-06-18)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Content-Disposition: inline
-In-Reply-To: <cb080da3-5ae5-bb83-8f5c-65d1fe17cb67@xs4all.nl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/mixed; boundary="0-1424241931-1595623369=:12486"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-> I can also take the i2c-tegra patches if preferred, but there too I need Acks.
-> Dmitry, can you either take these i2c patches, or reply with Acks if you want
-> me to take it?
-
-There are some more patches for i2c-tegra pending, so I'd rather pick
-them into my I2C tree once the Tegra maintainers acked them. I can
-provide a immutable branch, though, if there is interest.
+--0-1424241931-1595623369=:12486
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 
 
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
+Hi Rohit,
 
------BEGIN PGP SIGNATURE-----
+On Fri, 24 Jul 2020, Rohit K Bharadwaj wrote:
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl8bM6IACgkQFA3kzBSg
-KbYTCxAAotZrtFWCm4x17AWbkHShGvcc2z5M10agF+meIHjiSj9loeN4X928M+Hi
-bjAdLaRtKsDtpOQMvx+LUrooR8yO1+IP609BYETjzocL+jStyg4kfspuo+FSeRb2
-4MGI9FYsNLnbMz4ZEvyXvNRIK9MuM+tpRjVn0IQD+AEYOVaX86Yg37tU3pCJH+xH
-PhodfARWlVc3nQ6W/xd0/wotbDT2ZxoAB4Oaz0XVdnHbWb92imEt14IVLEtYPpz8
-dDc/K8AfqhgGHl2G74Qyg38AeDiomiRrSAEYUMurmq4sMXyQzmEBP5TPVrA5ApUL
-e9RLLRslny8bBru71qafKiWeZm8ZG2C594rtrxbmdkSwXROIekweIM/sm1/B1A30
-AxeNIaNr0JRa6f6gOAaBwOrl8p6vmfd+LzMWj/unZuF8nvucW5xoRJw6thlyy7K9
-ZfsMm3KNUXK4L2AsqgPnCMC8HDgL38i9ZguRmsmJQkhblwTTK1GQCrgP1czu2pBX
-L2P34eKIFzuPqGmnNO6KlEu+SbUwx3ihHwZxrcC8zD9WuaNT09PGWMxLYCzA7t7J
-UKcB6Prr0gToQ7aS0J8q66inAqRlQOHLzHx4uY3iJI3y17Wx39pHLIlXfbyKNp09
-42tnbRlT/ZoRdxXVfJjHhBCopnX2VnFsYJmdWvHJohTXtcZCdqs=
-=ykZo
------END PGP SIGNATURE-----
+> On 24/07/20 10:06 pm, Marc Dietrich wrote:
+>>
+>>
+>> On Fri, 24 Jul 2020, Marc Dietrich wrote:
+>>
+>>> Hi Rohit,
+>>>
+>>> On Fri, 24 Jul 2020, Rohit Bharadwaj wrote:
+>>>
+>>>> On 24/07/20 1:58 pm, Greg KH wrote:
+>>>>> On Fri, Jul 24, 2020 at 01:44:27PM +0530, Rohit Bharadwaj wrote:
+>>>>>> On 24/07/20 10:06 am, Rohit K Bharadwaj wrote:
+>>>>>>> changed usage of slave (deprecated) to secondary
+>>>>>>>
+>>>>>>> Signed-off-by: Rohit K Bharadwaj <bharadwaj.rohit8@gmail.com>
+>>>>>>> ---
+>>>>>>> v3: change patch subject, add version history
+>>>>>>> v2: add changelog text in body of mail
+>>>>>>> v1: fix style issues by changing usage of slave to secondary
+>>>>>>>
+>>>>>>>  drivers/staging/nvec/nvec.c | 12 ++++++------
+>>>>>>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+>>>>>>> index 360ec0407740..5d7b66719a39 100644
+>>>>>>> --- a/drivers/staging/nvec/nvec.c
+>>>>>>> +++ b/drivers/staging/nvec/nvec.c
+>>>>>>> @@ -718,7 +718,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+>>>>>>>      return IRQ_HANDLED;
+>>>>>>>  }
+>>>>>>>
+>>>>>>> -static void tegra_init_i2c_slave(struct nvec_chip *nvec)
+>>>>>>> +static void tegra_init_i2c_secondary(struct nvec_chip *nvec)
+>>>>>>>  {
+>>>>>>>      u32 val;
+>>>>>>>
+>>>>>>> @@ -744,7 +744,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
+>>>>>>>  }
+>>>>>>>
+>>>>>>>  #ifdef CONFIG_PM_SLEEP
+>>>>>>> -static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+>>>>>>> +static void nvec_disable_i2c_secondary(struct nvec_chip *nvec)
+>>>>>>>  {
+>>>>>>>      disable_irq(nvec->irq);
+>>>>>>>      writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+>>>>>>> @@ -784,7 +784,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+>>>>>>>      platform_set_drvdata(pdev, nvec);
+>>>>>>>      nvec->dev = dev;
+>>>>>>>
+>>>>>>> -    if (of_property_read_u32(dev->of_node, "slave-addr", &nvec->i2c_addr)) {
+>>>>>>> +    if (of_property_read_u32(dev->of_node, "secondary-addr", &nvec->i2c_addr)) {
+>>>>>>>          dev_err(dev, "no i2c address specified");
+>>>>>>>          return -ENODEV;
+>>>>>>>      }
+>>>
+>>> as Christoph said, please don't change this line.
+>>
+>> arr, I meant Dan of course ;-)
+> Dear all, thank you so much for your inputs, I will try to make some other patch which will not break the driver (hopefully :p), or if you give me permission to submit this patch itself by just keeping this one line
+>
+>> if (of_property_read_u32(dev->of_node, "slave-addr", &nvec->i2c_addr))
+>
+> unchanged, and provided it does not break the driver by doing so, I would gladly make the changes and submit v4 of the patch.
 
---VbJkn9YxBvnuCH5J--
+please resend the patch with the line above unchanged as v4. Don't forget 
+to to update the changelog to the commit message. I tested your patch 
+(without the dt property change) and it does not change behavoir - as expected,
+so you will recevice my Ack.
+
+Marc
+
+--0-1424241931-1595623369=:12486--
