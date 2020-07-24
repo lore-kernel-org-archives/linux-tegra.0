@@ -1,54 +1,85 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [RFC PATCH v4 01/14] i2c: tegra: Don't mark VI I2C as IRQ safe runtime PM
-Date: Thu, 23 Jul 2020 16:50:59 -0700
-Message-ID: <1595548272-9809-2-git-send-email-skomatineni@nvidia.com>
-References: <1595548272-9809-1-git-send-email-skomatineni@nvidia.com>
+From: Rohit K Bharadwaj <bharadwaj.rohit8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3] staging: nvec: change usage of slave to secondary
+Date: Fri, 24 Jul 2020 10:06:34 +0530
+Message-ID: <20200724043633.7755-1-bharadwaj.rohit8@gmail.com>
+References: <20200723151511.22193-1-bharadwaj.rohit8@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1595548272-9809-1-git-send-email-skomatineni@nvidia.com>
-Sender: linux-media-owner@vger.kernel.org
-To: skomatineni@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
-Cc: digetx@gmail.com, sboyd@kernel.org, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20200723151511.22193-1-bharadwaj.rohit8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: marvin24-Mmb7MZpHnFY@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
+Cc: Rohit K Bharadwaj <bharadwaj.rohit8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra VI I2C is part of VE power domain and typically used for
-camera usecases.
+changed usage of slave (deprecated) to secondary
 
-VE power domain is not always on and is non-IRQ safe. So, IRQ safe
-device cannot be attached to a non-IRQ safe domain as it prevents
-powering off the PM domain and generic power domain driver will warn.
-
-Current driver marks all I2C devices as IRQ safe and VI I2C device
-does not require IRQ safe as it will not be used for atomic transfers.
-
-This patch has fix to make VI I2C as non-IRQ safe.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Rohit K Bharadwaj <bharadwaj.rohit8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/i2c/busses/i2c-tegra.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+v3: change patch subject, add version history
+v2: add changelog text in body of mail
+v1: fix style issues by changing usage of slave to secondary
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 1577296..3be1018 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1750,7 +1750,15 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		goto unprepare_slow_clk;
- 	}
+ drivers/staging/nvec/nvec.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 360ec0407740..5d7b66719a39 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -718,7 +718,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 	return IRQ_HANDLED;
+ }
  
--	pm_runtime_irq_safe(&pdev->dev);
-+	/*
-+	 * VI I2C is in VE power domain which is not always on and not
-+	 * an IRQ safe. So, IRQ safe device can't be attached to a non-IRQ
-+	 * safe domain as it prevents powering off the PM domain.
-+	 * Also, VI I2C device don't need to use runtime IRQ safe as it will
-+	 * not be used for atomic transfers.
-+	 */
-+	if (!i2c_dev->is_vi)
-+		pm_runtime_irq_safe(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 	if (!pm_runtime_enabled(&pdev->dev)) {
- 		ret = tegra_i2c_runtime_resume(&pdev->dev);
+-static void tegra_init_i2c_slave(struct nvec_chip *nvec)
++static void tegra_init_i2c_secondary(struct nvec_chip *nvec)
+ {
+ 	u32 val;
+ 
+@@ -744,7 +744,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
++static void nvec_disable_i2c_secondary(struct nvec_chip *nvec)
+ {
+ 	disable_irq(nvec->irq);
+ 	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+@@ -784,7 +784,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, nvec);
+ 	nvec->dev = dev;
+ 
+-	if (of_property_read_u32(dev->of_node, "slave-addr", &nvec->i2c_addr)) {
++	if (of_property_read_u32(dev->of_node, "secondary-addr", &nvec->i2c_addr)) {
+ 		dev_err(dev, "no i2c address specified");
+ 		return -ENODEV;
+ 	}
+@@ -839,7 +839,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 	}
+ 	disable_irq(nvec->irq);
+ 
+-	tegra_init_i2c_slave(nvec);
++	tegra_init_i2c_secondary(nvec);
+ 
+ 	/* enable event reporting */
+ 	nvec_toggle_global_events(nvec, true);
+@@ -913,7 +913,7 @@ static int nvec_suspend(struct device *dev)
+ 	if (!err)
+ 		nvec_msg_free(nvec, msg);
+ 
+-	nvec_disable_i2c_slave(nvec);
++	nvec_disable_i2c_secondary(nvec);
+ 
+ 	return 0;
+ }
+@@ -923,7 +923,7 @@ static int nvec_resume(struct device *dev)
+ 	struct nvec_chip *nvec = dev_get_drvdata(dev);
+ 
+ 	dev_dbg(nvec->dev, "resuming\n");
+-	tegra_init_i2c_slave(nvec);
++	tegra_init_i2c_secondary(nvec);
+ 	nvec_toggle_global_events(nvec, true);
+ 
+ 	return 0;
 -- 
-2.7.4
+2.25.1
