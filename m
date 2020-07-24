@@ -3,129 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9B4C433EB
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 14:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C845DC433EA
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 14:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 091DD20663
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 14:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595599436;
-	bh=l8O9b9w6KVznaryemW8PrV8g8wM+lmsDAl7e+r2DSRk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ub6IgbosUjuGHvrJxd0vJj3FtvXFscPi7ep+dE+LSwmz44mOjchb6kQ5kpuMKGbGY
-	 3hcuH1a/V+MGIzbsW/aoifj4K6dy+OnKGfA/aH6/qnr5FtfNM2QhYgpGPv2dOgav7I
-	 AeOayQyRjmSpnIm+9xX8SCT3OxUBidZ4T+S2zXFw=
+	by mail.kernel.org (Postfix) with ESMTP id A4985206D8
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 14:06:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vo7kht33"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbgGXODw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Jul 2020 10:03:52 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39071 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbgGXODv (ORCPT
+        id S1726424AbgGXOG7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Jul 2020 10:06:59 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:45884 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbgGXOG7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Jul 2020 10:03:51 -0400
-Received: by mail-ed1-f67.google.com with SMTP id d18so7112498edv.6;
-        Fri, 24 Jul 2020 07:03:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TpZJ/ISFXgu5jBP5FbghkLZJiBtFOhQ1zwiBpuz8Qz4=;
-        b=lNMiaupolLT8jj2eQ/YGGJX4BsPAoan/6NmSNRIGDjDu9KxgSQG51p6k8ibLN1IROM
-         OH0zfOqt07KVj266JNY/aWBGGuyJapYgdy4Nzb1VFv05NWGfZLH0fnkv/Epns4ZbrCDI
-         6yeXQFrs/FrGDiDg8zCea+Q+FtkVEtW3S9rd4jsu7MVkThEkmiEbf4WFUYaMoVJGh7Ak
-         i1Om+ol/ipvvSJhd2QeTvUag20QmNB64+fo+22SVKhJ0KRcRcKY5y2AGVFRMrbLtJSt8
-         ztz8CeyQ+DR7OETa6KTWkooP8NR6Kl4WtV5TRlXnTp5TQyBslHqyZTrnEooPBQ14S923
-         miSQ==
-X-Gm-Message-State: AOAM531iphuIAkFtLknJb1Xu5sNMaP6K7JtJidIV0MfdLQfkTbTtmtsx
-        WGkBhDa0QQzSM8yQwLwkfyU=
-X-Google-Smtp-Source: ABdhPJwl2mU8KmEpK8AFkahBSmMJ4Kn3RsrN9Ktb6p4HbAcUPjkoroNdJBTxS8QkKijbtd+6pGmUwg==
-X-Received: by 2002:a50:ed15:: with SMTP id j21mr9386366eds.246.1595599429024;
-        Fri, 24 Jul 2020 07:03:49 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.213])
-        by smtp.googlemail.com with ESMTPSA id o17sm710946ejb.105.2020.07.24.07.03.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 Jul 2020 07:03:48 -0700 (PDT)
-Date:   Fri, 24 Jul 2020 16:03:45 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Olof Johansson <olof@lixom.net>,
-        Markus Mayer <mmayer@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Roger Quadros <rogerq@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 00/29] *memory: Cleanup, improve and compile test
- memory drivers
-Message-ID: <20200724140345.GB13472@kozik-lap>
-References: <20200724074038.5597-1-krzk@kernel.org>
- <CAK8P3a2EAm=pxkU-AiucgDQyoMEGFOGqQBkVacWjoT7O9-PHkA@mail.gmail.com>
+        Fri, 24 Jul 2020 10:06:59 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06OE6fox040220;
+        Fri, 24 Jul 2020 14:06:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=piyJMklUvGrOxfEEo6YnsSt/7VRBdBHr9hNQZ8FNOXU=;
+ b=vo7kht33Vk2EFW16FUxCfVNcw+VchfCqjbOrW0M5NiLeAOSRJb8jxYwUzBv1MSz9YDQ5
+ vC2cJjJlgLSUlZIpHeMqR8v95ur/rOhUwW08gAFmmWOusblIgzqpzkL0mCoiVR/q3fwe
+ RlC8mfYIIB9lR+cU2HV7mWwWy/Om46TioRj3hqqZkOJbJJ8af2DbSorkuYCtAage19u4
+ wFblbUJSMGQvjjk+W3S9BqLIKwOS9AurDCoYYVGBPha5QrMdKt+38QTJPSiLvv7bTbJC
+ qqydMBxfazPPbRDma9PlkYxX8EptkqkBzfde1xWNOkKWOQ/7KVcR12Dv2l1uLCrwb6wN UA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 32brgryakj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 24 Jul 2020 14:06:42 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06OE6FBn151955;
+        Fri, 24 Jul 2020 14:06:41 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 32ft2vahme-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Jul 2020 14:06:41 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06OE6Iro007443;
+        Fri, 24 Jul 2020 14:06:19 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 24 Jul 2020 07:06:18 -0700
+Date:   Fri, 24 Jul 2020 17:06:11 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Rohit K Bharadwaj <bharadwaj.rohit8@gmail.com>
+Cc:     marvin24@gmx.de, gregkh@linuxfoundation.org,
+        p.zabel@pengutronix.de, linux-tegra@vger.kernel.org,
+        devel@driverdev.osuosl.org, ac100@lists.launchpad.net
+Subject: Re: [PATCH] change slave occurence to secondary everywhere
+Message-ID: <20200724140611.GU2549@kadam>
+References: <20200723145811.21109-1-bharadwaj.rohit8@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a2EAm=pxkU-AiucgDQyoMEGFOGqQBkVacWjoT7O9-PHkA@mail.gmail.com>
+In-Reply-To: <20200723145811.21109-1-bharadwaj.rohit8@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9691 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 bulkscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007240108
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9691 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 adultscore=0 clxscore=1011 mlxlogscore=999
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007240108
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 03:51:04PM +0200, Arnd Bergmann wrote:
-> On Fri, Jul 24, 2020 at 9:41 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > Dear All,
-> >
-> > Changes since v1:
-> > 1. Few new patches,
-> > 2. Please see individual logs (per patch).
-> >
-> >
-> > The drivers/memory directory contains generic code (of_memory.c) and a
-> > bunch of drivers.  Changes to generic code were coming usually through
-> > different trees with the driver code.
-> >
-> > Over last days, memory drivers grew in numbers but not necessarily in
-> > quality.  They lacked compile testing and code cleanup.  Also lacked
-> > maintainer.
-> >
-> > I would be happy to take care about this part.
-> >
-> > If there are no objections, I will collect the patches and push them
-> > through arm-soc maintainers.
-> >
-> > Driver-specific changes in the patchset were only compile-tested. Tests
-> > are welcome. The generic code was tested on ARMv7 Exynos based boards
-> > with a exynos5422-dmc memory controller driver.
-> 
-> Looks all good. Can you send a pull request for the patches that you don't
-> expect to need testing for, while you still wait for more feedback on the
-> others?
-> 
-> As the merge window (and my vacation) is getting closer, I would like to
-> have most of the patches for v5.9 queued up.
+On Thu, Jul 23, 2020 at 08:28:11PM +0530, Rohit K Bharadwaj wrote:
+> @@ -744,7 +744,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
+>  }
+>  
+>  #ifdef CONFIG_PM_SLEEP
+> -static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+> +static void nvec_disable_i2c_secondary(struct nvec_chip *nvec)
+>  {
+>  	disable_irq(nvec->irq);
+>  	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+> @@ -784,7 +784,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, nvec);
+>  	nvec->dev = dev;
+>  
+> -	if (of_property_read_u32(dev->of_node, "slave-addr", &nvec->i2c_addr)) {
+> +	if (of_property_read_u32(dev->of_node, "secondary-addr", &nvec->i2c_addr)) {
 
-Sure, I'll prepare a pull.
+This change will break the driver.
 
-Thanks!
-
-Best regards,
-Krzysztof
+regards,
+dan carpenter
 
