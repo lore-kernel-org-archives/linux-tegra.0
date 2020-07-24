@@ -2,98 +2,97 @@ Return-Path: <SRS0=jT6+=BD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EC3C433E4
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 14:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC91C433E5
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 14:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD8782063A
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 14:11:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595599891;
-	bh=muurSGsYrfMRYrmqraS6Y24L4SfgT9dcARUV8IGr9I4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qdrK4S1Qd8YBuiNo6W6cjKFONU4abNbBg2zLdu8FPB458jq9e9J7ZNQ9vZQJ01WKR
-	 APiTH9/pi1RkExf2w6ootxtOWAogqTzi8YDCR1LfoSH+Adewgmsr28IUqOiaQtAVSo
-	 9Lt22mkwYAbkCGCYrKTOy61O1My+ObGSZeuBjfv8=
+	by mail.kernel.org (Postfix) with ESMTP id 7AD0F2063A
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Jul 2020 14:12:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rbVKa7CB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbgGXOL2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Jul 2020 10:11:28 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42043 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbgGXOL2 (ORCPT
+        id S1726381AbgGXOML (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Jul 2020 10:12:11 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50494 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbgGXOMK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Jul 2020 10:11:28 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r4so5489416wrx.9;
-        Fri, 24 Jul 2020 07:11:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2RbvOcNTBCcTHmXNREDJs12mgijnjhzxCtnjRZr8ol8=;
-        b=SNdkCVhoJct/6HaSAmYOVPPIMJMwO4ep8ukISDsQDWNQTVxvurXYqZ6j2xLuK5WtKo
-         lwBpokG619hUTaGfrw3KRCoIayPAtLTZkgD7ocnV0RAlNX0By6bg8CJnrEceYQX9TubI
-         IroOht7820mCWa6oXYxp8tziy2DRWTP26bDtxqzNfyf9/ispk8aA+DzeHCCOx3VUMEQ7
-         bN/gjruBBiAbrLisvXQwPqBelHSUup7WUFp26Ixx7U1VT7pgJn5iGS1+TJwrezDxCQ3R
-         YwqPw2/5RaozQ3Aeo9jxX/i1ugPvkFQP9Y2tGd0NNdAq9bCYdRZppIyslZTuvk5pdtyX
-         AWYw==
-X-Gm-Message-State: AOAM530rnpfF9v4R2YINyo4pkgQx5KBzd1Je8XvXo/gXMOZoOssmxeoI
-        LzW0ohcM1p1CgcLXVr6Gnoc=
-X-Google-Smtp-Source: ABdhPJxuanK99JgtCFD/kyLYhj1m3VPN7GVyIvcjAjLoBgeFmxoxxrCiq+S0zBIRvkmJH9aZHm/a1w==
-X-Received: by 2002:a5d:65d2:: with SMTP id e18mr8593283wrw.70.1595599886067;
-        Fri, 24 Jul 2020 07:11:26 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.213])
-        by smtp.googlemail.com with ESMTPSA id p8sm1592476wrq.9.2020.07.24.07.11.23
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 Jul 2020 07:11:25 -0700 (PDT)
-Date:   Fri, 24 Jul 2020 16:11:21 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Markus Mayer <mmayer@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Roger Quadros <rogerq@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 14/29] memory: emif: Silence platform_get_irq() error
- in driver
-Message-ID: <20200724141121.GF14851@kozik-lap>
-References: <20200724074038.5597-1-krzk@kernel.org>
- <20200724074038.5597-15-krzk@kernel.org>
+        Fri, 24 Jul 2020 10:12:10 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06OE6a4O040064;
+        Fri, 24 Jul 2020 14:12:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=luNOSejEoIgK8S6y4yOxUCk+a6tKCZ0mVEaQYImWMHY=;
+ b=rbVKa7CBc8VYmUVAj0KwBMJCTF6LaHSNDivpKaVAK3LVYZNiMm6Bd7oac/9rQ7O7X0tP
+ 4bT9TA/zEs+k8+koYvGNxjiYG+UuMO2EFF5591PBbypGCIvRlDmjJwzLNsZgHagAFGvz
+ 6oq7tep6ZOuMZPW9kRPpzFqIKoCw5MANP+9jyniZOXUrcSlJMhNZGn2cBkOOz0PjUaWO
+ 2fF1ZpxqSbvlEpoTDJpWuYEgtqMYUURaoS9hkBOnhvM0rlu25Wv3E5rDpDNhR99EFO0y
+ cPowH7T7e4NPDb83ZyLSo/Y7/PgexX1dzHS0blbVhxgd8p8v2EWp83Zdi0qGifHtE3rS jg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 32brgrybr0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 24 Jul 2020 14:12:01 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06OE4OHC178469;
+        Fri, 24 Jul 2020 14:10:01 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 32fswsjhc1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Jul 2020 14:10:01 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06OE9w0H003704;
+        Fri, 24 Jul 2020 14:09:59 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 24 Jul 2020 14:09:54 +0000
+Date:   Fri, 24 Jul 2020 17:09:47 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Rohit K Bharadwaj <bharadwaj.rohit8@gmail.com>
+Cc:     marvin24@gmx.de, gregkh@linuxfoundation.org,
+        p.zabel@pengutronix.de, linux-tegra@vger.kernel.org,
+        devel@driverdev.osuosl.org, ac100@lists.launchpad.net
+Subject: Re: [PATCH v3] staging: nvec: change usage of slave to secondary
+Message-ID: <20200724140947.GW2549@kadam>
+References: <20200723151511.22193-1-bharadwaj.rohit8@gmail.com>
+ <20200724043633.7755-1-bharadwaj.rohit8@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200724074038.5597-15-krzk@kernel.org>
+In-Reply-To: <20200724043633.7755-1-bharadwaj.rohit8@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9691 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
+ malwarescore=0 bulkscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007240108
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9691 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 adultscore=0 clxscore=1015 mlxlogscore=999
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007240108
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 09:40:23AM +0200, Krzysztof Kozlowski wrote:
-> The platform_get_irq() already prints error message so there is no need
-> to do it again in the driver.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/memory/emif.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
+On Fri, Jul 24, 2020 at 10:06:34AM +0530, Rohit K Bharadwaj wrote:
+> @@ -784,7 +784,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, nvec);
+>  	nvec->dev = dev;
+>  
+> -	if (of_property_read_u32(dev->of_node, "slave-addr", &nvec->i2c_addr)) {
+> +	if (of_property_read_u32(dev->of_node, "secondary-addr", &nvec->i2c_addr)) {
 
-Applied (and part of pull request to arm-soc).
+Sorry, I should have looked for v3 at the start to reply to it.  This
+line will break the driver.
 
-Best regards,
-Krzysztof
+regards,
+dan carpenter
+
