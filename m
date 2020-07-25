@@ -4,81 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A595DC433E4
-	for <linux-tegra@archiver.kernel.org>; Sat, 25 Jul 2020 11:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DDEC433E0
+	for <linux-tegra@archiver.kernel.org>; Sat, 25 Jul 2020 12:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 854FE20714
-	for <linux-tegra@archiver.kernel.org>; Sat, 25 Jul 2020 11:26:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A3B2206C1
+	for <linux-tegra@archiver.kernel.org>; Sat, 25 Jul 2020 12:01:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="Xwjcy1La"
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="PPNCdzhy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726745AbgGYL0z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 25 Jul 2020 07:26:55 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:38571 "EHLO rere.qmqm.pl"
+        id S1726612AbgGYMBv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 25 Jul 2020 08:01:51 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:29317 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726652AbgGYL0y (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 25 Jul 2020 07:26:54 -0400
+        id S1726583AbgGYMBv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 25 Jul 2020 08:01:51 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4BDP0r3qYnz4D;
-        Sat, 25 Jul 2020 13:26:52 +0200 (CEST)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4BDPn81jwXz4D;
+        Sat, 25 Jul 2020 14:01:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1595676412; bh=L/BNcvROLxjZ1rfhEFzHdQ0i28PS8mEqlcC60AdsZak=;
+        t=1595678509; bh=w3jUGDxRIp+sGpE9bEyj0oc+ewSofeGPQslarzeKxxo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xwjcy1La/33lpBqiemFmaAYxb4PNRMspC5H79u3InnXfp64Wrpebc9Z4AU0aCg8Pg
-         jCdMIcjy5SnpmPfHjxmadbIfZIWnkJZXZ2jjy4pyRhpI6rJcl3prtM6/x382YNvJP9
-         b/yTofHNXZ4xcfd9s5gY6QbyVNqibqIw50s4/rtGi4CNgQOJ7WV+f5gTw0uxp8X/QM
-         iIn66pmENQHlQO3fYZzAShlk/m7X3QLsHeZ+dVhg/fYjH2ZbPXxy0GgxkGUN8fwpZY
-         uqAOjDQB4BccGD5Cm9qKAMqX8ZqdvUBXdPbh7ADm8r3gq/qpa7L8gZ7YL1BXM/CHEO
-         MzRX8UeLxucHw==
+        b=PPNCdzhyzVxX03mIEivhG7d/l2lFQD2BCi4mXt9uALM0rUoA3As8RN4hksjdd9FYl
+         /ZTPDoAlxYg+lRbB/iSg4TQVhZ/DGCMOOIS3GHG1+fF6j2muJrefXUANdfObiX4alB
+         Pt/YVFHIwSKttoxv+geGRe/fz1TtLgYdZ6ZQoRxBxB9r5aVBc22MpyyiqWvfeIHnjV
+         SPYtgHdNAfeNXAUq0y2rvG317NDE1ThkfGi+addFjm/fKwZov6HKJHzzpVMsHwpmH3
+         eibaAFS81VCVyWKs0cyh5ZTwxa7KKeI7F3kyzrNnh852vUCE4GmWvNo1lFikhp0vw8
+         nGT2jBMykX3Fg==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.102.3 at mail
-Date:   Sat, 25 Jul 2020 13:26:48 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     digetx@gmail.com, linux-i2c@vger.kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldewangan@nvidia.com, smohammed@nvidia.com, rgumasta@nvidia.com
-Subject: Re: [PATCH 4/7] i2c: tegra: add high speed mode support
-Message-ID: <20200725112648.GA26689@qmqm.qmqm.pl>
-References: <1595506733-10307-1-git-send-email-kyarlagadda@nvidia.com>
- <1595506733-10307-4-git-send-email-kyarlagadda@nvidia.com>
+Date:   Sat, 25 Jul 2020 14:01:47 +0200
+From:   =?iso-8859-2?B?TWljaGGzoE1pcm9zs2F3?= <mirq-linux@rere.qmqm.pl>
+To:     Rohit K Bharadwaj <bharadwaj.rohit8@gmail.com>
+Cc:     marvin24@posteo.de, gregkh@linuxfoundation.org,
+        p.zabel@pengutronix.de, ac100@lists.launchpad.net,
+        linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v4] staging: nvec: change usage of slave to secondary
+Message-ID: <20200725120146.GB26689@qmqm.qmqm.pl>
+References: <20200724043633.7755-1-bharadwaj.rohit8@gmail.com>
+ <20200725062938.15388-1-bharadwaj.rohit8@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-2
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1595506733-10307-4-git-send-email-kyarlagadda@nvidia.com>
+In-Reply-To: <20200725062938.15388-1-bharadwaj.rohit8@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jul 23, 2020 at 05:48:50PM +0530, Krishna Yarlagadda wrote:
-> From: Shardar Shariff Md <smohammed@nvidia.com>
-> 
-> Add high speed mode support
-[...]
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-[...]
-> @@ -215,12 +218,14 @@ struct tegra_i2c_hw_feature {
->  	int clk_divisor_std_mode;
->  	int clk_divisor_fast_mode;
->  	u16 clk_divisor_fast_plus_mode;
-> +	int clk_multiplier_hs_mode;
->  	bool has_multi_master_mode;
->  	bool has_slcg_override_reg;
->  	bool has_mst_fifo;
->  	const struct i2c_adapter_quirks *quirks;
->  	bool supports_bus_clear;
->  	bool has_reg_write_buffering;
-> +	bool has_hs_mode_support;
+On Sat, Jul 25, 2020 at 11:59:39AM +0530, Rohit K Bharadwaj wrote:
+> changed usage of slave (which is deprecated) to secondary without breaking the driver
 
-This field seems redundant: == !clk_multiplier_hs_mode ?
+The relevant I2C and SMBus standards use master/slave terminology. Why are
+you changing the names to something unfamiliar?
 
-Best Regards,
-Micha³ Miros³aw
+If the reason are the recent coding-style changes, then please note they
+are about avoiding introducing *NEW* uses of the specific words and not
+about blindly replacing existing occurrences.
+
+Best Regards
+Micha³ Miros³aw
