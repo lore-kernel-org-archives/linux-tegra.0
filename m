@@ -1,211 +1,131 @@
-Return-Path: <SRS0=u+5c=BE=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=Zz/u=BF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DC9C433EB
-	for <linux-tegra@archiver.kernel.org>; Sat, 25 Jul 2020 15:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22717C433E4
+	for <linux-tegra@archiver.kernel.org>; Sun, 26 Jul 2020 23:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBC7920674
-	for <linux-tegra@archiver.kernel.org>; Sat, 25 Jul 2020 15:48:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595692132;
-	bh=9wW8Uj4gUAhhIfHGan5QMeMR2ANgUUO3YVTWvZde0cw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=2tBt0orYn/wRd+ZEbDf5QkMQ8lMI4RazOgV1SuQTPMIC+Yx9BKuSRTE04+tD5gUL+
-	 AXI+RNO8KwA1zwf7NFYNDNdT0JpWdrv+TtSr/ttJbXlhV0jsVRynMsihBHbjzJ8ZO3
-	 3v5Ed4UvrPjvsPGKTpQh6FsgaOkBSJHsqn6ORsUI=
+	by mail.kernel.org (Postfix) with ESMTP id F03E420786
+	for <linux-tegra@archiver.kernel.org>; Sun, 26 Jul 2020 23:30:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUH7Lahw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbgGYPsw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 25 Jul 2020 11:48:52 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35334 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726870AbgGYPsw (ORCPT
+        id S1727090AbgGZXaJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 26 Jul 2020 19:30:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40442 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbgGZXaJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 25 Jul 2020 11:48:52 -0400
-Received: by mail-ot1-f67.google.com with SMTP id d4so9270679otk.2;
-        Sat, 25 Jul 2020 08:48:51 -0700 (PDT)
+        Sun, 26 Jul 2020 19:30:09 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 082ABC0619D2;
+        Sun, 26 Jul 2020 16:30:08 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id t6so2296565ljk.9;
+        Sun, 26 Jul 2020 16:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PAu1KY0p6PHiyFmlvXCLwKle62tn9il6DTEVsfWR1Ao=;
+        b=dUH7LahwQFmnVVH3XTbmrGcYfoe4XYGECuxezQr8GlgoUfwLvczCoAE+T9YLD4lrRd
+         nX7Qr0c7hc+CJDRQNkOF0YgiuNz9R5ZMc75CHJ+3/T2904Z9ErCkKzqH0wX12r1GIf+p
+         +RW3qEiscxNAw9tFjjgMp404PNOynQoweZZC4Qn696swubbbT8Xpr8BgYewZ/dy2GYJ4
+         RYsVPrGvXNvCLVsjnUINXiEQ6LrZufmjnnOWIU1WCGHrgTf5x9JepT3ZGu/C5cb2D2iU
+         +tQ7bRI5Bl/I/wL7cHOf9kzrxrreAcHfHAKSkGZadjzlRfEQBqB0uNhmM0XjxCroSgWf
+         1F7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C2tWIq6ckvPQ/yQ9n0OcVSF3V7zuB66fdFiG7czZWrM=;
-        b=BomFKCttun5Rrd42mdzfArBexeRjhvuk9CoCD4aQgPr/B7PpJSIy5GHuyPdLdlZgs+
-         Lbe6l59YUrNcBSFgwSVknFv8xZVXV7Vr9BsY5LVC81l3nxoWPovmxr/zOiu161bJC6rH
-         zXYKc2e+1sEsAJzI4i23Oq0NJSFyXeQ5fV6jwUA80J05ShFyQtJtsV9FHrgB8NtAf7s+
-         EPsf7wEAqcfyV7J9A3uOhqVmUxfvod6hSOPespv1UDDEccwJMiM8XtilvEE4bE80BXGx
-         Dfma3IWQJyrzZVDNxN02VfmOgnBvxh2YIzhlfj57V7FbRX6tkcOXaQoCWfdWigJPomAw
-         ir0A==
-X-Gm-Message-State: AOAM532LJ8egY82rR89UBj+L8I2O4wKNvugGFbwKlbODIRmDVsjiCa4l
-        wbNczgCPskIIpDuGvyR2pzrrKEoAy87V5Gz4n0o=
-X-Google-Smtp-Source: ABdhPJxdIbJjT+WXUymtPF9yecfsiFiCGsZKNzDMvi+8ZkivU76IBsZTeqiLhBkUl+vQbEzionhR0LjlVM4VyaFCCjM=
-X-Received: by 2002:a05:6830:30ba:: with SMTP id g26mr13183298ots.118.1595692130877;
- Sat, 25 Jul 2020 08:48:50 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PAu1KY0p6PHiyFmlvXCLwKle62tn9il6DTEVsfWR1Ao=;
+        b=oaLgE6NUvp3XXITN/dTE1fIYVJUqFhXtwMCQf9cgh6w1VR2XH84N41uDQ7kLxucWSi
+         AhrACj6GUiT1EeaCa7aV9J+hLFk/F9ljB2sAAuRiZABDV0a7plXelll6JE0Xs5BgeYIN
+         ekkt5SdkDEVo3VcTc6IkNNwZLEkY4m0M6R6oa/ETGc5fbzlcZOOXGjxDZexuEiaHpTmi
+         IaoZRsQ+r8PFH8prDXB29cI2Gb8K7Xu1FfLzVdWIJsW/xJKMbQa+yazFMX04MhuY+u5a
+         OLVtxgICfSowzWk+1LQGWP2iVZD749GRDY9dgpnZvUFH77yVHSN7hodvPCCsAUd2pqV9
+         GXfw==
+X-Gm-Message-State: AOAM532leFWlPHsA5BlXXw7uG7xng3v3Sd42hKXWKwTTGdH+FvYNRZN4
+        wZTnT4HidGNdFuX71Fl6M4SPZp6g
+X-Google-Smtp-Source: ABdhPJzNNxD84bO09GwYYRcLJmxDb9/vLPRaUQddSIL1G8k8RUQGPO7xemuu+O5l0GACd2kADXL1rw==
+X-Received: by 2002:a2e:8702:: with SMTP id m2mr3621248lji.183.1595806206140;
+        Sun, 26 Jul 2020 16:30:06 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-76-12-16.pppoe.mtu-net.ru. [91.76.12.16])
+        by smtp.googlemail.com with ESMTPSA id c22sm106679ljk.128.2020.07.26.16.30.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Jul 2020 16:30:05 -0700 (PDT)
+Subject: Re: [RFC PATCH v4 01/14] i2c: tegra: Don't mark VI I2C as IRQ safe
+ runtime PM
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        helen.koike@collabora.com
+Cc:     sboyd@kernel.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1595548272-9809-1-git-send-email-skomatineni@nvidia.com>
+ <1595548272-9809-2-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <56aedefa-fb5d-2251-da71-5cdf0e357576@gmail.com>
+Date:   Mon, 27 Jul 2020 02:30:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <1594005196-16327-1-git-send-email-neal.liu@mediatek.com>
- <1594005196-16327-2-git-send-email-neal.liu@mediatek.com> <CAJZ5v0ihB5AJwSRpjaOnXAmciregzxARL5xfudu1h+=_LXaE_w@mail.gmail.com>
- <1594350535.4670.13.camel@mtkswgap22> <1595233294.8055.0.camel@mtkswgap22>
- <20200723190724.GA1339461@google.com> <CAJZ5v0g_14D-tyWFEZ9eOJC=GmzR-31iAAPff=Ch8KjFyK2wfw@mail.gmail.com>
- <1595586289.14121.5.camel@mtkswgap22> <CAJZ5v0hnW5NB1T90QNSVuzFSZrrXzxKASWYDTW=mFF6MOan9hQ@mail.gmail.com>
- <1595591389.14564.3.camel@mtkswgap22>
-In-Reply-To: <1595591389.14564.3.camel@mtkswgap22>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sat, 25 Jul 2020 17:48:39 +0200
-Message-ID: <CAJZ5v0jyWbnztoTGkA88-4FwUjbvQvbW5a+GreJT-uJoNREPOA@mail.gmail.com>
-Subject: Re: [PATCH v2] cpuidle: change enter_s2idle() prototype
-To:     Neal Liu <neal.liu@mediatek.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1595548272-9809-2-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 1:50 PM Neal Liu <neal.liu@mediatek.com> wrote:
->
-> On Fri, 2020-07-24 at 13:20 +0200, Rafael J. Wysocki wrote:
-> > On Fri, Jul 24, 2020 at 12:24 PM Neal Liu <neal.liu@mediatek.com> wrote:
-> > >
-> > > On Fri, 2020-07-24 at 11:57 +0200, Rafael J. Wysocki wrote:
-> > > > On Thu, Jul 23, 2020 at 9:07 PM Sami Tolvanen <samitolvanen@google.com> wrote:
-> > > > >
-> > > > > On Mon, Jul 20, 2020 at 04:21:34PM +0800, Neal Liu wrote:
-> > > > > > Gentle ping on this patch.
-> > > > > >
-> > > > > >
-> > > > > > On Fri, 2020-07-10 at 11:08 +0800, Neal Liu wrote:
-> > > > > > > On Thu, 2020-07-09 at 14:18 +0200, Rafael J. Wysocki wrote:
-> > > > > > > > On Mon, Jul 6, 2020 at 5:13 AM Neal Liu <neal.liu@mediatek.com> wrote:
-> > > > > > > > >
-> > > > > > > > > Control Flow Integrity(CFI) is a security mechanism that disallows
-> > > > > > > > > changes to the original control flow graph of a compiled binary,
-> > > > > > > > > making it significantly harder to perform such attacks.
-> > > > > > > > >
-> > > > > > > > > init_state_node() assign same function callback to different
-> > > > > > > > > function pointer declarations.
-> > > > > > > > >
-> > > > > > > > > static int init_state_node(struct cpuidle_state *idle_state,
-> > > > > > > > >                            const struct of_device_id *matches,
-> > > > > > > > >                            struct device_node *state_node) { ...
-> > > > > > > > >         idle_state->enter = match_id->data; ...
-> > > > > > > > >         idle_state->enter_s2idle = match_id->data; }
-> > > > > > > > >
-> > > > > > > > > Function declarations:
-> > > > > > > > >
-> > > > > > > > > struct cpuidle_state { ...
-> > > > > > > > >         int (*enter) (struct cpuidle_device *dev,
-> > > > > > > > >                       struct cpuidle_driver *drv,
-> > > > > > > > >                       int index);
-> > > > > > > > >
-> > > > > > > > >         void (*enter_s2idle) (struct cpuidle_device *dev,
-> > > > > > > > >                               struct cpuidle_driver *drv,
-> > > > > > > > >                               int index); };
-> > > > > > > > >
-> > > > > > > > > In this case, either enter() or enter_s2idle() would cause CFI check
-> > > > > > > > > failed since they use same callee.
-> > > > > > > >
-> > > > > > > > Can you please explain this in a bit more detail?
-> > > > > > > >
-> > > > > > > > As it stands, I don't understand the problem statement enough to apply
-> > > > > > > > the patch.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Okay, Let's me try to explain more details.
-> > > > > > > Control Flow Integrity(CFI) is a security mechanism that disallows
-> > > > > > > changes to the original control flow graph of a compiled binary, making
-> > > > > > > it significantly harder to perform such attacks.
-> > > > > > >
-> > > > > > > There are multiple control flow instructions that could be manipulated
-> > > > > > > by the attacker and subvert control flow. The target instructions that
-> > > > > > > use data to determine the actual destination.
-> > > > > > > - indirect jump
-> > > > > > > - indirect call
-> > > > > > > - return
-> > > > > > >
-> > > > > > > In this case, function prototype between caller and callee are mismatch.
-> > > > > > > Caller: (type A)funcA
-> > > > > > > Callee: (type A)funcB
-> > > > > > > Callee: (type C)funcC
-> > > > > > >
-> > > > > > > funcA calls funcB -> no problem
-> > > > > > > funcA calls funcC -> CFI check failed
-> > > > > > >
-> > > > > > > That's why we try to align function prototype.
-> > > > > > > Please feel free to feedback if you have any questions.
-> > > > >
-> > > > > I think you should include a better explanation in the commit message.
-> > > > > Perhaps something like this?
-> > > > >
-> > > > >   init_state_node assigns the same callback function to both enter and
-> > > > >   enter_s2idle despite mismatching function types, which trips indirect
-> > > > >   call checking with Control-Flow Integrity (CFI).
-> > > > >
-> > > > > > > > > Align function prototype of enter() since it needs return value for
-> > > > > > > > > some use cases. The return value of enter_s2idle() is no
-> > > > > > > > > need currently.
-> > > > > > > >
-> > > > > > > > So last time I requested you to document why ->enter_s2idle needs to
-> > > > > > > > return an int in the code, which has not been done.  Please do that.
-> > > > >
-> > > > > Rafael, are you happy with the commit message documenting the reason,
-> > > > > or would you prefer to also add a comment before enter_s2idle?
-> > > >
-> > > > As I said before, it would be good to have a comment in the code as
-> > > > well or people will be wondering why it is necessary to return
-> > > > anything from that callback, because its return value is never used.
-> > > >
-> > > > Thanks!
-> > >
-> > > Is it okay to add these comments before enter_s2idle?
-> > >
-> > > /*
-> > >  * Align function type since init_state_node assigns the same callback
-> >
-> > init_state_node()
-> >
-> > >  * function to both enter and enter_s2idle despite mismatching function
-> >
-> > ->enter_s2idle
-> >
-> > >  * types, which trips indirect call checking with Control-Flow Integrity
-> > >  * (CFI).
-> > >  */
-> > > int (*enter_s2idle)(struct cpuidle_device *dev,
-> > >                     struct cpuidle_driver *drv,
-> > >                     int index);
-> >
-> > But IMO it would be sufficient to add something like this to the
-> > existing comment regarding ->enter_s2idle:
-> >
-> > "This callback may point to the same function as ->enter if all of the
-> > above requirements are met by it."
-> >
-> > That would explain why the signature is the same sufficiently in my view.
-> >
-> > Thanks!
->
-> For clarification, do you mean add this comment on enter_s2idle function
-> pointer declaration is enough?
+24.07.2020 02:50, Sowjanya Komatineni пишет:
+> Tegra VI I2C is part of VE power domain and typically used for
+> camera usecases.
+> 
+> VE power domain is not always on and is non-IRQ safe. So, IRQ safe
+> device cannot be attached to a non-IRQ safe domain as it prevents
+> powering off the PM domain and generic power domain driver will warn.
+> 
+> Current driver marks all I2C devices as IRQ safe and VI I2C device
+> does not require IRQ safe as it will not be used for atomic transfers.
+> 
+> This patch has fix to make VI I2C as non-IRQ safe.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 1577296..3be1018 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -1750,7 +1750,15 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+>  		goto unprepare_slow_clk;
+>  	}
+>  
+> -	pm_runtime_irq_safe(&pdev->dev);
+> +	/*
+> +	 * VI I2C is in VE power domain which is not always on and not
+> +	 * an IRQ safe. So, IRQ safe device can't be attached to a non-IRQ
+> +	 * safe domain as it prevents powering off the PM domain.
+> +	 * Also, VI I2C device don't need to use runtime IRQ safe as it will
+> +	 * not be used for atomic transfers.
+> +	 */
+> +	if (!i2c_dev->is_vi)
+> +		pm_runtime_irq_safe(&pdev->dev);
+>  	pm_runtime_enable(&pdev->dev);
+>  	if (!pm_runtime_enabled(&pdev->dev)) {
+>  		ret = tegra_i2c_runtime_resume(&pdev->dev);
+> 
 
-Yes, I do.
-
-Thanks!
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
