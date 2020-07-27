@@ -2,101 +2,95 @@ Return-Path: <SRS0=ucTN=BG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,TVD_SUBJ_WIPE_DEBT,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E301C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 14:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96133C43461
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 16:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA0620719
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 14:47:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XwSAeY0e"
+	by mail.kernel.org (Postfix) with ESMTP id 6ADE920729
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 16:18:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595866719;
+	bh=VbSJ7we7F7x94gn8MtdIpC00p71t6I2a2U/7FXBvqOg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Ey8X5WzqOgPfbpvLRU1ZnCrQ26e+z38N65OBLni3FNIkVTVgVjLGNpiWXcjmBBIW0
+	 TiotVrcmOOrYpIFhg5ZutnR6jN8t0XYHLyXzoFq0QUfRYvtNh9BGaKBhDdFqDB/s+L
+	 ToFrJiBhl3rJh6MOctBwTtlCaHtQ5TYva/EzuJKM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbgG0OrM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jul 2020 10:47:12 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:14501 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727032AbgG0OrM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jul 2020 10:47:12 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f1ee8e20000>; Mon, 27 Jul 2020 07:46:59 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 27 Jul 2020 07:47:12 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 27 Jul 2020 07:47:12 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 27 Jul
- 2020 14:47:12 +0000
-Received: from [192.168.22.23] (10.124.1.5) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 27 Jul 2020 14:47:09 +0000
-From:   Thierry Reding <treding@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.7 000/179] 5.7.11-rc1 review
-In-Reply-To: <20200727134932.659499757@linuxfoundation.org>
-References: <20200727134932.659499757@linuxfoundation.org>
-X-NVConfidentiality: public
+        id S1731731AbgG0QSH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jul 2020 12:18:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728717AbgG0QSG (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 27 Jul 2020 12:18:06 -0400
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D45521883;
+        Mon, 27 Jul 2020 16:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595866685;
+        bh=VbSJ7we7F7x94gn8MtdIpC00p71t6I2a2U/7FXBvqOg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zUq77H9YvtsQbDTgUzIyNOCY0Miln5H0R0NhefZ4bn+WVZIhEW7jIHCBHVO5iDpi4
+         /W+NsrMgHCXEmr1Ii7czPaUeyGKh/tFcSHOePe4cDk6bEgv0LMfRupVV9gB4Mi5hWf
+         rS7iHGwkSeOQlsouLNGafySTjpksGOi7xaLM6Gyk=
+Received: by mail-oo1-f49.google.com with SMTP id z10so377631ooi.10;
+        Mon, 27 Jul 2020 09:18:05 -0700 (PDT)
+X-Gm-Message-State: AOAM530J4PfQ5LAXjSxKGXlHnXQMCcdPYtY43y/Hfk9mr426SHkC/Xv0
+        revu9E0E1kwvioGg07DivcTUoQI4zVmdR9N3fQ==
+X-Google-Smtp-Source: ABdhPJxy2HNX2qe5qurpCuCASaH673vpWzF1fqD8RgM/pdLjw54HcFjl1uO6DNZz6SeGELq82YXp3iMU27l37r6AOz4=
+X-Received: by 2002:a4a:ae07:: with SMTP id z7mr20031067oom.25.1595866684651;
+ Mon, 27 Jul 2020 09:18:04 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <8bd52f5eab274431925b82ee9c5f13c5@HQMAIL105.nvidia.com>
-Date:   Mon, 27 Jul 2020 14:47:09 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1595861219; bh=mCe2jhBQ/C8mkrNSk9jzIjCd08de8/WFPU33RQbpgGw=;
-        h=X-PGP-Universal:From:To:CC:Subject:In-Reply-To:References:
-         X-NVConfidentiality:MIME-Version:Message-ID:Date:Content-Type:
-         Content-Transfer-Encoding;
-        b=XwSAeY0emLxMhdaemoOwVlOqWSMxsoh2QD/nILm+WFArtwBj0yTgoqXLS3O1WlFyS
-         AG1nMI+D3zzaQZdeMEF+iAmo6IIUzy/kDAdCr4SfmcWPF3L584qY93kPGBcsujLLY/
-         1foUrJDNCwmQ+GUqPDVckbkH8anSDVd+Es7Dklf+90uMoj7UQrah9XDuF1eCj0PHle
-         PGvzu2jIfH55oUQNDCafdZbpNg4Le7anAEpWMXIPtzGvlTp7vo+0qjUrf77XzL7y28
-         14Z22MU3cCLxyTRbkiskiVaPl8M8/59RaHEbAvThE4vhOwR0S4p3uZJe0GU8TeFu5w
-         wKQcpxRkn157A==
+References: <20200623145528.1658337-1-thierry.reding@gmail.com>
+In-Reply-To: <20200623145528.1658337-1-thierry.reding@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 27 Jul 2020 10:17:53 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLzcx5R+FvoOJwRboDx-FWoiGa_8_q8-eSc=AG_fOz=HA@mail.gmail.com>
+Message-ID: <CAL_JsqLzcx5R+FvoOJwRboDx-FWoiGa_8_q8-eSc=AG_fOz=HA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: pci: tegra: Remove PLL power supplies
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        PCI <linux-pci@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 27 Jul 2020 16:02:55 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.7.11 release.
-> There are 179 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 29 Jul 2020 13:48:51 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.7.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.7.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Tue, Jun 23, 2020 at 8:55 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> From: Thierry Reding <treding@nvidia.com>
+>
+> The XUSB pad controller, which provides access to various USB, PCI and
+> SATA pads (or PHYs), needs to bring up the PLLs associated with these
+> pads. In order to properly do so, it needs to control the power supplied
+> to these PLLs.
+>
+> Remove the PLL power supplies from the PCIe controller because it does
+> not need direct access to them. Instead it will only use the configured
+> pads provided by the XUSB pad controller.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Hi Rob,
+>
+> I already made this change as part of the conversion series, but wanted
+> to send this out as part of this subseries since it addresses a fairly
+> long-standing issue that I'd like to clean up irrespective of the DT
+> binding conversion. Since it looks like the conversion series will take
+> a bit longer, I think it makes sense to send this out separately.
+>
+> Thierry
+>
+>  .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt  | 12 ------------
+>  1 file changed, 12 deletions(-)
 
-All tests passing for Tegra ...
-
-Test results for stable-v5.7:
-    11 builds:	11 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    56 tests:	56 pass, 0 fail
-
-Linux version:	5.7.11-rc1-g5e6331d4c49c
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Thierry
+Reviewed-by: Rob Herring <robh@kernel.org>
