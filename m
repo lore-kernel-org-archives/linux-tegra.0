@@ -2,128 +2,100 @@ Return-Path: <SRS0=ucTN=BG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB2BC433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 13:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82698C433E1
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 14:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB7E3206E7
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 13:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A4520719
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 14:46:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpOet+5O"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nGny55kj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbgG0NKL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jul 2020 09:10:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53706 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728141AbgG0NKL (ORCPT
+        id S1728874AbgG0OqC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jul 2020 10:46:02 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:14429 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728536AbgG0OqB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jul 2020 09:10:11 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A754FC061794;
-        Mon, 27 Jul 2020 06:10:10 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id x9so17157461ljc.5;
-        Mon, 27 Jul 2020 06:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=S8aJgTeOOMNvC3X35ZPNyQ7MJmZxrJEivSO6dpNlY0w=;
-        b=YpOet+5OohAKeocqhV4KRLZsIftxN6qyrcm78/wxaBs4d531oO5QKTKrZAavKghZL1
-         pCvTUMj6CTUQ7v/+BuleaUG+AhkLfMHR3pY4oYBx5YzOCRaa/7hEJ2fd3CUvYiZIHVsJ
-         YhVqVLUXSKvLjP2D3TReIOkhipMEb03uXaymu+V+PtUQ4Mj/bMQ5pnv2WGm1toyTWaFy
-         TVznEBSh19VXP+D2rafhgJJLiuV1/YzcVhg7LbMTkvVkKtaioOBnzibXP9GPx3C85zqq
-         Q1V6b2Yrfk2meVn+ZJe9/8si9mV1w3U2qX92U8RK+Ih6CAN0M8VfxziWYQ8JgrrTWrj6
-         xPbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=S8aJgTeOOMNvC3X35ZPNyQ7MJmZxrJEivSO6dpNlY0w=;
-        b=RAYuWxAddQxooYjf7nVcS6fyNBErfL5tsUFzqmYworOA9hLbR/CoBBsU00v2n6choj
-         AYZkn7ZEJ9uuzqQZISiWsyMBdfhK9ZpM8sJ9K4mNXV0dI/4uP/Rwyo8sF08amc3vOyCm
-         BEwPAISwshsDZ8+rrgPvfMPvYm8efBMXPwrjFjVwqjdV4NjqHvpc/h2xxgjhpghVSkqI
-         gAs+332hD5rpiZGuRdpaucWXzuflBKRxnBtHBqMnfvjJ9kPBjKPgLsijNTaOYfBdMJY8
-         oM15SiSJYDCuZLpOUL1qigVBG6/Dz2Gb39rNlDw/WKWDiE2JX9QSay+DOEkaxZstzyET
-         WILw==
-X-Gm-Message-State: AOAM532rWUhSAxAiRn/q0kc6wU1CcbxVLM/m9djy2F5n6u21aI59a0Vh
-        wYAiiQ2t8hYGEIM8YseL4bEufgmB
-X-Google-Smtp-Source: ABdhPJwnoGvwlTb4Q7yMAGl31ThQ1KF8qea01jP6Ay2SV7pxHkffrZcL4Kvcg7FIL4wXQC4qb+FkRQ==
-X-Received: by 2002:a2e:a0cd:: with SMTP id f13mr9415769ljm.343.1595855409032;
-        Mon, 27 Jul 2020 06:10:09 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-76-12-16.pppoe.mtu-net.ru. [91.76.12.16])
-        by smtp.googlemail.com with ESMTPSA id l19sm2348443ljb.15.2020.07.27.06.10.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jul 2020 06:10:08 -0700 (PDT)
-Subject: Re: [PATCH] mmc: tegra: Add Runtime PM callbacks
-To:     Aniruddha Rao <anrao@nvidia.com>, adrian.hunter@intel.com,
-        ulf.hansson@linaro.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, p.zabel@pengutronix.de
-Cc:     linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1595854036-15434-1-git-send-email-anrao@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ea1a68b6-2399-f7ae-a336-bd1e14793b52@gmail.com>
-Date:   Mon, 27 Jul 2020 16:10:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 27 Jul 2020 10:46:01 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f1ee89b0000>; Mon, 27 Jul 2020 07:45:47 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 27 Jul 2020 07:46:01 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 27 Jul 2020 07:46:01 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 27 Jul
+ 2020 14:46:00 +0000
+Received: from [192.168.22.23] (10.124.1.5) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 27 Jul 2020 14:45:58 +0000
+From:   Thierry Reding <treding@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/86] 4.19.135-rc1 review
+In-Reply-To: <20200727134914.312934924@linuxfoundation.org>
+References: <20200727134914.312934924@linuxfoundation.org>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <1595854036-15434-1-git-send-email-anrao@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Message-ID: <f065006ca0fe4f38b5508cf1ab0923cc@HQMAIL105.nvidia.com>
+Date:   Mon, 27 Jul 2020 14:45:58 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1595861147; bh=eKrANP0a1cmZ/UxSYMAsx9yLpHH8+CMY/bv2GgKL9TE=;
+        h=X-PGP-Universal:From:To:CC:Subject:In-Reply-To:References:
+         X-NVConfidentiality:MIME-Version:Message-ID:Date:Content-Type:
+         Content-Transfer-Encoding;
+        b=nGny55kjd28V/9V5LM7+NcKRYwHWQk/EOhCKCJUdzRCwwxT/mKHU7wH5YzV2Lr6Bd
+         KH++qt7ObXIaond5IzCgqafw1pPAcHirJ1tvUfwz2ys6RGVH4WRfaOhO/VttPuVl/z
+         RNHmROvy8YQyC7X5DJ9z3qk0LorYw17aNL93wLtOzC9OBsuOImhwpVxAyWs7mLFeDQ
+         3n4WPev7hMtSSNEv752mRptQEI7ZjyN/NBlBFaviNKdGoHBIYcZkZT9CSFOLIW9DTv
+         aZGp4aqIuIoZmt5V6PEMXhyeNEgAh+NsYLvnlvCMoxR/jXNrPnbNEcHWeDn0CenE1h
+         HneI2wYVcf8sA==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.07.2020 15:47, Aniruddha Rao пишет:
-> Add runtime suspend/resume callbacks to save power
-> when the bus is not in use.
-> In runtime suspend
-> - Turn off the SDMMC host CAR clock.
-> - Turn off the trimmer/DLL circuit(BG) power supply(VREG).
-> - Turn off the SDMMC host internal clocks.
+On Mon, 27 Jul 2020 16:03:34 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.135 release.
+> There are 86 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Re-enable all the disabled clocks/regulators in runtime resume.
+> Responses should be made by Wed, 29 Jul 2020 13:48:51 +0000.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Aniruddha Rao <anrao@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 149 ++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 140 insertions(+), 9 deletions(-)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.135-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
 > 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 0a3f9d0..1b4b245 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -23,6 +23,7 @@
->  #include <linux/mmc/slot-gpio.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/ktime.h>
-> +#include <linux/pm_runtime.h>
->  
->  #include "sdhci-pltfm.h"
->  #include "cqhci.h"
-> @@ -36,6 +37,7 @@
->  #define SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE		BIT(5)
->  #define SDHCI_CLOCK_CTRL_PADPIPE_CLKEN_OVERRIDE		BIT(3)
->  #define SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE	BIT(2)
-> +#define SDHCI_CLOCK_CTRL_SDMMC_CLK			BIT(0)
->  
->  #define SDHCI_TEGRA_VENDOR_SYS_SW_CTRL			0x104
->  #define SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE		BIT(31)
-> @@ -51,6 +53,9 @@
->  #define SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300		0x20
->  #define SDHCI_MISC_CTRL_ENABLE_DDR50			0x200
->  
-> +#define SDHCI_TEGRA_VENDOR_IO_TRIM_CTRL_0		0x1AC
-> +#define SDHCI_TEGRA_IO_TRIM_CTRL_0_SEL_VREG_MASK	0x4
+> thanks,
+> 
+> greg k-h
 
-Hello Aniruddha,
+All tests passing for Tegra ...
 
-Does this register exist on older Tegra SoCs?
+Test results for stable-v4.19:
+    11 builds:	11 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	38 pass, 0 fail
+
+Linux version:	4.19.135-rc1-ge61bf6def734
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Thierry
