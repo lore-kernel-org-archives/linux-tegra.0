@@ -2,104 +2,101 @@ Return-Path: <SRS0=ucTN=BG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3772EC433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 08:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B964C433E4
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 09:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08F0B20738
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 08:17:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A4D620714
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 09:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595837876;
-	bh=182uDZfI3R3hVYIlmhqKHKAZrpJl3jwGOHg2j+LafyI=;
+	s=default; t=1595840843;
+	bh=K6RQC+ajywY34zdeP2+jgr6UKjQUY6swoVf9n8j35Jg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VXW5oKpXXZVVKRVPq9u6fO08qTiGiwpLsmVhRWJXnoSc4XSDZoQD3CyvXolIxTwLD
-	 1g8inrBrnAFaQDqUP0QnpbakfOCqOLodjsbPe4lrUJTLPnszotlYetXWa9H4Y0h2xd
-	 VMiGPx/xqasuIcCpc+iTcbDTMqNsM6FC87CCWGTk=
+	b=QVH1dykSNCtTu2gK2ynVQbH37g40IbNcuC7gFXzqAC7mmZ1mNzBbS6KrlDw5yS/Cb
+	 aevwwcN5YkFnsBLdV+TxKXWvszKnyuE/LuYCNgzBC1mZJohTw0P1pj+BZx1igZsqiT
+	 koEjLqfCYP8uIYsZ1sbtDnoLJTUNYuWw8jpK4OS0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbgG0IRz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jul 2020 04:17:55 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:34442 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbgG0IRz (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jul 2020 04:17:55 -0400
-Received: by mail-ej1-f67.google.com with SMTP id y10so16166584eje.1;
-        Mon, 27 Jul 2020 01:17:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E7aGMVBbgko2tboKSW/8bzhPgYImOO4fEvxr87lyS2k=;
-        b=h0soYIgoZ0CqmiemCDMUMUBPI46IrKg84t0UZzwlUMzS4yI/2yWMxkj67QNfj0Bhlz
-         Wd2hiX1kkAJ9vCyQmydyTWW0h3ZQtEkyKw+GR0/fi+2gnL2XvYNE2s4aaSArk9I7OcPV
-         zC/Pwmr70v4KDG/+3WGRuDIhv0IlRh0pIa5UQHLvcTwvcdLCNuKFjznb9qC4iWab0lFH
-         mg6SFGZo05YJv855dresTCqv5qaxFZsSZs7e/HWqdXTPzsZoaUpzRXgvXHWvd/Y0BjlP
-         D5ZaFykeIbT5DnfmwlxT8TIoXrKHixQ7JHWYvfBhn5Hs39Pe/JJ9vNVC0nh7x9C4OIHl
-         xCjg==
-X-Gm-Message-State: AOAM5335HIdbbnA90mp7jMmmJ3bL2v6fTVlYZfObymZdar5xnZ6RaL58
-        nPIW/hZZQeheanjwvzxfg87qkdqNl6Q=
-X-Google-Smtp-Source: ABdhPJyrUVPjTHJCuMko8x4nzu7fSRmtm7c0iNZkzOhX7RgpOsciUH/ZRpt1cPE3kLgP1O6OOhXiWQ==
-X-Received: by 2002:a17:906:82d4:: with SMTP id a20mr19026277ejy.165.1595837871933;
-        Mon, 27 Jul 2020 01:17:51 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.213])
-        by smtp.googlemail.com with ESMTPSA id dj22sm6931988edb.54.2020.07.27.01.17.49
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Jul 2020 01:17:50 -0700 (PDT)
-Date:   Mon, 27 Jul 2020 10:17:48 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Markus Mayer <mmayer@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Roger Quadros <rogerq@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 06/29] memory: Enable compile testing for most of the
- drivers
-Message-ID: <20200727081748.GJ17644@kozik-lap>
-References: <20200724074038.5597-1-krzk@kernel.org>
- <20200724074038.5597-7-krzk@kernel.org>
+        id S1727876AbgG0JHW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jul 2020 05:07:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728022AbgG0JHP (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 27 Jul 2020 05:07:15 -0400
+Received: from localhost (unknown [122.171.202.192])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87E7220714;
+        Mon, 27 Jul 2020 09:07:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595840835;
+        bh=K6RQC+ajywY34zdeP2+jgr6UKjQUY6swoVf9n8j35Jg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UB3qgBOwuPNQb27NTD9csVxte0kbDywOrkYLfeUMb+NbFLJJdE2blymLmEEIbwOiC
+         Jd1mGs50efeCkFDwi/DCs3QMUo5p1tm/fVmeEjEyKwrR12thToifCOeb1IQ1qkm5x/
+         UkJaINx4C0vZieTb8EPplP3DpcdfvUunkcvKtcJw=
+Date:   Mon, 27 Jul 2020 14:37:11 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Rajesh Gumasta <rgumasta@nvidia.com>
+Cc:     ldewangan@nvidia.com, jonathanh@nvidia.com,
+        dan.j.williams@intel.com, thierry.reding@gmail.com,
+        p.zabel@pengutronix.de, dmaengine@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kyarlagadda@nvidia.com, Pavan Kunapuli <pkunapuli@nvidia.com>
+Subject: Re: [Patch v1 2/4] dma: tegra: Adding Tegra GPC DMA controller driver
+Message-ID: <20200727090711.GN12965@vkoul-mobl>
+References: <1595226856-19241-1-git-send-email-rgumasta@nvidia.com>
+ <1595226856-19241-3-git-send-email-rgumasta@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200724074038.5597-7-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1595226856-19241-3-git-send-email-rgumasta@nvidia.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 09:40:15AM +0200, Krzysztof Kozlowski wrote:
-> Most of the memory controller drivers do not depend on architecture
-> specific code so can be compile tested to increase build coverage.
+On 20-07-20, 12:04, Rajesh Gumasta wrote:
+> v4 changes: Removed pending dma desc list and other unused
+> data structures
 > 
-> When compile tested, do not enable them by default.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. When compile tested, do not enable them by default.
-> ---
->  drivers/memory/Kconfig | 39 ++++++++++++++++++++++-----------------
->  1 file changed, 22 insertions(+), 17 deletions(-)
+> v3 changes: Removed free list for dma_desc and sg
 
-Applied to drivers/memory tree.
+This is v1 patch and we have v3/v4 stuff! Anyway this can go after the
+marker succeeding sob line or cover!
 
-Best regards,
-Krzysztof
+> 
+> Adding GPC DMA controller driver for Tegra186 and Tegra194. The driver
+> supports dma transfers between memory to memory, IO to memory and
+> memory to IO.
+
+This is dmaengine subsystem, so please tag to appropriately
+
+> +/* MMIO sequence register */
+> +#define TEGRA_GPCDMA_CHAN_MMIOSEQ		0x01c
+> +#define TEGRA_GPCDMA_MMIOSEQ_DBL_BUF		BIT(31)
+> +#define TEGRA_GPCDMA_MMIOSEQ_BUS_WIDTH_8	(0 << 28)
+> +#define TEGRA_GPCDMA_MMIOSEQ_BUS_WIDTH_16	(1 << 28)
+> +#define TEGRA_GPCDMA_MMIOSEQ_BUS_WIDTH_32	(2 << 28)
+> +#define TEGRA_GPCDMA_MMIOSEQ_BUS_WIDTH_64	(3 << 28)
+> +#define TEGRA_GPCDMA_MMIOSEQ_BUS_WIDTH_128	(4 << 28)
+
+GENMASK for these please
+
+> +static int tegra_dma_slave_config(struct dma_chan *dc,
+> +		struct dma_slave_config *sconfig)
+> +{
+> +	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+> +
+> +	if (!list_empty(&tdc->pending_sg_req)) {
+> +		dev_err(tdc2dev(tdc), "Configuration not allowed\n");
+
+why is that?
+
+Also run checkpatch --strict on this before sending.
+
+Thanks
+-- 
+~Vinod
