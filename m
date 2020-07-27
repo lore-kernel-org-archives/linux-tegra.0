@@ -5,39 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02261C433ED
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 20:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EBFC433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 20:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C939920792
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 20:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2571D20792
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 20:52:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Vm4bseEO"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="T40QL9Qi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbgG0Uvz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jul 2020 16:51:55 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9067 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727792AbgG0Uvy (ORCPT
+        id S1727843AbgG0UwN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Jul 2020 16:52:13 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14259 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbgG0UwB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jul 2020 16:51:54 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f1f3e5c0000>; Mon, 27 Jul 2020 13:51:40 -0700
+        Mon, 27 Jul 2020 16:52:01 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f1f3e150001>; Mon, 27 Jul 2020 13:50:29 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 27 Jul 2020 13:51:53 -0700
+  Mon, 27 Jul 2020 13:51:59 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 27 Jul 2020 13:51:53 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 27 Jul
- 2020 20:51:53 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 27 Jul 2020 20:51:53 +0000
+        by hqpgpgate101.nvidia.com on Mon, 27 Jul 2020 13:51:59 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 27 Jul
+ 2020 20:51:58 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 27 Jul 2020 20:51:58 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.168.236]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f1f3e680003>; Mon, 27 Jul 2020 13:51:53 -0700
+        id <B5f1f3e6e0000>; Mon, 27 Jul 2020 13:51:58 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -47,9 +46,9 @@ CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
         <gregkh@linuxfoundation.org>, <linux-media@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
-Subject: [RFC PATCH v5 05/14] i2c: tegra: Avoid tegra_i2c_init_dma() for Tegra210 vi i2c
-Date:   Mon, 27 Jul 2020 13:57:23 -0700
-Message-ID: <1595883452-17343-6-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v5 13/14] media: tegra-video: Add CSI MIPI pads calibration
+Date:   Mon, 27 Jul 2020 13:57:31 -0700
+Message-ID: <1595883452-17343-14-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1595883452-17343-1-git-send-email-skomatineni@nvidia.com>
 References: <1595883452-17343-1-git-send-email-skomatineni@nvidia.com>
@@ -57,45 +56,222 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1595883100; bh=BMA/iG9RTUEd5/zUo8Vr5bcj5BAWPvKwkFECh1c8kbY=;
+        t=1595883029; bh=I2gUBGgzh+NjI754iG0UlGbAOfznDQVjqdfv6dqo1/g=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=Vm4bseEOhBXlmHuGTHvTM+6gHWj51y/yeUvD6TKm0OY+eBExPSLvCmsOJZUYFpRSl
-         gt4/bPkyhR1Yju+bQBoiCQaGMn3ptgoRR3jaW22oV7CmyFbrwWFlMu6URP7XrhAvmX
-         RJ1fhE8izr0+eVNZqYi1xL8BsNIWXmFXa7926STvhe0o73MtBa51Q9RIABQoUr+Zkk
-         AJMjMEW8Z2pXv7ovwk9oqAGZHaTGIm5YPHkgYQ9tvPraB6NkjUuGmX+pjo9TErdM83
-         FVJy3S3tntyECy1pQFbBAWl+s3AQROkFNCEGAF5UAzmCyKcZRubdisWrQii+t9aUAX
-         Ay2+Wq0Hli01A==
+        b=T40QL9QipkvsUAwCzLtEFpsudUWNKZsvAoI2UgfUhFPU536UTGiK1bdDFfOL4VhG+
+         zMj6N2hWQJACp1uVYdTHRfnCxDOwbBgMSsrCUxAU4T1Nfyd/h1VqJO1XyKRM2Ja45/
+         TxvJuVO2ATg1JaUFgToHhGbqY7fb2Hxcxc4dA8wLL5oY+q7bpkMwcbwA9VQM5giAO7
+         JPxISMiOEIKHIeIH+RyS6GbEC2nNG9LnV01A4+XRleS5HqPD1DXSq+nW+gZxwRN8j1
+         92otdkFfTDcp6lzed6x5CSEZSiOd4kNvhKkwXGeY5KP7QUacytCtOOy1yxpdBj/gXe
+         IsSS/gO6MX16g==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-VI I2C is on host1x bus so APB DMA can't be used for Tegra210 VI
-I2C and there are no tx and rx dma channels for VI I2C.
+CSI MIPI pads need to be enabled and calibrated for capturing from
+the external sensor or transmitter.
 
-So, avoid attempt of requesting DMA channels.
+MIPI CAL unit calibrates MIPI pads pull-up, pull-down and termination
+impedances. Calibration is done by co-work of MIPI BIAS pad and MIPI
+CAL control unit.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Triggering calibration start can happen any time after MIPI pads are
+enabled but calibration results will be latched and applied to MIPI
+pads by MIPI CAL unit only when the link is in LP11 state and then
+calibration status register gets updated.
+
+This patch enables CSI MIPI pads and calibrates them during streaming.
+
+Tegra CSI receiver is able to catch the very first clock transition.
+So, CSI receiver is always enabled prior to sensor streaming and
+trigger of calibration start is done during CSI subdev streaming and
+status of calibration is verified after sensor stream on.
+
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/tegra-video/TODO  |  1 -
+ drivers/staging/media/tegra-video/csi.c | 55 +++++++++++++++++++++++++++++++--
+ drivers/staging/media/tegra-video/csi.h |  2 ++
+ drivers/staging/media/tegra-video/vi.c  | 25 ++++++++++++++-
+ 4 files changed, 78 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 1bf3666..00d3e4d 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -421,7 +421,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 	dma_addr_t dma_phys;
- 	int err;
+diff --git a/drivers/staging/media/tegra-video/TODO b/drivers/staging/media/tegra-video/TODO
+index 97a19b4..98d3c7d 100644
+--- a/drivers/staging/media/tegra-video/TODO
++++ b/drivers/staging/media/tegra-video/TODO
+@@ -1,5 +1,4 @@
+ TODO list
+-* Add Tegra CSI MIPI pads calibration.
+ * Add MIPI clock Settle time computation based on the data rate.
+ * Add support for Ganged mode.
+ * Add RAW10 packed video format support to Tegra210 video formats.
+diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+index c21dd09..752ebe8 100644
+--- a/drivers/staging/media/tegra-video/csi.c
++++ b/drivers/staging/media/tegra-video/csi.c
+@@ -252,15 +252,51 @@ static int tegra_csi_s_stream(struct v4l2_subdev *subdev, int enable)
+ 			return ret;
+ 		}
  
--	if (!i2c_dev->hw->has_apb_dma)
-+	if (!i2c_dev->hw->has_apb_dma || i2c_dev->is_vi)
++		if (csi_chan->mipi) {
++			ret = tegra_mipi_enable(csi_chan->mipi);
++			if (ret < 0) {
++				dev_err(csi->dev,
++					"failed to enable MIPI pads: %d\n",
++					ret);
++				goto rpm_put;
++			}
++
++			/*
++			 * CSI MIPI pads PULLUP, PULLDN and TERM impedances
++			 * need to be calibrated after power on.
++			 * So, trigger the calibration start here and results
++			 * will be latched and applied to the pads when link is
++			 * in LP11 state during start of sensor streaming.
++			 */
++			ret = tegra_mipi_start_calibration(csi_chan->mipi);
++			if (ret < 0) {
++				dev_err(csi->dev,
++					"failed to start MIPI calibration: %d\n",
++					ret);
++				goto disable_mipi;
++			}
++		}
++
+ 		ret = csi->ops->csi_start_streaming(csi_chan);
+-		if (ret < 0)
+-			goto rpm_put;
++		if (ret < 0) {
++			if (csi_chan->mipi)
++				tegra_mipi_cancel_calibration(csi_chan->mipi);
++			goto disable_mipi;
++		}
+ 
+ 		return 0;
+ 	}
+ 
+ 	csi->ops->csi_stop_streaming(csi_chan);
+ 
++disable_mipi:
++	if (csi_chan->mipi) {
++		ret = tegra_mipi_disable(csi_chan->mipi);
++		if (ret < 0)
++			dev_err(csi->dev,
++				"failed to disable MIPI pads: %d\n", ret);
++	}
++
+ rpm_put:
+ 	pm_runtime_put(csi->dev);
+ 	return ret;
+@@ -294,6 +330,7 @@ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
+ 				   unsigned int num_pads)
+ {
+ 	struct tegra_csi_channel *chan;
++	int ret = 0;
+ 
+ 	chan = kzalloc(sizeof(*chan), GFP_KERNEL);
+ 	if (!chan)
+@@ -312,7 +349,16 @@ static int tegra_csi_channel_alloc(struct tegra_csi *csi,
+ 		chan->pads[0].flags = MEDIA_PAD_FL_SOURCE;
+ 	}
+ 
+-	return 0;
++	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		return 0;
++
++	chan->mipi = tegra_mipi_request(csi->dev, node);
++	if (IS_ERR(chan->mipi)) {
++		ret = PTR_ERR(chan->mipi);
++		dev_err(csi->dev, "failed to get mipi device: %d\n", ret);
++	}
++
++	return ret;
+ }
+ 
+ static int tegra_csi_tpg_channels_alloc(struct tegra_csi *csi)
+@@ -475,6 +521,9 @@ static void tegra_csi_channels_cleanup(struct tegra_csi *csi)
+ 	struct tegra_csi_channel *chan, *tmp;
+ 
+ 	list_for_each_entry_safe(chan, tmp, &csi->csi_chans, list) {
++		if (chan->mipi)
++			tegra_mipi_free(chan->mipi);
++
+ 		subdev = &chan->subdev;
+ 		if (subdev->dev) {
+ 			if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+diff --git a/drivers/staging/media/tegra-video/csi.h b/drivers/staging/media/tegra-video/csi.h
+index 78a5110..0d50fc3 100644
+--- a/drivers/staging/media/tegra-video/csi.h
++++ b/drivers/staging/media/tegra-video/csi.h
+@@ -50,6 +50,7 @@ struct tegra_csi;
+  * @framerate: active framerate for TPG
+  * @h_blank: horizontal blanking for TPG active format
+  * @v_blank: vertical blanking for TPG active format
++ * @mipi: mipi device for corresponding csi channel pads
+  */
+ struct tegra_csi_channel {
+ 	struct list_head list;
+@@ -65,6 +66,7 @@ struct tegra_csi_channel {
+ 	unsigned int framerate;
+ 	unsigned int h_blank;
+ 	unsigned int v_blank;
++	struct tegra_mipi_device *mipi;
+ };
+ 
+ /**
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index fc43629..9c01cc5 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -191,10 +191,12 @@ tegra_channel_get_remote_source_subdev(struct tegra_vi_channel *chan)
+ int tegra_channel_set_stream(struct tegra_vi_channel *chan, bool on)
+ {
+ 	struct v4l2_subdev *subdev, *csi_subdev, *src_subdev;
++	struct tegra_csi_channel *csi_chan;
+ 	int ret;
+ 
+ 	csi_subdev = tegra_channel_get_remote_csi_subdev(chan);
+ 	src_subdev = tegra_channel_get_remote_source_subdev(chan);
++	csi_chan = v4l2_get_subdevdata(csi_subdev);
+ 	/*
+ 	 * Tegra CSI receiver can detect the first LP to HS transition.
+ 	 * So, start the CSI stream-on prior to sensor stream-on and
+@@ -208,10 +210,31 @@ int tegra_channel_set_stream(struct tegra_vi_channel *chan, bool on)
+ 	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
  		return 0;
  
- 	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)) {
++	/*
++	 * TRM has incorrectly documented to wait for done status from
++	 * calibration logic after CSI interface power on.
++	 * As per the design, calibration results are latched and applied
++	 * to the pads only when the link is in LP11 state which will happen
++	 * during the sensor stream-on.
++	 * CSI subdev stream-on triggers start of MIPI pads calibration.
++	 * Wait for calibration to finish here after sensor subdev stream-on
++	 * and in case of sensor stream-on failure, cancel the calibration.
++	 */
+ 	subdev = on ? src_subdev : csi_subdev;
+ 	ret = v4l2_subdev_call(subdev, video, s_stream, on);
+-	if (ret < 0 && ret != -ENOIOCTLCMD)
++	if (ret < 0 && ret != -ENOIOCTLCMD) {
++		if (on && csi_chan->mipi)
++			tegra_mipi_cancel_calibration(csi_chan->mipi);
+ 		return ret;
++	}
++
++	if (on && csi_chan->mipi) {
++		ret = tegra_mipi_finish_calibration(csi_chan->mipi);
++		if (ret < 0)
++			dev_err(csi_chan->csi->dev,
++				"MIPI calibration failed: %d\n", ret);
++		return ret;
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.7.4
 
