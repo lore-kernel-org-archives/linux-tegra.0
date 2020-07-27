@@ -2,111 +2,77 @@ Return-Path: <SRS0=ucTN=BG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EBDC433E3
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 00:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD356C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 03:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF362078A
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 00:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB7D3206F6
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Jul 2020 03:25:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Shm0qTlI"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="a1ck6GHo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgG0AZw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 26 Jul 2020 20:25:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48962 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbgG0AZw (ORCPT
+        id S1726841AbgG0DZw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 26 Jul 2020 23:25:52 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:23218 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726701AbgG0DZw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 26 Jul 2020 20:25:52 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0396EC0619D2;
-        Sun, 26 Jul 2020 17:25:51 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id v4so5642259ljd.0;
-        Sun, 26 Jul 2020 17:25:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GKnOu6p3RfixuqRD3S1qs+Z1A7aJHu+EzkEkVp7wuI4=;
-        b=Shm0qTlIgExezzQDG02ewiytrxTdTlFNuf81amBugZdEAACLhDAnQJFlN5TWe7GTl/
-         rHNWDAlfHOrfIU9sZXwGiHL08BDIJHWOhumvV3SB04XIYHVdGzsI7yhtAYshn0D68syI
-         AAqd0f+IjpucFGfFNTvaexbuqqrlczUrFNC7QZSWvQMGyq0zV8N4mpE3m5pEL4DgOnEY
-         r5suHNBPgNDT9sfVVpNREEGKktZBsC0i4BztDx3p40TGVqKjGdY5eEDZZR886F2ugiR/
-         uDBnPay8bCRyPpbEPLgNIMhkdN93mpiFyN+kcTK6GM+dskvzFxIKpl8twF2yCxKSUD4k
-         JJUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GKnOu6p3RfixuqRD3S1qs+Z1A7aJHu+EzkEkVp7wuI4=;
-        b=WLThu9xaflXIjgg38w31gvKPbbVBu66RjYaT7Q0202GLh+NoplkCswDYd94GyCMbqC
-         jpQOIojkjJUln34CQ6DP8kaSGDoKzIZpTHvSz4j8A05kv0+HKMCJ3VStyt8/7d2LDhKT
-         Jdw6bnqBSSnaAWhA1Dj92yhpFID0yrnEpBwdPCPzpyfYgt/uu2kfUE20dEmUKt66jILt
-         cDO2xNKm6uTjljlI/pAGY84Dwjf6RSc7ddvdlmjji7+ZFOfpd5iTunO/qCx/Oyp87FJb
-         QivLM51Y8tntKh2GHT4G+4AP+yY90Ps3hmOL2hGh2hJm3eNXZsULA0KMyLU/UKqStoU6
-         SlEA==
-X-Gm-Message-State: AOAM532W8btD4DJafSZT0JIrXSu0qqO5+ccDOrpPQHljEzCFnjfLUJfR
-        SJes73gGijbsBd6j6zWrGrZ9zZnM
-X-Google-Smtp-Source: ABdhPJxwmNHqgZ0KpbLsAZAfgqCcfjiJWhzQTm93xQrBExY7mKMKds0N90A6ux1p4RD7yyJn7eGXfw==
-X-Received: by 2002:a2e:6c0d:: with SMTP id h13mr8629273ljc.394.1595809550157;
-        Sun, 26 Jul 2020 17:25:50 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-76-12-16.pppoe.mtu-net.ru. [91.76.12.16])
-        by smtp.googlemail.com with ESMTPSA id p13sm3021471lfc.63.2020.07.26.17.25.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Jul 2020 17:25:49 -0700 (PDT)
-Subject: Re: [RFC PATCH v4 00/14] Support for Tegra video capture from
- external sensor
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com
-Cc:     sboyd@kernel.org, gregkh@linuxfoundation.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1595548272-9809-1-git-send-email-skomatineni@nvidia.com>
- <cb080da3-5ae5-bb83-8f5c-65d1fe17cb67@xs4all.nl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e7fd1d23-ea4d-2c17-e3cb-b27f9eb4f687@gmail.com>
-Date:   Mon, 27 Jul 2020 03:25:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sun, 26 Jul 2020 23:25:52 -0400
+X-UUID: ed7933e00dc847e383996d2f93d14690-20200727
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=eSopwLpH/77DG0bJJS5cJFVvSCyQIzU5BBA1AxHDxlA=;
+        b=a1ck6GHoJ6jLtLN3ma2OO38vM0av3wzNJHxpBikaAeOyA/qOmNOzDx4PAej1Xk4CRugb+ZheHT7dHCR9HkW6dcz9uX9Dg3C91BvzCW6Sa0PPNRhkGa++xQvBYcgSAv3WBnM68S+8g5KtzPMkR05ms1pNbhudAZD3U6ej1sfGOUc=;
+X-UUID: ed7933e00dc847e383996d2f93d14690-20200727
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
+        (envelope-from <neal.liu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 297905851; Mon, 27 Jul 2020 11:25:50 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 27 Jul 2020 11:25:47 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 27 Jul 2020 11:25:47 +0800
+From:   Neal Liu <neal.liu@mediatek.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sami Tolvanen <samitolvanen@google.com>
+CC:     Neal Liu <neal.liu@mediatek.com>, <linux-acpi@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>
+Subject: [PATCH v3] cpuidle: Fix CFI failure
+Date:   Mon, 27 Jul 2020 11:25:45 +0800
+Message-ID: <1595820346-4361-1-git-send-email-neal.liu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <cb080da3-5ae5-bb83-8f5c-65d1fe17cb67@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-SNTS-SMTP: D08AD23496ADA7D400167910677C0DCFFBB567C0F76E1255568C6D18DA940D892000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.07.2020 12:43, Hans Verkuil пишет:
-> Thierry, Dmitry,
-> 
-> I'm happy with this series from a media perspective. However, patches 1-5 fix
-> various i2c-tegra.c issues and patch 12 changes mipi calibration functions in
-> drivers/gpu that patch 13 relies on.
-> 
-> I think the i2c-tegra.c patches can be merged independently into the i2c
-> subsystem, but patch 12 needs to be merged with the media patches. So for patch
-> 12 I need an Acked-by from Thierry.
-> 
-> I can also take the i2c-tegra patches if preferred, but there too I need Acks.
-> Dmitry, can you either take these i2c patches, or reply with Acks if you want
-> me to take it?
+Y2hhbmdlcyBzaW5jZSB2MjoNCi0gYWRkIG1vcmUgY29tbWVudHMgb24gZW50ZXJfczJpZGxlIHRv
+IGV4cGxhaW4gd2h5IGl0IGlzIG5lY2Vzc2FyeSB0byByZXR1cm4NCiAgaW50IGV2ZW4gaWYgaXRz
+IHJldHVybiB2YWx1ZSBpcyBuZXZlciB1c2VkLg0KDQpjaGFuZ2VzIHNpbmNlIHYxOg0KLSBhZGQg
+bW9yZSBkZXNjcmlwdGlvbiBpbiBjb21taXQgbWVzc2FnZS4NCg0KKioqIEJMVVJCIEhFUkUgKioq
+DQoNCk5lYWwgTGl1ICgxKToNCiAgY3B1aWRsZTogY2hhbmdlIGVudGVyX3MyaWRsZSgpIHByb3Rv
+dHlwZQ0KDQogZHJpdmVycy9hY3BpL3Byb2Nlc3Nvcl9pZGxlLmMgICB8IDYgKysrKy0tDQogZHJp
+dmVycy9jcHVpZGxlL2NwdWlkbGUtdGVncmEuYyB8IDggKysrKystLS0NCiBkcml2ZXJzL2lkbGUv
+aW50ZWxfaWRsZS5jICAgICAgIHwgNiArKysrLS0NCiBpbmNsdWRlL2xpbnV4L2NwdWlkbGUuaCAg
+ICAgICAgIHwgOSArKysrKystLS0NCiA0IGZpbGVzIGNoYW5nZWQsIDE5IGluc2VydGlvbnMoKyks
+IDEwIGRlbGV0aW9ucygtKQ0KDQotLSANCjIuMTguMA0K
 
-Hello, Hans and everyone! The I2C patches are good to me.
-
-Either way of merging the patches should be fine since it's a hardware
-bring up phase, and thus, it's not critical if patches will be applied
-in a wrong order.
-
-I'm listed as a reviewer and not a maintainer of the Tegra I2C driver,
-so it should be up to Thierry and Wolfram to decide how to merge the I2C
-patches.
