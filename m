@@ -2,113 +2,130 @@ Return-Path: <SRS0=Admd=BH=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,TVD_SUBJ_WIPE_DEBT,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9C9C433E5
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 10:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D9AC433ED
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 10:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC22820775
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 10:21:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8216B22B4B
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 10:30:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQpw3Dg2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbgG1KVC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jul 2020 06:21:02 -0400
-Received: from foss.arm.com ([217.140.110.172]:60376 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728424AbgG1KVC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jul 2020 06:21:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E298F1FB;
-        Tue, 28 Jul 2020 03:21:01 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 079763F66E;
-        Tue, 28 Jul 2020 03:21:00 -0700 (PDT)
-Date:   Tue, 28 Jul 2020 11:20:55 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: pci: tegra: Remove PLL power supplies
-Message-ID: <20200728102055.GA32448@e121166-lin.cambridge.arm.com>
-References: <20200623145528.1658337-1-thierry.reding@gmail.com>
+        id S1728703AbgG1Kav (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jul 2020 06:30:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55256 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728547AbgG1Kav (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 28 Jul 2020 06:30:51 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCF5DC061794;
+        Tue, 28 Jul 2020 03:30:50 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id q7so20565126ljm.1;
+        Tue, 28 Jul 2020 03:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=e64gRt1McL8oFj3/qgie+MEUtDHl7yc27Ox+TPY2v1w=;
+        b=UQpw3Dg2VBKkCK7p31udbkD4bwRyUahlHGrHBTN3d8xe290GQuPr9vqvRcVUGcjjmX
+         ZhKQSf9sS01aMoQAUlH/DjtuNWlxsMzvViO0rHeWcnGNNHLwtg1ZieX6MNEnIu0tfxAj
+         vN01FJpHJN8HorVG7AgtlLMq2LfblspGUQ0Tkw3nUcMHTDAISy1vOBctLeN11ckAqDSF
+         vdihpYtv0z2ZnXqlSXe/VtiADzx46//7OEj825OnBCYxbGy4PdEHIsMSWy2koGwsSYee
+         EWqvDkbkFUDSEuqyx2QOlUnE4mzqtWHBn+vyrMp6EOUyli5easKTAk2tyEAtEIjiumHQ
+         mdGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e64gRt1McL8oFj3/qgie+MEUtDHl7yc27Ox+TPY2v1w=;
+        b=EGiwCXr+kTaJgW5lbcF7OSWDxegQXDommYTzv53P4SHjn5Yuqsu80YCZsPqr5tIWAq
+         3p+8Jurz4mf1jBURmUj7fhjfCrwpUqIZP/65hhrnqswOZpUFV8klyMzYc9hBiQPfTuHK
+         sCwnMb+wuvEnveBroW7B50xzhAYf39tAmIFrwFVGCf7keMqzlltOEQUBpADdxF+nUOPd
+         u/e86H20XumXLI6SysBwkZvPszWoiHyKTrUyPzvFDCDdrE/73kSaaeaV8Wq3GKMWTwJ8
+         uwluxHicTPTfBD1JI5N0rN44P/aQSdy1xb/2xtiY3rfbB8qKelOwCor2iafpgd/OcgLH
+         /pEA==
+X-Gm-Message-State: AOAM530L2f4OnU4lcgcoe99zSN1KG4QRI6imah9ifBb2nnwq5bjiDsPa
+        L5vRAA5zDWFObTyWGYpqs6u8Q/TN
+X-Google-Smtp-Source: ABdhPJz46tCr6CW+PTJsXEbxKg9+0sMlL264bMhMsnNpyA2iOhGHds2jS25HqrU7xyrwFKqVUm8+WA==
+X-Received: by 2002:a2e:b4bb:: with SMTP id q27mr8024317ljm.277.1595932249003;
+        Tue, 28 Jul 2020 03:30:49 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-76-12-16.pppoe.mtu-net.ru. [91.76.12.16])
+        by smtp.googlemail.com with ESMTPSA id u9sm2884825ljk.44.2020.07.28.03.30.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jul 2020 03:30:48 -0700 (PDT)
+Subject: Re: [RFC PATCH v5 13/14] media: tegra-video: Add CSI MIPI pads
+ calibration
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        helen.koike@collabora.com
+Cc:     sboyd@kernel.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1595883452-17343-1-git-send-email-skomatineni@nvidia.com>
+ <1595883452-17343-14-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <c3d40261-9d77-3634-3e04-f20efad9d3d8@gmail.com>
+Date:   Tue, 28 Jul 2020 13:30:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200623145528.1658337-1-thierry.reding@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1595883452-17343-14-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 23, 2020 at 04:55:27PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The XUSB pad controller, which provides access to various USB, PCI and
-> SATA pads (or PHYs), needs to bring up the PLLs associated with these
-> pads. In order to properly do so, it needs to control the power supplied
-> to these PLLs.
-> 
-> Remove the PLL power supplies from the PCIe controller because it does
-> not need direct access to them. Instead it will only use the configured
-> pads provided by the XUSB pad controller.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Hi Rob,
-> 
-> I already made this change as part of the conversion series, but wanted
-> to send this out as part of this subseries since it addresses a fairly
-> long-standing issue that I'd like to clean up irrespective of the DT
-> binding conversion. Since it looks like the conversion series will take
-> a bit longer, I think it makes sense to send this out separately.
+27.07.2020 23:57, Sowjanya Komatineni пишет:
+> +	/*
+> +	 * TRM has incorrectly documented to wait for done status from
+> +	 * calibration logic after CSI interface power on.
+> +	 * As per the design, calibration results are latched and applied
+> +	 * to the pads only when the link is in LP11 state which will happen
+> +	 * during the sensor stream-on.
+> +	 * CSI subdev stream-on triggers start of MIPI pads calibration.
+> +	 * Wait for calibration to finish here after sensor subdev stream-on
+> +	 * and in case of sensor stream-on failure, cancel the calibration.
+> +	 */
+>  	subdev = on ? src_subdev : csi_subdev;
+>  	ret = v4l2_subdev_call(subdev, video, s_stream, on);
+> -	if (ret < 0 && ret != -ENOIOCTLCMD)
+> +	if (ret < 0 && ret != -ENOIOCTLCMD) {
 
-Applied the series to pci/tegra, thanks.
+I assume -ENOIOCTLCMD means that camera wasn't turned ON, so why
+-ENOIOCTLCMD is special?
 
-Lorenzo
+> +		if (on && csi_chan->mipi)
+> +			tegra_mipi_cancel_calibration(csi_chan->mipi);
+>  		return ret;
+> +	}
+> +
+> +	if (on && csi_chan->mipi) {
 
-> Thierry
-> 
->  .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt  | 12 ------------
->  1 file changed, 12 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> index 7939bca47861..d099f3476ccc 100644
-> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> @@ -112,28 +112,16 @@ Power supplies for Tegra124:
->  - Required:
->    - avddio-pex-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
->    - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
-> -  - avdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
-> -    supply 1.05 V.
->    - hvdd-pex-supply: High-voltage supply for PCIe I/O and PCIe output clocks.
->      Must supply 3.3 V.
-> -  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
-> -    Must supply 3.3 V.
->    - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
->      supply 2.8-3.3 V.
-> -  - avdd-pll-erefe-supply: Power supply for PLLE (shared with USB3). Must
-> -    supply 1.05 V.
+Does finish_calibration() really need to be called for ret=-ENOIOCTLCMD?
+
+Shouldn't it be cancel_calibration( for the -ENOIOCTLCMD?
+
+> +		ret = tegra_mipi_finish_calibration(csi_chan->mipi);
+> +		if (ret < 0)
+> +			dev_err(csi_chan->csi->dev,
+> +				"MIPI calibration failed: %d\n", ret);
+
+Doesn't v4l2_subdev_call(OFF) need to be invoked here on error?
+
+> +		return ret;
+> +	}
 >  
->  Power supplies for Tegra210:
->  - Required:
-> -  - avdd-pll-uerefe-supply: Power supply for PLLE (shared with USB3). Must
-> -    supply 1.05 V.
->    - hvddio-pex-supply: High-voltage supply for PCIe I/O and PCIe output
->      clocks. Must supply 1.8 V.
->    - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
-> -  - dvdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
-> -    supply 1.05 V.
-> -  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
-> -    Must supply 3.3 V.
->    - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
->      supply 1.8 V.
->  
-> -- 
-> 2.27.0
-> 
+>  	return 0;
+>  }
+
