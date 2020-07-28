@@ -2,76 +2,113 @@ Return-Path: <SRS0=Admd=BH=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,TVD_SUBJ_WIPE_DEBT,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3488C433E4
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 01:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9C9C433E5
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 10:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 739E220809
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 01:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595899291;
-	bh=TP0DIGZeyxZ5cg4Nue/9kKwQH8LAa0PI7lvigJ7p4tw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=IFilgiY3h+rDLjZ7bL2xVSviaa6gVcA56S6UDa269sJvY9/OAJdbu++QyiIKXbuJk
-	 9kb1o1YLW2sc/docGs8uDI3jDR9ez0fXo96uTUckhomTdMyxfmmcxOruHmB6H+B6Kr
-	 QG7V6ugmDm/yUN8UXIVQDgqtMeuLtbRnRKgAQ4yo=
+	by mail.kernel.org (Postfix) with ESMTP id BC22820775
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 10:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbgG1BVb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Jul 2020 21:21:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33652 "EHLO mail.kernel.org"
+        id S1728542AbgG1KVC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jul 2020 06:21:02 -0400
+Received: from foss.arm.com ([217.140.110.172]:60376 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgG1BVa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Jul 2020 21:21:30 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B66220809;
-        Tue, 28 Jul 2020 01:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595899290;
-        bh=TP0DIGZeyxZ5cg4Nue/9kKwQH8LAa0PI7lvigJ7p4tw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=TDCp6gcHm+cOLcSzNOABMln2PKCYX5v11eDZKS2SNDpUPRghKbQKsOJNU9A03T/u0
-         C860WCHScGSbqx7iDQs91/yLFHtsdLJwecfhGSkbpC+H/gL3lXtYFlI28w18i/B5QE
-         fsYIgagBQBydU1W5N9yL9nCgWKALcVw4yRGgzRa4=
-Content-Type: text/plain; charset="utf-8"
+        id S1728424AbgG1KVC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 28 Jul 2020 06:21:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E298F1FB;
+        Tue, 28 Jul 2020 03:21:01 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 079763F66E;
+        Tue, 28 Jul 2020 03:21:00 -0700 (PDT)
+Date:   Tue, 28 Jul 2020 11:20:55 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: pci: tegra: Remove PLL power supplies
+Message-ID: <20200728102055.GA32448@e121166-lin.cambridge.arm.com>
+References: <20200623145528.1658337-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200709172057.13951-1-digetx@gmail.com>
-References: <20200709172057.13951-1-digetx@gmail.com>
-Subject: Re: [PATCH v4] clk: tegra: pll: Improve PLLM enable-state detection
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Mon, 27 Jul 2020 18:21:29 -0700
-Message-ID: <159589928947.1360974.2291551893182994686@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200623145528.1658337-1-thierry.reding@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Quoting Dmitry Osipenko (2020-07-09 10:20:57)
-> Power Management Controller (PMC) can override the PLLM clock settings,
-> including the enable-state. Although PMC could only act as a second level
-> gate, meaning that PLLM needs to be enabled by the Clock and Reset
-> Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
-> overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
-> order to be functional. Please note that this patch doesn't fix any known
-> problem, and thus, it's merely a minor improvement.
->=20
-> Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@u=
-lmo/T/
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+On Tue, Jun 23, 2020 at 04:55:27PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The XUSB pad controller, which provides access to various USB, PCI and
+> SATA pads (or PHYs), needs to bring up the PLLs associated with these
+> pads. In order to properly do so, it needs to control the power supplied
+> to these PLLs.
+> 
+> Remove the PLL power supplies from the PCIe controller because it does
+> not need direct access to them. Instead it will only use the configured
+> pads provided by the XUSB pad controller.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
+> Hi Rob,
+> 
+> I already made this change as part of the conversion series, but wanted
+> to send this out as part of this subseries since it addresses a fairly
+> long-standing issue that I'd like to clean up irrespective of the DT
+> binding conversion. Since it looks like the conversion series will take
+> a bit longer, I think it makes sense to send this out separately.
 
-Applied to clk-next
+Applied the series to pci/tegra, thanks.
+
+Lorenzo
+
+> Thierry
+> 
+>  .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt  | 12 ------------
+>  1 file changed, 12 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> index 7939bca47861..d099f3476ccc 100644
+> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> @@ -112,28 +112,16 @@ Power supplies for Tegra124:
+>  - Required:
+>    - avddio-pex-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
+>    - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
+> -  - avdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
+> -    supply 1.05 V.
+>    - hvdd-pex-supply: High-voltage supply for PCIe I/O and PCIe output clocks.
+>      Must supply 3.3 V.
+> -  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
+> -    Must supply 3.3 V.
+>    - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
+>      supply 2.8-3.3 V.
+> -  - avdd-pll-erefe-supply: Power supply for PLLE (shared with USB3). Must
+> -    supply 1.05 V.
+>  
+>  Power supplies for Tegra210:
+>  - Required:
+> -  - avdd-pll-uerefe-supply: Power supply for PLLE (shared with USB3). Must
+> -    supply 1.05 V.
+>    - hvddio-pex-supply: High-voltage supply for PCIe I/O and PCIe output
+>      clocks. Must supply 1.8 V.
+>    - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
+> -  - dvdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
+> -    supply 1.05 V.
+> -  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
+> -    Must supply 3.3 V.
+>    - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
+>      supply 1.8 V.
+>  
+> -- 
+> 2.27.0
+> 
