@@ -2,103 +2,160 @@ Return-Path: <SRS0=Admd=BH=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1639C43458
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 16:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1835C433DF
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 19:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6BB22083B
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 16:34:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595954052;
-	bh=uXUumP2+sNTXnE6EHRt6PUDgwtUeHTn5j+dNJH7KOVE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=e0yko+BYWOuHnjDCh/11ev9YGh8ZuCyYC+yHHtkyRTSQI2zZZ/bUf1Yzsg4P+/TpQ
-	 0Co/soDkKRoD2tXBKD1aLosM7/tMzvxzFCHTcHgGspaaHSFNt8weWvvpLF/roS4U40
-	 oLHbm+WEgrndHK6g+l5+pAVv/5GW8xk9E/Mm3De4=
+	by mail.kernel.org (Postfix) with ESMTP id ACDFF2075A
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 19:37:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZaUisKhK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731554AbgG1QeJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jul 2020 12:34:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731422AbgG1QeJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jul 2020 12:34:09 -0400
-Received: from localhost (p54b330d0.dip0.t-ipconnect.de [84.179.48.208])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A79D20792;
-        Tue, 28 Jul 2020 16:34:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595954048;
-        bh=uXUumP2+sNTXnE6EHRt6PUDgwtUeHTn5j+dNJH7KOVE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cgrVwCnMxj91VP8xHGJ7740Jinf4MxWMNJ3NEkmqJ/yCMP4Dv2nlppxBjd3sCU4v6
-         CYFGKgh/oAIlXBgvSjuyyHcTn5tEK3k1OtiztCbtU2pcqzMDgv3CofEG+R75TuusMP
-         qvBF2E1miBiyOvrRv3rZ8yIwTrVjnBIfw5MNasxs=
-Date:   Tue, 28 Jul 2020 18:34:05 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org,
-        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [RFC PATCH v5 05/14] i2c: tegra: Avoid tegra_i2c_init_dma() for
- Tegra210 vi i2c
-Message-ID: <20200728163405.GE3736@ninjato>
+        id S1732747AbgG1Thb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jul 2020 15:37:31 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:7219 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729846AbgG1Thb (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 28 Jul 2020 15:37:31 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f207e6c0003>; Tue, 28 Jul 2020 12:37:17 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 28 Jul 2020 12:37:30 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 28 Jul 2020 12:37:30 -0700
+Received: from [10.2.168.236] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Jul
+ 2020 19:37:29 +0000
+Subject: Re: [RFC PATCH v5 13/14] media: tegra-video: Add CSI MIPI pads
+ calibration
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
+        <helen.koike@collabora.com>
+CC:     <sboyd@kernel.org>, <gregkh@linuxfoundation.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>
 References: <1595883452-17343-1-git-send-email-skomatineni@nvidia.com>
- <1595883452-17343-6-git-send-email-skomatineni@nvidia.com>
+ <1595883452-17343-14-git-send-email-skomatineni@nvidia.com>
+ <c3d40261-9d77-3634-3e04-f20efad9d3d8@gmail.com>
+ <01ee0805-3d57-d857-48e3-5c2245cd4500@nvidia.com>
+Message-ID: <edefa3b1-e0fe-0f34-80b7-8729551ee2ea@nvidia.com>
+Date:   Tue, 28 Jul 2020 12:43:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="FN+gV9K+162wdwwF"
-Content-Disposition: inline
-In-Reply-To: <1595883452-17343-6-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <01ee0805-3d57-d857-48e3-5c2245cd4500@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1595965037; bh=IGHiL01+pCfxDUBGk+J+sS1IuAeLkaTPJTReY8Unf3o=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=ZaUisKhK7xpa5/nsUXCO6YY8CpuPQooaZftXiY0f5x1hzdGX8Ydeo5+t9p/YDhmx3
+         JBJl8mCZ8+1JWQfHVHNN75IIEt4jT0jwhkymKwxyGKtZKVBRDuHrBI+RuIVPPbDk8r
+         HyiYRQuy1BBGZSJfNFDEpz7IU+IPOP6hCczxh1wvGe9hNqDNhHFWKwMzJ+JG4WcLRg
+         dC3jOKKxGQEzdhiP/e0PCS9JESowb/eYiqiNv1Pgv4OzBHIOGj8FEnDYxT1HAwpux9
+         KECGIYPuccFVjKY5TN367n78kg49ExbTSJbVsQr++FHA1HMZVbsE6i/3RnS95ojadu
+         VepW6NSKlefXA==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---FN+gV9K+162wdwwF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/28/20 8:59 AM, Sowjanya Komatineni wrote:
+>
+> On 7/28/20 3:30 AM, Dmitry Osipenko wrote:
+>> 27.07.2020 23:57, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> +=C2=A0=C2=A0=C2=A0 /*
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * TRM has incorrectly documented to wait for =
+done status from
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * calibration logic after CSI interface power=
+ on.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * As per the design, calibration results are =
+latched and applied
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * to the pads only when the link is in LP11 s=
+tate which will=20
+>>> happen
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * during the sensor stream-on.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * CSI subdev stream-on triggers start of MIPI=
+ pads calibration.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * Wait for calibration to finish here after s=
+ensor subdev=20
+>>> stream-on
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * and in case of sensor stream-on failure, ca=
+ncel the=20
+>>> calibration.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 subdev =3D on ? src_subdev : csi_subdev;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D v4l2_subdev_call(subdev, video, =
+s_stream, on);
+>>> -=C2=A0=C2=A0=C2=A0 if (ret < 0 && ret !=3D -ENOIOCTLCMD)
+>>> +=C2=A0=C2=A0=C2=A0 if (ret < 0 && ret !=3D -ENOIOCTLCMD) {
+>> I assume -ENOIOCTLCMD means that camera wasn't turned ON, so why
+>> -ENOIOCTLCMD is special?
+> No -ENOIOCTLCMD mean subdev don't have s_stream ops
+>>
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (on && csi_chan->mipi)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 teg=
+ra_mipi_cancel_calibration(csi_chan->mipi);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (on && csi_chan->mipi) {
+>> Does finish_calibration() really need to be called for ret=3D-ENOIOCTLCM=
+D?
+>>
+>> Shouldn't it be cancel_calibration( for the -ENOIOCTLCMD?
+>
+> start calibration happens during csi sensor streaming which happens=20
+> prior to this point.
+>
+> In case if sensor subdev does not have s_stream ops, then either=20
+> finish/cancel calibration should happen to disable the clock.
 
-On Mon, Jul 27, 2020 at 01:57:23PM -0700, Sowjanya Komatineni wrote:
-> VI I2C is on host1x bus so APB DMA can't be used for Tegra210 VI
-> I2C and there are no tx and rx dma channels for VI I2C.
->=20
-> So, avoid attempt of requesting DMA channels.
->=20
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+For -ENOIOCTLCMD, calling finish calibration as some sensors might keep=20
+pads in LP-11 on power up and for such sensors calibration logic will=20
+apply results to pads and done bit will be set.
 
-Applied to for-next, thanks!
+Also avoiding additional check to specifically call cancel calibration=20
+on ENOIOCTLCMD and making it fall into finish calibration as both does=20
+disable clock except finish will wait for done bit to be set.
 
+Also, most sensor subdev have s_stream ops implemented.
 
---FN+gV9K+162wdwwF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl8gU30ACgkQFA3kzBSg
-KbbAPg//ehPzd9wKNGR8liN8/pgm4FABYGaxyQIuEG4paVvdgwUOoQ0ZW+itZsTJ
-svnQjlamrbF65Yq1whqDLBiPMwfowGK6DUb9S2s9tyo4X2qsNJY9c2QTDZCnHqA2
-DOM52p7v1lN1wTb8bSFCgxA59TEkKuWpkJSvjN0fAXQ7mpq1ioH4su7+SQ6aqNVQ
-eg6XZPhsmg9uoneHBpaAT4irs7fR1X+GWppEwn2vMAGxcLEf5HaI/yhY2aalIpxu
-lAHfXBJK5Jreqn497B7WXT5WMJ97a/IXPbvW51S7Y0OAKpsrBgG/w4ga2Wqltj0C
-QfMY8aCukQhGRhlmUeC+kULlrcY1bhVAI20cIjNxLhaFCnymGAjCKU14MO75tfwl
-PdsyVnd/OvKhAKW/7lLXZyWNJK41xQ0sRgOT3C3Mg1+KdfWFJB9c8hqynjBnvuZb
-J0bdYJ1mNRVOEFn3QXOOb3BnYFdUhl03LYJYax+NEzZxbiZYyn7NjoPW+J1eBsjL
-cxOtzP12AbIXDj+EWVBGn2B0HrTIQhQMovsdgaDS7tW7ahUGnESO3EdpH0yF6Jk2
-+LnVRpFB1aHxze/dFahBmjBPtODTJQrsmHz5b93Nw5bjHWm10c+ro+IQF19V3/qW
-47na6KqnvslbLzHUiWW4WX5GMKYQYHbWY+dSwB8X7MEjAU/aysw=
-=cUam
------END PGP SIGNATURE-----
-
---FN+gV9K+162wdwwF--
+>
+>>
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D tegra_mipi_finish_c=
+alibration(csi_chan->mipi);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret < 0)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
+_err(csi_chan->csi->dev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 "MIPI calibration failed: %d\n", ret);
+>> Doesn't v4l2_subdev_call(OFF) need to be invoked here on error?
+>
+> Not required as on error streaming fails and runtime PM will turn off=20
+> power anyway.
+>
+> Also we only did csi subdev s_stream on and during sensor subdev=20
+> s_stream on fail, actual stream dont happen and on tegra side frame=20
+> capture by HW happens only when kthreads run.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>> =C2=A0 }
