@@ -2,65 +2,66 @@ Return-Path: <SRS0=Admd=BH=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D9AC433ED
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 10:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A748C433EA
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 11:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8216B22B4B
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 10:30:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36D8C2083E
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 11:04:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQpw3Dg2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d13uPu0+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbgG1Kav (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jul 2020 06:30:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55256 "EHLO
+        id S1728866AbgG1LD6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Jul 2020 07:03:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728547AbgG1Kav (ORCPT
+        with ESMTP id S1728788AbgG1LD6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jul 2020 06:30:51 -0400
+        Tue, 28 Jul 2020 07:03:58 -0400
 Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCF5DC061794;
-        Tue, 28 Jul 2020 03:30:50 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id q7so20565126ljm.1;
-        Tue, 28 Jul 2020 03:30:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81825C061794;
+        Tue, 28 Jul 2020 04:03:57 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id f5so20634392ljj.10;
+        Tue, 28 Jul 2020 04:03:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=e64gRt1McL8oFj3/qgie+MEUtDHl7yc27Ox+TPY2v1w=;
-        b=UQpw3Dg2VBKkCK7p31udbkD4bwRyUahlHGrHBTN3d8xe290GQuPr9vqvRcVUGcjjmX
-         ZhKQSf9sS01aMoQAUlH/DjtuNWlxsMzvViO0rHeWcnGNNHLwtg1ZieX6MNEnIu0tfxAj
-         vN01FJpHJN8HorVG7AgtlLMq2LfblspGUQ0Tkw3nUcMHTDAISy1vOBctLeN11ckAqDSF
-         vdihpYtv0z2ZnXqlSXe/VtiADzx46//7OEj825OnBCYxbGy4PdEHIsMSWy2koGwsSYee
-         EWqvDkbkFUDSEuqyx2QOlUnE4mzqtWHBn+vyrMp6EOUyli5easKTAk2tyEAtEIjiumHQ
-         mdGA==
+        bh=jX6sjTJPEr15dOzF7TYKeW7hD2/3KOKGSVAXq2cMBEc=;
+        b=d13uPu0+A8NFdVShzGvgGo4igAAaBdTaVAmAtFt4WF3hQWPCzgOZa3msY075ut5XaJ
+         k8eWcH8d33j3q9R5BTwumU5UEfPfG5MTo6ELaMCYTqMjNlWtwJloALgvmhwktj4sniV8
+         e++cuzk30jO7afhKJycMTVt00m3AUpWl4YGo4Av4UjOXJyE+zRFn2qXnSJ0GsbX/2uQd
+         MKsWo4z2zGaowAA5XbZi69CFjkNvsCB2sbxIbEzvdoHPKd16q+8t7TjVPRZBHICf4yz2
+         296srKHU3RreyC48COtmJUgeAjyVGp1ojNLE/2Y4AIH5NH6CsIEwAXQXpqYgFpmMi3a4
+         MlDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=e64gRt1McL8oFj3/qgie+MEUtDHl7yc27Ox+TPY2v1w=;
-        b=EGiwCXr+kTaJgW5lbcF7OSWDxegQXDommYTzv53P4SHjn5Yuqsu80YCZsPqr5tIWAq
-         3p+8Jurz4mf1jBURmUj7fhjfCrwpUqIZP/65hhrnqswOZpUFV8klyMzYc9hBiQPfTuHK
-         sCwnMb+wuvEnveBroW7B50xzhAYf39tAmIFrwFVGCf7keMqzlltOEQUBpADdxF+nUOPd
-         u/e86H20XumXLI6SysBwkZvPszWoiHyKTrUyPzvFDCDdrE/73kSaaeaV8Wq3GKMWTwJ8
-         uwluxHicTPTfBD1JI5N0rN44P/aQSdy1xb/2xtiY3rfbB8qKelOwCor2iafpgd/OcgLH
-         /pEA==
-X-Gm-Message-State: AOAM530L2f4OnU4lcgcoe99zSN1KG4QRI6imah9ifBb2nnwq5bjiDsPa
-        L5vRAA5zDWFObTyWGYpqs6u8Q/TN
-X-Google-Smtp-Source: ABdhPJz46tCr6CW+PTJsXEbxKg9+0sMlL264bMhMsnNpyA2iOhGHds2jS25HqrU7xyrwFKqVUm8+WA==
-X-Received: by 2002:a2e:b4bb:: with SMTP id q27mr8024317ljm.277.1595932249003;
-        Tue, 28 Jul 2020 03:30:49 -0700 (PDT)
+        bh=jX6sjTJPEr15dOzF7TYKeW7hD2/3KOKGSVAXq2cMBEc=;
+        b=KXQfqZX/5M6K2GnUEIog1q4URisQFVSNogKqQv3w06XIJm6eSSAT5PFAE392l5SK8b
+         2VVNFmLPid/5yyMXNg/Fa/LIan5+ySrW0Fhz1CXh2R21ZWsxMnPgCAvrKIg/QLbCknDr
+         7olXKFAAhbJfvVEVnncweW6KxSYD21N/Dfpm/gnPtJE6e8sDhMbyqTHc0JblaWd07ZYJ
+         Ny3fqwDyTYWT/5Go+DA0SoN+0P3Pjp01lTa/hNH6/hKuh01kO+eR0ncWd5arVosY+DNO
+         MtB5yEG8bLal/uzUUB7QRZMXgF03FSj5OG/ngoRsBQBeAZLIrc0s+tOyin5BDlsXvDaB
+         PIuQ==
+X-Gm-Message-State: AOAM533mVQ7sgNXN2zS8T7NULMRtBBGY4SVdas3qYaVzefYQ2ajEfPYx
+        C8llCZulo4OhVc7dzA5tob99udjS
+X-Google-Smtp-Source: ABdhPJy21QLY/yVjHkncbE+RD0wsgXFjz+XHQdbpbJEUed+zywipzYvk8mjCf8LoQO76elRFDDdGzg==
+X-Received: by 2002:a2e:7308:: with SMTP id o8mr5524141ljc.414.1595934235729;
+        Tue, 28 Jul 2020 04:03:55 -0700 (PDT)
 Received: from [192.168.2.145] (ppp91-76-12-16.pppoe.mtu-net.ru. [91.76.12.16])
-        by smtp.googlemail.com with ESMTPSA id u9sm2884825ljk.44.2020.07.28.03.30.47
+        by smtp.googlemail.com with ESMTPSA id k25sm2905238ljk.87.2020.07.28.04.03.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jul 2020 03:30:48 -0700 (PDT)
-Subject: Re: [RFC PATCH v5 13/14] media: tegra-video: Add CSI MIPI pads
- calibration
+        Tue, 28 Jul 2020 04:03:55 -0700 (PDT)
+Subject: Re: [RFC PATCH v5 12/14] gpu: host1x: mipi: Keep MIPI clock enabled
+ till calibration is done
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
         hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
@@ -70,14 +71,14 @@ Cc:     sboyd@kernel.org, gregkh@linuxfoundation.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-i2c@vger.kernel.org
 References: <1595883452-17343-1-git-send-email-skomatineni@nvidia.com>
- <1595883452-17343-14-git-send-email-skomatineni@nvidia.com>
+ <1595883452-17343-13-git-send-email-skomatineni@nvidia.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c3d40261-9d77-3634-3e04-f20efad9d3d8@gmail.com>
-Date:   Tue, 28 Jul 2020 13:30:46 +0300
+Message-ID: <b21e3227-d0d8-5b4a-ae69-aa29551a22c3@gmail.com>
+Date:   Tue, 28 Jul 2020 14:03:54 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <1595883452-17343-14-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1595883452-17343-13-git-send-email-skomatineni@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -87,45 +88,124 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 27.07.2020 23:57, Sowjanya Komatineni пишет:
-> +	/*
-> +	 * TRM has incorrectly documented to wait for done status from
-> +	 * calibration logic after CSI interface power on.
-> +	 * As per the design, calibration results are latched and applied
-> +	 * to the pads only when the link is in LP11 state which will happen
-> +	 * during the sensor stream-on.
-> +	 * CSI subdev stream-on triggers start of MIPI pads calibration.
-> +	 * Wait for calibration to finish here after sensor subdev stream-on
-> +	 * and in case of sensor stream-on failure, cancel the calibration.
-> +	 */
->  	subdev = on ? src_subdev : csi_subdev;
->  	ret = v4l2_subdev_call(subdev, video, s_stream, on);
-> -	if (ret < 0 && ret != -ENOIOCTLCMD)
-> +	if (ret < 0 && ret != -ENOIOCTLCMD) {
+> With the split of MIPI calibration into tegra_mipi_calibrate() and
+> tegra_mipi_wait(), MIPI clock is not kept enabled till the calibration
+> is done.
+> 
+> So, this patch skips disabling MIPI clock after triggering start of
+> calibration and disables it only after waiting for done status from
+> the calibration logic.
+> 
+> This patch renames tegra_mipi_calibrate() as tegra_mipi_start_calibration()
+> and tegra_mipi_wait() as tegra_mipi_finish_calibration() to be inline
+> with their usage.
+> 
+> As MIPI clock is left enabled and in case of any failures with CSI input
+> streaming tegra_mipi_finish_calibration() will not get invoked.
+> So added new API tegra_mipi_cancel_calibration() which disables MIPI clock
+> and consumer drivers can call this in such cases.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/gpu/drm/tegra/dsi.c |  4 ++--
+>  drivers/gpu/host1x/mipi.c   | 19 ++++++++++---------
+>  include/linux/host1x.h      |  5 +++--
+>  3 files changed, 15 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+> index 3820e8d..a7864e9 100644
+> --- a/drivers/gpu/drm/tegra/dsi.c
+> +++ b/drivers/gpu/drm/tegra/dsi.c
+> @@ -694,11 +694,11 @@ static int tegra_dsi_pad_calibrate(struct tegra_dsi *dsi)
+>  		DSI_PAD_PREEMP_PD(0x03) | DSI_PAD_PREEMP_PU(0x3);
+>  	tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_3);
+>  
+> -	err = tegra_mipi_calibrate(dsi->mipi);
+> +	err = tegra_mipi_start_calibration(dsi->mipi);
+>  	if (err < 0)
+>  		return err;
+>  
+> -	return tegra_mipi_wait(dsi->mipi);
+> +	return tegra_mipi_finish_calibration(dsi->mipi);
+>  }
+>  
+>  static void tegra_dsi_set_timeout(struct tegra_dsi *dsi, unsigned long bclk,
+> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+> index e606464..b15ab6e 100644
+> --- a/drivers/gpu/host1x/mipi.c
+> +++ b/drivers/gpu/host1x/mipi.c
+> @@ -293,17 +293,19 @@ int tegra_mipi_disable(struct tegra_mipi_device *dev)
+>  }
+>  EXPORT_SYMBOL(tegra_mipi_disable);
+>  
+> -int tegra_mipi_wait(struct tegra_mipi_device *device)
+> +void tegra_mipi_cancel_calibration(struct tegra_mipi_device *device)
+> +{
 
-I assume -ENOIOCTLCMD means that camera wasn't turned ON, so why
--ENOIOCTLCMD is special?
+Doesn't MIPI_CAL need to be reset here?
 
-> +		if (on && csi_chan->mipi)
-> +			tegra_mipi_cancel_calibration(csi_chan->mipi);
->  		return ret;
-> +	}
+> +	clk_disable(device->mipi->clk);
+> +}
+> +EXPORT_SYMBOL(tegra_mipi_cancel_calibration);
 > +
-> +	if (on && csi_chan->mipi) {
+> +int tegra_mipi_finish_calibration(struct tegra_mipi_device *device)
+>  {
+>  	struct tegra_mipi *mipi = device->mipi;
+>  	void __iomem *status_reg = mipi->regs + (MIPI_CAL_STATUS << 2);
+>  	u32 value;
+>  	int err;
+>  
+> -	err = clk_enable(device->mipi->clk);
+> -	if (err < 0)
+> -		return err;
+> -
+>  	mutex_lock(&device->mipi->lock);
+>  
+>  	err = readl_relaxed_poll_timeout(status_reg, value,
+> @@ -315,9 +317,9 @@ int tegra_mipi_wait(struct tegra_mipi_device *device)
+>  
+>  	return err;
+>  }
+> -EXPORT_SYMBOL(tegra_mipi_wait);
+> +EXPORT_SYMBOL(tegra_mipi_finish_calibration);
+>  
+> -int tegra_mipi_calibrate(struct tegra_mipi_device *device)
+> +int tegra_mipi_start_calibration(struct tegra_mipi_device *device)
+>  {
+>  	const struct tegra_mipi_soc *soc = device->mipi->soc;
+>  	unsigned int i;
+> @@ -382,11 +384,10 @@ int tegra_mipi_calibrate(struct tegra_mipi_device *device)
+>  	tegra_mipi_writel(device->mipi, value, MIPI_CAL_CTRL);
 
-Does finish_calibration() really need to be called for ret=-ENOIOCTLCMD?
+This function sets MIPI_CAL_CLKEN_OVR bit, does it mean that MIPI clock
+becomes always-ON?
 
-Shouldn't it be cancel_calibration( for the -ENOIOCTLCMD?
+I don't see where MIPI_CAL_CLKEN_OVR is unset.
 
-> +		ret = tegra_mipi_finish_calibration(csi_chan->mipi);
-> +		if (ret < 0)
-> +			dev_err(csi_chan->csi->dev,
-> +				"MIPI calibration failed: %d\n", ret);
-
-Doesn't v4l2_subdev_call(OFF) need to be invoked here on error?
-
-> +		return ret;
-> +	}
+>  	mutex_unlock(&device->mipi->lock);
+> -	clk_disable(device->mipi->clk);
 >  
 >  	return 0;
 >  }
+> -EXPORT_SYMBOL(tegra_mipi_calibrate);
+> +EXPORT_SYMBOL(tegra_mipi_start_calibration);
+>  
+>  static const struct tegra_mipi_pad tegra114_mipi_pads[] = {
+>  	{ .data = MIPI_CAL_CONFIG_CSIA },
+> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+> index 20c885d..b490dda 100644
+> --- a/include/linux/host1x.h
+> +++ b/include/linux/host1x.h
+> @@ -333,7 +333,8 @@ struct tegra_mipi_device *tegra_mipi_request(struct device *device,
+>  void tegra_mipi_free(struct tegra_mipi_device *device);
+>  int tegra_mipi_enable(struct tegra_mipi_device *device);
+>  int tegra_mipi_disable(struct tegra_mipi_device *device);
+> -int tegra_mipi_calibrate(struct tegra_mipi_device *device);
+> -int tegra_mipi_wait(struct tegra_mipi_device *device);
+> +int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
+> +int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
+> +void tegra_mipi_cancel_calibration(struct tegra_mipi_device *device);
+>  
+>  #endif
+> 
 
