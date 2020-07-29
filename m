@@ -2,116 +2,103 @@ Return-Path: <SRS0=/NnN=BI=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA45AC433DF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 10:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC6CC433DF
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 17:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 977362074B
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 10:08:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BC1F2075D
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 17:08:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nAqZhoEx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3pBUmaq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbgG2KIM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jul 2020 06:08:12 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18831 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbgG2KIL (ORCPT
+        id S1726476AbgG2RIK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jul 2020 13:08:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbgG2RIJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jul 2020 06:08:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f214a5e0001>; Wed, 29 Jul 2020 03:07:26 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 29 Jul 2020 03:08:11 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 29 Jul 2020 03:08:11 -0700
-Received: from [10.26.73.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 Jul
- 2020 10:08:06 +0000
-Subject: Re: [PATCH V2] usb: tegra: Fix allocation for the FPCI context
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Mathias Nyman <mathias.nyman@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20200712102837.24340-1-jonathanh@nvidia.com>
- <20200715113842.30680-1-jonathanh@nvidia.com>
- <20200723111934.GA1964033@kroah.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <bf4c5600-067d-eaaf-6364-84a23cce497d@nvidia.com>
-Date:   Wed, 29 Jul 2020 11:08:04 +0100
+        Wed, 29 Jul 2020 13:08:09 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D188C061794;
+        Wed, 29 Jul 2020 10:08:09 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id f5so25852477ljj.10;
+        Wed, 29 Jul 2020 10:08:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Kdm+mgqvwV7CVf+Pvs1UK+aKOAgvVAj+fT+AGl9gU/o=;
+        b=R3pBUmaqToAvUXZH5tAeJ79vR2bK59XOrW1Pa/E6R1a4Wh7fwhrJ5ZwNnG4J4svnaO
+         o5o/tb/6pZ+H8jUY3rLNE/hGK2hKFu4P282EQGgk0U0UuUyIZSxdijncXnxgRx+J28hM
+         JWiUL6fnheSuk/8ZLzTDgui69PyMDaVxQM31gxngUPALVcpGxWMbstWCVulOhLOnPPa+
+         EiiL9At+Pe6MtwLIyGrs6zPBG61Pq6keRFTjUmnXMwMwceNoQKfTdqYZT7IeuXvixuVo
+         qqGZ/w6aPuOhE3R+bjeIP1fD2tYao3K8Lw9S786/4pytTN1bGM+2XYY1EKJudfhZWVVc
+         i8rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Kdm+mgqvwV7CVf+Pvs1UK+aKOAgvVAj+fT+AGl9gU/o=;
+        b=JHYtaU617K4oJHN37V79e6m+BQZu7A84cGXxrVQ23GsPidHsXSplFazq/fR7YGi4K0
+         C2cBZwvcfsqBj6ET2gTzXHLQezuq4MLP+rQ5WED/Wqk748D8/2+jF2hEEItPNdHquxHM
+         Pbh62vJPpuMMhRKLQGKAsDnDfhN2MAf5wnXvTsdVicr8PnYnBSUDDoO9VBsbFunXebzF
+         TLNaZIyWhA9gr63XMYHxIxjaOsqjD5vgzeC15XFPCu78Pi8iyfunnxlhvHcorl2VPWAo
+         5hrvXByNxuCXWXdIjLb/qYchw6IgGP7ULF8DBhjdaFxZlDgOsNLiKoE5TqExjIcNPwpm
+         O6HQ==
+X-Gm-Message-State: AOAM532nJtZbU06wbnvOJM3tvO/jsq+sSdbTvDbFf3Nia8EnlD8QBWhX
+        ud5gQGKOCw6Er1Fdx2tF1pxefKlS
+X-Google-Smtp-Source: ABdhPJxZZPDDdtZSLDx1sPcvKxSlR6GIhIb8gtqrr7AXluJlgMFp6LEauw/Lo1ppkp1hv0BmrPW3Cw==
+X-Received: by 2002:a2e:9a91:: with SMTP id p17mr1664078lji.378.1596042487460;
+        Wed, 29 Jul 2020 10:08:07 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-76-12-16.pppoe.mtu-net.ru. [91.76.12.16])
+        by smtp.googlemail.com with ESMTPSA id z25sm498374lji.33.2020.07.29.10.08.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jul 2020 10:08:06 -0700 (PDT)
+Subject: Re: [RFC PATCH v5 12/14] gpu: host1x: mipi: Keep MIPI clock enabled
+ till calibration is done
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        helen.koike@collabora.com
+Cc:     sboyd@kernel.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1595883452-17343-1-git-send-email-skomatineni@nvidia.com>
+ <1595883452-17343-13-git-send-email-skomatineni@nvidia.com>
+ <b21e3227-d0d8-5b4a-ae69-aa29551a22c3@gmail.com>
+ <69903c67-8e5f-11c2-45ec-c76b97634aba@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <d291d306-55d4-2264-dc05-0e47f0dfef20@gmail.com>
+Date:   Wed, 29 Jul 2020 20:08:05 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200723111934.GA1964033@kroah.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <69903c67-8e5f-11c2-45ec-c76b97634aba@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596017246; bh=J9aeU8QwhA/JpGumv0tXw97StQVGfr0gZpe+p+AtC6g=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=nAqZhoExb/n7tqUKdOPO908fv9jjGGo36/TG9jMXPo8zRbAOQek+STMLzw7OHGpMg
-         mpcfwhatS3Wj/tNSzlRCMmIPDOjhpIRat4Hpvntf5Q+UBMkezzbMDsOxhgCTQdchLe
-         tW89JQJ1RNiwjgn4gBdBTVBrujXBETqhf91wDF12gKiLXZpikM8odFFC/Ct8QQlpOX
-         evf+EalsdJYogJD3rbemv0QPeCNv/GxzJlLtXFYMDjRqJEnldrmK6YpWuHrYGzF4VV
-         EiPFovdp9SpAGsjRCNL5HCP9KeA3wBhjKup5VGPBIsFreEqhWnqjuDI6sV7eQROELN
-         /t21PyBzq4JUQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+28.07.2020 19:04, Sowjanya Komatineni пишет:
+...
+>>> +void tegra_mipi_cancel_calibration(struct tegra_mipi_device *device)
+>>> +{
+>> Doesn't MIPI_CAL need to be reset here?
+> No need to reset MIPI CAL
 
-On 23/07/2020 12:19, Greg Kroah-Hartman wrote:
-> On Wed, Jul 15, 2020 at 12:38:42PM +0100, Jon Hunter wrote:
->> Commit 5c4e8d3781bc ("usb: host: xhci-tegra: Add support for XUSB
->> context save/restore") is using the IPFS 'num_offsets' value when
->> allocating memory for FPCI context instead of the FPCI 'num_offsets'.
->>
->> After commit cad064f1bd52 ("devres: handle zero size in devm_kmalloc()")
->> was added system suspend started failing on Tegra186. The kernel log
->> showed that the Tegra XHCI driver was crashing on entry to suspend when
->> attempting the save the USB context. On Tegra186, the IPFS context has a
->> zero length but the FPCI content has a non-zero length, and because of
->> the bug in the Tegra XHCI driver we are incorrectly allocating a zero
->> length array for the FPCI context. The crash seen on entering suspend
->> when we attempt to save the FPCI context and following commit
->> cad064f1bd52 ("devres: handle zero size in devm_kmalloc()") this now
->> causes a NULL pointer deference when we access the memory. Fix this by
->> correcting the amount of memory we are allocating for FPCI contexts.
->>
->> Cc: stable@vger.kernel.org
->>
->> Fixes: 5c4e8d3781bc ("usb: host: xhci-tegra: Add support for XUSB context save/restore")
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> ---
->>
->> Changes since V1:
->> - Corrected commit message
->> - Added Thierry's ACK
->>
->>  drivers/usb/host/xhci-tegra.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> No cc: to linux-usb@vger?  :(
-> 
-> I'll go queue this up, but I would have caught it sooner if you had done
-> so...
+Could you please explain why. There is a calibration state-machine that
+apparently needs to be returned into initial state, does it return by
+itself?
 
-Sorry about that. Thanks for queuing up!
-Jon
-
--- 
-nvpublic
+TRM says that MIPI block needs to be reset before of starting
+calibration process. The reset is completely missing in the driver, I
+assume it needs to be corrected with another patch.
