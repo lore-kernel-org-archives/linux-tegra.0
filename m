@@ -1,161 +1,96 @@
-Return-Path: <SRS0=Admd=BH=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=/NnN=BI=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1835C433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 19:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B41C433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 08:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACDFF2075A
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Jul 2020 19:37:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZaUisKhK"
+	by mail.kernel.org (Postfix) with ESMTP id 9566720838
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 08:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596010963;
+	bh=tXBTHxTrjeaNwrHl2lRRCFNppBO0POfp8G+RESBPgJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=s0tuUgtjYTmdplTYAM2y0cuoliXztM7FfeYCmZlxeqbehNaxeW1XYag+RZ7R0Jguo
+	 q3TufHgLxnufmHDxpdUt0NOflYJW2DyYgWYlJaqjeF9ZUS0zI/TjmfWuuULveyRg+2
+	 DOJrVi5/veUvH9Rr5wPlx4ybSx+s91n1sNF09l0k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732747AbgG1Thb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Jul 2020 15:37:31 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:7219 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729846AbgG1Thb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Jul 2020 15:37:31 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f207e6c0003>; Tue, 28 Jul 2020 12:37:17 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 28 Jul 2020 12:37:30 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 28 Jul 2020 12:37:30 -0700
-Received: from [10.2.168.236] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Jul
- 2020 19:37:29 +0000
-Subject: Re: [RFC PATCH v5 13/14] media: tegra-video: Add CSI MIPI pads
- calibration
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
-        <helen.koike@collabora.com>
-CC:     <sboyd@kernel.org>, <gregkh@linuxfoundation.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>
-References: <1595883452-17343-1-git-send-email-skomatineni@nvidia.com>
- <1595883452-17343-14-git-send-email-skomatineni@nvidia.com>
- <c3d40261-9d77-3634-3e04-f20efad9d3d8@gmail.com>
- <01ee0805-3d57-d857-48e3-5c2245cd4500@nvidia.com>
-Message-ID: <edefa3b1-e0fe-0f34-80b7-8729551ee2ea@nvidia.com>
-Date:   Tue, 28 Jul 2020 12:43:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726536AbgG2IWn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jul 2020 04:22:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726336AbgG2IWn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 29 Jul 2020 04:22:43 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4ACBF206D4;
+        Wed, 29 Jul 2020 08:22:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596010962;
+        bh=tXBTHxTrjeaNwrHl2lRRCFNppBO0POfp8G+RESBPgJY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bIkKMDlaa7WxgaW2wIu//ShNYA/4V7B5gwp0Ee7bcdsIdJSemX1QsL9K7fREnvb2K
+         K0BYLhBaeMIYFn1doeRvjDiy6xRNNDv38eTpgvcL/f7kdMNcJOM0q2atptu5oSt9+3
+         inWXhBIL/XX7YGLtUeC91qf7fBG6oEqQ8uOZAE20=
+Date:   Wed, 29 Jul 2020 10:22:34 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Thierry Reding <treding@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.7 000/179] 5.7.11-rc1 review
+Message-ID: <20200729082234.GD529870@kroah.com>
+References: <20200727134932.659499757@linuxfoundation.org>
+ <8bd52f5eab274431925b82ee9c5f13c5@HQMAIL105.nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <01ee0805-3d57-d857-48e3-5c2245cd4500@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1595965037; bh=IGHiL01+pCfxDUBGk+J+sS1IuAeLkaTPJTReY8Unf3o=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=ZaUisKhK7xpa5/nsUXCO6YY8CpuPQooaZftXiY0f5x1hzdGX8Ydeo5+t9p/YDhmx3
-         JBJl8mCZ8+1JWQfHVHNN75IIEt4jT0jwhkymKwxyGKtZKVBRDuHrBI+RuIVPPbDk8r
-         HyiYRQuy1BBGZSJfNFDEpz7IU+IPOP6hCczxh1wvGe9hNqDNhHFWKwMzJ+JG4WcLRg
-         dC3jOKKxGQEzdhiP/e0PCS9JESowb/eYiqiNv1Pgv4OzBHIOGj8FEnDYxT1HAwpux9
-         KECGIYPuccFVjKY5TN367n78kg49ExbTSJbVsQr++FHA1HMZVbsE6i/3RnS95ojadu
-         VepW6NSKlefXA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8bd52f5eab274431925b82ee9c5f13c5@HQMAIL105.nvidia.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Jul 27, 2020 at 02:47:09PM +0000, Thierry Reding wrote:
+> On Mon, 27 Jul 2020 16:02:55 +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.7.11 release.
+> > There are 179 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed, 29 Jul 2020 13:48:51 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.7.11-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.7.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.7:
+>     11 builds:	11 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     56 tests:	56 pass, 0 fail
+> 
+> Linux version:	5.7.11-rc1-g5e6331d4c49c
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
 
-On 7/28/20 8:59 AM, Sowjanya Komatineni wrote:
->
-> On 7/28/20 3:30 AM, Dmitry Osipenko wrote:
->> 27.07.2020 23:57, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> +=C2=A0=C2=A0=C2=A0 /*
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 * TRM has incorrectly documented to wait for =
-done status from
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 * calibration logic after CSI interface power=
- on.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 * As per the design, calibration results are =
-latched and applied
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 * to the pads only when the link is in LP11 s=
-tate which will=20
->>> happen
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 * during the sensor stream-on.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 * CSI subdev stream-on triggers start of MIPI=
- pads calibration.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 * Wait for calibration to finish here after s=
-ensor subdev=20
->>> stream-on
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 * and in case of sensor stream-on failure, ca=
-ncel the=20
->>> calibration.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 subdev =3D on ? src_subdev : csi_subdev;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D v4l2_subdev_call(subdev, video, =
-s_stream, on);
->>> -=C2=A0=C2=A0=C2=A0 if (ret < 0 && ret !=3D -ENOIOCTLCMD)
->>> +=C2=A0=C2=A0=C2=A0 if (ret < 0 && ret !=3D -ENOIOCTLCMD) {
->> I assume -ENOIOCTLCMD means that camera wasn't turned ON, so why
->> -ENOIOCTLCMD is special?
-> No -ENOIOCTLCMD mean subdev don't have s_stream ops
->>
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (on && csi_chan->mipi)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 teg=
-ra_mipi_cancel_calibration(csi_chan->mipi);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->>> +=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0 if (on && csi_chan->mipi) {
->> Does finish_calibration() really need to be called for ret=3D-ENOIOCTLCM=
-D?
->>
->> Shouldn't it be cancel_calibration( for the -ENOIOCTLCMD?
->
-> start calibration happens during csi sensor streaming which happens=20
-> prior to this point.
->
-> In case if sensor subdev does not have s_stream ops, then either=20
-> finish/cancel calibration should happen to disable the clock.
+Thanks for testing all of these and letting me know.
 
-For -ENOIOCTLCMD, calling finish calibration as some sensors might keep=20
-pads in LP-11 on power up and for such sensors calibration logic will=20
-apply results to pads and done bit will be set.
-
-Also avoiding additional check to specifically call cancel calibration=20
-on ENOIOCTLCMD and making it fall into finish calibration as both does=20
-disable clock except finish will wait for done bit to be set.
-
-Also, most sensor subdev have s_stream ops implemented.
-
->
->>
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D tegra_mipi_finish_c=
-alibration(csi_chan->mipi);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret < 0)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
-_err(csi_chan->csi->dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 "MIPI calibration failed: %d\n", ret);
->> Doesn't v4l2_subdev_call(OFF) need to be invoked here on error?
->
-> Not required as on error streaming fails and runtime PM will turn off=20
-> power anyway.
->
-> Also we only did csi subdev s_stream on and during sensor subdev=20
-> s_stream on fail, actual stream dont happen and on tegra side frame=20
-> capture by HW happens only when kthreads run.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->>> +=C2=A0=C2=A0=C2=A0 }
->>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>> =C2=A0 }
+greg k-h
