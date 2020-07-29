@@ -2,108 +2,115 @@ Return-Path: <SRS0=/NnN=BI=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E11C433E4
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 17:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D6EC433DF
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 23:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE6F2075F
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 17:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58BDC2074B
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Jul 2020 23:26:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="J0L2YvLf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLw9Yjpk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbgG2RsP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jul 2020 13:48:15 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:13637 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726449AbgG2RsN (ORCPT
+        id S1727087AbgG2XZ7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Jul 2020 19:25:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57866 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726718AbgG2XZ7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jul 2020 13:48:13 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f21b6300000>; Wed, 29 Jul 2020 10:47:28 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 29 Jul 2020 10:48:13 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 29 Jul 2020 10:48:13 -0700
-Received: from [10.2.160.194] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 Jul
- 2020 17:48:12 +0000
-Subject: Re: [RFC PATCH v5 12/14] gpu: host1x: mipi: Keep MIPI clock enabled
- till calibration is done
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
-        <helen.koike@collabora.com>
-CC:     <sboyd@kernel.org>, <gregkh@linuxfoundation.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>
+        Wed, 29 Jul 2020 19:25:59 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C200CC061794;
+        Wed, 29 Jul 2020 16:25:58 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id k13so13986610lfo.0;
+        Wed, 29 Jul 2020 16:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NCa+6+FpulnqctzU8RoW4eAJcOOgsGCS7xmaanI8k+U=;
+        b=MLw9Yjpk5gOX5QxhRfNeA+9SDbpCJxENmouOcbiiLJv79EO4oLesW9CKC1+FBZhR0v
+         FP0ljRnhKGVDXozyGFn8FdFxNU42wfoRzgxkoUHQisdctU5hMeQZsnE6A+oYQHQT5aqz
+         lkW4Hym5BtxdmeaxrN/zjiLZYTCDGdeKGTfQxueE2jYnBOsVqQpmVVNoJ5llubnL88y+
+         cvXeVtmGLFU2zPOw04EwUSiRdwIiFWjwmFTRSmJHTC4UJ4PNgORnGPBLD+6JA7mbl16l
+         lGgK/rqwkz/8YDH7fkm4TP9HBmlRilyTQzQs6rIcYfEBV1uc0Kw9bQax8ls6btFFP7cq
+         WCOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NCa+6+FpulnqctzU8RoW4eAJcOOgsGCS7xmaanI8k+U=;
+        b=GJTTEDGL76LC+X0mn/oYiW7JzH5HFyxw9lBAsAvkEEziXEiVgWen8jmup8hESoi6QU
+         oTHKSdON8zJ+Lwgi+8T+dJR2X8DfsGIrgPx1bDu+y7tn32xi8yOAC/0mVgl6NTxgRDYj
+         elkUMmy1a2TgIsTaj6jEXVtbUN/HhB5piIpoRUxoLxj+Cz2136JY6xOf/tVuqWCQvhKt
+         lkfZGNZGkmYdw4ok4whgDf2rRN+b0tWfBrWQNL0ZSL0PPUrEGy+/0tkPcQtmC2oRhr0i
+         vdwEYtDizSe9bxOTCqlNrfdeiAETNBbz7qAAD6Qj9RGcmY9l9SJ0UQOSd/0LbnUVG+iP
+         9z5A==
+X-Gm-Message-State: AOAM530xr8OsjMSq8UFoaTapaBd+V4AZ+Hx+i9IYCLvAwNZqhzGjyWLW
+        z8uUBxoKc86W2datiVUhd/TYzlI6
+X-Google-Smtp-Source: ABdhPJziJ+s1t3LvOqj08h4deyFSCu7mAhp88bfPJj5sw3l6yR7zwiq83ewDPJZHfQ5/eocS9hQmdg==
+X-Received: by 2002:a19:830a:: with SMTP id f10mr165618lfd.28.1596065157014;
+        Wed, 29 Jul 2020 16:25:57 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-76-12-16.pppoe.mtu-net.ru. [91.76.12.16])
+        by smtp.googlemail.com with ESMTPSA id v23sm768693lfa.5.2020.07.29.16.25.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jul 2020 16:25:56 -0700 (PDT)
+Subject: Re: [RFC PATCH v5 13/14] media: tegra-video: Add CSI MIPI pads
+ calibration
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        helen.koike@collabora.com
+Cc:     sboyd@kernel.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
 References: <1595883452-17343-1-git-send-email-skomatineni@nvidia.com>
- <1595883452-17343-13-git-send-email-skomatineni@nvidia.com>
- <b21e3227-d0d8-5b4a-ae69-aa29551a22c3@gmail.com>
- <69903c67-8e5f-11c2-45ec-c76b97634aba@nvidia.com>
- <d291d306-55d4-2264-dc05-0e47f0dfef20@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <b5fcc292-8ce3-2833-491f-5aefbe0196eb@nvidia.com>
-Date:   Wed, 29 Jul 2020 10:55:16 -0700
+ <1595883452-17343-14-git-send-email-skomatineni@nvidia.com>
+ <c3d40261-9d77-3634-3e04-f20efad9d3d8@gmail.com>
+ <01ee0805-3d57-d857-48e3-5c2245cd4500@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2ec535c9-55e8-8834-6002-36c75aeb097c@gmail.com>
+Date:   Thu, 30 Jul 2020 02:25:55 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <d291d306-55d4-2264-dc05-0e47f0dfef20@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <01ee0805-3d57-d857-48e3-5c2245cd4500@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596044848; bh=WlqRhgzgQcue/GR0Zrfuhfw08PXoX9nLL9Uz68gPB6A=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=J0L2YvLfggXNKWADlDM+eCasPdwHDhj8F+Z6cwBwODvdJFoV2n8lYuQcuHfyfzvUI
-         vnkhEBtuw+vWMyAF5+squmzJmLFqetZTUqbj9XcubCnkZGgRAI22Cpshh0PgJr1il5
-         BS8yGVHJM2i7Ibvw+OwrI+UyEQsHCcLl+sbtVzD9yBzXx2YxMKm3tJ6jn5V97/7SAQ
-         vZNkq66AKKSMpA5j83S0TAxvj/jHoMnTo8YyqI32pJieVruFYA5jQMR/f2To1qqrW3
-         26SAa+IKuSI3+ub8djJ3wryyw44LszGsqF9ZKOyZqfOgNPGE/gMI60Lorswa7s2Ohl
-         s+EUOh1AfxNOQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+28.07.2020 18:59, Sowjanya Komatineni пишет:
+...
+>>> +        ret = tegra_mipi_finish_calibration(csi_chan->mipi);
+>>> +        if (ret < 0)
+>>> +            dev_err(csi_chan->csi->dev,
+>>> +                "MIPI calibration failed: %d\n", ret);
+>> Doesn't v4l2_subdev_call(OFF) need to be invoked here on error?
+> 
+> Not required as on error streaming fails and runtime PM will turn off
+> power anyway.
 
-On 7/29/20 10:08 AM, Dmitry Osipenko wrote:
-> 28.07.2020 19:04, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
->>>> +void tegra_mipi_cancel_calibration(struct tegra_mipi_device *device)
->>>> +{
->>> Doesn't MIPI_CAL need to be reset here?
->> No need to reset MIPI CAL
-> Could you please explain why. There is a calibration state-machine that
-> apparently needs to be returned into initial state, does it return by
-> itself?
->
-> TRM says that MIPI block needs to be reset before of starting
-> calibration process. The reset is completely missing in the driver, I
-> assume it needs to be corrected with another patch.
+I see that camera drivers bump theirs RPM on s_stream=1, and thus,
+s_stream=0 should be invoked in order to balance the RPM. What am I missing?
 
-TRM documented incorrectly. There is no need to reset MIPI_CAL.
+https://elixir.bootlin.com/linux/v5.8-rc4/source/drivers/media/i2c/ov2740.c#L634
 
-MIPI CAL is FSM and it does not hang and done bit is to indicate if=20
-results are applied to pads or not.
+> Also we only did csi subdev s_stream on and during sensor subdev
+> s_stream on fail, actual stream dont happen and on tegra side frame
+> capture by HW happens only when kthreads run.
+Secondly, perhaps a failed calibration isn't a very critical error?
+Hence just printing a warning message should be enough.
 
-If we don't see done bit set meaning, MIPI CAL did not see LP-11 and=20
-results are not applied to pads.
-
-Also while multiple streams can happen in parallel and we can't reset=20
-MIPI CAL as other CSI channel streams (using other pads) may also be=20
-going thru calibration process in parallel depending and also DSI pads=20
-also are calibrated thru same MIPI CAL controller.
-
-
+Could you please make a patch that factors all ON/OFF code paths into a
+separate functions? It's a bit difficult to follow the combined code,
+especially partial changes in the patches. Thanks in advance!
