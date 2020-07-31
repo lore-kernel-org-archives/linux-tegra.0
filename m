@@ -2,95 +2,165 @@ Return-Path: <SRS0=jljd=BK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DBDC433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 13:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C597C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 15:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9914921744
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 13:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596202851;
-	bh=riof81UgLdZ5axTp6J4xR8oi2LabGN/mqTM5OX3Fh/M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bNv9wEKTdTi0NF7cd0w0FRYz8Yi/Vw07YHS0Z8I2Grxq1YFHTGSaKd1hnxib7l59E
-	 oi9ftEmaPsvELtf3KybRgNbc2E4aEkHcqiGag5A+3FZ5Y22c0h0p4IR2MY55C1fNdT
-	 HLmQzXDE5lEbtqf5DgDPf4/d/SwsCr1YssTNrsSo=
+	by mail.kernel.org (Postfix) with ESMTP id 161E82083B
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 15:46:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lFNkPzZP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbgGaNkv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 31 Jul 2020 09:40:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42690 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727851AbgGaNkv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 31 Jul 2020 09:40:51 -0400
-Received: from localhost (router.4pisysteme.de [80.79.225.122])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06C37208E4;
-        Fri, 31 Jul 2020 13:40:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596202850;
-        bh=riof81UgLdZ5axTp6J4xR8oi2LabGN/mqTM5OX3Fh/M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g8ysFyQqaVcSpSIdvRUMr5R3BABkOWypD4M46SccCky92oCrgUL0d8ko3C7hJ3suQ
-         jQg+Si2gK2vktoLknjAhepLhg/bCwOmE/GaVetbU6fUJXMtwh9S/lsr3PtHTX596AE
-         uH4Cf7z+G9TI3XrCziJuOC1ryxB1Pz/IlourZU20=
-Date:   Fri, 31 Jul 2020 15:40:45 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org,
-        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [RFC PATCH v6 00/10] Support for Tegra video capture from
- external sensor
-Message-ID: <20200731134045.GA1679@kunai>
+        id S1728693AbgGaPqi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 31 Jul 2020 11:46:38 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17452 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727933AbgGaPqi (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 31 Jul 2020 11:46:38 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f243cd00000>; Fri, 31 Jul 2020 08:46:25 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 31 Jul 2020 08:46:38 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 31 Jul 2020 08:46:38 -0700
+Received: from [10.2.167.221] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jul
+ 2020 15:46:37 +0000
+Subject: Re: [RFC PATCH v6 09/10] media: tegra-video: Add CSI MIPI pads
+ calibration
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
+        <helen.koike@collabora.com>
+CC:     <sboyd@kernel.org>, <gregkh@linuxfoundation.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>
 References: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
+ <1596186169-18729-10-git-send-email-skomatineni@nvidia.com>
+ <3ac158c4-7df7-e3c1-f0e1-33e7ef017762@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <f483329d-b5fe-fda5-e235-b8edb5fce440@nvidia.com>
+Date:   Fri, 31 Jul 2020 08:46:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
-Content-Disposition: inline
-In-Reply-To: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <3ac158c4-7df7-e3c1-f0e1-33e7ef017762@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1596210385; bh=LT7Rum+TVQ8i+yg00HUXL4JpRxYnF2QyXbgXIWuPmeU=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=lFNkPzZP4nsuT2DXNN2EEOT0x95rCZEZVWQhkkOPFwtAjVPdHvlgRLpjZkE6WQ2bm
+         2008IJ0xIH2P1z1nNG/29TvpGL5sAhfjtMcaeE3QP+NlNHhF6Bwy7Xay7VbiyRSuMb
+         unl5Wlgq6K7JaLQJGIj0hyL6Yin09OycAu/1Bxw5j6G8RbL9nyqQ5TYyjP6TGQiOX9
+         Qs+wtOhLYsATerUT9trZ76xuTL+DweM+PsDpdHdbM5h4ksTQ2HrtOE1yr61fm+HOXU
+         IKQN0jjnGNDOSEreOeoo93WFnk7EWwj7Z0eKLg4P3EZGcBajuDTDZC61MMbvWgFGx1
+         aTt+jHx0VNctg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---17pEHd4RhPHOinZp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 7/31/20 4:39 AM, Dmitry Osipenko wrote:
+> 31.07.2020 12:02, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+>> @@ -249,13 +249,47 @@ static int tegra_csi_enable_stream(struct v4l2_sub=
+dev *subdev)
+>>   		return ret;
+>>   	}
+>>  =20
+>> +	if (csi_chan->mipi) {
+>> +		ret =3D tegra_mipi_enable(csi_chan->mipi);
+>> +		if (ret < 0) {
+>> +			dev_err(csi->dev,
+>> +				"failed to enable MIPI pads: %d\n", ret);
+>> +			goto rpm_put;
+>> +		}
+>> +
+>> +		/*
+>> +		 * CSI MIPI pads PULLUP, PULLDN and TERM impedances need to
+>> +		 * be calibrated after power on.
+>> +		 * So, trigger the calibration start here and results will
+>> +		 * be latched and applied to the pads when link is in LP11
+>> +		 * state during start of sensor streaming.
+>> +		 */
+>> +		ret =3D tegra_mipi_start_calibration(csi_chan->mipi);
+>> +		if (ret < 0) {
+>> +			dev_err(csi->dev,
+>> +				"failed to start MIPI calibration: %d\n", ret);
+>> +			goto disable_mipi;
+>> +		}
+> What would happen if CSI stream is enabled and then immediately disabled
+> without enabling camera sensor?
 
-On Fri, Jul 31, 2020 at 02:02:39AM -0700, Sowjanya Komatineni wrote:
-> This series adds support for video capture from external camera sensor to
-> Tegra video driver.
+Nothing will happen as during stream enable csi receiver is kept ready.
 
-No need anymore to CC me or the i2c-list, I think? Also, is this series
-really still RFC?
+But actual capture will not happen during that point.
 
+>
+>> +	}
+>> +
+> ...
+>>   static int tegra_channel_enable_stream(struct tegra_vi_channel *chan)
+>>   {
+>>   	struct v4l2_subdev *csi_subdev, *src_subdev;
+>> +	struct tegra_csi_channel *csi_chan;
+>>   	int ret;
+>>  =20
+>>   	/*
+>> @@ -206,13 +207,30 @@ static int tegra_channel_enable_stream(struct tegr=
+a_vi_channel *chan)
+>>   	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>>   		return 0;
+>>  =20
+>> +	csi_chan =3D v4l2_get_subdevdata(csi_subdev);
+>> +	/*
+>> +	 * TRM has incorrectly documented to wait for done status from
+>> +	 * calibration logic after CSI interface power on.
+>> +	 * As per the design, calibration results are latched and applied
+>> +	 * to the pads only when the link is in LP11 state which will happen
+>> +	 * during the sensor stream-on.
+>> +	 * CSI subdev stream-on triggers start of MIPI pads calibration.
+>> +	 * Wait for calibration to finish here after sensor subdev stream-on
+>> +	 * and in case of sensor stream-on failure, cancel the calibration.
+>> +	 */
+>>   	src_subdev =3D tegra_channel_get_remote_source_subdev(chan);
+> Is it possible to move the start_calibration() here?
 
---17pEHd4RhPHOinZp
-Content-Type: application/pgp-signature; name="signature.asc"
+I think we can do start here as well I guess but currently I am=20
+following steps order as per design document.
 
------BEGIN PGP SIGNATURE-----
+This is the reason I have updated in above comment as well.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl8kH1kACgkQFA3kzBSg
-Kbb2/A/9FLStog9+LDCFSypkjVVSofsann8AzQpWSWrl/rE78UpM4cNWs1erhcYM
-1UicYFZvmc6AGZHH6hFWx5prq+gyZzAhu26zNbRzscwtiOraCYE/6PvIvMKoqGVE
-HVwqQEQ6692jRLl8xvGqUfYmk7LfW7hpyAjK7CzHcrm3OIat6VBKmpoKX+K9J/ZV
-n9OH/eQW73rguUmq7R4NppeZzPXiDET8J22gqI9i3Pd0JEzFZs/5H7D/+B1UwaSU
-Nbb+BPGd0sXcp1Zhk93lNfFAPrkEv+GbMGtKgucqNoD5qYe7A7IvYxkM9e2+Zv61
-L+eM0pP/LM9esWIRxiFYVEQKw70X0ADQYICFgbgttn8gWnNoD6E74ZxhCopO1xM+
-LFHacxKl6kqy1pgQqRwh7Q8w9PbsdIQJf8gD2g8GvQpSjtKKa/yj+p26waMZSjQy
-513ETISiNAOh1Cz0fRgKr9NpmU/PuF1U7JH8tsqdjHl17A/v/q7+aElf5f55Me67
-wzwG/wXdTJXBycxXlrXxzP++NcFMKkhZ1tdFYuwxk4gdSLM+OSu9cIqsc6zXfNx6
-ZurpLW9TwAi8HoYu7A3k9ECcj2k5Xt/V4PrsCfnkFRxxr78dv70HYUclowzrOuPM
-k2q1a4dISCqVsHPATs6hdmiDGnvJVFWxKxD8jnVVhlIOgfdt+X0=
-=y7Wv
------END PGP SIGNATURE-----
-
---17pEHd4RhPHOinZp--
+>
+>>   	ret =3D v4l2_subdev_call(src_subdev, video, s_stream, true);
+>>   	if (ret < 0 && ret !=3D -ENOIOCTLCMD) {
+>> +		tegra_mipi_cancel_calibration(csi_chan->mipi);
+>>   		v4l2_subdev_call(csi_subdev, video, s_stream, false);
+>>   		return ret;
+>>   	}
+>>  =20
+>> +	ret =3D tegra_mipi_finish_calibration(csi_chan->mipi);
+>> +	if (ret < 0)
+>> +		dev_warn(csi_chan->csi->dev,
+>> +			 "MIPI calibration failed: %d\n", ret);
+>> +
+>>   	return 0;
+>>   }
+>>  =20
+>>
