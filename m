@@ -2,41 +2,41 @@ Return-Path: <SRS0=jljd=BK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCF1C433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 09:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E20C433E3
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 09:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9600C20829
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 09:02:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9251F20829
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 09:03:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="McGbKryJ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="TD346GvK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731966AbgGaJCz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 31 Jul 2020 05:02:55 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16304 "EHLO
+        id S1731442AbgGaJDA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 31 Jul 2020 05:03:00 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16331 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731442AbgGaJCy (ORCPT
+        with ESMTP id S1732064AbgGaJC7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 31 Jul 2020 05:02:54 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f23de310000>; Fri, 31 Jul 2020 02:02:41 -0700
+        Fri, 31 Jul 2020 05:02:59 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f23de350000>; Fri, 31 Jul 2020 02:02:45 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 31 Jul 2020 02:02:54 -0700
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 31 Jul 2020 02:02:59 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 31 Jul 2020 02:02:54 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jul
- 2020 09:02:54 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 31 Jul 2020 09:02:54 +0000
+        by hqpgpgate101.nvidia.com on Fri, 31 Jul 2020 02:02:59 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jul
+ 2020 09:02:58 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 31 Jul 2020 09:02:58 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.221]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f23de3d0001>; Fri, 31 Jul 2020 02:02:54 -0700
+        id <B5f23de420000>; Fri, 31 Jul 2020 02:02:58 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -46,137 +46,185 @@ CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
         <gregkh@linuxfoundation.org>, <linux-media@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
-Subject: [RFC PATCH v6 00/10] Support for Tegra video capture from external sensor
-Date:   Fri, 31 Jul 2020 02:02:39 -0700
-Message-ID: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
+Subject: [RFC PATCH v6 07/10] media: tegra-video: Add support for selection ioctl ops
+Date:   Fri, 31 Jul 2020 02:02:46 -0700
+Message-ID: <1596186169-18729-8-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
+References: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596186161; bh=ODEbrQxWU99pgy2R0nVoleMIPeQ0jojZYwaChWYECB0=;
+        t=1596186165; bh=qHGRfnG9yJWVnaGVmj2LoFkzN3M1dM4/FLq29ezkPP8=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=McGbKryJc9iZuCIZSnWay2yGJJhO3meeRhXav3g1fKqW6KWL6oH2flf3zUwCOuILZ
-         mlVtaXjrVJX1Eba8FImEzbjdxOjp4a25WXWTy8ssmW0geLfYBSpg+h27mLJh3yyXod
-         fX8JIWG81R8Hcn/r7GYSb/n4oH/qrti+3b4Dbf3qdwlr6WTeSNwqjd3Chcia0dCE6c
-         xnNTWrJYILHvBEuZ1DDdqVjFHkFuRIP5sndH6E0kCiGENxi6FJtqiEGKOdDA4OmuOn
-         3pABxfyaMdzORz55tFp/FBHtKZOD4qYn6ar0x3NssAYIw7i21yBqz7t/5qDeRBU0+Q
-         3ui5+iKgvrpvQ==
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=TD346GvKb9JNjZjh8iF6Sx+qmtNcaC1nRWxh1Tn1t3Xldv+7IhQOx67d0uof7XKZ1
+         I9gZqTmdM78gUsXypJK0EjSmc5GC9Fpk3DwO8goQc49rATehKugGkt546M1ceFoP/B
+         JRE8J/wWpWaM9ShjJMb+cKml/PTQ7m4XpApsIqC8Oejz44N5FbX2YvM/CSRPaGgi4R
+         08HQjj5p2JqR6R3qls3zDeS9uQxmX/DwE4qa8sPJ02CCVSxLpRn1s6mM7tevWKfRq6
+         8Gc2lBE3K6jPAvF1g0GqmNt1hnLjnlIFcVypTLJBE943jmT7ryo/o6OTVP0gEYD7Xn
+         otkG7j2NGATlA==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This series adds support for video capture from external camera sensor to
-Tegra video driver.
+This patch adds selection v4l2 ioctl operations to allow configuring
+a selection rectangle in the sensor through the Tegra video device
+node.
 
-Jetson TX1 has camera expansion connector and supports custom camera module
-designed as per TX1 design specification.
+Some sensor drivers supporting crop uses try_crop rectangle from
+v4l2_subdev_pad_config during try format for computing binning.
 
-This series also enables camera capture support for Jetson Nano which has
-Raspberry PI camera header.
+So with selection ops support, this patch also updates try format
+to use try crop rectangle either from subdev frame size enumeration
+or from subdev crop boundary.
 
-This series is tested with IMX274 and IMX219 camera sensors.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/staging/media/tegra-video/vi.c | 106 +++++++++++++++++++++++++++++++++
+ 1 file changed, 106 insertions(+)
 
-This series include,
-
-Tegra video driver updates
-- TPG Vs Non-TPG based on Kconfig
-- Support for external sensor video capture based on device graph from DT
-- Support for selection ioctl operations
-- Tegra MIPI CSI pads calibration
-- CSI T-CLK and T-HS settle time computation based on clock rates
-- dt-binding doc update
-
-Host1x driver updates
-- Keep MIPI clock enabled till calibration is done
-
-Delta between patch versions:
-[v6]:	Includes below changes based on v5 feedback
-	- Patches are based on latest linux-next.
-	- separated stream enable and disable implementations into
-	  separate functions for tegra_channel_set_stream() and
-	  tegra_csi_s_stream().
-	- changed dev_err to dev_warn on MIPI calibration failure after
-	  sensor streaming as its not critical error.
-
-	Note:
-	Patch-0006 has compilation dependency on
-	https://patchwork.kernel.org/patch/11659521/
-
-[v5]:	Includes below minor change based on v4 feedback
-	Patch-0012: renames APIs to use calibration instead of calibrate.
-
-	Note:
-	Patch-0010 has compilation dependency on
-	https://patchwork.kernel.org/patch/11659521/
-
-[v4]:	Includes below fix based on v3 feedback
-	- Patches are based on latest linux-next.
-	- With split of tegra_mipi_calibrate() and tegra_mipi_wait(), mipi
-	  clock is not left enabled till calibration done. This series adds
-	  a patch to fix this by keeping clock enabled till calibration is
-	  done.
-
-	Note:
-	Patch-0010 has compilation dependency on
-	https://patchwork.kernel.org/patch/11659521/
-
-[v3]:	Includes v2 feedback
-	- Uses separate helper function for retrieving remote csi subdevice
-	  and source subdevice.
-	- Added check for presence of subdevice ops set/get_selection
-	- dropped vb2_queue_release from driver and using
-	  vb2_video_unregister_device instead of video_unregister_device.
-	- video device register should happen in the last after all video
-	  device related setup is done in the driver. This is being addressed
-	  in below RFC patch. Once proper implementation of this is available
-	  will update Tegra video driver to use split APIs and do all setup
-	  prior to device register. Added this as TODO in the driver.
-	  https://www.spinics.net/lists/linux-media/msg172761.html
-
-	Note:
-	Patch-0012 has compilation dependency on
-	https://patchwork.kernel.org/patch/11659521/
-
-
-[v2]:	Includes below changes based on v1 feedback
-	- dt-binding document and the driver update for device graph to use
-	  separate ports for sink endpoint and source endpoint for csi.
-	- Use data-lanes endpoint property for csi.
-	- Update tegra_mipi_request() to take device node pointer argument
-	  rather than adding extra API.
-	- Remove checking for clk pointer before clk_disable.
-
-
-Sowjanya Komatineni (10):
-  media: tegra-video: Fix channel format alignment
-  media: tegra-video: Enable TPG based on kernel config
-  media: tegra-video: Update format lookup to offset based
-  dt-bindings: tegra: Update VI and CSI bindings with port info
-  media: tegra-video: Separate CSI stream enable and disable
-    implementations
-  media: tegra-video: Add support for external sensor capture
-  media: tegra-video: Add support for selection ioctl ops
-  gpu: host1x: mipi: Keep MIPI clock enabled till calibration is done
-  media: tegra-video: Add CSI MIPI pads calibration
-  media: tegra-video: Compute settle times based on the clock rate
-
- .../display/tegra/nvidia,tegra20-host1x.txt        |  92 ++-
- drivers/gpu/drm/tegra/dsi.c                        |   4 +-
- drivers/gpu/host1x/mipi.c                          |  19 +-
- drivers/staging/media/tegra-video/Kconfig          |   7 +
- drivers/staging/media/tegra-video/TODO             |   6 -
- drivers/staging/media/tegra-video/csi.c            | 305 +++++++-
- drivers/staging/media/tegra-video/csi.h            |   8 +
- drivers/staging/media/tegra-video/tegra210.c       |  25 +-
- drivers/staging/media/tegra-video/vi.c             | 834 +++++++++++++++++++--
- drivers/staging/media/tegra-video/vi.h             |  25 +-
- drivers/staging/media/tegra-video/video.c          |  23 +-
- include/linux/host1x.h                             |   5 +-
- 12 files changed, 1237 insertions(+), 116 deletions(-)
-
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 20abf01..6d0aed0 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -474,6 +474,13 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
+ 	struct v4l2_subdev *subdev;
+ 	struct v4l2_subdev_format fmt;
+ 	struct v4l2_subdev_pad_config *pad_cfg;
++	struct v4l2_subdev_frame_size_enum fse = {
++		.which = V4L2_SUBDEV_FORMAT_TRY,
++	};
++	struct v4l2_subdev_selection sdsel = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++		.target = V4L2_SEL_TGT_CROP_BOUNDS,
++	};
+ 	int ret;
+ 
+ 	subdev = tegra_channel_get_remote_source_subdev(chan);
+@@ -499,6 +506,24 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
+ 	fmt.which = V4L2_SUBDEV_FORMAT_TRY;
+ 	fmt.pad = 0;
+ 	v4l2_fill_mbus_format(&fmt.format, pix, fmtinfo->code);
++
++	/*
++	 * Attempt to obtain the format size from subdev.
++	 * If not available, try to get crop boundary from subdev.
++	 */
++	fse.code = fmtinfo->code;
++	ret = v4l2_subdev_call(subdev, pad, enum_frame_size, pad_cfg, &fse);
++	if (ret) {
++		ret = v4l2_subdev_call(subdev, pad, get_selection, NULL, &sdsel);
++		if (ret)
++			return -EINVAL;
++		pad_cfg->try_crop.width = sdsel.r.width;
++		pad_cfg->try_crop.height = sdsel.r.height;
++	} else {
++		pad_cfg->try_crop.width = fse.max_width;
++		pad_cfg->try_crop.height = fse.max_height;
++	}
++
+ 	ret = v4l2_subdev_call(subdev, pad, set_fmt, pad_cfg, &fmt);
+ 	if (ret < 0)
+ 		return ret;
+@@ -588,6 +613,85 @@ static int tegra_channel_set_subdev_active_fmt(struct tegra_vi_channel *chan)
+ 	return 0;
+ }
+ 
++static int tegra_channel_g_selection(struct file *file, void *priv,
++				     struct v4l2_selection *sel)
++{
++	struct tegra_vi_channel *chan = video_drvdata(file);
++	struct v4l2_subdev *subdev;
++	struct v4l2_subdev_format fmt = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
++	struct v4l2_subdev_selection sdsel = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++		.target = sel->target,
++	};
++	int ret;
++
++	subdev = tegra_channel_get_remote_source_subdev(chan);
++	if (!v4l2_subdev_has_op(subdev, pad, get_selection))
++		return -ENOTTY;
++
++	if (sel->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
++		return -EINVAL;
++	/*
++	 * Try the get selection operation and fallback to get format if not
++	 * implemented.
++	 */
++	ret = v4l2_subdev_call(subdev, pad, get_selection, NULL, &sdsel);
++	if (!ret)
++		sel->r = sdsel.r;
++	if (ret != -ENOIOCTLCMD)
++		return ret;
++
++	ret = v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
++	if (ret < 0)
++		return ret;
++
++	sel->r.left = 0;
++	sel->r.top = 0;
++	sel->r.width = fmt.format.width;
++	sel->r.height = fmt.format.height;
++
++	return 0;
++}
++
++static int tegra_channel_s_selection(struct file *file, void *fh,
++				     struct v4l2_selection *sel)
++{
++	struct tegra_vi_channel *chan = video_drvdata(file);
++	struct v4l2_subdev *subdev;
++	int ret;
++	struct v4l2_subdev_selection sdsel = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++		.target = sel->target,
++		.flags = sel->flags,
++		.r = sel->r,
++	};
++
++	subdev = tegra_channel_get_remote_source_subdev(chan);
++	if (!v4l2_subdev_has_op(subdev, pad, set_selection))
++		return -ENOTTY;
++
++	if (sel->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
++		return -EINVAL;
++
++	if (vb2_is_busy(&chan->queue))
++		return -EBUSY;
++
++	ret = v4l2_subdev_call(subdev, pad, set_selection, NULL, &sdsel);
++	if (!ret) {
++		sel->r = sdsel.r;
++		/*
++		 * Subdev active format resolution may have changed during
++		 * set selection operation. So, update channel format to
++		 * the sub-device active format.
++		 */
++		return tegra_channel_set_subdev_active_fmt(chan);
++	}
++
++	return ret;
++}
++
+ static int tegra_channel_enum_input(struct file *file, void *fh,
+ 				    struct v4l2_input *inp)
+ {
+@@ -645,6 +749,8 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
+ 	.vidioc_streamoff		= vb2_ioctl_streamoff,
+ 	.vidioc_subscribe_event		= v4l2_ctrl_subscribe_event,
+ 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
++	.vidioc_g_selection		= tegra_channel_g_selection,
++	.vidioc_s_selection		= tegra_channel_s_selection,
+ };
+ 
+ /*
 -- 
 2.7.4
 
