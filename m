@@ -2,84 +2,181 @@ Return-Path: <SRS0=jljd=BK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA81C433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 03:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCF1C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 09:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31F47208E4
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 03:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9600C20829
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 09:02:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="YM3g9zUh"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="McGbKryJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731283AbgGaDjL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Jul 2020 23:39:11 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:20282 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731199AbgGaDjJ (ORCPT
+        id S1731966AbgGaJCz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 31 Jul 2020 05:02:55 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16304 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731442AbgGaJCy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Jul 2020 23:39:09 -0400
-X-UUID: 900d5a9cec694ea3b38005d46e34a007-20200731
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=1ERRm3aXwOnbFAuF3CGICnm9rLGKEtIUDiGMxxFg0OM=;
-        b=YM3g9zUhNE4RO4twTYyzLRvTU/yLXrKX82OY6uk5FyK3tNtzp0YKC5b9c4KEOEsTMQj6J2gsRsRjyf2ZWL0S1onBr08e1UN5VtOTBGn0aGpXvFhsD7iCFWsk/E58zse21Sssboaj2JHdLJdyJ8XuIB5WKn4TqRdkU6vWV2Fzlwk=;
-X-UUID: 900d5a9cec694ea3b38005d46e34a007-20200731
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <neal.liu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1071401226; Fri, 31 Jul 2020 11:39:06 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 31 Jul 2020 11:39:04 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 31 Jul 2020 11:39:06 +0800
-From:   Neal Liu <neal.liu@mediatek.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sami Tolvanen <samitolvanen@google.com>
-CC:     Neal Liu <neal.liu@mediatek.com>, <linux-acpi@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>
-Subject: [PATCH] acpi: fix 'return' with no value build warning
-Date:   Fri, 31 Jul 2020 11:39:04 +0800
-Message-ID: <1596166744-2954-2-git-send-email-neal.liu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1596166744-2954-1-git-send-email-neal.liu@mediatek.com>
-References: <1596166744-2954-1-git-send-email-neal.liu@mediatek.com>
+        Fri, 31 Jul 2020 05:02:54 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f23de310000>; Fri, 31 Jul 2020 02:02:41 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 31 Jul 2020 02:02:54 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 31 Jul 2020 02:02:54 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jul
+ 2020 09:02:54 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 31 Jul 2020 09:02:54 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.221]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f23de3d0001>; Fri, 31 Jul 2020 02:02:54 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
+        <helen.koike@collabora.com>
+CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
+        <gregkh@linuxfoundation.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
+Subject: [RFC PATCH v6 00/10] Support for Tegra video capture from external sensor
+Date:   Fri, 31 Jul 2020 02:02:39 -0700
+Message-ID: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1596186161; bh=ODEbrQxWU99pgy2R0nVoleMIPeQ0jojZYwaChWYECB0=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=McGbKryJc9iZuCIZSnWay2yGJJhO3meeRhXav3g1fKqW6KWL6oH2flf3zUwCOuILZ
+         mlVtaXjrVJX1Eba8FImEzbjdxOjp4a25WXWTy8ssmW0geLfYBSpg+h27mLJh3yyXod
+         fX8JIWG81R8Hcn/r7GYSb/n4oH/qrti+3b4Dbf3qdwlr6WTeSNwqjd3Chcia0dCE6c
+         xnNTWrJYILHvBEuZ1DDdqVjFHkFuRIP5sndH6E0kCiGENxi6FJtqiEGKOdDA4OmuOn
+         3pABxfyaMdzORz55tFp/FBHtKZOD4qYn6ar0x3NssAYIw7i21yBqz7t/5qDeRBU0+Q
+         3ui5+iKgvrpvQ==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Rml4aW5nIENGSSBpc3N1ZSB3aGljaCBpbnRyb2R1Y2VkIGJ5IGNvbW1pdCBlZmU5NzExMjE0ZTYg
-aXMNCmluY29tcGxldGUuDQpBZGQgcmV0dXJuIHZhbHVlIHRvIGZpeCByZXR1cm4tdHlwZSBidWls
-ZCB3YXJuaW5nLg0KDQpTaWduZWQtb2ZmLWJ5OiBOZWFsIExpdSA8bmVhbC5saXVAbWVkaWF0ZWsu
-Y29tPg0KLS0tDQogZHJpdmVycy9hY3BpL3Byb2Nlc3Nvcl9pZGxlLmMgfCAgICA0ICsrLS0NCiAx
-IGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9hY3BpL3Byb2Nlc3Nvcl9pZGxlLmMgYi9kcml2ZXJzL2FjcGkvcHJvY2Vz
-c29yX2lkbGUuYw0KaW5kZXggNmZmYjZjOS4uNjg3MDAyMCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
-YWNwaS9wcm9jZXNzb3JfaWRsZS5jDQorKysgYi9kcml2ZXJzL2FjcGkvcHJvY2Vzc29yX2lkbGUu
-Yw0KQEAgLTY2NCwxMSArNjY0LDExIEBAIHN0YXRpYyBpbnQgYWNwaV9pZGxlX2VudGVyX3MyaWRs
-ZShzdHJ1Y3QgY3B1aWRsZV9kZXZpY2UgKmRldiwNCiAJCXN0cnVjdCBhY3BpX3Byb2Nlc3NvciAq
-cHIgPSBfX3RoaXNfY3B1X3JlYWQocHJvY2Vzc29ycyk7DQogDQogCQlpZiAodW5saWtlbHkoIXBy
-KSkNCi0JCQlyZXR1cm47DQorCQkJcmV0dXJuIC1FRkFVTFQ7DQogDQogCQlpZiAocHItPmZsYWdz
-LmJtX2NoZWNrKSB7DQogCQkJYWNwaV9pZGxlX2VudGVyX2JtKHByLCBjeCwgZmFsc2UpOw0KLQkJ
-CXJldHVybjsNCisJCQlyZXR1cm4gMDsNCiAJCX0gZWxzZSB7DQogCQkJQUNQSV9GTFVTSF9DUFVf
-Q0FDSEUoKTsNCiAJCX0NCi0tIA0KMS43LjkuNQ0K
+This series adds support for video capture from external camera sensor to
+Tegra video driver.
+
+Jetson TX1 has camera expansion connector and supports custom camera module
+designed as per TX1 design specification.
+
+This series also enables camera capture support for Jetson Nano which has
+Raspberry PI camera header.
+
+This series is tested with IMX274 and IMX219 camera sensors.
+
+This series include,
+
+Tegra video driver updates
+- TPG Vs Non-TPG based on Kconfig
+- Support for external sensor video capture based on device graph from DT
+- Support for selection ioctl operations
+- Tegra MIPI CSI pads calibration
+- CSI T-CLK and T-HS settle time computation based on clock rates
+- dt-binding doc update
+
+Host1x driver updates
+- Keep MIPI clock enabled till calibration is done
+
+Delta between patch versions:
+[v6]:	Includes below changes based on v5 feedback
+	- Patches are based on latest linux-next.
+	- separated stream enable and disable implementations into
+	  separate functions for tegra_channel_set_stream() and
+	  tegra_csi_s_stream().
+	- changed dev_err to dev_warn on MIPI calibration failure after
+	  sensor streaming as its not critical error.
+
+	Note:
+	Patch-0006 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+[v5]:	Includes below minor change based on v4 feedback
+	Patch-0012: renames APIs to use calibration instead of calibrate.
+
+	Note:
+	Patch-0010 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+[v4]:	Includes below fix based on v3 feedback
+	- Patches are based on latest linux-next.
+	- With split of tegra_mipi_calibrate() and tegra_mipi_wait(), mipi
+	  clock is not left enabled till calibration done. This series adds
+	  a patch to fix this by keeping clock enabled till calibration is
+	  done.
+
+	Note:
+	Patch-0010 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+[v3]:	Includes v2 feedback
+	- Uses separate helper function for retrieving remote csi subdevice
+	  and source subdevice.
+	- Added check for presence of subdevice ops set/get_selection
+	- dropped vb2_queue_release from driver and using
+	  vb2_video_unregister_device instead of video_unregister_device.
+	- video device register should happen in the last after all video
+	  device related setup is done in the driver. This is being addressed
+	  in below RFC patch. Once proper implementation of this is available
+	  will update Tegra video driver to use split APIs and do all setup
+	  prior to device register. Added this as TODO in the driver.
+	  https://www.spinics.net/lists/linux-media/msg172761.html
+
+	Note:
+	Patch-0012 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+
+[v2]:	Includes below changes based on v1 feedback
+	- dt-binding document and the driver update for device graph to use
+	  separate ports for sink endpoint and source endpoint for csi.
+	- Use data-lanes endpoint property for csi.
+	- Update tegra_mipi_request() to take device node pointer argument
+	  rather than adding extra API.
+	- Remove checking for clk pointer before clk_disable.
+
+
+Sowjanya Komatineni (10):
+  media: tegra-video: Fix channel format alignment
+  media: tegra-video: Enable TPG based on kernel config
+  media: tegra-video: Update format lookup to offset based
+  dt-bindings: tegra: Update VI and CSI bindings with port info
+  media: tegra-video: Separate CSI stream enable and disable
+    implementations
+  media: tegra-video: Add support for external sensor capture
+  media: tegra-video: Add support for selection ioctl ops
+  gpu: host1x: mipi: Keep MIPI clock enabled till calibration is done
+  media: tegra-video: Add CSI MIPI pads calibration
+  media: tegra-video: Compute settle times based on the clock rate
+
+ .../display/tegra/nvidia,tegra20-host1x.txt        |  92 ++-
+ drivers/gpu/drm/tegra/dsi.c                        |   4 +-
+ drivers/gpu/host1x/mipi.c                          |  19 +-
+ drivers/staging/media/tegra-video/Kconfig          |   7 +
+ drivers/staging/media/tegra-video/TODO             |   6 -
+ drivers/staging/media/tegra-video/csi.c            | 305 +++++++-
+ drivers/staging/media/tegra-video/csi.h            |   8 +
+ drivers/staging/media/tegra-video/tegra210.c       |  25 +-
+ drivers/staging/media/tegra-video/vi.c             | 834 +++++++++++++++++++--
+ drivers/staging/media/tegra-video/vi.h             |  25 +-
+ drivers/staging/media/tegra-video/video.c          |  23 +-
+ include/linux/host1x.h                             |   5 +-
+ 12 files changed, 1237 insertions(+), 116 deletions(-)
+
+-- 
+2.7.4
 
