@@ -2,101 +2,95 @@ Return-Path: <SRS0=jljd=BK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28211C433DF
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 12:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DBDC433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 13:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F021C2087C
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 12:53:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bv6Hs8WT"
+	by mail.kernel.org (Postfix) with ESMTP id 9914921744
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 13:40:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596202851;
+	bh=riof81UgLdZ5axTp6J4xR8oi2LabGN/mqTM5OX3Fh/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bNv9wEKTdTi0NF7cd0w0FRYz8Yi/Vw07YHS0Z8I2Grxq1YFHTGSaKd1hnxib7l59E
+	 oi9ftEmaPsvELtf3KybRgNbc2E4aEkHcqiGag5A+3FZ5Y22c0h0p4IR2MY55C1fNdT
+	 HLmQzXDE5lEbtqf5DgDPf4/d/SwsCr1YssTNrsSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729896AbgGaMxZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 31 Jul 2020 08:53:25 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:2011 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbgGaMxZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 31 Jul 2020 08:53:25 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2414370000>; Fri, 31 Jul 2020 05:53:12 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 31 Jul 2020 05:53:25 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 31 Jul 2020 05:53:25 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jul
- 2020 12:53:24 +0000
-Received: from [127.0.1.1] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 31 Jul 2020 12:53:22 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.7 00/20] 5.7.12-rc1 review
-In-Reply-To: <20200730074420.533211699@linuxfoundation.org>
-References: <20200730074420.533211699@linuxfoundation.org>
-X-NVConfidentiality: public
+        id S1729729AbgGaNkv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 31 Jul 2020 09:40:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727851AbgGaNkv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 31 Jul 2020 09:40:51 -0400
+Received: from localhost (router.4pisysteme.de [80.79.225.122])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06C37208E4;
+        Fri, 31 Jul 2020 13:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596202850;
+        bh=riof81UgLdZ5axTp6J4xR8oi2LabGN/mqTM5OX3Fh/M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g8ysFyQqaVcSpSIdvRUMr5R3BABkOWypD4M46SccCky92oCrgUL0d8ko3C7hJ3suQ
+         jQg+Si2gK2vktoLknjAhepLhg/bCwOmE/GaVetbU6fUJXMtwh9S/lsr3PtHTX596AE
+         uH4Cf7z+G9TI3XrCziJuOC1ryxB1Pz/IlourZU20=
+Date:   Fri, 31 Jul 2020 15:40:45 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org,
+        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [RFC PATCH v6 00/10] Support for Tegra video capture from
+ external sensor
+Message-ID: <20200731134045.GA1679@kunai>
+References: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Message-ID: <f01a47b2f2cc422299a135420847c7a1@HQMAIL101.nvidia.com>
-Date:   Fri, 31 Jul 2020 12:53:22 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596199992; bh=F+o6ypxETvZa2eytqB20KCSmkTxOnsae0Xs5CpEmB+o=;
-        h=X-PGP-Universal:From:To:CC:Subject:In-Reply-To:References:
-         X-NVConfidentiality:MIME-Version:Message-ID:Date:Content-Type:
-         Content-Transfer-Encoding;
-        b=bv6Hs8WTY7Ske+Ultdoa8CUUoAw3WzfN5S+60clEX3BIE5a0aTsVLBDRox5a185OK
-         Pqth8KexNFCDyu9XwceoyZGtMBRCONW8eatqYBk5N65g0tyjFN0cC4Ah2swtZnLxrd
-         ZzfHkRDY6KRzaxA6TmFfr47SE5iDohvSbJn2hfiwhKxrQSW0if+2bv1v12tEb2DLTp
-         e0uvEPtSmgt/x79TUNbQ1YT1bsDrlFTglYu3dohyRxBL7H3zWUZlQ9kSKlLOn7bkSp
-         Df80IpXsMt1AMtQ1YoPlqGVNbcu8yDd/to4H7aHcc2YCGLfwClFYsf+CDFAClbkgCa
-         Omr+NL3cbhFIQ==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
+Content-Disposition: inline
+In-Reply-To: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 30 Jul 2020 10:03:50 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.7.12 release.
-> There are 20 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 01 Aug 2020 07:44:05 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.7.12-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.7.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+--17pEHd4RhPHOinZp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Test results for stable-v5.7:
-    11 builds:	11 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    56 tests:	56 pass, 0 fail
+On Fri, Jul 31, 2020 at 02:02:39AM -0700, Sowjanya Komatineni wrote:
+> This series adds support for video capture from external camera sensor to
+> Tegra video driver.
 
-Linux version:	5.7.12-rc1-g3d6db9c81440
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+No need anymore to CC me or the i2c-list, I think? Also, is this series
+really still RFC?
 
-Jon
+
+--17pEHd4RhPHOinZp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl8kH1kACgkQFA3kzBSg
+Kbb2/A/9FLStog9+LDCFSypkjVVSofsann8AzQpWSWrl/rE78UpM4cNWs1erhcYM
+1UicYFZvmc6AGZHH6hFWx5prq+gyZzAhu26zNbRzscwtiOraCYE/6PvIvMKoqGVE
+HVwqQEQ6692jRLl8xvGqUfYmk7LfW7hpyAjK7CzHcrm3OIat6VBKmpoKX+K9J/ZV
+n9OH/eQW73rguUmq7R4NppeZzPXiDET8J22gqI9i3Pd0JEzFZs/5H7D/+B1UwaSU
+Nbb+BPGd0sXcp1Zhk93lNfFAPrkEv+GbMGtKgucqNoD5qYe7A7IvYxkM9e2+Zv61
+L+eM0pP/LM9esWIRxiFYVEQKw70X0ADQYICFgbgttn8gWnNoD6E74ZxhCopO1xM+
+LFHacxKl6kqy1pgQqRwh7Q8w9PbsdIQJf8gD2g8GvQpSjtKKa/yj+p26waMZSjQy
+513ETISiNAOh1Cz0fRgKr9NpmU/PuF1U7JH8tsqdjHl17A/v/q7+aElf5f55Me67
+wzwG/wXdTJXBycxXlrXxzP++NcFMKkhZ1tdFYuwxk4gdSLM+OSu9cIqsc6zXfNx6
+ZurpLW9TwAi8HoYu7A3k9ECcj2k5Xt/V4PrsCfnkFRxxr78dv70HYUclowzrOuPM
+k2q1a4dISCqVsHPATs6hdmiDGnvJVFWxKxD8jnVVhlIOgfdt+X0=
+=y7Wv
+-----END PGP SIGNATURE-----
+
+--17pEHd4RhPHOinZp--
