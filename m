@@ -2,126 +2,113 @@ Return-Path: <SRS0=jljd=BK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A33C433E4
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 09:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB29C433DF
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 11:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A92F120838
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 09:03:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="HaVarrBS"
+	by mail.kernel.org (Postfix) with ESMTP id 090CE22B40
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 11:33:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596195222;
+	bh=nRMU61Aikd6d7OiSdk8nqrvF5kYZ8WTzMhfKjj86UAQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=SNQWTJM1x9XsVQCFNEbqterD2lBikGRxvVsZgGjtegvYbk8WeW4RggHG2kKTq7JRs
+	 lNP7dLqqg3eIx9oFr+rcmN9h1ya93hsZiEYbStaHzTSNgv3Xac0Q9tf4IxRh5Nqr/Q
+	 cQCIzidKRl2S3Y2KrrTTXN3XRIOEhoWjakRnYN2g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732107AbgGaJDn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 31 Jul 2020 05:03:43 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:19125 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732030AbgGaJC5 (ORCPT
+        id S1732512AbgGaLdi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 31 Jul 2020 07:33:38 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40075 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732104AbgGaLdi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 31 Jul 2020 05:02:57 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f23dde20008>; Fri, 31 Jul 2020 02:01:22 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 31 Jul 2020 02:02:56 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 31 Jul 2020 02:02:56 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jul
- 2020 09:02:56 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 31 Jul 2020 09:02:56 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.221]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f23de3f0003>; Fri, 31 Jul 2020 02:02:56 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
-        <helen.koike@collabora.com>
-CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
-        <gregkh@linuxfoundation.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
-Subject: [RFC PATCH v6 03/10] media: tegra-video: Update format lookup to offset based
-Date:   Fri, 31 Jul 2020 02:02:42 -0700
-Message-ID: <1596186169-18729-4-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
-References: <1596186169-18729-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Fri, 31 Jul 2020 07:33:38 -0400
+Received: by mail-oi1-f195.google.com with SMTP id u24so16553690oiv.7;
+        Fri, 31 Jul 2020 04:33:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mpZwL9ptFKxq7FoZCH1xjumTWQNcssejfeTwP6RoxpQ=;
+        b=diuHMLwFGE03iB6FycWL3gzVKV7vJzuDP40K9hGRPOQcLzQIi9LpAbE+bb+iu1Zva7
+         b7hj6RtcnDvzlg7h3eYbSZvJLmYlNeNiRCKL900jpKHwv5KXYbY7L3g/VaYc1GjEyoJz
+         EE8UibbNHAQ2xvP8l3MH4L5l0FT4XlCfQzCJza6pD2tBjS5oTSksRX8gkBKX5BTHbyAj
+         SNrwrRNcYA3QhnfE9ylEFohlC84WnJz2erwTT4CWf6vKCMDutiNwj6fk+z3+F0SBtbNO
+         EugJdjKvoeNHJYWBqakqrimVl0NheHFYPhWy6JR2X2uYm3YS8xkhOyZaGfRIrMZeD5Ah
+         eHbA==
+X-Gm-Message-State: AOAM530dUNDrNfQUhFqddHrZ4wxeJDT4smiaX9qYbSJjy0kPyRTht2Sh
+        oStEZMDE27hETN8WPbTTQSjTqHdUHemGtOqXmik=
+X-Google-Smtp-Source: ABdhPJwjnTZ4vCcK+PJMw9f0cgXjEhaXp88nRbYUPJxc2xho6yL2W9vIsfi0PJ+loYFbKG0KfjHoOo6H/h7XzI4Nqoc=
+X-Received: by 2002:aca:a88e:: with SMTP id r136mr2704600oie.110.1596195217368;
+ Fri, 31 Jul 2020 04:33:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596186082; bh=5U56MbpoGgbizDY87xBQZF5BWeIIcAyUuev+l62V8Co=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=HaVarrBScuUl2g24Cmi3KwvpBdXdSe+Ewvyl900IBeYqVh6okqW4CbJUtefW0+Z9m
-         SRMJIR0wvaczbOF61W5yv2Y6J+lXmswak4KG0wAdv9bfKWhgsUkMd4AVT7nauGL7FU
-         vE3GlzrdceHl5Gf4ro/0c/Iu5Wmq+E88RvGLTERXTrbRund5dNyIdVSSr6xjltSxlu
-         eiR/RveZQMGpInbb2qNaNAap+D4cNh9JP1N8+Wf0+HBlKiDR+Zo/4hNuSfdKI1HXjQ
-         sPb2nZzICns5IdsVSKN9Rt2QGmD6a4tUSbpIYo38UQHbiHzthvDEdaPPYer8H1xfKJ
-         s+MhPdNT02GyA==
+References: <1596166744-2954-1-git-send-email-neal.liu@mediatek.com> <1596166744-2954-2-git-send-email-neal.liu@mediatek.com>
+In-Reply-To: <1596166744-2954-2-git-send-email-neal.liu@mediatek.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 31 Jul 2020 13:33:24 +0200
+Message-ID: <CAJZ5v0gk9a-PVr4+zerNWdBORyC563K8XgUdgxENAQ+Y5-85tg@mail.gmail.com>
+Subject: Re: [PATCH] acpi: fix 'return' with no value build warning
+To:     Neal Liu <neal.liu@mediatek.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC..." 
+        <linux-mediatek@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra VI supported video formats are more for non TPG and there
-can be multiple pixel formats for the same media bus format.
+On Fri, Jul 31, 2020 at 5:39 AM Neal Liu <neal.liu@mediatek.com> wrote:
+>
+> Fixing CFI issue which introduced by commit efe9711214e6 is
+> incomplete.
+> Add return value to fix return-type build warning.
+>
+> Signed-off-by: Neal Liu <neal.liu@mediatek.com>
 
-This patch updates the helper function for format lookup based on
-mbus code from pre-defined Tegra supported format list to look from
-the specified list index offset.
+Applied with edited subject and changelog, but ->
 
-Offset based look up is used with sensor device graph (non TPG)
-where format enumeration can list all supported formats for the
-specific sensor mbus codes.
+> ---
+>  drivers/acpi/processor_idle.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+> index 6ffb6c9..6870020 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -664,11 +664,11 @@ static int acpi_idle_enter_s2idle(struct cpuidle_device *dev,
+>                 struct acpi_processor *pr = __this_cpu_read(processors);
+>
+>                 if (unlikely(!pr))
+> -                       return;
+> +                       return -EFAULT;
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/staging/media/tegra-video/vi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+-> there is no point returning an error code here, so I've made it
+just return 0.
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 0197f4e..52d751f 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -53,11 +53,12 @@ to_tegra_channel_buffer(struct vb2_v4l2_buffer *vb)
- }
- 
- static int tegra_get_format_idx_by_code(struct tegra_vi *vi,
--					unsigned int code)
-+					unsigned int code,
-+					unsigned int offset)
- {
- 	unsigned int i;
- 
--	for (i = 0; i < vi->soc->nformats; ++i) {
-+	for (i = offset; i < vi->soc->nformats; ++i) {
- 		if (vi->soc->video_formats[i].code == code)
- 			return i;
- 	}
-@@ -598,11 +599,12 @@ static void vi_tpg_fmts_bitmap_init(struct tegra_vi_channel *chan)
- 	bitmap_zero(chan->tpg_fmts_bitmap, MAX_FORMAT_NUM);
- 
- 	index = tegra_get_format_idx_by_code(chan->vi,
--					     MEDIA_BUS_FMT_SRGGB10_1X10);
-+					     MEDIA_BUS_FMT_SRGGB10_1X10, 0);
- 	bitmap_set(chan->tpg_fmts_bitmap, index, 1);
- 
- 	index = tegra_get_format_idx_by_code(chan->vi,
--					     MEDIA_BUS_FMT_RGB888_1X32_PADHI);
-+					     MEDIA_BUS_FMT_RGB888_1X32_PADHI,
-+					     0);
- 	bitmap_set(chan->tpg_fmts_bitmap, index, 1);
- }
- 
--- 
-2.7.4
-
+>
+>                 if (pr->flags.bm_check) {
+>                         acpi_idle_enter_bm(pr, cx, false);
+> -                       return;
+> +                       return 0;
+>                 } else {
+>                         ACPI_FLUSH_CPU_CACHE();
+>                 }
+> --
