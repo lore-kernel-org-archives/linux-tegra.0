@@ -1,111 +1,71 @@
-Return-Path: <SRS0=/KXw=BJ=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=jljd=BK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED5AC433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jul 2020 01:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D4AC433DF
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 03:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F99120809
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Jul 2020 01:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F157922D02
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 03:39:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OKIIlyfe"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="OnyvQOR3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbgG3BKo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Jul 2020 21:10:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45620 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbgG3BKn (ORCPT
+        id S1731320AbgGaDjM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Jul 2020 23:39:12 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:35699 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731317AbgGaDjM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Jul 2020 21:10:43 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AE97C061794;
-        Wed, 29 Jul 2020 18:10:43 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id g6so14451168ljn.11;
-        Wed, 29 Jul 2020 18:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZWKEJngoLfhhkppq8eEFicxqCaNFQuLwFe+Ry9i9VR0=;
-        b=OKIIlyfeMjBGfuQvoh4OzO1JzWurq/DAAfEv4IVHsIhaU9EIs0ZZUkMVF3Rbl1g7dK
-         8oLnI8mlAA0yDuJ/VsM3Rd0mvMWAMLtDYcp3BBCOwMogJVtBfqkMHFXLyEDSIIX4Y7zV
-         cwXB8ukqffd2T0J8PEXK8g9SLrb1MiHlunl/BQ7NcYY4MgMGhnLW9aelZbbFN317B9TJ
-         8O+6qo1jcwo+wG7GrTLURf6+o1ePqkTwCnwbPmf8vGyTI5QO6qT5EuitOn7p193eWzEd
-         NBOjpICE/ies/v0UOwzSEew1FY+E5EKkBVK3geOjt7mioEUsiRzkEK4b2MliMyJI4ULn
-         LVdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZWKEJngoLfhhkppq8eEFicxqCaNFQuLwFe+Ry9i9VR0=;
-        b=bapeXFuJgSdQXR+sFCv48hBiO0NEsToXUI4R4P0vu0exZmUhPa6BbS4BNBrYtF/dTb
-         oIS45qozt1IA8asRMFH++YleaqWetdsAfe9/xItt42oTYq96n+M2G+BbaKtjc8qjaa2A
-         hs5SqsnmlRcwc/0Uu3QGuY3a7lz0K0rJAoHc0R0j8N3LHFys04VRJAAwyXXVAzQ/j6+u
-         ZByLkK78wJwZbE2F9y97coefzXy1ulgF6U5kkVe7HljT77WceDWNHeV2OBCOd6f58nP5
-         9UA4sFD1TeBjlSUXCQ66u7gf+RDBZgrwCu6ftfnpun8ltUM/JZ5adLjFs13x7qsUBvYq
-         5TEg==
-X-Gm-Message-State: AOAM533pgbfbmIxd9AC/riEkZWKjZu+IJPCHmmqnHf6zoE33rq5U9KsA
-        puMJtAOFrlbA27t99Y2s4w3XF59z
-X-Google-Smtp-Source: ABdhPJwGIPVKqY18W3xbI/qBcECiSl3t/7iGIH/zuAH8Xc2d/HetO2yM1KDxIckcJgpWPRGdLMx92Q==
-X-Received: by 2002:a2e:9d81:: with SMTP id c1mr263058ljj.198.1596071441626;
-        Wed, 29 Jul 2020 18:10:41 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-76-12-16.pppoe.mtu-net.ru. [91.76.12.16])
-        by smtp.googlemail.com with ESMTPSA id e10sm692996ljb.118.2020.07.29.18.10.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jul 2020 18:10:40 -0700 (PDT)
-Subject: Re: [RFC PATCH v5 13/14] media: tegra-video: Add CSI MIPI pads
- calibration
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        helen.koike@collabora.com
-Cc:     sboyd@kernel.org, gregkh@linuxfoundation.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1595883452-17343-1-git-send-email-skomatineni@nvidia.com>
- <1595883452-17343-14-git-send-email-skomatineni@nvidia.com>
- <c3d40261-9d77-3634-3e04-f20efad9d3d8@gmail.com>
- <01ee0805-3d57-d857-48e3-5c2245cd4500@nvidia.com>
- <2ec535c9-55e8-8834-6002-36c75aeb097c@gmail.com>
- <021707b9-5f72-6f8b-d125-43627ef64a6d@nvidia.com>
- <de2d6117-b1e5-14c0-52ca-ff46b444c866@nvidia.com>
- <ca18b93e-1f1c-50ae-e0c1-11758935ee89@gmail.com>
- <42f25a49-ad2b-4e52-fd99-cb0f52037988@nvidia.com>
- <f5440f57-3653-7cf0-9efe-e9a0c276f7cf@nvidia.com>
- <6ae07f82-53f7-33fc-5892-340b0d9f12cf@gmail.com>
- <887d51fb-4292-c251-6568-32b884e8db67@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <5a0d4162-09c3-46c7-7811-f38c98e13179@gmail.com>
-Date:   Thu, 30 Jul 2020 04:10:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 30 Jul 2020 23:39:12 -0400
+X-UUID: bd3d21d8beb9465f864473798a8a906e-20200731
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=oh7I0V3mU+PQ8llIZifICHSnU6p1Nl4Cu1lEjZrbxTE=;
+        b=OnyvQOR3cbo3idYIKyAGUtrmMzPFeRRU04dYSL7oNpIeGP9FQLDAKfd3n06W9Z2vChOIiVElLFjvwG056JmnTGQJI8lExBz4WEF+WQ9tCuD95f4R27w2EFf9yX8B1QhqF9/vhKNp8sHchas3C0fjYmwrkAaBoedDpvgIQdB8PRA=;
+X-UUID: bd3d21d8beb9465f864473798a8a906e-20200731
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        (envelope-from <neal.liu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1155119920; Fri, 31 Jul 2020 11:39:06 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 31 Jul 2020 11:39:04 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 31 Jul 2020 11:39:06 +0800
+From:   Neal Liu <neal.liu@mediatek.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sami Tolvanen <samitolvanen@google.com>
+CC:     Neal Liu <neal.liu@mediatek.com>, <linux-acpi@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>
+Subject: acpi: fix 'return' with no value build warning
+Date:   Fri, 31 Jul 2020 11:39:03 +0800
+Message-ID: <1596166744-2954-1-git-send-email-neal.liu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <887d51fb-4292-c251-6568-32b884e8db67@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-30.07.2020 04:06, Sowjanya Komatineni пишет:
-...
-> Will have v6 and add additional patch at the end to do enable/disable
-> separately.
-> 
-> Separating this out with additional patch before adding sensor support
-> patch requires all patches to be updated.
-> 
-> So I am ok either ways. Please let me know if adding additional patch at
-> the end to split tegra_channel_set_stream() and tegra_csi_s_stream()
-> separately is ok?
+KioqIEJMVVJCIEhFUkUgKioqDQoNCk5lYWwgTGl1ICgxKToNCiAgYWNwaTogZml4ICdyZXR1cm4n
+IHdpdGggbm8gdmFsdWUgYnVpbGQgd2FybmluZw0KDQogZHJpdmVycy9hY3BpL3Byb2Nlc3Nvcl9p
+ZGxlLmMgfCA0ICsrLS0NCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0
+aW9ucygtKQ0KDQotLSANCjIuMTguMA0K
 
-Should be okay, thanks!
