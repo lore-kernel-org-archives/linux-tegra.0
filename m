@@ -1,122 +1,188 @@
-Return-Path: <SRS0=jljd=BK=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=/FfR=BL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F139C433E5
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 21:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49115C433E0
+	for <linux-tegra@archiver.kernel.org>; Sat,  1 Aug 2020 00:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B89A21744
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Jul 2020 21:33:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E1F420829
+	for <linux-tegra@archiver.kernel.org>; Sat,  1 Aug 2020 00:59:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="kf7dh7xB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IU9Eezqi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbgGaVc3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 31 Jul 2020 17:32:29 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:18234 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728055AbgGaVc3 (ORCPT
+        id S1726847AbgHAA7O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 31 Jul 2020 20:59:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34478 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbgHAA7O (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 31 Jul 2020 17:32:29 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f248ddf0000>; Fri, 31 Jul 2020 14:32:15 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 31 Jul 2020 14:32:28 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 31 Jul 2020 14:32:28 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jul
- 2020 21:32:28 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 31 Jul 2020 21:32:28 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.221]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f248deb0000>; Fri, 31 Jul 2020 14:32:28 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
-        <helen.koike@collabora.com>
-CC:     <digetx@gmail.com>, <gregkh@linuxfoundation.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 01/10] media: tegra-video: Fix channel format alignment
-Date:   Fri, 31 Jul 2020 14:32:15 -0700
-Message-ID: <1596231144-12554-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1596231144-12554-1-git-send-email-skomatineni@nvidia.com>
+        Fri, 31 Jul 2020 20:59:14 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C25C06174A;
+        Fri, 31 Jul 2020 17:59:14 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id i19so17744014lfj.8;
+        Fri, 31 Jul 2020 17:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bXmSNfhnUE6It9Edp0ZyP+wGCkB4UT/nvR9Ph2JS/Ss=;
+        b=IU9EezqiR5eaoJD3QE36dqnFospnSumWjxAhGptuYpv3iLJ83vT/+QaH3FwEmnp2FS
+         mD1bHFalPMSJoLJn9RvPxCYAo1NU7pVHH7Gv6THakhGUWwBBsTj11EBve/ElxxW/mqf9
+         Plj94CA1ENI0x45PttsiLkJ/VNByggqlb2HwXchYMzOYEZLEhyk3JCCTv++P+RoJnaVT
+         Q+MegNBzkBWWR15IEC7sOqf9ul5ZESMvDR/CetjdATvHWQsUhZRl0t9BEzyVxLzAQ3oW
+         KcePparNQR3LKKPyOWuKIj4P7NuoCrxWeml4Ux3dNmniKrh8iRPmAZ/BHX33a5iIElFq
+         8ddQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bXmSNfhnUE6It9Edp0ZyP+wGCkB4UT/nvR9Ph2JS/Ss=;
+        b=IFZEqGg6Ih7p2x2Ue+Co+36ZAVGzdbj5GpHDjF+oWGWmIF4v4XbdSijYe/bgOJ5sCp
+         f8bvXJ/lHVff6QXGj6MrfisKHMQCW3cbV1dU9v0K4VPO+xkC93tOaIayio7fdfNlSFZf
+         Mpolcll7ZOmld2FsWp/gE8t+JfWMPEAm7WmGJ5N78DIn4UPdmg/jBLwvegikkTJwQlxC
+         BpDqryWPIRW57RNZem8hy1RKujQtJGJNxaKbB9F/k7h+RRinKthXcmcwZT1enPL2prmI
+         tU9SVNBZ+EXCtwVjDIub6C8rEfV6sIu4XdLZlmIblmkLX1fU95PbJYW/RxaoJwo2uP7u
+         0I8A==
+X-Gm-Message-State: AOAM532qxbDcAeKyMQKwMT79I5hCT8DDT4bG3YUNBBc1xK92H9MpK9GB
+        HD8It5yp/ppQ0NdIS1b8l/TFpZ+G
+X-Google-Smtp-Source: ABdhPJzmRXyyWKi4kMaOeTi/VyIw4KgMWy1+QnaRg/0Llj1HgBtJTn+SjVtc4dx1ZeZ24Wg6WZGk7Q==
+X-Received: by 2002:a19:c197:: with SMTP id r145mr3168476lff.41.1596243552191;
+        Fri, 31 Jul 2020 17:59:12 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-41-50.dynamic.spd-mgts.ru. [94.29.41.50])
+        by smtp.googlemail.com with ESMTPSA id v10sm2314953lfo.11.2020.07.31.17.59.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jul 2020 17:59:11 -0700 (PDT)
+Subject: Re: [PATCH v7 06/10] media: tegra-video: Add support for external
+ sensor capture
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        helen.koike@collabora.com
+Cc:     gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <1596231144-12554-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+ <1596231144-12554-7-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <08acaeff-7819-07a3-69ca-adfbdb872ee3@gmail.com>
+Date:   Sat, 1 Aug 2020 03:59:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596231135; bh=8GJbUvoTqNXQhoilqMQO06MgCPv5IgO6eahUeR7/0ig=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=kf7dh7xBvwW7kBNLqeMyPx2jK1tq4ZBEFVe9o/GJEeZoTFkcqIpKwG/HLMkAMYHIO
-         eMD1BjVDyWtpGZWSnUPdrAO0P/0iUrP+jIsJ08kawQdTDHqBQqyjUJrA9ugFXoli+H
-         osiVlxU4i8wraZxhXp1NYkDJ4xgMJEJ2gkmu7AkYPw+ClDmXbRJe5xcUdkqKBvfCD0
-         L1wfrO/T2xU+FQtNHFVhFcg3KE5BdUaja7UiZ4/0NgjDJvLJa9s0iM475CnsbNP+HE
-         ihEwfgmL5pfPDs3AHgwdFQyy64Yx8/UpIZxk4Q1/p+KxyVIjqgKoI05tEZfOID+7fR
-         YzPyry4zuUXEQ==
+In-Reply-To: <1596231144-12554-7-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Pixel format width is mistakenly aligned to surface align bytes
-and altering width to aligned value may force sensor mode change
-other than the requested one and also cause mismatch in width
-programmed between sensor and vi which can lead to capture errors.
+01.08.2020 00:32, Sowjanya Komatineni пишет:
+...
+> +static int tegra_csi_channels_alloc(struct tegra_csi *csi)
+> +{
+> +	struct device_node *node = csi->dev->of_node;
+> +	struct v4l2_fwnode_endpoint v4l2_ep = {
+> +		.bus_type = V4L2_MBUS_CSI2_DPHY
+> +	};
+> +	struct fwnode_handle *fwh;
+> +	struct device_node *channel;
+> +	struct device_node *ep;
+> +	unsigned int lanes, portno, num_pads;
+> +	int ret;
+> +
+> +	for_each_child_of_node(node, channel) {
+> +		if (!of_node_name_eq(channel, "channel"))
+> +			continue;
+> +
+> +		ret = of_property_read_u32(channel, "reg", &portno);
+> +		if (ret < 0)
+> +			continue;
+> +
+> +		if (portno >= csi->soc->csi_max_channels) {
+> +			dev_err(csi->dev, "invalid port num %d\n", portno);
 
-This patch removes width alignment and clamps width as per Tegra
-minimum and maximum limits.
+The "channel" node should be put on error.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/staging/media/tegra-video/vi.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+> +			return -EINVAL;
+> +		}
+> +
+> +		ep = of_graph_get_endpoint_by_regs(channel, 0, 0);
+> +		if (!ep)
+> +			continue;
+> +
+> +		fwh = of_fwnode_handle(ep);
+> +		ret = v4l2_fwnode_endpoint_parse(fwh, &v4l2_ep);
+> +		of_node_put(ep);
+> +		if (ret) {
+> +			dev_err(csi->dev,
+> +				"failed to parse v4l2 endpoint: %d\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		lanes = v4l2_ep.bus.mipi_csi2.num_data_lanes;
+> +		if (!lanes || ((lanes & (lanes - 1)) != 0)) {
+> +			dev_err(csi->dev, "invalid data-lanes %d\n", lanes);
+> +			return -EINVAL;
+> +		}
+> +
+> +		num_pads = of_graph_get_endpoint_count(channel);
+> +		if (num_pads == TEGRA_CSI_PADS_NUM) {
+> +			ret = tegra_csi_channel_alloc(csi, channel, portno,
+> +						      lanes, num_pads);
+> +			if (ret < 0)
+> +				return ret;
+> +		}
+>  	}
+...
+> +static int tegra_vi_channels_alloc(struct tegra_vi *vi)
+> +{
+> +	struct device_node *node = vi->dev->of_node;
+> +	struct device_node *ep = NULL;
+> +	struct device_node *ports;
+> +	struct device_node *port;
+> +	unsigned int port_num;
+> +	int ret;
+> +
+> +	ports = of_get_child_by_name(node, "ports");
+> +	if (!ports)
+> +		return -ENODEV;
+> +
+> +	for_each_child_of_node(ports, port) {
+> +		if (!of_node_name_eq(port, "port"))
+> +			continue;
+> +
+> +		ret = of_property_read_u32(port, "reg", &port_num);
+> +		if (ret < 0)
+> +			continue;
+> +
+> +		if (port_num > vi->soc->vi_max_channels) {
+> +			of_node_put(ports);
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 1b5e660..d621ebc 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -359,25 +359,15 @@ static void tegra_channel_fmt_align(struct tegra_vi_channel *chan,
- 				    struct v4l2_pix_format *pix,
- 				    unsigned int bpp)
- {
--	unsigned int align;
--	unsigned int min_width;
--	unsigned int max_width;
--	unsigned int width;
- 	unsigned int min_bpl;
- 	unsigned int max_bpl;
- 	unsigned int bpl;
- 
- 	/*
--	 * The transfer alignment requirements are expressed in bytes. Compute
--	 * minimum and maximum values, clamp the requested width and convert
--	 * it back to pixels. Use bytesperline to adjust the width.
-+	 * The transfer alignment requirements are expressed in bytes.
-+	 * Clamp the requested width and height to the limits.
- 	 */
--	align = lcm(SURFACE_ALIGN_BYTES, bpp);
--	min_width = roundup(TEGRA_MIN_WIDTH, align);
--	max_width = rounddown(TEGRA_MAX_WIDTH, align);
--	width = roundup(pix->width * bpp, align);
--
--	pix->width = clamp(width, min_width, max_width) / bpp;
-+	pix->width = clamp(pix->width, TEGRA_MIN_WIDTH, TEGRA_MAX_WIDTH);
- 	pix->height = clamp(pix->height, TEGRA_MIN_HEIGHT, TEGRA_MAX_HEIGHT);
- 
- 	/* Clamp the requested bytes per line value. If the maximum bytes per
--- 
-2.7.4
+s/ports/port/
 
+> +			dev_err(vi->dev, "invalid port num %d\n", port_num);
+> +			return -EINVAL;
+> +		}
+> +
+> +		ep = of_get_child_by_name(port, "endpoint");
+> +		if (!ep)
+> +			continue;
+> +
+> +		of_node_put(ep);
+> +		ret = tegra_vi_channel_alloc(vi, port_num, port);
+> +		if (ret < 0) {
+> +			of_node_put(ports);
+s/ports/port/
+
+> +			return ret;
+> +		}
+>  	}
