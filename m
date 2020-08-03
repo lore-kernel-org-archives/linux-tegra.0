@@ -2,140 +2,156 @@ Return-Path: <SRS0=O4JP=BN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1DEC433E8
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 19:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D65C433E3
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3CCE22CA1
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 19:44:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="axOc1qr0"
+	by mail.kernel.org (Postfix) with ESMTP id BE10522CF7
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596488482;
+	bh=oN1wga6oDPnA3bltstYlRjnDl8QsPIAZBDEUhwkxmfU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=DpEMdq+9ST25Wc8C4H19J/6YZJzlXsDk81JfkPEe5915vZwVM6MIKCcrtHmPGwFL+
+	 0bd9kVhFnjkONkKm3CRoSSk6dV15bbW3rogFSHXYC3v1E3yB0FtNz4ygD9sTjXzUEA
+	 8Eoz8c7O1TY02QoX0LgQE2McJ+HdHBbjJp7gmWF4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728520AbgHCToc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Aug 2020 15:44:32 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6349 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbgHCToc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 15:44:32 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2869120000>; Mon, 03 Aug 2020 12:44:18 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 03 Aug 2020 12:44:32 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 03 Aug 2020 12:44:32 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Aug
- 2020 19:44:31 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 3 Aug 2020 19:44:31 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.221]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f28691d0001>; Mon, 03 Aug 2020 12:44:30 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>
-CC:     <skomatineni@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-Subject: [PATCH v1 4/6] arm64: tegra: Add missing timeout clock to Tegra186 SDMMC nodes
-Date:   Mon, 3 Aug 2020 12:44:21 -0700
-Message-ID: <1596483863-22153-5-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1596483863-22153-1-git-send-email-skomatineni@nvidia.com>
-References: <1596483863-22153-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1728895AbgHCVBV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Aug 2020 17:01:21 -0400
+Received: from mail-io1-f46.google.com ([209.85.166.46]:44953 "EHLO
+        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728889AbgHCVBU (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 17:01:20 -0400
+Received: by mail-io1-f46.google.com with SMTP id v6so24749093iow.11;
+        Mon, 03 Aug 2020 14:01:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=caU68Vks0Qq0qRNr1RcbbJo83bu5SQyVcphbC7uR/pw=;
+        b=eLf7LczPFnRjHgztRiF/SzIF4maOualtTBucdu4jKPARDpvweRK/8Ikey/hZ9uKHmW
+         q3ulkz9TB+0gsZyhMRRGV+RT0JScLW6eiRuVdy0h6Cs9wI3YAXyt530hyDYwClmvIrnF
+         PBSgvTeMUe4FM2Ri+r6Cu8rwmmPGbQ5HmLOvi3dURAioxjNXCSC6As/uyiRkpax9kg+I
+         MwVRonkBibAPH3Vqigm4NoLUZj9BsEoJF8P8u54s07kI5vpFnti4NApiVsjTXwetrzfw
+         Q7LbHWkLqRJaqwsn0wJl+urSidxjXe6DKTZ4jczt8GbdHlu8z0UQK1m9LWCB9sRnQUv+
+         icrQ==
+X-Gm-Message-State: AOAM530Wwp4vl3i/+A3lSiRwqAzCAJpP9Q+vPMGfTU/d18C2iXNGfuqi
+        1l7FTE3qx6SK7JIOdqNsdg==
+X-Google-Smtp-Source: ABdhPJwLvkQ8nLiW6KyvJ0FE/ZZBxba/47A0nMcMogCK9MlyD6FPHyseUZgrOPhESgV+UWpEU2XPBA==
+X-Received: by 2002:a5d:9b96:: with SMTP id r22mr1872679iom.66.1596488479389;
+        Mon, 03 Aug 2020 14:01:19 -0700 (PDT)
+Received: from xps15.herring.priv ([64.188.179.252])
+        by smtp.googlemail.com with ESMTPSA id r6sm9292280iod.7.2020.08.03.14.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Aug 2020 14:01:18 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>
+Subject: [RFC 00/27] PCI: dwc: Driver clean-ups
+Date:   Mon,  3 Aug 2020 15:00:49 -0600
+Message-Id: <20200803210116.3132633-1-robh@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596483858; bh=eFc2VU5GTK3y8YU8lvXMTIrju/5qbDsv3weenC955gY=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=axOc1qr08OYIAXDeOk7G7jvEFPBICz33ZtJTUrItnkjxbRqDG8GXHYy7lNvC1bPqq
-         hyI4LCx7rgPe8B8s/jK1OaFx8kYJm8iLLXn2OJqsH/vsfZTOrdFyDlfTEB3ExPV9id
-         V17Enl0F/ig7FU9z9PxlPT/zFxTEsEBU7STBbmoz0QY7FCyQQ2eDNZoMzxRFGDLSCz
-         nVYYsmcnygc5taLJqaD/tC7mHja9EAl8X0Qsors1OFstXq1EVcgCxIt7XHhlPbbi9o
-         CtvMGkSchAkJpjOlzmJEfykL/JHf8n7FYwdGUgEz1RjuaTYUYWAa0ETbeVbb3mE7S3
-         MyuU/pmAbUWNg==
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-commit 39cb62cb8973 ("arm64: tegra: Add Tegra186 support")
+This is a series of clean-ups for the Designware PCI driver. The series
+primarily reworks the config space accessors to use the existing pci_ops
+struct and removes various private data that's also present in the
+pci_host_bridge struct. There's also some duplicated common (PCI and
+DWC) register defines which I converted to use the common defines.
 
-Tegra186 uses separate SDMMC_LEGACY_TM clock for data timeout and
-this clock is not enabled currently which is not recommended.
+This is compile tested only as I don't have any DWC based h/w, so any
+testing would be helpful. This is an RFC as it will need to be rebased
+on 5.9-rc1 and my previous clean-up series.
 
-Tegra186 SDMMC advertises 12Mhz as timeout clock frequency in host
-capability register and uses it by default.
+Rob
 
-So, this clock should be kept enabled by the SDMMC driver.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+Rob Herring (27):
+  PCI: Allow root and child buses to have different pci_ops
+  PCI: dwc: Use DBI accessors instead of own config accessors
+  PCI: dwc: Allow overriding bridge pci_ops
+  PCI: dwc: Add a default pci_ops.map_bus for root port
+  PCI: dwc: al: Use pci_ops for child config space accessors
+  PCI: dwc: keystone: Use pci_ops for config space accessors
+  PCI: dwc: tegra: Use pci_ops for root config space accessors
+  PCI: dwc: meson: Use pci_ops for root config space accessors
+  PCI: dwc: kirin: Use pci_ops for root config space accessors
+  PCI: dwc: exynos: Use pci_ops for root config space accessors
+  PCI: dwc: histb: Use pci_ops for root config space accessors
+  PCI: dwc: Remove dwc specific config accessor ops
+  PCI: dwc: Use generic config accessors
+  PCI: Also call .add_bus() callback for root bus
+  PCI: dwc: keystone: Convert .scan_bus() callback to use add_bus
+  PCI: dwc: Convert to use pci_host_probe()
+  PCI: dwc: Remove root_bus pointer
+  PCI: dwc: Remove storing of PCI resources
+  PCI: dwc: Simplify config space handling
+  PCI: dwc/keystone: Drop duplicated 'num-viewport'
+  PCI: dwc: Check CONFIG_PCI_MSI inside dw_pcie_msi_init()
+  PCI: dwc/imx6: Remove duplicate define PCIE_LINK_WIDTH_SPEED_CONTROL
+  PCI: dwc/meson: Drop unnecessary RC config space initialization
+  PCI: dwc/meson: Rework PCI config and DW port logic register accesses
+  PCI: dwc/qcom: Use common PCI register definitions
+  PCI: dwc: Remove hardcoded PCI_CAP_ID_EXP offset
+  PCI: dwc/tegra: Use common Designware port logic register definitions
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 34d249d..8eb61dd 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -337,8 +337,9 @@
- 		compatible = "nvidia,tegra186-sdhci";
- 		reg = <0x0 0x03400000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&bpmp TEGRA186_CLK_SDMMC1>;
--		clock-names = "sdhci";
-+		clocks = <&bpmp TEGRA186_CLK_SDMMC1>,
-+			 <&bpmp TEGRA186_CLK_SDMMC_LEGACY_TM>;
-+		clock-names = "sdhci", "tmclk";
- 		resets = <&bpmp TEGRA186_RESET_SDMMC1>;
- 		reset-names = "sdhci";
- 		interconnects = <&mc TEGRA186_MEMORY_CLIENT_SDMMCRA &emc>,
-@@ -366,8 +367,9 @@
- 		compatible = "nvidia,tegra186-sdhci";
- 		reg = <0x0 0x03420000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&bpmp TEGRA186_CLK_SDMMC2>;
--		clock-names = "sdhci";
-+		clocks = <&bpmp TEGRA186_CLK_SDMMC2>,
-+			 <&bpmp TEGRA186_CLK_SDMMC_LEGACY_TM>;
-+		clock-names = "sdhci", "tmclk";
- 		resets = <&bpmp TEGRA186_RESET_SDMMC2>;
- 		reset-names = "sdhci";
- 		interconnects = <&mc TEGRA186_MEMORY_CLIENT_SDMMCRAA &emc>,
-@@ -390,8 +392,9 @@
- 		compatible = "nvidia,tegra186-sdhci";
- 		reg = <0x0 0x03440000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&bpmp TEGRA186_CLK_SDMMC3>;
--		clock-names = "sdhci";
-+		clocks = <&bpmp TEGRA186_CLK_SDMMC3>,
-+			 <&bpmp TEGRA186_CLK_SDMMC_LEGACY_TM>;
-+		clock-names = "sdhci", "tmclk";
- 		resets = <&bpmp TEGRA186_RESET_SDMMC3>;
- 		reset-names = "sdhci";
- 		interconnects = <&mc TEGRA186_MEMORY_CLIENT_SDMMCR &emc>,
-@@ -416,8 +419,9 @@
- 		compatible = "nvidia,tegra186-sdhci";
- 		reg = <0x0 0x03460000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&bpmp TEGRA186_CLK_SDMMC4>;
--		clock-names = "sdhci";
-+		clocks = <&bpmp TEGRA186_CLK_SDMMC4>,
-+			 <&bpmp TEGRA186_CLK_SDMMC_LEGACY_TM>;
-+		clock-names = "sdhci", "tmclk";
- 		assigned-clocks = <&bpmp TEGRA186_CLK_SDMMC4>,
- 				  <&bpmp TEGRA186_CLK_PLLC4_VCO>;
- 		assigned-clock-parents = <&bpmp TEGRA186_CLK_PLLC4_VCO>;
--- 
-2.7.4
+ drivers/pci/controller/dwc/pci-dra7xx.c       |   4 +-
+ drivers/pci/controller/dwc/pci-exynos.c       |  45 +--
+ drivers/pci/controller/dwc/pci-imx6.c         |   6 +-
+ drivers/pci/controller/dwc/pci-keystone.c     |  90 +++--
+ drivers/pci/controller/dwc/pci-meson.c        | 164 +++------
+ drivers/pci/controller/dwc/pcie-al.c          |  70 +---
+ drivers/pci/controller/dwc/pcie-artpec6.c     |  11 +-
+ .../pci/controller/dwc/pcie-designware-host.c | 319 ++++++------------
+ .../pci/controller/dwc/pcie-designware-plat.c |   4 +-
+ drivers/pci/controller/dwc/pcie-designware.h  |  28 +-
+ drivers/pci/controller/dwc/pcie-histb.c       |  45 +--
+ drivers/pci/controller/dwc/pcie-kirin.c       |  43 +--
+ drivers/pci/controller/dwc/pcie-qcom.c        |  31 +-
+ drivers/pci/controller/dwc/pcie-spear13xx.c   |   4 +-
+ drivers/pci/controller/dwc/pcie-tegra194.c    |  90 +++--
+ drivers/pci/controller/dwc/pcie-uniphier.c    |   3 +-
+ drivers/pci/probe.c                           |  14 +-
+ include/linux/pci.h                           |   1 +
+ 18 files changed, 368 insertions(+), 604 deletions(-)
 
+--
+2.25.1
