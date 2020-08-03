@@ -8,35 +8,35 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07098C433E8
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 15:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FEECC433E5
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 15:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D673520781
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 15:43:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4637D2072A
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 15:43:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="dF91DR81"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="J9URXn7r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbgHCPnP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Aug 2020 11:43:15 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:1755 "EHLO
+        id S1727932AbgHCPmc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Aug 2020 11:42:32 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:1748 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727940AbgHCPmd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 11:42:33 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f28305b0000>; Mon, 03 Aug 2020 08:42:19 -0700
+        with ESMTP id S1725945AbgHCPmc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 11:42:32 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f28305a0000>; Mon, 03 Aug 2020 08:42:18 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 03 Aug 2020 08:42:32 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 03 Aug 2020 08:42:31 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 03 Aug 2020 08:42:32 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
+        by hqpgpgate102.nvidia.com on Mon, 03 Aug 2020 08:42:31 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
  (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Aug
- 2020 15:42:32 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 3 Aug 2020 15:42:32 +0000
+ 2020 15:42:31 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 3 Aug 2020 15:42:31 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.221]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f2830680000>; Mon, 03 Aug 2020 08:42:32 -0700
+        id <B5f2830660001>; Mon, 03 Aug 2020 08:42:31 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -45,9 +45,9 @@ To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
 CC:     <digetx@gmail.com>, <gregkh@linuxfoundation.org>,
         <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 03/10] media: tegra-video: Update format lookup to offset based
-Date:   Mon, 3 Aug 2020 08:42:19 -0700
-Message-ID: <1596469346-937-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v8 01/10] media: tegra-video: Fix channel format alignment
+Date:   Mon, 3 Aug 2020 08:42:17 -0700
+Message-ID: <1596469346-937-2-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
 References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
@@ -55,71 +55,67 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596469339; bh=5U56MbpoGgbizDY87xBQZF5BWeIIcAyUuev+l62V8Co=;
+        t=1596469338; bh=8GJbUvoTqNXQhoilqMQO06MgCPv5IgO6eahUeR7/0ig=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=dF91DR81a20NtX/8TPxKYS5JdyhPM5NFEhUrAbelo90okyZpTMjKJ075GMDrBIr4t
-         oGrj8Vl6n/18imN3fj3F0V0mGi7I6IHGBvQLSwL4+y/ZbqskFEUzek4k8mAwEQHejD
-         maJkre9QTS2lWeJKQ67u+rBM+0NfeOom/EP1CYxcFhX08d8lNMX8paZEZ1uoD9r3Vz
-         sg85q5/YfIaCRbxdCrXOepubxQwrUeOAmPd7ST8U4ZpZVQ4m0qpqTv1uqebBMoWZwZ
-         dQl/0p7YZjpweeHfI0qFU7zfVGWhgIZl3LhuQwdvlrQowEskFjol8gsYD+arWxP/I4
-         HfDjZtaaFK5GA==
+        b=J9URXn7rMZFZccEKJYxPqRptaEUBofPPMk7FjAt4gq4IjFPO133OgDFVRC4Ln1iev
+         dgVOo41Qo8u23/NX0ixCdh7HocuN8e/ELZDYL+NK6+o7uOiHJBX8qfMSa3PXG6L0Ax
+         7KWoQ2JvYWh4SUO3LOCyUwrfu0dOpBNcmtqAO4sFmNS/V01+MngwC8pR5xt2LcIb8b
+         rrwzR9//F+2DHmWuzmF7GEtTxTm0xQop31XaJhoc81n+GtPCY0cS8dVG5+tsy4MAX2
+         /fWtFDqCGD1FwyFPkm3kRA2zlyRebOJjaKTP9l6R4TGgtFCR3vk9/weYNufFM+7jm7
+         bMgyUc2WyFSvw==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra VI supported video formats are more for non TPG and there
-can be multiple pixel formats for the same media bus format.
+Pixel format width is mistakenly aligned to surface align bytes
+and altering width to aligned value may force sensor mode change
+other than the requested one and also cause mismatch in width
+programmed between sensor and vi which can lead to capture errors.
 
-This patch updates the helper function for format lookup based on
-mbus code from pre-defined Tegra supported format list to look from
-the specified list index offset.
-
-Offset based look up is used with sensor device graph (non TPG)
-where format enumeration can list all supported formats for the
-specific sensor mbus codes.
+This patch removes width alignment and clamps width as per Tegra
+minimum and maximum limits.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/staging/media/tegra-video/vi.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 0197f4e..52d751f 100644
+index 1b5e660..d621ebc 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -53,11 +53,12 @@ to_tegra_channel_buffer(struct vb2_v4l2_buffer *vb)
- }
- 
- static int tegra_get_format_idx_by_code(struct tegra_vi *vi,
--					unsigned int code)
-+					unsigned int code,
-+					unsigned int offset)
+@@ -359,25 +359,15 @@ static void tegra_channel_fmt_align(struct tegra_vi_channel *chan,
+ 				    struct v4l2_pix_format *pix,
+ 				    unsigned int bpp)
  {
- 	unsigned int i;
+-	unsigned int align;
+-	unsigned int min_width;
+-	unsigned int max_width;
+-	unsigned int width;
+ 	unsigned int min_bpl;
+ 	unsigned int max_bpl;
+ 	unsigned int bpl;
  
--	for (i = 0; i < vi->soc->nformats; ++i) {
-+	for (i = offset; i < vi->soc->nformats; ++i) {
- 		if (vi->soc->video_formats[i].code == code)
- 			return i;
- 	}
-@@ -598,11 +599,12 @@ static void vi_tpg_fmts_bitmap_init(struct tegra_vi_channel *chan)
- 	bitmap_zero(chan->tpg_fmts_bitmap, MAX_FORMAT_NUM);
+ 	/*
+-	 * The transfer alignment requirements are expressed in bytes. Compute
+-	 * minimum and maximum values, clamp the requested width and convert
+-	 * it back to pixels. Use bytesperline to adjust the width.
++	 * The transfer alignment requirements are expressed in bytes.
++	 * Clamp the requested width and height to the limits.
+ 	 */
+-	align = lcm(SURFACE_ALIGN_BYTES, bpp);
+-	min_width = roundup(TEGRA_MIN_WIDTH, align);
+-	max_width = rounddown(TEGRA_MAX_WIDTH, align);
+-	width = roundup(pix->width * bpp, align);
+-
+-	pix->width = clamp(width, min_width, max_width) / bpp;
++	pix->width = clamp(pix->width, TEGRA_MIN_WIDTH, TEGRA_MAX_WIDTH);
+ 	pix->height = clamp(pix->height, TEGRA_MIN_HEIGHT, TEGRA_MAX_HEIGHT);
  
- 	index = tegra_get_format_idx_by_code(chan->vi,
--					     MEDIA_BUS_FMT_SRGGB10_1X10);
-+					     MEDIA_BUS_FMT_SRGGB10_1X10, 0);
- 	bitmap_set(chan->tpg_fmts_bitmap, index, 1);
- 
- 	index = tegra_get_format_idx_by_code(chan->vi,
--					     MEDIA_BUS_FMT_RGB888_1X32_PADHI);
-+					     MEDIA_BUS_FMT_RGB888_1X32_PADHI,
-+					     0);
- 	bitmap_set(chan->tpg_fmts_bitmap, index, 1);
- }
- 
+ 	/* Clamp the requested bytes per line value. If the maximum bytes per
 -- 
 2.7.4
 
