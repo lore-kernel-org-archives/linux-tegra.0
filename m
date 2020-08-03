@@ -2,81 +2,75 @@ Return-Path: <SRS0=O4JP=BN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA0FC433E0
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5753BC433E5
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0D3220775
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:11:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMmlG02v"
+	by mail.kernel.org (Postfix) with ESMTP id 4096820829
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbgHCOLa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Aug 2020 10:11:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
+        id S1727121AbgHCOlF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Aug 2020 10:41:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728345AbgHCOL3 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 10:11:29 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 803AEC061756;
-        Mon,  3 Aug 2020 07:11:26 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id 185so29566138ljj.7;
-        Mon, 03 Aug 2020 07:11:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YH7oVYHUYOmF2ZJdLJ9+nyMxPgXidrzPU6lX6vlVRJY=;
-        b=ZMmlG02vyjbYZRIKxDsPQ1IWCfK2i1G9Zv0ChJdx6D3BsN7+02eLisw6oxRkploX1E
-         81SeGVNSYrZwclL6vrSDB/9ESU480wBTty8BvTlgw08fRVilSJ5bK6m5sYSz/94iW2K2
-         ByggkqK70WXpRT8cpGoti4+4YMnO+rWxEf37UtRVjde7+1JZgSdvFB2js2s/Rv+1SW30
-         YgRjt4wq6xozFBHT/WSBuvNRWOkHAPIdITsQLBJsTNPAnJdK/4eIBmpOVuCLwrvahkIw
-         W9CiTOdwjKkymHWiBw7OVzs6vgdDKi4PfaC/xtL6fpGp7Glu1qgDCoVdXeD5vDtkf1bK
-         C7tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YH7oVYHUYOmF2ZJdLJ9+nyMxPgXidrzPU6lX6vlVRJY=;
-        b=iSYl7tcdhakhLwWYILVKtxXJJAUzZIppRs21ADFVD9oRFTijeh6zdsTV6sdmssNNsU
-         JZzPreFMg8CGwCYpvFqz880ASUkomZeYhmkQDONTbznbpjnCXaPc8ZKW4SIfRf5kROXk
-         lCT/NwxuLoPCgB1Ng6NZYF6YLhg5yeCl939Ry597GmPGLhBzLNe9dZM11g8ZGMWJ9z9C
-         f5I8r1QefjeJT9vwRcjyHbHr7GQhhPtoOHthZY0C9KbI5CHxDBiIe4XAvji3DKeAWlqW
-         JHetcZzQmmnYHbHeUcubRkDGjy7ZRIuzsjbfH00Qb7KAAQBbdAYfcd3Ep1TIhQKKNWjG
-         nvjg==
-X-Gm-Message-State: AOAM533LLgafVv1xbBc0Avh1ZlTCaNkrzRWRybX/n+3K1TAWcwlUdE9Q
-        Xa5NqDtQEcwsr/lG98O/rJYFzFea
-X-Google-Smtp-Source: ABdhPJyPkmQIsIxZcpJbVcfG0GS1zjreLf3UCcfaqInza2W6ea+wP8F2ZE2lzGs6+STG30tb79F5TQ==
-X-Received: by 2002:a05:651c:118f:: with SMTP id w15mr8041034ljo.211.1596463884908;
-        Mon, 03 Aug 2020 07:11:24 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-41-50.dynamic.spd-mgts.ru. [94.29.41.50])
-        by smtp.googlemail.com with ESMTPSA id d6sm2596272ljg.25.2020.08.03.07.11.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Aug 2020 07:11:24 -0700 (PDT)
-Subject: Re: [PATCH -next] media: staging: tegra-vde: Mark
- tegra_vde_runtime_suspend as __maybe_unused
-To:     Yuehaibing <yuehaibing@huawei.com>, mchehab@kernel.org,
-        gregkh@linuxfoundation.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, hverkuil-cisco@xs4all.nl
-Cc:     linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20200803115901.44068-1-yuehaibing@huawei.com>
- <721b8d01-5d7e-09c6-5f86-705130ab31a9@gmail.com>
- <e15a688e-934b-82a8-34c5-aac07928fd8f@huawei.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <95162bdc-2658-30a7-6ed2-63e095244139@gmail.com>
-Date:   Mon, 3 Aug 2020 17:11:23 +0300
+        with ESMTP id S1726358AbgHCOlE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 10:41:04 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B21C06174A;
+        Mon,  3 Aug 2020 07:41:04 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: andrzej.p)
+        with ESMTPSA id 6EA3629A06E
+Subject: Re: [PATCH v4 0/7] Support inhibiting input devices
+To:     Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
+ <1821a5b7-cbf3-a739-2203-a93b06f0c6f2@redhat.com>
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Message-ID: <8fc3a97d-94b7-e073-3981-2f146f5f209e@collabora.com>
+Date:   Mon, 3 Aug 2020 16:40:58 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <e15a688e-934b-82a8-34c5-aac07928fd8f@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1821a5b7-cbf3-a739-2203-a93b06f0c6f2@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
@@ -84,46 +78,47 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-03.08.2020 16:00, Yuehaibing пишет:
-> On 2020/8/3 20:51, Dmitry Osipenko wrote:
->> 03.08.2020 14:59, YueHaibing пишет:
->>> If CONFIG_PM is not set, gcc warns:
->>>
->>> drivers/staging/media/tegra-vde/vde.c:916:12:
->>>  warning: 'tegra_vde_runtime_suspend' defined but not used [-Wunused-function]
->>>
->>> Make it __maybe_unused to fix this.
->>>
->>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>> ---
->>>  drivers/staging/media/tegra-vde/vde.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
->>> index a3c24d96d5b9..2d043d518eef 100644
->>> --- a/drivers/staging/media/tegra-vde/vde.c
->>> +++ b/drivers/staging/media/tegra-vde/vde.c
->>> @@ -913,7 +913,7 @@ static irqreturn_t tegra_vde_isr(int irq, void *data)
->>>  	return IRQ_HANDLED;
->>>  }
->>>  
->>> -static int tegra_vde_runtime_suspend(struct device *dev)
->>> +static __maybe_unused int tegra_vde_runtime_suspend(struct device *dev)
->>>  {
->>>  	struct tegra_vde *vde = dev_get_drvdata(dev);
->>>  	int err;
->>>
->>
->> Hello Yue,
->>
->> Shouldn't the tegra_vde_runtime_resume() be marked as well?
+Hi Dmitry,
+
+W dniu 12.06.2020 o 10:17, Hans de Goede pisze:
+> Hi,
 > 
-> No, tegra_vde_runtime_resume() always be called by tegra_vde_shutdown().
+> On 6/8/20 1:22 PM, Andrzej Pietrasiewicz wrote:
+>> This is a quick respin of v3, with just two small changes, please see
+>> the changelog below.
+>>
+>> Userspace might want to implement a policy to temporarily disregard input
+>> from certain devices.
+>>
 
-Well.. it's unused, but compiler doesn't complain about runtime_resume()
-because it sees the potential reference to that function in the code
-(even that it's a dead code), while runtime_suspend() reference is
-completely removed by preprocessor before compiler sees the code.
+<snip>
 
-Should be nicer to have both suspend and resume functions marked, for
-consistency, IMO.
+>> v3..v4:
+>> - updated the comment in input_open_device() (Hans)
+>> - used more straightforward locking pattern in adc/exynos (Michał)
+>>
+>> v2..v3:
+>> - ignored autorepeat events in input_get_disposition() if a key is not
+>> pressed (Hans)
+>> - dropped inhibit()/uninhibit() driver callbacks (Hans)
+>> - split ACPI button patch into taking the lock and using the helper (Rafael)
+>> - dropped the elan_i2c conversion
+>> - fixed typos in exynos adc
+>>
+>> v1..v2:
+>> - added input_device_enabled() helper and used it in drivers (Dmitry)
+>> - the fact of open() and close() being called in inhibit/uninhibit paths has
+>> been emphasized in the commit message of PATCH 6/7 (Dmitry)
+
+<snip>
+
+> 
+> The entire series looks good to me:
+> 
+> Acked-by: Hans de Goede <hdegoede@redhat.com>
+
+What are the prospects of this series being merged?
+
+Regards,
+
+Andrzej
