@@ -2,75 +2,143 @@ Return-Path: <SRS0=O4JP=BN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F061C433DF
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 11:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6CBC433E0
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 12:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B02F20829
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 11:59:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE47A20678
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 12:04:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JzDHWYN5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbgHCL7U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Aug 2020 07:59:20 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46622 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725945AbgHCL7T (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 3 Aug 2020 07:59:19 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2415758666F959E4BACB;
-        Mon,  3 Aug 2020 19:59:16 +0800 (CST)
-Received: from localhost (10.174.179.108) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.487.0; Mon, 3 Aug 2020
- 19:59:05 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <digetx@gmail.com>, <mchehab@kernel.org>,
-        <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <hverkuil-cisco@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] media: staging: tegra-vde: Mark tegra_vde_runtime_suspend as __maybe_unused
-Date:   Mon, 3 Aug 2020 19:59:01 +0800
-Message-ID: <20200803115901.44068-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726169AbgHCMEB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Aug 2020 08:04:01 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4078 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbgHCMDs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 08:03:48 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f27fcfd0002>; Mon, 03 Aug 2020 05:03:09 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 03 Aug 2020 05:03:22 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 03 Aug 2020 05:03:22 -0700
+Received: from [10.25.96.161] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Aug
+ 2020 12:02:04 +0000
+Subject: Re: [PATCH 03/10] ASoC: audio-graph: Support Codec with multiple
+ endpoints
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
+        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
+References: <1595135417-16589-1-git-send-email-spujar@nvidia.com>
+ <1595135417-16589-4-git-send-email-spujar@nvidia.com>
+ <87365n2i2z.wl-kuninori.morimoto.gx@renesas.com>
+ <870feaf2-3aa2-dbb8-f883-9b6cfcb36d82@nvidia.com>
+ <87o8oazs5a.wl-kuninori.morimoto.gx@renesas.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <c3df2601-7b01-1880-790c-658a50fbca31@nvidia.com>
+Date:   Mon, 3 Aug 2020 17:32:00 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.174.179.108]
-X-CFilter-Loop: Reflected
+In-Reply-To: <87o8oazs5a.wl-kuninori.morimoto.gx@renesas.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1596456189; bh=O2ZsugzO8H52yaoEOi95oGcqyHBPMBe8xC47X2C3qKw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=JzDHWYN5PjPUbG1Aw90Z7OXdXilf7uR2/t0Va7reEfIuYW6g/i8iGV0NRWbsvui3C
+         CzATlG9CpyBuCM99pLu8cbWd6YWuDv5cRGt9dnndvu954qBnJoMbbdffvvn8t37PhZ
+         RnD5PdHEgYWk3eVXztq2w5eeCfdg6gCXA1A3RBBR9vHhwsxpOQP9YNVKr5mJ3+snur
+         h7vjJCwomgy5E7x7HxbpYC3ZD5SvAuHhnnWS/F6LFwssc48VUQ0HIVgqrmHxp0LPP5
+         UKZLvhJMa75f6+Z+AatO7+ZtSzHBJ6BYzbGrM4gznpcpgZNivFi6MwV4fSjaeOSYgA
+         FV4fC8ti9no2A==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-If CONFIG_PM is not set, gcc warns:
 
-drivers/staging/media/tegra-vde/vde.c:916:12:
- warning: 'tegra_vde_runtime_suspend' defined but not used [-Wunused-function]
+On 7/20/2020 10:43 AM, Kuninori Morimoto wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> Hi Sameer
+>
+>>>> diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+>>>> index 1e20562..b1903f9 100644
+>>>> --- a/sound/soc/generic/audio-graph-card.c
+>>>> +++ b/sound/soc/generic/audio-graph-card.c
+>>>> @@ -201,8 +201,7 @@ static void graph_parse_mclk_fs(struct device_node *top,
+>>>>    static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+>>>>                                   struct device_node *cpu_ep,
+>>>>                                   struct device_node *codec_ep,
+>>>> -                               struct link_info *li,
+>>>> -                               int dup_codec)
+>>>> +                               struct link_info *li)
+>>> This patch breaks DPCM connection which is used for MIXer
+>> Could you please elaborate a bit more as to what is broken with this?
+>> The problem I am trying to solve here is to have multiple endpoints
+>> for Codec port.
+> For example MIXer, it is like below.
+> If you removes "dup_codec", it breaks MIXer and/or TDM split mode.
+>
+>          CPU0  ---+---- DAI
+>                   |
+>          CPU1  ---+
+>
+>          cpu {
+>                  ports {
+>                          port@0 {
+>                                  cpu_0: endpoint {
+>                                          remote-endpoint = <&codec_0>;
+>                                  };
+>                          };
+>                          port@1 {
+>                                  cpu_1: endpoint {
+>                                          remote-endpoint = <&codec_1>;
+>                                  };
+>                          };
+>                  };
+>          };
+>
+>          codec {
+>                  port {
+>                          codec_0: endpoint {
+>                                  remote-endpoint = <&cpu_0>;
+>                          };
+>                          codec_1: endpoint {
+>                                  remote-endpoint = <&cpu_1>;
+>                          };
+>                  }
+>          };
 
-Make it __maybe_unused to fix this.
+Thanks Kuninori for explaining above and for giving a background in an 
+'off-list' thread. I will re-work on the patch by limiting the changes 
+to specific flag so that it does not affect any other user.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/staging/media/tegra-vde/vde.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-index a3c24d96d5b9..2d043d518eef 100644
---- a/drivers/staging/media/tegra-vde/vde.c
-+++ b/drivers/staging/media/tegra-vde/vde.c
-@@ -913,7 +913,7 @@ static irqreturn_t tegra_vde_isr(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static int tegra_vde_runtime_suspend(struct device *dev)
-+static __maybe_unused int tegra_vde_runtime_suspend(struct device *dev)
- {
- 	struct tegra_vde *vde = dev_get_drvdata(dev);
- 	int err;
--- 
-2.17.1
-
-
+> Thank you for your help !!
+>
+> Best regards
+> ---
+> Kuninori Morimoto
