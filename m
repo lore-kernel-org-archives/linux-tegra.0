@@ -2,114 +2,90 @@ Return-Path: <SRS0=O4JP=BN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C945C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 12:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD205C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 13:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A4C720738
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 12:53:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfvhYsgH"
+	by mail.kernel.org (Postfix) with ESMTP id 9DE14205CB
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 13:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbgHCMvl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Aug 2020 08:51:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46192 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728089AbgHCMvY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 08:51:24 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD16C06174A;
-        Mon,  3 Aug 2020 05:51:20 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id v12so9171970ljc.10;
-        Mon, 03 Aug 2020 05:51:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=E1PtArgjfRMgQPkbPEpkNWZtVLcHwOpeacE7i+LTE34=;
-        b=XfvhYsgHRryIe56E2n3nbUW+sRNhQGKbCAxxYdMS79gHcrQZ3iwoA5THCyJwqFvMan
-         zEg/iqNxdvpeglrBf4i+8ZZVqTGFskKUU8FVFpIykIEzfv+0tZbp91OyTbmA94ImGJpD
-         aiVKRIlTvCjZVCsOPqyf+O3aJFPX92Zd01jLqLbAzaU7hhBwN4QGg3DhjajdjnHmC4/U
-         qABVxbj+TfwdOe1Fe/U7hspoM8HDJclIw3EHFBTAIpggmogkEyMtGhG2Ta4hRl3Qgaa5
-         Lxu+J9+MF95vx2Mvy5InboBYs1/nDLoL6jgmsnlpD5G4+3UjmxAcR3tm4+AxiM5/nPZA
-         LAxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=E1PtArgjfRMgQPkbPEpkNWZtVLcHwOpeacE7i+LTE34=;
-        b=LdIOzs+JSnGadcwqODh9poaFVlHG+0OCTp/sVl2w/jz1Yeya3NTuQ3Yk+Toj7L1B7h
-         M9jAcUBWEeKwE3puyBUozRsbQl5esrp6g5ATt2OVz358peys7j6va3YvTKgptA+9uT5o
-         ayc654lnJtJ61csbiYLh5+Jr1zCCGGJJoff6gkQL36QqlqGETCkhFMtURa4hQ/n+qQqS
-         ajw4iNg9x/2fiPwBtzK5O0HRk9nLRhB/jooxBVNnAxBIbVK1Q5cE/PyJkqULcsZkgvWT
-         Hl/0m1HqQWa6CuOv5OtYgvafo6bLaEVPup8XnnmiQL4GTaQQ9Hlnp7aJAQGE2q1VztW+
-         lqEQ==
-X-Gm-Message-State: AOAM531BQTeT+JU/eu+9O+Tj2+6ZdOPLwozwtGugSi8q00iG/cZz2hvy
-        mrZzthI0PUFYElkAnZIkC01uJGuT
-X-Google-Smtp-Source: ABdhPJzz8tZyKT2FTlauL+UMMliVTqWJRdc4UfHZdfhNi5L45Su0vIUq+s+xHJd9w4s7odh9priVvg==
-X-Received: by 2002:a2e:7f0f:: with SMTP id a15mr6801520ljd.454.1596459078782;
-        Mon, 03 Aug 2020 05:51:18 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-41-50.dynamic.spd-mgts.ru. [94.29.41.50])
-        by smtp.googlemail.com with ESMTPSA id t20sm876625ljd.12.2020.08.03.05.51.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Aug 2020 05:51:18 -0700 (PDT)
+        id S1726291AbgHCNAS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Aug 2020 09:00:18 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9321 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726941AbgHCNAS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 3 Aug 2020 09:00:18 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BBB92F67641D87B08163;
+        Mon,  3 Aug 2020 21:00:09 +0800 (CST)
+Received: from [127.0.0.1] (10.174.179.108) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Mon, 3 Aug 2020
+ 21:00:08 +0800
 Subject: Re: [PATCH -next] media: staging: tegra-vde: Mark
  tegra_vde_runtime_suspend as __maybe_unused
-To:     YueHaibing <yuehaibing@huawei.com>, mchehab@kernel.org,
-        gregkh@linuxfoundation.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, hverkuil-cisco@xs4all.nl
-Cc:     linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To:     Dmitry Osipenko <digetx@gmail.com>, <mchehab@kernel.org>,
+        <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <hverkuil-cisco@xs4all.nl>
 References: <20200803115901.44068-1-yuehaibing@huawei.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <721b8d01-5d7e-09c6-5f86-705130ab31a9@gmail.com>
-Date:   Mon, 3 Aug 2020 15:51:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <721b8d01-5d7e-09c6-5f86-705130ab31a9@gmail.com>
+CC:     <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <e15a688e-934b-82a8-34c5-aac07928fd8f@huawei.com>
+Date:   Mon, 3 Aug 2020 21:00:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200803115901.44068-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <721b8d01-5d7e-09c6-5f86-705130ab31a9@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.179.108]
+X-CFilter-Loop: Reflected
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-03.08.2020 14:59, YueHaibing пишет:
-> If CONFIG_PM is not set, gcc warns:
+On 2020/8/3 20:51, Dmitry Osipenko wrote:
+> 03.08.2020 14:59, YueHaibing пишет:
+>> If CONFIG_PM is not set, gcc warns:
+>>
+>> drivers/staging/media/tegra-vde/vde.c:916:12:
+>>  warning: 'tegra_vde_runtime_suspend' defined but not used [-Wunused-function]
+>>
+>> Make it __maybe_unused to fix this.
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/staging/media/tegra-vde/vde.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
+>> index a3c24d96d5b9..2d043d518eef 100644
+>> --- a/drivers/staging/media/tegra-vde/vde.c
+>> +++ b/drivers/staging/media/tegra-vde/vde.c
+>> @@ -913,7 +913,7 @@ static irqreturn_t tegra_vde_isr(int irq, void *data)
+>>  	return IRQ_HANDLED;
+>>  }
+>>  
+>> -static int tegra_vde_runtime_suspend(struct device *dev)
+>> +static __maybe_unused int tegra_vde_runtime_suspend(struct device *dev)
+>>  {
+>>  	struct tegra_vde *vde = dev_get_drvdata(dev);
+>>  	int err;
+>>
 > 
-> drivers/staging/media/tegra-vde/vde.c:916:12:
->  warning: 'tegra_vde_runtime_suspend' defined but not used [-Wunused-function]
+> Hello Yue,
 > 
-> Make it __maybe_unused to fix this.
+> Shouldn't the tegra_vde_runtime_resume() be marked as well?
+
+No, tegra_vde_runtime_resume() always be called by tegra_vde_shutdown().
+
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/staging/media/tegra-vde/vde.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-> index a3c24d96d5b9..2d043d518eef 100644
-> --- a/drivers/staging/media/tegra-vde/vde.c
-> +++ b/drivers/staging/media/tegra-vde/vde.c
-> @@ -913,7 +913,7 @@ static irqreturn_t tegra_vde_isr(int irq, void *data)
->  	return IRQ_HANDLED;
->  }
->  
-> -static int tegra_vde_runtime_suspend(struct device *dev)
-> +static __maybe_unused int tegra_vde_runtime_suspend(struct device *dev)
->  {
->  	struct tegra_vde *vde = dev_get_drvdata(dev);
->  	int err;
+> .
 > 
 
-Hello Yue,
-
-Shouldn't the tegra_vde_runtime_resume() be marked as well?
