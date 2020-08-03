@@ -2,154 +2,194 @@ Return-Path: <SRS0=O4JP=BN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDF9C433E1
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A362FC433E0
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 15:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3815C20781
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:55:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596466511;
-	bh=qjp447E1FdrQ1VZ023mmW0i+s+n2xlSEVcNx6++grCw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=NZzrBGewXmlY6QG3Rc9fw+eq9oPaZ4qyywfwql3dCvz1WEww9JgRvKo+YAGgB7xGf
-	 KdlDKqTTlvWQhrpZfgOJROBlc3hcsBNLOVzfnveUn3WiisuGR54JB2GN/DIghN4lZB
-	 swG+GZQcFSX1V3sC1Qo2ChdrUo0bQnFV+1rsAjMA=
+	by mail.kernel.org (Postfix) with ESMTP id 7A24520678
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 15:42:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JSRzDnFo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbgHCOzL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Aug 2020 10:55:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726825AbgHCOzL (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 3 Aug 2020 10:55:11 -0400
-Received: from localhost (mobile-166-175-186-42.mycingular.net [166.175.186.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 941822076C;
-        Mon,  3 Aug 2020 14:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596466509;
-        bh=qjp447E1FdrQ1VZ023mmW0i+s+n2xlSEVcNx6++grCw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=js72JAn2bH2xSm+hYcTQJGVkYXneeZJu3WaUZn6z6vYSOzv7YKwhBYVr6t9avSQXt
-         qU1B6g/sav0/hQvP8lshLpuLg09vHpm0tBm1iPdgP8Oy8IOEVvOnZHpFaz1vJf+fWC
-         OM3gS2l2KadBq5i7cExyeKjGHeiEM+cd7lXZK83k=
-Date:   Mon, 3 Aug 2020 09:55:08 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Toan Le <toan@os.amperecomputing.com>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        rfi@lists.rocketboards.org
-Subject: Re: [PATCH 00/10] Remove surplus dev_err() when handing an error
- from platform_get_irq()
-Message-ID: <20200803145508.GA332368@bjorn-Precision-5520>
+        id S1727041AbgHCPmb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Aug 2020 11:42:31 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5001 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbgHCPma (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 11:42:30 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2830360000>; Mon, 03 Aug 2020 08:41:42 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 03 Aug 2020 08:42:30 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 03 Aug 2020 08:42:30 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Aug
+ 2020 15:42:30 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 3 Aug 2020 15:42:30 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.221]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f2830640002>; Mon, 03 Aug 2020 08:42:30 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
+        <helen.koike@collabora.com>
+CC:     <digetx@gmail.com>, <gregkh@linuxfoundation.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 00/10] Support for Tegra video capture from external sensor
+Date:   Mon, 3 Aug 2020 08:42:16 -0700
+Message-ID: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200803020151.GA291575@bjorn-Precision-5520>
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1596469302; bh=jglfIh67PtDerQ6NqdFEm5b/PyUxY62VvKmJhWUJEoQ=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=JSRzDnFo1Y1u4eJgMFfGcvX201Ib7cqGkLtSKxRR5zWDKkXn+Y2MlASzMwMBtq/+T
+         7Ko9+7YVAFpmqnZMov46/1nL1BggRrl43enqWgJWUVipo3dS8A7fvacJFIL+APTt6n
+         oeaQXwL8cjytY8EzZWY2OwJgRKIcFrM7CT0STwnerfmJbZRNZaBJanKCfO21Ofnvgc
+         qxW+zMDnDNG6zB+7bBGTSCa6yduT4PvItAqUsAPiLOyQp6tzFSmCgLlkbXtIVCK982
+         zTFxovPLVvFTqlCE607e4K7idzoO+EsZWNUS/SkPsdlk56G9Cp8iS6Iy70C+8pURNJ
+         m5wukodRIYw7A==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Aug 02, 2020 at 09:01:51PM -0500, Bjorn Helgaas wrote:
-> On Sun, Aug 02, 2020 at 02:25:52PM +0000, Krzysztof Wilczyński wrote:
-> > At the moment a lot of error handling code would print a duplicated
-> > error message should either the platform_get_irq() or
-> > platform_get_irq_byname() function fails to obtain an IRQ for a device.
-> > 
-> > There is no need to call the dev_err() function directly to print
-> > a custom message when handling an error from either of these functions
-> > as both are going to display an appropriate error message in case of
-> > a failure.
-> > 
-> > This series aims to remove surplus call to dev_err() when handing an
-> > error originating from either platform_get_irq() or
-> > platform_get_irq_byname() function as per suggestion from Coccinelle.
-> > 
-> > Related commits are commit 7723f4c5ecdb ("driver core: platform: Add an
-> > error message to platform_get_irq*()") and commit 98051ba2b28b
-> > ("coccinelle: Add script to check for platform_get_irq() excessive
-> > prints").
-> > 
-> > Krzysztof Wilczyński (10):
-> >   PCI: dwc: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: mobiveil: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: tegra: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: altera: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: host-generic: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: v3-semi: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: altera-msi: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: xgene-msi: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: rockchip: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: xilinx-nwl: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> > 
-> >  drivers/pci/controller/dwc/pci-dra7xx.c              |  8 ++------
-> >  drivers/pci/controller/dwc/pci-exynos.c              |  9 +++------
-> >  drivers/pci/controller/dwc/pci-imx6.c                |  4 +---
-> >  drivers/pci/controller/dwc/pci-keystone.c            |  4 +---
-> >  drivers/pci/controller/dwc/pci-meson.c               |  4 +---
-> >  drivers/pci/controller/dwc/pcie-armada8k.c           |  4 +---
-> >  drivers/pci/controller/dwc/pcie-artpec6.c            |  4 +---
-> >  drivers/pci/controller/dwc/pcie-histb.c              |  4 +---
-> >  drivers/pci/controller/dwc/pcie-kirin.c              |  5 +----
-> >  drivers/pci/controller/dwc/pcie-spear13xx.c          |  5 ++---
-> >  drivers/pci/controller/dwc/pcie-tegra194.c           |  4 +---
-> >  .../pci/controller/mobiveil/pcie-layerscape-gen4.c   |  5 ++---
-> >  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c |  4 +---
-> >  drivers/pci/controller/pci-tegra.c                   |  8 ++------
-> >  drivers/pci/controller/pci-v3-semi.c                 |  5 ++---
-> >  drivers/pci/controller/pci-xgene-msi.c               |  2 --
-> >  drivers/pci/controller/pcie-altera-msi.c             |  1 -
-> >  drivers/pci/controller/pcie-altera.c                 |  4 +---
-> >  drivers/pci/controller/pcie-rockchip-host.c          | 12 +++---------
-> >  drivers/pci/controller/pcie-tango.c                  |  4 +---
-> >  drivers/pci/controller/pcie-xilinx-nwl.c             | 11 ++---------
-> >  21 files changed, 29 insertions(+), 82 deletions(-)
-> 
-> I squashed these together and applied them to pci/irq-error for v5.9,
-> thanks!
-> 
-> The cover letter claims there should be 10 patches, but I only got 9.
-> Just FYI.
+This series adds support for video capture from external camera sensor to
+Tegra video driver.
 
-I picked up and applied 10/10 as well.  And added Jesper & Ley Foon's
-reviewed-by and acked-by.  Thanks!
+Jetson TX1 has camera expansion connector and supports custom camera module
+designed as per TX1 design specification.
+
+This series also enables camera capture support for Jetson Nano which has
+Raspberry PI camera header.
+
+This series is tested with IMX274 and IMX219 camera sensors.
+
+This series include,
+
+Tegra video driver updates
+- TPG Vs Non-TPG based on Kconfig
+- Support for external sensor video capture based on device graph from DT
+- Support for selection ioctl operations
+- Tegra MIPI CSI pads calibration
+- CSI T-CLK and T-HS settle time computation based on clock rates
+- dt-binding doc update
+
+Host1x driver updates
+- Keep MIPI clock enabled till calibration is done
+
+Delta between patch versions:
+[v8]:	Includes below minor changes
+	- Fixed missing of_node_put and updated error message to be
+	  more informative in tegra_csi_channels_alloc() and
+	  tegra_vi_channels_alloc()
+
+	Patch-0006 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+[v7]:	Includes minor feedback from v6
+	- Patch-0009 has minor update
+
+	Note:
+	Patch-0006 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+[v6]:	Includes below changes based on v5 feedback
+	- Patches are based on latest linux-next.
+	- separated stream enable and disable implementations into
+	  separate functions for tegra_channel_set_stream() and
+	  tegra_csi_s_stream().
+	- changed dev_err to dev_warn on MIPI calibration failure after
+	  sensor streaming as its not critical error.
+
+	Note:
+	Patch-0006 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+[v5]:	Includes below minor change based on v4 feedback
+	Patch-0012: renames APIs to use calibration instead of calibrate.
+
+	Note:
+	Patch-0010 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+[v4]:	Includes below fix based on v3 feedback
+	- Patches are based on latest linux-next.
+	- With split of tegra_mipi_calibrate() and tegra_mipi_wait(), mipi
+	  clock is not left enabled till calibration done. This series adds
+	  a patch to fix this by keeping clock enabled till calibration is
+	  done.
+
+	Note:
+	Patch-0010 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+[v3]:	Includes v2 feedback
+	- Uses separate helper function for retrieving remote csi subdevice
+	  and source subdevice.
+	- Added check for presence of subdevice ops set/get_selection
+	- dropped vb2_queue_release from driver and using
+	  vb2_video_unregister_device instead of video_unregister_device.
+	- video device register should happen in the last after all video
+	  device related setup is done in the driver. This is being addressed
+	  in below RFC patch. Once proper implementation of this is available
+	  will update Tegra video driver to use split APIs and do all setup
+	  prior to device register. Added this as TODO in the driver.
+	  https://www.spinics.net/lists/linux-media/msg172761.html
+
+	Note:
+	Patch-0012 has compilation dependency on
+	https://patchwork.kernel.org/patch/11659521/
+
+
+[v2]:	Includes below changes based on v1 feedback
+	- dt-binding document and the driver update for device graph to use
+	  separate ports for sink endpoint and source endpoint for csi.
+	- Use data-lanes endpoint property for csi.
+	- Update tegra_mipi_request() to take device node pointer argument
+	  rather than adding extra API.
+	- Remove checking for clk pointer before clk_disable.
+
+
+Sowjanya Komatineni (10):
+  media: tegra-video: Fix channel format alignment
+  media: tegra-video: Enable TPG based on kernel config
+  media: tegra-video: Update format lookup to offset based
+  dt-bindings: tegra: Update VI and CSI bindings with port info
+  media: tegra-video: Separate CSI stream enable and disable
+    implementations
+  media: tegra-video: Add support for external sensor capture
+  media: tegra-video: Add support for selection ioctl ops
+  gpu: host1x: mipi: Keep MIPI clock enabled till calibration is done
+  media: tegra-video: Add CSI MIPI pads calibration
+  media: tegra-video: Compute settle times based on the clock rate
+
+ .../display/tegra/nvidia,tegra20-host1x.txt        |  92 ++-
+ drivers/gpu/drm/tegra/dsi.c                        |   4 +-
+ drivers/gpu/host1x/mipi.c                          |  19 +-
+ drivers/staging/media/tegra-video/Kconfig          |   7 +
+ drivers/staging/media/tegra-video/TODO             |   6 -
+ drivers/staging/media/tegra-video/csi.c            | 314 +++++++-
+ drivers/staging/media/tegra-video/csi.h            |   8 +
+ drivers/staging/media/tegra-video/tegra210.c       |  25 +-
+ drivers/staging/media/tegra-video/vi.c             | 841 +++++++++++++++++++--
+ drivers/staging/media/tegra-video/vi.h             |  25 +-
+ drivers/staging/media/tegra-video/video.c          |  23 +-
+ include/linux/host1x.h                             |   5 +-
+ 12 files changed, 1252 insertions(+), 117 deletions(-)
+
+-- 
+2.7.4
+
