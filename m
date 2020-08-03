@@ -2,123 +2,154 @@ Return-Path: <SRS0=O4JP=BN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5753BC433E5
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDF9C433E1
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4096820829
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3815C20781
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 14:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596466511;
+	bh=qjp447E1FdrQ1VZ023mmW0i+s+n2xlSEVcNx6++grCw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=NZzrBGewXmlY6QG3Rc9fw+eq9oPaZ4qyywfwql3dCvz1WEww9JgRvKo+YAGgB7xGf
+	 KdlDKqTTlvWQhrpZfgOJROBlc3hcsBNLOVzfnveUn3WiisuGR54JB2GN/DIghN4lZB
+	 swG+GZQcFSX1V3sC1Qo2ChdrUo0bQnFV+1rsAjMA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbgHCOlF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Aug 2020 10:41:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34812 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbgHCOlE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 10:41:04 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B21C06174A;
-        Mon,  3 Aug 2020 07:41:04 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id 6EA3629A06E
-Subject: Re: [PATCH v4 0/7] Support inhibiting input devices
-To:     Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        id S1726897AbgHCOzL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Aug 2020 10:55:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726825AbgHCOzL (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 3 Aug 2020 10:55:11 -0400
+Received: from localhost (mobile-166-175-186-42.mycingular.net [166.175.186.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 941822076C;
+        Mon,  3 Aug 2020 14:55:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596466509;
+        bh=qjp447E1FdrQ1VZ023mmW0i+s+n2xlSEVcNx6++grCw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=js72JAn2bH2xSm+hYcTQJGVkYXneeZJu3WaUZn6z6vYSOzv7YKwhBYVr6t9avSQXt
+         qU1B6g/sav0/hQvP8lshLpuLg09vHpm0tBm1iPdgP8Oy8IOEVvOnZHpFaz1vJf+fWC
+         OM3gS2l2KadBq5i7cExyeKjGHeiEM+cd7lXZK83k=
+Date:   Mon, 3 Aug 2020 09:55:08 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <1821a5b7-cbf3-a739-2203-a93b06f0c6f2@redhat.com>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <8fc3a97d-94b7-e073-3981-2f146f5f209e@collabora.com>
-Date:   Mon, 3 Aug 2020 16:40:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Toan Le <toan@os.amperecomputing.com>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        rfi@lists.rocketboards.org
+Subject: Re: [PATCH 00/10] Remove surplus dev_err() when handing an error
+ from platform_get_irq()
+Message-ID: <20200803145508.GA332368@bjorn-Precision-5520>
 MIME-Version: 1.0
-In-Reply-To: <1821a5b7-cbf3-a739-2203-a93b06f0c6f2@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200803020151.GA291575@bjorn-Precision-5520>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
-
-W dniu 12.06.2020 o 10:17, Hans de Goede pisze:
-> Hi,
+On Sun, Aug 02, 2020 at 09:01:51PM -0500, Bjorn Helgaas wrote:
+> On Sun, Aug 02, 2020 at 02:25:52PM +0000, Krzysztof Wilczyński wrote:
+> > At the moment a lot of error handling code would print a duplicated
+> > error message should either the platform_get_irq() or
+> > platform_get_irq_byname() function fails to obtain an IRQ for a device.
+> > 
+> > There is no need to call the dev_err() function directly to print
+> > a custom message when handling an error from either of these functions
+> > as both are going to display an appropriate error message in case of
+> > a failure.
+> > 
+> > This series aims to remove surplus call to dev_err() when handing an
+> > error originating from either platform_get_irq() or
+> > platform_get_irq_byname() function as per suggestion from Coccinelle.
+> > 
+> > Related commits are commit 7723f4c5ecdb ("driver core: platform: Add an
+> > error message to platform_get_irq*()") and commit 98051ba2b28b
+> > ("coccinelle: Add script to check for platform_get_irq() excessive
+> > prints").
+> > 
+> > Krzysztof Wilczyński (10):
+> >   PCI: dwc: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> >   PCI: mobiveil: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> >   PCI: tegra: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> >   PCI: altera: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> >   PCI: host-generic: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> >   PCI: v3-semi: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> >   PCI: altera-msi: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> >   PCI: xgene-msi: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> >   PCI: rockchip: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> >   PCI: xilinx-nwl: Remove dev_err() when handing an error from
+> >     platform_get_irq()
+> > 
+> >  drivers/pci/controller/dwc/pci-dra7xx.c              |  8 ++------
+> >  drivers/pci/controller/dwc/pci-exynos.c              |  9 +++------
+> >  drivers/pci/controller/dwc/pci-imx6.c                |  4 +---
+> >  drivers/pci/controller/dwc/pci-keystone.c            |  4 +---
+> >  drivers/pci/controller/dwc/pci-meson.c               |  4 +---
+> >  drivers/pci/controller/dwc/pcie-armada8k.c           |  4 +---
+> >  drivers/pci/controller/dwc/pcie-artpec6.c            |  4 +---
+> >  drivers/pci/controller/dwc/pcie-histb.c              |  4 +---
+> >  drivers/pci/controller/dwc/pcie-kirin.c              |  5 +----
+> >  drivers/pci/controller/dwc/pcie-spear13xx.c          |  5 ++---
+> >  drivers/pci/controller/dwc/pcie-tegra194.c           |  4 +---
+> >  .../pci/controller/mobiveil/pcie-layerscape-gen4.c   |  5 ++---
+> >  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c |  4 +---
+> >  drivers/pci/controller/pci-tegra.c                   |  8 ++------
+> >  drivers/pci/controller/pci-v3-semi.c                 |  5 ++---
+> >  drivers/pci/controller/pci-xgene-msi.c               |  2 --
+> >  drivers/pci/controller/pcie-altera-msi.c             |  1 -
+> >  drivers/pci/controller/pcie-altera.c                 |  4 +---
+> >  drivers/pci/controller/pcie-rockchip-host.c          | 12 +++---------
+> >  drivers/pci/controller/pcie-tango.c                  |  4 +---
+> >  drivers/pci/controller/pcie-xilinx-nwl.c             | 11 ++---------
+> >  21 files changed, 29 insertions(+), 82 deletions(-)
 > 
-> On 6/8/20 1:22 PM, Andrzej Pietrasiewicz wrote:
->> This is a quick respin of v3, with just two small changes, please see
->> the changelog below.
->>
->> Userspace might want to implement a policy to temporarily disregard input
->> from certain devices.
->>
-
-<snip>
-
->> v3..v4:
->> - updated the comment in input_open_device() (Hans)
->> - used more straightforward locking pattern in adc/exynos (Michał)
->>
->> v2..v3:
->> - ignored autorepeat events in input_get_disposition() if a key is not
->> pressed (Hans)
->> - dropped inhibit()/uninhibit() driver callbacks (Hans)
->> - split ACPI button patch into taking the lock and using the helper (Rafael)
->> - dropped the elan_i2c conversion
->> - fixed typos in exynos adc
->>
->> v1..v2:
->> - added input_device_enabled() helper and used it in drivers (Dmitry)
->> - the fact of open() and close() being called in inhibit/uninhibit paths has
->> been emphasized in the commit message of PATCH 6/7 (Dmitry)
-
-<snip>
-
+> I squashed these together and applied them to pci/irq-error for v5.9,
+> thanks!
 > 
-> The entire series looks good to me:
-> 
-> Acked-by: Hans de Goede <hdegoede@redhat.com>
+> The cover letter claims there should be 10 patches, but I only got 9.
+> Just FYI.
 
-What are the prospects of this series being merged?
-
-Regards,
-
-Andrzej
+I picked up and applied 10/10 as well.  And added Jesper & Ley Foon's
+reviewed-by and acked-by.  Thanks!
