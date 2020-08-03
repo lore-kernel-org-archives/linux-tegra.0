@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A61EFC433E0
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEB9C433E4
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B387022BED
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59C4A22CAD
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596488484;
-	bh=r6TtqHCA3jtW5jbtGF1GAwZ0vnLQNPiDh4RVvrRIEJQ=;
+	s=default; t=1596488490;
+	bh=8Irn/YdkHb2QXNwssXPmCIL8uhGjYFUfAiI3OQQsIhI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h+yznzKf6xIgvTuTcsmXuW6E1X5TJ4zpYe9XhlL2FATbD2z2oMi6PrgusfUnjpLMI
-	 6RfFNreham9qCUE0uOnEDDS+XUUWf2t2SbawaSffFRE5A21lhXf3DwVIjO4mi+8zYD
-	 wUBRioJNUALR6B2cZK0AD4G+3DQbpWoYLr0X4/5M=
+	b=RaUqILJ6tJGLOI8NtZmtrwaJxdhqS5AOjGMQ0MYhSOJ/16GwTPNtWiIilOx7UG+fl
+	 p92C7galxj7OTGguKS4ThVG06uvjdXj6fBx6fqTeYPnElhdYpjSXrnItlIQVwQQhh8
+	 xxaIybZcWWcLgj/Z/eVBrA9l6TaD5uiRmHJ3Kxsc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbgHCVBY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Aug 2020 17:01:24 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34288 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728889AbgHCVBX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 17:01:23 -0400
-Received: by mail-io1-f65.google.com with SMTP id q75so31848823iod.1;
-        Mon, 03 Aug 2020 14:01:22 -0700 (PDT)
+        id S1729346AbgHCVB3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Aug 2020 17:01:29 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38423 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729344AbgHCVB1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 17:01:27 -0400
+Received: by mail-io1-f66.google.com with SMTP id l1so39991437ioh.5;
+        Mon, 03 Aug 2020 14:01:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bKskqR1BQLcQkRJa4jVCjBb26v/8ydnan9t1CfXlQP0=;
-        b=F3I5h+1s3UcJuJQIeVbdou8/lAyhnUMlEhtMa1/w69LqALXHoY4ZNvEqEZ8I7v1E4b
-         2jNorcDEgjjTASJg9DPX9XhGvMvRZK44Y7EHm00YQCDJ99YYZ3nYiKIKRMnhrRfj1cAR
-         uZv7WY5kUeNPzuJOy3HgdGN261vglpbF6hCEd8f/R0gPmI6/7Cv7ueRiqOEgllHS75Ks
-         J8u6RYTVWDsKnl6L6ECuQiOvJzm0qpFSZC0/IIjTrNZMPJO0uuZ3oP8hyfoFxL16n8xS
-         7pqLANaQt55//SdPd5NxH9pt31J4i7B6G+0hxwTZnbCNQ7qyWWtbGKMNK/oB7cPOJD1c
-         veuQ==
-X-Gm-Message-State: AOAM533y/m1MgN+Lfli8vdjoQidgdVwd3BzWF9Zq0d/6fMSOkfvVC/RZ
-        6yAZDex/edq+AqGKKbyugQ==
-X-Google-Smtp-Source: ABdhPJy4qG4p8bfrwbYSt3lvEPjhQpXlxLgUy+tuEvf+7Lf39Luq/OZA9TVNwuc57X3DpMVIygnSPw==
-X-Received: by 2002:a05:6638:2601:: with SMTP id m1mr1810484jat.141.1596488481653;
-        Mon, 03 Aug 2020 14:01:21 -0700 (PDT)
+        bh=ijQ8ATU40Ukxf+vdFPpN/cTBNWQIy8LHFEwNkXuS7vE=;
+        b=TtA3D50HOWjGSOYcI0fLq7MAUnDBSi++nGASm4Aoh/xGbxG+Nth6WBRpCcWzR9SZpJ
+         zXFkOFhdk5CglhnIbRVhmHVnrTacwOWTsbwSRutc8x0VmJKmquUL+Gsix5cdpmcsFwQz
+         k0+kaJQSrIPorGnuaRYv9orYBj9W0AYPkcJe7trNLYw/agEG2PAuWh4BjPBgOjPjVSg8
+         Pwsc5AphA4aWpxRoxYG36XEP47a81vesf02tunJ5SNy+qKfpGxOeW++4gDyBA4TwHmyB
+         Eq121ULzAvJ6cWj5psaqF7VRaLKEH/0fSCEaHlmY4VaVJYSKZO/gmO4qxftZGmUIOTff
+         TY3w==
+X-Gm-Message-State: AOAM532GpYjM3KbWCmeSb05lEiLzZCNVZwWkvEuYlBu6FitDnYc5T/Gp
+        YmOiADsJm8DwexS5xjTDBQ==
+X-Google-Smtp-Source: ABdhPJwDDB+OwHWjJuTy7sDEknkVzY4VCrs5f0YZ1QmljRmggfDq+USGhZLjxDletIoYITtztOCGKA==
+X-Received: by 2002:a05:6638:2482:: with SMTP id x2mr1801792jat.55.1596488486266;
+        Mon, 03 Aug 2020 14:01:26 -0700 (PDT)
 Received: from xps15.herring.priv ([64.188.179.252])
-        by smtp.googlemail.com with ESMTPSA id r6sm9292280iod.7.2020.08.03.14.01.19
+        by smtp.googlemail.com with ESMTPSA id r6sm9292280iod.7.2020.08.03.14.01.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2020 14:01:21 -0700 (PDT)
+        Mon, 03 Aug 2020 14:01:25 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
@@ -81,9 +81,9 @@ Cc:     Binghui Wang <wangbinghui@hisilicon.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Xiaowei Song <songxiaowei@hisilicon.com>,
         Yue Wang <yue.wang@Amlogic.com>
-Subject: [RFC 01/27] PCI: Allow root and child buses to have different pci_ops
-Date:   Mon,  3 Aug 2020 15:00:50 -0600
-Message-Id: <20200803210116.3132633-2-robh@kernel.org>
+Subject: [RFC 03/27] PCI: dwc: Allow overriding bridge pci_ops
+Date:   Mon,  3 Aug 2020 15:00:52 -0600
+Message-Id: <20200803210116.3132633-4-robh@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200803210116.3132633-1-robh@kernel.org>
 References: <20200803210116.3132633-1-robh@kernel.org>
@@ -94,60 +94,81 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-PCI host bridges often have different ways to access the root and child
-bus config spaces. The host bridge drivers have invented their own
-abstractions to handle this. Let's support having different root and
-child bus pci_ops so these per driver abstractions can be removed.
+In preparation to allow drivers to set their own root and child pci_ops
+instead of using the DWC specific config space ops, we need to make
+the pci_host_bridge pointer available and move setting the bridge->ops
+and bridge->child_ops pointer to before the .host_init() hook.
 
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pci/probe.c | 8 +++++++-
- include/linux/pci.h | 1 +
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pcie-designware-host.c | 15 ++++++++++-----
+ drivers/pci/controller/dwc/pcie-designware.h      |  1 +
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 2f66988cea25..8712e595174d 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1030,6 +1030,7 @@ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
- 					   struct pci_dev *bridge, int busnr)
- {
- 	struct pci_bus *child;
-+	struct pci_host_bridge *host;
- 	int i;
- 	int ret;
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 6232aefbbdb4..7cd8c9528d4c 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -344,6 +344,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 	if (!bridge)
+ 		return -ENOMEM;
  
-@@ -1039,11 +1040,16 @@ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
- 		return NULL;
- 
- 	child->parent = parent;
--	child->ops = parent->ops;
- 	child->msi = parent->msi;
- 	child->sysdata = parent->sysdata;
- 	child->bus_flags = parent->bus_flags;
- 
-+	host = pci_find_host_bridge(parent);
-+	if (host->child_ops)
-+		child->ops = host->child_ops;
-+	else
-+		child->ops = parent->ops;
++	pp->bridge = bridge;
 +
+ 	ret = pci_parse_request_of_pci_ranges(dev, &bridge->windows,
+ 					      &bridge->dma_ranges, NULL);
+ 	if (ret)
+@@ -450,6 +452,10 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 		}
+ 	}
+ 
++	/* Set default bus ops */
++	bridge->ops = &dw_pcie_ops;
++	bridge->child_ops = &dw_pcie_ops;
++
+ 	if (pp->ops->host_init) {
+ 		ret = pp->ops->host_init(pp);
+ 		if (ret)
+@@ -461,7 +467,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 	bridge->dev.parent = dev;
+ 	bridge->sysdata = pp;
+ 	bridge->busnr = pp->root_bus_nr;
+-	bridge->ops = &dw_pcie_ops;
+ 	bridge->map_irq = of_irq_parse_and_map_pci;
+ 	bridge->swizzle_irq = pci_common_swizzle;
+ 
+@@ -667,11 +672,11 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
+ 
  	/*
- 	 * Initialize some portions of the bus device, but don't register
- 	 * it now as the parent is not properly set up yet.
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index c79d83304e52..cec789a0437e 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -516,6 +516,7 @@ struct pci_host_bridge {
- 	struct device	dev;
- 	struct pci_bus	*bus;		/* Root bus */
- 	struct pci_ops	*ops;
-+	struct pci_ops	*child_ops;
- 	void		*sysdata;
- 	int		busnr;
- 	struct list_head windows;	/* resource_entry */
+-	 * If the platform provides ->rd_other_conf, it means the platform
+-	 * uses its own address translation component rather than ATU, so
+-	 * we should not program the ATU here.
++	 * If the platform provides its own child bus config accesses, it means
++	 * the platform uses its own address translation component rather than
++	 * ATU, so we should not program the ATU here.
+ 	 */
+-	if (!pp->ops->rd_other_conf) {
++	if (pp->bridge->child_ops == &dw_pcie_ops && !pp->ops->rd_other_conf) {
+ 		dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX0,
+ 					  PCIE_ATU_TYPE_MEM, pp->mem_base,
+ 					  pp->mem_bus_addr, pp->mem_size);
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 656e00f8fbeb..bad3cddab28e 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -201,6 +201,7 @@ struct pcie_port {
+ 	u32			num_vectors;
+ 	u32			irq_mask[MAX_MSI_CTRLS];
+ 	struct pci_bus		*root_bus;
++	struct pci_host_bridge  *bridge;
+ 	raw_spinlock_t		lock;
+ 	DECLARE_BITMAP(msi_irq_in_use, MAX_MSI_IRQS);
+ };
 -- 
 2.25.1
 
