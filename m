@@ -2,129 +2,118 @@ Return-Path: <SRS0=3r2u=BO=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B003C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 05:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14609C433E0
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 05:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E26E206F6
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 05:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1760A2073E
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 05:57:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SafJSNqu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uzh1lNvg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgHDFZP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Aug 2020 01:25:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58154 "EHLO
+        id S1728557AbgHDF5p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Aug 2020 01:57:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbgHDFZO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Aug 2020 01:25:14 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA64C061756
-        for <linux-tegra@vger.kernel.org>; Mon,  3 Aug 2020 22:25:14 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id j19so21462965pgm.11
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Aug 2020 22:25:14 -0700 (PDT)
+        with ESMTP id S1726514AbgHDF5p (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Aug 2020 01:57:45 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFC97C06174A;
+        Mon,  3 Aug 2020 22:57:44 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id v12so11881366ljc.10;
+        Mon, 03 Aug 2020 22:57:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VyvJTV65QYrZba9SIfzf3Qah/NqVWDrTLrkNojuqHV0=;
-        b=SafJSNqu2HzopBQNzSMzXgtQyoN95IoHlxuM48onRYrNr0jx5X5Yx4nbz7n1qxZTaz
-         BBLmwCHy6ILOfFAj4CVMMmylSVMacwrWKkcJQHwIk7vN5K3c9K4FBhLNWH2UDK0qjPuR
-         YGUpqI6YFRmyyfYhhfJDeZht6Y+jZjY7iT5DkLaaNJe5xOHeoArcGLnKyrwUVYgWgrzO
-         j1kh4lVdzME9oNVocVV+RTxxFppvbtEuHgVfDLkCKZT8qhtbHe7/vfLu2r0h/KLji4uj
-         RI5P+HSeGJFYjBdWLInTEPaOTXwpLsJZ2dkncuYuY/PF5XAQYjUlZEzY0oCevMx0Arni
-         uAoA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5U+m+9JSkwxJJhqjPVRn3WLkY6Le0ENenqvq9/Z7HUw=;
+        b=uzh1lNvgZJ6EKadMvtyrQbIJtr7vBd1YN8XcQUsa0sjlRqlPFz+Rmrr3NK7eKcgwla
+         U9zfXqeLgTpds/90Qm0HlhXZYTM/UX+jwip1OCeDO0hHDqjSf8UITgnfFjf4fMsxdt8H
+         8qU0Qse3pbeNGZzi1OilFilWF8vAz4c5Vv96SNqs1o43KJF1xiRQgQMsKPMnLhGtzutr
+         bdn455ho3bRaJ0NHR2YG9/R/RR1q0KxtH9c/I9a2T0cFxz+NKCHjimOX2vzTJIcG9eat
+         nunyaJk2qwidW+kxkDnHBAS0h46lvFGAMoHwSwstZBcKaFb9jrbcKFgba7f3rOgQTMYg
+         OYEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VyvJTV65QYrZba9SIfzf3Qah/NqVWDrTLrkNojuqHV0=;
-        b=iJlj/xNLJf5Kg4OpDyKT9l/XXCKQCHdqfKuCy7VXuliCfQbQ90Aw/PMve7szJawLtT
-         dzbQDFgo1DePS4cD1ml2/hY0fRTWDwZAM5gB9i01eUce5gs4qfUh2jtdNLKYNV9VpC5y
-         sfzXQd9Bu+veZCbFSCdo8oKnx/fARUOQU7ktiZzWJ3NUWQpghXyaIaYVuLQFOIF49zqr
-         rjZY7hUdHEDLWlYf2NQU2NbKVgUtnWJIeTrBstt8phDUysrK35pevMl5Goata2nQ2kil
-         kvryEV5pB7Y41lnf8eF5cSJa3OqkZaOK6RRgKZKc3Wh9TWTBfdrOyOGaJmuXRwqSZE4s
-         tKQQ==
-X-Gm-Message-State: AOAM5307MjCrdxFtD3B5oJ7qG3I67rxgPrwokL+rShWP9i7OOWRHEFgf
-        f5dV9IlksqmxwDevAgrlxcRfuA==
-X-Google-Smtp-Source: ABdhPJzQBa7GAz/BaRtEtdELU/h9ZsuAAyasELfzNQnsQprm5zGlYxyfDe3Uz3t1K1kJ/+YPjsWlhg==
-X-Received: by 2002:a63:5d11:: with SMTP id r17mr17546649pgb.146.1596518713836;
-        Mon, 03 Aug 2020 22:25:13 -0700 (PDT)
-Received: from localhost ([122.162.244.227])
-        by smtp.gmail.com with ESMTPSA id v11sm19518479pgs.22.2020.08.03.22.25.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Aug 2020 22:25:12 -0700 (PDT)
-Date:   Tue, 4 Aug 2020 10:55:09 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] cpufreq: tegra186: Fix initial frequency
-Message-ID: <20200804052509.24en7voy2bg6vdbc@vireshk-mac-ubuntu>
-References: <20200712100645.13927-1-jonathanh@nvidia.com>
- <20200713032554.cykywnygxln6ukrl@vireshk-i7>
- <3d6091f2-6b04-185f-6c23-e39a34b87877@nvidia.com>
- <20200714034635.2zdv3wzmftjg2t4a@vireshk-i7>
- <8c6d3c32-c142-3981-3a52-6560e885f4c9@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5U+m+9JSkwxJJhqjPVRn3WLkY6Le0ENenqvq9/Z7HUw=;
+        b=drpQc7aqGGkrRH4gV2P5d4XCOugKgdOVzv8C4PFMG5IJG2UZK8C3POGwY0rkGG1fAj
+         bi7KkFINxwfWN87b1/6npocOmf6/QSR11qbYU0DDJcIwr/JxlVSUypCYfhzj50AsTu8S
+         Apd6Hubs8CvkEKlfznSOsqrcC7L2/QkqLzMlrNK01R7qgKTqSKI7rNwqB+1TII9IkEjI
+         uDwiP7xq/Jek/KwsJj56mzg/iYwl0oGcX88wtlpL9O2Nzs3P0DJ5iovYaPX5iYgdI4l0
+         Cjgnmx7HtBJhZ5sZ1uY0ptkd52tW88T1VRpJ7rqnUxWMzBYfqLDaFqpQ21Xwll5jzDLZ
+         HTwA==
+X-Gm-Message-State: AOAM533L/w19tqreQjVrPZ527sFS9HUOyVNXISGlJMCFYhW2PY1O87rt
+        KrULVhxRfT6DY7GCDXKacJZDkxnm
+X-Google-Smtp-Source: ABdhPJz+YuuLYuM6oYU0ejGfnA7gf/4ATRAgnz8+lidinPm8XDWxCrf/O2v5WYAIlOrneeEqKzzF2w==
+X-Received: by 2002:a2e:804d:: with SMTP id p13mr4942418ljg.359.1596520663024;
+        Mon, 03 Aug 2020 22:57:43 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-41-50.dynamic.spd-mgts.ru. [94.29.41.50])
+        by smtp.googlemail.com with ESMTPSA id j4sm5074643ljc.20.2020.08.03.22.57.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Aug 2020 22:57:42 -0700 (PDT)
+Subject: Re: [PATCH v8 06/10] media: tegra-video: Add support for external
+ sensor capture
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        helen.koike@collabora.com
+Cc:     gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
+ <1596469346-937-7-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <287fb73c-63b9-e49d-095d-280179736cfc@gmail.com>
+Date:   Tue, 4 Aug 2020 08:57:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c6d3c32-c142-3981-3a52-6560e885f4c9@nvidia.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1596469346-937-7-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 31-07-20, 13:14, Jon Hunter wrote:
-> I have been doing some more testing on Tegra, I noticed that when
-> reading the current CPU frequency via the sysfs scaling_cur_freq entry,
-> this always returns the cached value (at least for Tegra). Looking at
-> the implementation of scaling_cur_freq I see ...
+03.08.2020 18:42, Sowjanya Komatineni пишет:
+> This patch adds support to capture from the external sensor
+> based on device graph in the device tree.
 > 
-> static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
-> {
->         ssize_t ret; 
->         unsigned int freq;
+> Driver walks through the device graph to create media links
+> between the entities and registers and unregisters video devices
+> when the corresponding sub-devices are bound and unbound.
 > 
->         freq = arch_freq_get_on_cpu(policy->cpu);
->         if (freq)
->                 ret = sprintf(buf, "%u\n", freq);
->         else if (cpufreq_driver && cpufreq_driver->setpolicy &&
->                         cpufreq_driver->get)
->                 ret = sprintf(buf, "%u\n", cpufreq_driver->get(policy->cpu));
->         else
->                 ret = sprintf(buf, "%u\n", policy->cur);
->         return ret; 
-> }
+> Channel formats are enumerated based on available formats from
+> the sensor and the corresponding matched formats from the Tegra
+> supported video formats list.
 > 
-> The various Tegra CPU frequency drivers do not implement the
-> set_policy callback and hence why we always get the cached value. I
-> see the following commit added this and before it simply return the
-> cached value ...
+> Each Tegra CSI instance can be configured as 4-lane or 2-lane
+> based on supported lane configuration from the sensor through
+> the device tree.
 > 
-> commit c034b02e213d271b98c45c4a7b54af8f69aaac1e
-> Author: Dirk Brandewie <dirk.j.brandewie@intel.com>
-> Date:   Mon Oct 13 08:37:40 2014 -0700
+> Currently this driver supports V4L2 video node centric only.
 > 
->     cpufreq: expose scaling_cur_freq sysfs file for set_policy() drivers
-> 
-> Is this intentional? 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/staging/media/tegra-video/Kconfig    |   1 +
+>  drivers/staging/media/tegra-video/TODO       |   4 -
+>  drivers/staging/media/tegra-video/csi.c      | 139 +++++-
+>  drivers/staging/media/tegra-video/csi.h      |   1 +
+>  drivers/staging/media/tegra-video/tegra210.c |   2 +-
+>  drivers/staging/media/tegra-video/vi.c       | 692 +++++++++++++++++++++++++--
+>  drivers/staging/media/tegra-video/vi.h       |  25 +-
+>  7 files changed, 800 insertions(+), 64 deletions(-)
 
-Yes, it is.
+This and the rest of the patches look sane to me, thanks.
 
-There are two sysfs files to read the current frequency.
-
-- scaling_cur_freq: as you noticed it returns cached value unless it is for
-  setpolicy drivers in whose case cpufreq core doesn't control the frequency and
-  so doesn't cache any values.
-
-- cpuinfo_cur_freq: This will return the value as read from hardware using
-  ->get() callback.
-
--- 
-viresh
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
