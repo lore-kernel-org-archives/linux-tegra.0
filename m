@@ -1,234 +1,105 @@
-Return-Path: <SRS0=O4JP=BN=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=3r2u=BO=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7A0C433EB
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 21:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EFEC433E0
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 01:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A92322CAD
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Aug 2020 21:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596488558;
-	bh=wNAortPHAA6pASw+U8qHcUy9YXqHf1T5fCjZn0oDeAg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WMvw0Yc23wuo2TzyfVXotP3yG3L3W1E1JTOgzeiDKGWQnD1kYCuOR4HARtRT+D8PG
-	 EYvdKemMhGbKGbONTztCL6mMlHeC9Rin30xoCT3Z3hmxAr2EGm/QrrThLQrM73W/XK
-	 cl6V46H7UHpEtfcMtDrIKcZ3XxnIN9Cfxpi39yLw=
+	by mail.kernel.org (Postfix) with ESMTP id 8CC1220786
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 01:39:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729126AbgHCVCh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Aug 2020 17:02:37 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43788 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728570AbgHCVCg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Aug 2020 17:02:36 -0400
-Received: by mail-io1-f65.google.com with SMTP id k23so39951531iom.10;
-        Mon, 03 Aug 2020 14:02:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5V63dl5D15U/c4aTTJinxu1IGbYXot5HyJAyQBAcQN8=;
-        b=lf+K0Ql0HCqhJcyF4kai/etIqiUZ5bNVUJd1+XspolRaUPLVLF6HBHldF/eAGa4TuT
-         pxPeu7ETiPIkjyXkvnU3ZWVZdmXznDyHHSy93nOnTCrIYV2cy9EMWm8FCWdKvKRFDDSj
-         bj95yG17VJ9ktftMRMUw+bhcIOpKW/KbyJqppiMFA8wpr8TkW8D7ozmuY1evdMp484Jq
-         kVog3G7VEvBV+dIiF+cuEHt5FunipPMYC9l+3Pxo4oDYhz+7klGu1zcZ0tydwv08girF
-         uOf7Z2qnsEIfEYSqg6hT/M9BaaVd62Lkk2tTBr6so+m8bb3+CqlPIlE3dQM1Fo1ZD7y+
-         pxAQ==
-X-Gm-Message-State: AOAM533M199Z9L1ErQJW2xeBpdskJyMIwQUIg32k+YS0Kxx2VA2t/H6O
-        86r7O0LE3m2qQzGF9QN+6A==
-X-Google-Smtp-Source: ABdhPJye2Mo2SgL9U7MmsN235jpxm7lOgHdwxN7y4uIMz2vtYYQ/vzsM/p/WbFYNk1hakIOySw24tA==
-X-Received: by 2002:a6b:c504:: with SMTP id v4mr1853953iof.20.1596488554927;
-        Mon, 03 Aug 2020 14:02:34 -0700 (PDT)
-Received: from xps15.herring.priv ([64.188.179.252])
-        by smtp.googlemail.com with ESMTPSA id r6sm9292280iod.7.2020.08.03.14.02.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2020 14:02:34 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@Amlogic.com>
-Subject: [RFC 27/27] PCI: dwc/tegra: Use common Designware port logic register definitions
-Date:   Mon,  3 Aug 2020 15:01:16 -0600
-Message-Id: <20200803210116.3132633-28-robh@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200803210116.3132633-1-robh@kernel.org>
-References: <20200803210116.3132633-1-robh@kernel.org>
+        id S1729377AbgHDBjt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Aug 2020 21:39:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45762 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728867AbgHDBjs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 3 Aug 2020 21:39:48 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9962D526A60D04327E95;
+        Tue,  4 Aug 2020 09:39:46 +0800 (CST)
+Received: from [127.0.0.1] (10.174.179.108) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Tue, 4 Aug 2020
+ 09:39:41 +0800
+Subject: Re: [PATCH -next] media: staging: tegra-vde: Mark
+ tegra_vde_runtime_suspend as __maybe_unused
+To:     Dmitry Osipenko <digetx@gmail.com>, <mchehab@kernel.org>,
+        <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <hverkuil-cisco@xs4all.nl>
+References: <20200803115901.44068-1-yuehaibing@huawei.com>
+ <721b8d01-5d7e-09c6-5f86-705130ab31a9@gmail.com>
+ <e15a688e-934b-82a8-34c5-aac07928fd8f@huawei.com>
+ <95162bdc-2658-30a7-6ed2-63e095244139@gmail.com>
+CC:     <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <f30f49f4-f249-d0de-fcfd-1fc52631a1f5@huawei.com>
+Date:   Tue, 4 Aug 2020 09:39:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
+In-Reply-To: <95162bdc-2658-30a7-6ed2-63e095244139@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.179.108]
+X-CFilter-Loop: Reflected
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Tegra driver has its own defines for common Designware Port Logic
-registers. Convert it to use the standard register definitions.
+On 2020/8/3 22:11, Dmitry Osipenko wrote:
+> 03.08.2020 16:00, Yuehaibing пишет:
+>> On 2020/8/3 20:51, Dmitry Osipenko wrote:
+>>> 03.08.2020 14:59, YueHaibing пишет:
+>>>> If CONFIG_PM is not set, gcc warns:
+>>>>
+>>>> drivers/staging/media/tegra-vde/vde.c:916:12:
+>>>>  warning: 'tegra_vde_runtime_suspend' defined but not used [-Wunused-function]
+>>>>
+>>>> Make it __maybe_unused to fix this.
+>>>>
+>>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>>>> ---
+>>>>  drivers/staging/media/tegra-vde/vde.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
+>>>> index a3c24d96d5b9..2d043d518eef 100644
+>>>> --- a/drivers/staging/media/tegra-vde/vde.c
+>>>> +++ b/drivers/staging/media/tegra-vde/vde.c
+>>>> @@ -913,7 +913,7 @@ static irqreturn_t tegra_vde_isr(int irq, void *data)
+>>>>  	return IRQ_HANDLED;
+>>>>  }
+>>>>  
+>>>> -static int tegra_vde_runtime_suspend(struct device *dev)
+>>>> +static __maybe_unused int tegra_vde_runtime_suspend(struct device *dev)
+>>>>  {
+>>>>  	struct tegra_vde *vde = dev_get_drvdata(dev);
+>>>>  	int err;
+>>>>
+>>>
+>>> Hello Yue,
+>>>
+>>> Shouldn't the tegra_vde_runtime_resume() be marked as well?
+>>
+>> No, tegra_vde_runtime_resume() always be called by tegra_vde_shutdown().
+> 
+> Well.. it's unused, but compiler doesn't complain about runtime_resume()
+> because it sees the potential reference to that function in the code
+> (even that it's a dead code), while runtime_suspend() reference is
+> completely removed by preprocessor before compiler sees the code.
+> 
 
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pci@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/pci/controller/dwc/pcie-designware.h |  6 +++
- drivers/pci/controller/dwc/pcie-tegra194.c   | 56 ++++++++------------
- 2 files changed, 28 insertions(+), 34 deletions(-)
+I see, thanks, will send v2.
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index b18a9a5f48d2..3bd322db69a6 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -32,7 +32,13 @@
- /* Synopsys-specific PCIe configuration registers */
- #define PCIE_PORT_AFR			0x70C
- #define PORT_AFR_N_FTS_MASK		GENMASK(15, 8)
-+#define PORT_AFR_N_FTS(n)		FIELD_PREP(PORT_AFR_N_FTS_MASK, n)
- #define PORT_AFR_CC_N_FTS_MASK		GENMASK(23, 16)
-+#define PORT_AFR_ENTER_ASPM		BIT(30)
-+#define PORT_AFR_L0S_ENTRANCE_LAT_SHIFT	24
-+#define PORT_AFR_L0S_ENTRANCE_LAT_MASK	GENMASK(26, 24)
-+#define PORT_AFR_L1_ENTRANCE_LAT_SHIFT	27
-+#define PORT_AFR_L1_ENTRANCE_LAT_MASK	GENMASK(29, 27)
- 
- #define PCIE_PORT_LINK_CONTROL		0x710
- #define PORT_LINK_DLL_LINK_EN		BIT(5)
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index c567c9c09ff6..ad295c854853 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -183,19 +183,7 @@
- #define EVENT_COUNTER_GROUP_SEL_SHIFT	24
- #define EVENT_COUNTER_GROUP_5		0x5
- 
--#define PORT_LOGIC_ACK_F_ASPM_CTRL			0x70C
--#define ENTER_ASPM					BIT(30)
--#define L0S_ENTRANCE_LAT_SHIFT				24
--#define L0S_ENTRANCE_LAT_MASK				GENMASK(26, 24)
--#define L1_ENTRANCE_LAT_SHIFT				27
--#define L1_ENTRANCE_LAT_MASK				GENMASK(29, 27)
--#define N_FTS_SHIFT					8
--#define N_FTS_MASK					GENMASK(7, 0)
- #define N_FTS_VAL					52
--
--#define PORT_LOGIC_GEN2_CTRL				0x80C
--#define PORT_LOGIC_GEN2_CTRL_DIRECT_SPEED_CHANGE	BIT(17)
--#define FTS_MASK					GENMASK(7, 0)
- #define FTS_VAL						52
- 
- #define PORT_LOGIC_MSI_CTRL_INT_0_EN		0x828
-@@ -401,9 +389,9 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
- 			val |= APPL_CAR_RESET_OVRD_CYA_OVERRIDE_CORE_RST_N;
- 			appl_writel(pcie, val, APPL_CAR_RESET_OVRD);
- 
--			val = dw_pcie_readl_dbi(pci, PORT_LOGIC_GEN2_CTRL);
--			val |= PORT_LOGIC_GEN2_CTRL_DIRECT_SPEED_CHANGE;
--			dw_pcie_writel_dbi(pci, PORT_LOGIC_GEN2_CTRL, val);
-+			val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-+			val |= PORT_LOGIC_SPEED_CHANGE;
-+			dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
- 		}
- 	}
- 
-@@ -694,11 +682,11 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
- 	dw_pcie_writel_dbi(pci, pcie->cfg_link_cap_l1sub, val);
- 
- 	/* Program L0s and L1 entrance latencies */
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL);
--	val &= ~L0S_ENTRANCE_LAT_MASK;
--	val |= (pcie->aspm_l0s_enter_lat << L0S_ENTRANCE_LAT_SHIFT);
--	val |= ENTER_ASPM;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL, val);
-+	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
-+	val &= ~PORT_AFR_L0S_ENTRANCE_LAT_MASK;
-+	val |= (pcie->aspm_l0s_enter_lat << PORT_AFR_L0S_ENTRANCE_LAT_SHIFT);
-+	val |= PORT_AFR_ENTER_ASPM;
-+	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
- }
- 
- static int init_debugfs(struct tegra_pcie_dw *pcie)
-@@ -895,15 +883,15 @@ static void tegra_pcie_prepare_host(struct pcie_port *pp)
- 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
- 
- 	/* Configure FTS */
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL);
--	val &= ~(N_FTS_MASK << N_FTS_SHIFT);
--	val |= N_FTS_VAL << N_FTS_SHIFT;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL, val);
-+	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
-+	val &= ~PORT_AFR_N_FTS_MASK;
-+	val |= PORT_AFR_N_FTS(N_FTS_VAL);
-+	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
- 
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_GEN2_CTRL);
--	val &= ~FTS_MASK;
-+	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-+	val &= ~PORT_LOGIC_N_FTS_MASK;
- 	val |= FTS_VAL;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_GEN2_CTRL, val);
-+	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
- 
- 	/* Enable as 0xFFFF0001 response for CRS */
- 	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT);
-@@ -1820,15 +1808,15 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
- 
- 	/* Configure N_FTS & FTS */
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL);
--	val &= ~(N_FTS_MASK << N_FTS_SHIFT);
--	val |= N_FTS_VAL << N_FTS_SHIFT;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL, val);
-+	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
-+	val &= ~PORT_AFR_N_FTS_MASK;
-+	val |= PORT_AFR_N_FTS(FTS_VAL);
-+	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
- 
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_GEN2_CTRL);
--	val &= ~FTS_MASK;
-+	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-+	val &= ~PORT_LOGIC_N_FTS_MASK;
- 	val |= FTS_VAL;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_GEN2_CTRL, val);
-+	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
- 
- 	/* Configure Max Speed from DT */
- 	if (pcie->max_speed && pcie->max_speed != -EINVAL) {
--- 
-2.25.1
+> Should be nicer to have both suspend and resume functions marked, for
+> consistency, IMO.
+> 
+> .
+> 
 
