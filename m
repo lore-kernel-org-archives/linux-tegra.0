@@ -2,126 +2,107 @@ Return-Path: <SRS0=3r2u=BO=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F78C433DF
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 05:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8441C433DF
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 07:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D83722B40
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 05:58:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A67A2076E
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Aug 2020 07:53:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j512w+pi"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="AQhEyqfX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729845AbgHDF60 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Aug 2020 01:58:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbgHDF60 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Aug 2020 01:58:26 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDDA4C06174A;
-        Mon,  3 Aug 2020 22:58:25 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id g6so29565973ljn.11;
-        Mon, 03 Aug 2020 22:58:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PovWtt/hyyq7GqZJhadvZnSefeeWx2retmil7K8DBl0=;
-        b=j512w+piXkOClqZwk8PPWIIwmv0LZ2ToLx2E5QqSFqoaeD8Z210SHobH0nWqZ457K6
-         37EtTc5wYusFkJcn1CXIOuJFGrldIzv38iLCWPhavlPqOmjjQ1AV7t02LJhB0llWOuD8
-         PXpY45pb4tskFB9KonqhdxBL//A0ASC5mkelYHe4BtAt7ichpEF5SingqlUZLUHVGclZ
-         rW4+Z6zePywYsuwkHH2QF+OCzTGGZGlaxmI7R+31SSUeGC9Mjpaca05Lf9QL7p5BkLpt
-         omzrh6yFiKSIOAJXpO7jP/htzke0kGvBi6eeDRCXNkiAyLhXFE2V40g3sr4dni2+dSxu
-         iDtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PovWtt/hyyq7GqZJhadvZnSefeeWx2retmil7K8DBl0=;
-        b=VrpmcQ7B/7PsxIGd9mCPxu1siXuXtuvCP5q/C5gddfAFCiDvC03qzEFMRBjIjgyImG
-         acj+m5t2mYIXf6WiBzOZY5aMPokbKii4I8PHqE4A8r0cw3G3mmVxVAd/bJIFkz6/jASY
-         w3MIPN3jgbxCzAAfLK0wnH8fkxiV1o3nv4NZsOIzpyhvxhTLfj8alj4m9sjwj+/auDra
-         1IJ8XXELtqpuVxMcgkbru115UliThRXLhzs2anVg8pltEHtLnA8Bh1TFcFChlVd6eYXI
-         2cbcF8OAYormQfK7IpWNzLqKEAoiOLH+o0qaT2WPVCnXLMuA7TJ2YL4LD5GLk6RfglkZ
-         nu6A==
-X-Gm-Message-State: AOAM533GkIzDtRH7yc4Y0DhnJL4ZRGMPCNSFeIawsZ/bVqpUFxJ9DdOc
-        nvuaH9Cx2+ypHiPStaeKEN3zAWfR
-X-Google-Smtp-Source: ABdhPJw+sd1rKTXZJUSBPB0N65PD6421E06QjDff/C5/PXiL1pCUKBh5p9a8YKXRX13MwMy3rIgcRA==
-X-Received: by 2002:a2e:b55c:: with SMTP id a28mr981400ljn.107.1596520704054;
-        Mon, 03 Aug 2020 22:58:24 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-41-50.dynamic.spd-mgts.ru. [94.29.41.50])
-        by smtp.googlemail.com with ESMTPSA id m20sm6546686lfb.72.2020.08.03.22.58.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Aug 2020 22:58:23 -0700 (PDT)
-Subject: Re: [PATCH v2 -next] media: staging: tegra-vde: Mark
- tegra_vde_runtime_suspend/resume as __maybe_unused
-To:     YueHaibing <yuehaibing@huawei.com>, mchehab@kernel.org,
-        gregkh@linuxfoundation.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, hverkuil-cisco@xs4all.nl
-Cc:     linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20200803115901.44068-1-yuehaibing@huawei.com>
- <20200804014137.45444-1-yuehaibing@huawei.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <709889ed-7757-ab5b-53c9-a061ae062d08@gmail.com>
-Date:   Tue, 4 Aug 2020 08:58:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726210AbgHDHxM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Aug 2020 03:53:12 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17401 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbgHDHxM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Aug 2020 03:53:12 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2913b70000>; Tue, 04 Aug 2020 00:52:23 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 04 Aug 2020 00:53:11 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 04 Aug 2020 00:53:11 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 4 Aug
+ 2020 07:53:11 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 4 Aug 2020 07:53:11 +0000
+Received: from amhetre.nvidia.com (Not Verified[10.40.136.162]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f2913e40000>; Tue, 04 Aug 2020 00:53:11 -0700
+From:   Ashish Mhetre <amhetre@nvidia.com>
+To:     <vdumpa@nvidia.com>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+        <swarren@nvidia.com>, <Snikam@nvidia.com>
+CC:     <SW-Mobile-Linux-Upstreaming@exchange.nvidia.com>,
+        <SW-Mobile-Memory-Core@exchange.nvidia.com>,
+        <linux-tegra@vger.kernel.org>, Ashish Mhetre <amhetre@nvidia.com>
+Subject: [PATCH] iommu/dma: Add support for mapping memory as device memory
+Date:   Tue, 4 Aug 2020 13:22:38 +0530
+Message-ID: <1596527558-22566-1-git-send-email-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20200804014137.45444-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1596527543; bh=GKfXmJWpyHbe++ETkC578LGd6aoYwhr4yuRFYgrseTM=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:Content-Type;
+        b=AQhEyqfXD7BD5EcUOFfro46xqobPFxwK7fGn59DVT81QjaaAXMXhzJJ4wgTyD4fy5
+         PPkZMP2OQUP1Nt5tbMo1XJhP1UoJv5ymC6H3NW+y1M1Dpqc/ACyAmufwSeGlcNKtKN
+         bNSv+z4W3st9R+7k4WNyXTH53KbeH7fy77P17AN5aX7XMRTjdw3sEIA+lI98E9mrM3
+         Z/Xn1TVzoN1faH7YHmLphOMUhQ9BBlh06MTCXvrXZsIssWkRjB3NPClqUnOGx1kDAv
+         Q+MUsv9qnejsgP5lv9Dws2OudcnA91jHa2vuc51KHwdxCCHo1E6wWNrxDpNxXWvFuM
+         Mvc5vWCF1aQmA==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-04.08.2020 04:41, YueHaibing пишет:
-> If CONFIG_PM is not set, gcc warns:
-> 
-> drivers/staging/media/tegra-vde/vde.c:916:12:
->  warning: 'tegra_vde_runtime_suspend' defined but not used [-Wunused-function]
-> 
-> Make it __maybe_unused to fix this.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> v2: both suspend and resume functions marked
-> ---
->  drivers/staging/media/tegra-vde/vde.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-> index a3c24d96d5b9..28845b5bafaf 100644
-> --- a/drivers/staging/media/tegra-vde/vde.c
-> +++ b/drivers/staging/media/tegra-vde/vde.c
-> @@ -913,7 +913,7 @@ static irqreturn_t tegra_vde_isr(int irq, void *data)
->  	return IRQ_HANDLED;
->  }
->  
-> -static int tegra_vde_runtime_suspend(struct device *dev)
-> +static __maybe_unused int tegra_vde_runtime_suspend(struct device *dev)
->  {
->  	struct tegra_vde *vde = dev_get_drvdata(dev);
->  	int err;
-> @@ -929,7 +929,7 @@ static int tegra_vde_runtime_suspend(struct device *dev)
->  	return 0;
->  }
->  
-> -static int tegra_vde_runtime_resume(struct device *dev)
-> +static __maybe_unused int tegra_vde_runtime_resume(struct device *dev)
->  {
->  	struct tegra_vde *vde = dev_get_drvdata(dev);
->  	int err;
-> 
+Add DMA_ATTRS_DEVICE_MAP attribute to support mapping memory as device
+memory.
 
-Thanks!
+Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+---
+ drivers/iommu/dma-iommu.c   | 3 +++
+ include/linux/dma-mapping.h | 6 ++++++
+ 2 files changed, 9 insertions(+)
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 65ac889..0e411ef 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -388,6 +388,9 @@ static int dma_info_to_prot(enum dma_data_direction dir, bool coherent,
+ 	if (attrs & DMA_ATTR_PRIVILEGED)
+ 		prot |= IOMMU_PRIV;
+ 
++	if (attrs & DMA_ATTR_DEVICE_MAP)
++		prot |= IOMMU_MMIO;
++
+ 	switch (dir) {
+ 	case DMA_BIDIRECTIONAL:
+ 		return prot | IOMMU_READ | IOMMU_WRITE;
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 330ad58..b0cb1b3 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -68,6 +68,12 @@
+ #define DMA_ATTR_PRIVILEGED		(1UL << 9)
+ 
+ /*
++ * DMA_ATTR_DEVICE_MAP: This specifies DMA-mapping subsystem to map memory
++ * as device memory.
++ */
++#define DMA_ATTR_DEVICE_MAP		(1UL << 10)
++
++/*
+  * A dma_addr_t can hold any valid DMA or bus address for the platform.
+  * It can be given to a device to use as a DMA source or target.  A CPU cannot
+  * reference a dma_addr_t directly because there may be translation between
+-- 
+2.7.4
+
