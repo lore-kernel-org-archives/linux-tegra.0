@@ -2,100 +2,171 @@ Return-Path: <SRS0=0g03=BP=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1C0C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Aug 2020 20:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6540C433E1
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Aug 2020 20:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A5BB22CBB
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Aug 2020 20:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5D6D22CA1
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Aug 2020 20:07:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="V1cn/VmJ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nPuQK4ea"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729764AbgHEUGp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:06:45 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5821 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbgHEQeg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Aug 2020 12:34:36 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2ad57f0001>; Wed, 05 Aug 2020 08:51:28 -0700
+        id S1726316AbgHEUHW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Aug 2020 16:07:22 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15177 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbgHEQeG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Aug 2020 12:34:06 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2adf640000>; Wed, 05 Aug 2020 09:33:40 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 05 Aug 2020 08:52:17 -0700
+  Wed, 05 Aug 2020 09:33:53 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 05 Aug 2020 08:52:17 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Aug
- 2020 15:52:17 +0000
-Received: from [127.0.1.1] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 5 Aug 2020 15:52:08 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.4 00/86] 5.4.56-rc3 review
-In-Reply-To: <20200804085225.402560650@linuxfoundation.org>
-References: <20200804085225.402560650@linuxfoundation.org>
-X-NVConfidentiality: public
+        by hqpgpgate101.nvidia.com on Wed, 05 Aug 2020 09:33:53 -0700
+Received: from [10.2.172.190] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Aug
+ 2020 16:33:53 +0000
+Subject: Re: [PATCH v8 08/10] gpu: host1x: mipi: Keep MIPI clock enabled till
+ calibration is done
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
+        <helen.koike@collabora.com>, <gregkh@linuxfoundation.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
+ <1596469346-937-9-git-send-email-skomatineni@nvidia.com>
+ <20200805134600.GA3351349@ulmo>
+ <103efe31-1abc-54f2-6004-490d7bb1b61a@gmail.com>
+ <dcd58ae7-58ed-11d1-0e10-7f522b651b30@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <addb92e5-7c7a-6fba-117d-c7880b2d4597@nvidia.com>
+Date:   Wed, 5 Aug 2020 09:33:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Message-ID: <efd7e42499764fe5aa4242316e6d83bd@HQMAIL107.nvidia.com>
-Date:   Wed, 5 Aug 2020 15:52:08 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <dcd58ae7-58ed-11d1-0e10-7f522b651b30@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596642688; bh=attfFQzfqWtAY+0kRxsEgEK/RqLVKg1BG1c4/dMXoHk=;
-        h=X-PGP-Universal:From:To:CC:Subject:In-Reply-To:References:
-         X-NVConfidentiality:MIME-Version:Message-ID:Date:Content-Type:
-         Content-Transfer-Encoding;
-        b=V1cn/VmJXonkxu9bdB3LcBAj3o7YyvjP8GLFXX7veMTKP0UydTxdf5hd8qKYYIJF3
-         kHdOGb8FxD54OS3uwPcewKCH5qV//aCGRYSBchKghs/rZsO/A8aP2Lbp7klHfHgSjn
-         kJ4g2B8dnpWaCNWPG3wo4tMTKIpFrXXNY71qV3SleTQ6Ka2CBZVnK0raLxSli0t4Mw
-         GXpoSPAikR+Lez0r/pMTR+PjRWDO5Bu2zKj4v3+XArnKjAyguW738cZwzEKG6yEW8P
-         iiotrfnWZdZsV0t0Vs+S/5CXRLPuGi8k3wJok1fu0xrdXvZ4PEXOIgywqvF8c+Lz7a
-         qYQByTsEnRa7Q==
+        t=1596645220; bh=X5zEu6vUXobqBcWHY7aaMnj5mp+hKk0lRFA0MhBpjdw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=nPuQK4eaWgFlwk7/vscxJYA0OVSW7M2yfsfpDKz7kRU5zT0VexC2rUVHuBsKNMUsV
+         kjRTmX9Qh/kiRlOZ0BFAmPOLDLrYCPZK8oPzS+uiksdWR36LN9Wd7EgzEuWzSKJ58y
+         lFIJOCz/EU1/0T3fhP1kX497iXKKEmizr/muMZa9Xky0yeRfrXrCKv/+IBPAMLfm67
+         qCssOIui/sHjGkL3CY/l3u/IgMsuEXPWzNT5N/6BUcN1IHykJLQkmMMQMtHw9pWTmj
+         6bzvNXbPqFmNi82DOfZ1znh0cR0C/PABI4AoX+w7KgGXK3FeidCnRFxfMSqK4qn9pD
+         eofJXi6fZl8Xw==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 04 Aug 2020 10:53:41 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.56 release.
-> There are 86 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 06 Aug 2020 08:51:59 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.56-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+On 8/5/20 7:19 AM, Dmitry Osipenko wrote:
+> 05.08.2020 17:05, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> 05.08.2020 16:46, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> On Mon, Aug 03, 2020 at 08:42:24AM -0700, Sowjanya Komatineni wrote:
+>>>> With the split of MIPI calibration into tegra_mipi_calibrate() and
+>>>> tegra_mipi_wait(), MIPI clock is not kept enabled till the calibration
+>>>> is done.
+>>>>
+>>>> So, this patch skips disabling MIPI clock after triggering start of
+>>>> calibration and disables it only after waiting for done status from
+>>>> the calibration logic.
+>>>>
+>>>> This patch renames tegra_mipi_calibrate() as tegra_mipi_start_calibrat=
+ion()
+>>>> and tegra_mipi_wait() as tegra_mipi_finish_calibration() to be inline
+>>>> with their usage.
+>>>>
+>>>> As MIPI clock is left enabled and in case of any failures with CSI inp=
+ut
+>>>> streaming tegra_mipi_finish_calibration() will not get invoked.
+>>>> So added new API tegra_mipi_cancel_calibration() which disables MIPI c=
+lock
+>>>> and consumer drivers can call this in such cases.
+>>>>
+>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>   drivers/gpu/drm/tegra/dsi.c |  4 ++--
+>>>>   drivers/gpu/host1x/mipi.c   | 19 ++++++++++---------
+>>>>   include/linux/host1x.h      |  5 +++--
+>>>>   3 files changed, 15 insertions(+), 13 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+>>>> index 3820e8d..a7864e9 100644
+>>>> --- a/drivers/gpu/drm/tegra/dsi.c
+>>>> +++ b/drivers/gpu/drm/tegra/dsi.c
+>>>> @@ -694,11 +694,11 @@ static int tegra_dsi_pad_calibrate(struct tegra_=
+dsi *dsi)
+>>>>   		DSI_PAD_PREEMP_PD(0x03) | DSI_PAD_PREEMP_PU(0x3);
+>>>>   	tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_3);
+>>>>  =20
+>>>> -	err =3D tegra_mipi_calibrate(dsi->mipi);
+>>>> +	err =3D tegra_mipi_start_calibration(dsi->mipi);
+>>>>   	if (err < 0)
+>>>>   		return err;
+>>>>  =20
+>>>> -	return tegra_mipi_wait(dsi->mipi);
+>>>> +	return tegra_mipi_finish_calibration(dsi->mipi);
+>>>>   }
+>>>>  =20
+>>>>   static void tegra_dsi_set_timeout(struct tegra_dsi *dsi, unsigned lo=
+ng bclk,
+>>>> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+>>>> index e606464..b15ab6e 100644
+>>>> --- a/drivers/gpu/host1x/mipi.c
+>>>> +++ b/drivers/gpu/host1x/mipi.c
+>>>> @@ -293,17 +293,19 @@ int tegra_mipi_disable(struct tegra_mipi_device =
+*dev)
+>>>>   }
+>>>>   EXPORT_SYMBOL(tegra_mipi_disable);
+>>>>  =20
+>>>> -int tegra_mipi_wait(struct tegra_mipi_device *device)
+>>>> +void tegra_mipi_cancel_calibration(struct tegra_mipi_device *device)
+>>>> +{
+>>>> +	clk_disable(device->mipi->clk);
+>>> Do we need to do anything with the MIPI_CAL_CTRL and MIPI_CAL_STATUS
+>>> registers here? We don't clear the START bit in the former when the
+>>> calibration has successfully finished, but I suspect that's because
+>>> the bit is self-clearing. But I wonder if we still need to clear it
+>>> upon cancellation to make sure the calibration does indeed stop.
+>> Apparently there is no way to explicitly stop calibration other than to
+>> reset MIPI calibration block, but Sowjanya says this is unnecessary.
+>>
+>> Perhaps having a fixed delay before disabling clock could be enough to
+>> ensure that calibration is stopped before the clock is disabled?
+>>
+> Actually, there is a MIPI_CAL_ACTIVE bit in the status register. Maybe
+> it needs to be polled until it's unset?
 
-Test results for stable-v5.4:
-    11 builds:	11 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    56 tests:	56 pass, 0 fail
+Confirmed with HW design team during this patch update.
 
-Linux version:	5.4.56-rc3-g47b594b8993f
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+SW does not need to clear START bit and only write 1 takes effect to=20
+that bit.
 
-Jon
+Also, no need to have delay or do any other register settings unclear as=20
+its FSM and there's nothing to get stuck.
+
+Also it goes thru small finite set of codes and by the time sensor=20
+programming happens for enabling streaming FSM will finish its=20
+calibration sequence much early and it will only wait for pads LP-11.
+
+So, during cancel we only need disable MIPI clock.
+
