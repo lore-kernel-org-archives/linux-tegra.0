@@ -2,127 +2,131 @@ Return-Path: <SRS0=WNzV=BQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A26DC433DF
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9EBC433E1
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60A01206B2
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB81F20716
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:02:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iZKuG+9V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMJixMjk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbgHFR7V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 13:59:21 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3127 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726899AbgHFR7V (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 13:59:21 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2bfd290001>; Thu, 06 Aug 2020 05:52:57 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 06 Aug 2020 05:54:37 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 06 Aug 2020 05:54:37 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
- 2020 12:54:36 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 6 Aug 2020 12:54:36 +0000
-Received: from moonraker.nvidia.com (Not Verified[10.26.73.183]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f2bfd890000>; Thu, 06 Aug 2020 05:54:35 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] rtc: max77686: Fix wake-ups for max77620
-Date:   Thu, 6 Aug 2020 13:54:31 +0100
-Message-ID: <20200806125431.699339-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        id S1726927AbgHFSB7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 14:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54522 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbgHFSB6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 14:01:58 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D589AC061574;
+        Thu,  6 Aug 2020 11:01:57 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id 185so42546056ljj.7;
+        Thu, 06 Aug 2020 11:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nC6bIifiB0m9GgpZqLSDdegfh971mx8D+ZFry44Vgyg=;
+        b=dMJixMjkM7CSJSyxjgTApWh7J7oNc/SeU+mP5yx4NaTxdUyaV8Y1S0lo/1eGjxtvgY
+         h4Z5FGgRE9Fn/e9vYhDyNTsJ8No5dMUfH2B044c5Kdi+JTWLQWQTsPBHS0D4zFH6N3rC
+         Xaip+oLnU1WSZoTsNo3tfDWahNDPE4rlWvUc1gRIUGHrX94B3VZng9Lt0pBcx9NWK4QF
+         4EmKr+B/LcaExTCmUPog0RHo4aLxVbXtIIHIFwhUX85CLIe8ZtTkjj3pAVDwXpaXLEue
+         kFRXzoFGloavOd4AU76jH+aEQ/Wz/5jXe4Ynr3apXl6stJP73TVgyyKWqTC/nRYPDY4i
+         vYsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nC6bIifiB0m9GgpZqLSDdegfh971mx8D+ZFry44Vgyg=;
+        b=Izw62bn2ia8AGcdaGgPlK9aCn5UKAvisBeZ2RorKvNsDqs530/mEWo82f6F1dQoHdM
+         FvlNsR7h5ZF5yjCSjn9sXqVVTSBMg++hIWaxYx4HAGfOM4iNDoUn8keZpykxtfE+TSQU
+         JI/RpiOTn/o8VRYesTbZFM7mHiktLEz8CqQCHFH9AgFu9/vwuukjZsiYMAFw/YQJZDuQ
+         T6sslE+i3R+K3figNmOv0VcotVm9HW8WCSQ5b25T6UmOWFfStVM8HORyuqk8NjtDuC8V
+         jPHVoVfmQXT7X59p5Bhb8Iow7jrZogcqcQf1egcGyHQAz8Ai+xJez6rXiaKRPDMbzIS4
+         b45Q==
+X-Gm-Message-State: AOAM531o2RBxj4ez2VO6B51nsCJUMrUVo9j1tV+PdVeVJ8EOr4ij/NfS
+        Fp1HBWKtd8ruUYMlq4fn0gC09wM2
+X-Google-Smtp-Source: ABdhPJzbmvQzRPPDUcSffbA5/CS5O80R5aVxdvh38T5M5Is8gZiMqa+a3FaRxJlTr+WIYqizEDpuUg==
+X-Received: by 2002:a2e:9852:: with SMTP id e18mr4417122ljj.415.1596736916086;
+        Thu, 06 Aug 2020 11:01:56 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-41-50.dynamic.spd-mgts.ru. [94.29.41.50])
+        by smtp.googlemail.com with ESMTPSA id u5sm3027762lfi.91.2020.08.06.11.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Aug 2020 11:01:55 -0700 (PDT)
+Subject: Re: [PATCH v8 08/10] gpu: host1x: mipi: Keep MIPI clock enabled till
+ calibration is done
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl,
+        sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com,
+        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
+ <addb92e5-7c7a-6fba-117d-c7880b2d4597@nvidia.com>
+ <ed80bf2f-213f-286a-59b2-fc85e4181b3d@gmail.com>
+ <6eede805-80fd-016f-22f8-b6d25f6587af@nvidia.com>
+ <1c12e40e-de7f-0599-a941-82760b4c7668@gmail.com>
+ <9ef0b875-e826-43e2-207e-168d2081ff6a@nvidia.com>
+ <4689cfe9-e7c4-48bf-217f-3a31b59b8bda@nvidia.com>
+ <0e78c5ca-c529-1e98-891d-30351c9aae81@gmail.com>
+ <b2098a68-d02f-b406-fc57-56e3ff5d8d1a@nvidia.com>
+ <309e3b66-9288-91ef-71b4-be73eacbbd62@nvidia.com>
+ <fde2431a-0585-ac32-ac25-73e198aaa948@nvidia.com>
+ <4025a458-fa78-924d-c84f-166f82df0f8e@gmail.com>
+ <4f15d655-3d62-cf9f-82da-eae379d60fa6@nvidia.com>
+ <b5612e93-f1c4-4762-baa1-5d85eb1edbe1@gmail.com>
+ <412f8c53-1aca-db31-99a1-a0ecb2081ca5@nvidia.com>
+ <61275bd6-58e7-887f-aa7d-8e60895e7b2b@nvidia.com>
+ <6ff57c38-9847-42b0-643b-0d167c13779f@gmail.com>
+ <c6ef5e77-2b0a-1712-ca58-dbd8d232e1f1@nvidia.com>
+ <ed79b201-85ba-f725-c5fa-fcde0761bc3d@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <26ed2841-db5d-aeb0-11c7-cbe2ddd1d76b@gmail.com>
+Date:   Thu, 6 Aug 2020 21:01:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596718377; bh=HvOnCueSYaWkbR/lK4/JjyTNelcuLb3sqOohz8d9Wgk=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
-         Content-Type;
-        b=iZKuG+9V2GSEnYBHLIuTX7/GI49h/PYN0JI+D19w3Am19SRs+06evOrkm2BwvJTmB
-         63QhahVCwdlvttes8rLWKGxClzNgn1p4i7ERyhRkPEhC2otKCwhf5LgtaTrI6FxQJJ
-         Mt7Ks9g0zVfCwYaSP7HdlEHc4YH5thy3JZYInIMw3uLEnDeIkxtBCxYPS8ZT4j+LUI
-         Qv6Iwu3/QiPhcYYuiDhxFrg4PNAD4CUSjpcTU+W0VX6BQWKHVBJDT5NxLqjWdUnCbN
-         zoIW0LVGJ0rfQPun9qoBJxIz9dMwXrYYWSkhzPBqAkzLJvq1LocSJpwqx+dqeXMKEE
-         Q8bA+ypgsh4wg==
+In-Reply-To: <ed79b201-85ba-f725-c5fa-fcde0761bc3d@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Following commit d8f090dbeafd ("rtc: max77686: Do not allow interrupt to
-fire before system resume"), RTC wake-ups stopped working on Jetson TX2
-and Jetson Xavier platforms. The Jetson TX2 uses the max77620 PMIC and
-the Jetson Xavier uses max20024 PMIC. Both of these PMICs have the same
-max77620 RTC controller.
+06.08.2020 20:52, Sowjanya Komatineni пишет:
+...
+> Right mutex_unlock should happen at end of finish_calibration.
+> 
+> With keeping mutex locked in start, we dont have to check for active to
+> be 0 to issue start as mutex will keep it locked and other pads
+> calibration can only go thru when current one is done.
+> 
+> So instead of below sequence, its simpler to do this way?
+> 
+> start_calibration()
+> 
+> - mutex_lock
+> 
+> - wait for 72uS after start
+> 
+> finish_calibration()
+> 
+> - keep check for ACTIVE = 0 and DONE = 1
 
-For the max77620 RTC, the variable 'rtc_irq_from_platform' is defined as
-true in the max77686 driver and because of this the IRQ passed to the
-max77686 driver for RTC is the PMIC IRQ and not the parent. Hence,
-following commit d8f090dbeafd ("rtc: max77686: Do not allow interrupt to
-fire before system resume"), for the max77620 the RTC IRQ within the
-PMIC is now getting disabled on entry to suspend and unable to wake the
-system up. Fix this by only disabling interrupts on entry to suspend
-in the max77686 RTC driver, if the interrupt is the parent interrupt.
+I think only the DONE bits which correspond to the mipi_device->pads
+bitmask should be awaited.
 
-Fixes: d8f090dbeafd ("rtc: max77686: Do not allow interrupt to fire before =
-system resume")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/rtc/rtc-max77686.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+> - mutex_unlock()
 
-diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
-index 645de5af707b..d51cc12114cb 100644
---- a/drivers/rtc/rtc-max77686.c
-+++ b/drivers/rtc/rtc-max77686.c
-@@ -815,13 +815,15 @@ static int max77686_rtc_suspend(struct device *dev)
- 	}
-=20
- 	/*
--	 * Main IRQ (not virtual) must be disabled during suspend because if it
--	 * happens while suspended it will be handled before resuming I2C.
-+	 * If the main IRQ (not virtual) is the parent IRQ, then it must be
-+	 * disabled during suspend because if it happens while suspended it
-+	 * will be handled before resuming I2C.
- 	 *
- 	 * Since Main IRQ is shared, all its users should disable it to be sure
- 	 * it won't fire while one of them is still suspended.
- 	 */
--	disable_irq(info->rtc_irq);
-+	if (!info->drv_data->rtc_irq_from_platform)
-+		disable_irq(info->rtc_irq);
-=20
- 	return ret;
- }
-@@ -830,7 +832,8 @@ static int max77686_rtc_resume(struct device *dev)
- {
- 	struct max77686_rtc_info *info =3D dev_get_drvdata(dev);
-=20
--	enable_irq(info->rtc_irq);
-+	if (!info->drv_data->rtc_irq_from_platform)
-+		enable_irq(info->rtc_irq);
-=20
- 	if (device_may_wakeup(dev)) {
- 		struct max77686_rtc_info *info =3D dev_get_drvdata(dev);
---=20
-2.25.1
+Perhaps the start_calibration() also needs to be changed to not touch
+the MIPI_CAL_CONFIG bits of the unrelated pads?
 
+Otherwise sounds good to me.
