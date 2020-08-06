@@ -2,112 +2,238 @@ Return-Path: <SRS0=WNzV=BQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE66C433DF
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CECC433DF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40C4D221E2
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:46:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ADA8206C3
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:48:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TrMpilwZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pg3dkv4M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbgHFRpX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 13:45:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41292 "EHLO
+        id S1730524AbgHFRsg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 13:48:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729048AbgHFQii (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 12:38:38 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF47C0A8937;
-        Thu,  6 Aug 2020 09:37:52 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id i10so17745342ljn.2;
-        Thu, 06 Aug 2020 09:37:51 -0700 (PDT)
+        with ESMTP id S1728851AbgHFQfR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 12:35:17 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F89CC002162;
+        Thu,  6 Aug 2020 09:04:22 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id b18so4400185edv.10;
+        Thu, 06 Aug 2020 09:04:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4Q0WTpvCCL+6Pe1EDwbYvKPkRlKq8z+DxxZ7AeLCJVg=;
-        b=TrMpilwZ9M4MwreBNnwma2VJI2q26VefA0WuFvLmreCsroIk7jwLukMoCftKuFEuhS
-         HjGOlFlw/dYW35bodmQ6KKv0WGlQYjZH/XbqPrpMGhlaVF9lk6rQoZeA7tpKXz4kOSlg
-         XyZx8DGJYmazif0infQGFLCmFl+o4w8GFZHCaIKFlhIlY0sdWoZEjWMO0w1it2SS4fwk
-         gbYGX6VbT0MA5LPdQq8Wpt6+s3LMoJcTIfMqzpPDgBIrs29E48gURdn0VRoshdUsYcKo
-         AIWWxTFDiyb0GIaIchp1SJDjiTtVTWZc0IECA4QTnL5L+aidt2pZTIoFIoZO4YWqrQNG
-         7wdg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kZTh0PB6PtKkLmDSXAVhkUVZ2z542iKjjb2bge0x2uk=;
+        b=pg3dkv4MzAI4Vu5ecucgFGw78gwbzmI6iFNufzUy2Y9bX4U+MpEOvwWztz/Kr7NOpu
+         xtpjEUtJroaxQvp3Wyi5+D8C4VEfvJb0UTXMBshW76X9ox4sp+KuoPobM/0tJMW+COjX
+         2cJ1jHU9SESSA77GtlVxxauA1toSZHcaEfJ6sf77ihymwZ5ecD+W6fsyN3RmpnIG8J0l
+         Fxyy7FGyHYIgGv8YnfUIjgUOln56C/xs9Laon1VIVux7pkSZn8LFx/IjZH6HYhnPdxNA
+         973wA7+KuPyRFjtGEzITS2phpbPrIme1DqwooH+sCogjL/f5fPbY3voQvcDopdAYr425
+         +QcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=4Q0WTpvCCL+6Pe1EDwbYvKPkRlKq8z+DxxZ7AeLCJVg=;
-        b=BxIJiPKdwoPV/iH0CQVNCPjmD5sSMC8rZEils/HQegH/+r9BYoX83aM3t6qzO1BOcH
-         GI5OjO7eV1WCpSTORZpE0oMXvnmU99cSqn7Vvkiv4F9fKcCQIZx8wUqDNYfEW2JhT6VS
-         V+e17ygsHe2FiEkIwn4pUukkzAPJqXGp291qytKWA+8Ahg8HMmENOFFK/m6/Zec9Gy00
-         STQnD6Bn8XO20nQUx0JTUbuj9YIV81tFJ5ERTpRkIECVhOR0QXWPhuj6fPj/7H74+j83
-         fRdZ+TRNvonSG2kxCfjxJ3MRG1DlgJkqhoAK4SbtGm1NmYUvwSyLH81vvVmgYYzU0HdY
-         UhCw==
-X-Gm-Message-State: AOAM532GDQkSMSeCEOPd+ROYfgtaq9npF73iIa3Jeo/UqTHgp8qv71f6
-        c5eB4cJhseWQQF0kdoDKGGyAmqVb
-X-Google-Smtp-Source: ABdhPJx4ujwkV04InWB60thG1oTCOQyv6u1R0K+P5Nf1ivz2mWIs/0ZQn9L5vQD/xYaS9UXOT+8p8w==
-X-Received: by 2002:a05:651c:330:: with SMTP id b16mr4315610ljp.77.1596731868683;
-        Thu, 06 Aug 2020 09:37:48 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-41-50.dynamic.spd-mgts.ru. [94.29.41.50])
-        by smtp.googlemail.com with ESMTPSA id e14sm2613354ljl.96.2020.08.06.09.37.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Aug 2020 09:37:47 -0700 (PDT)
-Subject: Re: [PATCH v8 08/10] gpu: host1x: mipi: Keep MIPI clock enabled till
- calibration is done
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com,
-        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
- <1596469346-937-9-git-send-email-skomatineni@nvidia.com>
- <20200805134600.GA3351349@ulmo>
- <103efe31-1abc-54f2-6004-490d7bb1b61a@gmail.com>
- <dcd58ae7-58ed-11d1-0e10-7f522b651b30@gmail.com>
- <addb92e5-7c7a-6fba-117d-c7880b2d4597@nvidia.com>
- <ed80bf2f-213f-286a-59b2-fc85e4181b3d@gmail.com>
- <6eede805-80fd-016f-22f8-b6d25f6587af@nvidia.com>
- <1c12e40e-de7f-0599-a941-82760b4c7668@gmail.com>
- <9ef0b875-e826-43e2-207e-168d2081ff6a@nvidia.com>
- <4689cfe9-e7c4-48bf-217f-3a31b59b8bda@nvidia.com>
- <0e78c5ca-c529-1e98-891d-30351c9aae81@gmail.com>
- <b2098a68-d02f-b406-fc57-56e3ff5d8d1a@nvidia.com>
- <309e3b66-9288-91ef-71b4-be73eacbbd62@nvidia.com>
- <fde2431a-0585-ac32-ac25-73e198aaa948@nvidia.com>
- <4025a458-fa78-924d-c84f-166f82df0f8e@gmail.com>
- <4f15d655-3d62-cf9f-82da-eae379d60fa6@nvidia.com>
- <9deaee09-c422-5694-7c19-d85354b9b703@gmail.com>
-Message-ID: <14793e8c-30dc-5cf5-fdf9-6f64fa433818@gmail.com>
-Date:   Thu, 6 Aug 2020 19:37:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=kZTh0PB6PtKkLmDSXAVhkUVZ2z542iKjjb2bge0x2uk=;
+        b=o90kZ3ov1bFQzhUM8ur2e35doBjJ/W4u88XjzteS1r2H2BqR/QYV7+5j20w9ik5rzs
+         NkReO0Pr8dyUs4BBqw3tQ0PjjwmwDxcXczsPHd+AmzxBq1Xgw0ScU/4BCm3xz6NQVEda
+         VAJPwYXKYaTwpR/k6/MGjX/Tbw0+hmmGvhWStSihUqoLWNAuaudx4tHe8wywTTLgnnBa
+         FKuEtr4lN6gmrN0D4kwu3Ki6rkyEvz2THivVAV5rs0CEL0YUu/fCm/nGm2ilXJbJW7+i
+         DJI0OWWNLd98/iEEdS/aAURI4NmUMmqg/60vAkFcVosQWTwumMgtN3q8YF/Gr3sbhdZK
+         5LeA==
+X-Gm-Message-State: AOAM532wfsx2CTsAI11VqPWreCVCXaCHJLmJEdUGUIKeNn9qIYfAd5b3
+        TQ8OZvrsmU4PPx4eIrhLBKA=
+X-Google-Smtp-Source: ABdhPJzSfarPrINxyfBxN7O8FB+1XmqNpoBkjHDOIgn+Hcw4GEthMJtAUMIwNZblwph/Ue9nS5ik0g==
+X-Received: by 2002:a50:ba84:: with SMTP id x4mr4954155ede.282.1596729860361;
+        Thu, 06 Aug 2020 09:04:20 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id bx22sm4051834ejc.18.2020.08.06.09.04.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Aug 2020 09:04:18 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 1/3] usb: gadget: tegra-xudc: Use consistent spelling and formatting
+Date:   Thu,  6 Aug 2020 18:04:15 +0200
+Message-Id: <20200806160417.3937056-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <9deaee09-c422-5694-7c19-d85354b9b703@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-06.08.2020 19:13, Dmitry Osipenko пишет:
-> 06.08.2020 18:59, Sowjanya Komatineni пишет:
-> ..
->> We cant use active status check for specific pads under calibration.
->> This is common bit for all pads.
-> 
-> I'm not sure why this is a problem.
-> 
+From: Thierry Reding <treding@nvidia.com>
 
-IIUC, the start_calibration() should wait for the MIPI_CAL_STATUS_ACTIVE
-and finish_calibration() should wait for MIPI_AUTO_CAL_DONE_CSIA/B.
+Make sure to use consistent spelling and formatting in error messages.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/usb/gadget/udc/tegra-xudc.c | 36 ++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index d6ff68c06911..ec43081f15bd 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -705,11 +705,11 @@ static void tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
+ 
+ 	err = phy_power_on(xudc->curr_utmi_phy);
+ 	if (err < 0)
+-		dev_err(xudc->dev, "utmi power on failed %d\n", err);
++		dev_err(xudc->dev, "UTMI power on failed: %d\n", err);
+ 
+ 	err = phy_power_on(xudc->curr_usb3_phy);
+ 	if (err < 0)
+-		dev_err(xudc->dev, "usb3 phy power on failed %d\n", err);
++		dev_err(xudc->dev, "USB3 PHY power on failed: %d\n", err);
+ 
+ 	dev_dbg(xudc->dev, "device mode on\n");
+ 
+@@ -759,11 +759,11 @@ static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
+ 
+ 	err = phy_power_off(xudc->curr_utmi_phy);
+ 	if (err < 0)
+-		dev_err(xudc->dev, "utmi_phy power off failed %d\n", err);
++		dev_err(xudc->dev, "UTMI PHY power off failed: %d\n", err);
+ 
+ 	err = phy_power_off(xudc->curr_usb3_phy);
+ 	if (err < 0)
+-		dev_err(xudc->dev, "usb3_phy power off failed %d\n", err);
++		dev_err(xudc->dev, "USB3 PHY power off failed: %d\n", err);
+ 
+ 	pm_runtime_put(xudc->dev);
+ }
+@@ -1539,7 +1539,7 @@ static int __tegra_xudc_ep_set_halt(struct tegra_xudc_ep *ep, bool halt)
+ 		return -EINVAL;
+ 
+ 	if (usb_endpoint_xfer_isoc(ep->desc)) {
+-		dev_err(xudc->dev, "can't halt isoc EP\n");
++		dev_err(xudc->dev, "can't halt isochronous EP\n");
+ 		return -ENOTSUPP;
+ 	}
+ 
+@@ -1788,7 +1788,7 @@ static int __tegra_xudc_ep_enable(struct tegra_xudc_ep *ep,
+ 
+ 	if (usb_endpoint_xfer_isoc(desc)) {
+ 		if (xudc->nr_isoch_eps > XUDC_MAX_ISOCH_EPS) {
+-			dev_err(xudc->dev, "too many isoch endpoints\n");
++			dev_err(xudc->dev, "too many isochronous endpoints\n");
+ 			return -EBUSY;
+ 		}
+ 		xudc->nr_isoch_eps++;
+@@ -3509,7 +3509,7 @@ static int tegra_xudc_phy_get(struct tegra_xudc *xudc)
+ 		if (IS_ERR(xudc->utmi_phy[i])) {
+ 			err = PTR_ERR(xudc->utmi_phy[i]);
+ 			if (err != -EPROBE_DEFER)
+-				dev_err(xudc->dev, "failed to get usb2-%d phy: %d\n",
++				dev_err(xudc->dev, "failed to get usb2-%d PHY: %d\n",
+ 					i, err);
+ 
+ 			goto clean_up;
+@@ -3539,12 +3539,12 @@ static int tegra_xudc_phy_get(struct tegra_xudc *xudc)
+ 		if (IS_ERR(xudc->usb3_phy[i])) {
+ 			err = PTR_ERR(xudc->usb3_phy[i]);
+ 			if (err != -EPROBE_DEFER)
+-				dev_err(xudc->dev, "failed to get usb3-%d phy: %d\n",
++				dev_err(xudc->dev, "failed to get usb3-%d PHY: %d\n",
+ 					usb3, err);
+ 
+ 			goto clean_up;
+ 		} else if (xudc->usb3_phy[i])
+-			dev_dbg(xudc->dev, "usb3_phy-%d registered", usb3);
++			dev_dbg(xudc->dev, "usb3-%d PHY registered", usb3);
+ 	}
+ 
+ 	return err;
+@@ -3577,13 +3577,13 @@ static int tegra_xudc_phy_init(struct tegra_xudc *xudc)
+ 	for (i = 0; i < xudc->soc->num_phys; i++) {
+ 		err = phy_init(xudc->utmi_phy[i]);
+ 		if (err < 0) {
+-			dev_err(xudc->dev, "utmi phy init failed: %d\n", err);
++			dev_err(xudc->dev, "UTMI PHY #%u initialization failed: %d\n", i, err);
+ 			goto exit_phy;
+ 		}
+ 
+ 		err = phy_init(xudc->usb3_phy[i]);
+ 		if (err < 0) {
+-			dev_err(xudc->dev, "usb3 phy init failed: %d\n", err);
++			dev_err(xudc->dev, "USB3 PHY #%u initialization failed: %d\n", i, err);
+ 			goto exit_phy;
+ 		}
+ 	}
+@@ -3696,14 +3696,14 @@ static int tegra_xudc_powerdomain_init(struct tegra_xudc *xudc)
+ 								"dev");
+ 	if (IS_ERR(xudc->genpd_dev_device)) {
+ 		err = PTR_ERR(xudc->genpd_dev_device);
+-		dev_err(dev, "failed to get dev pm-domain: %d\n", err);
++		dev_err(dev, "failed to get device power domain: %d\n", err);
+ 		return err;
+ 	}
+ 
+ 	xudc->genpd_dev_ss = dev_pm_domain_attach_by_name(dev, "ss");
+ 	if (IS_ERR(xudc->genpd_dev_ss)) {
+ 		err = PTR_ERR(xudc->genpd_dev_ss);
+-		dev_err(dev, "failed to get superspeed pm-domain: %d\n", err);
++		dev_err(dev, "failed to get SuperSpeed power domain: %d\n", err);
+ 		return err;
+ 	}
+ 
+@@ -3711,7 +3711,7 @@ static int tegra_xudc_powerdomain_init(struct tegra_xudc *xudc)
+ 					       DL_FLAG_PM_RUNTIME |
+ 					       DL_FLAG_STATELESS);
+ 	if (!xudc->genpd_dl_device) {
+-		dev_err(dev, "adding usb device device link failed!\n");
++		dev_err(dev, "failed to add USB device link\n");
+ 		return -ENODEV;
+ 	}
+ 
+@@ -3719,7 +3719,7 @@ static int tegra_xudc_powerdomain_init(struct tegra_xudc *xudc)
+ 					     DL_FLAG_PM_RUNTIME |
+ 					     DL_FLAG_STATELESS);
+ 	if (!xudc->genpd_dl_ss) {
+-		dev_err(dev, "adding superspeed device link failed!\n");
++		dev_err(dev, "failed to add SuperSpeed device link\n");
+ 		return -ENODEV;
+ 	}
+ 
+@@ -3783,7 +3783,7 @@ static int tegra_xudc_probe(struct platform_device *pdev)
+ 	err = devm_clk_bulk_get(&pdev->dev, xudc->soc->num_clks,
+ 				      xudc->clks);
+ 	if (err) {
+-		dev_err(xudc->dev, "failed to request clks %d\n", err);
++		dev_err(xudc->dev, "failed to request clocks: %d\n", err);
+ 		return err;
+ 	}
+ 
+@@ -3798,7 +3798,7 @@ static int tegra_xudc_probe(struct platform_device *pdev)
+ 	err = devm_regulator_bulk_get(&pdev->dev, xudc->soc->num_supplies,
+ 				      xudc->supplies);
+ 	if (err) {
+-		dev_err(xudc->dev, "failed to request regulators %d\n", err);
++		dev_err(xudc->dev, "failed to request regulators: %d\n", err);
+ 		return err;
+ 	}
+ 
+@@ -3808,7 +3808,7 @@ static int tegra_xudc_probe(struct platform_device *pdev)
+ 
+ 	err = regulator_bulk_enable(xudc->soc->num_supplies, xudc->supplies);
+ 	if (err) {
+-		dev_err(xudc->dev, "failed to enable regulators %d\n", err);
++		dev_err(xudc->dev, "failed to enable regulators: %d\n", err);
+ 		goto put_padctl;
+ 	}
+ 
+-- 
+2.27.0
+
