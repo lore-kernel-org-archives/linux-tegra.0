@@ -1,4 +1,4 @@
-Return-Path: <SRS0=0g03=BP=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=WNzV=BQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,165 +8,172 @@ X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6540C433E1
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Aug 2020 20:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8806FC433DF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 00:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5D6D22CA1
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Aug 2020 20:07:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6962F22CAE
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 00:07:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nPuQK4ea"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YJdzPn9n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbgHEUHW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:07:22 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15177 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbgHEQeG (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Aug 2020 12:34:06 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2adf640000>; Wed, 05 Aug 2020 09:33:40 -0700
+        id S1725998AbgHFAHM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Aug 2020 20:07:12 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1251 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbgHFAHL (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Aug 2020 20:07:11 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2b497d0000>; Wed, 05 Aug 2020 17:06:21 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 05 Aug 2020 09:33:53 -0700
+  Wed, 05 Aug 2020 17:07:11 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 05 Aug 2020 09:33:53 -0700
-Received: from [10.2.172.190] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Aug
- 2020 16:33:53 +0000
-Subject: Re: [PATCH v8 08/10] gpu: host1x: mipi: Keep MIPI clock enabled till
- calibration is done
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
-        <helen.koike@collabora.com>, <gregkh@linuxfoundation.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
- <1596469346-937-9-git-send-email-skomatineni@nvidia.com>
- <20200805134600.GA3351349@ulmo>
- <103efe31-1abc-54f2-6004-490d7bb1b61a@gmail.com>
- <dcd58ae7-58ed-11d1-0e10-7f522b651b30@gmail.com>
+        by hqpgpgate101.nvidia.com on Wed, 05 Aug 2020 17:07:11 -0700
+Received: from [10.2.172.190] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
+ 2020 00:07:10 +0000
+Subject: Re: [PATCH v2 6/6] sdhci: tegra: Add missing TMCLK for data timeout
+To:     Adrian Hunter <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <robh+dt@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+References: <1596515363-27235-1-git-send-email-skomatineni@nvidia.com>
+ <1596515363-27235-7-git-send-email-skomatineni@nvidia.com>
+ <d131fc8c-fa1f-cb67-fe6a-955d3582d1d6@intel.com>
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <addb92e5-7c7a-6fba-117d-c7880b2d4597@nvidia.com>
-Date:   Wed, 5 Aug 2020 09:33:52 -0700
+Message-ID: <8e8f3742-f80e-c58b-4d7b-99b5a455b157@nvidia.com>
+Date:   Wed, 5 Aug 2020 17:07:10 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <dcd58ae7-58ed-11d1-0e10-7f522b651b30@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+In-Reply-To: <d131fc8c-fa1f-cb67-fe6a-955d3582d1d6@intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
  HQMAIL107.nvidia.com (172.20.187.13)
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596645220; bh=X5zEu6vUXobqBcWHY7aaMnj5mp+hKk0lRFA0MhBpjdw=;
+        t=1596672381; bh=FbTeM4DKgB2Vhjb2SOpeG8Wwy4zacBAFsfEnf77sC7I=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
          Content-Language;
-        b=nPuQK4eaWgFlwk7/vscxJYA0OVSW7M2yfsfpDKz7kRU5zT0VexC2rUVHuBsKNMUsV
-         kjRTmX9Qh/kiRlOZ0BFAmPOLDLrYCPZK8oPzS+uiksdWR36LN9Wd7EgzEuWzSKJ58y
-         lFIJOCz/EU1/0T3fhP1kX497iXKKEmizr/muMZa9Xky0yeRfrXrCKv/+IBPAMLfm67
-         qCssOIui/sHjGkL3CY/l3u/IgMsuEXPWzNT5N/6BUcN1IHykJLQkmMMQMtHw9pWTmj
-         6bzvNXbPqFmNi82DOfZ1znh0cR0C/PABI4AoX+w7KgGXK3FeidCnRFxfMSqK4qn9pD
-         eofJXi6fZl8Xw==
+        b=YJdzPn9nPnzU3hlltw22wl4p1BG8ANDx2Ph5j6Cx1WXK5drU4jYiSmP/XP6MNiob/
+         i7k9E1Sg9eNWPoXuH2wNm57iQt1Eu40ugzu44gVJ2Hx+eZ9zPHAhS8MfQIEW0ZiEWI
+         r2DfZjFcAyIKH9qpI4dWtAGqb+WhhpJcgEDIqyWcoV+wxM98Xgg/eprZku8xZuv6kq
+         tw11yO8ml9xopUEUFH4G9x/N4MLNUIDEI8PygRrbR50wOLUfmsO2NBM2qWXXEAzQMA
+         GKoNFfjw0B0/EcDqNilhjT7ZdcGs7eLNSiYO3Y5tjCH+uqC17N4TwuLObzAObHpyyd
+         ViwJgwGPo8+4g==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 8/5/20 7:19 AM, Dmitry Osipenko wrote:
-> 05.08.2020 17:05, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> 05.08.2020 16:46, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> On Mon, Aug 03, 2020 at 08:42:24AM -0700, Sowjanya Komatineni wrote:
->>>> With the split of MIPI calibration into tegra_mipi_calibrate() and
->>>> tegra_mipi_wait(), MIPI clock is not kept enabled till the calibration
->>>> is done.
->>>>
->>>> So, this patch skips disabling MIPI clock after triggering start of
->>>> calibration and disables it only after waiting for done status from
->>>> the calibration logic.
->>>>
->>>> This patch renames tegra_mipi_calibrate() as tegra_mipi_start_calibrat=
-ion()
->>>> and tegra_mipi_wait() as tegra_mipi_finish_calibration() to be inline
->>>> with their usage.
->>>>
->>>> As MIPI clock is left enabled and in case of any failures with CSI inp=
-ut
->>>> streaming tegra_mipi_finish_calibration() will not get invoked.
->>>> So added new API tegra_mipi_cancel_calibration() which disables MIPI c=
-lock
->>>> and consumer drivers can call this in such cases.
->>>>
->>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>>>   drivers/gpu/drm/tegra/dsi.c |  4 ++--
->>>>   drivers/gpu/host1x/mipi.c   | 19 ++++++++++---------
->>>>   include/linux/host1x.h      |  5 +++--
->>>>   3 files changed, 15 insertions(+), 13 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
->>>> index 3820e8d..a7864e9 100644
->>>> --- a/drivers/gpu/drm/tegra/dsi.c
->>>> +++ b/drivers/gpu/drm/tegra/dsi.c
->>>> @@ -694,11 +694,11 @@ static int tegra_dsi_pad_calibrate(struct tegra_=
-dsi *dsi)
->>>>   		DSI_PAD_PREEMP_PD(0x03) | DSI_PAD_PREEMP_PU(0x3);
->>>>   	tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_3);
->>>>  =20
->>>> -	err =3D tegra_mipi_calibrate(dsi->mipi);
->>>> +	err =3D tegra_mipi_start_calibration(dsi->mipi);
->>>>   	if (err < 0)
->>>>   		return err;
->>>>  =20
->>>> -	return tegra_mipi_wait(dsi->mipi);
->>>> +	return tegra_mipi_finish_calibration(dsi->mipi);
->>>>   }
->>>>  =20
->>>>   static void tegra_dsi_set_timeout(struct tegra_dsi *dsi, unsigned lo=
-ng bclk,
->>>> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
->>>> index e606464..b15ab6e 100644
->>>> --- a/drivers/gpu/host1x/mipi.c
->>>> +++ b/drivers/gpu/host1x/mipi.c
->>>> @@ -293,17 +293,19 @@ int tegra_mipi_disable(struct tegra_mipi_device =
-*dev)
->>>>   }
->>>>   EXPORT_SYMBOL(tegra_mipi_disable);
->>>>  =20
->>>> -int tegra_mipi_wait(struct tegra_mipi_device *device)
->>>> +void tegra_mipi_cancel_calibration(struct tegra_mipi_device *device)
->>>> +{
->>>> +	clk_disable(device->mipi->clk);
->>> Do we need to do anything with the MIPI_CAL_CTRL and MIPI_CAL_STATUS
->>> registers here? We don't clear the START bit in the former when the
->>> calibration has successfully finished, but I suspect that's because
->>> the bit is self-clearing. But I wonder if we still need to clear it
->>> upon cancellation to make sure the calibration does indeed stop.
->> Apparently there is no way to explicitly stop calibration other than to
->> reset MIPI calibration block, but Sowjanya says this is unnecessary.
+On 8/5/20 1:06 AM, Adrian Hunter wrote:
+> On 4/08/20 7:29 am, Sowjanya Komatineni wrote:
+>> commit b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
+> So that could be a Fixes tag also?
+
+Thanks Adrian. Will resend with fixes tag.
+
+Sowjanya
+
+>
+>> Tegra210 and later has a separate sdmmc_legacy_tm (TMCLK) used by Tegra
+>> SDMMC hawdware for data timeout to achive better timeout than using
+>> SDCLK and using TMCLK is recommended.
 >>
->> Perhaps having a fixed delay before disabling clock could be enough to
->> ensure that calibration is stopped before the clock is disabled?
+>> USE_TMCLK_FOR_DATA_TIMEOUT bit in Tegra SDMMC register
+>> SDHCI_TEGRA_VENDOR_SYS_SW_CTRL can be used to choose either TMCLK or
+>> SDCLK for data timeout.
 >>
-> Actually, there is a MIPI_CAL_ACTIVE bit in the status register. Maybe
-> it needs to be polled until it's unset?
-
-Confirmed with HW design team during this patch update.
-
-SW does not need to clear START bit and only write 1 takes effect to=20
-that bit.
-
-Also, no need to have delay or do any other register settings unclear as=20
-its FSM and there's nothing to get stuck.
-
-Also it goes thru small finite set of codes and by the time sensor=20
-programming happens for enabling streaming FSM will finish its=20
-calibration sequence much early and it will only wait for pads LP-11.
-
-So, during cancel we only need disable MIPI clock.
-
+>> Default USE_TMCLK_FOR_DATA_TIMEOUT bit is set to 1 and TMCLK is used
+>> for data timeout by Tegra SDMMC hardware and having TMCLK not enabled
+>> is not recommended.
+>>
+>> So, this patch fixes it.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+>
+>> ---
+>>   drivers/mmc/host/sdhci-tegra.c | 41 +++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 41 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+>> index 31ed321..c0b9405 100644
+>> --- a/drivers/mmc/host/sdhci-tegra.c
+>> +++ b/drivers/mmc/host/sdhci-tegra.c
+>> @@ -140,6 +140,7 @@ struct sdhci_tegra_autocal_offsets {
+>>   struct sdhci_tegra {
+>>   	const struct sdhci_tegra_soc_data *soc_data;
+>>   	struct gpio_desc *power_gpio;
+>> +	struct clk *tmclk;
+>>   	bool ddr_signaling;
+>>   	bool pad_calib_required;
+>>   	bool pad_control_available;
+>> @@ -1611,6 +1612,44 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>>   		goto err_power_req;
+>>   	}
+>>   
+>> +	/*
+>> +	 * Tegra210 has a separate SDMMC_LEGACY_TM clock used for host
+>> +	 * timeout clock and SW can choose TMCLK or SDCLK for hardware
+>> +	 * data timeout through the bit USE_TMCLK_FOR_DATA_TIMEOUT of
+>> +	 * the register SDHCI_TEGRA_VENDOR_SYS_SW_CTRL.
+>> +	 *
+>> +	 * USE_TMCLK_FOR_DATA_TIMEOUT bit default is set to 1 and SDMMC uses
+>> +	 * 12Mhz TMCLK which is advertised in host capability register.
+>> +	 * With TMCLK of 12Mhz provides maximum data timeout period that can
+>> +	 * be achieved is 11s better than using SDCLK for data timeout.
+>> +	 *
+>> +	 * So, TMCLK is set to 12Mhz and kept enabled all the time on SoC's
+>> +	 * supporting SDR104 mode and when not using SDCLK for data timeout.
+>> +	 */
+>> +
+>> +	if ((soc_data->nvquirks & NVQUIRK_ENABLE_SDR104) &&
+>> +	    !(soc_data->pdata->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK)) {
+>> +		clk = devm_clk_get(&pdev->dev, "tmclk");
+>> +		if (IS_ERR(clk)) {
+>> +			rc = PTR_ERR(clk);
+>> +			if (rc == -EPROBE_DEFER)
+>> +				goto err_power_req;
+>> +
+>> +			dev_warn(&pdev->dev, "failed to get tmclk: %d\n", rc);
+>> +			clk = NULL;
+>> +		}
+>> +
+>> +		clk_set_rate(clk, 12000000);
+>> +		rc = clk_prepare_enable(clk);
+>> +		if (rc) {
+>> +			dev_err(&pdev->dev,
+>> +				"failed to enable tmclk: %d\n", rc);
+>> +			goto err_power_req;
+>> +		}
+>> +
+>> +		tegra_host->tmclk = clk;
+>> +	}
+>> +
+>>   	clk = devm_clk_get(mmc_dev(host->mmc), NULL);
+>>   	if (IS_ERR(clk)) {
+>>   		rc = PTR_ERR(clk);
+>> @@ -1654,6 +1693,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>>   err_rst_get:
+>>   	clk_disable_unprepare(pltfm_host->clk);
+>>   err_clk_get:
+>> +	clk_disable_unprepare(tegra_host->tmclk);
+>>   err_power_req:
+>>   err_parse_dt:
+>>   	sdhci_pltfm_free(pdev);
+>> @@ -1671,6 +1711,7 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
+>>   	reset_control_assert(tegra_host->rst);
+>>   	usleep_range(2000, 4000);
+>>   	clk_disable_unprepare(pltfm_host->clk);
+>> +	clk_disable_unprepare(tegra_host->tmclk);
+>>   
+>>   	sdhci_pltfm_free(pdev);
+>>   
+>>
