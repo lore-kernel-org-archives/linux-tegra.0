@@ -8,35 +8,35 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A6AC433EB
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 19:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8C3C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 19:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B407B221E3
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 19:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C180206C3
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 19:02:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="a310Y1Dh"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iN/cVRZG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbgHFTC2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 15:02:28 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:14673 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727884AbgHFTBo (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 15:01:44 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2c53650003>; Thu, 06 Aug 2020 12:00:53 -0700
+        id S1728960AbgHFTBo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 15:01:44 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:7198 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728473AbgHFTBj (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 15:01:39 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2c532c0002>; Thu, 06 Aug 2020 11:59:56 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 06 Aug 2020 12:01:43 -0700
+  Thu, 06 Aug 2020 12:01:36 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 06 Aug 2020 12:01:43 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
- 2020 19:01:43 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 6 Aug 2020 19:01:42 +0000
+        by hqpgpgate101.nvidia.com on Thu, 06 Aug 2020 12:01:36 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
+ 2020 19:01:36 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 6 Aug 2020 19:01:36 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.172.190]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f2c53950000>; Thu, 06 Aug 2020 12:01:42 -0700
+        id <B5f2c538f0000>; Thu, 06 Aug 2020 12:01:35 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -45,9 +45,9 @@ To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
 CC:     <digetx@gmail.com>, <gregkh@linuxfoundation.org>,
         <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 07/10] media: tegra-video: Add support for selection ioctl ops
-Date:   Thu, 6 Aug 2020 12:01:31 -0700
-Message-ID: <1596740494-19306-8-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v9 02/10] media: tegra-video: Enable TPG based on kernel config
+Date:   Thu, 6 Aug 2020 12:01:26 -0700
+Message-ID: <1596740494-19306-3-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1596740494-19306-1-git-send-email-skomatineni@nvidia.com>
 References: <1596740494-19306-1-git-send-email-skomatineni@nvidia.com>
@@ -55,175 +55,254 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596740453; bh=MY7OOyZbj1LgF9iiygCS22H/LqLtPRo9jxHh5A4z9vs=;
+        t=1596740396; bh=ds7oxXGxAuyDw53E4hJLEBinWlNAsgh9dJ6sWX9tefI=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=a310Y1Dhqq/dfKu+UgCJTdMbOS7BpSwg9rpRiMA4yDOKknr844Xmy+/EnM/SHKuuO
-         2a72qnsTzqKHeHBzH/F9OJGi66m+ZieEh7OZSYZwT5BMP8Se8IbB8NjblqRtmHSuEn
-         vdv4F+3sDq+FfGCD1qL84J/Uc6a6ZImT1wGw5sUk/h3MBILCUPdNZ8JypjzfykPLGM
-         wFvh+6uf32Ryx/8wuGBZT5VHWtPV67rFY4ae1HpNm+HmZ6oixnc+BSPMHnzfUFP7MC
-         RasIyc0j8c3AkZurcufLCDfoT+q9rBj/fFN68UgH7+XWED7w/i3RgKRGVu0/rcomJr
-         AZI4Pzz/gwm7g==
+        b=iN/cVRZGHiB1pRP3Cb3Y9NxTzdRjhf5uX6GATtIrXno6npGAPzwpRIk5TRcltHipD
+         I0CYYdHFMxJQsuffMHukl2oBxWBgX88csbPyfKGiGYf4KfbJSYHLdlH3lBAm5eHfZj
+         jLDoT/kTbNz7sM+0S4AfuWzfYtY0mjnctd0j6mLU6VqewRam3qc0KzCuXfpzIYsmaf
+         +HMa6hxa1HYHMwz7uhY0TN3W7tAgiOqtgzT5KbKNvKzdjmG815Lu2PcX/CJTBDb3tz
+         poWsGguddJOYpdtbEf1gvg9IrsevT0ECN2Y03i1jkCxmAHlTbPTDYjC5FKyqG9RqQ+
+         KJIW/fL0xx4zg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds selection v4l2 ioctl operations to allow configuring
-a selection rectangle in the sensor through the Tegra video device
-node.
+Tegra internal TPG mode is only for Tegra vi and csi testing
+without a real sensor and driver should default support real
+sensor.
 
-Some sensor drivers supporting crop uses try_crop rectangle from
-v4l2_subdev_pad_config during try format for computing binning.
-
-So with selection ops support, this patch also updates try format
-to use try crop rectangle either from subdev frame size enumeration
-or from subdev crop boundary.
+So, This patch adds CONFIG_VIDEO_TEGRA_TPG and enables Tegra
+internal TPG mode only when this config is selected.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 106 +++++++++++++++++++++++++++++++++
- 1 file changed, 106 insertions(+)
+ drivers/staging/media/tegra-video/Kconfig    |  6 +++++
+ drivers/staging/media/tegra-video/csi.c      | 38 +++++++++++++++++++++++-----
+ drivers/staging/media/tegra-video/tegra210.c |  6 +++++
+ drivers/staging/media/tegra-video/vi.c       | 13 +++++++---
+ drivers/staging/media/tegra-video/video.c    | 23 +++++++++--------
+ 5 files changed, 65 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index deb1252..29a172f 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -474,6 +474,13 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 	struct v4l2_subdev *subdev;
- 	struct v4l2_subdev_format fmt;
- 	struct v4l2_subdev_pad_config *pad_cfg;
-+	struct v4l2_subdev_frame_size_enum fse = {
-+		.which = V4L2_SUBDEV_FORMAT_TRY,
-+	};
-+	struct v4l2_subdev_selection sdsel = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.target = V4L2_SEL_TGT_CROP_BOUNDS,
-+	};
- 	int ret;
+diff --git a/drivers/staging/media/tegra-video/Kconfig b/drivers/staging/media/tegra-video/Kconfig
+index f6c61ec..566da62 100644
+--- a/drivers/staging/media/tegra-video/Kconfig
++++ b/drivers/staging/media/tegra-video/Kconfig
+@@ -10,3 +10,9 @@ config VIDEO_TEGRA
  
- 	subdev = tegra_channel_get_remote_source_subdev(chan);
-@@ -499,6 +506,24 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 	fmt.which = V4L2_SUBDEV_FORMAT_TRY;
- 	fmt.pad = 0;
- 	v4l2_fill_mbus_format(&fmt.format, pix, fmtinfo->code);
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called tegra-video.
 +
-+	/*
-+	 * Attempt to obtain the format size from subdev.
-+	 * If not available, try to get crop boundary from subdev.
-+	 */
-+	fse.code = fmtinfo->code;
-+	ret = v4l2_subdev_call(subdev, pad, enum_frame_size, pad_cfg, &fse);
-+	if (ret) {
-+		ret = v4l2_subdev_call(subdev, pad, get_selection, NULL, &sdsel);
-+		if (ret)
-+			return -EINVAL;
-+		pad_cfg->try_crop.width = sdsel.r.width;
-+		pad_cfg->try_crop.height = sdsel.r.height;
-+	} else {
-+		pad_cfg->try_crop.width = fse.max_width;
-+		pad_cfg->try_crop.height = fse.max_height;
-+	}
-+
- 	ret = v4l2_subdev_call(subdev, pad, set_fmt, pad_cfg, &fmt);
- 	if (ret < 0)
- 		return ret;
-@@ -588,6 +613,85 @@ static int tegra_channel_set_subdev_active_fmt(struct tegra_vi_channel *chan)
- 	return 0;
- }
- 
-+static int tegra_channel_g_selection(struct file *file, void *priv,
-+				     struct v4l2_selection *sel)
-+{
-+	struct tegra_vi_channel *chan = video_drvdata(file);
-+	struct v4l2_subdev *subdev;
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	struct v4l2_subdev_selection sdsel = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.target = sel->target,
-+	};
-+	int ret;
-+
-+	subdev = tegra_channel_get_remote_source_subdev(chan);
-+	if (!v4l2_subdev_has_op(subdev, pad, get_selection))
-+		return -ENOTTY;
-+
-+	if (sel->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
-+		return -EINVAL;
-+	/*
-+	 * Try the get selection operation and fallback to get format if not
-+	 * implemented.
-+	 */
-+	ret = v4l2_subdev_call(subdev, pad, get_selection, NULL, &sdsel);
-+	if (!ret)
-+		sel->r = sdsel.r;
-+	if (ret != -ENOIOCTLCMD)
-+		return ret;
-+
-+	ret = v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
-+	if (ret < 0)
-+		return ret;
-+
-+	sel->r.left = 0;
-+	sel->r.top = 0;
-+	sel->r.width = fmt.format.width;
-+	sel->r.height = fmt.format.height;
-+
-+	return 0;
-+}
-+
-+static int tegra_channel_s_selection(struct file *file, void *fh,
-+				     struct v4l2_selection *sel)
-+{
-+	struct tegra_vi_channel *chan = video_drvdata(file);
-+	struct v4l2_subdev *subdev;
-+	int ret;
-+	struct v4l2_subdev_selection sdsel = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.target = sel->target,
-+		.flags = sel->flags,
-+		.r = sel->r,
-+	};
-+
-+	subdev = tegra_channel_get_remote_source_subdev(chan);
-+	if (!v4l2_subdev_has_op(subdev, pad, set_selection))
-+		return -ENOTTY;
-+
-+	if (sel->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
-+		return -EINVAL;
-+
-+	if (vb2_is_busy(&chan->queue))
-+		return -EBUSY;
-+
-+	ret = v4l2_subdev_call(subdev, pad, set_selection, NULL, &sdsel);
-+	if (!ret) {
-+		sel->r = sdsel.r;
-+		/*
-+		 * Subdev active format resolution may have changed during
-+		 * set selection operation. So, update channel format to
-+		 * the sub-device active format.
-+		 */
-+		return tegra_channel_set_subdev_active_fmt(chan);
-+	}
-+
-+	return ret;
-+}
-+
- static int tegra_channel_enum_input(struct file *file, void *fh,
- 				    struct v4l2_input *inp)
++config VIDEO_TEGRA_TPG
++	bool "NVIDIA Tegra VI driver TPG mode"
++	depends on VIDEO_TEGRA
++	help
++	  Say yes here to enable Tegra internal TPG mode
+diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+index 40ea195..fb667df 100644
+--- a/drivers/staging/media/tegra-video/csi.c
++++ b/drivers/staging/media/tegra-video/csi.c
+@@ -62,6 +62,9 @@ static int csi_enum_bus_code(struct v4l2_subdev *subdev,
+ 			     struct v4l2_subdev_pad_config *cfg,
+ 			     struct v4l2_subdev_mbus_code_enum *code)
  {
-@@ -645,6 +749,8 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
- 	.vidioc_streamoff		= vb2_ioctl_streamoff,
- 	.vidioc_subscribe_event		= v4l2_ctrl_subscribe_event,
- 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
-+	.vidioc_g_selection		= tegra_channel_g_selection,
-+	.vidioc_s_selection		= tegra_channel_s_selection,
++	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		return -ENOIOCTLCMD;
++
+ 	if (code->index >= ARRAY_SIZE(tegra_csi_tpg_fmts))
+ 		return -EINVAL;
+ 
+@@ -76,6 +79,9 @@ static int csi_get_format(struct v4l2_subdev *subdev,
+ {
+ 	struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
+ 
++	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		return -ENOIOCTLCMD;
++
+ 	fmt->format = csi_chan->format;
+ 
+ 	return 0;
+@@ -121,6 +127,9 @@ static int csi_enum_framesizes(struct v4l2_subdev *subdev,
+ {
+ 	unsigned int i;
+ 
++	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		return -ENOIOCTLCMD;
++
+ 	if (fse->index >= ARRAY_SIZE(tegra_csi_tpg_sizes))
+ 		return -EINVAL;
+ 
+@@ -148,6 +157,9 @@ static int csi_enum_frameintervals(struct v4l2_subdev *subdev,
+ 	const struct tpg_framerate *frmrate = csi->soc->tpg_frmrate_table;
+ 	int index;
+ 
++	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		return -ENOIOCTLCMD;
++
+ 	/* one framerate per format and resolution */
+ 	if (fie->index > 0)
+ 		return -EINVAL;
+@@ -172,6 +184,9 @@ static int csi_set_format(struct v4l2_subdev *subdev,
+ 	const struct v4l2_frmsize_discrete *sizes;
+ 	unsigned int i;
+ 
++	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		return -ENOIOCTLCMD;
++
+ 	sizes = v4l2_find_nearest_size(tegra_csi_tpg_sizes,
+ 				       ARRAY_SIZE(tegra_csi_tpg_sizes),
+ 				       width, height,
+@@ -208,6 +223,9 @@ static int tegra_csi_g_frame_interval(struct v4l2_subdev *subdev,
+ {
+ 	struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
+ 
++	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		return -ENOIOCTLCMD;
++
+ 	vfi->interval.numerator = 1;
+ 	vfi->interval.denominator = csi_chan->framerate;
+ 
+@@ -311,8 +329,12 @@ static int tegra_csi_channel_init(struct tegra_csi_channel *chan)
+ 	subdev = &chan->subdev;
+ 	v4l2_subdev_init(subdev, &tegra_csi_ops);
+ 	subdev->dev = csi->dev;
+-	snprintf(subdev->name, V4L2_SUBDEV_NAME_SIZE, "%s-%d", "tpg",
+-		 chan->csi_port_num);
++	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		snprintf(subdev->name, V4L2_SUBDEV_NAME_SIZE, "%s-%d", "tpg",
++			 chan->csi_port_num);
++	else
++		snprintf(subdev->name, V4L2_SUBDEV_NAME_SIZE, "%s",
++			 kbasename(chan->of_node->full_name));
+ 
+ 	v4l2_set_subdevdata(subdev, chan);
+ 	subdev->fwnode = of_fwnode_handle(chan->of_node);
+@@ -405,11 +427,13 @@ static int tegra_csi_init(struct host1x_client *client)
+ 
+ 	INIT_LIST_HEAD(&csi->csi_chans);
+ 
+-	ret = tegra_csi_tpg_channels_alloc(csi);
+-	if (ret < 0) {
+-		dev_err(csi->dev,
+-			"failed to allocate tpg channels: %d\n", ret);
+-		goto cleanup;
++	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)) {
++		ret = tegra_csi_tpg_channels_alloc(csi);
++		if (ret < 0) {
++			dev_err(csi->dev,
++				"failed to allocate tpg channels: %d\n", ret);
++			goto cleanup;
++		}
+ 	}
+ 
+ 	ret = tegra_csi_channels_init(csi);
+diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+index 3baa4e3..3492a8a 100644
+--- a/drivers/staging/media/tegra-video/tegra210.c
++++ b/drivers/staging/media/tegra-video/tegra210.c
+@@ -631,7 +631,11 @@ const struct tegra_vi_soc tegra210_vi_soc = {
+ 	.ops = &tegra210_vi_ops,
+ 	.hw_revision = 3,
+ 	.vi_max_channels = 6,
++#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
+ 	.vi_max_clk_hz = 499200000,
++#else
++	.vi_max_clk_hz = 998400000,
++#endif
  };
  
- /*
+ /* Tegra210 CSI PHY registers accessors */
+@@ -957,7 +961,9 @@ static const char * const tegra210_csi_cil_clks[] = {
+ 	"cilab",
+ 	"cilcd",
+ 	"cile",
++#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
+ 	"csi_tpg",
++#endif
+ };
+ 
+ /* Tegra210 CSI operations */
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index d621ebc..0197f4e 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -565,6 +565,7 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+ {
+ 	int ret;
+ 
++#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
+ 	/* add test pattern control handler to v4l2 device */
+ 	v4l2_ctrl_new_std_menu_items(&chan->ctrl_handler, &vi_ctrl_ops,
+ 				     V4L2_CID_TEST_PATTERN,
+@@ -576,6 +577,7 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+ 		v4l2_ctrl_handler_free(&chan->ctrl_handler);
+ 		return chan->ctrl_handler.error;
+ 	}
++#endif
+ 
+ 	/* setup the controls */
+ 	ret = v4l2_ctrl_handler_setup(&chan->ctrl_handler);
+@@ -918,10 +920,13 @@ static int tegra_vi_init(struct host1x_client *client)
+ 
+ 	INIT_LIST_HEAD(&vi->vi_chans);
+ 
+-	ret = tegra_vi_tpg_channels_alloc(vi);
+-	if (ret < 0) {
+-		dev_err(vi->dev, "failed to allocate tpg channels: %d\n", ret);
+-		goto free_chans;
++	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)) {
++		ret = tegra_vi_tpg_channels_alloc(vi);
++		if (ret < 0) {
++			dev_err(vi->dev,
++				"failed to allocate tpg channels: %d\n", ret);
++			goto free_chans;
++		}
+ 	}
+ 
+ 	ret = tegra_vi_channels_init(vi);
+diff --git a/drivers/staging/media/tegra-video/video.c b/drivers/staging/media/tegra-video/video.c
+index 30816aa..e50bd70 100644
+--- a/drivers/staging/media/tegra-video/video.c
++++ b/drivers/staging/media/tegra-video/video.c
+@@ -60,15 +60,17 @@ static int host1x_video_probe(struct host1x_device *dev)
+ 	if (ret < 0)
+ 		goto unregister_v4l2;
+ 
+-	/*
+-	 * Both vi and csi channels are available now.
+-	 * Register v4l2 nodes and create media links for TPG.
+-	 */
+-	ret = tegra_v4l2_nodes_setup_tpg(vid);
+-	if (ret < 0) {
+-		dev_err(&dev->dev,
+-			"failed to setup tpg graph: %d\n", ret);
+-		goto device_exit;
++	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)) {
++		/*
++		 * Both vi and csi channels are available now.
++		 * Register v4l2 nodes and create media links for TPG.
++		 */
++		ret = tegra_v4l2_nodes_setup_tpg(vid);
++		if (ret < 0) {
++			dev_err(&dev->dev,
++				"failed to setup tpg graph: %d\n", ret);
++			goto device_exit;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -91,7 +93,8 @@ static int host1x_video_remove(struct host1x_device *dev)
+ {
+ 	struct tegra_video_device *vid = dev_get_drvdata(&dev->dev);
+ 
+-	tegra_v4l2_nodes_cleanup_tpg(vid);
++	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
++		tegra_v4l2_nodes_cleanup_tpg(vid);
+ 
+ 	host1x_device_exit(dev);
+ 
 -- 
 2.7.4
 
