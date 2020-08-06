@@ -5,70 +5,68 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E3BC433E0
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E7AC433E0
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D665B20786
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0861320786
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:06:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3bnalY4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIR49fct"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729458AbgHFREI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 13:04:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45092 "EHLO
+        id S1730060AbgHFRGo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 13:06:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729710AbgHFRC7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 13:02:59 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A797C002152
-        for <linux-tegra@vger.kernel.org>; Thu,  6 Aug 2020 08:54:14 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id c2so29648815edx.8
-        for <linux-tegra@vger.kernel.org>; Thu, 06 Aug 2020 08:54:13 -0700 (PDT)
+        with ESMTP id S1730039AbgHFRGM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 13:06:12 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C040AC0005BE
+        for <linux-tegra@vger.kernel.org>; Thu,  6 Aug 2020 08:41:17 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id kq25so37856919ejb.3
+        for <linux-tegra@vger.kernel.org>; Thu, 06 Aug 2020 08:41:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5pqsHiVxuyGBu/0tH+qVfNYUFXwSd1VD/tbRJZDzCuM=;
-        b=N3bnalY4rOo3OwG/8j8SBbq4MZzrUjNrh90GhJxywE3YKU44SMfEOiEHoXld0c18a0
-         s/Gg0aOJQ3cFcQ/Ap2KO71Kecxd1R4OxkcRaXjoPX02kMyKnrLDQZ3DYKMShLa2nP5Cv
-         XRQtHmF7f7Sx5a32R++4CxkmLy03gtfaNALT9Ke5z97jBI/lYZGFnmI/UX3f0AG0wntb
-         +G0GIz3tDWen7R4VpxKqXxPY9f1+5Cf3pCrvHpqhjU4Iq394/+wLAmwrW/bei6LRtlEh
-         9nXemf8stZtvILHHzL7E57QCdYRAO7xmzfUQS3MB2NSG8ZQNzidIPL7KwudmWzmRKvFZ
-         IuuQ==
+        bh=sQUBzqRn+ojYtqrJvGioQLo2eJbHTBHdMZpb/t+FuXk=;
+        b=FIR49fctoQ/DnjLIibCA7thl/tMrSUIqCWAxIxYfxoxiB/6QupHhLHqd917iylQDrX
+         x8y7ov7IIyJa2iBc3eeOpT87X98ReCAGewqsdOz6I/c2s1V5Npiv2zmw4eDbmQx4VcGO
+         41TIifx7wBaoX4CJiXBdabcPqSQPjld36e1GsGj3pOqrhI/01bpEVISngfCAo93dsNhi
+         N/u2S6Q/hXa3gm5toKWMdk/bFfFW4OhKrlIX3iZ28wI+rqgC2Vbz3SlZfGUflAr7WDO4
+         Fydzun71kz2szfpBZ3Sgr5W4aw4Sx2dcM6TtOH8tVFtDedefPIiFStQPi6aBSGrThN3G
+         WpZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5pqsHiVxuyGBu/0tH+qVfNYUFXwSd1VD/tbRJZDzCuM=;
-        b=l40Ywdl4NM25Rv6UWvGj29mjprT0zc4USbQG9PH1tXVY1eLf3uP7ju33benWkqMqZu
-         20UIsR4xmtHP9ZpNpC9sHAEeZ5FDZUgtF8crPeLATFjla93uSD7zZrf02YU9qP6QH7ue
-         PAsCiWPhaDDcA3UWKqDx4MPvG/2gDe0EGTCZHc/cfq4Y3erQ5QI/gKkj/sj/ZDM4cK9s
-         KBnMycz65TOwDggCGHXBSNqIzdRWz/MvJdACz5bE4DxF+XbwI8JFyPEBRRpq/LFVj7kT
-         Wy4h5+Dtv545SxJQXAlFLbhrrZS30MF9bnGj9BauiFbupeElTiy0+3t+XT0dqaMPIElG
-         Gskg==
-X-Gm-Message-State: AOAM531z+jF+S4SfDUEbaQtmBHYX6AXIl2IirCy1ahvFZuldSSfHxdZl
-        FRJA2dHQilTtzmV3Z0xRp4E=
-X-Google-Smtp-Source: ABdhPJxbkk+OQPQaekYiTtv/1k6LUn7kBiyDWdKxOIUCH6YCl/8AvW5AiX9ILJ+dfF4n7DH4+OLu9A==
-X-Received: by 2002:aa7:dbd9:: with SMTP id v25mr4827342edt.137.1596729250273;
-        Thu, 06 Aug 2020 08:54:10 -0700 (PDT)
+        bh=sQUBzqRn+ojYtqrJvGioQLo2eJbHTBHdMZpb/t+FuXk=;
+        b=YM0OIzjxPF0u5QmJ5yHpXGxwUopT3TUT27PJbftzybvVrAAPKitUpncgpRZuRpEN8y
+         YlndeYG6GNDbVy4XzuAAWzjomY1H7gc/QpcLIlZ7bAT9xeAavwWtOp8GCykGE5xA795K
+         toX4aATFYmcYWIDNDK54uhz8kDvlB9uK9w4tIcUMen/eY6rco74Qt7pbEe7sRl7Xs343
+         FB9b5HNhEE4XCo4qWDlSZKIBMbgRFkz0xG7CvuCX0S99PShTyklx4anli74l4Jx0x6ru
+         ixJeIMr5O2tKz8WS7ZjQZl3rY5F0Zu4vahrRkK8x1I3EVLXoPqcoUaqP5eMpXbBy2OvI
+         I6fw==
+X-Gm-Message-State: AOAM532mvHxuYL5tNe/cFNJFJse7vz8yZej72R++v3hp7iP9NO1vZdqD
+        1kg0hG9ccZW9HgVzIiLy9sU=
+X-Google-Smtp-Source: ABdhPJyO21fAnsVlMWWY+aqLyrBvqxsl1wlQctMcmYTuiX3eWPdMpR2SbM5rNjl/kd5ikn/YvcoLzg==
+X-Received: by 2002:a17:906:3c43:: with SMTP id i3mr5182318ejg.133.1596728475719;
+        Thu, 06 Aug 2020 08:41:15 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id p13sm3660700edq.81.2020.08.06.08.54.07
+        by smtp.gmail.com with ESMTPSA id z10sm3943519eje.122.2020.08.06.08.41.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Aug 2020 08:54:07 -0700 (PDT)
+        Thu, 06 Aug 2020 08:41:14 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 1/3] iommu/tegra-smmu: Set IOMMU group name
-Date:   Thu,  6 Aug 2020 17:54:02 +0200
-Message-Id: <20200806155404.3936074-2-thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Subject: [PATCH 2/4] arm64: tegra: Add VBUS supply for micro USB port on Jetson Nano
+Date:   Thu,  6 Aug 2020 17:41:09 +0200
+Message-Id: <20200806154111.3917284-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200806155404.3936074-1-thierry.reding@gmail.com>
-References: <20200806155404.3936074-1-thierry.reding@gmail.com>
+In-Reply-To: <20200806154111.3917284-1-thierry.reding@gmail.com>
+References: <20200806154111.3917284-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
@@ -78,25 +76,43 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Set the name of static IOMMU groups to help with debugging.
+The VBUS supply for the micro USB port on Jetson Nano is derived from
+the main system supply and always on. Describe in nevertheless to fix
+warnings during boot.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/iommu/tegra-smmu.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 124c8848ab7e..1ffdafe892d9 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -847,6 +847,7 @@ static struct iommu_group *tegra_smmu_group_get(struct tegra_smmu *smmu,
- 		return NULL;
- 	}
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index 195a43e2356b..d34338b63c90 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -541,6 +541,8 @@ usb2-0 {
+ 				mode = "peripheral";
+ 				usb-role-switch;
  
-+	iommu_group_set_name(group->group, soc->name);
- 	list_add_tail(&group->list, &smmu->groups);
- 	mutex_unlock(&smmu->lock);
++				vbus-supply = <&vdd_5v0_usb>;
++
+ 				connector {
+ 					compatible = "gpio-usb-b-connector",
+ 						     "usb-b-connector";
+@@ -843,4 +845,14 @@ avdd_io_edp_1v05: regulator@7 {
  
+ 		vin-supply = <&avdd_1v05_pll>;
+ 	};
++
++	vdd_5v0_usb: regulator@8 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VDD_5V_USB";
++		regulator-min-microvolt = <50000000>;
++		regulator-max-microvolt = <50000000>;
++
++		vin-supply = <&vdd_5v0_sys>;
++	};
+ };
 -- 
 2.27.0
 
