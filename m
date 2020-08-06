@@ -8,66 +8,63 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED47C433DF
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB692C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D20423117
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE73923117
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:26:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAfb3QXn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIUKmjtc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbgHFQVo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 12:21:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37760 "EHLO
+        id S1727045AbgHFQ01 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 12:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbgHFQTs (ORCPT
+        with ESMTP id S1725812AbgHFQTs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 12:19:48 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC5DC002163;
-        Thu,  6 Aug 2020 09:04:24 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id i26so32215315edv.4;
-        Thu, 06 Aug 2020 09:04:24 -0700 (PDT)
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FF1C00215E;
+        Thu,  6 Aug 2020 09:02:52 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id i6so9906415edy.5;
+        Thu, 06 Aug 2020 09:02:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wvtR8z/Ani5mL9lIVRm1/m2dHqQzOTsxvy15+fulIQ4=;
-        b=hAfb3QXnetMzCCM6f0K5d7xWLZ6od+HWfvETq9oP8nHvptxq3CDGNLE4MnlTbhwyF9
-         ZN8V6Iv7hVqo7e/MCYY56K/4B0S1y60LQSCeA22qnLbWJXOA2DVY8SR/jnkbwPSQ4h2n
-         04nHcT9UsgxDQbukf/yuBS/Vjbcrav/jl/MpoXsVaSdNSLm4cNbaYYn61tWtCnSZdVV8
-         1c2lJVeDgBKdQePAHclpWJm/L19thSYwOLepxoSQV9dRct/WDl/BojHn1I4HcJ3x9HAl
-         Wc6wgfzZE3r2Zxyn6t0lsrasl4heCRVc+Q0E7qk1TMrgSOwC0gJAYyAJEd9oyzY3+gu+
-         qZ9w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FNqcBw7gbdcsYAj3BqhT8zH10stbn01zoIqVBzt1ndI=;
+        b=aIUKmjtcRfg+2LmyFEYG1ZKfDaRGWTeFidf5qZnIa7woOEXLSv/NhvJ5ESpOQxO4IZ
+         9MEWqCc2LNCyqR9X9i10xzsTV7daNAESKymqsWecuAPz37090vufVngrd8fK579IWdVu
+         sibVIPxcQBqxrlx8FlQVx6IPGHSUgp7YPR1tdGSoj2P8qEOirB78nkmGpX00tvC1axQt
+         61EuuGL6Iu+W3cjKrZp8FbM7+hbENEgBBj9RDWxQa0xsMiQFAk95ZSPxn0GXr91S+Irj
+         xwZDTz2R/ktqBExnTB1qryOICMOHGyUt81jv7bNAsQxX2azKJloO4Rak1vP3AaDU7i4m
+         OyXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wvtR8z/Ani5mL9lIVRm1/m2dHqQzOTsxvy15+fulIQ4=;
-        b=TZbM6hqOlUijjRRyGEnxyM7sWGv4dhe+zCQ5FeAuM6/qu1MJ5UpaZLXScfYTkiiuEU
-         Yu7baGrbV0EAS4LPs/ia4s+W8M3F5zHIvcPJeL/e0xogU87OWWfRRBUirpAfruKb73uB
-         hoomHNqLBt+9hnwWBASF1PRKT0OWHgiWOGLimCJatKzTVjJPNDahGcM4ka47/1X3P3tE
-         H9F8sMgslJbVpts3NBQLrLY77sC3yWfN3UyCX1lUT1UGKwcvmKjVll7cPT19KQEREbRY
-         jGlDbX1UzGUUH2gF/XkS2x6oRRpVzB6vPQ3Udg649f4YrFr90Cfv1F/wrPZNWoJ/7xmK
-         Ag2Q==
-X-Gm-Message-State: AOAM533T1BnscrHVfWe1usJOYvi5n6/v1atn+4deP0GoyPXUSGng9I9p
-        QG4RClff1Fm8lYYZPHQxf2k=
-X-Google-Smtp-Source: ABdhPJzIJ39IJgxEOhLOrwxk39vBOFHtszT0/siZj26nK2C1VupKiiAtm8wZXygdL+ZjCs7khoW4aw==
-X-Received: by 2002:aa7:db51:: with SMTP id n17mr3829923edt.222.1596729863006;
-        Thu, 06 Aug 2020 09:04:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FNqcBw7gbdcsYAj3BqhT8zH10stbn01zoIqVBzt1ndI=;
+        b=SBMMBBa1OKdGYvwRWadiEPx40GloMmjD83YYQduCio1EJZmtI8wBAvrWVW2tqK36ov
+         hT0BiCJf2LDqBPxytjHzVZnRhz6QkTFdSH71asSrp6wyfvdaTORJKodJfEQTdF6bv6/F
+         dbubRM86QrbPyd5+lm1JthJ2GFdeEAd5O3GeKD8DIgnXOeKF4glG3/eRC+eOV0ppPKmI
+         yLJD8BTyDOg14a5+ei9GBILRAZGMqbBj5hktq5knKpHxsPk07QGjgd3GvAkXTwfPJzTO
+         taF+hKn+Z0OPvKKauseBR2yfP+NQkTF0dg0IW8ERdBANZklJI0OTdbdvLDD1Pq0NWpGj
+         fX6A==
+X-Gm-Message-State: AOAM530W/NCdQvAGf0w5pB7i9hXEpqsybMiaBfmJfnLui6Hx/9lLu7bc
+        wOWTw7ShLESpBtd6W6AAEmRSs0xu
+X-Google-Smtp-Source: ABdhPJxwDwLDDqIGo1x+XgU/Gsphj/4xYfmbRbh1sLk+5KU7qOFlfnLdw9q6QsJUuM2roZoidr6Nmg==
+X-Received: by 2002:a05:6402:30a5:: with SMTP id df5mr4700529edb.18.1596729771005;
+        Thu, 06 Aug 2020 09:02:51 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id dc23sm3438405edb.50.2020.08.06.09.04.21
+        by smtp.gmail.com with ESMTPSA id z5sm4005075ejm.111.2020.08.06.09.02.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Aug 2020 09:04:22 -0700 (PDT)
+        Thu, 06 Aug 2020 09:02:49 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 2/3] usb: gadget: tegra-xudc: Properly align parameters
-Date:   Thu,  6 Aug 2020 18:04:16 +0200
-Message-Id: <20200806160417.3937056-2-thierry.reding@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 1/2] usb: common: usb-conn-gpio: Make VBUS supply optional
+Date:   Thu,  6 Aug 2020 18:02:47 +0200
+Message-Id: <20200806160248.3936771-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200806160417.3937056-1-thierry.reding@gmail.com>
-References: <20200806160417.3937056-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
@@ -77,69 +74,91 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Align parameters on subsequent lines with the parameters on the first
-line for consistency.
+If the connector is the child of a USB port and that USB port already
+has a VBUS supply attached to it, it would be redundant to require the
+connector to have a VBUS supply. In this case, allow the VBUS supply to
+be optional.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/usb/gadget/udc/tegra-xudc.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ drivers/usb/common/usb-conn-gpio.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index ec43081f15bd..838863ede1df 100644
---- a/drivers/usb/gadget/udc/tegra-xudc.c
-+++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -3692,8 +3692,7 @@ static int tegra_xudc_powerdomain_init(struct tegra_xudc *xudc)
- 	struct device *dev = xudc->dev;
- 	int err;
- 
--	xudc->genpd_dev_device = dev_pm_domain_attach_by_name(dev,
--								"dev");
-+	xudc->genpd_dev_device = dev_pm_domain_attach_by_name(dev, "dev");
- 	if (IS_ERR(xudc->genpd_dev_device)) {
- 		err = PTR_ERR(xudc->genpd_dev_device);
- 		dev_err(dev, "failed to get device power domain: %d\n", err);
-@@ -3708,16 +3707,16 @@ static int tegra_xudc_powerdomain_init(struct tegra_xudc *xudc)
+diff --git a/drivers/usb/common/usb-conn-gpio.c b/drivers/usb/common/usb-conn-gpio.c
+index 7b3a21360d7c..c5b516d327c7 100644
+--- a/drivers/usb/common/usb-conn-gpio.c
++++ b/drivers/usb/common/usb-conn-gpio.c
+@@ -91,14 +91,14 @@ static void usb_conn_detect_cable(struct work_struct *work)
+ 		return;
  	}
  
- 	xudc->genpd_dl_device = device_link_add(dev, xudc->genpd_dev_device,
--					       DL_FLAG_PM_RUNTIME |
--					       DL_FLAG_STATELESS);
-+						DL_FLAG_PM_RUNTIME |
-+						DL_FLAG_STATELESS);
- 	if (!xudc->genpd_dl_device) {
- 		dev_err(dev, "failed to add USB device link\n");
- 		return -ENODEV;
- 	}
+-	if (info->last_role == USB_ROLE_HOST)
++	if (info->last_role == USB_ROLE_HOST && info->vbus)
+ 		regulator_disable(info->vbus);
  
- 	xudc->genpd_dl_ss = device_link_add(dev, xudc->genpd_dev_ss,
--					     DL_FLAG_PM_RUNTIME |
--					     DL_FLAG_STATELESS);
-+					    DL_FLAG_PM_RUNTIME |
-+					    DL_FLAG_STATELESS);
- 	if (!xudc->genpd_dl_ss) {
- 		dev_err(dev, "failed to add SuperSpeed device link\n");
- 		return -ENODEV;
-@@ -3772,16 +3771,15 @@ static int tegra_xudc_probe(struct platform_device *pdev)
- 		return err;
- 	}
+ 	ret = usb_role_switch_set_role(info->role_sw, role);
+ 	if (ret)
+ 		dev_err(info->dev, "failed to set role: %d\n", ret);
  
--	xudc->clks = devm_kcalloc(&pdev->dev, xudc->soc->num_clks,
--				      sizeof(*xudc->clks), GFP_KERNEL);
-+	xudc->clks = devm_kcalloc(&pdev->dev, xudc->soc->num_clks, sizeof(*xudc->clks),
-+				  GFP_KERNEL);
- 	if (!xudc->clks)
- 		return -ENOMEM;
+-	if (role == USB_ROLE_HOST) {
++	if (role == USB_ROLE_HOST && info->vbus) {
+ 		ret = regulator_enable(info->vbus);
+ 		if (ret)
+ 			dev_err(info->dev, "enable vbus regulator failed\n");
+@@ -106,8 +106,9 @@ static void usb_conn_detect_cable(struct work_struct *work)
  
- 	for (i = 0; i < xudc->soc->num_clks; i++)
- 		xudc->clks[i].id = xudc->soc->clock_names[i];
+ 	info->last_role = role;
  
--	err = devm_clk_bulk_get(&pdev->dev, xudc->soc->num_clks,
--				      xudc->clks);
-+	err = devm_clk_bulk_get(&pdev->dev, xudc->soc->num_clks, xudc->clks);
- 	if (err) {
- 		dev_err(xudc->dev, "failed to request clocks: %d\n", err);
- 		return err;
+-	dev_dbg(info->dev, "vbus regulator is %s\n",
+-		regulator_is_enabled(info->vbus) ? "enabled" : "disabled");
++	if (info->vbus)
++		dev_dbg(info->dev, "vbus regulator is %s\n",
++			regulator_is_enabled(info->vbus) ? "enabled" : "disabled");
+ 
+ 	power_supply_changed(info->charger);
+ }
+@@ -156,6 +157,7 @@ static int usb_conn_probe(struct platform_device *pdev)
+ 	struct power_supply_config cfg = {
+ 		.of_node = dev->of_node,
+ 	};
++	bool need_vbus = true;
+ 	int ret = 0;
+ 
+ 	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
+@@ -185,7 +187,23 @@ static int usb_conn_probe(struct platform_device *pdev)
+ 
+ 	INIT_DELAYED_WORK(&info->dw_det, usb_conn_detect_cable);
+ 
+-	info->vbus = devm_regulator_get(dev, "vbus");
++	/*
++	 * If the USB connector is a child of a USB port and that port already provides the VBUS
++	 * supply, there's no need for the USB connector to provide it again.
++	 */
++	if (dev->parent && dev->parent->of_node) {
++		if (of_find_property(dev->parent->of_node, "vbus-supply", NULL))
++			need_vbus = false;
++	}
++
++	if (!need_vbus) {
++		info->vbus = devm_regulator_get_optional(dev, "vbus");
++		if (PTR_ERR(info->vbus) == -ENODEV)
++			info->vbus = NULL;
++	} else {
++		info->vbus = devm_regulator_get(dev, "vbus");
++	}
++
+ 	if (IS_ERR(info->vbus)) {
+ 		if (PTR_ERR(info->vbus) != -EPROBE_DEFER)
+ 			dev_err(dev, "failed to get vbus\n");
+@@ -266,7 +284,7 @@ static int usb_conn_remove(struct platform_device *pdev)
+ 
+ 	cancel_delayed_work_sync(&info->dw_det);
+ 
+-	if (info->last_role == USB_ROLE_HOST)
++	if (info->last_role == USB_ROLE_HOST && info->vbus)
+ 		regulator_disable(info->vbus);
+ 
+ 	usb_role_switch_put(info->role_sw);
 -- 
 2.27.0
 
