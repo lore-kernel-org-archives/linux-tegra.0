@@ -7,33 +7,32 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD8CC433E1
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3325BC433DF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 013A223119
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 893FE23119
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:21:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="PN8wgwt6"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hPfwC07L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729977AbgHFRMT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 13:12:19 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:2932 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729728AbgHFRMP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 13:12:15 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2c39e10000>; Thu, 06 Aug 2020 10:12:01 -0700
+        id S1729625AbgHFRVt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 13:21:49 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:6842 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729491AbgHFRVm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 13:21:42 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2c28c90000>; Thu, 06 Aug 2020 08:59:05 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 06 Aug 2020 10:12:15 -0700
+  Thu, 06 Aug 2020 08:59:55 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 06 Aug 2020 10:12:15 -0700
+        by hqpgpgate101.nvidia.com on Thu, 06 Aug 2020 08:59:55 -0700
 Received: from [10.2.172.190] (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
- 2020 17:12:14 +0000
+ 2020 15:59:54 +0000
 Subject: Re: [PATCH v8 08/10] gpu: host1x: mipi: Keep MIPI clock enabled till
  calibration is done
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>
 CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -57,15 +56,13 @@ References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
  <309e3b66-9288-91ef-71b4-be73eacbbd62@nvidia.com>
  <fde2431a-0585-ac32-ac25-73e198aaa948@nvidia.com>
  <4025a458-fa78-924d-c84f-166f82df0f8e@gmail.com>
- <4f15d655-3d62-cf9f-82da-eae379d60fa6@nvidia.com>
- <b5612e93-f1c4-4762-baa1-5d85eb1edbe1@gmail.com>
- <412f8c53-1aca-db31-99a1-a0ecb2081ca5@nvidia.com>
-Message-ID: <61275bd6-58e7-887f-aa7d-8e60895e7b2b@nvidia.com>
-Date:   Thu, 6 Aug 2020 10:12:16 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <4f15d655-3d62-cf9f-82da-eae379d60fa6@nvidia.com>
+Date:   Thu, 6 Aug 2020 08:59:56 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <412f8c53-1aca-db31-99a1-a0ecb2081ca5@nvidia.com>
+In-Reply-To: <4025a458-fa78-924d-c84f-166f82df0f8e@gmail.com>
 X-Originating-IP: [10.124.1.5]
 X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
  HQMAIL107.nvidia.com (172.20.187.13)
@@ -73,101 +70,109 @@ Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596733921; bh=8R4NwntznSiP6O5k0i98yl5vksbAueRfRDWej6dHhRc=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+        t=1596729545; bh=BmP7tNOgCgboFqvS8lSz48oQDm4QwQamCVy+CrncH7k=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
          Content-Language;
-        b=PN8wgwt6ALE6zdY6YvNQGyrb1FNErEKu+7Pey8d02YYIMkCBwkUbxgJQNRFGl9BZl
-         RHI7aicJhNvbYl82P4hOkAvDdRq+xd3S83SlJjRzh9tXFurNGW8B2MqigplyvScKlR
-         J8YLGTDys0E+/PelzyZtdZi1Aw5QHcD3SoWDbvfoakSyxkWIbx4/WN67D/ceu0uJVC
-         1EGTuTzVBVy8nQJwDMHYRFNKh7WynIlOhC7OrbO7b4g9EpmRAMSs+1M9JnPhk6wg/H
-         r6Dw5ONZ0EuFeU710fBBgvvnv6CIZ29VM45cDZp4fdJAxDVgGU2rWKAPu9Qd3sgWLU
-         jdrkFVU3r1vdw==
+        b=hPfwC07LV+YrR7dnigHuF0tUwgIgPps+81M9GhtJxH8WlghHga5Ip43DtfXVjdEsD
+         KMZch65jTrOCyTidWLf3/qfMCuGuPFobjYrTkqv6m5kY1DqmNLLWuSrsgjkIKvu4zn
+         2CFhjK0VJJRvGTRVCw8vga5wkYG3ikBI5Oo7BaDw7QsYyOGBqvIv+pRJl5JV2Yv76Z
+         P8Nd7TogwVBLaSpDCLtmJqJnVyN3n9JPqaOg89O0i6rsgfTRjfxipnOObcshlI58M7
+         PxgovQ7gWocIEfCe8Aul5zvlYspj3W146SaFtTWmJ0v3ER5HcrNmSXDe6KgIXvxCSG
+         AbrdX6IXw+OUw==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 8/6/20 9:41 AM, Sowjanya Komatineni wrote:
->
-> On 8/6/20 9:10 AM, Dmitry Osipenko wrote:
->> 06.08.2020 18:59, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> ...
->>>>> Confirmed from HW designer, calibration FSM to finish takes worst=20
->>>>> case
->>>>> 72uS so by the time it gets to sensor stream it will be done its
->>>>> sequence and will be waiting for DONE bit.
->>>>>
->>>>> So disabling MIPI CAL clock on sensor stream fails is safe.
->>>> 72us is quite a lot of time, what will happen if LP-11 happens before
->>>> FSM finished calibration?
->>>>
->>>> Maybe the finish_calibration() needs to split into two parts:
->>>>
->>>> =C2=A0=C2=A0 1. wait for CAL_STATUS_ACTIVE before enabling sensor
->>>> =C2=A0=C2=A0 2. wait for CAL_STATUS_DONE after enabling sensor
->>> I don't think we need to split for active and done. Active will be 1 as
->>> long as other pads are in calibration as well.
+On 8/6/20 6:32 AM, Dmitry Osipenko wrote:
+> 06.08.2020 03:47, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 8/5/20 11:06 AM, Sowjanya Komatineni wrote:
+>>> On 8/5/20 10:46 AM, Sowjanya Komatineni wrote:
+>>>> On 8/5/20 10:34 AM, Dmitry Osipenko wrote:
+>>>>> 05.08.2020 20:29, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> ...
+>>>>>> UART_FST_MIPI_CAL is the clock used for calibration logic which is F=
+SM
+>>>>>> that goes thru sequence codes and when done waits for pads to be in
+>>>>>> LP-11 to apply results.
+>>>>>>
+>>>>>> MIPI_CLK is controller gate clock which is also need to be kept
+>>>>>> enabled
+>>>>>> as incase if it sees LP-11 it updates registers so its recommended t=
+o
+>>>>>> have this clock enabled.
+>>>>>>
+>>>>>> We can cancel_calibration() in CSI only when csi/sensor stream on
+>>>>>> fails
+>>>>>> and in which case there will be no LP-11 so we can unconditionally
+>>>>>> disable MIPI_CLK.
+>>>>>>
+>>>>> There is no guarantee that the fail comes before the LP-11. For
+>>>>> example,
+>>>>> some odd camera driver may have a complicated enable sequence which m=
+ay
+>>>>> fail after enabling the hardware streaming.
+>>>> MIPI_CLK to keep enable is for calibration logic to update results,
+>>>> but like I said calibration logic uses UART_FST_MIPI_CAL clock. So
+>>>> even in case if fail happens from sensor after having pads in LP-11
+>>>> then, calibration logic will still be running but result update will
+>>>> not happen with clock disabled. But HW will not stuck as this is
+>>>> confirmed from HW designer.
+>>> If LP-11 happens from sensor stream (followed by fail) and by that
+>>> time if calibration FSM is done and if calibration logic sees LP-11
+>>> then results will be applied to pads.
 >>>
->>> We cant use active status check for specific pads under calibration.
->>> This is common bit for all pads.
->> Does hardware have a single FSM block shared by all pads or there is FSM
->> per group of pads?
+>>> We did start of calibration before CSI stream so by the time we do
+>>> sensor stream enable, calibration logic might have done with FSM and
+>>> waiting for LP-11
+>>>
+>>> Also if we see any special case, we always can use
+>>> finish_calibration() instead of cancel_calibration() as well.
+> Why not to do it right now?
+
+> Then the code could look like this:
 >
-> MIPI CAL status register has DONE bits for individual pads status and=20
-> single ACTIVE bit.
+> src_subdev =3D tegra_channel_get_remote_source_subdev(chan);
+> ret =3D v4l2_subdev_call(src_subdev, video, s_stream, true);
+> err =3D tegra_mipi_finish_calibration(csi_chan->mipi);
 >
-> ACTIVE bit set to 1 indicates auto calibration is active which is the=20
-> case even when other pads (other CSI pads from other ports streaming=20
-> in case of parallel stream) are under calibration. Also DSI is shared=20
-> as well.
+> if (ret < 0 && ret !=3D -ENOIOCTLCMD)
+> 	goto err_disable_csi_stream;
 >
-> We do calibration for individual pads. So, we should not rely on=20
-> ACTIVE bit.
+> if (err < 0)
+> 	dev_warn(csi_chan->csi->dev,
+> 		 "MIPI calibration failed: %d\n", err);
 >
->
-> MIPI driver checks for condition ACTIVE =3D=3D 1 && DONE =3D=3D 1 from th=
-e=20
-> beginning.
->
-> But I think this also should be fixed as in case of parallel streams=20
-> calibration can happen in parallel waiting for ACTIVE to be cleared=20
-> makes all calibration callers to wait for longer than needed as ACTIVE=20
-> is common for all pads.
->
+>>> finish_calibration() has extra 250ms wait time polling done bit and we
+>>> can ignore its return code during fail pathway.
+>>>
+>> Confirmed from HW designer, calibration FSM to finish takes worst case
+>> 72uS so by the time it gets to sensor stream it will be done its
+>> sequence and will be waiting for DONE bit.
 >>
->>> Unfortunately HW don't have separate status indicating when sequence is
->>> done to indicate its waiting for LP11.
->>>
->>>
->>> To avoid all this, will remove cancel_calibration() totally and use=20
->>> same
->>> finish calibration even in case of stream failure then.
->>>
->> What about to add 72us delay to the end of start_calibration() in order
->> to ensure that FSM is finished before LP-11?
+>> So disabling MIPI CAL clock on sensor stream fails is safe.
 >
-> Why we should add 72uS in start_calibration() when can use same=20
-> finish_calibration() for both pass/fail cases?
+> 72us is quite a lot of time, what will happen if LP-11 happens before
+> FSM finished calibration?
 >
-> Only timing loose we see is in case of failure we still wait for 250ms=20
-> and as this is failing case I hope should be ok.
+> Maybe the finish_calibration() needs to split into two parts:
 >
-Also as we don't need cancel_calibration(), keeping tegra_mipi_wait()=20
-like earlier makes sense I believe as we are letting it finish going=20
-thru sequence.
+>   1. wait for CAL_STATUS_ACTIVE before enabling sensor
+>   2. wait for CAL_STATUS_DONE after enabling sensor
 
-So I think below are fixes,
+I don't think we need to split for active and done. Active will be 1 as=20
+long as other pads are in calibration as well.
 
-1. Existing MIPI driver, tegra_mipi_wait() to not use status ACTIVE bit=20
-to be 0 and use only DONE bit to be 1 for wait condition=C2=A0 as we are=20
-calibrating separately for individual pads and this ACTIVE bit is common=20
-for all pads where it will not be 0 in case of other parallel streams=20
-which may also be under calibration.
+We cant use active status check for specific pads under calibration.=20
+This is common bit for all pads.
 
-2. No need for separate cancel_calibration. So, probably earlier names=20
-tegra_mipi_calibrate() and tegra_mipi_wait() hols good as we are waiting=20
-for calibration sequence to finish irrespective of fail/pass.
+Unfortunately HW don't have separate status indicating when sequence is=20
+done to indicate its waiting for LP11.
+
+
+To avoid all this, will remove cancel_calibration() totally and use same=20
+finish calibration even in case of stream failure then.
 
