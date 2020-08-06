@@ -2,141 +2,99 @@ Return-Path: <SRS0=WNzV=BQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B390C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D206C433E0
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 946EF23119
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:09:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CzAZ6GdE"
+	by mail.kernel.org (Postfix) with ESMTP id 7515023119
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:12:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596733927;
+	bh=x9Ze0cDgQWMYzELAxNCRG4Als/cunFjflbfd4YzRC6A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=rx/FlMkgKdluB6LxtNamrFMrql8EpOaSgYnGNONA02vZu+uwjSP0o2oAPhXqdhp2r
+	 bYXMkj+rNeIJPPJO6zMUVUVS3QyvUHsdcn+m6XCUm0ig1BuPf9z6g9Sqxhjh3qOjmO
+	 uuY3tNAvnvVxDUkwd49nTcqrEqRsndDwio2HSnu0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729717AbgHFRIp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 13:08:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45872 "EHLO
+        id S1730074AbgHFRLr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 13:11:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730051AbgHFRGV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 13:06:21 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78872C000384
-        for <linux-tegra@vger.kernel.org>; Thu,  6 Aug 2020 08:41:21 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id i26so32157687edv.4
-        for <linux-tegra@vger.kernel.org>; Thu, 06 Aug 2020 08:41:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gGFtKaxSRLcBJrXrSKuT5gcGccZy60brObCwIGGtaO8=;
-        b=CzAZ6GdEMPduCQRZpB2RmrNL/aPQmAucOR1IbGT/rdXUhfonhlrw9Yyhb5VglWTryF
-         5VDgNO0w3YiqjvNrMEKVMmqdIIqRpj81kByPTBMuVwAxx1p9WpjmtO5p1rD1Htob68AD
-         C/wRJjTmcT/aHeuVonU+2Bfq67AScG0tt0aGqbN78tW9PMd0zpTh3oBaD3jdXccRF+sA
-         vVINR7JKX8Zi9RunPreq9ui2Rdoo3SKW8XrOQ7xIOIkhT77ytsuiXLpJgRVD82KqrBMR
-         4/Dq1jjNdd9sTcbYuiscRhOzM6c9/TE2cKBsfRxYcWJOL+9IJj7j+d0P7PxB1n7gwvN8
-         i3cw==
+        with ESMTP id S1730222AbgHFRKJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 13:10:09 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1CC1C00022F;
+        Thu,  6 Aug 2020 08:41:56 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id q76so10119076wme.4;
+        Thu, 06 Aug 2020 08:41:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gGFtKaxSRLcBJrXrSKuT5gcGccZy60brObCwIGGtaO8=;
-        b=i8HcJNhRU4zdVRvapdl6IqcRWwr8Ql/UC4PSrrdbLL3U0T5FDn81sy0LNCcgdK5Vhc
-         20zd9ams2MsUiNJZZeFMHrER5QMmqE8K2rtM62ErS/QYke2jfYJCk6+SZdDkgDEbCKVI
-         Nsf6FCjwpE0a0K75fUETHIMCa4xaBVHeOxxL1b5FmK0m42oTYOO+5sJ58s8ecyvnlDMu
-         7USA1HbURovN9096/n7zYimrePPOTMWnv0Ver6WeJnQuaDi8qBk7oahOkofynV5FAmva
-         sRyt9QfPSUUmDSPKkftXxrdu2e6Cbh+mEEVhucZlkiy8mTBeiASJIsYETEwWhxHTvs7O
-         AX/w==
-X-Gm-Message-State: AOAM532Xj+K7jS/uDOcn6r1tmuNYTCxplT/hWwS6bzttO4z4wuTboQNf
-        RmaxpoK9b7ycgVBW6xjXOuY=
-X-Google-Smtp-Source: ABdhPJwLviEWksIrCxmqouHOmHK+7GnS5TDxsM5VYn/bHcF5CpczkMp/s8V5gqriDRofNG+osRChVQ==
-X-Received: by 2002:a05:6402:847:: with SMTP id b7mr4776884edz.39.1596728480270;
-        Thu, 06 Aug 2020 08:41:20 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id fx15sm4060140ejb.1.2020.08.06.08.41.18
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Ql3hGTHje/p2vwNn/ID8F5Qa5Fp/I/jz2QjpfkMIy8A=;
+        b=oC4hbreq4JtGHYgQwcx9rp3aBj+50DSOmOh6Ez8Vl0e8HjTwFxzE7VrHXRzx5RPj7U
+         uH7wAPDseF369+ksel4ChAXjM9jrO6nLssTlYd5D3GF/Z7wsAl/gUByCxijkeDOjiIIx
+         Db/WBxH1j5nnv1/MBF5XL3uNeiDnXGBdit8NWcbsFyhyb9vv+JgpiSgcQKau34GTiHZf
+         +LXUCWjsqA5vsRC7ruhLbL0aEeYA746QFFV0yhsgKMsY/wMIWvJBI0QzdTbW0XhB0BZ9
+         yAykGnf17kSMKPLy+a3FWZaSBFnjt1RXi1BsMaT6PCOVKhmjRG/fwqtA3reG55K5xHvK
+         6iEg==
+X-Gm-Message-State: AOAM531RS+nv6LDU7T/7S2Pa3pOyAw7vlG+RaNayz3XT/HNZPK0iYX9B
+        FFUOEreaqUQS18KHOkCPIgZlhka6Zgk=
+X-Google-Smtp-Source: ABdhPJwzlHcAKonDnHK5hxlbdBjEHnGGkz382M78Jit2tSdVdrilgnAIiKjPkcJpf0NZhdrkpvAnyA==
+X-Received: by 2002:a05:600c:4112:: with SMTP id j18mr7692068wmi.187.1596720810126;
+        Thu, 06 Aug 2020 06:33:30 -0700 (PDT)
+Received: from pi3 ([194.230.155.117])
+        by smtp.googlemail.com with ESMTPSA id f124sm6322725wmf.7.2020.08.06.06.33.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Aug 2020 08:41:19 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH 4/4] arm64: tegra: Describe display controller outputs for Tegra210
-Date:   Thu,  6 Aug 2020 17:41:11 +0200
-Message-Id: <20200806154111.3917284-4-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200806154111.3917284-1-thierry.reding@gmail.com>
-References: <20200806154111.3917284-1-thierry.reding@gmail.com>
+        Thu, 06 Aug 2020 06:33:27 -0700 (PDT)
+Date:   Thu, 6 Aug 2020 15:33:25 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] rtc: max77686: Fix wake-ups for max77620
+Message-ID: <20200806133325.GA7685@pi3>
+References: <20200806125431.699339-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200806125431.699339-1-jonathanh@nvidia.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, Aug 06, 2020 at 01:54:31PM +0100, Jon Hunter wrote:
+> Following commit d8f090dbeafd ("rtc: max77686: Do not allow interrupt to
+> fire before system resume"), RTC wake-ups stopped working on Jetson TX2
+> and Jetson Xavier platforms. The Jetson TX2 uses the max77620 PMIC and
+> the Jetson Xavier uses max20024 PMIC. Both of these PMICs have the same
+> max77620 RTC controller.
+> 
+> For the max77620 RTC, the variable 'rtc_irq_from_platform' is defined as
+> true in the max77686 driver and because of this the IRQ passed to the
+> max77686 driver for RTC is the PMIC IRQ and not the parent. Hence,
+> following commit d8f090dbeafd ("rtc: max77686: Do not allow interrupt to
+> fire before system resume"), for the max77620 the RTC IRQ within the
+> PMIC is now getting disabled on entry to suspend and unable to wake the
+> system up. Fix this by only disabling interrupts on entry to suspend
+> in the max77686 RTC driver, if the interrupt is the parent interrupt.
+> 
+> Fixes: d8f090dbeafd ("rtc: max77686: Do not allow interrupt to fire before system resume")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/rtc/rtc-max77686.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 
-Both display controllers can drive both DSI and both SOR outputs on
-Tegra210. Describe this in device tree so that the operating system
-doesn't have to guess.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 829f786af133..27d4e3f134ca 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -194,6 +194,7 @@ dc@54200000 {
- 
- 			iommus = <&mc TEGRA_SWGROUP_DC>;
- 
-+			nvidia,outputs = <&dsia &dsib &sor0 &sor1>;
- 			nvidia,head = <0>;
- 		};
- 
-@@ -208,10 +209,11 @@ dc@54240000 {
- 
- 			iommus = <&mc TEGRA_SWGROUP_DCB>;
- 
-+			nvidia,outputs = <&dsia &dsib &sor0 &sor1>;
- 			nvidia,head = <1>;
- 		};
- 
--		dsi@54300000 {
-+		dsia: dsi@54300000 {
- 			compatible = "nvidia,tegra210-dsi";
- 			reg = <0x0 0x54300000 0x0 0x00040000>;
- 			clocks = <&tegra_car TEGRA210_CLK_DSIA>,
-@@ -248,7 +250,7 @@ nvjpg@54380000 {
- 			status = "disabled";
- 		};
- 
--		dsi@54400000 {
-+		dsib: dsi@54400000 {
- 			compatible = "nvidia,tegra210-dsi";
- 			reg = <0x0 0x54400000 0x0 0x00040000>;
- 			clocks = <&tegra_car TEGRA210_CLK_DSIB>,
-@@ -284,7 +286,7 @@ tsec@54500000 {
- 			status = "disabled";
- 		};
- 
--		sor@54540000 {
-+		sor0: sor@54540000 {
- 			compatible = "nvidia,tegra210-sor";
- 			reg = <0x0 0x54540000 0x0 0x00040000>;
- 			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-@@ -304,7 +306,7 @@ sor@54540000 {
- 			status = "disabled";
- 		};
- 
--		sor@54580000 {
-+		sor1: sor@54580000 {
- 			compatible = "nvidia,tegra210-sor1";
- 			reg = <0x0 0x54580000 0x0 0x00040000>;
- 			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.27.0
-
+Best regards,
+Krzysztof
