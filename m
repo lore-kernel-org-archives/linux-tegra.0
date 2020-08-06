@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2984EC433DF
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D41C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C7D32086A
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E1472086A
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:55:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hrgQXlLL"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FY9UKV4S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729593AbgHFQvp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 12:51:45 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4118 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729247AbgHFQvM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 12:51:12 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2c34cd0000>; Thu, 06 Aug 2020 09:50:21 -0700
+        id S1729334AbgHFQty (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 12:49:54 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:19381 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729087AbgHFQlS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 12:41:18 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2c329f0001>; Thu, 06 Aug 2020 09:41:03 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 06 Aug 2020 09:51:11 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 06 Aug 2020 09:41:16 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 06 Aug 2020 09:51:11 -0700
-Received: from [10.2.172.190] (172.20.13.39) by HQMAIL107.nvidia.com
+        by hqpgpgate102.nvidia.com on Thu, 06 Aug 2020 09:41:16 -0700
+Received: from [10.2.172.190] (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
- 2020 16:51:10 +0000
+ 2020 16:41:15 +0000
 Subject: Re: [PATCH v8 08/10] gpu: host1x: mipi: Keep MIPI clock enabled till
  calibration is done
 To:     Dmitry Osipenko <digetx@gmail.com>,
@@ -41,6 +41,7 @@ CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
         <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
+ <1596469346-937-9-git-send-email-skomatineni@nvidia.com>
  <20200805134600.GA3351349@ulmo>
  <103efe31-1abc-54f2-6004-490d7bb1b61a@gmail.com>
  <dcd58ae7-58ed-11d1-0e10-7f522b651b30@gmail.com>
@@ -57,64 +58,94 @@ References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
  <4025a458-fa78-924d-c84f-166f82df0f8e@gmail.com>
  <4f15d655-3d62-cf9f-82da-eae379d60fa6@nvidia.com>
  <b5612e93-f1c4-4762-baa1-5d85eb1edbe1@gmail.com>
- <412f8c53-1aca-db31-99a1-a0ecb2081ca5@nvidia.com>
- <04413bc8-8d89-7e57-9b34-84bb11ecb008@gmail.com>
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <60c38774-05d6-2825-bec5-be5eee9c3dea@nvidia.com>
-Date:   Thu, 6 Aug 2020 09:51:12 -0700
+Message-ID: <412f8c53-1aca-db31-99a1-a0ecb2081ca5@nvidia.com>
+Date:   Thu, 6 Aug 2020 09:41:18 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <04413bc8-8d89-7e57-9b34-84bb11ecb008@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+In-Reply-To: <b5612e93-f1c4-4762-baa1-5d85eb1edbe1@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
  HQMAIL107.nvidia.com (172.20.187.13)
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596732621; bh=jxf5qoZrAj9URSn6k3q12ygKmhPO93pb1oZSR7YNgBo=;
+        t=1596732063; bh=aSj+An4k0jQSBKE0gQLbkgh8EUdWIyZoOObI+nTFPQ4=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
          Content-Language;
-        b=hrgQXlLLYX1tvXU8WgTmMPKkkvgfHIokcrsmyF8UCj8N7IqaVdLjRkkRioRUtXJux
-         sSNwTWH7LztC6mnqUD8Fat+LduSpL3aqNxkXOr46Dko8VcGbxjqD1zn0KSUzGhqi2c
-         GBv8/tlcV1RgGHDHHUF+FLgCQNpYb7zDd2WkpUdO6mBniDYv8ebEOXucSYKXs7WQnd
-         08rbyM3lRaPjiDLhpPShPJFuSDU2ar2VORlC49HVtxMB/SdhdsYyPTCzHYRqBrv1Ly
-         jhLjLhtN6TjVlYCoLRVReDcAYWdjluOGU6rBktjLIIN1+nzqVCBJa7ntJ7ld9n5SkT
-         T10ygZjDKiA8w==
+        b=FY9UKV4S6ICiJGg4B7NbEf9KBDsvgca/RcruHvXMwH3vkmJvFd37M9kkd6NUrVePs
+         1AzoPKnCxuaJ55FLoYqhtX5CA/L9MkPR/WyhVndrEy5ivTCcuqIhRZ3NVltDZPUGSu
+         rsP80G+YfJIw0n8sAtFDcVZWKPe/TKgkWkTt3rS4He6ALc/mfL8T/kNqJCwr9RoIHc
+         nDOMWdUubUae1l1/q92P9NlLQ3DcmbWavouObFIbnESHkDSqCOPr2KT8LIaniP9ZGo
+         THX8GSRxcbqrtYIJ/ozDmzwVKYgsvYKUZJOCNpIEzLMqGnqDMfsor5d6bp9E3h7Qx6
+         1CdmL42QEtuQQ==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 8/6/20 9:45 AM, Dmitry Osipenko wrote:
-> 06.08.2020 19:41, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+On 8/6/20 9:10 AM, Dmitry Osipenko wrote:
+> 06.08.2020 18:59, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 > ...
->>> What about to add 72us delay to the end of start_calibration() in order
->>> to ensure that FSM is finished before LP-11?
->> Why we should add 72uS in start_calibration() when can use same
->> finish_calibration() for both pass/fail cases?
+>>>> Confirmed from HW designer, calibration FSM to finish takes worst case
+>>>> 72uS so by the time it gets to sensor stream it will be done its
+>>>> sequence and will be waiting for DONE bit.
+>>>>
+>>>> So disabling MIPI CAL clock on sensor stream fails is safe.
+>>> 72us is quite a lot of time, what will happen if LP-11 happens before
+>>> FSM finished calibration?
+>>>
+>>> Maybe the finish_calibration() needs to split into two parts:
+>>>
+>>>  =C2=A0 1. wait for CAL_STATUS_ACTIVE before enabling sensor
+>>>  =C2=A0 2. wait for CAL_STATUS_DONE after enabling sensor
+>> I don't think we need to split for active and done. Active will be 1 as
+>> long as other pads are in calibration as well.
 >>
->> Only timing loose we see is in case of failure we still wait for 250ms
->> and as this is failing case I hope should be ok.
+>> We cant use active status check for specific pads under calibration.
+>> This is common bit for all pads.
+> Does hardware have a single FSM block shared by all pads or there is FSM
+> per group of pads?
+
+MIPI CAL status register has DONE bits for individual pads status and=20
+single ACTIVE bit.
+
+ACTIVE bit set to 1 indicates auto calibration is active which is the=20
+case even when other pads (other CSI pads from other ports streaming in=20
+case of parallel stream) are under calibration. Also DSI is shared as well.
+
+We do calibration for individual pads. So, we should not rely on ACTIVE bit=
+.
+
+
+MIPI driver checks for condition ACTIVE =3D=3D 1 && DONE =3D=3D 1 from the=
+=20
+beginning.
+
+But I think this also should be fixed as in case of parallel streams=20
+calibration can happen in parallel waiting for ACTIVE to be cleared=20
+makes all calibration callers to wait for longer than needed as ACTIVE=20
+is common for all pads.
+
+>
+>> Unfortunately HW don't have separate status indicating when sequence is
+>> done to indicate its waiting for LP11.
 >>
-> You said that calibration settings are applied to pads on LP-11, but if
-> LP-11 happens before FSM is finished, then what values will be applied
-> if any?
+>>
+>> To avoid all this, will remove cancel_calibration() totally and use same
+>> finish calibration even in case of stream failure then.
+>>
+> What about to add 72us delay to the end of start_calibration() in order
+> to ensure that FSM is finished before LP-11?
 
-No calibration logic will check for LP-11 only after finishing=20
-calibration sequence codes.
+Why we should add 72uS in start_calibration() when can use same=20
+finish_calibration() for both pass/fail cases?
 
-After that if it sees LP-11, it will apply results to pads and DONE bit=20
-will then be set to 1 indication pad results update.
-
-Unfortunately like I said we don't have status indication for=20
-calibrating finished before waiting for LP-11.
-
-ACTIVE bit is common for all PADS. If multiple 6 streams are happening=20
-in parallel, ACTIVE will be 1 as long as its calibrating any of the pads=20
-and its not for individual pads.
+Only timing loose we see is in case of failure we still wait for 250ms=20
+and as this is failing case I hope should be ok.
 
