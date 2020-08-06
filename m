@@ -2,74 +2,45 @@ Return-Path: <SRS0=WNzV=BQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B5BC433E1
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA08C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BD90221E3
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F09C2221E2
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:44:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MyRZbQfG"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ANeuKtW0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbgHFSmg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 14:42:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727939AbgHFSUB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 14:20:01 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B82DC0617A2;
-        Thu,  6 Aug 2020 11:18:39 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id b30so26611445lfj.12;
-        Thu, 06 Aug 2020 11:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zyDgQ58yfMwWuCC3duccdkOno3vWVcRNh6nKRXhidek=;
-        b=MyRZbQfGm1TKcB+zBssqDMtxcidwjYO7hE4TlnATgTe0SqNa0BctoPeiVmFPhWxaxw
-         9HgsPi+ytgS6C+dLS5cbg0t0zGUI60l7w7qf/X76752INI/nDLHSPBvwvEwIxHkg72yr
-         t1fYK9Exm0UHawEzsVglsQvCFsKhh/WbzOc/0g23Wo7JMNB/zosNweCHyQ2LegAovw05
-         WJ3fpKjmLSt7TgLgMRKQU3ArR+P/c9OM3aRMi98LMDd/HJX3vg5qP+/AzIuUBlYSNOkA
-         oQyNWVqpRJlY7P35stTlbYDVn/6G4U4AAhKrSI/lKFSErmYn1AgtYwJ6iTmw+k9jSvsP
-         9WdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zyDgQ58yfMwWuCC3duccdkOno3vWVcRNh6nKRXhidek=;
-        b=FhyP0Nfzr24jUSUFQ8fqTltCvBNEe8LZsNSLvoewUNY6us5ZV+uc4+4yoFMEKQNjDB
-         9GljJU84S5p+pAUZBWt5bJnl6TebTu+TgcRXHxhWPdVvJz/R6wtAvBRFwBk5J3IGWGy4
-         T533yTqL5lkDKBneHhlMwgd0bndgCKkCHWEKNs5JOQSUqPR6/LJuGPsZmW+vMEi3HnDm
-         RZwxmocv6A0sMC7sc8+VmDQLVlc+k2pMQ2+3Iz93vUWvoJOcdyoklMGBZxJRdizQ6vSn
-         MoqA3zqBJja5TNDX1OkIPuw052LzSe8VEUx+y488bnJuMIekgleSIceyokd43z+xOvLJ
-         +b3A==
-X-Gm-Message-State: AOAM530qLF2xi/+NlrRlTq0Pd+RyCpcAKc0S3CbFxTui5x4WomIuD8WU
-        VUvazRwHhNA1LM+T2k8PBu1D1lEA
-X-Google-Smtp-Source: ABdhPJwsXrrzhKIHd4U+0mxTpUSDS+7zShPN2F0Yc4n/A8sv96yqeEPFnojDg1v3UbYpBfNORZD/4A==
-X-Received: by 2002:ac2:5e2c:: with SMTP id o12mr4378022lfg.71.1596737916355;
-        Thu, 06 Aug 2020 11:18:36 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-41-50.dynamic.spd-mgts.ru. [94.29.41.50])
-        by smtp.googlemail.com with ESMTPSA id 1sm2751561ljr.6.2020.08.06.11.18.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Aug 2020 11:18:35 -0700 (PDT)
+        id S1726965AbgHFSoG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 14:44:06 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:6177 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbgHFSoD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 14:44:03 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2c4f0e0002>; Thu, 06 Aug 2020 11:42:22 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 06 Aug 2020 11:44:03 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 06 Aug 2020 11:44:03 -0700
+Received: from [10.2.172.190] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
+ 2020 18:44:02 +0000
 Subject: Re: [PATCH v8 08/10] gpu: host1x: mipi: Keep MIPI clock enabled till
  calibration is done
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+To:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>
-Cc:     jonathanh@nvidia.com, frankc@nvidia.com, hverkuil@xs4all.nl,
-        sakari.ailus@iki.fi, robh+dt@kernel.org, helen.koike@collabora.com,
-        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
+        <helen.koike@collabora.com>, <gregkh@linuxfoundation.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
- <6eede805-80fd-016f-22f8-b6d25f6587af@nvidia.com>
  <1c12e40e-de7f-0599-a941-82760b4c7668@gmail.com>
  <9ef0b875-e826-43e2-207e-168d2081ff6a@nvidia.com>
  <4689cfe9-e7c4-48bf-217f-3a31b59b8bda@nvidia.com>
@@ -87,66 +58,101 @@ References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
  <ed79b201-85ba-f725-c5fa-fcde0761bc3d@nvidia.com>
  <26ed2841-db5d-aeb0-11c7-cbe2ddd1d76b@gmail.com>
  <eddfdaf0-818a-c4dd-e3b4-4d432af56982@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e965076a-dc31-5774-dd27-98c992331bd2@gmail.com>
-Date:   Thu, 6 Aug 2020 21:18:34 +0300
+ <e965076a-dc31-5774-dd27-98c992331bd2@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <50aa439e-a572-ce77-9d06-e060304b9bd4@nvidia.com>
+Date:   Thu, 6 Aug 2020 11:44:04 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <eddfdaf0-818a-c4dd-e3b4-4d432af56982@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <e965076a-dc31-5774-dd27-98c992331bd2@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1596739342; bh=hjtCqBLT9+XaCFVA4DWtudBFoaTKIKtpNhkT5ZGd7rA=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=ANeuKtW0WzWf1saO5fqSgMQAmjZn3w6C/Hl1i/smgxHVcxNwWmlBtXNSLhrvi3kxN
+         C+Cl4g8TUY1dKinTCP+pEF6+4j891st7uTl3I8psuUITeLxafc/r2R8gIWS8gqCmcj
+         jVgBROi9dq79L1oTPbbM7DmQ6sriLVZrOZQTzuBJnkwwHCiKjpytqtFNqv+x/UNaAt
+         ZOfheuvDq3pU8GEUsnZLVAO3qxasnhv5SnWguhGYthqZqOYgXYQAGus+c7JNIYbwlP
+         uqRsxmcM7+5Y5lG4+OlOTyzua4MUFVLmSlyuihw1Nb9t76DxtSBz8+BcUMsO/oHb5W
+         0xam/NpL+5otw==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-06.08.2020 21:07, Sowjanya Komatineni пишет:
-> 
-> On 8/6/20 11:01 AM, Dmitry Osipenko wrote:
->> 06.08.2020 20:52, Sowjanya Komatineni пишет:
->> ...
->>> Right mutex_unlock should happen at end of finish_calibration.
->>>
->>> With keeping mutex locked in start, we dont have to check for active to
->>> be 0 to issue start as mutex will keep it locked and other pads
->>> calibration can only go thru when current one is done.
->>>
->>> So instead of below sequence, its simpler to do this way?
->>>
->>> start_calibration()
->>>
->>> - mutex_lock
->>>
->>> - wait for 72uS after start
->>>
->>> finish_calibration()
->>>
->>> - keep check for ACTIVE = 0 and DONE = 1
->> I think only the DONE bits which correspond to the mipi_device->pads
->> bitmask should be awaited.
-> 
-> As next START can't be triggered when auto cal is ACTIVE, we should keep
-> this in finish.
-> 
-> As we do mutex_unlock only at end of finish, other pads calibrations
-> dont go thru till the one in process is finished.
-> 
-> So in this case ACTIVE applies to current selected pads that are under
-> calibration.
 
-Should be better to check only the relevant bits in order to catch bugs,
-otherwise you may get a DONE status from the irrelevant pads.
+On 8/6/20 11:18 AM, Dmitry Osipenko wrote:
+> 06.08.2020 21:07, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 8/6/20 11:01 AM, Dmitry Osipenko wrote:
+>>> 06.08.2020 20:52, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> ...
+>>>> Right mutex_unlock should happen at end of finish_calibration.
+>>>>
+>>>> With keeping mutex locked in start, we dont have to check for active t=
+o
+>>>> be 0 to issue start as mutex will keep it locked and other pads
+>>>> calibration can only go thru when current one is done.
+>>>>
+>>>> So instead of below sequence, its simpler to do this way?
+>>>>
+>>>> start_calibration()
+>>>>
+>>>> - mutex_lock
+>>>>
+>>>> - wait for 72uS after start
+>>>>
+>>>> finish_calibration()
+>>>>
+>>>> - keep check for ACTIVE =3D 0 and DONE =3D 1
+>>> I think only the DONE bits which correspond to the mipi_device->pads
+>>> bitmask should be awaited.
+>> As next START can't be triggered when auto cal is ACTIVE, we should keep
+>> this in finish.
+>>
+>> As we do mutex_unlock only at end of finish, other pads calibrations
+>> dont go thru till the one in process is finished.
+>>
+>> So in this case ACTIVE applies to current selected pads that are under
+>> calibration.
+> Should be better to check only the relevant bits in order to catch bugs,
+> otherwise you may get a DONE status from the irrelevant pads.
+tegra_mipi_device is separate for DSI and CSI channels. mutex lock used=20
+during calibrate is device specific lock.
+So, it will not prevent other devices to hold till on going calibration=20
+is done unless we add wait for active bit before triggering start.
 
->>> - mutex_unlock()
->> Perhaps the start_calibration() also needs to be changed to not touch
->> the MIPI_CAL_CONFIG bits of the unrelated pads?
-> Driver already takes care of programming corresponding pads config only.
+Currently we wait for active bit at end during calibration done check=20
+after start trigger. But when other devices go thru calibration in=20
+parallel as lock is device specific and not common lock for all devices=20
+it will trigger start but MIPI calibration logic ignore if previous=20
+calibration is still in progress.
 
-It writes 0 to the config of the unrelated pads, which probably isn't
-nice if some pads use periodic auto-calibration.
+Need to serialize calibration start requests from different devices=20
+based on ACTIVE bit.
 
-https://elixir.bootlin.com/linux/v5.8/source/drivers/gpu/host1x/mipi.c#L350
+>>> Perhaps the start_calibration() also needs to be changed to not touch
+>>> the MIPI_CAL_CONFIG bits of the unrelated pads?
+>> Driver already takes care of programming corresponding pads config only.
+> It writes 0 to the config of the unrelated pads, which probably isn't
+> nice if some pads use periodic auto-calibration.
+>
+> https://elixir.bootlin.com/linux/v5.8/source/drivers/gpu/host1x/mipi.c#L3=
+50
+>
+> Although looks like auto-calibration isn't supported by the current drive=
+r.
 
-Although looks like auto-calibration isn't supported by the current driver.
+Yes we don't use auto-calibration.
+
+Only common bit here is MIPI_CAL_CTRL start. All others are pad specific=20
+currently.
+
