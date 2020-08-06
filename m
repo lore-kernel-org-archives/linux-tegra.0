@@ -8,31 +8,31 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10787C433E8
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C30C433E0
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59B22221E3
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F84B221E3
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MwfczHrZ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="UXnpUM3b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbgHFScC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 14:32:02 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12369 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728422AbgHFSbN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 14:31:13 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2c4a7b0000>; Thu, 06 Aug 2020 11:22:51 -0700
+        id S1729436AbgHFSi6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 14:38:58 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9611 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbgHFSbr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 14:31:47 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2c4abf0001>; Thu, 06 Aug 2020 11:24:00 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 06 Aug 2020 11:23:41 -0700
+  Thu, 06 Aug 2020 11:24:13 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 06 Aug 2020 11:23:41 -0700
+        by hqpgpgate101.nvidia.com on Thu, 06 Aug 2020 11:24:13 -0700
 Received: from [10.26.73.183] (172.20.13.39) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
- 2020 18:23:36 +0000
-Subject: Re: [PATCH v5 08/11] arm64: defconfig: Build AHUB component drivers
+ 2020 18:24:07 +0000
+Subject: Re: [PATCH v5 09/11] arm64: defconfig: Build ADMA and ACONNECT driver
 To:     Sameer Pujar <spujar@nvidia.com>, <broonie@kernel.org>,
         <perex@perex.cz>, <tiwai@suse.com>,
         <kuninori.morimoto.gx@renesas.com>, <robh+dt@kernel.org>,
@@ -45,14 +45,14 @@ CC:     <thierry.reding@gmail.com>, <digetx@gmail.com>,
         <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
         <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
 References: <1595134890-16470-1-git-send-email-spujar@nvidia.com>
- <1595134890-16470-9-git-send-email-spujar@nvidia.com>
+ <1595134890-16470-10-git-send-email-spujar@nvidia.com>
 From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <eae61836-463d-4e50-36bc-c422d2094d0e@nvidia.com>
-Date:   Thu, 6 Aug 2020 19:23:33 +0100
+Message-ID: <86606b00-8ec8-608e-4b94-eff3e6ad2723@nvidia.com>
+Date:   Thu, 6 Aug 2020 19:24:03 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <1595134890-16470-9-git-send-email-spujar@nvidia.com>
+In-Reply-To: <1595134890-16470-10-git-send-email-spujar@nvidia.com>
 X-Originating-IP: [172.20.13.39]
 X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
  HQMAIL107.nvidia.com (172.20.187.13)
@@ -60,17 +60,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596738171; bh=R4YM1NGHdWeT95v8E9vGiRVmOpALow/m7dTW+oS7Nzc=;
+        t=1596738240; bh=cTftzqwrcOCcgqbdPCuAeNHtGbe/8tzV0BRaVzfY7L0=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Language:
          Content-Transfer-Encoding;
-        b=MwfczHrZJLUBOTJcWJJGy7Klr0mISWBuiU8W6VKd/baXDXgeUvwjIxktsP7Qu0fO8
-         uQ+sLa2Ah5DnfK/TWUmxpMZVj70/e9g6Byv5hSzj5u6zSdw7lnJny24+QL7/c2Vl7D
-         dyB7KSt8tUDhyPjG57Ur6YfF9JRbEXCQtS8ThY5PFDIgJUdVI63o8vR+cxg00GR/Ws
-         bKJslnpnJdIIbB7qgOTJWSfwvLzfnOoIwykifPIqz+yt+YChQAsRKiCQp+sQIWDCsh
-         Pw0LpFtM4g5/u7VCiPFPumP/pwzoo29Q5e0undXZ49CAVGivoGF5v+TNftPJRSI27p
-         1HbCuyDoBOhgA==
+        b=UXnpUM3bOKlamWewcwTU7jrr8O+fpdIHdPil6rIITe74wWhK8MxNAeF6W612FQ9vu
+         Rt865JY8RIwKW2kYND7ndjYPgp4o5S3Rngy6jAY+iFLxkotNI8IEu2eKOJxfsJP5LH
+         hTjjrL12auCb+M6VlbOwTPaw7h8WX9gzrp/++lrfe0bcdZGH4shJ7TOm5aYm5DpK5X
+         u8+MDuaR0uEcuVzGRDIgTEi1FSUQgMO3ry5ZxonAqulla0irV2tlZeG78ChNyJNyJv
+         qKAIY0O1b+46+uIs4UV1Mb6o+QmR/wOF0qidaZyvmF9GIVXDYej13ZOYfv8+ChYlgs
+         XaXnFdu+uADRg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -78,32 +78,35 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 
 On 19/07/2020 06:01, Sameer Pujar wrote:
-> This patch helps to build AHUB and its client drivers (I2S, DMIC,
-> DSPK, ADMAIF and AHUB). These register components with ASoC core.
+> This commit builds ADMA and ACONNECT drivers which can be used on
+> Tegra210 and later platforms to transfer audio data to/from AHUB
+> (Audio Hub).
 > 
 > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 > ---
->  arch/arm64/configs/defconfig | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/arm64/configs/defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 89538d9..4976e1a 100644
+> index 4976e1a..7bc093a 100644
 > --- a/arch/arm64/configs/defconfig
 > +++ b/arch/arm64/configs/defconfig
-> @@ -669,6 +669,12 @@ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
->  CONFIG_SND_SOC_SAMSUNG=y
->  CONFIG_SND_SOC_RCAR=m
->  CONFIG_SND_SUN4I_SPDIF=m
-> +CONFIG_SND_SOC_TEGRA=m
-> +CONFIG_SND_SOC_TEGRA210_AHUB=m
-> +CONFIG_SND_SOC_TEGRA210_DMIC=m
-> +CONFIG_SND_SOC_TEGRA210_I2S=m
-> +CONFIG_SND_SOC_TEGRA186_DSPK=m
-> +CONFIG_SND_SOC_TEGRA210_ADMAIF=m
->  CONFIG_SND_SOC_AK4613=m
->  CONFIG_SND_SOC_ES7134=m
->  CONFIG_SND_SOC_ES7241=m
-
+> @@ -219,6 +219,7 @@ CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
+>  CONFIG_HISILICON_LPC=y
+>  CONFIG_SIMPLE_PM_BUS=y
+>  CONFIG_FSL_MC_BUS=y
+> +CONFIG_TEGRA_ACONNECT=m
+>  CONFIG_MTD=y
+>  CONFIG_MTD_BLOCK=y
+>  CONFIG_MTD_CFI=y
+> @@ -788,6 +789,7 @@ CONFIG_MV_XOR_V2=y
+>  CONFIG_OWL_DMA=y
+>  CONFIG_PL330_DMA=y
+>  CONFIG_TEGRA20_APB_DMA=y
+> +CONFIG_TEGRA210_ADMA=m
+>  CONFIG_QCOM_BAM_DMA=y
+>  CONFIG_QCOM_HIDMA_MGMT=y
+>  CONFIG_QCOM_HIDMA=y
 
 Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
