@@ -5,66 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D36D1C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED47C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CF54221E4
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:18:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D20423117
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 16:22:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r7IVeb5V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAfb3QXn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbgHFQSm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 12:18:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37636 "EHLO
+        id S1727936AbgHFQVo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 12:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726799AbgHFQRX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 12:17:23 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21368C0F26C6
-        for <linux-tegra@vger.kernel.org>; Thu,  6 Aug 2020 08:47:36 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id di22so28323888edb.12
-        for <linux-tegra@vger.kernel.org>; Thu, 06 Aug 2020 08:47:36 -0700 (PDT)
+        with ESMTP id S1727083AbgHFQTs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 12:19:48 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC5DC002163;
+        Thu,  6 Aug 2020 09:04:24 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id i26so32215315edv.4;
+        Thu, 06 Aug 2020 09:04:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nLq3/R3B/Bs7i1xyWXouD50ckZ3IdU6H73XFc0RzNqU=;
-        b=r7IVeb5V3rQ7PjXDc5E09ALkqa3y28KDU1C+uk6A9EOwxpSael7R1V78JihJThNKbc
-         fGZuY1dUVCGKkMTWemiMcapVQ03l9R/nAG2W2MmZpQdF7bdcO2mu5FvLRwtPWT7bTuOw
-         3yDUYuOSRgOtllBZfztbYUKBoOexBTfk+txrM3W9LaaBJCOUyeO2gftMfNALAmqfO8md
-         3Oq9piRTEckH1pUbojbW/u7WD1SwCN5puNLRAzuSe6y2SG9aHC3OQi3+OMOXDqKUnAft
-         6km7Z0OAsNLJUi9EL9oYhtl0YLiWP3hvqXhL6665Jesju2IePu3LZfEXP2sQHmPwtZRU
-         NAmw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wvtR8z/Ani5mL9lIVRm1/m2dHqQzOTsxvy15+fulIQ4=;
+        b=hAfb3QXnetMzCCM6f0K5d7xWLZ6od+HWfvETq9oP8nHvptxq3CDGNLE4MnlTbhwyF9
+         ZN8V6Iv7hVqo7e/MCYY56K/4B0S1y60LQSCeA22qnLbWJXOA2DVY8SR/jnkbwPSQ4h2n
+         04nHcT9UsgxDQbukf/yuBS/Vjbcrav/jl/MpoXsVaSdNSLm4cNbaYYn61tWtCnSZdVV8
+         1c2lJVeDgBKdQePAHclpWJm/L19thSYwOLepxoSQV9dRct/WDl/BojHn1I4HcJ3x9HAl
+         Wc6wgfzZE3r2Zxyn6t0lsrasl4heCRVc+Q0E7qk1TMrgSOwC0gJAYyAJEd9oyzY3+gu+
+         qZ9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nLq3/R3B/Bs7i1xyWXouD50ckZ3IdU6H73XFc0RzNqU=;
-        b=SbAzgZS65pChl5CfCEI/cD92GfK/5tOu4WD336gCtNFRf9iF/ZkZBBFbOc0ffYNZnB
-         Hjk1uURlcPe801FaGgZax+TcHOB39I0bHe7m4W5E7LWnQG+u0JKKeqk7PcLlsF3WN3sJ
-         evaO3EqHevcLCgjbyL1dlcpRj2IH0t5z/IaxfuB4zixAC6Q0ZIHNdf0r1IdAmMXVB4iS
-         /YB7Nygb1pns//hCqkGamlsitSVF0TI5xSVTLK1IZHe4oMBAAYXhQ7aNrpwVwfmraiIS
-         mV1UrqN31H4AcUGzrM148PVipuR5dAczJD1FX1YenkyHIqClmIsgzQp2hqiST1Z/iqX3
-         BKkA==
-X-Gm-Message-State: AOAM5336DHJqOwNULt6xVh/dWmtoKoUNHszt8ZAFtFjYlzCEl9AEabKi
-        ZfxLcbro+wyoUeS3VwRLcSA=
-X-Google-Smtp-Source: ABdhPJz+QIzxLt9aaDspcJbe9CqTN90TYeRKWfqHikZphwICsiTy8nTYschoDetBTLUSxzk5kwA4Nw==
-X-Received: by 2002:a05:6402:308e:: with SMTP id de14mr4573955edb.344.1596728854859;
-        Thu, 06 Aug 2020 08:47:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wvtR8z/Ani5mL9lIVRm1/m2dHqQzOTsxvy15+fulIQ4=;
+        b=TZbM6hqOlUijjRRyGEnxyM7sWGv4dhe+zCQ5FeAuM6/qu1MJ5UpaZLXScfYTkiiuEU
+         Yu7baGrbV0EAS4LPs/ia4s+W8M3F5zHIvcPJeL/e0xogU87OWWfRRBUirpAfruKb73uB
+         hoomHNqLBt+9hnwWBASF1PRKT0OWHgiWOGLimCJatKzTVjJPNDahGcM4ka47/1X3P3tE
+         H9F8sMgslJbVpts3NBQLrLY77sC3yWfN3UyCX1lUT1UGKwcvmKjVll7cPT19KQEREbRY
+         jGlDbX1UzGUUH2gF/XkS2x6oRRpVzB6vPQ3Udg649f4YrFr90Cfv1F/wrPZNWoJ/7xmK
+         Ag2Q==
+X-Gm-Message-State: AOAM533T1BnscrHVfWe1usJOYvi5n6/v1atn+4deP0GoyPXUSGng9I9p
+        QG4RClff1Fm8lYYZPHQxf2k=
+X-Google-Smtp-Source: ABdhPJzIJ39IJgxEOhLOrwxk39vBOFHtszT0/siZj26nK2C1VupKiiAtm8wZXygdL+ZjCs7khoW4aw==
+X-Received: by 2002:aa7:db51:: with SMTP id n17mr3829923edt.222.1596729863006;
+        Thu, 06 Aug 2020 09:04:23 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id qp16sm4064854ejb.89.2020.08.06.08.47.32
+        by smtp.gmail.com with ESMTPSA id dc23sm3438405edb.50.2020.08.06.09.04.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Aug 2020 08:47:32 -0700 (PDT)
+        Thu, 06 Aug 2020 09:04:22 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] drm/tegra: Properly reference count the DDC I2C adapter
-Date:   Thu,  6 Aug 2020 17:47:31 +0200
-Message-Id: <20200806154731.3935679-1-thierry.reding@gmail.com>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 2/3] usb: gadget: tegra-xudc: Properly align parameters
+Date:   Thu,  6 Aug 2020 18:04:16 +0200
+Message-Id: <20200806160417.3937056-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200806160417.3937056-1-thierry.reding@gmail.com>
+References: <20200806160417.3937056-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
@@ -74,62 +77,69 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Use the of_get_i2c_adapter_by_node(), which is similar to the existing
-call to of_find_i2c_adapter_by_node() except that it also takes a
-reference to the owner module of the I2C adapter. In order to properly
-balance this out, call i2c_put_adapter() to release the reference to the
-I2C adapter and its owner module.
-
-For the special case where the DDC comes from the DPAUX, care must be
-taken to perform the same steps (i.e. get_device() and module_get()) so
-that the reference counts are all balanced.
+Align parameters on subsequent lines with the parameters on the first
+line for consistency.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/drm/tegra/output.c | 4 ++--
- drivers/gpu/drm/tegra/sor.c    | 7 ++++++-
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/udc/tegra-xudc.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index e36e5e7c2f69..03382550f7d9 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -112,7 +112,7 @@ int tegra_output_probe(struct tegra_output *output)
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index ec43081f15bd..838863ede1df 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -3692,8 +3692,7 @@ static int tegra_xudc_powerdomain_init(struct tegra_xudc *xudc)
+ 	struct device *dev = xudc->dev;
+ 	int err;
  
- 	ddc = of_parse_phandle(output->of_node, "nvidia,ddc-i2c-bus", 0);
- 	if (ddc) {
--		output->ddc = of_find_i2c_adapter_by_node(ddc);
-+		output->ddc = of_get_i2c_adapter_by_node(ddc);
- 		if (!output->ddc) {
- 			err = -EPROBE_DEFER;
- 			of_node_put(ddc);
-@@ -173,7 +173,7 @@ void tegra_output_remove(struct tegra_output *output)
- 		free_irq(output->hpd_irq, output);
- 
- 	if (output->ddc)
--		put_device(&output->ddc->dev);
-+		i2c_put_adapter(output->ddc);
- }
- 
- int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 45b5258c77a2..e88a17c2937f 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -3728,7 +3728,12 @@ static int tegra_sor_probe(struct platform_device *pdev)
- 		if (!sor->aux)
- 			return -EPROBE_DEFER;
- 
--		sor->output.ddc = &sor->aux->ddc;
-+		if (get_device(&sor->aux->ddc.dev)) {
-+			if (try_module_get(sor->aux->ddc.owner))
-+				sor->output.ddc = &sor->aux->ddc;
-+			else
-+				put_device(&sor->aux->ddc.dev);
-+		}
+-	xudc->genpd_dev_device = dev_pm_domain_attach_by_name(dev,
+-								"dev");
++	xudc->genpd_dev_device = dev_pm_domain_attach_by_name(dev, "dev");
+ 	if (IS_ERR(xudc->genpd_dev_device)) {
+ 		err = PTR_ERR(xudc->genpd_dev_device);
+ 		dev_err(dev, "failed to get device power domain: %d\n", err);
+@@ -3708,16 +3707,16 @@ static int tegra_xudc_powerdomain_init(struct tegra_xudc *xudc)
  	}
  
- 	if (!sor->aux) {
+ 	xudc->genpd_dl_device = device_link_add(dev, xudc->genpd_dev_device,
+-					       DL_FLAG_PM_RUNTIME |
+-					       DL_FLAG_STATELESS);
++						DL_FLAG_PM_RUNTIME |
++						DL_FLAG_STATELESS);
+ 	if (!xudc->genpd_dl_device) {
+ 		dev_err(dev, "failed to add USB device link\n");
+ 		return -ENODEV;
+ 	}
+ 
+ 	xudc->genpd_dl_ss = device_link_add(dev, xudc->genpd_dev_ss,
+-					     DL_FLAG_PM_RUNTIME |
+-					     DL_FLAG_STATELESS);
++					    DL_FLAG_PM_RUNTIME |
++					    DL_FLAG_STATELESS);
+ 	if (!xudc->genpd_dl_ss) {
+ 		dev_err(dev, "failed to add SuperSpeed device link\n");
+ 		return -ENODEV;
+@@ -3772,16 +3771,15 @@ static int tegra_xudc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	xudc->clks = devm_kcalloc(&pdev->dev, xudc->soc->num_clks,
+-				      sizeof(*xudc->clks), GFP_KERNEL);
++	xudc->clks = devm_kcalloc(&pdev->dev, xudc->soc->num_clks, sizeof(*xudc->clks),
++				  GFP_KERNEL);
+ 	if (!xudc->clks)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < xudc->soc->num_clks; i++)
+ 		xudc->clks[i].id = xudc->soc->clock_names[i];
+ 
+-	err = devm_clk_bulk_get(&pdev->dev, xudc->soc->num_clks,
+-				      xudc->clks);
++	err = devm_clk_bulk_get(&pdev->dev, xudc->soc->num_clks, xudc->clks);
+ 	if (err) {
+ 		dev_err(xudc->dev, "failed to request clocks: %d\n", err);
+ 		return err;
 -- 
 2.27.0
 
