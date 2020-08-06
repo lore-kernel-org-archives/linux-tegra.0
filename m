@@ -2,211 +2,248 @@ Return-Path: <SRS0=WNzV=BQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D270C433DF
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D83C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED471206C3
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BBDC206B2
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 17:52:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="GeNnH3ny"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="K6nhdIPU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbgHFRtu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 13:49:50 -0400
-Received: from nat-hk.nvidia.com ([203.18.50.4]:5011 "EHLO nat-hk.nvidia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728626AbgHFQdw (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 6 Aug 2020 12:33:52 -0400
-Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2c0bfb0000>; Thu, 06 Aug 2020 21:56:13 +0800
-Received: from HKMAIL103.nvidia.com ([10.18.16.12])
-  by hkpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 06 Aug 2020 06:56:13 -0700
+        id S1729592AbgHFRwl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 13:52:41 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2682 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728399AbgHFRwj (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 13:52:39 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2c43000001>; Thu, 06 Aug 2020 10:50:56 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 06 Aug 2020 10:52:37 -0700
 X-PGP-Universal: processed;
-        by hkpgpgate102.nvidia.com on Thu, 06 Aug 2020 06:56:13 -0700
-Received: from HKMAIL104.nvidia.com (10.18.16.13) by HKMAIL103.nvidia.com
- (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
- 2020 13:56:08 +0000
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.102)
- by HKMAIL104.nvidia.com (10.18.16.13) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3 via Frontend Transport; Thu, 6 Aug 2020 13:56:08 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OND8eULtNTglGlgQ3D5+IzwG4NXA3mbiIT7HrpXTLwN395mydHcC1y2LTgIiM29I3IN8NzFt57NsMevX9QdUm52eLCKfoSFyqdEIUPtTAKG8aWeQ5PuB6rN6ZdmF2SOvX8UU1/5ZvIQopMBdYKGxoSvWnAGxfMkWPMAykO6XIYEq8qVd97UoRvO/3FsXRzlx8FZ6dVzx/PS2LA+h0Il21M+0m5+zG6gsjqM4rHBvJVGpRWlNnRkffUJGK24ynIK07GHZSfrhN4ej7atxtEoAgvBandvYSaa0MjR2gFWt8EYXlZb/AP24SWTYVd5n5ZW6Qc3KPJ9hN66CtbCaE4KOhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W3kXfRFz5pAx9q//Nw5Cu6I0m7BXmIIrpPZvY8lJHyw=;
- b=D9Xc79mdIO4nAtFPtOejzbEgj5pgBHasiLwysKkhqBOd6ayw69HfzPy8e4+E57t9ymuezP+UeejNl6QGsIDlpXKrc981qdhIVCb9yZ7BrG9/IHpc/ASDi7YWVlbUVyLaUqh6qpUmD36vj/AmuqehtZk4h89+PNMebpJU03gcOHD2AKJeu5YC4xwQA+LerPPLkteLEAUaa6GJB+iwTDQwL2Pfu0sIcznih8KeaqjCIaN1oHK+INzrDYvyur0RpMWQdDQKgrMKyBRzppoirDCwKG39a6GcymAfXth737Awjjo6bz4Pwdv3Q7A8j3ctP/UIFJIde+tbKcx0qibP/ihWAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-Received: from CH2PR12MB4135.namprd12.prod.outlook.com (2603:10b6:610:7c::22)
- by CH2PR12MB4328.namprd12.prod.outlook.com (2603:10b6:610:a6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3261.19; Thu, 6 Aug
- 2020 13:56:05 +0000
-Received: from CH2PR12MB4135.namprd12.prod.outlook.com
- ([fe80::5c6d:6cf4:8e78:154c]) by CH2PR12MB4135.namprd12.prod.outlook.com
- ([fe80::5c6d:6cf4:8e78:154c%8]) with mapi id 15.20.3261.019; Thu, 6 Aug 2020
- 13:56:05 +0000
-From:   Rajesh Gumasta <rgumasta@nvidia.com>
+        by hqpgpgate101.nvidia.com on Thu, 06 Aug 2020 10:52:37 -0700
+Received: from [10.2.172.190] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Aug
+ 2020 17:52:36 +0000
+Subject: Re: [PATCH v8 08/10] gpu: host1x: mipi: Keep MIPI clock enabled till
+ calibration is done
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     Dmitry Osipenko <digetx@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Pavan Kunapuli <pkunapuli@nvidia.com>
-Subject: RE: [Patch v2 2/4] dmaengine: tegra: Add Tegra GPC DMA driver
-Thread-Topic: [Patch v2 2/4] dmaengine: tegra: Add Tegra GPC DMA driver
-Thread-Index: AQHWa8OB+CPw1KNMkkeLJdtszOpPiqkrGF8AgAABvrA=
-Date:   Thu, 6 Aug 2020 13:56:05 +0000
-Message-ID: <CH2PR12MB41350E273B36463F9B372A52A2480@CH2PR12MB4135.namprd12.prod.outlook.com>
-References: <1596699006-9934-1-git-send-email-rgumasta@nvidia.com>
- <1596699006-9934-3-git-send-email-rgumasta@nvidia.com>
- <bc7d0d9d-ac7f-b720-64f5-63e0c76e6786@gmail.com>
-In-Reply-To: <bc7d0d9d-ac7f-b720-64f5-63e0c76e6786@gmail.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Enabled=True;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_SiteId=43083d15-7273-40c1-b7db-39efd9ccc17a;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Owner=rgumasta@nvidia.com;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_SetDate=2020-08-06T13:56:03.2165375Z;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Name=Unrestricted;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_ActionId=646c1c28-e47f-43b7-bd9d-6a8ad7b80637;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Extended_MSFT_Method=Automatic
-authentication-results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=nvidia.com;
-x-originating-ip: [115.114.118.135]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4f54a77f-8752-4325-73de-08d83a1076b6
-x-ms-traffictypediagnostic: CH2PR12MB4328:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR12MB4328372206703AADFF15F48DA2480@CH2PR12MB4328.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ogf0z75XgAFS0fFBKxia5FUIqJAadqCxRJjLzTG6Y6T41B7gL9oXHJmnaYq6cIkGq8uJh6zd8p6bFZ+TyOFmKL2GdrJAhEiiQq7aYUVcu79/4UV06Zyfwb8w5x8vYp7LB8k6wumAdN4u3+3VyWi1RBhmxSFOZ9iGe7iRUsjXKyycbctKfww3MawLlcoBOTSNV9q4AwGXN/wcG4J23vZTv88Y8I/6JhTwiYGhkOdFiRBfELIF4vvtx56sIa3VEDAgRthuq1k8/oM7wxtAsudIXtMaqsKM/LYKq6v+l0U4wQoywH5xvxB7YR+UcuiwYX8mdTsnu5svf4DqHRqD/WD6Yh1/lQp+4YM4oUGoXr/MQj64sYbklw2AX2fCh5T07qTB
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4135.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39860400002)(396003)(136003)(376002)(346002)(366004)(86362001)(76116006)(66476007)(64756008)(66946007)(66556008)(66446008)(8936002)(54906003)(110136005)(8676002)(316002)(26005)(478600001)(83380400001)(71200400001)(2906002)(55016002)(186003)(107886003)(33656002)(9686003)(4326008)(5660300002)(7696005)(53546011)(6506007)(52536014)(921003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: KhvB9a//363hUH75PrW8m3+Q8yiWPgfFD8DI1oU8HWFTkNhiWJmpqP7uKSmYpfK5De8gQjr1ybquJy+R/I2lZqL2PWZvkkzqj3NycMoQ4p1lXBOs8hqR/MUXBOsP9hZr7tEDVTvzNaJoKlCv2NRNcQijmuqaYJUpxn1fGJSsOKlS+ys4xCv4poIKcCabESsuFxuiYahBUkf7HhzB0FSnv44+WcvbcydEP2s/1+s+gepLo5STSHlx7NqJydBd/+BSuKm5sD8wbv4TabXHL9mQhKQkx9Yjmj66RWYS1njPlTyIxdNaJBaOWDysZI5PRXuVgMv5PXbx2PII+yWBxqk4XkDISU+Rauo6ScCN1La8PlG5Tm9ULwRnUbiijl4RSLHzR5oC0LiQwGlAxwE+MkUQyJ2E1DoX6A2bCt/1WKF+jVUgS9gd17tGADsCFYOaxwqNkDY3C1TUGX0aguEfmofvg9YdVrq+p3ghQY0PnDNFbI0Zew3zG+3AX5tkcAhSRHdfmyWzRMUjJMrUhF+IThRghubyzQXFkZXMVoGlfRD2EkabQZ6u51YqEXEao3NOfrHCa1mOSsq5o81Tf+lTNiRD3kU8CCSxPxlYe79s2R6F5hs1/Kkk0lte41tp1P58q6sikE+C+sHzuHJ2hQ68j9r49A==
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>,
+        <helen.koike@collabora.com>, <gregkh@linuxfoundation.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1596469346-937-1-git-send-email-skomatineni@nvidia.com>
+ <dcd58ae7-58ed-11d1-0e10-7f522b651b30@gmail.com>
+ <addb92e5-7c7a-6fba-117d-c7880b2d4597@nvidia.com>
+ <ed80bf2f-213f-286a-59b2-fc85e4181b3d@gmail.com>
+ <6eede805-80fd-016f-22f8-b6d25f6587af@nvidia.com>
+ <1c12e40e-de7f-0599-a941-82760b4c7668@gmail.com>
+ <9ef0b875-e826-43e2-207e-168d2081ff6a@nvidia.com>
+ <4689cfe9-e7c4-48bf-217f-3a31b59b8bda@nvidia.com>
+ <0e78c5ca-c529-1e98-891d-30351c9aae81@gmail.com>
+ <b2098a68-d02f-b406-fc57-56e3ff5d8d1a@nvidia.com>
+ <309e3b66-9288-91ef-71b4-be73eacbbd62@nvidia.com>
+ <fde2431a-0585-ac32-ac25-73e198aaa948@nvidia.com>
+ <4025a458-fa78-924d-c84f-166f82df0f8e@gmail.com>
+ <4f15d655-3d62-cf9f-82da-eae379d60fa6@nvidia.com>
+ <b5612e93-f1c4-4762-baa1-5d85eb1edbe1@gmail.com>
+ <412f8c53-1aca-db31-99a1-a0ecb2081ca5@nvidia.com>
+ <61275bd6-58e7-887f-aa7d-8e60895e7b2b@nvidia.com>
+ <6ff57c38-9847-42b0-643b-0d167c13779f@gmail.com>
+ <c6ef5e77-2b0a-1712-ca58-dbd8d232e1f1@nvidia.com>
+Message-ID: <ed79b201-85ba-f725-c5fa-fcde0761bc3d@nvidia.com>
+Date:   Thu, 6 Aug 2020 10:52:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4135.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f54a77f-8752-4325-73de-08d83a1076b6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2020 13:56:05.7366
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gP6A8UQVvUenQPJNohghp6vm6xTlX5irdOvXo9yPLh1HuQIj+nHXvJeFX7fj7Apnu2Q8D7x+6kTSsmTnOVQfdw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4328
-X-OriginatorOrg: Nvidia.com
+In-Reply-To: <c6ef5e77-2b0a-1712-ca58-dbd8d232e1f1@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596722173; bh=W3kXfRFz5pAx9q//Nw5Cu6I0m7BXmIIrpPZvY8lJHyw=;
-        h=X-PGP-Universal:ARC-Seal:ARC-Message-Signature:
-         ARC-Authentication-Results:From:To:CC:Subject:Thread-Topic:
-         Thread-Index:Date:Message-ID:References:In-Reply-To:
-         Accept-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:msip_labels:
-         authentication-results:x-originating-ip:x-ms-publictraffictype:
-         x-ms-office365-filtering-correlation-id:x-ms-traffictypediagnostic:
-         x-ms-exchange-transport-forked:x-microsoft-antispam-prvs:
-         x-ms-oob-tlc-oobclassifiers:x-ms-exchange-senderadcheck:
-         x-microsoft-antispam:x-microsoft-antispam-message-info:
-         x-forefront-antispam-report:x-ms-exchange-antispam-messagedata:
-         MIME-Version:X-MS-Exchange-CrossTenant-AuthAs:
-         X-MS-Exchange-CrossTenant-AuthSource:
-         X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-CrossTenant-userprincipalname:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=GeNnH3nyky/FDHAeIaZhzNqnrklMW3eBx0jrO4fpTaH/Lr8mYYOMF8lbgdAnXyOAj
-         CKE108xkkKYGf1wLgkTFIVMvhIoLKtrQksf7aVZ0O+3VXzXVkqX9sPVASa7lcfsjGH
-         G9LSCg7RS5eM+usC5dxS6V6cQnITqaML9PZN2m2gbcH07js8kdAC/kedSVP07+GsRs
-         8FqtC+8szrnLkh6Gz9g6/tI+KZKguciI8tFzlpJaXnO9qGzj+XV2YQxSJbPngVeLoa
-         CIAfnN5KG5MZ5rnfTNJi041qZiwmMmqYmP/vLJUGmfAAO+f2bAj6+XmcrMl8h3NmdS
-         M9nKyYhiOMmOw==
+        t=1596736256; bh=CS+W4xiYVifNlDvQtAoKvNJ1SxgXVP8asa+INgRDbKA=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=K6nhdIPU86mcumxZoU9u24TPt4lhoYatIyHCBBHXSuGOa21WFcwdL8nwnBkAeUxKD
+         EW9RTS/+PXiKpJsVBqhs9gy/PEpqXddrFTSpoWE+Ebm9ep5EX86+khaLWRWzfKyrUW
+         m1bg3xIVfYXMYGYdILfuS1R03yh2VtHN+AItP1Ddyxxx8+1saSZQuAvNUNJ/jc2PgN
+         zSjC/0/czumePpKc1Zm4bZ4/yb1yzXQUlSP8RdbO7z7BCcr6Ed7dW5uaGpb5/5v8hZ
+         Jnqg4obHOggVcX5xoFbniTd0I1Mwaf5st48dk3mEk9gITCBObnwkvBtBHo7/s22JBf
+         wadD5eQywyG5g==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRG1pdHJ5IE9zaXBlbmtv
-IDxkaWdldHhAZ21haWwuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgQXVndXN0IDYsIDIwMjAgNzox
-NiBQTQ0KPiBUbzogUmFqZXNoIEd1bWFzdGEgPHJndW1hc3RhQG52aWRpYS5jb20+OyBMYXhtYW4g
-RGV3YW5nYW4NCj4gPGxkZXdhbmdhbkBudmlkaWEuY29tPjsgSm9uYXRoYW4gSHVudGVyIDxqb25h
-dGhhbmhAbnZpZGlhLmNvbT47DQo+IHZrb3VsQGtlcm5lbC5vcmc7IGRhbi5qLndpbGxpYW1zQGlu
-dGVsLmNvbTsgdGhpZXJyeS5yZWRpbmdAZ21haWwuY29tOw0KPiBwLnphYmVsQHBlbmd1dHJvbml4
-LmRlOyBkbWFlbmdpbmVAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gdGVncmFAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IENjOiBLcmlzaG5hIFlhcmxh
-Z2FkZGEgPGt5YXJsYWdhZGRhQG52aWRpYS5jb20+OyBQYXZhbiBLdW5hcHVsaQ0KPiA8cGt1bmFw
-dWxpQG52aWRpYS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUGF0Y2ggdjIgMi80XSBkbWFlbmdpbmU6
-IHRlZ3JhOiBBZGQgVGVncmEgR1BDIERNQSBkcml2ZXINCj4gDQo+IEV4dGVybmFsIGVtYWlsOiBV
-c2UgY2F1dGlvbiBvcGVuaW5nIGxpbmtzIG9yIGF0dGFjaG1lbnRzDQo+IA0KPiANCj4gMDYuMDgu
-MjAyMCAxMDozMCwgUmFqZXNoIEd1bWFzdGEg0L/QuNGI0LXRgjoNCj4gLi4uDQo+ID4gKy8qDQo+
-ID4gKyAqIFNhdmUgYW5kIHJlc3RvcmUgY3NyIGFuZCBjaGFubmVsIHJlZ2lzdGVyIG9uIHBtX3N1
-c3BlbmQNCj4gPiArICogYW5kIHBtX3Jlc3VtZSByZXNwZWN0aXZlbHkNCj4gPiArICovDQo+ID4g
-K3N0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgdGVncmFfZG1hX3BtX3N1c3BlbmQoc3RydWN0IGRl
-dmljZSAqZGV2KQ0KPiB7DQo+ID4gKyAgICAgc3RydWN0IHRlZ3JhX2RtYSAqdGRtYSA9IGRldl9n
-ZXRfZHJ2ZGF0YShkZXYpOw0KPiA+ICsgICAgIGludCBpOw0KPiA+ICsNCj4gPiArICAgICBmb3Ig
-KGkgPSAwOyBpIDwgdGRtYS0+Y2hpcF9kYXRhLT5ucl9jaGFubmVsczsgaSsrKSB7DQo+ID4gKyAg
-ICAgICAgICAgICBzdHJ1Y3QgdGVncmFfZG1hX2NoYW5uZWwgKnRkYyA9ICZ0ZG1hLT5jaGFubmVs
-c1tpXTsNCj4gPiArICAgICAgICAgICAgIHN0cnVjdCB0ZWdyYV9kbWFfY2hhbm5lbF9yZWdzICpj
-aF9yZWcgPQ0KPiA+ICsgJnRkYy0+Y2hhbm5lbF9yZWc7DQo+ID4gKw0KPiA+ICsgICAgICAgICAg
-ICAgY2hfcmVnLT5jc3IgPSB0ZGNfcmVhZCh0ZGMsIFRFR1JBX0dQQ0RNQV9DSEFOX0NTUik7DQo+
-ID4gKyAgICAgICAgICAgICBjaF9yZWctPnNyY19wdHIgPSB0ZGNfcmVhZCh0ZGMsDQo+IFRFR1JB
-X0dQQ0RNQV9DSEFOX1NSQ19QVFIpOw0KPiA+ICsgICAgICAgICAgICAgY2hfcmVnLT5kc3RfcHRy
-ID0gdGRjX3JlYWQodGRjLA0KPiBURUdSQV9HUENETUFfQ0hBTl9EU1RfUFRSKTsNCj4gPiArICAg
-ICAgICAgICAgIGNoX3JlZy0+aGlnaF9hZGRyX3B0ciA9IHRkY19yZWFkKHRkYywNCj4gPiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFRFR1JBX0dQQ0RNQV9D
-SEFOX0hJR0hfQUREUl9QVFIpOw0KPiA+ICsgICAgICAgICAgICAgY2hfcmVnLT5tY19zZXEgPSB0
-ZGNfcmVhZCh0ZGMsDQo+IFRFR1JBX0dQQ0RNQV9DSEFOX01DU0VRKTsNCj4gPiArICAgICAgICAg
-ICAgIGNoX3JlZy0+bW1pb19zZXEgPSB0ZGNfcmVhZCh0ZGMsDQo+IFRFR1JBX0dQQ0RNQV9DSEFO
-X01NSU9TRVEpOw0KPiA+ICsgICAgICAgICAgICAgY2hfcmVnLT53Y291bnQgPSB0ZGNfcmVhZCh0
-ZGMsDQo+IFRFR1JBX0dQQ0RNQV9DSEFOX1dDT1VOVCk7DQo+ID4gKyAgICAgfQ0KPiA+ICsgICAg
-IHJldHVybiAwOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50IF9fbWF5YmVfdW51c2Vk
-IHRlZ3JhX2RtYV9wbV9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KSB7DQo+ID4gKyAgICAgc3Ry
-dWN0IHRlZ3JhX2RtYSAqdGRtYSA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOw0KPiA+ICsgICAgIGlu
-dCBpOw0KPiA+ICsNCj4gPiArICAgICBmb3IgKGkgPSAwOyBpIDwgdGRtYS0+Y2hpcF9kYXRhLT5u
-cl9jaGFubmVsczsgaSsrKSB7DQo+ID4gKyAgICAgICAgICAgICBzdHJ1Y3QgdGVncmFfZG1hX2No
-YW5uZWwgKnRkYyA9ICZ0ZG1hLT5jaGFubmVsc1tpXTsNCj4gPiArICAgICAgICAgICAgIHN0cnVj
-dCB0ZWdyYV9kbWFfY2hhbm5lbF9yZWdzICpjaF9yZWcgPQ0KPiA+ICsgJnRkYy0+Y2hhbm5lbF9y
-ZWc7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgdGRjX3dyaXRlKHRkYywgVEVHUkFfR1BDRE1B
-X0NIQU5fV0NPVU5ULCBjaF9yZWctDQo+ID53Y291bnQpOw0KPiA+ICsgICAgICAgICAgICAgdGRj
-X3dyaXRlKHRkYywgVEVHUkFfR1BDRE1BX0NIQU5fRFNUX1BUUiwgY2hfcmVnLQ0KPiA+ZHN0X3B0
-cik7DQo+ID4gKyAgICAgICAgICAgICB0ZGNfd3JpdGUodGRjLCBURUdSQV9HUENETUFfQ0hBTl9T
-UkNfUFRSLCBjaF9yZWctDQo+ID5zcmNfcHRyKTsNCj4gPiArICAgICAgICAgICAgIHRkY193cml0
-ZSh0ZGMsIFRFR1JBX0dQQ0RNQV9DSEFOX0hJR0hfQUREUl9QVFIsDQo+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgY2hfcmVnLT5oaWdoX2FkZHJfcHRyKTsNCj4gPiArICAgICAgICAgICAgIHRk
-Y193cml0ZSh0ZGMsIFRFR1JBX0dQQ0RNQV9DSEFOX01NSU9TRVEsIGNoX3JlZy0NCj4gPm1taW9f
-c2VxKTsNCj4gPiArICAgICAgICAgICAgIHRkY193cml0ZSh0ZGMsIFRFR1JBX0dQQ0RNQV9DSEFO
-X01DU0VRLCBjaF9yZWctPm1jX3NlcSk7DQo+ID4gKyAgICAgICAgICAgICB0ZGNfd3JpdGUodGRj
-LCBURUdSQV9HUENETUFfQ0hBTl9DU1IsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgKGNo
-X3JlZy0+Y3NyICYgflRFR1JBX0dQQ0RNQV9DU1JfRU5CKSk7DQo+ID4gKyAgICAgfQ0KPiA+ICsg
-ICAgIHJldHVybiAwOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IF9f
-bWF5YmVfdW51c2VkIGRldl9wbV9vcHMNCj4gdGVncmFfZG1hX2Rldl9wbV9vcHMgPSB7DQo+ID4g
-KyAgICAgU0VUX05PSVJRX1NZU1RFTV9TTEVFUF9QTV9PUFModGVncmFfZG1hX3BtX3N1c3BlbmQs
-DQo+ID4gK3RlZ3JhX2RtYV9wbV9yZXN1bWUpIH07DQo+IA0KPiBQbGVhc2UgZXhwbGFpbiB3aHkg
-dGhpcyBpcyBuZWVkZWQuIEFsbCBETUEgc2hvdWxkIGJlIHN0b3BwZWQgKG5vdA0KPiBwYXVzZWQp
-IG9uIHN5c3RlbSdzIHN1c3BlbmQsIHNob3VsZG4ndCBpdD8NCkkgaGF2ZSByZWNoZWNrZWQgd2l0
-aCBIVyB2ZXJpZmljYXRpb24gdGVhbSBhbmQgdGhleSBjb25maXJtZWQgdGhhdCBhZnRlciBzdXNw
-ZW5kLCBjc3IgYW5kIGNoYW5uZWwgcmVnaXN0ZXJzIHdpbGwgZ2V0IHJlc2V0IGhlbmNlIG9uIHJl
-c3VtZSB3ZSBuZWVkIHRvIHJlc3RvcmUgYmFjay4NCkFsc28gR1BDRE1BIGRvZXMgbm90IHN1cHBv
-cnQgcG93ZXIgZ2F0ZSBhcyBhIHVuaXQuDQoNClRoYW5rcw0KUmFqZXNoDQo=
+
+On 8/6/20 10:44 AM, Sowjanya Komatineni wrote:
+>
+> On 8/6/20 10:27 AM, Dmitry Osipenko wrote:
+>> 06.08.2020 20:12, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> On 8/6/20 9:41 AM, Sowjanya Komatineni wrote:
+>>>> On 8/6/20 9:10 AM, Dmitry Osipenko wrote:
+>>>>> 06.08.2020 18:59, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> ...
+>>>>>>>> Confirmed from HW designer, calibration FSM to finish takes worst
+>>>>>>>> case
+>>>>>>>> 72uS so by the time it gets to sensor stream it will be done its
+>>>>>>>> sequence and will be waiting for DONE bit.
+>>>>>>>>
+>>>>>>>> So disabling MIPI CAL clock on sensor stream fails is safe.
+>>>>>>> 72us is quite a lot of time, what will happen if LP-11 happens=20
+>>>>>>> before
+>>>>>>> FSM finished calibration?
+>>>>>>>
+>>>>>>> Maybe the finish_calibration() needs to split into two parts:
+>>>>>>>
+>>>>>>> =C2=A0=C2=A0=C2=A0 1. wait for CAL_STATUS_ACTIVE before enabling se=
+nsor
+>>>>>>> =C2=A0=C2=A0=C2=A0 2. wait for CAL_STATUS_DONE after enabling senso=
+r
+>>>>>> I don't think we need to split for active and done. Active will=20
+>>>>>> be 1 as
+>>>>>> long as other pads are in calibration as well.
+>>>>>>
+>>>>>> We cant use active status check for specific pads under calibration.
+>>>>>> This is common bit for all pads.
+>>>>> Does hardware have a single FSM block shared by all pads or there=20
+>>>>> is FSM
+>>>>> per group of pads?
+>>>> MIPI CAL status register has DONE bits for individual pads status and
+>>>> single ACTIVE bit.
+>>>>
+>>>> ACTIVE bit set to 1 indicates auto calibration is active which is the
+>>>> case even when other pads (other CSI pads from other ports streaming
+>>>> in case of parallel stream) are under calibration. Also DSI is shared
+>>>> as well.
+>>>>
+>>>> We do calibration for individual pads. So, we should not rely on
+>>>> ACTIVE bit.
+>>>>
+>>>>
+>>>> MIPI driver checks for condition ACTIVE =3D=3D 1 && DONE =3D=3D 1 from=
+ the
+>>>> beginning.
+>>>>
+>>>> But I think this also should be fixed as in case of parallel streams
+>>>> calibration can happen in parallel waiting for ACTIVE to be cleared
+>>>> makes all calibration callers to wait for longer than needed as ACTIVE
+>>>> is common for all pads.
+>>>>
+>>>>>> Unfortunately HW don't have separate status indicating when=20
+>>>>>> sequence is
+>>>>>> done to indicate its waiting for LP11.
+>>>>>>
+>>>>>>
+>>>>>> To avoid all this, will remove cancel_calibration() totally and use
+>>>>>> same
+>>>>>> finish calibration even in case of stream failure then.
+>>>>>>
+>>>>> What about to add 72us delay to the end of start_calibration() in=20
+>>>>> order
+>>>>> to ensure that FSM is finished before LP-11?
+>>>> Why we should add 72uS in start_calibration() when can use same
+>>>> finish_calibration() for both pass/fail cases?
+>>>>
+>>>> Only timing loose we see is in case of failure we still wait for 250ms
+>>>> and as this is failing case I hope should be ok.
+>>>>
+>>> Also as we don't need cancel_calibration(), keeping tegra_mipi_wait()
+>>> like earlier makes sense I believe as we are letting it finish going
+>>> thru sequence.
+>>>
+>>> So I think below are fixes,
+>>>
+>>> 1. Existing MIPI driver, tegra_mipi_wait() to not use status ACTIVE bit
+>>> to be 0 and use only DONE bit to be 1 for wait condition=C2=A0 as we ar=
+e
+>>> calibrating separately for individual pads and this ACTIVE bit is=20
+>>> common
+>>> for all pads where it will not be 0 in case of other parallel streams
+>>> which may also be under calibration.
+>> Yes, looks like it's a mistake of the current MIPI driver that it polls
+>> the ACTIVE bit.
+>>
+>>> 2. No need for separate cancel_calibration. So, probably earlier names
+>>> tegra_mipi_calibrate() and tegra_mipi_wait() hols good as we are=20
+>>> waiting
+>>> for calibration sequence to finish irrespective of fail/pass.
+>> The new names reflect better what those functions actually do, IMO.
+> ok Will keep same names.
+>>
+>> What about to make finish_calibration() to take an additional argument
+>> which corresponds to the awaited HW bits? For example if it's CSIA, then
+>> it could be:
+>>
+>> =C2=A0=C2=A0 tegra_mipi_finish_calibration(csi_chan->mipi, MIPI_CAL_CSIA=
+);
+> MIPI device is separate for each stream so waiting for only those=20
+> corresponding DONE bits happen currently and no need to pass argument.
+>>
+>>
+>> Also, is it okay that DSI and CSI could change MIPI_CAL_CTRL after DSI
+>> or CSI already started calibration?
+>>
+>> Looking at the current start_calibration(), I think the mutex should be
+>> kept locked and then finish_calibration() should unlock it.
+
+Right mutex_unlock should happen at end of finish_calibration.
+
+With keeping mutex locked in start, we dont have to check for active to=20
+be 0 to issue start as mutex will keep it locked and other pads=20
+calibration can only go thru when current one is done.
+
+So instead of below sequence, its simpler to do this way?
+
+start_calibration()
+
+- mutex_lock
+
+- wait for 72uS after start
+
+finish_calibration()
+
+- keep check for ACTIVE =3D 0 and DONE =3D 1
+
+- mutex_unlock()
+
+>
+> Confirmed with HW designer.
+>
+> ACTIVE is common bit for all pads where we see it 1 as long as all=20
+> pads (DSI + all CSI Pads) are under calibration.
+>
+> While MIPI CAL is doing calibration for certain pads, before issuing=20
+> other start it has to wait for ACTIVE to be 0.
+>
+>
+> Earlier driver (before split) checks for ACTIVE to be 0 along with=20
+> DONE bit to be 1 as it does both calibrate and wait in same API.
+>
+> With the split, looks like we need below sequence to be safe.
+>
+> 1. tegra_mipi_start_calibration(): wait for ACTIVE to be 0 before=20
+> issuing START and after issuing start wait for 72uS to let calibration=20
+> code sequence finish so it will be ready to see LP-11 after that.
+>
+> In case of parallel streams, call to start_calibration can happen when=20
+> pads of other stream are under calibration.
+>
+> 2. tegra_mipi_finish_calibration(): check for DONE bit to be 1
+>
+>
+>
