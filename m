@@ -7,38 +7,39 @@ X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B40AC433DF
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Aug 2020 15:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C09B1C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Aug 2020 15:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 615152075D
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Aug 2020 15:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D6432075D
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Aug 2020 15:54:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="oyhaQehT"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nJF2sPBU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbgHGPxY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Aug 2020 11:53:24 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15598 "EHLO
+        id S1725993AbgHGPy2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Aug 2020 11:54:28 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15664 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbgHGPxW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Aug 2020 11:53:22 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f2d78e40000>; Fri, 07 Aug 2020 08:53:08 -0700
+        with ESMTP id S1725815AbgHGPy1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Aug 2020 11:54:27 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f2d79250000>; Fri, 07 Aug 2020 08:54:13 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 07 Aug 2020 08:53:22 -0700
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 07 Aug 2020 08:54:27 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 07 Aug 2020 08:53:22 -0700
+        by hqpgpgate101.nvidia.com on Fri, 07 Aug 2020 08:54:27 -0700
 Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 7 Aug
- 2020 15:53:21 +0000
+ 2020 15:54:26 +0000
 Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id C54D940BDB; Fri,  7 Aug 2020 18:53:19 +0300 (EEST)
-Date:   Fri, 7 Aug 2020 18:53:19 +0300
+        id 0B26540BDB; Fri,  7 Aug 2020 18:54:25 +0300 (EEST)
+Date:   Fri, 7 Aug 2020 18:54:25 +0300
 From:   Peter De Schrijver <pdeschrijver@nvidia.com>
 To:     <treding@nvidia.com>
 CC:     <linux-tegra@vger.kernel.org>
-Subject: [PATCH 2/3] firmware/tegra: Support mail store in DRAM or SRAM
-Message-ID: <20200807155319.GA16631@pdeschrijver-desktop.Nvidia.com>
+Subject: [PATCH 3/3] firmware/tegra: add support for reserved memory as mail
+ store
+Message-ID: <20200807155424.GA16672@pdeschrijver-desktop.Nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
@@ -48,289 +49,163 @@ X-Originating-IP: [10.124.1.5]
 X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
  HQMAIL107.nvidia.com (172.20.187.13)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1596815588; bh=CCG4qS+7j+gnGELohrAv685jxKjDKVB0hNMcX8nMuDU=;
+        t=1596815653; bh=XLLkvzfhXMFp+HeCHtdIakD61lBb6xXZTw7IpBJarZ4=;
         h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:MIME-Version:
          Content-Type:Content-Disposition:X-NVConfidentiality:User-Agent:
          X-Originating-IP:X-ClientProxiedBy;
-        b=oyhaQehTIfSMtFgLFZJ20W9nsfFauj5q3MinYutlQIyxuDshHgk1DIcaAmh3mmdO8
-         dVUqJ6H42C++GBeL3Pijyf3E7ZwbXXm1C2J+n8THK+FgHHe+h2tY95XlVrcNgpYnAa
-         kjCku1xP0ZZAM2487I8ifB7Brn5/Da3J0CQf89n4blMaUoKWpSC8DgomW1z4Gv/G3F
-         NAxyy678uGJYCL/faLZOCWToDtkcrG20+obf4qk7WgHH6mUxVmp/NMEmCNoVXBlffE
-         1y2YKS7WRjMZPEqrbYowrX9bi3Rc/GdaZBEq9YkDEAJhagv9JV3FqqHv4edWv9z9VW
-         ZyDcWd3BTLPMw==
+        b=nJF2sPBUwiyJXFowNofNoRTC62BFoXnLQmwqQvttFGnaGVzc2laRoPYc+wplWvBCg
+         VkFJi/Riu/tem5f0kwttACZzhhtlh0ORD6bc9AUXK/SU4jWwpG+1cX4xplY/hBIjpC
+         3jPkM2JOpGhWExU898/HCsan0H0gePm8VMK1aV2olb4m7M9DWwHvrOBeb3oQ0bvN6L
+         Hr7ghFEsU2cT5g04VgbBGsiB1fl67kWahMrT05ffyx25LHmwRvr4Ssyk7u/ua1+mx8
+         AFmAiyFL/RPErGz7GH2Wkr2ZJGgAwy6WP/kWJGwHDrptD2LMUWJoXyNVitYfcugb1T
+         Gmcuy8byBngeQ==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In Tegra234 the memory region to store the messages exchanged between
-Linux and BPMP firmware will be located in DRAM rather than SYSRAM as in
-previous chips (tegra186 and Tegra194). Refactor the code to support
-more than 1 type of memory region.
-
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/firmware/tegra/bpmp-tegra186.c | 175 ++++++++++++++++---------
- 1 file changed, 112 insertions(+), 63 deletions(-)
+ drivers/firmware/tegra/bpmp-private.h  |  3 +-
+ drivers/firmware/tegra/bpmp-tegra186.c | 57 ++++++++++++++++++++++++--
+ drivers/firmware/tegra/bpmp.c          | 10 +++--
+ 3 files changed, 62 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/firmware/tegra/bpmp-tegra186.c
-index ea308751635f..ca04ba4ae643 100644
---- a/drivers/firmware/tegra/bpmp-tegra186.c
-+++ b/drivers/firmware/tegra/bpmp-tegra186.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/genalloc.h>
-+#include <linux/io.h>
- #include <linux/mailbox_client.h>
- #include <linux/platform_device.h>
- 
-@@ -13,11 +14,12 @@
- 
- #include "bpmp-private.h"
- 
-+enum tegra_bpmp_mem_type { TEGRA_SRAM, TEGRA_RMEM };
-+
- struct tegra186_bpmp {
- 	struct tegra_bpmp *parent;
- 
- 	struct {
--		struct gen_pool *pool;
- 		dma_addr_t phys;
- 		void *virt;
- 	} tx, rx;
-@@ -26,6 +28,12 @@ struct tegra186_bpmp {
- 		struct mbox_client client;
- 		struct mbox_chan *channel;
- 	} mbox;
-+
-+	struct {
-+		struct gen_pool *tx, *rx;
-+	} sram;
-+
-+	enum tegra_bpmp_mem_type type;
+diff --git a/drivers/firmware/tegra/bpmp-private.h b/drivers/firmware/tegra/bpmp-private.h
+index 54d560c48398..182bfe396516 100644
+--- a/drivers/firmware/tegra/bpmp-private.h
++++ b/drivers/firmware/tegra/bpmp-private.h
+@@ -24,7 +24,8 @@ struct tegra_bpmp_ops {
  };
  
- static inline struct tegra_bpmp *
-@@ -160,63 +168,133 @@ static void mbox_handle_rx(struct mbox_client *client, void *data)
- 	tegra_bpmp_handle_rx(bpmp);
- }
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
+-    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
++    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
++    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
+ extern const struct tegra_bpmp_ops tegra186_bpmp_ops;
+ #endif
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
+diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/firmware/tegra/bpmp-tegra186.c
+index ca04ba4ae643..05f10c748a9a 100644
+--- a/drivers/firmware/tegra/bpmp-tegra186.c
++++ b/drivers/firmware/tegra/bpmp-tegra186.c
+@@ -6,6 +6,7 @@
+ #include <linux/genalloc.h>
+ #include <linux/io.h>
+ #include <linux/mailbox_client.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
  
--static int tegra186_bpmp_init(struct tegra_bpmp *bpmp)
-+static void tegra186_bpmp_channel_deinit(struct tegra_bpmp *bpmp)
-+{
-+	int i;
-+	struct tegra186_bpmp *priv = bpmp->priv;
-+
-+	for (i = 0; i < bpmp->threaded.count; i++) {
-+		if (!bpmp->threaded_channels[i].bpmp)
-+			continue;
-+
-+		tegra186_bpmp_channel_cleanup(&bpmp->threaded_channels[i]);
-+	}
-+
-+	tegra186_bpmp_channel_cleanup(bpmp->rx_channel);
-+	tegra186_bpmp_channel_cleanup(bpmp->tx_channel);
-+
-+	/* rmem gets cleaned up as part of the rmem device shutdown so no
-+	 * need to do anything here.
-+	 */
-+	if (priv->type == TEGRA_SRAM) {
-+		gen_pool_free(priv->sram.tx, (unsigned long)priv->tx.virt, 4096);
-+		gen_pool_free(priv->sram.rx, (unsigned long)priv->rx.virt, 4096);
-+	}
-+}
-+
-+static int tegra186_bpmp_channel_setup(struct tegra_bpmp *bpmp)
-+{
-+unsigned int i;
-+int err;
-+
-+	err = tegra186_bpmp_channel_init(bpmp->tx_channel, bpmp,
-+	bpmp->soc->channels.cpu_tx.offset);
-+	if (err < 0)
-+		return err;
-+
-+	err = tegra186_bpmp_channel_init(bpmp->rx_channel, bpmp,
-+	bpmp->soc->channels.cpu_rx.offset);
-+	if (err < 0) {
-+		tegra186_bpmp_channel_cleanup(bpmp->tx_channel);
-+		return err;
-+	}
-+
-+	for (i = 0; i < bpmp->threaded.count; i++) {
-+		unsigned int index = bpmp->soc->channels.thread.offset + i;
-+
-+		err = tegra186_bpmp_channel_init(&bpmp->threaded_channels[i],
-+						 bpmp, index);
+ #include <soc/tegra/bpmp.h>
+@@ -288,9 +289,11 @@ static int tegra186_bpmp_init(struct tegra_bpmp *bpmp)
+ 	bpmp->priv = priv;
+ 	priv->parent = bpmp;
+ 
+-	err = tegra186_bpmp_sram_init(bpmp);
+-	if (err < 0)
+-		return err;
++	if (of_reserved_mem_device_init(priv->parent->dev) < 0) {
++		err = tegra186_bpmp_sram_init(bpmp);
 +		if (err < 0)
-+			break;
++			return err;
 +	}
-+
-+        if (err < 0)
-+                tegra186_bpmp_channel_deinit(bpmp);
-+
-+        return err;
-+}
-+
-+static void tegra186_bpmp_reset_channels(struct tegra_bpmp *bpmp)
- {
--	struct tegra186_bpmp *priv;
- 	unsigned int i;
--	int err;
  
--	priv = devm_kzalloc(bpmp->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
-+	tegra186_bpmp_channel_reset(bpmp->tx_channel);
-+	tegra186_bpmp_channel_reset(bpmp->rx_channel);
- 
--	bpmp->priv = priv;
--	priv->parent = bpmp;
-+	for (i = 0; i < bpmp->threaded.count; i++)
-+		tegra186_bpmp_channel_reset(&bpmp->threaded_channels[i]);
-+}
+ 	err = tegra186_bpmp_channel_setup(bpmp);
+ 	if (err < 0)
+@@ -352,3 +355,51 @@ const struct tegra_bpmp_ops tegra186_bpmp_ops = {
+ 	.ring_doorbell = tegra186_bpmp_ring_doorbell,
+ 	.resume = tegra186_bpmp_resume,
+ };
 +
-+static int tegra186_bpmp_sram_init(struct tegra_bpmp *bpmp)
++static int tegra_bpmp_rmem_device_init(struct reserved_mem *rmem,
++				       struct device *dev)
 +{
-+	int err;
++	struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
 +	struct tegra186_bpmp *priv = bpmp->priv;
- 
--	priv->tx.pool = of_gen_pool_get(bpmp->dev->of_node, "shmem", 0);
--	if (!priv->tx.pool) {
-+	priv->sram.tx = of_gen_pool_get(bpmp->dev->of_node, "shmem", 0);
-+	if (!priv->sram.tx) {
- 		dev_err(bpmp->dev, "TX shmem pool not found\n");
- 		return -ENOMEM;
- 	}
- 
--	priv->tx.virt = gen_pool_dma_alloc(priv->tx.pool, 4096, &priv->tx.phys);
-+	priv->tx.virt = gen_pool_dma_alloc(priv->sram.tx, 4096, &priv->tx.phys);
- 	if (!priv->tx.virt) {
- 		dev_err(bpmp->dev, "failed to allocate from TX pool\n");
- 		return -ENOMEM;
- 	}
- 
--	priv->rx.pool = of_gen_pool_get(bpmp->dev->of_node, "shmem", 1);
--	if (!priv->rx.pool) {
-+	priv->sram.rx = of_gen_pool_get(bpmp->dev->of_node, "shmem", 1);
-+	if (!priv->sram.rx) {
- 		dev_err(bpmp->dev, "RX shmem pool not found\n");
- 		err = -ENOMEM;
- 		goto free_tx;
- 	}
- 
--	priv->rx.virt = gen_pool_dma_alloc(priv->rx.pool, 4096, &priv->rx.phys);
-+	priv->rx.virt = gen_pool_dma_alloc(priv->sram.rx, 4096, &priv->rx.phys);
- 	if (!priv->rx.virt) {
- 		dev_err(bpmp->dev, "failed to allocate from RX pool\n");
- 		err = -ENOMEM;
- 		goto free_tx;
- 	}
- 
--	err = tegra186_bpmp_channel_init(bpmp->tx_channel, bpmp,
--					 bpmp->soc->channels.cpu_tx.offset);
--	if (err < 0)
--		goto free_rx;
-+	priv->type = TEGRA_SRAM;
- 
--	err = tegra186_bpmp_channel_init(bpmp->rx_channel, bpmp,
--					 bpmp->soc->channels.cpu_rx.offset);
--	if (err < 0)
--		goto cleanup_tx_channel;
-+	return 0;
- 
--	for (i = 0; i < bpmp->threaded.count; i++) {
--		unsigned int index = bpmp->soc->channels.thread.offset + i;
-+free_tx:
-+	gen_pool_free(priv->sram.tx, (unsigned long)priv->tx.virt, 4096);
- 
--		err = tegra186_bpmp_channel_init(&bpmp->threaded_channels[i],
--						 bpmp, index);
--		if (err < 0)
--			goto cleanup_channels;
--	}
-+	return err;
-+}
 +
-+static int tegra186_bpmp_init(struct tegra_bpmp *bpmp)
-+{
-+	struct tegra186_bpmp *priv;
-+	int err;
-+
-+	priv = devm_kzalloc(bpmp->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
++	if (rmem->size < 0x2000)
 +		return -ENOMEM;
 +
-+	bpmp->priv = priv;
-+	priv->parent = bpmp;
++	priv->tx.phys = rmem->base;
++	priv->rx.phys = rmem->base + 0x1000;
 +
-+	err = tegra186_bpmp_sram_init(bpmp);
-+	if (err < 0)
-+		return err;
++	priv->tx.virt = memremap(priv->tx.phys, rmem->size, MEMREMAP_WC);
++	if (priv->tx.virt == NULL)
++		return -ENOMEM;
++	priv->rx.virt = priv->tx.virt + 0x1000;
 +
-+	err = tegra186_bpmp_channel_setup(bpmp);
-+	if (err < 0)
-+		return err;
++	priv->type = TEGRA_RMEM;
++
++	return 0;
++}
++
++static void tegra_bpmp_rmem_device_release(struct reserved_mem *rmem,
++					   struct device *dev)
++{
++	struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
++	struct tegra186_bpmp *priv = bpmp->priv;
++
++	memunmap(priv->tx.virt);
++}
++
++
++static const struct reserved_mem_ops tegra_bpmp_rmem_ops = {
++	.device_init = tegra_bpmp_rmem_device_init,
++	.device_release = tegra_bpmp_rmem_device_release,
++};
++
++static int tegra_bpmp_rmem_init(struct reserved_mem *rmem)
++{
++	pr_debug("Tegra BPMP message buffer at %pa, size %lu bytes\n", &rmem->base, (unsigned long)rmem->size);
++
++	rmem->ops = &tegra_bpmp_rmem_ops;
++
++	return 0;
++}
++
++RESERVEDMEM_OF_DECLARE(tegra_bpmp, "nvidia,tegra234-bpmp-shmem", tegra_bpmp_rmem_init);
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index dd775e8ba5a0..7f41a605f9bb 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -739,6 +739,8 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
+ 	if (!bpmp->threaded_channels)
+ 		return -ENOMEM;
  
- 	/* mbox registration */
- 	priv->mbox.client.dev = bpmp->dev;
-@@ -228,51 +306,22 @@ static int tegra186_bpmp_init(struct tegra_bpmp *bpmp)
- 	if (IS_ERR(priv->mbox.channel)) {
- 		err = PTR_ERR(priv->mbox.channel);
- 		dev_err(bpmp->dev, "failed to get HSP mailbox: %d\n", err);
--		goto cleanup_channels;
-+		tegra186_bpmp_channel_deinit(bpmp);
-+		return err;
- 	}
++	platform_set_drvdata(pdev, bpmp);
++
+ 	err = bpmp->soc->ops->init(bpmp);
+ 	if (err < 0)
+ 		return err;
+@@ -762,8 +764,6 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
  
--	tegra186_bpmp_channel_reset(bpmp->tx_channel);
--	tegra186_bpmp_channel_reset(bpmp->rx_channel);
--
--	for (i = 0; i < bpmp->threaded.count; i++)
--		tegra186_bpmp_channel_reset(&bpmp->threaded_channels[i]);
-+	tegra186_bpmp_reset_channels(bpmp);
+ 	dev_info(&pdev->dev, "firmware: %.*s\n", (int)sizeof(tag), tag);
  
- 	return 0;
+-	platform_set_drvdata(pdev, bpmp);
 -
--cleanup_channels:
--	for (i = 0; i < bpmp->threaded.count; i++) {
--		if (!bpmp->threaded_channels[i].bpmp)
--			continue;
--
--		tegra186_bpmp_channel_cleanup(&bpmp->threaded_channels[i]);
--	}
--
--	tegra186_bpmp_channel_cleanup(bpmp->rx_channel);
--cleanup_tx_channel:
--	tegra186_bpmp_channel_cleanup(bpmp->tx_channel);
--free_rx:
--	gen_pool_free(priv->rx.pool, (unsigned long)priv->rx.virt, 4096);
--free_tx:
--	gen_pool_free(priv->tx.pool, (unsigned long)priv->tx.virt, 4096);
--
--	return err;
- }
+ 	err = of_platform_default_populate(pdev->dev.of_node, NULL, &pdev->dev);
+ 	if (err < 0)
+ 		goto free_mrq;
+@@ -814,7 +814,8 @@ static int __maybe_unused tegra_bpmp_resume(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(tegra_bpmp_pm_ops, NULL, tegra_bpmp_resume);
  
- static void tegra186_bpmp_deinit(struct tegra_bpmp *bpmp)
- {
- 	struct tegra186_bpmp *priv = bpmp->priv;
--	unsigned int i;
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
+-    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
++    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
++    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
+ static const struct tegra_bpmp_soc tegra186_soc = {
+ 	.channels = {
+ 		.cpu_tx = {
+@@ -861,7 +862,8 @@ static const struct tegra_bpmp_soc tegra210_soc = {
  
- 	mbox_free_channel(priv->mbox.channel);
- 
--	for (i = 0; i < bpmp->threaded.count; i++)
--		tegra186_bpmp_channel_cleanup(&bpmp->threaded_channels[i]);
--
--	tegra186_bpmp_channel_cleanup(bpmp->rx_channel);
--	tegra186_bpmp_channel_cleanup(bpmp->tx_channel);
--
--	gen_pool_free(priv->rx.pool, (unsigned long)priv->rx.virt, 4096);
--	gen_pool_free(priv->tx.pool, (unsigned long)priv->tx.virt, 4096);
-+	tegra186_bpmp_channel_deinit(bpmp);
- }
- 
- static int tegra186_bpmp_resume(struct tegra_bpmp *bpmp)
+ static const struct of_device_id tegra_bpmp_match[] = {
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
+-    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
++    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
++    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
+ 	{ .compatible = "nvidia,tegra186-bpmp", .data = &tegra186_soc },
+ #endif
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
 -- 
 2.17.1
 
