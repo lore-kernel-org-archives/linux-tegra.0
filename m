@@ -1,136 +1,301 @@
-Return-Path: <SRS0=WNzV=BQ=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=/ZgJ=BR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5437C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 22:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85CEC433E1
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Aug 2020 02:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF65C20748
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Aug 2020 22:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C2DE221E2
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Aug 2020 02:09:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kF/rEQ3U"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xRVx7pmJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbgHFW6d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Aug 2020 18:58:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43748 "EHLO
+        id S1726027AbgHGCJb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Aug 2020 22:09:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbgHFW6c (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 18:58:32 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C20BC061574;
-        Thu,  6 Aug 2020 15:58:32 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id i26so33003246edv.4;
-        Thu, 06 Aug 2020 15:58:32 -0700 (PDT)
+        with ESMTP id S1726050AbgHGCJa (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Aug 2020 22:09:30 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9951C061575
+        for <linux-tegra@vger.kernel.org>; Thu,  6 Aug 2020 19:09:29 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id v6so439999ota.13
+        for <linux-tegra@vger.kernel.org>; Thu, 06 Aug 2020 19:09:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VtslGrVU5SAGgzW7ltz0AWj8DRyVUchOuuqr0kZRa5k=;
-        b=kF/rEQ3Upz30sy/q3PWqJOWBXzsQPT5udDoKLn0UMVtp2nGshMNkeBK7y2wl5N0nnp
-         bDp82L6sUeACUxMObpLrF7kPXE9bRfbRGloAUa2dgzSqmy2ajLMpMznJFgWWYrKfLPlr
-         9DvvgK1tvE/32QyHh3JRWLghCgw6rLbD6yz2ILaPOpfI+0Nqdd1w+a8HwMUmlPY3Rdnt
-         kLDyvxpnv11bHNIFVrkAadk8H8pS476mcq4O6zg/vzEwQBCIWLX/txP6gf22EOkPGWOw
-         woblvaqpzUw/7sM/zgEefGKYTAfM5HWFE/ymiPh0shUyjzjIhMxK0ZmE11EH7eivFFbk
-         TdvA==
+        bh=UXDzWg/XP+2sEYoVhG4gJfqwuqtmZXkmnkeb5iVh2iE=;
+        b=xRVx7pmJO/zgnmDPgxBODMiXXblNkdoeRjHXmhtFHUwUlpQxf7nYRXHHu9BNt2Hp8i
+         76kWUw7L3zpb9iMmyjcw2br1Wju7Q6dwIe79tqy4yr4oK5wtgTOVMpUc2rECYHCYsu9I
+         TcoaqnuUBgUEfeM+ZWZDU2CjurnWfmYp8IMnt/d7wNpSIf4mlqj1ZH8JVNvxvoHJ5a2p
+         uBF5+ggJjW1IUrkPnyH4niRERLtxkTIXZrtk1JNFb26gxC0RlgWewBXO+y12ZwRtfzse
+         mhLNykEUYuKZ/Iz2NnEH0KikWzaYpnbtc+3DPUt8pKC1/A5tDxdgt+lNq3/L4ucJgD23
+         gpvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VtslGrVU5SAGgzW7ltz0AWj8DRyVUchOuuqr0kZRa5k=;
-        b=hKR2irNR1rW5+fmWjWXoYnNysNYlDvZMK0BOrcTXZhKuKM0gnICBk7WWRPm0BPHtIn
-         +HZwIf1F2Zqh86uOgUMjGoLH7OKTRtt9EM9W0kmi4WudA3SgmprQ54L1p4akzcqMAWwD
-         zAFlUX95LiOg5wxlvMhc+9G4FAhx4VXEInjvDIgdAzLMQqRvm0SYIZEcQj4u9uYxcV+G
-         MexTsBWBI/J3N1JYpAf8SDSOFwuyUh3tqUW1zM9D8k8hzkrvbczOCOpxs1c0MI3VTGHu
-         sYaaHXqGQA8hMHVPMNfJEHex+XOW4rQAByia92lStNuy2lHGOkVGyZ4iqPlEa35N8xCk
-         gG6g==
-X-Gm-Message-State: AOAM532X5SfODJWn2/dPjWPh4UWXsJzY/Lq7QsbQXrRp1i4ExN1UxBXq
-        NZL/3zRvzwCfZ1Ff+sgnbP0wFqsrbyFXoVQtEes=
-X-Google-Smtp-Source: ABdhPJy7M1v3UbuJwCxS7d3k0GfNAu1Z2svSkVIyAj9XiXhqCh18sFq+Q96lb3zshRUkqnjrLeBL4eXChstRAtRq59E=
-X-Received: by 2002:a05:6402:1855:: with SMTP id v21mr6335735edy.355.1596754710231;
- Thu, 06 Aug 2020 15:58:30 -0700 (PDT)
+        bh=UXDzWg/XP+2sEYoVhG4gJfqwuqtmZXkmnkeb5iVh2iE=;
+        b=dsnYh3fux96J6Yy0QPByZzS2iiJ+0Xt1/dnTvBuHsHF3G547sfpkKm3gyzbPUhgs81
+         fyzmA2+3oqNF1X13wMIP3UhQg6sVZnAD7v6Ro+EnQwq8BAZMPb7Vtqefm1lz1M5TX/AT
+         fcA4Uf+vz2aLKZH+kkjONQ5dqA7InaiFVtHf+nj/wfd26KZDcXKie6pQvg5eTGO4WQjA
+         k+pBJnu0GRSM01ZHm60L9uhR/blo4safMw6qX2Y9Cucgw5kuxVJcVlWlGMgYStR9Wi9l
+         NyBFXRUP6S1lLCnPDQrAstPGJ30XUiidH4TSgKIdCKBlah58VgvQkZv7fsrSPv1j+jll
+         bbfA==
+X-Gm-Message-State: AOAM530uFnqwUrinsA76HMzbSR5TnGQHa21dgVtdhdVF1R42LbKiIMjC
+        J+7DwGFxuk3epclPLpJ7V5gx6UUUaQNODvZ5cqIIxg==
+X-Google-Smtp-Source: ABdhPJxpkfgvvlB6dJX/jSYtlNEZQF79RdUNfSy2KapZFTawN302cQpYn6luuDiz+1kWHSQ6VcY0la2Eq+7jSP4C/LY=
+X-Received: by 2002:a9d:6f8f:: with SMTP id h15mr3718655otq.221.1596766168877;
+ Thu, 06 Aug 2020 19:09:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAMdYzYoqKcG+LtFZy+TeYWB=GJo8Ya60r3Los4T5j7j3Okdbtw@mail.gmail.com>
- <20200806222254.GF1551@shell.armlinux.org.uk>
-In-Reply-To: <20200806222254.GF1551@shell.armlinux.org.uk>
-From:   Peter Geis <pgwipeout@gmail.com>
-Date:   Thu, 6 Aug 2020 18:58:18 -0400
-Message-ID: <CAMdYzYoa52gZ5TdPU366QoaVjGFxPxvjTn15ipyNp428iR_Seg@mail.gmail.com>
-Subject: Re: [PATCH] arm: Add support for ZSTD compressed kernel
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     nolange79@gmail.com, linux-kernel@vger.kernel.org,
-        Petr Malat <oss@malat.biz>, Kees Cook <keescook@chromium.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Terrell <terrelln@fb.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-tegra@vger.kernel.org
+References: <20200422203245.83244-1-john.stultz@linaro.org>
+ <20200422203245.83244-2-john.stultz@linaro.org> <20200806135251.GB3351349@ulmo>
+In-Reply-To: <20200806135251.GB3351349@ulmo>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Thu, 6 Aug 2020 19:09:16 -0700
+Message-ID: <CALAqxLU=a+KXKya2FkgCuYyw5ttZJ_NXjNbszFzSjP49wMN84g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] driver core: Revert default driver_deferred_probe_timeout
+ value to 0
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Basil Eljuse <Basil.Eljuse@arm.com>,
+        Ferry Toth <fntoth@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Aug 6, 2020 at 6:22 PM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
+On Thu, Aug 6, 2020 at 6:52 AM Thierry Reding <thierry.reding@gmail.com> wrote:
 >
-> On Thu, Aug 06, 2020 at 05:46:50PM -0400, Peter Geis wrote:
-> > Good Evening,
+> On Wed, Apr 22, 2020 at 08:32:43PM +0000, John Stultz wrote:
+> > This patch addresses a regression in 5.7-rc1+
 > >
-> > I had attempted to get this working as well, but have run into
-> > difficulties with both my implementation and yours as well.
-> > My implementation was almost the same as yours, with the exception of
-> > also changing:
-> > @@ -303,7 +305,7 @@ restart: adr r0, LC1
+> > In commit c8c43cee29f6 ("driver core: Fix
+> > driver_deferred_probe_check_state() logic"), we both cleaned up
+> > the logic and also set the default driver_deferred_probe_timeout
+> > value to 30 seconds to allow for drivers that are missing
+> > dependencies to have some time so that the dependency may be
+> > loaded from userland after initcalls_done is set.
 > >
-> >  #ifndef CONFIG_ZBOOT_ROM
-> >   /* malloc space is above the relocated stack (64k max) */
-> > - add r10, sp, #0x10000
-> > + add r10, sp, #0x30000
-> >  #else
-> >   /*
-> >   * With ZBOOT_ROM the bss/stack is non relocatable,
+> > However, Yoshihiro Shimoda reported that on his device that
+> > expects to have unmet dependencies (due to "optional links" in
+> > its devicetree), was failing to mount the NFS root.
 > >
-> > On QEMU this implementation works fine.
-> > However on bare metal tegra30, I get the following error:
+> > In digging further, it seemed the problem was that while the
+> > device properly probes after waiting 30 seconds for any missing
+> > modules to load, the ip_auto_config() had already failed,
+> > resulting in NFS to fail. This was due to ip_auto_config()
+> > calling wait_for_device_probe() which doesn't wait for the
+> > driver_deferred_probe_timeout to fire.
 > >
-> > Jumping to kernel at:4861 ms
+> > Fixing that issue is possible, but could also introduce 30
+> > second delays in bootups for users who don't have any
+> > missing dependencies, which is not ideal.
 > >
-> > C:0x80A000C0-0x8112BA40->0x8152C700-0x81C58080
-> > Uncompressing Linux...
+> > So I think the best solution to avoid any regressions is to
+> > revert back to a default timeout value of zero, and allow
+> > systems that need to utilize the timeout in order for userland
+> > to load any modules that supply misisng dependencies in the dts
+> > to specify the timeout length via the exiting documented boot
+> > argument.
 > >
-> > ZSTD-compressed dstSize is too small
+> > Thanks to Geert for chasing down that ip_auto_config was why NFS
+> > was failing in this case!
 > >
-> >  -- System halted
-> >
-> > The only difference between the bare metal test and the qemu test is
-> > the zImage with appended dtb is packaged in the android boot format
-> > for the bare metal test.
-> > Otherwise it's exactly the same file.
+> > Cc: "David S. Miller" <davem@davemloft.net>
+> > Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+> > Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+> > Cc: Jakub Kicinski <kuba@kernel.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > Cc: Robin Murphy <robin.murphy@arm.com>
+> > Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Cc: Sudeep Holla <sudeep.holla@arm.com>
+> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+> > Cc: Basil Eljuse <Basil.Eljuse@arm.com>
+> > Cc: Ferry Toth <fntoth@gmail.com>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Anders Roxell <anders.roxell@linaro.org>
+> > Cc: netdev <netdev@vger.kernel.org>
+> > Cc: linux-pm@vger.kernel.org
+> > Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > Fixes: c8c43cee29f6 ("driver core: Fix driver_deferred_probe_check_state() logic")
+> > Signed-off-by: John Stultz <john.stultz@linaro.org>
+> > ---
+> >  drivers/base/dd.c | 13 ++-----------
+> >  1 file changed, 2 insertions(+), 11 deletions(-)
 >
-> So it's relocating the compressed kernel and decompressor from
-> 0x80A000C0-0x8112BA40 to 0x8152C700-0x81C58080 and then failing.
-> Does the QEMU version also do similar?
-
-Here is the output from QEMU, note boot doesn't work because this
-image isn't for QEMU:
-
-C:0x400100C0-0x4073B1E0->0x4152C600-0x41C57720
-Uncompressing Linux... done, booting the kernel.
-
+> Sorry for being a bit late to the party, but this breaks suspend/resume
+> support on various Tegra devices. I've only noticed now because, well,
+> suspend/resume have been broken for other reasons for a little while and
+> it's taken us a bit to resolve those issues.
 >
-> On the off-hand, I'm not sure why it should fail.  I assume that
-> you've tried the other decompressors and they work fine on the
-> same setups?
+> But now that those other issues have been fixed, I've started seeing an
+> issue where after resume from suspend some of the I2C controllers are no
+> longer working. The reason for this is that they share pins with DP AUX
+> controllers via the pinctrl framework. The DP AUX driver registers as
+> part of the DRM/KMS driver, which usually happens in userspace. Since
+> the deferred probe timeout was set to 0 by default this no longer works
+> because no pinctrl states are assigned to the I2C controller and
+> therefore upon resume the pins cannot be configured for I2C operation.
 
-Correct, all other compressors work.
-ZSTD is handy for arm because size and speed are both important.
+Oof. My apologies!
 
+> I'm also somewhat confused by this patch and a few before because they
+> claim that they restore previous default behaviour, but that's just not
+> true. Originally when this timeout was introduced it was -1, which meant
+> that there was no timeout at all and hence users had to opt-in if they
+> wanted to use a deferred probe timeout.
+
+I don't think that's quite true, since the point of my original
+changes were to avoid troubles I was seeing with drivers not loading
+because once the timeout fired after init, driver loading would fail
+with ENODEV instead of returning EPROBE_DEFER. The logic that existed
+was buggy so the timeout handling didn't really work (changing the
+boot argument wouldn't help, because after init the logic would return
+ENODEV before it checked the timeout value).
+
+That said, looking at it now, I do realize the
+driver_deferred_probe_check_state_continue() logic in effect never
+returned ETIMEDOUT before was consolidated in the earlier changes, and
+now we've backed the default timeout to 0, old user (see bec6c0ecb243)
+will now get ETIMEDOUT where they wouldn't before.
+
+So would the following fix it up for you? (sorry its whitespace corrupted)
+
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index c6fe7d64c913..c7448be64d07 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -129,9 +129,8 @@ static int dt_to_map_one_config(struct pinctrl *p,
+                if (!np_pctldev || of_node_is_root(np_pctldev)) {
+                        of_node_put(np_pctldev);
+                        ret = driver_deferred_probe_check_state(p->dev);
+-                       /* keep deferring if modules are enabled
+unless we've timed out */
+-                       if (IS_ENABLED(CONFIG_MODULES) && !allow_default &&
+-                           (ret == -ENODEV))
++                       /* keep deferring if modules are enabled */
++                       if (IS_ENABLED(CONFIG_MODULES) &&
+!allow_default && ret < 0)
+                                ret = -EPROBE_DEFER;
+                        return ret;
+                }
+
+(you could probably argue calling driver_deferred_probe_check_state
+checking ret at all is silly here, since EPROBE_DEFER is the only
+option you want)
+
+> But now after this series the default is for there to be a very short
+> timeout, which in turn causes existing use-cases to potentially break.
+> I'm also going to suggest here that in most cases a driver will require
+> the resources that it asks for, so the case that Yoshihiro described and
+> that this patch is meant to fix sounds to me like it's the odd one out
+> rather than the other way around.
 >
+> But I realize that that's not very constructive. So perhaps we can find
+> some other way for drivers to advertise that their dependencies are
+> optional? I came up with the below patch, which restores suspend/resume
+> on Tegra and could be used in conjunction with a patch that opts into
+> this behaviour for the problematic driver in Yoshihiro's case to make
+> this again work for everyone.
+>
+> --- >8 ---
+> From a95f8f41b8a32dee3434db4f0515af7376d1873a Mon Sep 17 00:00:00 2001
+> From: Thierry Reding <treding@nvidia.com>
+> Date: Thu, 6 Aug 2020 14:51:59 +0200
+> Subject: [PATCH] driver core: Do not ignore dependencies by default
+>
+> Many drivers do require the resources that they ask for and timing out
+> may not always be an option. While there is a way to allow probing to
+> continue to be deferred for some time after the system has booted, the
+> fact that this is controlled via a command-line parameter is undesired
+> because it require manual intervention, whereas in can be avoid in the
+> majority of cases.
+>
+> Instead of requiring users to edit the kernel command-line, add a way
+> for drivers to specify whether or not their dependencies are optional
+> so that they can continue deferring probe indefinitely.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/base/dd.c             | 2 +-
+>  include/linux/device/driver.h | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 857b0a928e8d..11e747070eae 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -279,7 +279,7 @@ int driver_deferred_probe_check_state(struct device *dev)
+>                 return -ENODEV;
+>         }
+>
+> -       if (!driver_deferred_probe_timeout && initcalls_done) {
+> +       if (dev->driver->ignore_dependencies && !driver_deferred_probe_timeout && initcalls_done) {
+>                 dev_warn(dev, "deferred probe timeout, ignoring dependency\n");
+>                 return -ETIMEDOUT;
+>         }
+> diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
+> index ee7ba5b5417e..6994455e8a2e 100644
+> --- a/include/linux/device/driver.h
+> +++ b/include/linux/device/driver.h
+> @@ -100,6 +100,7 @@ struct device_driver {
+>         const char              *mod_name;      /* used for built-in modules */
+>
+>         bool suppress_bind_attrs;       /* disables bind/unbind via sysfs */
+> +       bool ignore_dependencies;       /* ignores dependencies */
+>         enum probe_type probe_type;
+>
+>         const struct of_device_id       *of_match_table;
 > --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+> 2.27.0
+> --- >8 ---
+>
+> Although, thinking about it a bit more it sounds to me like an even
+> better approach would be to make this part of the API where a resource
+> is requested. There are in fact already APIs that can request optional
+> resources (such as regulator_get_optional()), so I think it would make
+> more sense for any driver that can live without a resource to request
+> it with an optional flag, which in turn could then trigger this code
+> path for the deferred probe timeout. For anyone that really needs the
+> resources that they request, they really shouldn't have to jump through
+> hoops to get there.
+
+I do like these suggestions. I feel like the optional dt links
+handling is very opaque as there's no real way to tell if a dt link is
+truly optional or not. Having the timeout is a really subtle and
+implicit way of getting that optional link handling behavior.
+
+thanks
+-john
