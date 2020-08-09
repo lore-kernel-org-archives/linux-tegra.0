@@ -2,97 +2,70 @@ Return-Path: <SRS0=7M9f=BT=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F97C433DF
-	for <linux-tegra@archiver.kernel.org>; Sun,  9 Aug 2020 00:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A57C433E0
+	for <linux-tegra@archiver.kernel.org>; Sun,  9 Aug 2020 07:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1B17206D8
-	for <linux-tegra@archiver.kernel.org>; Sun,  9 Aug 2020 00:40:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7w+q029"
+	by mail.kernel.org (Postfix) with ESMTP id 0B5E1206C0
+	for <linux-tegra@archiver.kernel.org>; Sun,  9 Aug 2020 07:29:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbgHIAkM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 8 Aug 2020 20:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbgHIAkM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 8 Aug 2020 20:40:12 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F06C061756;
-        Sat,  8 Aug 2020 17:40:11 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id q17so2989536pls.9;
-        Sat, 08 Aug 2020 17:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OoI02kIPv5v2lQrEFtWYTVFM7JZrBv3uT+arvbEzRC8=;
-        b=O7w+q029hE2KX4W8MHGLpAX6jI7rJTMsRIVLfGKcz4IDDrum74DBgfi/oS6bOM0xOv
-         5nt6w4rcu6Wv8mPvg0cJVFGaZgTIF6UYC0zVyKsTfebJHS6jn2Z19BpAzIaTevZfKhsv
-         ldZLWj4PgusGw+dcJfro0TSwI4Zex4GOSFI9TxeiPs9LMq0ovRMyLqYwzN13jAXJg2v3
-         qCauBZAaBriDfmqxtgbJnTT01UWwBOWMUALtWCW1gJ9kBu/MKIU89gCEHrlYjcFuXO5e
-         gj4Ss5YHfrnq4NytbkeXvOHx3xOA+u1jIyCJkKSJNCEfiF1rDwZ0x+0/XU9SkIQfH038
-         cJtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OoI02kIPv5v2lQrEFtWYTVFM7JZrBv3uT+arvbEzRC8=;
-        b=H2gcUUqgcEfLCYf99sPX8rJl9Hwez12rgME2SoVEIlBlmN3CsIzhzkz9ETyEmkpfja
-         dOKhD5e/J6Zkp3oUBDD0w09q19GBoT9NSP7EFs0ZcQ8Z+SbH8B+GvTLhs5fgs9gwAzEO
-         YCzXGBSoiJ0OSMlz4BDyJswFzkhpFV4sKPpM0EwUaOGlV8fbMsVK7jnodKvmwN8PSDXM
-         i7u97piagXNMP8MiuYEEEukJT5KPFOp5rid/BXFQ8QF7lA4v2CxuZj6pDT9Uxd/wLwVW
-         avm6TtSc41sIyJd4eDo9iREF7mlU1PYvutDQTR3NwGKHualT5NHnDga15vAL4qgtIiH4
-         SpdQ==
-X-Gm-Message-State: AOAM531hVicW5DWJuUzIVRrZpv/mVRwtRFL/+0PSUnGXW3NYGilhKbsM
-        akgULP/XTC3GWTgjSHulqQI=
-X-Google-Smtp-Source: ABdhPJybEzbAts0RW8NMwyR4Aw7rMrZw1oGKzNLjQ+QABcupg38fRhfBMrvsw9hvY/vFeMXGqKtkPA==
-X-Received: by 2002:a17:90a:8909:: with SMTP id u9mr20792249pjn.119.1596933611431;
-        Sat, 08 Aug 2020 17:40:11 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q2sm18909579pfc.40.2020.08.08.17.40.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 08 Aug 2020 17:40:10 -0700 (PDT)
-Date:   Sat, 8 Aug 2020 17:40:09 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com,
-        robh+dt@kernel.org, mirq-linux@rere.qmqm.pl,
-        devicetree@vger.kernel.org, jonathanh@nvidia.com, talho@nvidia.com,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bbasu@nvidia.com, mperttunen@nvidia.com
-Subject: Re: [TEGRA194_CPUFREQ PATCH v6 3/3] cpufreq: Add Tegra194 cpufreq
- driver
-Message-ID: <20200809004009.GA96704@roeck-us.net>
-References: <1594819885-31016-1-git-send-email-sumitg@nvidia.com>
- <1594819885-31016-4-git-send-email-sumitg@nvidia.com>
+        id S1726412AbgHIH3z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 9 Aug 2020 03:29:55 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:48196 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbgHIH3z (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 9 Aug 2020 03:29:55 -0400
+Received: from localhost.localdomain ([93.22.150.139])
+        by mwinf5d64 with ME
+        id DKVq2300630hzCV03KVqWt; Sun, 09 Aug 2020 09:29:53 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 09 Aug 2020 09:29:53 +0200
+X-ME-IP: 93.22.150.139
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        nkristam@nvidia.com, yuehaibing@huawei.com,
+        heikki.krogerus@linux.intel.com
+Cc:     linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] usb: gadget: tegra-xudc: Avoid GFP_ATOMIC where it is not needed
+Date:   Sun,  9 Aug 2020 09:29:48 +0200
+Message-Id: <20200809072948.743269-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1594819885-31016-4-git-send-email-sumitg@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jul 15, 2020 at 07:01:25PM +0530, Sumit Gupta wrote:
-> Add support for CPU frequency scaling on Tegra194. The frequency
-> of each core can be adjusted by writing a clock divisor value to
-> a MSR on the core. The range of valid divisors is queried from
-> the BPMP.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+There is no need to use GFP_ATOMIC here. It is a probe function, no
+spinlock is taken.
 
-If built as module:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/usb/gadget/udc/tegra-xudc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ERROR: modpost: "__cpu_logical_map" [drivers/cpufreq/tegra194-cpufreq.ko] undefined!
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index d6ff68c06911..9aa4815c1c59 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -3733,7 +3733,7 @@ static int tegra_xudc_probe(struct platform_device *pdev)
+ 	unsigned int i;
+ 	int err;
+ 
+-	xudc = devm_kzalloc(&pdev->dev, sizeof(*xudc), GFP_ATOMIC);
++	xudc = devm_kzalloc(&pdev->dev, sizeof(*xudc), GFP_KERNEL);
+ 	if (!xudc)
+ 		return -ENOMEM;
+ 
+-- 
+2.25.1
 
-Guenter
