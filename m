@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74B5C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D652EC433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92BC622B47
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:17:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A30DD22CAE
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:21:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597087076;
-	bh=h4djccU8SRHv5HAmTc/Lbs8dPuas84jJHHnm4Ggawq4=;
+	s=default; t=1597087262;
+	bh=cUwC9Yi8xFwUR3ud0kfob6ueTPMUW+ozY7s6/mmjJgY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DI4TVU8GNVCK0LE5HRUhcAMfk9fWHJ59zVwXtNlt5fmjQctxFou/G2nth+xHBK+QP
-	 zmDrTvij7YrzysMlK8yzNJFwoxu4yA2vq2djTQoRGre5b9JGAnYzGjGx+RhaotADEa
-	 O34kI/LB8FbXTRcR0gr8Z8nCUXHhlOFNcMnNsFjM=
+	b=MycxsT6gc/NputDoGz+fKSB+2f+vP/mk56X3kt2LqTriVfew+cJhtK1et5Vh3mSOt
+	 GYrMF7G+bsdigcb3+046IXYSpkCa/1GmX5tPoBdwwO6SLH3O1qLnVHwaXO+NJgE9uD
+	 VHodt8ZXO1qmwht9UuFTAmdFFRsrU7beRx11Lbxw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbgHJTOI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Aug 2020 15:14:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45958 "EHLO mail.kernel.org"
+        id S1729799AbgHJTNg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Aug 2020 15:13:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729264AbgHJTOH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Aug 2020 15:14:07 -0400
+        id S1729789AbgHJTNe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 10 Aug 2020 15:13:34 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1524B22BED;
-        Mon, 10 Aug 2020 19:14:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7747207FF;
+        Mon, 10 Aug 2020 19:13:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597086847;
-        bh=h4djccU8SRHv5HAmTc/Lbs8dPuas84jJHHnm4Ggawq4=;
+        s=default; t=1597086813;
+        bh=cUwC9Yi8xFwUR3ud0kfob6ueTPMUW+ozY7s6/mmjJgY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jF7TTUIKK9qajq2WX43m9/ty/UDvfxTJRvR8zRarVP5IZ/q9CxQrS3xXM19egwydb
-         1uYN0nczMDCwd0FUJB+RqctfdBzFxZLJhwJX0V6EKiTYOraJ+RM67GqUxCaM1QayRK
-         26Gys+hBdhfMa31iUiymI/zsXhckLlUY/hWrUd74=
+        b=2vwv5lweNtmV5eQVVoUF4WCxbV3szyEtX8zpnEiSUBu8z3uNzRz0o+BUEN1nRRSZm
+         vcdMyPDU7BDXS4Aj0W5qCTdGBuJfXfw+lnUG6XQW9kiwfsETsHKfGlI4b8pRFeUVvP
+         KFEvWbUqSJ/wbFqySLLK4f03Tn+mU+CQta6FZS9w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 15/22] gpu: host1x: debug: Fix multiple channels emitting messages simultaneously
-Date:   Mon, 10 Aug 2020 15:13:37 -0400
-Message-Id: <20200810191345.3795166-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 23/31] gpu: host1x: debug: Fix multiple channels emitting messages simultaneously
+Date:   Mon, 10 Aug 2020 15:12:51 -0400
+Message-Id: <20200810191259.3794858-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200810191345.3795166-1-sashal@kernel.org>
-References: <20200810191345.3795166-1-sashal@kernel.org>
+In-Reply-To: <20200810191259.3794858-1-sashal@kernel.org>
+References: <20200810191259.3794858-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -77,7 +77,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+)
 
 diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
-index 2aae0e63214c2..0b8c23c399c2a 100644
+index 329e4a3d8ae7b..6c9ad4533999c 100644
 --- a/drivers/gpu/host1x/debug.c
 +++ b/drivers/gpu/host1x/debug.c
 @@ -25,6 +25,8 @@
@@ -89,7 +89,7 @@ index 2aae0e63214c2..0b8c23c399c2a 100644
  unsigned int host1x_debug_trace_cmdbuf;
  
  static pid_t host1x_debug_force_timeout_pid;
-@@ -49,12 +51,14 @@ static int show_channel(struct host1x_channel *ch, void *data, bool show_fifo)
+@@ -61,12 +63,14 @@ static int show_channel(struct host1x_channel *ch, void *data, bool show_fifo)
  	struct output *o = data;
  
  	mutex_lock(&ch->cdma.lock);
