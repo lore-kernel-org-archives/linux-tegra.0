@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8564C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAC1C433E1
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A98832080C
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:27:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B17D22B47
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:31:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597087648;
+	s=default; t=1597087911;
 	bh=jWqRiW4I0WKBGrfTOQRfUOvpMlfAxLk4XnkZZTMCiq8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fkh3yn4YwHDceG+9HHypB+uxSPBosbibrbLpROBDG9KeiOE4b3BtHJ02C7pKeR2Qy
-	 Qa/syKXADXYznX1+gZO1wZtm/vw0GuH/0BcvCaDzJiKird84O2OAg9R4zb+OZkTwPA
-	 9jQNX8vCTvIpvN108Ict4it04cQlcBwVs3SMLpoI=
+	b=zY1a0QaASt2X/xVMT3bVHtGMXOowuR+OBlYpX0x/xgl+zVj6SPToS/uJ67sBH3HME
+	 dBiOlDZ6lEsU8VgdHWBcU3A3AR0Hw5yvToaQFjG4Wby/O/Mrq+1FU/i9/96VuhA6oK
+	 vFQ1m8vVeqQAaLgFDll57drICBlXTDDcy6WAKMKQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbgHJT11 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Aug 2020 15:27:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39956 "EHLO mail.kernel.org"
+        id S1729500AbgHJTbk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Aug 2020 15:31:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729319AbgHJTL3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Aug 2020 15:11:29 -0400
+        id S1728813AbgHJTKE (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 10 Aug 2020 15:10:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1A4422B4B;
-        Mon, 10 Aug 2020 19:11:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7926C22B45;
+        Mon, 10 Aug 2020 19:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597086688;
+        s=default; t=1597086604;
         bh=jWqRiW4I0WKBGrfTOQRfUOvpMlfAxLk4XnkZZTMCiq8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eO8menNCQpuFZgPzo/ircOB0HGmMyOVhvhJJxD/Y5oxJ32lrXj7D601va8ZkUNNDt
-         mqNnCwv6wOXdNqWAmFRGrUUJMmB9dah2QHu939KRrd1QmKAVlObhILNLwzmttWLxWV
-         vpbxWbssgyeKsJ7FCUIKTqWLtLA7JCCCIGU1zd1w=
+        b=bg6jIFyVahsGJeRwLd1cTW1QEp4GKzQ4zt9EQV7A+nVfzjsqXDVzAhKJTDy4OY5Zw
+         JRqAQZSjLsI57lGejuPMzcW+YBy1hCfkaVWguIT/D4/e3ogG3/gAhMlLpUgxkEKamc
+         W5L4XxLdxz8aeMRIb0VnBStuiaYTahxbEEwYL1Xk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 43/60] gpu: host1x: debug: Fix multiple channels emitting messages simultaneously
-Date:   Mon, 10 Aug 2020 15:10:11 -0400
-Message-Id: <20200810191028.3793884-43-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 47/64] gpu: host1x: debug: Fix multiple channels emitting messages simultaneously
+Date:   Mon, 10 Aug 2020 15:08:42 -0400
+Message-Id: <20200810190859.3793319-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200810191028.3793884-1-sashal@kernel.org>
-References: <20200810191028.3793884-1-sashal@kernel.org>
+In-Reply-To: <20200810190859.3793319-1-sashal@kernel.org>
+References: <20200810190859.3793319-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
