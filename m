@@ -2,98 +2,118 @@ Return-Path: <SRS0=cyIW=BV=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D32C433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 18:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D77F5C433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 19:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 043A320771
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 18:49:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD62120782
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 19:43:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHTxic7s"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="n3To+SbS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726258AbgHKSte (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Aug 2020 14:49:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34506 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbgHKSte (ORCPT
+        id S1726430AbgHKTne (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Aug 2020 15:43:34 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4628 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbgHKTnd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Aug 2020 14:49:34 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57E8C06174A;
-        Tue, 11 Aug 2020 11:49:33 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 140so7239547lfi.5;
-        Tue, 11 Aug 2020 11:49:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7DTn5uFhSyuimkf8VN00wRIDhk5oSwcyOf7Qxcw85tU=;
-        b=FHTxic7sIGkNM9Mo36Oe6nF3rOGpsHOfy3yxhDcm5QMz3AhdVdCcXTd3NsgZaqo+qy
-         ihoaGod/PfgjHpbpNk5AyW9DJGD6QDZQt76KDc3AvtA0ax1l3eBL5vNL5QsrPwrHLSHx
-         GlPlE2dFHy2B79D5xFheaebZMp2jIwR60Dhc4Rx04I3qSjxf16K4GatDDw7Z8ZdjbE7I
-         vjPVjy1RBWJWVoMejf5kPcBe4uJwwUKqewXHIMi5WPA1E9qXZOwtJKDwSgQtX6f9wvUD
-         tH2k9vgPMyk40flenKHxNwj+s78W3dKo59xMPsb4vJeQO4cioIePxdKkh/nXw9n1i8ay
-         Y9DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7DTn5uFhSyuimkf8VN00wRIDhk5oSwcyOf7Qxcw85tU=;
-        b=jhpZT/ChH8Fa4WrJTw8GNQwkMcFdZW3dS81QMoid/h84HKiwcCRZy0Q6v3KBA29X7g
-         rnkX7XdmEVCbziiutjZAoPXcfWe/4wAZRLrTiY/+BwB2mE/wkz7+cLSlTYJUP9QI+ZMs
-         00d7BWt8q34+A/5DhQAtbyvnJ9gUrUnVdGU/r+PVUJzDFwK4iDqC/Gs1xY3vMCHS9y3C
-         ORg8fLQB6xgPExIYH43Xqjz2fVApKj17n8MgvOsPzIvZskH/0V7BhLLhQbz4RqcEv+Xg
-         4x62EjcRcPgYtYgw0dpCxNbXyB5fGaRMWDD7Sb/BOVHcNexI8SVixfGZZZmRichKqiRK
-         hO3g==
-X-Gm-Message-State: AOAM5311mhrw0xuxfC4py9ZXb8HJQeeGlu5CNBkxSl0E2YC97hEJVpSa
-        J9x2pvDgt9Qm7cnsNvPrdaCLyI0h
-X-Google-Smtp-Source: ABdhPJz/FpzQOdn9OOGGCezMzFAL+DHV0SHGzs6yjrB2lFiiEejBhhvW3hCAbATSPtqyb2YfEP5Tow==
-X-Received: by 2002:a19:654c:: with SMTP id c12mr3907741lfj.132.1597171771257;
-        Tue, 11 Aug 2020 11:49:31 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id i11sm11690790lfl.31.2020.08.11.11.49.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 11:49:30 -0700 (PDT)
-Subject: Re: [PATCH v9 09/10] media: tegra-video: Add CSI MIPI pads
- calibration
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        helen.koike@collabora.com
-Cc:     gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1596740494-19306-1-git-send-email-skomatineni@nvidia.com>
- <1596740494-19306-10-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0eb1c3ac-7cd7-d58c-9480-bd8d762c27f1@gmail.com>
-Date:   Tue, 11 Aug 2020 21:49:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 11 Aug 2020 15:43:33 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f32f4d60002>; Tue, 11 Aug 2020 12:43:18 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 11 Aug 2020 12:43:32 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 11 Aug 2020 12:43:32 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Aug
+ 2020 19:43:24 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 11 Aug 2020 19:43:24 +0000
+Received: from sumitg-l4t.nvidia.com (Not Verified[10.24.37.103]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f32f4d80006>; Tue, 11 Aug 2020 12:43:23 -0700
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <sudeep.holla@arm.com>, <rjw@rjwysocki.net>,
+        <viresh.kumar@linaro.org>, <catalin.marinas@arm.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <bbasu@nvidia.com>, <sumitg@nvidia.com>,
+        <wangkefeng.wang@huawei.com>
+Subject: [Patch] cpufreq: replace cpu_logical_map with read_cpuid_mpir
+Date:   Wed, 12 Aug 2020 01:13:17 +0530
+Message-ID: <1597174997-22505-1-git-send-email-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <1596740494-19306-10-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1597174999; bh=bRBbhMbs7h3ckPB8wW+c1VeSnD+Qsd3GDY3eazmuf7I=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=n3To+SbS9L60gDx7dJi8lFE0LLYkF5biIwcWZi/gBrfsQupp24FCSJrrpyCCZIypu
+         uCxy/y5zqG9nYtpfeeAVETttRAmGC3k+PWS4G3IW6z6kmP54u53o5ag3YsIK8dEUGN
+         9EuYiZ9wHVH1sCzJAlhBYdPB5XBEhDCwOBumKYhqi/I2jKa+DIv4aJnT3TeTuZN4kL
+         jcmhhJ8DbgeT4otQm0mFjAlFK04Xxe0/OuY3RY5C02VntwvssqPQ8tbZPPNvnms4BQ
+         wVOOecuQkvleVlrvWlJ0joA3QkK/do4CUkJLBU2nVX0zgep+pGmgkdAX4X+CfLf5p6
+         aYiaJPYYmwLpA==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-06.08.2020 22:01, Sowjanya Komatineni пишет:
-...
-> +	err = tegra_mipi_finish_calibration(csi_chan->mipi);
-> +
-> +	if (ret < 0 && ret != -ENOIOCTLCMD)
-> +		goto err_disable_csi_stream;
-> +
-> +	if (err < 0)
-> +		dev_warn(csi_chan->csi->dev,
-> +			 "MIPI calibration failed: %d\n", ret);
+Commit eaecca9e7710 ("arm64: Fix __cpu_logical_map undefined issue")
+fixes the issue with building tegra194 cpufreq driver as module. But
+the fix might cause problem while supporting physical cpu hotplug[1].
 
-err
+This patch fixes the original problem by avoiding use of cpu_logical_map().
+Instead calling read_cpuid_mpidr() to get MPIDR on target cpu.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20200724131059.GB6521@bogus/
+
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
+ drivers/cpufreq/tegra194-cpufreq.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index bae527e..e1d931c 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -56,9 +56,11 @@ struct read_counters_work {
+ 
+ static struct workqueue_struct *read_counters_wq;
+ 
+-static enum cluster get_cpu_cluster(u8 cpu)
++static void get_cpu_cluster(void *cluster)
+ {
+-	return MPIDR_AFFINITY_LEVEL(cpu_logical_map(cpu), 1);
++	u64 mpidr = read_cpuid_mpidr() & MPIDR_HWID_BITMASK;
++
++	*((uint32_t *)cluster) = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+ }
+ 
+ /*
+@@ -186,8 +188,10 @@ static unsigned int tegra194_get_speed(u32 cpu)
+ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+ {
+ 	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
+-	int cl = get_cpu_cluster(policy->cpu);
+ 	u32 cpu;
++	u32 cl;
++
++	smp_call_function_single(policy->cpu, get_cpu_cluster, &cl, true);
+ 
+ 	if (cl >= data->num_clusters)
+ 		return -EINVAL;
+-- 
+2.7.4
+
