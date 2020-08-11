@@ -1,109 +1,95 @@
-Return-Path: <SRS0=2bQJ=BU=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=cyIW=BV=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAC1C433E1
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 553E6C433DF
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 01:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B17D22B47
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Aug 2020 19:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597087911;
-	bh=jWqRiW4I0WKBGrfTOQRfUOvpMlfAxLk4XnkZZTMCiq8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zY1a0QaASt2X/xVMT3bVHtGMXOowuR+OBlYpX0x/xgl+zVj6SPToS/uJ67sBH3HME
-	 dBiOlDZ6lEsU8VgdHWBcU3A3AR0Hw5yvToaQFjG4Wby/O/Mrq+1FU/i9/96VuhA6oK
-	 vFQ1m8vVeqQAaLgFDll57drICBlXTDDcy6WAKMKQ=
+	by mail.kernel.org (Postfix) with ESMTP id 29F6F206DC
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 01:18:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MJIb+yGc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbgHJTbk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Aug 2020 15:31:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728813AbgHJTKE (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Aug 2020 15:10:04 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7926C22B45;
-        Mon, 10 Aug 2020 19:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597086604;
-        bh=jWqRiW4I0WKBGrfTOQRfUOvpMlfAxLk4XnkZZTMCiq8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bg6jIFyVahsGJeRwLd1cTW1QEp4GKzQ4zt9EQV7A+nVfzjsqXDVzAhKJTDy4OY5Zw
-         JRqAQZSjLsI57lGejuPMzcW+YBy1hCfkaVWguIT/D4/e3ogG3/gAhMlLpUgxkEKamc
-         W5L4XxLdxz8aeMRIb0VnBStuiaYTahxbEEwYL1Xk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 47/64] gpu: host1x: debug: Fix multiple channels emitting messages simultaneously
-Date:   Mon, 10 Aug 2020 15:08:42 -0400
-Message-Id: <20200810190859.3793319-47-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200810190859.3793319-1-sashal@kernel.org>
-References: <20200810190859.3793319-1-sashal@kernel.org>
+        id S1727092AbgHKBSp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Aug 2020 21:18:45 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5773 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727088AbgHKBSp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 10 Aug 2020 21:18:45 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f31f18c0000>; Mon, 10 Aug 2020 18:17:00 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 10 Aug 2020 18:18:45 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 10 Aug 2020 18:18:45 -0700
+Received: from [10.19.100.79] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Aug
+ 2020 01:18:37 +0000
+Subject: Re: [PATCH] usb: gadget: tegra-xudc: Avoid GFP_ATOMIC where it is not
+ needed
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Nagarjuna Kristam <nkristam@nvidia.com>
+CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <jonathanh@nvidia.com>, <yuehaibing@huawei.com>,
+        <heikki.krogerus@linux.intel.com>, <linux-usb@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20200809072948.743269-1-christophe.jaillet@wanadoo.fr>
+ <20200810140035.GA808811@ulmo>
+From:   JC Kuo <jckuo@nvidia.com>
+Message-ID: <f29c7d35-72a9-b8d1-98dc-427c6fa3cc31@nvidia.com>
+Date:   Tue, 11 Aug 2020 09:18:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200810140035.GA808811@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1597108620; bh=oNvf5Jr6+BIXlO9OnHSXX/LgXK2peo1IqhoZRRSw3uw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=MJIb+yGcZqL5KRNXFTviF0T3MMTcSFWeHLGYCF7gG+1oFfuK4SFV+Re8MWBthmMwp
+         ystfAnCzyrMDes6lCY8J6lKtOkVwph79o5HvjbUbjIP+QDYByA/Yy4imfKncySSW2b
+         9LG156rCoTe+jAE9H5PKazoXadJd3WAd6oPHL8O3p9inHe7m1uOY1lqLEbx6vu1uX9
+         bVylzomZ2eqVe6MqQasDT8y2CaJF+S34NSAtxlJuyLfSwxEhrXS5jliaYftVENy5S9
+         D/2O5oYekoOPWSJITVbdQsPZW7fCi22hg2y0w+sF/CJLSd4vLQQNay1vJFWDJcOTHL
+         5eeCOTpRRjt1w==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+Looks good to me.
 
-[ Upstream commit 35681862808472a0a4b9a8817ae2789c0b5b3edc ]
+Reviewed-by: JC Kuo <jckuo@nvidia.com>
 
-Once channel's job is hung, it dumps the channel's state into KMSG before
-tearing down the offending job. If multiple channels hang at once, then
-they dump messages simultaneously, making the debug info unreadable, and
-thus, useless. This patch adds mutex which allows only one channel to emit
-debug messages at a time.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/host1x/debug.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
-index c0392672a8421..1b4997bda1c79 100644
---- a/drivers/gpu/host1x/debug.c
-+++ b/drivers/gpu/host1x/debug.c
-@@ -16,6 +16,8 @@
- #include "debug.h"
- #include "channel.h"
- 
-+static DEFINE_MUTEX(debug_lock);
-+
- unsigned int host1x_debug_trace_cmdbuf;
- 
- static pid_t host1x_debug_force_timeout_pid;
-@@ -52,12 +54,14 @@ static int show_channel(struct host1x_channel *ch, void *data, bool show_fifo)
- 	struct output *o = data;
- 
- 	mutex_lock(&ch->cdma.lock);
-+	mutex_lock(&debug_lock);
- 
- 	if (show_fifo)
- 		host1x_hw_show_channel_fifo(m, ch, o);
- 
- 	host1x_hw_show_channel_cdma(m, ch, o);
- 
-+	mutex_unlock(&debug_lock);
- 	mutex_unlock(&ch->cdma.lock);
- 
- 	return 0;
--- 
-2.25.1
+On 8/10/20 10:00 PM, Thierry Reding wrote:
+> On Sun, Aug 09, 2020 at 09:29:48AM +0200, Christophe JAILLET wrote:
+>> There is no need to use GFP_ATOMIC here. It is a probe function, no
+>> spinlock is taken.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>  drivers/usb/gadget/udc/tegra-xudc.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> Looks good to me. I can't think of any reason why this would have to be
+> an atomic allocation. Nagarjuna, please shout if this is really needed,
+> otherwise:
+>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
