@@ -2,91 +2,95 @@ Return-Path: <SRS0=cyIW=BV=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9667BC433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 09:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B98CC433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 16:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63C3220756
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 09:35:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qyqoETaf"
+	by mail.kernel.org (Postfix) with ESMTP id 1714B2076C
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 16:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597162778;
+	bh=ZjhXjuqTJvAJKZfY2SXDlo4Upz8smnPmMdDcD0scrEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uh4+LS7Qy0iaV3K2vJdsuZFjux8VnSyfEcl12N0BP9ywSNRzlBPExozfGpZ0ro2FX
+	 1pkQJK5p3gv6NAET3byle4XRnswk5F5MyIEVGi5r6ksFPvSdDs08FovvslU/LWSSQI
+	 jUf/CRNLK773VXTqvSD93lZRReZo/GXMfMc4GYoM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbgHKJfs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Aug 2020 05:35:48 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9505 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728422AbgHKJfr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Aug 2020 05:35:47 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f3266650004>; Tue, 11 Aug 2020 02:35:33 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 11 Aug 2020 02:35:47 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 11 Aug 2020 02:35:47 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Aug
- 2020 09:35:46 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 11 Aug 2020 09:35:46 +0000
-Received: from jckuo-lt.nvidia.com (Not Verified[10.19.100.79]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f3266700002>; Tue, 11 Aug 2020 02:35:46 -0700
-From:   JC Kuo <jckuo@nvidia.com>
-To:     <mathias.nyman@linux.intel.com>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH] usb: host: xhci-tegra: remove a duplicated entry
-Date:   Tue, 11 Aug 2020 17:35:31 +0800
-Message-ID: <20200811093531.720503-1-jckuo@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        id S1729110AbgHKQTh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Aug 2020 12:19:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728797AbgHKQTg (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 11 Aug 2020 12:19:36 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6B3320825;
+        Tue, 11 Aug 2020 16:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597162776;
+        bh=ZjhXjuqTJvAJKZfY2SXDlo4Upz8smnPmMdDcD0scrEs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VQ5Qnf7eFPYRlnkq3gbEnk0bUIFlhGpVbR8U7RM89mnNDr2Ub0NWbzBuNJqGJwR20
+         O8JeZQFY34KsbqTGLLUKziJDKV2OYxmnyrrtVP3uV1NooUr1vBN6kPScVQKOpSeLXR
+         vf2ZEt6kc0h3Udog58lqAYnx9Cslr6ubPWbIlF2A=
+Date:   Tue, 11 Aug 2020 18:19:45 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.8 00/38] 5.8.1-rc1 review
+Message-ID: <20200811161945.GB440280@kroah.com>
+References: <20200810151803.920113428@linuxfoundation.org>
+ <5b30f340682c4ce09c64fc857cff5603@HQMAIL107.nvidia.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1597138533; bh=I3xFnRdOqr7BOTNMc72IoEmLCcGBonmAQfRk4MXXurc=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
-         Content-Type;
-        b=qyqoETaf9EbYVH4WcEm1JzLEYcBTRTDs2IeTnrYQWL4EJVeRFqZHxFBxMDQqVGjDH
-         xjUpXvas+2jRRebxJKHNbPPIInJGNhlQRpPo9UeS6qsquO2T8hgZIr/5QjH7f0XNNc
-         pW2nYItssqRGfmrdo2P558NIAo3TtFoQA4ugriLgSutL/GFfnp8YGFJ7lNlxjhbS7J
-         mQG3/TjZgOatUIhtL5aivRCTwH8hXVDWrUNpYsl7zsFhmiqYAmUvpI7UHfVWvnxuDH
-         B5BW4Zc0puqwT+YRq6kNmmA69EBwPuffbeFhjRe9a4DfCqRVktw2/rLxdQeXJDT+wX
-         o5oeLJYwp2kcQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b30f340682c4ce09c64fc857cff5603@HQMAIL107.nvidia.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Remove a duplicated register "IPFS_XUSB_HOST_MSI_BAR_SZ_0" from
-tegra124_xusb_context_ipfs[] array.
+On Tue, Aug 11, 2020 at 07:57:52AM +0000, Jon Hunter wrote:
+> On Mon, 10 Aug 2020 17:18:50 +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.8.1 release.
+> > There are 38 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed, 12 Aug 2020 15:17:47 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.1-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.8:
+>     11 builds:	11 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     60 tests:	60 pass, 0 fail
+> 
+> Linux version:	5.8.1-rc1-gb30c8c9d4260
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
- drivers/usb/host/xhci-tegra.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks for testing them all and letting me know.
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 014d79334f50..0672edcba8f1 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1863,7 +1863,6 @@ static const struct tegra_xusb_phy_type tegra124_phy_=
-types[] =3D {
- };
-=20
- static const unsigned int tegra124_xusb_context_ipfs[] =3D {
--	IPFS_XUSB_HOST_MSI_BAR_SZ_0,
- 	IPFS_XUSB_HOST_MSI_BAR_SZ_0,
- 	IPFS_XUSB_HOST_MSI_AXI_BAR_ST_0,
- 	IPFS_XUSB_HOST_MSI_FPCI_BAR_ST_0,
---=20
-2.25.1
-
+greg k-h
