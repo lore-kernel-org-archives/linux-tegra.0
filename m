@@ -2,94 +2,100 @@ Return-Path: <SRS0=cyIW=BV=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 553E6C433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 01:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CE0C433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 07:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29F6F206DC
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 01:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8536C206B5
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Aug 2020 07:56:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MJIb+yGc"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="UunPB2sq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbgHKBSp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Aug 2020 21:18:45 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5773 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbgHKBSp (ORCPT
+        id S1728133AbgHKH4F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Aug 2020 03:56:05 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:11132 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728095AbgHKH4F (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Aug 2020 21:18:45 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f31f18c0000>; Mon, 10 Aug 2020 18:17:00 -0700
+        Tue, 11 Aug 2020 03:56:05 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f324f070000>; Tue, 11 Aug 2020 00:55:51 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 10 Aug 2020 18:18:45 -0700
+  Tue, 11 Aug 2020 00:56:04 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 10 Aug 2020 18:18:45 -0700
-Received: from [10.19.100.79] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Aug
- 2020 01:18:37 +0000
-Subject: Re: [PATCH] usb: gadget: tegra-xudc: Avoid GFP_ATOMIC where it is not
- needed
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Nagarjuna Kristam <nkristam@nvidia.com>
-CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        <jonathanh@nvidia.com>, <yuehaibing@huawei.com>,
-        <heikki.krogerus@linux.intel.com>, <linux-usb@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20200809072948.743269-1-christophe.jaillet@wanadoo.fr>
- <20200810140035.GA808811@ulmo>
-From:   JC Kuo <jckuo@nvidia.com>
-Message-ID: <f29c7d35-72a9-b8d1-98dc-427c6fa3cc31@nvidia.com>
-Date:   Tue, 11 Aug 2020 09:18:35 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        by hqpgpgate101.nvidia.com on Tue, 11 Aug 2020 00:56:04 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Aug
+ 2020 07:56:04 +0000
+Received: from [127.0.1.1] (10.124.1.5) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 11 Aug 2020 07:56:02 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/48] 4.19.139-rc1 review
+In-Reply-To: <20200810151804.199494191@linuxfoundation.org>
+References: <20200810151804.199494191@linuxfoundation.org>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20200810140035.GA808811@ulmo>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
+Message-ID: <7d75d490b4ff4513ac0d9dbeb167532d@HQMAIL105.nvidia.com>
+Date:   Tue, 11 Aug 2020 07:56:02 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1597108620; bh=oNvf5Jr6+BIXlO9OnHSXX/LgXK2peo1IqhoZRRSw3uw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=MJIb+yGcZqL5KRNXFTviF0T3MMTcSFWeHLGYCF7gG+1oFfuK4SFV+Re8MWBthmMwp
-         ystfAnCzyrMDes6lCY8J6lKtOkVwph79o5HvjbUbjIP+QDYByA/Yy4imfKncySSW2b
-         9LG156rCoTe+jAE9H5PKazoXadJd3WAd6oPHL8O3p9inHe7m1uOY1lqLEbx6vu1uX9
-         bVylzomZ2eqVe6MqQasDT8y2CaJF+S34NSAtxlJuyLfSwxEhrXS5jliaYftVENy5S9
-         D/2O5oYekoOPWSJITVbdQsPZW7fCi22hg2y0w+sF/CJLSd4vLQQNay1vJFWDJcOTHL
-         5eeCOTpRRjt1w==
+        t=1597132551; bh=YG/+swQExQULGx6223RTBGGDK9PODesTfgYs7G7X77U=;
+        h=X-PGP-Universal:From:To:CC:Subject:In-Reply-To:References:
+         X-NVConfidentiality:MIME-Version:Message-ID:Date:Content-Type:
+         Content-Transfer-Encoding;
+        b=UunPB2sq/Kp2egfJHwnVmTUdfi/5UgZoiWT0a0a9jsp/cCmJY/pcCsLEyz/1x/IXc
+         iqzDWTFazWrF4+4TwMNMxiDUmZU+QB0fiL9AyL6Vp2ZNIidW2sGP9lMP0otX4QTJfA
+         vECZjMg4JHyO/P/Y8oyv2x23x5Ou1JQcqcgrJdQHLkNAKdCEg6cdkMFK7CroK0akiz
+         eHgq5QMhG0GtYeGkcyHwFgHennwxwMQ/dQSB8yUkkCHV0uqLkvLlOPq6cWROIoFE+d
+         3Vi4TzJAXfqMOaTmjg447LhfkuM3Hs2MbfrIZ+SHKMcSPFEhVEsafrX9AHVa/rRyuM
+         rvfXt/3vTpiyg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Looks good to me.
+On Mon, 10 Aug 2020 17:21:22 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.139 release.
+> There are 48 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 12 Aug 2020 15:17:47 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.139-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Reviewed-by: JC Kuo <jckuo@nvidia.com>
+All tests passing for Tegra ...
 
-On 8/10/20 10:00 PM, Thierry Reding wrote:
-> On Sun, Aug 09, 2020 at 09:29:48AM +0200, Christophe JAILLET wrote:
->> There is no need to use GFP_ATOMIC here. It is a probe function, no
->> spinlock is taken.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>  drivers/usb/gadget/udc/tegra-xudc.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> Looks good to me. I can't think of any reason why this would have to be
-> an atomic allocation. Nagarjuna, please shout if this is really needed,
-> otherwise:
->
-> Acked-by: Thierry Reding <treding@nvidia.com>
+Test results for stable-v4.19:
+    11 builds:	11 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	38 pass, 0 fail
 
+Linux version:	4.19.139-rc1-gb0e1bc72f7dd
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Jon
