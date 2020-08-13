@@ -2,132 +2,146 @@ Return-Path: <SRS0=irW6=BX=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,SUBJECT_DRUG_GAP_L,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDD8C433DF
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 00:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F289BC433DF
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C686320829
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 00:24:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="janc2rzC"
+	by mail.kernel.org (Postfix) with ESMTP id D78302078B
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:36:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbgHMAYh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Aug 2020 20:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54134 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbgHMAYg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Aug 2020 20:24:36 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37FE2C061383;
-        Wed, 12 Aug 2020 17:24:36 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id f26so4224681ljc.8;
-        Wed, 12 Aug 2020 17:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gwuRbsafJP8ISlOi3BJD/DTlryrf3+Ufz6ONoYmN8Cg=;
-        b=janc2rzCfPrV3szeglM91wrUIIoUk9PShPbTLwHqSIHsKnHYEY4E2zwkaBvWhdNQ1W
-         RxJPNvamviy/AodULq33Viu2RLg9nzCPbc48oLVaj5mq3RBJMkbrznWBEL2xnpQNSpk1
-         wWn+Yi7GYI5aFH9O47e+F9q6EyQuod1aasrvcAmoiXKrte0ezU3iJk6kr6lO9QZPlYlt
-         dYAQR41fk/ey32YPQHO3kwWN98bx0MglrPwugRZXQtof5HcKmA+icIJJY09aIQvHZk+k
-         RAPm/WQtE6yqqvdWo0EIXvG627ugM+PF7uz0f4Jh0ZnEV45TCygVHJJRfbBOcfTvKxDH
-         VWug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gwuRbsafJP8ISlOi3BJD/DTlryrf3+Ufz6ONoYmN8Cg=;
-        b=ev8QL4JMCBNwxrS2sEr30NbTyshQHsYWFm1ZHIbwRfZZ1cQ2NeGCmvXG28cWJ6X6Kz
-         XbevgfaXUJs+CvRjEy1qal3VFBMZIBVWcIaZeEvP/GYmmvOKivjpcUBPiy+k9cS7iJ5+
-         8CBmvIc9F7GuPd57l7afeL9L7568g5S3m1+OiJrNuV5BArF7Gp4vmX90m6IjXGeqP9OB
-         KeGXg7XLTwjuD/ORogawgZz5IdD1TWeAxRYNuMDCSR36LyrznIPeACcT3JD6y1kurnVn
-         cS+etNmw/2SP66pbM7lEee1R9elAdrm59NLoubyeRX1AcFmX7LY4Y50sG8D4W90m6rKh
-         3yuA==
-X-Gm-Message-State: AOAM530DSXb+asLHbmLA8F7WWznMSe409/a88e8L1iAmjN4BCPH2ISSR
-        FDM757eNT1Qv3z5h4ZNGhbk=
-X-Google-Smtp-Source: ABdhPJxn2xxQ3JGiSMdj5N3uj42Xe67P8W0+f37cwmSXORwfJX2X+7icfK82tq8Cxi9aiB6OAp4wdg==
-X-Received: by 2002:a05:651c:505:: with SMTP id o5mr769785ljp.306.1597278274140;
-        Wed, 12 Aug 2020 17:24:34 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id h6sm810501lfc.84.2020.08.12.17.24.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Aug 2020 17:24:33 -0700 (PDT)
-Subject: Re: Request to pick up couple NVIDIA Tegra ASoC patches into 5.7
- kernel
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Stable <stable@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Erik Faye-Lund <kusmabite@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-References: <2db6e1ef-5cea-d479-8a7a-8f336313cb1d@gmail.com>
- <20200813000800.GM2975990@sasha-vm>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4991edb7-011d-2dc4-e684-797b6504a122@gmail.com>
-Date:   Thu, 13 Aug 2020 03:24:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726570AbgHMIgx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Aug 2020 04:36:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58584 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbgHMIgx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 13 Aug 2020 04:36:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 95354AFA8;
+        Thu, 13 Aug 2020 08:37:13 +0000 (UTC)
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        abdiel.janulgue@linux.intel.com, tvrtko.ursulin@linux.intel.com,
+        andi.shyti@intel.com, sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 01/20] drm/amdgpu: Introduce GEM object functions
+Date:   Thu, 13 Aug 2020 10:36:25 +0200
+Message-Id: <20200813083644.31711-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200813083644.31711-1-tzimmermann@suse.de>
+References: <20200813083644.31711-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20200813000800.GM2975990@sasha-vm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-13.08.2020 03:08, Sasha Levin пишет:
-> On Wed, Aug 12, 2020 at 10:14:34PM +0300, Dmitry Osipenko wrote:
->> Hello, stable-kernel maintainers!
->>
->> Could you please cherry-pick these commits into the v5.7.x kernel?
->>
->> commit 0de6db30ef79b391cedd749801a49c485d2daf4b
->> Author: Sowjanya Komatineni <skomatineni@nvidia.com>
->> Date:   Mon Jan 13 23:24:17 2020 -0800
->>
->>    ASoC: tegra: Use device managed resource APIs to get the clock
->>
->> commit 1e4e0bf136aa4b4aa59c1e6af19844bd6d807794
->> Author: Sowjanya Komatineni <skomatineni@nvidia.com>
->> Date:   Mon Jan 13 23:24:23 2020 -0800
->>
->>    ASoC: tegra: Add audio mclk parent configuration
->>
->> commit ff5d18cb04f4ecccbcf05b7f83ab6df2a0d95c16
->> Author: Sowjanya Komatineni <skomatineni@nvidia.com>
->> Date:   Mon Jan 13 23:24:24 2020 -0800
->>
->>    ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init()
->>
->> It will fix a huge warnings splat during of kernel boot on NVIDIA Tegra
->> SoCs. For some reason these patches haven't made into 5.7 when it was
->> released and several people complained about the warnings. Thanks in
->> advance!
-> 
-> They never made it in because they don't have a stable tag, a fixes tag,
-> or do they sound like they fix a problem :)
-> 
-> Do you have a reference to the issue at hand here?
+GEM object functions deprecate several similar callback interfaces in
+struct drm_driver. This patch replaces the per-driver callbacks with
+per-instance callbacks in amdgpu. The only exception is gem_prime_mmap,
+which is non-trivial to convert.
 
-https://lore.kernel.org/lkml/64b70163-05be-e4f9-2dbc-5088ac2a3af9@nvidia.com/
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    |  6 ------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 12 ++++++++++++
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-> Either way, 5.7 is alive for only about 1 or 2 weeks, is anyone still
-> stuck on 5.7?
-> 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+index 81a79760ca61..51525b8774c9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+@@ -1468,19 +1468,13 @@ static struct drm_driver kms_driver = {
+ 	.lastclose = amdgpu_driver_lastclose_kms,
+ 	.irq_handler = amdgpu_irq_handler,
+ 	.ioctls = amdgpu_ioctls_kms,
+-	.gem_free_object_unlocked = amdgpu_gem_object_free,
+-	.gem_open_object = amdgpu_gem_object_open,
+-	.gem_close_object = amdgpu_gem_object_close,
+ 	.dumb_create = amdgpu_mode_dumb_create,
+ 	.dumb_map_offset = amdgpu_mode_dumb_mmap,
+ 	.fops = &amdgpu_driver_kms_fops,
+ 
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_export = amdgpu_gem_prime_export,
+ 	.gem_prime_import = amdgpu_gem_prime_import,
+-	.gem_prime_vmap = amdgpu_gem_prime_vmap,
+-	.gem_prime_vunmap = amdgpu_gem_prime_vunmap,
+ 	.gem_prime_mmap = amdgpu_gem_prime_mmap,
+ 
+ 	.name = DRIVER_NAME,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+index 43f4966331dd..ca2b79f94e99 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+@@ -36,6 +36,7 @@
+ #include <drm/amdgpu_drm.h>
+ #include <drm/drm_cache.h>
+ #include "amdgpu.h"
++#include "amdgpu_dma_buf.h"
+ #include "amdgpu_trace.h"
+ #include "amdgpu_amdkfd.h"
+ 
+@@ -510,6 +511,15 @@ bool amdgpu_bo_support_uswc(u64 bo_flags)
+ #endif
+ }
+ 
++static const struct drm_gem_object_funcs amdgpu_gem_object_funcs = {
++	.free = amdgpu_gem_object_free,
++	.open = amdgpu_gem_object_open,
++	.close = amdgpu_gem_object_close,
++	.export = amdgpu_gem_prime_export,
++	.vmap = amdgpu_gem_prime_vmap,
++	.vunmap = amdgpu_gem_prime_vunmap,
++};
++
+ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
+ 			       struct amdgpu_bo_param *bp,
+ 			       struct amdgpu_bo **bo_ptr)
+@@ -552,6 +562,8 @@ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
+ 	bo = kzalloc(sizeof(struct amdgpu_bo), GFP_KERNEL);
+ 	if (bo == NULL)
+ 		return -ENOMEM;
++
++	bo->tbo.base.funcs = &amdgpu_gem_object_funcs;
+ 	drm_gem_private_object_init(adev->ddev, &bo->tbo.base, size);
+ 	INIT_LIST_HEAD(&bo->shadow_list);
+ 	bo->vm_bo = NULL;
+-- 
+2.28.0
 
-I didn't know that 5.7 is about to die, let's not bother with it then.
-Thanks!
