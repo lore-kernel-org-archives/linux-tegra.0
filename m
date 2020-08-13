@@ -2,81 +2,79 @@ Return-Path: <SRS0=irW6=BX=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 980CEC433DF
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 21:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 988B6C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 21:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74EC02074D
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 21:35:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70786204EC
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 21:56:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0Vgyqpr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u2CJnwQQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbgHMVec (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Aug 2020 17:34:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51424 "EHLO
+        id S1726526AbgHMV4c (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Aug 2020 17:56:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbgHMVeb (ORCPT
+        with ESMTP id S1726205AbgHMV4b (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Aug 2020 17:34:31 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648A3C061757;
-        Thu, 13 Aug 2020 14:34:31 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id m22so7788931ljj.5;
-        Thu, 13 Aug 2020 14:34:31 -0700 (PDT)
+        Thu, 13 Aug 2020 17:56:31 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5811BC061757;
+        Thu, 13 Aug 2020 14:56:31 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id b11so3811964lfe.10;
+        Thu, 13 Aug 2020 14:56:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=IThCDjeYxkkM18VbuagJbEDKwOsjCUD5KwOfUA5QrWc=;
-        b=L0Vgyqpru8kmueUsI4cVMqp6htGxBMqzWsqUuXQPNeZvPK2y2MuDiHPu7qelLmRmJK
-         cRLvokXPeEs+Pfbmq9vu/zr+xclqXoYNjOW9fYWfk8QFVFr1fQv8YHM3lUv2VI7vkuj1
-         Dwc4gvPB9j9wy9nknQao6OgKHG4wTJjzIm/8qL3pvBRgBIYqPdRu1Bt3Er7id/8frVh5
-         nPSlN9IzzY/2Rsx18Kp72B/98RCIh1+du2sII5gzZAqO39vsRo5Pre3ANx0dWIemEFU1
-         znZNYXeLliGeOzNQCt7tK2jmIUKvykrEaOEmAd9mGcfJ3/L/9wEXlkUYam/C5UbztUgc
-         AoOg==
+        bh=PzeeHUlrLr61C7JvJ6pH3B5N/JEP/ZCyFmvXdO98Mgo=;
+        b=u2CJnwQQkKvug28WtHist7QpT6JyKtfrPoAVYzZWavwMLdZG3LJ0Ij9Nz3caK+urbx
+         urCap+pdkMAucM/w1WOVzxkD22GgGc+0oo/dxxd2E+K1sPAVikyYN6kGTbixi2v0lvQp
+         zNX295YgwYUVovrZfucNUJ6JYdQYdejGkITMRCQ3nx0pv9PuLtpgfCWcpPQsVwnVG+7M
+         R0wOv6t0A10GpqnlhfL3oSsE06E74HYPh3PsCL8xHvdSfk1guCz8LAxim0t2+V/ONog1
+         P0B5DMfgOpAGWp6Fi7RIJ56+3q8zQtZt2WyNkLbh8ieGDfJmtTgY0TaNUCta2BdTceOD
+         CIww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=IThCDjeYxkkM18VbuagJbEDKwOsjCUD5KwOfUA5QrWc=;
-        b=qUGyPZI5VfvZt0p0MZvVXIOjeZTO/KL00rYjQNbKjJUcwFOlqcbUYkp+irRh8jbzE+
-         Cd/Zigocw9EwvEJeq5wMLGyQQ1Li9hEf/eknefQ/WLEAbV5pphuIWa7Rt7DpnrDbMVFM
-         QeQwZQO5XZmExhXE7OQ+/Y22OhKf4PiHTr/5aO3tggoN0zbTYOpUIGf4EuSB30jc5JYE
-         NskWsF9+s5J50H17JxXVlLKy1BvgcL9pHA0NavaOTIvXoes71AICy98X80g6U1ci161c
-         97snsOyZxhwN7Xf5V5+YWtOoiukH/Z6/BHDHAeVyNAp83sWMnQL8kQPboECN+cMJfH9s
-         zcaw==
-X-Gm-Message-State: AOAM530kYap4jnrACXaMXuCkn4H44psHmsJWjBy0xhrKKv5HKGupgtsy
-        Iqd+Wkm3vM8D/4APxrfKUok=
-X-Google-Smtp-Source: ABdhPJy7yIGjPYA4/SOFJxhPGBV9c3CsJJwXuYU/XrKIbhdrF8Hoz43SP8lvuUwkYMhr8W94+XKQFw==
-X-Received: by 2002:a2e:92d0:: with SMTP id k16mr2736517ljh.70.1597354469716;
-        Thu, 13 Aug 2020 14:34:29 -0700 (PDT)
+        bh=PzeeHUlrLr61C7JvJ6pH3B5N/JEP/ZCyFmvXdO98Mgo=;
+        b=jrAXsBlqDYmHuM6nyGBYaDwlrR7sUsrZRu+9J0qO1epOlqGpC8p+NGrjTM5ELVYVFM
+         GIMQ7PnuqeW3MrFeLrSru78to/oRMIC1nCPvyErgaN0+LNfydEgndXXZ4MZQkqcfymLX
+         8S6mjsTcpHLHaWOaMnKbQMzjpVSS3aE7FPs1CFAYGBXEoetKrCSJ+hL2dL7z0Z6LJv7C
+         hbDrTPOIlLuCg7l03NQH/BB7sxAGnnafUAI69bLDMvXjIbSDkGIlrNYEbzxZ3HHHhmmT
+         f0297T127YOT8DXrD7FxnDKfSVAJ7to1zezL/Y9VU091bbd1YUfa5TymcP685Kj3G8lY
+         3Rew==
+X-Gm-Message-State: AOAM532S1zYGe2/ZBTbLAxiZKtJ0Kv8GPgLOclulKj7AlJcyY45PDxON
+        reLHfLfOKk0m3nwt10xydXw=
+X-Google-Smtp-Source: ABdhPJxKcz4O1AEDWJ/fIGU/BkBFKp9jenhUiSsUX4BAhvj7gZaCikC5OYaSSo8/REOZJow3PFKVDQ==
+X-Received: by 2002:a05:6512:2010:: with SMTP id a16mr3065769lfb.196.1597355789762;
+        Thu, 13 Aug 2020 14:56:29 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id j2sm1345309ljb.98.2020.08.13.14.34.28
+        by smtp.gmail.com with ESMTPSA id z20sm1349977ljk.97.2020.08.13.14.56.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2020 14:34:29 -0700 (PDT)
+        Thu, 13 Aug 2020 14:56:29 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Heidelberg <david@ixit.cz>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Bruce E . Robertson" <bruce.e.robertson@intel.com>
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Jonghwa Lee <jonghwa3.lee@samsung.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Vinay Simha BN <simhavcs@gmail.com>,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v3 00/10] Summit SMB3xx driver & device-tree
-Date:   Fri, 14 Aug 2020 00:33:59 +0300
-Message-Id: <20200813213409.24222-1-digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Derek Basehore <dbasehore@chromium.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Daniel Stone <daniel@fooishbar.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND v12 0/4] Panel rotation patches
+Date:   Fri, 14 Aug 2020 00:56:05 +0300
+Message-Id: <20200813215609.28643-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -85,65 +83,59 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-We gathered existing patches, fixed and improved what we could and
-final result is an working charging driver with device-tree support
-for Nexus 7.
+Hello!
 
-At this moment charging works with:
- - Nexus 7 2012 (grouper and tilapia)
- - Nexus 7 2013 (flo and deb)
- - ... and there are more devices equipped with these chargers.
+This series adds support for display panel's DT rotation property. It's a
+continuation of the work that was initially started by Derek Basehore for
+the panel driver that is used by some Mediatek device [1]. I picked up the
+Derek's patches and added my t-b and r-b tags to them, I also added
+rotation support to the panel-lvds and panel-simple drivers.
+
+We need the rotation support for the Nexus 7 tablet device which is now
+supported by the upstream kernel, the device has display panel mounted
+upside-down and it uses panel-lvds [2].
+
+[1] https://lkml.org/lkml/2020/3/5/1119
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi?#n1036
 
 Changelog:
 
-v3: - The uint32 type now isn't specified for standard units in the SMB
-      DT binding because standard units already have a type.
-      Thanks to Rob Herring for the suggestion!
+v12: - No code changes. The v11 missed v5.9 release, re-sending patches
+       for the v5.10 kernel. Please review and apply patches to linux-next,
+       thanks in advance!
 
-    - The battery binding changes are rebased on top of the new battery.yaml
+v11: - This series is factored out from this patchset [3] because these
+       patches do not have hard dependency on the Tegra DRM patches and
+       it should be nicer to review and apply the properly grouped patches.
 
-    - The new battery temperature DT properties now have shorter names
-      and use <min max> format. Thanks to Rob Herring for the suggestion!
+     - Initially [3] only touched the panel-lvds driver and Emil Velikov
+       suggested that it will be better to support more panels in the review
+       comments to [3]. So I included the Derek's patch for the BOE panel
+       and added rotation support to the panel-simple driver. I tested that
+       panel-lvds and panel-simple work properly with the rotated panel using
+       the Opentegra Xorg driver [4] and Wayland Weston [5].
 
-    - Added new patch that adds SMB charger node to the new Nexus 7 2012
-      device-tree which has been merged into v5.9 kernel.
+     - The panel-lvds driver now prints a error message if rotation property
+       fails to be parsed.
 
-v2: - Addressed v1 review comments from Rob Herring and Sebastian Reichel
-      by moving out common battery properties from the charger node into the
-      battery-cell node.
+[3] https://lore.kernel.org/lkml/20200614200121.14147-1-digetx@gmail.com/
+[4] https://github.com/grate-driver/xf86-video-opentegra/commit/28eb20a3959bbe5bc3a3b67e55977093fd5114ca
+[5] https://gitlab.freedesktop.org/wayland/weston/-/merge_requests/315
 
-    - power_supply_register() of the SMB driver converted to resource-managed
-      API variant.
+Derek Basehore (2):
+  drm/panel: Add helper for reading DT rotation
+  drm/panel: Read panel orientation for BOE TV101WUM-NL6
 
-    - Improved DT property names of the SMB binding by making them to follow
-      the generic power-supply naming scheme (-microvolts at the end, etc).
+Dmitry Osipenko (2):
+  drm/panel: lvds: Read panel orientation
+  drm/panel-simple: Read panel orientation
 
-David Heidelberg (7):
-  dt-bindings: power: supply: Add device-tree binding for Summit SMB3xx
-  power: supply: smb347-charger: Use resource-managed API
-  power: supply: smb347-charger: Implement device-tree support
-  power: supply: smb347-charger: Support SMB345 and SMB358
-  power: supply: smb347-charger: Remove virtual smb347-battery
-  ARM: dts: qcom: apq8064-nexus7: Add SMB345 battery charger
-  ARM: tegra: nexus7: Add SMB347 battery charger
-
-Dmitry Osipenko (3):
-  dt-bindings: battery: Add temperature properties
-  power: supply: Support battery temperature device-tree properties
-  power: supply: smb347-charger: Replace mutex with IRQ disable/enable
-
- .../bindings/power/supply/battery.yaml        |  24 +
- .../power/supply/summit,smb347-charger.yaml   | 152 +++++
- .../boot/dts/qcom-apq8064-asus-nexus7-flo.dts |  24 +
- .../tegra30-asus-nexus7-grouper-common.dtsi   |  24 +-
- drivers/power/supply/Kconfig                  |   6 +-
- drivers/power/supply/power_supply_core.c      |  19 +
- drivers/power/supply/smb347-charger.c         | 565 +++++++++---------
- .../dt-bindings/power/summit,smb347-charger.h |  19 +
- include/linux/power_supply.h                  |   6 +
- 9 files changed, 568 insertions(+), 271 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/power/supply/summit,smb347-charger.yaml
- create mode 100644 include/dt-bindings/power/summit,smb347-charger.h
+ drivers/gpu/drm/drm_panel.c                   | 43 +++++++++++++++++++
+ .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    |  6 +++
+ drivers/gpu/drm/panel/panel-lvds.c            | 10 +++++
+ drivers/gpu/drm/panel/panel-simple.c          | 11 +++++
+ include/drm/drm_panel.h                       |  9 ++++
+ 5 files changed, 79 insertions(+)
 
 -- 
 2.27.0
