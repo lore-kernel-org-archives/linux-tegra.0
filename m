@@ -1,112 +1,103 @@
-Return-Path: <SRS0=MkZd=BW=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=irW6=BX=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	SUBJECT_DRUG_GAP_L,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,SUBJECT_DRUG_GAP_L autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C57C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Aug 2020 19:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25432C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 00:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6ECEC20781
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Aug 2020 19:14:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCIfzsH+"
+	by mail.kernel.org (Postfix) with ESMTP id E209420829
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 00:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597277282;
+	bh=pKtuXYVz1xGuYZdygwhBuEOHiHPZxImUOidX/Ua9brY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vj8ZrM297RhbASjoxx/NP682nl/YZXMLLpKGwd76fLx/eJQicNRg+oe1EUXQYyTr1
+	 ylpBEGN+VKy4gqkQqmnA6xc8i4uQ1uCPucSxg95BsOgh/nIlf5PHloqTPvBb+lZ5uF
+	 wHlHjA13KZOANfRxD74Av4pyA6GOtsEJE7vn5N+s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbgHLTOj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Aug 2020 15:14:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33874 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbgHLTOi (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Aug 2020 15:14:38 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D98DBC061383;
-        Wed, 12 Aug 2020 12:14:37 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id z14so3506782ljm.1;
-        Wed, 12 Aug 2020 12:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:from:subject:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=tYFf59hA9v+jMzuapZ0MlLUMVG9vOUbRt2fp4Brw40A=;
-        b=VCIfzsH+uCHsKlZRNHmr1W3grdz/j0GxKXLKQF0Bj+PTue4HBBvlFy9Fa0NfoVEBMf
-         mRbNnLIIuQhlUlceVmz1Hw4l5puMLGo0z6yZ9J6RaNigMk/fsFc3g+rUtx/MwBKT9MZt
-         ReYEgMQ67q9KYLMHvK/3D3QNIUDDJvrkwyMUKTS/hE36MWWzbw94vdKfcdS5z1T5bGIV
-         qQ+k6nvOictNYh5rWywIz5hMBKo+xZBjppID8lgAAvXhUjMLnheOp6depw9cF0eh7TXr
-         26j9DcNdNvFV8jWSmS3Mt0DmnYRKq+pVpSX7VrWtBSDxIMymcbOc+2I0DiKqCrrXwFSC
-         4xog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=tYFf59hA9v+jMzuapZ0MlLUMVG9vOUbRt2fp4Brw40A=;
-        b=IRAe87nE98eANkCEBRgqDrJbaDT9YO0jNpaB8BsAL7Nk5v+Nu4gL9f88ezC4KuwOMg
-         jByq5HfHtwkdXpeqIe1jeDaFs8LcBwHKJJiEdMCX2PquljA0bbJ2vZo+w9kyPalEtM03
-         EUnH05HewQdSUdkG5z2e6ypIDX29H3xN8xUgzRkzLgxV5DniCRT5v0S7TS9Zqy2njjYK
-         MJ55MjE7Wu/cYRr1twtNV7o6/Xfd+snVQZIZIbAQL7Qrjk7/nfqMTIzRPK4uF+QXDzKP
-         MyvGIGMIGTFgXQUWaa12TQ+3oasl/1wGn3anU6gsX2TD0wEsbz2gWFIRAw+sIWqLUznV
-         Y/jA==
-X-Gm-Message-State: AOAM532gzOe8FiAPkkrXv1tyI0L+nWXC7EkoXRyo7WJLa2KxwUQg55M5
-        NLFhqyFDG65cAAaJBg73PG0=
-X-Google-Smtp-Source: ABdhPJypq/7BRfReIxcwzBms77PIV8Tf9CfaRzMDGjw4q5DavOE4FVKVMp2HzV0HjGdchXmV+q7jTg==
-X-Received: by 2002:a2e:b619:: with SMTP id r25mr353668ljn.220.1597259676032;
-        Wed, 12 Aug 2020 12:14:36 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id j17sm668713lfr.32.2020.08.12.12.14.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Aug 2020 12:14:35 -0700 (PDT)
-To:     Stable <stable@vger.kernel.org>,
+        id S1726542AbgHMAIC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Aug 2020 20:08:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43624 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726078AbgHMAIC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 12 Aug 2020 20:08:02 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D25A320774;
+        Thu, 13 Aug 2020 00:08:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597277282;
+        bh=pKtuXYVz1xGuYZdygwhBuEOHiHPZxImUOidX/Ua9brY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OnLaSYk7Dud9284Ox7lqs0BxwKOrAbJwHr7co2UUgO6QFGtEJ7DiRCwpisX8HxR+E
+         14wDqLIuQjtjqIqjN5ydOQ7OMdhIpKcxfUtrtKUAYaeizDwFkM4QphtGIYUu6PirO8
+         sAwZDOwTm89LPtbYADrE72YvfOs94i8dbWNE2XWI=
+Date:   Wed, 12 Aug 2020 20:08:00 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Stable <stable@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
         Sowjanya Komatineni <skomatineni@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>,
         Erik Faye-Lund <kusmabite@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Subject: Request to pick up couple NVIDIA Tegra ASoC patches into 5.7 kernel
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         alsa-devel@alsa-project.org
-Message-ID: <2db6e1ef-5cea-d479-8a7a-8f336313cb1d@gmail.com>
-Date:   Wed, 12 Aug 2020 22:14:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Subject: Re: Request to pick up couple NVIDIA Tegra ASoC patches into 5.7
+ kernel
+Message-ID: <20200813000800.GM2975990@sasha-vm>
+References: <2db6e1ef-5cea-d479-8a7a-8f336313cb1d@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <2db6e1ef-5cea-d479-8a7a-8f336313cb1d@gmail.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello, stable-kernel maintainers!
+On Wed, Aug 12, 2020 at 10:14:34PM +0300, Dmitry Osipenko wrote:
+>Hello, stable-kernel maintainers!
+>
+>Could you please cherry-pick these commits into the v5.7.x kernel?
+>
+>commit 0de6db30ef79b391cedd749801a49c485d2daf4b
+>Author: Sowjanya Komatineni <skomatineni@nvidia.com>
+>Date:   Mon Jan 13 23:24:17 2020 -0800
+>
+>    ASoC: tegra: Use device managed resource APIs to get the clock
+>
+>commit 1e4e0bf136aa4b4aa59c1e6af19844bd6d807794
+>Author: Sowjanya Komatineni <skomatineni@nvidia.com>
+>Date:   Mon Jan 13 23:24:23 2020 -0800
+>
+>    ASoC: tegra: Add audio mclk parent configuration
+>
+>commit ff5d18cb04f4ecccbcf05b7f83ab6df2a0d95c16
+>Author: Sowjanya Komatineni <skomatineni@nvidia.com>
+>Date:   Mon Jan 13 23:24:24 2020 -0800
+>
+>    ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init()
+>
+>It will fix a huge warnings splat during of kernel boot on NVIDIA Tegra
+>SoCs. For some reason these patches haven't made into 5.7 when it was
+>released and several people complained about the warnings. Thanks in
+>advance!
 
-Could you please cherry-pick these commits into the v5.7.x kernel?
+They never made it in because they don't have a stable tag, a fixes tag,
+or do they sound like they fix a problem :)
 
-commit 0de6db30ef79b391cedd749801a49c485d2daf4b
-Author: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date:   Mon Jan 13 23:24:17 2020 -0800
+Do you have a reference to the issue at hand here?
 
-    ASoC: tegra: Use device managed resource APIs to get the clock
+Either way, 5.7 is alive for only about 1 or 2 weeks, is anyone still
+stuck on 5.7?
 
-commit 1e4e0bf136aa4b4aa59c1e6af19844bd6d807794
-Author: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date:   Mon Jan 13 23:24:23 2020 -0800
-
-    ASoC: tegra: Add audio mclk parent configuration
-
-commit ff5d18cb04f4ecccbcf05b7f83ab6df2a0d95c16
-Author: Sowjanya Komatineni <skomatineni@nvidia.com>
-Date:   Mon Jan 13 23:24:24 2020 -0800
-
-    ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init()
-
-It will fix a huge warnings splat during of kernel boot on NVIDIA Tegra
-SoCs. For some reason these patches haven't made into 5.7 when it was
-released and several people complained about the warnings. Thanks in
-advance!
+-- 
+Thanks,
+Sasha
