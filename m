@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFDBC433DF
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 21:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0498DC433E4
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 21:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0AD4206A4
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 21:34:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D673820838
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 21:34:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mdz7ome6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAkX+Ug+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgHMVer (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Aug 2020 17:34:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51464 "EHLO
+        id S1726844AbgHMVes (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Aug 2020 17:34:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbgHMVen (ORCPT
+        with ESMTP id S1726686AbgHMVei (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Aug 2020 17:34:43 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A90E9C061757;
-        Thu, 13 Aug 2020 14:34:42 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id b11so3788310lfe.10;
-        Thu, 13 Aug 2020 14:34:42 -0700 (PDT)
+        Thu, 13 Aug 2020 17:34:38 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0125FC061757;
+        Thu, 13 Aug 2020 14:34:38 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id m22so7789232ljj.5;
+        Thu, 13 Aug 2020 14:34:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1VKJz7as6Cnf5+ugS7B5We4tFvmDh5J1LQ5Ei+QN204=;
-        b=Mdz7ome6uGBEDSOOYK1DK2qGkJ2LyKmz4CprA4KNemfPR/vk6ZmCuWZkqa595YZzfe
-         jAT/sVUAp9PADvR4NTiGN/uTzi4qDigHCn0/13Km49+msRgSlVVeG7ngq563LxXT/x8G
-         wOCdx+vBhsF1l2OTpSh4HBUbc6RmpcXspSoXTgPMo56wVA2KGEgqLtxDNkxE4mNB0wkX
-         Q6ouuCT+pW8M+ZX9cNkVakyjE9HYnpfLQnfyA9rsEnE22sVxL5Ow5b+3rk3L9WuvwR3i
-         WiWuS4c4TktAPdapjBdDosIq1VNKRqk02/Xzpbr8E8y6fHFvgMXkWeMaY40eqwmKR5e5
-         QJqg==
+        bh=Vvax3w5zuK8UPtDnqtBVJ1VxyZp9PqB+NM2Rb701YK0=;
+        b=MAkX+Ug+p6CdPoSe37XJnbgQmX3yCBW0vfji9BV1ZddlQDEkqnFtQaX5TqYk/lLza7
+         7vx/NXmOcKxs4Vv5XcPlcS2O6TOoF/AtrOmZxY2JJtPROV3BCZblv8V9axRTYef7ZIPa
+         q9M472RZHBn56UIHEBEjDDG2RbmhfKyAO/BRbAVyJP89adlVwo4FPXPzSRk6aOW+HVZk
+         FwZPcMpsPG2/wfjDc1pwJWKFSGSNXFow9kf6AZf2nHLMmKoRhxkhcCUI2/NCMpgdR2F2
+         ID8JgVyYUR8bDN5XM3uIu7edtxahpeAxuyS2U4aaKfuNp0tfRS10wqqQLS1oRkwM1Dsp
+         j+Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1VKJz7as6Cnf5+ugS7B5We4tFvmDh5J1LQ5Ei+QN204=;
-        b=euIsVOHvsSNbFIonFC+ovGHwD7QUAH9aVHykVbDmrlWcj4guKi/GeuXRvWGcJmqGDn
-         vU6vNmXwuv6ZX5U83JPm3JcZSX+xMQyH4pn0ZqIfUgFUBZC1/rhRuAOA+Xx3i8nETOBi
-         AtnXE82/Yb+idobRMdNfyJGK09R1RoRojkgxs2ZjkFSUwJ3iHZEaP6z7t16KoV+2xESI
-         5NX4bg6lao+8A01Ou9Mmi6fw8MrG0FPDScTmRms9qU7T+hTbm9o78bdERBsnn1r6dMS9
-         48B76UAqknrxqSg7tG2BAvfdvXR5Y2iiOhi42o1f+evS5GK/Ghf/Qu7fGdFJHhfhF/p5
-         KS0A==
-X-Gm-Message-State: AOAM531HaRXijLz+eAVx37PnGRKccE602PmeFZl8dF8i+U+FAPErtlXz
-        BVJr2Dx5m+ebUeJ7K8gKkAU=
-X-Google-Smtp-Source: ABdhPJw39bedeZ+5oHMO7WQ2X8ddte3dC4UDJEKwhsoj6tIuzTJAAHfXFj8f5zPPVwpuQi3ZMdrYbg==
-X-Received: by 2002:ac2:546f:: with SMTP id e15mr3217327lfn.133.1597354480140;
-        Thu, 13 Aug 2020 14:34:40 -0700 (PDT)
+        bh=Vvax3w5zuK8UPtDnqtBVJ1VxyZp9PqB+NM2Rb701YK0=;
+        b=Jfox2gQD62z9H3plcHZZcqeHngfmqpudKx82tnu5g23Iyv63XRabyc9HpYcxqpeqSz
+         VeoaXh6YWYo+QIcZYU3rhznRGNoZ77B9Sm3sutMw80tsTjSRZ6m1B45ZWTRLRGQ1qtkc
+         4th+0B727GCXReSnu6RFlW+titxghKDr+lz1pShsklso0CF/lpNGPVmTGWyYmd7BtbE5
+         o08PzEgg18v+XtgUapHwocwYvHsXlSjens7a27ZGac0op1gimnvc619nPXw3S0fkgZUd
+         ZveELUpxpjpoj+64VVT7xSHeNWaeOXMQwGUl1aYYxv17dsRxfVpLCP81Nbz4S6HktHj2
+         t9UA==
+X-Gm-Message-State: AOAM530THPhK/77qCGznFyyr4DQY35f6M7BHztW5ds7o6zcPN2odxf41
+        3GNQWIgqGj0NKTCBg/AAGoA=
+X-Google-Smtp-Source: ABdhPJzGLtS2jY3MI09apEoWdHFhx8OTfB1O7Fyu1ptGmy1FdOFZAYc7hVKGoGLnrpo+ae0daHUNpQ==
+X-Received: by 2002:a05:651c:1293:: with SMTP id 19mr334463ljc.427.1597354476417;
+        Thu, 13 Aug 2020 14:34:36 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id j2sm1345309ljb.98.2020.08.13.14.34.38
+        by smtp.gmail.com with ESMTPSA id j2sm1345309ljb.98.2020.08.13.14.34.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2020 14:34:39 -0700 (PDT)
+        Thu, 13 Aug 2020 14:34:35 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Sebastian Reichel <sre@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -75,9 +75,9 @@ Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         John Stultz <john.stultz@linaro.org>,
         Vinay Simha BN <simhavcs@gmail.com>,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v3 08/10] power: supply: smb347-charger: Replace mutex with IRQ disable/enable
-Date:   Fri, 14 Aug 2020 00:34:07 +0300
-Message-Id: <20200813213409.24222-9-digetx@gmail.com>
+Subject: [PATCH v3 05/10] power: supply: smb347-charger: Implement device-tree support
+Date:   Fri, 14 Aug 2020 00:34:04 +0300
+Message-Id: <20200813213409.24222-6-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200813213409.24222-1-digetx@gmail.com>
 References: <20200813213409.24222-1-digetx@gmail.com>
@@ -88,130 +88,235 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Let's simply disable/enable IRQ rather than use a mutex that protects from
-racing with the interrupt handler. The result of this patch is that it's a
-bit easier now to follow the driver's code.
+From: David Heidelberg <david@ixit.cz>
 
-Tested-by: David Heidelberg <david@ixit.cz>
+This patch adds device-tree support to the SMB347 charger driver. All
+legacy platform data now can be parsed from DT. Because of that and since
+SMB347 is an I2C client driver, the IRQ number can be passed automatically
+through client's IRQ variable if it's defined in DT. There is no need to
+map GPIO to IRQ manually in the case of DT.
+
+This patch is based on the original work made by:
+Jonghwa Lee <jonghwa3.lee@samsung.com>
+Link: https://patchwork.kernel.org/patch/4284731/
+
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- drivers/power/supply/smb347-charger.c | 38 ++++++++++++++-------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
+ drivers/power/supply/smb347-charger.c | 151 +++++++++++++++++++++++---
+ 1 file changed, 137 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/power/supply/smb347-charger.c b/drivers/power/supply/smb347-charger.c
-index 335b6ee494e4..ec68ab2bce27 100644
+index 60894105fcbd..da2c337107bf 100644
 --- a/drivers/power/supply/smb347-charger.c
 +++ b/drivers/power/supply/smb347-charger.c
-@@ -16,7 +16,6 @@
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
--#include <linux/mutex.h>
- #include <linux/power_supply.h>
- #include <linux/power/smb347-charger.h>
- #include <linux/regmap.h>
-@@ -122,7 +121,6 @@
- 
- /**
-  * struct smb347_charger - smb347 charger instance
-- * @lock: protects concurrent access to online variables
-  * @dev: pointer to device
-  * @regmap: pointer to driver regmap
-  * @mains: power_supply instance for AC/DC power
-@@ -134,7 +132,6 @@
-  * @pdata: pointer to platform data
-  */
- struct smb347_charger {
--	struct mutex		lock;
- 	struct device		*dev;
- 	struct regmap		*regmap;
- 	struct power_supply	*mains;
-@@ -243,11 +240,9 @@ static int smb347_update_ps_status(struct smb347_charger *smb)
- 	if (smb->pdata->use_usb)
- 		usb = !(val & IRQSTAT_E_USBIN_UV_STAT);
- 
--	mutex_lock(&smb->lock);
- 	ret = smb->mains_online != dc || smb->usb_online != usb;
- 	smb->mains_online = dc;
- 	smb->usb_online = usb;
--	mutex_unlock(&smb->lock);
- 
- 	return ret;
- }
-@@ -263,13 +258,7 @@ static int smb347_update_ps_status(struct smb347_charger *smb)
-  */
- static bool smb347_is_ps_online(struct smb347_charger *smb)
- {
--	bool ret;
--
--	mutex_lock(&smb->lock);
--	ret = smb->usb_online || smb->mains_online;
--	mutex_unlock(&smb->lock);
--
--	return ret;
-+	return smb->usb_online || smb->mains_online;
+@@ -1180,6 +1180,119 @@ static bool smb347_readable_reg(struct device *dev, unsigned int reg)
+ 	return smb347_volatile_reg(dev, reg);
  }
  
- /**
-@@ -303,14 +292,13 @@ static int smb347_charging_set(struct smb347_charger *smb, bool enable)
- 		return 0;
- 	}
- 
--	mutex_lock(&smb->lock);
- 	if (smb->charging_enabled != enable) {
- 		ret = regmap_update_bits(smb->regmap, CMD_A, CMD_A_CHG_ENABLED,
- 					 enable ? CMD_A_CHG_ENABLED : 0);
- 		if (!ret)
- 			smb->charging_enabled = enable;
- 	}
--	mutex_unlock(&smb->lock);
-+
- 	return ret;
- }
- 
-@@ -995,9 +983,9 @@ static int smb347_get_charging_status(struct smb347_charger *smb,
- 	return status;
- }
- 
--static int smb347_get_property(struct power_supply *psy,
--			       enum power_supply_property prop,
--			       union power_supply_propval *val)
-+static int smb347_get_property_locked(struct power_supply *psy,
-+				      enum power_supply_property prop,
-+				      union power_supply_propval *val)
- {
- 	struct smb347_charger *smb = power_supply_get_drvdata(psy);
- 	int ret;
-@@ -1064,6 +1052,21 @@ static int smb347_get_property(struct power_supply *psy,
- 	return 0;
- }
- 
-+static int smb347_get_property(struct power_supply *psy,
-+			       enum power_supply_property prop,
-+			       union power_supply_propval *val)
++static void smb347_dt_parse_pdata(struct device_node *np,
++				  struct smb347_charger_platform_data *pdata)
 +{
-+	struct smb347_charger *smb = power_supply_get_drvdata(psy);
-+	struct i2c_client *client = to_i2c_client(smb->dev);
-+	int ret;
++	pdata->soft_temp_limit_compensation =
++					SMB347_SOFT_TEMP_COMPENSATE_DEFAULT;
++	/*
++	 * These properties come from the battery info, still we need to
++	 * pre-initialize the values. See smb347_get_battery_info() below.
++	 */
++	pdata->soft_cold_temp_limit = SMB347_TEMP_USE_DEFAULT;
++	pdata->hard_cold_temp_limit = SMB347_TEMP_USE_DEFAULT;
++	pdata->soft_hot_temp_limit  = SMB347_TEMP_USE_DEFAULT;
++	pdata->hard_hot_temp_limit  = SMB347_TEMP_USE_DEFAULT;
 +
-+	disable_irq(client->irq);
-+	ret = smb347_get_property_locked(psy, prop, val);
-+	enable_irq(client->irq);
++	/* Charging constraints */
++	of_property_read_u32(np, "summit,fast-voltage-threshold-microvolt",
++			     &pdata->pre_to_fast_voltage);
++	of_property_read_u32(np, "summit,mains-current-limit-microamp",
++			     &pdata->mains_current_limit);
++	of_property_read_u32(np, "summit,usb-current-limit-microamp",
++			     &pdata->usb_hc_current_limit);
 +
-+	return ret;
++	/* For thermometer monitoring */
++	of_property_read_u32(np, "summit,chip-temperature-threshold-celsius",
++			     &pdata->chip_temp_threshold);
++	of_property_read_u32(np, "summit,soft-compensation-method",
++			     &pdata->soft_temp_limit_compensation);
++	of_property_read_u32(np, "summit,charge-current-compensation-microamp",
++			     &pdata->charge_current_compensation);
++
++	/* Supported charging mode */
++	pdata->use_mains =
++		of_property_read_bool(np, "summit,enable-mains-charging");
++	pdata->use_usb =
++		of_property_read_bool(np, "summit,enable-usb-charging");
++	pdata->use_usb_otg =
++		of_property_read_bool(np, "summit,enable-otg-charging");
++
++	/* Select charging control */
++	of_property_read_u32(np, "summit,enable-charge-control",
++			     &pdata->enable_control);
++
++	/* Interrupt support is optional */
++	if (!of_find_property(np, "interrupts", NULL))
++		pdata->irq_gpio = -1;
 +}
 +
- static enum power_supply_property smb347_properties[] = {
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_CHARGE_TYPE,
-@@ -1273,7 +1276,6 @@ static int smb347_probe(struct i2c_client *client,
++static int smb347_get_battery_info(struct smb347_charger *smb)
++{
++	struct smb347_charger_platform_data *pdata = (void *)smb->pdata;
++	struct power_supply_battery_info info = {};
++	struct power_supply *supply;
++	int err;
++
++	if (smb->mains)
++		supply = smb->mains;
++	else
++		supply = smb->usb;
++
++	err = power_supply_get_battery_info(supply, &info);
++	if (err == -ENXIO || err == -ENODEV)
++		return 0;
++	if (err)
++		return err;
++
++	if (info.constant_charge_current_max_ua != -EINVAL)
++		pdata->max_charge_current = info.constant_charge_current_max_ua;
++
++	if (info.constant_charge_voltage_max_uv != -EINVAL)
++		pdata->max_charge_voltage = info.constant_charge_voltage_max_uv;
++
++	if (info.precharge_current_ua != -EINVAL)
++		pdata->pre_charge_current = info.precharge_current_ua;
++
++	if (info.charge_term_current_ua != -EINVAL)
++		pdata->termination_current = info.charge_term_current_ua;
++
++	if (info.temp_alert_min != INT_MIN)
++		pdata->soft_cold_temp_limit = info.temp_alert_min;
++
++	if (info.temp_alert_max != INT_MAX)
++		pdata->soft_hot_temp_limit = info.temp_alert_max;
++
++	if (info.temp_min != INT_MIN)
++		pdata->hard_cold_temp_limit = info.temp_min;
++
++	if (info.temp_max != INT_MAX)
++		pdata->hard_hot_temp_limit = info.temp_max;
++
++	/* Suspend when battery temperature is outside hard limits */
++	if (pdata->hard_cold_temp_limit != SMB347_TEMP_USE_DEFAULT ||
++	    pdata->hard_hot_temp_limit != SMB347_TEMP_USE_DEFAULT)
++		pdata->suspend_on_hard_temp_limit = true;
++
++	return 0;
++}
++
++static struct smb347_charger_platform_data
++			*smb347_get_platdata(struct device *dev)
++{
++	struct smb347_charger_platform_data *pdata;
++
++	if (dev->of_node) {
++		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++		if (pdata)
++			smb347_dt_parse_pdata(dev->of_node, pdata);
++	} else {
++		pdata = dev_get_platdata(dev);
++	}
++
++	return pdata;
++}
++
+ static const struct regmap_config smb347_regmap = {
+ 	.reg_bits	= 8,
+ 	.val_bits	= 8,
+@@ -1216,40 +1329,35 @@ static int smb347_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
+ {
+ 	static char *battery[] = { "smb347-battery" };
+-	const struct smb347_charger_platform_data *pdata;
+ 	struct power_supply_config mains_usb_cfg = {}, battery_cfg = {};
+ 	struct device *dev = &client->dev;
+ 	struct smb347_charger *smb;
+ 	int ret;
  
+-	pdata = dev->platform_data;
+-	if (!pdata)
+-		return -EINVAL;
+-
+-	if (!pdata->use_mains && !pdata->use_usb)
+-		return -EINVAL;
+-
+ 	smb = devm_kzalloc(dev, sizeof(*smb), GFP_KERNEL);
+ 	if (!smb)
+ 		return -ENOMEM;
+ 
++	smb->pdata = smb347_get_platdata(dev);
++	if (!smb->pdata)
++		return -ENODEV;
++
++	if (!smb->pdata->use_mains && !smb->pdata->use_usb)
++		return -EINVAL;
++
  	i2c_set_clientdata(client, smb);
  
--	mutex_init(&smb->lock);
+ 	mutex_init(&smb->lock);
  	smb->dev = &client->dev;
- 	smb->id = id->driver_data;
+-	smb->pdata = pdata;
  
+ 	smb->regmap = devm_regmap_init_i2c(client, &smb347_regmap);
+ 	if (IS_ERR(smb->regmap))
+ 		return PTR_ERR(smb->regmap);
+ 
+-	ret = smb347_hw_init(smb);
+-	if (ret < 0)
+-		return ret;
+-
+ 	mains_usb_cfg.supplied_to = battery;
+ 	mains_usb_cfg.num_supplicants = ARRAY_SIZE(battery);
+ 	mains_usb_cfg.drv_data = smb;
++	mains_usb_cfg.of_node = dev->of_node;
+ 	if (smb->pdata->use_mains) {
+ 		smb->mains = devm_power_supply_register(dev, &smb347_mains_desc,
+ 							&mains_usb_cfg);
+@@ -1270,11 +1378,19 @@ static int smb347_probe(struct i2c_client *client,
+ 	if (IS_ERR(smb->battery))
+ 		return PTR_ERR(smb->battery);
+ 
++	ret = smb347_get_battery_info(smb);
++	if (ret)
++		return ret;
++
++	ret = smb347_hw_init(smb);
++	if (ret < 0)
++		return ret;
++
+ 	/*
+ 	 * Interrupt pin is optional. If it is connected, we setup the
+ 	 * interrupt support here.
+ 	 */
+-	if (pdata->irq_gpio >= 0) {
++	if (smb->pdata->irq_gpio >= 0) {
+ 		ret = smb347_irq_init(smb, client);
+ 		if (ret < 0) {
+ 			dev_warn(dev, "failed to initialize IRQ: %d\n", ret);
+@@ -1302,9 +1418,16 @@ static const struct i2c_device_id smb347_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, smb347_id);
+ 
++static const struct of_device_id smb3xx_of_match[] = {
++	{ .compatible = "summit,smb347" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, smb3xx_of_match);
++
+ static struct i2c_driver smb347_driver = {
+ 	.driver = {
+ 		.name = "smb347",
++		.of_match_table = smb3xx_of_match,
+ 	},
+ 	.probe        = smb347_probe,
+ 	.remove       = smb347_remove,
 -- 
 2.27.0
 
