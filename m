@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A74F5C43466
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5B4C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8697D2184D
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0C720781
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbgHMIhF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Aug 2020 04:37:05 -0400
+        id S1726747AbgHMIhH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Aug 2020 04:37:07 -0400
 Received: from mx2.suse.de ([195.135.220.15]:59022 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbgHMIhE (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Aug 2020 04:37:04 -0400
+        id S1726641AbgHMIhG (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 13 Aug 2020 04:37:06 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 977ACAFA8;
-        Thu, 13 Aug 2020 08:37:24 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 60B0EB597;
+        Thu, 13 Aug 2020 08:37:27 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -57,9 +57,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 13/20] drm/rockchip: Convert to drm_gem_object_funcs
-Date:   Thu, 13 Aug 2020 10:36:37 +0200
-Message-Id: <20200813083644.31711-14-tzimmermann@suse.de>
+Subject: [PATCH 16/20] drm/vgem: Introduce GEM object functions
+Date:   Thu, 13 Aug 2020 10:36:40 +0200
+Message-Id: <20200813083644.31711-17-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200813083644.31711-1-tzimmermann@suse.de>
 References: <20200813083644.31711-1-tzimmermann@suse.de>
@@ -72,63 +72,74 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in rockchip. The only exception is gem_prime_mmap,
+per-instance callbacks in vgem. The only exception is gem_prime_mmap,
 which is non-trivial to convert.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  5 -----
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 10 ++++++++++
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/vgem/vgem_drv.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index 0f3eb392fe39..b7654f5e4225 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -212,15 +212,10 @@ static const struct file_operations rockchip_drm_driver_fops = {
- static struct drm_driver rockchip_drm_driver = {
- 	.driver_features	= DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
- 	.lastclose		= drm_fb_helper_lastclose,
--	.gem_vm_ops		= &drm_gem_cma_vm_ops,
--	.gem_free_object_unlocked = rockchip_gem_free_object,
- 	.dumb_create		= rockchip_gem_dumb_create,
- 	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
--	.gem_prime_get_sg_table	= rockchip_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table	= rockchip_gem_prime_import_sg_table,
--	.gem_prime_vmap		= rockchip_gem_prime_vmap,
--	.gem_prime_vunmap	= rockchip_gem_prime_vunmap,
- 	.gem_prime_mmap		= rockchip_gem_mmap_buf,
- 	.fops			= &rockchip_drm_driver_fops,
- 	.name	= DRIVER_NAME,
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-index b9275ba7c5a5..9724e7b561f3 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-@@ -295,6 +295,14 @@ static void rockchip_gem_release_object(struct rockchip_gem_object *rk_obj)
- 	kfree(rk_obj);
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index 313339bbff90..c49f841dd4cd 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -50,6 +50,8 @@
+ #define DRIVER_MAJOR	1
+ #define DRIVER_MINOR	0
+ 
++static const struct drm_gem_object_funcs vgem_gem_object_funcs;
++
+ static struct vgem_device {
+ 	struct drm_device drm;
+ 	struct platform_device *platform;
+@@ -167,6 +169,8 @@ static struct drm_vgem_gem_object *__vgem_gem_create(struct drm_device *dev,
+ 	if (!obj)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	obj->base.funcs = &vgem_gem_object_funcs;
++
+ 	ret = drm_gem_object_init(dev, &obj->base, roundup(size, PAGE_SIZE));
+ 	if (ret) {
+ 		kfree(obj);
+@@ -408,13 +412,21 @@ static void vgem_release(struct drm_device *dev)
+ 	platform_device_unregister(vgem->platform);
  }
  
-+static const struct drm_gem_object_funcs rockchip_gem_object_funcs = {
-+	.free = rockchip_gem_free_object,
-+	.get_sg_table = rockchip_gem_prime_get_sg_table,
-+	.vmap = rockchip_gem_prime_vmap,
-+	.vunmap	= rockchip_gem_prime_vunmap,
-+	.vm_ops = &drm_gem_cma_vm_ops,
++static const struct drm_gem_object_funcs vgem_gem_object_funcs = {
++	.free = vgem_gem_free_object,
++	.pin = vgem_prime_pin,
++	.unpin = vgem_prime_unpin,
++	.get_sg_table = vgem_prime_get_sg_table,
++	.vmap = vgem_prime_vmap,
++	.vunmap = vgem_prime_vunmap,
++	.vm_ops = &vgem_gem_vm_ops,
 +};
 +
- static struct rockchip_gem_object *
- 	rockchip_gem_alloc_object(struct drm_device *drm, unsigned int size)
- {
-@@ -309,6 +317,8 @@ static struct rockchip_gem_object *
+ static struct drm_driver vgem_driver = {
+ 	.driver_features		= DRIVER_GEM | DRIVER_RENDER,
+ 	.release			= vgem_release,
+ 	.open				= vgem_open,
+ 	.postclose			= vgem_postclose,
+-	.gem_free_object_unlocked	= vgem_gem_free_object,
+-	.gem_vm_ops			= &vgem_gem_vm_ops,
+ 	.ioctls				= vgem_ioctls,
+ 	.num_ioctls 			= ARRAY_SIZE(vgem_ioctls),
+ 	.fops				= &vgem_driver_fops,
+@@ -423,13 +435,8 @@ static struct drm_driver vgem_driver = {
  
- 	obj = &rk_obj->base;
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_pin = vgem_prime_pin,
+-	.gem_prime_unpin = vgem_prime_unpin,
+ 	.gem_prime_import = vgem_prime_import,
+ 	.gem_prime_import_sg_table = vgem_prime_import_sg_table,
+-	.gem_prime_get_sg_table = vgem_prime_get_sg_table,
+-	.gem_prime_vmap = vgem_prime_vmap,
+-	.gem_prime_vunmap = vgem_prime_vunmap,
+ 	.gem_prime_mmap = vgem_prime_mmap,
  
-+	obj->funcs = &rockchip_gem_object_funcs;
-+
- 	drm_gem_object_init(drm, obj, size);
- 
- 	return rk_obj;
+ 	.name	= DRIVER_NAME,
 -- 
 2.28.0
 
