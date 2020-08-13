@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 149D3C433F1
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B1AC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F202820866
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B928F2078B
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:36:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgHMIgz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Aug 2020 04:36:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58722 "EHLO mx2.suse.de"
+        id S1726703AbgHMIg6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Aug 2020 04:36:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58806 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726621AbgHMIgy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Aug 2020 04:36:54 -0400
+        id S1726688AbgHMIg6 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 13 Aug 2020 04:36:58 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 66FBEAFB0;
-        Thu, 13 Aug 2020 08:37:15 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 29CB8B598;
+        Thu, 13 Aug 2020 08:37:18 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -57,9 +57,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 03/20] drm/etnaviv: Introduce GEM object functions
-Date:   Thu, 13 Aug 2020 10:36:27 +0200
-Message-Id: <20200813083644.31711-4-tzimmermann@suse.de>
+Subject: [PATCH 06/20] drm/i915: Introduce GEM object functions
+Date:   Thu, 13 Aug 2020 10:36:30 +0200
+Message-Id: <20200813083644.31711-7-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200813083644.31711-1-tzimmermann@suse.de>
 References: <20200813083644.31711-1-tzimmermann@suse.de>
@@ -72,106 +72,92 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in etnaviv. The only exception is gem_prime_mmap,
-which is non-trivial to convert.
+per-instance callbacks in i915.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/etnaviv/etnaviv_drv.c | 13 -------------
- drivers/gpu/drm/etnaviv/etnaviv_drv.h |  1 -
- drivers/gpu/drm/etnaviv/etnaviv_gem.c | 19 ++++++++++++++++++-
- 3 files changed, 18 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/i915/gem/i915_gem_object.c       |  9 ++++++++-
+ drivers/gpu/drm/i915/i915_drv.c                  | 10 ++++++----
+ drivers/gpu/drm/i915/i915_drv.h                  |  1 +
+ drivers/gpu/drm/i915/selftests/mock_gem_device.c |  3 ---
+ 4 files changed, 15 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-index a9a3afaef9a1..aa270b79e585 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-@@ -468,12 +468,6 @@ static const struct drm_ioctl_desc etnaviv_ioctls[] = {
- 	ETNA_IOCTL(PM_QUERY_SIG, pm_query_sig, DRM_RENDER_ALLOW),
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+index c8421fd9d2dc..bc15ee4f2bd5 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+@@ -41,7 +41,14 @@ static struct i915_global_object {
+ 
+ struct drm_i915_gem_object *i915_gem_object_alloc(void)
+ {
+-	return kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
++	struct drm_i915_gem_object *obj;
++
++	obj = kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
++	if (!obj)
++		return NULL;
++	obj->base.funcs = &i915_gem_object_funcs;
++
++	return obj;
+ }
+ 
+ void i915_gem_object_free(struct drm_i915_gem_object *obj)
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 068447f565a9..b09eee11c540 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -1840,6 +1840,12 @@ static const struct drm_ioctl_desc i915_ioctls[] = {
+ 	DRM_IOCTL_DEF_DRV(I915_GEM_VM_DESTROY, i915_gem_vm_destroy_ioctl, DRM_RENDER_ALLOW),
  };
  
--static const struct vm_operations_struct vm_ops = {
--	.fault = etnaviv_gem_fault,
--	.open = drm_gem_vm_open,
--	.close = drm_gem_vm_close,
--};
++const struct drm_gem_object_funcs i915_gem_object_funcs = {
++	.free = i915_gem_free_object,
++	.close = i915_gem_close_object,
++	.export = i915_gem_prime_export,
++};
++
+ static struct drm_driver driver = {
+ 	/* Don't use MTRRs here; the Xserver or userspace app should
+ 	 * deal with them for Intel hardware.
+@@ -1853,12 +1859,8 @@ static struct drm_driver driver = {
+ 	.lastclose = i915_driver_lastclose,
+ 	.postclose = i915_driver_postclose,
+ 
+-	.gem_close_object = i915_gem_close_object,
+-	.gem_free_object_unlocked = i915_gem_free_object,
 -
- static const struct file_operations fops = {
- 	.owner              = THIS_MODULE,
- 	.open               = drm_open,
-@@ -490,16 +484,9 @@ static struct drm_driver etnaviv_drm_driver = {
- 	.driver_features    = DRIVER_GEM | DRIVER_RENDER,
- 	.open               = etnaviv_open,
- 	.postclose           = etnaviv_postclose,
--	.gem_free_object_unlocked = etnaviv_gem_free_object,
--	.gem_vm_ops         = &vm_ops,
  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_pin      = etnaviv_gem_prime_pin,
--	.gem_prime_unpin    = etnaviv_gem_prime_unpin,
--	.gem_prime_get_sg_table = etnaviv_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table = etnaviv_gem_prime_import_sg_table,
--	.gem_prime_vmap     = etnaviv_gem_prime_vmap,
--	.gem_prime_vunmap   = etnaviv_gem_prime_vunmap,
- 	.gem_prime_mmap     = etnaviv_gem_prime_mmap,
- #ifdef CONFIG_DEBUG_FS
- 	.debugfs_init       = etnaviv_debugfs_init,
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-index 4d8dc9236e5f..914f0867ff71 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-@@ -49,7 +49,6 @@ int etnaviv_ioctl_gem_submit(struct drm_device *dev, void *data,
- 		struct drm_file *file);
+-	.gem_prime_export = i915_gem_prime_export,
+ 	.gem_prime_import = i915_gem_prime_import,
  
- int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma);
--vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf);
- int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset);
- struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj);
- void *etnaviv_gem_prime_vmap(struct drm_gem_object *obj);
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-index f06e19e7be04..66de9f299c76 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-@@ -170,7 +170,7 @@ int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma)
- 	return obj->ops->mmap(obj, vma);
- }
+ 	.dumb_create = i915_gem_dumb_create,
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+index bacb4c762f5b..666db65fe69e 100644
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -1736,6 +1736,7 @@ intel_ggtt_update_needs_vtd_wa(struct drm_i915_private *dev_priv)
  
--vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf)
-+static vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct drm_gem_object *obj = vma->vm_private_data;
-@@ -560,6 +560,22 @@ void etnaviv_gem_obj_add(struct drm_device *dev, struct drm_gem_object *obj)
- 	mutex_unlock(&priv->gem_lock);
- }
+ /* i915_drv.c */
+ extern const struct dev_pm_ops i915_pm_ops;
++extern const struct drm_gem_object_funcs i915_gem_object_funcs;
  
-+static const struct vm_operations_struct vm_ops = {
-+	.fault = etnaviv_gem_fault,
-+	.open = drm_gem_vm_open,
-+	.close = drm_gem_vm_close,
-+};
-+
-+static const struct drm_gem_object_funcs etnaviv_gem_object_funcs = {
-+	.free = etnaviv_gem_free_object,
-+	.pin = etnaviv_gem_prime_pin,
-+	.unpin = etnaviv_gem_prime_unpin,
-+	.get_sg_table = etnaviv_gem_prime_get_sg_table,
-+	.vmap = etnaviv_gem_prime_vmap,
-+	.vunmap = etnaviv_gem_prime_vunmap,
-+	.vm_ops = &vm_ops,
-+};
-+
- static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 flags,
- 	const struct etnaviv_gem_ops *ops, struct drm_gem_object **obj)
- {
-@@ -594,6 +610,7 @@ static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 flags,
- 	INIT_LIST_HEAD(&etnaviv_obj->vram_list);
+ int i915_driver_probe(struct pci_dev *pdev, const struct pci_device_id *ent);
+ void i915_driver_remove(struct drm_i915_private *i915);
+diff --git a/drivers/gpu/drm/i915/selftests/mock_gem_device.c b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+index ce4d4303229c..4725dad63e0a 100644
+--- a/drivers/gpu/drm/i915/selftests/mock_gem_device.c
++++ b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+@@ -86,9 +86,6 @@ static struct drm_driver mock_driver = {
+ 	.name = "mock",
+ 	.driver_features = DRIVER_GEM,
+ 	.release = mock_device_release,
+-
+-	.gem_close_object = i915_gem_close_object,
+-	.gem_free_object_unlocked = i915_gem_free_object,
+ };
  
- 	*obj = &etnaviv_obj->base;
-+	(*obj)->funcs = &etnaviv_gem_object_funcs;
- 
- 	return 0;
- }
+ static void release_dev(struct device *dev)
 -- 
 2.28.0
 
