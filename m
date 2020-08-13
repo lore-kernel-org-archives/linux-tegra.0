@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A791DC433FB
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384FEC43617
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 917DE2078B
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2139120866
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbgHMIhK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Aug 2020 04:37:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60070 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726641AbgHMIhJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        id S1726788AbgHMIhJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Thu, 13 Aug 2020 04:37:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58806 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726710AbgHMIhI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 13 Aug 2020 04:37:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 1507DB5A6;
-        Thu, 13 Aug 2020 08:37:30 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 4E2EBB5A5;
+        Thu, 13 Aug 2020 08:37:28 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -57,9 +57,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 19/20] drm/xlnx: Initialize DRM driver instance with CMA helper macro
-Date:   Thu, 13 Aug 2020 10:36:43 +0200
-Message-Id: <20200813083644.31711-20-tzimmermann@suse.de>
+Subject: [PATCH 17/20] drm/vkms: Introduce GEM object functions
+Date:   Thu, 13 Aug 2020 10:36:41 +0200
+Message-Id: <20200813083644.31711-18-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200813083644.31711-1-tzimmermann@suse.de>
 References: <20200813083644.31711-1-tzimmermann@suse.de>
@@ -70,44 +70,73 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The xlnx driver uses CMA helpers with default callback functions.
-Initialize the driver structure with the rsp CMA helper macro. The
-driver is being converted to use GEM object functions as part of
-this change.
-
-Two callbacks, .dumb_destroy and .gem_prime_import, were initialized
-to their default implementations, so they are just kept empty now.
+GEM object functions deprecate several similar callback interfaces in
+struct drm_driver. This patch replaces the per-driver callbacks with
+per-instance callbacks in vkms.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ drivers/gpu/drm/vkms/vkms_drv.c |  8 --------
+ drivers/gpu/drm/vkms/vkms_gem.c | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-index 26328c76305b..058044dcc062 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-@@ -80,19 +80,7 @@ static struct drm_driver zynqmp_dpsub_drm_driver = {
- 	.driver_features		= DRIVER_MODESET | DRIVER_GEM |
- 					  DRIVER_ATOMIC,
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index 83dd5567de8b..a3a1ee1f77fb 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -51,12 +51,6 @@ static const struct file_operations vkms_driver_fops = {
+ 	.release	= drm_release,
+ };
  
--	.prime_handle_to_fd		= drm_gem_prime_handle_to_fd,
--	.prime_fd_to_handle		= drm_gem_prime_fd_to_handle,
--	.gem_prime_export		= drm_gem_prime_export,
--	.gem_prime_import		= drm_gem_prime_import,
--	.gem_prime_get_sg_table		= drm_gem_cma_prime_get_sg_table,
--	.gem_prime_import_sg_table	= drm_gem_cma_prime_import_sg_table,
--	.gem_prime_vmap			= drm_gem_cma_prime_vmap,
--	.gem_prime_vunmap		= drm_gem_cma_prime_vunmap,
--	.gem_prime_mmap			= drm_gem_cma_prime_mmap,
--	.gem_free_object_unlocked	= drm_gem_cma_free_object,
--	.gem_vm_ops			= &drm_gem_cma_vm_ops,
--	.dumb_create			= zynqmp_dpsub_dumb_create,
--	.dumb_destroy			= drm_gem_dumb_destroy,
-+	DRM_GEM_CMA_DRIVER_OPS_VMAP_WITH_DUMB_CREATE(zynqmp_dpsub_dumb_create),
+-static const struct vm_operations_struct vkms_gem_vm_ops = {
+-	.fault = vkms_gem_fault,
+-	.open = drm_gem_vm_open,
+-	.close = drm_gem_vm_close,
+-};
+-
+ static void vkms_release(struct drm_device *dev)
+ {
+ 	struct vkms_device *vkms = container_of(dev, struct vkms_device, drm);
+@@ -101,8 +95,6 @@ static struct drm_driver vkms_driver = {
+ 	.release		= vkms_release,
+ 	.fops			= &vkms_driver_fops,
+ 	.dumb_create		= vkms_dumb_create,
+-	.gem_vm_ops		= &vkms_gem_vm_ops,
+-	.gem_free_object_unlocked = vkms_gem_free_object,
+ 	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+ 	.gem_prime_import_sg_table = vkms_prime_import_sg_table,
  
- 	.fops				= &zynqmp_dpsub_drm_fops,
+diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
+index a017fc59905e..19a0e260a4df 100644
+--- a/drivers/gpu/drm/vkms/vkms_gem.c
++++ b/drivers/gpu/drm/vkms/vkms_gem.c
+@@ -7,6 +7,17 @@
  
+ #include "vkms_drv.h"
+ 
++static const struct vm_operations_struct vkms_gem_vm_ops = {
++	.fault = vkms_gem_fault,
++	.open = drm_gem_vm_open,
++	.close = drm_gem_vm_close,
++};
++
++static const struct drm_gem_object_funcs vkms_gem_object_funcs = {
++	.free = vkms_gem_free_object,
++	.vm_ops = &vkms_gem_vm_ops,
++};
++
+ static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
+ 						 u64 size)
+ {
+@@ -17,6 +28,8 @@ static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
+ 	if (!obj)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	obj->gem.funcs = &vkms_gem_object_funcs;
++
+ 	size = roundup(size, PAGE_SIZE);
+ 	ret = drm_gem_object_init(dev, &obj->gem, size);
+ 	if (ret) {
 -- 
 2.28.0
 
