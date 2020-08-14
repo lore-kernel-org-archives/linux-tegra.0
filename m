@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E05C2C433E8
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 00:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BAEC433DF
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 00:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB1482078B
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 00:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F6412078B
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 00:08:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HaM6qeJA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHD2fNCD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbgHNAIV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Aug 2020 20:08:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46754 "EHLO
+        id S1727021AbgHNAHi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Aug 2020 20:07:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbgHNAHm (ORCPT
+        with ESMTP id S1727012AbgHNAHh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Aug 2020 20:07:42 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E85E1C061383;
-        Thu, 13 Aug 2020 17:07:41 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id v4so8143064ljd.0;
-        Thu, 13 Aug 2020 17:07:41 -0700 (PDT)
+        Thu, 13 Aug 2020 20:07:37 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661C6C061757;
+        Thu, 13 Aug 2020 17:07:37 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id m22so8091716ljj.5;
+        Thu, 13 Aug 2020 17:07:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7B2Fjpe2WofrQ7YRSrsm/9vOVUdpsuOK81+7RfPmroY=;
-        b=HaM6qeJArqPXRUxsPKUHAks2qnElfoALYTWeTT9zpff+MRFIE61LHa+pfpAAY2hnVU
-         6FQIXAbnNKa8nqQAvYixLwFArz2ht9xxzZIcaG8UDLqd4mvnPI5BaXL6F05MpJwrsiaH
-         iiqNN8rpKet0HgKGTFWtrgWj/a77b1RLyoynmITH4k3ZGyfNhBc6kcitvZp3uFHKofdR
-         NUxW0fb/4dL6bxmCWqBmfWrpMgjAV84Z/9HDi6TNI2Sg+89WgtUN4bwc6Yu+q+me2PUd
-         ffmaSHrkK7qIY201GUp/uWREnjEKqRaZId3nZUT9sE9qsA+HWH6mNndqY1bKEzRiWBAB
-         BbvQ==
+        bh=SYVrVqyKmi1R5n5EphsB7nCz8XZpBo0lBJhV0Ix8t+w=;
+        b=kHD2fNCDU7lJmrFW6dXFuOYm22bBYvr3VdsN9nKcyfb18EcS1FH+7kQ7JrxIqkMhOF
+         BULskAMHRRV7KO+7N/NkWA1lQ4nONQz1EILPJD0F2L0kwmo4DHViU8MnUzUwFegY60kQ
+         7tbY7ZiTvc8il6FQp/3xToaxFb/uwTQRj91YtVI6iE0fEsjePGJtz2UlAXQ+aegw0Udo
+         kTZu3m2DlUeNijlHo9oFblbttVhqM8jjworPOKtJ3GP6mqSoKXBGbOpuzlsz1mWE05H0
+         zhtAHSMNb60N9aiUaAf8rCZA4nkWRrHFdDUxAmZjYKgZOAvMJT6wKTDDsW6yBqwZhFoy
+         WxCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7B2Fjpe2WofrQ7YRSrsm/9vOVUdpsuOK81+7RfPmroY=;
-        b=gfsb16JoD3JJFlakgh0N+q7X2aaCTCLH+iurTpMUmUusnMuzIrwID6h26Z2xTxEoIf
-         mQmdUiHP1fhGClU9hpp1DYu7icNvKeG0KfBwSeatOpwXRYxlebP/HKVU3UXWuN17reyj
-         nmw/5Yj+jlDJIRNCXtAx64qN3xMhNO7UcfkY5ltW3TVkZaiytDOsm1Ye1lyiWS/3+Y5Y
-         WcvLtUfkyG6VkDzosPgqVoKGwSqWaKoLKBw3YxpfGRUlSSCnCSwtvogdSqMXa/VOKrG3
-         QX/kmZPuOthaO6tNZv2uxVaob5edEWR2MAkiFWmUGgX1g72RkDiaWp7N5VkAPVZPhnb+
-         WDLg==
-X-Gm-Message-State: AOAM532BYpggeKzWPenB5WeVkekdckMVsUmJDi31c38x08OG9dr6J36E
-        39UKX/DouwqGha2ml/bg7JY=
-X-Google-Smtp-Source: ABdhPJwiLQtOEsyJZryW1Z/xHL/Syj4Ki1lFQT0pVOuRrIjHNd7mLGMWk53BFO0l8cNZ0e5ryYtlzA==
-X-Received: by 2002:a2e:b55c:: with SMTP id a28mr98068ljn.107.1597363660402;
-        Thu, 13 Aug 2020 17:07:40 -0700 (PDT)
+        bh=SYVrVqyKmi1R5n5EphsB7nCz8XZpBo0lBJhV0Ix8t+w=;
+        b=XpRAhkCJlJnDN2l7KfAAlHXzyS1mNcW9OUWqUhRU8+nGXphJDXqtWUiJkGRhF1ZCQv
+         vLLF8dvsS/A1sPdrWGhUNgKsOZlLGlgwo8d0yWsoYwUtBIhfGSJ02iZOosg3viH2WzRi
+         9IPAeF/j1QLEvnW+POZdm4UGp3n20Dcv0A3CSshVNsaqlS4HtMNIDPWZnrbsg7nJhINh
+         buBelvdbcXwiT8K2t6vorVhVK9urRm8DIIRxVbFpOV3FsEx9qWZnZnI6bVMrsIX8Uo1g
+         laZMTLpwZZ8CZKjYi6/UgXQ773Xus9qxfaySLl9RFwfIgAjiVceBhNncD45/N21A1ExG
+         ev1Q==
+X-Gm-Message-State: AOAM530ehnbJZj4lqYVEKok61eCVLXkRoYz5CXeFvTLi5x4cyAvmu+Vu
+        TUHingZcy86M8mEn/eAyuxg=
+X-Google-Smtp-Source: ABdhPJwIs4y8aNM38rBL6i83ol6zAmutagnBs98xg1dZ+TNRSEXv4E1FjDzY79vpk5xE4Wzx4pmpiA==
+X-Received: by 2002:a2e:9dd0:: with SMTP id x16mr107011ljj.144.1597363655869;
+        Thu, 13 Aug 2020 17:07:35 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id c17sm1504450lfr.23.2020.08.13.17.07.39
+        by smtp.gmail.com with ESMTPSA id c17sm1504450lfr.23.2020.08.13.17.07.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2020 17:07:39 -0700 (PDT)
+        Thu, 13 Aug 2020 17:07:35 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -74,9 +74,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v5 35/36] drm/tegra: dc: Tune up high priority request controls for Tegra20
-Date:   Fri, 14 Aug 2020 03:06:20 +0300
-Message-Id: <20200814000621.8415-36-digetx@gmail.com>
+Subject: [PATCH v5 31/36] memory: tegra20-emc: Create tegra20-devfreq device
+Date:   Fri, 14 Aug 2020 03:06:16 +0300
+Message-Id: <20200814000621.8415-32-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200814000621.8415-1-digetx@gmail.com>
 References: <20200814000621.8415-1-digetx@gmail.com>
@@ -87,43 +87,30 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra20 has a high-priority-request control that allows to configure
-when display's memory client should perform read requests with a higher
-priority (Tegra30+ uses other means like Latency Allowance).
-
-This patch changes the controls configuration in order to get a more
-aggressive memory prefetching, which allows to reliably avoid FIFO
-underflow when running on a lower memory frequency. This allow us
-safely drop the memory bandwidth requirement by about two times in a
-most popular use-cases (only one display active, video overlay inactive,
-no scaling is done).
+The tegra20-devfreq driver provides memory frequency scaling functionality
+and it uses EMC clock for the scaling. Since tegra20-devfreq is a software
+driver, the device for the driver needs to be created manually. Let's do
+it from EMC driver since it provides the clk rate-change functionality.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/memory/tegra/tegra20-emc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 850fbcebefc2..4b062408467e 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1999,12 +1999,12 @@ static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
- 		tegra_dc_writel(dc, value, DC_CMD_INT_POLARITY);
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index 437d9d789941..e603cc0b0341 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -884,6 +884,9 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	tegra_emc_debugfs_init(emc);
+ 	tegra_emc_interconnect_init(emc);
  
- 		/* initialize timer */
--		value = CURSOR_THRESHOLD(0) | WINDOW_A_THRESHOLD(0x20) |
--			WINDOW_B_THRESHOLD(0x20) | WINDOW_C_THRESHOLD(0x20);
-+		value = CURSOR_THRESHOLD(0) | WINDOW_A_THRESHOLD(0x70) |
-+			WINDOW_B_THRESHOLD(0x30) | WINDOW_C_THRESHOLD(0x70);
- 		tegra_dc_writel(dc, value, DC_DISP_DISP_MEM_HIGH_PRIORITY);
- 
--		value = CURSOR_THRESHOLD(0) | WINDOW_A_THRESHOLD(1) |
--			WINDOW_B_THRESHOLD(1) | WINDOW_C_THRESHOLD(1);
-+		value = CURSOR_THRESHOLD(0) | WINDOW_A_THRESHOLD(0) |
-+			WINDOW_B_THRESHOLD(0) | WINDOW_C_THRESHOLD(0);
- 		tegra_dc_writel(dc, value, DC_DISP_DISP_MEM_HIGH_PRIORITY_TIMER);
- 
- 		value = VBLANK_INT | WIN_A_UF_INT | WIN_B_UF_INT | WIN_C_UF_INT |
++	if (IS_ENABLED(CONFIG_ARM_TEGRA20_DEVFREQ))
++		platform_device_register_simple("tegra20-devfreq", -1, NULL, 0);
++
+ 	/*
+ 	 * Don't allow the kernel module to be unloaded. Unloading adds some
+ 	 * extra complexity which doesn't really worth the effort in a case of
 -- 
 2.27.0
 
