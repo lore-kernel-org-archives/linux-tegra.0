@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E887AC433E3
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 00:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B14CC433E1
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 00:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C08562078B
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 00:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D90207DA
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 00:09:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErKBwp+P"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiP4ZDbq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbgHNAH1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Aug 2020 20:07:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46686 "EHLO
+        id S1726697AbgHNAJT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Aug 2020 20:09:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726904AbgHNAH0 (ORCPT
+        with ESMTP id S1726846AbgHNAHW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Aug 2020 20:07:26 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 157ECC061757;
-        Thu, 13 Aug 2020 17:07:26 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id i19so3949155lfj.8;
-        Thu, 13 Aug 2020 17:07:25 -0700 (PDT)
+        Thu, 13 Aug 2020 20:07:22 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1580C061757;
+        Thu, 13 Aug 2020 17:07:21 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id v15so3938600lfg.6;
+        Thu, 13 Aug 2020 17:07:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6hV/jfb1j57ds6uWusc67dwvrbgr9Nuaem2xPT64pOI=;
-        b=ErKBwp+Pi3uw2mPs1tCdGXty9djbWFZh7U9QKleaHXoAfkxBNKfThE66Q/uzNnc7J4
-         aTk8+/JsZmycsCyPcO8wlyCxP/+7dhTSQleHzgB8RAXh9y9JX/qoA3h0Dt4KqGsgqWgT
-         32US2OzxXAYh3P3Bq+YMOkgwj1jgCvZwihVWC43so56FI4FPSpixkmxH7Ryz0yw9gdcO
-         oycjad2ZwnRCk/P+MMGMiuHDdDaSqD6SW/HA2t+uraoAPUbv+yCSmeRz8aO8ak/Vfyco
-         dauYMCWTVOLrANbGWhYaug2aCunXB+Mmt8gqYzR6ZB7AEUZVQQHPqWg9rQyiGNg8aABC
-         xSIA==
+        bh=L79iwZ0bcQ/bYNErMnkgdiSpet8EKxInzRHfHgz6Aeo=;
+        b=NiP4ZDbqClOIWz3kunOdbowHssHlDerKEVLkW3GcU/ITVXqORlahFtc4DpJ823T7Af
+         0ENPwrfZBrqMpBHcZWNy1lsAJQe9lPJFaxz5X0U0Uw/qvjvdBB38amJO0/lRoh/2T7rc
+         bmC9+TscwV6l7JaKxeBOYJz6Tw6EhIEMVnFJ1/BGO26ek3M0YvmA4qgZODGwVVve8AYs
+         DAH8/tlNlcfuooDTjoXqhYxv0Bs2SDyXjAFOn8YAr5INCfa3LZ6Ccec+/mIUyvX6OBka
+         lsnEFgX1MBorRQwODElFfUhPq1daWwOQQY8cx3cqLEdL4CZCfszxsgSdTtgBiuPskxcz
+         lWdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6hV/jfb1j57ds6uWusc67dwvrbgr9Nuaem2xPT64pOI=;
-        b=JsF5/m6Vo8IrQ2bGh5p1Szc0FRGeodkAXnBPQ5A9MOh0KlRvdZcED8EJD1blHyGqk6
-         hselcLmLVARvN0FiKgDu+7lRTJeDKldP0zrZ2I0HrNHedHhfzff8ipWQqry4iPF2T+eb
-         Wv5HMzKRVbMZuv8EFBHICpfod1KcGcmv3awNMnh+e3vFHpGD2+MyEtf4O2+kBrkzI+QA
-         s8EOMK3QJL7mM5rKdpNTNID7tSeZdALb+S5TAmcPYv87hG02M1LfBNPf/lIrliNHczZR
-         Dhlnd2dXuVDlE+mG7/afPHiy3xr/zqdPYmjNpTDmlE/aaNlRi1OUXDFilyavnHX4rnD0
-         EGEg==
-X-Gm-Message-State: AOAM5314hmV0lwt5UzIp/gCfKh/FBs0GV/JjR+hX0RUlttV7EmVIkS0U
-        mgEOXq0Mgn2fEmIMvG2A7VU=
-X-Google-Smtp-Source: ABdhPJyX4+8v8JUfhatSVHBEDRahqnCfgVnO8HrDC7HMA1cGJSRRGzDZfveHa/V3VlNsHtHH294fRg==
-X-Received: by 2002:ac2:58c6:: with SMTP id u6mr3340219lfo.105.1597363644627;
-        Thu, 13 Aug 2020 17:07:24 -0700 (PDT)
+        bh=L79iwZ0bcQ/bYNErMnkgdiSpet8EKxInzRHfHgz6Aeo=;
+        b=ZkLSgyKTqWzu7CgPcIxPkAb6NtDlg0jc3llUpPKHTXaaKvYC9Q7wRqXe3l1wZwuvT3
+         zy1ba0w7LXQKN9CrUMYtkryXaNMSnYzsrzxCbubLcjU305jmvYy/ihmywI2/V9v3W7Ng
+         rd2OkJespXYzFhy2vb+SuXvqKPUw7CK7ziPgkIGIz6Nxduk3Dm8onA5fsmGbNQzUEO5m
+         wVy639bq2w4F30pM9SQ3LcBPVEYKcD6NK2U2OV81m5XbGAPTh6e7ihM6U2qv599ceK3D
+         7E1/U6CXRIxNuo1RCvr3aMhk9qK+Ki9bQP8S38oOhDDCQ2pm1dY+hOqGHA0zjkfPm4IA
+         UfkQ==
+X-Gm-Message-State: AOAM532bUTqNX3s9S5RYUgcWcFqO+kM7loFPVyzRdDUqTe6KWRLHhvtn
+        SZDXddtqYi1WNm8krLmHg3A=
+X-Google-Smtp-Source: ABdhPJw1OxzpVPy0ME8CmE74TISYPXIcWkGALKPr7LrdTvMm/viQPl/RwghQDZFc4M8Wqub9nLtTjg==
+X-Received: by 2002:a19:c501:: with SMTP id w1mr3142820lfe.172.1597363640159;
+        Thu, 13 Aug 2020 17:07:20 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id c17sm1504450lfr.23.2020.08.13.17.07.23
+        by smtp.gmail.com with ESMTPSA id c17sm1504450lfr.23.2020.08.13.17.07.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2020 17:07:24 -0700 (PDT)
+        Thu, 13 Aug 2020 17:07:19 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -74,9 +74,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v5 21/36] dt-bindings: memory: tegra30: emc: Document new interconnect property
-Date:   Fri, 14 Aug 2020 03:06:06 +0300
-Message-Id: <20200814000621.8415-22-digetx@gmail.com>
+Subject: [PATCH v5 17/36] PM / devfreq: tegra20: Relax Kconfig dependency
+Date:   Fri, 14 Aug 2020 03:06:02 +0300
+Message-Id: <20200814000621.8415-18-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200814000621.8415-1-digetx@gmail.com>
 References: <20200814000621.8415-1-digetx@gmail.com>
@@ -87,47 +87,34 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-External memory controller is interconnected with memory controller and
-with external memory. Document new interconnect property which turns
-external memory controller into interconnect provider.
+The Tegra EMC driver now could be compiled as a loadable kernel module.
+Currently devfreq driver depends on the EMC/MC drivers in Kconfig, and
+thus, devfreq is forced to be a kernel module if EMC is compiled as a
+module. This build dependency could be relaxed since devfreq driver
+checks MC/EMC presence on probe, allowing kernel configuration where
+devfreq is a built-in driver and EMC driver is a loadable module.
+This change puts Tegra20 devfreq Kconfig entry on a par with the Tegra30
+devfreq entry.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../bindings/memory-controllers/nvidia,tegra30-emc.yaml     | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/devfreq/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
-index 112bae2fcbbd..c243986db420 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
-@@ -31,6 +31,9 @@ properties:
-   interrupts:
-     maxItems: 1
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index 37dc40d1fcfb..0ee36ae2fa79 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -123,7 +123,7 @@ config ARM_TEGRA_DEVFREQ
  
-+  "#interconnect-cells":
-+    const: 0
-+
-   nvidia,memory-controller:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description:
-@@ -214,6 +217,7 @@ required:
-   - interrupts
-   - clocks
-   - nvidia,memory-controller
-+  - "#interconnect-cells"
- 
- additionalProperties: false
- 
-@@ -227,6 +231,8 @@ examples:
- 
-         nvidia,memory-controller = <&mc>;
- 
-+        #interconnect-cells = <0>;
-+
-         emc-timings-1 {
-             nvidia,ram-code = <1>;
- 
+ config ARM_TEGRA20_DEVFREQ
+ 	tristate "NVIDIA Tegra20 DEVFREQ Driver"
+-	depends on (TEGRA_MC && TEGRA20_EMC) || COMPILE_TEST
++	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+ 	help
 -- 
 2.27.0
 
