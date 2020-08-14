@@ -2,182 +2,156 @@ Return-Path: <SRS0=fbtN=BY=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A1EC433E1
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 16:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 185F9C433E1
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 16:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3203720791
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 16:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDF1D2078D
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Aug 2020 16:47:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="faTDxKkz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="We/FVSeW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbgHNQXK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Aug 2020 12:23:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55384 "EHLO
+        id S1726455AbgHNQrL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Aug 2020 12:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbgHNQXJ (ORCPT
+        with ESMTP id S1726270AbgHNQrG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Aug 2020 12:23:09 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA4DC061384;
-        Fri, 14 Aug 2020 09:23:09 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id i80so5083450lfi.13;
-        Fri, 14 Aug 2020 09:23:09 -0700 (PDT)
+        Fri, 14 Aug 2020 12:47:06 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30578C061384;
+        Fri, 14 Aug 2020 09:47:06 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id g6so10566397ljn.11;
+        Fri, 14 Aug 2020 09:47:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5XUom1+N8VJF984pWSuHb/mTQ8k7XQqK3c1GXB5JLrs=;
-        b=faTDxKkzEvzVfjje1Z55vXJsrvhO0hFBHdcT5Ih7idzEgEh4TTk7+M3nWvv7GVMmib
-         wSctTzmweNycw0D4wGGCytA/5j2IQaYcu5deIMNFcs9Asa9AT9CSE9Tr1Ylj+EMYdmfo
-         y9iJ6UJUJ74yd8avbXuUWecvZj30MAdXs81cjzDeWoAZPFNVMen/JGEbPQHBVnRio8pr
-         RM9GALxhjZLq8h411eAzEiQNwHwNzhuG1guE4Zj8IVWLLpeFGZQ3UD3eS/Y81JgmQyrE
-         ugNLHnQMJFaFjQI64FQEuXCKHRNNLp5qMXS4l2WlpYIqXlZV8Sw4LdQUVNUWSMLckDvT
-         eDvw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZmnQ4vUhgXM2is2ULbt6oEQrTJKTXGTCE402XB71Dck=;
+        b=We/FVSeWrjP0+MIiJxhGwCzfNF3FWjWCzWB0nN5SzPgQeyXr9kou5Fg1G6xwmODZ9W
+         zExpR2CW8OFInlbyttpitOEdHHPVzSF71HNvUTn4l1VP6YEPQPc5pGgNRcbcYUfYDWJN
+         HUsiKIWEGgsiYUuz/OVIsK2RGGZwLMlO9vQWI+c3/aaEXs+0qdGtpf9rVeFD6fG7WeDf
+         G1HKVVIYwVUN0QPDX+ccBKdcifMjTU2ihgqzA/QrFXkLPvkeW19oC7PqU9s4PagQK27z
+         ewemK3ELH1ss9E0v2Qlqb6QFRu43KeADbn7yTJQVw00RXb8KL7qPH6taCW/IERgVRHJz
+         g9+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=5XUom1+N8VJF984pWSuHb/mTQ8k7XQqK3c1GXB5JLrs=;
-        b=c6IdHfQbsLvFN4RutFOdADrf/b+PeXc9u4+xbX/tC8ooFgANGTBvDsw8gr3fDyiyox
-         +hm6ObglNov0yBNimJNGlTrUkCfKmrOtDZtid51WfzquniL6JZ1sblR8rIfJ1/L8tf1b
-         AFtlptlj4HN3/4JpXPynu99AnJ2i2cCI1v9D3GzfIVAjTT/IcsOdkrdfBfsezqkBtHLL
-         lg9X+OdZOOt17hqr715SQp2uH4IPB9XVv8MqfXhSD0xJXsSvOwdvO2Xq/0mU11WjxPjz
-         VeooGYwyWemqortBgBqFAorwA1BIeQO+v8yj6/MbjxY9GuZBjM+fDQ6Vr8wRMWddMBvp
-         TiWA==
-X-Gm-Message-State: AOAM533+Px4mCY5AloKJIkLqWh7RComV6wnP3+7ERitYnXZQNlwMbYB2
-        1OYA2SEwD4RPgqC8D5MJv8E=
-X-Google-Smtp-Source: ABdhPJxmowXg0NDxMUTsjwWOYeEN/ouIAg/BQuR2y27kS5zC+cBqFm2eDK4gW0JuFeMHGisvMYxWVg==
-X-Received: by 2002:ac2:58c6:: with SMTP id u6mr1574772lfo.105.1597422187536;
-        Fri, 14 Aug 2020 09:23:07 -0700 (PDT)
-Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id v14sm1846577ljk.10.2020.08.14.09.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Aug 2020 09:23:06 -0700 (PDT)
+        bh=ZmnQ4vUhgXM2is2ULbt6oEQrTJKTXGTCE402XB71Dck=;
+        b=f7ro3F+b05bEuDvCo6+tbhx5QOGIMrsVYJ6mi+3gbpJRQclznO/sW8mBnsoZ29xSjB
+         qiqNVO/wucws44bXDWSs4NqO9IrA1XpFnYb5EY4GiurGfiKa9vkFbmt0lvtnv4Kt3W+g
+         G3PMioEEPUBU05cTcSk6kS50VTWsOtDkpJaRkdA09ThhMrbpIK3nUgE8/cWYRCvX/lM3
+         0JlQ/bb7BHnQWjLY8MXyZztAmN+3LNAkY5iog9J72TT4TLn6AZTo8w9WFOHJyGP/98TR
+         fPj+TMs5L5pqkBVdVC5XD42oYkwWXecESqrlhclysT4dj2bVs/FdU7rRzIY93LDEeClH
+         20hA==
+X-Gm-Message-State: AOAM530Z/lI4xWDCNgAFfmgq9b2m/hzUySYJ1vm/qfBiDRwKuHFXighM
+        nTHm85AWa/WKHOW3F6ZDCDFlmG0y5Sc=
+X-Google-Smtp-Source: ABdhPJxRFdX8dMKX0zpz4P0YHR+SyK3OD8HyoKXvo125A32O6XK/VTWaU2KYfAdlkk4oum8Xf4i2FQ==
+X-Received: by 2002:a05:651c:106a:: with SMTP id y10mr1705452ljm.296.1597423624384;
+        Fri, 14 Aug 2020 09:47:04 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id v23sm1992608lfa.5.2020.08.14.09.47.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Aug 2020 09:47:03 -0700 (PDT)
+Subject: Re: [PATCH v5 13/36] PM / devfreq: tegra30: Use MC timings for
+ building OPP table
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+References: <20200814000621.8415-1-digetx@gmail.com>
+ <CGME20200814000944epcas1p3dfd0104c5fa640695dfcd4949f6b1818@epcas1p3.samsung.com>
+ <20200814000621.8415-14-digetx@gmail.com>
+ <1b0d75fe-79af-70eb-8450-999a3bc72bac@samsung.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND v3] iommu/tegra-smmu: Add missing locks around mapping operations
-Date:   Fri, 14 Aug 2020 19:22:52 +0300
-Message-Id: <20200814162252.31965-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.27.0
+Message-ID: <1de8aa41-8001-cf46-026c-b00f8df0b9a3@gmail.com>
+Date:   Fri, 14 Aug 2020 19:47:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <1b0d75fe-79af-70eb-8450-999a3bc72bac@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The mapping operations of the Tegra SMMU driver are subjected to a race
-condition issues because SMMU Address Space isn't allocated and freed
-atomically, while it should be. This patch makes the mapping operations
-atomic, it fixes an accidentally released Host1x Address Space problem
-which happens while running multiple graphics tests in parallel on
-Tegra30, i.e. by having multiple threads racing with each other in the
-Host1x's submission and completion code paths, performing IOVA mappings
-and unmappings in parallel.
+14.08.2020 05:02, Chanwoo Choi пишет:
+> Hi Dmitry,
+> 
+> I add the minor comment. Except of some comments, it looks good to me.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+Hello, Chanwoo! Thank you for the review!
 
-Changelog:
+...
+>> +struct tegra_devfreq_soc_data {
+>> +	const char *mc_compatible;
+>> +};
+>> +
+>> +static const struct tegra_devfreq_soc_data tegra30_soc = {
+>> +	.mc_compatible = "nvidia,tegra30-mc",
+>> +};
+>> +
+>> +static const struct tegra_devfreq_soc_data tegra124_soc = {
+>> +	.mc_compatible = "nvidia,tegra124-mc",
+>> +};
+.
+>> +	soc_data = of_device_get_match_data(&pdev->dev);
+> 
+> I think that better to check whether 'soc_data' is not NULL.
 
-v3: - No changes. Resending for visibility, please apply.
+It's a quite common misconception among kernel developers that
+of_device_get_match_data() may "accidentally" return NULL, but it
+couldn't if every driver's of_match[] entry has a non-NULL .data field
+and because the OF-matching already happened at the driver's probe-time
+[1], which is the case of this driver.
 
-v2: - Now using mutex instead of spinlock.
+[1] https://elixir.bootlin.com/linux/v5.8/source/drivers/of/device.c#L189
 
-    - The _locked postfix is replaced with the underscores prefix.
+Hence the NULL-checking is unnecessary.
 
+When I first encountered the of_device_get_match_data(), I was also
+thinking that adding the NULL-checks is a good idea, but later on
+somebody pointed out to me (maybe Thierry) that it's unnecessary to do.
 
- drivers/iommu/tegra-smmu.c | 38 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 34 insertions(+), 4 deletions(-)
+>> +
+>> +	mc = tegra_get_memory_controller(soc_data->mc_compatible);
+>> +	if (IS_ERR(mc))
+>> +		return PTR_ERR(mc);
+> 
+> You better to add error log.
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 124c8848ab7e..4315b6381354 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -49,6 +49,7 @@ struct tegra_smmu_as {
- 	struct iommu_domain domain;
- 	struct tegra_smmu *smmu;
- 	unsigned int use_count;
-+	struct mutex lock;
- 	u32 *count;
- 	struct page **pts;
- 	struct page *pd;
-@@ -308,6 +309,8 @@ static struct iommu_domain *tegra_smmu_domain_alloc(unsigned type)
- 		return NULL;
- 	}
- 
-+	mutex_init(&as->lock);
-+
- 	/* setup aperture */
- 	as->domain.geometry.aperture_start = 0;
- 	as->domain.geometry.aperture_end = 0xffffffff;
-@@ -655,8 +658,9 @@ static void tegra_smmu_set_pte(struct tegra_smmu_as *as, unsigned long iova,
- 	smmu_flush(smmu);
- }
- 
--static int tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
--			  phys_addr_t paddr, size_t size, int prot, gfp_t gfp)
-+static int
-+__tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
-+		 phys_addr_t paddr, size_t size, int prot, gfp_t gfp)
- {
- 	struct tegra_smmu_as *as = to_smmu_as(domain);
- 	dma_addr_t pte_dma;
-@@ -685,8 +689,9 @@ static int tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
- 	return 0;
- }
- 
--static size_t tegra_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
--			       size_t size, struct iommu_iotlb_gather *gather)
-+static size_t
-+__tegra_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
-+		   size_t size, struct iommu_iotlb_gather *gather)
- {
- 	struct tegra_smmu_as *as = to_smmu_as(domain);
- 	dma_addr_t pte_dma;
-@@ -702,6 +707,31 @@ static size_t tegra_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
- 	return size;
- }
- 
-+static int tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
-+			  phys_addr_t paddr, size_t size, int prot, gfp_t gfp)
-+{
-+	struct tegra_smmu_as *as = to_smmu_as(domain);
-+	int ret;
-+
-+	mutex_lock(&as->lock);
-+	ret = __tegra_smmu_map(domain, iova, paddr, size, prot, gfp);
-+	mutex_unlock(&as->lock);
-+
-+	return ret;
-+}
-+
-+static size_t tegra_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
-+			       size_t size, struct iommu_iotlb_gather *gather)
-+{
-+	struct tegra_smmu_as *as = to_smmu_as(domain);
-+
-+	mutex_lock(&as->lock);
-+	size = __tegra_smmu_unmap(domain, iova, size, gather);
-+	mutex_unlock(&as->lock);
-+
-+	return size;
-+}
-+
- static phys_addr_t tegra_smmu_iova_to_phys(struct iommu_domain *domain,
- 					   dma_addr_t iova)
- {
--- 
-2.27.0
+In practice we should get only -EPROBE_DEFER here ever. I'll consider
+adding the message in the next revision, at least just for consistency.
+
+Thanks!
+
+...
+>>  static const struct of_device_id tegra_devfreq_of_match[] = {
+>> -	{ .compatible = "nvidia,tegra30-actmon" },
+>> -	{ .compatible = "nvidia,tegra124-actmon" },
+>> +	{ .compatible = "nvidia,tegra30-actmon",  .data = &tegra30_soc, },
+>> +	{ .compatible = "nvidia,tegra124-actmon", .data = &tegra124_soc, },
+>>  	{ },
+>>  };
+
 
