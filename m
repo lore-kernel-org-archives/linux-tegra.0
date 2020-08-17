@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6B3C433E1
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 08:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FC1C433E3
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 08:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9E2520738
+	by mail.kernel.org (Postfix) with ESMTP id E203020738
 	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 08:19:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVYLm00p"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zv4j3ZnQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbgHQIS5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Aug 2020 04:18:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51492 "EHLO
+        id S1727797AbgHQITx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Aug 2020 04:19:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbgHQISy (ORCPT
+        with ESMTP id S1726840AbgHQITq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Aug 2020 04:18:54 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C26ACC061388;
-        Mon, 17 Aug 2020 01:18:54 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id e4so7459016pjd.0;
-        Mon, 17 Aug 2020 01:18:54 -0700 (PDT)
+        Mon, 17 Aug 2020 04:19:46 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D7F5C061388;
+        Mon, 17 Aug 2020 01:19:46 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id y206so7845256pfb.10;
+        Mon, 17 Aug 2020 01:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=31As0TImtle4pJMBIPFKRSxatdRKcSvERFzrO8LgibE=;
-        b=kVYLm00pzoz/kYADfRgu3biXEv4rb/ftLTz6v+Mm2Ug1uaoBSCJnXIC+O5/vlEqHEG
-         SoN3MeizX3SsTGtWi6lLT9/XOUnxZn/8BU5hyYewUWLtJfBx1RGXKoxz0pPr7dx+pghg
-         M69hQ46jFRp9eVSk7AR9qrZQAp0f37Kc+9Kk24UnbEqn+oajrWQG3MApns/YsJSZV7qC
-         siz5ss3nuBGRrY6Mk/RvwVMbxpPKrWRPH5w8tLvplV3bADjPVgOmly7i4G9W49hfdmb5
-         /Y17AISDHxF/rZ0dkCDnZKnr/Mbd4cPQ5DApM8nSF4Yo0pFYNuJi3oYRNJIU6q03IpKG
-         IKaw==
+        bh=C5F0nnOTh5Z2C3fK8ewqMRIq3Z/HzN1bhDJR1BeVHS8=;
+        b=Zv4j3ZnQEwlXKTmQMcr9yGw2Wg9syVGPoOFVEo88aRFfTusau3D/jPmgBPE/UoEk7W
+         6hVOMVLjy3IjuqSmajCe4ICoCGHzdbeVf7neS0HcR2YvB15zP0WtFq0EwGdBnKlAumKK
+         pm4gyCCSGQB/BieYkhoO84f8+D2FscxxVCgUc6aTVRfHCkccWQAFyh99LK4NhB4I+ZQy
+         5lM9ffV8CDoqkPhd7hdzLsDaMzhLwQU/QxUNq87pEqaXMMxpEEWlxDhCCQluK5XBiIpg
+         8oLWvIoJkd8CK2/7WfDRfvxHktayMAXa1HOW8Vg+seOGKtokTogysyzUUm3IyE76OF9f
+         RuSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=31As0TImtle4pJMBIPFKRSxatdRKcSvERFzrO8LgibE=;
-        b=XzhOBVAvXld+CCkSPwN+c3BpLz5CVKDjavq7QSA3kGmAMMCT5VEt2qw9ZFKMuL25BP
-         OVOpLiI59Gkz8fic+egr5ZCZ9p9UbzjiaPwfzBHprSTpdHhLpS7tEb56KuT38zlNDyLc
-         mnwpLuLjoP9NGIuPZWyeKTjfG1Z6maKRS1Ez8TJZqzJ76PqvM67scOYlnGNtgksN76bR
-         1QqZtVwsljPg7rhlEfCnp3YSfICqNs/QDDSn1FsXFo7SXlpyJkJLeIdTbCvFqmXWekjf
-         LpPQ4W78pxT6kVosNI28glxS6asKVZyvz/+WttvOMDtk/U4Psk878MGI3RDOfrfW4qPY
-         A+Fw==
-X-Gm-Message-State: AOAM533oaQelse3mQRlYuMdZL8eBNXYMuth0BLP4ebJIeSo4IHnbqvfi
-        UNtJBtuJh8uKMiSkhQmvXrA=
-X-Google-Smtp-Source: ABdhPJwP0zc4e3EnKYz6OndviVPG8NIAeh1Tmemt35ITvR7gj8KaKxs7FZF0RqsD/VedpkC323b1fw==
-X-Received: by 2002:a17:902:e905:: with SMTP id k5mr9889863pld.342.1597652333981;
-        Mon, 17 Aug 2020 01:18:53 -0700 (PDT)
+        bh=C5F0nnOTh5Z2C3fK8ewqMRIq3Z/HzN1bhDJR1BeVHS8=;
+        b=nVAT/IAd1j6VBhyFsjUs+U7NXWrhfoaKanZfvtf0MMdDokIUxntqy0fKbqTTUg/uMG
+         8UNyfgeVw6OiJC4pDxcQiP/Oz/dnG/Quk8gow+cU0qrm6Ac5YcLitoXUWCOwdedblnJM
+         +48cNdvONcNs0cBxr23DzIk5g4OVS+p3t93H9MgHhPDxp87XSB+BF3C3KTvkHWO1Ajne
+         E9HUKGDRiIUH5n3pItIox1Mr0s/DCvwPRHWZyW2lTxkWNXgFV9d9XIS/gU+B5cN/EJVY
+         UGS5Dp+I/4KyaVmVi8D/K9Fn5uqq5uX59eny4qBDOV3Zzav+1p/Ch8V6doxvR9rS2cZQ
+         dJBg==
+X-Gm-Message-State: AOAM531zL/JBK+DC1NhtwPd7uHXRYSGce1DxhD7lPIfHy1A8rG08Vrpz
+        P2wJkrciaLUfjtlOKHvLxSE=
+X-Google-Smtp-Source: ABdhPJwNz0WCRvYD0EzUq3bpg+5UrV7v8gJCanPc+Hu+vgv/oJ4AIpPuVHmHeKtfyGccvGps8amOKg==
+X-Received: by 2002:a63:fc4b:: with SMTP id r11mr9016761pgk.342.1597652385686;
+        Mon, 17 Aug 2020 01:19:45 -0700 (PDT)
 Received: from localhost.localdomain ([49.207.202.98])
-        by smtp.gmail.com with ESMTPSA id d93sm16735334pjk.44.2020.08.17.01.18.44
+        by smtp.gmail.com with ESMTPSA id d93sm16735334pjk.44.2020.08.17.01.19.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2020 01:18:53 -0700 (PDT)
+        Mon, 17 Aug 2020 01:19:45 -0700 (PDT)
 From:   Allen Pais <allen.lkml@gmail.com>
 To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
         festevam@gmail.com, linux-imx@nxp.com, ast@kernel.org,
@@ -72,9 +72,9 @@ Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Allen Pais <allen.lkml@gmail.com>,
         Romain Perier <romain.perier@gmail.com>
-Subject: [PATCH 07/35] dma: fsl: convert tasklets to use new tasklet_setup() API
-Date:   Mon, 17 Aug 2020 13:46:58 +0530
-Message-Id: <20200817081726.20213-8-allen.lkml@gmail.com>
+Subject: [PATCH 12/35] dma: k3dma: convert tasklets to use new tasklet_setup() API
+Date:   Mon, 17 Aug 2020 13:47:03 +0530
+Message-Id: <20200817081726.20213-13-allen.lkml@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200817081726.20213-1-allen.lkml@gmail.com>
 References: <20200817081726.20213-1-allen.lkml@gmail.com>
@@ -91,60 +91,34 @@ and from_tasklet() to pass the tasklet pointer explicitly.
 Signed-off-by: Romain Perier <romain.perier@gmail.com>
 Signed-off-by: Allen Pais <allen.lkml@gmail.com>
 ---
- drivers/dma/fsl_raid.c | 6 +++---
- drivers/dma/fsldma.c   | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/dma/k3dma.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/fsl_raid.c b/drivers/dma/fsl_raid.c
-index 493dc6c59d1d..26764bf2fc6d 100644
---- a/drivers/dma/fsl_raid.c
-+++ b/drivers/dma/fsl_raid.c
-@@ -154,9 +154,9 @@ static void fsl_re_cleanup_descs(struct fsl_re_chan *re_chan)
- 	fsl_re_issue_pending(&re_chan->chan);
+diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
+index c5c1aa0dcaed..f609a84c493c 100644
+--- a/drivers/dma/k3dma.c
++++ b/drivers/dma/k3dma.c
+@@ -297,9 +297,9 @@ static int k3_dma_start_txd(struct k3_dma_chan *c)
+ 	return -EAGAIN;
  }
  
--static void fsl_re_dequeue(unsigned long data)
-+static void fsl_re_dequeue(struct tasklet_struct *t)
+-static void k3_dma_tasklet(unsigned long arg)
++static void k3_dma_tasklet(struct tasklet_struct *t)
  {
--	struct fsl_re_chan *re_chan;
-+	struct fsl_re_chan *re_chan from_tasklet(re_chan, t, irqtask);
- 	struct fsl_re_desc *desc, *_desc;
- 	struct fsl_re_hw_desc *hwdesc;
- 	unsigned long flags;
-@@ -671,7 +671,7 @@ static int fsl_re_chan_probe(struct platform_device *ofdev,
- 	snprintf(chan->name, sizeof(chan->name), "re_jr%02d", q);
+-	struct k3_dma_dev *d = (struct k3_dma_dev *)arg;
++	struct k3_dma_dev *d = from_tasklet(d, t, task);
+ 	struct k3_dma_phy *p;
+ 	struct k3_dma_chan *c, *cn;
+ 	unsigned pch, pch_alloc = 0;
+@@ -962,7 +962,7 @@ static int k3_dma_probe(struct platform_device *op)
  
- 	chandev = &chan_ofdev->dev;
--	tasklet_init(&chan->irqtask, fsl_re_dequeue, (unsigned long)chandev);
-+	tasklet_setup(&chan->irqtask, fsl_re_dequeue);
+ 	spin_lock_init(&d->lock);
+ 	INIT_LIST_HEAD(&d->chan_pending);
+-	tasklet_init(&d->task, k3_dma_tasklet, (unsigned long)d);
++	tasklet_setup(&d->task, k3_dma_tasklet);
+ 	platform_set_drvdata(op, d);
+ 	dev_info(&op->dev, "initialized\n");
  
- 	ret = request_irq(chan->irq, fsl_re_isr, 0, chan->name, chandev);
- 	if (ret) {
-diff --git a/drivers/dma/fsldma.c b/drivers/dma/fsldma.c
-index ad72b3f42ffa..3ce9cf3d62f5 100644
---- a/drivers/dma/fsldma.c
-+++ b/drivers/dma/fsldma.c
-@@ -976,9 +976,9 @@ static irqreturn_t fsldma_chan_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static void dma_do_tasklet(unsigned long data)
-+static void dma_do_tasklet(struct tasklet_struct *t)
- {
--	struct fsldma_chan *chan = (struct fsldma_chan *)data;
-+	struct fsldma_chan *chan = from_tasklet(chan, t, tasklet);
- 
- 	chan_dbg(chan, "tasklet entry\n");
- 
-@@ -1151,7 +1151,7 @@ static int fsl_dma_chan_probe(struct fsldma_device *fdev,
- 	}
- 
- 	fdev->chan[chan->id] = chan;
--	tasklet_init(&chan->tasklet, dma_do_tasklet, (unsigned long)chan);
-+	tasklet_setup(&chan->tasklet, dma_do_tasklet);
- 	snprintf(chan->name, sizeof(chan->name), "chan%d", chan->id);
- 
- 	/* Initialize the channel */
 -- 
 2.17.1
 
