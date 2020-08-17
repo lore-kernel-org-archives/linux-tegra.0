@@ -2,128 +2,169 @@ Return-Path: <SRS0=aXVp=B3=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03725C433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 08:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D1FC433E3
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 08:17:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D39A5207FF
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 08:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D459820738
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 08:17:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="MTvnrvwF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="onQhzXUQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbgHQIHw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Aug 2020 04:07:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49756 "EHLO
+        id S1726324AbgHQIRv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Aug 2020 04:17:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbgHQIHv (ORCPT
+        with ESMTP id S1726196AbgHQIRs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Aug 2020 04:07:51 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A67C061388;
-        Mon, 17 Aug 2020 01:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=r7WbGzVtm2oC9CC43sPiWDFsv7kDRIWvlltobQO6A+U=; b=MTvnrvwFrm8JUFBGiuWBndScrq
-        JtZX0nZCAXs2TvZ6DhMZb16U2PsRt6EpipQQvWj8VHEa6uJ+7un7ppeRx+2K79FZFTaEqKgeIL20i
-        mbsDurpS+JVUYYT7eWf1fZiTcqKtk3mn2/H28GyEMu6awfR7hmhwYpNTS76n+hzsO6z+Q/BLT0pVa
-        SXShP5BHVvZFg4BRT7I4iT9/trRQM5Ckw+p8BvnMiybPCUiPO15t7Wp3mz+GFL5hUHaT46Qd/NalV
-        Z1ILyYf+I87Jc86po7WHH+nhyC5a6ptUS4m12E6dyYle6ygAP95390S8j+mxk2ys0aQXuSDc5WjiG
-        Hy8wCXNQ==;
-Received: from dsl-hkibng22-54faab-65.dhcp.inet.fi ([84.250.171.65] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1k7aBJ-0005Yn-3l; Mon, 17 Aug 2020 11:07:49 +0300
-Subject: Re: Role of DMA Heaps vs GEM in allocation
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <57062477-30e7-a3de-6723-a50d03a402c4@kapsi.fi>
- <CALAqxLX4J4bykRis3=Q2Q54Fe1o7A7nFH3Yfjbi-kNXOQPrQpw@mail.gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <186bd573-a6d8-f88c-d87d-bfe766f1fb24@kapsi.fi>
-Date:   Mon, 17 Aug 2020 11:07:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <CALAqxLX4J4bykRis3=Q2Q54Fe1o7A7nFH3Yfjbi-kNXOQPrQpw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.250.171.65
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+        Mon, 17 Aug 2020 04:17:48 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 043C9C061388;
+        Mon, 17 Aug 2020 01:17:48 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id f5so7119656plr.9;
+        Mon, 17 Aug 2020 01:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=dcFVRpNADqEtdLi4FpRtkurfxDiB5cQRK9Dfdg9x+Fk=;
+        b=onQhzXUQgU/a+5iv1eiedq708N2qUvbb9hLqPwbNcMZbrafaVgtTLqod6W5S5EvgwW
+         ia2Ga+2FDUNHJJUlvHy5eBfliIeLogU4Wi1w83nBad7XrSZfGbQDw8JL6oyYw8RaTYtb
+         GOxydtPyCELUViaGBMuJFHCNSjMyLoNfpvRMuQgrxT2UY8A3e6JIUTqyPNMAL7rw2Z/z
+         jRmxaeFeF106x1RJs9MwNGIRcjt7SYVS8LunMdKQB2V5M7ITp8JAW4VZ0O73s28t9dSG
+         M8mTaGTmh1K0jOh4sD2d3fwjxfMBFzh2nP52Yc87N5AUdfK33PUFRxYhs2yKIAgHNHgo
+         Nr0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dcFVRpNADqEtdLi4FpRtkurfxDiB5cQRK9Dfdg9x+Fk=;
+        b=he1y93ymJzIHac9nBGCvAf+MmDd3zg3JrjQdD+UUAP9hkdL62S68lFgRVX7fn+luQQ
+         /lXzUUZWxpbL/U2Hh1lUd/SFZX/EC0c3ps3GRghX5wxVNFOq0H3eELvxMwXorPpkooGu
+         zvN5zljIQl2DGmCG7qkmrsTVeZKDe94jd0IfzVfHxUbttfD786nfD69+xQAtlitPlUCe
+         /bI4L81x49hmEgb18Qieq6iV41J5N+K0sT/Czt+L63LbvE8dyPDmLq7vHsZR+X36ZPWC
+         3k+hZPOZliRmRoqmaiH4GXrgOJzpwlwCvnnMEJsjpj2WWkwMrcHsauMRn5NWM0Pz30YK
+         K0Ng==
+X-Gm-Message-State: AOAM533H88ZZiWXke4AHt5nvQIPSKbiYJ5OHCNdk6N3mXvINLfC+TIkL
+        HiLt5o3Ibw0EAmRsMKF1BB8=
+X-Google-Smtp-Source: ABdhPJzb4y/jT+CQHEdRjViuIc33Qdx/u/JnZxpHs/hd00NvayTZxHDE23pPiqS7tepaKyIUna7B1Q==
+X-Received: by 2002:a17:90b:3603:: with SMTP id ml3mr11555104pjb.207.1597652267552;
+        Mon, 17 Aug 2020 01:17:47 -0700 (PDT)
+Received: from localhost.localdomain ([49.207.202.98])
+        by smtp.gmail.com with ESMTPSA id d93sm16735334pjk.44.2020.08.17.01.17.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Aug 2020 01:17:47 -0700 (PDT)
+From:   Allen Pais <allen.lkml@gmail.com>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, ast@kernel.org,
+        daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com,
+        yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com,
+        kpsingh@chromium.org, baohua@kernel.org, mripard@kernel.org,
+        wens@csie.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        michal.simek@xilinx.com, matthias.bgg@gmail.com
+Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Allen Pais <allen.lkml@gmail.com>
+Subject: [PATCH 00/35] dma: convert tasklets to use new tasklet_setup()
+Date:   Mon, 17 Aug 2020 13:46:51 +0530
+Message-Id: <20200817081726.20213-1-allen.lkml@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 8/14/20 11:53 PM, John Stultz wrote:
-> On Fri, Aug 14, 2020 at 3:59 AM Mikko Perttunen <cyndis@kapsi.fi> wrote:
->>
->> I'm currently working on a new UAPI for Host1x/TegraDRM (see first draft
->> in thread "[RFC] Host1x/TegraDRM UAPI"[1]). One question that has come
->> up is regarding the buffer allocation mechanism. Traditionally, DRM
->> drivers provide custom GEM allocation IOCTLs. However, we now have DMA
->> Heaps, which would be sufficient for TegraDRM's needs, so we could skip
->> implementing any GEM IOCTLs in the TegraDRM UAPI, and rely on importing
->> DMA-BUFs. This would mean less code on TegraDRM's side.
->>
->> However, one complication with using DMA Heaps is that it only provides
->> DMA-BUF FDs, so it is possible that a user application could run out of
->> free file descriptors if it is not adjusting its soft FD limit. This
->> would especially be a problem for existing applications that might have
->> worked with the traditional GEM model and didn't need to adjust their FD
->> limits, but would then fail in some situations with the increased FD
->> usage of DMA-BUF FDs.
-> 
-> I'm not sure exactly if this would help, but I am working on some
-> exploratory tweaks to DMA BUF Heaps so that there could be an
-> in-kernel accessor that returns a struct dma_buf instead of a fd.
-> 
-> This is motivated as some folks want to use DMA BUF Heaps (if I
-> understand your approach) in a similar fashion, where the driver wants
-> to generate a DMA BUF but doesn't want to create their own DMA BUF
-> exporter which would duplicate one of the DMA BUF Heaps.
-> 
-> I'm a little mixed on this as part of the reason DMA BUF Heaps exists
-> as a userland interface is because its userland which knows the path
-> that a buffer will take, so userland is in the best position to
-> understand what type of buffer it needs to allocate. It seems to me
-> that drivers should instead import a buffer provided to them from
-> userland to fill, rather than allocating a buffer from a heap they
-> choose (which may constraint later use of that buffer). But, I also
-> grant that drivers implementing their own DMA BUF exporters that
-> duplicate existing code is silly, so having in-kernel allocation
-> interfaces may be reasonable.
-> 
-> However, the efforts are also somewhat blocked on having a public
-> in-kernel user of such an interface, so they are basically only
-> exploratory at the moment. So if you have an in-kernel user interested
-> in something like this, I'd be glad to get further input.
-> 
-> This probably doesn't help answer your question wrt to GEM, and I'd
-> defer to Daniel there. :)
+Commit 12cc923f1ccc ("tasklet: Introduce new initialization API")'
+introduced a new tasklet initialization API. This series converts 
+all the dma drivers to use the new tasklet_setup() API
 
-I think TegraDRM doesn't have a particular need for that (at least in 
-its current state), since it already needs GEMs, and has the GEM 
-infrastructure from DRM to lean on.
 
-Thanks for the information, anyway :)
+Allen Pais (35):
+  dma: altera-msgdma: convert tasklets to use new tasklet_setup() API
+  dma: at_hdmac: convert tasklets to use new tasklet_setup() API
+  dma: at_xdmac: convert tasklets to use new tasklet_setup() API
+  dma: coh901318: convert tasklets to use new tasklet_setup() API
+  dma: dw: convert tasklets to use new tasklet_setup() API
+  dma: ep93xx: convert tasklets to use new tasklet_setup() API
+  dma: fsl: convert tasklets to use new tasklet_setup() API
+  dma: imx-dma: convert tasklets to use new tasklet_setup() API
+  dma: ioat: convert tasklets to use new tasklet_setup() API
+  dma: iop_adma: convert tasklets to use new tasklet_setup() API
+  dma: ipu: convert tasklets to use new tasklet_setup() API
+  dma: k3dma: convert tasklets to use new tasklet_setup() API
+  dma: mediatek: convert tasklets to use new tasklet_setup() API
+  dma: mmp: convert tasklets to use new tasklet_setup() API
+  dma: mpc512x: convert tasklets to use new tasklet_setup() API
+  dma: mv_xor: convert tasklets to use new tasklet_setup() API
+  dma: mxs-dma: convert tasklets to use new tasklet_setup() API
+  dma: nbpfaxi: convert tasklets to use new tasklet_setup() API
+  dma: pch_dma: convert tasklets to use new tasklet_setup() API
+  dma: pl330: convert tasklets to use new tasklet_setup() API
+  dma: ppc4xx: convert tasklets to use new tasklet_setup() API
+  dma: qcom: convert tasklets to use new tasklet_setup() API
+  dma: sa11x0: convert tasklets to use new tasklet_setup() API
+  dma: sirf-dma: convert tasklets to use new tasklet_setup() API
+  dma: ste_dma40: convert tasklets to use new tasklet_setup() API
+  dma: sun6i: convert tasklets to use new tasklet_setup() API
+  dma: tegra20: convert tasklets to use new tasklet_setup() API
+  dma: timb_dma: convert tasklets to use new tasklet_setup() API
+  dma: txx9dmac: convert tasklets to use new tasklet_setup() API
+  dma: virt-dma: convert tasklets to use new tasklet_setup() API
+  dma: xgene: convert tasklets to use new tasklet_setup() API
+  dma: xilinx: convert tasklets to use new tasklet_setup() API
+  dma: plx_dma: convert tasklets to use new tasklet_setup() API
+  dma: sf-pdma: convert tasklets to use new tasklet_setup() API
+  dma: k3-udma: convert tasklets to use new tasklet_setup() API
 
-> 
-> thanks
-> -john
-> 
+ drivers/dma/altera-msgdma.c      |  6 +++---
+ drivers/dma/at_hdmac.c           |  7 +++----
+ drivers/dma/at_xdmac.c           |  5 ++---
+ drivers/dma/coh901318.c          |  7 +++----
+ drivers/dma/dw/core.c            |  6 +++---
+ drivers/dma/ep93xx_dma.c         |  7 +++----
+ drivers/dma/fsl_raid.c           |  6 +++---
+ drivers/dma/fsldma.c             |  6 +++---
+ drivers/dma/imx-dma.c            |  7 +++----
+ drivers/dma/ioat/dma.c           |  6 +++---
+ drivers/dma/ioat/dma.h           |  2 +-
+ drivers/dma/ioat/init.c          |  4 +---
+ drivers/dma/iop-adma.c           |  8 ++++----
+ drivers/dma/ipu/ipu_idmac.c      |  6 +++---
+ drivers/dma/k3dma.c              |  6 +++---
+ drivers/dma/mediatek/mtk-cqdma.c |  7 +++----
+ drivers/dma/mmp_pdma.c           |  6 +++---
+ drivers/dma/mmp_tdma.c           |  6 +++---
+ drivers/dma/mpc512x_dma.c        |  6 +++---
+ drivers/dma/mv_xor.c             |  7 +++----
+ drivers/dma/mv_xor_v2.c          |  8 ++++----
+ drivers/dma/mxs-dma.c            |  7 +++----
+ drivers/dma/nbpfaxi.c            |  6 +++---
+ drivers/dma/pch_dma.c            |  7 +++----
+ drivers/dma/pl330.c              | 12 ++++++------
+ drivers/dma/plx_dma.c            |  7 +++----
+ drivers/dma/ppc4xx/adma.c        |  7 +++----
+ drivers/dma/qcom/bam_dma.c       |  6 +++---
+ drivers/dma/qcom/hidma.c         |  6 +++---
+ drivers/dma/qcom/hidma_ll.c      |  6 +++---
+ drivers/dma/sa11x0-dma.c         |  6 +++---
+ drivers/dma/sf-pdma/sf-pdma.c    | 14 ++++++--------
+ drivers/dma/sirf-dma.c           |  6 +++---
+ drivers/dma/ste_dma40.c          |  7 +++----
+ drivers/dma/sun6i-dma.c          |  6 +++---
+ drivers/dma/tegra20-apb-dma.c    |  7 +++----
+ drivers/dma/ti/k3-udma.c         |  7 +++----
+ drivers/dma/timb_dma.c           |  6 +++---
+ drivers/dma/txx9dmac.c           | 14 ++++++--------
+ drivers/dma/virt-dma.c           |  6 +++---
+ drivers/dma/xgene-dma.c          |  7 +++----
+ drivers/dma/xilinx/xilinx_dma.c  |  7 +++----
+ drivers/dma/xilinx/zynqmp_dma.c  |  6 +++---
+ 43 files changed, 135 insertions(+), 157 deletions(-)
 
-Mikko
+-- 
+2.17.1
+
