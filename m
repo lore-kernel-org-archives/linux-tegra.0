@@ -2,124 +2,98 @@ Return-Path: <SRS0=aXVp=B3=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A49C433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 08:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83414C433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 18:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DC5D20658
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 08:24:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjvdAoYo"
+	by mail.kernel.org (Postfix) with ESMTP id 5C8152053B
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 18:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597688920;
+	bh=v2OMfKFCgf6E9GjrAHGZn7aVSe17HMAe+d9TeVSkkk8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vq3CNf2oUKikMEPcR4CIbNDsYZ/6KvPcvqrz8cRp8iizBkhoGCO73xnNIe38bNdpm
+	 mlzaEtUmNewEWQjUA3wtLxv/3NxQ9BUa7aqXYQvVZM9ZJ7l2tMlg54DEneJiD1TUI6
+	 KRhOkK8KbDgvODMqhyyQyCq3j55jJi2lZqr1q++g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727971AbgHQIVW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Aug 2020 04:21:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51876 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbgHQIVR (ORCPT
+        id S2390754AbgHQS2G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Aug 2020 14:28:06 -0400
+Received: from mail-ej1-f42.google.com ([209.85.218.42]:46672 "EHLO
+        mail-ej1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390989AbgHQS1n (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Aug 2020 04:21:17 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3D98C061388;
-        Mon, 17 Aug 2020 01:21:16 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id t6so7343341pjr.0;
-        Mon, 17 Aug 2020 01:21:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=y9TFyb5YPU9meSmmE+/B5Cy2MtU4Ivp78FeC1LNG7+4=;
-        b=KjvdAoYou4ybaWcAads3ZK4SvLiE31HbsHKajely8IWfAQdMn/OSyMaY3js7C7Ht8H
-         i/qCUkOyKDkjLNCAwIYxcnlQGSLxjCkEcE152V3EDZTRpOEbW08rDrNuuqzcUb5C2yI5
-         krHyqEmaDLqw6LYtAhr4BmFpFxKLFqaIzoXd3kKOja4G0vAqHho4VIGCOha30JuEs/1l
-         /ci2DECl5T9mgtDOhF1NpiC0yOq8h/NRmi4q8Ul+UFZH+AJqvt1m7I9ZZe5GTZ4iVICN
-         HB9ZSWz9nm28pjeTzk/T8DJsGKGRLeR2RaLpdJ0p07D7vPszP148/HV+dFZkZt7u0G/Y
-         EF+w==
+        Mon, 17 Aug 2020 14:27:43 -0400
+Received: by mail-ej1-f42.google.com with SMTP id p24so18905820ejf.13;
+        Mon, 17 Aug 2020 11:27:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=y9TFyb5YPU9meSmmE+/B5Cy2MtU4Ivp78FeC1LNG7+4=;
-        b=gRTr1L/QldapkW7tIDUEHxvUVM4NKpyklBCEp/RD6+1TlfzbIvij4p/uDe00tLDoV5
-         qjAxXwEJl5KRFMbzrE9aGxIWznje62ar+qmgh6LO+puxBSzNPYLdA9IN1j2Md5l7wDR5
-         ZLcgm4SG+0rLVG1aJ4PX+OcRR0PvOaUkN6EUQ/XeSrv13tAKYbIKCbHqjDmws2TYLkp7
-         sTK8gRfPFWk4Q207sQqFL7qmUfSAYPiOlBY3exiJ2AvR/jq/5ZAlxDJho7VFSf+4H4qQ
-         TxqAi7mvGFVMpD+dQZV8vJkKfw+vwpH8yH3ZecIoC6sJAYR1dk1o8YL2GsDwnDjRVrJj
-         L59w==
-X-Gm-Message-State: AOAM533TG2NELjHyZiIRn5VCs02pI/iFAg4Emyi5NgOQ4H/3Tr6rJWIz
-        vangB+6TX9D7vQ66nEKxnyA=
-X-Google-Smtp-Source: ABdhPJz3s3uZbr2e0/pl68cyu2TvshN2/ql+aVmWQNdSIKkRhrV2ij/yHaGbIZqOmjwusPAgdTGx9w==
-X-Received: by 2002:a17:902:8648:: with SMTP id y8mr10178303plt.91.1597652476410;
-        Mon, 17 Aug 2020 01:21:16 -0700 (PDT)
-Received: from localhost.localdomain ([49.207.202.98])
-        by smtp.gmail.com with ESMTPSA id d93sm16735334pjk.44.2020.08.17.01.21.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2020 01:21:15 -0700 (PDT)
-From:   Allen Pais <allen.lkml@gmail.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, ast@kernel.org,
-        daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com,
-        yhs@fb.com, andriin@fb.com, john.fastabend@gmail.com,
-        kpsingh@chromium.org, baohua@kernel.org, mripard@kernel.org,
-        wens@csie.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        michal.simek@xilinx.com, matthias.bgg@gmail.com
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Allen Pais <allen.lkml@gmail.com>,
-        Romain Perier <romain.perier@gmail.com>
-Subject: [PATCH 21/35] dma: ppc4xx: convert tasklets to use new tasklet_setup() API
-Date:   Mon, 17 Aug 2020 13:47:12 +0530
-Message-Id: <20200817081726.20213-22-allen.lkml@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200817081726.20213-1-allen.lkml@gmail.com>
-References: <20200817081726.20213-1-allen.lkml@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=In/lRzRecPXlJCsCXOUKVII8Zjza+KgDgAZ3qlg6NBY=;
+        b=BiNY0ojzti9yNUev2nTtLyzk6JZBBxmgIw+89KBTyFJPtrX4kouSN9kpSTK7LkIxw2
+         j9Pz/Kg8ccOg85UkfG1JklsNWKqwEDcH9s8+uPDlQJOZHK167K1pIqFzxB2EIaHNnu/7
+         Izz4hP5YEr1K9D+smmSYDxyTr1LGSLPOCTNxeCT0GSo8fk8BhNySaDqd11UjPliaEV+W
+         W4NvxcEExhA5BhevjU8msrwXKn20Fqx8SARrPe//BecWqABRKi3H5j+Dru1/PmLoX+kN
+         dSYZGIbBYfxJJYyNJPxhrShNpqExYZzTAA/3lu70IktG29rcgmR3OSnN9XkFPUqMdKKr
+         xmxg==
+X-Gm-Message-State: AOAM530o9Q1Rio42tofLoq3ofktyTaDx9pf01Fb89irFHehNi0hx584A
+        lUqKIcjqFLpdj7UPrbvfa+g=
+X-Google-Smtp-Source: ABdhPJzlp7hrM7e8yK6q4U5Xo1UPtQg4hALTTyDbMtxYuqmsunf77TyReaLSnblPdWrAoapQvk48kw==
+X-Received: by 2002:a17:906:54d3:: with SMTP id c19mr17313272ejp.408.1597688861304;
+        Mon, 17 Aug 2020 11:27:41 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.216])
+        by smtp.googlemail.com with ESMTPSA id p12sm13037482edt.27.2020.08.17.11.27.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Aug 2020 11:27:40 -0700 (PDT)
+Date:   Mon, 17 Aug 2020 20:27:36 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Markus Mayer <mmayer@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFT v2 01/29] memory: omap-gpmc: Remove unneeded
+ asm/mach-types.h inclusion
+Message-ID: <20200817182736.GA3464@kozik-lap>
+References: <20200724074038.5597-1-krzk@kernel.org>
+ <20200724074038.5597-2-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200724074038.5597-2-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In preparation for unconditionally passing the
-struct tasklet_struct pointer to all tasklet
-callbacks, switch to using the new tasklet_setup()
-and from_tasklet() to pass the tasklet pointer explicitly.
+On Fri, Jul 24, 2020 at 09:40:10AM +0200, Krzysztof Kozlowski wrote:
+> The driver does not use macros from asm/mach-types.h (neither MACH_TYPE
+> nor machine_is_xxx()).  Removal of this include allows compile testing
+> on non-ARM architectures which lack this header.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/memory/omap-gpmc.c | 2 --
 
-Signed-off-by: Romain Perier <romain.perier@gmail.com>
-Signed-off-by: Allen Pais <allen.lkml@gmail.com>
----
- drivers/dma/ppc4xx/adma.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Applied to drivers/memory tree.
 
-diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
-index 4db000d5f01c..71cdaaa8134c 100644
---- a/drivers/dma/ppc4xx/adma.c
-+++ b/drivers/dma/ppc4xx/adma.c
-@@ -1660,9 +1660,9 @@ static void __ppc440spe_adma_slot_cleanup(struct ppc440spe_adma_chan *chan)
- /**
-  * ppc440spe_adma_tasklet - clean up watch-dog initiator
-  */
--static void ppc440spe_adma_tasklet(unsigned long data)
-+static void ppc440spe_adma_tasklet(struct tasklet_struct *t)
- {
--	struct ppc440spe_adma_chan *chan = (struct ppc440spe_adma_chan *) data;
-+	struct ppc440spe_adma_chan *chan = from_tasklet(chan, t, irq_tasklet);
- 
- 	spin_lock_nested(&chan->lock, SINGLE_DEPTH_NESTING);
- 	__ppc440spe_adma_slot_cleanup(chan);
-@@ -4141,8 +4141,7 @@ static int ppc440spe_adma_probe(struct platform_device *ofdev)
- 	chan->common.device = &adev->common;
- 	dma_cookie_init(&chan->common);
- 	list_add_tail(&chan->common.device_node, &adev->common.channels);
--	tasklet_init(&chan->irq_tasklet, ppc440spe_adma_tasklet,
--		     (unsigned long)chan);
-+	tasklet_setup(&chan->irq_tasklet, ppc440spe_adma_tasklet);
- 
- 	/* allocate and map helper pages for async validation or
- 	 * async_mult/async_sum_product operations on DMA0/1.
--- 
-2.17.1
+Best regards,
+Krzysztof
 
