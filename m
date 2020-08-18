@@ -2,102 +2,175 @@ Return-Path: <SRS0=fNvp=B4=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B72C433E1
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 12:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAD9C433DF
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 13:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B29E720786
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 12:52:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="G8g1tzOJ"
+	by mail.kernel.org (Postfix) with ESMTP id 3F45D206B5
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 13:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597757845;
+	bh=7GfMx+3DL1strby6wKxSFzxulPkZi4asMsiaClpBxe8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=D61tO5iY7U1a3eN16cPHmx7u1p1o+t1+U0NxFCYN/7G9FvTBpDBq6b4gG+mjjf2+e
+	 VG0avopL1bLHZrqcXiLtHj05P+eQPOns0WiPlJUOum8xh2E7y+8eLAYZogmwMEgvnk
+	 GPcnfP3OKhnc8RzoJIvApzxD7pdF+7A9GSxQBRpE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbgHRMwu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Aug 2020 08:52:50 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:10162 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726932AbgHRMwl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Aug 2020 08:52:41 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1597755161; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=AJEe/qRZ45RZeh5yzMAs+NsXlJGYmx+mOLYSkXXDB/A=;
- b=G8g1tzOJL9vMaDa39UPjV6LzJ1hqbsorVexAHj29PHY3N/zexm6Kf0OzTjbdR4NYFBhoMKuW
- r7iZ3egI2N+xeCy1LYnwoo93vjtLmNOhMFrJNW5cAko3kPYbvaOrXmHHW8jPW7R50xJRd9NA
- WiCqa7a46pB3Id4gLO5LyQN6K0s=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI0ODE0OSIsICJsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 5f3bcf0c2889723bf8b92ddb (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 18 Aug 2020 12:52:28
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 4CFD3C433AF; Tue, 18 Aug 2020 12:52:28 +0000 (UTC)
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        id S1726633AbgHRNhX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Aug 2020 09:37:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46524 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726542AbgHRNhT (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 18 Aug 2020 09:37:19 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A4268C433C6;
-        Tue, 18 Aug 2020 12:52:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A4268C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        by mail.kernel.org (Postfix) with ESMTPSA id F358F206B5;
+        Tue, 18 Aug 2020 13:37:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597757838;
+        bh=7GfMx+3DL1strby6wKxSFzxulPkZi4asMsiaClpBxe8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bYw3M+Bw2yipIZCR47U4l57CfeltMX1PWV/R1cnD7Fp91pcNd8BT4CPuHm+/Anla0
+         xKjePM0rjqfW070Eq4RArDJl6QDYIy6z1MrKBj0ImWYj3u5mB5sSOm12Tmuow8RawY
+         aIkEFpX4Fh8HlV7Xmg6bktJti+v4hn8TfmdAHX5U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: tegra: no need to check return value of debugfs_create functions
+Date:   Tue, 18 Aug 2020 15:37:39 +0200
+Message-Id: <20200818133739.463193-1-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] mwifiex: Do not use GFP_KERNEL in atomic context
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20200809092906.744621-1-christophe.jaillet@wanadoo.fr>
-References: <20200809092906.744621-1-christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     amitkarwar@gmail.com, ganapathi.bhat@nxp.com,
-        huxinming820@gmail.com, davem@davemloft.net, kuba@kernel.org,
-        yogeshp@marvell.com, bzhao@marvell.com, linville@tuxdriver.com,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
-Message-Id: <20200818125228.4CFD3C433AF@smtp.codeaurora.org>
-Date:   Tue, 18 Aug 2020 12:52:28 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-> A possible call chain is as follow:
->   mwifiex_sdio_interrupt                            (sdio.c)
->     --> mwifiex_main_process                        (main.c)
->       --> mwifiex_process_cmdresp                   (cmdevt.c)
->         --> mwifiex_process_sta_cmdresp             (sta_cmdresp.c)
->           --> mwifiex_ret_802_11_scan               (scan.c)
->             --> mwifiex_parse_single_response_buf   (scan.c)
-> 
-> 'mwifiex_sdio_interrupt()' is an interrupt function.
-> 
-> Also note that 'mwifiex_ret_802_11_scan()' already uses GFP_ATOMIC.
-> 
-> So use GFP_ATOMIC instead of GFP_KERNEL when memory is allocated in
-> 'mwifiex_parse_single_response_buf()'.
-> 
-> Fixes: 7c6fa2a843c5 ("mwifiex: use cfg80211 dynamic scan table and cfg80211_get_bss API")
-> or
-> Fixes: 601216e12c65e ("mwifiex: process RX packets in SDIO IRQ thread directly")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Vidya Sagar <vidyas@nvidia.com>
+Cc: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-pci@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 20 +++++------------
+ drivers/pci/controller/pci-tegra.c         | 25 +++++-----------------
+ 2 files changed, 10 insertions(+), 35 deletions(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-d2ab7f00f432 mwifiex: Do not use GFP_KERNEL in atomic context
-
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 70498689d0c0..87f8dd63df0a 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -699,23 +699,16 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
+ 	dw_pcie_writel_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL, val);
+ }
+ 
+-static int init_debugfs(struct tegra_pcie_dw *pcie)
++static void init_debugfs(struct tegra_pcie_dw *pcie)
+ {
+-	struct dentry *d;
+-
+-	d = debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt",
+-					pcie->debugfs, aspm_state_cnt);
+-	if (IS_ERR_OR_NULL(d))
+-		dev_err(pcie->dev,
+-			"Failed to create debugfs file \"aspm_state_cnt\"\n");
+-
+-	return 0;
++	debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt", pcie->debugfs,
++				    aspm_state_cnt);
+ }
+ #else
+ static inline void disable_aspm_l12(struct tegra_pcie_dw *pcie) { return; }
+ static inline void disable_aspm_l11(struct tegra_pcie_dw *pcie) { return; }
+ static inline void init_host_aspm(struct tegra_pcie_dw *pcie) { return; }
+-static inline int init_debugfs(struct tegra_pcie_dw *pcie) { return 0; }
++static inline void init_debugfs(struct tegra_pcie_dw *pcie) { return; }
+ #endif
+ 
+ static void tegra_pcie_enable_system_interrupts(struct pcie_port *pp)
+@@ -1641,10 +1634,7 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+ 	}
+ 
+ 	pcie->debugfs = debugfs_create_dir(name, NULL);
+-	if (!pcie->debugfs)
+-		dev_err(dev, "Failed to create debugfs\n");
+-	else
+-		init_debugfs(pcie);
++	init_debugfs(pcie);
+ 
+ 	return ret;
+ 
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index c1d34353c29b..e1a6f9db36f7 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2601,24 +2601,12 @@ static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
+ 	pcie->debugfs = NULL;
+ }
+ 
+-static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
++static void tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
+ {
+-	struct dentry *file;
+-
+ 	pcie->debugfs = debugfs_create_dir("pcie", NULL);
+-	if (!pcie->debugfs)
+-		return -ENOMEM;
+-
+-	file = debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs,
+-				   pcie, &tegra_pcie_ports_ops);
+-	if (!file)
+-		goto remove;
+-
+-	return 0;
+ 
+-remove:
+-	tegra_pcie_debugfs_exit(pcie);
+-	return -ENOMEM;
++	debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs, pcie,
++			    &tegra_pcie_ports_ops);
+ }
+ 
+ static int tegra_pcie_probe(struct platform_device *pdev)
+@@ -2672,11 +2660,8 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 		goto pm_runtime_put;
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+-		err = tegra_pcie_debugfs_init(pcie);
+-		if (err < 0)
+-			dev_err(dev, "failed to setup debugfs: %d\n", err);
+-	}
++	if (IS_ENABLED(CONFIG_DEBUG_FS))
++		tegra_pcie_debugfs_init(pcie);
+ 
+ 	return 0;
+ 
 -- 
-https://patchwork.kernel.org/patch/11706587/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.28.0
 
