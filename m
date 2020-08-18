@@ -2,359 +2,95 @@ Return-Path: <SRS0=fNvp=B4=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CDAC433E1
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 09:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F2EC433E1
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 09:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1327720786
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 09:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D31B620789
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 09:51:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UryaiNCJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6X8c2ob"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbgHRJUc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Aug 2020 05:20:32 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36254 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726043AbgHRJUb (ORCPT
+        id S1726568AbgHRJvl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Aug 2020 05:51:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbgHRJvk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Aug 2020 05:20:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597742429;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=xSCOP8wykTX8rw1Lrf0j5AZQYJ2Q0tirGIG9eXW9mxE=;
-        b=UryaiNCJ96W7U1ZAhg3W3oUcj+Ca8PJ3TvtxNDoDmUNrAzSpq00KIT0XHeCeDLf982Fld8
-        Hn5G+YHhOgwJtbVCC1wnILjOqUHbxNCMoTJoLYMzcZ1EJdzRWi48HmbHDAdWnf5Hhvmwp7
-        p3LX2bOOmfbwubw87Elvakp01Af23eo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-485-vJEi5jTHNoivX51nQ0FcGw-1; Tue, 18 Aug 2020 05:20:27 -0400
-X-MC-Unique: vJEi5jTHNoivX51nQ0FcGw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D969E81F012;
-        Tue, 18 Aug 2020 09:20:22 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-112-195.ams2.redhat.com [10.36.112.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 17A7D5D9D2;
-        Tue, 18 Aug 2020 09:20:19 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 32D199CBD; Tue, 18 Aug 2020 11:20:18 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     christian.koenig@amd.com, Gerd Hoffmann <kraxel@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
-        linux-kernel@vger.kernel.org (open list),
-        etnaviv@lists.freedesktop.org (moderated list:DRM DRIVERS FOR VIVANTE
-        GPU IP),
-        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
-        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
-        GPU),
-        nouveau@lists.freedesktop.org (open list:DRM DRIVER FOR NVIDIA
-        GEFORCE/QUADRO GPUS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC
-        support),
-        linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
-        linux-tegra@vger.kernel.org (open list:DRM DRIVERS FOR NVIDIA TEGRA),
-        xen-devel@lists.xenproject.org (moderated list:DRM DRIVERS FOR XEN)
-Subject: [PATCH v2 1/2] drm: allow limiting the scatter list size.
-Date:   Tue, 18 Aug 2020 11:20:16 +0200
-Message-Id: <20200818092017.26290-2-kraxel@redhat.com>
-In-Reply-To: <20200818092017.26290-1-kraxel@redhat.com>
-References: <20200818092017.26290-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        Tue, 18 Aug 2020 05:51:40 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19D82C061389;
+        Tue, 18 Aug 2020 02:51:39 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id q19so8987018pll.0;
+        Tue, 18 Aug 2020 02:51:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=otPLqEhEC4NADyAIXZYXJ4OVE7liq3XA4AadgS4L4Qs=;
+        b=K6X8c2obreQMmDBXJBce/QrrUC4LvAtZCEjoW72ViHmyEwfK25HYVIMeXfPHRQjbkt
+         kkaYH2BYpt4tsOvly7k+fvB0g2Y3f3bqvUHoTM7j/nQv4Qyo0F25eoanhVK1rw78yzAR
+         j4gAMjwSfJSsAuSIMUox4Uge77H9WTrOwSPXRmBY0jWSPDF569OwrBTVSvMnCHdIIqGB
+         MZoD0STMGLRlu/J48XYaHHzO3jt1wTkQOyGHV+k4mjvwJ1DFcGlZR1gQ6vm1RitD3OpF
+         qW7B+43xXZ26Vhp/2up73BHFRDN9OYKDMiaHgpiBIW9bC2+FlQ3RopMqVtJPsJqjuXt/
+         eW6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=otPLqEhEC4NADyAIXZYXJ4OVE7liq3XA4AadgS4L4Qs=;
+        b=TpgUfFXUIKrR75BhItBpDJN7YEbXyU90w3nLlGIEQVjS7gtoHn/vjj2sAANB8uCxRv
+         DdE7MXjMTllG4r6C2QbXS8jxI4UtQrh9LLiszuEIOvVOGXF7qQajxPc6GNzASm832mUm
+         kHZaDjgAzJ966SeoUEbpJ/cj0CHSdHO8qyxDXi74QzR04ZZdDC4n0HX7lD8xAGq5+BvT
+         BHL5EUIk6HPSCW1sy2MNnbD7I18y2ChUZ5ZSoJ30focXypLpdGIWNznqW3p0zt4tmx3N
+         7QSEp8VUdsjFIOPHB3wCtNdBjq0H4i3t97M9EM6ACvPO2sR/j7eZCfbB+JKULaPzptpr
+         Ao9w==
+X-Gm-Message-State: AOAM533ozmdlb2KRbGAhEAe1wUKk5FghnJTaHAZ/fb3qW+XRG2CEfcks
+        aFU0KGnDH0UwWIiBgGOXONg=
+X-Google-Smtp-Source: ABdhPJwnNk2lQZ3z5+asMMkYEGaMJutHg8icaDoeozt9/e8QiJmOV5Z68JCD3NPb8sAYuqsFX1DKeA==
+X-Received: by 2002:a17:902:b594:: with SMTP id a20mr14586605pls.339.1597744298525;
+        Tue, 18 Aug 2020 02:51:38 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id z1sm20940125pjn.34.2020.08.18.02.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Aug 2020 02:51:38 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     thierry.reding@gmail.com
+Cc:     krzk@kernel.org, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] memory: tegra: Correct shift value of apew
+Date:   Tue, 18 Aug 2020 02:51:21 -0700
+Message-Id: <20200818095121.13645-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add max_segment argument to drm_prime_pages_to_sg().  When set pass it
-through to the __sg_alloc_table_from_pages() call, otherwise use
-SCATTERLIST_MAX_SEGMENT.
+According to Tegra X1 (Tegra210) TRM, the APEW field is between
+[23:16] so the shift bit for apew should be 16 accordingly.
 
-Also add max_segment field to drm driver and pass it to
-drm_prime_pages_to_sg() calls in drivers and helpers.
-
-v2: place max_segment in drm driver not gem object.
-
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 ---
- include/drm/drm_device.h                    |  8 ++++++++
- include/drm/drm_prime.h                     |  3 ++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c |  3 ++-
- drivers/gpu/drm/drm_gem_shmem_helper.c      |  3 ++-
- drivers/gpu/drm/drm_prime.c                 | 10 +++++++---
- drivers/gpu/drm/etnaviv/etnaviv_gem.c       |  3 ++-
- drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c |  3 ++-
- drivers/gpu/drm/msm/msm_gem.c               |  3 ++-
- drivers/gpu/drm/msm/msm_gem_prime.c         |  3 ++-
- drivers/gpu/drm/nouveau/nouveau_prime.c     |  3 ++-
- drivers/gpu/drm/radeon/radeon_prime.c       |  3 ++-
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c |  6 ++++--
- drivers/gpu/drm/tegra/gem.c                 |  3 ++-
- drivers/gpu/drm/vgem/vgem_drv.c             |  3 ++-
- drivers/gpu/drm/xen/xen_drm_front_gem.c     |  3 ++-
- 15 files changed, 43 insertions(+), 17 deletions(-)
+ drivers/memory/tegra/tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-index 0988351d743c..47cb547a8115 100644
---- a/include/drm/drm_device.h
-+++ b/include/drm/drm_device.h
-@@ -329,6 +329,14 @@ struct drm_device {
- 	 */
- 	struct drm_fb_helper *fb_helper;
- 
-+	/**
-+	 * @max_segment:
-+	 *
-+	 * Max size for scatter list segments.  When unset the default
-+	 * (SCATTERLIST_MAX_SEGMENT) is used.
-+	 */
-+	size_t max_segment;
-+
- 	/* Everything below here is for legacy driver, never use! */
- 	/* private: */
- #if IS_ENABLED(CONFIG_DRM_LEGACY)
-diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
-index 9af7422b44cf..2c3689435cb4 100644
---- a/include/drm/drm_prime.h
-+++ b/include/drm/drm_prime.h
-@@ -88,7 +88,8 @@ void drm_gem_dmabuf_vunmap(struct dma_buf *dma_buf, void *vaddr);
- int drm_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
- int drm_gem_dmabuf_mmap(struct dma_buf *dma_buf, struct vm_area_struct *vma);
- 
--struct sg_table *drm_prime_pages_to_sg(struct page **pages, unsigned int nr_pages);
-+struct sg_table *drm_prime_pages_to_sg(struct page **pages, unsigned int nr_pages,
-+				       size_t max_segment);
- struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
- 				     int flags);
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
-index 519ce4427fce..8f6a647757e7 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
-@@ -303,7 +303,8 @@ static struct sg_table *amdgpu_dma_buf_map(struct dma_buf_attachment *attach,
- 	switch (bo->tbo.mem.mem_type) {
- 	case TTM_PL_TT:
- 		sgt = drm_prime_pages_to_sg(bo->tbo.ttm->pages,
--					    bo->tbo.num_pages);
-+					    bo->tbo.num_pages,
-+					    obj->dev->max_segment);
- 		if (IS_ERR(sgt))
- 			return sgt;
- 
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index 4b7cfbac4daa..8f47b41b0b2f 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -656,7 +656,8 @@ struct sg_table *drm_gem_shmem_get_sg_table(struct drm_gem_object *obj)
- 
- 	WARN_ON(shmem->base.import_attach);
- 
--	return drm_prime_pages_to_sg(shmem->pages, obj->size >> PAGE_SHIFT);
-+	return drm_prime_pages_to_sg(shmem->pages, obj->size >> PAGE_SHIFT,
-+				     obj->dev->max_segment);
- }
- EXPORT_SYMBOL_GPL(drm_gem_shmem_get_sg_table);
- 
-diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
-index 1693aa7c14b5..27c783fd6633 100644
---- a/drivers/gpu/drm/drm_prime.c
-+++ b/drivers/gpu/drm/drm_prime.c
-@@ -802,7 +802,8 @@ static const struct dma_buf_ops drm_gem_prime_dmabuf_ops =  {
-  *
-  * This is useful for implementing &drm_gem_object_funcs.get_sg_table.
-  */
--struct sg_table *drm_prime_pages_to_sg(struct page **pages, unsigned int nr_pages)
-+struct sg_table *drm_prime_pages_to_sg(struct page **pages, unsigned int nr_pages,
-+				       size_t max_segment)
- {
- 	struct sg_table *sg = NULL;
- 	int ret;
-@@ -813,8 +814,11 @@ struct sg_table *drm_prime_pages_to_sg(struct page **pages, unsigned int nr_page
- 		goto out;
- 	}
- 
--	ret = sg_alloc_table_from_pages(sg, pages, nr_pages, 0,
--				nr_pages << PAGE_SHIFT, GFP_KERNEL);
-+	if (max_segment == 0 || max_segment > SCATTERLIST_MAX_SEGMENT)
-+		max_segment = SCATTERLIST_MAX_SEGMENT;
-+	ret = __sg_alloc_table_from_pages(sg, pages, nr_pages, 0,
-+					  nr_pages << PAGE_SHIFT,
-+					  max_segment, GFP_KERNEL);
- 	if (ret)
- 		goto out;
- 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-index f06e19e7be04..90654246b335 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-@@ -103,7 +103,8 @@ struct page **etnaviv_gem_get_pages(struct etnaviv_gem_object *etnaviv_obj)
- 		int npages = etnaviv_obj->base.size >> PAGE_SHIFT;
- 		struct sg_table *sgt;
- 
--		sgt = drm_prime_pages_to_sg(etnaviv_obj->pages, npages);
-+		sgt = drm_prime_pages_to_sg(etnaviv_obj->pages, npages,
-+					    etnaviv_obj->base.dev->max_segment);
- 		if (IS_ERR(sgt)) {
- 			dev_err(dev->dev, "failed to allocate sgt: %ld\n",
- 				PTR_ERR(sgt));
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
-index 6d9e5c3c4dd5..f65be0fffb3d 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
-@@ -19,7 +19,8 @@ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj)
- 	if (WARN_ON(!etnaviv_obj->pages))  /* should have already pinned! */
- 		return ERR_PTR(-EINVAL);
- 
--	return drm_prime_pages_to_sg(etnaviv_obj->pages, npages);
-+	return drm_prime_pages_to_sg(etnaviv_obj->pages, npages,
-+				     obj->dev->max_segment);
- }
- 
- void *etnaviv_gem_prime_vmap(struct drm_gem_object *obj)
-diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-index b2f49152b4d4..dbf1437c3dac 100644
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -126,7 +126,8 @@ static struct page **get_pages(struct drm_gem_object *obj)
- 
- 		msm_obj->pages = p;
- 
--		msm_obj->sgt = drm_prime_pages_to_sg(p, npages);
-+		msm_obj->sgt = drm_prime_pages_to_sg(p, npages,
-+						     obj->dev->max_segment);
- 		if (IS_ERR(msm_obj->sgt)) {
- 			void *ptr = ERR_CAST(msm_obj->sgt);
- 
-diff --git a/drivers/gpu/drm/msm/msm_gem_prime.c b/drivers/gpu/drm/msm/msm_gem_prime.c
-index d7c8948427fe..6337cd1f9428 100644
---- a/drivers/gpu/drm/msm/msm_gem_prime.c
-+++ b/drivers/gpu/drm/msm/msm_gem_prime.c
-@@ -19,7 +19,8 @@ struct sg_table *msm_gem_prime_get_sg_table(struct drm_gem_object *obj)
- 	if (WARN_ON(!msm_obj->pages))  /* should have already pinned! */
- 		return NULL;
- 
--	return drm_prime_pages_to_sg(msm_obj->pages, npages);
-+	return drm_prime_pages_to_sg(msm_obj->pages, npages,
-+				     obj->dev->max_segment);
- }
- 
- void *msm_gem_prime_vmap(struct drm_gem_object *obj)
-diff --git a/drivers/gpu/drm/nouveau/nouveau_prime.c b/drivers/gpu/drm/nouveau/nouveau_prime.c
-index bae6a3eccee0..dd0ff032ae16 100644
---- a/drivers/gpu/drm/nouveau/nouveau_prime.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_prime.c
-@@ -32,7 +32,8 @@ struct sg_table *nouveau_gem_prime_get_sg_table(struct drm_gem_object *obj)
- 	struct nouveau_bo *nvbo = nouveau_gem_object(obj);
- 	int npages = nvbo->bo.num_pages;
- 
--	return drm_prime_pages_to_sg(nvbo->bo.ttm->pages, npages);
-+	return drm_prime_pages_to_sg(nvbo->bo.ttm->pages, npages,
-+				     obj->dev->max_segment);
- }
- 
- void *nouveau_gem_prime_vmap(struct drm_gem_object *obj)
-diff --git a/drivers/gpu/drm/radeon/radeon_prime.c b/drivers/gpu/drm/radeon/radeon_prime.c
-index b906e8fbd5f3..61a3fe147489 100644
---- a/drivers/gpu/drm/radeon/radeon_prime.c
-+++ b/drivers/gpu/drm/radeon/radeon_prime.c
-@@ -36,7 +36,8 @@ struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj)
- 	struct radeon_bo *bo = gem_to_radeon_bo(obj);
- 	int npages = bo->tbo.num_pages;
- 
--	return drm_prime_pages_to_sg(bo->tbo.ttm->pages, npages);
-+	return drm_prime_pages_to_sg(bo->tbo.ttm->pages, npages,
-+				     obj->dev->max_segment);
- }
- 
- void *radeon_gem_prime_vmap(struct drm_gem_object *obj)
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-index b9275ba7c5a5..5ddb2d31a607 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-@@ -85,7 +85,8 @@ static int rockchip_gem_get_pages(struct rockchip_gem_object *rk_obj)
- 
- 	rk_obj->num_pages = rk_obj->base.size >> PAGE_SHIFT;
- 
--	rk_obj->sgt = drm_prime_pages_to_sg(rk_obj->pages, rk_obj->num_pages);
-+	rk_obj->sgt = drm_prime_pages_to_sg(rk_obj->pages, rk_obj->num_pages,
-+					    rk_obj->base.dev->max_segment);
- 	if (IS_ERR(rk_obj->sgt)) {
- 		ret = PTR_ERR(rk_obj->sgt);
- 		goto err_put_pages;
-@@ -442,7 +443,8 @@ struct sg_table *rockchip_gem_prime_get_sg_table(struct drm_gem_object *obj)
- 	int ret;
- 
- 	if (rk_obj->pages)
--		return drm_prime_pages_to_sg(rk_obj->pages, rk_obj->num_pages);
-+		return drm_prime_pages_to_sg(rk_obj->pages, rk_obj->num_pages,
-+					     obj->dev->max_segment);
- 
- 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
- 	if (!sgt)
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 723df142a981..a0abde747e95 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -284,7 +284,8 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
- 
- 	bo->num_pages = bo->gem.size >> PAGE_SHIFT;
- 
--	bo->sgt = drm_prime_pages_to_sg(bo->pages, bo->num_pages);
-+	bo->sgt = drm_prime_pages_to_sg(bo->pages, bo->num_pages,
-+					bo->gem.dev->max_segment);
- 	if (IS_ERR(bo->sgt)) {
- 		err = PTR_ERR(bo->sgt);
- 		goto put_pages;
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index 313339bbff90..045461dc6319 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -321,7 +321,8 @@ static struct sg_table *vgem_prime_get_sg_table(struct drm_gem_object *obj)
- {
- 	struct drm_vgem_gem_object *bo = to_vgem_bo(obj);
- 
--	return drm_prime_pages_to_sg(bo->pages, bo->base.size >> PAGE_SHIFT);
-+	return drm_prime_pages_to_sg(bo->pages, bo->base.size >> PAGE_SHIFT,
-+				     obj->dev->max_segment);
- }
- 
- static struct drm_gem_object* vgem_prime_import(struct drm_device *dev,
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-index f0b85e094111..61a8c1a9fb04 100644
---- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-@@ -179,7 +179,8 @@ struct sg_table *xen_drm_front_gem_get_sg_table(struct drm_gem_object *gem_obj)
- 	if (!xen_obj->pages)
- 		return ERR_PTR(-ENOMEM);
- 
--	return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
-+	return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages,
-+				     gem_obj->dev->max_segment);
- }
- 
- struct drm_gem_object *
+diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
+index eab4bc01c8bc..51b537cfa5a7 100644
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -842,7 +842,7 @@ static const struct tegra_mc_client tegra210_mc_clients[] = {
+ 		},
+ 		.la = {
+ 			.reg = 0x3dc,
+-			.shift = 0,
++			.shift = 16,
+ 			.mask = 0xff,
+ 			.def = 0x80,
+ 		},
 -- 
-2.18.4
+2.17.1
 
