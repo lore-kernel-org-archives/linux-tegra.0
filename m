@@ -1,133 +1,71 @@
-Return-Path: <SRS0=aXVp=B3=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=fNvp=B4=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73906C433E5
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 21:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A3AC433E1
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 02:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 505C7204FD
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Aug 2020 21:20:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="tQ0FE9hL"
+	by mail.kernel.org (Postfix) with ESMTP id 0C0BC20716
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 02:39:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbgHQVUN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Aug 2020 17:20:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60362 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728176AbgHQVUC (ORCPT
+        id S1726329AbgHRCjF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Aug 2020 22:39:05 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:19371 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726228AbgHRCjF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Aug 2020 17:20:02 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D337C061348
-        for <linux-tegra@vger.kernel.org>; Mon, 17 Aug 2020 14:20:02 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id l60so8415312pjb.3
-        for <linux-tegra@vger.kernel.org>; Mon, 17 Aug 2020 14:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=a6SU4e7qioZa1MSGn21iWR1ma/iTKUTYpUuysCGcy14=;
-        b=tQ0FE9hLvaMYPBTVoFLMvapqE3NmtNzvVLom8ama2749kqs+FHz9nxs7AHIJO7mDBv
-         K8Q+pQ4G/b4TMv1DEEAJUykFiG2bIYGrU3nC3oR7j6f2NPSzKfCcVFaY4kOAcXUttSVT
-         FcQd5pxyrvBzc1oQk+/2JMAu6G+p7dtknI9bruysURWXuQybraU9AWYk41P2rQ/Ugs1V
-         KCxO0AsJuqMRVrwiHYTBB1bwM8dzGrwTw+I2FuHbRzUP2Mdhb2OLUMXYWcNu2LS9HUSM
-         o/iArU0Mr099iYvhHaRGgPLkM2XevIGWNnpUQKOQ1d+f4UwWeBsVd7zpHvgp1Gst8iud
-         sCxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=a6SU4e7qioZa1MSGn21iWR1ma/iTKUTYpUuysCGcy14=;
-        b=bF/cFZWUqMs05zdLD07PoaR9pHNe3rVwFjj4o1X8RoCR2/r6bBEGaTeW7L+K8SPo91
-         Qxgz88jcA/cJAsqBDPHSahz9+erqmyRp2n2m1Yq2IEMGvv+kQbXmp7ccHJVReCxqEE6Z
-         646zML4JJHi7JPNKr36XlvP8vcEBetpFQlmXRu8Ovo2B3pC2/Dui44w44eEKBJURr/Qn
-         LV7E4fbwJ7AtsPXXfTLlCU80Y6THKzIo/WbHO1EiOF0SJQflw1G6XHmI+A/kJQVfY7yQ
-         7A7uBOPsTkUEht1edoqzhdLvDpejkrnsHjhJCf6dDTv3Zs4fHTfWqxsynHd2MCYtWQAe
-         5Pow==
-X-Gm-Message-State: AOAM531pdp/aTOlTX7QM/UQhkHU+ZIZBXskfcMDlWyFGJRACRucx1z29
-        eZuG6S4C69yRPuGgMQtfcrCPVQ==
-X-Google-Smtp-Source: ABdhPJxLpxYOD9HqJyjPsE+aMSLqEST9f99mfp5IwRRr6pkeOH6GEyp42pRMo63jP9uxCJQN7toCzQ==
-X-Received: by 2002:a17:90b:128e:: with SMTP id fw14mr14318007pjb.66.1597699202157;
-        Mon, 17 Aug 2020 14:20:02 -0700 (PDT)
-Received: from localhost.localdomain (S0106ac17c8c0ce82.vc.shawcable.net. [24.87.214.6])
-        by smtp.googlemail.com with ESMTPSA id q10sm20733468pfs.75.2020.08.17.14.20.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2020 14:20:01 -0700 (PDT)
-From:   Tom Murphy <murphyt7@tcd.ie>
-To:     iommu@lists.linux-foundation.org
-Cc:     Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-Subject: [PATCH 2/2] Handle init_iova_flush_queue failure in dma-iommu path
-Date:   Mon, 17 Aug 2020 22:19:50 +0100
-Message-Id: <20200817211951.14794-2-murphyt7@tcd.ie>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200817211951.14794-1-murphyt7@tcd.ie>
-References: <20200817211951.14794-1-murphyt7@tcd.ie>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 17 Aug 2020 22:39:05 -0400
+Date:   18 Aug 2020 11:39:03 +0900
+X-IronPort-AV: E=Sophos;i="5.76,325,1592838000"; 
+   d="scan'208";a="54824117"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 18 Aug 2020 11:39:03 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6103B4003881;
+        Tue, 18 Aug 2020 11:39:03 +0900 (JST)
+Message-ID: <87zh6sfznl.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
+        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
+Subject: Re: [PATCH v2 2/9] ASoC: audio-graph: Use of_node and DAI for DPCM DAI link names
+In-Reply-To: <1596605064-27748-3-git-send-email-spujar@nvidia.com>
+References: <1596605064-27748-1-git-send-email-spujar@nvidia.com>
+        <1596605064-27748-3-git-send-email-spujar@nvidia.com>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-init_iova_flush_queue can fail if we run out of memory. Fall back to no
-flush queue if it fails.
 
-Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
+Hi
+
+> For multiple instances of components, using DAI name alone for DAI links
+> is causing conflicts. Components can define multiple DAIs and hence using
+> just a device name won't help either. Thus DT device node reference and
+> DAI names are used to uniquely represent DAI link names.
+> 
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Thank you for your help !!
+
+Best regards
 ---
- drivers/iommu/dma-iommu.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 7433f74d921a..5445e2be08b5 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -356,9 +356,11 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
- 
- 	if (!cookie->fq_domain && !iommu_domain_get_attr(domain,
- 			DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE, &attr) && attr) {
--		cookie->fq_domain = domain;
--		init_iova_flush_queue(iovad, iommu_dma_flush_iotlb_all,
--				iommu_dma_entry_dtor);
-+		if (init_iova_flush_queue(iovad, iommu_dma_flush_iotlb_all,
-+				iommu_dma_entry_dtor))
-+			pr_warn("iova flush queue initialization failed\n");
-+		else
-+			cookie->fq_domain = domain;
- 	}
- 
- 	if (!dev)
--- 
-2.20.1
-
+Kuninori Morimoto
