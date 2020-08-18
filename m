@@ -2,126 +2,117 @@ Return-Path: <SRS0=fNvp=B4=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 365F8C433E1
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 08:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0973AC433E3
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 08:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 130922075E
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 08:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2B4A207FF
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 08:27:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="BNtp98LZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Af/2mKqO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbgHRIGt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Aug 2020 04:06:49 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15862 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbgHRIGs (ORCPT
+        id S1726435AbgHRI1O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Aug 2020 04:27:14 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24488 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726420AbgHRI1O (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Aug 2020 04:06:48 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f3b8c090001>; Tue, 18 Aug 2020 01:06:33 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 18 Aug 2020 01:06:47 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 18 Aug 2020 01:06:47 -0700
-Received: from [10.25.96.247] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Aug
- 2020 08:06:41 +0000
-Subject: Re: [PATCH v2 3/9] ASoC: audio-graph: Identify 'no_pcm' DAI links for
- DPCM
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
-        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
-        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
-        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
-        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
-References: <1596605064-27748-1-git-send-email-spujar@nvidia.com>
- <1596605064-27748-4-git-send-email-spujar@nvidia.com>
- <87y2mcfzir.wl-kuninori.morimoto.gx@renesas.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <94e2c4ad-91a8-76c8-c956-8dbfdf68d1a8@nvidia.com>
-Date:   Tue, 18 Aug 2020 13:36:37 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 18 Aug 2020 04:27:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597739233;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YE9v2iUUt0C+eIB9363k6FZZUNnKbdhJpiU9fX/PhuY=;
+        b=Af/2mKqOvbxTNoooOkwf2vMQkD1fX7Bsqo7+NuMpZbcr6pnrUM1vF+jLc9VRucj8HrUKuL
+        iv8JWKvDfGeaP6e6lk06lWGvq0CYSjuR8dJzCJjewDkHxveVPC8sQTfsNg041G6Adz/VOk
+        MDAIKk1NmMkqOi9RnmuJ569MwcKJXQM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-11-ahIv83ehNsqc6ofMzQXlaA-1; Tue, 18 Aug 2020 04:27:09 -0400
+X-MC-Unique: ahIv83ehNsqc6ofMzQXlaA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B292C1DDF1;
+        Tue, 18 Aug 2020 08:27:06 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-112-195.ams2.redhat.com [10.36.112.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A5EAA261B9;
+        Tue, 18 Aug 2020 08:27:04 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id C21E09CBD; Tue, 18 Aug 2020 10:27:03 +0200 (CEST)
+Date:   Tue, 18 Aug 2020 10:27:03 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
+        <nouveau@lists.freedesktop.org>, Sandy Huang <hjc@rock-chips.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        "open list:RADEON and AMDGPU DRM DRIVERS" 
+        <amd-gfx@lists.freedesktop.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "open list:ARM/Rockchip SoC support" 
+        <linux-rockchip@lists.infradead.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        "moderated list:DRM DRIVERS FOR XEN" <xen-devel@lists.xenproject.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <linux-arm-msm@vger.kernel.org>,
+        "moderated list:DRM DRIVERS FOR VIVANTE GPU IP" 
+        <etnaviv@lists.freedesktop.org>,
+        "open list:DRM DRIVERS FOR NVIDIA TEGRA" 
+        <linux-tegra@vger.kernel.org>, Sean Paul <sean@poorly.run>,
+        "moderated list:ARM/Rockchip SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>
+Subject: Re: [PATCH 1/2] drm: allow limiting the scatter list size.
+Message-ID: <20200818082703.7z6fcvoymiqow5kw@sirius.home.kraxel.org>
+References: <20200818074828.9509-1-kraxel@redhat.com>
+ <20200818074828.9509-2-kraxel@redhat.com>
+ <9c355d64-1a61-eb59-be80-d9fc863ddf22@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <87y2mcfzir.wl-kuninori.morimoto.gx@renesas.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1597737994; bh=ZXSuf8dJcEyEX5k466eJpjxKeuZb+qrwyJvu3I6LwjU=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=BNtp98LZzdUvqLCn9Us3RAOIqzAZ0wLoqExbNqAv86BlHIhfXic3cfKAN7i7HXrt1
-         FmjmmAystMbcyaREzFj1OxN2ENXvZJpkbWcRf/2bNONAcIDmez9mz/KeZYe9C74k86
-         nKI33jYsJGye/dIRVSTJWzZ7C3iCbdZb3QL3z7uE3Di874nnKsv13Pf7hIDHYuJhNv
-         6633KjbHupZDd/aKDJ7J6/AiRKHzrO/MTn+urn4UgIW4vWrHadSh+Bq17kQCZgGS9N
-         gUMhdeNGGKf4FZzZd6lLb7Ir3tjgZsaWx+kbcTBslUxLk37CLDdRcP6WEcyUyTnIWo
-         mTT5zLyJu6dnw==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9c355d64-1a61-eb59-be80-d9fc863ddf22@amd.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Kuninori,
+On Tue, Aug 18, 2020 at 09:57:59AM +0200, Christian König wrote:
+> Am 18.08.20 um 09:48 schrieb Gerd Hoffmann:
+> > Add max_segment argument to drm_prime_pages_to_sg().  When set pass it
+> > through to the __sg_alloc_table_from_pages() call, otherwise use
+> > SCATTERLIST_MAX_SEGMENT.
+> > 
+> > Also add max_segment field to gem objects and pass it to
+> > drm_prime_pages_to_sg() calls in drivers and helpers.
+> > 
+> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> 
+> I'm missing an explanation why this should be useful (it certainly is).
 
-On 8/18/2020 8:11 AM, Kuninori Morimoto wrote:
-> External email: Use caution opening links or attachments
->
->
-> Hi Sameer
->
->> PCM devices are created for FE dai links with 'no-pcm' flag as '0'.
->> Such DAI links have CPU component which implement either pcm_construct()
->> or pcm_new() at component or dai level respectively. Based on this,
->> current patch exposes a helper function to identify such components
->> and populate 'no_pcm' flag for DPCM DAI link.
->>
->> This helps to have BE<->BE component links where PCM devices need
->> not be created for CPU component involved in such links.
->>
->> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->> ---
-> (snip)
->> @@ -259,6 +270,16 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
->>                if (ret < 0)
->>                        goto out_put_node;
->>
->> +             /*
->> +              * In BE<->BE connections it is not required to create
->> +              * PCM devices at CPU end of the dai link and thus 'no_pcm'
->> +              * flag needs to be set. It is useful when there are many
->> +              * BE components and some of these have to be connected to
->> +              * form a valid audio path.
->> +              */
->> +             if (!soc_component_is_pcm(cpus))
->> +                     dai_link->no_pcm = 1;
->> +
-> For safety, I want to judge with data->component_chaining.
->
->          if (data->component_chaining &&
->              !soc_component_is_pcm(cpus))
->                          dai_link->no_pcm = 1;
+virtio-gpu needs this to work properly with SEV (see patch 2/2 of this
+series).
 
-OK. I will keep the additional check. Thanks.
+> And the maximum segment size seems misplaced in the GEM object. This is
+> usually a property of the device or even completely constant.
 
->
-> Thank you for your help !!
->
-> Best regards
-> ---
-> Kuninori Morimoto
+Placing it in drm_device instead would indeed work for virtio-gpu, so I
+guess you are suggesting that instead?
+
+take care,
+  Gerd
+
