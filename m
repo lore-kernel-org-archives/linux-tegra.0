@@ -2,32 +2,32 @@ Return-Path: <SRS0=fNvp=B4=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB869C433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 02:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A21C433E1
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 05:23:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D11E720716
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 02:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0EC3207BB
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 05:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbgHRCl7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Aug 2020 22:41:59 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:27986 "EHLO
+        id S1726365AbgHRFXl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Aug 2020 01:23:41 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:2365 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726360AbgHRCl7 (ORCPT
+        by vger.kernel.org with ESMTP id S1726228AbgHRFXl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Aug 2020 22:41:59 -0400
-Date:   18 Aug 2020 11:41:57 +0900
-X-IronPort-AV: E=Sophos;i="5.76,325,1592838000"; 
-   d="scan'208";a="54610110"
+        Tue, 18 Aug 2020 01:23:41 -0400
+Date:   18 Aug 2020 14:23:39 +0900
+X-IronPort-AV: E=Sophos;i="5.76,326,1592838000"; 
+   d="scan'208";a="54623889"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Aug 2020 11:41:57 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Aug 2020 14:23:39 +0900
 Received: from mercury.renesas.com (unknown [10.166.252.133])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A3E8241580A3;
-        Tue, 18 Aug 2020 11:41:57 +0900 (JST)
-Message-ID: <87y2mcfzir.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BDD2541A7AD0;
+        Tue, 18 Aug 2020 14:23:39 +0900 (JST)
+Message-ID: <87pn7ofs19.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 To:     Sameer Pujar <spujar@nvidia.com>
 Cc:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
@@ -52,7 +52,7 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-Hi Sameer
+Hi again
 
 > PCM devices are created for FE dai links with 'no-pcm' flag as '0'.
 > Such DAI links have CPU component which implement either pcm_construct()
@@ -66,26 +66,22 @@ Hi Sameer
 > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 > ---
 (snip)
-> @@ -259,6 +270,16 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
->  		if (ret < 0)
->  			goto out_put_node;
->  
-> +		/*
-> +		 * In BE<->BE connections it is not required to create
-> +		 * PCM devices at CPU end of the dai link and thus 'no_pcm'
-> +		 * flag needs to be set. It is useful when there are many
-> +		 * BE components and some of these have to be connected to
-> +		 * form a valid audio path.
-> +		 */
-> +		if (!soc_component_is_pcm(cpus))
-> +			dai_link->no_pcm = 1;
+> +static bool soc_component_is_pcm(struct snd_soc_dai_link_component *dlc)
+> +{
+> +	struct snd_soc_dai *dai = snd_soc_find_dai(dlc);
 > +
+> +	if (dai && (dai->component->driver->pcm_construct ||
+> +		    dai->driver->pcm_new))
+> +		return true;
+> +
+> +	return false;
+> +}
 
-For safety, I want to judge with data->component_chaining.
+This snd_soc_find_dai() will indicate WARNING
+if .config has CONFIG_LOCKDEP for me.
 
-	if (data->component_chaining &&
-	    !soc_component_is_pcm(cpus))
-			dai_link->no_pcm = 1;
+Maybe implement it at soc-core.c with client_mutex lock
+is needed.
 
 Thank you for your help !!
 
