@@ -2,175 +2,139 @@ Return-Path: <SRS0=fNvp=B4=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAD9C433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 13:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CC3C433DF
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 14:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F45D206B5
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 13:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597757845;
-	bh=7GfMx+3DL1strby6wKxSFzxulPkZi4asMsiaClpBxe8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=D61tO5iY7U1a3eN16cPHmx7u1p1o+t1+U0NxFCYN/7G9FvTBpDBq6b4gG+mjjf2+e
-	 VG0avopL1bLHZrqcXiLtHj05P+eQPOns0WiPlJUOum8xh2E7y+8eLAYZogmwMEgvnk
-	 GPcnfP3OKhnc8RzoJIvApzxD7pdF+7A9GSxQBRpE=
+	by mail.kernel.org (Postfix) with ESMTP id ADA7A20786
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Aug 2020 14:09:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jiEOFluj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbgHRNhX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Aug 2020 09:37:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726542AbgHRNhT (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Aug 2020 09:37:19 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F358F206B5;
-        Tue, 18 Aug 2020 13:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597757838;
-        bh=7GfMx+3DL1strby6wKxSFzxulPkZi4asMsiaClpBxe8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bYw3M+Bw2yipIZCR47U4l57CfeltMX1PWV/R1cnD7Fp91pcNd8BT4CPuHm+/Anla0
-         xKjePM0rjqfW070Eq4RArDJl6QDYIy6z1MrKBj0ImWYj3u5mB5sSOm12Tmuow8RawY
-         aIkEFpX4Fh8HlV7Xmg6bktJti+v4hn8TfmdAHX5U=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1726482AbgHROJ1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Aug 2020 10:09:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48444 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbgHROJ0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 18 Aug 2020 10:09:26 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD8F7C061389;
+        Tue, 18 Aug 2020 07:09:25 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id l2so18406503wrc.7;
+        Tue, 18 Aug 2020 07:09:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1H2yOHeG6qsldeZpoyc2sz7sMJshfjbS1b8gZKRx98Y=;
+        b=jiEOFlujIONfp3NsuPDQRxhggX67lZRgtm1FlIVKeSOqATb5V31ZYHVr3DR37JNiwl
+         Anqx/RkRSGwmNHjOcjr4dLGi4XANj5Ezf5JBhYwObSiJKvAg033ZQ/gaxzc9hHjN195I
+         lClOJqR70hNEt0beS5Y8JILTPR49xNoWIZjG2RBC6uUT0y4L41R1wZJyXQRi0PE9DYwz
+         l1GGIx58h4ul20GqBWe+bREP0afY0y522dCXM0ars4vTFUT9pGiXuqLkIZE58z11PJBG
+         oUH6f9JQ68R1sSXkgwo+2lNSCAI8lVt807P+6e6DupMlPtiefVULfci/WybApzDkrI2Z
+         7Flw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1H2yOHeG6qsldeZpoyc2sz7sMJshfjbS1b8gZKRx98Y=;
+        b=sEtiJGX5FRm+0pYkIBq7BrZj7C5K4zaDpmrRFDUy+TQJzN3ynhXIx9FdXrniMtCdom
+         Qvy3/MW5RtpvOBVXzQIyx6nxxLPWt3/rzGxomfXVCD7Cmoh1gII9nNKlLBSb8emHqEkt
+         rbLgOK/e0M9arzkXhm7/WaF11fHF/OOZk/AgIoOb+FXWQJyW4HNvP2YrobQZr9WStr4m
+         BHBa2asdu+XO2HO3wCyi9TQyvkW7Wjl9vhb1lxIoJHOO4nLcbi8Br9TK+RGD1cS82eRk
+         SZ1Ca8CueY5mCr++9KbRnXuLvy43DOO8gZ2jSh2WWmcyrJXJEJtnT7RtaiV7ldV9wWO+
+         SHfA==
+X-Gm-Message-State: AOAM5303UPl3pdHZfBbeGU91Im+k/UO9LTKdBp9Trl94WIExNwhjggtU
+        MaCj/2vYlfE+coS/2wG9uTc=
+X-Google-Smtp-Source: ABdhPJzuOGcRH65pQQhWEPOum5p4OObacHriBq62kw/b4exT9sD7ZnV8iohBJO6BMKN2IE56kRzmdw==
+X-Received: by 2002:adf:ed0c:: with SMTP id a12mr20170776wro.24.1597759764468;
+        Tue, 18 Aug 2020 07:09:24 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id b7sm31979036wrs.67.2020.08.18.07.09.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Aug 2020 07:09:23 -0700 (PDT)
+Date:   Tue, 18 Aug 2020 16:09:21 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Rob Herring <robh@kernel.org>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Vidya Sagar <vidyas@nvidia.com>,
         Andrew Murray <amurray@thegoodpenguin.co.uk>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: tegra: no need to check return value of debugfs_create functions
-Date:   Tue, 18 Aug 2020 15:37:39 +0200
-Message-Id: <20200818133739.463193-1-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.28.0
+Subject: Re: [PATCH] PCI: tegra: no need to check return value of
+ debugfs_create functions
+Message-ID: <20200818140921.GA814860@ulmo>
+References: <20200818133739.463193-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+Content-Disposition: inline
+In-Reply-To: <20200818133739.463193-1-gregkh@linuxfoundation.org>
+User-Agent: Mutt/1.14.6 (2020-07-11)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
 
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>
-Cc: Andrew Murray <amurray@thegoodpenguin.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-pci@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pci/controller/dwc/pcie-tegra194.c | 20 +++++------------
- drivers/pci/controller/pci-tegra.c         | 25 +++++-----------------
- 2 files changed, 10 insertions(+), 35 deletions(-)
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 70498689d0c0..87f8dd63df0a 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -699,23 +699,16 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
- 	dw_pcie_writel_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL, val);
- }
- 
--static int init_debugfs(struct tegra_pcie_dw *pcie)
-+static void init_debugfs(struct tegra_pcie_dw *pcie)
- {
--	struct dentry *d;
--
--	d = debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt",
--					pcie->debugfs, aspm_state_cnt);
--	if (IS_ERR_OR_NULL(d))
--		dev_err(pcie->dev,
--			"Failed to create debugfs file \"aspm_state_cnt\"\n");
--
--	return 0;
-+	debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt", pcie->debugfs,
-+				    aspm_state_cnt);
- }
- #else
- static inline void disable_aspm_l12(struct tegra_pcie_dw *pcie) { return; }
- static inline void disable_aspm_l11(struct tegra_pcie_dw *pcie) { return; }
- static inline void init_host_aspm(struct tegra_pcie_dw *pcie) { return; }
--static inline int init_debugfs(struct tegra_pcie_dw *pcie) { return 0; }
-+static inline void init_debugfs(struct tegra_pcie_dw *pcie) { return; }
- #endif
- 
- static void tegra_pcie_enable_system_interrupts(struct pcie_port *pp)
-@@ -1641,10 +1634,7 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
- 	}
- 
- 	pcie->debugfs = debugfs_create_dir(name, NULL);
--	if (!pcie->debugfs)
--		dev_err(dev, "Failed to create debugfs\n");
--	else
--		init_debugfs(pcie);
-+	init_debugfs(pcie);
- 
- 	return ret;
- 
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index c1d34353c29b..e1a6f9db36f7 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2601,24 +2601,12 @@ static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
- 	pcie->debugfs = NULL;
- }
- 
--static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
-+static void tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
- {
--	struct dentry *file;
--
- 	pcie->debugfs = debugfs_create_dir("pcie", NULL);
--	if (!pcie->debugfs)
--		return -ENOMEM;
--
--	file = debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs,
--				   pcie, &tegra_pcie_ports_ops);
--	if (!file)
--		goto remove;
--
--	return 0;
- 
--remove:
--	tegra_pcie_debugfs_exit(pcie);
--	return -ENOMEM;
-+	debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs, pcie,
-+			    &tegra_pcie_ports_ops);
- }
- 
- static int tegra_pcie_probe(struct platform_device *pdev)
-@@ -2672,11 +2660,8 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 		goto pm_runtime_put;
- 	}
- 
--	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
--		err = tegra_pcie_debugfs_init(pcie);
--		if (err < 0)
--			dev_err(dev, "failed to setup debugfs: %d\n", err);
--	}
-+	if (IS_ENABLED(CONFIG_DEBUG_FS))
-+		tegra_pcie_debugfs_init(pcie);
- 
- 	return 0;
- 
--- 
-2.28.0
+On Tue, Aug 18, 2020 at 03:37:39PM +0200, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+>=20
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Vidya Sagar <vidyas@nvidia.com>
+> Cc: Andrew Murray <amurray@thegoodpenguin.co.uk>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 20 +++++------------
+>  drivers/pci/controller/pci-tegra.c         | 25 +++++-----------------
+>  2 files changed, 10 insertions(+), 35 deletions(-)
 
+Looks good to me:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl874Q8ACgkQ3SOs138+
+s6EPYhAAiOKXbVExfZ5GF1JdSWf/MtDFL//RZskjZAr4Qt2mz45OBpoOSLNz5ZxT
+kY8TAAiQXmIB8SvO1CeMYbJhX9yZKZHdTq9PsPwH7D9ReJ/G6wr18HFQCsmZru+v
+MvoUUz77VPh21olmyPr5k53OOwNb/8HSf3JAWuide4a6dZB+DfxE1LXZFjtMLRYl
+oqsQV3tiCRqcw9O+nsAkTrEbw5Kj2n1PN2E8QxgSX/YsVRW695obVMBVJkmpX67W
+ly1/a7rVhvNfvZD3nkYPtcG8/deJ87w9/ztckn4gsGyg77PH/qlWQLmXcwMPCG+Q
+wt5+tdeN9HKwrVQcL7NKUOW0unFCeSYFliwTc4//LqCLg/3ZdHnuuqeaQmXCtxnG
+biOlDzgn3GoaUBBKaQ1x3wgb09fgfsnJP2Rboe6Jm2pYeVT7w6F0IHoZH2gqLPHr
+MRj71MZGyrQrivsI7cLk5nhWlyOl4HTguD762djx9p+gi+Gf8MXKUIrWiM0A+hj5
+WJYfZ0IUpFaLpBZRK+WrpVUU+qe+ZkwKQWDPq9t3YZcxvBhsjEEtrA/heEDLX5xq
+/A41Qj97BirCtqLj/RDYhCaGqAFl5Xk7bHESRiHakB8UFVwi+uk+d2QyH8vhQUwL
+9wERatxDfRdHK0fMSg2AtpLTYljlVlBcEqTY2aCf9qbSAeB+51Q=
+=cp7x
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
