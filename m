@@ -2,212 +2,82 @@ Return-Path: <SRS0=YwZ7=B5=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A4AC433DF
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Aug 2020 10:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9146C433E3
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Aug 2020 23:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBDB62076E
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Aug 2020 10:45:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hq3DNU8G"
+	by mail.kernel.org (Postfix) with ESMTP id B71BF20B1F
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Aug 2020 23:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597881449;
+	bh=95865ixrYC1v6ZjX0Pjv06mJR5GvBzZXg7ZLlGo0yXA=;
+	h=Date:From:To:To:To:CC:Cc:Subject:In-Reply-To:References:List-ID:
+	 From;
+	b=YzceO/bodhfMXtWX/ZEnUtF8Hdft68virHmRGjjdrPE6Z7yeZNXR0BrOCK1Y5w6u2
+	 CJBoGM3jUSdGBhUKYFNqC674/Ze5qUnO3NeGrwIptJhy9I9bObembcvvHFUpwbBCdE
+	 MS0MOfN2VwZkS70i6w6GEkZO+Wz9Xr5zBOGL/8Ps=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbgHSKpO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Aug 2020 06:45:14 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35654 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbgHSKpN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Aug 2020 06:45:13 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07JAhS5P011860;
-        Wed, 19 Aug 2020 05:43:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1597833808;
-        bh=FQ/P96RlmX4WL6iS15Y4+TdcnOXuRLw5jD5fcCLIPRM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=hq3DNU8GyRjS+6Rnn7skcN1ku0AwIVNiB8bZ3hVmcFFpSNzKBAUK00toMRz1KnLCE
-         NxcnurQiObMWPuedh5shwC1BCu6hnnUua5zjmH8lZNKmxDlxcyNuA14gMqszA0YtC2
-         JjErGKTXzkqOL97zfTZs8nV570QUwaiW3pOgGLAw=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 07JAhSRj019744
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Aug 2020 05:43:28 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 19
- Aug 2020 05:43:28 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 19 Aug 2020 05:43:27 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07JAhFih039071;
-        Wed, 19 Aug 2020 05:43:15 -0500
-Subject: Re: [PATCH 10/20] drm/omapdrm: Introduce GEM object functions
-To:     Thomas Zimmermann <tzimmermann@suse.de>,
-        <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <airlied@linux.ie>, <daniel@ffwll.ch>, <linux@armlinux.org.uk>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <l.stach@pengutronix.de>, <christian.gmeiner@gmail.com>,
-        <inki.dae@samsung.com>, <jy0922.shim@samsung.com>,
-        <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>,
-        <kgene@kernel.org>, <krzk@kernel.org>,
-        <patrik.r.jakobsson@gmail.com>, <jani.nikula@linux.intel.com>,
-        <joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
-        <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>,
-        <matthias.bgg@gmail.com>, <robdclark@gmail.com>, <sean@poorly.run>,
-        <bskeggs@redhat.com>, <eric@anholt.net>, <hjc@rock-chips.com>,
-        <heiko@sntech.de>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <rodrigosiqueiramelo@gmail.com>,
-        <hamohammed.sa@gmail.com>, <oleksandr_andrushchenko@epam.com>,
-        <hyun.kwon@xilinx.com>, <laurent.pinchart@ideasonboard.com>,
-        <michal.simek@xilinx.com>, <sumit.semwal@linaro.org>,
-        <evan.quan@amd.com>, <Hawking.Zhang@amd.com>, <tianci.yin@amd.com>,
-        <marek.olsak@amd.com>, <hdegoede@redhat.com>,
-        <andrey.grodzovsky@amd.com>, <Felix.Kuehling@amd.com>,
-        <xinhui.pan@amd.com>, <aaron.liu@amd.com>, <nirmoy.das@amd.com>,
-        <chris@chris-wilson.co.uk>, <matthew.auld@intel.com>,
-        <abdiel.janulgue@linux.intel.com>,
-        <tvrtko.ursulin@linux.intel.com>, <andi.shyti@intel.com>,
-        <sam@ravnborg.org>, <miaoqinglang@huawei.com>,
-        <emil.velikov@collabora.com>
-CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <etnaviv@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <intel-gfx@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
-        <nouveau@lists.freedesktop.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <xen-devel@lists.xenproject.org>
-References: <20200813083644.31711-1-tzimmermann@suse.de>
- <20200813083644.31711-11-tzimmermann@suse.de>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <8739b085-0342-4c43-60e3-a21d6b257319@ti.com>
-Date:   Wed, 19 Aug 2020 13:43:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200813083644.31711-11-tzimmermann@suse.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1726974AbgHSX53 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Aug 2020 19:57:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54368 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726968AbgHSX47 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 19 Aug 2020 19:56:59 -0400
+Received: from localhost (unknown [70.37.104.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E94820FC3;
+        Wed, 19 Aug 2020 23:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597881419;
+        bh=95865ixrYC1v6ZjX0Pjv06mJR5GvBzZXg7ZLlGo0yXA=;
+        h=Date:From:To:To:To:CC:Cc:Subject:In-Reply-To:References:From;
+        b=elK8Yczd/rlfQZufDXDKhrAYIUJ8NwMdqR91FSkIJxkknj/4OvXQyY9HNYT+8yvq1
+         H855kFDgHLmHDvBOxVnINhCkMkCQXAfyeZC8xqRhEYPdQLyZ49JC0J9f7W8uzMsUPN
+         D38AVRhAvqS49d5E2gizwdlOSJbSsN6xGGmj95Es=
+Date:   Wed, 19 Aug 2020 23:56:58 +0000
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>
+CC:     <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] sdhci: tegra: Add missing TMCLK for data timeout
+In-Reply-To: <1596673949-1571-7-git-send-email-skomatineni@nvidia.com>
+References: <1596673949-1571-7-git-send-email-skomatineni@nvidia.com>
+Message-Id: <20200819235659.1E94820FC3@mail.kernel.org>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+Hi
 
-On 13/08/2020 11:36, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in omapdrm.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->  drivers/gpu/drm/omapdrm/omap_drv.c |  9 ---------
->  drivers/gpu/drm/omapdrm/omap_gem.c | 16 +++++++++++++++-
->  drivers/gpu/drm/omapdrm/omap_gem.h |  1 -
->  3 files changed, 15 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
-> index 53d5e184ee77..2e598b8b72af 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_drv.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-> @@ -521,12 +521,6 @@ static int dev_open(struct drm_device *dev, struct drm_file *file)
->  	return 0;
->  }
->  
-> -static const struct vm_operations_struct omap_gem_vm_ops = {
-> -	.fault = omap_gem_fault,
-> -	.open = drm_gem_vm_open,
-> -	.close = drm_gem_vm_close,
-> -};
-> -
->  static const struct file_operations omapdriver_fops = {
->  	.owner = THIS_MODULE,
->  	.open = drm_open,
-> @@ -549,10 +543,7 @@ static struct drm_driver omap_drm_driver = {
->  #endif
->  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
-> -	.gem_prime_export = omap_gem_prime_export,
->  	.gem_prime_import = omap_gem_prime_import,
-> -	.gem_free_object_unlocked = omap_gem_free_object,
-> -	.gem_vm_ops = &omap_gem_vm_ops,
->  	.dumb_create = omap_gem_dumb_create,
->  	.dumb_map_offset = omap_gem_dumb_map_offset,
->  	.ioctls = ioctls,
-> diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
-> index d0d12d5dd76c..d68dc63dea0a 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_gem.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_gem.c
-> @@ -487,7 +487,7 @@ static vm_fault_t omap_gem_fault_2d(struct drm_gem_object *obj,
->   * vma->vm_private_data points to the GEM object that is backing this
->   * mapping.
->   */
-> -vm_fault_t omap_gem_fault(struct vm_fault *vmf)
-> +static vm_fault_t omap_gem_fault(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  	struct drm_gem_object *obj = vma->vm_private_data;
-> @@ -1169,6 +1169,18 @@ static bool omap_gem_validate_flags(struct drm_device *dev, u32 flags)
->  	return true;
->  }
->  
-> +static const struct vm_operations_struct omap_gem_vm_ops = {
-> +	.fault = omap_gem_fault,
-> +	.open = drm_gem_vm_open,
-> +	.close = drm_gem_vm_close,
-> +};
-> +
-> +static const struct drm_gem_object_funcs omap_gem_object_funcs = {
-> +	.free = omap_gem_free_object,
-> +	.export = omap_gem_prime_export,
-> +	.vm_ops = &omap_gem_vm_ops,
-> +};
-> +
->  /* GEM buffer object constructor */
->  struct drm_gem_object *omap_gem_new(struct drm_device *dev,
->  		union omap_gem_size gsize, u32 flags)
-> @@ -1236,6 +1248,8 @@ struct drm_gem_object *omap_gem_new(struct drm_device *dev,
->  		size = PAGE_ALIGN(gsize.bytes);
->  	}
->  
-> +	obj->funcs = &omap_gem_object_funcs;
-> +
->  	/* Initialize the GEM object. */
->  	if (!(flags & OMAP_BO_MEM_SHMEM)) {
->  		drm_gem_private_object_init(dev, obj, size);
-> diff --git a/drivers/gpu/drm/omapdrm/omap_gem.h b/drivers/gpu/drm/omapdrm/omap_gem.h
-> index 729b7812a815..9e6b5c8195d9 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_gem.h
-> +++ b/drivers/gpu/drm/omapdrm/omap_gem.h
-> @@ -69,7 +69,6 @@ struct dma_buf *omap_gem_prime_export(struct drm_gem_object *obj, int flags);
->  struct drm_gem_object *omap_gem_prime_import(struct drm_device *dev,
->  		struct dma_buf *buffer);
->  
-> -vm_fault_t omap_gem_fault(struct vm_fault *vmf);
->  int omap_gem_roll(struct drm_gem_object *obj, u32 roll);
->  void omap_gem_cpu_sync_page(struct drm_gem_object *obj, int pgoff);
->  void omap_gem_dma_sync_buffer(struct drm_gem_object *obj,
+[This is an automated email]
 
-omap_gem_free_object() can also be made static, and removed from omap_gem.h.
+This commit has been processed because it contains a "Fixes:" tag
+fixing commit: b5a84ecf025a ("mmc: tegra: Add Tegra210 support").
 
-Tested on AM5 EVM.
+The bot has tested the following trees: v5.8.1, v5.7.15, v5.4.58, v4.19.139, v4.14.193, v4.9.232.
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+v5.8.1: Build OK!
+v5.7.15: Build OK!
+v5.4.58: Build OK!
+v4.19.139: Build OK!
+v4.14.193: Build OK!
+v4.9.232: Failed to apply! Possible dependencies:
+    20567be9d2e6 ("mmc: tegra: Support module reset")
+    4346b7c7941d ("mmc: tegra: Add Tegra186 support")
+    86ac2f8bf90a ("mmc: tegra: Reconfigure pad voltages during voltage switching")
 
- Tomi
+
+NOTE: The patch will not be queued to stable trees until it is upstream.
+
+How should we proceed with this patch?
 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Thanks
+Sasha
