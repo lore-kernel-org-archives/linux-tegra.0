@@ -2,110 +2,114 @@ Return-Path: <SRS0=7KTg=B6=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2FAC433E1
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 09:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3ECC433E3
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 11:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 272D82078B
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 09:03:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9DF920855
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 11:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pjCbM9vS"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EDnzEc4B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbgHTJDG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 05:03:06 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14498 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbgHTJDE (ORCPT
+        id S1730403AbgHTL5o (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 07:57:44 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:5935 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729180AbgHTL5l (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 05:03:04 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f3e3bd5001d>; Thu, 20 Aug 2020 02:01:10 -0700
+        Thu, 20 Aug 2020 07:57:41 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f3e65270001>; Thu, 20 Aug 2020 04:57:27 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 20 Aug 2020 02:03:04 -0700
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 20 Aug 2020 04:57:41 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 20 Aug 2020 02:03:04 -0700
-Received: from [10.25.96.247] (10.124.1.5) by HQMAIL107.nvidia.com
+        by hqpgpgate101.nvidia.com on Thu, 20 Aug 2020 04:57:41 -0700
+Received: from [10.26.73.68] (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Aug
- 2020 09:02:58 +0000
-Subject: Re: [PATCH v2 0/9] Audio graph card updates and usage with Tegra210
- audio
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
-        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
-        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
-        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
-        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
-References: <1596605064-27748-1-git-send-email-spujar@nvidia.com>
- <87v9highuf.wl-kuninori.morimoto.gx@renesas.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <8fa4a359-c80c-9c8f-93fa-c1cc25b322e8@nvidia.com>
-Date:   Thu, 20 Aug 2020 14:32:55 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ 2020 11:57:38 +0000
+Subject: Re: [PATCH 4.14 000/228] 4.14.194-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20200820091607.532711107@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <a6b632f8-b327-3f8d-5306-12989cfaf4e3@nvidia.com>
+Date:   Thu, 20 Aug 2020 12:57:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <87v9highuf.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <20200820091607.532711107@linuxfoundation.org>
 X-Originating-IP: [10.124.1.5]
 X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
  HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1597914070; bh=l93EHFvud8eHnNf5HuttsftOmzf1SaVxatzJ4Lt47G8=;
+        t=1597924647; bh=r74Ro8+IvD+U7RWZxt3Uhr4cSN8tdC8hsw3f2VfgBWY=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=pjCbM9vSsTNYfabczFr41DPleV11yMC26g0HrwUCyslwN3LhT0yRZnjyHAQGv+7zn
-         ERIfTz94Ctp7fikIKeSYmpySTLRP1VR/1v6a/rpZefKBcemsJ9tYInzNlXyCiUQsYu
-         lTaBq6rNRYXWxM+xZIDw8sIOXPvHRPy3A337VD2zrOQanIe+NVd4mrjohacGiAPDbo
-         bc3dBl+ZsvNWRVUpSSfHMpGxvRHLMsWLj5hZ1J6MCgegtrxY7msb4FF4Ae9YiqSzsp
-         M+qwAt6n9Y46KVt35kxvMG2YKk42ZxqMKMSW1RyB+5sWWJ967j9U5C0eEJblT+FmCh
-         Pz7MmtO821lMA==
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=EDnzEc4BtXXN2Z6iYGaCk4soNiKt6ocAw/EzEH638I8e2hL9q2ySHS63lio1j0vuo
+         KSdG7zStYd1JGGSiwQF3D64sJ3HH20eRRuXdF6vkM9yOsqeWvETu/XTq705wT0uoGl
+         je6QJuSOGiMXOYG98fWDqo+3fntUl3lKkg5fFQm6rt77GPm/FmZEhQ2UvaGaKb3WOM
+         6b9WNMm8mX27L7t87dFVCbM5+sLn1l9WKs3Pg5ZUnqPlsLx/OwQo251YkB9totrmkA
+         KK0qLGyH0wgr7e6oHXvg6Iiy9EW1o+oMXDBb+6INYbCrdoHsBKetdQnU5pZMpUTmTS
+         tNO6mOoxdEMlw==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Kuninori,
 
-On 8/17/2020 7:23 AM, Kuninori Morimoto wrote:
-> External email: Use caution opening links or attachments
->
->
-> Hi Sameer
-> Cc Mark
->
->> This series proposes following enhancements to audio-graph card driver.
->>   * Support multiple instances of a component.
->>   * Support open platforms with empty Codec endpoint.
->>   * Identify no-pcm DPCM DAI links which can be used in BE<->BE connections.
->>   * Add new compatible to support DPCM based DAI chaining.
->>
->> This pushes DT support for Tegra210 based platforms which uses audio-graph
->> card and above enhancements.
->>
->> The series is based on following references where DPCM usgae for Tegra
->> Audio and simple-card driver proposal were discussed.
->>   * https://lkml.org/lkml/2020/4/30/519 (DPCM for Tegra)
->>   * https://lkml.org/lkml/2020/6/27/4 (simple-card driver)
-> I will try to test this patch-set this week, and report/review it.
+On 20/08/2020 10:19, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.194 release.
+> There are 228 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 22 Aug 2020 09:15:09 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.194-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
 
-Thank you for review so far. Have you also got a chance to review 
-remaining commits in the series?
+...
 
->
-> Thank you for your help !!
->
-> Best regards
-> ---
-> Kuninori Morimoto
+> Tomasz Maciej Nowak <tmn505@gmail.com>
+>     arm64: dts: marvell: espressobin: add ethernet alias
+
+
+The above change is causing the following build failure for ARM64 ...
+
+arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR (path_references): Reference to non-existent node or label "uart1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+scripts/Makefile.lib:317: recipe for target 'arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb' failed
+make[3]: *** [arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb] Error 2
+
+Reverting this fixes the problem.
+
+Cheers
+Jon
+
+-- 
+nvpublic
