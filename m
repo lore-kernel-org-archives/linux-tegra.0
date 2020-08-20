@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3814FC433E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6E0C433E1
 	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14A362224D
+	by mail.kernel.org (Postfix) with ESMTP id C85A1204EA
 	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbgHTPMR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 11:12:17 -0400
-Received: from foss.arm.com ([217.140.110.172]:40952 "EHLO foss.arm.com"
+        id S1728622AbgHTPJL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 11:09:11 -0400
+Received: from foss.arm.com ([217.140.110.172]:40714 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728650AbgHTPJV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:09:21 -0400
+        id S1727920AbgHTPI6 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 11:08:58 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D16D1424;
-        Thu, 20 Aug 2020 08:09:20 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82CFDD6E;
+        Thu, 20 Aug 2020 08:08:57 -0700 (PDT)
 Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DE4803F6CF;
-        Thu, 20 Aug 2020 08:09:16 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E35423F6CF;
+        Thu, 20 Aug 2020 08:08:53 -0700 (PDT)
 From:   Robin Murphy <robin.murphy@arm.com>
 To:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk
 Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
@@ -40,9 +40,9 @@ Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
         linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 07/18] iommu/arm-smmu: Remove arch/arm workaround
-Date:   Thu, 20 Aug 2020 16:08:26 +0100
-Message-Id: <ef39be82b98d2471c9e99c82d0eeda37ba30e4fa.1597931876.git.robin.murphy@arm.com>
+Subject: [PATCH 01/18] ARM/dma-mapping: Drop .dma_supported for IOMMU ops
+Date:   Thu, 20 Aug 2020 16:08:20 +0100
+Message-Id: <8bcf5f908d23883af00a42c0bb88d44d25c019f5.1597931876.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.28.0.dirty
 In-Reply-To: <cover.1597931875.git.robin.murphy@arm.com>
 References: <cover.1597931875.git.robin.murphy@arm.com>
@@ -53,36 +53,38 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Now that arch/arm is wired up for default domains and iommu-dma, remove
-the add_device workaround.
+When an IOMMU is present, we trust that it should be capable
+of remapping any physical memory, and since the device masks
+represent the input (virtual) addresses to the IOMMU it makes
+no sense to validate them against physical PFNs anyway.
 
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/iommu/arm/arm-smmu/arm-smmu.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ arch/arm/mm/dma-mapping.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-index 09c42af9f31e..4e52d8cb67dd 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-@@ -1164,17 +1164,7 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 		return -ENXIO;
- 	}
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index 8a8949174b1c..ffa387f343dc 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1997,8 +1997,6 @@ static const struct dma_map_ops iommu_ops = {
  
--	/*
--	 * FIXME: The arch/arm DMA API code tries to attach devices to its own
--	 * domains between of_xlate() and probe_device() - we have no way to cope
--	 * with that, so until ARM gets converted to rely on groups and default
--	 * domains, just say no (but more politely than by dereferencing NULL).
--	 * This should be at least a WARN_ON once that's sorted.
--	 */
- 	cfg = dev_iommu_priv_get(dev);
--	if (!cfg)
--		return -ENODEV;
+ 	.map_resource		= arm_iommu_map_resource,
+ 	.unmap_resource		= arm_iommu_unmap_resource,
 -
- 	smmu = cfg->smmu;
+-	.dma_supported		= arm_dma_supported,
+ };
  
- 	ret = arm_smmu_rpm_get(smmu);
+ static const struct dma_map_ops iommu_coherent_ops = {
+@@ -2015,8 +2013,6 @@ static const struct dma_map_ops iommu_coherent_ops = {
+ 
+ 	.map_resource	= arm_iommu_map_resource,
+ 	.unmap_resource	= arm_iommu_unmap_resource,
+-
+-	.dma_supported		= arm_dma_supported,
+ };
+ 
+ /**
 -- 
 2.28.0.dirty
 
