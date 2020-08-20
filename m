@@ -2,110 +2,110 @@ Return-Path: <SRS0=7KTg=B6=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,SUBJECT_DRUG_GAP_L,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D7BC433DF
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 08:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2FAC433E1
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 09:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C5FE221E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 08:15:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597911350;
-	bh=tddAiBcBg636YsUky6xQnxC3WBTnjkIrM7gdFJfAUQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ObWQKWUGrHLNNQe9V+C4SFJv9aQa2jwew9PebL3lpeCt/W5f+Jhr3UaLWO4XKzG07
-	 KYDc4UBcish2iBtJhd574QHJW2N7vr3QvUSpbduEGt+YNvwWX4Wv4twO8bwVkurBM0
-	 JQ7dvIKL2fbi9/UdhcX8VCb285W1hj4om1W4Lans=
+	by mail.kernel.org (Postfix) with ESMTP id 272D82078B
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 09:03:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pjCbM9vS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbgHTIPr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 04:15:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54616 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726853AbgHTIPY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 04:15:24 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C9B1207DE;
-        Thu, 20 Aug 2020 08:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597911323;
-        bh=tddAiBcBg636YsUky6xQnxC3WBTnjkIrM7gdFJfAUQg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=10zAw+KyLlJbU0S3r/KJWy2PL+yM+t4glZ2QgmyYfdlogEd4NbDUBsbLnXFQR56Jr
-         e2PIFfkXvrammwnmgiRoUtClVNl96hWnxw3oe3LyGyKuxzMsIxD5WHh54UM9n4h1h4
-         P3A5ds6L1Y5s0hoqITiwVO67+1XDHV5ygnD11obI=
-Date:   Thu, 20 Aug 2020 10:15:43 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Stable <stable@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Erik Faye-Lund <kusmabite@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: Re: Request to pick up couple NVIDIA Tegra ASoC patches into 5.7
- kernel
-Message-ID: <20200820081543.GG4049659@kroah.com>
-References: <2db6e1ef-5cea-d479-8a7a-8f336313cb1d@gmail.com>
- <20200813000800.GM2975990@sasha-vm>
+        id S1726759AbgHTJDG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 05:03:06 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14498 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbgHTJDE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 05:03:04 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f3e3bd5001d>; Thu, 20 Aug 2020 02:01:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 20 Aug 2020 02:03:04 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 20 Aug 2020 02:03:04 -0700
+Received: from [10.25.96.247] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Aug
+ 2020 09:02:58 +0000
+Subject: Re: [PATCH v2 0/9] Audio graph card updates and usage with Tegra210
+ audio
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
+        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
+References: <1596605064-27748-1-git-send-email-spujar@nvidia.com>
+ <87v9highuf.wl-kuninori.morimoto.gx@renesas.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <8fa4a359-c80c-9c8f-93fa-c1cc25b322e8@nvidia.com>
+Date:   Thu, 20 Aug 2020 14:32:55 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200813000800.GM2975990@sasha-vm>
+In-Reply-To: <87v9highuf.wl-kuninori.morimoto.gx@renesas.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1597914070; bh=l93EHFvud8eHnNf5HuttsftOmzf1SaVxatzJ4Lt47G8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=pjCbM9vSsTNYfabczFr41DPleV11yMC26g0HrwUCyslwN3LhT0yRZnjyHAQGv+7zn
+         ERIfTz94Ctp7fikIKeSYmpySTLRP1VR/1v6a/rpZefKBcemsJ9tYInzNlXyCiUQsYu
+         lTaBq6rNRYXWxM+xZIDw8sIOXPvHRPy3A337VD2zrOQanIe+NVd4mrjohacGiAPDbo
+         bc3dBl+ZsvNWRVUpSSfHMpGxvRHLMsWLj5hZ1J6MCgegtrxY7msb4FF4Ae9YiqSzsp
+         M+qwAt6n9Y46KVt35kxvMG2YKk42ZxqMKMSW1RyB+5sWWJ967j9U5C0eEJblT+FmCh
+         Pz7MmtO821lMA==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 08:08:00PM -0400, Sasha Levin wrote:
-> On Wed, Aug 12, 2020 at 10:14:34PM +0300, Dmitry Osipenko wrote:
-> > Hello, stable-kernel maintainers!
-> > 
-> > Could you please cherry-pick these commits into the v5.7.x kernel?
-> > 
-> > commit 0de6db30ef79b391cedd749801a49c485d2daf4b
-> > Author: Sowjanya Komatineni <skomatineni@nvidia.com>
-> > Date:   Mon Jan 13 23:24:17 2020 -0800
-> > 
-> >    ASoC: tegra: Use device managed resource APIs to get the clock
-> > 
-> > commit 1e4e0bf136aa4b4aa59c1e6af19844bd6d807794
-> > Author: Sowjanya Komatineni <skomatineni@nvidia.com>
-> > Date:   Mon Jan 13 23:24:23 2020 -0800
-> > 
-> >    ASoC: tegra: Add audio mclk parent configuration
-> > 
-> > commit ff5d18cb04f4ecccbcf05b7f83ab6df2a0d95c16
-> > Author: Sowjanya Komatineni <skomatineni@nvidia.com>
-> > Date:   Mon Jan 13 23:24:24 2020 -0800
-> > 
-> >    ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init()
-> > 
-> > It will fix a huge warnings splat during of kernel boot on NVIDIA Tegra
-> > SoCs. For some reason these patches haven't made into 5.7 when it was
-> > released and several people complained about the warnings. Thanks in
-> > advance!
-> 
-> They never made it in because they don't have a stable tag, a fixes tag,
-> or do they sound like they fix a problem :)
-> 
-> Do you have a reference to the issue at hand here?
-> 
-> Either way, 5.7 is alive for only about 1 or 2 weeks, is anyone still
-> stuck on 5.7?
+Hi Kuninori,
 
-What's a few more patches :)
+On 8/17/2020 7:23 AM, Kuninori Morimoto wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> Hi Sameer
+> Cc Mark
+>
+>> This series proposes following enhancements to audio-graph card driver.
+>>   * Support multiple instances of a component.
+>>   * Support open platforms with empty Codec endpoint.
+>>   * Identify no-pcm DPCM DAI links which can be used in BE<->BE connections.
+>>   * Add new compatible to support DPCM based DAI chaining.
+>>
+>> This pushes DT support for Tegra210 based platforms which uses audio-graph
+>> card and above enhancements.
+>>
+>> The series is based on following references where DPCM usgae for Tegra
+>> Audio and simple-card driver proposal were discussed.
+>>   * https://lkml.org/lkml/2020/4/30/519 (DPCM for Tegra)
+>>   * https://lkml.org/lkml/2020/6/27/4 (simple-card driver)
+> I will try to test this patch-set this week, and report/review it.
 
-I've queued them up now, but people really should be moving to 5.8.y
-now...
+Thank you for review so far. Have you also got a chance to review 
+remaining commits in the series?
 
-thanks,
-
-gre gk-h
+>
+> Thank you for your help !!
+>
+> Best regards
+> ---
+> Kuninori Morimoto
