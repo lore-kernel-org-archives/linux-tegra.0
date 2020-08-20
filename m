@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D51CAC433DF
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA678C433E4
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCDAC204EA
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95B9A208E4
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:11:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729156AbgHTPLx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 11:11:53 -0400
-Received: from foss.arm.com ([217.140.110.172]:41100 "EHLO foss.arm.com"
+        id S1728706AbgHTPJf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 11:09:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:41062 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728722AbgHTPJg (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:09:36 -0400
+        id S1728698AbgHTPJd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 11:09:33 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A704E1477;
-        Thu, 20 Aug 2020 08:09:35 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB83F1476;
+        Thu, 20 Aug 2020 08:09:31 -0700 (PDT)
 Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 226C33F6CF;
-        Thu, 20 Aug 2020 08:09:32 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 539A53F6CF;
+        Thu, 20 Aug 2020 08:09:28 -0700 (PDT)
 From:   Robin Murphy <robin.murphy@arm.com>
 To:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk
 Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
@@ -40,9 +40,9 @@ Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
         linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 11/18] iommu/omap: Add IOMMU_DOMAIN_DMA support
-Date:   Thu, 20 Aug 2020 16:08:30 +0100
-Message-Id: <5ac3788f9f61f7698cfa9c5924d62714e230f678.1597931876.git.robin.murphy@arm.com>
+Subject: [PATCH 10/18] iommu/msm: Add IOMMU_DOMAIN_DMA support
+Date:   Thu, 20 Aug 2020 16:08:29 +0100
+Message-Id: <93d7de3533cfd952aecd6198b9221d7a58c0e521.1597931876.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.28.0.dirty
 In-Reply-To: <cover.1597931875.git.robin.murphy@arm.com>
 References: <cover.1597931875.git.robin.murphy@arm.com>
@@ -58,76 +58,47 @@ implement the corresponding driver-side support for DMA domains.
 
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/iommu/omap-iommu.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ drivers/iommu/msm_iommu.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-index 71f29c0927fc..ea25c2fe0418 100644
---- a/drivers/iommu/omap-iommu.c
-+++ b/drivers/iommu/omap-iommu.c
-@@ -9,6 +9,7 @@
-  *		Paul Mundt and Toshihiro Kobayashi
-  */
- 
+diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+index 3615cd6241c4..f34efcbb0b2b 100644
+--- a/drivers/iommu/msm_iommu.c
++++ b/drivers/iommu/msm_iommu.c
+@@ -8,6 +8,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
 +#include <linux/dma-iommu.h>
- #include <linux/dma-mapping.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-@@ -1574,13 +1575,19 @@ static struct iommu_domain *omap_iommu_domain_alloc(unsigned type)
+ #include <linux/errno.h>
+ #include <linux/io.h>
+ #include <linux/io-pgtable.h>
+@@ -314,13 +315,16 @@ static struct iommu_domain *msm_iommu_domain_alloc(unsigned type)
  {
- 	struct omap_iommu_domain *omap_domain;
+ 	struct msm_priv *priv;
  
 -	if (type != IOMMU_DOMAIN_UNMANAGED)
 +	if (type != IOMMU_DOMAIN_UNMANAGED && type != IOMMU_DOMAIN_DMA)
  		return NULL;
  
- 	omap_domain = kzalloc(sizeof(*omap_domain), GFP_KERNEL);
- 	if (!omap_domain)
- 		return NULL;
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		goto fail_nomem;
  
-+	if (type == IOMMU_DOMAIN_DMA &&
-+	    iommu_get_dma_cookie(&omap_domain->domain)) {
-+		kfree(omap_domain);
-+		return NULL;
-+	}
++	if (type == IOMMU_DOMAIN_DMA && iommu_get_dma_cookie(&priv->domain))
++		goto fail_nomem;
 +
- 	spin_lock_init(&omap_domain->lock);
+ 	INIT_LIST_HEAD(&priv->list_attached);
  
- 	omap_domain->domain.geometry.aperture_start = 0;
-@@ -1601,6 +1608,7 @@ static void omap_iommu_domain_free(struct iommu_domain *domain)
- 	if (omap_domain->dev)
- 		_omap_iommu_detach_dev(omap_domain, omap_domain->dev);
+ 	priv->domain.geometry.aperture_start = 0;
+@@ -339,6 +343,7 @@ static void msm_iommu_domain_free(struct iommu_domain *domain)
+ 	struct msm_priv *priv;
+ 	unsigned long flags;
  
-+	iommu_put_dma_cookie(&omap_domain->domain);
- 	kfree(omap_domain);
- }
- 
-@@ -1736,6 +1744,17 @@ static struct iommu_group *omap_iommu_device_group(struct device *dev)
- 	return group;
- }
- 
-+static int omap_iommu_of_xlate(struct device *dev,
-+			       struct of_phandle_args *args)
-+{
-+	/*
-+	 * Logically, some of the housekeeping from _omap_iommu_add_device()
-+	 * should probably move here, but the minimum we *need* is simply to
-+	 * cooperate with of_iommu at all to let iommu-dma work.
-+	 */
-+	return 0;
-+}
-+
- static const struct iommu_ops omap_iommu_ops = {
- 	.domain_alloc	= omap_iommu_domain_alloc,
- 	.domain_free	= omap_iommu_domain_free,
-@@ -1747,6 +1766,7 @@ static const struct iommu_ops omap_iommu_ops = {
- 	.probe_device	= omap_iommu_probe_device,
- 	.release_device	= omap_iommu_release_device,
- 	.device_group	= omap_iommu_device_group,
-+	.of_xlate	= omap_iommu_of_xlate,
- 	.pgsize_bitmap	= OMAP_IOMMU_PGSIZES,
- };
- 
++	iommu_put_dma_cookie(domain);
+ 	spin_lock_irqsave(&msm_iommu_lock, flags);
+ 	priv = to_msm_priv(domain);
+ 	kfree(priv);
 -- 
 2.28.0.dirty
 
