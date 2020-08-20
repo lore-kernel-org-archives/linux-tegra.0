@@ -2,81 +2,165 @@ Return-Path: <SRS0=7KTg=B6=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C14C433E1
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B78CFC433E1
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A6642086A
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597937109;
-	bh=Rr8BadVQmc+yhuxW6996EN9N6bisFQ+xqkh4fdqJ/nI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vQsrnHnvlhRMdNpy4UJwICFk8vTeEoSzqZf2s+ltj3+lAh4CqUte4HlokYZfci7yb
-	 logFSBKAgR8eRS+mVl+E1Gedt4x6dx9tSSipa2J2E0AVWhvL7X4T05SBi/LZ1Oht3K
-	 hz2PcaFm1HADhI95x4mUal+Ki5kuFJRZrnzfB/5s=
+	by mail.kernel.org (Postfix) with ESMTP id 9826121734
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:55:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebljxtw8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbgHTPZG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 11:25:06 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39337 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728433AbgHTPZC (ORCPT
+        id S1726871AbgHTPzS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 11:55:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60174 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbgHTPzQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:25:02 -0400
-Received: by mail-wm1-f66.google.com with SMTP id g75so1939695wme.4;
-        Thu, 20 Aug 2020 08:25:01 -0700 (PDT)
+        Thu, 20 Aug 2020 11:55:16 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F250C061385;
+        Thu, 20 Aug 2020 08:55:15 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id f18so4058327wmc.0;
+        Thu, 20 Aug 2020 08:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4gsAD01Lu/a6HHuOZz2Js+H3gnol7gh8tJ3zMDutdDc=;
+        b=ebljxtw8UtQQ032VUUuCGK812jroSyyHZHtTYoOMrud/UydGhZ3UMgBUN9qe9aAvk4
+         EHygzdAvntJ9+R/Y3KA0p2V8fSCNXm6RFtsp3+CZNKezVJQ8X2aAKOeBHvVnuXgBzp1O
+         Z4mdnxldoQFQbYRJYgGPkdtLHKlnlIzkaDXqkqTa3laBrCC8GM7uy1HvEv9ndhSWNfl7
+         gtrl6II21EVeL5x1fdWpBOS2x6s/Ea7ce8pWBuPej62eiBTIeFwATx0cPhjPkPFtdmbp
+         cpVIJwigFocq1ZQgZzWrnaG3CAmE48jwTnhO+RO8Uw3CBwiyc46QOxMJqP5MrYAE3v9X
+         TZPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jna++P8ibJUzY4rXBqsDRJ76r2GrW9IXjOzwbfnLiaU=;
-        b=Tm7kRo+C19QeR8Pm6PpIzqDyoFxnVhjN7Hz63D6e6lKwZnr6k9sNoGtzJractJh4ad
-         D2PNJbi/fV7HsMwal0VwsS60PYzgk/dLpwRZb9A8bQ19xKphk436S5G5H5klkz5zYUHJ
-         rAkPLZNcR6zcBnG6T8QDbn4i6tacVQi4fTRYq2A0eDOY5u3D6b2+YyR/hj0cyXTTmVbh
-         ApwTZIIr1AjlG7XNtC84/LbHirwzEll84X+SRmokjqXWrOLVzNkacXUejMxun6LeIkuL
-         y5sq1W+Bgl9hZ1yU44H7TWPtNsK4I5dVg6xjZwukEQDnRJJkTS/N0d9mFVJMqKtz57WX
-         QRHQ==
-X-Gm-Message-State: AOAM531U6ASPnOvJpWrSiNpXw1BZ9F7SXGpOBmyiajaWee3w4/XRPXqZ
-        NG7V6jVpjMKEG16WJjhqpDM=
-X-Google-Smtp-Source: ABdhPJxHoozIQKOovfpdgjFEUuF8vXf4rcux9Gapm/Z8yZh3pdQKppbCBoVdTwT2wswiFa0z+kTx5g==
-X-Received: by 2002:a1c:ed0e:: with SMTP id l14mr3915978wmh.140.1597937100925;
-        Thu, 20 Aug 2020 08:25:00 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id k204sm5178775wma.21.2020.08.20.08.24.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Aug 2020 08:25:00 -0700 (PDT)
-Date:   Thu, 20 Aug 2020 17:24:58 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] memory: tegra: Correct shift value of apew
-Message-ID: <20200820152458.GA17144@kozik-lap>
-References: <20200818095121.13645-1-nicoleotsuka@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4gsAD01Lu/a6HHuOZz2Js+H3gnol7gh8tJ3zMDutdDc=;
+        b=M2YK8C25wXwiSlREDrwaje+Pc+ecbq1cXWwfA8Fk0e9DOJid8OOBnn1mdwH3HLoous
+         spe0JTBTU3BNH/1lUxcQP12SqaQP8TYy2nFQR2zIJ3JzMtU+1MdVXEvzUuz+ynyXOHiF
+         NNTrAesVGO/237I03JgLbMlQPOIN5jPIWKW4dzmQMu3ka0K3Syc1BFhzgpSjAKYmIIUS
+         Ro13v0tmcQNrOn33wGG5SB10T/CLuBTvcn77p1DsTRl0j6dZ9dv/YDzJlp/D+ELCDXbC
+         G7VxZ0V+V37l9EphncDzikuoaGxD/q+oXognZs/fniQ6Xkup3rk+ZulWtNICnYb73WzT
+         76mQ==
+X-Gm-Message-State: AOAM530phEGQ7c76G/posaBLJMHDsZTTmg628O0OV4MvnhllB/svZFvP
+        zyvsTVBmsgak4Hyt5yvUQEi8fi8A0NvkmP5s33Q=
+X-Google-Smtp-Source: ABdhPJymrLvmSo2mjxf1P+WzawgnYC5TC99FhFkAg2iJ/mZCttmTx/9BBIkjwyymKsU721sVZprDLyZXm16x0EfQzm0=
+X-Received: by 2002:a7b:c257:: with SMTP id b23mr3974646wmj.164.1597938913876;
+ Thu, 20 Aug 2020 08:55:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200818095121.13645-1-nicoleotsuka@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <cover.1597931875.git.robin.murphy@arm.com> <93d7de3533cfd952aecd6198b9221d7a58c0e521.1597931876.git.robin.murphy@arm.com>
+In-Reply-To: <93d7de3533cfd952aecd6198b9221d7a58c0e521.1597931876.git.robin.murphy@arm.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Thu, 20 Aug 2020 08:55:02 -0700
+Message-ID: <CAF6AEGuKa4P=gfus08CdfT2H5pG6a2PBumGb=Pw3qvD=NWueig@mail.gmail.com>
+Subject: Re: [PATCH 10/18] iommu/msm: Add IOMMU_DOMAIN_DMA support
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        digetx@gmail.com, Suman Anna <s-anna@ti.com>,
+        Will Deacon <will@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "moderated list:ARM/S5P EXYNOS AR..." 
+        <linux-samsung-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
+        linux-media@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        "moderated list:ARM/Mediatek SoC..." 
+        <linux-mediatek@lists.infradead.org>, linux-tegra@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        t-kristo@ti.com,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 02:51:21AM -0700, Nicolin Chen wrote:
-> According to Tegra X1 (Tegra210) TRM, the APEW field is between
-> [23:16] so the shift bit for apew should be 16 accordingly.
-> 
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Side note, I suspect we'll end up needing something like
+0e764a01015dfebff8a8ffd297d74663772e248a .. if someone can dig a 32b
+device out of the closet and dust it off, the fix is easy enough.
+Just wanted to mention that here so anyone with a 32b device could
+find what is needed.
+
+BR,
+-R
+
+On Thu, Aug 20, 2020 at 8:09 AM Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> Now that arch/arm is wired up for default domains and iommu-dma,
+> implement the corresponding driver-side support for DMA domains.
+>
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 > ---
->  drivers/memory/tegra/tegra210.c | 2 +-
-
-Thanks, applied to drivers/memory.
-
-Best regards,
-Krzysztof
-
+>  drivers/iommu/msm_iommu.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+> index 3615cd6241c4..f34efcbb0b2b 100644
+> --- a/drivers/iommu/msm_iommu.c
+> +++ b/drivers/iommu/msm_iommu.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/dma-iommu.h>
+>  #include <linux/errno.h>
+>  #include <linux/io.h>
+>  #include <linux/io-pgtable.h>
+> @@ -314,13 +315,16 @@ static struct iommu_domain *msm_iommu_domain_alloc(unsigned type)
+>  {
+>         struct msm_priv *priv;
+>
+> -       if (type != IOMMU_DOMAIN_UNMANAGED)
+> +       if (type != IOMMU_DOMAIN_UNMANAGED && type != IOMMU_DOMAIN_DMA)
+>                 return NULL;
+>
+>         priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+>         if (!priv)
+>                 goto fail_nomem;
+>
+> +       if (type == IOMMU_DOMAIN_DMA && iommu_get_dma_cookie(&priv->domain))
+> +               goto fail_nomem;
+> +
+>         INIT_LIST_HEAD(&priv->list_attached);
+>
+>         priv->domain.geometry.aperture_start = 0;
+> @@ -339,6 +343,7 @@ static void msm_iommu_domain_free(struct iommu_domain *domain)
+>         struct msm_priv *priv;
+>         unsigned long flags;
+>
+> +       iommu_put_dma_cookie(domain);
+>         spin_lock_irqsave(&msm_iommu_lock, flags);
+>         priv = to_msm_priv(domain);
+>         kfree(priv);
+> --
+> 2.28.0.dirty
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
