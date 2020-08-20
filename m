@@ -2,29 +2,29 @@ Return-Path: <SRS0=7KTg=B6=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CE5C433E1
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2F8C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64D79208C7
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:09:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED21F208E4
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:10:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbgHTPI4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 11:08:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:40680 "EHLO foss.arm.com"
+        id S1728887AbgHTPKD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 11:10:03 -0400
+Received: from foss.arm.com ([217.140.110.172]:41298 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727920AbgHTPIy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:08:54 -0400
+        id S1728799AbgHTPJz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 11:09:55 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA18331B;
-        Thu, 20 Aug 2020 08:08:53 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B02CC1529;
+        Thu, 20 Aug 2020 08:09:54 -0700 (PDT)
 Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1FDC83F6CF;
-        Thu, 20 Aug 2020 08:08:50 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 200693F6CF;
+        Thu, 20 Aug 2020 08:09:51 -0700 (PDT)
 From:   Robin Murphy <robin.murphy@arm.com>
 To:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk
 Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
@@ -40,10 +40,12 @@ Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
         linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 00/18] Convert arch/arm to use iommu-dma
-Date:   Thu, 20 Aug 2020 16:08:19 +0100
-Message-Id: <cover.1597931875.git.robin.murphy@arm.com>
+Subject: [PATCH 16/18] staging/media/tegra-vde: Clean up IOMMU workaround
+Date:   Thu, 20 Aug 2020 16:08:35 +0100
+Message-Id: <3535c205b9bce52556abbf2f63384fb38e009df9.1597931876.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.28.0.dirty
+In-Reply-To: <cover.1597931875.git.robin.murphy@arm.com>
+References: <cover.1597931875.git.robin.murphy@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
@@ -51,81 +53,44 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi all,
+Now that arch/arm is wired up for default domains and iommu-dma, we no
+longer need to work around the arch-private mapping.
 
-After 5 years or so of intending to get round to this, finally the
-time comes! The changes themselves actualy turn out to be relatively
-mechanical; the bigger concern appears to be how to get everything
-merged across about 5 diffferent trees given the dependencies.
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+ drivers/staging/media/tegra-vde/iommu.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-I've lightly boot-tested things on Rockchip RK3288 and Exynos 4412
-(Odroid-U3), to the degree that their display drivers should be using
-IOMMU-backed buffers and don't explode (the Odroid doesn't manage to
-send a working HDMI signal to the one monitor I have that it actually
-detects, but that's a pre-existing condition...) Confirmation that the
-Mediatek, OMAP and Tegra changes work will be most welcome.
-
-Patches are based on 5.9-rc1, branch available here:
-
-  git://linux-arm.org/linux-rm arm/dma
-
-
-Robin.
-
-
-Robin Murphy (18):
-  ARM/dma-mapping: Drop .dma_supported for IOMMU ops
-  ARM/dma-mapping: Consolidate IOMMU ops callbacks
-  ARM/dma-mapping: Merge IOMMU ops
-  iommu/dma: Add temporary hacks for arch/arm
-  ARM/dma-mapping: Switch to iommu_dma_ops
-  ARM/dma-mapping: Support IOMMU default domains
-  iommu/arm-smmu: Remove arch/arm workaround
-  iommu/renesas: Remove arch/arm workaround
-  iommu/mediatek-v1: Add IOMMU_DOMAIN_DMA support
-  iommu/msm: Add IOMMU_DOMAIN_DMA support
-  iommu/omap: Add IOMMU_DOMAIN_DMA support
-  iommu/tegra-gart: Add IOMMU_DOMAIN_DMA support
-  iommu/tegra: Add IOMMU_DOMAIN_DMA support
-  drm/exynos: Consolidate IOMMU mapping code
-  drm/nouveau/tegra: Clean up IOMMU workaround
-  staging/media/tegra-vde: Clean up IOMMU workaround
-  media/omap3isp: Clean up IOMMU workaround
-  ARM/dma-mapping: Remove legacy dma-iommu API
-
- arch/arm/Kconfig                              |   28 +-
- arch/arm/common/dmabounce.c                   |    1 -
- arch/arm/include/asm/device.h                 |    9 -
- arch/arm/include/asm/dma-iommu.h              |   37 -
- arch/arm/mm/dma-mapping.c                     | 1198 +----------------
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |    5 +-
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |    5 +-
- drivers/gpu/drm/exynos/exynos_drm_dma.c       |   61 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |    6 +-
- drivers/gpu/drm/exynos/exynos_drm_fimc.c      |    5 +-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |    5 +-
- drivers/gpu/drm/exynos/exynos_drm_g2d.c       |    5 +-
- drivers/gpu/drm/exynos/exynos_drm_gsc.c       |    5 +-
- drivers/gpu/drm/exynos/exynos_drm_rotator.c   |    5 +-
- drivers/gpu/drm/exynos/exynos_drm_scaler.c    |    6 +-
- drivers/gpu/drm/exynos/exynos_mixer.c         |    7 +-
- .../drm/nouveau/nvkm/engine/device/tegra.c    |   13 -
- drivers/iommu/Kconfig                         |    8 -
- drivers/iommu/arm/arm-smmu/arm-smmu.c         |   10 -
- drivers/iommu/ipmmu-vmsa.c                    |   69 -
- drivers/iommu/msm_iommu.c                     |    7 +-
- drivers/iommu/mtk_iommu.h                     |    2 -
- drivers/iommu/mtk_iommu_v1.c                  |  153 +--
- drivers/iommu/omap-iommu.c                    |   22 +-
- drivers/iommu/tegra-gart.c                    |   17 +-
- drivers/iommu/tegra-smmu.c                    |   37 +-
- drivers/media/platform/Kconfig                |    1 -
- drivers/media/platform/omap3isp/isp.c         |   68 +-
- drivers/media/platform/omap3isp/isp.h         |    3 -
- drivers/staging/media/tegra-vde/iommu.c       |   12 -
- 30 files changed, 150 insertions(+), 1660 deletions(-)
- delete mode 100644 arch/arm/include/asm/dma-iommu.h
-
+diff --git a/drivers/staging/media/tegra-vde/iommu.c b/drivers/staging/media/tegra-vde/iommu.c
+index 6af863d92123..4f770189ed34 100644
+--- a/drivers/staging/media/tegra-vde/iommu.c
++++ b/drivers/staging/media/tegra-vde/iommu.c
+@@ -10,10 +10,6 @@
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ 
+-#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+-#include <asm/dma-iommu.h>
+-#endif
+-
+ #include "vde.h"
+ 
+ int tegra_vde_iommu_map(struct tegra_vde *vde,
+@@ -70,14 +66,6 @@ int tegra_vde_iommu_init(struct tegra_vde *vde)
+ 	if (!vde->group)
+ 		return 0;
+ 
+-#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+-	if (dev->archdata.mapping) {
+-		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
+-
+-		arm_iommu_detach_device(dev);
+-		arm_iommu_release_mapping(mapping);
+-	}
+-#endif
+ 	vde->domain = iommu_domain_alloc(&platform_bus_type);
+ 	if (!vde->domain) {
+ 		err = -ENOMEM;
 -- 
 2.28.0.dirty
 
