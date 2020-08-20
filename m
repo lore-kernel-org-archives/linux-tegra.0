@@ -1,118 +1,101 @@
-Return-Path: <SRS0=YwZ7=B5=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=7KTg=B6=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C23C433E1
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Aug 2020 23:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5422C433DF
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 05:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C400C20888
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Aug 2020 23:57:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597881461;
-	bh=h/HiWAywJlSa5mSBR+HYgDRJ7rEjeDW2Fcu6W4zTkdk=;
-	h=Date:From:To:To:To:CC:Cc:Subject:In-Reply-To:References:List-ID:
-	 From;
-	b=DKdXeSoVghngF+R0onAf7F7BVgiqASqdaA7H4PDZcddkYBjaCiPcSHXXpZ8log+st
-	 4UEKM93mt2DBlczb1xHRd1DYBFKdYyebZR8to80phmjwf2QG+6Hzls4g6Q9O/Sl4zN
-	 lYcoVI0d09/dczCswi7izu06ESHPhJAX/mAd1emQ=
+	by mail.kernel.org (Postfix) with ESMTP id B3C742072D
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 05:39:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vUNZOjju"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbgHSX5e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Aug 2020 19:57:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbgHSX4z (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Aug 2020 19:56:55 -0400
-Received: from localhost (unknown [70.37.104.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4B7C21775;
-        Wed, 19 Aug 2020 23:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597881414;
-        bh=h/HiWAywJlSa5mSBR+HYgDRJ7rEjeDW2Fcu6W4zTkdk=;
-        h=Date:From:To:To:To:CC:Cc:Subject:In-Reply-To:References:From;
-        b=MaKDaSBNPUVyEFdTIIdy20QRLlcazr/etKxW5uaGo5/konCpd7NgRxCqr1K/r9aOL
-         C/VFTMlN2i5kvsX8ZwRq1eFfyzXXDcpCTefQgqsi2FBcNMmWJ8stAbEXnGgXSTO/mb
-         sNlS6G/EiLyv8t6vaV88ByCXd3Nm1dhXLIIMvXmI=
-Date:   Wed, 19 Aug 2020 23:56:53 +0000
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>
-CC:     <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] arm64: tegra: Add missing timeout clock to Tegra186 SDMMC nodes
-In-Reply-To: <1596673949-1571-5-git-send-email-skomatineni@nvidia.com>
-References: <1596673949-1571-5-git-send-email-skomatineni@nvidia.com>
-Message-Id: <20200819235653.D4B7C21775@mail.kernel.org>
+        id S1725778AbgHTFjz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 01:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbgHTFjt (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 01:39:49 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63231C061384
+        for <linux-tegra@vger.kernel.org>; Wed, 19 Aug 2020 22:39:49 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id v15so621521pgh.6
+        for <linux-tegra@vger.kernel.org>; Wed, 19 Aug 2020 22:39:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=THYhk6JOC4TXpYcTdTNB05bB3kc64g/hoRGOJ2KPS5g=;
+        b=vUNZOjjum+PBtEM3XlGi73tWZ5COii2DJIxmx3PWecAaYP9ZkvQUA7habblAnQnr6d
+         alqrkUOAhgfUDXVG7WOOUGxceCadhsQh/LBW98JK8KmX/2c1Kn/PUn7HN4V2K6cx6p3U
+         GsKt+ALuaCIaI6S2b8rxVKkNQrxFMMbHXW2e22cCB0gpgwnewwThTAttwYA8fGBN7CdO
+         Fn1oNlNG1TB0kVnpI0/8Ei7m3hcwPoWdPiyd3cAwl2G1Sarxl5ZcSBxtB+1kvyO7TVrw
+         SYyTOaFPJbATGo+HmKy+0kwEAYwvH3C58ILx1n9AmgRcUtE4veIvTM11S2CUZ3ZIeVBm
+         WnXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=THYhk6JOC4TXpYcTdTNB05bB3kc64g/hoRGOJ2KPS5g=;
+        b=XnXgpGnXe6LrAqUygsPwOWbLcF7RwwEP2qBOHm4nPDXfM6w4oiLH7nER3/b4odc074
+         NTa5vuGqaJOLsTnTzNGDUfuKtkPwHyvv+B5atPQGR3VpYG8cyIEwrKD9n3ji3mp2Z//J
+         lN1xrm+Z+afn9o2pQZlN5rsgto1z7CC2UaG3Cqn+Rqayt7dMSQwKKliLgiEvQvDe1RKu
+         Nvw7lf3bILUvvyuIEkQ6dYiXMyQxIQPr8BVqbzJ8C5bvloO5+DfdjS6UZgg3Yyov2Fyf
+         EbjCt9/oeuwj2v7QORNvyYs9xweS3ZxSYYjWUU3xKSIpameB0BwHK9z4cIFx5AMF6ENk
+         jh9g==
+X-Gm-Message-State: AOAM532wez7IXWBfnKQICAf/ZWDP+XqUaUEnil3tr1tVATiAS4//lAyx
+        xwk9A1fAKZBqtBGBAbQ+6epdHQ==
+X-Google-Smtp-Source: ABdhPJyiv6R/08txV3btGY8Wex4DoNWiQ9V8i7TVrXG6grrAcw0P8NDqDoa/L6UCGKZqA6mKxIB7VA==
+X-Received: by 2002:aa7:95b8:: with SMTP id a24mr1028280pfk.219.1597901988631;
+        Wed, 19 Aug 2020 22:39:48 -0700 (PDT)
+Received: from localhost ([122.172.43.13])
+        by smtp.gmail.com with ESMTPSA id u21sm802708pjn.27.2020.08.19.22.39.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Aug 2020 22:39:47 -0700 (PDT)
+Date:   Thu, 20 Aug 2020 11:09:45 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     sudeep.holla@arm.com, rjw@rjwysocki.net, catalin.marinas@arm.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bbasu@nvidia.com, wangkefeng.wang@huawei.com
+Subject: Re: [Patch] cpufreq: replace cpu_logical_map with read_cpuid_mpir
+Message-ID: <20200820053945.xlwtpkvbt4o23flk@vireshk-i7>
+References: <1597174997-22505-1-git-send-email-sumitg@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1597174997-22505-1-git-send-email-sumitg@nvidia.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi
+On 12-08-20, 01:13, Sumit Gupta wrote:
+> Commit eaecca9e7710 ("arm64: Fix __cpu_logical_map undefined issue")
+> fixes the issue with building tegra194 cpufreq driver as module. But
+> the fix might cause problem while supporting physical cpu hotplug[1].
+> 
+> This patch fixes the original problem by avoiding use of cpu_logical_map().
+> Instead calling read_cpuid_mpidr() to get MPIDR on target cpu.
+> 
+> [1] https://lore.kernel.org/linux-arm-kernel/20200724131059.GB6521@bogus/
+> 
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra194-cpufreq.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 
-[This is an automated email]
-
-This commit has been processed because it contains a "Fixes:" tag
-fixing commit: 39cb62cb8973 ("arm64: tegra: Add Tegra186 support").
-
-The bot has tested the following trees: v5.8.1, v5.7.15, v5.4.58, v4.19.139, v4.14.193.
-
-v5.8.1: Build OK!
-v5.7.15: Build OK!
-v5.4.58: Build OK!
-v4.19.139: Failed to apply! Possible dependencies:
-    05705c721591 ("arm64: tegra: Enable SMMU for XUSB host on Tegra186")
-    06c6b06f8908 ("arm64: tegra: Make XUSB node consistent with the rest")
-    24005fd1b3b4 ("arm64: dts: Add Tegra186 sdmmc pinctrl voltage states")
-    29ef1f4dacb5 ("arm64: tegra: Enable SMMU for VIC on Tegra186")
-    31af04cd60d3 ("arm64: dts: Remove inconsistent use of 'arm,armv8' compatible string")
-    3f6eaef9ab37 ("arm64: tegra: Add external memory controller on Tegra186")
-    41408c215ab7 ("arm64: dts: tegra186: Add sdmmc pad auto calibration offsets")
-    5298166d47a6 ("arm64: tegra: Add CPU cache topology for Tegra186")
-    541d7c44069b ("arm64: tegra: Sort device tree nodes alphabetically")
-    5d2249dda08e ("arm64: tegra: Add ACONNECT, ADMA and AGIC nodes")
-    6f90c6f0db83 ("arm64: dts: tegra186: Add SDHCI tap and trim values")
-    8589a649d5f9 ("arm64: dts: tegra186: Enable IOMMU for SDHCI")
-    8bfde5183e98 ("arm64: tegra: Add XUSB and pad controller on Tegra186")
-    954490b30cb4 ("arm64: tegra: Describe interconnect paths on Tegra186")
-    98a2494f847c ("arm64: dts: tegra186: Assign clocks for sdmmc1 and sdmmc4")
-    9c8c52f7cb4f ("arm64: dts: meson-g12a: add initial g12a s905d2 SoC DT support")
-    b066a31040b7 ("arm64: tegra: Add HDA controller on Tegra186")
-    b72d52a1b60b ("arm64: tegra: Add interrupt for memory controller on Tegra186")
-    dfdbf16c50d8 ("arm64: tegra: Fix insecure SMMU users for Tegra186")
-    f2a465e7185f ("arm64: tegra: Enable SMMU translation for PCI on Tegra186")
-
-v4.14.193: Failed to apply! Possible dependencies:
-    15274c232131 ("arm64: tegra: Add BPMP thermal sensor to Tegra186")
-    24005fd1b3b4 ("arm64: dts: Add Tegra186 sdmmc pinctrl voltage states")
-    3f6eaef9ab37 ("arm64: tegra: Add external memory controller on Tegra186")
-    41408c215ab7 ("arm64: dts: tegra186: Add sdmmc pad auto calibration offsets")
-    5425fb15d8ee ("arm64: tegra: Add Tegra194 chip device tree")
-    5d2249dda08e ("arm64: tegra: Add ACONNECT, ADMA and AGIC nodes")
-    6f90c6f0db83 ("arm64: dts: tegra186: Add SDHCI tap and trim values")
-    85593b75ee71 ("arm64: tegra: Add FUSE block on Tegra186")
-    8589a649d5f9 ("arm64: dts: tegra186: Enable IOMMU for SDHCI")
-    954490b30cb4 ("arm64: tegra: Describe interconnect paths on Tegra186")
-    98a2494f847c ("arm64: dts: tegra186: Assign clocks for sdmmc1 and sdmmc4")
-    b066a31040b7 ("arm64: tegra: Add HDA controller on Tegra186")
-    b72d52a1b60b ("arm64: tegra: Add interrupt for memory controller on Tegra186")
-    b8656c673a6b ("arm64: tegra: Add device tree for the Tegra194 P2972-0000 board")
-    d25a3bf11fc9 ("arm64: tegra: Add memory controller on Tegra186")
-    dfdbf16c50d8 ("arm64: tegra: Fix insecure SMMU users for Tegra186")
-    f69ce393ec48 ("arm64: tegra: Add GPIO controller on Tegra194")
-    f89b58ce71a9 ("arm64: tegra: Add ethernet controller on Tegra194")
-
-
-NOTE: The patch will not be queued to stable trees until it is upstream.
-
-How should we proceed with this patch?
+Applied. Thanks.
 
 -- 
-Thanks
-Sasha
+viresh
