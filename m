@@ -2,176 +2,81 @@ Return-Path: <SRS0=7KTg=B6=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FC5C433E1
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C14C433E1
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2DA208C7
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:13:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A6642086A
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:25:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597937109;
+	bh=Rr8BadVQmc+yhuxW6996EN9N6bisFQ+xqkh4fdqJ/nI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vQsrnHnvlhRMdNpy4UJwICFk8vTeEoSzqZf2s+ltj3+lAh4CqUte4HlokYZfci7yb
+	 logFSBKAgR8eRS+mVl+E1Gedt4x6dx9tSSipa2J2E0AVWhvL7X4T05SBi/LZ1Oht3K
+	 hz2PcaFm1HADhI95x4mUal+Ki5kuFJRZrnzfB/5s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728679AbgHTPMy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 11:12:54 -0400
-Received: from foss.arm.com ([217.140.110.172]:40790 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728613AbgHTPJG (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:09:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C0E61045;
-        Thu, 20 Aug 2020 08:09:05 -0700 (PDT)
-Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A3F923F6CF;
-        Thu, 20 Aug 2020 08:09:01 -0700 (PDT)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk
-Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
-        digetx@gmail.com, matthias.bgg@gmail.com, yong.wu@mediatek.com,
-        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
-        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 03/18] ARM/dma-mapping: Merge IOMMU ops
-Date:   Thu, 20 Aug 2020 16:08:22 +0100
-Message-Id: <bcab0427a3e827f4a4c033fbdf61239c8449773c.1597931876.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.28.0.dirty
-In-Reply-To: <cover.1597931875.git.robin.murphy@arm.com>
-References: <cover.1597931875.git.robin.murphy@arm.com>
+        id S1728614AbgHTPZG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 11:25:06 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39337 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728433AbgHTPZC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 11:25:02 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g75so1939695wme.4;
+        Thu, 20 Aug 2020 08:25:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Jna++P8ibJUzY4rXBqsDRJ76r2GrW9IXjOzwbfnLiaU=;
+        b=Tm7kRo+C19QeR8Pm6PpIzqDyoFxnVhjN7Hz63D6e6lKwZnr6k9sNoGtzJractJh4ad
+         D2PNJbi/fV7HsMwal0VwsS60PYzgk/dLpwRZb9A8bQ19xKphk436S5G5H5klkz5zYUHJ
+         rAkPLZNcR6zcBnG6T8QDbn4i6tacVQi4fTRYq2A0eDOY5u3D6b2+YyR/hj0cyXTTmVbh
+         ApwTZIIr1AjlG7XNtC84/LbHirwzEll84X+SRmokjqXWrOLVzNkacXUejMxun6LeIkuL
+         y5sq1W+Bgl9hZ1yU44H7TWPtNsK4I5dVg6xjZwukEQDnRJJkTS/N0d9mFVJMqKtz57WX
+         QRHQ==
+X-Gm-Message-State: AOAM531U6ASPnOvJpWrSiNpXw1BZ9F7SXGpOBmyiajaWee3w4/XRPXqZ
+        NG7V6jVpjMKEG16WJjhqpDM=
+X-Google-Smtp-Source: ABdhPJxHoozIQKOovfpdgjFEUuF8vXf4rcux9Gapm/Z8yZh3pdQKppbCBoVdTwT2wswiFa0z+kTx5g==
+X-Received: by 2002:a1c:ed0e:: with SMTP id l14mr3915978wmh.140.1597937100925;
+        Thu, 20 Aug 2020 08:25:00 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.216])
+        by smtp.googlemail.com with ESMTPSA id k204sm5178775wma.21.2020.08.20.08.24.59
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Aug 2020 08:25:00 -0700 (PDT)
+Date:   Thu, 20 Aug 2020 17:24:58 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] memory: tegra: Correct shift value of apew
+Message-ID: <20200820152458.GA17144@kozik-lap>
+References: <20200818095121.13645-1-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200818095121.13645-1-nicoleotsuka@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The dma_sync_* operations are now the only difference between the
-coherent and non-coherent IOMMU ops. Some minor tweaks to make those
-safe for coherent devices with minimal overhead, and we can condense
-down to a single set of DMA ops.
+On Tue, Aug 18, 2020 at 02:51:21AM -0700, Nicolin Chen wrote:
+> According to Tegra X1 (Tegra210) TRM, the APEW field is between
+> [23:16] so the shift bit for apew should be 16 accordingly.
+> 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  drivers/memory/tegra/tegra210.c | 2 +-
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
- arch/arm/mm/dma-mapping.c | 41 +++++++++++++--------------------------
- 1 file changed, 13 insertions(+), 28 deletions(-)
+Thanks, applied to drivers/memory.
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 1bb7e9608f75..0537c97cebe1 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -1677,6 +1677,9 @@ static void arm_iommu_sync_sg_for_cpu(struct device *dev,
- 	struct scatterlist *s;
- 	int i;
- 
-+	if (dev->dma_coherent)
-+		return;
-+
- 	for_each_sg(sg, s, nents, i)
- 		__dma_page_dev_to_cpu(sg_page(s), s->offset, s->length, dir);
- 
-@@ -1696,6 +1699,9 @@ static void arm_iommu_sync_sg_for_device(struct device *dev,
- 	struct scatterlist *s;
- 	int i;
- 
-+	if (dev->dma_coherent)
-+		return;
-+
- 	for_each_sg(sg, s, nents, i)
- 		__dma_page_cpu_to_dev(sg_page(s), s->offset, s->length, dir);
- }
-@@ -1829,12 +1835,13 @@ static void arm_iommu_sync_single_for_cpu(struct device *dev,
- {
- 	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
- 	dma_addr_t iova = handle & PAGE_MASK;
--	struct page *page = phys_to_page(iommu_iova_to_phys(mapping->domain, iova));
-+	struct page *page;
- 	unsigned int offset = handle & ~PAGE_MASK;
- 
--	if (!iova)
-+	if (dev->dma_coherent || !iova)
- 		return;
- 
-+	page = phys_to_page(iommu_iova_to_phys(mapping->domain, iova));
- 	__dma_page_dev_to_cpu(page, offset, size, dir);
- }
- 
-@@ -1843,12 +1850,13 @@ static void arm_iommu_sync_single_for_device(struct device *dev,
- {
- 	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
- 	dma_addr_t iova = handle & PAGE_MASK;
--	struct page *page = phys_to_page(iommu_iova_to_phys(mapping->domain, iova));
-+	struct page *page;
- 	unsigned int offset = handle & ~PAGE_MASK;
- 
--	if (!iova)
-+	if (dev->dma_coherent || !iova)
- 		return;
- 
-+	page = phys_to_page(iommu_iova_to_phys(mapping->domain, iova));
- 	__dma_page_cpu_to_dev(page, offset, size, dir);
- }
- 
-@@ -1872,22 +1880,6 @@ static const struct dma_map_ops iommu_ops = {
- 	.unmap_resource		= arm_iommu_unmap_resource,
- };
- 
--static const struct dma_map_ops iommu_coherent_ops = {
--	.alloc		= arm_iommu_alloc_attrs,
--	.free		= arm_iommu_free_attrs,
--	.mmap		= arm_iommu_mmap_attrs,
--	.get_sgtable	= arm_iommu_get_sgtable,
--
--	.map_page	= arm_iommu_map_page,
--	.unmap_page	= arm_iommu_unmap_page,
--
--	.map_sg		= arm_iommu_map_sg,
--	.unmap_sg	= arm_iommu_unmap_sg,
--
--	.map_resource	= arm_iommu_map_resource,
--	.unmap_resource	= arm_iommu_unmap_resource,
--};
--
- /**
-  * arm_iommu_create_mapping
-  * @bus: pointer to the bus holding the client device (for IOMMU calls)
-@@ -2067,11 +2059,6 @@ void arm_iommu_detach_device(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(arm_iommu_detach_device);
- 
--static const struct dma_map_ops *arm_get_iommu_dma_map_ops(bool coherent)
--{
--	return coherent ? &iommu_coherent_ops : &iommu_ops;
--}
--
- static bool arm_setup_iommu_dma_ops(struct device *dev, u64 dma_base, u64 size,
- 				    const struct iommu_ops *iommu)
- {
-@@ -2118,8 +2105,6 @@ static bool arm_setup_iommu_dma_ops(struct device *dev, u64 dma_base, u64 size,
- 
- static void arm_teardown_iommu_dma_ops(struct device *dev) { }
- 
--#define arm_get_iommu_dma_map_ops arm_get_dma_map_ops
--
- #endif	/* CONFIG_ARM_DMA_USE_IOMMU */
- 
- void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
-@@ -2141,7 +2126,7 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
- 		return;
- 
- 	if (arm_setup_iommu_dma_ops(dev, dma_base, size, iommu))
--		dma_ops = arm_get_iommu_dma_map_ops(coherent);
-+		dma_ops = &iommu_ops;
- 	else
- 		dma_ops = arm_get_dma_map_ops(coherent);
- 
--- 
-2.28.0.dirty
+Best regards,
+Krzysztof
 
