@@ -2,78 +2,106 @@ Return-Path: <SRS0=7KTg=B6=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C659AC433DF
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 12:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E54EC433E3
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 12:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A92CD207FB
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 12:37:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 212A0207FB
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 12:38:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597927135;
+	bh=cIbxg9UUN6M619llrJyaOowDQPOinSAHEP3gP0M4mTE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wbSwbpW/moIPZe5+VeQUyKfUPwX+g3zP7/c/GdtfPreJikbRkOrFla9wlchXIN0jx
+	 vPhgWP5hh8ntW9AM+zcH15Ff2T7b3oqd05bmnt8aEIqDTjN7clTk8KeEA9QEHlG7IR
+	 bvSUztyNAWSr53lSWZU7pal8qDlVrlUingLcy7MI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbgHTMhd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 08:37:33 -0400
-Received: from foss.arm.com ([217.140.110.172]:38048 "EHLO foss.arm.com"
+        id S1729549AbgHTMi3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 08:38:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729539AbgHTMhW (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 08:37:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A69C30E;
-        Thu, 20 Aug 2020 05:37:21 -0700 (PDT)
-Received: from bogus (unknown [10.37.8.132])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E62643F66B;
-        Thu, 20 Aug 2020 05:37:18 -0700 (PDT)
-Date:   Thu, 20 Aug 2020 13:37:11 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Sumit Gupta <sumitg@nvidia.com>, rjw@rjwysocki.net,
-        catalin.marinas@arm.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bbasu@nvidia.com,
-        wangkefeng.wang@huawei.com, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [Patch] cpufreq: replace cpu_logical_map with read_cpuid_mpir
-Message-ID: <20200820123711.GA19989@bogus>
-References: <1597174997-22505-1-git-send-email-sumitg@nvidia.com>
- <20200820053945.xlwtpkvbt4o23flk@vireshk-i7>
+        id S1729538AbgHTMiS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 08:38:18 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94998207DA;
+        Thu, 20 Aug 2020 12:38:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597927088;
+        bh=cIbxg9UUN6M619llrJyaOowDQPOinSAHEP3gP0M4mTE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WShExgaJDny7YAQnnWbaYiRIdztdiOjGP06WViOCIZ7KkAknc8/9Xl/ch+iXlQ7Uy
+         o0830S5PI4QA8X3zgkUtfU3eVxWasiEb6DSC2hbwOCFqG0gOmsJtFnVCKzrWJWrJVD
+         i2hbdbL92Me+QbmI7UsKB4It8J5U9wUUqi7WUuC8=
+Date:   Thu, 20 Aug 2020 14:38:28 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 000/228] 4.14.194-rc1 review
+Message-ID: <20200820123828.GA1465682@kroah.com>
+References: <20200820091607.532711107@linuxfoundation.org>
+ <a6b632f8-b327-3f8d-5306-12989cfaf4e3@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200820053945.xlwtpkvbt4o23flk@vireshk-i7>
+In-Reply-To: <a6b632f8-b327-3f8d-5306-12989cfaf4e3@nvidia.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 11:09:45AM +0530, Viresh Kumar wrote:
-> On 12-08-20, 01:13, Sumit Gupta wrote:
-> > Commit eaecca9e7710 ("arm64: Fix __cpu_logical_map undefined issue")
-> > fixes the issue with building tegra194 cpufreq driver as module. But
-> > the fix might cause problem while supporting physical cpu hotplug[1].
-> > 
-> > This patch fixes the original problem by avoiding use of cpu_logical_map().
-> > Instead calling read_cpuid_mpidr() to get MPIDR on target cpu.
-> > 
-> > [1] https://lore.kernel.org/linux-arm-kernel/20200724131059.GB6521@bogus/
-> > 
-> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> > ---
-> >  drivers/cpufreq/tegra194-cpufreq.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
+On Thu, Aug 20, 2020 at 12:57:36PM +0100, Jon Hunter wrote:
 > 
-> Applied. Thanks.
+> On 20/08/2020 10:19, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.194 release.
+> > There are 228 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat, 22 Aug 2020 09:15:09 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.194-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> > Pseudo-Shortlog of commits:
+> 
+> ...
+> 
+> > Tomasz Maciej Nowak <tmn505@gmail.com>
+> >     arm64: dts: marvell: espressobin: add ethernet alias
+> 
+> 
+> The above change is causing the following build failure for ARM64 ...
+> 
+> arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR (path_references): Reference to non-existent node or label "uart1"
+> ERROR: Input tree has errors, aborting (use -f to force output)
+> scripts/Makefile.lib:317: recipe for target 'arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb' failed
+> make[3]: *** [arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb] Error 2
+> 
+> Reverting this fixes the problem.
 
-Just to confirm, is this going as a fix ? We want to drop exporting
-cpu_logical_map in v5.9 so this needs to go as fix. I missed it earlier,
-actually,
+Thanks, now dropping it.  Sad as it said it was to be backported here...
 
-Fixes: df320f89359c ("cpufreq: Add Tegra194 cpufreq driver")
-is appropriate here so that we can drop export symbol which was part of
-Commit eaecca9e7710 ("arm64: Fix __cpu_logical_map undefined issue")
-as a workaround to  fix the build.
+Will go push out a -rc2 with that fixed.
 
--- 
-Regards,
-Sudeep
+thanks,
+
+greg k-h
