@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA68C433DF
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8A8C433E1
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AB442086A
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:11:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 299FA204EA
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 15:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbgHTPJw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 11:09:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:41146 "EHLO foss.arm.com"
+        id S1728338AbgHTPLS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 11:11:18 -0400
+Received: from foss.arm.com ([217.140.110.172]:41266 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728757AbgHTPJk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:09:40 -0400
+        id S1728698AbgHTPJw (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 11:09:52 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81AC414BF;
-        Thu, 20 Aug 2020 08:09:39 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D724B1516;
+        Thu, 20 Aug 2020 08:09:50 -0700 (PDT)
 Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DFEF43F6CF;
-        Thu, 20 Aug 2020 08:09:35 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 48CAB3F6CF;
+        Thu, 20 Aug 2020 08:09:47 -0700 (PDT)
 From:   Robin Murphy <robin.murphy@arm.com>
 To:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk
 Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
@@ -40,9 +40,9 @@ Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
         linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 12/18] iommu/tegra-gart: Add IOMMU_DOMAIN_DMA support
-Date:   Thu, 20 Aug 2020 16:08:31 +0100
-Message-Id: <516b33118d489e56499ff8c64c019709b744110c.1597931876.git.robin.murphy@arm.com>
+Subject: [PATCH 15/18] drm/nouveau/tegra: Clean up IOMMU workaround
+Date:   Thu, 20 Aug 2020 16:08:34 +0100
+Message-Id: <21d8d42edb9f91e62f9c72875cf2210afacff18c.1597931876.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.28.0.dirty
 In-Reply-To: <cover.1597931875.git.robin.murphy@arm.com>
 References: <cover.1597931875.git.robin.murphy@arm.com>
@@ -53,53 +53,44 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Now that arch/arm is wired up for default domains and iommu-dma,
-implement the corresponding driver-side support for DMA domains.
+Now that arch/arm is wired up for default domains and iommu-dma, we no
+longer need to work around the arch-private mapping.
 
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/iommu/tegra-gart.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index fac720273889..e081387080f6 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -9,6 +9,7 @@
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index d0d52c1d4aee..410ee1f83e0b 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -23,10 +23,6 @@
+ #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
+ #include "priv.h"
  
- #define dev_fmt(fmt)	"gart: " fmt
- 
-+#include <linux/dma-iommu.h>
- #include <linux/io.h>
- #include <linux/iommu.h>
- #include <linux/moduleparam.h>
-@@ -145,16 +146,22 @@ static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
+-#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+-#include <asm/dma-iommu.h>
+-#endif
+-
+ static int
+ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
  {
- 	struct iommu_domain *domain;
+@@ -109,15 +105,6 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
+ 	unsigned long pgsize_bitmap;
+ 	int ret;
  
--	if (type != IOMMU_DOMAIN_UNMANAGED)
-+	if (type != IOMMU_DOMAIN_UNMANAGED && type != IOMMU_DOMAIN_DMA)
- 		return NULL;
- 
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
--	if (domain) {
--		domain->geometry.aperture_start = gart_handle->iovmm_base;
--		domain->geometry.aperture_end = gart_handle->iovmm_end - 1;
--		domain->geometry.force_aperture = true;
-+	if (!domain)
-+		return NULL;
-+
-+	if (type == IOMMU_DOMAIN_DMA && iommu_get_dma_cookie(domain)) {
-+		kfree(domain);
-+		return NULL;
- 	}
- 
-+	domain->geometry.aperture_start = gart_handle->iovmm_base;
-+	domain->geometry.aperture_end = gart_handle->iovmm_end - 1;
-+	domain->geometry.force_aperture = true;
-+
- 	return domain;
- }
+-#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+-	if (dev->archdata.mapping) {
+-		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
+-
+-		arm_iommu_detach_device(dev);
+-		arm_iommu_release_mapping(mapping);
+-	}
+-#endif
+-
+ 	if (!tdev->func->iommu_bit)
+ 		return;
  
 -- 
 2.28.0.dirty
