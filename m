@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD038C433DF
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 16:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4AAC433E3
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 16:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 819A622B49
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 16:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E86D207BB
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 16:38:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598026831;
-	bh=ySY7r+XvByWG/h02YkSpizvqYnRnOEsqEYmyDA8cBmk=;
+	s=default; t=1598027917;
+	bh=ngB6DdBiJuvmnLavUkZSbxNw6b3Hq4QduT3Hww3mo2E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M/w0vbA14o6+5SVyySqPTSe6RsxuX+JMZikK0YyYTpS19UdG4kJ5F4nL/cUriwysn
-	 PD13XgxtfEl2zMV3jDENQ+I0TXptOwe9rX1sZLc5Jtug+0G0O8JHo76E9fEVqhyEeq
-	 lVc8l2DIVBR8elizGORmennXe98B36687GlaIaCc=
+	b=kYyEDGB6fVq0xG/9xbKZf922hBmiyfUIs6OSpix8snP/1GtfxwKMCyUNSTEpGB4by
+	 aRuLUT68FjMiSTYCYIe3QYLxtHyb7Qt+NN9aA7ESQ4TnZexEd/NPzdBdjKoZpCAFbi
+	 1ryljHJRAdlEo2ImwcwcWn0kBr0D9GMTTLnWosSs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbgHUQUY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Aug 2020 12:20:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50912 "EHLO mail.kernel.org"
+        id S1728585AbgHUQhU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Aug 2020 12:37:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728341AbgHUQTy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Aug 2020 12:19:54 -0400
+        id S1728439AbgHUQVJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 21 Aug 2020 12:21:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2221022BEA;
-        Fri, 21 Aug 2020 16:19:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8D3D22D0B;
+        Fri, 21 Aug 2020 16:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598026741;
-        bh=ySY7r+XvByWG/h02YkSpizvqYnRnOEsqEYmyDA8cBmk=;
+        s=default; t=1598026817;
+        bh=ngB6DdBiJuvmnLavUkZSbxNw6b3Hq4QduT3Hww3mo2E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MH80z+BUrYiVrtuCtqcLt5U+sulMfEB51hcwifwMisy9+maW94zdyh3gxkCb4I5qS
-         MLLNgfFPC6uFUzm3ags9S9redT7GwwhUvPBamN+TPNMUm4ihhJMB0JI7ZsgU5vAFu8
-         CqUPkH/oxx4QgtlzSdmV5HlF6lTywpdP3oTfTTJ4=
+        b=eg72yDFgwmWnY4Zp9s7alwKqO7JyIeVZF1tAm64j/1igICfQHg4tiT0Xasv5ZShY/
+         505Te5gJS99DCsRJxwCj8y4RXyRtDkMd4Km38wwsFWYOAJkh0QapTmMaZjeC7qd4aG
+         uBFgHYl08Udx13B5sY+TBPPvH9WP6GD3XfVbiMq8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Qiushi Wu <wu000273@umn.edu>, Jon Hunter <jonathanh@nvidia.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 02/30] ASoC: tegra: Fix reference count leaks.
-Date:   Fri, 21 Aug 2020 12:18:29 -0400
-Message-Id: <20200821161857.348955-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 02/22] ASoC: tegra: Fix reference count leaks.
+Date:   Fri, 21 Aug 2020 12:19:54 -0400
+Message-Id: <20200821162014.349506-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200821161857.348955-1-sashal@kernel.org>
-References: <20200821161857.348955-1-sashal@kernel.org>
+In-Reply-To: <20200821162014.349506-1-sashal@kernel.org>
+References: <20200821162014.349506-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -78,10 +78,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 43679aeeb12be..88e838ac937dc 100644
+index fef3b9a21a667..e441e23a37e4f 100644
 --- a/sound/soc/tegra/tegra30_ahub.c
 +++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -655,8 +655,10 @@ static int tegra30_ahub_resume(struct device *dev)
+@@ -656,8 +656,10 @@ static int tegra30_ahub_resume(struct device *dev)
  	int ret;
  
  	ret = pm_runtime_get_sync(dev);
@@ -94,10 +94,10 @@ index 43679aeeb12be..88e838ac937dc 100644
  	ret |= regcache_sync(ahub->regmap_apbif);
  	pm_runtime_put(dev);
 diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index 0b176ea24914b..bf155c5092f06 100644
+index 8e55583aa104e..516f37896092c 100644
 --- a/sound/soc/tegra/tegra30_i2s.c
 +++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -551,8 +551,10 @@ static int tegra30_i2s_resume(struct device *dev)
+@@ -552,8 +552,10 @@ static int tegra30_i2s_resume(struct device *dev)
  	int ret;
  
  	ret = pm_runtime_get_sync(dev);
