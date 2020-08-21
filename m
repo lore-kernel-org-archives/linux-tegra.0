@@ -2,113 +2,110 @@ Return-Path: <SRS0=jf4o=B7=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B002BC433DF
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 17:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33B7C433E1
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 18:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89DB322BEA
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 17:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C41B820720
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 18:18:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598030964;
-	bh=gWohrytgPPCufu0Y0SdUetLBz+Kc3A0G8R2gLyGeer8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aL4LvEd/6o0h4F68RWU+SG4jMXMnGf/CnK6Lo4Z2EJnMG5N4dh8+8oDpcgydLMNJI
-	 pvUNGaDYCl9Ecb4+meE4f9Tp40QCTHat5QehAUp9FfGPY72zNKa65imAeeYalo6r1O
-	 4io1I6O/qEdrIASLZJEcDgfbL3XTQIarUJU2BOiY=
+	s=default; t=1598033903;
+	bh=roBEx2Gr4IXvQgfHy3Ln4LK8d7kklbY3qskNwrZ4tKM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=NlG0yPI5APPD12HtEuTqKec5lhyPnxzhEXWEfu4oaiJEFWQYjBFQKDReqlefTbwB5
+	 EYhgFuj6mI1k47hAE91iq2WMWnoGJ9xpekvcuqrU04QbiLmxtCgf2GuoUvsHDSsHWE
+	 h37DSX6MPXw1ovDoeSnJL0fRmH12GufWRP6BlMy0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbgHUR2z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Aug 2020 13:28:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbgHUQOn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Aug 2020 12:14:43 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8F3322B4B;
-        Fri, 21 Aug 2020 16:14:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598026475;
-        bh=gWohrytgPPCufu0Y0SdUetLBz+Kc3A0G8R2gLyGeer8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BX30BvcMviD5aaJBOaw1W6vcKLChTMHU3rDuM9TswtEPglj+waUKL21hm3FSKv0kM
-         R8SGaJsyrqtCI1zkTLsBSx95946XVkKwBSBEq8qvNZYYDnCXYdvNTL0T5vzXdd05nC
-         9q/PoYXnFNLQuRT4U53O6J0G40S/nxHofZUzIqyk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qiushi Wu <wu000273@umn.edu>, Jon Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 09/62] ASoC: tegra: Fix reference count leaks.
-Date:   Fri, 21 Aug 2020 12:13:30 -0400
-Message-Id: <20200821161423.347071-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200821161423.347071-1-sashal@kernel.org>
-References: <20200821161423.347071-1-sashal@kernel.org>
+        id S1726851AbgHUSSX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Aug 2020 14:18:23 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35115 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbgHUSSS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 21 Aug 2020 14:18:18 -0400
+Received: by mail-oi1-f196.google.com with SMTP id k4so2303738oik.2;
+        Fri, 21 Aug 2020 11:18:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QjJkBvBjo776ONBX3/HAkoIAhioOEeqkU0qIVdyiyL8=;
+        b=Zw7l3EQNDJPzJ0cCrAE74lY53hO3/nIiZyeu67RjmrjaRx/JrVXBf9FuZ+A/F9VRS6
+         AnCpiaXw2L7nPFbLQvLJLP5ZjHa1euXxCxyEs0Io1lxJLzJdQuiPDuH6bcqy4Dcle3n2
+         7fDgWDn6OPQFz+SSg8ODRpYnF+oHl0Nixh9OjLxNuSvcMvhVe/YM5GP+1KcjNEMz2QGh
+         M9N9Z/APfF7CHU4fcwsgmnxbamLy5K6tVn7WouvyoyYwl1+8prbUQTaVHR8F4SFMYBiL
+         mNoIUNu1x9RSkS9VTqHjsICr5xxvyQ1z4+VrlwFJcyJ4rF9++P+rFogjMaR6aewQMMM8
+         0w+Q==
+X-Gm-Message-State: AOAM5305nCFt9Qzh4k5uiYi+Z2KsoF1zNmN/7ts51UvzUmWRUdr/AFpj
+        fmgc4S4dvXDBciiAdsNCN8KYcgb0y+rIA1ZQv+s=
+X-Google-Smtp-Source: ABdhPJwDXJduVUwizXZmHUX9etUgUltSIzd/6mAXhHVLPONoFfI4erptBGS0kKbtYaKBSso5vjmNWttHpEInKH3w9wo=
+X-Received: by 2002:aca:110a:: with SMTP id 10mr2503242oir.68.1598033897265;
+ Fri, 21 Aug 2020 11:18:17 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <1597174997-22505-1-git-send-email-sumitg@nvidia.com>
+ <20200820053945.xlwtpkvbt4o23flk@vireshk-i7> <20200820123711.GA19989@bogus> <20200821052209.efturkzs2kp4nbcn@vireshk-i7>
+In-Reply-To: <20200821052209.efturkzs2kp4nbcn@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 21 Aug 2020 20:18:06 +0200
+Message-ID: <CAJZ5v0jPdgxR2erER74gcPtRFBCzWkoD7Zq1E-SgN7Lx50bvYg@mail.gmail.com>
+Subject: Re: [Patch] cpufreq: replace cpu_logical_map with read_cpuid_mpir
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Sumit Gupta <sumitg@nvidia.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        bbasu@nvidia.com, Kefeng Wang <wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Qiushi Wu <wu000273@umn.edu>
+On Fri, Aug 21, 2020 at 7:22 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 20-08-20, 13:37, Sudeep Holla wrote:
+> > On Thu, Aug 20, 2020 at 11:09:45AM +0530, Viresh Kumar wrote:
+> > > On 12-08-20, 01:13, Sumit Gupta wrote:
+> > > > Commit eaecca9e7710 ("arm64: Fix __cpu_logical_map undefined issue")
+> > > > fixes the issue with building tegra194 cpufreq driver as module. But
+> > > > the fix might cause problem while supporting physical cpu hotplug[1].
+> > > >
+> > > > This patch fixes the original problem by avoiding use of cpu_logical_map().
+> > > > Instead calling read_cpuid_mpidr() to get MPIDR on target cpu.
+> > > >
+> > > > [1] https://lore.kernel.org/linux-arm-kernel/20200724131059.GB6521@bogus/
+> > > >
+> > > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> > > > ---
+> > > >  drivers/cpufreq/tegra194-cpufreq.c | 10 +++++++---
+> > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > >
+> > > Applied. Thanks.
+> >
+> > Just to confirm, is this going as a fix ? We want to drop exporting
+> > cpu_logical_map in v5.9 so this needs to go as fix. I missed it earlier,
+> > actually,
+> >
+> > Fixes: df320f89359c ("cpufreq: Add Tegra194 cpufreq driver")
+> > is appropriate here so that we can drop export symbol which was part of
+> > Commit eaecca9e7710 ("arm64: Fix __cpu_logical_map undefined issue")
+> > as a workaround to  fix the build.
+>
+> Okay.
+>
+> Rafael: Please pick this patch directly for next rc with
+>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit deca195383a6085be62cb453079e03e04d618d6e ]
-
-Calling pm_runtime_get_sync increments the counter even in case of
-failure, causing incorrect ref count if pm_runtime_put is not called in
-error handling paths. Call pm_runtime_put if pm_runtime_get_sync fails.
-
-Signed-off-by: Qiushi Wu <wu000273@umn.edu>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Link: https://lore.kernel.org/r/20200613204422.24484-1-wu000273@umn.edu
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/soc/tegra/tegra30_ahub.c | 4 +++-
- sound/soc/tegra/tegra30_i2s.c  | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 635eacbd28d47..156e3b9d613c6 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -643,8 +643,10 @@ static int tegra30_ahub_resume(struct device *dev)
- 	int ret;
- 
- 	ret = pm_runtime_get_sync(dev);
--	if (ret < 0)
-+	if (ret < 0) {
-+		pm_runtime_put(dev);
- 		return ret;
-+	}
- 	ret = regcache_sync(ahub->regmap_ahub);
- 	ret |= regcache_sync(ahub->regmap_apbif);
- 	pm_runtime_put(dev);
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index d59882ec48f16..db5a8587bfa4c 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -567,8 +567,10 @@ static int tegra30_i2s_resume(struct device *dev)
- 	int ret;
- 
- 	ret = pm_runtime_get_sync(dev);
--	if (ret < 0)
-+	if (ret < 0) {
-+		pm_runtime_put(dev);
- 		return ret;
-+	}
- 	ret = regcache_sync(i2s->regmap);
- 	pm_runtime_put(dev);
- 
--- 
-2.25.1
-
+Applied as 5.9-rc3 material with a couple of minor edits in the
+subject and changelog, thanks!
