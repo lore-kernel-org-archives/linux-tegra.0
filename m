@@ -1,38 +1,38 @@
-Return-Path: <SRS0=7KTg=B6=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=jf4o=B7=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9CDC433E5
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 23:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4308C433DF
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 00:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DDF5207DF
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Aug 2020 23:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBC8820702
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 00:12:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbgHTXBq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 19:01:46 -0400
-Received: from foss.arm.com ([217.140.110.172]:46972 "EHLO foss.arm.com"
+        id S1726792AbgHUAMI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 20:12:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:48692 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728368AbgHTXBq (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 19:01:46 -0400
+        id S1725859AbgHUAMF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 20:12:05 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6C6331B;
-        Thu, 20 Aug 2020 16:01:44 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF7E230E;
+        Thu, 20 Aug 2020 17:12:04 -0700 (PDT)
 Received: from [10.57.40.122] (unknown [10.57.40.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98AAB3F71F;
-        Thu, 20 Aug 2020 16:01:39 -0700 (PDT)
-Subject: Re: [PATCH 17/18] media/omap3isp: Clean up IOMMU workaround
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-Cc:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk,
-        will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 346943F71F;
+        Thu, 20 Aug 2020 17:11:59 -0700 (PDT)
+Subject: Re: [PATCH 16/18] staging/media/tegra-vde: Clean up IOMMU workaround
+To:     Dmitry Osipenko <digetx@gmail.com>, hch@lst.de, joro@8bytes.org,
+        linux@armlinux.org.uk
+Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
         kyungmin.park@samsung.com, m.szyprowski@samsung.com,
         agross@kernel.org, bjorn.andersson@linaro.org,
         thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
-        digetx@gmail.com, matthias.bgg@gmail.com, yong.wu@mediatek.com,
+        matthias.bgg@gmail.com, yong.wu@mediatek.com,
         geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
         s-anna@ti.com, laurent.pinchart@ideasonboard.com,
         linux-arm-kernel@lists.infradead.org,
@@ -42,65 +42,136 @@ Cc:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <cover.1597931875.git.robin.murphy@arm.com>
- <11d8419744e4e744a9448180801b0c4683328afd.1597931876.git.robin.murphy@arm.com>
- <20200820165339.GK7145@valkosipuli.retiisi.org.uk>
- <be010209-4abc-ba48-4e31-185427776a13@arm.com>
- <20200820195536.GL7145@valkosipuli.retiisi.org.uk>
+ <3535c205b9bce52556abbf2f63384fb38e009df9.1597931876.git.robin.murphy@arm.com>
+ <07135a55-cbc9-83e5-60dc-731282192554@gmail.com>
 From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <5190a40e-ad24-d98e-3588-b95592ea2db3@arm.com>
-Date:   Fri, 21 Aug 2020 00:01:38 +0100
+Message-ID: <cb12808b-7316-19db-7413-b7f852a6f8ae@arm.com>
+Date:   Fri, 21 Aug 2020 01:11:57 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200820195536.GL7145@valkosipuli.retiisi.org.uk>
+In-Reply-To: <07135a55-cbc9-83e5-60dc-731282192554@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2020-08-20 20:55, Sakari Ailus wrote:
-> On Thu, Aug 20, 2020 at 06:25:19PM +0100, Robin Murphy wrote:
->> On 2020-08-20 17:53, Sakari Ailus wrote:
->>> Hi Robin,
->>>
->>> On Thu, Aug 20, 2020 at 04:08:36PM +0100, Robin Murphy wrote:
->>>> Now that arch/arm is wired up for default domains and iommu-dma, devices
->>>> behind IOMMUs will get mappings set up automatically as appropriate, so
->>>> there is no need for drivers to do so manually.
->>>>
->>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>>
->>> Thanks for the patch.
+On 2020-08-20 20:51, Dmitry Osipenko wrote:
+> 20.08.2020 18:08, Robin Murphy пишет:
+>> Now that arch/arm is wired up for default domains and iommu-dma, we no
+>> longer need to work around the arch-private mapping.
 >>
->> Many thanks for testing so quickly!
+>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>> ---
+>>   drivers/staging/media/tegra-vde/iommu.c | 12 ------------
+>>   1 file changed, 12 deletions(-)
 >>
->>> I haven't looked at the details but it seems that this causes the buffer
->>> memory allocation to be physically contiguous, which causes a failure to
->>> allocate video buffers of entirely normal size. I guess that was not
->>> intentional?
+>> diff --git a/drivers/staging/media/tegra-vde/iommu.c b/drivers/staging/media/tegra-vde/iommu.c
+>> index 6af863d92123..4f770189ed34 100644
+>> --- a/drivers/staging/media/tegra-vde/iommu.c
+>> +++ b/drivers/staging/media/tegra-vde/iommu.c
+>> @@ -10,10 +10,6 @@
+>>   #include <linux/kernel.h>
+>>   #include <linux/platform_device.h>
+>>   
+>> -#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+>> -#include <asm/dma-iommu.h>
+>> -#endif
+>> -
+>>   #include "vde.h"
+>>   
+>>   int tegra_vde_iommu_map(struct tegra_vde *vde,
+>> @@ -70,14 +66,6 @@ int tegra_vde_iommu_init(struct tegra_vde *vde)
+>>   	if (!vde->group)
+>>   		return 0;
+>>   
+>> -#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+>> -	if (dev->archdata.mapping) {
+>> -		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
+>> -
+>> -		arm_iommu_detach_device(dev);
+>> -		arm_iommu_release_mapping(mapping);
+>> -	}
+>> -#endif
+>>   	vde->domain = iommu_domain_alloc(&platform_bus_type);
+>>   	if (!vde->domain) {
+>>   		err = -ENOMEM;
 >>
->> Hmm, it looks like the device ends up with the wrong DMA ops, which implies
->> something didn't go as expected with the earlier IOMMU setup and default
->> domain creation. Chances are that either I missed some subtlety in the
->> omap_iommu change, or I've fundamentally misjudged how the ISP probing works
->> and it never actually goes down the of_iommu_configure() path in the first
->> place. Do you get any messages from the IOMMU layer earlier on during boot?
 > 
-> I do get these:
+> Hello, Robin! Thank you for yours work!
 > 
-> [    2.934936] iommu: Default domain type: Translated
-> [    2.940917] omap-iommu 480bd400.mmu: 480bd400.mmu registered
-> [    2.946899] platform 480bc000.isp: Adding to iommu group 0
-> 
+> Some drivers, like this Tegra VDE (Video Decoder Engine) driver for
+> example, do not want to use implicit IOMMU domain.
 
-So that much looks OK, if there are no obvious errors. Unfortunately 
-there's no easy way to tell exactly what of_iommu_configure() is doing 
-(beyond enabling a couple of vague debug messages). The first thing I'll 
-do tomorrow is double-check whether it's really working on my boards 
-here, or whether I was just getting lucky with CMA... (I assume you 
-don't have CMA enabled if you're ending up in remap_allocator_alloc())
+That isn't (intentionally) changing here - the only difference should be 
+that instead of having the ARM-special implicit domain, which you have 
+to kick out of the way with the ARM-specific API before you're able to 
+attach your own domain, the implicit domain is now a proper IOMMU API 
+default domain, which automatically gets bumped by your attach. The 
+default domains should still only be created in the same cases that the 
+ARM dma_iommu_mappings were.
+
+> Tegra VDE driver
+> relies on explicit IOMMU domain in a case of Tegra SMMU because VDE
+> hardware can't access last page of the AS and because driver wants to
+> reserve some fixed addresses [1].
+> 
+> [1]
+> https://elixir.bootlin.com/linux/v5.9-rc1/source/drivers/staging/media/tegra-vde/iommu.c#L100
+> 
+> Tegra30 SoC supports up to 4 domains, hence it's not possible to afford
+> wasting unused implicit domains. I think this needs to be addressed
+> before this patch could be applied.
+
+Yeah, there is one subtle change in behaviour from removing the ARM 
+layer on top of the core API, in that the IOMMU driver will no longer 
+see an explicit detach call. Thus it does stand to benefit from being a 
+bit cleverer about noticing devices being moved from one domain to 
+another by an attach call, either by releasing the hardware context for 
+the inactive domain once the device(s) are moved across to the new one, 
+or by simply reprogramming the hardware context in-place for the new 
+domain's address space without allocating a new one at all (most of the 
+drivers that don't have multiple contexts already handle the latter 
+approach quite well).
+
+> Would it be possible for IOMMU drivers to gain support for filtering out
+> devices in iommu_domain_alloc(dev, type)? Then perhaps Tegra SMMU driver
+> could simply return NULL in a case of type=IOMMU_DOMAIN_DMA and
+> dev=tegra-vde.
+
+If you can implement IOMMU_DOMAIN_IDENTITY by allowing the relevant 
+devices to bypass translation entirely without needing a hardware 
+context (or at worst, can spare one context which all identity-mapped 
+logical domains can share), then you could certainly do that kind of 
+filtering with the .def_domain_type callback if you really wanted to. As 
+above, the intent is that that shouldn't be necessary for this 
+particular case, since only one of a group's default domain and 
+explicitly attached domain can be live at any given time, so the driver 
+should be able to take advantage of that.
+
+If you simply have more active devices (groups) than available contexts 
+then yes, you probably would want to do some filtering to decide who 
+deserves a translation domain and who doesn't, but in that case you 
+should already have had a long-standing problem with the ARM implicit 
+domains.
+
+> Alternatively, the Tegra SMMU could be changed such that the devices
+> will be attached to a domain at the time of a first IOMMU mapping
+> invocation instead of attaching at the time of attach_dev() callback
+> invocation.
+> 
+> Or maybe even IOMMU core could be changed to attach devices at the time
+> of the first IOMMU mapping invocation? This could be a universal
+> solution for all drivers.
+
+I suppose technically you could do that within an IOMMU driver already 
+(similar to how some defer most of setup that logically belongs to 
+->domain_alloc until the first ->attach_dev). It's a bit grim from the 
+caller's PoV though, in terms of the failure mode being non-obvious and 
+having no real way to recover. Again, you'd be better off simply making 
+decisions up-front at domain_alloc or attach time based on the domain type.
 
 Robin.
