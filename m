@@ -2,126 +2,184 @@ Return-Path: <SRS0=jf4o=B7=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D7AC433DF
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 00:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C89C433E3
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 03:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1DF22076E
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 00:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9E02177B
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 03:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597982070;
+	bh=Gk6wv7QLotp6FAdyTvDkKHGlnKmIR+s56Sgvxjzdu70=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=1gWKbb68bG7qweDd+QQTF6+Oc6bEV6fDmNgLsk4jlGmCQFp+GtCRxAfoQkipHUly0
+	 rNnRAEvmaNFUidwbmLOVK/YntvZJXzJ2t86h6PvUkXwpfI+BIcWrI4TVYZ6YP62AW7
+	 pxonZdC4LNYmNjzUrhrSWRRiiaqEfYm5GZBntSv8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbgHUA3D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 20:29:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:49090 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726735AbgHUA3C (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 20:29:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E07930E;
-        Thu, 20 Aug 2020 17:29:01 -0700 (PDT)
-Received: from [10.57.40.122] (unknown [10.57.40.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09B773F71F;
-        Thu, 20 Aug 2020 17:28:52 -0700 (PDT)
-Subject: Re: [PATCH 12/18] iommu/tegra-gart: Add IOMMU_DOMAIN_DMA support
-To:     Dmitry Osipenko <digetx@gmail.com>, hch@lst.de, joro@8bytes.org,
-        linux@armlinux.org.uk
-Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
-        matthias.bgg@gmail.com, yong.wu@mediatek.com,
-        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
-        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
+        id S1727104AbgHUDy1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 23:54:27 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39107 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727066AbgHUDy0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 23:54:26 -0400
+Received: by mail-io1-f68.google.com with SMTP id z17so470442ioi.6;
+        Thu, 20 Aug 2020 20:54:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3xQSyuidDHE000cQW3ruY29YdVzjzemLhdUCUqMHH4g=;
+        b=uoec5P7k+QAy4T9/nm7pq0b8CZje786rS41068pS6CuvKKElqVH0zc86wKhU1rkXSe
+         ge4AYyvkGT10QcwxPl5s4FNn3zXyEh88p3p7pnatrqZhv+8a0fAED8IrnyN0dOuA0dP3
+         FoJu6YDc31iTC92MApZVcmxVDWZMOXpghYkKpthOhc5K6RqEKpd4hPOY76gUymCZH13d
+         ADQ4fUteyv4DoXI3X+A6sOndgAcxHQdQar6paKB5HJNIkWA7rPzYxpLn+Gyxuayc5Eeq
+         2Ug4CDQwa90FUQtT0CiLaNF8vHAlG96DLJDiHRO8Pv0SM6bnnDFX27RUyoJkpf04SbF9
+         Wzxg==
+X-Gm-Message-State: AOAM5328FtueSOGCteuIevaPKX7ePcTf/Z+LVefPGpw5+H6RkW6wmSme
+        yR4WJssPaXKPcUZ+tWasnA==
+X-Google-Smtp-Source: ABdhPJwWDZ2uF1UR52gyVwJrVKI7xgxX5Bug8MFl6x6tEW09K4V+Q0/1o3ijFf216rQPvCw1DGjTMQ==
+X-Received: by 2002:a6b:e70d:: with SMTP id b13mr795565ioh.141.1597982065025;
+        Thu, 20 Aug 2020 20:54:25 -0700 (PDT)
+Received: from xps15.herring.priv ([64.188.179.249])
+        by smtp.googlemail.com with ESMTPSA id 79sm413923ilc.9.2020.08.20.20.54.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Aug 2020 20:54:24 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dilip Kota <eswara.kota@linux.intel.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>, Marc Zyngier <maz@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
         linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1597931875.git.robin.murphy@arm.com>
- <516b33118d489e56499ff8c64c019709b744110c.1597931876.git.robin.murphy@arm.com>
- <081f7532-9ca0-0af3-35a1-cbaba0782237@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <3a132bb0-f2e6-6f8d-6d0c-bc925dd23f06@arm.com>
-Date:   Fri, 21 Aug 2020 01:28:49 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
+Date:   Thu, 20 Aug 2020 21:53:40 -0600
+Message-Id: <20200821035420.380495-1-robh@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <081f7532-9ca0-0af3-35a1-cbaba0782237@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2020-08-20 21:16, Dmitry Osipenko wrote:
-> 20.08.2020 18:08, Robin Murphy пишет:
->> Now that arch/arm is wired up for default domains and iommu-dma,
->> implement the corresponding driver-side support for DMA domains.
->>
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->> ---
->>   drivers/iommu/tegra-gart.c | 17 ++++++++++++-----
->>   1 file changed, 12 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
->> index fac720273889..e081387080f6 100644
->> --- a/drivers/iommu/tegra-gart.c
->> +++ b/drivers/iommu/tegra-gart.c
->> @@ -9,6 +9,7 @@
->>   
->>   #define dev_fmt(fmt)	"gart: " fmt
->>   
->> +#include <linux/dma-iommu.h>
->>   #include <linux/io.h>
->>   #include <linux/iommu.h>
->>   #include <linux/moduleparam.h>
->> @@ -145,16 +146,22 @@ static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
->>   {
->>   	struct iommu_domain *domain;
-> 
-> Hello, Robin!
-> 
-> Tegra20 GART isn't a real IOMMU, but a small relocation aperture. We
-> would only want to use it for a temporal mappings (managed by GPU
-> driver) for the time while GPU hardware is busy and working with a
-> sparse DMA buffers, the driver will take care of unmapping the sparse
-> buffers once GPU work is finished [1]. In a case of contiguous DMA
-> buffers, we want to bypass the IOMMU and use buffer's phys address
-> because GART aperture is small and all buffers simply can't fit into
-> GART for a complex GPU operations that involve multiple buffers [2][3].
-> The upstream GPU driver still doesn't support GART, but eventually it
-> needs to be changed.
-> 
-> [1]
-> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/gart.c#L489
-> 
-> [2]
-> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/gart.c#L542
-> 
-> [3]
-> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/uapi/patching.c#L90
-> 
->> -	if (type != IOMMU_DOMAIN_UNMANAGED)
->> +	if (type != IOMMU_DOMAIN_UNMANAGED && type != IOMMU_DOMAIN_DMA)
->>   		return NULL;
-> 
-> Will a returned NULL tell to IOMMU core that implicit domain shouldn't
-> be used? Is it possible to leave this driver as-is?
+This is a series of clean-ups for the Designware PCI driver. The series
+initially reworks the config space accessors to use the existing pci_ops
+struct. Then there's removal of various private data that's also present
+in the pci_host_bridge struct. There's also some duplicated common (PCI
+and DWC) register defines which I converted to use the common defines.
+Finally, the initialization for speed/gen, number of lanes, and N_FTS
+are all moved to the common DWC code.
 
-The aim of this patch was just to make the conversion without functional 
-changes wherever possible, i.e. maintain an equivalent to the existing 
-ARM behaviour of allocating its own implicit domains for everything. It 
-doesn't represent any judgement of whether that was ever appropriate for 
-this driver in the first place ;)
+This is compile tested only as I don't have any DWC based h/w, so any
+testing would be helpful. A branch is here[1].
 
-Hopefully my other reply already covered the degree of control drivers 
-can have with proper default domains, but do shout if anything wasn't clear.
+Rob
 
-Cheers,
-Robin.
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git pci-dw-cleanups
+
+Rob Herring (40):
+  PCI: Allow root and child buses to have different pci_ops
+  PCI: dwc: Use DBI accessors instead of own config accessors
+  PCI: dwc: Allow overriding bridge pci_ops
+  PCI: dwc: Add a default pci_ops.map_bus for root port
+  PCI: dwc: al: Use pci_ops for child config space accessors
+  PCI: dwc: keystone: Use pci_ops for config space accessors
+  PCI: dwc: tegra: Use pci_ops for root config space accessors
+  PCI: dwc: meson: Use pci_ops for root config space accessors
+  PCI: dwc: kirin: Use pci_ops for root config space accessors
+  PCI: dwc: exynos: Use pci_ops for root config space accessors
+  PCI: dwc: histb: Use pci_ops for root config space accessors
+  PCI: dwc: Remove dwc specific config accessor ops
+  PCI: dwc: Use generic config accessors
+  PCI: Also call .add_bus() callback for root bus
+  PCI: dwc: keystone: Convert .scan_bus() callback to use add_bus
+  PCI: dwc: Convert to use pci_host_probe()
+  PCI: dwc: Remove root_bus pointer
+  PCI: dwc: Remove storing of PCI resources
+  PCI: dwc: Simplify config space handling
+  PCI: dwc/keystone: Drop duplicated 'num-viewport'
+  PCI: dwc: Check CONFIG_PCI_MSI inside dw_pcie_msi_init()
+  PCI: dwc/imx6: Remove duplicate define PCIE_LINK_WIDTH_SPEED_CONTROL
+  PCI: dwc: Add a 'num_lanes' field to struct dw_pcie
+  PCI: dwc: Ensure FAST_LINK_MODE is cleared
+  PCI: dwc/meson: Drop the duplicate number of lanes setup
+  PCI: dwc/meson: Drop unnecessary RC config space initialization
+  PCI: dwc/meson: Rework PCI config and DW port logic register accesses
+  PCI: dwc/imx6: Use common PCI register definitions
+  PCI: dwc/qcom: Use common PCI register definitions
+  PCI: dwc: Remove hardcoded PCI_CAP_ID_EXP offset
+  PCI: dwc/tegra: Use common Designware port logic register definitions
+  PCI: dwc: Remove read_dbi2 code
+  PCI: dwc: Make ATU accessors private
+  PCI: dwc: Centralize link gen setting
+  PCI: dwc: Set PORT_LINK_DLL_LINK_EN in common setup code
+  PCI: dwc/intel-gw: Drop unnecessary checking of DT 'device_type'
+    property
+  PCI: dwc/intel-gw: Move getting PCI_CAP_ID_EXP offset to
+    intel_pcie_link_setup()
+  PCI: dwc/intel-gw: Drop unused max_width
+  PCI: dwc: Move N_FTS setup to common setup
+  PCI: dwc: Use DBI accessors
+
+ drivers/pci/controller/dwc/pci-dra7xx.c       |  29 +-
+ drivers/pci/controller/dwc/pci-exynos.c       |  45 +--
+ drivers/pci/controller/dwc/pci-imx6.c         |  52 +--
+ drivers/pci/controller/dwc/pci-keystone.c     | 126 ++-----
+ drivers/pci/controller/dwc/pci-meson.c        | 156 ++-------
+ drivers/pci/controller/dwc/pcie-al.c          |  70 +---
+ drivers/pci/controller/dwc/pcie-artpec6.c     |  48 +--
+ .../pci/controller/dwc/pcie-designware-ep.c   |  11 +-
+ .../pci/controller/dwc/pcie-designware-host.c | 319 ++++++------------
+ .../pci/controller/dwc/pcie-designware-plat.c |   4 +-
+ drivers/pci/controller/dwc/pcie-designware.c  | 104 +++---
+ drivers/pci/controller/dwc/pcie-designware.h  |  54 +--
+ drivers/pci/controller/dwc/pcie-histb.c       |  45 +--
+ drivers/pci/controller/dwc/pcie-intel-gw.c    |  65 +---
+ drivers/pci/controller/dwc/pcie-kirin.c       |  43 +--
+ drivers/pci/controller/dwc/pcie-qcom.c        |  33 +-
+ drivers/pci/controller/dwc/pcie-spear13xx.c   |  39 +--
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 120 ++-----
+ drivers/pci/controller/dwc/pcie-uniphier.c    |   3 +-
+ drivers/pci/probe.c                           |  14 +-
+ include/linux/pci.h                           |   1 +
+ 21 files changed, 443 insertions(+), 938 deletions(-)
+
+--
+2.25.1
