@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4AAC433E3
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 16:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF98C433E1
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 16:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E86D207BB
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 16:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A92720732
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 16:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598027917;
+	s=default; t=1598028405;
 	bh=ngB6DdBiJuvmnLavUkZSbxNw6b3Hq4QduT3Hww3mo2E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kYyEDGB6fVq0xG/9xbKZf922hBmiyfUIs6OSpix8snP/1GtfxwKMCyUNSTEpGB4by
-	 aRuLUT68FjMiSTYCYIe3QYLxtHyb7Qt+NN9aA7ESQ4TnZexEd/NPzdBdjKoZpCAFbi
-	 1ryljHJRAdlEo2ImwcwcWn0kBr0D9GMTTLnWosSs=
+	b=NshLBO6jhSkWgu14Q3B7bUSmis+kwmwuIW7tZeR370KA82egkf5lxruYFA3f94jjy
+	 kZklD6he0/qImvTe/7b/1btQBCwsrUZjwQwdt+XEYFiNxnXp/Xy2aviYA+9B5pBAPU
+	 8eZbVla4oQTlEYY1MenOh2+q549diRVz5xLQ01OA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728585AbgHUQhU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Aug 2020 12:37:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51510 "EHLO mail.kernel.org"
+        id S1728392AbgHUQqn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Aug 2020 12:46:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728439AbgHUQVJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Aug 2020 12:21:09 -0400
+        id S1728378AbgHUQUj (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 21 Aug 2020 12:20:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8D3D22D0B;
-        Fri, 21 Aug 2020 16:20:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FA8722B4E;
+        Fri, 21 Aug 2020 16:19:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598026817;
+        s=default; t=1598026781;
         bh=ngB6DdBiJuvmnLavUkZSbxNw6b3Hq4QduT3Hww3mo2E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eg72yDFgwmWnY4Zp9s7alwKqO7JyIeVZF1tAm64j/1igICfQHg4tiT0Xasv5ZShY/
-         505Te5gJS99DCsRJxwCj8y4RXyRtDkMd4Km38wwsFWYOAJkh0QapTmMaZjeC7qd4aG
-         uBFgHYl08Udx13B5sY+TBPPvH9WP6GD3XfVbiMq8=
+        b=woRazyhH3QHLTv90KUPI/aVANXjzjRloKaucqJuJkWMYmx65fX0H532q/JdIHCD9/
+         YNqtw7luKnWVI0PVhtUgGVMqWMseqdQZm38sqDz6r7yxQQOSVeCrKGl3VVnAvyYxkI
+         1N9HjfA+Gkk/LIgEKrGA8FrGJikouXN8TBF8CI5s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Qiushi Wu <wu000273@umn.edu>, Jon Hunter <jonathanh@nvidia.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 02/22] ASoC: tegra: Fix reference count leaks.
-Date:   Fri, 21 Aug 2020 12:19:54 -0400
-Message-Id: <20200821162014.349506-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 02/26] ASoC: tegra: Fix reference count leaks.
+Date:   Fri, 21 Aug 2020 12:19:13 -0400
+Message-Id: <20200821161938.349246-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200821162014.349506-1-sashal@kernel.org>
-References: <20200821162014.349506-1-sashal@kernel.org>
+In-Reply-To: <20200821161938.349246-1-sashal@kernel.org>
+References: <20200821161938.349246-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
