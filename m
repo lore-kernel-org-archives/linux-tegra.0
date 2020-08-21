@@ -2,30 +2,30 @@ Return-Path: <SRS0=jf4o=B7=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4308C433DF
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 00:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D7AC433DF
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 00:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBC8820702
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 00:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1DF22076E
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 00:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbgHUAMI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 20:12:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:48692 "EHLO foss.arm.com"
+        id S1726861AbgHUA3D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 20:29:03 -0400
+Received: from foss.arm.com ([217.140.110.172]:49090 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725859AbgHUAMF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 20:12:05 -0400
+        id S1726735AbgHUA3C (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 Aug 2020 20:29:02 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF7E230E;
-        Thu, 20 Aug 2020 17:12:04 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E07930E;
+        Thu, 20 Aug 2020 17:29:01 -0700 (PDT)
 Received: from [10.57.40.122] (unknown [10.57.40.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 346943F71F;
-        Thu, 20 Aug 2020 17:11:59 -0700 (PDT)
-Subject: Re: [PATCH 16/18] staging/media/tegra-vde: Clean up IOMMU workaround
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09B773F71F;
+        Thu, 20 Aug 2020 17:28:52 -0700 (PDT)
+Subject: Re: [PATCH 12/18] iommu/tegra-gart: Add IOMMU_DOMAIN_DMA support
 To:     Dmitry Osipenko <digetx@gmail.com>, hch@lst.de, joro@8bytes.org,
         linux@armlinux.org.uk
 Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
@@ -42,15 +42,15 @@ Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <cover.1597931875.git.robin.murphy@arm.com>
- <3535c205b9bce52556abbf2f63384fb38e009df9.1597931876.git.robin.murphy@arm.com>
- <07135a55-cbc9-83e5-60dc-731282192554@gmail.com>
+ <516b33118d489e56499ff8c64c019709b744110c.1597931876.git.robin.murphy@arm.com>
+ <081f7532-9ca0-0af3-35a1-cbaba0782237@gmail.com>
 From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <cb12808b-7316-19db-7413-b7f852a6f8ae@arm.com>
-Date:   Fri, 21 Aug 2020 01:11:57 +0100
+Message-ID: <3a132bb0-f2e6-6f8d-6d0c-bc925dd23f06@arm.com>
+Date:   Fri, 21 Aug 2020 01:28:49 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <07135a55-cbc9-83e5-60dc-731282192554@gmail.com>
+In-Reply-To: <081f7532-9ca0-0af3-35a1-cbaba0782237@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
@@ -59,119 +59,69 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2020-08-20 20:51, Dmitry Osipenko wrote:
+On 2020-08-20 21:16, Dmitry Osipenko wrote:
 > 20.08.2020 18:08, Robin Murphy пишет:
->> Now that arch/arm is wired up for default domains and iommu-dma, we no
->> longer need to work around the arch-private mapping.
+>> Now that arch/arm is wired up for default domains and iommu-dma,
+>> implement the corresponding driver-side support for DMA domains.
 >>
 >> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 >> ---
->>   drivers/staging/media/tegra-vde/iommu.c | 12 ------------
->>   1 file changed, 12 deletions(-)
+>>   drivers/iommu/tegra-gart.c | 17 ++++++++++++-----
+>>   1 file changed, 12 insertions(+), 5 deletions(-)
 >>
->> diff --git a/drivers/staging/media/tegra-vde/iommu.c b/drivers/staging/media/tegra-vde/iommu.c
->> index 6af863d92123..4f770189ed34 100644
->> --- a/drivers/staging/media/tegra-vde/iommu.c
->> +++ b/drivers/staging/media/tegra-vde/iommu.c
->> @@ -10,10 +10,6 @@
->>   #include <linux/kernel.h>
->>   #include <linux/platform_device.h>
+>> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+>> index fac720273889..e081387080f6 100644
+>> --- a/drivers/iommu/tegra-gart.c
+>> +++ b/drivers/iommu/tegra-gart.c
+>> @@ -9,6 +9,7 @@
 >>   
->> -#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
->> -#include <asm/dma-iommu.h>
->> -#endif
->> -
->>   #include "vde.h"
+>>   #define dev_fmt(fmt)	"gart: " fmt
 >>   
->>   int tegra_vde_iommu_map(struct tegra_vde *vde,
->> @@ -70,14 +66,6 @@ int tegra_vde_iommu_init(struct tegra_vde *vde)
->>   	if (!vde->group)
->>   		return 0;
->>   
->> -#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
->> -	if (dev->archdata.mapping) {
->> -		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
->> -
->> -		arm_iommu_detach_device(dev);
->> -		arm_iommu_release_mapping(mapping);
->> -	}
->> -#endif
->>   	vde->domain = iommu_domain_alloc(&platform_bus_type);
->>   	if (!vde->domain) {
->>   		err = -ENOMEM;
->>
+>> +#include <linux/dma-iommu.h>
+>>   #include <linux/io.h>
+>>   #include <linux/iommu.h>
+>>   #include <linux/moduleparam.h>
+>> @@ -145,16 +146,22 @@ static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
+>>   {
+>>   	struct iommu_domain *domain;
 > 
-> Hello, Robin! Thank you for yours work!
+> Hello, Robin!
 > 
-> Some drivers, like this Tegra VDE (Video Decoder Engine) driver for
-> example, do not want to use implicit IOMMU domain.
-
-That isn't (intentionally) changing here - the only difference should be 
-that instead of having the ARM-special implicit domain, which you have 
-to kick out of the way with the ARM-specific API before you're able to 
-attach your own domain, the implicit domain is now a proper IOMMU API 
-default domain, which automatically gets bumped by your attach. The 
-default domains should still only be created in the same cases that the 
-ARM dma_iommu_mappings were.
-
-> Tegra VDE driver
-> relies on explicit IOMMU domain in a case of Tegra SMMU because VDE
-> hardware can't access last page of the AS and because driver wants to
-> reserve some fixed addresses [1].
+> Tegra20 GART isn't a real IOMMU, but a small relocation aperture. We
+> would only want to use it for a temporal mappings (managed by GPU
+> driver) for the time while GPU hardware is busy and working with a
+> sparse DMA buffers, the driver will take care of unmapping the sparse
+> buffers once GPU work is finished [1]. In a case of contiguous DMA
+> buffers, we want to bypass the IOMMU and use buffer's phys address
+> because GART aperture is small and all buffers simply can't fit into
+> GART for a complex GPU operations that involve multiple buffers [2][3].
+> The upstream GPU driver still doesn't support GART, but eventually it
+> needs to be changed.
 > 
 > [1]
-> https://elixir.bootlin.com/linux/v5.9-rc1/source/drivers/staging/media/tegra-vde/iommu.c#L100
+> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/gart.c#L489
 > 
-> Tegra30 SoC supports up to 4 domains, hence it's not possible to afford
-> wasting unused implicit domains. I think this needs to be addressed
-> before this patch could be applied.
-
-Yeah, there is one subtle change in behaviour from removing the ARM 
-layer on top of the core API, in that the IOMMU driver will no longer 
-see an explicit detach call. Thus it does stand to benefit from being a 
-bit cleverer about noticing devices being moved from one domain to 
-another by an attach call, either by releasing the hardware context for 
-the inactive domain once the device(s) are moved across to the new one, 
-or by simply reprogramming the hardware context in-place for the new 
-domain's address space without allocating a new one at all (most of the 
-drivers that don't have multiple contexts already handle the latter 
-approach quite well).
-
-> Would it be possible for IOMMU drivers to gain support for filtering out
-> devices in iommu_domain_alloc(dev, type)? Then perhaps Tegra SMMU driver
-> could simply return NULL in a case of type=IOMMU_DOMAIN_DMA and
-> dev=tegra-vde.
-
-If you can implement IOMMU_DOMAIN_IDENTITY by allowing the relevant 
-devices to bypass translation entirely without needing a hardware 
-context (or at worst, can spare one context which all identity-mapped 
-logical domains can share), then you could certainly do that kind of 
-filtering with the .def_domain_type callback if you really wanted to. As 
-above, the intent is that that shouldn't be necessary for this 
-particular case, since only one of a group's default domain and 
-explicitly attached domain can be live at any given time, so the driver 
-should be able to take advantage of that.
-
-If you simply have more active devices (groups) than available contexts 
-then yes, you probably would want to do some filtering to decide who 
-deserves a translation domain and who doesn't, but in that case you 
-should already have had a long-standing problem with the ARM implicit 
-domains.
-
-> Alternatively, the Tegra SMMU could be changed such that the devices
-> will be attached to a domain at the time of a first IOMMU mapping
-> invocation instead of attaching at the time of attach_dev() callback
-> invocation.
+> [2]
+> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/gart.c#L542
 > 
-> Or maybe even IOMMU core could be changed to attach devices at the time
-> of the first IOMMU mapping invocation? This could be a universal
-> solution for all drivers.
+> [3]
+> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/uapi/patching.c#L90
+> 
+>> -	if (type != IOMMU_DOMAIN_UNMANAGED)
+>> +	if (type != IOMMU_DOMAIN_UNMANAGED && type != IOMMU_DOMAIN_DMA)
+>>   		return NULL;
+> 
+> Will a returned NULL tell to IOMMU core that implicit domain shouldn't
+> be used? Is it possible to leave this driver as-is?
 
-I suppose technically you could do that within an IOMMU driver already 
-(similar to how some defer most of setup that logically belongs to 
-->domain_alloc until the first ->attach_dev). It's a bit grim from the 
-caller's PoV though, in terms of the failure mode being non-obvious and 
-having no real way to recover. Again, you'd be better off simply making 
-decisions up-front at domain_alloc or attach time based on the domain type.
+The aim of this patch was just to make the conversion without functional 
+changes wherever possible, i.e. maintain an equivalent to the existing 
+ARM behaviour of allocating its own implicit domains for everything. It 
+doesn't represent any judgement of whether that was ever appropriate for 
+this driver in the first place ;)
 
+Hopefully my other reply already covered the degree of control drivers 
+can have with proper default domains, but do shout if anything wasn't clear.
+
+Cheers,
 Robin.
