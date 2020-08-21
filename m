@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3334C433E8
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 03:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FCAC433E8
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 03:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC81F20714
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 03:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85B4D221E2
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 03:57:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597982211;
-	bh=I2ata9TeghmAV6hmk+KQT5pjWf9J+SqwX4FUg1NmVGI=;
+	s=default; t=1597982220;
+	bh=cawIRPOanM4q3RIhd6+vc2sIs/Til8o0Yl6KJ7cE2uA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lsaX1u7kYUoA929R0Uafvxuhowc2+BBG1XBZ8uJfqPnJl2DR1Iahly40sa+J2KIm9
-	 tYd/aaSe1t+nqgWnAJIS7LM3p3jIeNZyb2AimoIZFrvHy8JiqS46LJagVvfdrEZfn8
-	 RkZzAxYaXuUmLWpNm3fkgdZLeGEY6L0ePFnGy7bE=
+	b=Tmsac4pN9llQWJFNTBjjPuYFMwN8KdcY8KwX05zqPGUVmBiscG1HT652IGc1DJ3gI
+	 WmIudsQokokrKqGjW/pIWrQr3fy6advp4VhG8KgVx0u8DbiSDUCyYU5yUh2/lOvpNK
+	 L+8jEuOUG4IvIbjTR+BpORFQZNlqB9fA+UcWQLjo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbgHUD4v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Aug 2020 23:56:51 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37248 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728070AbgHUD4r (ORCPT
+        id S1727808AbgHUD5A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Aug 2020 23:57:00 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37259 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727807AbgHUD46 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Aug 2020 23:56:47 -0400
-Received: by mail-io1-f67.google.com with SMTP id b16so484841ioj.4;
-        Thu, 20 Aug 2020 20:56:46 -0700 (PDT)
+        Thu, 20 Aug 2020 23:56:58 -0400
+Received: by mail-io1-f65.google.com with SMTP id b16so485080ioj.4;
+        Thu, 20 Aug 2020 20:56:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=977wihraQvLF0SPRRQJhF+YrG+p3/qEwPqMrKAY+nbQ=;
-        b=QP6Ph6SxkKDtZbORRtfLMy3zhPOXoer1TZ4GkXKLxhjDd4oyTP/tBCQUjyG8U033C8
-         yr6dg5p34tHYR7cGuVa3zNUWDDIFlyM6D7ICccvZelfakNKxMABjpxfFHiescP2hyqz+
-         Gjx/gKRB2jAPn52dfrAv+QY0qOvGNyTPQIm/lzbdVAQDd20DD4CcDVdfc/gc51R/WfDH
-         8Sk3QgMxH7btHOlNHM/MF4jaw78uYda9kCIK8ADENjarxiYm+ja83a/fg+ohDWZhUs3O
-         sDnrhJS6Gp7YRMmvFOV4jalcN+irJWmK/9flL+237d1lo/HECj7zhvhzGVmwB7Uyqbx9
-         1GOg==
-X-Gm-Message-State: AOAM531CwISCsdsVPdcn+nDEi+q9dY26vHQPkrTTqCvvWtPtpmLxkqD8
-        tDbQMgNKPOW2xSbXRU9oPA==
-X-Google-Smtp-Source: ABdhPJw/uNByXN0aCl+4jyJ73JOY4dDBXCFrmTrhHNDlH5OMH+mWhGn9ESZSwCXXys59FN3TPFATHw==
-X-Received: by 2002:a02:29ca:: with SMTP id p193mr859557jap.131.1597982205997;
-        Thu, 20 Aug 2020 20:56:45 -0700 (PDT)
+        bh=9/YPThWKebuepD09jEOhLOS7SrW7ksPYY3UHELax/QU=;
+        b=d1qJeTUtDUyEYXJ3St92Tp8URiCGPgf3NhXE1psc1WG8XNZ3+0ROmkjWxRWxvK6q+k
+         CXrM9hd4k1dBXUncHhPPB3d5eodNKy+Cmv525A1aQLEsi80uNX+VYDEdsRCv8dqNcfxw
+         03WM6RRhPF7qmxUXR9E3Q6/FaDVaSBP3vjNIA6iwB4WfLVLWU0pKZEdqliLfMzr5AyO1
+         4IHe5pfca+oky+T4pF1Q6X7e2rmZc0/3KEeVviaX91b3sxw9JVREhUeQb8VCJLqc6otW
+         UhUHJQTarVqTKz4CRV/ZOAnmqzL4f/74U8Ra0qFR2RHywspbKOEPbiWtZbWA/TP9gt4n
+         rmGQ==
+X-Gm-Message-State: AOAM532qxeNRuBBheL2y3JpwvtMEup2brvdSUpkMWVzc2/cgJxwIMbde
+        D+rPMjifHHikTQq1HOGTRA==
+X-Google-Smtp-Source: ABdhPJwTwqsPsKVkMoMEXHOo2cKMWdbZxZdy/oInmh65Y7ywfHBijNwvFaSB2WL1YEbhA5nsNJVKOg==
+X-Received: by 2002:a05:6638:1690:: with SMTP id f16mr859543jat.91.1597982216882;
+        Thu, 20 Aug 2020 20:56:56 -0700 (PDT)
 Received: from xps15.herring.priv ([64.188.179.249])
-        by smtp.googlemail.com with ESMTPSA id 79sm413923ilc.9.2020.08.20.20.56.41
+        by smtp.googlemail.com with ESMTPSA id 79sm413923ilc.9.2020.08.20.20.56.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Aug 2020 20:56:45 -0700 (PDT)
+        Thu, 20 Aug 2020 20:56:56 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
@@ -88,9 +88,9 @@ Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 36/40] PCI: dwc/intel-gw: Drop unnecessary checking of DT 'device_type' property
-Date:   Thu, 20 Aug 2020 21:54:16 -0600
-Message-Id: <20200821035420.380495-37-robh@kernel.org>
+Subject: [PATCH v2 40/40] PCI: dwc: Use DBI accessors
+Date:   Thu, 20 Aug 2020 21:54:20 -0600
+Message-Id: <20200821035420.380495-41-robh@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200821035420.380495-1-robh@kernel.org>
 References: <20200821035420.380495-1-robh@kernel.org>
@@ -101,34 +101,77 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-A driver doesn't need to check for DT 'device_type' property, so let's
-remove the check.
+Convert the remaining cases of register accesses using dbi_base rather
+than dw_pcie_(read|write)[bwl]_dbi accessors.
 
-Cc: Dilip Kota <eswara.kota@linux.intel.com>
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Pratyush Anand <pratyush.anand@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pci/controller/dwc/pcie-intel-gw.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/pci/controller/dwc/pcie-spear13xx.c |  8 ++++----
+ drivers/pci/controller/dwc/pcie-tegra194.c  | 10 ++++------
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
-index d15e49b8df2a..6b102197a1b6 100644
---- a/drivers/pci/controller/dwc/pcie-intel-gw.c
-+++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
-@@ -268,12 +268,6 @@ static int intel_pcie_get_resources(struct platform_device *pdev)
- 		return ret;
+diff --git a/drivers/pci/controller/dwc/pcie-spear13xx.c b/drivers/pci/controller/dwc/pcie-spear13xx.c
+index 0d8d0fe87f27..e348225f651f 100644
+--- a/drivers/pci/controller/dwc/pcie-spear13xx.c
++++ b/drivers/pci/controller/dwc/pcie-spear13xx.c
+@@ -86,12 +86,12 @@ static int spear13xx_pcie_establish_link(struct spear13xx_pcie *spear13xx_pcie)
+ 	 * default value in capability register is 512 bytes. So force
+ 	 * it to 128 here.
+ 	 */
+-	dw_pcie_read(pci->dbi_base + exp_cap_off + PCI_EXP_DEVCTL, 2, &val);
++	val = dw_pcie_readw_dbi(pci, exp_cap_off + PCI_EXP_DEVCTL);
+ 	val &= ~PCI_EXP_DEVCTL_READRQ;
+-	dw_pcie_write(pci->dbi_base + exp_cap_off + PCI_EXP_DEVCTL, 2, val);
++	dw_pcie_writew_dbi(pci, exp_cap_off + PCI_EXP_DEVCTL, val);
+ 
+-	dw_pcie_write(pci->dbi_base + PCI_VENDOR_ID, 2, 0x104A);
+-	dw_pcie_write(pci->dbi_base + PCI_DEVICE_ID, 2, 0xCD80);
++	dw_pcie_writew_dbi(pci, PCI_VENDOR_ID, 0x104A);
++	dw_pcie_writew_dbi(pci, PCI_DEVICE_ID, 0xCD80);
+ 
+ 	/* enable ltssm */
+ 	writel(DEVICE_TYPE_RC | (1 << MISCTRL_EN_ID)
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 1560c449757d..aa511ec0d800 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -816,26 +816,24 @@ static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
+ 
+ 	/* Program init preset */
+ 	for (i = 0; i < pcie->num_lanes; i++) {
+-		dw_pcie_read(pci->dbi_base + CAP_SPCIE_CAP_OFF
+-				 + (i * 2), 2, &val);
++		val = dw_pcie_readw_dbi(pci, CAP_SPCIE_CAP_OFF + (i * 2));
+ 		val &= ~CAP_SPCIE_CAP_OFF_DSP_TX_PRESET0_MASK;
+ 		val |= GEN3_GEN4_EQ_PRESET_INIT;
+ 		val &= ~CAP_SPCIE_CAP_OFF_USP_TX_PRESET0_MASK;
+ 		val |= (GEN3_GEN4_EQ_PRESET_INIT <<
+ 			   CAP_SPCIE_CAP_OFF_USP_TX_PRESET0_SHIFT);
+-		dw_pcie_write(pci->dbi_base + CAP_SPCIE_CAP_OFF
+-				 + (i * 2), 2, val);
++		dw_pcie_writew_dbi(pci, CAP_SPCIE_CAP_OFF + (i * 2), val);
+ 
+ 		offset = dw_pcie_find_ext_capability(pci,
+ 						     PCI_EXT_CAP_ID_PL_16GT) +
+ 				PCI_PL_16GT_LE_CTRL;
+-		dw_pcie_read(pci->dbi_base + offset + i, 1, &val);
++		val = dw_pcie_readb_dbi(pci, offset + i);
+ 		val &= ~PCI_PL_16GT_LE_CTRL_DSP_TX_PRESET_MASK;
+ 		val |= GEN3_GEN4_EQ_PRESET_INIT;
+ 		val &= ~PCI_PL_16GT_LE_CTRL_USP_TX_PRESET_MASK;
+ 		val |= (GEN3_GEN4_EQ_PRESET_INIT <<
+ 			PCI_PL_16GT_LE_CTRL_USP_TX_PRESET_SHIFT);
+-		dw_pcie_write(pci->dbi_base + offset + i, 1, val);
++		dw_pcie_writeb_dbi(pci, offset + i, val);
  	}
  
--	ret = device_property_match_string(dev, "device_type", "pci");
--	if (ret) {
--		dev_err(dev, "Failed to find pci device type: %d\n", ret);
--		return ret;
--	}
--
- 	ret = device_property_read_u32(dev, "reset-assert-ms",
- 				       &lpp->rst_intrvl);
- 	if (ret)
+ 	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
 -- 
 2.25.1
 
