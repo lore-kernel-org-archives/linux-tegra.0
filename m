@@ -2,124 +2,105 @@ Return-Path: <SRS0=jf4o=B7=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67015C433E3
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 07:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC36C433E1
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 08:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3988A2087D
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 07:40:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kOxOuxMx"
+	by mail.kernel.org (Postfix) with ESMTP id 9699C207DF
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Aug 2020 08:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597997259;
+	bh=LaMlJ8OWitxR94LYzLAW+/aCIQp70S1xt+7fdRecGkM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jKUF9r4Sr2hUCuFgN6pSCkFbyGelw2efXaXorHFQiCxJD4kEBYCAXfbX609JI8Cgc
+	 Xpd8Avvcng5G3WPQ04xSt5CLzZLB50D5Y6tMnFIT0cM9rxIaWBhbQHK6SsZ4Opyf3t
+	 ySK+5zkxBzuNFIZ1hswi5vf0QFuMGRapJk6uKzv4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbgHUHkS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Aug 2020 03:40:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728182AbgHUHkJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Aug 2020 03:40:09 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39642C061386
-        for <linux-tegra@vger.kernel.org>; Fri, 21 Aug 2020 00:40:08 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id b26so369649vsa.13
-        for <linux-tegra@vger.kernel.org>; Fri, 21 Aug 2020 00:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bAU9iZW9yGALOB30mTlHDeoRf5CRh/Snlg+xCwRu8JU=;
-        b=kOxOuxMxSQ+ksSLjKg3Ni5aIYiY5w0RxKooi0DNSCKve7b14PccYxmywLlnGxld6mc
-         WqavXtK7TC9i0AqdD3XPTGzIoa5x8gqELOCV/+vAlvOIAyKSZztrQsMbO4Rg2Sd1UFPg
-         SiEMKltZUmr8lz2zr42CVDG7YdRtLuErHINARiW/rqVexyezip3RnwlVXtlEpgakssZH
-         NiFgJ9BjbUnADlw9BpI2N/RodkTY07zEH8wagrgldLZZX2bBReCzCGOX1V/M9Lb+z/Vk
-         +T51a1HYvojPzfuH4UOvwvYnJe1ukLKul84xO8Z6/4GZPuwyMPAeamxXv+di9soZ/b3m
-         KOmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bAU9iZW9yGALOB30mTlHDeoRf5CRh/Snlg+xCwRu8JU=;
-        b=jq6/uqa/vX1LLftmVWy6cNKTd9qrLdFmzKbsxf5roMedY3ah7hAoo8ZCp4copmI1mE
-         3SnnCatxYZr1csuwNid15B8Uo8PiQYlBMGhpeXlAjU7HPbkg/cN5MzMJfzFJrwfaR2ms
-         EDGSLQFf2zKeFGDAP4EXMZ3K87+XJ9Zi9IQ6mOmHBB6muFeDoBQQXE3NZmRs5LONlGfk
-         0LsnNnNFbSLCs5RrQBN5FkiaVJX5EywDu3h7xYxiy1JfKT/ntGdkweWh+z2mF5NkKb/f
-         8jW/6a8wCImtXToSHWjKGCxPRHyc15SPDTTw0nQzOmIwF2BarjW55dfsf0T2FyvueD94
-         O+ug==
-X-Gm-Message-State: AOAM533meSZCG+Csi4rsc1Y0pVyV+63oFMBmBhg41nKfs0Z2uI5MyAJ2
-        +dKmPmv5q4lalfGJrc9vhlJg3rcAiB7+mY0r9VWwcg==
-X-Google-Smtp-Source: ABdhPJwcZWnwUZBTqM0sxN5IRp11B+ol/YTZpoa5qsJpj61ysTHH9tG19j4VKQcti7QxF7eU+rcXtzQeNyrlpU0p/zI=
-X-Received: by 2002:a67:e9d8:: with SMTP id q24mr887206vso.165.1597995607373;
- Fri, 21 Aug 2020 00:40:07 -0700 (PDT)
+        id S1727868AbgHUIHf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Aug 2020 04:07:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727840AbgHUIHd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 21 Aug 2020 04:07:33 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DA4C2078D;
+        Fri, 21 Aug 2020 08:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597997252;
+        bh=LaMlJ8OWitxR94LYzLAW+/aCIQp70S1xt+7fdRecGkM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lvzNVTn3kK+R6rhX3v2r5kGGWFVmcbdZ4VJtDADKQTwh2Aes+1MU5H+LAHiN8OQ+H
+         ket2nq3Gs0f+y7KGGrtoh30Khl+NLrKZB5sMVZ4StNWFcKM28IvThm25QAGBbg8Bw9
+         DAQdnRs+m1kjIK5XxPYS+MsULpHW1cs7ylBpEn4U=
+Date:   Fri, 21 Aug 2020 09:07:25 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
+        digetx@gmail.com, matthias.bgg@gmail.com, yong.wu@mediatek.com,
+        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
+        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/18] iommu/arm-smmu: Remove arch/arm workaround
+Message-ID: <20200821080724.GA20060@willie-the-truck>
+References: <cover.1597931875.git.robin.murphy@arm.com>
+ <ef39be82b98d2471c9e99c82d0eeda37ba30e4fa.1597931876.git.robin.murphy@arm.com>
 MIME-Version: 1.0
-References: <1596673949-1571-1-git-send-email-skomatineni@nvidia.com>
-In-Reply-To: <1596673949-1571-1-git-send-email-skomatineni@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 21 Aug 2020 09:39:31 +0200
-Message-ID: <CAPDyKFre3Rpfd-XW=kMzuKJAfUcr4v-vEj9KVkPyAvkbTdRuGg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Fix timeout clock used by hardware data timeout
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "# 4.0+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef39be82b98d2471c9e99c82d0eeda37ba30e4fa.1597931876.git.robin.murphy@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 6 Aug 2020 at 02:32, Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
->
-> Tegra210/Tegra186/Tegra194 has incorrectly enabled
-> SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK from the beginning of their support.
->
-> Tegra210 and later SDMMC hardware default uses sdmmc_legacy_tm (TMCLK)
-> all the time for hardware data timeout instead of SDCLK and this TMCLK
-> need to be kept enabled by Tegra sdmmc driver.
->
-> This series includes patches to fix this for Tegra210/Tegra186/Tegra194.
->
-> These patches need to be manually backported for 4.9, 4.14 and 4.19.
->
-> Will send patches to backport separately once these patches are ack'd.
->
-> Delta between patch versions:
-> [v3]:   Same as v2 with fixes tag
->
-> [v2]:   Includes minor fix
->         - Patch-0006: parentheses around operand of '!'
->
-> Sowjanya Komatineni (6):
->   sdhci: tegra: Remove SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for Tegra210
->   sdhci: tegra: Remove SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for Tegra186
->   arm64: tegra: Add missing timeout clock to Tegra210 SDMMC
->   arm64: tegra: Add missing timeout clock to Tegra186 SDMMC nodes
->   arm64: tegra: Add missing timeout clock to Tegra194 SDMMC nodes
->   sdhci: tegra: Add missing TMCLK for data timeout
->
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 20 +++++++++------
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 15 ++++++-----
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 20 +++++++++------
->  drivers/mmc/host/sdhci-tegra.c           | 43 ++++++++++++++++++++++++++++++--
->  4 files changed, 74 insertions(+), 24 deletions(-)
->
-> --
-> 2.7.4
->
+On Thu, Aug 20, 2020 at 04:08:26PM +0100, Robin Murphy wrote:
+> Now that arch/arm is wired up for default domains and iommu-dma, remove
+> the add_device workaround.
+> 
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+>  drivers/iommu/arm/arm-smmu/arm-smmu.c | 10 ----------
+>  1 file changed, 10 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> index 09c42af9f31e..4e52d8cb67dd 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> @@ -1164,17 +1164,7 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
+>  		return -ENXIO;
+>  	}
+>  
+> -	/*
+> -	 * FIXME: The arch/arm DMA API code tries to attach devices to its own
+> -	 * domains between of_xlate() and probe_device() - we have no way to cope
+> -	 * with that, so until ARM gets converted to rely on groups and default
+> -	 * domains, just say no (but more politely than by dereferencing NULL).
+> -	 * This should be at least a WARN_ON once that's sorted.
+> -	 */
+>  	cfg = dev_iommu_priv_get(dev);
+> -	if (!cfg)
+> -		return -ENODEV;
+> -
+>  	smmu = cfg->smmu;
+>  
+>  	ret = arm_smmu_rpm_get(smmu);
 
-This looks good to me.
+Acked-by: Will Deacon <will@kernel.org>
 
-If it helps, I can also pick the arm64 patches for my fixes branch,
-but I need an ack from Thierry/Jon to do that.
-
-Kind regards
-Uffe
+Will
