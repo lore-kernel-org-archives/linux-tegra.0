@@ -8,72 +8,67 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E721BC433DF
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 Aug 2020 14:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61846C433E1
+	for <linux-tegra@archiver.kernel.org>; Sun, 23 Aug 2020 14:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE15720706
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 Aug 2020 14:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CCDF206C0
+	for <linux-tegra@archiver.kernel.org>; Sun, 23 Aug 2020 14:48:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKOdxg9x"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tZOVHl6o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbgHWOWj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 23 Aug 2020 10:22:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35482 "EHLO
+        id S1725887AbgHWOs2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 23 Aug 2020 10:48:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbgHWOWi (ORCPT
+        with ESMTP id S1726727AbgHWOs0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 23 Aug 2020 10:22:38 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC3BC061573;
-        Sun, 23 Aug 2020 07:22:37 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id 185so6756695ljj.7;
-        Sun, 23 Aug 2020 07:22:37 -0700 (PDT)
+        Sun, 23 Aug 2020 10:48:26 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2316C061574
+        for <linux-tegra@vger.kernel.org>; Sun, 23 Aug 2020 07:48:24 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id w14so6804705ljj.4
+        for <linux-tegra@vger.kernel.org>; Sun, 23 Aug 2020 07:48:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cpCT819jIZRApX9D520kYS6bFmlnpJPpxZjN4lrXVfs=;
-        b=AKOdxg9x4WPMYdcVBFb6mbCTAht38QZGhsXUdTJkxxM1nl1W0PkY/anI72vrMwXbaI
-         ou7kHmCFWXkygBGapGdKCmTdbNTMEyiWMBtOxxsWbaKw2yACIoX1z17ez2bBC/HqQ2EG
-         5addTlyUg5G9vohHbfBMtLeJriLNqoMMlprdqUtXvZ0vEXMBqQq5FELMWGOYPn6KX487
-         R83z83bnvJGWte06RSYwY4vX5cFb6FCVYrlwjWKgCjzLlI6VzTDvFJjqZIdaUn9gJBEB
-         56t+5W7vJK6+ShRCQzNCQ2FN2j2qfcgKS9krwdX70YrDsIDbiHAC5gGmxhE/QgvzNzCo
-         eYzQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=EaBvL32tcEigONyE/qxDU3km7C5iOhDt/gYUThD/Lio=;
+        b=tZOVHl6oyCjSkI+ZX62nzeeCQtygQXQshViI2itFlf/SZmKu3cqYAj9cligMieeIXJ
+         SnmrTBnc2Fe+CXXHUWmuOEQYr7nsK4Pw+3HWklFF2xNPHWwYzJTt6f1DIVlZIhviIIyO
+         XgY85aoXL4RMpbomKKp5LgeL2tukGsOxpqJn5hcD/5kGbo6QBhqhR1xotYcADs2fu0iI
+         2RAC81i33e+uLOVQft8qauuQ99kxSH2kmyLX6xOWieyjktuXewsJH/p1qT+xSQ0cSpUz
+         nCywoyxQax1/p9gylnJViJ2KuIKvyt5spqE0qu2sg3YkXrMKXZtHG8nENr4rWJcNq/di
+         tofQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cpCT819jIZRApX9D520kYS6bFmlnpJPpxZjN4lrXVfs=;
-        b=ZoXJihx59V0HAFqtJEDimaNSwEoOrlCO6cn4TwLSYNZHD1NlXDrKvJYaBV/Ip1E74S
-         OVWn+eLYtL5PvVjtbfgVy+QzZwYEZZ931sfAjJ2kVZTFgWiKHWcrI5KdXZB9ywsDJk22
-         eZZ8JWw+1SNSnxD0LcxgvVhh43ZG1JKWKDA14/Vu50UAuOyjeFHNZshfCzotcf3k+wcc
-         WU31WfWq8P+7QRUfYMKBDo5ONamdaPpVWY/DXDwoEy4otBc6c1AVpoZ9t0I7XtF6qEYe
-         UDX8uMn+V8dvDtO8VJT82ydMjGxnLbsuQlR8TwQJh1hL3+aZodrCGSBARvt5i356RGIr
-         nJxQ==
-X-Gm-Message-State: AOAM5303QXBQxllRafkMrNJ+gXyMsiaLsiqbgvYJI52HeggorEIo2qKN
-        HJTBdMyLWuYeJOgFswhDNmIz7Dx+zxA=
-X-Google-Smtp-Source: ABdhPJxGj++OCovG9IFWIJGZ6F5MA3xQetTwTZaV29FbQT5OaF+P2/Fkq2Y8x3gtSk0LOz9fiFZHWw==
-X-Received: by 2002:a2e:8e94:: with SMTP id z20mr762846ljk.367.1598192556375;
-        Sun, 23 Aug 2020 07:22:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EaBvL32tcEigONyE/qxDU3km7C5iOhDt/gYUThD/Lio=;
+        b=YcE2sUNm7e+mD8ma2ddMQtoFql/iari3YUNMLa846l8C7Y37oFzL17SglmC4SnF+fk
+         g37QbIQ71Qa5PBvA9h37cPYHKa7caI+VZYxXCZtoesh0WUQAtmmp427JGM+N61CKvMBp
+         4hS6aFxtOT0KuPdBJ1+tqRQiLaVtC7BmfZzswBtvCyoVkoM7uBNFqYZbm94OQEYY04E8
+         BxJN6YiTVdeorPgomt9WvDY6SeRByZoROYT8MOgrOjJgWrpbe1I19rorfvhOweRIARJL
+         UvnFOQs+ZeegM+qlKzkGyCdZk0mJWcghLLfdC2IXhG3MRA6J70tdjZpCDFCY6d5vo+Ws
+         qGdA==
+X-Gm-Message-State: AOAM531SnEbfvOKaQ99WAtluonJN5wJbEI3x3jS/lLrezDg+LTAKH2DQ
+        tZPS+DicL9E3c2EOW3f1KFs=
+X-Google-Smtp-Source: ABdhPJw4J7ZgjAsfgrQjbAgKioGCC4b8+7kkKemlFfSK5p2WfS7epgRP6urS9ZbWUle5D+7ivshvoA==
+X-Received: by 2002:a05:651c:1390:: with SMTP id k16mr701924ljb.176.1598194103350;
+        Sun, 23 Aug 2020 07:48:23 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id 1sm1627876ljr.6.2020.08.23.07.22.35
+        by smtp.gmail.com with ESMTPSA id l24sm1635560ljb.43.2020.08.23.07.48.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Aug 2020 07:22:35 -0700 (PDT)
+        Sun, 23 Aug 2020 07:48:22 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1] brcmfmac: increase F2 watermark for BCM4329
-Date:   Sun, 23 Aug 2020 17:20:04 +0300
-Message-Id: <20200823142004.21990-1-digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Wright Feng <Wright.Feng@cypress.com>, linux-tegra@vger.kernel.org
+Subject: [PATCH v1 3/4] ARM: tegra: acer-a500: Use PLLC for WiFi MMC clk parent
+Date:   Sun, 23 Aug 2020 17:47:24 +0300
+Message-Id: <20200823144725.28299-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200823144725.28299-1-digetx@gmail.com>
+References: <20200823144725.28299-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
@@ -81,29 +76,33 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch fixes SDHCI CRC errors during of RX throughput testing on
-BCM4329 chip if SDIO BUS is clocked above 25MHz. In particular the
-checksum problem is observed on NVIDIA Tegra20 SoCs. The good watermark
-value is borrowed from downstream BCMDHD driver and it's the same as the
-value used for the BCM4339 chip, hence let's re-use it for BCM4329.
+The default parent for all MMCs is PLLP, which is running at 216MHz on
+Tegra20 and 50MHz clock can't be derived from PLLP. The maximum SDIO
+clock rate is 50MHz, but this rate isn't achievable using PLLP.
+
+Let's switch the WiFi MMC clk parent to PLLC in order to get true 50MHz.
+This patch doesn't fix any problems, it's just a minor improvement.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-index 3c07d1bbe1c6..ac3ee93a2378 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-@@ -4278,6 +4278,7 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
- 			brcmf_sdiod_writeb(sdiod, SBSDIO_FUNC1_MESBUSYCTRL,
- 					   CY_43012_MESBUSYCTRL, &err);
- 			break;
-+		case SDIO_DEVICE_ID_BROADCOM_4329:
- 		case SDIO_DEVICE_ID_BROADCOM_4339:
- 			brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes for 4339\n",
- 				  CY_4339_F2_WATERMARK);
+diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+index b89e9398f681..ab3c378e5519 100644
+--- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
++++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+@@ -744,6 +744,10 @@ mmc@c8000000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		assigned-clocks = <&tegra_car TEGRA20_CLK_SDMMC1>;
++		assigned-clock-parents = <&tegra_car TEGRA20_CLK_PLL_C>;
++		assigned-clock-rates = <50000000>;
++
+ 		max-frequency = <50000000>;
+ 		keep-power-in-suspend;
+ 		bus-width = <4>;
 -- 
 2.27.0
 
