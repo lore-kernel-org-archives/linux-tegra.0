@@ -2,121 +2,103 @@ Return-Path: <SRS0=c9q3=CB=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73960C433E1
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 Aug 2020 21:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D333C433E1
+	for <linux-tegra@archiver.kernel.org>; Sun, 23 Aug 2020 22:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52EAA206BE
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 Aug 2020 21:42:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bi3p+Cp3"
+	by mail.kernel.org (Postfix) with ESMTP id 55ADA20720
+	for <linux-tegra@archiver.kernel.org>; Sun, 23 Aug 2020 22:30:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbgHWVmI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 23 Aug 2020 17:42:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46602 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbgHWVmI (ORCPT
+        id S1726752AbgHWWak (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 23 Aug 2020 18:30:40 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:42566 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726624AbgHWWaj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 23 Aug 2020 17:42:08 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFFE4C061573;
-        Sun, 23 Aug 2020 14:42:07 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id 145so551565lfi.8;
-        Sun, 23 Aug 2020 14:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wc4iGC6lUOkdFB1yl61K549g5r3SOsu5JHxiruFQCrg=;
-        b=Bi3p+Cp3Oib9xYvfFtUZm0Uf4rS7f9RNyKsd3tWxxONpQQc3PTzptgnmmrY8S6kGoN
-         MOvAz8xOUY9ngcOmmuv32FeGCODgI3+OG2C1ZfXRwC80bdmDQFHZhV0g8e/8gqYcSkMK
-         VnOoZTXbShIC6Bch87KRpZNeDTivaN6dRe3bl07uV2weQcOSTlnP8PSnJSpTAz6UwHXh
-         jfkfJtWP6VTM0IVwVX0tTJylC0DIYkRTaV1fnQyEsy7T5f3ySgDBw7pvJhI1XA7xov8H
-         aaOCGtjqie8LdeYqkGUwj5n+Z1y9yL6cENlISNUIdyKKFk/8rZaF0QyYzMRltPEBVOw0
-         WQqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wc4iGC6lUOkdFB1yl61K549g5r3SOsu5JHxiruFQCrg=;
-        b=jd3Vih/FsjJhqubomzZZG87XosGkGn8YTp7d1WD+lscweSinc4Z8WoPThpQOpxmfdA
-         K2BzfICAhxTFIYxsJ2tMGPN8GSuD2HujHjB0NmnUW6fDJnRwfW5i/GZGyIOllWkMJAZb
-         s5Ae1wiSIYViSv/BG2nuLCe4M0VoARGymNEZ1C14kP64XfX5lWJfvtF/Enhl8zlq61Zr
-         ir4cFp958112iym8s1jgJPzofVgnLl89Fm7qrMzbmOixX5NZx+Ynw/qT4K6ZeO7UExDb
-         QY172l9qGp1W3AcVg8NRUfMyJx61CvsTag1kWG1JjAsCBMy1RAP9aVyi874k8x0wrSN3
-         ufnA==
-X-Gm-Message-State: AOAM531gNIji4+LPCakX2stA4t4QDkyH64iX3mlaamKx/+ksN+jZgdn1
-        fwHGRTr66eG9/Aw1pTVjkfmEEpIJsco=
-X-Google-Smtp-Source: ABdhPJzBkQVyR54HEK+tqk6nv9UaSdmG4fAbLjgLYrMh+ECOQvZhJQPh8Uzu3899cmc9YqmRioxiNg==
-X-Received: by 2002:a19:4ace:: with SMTP id x197mr1185909lfa.70.1598218924740;
-        Sun, 23 Aug 2020 14:42:04 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id w8sm1807687ljm.48.2020.08.23.14.42.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Aug 2020 14:42:03 -0700 (PDT)
-Subject: Re: [PATCH 12/18] iommu/tegra-gart: Add IOMMU_DOMAIN_DMA support
-To:     Robin Murphy <robin.murphy@arm.com>, hch@lst.de, joro@8bytes.org,
-        linux@armlinux.org.uk
-Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
-        matthias.bgg@gmail.com, yong.wu@mediatek.com,
-        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
-        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1597931875.git.robin.murphy@arm.com>
- <516b33118d489e56499ff8c64c019709b744110c.1597931876.git.robin.murphy@arm.com>
- <081f7532-9ca0-0af3-35a1-cbaba0782237@gmail.com>
- <3a132bb0-f2e6-6f8d-6d0c-bc925dd23f06@arm.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ceccd3d1-2510-c289-c063-681ae005da85@gmail.com>
-Date:   Mon, 24 Aug 2020 00:42:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sun, 23 Aug 2020 18:30:39 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 5F84D1C0BC2; Mon, 24 Aug 2020 00:30:37 +0200 (CEST)
+Date:   Mon, 24 Aug 2020 00:30:37 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/6] leds: Add driver for Acer Iconia Tab A500
+Message-ID: <20200823223037.5fkeg5ai6hry3axj@duo.ucw.cz>
+References: <20200823140846.19299-1-digetx@gmail.com>
+ <20200823140846.19299-4-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3a132bb0-f2e6-6f8d-6d0c-bc925dd23f06@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6chsuobtor6dul2u"
+Content-Disposition: inline
+In-Reply-To: <20200823140846.19299-4-digetx@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-21.08.2020 03:28, Robin Murphy пишет:
-...
->> Will a returned NULL tell to IOMMU core that implicit domain shouldn't
->> be used? Is it possible to leave this driver as-is?
-> 
-> The aim of this patch was just to make the conversion without functional
-> changes wherever possible, i.e. maintain an equivalent to the existing
-> ARM behaviour of allocating its own implicit domains for everything. It
-> doesn't represent any judgement of whether that was ever appropriate for
-> this driver in the first place ;)
-> 
-> Hopefully my other reply already covered the degree of control drivers
-> can have with proper default domains, but do shout if anything wasn't
-> clear.
 
-Thank you for the detailed comments! I wasn't watching closely all the
-recent iommu/ changes and yours clarification is very helpful!
+--6chsuobtor6dul2u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My current understanding is that the GART driver will need to support
-the IOMMU_DOMAIN_IDENTITY and set def_domain_type to
-IOMMU_DOMAIN_IDENTITY for all devices.
+Hi!
 
-Meanwhile, today's upstream drivers don't use GART, hence this patch
-should be okay. Although, it's a bit unlikely that the IOMMU_DOMAIN_DMA
-type will ever be useful for the GART, and thus, I'm still thinking that
-will be a bit nicer to keep GART driver as-is for now.
+> Acer Iconia Tab A500 is an Android tablet device which has two LEDs
+> embedded into the Power Button. Orange LED indicates "battery charging"
+> status and white LED indicates "wake-up/charge-done" status. The new LED
+> driver provides control over both LEDs to userspace.
+
+> @@ -0,0 +1,121 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+
+Nice.
+
+> + * Copyright 2020 GRATE-driver project.
+
+Probably untrue.
+
+
+> +	white_led->cdev.name =3D "power-button-white";
+
+"white:power"
+
+> +	white_led->cdev.max_brightness =3D LED_ON;
+
+=3D 1. (And you'll need other adjustments over the code).
+
+> +	orange_led->cdev.name =3D "power-button-orange";
+
+"orange:power" -- or what is this LED usually used for?
+
+> +MODULE_LICENSE("GPL v2");
+
+Should be "GPL"?
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--6chsuobtor6dul2u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX0LuDQAKCRAw5/Bqldv6
+8to6AJ9R5ltlmy3K3jnj9kfTrFsm9vnnSgCfSRzSZElGgph2rsOdpzOgkHDfR4A=
+=vV3r
+-----END PGP SIGNATURE-----
+
+--6chsuobtor6dul2u--
