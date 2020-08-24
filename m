@@ -2,136 +2,102 @@ Return-Path: <SRS0=inwd=CC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A03F6C433E1
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 16:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7C4C433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 18:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BB562074D
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 16:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78EC020702
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 18:09:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnnoeX87"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JIzhXZr8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725780AbgHXQXA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Aug 2020 12:23:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51666 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbgHXQW6 (ORCPT
+        id S1726609AbgHXSJL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Aug 2020 14:09:11 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12223 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbgHXSJB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Aug 2020 12:22:58 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA7EC061573;
-        Mon, 24 Aug 2020 09:22:57 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id j15so4798901lfg.7;
-        Mon, 24 Aug 2020 09:22:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8SE2/PBYTcg3YOOGVssHW9UdXmQ9vzkd0F1vzB4ywX0=;
-        b=DnnoeX87A92PXfQdNg94MVeLYDAT3zqKbPKbpHGZ1FuIrV4WzlqZVzOGNoozEFsnm2
-         ED75DE/5XDhnG8rdvn8Y9kpCziRwd2N/G2dHYzq/Nur0sJjLIUylqrUTHpxvMl7rULpA
-         /EnnRVAkUjgDcN+ScF3wR9jW3sHUo9427B+u1CUUOHA2/ftPWIaANvFn6e7MzCWfOHwH
-         dg509aUThMclSy+TaAsfT637zjnXrzrwCQPkOAvmO5/dkoeD2R0ODp6UVP+FJlm2FHt6
-         EXNPImxGFft5HjcMQKDlJl7R2NTj8A4NUaJHuayayTS/2nL0PgY9nkRMfrFiL3CeWxyM
-         5z3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8SE2/PBYTcg3YOOGVssHW9UdXmQ9vzkd0F1vzB4ywX0=;
-        b=K6ACY7ECnuXQ4he1L3IFQL9XNncFHLU1VNSjXgK3ch5DHXT10SqL2Gt6FAYGrOP1Jt
-         q8RVzmy00NaPbhtZkFnSVP96hY9XPY3IAga3ik8K4XPToOPiG8tmCadvP2wlNIFixKpU
-         jOwJDAVTHe+5/5YMX0xLkUw4WzAcz91dCAtVOeeFp1/tpmPO8Phtor9gdvW23pK/0oDx
-         Iv63rpfjDmcw5xsZj5+MJY0dvi0kUfPTVSPvExjy5F4a5EwLiaGolF9I6w51EDOWTHtW
-         EErPVKhKhqUt9QLYPi4WJLHANneuaYlIdoa0EdzzQaF/9qawj/+mhmUogmlhQPktQI1f
-         6Siw==
-X-Gm-Message-State: AOAM531X1AzaU+ejJarsgsBh522rh7Re29pZSqHyn44gRFO7kyVw2xsF
-        C/tDndDirGETkWfKx5/9IPFD+dBjMbg=
-X-Google-Smtp-Source: ABdhPJyTB7OeM6e/0yyqMX24QqKUrWykp5KkGVjiypWExtGCjYMNFSGGdklt4RHFZ6A/jaA4ghujbw==
-X-Received: by 2002:a19:ae0a:: with SMTP id f10mr2935544lfc.100.1598286171416;
-        Mon, 24 Aug 2020 09:22:51 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id u17sm2272041ljk.56.2020.08.24.09.22.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2020 09:22:50 -0700 (PDT)
-Subject: Re: [PATCH v3] cpuidle: tegra: Correctly handle result of
- arm_cpuidle_simple_enter()
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20200709173532.15431-1-digetx@gmail.com>
- <69c57c9c-a8e4-2367-3f72-232b6b3456b8@gmail.com>
- <c7e79586-f948-3681-6046-a51852ab2523@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <988cf17e-c824-cd6c-f682-084aab97afc1@gmail.com>
-Date:   Mon, 24 Aug 2020 19:22:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 24 Aug 2020 14:09:01 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4401fe0001>; Mon, 24 Aug 2020 11:07:58 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 24 Aug 2020 11:09:00 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 24 Aug 2020 11:09:00 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
+ 2020 18:09:00 +0000
+Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 24 Aug 2020 18:08:59 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/73] 4.19.142-rc2 review
+In-Reply-To: <20200824164729.443078729@linuxfoundation.org>
+References: <20200824164729.443078729@linuxfoundation.org>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <c7e79586-f948-3681-6046-a51852ab2523@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Message-ID: <d89ab8be152e4edea12bce82046b2b33@HQMAIL105.nvidia.com>
+Date:   Mon, 24 Aug 2020 18:08:59 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598292478; bh=RIMVRl2FWpuhLu7tharvXNelmdbjF7Rr5S0t9SO+mpc=;
+        h=X-PGP-Universal:From:To:CC:Subject:In-Reply-To:References:
+         X-NVConfidentiality:MIME-Version:Message-ID:Date:Content-Type:
+         Content-Transfer-Encoding;
+        b=JIzhXZr8cY/tqpIUbNuXcgdalEM26DB7+mmzC6WyKl+55fNA15w4kC+amaJ9jTTyY
+         GjsMA8d3y2quLglrwgve0zvxLq/cdP9HforG/7t6eg1N+tNxvAa0DYOwq751DS0KYr
+         izYIuZ7OFkUbZs7gQOAXgP0OOYw2Fwcy3WEz7iz20waVsuyAvduSbrqwss8Fb9Fscw
+         QcXGsfw8kZB/2+iBjv274R36D92To42kTyPhsga+2gLg6AIn/5gvFI2Xyz+Qa2r6vb
+         GLeRe+IEX0RQA44hiP6yBFhKxI+o9koKcLyvvBIOGIBfYUJvYVFkKtufMJ2xeGsX7t
+         SyjcNWQes/2Jw==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.08.2020 19:02, Jon Hunter пишет:
+On Mon, 24 Aug 2020 18:49:36 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.142 release.
+> There are 73 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On 14/08/2020 18:53, Dmitry Osipenko wrote:
->> 09.07.2020 20:35, Dmitry Osipenko пишет:
->>> The enter() callback of CPUIDLE drivers returns index of the entered idle
->>> state on success or a negative value on failure. The negative value could
->>> any negative value, i.e. it doesn't necessarily needs to be a error code.
->>> That's because CPUIDLE core only cares about the fact of failure and not
->>> about the reason of the enter() failure.
->>>
->>> Like every other enter() callback, the arm_cpuidle_simple_enter() returns
->>> the entered idle-index on success. Unlike some of other drivers, it never
->>> fails. It happened that TEGRA_C1=index=err=0 in the code of cpuidle-tegra
->>> driver, and thus, there is no problem for the cpuidle-tegra driver created
->>> by the typo in the code which assumes that the arm_cpuidle_simple_enter()
->>> returns a error code.
->>>
->>> The arm_cpuidle_simple_enter() also may return a -ENODEV error if CPU_IDLE
->>> is disabled in a kernel's config, but all CPUIDLE drivers are disabled if
->>> CPU_IDLE is disabled, including the cpuidle-tegra driver. So we can't ever
->>> see the error code from arm_cpuidle_simple_enter() today.
->>>
->>> Of course the code may get some changes in the future and then the
->>> typo may transform into a real bug, so let's correct the typo! The
->>> tegra_cpuidle_state_enter() is now changed to make it return the entered
->>> idle-index on success and negative error code on fail, which puts it on
->>> par with the arm_cpuidle_simple_enter(), making code consistent in regards
->>> to the error handling.
->>>
->>> This patch fixes a minor typo in the code, it doesn't fix any bugs.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>
->>> Changelog:
->>>
->>> v3: The tegra_cpuidle_state_enter() now returns entered idle-index on
->>>     success instead of 0. Hence the error message will be shown by the
->>>     tegra-cpuidle driver if arm_cpuidle_simple_enter() will ever fail.
->>>     Again thanks to Jon Hunter!
->>
->> Hello, Jon! Do you see anything else that could be improved in this patch?
->>
+> Responses should be made by Wed, 26 Aug 2020 16:47:07 +0000.
+> Anything received after that time might be too late.
 > 
-> Sorry for the delay. Looks good to me ...
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.142-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
 > 
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> thanks,
+> 
+> greg k-h
 
-No problems, thank you! :)
+All tests passing for Tegra ...
 
+Test results for stable-v4.19:
+    11 builds:	11 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	38 pass, 0 fail
+
+Linux version:	4.19.142-rc2-gd06cb8bccfe1
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
