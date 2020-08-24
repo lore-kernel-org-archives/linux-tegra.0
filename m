@@ -2,156 +2,105 @@ Return-Path: <SRS0=inwd=CC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC80C433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 18:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E974BC433E1
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 19:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9C8220738
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 18:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B885F208E4
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 19:16:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rxx2Czwe"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="DGFfWYph"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbgHXSzY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Aug 2020 14:55:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbgHXSzY (ORCPT
+        id S1726784AbgHXTQG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Aug 2020 15:16:06 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1915 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726723AbgHXTQE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Aug 2020 14:55:24 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1FD8C061573;
-        Mon, 24 Aug 2020 11:55:23 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id w14so10904441ljj.4;
-        Mon, 24 Aug 2020 11:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qq+FwKaAL0+i+v9B+INTc0h8RAmxp7NQuyM7xAAxgP4=;
-        b=rxx2CzweB1rd+Z9fgBd8jNjjrS7CPMKwQcKUql4L6YBEzJSjR/wbXY1yE8trzq40wz
-         dWEeONiwi/DR9ws1D+fE102ak1bsSI3DJ4XIPblj4+rQWEVc4eJbOq01CzkjC4W9Vy3K
-         QokcS3iGm1gkC+xSzusq/wSGqKsymeBWx/5r03ZfDF0chjAvO0caMJRTzwQMthtcvEAE
-         aPYD6NlDs5237Nl2f4h7c9Q72PTTtjD0tJrn76aIzkMzsWDrw2yXZN2nOCuPpPgiIfyY
-         FkXt9Y/qBunn3Uxk+6d3rs8yIXVFAOizoKCpgcFpCfz6XH+QnBSyM1AN9BGQWGOo6NZz
-         3Ngw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qq+FwKaAL0+i+v9B+INTc0h8RAmxp7NQuyM7xAAxgP4=;
-        b=p4iwJbd9uZPU+zCK/qSWdeEjgMF5OS1wuPrhrTbHVgNkhfS6rcXH69ehL/aF7dr+qS
-         S5Iu+nuQUYJFdvwMDt96eRO/CIefRHELTxi4nAjxG3G1gk/0sjNu39Jk4P/IOjRLpges
-         7cPI6cpRxnpiTmt8cUVQDjPNyXP1qgn2WLQ3dv7PvOmlVdiAx5uV3SfUdae0ifcTEtlO
-         6aeVaz4KobEyt8dXsyRFB0t+5/uN5obnHMFZdIFfyUmRWl9vX107N2i1QdXieOCZLKsb
-         3l/LI7EzPMAfXvGh0I5XNxhVKgAuc8HGxzuS6lCVECo/kj4w1KBnO+MVACTFLsmhGbKc
-         DDNg==
-X-Gm-Message-State: AOAM531aZOGDPkA9aeWLYTpTRI6ySiGiUnLPWIHu5OI6zXwEd1bW5VER
-        WbgjCdFTdekpl2mEXYTPmACSov2hqe4=
-X-Google-Smtp-Source: ABdhPJzWwTyU3v6bW25kjpxAXFiQU4GbZLc10ZygwhVenWjgzbqGxjhdCEEbHk9fUUyGsaH7gHH01A==
-X-Received: by 2002:a2e:96d9:: with SMTP id d25mr3476883ljj.408.1598295317815;
-        Mon, 24 Aug 2020 11:55:17 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id r1sm2442954lfc.44.2020.08.24.11.55.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2020 11:55:17 -0700 (PDT)
-Subject: Re: [PATCH v1 2/6] power: supply: Add battery gauge driver for Acer
- Iconia Tab A500
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Lubomir Rintel <lkundrak@v3.sk>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200823140846.19299-1-digetx@gmail.com>
- <20200823140846.19299-3-digetx@gmail.com>
- <20200824140718.apoavlny6hlkm2ql@earth.universe>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <31ec6865-4a33-bde8-73a6-20c188ec2ee7@gmail.com>
-Date:   Mon, 24 Aug 2020 21:55:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 24 Aug 2020 15:16:04 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4411b60001>; Mon, 24 Aug 2020 12:15:02 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 24 Aug 2020 12:16:04 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 24 Aug 2020 12:16:04 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
+ 2020 19:16:01 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 24 Aug 2020 19:16:01 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.174.186]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f4411f00001>; Mon, 24 Aug 2020 12:16:01 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <robh+dt@kernel.org>
+CC:     <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: [PATCH v4 1/7] sdhci: tegra: Remove SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for Tegra210
+Date:   Mon, 24 Aug 2020 12:15:51 -0700
+Message-ID: <1598296557-32020-2-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1598296557-32020-1-git-send-email-skomatineni@nvidia.com>
+References: <1598296557-32020-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20200824140718.apoavlny6hlkm2ql@earth.universe>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598296502; bh=wT4t2/nhx1LSbE4eS4U3X4HmPpfUMZEMwHW/3RtHINo=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=DGFfWYph8oIywKMWAFFcnibzClLxjkGKhaNUFm3+Dsp8togfqmwBgS23klntaDaTf
+         J7Lxx0s2J4fuYSPGK9puXLyUYWHAVq6Uc359+fUp5BhGd1euBlkirnmXjwpcJbOmNV
+         TbSPpXXYTZJZl/CrW7D8KizdEbB/5lIg5nDtPkKyc7WVn9E46BTHA3a4EB94i0n2V0
+         bMkFtjyQt1AoOTNOzwKc+ywaebOc/h6UxUcunG8i3osS0aMxzsmD47h/MPmOMdMjQ1
+         9Vtgy8+yefBcDVXnxsOS1i/HF1DhFmJw199f0DltqL3tktcmi4G9oDFhhBxlYRTCVi
+         Q62Za8baP9j4w==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.08.2020 17:07, Sebastian Reichel пишет:
-> Hi,
-...
->> +static int a500_battery_get_serial_number(struct a500_battery *bat,
->> +					  union power_supply_propval *val)
->> +{
->> +	unsigned int i;
->> +	s32 ret = 0;
->> +
->> +	if (bat->serial[0])
->> +		goto done;
->> +
->> +	a500_ec_lock(bat->ec_chip);
->> +	for (i = 0; i < BATTERY_SERIAL_LEN / 2; i++) {
->> +		ret = a500_ec_read_locked(bat->ec_chip,
->> +					  &ec_data[REG_SERIAL_NUMBER].cmd);
->> +		if (ret < 0) {
->> +			bat->serial[0] = '\0';
->> +			break;
->> +		}
->> +
->> +		bat->serial[i * 2 + 0] = (ret >> 0) & 0xff;
->> +		bat->serial[i * 2 + 1] = (ret >> 8) & 0xff;
->> +	}
->> +	a500_ec_unlock(bat->ec_chip);
->> +done:
->> +	val->strval = bat->serial;
->> +
->> +	return ret;
->> +}
-> 
-> If battery is swapped, this will keep the old serial.
+commit b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
 
-Hello, Sebastian! The battery isn't hot-swappable on A500, but it also
-should be okay to always re-read the serialno. I'll consider removing
-the caching in the v2, thanks.
+SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK is set for Tegra210 from the
+beginning of Tegra210 support in the driver.
 
-...
->> +	bat->psy = devm_power_supply_register_no_ws(&pdev->dev,
->> +						    &a500_battery_desc,
->> +						    &psy_cfg);
->> +	err = PTR_ERR_OR_ZERO(bat->psy);
->> +	if (err) {
->> +		if (err == -EPROBE_DEFER)
->> +			dev_dbg(&pdev->dev, "failed to register battery, deferring probe\n");
->> +		else
->> +			dev_err(&pdev->dev, "failed to register battery: %d\n",
->> +				err);
->> +		return err;
->> +	}
-> 
-> if (IS_ERR(bat->psy))
->     return dev_err_probe(&pdev->dev, PTR_ERR(err), "failed to register battery\n");
+Tegra210 SDMMC hardware by default uses timeout clock (TMCLK)
+instead of SDCLK and this quirk should not be set.
 
-I didn't know that dev_err_probe() is available now, very nice! I'll use
-it in the v2, thanks.
+So, this patch remove this quirk for Tegra210.
 
-...
->> +MODULE_DESCRIPTION("Battery gauge driver for Acer Iconia Tab A500");
->> +MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
->> +MODULE_ALIAS("platform:acer-a500-iconia-battery");
->> +MODULE_LICENSE("GPL v2");
-> 
-> MODULE_LICENSE("GPL");
-> 
-> Otherwise looks good to me.
+Fixes: b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
+Cc: stable <stable@vger.kernel.org> # 5.4
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Okay, thank you!
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 0a3f9d0..2be3511 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1418,7 +1418,6 @@ static const struct sdhci_ops tegra210_sdhci_ops = {
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+-		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+ 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+-- 
+2.7.4
+
