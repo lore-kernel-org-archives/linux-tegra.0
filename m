@@ -2,129 +2,137 @@ Return-Path: <SRS0=inwd=CC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F328C433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 15:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C52C433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 16:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D54EC2074D
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 15:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4611C2078D
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 16:05:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sFvK/cjq"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Th+DnOD3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbgHXP1V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Aug 2020 11:27:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbgHXP1J (ORCPT
+        id S1726795AbgHXQFJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Aug 2020 12:05:09 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8065 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbgHXQEU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Aug 2020 11:27:09 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCC1C061573;
-        Mon, 24 Aug 2020 08:27:08 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id h19so10118610ljg.13;
-        Mon, 24 Aug 2020 08:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sZNoB46D8/M/M2PgyVIiT6V2NCFpqgPFmRkE3BbQYY0=;
-        b=sFvK/cjqd0IY2FPppcw4ggSbTyzS+/bWDuEn6APnjzaEMODweGr843dqvGmIuZ+7+l
-         gh06YDRForm905ZwwSXfCS10xvIyJHfBRec0N9sQKOlmpvcQiDXtyT/bqdhRpw7tZUNu
-         UEt8sEEUrr11VVRAa01f+JHkf5pvNVeBCA7po2V2tGY66x0vz7fDMP2/dIH8JrUq37HC
-         8bfccDyUTlVyGazDcn+uLQRca/72M8adtNfMbKh3TutR5L2eUnXkaE1OEV1wT1R0bjyc
-         7Ir8HxkHJ7jEa/cc/qgxI3W57DzAosbcngWFKAECdSjK8/+4rinCdsDecBnH4RjzY/1q
-         m2Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sZNoB46D8/M/M2PgyVIiT6V2NCFpqgPFmRkE3BbQYY0=;
-        b=gGRWGha3WcfILFzg2rb2LW8XxMEg1iMfsXG/iR/0/4sT+iJ/tG3o7xZXyobYoqzMyd
-         aSlPAP3eTM52Yu1MBKKjL4alqscKJKLn4Q9Lh77WT1xOb+Uhus1AESL7jMytx8OKtPiS
-         +m7Q+b/wZtLo9YfJkHirxdGUL1hw6PpxetPl+2o0sukiWSSnc0qCI38Uh/fZH87QugCe
-         tF/LxxCMGJQ5DopjVysOE7WTfv6Re9BH4g6UacM/uGoUXz/ULsVva8VlHSVwas9Gmk/j
-         Ug5wy5UXaWKbaYt4KzRrBLI2+mGOtKoZ+0E73lt/8+tB99JxrgVxl3E9cwyNlkrY0hxM
-         qmCA==
-X-Gm-Message-State: AOAM530UWit5etDGObjrMvo7RV5hh8UXG9DQHwJVpFJSLfCpVQUNoq0/
-        klZ/GqYQRnMyG2FFR+iAy24xniYdYmk=
-X-Google-Smtp-Source: ABdhPJwS3dpy3Zm6zjcqPm81pjWD00BirHl7L/nEzT8MmwndTfEiqXTyjQEML9iDc7lMLRZgUCDamw==
-X-Received: by 2002:a2e:2c0e:: with SMTP id s14mr3038795ljs.28.1598282826933;
-        Mon, 24 Aug 2020 08:27:06 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id z3sm2239976ljz.109.2020.08.24.08.27.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2020 08:27:06 -0700 (PDT)
-Subject: Re: [PATCH v1] brcmfmac: increase F2 watermark for BCM4329
-To:     Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200823142004.21990-1-digetx@gmail.com>
- <93536fd4-8abc-e167-a184-5a5e36d4205a@broadcom.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <1ac6d0f3-d639-e947-4108-17ecc0220a1e@gmail.com>
-Date:   Mon, 24 Aug 2020 18:27:05 +0300
+        Mon, 24 Aug 2020 12:04:20 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f43e47f0006>; Mon, 24 Aug 2020 09:02:07 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 24 Aug 2020 09:04:06 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 24 Aug 2020 09:04:06 -0700
+Received: from [10.26.74.138] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
+ 2020 16:02:24 +0000
+Subject: Re: [PATCH v3] cpuidle: tegra: Correctly handle result of
+ arm_cpuidle_simple_enter()
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+References: <20200709173532.15431-1-digetx@gmail.com>
+ <69c57c9c-a8e4-2367-3f72-232b6b3456b8@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <c7e79586-f948-3681-6046-a51852ab2523@nvidia.com>
+Date:   Mon, 24 Aug 2020 17:02:21 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <93536fd4-8abc-e167-a184-5a5e36d4205a@broadcom.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <69c57c9c-a8e4-2367-3f72-232b6b3456b8@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598284927; bh=tnamZSPAa6+zvxxL1eNXRdhByZgvdWqa/x1tggg/uVY=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Th+DnOD3eJfMKP8xcULi+khKUkagyuL14tA4lDflfkLjgvzIBrhxf4oLaRD1gwUgS
+         7ByCrEYCWoxQxBmNwsdXkmkmjEGA1BeMcfjYZJi7r9dhMRWgRuw45nRkDpfqbxzgBm
+         om9E+FwfcsCFYYyGVJCHCH7Oj3d7Hpuq1UEkIeKXpo4lz8jKPBh1LjJQvWXaEn0y5c
+         DIeqt1IwxOaBsNi0tjXD2hzWrEKWqi62DZqNpQzQgpc8V+Q7RIKHtgM+nTzQzakH3q
+         603LcCYFH1PCooaETQvvwcNcbWro0bCdi3xxSRFsWsJEDHO4b3IBH8hdbyGOaXcqZL
+         i+YyZuUFGxzvg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.08.2020 11:28, Arend Van Spriel пишет:
-> 
-> 
-> On 8/23/2020 4:20 PM, Dmitry Osipenko wrote:
->> This patch fixes SDHCI CRC errors during of RX throughput testing on
->> BCM4329 chip if SDIO BUS is clocked above 25MHz. In particular the
->> checksum problem is observed on NVIDIA Tegra20 SoCs. The good watermark
->> value is borrowed from downstream BCMDHD driver and it's the same as the
->> value used for the BCM4339 chip, hence let's re-use it for BCM4329.
-> 
-> one comment, but when fixed you can add my....
-> 
-> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+
+On 14/08/2020 18:53, Dmitry Osipenko wrote:
+> 09.07.2020 20:35, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> The enter() callback of CPUIDLE drivers returns index of the entered idl=
+e
+>> state on success or a negative value on failure. The negative value coul=
+d
+>> any negative value, i.e. it doesn't necessarily needs to be a error code=
+.
+>> That's because CPUIDLE core only cares about the fact of failure and not
+>> about the reason of the enter() failure.
+>>
+>> Like every other enter() callback, the arm_cpuidle_simple_enter() return=
+s
+>> the entered idle-index on success. Unlike some of other drivers, it neve=
+r
+>> fails. It happened that TEGRA_C1=3Dindex=3Derr=3D0 in the code of cpuidl=
+e-tegra
+>> driver, and thus, there is no problem for the cpuidle-tegra driver creat=
+ed
+>> by the typo in the code which assumes that the arm_cpuidle_simple_enter(=
+)
+>> returns a error code.
+>>
+>> The arm_cpuidle_simple_enter() also may return a -ENODEV error if CPU_ID=
+LE
+>> is disabled in a kernel's config, but all CPUIDLE drivers are disabled i=
+f
+>> CPU_IDLE is disabled, including the cpuidle-tegra driver. So we can't ev=
+er
+>> see the error code from arm_cpuidle_simple_enter() today.
+>>
+>> Of course the code may get some changes in the future and then the
+>> typo may transform into a real bug, so let's correct the typo! The
+>> tegra_cpuidle_state_enter() is now changed to make it return the entered
+>> idle-index on success and negative error code on fail, which puts it on
+>> par with the arm_cpuidle_simple_enter(), making code consistent in regar=
+ds
+>> to the error handling.
+>>
+>> This patch fixes a minor typo in the code, it doesn't fix any bugs.
+>>
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 1 +
->>   1 file changed, 1 insertion(+)
 >>
->> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
->> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
->> index 3c07d1bbe1c6..ac3ee93a2378 100644
->> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
->> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
->> @@ -4278,6 +4278,7 @@ static void brcmf_sdio_firmware_callback(struct
->> device *dev, int err,
->>               brcmf_sdiod_writeb(sdiod, SBSDIO_FUNC1_MESBUSYCTRL,
->>                          CY_43012_MESBUSYCTRL, &err);
->>               break;
->> +        case SDIO_DEVICE_ID_BROADCOM_4329:
->>           case SDIO_DEVICE_ID_BROADCOM_4339:
->>               brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes for
->> 4339\n",
-> 
-> Maybe better to drop the chip id from the debug message. The chip id is
-> printed elsewhere already so it does not add info here and could only
-> cause confusion. Maybe you can also remove it from the 43455 message a
-> bit below.
+>> Changelog:
+>>
+>> v3: The tegra_cpuidle_state_enter() now returns entered idle-index on
+>>     success instead of 0. Hence the error message will be shown by the
+>>     tegra-cpuidle driver if arm_cpuidle_simple_enter() will ever fail.
+>>     Again thanks to Jon Hunter!
+>=20
+> Hello, Jon! Do you see anything else that could be improved in this patch=
+?
+>
 
-Hello, Arend! Thank you for the review! I'll prepare v2 with the cleaned
-debug messages and couple more small changes!
+Sorry for the delay. Looks good to me ...
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+--=20
+nvpublic
