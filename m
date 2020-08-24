@@ -2,162 +2,129 @@ Return-Path: <SRS0=inwd=CC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D2CC433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 14:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F328C433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 15:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7609120738
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 14:59:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D54EC2074D
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 15:27:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="i0RiXfl0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sFvK/cjq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbgHXO7R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Aug 2020 10:59:17 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18555 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbgHXO7Q (ORCPT
+        id S1727889AbgHXP1V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Aug 2020 11:27:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbgHXP1J (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Aug 2020 10:59:16 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f43d5860000>; Mon, 24 Aug 2020 07:58:14 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 24 Aug 2020 07:59:15 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 24 Aug 2020 07:59:15 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
- 2020 14:59:15 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 24 Aug 2020 14:59:15 +0000
-Received: from moonraker.nvidia.com (Not Verified[10.26.74.138]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f43d5c10000>; Mon, 24 Aug 2020 07:59:14 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2] cpufreq: tegra186: Fix initial frequency
-Date:   Mon, 24 Aug 2020 15:59:07 +0100
-Message-ID: <20200824145907.331899-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 24 Aug 2020 11:27:09 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCC1C061573;
+        Mon, 24 Aug 2020 08:27:08 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id h19so10118610ljg.13;
+        Mon, 24 Aug 2020 08:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sZNoB46D8/M/M2PgyVIiT6V2NCFpqgPFmRkE3BbQYY0=;
+        b=sFvK/cjqd0IY2FPppcw4ggSbTyzS+/bWDuEn6APnjzaEMODweGr843dqvGmIuZ+7+l
+         gh06YDRForm905ZwwSXfCS10xvIyJHfBRec0N9sQKOlmpvcQiDXtyT/bqdhRpw7tZUNu
+         UEt8sEEUrr11VVRAa01f+JHkf5pvNVeBCA7po2V2tGY66x0vz7fDMP2/dIH8JrUq37HC
+         8bfccDyUTlVyGazDcn+uLQRca/72M8adtNfMbKh3TutR5L2eUnXkaE1OEV1wT1R0bjyc
+         7Ir8HxkHJ7jEa/cc/qgxI3W57DzAosbcngWFKAECdSjK8/+4rinCdsDecBnH4RjzY/1q
+         m2Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sZNoB46D8/M/M2PgyVIiT6V2NCFpqgPFmRkE3BbQYY0=;
+        b=gGRWGha3WcfILFzg2rb2LW8XxMEg1iMfsXG/iR/0/4sT+iJ/tG3o7xZXyobYoqzMyd
+         aSlPAP3eTM52Yu1MBKKjL4alqscKJKLn4Q9Lh77WT1xOb+Uhus1AESL7jMytx8OKtPiS
+         +m7Q+b/wZtLo9YfJkHirxdGUL1hw6PpxetPl+2o0sukiWSSnc0qCI38Uh/fZH87QugCe
+         tF/LxxCMGJQ5DopjVysOE7WTfv6Re9BH4g6UacM/uGoUXz/ULsVva8VlHSVwas9Gmk/j
+         Ug5wy5UXaWKbaYt4KzRrBLI2+mGOtKoZ+0E73lt/8+tB99JxrgVxl3E9cwyNlkrY0hxM
+         qmCA==
+X-Gm-Message-State: AOAM530UWit5etDGObjrMvo7RV5hh8UXG9DQHwJVpFJSLfCpVQUNoq0/
+        klZ/GqYQRnMyG2FFR+iAy24xniYdYmk=
+X-Google-Smtp-Source: ABdhPJwS3dpy3Zm6zjcqPm81pjWD00BirHl7L/nEzT8MmwndTfEiqXTyjQEML9iDc7lMLRZgUCDamw==
+X-Received: by 2002:a2e:2c0e:: with SMTP id s14mr3038795ljs.28.1598282826933;
+        Mon, 24 Aug 2020 08:27:06 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id z3sm2239976ljz.109.2020.08.24.08.27.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Aug 2020 08:27:06 -0700 (PDT)
+Subject: Re: [PATCH v1] brcmfmac: increase F2 watermark for BCM4329
+To:     Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc:     linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200823142004.21990-1-digetx@gmail.com>
+ <93536fd4-8abc-e167-a184-5a5e36d4205a@broadcom.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <1ac6d0f3-d639-e947-4108-17ecc0220a1e@gmail.com>
+Date:   Mon, 24 Aug 2020 18:27:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598281094; bh=EmuB4is9VINRVTLC+GeQuqGP2D8AcHAOKBPg4Mi7SQ8=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
-         Content-Type;
-        b=i0RiXfl0RArXB2ERXcAAdV5/PXOm5Z4aMm/cu0PkFOxYwalCltIQ8oT4iUQjDPynX
-         wL/O9yF2f+Sy0x1N5XMNi4zBpCzScvZnAobQcQIt6Q47/lFP3u6NuHlqyxHII8tozM
-         7wc2cw7NQmp97/krVV0P/0VYa+R3pA9QQ67k2OrCKu4kkt9LYruTsdgWvsDJqzBzbE
-         Klysni5Ia7QhVfdzz9aNOgYn92scUyi3rZQCDAouQnSrmcAUXTTWdRgAe07wnXoo+a
-         k+drvz9EGxx84N8ETxupW9lWqS3Qk9fjPFqU20FRGa6XFF3Ldi96hWgrazt5fUJ4W8
-         tcBwv4HModW3g==
+In-Reply-To: <93536fd4-8abc-e167-a184-5a5e36d4205a@broadcom.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Commit 6cc3d0e9a097 ("cpufreq: tegra186: add
-CPUFREQ_NEED_INITIAL_FREQ_CHECK flag") fixed CPUFREQ support for
-Tegra186 but as a consequence the following warnings are now seen on
-boot ...
+24.08.2020 11:28, Arend Van Spriel пишет:
+> 
+> 
+> On 8/23/2020 4:20 PM, Dmitry Osipenko wrote:
+>> This patch fixes SDHCI CRC errors during of RX throughput testing on
+>> BCM4329 chip if SDIO BUS is clocked above 25MHz. In particular the
+>> checksum problem is observed on NVIDIA Tegra20 SoCs. The good watermark
+>> value is borrowed from downstream BCMDHD driver and it's the same as the
+>> value used for the BCM4339 chip, hence let's re-use it for BCM4329.
+> 
+> one comment, but when fixed you can add my....
+> 
+> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+>> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+>> index 3c07d1bbe1c6..ac3ee93a2378 100644
+>> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+>> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+>> @@ -4278,6 +4278,7 @@ static void brcmf_sdio_firmware_callback(struct
+>> device *dev, int err,
+>>               brcmf_sdiod_writeb(sdiod, SBSDIO_FUNC1_MESBUSYCTRL,
+>>                          CY_43012_MESBUSYCTRL, &err);
+>>               break;
+>> +        case SDIO_DEVICE_ID_BROADCOM_4329:
+>>           case SDIO_DEVICE_ID_BROADCOM_4339:
+>>               brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes for
+>> 4339\n",
+> 
+> Maybe better to drop the chip id from the debug message. The chip id is
+> printed elsewhere already so it does not add info here and could only
+> cause confusion. Maybe you can also remove it from the 43455 message a
+> bit below.
 
- cpufreq: cpufreq_online: CPU0: Running at unlisted freq: 0 KHz
- cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed to: 2035=
-200 KHz
- cpufreq: cpufreq_online: CPU1: Running at unlisted freq: 0 KHz
- cpufreq: cpufreq_online: CPU1: Unlisted initial frequency changed to: 2035=
-200 KHz
- cpufreq: cpufreq_online: CPU2: Running at unlisted freq: 0 KHz
- cpufreq: cpufreq_online: CPU2: Unlisted initial frequency changed to: 2035=
-200 KHz
- cpufreq: cpufreq_online: CPU3: Running at unlisted freq: 0 KHz
- cpufreq: cpufreq_online: CPU3: Unlisted initial frequency changed to: 2035=
-200 KHz
- cpufreq: cpufreq_online: CPU4: Running at unlisted freq: 0 KHz
- cpufreq: cpufreq_online: CPU4: Unlisted initial frequency changed to: 2035=
-200 KHz
- cpufreq: cpufreq_online: CPU5: Running at unlisted freq: 0 KHz
- cpufreq: cpufreq_online: CPU5: Unlisted initial frequency changed to: 2035=
-200 KHz
-
-Fix this by adding a 'get' callback for the Tegra186 CPUFREQ driver to
-retrieve the current operating frequency for a given CPU. The 'get'
-callback uses the current 'ndiv' value that is programmed to determine
-that current operating frequency.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
-Changes since V1:
-- Moved code into a 'get' callback
-
- drivers/cpufreq/tegra186-cpufreq.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-=
-cpufreq.c
-index 01e1f58ba422..0d0fcff60765 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -14,6 +14,7 @@
-=20
- #define EDVD_CORE_VOLT_FREQ(core)		(0x20 + (core) * 0x4)
- #define EDVD_CORE_VOLT_FREQ_F_SHIFT		0
-+#define EDVD_CORE_VOLT_FREQ_F_MASK		0xffff
- #define EDVD_CORE_VOLT_FREQ_V_SHIFT		16
-=20
- struct tegra186_cpufreq_cluster_info {
-@@ -91,10 +92,39 @@ static int tegra186_cpufreq_set_target(struct cpufreq_p=
-olicy *policy,
- 	return 0;
- }
-=20
-+static unsigned int tegra186_cpufreq_get(unsigned int cpu)
-+{
-+	struct cpufreq_frequency_table *tbl;
-+	struct cpufreq_policy *policy;
-+	void __iomem *edvd_reg;
-+	unsigned int i, freq =3D 0;
-+	u32 ndiv;
-+
-+	policy =3D cpufreq_cpu_get(cpu);
-+	if (!policy)
-+		return -EINVAL;
-+
-+	tbl =3D policy->freq_table;
-+	edvd_reg =3D policy->driver_data;
-+	ndiv =3D readl(edvd_reg) & EDVD_CORE_VOLT_FREQ_F_MASK;
-+
-+	for (i =3D 0; tbl[i].frequency !=3D CPUFREQ_TABLE_END; i++) {
-+		if ((tbl[i].driver_data & EDVD_CORE_VOLT_FREQ_F_MASK) =3D=3D ndiv) {
-+			freq =3D tbl[i].frequency;
-+			break;
-+		}
-+	}
-+
-+	cpufreq_cpu_put(policy);
-+
-+	return freq;
-+}
-+
- static struct cpufreq_driver tegra186_cpufreq_driver =3D {
- 	.name =3D "tegra186",
- 	.flags =3D CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
- 			CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+	.get =3D tegra186_cpufreq_get,
- 	.verify =3D cpufreq_generic_frequency_table_verify,
- 	.target_index =3D tegra186_cpufreq_set_target,
- 	.init =3D tegra186_cpufreq_init,
---=20
-2.25.1
-
+Hello, Arend! Thank you for the review! I'll prepare v2 with the cleaned
+debug messages and couple more small changes!
