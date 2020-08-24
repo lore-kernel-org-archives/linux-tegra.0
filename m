@@ -2,128 +2,101 @@ Return-Path: <SRS0=inwd=CC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA37C433E1
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 10:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 774CAC433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 10:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE59B2074D
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 10:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F38920738
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 10:17:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZtbAURe"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="klOZwYYP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbgHXKLJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Aug 2020 06:11:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49632 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbgHXKLI (ORCPT
+        id S1726189AbgHXKQ6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Aug 2020 06:16:58 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9131 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbgHXKQs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Aug 2020 06:11:08 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F806C061573;
-        Mon, 24 Aug 2020 03:11:07 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id c8so4152847lfh.9;
-        Mon, 24 Aug 2020 03:11:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eCM1MY9fL6XG/g9S5/R519/+dhVf/rR5iiVNVW9wNCM=;
-        b=iZtbAURe/TcGpxgHsdxjWk+OBcVapW76EJhdem0MYolKHHUTpp7lpODnmH7+Vbf34w
-         1OiD6R7tRTqvOZiScHDAcYR2tKiLLBO2KJ9ykXgEresO+HNuDPGDBhxwao7N//UWo1cV
-         7nelPhDcGThb5Lh0+z6m1BFSPFrFCFPFJk0a45oCQoiTHZw5JTpih6g+K/Yp2zLwFVjh
-         SZkf04JtwtIYCBa27oO3lZXiDWLLFjruvNIIN+6ov/w2gWAbfTL7Tv4nINtax5mo+N7L
-         045CsgP4gdbbr/fCE2mQvngCsiAolJo9DmJZyhPtBBAFB9n2h2nlk3bZuDhV7d29r/G9
-         8WfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eCM1MY9fL6XG/g9S5/R519/+dhVf/rR5iiVNVW9wNCM=;
-        b=oixOVDFp+YXA7WIV9XHFoXWiZOJV6Fq/Q+LjpaSRyRAqG9u92k9ZkHCGFpeRrvHaa1
-         XdIgK4VIYB+TyKdx7UWXyqmm2TuDDcYH8f/mBfHFlyFw29OIGLqcgxTPvjKgtiFqFVg5
-         EQ4W20V4w1Gu8OjOa0Xc8VUxawjCDQyj4ZfQ3ac5AInHV/Qa7LCcJttG/vhJkkwXjEIu
-         9jU+WFGfyKoYUvas5etDH7qJ+ptXgk8fYQcFb4OenOcBUKIZbKiR1PdBjwPJ5EmIW2kj
-         +Wx0Q2b7doZoEr8Q4TtPnBv0tUqBsb7ri6LBHYGm4Gee/onBvA0IGs1scx1+WFsbZGF0
-         IDYg==
-X-Gm-Message-State: AOAM5316GIGXCizt76gYA8TqV+31hqb4+IH2b1ClEa1MmIINVpjwy2xs
-        q1oatYQgPUxlZDGxnMZNMdOc2Bsjkew=
-X-Google-Smtp-Source: ABdhPJxvtbBhDZM+Ig1AWobTyAP+bnsWRaGngsk0KGvGCf5SE5DqpM2UiJhgMN4XuNz5SFNsE1yirg==
-X-Received: by 2002:a19:2202:: with SMTP id i2mr2316168lfi.35.1598263865536;
-        Mon, 24 Aug 2020 03:11:05 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id t19sm2079121ljc.137.2020.08.24.03.11.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2020 03:11:05 -0700 (PDT)
-Subject: Re: [PATCH v1 3/6] leds: Add driver for Acer Iconia Tab A500
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200823140846.19299-1-digetx@gmail.com>
- <20200823140846.19299-4-digetx@gmail.com>
- <20200823223037.5fkeg5ai6hry3axj@duo.ucw.cz>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <eb2da40a-9dbb-0a18-4dbc-3eb93bd2968c@gmail.com>
-Date:   Mon, 24 Aug 2020 13:11:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 24 Aug 2020 06:16:48 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4393190001>; Mon, 24 Aug 2020 03:14:49 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 24 Aug 2020 03:16:48 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 24 Aug 2020 03:16:48 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
+ 2020 10:16:47 +0000
+Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 24 Aug 2020 10:16:47 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 00/39] 4.9.234-rc1 review
+In-Reply-To: <20200824082348.445866152@linuxfoundation.org>
+References: <20200824082348.445866152@linuxfoundation.org>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20200823223037.5fkeg5ai6hry3axj@duo.ucw.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Message-ID: <d7a01ae24c22434fbc078f247822eb62@HQMAIL101.nvidia.com>
+Date:   Mon, 24 Aug 2020 10:16:47 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598264089; bh=zCOMRXf7r4TjWjRDyZTp6px6T7iE2QwmzkwLgQxRwXU=;
+        h=X-PGP-Universal:From:To:CC:Subject:In-Reply-To:References:
+         X-NVConfidentiality:MIME-Version:Message-ID:Date:Content-Type:
+         Content-Transfer-Encoding;
+        b=klOZwYYP8K88mJTrxEZ7hCvN0y4DpfGLfztmdHFJ7YEksx9+15Xg9d1pVYXcspZ3O
+         Q9nrVLWUuGnMwAg4S1PB5OixvC4rMvfEY84sBkE1iS8R1dl3cDdBg2c/oOyCQQosk9
+         KWIiRsFPhkAyTaEr9pS0ZdnfLABKMgIWQTyVRDytJ8l+7TKbDwfm0yoQO3GzcImfNG
+         VN2/9D5v1P3VYjHho9wGFGLvFlSfHYHxCDHSwe4MsiwaIu1ULKricKaHDEnU4tsSy1
+         OWhivNjKqR0+7JXvJlicP2ZThr+heVzBK3DRvDdz9O0mnaYqM1+6aesX8AZnG7XC+q
+         5GeVTxjAhLwMg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.08.2020 01:30, Pavel Machek пишет:
-> Hi!
+On Mon, 24 Aug 2020 10:30:59 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.234 release.
+> There are 39 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 26 Aug 2020 08:23:34 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.234-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Hello, Pavel! Thank you very much for the review! I'll take into account
-yours comments in the v2!
+All tests passing for Tegra ...
 
->> Acer Iconia Tab A500 is an Android tablet device which has two LEDs
->> embedded into the Power Button. Orange LED indicates "battery charging"
->> status and white LED indicates "wake-up/charge-done" status. The new LED
->> driver provides control over both LEDs to userspace.
-> 
->> @@ -0,0 +1,121 @@
->> +// SPDX-License-Identifier: GPL-2.0+
-> 
-> Nice.
-> 
->> + * Copyright 2020 GRATE-driver project.
-> 
-> Probably untrue.
-> 
-> 
->> +	white_led->cdev.name = "power-button-white";
-> 
-> "white:power"
-> 
->> +	white_led->cdev.max_brightness = LED_ON;
-> 
-> = 1. (And you'll need other adjustments over the code).
-> 
->> +	orange_led->cdev.name = "power-button-orange";
-> 
-> "orange:power" -- or what is this LED usually used for?
-> 
->> +MODULE_LICENSE("GPL v2");
-> 
-> Should be "GPL"?
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    30 tests:	30 pass, 0 fail
 
-Yes, apparently it should be "GPL". I'll try to double-check it for the v2.
+Linux version:	4.9.234-rc1-g8d1fe1cced13
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Thanks!
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
