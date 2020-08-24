@@ -2,126 +2,188 @@ Return-Path: <SRS0=inwd=CC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B255FC433E4
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 07:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B60BC433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 07:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B3E42075B
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 07:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 270312075B
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 07:59:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QtU30oRE"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QHuXkUnp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbgHXHdi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Aug 2020 03:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52310 "EHLO
+        id S1726000AbgHXH7G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Aug 2020 03:59:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbgHXHdg (ORCPT
+        with ESMTP id S1725999AbgHXH7D (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Aug 2020 03:33:36 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E707C0613ED
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 00:33:35 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id c15so7575363wrs.11
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 00:33:35 -0700 (PDT)
+        Mon, 24 Aug 2020 03:59:03 -0400
+Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39775C061755
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 00:59:03 -0700 (PDT)
+Received: by mail-vs1-xe41.google.com with SMTP id u131so1390864vsu.11
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 00:59:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=9b6JStI+Pc7Gan44H9Zai7qTn63i//epl6t/+SyCbvI=;
-        b=QtU30oREihjyaqVpYIPlh7uBHK/+lhu3kH4oL78qeud837ZI7zpawFKbrvXu6gEeF7
-         lirP1Q5eX5PgM10QHCj806++kYW29bWS1XHPniLoLJmno35vPnyrxiKHV7p3aodMTbfn
-         Y04755PuaOjBiEiyjPx6oxKlWUTs8W/nrEsTE3D3EiVIAnqck+zGCO2Kq8GPGxqS88WV
-         f4gu+gKuQuMYYK3aNi2V+GEfSaNUiYjGZVV3Uw2wOTjSE1MiKI50ALupBV4fO60Qx61C
-         dqwaeZn9bWLrQ8yqRwpZvWKQJqdQJBPxLU4x9pO0dXGyofFd0dRNrP7PqtDNr3k7hB5u
-         E43g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x5fetNBGlq6IDEbKDStVMl4rk13Z2lttGI7mVbBoANg=;
+        b=QHuXkUnpzno+kWLVS5giRuWiYCUzOhxOpcvPhkZp0VmzUF0E2y1n5YR13ShN+SPEFL
+         JJFQCYCGhqS8sEZpb45cYKnkILyJBPw7RzXpxvpYkPEoL2od3NMw2PQrnsr1vq1tfNCB
+         gWSsRvI6m2engpZqC9iA2xBjM7HH1j2f2jY8iaPNwkl0eMQgdzn49x9/Xk7f7RWWlocQ
+         c4WcvhRoh8vSIdL+U+glIqO7uWLlmEUoX35MgTQxlN4FHfXe6ZaerbYGPUDcHT7ERy7A
+         gfiibhBbuXTQqsVrPj4xGzj6dXRDMZVkyrIS9sUJ9jOPvSrHTHDGhkyT64WIPykCTCQZ
+         BuaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=9b6JStI+Pc7Gan44H9Zai7qTn63i//epl6t/+SyCbvI=;
-        b=O3TZv+2xguTPNT4+RgqXfukYG03nGBbEQyB66Zi3dHxUFNpJtZGDR8lKRJJ6VFpegy
-         NAGny8ptSnWDz22lLNG1JwhbyYtFdq8GPb5FsjpoO4mTBr9bRk/qS/aI4vjdKjkHD4uP
-         cWXW8XsEE+fD9VaJnwMxaxgUP8e5g9Mp1zHFTu5m/a46WN2CwskAiWES2kQgRTXLNiOt
-         jtaLCyrjcJzJl/GgXg+1VxX6MdmywZPyMxyInVfZynX9Sl9WwnHWi3wxk5MCth3LaeZR
-         9BAoVsr0XwsXyaedJl9uv4wC7jE9bq32i5y7My2bKBl237GwN+JEiuh4z0bufAQaw3Yu
-         hgXg==
-X-Gm-Message-State: AOAM533LedpctJePw7INF2MPKrJkFqKQantAypvPbKjjiUbCxRPE4pTG
-        f7TujmBfza/oCs/6LyC9ZGTHDA==
-X-Google-Smtp-Source: ABdhPJyrXOh+fiqV7Y/t9Tokf2adkKintBDcUuhkhcJ9lId4930V3lXNU3Dgrt+bFOeg/VRmD57z0w==
-X-Received: by 2002:adf:9ec1:: with SMTP id b1mr4456180wrf.171.1598254413967;
-        Mon, 24 Aug 2020 00:33:33 -0700 (PDT)
-Received: from dell ([95.149.164.62])
-        by smtp.gmail.com with ESMTPSA id t14sm21197697wrv.14.2020.08.24.00.33.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2020 00:33:33 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 08:33:31 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/6] mfd: Add driver for Embedded Controller found on
- Acer Iconia Tab A500
-Message-ID: <20200824073331.GG3248864@dell>
-References: <20200823140846.19299-1-digetx@gmail.com>
- <20200823140846.19299-2-digetx@gmail.com>
- <20200823181653.GC209852@demiurge.local>
- <82abab10-9af6-a9c4-b241-d5a3af5b588d@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x5fetNBGlq6IDEbKDStVMl4rk13Z2lttGI7mVbBoANg=;
+        b=hNvDirPSGzaxAM6Qz49nO8Uh675Pd98kgyaKtm/iaGx36+hG962kg5iNDKkT6XwLHg
+         00H6OSr2FfLkULUMoIxQs3GuUIeU8vhRt6ZCpFjriXq90LBWPA3ZRfz96y7I7t+EQX1M
+         UqKm5fI9GD5o9eTuBhVeHmcG9cOopxD8WSyQpErpM6Yph6D9f+wa2q/7laGvtcI5p1GS
+         4dBPzbrU1pnqqbxbTErOoCJoubts5gytKJeNIzyypWac1i09dcXpmlWVPXjyHottq4yz
+         qT4WhrTIBG4PuPPn4nQmwI12ltTBt17AActNflNDwSSWsF5bs18Sxov+9gGAJhQ4dTB4
+         JJag==
+X-Gm-Message-State: AOAM531dIJkkDOiArOcExGcrhC+Qrl6pKVnhChL2QzEjCYfxy5ZtBCmd
+        fEDaz4l6cggTbeOMpMVuJ+bMO6Y3qT25KU5/vtNGoA==
+X-Google-Smtp-Source: ABdhPJyTCnrU5j4N+bDMRKTXv/VoAO85MH3Zxse2PUmGY/gwR2eoAN6g9RWT58TPGUc6iYmOooJUjV6vconZcUFv3yY=
+X-Received: by 2002:a67:e9d8:: with SMTP id q24mr1800063vso.165.1598255941860;
+ Mon, 24 Aug 2020 00:59:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <82abab10-9af6-a9c4-b241-d5a3af5b588d@gmail.com>
+References: <1596673949-1571-1-git-send-email-skomatineni@nvidia.com> <1596673949-1571-7-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1596673949-1571-7-git-send-email-skomatineni@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 24 Aug 2020 09:58:25 +0200
+Message-ID: <CAPDyKFpSwcfu3NqM_uqpKfDBeWAvE7XguZntO=ZrnJx8m+vjeg@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] sdhci: tegra: Add missing TMCLK for data timeout
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "# 4.0+" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 23 Aug 2020, Dmitry Osipenko wrote:
+On Thu, 6 Aug 2020 at 02:32, Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
+>
+> commit b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
+>
+> Tegra210 and later has a separate sdmmc_legacy_tm (TMCLK) used by Tegra
+> SDMMC hawdware for data timeout to achive better timeout than using
+> SDCLK and using TMCLK is recommended.
+>
+> USE_TMCLK_FOR_DATA_TIMEOUT bit in Tegra SDMMC register
+> SDHCI_TEGRA_VENDOR_SYS_SW_CTRL can be used to choose either TMCLK or
+> SDCLK for data timeout.
+>
+> Default USE_TMCLK_FOR_DATA_TIMEOUT bit is set to 1 and TMCLK is used
+> for data timeout by Tegra SDMMC hardware and having TMCLK not enabled
+> is not recommended.
+>
+> So, this patch fixes it.
 
-> 23.08.2020 21:16, Lubomir Rintel пишет:
-> > Hello,
-> ...
-> >> +config MFD_ACER_A500_EC
-> >> +	tristate "Embedded Controller driver for Acer Iconia Tab A500"
-> >> +	depends on (I2C_TEGRA && ARCH_TEGRA_2x_SOC) || COMPILE_TEST
-> > 
-> > This seems to also depend on I2C and OF. Perhaps I2C_TEGRA and
-> > ARCH_TEGRA_2x_SOC imply that, but it could lead to build failures with
-> > COMPILE_TEST=y. 
-> 
-> Hello, Lubomir! You're right about the I2C because it could be compiled
-> as a loadable module, good catch! The OF seems should fine as-is.
-> 
-> ...
-> >> +static struct a500_ec *a500_ec_scratch;
-> > 
-> > If this is only used for power_off, please rename it. I've been told to
-> > do so in my driver: https://lore.kernel.org/lkml/20200519104933.GX271301@dell/
-> 
-> I don't mind to rename the variable, but not sure whether it will be a
-> worthwhile change since _scratch is also a common naming scheme among
-> MFD drivers. Please see max77620_scratch for example, which I added
-> about a year ago.
+Just realized that there should be an updated DT binding accordingly,
+stating that the "tmclk" is recommended but optional for some
+variants. Please re-spin.
 
-If something is used once, it does not make it 'common'.
+Kind regards
+Uffe
 
-Not sure how this slipped my notice before, but I don't like it.
-
-Ensure any global struct used for power_off only includes items
-required for this purpose.  It's unfortunate this API requires a
-global variable at all.
-
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>
+> Fixes: b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
+> Cc: stable <stable@vger.kernel.org> # 5.4
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 41 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 31ed321..c0b9405 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -140,6 +140,7 @@ struct sdhci_tegra_autocal_offsets {
+>  struct sdhci_tegra {
+>         const struct sdhci_tegra_soc_data *soc_data;
+>         struct gpio_desc *power_gpio;
+> +       struct clk *tmclk;
+>         bool ddr_signaling;
+>         bool pad_calib_required;
+>         bool pad_control_available;
+> @@ -1611,6 +1612,44 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>                 goto err_power_req;
+>         }
+>
+> +       /*
+> +        * Tegra210 has a separate SDMMC_LEGACY_TM clock used for host
+> +        * timeout clock and SW can choose TMCLK or SDCLK for hardware
+> +        * data timeout through the bit USE_TMCLK_FOR_DATA_TIMEOUT of
+> +        * the register SDHCI_TEGRA_VENDOR_SYS_SW_CTRL.
+> +        *
+> +        * USE_TMCLK_FOR_DATA_TIMEOUT bit default is set to 1 and SDMMC uses
+> +        * 12Mhz TMCLK which is advertised in host capability register.
+> +        * With TMCLK of 12Mhz provides maximum data timeout period that can
+> +        * be achieved is 11s better than using SDCLK for data timeout.
+> +        *
+> +        * So, TMCLK is set to 12Mhz and kept enabled all the time on SoC's
+> +        * supporting SDR104 mode and when not using SDCLK for data timeout.
+> +        */
+> +
+> +       if ((soc_data->nvquirks & NVQUIRK_ENABLE_SDR104) &&
+> +           !(soc_data->pdata->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK)) {
+> +               clk = devm_clk_get(&pdev->dev, "tmclk");
+> +               if (IS_ERR(clk)) {
+> +                       rc = PTR_ERR(clk);
+> +                       if (rc == -EPROBE_DEFER)
+> +                               goto err_power_req;
+> +
+> +                       dev_warn(&pdev->dev, "failed to get tmclk: %d\n", rc);
+> +                       clk = NULL;
+> +               }
+> +
+> +               clk_set_rate(clk, 12000000);
+> +               rc = clk_prepare_enable(clk);
+> +               if (rc) {
+> +                       dev_err(&pdev->dev,
+> +                               "failed to enable tmclk: %d\n", rc);
+> +                       goto err_power_req;
+> +               }
+> +
+> +               tegra_host->tmclk = clk;
+> +       }
+> +
+>         clk = devm_clk_get(mmc_dev(host->mmc), NULL);
+>         if (IS_ERR(clk)) {
+>                 rc = PTR_ERR(clk);
+> @@ -1654,6 +1693,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>  err_rst_get:
+>         clk_disable_unprepare(pltfm_host->clk);
+>  err_clk_get:
+> +       clk_disable_unprepare(tegra_host->tmclk);
+>  err_power_req:
+>  err_parse_dt:
+>         sdhci_pltfm_free(pdev);
+> @@ -1671,6 +1711,7 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
+>         reset_control_assert(tegra_host->rst);
+>         usleep_range(2000, 4000);
+>         clk_disable_unprepare(pltfm_host->clk);
+> +       clk_disable_unprepare(tegra_host->tmclk);
+>
+>         sdhci_pltfm_free(pdev);
+>
+> --
+> 2.7.4
+>
