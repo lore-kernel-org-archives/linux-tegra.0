@@ -2,188 +2,117 @@ Return-Path: <SRS0=inwd=CC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B60BC433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 07:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF8CC433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 08:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 270312075B
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 07:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 692CA20738
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 08:29:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QHuXkUnp"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="axj1fpma"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726000AbgHXH7G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Aug 2020 03:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
+        id S1726037AbgHXI3K (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Aug 2020 04:29:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbgHXH7D (ORCPT
+        with ESMTP id S1725780AbgHXI3J (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Aug 2020 03:59:03 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39775C061755
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 00:59:03 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id u131so1390864vsu.11
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 00:59:03 -0700 (PDT)
+        Mon, 24 Aug 2020 04:29:09 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BAEDC061573
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 01:29:09 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id m71so4455761pfd.1
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 01:29:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x5fetNBGlq6IDEbKDStVMl4rk13Z2lttGI7mVbBoANg=;
-        b=QHuXkUnpzno+kWLVS5giRuWiYCUzOhxOpcvPhkZp0VmzUF0E2y1n5YR13ShN+SPEFL
-         JJFQCYCGhqS8sEZpb45cYKnkILyJBPw7RzXpxvpYkPEoL2od3NMw2PQrnsr1vq1tfNCB
-         gWSsRvI6m2engpZqC9iA2xBjM7HH1j2f2jY8iaPNwkl0eMQgdzn49x9/Xk7f7RWWlocQ
-         c4WcvhRoh8vSIdL+U+glIqO7uWLlmEUoX35MgTQxlN4FHfXe6ZaerbYGPUDcHT7ERy7A
-         gfiibhBbuXTQqsVrPj4xGzj6dXRDMZVkyrIS9sUJ9jOPvSrHTHDGhkyT64WIPykCTCQZ
-         BuaA==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2K6WTwIMAPjI/mFWjHAehqUSAvXRAhIwddvFBN/4ox0=;
+        b=axj1fpmaqcL2Qqo0AMtAeS6B0LKBjq2tPBvFPljiQrgASaCnXDIbJ4z7d4VjuQiTzO
+         +jGzyVIOL6Xo0Zl8tgRb/6ANQAREAa1p3nMY8l+/wfXMzuUzZS8WJ8K4RVFzdGAPSOLt
+         Cu25OPgCOpOV48fmgSwCU9iMxRvkGZ1QAOz50=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x5fetNBGlq6IDEbKDStVMl4rk13Z2lttGI7mVbBoANg=;
-        b=hNvDirPSGzaxAM6Qz49nO8Uh675Pd98kgyaKtm/iaGx36+hG962kg5iNDKkT6XwLHg
-         00H6OSr2FfLkULUMoIxQs3GuUIeU8vhRt6ZCpFjriXq90LBWPA3ZRfz96y7I7t+EQX1M
-         UqKm5fI9GD5o9eTuBhVeHmcG9cOopxD8WSyQpErpM6Yph6D9f+wa2q/7laGvtcI5p1GS
-         4dBPzbrU1pnqqbxbTErOoCJoubts5gytKJeNIzyypWac1i09dcXpmlWVPXjyHottq4yz
-         qT4WhrTIBG4PuPPn4nQmwI12ltTBt17AActNflNDwSSWsF5bs18Sxov+9gGAJhQ4dTB4
-         JJag==
-X-Gm-Message-State: AOAM531dIJkkDOiArOcExGcrhC+Qrl6pKVnhChL2QzEjCYfxy5ZtBCmd
-        fEDaz4l6cggTbeOMpMVuJ+bMO6Y3qT25KU5/vtNGoA==
-X-Google-Smtp-Source: ABdhPJyTCnrU5j4N+bDMRKTXv/VoAO85MH3Zxse2PUmGY/gwR2eoAN6g9RWT58TPGUc6iYmOooJUjV6vconZcUFv3yY=
-X-Received: by 2002:a67:e9d8:: with SMTP id q24mr1800063vso.165.1598255941860;
- Mon, 24 Aug 2020 00:59:01 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2K6WTwIMAPjI/mFWjHAehqUSAvXRAhIwddvFBN/4ox0=;
+        b=ozDn0EsBW7XjxyAGj9uZMUmsNcx0vVg25qGUoNU3ydmXIDQdYawxpG5bhFf3gQYd2w
+         B5RveEJ4jia21jQxjURkAS/s9nc6WjbAusM23UDbOKYW1LclslYe2MSVV0wWsdC8408k
+         ngzXiJLreqxbJyIrrTDf9xzJ/kSltqf6HSbahhslPeCiWiOCGqP2EB47/vsX73tKDaSk
+         XE4IZvRIrg923Uy3rjQfe1EM7gsn/1kL0Vy32P4TDxsTjAPFCUL/51LcVXGEOYzZ7bAd
+         xOVA+9o4AX+szl/xvwas1sZhi+92AEKw4DXp5fLkDhvJ1/NLjpo6yiZxR6PwyYs5l+51
+         Wa0Q==
+X-Gm-Message-State: AOAM533vcdVnahyOnlKRqFgeLSj5h4flVph/NzN5RxumyEB1589jsw6+
+        LM8FkzsqMDjmdzWDTGgPp/D3D2+5z7VU/D/cojk=
+X-Google-Smtp-Source: ABdhPJxJpp2dbQYy+c7xEPbxjJsA+XavJY3DvvaeIZvSws19WA21Xd666HyNd8XbMZp3ek05KWmEJw==
+X-Received: by 2002:a63:2746:: with SMTP id n67mr2883670pgn.314.1598257748320;
+        Mon, 24 Aug 2020 01:29:08 -0700 (PDT)
+Received: from [192.168.178.129] (f140230.upc-f.chello.nl. [80.56.140.230])
+        by smtp.gmail.com with ESMTPSA id m22sm9074959pja.36.2020.08.24.01.29.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Aug 2020 01:29:07 -0700 (PDT)
+Subject: Re: [PATCH v1] brcmfmac: increase F2 watermark for BCM4329
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc:     linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200823142004.21990-1-digetx@gmail.com>
+From:   Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <93536fd4-8abc-e167-a184-5a5e36d4205a@broadcom.com>
+Date:   Mon, 24 Aug 2020 10:28:57 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-References: <1596673949-1571-1-git-send-email-skomatineni@nvidia.com> <1596673949-1571-7-git-send-email-skomatineni@nvidia.com>
-In-Reply-To: <1596673949-1571-7-git-send-email-skomatineni@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 24 Aug 2020 09:58:25 +0200
-Message-ID: <CAPDyKFpSwcfu3NqM_uqpKfDBeWAvE7XguZntO=ZrnJx8m+vjeg@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] sdhci: tegra: Add missing TMCLK for data timeout
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "# 4.0+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200823142004.21990-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 6 Aug 2020 at 02:32, Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
->
-> commit b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
->
-> Tegra210 and later has a separate sdmmc_legacy_tm (TMCLK) used by Tegra
-> SDMMC hawdware for data timeout to achive better timeout than using
-> SDCLK and using TMCLK is recommended.
->
-> USE_TMCLK_FOR_DATA_TIMEOUT bit in Tegra SDMMC register
-> SDHCI_TEGRA_VENDOR_SYS_SW_CTRL can be used to choose either TMCLK or
-> SDCLK for data timeout.
->
-> Default USE_TMCLK_FOR_DATA_TIMEOUT bit is set to 1 and TMCLK is used
-> for data timeout by Tegra SDMMC hardware and having TMCLK not enabled
-> is not recommended.
->
-> So, this patch fixes it.
 
-Just realized that there should be an updated DT binding accordingly,
-stating that the "tmclk" is recommended but optional for some
-variants. Please re-spin.
 
-Kind regards
-Uffe
+On 8/23/2020 4:20 PM, Dmitry Osipenko wrote:
+> This patch fixes SDHCI CRC errors during of RX throughput testing on
+> BCM4329 chip if SDIO BUS is clocked above 25MHz. In particular the
+> checksum problem is observed on NVIDIA Tegra20 SoCs. The good watermark
+> value is borrowed from downstream BCMDHD driver and it's the same as the
+> value used for the BCM4339 chip, hence let's re-use it for BCM4329.
 
->
-> Fixes: b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
-> Cc: stable <stable@vger.kernel.org> # 5.4
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+one comment, but when fixed you can add my....
+
+Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/mmc/host/sdhci-tegra.c | 41 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 31ed321..c0b9405 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -140,6 +140,7 @@ struct sdhci_tegra_autocal_offsets {
->  struct sdhci_tegra {
->         const struct sdhci_tegra_soc_data *soc_data;
->         struct gpio_desc *power_gpio;
-> +       struct clk *tmclk;
->         bool ddr_signaling;
->         bool pad_calib_required;
->         bool pad_control_available;
-> @@ -1611,6 +1612,44 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->                 goto err_power_req;
->         }
->
-> +       /*
-> +        * Tegra210 has a separate SDMMC_LEGACY_TM clock used for host
-> +        * timeout clock and SW can choose TMCLK or SDCLK for hardware
-> +        * data timeout through the bit USE_TMCLK_FOR_DATA_TIMEOUT of
-> +        * the register SDHCI_TEGRA_VENDOR_SYS_SW_CTRL.
-> +        *
-> +        * USE_TMCLK_FOR_DATA_TIMEOUT bit default is set to 1 and SDMMC uses
-> +        * 12Mhz TMCLK which is advertised in host capability register.
-> +        * With TMCLK of 12Mhz provides maximum data timeout period that can
-> +        * be achieved is 11s better than using SDCLK for data timeout.
-> +        *
-> +        * So, TMCLK is set to 12Mhz and kept enabled all the time on SoC's
-> +        * supporting SDR104 mode and when not using SDCLK for data timeout.
-> +        */
-> +
-> +       if ((soc_data->nvquirks & NVQUIRK_ENABLE_SDR104) &&
-> +           !(soc_data->pdata->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK)) {
-> +               clk = devm_clk_get(&pdev->dev, "tmclk");
-> +               if (IS_ERR(clk)) {
-> +                       rc = PTR_ERR(clk);
-> +                       if (rc == -EPROBE_DEFER)
-> +                               goto err_power_req;
-> +
-> +                       dev_warn(&pdev->dev, "failed to get tmclk: %d\n", rc);
-> +                       clk = NULL;
-> +               }
-> +
-> +               clk_set_rate(clk, 12000000);
-> +               rc = clk_prepare_enable(clk);
-> +               if (rc) {
-> +                       dev_err(&pdev->dev,
-> +                               "failed to enable tmclk: %d\n", rc);
-> +                       goto err_power_req;
-> +               }
-> +
-> +               tegra_host->tmclk = clk;
-> +       }
-> +
->         clk = devm_clk_get(mmc_dev(host->mmc), NULL);
->         if (IS_ERR(clk)) {
->                 rc = PTR_ERR(clk);
-> @@ -1654,6 +1693,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  err_rst_get:
->         clk_disable_unprepare(pltfm_host->clk);
->  err_clk_get:
-> +       clk_disable_unprepare(tegra_host->tmclk);
->  err_power_req:
->  err_parse_dt:
->         sdhci_pltfm_free(pdev);
-> @@ -1671,6 +1711,7 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
->         reset_control_assert(tegra_host->rst);
->         usleep_range(2000, 4000);
->         clk_disable_unprepare(pltfm_host->clk);
-> +       clk_disable_unprepare(tegra_host->tmclk);
->
->         sdhci_pltfm_free(pdev);
->
-> --
-> 2.7.4
->
+>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> index 3c07d1bbe1c6..ac3ee93a2378 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> @@ -4278,6 +4278,7 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
+>   			brcmf_sdiod_writeb(sdiod, SBSDIO_FUNC1_MESBUSYCTRL,
+>   					   CY_43012_MESBUSYCTRL, &err);
+>   			break;
+> +		case SDIO_DEVICE_ID_BROADCOM_4329:
+>   		case SDIO_DEVICE_ID_BROADCOM_4339:
+>   			brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes for 4339\n",
+
+Maybe better to drop the chip id from the debug message. The chip id is 
+printed elsewhere already so it does not add info here and could only 
+cause confusion. Maybe you can also remove it from the 43455 message a 
+bit below.
