@@ -2,165 +2,235 @@ Return-Path: <SRS0=inwd=CC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE0CC433E1
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 00:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3D2C433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 07:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 167C220720
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 00:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04AC820720
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Aug 2020 07:20:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="ph3cmZei"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XIyhPB/n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbgHXAEw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 23 Aug 2020 20:04:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40204 "EHLO
+        id S1726354AbgHXHUp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Aug 2020 03:20:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbgHXAEs (ORCPT
+        with ESMTP id S1726119AbgHXHUp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 23 Aug 2020 20:04:48 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEBBFC061574
-        for <linux-tegra@vger.kernel.org>; Sun, 23 Aug 2020 17:04:47 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id v2so5821026ilq.4
-        for <linux-tegra@vger.kernel.org>; Sun, 23 Aug 2020 17:04:47 -0700 (PDT)
+        Mon, 24 Aug 2020 03:20:45 -0400
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C64C061574
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 00:20:45 -0700 (PDT)
+Received: by mail-vs1-xe42.google.com with SMTP id a127so3922339vsd.1
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 00:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2qvzvkep7ZlQHNyjrGsuXQAp+x7s+RjdNiOv81NxtoQ=;
-        b=ph3cmZeijsQTsHnHnrr9eCGgxMPexaLwCGnu3F9Od9T7oE9SJ1xriseSecoaLR+A31
-         cxdttU99z8vHmtpSvs9wLGOOgPOY6GzwuKuovZh4UMjplaxKJu/wyAtKKGV99cTnuUCc
-         b9jW667DJd78gpOSqL093TQrnCvZ9zpW4sDgc9e3s4gqdpHbIh0cqwIbSVLaQrTLqDAX
-         thER0vKrZAtqkOJvYQeGZuITMeh4kPZ6AWC1kOvIEmnWvuxZr35lD2OOnlXMpkqB5GBo
-         XlqFU7D/ggoXmysuTUVEiDWk1jvnBEMzHRuwpliqu/K2HYrSEPvB6WXxqYArt4mYifKa
-         QdMw==
+        bh=eaT6ZpVnYcO23xeg/lu0Nhu8kAcIVMz0J5y75t8rIj8=;
+        b=XIyhPB/n685+4pfsehSeIJnQGn+mn/wx/PGufkNW2qkHyJQBm6bD6g/tZrMDy9oqb/
+         zleBCHtR9ZwLEgFype2fNYCvzr822DoFzYvKOYqaJMJtr05srZy6lvqd4GyZGFKNlI11
+         YReAawC9roCXvbgHa5OZ8v1xSB40EJXDqAJ3j9PyR20kX3hoM2n4K1c76j3TfUgNcsX6
+         YmwepHlupZl4/MCbGtzO7OZvjJqjTEp6APKJRqVqRQSw3JdNqS1vva1TDeLw1TFSPQ3f
+         kh3EYSEh9jDW1vSXTBal8ySr+SuA2rejv6s9omXoI9XZuLLGKihelaDinntX3Zhs6A9X
+         cBRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2qvzvkep7ZlQHNyjrGsuXQAp+x7s+RjdNiOv81NxtoQ=;
-        b=Pomp6oGQzy0Z+bEqJZ7ccaBtJrF+R6Z5W9x+zB6g21MZIdhzXOQbRiP6DkYH9m28BS
-         wEHOwGftUX2tvtiyH0MFlPRRiN0e4G0J+ivPjGXm1su99ZFvmXj+ZTXIvmmH53etiohQ
-         1PUQW8teSupb9wgY+1Yd/GtBteNF6jdQhrkeBgGmpAJKO/xf9iV+qC7ViAN4sXJ8vG6E
-         1x4vDooXGp5OD73jVIahH87lJtFFYKOLGWYeZbBJ1JjXxbri4CyLgdjsNTKj+/Rd1Lie
-         NNNnHYjDDuiy1gNhJldOeP+j70/Iu0NNlCRnyYlBMPzLBjYcwJDLv2u1tb+mqLiZecz3
-         xXBw==
-X-Gm-Message-State: AOAM531CpyGDeOkaKe71t2qS3VoavALGu9jA6pvM2GCb6FXJUrwQdR2l
-        NRcDiuIyD5/HJypPFpzmix53/jNN1szYbjmUPDtULw==
-X-Google-Smtp-Source: ABdhPJx+Rb9Dh5afCkPV93ubbfa83YINwHuyBNL6aGGIC9gNFt/GVdQQ5DqMV2LQPpqLPd5cGrS+QMzugsAJ9rHE3h4=
-X-Received: by 2002:a92:4f:: with SMTP id 76mr2640989ila.11.1598227486317;
- Sun, 23 Aug 2020 17:04:46 -0700 (PDT)
+        bh=eaT6ZpVnYcO23xeg/lu0Nhu8kAcIVMz0J5y75t8rIj8=;
+        b=BPM1qXyHWtBuKlJQ4kwMP8LePyrtVOLNdKT9vjfpQZJy1UAKDvxvk2B3T98o0dnrl7
+         4rP1U45g/ZVDxFyI0IUTMHIWlOMGC9i+T0Am6O3L3EM0iw2DQioQXZh9Gv+75tsr5nyV
+         hevmosXefybXE7xq6zmWNcwf5snb1WzXF1F/aJqRdzQ3wL3pclxHhriqqz+FMy0e+D8H
+         hemMoIXbLkWy4AFECi+hbODSOXGEP8z0druW3SGFclEUmENiiSzC2WiWtJQJ2iyL2ooh
+         KO1tGi+ZeBIXO6N7hDwdm6EEQFkaf3Q0tmcGMrP2YLitOi7HVETQ60+ZMnk3JpitUXHk
+         WLzw==
+X-Gm-Message-State: AOAM530+AzhFfE/GMGb9SvEWstX+fSiBzE49w3GIOXYWkrPzhpwk+7zL
+        CdR503dNLMV0R8Jp0OjQqJR8ZVS+UgRYGYQk9yMyfQ==
+X-Google-Smtp-Source: ABdhPJxLWHtQvlu1QPMP0YIlNkor+BVOiAxP3JIFg+wYR5I8gslFVM6ywgWF3rYEbAQMY/Is9klukrMCVQusMT03IKg=
+X-Received: by 2002:a67:fd0a:: with SMTP id f10mr1494683vsr.35.1598253641430;
+ Mon, 24 Aug 2020 00:20:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
-In-Reply-To: <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
-From:   Tom Murphy <murphyt7@tcd.ie>
-Date:   Mon, 24 Aug 2020 01:04:35 +0100
-Message-ID: <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Julien Grall <julien.grall@arm.com>,
+References: <1595854036-15434-1-git-send-email-anrao@nvidia.com>
+In-Reply-To: <1595854036-15434-1-git-send-email-anrao@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 24 Aug 2020 09:20:04 +0200
+Message-ID: <CAPDyKFp1K1+J-urcdcOstDqVMnTaEUfc_jJri0ZgNkWB8cpuKQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tegra: Add Runtime PM callbacks
+To:     Aniruddha Rao <anrao@nvidia.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+        Jon Hunter <jonathanh@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Logan/All,
+[...]
 
-I have added a check for the sg_dma_len == 0 :
-"""
- } __sgt_iter(struct scatterlist *sgl, bool dma) {
-        struct sgt_iter s = { .sgp = sgl };
+> @@ -1622,7 +1699,6 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>
+>                 goto err_clk_get;
+>         }
+> -       clk_prepare_enable(clk);
+>         pltfm_host->clk = clk;
+>
+>         tegra_host->rst = devm_reset_control_get_exclusive(&pdev->dev,
+> @@ -1645,16 +1721,29 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>
+>         usleep_range(2000, 4000);
+>
+> +       pm_runtime_enable(&pdev->dev);
+> +       rc = pm_runtime_get_sync(&pdev->dev);
+> +       if (rc < 0)
+> +               goto pm_disable;
+> +       pm_runtime_set_autosuspend_delay(&pdev->dev,
+> +                                        SDHCI_TEGRA_RTPM_MSEC_TMOUT);
+> +       pm_runtime_use_autosuspend(&pdev->dev);
+> +
+>         rc = sdhci_tegra_add_host(host);
+>         if (rc)
+>                 goto err_add_host;
+>
+> +       pm_runtime_mark_last_busy(&pdev->dev);
+> +       pm_runtime_put_autosuspend(&pdev->dev);
+> +
+>         return 0;
+>
+>  err_add_host:
+>         reset_control_assert(tegra_host->rst);
+> +       pm_runtime_put_autosuspend(&pdev->dev);
+> +pm_disable:
+> +       pm_runtime_disable(&pdev->dev);
+>  err_rst_get:
+> -       clk_disable_unprepare(pltfm_host->clk);
+>  err_clk_get:
+>  err_power_req:
+>  err_parse_dt:
+> @@ -1679,6 +1768,41 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
+>         return 0;
+>  }
+>
+> +static int sdhci_tegra_runtime_suspend(struct device *dev)
+> +{
+> +       struct sdhci_host *host = dev_get_drvdata(dev);
+> +
+> +       /* Disable SDMMC internal clock */
+> +       sdhci_set_clock(host, 0);
+> +
+> +       /* Disable SDMMC host CAR clock and BG trimmer supply */
+> +       return tegra_sdhci_set_host_clock(host, false);
 
-+       if (sgl && sg_dma_len(sgl) == 0)
-+           s.sgp = NULL;
+Shouldn't you also call sdhci_runtime_suspend_host() somewhere around
+here, to mask IRQs etc.
 
-        if (s.sgp) {
-            .....
-"""
-at location [1].
-but it doens't fix the problem.
+> +}
+> +
+> +static int sdhci_tegra_runtime_resume(struct device *dev)
+> +{
+> +       struct sdhci_host *host = dev_get_drvdata(dev);
+> +       unsigned int clk;
+> +       int err = 0;
+> +
+> +       /* Clock enable should be invoked with a non-zero freq */
+> +       if (host->clock)
+> +               clk = host->clock;
+> +       else if (host->mmc->ios.clock)
+> +               clk = host->mmc->ios.clock;
+> +       else
+> +               clk = SDHCI_TEGRA_FALLBACK_CLK_HZ;
+> +
+> +       /* Enable SDMMC host CAR clock and BG trimmer supply */
 
-You're right though, this change does need to be made, this code
-doesn't handle pages of sg_dma_len(sg) == 0 correctly
-So my guess is that we have more bugs in other parts of the i915
-driver (or there is a problem with my "sg_dma_len == 0" fix above).
-I have been trying to spot where else the code might be buggy but I
-haven't had any luck so far.
+I don't know the Tegra controller very well, but to me, looks odd that
+the BG trimmer supply hasn't been handled before. Looks like you need
+to enable that, even if you don't use runtime PM, no?
 
-I'm doing a microconfernce (at LPC 2020) this wednesdays [1] on this
-if you're interested in attending.
-I'm hoping I can chat about it with a few people and find how can
-reproduce and fix this issues. I don't have any more time I can give
-to this unfortunately and it would be a shame for the work to go to
-waste.
+> +       err = tegra_sdhci_set_host_clock(host, true);
+> +       if (!err) {
+> +               /* Re-enable SDMMC internal clock */
+> +               sdhci_set_clock(host, clk);
+> +       }
 
-[0] https://github.com/torvalds/linux/blob/d012a7190fc1fd72ed48911e77ca97ba4521bccd/drivers/gpu/drm/i915/i915_scatterlist.h#L28
-[1] https://linuxplumbersconf.org/event/7/contributions/846/
+Maybe you need to call sdhci_runtime_resume_host() somewhere around here?
 
-On Fri, 29 May 2020 at 22:21, Logan Gunthorpe <logang@deltatee.com> wrote:
+> +
+> +       return err;
+> +}
+> +
+>  #ifdef CONFIG_PM_SLEEP
+>  static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
+>  {
+> @@ -1686,6 +1810,12 @@ static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>         int ret;
 >
+> +       if (pm_runtime_status_suspended(dev)) {
+> +               ret = tegra_sdhci_set_host_clock(host, true);
+> +               if (ret)
+> +                       return ret;
+> +       }
+
+So you need to re-enable the clock above, if it's been turned off in
+runtime suspend, to complete the below operations.
+
+That makes me wonder about the below operations. Why don't you need to
+call cqhci_suspend() at runtime suspend?
+
+> +
+>         if (host->mmc->caps2 & MMC_CAP2_CQE) {
+>                 ret = cqhci_suspend(host->mmc);
+>                 if (ret)
+> @@ -1698,8 +1828,7 @@ static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
+>                 return ret;
+>         }
 >
+> -       clk_disable_unprepare(pltfm_host->clk);
+> -       return 0;
+> +       return tegra_sdhci_set_host_clock(host, false);
+>  }
 >
-> On 2020-05-29 3:11 p.m., Marek Szyprowski wrote:
-> > Patches are pending:
-> > https://lore.kernel.org/linux-iommu/20200513132114.6046-1-m.szyprowski@samsung.com/T/
+>  static int __maybe_unused sdhci_tegra_resume(struct device *dev)
+> @@ -1708,7 +1837,7 @@ static int __maybe_unused sdhci_tegra_resume(struct device *dev)
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>         int ret;
 >
-> Cool, nice! Though, I still don't think that fixes the issue in
-> i915_scatterlist.h given it still ignores sg_dma_len() and strictly
-> relies on sg_next()/sg_is_last() to stop iterating -- and I suspect this
-> is the bug that got in Tom's way.
+> -       ret = clk_prepare_enable(pltfm_host->clk);
+> +       ret = tegra_sdhci_set_host_clock(host, true);
+>         if (ret)
+>                 return ret;
 >
-> >> However, as Robin pointed out, there are other ugly tricks like stopping
-> >> iterating through the SGL when sg_dma_len() is zero. For example, the
-> >> AMD driver appears to use drm_prime_sg_to_page_addr_arrays() which does
-> >> this trick and thus likely isn't buggy (otherwise, I'd expect someone to
-> >> have complained by now seeing AMD has already switched to IOMMU-DMA.
-> >
-> > I'm not sure that this is a trick. Stopping at zero sg_dma_len() was
-> > somewhere documented.
+> @@ -1727,13 +1856,15 @@ static int __maybe_unused sdhci_tegra_resume(struct device *dev)
+>  suspend_host:
+>         sdhci_suspend_host(host);
+>  disable_clk:
+> -       clk_disable_unprepare(pltfm_host->clk);
+> -       return ret;
+> +       return tegra_sdhci_set_host_clock(host, false);
+>  }
+>  #endif
 >
-> Well whatever you want to call it, it is ugly to have some drivers doing
-> one thing with the returned value and others assuming there's an extra
-> zero at the end. It just causes confusion for people reading/copying the
-> code. It would be better if they are all consistent. However, I concede
-> stopping at zero should not be broken, presently.
+> -static SIMPLE_DEV_PM_OPS(sdhci_tegra_dev_pm_ops, sdhci_tegra_suspend,
+> -                        sdhci_tegra_resume);
+> +const struct dev_pm_ops sdhci_tegra_dev_pm_ops = {
+> +       SET_SYSTEM_SLEEP_PM_OPS(sdhci_tegra_suspend, sdhci_tegra_resume)
+> +       SET_RUNTIME_PM_OPS(sdhci_tegra_runtime_suspend,
+> +                          sdhci_tegra_runtime_resume, NULL)
+> +};
 >
-> Logan
+>  static struct platform_driver sdhci_tegra_driver = {
+>         .driver         = {
+> --
+> 2.7.4
+>
+
+Kind regards
+Uffe
