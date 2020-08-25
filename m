@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD38C433E1
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 07:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDA2C433E1
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 07:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68C53204FD
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 07:36:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90093204FD
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 07:38:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729483AbgHYHgZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Aug 2020 03:36:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33034 "EHLO mx2.suse.de"
+        id S1729526AbgHYHiF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Aug 2020 03:38:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33112 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729343AbgHYHgZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Aug 2020 03:36:25 -0400
+        id S1729322AbgHYHge (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 25 Aug 2020 03:36:34 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6BEC0AC24;
-        Tue, 25 Aug 2020 07:36:54 +0000 (UTC)
-Date:   Tue, 25 Aug 2020 09:36:23 +0200
-Message-ID: <s5heenv6utk.wl-tiwai@suse.de>
+        by mx2.suse.de (Postfix) with ESMTP id ED17EAD26;
+        Tue, 25 Aug 2020 07:37:03 +0000 (UTC)
+Date:   Tue, 25 Aug 2020 09:36:33 +0200
+Message-ID: <s5hd03f6uta.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Mohan Kumar <mkumard@nvidia.com>
 Cc:     <tiwai@suse.com>, <aplattner@nvidia.com>, <spujar@nvidia.com>,
         <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
         <treding@nvidia.com>, <jonathanh@nvidia.com>
-Subject: Re: [PATCH 1/2] ALSA: hda: Fix 2 channel swapping for Tegra
-In-Reply-To: <20200825052415.20626-2-mkumard@nvidia.com>
+Subject: Re: [PATCH 2/2] ALSA: hda/tegra: Program WAKEEN register for Tegra
+In-Reply-To: <20200825052415.20626-3-mkumard@nvidia.com>
 References: <20200825052415.20626-1-mkumard@nvidia.com>
-        <20200825052415.20626-2-mkumard@nvidia.com>
+        <20200825052415.20626-3-mkumard@nvidia.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -43,14 +43,13 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 25 Aug 2020 07:24:14 +0200,
+On Tue, 25 Aug 2020 07:24:15 +0200,
 Mohan Kumar wrote:
 > 
-> The Tegra HDA codec HW implementation has an issue related to not
-> swapping the 2 channel Audio Sample Packet(ASP) channel mapping.
-> Whatever the FL and FR mapping specified the left channel always
-> comes out of left speaker and right channel on right speaker. So
-> add condition to disallow the swapping of FL,FR during the playback.
+> The WAKEEN bits are used to indicate which bits in the
+> STATESTS register may cause wake event during the codec
+> state change request. Configure the WAKEEN register for
+> the Tegra to detect the wake events.
 > 
 > Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
 
