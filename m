@@ -2,111 +2,171 @@ Return-Path: <SRS0=F6W0=CD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BBEC433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 07:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 013B5C433E1
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 07:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8771B20706
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 07:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCDB520706
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 07:29:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FNBSbR20"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YVimBWLT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729209AbgHYHTJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Aug 2020 03:19:09 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:14261 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729194AbgHYHTI (ORCPT
+        id S1729434AbgHYH3E (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Aug 2020 03:29:04 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:16435 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729194AbgHYH3E (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Aug 2020 03:19:08 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f44bb5d0002>; Tue, 25 Aug 2020 00:18:53 -0700
+        Tue, 25 Aug 2020 03:29:04 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f44bd480002>; Tue, 25 Aug 2020 00:27:04 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 25 Aug 2020 00:19:07 -0700
+  Tue, 25 Aug 2020 00:29:03 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 25 Aug 2020 00:19:07 -0700
-Received: from [10.25.97.151] (10.124.1.5) by HQMAIL107.nvidia.com
+        by hqpgpgate102.nvidia.com on Tue, 25 Aug 2020 00:29:03 -0700
+Received: from [10.26.74.41] (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 25 Aug
- 2020 07:19:01 +0000
-Subject: Re: [PATCH v2 3/9] ASoC: audio-graph: Identify 'no_pcm' DAI links for
- DPCM
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
-        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
-        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
-        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
-        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
-References: <1596605064-27748-1-git-send-email-spujar@nvidia.com>
- <1596605064-27748-4-git-send-email-spujar@nvidia.com>
- <87pn7ofs19.wl-kuninori.morimoto.gx@renesas.com>
- <97f325a6-96cc-11c5-8027-8c0a159e3da0@nvidia.com>
- <2d3aa11e-3c56-1f7a-3d41-2457f973d55b@nvidia.com>
- <87sgcbwcnf.wl-kuninori.morimoto.gx@renesas.com>
- <14691a05-cb29-a030-0e72-eca900d8eb7e@nvidia.com>
- <87o8mzwajg.wl-kuninori.morimoto.gx@renesas.com>
- <e9698ac3-0a2e-08a2-3f78-b0be0069d6ee@nvidia.com>
- <87lfi3w7hj.wl-kuninori.morimoto.gx@renesas.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <f3724be2-c79d-0815-6ff5-460a4f6c10cc@nvidia.com>
-Date:   Tue, 25 Aug 2020 12:48:58 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ 2020 07:28:56 +0000
+Subject: Re: [PATCH v4 7/7] sdhci: tegra: Add missing TMCLK for data timeout
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <thierry.reding@gmail.com>, <robh+dt@kernel.org>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <stable@vger.kernel.org>
+References: <1598296557-32020-1-git-send-email-skomatineni@nvidia.com>
+ <1598296557-32020-8-git-send-email-skomatineni@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <a8ea7d0e-ed1d-165a-bba7-2a39c31cc107@nvidia.com>
+Date:   Tue, 25 Aug 2020 08:28:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <87lfi3w7hj.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <1598296557-32020-8-git-send-email-skomatineni@nvidia.com>
 X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
  HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598339933; bh=PT6WTDioQCPbdq/KOc0iRkwH1Ym5t9uF4Cc1BSATpZg=;
+        t=1598340424; bh=R3hLvCd5YUZLhhnoklm4RrizfdS9HAJpYHSPgk5QwRc=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=FNBSbR20FJjYN36jhj3xpPjRHmqNM7nWGKauDua6IkLSLhNKPdgvuM/uoUFedegK7
-         gzOipcya4eeDda0nXog91znM2v0+H7z7wIfgrKeM6GzYmF2SFyLdFQ1baAF6HrAEZp
-         k9aRvwS1FHBvDJHq+ybXvm/K5r66l4gF/1gP95mKdMNVJ3SCJ6DgGSJvZi3Ia98mmW
-         nnobrWsOkbAXtJWjfDH5rfi52oxByhdpjoqsQfxnFme67iDBID4GBKVAXn0fv5cqSp
-         1TIrSZCtQ7Mc5fp75aYgGQQnXBOg6Lw8GybFr+LSr7mGoW1Z3wd5ssPw0EJPA82lC+
-         xYaUkAUFneZrw==
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=YVimBWLTRrbrR+FkD2wyHFGJzWM82x9PGLcjxAyHWw/Z5zCgc2BKGnQYsvhaBsX34
+         GlEmTtT0sVhAM+a70ut0CbPpN9swBjfOLru9INzrN9Z2wTbqOQqWYyHze8SLVOONEL
+         XjI+Juwc1EiGSxo+5VuQQyuhCBHqIG6ATKQkca54RIHuMUdx5jfNgytCpVXt5KmFHD
+         GoTfedudxaB8zEQ1yiOrBMg6x5E1pu/J31sZthQNAuys7McMDRzS9yigsvbB3czgdJ
+         gIo54HQ6AM32cMzqw8wH6q0CyBWEMsLBNAJ6uzbpBOrrwwXlDONclUzCQ4ffpDgxYX
+         AdbggAbwKFkHg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Morimoto-san,
 
->>> Other solution is create both snd_soc_find_dai_with_mutex()/without_mutex().
->>> I'm not sure which style is best.
->> I don't know how complex it is to have a unified solution. But if we
->> can protect snd_soc_find_dai() itself, things would be simpler may be
->> in long term. Right now there are separate source files for soc-core,
->> soc-dai and soc-component, but because of two approaches looks like
->> the function need to be moved around and need to be placed in
->> soc-core. Also the issue might go unnoticed if LOCKDEP is not enabled.
->>
->> May be start with a wrapper for now and eventually unify?
-> Yeah, it seems has _with_mutex() can be better idea.
-> I'm posting patch, but I noticed that Mark's branch vs Linus branch
-> have some mismatch (?), and now I'm asking it to him.
-> I can post _with_mutex() version as v2 if I could get answer.
-> After that I'm happy your next patch can re-use it.
->
+On 24/08/2020 20:15, Sowjanya Komatineni wrote:
+> commit b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
+> 
+> Tegra210 and later has a separate sdmmc_legacy_tm (TMCLK) used by Tegra
+> SDMMC hawdware for data timeout to achive better timeout than using
+> SDCLK and using TMCLK is recommended.
+> 
+> USE_TMCLK_FOR_DATA_TIMEOUT bit in Tegra SDMMC register
+> SDHCI_TEGRA_VENDOR_SYS_SW_CTRL can be used to choose either TMCLK or
+> SDCLK for data timeout.
+> 
+> Default USE_TMCLK_FOR_DATA_TIMEOUT bit is set to 1 and TMCLK is used
+> for data timeout by Tegra SDMMC hardware and having TMCLK not enabled
+> is not recommended.
+> 
+> So, this patch fixes it.
+> 
+> Fixes: b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
+> Cc: stable <stable@vger.kernel.org> # 5.4
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 41 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 31ed321..c0b9405 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -140,6 +140,7 @@ struct sdhci_tegra_autocal_offsets {
+>  struct sdhci_tegra {
+>  	const struct sdhci_tegra_soc_data *soc_data;
+>  	struct gpio_desc *power_gpio;
+> +	struct clk *tmclk;
+>  	bool ddr_signaling;
+>  	bool pad_calib_required;
+>  	bool pad_control_available;
+> @@ -1611,6 +1612,44 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>  		goto err_power_req;
+>  	}
+>  
+> +	/*
+> +	 * Tegra210 has a separate SDMMC_LEGACY_TM clock used for host
+> +	 * timeout clock and SW can choose TMCLK or SDCLK for hardware
+> +	 * data timeout through the bit USE_TMCLK_FOR_DATA_TIMEOUT of
+> +	 * the register SDHCI_TEGRA_VENDOR_SYS_SW_CTRL.
+> +	 *
+> +	 * USE_TMCLK_FOR_DATA_TIMEOUT bit default is set to 1 and SDMMC uses
+> +	 * 12Mhz TMCLK which is advertised in host capability register.
+> +	 * With TMCLK of 12Mhz provides maximum data timeout period that can
+> +	 * be achieved is 11s better than using SDCLK for data timeout.
+> +	 *
+> +	 * So, TMCLK is set to 12Mhz and kept enabled all the time on SoC's
+> +	 * supporting SDR104 mode and when not using SDCLK for data timeout.
+> +	 */
+> +
+> +	if ((soc_data->nvquirks & NVQUIRK_ENABLE_SDR104) &&
+> +	    !(soc_data->pdata->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK)) {
+> +		clk = devm_clk_get(&pdev->dev, "tmclk");
+> +		if (IS_ERR(clk)) {
+> +			rc = PTR_ERR(clk);
+> +			if (rc == -EPROBE_DEFER)
+> +				goto err_power_req;
+> +
+> +			dev_warn(&pdev->dev, "failed to get tmclk: %d\n", rc);
+> +			clk = NULL;
+> +		}
+> +
+> +		clk_set_rate(clk, 12000000);
+> +		rc = clk_prepare_enable(clk);
+> +		if (rc) {
+> +			dev_err(&pdev->dev,
+> +				"failed to enable tmclk: %d\n", rc);
+> +			goto err_power_req;
+> +		}
+> +
+> +		tegra_host->tmclk = clk;
+> +	}
+> +
+>  	clk = devm_clk_get(mmc_dev(host->mmc), NULL);
 
-Sure. BTW, there are more such candidates which require 'lock' version 
-of these helpers.
-For example: soc_find_component(), snd_soc_add/remove_pcm_runtime() and 
-snd_soc_register_dai().
 
-Thank you for the feedback.
+One thing that I just thought of is that now we may have two clocks,
+shouldn't we use the name, 'sdhci', for requesting the above clock as well?
 
+Unfortunately, the name 'sdhci' has not been populated for all Tegra
+devices until recently and so we may need to check if there are one of
+two clocks populated. If there is only one, then maybe we fall back to
+the above.
+
+Cheers
+Jon
+
+-- 
+nvpublic
