@@ -2,145 +2,129 @@ Return-Path: <SRS0=F6W0=CD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 287DBC433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 08:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B1AC433E1
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 14:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02B3D20639
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 08:22:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBF712072D
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 14:31:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gJV28BEO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ilLeVCiL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbgHYIWn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Aug 2020 04:22:43 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4669 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbgHYIWn (ORCPT
+        id S1726241AbgHYObF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Aug 2020 10:31:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33778 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbgHYObF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Aug 2020 04:22:43 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f44ca440002>; Tue, 25 Aug 2020 01:22:28 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 25 Aug 2020 01:22:42 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 25 Aug 2020 01:22:42 -0700
-Received: from [10.26.74.41] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 25 Aug
- 2020 08:22:40 +0000
-Subject: Re: [PATCH V2] cpufreq: tegra186: Fix initial frequency
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200824145907.331899-1-jonathanh@nvidia.com>
- <20200825055003.qfsuktsv7cyouxei@vireshk-i7>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <ab693b02-9ae2-48c2-0104-e82d949d82b7@nvidia.com>
-Date:   Tue, 25 Aug 2020 09:22:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 25 Aug 2020 10:31:05 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1592DC061574
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2020 07:31:04 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id k25so11393628edj.13
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2020 07:31:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Djp14USfvpYT1zsr5IEolXY6Uvk4OEQv1Milhu2LcVk=;
+        b=ilLeVCiLFNfbmGIGhiypWMNJXz09yR8OBU6eNHcp1rksRUcRk4ipzHJdQBUUmrrkJl
+         NKX4YZR70Qy0w1T5Z4QrwvJLD2I4lpyU4IsSkdnC1NRng19TEGj967JacI3szKSZZz/p
+         0zz4fde2NHV2xKaPaBbDO+BmTTi0gR338P3prp5XI7gnD9lUcuqWcCyhI303BF/ZUdrB
+         s31mfkeahJ6b/+80JHNBPrT0FRXvvTdsq9reFOBQIdDgOIqHodEX5y0ZC8VfVAefS645
+         VPZdx4MZMDUlK90bd3fLTVM5Zv1G5fketjLTjZPAuQU7dOzb+QYQfk+Jwm99LBT7b0gK
+         JQJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Djp14USfvpYT1zsr5IEolXY6Uvk4OEQv1Milhu2LcVk=;
+        b=J+GFS5gv18p3aPNd7bs67pZUuaTHW1vdU5tUL45c3Egl9XP9X/SrDJXIDdYJvH7Wh0
+         HXfhZcRLIvLteLGNMjehRLkqyROUCyjPElGocPEdnvCjGUw43kwQefIRH6eB9oPpmVty
+         tjQk5wl2mcbLpTiQD00eXvRFltVpQAn/o8gKyXOVRD7kOgB/0ZJELTehmAmsTAX8iQb6
+         K3XzxWuo+7+EY/mFIscGwSYMgoD9xvaTRD92pQkfGu5g7i5U3FFHBaSUz76Zh/x4rEXR
+         CgEccUkSkCr2ZsZiHG/kD5FLaQBpN1x8zpfBxLb+JfZ7cv5yJyQ5tH46Bth1O4wz8LyI
+         j9Yg==
+X-Gm-Message-State: AOAM531IMHnm6dbg8nlzoiNIFeRlk6Ur/xMkH1KCoGN5l9vRDQZJExZ4
+        /9bL5vMGhSL8qpPKoMUlq6I=
+X-Google-Smtp-Source: ABdhPJzy59OuIlJlrK2KF60RjoXW3776KvTjB+eF3yr0H/Ntgiiyn2Laweercgv14Q+Qilt2lVvE2A==
+X-Received: by 2002:a50:bac2:: with SMTP id x60mr10780366ede.210.1598365862696;
+        Tue, 25 Aug 2020 07:31:02 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id d2sm13924247ejm.19.2020.08.25.07.31.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Aug 2020 07:31:01 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: tegra: Use the correct names for DPAUX pinctrl states
+Date:   Tue, 25 Aug 2020 16:30:57 +0200
+Message-Id: <20200825143057.1358321-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20200825055003.qfsuktsv7cyouxei@vireshk-i7>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598343748; bh=LkkmwW6Ou5KUyXiZ9GFzOWPI5DK3g7/4RUVRkK4oGKk=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=gJV28BEOFvRtdFiEGfwtPMV9+KMj2wVPpgmf+wPdzt4yXxsbxi6eJjkjARn8ho1ED
-         RFsZbjZMTmgM+wU4V0PCz8l2u6gYmkj9+x7k/558EHveYWxFEIOLfJa2FlgycXMX31
-         ivG6lNFQ/966NIFZu/i8iEOFn2e6Qhg6N3RGwK3cc3OQZx4DuwOox7KoEZA8YeXHNV
-         +XIHri+B3MUoLTglzV5ICmURBfeaeHOmwcA7uUVdvIkudMXMRF/ILs8uXQpJhsBiGI
-         Ut6AuKgQ7hi6334gfIwOqZdLR9bmSKyAr12aCi2OZb+BMCAr/HfNUyasy101Fqq98U
-         usCthjRAs0E/w==
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
-On 25/08/2020 06:50, Viresh Kumar wrote:
-> On 24-08-20, 15:59, Jon Hunter wrote:
->> Commit 6cc3d0e9a097 ("cpufreq: tegra186: add
->> CPUFREQ_NEED_INITIAL_FREQ_CHECK flag") fixed CPUFREQ support for
->> Tegra186 but as a consequence the following warnings are now seen on
->> boot ...
->>
->>  cpufreq: cpufreq_online: CPU0: Running at unlisted freq: 0 KHz
->>  cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed to: 2035200 KHz
->>  cpufreq: cpufreq_online: CPU1: Running at unlisted freq: 0 KHz
->>  cpufreq: cpufreq_online: CPU1: Unlisted initial frequency changed to: 2035200 KHz
->>  cpufreq: cpufreq_online: CPU2: Running at unlisted freq: 0 KHz
->>  cpufreq: cpufreq_online: CPU2: Unlisted initial frequency changed to: 2035200 KHz
->>  cpufreq: cpufreq_online: CPU3: Running at unlisted freq: 0 KHz
->>  cpufreq: cpufreq_online: CPU3: Unlisted initial frequency changed to: 2035200 KHz
->>  cpufreq: cpufreq_online: CPU4: Running at unlisted freq: 0 KHz
->>  cpufreq: cpufreq_online: CPU4: Unlisted initial frequency changed to: 2035200 KHz
->>  cpufreq: cpufreq_online: CPU5: Running at unlisted freq: 0 KHz
->>  cpufreq: cpufreq_online: CPU5: Unlisted initial frequency changed to: 2035200 KHz
->>
->> Fix this by adding a 'get' callback for the Tegra186 CPUFREQ driver to
->> retrieve the current operating frequency for a given CPU. The 'get'
->> callback uses the current 'ndiv' value that is programmed to determine
->> that current operating frequency.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->> Changes since V1:
->> - Moved code into a 'get' callback
->>
->>  drivers/cpufreq/tegra186-cpufreq.c | 30 ++++++++++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
->>
->> diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
->> index 01e1f58ba422..0d0fcff60765 100644
->> --- a/drivers/cpufreq/tegra186-cpufreq.c
->> +++ b/drivers/cpufreq/tegra186-cpufreq.c
->> @@ -14,6 +14,7 @@
->>  
->>  #define EDVD_CORE_VOLT_FREQ(core)		(0x20 + (core) * 0x4)
->>  #define EDVD_CORE_VOLT_FREQ_F_SHIFT		0
->> +#define EDVD_CORE_VOLT_FREQ_F_MASK		0xffff
->>  #define EDVD_CORE_VOLT_FREQ_V_SHIFT		16
->>  
->>  struct tegra186_cpufreq_cluster_info {
->> @@ -91,10 +92,39 @@ static int tegra186_cpufreq_set_target(struct cpufreq_policy *policy,
->>  	return 0;
->>  }
->>  
->> +static unsigned int tegra186_cpufreq_get(unsigned int cpu)
->> +{
->> +	struct cpufreq_frequency_table *tbl;
->> +	struct cpufreq_policy *policy;
->> +	void __iomem *edvd_reg;
->> +	unsigned int i, freq = 0;
->> +	u32 ndiv;
->> +
->> +	policy = cpufreq_cpu_get(cpu);
->> +	if (!policy)
->> +		return -EINVAL;
-> 
-> This should be return 0;
-> 
-> Applied with that change. Thanks.
+The default and idle states need to be called "default" and "idle",
+respectively, for the driver core to select them at the right time.
 
+Fixes: fff67b5c73c1 ("arm64: tegra: Wire up pinctrl states for all DPAUX controllers")
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-OK, thanks!
-
-Jon
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 94c65ca8345a..dc6ae42b3027 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -348,7 +348,7 @@ dp_aux_ch1_i2c: i2c@3190000 {
+ 			reset-names = "i2c";
+ 			pinctrl-0 = <&state_dpaux1_i2c>;
+ 			pinctrl-1 = <&state_dpaux1_off>;
+-			pinctrl-names = "i2c", "off";
++			pinctrl-names = "default", "idle";
+ 			status = "disabled";
+ 		};
+ 
+@@ -365,7 +365,7 @@ dp_aux_ch0_i2c: i2c@31b0000 {
+ 			reset-names = "i2c";
+ 			pinctrl-0 = <&state_dpaux0_i2c>;
+ 			pinctrl-1 = <&state_dpaux0_off>;
+-			pinctrl-names = "i2c", "off";
++			pinctrl-names = "default", "idle";
+ 			status = "disabled";
+ 		};
+ 
+@@ -382,7 +382,7 @@ dp_aux_ch2_i2c: i2c@31c0000 {
+ 			reset-names = "i2c";
+ 			pinctrl-0 = <&state_dpaux2_i2c>;
+ 			pinctrl-1 = <&state_dpaux2_off>;
+-			pinctrl-names = "i2c", "off";
++			pinctrl-names = "default", "idle";
+ 			status = "disabled";
+ 		};
+ 
+@@ -399,7 +399,7 @@ dp_aux_ch3_i2c: i2c@31e0000 {
+ 			reset-names = "i2c";
+ 			pinctrl-0 = <&state_dpaux3_i2c>;
+ 			pinctrl-1 = <&state_dpaux3_off>;
+-			pinctrl-names = "i2c", "off";
++			pinctrl-names = "default", "idle";
+ 			status = "disabled";
+ 		};
+ 
 -- 
-nvpublic
+2.28.0
+
