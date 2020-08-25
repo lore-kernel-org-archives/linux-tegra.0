@@ -2,94 +2,106 @@ Return-Path: <SRS0=F6W0=CD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C54C433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 02:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2DBC433DF
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 04:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 558012072D
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 02:09:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598321395;
-	bh=XQi6zHkmZLUO9y/5riKwfZshwxg5/GFLB99HPJLwlc0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Tl9BJTcqcKyvfuuXcDnBOYFQyg0T8/qBMzFKjZncw8jBLzIMvsNi47Fj0CUkyVzx5
-	 /6CuLlEcXQ1qkXQ9jqUPx9orDc+mL9B1AH/uCjQflQfJU7c2pNNtvaCZAwp+zawmkn
-	 box+X+BDb6cruxvNUTAK6YNDW8jhA5jh9UYDwD0A=
+	by mail.kernel.org (Postfix) with ESMTP id 14F6A2072D
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 04:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbgHYCJv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Aug 2020 22:09:51 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46479 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgHYCJu (ORCPT
+        id S1728043AbgHYEy3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Aug 2020 00:54:29 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:21098 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725792AbgHYEy3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Aug 2020 22:09:50 -0400
-Received: by mail-io1-f68.google.com with SMTP id d18so1576661iop.13;
-        Mon, 24 Aug 2020 19:09:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=p24wmINxw5ACsrgiOLfq84gw2srTWDcxVk5SINBeDzc=;
-        b=d+QPmzzr6rTzmiqxMRhLvqUr0EoBhvZlDJoPcVYsoSKdHjl6XTzSGZw5KlPy4+SeXC
-         mf5/+dkSv2M1hInB5RRrp9CGiLo8JR/8E+tfYeivFSt+2RCd12vEz1asF66NxHBzQu5+
-         nDNjyfkQeI27YWewkHSMYUFCogdIu/hFvmADS3XEDvL+w0AZQlGpmGo4ZqZqApFmCrTL
-         iuIV3JV0XKMjJ9X+VgR088nn4OmGDAecJPXZAaECvf3I94nGiRKFpoN+TlRT+axVA+JJ
-         ApjCX8OLjp0m4+YlAwx4gbb/BhCNPV5jjvcVXi4SOdviB5RdBi2a4NXCmbbTjQnBKFcd
-         KDKg==
-X-Gm-Message-State: AOAM532yVE+klvyWWDCQ0RhRishWD65RgMWhp25sDL8iftOZpxE8wSeD
-        fpMERFN2XaBwD3GZVDfRgg==
-X-Google-Smtp-Source: ABdhPJyR64UEBk7XMJS3xaNhsQOHAvXTybO+KgsxIlNUDqaIOvnKq7x6Bf0G/VyGmP353HDAmwZHfQ==
-X-Received: by 2002:a5d:88da:: with SMTP id i26mr7193353iol.158.1598321389515;
-        Mon, 24 Aug 2020 19:09:49 -0700 (PDT)
-Received: from xps15 ([64.188.179.249])
-        by smtp.gmail.com with ESMTPSA id r9sm8205705iln.18.2020.08.24.19.09.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2020 19:09:49 -0700 (PDT)
-Received: (nullmailer pid 3789123 invoked by uid 1000);
-        Tue, 25 Aug 2020 02:09:45 -0000
-Date:   Mon, 24 Aug 2020 20:09:45 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>, devicetree@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-pm@vger.kernel.org,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-tegra@vger.kernel.org,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v5 22/36] dt-bindings: host1x: Document new interconnect
- properties
-Message-ID: <20200825020945.GA3789072@bogus>
-References: <20200814000621.8415-1-digetx@gmail.com>
- <20200814000621.8415-23-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200814000621.8415-23-digetx@gmail.com>
+        Tue, 25 Aug 2020 00:54:29 -0400
+Date:   25 Aug 2020 13:54:28 +0900
+X-IronPort-AV: E=Sophos;i="5.76,351,1592838000"; 
+   d="scan'208";a="55442315"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 25 Aug 2020 13:54:28 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D029641C6063;
+        Tue, 25 Aug 2020 13:54:27 +0900 (JST)
+Message-ID: <87sgcbwcnf.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
+        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
+Subject: Re: [PATCH v2 3/9] ASoC: audio-graph: Identify 'no_pcm' DAI links for DPCM
+In-Reply-To: <2d3aa11e-3c56-1f7a-3d41-2457f973d55b@nvidia.com>
+References: <1596605064-27748-1-git-send-email-spujar@nvidia.com>
+        <1596605064-27748-4-git-send-email-spujar@nvidia.com>
+        <87pn7ofs19.wl-kuninori.morimoto.gx@renesas.com>
+        <97f325a6-96cc-11c5-8027-8c0a159e3da0@nvidia.com>
+        <2d3aa11e-3c56-1f7a-3d41-2457f973d55b@nvidia.com>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 14 Aug 2020 03:06:07 +0300, Dmitry Osipenko wrote:
-> Most of Host1x devices have at least one memory client. These clients
-> are directly connected to the memory controller. The new interconnect
-> properties represent the memory client's connection to the memory
-> controller.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../display/tegra/nvidia,tegra20-host1x.txt   | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi Sameer
+
+>             +static bool soc_component_is_pcm(struct snd_soc_dai_link_component *dlc)
+>             +{
+>             +     struct snd_soc_dai *dai = snd_soc_find_dai(dlc);
+>             +
+>             +     if (dai && (dai->component->driver->pcm_construct ||
+>             +                 dai->driver->pcm_new))
+>             +             return true;
+>             +
+>             +     return false;
+>             +}
+(snip)
+> I tried testing this with LOCKDEP config enabled at my end.
+> It seems I don't see warning originated from above function.
+> Are you suggesting that, in general, snd_soc_find_dai()
+> should be called with client_mutex held?
+
+Hmm ? strange...
+
+snd_soc_find_dai() is using lockdep_assert_held()
+
+	struct snd_soc_dai *snd_soc_find_dai(...)
+	{
+		...
+=>		lockdep_assert_held(&client_mutex);
+		...
+	}
+
+and lockdep_assert_held() will indicate WARN_ON()
+
+	-- lockdep.h --
+	...
+	#ifdef CONFIG_LOCKDEP
+	...
+	#define lockdep_assert_held(l)	do {				\
+=>			WARN_ON(debug_locks && !lockdep_is_held(l));	\
+		} while (0)
+
+> May be snd_soc_dai_link_set_capabilities() requires similar fix?
+
+Yes, I'm posting fixup patch.
+
+	https://patchwork.kernel.org/patch/11719919/
+
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
