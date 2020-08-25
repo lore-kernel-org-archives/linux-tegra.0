@@ -2,145 +2,108 @@ Return-Path: <SRS0=F6W0=CD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F3DC433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 05:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF282C433DF
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 05:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAC052071E
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 05:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B8492071E
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 05:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sUtrjydE"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="fsLiRzQw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbgHYFuI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Aug 2020 01:50:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36246 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbgHYFuI (ORCPT
+        id S1728882AbgHYFxY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Aug 2020 01:53:24 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12339 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbgHYFxV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Aug 2020 01:50:08 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E41C061574
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 22:50:07 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id p37so6054551pgl.3
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2020 22:50:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vnJNUHtuFQUFx13e1DH6FdQTNcSlnOczZJdYD+gETKQ=;
-        b=sUtrjydErcLgPizhn/Xtx4ItBgxoAz/OtzMIkDhh/Q2SE9qFJyNZ2IWh/2wrLbP6F3
-         vMtRByRkp1mYza87avjNVjpHkG6lCbqxvXdcHvDFWIUUDogaJ2wO/o4/rENLnkbuOACB
-         Hps0Tvpynh9hWCbsYRkAKdJwaeblvE+o/JQuCsq1VknHKEl6aAc7zlJDEZijhlYuLR3i
-         ND/Go6sn4ST2/vDfSmtmhqTcmAI2UtUsC21eT/h6OZwd1Ipp6dRZnrCk2yFlAF7tZXmf
-         RGy1hmTFbfTZYLSQluB5wNe7oBjCkvwFyXaDTcVXAOzhh74RtFdCJtggaXeZT7b5TZrc
-         YyRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vnJNUHtuFQUFx13e1DH6FdQTNcSlnOczZJdYD+gETKQ=;
-        b=Ebvbe5UfcDXw06FeB9IFWT6JTUUxtpterUMv5be5C+zNHfK1zgCBS1t5OBgkrMPrxu
-         XTQZvfIJdJML59YyTgLjQSD89ySQ131/Yhh+l9ODrxmI2SWrF+I4PdYp8pwIyhlTV3yH
-         OstaVoz964IqkkrZcMRaHuTyFPG5gGPQ55GN/L4bckUrXQxG2+Ce4zZFjmg20ejptGny
-         cvtoTzh9ABJvyq3DUQ9T0UsLcI+4uVZ0gnT6A22Lk/S5YZsIWdGYYet+dkKXZ35eeojh
-         btcZHJUTNVUvAsqIRMKx/gCenXzdL12/Ows09uZMAJUP79mfy2EcBRIVWKJM6yz/p62z
-         KZ4g==
-X-Gm-Message-State: AOAM532iY4M7RlBMQUVu6f0lGUnJheJEzneHCcTDIBhtBAE47Pjzi/Xt
-        xeR4zaGGtYnnXZ2bB9tZmZj+hw==
-X-Google-Smtp-Source: ABdhPJx7LW43H/WEVT3wFqJuqlI6n26TIbT5/snnF9dSqDbHnlNMONApn7rCm69tVvLefn/LYmHMeQ==
-X-Received: by 2002:a63:31d0:: with SMTP id x199mr5238003pgx.99.1598334606437;
-        Mon, 24 Aug 2020 22:50:06 -0700 (PDT)
-Received: from localhost ([122.172.43.13])
-        by smtp.gmail.com with ESMTPSA id o5sm2988556pgi.18.2020.08.24.22.50.05
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Aug 2020 22:50:05 -0700 (PDT)
-Date:   Tue, 25 Aug 2020 11:20:03 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] cpufreq: tegra186: Fix initial frequency
-Message-ID: <20200825055003.qfsuktsv7cyouxei@vireshk-i7>
-References: <20200824145907.331899-1-jonathanh@nvidia.com>
+        Tue, 25 Aug 2020 01:53:21 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f44a7130000>; Mon, 24 Aug 2020 22:52:19 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 24 Aug 2020 22:53:21 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 24 Aug 2020 22:53:21 -0700
+Received: from [10.25.97.151] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 25 Aug
+ 2020 05:53:15 +0000
+Subject: Re: [PATCH v2 3/9] ASoC: audio-graph: Identify 'no_pcm' DAI links for
+ DPCM
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
+        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
+References: <1596605064-27748-1-git-send-email-spujar@nvidia.com>
+ <1596605064-27748-4-git-send-email-spujar@nvidia.com>
+ <87pn7ofs19.wl-kuninori.morimoto.gx@renesas.com>
+ <97f325a6-96cc-11c5-8027-8c0a159e3da0@nvidia.com>
+ <2d3aa11e-3c56-1f7a-3d41-2457f973d55b@nvidia.com>
+ <87sgcbwcnf.wl-kuninori.morimoto.gx@renesas.com>
+ <14691a05-cb29-a030-0e72-eca900d8eb7e@nvidia.com>
+ <87o8mzwajg.wl-kuninori.morimoto.gx@renesas.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <e9698ac3-0a2e-08a2-3f78-b0be0069d6ee@nvidia.com>
+Date:   Tue, 25 Aug 2020 11:23:11 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200824145907.331899-1-jonathanh@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <87o8mzwajg.wl-kuninori.morimoto.gx@renesas.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598334739; bh=bOJlbPEDP7bzEfLTN1ma/hpFcaswtMKhxhFtn3X3KB0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=fsLiRzQw2KhMMRuKJolVunTD28eXxVDQEasbWsBseJFOJDgUaSFnunqKtJ3hBvnjb
+         E7KH1w1J+OjQ3pxSZXZpO+ndOwCuK0G2/xn5odTxVE055PvSbW4ECgZOPS2OGsbbH7
+         rOTlyUpcq+sthGswphFXGjEDvltPYqQKPUEiDY1CgM3MnLEhYtWEBV2/wZxieSF4SN
+         ezxBnh4qVgtV983svcZeEKtOAZxdKwbwbVIe0utHlM7kG0Oq8ssLOsvFEAUnDYnjBO
+         b/eNGzTOIAnxUbM7fpNZ8m4Rvv7XVXAdZ1hImwviKGkkc2sFPkgiMHW91zdOI1622/
+         erQHqP+NaoXCg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 24-08-20, 15:59, Jon Hunter wrote:
-> Commit 6cc3d0e9a097 ("cpufreq: tegra186: add
-> CPUFREQ_NEED_INITIAL_FREQ_CHECK flag") fixed CPUFREQ support for
-> Tegra186 but as a consequence the following warnings are now seen on
-> boot ...
-> 
->  cpufreq: cpufreq_online: CPU0: Running at unlisted freq: 0 KHz
->  cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed to: 2035200 KHz
->  cpufreq: cpufreq_online: CPU1: Running at unlisted freq: 0 KHz
->  cpufreq: cpufreq_online: CPU1: Unlisted initial frequency changed to: 2035200 KHz
->  cpufreq: cpufreq_online: CPU2: Running at unlisted freq: 0 KHz
->  cpufreq: cpufreq_online: CPU2: Unlisted initial frequency changed to: 2035200 KHz
->  cpufreq: cpufreq_online: CPU3: Running at unlisted freq: 0 KHz
->  cpufreq: cpufreq_online: CPU3: Unlisted initial frequency changed to: 2035200 KHz
->  cpufreq: cpufreq_online: CPU4: Running at unlisted freq: 0 KHz
->  cpufreq: cpufreq_online: CPU4: Unlisted initial frequency changed to: 2035200 KHz
->  cpufreq: cpufreq_online: CPU5: Running at unlisted freq: 0 KHz
->  cpufreq: cpufreq_online: CPU5: Unlisted initial frequency changed to: 2035200 KHz
-> 
-> Fix this by adding a 'get' callback for the Tegra186 CPUFREQ driver to
-> retrieve the current operating frequency for a given CPU. The 'get'
-> callback uses the current 'ndiv' value that is programmed to determine
-> that current operating frequency.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> Changes since V1:
-> - Moved code into a 'get' callback
-> 
->  drivers/cpufreq/tegra186-cpufreq.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-> index 01e1f58ba422..0d0fcff60765 100644
-> --- a/drivers/cpufreq/tegra186-cpufreq.c
-> +++ b/drivers/cpufreq/tegra186-cpufreq.c
-> @@ -14,6 +14,7 @@
->  
->  #define EDVD_CORE_VOLT_FREQ(core)		(0x20 + (core) * 0x4)
->  #define EDVD_CORE_VOLT_FREQ_F_SHIFT		0
-> +#define EDVD_CORE_VOLT_FREQ_F_MASK		0xffff
->  #define EDVD_CORE_VOLT_FREQ_V_SHIFT		16
->  
->  struct tegra186_cpufreq_cluster_info {
-> @@ -91,10 +92,39 @@ static int tegra186_cpufreq_set_target(struct cpufreq_policy *policy,
->  	return 0;
->  }
->  
-> +static unsigned int tegra186_cpufreq_get(unsigned int cpu)
-> +{
-> +	struct cpufreq_frequency_table *tbl;
-> +	struct cpufreq_policy *policy;
-> +	void __iomem *edvd_reg;
-> +	unsigned int i, freq = 0;
-> +	u32 ndiv;
-> +
-> +	policy = cpufreq_cpu_get(cpu);
-> +	if (!policy)
-> +		return -EINVAL;
+Hi Morimoto-san,
 
-This should be return 0;
+>>> Yes, I'm posting fixup patch.
+>>>
+>>>           https://patchwork.kernel.org/patch/11719919/
+>> Just curious that why snd_soc_find_dai() itself cannot be protected,
+>> instead of leaving this to callers.
+> Because, snd_soc_find_dai() is called both with/without client_mutex.
+> (same/sof are calling it with mutex, simple-card/audio-graph are calling without mutex)
+>
+> Other solution is create both snd_soc_find_dai_with_mutex()/without_mutex().
+> I'm not sure which style is best.
 
-Applied with that change. Thanks.
+I don't know how complex it is to have a unified solution. But if we can 
+protect snd_soc_find_dai() itself, things would be simpler may be in 
+long term. Right now there are separate source files for soc-core, 
+soc-dai and soc-component, but because of two approaches looks like the 
+function need to be moved around and need to be placed in soc-core. Also 
+the issue might go unnoticed if LOCKDEP is not enabled.
 
--- 
-viresh
+May be start with a wrapper for now and eventually unify?
+
+Thanks,
+Sameer.
+
