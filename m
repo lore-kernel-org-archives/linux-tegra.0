@@ -2,178 +2,186 @@ Return-Path: <SRS0=/nj9=CE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D77C433DF
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 07:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE73CC433E1
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 09:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7F9420767
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 07:19:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62357206FA
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 09:21:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OXa+dODJ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LnYiAQap"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbgHZHTg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Aug 2020 03:19:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48432 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbgHZHTf (ORCPT
+        id S1728000AbgHZJVl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Aug 2020 05:21:41 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12311 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727884AbgHZJVk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Aug 2020 03:19:35 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A52CC061574;
-        Wed, 26 Aug 2020 00:19:35 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id g1so590809pgm.9;
-        Wed, 26 Aug 2020 00:19:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qWLQ09H4pd8WgMgtgz12mw5W3VvW3dhG530iJhOXSE0=;
-        b=OXa+dODJtUqYwtqpQ7ayh7hD2+7v70th2/273W1+fTk2MmqVr26N7l3YZK+gVNeD/0
-         VJQGWHjYBPCccKWZ5YVAYwN/9y4ZFAyd6xLhPT4v16Qzl8uLtYEwJYFtwS+IV2T+uYRT
-         o696chC8iVjFQ0LJSsUiv6kscF9IHSXTtAA+LZaM69XQXkCOHKmEW0qVuTAVoGDTw8rI
-         sKBmyMC1a5Rt7wlCJz+Qs7XI8L/DKlv4IH8jFR3MVib6BMPkEUCTjfEyquqWtlz1cbbZ
-         Ja4CpU7sVeu/8jGj2Wbeme+jeEiCa6g/jBznhIWVa5JLTjmtiBQR2a5mNhXgh2O5GvYc
-         AUBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=qWLQ09H4pd8WgMgtgz12mw5W3VvW3dhG530iJhOXSE0=;
-        b=tn+9w6CiRtMbIpuveuhC37fUCmmj1OsAanDCA47jAXzMVjiucwRaMjaTvsBGfcybK+
-         yoOj75a2cOquqBqvq/uz4w/+tzckBbwLb8YMyDxqHg9oZlfd14XNJt6BSYl/+jZhcpya
-         0rMs7CuhMpL/+arKhc/AuOtqc4YrwsIdR80m/+9HUNa27vlF0E359c3wOsAVfMGLimdM
-         NgkvtubXDzck0wmcJMxlH5SmwdRUNXkxHNO/PS4CstmdSszhGwC2LINijFOJ88OnuoHq
-         57WJ8YltyWRjrAjoY02nq6/P0EC+Jigx+TPeorzauZsOtdbOtfAd1Z4tClXGhbylFzSU
-         ex8Q==
-X-Gm-Message-State: AOAM530NZR5Vps1S6xayj6En9fye9BMp8pHcu8XLjFnCuBtidwKixSRa
-        fHTF7uDBUKB1RKDBbVOmHps=
-X-Google-Smtp-Source: ABdhPJzu+RfzmpakKaJ6ICWRJIIn4iAY6rm05Qjiy2cIfh8eZg7ri+t6ytJ/DqHxJh9T+iOIaATKGQ==
-X-Received: by 2002:a62:1c86:: with SMTP id c128mr11084787pfc.78.1598426374880;
-        Wed, 26 Aug 2020 00:19:34 -0700 (PDT)
-Received: from localhost.localdomain ([45.124.203.19])
-        by smtp.gmail.com with ESMTPSA id mw8sm1125465pjb.47.2020.08.26.00.19.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Aug 2020 00:19:33 -0700 (PDT)
-From:   Joel Stanley <joel@jms.id.au>
-To:     Andrew Jeffery <andrew@aj.id.au>, Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        James Hartley <james.hartley@sondrel.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, stable@vger.kernel.org
-Subject: [PATCH] ARM: config: aspeed: Fix selection of media drivers
-Date:   Wed, 26 Aug 2020 16:49:16 +0930
-Message-Id: <20200826071916.3081953-1-joel@jms.id.au>
-X-Mailer: git-send-email 2.28.0
+        Wed, 26 Aug 2020 05:21:40 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f46292c0000>; Wed, 26 Aug 2020 02:19:40 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 26 Aug 2020 02:21:40 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 26 Aug 2020 02:21:40 -0700
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 26 Aug
+ 2020 09:21:40 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 522FF42775; Wed, 26 Aug 2020 12:21:37 +0300 (EEST)
+Date:   Wed, 26 Aug 2020 12:21:37 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     <treding@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/3 resend] dt-bindings: Bindings for reserved memory for
+ BPMP mail
+Message-ID: <20200826092137.GB9594@pdeschrijver-desktop.Nvidia.com>
+References: <20200807162006.17333-1-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200807162006.17333-1-pdeschrijver@nvidia.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598433580; bh=IgZ9D8kj8Ws8KdDfV0GqwE/BWT/dLRsg8NwOwEBz4b4=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=LnYiAQapIlzBFcyGTZCj5c9pMPMvqqqtMY1QVacVOAC1+Ojc1HJ3rKbehujF7gDsK
+         eM53sd2Sop62pJOq29fhmaBB7/YNYUAHOJIaMHitUQ87XejGtg5TS61/xBZf/8It+X
+         4frc2kCGHWt5iBNkAqPfkIGhr3ke9rCu8qXUG11Cd4kdkG1Ubvj8zfwkwMHzmBFFs0
+         OzfVUbYcoj5+9usQwSaCdDx4ek0J6V+v1vv06u4YbhUIHj8wwMHpncAYj/MwNtPN66
+         SDsO4QIZTheBm7KLjAd82kC5eMemDqhbDVPKTzG0iukRh09xawJqnJTxD3lXR4sIet
+         hCw1yQ0Vfugsg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In the 5.7 merge window the media kconfig was restructued. For most
-platforms these changes set CONFIG_MEDIA_SUPPORT_FILTER=y which keeps
-unwanted drivers disabled.
+On Fri, Aug 07, 2020 at 07:20:06PM +0300, Peter De Schrijver wrote:
+> Tegra234 will use DRAM to store the messages exchanged between Linux and
+> BPMP firmware rather than sysram as used in Tegra186 and Tegra194. The
+> kernel will be informed about the size and location of the DRAM area to
+> be used using the DT reserved memory bindings.
+> 
 
-The exception is if a config sets EMBEDDED or EXPERT (see b0cd4fb27665).
-In that case the filter is set to =n, causing a bunch of DVB tuner drivers
-(MEDIA_TUNER_*) to be accidentally enabled. This was noticed as it blew
-out the build time for the Aspeed defconfigs.
+Plans have changed so also on Tegra234 the IPC messages will be stored
+in sysram, hence these patches can be ignored.
 
-Enabling the filter means the Aspeed config also needs to set
-CONFIG_MEDIA_PLATFORM_SUPPORT=y in order to have the CONFIG_VIDEO_ASPEED
-driver enabled.
+Peter.
 
-Fixes: 06b93644f4d1 ("media: Kconfig: add an option to filter in/out platform drivers")
-Fixes: b0cd4fb27665 ("media: Kconfig: on !EMBEDDED && !EXPERT, enable driver filtering")
-Cc: stable@vger.kernel.org
-CC: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
-
-Another solution would be to revert b0cd4fb27665 ("media: Kconfig: on
-!EMBEDDED && !EXPERT, enable driver filtering"). I assume this was done
-to be helpful, but in practice it has enabled the TUNER drivers (and
-others) for the following configs that didn't have them before:
-
-$ git grep -lE "(CONFIG_EXPERT|CONFIG_EMBEDDED)"  arch/*/configs/ | xargs grep -l MEDIA_SUPPORT
-arch/arm/configs/aspeed_g4_defconfig
-arch/arm/configs/aspeed_g5_defconfig
-arch/arm/configs/at91_dt_defconfig
-arch/arm/configs/bcm2835_defconfig
-arch/arm/configs/davinci_all_defconfig
-arch/arm/configs/ezx_defconfig
-arch/arm/configs/imote2_defconfig
-arch/arm/configs/imx_v4_v5_defconfig
-arch/arm/configs/imx_v6_v7_defconfig
-arch/arm/configs/milbeaut_m10v_defconfig
-arch/arm/configs/multi_v7_defconfig
-arch/arm/configs/omap2plus_defconfig
-arch/arm/configs/pxa_defconfig
-arch/arm/configs/qcom_defconfig
-arch/arm/configs/sama5_defconfig
-arch/arm/configs/tegra_defconfig
-arch/mips/configs/ci20_defconfig
-arch/mips/configs/lemote2f_defconfig
-arch/mips/configs/loongson3_defconfig
-arch/mips/configs/pistachio_defconfig
-
-I've cc'd the maintainers of these defconfigs so they are aware.
-
----
- arch/arm/configs/aspeed_g4_defconfig | 3 ++-
- arch/arm/configs/aspeed_g5_defconfig | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/configs/aspeed_g4_defconfig b/arch/arm/configs/aspeed_g4_defconfig
-index 303f75a3baec..58d293b63581 100644
---- a/arch/arm/configs/aspeed_g4_defconfig
-+++ b/arch/arm/configs/aspeed_g4_defconfig
-@@ -160,7 +160,8 @@ CONFIG_SENSORS_TMP421=y
- CONFIG_SENSORS_W83773G=y
- CONFIG_WATCHDOG_SYSFS=y
- CONFIG_MEDIA_SUPPORT=y
--CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_SUPPORT_FILTER=y
-+CONFIG_MEDIA_PLATFORM_SUPPORT=y
- CONFIG_V4L_PLATFORM_DRIVERS=y
- CONFIG_VIDEO_ASPEED=y
- CONFIG_DRM=y
-diff --git a/arch/arm/configs/aspeed_g5_defconfig b/arch/arm/configs/aspeed_g5_defconfig
-index b0d056d49abe..cc2449ed6e6d 100644
---- a/arch/arm/configs/aspeed_g5_defconfig
-+++ b/arch/arm/configs/aspeed_g5_defconfig
-@@ -175,7 +175,8 @@ CONFIG_SENSORS_TMP421=y
- CONFIG_SENSORS_W83773G=y
- CONFIG_WATCHDOG_SYSFS=y
- CONFIG_MEDIA_SUPPORT=y
--CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_SUPPORT_FILTER=y
-+CONFIG_MEDIA_PLATFORM_SUPPORT=y
- CONFIG_V4L_PLATFORM_DRIVERS=y
- CONFIG_VIDEO_ASPEED=y
- CONFIG_DRM=y
--- 
-2.28.0
-
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  .../firmware/nvidia,tegra186-bpmp.txt         | 38 ++++++++++++++++++-
+>  .../reserved-memory/tegra234-bpmp-shmem.txt   | 33 ++++++++++++++++
+>  2 files changed, 69 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/reserved-memory/tegra234-bpmp-shmem.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+> index ff380dadb5f9..ff8fc4b6816d 100644
+> --- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+> +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+> @@ -13,12 +13,18 @@ Required properties:
+>      One of:
+>      - "nvidia,tegra186-bpmp"
+>  - mboxes : The phandle of mailbox controller and the mailbox specifier.
+> -- shmem : List of the phandle of the TX and RX shared memory area that
+> -	  the IPC between CPU and BPMP is based on.
+>  - #clock-cells : Should be 1.
+>  - #power-domain-cells : Should be 1.
+>  - #reset-cells : Should be 1.
+>  
+> +Optinal properties:
+> +- shmem : List of the phandle of the TX and RX shared memory area that
+> +	  the IPC between CPU and BPMP is based on.
+> +- memory-region : phandle to reserved memory region used for IPC between
+> +	  CPU-NS and BPMP.
+> +One 1 of the above 2 properties must be present. In case both are present
+> +memory-region will take precedence and shmem will be ignored.
+> +
+>  This node is a mailbox consumer. See the following files for details of
+>  the mailbox subsystem, and the specifiers implemented by the relevant
+>  provider(s):
+> @@ -105,3 +111,31 @@ bpmp {
+>  		...
+>  	};
+>  };
+> +
+> +memory-region binding for BPMP
+> +------------------------------
+> +
+> +The shared memory area for the IPC TX and RX between CPU-NS and BPMP
+> +resides in normal SDRAM and is defined using a sub-node of the reserved-memory
+> +node. See ../reserved-memory/nvidia,tegra234-bpmp-shmem.txt for binding.
+> +
+> +Example:
+> +
+> +hsp_top: hsp@3c00000 {
+> +	...
+> +	#mbox-cells = <2>;
+> +};
+> +
+> +bpmp: bpmp {
+> +	compatible = "nvidia,tegra234-bpmp", "nvidia,tegra186-bpmp";
+> +	mboxes = <&hsp_top TEGRA_HSP_MBOX_TYPE_DB TEGRA_HSP_DB_MASTER_BPMP>;
+> +	memory-region = <&dram_cpu_bpmp_mail>;
+> +	#clock-cells = <1>;
+> +	#reset-cells = <1>;
+> +	#power-domain-cells = <1>;
+> +
+> +	i2c {
+> +		compatible = "...";
+> +		...
+> +	};
+> +};
+> diff --git a/Documentation/devicetree/bindings/reserved-memory/tegra234-bpmp-shmem.txt b/Documentation/devicetree/bindings/reserved-memory/tegra234-bpmp-shmem.txt
+> new file mode 100644
+> index 000000000000..44338184d94b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reserved-memory/tegra234-bpmp-shmem.txt
+> @@ -0,0 +1,33 @@
+> +* Tegra CPU-NS - BPMP IPC reserved memory binding
+> +
+> +Define a memory region used for communication between CPU-NS and BPMP.
+> +Typically this node is created by the bootloader as the physical address
+> +has to be known to both CPU-NS and BPMP for correct IPC operation.
+> +
+> +The memory region is defined using a child node under /reserved-memory.
+> +The sub-node is named shmem@<address> and has the following properties:
+> +
+> +- compatible:
+> +	compatible = "nvidia,tegra234-bpmp-shmem";
+> +
+> +- reg:
+> +	The physical address and size of the shared SDRAM region
+> +
+> +- no-map:
+> +	To prevent the OS from creating a virtual mapping for this region.
+> +	(See reserved-memory.txt for deatils on the no-map property)
+> +
+> +Example:
+> +
+> +/ {
+> +	reserved-memory {
+> +		...
+> +		dram_cpu_bpmp_mail: shmem@0xf1be0000  {
+> +			compatible = "nvidia,tegra234-bpmp-shmem";
+> +			reg = <0x0 0xf1be0000 0x0 0x2000>;
+> +			no-map;
+> +		};
+> +
+> +		...
+> +	};
+> +};
+> -- 
+> 2.17.1
+> 
