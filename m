@@ -2,103 +2,141 @@ Return-Path: <SRS0=/nj9=CE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F903C433DF
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 16:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D3DC433E3
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 18:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0872620825
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 16:05:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FkgaJKpg"
+	by mail.kernel.org (Postfix) with ESMTP id ED7122080C
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 18:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbgHZQFl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Aug 2020 12:05:41 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8753 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727889AbgHZQEX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Aug 2020 12:04:23 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4687f10004>; Wed, 26 Aug 2020 09:04:01 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 26 Aug 2020 09:04:15 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 26 Aug 2020 09:04:15 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 26 Aug
- 2020 16:04:15 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.13.39) by
- HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3 via Frontend Transport; Wed, 26 Aug 2020 16:04:15 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.8 00/16] 5.8.5-rc1 review
-In-Reply-To: <20200826114911.216745274@linuxfoundation.org>
-References: <20200826114911.216745274@linuxfoundation.org>
-X-NVConfidentiality: public
+        id S1726790AbgHZSOj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Aug 2020 14:14:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:49688 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726241AbgHZSOh (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 26 Aug 2020 14:14:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF4DA101E;
+        Wed, 26 Aug 2020 11:14:36 -0700 (PDT)
+Received: from [10.57.40.122] (unknown [10.57.40.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6133E3F71F;
+        Wed, 26 Aug 2020 11:14:31 -0700 (PDT)
+Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+To:     Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
+Cc:     Heiko Stuebner <heiko@sntech.de>, kvm@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-mediatek@lists.infradead.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20191221150402.13868-1-murphyt7@tcd.ie>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <03caf286-09e8-a072-8d3a-b6bcca991516@arm.com>
+Date:   Wed, 26 Aug 2020 19:14:28 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Message-ID: <1505aad2fc61485e8c6b02117b0a5ea9@HQMAIL107.nvidia.com>
-Date:   Wed, 26 Aug 2020 16:04:15 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598457841; bh=XUy7RKRfhORG84FkMp9ZQDnkRSAxkNy1oBBz135zN/8=;
-        h=X-PGP-Universal:From:To:CC:Subject:In-Reply-To:References:
-         X-NVConfidentiality:MIME-Version:Message-ID:Date:Content-Type:
-         Content-Transfer-Encoding;
-        b=FkgaJKpg79CTgEXdefLrwEAYg/bxqsV/0simIG46G60gL6e7JNz+E9WZ9yONZL6Ni
-         8l4u5Fe3TFctFwCrcez6/IE6m5zLe1Ti0qI1tSiX/K0UuHwrLFdKL9N5nFjQtKyfki
-         Z4H6dGQ0DnxO+7RVVj54g3PbliedpIw6a9o995+1qzTr6vJBJhXZ/YUndxH3TLsOTC
-         yLipihpDJJlQQdAqX970GKdiEcXMj8Fwu12VaG7w/iCANOKzrj0Vx2ISgCqyIupJnJ
-         kt5iDalSsE6RfeX1lttKYw1gwY/oO2ALqAhs4Br380lxky86UARduKCr8mas3JjslH
-         RC7uoXk/StIIg==
+In-Reply-To: <20191221150402.13868-1-murphyt7@tcd.ie>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 26 Aug 2020 14:02:37 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.8.5 release.
-> There are 16 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Tom,
+
+On 2019-12-21 15:03, Tom Murphy wrote:
+> This patchset converts the intel iommu driver to the dma-iommu api.
 > 
-> Responses should be made by Fri, 28 Aug 2020 11:49:02 +0000.
-> Anything received after that time might be too late.
+> While converting the driver I exposed a bug in the intel i915 driver which causes a huge amount of artifacts on the screen of my laptop. You can see a picture of it here:
+> https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_225922.jpg
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
-> and the diffstat can be found below.
+> This issue is most likely in the i915 driver and is most likely caused by the driver not respecting the return value of the dma_map_ops::map_sg function. You can see the driver ignoring the return value here:
+> https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e495f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
 > 
-> thanks,
+> Previously this didn’t cause issues because the intel map_sg always returned the same number of elements as the input scatter gather list but with the change to this dma-iommu api this is no longer the case. I wasn’t able to track the bug down to a specific line of code unfortunately.
 > 
-> greg k-h
+> Could someone from the intel team look at this?
+> 
+> 
+> I have been testing on a lenovo x1 carbon 5th generation. Let me know if there’s any more information you need.
+> 
+> To allow my patch set to be tested I have added a patch (patch 8/8) in this series to disable combining sg segments in the dma-iommu api which fixes the bug but it doesn't fix the actual problem.
+> 
+> As part of this patch series I copied the intel bounce buffer code to the dma-iommu path. The addition of the bounce buffer code took me by surprise. I did most of my development on this patch series before the bounce buffer code was added and my reimplementation in the dma-iommu path is very rushed and not properly tested but I’m running out of time to work on this patch set.
+> 
+> On top of that I also didn’t port over the intel tracing code from this commit:
+> https://github.com/torvalds/linux/commit/3b53034c268d550d9e8522e613a14ab53b8840d8#diff-6b3e7c4993f05e76331e463ab1fc87e1
+> So all the work in that commit is now wasted. The code will need to be removed and reimplemented in the dma-iommu path. I would like to take the time to do this but I really don’t have the time at the moment and I want to get these changes out before the iommu code changes any more.
 
-All tests passing for Tegra ...
+Further to what we just discussed at LPC, I've realised that tracepoints 
+are actually something I could do with *right now* for debugging my Arm 
+DMA ops series, so if I'm going to hack something up anyway I may as 
+well take responsibility for polishing it into a proper patch as well :)
 
-Test results for stable-v5.8:
-    11 builds:	11 pass, 0 fail
-    20 boots:	20 pass, 0 fail
-    45 tests:	45 pass, 0 fail
+Robin.
 
-Linux version:	5.8.5-rc1-ga8485efcbc70
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+> 
+> Tom Murphy (8):
+>    iommu/vt-d: clean up 32bit si_domain assignment
+>    iommu/vt-d: Use default dma_direct_* mapping functions for direct
+>      mapped devices
+>    iommu/vt-d: Remove IOVA handling code from non-dma_ops path
+>    iommu: Handle freelists when using deferred flushing in iommu drivers
+>    iommu: Add iommu_dma_free_cpu_cached_iovas function
+>    iommu: allow the dma-iommu api to use bounce buffers
+>    iommu/vt-d: Convert intel iommu driver to the iommu ops
+>    DO NOT MERGE: iommu: disable list appending in dma-iommu
+> 
+>   drivers/iommu/Kconfig           |   1 +
+>   drivers/iommu/amd_iommu.c       |  14 +-
+>   drivers/iommu/arm-smmu-v3.c     |   3 +-
+>   drivers/iommu/arm-smmu.c        |   3 +-
+>   drivers/iommu/dma-iommu.c       | 183 +++++--
+>   drivers/iommu/exynos-iommu.c    |   3 +-
+>   drivers/iommu/intel-iommu.c     | 936 ++++----------------------------
+>   drivers/iommu/iommu.c           |  39 +-
+>   drivers/iommu/ipmmu-vmsa.c      |   3 +-
+>   drivers/iommu/msm_iommu.c       |   3 +-
+>   drivers/iommu/mtk_iommu.c       |   3 +-
+>   drivers/iommu/mtk_iommu_v1.c    |   3 +-
+>   drivers/iommu/omap-iommu.c      |   3 +-
+>   drivers/iommu/qcom_iommu.c      |   3 +-
+>   drivers/iommu/rockchip-iommu.c  |   3 +-
+>   drivers/iommu/s390-iommu.c      |   3 +-
+>   drivers/iommu/tegra-gart.c      |   3 +-
+>   drivers/iommu/tegra-smmu.c      |   3 +-
+>   drivers/iommu/virtio-iommu.c    |   3 +-
+>   drivers/vfio/vfio_iommu_type1.c |   2 +-
+>   include/linux/dma-iommu.h       |   3 +
+>   include/linux/intel-iommu.h     |   1 -
+>   include/linux/iommu.h           |  32 +-
+>   23 files changed, 345 insertions(+), 908 deletions(-)
+> 
