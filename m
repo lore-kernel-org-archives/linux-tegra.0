@@ -1,130 +1,107 @@
-Return-Path: <SRS0=F6W0=CD=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=/nj9=CE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B1AC433E1
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 14:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3647EC433E1
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 06:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBF712072D
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Aug 2020 14:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1662420825
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 06:34:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ilLeVCiL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BStScc7S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbgHYObF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Aug 2020 10:31:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33778 "EHLO
+        id S1726069AbgHZGeT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Aug 2020 02:34:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbgHYObF (ORCPT
+        with ESMTP id S1725786AbgHZGeT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Aug 2020 10:31:05 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1592DC061574
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2020 07:31:04 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id k25so11393628edj.13
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2020 07:31:04 -0700 (PDT)
+        Wed, 26 Aug 2020 02:34:19 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8AD2C061574;
+        Tue, 25 Aug 2020 23:34:18 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id m22so1023548ljj.5;
+        Tue, 25 Aug 2020 23:34:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Djp14USfvpYT1zsr5IEolXY6Uvk4OEQv1Milhu2LcVk=;
-        b=ilLeVCiLFNfbmGIGhiypWMNJXz09yR8OBU6eNHcp1rksRUcRk4ipzHJdQBUUmrrkJl
-         NKX4YZR70Qy0w1T5Z4QrwvJLD2I4lpyU4IsSkdnC1NRng19TEGj967JacI3szKSZZz/p
-         0zz4fde2NHV2xKaPaBbDO+BmTTi0gR338P3prp5XI7gnD9lUcuqWcCyhI303BF/ZUdrB
-         s31mfkeahJ6b/+80JHNBPrT0FRXvvTdsq9reFOBQIdDgOIqHodEX5y0ZC8VfVAefS645
-         VPZdx4MZMDUlK90bd3fLTVM5Zv1G5fketjLTjZPAuQU7dOzb+QYQfk+Jwm99LBT7b0gK
-         JQJw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lgWQaoUOmck1zKDSkfP/KU2pBuaR71IA8RK6LfmWfiU=;
+        b=BStScc7SEeJUXWtFIaOczGlfItuM9LUgot65Loa+CmcdSSPsyajCEedCUQudaWZm9z
+         2TzbozcX2s/U8pizJdFJ+iQHlu/IhWgEvwKuCgyC/MTXQeXCEY9o8LLux0T3CdD3AtA7
+         tn14pPv210JrLNqMSWzcgvPTGInmDCtX8eZLXqXRf084qdVH4xCMb2EOnB8WKBLC3VRG
+         FRkDG01aQbahppWVUqjzkW/AhJzBAulb4Z/WFkm+l3/BZX4cpFEVGo6mwDXX/OOz+YAe
+         ACwf6a462wehrJUZoFH9LB6jP6Fab5BbOOGEV3pyp5UTLFeayZmjFIssirme/7grvq3y
+         Rxlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Djp14USfvpYT1zsr5IEolXY6Uvk4OEQv1Milhu2LcVk=;
-        b=J+GFS5gv18p3aPNd7bs67pZUuaTHW1vdU5tUL45c3Egl9XP9X/SrDJXIDdYJvH7Wh0
-         HXfhZcRLIvLteLGNMjehRLkqyROUCyjPElGocPEdnvCjGUw43kwQefIRH6eB9oPpmVty
-         tjQk5wl2mcbLpTiQD00eXvRFltVpQAn/o8gKyXOVRD7kOgB/0ZJELTehmAmsTAX8iQb6
-         K3XzxWuo+7+EY/mFIscGwSYMgoD9xvaTRD92pQkfGu5g7i5U3FFHBaSUz76Zh/x4rEXR
-         CgEccUkSkCr2ZsZiHG/kD5FLaQBpN1x8zpfBxLb+JfZ7cv5yJyQ5tH46Bth1O4wz8LyI
-         j9Yg==
-X-Gm-Message-State: AOAM531IMHnm6dbg8nlzoiNIFeRlk6Ur/xMkH1KCoGN5l9vRDQZJExZ4
-        /9bL5vMGhSL8qpPKoMUlq6I=
-X-Google-Smtp-Source: ABdhPJzy59OuIlJlrK2KF60RjoXW3776KvTjB+eF3yr0H/Ntgiiyn2Laweercgv14Q+Qilt2lVvE2A==
-X-Received: by 2002:a50:bac2:: with SMTP id x60mr10780366ede.210.1598365862696;
-        Tue, 25 Aug 2020 07:31:02 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id d2sm13924247ejm.19.2020.08.25.07.31.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2020 07:31:01 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] arm64: tegra: Use the correct names for DPAUX pinctrl states
-Date:   Tue, 25 Aug 2020 16:30:57 +0200
-Message-Id: <20200825143057.1358321-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.28.0
+        bh=lgWQaoUOmck1zKDSkfP/KU2pBuaR71IA8RK6LfmWfiU=;
+        b=Qfm57taGOyea3w6577o3CZYagCbbZPg7ZpnDklL5R5Qzlbm3vgQe+d3o2X8I1tyZLu
+         VuwZrNrTW/YmJpSz4wgh865BCqs2KeUKcEyK3JMnHUAH7XUAbHb2H/TZFxgWBcUIr2Ud
+         4nt+4bi9KC/WXeF86G0uvRtrva8I5rq/DuX9KtOa38i//Khmi3d8CFHccMZnPve0tcu0
+         yq/ieTMW/G72sAvNBVbIbcrQbZUdU+GvjXUaUZXhYPmPoFs57FclcLN9PlJdj6eA+H36
+         rcC8SdFmsD6oREuwbyLgPglDHf1bZfIw4utuux17/bvvUYFrE5c+/aGyuvg5HV8F5dHF
+         0rNg==
+X-Gm-Message-State: AOAM532Orx5Jx7Nj660Uso8BzBA3nvzMFHBmfuT1F0VvTeeV/7UZoTJ0
+        gT0ZRD1SICELQvpbjmI3mKstGHgyTpE=
+X-Google-Smtp-Source: ABdhPJzPxuktg7pPrBXmouq95t70LJMDgatsUj53Twb1MRVQoKDhxeCz9r165MKz6Y5g35tPP6YkBw==
+X-Received: by 2002:a05:651c:88:: with SMTP id 8mr6808046ljq.277.1598423656911;
+        Tue, 25 Aug 2020 23:34:16 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id q5sm315641lfn.92.2020.08.25.23.34.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Aug 2020 23:34:16 -0700 (PDT)
+Subject: Re: [PATCH v1 2/6] power: supply: Add battery gauge driver for Acer
+ Iconia Tab A500
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Lubomir Rintel <lkundrak@v3.sk>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200823140846.19299-1-digetx@gmail.com>
+ <20200823140846.19299-3-digetx@gmail.com>
+ <20200824140718.apoavlny6hlkm2ql@earth.universe>
+ <31ec6865-4a33-bde8-73a6-20c188ec2ee7@gmail.com>
+ <20200824213859.6o3q5i2kvtk44lqi@earth.universe>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <bc5e828c-67ce-0c9e-e8e7-19a532145cfa@gmail.com>
+Date:   Wed, 26 Aug 2020 09:34:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200824213859.6o3q5i2kvtk44lqi@earth.universe>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+25.08.2020 00:38, Sebastian Reichel пишет:
+> Hi,
+...
+>> Hello, Sebastian! The battery isn't hot-swappable on A500, but it also
+>> should be okay to always re-read the serialno. I'll consider removing
+>> the caching in the v2, thanks.
+> 
+> I assumed it would be hot-swappable because of a500_battery_get_presence().
+> If it's not hot-swappable, the caching is fine.
 
-The default and idle states need to be called "default" and "idle",
-respectively, for the driver core to select them at the right time.
+The battery could be disconnected from the motherboard, but this
+requires to have device disassembled.
 
-Fixes: fff67b5c73c1 ("arm64: tegra: Wire up pinctrl states for all DPAUX controllers")
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Okay, I'll keep the caching.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 94c65ca8345a..dc6ae42b3027 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -348,7 +348,7 @@ dp_aux_ch1_i2c: i2c@3190000 {
- 			reset-names = "i2c";
- 			pinctrl-0 = <&state_dpaux1_i2c>;
- 			pinctrl-1 = <&state_dpaux1_off>;
--			pinctrl-names = "i2c", "off";
-+			pinctrl-names = "default", "idle";
- 			status = "disabled";
- 		};
- 
-@@ -365,7 +365,7 @@ dp_aux_ch0_i2c: i2c@31b0000 {
- 			reset-names = "i2c";
- 			pinctrl-0 = <&state_dpaux0_i2c>;
- 			pinctrl-1 = <&state_dpaux0_off>;
--			pinctrl-names = "i2c", "off";
-+			pinctrl-names = "default", "idle";
- 			status = "disabled";
- 		};
- 
-@@ -382,7 +382,7 @@ dp_aux_ch2_i2c: i2c@31c0000 {
- 			reset-names = "i2c";
- 			pinctrl-0 = <&state_dpaux2_i2c>;
- 			pinctrl-1 = <&state_dpaux2_off>;
--			pinctrl-names = "i2c", "off";
-+			pinctrl-names = "default", "idle";
- 			status = "disabled";
- 		};
- 
-@@ -399,7 +399,7 @@ dp_aux_ch3_i2c: i2c@31e0000 {
- 			reset-names = "i2c";
- 			pinctrl-0 = <&state_dpaux3_i2c>;
- 			pinctrl-1 = <&state_dpaux3_off>;
--			pinctrl-names = "i2c", "off";
-+			pinctrl-names = "default", "idle";
- 			status = "disabled";
- 		};
- 
--- 
-2.28.0
-
+Thanks!
