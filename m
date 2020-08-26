@@ -2,97 +2,110 @@ Return-Path: <SRS0=/nj9=CE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAA3C433E1
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 09:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA53C433E1
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 11:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F17E220838
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 09:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598435373;
-	bh=wLI/xzMKZEq+6BTMS/1q5FM6TMsaSvzW0vR7P2KfPuY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UcPIOKVVrz804a0DZibryG8u+BtnsskQ8EaVUkAtdJHpGW9Vlg6prz+DErg9OfJQ/
-	 fguR0SFVW8PhF4DprCyXze7Qh4PMdv2jfEd/8uQKV9gaoLO1rxzapP5HsUUbSjSnD3
-	 bxtJNX7VCojVcMrRdlY8YZ/Uw4tA8nHYRVdULIdA=
+	by mail.kernel.org (Postfix) with ESMTP id A044720707
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Aug 2020 11:51:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mBiZVZxD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgHZJtc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Aug 2020 05:49:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727997AbgHZJtc (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Aug 2020 05:49:32 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D802075E;
-        Wed, 26 Aug 2020 09:49:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598435371;
-        bh=wLI/xzMKZEq+6BTMS/1q5FM6TMsaSvzW0vR7P2KfPuY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UwkXCaT5xZ28BAUwA2Q7peqBTU5iEtHxlXhRGnli8CnhF0vsE9aHgd99daByc+nyq
-         1gLNduxIcDoKFrhAeOfc8zSxKRH4x8WxRKroHgVBrrASWIiocACfN6mf23qJGdlwfE
-         Yld3G9J5dTxfLI/+00LSC42G6j1doiIXdpVN7Q5M=
-Date:   Wed, 26 Aug 2020 11:49:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.8 000/149] 5.8.4-rc2 review
-Message-ID: <20200826094947.GA2047935@kroah.com>
-References: <20200824164745.715432380@linuxfoundation.org>
- <0d2ab7718bfb4123ab6b26ba7cc99eab@HQMAIL101.nvidia.com>
+        id S1729053AbgHZLus (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Aug 2020 07:50:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33768 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729138AbgHZLul (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 26 Aug 2020 07:50:41 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00AC8C061756
+        for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2020 04:50:40 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id h2so772323plr.0
+        for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2020 04:50:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YamHvfkP8QzJYhuEjb0/KnD0eM3ZI++KpyFGM28MyaU=;
+        b=mBiZVZxDCvUt6hLD48mg3Q12FL0jsNUjeakdVaFYreSg+6zLizvcH7tOYA4wRmTTut
+         wIRIJ8dVERDNCPc+80jOIqaToeBcOSL5ZS7Tpm2PL7/CPYx06WJ+MsEAxd8bvpIq9Z/7
+         MTCNTwed9PIYasztEIAiWwLt68PZEymEWPKIT39Je/TA/Dnsdys/fb6XzLofGnbYc3Kf
+         60p2IGvt1TF5ERJbECNEeCRD1GO27gjcKJXwNgBV6+JsRjVFoa3iQG3gE1Qj0/P4dqgy
+         GfD4vA4g7BHKFEjT23GkDssilnM5F4pYiUVuLOoDfvedhc+7jePoG1R9fxG8HtR8dTex
+         2asQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YamHvfkP8QzJYhuEjb0/KnD0eM3ZI++KpyFGM28MyaU=;
+        b=VSEtEWEqEQvy9qUVRDX4noaZiyftxQAF5wdIY/LHd0KkxOV1CH/ptPKuhyBr0GrhZz
+         CY/5y9mb2vCgG2moIxl1clrt8fWUbP7WEovOScmeeUsPzuVe/RKYG1FdKoR7Kzgw+Ya8
+         LbVuq/BvpaOiJi/P1Vu4xqwGQ4wNF7OUK2Aj5zUoyVtj/PTy7kcf8yL1aLZBVZxNvCex
+         cRBdSh2Y1y2izsw0jNB5DEQy5CRUZb104emK7ZGGeXGME63oq/HIZQlp+3k6SSgjZ6xk
+         EO+5uQ90f74xbBEKdWy91NrJ8Nmvbd7cUpQ4ntZrubDYU7gx5ftzlPB+vuklnPvs/mJ/
+         TrmQ==
+X-Gm-Message-State: AOAM532LNlLUioOhh5jE4Xq4UYz6uPPP52FCe53DhsWMx8iS2O3rkYlA
+        jyg9SeZ1JrELd4T8MmsGnPe/Mw==
+X-Google-Smtp-Source: ABdhPJw8Oo/HMnBPg30gLaQd8tsLpFWkUn2/9H03cnOA39gJU2XV4GJz2To+Kk1+/bfcON40cB1AdA==
+X-Received: by 2002:a17:90a:550e:: with SMTP id b14mr5698261pji.64.1598442640224;
+        Wed, 26 Aug 2020 04:50:40 -0700 (PDT)
+Received: from localhost ([122.172.43.13])
+        by smtp.gmail.com with ESMTPSA id q2sm2261270pgs.90.2020.08.26.04.50.39
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Aug 2020 04:50:39 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 0/3] opp: Allow opp-supported-hw to contain multiple versions
+Date:   Wed, 26 Aug 2020 17:20:27 +0530
+Message-Id: <cover.1598442485.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.25.0.rc1.19.g042ed3e048af
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d2ab7718bfb4123ab6b26ba7cc99eab@HQMAIL101.nvidia.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 06:09:03PM +0000, Jon Hunter wrote:
-> On Mon, 24 Aug 2020 18:48:20 +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.8.4 release.
-> > There are 149 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 26 Aug 2020 16:47:07 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.4-rc2.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests passing for Tegra ...
-> 
-> Test results for stable-v5.8:
->     11 builds:	11 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     60 tests:	60 pass, 0 fail
-> 
-> Linux version:	5.8.4-rc2-gff3effda97ba
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Stephan and Dmitry,
 
-Thanks for testing all of these and letting me know.
+Here is an attempt to solve the problem you guys faced, I have tested it
+locally and works with my expectations. Please see if they solve your
+problems.
 
-greg k-h
+Dmitry: I sent another message for you in patch 3's comments section.
+
+--
+viresh
+
+Viresh Kumar (3):
+  dt-bindings: opp: Allow opp-supported-hw to contain multiple versions
+  opp: Allow opp-supported-hw to contain multiple versions
+  ARM: tegra: Pass multiple versions in opp-supported-hw property
+
+ Documentation/devicetree/bindings/opp/opp.txt |  53 +-
+ .../boot/dts/tegra20-cpu-opp-microvolt.dtsi   |  36 -
+ arch/arm/boot/dts/tegra20-cpu-opp.dtsi        |  67 +-
+ .../boot/dts/tegra30-cpu-opp-microvolt.dtsi   | 512 ---------
+ arch/arm/boot/dts/tegra30-cpu-opp.dtsi        | 986 +++---------------
+ drivers/opp/of.c                              |  47 +-
+ 6 files changed, 214 insertions(+), 1487 deletions(-)
+
+-- 
+2.25.0.rc1.19.g042ed3e048af
+
