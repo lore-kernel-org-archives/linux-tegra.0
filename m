@@ -2,208 +2,105 @@ Return-Path: <SRS0=ga/+=CF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A875AC433E3
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 15:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE2FC433E1
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 17:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 821392177B
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 15:54:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BED62087C
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 17:21:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6GtZhat"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="M25K8WSO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbgH0Pyx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Aug 2020 11:54:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43296 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbgH0Pyu (ORCPT
+        id S1726826AbgH0RV0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Aug 2020 13:21:26 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12441 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbgH0RVZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Aug 2020 11:54:50 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03202C061264;
-        Thu, 27 Aug 2020 08:54:50 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id e23so7569418ejb.4;
-        Thu, 27 Aug 2020 08:54:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PcnV+VbshytERqdt424MTVCSN2fNBDRxKuWfy1e0p9g=;
-        b=Z6GtZhatW3wqoZBO74t01ugFrEFZ4RiwNY6TJPKoSGjxXJ5nxebyKaKXKNcD+OG6Sw
-         5XZ2B+e/Jnm5baVr8ePuVjWSAmTQtmUDHNa9JVmU7YtqlBNHjpKkyDPPZ9CvNCM1iIaQ
-         XGo2NR+Z1XHGqTs+hkYTIrUwYB13Fu27cWwxS4i6OIvQwFVYZK1Nu5wdtAqOg1uFNhxX
-         zqP1H/7UONyxKo2JCavOHySa3TAKZBtZqtdQDTgFR4MUMHth9wpfzOj8sS0f7rCOfsI2
-         Gpr5+StU1XeXrEhqlI5hIvET7kvoBMfQdyb0FV6rDgZk/LNE/9MdwdBIyx4FfYNovwb3
-         ORhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PcnV+VbshytERqdt424MTVCSN2fNBDRxKuWfy1e0p9g=;
-        b=jFdwgqQUvzvmfX91bhF8gLWvcwCBaCQbzkEYmrtxdTsqFM6djrZRuVsmot07ocWfWu
-         J4R3cW8V4VpePmEaYBRilwaRTHrOmn2sVHjbyaOHX0hIdU1OJVXYLq+4knP6NURx6Wsq
-         CZdlEfYovnALXOyI2VQSM+IHsFnZAeiN94Gz+L5NnE/Kt1Igq7avSuoNp2Y8GxEiod8i
-         WSZIoj7S0viCPd120WFrd85mj44upJuQX5goU9eR5amcCO811diP7UspfrFZFR3w6SyH
-         fmYGGzqnvV/kWcEVR8A+RSsw8bj+3YvIhXYN/snsk51oAPNzSwGf8FrwmC1CfJXlSyqm
-         8HWw==
-X-Gm-Message-State: AOAM533wl6D3REAGLXDmivIwlUh1HPQDZ2lbrXq5CnFlanVhSPqxGQYO
-        A8C+OB1XtHfWsWvIhQXkQc4=
-X-Google-Smtp-Source: ABdhPJxRN3/hHhmVWUDnuK+ITrQLAgcX6Ds84mEo8Et89wVzCgM2C1+aJm+R5X/GGEFXLDpMMN9pRA==
-X-Received: by 2002:a17:906:a141:: with SMTP id bu1mr21592725ejb.303.1598543688596;
-        Thu, 27 Aug 2020 08:54:48 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id lh26sm2253529ejb.29.2020.08.27.08.54.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2020 08:54:47 -0700 (PDT)
-Date:   Thu, 27 Aug 2020 17:54:46 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>, hch@lst.de, joro@8bytes.org,
-        linux@armlinux.org.uk, will@kernel.org, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, jonathanh@nvidia.com,
-        vdumpa@nvidia.com, matthias.bgg@gmail.com, yong.wu@mediatek.com,
-        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
-        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 16/18] staging/media/tegra-vde: Clean up IOMMU workaround
-Message-ID: <20200827155446.GB1660457@ulmo>
-References: <cover.1597931875.git.robin.murphy@arm.com>
- <3535c205b9bce52556abbf2f63384fb38e009df9.1597931876.git.robin.murphy@arm.com>
- <07135a55-cbc9-83e5-60dc-731282192554@gmail.com>
- <cb12808b-7316-19db-7413-b7f852a6f8ae@arm.com>
- <62a72187-442b-2103-46c3-39d3cd999f54@gmail.com>
- <affe2cfb-19e8-8e55-acd0-7170e274ab34@arm.com>
- <f1923a53-e799-e63c-fd22-4a6cca3b8212@gmail.com>
+        Thu, 27 Aug 2020 13:21:25 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f47eb870000>; Thu, 27 Aug 2020 10:21:11 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 27 Aug 2020 10:21:25 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 27 Aug 2020 10:21:25 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 27 Aug
+ 2020 17:21:24 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 27 Aug 2020 17:21:24 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.174.186]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f47eb940000>; Thu, 27 Aug 2020 10:21:24 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <robh+dt@kernel.org>
+CC:     <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: [PATCH v7 2/7] sdhci: tegra: Remove SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for Tegra186
+Date:   Thu, 27 Aug 2020 10:20:56 -0700
+Message-ID: <1598548861-32373-3-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1598548861-32373-1-git-send-email-skomatineni@nvidia.com>
+References: <1598548861-32373-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tjCHc7DPkfUGtrlw"
-Content-Disposition: inline
-In-Reply-To: <f1923a53-e799-e63c-fd22-4a6cca3b8212@gmail.com>
-User-Agent: Mutt/1.14.6 (2020-07-11)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598548871; bh=mXqaDHZAnjiA2FC3TMHhwQF8i9i1LflPE/o4KLabvD8=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=M25K8WSOq2mO9Upcrlb21CYGug2SVFxWxAyIo7imxWincvTQ7AsDcrZ+FG3kweO3G
+         1gkVc9JVyfe1jgTf6/zgQcEYXOyu48tjNqbaWo7M2B/JUtGAnM2zptwIwZipeh1waC
+         aBJ7q/Le6EXzQDUww67ausdpkwR/FuJLGSIpPUfrkn+Gbqf2TLmK3vTGxd35KaVHid
+         J0mE7p0oXIKvQ3BUtRYbU+VRoWHjmbrHATjNKkSzKlox2ohdV1mFDjaquwVIUam+kC
+         IWHa6nbPQaWCQ5aFnfYG4cqX2q+Fmk/Qc1zADJokidChfYgiNTYEPMY77dZ+Mb254s
+         VQsQpQ5+Lafiw==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+commit 4346b7c7941d ("mmc: tegra: Add Tegra186 support")
 
---tjCHc7DPkfUGtrlw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK is set for Tegra186 from the
+beginning of its support in driver.
 
-On Thu, Aug 27, 2020 at 10:05:14AM +0300, Dmitry Osipenko wrote:
-> 24.08.2020 17:01, Robin Murphy =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
-> >> Robin, thank you very much for the clarifications!
-> >>
-> >> In accordance to yours comments, this patch can't be applied until Teg=
-ra
-> >> SMMU will support IOMMU_DOMAIN_IDENTITY and implement def_domain_type()
-> >> callback that returns IOMMU_DOMAIN_IDENTITY for the VDE device.
-> >>
-> >> Otherwise you're breaking the VDE driver because
-> >> dma_buf_map_attachment() [1] returns the IOMMU SGT of the implicit
-> >> domain which is then mapped into the VDE's explicit domain [2], and th=
-is
-> >> is a nonsense.
-> >=20
-> > It's true that iommu_dma_ops will do some work in the unattached default
-> > domain, but non-coherent cache maintenance will still be performed
-> > correctly on the underlying memory, which is really all that you care
-> > about for this case. As for tegra_vde_iommu_map(), that seems to do the
-> > right thing in only referencing the physical side of the scatterlist
-> > (via iommu_map_sg()) and ignoring the DMA side, so things ought to work
-> > out OK even if it is a little non-obvious.
->=20
-> I'll need to double-check this, it's indeed not clear to me right now.
->=20
-> I see that if Tegra DRM driver uses implicit IOMMU domain, then when VDE
-> driver imports DMA-buf from Terga DRM and the imported buffer will be
-> auto-mapped to the implicit VDE IOVA [1].
->=20
-> [1]
-> https://elixir.bootlin.com/linux/v5.9-rc2/source/drivers/gpu/drm/tegra/ge=
-m.c#L574
->=20
-> >> Hence, either VDE driver should bypass iommu_dma_ops from the start or
-> >> it needs a way to kick out the ops, like it does this using ARM's
-> >> arm_iommu_detach_device().
-> >>
-> >>
-> >> The same applies to the Tegra GPU devices, otherwise you're breaking
-> >> them as well because Tegra DRM is sensible to implicit vs explicit
-> >> domain.
-> >=20
-> > Note that Tegra DRM will only be as broken as its current state on
-> > arm64, and I was under the impression that that was OK now - at least I
-> > don't recall seeing any complaints since 43c5bf11a610. Although that
-> > commit and the one before it are resolving the scalability issue that
-> > they describe, it was very much in my mind at the time that they also
-> > have the happy side-effect described above - the default domain isn't
-> > *completely* out of the way, but it's far enough that sensible cases
-> > should be able to work as expected.
->=20
-> The Tegra DRM has a very special quirk for ARM32 that was added in this
-> commit [2] and driver relies on checking of whether explicit or implicit
-> IOMMU is used in order to activate the quirk.
->=20
-> [2]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commi=
-t/?id=3D273da5a046965ccf0ec79eb63f2d5173467e20fa
->=20
-> Once the implicit IOMMU is used for the DRM driver, the quirk no longer
-> works (if I'm not missing something). This problem needs to be resolved
-> before implicit IOMMU could be used by the Tegra DRM on ARM32.
->=20
-> >> BTW, I tried to apply this series and T30 doesn't boot anymore. I don't
-> >> have more info for now.
-> >=20
-> > Yeah, I'm still trying to get to the bottom of whether it's actually
-> > working as intended at all, even on my RK3288. So far my debugging
-> > instrumentation has been confusingly inconclusive :/
->=20
-> Surely it will take some time to resolve all the problems and it's great
-> that you're pushing this work!
->=20
-> I'll try to help with fixing the ARM32 Tegra side of the problems. I
-> added this to my "TODO" list and should be able to take a closer look
-> during of this/next weeks!
+Tegra186 SDMMC hardware by default uses timeout clock (TMCLK) instead
+of SDCLK and this quirk should not be set.
 
-I do have a patch lying around somewhere that implements the mapping
-cache that was referenced in the above commit. Let me know if I should
-dig that up and send it out.
+So, this patch remove this quirk for Tegra186.
 
-Thierry
+Fixes: 4346b7c7941d ("mmc: tegra: Add Tegra186 support")
+Cc: stable <stable@vger.kernel.org> # 5.4
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---tjCHc7DPkfUGtrlw
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 2be3511..31ed321 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1455,7 +1455,6 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+-		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+ 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+-- 
+2.7.4
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9H10YACgkQ3SOs138+
-s6Ho9xAAt8+JWNLQEvoZD8j6kfevMWDRg0X0JAvc+NErkw6iIO/KuWqz3Y/jDzWT
-Vraw9q+W0ymCn89hebC5Hi4VTmbi3EohsXFiF0as4NxOztIlv1h9Ec2yBfbdUYoW
-q7TUcv5wINDh7d4m2xCM11GhqtfHedHnsN2w8tY4bC/1FnZk+g6pSVQX3I+LQsZP
-XQbMKdiSWemTYW4gGJhf4Avo178lfXznY0YEmRaC988RpXUpOqT2VPAMwPKXMFzQ
-xhFXRBbTVdmVFVpJo4a9zGO3HZ7iGnEs6wUOL0f9G/xenc9AIj4zEsprdj/9JaYW
-keFknUwowh4Sg1bD7sGbNVKl7+gVaXQCL1J2EiaPDqORtwXjXbo7mzJ8tlPgEISW
-bdhpBPsZS9SakpTKjd1JikXOjclR+XZhKMjEnBY+IaK5D7MF4t9QlZonxFQWK0aR
-JrDNHA2SfMZala2hPO9YWiY/FapI+6GRnEFYNLA6Od0DhSprgo7eOTxWD1cyqAhH
-UdqeiM35WVK46L3dgr+UXvD2gRoQqxyIvsP8f5FHJUtih88cGCPuBvxMknSt1mnz
-FGiRpuz9MMbPzZEHffFNTq92iQ/22KuXOj6qvG2QZLQgsfzvbat1pOmTnZn7vFW1
-z66DSPsCdi8MmBTsbJLyoKfO7i0bmN+qktNSjgEIM/Rt+dsKmmQ=
-=ZkWM
------END PGP SIGNATURE-----
-
---tjCHc7DPkfUGtrlw--
