@@ -2,106 +2,120 @@ Return-Path: <SRS0=ga/+=CF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA374C433E8
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 03:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CB5C433E1
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 06:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8BA921741
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 03:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2004B20786
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 06:06:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WXqhA+Re"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAQCKf7V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbgH0DvD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Aug 2020 23:51:03 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:18240 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbgH0Duc (ORCPT
+        id S1726098AbgH0GGB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Aug 2020 02:06:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbgH0GGA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Aug 2020 23:50:32 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f472d790002>; Wed, 26 Aug 2020 20:50:17 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 26 Aug 2020 20:50:31 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 26 Aug 2020 20:50:31 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 27 Aug
- 2020 03:50:28 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 27 Aug 2020 03:50:28 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.174.186]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f472d840000>; Wed, 26 Aug 2020 20:50:28 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>
-CC:     <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [PATCH v6 2/7] sdhci: tegra: Remove SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for Tegra186
-Date:   Wed, 26 Aug 2020 20:49:56 -0700
-Message-ID: <1598500201-5987-3-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1598500201-5987-1-git-send-email-skomatineni@nvidia.com>
-References: <1598500201-5987-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Thu, 27 Aug 2020 02:06:00 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7655C06124F;
+        Wed, 26 Aug 2020 23:05:59 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id f26so5043834ljc.8;
+        Wed, 26 Aug 2020 23:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=85fBH067dHvKQNq6ek+W6lpUInMb+ZStwZLTCqTuQ3g=;
+        b=LAQCKf7V+H8Hfnb7BZybXxxgLvGGrihgB+KAUY1Tj+kA0EoV35K6aUEb5WXr23Q30Y
+         hQtw6kqLqLfS0UMyLBIXjMRb6LFAC0B6K5YCTROdl24fwAg/MCo3YYfLvyxVRB7IB+7J
+         wANPAygVIyQKATVHjVt3N8pk8TGRgRy3zhmjqvP8lDFVJwf4t4TyKxFoOKZnLzynj/z7
+         B7bKlnDJShUYmmO2QUG4+xGhYSflF8aCg1UvernFWssBdoZoZ2fye3j7rtr7VbvVaqgB
+         eYdTf/1z1wRP0v4UEiR6WOOEwvg/m1OyL9nDEeG+00C+SePaDOODBSGrCt0FHpuPTzFR
+         NZlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=85fBH067dHvKQNq6ek+W6lpUInMb+ZStwZLTCqTuQ3g=;
+        b=nhZu2+0V97IFijj4d8vdptMZnX3sp2WIrV8OCXYFECW7ykgsLE1WI0OiER9kilKgpm
+         0+C5vrVnztpsU4v7loTyVKJf9QMvKoE8PMtHFihK9s+7ohbMjNVFEsboinntQunMpFd6
+         yP7m9gGEiwTKjn1jWgbEPNP0c/DzGkFhuntaC4yKAMx1caoL7+0NrTVJ0bSAotZeA3UE
+         2yEqDf+T+OKZ33wbthjTNHaXlM7II2896CFZc98OEcoFyv5PYWPjXLJtEjQDjs3U1Wi0
+         pmx7BYGi/eI7TolE/MbRrZ5cDEsXURnaHA9RdIW2/dl9gU3ZeBUTYaVSuJc0hXV5O+yg
+         /gxQ==
+X-Gm-Message-State: AOAM531Iafru935YWn7mcmkgFi8+KfSnura/L0G61XkSvgHKSyn4nbw8
+        hHLT6UMN1gialDSQdhs2PXE=
+X-Google-Smtp-Source: ABdhPJwoOgvB7reSaDGYFu+hqpx2fpi2Z8iky2pgXDkwAHSZ7nlUuSO623t8xrL9U8X11t6Q7cSmdg==
+X-Received: by 2002:a2e:9990:: with SMTP id w16mr8244686lji.156.1598508358235;
+        Wed, 26 Aug 2020 23:05:58 -0700 (PDT)
+Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.gmail.com with ESMTPSA id z7sm255295lfc.59.2020.08.26.23.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Aug 2020 23:05:57 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc:     linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/4] brcmfmac: drop chip id from debug messages
+Date:   Thu, 27 Aug 2020 09:04:40 +0300
+Message-Id: <20200827060441.15487-4-digetx@gmail.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200827060441.15487-1-digetx@gmail.com>
+References: <20200827060441.15487-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598500217; bh=mXqaDHZAnjiA2FC3TMHhwQF8i9i1LflPE/o4KLabvD8=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=WXqhA+Ren3FQTe1vEUBmQnWuk6aV8sEnLj1CRZ1pqraL4VQN/rIniSGWckHDBCyBb
-         MPv2VCWEFiU+HoUedCAGozqo/UCNe41bHBPpwNfLa/XxMg5AJJHbvHyYQy9jxSx/G3
-         Pk1Quo8ZgoOeKYMEPQ9n08wYbUw4rR8cy2b82lcrYP30wg221BErunJA/2dmrHQ7OU
-         1AVEtMGDpjbyNcw+ECXxyGAiG3vCnw8JpcpiTAkQlsXZzcaUo5i1HmONONjeN533wP
-         YKpV8bh/xYeHOa9jsTYdstUA0D7vxTPpebI3L3WLwHatAxbx88fFVX+aNtKnVSrhtC
-         4/7/3DSYKAsdA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-commit 4346b7c7941d ("mmc: tegra: Add Tegra186 support")
+The chip ID was already printed out at the time when debug message about
+the changed F2 watermark is printed, hence let's drop the unnecessary part
+of the debug messages. This cleans code a tad and also allows to re-use
+the F2 watermark debug messages by multiple chips.
 
-SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK is set for Tegra186 from the
-beginning of its support in driver.
-
-Tegra186 SDMMC hardware by default uses timeout clock (TMCLK) instead
-of SDCLK and this quirk should not be set.
-
-So, this patch remove this quirk for Tegra186.
-
-Fixes: 4346b7c7941d ("mmc: tegra: Add Tegra186 support")
-Cc: stable <stable@vger.kernel.org> # 5.4
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Suggested-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 2be3511..31ed321 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1455,7 +1455,6 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
- 
- static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
- 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
--		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
- 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+index b16944a898f9..d4989e0cd7be 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+@@ -4280,7 +4280,7 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
+ 			break;
+ 		case SDIO_DEVICE_ID_BROADCOM_4329:
+ 		case SDIO_DEVICE_ID_BROADCOM_4339:
+-			brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes for 4339\n",
++			brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes\n",
+ 				  CY_4339_F2_WATERMARK);
+ 			brcmf_sdiod_writeb(sdiod, SBSDIO_WATERMARK,
+ 					   CY_4339_F2_WATERMARK, &err);
+@@ -4293,7 +4293,7 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
+ 					   CY_4339_MESBUSYCTRL, &err);
+ 			break;
+ 		case SDIO_DEVICE_ID_BROADCOM_43455:
+-			brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes for 43455\n",
++			brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes\n",
+ 				  CY_43455_F2_WATERMARK);
+ 			brcmf_sdiod_writeb(sdiod, SBSDIO_WATERMARK,
+ 					   CY_43455_F2_WATERMARK, &err);
 -- 
-2.7.4
+2.27.0
 
