@@ -2,153 +2,98 @@ Return-Path: <SRS0=ga/+=CF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AEDC433E3
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 08:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D56C433E3
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 09:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72F552177B
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 08:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA00E22CAF
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 09:33:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="f7MNXB70"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="oSqcIa3/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbgH0IyI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Aug 2020 04:54:08 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3553 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728001AbgH0IyH (ORCPT
+        id S1728074AbgH0JdN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Aug 2020 05:33:13 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:3989 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726826AbgH0JdM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Aug 2020 04:54:07 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4774350000>; Thu, 27 Aug 2020 01:52:05 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 27 Aug 2020 01:54:07 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 27 Aug 2020 01:54:07 -0700
-Received: from [10.26.74.41] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 27 Aug
- 2020 08:54:01 +0000
-Subject: Re: [PATCH v6 3/7] dt-bindings: mmc: tegra: Add tmclk for Tegra210
- and later
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <thierry.reding@gmail.com>, <robh+dt@kernel.org>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <1598500201-5987-1-git-send-email-skomatineni@nvidia.com>
- <1598500201-5987-4-git-send-email-skomatineni@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <46af4970-6a5a-d51e-a93f-31690dfe6ec8@nvidia.com>
-Date:   Thu, 27 Aug 2020 09:53:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 27 Aug 2020 05:33:12 -0400
+X-UUID: c92f2ad19b8e434ea14cd62c1dd6f4ac-20200827
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=GDw8qw5Cf2+oW80aLaeL2MYzA4FJZY4c7yqCaOQfvls=;
+        b=oSqcIa3/yC/pN03AO49rxAvpF3Iu+dX+UCKbsCS9Cvu8rkfRhECq1oOur6YOZQrtn++ipnFFbUcx7R6cWUhsRdb+bVjKT8ytBFiM0CgLIF0gcxJS4yxm9iaZI2H4Ok8f6FaPwiJxPZPiW8EK34KGGwMO8iZk3gSBIJD9oRrabuI=;
+X-UUID: c92f2ad19b8e434ea14cd62c1dd6f4ac-20200827
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chun-hung.wu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1959076118; Thu, 27 Aug 2020 17:33:07 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 27 Aug 2020 17:33:04 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 27 Aug 2020 17:33:05 +0800
+From:   Chun-Hung Wu <chun-hung.wu@mediatek.com>
+To:     <mirq-linux@rere.qmqm.pl>, Jonathan Hunter <jonathanh@nvidia.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Mao Yong <yong.mao@mediatek.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Pan Bian <bianpan2016@163.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Ritesh Harjani <riteshh@codeaurora.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>
+CC:     <kernel-team@android.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Chun-Hung Wu <chun-hung.wu@mediatek.com>
+Subject: [PATCH v1 0/2] mmc: cqhci: Add pre_enable() and post_disable() hook function
+Date:   Thu, 27 Aug 2020 17:33:01 +0800
+Message-ID: <1598520783-25250-1-git-send-email-chun-hung.wu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <1598500201-5987-4-git-send-email-skomatineni@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598518325; bh=C6Crf15LnfbR0rYCsspSBLWvgIDpcD7/H+1fQJjziBk=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=f7MNXB70JXKKV7eh+wWqv5g6k0XPXmJk+IZpcs/j/jUPI/9rRzfsMCO/fkoR72bNL
-         CoCAtkSQiJACST7dmGpn3SfK/k2ng5vxqxJEVfSamkxwNt5QXWRYQbWD04XGoLHkLn
-         w6vJziiP0rq88p121df6/iNrPRH3SPKS2s2s5l5VmRq7ogPnTqyTCNg3brFMIu1DLW
-         6CplkBy7/Z9VuNq55aRoPxJ0uPiL9dL3NzYFp288plQgyB3uOgp36i+D4axRISXA+m
-         yJyalyfWVXylgRGUfs3GO4Ktw1HwqpcnYVIyBSnoH5h9UzuHaz5IP2ELmKEmvDk5e4
-         Hjd3EnyaiJHMQ==
+Content-Type: text/plain
+X-TM-SNTS-SMTP: CCF1C9EE5CC8277C1A06A622833D52EA4C4DF2634262C08F134094BB2ABF89472000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+VGhpcyBzZXJpZXMgcHJvdmlkZXMgTWVkaWFUZWsgY3FoY2kgaW1wbGVtZW50YXRpb25zIGFzIGJl
+bG93Og0KICAtIEFkZCBjcWhjaV9ob3N0X29wcy0+cHJlX2VuYWJsZSgpIGFuZCBjcWhjaV9ob3N0
+X29wcy0+cG9zdF9kaXNhYmxlKCkNCiAgLSBJbXBsZW1lbnQgTWVkaWFUZWsncyBob29rIGZ1bmN0
+aW9ucw0KDQpDaHVuLUh1bmcgV3UgKDIpOg0KICBtbWM6IGNxaGNpOiBhZGQgbmV3IGNxaGNpX2hv
+c3Rfb3BzIHByZV9lbmFibGUoKSBhbmQgcG9zdF9kaXNhYmxlKCkNCiAgbW1jOiBtZWRpYXRlazog
+YWRkIHByZV9lbmFibGUoKSBhbmQgcG9zdF9kaXNhYmxlKCkgaG9vayBmdW5jdGlvbg0KDQogZHJp
+dmVycy9tbWMvaG9zdC9jcWhjaS5jICB8ICAgIDYgKysrKysrDQogZHJpdmVycy9tbWMvaG9zdC9j
+cWhjaS5oICB8ICAgIDIgKysNCiBkcml2ZXJzL21tYy9ob3N0L210ay1zZC5jIHwgICAyMiArKysr
+KysrKysrKysrKysrKysrKysrDQogMyBmaWxlcyBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspDQoN
+Ci0tIA0KMS43LjkuNQ0K
 
-On 27/08/2020 04:49, Sowjanya Komatineni wrote:
-> Tegra210 and later uses separate SDMMC_LEGACY_TM clock for data
-> timeout.
-> 
-> So, this patch adds "tmclk" to Tegra sdhci clock property in the
-> device tree binding.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 32 ++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> index 2cf3aff..96c0b14 100644
-> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> @@ -15,8 +15,15 @@ Required properties:
->    - "nvidia,tegra210-sdhci": for Tegra210
->    - "nvidia,tegra186-sdhci": for Tegra186
->    - "nvidia,tegra194-sdhci": for Tegra194
-> -- clocks : Must contain one entry, for the module clock.
-> -  See ../clocks/clock-bindings.txt for details.
-> +- clocks: For Tegra210, Tegra186 and Tegra194 must contain two entries.
-> +	  One for the module clock and one for the timeout clock.
-> +	  For all other Tegra devices, must contain a single entry for
-> +	  the module clock. See ../clocks/clock-bindings.txt for details.
-> +- clock-names: For Tegra210, Tegra186 and Tegra194 must contain the
-> +	       strings 'sdhci' and 'tmclk' to represent the module and
-> +	       the timeout clocks, respectively.
-> +	       For all other Tegra devices must contain the string 'sdhci'
-> +	       to represent the module clock.
->  - resets : Must contain an entry for each entry in reset-names.
->    See ../reset/reset.txt for details.
->  - reset-names : Must include the following entries:
-> @@ -99,7 +106,7 @@ Optional properties for Tegra210, Tegra186 and Tegra194:
->  
->  Example:
->  sdhci@700b0000 {
-> -	compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
-> +	compatible = "nvidia,tegra124-sdhci";
->  	reg = <0x0 0x700b0000 0x0 0x200>;
->  	interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
->  	clocks = <&tegra_car TEGRA210_CLK_SDMMC1>;
-> @@ -115,3 +122,22 @@ sdhci@700b0000 {
->  	nvidia,pad-autocal-pull-down-offset-1v8 = <0x7b>;
->  	status = "disabled";
->  };
-> +
-> +sdhci@700b0000 {
-> +	compatible = "nvidia,tegra210-sdhci";
-> +	reg = <0x0 0x700b0000 0x0 0x200>;
-> +	interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&tegra_car TEGRA210_CLK_SDMMC1>,
-> +		 <&tegra_car TEGRA210_CLK_SDMMC_LEGACY>;
-> +	clock-names = "sdhci", "tmclk";
-> +	resets = <&tegra_car 14>;
-> +	reset-names = "sdhci";
-> +	pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-> +	pinctrl-0 = <&sdmmc1_3v3>;
-> +	pinctrl-1 = <&sdmmc1_1v8>;
-> +	nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
-> +	nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
-> +	nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
-> +	nvidia,pad-autocal-pull-down-offset-1v8 = <0x7b>;
-> +	status = "disabled";
-> +};
-> 
-
-
-Thanks!
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
