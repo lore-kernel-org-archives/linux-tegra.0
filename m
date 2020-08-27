@@ -2,134 +2,85 @@ Return-Path: <SRS0=ga/+=CF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F1DC433DF
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 09:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81A3C433E1
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 12:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F18620738
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 09:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8466322B40
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 12:37:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/HXMGta"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="KGLhb4lQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbgH0JhU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Aug 2020 05:37:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40486 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbgH0JhT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Aug 2020 05:37:19 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 068A6C061264;
-        Thu, 27 Aug 2020 02:37:19 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id r13so2238211ljm.0;
-        Thu, 27 Aug 2020 02:37:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=GY1rN8KvUeBPuS99BWAMkTAboyulS1ztwK+477Pzgnk=;
-        b=W/HXMGtaMBCNIjXSsI42yyo8JZP002u/pWs62pQsrVU4WAeQzaTbeQM3yg87iI2fAG
-         +l0z2nICgrSeYyLt8xY5o/1dXBsSGAzMgHYMhTy5dCbAV9cTaRAoed5T1UqCAAxpGTmP
-         9Tw0WuVOkG1ohfIsWpL+YHpAsaT7V1aOgAhbH4lQbQlFpM8+o2BAd7o6oCio5MeZ0Z4d
-         /Tvrb3YqaGvBKYJ5/4ccGcOsRSwE39TnEFjM6HqhuTVGVATuS/MaZGS4rHz379uCElT1
-         do02BFvqMgBeuizs6Sn9yFrV9zrIOsAsFj6LSrfaD4Ajtfp2tBCiCokRURMxtME2VT4h
-         SD3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GY1rN8KvUeBPuS99BWAMkTAboyulS1ztwK+477Pzgnk=;
-        b=OfUprUXGvoXAUSqUYixV5yN703djCcp7BQCwjlPaTwkjUGY4/sAIZWZ3VZcqcGv5r4
-         7YLNxDgV3tcKhm1m+1KFUnq8odq1GnYKiOmX7T55kHQ1eKt43lUVrJJUabLhwx/N3DhO
-         Xjn3qJQ5PRsF/xdgXOa2w5kMrNKVwzVWoB5P8nsbRtaZRa1SqEQK/s2OScKVl+/zmrVP
-         DKk9AOK0ksdNG+ypg69Lmk6/XM/FFV/IlhvL9T8uGzikyiqoyB7Wo43IxJIkCGfltxYQ
-         1/oDt/Ukic0s+mSPvNAXXovpuVRFBbs+ydMMHtj1x3ru/ta9ZPqMmRI1u/r5m0GuXRvm
-         U5Dg==
-X-Gm-Message-State: AOAM531k3lbeYPfeijo3SgIl7SSGClWD+EGMrACUIs1rBhXAijuiB51u
-        ibjB8T+eIf+x1wZwhoOtXsm57e0szIM=
-X-Google-Smtp-Source: ABdhPJwRRCiqTzPrEy6fkoV6x3zZn4FlnHFbMTF/Bhy4jGZWGgspCK/7OYxer08qFGa/Zzc7B8CS1g==
-X-Received: by 2002:a2e:320b:: with SMTP id y11mr9251653ljy.92.1598521037145;
-        Thu, 27 Aug 2020 02:37:17 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id e25sm350263ljp.47.2020.08.27.02.37.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 02:37:16 -0700 (PDT)
-Subject: Re: Broadcom WiFi SDIO performance regression after commit "mmc:
- sdhci: Remove finish_tasklet"
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        brcm80211-dev-list@cypress.com,
-        brcm80211-dev-list.pdl@broadcom.com,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <5cf1af89-6026-09ad-7f20-82e19ad49fa1@gmail.com>
- <9332715c-6ee5-fce3-8b93-305823d5a551@intel.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <eec0c7d2-87f3-1213-dec1-bb34c5bde35a@gmail.com>
-Date:   Thu, 27 Aug 2020 12:36:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1729078AbgH0MhQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Aug 2020 08:37:16 -0400
+Received: from mout.gmx.net ([212.227.17.22]:37021 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729064AbgH0MeH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 27 Aug 2020 08:34:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1598531519;
+        bh=92IISck0Hh+QcjDct9i6ju3E7DbMlpwjZF7zW6G46Sc=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=KGLhb4lQ48yAcFw8dyYZZ4x3abl5+wHNWFde6rh76yn9TPOcDV2dbkia1bYvTngcK
+         7dd3CUH7vIzWvLAdPDqQQvSbIGjz+6C3cK0LESwWWnNOYWDreQs6J7TFzngFQN5veX
+         SkpUre3ZxsKqNnQ1AiFgZ92OsNfUIQ3UCQ6X9UmI=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [217.61.146.7] ([217.61.146.7]) by web-mail.gmx.net
+ (3c-app-gmx-bap26.server.lan [172.19.172.96]) (via HTTP); Thu, 27 Aug 2020
+ 14:31:59 +0200
 MIME-Version: 1.0
-In-Reply-To: <9332715c-6ee5-fce3-8b93-305823d5a551@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Message-ID: <trinity-d6be65d8-9086-42bc-b993-238b731cdf60-1598531519064@3c-app-gmx-bap26>
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk,
+        geert+renesas@glider.be, dri-devel@lists.freedesktop.org,
+        bjorn.andersson@linaro.org, thierry.reding@gmail.com,
+        laurent.pinchart@ideasonboard.com, digetx@gmail.com, s-anna@ti.com,
+        will@kernel.org, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, magnus.damm@gmail.com,
+        kyungmin.park@samsung.com, jonathanh@nvidia.com, agross@kernel.org,
+        yong.wu@mediatek.com, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, inki.dae@samsung.com,
+        vdumpa@nvidia.com, linux-mediatek@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        sw0312.kim@samsung.com, linux-kernel@vger.kernel.org,
+        t-kristo@ti.com, iommu@lists.linux-foundation.org
+Subject: Aw: [PATCH 00/18] Convert arch/arm to use iommu-dma
+Content-Type: text/plain; charset=UTF-8
+Date:   Thu, 27 Aug 2020 14:31:59 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <cover.1597931875.git.robin.murphy@arm.com>
+References: <cover.1597931875.git.robin.murphy@arm.com>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:s+a4a7dJl6sfE8qr3afXfh3rFMEB0yoGDcQKLuHS4QzYWvUvvC45GFgO8lF9qXw9R52Wk
+ DtakmHS+HD6cGoa1Zil3uW/U+yFS9kxTAT+z6AMI2xcYorqC2HXtzYuOCqJCgtLpQ+XE0cJjSFZx
+ jxGxAyxNxltq5fYSEegUZWLgP9jut/anC9MQ4QvGWdC7Fx2DqQGzPbELk6qKjHDVZ/m5suQOG5WX
+ iSa5xQ1TVnlfnQDl3zDcjq+ZYocRCeCF/YEHBWcp/6xTs4r2KnkcTO/1Z2Mnufc+NBr+EgqeLN3I
+ Vw=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FxwUSbP1mjI=:ttSQgY8yWxDnU00gqYZD9w
+ Z/qDxX2NghmiDYfDQ5KlK2CvVPv511mt50baxcV9OWViPRqrVksHRa4Q70leW/35miqZsjM4V
+ IO6h92zZspcakoDMbQBjPkuMoyi+5LQ/QFBqRCLiWwjAvFd059HIdZ3wIqx4Ym54NMmsqjccz
+ GSjwDTLDSlPZZ31m1rM3TpUiUEHmvR2WgipwWqz1AAq7WXhaIEH9QsZ2JnZLEEbOhxXoPsI/Z
+ TRcWMQZ1A9GV15KtQDIO2i/Dq3pFNOn6hQhy7q9DtWpXhyRvveQF9KRDJYqc0qTjBpvzvMKr7
+ cwEg2rxqBaJWgiTbO8eTHZQs26rh5cUZDyt0F7+vYHaCPFuefMRRBB057XIJ51LSUel/IEcBx
+ jKL0kBgE2bzG14g6AuFmvgYvmWEVN4O/y2NQMUrsTNo+oCPAkE4kNJZRWZcUmma+gyoOQcDkF
+ PF2HL5TN/+tF8l4QCRCJegf1NBi1AFsXmHuAdCOMo4mEr8RGOKC4Z9Q1zFeTTDPSLLcCl+zEE
+ Ii91uM5UaMUTvml0hGGBCxEsqbJsfJ8v3jTJ9teKmcwELpC6kt7ciWfOUlIPV4vD2eQdFtfwk
+ 1oipkVsSHlw6p58a4q/xNJukuLHryikdXoZi+l8M+576WxE3K6Ngz4VHUmx0HOrdPsQ3RuO6H
+ UQHfIQ/HTJp3cXIfVqtRO2Xhoda3GGGLYRUb8PYIOqNcBnvhX6Jze8vfjXKlOuNpMwLk=
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.08.2020 09:45, Adrian Hunter пишет:
-> On 27/08/20 9:07 am, Dmitry Osipenko wrote:
->> Hello!
->>
->> I was debugging WiFi performance problems on Acer A500 tablet device
->> that has BCM4329 WiFi chip which is connected to NVIDIA Terga20 SoC via
->> SDIO and found that the following commit causes a solid 5-10 Mbit/s of
->> WiFi throughput regression after 5.2 kernel:
-> 
-> What is that in percentage terms?
+Tested full series on bananapi r2 (mt7623/mt2701, 5.9-rc1 + hdmi-patches), works so far fbcon+x without issues
 
-That is about 20%.
+Tested-by: Frank Wunderlich <frank-w@public-files.de>
 
->> commit c07a48c2651965e84d35cf193dfc0e5f7892d612
->> Author: Adrian Hunter <adrian.hunter@intel.com>
->> Date:   Fri Apr 5 15:40:20 2019 +0300
->>
->>     mmc: sdhci: Remove finish_tasklet
->>
->>     Remove finish_tasklet. Requests that require DMA-unmapping or
->> sdhci_reset
->>     are completed either in the IRQ thread or a workqueue if the
->> completion is
->>     not initiated by the IRQ.
->>
->> Reverting the offending commit on top of recent linux-next resolves the
->> problem.
->>
->> Ulf / Adrian, do you have any ideas what could be done in regards to
->> restoring the SDIO performance? Should we just revert the offending commit?
->>
-> 
-> Unfortunately I think we are past the point of returning to the tasklet.
-> 
-> sdhci can complete requests in the irq handler but only if ->pre_req() and
-> ->post_req() are used, which is not supported by SDIO at present.  pre_req
-> and post_req were introduced to reduce latency for the block driver, so it
-> seems reasonable perhaps to look at using them in SDIO as well.
-> 
-
-I'll try to take a look at pre/post_req(), but I'm not very familiar
-with the MMC code, so it may take quite some time. Will be great if you
-could help with making a patch that I could test!
+regards Frank
