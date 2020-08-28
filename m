@@ -2,107 +2,201 @@ Return-Path: <SRS0=v48G=CG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BEBC433E2
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 01:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B81BDC433E2
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 01:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37BA82080C
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 01:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94D3D21556
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 01:35:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gir4tIU4"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="u7auesJf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbgH1BMA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Aug 2020 21:12:00 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9882 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbgH1BL7 (ORCPT
+        id S1728270AbgH1Bfe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Aug 2020 21:35:34 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:22217 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728271AbgH1Bfd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Aug 2020 21:11:59 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4859640000>; Thu, 27 Aug 2020 18:09:56 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 27 Aug 2020 18:11:58 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 27 Aug 2020 18:11:58 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Aug
- 2020 01:11:57 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 28 Aug 2020 01:11:57 +0000
-Received: from jckuo-lt.nvidia.com (Not Verified[10.19.101.4]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f4859db0000>; Thu, 27 Aug 2020 18:11:56 -0700
-From:   JC Kuo <jckuo@nvidia.com>
-To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-        <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH 02/12] clk: tegra: don't enable PLLE HW sequencer at init
-Date:   Fri, 28 Aug 2020 09:10:46 +0800
-Message-ID: <20200828011056.1067559-3-jckuo@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200828011056.1067559-1-jckuo@nvidia.com>
-References: <20200828011056.1067559-1-jckuo@nvidia.com>
+        Thu, 27 Aug 2020 21:35:33 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200828013529epoutp01ba337180859292baf523cbc8f13d52a9~vSrQOPHwP0954409544epoutp01Q
+        for <linux-tegra@vger.kernel.org>; Fri, 28 Aug 2020 01:35:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200828013529epoutp01ba337180859292baf523cbc8f13d52a9~vSrQOPHwP0954409544epoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598578529;
+        bh=mfZS9t3mm4EcSIakzUimqKpFxitij5KZmxwTrUCgxhc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=u7auesJfbgAw2m+bpWAjU7aJ0vNeEXVLoQODJgIbfdZYitK/9443Vm9mvSgHDpS60
+         Tp0jhxn1pZayhKfqPXBXIP8hDz91LZkusCei/90IVBw4CidlBjnRTLtQISPwTWuh49
+         6TkIQDX/4v6le91qnI3r+yrFn5VOXyrpuQc3us5g=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200828013529epcas1p47231fba0fb8e3486082f079f17624411~vSrPXxycJ3008030080epcas1p4J;
+        Fri, 28 Aug 2020 01:35:29 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4Bd2Gh6nN0zMqYmD; Fri, 28 Aug
+        2020 01:35:24 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4C.BE.29173.85F584F5; Fri, 28 Aug 2020 10:35:20 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200828013520epcas1p2bc32bd495a6427a36bc7e016dea98e27~vSrHIUnUo0309303093epcas1p2z;
+        Fri, 28 Aug 2020 01:35:20 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200828013520epsmtrp1aae0b48885e40c8b76c3a48da1087bfe~vSrHHRFUJ0208202082epsmtrp1S;
+        Fri, 28 Aug 2020 01:35:20 +0000 (GMT)
+X-AuditID: b6c32a37-9b7ff700000071f5-02-5f485f584a00
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EE.F2.08382.75F584F5; Fri, 28 Aug 2020 10:35:20 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200828013519epsmtip2cb4c7fb54f955a09e82cac16c65c1415~vSrG0NQaN0625906259epsmtip2I;
+        Fri, 28 Aug 2020 01:35:19 +0000 (GMT)
+Subject: Re: [PATCH v5 13/36] PM / devfreq: tegra30: Use MC timings for
+ building OPP table
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <2a255211-5426-d78f-d266-cdb958f4c658@samsung.com>
+Date:   Fri, 28 Aug 2020 10:47:46 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598576996; bh=H0R9Siiu+twi27jJX/Jx8a1i8OSPS6fZLapkwSfwBYg=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=gir4tIU4i7QiR/gjr2bUR54nyhEjRZnO1uhL3csVFY0pYSrFU9zXnOfDc3Be+5is4
-         ubWBUOcJYU35hdkwADyug2Zw+it6sOKdyf8s/hjaipG122vyq2rx09qkYe9/9f2/ib
-         2v2NHpLdIlCszVSXx+c4YgK9p0DRAdgD6Pb0ORfL47AKKh4x4w6pvrO7fbPXu6dOkx
-         b3OWu+0JULuIgBAIUTAbLjyCRlJFO6spDH9hIzVw3BPo/IvXcq07vehsvCkolCiDju
-         7cBLhNY3KpIgooQWJ8LsFOWFSpykALQUynPUCo4KDCyAPWWSsx28HRV5F+r1I5mIKA
-         5XnKsTbu5eljA==
+In-Reply-To: <1de8aa41-8001-cf46-026c-b00f8df0b9a3@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBJsWRmVeSWpSXmKPExsWy7bCmnm5EvEe8QdsSI4t3n56yWsw/co7V
+        YvXHx4wWV76+Z7OYvncTm0XLrEUsFmeb3rBbXN41h83ic+8RRovOL7PYLC6ecrW43biCzWLS
+        2qmMFq17j7Bb/Lu2kcXi5655LA4CHu9vtLJ77Jx1l93j0rk/zB6bVnWyedy5tofN4373cSaP
+        3uZ3bB59W1YxenzeJBfAGZVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeY
+        m2qr5OIToOuWmQP0hpJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLJArzgxt7g0
+        L10vOT/XytDAwMgUqDAhO2Nx4ySmgvN8FR/udrE2ML7i7mLk5JAQMJFoe7CftYuRi0NIYAej
+        xMMt/UwgCSGBT4wSc7ZoQCS+MUq8/tPBDNNxccN0RojEXkaJ9ncXmSGc94wSTQv/sINUCQvE
+        SJyZt5EdJCEicIRZYnXncUaQBLPADEaJO3uUQWw2AS2J/S9usIHY/AKKEld/PAar4RWwk5j8
+        4xtYnEVAVeLa28tgN4kKhEmc3NYCVSMocXLmExYQm1PAVmLd/jUsEPPFJW49mc8EYctLNG+d
+        DXadhMB/Dompp38DNXMAOS4SGz87Q7wjLPHq+BZ2CFtK4mV/G5RdLbHy5BE2iN4ORokt+y+w
+        QiSMJfYvncwEModZQFNi/S59iLCixM7fc6F+5JN497WHFWIVr0RHmxBEibLE5Qd3mSBsSYnF
+        7Z1sExiVZiH5ZhaSD2Yh+WAWwrIFjCyrGMVSC4pz01OLDQuMkWN7EyM4iWuZ72Cc9vaD3iFG
+        Jg7GQ4wSHMxKIryvj7rHC/GmJFZWpRblxxeV5qQWH2I0BYbvRGYp0eR8YB7JK4k3NDUyNja2
+        MDE0MzU0VBLnfXhLIV5IID2xJDU7NbUgtQimj4mDU6qByYib2++EtvOLZX+/Vcxcq7R3blRs
+        I2vBnh2Zq6wFVLoSQ5O/CU+dsePmukmeb0NXrZQJirqRn1NouVb91d8ff4Imq9xgvTulzmLR
+        BEHlHbJvL7VZr4x737P4+eNglcSPAd8WMDaqGR05/3d1G/8/foZGl2T7+Xq1SbIzg00nqUgu
+        4nqeu/BipNfVCY92REqvnZR2UjOt8q7JXZZn/7fJMxREvln26s2WaKUEv0lme57KpHzOTir1
+        VCmsKZ0jd93GYMHVfblicmGGcmdSJk9OTdYJC+WV0J6TxZgWIdJ1bXa4q/7Ut0pzu9ND77L4
+        9u3Z5J2hImw46Yqhm8MEqcOma/gqWyU3M60wrzeK+HNIiaU4I9FQi7moOBEAfmno22sEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsWy7bCSvG5EvEe8wZlOJot3n56yWsw/co7V
+        YvXHx4wWV76+Z7OYvncTm0XLrEUsFmeb3rBbXN41h83ic+8RRovOL7PYLC6ecrW43biCzWLS
+        2qmMFq17j7Bb/Lu2kcXi5655LA4CHu9vtLJ77Jx1l93j0rk/zB6bVnWyedy5tofN4373cSaP
+        3uZ3bB59W1YxenzeJBfAGcVlk5Kak1mWWqRvl8CVsbhxElPBeb6KD3e7WBsYX3F3MXJySAiY
+        SFzcMJ2xi5GLQ0hgN6PE9u3bmSESkhLTLh4FsjmAbGGJw4eLIWreMkpM2PkIrEZYIEbizLyN
+        7CAJEYFjzBKbTp9mAnGYBWYwSvzZAJEREpjDJHF0zjw2kBY2AS2J/S9ugNn8AooSV388ZgSx
+        eQXsJCb/+AYWZxFQlbj29jITiC0qECaxc8ljJogaQYmTM5+wgNicArYS6/avAbOZBdQl/sy7
+        xAxhi0vcejKfCcKWl2jeOpt5AqPwLCTts5C0zELSMgtJywJGllWMkqkFxbnpucWGBYZ5qeV6
+        xYm5xaV56XrJ+bmbGMExraW5g3H7qg96hxiZOBgPMUpwMCuJ8L4+6h4vxJuSWFmVWpQfX1Sa
+        k1p8iFGag0VJnPdG4cI4IYH0xJLU7NTUgtQimCwTB6dUA1Ob1I9zPnO5j8zS4d637czuA4wW
+        5XOKmsoOZL5omCt+7cvyRcFzL5QavJoSuPdN3zn3rfl+zRKnGDh2xrk5lwtm/5itoSE26dJh
+        xVLZ/kVHF3Vf2yehcTF93ZNpDblPr642Wv/g+PZHtxoD2atnJlhZzvEO/BUsm7rSgttBYVWn
+        Y5tXfKPb+6tukrsqD1dttXmoUeBXMlFKdFPgvdbv6TN01wbdmVK5pUHPoXj3zGV3G/eukb/6
+        TD/6jv7JX/rGD761TH4nfT+Pf0nN9MnCTEs7mF4Gnt6gvJHn6dzIyU47LzDI/uBtEFhrnL49
+        b8VmWVvNY5/PtbZxvhRm1efxNP6tz1Qf9ftOu0RpSJuScbQSS3FGoqEWc1FxIgB9F1inWAMA
+        AA==
+X-CMS-MailID: 20200828013520epcas1p2bc32bd495a6427a36bc7e016dea98e27
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200814000944epcas1p3dfd0104c5fa640695dfcd4949f6b1818
+References: <20200814000621.8415-1-digetx@gmail.com>
+        <CGME20200814000944epcas1p3dfd0104c5fa640695dfcd4949f6b1818@epcas1p3.samsung.com>
+        <20200814000621.8415-14-digetx@gmail.com>
+        <1b0d75fe-79af-70eb-8450-999a3bc72bac@samsung.com>
+        <1de8aa41-8001-cf46-026c-b00f8df0b9a3@gmail.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-PLLE hardware power sequencer references PEX/SATA UPHY PLL hardware
-power sequencers' output to enable/disable PLLE. PLLE hardware power
-sequencer has to be enabled only after PEX/SATA UPHY PLL's sequencers
-are enabled.
+Hi,
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 12 ------------
- 1 file changed, 12 deletions(-)
+On 8/15/20 1:47 AM, Dmitry Osipenko wrote:
+> 14.08.2020 05:02, Chanwoo Choi пишет:
+>> Hi Dmitry,
+>>
+>> I add the minor comment. Except of some comments, it looks good to me.
+> 
+> Hello, Chanwoo! Thank you for the review!
+> 
+> ...
+>>> +struct tegra_devfreq_soc_data {
+>>> +	const char *mc_compatible;
+>>> +};
+>>> +
+>>> +static const struct tegra_devfreq_soc_data tegra30_soc = {
+>>> +	.mc_compatible = "nvidia,tegra30-mc",
+>>> +};
+>>> +
+>>> +static const struct tegra_devfreq_soc_data tegra124_soc = {
+>>> +	.mc_compatible = "nvidia,tegra124-mc",
+>>> +};
+> .
+>>> +	soc_data = of_device_get_match_data(&pdev->dev);
+>>
+>> I think that better to check whether 'soc_data' is not NULL.
+> 
+> It's a quite common misconception among kernel developers that
+> of_device_get_match_data() may "accidentally" return NULL, but it
+> couldn't if every driver's of_match[] entry has a non-NULL .data field
+> and because the OF-matching already happened at the driver's probe-time
+> [1], which is the case of this driver.
+> 
+> [1] https://elixir.bootlin.com/linux/v5.8/source/drivers/of/device.c#L189
+> 
+> Hence the NULL-checking is unnecessary.
+> 
+> When I first encountered the of_device_get_match_data(), I was also
+> thinking that adding the NULL-checks is a good idea, but later on
+> somebody pointed out to me (maybe Thierry) that it's unnecessary to do.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index c5cc0a2dac6f..0193cebe8c5a 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2515,18 +2515,6 @@ static int clk_plle_tegra210_enable(struct clk_hw *h=
-w)
- 	pll_writel(val, PLLE_SS_CTRL, pll);
- 	udelay(1);
-=20
--	val =3D pll_readl_misc(pll);
--	val &=3D ~PLLE_MISC_IDDQ_SW_CTRL;
--	pll_writel_misc(val, pll);
--
--	val =3D pll_readl(pll->params->aux_reg, pll);
--	val |=3D (PLLE_AUX_USE_LOCKDET | PLLE_AUX_SS_SEQ_INCLUDE);
--	val &=3D ~(PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL);
--	pll_writel(val, pll->params->aux_reg, pll);
--	udelay(1);
--	val |=3D PLLE_AUX_SEQ_ENABLE;
--	pll_writel(val, pll->params->aux_reg, pll);
--
- out:
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
---=20
-2.25.1
+OK. Thanks.
 
+> 
+>>> +
+>>> +	mc = tegra_get_memory_controller(soc_data->mc_compatible);
+>>> +	if (IS_ERR(mc))
+>>> +		return PTR_ERR(mc);
+>>
+>> You better to add error log.
+> 
+> In practice we should get only -EPROBE_DEFER here ever. I'll consider
+> adding the message in the next revision, at least just for consistency.
+
+In order to handle -EPROBE_DEFER, recommend the using of dev_err_probe().
+
+(snip)
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
