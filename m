@@ -1,169 +1,418 @@
-Return-Path: <SRS0=ga/+=CF=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=v48G=CG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CA6C433E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 23:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70998C433E7
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 01:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 680FC20872
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Aug 2020 23:34:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45BC020848
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 01:12:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="z5afeT1u"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MKmC9O3F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbgH0Xe4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Aug 2020 19:34:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58598 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbgH0Xey (ORCPT
+        id S1728295AbgH1BMZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Aug 2020 21:12:25 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:15038 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728387AbgH1BMY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Aug 2020 19:34:54 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E140DC061264
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Aug 2020 16:34:53 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id k4so6384455ilr.12
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Aug 2020 16:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WedloSq7WEmmdLIoMis0OnTbQ3vwipQyHuMeYXqSrtc=;
-        b=z5afeT1uAO8r4nUnyvdyA9XOFk/fx4rNEV7OzYIxSzIyRPXSSuP0kLR0uFLb5b32/u
-         2F9MWfvV9WNZ+AXIi+QLZ8p0NAvNTBNro8XHBAkvaJyY3ufO9Q62GJ4oCd3Mw0z1agKr
-         qFAx/HdJ+EmG1djyMZ9CSGcKQmWFu/zVKz5vJDxg6Nx++SMMng1dGMX9Fmd/wZDTKzHU
-         hK7p1r057Z3QOjx4Tgjjmk5k/beu18E/9gkjDnfpmsN6+7UO8xqzHsjZBJhd37zZ1RdM
-         prBipf1AI2muUbFcyfU3La5FJDcrT8wuyB+danzKbVnftQC2AzrWmBaIjshroZB9Cb96
-         Llhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WedloSq7WEmmdLIoMis0OnTbQ3vwipQyHuMeYXqSrtc=;
-        b=dQqsVoAgbL0JDyWVI4k7oIJeXKRhH/rjNXhZI9d6lI4YHWne3Ue7PD6qYFbqkS6zq3
-         qC21dpaF13ZWRNv8YzE3HwF56/DdCcUpOee7DBcwObgNihfCEwrOuXMYY7OahYohb7qm
-         iNq7krSJX6qrLyThORC0AeBdLBw2z8UpiddXwHMNFmDg1FN24tC+gSV3NHprGFDTBgbR
-         s56Qzce9EQ9i1mST4YjSINntsLrri+EzrBocHfDEX/ddUFjheLD04ImGccuZMziR/uka
-         PPH1q4nDhn4XBO8oDmHmisKylb3OQnvNdSGwKYKNptIFsI6zmyMEA6Cm7Wd4wczLaH/8
-         +qwA==
-X-Gm-Message-State: AOAM533uEUKIOz/X7kDQ11o+DknPEGyTJr5IiA5i2qTDfN2411RmaGac
-        tX5lKfYdx9n0C5c83QWP1fetEAnRUgIJf+otyaTwLg==
-X-Google-Smtp-Source: ABdhPJw0W2KNMSiVDCp6qP+D3bxqQi5szrf3hiteZz0kvkkYuvF0+Qn7lDLtjb0Ko+kJMcKtvMnZ3YU+iAfoJmlGVTk=
-X-Received: by 2002:a92:4f:: with SMTP id 76mr18588367ila.11.1598571293162;
- Thu, 27 Aug 2020 16:34:53 -0700 (PDT)
+        Thu, 27 Aug 2020 21:12:24 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4859cc0001>; Thu, 27 Aug 2020 18:11:40 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 27 Aug 2020 18:12:23 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 27 Aug 2020 18:12:23 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Aug
+ 2020 01:12:18 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 28 Aug 2020 01:12:18 +0000
+Received: from jckuo-lt.nvidia.com (Not Verified[10.19.101.4]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f4859f00001>; Thu, 27 Aug 2020 18:12:18 -0700
+From:   JC Kuo <jckuo@nvidia.com>
+To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+        <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
+Subject: [PATCH 11/12] usb: host: xhci-tegra: unlink power domain devices
+Date:   Fri, 28 Aug 2020 09:10:55 +0800
+Message-ID: <20200828011056.1067559-12-jckuo@nvidia.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200828011056.1067559-1-jckuo@nvidia.com>
+References: <20200828011056.1067559-1-jckuo@nvidia.com>
 MIME-Version: 1.0
-References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com> <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
- <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
-In-Reply-To: <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
-From:   Tom Murphy <murphyt7@tcd.ie>
-Date:   Fri, 28 Aug 2020 00:34:41 +0100
-Message-ID: <CALQxJuuS8KKUX_eWWSE81gsq5ePAETB-FoqRUSWFfqgr+B13gg@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598577100; bh=0CTHi9mIhl9G6jvo2lJZ946QRa9r6dmOL3TNK2XctPQ=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=MKmC9O3FChYVa7LT+0dg7kXTTrJhTd6eBGT7RBJaAj6FiCp+bS9BknFEKyBOuU23r
+         F2+WxBR7+bvysDNF+2ZwDpg3C3AD2DQ5EbIYWB4pRFKNr0jG1g1X6Dq2bNwIJp9EwW
+         DkO/zeaqsXWuv3K50kFBIvNo2e1cOhMpGHMtTXaa36d91zSMNpfn9JNylHxU5WGW+b
+         OzVctFRE9KvNlZkwrhd70ruOjRH2axrUt1Hiry/93i4KiiHXLvtroK+W/uiYkW6TcL
+         3IJqjkHiY1z0zlCKUfQftCAVw2f0Ob+ZKVlWql7VfJyP7KzuVilH6qRZX6gFflQeLv
+         FPAy0UxQoXgzQ==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 27 Aug 2020 at 22:36, Logan Gunthorpe <logang@deltatee.com> wrote:
->
->
->
-> On 2020-08-23 6:04 p.m., Tom Murphy wrote:
-> > I have added a check for the sg_dma_len == 0 :
-> > """
-> >  } __sgt_iter(struct scatterlist *sgl, bool dma) {
-> >         struct sgt_iter s = { .sgp = sgl };
-> >
-> > +       if (sgl && sg_dma_len(sgl) == 0)
-> > +           s.sgp = NULL;
-> >
-> >         if (s.sgp) {
-> >             .....
-> > """
-> > at location [1].
-> > but it doens't fix the problem.
->
-> Based on my read of the code, it looks like we also need to change usage
-> of sgl->length... Something like the rough patch below, maybe?
->
-> Also, Tom, do you have an updated version of the patchset to convert the
-> Intel IOMMU to dma-iommu available? The last one I've found doesn't
-> apply cleanly (I'm assuming parts of it have been merged in slightly
-> modified forms).
->
+This commit unlinks xhci-tegra platform device with ss/host power
+domain devices. Reasons for this change is - at elpg entry, phy
+sleepwalk and wake configuration need to be done before powering
+down ss/host partitions, and phy need be powered off after powering
+down ss/host partitions. Sequence looks like roughly below:
 
-I'll try and post one in the next 24hours
+  tegra_xusb_enter_elpg() -> xhci_suspend()
+                          -> enable phy sleepwalk and wake if needed
+                          -> power down ss/host partitions
+                          -> power down phy
 
-> Thanks,
->
-> Logan
->
-> --
->
-> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
-> b/drivers/gpu/drm/i915/i915
-> index b7b59328cb76..9367ac801f0c 100644
-> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
-> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
-> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
->  } __sgt_iter(struct scatterlist *sgl, bool dma) {
->         struct sgt_iter s = { .sgp = sgl };
->
-> +       if (sgl && !sg_dma_len(s.sgp))
-> +               s.sgp = NULL;
-> +
->         if (s.sgp) {
->                 s.max = s.curr = s.sgp->offset;
-> -               s.max += s.sgp->length;
-> -               if (dma)
-> +
-> +               if (dma) {
-> +                       s.max += sg_dma_len(s.sgp);
->                         s.dma = sg_dma_address(s.sgp);
-> -               else
-> +               } else {
-> +                       s.max += s.sgp->length;
->                         s.pfn = page_to_pfn(sg_page(s.sgp));
-> +               }
->         }
->
->         return s;
+If ss/host power domains are linked to xhci-tegra platform device, we
+are not able to perform the sequence like above.
+
+This commit introduces:
+  1. tegra_xusb_unpowergate_partitions() to power up ss and host
+     partitions together. If ss/host power domain devices are
+     available, it invokes pm_runtime_get_sync() to request power
+     driver to power up partitions; If power domain devices are not
+     available, tegra_powergate_sequence_power_up() will be used to
+     power up partitions.
+
+  2. tegra_xusb_powergate_partitions() to power down ss and host
+     partitions together. If ss/host power domain devices are
+     available, it invokes pm_runtime_put_sync() to request power
+     driver to power down partitions; If power domain devices are not
+     available, tegra_powergate_power_off() will be used to power down
+     partitions.
+
+Signed-off-by: JC Kuo <jckuo@nvidia.com>
+---
+ drivers/usb/host/xhci-tegra.c | 202 +++++++++++++++++++---------------
+ 1 file changed, 111 insertions(+), 91 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 934be1686352..ce6526c2caf6 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -249,8 +249,6 @@ struct tegra_xusb {
+=20
+ 	struct device *genpd_dev_host;
+ 	struct device *genpd_dev_ss;
+-	struct device_link *genpd_dl_host;
+-	struct device_link *genpd_dl_ss;
+=20
+ 	struct phy **phys;
+ 	unsigned int num_phys;
+@@ -814,36 +812,12 @@ static void tegra_xusb_phy_disable(struct tegra_xusb =
+*tegra)
+=20
+ static int tegra_xusb_runtime_suspend(struct device *dev)
+ {
+-	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
+-
+-	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+-	tegra_xusb_clk_disable(tegra);
+-
+ 	return 0;
+ }
+=20
+ static int tegra_xusb_runtime_resume(struct device *dev)
+ {
+-	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
+-	int err;
+-
+-	err =3D tegra_xusb_clk_enable(tegra);
+-	if (err) {
+-		dev_err(dev, "failed to enable clocks: %d\n", err);
+-		return err;
+-	}
+-
+-	err =3D regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
+-	if (err) {
+-		dev_err(dev, "failed to enable regulators: %d\n", err);
+-		goto disable_clk;
+-	}
+-
+ 	return 0;
+-
+-disable_clk:
+-	tegra_xusb_clk_disable(tegra);
+-	return err;
+ }
+=20
+ #ifdef CONFIG_PM_SLEEP
+@@ -1019,10 +993,6 @@ static int tegra_xusb_load_firmware(struct tegra_xusb=
+ *tegra)
+ static void tegra_xusb_powerdomain_remove(struct device *dev,
+ 					  struct tegra_xusb *tegra)
+ {
+-	if (tegra->genpd_dl_ss)
+-		device_link_del(tegra->genpd_dl_ss);
+-	if (tegra->genpd_dl_host)
+-		device_link_del(tegra->genpd_dl_host);
+ 	if (!IS_ERR_OR_NULL(tegra->genpd_dev_ss))
+ 		dev_pm_domain_detach(tegra->genpd_dev_ss, true);
+ 	if (!IS_ERR_OR_NULL(tegra->genpd_dev_host))
+@@ -1048,20 +1018,88 @@ static int tegra_xusb_powerdomain_init(struct devic=
+e *dev,
+ 		return err;
+ 	}
+=20
+-	tegra->genpd_dl_host =3D device_link_add(dev, tegra->genpd_dev_host,
+-					       DL_FLAG_PM_RUNTIME |
+-					       DL_FLAG_STATELESS);
+-	if (!tegra->genpd_dl_host) {
+-		dev_err(dev, "adding host device link failed!\n");
+-		return -ENODEV;
++	return 0;
++}
++
++static int tegra_xusb_unpowergate_partitions(struct tegra_xusb *tegra)
++{
++	struct device *dev =3D tegra->dev;
++	bool use_genpd;
++	int rc;
++
++	use_genpd =3D of_property_read_bool(dev->of_node, "power-domains");
++
++	if (use_genpd) {
++		rc =3D pm_runtime_get_sync(tegra->genpd_dev_ss);
++		if (rc < 0) {
++			dev_err(dev, "failed to enable XUSB SS partition\n");
++			return rc;
++		}
++
++		rc =3D pm_runtime_get_sync(tegra->genpd_dev_host);
++		if (rc < 0) {
++			dev_err(dev, "failed to enable XUSB Host partition\n");
++			pm_runtime_put_sync(tegra->genpd_dev_ss);
++			return rc;
++		}
++	} else {
++		rc =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
++							tegra->ss_clk,
++							tegra->ss_rst);
++		if (rc < 0) {
++			dev_err(dev, "failed to enable XUSB SS partition\n");
++			return rc;
++		}
++
++		rc =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
++							tegra->host_clk,
++							tegra->host_rst);
++		if (rc < 0) {
++			dev_err(dev, "failed to enable XUSB Host partition\n");
++			tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
++			return rc;
++		}
+ 	}
+=20
+-	tegra->genpd_dl_ss =3D device_link_add(dev, tegra->genpd_dev_ss,
+-					     DL_FLAG_PM_RUNTIME |
+-					     DL_FLAG_STATELESS);
+-	if (!tegra->genpd_dl_ss) {
+-		dev_err(dev, "adding superspeed device link failed!\n");
+-		return -ENODEV;
++	return 0;
++}
++
++static int tegra_xusb_powergate_partitions(struct tegra_xusb *tegra)
++{
++	struct device *dev =3D tegra->dev;
++	bool use_genpd;
++	int rc;
++
++	use_genpd =3D of_property_read_bool(dev->of_node, "power-domains");
++
++	if (use_genpd) {
++		rc =3D pm_runtime_put_sync(tegra->genpd_dev_host);
++		if (rc < 0) {
++			dev_err(dev, "failed to disable XUSB Host partition\n");
++			return rc;
++		}
++
++		rc =3D pm_runtime_put_sync(tegra->genpd_dev_ss);
++		if (rc < 0) {
++			dev_err(dev, "failed to disable XUSB SS partition\n");
++			pm_runtime_get_sync(tegra->genpd_dev_host);
++			return rc;
++		}
++	} else {
++		rc =3D tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
++		if (rc < 0) {
++			dev_err(dev, "failed to disable XUSB Host partition\n");
++			return rc;
++		}
++
++		rc =3D tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
++		if (rc < 0) {
++			dev_err(dev, "failed to disable XUSB SS partition\n");
++			tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
++							  tegra->host_clk,
++							  tegra->host_rst);
++			return rc;
++		}
+ 	}
+=20
+ 	return 0;
+@@ -1425,25 +1463,6 @@ static int tegra_xusb_probe(struct platform_device *=
+pdev)
+ 				err);
+ 			goto put_padctl;
+ 		}
+-
+-		err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
+-							tegra->ss_clk,
+-							tegra->ss_rst);
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"failed to enable XUSBA domain: %d\n", err);
+-			goto put_padctl;
+-		}
+-
+-		err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
+-							tegra->host_clk,
+-							tegra->host_rst);
+-		if (err) {
+-			tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+-			dev_err(&pdev->dev,
+-				"failed to enable XUSBC domain: %d\n", err);
+-			goto put_padctl;
+-		}
+ 	} else {
+ 		err =3D tegra_xusb_powerdomain_init(&pdev->dev, tegra);
+ 		if (err)
+@@ -1518,10 +1537,22 @@ static int tegra_xusb_probe(struct platform_device =
+*pdev)
+ 	 */
+ 	platform_set_drvdata(pdev, tegra);
+=20
++	err =3D tegra_xusb_clk_enable(tegra);
++	if (err) {
++		dev_err(tegra->dev, "failed to enable clocks: %d\n", err);
++		goto put_hcd;
++	}
++
++	err =3D regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
++	if (err) {
++		dev_err(tegra->dev, "failed to enable regulators: %d\n", err);
++		goto disable_clk;
++	}
++
+ 	err =3D tegra_xusb_phy_enable(tegra);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to enable PHYs: %d\n", err);
+-		goto put_hcd;
++		goto disable_regulator;
+ 	}
+=20
+ 	/*
+@@ -1540,30 +1571,22 @@ static int tegra_xusb_probe(struct platform_device =
+*pdev)
+ 		goto disable_phy;
+ 	}
+=20
+-	pm_runtime_enable(&pdev->dev);
+-
+-	if (!pm_runtime_enabled(&pdev->dev))
+-		err =3D tegra_xusb_runtime_resume(&pdev->dev);
+-	else
+-		err =3D pm_runtime_get_sync(&pdev->dev);
+-
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to enable device: %d\n", err);
++	err =3D tegra_xusb_unpowergate_partitions(tegra);
++	if (err)
+ 		goto free_firmware;
+-	}
+=20
+ 	tegra_xusb_config(tegra);
+=20
+ 	err =3D tegra_xusb_load_firmware(tegra);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to load firmware: %d\n", err);
+-		goto put_rpm;
++		goto powergate;
+ 	}
+=20
+ 	err =3D usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to add USB HCD: %d\n", err);
+-		goto put_rpm;
++		goto powergate;
+ 	}
+=20
+ 	device_wakeup_enable(tegra->hcd->self.controller);
+@@ -1615,24 +1638,21 @@ static int tegra_xusb_probe(struct platform_device =
+*pdev)
+ 	usb_put_hcd(xhci->shared_hcd);
+ remove_usb2:
+ 	usb_remove_hcd(tegra->hcd);
+-put_rpm:
+-	if (!pm_runtime_status_suspended(&pdev->dev))
+-		tegra_xusb_runtime_suspend(&pdev->dev);
+-put_hcd:
+-	usb_put_hcd(tegra->hcd);
++powergate:
++	tegra_xusb_powergate_partitions(tegra);
+ free_firmware:
+ 	dma_free_coherent(&pdev->dev, tegra->fw.size, tegra->fw.virt,
+ 			  tegra->fw.phys);
+ disable_phy:
+ 	tegra_xusb_phy_disable(tegra);
+-	pm_runtime_disable(&pdev->dev);
++disable_regulator:
++	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
++disable_clk:
++	tegra_xusb_clk_disable(tegra);
++put_hcd:
++	usb_put_hcd(tegra->hcd);
+ put_powerdomains:
+-	if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+-		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+-		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+-	} else {
+-		tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+-	}
++	tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+ put_padctl:
+ 	tegra_xusb_padctl_put(tegra->padctl);
+ 	return err;
+@@ -1657,15 +1677,15 @@ static int tegra_xusb_remove(struct platform_device=
+ *pdev)
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+=20
+-	if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+-		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+-		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+-	} else {
++	tegra_xusb_powergate_partitions(tegra);
++
++	if (of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+ 		tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+ 	}
+=20
+ 	tegra_xusb_phy_disable(tegra);
+-
++	tegra_xusb_clk_disable(tegra);
++	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+ 	tegra_xusb_padctl_put(tegra->padctl);
+=20
+ 	return 0;
+--=20
+2.25.1
+
