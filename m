@@ -2,127 +2,151 @@ Return-Path: <SRS0=v48G=CG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D737BC433E6
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 08:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26EBC433E7
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 08:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAE882078A
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 08:30:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AF372071B
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 08:45:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sdCwCAI9"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T11C7mph"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbgH1Iab (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 Aug 2020 04:30:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56452 "EHLO
+        id S1728721AbgH1Ipa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 Aug 2020 04:45:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728269AbgH1Ia3 (ORCPT
+        with ESMTP id S1728752AbgH1Iow (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 Aug 2020 04:30:29 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4BB5C061264;
-        Fri, 28 Aug 2020 01:30:28 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id j15so276766lfg.7;
-        Fri, 28 Aug 2020 01:30:28 -0700 (PDT)
+        Fri, 28 Aug 2020 04:44:52 -0400
+Received: from mail-vk1-xa44.google.com (mail-vk1-xa44.google.com [IPv6:2607:f8b0:4864:20::a44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF8DC06123C
+        for <linux-tegra@vger.kernel.org>; Fri, 28 Aug 2020 01:44:51 -0700 (PDT)
+Received: by mail-vk1-xa44.google.com with SMTP id i20so82692vkk.2
+        for <linux-tegra@vger.kernel.org>; Fri, 28 Aug 2020 01:44:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LflMgJmibSpFeOHc4WL2YJ+POCyG0pEvbGVH5SBOv0E=;
-        b=sdCwCAI9GltezF0rEB2fLfVxKx/8qRdfoKbbiRoFKxvVCYIkR3/N1t+zeTEEbig46m
-         +Kyj/BDTYw6OGVtSPlqNjGOO+fv9AYhJPWBogZ4zZlmC2yxHp+dH2Ko7FVvt1wfQtAEJ
-         C3EGMetrjmTC/sV3gobl9IyF5UkoeKSYqq3m2hVHVbaEPYOGuzFFd5jgWMxslMdgQGer
-         9+UFDbyhkm+yhdM7yCy9ywuHycOSmJv+CRYhHhUfXf/FoN7mgRZ9eqL8dvW5VmgrW/Oe
-         mvL9YOYm9HUrthueMnVNdX9U8x9oc0gEqLz7mTAFACitArMxyd1dGhLSQEfC89ew0Qql
-         tX3g==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i68K1oVW//N2+LJY/Znt9A9GXSvc2knY+uF5OLZlW3E=;
+        b=T11C7mphpjdwy94FR3QiUCw/s5gZrgGyEYLzUcAk2VBMcgtTsIiASblHRXVOWjTR8f
+         fSKqXBAkgf1x0Aawx9GdU41IiybGpPpfdoZ24viRcWevKccV7/LcywLkUf39qPSUIgHM
+         gs3BKu6/VuSar3C7KsUUdC7YkhhrLIOQuBKubp2UruUbOs/EryrB50B+emHFGs2JTcpL
+         VnPJw8ECgwjn62NENrOKdNdJnG69PlgCedXkB67QgRMqh5EHp/8AIAUYzOyGUVsoAk4o
+         QKcK/gsJaQdig0KI4JuE1N5YPUHbqVZcGeOdMXpK93TV0Xm1DzaetY5de3wKBWnGDfMQ
+         EuFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LflMgJmibSpFeOHc4WL2YJ+POCyG0pEvbGVH5SBOv0E=;
-        b=gCsHhKqohe0/MSCkH+0iFeWo2ANHY2pdneE5uK8GqO9Tbsr3R8wef5psDc4g5nwfjw
-         iWBRHA0dxxQ1wJjYX+iQ6MTPpz767pDdzSQJ5D6FA3wteboI8Y6GCoPQ8BRuLBmG0q1J
-         XEZABPxA14rT9Hx9lYY4EmV8HTtIyRd586HXQ+xv9FvGe46S7m6e8SPPXUsmAnJBKIXt
-         9bXGSt5Xxqu1oevArpUghSGEPU6lL1a5iq3sepx3G4bnsDEjzD6klEcpDjkPziULV1MC
-         /743Z72sx6etFDifID3tr4yBCdhkfFn2zTLxMLhjBbRDXYv0sOr84aD9nWSMXx0VyCku
-         Wyzw==
-X-Gm-Message-State: AOAM532+vJoP3yOfEk5DfzLdFC45gD4DMO8c6Xhh2QkH5Az26l5Qfts9
-        P/cM65bHlEosFoK17lVAsoKjO+Z91co=
-X-Google-Smtp-Source: ABdhPJzLnvqVFe/sNW/j+lmpEBM4x5/CZ5x6tV+zcsDznlhemeqh60v+eDDBRVDdroYZaI53iNUCkA==
-X-Received: by 2002:a19:24c2:: with SMTP id k185mr276673lfk.120.1598603426636;
-        Fri, 28 Aug 2020 01:30:26 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id h6sm130676lfc.84.2020.08.28.01.30.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Aug 2020 01:30:25 -0700 (PDT)
-Subject: Re: [PATCH v5 13/36] PM / devfreq: tegra30: Use MC timings for
- building OPP table
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-References: <20200814000621.8415-1-digetx@gmail.com>
- <CGME20200814000944epcas1p3dfd0104c5fa640695dfcd4949f6b1818@epcas1p3.samsung.com>
- <20200814000621.8415-14-digetx@gmail.com>
- <1b0d75fe-79af-70eb-8450-999a3bc72bac@samsung.com>
- <1de8aa41-8001-cf46-026c-b00f8df0b9a3@gmail.com>
- <2a255211-5426-d78f-d266-cdb958f4c658@samsung.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a11d60af-3a67-6a76-57ae-7cb9bad13bed@gmail.com>
-Date:   Fri, 28 Aug 2020 11:30:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i68K1oVW//N2+LJY/Znt9A9GXSvc2knY+uF5OLZlW3E=;
+        b=ZNwx4n1PQIan31qluvrPo3M2rf30LzULMQZ+XXggM4Zza2mz4/xdODyJI3cCAAAjKf
+         fzQ0pNUBOW+lahasiIRNKNiZJ2p1UVsZB+Lbp8IEC+ZM+me88VokEqsr0z6jMm+0D756
+         d8uIuAnpCXVD5YtgiT/5khiSLhWjwKdml+QFfDzp+1rSzQIC+++jf+MoYN7aplbT+HH3
+         1+lAX2eomNoWpWEACvgLolIp5BVtU+SEjNriaLqRbOz5kKYIhHdjV2p2NmZN2FRMawUQ
+         DfsiosaL104b5l/are98oYqOnarqzDZT1mGryg9VT2ipYKBI6LR6CiOjeQdw9H0vovks
+         MxNQ==
+X-Gm-Message-State: AOAM533J09brFCIATEGjausUQJiLU0hJo1YjWtZK8pdg06eHqg13HjJL
+        hcis5njb0zzSIZkDSm4H5ijMBaZMBCrGBXqyh+4RpwpCFNDhIw==
+X-Google-Smtp-Source: ABdhPJwyLUVJLFv8vKvkEYsSU7ILzcE5NWJavW5HwQPyZHyyUDM1gvnGVTI+2DM9xnyhEB7GbwL/uRVULNGsWzDFs6Y=
+X-Received: by 2002:a1f:2a48:: with SMTP id q69mr199169vkq.69.1598604290613;
+ Fri, 28 Aug 2020 01:44:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <2a255211-5426-d78f-d266-cdb958f4c658@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1598548861-32373-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1598548861-32373-1-git-send-email-skomatineni@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 28 Aug 2020 10:44:12 +0200
+Message-ID: <CAPDyKFo+1XzHaS55jV3KsjkGA5a6A_NovLFrBw66Vg3xzTNkRQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] Fix timeout clock used by hardware data timeout
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "# 4.0+" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-28.08.2020 04:47, Chanwoo Choi пишет:
-> Hi,
-...
->> Hence the NULL-checking is unnecessary.
->>
->> When I first encountered the of_device_get_match_data(), I was also
->> thinking that adding the NULL-checks is a good idea, but later on
->> somebody pointed out to me (maybe Thierry) that it's unnecessary to do.
-> 
-> OK. Thanks.
-> 
->>
->>>> +
->>>> +	mc = tegra_get_memory_controller(soc_data->mc_compatible);
->>>> +	if (IS_ERR(mc))
->>>> +		return PTR_ERR(mc);
->>>
->>> You better to add error log.
->>
->> In practice we should get only -EPROBE_DEFER here ever. I'll consider
->> adding the message in the next revision, at least just for consistency.
-> 
-> In order to handle -EPROBE_DEFER, recommend the using of dev_err_probe().
+On Thu, 27 Aug 2020 at 19:21, Sowjanya Komatineni
+<skomatineni@nvidia.com> wrote:
+>
+> Tegra210/Tegra186/Tegra194 has incorrectly enabled
+> SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK from the beginning of their support.
+>
+> Tegra210 and later SDMMC hardware default uses sdmmc_legacy_tm (TMCLK)
+> all the time for hardware data timeout instead of SDCLK and this TMCLK
+> need to be kept enabled by Tegra sdmmc driver.
+>
+> This series includes patches to fix this for Tegra210/Tegra186/Tegra194.
+>
+> These patches need to be manually backported to 4.19.
+>
+> Will send patches for 4.19 backport separately.
+>
+> Delta between patch versions:
+> [v7]:   v7 has below change
+>         - v6 has implementation for retrieving tmclk irrespective of
+>           clocks order. But based in internal discussion with Thierry
+>           this is not required as typically order specified in DT
+>           bindings is the order validator want to see in DT.
+>
+> [v6]:   v5 is sent out mistakenly with incorrect patches.
+>         v6 includes proper patches addressing v4 feedback
+>         - updated dt-binding doc to be more clear
+>         - updated Tegra sdhci driver to retrieve sdhci and tmclk clocks
+>           based on no. of clocks in sdhci device node as old device trees
+>           do not use sdhci clock name and this allows proper clock retrival
+>           irrespective of sdhci and tmclk clocks order in device tree.
+>         - Added separate quirk for identifying SoC's supporting separate
+>           timeout clock to be more clear.
+>
+> [v5]:   Include below changes based on v4 feedback
+>         - updated dt-binding doc to be more clear
+>         - updated Tegra sdhci driver to retrieve sdhci and tmclk clocks
+>           based on no. of clocks in sdhci device node as old device trees
+>           do not use sdhci clock name and this allows proper clock retrival
+>           irrespective of sdhci and tmclk clocks order in device tree.
+>         - Added separate quirk for identifying SoC's supporting separate
+>           timeout clock to be more clear.
+>
+> [v4]:   Include additional dt-binding patch
+>
+> [v3]:   Same as v2 with fixes tag
+>
+> [v2]:   Includes minor fix
+>         - Patch-0006: parentheses around operand of '!'
+>
+> Sowjanya Komatineni (7):
+>   sdhci: tegra: Remove SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for Tegra210
+>   sdhci: tegra: Remove SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for Tegra186
+>   dt-bindings: mmc: tegra: Add tmclk for Tegra210 and later
+>   arm64: tegra: Add missing timeout clock to Tegra210 SDMMC
+>   arm64: tegra: Add missing timeout clock to Tegra186 SDMMC nodes
+>   arm64: tegra: Add missing timeout clock to Tegra194 SDMMC nodes
+>   sdhci: tegra: Add missing TMCLK for data timeout
+>
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 32 +++++++++++--
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 20 ++++----
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 15 +++---
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 20 ++++----
+>  drivers/mmc/host/sdhci-tegra.c                     | 55 ++++++++++++++++++++--
+>  5 files changed, 113 insertions(+), 29 deletions(-)
+>
+> --
+> 2.7.4
+>
 
-Hello, Chanwoo!
+Applied for fixes, thanks!
 
-Thank you for the suggestion! I wasn't aware about the dev_err_probe()
-until recently and will use this new helper in the v6!
-
-Thanks!
+Kind regards
+Uffe
