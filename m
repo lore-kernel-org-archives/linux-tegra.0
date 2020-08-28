@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C48C433E6
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 22:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3AFC2BC11
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 22:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09C1E2086A
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 22:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D26E0208CA
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Aug 2020 22:26:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gC73ZtBv"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="N5UZnWji"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbgH1W0O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 Aug 2020 18:26:14 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18106 "EHLO
+        id S1727008AbgH1W0L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 Aug 2020 18:26:11 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18108 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbgH1WZ5 (ORCPT
+        with ESMTP id S1726677AbgH1WZ5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Fri, 28 Aug 2020 18:25:57 -0400
 Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4984460000>; Fri, 28 Aug 2020 15:25:10 -0700
+        id <B5f4984460001>; Fri, 28 Aug 2020 15:25:10 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
   Fri, 28 Aug 2020 15:25:53 -0700
 X-PGP-Universal: processed;
         by hqpgpgate101.nvidia.com on Fri, 28 Aug 2020 15:25:53 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Aug
- 2020 22:25:52 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 28 Aug 2020 22:25:52 +0000
+ 2020 22:25:49 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 28 Aug 2020 22:25:49 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.174.186]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f49846f0003>; Fri, 28 Aug 2020 15:25:52 -0700
+        id <B5f49846b0002>; Fri, 28 Aug 2020 15:25:48 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
@@ -44,9 +44,9 @@ To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
 CC:     <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [PATCH 4.19 6/7] arm64: tegra: Add missing timeout clock to Tegra194 SDMMC nodes
-Date:   Fri, 28 Aug 2020 15:25:16 -0700
-Message-ID: <1598653517-13658-7-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH 4.19 1/7] sdhci: tegra: Remove SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for Tegra210
+Date:   Fri, 28 Aug 2020 15:25:11 -0700
+Message-ID: <1598653517-13658-2-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1598653517-13658-1-git-send-email-skomatineni@nvidia.com>
 References: <1598653517-13658-1-git-send-email-skomatineni@nvidia.com>
@@ -54,80 +54,53 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598653510; bh=UXDpKI9QewAM3RzZ99bpRPC6DADHnDp3cxWP5RZlxM0=;
+        t=1598653510; bh=VIKWDEAvPiySVCmo5Iz/KvGAZ9ESjUXPa7bO4W72NME=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=gC73ZtBvz8G9FRt+wWDYgrTY3QUkcSrnV0I25XNAZYT3v0eZZTqpuW7u3wlV78c5Z
-         G76Dd10iuXGI3nDw6i42NoMJU5A7d0EadvqPEOq8v7UtSjB8l3C/VlK0Jq/iPRDGcG
-         O5KeMlJA+KYjuT/4jIeAUkW1KxRm+iMchQM+jR84fyApdQQkCbLewdhbIZNbTMTZbi
-         6SuUEEJz96G1cDUiKPn5bXjIA8zP8WpApW9P7OoeHtE06G58iuIg9OVnmE/WpthWiY
-         b+MNHbLXO7XuvDK7TzdMZf8pwK3SxYLPa5FMdedX5TOnAjXnq+H/EIBiej/oqEDgL6
-         r2RWScY7T39pw==
+        b=N5UZnWji/SOKcDV8HGvHgzx8yH2vSztJjdWhFVr7bYp9Mcw8vQpQ3aTVEjBkoVX1T
+         hLfwtUA0VLdYuLb41Qi2nH2NWqNHiO/3WXZ0eHZCzlAgTFG4JTSVpWNQCcYudALsz1
+         7R7T6oA9B9TQcB9t5xhaHk8AKCPO7JmYwPNuy5NphKAqWp4gd35bupuhRa3OYFi3gM
+         2PyHwfIRe0NJ8xT/e+LTnnFQ7vcoWK9r0ZDhvKg35pbT8Lq6pByDdaHTrtdJqK/hZg
+         GFBYHmL0ueTuMHf7QT6rr6jN5fzu7eE9RsroN6qm0+E5jlpLBWWXySQXDSyQ+Xf2Py
+         ZS/lWEBTW5Hiw==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-commit 5425fb15d8ee ("arm64: tegra: Add Tegra194 chip device tree")
+commit b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
 
-Tegra194 uses separate SDMMC_LEGACY_TM clock for data timeout and
-this clock is not enabled currently which is not recommended.
+SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK is set for Tegra210 from the
+beginning of Tegra210 support in the driver.
 
-Tegra194 SDMMC advertises 12Mhz as timeout clock frequency in host
-capability register.
+Tegra210 SDMMC hardware by default uses timeout clock (TMCLK)
+instead of SDCLK and this quirk should not be set.
 
-So, this clock should be kept enabled by SDMMC driver.
+So, this patch remove this quirk for Tegra210.
 
-Fixes: 5425fb15d8ee ("arm64: tegra: Add Tegra194 chip device tree")
+Fixes: b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
 Cc: stable <stable@vger.kernel.org> # 4.19
 Tested-by: Jon Hunter <jonathanh@nvidia.com>
 Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 9fc14bb..8a319c2 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -213,8 +213,9 @@
- 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
- 			reg = <0x03400000 0x10000>;
- 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bpmp TEGRA194_CLK_SDMMC1>;
--			clock-names = "sdhci";
-+			clocks = <&bpmp TEGRA194_CLK_SDMMC1>,
-+				 <&bpmp TEGRA194_CLK_SDMMC_LEGACY_TM>;
-+			clock-names = "sdhci", "tmclk";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC1>;
- 			reset-names = "sdhci";
- 			status = "disabled";
-@@ -224,8 +225,9 @@
- 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
- 			reg = <0x03440000 0x10000>;
- 			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bpmp TEGRA194_CLK_SDMMC3>;
--			clock-names = "sdhci";
-+			clocks = <&bpmp TEGRA194_CLK_SDMMC3>,
-+				 <&bpmp TEGRA194_CLK_SDMMC_LEGACY_TM>;
-+			clock-names = "sdhci", "tmclk";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC3>;
- 			reset-names = "sdhci";
- 			status = "disabled";
-@@ -235,8 +237,9 @@
- 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
- 			reg = <0x03460000 0x10000>;
- 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&bpmp TEGRA194_CLK_SDMMC4>;
--			clock-names = "sdhci";
-+			clocks = <&bpmp TEGRA194_CLK_SDMMC4>,
-+				 <&bpmp TEGRA194_CLK_SDMMC_LEGACY_TM>;
-+			clock-names = "sdhci", "tmclk";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
- 			reset-names = "sdhci";
- 			status = "disabled";
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 27bdf6d..731956e 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -423,7 +423,6 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+-		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+ 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
 -- 
 2.7.4
 
