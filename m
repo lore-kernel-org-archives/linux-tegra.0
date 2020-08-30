@@ -2,122 +2,129 @@ Return-Path: <SRS0=+Ccn=CI=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A1FC433E6
-	for <linux-tegra@archiver.kernel.org>; Sun, 30 Aug 2020 19:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCEAC433E6
+	for <linux-tegra@archiver.kernel.org>; Sun, 30 Aug 2020 19:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56243206F0
-	for <linux-tegra@archiver.kernel.org>; Sun, 30 Aug 2020 19:18:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A98042078D
+	for <linux-tegra@archiver.kernel.org>; Sun, 30 Aug 2020 19:44:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ADD6Kq4a"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhzf3GQj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbgH3TRp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 30 Aug 2020 15:17:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36392 "EHLO
+        id S1726507AbgH3Too (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 Aug 2020 15:44:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbgH3TPJ (ORCPT
+        with ESMTP id S1726150AbgH3Tom (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 30 Aug 2020 15:15:09 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6439FC061239;
-        Sun, 30 Aug 2020 12:15:08 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id j15so2315593lfg.7;
-        Sun, 30 Aug 2020 12:15:08 -0700 (PDT)
+        Sun, 30 Aug 2020 15:44:42 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 708DEC061573;
+        Sun, 30 Aug 2020 12:44:42 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id c2so229856ljj.12;
+        Sun, 30 Aug 2020 12:44:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WKk6KWPNkMHUCww/FbErLxUYYQtEUh3n/PTtmJB/IIQ=;
-        b=ADD6Kq4arZJOO7Z+X6dlbNFUKa2MGhu79OcOljRz3WAcc/N3H23SdadMXUusZl7Re7
-         mavcADGOOGjw4YPLh4Bd3AHe3Wf3GrR9xszVDjKeNWBVzpgfPFpbu+G5v/ZCc1IocLez
-         Tml2HhWF++QwC8/gg0QSMJMYiVTHYrz7Mfq31KkwcMzdX/uXIwpZBuRtIx3Vf6OfTE4I
-         gSfTcZ6mcSbFla2yJur9lviMamt/2uiHZG0/UTLDqfDQ0fXciUFWXW/wU1YYVwLxynkp
-         32H0oWWSihfW4LFt7gufNGgSOCh6YMorVxHCY3+a2JagEhMaXuLn853leokAN8VD3nsO
-         IjnQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=w2b3uQ3grQuHzLpPQOfEHno6ki6zY9r+UONQurulOvI=;
+        b=fhzf3GQjA1EtS/4zAwotNBVfEP5BgQC/vHh7NlqVuoqdj7ROn0tVvewLZVBzxTj4Pv
+         4uAEsVCRdvMO7MN38yRhvjx55DRhviVUp+DeySquLtSENxd8LUNUq5mIKtUDp7268hWj
+         EiAUYpoHBSpKqaW7iOB+cqshvXFhudBmVbsI7vuQfku+8lEdvR++g+KmaUBIrqUudFxn
+         W8bUy8KkEXDCgYhxAAGz+7w9KmUMEitnB8JF5nbRsi/deNwUInd6AYGqmk3s0Ib8ljbl
+         l0EyB1+767rr0k5EB5hEav1tXcXzg8p3RaCj4yuxNRG9oCWCo1/o1xG6lEcvfnnZFy/d
+         3pcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WKk6KWPNkMHUCww/FbErLxUYYQtEUh3n/PTtmJB/IIQ=;
-        b=P70ZXffe7IiriynRgLFOrgujg3zCp+qiQV2DtraBUnPXzHbxNDRH7MnRX8RyYwJZs7
-         MDwZwyOsryxbtpv/1lQfakB0pFKDzMAqpRhxIc4amXyIBz2g4uoZIDStNSODVhXtjG5H
-         h4uPuSz9neHI7vO4/7Yp1kvBCS29fbXLIKIFGR4QrwqWxGuaMhNyeXs2Eb3K/jkyfDjn
-         1HVDqw+yW5WX2R5Rq7xkjw05AMrqSVvecbX+WV/ksoCgYd3N9bS52B0rBA3Qd6uOADTj
-         82vYn1zNANhjSnTRMC0hOTZmzmnqZsyksYdQrpbyEsdpHaKbB6GkX7ylp3TM9XDpD9xK
-         +ROQ==
-X-Gm-Message-State: AOAM532osjv7Nw1P0/HRBwzPySBJZh+vqXrZj/Ko6Yzt0eyt2qeOFDG3
-        JOT89QLhVftNg53aBYKa2p4=
-X-Google-Smtp-Source: ABdhPJzL0Cdo7AKGH5FiC2AREv1bSdtUCg+BEl1uu43NLTd1wRmGMfv3vj1BvcduUPeX7jN48VJ+7Q==
-X-Received: by 2002:ac2:41cc:: with SMTP id d12mr4018561lfi.20.1598814906867;
-        Sun, 30 Aug 2020 12:15:06 -0700 (PDT)
-Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id e23sm1409709lfj.80.2020.08.30.12.15.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Aug 2020 12:15:06 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=w2b3uQ3grQuHzLpPQOfEHno6ki6zY9r+UONQurulOvI=;
+        b=leG/wgtrMJFH5J1J6VxTS5Hd9aNg/sD84usrjAA03Y1WiJFHL4z0fproDJoB7tZcAL
+         64na/53cO6FqPjD53NATlKU+XdzYTqaZK6RXa5Tzy/xcHKDjRrmc1FwbKQ0alVVFyx1l
+         rUciuBZv4gnUyPPz95rSjHMUOwjfMxcLqt1KrEbWowTn5W/NQLmeq8nYdsxxZ319OF5V
+         HdHM5iyf0h4q1Z6QO0wEx8cEHseIRCq6bUp+ZNkg+3wZrQWED/tbQOXW3dHOW2y5UWB5
+         TkWkcCJOypZMplVCrlU6gWw1a+GlGk0roCnk6JjsbxNd0OcjMXmYy21aRkSfK4ebEzgD
+         3Xxg==
+X-Gm-Message-State: AOAM530wrMXZiGXqjocBQznwdUCvRy6X8lg5eIBDvQkGtFfKVewLDvZT
+        NcfpDvUyAuhtxtARDPDNifjjow+d+5c=
+X-Google-Smtp-Source: ABdhPJz59TfkPi8wlRB5m8RE5yjEcxQe68Z6X9P8P2LdznriMOncqOezMDUqioFbPNx1FbZLjJi8TA==
+X-Received: by 2002:a05:651c:11c5:: with SMTP id z5mr3132694ljo.74.1598816680601;
+        Sun, 30 Aug 2020 12:44:40 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id e8sm1114886lja.93.2020.08.30.12.44.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Aug 2020 12:44:39 -0700 (PDT)
+Subject: Re: [PATCH 16/18] staging/media/tegra-vde: Clean up IOMMU workaround
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>, hch@lst.de, joro@8bytes.org,
+        linux@armlinux.org.uk, will@kernel.org, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, jonathanh@nvidia.com,
+        vdumpa@nvidia.com, matthias.bgg@gmail.com, yong.wu@mediatek.com,
+        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
+        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1597931875.git.robin.murphy@arm.com>
+ <3535c205b9bce52556abbf2f63384fb38e009df9.1597931876.git.robin.murphy@arm.com>
+ <07135a55-cbc9-83e5-60dc-731282192554@gmail.com>
+ <cb12808b-7316-19db-7413-b7f852a6f8ae@arm.com>
+ <62a72187-442b-2103-46c3-39d3cd999f54@gmail.com>
+ <affe2cfb-19e8-8e55-acd0-7170e274ab34@arm.com>
+ <f1923a53-e799-e63c-fd22-4a6cca3b8212@gmail.com>
+ <20200827155446.GB1660457@ulmo>
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] brcmfmac: set F2 SDIO block size to 128 bytes for BCM4329
-Date:   Sun, 30 Aug 2020 22:14:39 +0300
-Message-Id: <20200830191439.10017-4-digetx@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200830191439.10017-1-digetx@gmail.com>
-References: <20200830191439.10017-1-digetx@gmail.com>
+Message-ID: <f6240633-feed-70b7-2fe8-49fcee687676@gmail.com>
+Date:   Sun, 30 Aug 2020 22:44:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200827155446.GB1660457@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Setting F2 block size to 128 bytes for BCM4329 allows to significantly
-improve RX throughput on NVIDIA Tegra20. Before this change the throughput
-was capped to 30 Mbit/s on Tegra, now throughput is at 40 Mbit/s, which is
-a maximum throughput for the BCM4329 chip. The F2 block size is borrowed
-from the downstream BCMDHD driver. The comment in the BCMDHD driver says
-that 128B improves throughput and turns out that it works for the brcmfmac
-as well.
+27.08.2020 18:54, Thierry Reding пишет:
+...
+>> The Tegra DRM has a very special quirk for ARM32 that was added in this
+>> commit [2] and driver relies on checking of whether explicit or implicit
+>> IOMMU is used in order to activate the quirk.
+>>
+>> [2]
+>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=273da5a046965ccf0ec79eb63f2d5173467e20fa
+>>
+>> Once the implicit IOMMU is used for the DRM driver, the quirk no longer
+>> works (if I'm not missing something). This problem needs to be resolved
+>> before implicit IOMMU could be used by the Tegra DRM on ARM32.
+...
+> I do have a patch lying around somewhere that implements the mapping
+> cache that was referenced in the above commit. Let me know if I should
+> dig that up and send it out.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Hello, Thierry! It certainly will be interesting to take a look at yours
+patch!
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-index 0dc4de2fa9f6..318bd00bf94f 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-@@ -45,6 +45,7 @@
- #define SDIO_FUNC2_BLOCKSIZE		512
- #define SDIO_4373_FUNC2_BLOCKSIZE	256
- #define SDIO_435X_FUNC2_BLOCKSIZE	256
-+#define SDIO_4329_FUNC2_BLOCKSIZE	128
- /* Maximum milliseconds to wait for F2 to come up */
- #define SDIO_WAIT_F2RDY	3000
- 
-@@ -920,6 +921,9 @@ int brcmf_sdiod_probe(struct brcmf_sdio_dev *sdiodev)
- 	case SDIO_DEVICE_ID_BROADCOM_4356:
- 		f2_blksz = SDIO_435X_FUNC2_BLOCKSIZE;
- 		break;
-+	case SDIO_DEVICE_ID_BROADCOM_4329:
-+		f2_blksz = SDIO_4329_FUNC2_BLOCKSIZE;
-+		break;
- 	default:
- 		break;
- 	}
--- 
-2.27.0
+I think that the caching shouldn't be strictly necessary for keeping the
+current workaround working and it should be possible to keep the code
+as-is by replacing the domain-type checking with the SoC-generation
+check in the Tegra DRM driver.
 
+In general, IMO it should be better to stash the complex changes until
+we'll get closer to adopting the new UAPI as it will certainly touch the
+aspect of the per-device mappings. But if yours patch is less than 100
+LOC, then maybe we could consider applying it right now!
