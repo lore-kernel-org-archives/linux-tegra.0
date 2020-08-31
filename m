@@ -5,76 +5,76 @@ X-Spam-Level:
 X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0838AC433E6
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 11:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3363CC433E6
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 11:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA1C0207DA
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 11:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 040152098B
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 11:53:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7Mua0vz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t0MfFI/V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbgHaLmS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Aug 2020 07:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47886 "EHLO
+        id S1726224AbgHaLxm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Aug 2020 07:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbgHaLmR (ORCPT
+        with ESMTP id S1726121AbgHaLxl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Aug 2020 07:42:17 -0400
+        Mon, 31 Aug 2020 07:53:41 -0400
 Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 533AFC061573;
-        Mon, 31 Aug 2020 04:42:16 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id c10so5109484edk.6;
-        Mon, 31 Aug 2020 04:42:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EECDC061573;
+        Mon, 31 Aug 2020 04:53:39 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id n22so716725edt.4;
+        Mon, 31 Aug 2020 04:53:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Duh1V085veXGe65AU6M3+q7eVYSTOZ5DljpuqDKUcVA=;
-        b=V7Mua0vzsymkuA4Ully/sJn+hoJqt3u/HxARTSL+0Ytd3Hx7StMN9oj6S4TkRXJINo
-         hPPcEvcBoIVfIQUK/09A1Fbp8r5STkk5ePaJT0F53hcIbwNer8JEZEU9W0+6d+UXSlir
-         0etcaPK/VMVKtUdUi/SfvmCDgMb1Z7QI+NEhMJsFLZohwHhd/2MmWY5jiGNRNIABPvc+
-         TDhP36uf3H6m8OZnHa3lnOd6RHpnAD64iI7g5uojPU+kiHh5OlNA/KRPOak4H0XZbmX5
-         rrDuXk4HzoUZH2wc5uJsCYebex7Od9AOd+u+Z6rrIj6kFVZJ24xlvibO2Sk10sKo7W8X
-         ewpw==
+        bh=GXk7qI7N4bQmfsEAs5tr94//1pxOpXUujDZHPwZhTbY=;
+        b=t0MfFI/VvF3AgjVOr2OHiF3lYvL3eCHzR1fJ2mOyq+lHuQrkRAs35aw3SNjCdGXCn6
+         uj2iNqgITBUKQyXGZIZMdsxpN6G4BNcrUCJEImuqTEtCfLAc6yxWChJyc/7TQEEOnYzl
+         Ifty2wQ5KO8foMvO4QuEfGxL2tAaQHxnwYkkvy09LcqbZFnUy2qWnJtMA2RhQv6J8MtO
+         LiPeEtHz3Xge7bpIJNEsYpGErrcPGmYxPUGmDqdjkVAybBXl0YSlk5YxN1ZrtVfUIp89
+         gFxjKFkyEVdwjPpDT+cD8Dh8iyiwJRQb6V4LiXqsj6M2gjthUkbOfjHyGHog6h76d7hO
+         5JiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Duh1V085veXGe65AU6M3+q7eVYSTOZ5DljpuqDKUcVA=;
-        b=LxMv6s+3fOZqrsmNJJtQcMr4PJ2RF+JopPNlioZsLeCClXHHhYbYNhI0PS3TBe84FI
-         RSL4gnXIgc2OPwhHwf2f/SKkYJBYdCviCgSkIG2QS6WBH3UpbVPfGwjE33RFLqk/KQeY
-         8GPCyUwqqEqTeio030S/nnx9A6FU0e8Z80FAHzK7ovpf7ZIx3gSlsXlFOmM5f9jhcCX7
-         6psjAbQqp0mm0hMlm6JNn1fxOr0OBtxWBs97n1jZI0+PnjD9jUTJKXlfHvAqCYETJ3Vu
-         2OpeDQi8vOWb/j1kqfZQu1lnlnuNDZlDGUaOBgMtkGfaj45DtIsRVZ5ZF5jYUu8voxRV
-         V6JA==
-X-Gm-Message-State: AOAM533XzKxOxmRd5V44kyuDIrRRxyfz4gLL+QJtZVFgsXR5j1J7ca0J
-        sNPwAfSC0x03PBygUoblW7U=
-X-Google-Smtp-Source: ABdhPJwsJIHZoMgqd7ZW/2RTScLUQLgKsk4NYHNIy5V6Q8TJjEGbSiQw2r3F3b4eduhRG4ndrkaChQ==
-X-Received: by 2002:aa7:dcd9:: with SMTP id w25mr803949edu.280.1598874134641;
-        Mon, 31 Aug 2020 04:42:14 -0700 (PDT)
+        bh=GXk7qI7N4bQmfsEAs5tr94//1pxOpXUujDZHPwZhTbY=;
+        b=X6UpsrDFcl/JI1QDn8Ur4lHEuQx+AZZZpJIZoMzxvzwRSQTLLfC5mf05tQ16Qm5ts3
+         fV34BHtyeRXLuLAhMdtCBLiFJLs9k3zqLdSd0NU4860r0llj8YeMeXgINPzgpWNUu5tr
+         YZLrQF3V4VtqbKpYNgzLngGbIAbCYiFdoXjF35vWUpMwN4HkJJIR6UeEE41d4Fj39Ffb
+         As5FTGMuvmLU3UMI/q1r+JQzj5G/inOgE5g/8J7gnUJxG0d8SV/J+oGDNLoTcLVIkp/2
+         +fmPTUapLkhGHXio+Nzv1oo6U1vj0de/sMJ4un0D9kcacRWVdxqFaALelnm1Ps3KjdQ6
+         fvAg==
+X-Gm-Message-State: AOAM532HSUM3GfCPtf3bEqrMHLjOFtVfbrUXbf2pHaw1XXhqNq0IXEN/
+        6FyGGHpL1rVM+YA0kKWadBA=
+X-Google-Smtp-Source: ABdhPJzkhTekhK2NnvINKM71d6x+uStF50c9YcO/gEbkyLskv8ZfDqA1DyhgZbQXKcC8xiR1gNfbww==
+X-Received: by 2002:a05:6402:10d3:: with SMTP id p19mr916991edu.380.1598874817936;
+        Mon, 31 Aug 2020 04:53:37 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id o60sm7292704eda.30.2020.08.31.04.42.13
+        by smtp.gmail.com with ESMTPSA id g25sm7328404edp.22.2020.08.31.04.53.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2020 04:42:13 -0700 (PDT)
-Date:   Mon, 31 Aug 2020 13:42:12 +0200
+        Mon, 31 Aug 2020 04:53:36 -0700 (PDT)
+Date:   Mon, 31 Aug 2020 13:53:30 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     JC Kuo <jckuo@nvidia.com>
 Cc:     gregkh@linuxfoundation.org, robh@kernel.org, jonathanh@nvidia.com,
         kishon@ti.com, linux-tegra@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, nkristam@nvidia.com
-Subject: Re: [PATCH v2 03/12] phy: tegra: xusb: t210: rearrange UPHY init
-Message-ID: <20200831114212.GA1689119@ulmo>
+Subject: Re: [PATCH v2 04/12] phy: tegra: xusb: t210: add lane_iddq operations
+Message-ID: <20200831115330.GB1689119@ulmo>
 References: <20200831044043.1561074-1-jckuo@nvidia.com>
- <20200831044043.1561074-4-jckuo@nvidia.com>
+ <20200831044043.1561074-5-jckuo@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
+        protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
 Content-Disposition: inline
-In-Reply-To: <20200831044043.1561074-4-jckuo@nvidia.com>
+In-Reply-To: <20200831044043.1561074-5-jckuo@nvidia.com>
 User-Agent: Mutt/1.14.6 (2020-07-11)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
@@ -82,391 +82,282 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---jI8keyz6grp/JLjh
+--ZoaI/ZTpAVc4A5k6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Please start commit subjects with a capital letter after the prefix.
-Also, please avoid t210 as abbreviation and use tegra210 instead.
-
-The above should be something like:
-
-    phy: tegra: xusb: tegra210: Rearrange UPHY init
-
-Or perhaps:
-
-    phy: tegra: xusb: Rearrange UPHY init on Tegra210
-
-On Mon, Aug 31, 2020 at 12:40:34PM +0800, JC Kuo wrote:
-> This commit is a preparation for enabling XUSB SC7 support.
-> It rearranges Tegra210 XUSB PADCTL UPHY initialization sequence,
-> for the following reasons:
->=20
-> 1. PLLE hardware power sequencer has to be enabled only after both
->    PEX UPHY PLL and SATA UPHY PLL are initialized.
->    tegra210_uphy_init() -> tegra210_pex_uphy_enable()
->                         -> tegra210_sata_uphy_enable()
->                         -> tegra210_plle_hw_sequence_start()
->                         -> tegra210_aux_mux_lp0_clamp_disable()
->=20
-> 2. Once UPHY PLL hardware power sequencer is enabled, do not assert
->    reset to PEX/SATA PLLs, otherwise UPHY PLL operation will be
->    broken.
->    reset_control_assert(pcie->rst) and reset_control_assert(sata->rst)
->    are removed from PEX/SATA UPHY disable procedure.
->=20
-> 3. At cold boot and SC7 exit, the following bits must be cleared after
->    PEX/SATA lanes are out of IDDQ (IDDQ_DISABLE=3D1).
->    a. XUSB_PADCTL_ELPG_PROGRAM1_AUX_MUX_LP0_CLAMP_EN,
->    b. XUSB_PADCTL_ELPG_PROGRAM1_AUX_MUX_LP0_CLAMP_EN_EARLY
->    c. XUSB_PADCTL_ELPG_PROGRAM1_AUX_MUX_LP0_VCORE_DOWN
->=20
->    tegra210_pex_uphy_enable() and tegra210_sata_uphy_enable() are in
->    charge of bringing lanes out of IDDQ, and then AUX_MUX_LP0_* bits
->    will be cleared by tegra210_aux_mux_lp0_clamp_disable().
->=20
-> 4. The programming sequence in tegra210_usb3_port_enable() is required
->    for both cold boot and SC7 exit, and must be performed only after
->    PEX/SATA UPHY is initialized. Therefore, this commit moves the
->    programming sequence to .power_on() stub which is invoked after
->    .init(). PEX/SATA UPHY is initialzied in .init().
+On Mon, Aug 31, 2020 at 12:40:35PM +0800, JC Kuo wrote:
+> As per Tegra210 TRM, before changing lane assignments, driver should
+> keep lanes in IDDQ and sleep state; after changing lane assignments,
+> driver should bring lanes out of IDDQ.
+> This commit implements the required operations.
 >=20
 > Signed-off-by: JC Kuo <jckuo@nvidia.com>
 > ---
->  drivers/phy/tegra/xusb-tegra210.c | 495 ++++++++++++++++--------------
->  drivers/phy/tegra/xusb.c          |   2 +-
->  drivers/phy/tegra/xusb.h          |   6 +-
->  3 files changed, 270 insertions(+), 233 deletions(-)
-
-You've listed 4 logically separate changes in the commit message, so I'm
-wondering if it's possible to split this patch into 4 different ones. It
-might not be worth doing that if they all basically fix the sequence in
-one go, but it's pretty difficult to review this as-is.
-
+>  drivers/phy/tegra/xusb-tegra210.c | 94 +++++++++++++++++++++++++++++++
+>  drivers/phy/tegra/xusb.c          |  6 ++
+>  drivers/phy/tegra/xusb.h          |  4 +-
+>  3 files changed, 103 insertions(+), 1 deletion(-)
 >=20
 > diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-t=
 egra210.c
-> index 66bd4613835b..3a2d9797fb9f 100644
+> index 3a2d9797fb9f..fe1ab440424d 100644
 > --- a/drivers/phy/tegra/xusb-tegra210.c
 > +++ b/drivers/phy/tegra/xusb-tegra210.c
-> @@ -256,23 +256,52 @@ to_tegra210_xusb_padctl(struct tegra_xusb_padctl *p=
-adctl)
->  	return container_of(padctl, struct tegra210_xusb_padctl, base);
->  }
+> @@ -198,6 +198,18 @@
+>  #define XUSB_PADCTL_UPHY_MISC_PAD_CTL1_AUX_RX_TERM_EN BIT(18)
+>  #define XUSB_PADCTL_UPHY_MISC_PAD_CTL1_AUX_RX_MODE_OVRD BIT(13)
 > =20
-> +static const struct tegra_xusb_lane_map tegra210_usb3_map[] =3D {
-> +	{ 0, "pcie", 6 },
-> +	{ 1, "pcie", 5 },
-> +	{ 2, "pcie", 0 },
-> +	{ 2, "pcie", 3 },
-> +	{ 3, "pcie", 4 },
-> +	{ 3, "pcie", 4 },
-> +	{ 0, NULL,   0 }
-> +};
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(x) (0x464 + (x) * 0x40)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ BIT(0)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ_OVRD BIT(1)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_MASK (0x3 << 4)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_VAL (0x3 << 4)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_PWR_OVRD BIT(24)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ BIT(8)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ_OVRD BIT(9)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_MASK (0x3 << 12)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_VAL (0x3 << 12)
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_PWR_OVRD BIT(25)
 > +
-> +static int tegra210_usb3_lane_map(struct tegra_xusb_lane *lane)
+>  #define XUSB_PADCTL_UPHY_PLL_S0_CTL1 0x860
+> =20
+>  #define XUSB_PADCTL_UPHY_PLL_S0_CTL2 0x864
+> @@ -209,6 +221,7 @@
+>  #define XUSB_PADCTL_UPHY_PLL_S0_CTL8 0x87c
+> =20
+>  #define XUSB_PADCTL_UPHY_MISC_PAD_S0_CTL1 0x960
+> +#define XUSB_PADCTL_UPHY_MISC_PAD_S0_CTL2 0x964
+> =20
+>  #define XUSB_PADCTL_UPHY_USB3_PADX_ECTL1(x) (0xa60 + (x) * 0x40)
+>  #define XUSB_PADCTL_UPHY_USB3_PAD_ECTL1_TX_TERM_CTRL_SHIFT 16
+> @@ -1636,6 +1649,63 @@ static const struct tegra_xusb_pad_soc tegra210_hs=
+ic_pad =3D {
+>  	.ops =3D &tegra210_hsic_ops,
+>  };
+> =20
+> +static void
+> +tegra210_uphy_lane_iddq_enable(struct tegra_xusb_padctl *padctl, unsigne=
+d lane)
 > +{
-> +	const struct tegra_xusb_lane_map *map;
+> +	u32 val, offset;
 > +
-> +	for (map =3D tegra210_usb3_map; map->type; map++) {
-> +		if (map->index =3D=3D lane->index &&
-> +		    strcmp(map->type, lane->pad->soc->name) =3D=3D 0) {
-> +			dev_dbg(lane->pad->padctl->dev,
-> +				"lane =3D %s map to port =3D usb3-%d\n",
-
-"mapped to port"?
-
-> +				lane->pad->soc->lanes[lane->index].name,
-> +				map->port);
-> +			return map->port;
-> +		}
+> +	if (lane <=3D 6)
+> +		offset =3D XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(lane);
+> +	else if (lane =3D=3D 7)
+> +		offset =3D XUSB_PADCTL_UPHY_MISC_PAD_S0_CTL2;
+> +	else {
+> +		WARN(true, "invalid lane %u\n", lane);
+> +		return;
 > +	}
 > +
-> +	return -EINVAL;
+> +	val =3D padctl_readl(padctl, offset);
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ_OVRD;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ_OVRD;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_PWR_OVRD;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_PWR_OVRD;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ;
+> +	val &=3D ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_MASK;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_VAL;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ;
+> +	val &=3D ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_MASK;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_VAL;
+> +	padctl_writel(padctl, val, offset);
 > +}
 > +
->  /* must be called under padctl->lock */
->  static int tegra210_pex_uphy_enable(struct tegra_xusb_padctl *padctl)
->  {
->  	struct tegra_xusb_pcie_pad *pcie =3D to_pcie_pad(padctl->pcie);
->  	unsigned long timeout;
->  	u32 value;
-> -	int err;
-> +	int err, i;
-
-i should be unsigned to match the type of padctl->pcie->soc->num_lanes.
-
-> =20
-> -	if (pcie->enable > 0) {
-> -		pcie->enable++;
-> +	if (pcie->enable)
->  		return 0;
-> -	}
-> =20
->  	err =3D clk_prepare_enable(pcie->pll);
->  	if (err < 0)
->  		return err;
-> =20
-> +	if (tegra210_plle_hw_sequence_is_enabled())
-> +		goto skip_pll_init;
+> +static void
+> +tegra210_uphy_lane_iddq_disable(struct tegra_xusb_padctl *padctl, unsign=
+ed lane)
+> +{
+> +	u32 val, offset;
 > +
->  	err =3D reset_control_deassert(pcie->rst);
-
-Is it guaranteed that the reset is asserted if the PLLE HW sequencer is
-enabled? I suppose with the change to not enable the sequencer by
-default in one of the earlier patches this may indeed be a valid
-assumption.
-
->  	if (err < 0)
->  		goto disable;
-> @@ -455,7 +484,14 @@ static int tegra210_pex_uphy_enable(struct tegra_xus=
-b_padctl *padctl)
-> =20
->  	tegra210_xusb_pll_hw_sequence_start();
-> =20
-> -	pcie->enable++;
-> +skip_pll_init:
-> +	pcie->enable =3D true;
-> +
-> +	for (i =3D 0; i < padctl->pcie->soc->num_lanes; i++) {
-> +		value =3D padctl_readl(padctl, XUSB_PADCTL_USB3_PAD_MUX);
-> +		value |=3D XUSB_PADCTL_USB3_PAD_MUX_PCIE_IDDQ_DISABLE(i);
-> +		padctl_writel(padctl, value, XUSB_PADCTL_USB3_PAD_MUX);
-> +	}
-> =20
->  	return 0;
-> =20
-> @@ -469,34 +505,42 @@ static int tegra210_pex_uphy_enable(struct tegra_xu=
-sb_padctl *padctl)
->  static void tegra210_pex_uphy_disable(struct tegra_xusb_padctl *padctl)
->  {
->  	struct tegra_xusb_pcie_pad *pcie =3D to_pcie_pad(padctl->pcie);
-> +	u32 value;
-> +	int i;
-
-Same as above.
-
-> =20
-> -	mutex_lock(&padctl->lock);
-> -
-> -	if (WARN_ON(pcie->enable =3D=3D 0))
-> -		goto unlock;
-> +	if (WARN_ON(!pcie->enable))
+> +	if (lane <=3D 6)
+> +		offset =3D XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(lane);
+> +	else if (lane =3D=3D 7)
+> +		offset =3D XUSB_PADCTL_UPHY_MISC_PAD_S0_CTL2;
+> +	else {
+> +		WARN(true, "invalid lane %d\n", lane);
 > +		return;
-> =20
-> -	if (--pcie->enable > 0)
-> -		goto unlock;
-> +	pcie->enable =3D false;
-> =20
-> -	reset_control_assert(pcie->rst);
-> +	for (i =3D 0; i < padctl->pcie->soc->num_lanes; i++) {
-> +		value =3D padctl_readl(padctl, XUSB_PADCTL_USB3_PAD_MUX);
-> +		value &=3D ~XUSB_PADCTL_USB3_PAD_MUX_PCIE_IDDQ_DISABLE(i);
-> +		padctl_writel(padctl, value, XUSB_PADCTL_USB3_PAD_MUX);
 > +	}
->  	clk_disable_unprepare(pcie->pll);
-
-Please leave a blank line after a block for better readability.
-
-> -
-> -unlock:
-> -	mutex_unlock(&padctl->lock);
->  }
-> =20
->  /* must be called under padctl->lock */
-> -static int tegra210_sata_uphy_enable(struct tegra_xusb_padctl *padctl, b=
-ool usb)
-> +static int tegra210_sata_uphy_enable(struct tegra_xusb_padctl *padctl)
->  {
->  	struct tegra_xusb_sata_pad *sata =3D to_sata_pad(padctl->sata);
-> +	struct tegra_xusb_lane *lane =3D tegra_xusb_find_lane(padctl, "sata", 0=
-);
->  	unsigned long timeout;
->  	u32 value;
-> -	int err;
-> +	int err, i;
-
-Same comment as above for "i".
-
-> +	bool usb;
-> =20
-> -	if (sata->enable > 0) {
-> -		sata->enable++;
-> +	if (sata->enable)
-
-Do we want a WARN_ON() here for symmetry with the implementation of
-tegra210_sata_uphy_disable() below?
-
->  		return 0;
-> -	}
 > +
-> +	if (!lane)
-> +		return 0;
-> +
-> +	if (tegra210_plle_hw_sequence_is_enabled())
-> +		goto skip_pll_init;
-> +
-> +	usb =3D tegra_xusb_lane_check(lane, "usb3-ss");
-> =20
->  	err =3D clk_prepare_enable(sata->pll);
->  	if (err < 0)
-> @@ -697,7 +741,14 @@ static int tegra210_sata_uphy_enable(struct tegra_xu=
-sb_padctl *padctl, bool usb)
-> =20
->  	tegra210_sata_pll_hw_sequence_start();
-> =20
-> -	sata->enable++;
-> +skip_pll_init:
-> +	sata->enable =3D true;
-> +
-> +	for (i =3D 0; i < padctl->sata->soc->num_lanes; i++) {
-> +		value =3D padctl_readl(padctl, XUSB_PADCTL_USB3_PAD_MUX);
-> +		value |=3D XUSB_PADCTL_USB3_PAD_MUX_SATA_IDDQ_DISABLE(i);
-> +		padctl_writel(padctl, value, XUSB_PADCTL_USB3_PAD_MUX);
-> +	}
-> =20
->  	return 0;
-> =20
-> @@ -711,31 +762,26 @@ static int tegra210_sata_uphy_enable(struct tegra_x=
-usb_padctl *padctl, bool usb)
->  static void tegra210_sata_uphy_disable(struct tegra_xusb_padctl *padctl)
->  {
->  	struct tegra_xusb_sata_pad *sata =3D to_sata_pad(padctl->sata);
-> +	u32 value;
-> +	int i;
-
-unsigned int, please.
-
-> =20
-> -	mutex_lock(&padctl->lock);
-> -
-> -	if (WARN_ON(sata->enable =3D=3D 0))
-> -		goto unlock;
-> +	if (WARN_ON(!sata->enable))
-> +		return;
-> =20
-> -	if (--sata->enable > 0)
-> -		goto unlock;
-> +	sata->enable =3D false;
-> =20
-> -	reset_control_assert(sata->rst);
-> +	for (i =3D 0; i < padctl->sata->soc->num_lanes; i++) {
-> +		value =3D padctl_readl(padctl, XUSB_PADCTL_USB3_PAD_MUX);
-> +		value &=3D ~XUSB_PADCTL_USB3_PAD_MUX_SATA_IDDQ_DISABLE(i);
-> +		padctl_writel(padctl, value, XUSB_PADCTL_USB3_PAD_MUX);
-> +	}
->  	clk_disable_unprepare(sata->pll);
-> -
-> -unlock:
-> -	mutex_unlock(&padctl->lock);
->  }
-> =20
-> -static int tegra210_xusb_padctl_enable(struct tegra_xusb_padctl *padctl)
-> +static void tegra210_aux_mux_lp0_clamp_disable(struct tegra_xusb_padctl =
-*padctl)
->  {
->  	u32 value;
-> =20
-> -	mutex_lock(&padctl->lock);
-> -
-> -	if (padctl->enable++ > 0)
-> -		goto out;
-> -
->  	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM1);
->  	value &=3D ~XUSB_PADCTL_ELPG_PROGRAM1_AUX_MUX_LP0_CLAMP_EN;
->  	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM1);
-> @@ -751,24 +797,12 @@ static int tegra210_xusb_padctl_enable(struct tegra=
-_xusb_padctl *padctl)
->  	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM1);
->  	value &=3D ~XUSB_PADCTL_ELPG_PROGRAM1_AUX_MUX_LP0_VCORE_DOWN;
->  	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM1);
-> -
-> -out:
-> -	mutex_unlock(&padctl->lock);
-> -	return 0;
->  }
-> =20
-> -static int tegra210_xusb_padctl_disable(struct tegra_xusb_padctl *padctl)
-> +static void tegra210_aux_mux_lp0_clamp_enable(struct tegra_xusb_padctl *=
-padctl)
->  {
->  	u32 value;
-> =20
-> -	mutex_lock(&padctl->lock);
-> -
-> -	if (WARN_ON(padctl->enable =3D=3D 0))
-> -		goto out;
-> -
-> -	if (--padctl->enable > 0)
-> -		goto out;
-> -
->  	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM1);
->  	value |=3D XUSB_PADCTL_ELPG_PROGRAM1_AUX_MUX_LP0_VCORE_DOWN;
->  	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM1);
-> @@ -784,12 +818,36 @@ static int tegra210_xusb_padctl_disable(struct tegr=
-a_xusb_padctl *padctl)
->  	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM1);
->  	value |=3D XUSB_PADCTL_ELPG_PROGRAM1_AUX_MUX_LP0_CLAMP_EN;
->  	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM1);
+> +	val =3D padctl_readl(padctl, offset);
+> +	val &=3D ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ_OVRD;
+> +	val &=3D ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ_OVRD;
+> +	val &=3D ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_PWR_OVRD;
+> +	val &=3D ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_PWR_OVRD;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ;
+> +	val &=3D ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_MASK;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_VAL;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ;
+> +	val &=3D ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_MASK;
+> +	val |=3D XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_VAL;
+> +	padctl_writel(padctl, val, offset);
 > +}
 > +
-> +static int tegra210_uphy_init(struct tegra_xusb_padctl *padctl)
-> +{
-> +	if (padctl->pcie)
-> +		tegra210_pex_uphy_enable(padctl);
-> +	if (padctl->sata)
-> +		tegra210_sata_uphy_enable(padctl);
 > +
-> +	if (!tegra210_plle_hw_sequence_is_enabled())
-> +		tegra210_plle_hw_sequence_start();
-> +	else
-> +		dev_dbg(padctl->dev, "PLLE is already in HW control\n");
-> +
-> +	tegra210_aux_mux_lp0_clamp_disable(padctl);
-> =20
-> -out:
-> -	mutex_unlock(&padctl->lock);
->  	return 0;
+>  static const char *tegra210_pcie_functions[] =3D {
+>  	"pcie-x1",
+>  	"usb3-ss",
+> @@ -1808,9 +1878,21 @@ static void tegra210_pcie_lane_remove(struct tegra=
+_xusb_lane *lane)
+>  	kfree(pcie);
 >  }
 > =20
-> +static void __maybe_unused
-> +tegra210_uphy_deinit(struct tegra_xusb_padctl *padctl)
+> +static void tegra210_pcie_lane_iddq_enable(struct tegra_xusb_lane *lane)
 > +{
-> +	tegra210_aux_mux_lp0_clamp_enable(padctl);
+> +	tegra210_uphy_lane_iddq_enable(lane->pad->padctl, lane->index);
+> +}
+> +
+> +static void tegra210_pcie_lane_iddq_disable(struct tegra_xusb_lane *lane)
+> +{
+> +	tegra210_uphy_lane_iddq_disable(lane->pad->padctl, lane->index);
+> +}
+> +
+>  static const struct tegra_xusb_lane_ops tegra210_pcie_lane_ops =3D {
+>  	.probe =3D tegra210_pcie_lane_probe,
+>  	.remove =3D tegra210_pcie_lane_remove,
+> +	.iddq_enable =3D tegra210_pcie_lane_iddq_enable,
+> +	.iddq_disable =3D tegra210_pcie_lane_iddq_disable,
+>  };
+> =20
+>  static int tegra210_pcie_phy_init(struct phy *phy)
+> @@ -1971,9 +2053,21 @@ static void tegra210_sata_lane_remove(struct tegra=
+_xusb_lane *lane)
+>  	kfree(sata);
+>  }
+> =20
+> +static void tegra210_sata_lane_iddq_enable(struct tegra_xusb_lane *lane)
+> +{
+> +	tegra210_uphy_lane_iddq_enable(lane->pad->padctl, lane->index + 7);
+> +}
+> +
+> +static void tegra210_sata_lane_iddq_disable(struct tegra_xusb_lane *lane)
+> +{
+> +	tegra210_uphy_lane_iddq_disable(lane->pad->padctl, lane->index + 7);
+> +}
 
-Do we need tegra210_plle_hw_sequence_stop() here?
+This looks like abstraction at the wrong level. You introduce this
+arbtitrary offset 7 to differentiate between the two types, whereas what
+you really only seem to be after is to get the correct offset.
+
+Can't we instead make tegra210_uphy_lane_iddq_{enable,disable}() take
+the offset instead and push the logic to pick the offset into the
+callers? We could then have an extra helper that determines the offset
+=66rom the lane if we want to avoid duplicating that logic.
+
+Or perhaps an even better way would be to store the offset to this MISC
+register in struct tegra_xusb_lane_soc? Something like this perhaps:
+
+    struct tegra_xusb_lane_soc {
+        ...
+        struct {
+            unsigned int misc;
+        } regs;
+    };
+
+That way we don't even have to go through two layers but instead can
+operate on the struct tegra_xusb_lane directly.
 
 > +
-> +	if (padctl->pcie)
-> +		tegra210_pex_uphy_disable(padctl);
-> +	if (padctl->sata)
-> +		tegra210_sata_uphy_disable(padctl);
+>  static const struct tegra_xusb_lane_ops tegra210_sata_lane_ops =3D {
+>  	.probe =3D tegra210_sata_lane_probe,
+>  	.remove =3D tegra210_sata_lane_remove,
+> +	.iddq_enable =3D tegra210_sata_lane_iddq_enable,
+> +	.iddq_disable =3D tegra210_sata_lane_iddq_disable,
+>  };
+> =20
+>  static int tegra210_sata_phy_init(struct phy *phy)
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index b48b590aa0c1..74abd67e3a31 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -321,11 +321,17 @@ static void tegra_xusb_lane_program(struct tegra_xu=
+sb_lane *lane)
+>  	if (soc->num_funcs < 2)
+>  		return;
+> =20
+> +	if (lane->pad->ops->iddq_enable && lane->pad->ops->iddq_disable)
+> +		lane->pad->ops->iddq_enable(lane);
 
-Maybe reverse the order of these two so that they are symmetrical with
-tegra210_uphy_init()? Also, single blank lines between the two blocks
-make this easier to read, in my opinion.
+You can drop the second check because it isn't relevant here.
+
+> +
+>  	/* choose function */
+>  	value =3D padctl_readl(padctl, soc->offset);
+>  	value &=3D ~(soc->mask << soc->shift);
+>  	value |=3D lane->function << soc->shift;
+>  	padctl_writel(padctl, value, soc->offset);
+> +
+> +	if (lane->pad->ops->iddq_enable && lane->pad->ops->iddq_disable)
+> +		lane->pad->ops->iddq_disable(lane);
+
+Similarly, the first check can be dropped here because only the second
+is relevant. It might make sense to only support IDDQ if both callbacks
+are implemented, but that's not something we need to check at this
+level. The check here is only to avoid calling a NULL function. If you
+absolutely want to do sanity checks, do them at ->probe() time. But I
+don't think we need that here. It's up to the developer to get this
+right.
+
+>  }
+> =20
+>  static void tegra_xusb_pad_program(struct tegra_xusb_pad *pad)
+> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+> index 0c828694cf2d..485b692a3b15 100644
+> --- a/drivers/phy/tegra/xusb.h
+> +++ b/drivers/phy/tegra/xusb.h
+> @@ -22,6 +22,7 @@ struct phy;
+>  struct phy_provider;
+>  struct platform_device;
+>  struct regulator;
+> +struct tegra_xusb_padctl;
+> =20
+>  /*
+>   * lanes
+> @@ -126,6 +127,8 @@ struct tegra_xusb_lane_ops {
+>  					 struct device_node *np,
+>  					 unsigned int index);
+>  	void (*remove)(struct tegra_xusb_lane *lane);
+> +	void (*iddq_enable)(struct tegra_xusb_lane *lane);
+> +	void (*iddq_disable)(struct tegra_xusb_lane *lane);
+>  };
+> =20
+>  bool tegra_xusb_lane_check(struct tegra_xusb_lane *lane, const char *fun=
+ction);
+> @@ -134,7 +137,6 @@ bool tegra_xusb_lane_check(struct tegra_xusb_lane *la=
+ne, const char *function);
+>   * pads
+>   */
+>  struct tegra_xusb_pad_soc;
+> -struct tegra_xusb_padctl;
+> =20
+>  struct tegra_xusb_pad_ops {
+>  	struct tegra_xusb_pad *(*probe)(struct tegra_xusb_padctl *padctl,
+
+These last two hunks look like leftovers. I don't see why they are
+needed here.
 
 Thierry
 
---jI8keyz6grp/JLjh
+--ZoaI/ZTpAVc4A5k6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9M4hEACgkQ3SOs138+
-s6EI2hAApNax2Figu58Vn9NnvSW/ThTbFJ2/WPsRSW84s5KymTYdApMhBnb8Gbkn
-xeIAdJeyrTqJuSWbRLXDb1UiypPJA40nwRjIZKWvXQId00E+F6vPf6h7ZFGWfPpU
-AWBOEsQSCi7liBJWLg0oJC5LQedLv3uvRNNXMhiVmp188iWExlss5moSLg3YHVJW
-DWDnHv82v+b3p/j/qMk9xKkAvyMh5uhpHuX9/6xInWwFST5Q2sHg2hsgRRma0onO
-u0XaDxFqk8zgrQ6jCchL5dCnr51b9tNDWNqHwn08HZpCBeKrKkvduNhEl5oEV90J
-3rhNNRCfssf/JBwwAfhA9oARxKQMvT3g6YuuJESVzZO27cZz4SFiKafUAtM/CwBL
-+OpWkFe44xIovY30dJQWaQ6e/2GMJgWsRQm3ng34F67ruVLcUv0XaD758KskHcpQ
-D5L2ypbi4SLQh7/PP0wn8uH84eGPQSi3ZjnjMjr6ET66VoreVGmYvVtenSEM1bEM
-TYcnrEKLnwnO/FUa5LQ52isvXAes8O8roOAcW0U3HL2jhK2bjE0mQveZxSU3TSmK
-0K+2YdLBNRCEnPEy3Z5uCa4ACfXip+Qs0lni6NmaHy8+gibYgpaDRDqqL1j74zoI
-HbyUFTRd3n1M/FHmDcl8idFdYgikuFXZ9Yytw+4QoLsXl30agPk=
-=aDUQ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9M5LQACgkQ3SOs138+
+s6Ghkw//YI4c0PDUp2NZlN2Sk6ZPCpsy/Tztt0WRmu6b9WMymhXr4D9+jykl97BF
+7LlDt9fi/E+vXdnTqHyTgACDq7zO5AeXrzE8g4az2/EeKRmxIN7eNxnnz2JAOipY
+A7Q8GxBK40CmwgnuYAXk53jEFRRNRMQ9net9U9rX/ivJhNSuo2/L8oxXPdcXi9lS
+AGsIy17GPYTBabxP1Eann2mgqjLQvH4JsQgkNOK0U3n7W6SdOpUWFOZjf9q8XhKH
+Wj3brktQFS8bOg997ohdMZiif11QVieQmHsdOxbtbWwaLzOqalgCHQmUV7H6/aWJ
+tdg/V4LNg+NzAiupC3pyB0Z9FFt3b5prJs36oECeBYkRhp6qKs6uhBBnJ4eToFbI
+IAvbfaPqg6s+T9lwXkV93pTPP/vwKUQb6miXBKVIyYLfLlTZtCrVfJEzJ1Y5nXxW
+s03X2KM//HRynwGuV602vYJ8xzLEIkGyjDWpumYQkIkt6KjNabSbZs1EIGQONa76
+C/OZzIQVorHX/w5LAkR9aP8ulYcKNqXz/cXJyoacDeR6q5U9symFPWMQGDCbKD5m
+6/KELU+TRrzpv4c8VoWIllZBTAm9hXDzYb4g6+FD6wpEFfkZ6GkwcMn+V0xXsGBQ
+ZGKeKddkQtbYH+SwHl4Z/TRWJ4PgM6mvrPwevOasAniNiq9DTSE=
+=hbGZ
 -----END PGP SIGNATURE-----
 
---jI8keyz6grp/JLjh--
+--ZoaI/ZTpAVc4A5k6--
