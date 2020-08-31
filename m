@@ -2,106 +2,147 @@ Return-Path: <SRS0=VfvW=CJ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF63C433E7
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 15:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EB2C433E6
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 18:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83A1520866
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 15:37:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6C1120866
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 18:53:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jT2X6vSc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ThTytV7I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729352AbgHaPh5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Aug 2020 11:37:57 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:2104 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728869AbgHaPhu (ORCPT
+        id S1728239AbgHaSxj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Aug 2020 14:53:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58942 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727933AbgHaSxi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Aug 2020 11:37:50 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4d19400000>; Mon, 31 Aug 2020 08:37:36 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 31 Aug 2020 08:37:49 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 31 Aug 2020 08:37:49 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 31 Aug
- 2020 15:37:49 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 31 Aug 2020 15:37:49 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.173.243]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f4d194c0002>; Mon, 31 Aug 2020 08:37:49 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>
-CC:     <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] media: tegra-video: Fix compilation warning of unused variable
-Date:   Mon, 31 Aug 2020 08:37:38 -0700
-Message-ID: <1598888258-25586-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1598888258-25586-1-git-send-email-skomatineni@nvidia.com>
-References: <1598888258-25586-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 31 Aug 2020 14:53:38 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77395C061573;
+        Mon, 31 Aug 2020 11:53:38 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id h19so7883047ljg.13;
+        Mon, 31 Aug 2020 11:53:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=L+p5pMS5zt9rDPom08XJnrF8bxGqtpHNHupyZeHaC5s=;
+        b=ThTytV7Ig5B7hm5YhpUR7zmDLEA87iCYPbWjyx8p+PsfxGlbwgztuZy58UpfJO6Nxx
+         VhfPLNKvBjbBXXKzwM7D+1XMN/uomJ6lUKBWaFe2i4jpaRTu5Yi1yexGBMD4Aaxlq9Rg
+         q2bqNn89VqwZQNWafA2F341nTltxnX71p1yGQGO5lfemofdwH53xFcQytgqAu5CAQjA9
+         FUEGNXsRv5PiYfIW4JjW/Mu7fHCcI1AUIRKJXO2yWzCSQIUSxC/sQTPhszuq/4VJ3nv3
+         arh6NPgS34g3IKi0wmDM9XYYQTc0CClpl0sW3LkQsGW8iFzbcEKqZWhy1i+NpAInYUSi
+         RQeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=L+p5pMS5zt9rDPom08XJnrF8bxGqtpHNHupyZeHaC5s=;
+        b=XPVOc+iKWXDIByWdOYllchJ/ANCeLNE0rPq26eaM0LrCc7i4mDwW/MFaFpqcqtt41M
+         nXFez4unNBYxwvDLQMKWD4m5d0ShwxWkDBcPq2fSDgI2o/5h7WF+tlpHWMzkJUJfkKGR
+         9xzlh7HVpu/BUVE/StxDH9gsOLexyknrA/g0K4GxOjzq3AvzNAC1MSbe5osTleQe/+U5
+         ZuFAE2suy12EG/ycx32yKQarVgUkU4KsAUjaFnLdEi5TR8HWU8NfeP3oiVByqQAd7Dkg
+         viJ0G/OtoofHtr8OjiFXJIvmxX5kACQKOS2OxbZD0gYNwSjB2JCr9gOXUkVUbcP7Kt9U
+         G0EA==
+X-Gm-Message-State: AOAM5314JipIG3BKrfFeL5XZWGnLd6VpymLr/ET3wHxWsEuYV3SHU/fH
+        cwIY0abUqk4FlWOZIhD67t78x+YSDLU=
+X-Google-Smtp-Source: ABdhPJxEzrfGn7i3KNEykO5kPP4BLGlg14bAOleoamj8Ou3Tqnrnw+7oiuPQ4tHno4EbnaB0QEFEXA==
+X-Received: by 2002:a2e:91d2:: with SMTP id u18mr1244754ljg.436.1598900016513;
+        Mon, 31 Aug 2020 11:53:36 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id m26sm1538132ljc.82.2020.08.31.11.53.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Aug 2020 11:53:35 -0700 (PDT)
+Subject: Re: Broadcom WiFi SDIO performance regression after commit "mmc:
+ sdhci: Remove finish_tasklet"
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        brcm80211-dev-list@cypress.com,
+        brcm80211-dev-list.pdl@broadcom.com,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <5cf1af89-6026-09ad-7f20-82e19ad49fa1@gmail.com>
+ <9332715c-6ee5-fce3-8b93-305823d5a551@intel.com>
+ <eec0c7d2-87f3-1213-dec1-bb34c5bde35a@gmail.com>
+ <379c7435-a940-c427-305d-c4fa5f1970d6@intel.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <17a4729b-b307-92cb-8669-bf043e65bc49@gmail.com>
+Date:   Mon, 31 Aug 2020 21:53:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598888256; bh=r2B4bFQ0h21ACRr/bK6OULS0v9Sdz+0PMoYvgjWx+Eo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=jT2X6vSctCi4E7WQThDH+7KkcJqd4AbMRLDgPVB/vd+rPXJGce8izzYmjwPC6ZpN2
-         4xxnHZcjdhqnL5yEKdvhbl0BQwI63MPUYcaAlT+Fn06Z/9He+cPfJbjbnncsnNyrRJ
-         Brk4uLOa6wF74K0v32U58ypZ/Tiu16AhwBRFED3b8GDOlJpalIMvzTKBxbx+fiH3bl
-         GqinaAADxUqFDTW6n0zbM7QsplBpHhPrgWcsKRaiWqwWnzl7oKUuDMkHGpY1WS7Vxi
-         beledZ0Df4jO+ri4ARSu94fQEfx/rZmA7qrznTCGgEhFCfeZAFkYivpl31TfG/7PKm
-         TvyeHfnCXVQ+g==
+In-Reply-To: <379c7435-a940-c427-305d-c4fa5f1970d6@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-vi_pattern_strings is used only when CONFIG_VIDEO_TEGRA_TPG is
-enabled and V4L2 control operations currently are used only in
-TPG mode.
+31.08.2020 18:08, Adrian Hunter пишет:
+> On 27/08/20 12:36 pm, Dmitry Osipenko wrote:
+>> 27.08.2020 09:45, Adrian Hunter пишет:
+>>> On 27/08/20 9:07 am, Dmitry Osipenko wrote:
+>>>> Hello!
+>>>>
+>>>> I was debugging WiFi performance problems on Acer A500 tablet device
+>>>> that has BCM4329 WiFi chip which is connected to NVIDIA Terga20 SoC via
+>>>> SDIO and found that the following commit causes a solid 5-10 Mbit/s of
+>>>> WiFi throughput regression after 5.2 kernel:
+>>>
+>>> What is that in percentage terms?
+>>
+>> That is about 20%.
+>>
+>>>> commit c07a48c2651965e84d35cf193dfc0e5f7892d612
+>>>> Author: Adrian Hunter <adrian.hunter@intel.com>
+>>>> Date:   Fri Apr 5 15:40:20 2019 +0300
+>>>>
+>>>>     mmc: sdhci: Remove finish_tasklet
+>>>>
+>>>>     Remove finish_tasklet. Requests that require DMA-unmapping or
+>>>> sdhci_reset
+>>>>     are completed either in the IRQ thread or a workqueue if the
+>>>> completion is
+>>>>     not initiated by the IRQ.
+>>>>
+>>>> Reverting the offending commit on top of recent linux-next resolves the
+>>>> problem.
+>>>>
+>>>> Ulf / Adrian, do you have any ideas what could be done in regards to
+>>>> restoring the SDIO performance? Should we just revert the offending commit?
+>>>>
+>>>
+>>> Unfortunately I think we are past the point of returning to the tasklet.
+>>>
+>>> sdhci can complete requests in the irq handler but only if ->pre_req() and
+>>> ->post_req() are used, which is not supported by SDIO at present.  pre_req
+>>> and post_req were introduced to reduce latency for the block driver, so it
+>>> seems reasonable perhaps to look at using them in SDIO as well.
+>>>
+>>
+>> I'll try to take a look at pre/post_req(), but I'm not very familiar
+>> with the MMC code, so it may take quite some time. Will be great if you
+>> could help with making a patch that I could test!
+>>
+> 
+> You could start by seeing if using pre/post_req helps at all, as below.
+> If that doesn't help, then it might need more analysis.
 
-So when tegra-video is build for non TPG, warnings of unused
-variable is reported for v4l2 control operation variable.
+Hello, Adrian! I tested yours patch and 100% fixes the problem! Thank
+you very much! Please make a proper patch and feel free to add my t-b!
 
-This patch fixes it.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/staging/media/tegra-video/vi.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 5543ead..dabb99a 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -788,6 +788,7 @@ static const struct v4l2_file_operations tegra_channel_fops = {
- /*
-  * V4L2 control operations
-  */
-+#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
- static int vi_s_ctrl(struct v4l2_ctrl *ctrl)
- {
- 	struct tegra_vi_channel *chan = container_of(ctrl->handler,
-@@ -814,6 +815,7 @@ static const char *const vi_pattern_strings[] = {
- 	"Black/White Direct Mode",
- 	"Color Patch Mode",
- };
-+#endif
- 
- static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
- {
--- 
-2.7.4
-
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
