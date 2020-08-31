@@ -2,62 +2,63 @@ Return-Path: <SRS0=VfvW=CJ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963E7C433E2
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 20:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F863C433E6
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 20:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6389A2083E
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 20:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7947B2087D
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 20:23:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRawU+1/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQSm3orK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbgHaUX2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Aug 2020 16:23:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44744 "EHLO
+        id S1729981AbgHaUXc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Aug 2020 16:23:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbgHaUX1 (ORCPT
+        with ESMTP id S1729976AbgHaUX3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Aug 2020 16:23:27 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D5F8C061573;
-        Mon, 31 Aug 2020 13:23:27 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id w14so8242404ljj.4;
-        Mon, 31 Aug 2020 13:23:27 -0700 (PDT)
+        Mon, 31 Aug 2020 16:23:29 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571B6C061575;
+        Mon, 31 Aug 2020 13:23:29 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id z25so1102795lfj.9;
+        Mon, 31 Aug 2020 13:23:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kFKd8H+fYcsnXikLZwEK7Kis8FaXYZ+WoHtlNYHj6YY=;
-        b=TRawU+1/VIDgjh+KJAHd77ib+z8P8nWexHRXuAKwH/8XfVUFQRwEFLSoU7czyf+YHV
-         jCgENpnLMWLn3xdFjKGDibTIkymg/qK9pes1IKnCFVn1ZtUwtdMyHGPXi9WwmhfbdoJR
-         Crdo2o09jcnaCMQc3CCPFBY6HcjSFjhD6Rv1Uz4P5ZVmK9CMRxqWvp1fsU+kQJ9Cg3uN
-         4Ilp6i18m7N8J4wZB/rgb+gms1kvS7zUKXSkWmdfbsvv99OoRgI9r08QZxVWmd8doXi1
-         dcHY61aw2LuCsMP5/625FW/CGsf8lweVXtnCE9rV0/Vs6wA/kTvSzBIC4Ij1rDS3PULQ
-         Spyw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=FRnx45u7/i2kry58qh4geYUb8/TK/AjF/UDJOIFPEeg=;
+        b=TQSm3orKZFtx48PL9rXWPF+QicyZywM+5js65DonZeTjkZfqJDGS4rnAS1d5hv6MDV
+         rFm3PgpGOjmuqKbqYE9N/grYw2dHI6n33ljM76xM2yu/0bBF7C5aFN+OI4CGbK8GX36p
+         aZgmT1K/5D2HAOnVT77RZ1wLuftRqLNBb4jygAcMzWn5DWnO9QBT5sLUtzNOEDzaAlwd
+         FXF30aK8TTP2qhegf9cNTdbt2hqhh/RMkA5A026tbRUMb0z8R+oVwQhJJHyyztG6MP4/
+         gJcrb2UroEGGdzjTkkhCD6TQer2rnZrNbE3tY0d0zFfHbPXUxhC3cXZS4WorFSJj9+hy
+         4Yew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kFKd8H+fYcsnXikLZwEK7Kis8FaXYZ+WoHtlNYHj6YY=;
-        b=lM5r3W7jGpePZE1kQh4JKgfM32ND6Y9xHAZCirsclUYALIULJaPuucBiME3ulZ7P9b
-         URLACKrK+BsgH/9ql38f0rr9isv2Gef7rqVF11JKyQ7k2rDqZYDDmuVluatmE/BwzfhC
-         AuspzuT3IF32Bm//0BnOOSjIJFrQCXF4DaWHKvxnBuGdclXqfaVAn8zKfOxjsxwrBt5b
-         zGhx6W1oAQbk1aCQBIKsLGIhCaPUX3NNH/HPDhtavgW3GKxQjUGl34gh+DC1688nGdkX
-         SIsq+75IRNDLel/KoZbggobm7yw93tZ0TjY1FeQL90JJZkNzKW4hlBEruuHNTaEIYAhy
-         phOA==
-X-Gm-Message-State: AOAM530qRjS60sOpDYzuhExvOpmJ5cIvvTlBfKn+SCBKBsC8we+DWFSZ
-        TXnlPYiCycilHePLbfHgeYsPELQ9bNk=
-X-Google-Smtp-Source: ABdhPJyAokqCkfKjFH8sd/+mlBBXpBJ2ZweoTY0E8lZ+rS8yA/OxO0uXDU/rh4UKP+Vp1JFSJwP6pA==
-X-Received: by 2002:a2e:b8cb:: with SMTP id s11mr1486897ljp.110.1598905405704;
-        Mon, 31 Aug 2020 13:23:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FRnx45u7/i2kry58qh4geYUb8/TK/AjF/UDJOIFPEeg=;
+        b=poK6vXQgcOS87VMQMH8ccPsTkBGHsKpPx3OtEQ9s7cqpTv3UjZV9cnmVMP/cEB6moD
+         IVgk1wm4t1PACtbO4BmyZ3nSU53L5HB7iJmwzT350zfBqFlJTF2IRAsGRcepPwyXJ2FR
+         AJt3XZkv3HgSgR1gJFXwwX2zOxvIPLkMaDKXu6BRcCuODoZ9BDnZOrPKXT+9CjzUY91C
+         4Ym81It0ZiNgM1fsPA1PBwYhjyxgMcxxt37CBhohx2bQEgXxByuoaqp1h8kph+Zu1bka
+         Uji4YDeUoyxMQpqPjR8QphNKs+9Qa7BQE/SwaqFVsEs9LNevKMXG2Otr0NkRMoe9s0kL
+         pBSg==
+X-Gm-Message-State: AOAM530YvLm9UkyCwqZjKcCOIUz0aadBNHGfoBReaJWP9iVaacdv7AiC
+        cZhC2N3VVEDpRwxWcFhY3feqHsq35Jc=
+X-Google-Smtp-Source: ABdhPJz3PRoABhtWRAaEJeBE6ftdtg0VDdHNNymnzHMEgS8i06hSaZNuqdqbf5qJP6c0lT/ylt8YIw==
+X-Received: by 2002:a19:ef13:: with SMTP id n19mr1446589lfh.1.1598905407773;
+        Mon, 31 Aug 2020 13:23:27 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id z20sm1769054ljk.97.2020.08.31.13.23.24
+        by smtp.gmail.com with ESMTPSA id z20sm1769054ljk.97.2020.08.31.13.23.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2020 13:23:25 -0700 (PDT)
+        Mon, 31 Aug 2020 13:23:27 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,10 +66,12 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Wolfram Sang <wsa@the-dreams.de>
 Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 00/12] Improvements for Tegra I2C driver
-Date:   Mon, 31 Aug 2020 23:22:51 +0300
-Message-Id: <20200831202303.15391-1-digetx@gmail.com>
+Subject: [PATCH v1 02/12] i2c: tegra: Add missing newline before returns
+Date:   Mon, 31 Aug 2020 23:22:53 +0300
+Message-Id: <20200831202303.15391-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200831202303.15391-1-digetx@gmail.com>
+References: <20200831202303.15391-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
@@ -76,28 +79,67 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello!
+Some places in the code are missing a newline before return, making
+code more difficult to read and creating inconsistency of the code.
+This patch adds the missing newlines.
 
-This series performs a small refactoring of the Tegra I2C driver code and
-hardens the atomic-transfer mode.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Dmitry Osipenko (12):
-  i2c: tegra: Make tegra_i2c_flush_fifos() usable in atomic transfer
-  i2c: tegra: Add missing newline before returns
-  i2c: tegra: Clean up messages in the code
-  i2c: tegra: Don't ignore tegra_i2c_flush_fifos() error
-  i2c: tegra: Use reset_control_reset()
-  i2c: tegra: Improve formatting of function variables
-  i2c: tegra: Use dev_err_probe()
-  i2c: tegra: Runtime PM always available on Tegra
-  i2c: tegra: Clean up probe function
-  i2c: tegra: Drop '_timeout' from wait/poll function names
-  i2c: tegra: Remove likely/unlikely from the code
-  i2c: tegra: Factor out error recovery from tegra_i2c_xfer_msg()
-
- drivers/i2c/busses/i2c-tegra.c | 601 ++++++++++++++++++---------------
- 1 file changed, 338 insertions(+), 263 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index aab58395fb71..9bd91b6f32f4 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -317,6 +317,7 @@ static unsigned long tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev,
+ 		reg += (reg >= I2C_TX_FIFO) ? 0x10 : 0x40;
+ 	else if (i2c_dev->is_vi)
+ 		reg = 0xc00 + (reg << 2);
++
+ 	return reg;
+ }
+ 
+@@ -392,6 +393,7 @@ static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
+ 	dma_desc->callback_param = i2c_dev;
+ 	dmaengine_submit(dma_desc);
+ 	dma_async_issue_pending(chan);
++
+ 	return 0;
+ }
+ 
+@@ -500,6 +502,7 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
+ 
+ 		ktime = ktime_get();
+ 	}
++
+ 	return 0;
+ 
+ err_timeout:
+@@ -707,6 +710,7 @@ static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
+ 	clk_disable(i2c_dev->slow_clk);
+ disable_fast_clk:
+ 	clk_disable(i2c_dev->fast_clk);
++
+ 	return ret;
+ }
+ 
+@@ -1421,6 +1425,7 @@ static u32 tegra_i2c_func(struct i2c_adapter *adap)
+ 
+ 	if (i2c_dev->hw->has_continue_xfer_support)
+ 		ret |= I2C_FUNC_NOSTART;
++
+ 	return ret;
+ }
+ 
+@@ -1888,6 +1893,7 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+ 	clk_unprepare(i2c_dev->fast_clk);
+ 
+ 	tegra_i2c_release_dma(i2c_dev);
++
+ 	return 0;
+ }
+ 
 -- 
 2.27.0
 
