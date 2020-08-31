@@ -2,212 +2,123 @@ Return-Path: <SRS0=VfvW=CJ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D12C433E2
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 08:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86197C433E7
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 09:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C694B2073A
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 08:50:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598863836;
-	bh=w7GILwlnmbwNn51e2hei6U35hUGZv7Y4UBF1UqN+VkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WCcaVrcqtKBa6FSF/FNxBqK9sWexaxrff8ofppFm3ANcCrLmVYCaOFdfs/96pp1Y8
-	 po3hbeq7htr/iAIT3YIx4WMrI6/M6GsgNcf3/2jIFaor00j/80FfSAB03BnEUQWHOV
-	 Z4p1OUjPUsrnXegjavg65pYXoFqV9v566fBRz7zo=
+	by mail.kernel.org (Postfix) with ESMTP id 666542098B
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 09:54:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kurhuhNu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbgHaIuf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Aug 2020 04:50:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbgHaIuc (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Aug 2020 04:50:32 -0400
-Received: from localhost (unknown [122.171.38.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AAA3206F0;
-        Mon, 31 Aug 2020 08:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598863832;
-        bh=w7GILwlnmbwNn51e2hei6U35hUGZv7Y4UBF1UqN+VkY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qFxZb6il+5SsynJ67x29zLpIox8zm3XWOtZcm9S2JOE5ZFix1+4cwEE7vIePPlsEK
-         St3EOgPQ6mUX8WyBy8y32oIr9m+Wn7K639mdQWdoCoxQwc3B+YbhfHvQK6GKnv/KlQ
-         17i5/uj/8MAo/SVOWhMJ+R+bNrjgeoC6hLtwUgxI=
-Date:   Mon, 31 Aug 2020 14:20:28 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Nagarjuna Kristam <nkristam@nvidia.com>
-Cc:     kishon@ti.com, thierry.reding@gmail.com,
+        id S1726100AbgHaJyr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Aug 2020 05:54:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59048 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbgHaJyl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 31 Aug 2020 05:54:41 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D6A2C061573;
+        Mon, 31 Aug 2020 02:54:22 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id g6so5882570ljn.11;
+        Mon, 31 Aug 2020 02:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TSm8Xir2qHLM4KnvUNa9QAiKGDLz5dH6Zq6NNkg0IXQ=;
+        b=kurhuhNueqi6Go7ZBSzHHlC2VATfsEJ18kcOG0TtB7QnuhDk2JAqZNyWAev7TBzYkz
+         CiP5BBA5nDhYGxWPvdTHEM3NhEE76P/YLA+6sVzE9ptTSR4lvQ6U9Fz3VCaIPnv32BAL
+         FZ6kHKgDbxvcOlstFWUomxLz9Gs2BNXfsfP9Gg6Z0voNpQrkTh1RmAnL5VAwZthtO2fg
+         I1B/orxzR62QrpHX62BXGDknIrnk2A7vD1sCjZnI8chUENqi6RoZGQ8FvyKNJPYkZ+bb
+         OKa9i4zJ4xkwbKdT3lpLqL/M4W2gl+hmPOVXCmvkZ8ZiSG9OYoJIcawMs5XiuHyCSFjy
+         7Aug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TSm8Xir2qHLM4KnvUNa9QAiKGDLz5dH6Zq6NNkg0IXQ=;
+        b=SnN6pldGoJQInx/m1zeGmteApodgzbnlZJmK2f5pYudoBhyVOdvKvoFg5N5sdS4S5S
+         D6dsnbGmgY4ooudUKVMW/uocyfaW70OwF9D6Fhw53GrvqTRp+h2OTlvuArTqcg6Lo8vz
+         AZmhBvGagNx3BG8kLa6zUqcTzVae0P4hmRYF8SJNVFOwGlA5Di12RkqW606ie/revFGw
+         20/myo5p31UNvdfJoCQdnPNAg66jIsz5Vn9IJXW7lPjwuCFKijKEXUjnSUhM8TrSktZK
+         uUOGyf9DEAcs1pvdPnsvbR1hdy2Q05LAKhQhTsQLaBgutc7C4CKQbvXZtXju4gk3IBbI
+         PVxA==
+X-Gm-Message-State: AOAM5333RUoiFysFOzYMo0KGwZH15LB0KdqOXgTW3trd1BSiNIzey+Z5
+        6C1Jx9rtFr2IIaTtg33URT8oxyTUPKM=
+X-Google-Smtp-Source: ABdhPJy8KZjk72a5eEDT0IuSYdmnLR/C/55LTP2RBCq87JBLCuN6xfMUdvGBtMMHsODr7dV4jftXMg==
+X-Received: by 2002:a2e:b4f4:: with SMTP id s20mr251794ljm.339.1598867660906;
+        Mon, 31 Aug 2020 02:54:20 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id f20sm1863068lfk.70.2020.08.31.02.54.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Aug 2020 02:54:20 -0700 (PDT)
+Subject: Re: [PATCH 3/3] ARM: tegra: Pass multiple versions in
+ opp-supported-hw property
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
         devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 5/7] phy: tegra: xusb: Add support for charger detect
-Message-ID: <20200831085028.GG2639@vkoul-mobl>
-References: <1595238948-20531-1-git-send-email-nkristam@nvidia.com>
- <1595238948-20531-6-git-send-email-nkristam@nvidia.com>
+References: <cover.1598442485.git.viresh.kumar@linaro.org>
+ <b13f1b112532fe0189d1f7bbb50903d9e1defb07.1598442485.git.viresh.kumar@linaro.org>
+ <b0763074-859f-fccb-dde4-03d1a50ea021@gmail.com>
+ <20200831043908.mtw4dglybcmcabjb@vireshk-i7>
+ <0da380c2-9161-d450-afd2-4b159c8cfb7d@gmail.com>
+ <20200831084111.6udzvrdonxgzju4l@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <cbfa012b-8f50-e460-972c-c51fa52bb858@gmail.com>
+Date:   Mon, 31 Aug 2020 12:54:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1595238948-20531-6-git-send-email-nkristam@nvidia.com>
+In-Reply-To: <20200831084111.6udzvrdonxgzju4l@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 20-07-20, 15:25, Nagarjuna Kristam wrote:
+31.08.2020 11:41, Viresh Kumar пишет:
+> On 31-08-20, 10:54, Dmitry Osipenko wrote:
+>> 31.08.2020 07:39, Viresh Kumar пишет:
+>> ...
+>>>>> Dmitry, I think there is further scope of simplifying stuff here by
+>>>>> using the opp-microvolt-<name> property and corresponding
+>>>>> dev_pm_opp_set_prop_name() call.
+>>>
+>>> Any inputs on this Dmitry ?
+>>
+>> Could you please give an example?
+> 
+> There are many users of it in the kernel. grep for "opp-microvolt-" in
+> the DT files and you will see.
+> 
+> The use of this property is to specific multiple microvolt properties
+> to the same frequency without a need to create separate nodes for them
+> all. The right microvolt property will be selected based on the call
+> made to dev_pm_opp_set_prop_name(), search for that too in kernel.
+> 
 
-> +#define USB2_BATTERY_CHRG_OTGPADX_CTL0(x)	(0x80 + (x) * 0x40)
-> +#define  PD_CHG					BIT(0)
-> +#define  VDCD_DET_FILTER_EN			BIT(4)
-> +#define  VDAT_DET				BIT(5)
-> +#define  VDAT_DET_FILTER_EN			BIT(8)
-> +#define  OP_SINK_EN				BIT(9)
-> +#define  OP_SRC_EN				BIT(10)
-> +#define  ON_SINK_EN				BIT(11)
-> +#define  ON_SRC_EN				BIT(12)
-> +#define  OP_I_SRC_EN				BIT(13)
-> +#define  ZIP_FILTER_EN				BIT(21)
-> +#define  ZIN_FILTER_EN				BIT(25)
-> +#define  DCD_DETECTED				BIT(26)
-> +
-> +#define USB2_BATTERY_CHRG_OTGPADX_CTL1(x)	(0x84 + (x) * 0x40)
-> +#define  PD_VREG				BIT(6)
-> +#define  VREG_LEV(x)				(((x) & 0x3) << 7)
-> +#define  VREG_DIR(x)				(((x) & 0x3) << 11)
+It's not clear to me how it could be applicable to the Tegra CPU OPP
+because Tegra depends on a combination of SPEEDO + PROCESS versions.
 
-GENMASK and FIELD_PREP please
-
-> +static void
-> +tegra_xusb_padctl_set_debounce_time(struct tegra_xusb_padctl *padctl,
-> +				    u32 debounce)
-> +{
-> +	u32 value;
-> +
-> +	value = padctl_readl(padctl,
-> +		XUSB_PADCTL_USB2_BATTERY_CHRG_TDCD_DBNC_TIMER_0);
-
-Single line
-
-> +static void
-> +tegra_xusb_padctl_charger_detect_on(struct tegra_xusb_padctl *padctl, u32 index)
-> +{
-> +	u32 value;
-> +
-> +	value = padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> +	value &= ~USB2_OTG_PD_ZI;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> +
-> +	value = padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> +	value |= (USB2_OTG_PD2 | USB2_OTG_PD2_OVRD_EN);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> +
-> +	value = padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
-> +	value &= ~PD_CHG;
-> +	padctl_writel(padctl, value, USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
-
-maybe a padctl_updatel() helper to do read, modify and write
-
-> +static void tegra_xusb_padctl_dcd(struct tegra_xusb_padctl *padctl, u32 index)
-> +{
-> +	u32 value;
-> +	unsigned int offset;
-> +	bool ret = false;
-> +
-> +	/* Turn on IDP_SRC */
-> +	value = padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
-> +	value |= OP_I_SRC_EN;
-> +	padctl_writel(padctl, value, USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
-> +
-> +	/* Turn on D- pull-down resistor */
-> +	value = padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
-> +	value |= USBON_RPD_OVRD_VAL;
-> +	padctl_writel(padctl, value, USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
-> +
-> +	/* Wait for TDCD_DBNC (DCD debounce), refer to BC1.2 spec Table 5 */
-> +	usleep_range(10000, 20000);
-> +
-> +	offset = USB2_BATTERY_CHRG_OTGPADX_CTL0(index);
-> +	ret = readl_poll_timeout(padctl->regs + offset, value,
-> +				 value & DCD_DETECTED, 20000,
-> +				 TDCD_TIMEOUT_MS * 1000);
-> +	if (!ret)
-> +		dev_warn(padctl->dev, "%s: DCD timeout.", __func__);
-
-Not dev_err() ? and continue after this?
-
-> +static bool
-> +tegra_xusb_padctl_primary_secondary(struct tegra_xusb_padctl *padctl, u32 index,
-> +				    bool is_primary)
-> +{
-> +	u32 value;
-> +	u32 config = is_primary ? (OP_SRC_EN | ON_SINK_EN) :
-> +				  (ON_SRC_EN | OP_SINK_EN);
-> +	bool ret = false;
-> +
-> +	if (is_primary)
-> +		/* data contact detection */
-> +		tegra_xusb_padctl_dcd(padctl, index);
-> +
-> +	/* Source D- to D+ */
-> +	value = padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
-> +	value |= config;
-> +	padctl_writel(padctl, value, USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
-> +
-> +	/*
-> +	 * Wait for TVDPSRC_ON/TVDMSRC_ON(D+/- voltage source on time),
-> +	 * refer to BC1.2 spec Table 5
-> +	 */
-> +	msleep(40);
-> +
-> +	value = padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
-> +	if (is_primary)
-> +		ret = !!(value & VDAT_DET);
-> +	else
-> +		ret = !(value & VDAT_DET);
-
-How about 
-
-        ret = !(value & VDAT_DET);
-        if (is_primary)
-                ret = !ret;
-
-> +#define VON_DIV2P0_DET BIT(0)
-> +#define VON_DIV2P7_DET BIT(1)
-> +#define VOP_DIV2P0_DET BIT(2)
-> +#define VOP_DIV2P7_DET BIT(3)
-> +
-> +#define VREG_CUR_LEVEL_0        500
-> +#define VREG_CUR_LEVEL_1        900
-> +#define VREG_CUR_LEVEL_2        1500
-> +#define VREG_CUR_LEVEL_3        2000
-
-tabs or spaces, pick one please, not both
-
-> +
-> +#define IS_CUR_IN_RANGE(ma, low, high)  \
-> +	((ma >= VREG_CUR_LEVEL_##low) && (ma <= (VREG_CUR_LEVEL_##high - 1)))
-> +#define VREG_LVL(ma, level)     IS_CUR_IN_RANGE(ma, level, level + 1)
-> +
-> +static void tegra_xusb_padctl_vbus_pad_portection(struct tegra_xusb_port *port)
-> +{
-> +	struct tegra_xusb_padctl *padctl = port->padctl;
-> +	int level = 0;
-> +	enum tegra_vbus_dir dir = TEGRA_VBUS_SINK;
-> +	int max_ua, min_ua;
-
-reverse christmas tree please
-
-> +static enum usb_charger_type tegra_xusb_charger_detect(struct usb_phy *usb_phy)
-> +{
-> +	struct tegra_xusb_port *port = container_of(usb_phy,
-> +						    struct tegra_xusb_port,
-> +						    usb_phy);
-
-how about:
-
-        struct tegra_xusb_port *port = 
-                        container_of(usb_phy, struct tegra_xusb_port, usb_phy);
--- 
-~Vinod
+It's not like all voltages are the same for all OPPs that have the same
+PROCESS ID, otherwise it indeed would be nice to have
+"opp-microvolt-process0", but unfortunately this variant is not suitable
+for Tegra because some freqs have different voltages using the same
+PROCESS ID and the same applies to the SPEEDO ID.
