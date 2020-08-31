@@ -2,250 +2,264 @@ Return-Path: <SRS0=VfvW=CJ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D69AC433E6
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 04:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7C2C433E6
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 07:36:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F126D20936
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 04:42:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="j0freA1e"
+	by mail.kernel.org (Postfix) with ESMTP id 2D2A9206EB
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 07:36:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598859362;
+	bh=AmuiRA9ag6zrrQLhZzSQH64RuSqSCWUPiji2PS7IRfg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TRCYkho6jDK2a81YLkKes81Gr37z2SNFvGsznekmUxJspoOGslR7j6OLOYTEWI4wL
+	 m1FPXSKIn20tkU6a63wM++/Ln7r/qnKjw6bxw5GwxvisUa57YTrTGkpkMWgFV5RTwL
+	 sEMyNIMFs8XMVLXsUq9i6BcoT8POjULiqObJ0ltM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbgHaEl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Aug 2020 00:41:57 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9170 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbgHaEks (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Aug 2020 00:40:48 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4c7f420001>; Sun, 30 Aug 2020 21:40:34 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 30 Aug 2020 21:40:48 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 30 Aug 2020 21:40:48 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 31 Aug
- 2020 04:40:46 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 31 Aug 2020 04:40:46 +0000
-Received: from jckuo-lt.nvidia.com (Not Verified[10.19.101.4]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f4c7f4b0004>; Sun, 30 Aug 2020 21:40:45 -0700
-From:   JC Kuo <jckuo@nvidia.com>
-To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-        <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v2 06/12] soc/tegra: pmc: provide usb sleepwalk register map
-Date:   Mon, 31 Aug 2020 12:40:37 +0800
-Message-ID: <20200831044043.1561074-7-jckuo@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200831044043.1561074-1-jckuo@nvidia.com>
-References: <20200831044043.1561074-1-jckuo@nvidia.com>
+        id S1727918AbgHaHgB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Aug 2020 03:36:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44872 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbgHaHgA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 31 Aug 2020 03:36:00 -0400
+Received: from localhost (unknown [122.171.38.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F5A8206EB;
+        Mon, 31 Aug 2020 07:35:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598859359;
+        bh=AmuiRA9ag6zrrQLhZzSQH64RuSqSCWUPiji2PS7IRfg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=omVR4E1V9p59SGh3NCwkGPbmZ4yk/C/d/XOEDQpdjEleYqYq/n7fV+WAEz8AwOg0o
+         SaApy4rCEULKr1VjvVTTOL0PfAOq180K4h16Ov1mVNF7/k+GlTryeeTwkkS+8xrIeM
+         n5V+9MfMGUv2Yuor0Z1kAymt+BfsndpTc+08KuVQ=
+Date:   Mon, 31 Aug 2020 13:05:54 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Nagarjuna Kristam <nkristam@nvidia.com>
+Cc:     kishon@ti.com, thierry.reding@gmail.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V5 4/7] phy: tegra: xusb: Add soc ops API to enable UTMI
+ PAD protection
+Message-ID: <20200831073554.GF2639@vkoul-mobl>
+References: <1595238948-20531-1-git-send-email-nkristam@nvidia.com>
+ <1595238948-20531-5-git-send-email-nkristam@nvidia.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598848834; bh=qMIiOpSXddd3JYE2uwQZI8jkkNxTjdLC0hryIYSQ+T0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=j0freA1ef1aspdtU8ec2rNixZmzMfoTQZh4bjdlERcIsLcbK3uTmgG3Xy6yZSgcj+
-         peG2/L68dKhzFu/pJVH45WoGBvtcxhtak0ZV5bgUOy/3SBPrAlAIKei8LMQ+pKqmWr
-         b90tYmPIffYAuyaY+MtozdVAb4JXHeOm0hizsOjc2H+rsESejosDzA4Ej+7xQb/HlW
-         Z77eJDi8xl5rOxsYDQ7cJ1RrGwb3qDZ3MWRWQ0ThDdhHlv99NTx5Y4lFqKLmyKZgZm
-         dSmnlBfZAi4q0Qqd7+cUIxU09jcb2MrIhSVVKS7R6c83OL/zTUhEnCllKMQO2Qu2Vl
-         Onp8koHU92IXQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1595238948-20531-5-git-send-email-nkristam@nvidia.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This commit implements a register map which grants USB (UTMI and HSIC)
-sleepwalk registers access to USB phy drivers. The USB sleepwalk logic
-is in PMC hardware block but USB phy drivers have the best knowledge
-of proper programming sequence. This approach prevents using custom
-pmc APIs.
+On 20-07-20, 15:25, Nagarjuna Kristam wrote:
+> When USB charger is enabled, UTMI PAD needs to be protected according
+> to the direction and current level. Add support for the same on Tegra210
+> and Tegra186.
+> 
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+> V5:
+>  - No changes.
+> ---
+> V4:
+>  - Added Acked-by updates to commit message.
+> ---
+> V3:
+>  - Alligned function and its arguments.
+>  - Fixed other comments from Thierry.
+> ---
+> V2:
+>  - Commit message coorected.
+>  - Patch re-based.
+> ---
+>  drivers/phy/tegra/xusb-tegra186.c | 40 +++++++++++++++++++++++++++++++++++++++
+>  drivers/phy/tegra/xusb-tegra210.c | 32 +++++++++++++++++++++++++++++++
+>  drivers/phy/tegra/xusb.h          | 13 +++++++++++++
+>  3 files changed, 85 insertions(+)
+> 
+> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+> index f862254..59b78a7 100644
+> --- a/drivers/phy/tegra/xusb-tegra186.c
+> +++ b/drivers/phy/tegra/xusb-tegra186.c
+> @@ -68,6 +68,13 @@
+>  #define   PORTX_SPEED_SUPPORT_MASK		(0x3)
+>  #define     PORT_SPEED_SUPPORT_GEN1		(0x0)
+>  
+> +#define USB2_BATTERY_CHRG_OTGPADX_CTL1(x)       (0x84 + (x) * 0x40)
+> +#define  PD_VREG                                (1 << 6)
+> +#define  VREG_LEV(x)                            (((x) & 0x3) << 7)
+> +#define  VREG_DIR(x)                            (((x) & 0x3) << 11)
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 89 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
+maybe FIELD_GET() would be better, avoids error with shifts
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index d332e5d9abac..03317978915a 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -43,6 +43,7 @@
- #include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-+#include <linux/regmap.h>
-=20
- #include <soc/tegra/common.h>
- #include <soc/tegra/fuse.h>
-@@ -102,6 +103,9 @@
-=20
- #define PMC_PWR_DET_VALUE		0xe4
-=20
-+#define PMC_USB_DEBOUNCE_DEL		0xec
-+#define PMC_USB_AO			0xf0
-+
- #define PMC_SCRATCH41			0x140
-=20
- #define PMC_WAKE2_MASK			0x160
-@@ -133,6 +137,13 @@
- #define IO_DPD2_STATUS			0x1c4
- #define SEL_DPD_TIM			0x1c8
-=20
-+#define PMC_UTMIP_UHSIC_TRIGGERS	0x1ec
-+#define PMC_UTMIP_UHSIC_SAVED_STATE	0x1f0
-+
-+#define PMC_UTMIP_TERM_PAD_CFG		0x1f8
-+#define PMC_UTMIP_UHSIC_SLEEP_CFG	0x1fc
-+#define PMC_UTMIP_UHSIC_FAKE		0x218
-+
- #define PMC_SCRATCH54			0x258
- #define  PMC_SCRATCH54_DATA_SHIFT	8
- #define  PMC_SCRATCH54_ADDR_SHIFT	0
-@@ -145,8 +156,18 @@
- #define  PMC_SCRATCH55_CHECKSUM_SHIFT	16
- #define  PMC_SCRATCH55_I2CSLV1_SHIFT	0
-=20
-+#define  PMC_UTMIP_UHSIC_LINE_WAKEUP	0x26c
-+
-+#define PMC_UTMIP_BIAS_MASTER_CNTRL	0x270
-+#define PMC_UTMIP_MASTER_CONFIG		0x274
-+#define PMC_UTMIP_UHSIC2_TRIGGERS	0x27c
-+#define PMC_UTMIP_MASTER2_CONFIG	0x29c
-+
- #define GPU_RG_CNTRL			0x2d4
-=20
-+#define PMC_UTMIP_PAD_CFG0		0x4c0
-+#define PMC_UTMIP_UHSIC_SLEEP_CFG1	0x4d0
-+#define PMC_UTMIP_SLEEPWALK_P3		0x4e0
- /* Tegra186 and later */
- #define WAKE_AOWAKE_CNTRL(x) (0x000 + ((x) << 2))
- #define WAKE_AOWAKE_CNTRL_LEVEL (1 << 3)
-@@ -334,6 +355,7 @@ struct tegra_pmc_soc {
- 	const struct pmc_clk_init_data *pmc_clks_data;
- 	unsigned int num_pmc_clks;
- 	bool has_blink_output;
-+	bool has_usb_sleepwalk;
- };
-=20
- static const char * const tegra186_reset_sources[] =3D {
-@@ -2495,6 +2517,67 @@ static void tegra_pmc_clock_register(struct tegra_pm=
-c *pmc,
- 			 err);
- }
-=20
-+#define regmap_reg(x) regmap_reg_range(x, x)
-+static const struct regmap_range pmc_usb_sleepwalk_ranges[] =3D {
-+	regmap_reg_range(PMC_USB_DEBOUNCE_DEL, PMC_USB_AO),
-+	regmap_reg_range(PMC_UTMIP_UHSIC_TRIGGERS, PMC_UTMIP_UHSIC_SAVED_STATE),
-+	regmap_reg_range(PMC_UTMIP_TERM_PAD_CFG, PMC_UTMIP_UHSIC_FAKE),
-+	regmap_reg(PMC_UTMIP_UHSIC_LINE_WAKEUP),
-+	regmap_reg_range(PMC_UTMIP_BIAS_MASTER_CNTRL, PMC_UTMIP_MASTER_CONFIG),
-+	regmap_reg_range(PMC_UTMIP_UHSIC2_TRIGGERS, PMC_UTMIP_MASTER2_CONFIG),
-+	regmap_reg_range(PMC_UTMIP_PAD_CFG0, PMC_UTMIP_UHSIC_SLEEP_CFG1),
-+	regmap_reg(PMC_UTMIP_SLEEPWALK_P3),
-+};
-+
-+static const struct regmap_access_table pmc_usb_sleepwalk_table =3D {
-+	.yes_ranges =3D pmc_usb_sleepwalk_ranges,
-+	.n_yes_ranges =3D ARRAY_SIZE(pmc_usb_sleepwalk_ranges),
-+};
-+
-+static int tegra_pmc_regmap_readl(void *context, unsigned int reg, unsigne=
-d int *val)
-+{
-+	struct tegra_pmc *pmc =3D context;
-+
-+	*val =3D tegra_pmc_readl(pmc, reg);
-+	return 0;
-+}
-+
-+static int tegra_pmc_regmap_writel(void *context, unsigned int reg, unsign=
-ed int val)
-+{
-+	struct tegra_pmc *pmc =3D context;
-+
-+	tegra_pmc_writel(pmc, val, reg);
-+	return 0;
-+}
-+
-+static const struct regmap_config usb_sleepwalk_regmap_config =3D {
-+	.name =3D "usb_sleepwalk",
-+	.reg_bits =3D 32,
-+	.val_bits =3D 32,
-+	.reg_stride =3D 4,
-+	.fast_io =3D true,
-+	.rd_table =3D &pmc_usb_sleepwalk_table,
-+	.wr_table =3D &pmc_usb_sleepwalk_table,
-+	.reg_read =3D tegra_pmc_regmap_readl,
-+	.reg_write =3D tegra_pmc_regmap_writel,
-+};
-+
-+static int tegra_pmc_regmap_init(struct tegra_pmc *pmc)
-+{
-+	struct regmap *regmap;
-+
-+	if (pmc->soc->has_usb_sleepwalk) {
-+		regmap =3D devm_regmap_init(pmc->dev, NULL, (__force void *)pmc,
-+					  &usb_sleepwalk_regmap_config);
-+		if (IS_ERR(regmap)) {
-+			dev_err(pmc->dev, "failed to allocate register map\n");
-+			return PTR_ERR(regmap);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int tegra_pmc_probe(struct platform_device *pdev)
- {
- 	void __iomem *base;
-@@ -2613,6 +2696,10 @@ static int tegra_pmc_probe(struct platform_device *p=
-dev)
- 	pmc->base =3D base;
- 	mutex_unlock(&pmc->powergates_lock);
-=20
-+	err =3D tegra_pmc_regmap_init(pmc);
-+	if (err < 0)
-+		goto cleanup_powergates;
-+
- 	tegra_pmc_clock_register(pmc, pdev->dev.of_node);
- 	platform_set_drvdata(pdev, pmc);
-=20
-@@ -2976,6 +3063,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc =
-=3D {
- 	.pmc_clks_data =3D tegra_pmc_clks_data,
- 	.num_pmc_clks =3D ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output =3D true,
-+	.has_usb_sleepwalk =3D true,
- };
-=20
- static const char * const tegra210_powergates[] =3D {
-@@ -3094,6 +3182,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc =
-=3D {
- 	.pmc_clks_data =3D tegra_pmc_clks_data,
- 	.num_pmc_clks =3D ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output =3D true,
-+	.has_usb_sleepwalk =3D true,
- };
-=20
- #define TEGRA186_IO_PAD_TABLE(_pad)                                       =
-   \
---=20
-2.25.1
+> +#define  VREG_DIR_IN                            VREG_DIR(1)
+> +#define  VREG_DIR_OUT                           VREG_DIR(2)
+> +
+>  #define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x)	(0x88 + (x) * 0x40)
+>  #define  HS_CURR_LEVEL(x)			((x) & 0x3f)
+>  #define  TERM_SEL				BIT(25)
+> @@ -289,6 +296,37 @@ static void tegra_phy_xusb_utmi_pad_power_down(struct phy *phy)
+>  	usb2->powered_on = false;
+>  }
+>  
+> +static void
+> +tegra186_xusb_padctl_utmi_pad_set_protection(struct tegra_xusb_port *port,
+> +					     int level,
+> +					     enum tegra_vbus_dir dir)
+> +{
+> +	u32 value;
+> +	struct tegra_xusb_padctl *padctl = port->padctl;
+> +	unsigned int index = port->index;
+> +
+> +	value = padctl_readl(padctl, USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
+> +
+> +	if (level < 0) {
+> +		/* disable pad protection */
+> +		value |= PD_VREG;
+> +		value &= ~VREG_LEV(~0);
+> +		value &= ~VREG_DIR(~0);
+> +	} else {
+> +		if (dir == TEGRA_VBUS_SOURCE)
+> +			value |= VREG_DIR_OUT;
+> +		else if (dir == TEGRA_VBUS_SINK)
+> +			value |= VREG_DIR_IN;
+> +
+> +		value &= ~PD_VREG;
+> +		value &= ~VREG_DIR(~0);
+> +		value &= ~VREG_LEV(~0);
+> +		value |= VREG_LEV(level);
 
+This would look much cleaner with FIELD_PREP() or u32_encoded_bits()
+
+> +	}
+> +
+> +	padctl_writel(padctl, value, USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
+> +}
+> +
+>  static int tegra186_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
+>  					       bool status)
+>  {
+> @@ -935,6 +973,8 @@ static const struct tegra_xusb_padctl_ops tegra186_xusb_padctl_ops = {
+>  	.vbus_override = tegra186_xusb_padctl_vbus_override,
+>  	.utmi_pad_power_on = tegra_phy_xusb_utmi_pad_power_on,
+>  	.utmi_pad_power_down = tegra_phy_xusb_utmi_pad_power_down,
+> +	.utmi_pad_set_protection =
+> +			tegra186_xusb_padctl_utmi_pad_set_protection,
+
+single line please
+
+>  };
+>  
+>  #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
+> diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+> index 2e5f71c..3aff284 100644
+> --- a/drivers/phy/tegra/xusb-tegra210.c
+> +++ b/drivers/phy/tegra/xusb-tegra210.c
+> @@ -74,6 +74,8 @@
+>  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_MASK 0x3
+>  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_VAL 0x1
+>  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_FIX18 (1 << 6)
+> +#define USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(x) (((x) & 0x3) << 7)
+> +#define USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_DIR(x) (((x) & 0x3) << 11)
+>  
+>  #define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x) (0x088 + (x) * 0x40)
+>  #define XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD_ZI (1 << 29)
+> @@ -1116,6 +1118,34 @@ static void tegra210_usb2_pad_power_down(struct phy *phy)
+>  	usb2->powered_on = false;
+>  }
+>  
+> +static void
+> +tegra210_xusb_padctl_utmi_pad_set_protection(struct tegra_xusb_port *port,
+> +					     int level,
+> +					     enum tegra_vbus_dir dir)
+
+single line and aligned to preceeding parenthesis (hint checkpatch.pl
+with --strict option tells you so)
+
+
+> +{
+> +	u32 value;
+> +	struct tegra_xusb_padctl *padctl = port->padctl;
+> +	unsigned int index = port->index;
+> +
+> +	value = padctl_readl(padctl,
+> +			     XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
+
+Single line please
+
+> +
+> +	if (level < 0) {
+> +		/* disable pad protection */
+> +		value |= XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_FIX18;
+> +		value &= USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(~0);
+> +		value &= ~USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_DIR(~0);
+> +	} else {
+> +		value &= ~XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_FIX18;
+> +		value &= ~USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_DIR(~0);
+> +		value &= USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(~0);
+> +		value |= USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV(level);
+> +	}
+> +
+> +	padctl_writel(padctl, value,
+> +		      XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
+> +}
+> +
+>  static int tegra210_usb2_phy_set_mode(struct phy *phy, enum phy_mode mode,
+>  				      int submode)
+>  {
+> @@ -2291,6 +2321,8 @@ static const struct tegra_xusb_padctl_ops tegra210_xusb_padctl_ops = {
+>  	.utmi_port_reset = tegra210_utmi_port_reset,
+>  	.utmi_pad_power_on = tegra210_usb2_pad_power_on,
+>  	.utmi_pad_power_down = tegra210_usb2_pad_power_down,
+> +	.utmi_pad_set_protection =
+> +			tegra210_xusb_padctl_utmi_pad_set_protection,
+
+Here too
+
+>  };
+>  
+>  static const char * const tegra210_xusb_padctl_supply_names[] = {
+> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+> index 6995fc4..475bcc6 100644
+> --- a/drivers/phy/tegra/xusb.h
+> +++ b/drivers/phy/tegra/xusb.h
+> @@ -259,6 +259,17 @@ to_sata_pad(struct tegra_xusb_pad *pad)
+>   */
+>  struct tegra_xusb_port_ops;
+>  
+> +/*
+> + * Tegra OTG port VBUS direction:
+> + * default (based on port capability) or
+> + * as source or sink
+> + */
+> +enum tegra_vbus_dir {
+> +	TEGRA_VBUS_DEFAULT,
+> +	TEGRA_VBUS_SOURCE,
+> +	TEGRA_VBUS_SINK
+> +};
+> +
+>  struct tegra_xusb_port {
+>  	struct tegra_xusb_padctl *padctl;
+>  	struct tegra_xusb_lane *lane;
+> @@ -398,6 +409,8 @@ struct tegra_xusb_padctl_ops {
+>  	int (*utmi_port_reset)(struct phy *phy);
+>  	void (*utmi_pad_power_on)(struct phy *phy);
+>  	void (*utmi_pad_power_down)(struct phy *phy);
+> +	void (*utmi_pad_set_protection)(struct tegra_xusb_port *port,
+> +					int level, enum tegra_vbus_dir dir);
+>  };
+>  
+>  struct tegra_xusb_padctl_soc {
+> -- 
+> 2.7.4
+
+-- 
+~Vinod
