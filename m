@@ -2,66 +2,65 @@ Return-Path: <SRS0=VfvW=CJ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86197C433E7
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 09:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50137C433E6
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 11:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 666542098B
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 09:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B6D220866
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Aug 2020 11:23:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kurhuhNu"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qu9xuHsi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726100AbgHaJyr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Aug 2020 05:54:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59048 "EHLO
+        id S1726714AbgHaLWz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Aug 2020 07:22:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbgHaJyl (ORCPT
+        with ESMTP id S1726479AbgHaLEl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Aug 2020 05:54:41 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D6A2C061573;
-        Mon, 31 Aug 2020 02:54:22 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id g6so5882570ljn.11;
-        Mon, 31 Aug 2020 02:54:22 -0700 (PDT)
+        Mon, 31 Aug 2020 07:04:41 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B626C06123A
+        for <linux-tegra@vger.kernel.org>; Mon, 31 Aug 2020 04:04:14 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id 7so398492pgm.11
+        for <linux-tegra@vger.kernel.org>; Mon, 31 Aug 2020 04:04:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TSm8Xir2qHLM4KnvUNa9QAiKGDLz5dH6Zq6NNkg0IXQ=;
-        b=kurhuhNueqi6Go7ZBSzHHlC2VATfsEJ18kcOG0TtB7QnuhDk2JAqZNyWAev7TBzYkz
-         CiP5BBA5nDhYGxWPvdTHEM3NhEE76P/YLA+6sVzE9ptTSR4lvQ6U9Fz3VCaIPnv32BAL
-         FZ6kHKgDbxvcOlstFWUomxLz9Gs2BNXfsfP9Gg6Z0voNpQrkTh1RmAnL5VAwZthtO2fg
-         I1B/orxzR62QrpHX62BXGDknIrnk2A7vD1sCjZnI8chUENqi6RoZGQ8FvyKNJPYkZ+bb
-         OKa9i4zJ4xkwbKdT3lpLqL/M4W2gl+hmPOVXCmvkZ8ZiSG9OYoJIcawMs5XiuHyCSFjy
-         7Aug==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SQHLmew/+Uw02hOPwl2KHpbtxwjKEHifcexkv1FCU6c=;
+        b=qu9xuHsiVO1/lhFmOB3Y3peMVj53ZshahjOB6elhp66R5CgK9whhOLPoUy9hJDwOml
+         Xx52NED74g9DEWtob9uJW3arR10F4ZGioAyQqYEs5SvJ1RjzcZA2QrePfX+NC69hXOpx
+         T2ZqORq8P48EJWSjC8u3HyAakTJWOPBND8tw/CDs4nTIDPYu0fE46kWrXoL+o5XVsLiq
+         ztj4QCcWejcIcr3s62PLOOcoR4zkUTdUUajQzYFsgdxoSYCfFfbcUWznqhF0ABqFnXPE
+         OHlJ3s1cAKonQKGi4+iTZ+TeuRQIbX3NmSxTqk9xxswBLaw7kbqZlhRogYMkOY2qzObd
+         Qt+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TSm8Xir2qHLM4KnvUNa9QAiKGDLz5dH6Zq6NNkg0IXQ=;
-        b=SnN6pldGoJQInx/m1zeGmteApodgzbnlZJmK2f5pYudoBhyVOdvKvoFg5N5sdS4S5S
-         D6dsnbGmgY4ooudUKVMW/uocyfaW70OwF9D6Fhw53GrvqTRp+h2OTlvuArTqcg6Lo8vz
-         AZmhBvGagNx3BG8kLa6zUqcTzVae0P4hmRYF8SJNVFOwGlA5Di12RkqW606ie/revFGw
-         20/myo5p31UNvdfJoCQdnPNAg66jIsz5Vn9IJXW7lPjwuCFKijKEXUjnSUhM8TrSktZK
-         uUOGyf9DEAcs1pvdPnsvbR1hdy2Q05LAKhQhTsQLaBgutc7C4CKQbvXZtXju4gk3IBbI
-         PVxA==
-X-Gm-Message-State: AOAM5333RUoiFysFOzYMo0KGwZH15LB0KdqOXgTW3trd1BSiNIzey+Z5
-        6C1Jx9rtFr2IIaTtg33URT8oxyTUPKM=
-X-Google-Smtp-Source: ABdhPJy8KZjk72a5eEDT0IuSYdmnLR/C/55LTP2RBCq87JBLCuN6xfMUdvGBtMMHsODr7dV4jftXMg==
-X-Received: by 2002:a2e:b4f4:: with SMTP id s20mr251794ljm.339.1598867660906;
-        Mon, 31 Aug 2020 02:54:20 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id f20sm1863068lfk.70.2020.08.31.02.54.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Aug 2020 02:54:20 -0700 (PDT)
-Subject: Re: [PATCH 3/3] ARM: tegra: Pass multiple versions in
- opp-supported-hw property
-To:     Viresh Kumar <viresh.kumar@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SQHLmew/+Uw02hOPwl2KHpbtxwjKEHifcexkv1FCU6c=;
+        b=uEsZwJPxep8RRGXuQ1F6IJ1DoK/WPPMsWs69JgxXRUmkqH7usE8bHSfr/EvzXtC+lg
+         TSLnKm1Og7VyKJZfYmdgtpR72phv+gS9Q3+7qJY2CxgH7XcJoEaJVM2xF7BJkri3Uqgw
+         ZhYog1EcLFdvHGTQtRGkGZQDQNY3Bu+wF12MUxXPXo3xky7m+D1Rt54zFqlSvjltCPe3
+         wWBmfmmuseY8JxodWZQW0ati6gHC6M3QXXth+i3Hegj086vqzInLi208GoYZcLPXbCoE
+         M1i02hWYbSzzAtFrdCWpCYN8ZLb2dxhGBg2y90txULYKff7ZeZU8+EwidVxUBvzEK+4o
+         JJ6A==
+X-Gm-Message-State: AOAM530WGymu6jB+Nmaqy/ZVS6aCH0Vsu9MT6qotlfLcj0+setJZ+Ta7
+        XcPGX9KinqJlQDsEWD0BNFUiVA==
+X-Google-Smtp-Source: ABdhPJxeSefAgzvdXk9S266/E7KO0kwk+YEMEr+ulK04bFCe5SCH5jaiI2wePURUQh3DPfX154nn+A==
+X-Received: by 2002:a05:6a00:14d0:: with SMTP id w16mr833159pfu.39.1598871854010;
+        Mon, 31 Aug 2020 04:04:14 -0700 (PDT)
+Received: from localhost ([122.167.135.199])
+        by smtp.gmail.com with ESMTPSA id w16sm7665688pfq.13.2020.08.31.04.04.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 31 Aug 2020 04:04:13 -0700 (PDT)
+Date:   Mon, 31 Aug 2020 16:34:08 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -72,53 +71,58 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephan Gerhold <stephan@gerhold.net>,
         devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ARM: tegra: Pass multiple versions in
+ opp-supported-hw property
+Message-ID: <20200831110408.a6lwivim4w4jtkdc@vireshk-i7>
 References: <cover.1598442485.git.viresh.kumar@linaro.org>
  <b13f1b112532fe0189d1f7bbb50903d9e1defb07.1598442485.git.viresh.kumar@linaro.org>
  <b0763074-859f-fccb-dde4-03d1a50ea021@gmail.com>
  <20200831043908.mtw4dglybcmcabjb@vireshk-i7>
  <0da380c2-9161-d450-afd2-4b159c8cfb7d@gmail.com>
  <20200831084111.6udzvrdonxgzju4l@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <cbfa012b-8f50-e460-972c-c51fa52bb858@gmail.com>
-Date:   Mon, 31 Aug 2020 12:54:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <cbfa012b-8f50-e460-972c-c51fa52bb858@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200831084111.6udzvrdonxgzju4l@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cbfa012b-8f50-e460-972c-c51fa52bb858@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-31.08.2020 11:41, Viresh Kumar пишет:
-> On 31-08-20, 10:54, Dmitry Osipenko wrote:
->> 31.08.2020 07:39, Viresh Kumar пишет:
->> ...
->>>>> Dmitry, I think there is further scope of simplifying stuff here by
->>>>> using the opp-microvolt-<name> property and corresponding
->>>>> dev_pm_opp_set_prop_name() call.
->>>
->>> Any inputs on this Dmitry ?
->>
->> Could you please give an example?
+On 31-08-20, 12:54, Dmitry Osipenko wrote:
+> It's not clear to me how it could be applicable to the Tegra CPU OPP
+> because Tegra depends on a combination of SPEEDO + PROCESS versions.
 > 
-> There are many users of it in the kernel. grep for "opp-microvolt-" in
-> the DT files and you will see.
-> 
-> The use of this property is to specific multiple microvolt properties
-> to the same frequency without a need to create separate nodes for them
-> all. The right microvolt property will be selected based on the call
-> made to dev_pm_opp_set_prop_name(), search for that too in kernel.
-> 
+> It's not like all voltages are the same for all OPPs that have the same
+> PROCESS ID, otherwise it indeed would be nice to have
+> "opp-microvolt-process0", but unfortunately this variant is not suitable
+> for Tegra because some freqs have different voltages using the same
+> PROCESS ID and the same applies to the SPEEDO ID.
 
-It's not clear to me how it could be applicable to the Tegra CPU OPP
-because Tegra depends on a combination of SPEEDO + PROCESS versions.
+How exactly do you know what voltage belongs to a particular OPP ?
 
-It's not like all voltages are the same for all OPPs that have the same
-PROCESS ID, otherwise it indeed would be nice to have
-"opp-microvolt-process0", but unfortunately this variant is not suitable
-for Tegra because some freqs have different voltages using the same
-PROCESS ID and the same applies to the SPEEDO ID.
+		opp@216000000 {
+			clock-latency-ns = <400000>;
+			opp-supported-hw = <0x0F 0x0003>;
+			opp-hz = /bits/ 64 <216000000>;
+			opp-microvolt-fast-process0 = <750000 750000 1125000>;
+			opp-microvolt-slow-process0 = <750000 850000 1125000>;
+
+		};
+
+		opp@312000000 {
+			clock-latency-ns = <400000>;
+			opp-supported-hw = <0x0F 0x0003>;
+			opp-hz = /bits/ 64 <312000000>;
+			opp-microvolt-fast-process0 = <750000 750000 1125000>;
+			opp-microvolt-slow-process0 = <750000 850000 1125000>;
+		};
+
+You can make any combinations of such names that come from speedo,
+process, or something else. If you can get this done as a fixed
+formula then it is workable.
+
+-- 
+viresh
