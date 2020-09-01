@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4D3C433E7
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DE6C433E7
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14D262087D
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:42:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18AA120767
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598978549;
-	bh=lQCnpE+h3F7ldlhOlP/LmTgLkwRbrAWwyY8D9fia1fg=;
+	s=default; t=1598978590;
+	bh=o8qlZ2EryFTu3cjlwAR8kRQlz7lJkpkfP6U3eaeoReE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NLm8UoA+PscnaqkjhLwPNKZFHkWC7iZJVoXEoHRFmdz5FfO+ZnmaKKfsbIP79t6QB
-	 w0mnxOJ9dUgtI24NB9yGqJU8umMQf4qQAfYAfUxXX0S+ZyoMN+0k5hTVG7K4bZagyk
-	 dMTyYkTDKGlPI11H1Uyt9EMa7Ds3xYzDgn4ou8Lk=
+	b=TTyrB1N+GhNQUO9rsuP+z8mJVvpbdDUs5MjiWmNyZMf6aD0WyT0wyGwwGfTNd9M8t
+	 ANP4SvU25fWxFrl8UnRteuE+qhj4l65yTYyNGMccOtG2ckA/FnKz8M6ZpJcJ6c8aw9
+	 ffe2ab8DmXZSSxDw9RHhNTiKC6mJ18XBqjtETQHU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbgIAP2B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 11:28:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55748 "EHLO mail.kernel.org"
+        id S1732228AbgIAQnB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Sep 2020 12:43:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730316AbgIAP17 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Sep 2020 11:27:59 -0400
+        id S1728331AbgIAP1u (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 1 Sep 2020 11:27:50 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CD7C2100A;
-        Tue,  1 Sep 2020 15:27:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81CC82078B;
+        Tue,  1 Sep 2020 15:27:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598974078;
-        bh=lQCnpE+h3F7ldlhOlP/LmTgLkwRbrAWwyY8D9fia1fg=;
+        s=default; t=1598974069;
+        bh=o8qlZ2EryFTu3cjlwAR8kRQlz7lJkpkfP6U3eaeoReE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m9ezrBcITeM03VLnUcB2yHSUbMGl07t9SG4iL8L9fX6fmWiJrm1m6eDlk21/simjC
-         0r3hzUvihtAn8zL1j8ci9rCw7Wu/SLrupJCv41/pUe0YYviRov8xg1VHyDzvQ1J2Ug
-         amglPELe1Gp4Zcjic1dsxW/C4IcJs/RIpR3/V0iQ=
+        b=LnBeGSSXnEMQ4CLcP1ia4NPBE1xz6UJfBgv5qLJlLwDIXOlWFOMKFvKfOYau0Wrp5
+         t+qX6bomEziRTl4D9pW4LjSoJtxAWrDw/V2kooxiPBLWtDGz3XwxN970p60F1uiDgH
+         YVip6d1dTCUU1c4xzjgbWDLgdUfBeinrVW2AUDGs=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
         Mark Brown <broonie@kernel.org>,
@@ -67,9 +67,9 @@ To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 05/11] spi: cadence-quadspi: Simplify with dev_err_probe()
-Date:   Tue,  1 Sep 2020 17:27:07 +0200
-Message-Id: <20200901152713.18629-5-krzk@kernel.org>
+Subject: [PATCH 04/11] spi: bcm2835: Simplify with dev_err_probe()
+Date:   Tue,  1 Sep 2020 17:27:06 +0200
+Message-Id: <20200901152713.18629-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200901152713.18629-1-krzk@kernel.org>
 References: <20200901152713.18629-1-krzk@kernel.org>
@@ -83,25 +83,26 @@ dev_err_probe().  Less code and the error value gets printed.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/spi/spi-cadence-quadspi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/spi/spi-bcm2835.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
-index 508b219eabf8..cec4e89ab9b2 100644
---- a/drivers/spi/spi-cadence-quadspi.c
-+++ b/drivers/spi/spi-cadence-quadspi.c
-@@ -1117,11 +1117,8 @@ static int cqspi_request_mmap_dma(struct cqspi_st *cqspi)
- 	cqspi->rx_chan = dma_request_chan_by_mask(&mask);
- 	if (IS_ERR(cqspi->rx_chan)) {
- 		int ret = PTR_ERR(cqspi->rx_chan);
--
--		if (ret != -EPROBE_DEFER)
--			dev_err(&cqspi->pdev->dev, "No Rx DMA available\n");
- 		cqspi->rx_chan = NULL;
--		return ret;
-+		return dev_err_probe(&cqspi->pdev->dev, ret, "No Rx DMA available\n");
+diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+index c45d76c848c8..5519f1eda238 100644
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -1319,11 +1319,8 @@ static int bcm2835_spi_probe(struct platform_device *pdev)
+ 
+ 	bs->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(bs->clk)) {
+-		err = PTR_ERR(bs->clk);
+-		if (err == -EPROBE_DEFER)
+-			dev_dbg(&pdev->dev, "could not get clk: %d\n", err);
+-		else
+-			dev_err(&pdev->dev, "could not get clk: %d\n", err);
++		err = dev_err_probe(&pdev->dev, PTR_ERR(bs->clk),
++				    "could not get clk\n");
+ 		goto out_controller_put;
  	}
- 	init_completion(&cqspi->rx_dma_complete);
  
 -- 
 2.17.1
