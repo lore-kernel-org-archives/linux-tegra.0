@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31248C433E6
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 472A6C43461
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED53D20767
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14E4020767
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:44:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598978650;
-	bh=jo5js8lscFdRLSI/iL/0MdnOq2JeNN+Y1xQFxh7q//s=;
+	s=default; t=1598978687;
+	bh=TxQu2yA10K+9lWq+TKY2JDeXUOfkOFu5YajYPSCGs6s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s2TChHrldhlA9ZM+n4HGHNyYrd/XAfAcgo7ovX8nyqYpwKK1bC6ib84N0e1aUn2W8
-	 9vcVFOuqq5atud9srhOtDxavj0moaOz1z2XGc0+5Noz81uzRVMwKEQRAsI49MD1OWn
-	 bGehOSFEj5hBW2by1+8SnynVoIdzbA7SRue1CfE0=
+	b=ZFcE19ZBp6MZQzifklSQHYNrJmj5miOAN93vlw/1VfhgYq0LytAQfbgakHahkZ/oY
+	 W8fFei7Oc7zca+4LinFnvBD7pRonewVV8BQ7FZfUrjj+vVoJeN85M4MXkIoXIv3dUM
+	 EA4JUiwUHeCxwn89hKsEo704wI/DFMTQer7JGy50=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730461AbgIAQoC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 12:44:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55064 "EHLO mail.kernel.org"
+        id S1730220AbgIAP1h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Sep 2020 11:27:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730258AbgIAP1n (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Sep 2020 11:27:43 -0400
+        id S1730218AbgIAP1g (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 1 Sep 2020 11:27:36 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB5A9207D3;
-        Tue,  1 Sep 2020 15:27:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B670214D8;
+        Tue,  1 Sep 2020 15:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598974062;
-        bh=jo5js8lscFdRLSI/iL/0MdnOq2JeNN+Y1xQFxh7q//s=;
+        s=default; t=1598974055;
+        bh=TxQu2yA10K+9lWq+TKY2JDeXUOfkOFu5YajYPSCGs6s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g7ARaH/6gOwD0Qobni24k3l1FK1h9lohBOSSiMWp1zDmY29GS2uEBiXYEB8w/mMRy
-         dWIESHQOUL9Sm/eKOoGkTa5jVu/U50ba2pw7lGsX32GR0ma0KXpP+2Yj3eJwSGKyCl
-         2Gir9We9wSMfaBjfLz7kXjkoSL+SRHr5UgQe8JiY=
+        b=m7pW1hFOu4r/Fytp0mI7U9/5laqm05C7C7LoNdZtlVyfJN5SIplvnI1LbdIAphqIz
+         Lge21VQ7IK84PLBBEwenFUelYGUjkQ6/NV12f63lsHVZeoYeXz1wpW4g/eUYqq9H5u
+         1k3xqQnrBL5NW4PO6e9tFmmxZIf80aj7JkW+mEcw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
         Mark Brown <broonie@kernel.org>,
@@ -67,9 +67,9 @@ To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 03/11] spi: atmel: Simplify with dev_err_probe()
-Date:   Tue,  1 Sep 2020 17:27:05 +0200
-Message-Id: <20200901152713.18629-3-krzk@kernel.org>
+Subject: [PATCH 02/11] spi: sprd: Simplify with dev_err_probe()
+Date:   Tue,  1 Sep 2020 17:27:04 +0200
+Message-Id: <20200901152713.18629-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200901152713.18629-1-krzk@kernel.org>
 References: <20200901152713.18629-1-krzk@kernel.org>
@@ -83,25 +83,58 @@ dev_err_probe().  Less code and the error value gets printed.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/spi/spi-atmel.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/spi/spi-sprd-adi.c |  5 +----
+ drivers/spi/spi-sprd.c     | 17 +++++------------
+ 2 files changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
-index 2cfe6253a784..7c68d5cdbdc6 100644
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -513,9 +513,8 @@ static int atmel_spi_configure_dma(struct spi_master *master,
+diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
+index 127b8bd25831..392ec5cfa3d6 100644
+--- a/drivers/spi/spi-sprd-adi.c
++++ b/drivers/spi/spi-sprd-adi.c
+@@ -504,10 +504,7 @@ static int sprd_adi_probe(struct platform_device *pdev)
+ 			dev_info(&pdev->dev, "no hardware spinlock supplied\n");
+ 			break;
+ 		default:
+-			dev_err(&pdev->dev,
+-				"failed to find hwlock id, %d\n", ret);
+-			fallthrough;
+-		case -EPROBE_DEFER:
++			dev_err_probe(&pdev->dev, ret, "failed to find hwlock id\n");
+ 			goto put_ctlr;
+ 		}
+ 	}
+diff --git a/drivers/spi/spi-sprd.c b/drivers/spi/spi-sprd.c
+index 0443fec3a6ab..635738f54c73 100644
+--- a/drivers/spi/spi-sprd.c
++++ b/drivers/spi/spi-sprd.c
+@@ -553,22 +553,15 @@ static int sprd_spi_dma_tx_config(struct sprd_spi *ss, struct spi_transfer *t)
+ static int sprd_spi_dma_request(struct sprd_spi *ss)
+ {
+ 	ss->dma.dma_chan[SPRD_SPI_RX] = dma_request_chan(ss->dev, "rx_chn");
+-	if (IS_ERR_OR_NULL(ss->dma.dma_chan[SPRD_SPI_RX])) {
+-		if (PTR_ERR(ss->dma.dma_chan[SPRD_SPI_RX]) == -EPROBE_DEFER)
+-			return PTR_ERR(ss->dma.dma_chan[SPRD_SPI_RX]);
+-
+-		dev_err(ss->dev, "request RX DMA channel failed!\n");
+-		return PTR_ERR(ss->dma.dma_chan[SPRD_SPI_RX]);
+-	}
++	if (IS_ERR_OR_NULL(ss->dma.dma_chan[SPRD_SPI_RX]))
++		return dev_err_probe(ss->dev, PTR_ERR(ss->dma.dma_chan[SPRD_SPI_RX]),
++				     "request RX DMA channel failed!\n");
  
- 	master->dma_tx = dma_request_chan(dev, "tx");
- 	if (IS_ERR(master->dma_tx)) {
--		err = PTR_ERR(master->dma_tx);
--		if (err != -EPROBE_DEFER)
--			dev_err(dev, "No TX DMA channel, DMA is disabled\n");
-+		err = dev_err_probe(dev, PTR_ERR(master->dma_tx),
-+				    "No TX DMA channel, DMA is disabled\n");
- 		goto error_clear;
+ 	ss->dma.dma_chan[SPRD_SPI_TX]  = dma_request_chan(ss->dev, "tx_chn");
+ 	if (IS_ERR_OR_NULL(ss->dma.dma_chan[SPRD_SPI_TX])) {
+ 		dma_release_channel(ss->dma.dma_chan[SPRD_SPI_RX]);
+-		if (PTR_ERR(ss->dma.dma_chan[SPRD_SPI_TX]) == -EPROBE_DEFER)
+-			return PTR_ERR(ss->dma.dma_chan[SPRD_SPI_TX]);
+-
+-		dev_err(ss->dev, "request TX DMA channel failed!\n");
+-		return PTR_ERR(ss->dma.dma_chan[SPRD_SPI_TX]);
++		return dev_err_probe(ss->dev, PTR_ERR(ss->dma.dma_chan[SPRD_SPI_TX]),
++				     "request TX DMA channel failed!\n");
  	}
  
+ 	return 0;
 -- 
 2.17.1
 
