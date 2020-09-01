@@ -3,124 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1966EC433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 739C1C433E7
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E319F20767
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:26:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LXYWaF0F"
+	by mail.kernel.org (Postfix) with ESMTP id 4EAB12098B
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:38:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598978327;
+	bh=/XJaGl06CsjTQv2yh1KyHC+7ktek0ZuAsx836iRegvw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=hxCogG/96q1t60EgzQZPD8+o4TVQA9wBHlXCYcaFSBa/0iiDjkoPkqBnDxuS6ZOrr
+	 Lf+fLbc5e4w3zAWKsYlDu/o1gG6F+rLn7+AfYgCt8iEEUyLevZqeqfEsLnDBZ8h263
+	 qLm5BAQOGfkVBIQ/LAP3YXeSnPU2QcPSFAtFecYk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730981AbgIAQ0M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 12:26:12 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17418 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730027AbgIAQZU (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Sep 2020 12:25:20 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4e75e20000>; Tue, 01 Sep 2020 09:25:06 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 01 Sep 2020 09:25:19 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 01 Sep 2020 09:25:19 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 1 Sep
- 2020 16:25:17 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 1 Sep 2020 16:25:17 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.173.243]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f4e75ec0001>; Tue, 01 Sep 2020 09:25:17 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>
-CC:     <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [PATCH v2 4.19 3/7] dt-bindings: mmc: tegra: Add tmclk for Tegra210 and Tegra186
-Date:   Tue, 1 Sep 2020 09:24:46 -0700
-Message-ID: <1598977490-1826-4-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1598977490-1826-1-git-send-email-skomatineni@nvidia.com>
-References: <1598977490-1826-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598977506; bh=91lpNkKdgEoPrfUshzx2bxO8w2NQjCapWrsEaT/jp7s=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=LXYWaF0FZWO0RkCl9xIIyGGdXDXStOqPJju3bjklL+mE0ZIhJ6ig6EDsHUHBOn8XJ
-         Y4AdwN/OSPFDPdraIst4tVzkYaZj4HI72wD9VlSnY1sJ3EJfUr3FI7p8E2D8py2+7S
-         Ohg1/GvhoelgrUIMZSFi3dU660R3e9RT6fXUsn3sHVYbvBEwnFI0fvEffI1Fuw7Jgk
-         ChA9SxcNsm/v9h0seAUhlF1w1Pd7qjb1g9xusLdXAwcJ0fD4YEIdsETOp2S6fz+hJu
-         Y3YaOzsRfWwvkb+stgfkoP6nAMkOlV01jyDwi2h2uOtl5VgiUXHH4IjPWlLimB7k2q
-         vMclH3rxZuq6g==
+        id S1730496AbgIAQig (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Sep 2020 12:38:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730401AbgIAP2p (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 1 Sep 2020 11:28:45 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16CD620FC3;
+        Tue,  1 Sep 2020 15:28:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598974125;
+        bh=/XJaGl06CsjTQv2yh1KyHC+7ktek0ZuAsx836iRegvw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=n2mdRPDrNq2pVxukr4c3iPl+YkyyHJaWmRW5Jvz8KNAR0gjpv3Svn6cs3odcRB3wg
+         aRgXXOz0vV5ybQhyPw+p1EPa2Mq2mUsHfU3DKmGbzsjwiSC4oNC4xZ4tUsD30dQyNo
+         IIgfBbfOVuEEqmw46QROFHdgplBU7IGDhhHrHy7I=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Masahisa Kojima <masahisa.kojima@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 11/11] spi: tegra20: Simplify with dev_err_probe()
+Date:   Tue,  1 Sep 2020 17:27:13 +0200
+Message-Id: <20200901152713.18629-11-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200901152713.18629-1-krzk@kernel.org>
+References: <20200901152713.18629-1-krzk@kernel.org>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra210 and later uses separate SDMMC_LEGACY_TM clock for data
-timeout.
+Common pattern of handling deferred probe can be simplified with
+dev_err_probe().  Less code and the error value gets printed.
 
-So, this patch adds "tmclk" to Tegra sdhci clock property in the
-device tree binding.
-
-Fixes: b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
-Cc: stable <stable@vger.kernel.org> # 4.19
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 23 ++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ drivers/spi/spi-tegra20-slink.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-index 9bce578..a5f1fae 100644
---- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-+++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-@@ -14,8 +14,15 @@ Required properties:
-   - "nvidia,tegra124-sdhci": for Tegra124 and Tegra132
-   - "nvidia,tegra210-sdhci": for Tegra210
-   - "nvidia,tegra186-sdhci": for Tegra186
--- clocks : Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
-+- clocks: For Tegra210 and Tegra186 must contain two entries.
-+	  One for the module clock and one for the timeout clock.
-+	  For all other Tegra devices, must contain a single entry for
-+	  the module clock. See ../clocks/clock-bindings.txt for details.
-+- clock-names: For Tegra210 and Tegra186 must contain the strings 'sdhci'
-+	       and 'tmclk' to represent the module and the timeout clocks,
-+	       respectively.
-+	       For all other Tegra devices must contain the string 'sdhci'
-+	       to represent the module clock.
- - resets : Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
- - reset-names : Must include the following entries:
-@@ -38,3 +45,15 @@ sdhci@c8000200 {
- 	power-gpios = <&gpio 155 0>; /* gpio PT3 */
- 	bus-width = <8>;
- };
-+
-+sdhci@700b0000 {
-+	compatible = "nvidia,tegra210-sdhci";
-+	reg = <0x0 0x700b0000 0x0 0x200>;
-+	interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&tegra_car TEGRA210_CLK_SDMMC1>,
-+		 <&tegra_car TEGRA210_CLK_SDMMC_LEGACY>;
-+	clock-names = "sdhci", "tmclk";
-+	resets = <&tegra_car 14>;
-+	reset-names = "sdhci";
-+	status = "disabled";
-+};
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index a07b72e9c344..a0810765d4e5 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -600,13 +600,9 @@ static int tegra_slink_init_dma_param(struct tegra_slink_data *tspi,
+ 	struct dma_slave_config dma_sconfig;
+ 
+ 	dma_chan = dma_request_chan(tspi->dev, dma_to_memory ? "rx" : "tx");
+-	if (IS_ERR(dma_chan)) {
+-		ret = PTR_ERR(dma_chan);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(tspi->dev,
+-				"Dma channel is not available: %d\n", ret);
+-		return ret;
+-	}
++	if (IS_ERR(dma_chan))
++		return dev_err_probe(tspi->dev, PTR_ERR(dma_chan),
++				     "Dma channel is not available\n");
+ 
+ 	dma_buf = dma_alloc_coherent(tspi->dev, tspi->dma_buf_size,
+ 				&dma_phys, GFP_KERNEL);
 -- 
-2.7.4
+2.17.1
 
