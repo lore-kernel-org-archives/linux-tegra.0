@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81030C433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF02C43461
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 494FF2078B
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F36B2078B
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:40:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598978405;
-	bh=t6xL7+nzs+mrnXa/pS4dInGiF2OBxrYskhX5bGXiGFI=;
+	s=default; t=1598978406;
+	bh=ZWHMnQM/CURbA1JIRAEZIvphDU5D8wae4PWN5Vo15i0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LTQi8RpRYB3W6L3Imgu1xSDXIBESy5k0/PPpmKGgwQC3dLL6aPqER61BXXPbjt3uQ
-	 AvukZvUz0HBncl8ouo9P5m+yY1nPnCNCrsxW+TQXYH2qfqT1InPNE35WXyVAEUOrpl
-	 nXUWvpypLiyR11f3+6AeQ/UFWo3reHY699EhCo24=
+	b=kgFPj6COZkk4uERMBzb52pPI201crclsqyi1WLF2h1NOZgIVqidl8YtB8sofFQEDk
+	 Cw3HwuFkLtDLkNtVDYSBacaSXH7fyPUf+rsMp+54JElbVvbPPLx8Vn2WnlWFxJDlP9
+	 VmW75Kw1tSzQBklqFTLXlzZCS5MAjvPysJROHFXc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731087AbgIAQj6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 12:39:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56894 "EHLO mail.kernel.org"
+        id S1730383AbgIAP2W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Sep 2020 11:28:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730386AbgIAP2b (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Sep 2020 11:28:31 -0400
+        id S1730376AbgIAP2V (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 1 Sep 2020 11:28:21 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A72020BED;
-        Tue,  1 Sep 2020 15:28:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B17B20684;
+        Tue,  1 Sep 2020 15:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598974108;
-        bh=t6xL7+nzs+mrnXa/pS4dInGiF2OBxrYskhX5bGXiGFI=;
+        s=default; t=1598974100;
+        bh=ZWHMnQM/CURbA1JIRAEZIvphDU5D8wae4PWN5Vo15i0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bnoPmKNKd28LlKy9QcwtnZ1wTrOYtz9newemzZarooh81jBwMIyRhJTmPaNMR8oGQ
-         4Go50IxD1/QkxcX3PT4keyZdUiI8B6Zyi/1MBBPNmewdGrNtW/XBTcM1OC7J2R1kDu
-         PCEU13qOJ6L6443LtBlXMTT0CPmw/7Xc6eUSnpis=
+        b=fSGtfZeZCm3TiMylfkCI5P8pCwDKJys94RBEilJ2Sih8/T9FzFNb6CP+fOzBgYWO7
+         5P6A9z0uDBLqmNUh0iBzomdRI7o7WhsTuXSz9O2Ld9mB9RTBh3yZU3wq9cQ03ouo9i
+         M2bAn5PBFZm4gbj8jQc+xWxqa/6K9c/qXY6AuULU=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
         Mark Brown <broonie@kernel.org>,
@@ -67,9 +67,9 @@ To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 09/11] spi: synquacer: Simplify with dev_err_probe()
-Date:   Tue,  1 Sep 2020 17:27:11 +0200
-Message-Id: <20200901152713.18629-9-krzk@kernel.org>
+Subject: [PATCH 08/11] spi: stm32: Simplify with dev_err_probe()
+Date:   Tue,  1 Sep 2020 17:27:10 +0200
+Message-Id: <20200901152713.18629-8-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200901152713.18629-1-krzk@kernel.org>
 References: <20200901152713.18629-1-krzk@kernel.org>
@@ -83,25 +83,24 @@ dev_err_probe().  Less code and the error value gets printed.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/spi/spi-synquacer.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/spi/spi-stm32.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-synquacer.c b/drivers/spi/spi-synquacer.c
-index ae17c99cce03..42e82dbe3d41 100644
---- a/drivers/spi/spi-synquacer.c
-+++ b/drivers/spi/spi-synquacer.c
-@@ -640,9 +640,8 @@ static int synquacer_spi_probe(struct platform_device *pdev)
- 		}
+diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+index d4b33b358a31..f0e594b2fee4 100644
+--- a/drivers/spi/spi-stm32.c
++++ b/drivers/spi/spi-stm32.c
+@@ -1857,9 +1857,7 @@ static int stm32_spi_probe(struct platform_device *pdev)
  
- 		if (IS_ERR(sspi->clk)) {
--			if (!(PTR_ERR(sspi->clk) == -EPROBE_DEFER))
--				dev_err(&pdev->dev, "clock not found\n");
--			ret = PTR_ERR(sspi->clk);
-+			ret = dev_err_probe(&pdev->dev, PTR_ERR(sspi->clk),
-+					    "clock not found\n");
- 			goto put_spi;
- 		}
- 
+ 	spi->irq = platform_get_irq(pdev, 0);
+ 	if (spi->irq <= 0) {
+-		ret = spi->irq;
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "failed to get irq: %d\n", ret);
++		ret = dev_err_probe(&pdev->dev, spi->irq, "failed to get irq\n");
+ 		goto err_master_put;
+ 	}
+ 	ret = devm_request_threaded_irq(&pdev->dev, spi->irq,
 -- 
 2.17.1
 
