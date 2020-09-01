@@ -2,89 +2,98 @@ Return-Path: <SRS0=hxt9=CK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2144C433E6
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 13:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85034C433E2
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 14:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FAC9206EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 13:54:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A29206EB
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 14:51:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598968492;
-	bh=fgdQbvNKfrT9RQxxwbrS+G3c51w2CaurFPEVweTkSFs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Pbtvtz3mh1EnRPrfU2xjjEM4qEE9ZfrHffRP/bHuBjdi1BYY+D5pVarhoFGImeTEy
-	 j/zlDniVzciVtCOxXnjpLNJpr2o8pSpEz5g8oMk2b7+QfHCg+gfS20j0x22OrYawuE
-	 YCPmxH26yhPO7uV96eF3ExzEd7SmDitlBKmOs8Mw=
+	s=default; t=1598971915;
+	bh=hfukjQ/MUILfw8yDC7cf0oDeEgXFfD/okOKu4FWtQjo=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
+	b=Bt4Nz+v+bio7Azml1oavoNk4/46Rcdab06gYOi34GRChPwn+HbT5Vf74T62CNw8BF
+	 zVoQrsiZABTqdRMUV0VBJgNqiFG/TXmT3WOs8sdohpwRebfRThRh2kRs9uXeKJSLgK
+	 ecRPDleMi5Yp+JhCxy7AFwt6+nSyMP0LSroXh9MI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbgIANyv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 09:54:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45914 "EHLO mail.kernel.org"
+        id S1728374AbgIAOvM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Sep 2020 10:51:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728267AbgIANyq (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Sep 2020 09:54:46 -0400
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
+        id S1727037AbgIAOvI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 1 Sep 2020 10:51:08 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21121206EF;
-        Tue,  1 Sep 2020 13:54:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70B8A206EB;
+        Tue,  1 Sep 2020 14:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598968485;
-        bh=fgdQbvNKfrT9RQxxwbrS+G3c51w2CaurFPEVweTkSFs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=foEI5kCGhAdHd4Lc751iDhiFVCWbPPfNcIr92QxDyn3UHDswkD+id1vtNBkV1y7Cy
-         WfRn3Dz3pzF+lfzQ60RdprxObBsaeOpcqgut597Zbdm26EejvLtQh58icB6LxAWsau
-         sUd7M0EMs0QUirzh+WA6y4pe1Yl9VE4Du6yiE8+k=
-Date:   Tue, 1 Sep 2020 15:55:13 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Sasha Levin <sashal@kernel.org>, adrian.hunter@intel.com,
-        ulf.hansson@linaro.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, robh+dt@kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 1/7] sdhci: tegra: Remove
- SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for Tegra210
-Message-ID: <20200901135513.GA397411@kroah.com>
-References: <1598653517-13658-1-git-send-email-skomatineni@nvidia.com>
- <1598653517-13658-2-git-send-email-skomatineni@nvidia.com>
- <20200828231536.GU8670@sasha-vm>
- <dc6bfd08-baaf-e1ad-6b3f-77ff82d110bb@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc6bfd08-baaf-e1ad-6b3f-77ff82d110bb@nvidia.com>
+        s=default; t=1598971867;
+        bh=hfukjQ/MUILfw8yDC7cf0oDeEgXFfD/okOKu4FWtQjo=;
+        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+        b=KdZkKrPbJPR6PVQp86UaHDX+HsDJrrw5I5U4tYBdv8Pl0BBqfci5MRo14nfvRMDZw
+         MRR1yz/s4kYCrYRB1Vw2MjvW/WsWHTc8nezzIGOQVoqvC8/QlhSntVTYcCUTBlmyrB
+         LsYvyQzhb74p2tAKSwJ1WvFh4/h2Dk3Uz7uVy3/o=
+Date:   Tue, 01 Sep 2020 15:50:27 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Dan Murphy <dmurphy@ti.com>, Lee Jones <lee.jones@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20200830185356.5365-1-digetx@gmail.com>
+References: <20200830185356.5365-1-digetx@gmail.com>
+Subject: Re: [PATCH v2 0/6] Introduce Embedded Controller driver for Acer A500
+Message-Id: <159897181721.47861.7031289432829890619.b4-ty@kernel.org>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Aug 28, 2020 at 04:23:48PM -0700, Sowjanya Komatineni wrote:
+On Sun, 30 Aug 2020 21:53:50 +0300, Dmitry Osipenko wrote:
+> This series adds support for the Embedded Controller which is found on
+> Acer Iconia Tab A500 (Android tablet device).
 > 
-> On 8/28/20 4:15 PM, Sasha Levin wrote:
-> > On Fri, Aug 28, 2020 at 03:25:11PM -0700, Sowjanya Komatineni wrote:
-> > > commit b5a84ecf025a ("mmc: tegra: Add Tegra210 support")
-> > 
-> > What does this line above represent?
-> > 
-> SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK is set incorrectly in above commit
+> The Embedded Controller is ENE KB930 and it's running firmware customized
+> for the A500. The firmware interface may be reused by some other sibling
+> Acer tablets, although none of those tablets are supported in upstream yet.
+> Please review and apply, thanks in advance!
 > 
-> when Tegra210 support was added.
+> [...]
 
-Odd, that's a new format to send to us to apply :)
+Applied to
 
-Can you please provide the git commit id of the original commit in
-Linus's tree, as per the documentation, so we know what this is, and can
-document that?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
 
-Look at all of the commits in the stable trees for examples of how to do
-this.
+Thanks!
 
-Can y ou fix that up and resend this whole series?
+[1/1] regmap: Use flexible sleep
+      commit: 2b32d2f7ce0a54ce74a75f0d939b5ee063a05ec5
 
-thanks,
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-greg k-h
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
