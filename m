@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2607C433E7
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 20:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AACAC433E6
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 20:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8144207EA
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 20:11:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82B162078B
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 20:13:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbgIAULl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 16:11:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:49410 "EHLO foss.arm.com"
+        id S1727103AbgIAUNf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Sep 2020 16:13:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:49476 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726764AbgIAULk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Sep 2020 16:11:40 -0400
+        id S1726323AbgIAUNe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 1 Sep 2020 16:13:34 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F28D1FB;
-        Tue,  1 Sep 2020 13:11:39 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCA181FB;
+        Tue,  1 Sep 2020 13:13:33 -0700 (PDT)
 Received: from [10.57.40.122] (unknown [10.57.40.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73CC33F66F;
-        Tue,  1 Sep 2020 13:11:37 -0700 (PDT)
-Subject: Re: [PATCH v9 18/32] drm: tegra: fix common struct sg_table related
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B1FE3F66F;
+        Tue,  1 Sep 2020 13:13:31 -0700 (PDT)
+Subject: Re: [PATCH v9 24/32] drm: host1x: fix common struct sg_table related
  issues
 To:     Marek Szyprowski <m.szyprowski@samsung.com>,
         dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
@@ -36,18 +36,17 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org
 References: <20200826063316.23486-1-m.szyprowski@samsung.com>
- <CGME20200826063538eucas1p2a9fe42c2ccee634c41ba9f3dd43dc3c4@eucas1p2.samsung.com>
- <20200826063316.23486-19-m.szyprowski@samsung.com>
+ <CGME20200826063542eucas1p1713d37f4589ddaca27e1968b5fe44027@eucas1p1.samsung.com>
+ <20200826063316.23486-25-m.szyprowski@samsung.com>
 From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <35eb8693-9fee-1fd7-d6ae-a8f3e0d263d7@arm.com>
-Date:   Tue, 1 Sep 2020 21:11:36 +0100
+Message-ID: <ee8392f8-36eb-4e60-5a3a-965369465dac@arm.com>
+Date:   Tue, 1 Sep 2020 21:13:30 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
  Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200826063316.23486-19-m.szyprowski@samsung.com>
+In-Reply-To: <20200826063316.23486-25-m.szyprowski@samsung.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -84,144 +83,71 @@ Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->   drivers/gpu/drm/tegra/gem.c   | 27 ++++++++++-----------------
->   drivers/gpu/drm/tegra/plane.c | 15 +++++----------
->   2 files changed, 15 insertions(+), 27 deletions(-)
+>   drivers/gpu/host1x/job.c | 22 ++++++++--------------
+>   1 file changed, 8 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> index 723df142a981..01d94befab11 100644
-> --- a/drivers/gpu/drm/tegra/gem.c
-> +++ b/drivers/gpu/drm/tegra/gem.c
-> @@ -98,8 +98,8 @@ static struct sg_table *tegra_bo_pin(struct device *dev, struct host1x_bo *bo,
->   		 * the SG table needs to be copied to avoid overwriting any
->   		 * other potential users of the original SG table.
->   		 */
-> -		err = sg_alloc_table_from_sg(sgt, obj->sgt->sgl, obj->sgt->nents,
-> -					     GFP_KERNEL);
-> +		err = sg_alloc_table_from_sg(sgt, obj->sgt->sgl,
-> +					     obj->sgt->orig_nents, GFP_KERNEL);
->   		if (err < 0)
->   			goto free;
->   	} else {
-> @@ -196,8 +196,7 @@ static int tegra_bo_iommu_map(struct tegra_drm *tegra, struct tegra_bo *bo)
+> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+> index 89b6c14b7392..82d0a60ba3f7 100644
+> --- a/drivers/gpu/host1x/job.c
+> +++ b/drivers/gpu/host1x/job.c
+> @@ -170,11 +170,9 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+>   				goto unpin;
+>   			}
 >   
->   	bo->iova = bo->mm->start;
->   
-> -	bo->size = iommu_map_sg(tegra->domain, bo->iova, bo->sgt->sgl,
-> -				bo->sgt->nents, prot);
-> +	bo->size = iommu_map_sgtable(tegra->domain, bo->iova, bo->sgt, prot);
->   	if (!bo->size) {
->   		dev_err(tegra->drm->dev, "failed to map buffer\n");
->   		err = -ENOMEM;
-> @@ -264,8 +263,7 @@ static struct tegra_bo *tegra_bo_alloc_object(struct drm_device *drm,
->   static void tegra_bo_free(struct drm_device *drm, struct tegra_bo *bo)
->   {
->   	if (bo->pages) {
-> -		dma_unmap_sg(drm->dev, bo->sgt->sgl, bo->sgt->nents,
-> -			     DMA_FROM_DEVICE);
-> +		dma_unmap_sgtable(drm->dev, bo->sgt, DMA_FROM_DEVICE, 0);
->   		drm_gem_put_pages(&bo->gem, bo->pages, true, true);
->   		sg_free_table(bo->sgt);
->   		kfree(bo->sgt);
-> @@ -290,12 +288,9 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
->   		goto put_pages;
->   	}
->   
-> -	err = dma_map_sg(drm->dev, bo->sgt->sgl, bo->sgt->nents,
-> -			 DMA_FROM_DEVICE);
-> -	if (err == 0) {
-> -		err = -EFAULT;
-> +	err = dma_map_sgtable(drm->dev, bo->sgt, DMA_FROM_DEVICE, 0);
-> +	if (err)
->   		goto free_sgt;
-> -	}
->   
->   	return 0;
->   
-> @@ -571,7 +566,7 @@ tegra_gem_prime_map_dma_buf(struct dma_buf_attachment *attach,
->   			goto free;
->   	}
->   
-> -	if (dma_map_sg(attach->dev, sgt->sgl, sgt->nents, dir) == 0)
-> +	if (dma_map_sgtable(attach->dev, sgt, dir, 0))
->   		goto free;
->   
->   	return sgt;
-> @@ -590,7 +585,7 @@ static void tegra_gem_prime_unmap_dma_buf(struct dma_buf_attachment *attach,
->   	struct tegra_bo *bo = to_tegra_bo(gem);
->   
->   	if (bo->pages)
-> -		dma_unmap_sg(attach->dev, sgt->sgl, sgt->nents, dir);
-> +		dma_unmap_sgtable(attach->dev, sgt, dir, 0);
->   
->   	sg_free_table(sgt);
->   	kfree(sgt);
-> @@ -609,8 +604,7 @@ static int tegra_gem_prime_begin_cpu_access(struct dma_buf *buf,
->   	struct drm_device *drm = gem->dev;
->   
->   	if (bo->pages)
-> -		dma_sync_sg_for_cpu(drm->dev, bo->sgt->sgl, bo->sgt->nents,
-> -				    DMA_FROM_DEVICE);
-> +		dma_sync_sgtable_for_cpu(drm->dev, bo->sgt, DMA_FROM_DEVICE);
->   
->   	return 0;
->   }
-> @@ -623,8 +617,7 @@ static int tegra_gem_prime_end_cpu_access(struct dma_buf *buf,
->   	struct drm_device *drm = gem->dev;
->   
->   	if (bo->pages)
-> -		dma_sync_sg_for_device(drm->dev, bo->sgt->sgl, bo->sgt->nents,
-> -				       DMA_TO_DEVICE);
-> +		dma_sync_sgtable_for_device(drm->dev, bo->sgt, DMA_TO_DEVICE);
->   
->   	return 0;
->   }
-> diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-> index 4cd0461cc508..539d14935728 100644
-> --- a/drivers/gpu/drm/tegra/plane.c
-> +++ b/drivers/gpu/drm/tegra/plane.c
-> @@ -131,12 +131,9 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
->   		}
->   
->   		if (sgt) {
-> -			err = dma_map_sg(dc->dev, sgt->sgl, sgt->nents,
-> -					 DMA_TO_DEVICE);
-> -			if (err == 0) {
+> -			err = dma_map_sg(dev, sgt->sgl, sgt->nents, dir);
+> -			if (!err) {
 > -				err = -ENOMEM;
-> +			err = dma_map_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
+> +			err = dma_map_sgtable(dev, sgt, dir, 0);
 > +			if (err)
 >   				goto unpin;
 > -			}
 >   
->   			/*
->   			 * The display controller needs contiguous memory, so
-> @@ -144,7 +141,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
->   			 * map its SG table to a single contiguous chunk of
->   			 * I/O virtual memory.
->   			 */
-> -			if (err > 1) {
-> +			if (sgt->nents > 1) {
->   				err = -EINVAL;
->   				goto unpin;
+>   			job->unpins[job->num_unpins].dev = dev;
+>   			job->unpins[job->num_unpins].dir = dir;
+> @@ -228,7 +226,7 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+>   		}
+>   
+>   		if (host->domain) {
+> -			for_each_sg(sgt->sgl, sg, sgt->nents, j)
+> +			for_each_sgtable_sg(sgt, sg, j)
+>   				gather_size += sg->length;
+>   			gather_size = iova_align(&host->iova, gather_size);
+>   
+> @@ -240,9 +238,9 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+>   				goto put;
 >   			}
-> @@ -166,8 +163,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
->   		struct sg_table *sgt = state->sgt[i];
 >   
->   		if (sgt)
-> -			dma_unmap_sg(dc->dev, sgt->sgl, sgt->nents,
-> -				     DMA_TO_DEVICE);
-> +			dma_unmap_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
+> -			err = iommu_map_sg(host->domain,
+> +			err = iommu_map_sgtable(host->domain,
+>   					iova_dma_addr(&host->iova, alloc),
+> -					sgt->sgl, sgt->nents, IOMMU_READ);
+> +					sgt, IOMMU_READ);
+>   			if (err == 0) {
+>   				__free_iova(&host->iova, alloc);
+>   				err = -EINVAL;
+> @@ -252,12 +250,9 @@ static unsigned int pin_job(struct host1x *host, struct host1x_job *job)
+>   			job->unpins[job->num_unpins].size = gather_size;
+>   			phys_addr = iova_dma_addr(&host->iova, alloc);
+>   		} else if (sgt) {
+> -			err = dma_map_sg(host->dev, sgt->sgl, sgt->nents,
+> -					 DMA_TO_DEVICE);
+> -			if (!err) {
+> -				err = -ENOMEM;
+> +			err = dma_map_sgtable(host->dev, sgt, DMA_TO_DEVICE, 0);
+> +			if (err)
+>   				goto put;
+> -			}
 >   
->   		host1x_bo_unpin(dc->dev, &bo->base, sgt);
->   		state->iova[i] = DMA_MAPPING_ERROR;
-> @@ -186,8 +182,7 @@ static void tegra_dc_unpin(struct tegra_dc *dc, struct tegra_plane_state *state)
->   		struct sg_table *sgt = state->sgt[i];
+>   			job->unpins[job->num_unpins].dir = DMA_TO_DEVICE;
+>   			job->unpins[job->num_unpins].dev = host->dev;
+> @@ -660,8 +655,7 @@ void host1x_job_unpin(struct host1x_job *job)
+>   		}
 >   
->   		if (sgt)
-> -			dma_unmap_sg(dc->dev, sgt->sgl, sgt->nents,
-> -				     DMA_TO_DEVICE);
-> +			dma_unmap_sgtable(dc->dev, sgt, DMA_TO_DEVICE, 0);
+>   		if (unpin->dev && sgt)
+> -			dma_unmap_sg(unpin->dev, sgt->sgl, sgt->nents,
+> -				     unpin->dir);
+> +			dma_unmap_sgtable(unpin->dev, sgt, unpin->dir, 0);
 >   
->   		host1x_bo_unpin(dc->dev, &bo->base, sgt);
->   		state->iova[i] = DMA_MAPPING_ERROR;
+>   		host1x_bo_unpin(dev, unpin->bo, sgt);
+>   		host1x_bo_put(unpin->bo);
 > 
