@@ -2,98 +2,111 @@ Return-Path: <SRS0=hxt9=CK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85034C433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 14:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C89C3C433E6
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 15:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47A29206EB
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 14:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598971915;
-	bh=hfukjQ/MUILfw8yDC7cf0oDeEgXFfD/okOKu4FWtQjo=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
-	b=Bt4Nz+v+bio7Azml1oavoNk4/46Rcdab06gYOi34GRChPwn+HbT5Vf74T62CNw8BF
-	 zVoQrsiZABTqdRMUV0VBJgNqiFG/TXmT3WOs8sdohpwRebfRThRh2kRs9uXeKJSLgK
-	 ecRPDleMi5Yp+JhCxy7AFwt6+nSyMP0LSroXh9MI=
+	by mail.kernel.org (Postfix) with ESMTP id 992D521582
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 15:33:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InCwqcJT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbgIAOvM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 10:51:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727037AbgIAOvI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Sep 2020 10:51:08 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70B8A206EB;
-        Tue,  1 Sep 2020 14:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598971867;
-        bh=hfukjQ/MUILfw8yDC7cf0oDeEgXFfD/okOKu4FWtQjo=;
-        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-        b=KdZkKrPbJPR6PVQp86UaHDX+HsDJrrw5I5U4tYBdv8Pl0BBqfci5MRo14nfvRMDZw
-         MRR1yz/s4kYCrYRB1Vw2MjvW/WsWHTc8nezzIGOQVoqvC8/QlhSntVTYcCUTBlmyrB
-         LsYvyQzhb74p2tAKSwJ1WvFh4/h2Dk3Uz7uVy3/o=
-Date:   Tue, 01 Sep 2020 15:50:27 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Dan Murphy <dmurphy@ti.com>, Lee Jones <lee.jones@linaro.org>,
+        id S1729968AbgIAPdC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Sep 2020 11:33:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729209AbgIAPc4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Sep 2020 11:32:56 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7BF6C061244;
+        Tue,  1 Sep 2020 08:32:54 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id d11so2241288ejt.13;
+        Tue, 01 Sep 2020 08:32:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zEPKP0AU97R+PVYnTVD02jf9E8X+9qMRm9ouiwdoWWA=;
+        b=InCwqcJTR/4A4+EuZFsM5xaKx0nFq9NH/7wDwaCpNHNzYmfW1s67o66afdrgjeT+42
+         3/IBsOzuQmvbcTIMqzeilMo8jynJopsDvJ04YORoFPrNoteMPeOR9CGnYRn5sTCTx/F8
+         MExLqETfRiiBnfdt5p4S8Fw+UhsQjMtDLGVO+SktivIJKL0jgOtiulaSQfPNJxhuvalA
+         YnMxjXkFrVLYsf7Q9rHbGANzrB4pQCOFOXTTolGhIm/OgJ1H1t2modzQdKwRXUsADB8L
+         Wr95PT8IW7Kyqe+GrX2iD2azK1Ul6M6Ln7WgHWIYOkYGFRrhvMpSiRjMe9w0F1HwAjjO
+         5qzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zEPKP0AU97R+PVYnTVD02jf9E8X+9qMRm9ouiwdoWWA=;
+        b=kZZAjUtuN3hiPdfltUcr+jhnrz7c9rru5yMEq/CkI9aBm/ETez84EH3hV1B78K5P7L
+         hNmGrJSHJ5IWuxDnUZQfaEPySWbcOwFUhahKgCeHLV/pbdTdosT0dhbnN1YfuCqO0dzc
+         iPOvOI7WM/A19xKHKPCspaPpluPkBiUabwFLCWWVb06ZBUUNgVhy/7Dx7Ju8GP3kNUaA
+         Pt0XvSw/Mp/rm2gKvnuDO9QKteP66lw5hvCUTUEIh76d8jMRMY8378JiysKz2wdaz8Fd
+         BYHMvMGbdRy6TAA/Uez3CT9nV1OyhEST03ttXC1lJTpyHbNiA34oKyeRtqCxxOXza5yA
+         k22g==
+X-Gm-Message-State: AOAM5312YM/x/KVL6Su0HEVLMkmVlAUpCOSazQK4PIdtRtPsaThSHihn
+        RPsOkzFPKcz36DsW5eZOFaE=
+X-Google-Smtp-Source: ABdhPJx8pgbFxwX4+nQIkeKINcUC4+itTbYvBBHcPVcN6ZtaYmSEFVcT5J21t8xvkFqrlVQX3t3VOg==
+X-Received: by 2002:a17:907:9c3:: with SMTP id bx3mr2005039ejc.164.1598974373583;
+        Tue, 01 Sep 2020 08:32:53 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id r23sm1371455edt.57.2020.09.01.08.32.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Sep 2020 08:32:52 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20200830185356.5365-1-digetx@gmail.com>
-References: <20200830185356.5365-1-digetx@gmail.com>
-Subject: Re: [PATCH v2 0/6] Introduce Embedded Controller driver for Acer A500
-Message-Id: <159897181721.47861.7031289432829890619.b4-ty@kernel.org>
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matias Zuniga <matias.nicolas.zc@gmail.com>
+Subject: [PATCH] memory: tegra: Remove GPU from DRM IOMMU group
+Date:   Tue,  1 Sep 2020 17:32:48 +0200
+Message-Id: <20200901153248.1831263-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.28.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 30 Aug 2020 21:53:50 +0300, Dmitry Osipenko wrote:
-> This series adds support for the Embedded Controller which is found on
-> Acer Iconia Tab A500 (Android tablet device).
-> 
-> The Embedded Controller is ENE KB930 and it's running firmware customized
-> for the A500. The firmware interface may be reused by some other sibling
-> Acer tablets, although none of those tablets are supported in upstream yet.
-> Please review and apply, thanks in advance!
-> 
-> [...]
+From: Thierry Reding <treding@nvidia.com>
 
-Applied to
+Commit 63a613fdb16c ("memory: tegra: Add gr2d and gr3d to DRM IOMMU
+group") added the GPU to the DRM IOMMU group, which doesn't make any
+sense. This causes problems when Nouveau tries to attach to the SMMU
+and causes it to fall back to using the DMA API.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+Remove the GPU from the DRM groups to restore the old behaviour. The
+GPU should always have its own IOMMU domain to make sure it can map
+buffers into contiguous chunks (for big page support) without getting
+in the way of mappings from the DRM group.
 
-Thanks!
+Fixes: 63a613fdb16c ("memory: tegra: Add gr2d and gr3d to DRM IOMMU group")
+Reported-by: Matias Zuniga <matias.nicolas.zc@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/memory/tegra/tegra124.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-[1/1] regmap: Use flexible sleep
-      commit: 2b32d2f7ce0a54ce74a75f0d939b5ee063a05ec5
+diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
+index 493b5dc3a4b3..0cede24479bf 100644
+--- a/drivers/memory/tegra/tegra124.c
++++ b/drivers/memory/tegra/tegra124.c
+@@ -957,7 +957,6 @@ static const struct tegra_smmu_swgroup tegra124_swgroups[] = {
+ static const unsigned int tegra124_group_drm[] = {
+ 	TEGRA_SWGROUP_DC,
+ 	TEGRA_SWGROUP_DCB,
+-	TEGRA_SWGROUP_GPU,
+ 	TEGRA_SWGROUP_VIC,
+ };
+ 
+-- 
+2.28.0
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
