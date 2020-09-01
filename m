@@ -2,61 +2,62 @@ Return-Path: <SRS0=hxt9=CK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4017C433E7
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 21:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC3BC433E6
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 21:11:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1AAA206FA
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 21:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69008206FA
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 21:11:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZO9hYcy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyKYVltl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbgIAVL3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 17:11:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50532 "EHLO
+        id S1729094AbgIAVLl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Sep 2020 17:11:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727927AbgIAVL1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Sep 2020 17:11:27 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C105C061244;
-        Tue,  1 Sep 2020 14:11:26 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id b12so465793lfp.9;
-        Tue, 01 Sep 2020 14:11:26 -0700 (PDT)
+        with ESMTP id S1728998AbgIAVLe (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Sep 2020 17:11:34 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBEC7C061249;
+        Tue,  1 Sep 2020 14:11:32 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id v23so3303176ljd.1;
+        Tue, 01 Sep 2020 14:11:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=84MPreMuR2/T3yIOiZ/2P9Fj1HLxAFnVjtsguhtVnHk=;
-        b=jZO9hYcymOzuenDVMRBEJxSwecPQAP9LrYB5scHsZVAR+SqLC1rNtGtRXEBwH1f/Cp
-         UW5PQJdA3aA+6OxbegLO6K7YaW+wFxycI9/jDwz/M4B8MVG2pEml41g1J5ZcUw11mLCt
-         EBxrGpmNDJBLKCbcXnE+2ZkKrJKh1obCgNipXb4mwglYjyL/kdmW9EJwdQv9uqUZ1YRT
-         jp8MRuXR6+wHi6hkMDlosCM1R4TAinP7ZHgb8Nhx/53XAx39ukkBCv8n9u7n0tcCkhMX
-         /BteBL8BhbgJYZDIfKZDf76Bx3bvQJ7zivpOweYXFDVBviE5grHoRBXztc/0RQyyzLqg
-         TK8g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ULaOztD74OSTG1+kWd+VH/aLpegv1mFhAzUeElTs0qM=;
+        b=TyKYVltlSS23ZSl8C4BJIq5EmiqKodA4NJAAzXI+6ajFQjlG4x+ukhei0dtFaB4VAE
+         dEYjAqmQoT9sgSIOobYpi/UiUUgXeicZSWzS9FRqsgHBeGAzuPXkJE0hl52r13w4XEAb
+         2NUw90xMGYv8rXBInx9Tun4mx+8FFbacFrNA7ww0ff0tGimxmC8OJE6/uUIUOODrJZaO
+         oRFTkgEBiQXDX1v3ImgddhRQTeH6y4/C4mwFzFO2k7sK6DdM32mnckJ86IHOoMEWlmJO
+         DBoYmB7r7KKyQYmmKK2WuUwucPHKXT9OtTq0oQe8bl444YTfFZYOFVc/8k32mSaDKM4T
+         8eWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=84MPreMuR2/T3yIOiZ/2P9Fj1HLxAFnVjtsguhtVnHk=;
-        b=PbkMAIiyCxPedV4VOvBDGmaG2ubR6uMPWiW+hpGIQs+Mi3SZETXZjrZgpRzQuzdq6b
-         +JidjcaBOycHiAEO4+AWtKtihTC6YGCX20POqoVNFz1G9uh0xcE7tUZXU6Vvps1jKzyr
-         MfheGQzaXMmGkXAyPPINJ9+z8SKkoGfPA6zolEVPz2Ix5rSBt76vEJLK7PUmb6hqyEsB
-         Gby0PChBah1PtSR+UZTPFwJ1AGWC7SzKh+i7HrMON5WLTksHoG0Nu4WCrp/tNSG26a2I
-         7z+zrkKO518QMTaXefK/yoU+Dud5F0RdPKW0XJRxCnFHRo7OrJX3BByXp5byh/IACOar
-         RNhQ==
-X-Gm-Message-State: AOAM533OQe3+Tin9a1m1SjCOUWC4fYI2GmjjtEUYGPYgxfA7RRz0ZvFo
-        rF9jK2fyIsf09EBVW9fZGjs=
-X-Google-Smtp-Source: ABdhPJx6UYt5kPQ7boJpEv3lj8V4IiEwS52R1CZ2imLoJEADp0rp1OMFFh89lPObOv8y0TbZftqmwg==
-X-Received: by 2002:a19:f245:: with SMTP id d5mr1545418lfk.97.1598994683653;
-        Tue, 01 Sep 2020 14:11:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ULaOztD74OSTG1+kWd+VH/aLpegv1mFhAzUeElTs0qM=;
+        b=mxoC48XFpO6Xwgk5m0sJ70T8qeKp3pLSFi3w6LTLlkD9twLCxPc9NsmrrzGnqQIrIC
+         zdP75vK6OcXtma+q0092FCpzEF47u2nfqSdmYL7yvo9Jqsff7oRU09WD+GJQkBpUGMe2
+         h0zyXDvkwbx2u6pgVkYg/182Y2bwMVQv3a7tW5pB2A3PVegkAkx0KmgwxwvO2LjfFuEb
+         P4mCKY8JkCExHMiq4WJAUdliDMlIO6Fy39oVJ4H2pYuP+7OMZuFzhK8S+FQjHSsX862U
+         LB2M8N6awWWqq8qv+fNj8r9TXTDh/CVyiGG+HG9mctxg4cL35iJqc8/1xIrElbAGfgsX
+         kszA==
+X-Gm-Message-State: AOAM530xUodIlcGqIBMLQMZix3Qbv7gyWYy/TJmROekLO+4iFnbKsmzK
+        ZGTHx+Ksany4PrfShJOhI/s=
+X-Google-Smtp-Source: ABdhPJy+7LSy+rn935AMuflyh/7dh9M9paa8A+kn/iPXkUSGbJ1CW3iCFkYG7h47fz0XdTkIbbQVzQ==
+X-Received: by 2002:a2e:80c9:: with SMTP id r9mr1403653ljg.95.1598994691266;
+        Tue, 01 Sep 2020 14:11:31 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id g19sm502656ljk.125.2020.09.01.14.11.22
+        by smtp.gmail.com with ESMTPSA id g19sm502656ljk.125.2020.09.01.14.11.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Sep 2020 14:11:22 -0700 (PDT)
+        Tue, 01 Sep 2020 14:11:30 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -64,10 +65,12 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Wolfram Sang <wsa@the-dreams.de>
 Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 00/17] Improvements for Tegra I2C driver
-Date:   Wed,  2 Sep 2020 00:10:45 +0300
-Message-Id: <20200901211102.11072-1-digetx@gmail.com>
+Subject: [PATCH v2 08/17] i2c: tegra: Runtime PM always available on Tegra
+Date:   Wed,  2 Sep 2020 00:10:53 +0300
+Message-Id: <20200901211102.11072-9-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200901211102.11072-1-digetx@gmail.com>
+References: <20200901211102.11072-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
@@ -75,47 +78,70 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello!
+The runtime PM is guaranteed to be always available on Tegra after commit
+40b2bb1b132a ("ARM: tegra: enforce PM requirement"). Hence let's remove
+all the RPM-availability checking and handling from the code.
 
-This series performs a small refactoring of the Tegra I2C driver code and
-hardens the atomic-transfer mode.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 28 ++++++----------------------
+ 1 file changed, 6 insertions(+), 22 deletions(-)
 
-Changelog:
-
-v2: - Cleaned more messages in the "Clean up messages in the code" patch.
-
-    - The error code of reset_control_reset() is checked now.
-
-    - Added these new patches to clean up couple more things:
-
-        i2c: tegra: Check errors for both positive and negative values
-        i2c: tegra: Improve coding style of tegra_i2c_wait_for_config_load()
-        i2c: tegra: Remove unnecessary whitespaces and newlines
-        i2c: tegra: Rename variable in tegra_i2c_issue_bus_clear()
-        i2c: tegra: Improve driver module description
-
-Dmitry Osipenko (17):
-  i2c: tegra: Make tegra_i2c_flush_fifos() usable in atomic transfer
-  i2c: tegra: Add missing newline before returns
-  i2c: tegra: Clean up messages in the code
-  i2c: tegra: Don't ignore tegra_i2c_flush_fifos() error
-  i2c: tegra: Use reset_control_reset()
-  i2c: tegra: Improve formatting of function variables
-  i2c: tegra: Use dev_err_probe()
-  i2c: tegra: Runtime PM always available on Tegra
-  i2c: tegra: Clean up probe function
-  i2c: tegra: Drop '_timeout' from wait/poll function names
-  i2c: tegra: Remove likely/unlikely from the code
-  i2c: tegra: Factor out error recovery from tegra_i2c_xfer_msg()
-  i2c: tegra: Check errors for both positive and negative values
-  i2c: tegra: Improve coding style of tegra_i2c_wait_for_config_load()
-  i2c: tegra: Remove unnecessary whitespaces and newlines
-  i2c: tegra: Rename variable in tegra_i2c_issue_bus_clear()
-  i2c: tegra: Improve driver module description
-
- drivers/i2c/busses/i2c-tegra.c | 686 ++++++++++++++++++---------------
- 1 file changed, 379 insertions(+), 307 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c142b424e46d..a5d9e3ce6320 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1767,18 +1767,10 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	if (!i2c_dev->is_vi)
+ 		pm_runtime_irq_safe(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+-	if (!pm_runtime_enabled(&pdev->dev)) {
+-		ret = tegra_i2c_runtime_resume(&pdev->dev);
+-		if (ret < 0) {
+-			dev_err(dev, "runtime resume failed\n");
+-			goto unprepare_div_clk;
+-		}
+-	} else {
+-		ret = pm_runtime_get_sync(i2c_dev->dev);
+-		if (ret < 0) {
+-			dev_err(dev, "runtime resume failed\n");
+-			goto disable_rpm;
+-		}
++	ret = pm_runtime_get_sync(i2c_dev->dev);
++	if (ret < 0) {
++		dev_err(dev, "runtime resume failed\n");
++		goto disable_rpm;
+ 	}
+ 
+ 	if (i2c_dev->is_multimaster_mode) {
+@@ -1836,16 +1828,10 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 		clk_disable(i2c_dev->div_clk);
+ 
+ put_rpm:
+-	if (pm_runtime_enabled(&pdev->dev))
+-		pm_runtime_put_sync(&pdev->dev);
+-	else
+-		tegra_i2c_runtime_suspend(&pdev->dev);
++	pm_runtime_put_sync(&pdev->dev);
+ 
+ disable_rpm:
+-	if (pm_runtime_enabled(&pdev->dev))
+-		pm_runtime_disable(&pdev->dev);
+-
+-unprepare_div_clk:
++	pm_runtime_disable(&pdev->dev);
+ 	clk_unprepare(i2c_dev->div_clk);
+ 
+ unprepare_slow_clk:
+@@ -1867,8 +1853,6 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+ 		clk_disable(i2c_dev->div_clk);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+-	if (!pm_runtime_status_suspended(&pdev->dev))
+-		tegra_i2c_runtime_suspend(&pdev->dev);
+ 
+ 	clk_unprepare(i2c_dev->div_clk);
+ 	clk_unprepare(i2c_dev->slow_clk);
 -- 
 2.27.0
 
