@@ -2,117 +2,143 @@ Return-Path: <SRS0=hxt9=CK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C40C433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF93C433E6
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B4C12067C
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:09:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDB25206FA
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 16:25:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGijq2cv"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rNpabDcm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731295AbgIAQI4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 12:08:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60180 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729790AbgIAQIu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Sep 2020 12:08:50 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB476C061244;
-        Tue,  1 Sep 2020 09:08:48 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id k13so743871plk.13;
-        Tue, 01 Sep 2020 09:08:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=XCC1MeRo0BRoasyj+5VGbw00gjoW3R7USmRQ2Ubh6Bk=;
-        b=gGijq2cvjjnFqOBtVFVOUecKydlvZdUDmdEShkPQtQDERDF4peXrJgChqPs84f9ckP
-         b9dFKbatiQXXJdwfBqjlgmu2mdiy6xjOhtUqfe0G/V909ePxhCpK9gRe5baQbfZehm7W
-         zWVz+4iD1vAJFTJh9wRVk6cSj8CpV5DUfj4HOSOZl3tCOZN/4hdQVnjor8LnrINRnw6x
-         TVVTz1PQ4v6wLqrpKv66juerPGmzJKRbdWniVq+0xnmFe3KXd9X3SA51YaCvc+0b4PAx
-         9XqDu2Bg+nZ/EGO3CsDwVmCW9HcbyX07tAn62Vbkq6VX4JguDhyqh4E8aziGpxBusjyN
-         xTxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XCC1MeRo0BRoasyj+5VGbw00gjoW3R7USmRQ2Ubh6Bk=;
-        b=Df2nzwe+1BRnFVVmM3RVPPKa//CTXqDAKP0FZ1/PK5Go15Y1BcEKwJ7W6FxU1U92CF
-         vdKnrjUbFflF1PdWPr2VnnFbpLmvu9xJLkD2omFI3SZr84XODZvH4onuXudKnzivBFGR
-         ZycAA2ait93F4wkCCtq4T1WJmCIn606BqLKM0oFmUSY3ZFwx6Q1+2OB/wFCiwHgKNOwU
-         i368DMgJw4T1SrhlTvCYr/C7vpbGfoJZ0NEt6LLoxVLsxpt3zmKosHB7wY4ZHG/VoJqN
-         7CEA7vIDayzBnPDbOeb+qb42n8RzKLjhy/8Eyn025hdaR1ortkKsfOK4yrkyhpxTF1YP
-         UJTw==
-X-Gm-Message-State: AOAM530jWnYYQdQ7ueSWXrao4gBVsxVCykcm7ZrQedKN01KgoLNrKXvf
-        wPgwqcakCPgS9RMe1K4qP8dheCzVih4=
-X-Google-Smtp-Source: ABdhPJzMJlB1p6o9YUqwWsudQKNUJlMRUAuSiBfxFfepp8AQHGZU1/+/y1JGrTe2lZw+V7k8QgJFng==
-X-Received: by 2002:a17:90b:4a07:: with SMTP id kk7mr2316459pjb.125.1598976527418;
-        Tue, 01 Sep 2020 09:08:47 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id d15sm2497723pfr.143.2020.09.01.09.08.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Sep 2020 09:08:46 -0700 (PDT)
-Subject: Re: [PATCH 04/11] spi: bcm2835: Simplify with dev_err_probe()
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Masahisa Kojima <masahisa.kojima@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-References: <20200901152713.18629-1-krzk@kernel.org>
- <20200901152713.18629-4-krzk@kernel.org>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <2fefe978-c91c-7c87-e342-32287c674a8f@gmail.com>
-Date:   Tue, 1 Sep 2020 09:08:43 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.1.1
+        id S1731296AbgIAQZ3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Sep 2020 12:25:29 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12019 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731104AbgIAQZY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Sep 2020 12:25:24 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4e75c20001>; Tue, 01 Sep 2020 09:24:34 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 01 Sep 2020 09:25:21 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 01 Sep 2020 09:25:21 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 1 Sep
+ 2020 16:25:19 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 1 Sep 2020 16:25:19 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.173.243]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f4e75ee0000>; Tue, 01 Sep 2020 09:25:18 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <robh+dt@kernel.org>
+CC:     <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: [PATCH v2 4.19 5/7] arm64: tegra: Add missing timeout clock to Tegra186 SDMMC nodes
+Date:   Tue, 1 Sep 2020 09:24:48 -0700
+Message-ID: <1598977490-1826-6-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1598977490-1826-1-git-send-email-skomatineni@nvidia.com>
+References: <1598977490-1826-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20200901152713.18629-4-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598977475; bh=hYsZs3PFx3eixB8zWm5MxRB8KNm72Tw8kvyR/ZyLQDY=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=rNpabDcminKZESuxA7an0et29CbKTK9CL1YAkO0Bf+TQD9Z2XnL+2hD8HUoeAql3W
+         Kd1Uc9jRW53rqvahLoCSwEp38Pnu4bR2REz8+SWtfUyyBAPFRnk2QTDNo+73iugjnB
+         mHhLzPMimZNBMnDdKulhAB1Q8xF0QJCJmu3r1I9drPlLPmOFNYTaXJGbpXwzsjtov1
+         LnRDgAz6wQD2xQUJV/TcVwhgxiBUmNZ/1+IrvbfB2+2e31Ov3VQIZpWP66FsycJLe5
+         LMtVdgZiVmOadKfsfK962YvWOitaOPQOHkPXYu/gZyoE3BO5sho6qZVmQuATDXmAsw
+         L4R9SpqD+2cdg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Tegra186 uses separate SDMMC_LEGACY_TM clock for data timeout and this
+clock was not enabled when Tegra186 support was added to the driver in
+commit 39cb62cb8973 ("arm64: tegra: Add Tegra186 support") which is not
+recommended.
 
+Tegra186 SDMMC advertises 12Mhz as timeout clock frequency in host
+capability register and uses it by default.
 
-On 9/1/2020 8:27 AM, Krzysztof Kozlowski wrote:
-> Common pattern of handling deferred probe can be simplified with
-> dev_err_probe().  Less code and the error value gets printed.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+So, this clock should be kept enabled by the SDMMC driver.
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: 39cb62cb8973 ("arm64: tegra: Add Tegra186 support")
+Cc: stable <stable@vger.kernel.org> # 4.19
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index b762227..821dc5f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -232,8 +232,9 @@
+ 		compatible = "nvidia,tegra186-sdhci";
+ 		reg = <0x0 0x03400000 0x0 0x10000>;
+ 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&bpmp TEGRA186_CLK_SDMMC1>;
+-		clock-names = "sdhci";
++		clocks = <&bpmp TEGRA186_CLK_SDMMC1>,
++			 <&bpmp TEGRA186_CLK_SDMMC_LEGACY_TM>;
++		clock-names = "sdhci", "tmclk";
+ 		resets = <&bpmp TEGRA186_RESET_SDMMC1>;
+ 		reset-names = "sdhci";
+ 		status = "disabled";
+@@ -243,8 +244,9 @@
+ 		compatible = "nvidia,tegra186-sdhci";
+ 		reg = <0x0 0x03420000 0x0 0x10000>;
+ 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&bpmp TEGRA186_CLK_SDMMC2>;
+-		clock-names = "sdhci";
++		clocks = <&bpmp TEGRA186_CLK_SDMMC2>,
++			 <&bpmp TEGRA186_CLK_SDMMC_LEGACY_TM>;
++		clock-names = "sdhci", "tmclk";
+ 		resets = <&bpmp TEGRA186_RESET_SDMMC2>;
+ 		reset-names = "sdhci";
+ 		status = "disabled";
+@@ -254,8 +256,9 @@
+ 		compatible = "nvidia,tegra186-sdhci";
+ 		reg = <0x0 0x03440000 0x0 0x10000>;
+ 		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&bpmp TEGRA186_CLK_SDMMC3>;
+-		clock-names = "sdhci";
++		clocks = <&bpmp TEGRA186_CLK_SDMMC3>,
++			 <&bpmp TEGRA186_CLK_SDMMC_LEGACY_TM>;
++		clock-names = "sdhci", "tmclk";
+ 		resets = <&bpmp TEGRA186_RESET_SDMMC3>;
+ 		reset-names = "sdhci";
+ 		status = "disabled";
+@@ -265,8 +268,9 @@
+ 		compatible = "nvidia,tegra186-sdhci";
+ 		reg = <0x0 0x03460000 0x0 0x10000>;
+ 		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&bpmp TEGRA186_CLK_SDMMC4>;
+-		clock-names = "sdhci";
++		clocks = <&bpmp TEGRA186_CLK_SDMMC4>,
++			 <&bpmp TEGRA186_CLK_SDMMC_LEGACY_TM>;
++		clock-names = "sdhci", "tmclk";
+ 		resets = <&bpmp TEGRA186_RESET_SDMMC4>;
+ 		reset-names = "sdhci";
+ 		status = "disabled";
 -- 
-Florian
+2.7.4
+
