@@ -1,106 +1,104 @@
-Return-Path: <SRS0=hxt9=CK=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=HZc5=CL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84059C433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 21:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CD2C433E6
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 05:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5132078B
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Sep 2020 21:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3C57207EA
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 05:23:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n+1Am0Ap"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fCMQSPyR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbgIAVhf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Sep 2020 17:37:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54548 "EHLO
+        id S1726386AbgIBFXT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Sep 2020 01:23:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728179AbgIAVhe (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Sep 2020 17:37:34 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F01C061244;
-        Tue,  1 Sep 2020 14:37:32 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id v12so3342972ljc.10;
-        Tue, 01 Sep 2020 14:37:32 -0700 (PDT)
+        with ESMTP id S1726144AbgIBFXP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Sep 2020 01:23:15 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A4BBC061244
+        for <linux-tegra@vger.kernel.org>; Tue,  1 Sep 2020 22:23:15 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id 7so1948088pgm.11
+        for <linux-tegra@vger.kernel.org>; Tue, 01 Sep 2020 22:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5T+g9DRQqay2PabjlLSj/X2sJw2Dpph5rvQ4ZUvPnIs=;
-        b=n+1Am0Apg9IabuusVP/4fVRuYgL9+tynHNQeQp6G8FjopV6kJilZ9INYZ5haBgkKK8
-         YuMIwjomp3ceqS9sq65t7uQOcAY5qgrKjblohnoTLNAAnZ8DY461wlHomP/fHf00/3js
-         CKStdJlP1m7pjmNbC7iODcvjDINXvqByV7Pbje6fXsYdXhUJUVU+/0GK5SbtiuzUMDhm
-         ViRaDoteJVjkj+FHVrUwQpDkz9wJoCV1sApSzBgEee7woo8tIrW+UpFiyg2arOfJ8/lZ
-         4Lcgo5ntl8IchBKcl3T6WlkwqUptffEgYdy8+OOe64fZJFxc/LbmD8wXvPUMN1EjHnLd
-         l8IQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BVhFJ3Y+hjMqVUpwLbS9tGUo0xITtak6uttEh+ZRoAE=;
+        b=fCMQSPyR6dqJGAxuqwQ3iQwXVR9XO4k3BEgkYmAL5kNppciYkogCXaku4r8hyC64bt
+         EZgv2mebMFjGNTKx160KdU6YvcouTOBGBmSc6F5OlDUF2Oq1Inqt/CgxEy9nvcrk6V+8
+         aLwxx5q0gIWPmlB7Tggypgri2EfouqVjjRT0LsobAcllcgxhv6CBt4ITtwjl6EjTjj+S
+         xtwaQGnH0XJrSHndj9J78HeG1wKqYpCNKKf+hCEZlS6LV+4vH2GF2GKFGM1Ne+jOJz0e
+         vUNGObEpeMOZ3EwWchFNgj+56ykk4/Aekxm8ChJXEyhj/zZ2gHWiwEd4srfTqJIXVuvW
+         38gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5T+g9DRQqay2PabjlLSj/X2sJw2Dpph5rvQ4ZUvPnIs=;
-        b=pWdNnys3Xbp3rJzULFb7EC3rW+tounVFfEip0c7ypvSzXQNQih5l9FXyn28zknW9iC
-         dF5Xj18pMHV6yy4CWqZMdEvaQQwb2pWndl9CXwDJaa/8LqwgWfkZmDcpm0TVWd2xqsn8
-         ouBfwNoVu+OqlgCCFqIHS1MsObHu75/1Rge5xyPUN95au+a91tT7egupP+xesJAz+zIW
-         KBLHrvglV0GCpagOu4clHXzkvmHBsp86A9mdBGAnpw8cAcq8GJKaNyPBf908fR8AEgAR
-         HK1xnHxYhNvZ86NYNqaagiu8+EfxpgIGGEqWDq/JSnzah2volP+2r0EkOvORx1oTrWfx
-         etAg==
-X-Gm-Message-State: AOAM531VqEPi1wDWTNkzsxtsZkbMkZnbGMmGyDrwRH9WUgD/Lxpy8IBy
-        uCddA97+tKWJlODRS49ixrejQcVPyuA=
-X-Google-Smtp-Source: ABdhPJzuf3UbN7Jo3MJq20m+YQboZeEgPiVQkb3uTbaNUrUPHCOAN+2A/DNI61e1hV8L69sfLamkOg==
-X-Received: by 2002:a2e:9643:: with SMTP id z3mr1710770ljh.282.1598996250679;
-        Tue, 01 Sep 2020 14:37:30 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id l15sm521755lje.16.2020.09.01.14.37.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Sep 2020 14:37:30 -0700 (PDT)
-Subject: Re: [PATCH v2 03/17] i2c: tegra: Clean up messages in the code
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BVhFJ3Y+hjMqVUpwLbS9tGUo0xITtak6uttEh+ZRoAE=;
+        b=Ld/yyJlYWKl/+oFxcBr+czscyOEa4wCxOYsXDXrLkwwe6UP+gWX6trPQfb+BLMuvh9
+         /gVGbMNxrNLjSKbNRXa2U7aZrbkCUQhA/6J1u40pS4tl5z7bY86c0gV2vDOzM+LWu2Ra
+         VKD+TBRhYvH85a3P193AJ9LI86BrZqnqtZwBf4uOgeSU2UxWZ9gnWiTR2Y9YmUJTcH3i
+         kzbcw96FI++w1gyKXt2XTXtms+UoY66JifH7gE2YkzjDH0Rd1Bbq64Vx12PMtyyj/X5N
+         aRhdSYxCpwglRCPJV4tkGASsCM6JEJ5dkIQ17ds1rLdG0sSEQmbEbfI5YWnTf5pxswcM
+         y4Eg==
+X-Gm-Message-State: AOAM533o1JBjJ+M+2WThhfIGE84EZlCr43gKxWXKfvdeKNoCfLFcQKWE
+        ZVUYR9Puijs1QpqhC8vbUMspCg==
+X-Google-Smtp-Source: ABdhPJyVAj5bq2ZIy1KPMkq6FyhzjG9cOtRfI0Si6VHtWCcizDPw0evcn9d4QROXifoq9jqPssZ7jw==
+X-Received: by 2002:a63:e741:: with SMTP id j1mr629326pgk.422.1599024194547;
+        Tue, 01 Sep 2020 22:23:14 -0700 (PDT)
+Received: from localhost ([122.167.135.199])
+        by smtp.gmail.com with ESMTPSA id l24sm3848694pff.20.2020.09.01.22.23.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Sep 2020 22:23:13 -0700 (PDT)
+Date:   Wed, 2 Sep 2020 10:53:08 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200901211102.11072-1-digetx@gmail.com>
- <20200901211102.11072-4-digetx@gmail.com>
- <CAHp75Vf9ETJMibQGe4Nx7n4703GtgO1XBsE1yGwsk3TaSPTDHw@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9bc715d3-3065-d705-7349-5aacdac7cbbc@gmail.com>
-Date:   Wed, 2 Sep 2020 00:37:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ARM: tegra: Pass multiple versions in
+ opp-supported-hw property
+Message-ID: <20200902052308.jvdbkyjuawfihea3@vireshk-i7>
+References: <cover.1598442485.git.viresh.kumar@linaro.org>
+ <b13f1b112532fe0189d1f7bbb50903d9e1defb07.1598442485.git.viresh.kumar@linaro.org>
+ <b0763074-859f-fccb-dde4-03d1a50ea021@gmail.com>
+ <20200831043908.mtw4dglybcmcabjb@vireshk-i7>
+ <0da380c2-9161-d450-afd2-4b159c8cfb7d@gmail.com>
+ <20200831084111.6udzvrdonxgzju4l@vireshk-i7>
+ <cbfa012b-8f50-e460-972c-c51fa52bb858@gmail.com>
+ <20200831110408.a6lwivim4w4jtkdc@vireshk-i7>
+ <603071ec-6ae4-7e34-26e4-f64065b01ee0@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vf9ETJMibQGe4Nx7n4703GtgO1XBsE1yGwsk3TaSPTDHw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <603071ec-6ae4-7e34-26e4-f64065b01ee0@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-02.09.2020 00:23, Andy Shevchenko пишет:
-> 
-> 
-> On Wednesday, September 2, 2020, Dmitry Osipenko <digetx@gmail.com
-> <mailto:digetx@gmail.com>> wrote:
-> 
->     Use lowercase and consistent wording for all messages in the code.
-> 
-> 
-> Why? DMA is an abbreviation and reads in capital letters. FWIW, I don’t
-> like bending English grammar.
+On 01-09-20, 16:21, Dmitry Osipenko wrote:
+> IIUC, there is no fixed formula for Tegra, at least I don't see it. For
+> example, if you'll take a look at the 1300MHz OPP of Tegra30, then you
+> could see that this freq has a lot of voltages each depending on
+> specific combination of SPEEDO+PROCESS versions.
 
-The idea is to make messages to look less "noisy" in a log. Although, I
-don't have strong preference in regards to the style and keeping the
-capitalization of abbreviations would be okay too. All I really care
-about is to make all messages to use one common style.
+Right, it may not be worth it to clean this up :)
 
-I'll consider returning the capitalization in the next revision, thank
-you for the input!
+-- 
+viresh
