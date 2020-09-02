@@ -2,79 +2,107 @@ Return-Path: <SRS0=HZc5=CL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE0DC433E2
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 21:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED29C433E7
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 21:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2ADBF20758
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 21:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA9402098B
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 21:17:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="GSUZUTLA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e69T9ONa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbgIBVGQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Sep 2020 17:06:16 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:14909 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726226AbgIBVGP (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 2 Sep 2020 17:06:15 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4Bhc1K1S1dz98;
-        Wed,  2 Sep 2020 23:06:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1599080773; bh=4Q6tnyuAu+zTSkHMFyyH05pZbDuBraods2UoZtxr+qE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GSUZUTLAJRUWcWTMsqtlP5NPVAFNSMOkO+EoJGEb6qZVij8rMZpHRxzIhN1FrUuT4
-         2tqgWNFgNHKS+IHTbMhUb6GrI3osDQw4d6+58toMy9i7JvwfX8QdHfFNSxhatO3bh6
-         pJAmPm4MLOEvpFu0iTDY/S0Em0FfC86u8nrFCskrXv+3p3jpCsuvSoZupuOvD+XRjz
-         Oa+c6w78vQ9BZi4ci1rjHBUuqYiVttTkT27Xg4S9sS3k1gIkLqbG0hRn9zZc8T5HEb
-         A0J76ijajgsWKmepDtbdukQ9MmhvS/v6esQUe6ysKI7A1VcO6krG3Vqf5xqSbMNEwF
-         8ClTNyXb1X/4Q==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.4 at mail
-Date:   Wed, 2 Sep 2020 23:06:11 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        id S1726892AbgIBVRM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Sep 2020 17:17:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47128 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbgIBVRJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Sep 2020 17:17:09 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F12CC061244;
+        Wed,  2 Sep 2020 14:17:09 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id c2so842251ljj.12;
+        Wed, 02 Sep 2020 14:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kJwdaciwlzmHxgPhtXBhgo/SewTY8c1fcNKes/1opk8=;
+        b=e69T9ONaUGjzJ6MKYlr8VKRezvw6wJxhvusIEdkssmNYSdMlEeo1OXmn18DEORwG1S
+         CxyaYYDUv/k6jEaZfQ9SOINFjbLnK0/cL+22brwI0MZIWUVlhjqX8+WWM6rQ6X/9UvUn
+         77wePZau1jp9zAosH0ODfqaVqmJ3g98Ngn9y5XYEI8C3KLR9Zb7FclSV3hAfyG9waLZ0
+         l1qQX9EzfHGVEg9QXi/rSfZfJ4cRBtEzv9bKAT+NKNMFGJiAHV+34G9d4foDyDy34XrA
+         plxCMHAo8rfaX88O2EV466r/jm1+jb3cYpHkRRPKIzJejNJHZhJwoBwsWeSYnRJNBmyl
+         PLOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kJwdaciwlzmHxgPhtXBhgo/SewTY8c1fcNKes/1opk8=;
+        b=CsT/pNJKeXPxDDcoE2wdc8SmhhY4i7E9d9U7rYVQ+GhJ9juw9c/QKqk76jfeNGD3Qb
+         iPDwN7k1O2KkXe4t2jFg9h4f4lOpyO33gtG2I/N7PWptGfrLzQkI+/z2zkm49fQHtvmu
+         5tnyIfZ+GdJHSF4bmzGePcvLya+R2cSPko9kiuj/KOz9vv3sesczmlbFBlmSgagBY+6L
+         wLF2tl04NQBdyABb8fwocJuGvefdblhYJyCm01ETVRvlAAc3QER4TWArIG5yVNGodMqN
+         O94m1ylp+g7x8ekL0iEVlgXwLmehmsJsHy4jNByLxcD83ltVNkDSB7/YdUVwp9rx8/N0
+         c/wA==
+X-Gm-Message-State: AOAM531uSIRG7jhj3LbFiewJ3nCY4E7t+m5DWtBDsTh8PM481iH9uomO
+        DhV1VDtXb0WnI/mPhd1WNBo6q6I4Oec=
+X-Google-Smtp-Source: ABdhPJwDoCVaVtrrRbpS6jg+XoX3itcd78Sy7aCO5GG8dmFoPlynpvFnsdDn8WzZFJvCIoABlrzb9g==
+X-Received: by 2002:a2e:5857:: with SMTP id x23mr4300713ljd.360.1599081427360;
+        Wed, 02 Sep 2020 14:17:07 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id y5sm104174lff.60.2020.09.02.14.17.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Sep 2020 14:17:06 -0700 (PDT)
+Subject: Re: [PATCH v1 09/12] i2c: tegra: Clean up probe function
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 09/12] i2c: tegra: Clean up probe function
-Message-ID: <20200902210611.GC1624@qmqm.qmqm.pl>
 References: <20200831202303.15391-1-digetx@gmail.com>
  <20200831202303.15391-10-digetx@gmail.com>
+ <20200902210611.GC1624@qmqm.qmqm.pl>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <47d8b629-708f-de82-1118-054200331ef9@gmail.com>
+Date:   Thu, 3 Sep 2020 00:17:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
+In-Reply-To: <20200902210611.GC1624@qmqm.qmqm.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200831202303.15391-10-digetx@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Aug 31, 2020 at 11:23:00PM +0300, Dmitry Osipenko wrote:
-> The driver's probe function code is difficult to read and follow. This
-> patch splits probe function into several logical parts that are easy to
-> work with.
+03.09.2020 00:06, Michał Mirosław пишет:
+> On Mon, Aug 31, 2020 at 11:23:00PM +0300, Dmitry Osipenko wrote:
+>> The driver's probe function code is difficult to read and follow. This
+>> patch splits probe function into several logical parts that are easy to
+>> work with.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/i2c/busses/i2c-tegra.c | 398 ++++++++++++++++++++-------------
+>>  1 file changed, 240 insertions(+), 158 deletions(-)
+> [...]
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 398 ++++++++++++++++++++-------------
->  1 file changed, 240 insertions(+), 158 deletions(-)
-[...]
+> I can see why you want to extract clock setup and combine DT-parsing parts,
+> but the rest is not that clear. At least the clock setup split should be
+> a separate patch, as it seems to require massive code motion.
+> For eg. runtime PM setup/disable or interrupt setup, I would actually suggest
+> to drop the parts as they make the code harder to follow (you have
+> a function doing nothing but calling another one).
 
-I can see why you want to extract clock setup and combine DT-parsing parts,
-but the rest is not that clear. At least the clock setup split should be
-a separate patch, as it seems to require massive code motion.
-For eg. runtime PM setup/disable or interrupt setup, I would actually suggest
-to drop the parts as they make the code harder to follow (you have
-a function doing nothing but calling another one).
-
-Best Regards,
-Micha� Miros�aw
+Okay, I guess indeed it will be better to squash couple functions back,
+but excluding functions that help to make error unwinding cleaner. Thank
+you for the suggestion!
