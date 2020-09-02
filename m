@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B35ECC433E7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB8CC433E2
 	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 19:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1062083B
+	by mail.kernel.org (Postfix) with ESMTP id B43B620C56
 	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 19:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1599075452;
-	bh=QI1dbgDJjoYYCfP5Ig/mRza3CKsYxoxxWzwXZDaG6PA=;
+	bh=KnAHsAhCAvOSLEBHOSIHPUitvjNtd94PQrfzNeHigMk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YCTh34Y2EVWzocbTkU3hOlnHBR1wjx//Z6paFLvSyOBVM7jOvY2o1cQtRtThpmjqv
-	 MStTwmaJ917v5r9RyMzIKW2/FIoJ30oARHw3y/JwrseFYgGrspYMIU63l8H7M0KJKS
-	 CmpGz/l0umzEb+WAZstoWZYKqE4JLy20KmqIRk7g=
+	b=ezN+XpEQYsf4UJIhNy8vpvV/QaQXHLY6q1SX/KVS8BwN2iuTPE5MXkU8L9mhqnM3x
+	 4RYSnbbhLDfbvqbmdXExH1RWUMA9c7Ui4OIETMIPNyXl18wNpO0hU/R2JGo4h45hf4
+	 Ze9A3tM521021fd/Q1WdV4usubg5yfNZ95n64nBg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgIBThX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Sep 2020 15:37:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42360 "EHLO mail.kernel.org"
+        id S1726892AbgIBThb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Sep 2020 15:37:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726140AbgIBThX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 2 Sep 2020 15:37:23 -0400
+        id S1726140AbgIBTha (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 2 Sep 2020 15:37:30 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D97F620C56;
-        Wed,  2 Sep 2020 19:37:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D7AE20DD4;
+        Wed,  2 Sep 2020 19:37:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599075442;
-        bh=QI1dbgDJjoYYCfP5Ig/mRza3CKsYxoxxWzwXZDaG6PA=;
+        s=default; t=1599075449;
+        bh=KnAHsAhCAvOSLEBHOSIHPUitvjNtd94PQrfzNeHigMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AphxV8QEPolpObOxM6UHjrZjADaAg1btgTTHrvzO2dWIADsBTTqpuMWAL4i370o7v
-         4p9el5oYjDyJ+MbJEwURiHc7zp8MMUlNuPfYUBojB3mCF8mIcvTL88iitSV6+7veqF
-         PcmNdGmheaZlQtHy9Nuvsk99SoqL4pFsrHLfZamU=
+        b=19NPyyAcEVgKpUIQmCzm9NfZXOVi4EvtLXUxhb9JhGvBxUoYLFBw0XhFE+fhf7l/2
+         +6GrTOaxG2bbUyo4FaCsAwqxY5x3Tkjsv4OYAnIw4CF70blUiyO4EPix+MupLV/ENG
+         xBIIWbitsRGyj0I3mJcl+fyJyRkcboB+HfLj1eWI=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -65,9 +65,9 @@ To:     Ulf Hansson <ulf.hansson@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 01/11] mmc: bcm2835: Simplify with dev_err_probe()
-Date:   Wed,  2 Sep 2020 21:36:48 +0200
-Message-Id: <20200902193658.20539-2-krzk@kernel.org>
+Subject: [PATCH 02/11] mmc: davinci: Simplify with dev_err_probe()
+Date:   Wed,  2 Sep 2020 21:36:49 +0200
+Message-Id: <20200902193658.20539-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200902193658.20539-1-krzk@kernel.org>
 References: <20200902193658.20539-1-krzk@kernel.org>
@@ -81,24 +81,25 @@ dev_err_probe().  Less code and the error value gets printed.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/mmc/host/bcm2835.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mmc/host/davinci_mmc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
-index a0767790a826..35320bc9dc02 100644
---- a/drivers/mmc/host/bcm2835.c
-+++ b/drivers/mmc/host/bcm2835.c
-@@ -1406,9 +1406,7 @@ static int bcm2835_probe(struct platform_device *pdev)
- 
- 	clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
--		if (ret != -EPROBE_DEFER)
--			dev_err(dev, "could not get clk: %d\n", ret);
-+		ret = dev_err_probe(dev, PTR_ERR(clk), "could not get clk\n");
- 		goto err;
- 	}
- 
+diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
+index e50a08bce7ef..fad1010fb52b 100644
+--- a/drivers/mmc/host/davinci_mmc.c
++++ b/drivers/mmc/host/davinci_mmc.c
+@@ -1240,9 +1240,8 @@ static int davinci_mmcsd_probe(struct platform_device *pdev)
+ 		pdev->id_entry = match->data;
+ 		ret = mmc_of_parse(mmc);
+ 		if (ret) {
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(&pdev->dev,
+-					"could not parse of data: %d\n", ret);
++			dev_err_probe(&pdev->dev, ret,
++				      "could not parse of data\n");
+ 			goto parse_fail;
+ 		}
+ 	} else {
 -- 
 2.17.1
 
