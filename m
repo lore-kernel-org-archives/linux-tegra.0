@@ -2,86 +2,103 @@ Return-Path: <SRS0=HZc5=CL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E593C433E7
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 15:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B35ECC433E7
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 19:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3D9920767
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 15:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D1062083B
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 19:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599060742;
-	bh=/0DWAYC3uSsJFAAy4B6zrY6VAccL8xuJeu1JNjixCV8=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=A2G5jDcoESuDN9wA54uU8Zzl4GKY67Eic9B9Wv0o63AjgMObdYtbRxjjy4dogKHvz
-	 Pv+a5V88PvrhIl7MOrynUUksDItq+8nMP9vE+q9f1k/WzKCbRTJIWFRLY9kZRf+P8E
-	 pV3sqCu8OpDgGER4INDfT3lLfmcKPMOxUqbmsBzE=
+	s=default; t=1599075452;
+	bh=QI1dbgDJjoYYCfP5Ig/mRza3CKsYxoxxWzwXZDaG6PA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=YCTh34Y2EVWzocbTkU3hOlnHBR1wjx//Z6paFLvSyOBVM7jOvY2o1cQtRtThpmjqv
+	 MStTwmaJ917v5r9RyMzIKW2/FIoJ30oARHw3y/JwrseFYgGrspYMIU63l8H7M0KJKS
+	 CmpGz/l0umzEb+WAZstoWZYKqE4JLy20KmqIRk7g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbgIBPcU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Sep 2020 11:32:20 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34491 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbgIBPXZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Sep 2020 11:23:25 -0400
-Received: by mail-ed1-f68.google.com with SMTP id q21so5344446edv.1;
-        Wed, 02 Sep 2020 08:23:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F44EDajBvPviYlEA0jAJJoSkCusNo9MYluuMOfOxWLU=;
-        b=Vm4UBiiWc6r65Fr3S9oSwoS9IKRrKK9daTUdpL6677aYwKYInPwinNK5IOVv5BaUjM
-         6xh4zzh+AHqtDa0j6UHvmU+CNK4EQfJKSGb8N2AGcNExHg33ql0wDJilNUDJcw0Ez8l/
-         jhD2XNChZRLRiKtESXIA6SassQSpJpL3OAKD27c5NHXwVAJTuerXjrK3ARiPtXV80X9l
-         xsPrtWAL53GfwHZDU1oaXXeZVnjPhPNea7iWMVPQjpNE9oFNF/+Hn8MxpjdlCPBmxsUq
-         mcXr1zxShoxQGix5Mnt89ofdZZ30YVQrvtt6T0Nh9QxZTyK6mH6VxRwEFu6EmOrgxO8N
-         AtGA==
-X-Gm-Message-State: AOAM533U1vx96wxkSZCWIQDZI1tewE1Qqzvqq//jmpUlpVOFEYyDL6T3
-        1v7oDzofLctLfE+ItgDyW/EQ//iaWvpdMQ==
-X-Google-Smtp-Source: ABdhPJwcIaf0v6xkFM1k0x3N8F3tYYiXoNV0F88TN+IXKED6qPsMiiyEq9fRbbO3sWuXtKXA2Ml7vg==
-X-Received: by 2002:aa7:c394:: with SMTP id k20mr537020edq.279.1599060188992;
-        Wed, 02 Sep 2020 08:23:08 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.106])
-        by smtp.googlemail.com with ESMTPSA id v7sm5078926edd.48.2020.09.02.08.23.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Sep 2020 08:23:08 -0700 (PDT)
-Date:   Wed, 2 Sep 2020 17:23:06 +0200
+        id S1726323AbgIBThX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Sep 2020 15:37:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42360 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726140AbgIBThX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 2 Sep 2020 15:37:23 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D97F620C56;
+        Wed,  2 Sep 2020 19:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599075442;
+        bh=QI1dbgDJjoYYCfP5Ig/mRza3CKsYxoxxWzwXZDaG6PA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=AphxV8QEPolpObOxM6UHjrZjADaAg1btgTTHrvzO2dWIADsBTTqpuMWAL4i370o7v
+         4p9el5oYjDyJ+MbJEwURiHc7zp8MMUlNuPfYUBojB3mCF8mIcvTL88iitSV6+7veqF
+         PcmNdGmheaZlQtHy9Nuvsk99SoqL4pFsrHLfZamU=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Markus Mayer <mmayer@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/2] memory: tegra186-emc: Simplify with dev_err_probe()
-Message-ID: <20200902152306.GB19659@kozik-lap>
-References: <20200828153747.22358-1-krzk@kernel.org>
- <20200828153747.22358-2-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200828153747.22358-2-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 01/11] mmc: bcm2835: Simplify with dev_err_probe()
+Date:   Wed,  2 Sep 2020 21:36:48 +0200
+Message-Id: <20200902193658.20539-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200902193658.20539-1-krzk@kernel.org>
+References: <20200902193658.20539-1-krzk@kernel.org>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Aug 28, 2020 at 05:37:47PM +0200, Krzysztof Kozlowski wrote:
-> Common pattern of handling deferred probe can be simplified with
-> dev_err_probe().  Less code and the error value gets printed.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/memory/tegra/tegra186-emc.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
+Common pattern of handling deferred probe can be simplified with
+dev_err_probe().  Less code and the error value gets printed.
 
-Applied.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/mmc/host/bcm2835.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
+index a0767790a826..35320bc9dc02 100644
+--- a/drivers/mmc/host/bcm2835.c
++++ b/drivers/mmc/host/bcm2835.c
+@@ -1406,9 +1406,7 @@ static int bcm2835_probe(struct platform_device *pdev)
+ 
+ 	clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(clk)) {
+-		ret = PTR_ERR(clk);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(dev, "could not get clk: %d\n", ret);
++		ret = dev_err_probe(dev, PTR_ERR(clk), "could not get clk\n");
+ 		goto err;
+ 	}
+ 
+-- 
+2.17.1
 
