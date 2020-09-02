@@ -2,105 +2,116 @@ Return-Path: <SRS0=HZc5=CL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225AAC433E7
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 21:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDAEC433E2
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 21:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD9FF207EA
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 21:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 170ED20758
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 21:47:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="rHYnDWAN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qVf/0GSS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbgIBVcj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Sep 2020 17:32:39 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:38076 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726226AbgIBVcf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 2 Sep 2020 17:32:35 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4Bhcbd1b8Vz98;
-        Wed,  2 Sep 2020 23:32:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1599082353; bh=GDacUcTntXycW3HLTxPt24O1o6lCFXAi5egUm6GCp7I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rHYnDWANlv95qPZreUCEccYzoc77bbn+WHcWLJBhy6sn2k0K4siHC9hoVsg+/+rOT
-         zpJN1ArAy6bRh8O8FYxl6b/YXBF/SfufJWDOIjWLCmRkcKf6/Q198a+VlFWD/9SIEt
-         s2A8OY2emLgL0NZ0+IO9zWHcTD2D3VMSd8/XI8WiPTH9wx3s/Ox7PMcYFv7OoKe22G
-         CWJfP93yPUm3WmdRyzoWFdXNAQYiefjsgD9XqWJgJpRDrTYgw7/+C1dlKP7E7+IAYp
-         QXUAyzBTUSibrhBWvSWkJpT/Y6kx5cNKggPC19kRufrVfbMXvq8l3UrS2OKWbIV5mH
-         osyOa4JHgkY6Q==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.4 at mail
-Date:   Wed, 2 Sep 2020 23:32:27 +0200
-From:   =?iso-8859-2?B?TWljaGGzoE1pcm9zs2F3?= <mirq-linux@rere.qmqm.pl>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        id S1726726AbgIBVrS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Sep 2020 17:47:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51718 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726226AbgIBVrS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Sep 2020 17:47:18 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F36C061244;
+        Wed,  2 Sep 2020 14:47:16 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id 12so615737lfb.11;
+        Wed, 02 Sep 2020 14:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aUUaHl/COZyZ4MmMHf9ceCNdidMcQ0s4jCCYIv5+oJo=;
+        b=qVf/0GSSCfmckQ8NGlEfyLcvfVkAvNY1TqrPUpxmznHv7Phw0lbZvesCItHeMa5TIx
+         oarCfw2MHQXPGBKorcUhm7qvT0EZh2Tl03Y3Jo/fqAJZWsMyz+zpbQzAMBflgk3Eao9K
+         Y2qqU1faSZS0oggbVY7eVwZU3GK76T+FP+jEF9l55tTzVsQmsyjBQCkJwzL+YTXVAgFx
+         M/ggimnWniEvyzc7vdXCr/T7QgdUAaVKJlsqfHwQnLQ5vDG7jxQjJC69kC6P2aQyIi+z
+         DR5mO8IxzYKZtHCioeCMYy+ZYKwAdA4oz8MtN1LVIQpAqLkIYJqMx4g+O0fH150MBrJ+
+         1OUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aUUaHl/COZyZ4MmMHf9ceCNdidMcQ0s4jCCYIv5+oJo=;
+        b=dPmZSLj6jmwU4FdFxhoRy0UZag7//q2GpKhHDRZuP0P9BMSF6kcpgLG1cXPPxXStgY
+         fHktn3k8TXTe0bDxRH6beHHvo+TO4m7UnAfMT0agFQ5AFCV2MnG8/DLz02it3Mc6fKPt
+         37x8XZkYDzaOvWUQIl1hRKRFAOWOz80K0Tykl5ptYUnWfUlVTycSqQ7IApR7eRD9j3x4
+         H0OE3loqCHo7kS2qNNLgXGvHUUl19nfuxKiCH2ZirbbKDjhn0jAJB/iHN5XDFiuYPp6j
+         EPYU9YMyo2Pk3hlqdABVffYfBy5ha6ddAccndRtPQ0MubSyYQ8Mdfwm2wgSsvT7i3KGP
+         nzVA==
+X-Gm-Message-State: AOAM530YioCI5078AriYSc1LCRcGwZG0g0nEXwP12YmXz+71S5SuMk/I
+        tOClOGn+YEfgts9CSlIwmKTLWAaFzQI=
+X-Google-Smtp-Source: ABdhPJwMgIUczJFGKnpyGhQXBEl6zV4n22jatTM6p+zXhiZagscvb0jJ0zT6Z5D73fyzCyN3dt4CzQ==
+X-Received: by 2002:a19:4e:: with SMTP id 75mr4299237lfa.159.1599083234242;
+        Wed, 02 Sep 2020 14:47:14 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id x73sm114582lfa.94.2020.09.02.14.47.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Sep 2020 14:47:13 -0700 (PDT)
+Subject: Re: [PATCH v1 09/12] i2c: tegra: Clean up probe function
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 11/11] mmc: host: Enable compile testing of multiple
- drivers
-Message-ID: <20200902213227.GE1624@qmqm.qmqm.pl>
-References: <20200902193658.20539-1-krzk@kernel.org>
- <20200902193658.20539-12-krzk@kernel.org>
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200831202303.15391-1-digetx@gmail.com>
+ <20200831202303.15391-10-digetx@gmail.com>
+ <20200902210611.GC1624@qmqm.qmqm.pl>
+ <47d8b629-708f-de82-1118-054200331ef9@gmail.com>
+Message-ID: <85cc4e0c-e085-18a1-7cb5-a24b653cbb86@gmail.com>
+Date:   Thu, 3 Sep 2020 00:47:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
+In-Reply-To: <47d8b629-708f-de82-1118-054200331ef9@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200902193658.20539-12-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 02, 2020 at 09:36:58PM +0200, Krzysztof Kozlowski wrote:
-> Multiple MMC host controller driver can be compile tested as they do not
-> depend on architecture specific headers.
-[...]
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -178,7 +178,7 @@ config MMC_SDHCI_OF_AT91
-[...]
->  config MMC_MESON_GX
->  	tristate "Amlogic S905/GX*/AXG SD/MMC Host Controller support"
-> -	depends on ARCH_MESON && MMC
-> +	depends on MMC
-> +	depends on ARCH_MESON|| COMPILE_TEST
-[...]
->  config MMC_MOXART
->  	tristate "MOXART SD/MMC Host Controller support"
-> -	depends on ARCH_MOXART && MMC
-> +	depends on MMC
-> +	depends on ARCH_MOXART || COMPILE_TEST
-[...]
+03.09.2020 00:17, Dmitry Osipenko пишет:
+> 03.09.2020 00:06, Michał Mirosław пишет:
+>> On Mon, Aug 31, 2020 at 11:23:00PM +0300, Dmitry Osipenko wrote:
+>>> The driver's probe function code is difficult to read and follow. This
+>>> patch splits probe function into several logical parts that are easy to
+>>> work with.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/i2c/busses/i2c-tegra.c | 398 ++++++++++++++++++++-------------
+>>>  1 file changed, 240 insertions(+), 158 deletions(-)
+>> [...]
+>>
+>> I can see why you want to extract clock setup and combine DT-parsing parts,
+>> but the rest is not that clear. At least the clock setup split should be
+>> a separate patch, as it seems to require massive code motion.
+>> For eg. runtime PM setup/disable or interrupt setup, I would actually suggest
+>> to drop the parts as they make the code harder to follow (you have
+>> a function doing nothing but calling another one).
+> 
+> Okay, I guess indeed it will be better to squash couple functions back,
+> but excluding functions that help to make error unwinding cleaner. Thank
+> you for the suggestion!
+> 
 
-You can drop 'MMC' from depends as the whole tree is under 'if MMC' already.
+Actually, looks like it will be fine to do exactly what you're
+suggesting. I also noticed few more things to improve in the probe
+function and other places.
 
-Best Regards,
-Micha��Miros�aw
+BTW, you're looking at v1, but there is a v2 on the list already.
