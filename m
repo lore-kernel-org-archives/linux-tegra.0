@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF730C43461
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 19:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 255A5C433E7
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 19:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A986120E65
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 19:38:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F390820E65
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Sep 2020 19:38:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599075504;
-	bh=SQl/6OS4NtkfhoHM6x57EjikQWPjJp6R4j4puLXRYOQ=;
+	s=default; t=1599075507;
+	bh=FKAYu4oD2G5WMtLd9hitMhMb2ec5r1K6mvi1cq8DwSY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rEO3Z+4rjOiExULy4YxJpKPSO9e/VDpJnOUwOx7QVaTWYEbfKvuZflymyFJf8DolZ
-	 PZgzIC21gcBtXsBV1SubEu6BLOlONMKON5tNoeq3Zum5AF2jNgweuBKLsk40F+l/ET
-	 niRvSnQYp2cuyo1Y5pidAdqBWUsS2Z1gD5nQBoqg=
+	b=V4zkeFwaW4+SHpF3Pz4sdQ5nqO//BKmDmfqaXyd53rlK0lIGFf572V9Xb7OMjQRy6
+	 41Z43Srrco7qGo1Ff02riBdE4zQyvqFagkqDn2TKgujVS2s+7dopp5Js9fqRHgAeTm
+	 IRkVzqgBlcCWF498301TFQxob1gP9DjM5ppT6Nqg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbgIBTiL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Sep 2020 15:38:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43870 "EHLO mail.kernel.org"
+        id S1727094AbgIBTi0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Sep 2020 15:38:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727112AbgIBTiI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 2 Sep 2020 15:38:08 -0400
+        id S1726900AbgIBTi0 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 2 Sep 2020 15:38:26 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F4B720C56;
-        Wed,  2 Sep 2020 19:38:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE434208C7;
+        Wed,  2 Sep 2020 19:38:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599075488;
-        bh=SQl/6OS4NtkfhoHM6x57EjikQWPjJp6R4j4puLXRYOQ=;
+        s=default; t=1599075505;
+        bh=FKAYu4oD2G5WMtLd9hitMhMb2ec5r1K6mvi1cq8DwSY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tnPu8F1exJo+uPphLfUjycPSojRrb5lbYJCxy0OkbDJoBIbtJlppeGGRantb0xIHK
-         wZTnr9qAwMjHtzjSypym5MrBxUODR9ojVsLzCCi9AExiyKzJmWJ+LpoGJ9xmkVXtgX
-         ZyNbL60PgIqbyR0miZYsDgn1IJnK+/B8f+ssAeeE=
+        b=Y/oZcVE+7MwGo3enjkFgsjITJp6lQVttN8zMl+peWR/VHJbvGYExW57UOivCRwmHU
+         FgqzHkNemwRXeHzS07Y+luaw140AMnoDKyyVebm+0O0TVdB0SPpOikhtA3UQZZHpC4
+         x2puAX6Uqz5H23ylate4gQDGP2KirfA6oG3zkJo0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -65,9 +65,9 @@ To:     Ulf Hansson <ulf.hansson@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 07/11] mmc: sdhci-of-arasan: Simplify with dev_err_probe()
-Date:   Wed,  2 Sep 2020 21:36:54 +0200
-Message-Id: <20200902193658.20539-8-krzk@kernel.org>
+Subject: [PATCH 09/11] mmc: dw_mmc: Simplify with dev_err_probe()
+Date:   Wed,  2 Sep 2020 21:36:56 +0200
+Message-Id: <20200902193658.20539-10-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200902193658.20539-1-krzk@kernel.org>
 References: <20200902193658.20539-1-krzk@kernel.org>
@@ -77,31 +77,34 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 Common pattern of handling deferred probe can be simplified with
-dev_err_probe().  Less code and the error value gets printed.
+dev_err_probe().  Less code, the error value gets printed and real error
+from dw_mci_parse_dt() is passed further instead of fixed -EINVAL.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/mmc/host/sdhci-of-arasan.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/mmc/host/dw_mmc.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-index f186fbd016b1..3aea46db2ea7 100644
---- a/drivers/mmc/host/sdhci-of-arasan.c
-+++ b/drivers/mmc/host/sdhci-of-arasan.c
-@@ -1543,10 +1543,9 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
- 		of_node_put(node);
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 0fba940544ca..43c5795691fb 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -3161,12 +3161,9 @@ int dw_mci_probe(struct dw_mci *host)
  
- 		if (IS_ERR(sdhci_arasan->soc_ctl_base)) {
--			ret = PTR_ERR(sdhci_arasan->soc_ctl_base);
--			if (ret != -EPROBE_DEFER)
--				dev_err(&pdev->dev, "Can't get syscon: %d\n",
--					ret);
-+			ret = dev_err_probe(&pdev->dev,
-+					    PTR_ERR(sdhci_arasan->soc_ctl_base),
-+					    "Can't get syscon\n");
- 			goto err_pltfm_free;
- 		}
+ 	if (!host->pdata) {
+ 		host->pdata = dw_mci_parse_dt(host);
+-		if (PTR_ERR(host->pdata) == -EPROBE_DEFER) {
+-			return -EPROBE_DEFER;
+-		} else if (IS_ERR(host->pdata)) {
+-			dev_err(host->dev, "platform data not available\n");
+-			return -EINVAL;
+-		}
++		if (IS_ERR(host->pdata))
++			return dev_err_probe(host->dev, PTR_ERR(host->pdata),
++					     "platform data not available\n");
  	}
+ 
+ 	host->biu_clk = devm_clk_get(host->dev, "biu");
 -- 
 2.17.1
 
