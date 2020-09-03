@@ -2,65 +2,65 @@ Return-Path: <SRS0=WZu/=CM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA86C433E2
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 11:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B63C433E2
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 13:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC5062087C
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 11:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E794920C09
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 13:58:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pOAISEGL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qbBhVlVN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbgICLWZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 07:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32926 "EHLO
+        id S1729041AbgICN6w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Sep 2020 09:58:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728344AbgICLHg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 07:07:36 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EFE5C06125C;
-        Thu,  3 Sep 2020 04:07:07 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id 17so2036396pfw.9;
-        Thu, 03 Sep 2020 04:07:07 -0700 (PDT)
+        with ESMTP id S1728927AbgICN5y (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 09:57:54 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44E46C0610E4;
+        Thu,  3 Sep 2020 06:54:53 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id y4so3790261ljk.8;
+        Thu, 03 Sep 2020 06:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eaRhsZ5TWpfGSPdWSz1VTVO/mX4t+F5UcIQtgVoahy0=;
-        b=pOAISEGLGapqlDNpjEyrYBaAWWHCLZskiXqlh+HTkbAlUtPGW03AZqfOZ3hYuFyLbk
-         lVD/q/IhrFnVi8CGt4+6D+XTK0NJl39HWm95D36dIPjI28fEOhMxhzxAT7rHsQQPAZrt
-         smLXj7Pyz+w2tOkyJGqF/AcVBPEadWdkY3CFpTjA4+Fqi6lTgJ/diuVMUl9wZ1mPKrPo
-         e3lplG7jjPGbp/idOhPr16vxd7cMzWkeIanwZSbiZ8hUgXr+M92KcbYeOuq18bU9M/A6
-         j/sR/JAP8mfnkqspbu7n6oanpUB387x/uLQJ8eq//8xolL9L/CEXsshXX91FvOmzdlQi
-         Iqzg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vZF87zSk1oleEIGJMMtf9vb52AVAs8bIBPfRdsKpf5Q=;
+        b=qbBhVlVNvPmvqPx5v6F58TSakj6W9nFXHWjRE5NqtqVKAmw1K0JWbEqfA+/gd42S91
+         JXUVEaLb+Qfzk7NxCRl2cx+HjSOJu+vak0Cgh8OfdcWhhjCfgpekxBq+wRNMHQePEi8h
+         8ZwypTxHgr1tfi6Dy39W4aPoapfsvFO4PJ0dcdZlUCshhuNTCxFoTIg7Lzc//2PyTOnp
+         FKi1mTlOqecL8AFYe1fwhDp/o3pRJoPSjqrIwn/ymFoeklQRoHTQIyLu4Bql28tB2alb
+         MOodx4J/fpQLZWLDd97dtmOxL9uEb556nMBT5Yw8dgDd/R56+juVdP5ltP/5ASdyHBwT
+         ej6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eaRhsZ5TWpfGSPdWSz1VTVO/mX4t+F5UcIQtgVoahy0=;
-        b=kRXRzaoRUuwZmCRJ8VZaAGZV0pexjtmnIeY/YRoE6Fmy6X3t8H7B27BZ4R377bg84j
-         WJt7p6q0dAAVa1sDrRDoEvdTUo8PnonwWaocEaKaK9JQHPl3l9ooC4QJSb9tYIWFq1Rh
-         tDVA5dQu2BovPG0ZqHj/TG4+l+gx3l1in0qnJaT/JyGDpoy+Ge4YafL+LCbH6pEvM/Ke
-         fRi5DDlS6dOs2aB5PnxR9cv6BrWZ4bAjwQqgSRutsLY8hOfeHVmnF0qLgyWkQnbO5Bqv
-         22YE4Is01+JK9942PzSoEdIJ0Zu+t/dXRBPXtXB9NOGxcmXX66LhCRH3xPI4AQ44iB5v
-         m2KA==
-X-Gm-Message-State: AOAM533sBkYheN4TYSGJBIZ0HwUJfjYRbhyg/QNwbNDk0G6vBckvrhw7
-        /voV8x6rz7xHQp8GycjD03xkxYocUUBpAFo375s=
-X-Google-Smtp-Source: ABdhPJwuGc2+bCg2ErG6/q6jf3bKJSgb0rbju4qg8koUw0SNPYEPIhl4iKY40gX8AZ3+BDdHmV3pB+52drdFpLjXWtA=
-X-Received: by 2002:a17:902:ea86:: with SMTP id x6mr3360111plb.131.1599131226890;
- Thu, 03 Sep 2020 04:07:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200903005300.7894-1-digetx@gmail.com> <20200903005300.7894-4-digetx@gmail.com>
-In-Reply-To: <20200903005300.7894-4-digetx@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 3 Sep 2020 14:06:49 +0300
-Message-ID: <CAHp75VfFZ2bgEqS7cbTfYzxtXk3T5VaoJpum5aiNMpfvhfbuqw@mail.gmail.com>
-Subject: Re: [PATCH v3 03/22] i2c: tegra: Clean up messages in the code
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vZF87zSk1oleEIGJMMtf9vb52AVAs8bIBPfRdsKpf5Q=;
+        b=raicgMClrd22+iH5Mo574nTj558eGHzEYvzAxyY4okrOAbUVwmf65ToIQTLtSop8e1
+         NAI61/2JM7o5U/c2rG/rI9uE//49LrZcN0xvKuKopzrO6+URUVmhKYS12/X2pD8aYSkq
+         r1wcJxs/ev5OPFCDK3IfxQrSrb9qu5WrvpcCWxqC5rnujpt88WB4UunhIRj0bnHbxmEv
+         OvNmjVMgVT+b07JLgvRgA1mrLSf3K0ikoJTTlqAuDXzitnwanFfL9Q0sKVdQASLFoX9Q
+         WaKsvWqqPwMIU2CpGhunX17GYP8psBMowLXdCGLhjx1LPCu049PnBDNHgafDuuTEfqNF
+         eQYA==
+X-Gm-Message-State: AOAM533mKuVPbLRmP5evj1nC/N9t31HGX89RgAuA+Ol2qiSxeE+5E/uq
+        tXUZkzq/mhlii8lWcKYRoTwrqhlfpG0=
+X-Google-Smtp-Source: ABdhPJxttIN1R0lpLrPnWhXTqIN++Y7J5bfgO+/vIsXA2S2Frc33+/pts+ZC/vmRHdqA6RYrchDvSA==
+X-Received: by 2002:a2e:911:: with SMTP id 17mr1452833ljj.207.1599141291562;
+        Thu, 03 Sep 2020 06:54:51 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id t16sm637505ljo.27.2020.09.03.06.54.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Sep 2020 06:54:50 -0700 (PDT)
+Subject: Re: [PATCH v3 04/22] i2c: tegra: Don't ignore tegra_i2c_flush_fifos()
+ error
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
@@ -69,32 +69,32 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-i2c <linux-i2c@vger.kernel.org>,
         linux-tegra@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20200903005300.7894-1-digetx@gmail.com>
+ <20200903005300.7894-5-digetx@gmail.com>
+ <CAHp75Vf9P9L1uM+he63D5H+-V3Zwv3jRiKTrXmtB4Sxuk9SC9A@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <60b6b0c7-48fe-4cfa-2408-17b2182e1cc2@gmail.com>
+Date:   Thu, 3 Sep 2020 16:54:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75Vf9P9L1uM+he63D5H+-V3Zwv3jRiKTrXmtB4Sxuk9SC9A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 3, 2020 at 3:53 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> This patch unifies style of all messages in the driver by starting them
-> with a lowercase letter and using consistent capitalization and wording
-> for all messages.
+03.09.2020 14:09, Andy Shevchenko пишет:
+> On Thu, Sep 3, 2020 at 3:53 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> The tegra_i2c_flush_fifos() may fail and transfer should be aborted in
+>> this case.
+> 
+> Sounds like a fix. To add to previous comment, fixes that are likely
+> to be backported should have Fixes: tags.
 
-I didn't look at the rest (yet) but this series has a patch ordering issue.
-Why do we first do some little, non-critical clean ups?
-
-The preferred way is to arrange like:
- - fixes that may be backported
- - fixes that are likely not going to be backported
- - features
- - cleanups
-
-In its turn cleanups go by severity:
- - code affected ones (and maybe logical changers)
- - ...
- - commentary / indentation fixes
-
--- 
-With Best Regards,
-Andy Shevchenko
+I'll reword the commit title and message in order to make it not to
+sound like this is a bug fix. Thanks!
