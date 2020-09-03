@@ -2,65 +2,64 @@ Return-Path: <SRS0=WZu/=CM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F41C433E2
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 11:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF6AC433E9
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 11:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3778206EB
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 11:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F2722087C
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 11:22:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qTSjE1pP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVbRyPos"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbgICLLq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 07:11:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33380 "EHLO
+        id S1726323AbgICLVu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Sep 2020 07:21:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728372AbgICLKN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 07:10:13 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A20C061247;
-        Thu,  3 Sep 2020 04:10:11 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id u13so1875384pgh.1;
-        Thu, 03 Sep 2020 04:10:11 -0700 (PDT)
+        with ESMTP id S1728330AbgICLLX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 07:11:23 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE974C061247;
+        Thu,  3 Sep 2020 04:11:22 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id e33so1876952pgm.0;
+        Thu, 03 Sep 2020 04:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=J1i57IRdZhg4OVu4ihUxUTPehYMdVSv4veIZG06bWXs=;
-        b=qTSjE1pPHNfO1QDYQ9Ia409UNvEpYppa854Dj58KuStsVelX/b9ITDHVNcirMfta1V
-         w9sMOaXM3THG/sQMt4q9TzrIsptXA7M7JX/2SvizD5bBgc+Dpo7k9/KKe5vUoUNuf/Q+
-         H3tVkBVFaC0fQqdMevV/2ouY7TNxI0oL8W00lK+f9B4hlyU3u+3xD65RjDjn0PwaW/pB
-         hjyIKnX1RwhSmqmIjyNhnUR1PD4T0i9JO4PhmwAh5BNp7cVe1f4DkQLRBoAt7DvFqZRK
-         AeOKT3/aCXeYvZIonJSlQ9kA9z4TaJDcKy1mh1thc46CtXdz7ky8VrSiSPFVuMUE0Vzz
-         zkag==
+        bh=AobGiMqA/cDFWY4Oywceftiem4qTQGg8aRmvx/rxcd0=;
+        b=BVbRyPosrveWpQahdCcvHTRppfLuXeS3v+eTlwJFCAoPh3ntC5bQROHsHpugizKvdt
+         cgiVCHDYUMP2nZhqAJQ2AwdrW5nAlLjnuHxc0fJ6bI++ZNnXBR9M7kwi0c/EFdYcLE+n
+         eVS/idRookFVOKqrMSubmrwXX78cnmETb/5mzEytvnmtbeZzrYWW+Aof+CdKtOeYg4ki
+         m2Dz1IqrkAekl4/M1WuGF3G3YiD6iY+szu8L1BWFHDoGJb2sDSQa7rtzf+UN3Kb9eIev
+         Fa5y4hisZyBqoUEwy/vvxR/G5zL2YREMY+GOHwV8bLPX6rZJIL3zlR84yfhExQPYVKKT
+         HrrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=J1i57IRdZhg4OVu4ihUxUTPehYMdVSv4veIZG06bWXs=;
-        b=XLMV7kxLQY61JhoSiGl264lnAdzISFNAlgUL1p8+1mdwQvQtiSpGh5M6HivYA5KUo3
-         ilTwOR+KWV8Un2ZmIkE96rXpUtKQVJhpfJmo1WcpuT1M5eOI/tIvGhLZv+P3WtOnm9Tq
-         yfIDWHo6cG8T7FKzklEwP9H5almE+7z5kfAQrey+QccuuAb0X/4ROpvMCz1m04cYuGom
-         bImZ0iJ5LbTJ6xONTIJaaqLo5EDTgGnjd19jOOXfmsWIHteKdjU/GkNzqLq6xSA/cyMk
-         aatHQR4lmykh/UsoGN+r8+k3rJNr9Vidnds07KRVuj4Awq/xDsxc6hZkbYHw7FMoY3Vv
-         QxLQ==
-X-Gm-Message-State: AOAM532lpI++sdnFLnUHDvC849l8iWlVWoQlq3xdRPFjCFkwBBG2cTox
-        GvKnPqpdQyxXTKrlMyDTF+OTxFbwkdSQB9TVurA=
-X-Google-Smtp-Source: ABdhPJyCwXKGVjz91KGqfY0UKqnCfamjPLQ+Z7zKhx0zAlE0rMJ8Yq95QIAr45mRcsOTIo66t9x+0vzxg/lDu+ElLS8=
-X-Received: by 2002:a17:902:b289:: with SMTP id u9mr3407159plr.226.1599131410681;
- Thu, 03 Sep 2020 04:10:10 -0700 (PDT)
+        bh=AobGiMqA/cDFWY4Oywceftiem4qTQGg8aRmvx/rxcd0=;
+        b=Q811y2WVOb0yIp1iubyTRyVHQ1D6FbE+OGeS6vqu0uXbFm6aJtV/buwIcR82eeE2JH
+         IJ7EbFurxD06k2fq6RbtaCQMNV8spElpzFkFs5RAAVXNKXOzCa4m1gY6oeH0KdRKJB7X
+         X8raWCZT0MxV/MllHyUIKmhRqsd6AE4AzxI7TdkA6elRfUAJwpceBOryXMD4j0ctco1q
+         pNZjP2VDmmvBP3Ihmc6JQ5U57TZ6banpWJF2zTWKs0UwBDxrcwIGsw0Tj5XqkY1MIhJG
+         JSSoQzU/7kKBZ8mb4G7uU4WGtH6OJum40F2c+fWHUeYaPwVSIc8pNn6R6uAnqIZl96e2
+         2Afg==
+X-Gm-Message-State: AOAM530KhF0tAEjHUgJFulOCHzWGO/JfrBwD/ph0v53QtPBMNDZ9h8Sw
+        A+xSMF18uj7zQljsiyytUYcECn5Y38pxrHsRGqQ=
+X-Google-Smtp-Source: ABdhPJxPIuRSAkooAyor+9Sgh8QhWpV5z/djl4ilpRF9DBd6NzbYPrgG14FAx4hP0rBWt6RkZN7TL/RDa5wxsr+Fh7g=
+X-Received: by 2002:a17:902:56a:: with SMTP id 97mr3453206plf.130.1599131482530;
+ Thu, 03 Sep 2020 04:11:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200903005300.7894-1-digetx@gmail.com> <20200903005300.7894-5-digetx@gmail.com>
-In-Reply-To: <20200903005300.7894-5-digetx@gmail.com>
+References: <20200903005300.7894-1-digetx@gmail.com> <20200903005300.7894-6-digetx@gmail.com>
+In-Reply-To: <20200903005300.7894-6-digetx@gmail.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 3 Sep 2020 14:09:53 +0300
-Message-ID: <CAHp75Vf9P9L1uM+he63D5H+-V3Zwv3jRiKTrXmtB4Sxuk9SC9A@mail.gmail.com>
-Subject: Re: [PATCH v3 04/22] i2c: tegra: Don't ignore tegra_i2c_flush_fifos() error
+Date:   Thu, 3 Sep 2020 14:11:03 +0300
+Message-ID: <CAHp75VefJMxAoGxN8muTxLUJ=bwcMyjzX4uEGvYdckE6xYJvjw@mail.gmail.com>
+Subject: Re: [PATCH v3 05/22] i2c: tegra: Use reset_control_reset()
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -79,38 +78,19 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 On Thu, Sep 3, 2020 at 3:53 AM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> The tegra_i2c_flush_fifos() may fail and transfer should be aborted in
-> this case.
+> Use a single reset_control_reset() instead of assert/deasset couple in
+> order to make code cleaner a tad.
 
-Sounds like a fix. To add to previous comment, fixes that are likely
-to be backported should have Fixes: tags.
+> Note that the reset_control_reset()
+> uses 1 microsecond delay instead of 2 that was used previously, but this
+> shouldn't matter.
 
+What datasheet says about this delay?
+
+> In addition don't ignore potential error of the reset.
+>
 > Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index 79e542cf3e59..b912a7153e3b 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1189,7 +1189,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev =
-*i2c_dev,
->         bool dma;
->         u16 xfer_time =3D 100;
->
-> -       tegra_i2c_flush_fifos(i2c_dev);
-> +       err =3D tegra_i2c_flush_fifos(i2c_dev);
-> +       if (err)
-> +               return err;
->
->         i2c_dev->msg_buf =3D msg->buf;
->         i2c_dev->msg_buf_remaining =3D msg->len;
-> --
-> 2.27.0
->
 
 
 --=20
