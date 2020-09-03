@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A95FC433E2
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D76C2BC11
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CDE220786
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:22:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 077DA20786
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:23:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay6T3o5V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+NLN2f/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbgICPWq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 11:22:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34936 "EHLO
+        id S1728871AbgICPXs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Sep 2020 11:23:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728437AbgICLWj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 07:22:39 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF00EC06124F;
-        Thu,  3 Sep 2020 04:20:07 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id u128so2067209pfb.6;
-        Thu, 03 Sep 2020 04:20:07 -0700 (PDT)
+        with ESMTP id S1728401AbgICLFm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 07:05:42 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5BFC061251;
+        Thu,  3 Sep 2020 04:03:05 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id v196so2053454pfc.1;
+        Thu, 03 Sep 2020 04:03:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=jaMby09cIkH4uMnP/QGnY16JaDZOahjJy8+IAE25qQI=;
-        b=Ay6T3o5VYcusUis3uZZWyVXgWIF+mUScyEZqpgOBAkCyeAtQEi02m/lV4Zjp+2Up8b
-         P5HHxCYax2aeFuBIwfE9vkRx+6TvW+6Vm6kyHFEN+E0yPgD5XiR+0wm/OTIU0SzU/fxi
-         Ue9xgqsFhxucu35ddMNJ8f4Q6q54cRwQrjfL/k6HLl1SPz6T+fbW/FmMrOS+RK36o/yp
-         eot8QtHOU5p+dCS+zlE3nZhSqjlSVjngrXrtxqf5zpErPMvK9E0ttthZbQkeRjyeCJbP
-         /tFH53iy1swTu3Hn7XMqUQr0q0G0d7FrrluY8wXxb79FPdK7DrwvMR67Em48j4RsAzPo
-         b8vQ==
+        bh=Yc4wkCo7MeYrmmnwisSRarxaaBJAo1GNuY3VsM322Kg=;
+        b=V+NLN2f/oumXmYED9CGhvzHg1A3k7uzbduXR5eZhQX9/LB452xGmGWatlhugioh3fn
+         C2jDtT6Rc46kWS8I2VMaaQ0YJ2cUJ0sW+0WJexHovLKoPUHB35BiDayz+5LOPKPRh7jN
+         LDbNcnYH6pS9mK4fFj6e+3Ohv0X/OBTORciTRAxc+4tQXi6M5vmL49DLqUTh1O7Zc1gZ
+         TShC6BYGRuSfGHezFoj+FzbZQ7DRptRhuSXsAOWIOYn9IzCI1Vi1paFBp6LrQFxA8AKs
+         j6lwADHrIN66e/OyJTVsiNNhAn6Y0D5eGSoKsL2bPAWMUbdWHdvzKfkOF+cewY9GN8/b
+         pdTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=jaMby09cIkH4uMnP/QGnY16JaDZOahjJy8+IAE25qQI=;
-        b=K4bnAdFR5RNJd4H+3kv+PiZvxbn4Oey3V1ELfQOipME9NkJKj4kvCPEeu0mcaTl3jJ
-         zLVU5K6Cqv5/v3imYm4017X7hjIIeznCGGXkOv3xKPI2N/JTmJgUu6woiaH2EOgcNDXu
-         Vh5fGiPbkMy1+KlXU9uKqqHuRXEFUnT9G0SEdZDePblkLOTJadAD78DYt8POoOnHq6vL
-         W695p60fIJEXhurFhSXpFRIWqgv13fZvcxoWysg0pD3nb1UOG3NuzW0rLKZ8d9aMXIib
-         EAdPVHzaj+HeLRE3QlpkvobFv9E4j4qVUS3/5jCQvwz/ft8kx+E8nSfRU/sF5OmI1GIn
-         2vLQ==
-X-Gm-Message-State: AOAM532E1o9B5l3UHQbUm0oVYbnsF7fa7fewayHxxUe73qc+AhqxR+3f
-        NJgjRm84i5BDPBrrHnGVEYeYtEChceptxZPyhvE=
-X-Google-Smtp-Source: ABdhPJySXMx2fPHPuW2rKM86f6gT94qFOY5VNUlJ0a6oRyW8MpyDO7nrdRSyyg9cHogg5ipMhKUgG8PyRMoTMDYaaR8=
-X-Received: by 2002:a63:c543:: with SMTP id g3mr2587849pgd.203.1599132007489;
- Thu, 03 Sep 2020 04:20:07 -0700 (PDT)
+        bh=Yc4wkCo7MeYrmmnwisSRarxaaBJAo1GNuY3VsM322Kg=;
+        b=X9EbEKKDQ7SKr3hFldkD+96BSiInMEBHd4MdeRZ14RnTstUIJ4NfcM5Y6PNBmBKyIU
+         O4EGi5hLLaCDFxjyR0FHsea/D2JeCkMwokcoBBjybz6Qm5FMpmuVOMO+Oe3RjuhwvIR9
+         /YEKSriqSn/e270yD0GvE9tZMSH03QFL/tVV2QbqcbGgtj6I2jpZBdhSGgeCJQ/Gdfze
+         PtaM3RkaYib82tbNM2Mewz+CW6jEC+MOfSLf5Wzfdp9EsCoHwdfPx3VgzyjNfSWrkrno
+         7tdUYBtBeZP5XNyCDCfHwtlrROV1oqV/X4+LcVeSqWaEYS3+G+YTp6tkZPx91MNtoyPr
+         UtxA==
+X-Gm-Message-State: AOAM530mWtu7OGKgKaLUAcg6aJTuBA2jOjorX+29sIpQ9LOhCBB7ejXc
+        1NDsQcxKzTcej4UyqihzrdoC9thx9I4DrMUO5II=
+X-Google-Smtp-Source: ABdhPJwDzelAtXwzu1AP2Sck+DOJdO2HFfZJWEguZGryUdrzqFlNyIe50UOUdMIYN72Gvo8JpjKeqGFXAeY1JyeFBFc=
+X-Received: by 2002:a63:d648:: with SMTP id d8mr2513798pgj.4.1599130985426;
+ Thu, 03 Sep 2020 04:03:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200903005300.7894-1-digetx@gmail.com> <20200903005300.7894-14-digetx@gmail.com>
-In-Reply-To: <20200903005300.7894-14-digetx@gmail.com>
+References: <20200903005300.7894-1-digetx@gmail.com> <20200903005300.7894-2-digetx@gmail.com>
+In-Reply-To: <20200903005300.7894-2-digetx@gmail.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 3 Sep 2020 14:19:49 +0300
-Message-ID: <CAHp75VcX0=WTKWB+W2NoCzDJbL+axd9D27nJ6OMCgL_m_4=PHw@mail.gmail.com>
-Subject: Re: [PATCH v3 13/22] i2c: tegra: Check errors for both positive and
- negative values
+Date:   Thu, 3 Sep 2020 14:02:48 +0300
+Message-ID: <CAHp75VcLk9pVRefA7cTgVQcX3-9EgcW6c-VUSpSOut0Y1B7J5Q@mail.gmail.com>
+Subject: Re: [PATCH v3 01/22] i2c: tegra: Make tegra_i2c_flush_fifos() usable
+ in atomic transfer
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -76,15 +76,52 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 3, 2020 at 3:54 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+On Thu, Sep 3, 2020 at 3:53 AM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> The driver's code is inconsistent in regards to the error values checking.
-> The correct way should be to check both positive and negative values.
-> This patch cleans up the error-checks in the code. Note that the
-> pm_runtime_get_sync() could return positive value on success, hence only
-> relevant parts of the code are changed by this patch.
+> The tegra_i2c_flush_fifos() shouldn't sleep in atomic transfer and jiffies
+> are not updating if interrupts are disabled. Hence let's use proper delay
+> functions and use ktime API in order not to hang atomic transfer. Note
+> that this patch doesn't fix any known problem because normally FIFO is
+> flushed at the time of starting a new transfer.
 
-Yeah, fix the order of the series. Now it seems like arbitrary mess.
+> +       /*
+> +        * ktime_get() may take up to couple milliseconds in a worst case
+> +        * and normally FIFOs are flushed, hence let's check the state before
+> +        * proceeding to polling.
+> +        */
+
+Everything, including above can be done by using macros from iopoll.h. Why not?
+
+> +       if (!(i2c_readl(i2c_dev, offset) & mask))
+> +               return 0;
+> +
+> +       ktime = ktime_get();
+> +       ktimeout = ktime_add_ms(ktime, 1000);
+> +
+>         while (i2c_readl(i2c_dev, offset) & mask) {
+> -               if (time_after(jiffies, timeout)) {
+> -                       dev_warn(i2c_dev->dev, "timeout waiting for fifo flush\n");
+> -                       return -ETIMEDOUT;
+> -               }
+> -               usleep_range(1000, 2000);
+> +               if (ktime_after(ktime, ktimeout))
+> +                       goto err_timeout;
+> +
+> +               if (i2c_dev->is_curr_atomic_xfer)
+> +                       mdelay(1);
+> +               else
+> +                       fsleep(1000);
+> +
+> +               ktime = ktime_get();
+>         }
+>         return 0;
+> +
+> +err_timeout:
+> +       dev_err(i2c_dev->dev, "FIFO flushing timed out\n");
+> +
+> +       return -ETIMEDOUT;
+>  }
+
 
 -- 
 With Best Regards,
