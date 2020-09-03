@@ -2,155 +2,114 @@ Return-Path: <SRS0=WZu/=CM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB66C433E2
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AF9C43461
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1939E2072A
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:13:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 730B820786
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:19:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SgES9OtT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YTmj5Nx/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbgICPNO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 11:13:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39208 "EHLO
+        id S1728876AbgICPTZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Sep 2020 11:19:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728687AbgICLsk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 07:48:40 -0400
-Received: from mail-ua1-x943.google.com (mail-ua1-x943.google.com [IPv6:2607:f8b0:4864:20::943])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0F6AC061245
-        for <linux-tegra@vger.kernel.org>; Thu,  3 Sep 2020 04:47:59 -0700 (PDT)
-Received: by mail-ua1-x943.google.com with SMTP id f16so477100ual.11
-        for <linux-tegra@vger.kernel.org>; Thu, 03 Sep 2020 04:47:59 -0700 (PDT)
+        with ESMTP id S1728561AbgICL1b (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 07:27:31 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A597C061245;
+        Thu,  3 Sep 2020 04:18:11 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id w7so2075460pfi.4;
+        Thu, 03 Sep 2020 04:18:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lF+Kc4r9sUDwFZ8bE5xtVYQtO57AZ59ErxR5WiW/3Dw=;
-        b=SgES9OtTIMOLLR9GP0CgnxjBl8QnwGm0lnbEOFW3YZ4Umcbth07htLKrbtjPzoJrQN
-         riHsXXueEfeQzGreBEqhUgL7qnCZ622H+IqZXNhqcioGKpE1EXPctfh1eMVAndcV4Bhb
-         XyHMcTpFpYx8azbD9Jamf1pRcJZZD6V4M+4Rf4ds2nfXvcRcOuYB6EDeBvisP8w90yBY
-         drtgRLbuUdVF7V4BNcf3684BR1CPveOvuE1JSePdKmugPHvpeRaojJUAE5IutFeKrTzS
-         d32RKGZD2865aakLJfYtpDwq7Nb1hvCzLXd2UiG0wjnuPQaIQSzu2jdLcHapaRGIeRrw
-         Spdw==
+         :cc;
+        bh=dYHgOYFkdCbGZWuPZrhfEhLKQCW87nGOndt8XY8lTCE=;
+        b=YTmj5Nx/rxPJZhk7d9yLcM2eIv4s0d3h/2ZR84Em9iBxXXU+6fm3Z5kcFOSLY+Gsu+
+         rnb+mSPFr38Rfgetp+MVqEa0Y5Z88781pr3jGwxI9aW9uIc2OIfhdOiAuEMz8ZwWRwrv
+         Xtky8ninIqNZ1+nE5/RIr2SDFhktx6FZoCwZ/+NltoqGD8aKYsjsqajhIyssbPj2x/+N
+         cNlWAUKA1jars5Ol/hlBfegnT3XpElC5fPQaZ/dSLZTKwBcP23I4SpXHLO0gD4BDMDd4
+         TOjqdW4p/n2T6IddPecArk4zZSzmYuWcymqQTKaBEo+10kylkPek6mgPXylU1suF/uhb
+         Dt2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lF+Kc4r9sUDwFZ8bE5xtVYQtO57AZ59ErxR5WiW/3Dw=;
-        b=gBPQ2e8MDtH5xqCkUX/xSqyNNa14OmzerqRlwNGWtI8OgkGlTO/WuFWrSDuWc/Qe0d
-         6V2qQG5lsmGPz/l5UPAGMgWWnclwgvWg/slelQdceIt8aJ1nYYTBCjjR10BB9bZika7p
-         GGSMuoNgi8ShgJt7gmpQ6NbC7O6gPmvhQQqyVfm3PDWIlTgOQ31sWLPtavTMTnhcr3Iv
-         rx0CTpM5kSEgTWcmsxAWKbmvlQlV2v1rx5VUjGs/OVzTuwu9cHjDZZaVD/LXZY2/+BTZ
-         BdqKKR5RnAP/V1IR8RJ+jqFx6tO4t7a63xCX5zvOCVVrJRzeuZaWbnFHj26azmo67Fsn
-         uqgA==
-X-Gm-Message-State: AOAM5337kSRKQyvBDdrJLbVbeUHTFXpxrBCOWEmfXPItWus/DyVBqWdx
-        XEl8DydZ/Ms3GCR0qlxVlq54M+9PE7GxM5f1N9VW5w==
-X-Google-Smtp-Source: ABdhPJw60X++tc8veDsSpQLnhcJtb/sfDLdknN30k3JsTHwZA+kgY04b4+NZKXDv5kVrAmvgSCiWFjVFdoodQnu3vjE=
-X-Received: by 2002:ab0:5e43:: with SMTP id a3mr726376uah.19.1599133678563;
- Thu, 03 Sep 2020 04:47:58 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=dYHgOYFkdCbGZWuPZrhfEhLKQCW87nGOndt8XY8lTCE=;
+        b=I3u4r+FcqjlHj7nPPkNEwEWzHmvcf8EjDtN304Quv9b4+WZ/ITteW9LgnX+XcAi6SQ
+         v86HrdHW4Xxf7sLS8cYb8wwmG2AsQT26IjJfL9mrk0XQcyIdTaBiO6bEyesrubXaR5tL
+         x2dG2118VIj6nHVxqfm6NaqjCvaYO8Eh6Tepkuz4ft6lWMYZPhgOxAuuUss25IUB04/c
+         NgSLaPVRN+coCYviqo2XdrxgPHd6SRVfIorG2QyIL6Nj3P7DXmFJg0X3pzi1piA30muN
+         6p/iKzX4Oxe4/rxsGE8PG4jjCT7yJ6gUrYzaJ2Zjo7+bYHTPRWQGssnJcZUYHqpVPOAp
+         KdCA==
+X-Gm-Message-State: AOAM532V1JSvji1X/vvCNY1hzml2LzMOi8IE78Ui7eLiF3Ubmf6j+X+a
+        nT0uj65eLsHwZQqkltWgLM3mT+NR74GB01HoBLKxrtJGX34=
+X-Google-Smtp-Source: ABdhPJwb3eyvijxdRfrW78iIFLm79zpgRsDNv/ojUM5mIhB1AodbO4N0A4ueSIU1v6GyeE3AMG04UUsRMgbbuwovn94=
+X-Received: by 2002:a17:902:56a:: with SMTP id 97mr3479518plf.130.1599131890968;
+ Thu, 03 Sep 2020 04:18:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200902193658.20539-1-krzk@kernel.org> <20200902193658.20539-5-krzk@kernel.org>
- <4RW2GQ.J2DD55HCZMCH2@crapouillou.net>
-In-Reply-To: <4RW2GQ.J2DD55HCZMCH2@crapouillou.net>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 3 Sep 2020 13:47:22 +0200
-Message-ID: <CAPDyKFoXacPnq5Kv5QEvHjhQz+PN1jAzdGA=TR+e+MwB90Hafw@mail.gmail.com>
-Subject: Re: [PATCH 04/11] mmc: jz4740: Simplify with dev_err_probe()
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+References: <20200903005300.7894-1-digetx@gmail.com> <20200903005300.7894-10-digetx@gmail.com>
+In-Reply-To: <20200903005300.7894-10-digetx@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 3 Sep 2020 14:17:53 +0300
+Message-ID: <CAHp75VdPoJFNC+MntKu-CL8jFMEe85ZT3R9DF0aaNC4KjqWXyg@mail.gmail.com>
+Subject: Re: [PATCH v3 09/22] i2c: tegra: Clean up probe function
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 3 Sep 2020 at 12:50, Paul Cercueil <paul@crapouillou.net> wrote:
+On Thu, Sep 3, 2020 at 3:54 AM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> Hi Krzysztof,
+> The driver's probe function code is difficult to read and follow. This
+> patch reorders code of the probe function, forming logical groups that are
+> easy to work with. The clock and hardware initializations are factored
+> out into separate functions in order to keep code clean and ease error
+> unwinding.
 >
-> Le mer. 2 sept. 2020 =C3=A0 21:36, Krzysztof Kozlowski <krzk@kernel.org> =
-a
-> =C3=A9crit :
-> > Common pattern of handling deferred probe can be simplified with
-> > dev_err_probe().  Less code and the error value gets printed.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  drivers/mmc/host/jz4740_mmc.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/jz4740_mmc.c
-> > b/drivers/mmc/host/jz4740_mmc.c
-> > index 81d71010b474..0c5b52b53303 100644
-> > --- a/drivers/mmc/host/jz4740_mmc.c
-> > +++ b/drivers/mmc/host/jz4740_mmc.c
-> > @@ -991,9 +991,8 @@ static int jz4740_mmc_probe(struct
-> > platform_device* pdev)
-> >
-> >       ret =3D mmc_of_parse(mmc);
-> >       if (ret) {
-> > -             if (ret !=3D -EPROBE_DEFER)
-> > -                     dev_err(&pdev->dev,
-> > -                             "could not parse device properties: %d\n"=
-, ret);
-> > +             dev_err_probe(&pdev->dev, ret,
-> > +                           "could not parse device properties\n");
+> Driver now makes use of devm_platform_get_and_ioremap_resource() and
+> platform_get_irq() which are replacing boilerplate parts of the code.
 >
-> I think you can put that on one line.
+> The dev_err_probe() is now used for reset control retrieval because reset
+> is now requested before clocks, and thus, BPMP driver that provides reset
+> controls for newer SoCs may cause the probe defer.
 
-I can amend the patch when I rebase my branch next week, no need for a rese=
-nd.
+> The error message of devm_request_irq() is removed because this function
+> takes care of printing the message by itself.
 
->
-> With that said:
-> Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+I see no evidence of this.
 
-And I add your tag as well, thanks!
+...
 
-Kind regards
-Uffe
+> +       of_property_read_u32(np, "clock-frequency", &bus_clk_rate);
+> +       i2c_dev->bus_clk_rate = bus_clk_rate;
 
->
-> Cheers,
-> -Paul
->
-> >               goto err_free_host;
-> >       }
-> >
-> > --
-> > 2.17.1
-> >
->
->
+Hmm... I dunno if Wolfram is going to implement a special helper
+exactly for this. I remember we discussed that with him during v5.8
+(?) times.
+
+...
+
+> +static int tegra_i2c_init_clocks(struct tegra_i2c_dev *i2c_dev)
+
+Hmm... Don't we have something like devm_clk_bulk_get_all() or so?
+
+-- 
+With Best Regards,
+Andy Shevchenko
