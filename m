@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B45D0C433E2
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C1EC43461
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B49B20722
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:02:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 532572098B
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:04:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkmzOxWi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pFqpNhWN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbgICPCt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 11:02:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59166 "EHLO
+        id S1728826AbgICPEG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Sep 2020 11:04:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728927AbgICN66 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 09:58:58 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE529C061A17;
-        Thu,  3 Sep 2020 06:44:42 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id k25so3729746ljg.9;
-        Thu, 03 Sep 2020 06:44:42 -0700 (PDT)
+        with ESMTP id S1728984AbgICN60 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 09:58:26 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE185C061A20;
+        Thu,  3 Sep 2020 06:48:37 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id s205so3789984lja.7;
+        Thu, 03 Sep 2020 06:48:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LLcfLa3jT9VCX7RwE0dDUcAeziaCYPyIo1qnxZ7SIOw=;
-        b=GkmzOxWiAOcSoEKeOaq7PHvTvKu0i0MK1dDNNjyPgwybZgb2UXACJiPvcc2jz0oyzk
-         0lcYO2+V2fy36TNsxrXdx/5px2LKO6+5q2+Rm8WVBpzfxw04qQJ+OCscZYg84bWU1fz7
-         ldaYQ8xsy6RqXXHtvLyQG1Az2juEdwWD7D+neZp7oMkN4CJ1ADEpdwnlXLwRVD1JhIui
-         Go4ZKcXXtPGvXRlvtmC1kOCSHiG3CU2UY00/6+Nnw1wWqOl5yH2vbNIPOSmKgkbdc2Nd
-         mSDZj8hHj2AQOYiPRF9l8VL+kQGYx4QUt4kXmGAHhlIXoTcpiKXwezhKY0CVtHBFVrpW
-         M82g==
+        bh=LaqCbRyYwj+hXeNs4Rfcy15/efkgJqt2Cesa41CCq68=;
+        b=pFqpNhWNj4qz5FszdeKCO0DovSJF9igdv0sKaSivGNh1VvmDLPOJ2rVuVtDSOn9zZV
+         5tbik1hIIgqy04EDMRQ3NMuHvhu7FlLQz+wUAjmVDBFSFkR9PgVZOFJONMHTxo84I43H
+         K5VhgNgMdds6pfYJBoww/b+eiYOTiOhK1ZOTnzv+BveFKlyUOolamDkKm2blJbO6uPfw
+         ypekU/Bx1o85t+RyeTWpkAKnz+WZVog0AaReHQ7kjKsS01R+LztnFevJCwHFwPUwxxZg
+         TtKboFvpMlSXgqH/9owS8ConHNcYoX72N3imv6VsGCoDB+cDklcIQGCzaECSADbrMNEq
+         vsxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=LLcfLa3jT9VCX7RwE0dDUcAeziaCYPyIo1qnxZ7SIOw=;
-        b=c5zi5/wquh/NjMKVUvIL6kOkNFtHpqXHx/ff1KoN/l4wdzH2dK2OURVp9UKu2OtsK1
-         PHFToQOj20x87PZSinKU2MFyjj6phBPBlLGBhMt1sbhOMVIBXAD7QAjX+TFzgWI68zjP
-         0I/5MT6jD5EvuiJbe3m/TtCP9JLMNMdySF+fm7ChYYDdSyWR2mOiX2bAXk2xL9SN/+rt
-         d6PoV75YaDLV8M6I0HgbxoUiUmnd27JuaVN84XljusIgoELUieb94bOPuuJW1BFaJDOd
-         fzILjKnd6GBSfx0LzL2CmI1CECR1j1ICPLGliWIyntycxQOu5vg8sAPFbEx5zeT4jnu1
-         2ctw==
-X-Gm-Message-State: AOAM533Kgc3tn0cSVU1ELyyVp+7U3DWdEJuhpPpGZY9EyVtq7QdCMxf2
-        ZzB+loVxv0uACzqnFflNHjiU//TKWOA=
-X-Google-Smtp-Source: ABdhPJxGmrB2gV5oToqqcL2Lc1GBuuGegYSbf4toI7NGmoFajWRCUk17/vK/Z5QBgbrJ2TEEcYanWw==
-X-Received: by 2002:a2e:b81a:: with SMTP id u26mr1422295ljo.241.1599140680897;
-        Thu, 03 Sep 2020 06:44:40 -0700 (PDT)
+        bh=LaqCbRyYwj+hXeNs4Rfcy15/efkgJqt2Cesa41CCq68=;
+        b=TtBuX/cypAOqiOQ4VPqLSyF393UE3zGZeD2Dq9ZBA3Yv/jRBzHP8r560EapfwtZwvQ
+         wuUVQONSum0vFXwhiGZHWbQrwGJsQ/gSWktCq5n365vt5kRc4ha/CR5uLrDwZWMfJ4FR
+         trLwEHcKTDipfeRuqrxZ0VtdPh03vndoK88l5SWI066oX3Cc500iYORE4WQ5ItEmUKgk
+         +xUgD+TXMFvS3JWso412bXUKCU6KvSZZYW7G2zBPuFl28IEenBbkt/LkWxBPcOtmCHVg
+         NJi8RcIam+67F+Qu3BuZWT5kvRNR1hpytjv+XigS13mPP05Q0duUbXBSX7zqd6x9sMnW
+         4piA==
+X-Gm-Message-State: AOAM531iOOltLwk5qalkv3kaEKALR3Mmp1C7hQKaRaGq6Q2EqP0s1Bu/
+        sa3x4oFHgKwF3gLjjJ5KMOnsE54qrO8=
+X-Google-Smtp-Source: ABdhPJysBNIOjzHtL+VhmNkg+NelDDnocAgSZYpjvcLtfIhQVLeWlsH5s72PcLFzEMhLzr7ci/8TXw==
+X-Received: by 2002:a2e:a0d5:: with SMTP id f21mr1448443ljm.364.1599140916133;
+        Thu, 03 Sep 2020 06:48:36 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id y17sm630318ljc.18.2020.09.03.06.44.39
+        by smtp.googlemail.com with ESMTPSA id k205sm605178lfk.19.2020.09.03.06.48.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2020 06:44:40 -0700 (PDT)
-Subject: Re: [PATCH v3 03/22] i2c: tegra: Clean up messages in the code
+        Thu, 03 Sep 2020 06:48:35 -0700 (PDT)
+Subject: Re: [PATCH v3 09/22] i2c: tegra: Clean up probe function
 To:     Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,15 +69,15 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-tegra@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 References: <20200903005300.7894-1-digetx@gmail.com>
- <20200903005300.7894-4-digetx@gmail.com>
- <CAHp75VfFZ2bgEqS7cbTfYzxtXk3T5VaoJpum5aiNMpfvhfbuqw@mail.gmail.com>
+ <20200903005300.7894-10-digetx@gmail.com>
+ <CAHp75VdPoJFNC+MntKu-CL8jFMEe85ZT3R9DF0aaNC4KjqWXyg@mail.gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2b6d99a0-0913-6c55-7c13-8a2a1524488d@gmail.com>
-Date:   Thu, 3 Sep 2020 16:44:39 +0300
+Message-ID: <4bd12095-7a29-bcb4-6b49-83eca285c897@gmail.com>
+Date:   Thu, 3 Sep 2020 16:48:34 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VfFZ2bgEqS7cbTfYzxtXk3T5VaoJpum5aiNMpfvhfbuqw@mail.gmail.com>
+In-Reply-To: <CAHp75VdPoJFNC+MntKu-CL8jFMEe85ZT3R9DF0aaNC4KjqWXyg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -86,33 +86,53 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-03.09.2020 14:06, Andy Shevchenko пишет:
-> On Thu, Sep 3, 2020 at 3:53 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+03.09.2020 14:17, Andy Shevchenko пишет:
+> On Thu, Sep 3, 2020 at 3:54 AM Dmitry Osipenko <digetx@gmail.com> wrote:
 >>
->> This patch unifies style of all messages in the driver by starting them
->> with a lowercase letter and using consistent capitalization and wording
->> for all messages.
+>> The driver's probe function code is difficult to read and follow. This
+>> patch reorders code of the probe function, forming logical groups that are
+>> easy to work with. The clock and hardware initializations are factored
+>> out into separate functions in order to keep code clean and ease error
+>> unwinding.
+>>
+>> Driver now makes use of devm_platform_get_and_ioremap_resource() and
+>> platform_get_irq() which are replacing boilerplate parts of the code.
+>>
+>> The dev_err_probe() is now used for reset control retrieval because reset
+>> is now requested before clocks, and thus, BPMP driver that provides reset
+>> controls for newer SoCs may cause the probe defer.
 > 
-> I didn't look at the rest (yet) but this series has a patch ordering issue.
-> Why do we first do some little, non-critical clean ups?
+>> The error message of devm_request_irq() is removed because this function
+>> takes care of printing the message by itself.
 > 
-> The preferred way is to arrange like:
->  - fixes that may be backported
->  - fixes that are likely not going to be backported
->  - features
->  - cleanups
+> I see no evidence of this.
+
+Good catch! I confused it with the platform_get_irq() which prints the
+message! I'll correct it in v4, thanks!
+
+Anyways, the message of devm_request_irq() needs a correction since it
+prints the number of vIRQ instead of the error code.
+
+> ...
 > 
-> In its turn cleanups go by severity:
->  - code affected ones (and maybe logical changers)
->  - ...
->  - commentary / indentation fixes
+>> +       of_property_read_u32(np, "clock-frequency", &bus_clk_rate);
+>> +       i2c_dev->bus_clk_rate = bus_clk_rate;
+> 
+> Hmm... I dunno if Wolfram is going to implement a special helper
+> exactly for this. I remember we discussed that with him during v5.8
+> (?) times.
+
+I now see that there is a i2c_parse_fw_timings() which parses
+"clock-frequency" and other common properties. I could switch to use
+that helper, but not sure whether it would be really worthwhile because
+only one property is needed to be parsed. I'll consider this change for
+v4, thank you for the suggestion!
+
+> ...
+> 
+>> +static int tegra_i2c_init_clocks(struct tegra_i2c_dev *i2c_dev)
+> 
+> Hmm... Don't we have something like devm_clk_bulk_get_all() or so?
 > 
 
-That's a good suggestion! All patches in this version are ordered by the
-time they were created ans since none of these patches should be
-worthwhile to backport (IMO) and because majority of patches do minor
-changes, it appeared to me that it should be okay as-is.
-
-I agree that it should be worthwhile to reorder the patches now, after
-the series grew up a tad in regards to amount of patches. I'll change
-the order in the next version, thanks!
+Sounds like a good suggestion! I'll consider it for the v4, thanks!
