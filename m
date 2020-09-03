@@ -2,117 +2,103 @@ Return-Path: <SRS0=WZu/=CM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CB5C43461
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FCFC43461
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 16:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5694206EB
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:56:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxzyJ4gP"
+	by mail.kernel.org (Postfix) with ESMTP id 19999208B3
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 16:10:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599149436;
+	bh=W32TLOkU1RN84JrGJ5PYMhalY4FOPtwlWcdZfX/Gyk4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=a83lnXVfVEMhWRza0AEmBAfQfVd6wqCop5P8zPXdaCL4DbTUY8Rbu8qBXRqj5+5p4
+	 9i4INgX48A9mkMPGgUFKQltvwp1uolho2iJbx2E3dhPxaRXx6v5u5gZdaHYNiZlSQk
+	 0BdTXCihh0wcih7fGKGwEtlc2Q4FJJ5mrdErUKQs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbgICP4p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 11:56:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49618 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729014AbgICP4b (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 11:56:31 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548E6C06124F;
-        Thu,  3 Sep 2020 08:56:29 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id y4so4323465ljk.8;
-        Thu, 03 Sep 2020 08:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Kutay0Y9gemJumzTQfyc2Ti220nlbL0Ja7cyDFdaHzY=;
-        b=KxzyJ4gPqH8AsNbbKWXKRhIR6R7hLYA493Tude4qe1gDD/UbdP82oMG4v9MXXRriAY
-         pBRd7crNp1Fxe3cSWN1HdlZugn3ogXRPBvx6CEtawLHtvLRuq0RbzsUYGihHELfVUiBD
-         MU6dsxr5y6I4ntw+yv4Aw582fDdrLGCfgp/XEqittFXTgD3ywfv/8C42nZWzuYpZfufs
-         m3SaA9NaVqfHV7vFI2xUUlsFNvFDYVE241FKfZ79sBVJRNISHKx0kRJbDLuI24+fYKy3
-         sXjSGyz1VKXBWVz2pjqOGbNsM/y9TPX//Bj9V+9YD1syr62IowLEEjWODhrV3ZkQzRvR
-         zPiw==
+        id S1728546AbgICQK1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Sep 2020 12:10:27 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:35034 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbgICQK1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 12:10:27 -0400
+Received: by mail-il1-f194.google.com with SMTP id l4so3157741ilq.2;
+        Thu, 03 Sep 2020 09:10:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Kutay0Y9gemJumzTQfyc2Ti220nlbL0Ja7cyDFdaHzY=;
-        b=W1gaf76zj/PVrsV7zrfijQDLP3+QEVxkGp210VsrBY1Fh9dqwKuzVYehtgr4FDRrYA
-         tcR9nq6c/IPUGiE11cwkuHaSdQuioxy2zM2de28xWHwAg1nfFHdVQvMfSusr+aZoefYm
-         rIVfyEgIOKvVNLafe3iVamt4unvMMh3EhC/ywvCSCaWN1IZkSWFkppf4V+Yv5KEv4y73
-         c03T9+zJfoRO06/8hy4FHxdIUzhYoNWDSI7IUQ2EPbJghaRFMQKDUcGWY0lVSV/p9+dO
-         b7S5FIMVeZby8bcK5i0bQ0oqssJQhyWI/0eT1J0lMV+Xb8zgRr8gY9zk4f1DAL4C2cDK
-         newg==
-X-Gm-Message-State: AOAM533KxMPl5TJi810xyW6MlgM2Fz4WGOMWSfLbe0JhuQTAgbyrupZB
-        GWk77tl7JRyxQyxlECNOGT0mGtpE8tA=
-X-Google-Smtp-Source: ABdhPJyIKQMpbPJqysMxDujCjWMoMdKHr1ywPllPEP/Zava+ueKPpb7X+iqMG/s5yTddNb80yI8kyQ==
-X-Received: by 2002:a2e:71a:: with SMTP id 26mr1654291ljh.198.1599148586155;
-        Thu, 03 Sep 2020 08:56:26 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id c11sm673846lff.3.2020.09.03.08.56.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2020 08:56:25 -0700 (PDT)
-Subject: Re: [PATCH v3 09/22] i2c: tegra: Clean up probe function
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ub/YDXcxHDsGS0dDuXZfKNg7N1487AgGtWs2ISNYV0w=;
+        b=KO3s42VYbzabC5gmMd9r54DJ0SZxApw7havc6vUUF8c+m0HBQkdS9PSyAKB1PvDkhH
+         xPVchF6YkwfTjUy2QW+KIRmp26MfNammQVt8hiqwWeqax2zvOH/ZH0XEAPFjKbSUtZWr
+         AOpUEc4c6F6JWeM+1A2MLCuAxyxhmEV2KGkFrMvNduXNfnbwFsfx6Gc60eAgd/wkj91M
+         rE371is2dFvMLtLDT3LCfU5Su/RIXy0cKVOq4qJJu2ahtsSYg6UW3K+lCPCM9AP84OqA
+         G3zYj5tkqP/XuTz53YdQMGFYXpUyzDiACbiWAYHPWJs5RXXGISbcMRlFcdmuGF11Xijv
+         VHJQ==
+X-Gm-Message-State: AOAM531ISQGDoCUQVwcz0dk4IVQUZ5k0hjqgIIeLmvaXVlw+sIZktbYE
+        YW4NaVXWeok470OX/Zxf6Q==
+X-Google-Smtp-Source: ABdhPJxLZ9ZiPkSL+rOvAxAf3g+LEBXr7Jjhv24bCXU19LypWZMrwzhwOhCFPx9l8w9NZ9RW+7oU5Q==
+X-Received: by 2002:a92:7991:: with SMTP id u139mr3437463ilc.62.1599149426172;
+        Thu, 03 Sep 2020 09:10:26 -0700 (PDT)
+Received: from xps15 ([64.188.179.249])
+        by smtp.gmail.com with ESMTPSA id c7sm1610386ilk.49.2020.09.03.09.10.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2020 09:10:25 -0700 (PDT)
+Received: (nullmailer pid 2870752 invoked by uid 1000);
+        Thu, 03 Sep 2020 16:10:22 -0000
+Date:   Thu, 3 Sep 2020 10:10:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Lubomir Rintel <lkundrak@v3.sk>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200903005300.7894-1-digetx@gmail.com>
- <20200903005300.7894-10-digetx@gmail.com>
- <CAHp75VdPoJFNC+MntKu-CL8jFMEe85ZT3R9DF0aaNC4KjqWXyg@mail.gmail.com>
- <4bd12095-7a29-bcb4-6b49-83eca285c897@gmail.com>
- <CAHp75VerqMmyDnbxaWN0R-DYPkOosh-R9CG970Sh+EqG21oZ8w@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <77562fdc-0314-b711-90b6-2fc90940f472@gmail.com>
-Date:   Thu, 3 Sep 2020 18:56:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: Add ENE KB930 Embedded
+ Controller binding
+Message-ID: <20200903161022.GA2707794@bogus>
+References: <20200830185356.5365-1-digetx@gmail.com>
+ <20200830185356.5365-2-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VerqMmyDnbxaWN0R-DYPkOosh-R9CG970Sh+EqG21oZ8w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200830185356.5365-2-digetx@gmail.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-03.09.2020 17:02, Andy Shevchenko пишет:
-> On Thu, Sep 3, 2020 at 4:48 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->> 03.09.2020 14:17, Andy Shevchenko пишет:
->>> On Thu, Sep 3, 2020 at 3:54 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+On Sun, 30 Aug 2020 21:53:51 +0300, Dmitry Osipenko wrote:
+> Add binding document for the ENE KB930 Embedded Controller.
 > 
-> ...
-> 
->>>> +       of_property_read_u32(np, "clock-frequency", &bus_clk_rate);
->>>> +       i2c_dev->bus_clk_rate = bus_clk_rate;
->>>
->>> Hmm... I dunno if Wolfram is going to implement a special helper
->>> exactly for this. I remember we discussed that with him during v5.8
->>> (?) times.
->>
->> I now see that there is a i2c_parse_fw_timings() which parses
->> "clock-frequency" and other common properties. I could switch to use
->> that helper, but not sure whether it would be really worthwhile because
->> only one property is needed to be parsed. I'll consider this change for
->> v4, thank you for the suggestion!
-> 
-> That's exactly why I was wondering about the current state of affairs
-> with the discussed helper which should only parse the clock-frequency
-> property.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
 > 
 
-Alright, I see that many other I2C drivers are in the same position, so
-perhaps should better to keep the current variant as-is until a common
-solution will become available.
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/ene-kb930.example.dt.yaml: battery-cell: 'operating-range-celsius' does not match any of the regexes: '^ocv-capacity-table-[0-9]+$', 'pinctrl-[0-9]+'
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/supply/battery.yaml
+
+
+See https://patchwork.ozlabs.org/patch/1354004
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
+
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
+
