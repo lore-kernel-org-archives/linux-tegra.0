@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E683C433E2
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 00:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB97C433E7
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 00:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B33220758
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 00:55:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD78320758
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 00:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJ7KNqgd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQvJG7MD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbgICAyv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Sep 2020 20:54:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52114 "EHLO
+        id S1726994AbgICAzD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Sep 2020 20:55:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbgICAyI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Sep 2020 20:54:08 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F191FC061245;
-        Wed,  2 Sep 2020 17:54:07 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id u4so535135ljd.10;
-        Wed, 02 Sep 2020 17:54:07 -0700 (PDT)
+        with ESMTP id S1727872AbgICAyH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Sep 2020 20:54:07 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0791DC06125C;
+        Wed,  2 Sep 2020 17:54:06 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id s205so1405503lja.7;
+        Wed, 02 Sep 2020 17:54:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=awlTr+/jK6xRAU2Z+v5rJTj8OB3fgcHycxXMdhCQDDw=;
-        b=eJ7KNqgdpjQSLf6TzgWaqSc7j4jGso2nIRMoGmjcIiklLFi+/YA1109SbAXUOpPDld
-         B5Z6D6wuTZ2RJ45u0ljD3qS+6ARPhkzUd4KTVwQNOA3El6vSF8EMjZ+hOqYsTabrpAJp
-         FgrMAYT1xvt8rhVJHMz9/o7fHHNmz+CnO/Ci3d6XLbpd8BzhgJUNDQQLW82yjAJKAH6J
-         ue3gGrIrVl2SSEQmgNGFBmhLOn87/JAD8TSIxNY0e/6mq3s9K9W7T7IhZCpMJraeW8T2
-         QcLRvWsfyGy0RUuil0nLLAT9Lb8cS92l325sDFxF89TW3pLa0UZFOfNGDkd3M0L/SVkT
-         uhUw==
+        bh=fKC7ox5xjiDQwdax/qs9twZjRL3I7mSAjSyh7NydcjE=;
+        b=gQvJG7MD5FQFlPScPf34fcl1WXC4zyp8EvZmt5Fyz5vhk+KmD1PKEGNcKGUV3z0ibv
+         j1nS2ptI+CAs3fygoGy+lMCYfGYARgkyL7Pfug6tLAY1F9BnfY3PUVjACVvew9r9J7o0
+         F+SGsT7hGYCqUJMeF0qkeY47WqfjGu9DaRbZzsrsYAokkiy0IyT/YQzJ0fpqO2BqBMKF
+         bStwWW+NgLVrL1Tzme+j32+TObwjnIWVUGay70jP6KCjg8q1XLgG3l4qosM4e140G60g
+         YFBJW5+4kpL1qIq6gbqdo9usAsZJFqOuJgMpV0ZaQG0VAwITEsvEaiw0FD1t2q/MwRzt
+         O4yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=awlTr+/jK6xRAU2Z+v5rJTj8OB3fgcHycxXMdhCQDDw=;
-        b=PiszuwtTkY8D38uJhmP1VLBD9iCHEMBOvDDQJq/5t/HjGYhbp1k0BjEK1ulJxdS1ku
-         hpesUUFgV/AfKRnRTBaN3VhWbZj0pM8aPEr7isIzI3ub/mYRUPdraEzKdNT3ImE1JV/a
-         3MD12twkWTRXKnJflaXaEBmKt5ALpVfR8+OCwkYuHyJsh5JxJQB/14Evy7s8BEq6k2Ip
-         qAGirwYwuXjxwA+UgpMixtLH7MMnAsVzRcxnElhMUa+51tFUd5zzZ7UJR3U1ZNP+lZ0q
-         wqzX6ZimI+wi046TCPoBmf63yX2ljEUOnY6OJbTGq+vuEpnuO9ETpWbzjZbzCnaT0KOa
-         OCyQ==
-X-Gm-Message-State: AOAM531FyzPXqRml2Vkf8e0TcDSijB6LJ2gaN9P99NOXNLjmm2NOw/0/
-        G8bXhqeo4QW8bTv6K+Tj3Kk=
-X-Google-Smtp-Source: ABdhPJwnCApj+uKfGK7ZhoIIjDKz5/UCdf3UKTEJpotbrr0LJQXU2BgmRD2mSrTuradWGr32FYWysA==
-X-Received: by 2002:a2e:7c0f:: with SMTP id x15mr264099ljc.205.1599094446373;
-        Wed, 02 Sep 2020 17:54:06 -0700 (PDT)
+        bh=fKC7ox5xjiDQwdax/qs9twZjRL3I7mSAjSyh7NydcjE=;
+        b=PYxLKjkreXTroPIFvVHESCCBEz4z2UnTRz6aUbVFZmOV7jtbtV/lIIg2cDSG1HAtUh
+         AvlXAa5BXbkauqqpEW73dtu8uTNvEm7JiYs8n5gA0iWzS1hsxC5WRj3fqm4/zoY/cPb7
+         0J9vRmi7NAP9UUgVcBw5atl/LArcm9dtbQLeEf+RS0d72fJbEbMwS3Lt7QkRWQ0xtJ7u
+         dGj/O7hrMiJpoZS81+t9wBspVwMjs6MMQQZzGtyDYDwvFvGyz+9wsIksqzSKcnNB69On
+         OdSd9+6hne0+FaBBmZ2iV7bS7jsn9GuJ+CtXYLi9ZfQcZbPjCopXK64cGdvL1dTEC4He
+         fsAg==
+X-Gm-Message-State: AOAM530K3uI8mnc7SGoqQ+vkh+1Xao55mwVkxqmEDfFtYv67oUa+Bjno
+        zDCb7dm8QqivjMjItoulnx0=
+X-Google-Smtp-Source: ABdhPJzeBY4SCv1hVAtRW5GZhA8whuQJAd9g4tLjAIGyxziPiz3qU1/wjB4TcJAwz46giBqrjmLqMg==
+X-Received: by 2002:a2e:968c:: with SMTP id q12mr273735lji.345.1599094444495;
+        Wed, 02 Sep 2020 17:54:04 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id g1sm250321ljj.56.2020.09.02.17.54.05
+        by smtp.gmail.com with ESMTPSA id g1sm250321ljj.56.2020.09.02.17.54.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2020 17:54:05 -0700 (PDT)
+        Wed, 02 Sep 2020 17:54:04 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 16/22] i2c: tegra: Rename variable in tegra_i2c_issue_bus_clear()
-Date:   Thu,  3 Sep 2020 03:52:54 +0300
-Message-Id: <20200903005300.7894-17-digetx@gmail.com>
+Subject: [PATCH v3 14/22] i2c: tegra: Improve coding style of tegra_i2c_wait_for_config_load()
+Date:   Thu,  3 Sep 2020 03:52:52 +0300
+Message-Id: <20200903005300.7894-15-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200903005300.7894-1-digetx@gmail.com>
 References: <20200903005300.7894-1-digetx@gmail.com>
@@ -80,57 +80,58 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Rename variable "reg" to "val" in order to better reflect the actual usage
-of the variable in the code and to make naming consistent with the rest of
-the code.
+Improve coding style of the tegra_i2c_wait_for_config_load() function by
+making code a bit more narrow, adhering to the common kernel coding style.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index ed8f2a7c2804..67f2f4a0fe86 100644
+index 0f2b6eb5fa27..7c5931639d42 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1137,21 +1137,21 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
- {
- 	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
- 	unsigned long time_left;
--	u32 reg;
-+	u32 val;
+@@ -743,24 +743,23 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
+ 	u32 val;
  	int err;
  
- 	reinit_completion(&i2c_dev->msg_complete);
--	reg = FIELD_PREP(I2C_BC_SCLK_THRESHOLD, 9) | I2C_BC_STOP_COND |
-+	val = FIELD_PREP(I2C_BC_SCLK_THRESHOLD, 9) | I2C_BC_STOP_COND |
- 	      I2C_BC_TERMINATE;
--	i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+	i2c_writel(i2c_dev, val, I2C_BUS_CLEAR_CNFG);
- 	if (i2c_dev->hw->has_config_load_reg) {
- 		err = tegra_i2c_wait_for_config_load(i2c_dev);
- 		if (err)
- 			return err;
+-	if (i2c_dev->hw->has_config_load_reg) {
+-		reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_CONFIG_LOAD);
+-		addr = i2c_dev->base + reg_offset;
+-		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
++	if (!i2c_dev->hw->has_config_load_reg)
++		return 0;
+ 
+-		if (i2c_dev->is_curr_atomic_xfer)
+-			err = readl_relaxed_poll_timeout_atomic(
+-						addr, val, val == 0, 1000,
+-						I2C_CONFIG_LOAD_TIMEOUT);
+-		else
+-			err = readl_relaxed_poll_timeout(
+-						addr, val, val == 0, 1000,
+-						I2C_CONFIG_LOAD_TIMEOUT);
++	reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_CONFIG_LOAD);
++	addr = i2c_dev->base + reg_offset;
++	i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
+ 
+-		if (err) {
+-			dev_err(i2c_dev->dev, "failed to load config\n");
+-			return err;
+-		}
++	if (i2c_dev->is_curr_atomic_xfer)
++		err = readl_relaxed_poll_timeout_atomic(addr, val, val == 0, 1000,
++							I2C_CONFIG_LOAD_TIMEOUT);
++	else
++		err = readl_relaxed_poll_timeout(addr, val, val == 0, 1000,
++						 I2C_CONFIG_LOAD_TIMEOUT);
++
++	if (err) {
++		dev_err(i2c_dev->dev, "failed to load config\n");
++		return err;
  	}
  
--	reg |= I2C_BC_ENABLE;
--	i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+	val |= I2C_BC_ENABLE;
-+	i2c_writel(i2c_dev, val, I2C_BUS_CLEAR_CNFG);
- 	tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 
- 	time_left = tegra_i2c_wait_completion(i2c_dev, &i2c_dev->msg_complete,
-@@ -1161,8 +1161,8 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
- 		return -ETIMEDOUT;
- 	}
- 
--	reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
--	if (!(reg & I2C_BC_STATUS)) {
-+	val = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
-+	if (!(val & I2C_BC_STATUS)) {
- 		dev_err(i2c_dev->dev, "un-recovered arbitration lost\n");
- 		return -EIO;
- 	}
+ 	return 0;
 -- 
 2.27.0
 
