@@ -2,103 +2,77 @@ Return-Path: <SRS0=WZu/=CM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FCFC43461
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 16:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D0CC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 16:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19999208B3
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 16:10:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599149436;
-	bh=W32TLOkU1RN84JrGJ5PYMhalY4FOPtwlWcdZfX/Gyk4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=a83lnXVfVEMhWRza0AEmBAfQfVd6wqCop5P8zPXdaCL4DbTUY8Rbu8qBXRqj5+5p4
-	 9i4INgX48A9mkMPGgUFKQltvwp1uolho2iJbx2E3dhPxaRXx6v5u5gZdaHYNiZlSQk
-	 0BdTXCihh0wcih7fGKGwEtlc2Q4FJJ5mrdErUKQs=
+	by mail.kernel.org (Postfix) with ESMTP id 0B9A920716
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 16:47:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="FbzJpLnI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbgICQK1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 12:10:27 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:35034 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbgICQK1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 12:10:27 -0400
-Received: by mail-il1-f194.google.com with SMTP id l4so3157741ilq.2;
-        Thu, 03 Sep 2020 09:10:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ub/YDXcxHDsGS0dDuXZfKNg7N1487AgGtWs2ISNYV0w=;
-        b=KO3s42VYbzabC5gmMd9r54DJ0SZxApw7havc6vUUF8c+m0HBQkdS9PSyAKB1PvDkhH
-         xPVchF6YkwfTjUy2QW+KIRmp26MfNammQVt8hiqwWeqax2zvOH/ZH0XEAPFjKbSUtZWr
-         AOpUEc4c6F6JWeM+1A2MLCuAxyxhmEV2KGkFrMvNduXNfnbwFsfx6Gc60eAgd/wkj91M
-         rE371is2dFvMLtLDT3LCfU5Su/RIXy0cKVOq4qJJu2ahtsSYg6UW3K+lCPCM9AP84OqA
-         G3zYj5tkqP/XuTz53YdQMGFYXpUyzDiACbiWAYHPWJs5RXXGISbcMRlFcdmuGF11Xijv
-         VHJQ==
-X-Gm-Message-State: AOAM531ISQGDoCUQVwcz0dk4IVQUZ5k0hjqgIIeLmvaXVlw+sIZktbYE
-        YW4NaVXWeok470OX/Zxf6Q==
-X-Google-Smtp-Source: ABdhPJxLZ9ZiPkSL+rOvAxAf3g+LEBXr7Jjhv24bCXU19LypWZMrwzhwOhCFPx9l8w9NZ9RW+7oU5Q==
-X-Received: by 2002:a92:7991:: with SMTP id u139mr3437463ilc.62.1599149426172;
-        Thu, 03 Sep 2020 09:10:26 -0700 (PDT)
-Received: from xps15 ([64.188.179.249])
-        by smtp.gmail.com with ESMTPSA id c7sm1610386ilk.49.2020.09.03.09.10.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2020 09:10:25 -0700 (PDT)
-Received: (nullmailer pid 2870752 invoked by uid 1000);
-        Thu, 03 Sep 2020 16:10:22 -0000
-Date:   Thu, 3 Sep 2020 10:10:22 -0600
-From:   Rob Herring <robh@kernel.org>
+        id S1728085AbgICQrR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Sep 2020 12:47:17 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:36885 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728458AbgICQrQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 3 Sep 2020 12:47:16 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4Bj6D12XTXz6R;
+        Thu,  3 Sep 2020 18:47:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1599151633; bh=aW3vviD3X6zwOHneikrU8nTQgniWlnIKgJxxeVIHhJc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FbzJpLnIa630aI8y1RwLW6KhJfwv1iwu+6hA0QRMlp0ZEJJmHLVSjEfMNteG8X0pl
+         EqDLn5s12AOv0XmkWGmMTHkPQsiOfwD6nMkVKshDWu+/WGzO/BW34JsPh8mVDIIAvL
+         869P6DJQhM2mRbDuH6Xdvssmue6J7OTw7+u/9t6p+O0TAvmPtxbn0Lss7Umv7Ngu+Q
+         gvEinYFM/r4d/3r2n+V2pP3RpESDyyYeJyueGVzixZocEcRoluB8xYcH7CJtRWD+/6
+         iDIWsJGPVA6lSPu6dvxqiEV0aUf6DrgyOI69eF5zdi9t120zv14TV99kQJj/H7pA57
+         daEzCQdcOWfGw==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.4 at mail
+Date:   Thu, 3 Sep 2020 18:47:09 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Lubomir Rintel <lkundrak@v3.sk>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: Add ENE KB930 Embedded
- Controller binding
-Message-ID: <20200903161022.GA2707794@bogus>
-References: <20200830185356.5365-1-digetx@gmail.com>
- <20200830185356.5365-2-digetx@gmail.com>
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 00/12] Improvements for Tegra I2C driver
+Message-ID: <20200903164709.GA7406@qmqm.qmqm.pl>
+References: <20200831202303.15391-1-digetx@gmail.com>
+ <20200902212026.GD1624@qmqm.qmqm.pl>
+ <04aae642-80f9-d22e-1d80-bb206bb27a8b@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200830185356.5365-2-digetx@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <04aae642-80f9-d22e-1d80-bb206bb27a8b@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 30 Aug 2020 21:53:51 +0300, Dmitry Osipenko wrote:
-> Add binding document for the ENE KB930 Embedded Controller.
+On Thu, Sep 03, 2020 at 04:12:13AM +0300, Dmitry Osipenko wrote:
+> 03.09.2020 00:20, Michał Mirosław пишет:
+> > BTW, I wonder if you could expose i2c_in_atomic_xfer_mode() and use it
+> > to differentiate atomic_xfer from normal and get rid of the internal
+> > flag and .master_xfer_atomic callback.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
-> 
+> The atomic transfer uses 90% of the code path that a non-atomic transfer
+> uses. I don't see how it could be exposed without duplicated lots of the
+> code, unless I'm not missing what you're suggesting.
 
+The I2C core falls back to .master_xfer even in atomic mode if
+.master_xfer_atomic is NULL, so what I'm suggesting is to make
+i2c_in_atomic_xfer_mode() public (from i2c-core.h) and use it in
+normal .master_xfer to choose atomic wait variants.
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/ene-kb930.example.dt.yaml: battery-cell: 'operating-range-celsius' does not match any of the regexes: '^ocv-capacity-table-[0-9]+$', 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/supply/battery.yaml
-
-
-See https://patchwork.ozlabs.org/patch/1354004
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure dt-schema is up to date:
-
-pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
-
-Please check and re-submit.
-
+Best Regards,
+Michał Mirosław
