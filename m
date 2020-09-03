@@ -2,66 +2,64 @@ Return-Path: <SRS0=WZu/=CM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AC8C2BD0F
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45D0C433E2
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ACF120716
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B49B20722
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 15:02:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQtt7SzK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkmzOxWi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728885AbgICOFq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 10:05:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59982 "EHLO
+        id S1728913AbgICPCt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Sep 2020 11:02:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728409AbgICOFl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 10:05:41 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C862C061249;
-        Thu,  3 Sep 2020 07:02:36 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id o16so1585564pjr.2;
-        Thu, 03 Sep 2020 07:02:36 -0700 (PDT)
+        with ESMTP id S1728927AbgICN66 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 09:58:58 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE529C061A17;
+        Thu,  3 Sep 2020 06:44:42 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id k25so3729746ljg.9;
+        Thu, 03 Sep 2020 06:44:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=49A9aeIFdmHDcRIkQHriMpz6lE3JWxr0PldhLtC8qt0=;
-        b=SQtt7SzKrG6DaNEyGfxX5XwoHo4i/dcT7LKhKfbmdlABg0wik2erYixTDgLZZifEtT
-         lTWm34bIVf9bUCSATFdNaqWG9AVnQw9WMCtdTmUIY7punEno0HlE9nnZWgUP9HXBscDC
-         uPdXWKZf6HL87EULVYTwckDAVO0uQbTSVR/mtsl2worIExzxv1wtSiGvWFx2XiagGNd6
-         ZjlE2ItUxUCvlujUnF0W1k4HAv3+4fI8yvYjrevnO47xbB++Wuzh2Nqsxs50kLacDuwT
-         lXckxwmX/+nN5gG0Ok0HxlpfiJpuO/EO8mNmpZu2AbYTWHPg+HmIIK3oVfqVcynrQBSq
-         ugAg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LLcfLa3jT9VCX7RwE0dDUcAeziaCYPyIo1qnxZ7SIOw=;
+        b=GkmzOxWiAOcSoEKeOaq7PHvTvKu0i0MK1dDNNjyPgwybZgb2UXACJiPvcc2jz0oyzk
+         0lcYO2+V2fy36TNsxrXdx/5px2LKO6+5q2+Rm8WVBpzfxw04qQJ+OCscZYg84bWU1fz7
+         ldaYQ8xsy6RqXXHtvLyQG1Az2juEdwWD7D+neZp7oMkN4CJ1ADEpdwnlXLwRVD1JhIui
+         Go4ZKcXXtPGvXRlvtmC1kOCSHiG3CU2UY00/6+Nnw1wWqOl5yH2vbNIPOSmKgkbdc2Nd
+         mSDZj8hHj2AQOYiPRF9l8VL+kQGYx4QUt4kXmGAHhlIXoTcpiKXwezhKY0CVtHBFVrpW
+         M82g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=49A9aeIFdmHDcRIkQHriMpz6lE3JWxr0PldhLtC8qt0=;
-        b=WThqJp19wnNYy431ucOQoHQO7ttLpVS3kBoq7q+Ipy+G/EPseIobbZ/MfSgU0Vi6Lq
-         JfgZvJYrEKmOPGRERtNzw44cmKK5AZFmjyBSvK802A5pGUlNU+l/3Qud7oQowf6bXJJW
-         B0Lod57fzAzMEFdTe7U/Coinkgk6eOQ485NGAW1bFvwxoRy+DycGNTuny5NTzyE86l4o
-         48rXupPdOlDUPk2gvzRcE9t0Z5chJZcP8roQh+kov4xEsUQXqK/w6dzE7e4a3Um5V4PH
-         UkuUwmOMaBVx1y/c8VnbytJA6YDDVhd86mVGbRj87+UNNBiZSvNhFPs3/FIUUPAyggxj
-         TuTw==
-X-Gm-Message-State: AOAM531DnVQoqVmhz6FNANiDVTcYntRI0lcpQ3vzI1ILBuhb4gpv3Ihk
-        yDwAb0a7ANUyWT6/CH6x3Dgg9ZZthPVES8n0V+U=
-X-Google-Smtp-Source: ABdhPJwFgSljebq/SNlzE73+hLRfPqfCH28CvG+u4ut4f0+IKxAQOiTd2OW6REn+/uM8F8LH7Cs3l5w88lmhp1SSd4k=
-X-Received: by 2002:a17:90a:b387:: with SMTP id e7mr3543210pjr.228.1599141755915;
- Thu, 03 Sep 2020 07:02:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200903005300.7894-1-digetx@gmail.com> <20200903005300.7894-10-digetx@gmail.com>
- <CAHp75VdPoJFNC+MntKu-CL8jFMEe85ZT3R9DF0aaNC4KjqWXyg@mail.gmail.com> <4bd12095-7a29-bcb4-6b49-83eca285c897@gmail.com>
-In-Reply-To: <4bd12095-7a29-bcb4-6b49-83eca285c897@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 3 Sep 2020 17:02:18 +0300
-Message-ID: <CAHp75VerqMmyDnbxaWN0R-DYPkOosh-R9CG970Sh+EqG21oZ8w@mail.gmail.com>
-Subject: Re: [PATCH v3 09/22] i2c: tegra: Clean up probe function
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LLcfLa3jT9VCX7RwE0dDUcAeziaCYPyIo1qnxZ7SIOw=;
+        b=c5zi5/wquh/NjMKVUvIL6kOkNFtHpqXHx/ff1KoN/l4wdzH2dK2OURVp9UKu2OtsK1
+         PHFToQOj20x87PZSinKU2MFyjj6phBPBlLGBhMt1sbhOMVIBXAD7QAjX+TFzgWI68zjP
+         0I/5MT6jD5EvuiJbe3m/TtCP9JLMNMdySF+fm7ChYYDdSyWR2mOiX2bAXk2xL9SN/+rt
+         d6PoV75YaDLV8M6I0HgbxoUiUmnd27JuaVN84XljusIgoELUieb94bOPuuJW1BFaJDOd
+         fzILjKnd6GBSfx0LzL2CmI1CECR1j1ICPLGliWIyntycxQOu5vg8sAPFbEx5zeT4jnu1
+         2ctw==
+X-Gm-Message-State: AOAM533Kgc3tn0cSVU1ELyyVp+7U3DWdEJuhpPpGZY9EyVtq7QdCMxf2
+        ZzB+loVxv0uACzqnFflNHjiU//TKWOA=
+X-Google-Smtp-Source: ABdhPJxGmrB2gV5oToqqcL2Lc1GBuuGegYSbf4toI7NGmoFajWRCUk17/vK/Z5QBgbrJ2TEEcYanWw==
+X-Received: by 2002:a2e:b81a:: with SMTP id u26mr1422295ljo.241.1599140680897;
+        Thu, 03 Sep 2020 06:44:40 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id y17sm630318ljc.18.2020.09.03.06.44.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Sep 2020 06:44:40 -0700 (PDT)
+Subject: Re: [PATCH v3 03/22] i2c: tegra: Clean up messages in the code
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
@@ -70,37 +68,51 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-i2c <linux-i2c@vger.kernel.org>,
         linux-tegra@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20200903005300.7894-1-digetx@gmail.com>
+ <20200903005300.7894-4-digetx@gmail.com>
+ <CAHp75VfFZ2bgEqS7cbTfYzxtXk3T5VaoJpum5aiNMpfvhfbuqw@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2b6d99a0-0913-6c55-7c13-8a2a1524488d@gmail.com>
+Date:   Thu, 3 Sep 2020 16:44:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VfFZ2bgEqS7cbTfYzxtXk3T5VaoJpum5aiNMpfvhfbuqw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 3, 2020 at 4:48 PM Dmitry Osipenko <digetx@gmail.com> wrote:
-> 03.09.2020 14:17, Andy Shevchenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Thu, Sep 3, 2020 at 3:54 AM Dmitry Osipenko <digetx@gmail.com> wrote=
-:
+03.09.2020 14:06, Andy Shevchenko пишет:
+> On Thu, Sep 3, 2020 at 3:53 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> This patch unifies style of all messages in the driver by starting them
+>> with a lowercase letter and using consistent capitalization and wording
+>> for all messages.
+> 
+> I didn't look at the rest (yet) but this series has a patch ordering issue.
+> Why do we first do some little, non-critical clean ups?
+> 
+> The preferred way is to arrange like:
+>  - fixes that may be backported
+>  - fixes that are likely not going to be backported
+>  - features
+>  - cleanups
+> 
+> In its turn cleanups go by severity:
+>  - code affected ones (and maybe logical changers)
+>  - ...
+>  - commentary / indentation fixes
+> 
 
-...
+That's a good suggestion! All patches in this version are ordered by the
+time they were created ans since none of these patches should be
+worthwhile to backport (IMO) and because majority of patches do minor
+changes, it appeared to me that it should be okay as-is.
 
-> >> +       of_property_read_u32(np, "clock-frequency", &bus_clk_rate);
-> >> +       i2c_dev->bus_clk_rate =3D bus_clk_rate;
-> >
-> > Hmm... I dunno if Wolfram is going to implement a special helper
-> > exactly for this. I remember we discussed that with him during v5.8
-> > (?) times.
->
-> I now see that there is a i2c_parse_fw_timings() which parses
-> "clock-frequency" and other common properties. I could switch to use
-> that helper, but not sure whether it would be really worthwhile because
-> only one property is needed to be parsed. I'll consider this change for
-> v4, thank you for the suggestion!
-
-That's exactly why I was wondering about the current state of affairs
-with the discussed helper which should only parse the clock-frequency
-property.
-
---=20
-With Best Regards,
-Andy Shevchenko
+I agree that it should be worthwhile to reorder the patches now, after
+the series grew up a tad in regards to amount of patches. I'll change
+the order in the next version, thanks!
