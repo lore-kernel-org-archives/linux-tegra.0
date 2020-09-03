@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D573C2BBD0
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 00:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C724BC433E7
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 00:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1981C2086A
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 00:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0C96204EC
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 00:55:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNupbBjy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAIrcxLp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727892AbgICAzY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Sep 2020 20:55:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52126 "EHLO
+        id S1727122AbgICAzw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Sep 2020 20:55:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727852AbgICAyD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Sep 2020 20:54:03 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CB51C061247;
-        Wed,  2 Sep 2020 17:54:01 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id e11so1411199ljn.6;
-        Wed, 02 Sep 2020 17:54:01 -0700 (PDT)
+        with ESMTP id S1727119AbgICAx4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Sep 2020 20:53:56 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483C8C061247;
+        Wed,  2 Sep 2020 17:53:55 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id b19so1367309lji.11;
+        Wed, 02 Sep 2020 17:53:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=x1zSL+5XrZ1f5CiQoL/vK+B3H/oDgqCKzqkda5Kz3q8=;
-        b=QNupbBjyW8Qu0LunCK4NJ1lAuNqY0K2uhx2PLJUM7maEzDRBMIOpFKP4qo1gbow9p3
-         Gwsc+Bbdg34RyuttExzw9toGbH/C/rot/szXnbHoIdiqm4N4a4L3OQe9jdaWcgxwTUji
-         OK0gJzaI1Js0a8I7ub0tR+iwMLT7rOgrHDS9P8Lxna2skgqR3UPUKBXr0pm835fg7H0K
-         UBtK+w9Mz43yZT+CJAv+SDjXlSK/ZorVxtTEQxk2epKbqieN0DB/vuZri60+eh19WC4e
-         jkgdLQ4ivnZDdeC4yVnHq5FDisWaBvkBnrq0fqHLFmVeC1z/ZpnTdpW4MH/a27mm5J6K
-         /f2Q==
+        bh=P09fB9PJmjA7VSekvJwMh8LCjQIhzh/GV3rByZhgWNQ=;
+        b=fAIrcxLpjTA6W1QJTu/eVvoiZDhmqTysVZn0MjrBT50PSZZzrDeSvWXLjfyB6JLlLr
+         4GaR7gGWMXVck8B//ChlrvPlEhOZMA3vxhvhzom7jscvycmFFF0mp6oObSV978U5qTVf
+         SWX1n8kDN9fZnZdgfk6UjTRqGtx2iYeivgkVE72wDjYmHiMacDx6oAWDQf3qEWf1feU1
+         KUpHlxhdC9cKLzaCIk3h6AfXLwLdUEp0leLlY0QOZvVeIDuPeLvw6jszxBmtKhTWLkCz
+         8VWXObP00A/Ki7yHN04vl2wnP7K4uuiOSy2E/uSeWH9imgeLl8vVW/CDH2EKoMw0cavL
+         ZUUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=x1zSL+5XrZ1f5CiQoL/vK+B3H/oDgqCKzqkda5Kz3q8=;
-        b=DrrW1AbPy9uKK/JxtM86BFY66W028pbvbc41qPKo/koiGuN7is7aoWsgfV9tHsBRIA
-         CmGXVGgsdbmlWJ4c/z9ZXZ87VzHW28zLQj1yCbTgTqILiI7OljRklbfs+CbbWIM3q0x3
-         izOHsHWcdLiow8QRGSRvjAcT0q8Xy9YurklrJXDOWpMAVWeK5pqwqmQOD/vCjmuWwyQe
-         81UUfAY6MLKG3hLLYsGf09sSUATYXOXjM0W38U2SKwfv+ktQtR4B8tACod+dGkoe8u/T
-         45zLnfDGq02Pm588nUyWWtjRrHgzInsOckeNcQlYfXVSz4PoBNkomSk/CMs8yjzesmrH
-         we7g==
-X-Gm-Message-State: AOAM530yCmI92L8tKpkPhvHcz1NkR0mf2gJ+2MA6XgOAFVlhr9zIpIdt
-        QNBYU0lNNEaDpXmk9IJIFQQ=
-X-Google-Smtp-Source: ABdhPJy0fvwIBTRs/0shQjTtL64TL9+TDhPZuA7M3L+Lq2QAhURoNVIJ2cYYBAg2jkfiS7OtyXuziA==
-X-Received: by 2002:a2e:7210:: with SMTP id n16mr287821ljc.262.1599094439623;
-        Wed, 02 Sep 2020 17:53:59 -0700 (PDT)
+        bh=P09fB9PJmjA7VSekvJwMh8LCjQIhzh/GV3rByZhgWNQ=;
+        b=EYhvkOmGfIfXsGm9ATvCoEBM19yGSJ+tFtL1uYxXOMHNSW96+jSEZE1YY7W9rzXRMd
+         o4uURFdWhr4rjgVhh1YguI/PuLXlwtbbUtppI42lVgfnnTYg3nPTuqyqHQy6GoxxdTMf
+         HHIKE2WD/WDd0M+An96NAreqyqPk3vCWuwVHJWMVDNgAWyRHY80Fq13KqJYUc2t21iTl
+         FsfcWyWxq6NWv6AZCSpK+v6EcpMbicg/g0CTtqV/BttTPrwEp83gJ8+BUIqY1B4mwCiz
+         kW+4RgA37P6jZBDfKAqbo97eXPcT3UspwsliWm8fBXxroqQ6XuyBWGB0d/VaQ/YXG9xd
+         gz2g==
+X-Gm-Message-State: AOAM530yQ7YtBZpA9KnXqpIf0MRW20Kk7XLIVhn1KqLsIgBTA4NeuQGN
+        7OLrkNtcBn8QJjBHmiU2VBo=
+X-Google-Smtp-Source: ABdhPJx5iGoaGoNenP1waUy3WkJ8JOBj2Y5gbSVkGn0HW3OQsPDLCfJM22BhrqmOmo/xWs17bDUjFA==
+X-Received: by 2002:a05:651c:1119:: with SMTP id d25mr244590ljo.300.1599094433635;
+        Wed, 02 Sep 2020 17:53:53 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id g1sm250321ljj.56.2020.09.02.17.53.58
+        by smtp.gmail.com with ESMTPSA id g1sm250321ljj.56.2020.09.02.17.53.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2020 17:53:59 -0700 (PDT)
+        Wed, 02 Sep 2020 17:53:53 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/22] i2c: tegra: Clean up probe function
-Date:   Thu,  3 Sep 2020 03:52:47 +0300
-Message-Id: <20200903005300.7894-10-digetx@gmail.com>
+Subject: [PATCH v3 03/22] i2c: tegra: Clean up messages in the code
+Date:   Thu,  3 Sep 2020 03:52:41 +0300
+Message-Id: <20200903005300.7894-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200903005300.7894-1-digetx@gmail.com>
 References: <20200903005300.7894-1-digetx@gmail.com>
@@ -80,476 +80,252 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The driver's probe function code is difficult to read and follow. This
-patch reorders code of the probe function, forming logical groups that are
-easy to work with. The clock and hardware initializations are factored
-out into separate functions in order to keep code clean and ease error
-unwinding.
-
-Driver now makes use of devm_platform_get_and_ioremap_resource() and
-platform_get_irq() which are replacing boilerplate parts of the code.
-
-The dev_err_probe() is now used for reset control retrieval because reset
-is now requested before clocks, and thus, BPMP driver that provides reset
-controls for newer SoCs may cause the probe defer.
-
-The error message of devm_request_irq() is removed because this function
-takes care of printing the message by itself.
+This patch unifies style of all messages in the driver by starting them
+with a lowercase letter and using consistent capitalization and wording
+for all messages.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 359 ++++++++++++++++++---------------
- 1 file changed, 196 insertions(+), 163 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 63 ++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a8ef8619b7ef..35a5d46865bc 100644
+index efc6e97aeb8a..79e542cf3e59 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -447,6 +447,9 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+@@ -427,7 +427,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+ 		return 0;
  
- 	i2c_dev->tx_dma_chan = chan;
+ 	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)) {
+-		dev_dbg(i2c_dev->dev, "Support for APB DMA not enabled!\n");
++		dev_dbg(i2c_dev->dev, "DMA support not enabled\n");
+ 		return 0;
+ 	}
  
-+	i2c_dev->dma_buf_size = i2c_dev->hw->quirks->max_write_len +
-+				I2C_PACKET_HEADER_SIZE;
-+
+@@ -450,7 +450,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
  	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
  				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
  	if (!dma_buf) {
-@@ -1427,19 +1430,25 @@ static u32 tegra_i2c_func(struct i2c_adapter *adap)
- 	return ret;
- }
- 
--static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
-+static int tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
- {
- 	struct device_node *np = i2c_dev->dev->of_node;
-+	u32 bus_clk_rate = I2C_MAX_STANDARD_MODE_FREQ;
- 	bool multi_mode;
--	int ret;
- 
--	ret = of_property_read_u32(np, "clock-frequency",
--				   &i2c_dev->bus_clk_rate);
--	if (ret)
--		i2c_dev->bus_clk_rate = I2C_MAX_STANDARD_MODE_FREQ; /* default clock rate */
-+	of_property_read_u32(np, "clock-frequency", &bus_clk_rate);
-+	i2c_dev->bus_clk_rate = bus_clk_rate;
- 
- 	multi_mode = of_property_read_bool(np, "multi-master");
- 	i2c_dev->is_multimaster_mode = multi_mode;
-+
-+	if (of_device_is_compatible(np, "nvidia,tegra20-i2c-dvc"))
-+		i2c_dev->is_dvc = true;
-+
-+	if (of_device_is_compatible(np, "nvidia,tegra210-i2c-vi"))
-+		i2c_dev->is_vi = true;
-+
-+	return 0;
- }
- 
- static const struct i2c_algorithm tegra_i2c_algo = {
-@@ -1654,203 +1663,234 @@ static const struct of_device_id tegra_i2c_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
- 
--static int tegra_i2c_probe(struct platform_device *pdev)
-+static int tegra_i2c_init_clocks(struct tegra_i2c_dev *i2c_dev)
- {
--	struct clk *div_clk, *fast_clk, *slow_clk;
--	struct device *dev = &pdev->dev;
--	struct tegra_i2c_dev *i2c_dev;
--	phys_addr_t base_phys;
--	struct resource *res;
--	void __iomem *base;
--	int irq, ret;
-+	const struct tegra_i2c_hw_feature *hw = i2c_dev->hw;
-+	struct device *dev = i2c_dev->dev;
-+	struct clk *clk;
-+	int err, mode;
-+
-+	clk = devm_clk_get(dev, "div-clk");
-+	if (IS_ERR(clk))
-+		return dev_err_probe(dev, PTR_ERR(clk),
-+				     "failed to get div-clk\n");
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base_phys = res->start;
--	base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
-+	i2c_dev->div_clk = clk;
- 
--	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (!res) {
--		dev_err(dev, "no IRQ resource\n");
--		return -EINVAL;
-+	if (!hw->has_single_clk_source) {
-+		clk = devm_clk_get(dev, "fast-clk");
-+		if (IS_ERR(clk))
-+			return dev_err_probe(dev, PTR_ERR(clk),
-+					     "failed to get fast-clk\n");
-+
-+		i2c_dev->fast_clk = clk;
+-		dev_err(i2c_dev->dev, "failed to allocate the DMA buffer\n");
++		dev_err(i2c_dev->dev, "failed to allocate DMA buffer\n");
+ 		err = -ENOMEM;
+ 		goto err_out;
  	}
--	irq = res->start;
+@@ -682,8 +682,7 @@ static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
  
--	div_clk = devm_clk_get(&pdev->dev, "div-clk");
--	if (IS_ERR(div_clk))
--		return dev_err_probe(&pdev->dev, PTR_ERR(div_clk),
--				     "failed to get div-clk\n");
-+	if (i2c_dev->is_vi) {
-+		clk = devm_clk_get(dev, "slow");
-+		if (IS_ERR(clk))
-+			return dev_err_probe(dev, PTR_ERR(clk),
-+					     "failed to get slow clk\n");
- 
--	i2c_dev = devm_kzalloc(&pdev->dev, sizeof(*i2c_dev), GFP_KERNEL);
--	if (!i2c_dev)
--		return -ENOMEM;
-+		i2c_dev->slow_clk = clk;
-+	}
- 
--	i2c_dev->base = base;
--	i2c_dev->base_phys = base_phys;
--	i2c_dev->div_clk = div_clk;
--	i2c_dev->adapter.algo = &tegra_i2c_algo;
--	i2c_dev->adapter.retries = 1;
--	i2c_dev->adapter.timeout = 6 * HZ;
--	i2c_dev->irq = irq;
--	i2c_dev->cont_id = pdev->id;
--	i2c_dev->dev = &pdev->dev;
-+	err = clk_prepare(i2c_dev->fast_clk);
-+	if (err) {
-+		dev_err(dev, "failed to prepare fast clk: %d\n", err);
-+		return err;
-+	}
- 
--	i2c_dev->rst = devm_reset_control_get_exclusive(&pdev->dev, "i2c");
--	if (IS_ERR(i2c_dev->rst)) {
--		dev_err(dev, "failed to get reset control: %pe\n",
--			i2c_dev->rst);
-+	err = clk_prepare(i2c_dev->slow_clk);
-+	if (err) {
-+		dev_err(dev, "failed to prepare slow clk: %d\n", err);
-+		goto unprepare_fast_clk;
-+	}
- 
--		return PTR_ERR(i2c_dev->rst);
-+	err = clk_prepare(i2c_dev->div_clk);
-+	if (err) {
-+		dev_err(dev, "failed to prepare div-clk: %d\n", err);
-+		goto unprepare_slow_clk;
- 	}
- 
--	tegra_i2c_parse_dt(i2c_dev);
-+	if (i2c_dev->is_multimaster_mode) {
-+		err = clk_enable(i2c_dev->div_clk);
-+		if (err) {
-+			dev_err(dev, "failed to enable div-clk: %d\n", err);
-+			goto unprepare_div_clk;
-+		}
-+	}
- 
--	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
--	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
--						  "nvidia,tegra20-i2c-dvc");
--	i2c_dev->is_vi = of_device_is_compatible(dev->of_node,
--						 "nvidia,tegra210-i2c-vi");
--	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
--	i2c_dev->dma_buf_size = i2c_dev->adapter.quirks->max_write_len +
--				I2C_PACKET_HEADER_SIZE;
--	init_completion(&i2c_dev->msg_complete);
--	init_completion(&i2c_dev->dma_complete);
-+	switch (i2c_dev->bus_clk_rate) {
-+	case I2C_MAX_FAST_MODE_FREQ + 1 ... I2C_MAX_FAST_MODE_PLUS_FREQ:
-+		mode = hw->clk_divisor_fast_plus_mode;
-+		break;
- 
--	if (!i2c_dev->hw->has_single_clk_source) {
--		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
--		if (IS_ERR(fast_clk))
--			return dev_err_probe(&pdev->dev, PTR_ERR(fast_clk),
--					     "failed to get fast clock\n");
-+	case I2C_MAX_STANDARD_MODE_FREQ + 1 ... I2C_MAX_FAST_MODE_FREQ:
-+		mode = hw->clk_divisor_fast_mode;
-+		break;
- 
--		i2c_dev->fast_clk = fast_clk;
-+	default:
-+		mode = hw->clk_divisor_std_mode;
-+		break;
- 	}
- 
--	if (i2c_dev->is_vi) {
--		slow_clk = devm_clk_get(dev, "slow");
--		if (IS_ERR(slow_clk))
--			return dev_err_probe(&pdev->dev, PTR_ERR(slow_clk),
--					     "failed to get slow clock\n");
-+	i2c_dev->clk_divisor_non_hs_mode = mode;
- 
--		i2c_dev->slow_clk = slow_clk;
--	}
-+	return 0;
- 
--	platform_set_drvdata(pdev, i2c_dev);
-+unprepare_div_clk:
-+	clk_unprepare(i2c_dev->div_clk);
-+unprepare_slow_clk:
-+	clk_unprepare(i2c_dev->slow_clk);
-+unprepare_fast_clk:
-+	clk_unprepare(i2c_dev->fast_clk);
- 
--	ret = clk_prepare(i2c_dev->fast_clk);
--	if (ret < 0) {
--		dev_err(dev, "failed to prepare fast clock: %d\n", ret);
--		return ret;
--	}
-+	return err;
-+}
- 
--	ret = clk_prepare(i2c_dev->slow_clk);
--	if (ret < 0) {
--		dev_err(dev, "failed to prepare slow clock: %d\n", ret);
--		goto unprepare_fast_clk;
--	}
-+static void tegra_i2c_release_clocks(struct tegra_i2c_dev *i2c_dev)
-+{
-+	if (i2c_dev->is_multimaster_mode)
-+		clk_disable(i2c_dev->div_clk);
- 
--	if (i2c_dev->bus_clk_rate > I2C_MAX_FAST_MODE_FREQ &&
--	    i2c_dev->bus_clk_rate <= I2C_MAX_FAST_MODE_PLUS_FREQ)
--		i2c_dev->clk_divisor_non_hs_mode =
--				i2c_dev->hw->clk_divisor_fast_plus_mode;
--	else if (i2c_dev->bus_clk_rate > I2C_MAX_STANDARD_MODE_FREQ &&
--		 i2c_dev->bus_clk_rate <= I2C_MAX_FAST_MODE_FREQ)
--		i2c_dev->clk_divisor_non_hs_mode =
--				i2c_dev->hw->clk_divisor_fast_mode;
--	else
--		i2c_dev->clk_divisor_non_hs_mode =
--				i2c_dev->hw->clk_divisor_std_mode;
-+	clk_unprepare(i2c_dev->div_clk);
-+	clk_unprepare(i2c_dev->slow_clk);
-+	clk_unprepare(i2c_dev->fast_clk);
-+}
- 
--	ret = clk_prepare(i2c_dev->div_clk);
--	if (ret < 0) {
--		dev_err(dev, "failed to prepare div-clk: %d\n", ret);
--		goto unprepare_slow_clk;
--	}
-+static int tegra_i2c_init_runtime_pm_and_hardware(struct tegra_i2c_dev *i2c_dev)
-+{
-+	int ret;
- 
- 	/*
--	 * VI I2C is in VE power domain which is not always on and not
--	 * an IRQ safe. So, IRQ safe device can't be attached to a non-IRQ
--	 * safe domain as it prevents powering off the PM domain.
--	 * Also, VI I2C device don't need to use runtime IRQ safe as it will
--	 * not be used for atomic transfers.
-+	 * VI I2C is in VE power domain which is not always ON and not
-+	 * IRQ-safe. Thus, IRQ-safe device shouldn't be attached to a
-+	 * non IRQ-safe domain because this prevents powering off the power
-+	 * domain.
-+	 *
-+	 * VI I2C device shouldn't be marked as IRQ-safe because VI I2C won't
-+	 * be used for atomic transfers.
- 	 */
- 	if (!i2c_dev->is_vi)
--		pm_runtime_irq_safe(&pdev->dev);
--	pm_runtime_enable(&pdev->dev);
-+		pm_runtime_irq_safe(i2c_dev->dev);
-+
-+	pm_runtime_enable(i2c_dev->dev);
-+
- 	ret = pm_runtime_get_sync(i2c_dev->dev);
+ 	ret = clk_enable(i2c_dev->fast_clk);
  	if (ret < 0) {
--		dev_err(dev, "runtime resume failed\n");
--		goto disable_rpm;
-+		dev_err(i2c_dev->dev, "runtime resume failed: %d\n", ret);
-+		pm_runtime_disable(i2c_dev->dev);
-+		return ret;
+-		dev_err(i2c_dev->dev,
+-			"Enabling fast clk failed, err %d\n", ret);
++		dev_err(dev, "failed to enable fast clock: %d\n", ret);
+ 		return ret;
  	}
  
--	if (i2c_dev->is_multimaster_mode) {
--		ret = clk_enable(i2c_dev->div_clk);
--		if (ret < 0) {
--			dev_err(dev, "failed to enable div-clk: %d\n", ret);
--			goto put_rpm;
--		}
--	}
-+	/* initialize hardware state */
-+	ret = tegra_i2c_init(i2c_dev, false);
+@@ -695,8 +694,7 @@ static int __maybe_unused tegra_i2c_runtime_resume(struct device *dev)
  
--	if (i2c_dev->hw->supports_bus_clear)
--		i2c_dev->adapter.bus_recovery_info = &tegra_i2c_recovery_info;
-+	pm_runtime_put(i2c_dev->dev);
- 
--	ret = tegra_i2c_init_dma(i2c_dev);
--	if (ret < 0)
--		goto disable_div_clk;
-+	return ret;
-+}
- 
--	ret = tegra_i2c_init(i2c_dev, false);
--	if (ret) {
--		dev_err(dev, "failed to initialize I2C controller\n");
--		goto release_dma;
--	}
-+static int tegra_i2c_probe(struct platform_device *pdev)
-+{
-+	struct tegra_i2c_dev *i2c_dev;
-+	struct resource *res;
-+	int err;
- 
-+	i2c_dev = devm_kzalloc(&pdev->dev, sizeof(*i2c_dev), GFP_KERNEL);
-+	if (!i2c_dev)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, i2c_dev);
-+
-+	init_completion(&i2c_dev->msg_complete);
-+	init_completion(&i2c_dev->dma_complete);
-+
-+	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
-+	i2c_dev->cont_id = pdev->id;
-+	i2c_dev->dev = &pdev->dev;
-+
-+	/* initialize virt base of hardware registers */
-+	i2c_dev->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-+	if (IS_ERR(i2c_dev->base))
-+		return PTR_ERR(i2c_dev->base);
-+
-+	/* initialize phys base of hardware registers */
-+	i2c_dev->base_phys = res->start;
-+
-+	/* initialize controller's interrupt */
-+	err = platform_get_irq(pdev, 0);
-+	if (err < 0)
-+		return err;
-+
-+	i2c_dev->irq = err;
-+
-+	/* interrupt will be enabled during of transfer time */
- 	irq_set_status_flags(i2c_dev->irq, IRQ_NOAUTOEN);
- 
--	ret = devm_request_irq(&pdev->dev, i2c_dev->irq, tegra_i2c_isr,
--			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c_dev);
--	if (ret) {
--		dev_err(dev, "failed to request IRQ %i\n", i2c_dev->irq);
--		goto release_dma;
-+	err = devm_request_irq(i2c_dev->dev, i2c_dev->irq, tegra_i2c_isr,
-+			       IRQF_NO_SUSPEND, dev_name(i2c_dev->dev),
-+			       i2c_dev);
-+	if (err)
-+		return err;
-+
-+	/* initialize hardware reset control */
-+	i2c_dev->rst = devm_reset_control_get_exclusive(i2c_dev->dev, "i2c");
-+	if (IS_ERR(i2c_dev->rst)) {
-+		dev_err_probe(i2c_dev->dev, PTR_ERR(i2c_dev->rst),
-+			      "failed to get reset control\n");
-+		return PTR_ERR(i2c_dev->rst);
+ 	ret = clk_enable(i2c_dev->div_clk);
+ 	if (ret < 0) {
+-		dev_err(i2c_dev->dev,
+-			"Enabling div clk failed, err %d\n", ret);
++		dev_err(dev, "failed to enable div clock: %d\n", ret);
+ 		goto disable_slow_clk;
  	}
  
--	i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
-+	err = tegra_i2c_parse_dt(i2c_dev);
-+	if (err)
-+		return err;
+@@ -757,8 +755,7 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
+ 						I2C_CONFIG_LOAD_TIMEOUT);
+ 
+ 		if (err) {
+-			dev_warn(i2c_dev->dev,
+-				 "timeout waiting for config load\n");
++			dev_err(i2c_dev->dev, "failed to load config\n");
+ 			return err;
+ 		}
+ 	}
+@@ -860,7 +857,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
+ 				   i2c_dev->bus_clk_rate * clk_multiplier);
+ 		if (err) {
+ 			dev_err(i2c_dev->dev,
+-				"failed changing clock rate: %d\n", err);
++				"failed to set div-clk rate: %d\n", err);
+ 			return err;
+ 		}
+ 	}
+@@ -916,7 +913,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
+ 
+ 	if (status == 0) {
+-		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
++		dev_warn(i2c_dev->dev, "IRQ status 0 %08x %08x %08x\n",
+ 			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
+ 			 i2c_readl(i2c_dev, I2C_STATUS),
+ 			 i2c_readl(i2c_dev, I2C_CNFG));
+@@ -1062,8 +1059,7 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
+ 		slv_config.device_fc = true;
+ 		ret = dmaengine_slave_config(chan, &slv_config);
+ 		if (ret < 0) {
+-			dev_err(i2c_dev->dev, "DMA slave config failed: %d\n",
+-				ret);
++			dev_err(i2c_dev->dev, "DMA config failed: %d\n", ret);
+ 			dev_err(i2c_dev->dev, "falling back to PIO\n");
+ 			tegra_i2c_release_dma(i2c_dev);
+ 			i2c_dev->is_curr_dma_xfer = false;
+@@ -1173,8 +1169,7 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
+ 
+ 	reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
+ 	if (!(reg & I2C_BC_STATUS)) {
+-		dev_err(i2c_dev->dev,
+-			"un-recovered arbitration lost\n");
++		dev_err(i2c_dev->dev, "un-recovered arbitration lost\n");
+ 		return -EIO;
+ 	}
+ 
+@@ -1231,8 +1226,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 			err = tegra_i2c_dma_submit(i2c_dev, xfer_size);
+ 			if (err < 0) {
+ 				dev_err(i2c_dev->dev,
+-					"starting RX DMA failed, err %d\n",
+-					err);
++					"starting RX DMA failed: %d\n", err);
+ 				return err;
+ 			}
+ 
+@@ -1291,8 +1285,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 			err = tegra_i2c_dma_submit(i2c_dev, xfer_size);
+ 			if (err < 0) {
+ 				dev_err(i2c_dev->dev,
+-					"starting TX DMA failed, err %d\n",
+-					err);
++					"starting TX DMA failed: %d\n", err);
+ 				return err;
+ 			}
+ 		} else {
+@@ -1310,7 +1303,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	}
+ 
+ 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
+-	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
++	dev_dbg(i2c_dev->dev, "unmasked IRQ: %02x\n",
+ 		i2c_readl(i2c_dev, I2C_INT_MASK));
+ 
+ 	if (dma) {
+@@ -1352,12 +1345,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	tegra_i2c_mask_irq(i2c_dev, int_mask);
+ 
+ 	if (time_left == 0) {
+-		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
++		dev_err(i2c_dev->dev, "I2C transfer timed out\n");
+ 		tegra_i2c_init(i2c_dev, true);
+ 		return -ETIMEDOUT;
+ 	}
+ 
+-	dev_dbg(i2c_dev->dev, "transfer complete: %lu %d %d\n",
++	dev_dbg(i2c_dev->dev, "transfer completed: %lu %d %d\n",
+ 		time_left, completion_done(&i2c_dev->msg_complete),
+ 		i2c_dev->msg_err);
+ 
+@@ -1686,7 +1679,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!res) {
+-		dev_err(&pdev->dev, "no irq resource\n");
++		dev_err(dev, "no IRQ resource\n");
+ 		return -EINVAL;
+ 	}
+ 	irq = res->start;
+@@ -1694,7 +1687,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	div_clk = devm_clk_get(&pdev->dev, "div-clk");
+ 	if (IS_ERR(div_clk)) {
+ 		if (PTR_ERR(div_clk) != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "missing controller clock\n");
++			dev_err(&pdev->dev, "failed to get div-clk: %ld\n",
++				PTR_ERR(div_clk));
+ 
+ 		return PTR_ERR(div_clk);
+ 	}
+@@ -1715,7 +1709,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 
+ 	i2c_dev->rst = devm_reset_control_get_exclusive(&pdev->dev, "i2c");
+ 	if (IS_ERR(i2c_dev->rst)) {
+-		dev_err(&pdev->dev, "missing controller reset\n");
++		dev_err(dev, "failed to get reset control: %pe\n",
++			i2c_dev->rst);
 +
-+	err = tegra_i2c_init_clocks(i2c_dev);
-+	if (err)
-+		return err;
+ 		return PTR_ERR(i2c_dev->rst);
+ 	}
+ 
+@@ -1735,7 +1731,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	if (!i2c_dev->hw->has_single_clk_source) {
+ 		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
+ 		if (IS_ERR(fast_clk)) {
+-			dev_err(&pdev->dev, "missing fast clock\n");
++			dev_err(dev, "failed to get fast clock\n: %ld\n",
++				PTR_ERR(fast_clk));
 +
-+	err = tegra_i2c_init_dma(i2c_dev);
-+	if (err)
-+		goto release_clocks;
-+
-+	err = tegra_i2c_init_runtime_pm_and_hardware(i2c_dev);
-+	if (err)
-+		goto release_dma;
-+
-+	i2c_dev->adapter.dev.of_node = i2c_dev->dev->of_node;
-+	i2c_dev->adapter.dev.parent = i2c_dev->dev;
-+	i2c_dev->adapter.retries = 1;
-+	i2c_dev->adapter.timeout = 6 * HZ;
-+	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
- 	i2c_dev->adapter.owner = THIS_MODULE;
- 	i2c_dev->adapter.class = I2C_CLASS_DEPRECATED;
--	strlcpy(i2c_dev->adapter.name, dev_name(&pdev->dev),
-+	i2c_dev->adapter.algo = &tegra_i2c_algo;
-+	i2c_dev->adapter.nr = i2c_dev->cont_id;
-+
-+	if (i2c_dev->hw->supports_bus_clear)
-+		i2c_dev->adapter.bus_recovery_info = &tegra_i2c_recovery_info;
-+
-+	strlcpy(i2c_dev->adapter.name, dev_name(i2c_dev->dev),
- 		sizeof(i2c_dev->adapter.name));
--	i2c_dev->adapter.dev.parent = &pdev->dev;
--	i2c_dev->adapter.nr = pdev->id;
--	i2c_dev->adapter.dev.of_node = pdev->dev.of_node;
+ 			return PTR_ERR(fast_clk);
+ 		}
+ 		i2c_dev->fast_clk = fast_clk;
+@@ -1756,7 +1754,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
  
--	ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
--	if (ret)
--		goto release_dma;
-+	i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
+ 	ret = clk_prepare(i2c_dev->fast_clk);
+ 	if (ret < 0) {
+-		dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
++		dev_err(dev, "failed to prepare fast clock: %d\n", ret);
+ 		return ret;
+ 	}
  
--	pm_runtime_put(&pdev->dev);
-+	err = i2c_add_numbered_adapter(&i2c_dev->adapter);
-+	if (err)
-+		goto release_rpm;
+@@ -1780,7 +1778,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
  
- 	return 0;
+ 	ret = clk_prepare(i2c_dev->div_clk);
+ 	if (ret < 0) {
+-		dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
++		dev_err(dev, "failed to prepare div-clk: %d\n", ret);
+ 		goto unprepare_slow_clk;
+ 	}
  
-+release_rpm:
-+	pm_runtime_disable(i2c_dev->dev);
- release_dma:
- 	tegra_i2c_release_dma(i2c_dev);
-+release_clocks:
-+	tegra_i2c_release_clocks(i2c_dev);
+@@ -1797,13 +1795,13 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	if (!pm_runtime_enabled(&pdev->dev)) {
+ 		ret = tegra_i2c_runtime_resume(&pdev->dev);
+ 		if (ret < 0) {
+-			dev_err(&pdev->dev, "runtime resume failed\n");
++			dev_err(dev, "runtime resume failed\n");
+ 			goto unprepare_div_clk;
+ 		}
+ 	} else {
+ 		ret = pm_runtime_get_sync(i2c_dev->dev);
+ 		if (ret < 0) {
+-			dev_err(&pdev->dev, "runtime resume failed\n");
++			dev_err(dev, "runtime resume failed\n");
+ 			goto disable_rpm;
+ 		}
+ 	}
+@@ -1811,8 +1809,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	if (i2c_dev->is_multimaster_mode) {
+ 		ret = clk_enable(i2c_dev->div_clk);
+ 		if (ret < 0) {
+-			dev_err(i2c_dev->dev, "div_clk enable failed %d\n",
+-				ret);
++			dev_err(dev, "failed to enable div-clk: %d\n", ret);
+ 			goto put_rpm;
+ 		}
+ 	}
+@@ -1826,7 +1823,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
  
--disable_div_clk:
--	if (i2c_dev->is_multimaster_mode)
--		clk_disable(i2c_dev->div_clk);
--
--put_rpm:
--	pm_runtime_put_sync(&pdev->dev);
--
--disable_rpm:
--	pm_runtime_disable(&pdev->dev);
--	clk_unprepare(i2c_dev->div_clk);
--
--unprepare_slow_clk:
--	clk_unprepare(i2c_dev->slow_clk);
--
--unprepare_fast_clk:
--	clk_unprepare(i2c_dev->fast_clk);
--
--	return ret;
-+	return err;
- }
+ 	ret = tegra_i2c_init(i2c_dev, false);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
++		dev_err(dev, "failed to initialize I2C controller\n");
+ 		goto release_dma;
+ 	}
  
- static int tegra_i2c_remove(struct platform_device *pdev)
-@@ -1858,17 +1898,10 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
+@@ -1835,7 +1832,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	ret = devm_request_irq(&pdev->dev, i2c_dev->irq, tegra_i2c_isr,
+ 			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c_dev);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
++		dev_err(dev, "failed to request IRQ %i\n", i2c_dev->irq);
+ 		goto release_dma;
+ 	}
  
- 	i2c_del_adapter(&i2c_dev->adapter);
--
--	if (i2c_dev->is_multimaster_mode)
--		clk_disable(i2c_dev->div_clk);
--
--	pm_runtime_disable(&pdev->dev);
--
--	clk_unprepare(i2c_dev->div_clk);
--	clk_unprepare(i2c_dev->slow_clk);
--	clk_unprepare(i2c_dev->fast_clk);
-+	pm_runtime_disable(i2c_dev->dev);
- 
- 	tegra_i2c_release_dma(i2c_dev);
-+	tegra_i2c_release_clocks(i2c_dev);
- 
- 	return 0;
- }
 -- 
 2.27.0
 
