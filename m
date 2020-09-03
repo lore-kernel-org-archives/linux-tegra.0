@@ -2,61 +2,69 @@ Return-Path: <SRS0=WZu/=CM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDEFC433E7
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 05:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56611C433E7
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 08:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A994F2080C
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 05:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599111555;
-	bh=jAExD5YbN4NOCVCuOzux7zGEA6oKWHOZzpnXunrpQVQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WoRQqk3qJ0noVZ2gRVbHte3i4SRtLiBAG3R4RV2UOhkOQvY8SaatMR6bLHtxPLKrE
-	 XERCkOOZC0Ykm5Xs3q2GkZMSXR04e9x/27U7305+Ch6Pd3Li4jWlCRAWsNEhT5ufk+
-	 8R99OeEpgArRoscbMN94chUwvUauk16FWS7m6lb0=
+	by mail.kernel.org (Postfix) with ESMTP id 22622208CA
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 08:11:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KvJqMahN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725943AbgICFjO convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 01:39:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43331 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbgICFjN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 01:39:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id k15so1688051wrn.10;
-        Wed, 02 Sep 2020 22:39:11 -0700 (PDT)
+        id S1728616AbgICILh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Sep 2020 04:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728422AbgICIKd (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 04:10:33 -0400
+Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A1C5C061247
+        for <linux-tegra@vger.kernel.org>; Thu,  3 Sep 2020 01:10:32 -0700 (PDT)
+Received: by mail-ua1-x942.google.com with SMTP id e41so620539uad.6
+        for <linux-tegra@vger.kernel.org>; Thu, 03 Sep 2020 01:10:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t0hPUkXrts5hGV+gelozsNVJL831/qNHHpNikRUOxRI=;
+        b=KvJqMahNGmcwZQvnzuao4zxMTJwrZ0aVd7RcYrE6hPpss6ABBzXgZfiKyN0Dc1xt3w
+         d3AvbT3tUsr7G6i3EtAwWd+0XJ5MPlSy7K4kK/NeDlm6/Oo+WgIIiY7uz1D6RIs5kRTl
+         dKWixy9q/3zuVRU3M/njOSPnnFTjXipSJ87wGBJtH7eiTaBcdN5ZUFQbWqAfd7QPVhU4
+         FWG6f+ssqAmxHxYlswVTrkTyEBATxmqcTZ+YR/6XiBmCPeZOcSHKQUO12y6KiBnU5dUR
+         2oEVUql1QDK9sCgoP2ChziQt2N+GXUK0rLFjOpZPxVz+l1LqejH6ftYDaJh35vQI3K+P
+         LMJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=cjA1SpxFdTarFmkqi5x6o7EpaRfJ1ZdEWfLV8+qCoTw=;
-        b=V+e64THtvZwl6wLV93JIn1EdEkTh1VPnryR3TOQEGt4WzvLsbO6inJ2oX8a++/xoEy
-         mNQLte6fMa4OOU0yWQ63y+L1FGV7ADlhiy5IVpoQwAH4fnxrF7P4WtilxOOF3w9erxSa
-         wb7CZa03p4kCv8k/jgSTo6BB2cRFhEpYY17BoIUUuFVyCBzAiqLRmwSHhiOabh82891e
-         0mWvMOuaBv0okUxmvrllL7oOPA+yYpMbIENJv+3XtNsjL/WkRPs4FPv88ZEVxWibEDI3
-         WykMIli6GsR1VRkmAGvI0oyvmfm++ufZ4+oG93qhxnIE8Ucbr/Kwfb/go5swpALo48bY
-         sM0g==
-X-Gm-Message-State: AOAM530qPh+JIhfbPsfh7QeR38Otae1sa9q18ODD68wMuSLigSOH/cwK
-        Ar2kRi1Z7nUdfdKu3lhc/yg=
-X-Google-Smtp-Source: ABdhPJzzxouJj0AiVAoYVXd6GYxpjH3humJ0K6tdJJ+HM3g/hLmKJVkO4jJwfiALZiApJbZ3FqXwiw==
-X-Received: by 2002:a5d:540a:: with SMTP id g10mr377991wrv.138.1599111550768;
-        Wed, 02 Sep 2020 22:39:10 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.106])
-        by smtp.googlemail.com with ESMTPSA id q8sm2590564wrx.79.2020.09.02.22.39.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Sep 2020 22:39:09 -0700 (PDT)
-Date:   Thu, 3 Sep 2020 07:39:05 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?utf-8?B?TWljaGHFgsKgTWlyb3PFgmF3?= <mirq-linux@rere.qmqm.pl>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t0hPUkXrts5hGV+gelozsNVJL831/qNHHpNikRUOxRI=;
+        b=n5PKBtsiL3VV1d/firqE8xmMHT4f5NM9Nlh0juWNNdwhlVeyZvc+yo9AMw2i30ZLws
+         rokpaJg87F56cMtCgwckeRI0ySzzdaQBkR7MT4gbGK0qnnMXug+1rDkMY6oTCI+HmY73
+         fllxpVjwcZVBnT/EfIdiuBMFKArC/phMm5VXDOjhEc3ccax7ot52il+A69MYjMuhaOC8
+         ynTXeb4g1A9mrT1GLCqusKUg/9ErjcXVLh4aQcrJJ2KWVfv7ap0Xc2ZWd6Gxq1ooFsL6
+         xxKLrXy3ZsmTIKxT/8Ub9LbhI7tCNxNQLsqR3PC7uGqSakoZAghGvN4SOKGerul9nKi9
+         zCoA==
+X-Gm-Message-State: AOAM532p2tWHFbAwxInO4UkCTmkLBtqNjJjDTGUCRuZoyPLhKfdBawYf
+        XYvPRt+GcyicgbMMn9Y/ZnaVq9rGGBscwLnbSu+WVw==
+X-Google-Smtp-Source: ABdhPJyGFXf2GrcMm01qExZWSJ7jPtSw9m1PN/7SAvsSK9s1ZS20v0pF9sjrlhSxNVUE5hh22/OySMNemS1iIc0OoDQ=
+X-Received: by 2002:a9f:2722:: with SMTP id a31mr381930uaa.100.1599120631644;
+ Thu, 03 Sep 2020 01:10:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200902193658.20539-1-krzk@kernel.org> <20200902193658.20539-7-krzk@kernel.org>
+ <d98f6b67-c0d0-f701-af24-b01f61c4580d@gmail.com>
+In-Reply-To: <d98f6b67-c0d0-f701-af24-b01f61c4580d@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 3 Sep 2020 10:09:53 +0200
+Message-ID: <CAPDyKFrp3GLLTjdSroyB9_QOcGM=JkFcsv3Chfgu2FSfATxGqg@mail.gmail.com>
+Subject: Re: [RFT 06/11] mmc: sdhci-brcmstb: Simplify with optional clock and dev_err_probe()
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Jaehoon Chung <jh80.chung@samsung.com>,
         Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
@@ -73,53 +81,47 @@ Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
         Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 11/11] mmc: host: Enable compile testing of multiple
- drivers
-Message-ID: <20200903053905.GA14577@kozik-lap>
-References: <20200902193658.20539-1-krzk@kernel.org>
- <20200902193658.20539-12-krzk@kernel.org>
- <20200902213227.GE1624@qmqm.qmqm.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200902213227.GE1624@qmqm.qmqm.pl>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 02, 2020 at 11:32:27PM +0200, Michał Mirosław wrote:
-> On Wed, Sep 02, 2020 at 09:36:58PM +0200, Krzysztof Kozlowski wrote:
-> > Multiple MMC host controller driver can be compile tested as they do not
-> > depend on architecture specific headers.
-> [...]
-> > --- a/drivers/mmc/host/Kconfig
-> > +++ b/drivers/mmc/host/Kconfig
-> > @@ -178,7 +178,7 @@ config MMC_SDHCI_OF_AT91
-> [...]
-> >  config MMC_MESON_GX
-> >  	tristate "Amlogic S905/GX*/AXG SD/MMC Host Controller support"
-> > -	depends on ARCH_MESON && MMC
-> > +	depends on MMC
-> > +	depends on ARCH_MESON|| COMPILE_TEST
-> [...]
-> >  config MMC_MOXART
-> >  	tristate "MOXART SD/MMC Host Controller support"
-> > -	depends on ARCH_MOXART && MMC
-> > +	depends on MMC
-> > +	depends on ARCH_MOXART || COMPILE_TEST
-> [...]
-> 
-> You can drop 'MMC' from depends as the whole tree is under 'if MMC' already.
+On Wed, 2 Sep 2020 at 21:58, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+>
+> On 9/2/2020 12:36 PM, Krzysztof Kozlowski wrote:
+> > Only -ENOENT from devm_clk_get() means that clock is not present in
+> > device tree.  Other errors have their own meaning and should not be
+> > ignored.
+> >
+> > Simplify getting the clock which is in fact optional and also use
+> > dev_err_probe() for handling deferred.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> This is actually an open coded version of devm_clk_get_optional(), so
+> this is fine:
 
-Right, thanks for feedback.
+devm_clk_get_optional() treats -ENOENT specifically, so it's not an
+exact open coded version. I think that's why Krzysztof prefered to get
+it tested on HW.
 
-Best regards,
-Krzysztof
+>
+> Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 
+Thanks!
+
+I am queuing this up for next, without waiting for explicit tests .
+There is time to get that from testing in linux-next anyway.
+
+Kind regards
+Uffe
