@@ -2,118 +2,147 @@ Return-Path: <SRS0=3zU+=CN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1168EC433E2
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 12:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76599C43461
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 12:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2D2B2137B
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 12:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 445442137B
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 12:20:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSRbN12q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VS/byoFL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbgIDMHO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Sep 2020 08:07:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38308 "EHLO
+        id S1729942AbgIDMT7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Sep 2020 08:19:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729741AbgIDMHN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Sep 2020 08:07:13 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A02C061244;
-        Fri,  4 Sep 2020 05:07:13 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id w3so7640241ljo.5;
-        Fri, 04 Sep 2020 05:07:13 -0700 (PDT)
+        with ESMTP id S1729932AbgIDMTx (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Sep 2020 08:19:53 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B970C061244;
+        Fri,  4 Sep 2020 05:19:53 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id g4so5924639edk.0;
+        Fri, 04 Sep 2020 05:19:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qArgLGR5u08jxqjeiIaKBsm2Gby+9FNWFXKhm4/XNe8=;
-        b=WSRbN12q9LW1Lj8lPIpnEH31mQEURVGd3tAVeqqpORt/L7v2MClTqOe3bm5ACJ4ZY5
-         kBeKWCEB9W2g7A9vlHe4jqeQW6yQOC1N8VElCh4+IpZF+Ysb3QZosgJ65dd1Xmog2JA9
-         FsrUQjpwoSOp9NtWfVqG6M9cIioux3TV2tXmZU33dVBV6vKTvG1bOQZmdld0tFt6oXr/
-         U2ou93Jm0rYmfnMeHBWiJEJRBdbV5Nv2zTO9K5t8Vz60EIIDUUJHeLDKzr4PI8Q8B6s2
-         ogHUQBEsfuXNFPfOR9mB+AxHaZe/iit5Wzq+WDw/rIqNySKMLfW7lV/iTDOMEvcwe3Be
-         MyYg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xpMuN6oufyDsPAKl7hqAVZXkONbQHQ1IA1e69CcugwI=;
+        b=VS/byoFLeR9gTw/tfqWAMD+WnTiGH4K21Z/4suj5vpyhN4kjKp7gDA90GmeDX8Qg5V
+         6FmxgLfqRbYdVIf+/zpUr3/EGORx/5pNL2nUvdcoVUQQfCX/3kw/BZLt4d1asqkax/8T
+         XfySzac9YJ+V3wtMhCkKP9mgTGM66voPz9+00PCeUmqOGpHetIcPgi0Rx3NCmToTNnTD
+         VRdcyU4+JklxYByZ9XcyapKWe3MH+ocHmezSg2mzIOTA8V9/m0ipPI+L7Av1/+/j5AiV
+         1nJEn4ZMDtxFL4AHMLSuniTAnoo/MPZaJ9MYfmy7VsRD0cIW5dFINa2GydcsPI7Gr3Hl
+         dzMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qArgLGR5u08jxqjeiIaKBsm2Gby+9FNWFXKhm4/XNe8=;
-        b=mYk8MrWdL76TJSYvtlnSTwyp2zx0uedMyxCplu4jsyTZSiTPpwmw7tYnMMkKd9FUtf
-         QJ2SWWr2p6QyStM2xAIvJPmv35m0dEOabYzjmFcyvRxqsctoo8cdXyzavnvlS5S5w6My
-         QW0Tu/mZbp24BFcVShM9YL1qVUbcthM+y0EnRxfY0/r69aLiHP4hk8EIPWKl4KjokJZS
-         etBYkedJw6UKLtu20XVJiIpHw9owPSalNWhwvzOrFq48vW/TRuFD3zpfuvJ48HPUVVz8
-         sKsqvjySwP9J/MKU9szsLihXV2AwrE98Xxk7Yt7fOVre6Nat6zbQfgBWlYBTIgKlOWvR
-         b4DQ==
-X-Gm-Message-State: AOAM532mbLswa/DxjoaL0fo/Cwgae2bpfdsZgHK6Wo/ZvxcJBLwmyZk3
-        YcMZSa4mBmeDHfVM1MBUykI7b6AGSMg=
-X-Google-Smtp-Source: ABdhPJyyU60zq5tUu6ycbGZKp2YIc7fIwrUFaiI0p1yTQHkL7RZ5ksQ1SgtGs9RFEJegTpoNeBtUIA==
-X-Received: by 2002:a2e:a16c:: with SMTP id u12mr3251357ljl.266.1599221231300;
-        Fri, 04 Sep 2020 05:07:11 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id l16sm1261285ljb.72.2020.09.04.05.07.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2020 05:07:10 -0700 (PDT)
-Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: Add ENE KB930 Embedded
- Controller binding
-To:     Rob Herring <robh@kernel.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, Lubomir Rintel <lkundrak@v3.sk>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xpMuN6oufyDsPAKl7hqAVZXkONbQHQ1IA1e69CcugwI=;
+        b=GwYGyRmW6laoYmD9OBcjNUCMn0mbIvNujux5utSpjI4Chm3nLNjCU0jdaOnF0ZDZl6
+         N7zr3vkLIqY2YcKQMaW2OFQnRcOnCsUdmMXYgNrnCZIfIQ/lWDOQ1XmUd3cQtFgzxbew
+         9xgdadZGIJebyxhGhgO4qKMDWa0miU60PA5YONfp74wCMlGzSYaYqynkWPKbKDLMns2r
+         Fe3yOZpOMMbha6wfFuWWyPCoEZYnC73LoeM9i3xFq3PtQwbaaU3KSh/PSaSN49/AXAUM
+         mXUDsWU5779qaHc7Bmo8Ol3e6LuTUAYWaP7eKTlSg0MMZTWk/hc/TPnFjBE98t6X6My+
+         jt+g==
+X-Gm-Message-State: AOAM530qzxgpErjyWpS9zqDId+6JFIGoOaJzEztCiHVOifUxGmo9TMZ2
+        MdBLcG5hVfFihHZIJfWGhGE=
+X-Google-Smtp-Source: ABdhPJzuwMBGdBk9IYYGRNIj0xeJachDfQfz2WniTevu+3xzRvwqoytHGkTtUp2e0fxhiAgvCksl0A==
+X-Received: by 2002:a05:6402:503:: with SMTP id m3mr8390126edv.45.1599221991805;
+        Fri, 04 Sep 2020 05:19:51 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id x10sm5740082eds.21.2020.09.04.05.19.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Sep 2020 05:19:50 -0700 (PDT)
+Date:   Fri, 4 Sep 2020 14:19:49 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-References: <20200830185356.5365-1-digetx@gmail.com>
- <20200830185356.5365-2-digetx@gmail.com> <20200903161022.GA2707794@bogus>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <790dbb23-7422-887a-3f11-5ae55bb916fa@gmail.com>
-Date:   Fri, 4 Sep 2020 15:07:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Krishna Reddy <vdumpa@nvidia.com>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] iommu/tegra-smmu: Add locking around mapping
+ operations
+Message-ID: <20200904121949.GA570531@ulmo>
+References: <20200901203730.27865-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200903161022.GA2707794@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="k1lZvvs/B4yU6o8G"
+Content-Disposition: inline
+In-Reply-To: <20200901203730.27865-1-digetx@gmail.com>
+User-Agent: Mutt/1.14.6 (2020-07-11)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-03.09.2020 19:10, Rob Herring пишет:
-> On Sun, 30 Aug 2020 21:53:51 +0300, Dmitry Osipenko wrote:
->> Add binding document for the ENE KB930 Embedded Controller.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
->>  1 file changed, 66 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
->>
-> 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/ene-kb930.example.dt.yaml: battery-cell: 'operating-range-celsius' does not match any of the regexes: '^ocv-capacity-table-[0-9]+$', 'pinctrl-[0-9]+'
-> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/supply/battery.yaml
-> 
-> 
-> See https://patchwork.ozlabs.org/patch/1354004
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure dt-schema is up to date:
-> 
-> pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
-> 
-> Please check and re-submit.
-> 
 
-Apparently bot uses outdated kernel.
+--k1lZvvs/B4yU6o8G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 01, 2020 at 11:37:30PM +0300, Dmitry Osipenko wrote:
+> The mapping operations of the Tegra SMMU driver are subjected to a race
+> condition issues because SMMU Address Space isn't allocated and freed
+> atomically, while it should be. This patch makes the mapping operations
+> atomic, it fixes an accidentally released Host1x Address Space problem
+> which happens while running multiple graphics tests in parallel on
+> Tegra30, i.e. by having multiple threads racing with each other in the
+> Host1x's submission and completion code paths, performing IOVA mappings
+> and unmappings in parallel.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>=20
+> Changelog:
+>=20
+> v5: - Replaced GFP_NOWAIT check with __GFP_ATOMIC to fix "sleep in
+>       atomic context" warnings, NOWAIT !=3D ATOMIC.
+>=20
+> v4: - Returned to use spinlock, but now using a smarter allocation
+>       logic that performs allocation in a sleeping context whenever
+>       possible.
+>=20
+>     - Removed the stable tag because patch isn't portable as-is
+>       since the arguments of map/unmap() callbacks changed recently.
+>       Perhaps we could just ignore older kernels for now. It will be
+>       possible to fix older kernels with a custom patch if will be needed.
+>=20
+> v3: - No changes. Resending for visibility.
+>=20
+>  drivers/iommu/tegra-smmu.c | 95 +++++++++++++++++++++++++++++++++-----
+>  1 file changed, 84 insertions(+), 11 deletions(-)
+
+Seems to work fine. Tested on Jetson TX1 with display and GPU, which are
+the primary users of the SMMU.
+
+Tested-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--k1lZvvs/B4yU6o8G
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9SMOIACgkQ3SOs138+
+s6H9aA/+POA3gKeeFXU13V+vbYgFzYonGue9SVkjCLeoT91VnE/GC8951N6yBoU+
+LuxfBZj1l3O52ICRMHIAX4A1SRrHdhoPvj3GsDWdCpxuVinvlm3ZpsIq+klF2yfp
+jmuzRCKisOr0cWz+WUbMEjSu5E4IIFQOjaG4pejbKuma7bcVLisSTtlXorgGp29+
+4MCueGk+BVMdGqr7dw+9J6fdFk2v5JWN/UT9rFsLrMTkvZ3JwAKUHRDq0W9iItZN
+EIGy+FBETildbjBMBplBUxF00U7JedZuvqfEyZUYPxX3VkiAx0+b5bf3CKySRYYT
+ew16Kcv99xqpI9pCoVfQW57b28lX3HJ/okOuFx+zDE24jfX9cMJJ5y9Jr+za3CN6
+rCtILMNBCQQIlgkXgePW4EQuGhHYtbc7CEfHQ6Mam7ePlteZq72yOURxszSz5t2f
+fun4hdomQNYQY/6yEYd90HGtf7mdKOiIlezNwx/xWyE+PWk8u8LUHcY3VY/ymE07
+ZfajZTDFr/fz3Bz/pAPRPJt0YgIPeg+PjNESa1HB3RKyxBCCeo8F4gA9KSc6K2ve
+fX5EqIbZx0ZbGFciLgR3liIOLd3KvDUKfTarRfXjKyb4EIOosb4R8ZE2WDBe8qDF
+UxolffLfQYAXanJ8rpduYEuWG0gIBMsGPzuE21RTg9Os5erG1ng=
+=i6XW
+-----END PGP SIGNATURE-----
+
+--k1lZvvs/B4yU6o8G--
