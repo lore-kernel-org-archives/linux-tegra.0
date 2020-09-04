@@ -1,107 +1,129 @@
-Return-Path: <SRS0=WZu/=CM=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=3zU+=CN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA750C433E2
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 22:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7C8C433E2
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 08:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78EC320716
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Sep 2020 22:18:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4225207EA
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 08:09:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TWyRrvJA"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BBvwVZVA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728484AbgICWSU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Sep 2020 18:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51988 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbgICWST (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Sep 2020 18:18:19 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54CAAC061244;
-        Thu,  3 Sep 2020 15:18:19 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id v23so5661552ljd.1;
-        Thu, 03 Sep 2020 15:18:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=L6OYjrBWLMGkLZUDNUHAcsUTScuiU6WSVwlqzVd6Pzc=;
-        b=TWyRrvJAvb5keY81T6x3lfqcDecwPzWx87ybAGWLnxTvc0Rha1udM7jn+nGN8AbBoX
-         /PPf1Jd2rpVcEBSnypYGZTUFD8BZoNRbJPQjnHXQphg4fL0cLyA3WB+SmZOB9DvHkH1s
-         2pje8dwelv9GhEcpHe/t1X6caFRA75du5buyYrB/0o6kdzGdyg4w05FVo3l6Af6iPKEl
-         DkfCwypiyhMfHKUEq9OSDThzRqYH5aCTQ/nIloDqhLezdVbDD2dfIAAQiYGucHtFY0yl
-         mbFNZUh7A9Fm9fL2eJrmeSyrp2mF3C22jcATK3HfQ+q/hx5dWhWRoWguSBy34/nG+rxO
-         hRzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=L6OYjrBWLMGkLZUDNUHAcsUTScuiU6WSVwlqzVd6Pzc=;
-        b=eFVaeUHOuvODiP4bKhjtTdaTPodYq24idoKW7mRYHI5kZKlFveu/HyU86OTq+cdGRd
-         6bG17rL8nXYQu0N6KhS+1jPYSqZaHFsnCr23+JH9Cn0jThJWOUnIpjV0ydGI0XBLaSpP
-         /CElyTO0HtMe802Ahczhnmc2aE7Vt70sVj6Rhmy/4dbgGJMITbp4R9SjfSvguW77kQ8M
-         dUGYx1U+JY+21BAy0I+EFfMdDgzRRuzqmW3OjoRKAZE8fqjMeaRdvdL2omXLb4CROGIt
-         77EfcfybIG3fajFg488X+StUnuSG094vcGmoWk2Nr1lCotcldiXE42jODS8D4fsayUYI
-         WhwA==
-X-Gm-Message-State: AOAM531fE3P4v4xG5zsetOZQuBmSVjW/CkM4z9InhnwWAyPXCs7baNG+
-        TfqNABHvQ6sBo2ie345rw2nGt6piB/M=
-X-Google-Smtp-Source: ABdhPJz5Ov+gqdpL+IzGjoOMfvZX5CXv7ChYUyHXwOI1HZaIVfBMeKzxeSNXqrpHCrWgQ4/DFUn0Xw==
-X-Received: by 2002:a2e:9d8e:: with SMTP id c14mr1019646ljj.135.1599171497517;
-        Thu, 03 Sep 2020 15:18:17 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id c13sm855258lfi.76.2020.09.03.15.18.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2020 15:18:16 -0700 (PDT)
-Subject: Re: [PATCH v1 00/12] Improvements for Tegra I2C driver
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        id S1728588AbgIDIJK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Sep 2020 04:09:10 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:30821 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728293AbgIDIJH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Sep 2020 04:09:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1599206946; x=1630742946;
+  h=references:from:to:cc:subject:in-reply-to:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=8kg7NVGvA/Y4ravBA+Ck9g+ekPrMr/sJwXHN4ceS2DY=;
+  b=BBvwVZVA5EyI70ql0luan7uUrbQjOW9SWdfqJNCAQkQSKVmq+Ay0idPf
+   Ee50RPVHTkouPwJr5cWSL0a9hxC6DqV/7ps2eqGXnpXLP21QWSOAjXJKa
+   ZcM9Zwfj7Ydzj7hU78ohR2BWuojh+ITMtkNcTAyQwZ3UoVrejJ5LzHFUG
+   Fb9+F0KqZA3G/2HHlaOHcfIyh+RaEo3LW2HVmV4lLQNtGnIOYDFwCxKHI
+   4uQMcyptwlWsLKXk33HTU4cLNhqrcPdH/yKy9enHrIPsSGi+l4JmtQG/I
+   3LfL0lnLStkBHaX2eIWzkijQXnZyOSW1Kyt+gnPd15a5BQRrYlC63vOJH
+   g==;
+IronPort-SDR: gFJOOhxnbMekT+gVguHT6+Xjx6sB8n0ubMR5otjKsB+saYnGsOOppBCh+Fj0+R+9J65PTYV2wf
+ dGSvHGIUiWDX8mmGYWMD9l5tHBxzEVhOzHkD0xk0VJAyFaqkKnXGuLkFAquFe8OYNFzYg5us/O
+ 5hPW1xnCuOFYZvDMcr+oFh27Ht4NZ8KdA2fEMvQdWVpXfGghpUjg9s+QOe53DLcVCB3Wk62jPv
+ FRF6/hiBOfsRphm+lo3KYSbpidZ+5L8BTG4RFT/HBis8Eclgsv7eK/7BIThzFeFJvMZn81bb0k
+ 0Ec=
+X-IronPort-AV: E=Sophos;i="5.76,389,1592895600"; 
+   d="scan'208";a="90544258"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 04 Sep 2020 01:09:05 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Fri, 4 Sep 2020 01:08:54 -0700
+Received: from soft-dev15.microsemi.net.microchip.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3
+ via Frontend Transport; Fri, 4 Sep 2020 01:08:04 -0700
+References: <20200902193658.20539-1-krzk@kernel.org> <20200902193658.20539-11-krzk@kernel.org>
+From:   Lars Povlsen <lars.povlsen@microchip.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+CC:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "Nicolas Saenz Julienne" <nsaenzjulienne@suse.de>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        "Jerome Brunet" <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        "Steen Hegelund" <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200831202303.15391-1-digetx@gmail.com>
- <20200902212026.GD1624@qmqm.qmqm.pl>
- <04aae642-80f9-d22e-1d80-bb206bb27a8b@gmail.com>
- <20200903164709.GA7406@qmqm.qmqm.pl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e1b7a9fc-e638-8576-a79e-7c2cf1cfbfe2@gmail.com>
-Date:   Fri, 4 Sep 2020 01:18:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Arnd Bergmann <arnd@arndb.de>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 10/11] mmc: sdhci-of-sparx5: Use proper printk format for dma_addr_t
+In-Reply-To: <20200902193658.20539-11-krzk@kernel.org>
+Date:   Fri, 4 Sep 2020 10:08:48 +0200
+Message-ID: <87zh66vu9b.fsf@soft-dev15.microsemi.net>
 MIME-Version: 1.0
-In-Reply-To: <20200903164709.GA7406@qmqm.qmqm.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-03.09.2020 19:47, Michał Mirosław пишет:
-> On Thu, Sep 03, 2020 at 04:12:13AM +0300, Dmitry Osipenko wrote:
->> 03.09.2020 00:20, Michał Mirosław пишет:
->>> BTW, I wonder if you could expose i2c_in_atomic_xfer_mode() and use it
->>> to differentiate atomic_xfer from normal and get rid of the internal
->>> flag and .master_xfer_atomic callback.
->>
->> The atomic transfer uses 90% of the code path that a non-atomic transfer
->> uses. I don't see how it could be exposed without duplicated lots of the
->> code, unless I'm not missing what you're suggesting.
-> 
-> The I2C core falls back to .master_xfer even in atomic mode if
-> .master_xfer_atomic is NULL, so what I'm suggesting is to make
-> i2c_in_atomic_xfer_mode() public (from i2c-core.h) and use it in
-> normal .master_xfer to choose atomic wait variants.
 
-Okay, I see now. But the I2C core prints a noisy warning if
-master_xfer_atomic is NULL in atomic transfer, so I'm not sure whether
-changing all that code will bring much benefits to us and anyone else.
-It's a bit too questionable change to me, but maybe I'm still missing
-something. Will be great if you could provide an example patch.
+Krzysztof Kozlowski writes:
+
+> dma_addr_t size varies between architectures so use dedicated printk
+> format to fix compile testing warning (e.g. on 32-bit MIPS):
+>
+>   drivers/mmc/host/sdhci-of-sparx5.c:63:11: warning:
+>     format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘dma_addr_t {aka unsigned int}’ [-Wformat=]
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/mmc/host/sdhci-of-sparx5.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-of-sparx5.c b/drivers/mmc/host/sdhci-of-sparx5.c
+> index 14b5dad6575a..747f108a0ace 100644
+> --- a/drivers/mmc/host/sdhci-of-sparx5.c
+> +++ b/drivers/mmc/host/sdhci-of-sparx5.c
+> @@ -60,8 +60,8 @@ static void sdhci_sparx5_adma_write_desc(struct sdhci_host *host, void **desc,
+>                 return;
+>         }
+>
+> -       pr_debug("%s: write_desc: splitting dma len %d, offset 0x%0llx\n",
+> -                mmc_hostname(host->mmc), len, addr);
+> +       pr_debug("%s: write_desc: splitting dma len %d, offset %pad\n",
+> +                mmc_hostname(host->mmc), len, &addr);
+>
+>         offset = addr & (SZ_128M - 1);
+>         tmplen = SZ_128M - offset;
+
+Acked-by: Lars Povlsen <larc.povlsen@microchip.com>
+
+-- 
+Lars Povlsen,
+Microchip
