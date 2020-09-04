@@ -2,134 +2,110 @@ Return-Path: <SRS0=3zU+=CN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEEAC43461
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 15:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D756AC2D0E0
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 16:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5DD2074D
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 15:55:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DssenJ5M"
+	by mail.kernel.org (Postfix) with ESMTP id A7E9620795
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 16:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599237827;
+	bh=nxciuoD47KxGkOpJC1/Yb+VqPBHDhps24SnDZPx4IXk=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=NyxMtRCbaZQZ5Ra/Z9iWxXMZP6PhLfoUef+GHb/bh82VueEyA5VfrQPxqsPj4yG9U
+	 bOwv7qTmlcb3vnP/mLqNxigtKX3gcbc6oBIkJw7BtC6YJa8LVOPYS49hHdlChQnDkZ
+	 nDqOyK7t+L5AiT4/zMe8YMKxb8LLEZxp2jlkF5m8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbgIDPy5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Sep 2020 11:54:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45258 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbgIDPy4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Sep 2020 11:54:56 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D568C061244;
-        Fri,  4 Sep 2020 08:54:56 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id a22so2144187ljp.13;
-        Fri, 04 Sep 2020 08:54:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EqeV5GEwpLCEYW39izvLrI1V3Ff38lvkS7tHlLnnMxs=;
-        b=DssenJ5M9KIfi6BE9jD/OI9v5CzIF/fPDV+WuIb9FArUFM3ZBbk7peirj6rRfKnljd
-         jljpvH0T1P89IudOqYBEi1p/6AoerHB6T5dLCCJExhpIf9Mh440xmmwmYkv+kPN981gh
-         FDIxduBgre/xQV28L+LlzXiTNa0QSd9HrBnc+soPXc4DZ7smtLiV+qK5sTAjB7nj+mpq
-         8iqRkqp7nMybTI89mrtaf5xvKKfwrTHMguTodpCzGfR7kfKJlQ/OXu/M3sZYkVVUO+pC
-         JvZfKQ0b/baOFr1DxDda9wUv1HqmDK4hLwuxRaLsedl6SKCygROjNR0auySXvMLkJfJJ
-         aaUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EqeV5GEwpLCEYW39izvLrI1V3Ff38lvkS7tHlLnnMxs=;
-        b=MWPXhdiGPlLPC8HWyO4dNHAzjypcwaI9eMEMo3+9VvGxjpZkEe20todiTe31EChIgo
-         h03c1UoRngOn7IcZOsD8EISsZqEkPB9IczTIQsda1DUcbzjw1ulLeyFdnWZjmU6cIkRH
-         8GpNXI5OfEdhqIs9/3frKYYQIvoaK1D+Z0EsJ/yWSGprD49IgEAYJceFo3TywoT9h/pv
-         IBkP831G15+/C2WNfXi/rMLxMW5WcUWwkve/XpU4Eb91zL7Dn5tKuFBij96EFCjgWjuP
-         MPbE6f2U25b9mugVkytPc+KgbOSOLSm0q2zHaJABpLgWNcV4AFqF0S56WBE7AhFtTG1A
-         Ic7A==
-X-Gm-Message-State: AOAM532dqkP8jHcYlAi5rCEAsM4h5BIdQdHRoJn94lJn2BfbaFmcWIU6
-        Bm9e4O11XEkZglyqegBhtbvM9UiSOfo=
-X-Google-Smtp-Source: ABdhPJz5FifqYk3SjmTOueHmmnT5Ltqf/CqnsxxulfweyJbL6UPMKd91CsOuPbUe7o5Lcw9KxUjxew==
-X-Received: by 2002:a2e:9910:: with SMTP id v16mr3920272lji.59.1599234894481;
-        Fri, 04 Sep 2020 08:54:54 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id g19sm1333483ljk.125.2020.09.04.08.54.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2020 08:54:53 -0700 (PDT)
-Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: Add ENE KB930 Embedded
- Controller binding
-To:     Rob Herring <robh@kernel.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, Lubomir Rintel <lkundrak@v3.sk>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-References: <20200830185356.5365-1-digetx@gmail.com>
- <20200830185356.5365-2-digetx@gmail.com> <20200903161022.GA2707794@bogus>
- <790dbb23-7422-887a-3f11-5ae55bb916fa@gmail.com>
- <CAL_Jsq+Ue72jJ9gurcG0f_R+gGVC77dErhgbKpB_p40buUewLg@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <40e34696-5af8-a3da-35f2-483a0dacd835@gmail.com>
-Date:   Fri, 4 Sep 2020 18:54:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727780AbgIDQno (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Sep 2020 12:43:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbgIDQnn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 4 Sep 2020 12:43:43 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D3362064E;
+        Fri,  4 Sep 2020 16:43:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599237823;
+        bh=nxciuoD47KxGkOpJC1/Yb+VqPBHDhps24SnDZPx4IXk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vV07QlSQWiamQPiw7TcgBV0AVn8g3VLYp4Y0YEpQajmWoDymFi6NXno5wrMIrWqbk
+         IYPI85Ll5xGRHSi6KObRaeEGTM/DoL18I/V+Yzx29NgruQPi31ggY144MQCLaytdIg
+         uZHZpn9PJ/8lwmzuvIfusuOcx36eP0X6eMPZ8fYk=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Manuel Lauss <manuel.lauss@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Prabu Thangamuthu <prabu.t@synopsys.com>,
+        Manjunath M B <manjumb@synopsys.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@axis.com
+Cc:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v2 1/2] mmc: host: Drop unneeded MMC dependency in Kconfig
+Date:   Fri,  4 Sep 2020 18:43:14 +0200
+Message-Id: <20200904164315.24618-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+Ue72jJ9gurcG0f_R+gGVC77dErhgbKpB_p40buUewLg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-04.09.2020 18:40, Rob Herring пишет:
-> On Fri, Sep 4, 2020 at 6:07 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> 03.09.2020 19:10, Rob Herring пишет:
->>> On Sun, 30 Aug 2020 21:53:51 +0300, Dmitry Osipenko wrote:
->>>> Add binding document for the ENE KB930 Embedded Controller.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
->>>>  1 file changed, 66 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
->>>>
->>>
->>>
->>> My bot found errors running 'make dt_binding_check' on your patch:
->>>
->>> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/ene-kb930.example.dt.yaml: battery-cell: 'operating-range-celsius' does not match any of the regexes: '^ocv-capacity-table-[0-9]+$', 'pinctrl-[0-9]+'
->>>       From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/supply/battery.yaml
->>>
->>>
->>> See https://patchwork.ozlabs.org/patch/1354004
->>>
->>> If you already ran 'make dt_binding_check' and didn't see the above
->>> error(s), then make sure dt-schema is up to date:
->>>
->>> pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
->>>
->>> Please check and re-submit.
->>>
->>
->> Apparently bot uses outdated kernel.
-> 
-> It's on v5.9-rc2. The scripts don't know your base/dependencies and
-> neither did I because you didn't mention anything here. I do review
-> the errors before spamming people.
+All entries in Kconfig are already part of "if MMC", so there is no need
+for additional dependency on MMC.
 
-The patches are based on the linux-next, hence nothing special here. My
-expectation is that the bot should use the linux-next as well in order
-to prevent such warnings. Is there any reason to why bot not using
-linux-next?
+Suggested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Changes since v1:
+1. New patch
+---
+ drivers/mmc/host/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index b95f79f53395..eea01fde0591 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -422,7 +422,7 @@ config MMC_SDHCI_IPROC
+ 
+ config MMC_MESON_GX
+ 	tristate "Amlogic S905/GX*/AXG SD/MMC Host Controller support"
+-	depends on ARCH_MESON && MMC
++	depends on ARCH_MESON
+ 	help
+ 	  This selects support for the Amlogic SD/MMC Host Controller
+ 	  found on the S905/GX*/AXG family of SoCs.  This controller is
+@@ -458,7 +458,7 @@ config MMC_MESON_MX_SDIO
+ 
+ config MMC_MOXART
+ 	tristate "MOXART SD/MMC Host Controller support"
+-	depends on ARCH_MOXART && MMC
++	depends on ARCH_MOXART
+ 	help
+ 	  This selects support for the MOXART SD/MMC Host Controller.
+ 	  MOXA provides one multi-functional card reader which can
+-- 
+2.17.1
+
