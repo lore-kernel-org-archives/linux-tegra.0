@@ -1,266 +1,134 @@
-Return-Path: <SRS0=3zU+=CN=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=vF+y=CO=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29D3C43461
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 16:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B05CC2BBD0
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72F3D2064E
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Sep 2020 16:44:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599237841;
-	bh=M0F0NujsJbA6VRAoiFk6VohTncRpdlqvI+V+EXO6eTI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bx+4W8skSUm9kMIcGa9mlRxUkKi9TN2pQvTsfCaPk+8ifaJ7tNvQErhjnRTE/HvsW
-	 cd8fz+4cCMgks2AneuNBYXnpJa1CvlNf5NJgiWIat7C33jDCkYV1LyiWFrTDph7ytR
-	 u2TuGmYx+Fh7zhGGiKlLCsIr4V+Y6GcyC3LsrPKI=
+	by mail.kernel.org (Postfix) with ESMTP id 0431720760
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="ezWiY1V1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbgIDQny (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Sep 2020 12:43:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726441AbgIDQnt (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 4 Sep 2020 12:43:49 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 808062074D;
-        Fri,  4 Sep 2020 16:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599237828;
-        bh=M0F0NujsJbA6VRAoiFk6VohTncRpdlqvI+V+EXO6eTI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YNhuRd9bPGkZy4dXcqM4wKBiNUbzE9fZg+ZWuG0rftUJ+tr0tNSNpYkBZTA38LTUr
-         C2BCBXN88B/3wM5OaP8T8RT99NAHiaGDVfp8omRAWmcls7cWRlAVAhuHexZ1jV1ODZ
-         D3tvHvz+KgvITSlGuGrAtkaCNFw9z57g2bkJBSCk=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Manuel Lauss <manuel.lauss@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Prabu Thangamuthu <prabu.t@synopsys.com>,
-        Manjunath M B <manjumb@synopsys.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@axis.com
-Cc:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 2/2] mmc: host: Enable compile testing of multiple drivers
-Date:   Fri,  4 Sep 2020 18:43:15 +0200
-Message-Id: <20200904164315.24618-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200904164315.24618-1-krzk@kernel.org>
-References: <20200904164315.24618-1-krzk@kernel.org>
+        id S1728393AbgIEKgJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 5 Sep 2020 06:36:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbgIEKgD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 5 Sep 2020 06:36:03 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBC69C061244
+        for <linux-tegra@vger.kernel.org>; Sat,  5 Sep 2020 03:36:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=80UL8AOrmi15avfI4BecbEfzyt/yEv+160kOfcy5fMo=; b=ezWiY1V1AZ9//6+BILu3R0DId9
+        ykcFqbk5RMx96p7dYfRSf9YtT15ef/Qu2FT/LcPz5IK6NVu3efz9BTiImZSp9j4k6j8ymWeE4X1jc
+        F2rSWCVM0mZDANZtDnJTcRlzq/i+Urfnkzk3NMQKrt57FQWLaatZQS4hIjqgBjK149QrK3filoQIf
+        L/aowVbuFRi/pYM6gyW0F601DY5bEYW2pfM3QSgcHeF6Fn/BO9cHIXysUNE3NLwiw9h5XUO9QXM0n
+        7e7j99qxvyTJ+ajNLuU1Vx+rtD6hvCSQ1zCyaMdvXwRxUE8VDCNg3TRuV232sH3+//Gp5+V5Dhodq
+        C9731bRw==;
+Received: from dsl-hkibng22-54faab-65.dhcp.inet.fi ([84.250.171.65] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <mperttunen@nvidia.com>)
+        id 1kEVXw-0003SS-Kg; Sat, 05 Sep 2020 13:35:48 +0300
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
+        airlied@linux.ie, daniel@ffwll.ch
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        talho@nvidia.com, bhuntsman@nvidia.com,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [RFC PATCH v2 02/17] gpu: host1x: Allow syncpoints without associated client
+Date:   Sat,  5 Sep 2020 13:34:05 +0300
+Message-Id: <20200905103420.3021852-3-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200905103420.3021852-1-mperttunen@nvidia.com>
+References: <20200905103420.3021852-1-mperttunen@nvidia.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 84.250.171.65
+X-SA-Exim-Mail-From: mperttunen@nvidia.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Multiple MMC host controller driver can be compile tested as they do not
-depend on architecture specific headers.
+Syncpoints don't need to be associated with any client,
+so remove the property, and expose host1x_syncpt_alloc.
+This will allow allocating syncpoints without prior knowledge
+of the engine that it will be used with.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
+ drivers/gpu/host1x/syncpt.c | 8 +++-----
+ drivers/gpu/host1x/syncpt.h | 6 +++++-
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-Changes since v1:
-1. Add COMMON_CLK dependency to MESON_GX to fix errors like:
-   ERROR: modpost: "devm_clk_register" [drivers/mmc/host/meson-gx-mmc.ko] undefined!
----
- drivers/mmc/host/Kconfig | 41 +++++++++++++++++++++-------------------
- 1 file changed, 22 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index eea01fde0591..93db789cf8ec 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -178,7 +178,7 @@ config MMC_SDHCI_OF_AT91
- config MMC_SDHCI_OF_ESDHC
- 	tristate "SDHCI OF support for the Freescale eSDHC controller"
- 	depends on MMC_SDHCI_PLTFM
--	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
-+	depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE || COMPILE_TEST
- 	select MMC_SDHCI_IO_ACCESSORS
- 	select FSL_GUTS
- 	help
-@@ -216,7 +216,7 @@ config MMC_SDHCI_OF_DWCMSHC
- config MMC_SDHCI_OF_SPARX5
- 	tristate "SDHCI OF support for the MCHP Sparx5 SoC"
- 	depends on MMC_SDHCI_PLTFM
--	depends on ARCH_SPARX5
-+	depends on ARCH_SPARX5 || COMPILE_TEST
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  found in the MCHP Sparx5 SoC.
-@@ -238,7 +238,7 @@ config MMC_SDHCI_CADENCE
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index fce7892d5137..7cb80d4768b1 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -42,9 +42,9 @@ static void host1x_syncpt_base_free(struct host1x_syncpt_base *base)
+ 		base->requested = false;
+ }
  
- config MMC_SDHCI_CNS3XXX
- 	tristate "SDHCI support on the Cavium Networks CNS3xxx SoC"
--	depends on ARCH_CNS3XXX
-+	depends on ARCH_CNS3XXX || COMPILE_TEST
- 	depends on MMC_SDHCI_PLTFM
- 	help
- 	  This selects the SDHCI support for CNS3xxx System-on-Chip devices.
-@@ -262,7 +262,7 @@ config MMC_SDHCI_ESDHC_MCF
+-static struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
+-						 struct host1x_client *client,
+-						 unsigned long flags)
++struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
++					  struct host1x_client *client,
++					  unsigned long flags)
+ {
+ 	struct host1x_syncpt *sp = host->syncpt;
+ 	unsigned int i;
+@@ -69,7 +69,6 @@ static struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
+ 	if (!name)
+ 		goto free_base;
  
- config MMC_SDHCI_ESDHC_IMX
- 	tristate "SDHCI support for the Freescale eSDHC/uSDHC i.MX controller"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || COMPILE_TEST
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
- 	select MMC_CQHCI
-@@ -276,7 +276,7 @@ config MMC_SDHCI_ESDHC_IMX
+-	sp->client = client;
+ 	sp->name = name;
  
- config MMC_SDHCI_DOVE
- 	tristate "SDHCI support on Marvell's Dove SoC"
--	depends on ARCH_DOVE || MACH_DOVE
-+	depends on ARCH_DOVE || MACH_DOVE || COMPILE_TEST
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
- 	help
-@@ -289,7 +289,7 @@ config MMC_SDHCI_DOVE
+ 	if (flags & HOST1X_SYNCPT_CLIENT_MANAGED)
+@@ -447,7 +446,6 @@ void host1x_syncpt_free(struct host1x_syncpt *sp)
+ 	host1x_syncpt_base_free(sp->base);
+ 	kfree(sp->name);
+ 	sp->base = NULL;
+-	sp->client = NULL;
+ 	sp->name = NULL;
+ 	sp->client_managed = false;
  
- config MMC_SDHCI_TEGRA
- 	tristate "SDHCI platform support for the Tegra SD/MMC Controller"
--	depends on ARCH_TEGRA
-+	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
- 	select MMC_CQHCI
-@@ -301,7 +301,8 @@ config MMC_SDHCI_TEGRA
+diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
+index 8e1d04dacaa0..77e7206cc316 100644
+--- a/drivers/gpu/host1x/syncpt.h
++++ b/drivers/gpu/host1x/syncpt.h
+@@ -33,7 +33,6 @@ struct host1x_syncpt {
+ 	const char *name;
+ 	bool client_managed;
+ 	struct host1x *host;
+-	struct host1x_client *client;
+ 	struct host1x_syncpt_base *base;
  
- config MMC_SDHCI_S3C
- 	tristate "SDHCI support on Samsung S3C SoC"
--	depends on MMC_SDHCI && (PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS)
-+	depends on MMC_SDHCI
-+	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  often referrered to as the HSMMC block in some of the Samsung S3C
-@@ -313,7 +314,7 @@ config MMC_SDHCI_S3C
+ 	/* interrupt data */
+@@ -113,4 +112,9 @@ static inline int host1x_syncpt_is_valid(struct host1x_syncpt *sp)
+ 	return sp->id < host1x_syncpt_nb_pts(sp->host);
+ }
  
- config MMC_SDHCI_SIRF
- 	tristate "SDHCI support on CSR SiRFprimaII and SiRFmarco SoCs"
--	depends on ARCH_SIRF
-+	depends on ARCH_SIRF || COMPILE_TEST
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
- 	help
-@@ -351,7 +352,8 @@ config MMC_SDHCI_PXAV2
- 
- config MMC_SDHCI_SPEAR
- 	tristate "SDHCI support on ST SPEAr platform"
--	depends on MMC_SDHCI && PLAT_SPEAR
-+	depends on MMC_SDHCI
-+	depends on PLAT_SPEAR || COMPILE_TEST
- 	depends on OF
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
-@@ -374,7 +376,7 @@ config MMC_SDHCI_S3C_DMA
- 
- config MMC_SDHCI_BCM_KONA
- 	tristate "SDHCI support on Broadcom KONA platform"
--	depends on ARCH_BCM_MOBILE
-+	depends on ARCH_BCM_MOBILE || COMPILE_TEST
- 	depends on MMC_SDHCI_PLTFM
- 	help
- 	  This selects the Broadcom Kona Secure Digital Host Controller
-@@ -422,7 +424,8 @@ config MMC_SDHCI_IPROC
- 
- config MMC_MESON_GX
- 	tristate "Amlogic S905/GX*/AXG SD/MMC Host Controller support"
--	depends on ARCH_MESON
-+	depends on ARCH_MESON || COMPILE_TEST
-+	depends on COMMON_CLK
- 	help
- 	  This selects support for the Amlogic SD/MMC Host Controller
- 	  found on the S905/GX*/AXG family of SoCs.  This controller is
-@@ -458,7 +461,7 @@ config MMC_MESON_MX_SDIO
- 
- config MMC_MOXART
- 	tristate "MOXART SD/MMC Host Controller support"
--	depends on ARCH_MOXART
-+	depends on ARCH_MOXART || COMPILE_TEST
- 	help
- 	  This selects support for the MOXART SD/MMC Host Controller.
- 	  MOXA provides one multi-functional card reader which can
-@@ -467,7 +470,7 @@ config MMC_MOXART
- 
- config MMC_SDHCI_ST
- 	tristate "SDHCI support on STMicroelectronics SoC"
--	depends on ARCH_STI || FSP2
-+	depends on ARCH_STI || FSP2 || COMPILE_TEST
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
- 	help
-@@ -587,7 +590,7 @@ config MMC_TIFM_SD
- 
- config MMC_MVSDIO
- 	tristate "Marvell MMC/SD/SDIO host driver"
--	depends on PLAT_ORION
-+	depends on PLAT_ORION || (COMPILE_TEST && ARM)
- 	depends on OF
- 	help
- 	  This selects the Marvell SDIO host driver.
-@@ -599,7 +602,7 @@ config MMC_MVSDIO
- 
- config MMC_DAVINCI
- 	tristate "TI DAVINCI Multimedia Card Interface support"
--	depends on ARCH_DAVINCI
-+	depends on ARCH_DAVINCI || COMPILE_TEST
- 	help
- 	  This selects the TI DAVINCI Multimedia card Interface.
- 	  If you have an DAVINCI board with a Multimedia Card slot,
-@@ -628,7 +631,7 @@ config MMC_SPI
- 
- config MMC_S3C
- 	tristate "Samsung S3C SD/MMC Card Interface support"
--	depends on ARCH_S3C24XX
-+	depends on ARCH_S3C24XX || COMPILE_TEST
- 	depends on S3C24XX_DMAC
- 	help
- 	  This selects a driver for the MCI interface found in
-@@ -681,7 +684,7 @@ config MMC_SDRICOH_CS
- 
- config MMC_SDHCI_SPRD
- 	tristate "Spreadtrum SDIO host Controller"
--	depends on ARCH_SPRD
-+	depends on ARCH_SPRD || COMPILE_TEST
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
- 	select MMC_HSQ
-@@ -698,7 +701,7 @@ config MMC_TMIO_CORE
- 
- config MMC_TMIO
- 	tristate "Toshiba Mobile IO Controller (TMIO) MMC/SD function support"
--	depends on MFD_TMIO || MFD_ASIC3
-+	depends on MFD_TMIO || MFD_ASIC3 || COMPILE_TEST
- 	select MMC_TMIO_CORE
- 	help
- 	  This provides support for the SD/MMC cell found in TC6393XB,
-@@ -971,7 +974,7 @@ config MMC_REALTEK_USB
- 
- config MMC_SUNXI
- 	tristate "Allwinner sunxi SD/MMC Host Controller support"
--	depends on ARCH_SUNXI
-+	depends on ARCH_SUNXI || COMPILE_TEST
- 	help
- 	  This selects support for the SD/MMC Host Controller on
- 	  Allwinner sunxi SoCs.
++/* Allocate a syncpoint. */
++struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
++					  struct host1x_client *client,
++					  unsigned long flags);
++
+ #endif
 -- 
-2.17.1
+2.28.0
 
