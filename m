@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66124C35256
-	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0259EC35264
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 330CF20757
-	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C03262078D
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="OBRIXqaA"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="Sh9kJic8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbgIEKgS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1728336AbgIEKgS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Sat, 5 Sep 2020 06:36:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47408 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728301AbgIEKgD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 5 Sep 2020 06:36:03 -0400
+        with ESMTP id S1728331AbgIEKgG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 5 Sep 2020 06:36:06 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63FC6C061249
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 887BFC061251
         for <linux-tegra@vger.kernel.org>; Sat,  5 Sep 2020 03:36:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -30,26 +30,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=wlKBqCBKNW33N2E4aCOfCZz4NWkiLHZTvRoEUoaMxhY=; b=OBRIXqaAyFG+IhpmJ75sxkLYWS
-        ZD/idwc2i4JqqYTOIkwzmX7AvpFhaBPxzxXoqjUtNbATlfnL1t+00bZjccvpbgjz2Uo+oiQTX9sj7
-        5c/Q5HYmFm7GSNWcqyT4ajn8LGKT/uDciWdv+GsNYoY3CzVUkM/hNRTozJyjK8ueGy7IRvXZIH0qu
-        M6mtNoy6/QK6rDvIFqBuVmN3fzWaIF5hXH4Fbqwu9UrOd08zTaEwwMYsEpUp3P+cQk5QElaspr/r1
-        TC2p/hxrdphvO4diYaEEFcIzn7o8zy3LbPyYYdtwERupJhGHf0Ei3e10yqeXEkCngkzZcK1aBwiKi
-        hkEFoZZw==;
+        bh=efbeVCQoLytd+E0O7D/DZEJokfsYVieF5J5uHvSWzyA=; b=Sh9kJic8xjqMfW7nLUrfJOhz0v
+        oo8OrUF25PgzXr7p5Y45q8RXscjTKWidA/lzapbFICKmgkF/FqOeMxo8+S3o90nL/M6kQjMBd15D0
+        VtOTuG2hqUxYUZd+AIg2tGyB+ND+ksozZkKnwtEL2XHJlGUT94K7XaIlXhH8J3+DaaFAuFHRe9zYh
+        nmYRfChdXmQq4AlQ8NCz0hAMEMZX+6FchV+Icg9x4J19ws8NrbhARiC8499ldGbvLEvZJMIgGqpPE
+        kR4KX8kUO/rqDZhSj//bGl1v9yLLI08NrENB9ee0t5MbTY2uWh0niUsd5PDHst0eIXTZtOnBcFvXl
+        Osqppn8A==;
 Received: from dsl-hkibng22-54faab-65.dhcp.inet.fi ([84.250.171.65] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kEVXx-0003SS-To; Sat, 05 Sep 2020 13:35:50 +0300
+        id 1kEVXx-0003SS-BW; Sat, 05 Sep 2020 13:35:49 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [RFC PATCH v2 10/17] WIP: gpu: host1x: Add no-recovery mode
-Date:   Sat,  5 Sep 2020 13:34:13 +0300
-Message-Id: <20200905103420.3021852-11-mperttunen@nvidia.com>
+Subject: [RFC PATCH v2 07/17] gpu: host1x: Introduce UAPI header
+Date:   Sat,  5 Sep 2020 13:34:10 +0300
+Message-Id: <20200905103420.3021852-8-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200905103420.3021852-1-mperttunen@nvidia.com>
 References: <20200905103420.3021852-1-mperttunen@nvidia.com>
@@ -63,239 +63,157 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add a new property for jobs to enable or disable recovery i.e.
-CPU increments of syncpoints to max value on job timeout. This
-allows for a more solid model for hanged jobs, where userspace
-doesn't need to guess if a syncpoint increment happened because
-the job completed, or because job timeout was triggered.
-
-On job timeout, we stop the channel, NOP all future jobs on the
-channel using the same syncpoint, mark the syncpoint as locked
-and resume the channel from the next job, if any.
-
-The future jobs are NOPed, since because we don't do the CPU
-increments, the value of the syncpoint is no longer synchronized,
-and any waiters would become confused if a future job incremented
-the syncpoint. The syncpoint is marked locked to ensure that any
-future jobs cannot increment the syncpoint either, until the
-application has recognized the situation and reallocated the
-syncpoint.
-
-WIP: There is a race condition between the locking and submission:
-* Submission passes locking check
-* Concurrent existing job timeouts, locking the syncpoint
-* Submission still goes ahead
+Add the userspace interface header, specifying interfaces
+for allocating and accessing syncpoints from userspace,
+and for creating sync_file based fences based on syncpoint
+thresholds.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/drm.c        |  1 +
- drivers/gpu/host1x/cdma.c          | 42 +++++++++++++++++++++++++-----
- drivers/gpu/host1x/hw/channel_hw.c |  6 ++++-
- drivers/gpu/host1x/job.c           |  4 +++
- drivers/gpu/host1x/syncpt.c        |  2 ++
- drivers/gpu/host1x/syncpt.h        | 12 +++++++++
- include/linux/host1x.h             |  9 +++++++
- 7 files changed, 69 insertions(+), 7 deletions(-)
+ include/uapi/linux/host1x.h | 134 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 134 insertions(+)
+ create mode 100644 include/uapi/linux/host1x.h
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index ceea9db341f0..7437c67924aa 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -197,6 +197,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	job->client = client;
- 	job->class = client->class;
- 	job->serialize = true;
-+	job->syncpt_recovery = true;
- 
- 	/*
- 	 * Track referenced BOs so that they can be unreferenced after the
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 6e6ca774f68d..59ad4ca38292 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -312,10 +312,6 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 	bool signal = false;
- 	struct host1x_job *job, *n;
- 
--	/* If CDMA is stopped, queue is cleared and we can return */
--	if (!cdma->running)
--		return;
--
- 	/*
- 	 * Walk the sync queue, reading the sync point registers as necessary,
- 	 * to consume as many sync queue entries as possible without blocking
-@@ -324,7 +320,8 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 		struct host1x_syncpt *sp = job->syncpt;
- 
- 		/* Check whether this syncpt has completed, and bail if not */
--		if (!host1x_syncpt_is_expired(sp, job->syncpt_end)) {
-+		if (!host1x_syncpt_is_expired(sp, job->syncpt_end) &&
-+		    !job->cancelled) {
- 			/* Start timer on next pending syncpt */
- 			if (job->timeout)
- 				cdma_start_timer_locked(cdma, job);
-@@ -413,8 +410,11 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 	else
- 		restart_addr = cdma->last_pos;
- 
-+	if (!job)
-+		goto resume;
+diff --git a/include/uapi/linux/host1x.h b/include/uapi/linux/host1x.h
+new file mode 100644
+index 000000000000..9c8fb9425cb2
+--- /dev/null
++++ b/include/uapi/linux/host1x.h
+@@ -0,0 +1,134 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/* Copyright (c) 2020 NVIDIA Corporation */
 +
- 	/* do CPU increments for the remaining syncpts */
--	if (job) {
-+	if (job->syncpt_recovery) {
- 		dev_dbg(dev, "%s: perform CPU incr on pending buffers\n",
- 			__func__);
- 
-@@ -433,8 +433,38 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 
- 		dev_dbg(dev, "%s: finished sync_queue modification\n",
- 			__func__);
-+	} else {
-+		struct host1x_job *failed_job = job;
++#ifndef _UAPI__LINUX_HOST1X_H
++#define _UAPI__LINUX_HOST1X_H
 +
-+		host1x_job_dump(dev, job);
++#include <linux/ioctl.h>
++#include <linux/types.h>
 +
-+		host1x_syncpt_set_locked(job->syncpt);
-+		failed_job->cancelled = true;
++#if defined(__cplusplus)
++extern "C" {
++#endif
 +
-+		list_for_each_entry_continue(job, &cdma->sync_queue, list) {
-+			unsigned int i;
-+
-+			if (job->syncpt != failed_job->syncpt)
-+				continue;
-+
-+			for (i = 0; i < job->num_slots; i++) {
-+				unsigned int slot = (job->first_get/8 + i) %
-+						    HOST1X_PUSHBUFFER_SLOTS;
-+				u32 *mapped = cdma->push_buffer.mapped;
-+
-+				mapped[2*slot+0] = 0x1bad0000;
-+				mapped[2*slot+1] = 0x1bad0000;
-+			}
-+
-+			job->cancelled = true;
-+		}
-+
-+		wmb();
-+
-+		update_cdma_locked(cdma);
- 	}
- 
-+resume:
- 	/* roll back DMAGET and start up channel again */
- 	host1x_hw_cdma_resume(host1x, cdma, restart_addr);
- }
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index d4c28faf27d1..145746c6f6fb 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -129,6 +129,10 @@ static int channel_submit(struct host1x_job *job)
- 				    job->num_gathers, job->num_relocs,
- 				    job->syncpt->id, job->syncpt_incrs);
- 
-+	/* TODO this is racy */
-+	if (job->syncpt->locked)
-+		return -EPERM;
-+
- 	/* before error checks, return current max */
- 	prev_max = job->syncpt_end = host1x_syncpt_read_max(sp);
- 
-@@ -191,7 +195,7 @@ static int channel_submit(struct host1x_job *job)
- 	/* schedule a submit complete interrupt */
- 	err = host1x_intr_add_action(host, sp, syncval,
- 				     HOST1X_INTR_ACTION_SUBMIT_COMPLETE, ch,
--				     completed_waiter, NULL);
-+				     completed_waiter, &job->waiter);
- 	completed_waiter = NULL;
- 	WARN(err, "Failed to set submit complete interrupt");
- 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index d8345d3bf0b3..e4f16fc899b0 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -79,6 +79,10 @@ static void job_free(struct kref *ref)
- {
- 	struct host1x_job *job = container_of(ref, struct host1x_job, ref);
- 
-+	if (job->waiter)
-+		host1x_intr_put_ref(job->syncpt->host, job->syncpt->id,
-+				    job->waiter);
-+
- 	if (job->syncpt)
- 		host1x_syncpt_put(job->syncpt);
- 
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index b31b994624fa..2fad8b2a55cc 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -385,6 +385,8 @@ static void syncpt_release(struct kref *ref)
- {
- 	struct host1x_syncpt *sp = container_of(ref, struct host1x_syncpt, ref);
- 
-+	sp->locked = false;
-+
- 	mutex_lock(&sp->host->syncpt_mutex);
- 
- 	host1x_syncpt_base_free(sp->base);
-diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
-index eb49d7003743..d19461704ea2 100644
---- a/drivers/gpu/host1x/syncpt.h
-+++ b/drivers/gpu/host1x/syncpt.h
-@@ -40,6 +40,13 @@ struct host1x_syncpt {
- 
- 	/* interrupt data */
- 	struct host1x_syncpt_intr intr;
-+
-+	/* 
-+	 * If a submission incrementing this syncpoint fails, lock it so that
-+	 * further submission cannot be made until application has handled the
-+	 * failure.
++struct host1x_allocate_syncpoint {
++	/**
++	 * @fd: [out]
++	 *
++	 * New file descriptor representing the allocated syncpoint.
 +	 */
-+	bool locked;
- };
- 
- /* Initialize sync point array  */
-@@ -120,4 +127,9 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
- 					  struct host1x_client *client,
- 					  unsigned long flags);
- 
-+static inline void host1x_syncpt_set_locked(struct host1x_syncpt *sp)
-+{
-+	sp->locked = true;
++	__s32 fd;
++
++	__u32 reserved[3];
++};
++
++struct host1x_syncpoint_info {
++	/**
++	 * @id: [out]
++	 *
++	 * System-global ID of the syncpoint.
++	 */
++	__u32 id;
++
++	__u32 reserved[3];
++};
++
++struct host1x_syncpoint_increment {
++	/**
++	 * @count: [in]
++	 *
++	 * Number of times to increment the syncpoint. The syncpoint can
++	 * be observed at in-between values, but each increment is atomic.
++	 */
++	__u32 count;
++};
++
++struct host1x_read_syncpoint {
++	/**
++	 * @id: [in]
++	 *
++	 * ID of the syncpoint to read.
++	 */
++	__u32 id;
++
++	/**
++	 * @value: [out]
++	 *
++	 * Current value of the syncpoint.
++	 */
++	__u32 value;
++};
++
++struct host1x_create_fence {
++	/**
++	 * @id: [in]
++	 *
++	 * ID of the syncpoint to create a fence for.
++	 */
++	__u32 id;
++
++	/**
++	 * @threshold: [in]
++	 *
++	 * When the syncpoint reaches this value, the fence will be signaled.
++	 * The syncpoint is considered to have reached the threshold when the
++	 * following condition is true:
++	 *
++	 * 	((value - threshold) & 0x80000000U) == 0U
++	 *
++	 */
++	__u32 threshold;
++
++	/**
++	 * @fence_fd: [out]
++	 *
++	 * New sync_file file descriptor containing the created fence.
++	 */
++	__s32 fence_fd;
++
++	__u32 reserved[1];
++};
++
++struct host1x_fence_extract_fence {
++	__u32 id;
++	__u32 threshold;
++};
++
++struct host1x_fence_extract {
++	/**
++	 * @fence_fd: [in]
++	 *
++	 * sync_file file descriptor
++	 */
++	__s32 fence_fd;
++
++	/**
++	 * @num_fences: [in,out]
++	 *
++	 * In: size of the `fences_ptr` array counted in elements.
++	 * Out: required size of the `fences_ptr` array counted in elements.
++	 */
++	__u32 num_fences;
++
++	/**
++	 * @fences_ptr: [in]
++	 *
++	 * Pointer to array of `struct host1x_fence_extract_fence`.
++	 */
++	__u64 fences_ptr;
++
++	__u32 reserved[2];
++};
++
++#define HOST1X_IOCTL_ALLOCATE_SYNCPOINT  _IOWR('X', 0x00, struct host1x_allocate_syncpoint)
++#define HOST1X_IOCTL_READ_SYNCPOINT      _IOR ('X', 0x01, struct host1x_read_syncpoint)
++#define HOST1X_IOCTL_CREATE_FENCE        _IOWR('X', 0x02, struct host1x_create_fence)
++#define HOST1X_IOCTL_SYNCPOINT_INFO      _IOWR('X', 0x03, struct host1x_syncpoint_info)
++#define HOST1X_IOCTL_SYNCPOINT_INCREMENT _IOWR('X', 0x04, struct host1x_syncpoint_increment)
++#define HOST1X_IOCTL_FENCE_EXTRACT       _IOWR('X', 0x05, struct host1x_fence_extract)
++
++#if defined(__cplusplus)
 +}
++#endif
 +
- #endif
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 73a247e180a9..3ffe16152ebc 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -229,9 +229,15 @@ struct host1x_job {
- 	u32 syncpt_incrs;
- 	u32 syncpt_end;
- 
-+	/* Completion waiter ref */
-+	void *waiter;
-+
- 	/* Maximum time to wait for this job */
- 	unsigned int timeout;
- 
-+	/* Job has timed out and should be released */
-+	bool cancelled;
-+
- 	/* Index and number of slots used in the push buffer */
- 	unsigned int first_get;
- 	unsigned int num_slots;
-@@ -252,6 +258,9 @@ struct host1x_job {
- 
- 	/* Add a channel wait for previous ops to complete */
- 	bool serialize;
-+
-+	/* Fast-forward syncpoint increments on job timeout */
-+	bool syncpt_recovery;
- };
- 
- struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
++#endif
 -- 
 2.28.0
 
