@@ -2,62 +2,61 @@ Return-Path: <SRS0=vF+y=CO=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAD1C43461
-	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 20:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B16A1C43461
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 20:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD322074B
-	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 20:47:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CBC72074B
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 20:47:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIthBN+1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kedm53ZI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729029AbgIEUqz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 5 Sep 2020 16:46:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55442 "EHLO
+        id S1729039AbgIEUrM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 5 Sep 2020 16:47:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728665AbgIEUmd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 5 Sep 2020 16:42:33 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97271C061246;
-        Sat,  5 Sep 2020 13:42:30 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id w11so5627810lfn.2;
-        Sat, 05 Sep 2020 13:42:30 -0700 (PDT)
+        with ESMTP id S1728323AbgIEUmb (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 5 Sep 2020 16:42:31 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82B23C061244;
+        Sat,  5 Sep 2020 13:42:28 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id z19so5615096lfr.4;
+        Sat, 05 Sep 2020 13:42:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=QMj/s4K97H8grdOpygKSw68Mm/Tx/Oq6EnRbophVBOI=;
-        b=EIthBN+16r3Z0wTV7VPAVeJH3TqEeOEPRvQa83kBY0blFCdtkp2sMwDsY31rWX/3In
-         p99eBv+4Yb2yNxkf2NboXT1ysxEYgX6x57F5kmkQBhi+aIqeYMtgxFGEdiF+oHq1X8qS
-         JOI99SfzF2vQPM2faY8X2fzOKo1gjB9JwZ/ZPXXLiLRye2yUjoL/iH+qcDHQVuC0V/W8
-         Q2rgtWvQgrs/nh/BmhQVJRIEU9Rn3tplWa1P7lmSg4C/ch6J6pdPO13+Su4nOJecLgXi
-         2TEdIv3BdPKp77pqbAzqXkUe5F582osI3Oaq6ZrDw5S+6PmxgdhzglgYskSA14sHgMj+
-         oULQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=l/2Yi9oA04Gn2zXLl91qyD7H5oBjTtrtpwfVnvjh2FA=;
+        b=kedm53ZIacgGuBr6hF16jt18gyFz9AyEc0Ys4PpdlkPLHe01gvzOALH3YtUprh45p6
+         fDdu40+bixZyanjgKCnqjgBAfWG664a5Ct73wMsrbktvDDbAxr8QX4FeN/rPAR8UoTkM
+         74XmpefXordV8xoobxDAntA8LGCXzSNCNtDQp2wgR57WgQ2b57K4PTvpFe4thuE7PXcX
+         FgNBSdG4niDOpWmlRQNw+LbF/oaERoqObX4ixMEY8C1t8mDy2e/QprbeqB6lNtswkeNn
+         fGWEMsrhyuJU4HTaxPlkc0MTO90zmbPcV/1eEw5xDdL1tiekmyDq4YZGO3lR5dIWYB+g
+         sXJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QMj/s4K97H8grdOpygKSw68Mm/Tx/Oq6EnRbophVBOI=;
-        b=TISwiSwtC013635m1G+NtZFP3hc9mFx5a6Nqyi/s6PldGqWdM1BBWks0BGqxUAEgpS
-         hnfTf8EMMbtzXWzyR05Wybz7Ld4U9OAOLqqUhnNpOlbVXghzs/k1ItCH+4OiMchoxBj6
-         BFADMnEoPkkrh1umrKc3dzma0RCc221galz0YlXsIknOAS35x7SyNwPBRDw1HuNBLewP
-         Mp810YU9R29IjY8EWGOeFoiO25DFSfhNsTFCxYPg2Jn6J+XlH3NkwsaNTL+22AXT7GnT
-         2fmcWZ9NeCvaB9VTxjKJRCtIgws+snjCGO6fnkt6cGCddzlOZWfm24DFOMnNhpxlIhxf
-         IEPQ==
-X-Gm-Message-State: AOAM532sJFf/uv8taDwPkTqUfqRWjDcNeyPTap/rPyPMQqcuks2L39+g
-        nI2Z1vem7yUg+SMts11Ys8xN9qjqwi8=
-X-Google-Smtp-Source: ABdhPJywMbhvZcuvk4k5Lnbh1hgdTT1mHZYradysifXwQQAsoNHjT/G3VlUV3V3K9RC26k14Ppn/tg==
-X-Received: by 2002:a19:915b:: with SMTP id y27mr6819862lfj.134.1599338548671;
-        Sat, 05 Sep 2020 13:42:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=l/2Yi9oA04Gn2zXLl91qyD7H5oBjTtrtpwfVnvjh2FA=;
+        b=cAB1Isp1pbNATw91j4BzMr+UvCWQbe5HcpClSErr6S6dQL0wE7OihAnpMSRfDJ0nKA
+         YRixl0FgD3vkAsOX6YK58QrSj1EjYDPg4ZCNKDmwnVNztynpJWpeUiU+LFP7rOs1Ot47
+         K6OkdegTLq3ShXOgnxSuraEuzz5bpu/anFgiYxkEyDUArkSpfypwh/8T+Z/dE1DJtSps
+         KDyNyfds9kNm9jl40EZetWj5xkwq1zANqmoSmgvBi+Y6u5Pfdn8alWiMBf+TBrhDIqgo
+         6G/tVwUNQ3AajNZlnnZc2px9d/B+fdjbDWuht4jBecULmQrAqAY/q8DXC5JE1p5CQ483
+         66iw==
+X-Gm-Message-State: AOAM532krWW7pxyiDOo00e8mCCYJhxGDhUGxTvOLaYuDk10doJgecpzs
+        MaKUnyWMtuqHND4lsVtTifVYPHKLGn8=
+X-Google-Smtp-Source: ABdhPJyakU5Ph9sxkfrNWT7+VQ+knnK/r6Y/uEC5lTQ5dWbgCvH+UGdn7KiwspRoPeTlo2aJLIBHyw==
+X-Received: by 2002:a19:f510:: with SMTP id j16mr6635793lfb.169.1599338545035;
+        Sat, 05 Sep 2020 13:42:25 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id e17sm1677763ljn.18.2020.09.05.13.42.27
+        by smtp.gmail.com with ESMTPSA id e17sm1677763ljn.18.2020.09.05.13.42.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Sep 2020 13:42:28 -0700 (PDT)
+        Sat, 05 Sep 2020 13:42:24 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,128 +66,131 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 04/31] i2c: tegra: Remove i2c_dev.clk_divisor_non_hs_mode member
-Date:   Sat,  5 Sep 2020 23:41:24 +0300
-Message-Id: <20200905204151.25343-5-digetx@gmail.com>
+Subject: [PATCH v4 00/31] Improvements for Tegra I2C driver
+Date:   Sat,  5 Sep 2020 23:41:20 +0300
+Message-Id: <20200905204151.25343-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200905204151.25343-1-digetx@gmail.com>
-References: <20200905204151.25343-1-digetx@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The "non_hs_mode" divisor value is fixed, thus there is no need to have
-the variable i2c_dev.clk_divisor_non_hs_mode struct member. Let's remove
-it and move the mode selection into tegra_i2c_init() where it can be
-united with the timing selection.
+Hello!
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/i2c/busses/i2c-tegra.c | 45 +++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 25 deletions(-)
+This series performs refactoring of the Tegra I2C driver code and hardens
+the atomic-transfer mode.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 56c5aff579b6..f5b9cdb65182 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -250,7 +250,6 @@ struct tegra_i2c_hw_feature {
-  * @msg_buf_remaining: size of unsent data in the message buffer
-  * @msg_read: identifies read transfers
-  * @bus_clk_rate: current I2C bus clock rate
-- * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
-  * @is_multimaster_mode: track if I2C controller is in multi-master mode
-  * @tx_dma_chan: DMA transmit channel
-  * @rx_dma_chan: DMA receive channel
-@@ -281,7 +280,6 @@ struct tegra_i2c_dev {
- 	size_t msg_buf_remaining;
- 	int msg_read;
- 	u32 bus_clk_rate;
--	u16 clk_divisor_non_hs_mode;
- 	bool is_multimaster_mode;
- 	struct dma_chan *tx_dma_chan;
- 	struct dma_chan *rx_dma_chan;
-@@ -783,6 +781,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	u32 val;
- 	int err;
- 	u32 clk_divisor, clk_multiplier;
-+	u32 non_hs_mode;
- 	u32 tsu_thd;
- 	u8 tlow, thigh;
- 
-@@ -805,24 +804,32 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	if (i2c_dev->is_vi)
- 		tegra_i2c_vi_init(i2c_dev);
- 
--	/* Make sure clock divisor programmed correctly */
--	clk_divisor = FIELD_PREP(I2C_CLK_DIVISOR_HSMODE,
--				 i2c_dev->hw->clk_divisor_hs_mode) |
--		      FIELD_PREP(I2C_CLK_DIVISOR_STD_FAST_MODE,
--				 i2c_dev->clk_divisor_non_hs_mode);
--	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
--
--	if (i2c_dev->bus_clk_rate > I2C_MAX_STANDARD_MODE_FREQ &&
--	    i2c_dev->bus_clk_rate <= I2C_MAX_FAST_MODE_PLUS_FREQ) {
-+	switch (i2c_dev->bus_clk_rate) {
-+	case I2C_MAX_STANDARD_MODE_FREQ + 1 ... I2C_MAX_FAST_MODE_PLUS_FREQ:
- 		tlow = i2c_dev->hw->tlow_fast_fastplus_mode;
- 		thigh = i2c_dev->hw->thigh_fast_fastplus_mode;
- 		tsu_thd = i2c_dev->hw->setup_hold_time_fast_fast_plus_mode;
--	} else {
-+
-+		if (i2c_dev->bus_clk_rate > I2C_MAX_FAST_MODE_FREQ)
-+			non_hs_mode = i2c_dev->hw->clk_divisor_fast_plus_mode;
-+		else
-+			non_hs_mode = i2c_dev->hw->clk_divisor_fast_mode;
-+		break;
-+
-+	default:
- 		tlow = i2c_dev->hw->tlow_std_mode;
- 		thigh = i2c_dev->hw->thigh_std_mode;
- 		tsu_thd = i2c_dev->hw->setup_hold_time_std_mode;
-+		non_hs_mode = i2c_dev->hw->clk_divisor_std_mode;
-+		break;
- 	}
- 
-+	/* Make sure clock divisor programmed correctly */
-+	clk_divisor = FIELD_PREP(I2C_CLK_DIVISOR_HSMODE,
-+				 i2c_dev->hw->clk_divisor_hs_mode) |
-+		      FIELD_PREP(I2C_CLK_DIVISOR_STD_FAST_MODE, non_hs_mode);
-+	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
-+
- 	if (i2c_dev->hw->has_interface_timing_reg) {
- 		val = FIELD_PREP(I2C_INTERFACE_TIMING_THIGH, thigh) |
- 		      FIELD_PREP(I2C_INTERFACE_TIMING_TLOW, tlow);
-@@ -837,7 +844,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
- 
- 	clk_multiplier  = tlow + thigh + 2;
--	clk_multiplier *= i2c_dev->clk_divisor_non_hs_mode + 1;
-+	clk_multiplier *= non_hs_mode + 1;
- 
- 	err = clk_set_rate(i2c_dev->div_clk,
- 			   i2c_dev->bus_clk_rate * clk_multiplier);
-@@ -1748,18 +1755,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		goto unprepare_fast_clk;
- 	}
- 
--	if (i2c_dev->bus_clk_rate > I2C_MAX_FAST_MODE_FREQ &&
--	    i2c_dev->bus_clk_rate <= I2C_MAX_FAST_MODE_PLUS_FREQ)
--		i2c_dev->clk_divisor_non_hs_mode =
--				i2c_dev->hw->clk_divisor_fast_plus_mode;
--	else if (i2c_dev->bus_clk_rate > I2C_MAX_STANDARD_MODE_FREQ &&
--		 i2c_dev->bus_clk_rate <= I2C_MAX_FAST_MODE_FREQ)
--		i2c_dev->clk_divisor_non_hs_mode =
--				i2c_dev->hw->clk_divisor_fast_mode;
--	else
--		i2c_dev->clk_divisor_non_hs_mode =
--				i2c_dev->hw->clk_divisor_std_mode;
--
- 	ret = clk_prepare(i2c_dev->div_clk);
- 	if (ret < 0) {
- 		dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
+Changelog:
+
+v4: - Reordered patches in the fixes/features/cleanups order like it was
+      suggested by Andy Shevchenko.
+
+    - Now using clk-bulk API, which was suggested by Andy Shevchenko.
+
+    - Reworked "Make tegra_i2c_flush_fifos() usable in atomic transfer"
+      patch to use iopoll API, which was suggested by Andy Shevchenko.
+
+    - Separated "Clean up probe function" into several smaller patches.
+
+    - Squashed "Add missing newline before returns" patch into
+      "Clean up whitespaces, newlines and indentation".
+
+    - The "Drop '_timeout' from wait/poll function names" is renamed to
+      "Rename wait/poll functions".
+
+    - The "Use reset_control_reset()" is changed to not fail tegra_i2c_init(),
+      but only emit warning. This should be more friendly behaviour in oppose
+      to having a non-bootable machine if reset-control fails.
+
+    - New patches:
+
+        i2c: tegra: Remove error message used for devm_request_irq() failure
+        i2c: tegra: Use devm_platform_get_and_ioremap_resource()
+        i2c: tegra: Use platform_get_irq()
+        i2c: tegra: Use clk-bulk helpers
+        i2c: tegra: Remove bogus barrier()
+        i2c: tegra: Factor out register polling into separate function
+        i2c: tegra: Consolidate error handling in tegra_i2c_xfer_msg()
+        i2c: tegra: Clean up and improve comments
+        i2c: tegra: Rename couple "ret" variables to "err"
+
+v3: - Optimized "Make tegra_i2c_flush_fifos() usable in atomic transfer"
+      patch by pre-checking FIFO state before starting to poll using
+      ktime API, which may be expensive under some circumstances.
+
+    - The "Clean up messages in the code" patch now makes all messages
+      to use proper capitalization of abbreviations. Thanks to Andy Shevchenko
+      and Michał Mirosław for the suggestion.
+
+    - The "Remove unnecessary whitespaces and newlines" patch is transformed
+      into "Clean up whitespaces and newlines", it now also adds missing
+      newlines and spaces.
+
+    - Reworked the "Clean up probe function" patch in accordance to
+      suggestion from Michał Mirosław by factoring out only parts of
+      the code that make error unwinding cleaner.
+
+    - Added r-b from Michał Mirosław.
+
+    - Added more patches:
+
+        i2c: tegra: Reorder location of functions in the code
+        i2c: tegra: Factor out packet header setup from tegra_i2c_xfer_msg()
+        i2c: tegra: Remove "dma" variable
+        i2c: tegra: Initialization div-clk rate unconditionally
+        i2c: tegra: Remove i2c_dev.clk_divisor_non_hs_mode member
+
+v2: - Cleaned more messages in the "Clean up messages in the code" patch.
+
+    - The error code of reset_control_reset() is checked now.
+
+    - Added these new patches to clean up couple more things:
+
+        i2c: tegra: Check errors for both positive and negative values
+        i2c: tegra: Improve coding style of tegra_i2c_wait_for_config_load()
+        i2c: tegra: Remove unnecessary whitespaces and newlines
+        i2c: tegra: Rename variable in tegra_i2c_issue_bus_clear()
+        i2c: tegra: Improve driver module description
+
+Dmitry Osipenko (31):
+  i2c: tegra: Make tegra_i2c_flush_fifos() usable in atomic transfer
+  i2c: tegra: Handle potential error of tegra_i2c_flush_fifos()
+  i2c: tegra: Initialization div-clk rate unconditionally
+  i2c: tegra: Remove i2c_dev.clk_divisor_non_hs_mode member
+  i2c: tegra: Runtime PM always available on Tegra
+  i2c: tegra: Remove error message used for devm_request_irq() failure
+  i2c: tegra: Use reset_control_reset()
+  i2c: tegra: Use devm_platform_get_and_ioremap_resource()
+  i2c: tegra: Use platform_get_irq()
+  i2c: tegra: Use clk-bulk helpers
+  i2c: tegra: Factor out runtime PM and hardware initialization
+  i2c: tegra: Move out all device-tree parsing into tegra_i2c_parse_dt()
+  i2c: tegra: Clean up probe function
+  i2c: tegra: Remove likely/unlikely from the code
+  i2c: tegra: Remove bogus barrier()
+  i2c: tegra: Remove "dma" variable from tegra_i2c_xfer_msg()
+  i2c: tegra: Improve formatting of function variables
+  i2c: tegra: Improve coding style of tegra_i2c_wait_for_config_load()
+  i2c: tegra: Rename wait/poll functions
+  i2c: tegra: Rename variable in tegra_i2c_issue_bus_clear()
+  i2c: tegra: Factor out error recovery from tegra_i2c_xfer_msg()
+  i2c: tegra: Factor out packet header setup from tegra_i2c_xfer_msg()
+  i2c: tegra: Factor out register polling into separate function
+  i2c: tegra: Reorder location of functions in the code
+  i2c: tegra: Check errors for both positive and negative values
+  i2c: tegra: Consolidate error handling in tegra_i2c_xfer_msg()
+  i2c: tegra: Clean up printk messages
+  i2c: tegra: Clean up whitespaces, newlines and indentation
+  i2c: tegra: Improve driver module description
+  i2c: tegra: Clean up and improve comments
+  i2c: tegra: Rename couple "ret" variables to "err"
+
+ drivers/i2c/busses/i2c-tegra.c | 1272 +++++++++++++++-----------------
+ 1 file changed, 612 insertions(+), 660 deletions(-)
+
 -- 
 2.27.0
 
