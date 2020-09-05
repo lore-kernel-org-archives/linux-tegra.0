@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099B3C2D0E2
-	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210FEC2D0E4
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7F1A2078D
-	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E355E20757
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="1NaxRjpu"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="SPd7YTbp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgIEKgM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 5 Sep 2020 06:36:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47432 "EHLO
+        id S1728376AbgIEKgN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 5 Sep 2020 06:36:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728371AbgIEKgI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 5 Sep 2020 06:36:08 -0400
+        with ESMTP id S1728381AbgIEKgJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 5 Sep 2020 06:36:09 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B2F2C06125C
-        for <linux-tegra@vger.kernel.org>; Sat,  5 Sep 2020 03:36:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB19CC061262
+        for <linux-tegra@vger.kernel.org>; Sat,  5 Sep 2020 03:36:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=/3TwTHVr7Z4vVF3wkK/PK3Vd63FGJpSsXWpQHaDcQCc=; b=1NaxRjpuwDIQPuI7lREUjQW/NR
-        AaYg8NX1jXyCla+5+6MA8kH7IRkxcRtE/ScOzDgJcgIlgxWITnnr9rzfxifPiOpH+xAeYsvuocoXh
-        b050FLULNXa/OvoovAPFupvrnTOxwE93SD/EZC88VK/bbhcFwGhavWKq23c5Y9KKT6KccUtbPsFI/
-        hkJOUro1nNGR8tmeHZJFCYe/Djlz9sBZRWfCSTR0s5+2ZonlGgbTB/yEyVuwqh8ARlTcsV1ZraVry
-        PP9quS9rXckOBuirKD0WroDyzn7zPxg4CiU7RbAZKqtOdKH0J2aWtCk4jxeBUnlTBLk9jkYtDm3Uz
-        5xq+ZUlQ==;
+        bh=G0qJuXob1DSXWdY1RiQruheMQunVJ/ybhzxu/lTK9ys=; b=SPd7YTbpBuA7ogF8d3BXRsLhFa
+        FH98nyQF8C21c8D+E31XxIRmqb3XdsZlzX5+yr7NMMeqL/RdtbLcrZh+ydHRrnYSPdKt+xpcnR5Sy
+        2S9hqbaMEWh58WZ/YQi4PEaD3WzlLsa9H1YW48uCJhspxLpMQ5DjFZEK7P1BMaJcvA0wrxGzR54CT
+        E3t+OLB1Y6qnrchjd7Q1mBNs8wxTe1h7AIot0jQ7TS9hLH2Md750gdDwb5DLUoQS5w+J+pdn8xUqJ
+        98DXYhSue2Ekk+0Jqra4AbGfRJuTv41MnvBupBkeUMWKlPbaswwdNKxrtCL2TdKYcMZ9DdSLkT3JJ
+        /YyV8M8w==;
 Received: from dsl-hkibng22-54faab-65.dhcp.inet.fi ([84.250.171.65] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kEVXy-0003SS-3V; Sat, 05 Sep 2020 13:35:50 +0300
+        id 1kEVXw-0003SS-SP; Sat, 05 Sep 2020 13:35:48 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [RFC PATCH v2 11/17] gpu: host1x: Add job release callback
-Date:   Sat,  5 Sep 2020 13:34:14 +0300
-Message-Id: <20200905103420.3021852-12-mperttunen@nvidia.com>
+Subject: [RFC PATCH v2 04/17] gpu: host1x: Remove cancelled waiters immediately
+Date:   Sat,  5 Sep 2020 13:34:07 +0300
+Message-Id: <20200905103420.3021852-5-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200905103420.3021852-1-mperttunen@nvidia.com>
 References: <20200905103420.3021852-1-mperttunen@nvidia.com>
@@ -63,45 +63,42 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add a callback field to the job structure, to be called just before
-the job is to be freed. This allows the job's submitter to clean
-up any of its own state, like decrement runtime PM refcounts.
+Before this patch, cancelled waiters would only be cleaned up
+once their threshold value was reached. Make host1x_intr_put_ref
+process the cancellation immediately to fix this.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/host1x/job.c | 3 +++
- include/linux/host1x.h   | 4 ++++
- 2 files changed, 7 insertions(+)
+ drivers/gpu/host1x/intr.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index e4f16fc899b0..acf322beb56c 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -79,6 +79,9 @@ static void job_free(struct kref *ref)
- {
- 	struct host1x_job *job = container_of(ref, struct host1x_job, ref);
+diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
+index 9245add23b5d..5d328d20ce6d 100644
+--- a/drivers/gpu/host1x/intr.c
++++ b/drivers/gpu/host1x/intr.c
+@@ -247,13 +247,17 @@ void host1x_intr_put_ref(struct host1x *host, unsigned int id, void *ref)
+ 	struct host1x_waitlist *waiter = ref;
+ 	struct host1x_syncpt *syncpt;
  
-+	if (job->release)
-+		job->release(job);
+-	while (atomic_cmpxchg(&waiter->state, WLS_PENDING, WLS_CANCELLED) ==
+-	       WLS_REMOVED)
+-		schedule();
++	atomic_cmpxchg(&waiter->state, WLS_PENDING, WLS_CANCELLED);
+ 
+ 	syncpt = host->syncpt + id;
+-	(void)process_wait_list(host, syncpt,
+-				host1x_syncpt_load(host->syncpt + id));
 +
- 	if (job->waiter)
- 		host1x_intr_put_ref(job->syncpt->host, job->syncpt->id,
- 				    job->waiter);
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 3ffe16152ebc..cabc5bef5bae 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -261,6 +261,10 @@ struct host1x_job {
++	spin_lock(&syncpt->intr.lock);
++	if (atomic_cmpxchg(&waiter->state, WLS_CANCELLED, WLS_HANDLED) ==
++	    WLS_CANCELLED) {
++		list_del(&waiter->list);
++		kref_put(&waiter->refcount, waiter_release);
++	}
++	spin_unlock(&syncpt->intr.lock);
  
- 	/* Fast-forward syncpoint increments on job timeout */
- 	bool syncpt_recovery;
-+
-+	/* Callback called when job is freed */
-+	void (*release)(struct host1x_job *job);
-+	void *user_data;
- };
- 
- struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
+ 	kref_put(&waiter->refcount, waiter_release);
+ }
 -- 
 2.28.0
 
