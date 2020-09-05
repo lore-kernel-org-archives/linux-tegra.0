@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B7CC2D0A7
-	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C59C433E2
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB1720760
-	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D809020757
+	for <linux-tegra@archiver.kernel.org>; Sat,  5 Sep 2020 10:36:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="wedhOI5A"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="Q6rnyjer"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbgIEKgN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 5 Sep 2020 06:36:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47436 "EHLO
+        id S1726302AbgIEKgK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 5 Sep 2020 06:36:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728376AbgIEKgJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 5 Sep 2020 06:36:09 -0400
+        with ESMTP id S1726582AbgIEKgD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 5 Sep 2020 06:36:03 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A319AC061260
-        for <linux-tegra@vger.kernel.org>; Sat,  5 Sep 2020 03:36:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0016CC061246
+        for <linux-tegra@vger.kernel.org>; Sat,  5 Sep 2020 03:36:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=R/UoEBSvS9MS0V5B2W+FSB1dz5Fuk25uS8KxK4O3IF4=; b=wedhOI5Ax6dGZ+nHjkSwql0+uB
-        ucyhIOG4RwqeRXaNCale2qTXGWCTyZUxQjFZ6kgK4byAD1zMyLOtFvZdiAkgZk8E3xpkp0xFf8Uoa
-        UCMP7K4roOnQUuBaiADLqPDODQ9mARGcvrEWgXInrS2Ojoiw/hEignfYXQdYxod9YLYeF9HKaq88N
-        qOymDd+SeYDTLQLW/7kavKd9ioY7udwGjjSu/F7BQL+aRGga3evbETqOKdI7UXh9SMHZSsbo89st7
-        sdaZByUqhFYfvZUXwExhRzjQQ29mS2uwT3AfPvmfY58HwOrPEZZcojByMfZ9LJr1FzJ7CQVyxkYfS
-        z7E9GHaw==;
+        bh=+kekVY1ysXXVxtQl2+Ofqk1YNgrLDl1hS21TPN9wUu4=; b=Q6rnyjereYVs3tsgZqs0O48Cql
+        ZfqPpyYzGI4N8qcbkKHLNxCGOQiV3q/BXMWmAR44OBABcXoP0TAPWmOPFSZL6Ko6L4Zp00oIo4yQ1
+        c9WWiOQRCzMSELisQjSs6prCtJ+LUMd8eN5ITBoMnrDFCUlLRtsfyOsroOGBdpgdtRcKzgIBO6vmi
+        o+ty/wz8p1t1b4yiWSmv+eJPCaVKU9w31sJLjzvOOZvUOcuzjcW3vciRl4MR00SgoPkAYAxImIA5e
+        0FEghTOd6MylrtC/S6+12El91qfQe+phaQiuv1EcpoMKhqYpOKNmYBRw3HRWT7sAU8a5NYqHhsGIi
+        9Jri5RKQ==;
 Received: from dsl-hkibng22-54faab-65.dhcp.inet.fi ([84.250.171.65] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kEVXx-0003SS-4E; Sat, 05 Sep 2020 13:35:49 +0300
+        id 1kEVXw-0003SS-Oe; Sat, 05 Sep 2020 13:35:48 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [RFC PATCH v2 06/17] gpu: host1x: Cleanup and refcounting for syncpoints
-Date:   Sat,  5 Sep 2020 13:34:09 +0300
-Message-Id: <20200905103420.3021852-7-mperttunen@nvidia.com>
+Subject: [RFC PATCH v2 03/17] gpu: host1x: Show number of pending waiters in debugfs
+Date:   Sat,  5 Sep 2020 13:34:06 +0300
+Message-Id: <20200905103420.3021852-4-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200905103420.3021852-1-mperttunen@nvidia.com>
 References: <20200905103420.3021852-1-mperttunen@nvidia.com>
@@ -63,531 +63,50 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add reference counting for allocated syncpoints to allow keeping
-them allocated while jobs are referencing them. Additionally,
-clean up various places using syncpoint IDs to use host1x_syncpt
-pointers instead.
+Show the number of pending waiters in the debugfs status file.
+This is useful for testing to verify that waiters do not leak
+or accumulate incorrectly.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/dc.c         |  4 +-
- drivers/gpu/drm/tegra/drm.c        | 17 ++++---
- drivers/gpu/drm/tegra/gr2d.c       |  4 +-
- drivers/gpu/drm/tegra/gr3d.c       |  4 +-
- drivers/gpu/drm/tegra/vic.c        |  4 +-
- drivers/gpu/host1x/cdma.c          | 11 ++---
- drivers/gpu/host1x/dev.h           |  7 ++-
- drivers/gpu/host1x/hw/cdma_hw.c    |  2 +-
- drivers/gpu/host1x/hw/channel_hw.c | 10 ++--
- drivers/gpu/host1x/hw/debug_hw.c   |  2 +-
- drivers/gpu/host1x/job.c           |  5 +-
- drivers/gpu/host1x/syncpt.c        | 75 +++++++++++++++++++++++-------
- drivers/gpu/host1x/syncpt.h        |  3 ++
- include/linux/host1x.h             |  8 ++--
- 14 files changed, 99 insertions(+), 57 deletions(-)
+ drivers/gpu/host1x/debug.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 9a0b3240bc58..efb41c10dad4 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2127,7 +2127,7 @@ static int tegra_dc_init(struct host1x_client *client)
- 		drm_plane_cleanup(primary);
+diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
+index 3eee4318b158..2d06a7406b3b 100644
+--- a/drivers/gpu/host1x/debug.c
++++ b/drivers/gpu/host1x/debug.c
+@@ -69,6 +69,7 @@ static int show_channel(struct host1x_channel *ch, void *data, bool show_fifo)
  
- 	host1x_client_iommu_detach(client);
--	host1x_syncpt_free(dc->syncpt);
-+	host1x_syncpt_put(dc->syncpt);
+ static void show_syncpts(struct host1x *m, struct output *o)
+ {
++	struct list_head *pos;
+ 	unsigned int i;
  
- 	return err;
- }
-@@ -2152,7 +2152,7 @@ static int tegra_dc_exit(struct host1x_client *client)
+ 	host1x_debug_output(o, "---- syncpts ----\n");
+@@ -76,12 +77,19 @@ static void show_syncpts(struct host1x *m, struct output *o)
+ 	for (i = 0; i < host1x_syncpt_nb_pts(m); i++) {
+ 		u32 max = host1x_syncpt_read_max(m->syncpt + i);
+ 		u32 min = host1x_syncpt_load(m->syncpt + i);
++		unsigned int waiters = 0;
+ 
+-		if (!min && !max)
++		spin_lock(&m->syncpt[i].intr.lock);
++		list_for_each(pos, &m->syncpt[i].intr.wait_head)
++			waiters++;
++		spin_unlock(&m->syncpt[i].intr.lock);
++
++		if (!min && !max && !waiters)
+ 			continue;
+ 
+-		host1x_debug_output(o, "id %u (%s) min %d max %d\n",
+-				    i, m->syncpt[i].name, min, max);
++		host1x_debug_output(o,
++				    "id %u (%s) min %d max %d (%d waiters)\n",
++				    i, m->syncpt[i].name, min, max, waiters);
  	}
  
- 	host1x_client_iommu_detach(client);
--	host1x_syncpt_free(dc->syncpt);
-+	host1x_syncpt_put(dc->syncpt);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index ba9d1c3e7cac..ceea9db341f0 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -171,7 +171,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	struct drm_tegra_syncpt syncpt;
- 	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
- 	struct drm_gem_object **refs;
--	struct host1x_syncpt *sp;
-+	struct host1x_syncpt *sp = NULL;
- 	struct host1x_job *job;
- 	unsigned int num_refs;
- 	int err;
-@@ -298,8 +298,8 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 		goto fail;
- 	}
- 
--	/* check whether syncpoint ID is valid */
--	sp = host1x_syncpt_get(host1x, syncpt.id);
-+	/* Syncpoint ref will be dropped on job release. */
-+	sp = host1x_syncpt_get_by_id(host1x, syncpt.id);
- 	if (!sp) {
- 		err = -ENOENT;
- 		goto fail;
-@@ -308,7 +308,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	job->is_addr_reg = context->client->ops->is_addr_reg;
- 	job->is_valid_class = context->client->ops->is_valid_class;
- 	job->syncpt_incrs = syncpt.incrs;
--	job->syncpt_id = syncpt.id;
-+	job->syncpt = sp;
- 	job->timeout = 10000;
- 
- 	if (args->timeout && args->timeout < 10000)
-@@ -327,6 +327,9 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	args->fence = job->syncpt_end;
- 
- fail:
-+	if (sp)
-+		host1x_syncpt_put(sp);
-+
- 	while (num_refs--)
- 		drm_gem_object_put(refs[num_refs]);
- 
-@@ -380,7 +383,7 @@ static int tegra_syncpt_read(struct drm_device *drm, void *data,
- 	struct drm_tegra_syncpt_read *args = data;
- 	struct host1x_syncpt *sp;
- 
--	sp = host1x_syncpt_get(host, args->id);
-+	sp = host1x_syncpt_get_by_id_noref(host, args->id);
- 	if (!sp)
- 		return -EINVAL;
- 
-@@ -395,7 +398,7 @@ static int tegra_syncpt_incr(struct drm_device *drm, void *data,
- 	struct drm_tegra_syncpt_incr *args = data;
- 	struct host1x_syncpt *sp;
- 
--	sp = host1x_syncpt_get(host1x, args->id);
-+	sp = host1x_syncpt_get_by_id_noref(host1x, args->id);
- 	if (!sp)
- 		return -EINVAL;
- 
-@@ -409,7 +412,7 @@ static int tegra_syncpt_wait(struct drm_device *drm, void *data,
- 	struct drm_tegra_syncpt_wait *args = data;
- 	struct host1x_syncpt *sp;
- 
--	sp = host1x_syncpt_get(host1x, args->id);
-+	sp = host1x_syncpt_get_by_id_noref(host1x, args->id);
- 	if (!sp)
- 		return -EINVAL;
- 
-diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-index 1a0d3ba6e525..d857a99b21a7 100644
---- a/drivers/gpu/drm/tegra/gr2d.c
-+++ b/drivers/gpu/drm/tegra/gr2d.c
-@@ -67,7 +67,7 @@ static int gr2d_init(struct host1x_client *client)
- detach:
- 	host1x_client_iommu_detach(client);
- free:
--	host1x_syncpt_free(client->syncpts[0]);
-+	host1x_syncpt_put(client->syncpts[0]);
- put:
- 	host1x_channel_put(gr2d->channel);
- 	return err;
-@@ -86,7 +86,7 @@ static int gr2d_exit(struct host1x_client *client)
- 		return err;
- 
- 	host1x_client_iommu_detach(client);
--	host1x_syncpt_free(client->syncpts[0]);
-+	host1x_syncpt_put(client->syncpts[0]);
- 	host1x_channel_put(gr2d->channel);
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index b0b8154e8104..24442ade0da3 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -76,7 +76,7 @@ static int gr3d_init(struct host1x_client *client)
- detach:
- 	host1x_client_iommu_detach(client);
- free:
--	host1x_syncpt_free(client->syncpts[0]);
-+	host1x_syncpt_put(client->syncpts[0]);
- put:
- 	host1x_channel_put(gr3d->channel);
- 	return err;
-@@ -94,7 +94,7 @@ static int gr3d_exit(struct host1x_client *client)
- 		return err;
- 
- 	host1x_client_iommu_detach(client);
--	host1x_syncpt_free(client->syncpts[0]);
-+	host1x_syncpt_put(client->syncpts[0]);
- 	host1x_channel_put(gr3d->channel);
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index ade56b860cf9..cb476da59adc 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -197,7 +197,7 @@ static int vic_init(struct host1x_client *client)
- 	return 0;
- 
- free_syncpt:
--	host1x_syncpt_free(client->syncpts[0]);
-+	host1x_syncpt_put(client->syncpts[0]);
- free_channel:
- 	host1x_channel_put(vic->channel);
- detach:
-@@ -221,7 +221,7 @@ static int vic_exit(struct host1x_client *client)
- 	if (err < 0)
- 		return err;
- 
--	host1x_syncpt_free(client->syncpts[0]);
-+	host1x_syncpt_put(client->syncpts[0]);
- 	host1x_channel_put(vic->channel);
- 	host1x_client_iommu_detach(client);
- 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index e8d3fda91d8a..6e6ca774f68d 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -273,15 +273,13 @@ static int host1x_cdma_wait_pushbuffer_space(struct host1x *host1x,
- static void cdma_start_timer_locked(struct host1x_cdma *cdma,
- 				    struct host1x_job *job)
- {
--	struct host1x *host = cdma_to_host1x(cdma);
--
- 	if (cdma->timeout.client) {
- 		/* timer already started */
- 		return;
- 	}
- 
- 	cdma->timeout.client = job->client;
--	cdma->timeout.syncpt = host1x_syncpt_get(host, job->syncpt_id);
-+	cdma->timeout.syncpt = job->syncpt;
- 	cdma->timeout.syncpt_val = job->syncpt_end;
- 	cdma->timeout.start_ktime = ktime_get();
- 
-@@ -312,7 +310,6 @@ static void stop_cdma_timer_locked(struct host1x_cdma *cdma)
- static void update_cdma_locked(struct host1x_cdma *cdma)
- {
- 	bool signal = false;
--	struct host1x *host1x = cdma_to_host1x(cdma);
- 	struct host1x_job *job, *n;
- 
- 	/* If CDMA is stopped, queue is cleared and we can return */
-@@ -324,8 +321,7 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 	 * to consume as many sync queue entries as possible without blocking
- 	 */
- 	list_for_each_entry_safe(job, n, &cdma->sync_queue, list) {
--		struct host1x_syncpt *sp =
--			host1x_syncpt_get(host1x, job->syncpt_id);
-+		struct host1x_syncpt *sp = job->syncpt;
- 
- 		/* Check whether this syncpt has completed, and bail if not */
- 		if (!host1x_syncpt_is_expired(sp, job->syncpt_end)) {
-@@ -499,8 +495,7 @@ int host1x_cdma_begin(struct host1x_cdma *cdma, struct host1x_job *job)
- 		if (!cdma->timeout.initialized) {
- 			int err;
- 
--			err = host1x_hw_cdma_timeout_init(host1x, cdma,
--							  job->syncpt_id);
-+			err = host1x_hw_cdma_timeout_init(host1x, cdma);
- 			if (err) {
- 				mutex_unlock(&cdma->lock);
- 				return err;
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index f781a9b0f39d..63010ae37a97 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -37,7 +37,7 @@ struct host1x_cdma_ops {
- 	void (*start)(struct host1x_cdma *cdma);
- 	void (*stop)(struct host1x_cdma *cdma);
- 	void (*flush)(struct  host1x_cdma *cdma);
--	int (*timeout_init)(struct host1x_cdma *cdma, unsigned int syncpt);
-+	int (*timeout_init)(struct host1x_cdma *cdma);
- 	void (*timeout_destroy)(struct host1x_cdma *cdma);
- 	void (*freeze)(struct host1x_cdma *cdma);
- 	void (*resume)(struct host1x_cdma *cdma, u32 getptr);
-@@ -261,10 +261,9 @@ static inline void host1x_hw_cdma_flush(struct host1x *host,
- }
- 
- static inline int host1x_hw_cdma_timeout_init(struct host1x *host,
--					      struct host1x_cdma *cdma,
--					      unsigned int syncpt)
-+					      struct host1x_cdma *cdma)
- {
--	return host->cdma_op->timeout_init(cdma, syncpt);
-+	return host->cdma_op->timeout_init(cdma);
- }
- 
- static inline void host1x_hw_cdma_timeout_destroy(struct host1x *host,
-diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
-index 2f3bf94cf365..e49cd5b8f735 100644
---- a/drivers/gpu/host1x/hw/cdma_hw.c
-+++ b/drivers/gpu/host1x/hw/cdma_hw.c
-@@ -295,7 +295,7 @@ static void cdma_timeout_handler(struct work_struct *work)
- /*
-  * Init timeout resources
-  */
--static int cdma_timeout_init(struct host1x_cdma *cdma, unsigned int syncpt)
-+static int cdma_timeout_init(struct host1x_cdma *cdma)
- {
- 	INIT_DELAYED_WORK(&cdma->timeout.wq, cdma_timeout_handler);
- 	cdma->timeout.initialized = true;
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index 5eaa29d171c9..d4c28faf27d1 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -86,8 +86,7 @@ static void submit_gathers(struct host1x_job *job)
- 
- static inline void synchronize_syncpt_base(struct host1x_job *job)
- {
--	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
--	struct host1x_syncpt *sp = host->syncpt + job->syncpt_id;
-+	struct host1x_syncpt *sp = job->syncpt;
- 	unsigned int id;
- 	u32 value;
- 
-@@ -118,7 +117,7 @@ static void host1x_channel_set_streamid(struct host1x_channel *channel)
- static int channel_submit(struct host1x_job *job)
- {
- 	struct host1x_channel *ch = job->channel;
--	struct host1x_syncpt *sp;
-+	struct host1x_syncpt *sp = job->syncpt;
- 	u32 user_syncpt_incrs = job->syncpt_incrs;
- 	u32 prev_max = 0;
- 	u32 syncval;
-@@ -126,10 +125,9 @@ static int channel_submit(struct host1x_job *job)
- 	struct host1x_waitlist *completed_waiter = NULL;
- 	struct host1x *host = dev_get_drvdata(ch->dev->parent);
- 
--	sp = host->syncpt + job->syncpt_id;
- 	trace_host1x_channel_submit(dev_name(ch->dev),
- 				    job->num_gathers, job->num_relocs,
--				    job->syncpt_id, job->syncpt_incrs);
-+				    job->syncpt->id, job->syncpt_incrs);
- 
- 	/* before error checks, return current max */
- 	prev_max = job->syncpt_end = host1x_syncpt_read_max(sp);
-@@ -163,7 +161,7 @@ static int channel_submit(struct host1x_job *job)
- 		host1x_cdma_push(&ch->cdma,
- 				 host1x_opcode_setclass(HOST1X_CLASS_HOST1X,
- 					host1x_uclass_wait_syncpt_r(), 1),
--				 host1x_class_host_wait_syncpt(job->syncpt_id,
-+				 host1x_class_host_wait_syncpt(job->syncpt->id,
- 					host1x_syncpt_read_max(sp)));
- 	}
- 
-diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
-index f31bcfa1b837..ceb48229d14b 100644
---- a/drivers/gpu/host1x/hw/debug_hw.c
-+++ b/drivers/gpu/host1x/hw/debug_hw.c
-@@ -204,7 +204,7 @@ static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
- 		unsigned int i;
- 
- 		host1x_debug_output(o, "\n%p: JOB, syncpt_id=%d, syncpt_val=%d, first_get=%08x, timeout=%d num_slots=%d, num_handles=%d\n",
--				    job, job->syncpt_id, job->syncpt_end,
-+				    job, job->syncpt->id, job->syncpt_end,
- 				    job->first_get, job->timeout,
- 				    job->num_slots, job->num_unpins);
- 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 89b6c14b7392..d8345d3bf0b3 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -79,6 +79,9 @@ static void job_free(struct kref *ref)
- {
- 	struct host1x_job *job = container_of(ref, struct host1x_job, ref);
- 
-+	if (job->syncpt)
-+		host1x_syncpt_put(job->syncpt);
-+
- 	kfree(job);
- }
- 
-@@ -680,7 +683,7 @@ EXPORT_SYMBOL(host1x_job_unpin);
-  */
- void host1x_job_dump(struct device *dev, struct host1x_job *job)
- {
--	dev_dbg(dev, "    SYNCPT_ID   %d\n", job->syncpt_id);
-+	dev_dbg(dev, "    SYNCPT_ID   %d\n", job->syncpt->id);
- 	dev_dbg(dev, "    SYNCPT_VAL  %d\n", job->syncpt_end);
- 	dev_dbg(dev, "    FIRST_GET   0x%x\n", job->first_get);
- 	dev_dbg(dev, "    TIMEOUT     %d\n", job->timeout);
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 5329a0886d29..b31b994624fa 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -76,6 +76,8 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
- 	else
- 		sp->client_managed = false;
- 
-+	kref_init(&sp->ref);
-+
- 	mutex_unlock(&host->syncpt_mutex);
- 	return sp;
- 
-@@ -368,7 +370,7 @@ int host1x_syncpt_init(struct host1x *host)
-  * host1x client drivers can use this function to allocate a syncpoint for
-  * subsequent use. A syncpoint returned by this function will be reserved for
-  * use by the client exclusively. When no longer using a syncpoint, a host1x
-- * client driver needs to release it using host1x_syncpt_free().
-+ * client driver needs to release it using host1x_syncpt_put().
-  */
- struct host1x_syncpt *host1x_syncpt_request(struct host1x_client *client,
- 					    unsigned long flags)
-@@ -379,20 +381,9 @@ struct host1x_syncpt *host1x_syncpt_request(struct host1x_client *client,
- }
- EXPORT_SYMBOL(host1x_syncpt_request);
- 
--/**
-- * host1x_syncpt_free() - free a requested syncpoint
-- * @sp: host1x syncpoint
-- *
-- * Release a syncpoint previously allocated using host1x_syncpt_request(). A
-- * host1x client driver should call this when the syncpoint is no longer in
-- * use. Note that client drivers must ensure that the syncpoint doesn't remain
-- * under the control of hardware after calling this function, otherwise two
-- * clients may end up trying to access the same syncpoint concurrently.
-- */
--void host1x_syncpt_free(struct host1x_syncpt *sp)
-+static void syncpt_release(struct kref *ref)
- {
--	if (!sp)
--		return;
-+	struct host1x_syncpt *sp = container_of(ref, struct host1x_syncpt, ref);
- 
- 	mutex_lock(&sp->host->syncpt_mutex);
- 
-@@ -404,7 +395,23 @@ void host1x_syncpt_free(struct host1x_syncpt *sp)
- 
- 	mutex_unlock(&sp->host->syncpt_mutex);
- }
--EXPORT_SYMBOL(host1x_syncpt_free);
-+
-+/**
-+ * host1x_syncpt_put() - free a requested syncpoint
-+ * @sp: host1x syncpoint
-+ *
-+ * Release a syncpoint previously allocated using host1x_syncpt_request(). A
-+ * host1x client driver should call this when the syncpoint is no longer in
-+ * use.
-+ */
-+void host1x_syncpt_put(struct host1x_syncpt *sp)
-+{
-+	if (!sp)
-+		return;
-+
-+	kref_put(&sp->ref, syncpt_release);
-+}
-+EXPORT_SYMBOL(host1x_syncpt_put);
- 
- void host1x_syncpt_deinit(struct host1x *host)
- {
-@@ -471,16 +478,48 @@ unsigned int host1x_syncpt_nb_mlocks(struct host1x *host)
- }
- 
- /**
-- * host1x_syncpt_get() - obtain a syncpoint by ID
-+ * host1x_syncpt_get_by_id() - obtain a syncpoint by ID
-+ * @host: host1x controller
-+ * @id: syncpoint ID
-+ */
-+struct host1x_syncpt *host1x_syncpt_get_by_id(struct host1x *host,
-+					      unsigned int id)
-+{
-+	if (id >= host->info->nb_pts)
-+		return NULL;
-+
-+	if (kref_get_unless_zero(&host->syncpt[id].ref))
-+		return &host->syncpt[id];
-+	else
-+		return NULL;
-+}
-+EXPORT_SYMBOL(host1x_syncpt_get_by_id);
-+
-+/**
-+ * host1x_syncpt_get_by_id_noref() - obtain a syncpoint by ID but don't
-+ * 	increase the refcount.
-  * @host: host1x controller
-  * @id: syncpoint ID
-  */
--struct host1x_syncpt *host1x_syncpt_get(struct host1x *host, unsigned int id)
-+struct host1x_syncpt *host1x_syncpt_get_by_id_noref(struct host1x *host,
-+						    unsigned int id)
- {
- 	if (id >= host->info->nb_pts)
- 		return NULL;
- 
--	return host->syncpt + id;
-+	return &host->syncpt[id];
-+}
-+EXPORT_SYMBOL(host1x_syncpt_get_by_id_noref);
-+
-+/**
-+ * host1x_syncpt_get() - increment syncpoint refcount
-+ * @sp: syncpoint
-+ */
-+struct host1x_syncpt *host1x_syncpt_get(struct host1x_syncpt *sp)
-+{
-+	kref_get(&sp->ref);
-+
-+	return sp;
- }
- EXPORT_SYMBOL(host1x_syncpt_get);
- 
-diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
-index 77e7206cc316..eb49d7003743 100644
---- a/drivers/gpu/host1x/syncpt.h
-+++ b/drivers/gpu/host1x/syncpt.h
-@@ -11,6 +11,7 @@
- #include <linux/atomic.h>
- #include <linux/host1x.h>
- #include <linux/kernel.h>
-+#include <linux/kref.h>
- #include <linux/sched.h>
- 
- #include "intr.h"
-@@ -26,6 +27,8 @@ struct host1x_syncpt_base {
- };
- 
- struct host1x_syncpt {
-+	struct kref ref;
-+
- 	unsigned int id;
- 	atomic_t min_val;
- 	atomic_t max_val;
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index f711fc0154f4..da87ceb33c2d 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -142,7 +142,9 @@ struct host1x_syncpt_base;
- struct host1x_syncpt;
- struct host1x;
- 
--struct host1x_syncpt *host1x_syncpt_get(struct host1x *host, u32 id);
-+struct host1x_syncpt *host1x_syncpt_get_by_id(struct host1x *host, u32 id);
-+struct host1x_syncpt *host1x_syncpt_get_by_id_noref(struct host1x *host, u32 id);
-+struct host1x_syncpt *host1x_syncpt_get(struct host1x_syncpt *sp);
- u32 host1x_syncpt_id(struct host1x_syncpt *sp);
- u32 host1x_syncpt_read_min(struct host1x_syncpt *sp);
- u32 host1x_syncpt_read_max(struct host1x_syncpt *sp);
-@@ -153,7 +155,7 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
- 		       u32 *value);
- struct host1x_syncpt *host1x_syncpt_request(struct host1x_client *client,
- 					    unsigned long flags);
--void host1x_syncpt_free(struct host1x_syncpt *sp);
-+void host1x_syncpt_put(struct host1x_syncpt *sp);
- 
- struct host1x_syncpt_base *host1x_syncpt_get_base(struct host1x_syncpt *sp);
- u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base);
-@@ -218,7 +220,7 @@ struct host1x_job {
- 	dma_addr_t *reloc_addr_phys;
- 
- 	/* Sync point id, number of increments and end related to the submit */
--	u32 syncpt_id;
-+	struct host1x_syncpt *syncpt;
- 	u32 syncpt_incrs;
- 	u32 syncpt_end;
- 
+ 	for (i = 0; i < host1x_syncpt_nb_bases(m); i++) {
 -- 
 2.28.0
 
