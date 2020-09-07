@@ -8,43 +8,43 @@ X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B39C433E2
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 19:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663DBC433E2
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 19:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BE6E2177B
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 19:43:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22A142177B
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 19:46:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="dbyO4rHY"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MrGMaTt5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbgIGTnj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 15:43:39 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10342 "EHLO
+        id S1728675AbgIGTqx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 15:46:53 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10941 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728622AbgIGTnf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 15:43:35 -0400
+        with ESMTP id S1726406AbgIGTqv (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 15:46:51 -0400
 Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f568d350000>; Mon, 07 Sep 2020 12:42:45 -0700
+        id <B5f568df90004>; Mon, 07 Sep 2020 12:46:01 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 07 Sep 2020 12:43:34 -0700
+  Mon, 07 Sep 2020 12:46:51 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 07 Sep 2020 12:43:34 -0700
+        by hqpgpgate101.nvidia.com on Mon, 07 Sep 2020 12:46:51 -0700
 Received: from [10.26.73.157] (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 7 Sep
- 2020 19:43:33 +0000
-Subject: Re: [PATCH 8/9] firmware: tegra: Enable BPMP support on Tegra234
+ 2020 19:46:50 +0000
+Subject: Re: [PATCH 9/9] arm64: tegra: Initial Tegra234 VDK support
 To:     Thierry Reding <thierry.reding@gmail.com>
 CC:     <linux-tegra@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
 References: <20200716141856.544718-1-thierry.reding@gmail.com>
- <20200716141856.544718-9-thierry.reding@gmail.com>
+ <20200716141856.544718-10-thierry.reding@gmail.com>
 From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <05068df4-7c6d-e291-9bed-4b4a57eb2498@nvidia.com>
-Date:   Mon, 7 Sep 2020 20:43:31 +0100
+Message-ID: <3c2f4e9c-28af-d5dc-1daa-40744da32898@nvidia.com>
+Date:   Mon, 7 Sep 2020 20:46:48 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200716141856.544718-9-thierry.reding@gmail.com>
+In-Reply-To: <20200716141856.544718-10-thierry.reding@gmail.com>
 X-Originating-IP: [10.124.1.5]
 X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
  HQMAIL107.nvidia.com (172.20.187.13)
@@ -52,17 +52,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1599507765; bh=73KBzlUIA5eYA1VqGk+Jtuiw1SyndnYIZV7XhXuuO9k=;
+        t=1599507961; bh=NfbdzbDWSK2f9TIVcSseYvz0C+22PNTWcxWId9v0NkQ=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Language:
          Content-Transfer-Encoding;
-        b=dbyO4rHY+Qa9L2N8jGL7BRzWWFDUdzg0OAnguoQ9F/9cKxzGxuhb/PA8YeYVCKIvG
-         gHqBOTh5YWj1ycSn0X0g2R5kKN0jKW9fGWaBSZqvG1/WgumeQ8gHVf2X6DqGIMG6ha
-         CegGIb8wuv5AOxtHuVUF9VRjVH3v5MZHkxlXktuxt2gfFyf2Newbg63a075SSDW9kn
-         WD2XBz52Q3lljVs2mNzt53pAO9lLYuosQM9ThaTOPX5M322io18/R6b/x4lIjmqxI4
-         kNLeEFOZ860P4+Q4/YUealIXpev0K6ilDQjmTNhESs7MhpHbUGx0FhhxnsLzA16RTm
-         mlRoSJfRuEyeA==
+        b=MrGMaTt50tv7WbepIwqgeSZ9lE18G7saPrkZhqg3/eGCrKgGs9XXPjwR0cU5JIhpW
+         B2H7sqhVWAF4uiAGyky6QeRUKkaGm1GGsCw+UlCh6olzdvnUBdpFqAhYxxk9QGyhep
+         leL5Yr+o4JV4Fbobm1SQKvL3Waj4099tzcuTPvw67B5iG4U8fJAjo2Qa9EPuTEITJm
+         zUKqvxMcLl4538VrDT6fRHZNJT2V35TMGXfEHuE088b9cPgK0vyNHnNuZIhoH/Fjau
+         qrKyKiFJoelT7Gwyt1bj++u6gP5etKVpgFNyKddCHoetRfUrF14USC/o1bTOWpDSUL
+         txsb7EttkEG1g==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -72,66 +72,115 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 On 16/07/2020 15:18, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Enable support for the BPMP on Tegra234 to avoid relying on Tegra194
-> being enabled to pull in the needed OF device ID table entry.
-> 
-> On simulation platforms the BPMP hasn't booted up yet by the time we
-> probe the BPMP driver and the BPMP hasn't had a chance to mark the
-> doorbell as ringable by the CCPLEX. This corresponding check in the
-> BPMP driver will therefore fail. Work around this by disabling the
-> check on simulation platforms.
+> The NVIDIA Tegra234 VDK is a simulation platform for the Orin SoC. It
+> supports a subset of the peripherals that will be available in the final
+> chip and serves as a bootstrapping platform.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/firmware/tegra/bpmp.c | 3 ++-
->  drivers/mailbox/tegra-hsp.c   | 9 ++++++++-
->  2 files changed, 10 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/nvidia/Makefile           |   1 +
+>  .../boot/dts/nvidia/tegra234-sim-vdk.dts      |  40 ++++
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 191 ++++++++++++++++++
+>  drivers/soc/tegra/Kconfig                     |  10 +
+>  include/dt-bindings/clock/tegra234-clock.h    |  14 ++
+>  include/dt-bindings/reset/tegra234-reset.h    |  10 +
+>  6 files changed, 266 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>  create mode 100644 include/dt-bindings/clock/tegra234-clock.h
+>  create mode 100644 include/dt-bindings/reset/tegra234-reset.h
 > 
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index 4d93d8925e14..0742a90cb844 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -856,7 +856,8 @@ static const struct tegra_bpmp_soc tegra210_soc = {
->  
->  static const struct of_device_id tegra_bpmp_match[] = {
->  #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
-> -    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
-> +    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
-> +    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
->  	{ .compatible = "nvidia,tegra186-bpmp", .data = &tegra186_soc },
->  #endif
->  #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
-> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-> index 834b35dc3b13..e07091d71986 100644
-> --- a/drivers/mailbox/tegra-hsp.c
-> +++ b/drivers/mailbox/tegra-hsp.c
-> @@ -13,6 +13,8 @@
->  #include <linux/pm.h>
->  #include <linux/slab.h>
->  
-> +#include <soc/tegra/fuse.h>
+> diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
+> index 2273fc5db19c..9296d12d11e9 100644
+> --- a/arch/arm64/boot/dts/nvidia/Makefile
+> +++ b/arch/arm64/boot/dts/nvidia/Makefile
+> @@ -9,3 +9,4 @@ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2894-0050-a08.dtb
+>  dtb-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-p2771-0000.dtb
+>  dtb-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra194-p2972-0000.dtb
+>  dtb-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra194-p3509-0000+p3668-0000.dtb
+> +dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-sim-vdk.dtb
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts b/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
+> new file mode 100644
+> index 000000000000..f6e6a24829af
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
+> @@ -0,0 +1,40 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/dts-v1/;
 > +
->  #include <dt-bindings/mailbox/tegra186-hsp.h>
->  
->  #include "mailbox.h"
-> @@ -322,7 +324,12 @@ static int tegra_hsp_doorbell_startup(struct mbox_chan *chan)
->  	if (!ccplex)
->  		return -ENODEV;
->  
-> -	if (!tegra_hsp_doorbell_can_ring(db))
-> +	/*
-> +	 * On simulation platforms the BPMP hasn't had a chance yet to mark
-> +	 * the doorbell as ringable by the CCPLEX, so we want to skip extra
-> +	 * checks here.
-> +	 */
-> +	if (tegra_is_silicon() && !tegra_hsp_doorbell_can_ring(db))
->  		return -ENODEV;
->  
->  	spin_lock_irqsave(&hsp->lock, flags);
-> 
+> +#include "tegra234.dtsi"
+> +
+> +/ {
+> +	model = "NVIDIA Tegra234 VDK";
+> +	compatible = "nvidia,tegra234-vdk", "nvidia,tegra234";
+> +
+> +	aliases {
+> +		sdhci3 = "/cbb@0/sdhci@3460000";
+> +		serial0 = &uarta;
+> +	};
+> +
+> +	chosen {
+> +		bootargs = "console=ttyS0,115200n8 earlycon=uart8250,mmio32,0x03100000";
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	cbb@0 {
+> +		serial@3100000 {
+> +			status = "okay";
+> +		};
+> +
+> +		sdhci@3460000 {
+> +			status = "okay";
+> +			bus-width = <8>;
+> +			non-removable;
+> +			only-1-8-v;
+> +		};
+> +
+> +		rtc@c2a0000 {
+> +			status = "okay";
+> +		};
+> +
+> +		pmc@c360000 {
+> +			nvidia,invert-interrupt;
+> +		};
+> +	};
+> +};
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> new file mode 100644
+> index 000000000000..3509687441a1
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> @@ -0,0 +1,191 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <dt-bindings/clock/tegra234-clock.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/mailbox/tegra186-hsp.h>
+> +#include <dt-bindings/reset/tegra234-reset.h>
+> +
+> +/ {
+> +	compatible = "nvidia,tegra234";
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	bus@0 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +
+> +		ranges = <0x0 0x0 0x0 0x40000000>;
+> +
+> +		misc@100000 {
+> +			compatible = "nvidia,tegra234-misc";
+> +			reg = <0x00100000 0xf000>,
+> +			      <0x0010f000 0x1000>;
+> +			status = "okay";
+> +		};
 
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Is there meant to be a fallback option here, because I don't see
+anything to match the above compatible string?
 
 Cheers
 Jon
