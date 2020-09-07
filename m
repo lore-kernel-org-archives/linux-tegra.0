@@ -2,68 +2,65 @@ Return-Path: <SRS0=rvI8=CQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E3DC433E2
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 15:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517C0C433E2
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 16:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77AFD21481
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 15:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 063EB2087D
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 16:05:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRKop/o+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpZGZSLN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730172AbgIGPfk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 11:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53348 "EHLO
+        id S1729985AbgIGQFR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 12:05:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbgIGPfO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 11:35:14 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F5FC061573;
-        Mon,  7 Sep 2020 08:35:13 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id j7so1797050plk.11;
-        Mon, 07 Sep 2020 08:35:13 -0700 (PDT)
+        with ESMTP id S1729976AbgIGOrM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 10:47:12 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E821FC061575;
+        Mon,  7 Sep 2020 07:36:33 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id z19so7611951lfr.4;
+        Mon, 07 Sep 2020 07:36:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2iFqwT4LVt1GmMyaphEkLC+szKUS+5awlK2tO4HV4yY=;
-        b=LRKop/o+FlX1+zxDoN3dyTWIXA9Hufu8ozxbvEaVbPt4avhksSHg9gg9Xdjc2X4jCM
-         49L/Y5ssEHT3vyL4oaDQoiL4CwMpfWm8lufVeLBM0b4db9fWZWZdWDSOIUN1oXvajxGr
-         9J6CGcp9dg7y11Ag5XIMPKrq41dg5qxYgplmbqKnV4KTdfzzYZIKnTOF6B4mrZolfyU9
-         rP5Fp+oau2Ca8t1yKK6tNmDQfErqPodidON7Cq0FLIY/vdwXaMWpT4tFJBLx24MNR92V
-         hzzsuTBYphkb+1ndB+gV4FiJPIkVzWzjMRpt7jzevgWi8tTZCttpDSuGzPmI8ruzkF0F
-         vvWw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LbYatuVWRGYewGcDmiye1sSegUENy4SIbsUeZ7U/qG4=;
+        b=JpZGZSLNqRaE0exdU8CU465eqriG0RqHm2s6LczbPE71uOTMNdEZz2JGG4y3tK/LN6
+         y9z23DLcygyjqprpVkOT06L6PCQk7ujXbG2vpwyayBtKAx6x4S/N9Fz8Fo+RkcgBOxew
+         SsIrCfAsYkObkThkDYUhnCHbE21CoRRqUfeqtmKedhHMwRNy+nkcdNnpJpEBxmD8wG95
+         o3WDxGmVPtu4+n7pi1LD0AS3B3M/MTOub3vyAsO2IUZrHXIgToj4MI3m9COtHplDVFtN
+         sqjJs1GtnnWxbyO0ZtijkeJRWgOt+OqHYwHKJcMtmbVvZTIUubGSiJv7Fw6urR21wEsb
+         cumQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2iFqwT4LVt1GmMyaphEkLC+szKUS+5awlK2tO4HV4yY=;
-        b=rANkHskJXYhSZsMntbyPmdI3emCWNKBZOL+Bd3dWqxEI973rF/H2nZb2/+floUrcHi
-         vG+0vCgIR/t2FgUraYSCOEQligGYXd/khU4Zoz8h1XLnxsQQPpc2UCV5wBjNMKTLnYgX
-         43v61JXHdi7QYn5Upmqa1AwzxYXEVJP/dUZz2Zr5ovcaI6AYgTPN2u/ju+A/M+ou3t+b
-         9jmq+JpJHHgggQ9M9sMwtwUN84CRj/TWh8hiOuxcUR6jxt4735ApWfrx+MLpDcDLm7wW
-         cWKLPiSkrX3KbL/jHMZk8/uHZ+Pf4mk/AIZ2nxLAC77h7ec/RjDFqMSUtNcGdGccThdj
-         P49w==
-X-Gm-Message-State: AOAM530s8Kf4NK4lwFTBqzb7eN8aETCPKESMm2gDPRsCuiBWxX2In753
-        n8QcuqlW8ewYPG/25oWLk14CCLWfmQF0fBoDhFw=
-X-Google-Smtp-Source: ABdhPJw166M/KQdh5DvSJ2ii7x1eL8g3Lg4xkKxVgvriGvUnalc2cdM9ihP20WgqavU85pKjXWFLcv4Aje1FYx6gK4s=
-X-Received: by 2002:a17:902:b289:: with SMTP id u9mr19923485plr.226.1599492913310;
- Mon, 07 Sep 2020 08:35:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200906185039.22700-1-digetx@gmail.com> <20200906185039.22700-7-digetx@gmail.com>
- <CAHp75VevXe3c2LGF3jZyDfvPpRAz+-GQKvXEO4OKvuur=RgXCQ@mail.gmail.com>
- <f9ec5178-e38e-ed9a-25f8-21e53ccd31d1@gmail.com> <CAHp75Vdj7HYN0SWt9StqB8K6JrUCk7dtDhAUwYDkkBXc1R8ueg@mail.gmail.com>
- <c76f64c8-bd46-36f0-edb4-3ddca281a72b@gmail.com>
-In-Reply-To: <c76f64c8-bd46-36f0-edb4-3ddca281a72b@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 7 Sep 2020 18:34:56 +0300
-Message-ID: <CAHp75Vf3BirttCnW5KarsL0_MqofpWnEN5K5z+TY2YZV-R9fhQ@mail.gmail.com>
-Subject: Re: [PATCH v5 06/36] i2c: tegra: Runtime PM always available on Tegra
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LbYatuVWRGYewGcDmiye1sSegUENy4SIbsUeZ7U/qG4=;
+        b=G2zU1TzviXkEobesClo7cgXQjKm9EN7+foJrfYhkSlHrexEm9Ckc2N+Ld/5csytyiS
+         zD2LdINMHgAutuKR+DStS0vI2yB+VQGETxX06tWUoN8qDNNsdZkDynJfcBo72UPZQzq3
+         LWNqCaCL0Y/x74GhBdpb3HWKLccQDvt3s4Z6/3G/1PIzwe9N/xkhSioeQD7E8qQMbEgr
+         164TTwSktVAzXTBxrjfoXCLgzAmV5LTgkp8l76MZeiTc1mp8bp5HS98d4fFRTGJdBdqG
+         x4sN2NhxMGP5Zh3gnO0dgANenylkaPMp7oEt+34VBuy83SDDpnadaysQWYgAF6nAPppt
+         1z4g==
+X-Gm-Message-State: AOAM533DgXf7SpsdEQUNUWY56Hgxc3p5zprsbH3nmeXSmBmHF8JC1XkY
+        lmmtkF1RDiz8obN4PkhbkYQTAggXp50=
+X-Google-Smtp-Source: ABdhPJz9601EdKos+ms9H/SphtscTtUQmKponvS3+EYjzKvYmMOrE5RHyzgfpE/oiJUjRRrNVcr5nQ==
+X-Received: by 2002:a19:82c3:: with SMTP id e186mr10075422lfd.144.1599489391997;
+        Mon, 07 Sep 2020 07:36:31 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id t13sm7639481lfg.53.2020.09.07.07.36.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Sep 2020 07:36:31 -0700 (PDT)
+Subject: Re: [PATCH v5 27/36] i2c: tegra: Reorder location of functions in the
+ code
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
@@ -72,47 +69,36 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-i2c <linux-i2c@vger.kernel.org>,
         linux-tegra@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20200906185039.22700-1-digetx@gmail.com>
+ <20200906185039.22700-28-digetx@gmail.com>
+ <CAHp75VfSyfJoEbFGEH32=841_2h4_8r+vVYO2BPHgSVvuatOag@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <61845513-bf41-1c15-126d-8470a23b178e@gmail.com>
+Date:   Mon, 7 Sep 2020 17:36:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VfSyfJoEbFGEH32=841_2h4_8r+vVYO2BPHgSVvuatOag@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Sep 7, 2020 at 6:25 PM Dmitry Osipenko <digetx@gmail.com> wrote:
-> 07.09.2020 18:05, Andy Shevchenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Mon, Sep 7, 2020 at 5:32 PM Dmitry Osipenko <digetx@gmail.com> wrote=
-:
-> >> 07.09.2020 11:10, Andy Shevchenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+07.09.2020 11:27, Andy Shevchenko пишет:
+> On Sun, Sep 6, 2020 at 9:52 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> Reorder location of functions in the code in order to have definition
+>> of functions closer to the place of the invocation. This change makes
+>> easier to navigate around the code and removes the need to have a
+>> prototype for tegra_i2c_init().
+>>
+> 
+> This patch as 25th and one I commented before have a ping-pong style
+> of programming (you touch a lot of LOCs which you introduced in
+> previous patches). Please try to reorder series in a way that you
+> minimize the churn of shuffling the code.
 
-...
-
-> >> Would be great if anyone could put effort into changing the default
-> >> get_sync() behaviour and add get_sync_nofail(). Otherwise this will be=
- a
-> >> never ending problem.
-> >
-> > I didn't get this. For time being the API (yes, with its all cons) has
-> > the clear usage:
-> > a) don't check for errors -- you are fine
-> > b) if you start checking errors, keep in mind refcounting.
-> >
-> > So, I don't see how nofail() can fix b) case.
-> >
->
-> It's a very unintuitive behaviour which none of other APIs have. I would
-> never expect the refcount to be bumped in a case of error, this is a
-> clear drawback of the API, IMO.
-
-I agree.
-
-> Perhaps this is not seen as a problem by
-> people who have excellent memory and can easily remember about existence
-> of such non-standard quirks, or by people who're touching the RPM code
-> frequently.
-
-...or by running coccinelle script.
-
---=20
-With Best Regards,
-Andy Shevchenko
+Okay, I'll improve the ordering in v6. Thanks!
