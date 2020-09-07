@@ -2,91 +2,168 @@ Return-Path: <SRS0=rvI8=CQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C449C433E2
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 08:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 274ADC433E2
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 09:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C338A2145D
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 08:52:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g2U8yefQ";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="bRX4/u4o"
+	by mail.kernel.org (Postfix) with ESMTP id D616A2075A
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 09:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbgIGIwp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 04:52:45 -0400
-Received: from a27-56.smtp-out.us-west-2.amazonses.com ([54.240.27.56]:35842
-        "EHLO a27-56.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727122AbgIGIwp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 7 Sep 2020 04:52:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1599468764;
-        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:From:In-Reply-To:References:To:Cc:Message-Id:Date;
-        bh=kiE5N7xdS+rLmJWgRX00IfpwqEON5REUjDKthNcC2KU=;
-        b=g2U8yefQnDuE/1nsrNd1b9L0c/UydYwcUYqE//bjWq2ANJ7eajM46s6OWx+Tg2Us
-        25MyGHyrpCOW+Z+6aqAxzYorc+7JpFINOJlFe/JUUVs4e95SvxAQ0wuGSXe+UrIPyLf
-        LNh/K9GUc+/EHkoWX1MSJ4vv7jR+aobk+iivbsqo=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=hsbnp7p3ensaochzwyq5wwmceodymuwv; d=amazonses.com; t=1599468764;
-        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:From:In-Reply-To:References:To:Cc:Message-Id:Date:Feedback-ID;
-        bh=kiE5N7xdS+rLmJWgRX00IfpwqEON5REUjDKthNcC2KU=;
-        b=bRX4/u4oqoNsL8HDjPGqMJ5twUNf74DvlFoFvEDQ0MfPkSPdiCk+rcSf9pXwOsul
-        Pwx2HIjGGnYuQkgN5EU0yk5p/4bgrfMPj0eG7i2dYVrK/A+gpfz0FXiJpEpUxvNg0JE
-        gqm2LIawawDdk9f7RYrIFPfhe403hnNQqFfyhb+s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5E8AC35A16
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        id S1728067AbgIGJgK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 05:36:10 -0400
+Received: from foss.arm.com ([217.140.110.172]:58790 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727122AbgIGJgH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 7 Sep 2020 05:36:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D06430E;
+        Mon,  7 Sep 2020 02:36:06 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BF733F66E;
+        Mon,  7 Sep 2020 02:36:01 -0700 (PDT)
+Date:   Mon, 7 Sep 2020 10:35:58 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dilip Kota <eswara.kota@linux.intel.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>, Marc Zyngier <maz@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
+Message-ID: <20200907093558.GC6428@e121166-lin.cambridge.arm.com>
+References: <20200821035420.380495-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v3 1/3] brcmfmac: increase F2 watermark for BCM4329
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20200830191439.10017-2-digetx@gmail.com>
-References: <20200830191439.10017-2-digetx@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
-Message-ID: <0101017467c47c8b-3be0f076-452b-4e42-933f-c40f7c2dc3fb-000000@us-west-2.amazonses.com>
-Date:   Mon, 7 Sep 2020 08:52:44 +0000
-X-SES-Outgoing: 2020.09.07-54.240.27.56
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200821035420.380495-1-robh@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dmitry Osipenko <digetx@gmail.com> wrote:
-
-> This patch fixes SDHCI CRC errors during of RX throughput testing on
-> BCM4329 chip if SDIO BUS is clocked above 25MHz. In particular the
-> checksum problem is observed on NVIDIA Tegra20 SoCs. The good watermark
-> value is borrowed from downstream BCMDHD driver and it's matching to the
-> value that is already used for the BCM4339 chip, hence let's re-use it
-> for BCM4329.
+On Thu, Aug 20, 2020 at 09:53:40PM -0600, Rob Herring wrote:
+> This is a series of clean-ups for the Designware PCI driver. The series
+> initially reworks the config space accessors to use the existing pci_ops
+> struct. Then there's removal of various private data that's also present
+> in the pci_host_bridge struct. There's also some duplicated common (PCI
+> and DWC) register defines which I converted to use the common defines.
+> Finally, the initialization for speed/gen, number of lanes, and N_FTS
+> are all moved to the common DWC code.
 > 
-> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> This is compile tested only as I don't have any DWC based h/w, so any
+> testing would be helpful. A branch is here[1].
 
-3 patches applied to wireless-drivers-next.git, thanks.
+Applied the series to pci/dwc, thanks.
 
-317da69d10b0 brcmfmac: increase F2 watermark for BCM4329
-1a867a6230db brcmfmac: drop chip id from debug messages
-cc95fa81524a brcmfmac: set F2 SDIO block size to 128 bytes for BCM4329
+Lorenzo
 
--- 
-https://patchwork.kernel.org/patch/11745283/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+> Rob
+> 
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git pci-dw-cleanups
+> 
+> Rob Herring (40):
+>   PCI: Allow root and child buses to have different pci_ops
+>   PCI: dwc: Use DBI accessors instead of own config accessors
+>   PCI: dwc: Allow overriding bridge pci_ops
+>   PCI: dwc: Add a default pci_ops.map_bus for root port
+>   PCI: dwc: al: Use pci_ops for child config space accessors
+>   PCI: dwc: keystone: Use pci_ops for config space accessors
+>   PCI: dwc: tegra: Use pci_ops for root config space accessors
+>   PCI: dwc: meson: Use pci_ops for root config space accessors
+>   PCI: dwc: kirin: Use pci_ops for root config space accessors
+>   PCI: dwc: exynos: Use pci_ops for root config space accessors
+>   PCI: dwc: histb: Use pci_ops for root config space accessors
+>   PCI: dwc: Remove dwc specific config accessor ops
+>   PCI: dwc: Use generic config accessors
+>   PCI: Also call .add_bus() callback for root bus
+>   PCI: dwc: keystone: Convert .scan_bus() callback to use add_bus
+>   PCI: dwc: Convert to use pci_host_probe()
+>   PCI: dwc: Remove root_bus pointer
+>   PCI: dwc: Remove storing of PCI resources
+>   PCI: dwc: Simplify config space handling
+>   PCI: dwc/keystone: Drop duplicated 'num-viewport'
+>   PCI: dwc: Check CONFIG_PCI_MSI inside dw_pcie_msi_init()
+>   PCI: dwc/imx6: Remove duplicate define PCIE_LINK_WIDTH_SPEED_CONTROL
+>   PCI: dwc: Add a 'num_lanes' field to struct dw_pcie
+>   PCI: dwc: Ensure FAST_LINK_MODE is cleared
+>   PCI: dwc/meson: Drop the duplicate number of lanes setup
+>   PCI: dwc/meson: Drop unnecessary RC config space initialization
+>   PCI: dwc/meson: Rework PCI config and DW port logic register accesses
+>   PCI: dwc/imx6: Use common PCI register definitions
+>   PCI: dwc/qcom: Use common PCI register definitions
+>   PCI: dwc: Remove hardcoded PCI_CAP_ID_EXP offset
+>   PCI: dwc/tegra: Use common Designware port logic register definitions
+>   PCI: dwc: Remove read_dbi2 code
+>   PCI: dwc: Make ATU accessors private
+>   PCI: dwc: Centralize link gen setting
+>   PCI: dwc: Set PORT_LINK_DLL_LINK_EN in common setup code
+>   PCI: dwc/intel-gw: Drop unnecessary checking of DT 'device_type'
+>     property
+>   PCI: dwc/intel-gw: Move getting PCI_CAP_ID_EXP offset to
+>     intel_pcie_link_setup()
+>   PCI: dwc/intel-gw: Drop unused max_width
+>   PCI: dwc: Move N_FTS setup to common setup
+>   PCI: dwc: Use DBI accessors
+> 
+>  drivers/pci/controller/dwc/pci-dra7xx.c       |  29 +-
+>  drivers/pci/controller/dwc/pci-exynos.c       |  45 +--
+>  drivers/pci/controller/dwc/pci-imx6.c         |  52 +--
+>  drivers/pci/controller/dwc/pci-keystone.c     | 126 ++-----
+>  drivers/pci/controller/dwc/pci-meson.c        | 156 ++-------
+>  drivers/pci/controller/dwc/pcie-al.c          |  70 +---
+>  drivers/pci/controller/dwc/pcie-artpec6.c     |  48 +--
+>  .../pci/controller/dwc/pcie-designware-ep.c   |  11 +-
+>  .../pci/controller/dwc/pcie-designware-host.c | 319 ++++++------------
+>  .../pci/controller/dwc/pcie-designware-plat.c |   4 +-
+>  drivers/pci/controller/dwc/pcie-designware.c  | 104 +++---
+>  drivers/pci/controller/dwc/pcie-designware.h  |  54 +--
+>  drivers/pci/controller/dwc/pcie-histb.c       |  45 +--
+>  drivers/pci/controller/dwc/pcie-intel-gw.c    |  65 +---
+>  drivers/pci/controller/dwc/pcie-kirin.c       |  43 +--
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  33 +-
+>  drivers/pci/controller/dwc/pcie-spear13xx.c   |  39 +--
+>  drivers/pci/controller/dwc/pcie-tegra194.c    | 120 ++-----
+>  drivers/pci/controller/dwc/pcie-uniphier.c    |   3 +-
+>  drivers/pci/probe.c                           |  14 +-
+>  include/linux/pci.h                           |   1 +
+>  21 files changed, 443 insertions(+), 938 deletions(-)
+> 
+> --
+> 2.25.1
