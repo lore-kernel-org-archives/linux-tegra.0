@@ -2,170 +2,139 @@ Return-Path: <SRS0=rvI8=CQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5893C433E2
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 09:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE16FC43461
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 10:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7996720C09
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 09:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76011207C3
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 10:08:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GdR9hDKN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbgIGJuX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 05:50:23 -0400
-Received: from foss.arm.com ([217.140.110.172]:59148 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728369AbgIGJuT (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 7 Sep 2020 05:50:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6198930E;
-        Mon,  7 Sep 2020 02:50:18 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1303E3F66E;
-        Mon,  7 Sep 2020 02:50:16 -0700 (PDT)
-Date:   Mon, 7 Sep 2020 10:50:14 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: tegra: no need to check return value of
- debugfs_create functions
-Message-ID: <20200907095014.GE6428@e121166-lin.cambridge.arm.com>
-References: <20200818133739.463193-1-gregkh@linuxfoundation.org>
+        id S1728531AbgIGKIF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 06:08:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728520AbgIGKIA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 06:08:00 -0400
+Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C15F2C061575
+        for <linux-tegra@vger.kernel.org>; Mon,  7 Sep 2020 03:07:59 -0700 (PDT)
+Received: by mail-ua1-x944.google.com with SMTP id o14so1125451ual.11
+        for <linux-tegra@vger.kernel.org>; Mon, 07 Sep 2020 03:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=QuNLltsEiIW4LCbpFyTWl1p44IkTT3QJmbdClg97dn0=;
+        b=GdR9hDKN5L9o4E+D9klMf226TdSBiyQrmIJFqTy1wvu7JgUOP5hnq9D/dbGUt34nVN
+         XTE9ZkkMZYDWJkEj8/LXyenZz3T0Irx/WXSUQIYDB4F7XGGOjeU/eP0cHxgH70gtpxoS
+         593wZnUVUiqgZqhmNZJBvdbDOEAjelVZNg7W3uJxmMeE2W2+4ryrLED4uLWr5d2on/1Y
+         V+k0+LPGbknr9eHhBtS9n9cOKc/o9fFLWU4T/+6C9EhAuV3OtNNgAG8pjet6UXydTeg8
+         /OlJ55P8StYowRupDWz7iqCrO55GZV8SHF0Qf78K+dPX1qyWPG1Pi5uUN5Re3N+8QgpF
+         Opsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QuNLltsEiIW4LCbpFyTWl1p44IkTT3QJmbdClg97dn0=;
+        b=GabiKXRqF+m900LZV2SHHYHNxtHD44D7j1RwylXs37nSWJCtFiEDeXrCcZO7HF5pdZ
+         v4kKlJHNh5Z6b6RMkzwwu2fi22jt4inDaCpQu9LuWqZmU0LZ7NhUnJIOFoARLrLJAjHi
+         Dm7jOfB8e02YsLxO39ASaYpBqXl27zm6snSbpohz7rWibdMWxZ4Jy8KOCBtKTbTmCKsl
+         K4U0eX6jnE4MVSO9QGUlGhReU+rkOZC6b6y4YrF9DRorjfce3G/tZPH2DGuE6NOIQFp0
+         gRzAhisoVA3DJd3ABDeS/sYpZtO+B4hIQyFA+z/K3wrlz4gEqKA3Iaj2esVBPGn4YbW+
+         t0PQ==
+X-Gm-Message-State: AOAM533txS484iz811SAe7VrS44yFmXq6zlZWEDz5s2bi6Q/z4BCVeP0
+        adqImkIeIAbwoXNkYY9YwRMgUX4GqGvhvtJ8goh8Pg==
+X-Google-Smtp-Source: ABdhPJylvGTfdGwP02Q+D0hgvcDauwlOQni6HAn5s7aLot2eLwS2w0Wmn0FgXWKx98K2aaDsiVxs7F4QHZfQitRnsZs=
+X-Received: by 2002:ab0:130a:: with SMTP id g10mr1522518uae.100.1599473277782;
+ Mon, 07 Sep 2020 03:07:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200818133739.463193-1-gregkh@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200904164315.24618-1-krzk@kernel.org>
+In-Reply-To: <20200904164315.24618-1-krzk@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 7 Sep 2020 12:07:21 +0200
+Message-ID: <CAPDyKFrzDeNqvM4cc69iCdVW7QnF=O9C=v13+o5bGBSCSzZfWA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mmc: host: Drop unneeded MMC dependency in Kconfig
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Manuel Lauss <manuel.lauss@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Prabu Thangamuthu <prabu.t@synopsys.com>,
+        Manjunath M B <manjumb@synopsys.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-arm-kernel@axis.com,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 03:37:39PM +0200, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> 
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Vidya Sagar <vidyas@nvidia.com>
-> Cc: Andrew Murray <amurray@thegoodpenguin.co.uk>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Fri, 4 Sep 2020 at 18:43, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> All entries in Kconfig are already part of "if MMC", so there is no need
+> for additional dependency on MMC.
+>
+> Suggested-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
+
+>
 > ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 20 +++++------------
->  drivers/pci/controller/pci-tegra.c         | 25 +++++-----------------
->  2 files changed, 10 insertions(+), 35 deletions(-)
-
-Applied to pci/tegra, thanks.
-
-Lorenzo
-
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 70498689d0c0..87f8dd63df0a 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -699,23 +699,16 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
->  	dw_pcie_writel_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL, val);
->  }
->  
-> -static int init_debugfs(struct tegra_pcie_dw *pcie)
-> +static void init_debugfs(struct tegra_pcie_dw *pcie)
->  {
-> -	struct dentry *d;
-> -
-> -	d = debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt",
-> -					pcie->debugfs, aspm_state_cnt);
-> -	if (IS_ERR_OR_NULL(d))
-> -		dev_err(pcie->dev,
-> -			"Failed to create debugfs file \"aspm_state_cnt\"\n");
-> -
-> -	return 0;
-> +	debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt", pcie->debugfs,
-> +				    aspm_state_cnt);
->  }
->  #else
->  static inline void disable_aspm_l12(struct tegra_pcie_dw *pcie) { return; }
->  static inline void disable_aspm_l11(struct tegra_pcie_dw *pcie) { return; }
->  static inline void init_host_aspm(struct tegra_pcie_dw *pcie) { return; }
-> -static inline int init_debugfs(struct tegra_pcie_dw *pcie) { return 0; }
-> +static inline void init_debugfs(struct tegra_pcie_dw *pcie) { return; }
->  #endif
->  
->  static void tegra_pcie_enable_system_interrupts(struct pcie_port *pp)
-> @@ -1641,10 +1634,7 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
->  	}
->  
->  	pcie->debugfs = debugfs_create_dir(name, NULL);
-> -	if (!pcie->debugfs)
-> -		dev_err(dev, "Failed to create debugfs\n");
-> -	else
-> -		init_debugfs(pcie);
-> +	init_debugfs(pcie);
->  
->  	return ret;
->  
-> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> index c1d34353c29b..e1a6f9db36f7 100644
-> --- a/drivers/pci/controller/pci-tegra.c
-> +++ b/drivers/pci/controller/pci-tegra.c
-> @@ -2601,24 +2601,12 @@ static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
->  	pcie->debugfs = NULL;
->  }
->  
-> -static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
-> +static void tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
->  {
-> -	struct dentry *file;
-> -
->  	pcie->debugfs = debugfs_create_dir("pcie", NULL);
-> -	if (!pcie->debugfs)
-> -		return -ENOMEM;
-> -
-> -	file = debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs,
-> -				   pcie, &tegra_pcie_ports_ops);
-> -	if (!file)
-> -		goto remove;
-> -
-> -	return 0;
->  
-> -remove:
-> -	tegra_pcie_debugfs_exit(pcie);
-> -	return -ENOMEM;
-> +	debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs, pcie,
-> +			    &tegra_pcie_ports_ops);
->  }
->  
->  static int tegra_pcie_probe(struct platform_device *pdev)
-> @@ -2672,11 +2660,8 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->  		goto pm_runtime_put;
->  	}
->  
-> -	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
-> -		err = tegra_pcie_debugfs_init(pcie);
-> -		if (err < 0)
-> -			dev_err(dev, "failed to setup debugfs: %d\n", err);
-> -	}
-> +	if (IS_ENABLED(CONFIG_DEBUG_FS))
-> +		tegra_pcie_debugfs_init(pcie);
->  
->  	return 0;
->  
-> -- 
-> 2.28.0
-> 
+>
+> Changes since v1:
+> 1. New patch
+> ---
+>  drivers/mmc/host/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index b95f79f53395..eea01fde0591 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -422,7 +422,7 @@ config MMC_SDHCI_IPROC
+>
+>  config MMC_MESON_GX
+>         tristate "Amlogic S905/GX*/AXG SD/MMC Host Controller support"
+> -       depends on ARCH_MESON && MMC
+> +       depends on ARCH_MESON
+>         help
+>           This selects support for the Amlogic SD/MMC Host Controller
+>           found on the S905/GX*/AXG family of SoCs.  This controller is
+> @@ -458,7 +458,7 @@ config MMC_MESON_MX_SDIO
+>
+>  config MMC_MOXART
+>         tristate "MOXART SD/MMC Host Controller support"
+> -       depends on ARCH_MOXART && MMC
+> +       depends on ARCH_MOXART
+>         help
+>           This selects support for the MOXART SD/MMC Host Controller.
+>           MOXA provides one multi-functional card reader which can
+> --
+> 2.17.1
+>
