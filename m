@@ -2,88 +2,91 @@ Return-Path: <SRS0=rvI8=CQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA5FC43461
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 08:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C449C433E2
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 08:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A56DD2145D
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 08:32:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C338A2145D
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 08:52:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pWYuDWDK"
+	dkim=pass (1024-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g2U8yefQ";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="bRX4/u4o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbgIGIce (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 04:32:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbgIGIce (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 04:32:34 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A665C061573;
-        Mon,  7 Sep 2020 01:32:32 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id mm21so6380739pjb.4;
-        Mon, 07 Sep 2020 01:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0kLW5Y5jxw0TW/g+38xiE8cSYLcd3/NtwgT6Jz0KRbE=;
-        b=pWYuDWDKai3qEj3Nc14HE/TxyW1+/AuFPIGTiJ1QDkh2VVsZgpCqPXdqS+sAf5ekb0
-         5xLdrdhOtZ46JLYEzOH2gei7RY9T2GEqJ3zuYE3M9mti3tdt8UHnaMHg+7VtnIo0LdxI
-         TVyC1QpioAuL0TfyJQCL2/++wL+9j8EExzXwcqm2ZHaphq09C3do7QaH90XgPrt3OZMd
-         WXNpbHJrmqZ+JdHkQJJTq7rP8RCjO+096tm3yJKB+qMn3usqGEuwWla9XSaObDdJU2sE
-         OWVNbJNoyGtCa0PXndUWWSYdI/9YbQUPXRXSJdQJ6P5tjJgfrtR/s2ccVGiGHIja8akt
-         Zwxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0kLW5Y5jxw0TW/g+38xiE8cSYLcd3/NtwgT6Jz0KRbE=;
-        b=ZyanaTwD05EBnxnOzM6PIcnVSkk5dGZ41QnbS0bqfaOWrYw4IlXBGTwMxBXeOU4w76
-         FMxcw+etV3HUsfebXDyCd9xQ5iuxXyRIr4Yq7Bp66U300NDrJdU8ilCAZCMjknyB7Nts
-         7YKx/20xfBN8uJaE2WN7+IjByfMqhKc2YzcaJABK64EYRYhAh0pFi3iXSUBeXAtWt7va
-         z+5g8mpiZrT8UX4AvuGSaXETDrGfIKTg7lkp2LJAFXXDfdXD8LibyP1mJJGrFIO+D9eQ
-         rbzt9PdOMwjaDo6Y3esz/tBbdeNc/6obZ8cw/y67c8pKAufee6drTdXigUoz69VZdIJu
-         a3pQ==
-X-Gm-Message-State: AOAM531xgRx0P4J5spxL6FfHyG3pwPv1jZEX8JLN3qXT9rZVpfA68xQQ
-        ixTCV1yPWF7C7hTvUiqlzyW/E9woDM9VozkzlaQ=
-X-Google-Smtp-Source: ABdhPJw4D3rglgLu0nrgT52NBe8Iw7n02nwj88iERjQUIsyt5l54rmTLp600wtYn80naTZ1gaa2MDrp844BfQZfzBDc=
-X-Received: by 2002:a17:90b:fc4:: with SMTP id gd4mr13392870pjb.129.1599467552145;
- Mon, 07 Sep 2020 01:32:32 -0700 (PDT)
+        id S1727989AbgIGIwp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 04:52:45 -0400
+Received: from a27-56.smtp-out.us-west-2.amazonses.com ([54.240.27.56]:35842
+        "EHLO a27-56.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727122AbgIGIwp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 7 Sep 2020 04:52:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1599468764;
+        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:From:In-Reply-To:References:To:Cc:Message-Id:Date;
+        bh=kiE5N7xdS+rLmJWgRX00IfpwqEON5REUjDKthNcC2KU=;
+        b=g2U8yefQnDuE/1nsrNd1b9L0c/UydYwcUYqE//bjWq2ANJ7eajM46s6OWx+Tg2Us
+        25MyGHyrpCOW+Z+6aqAxzYorc+7JpFINOJlFe/JUUVs4e95SvxAQ0wuGSXe+UrIPyLf
+        LNh/K9GUc+/EHkoWX1MSJ4vv7jR+aobk+iivbsqo=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=hsbnp7p3ensaochzwyq5wwmceodymuwv; d=amazonses.com; t=1599468764;
+        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:From:In-Reply-To:References:To:Cc:Message-Id:Date:Feedback-ID;
+        bh=kiE5N7xdS+rLmJWgRX00IfpwqEON5REUjDKthNcC2KU=;
+        b=bRX4/u4oqoNsL8HDjPGqMJ5twUNf74DvlFoFvEDQ0MfPkSPdiCk+rcSf9pXwOsul
+        Pwx2HIjGGnYuQkgN5EU0yk5p/4bgrfMPj0eG7i2dYVrK/A+gpfz0FXiJpEpUxvNg0JE
+        gqm2LIawawDdk9f7RYrIFPfhe403hnNQqFfyhb+s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5E8AC35A16
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200906185039.22700-1-digetx@gmail.com> <20200906185039.22700-37-digetx@gmail.com>
-In-Reply-To: <20200906185039.22700-37-digetx@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 7 Sep 2020 11:32:15 +0300
-Message-ID: <CAHp75Vdgc9HPQ5JYRoTa4Xt0-UngLiqGNXi_SPJh3PZeT81EsA@mail.gmail.com>
-Subject: Re: [PATCH v5 36/36] i2c: tegra: Improve tegra_i2c_dev structure
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 1/3] brcmfmac: increase F2 watermark for BCM4329
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20200830191439.10017-2-digetx@gmail.com>
+References: <20200830191439.10017-2-digetx@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
+Message-ID: <0101017467c47c8b-3be0f076-452b-4e42-933f-c40f7c2dc3fb-000000@us-west-2.amazonses.com>
+Date:   Mon, 7 Sep 2020 08:52:44 +0000
+X-SES-Outgoing: 2020.09.07-54.240.27.56
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Sep 6, 2020 at 9:52 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> Rename, reorder and change type of a few members of the tegra_i2c_dev
-> structure in order to improve readability of the code and have consistent
-> typing of the variables.
+Dmitry Osipenko <digetx@gmail.com> wrote:
 
-Again ping-pong.
-Should go before kernel doc changes.
+> This patch fixes SDHCI CRC errors during of RX throughput testing on
+> BCM4329 chip if SDIO BUS is clocked above 25MHz. In particular the
+> checksum problem is observed on NVIDIA Tegra20 SoCs. The good watermark
+> value is borrowed from downstream BCMDHD driver and it's matching to the
+> value that is already used for the BCM4339 chip, hence let's re-use it
+> for BCM4329.
+> 
+> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+
+3 patches applied to wireless-drivers-next.git, thanks.
+
+317da69d10b0 brcmfmac: increase F2 watermark for BCM4329
+1a867a6230db brcmfmac: drop chip id from debug messages
+cc95fa81524a brcmfmac: set F2 SDIO block size to 128 bytes for BCM4329
 
 -- 
-With Best Regards,
-Andy Shevchenko
+https://patchwork.kernel.org/patch/11745283/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
