@@ -2,122 +2,105 @@ Return-Path: <SRS0=rvI8=CQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BE0C2BB84
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 16:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2D8C433E2
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 17:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 986E721556
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 16:29:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPrb8tOx"
+	by mail.kernel.org (Postfix) with ESMTP id 6C057207DE
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 17:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599498085;
+	bh=MCpL6LB8MUB026Zf8apGOuhcoKAPd/ZbuWwOu9lqhaA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=rocNl0O+WFW7obE1bpSsWAwBZ1zDSGuSwZsj5QRWTEEQ1m8MjzCf8IKTBryuxY3/F
+	 XSAqB2u7Y5pslUFJ8PhWNTJSBVSkf5TXAlazjX8LRnLz5lgBf7ot6W1wZJgH3M53jz
+	 mzZt3Dlkti1gu59xjnBs3M1vMFoaJmVao2QZWuIc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730361AbgIGQ33 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:29:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729895AbgIGObp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 10:31:45 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784D5C061573;
-        Mon,  7 Sep 2020 07:31:43 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id a22so9976766ljp.13;
-        Mon, 07 Sep 2020 07:31:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4HCwT5VeeawjAucidjJ8dUXtWRA7EV8ZxyXVxojBpMQ=;
-        b=FPrb8tOx20gTiMwOa1l+Lg05WnDC1bSkwecWvfGM2y7U2UEE39gQMAsVlny5a5K4hG
-         5pqodWmurJEU2Kk1+TFvJ3B84NyC546CuIWn7Kj7xJMjq06RNfAUdpGb24zhb7sjIvVv
-         Pa+iGVJ3zN02M1fD4hCk/GgfpU6Rjn4aYQEHMNZj0LSG1fZRVmeCdcSv+ndxnSojnkWH
-         ifq4/u6Ev6MD5SJ1KzNrdN5coam3vmE7TyZeB10102yN5e0JcawtuhbEvphkaVlu3kIe
-         xogGUkEGMWXS8MVg9ocUgQ2vHOBcxzmH1TeO7MB+F8k4xYf4QPa2Ugyiuk2+tYzeqMVx
-         Yk7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4HCwT5VeeawjAucidjJ8dUXtWRA7EV8ZxyXVxojBpMQ=;
-        b=OylSh2jfQ9pByJfHmMz2F//Si2pW6/1KE5jmoQu95ZeSaBV7pYLAq9+imOJCWaog5n
-         ESJ71OgJWhahgjs8o+vqoILvijDLO2EDy+tCxCh1PACjsRcLvkjkztf3oap+JILaZyqC
-         8yS1nCF1nu/A/xUlviBM5JlFPI4aZcDzEen93hqGrGz4g5q5BdSPmDSXSuxZ4ALD70/7
-         zJSdTffLNyM0yEN3kAHLipAmXG34rWH1q7dPY1CC1xOOPFlLNfdtn7ThHJ7nN3teaNZM
-         xdFuCq7ABzXxXL8W6OdMeEthfBDm1KqE8t/KauesIMDd/J5M+8jYPmsGeRA/LW76zsU+
-         21IA==
-X-Gm-Message-State: AOAM532pRPurNOAmGne80b6M1jLwniif1Qnx/dADZ7sitKzttSQR3AoT
-        LbVecfZZn/aXb1hNb+/ngc+JCTjbehI=
-X-Google-Smtp-Source: ABdhPJxsxsJOhrx//7QJF9bND1r8Dv5qiBPxCgjjLtYZSM0x0yLCl9xRNsuextXw/nXKkkx7SakCpA==
-X-Received: by 2002:a2e:92cd:: with SMTP id k13mr10801560ljh.441.1599489098724;
-        Mon, 07 Sep 2020 07:31:38 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id 30sm7169937ljv.35.2020.09.07.07.31.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Sep 2020 07:31:38 -0700 (PDT)
-Subject: Re: [PATCH v5 01/36] i2c: tegra: Make tegra_i2c_flush_fifos() usable
- in atomic transfer
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200906185039.22700-1-digetx@gmail.com>
- <20200906185039.22700-2-digetx@gmail.com>
- <CAHp75VfGjk-91P5ENQ4=j0F99o7uVK10NxEqCS3tPEsM1o3NAQ@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <272065fe-950a-24e9-ba8f-8b1a782c203f@gmail.com>
-Date:   Mon, 7 Sep 2020 17:31:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1730708AbgIGQdq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 12:33:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730698AbgIGQdm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 7 Sep 2020 12:33:42 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5E4B21775;
+        Mon,  7 Sep 2020 16:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599496421;
+        bh=MCpL6LB8MUB026Zf8apGOuhcoKAPd/ZbuWwOu9lqhaA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rsr8nJSIb17YoHf/31lr9FfQf9QK7kjeXaSv83if5t6+Zodp3OIdownI1wALBM1H/
+         7sBK7rhW9iiC9vOZQi+BHgdHl4Ob+S85elSMpcFhLvGUj1Kz4uCQUy52Ao9nvUYPg2
+         iSfblXKcc6EoFklzK25BUVA8EFVw8h0UjGuYGGOA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Mohan Kumar <mkumard@nvidia.com>, Sameer Pujar <spujar@nvidia.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 09/43] ALSA: hda/tegra: Program WAKEEN register for Tegra
+Date:   Mon,  7 Sep 2020 12:32:55 -0400
+Message-Id: <20200907163329.1280888-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200907163329.1280888-1-sashal@kernel.org>
+References: <20200907163329.1280888-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VfGjk-91P5ENQ4=j0F99o7uVK10NxEqCS3tPEsM1o3NAQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-07.09.2020 10:56, Andy Shevchenko пишет:
-> On Sun, Sep 6, 2020 at 9:51 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> The tegra_i2c_flush_fifos() shouldn't sleep in atomic transfer and jiffies
->> are not updating if interrupts are disabled. Let's switch to use iopoll
->> API helpers for register-polling. The iopoll API provides helpers for both
->> atomic and non-atomic cases.
->>
->> Note that this patch doesn't fix any known problem because normally FIFO
->> is flushed at the time of starting a new transfer.
-> 
-> ...
-> 
->> +       if (i2c_dev->is_curr_atomic_xfer)
->> +               err = readl_relaxed_poll_timeout_atomic(addr, val, !(val & mask),
->> +                                                       1000, 1000000);
->> +       else
->> +               err = readl_relaxed_poll_timeout(addr, val, !(val & mask),
->> +                                                1000, 1000000);
->> +
->> +       if (err) {
->> +               dev_err(i2c_dev->dev, "failed to flush FIFO\n");
-> 
->> +               return err;
->>         }
->>         return 0;
-> 
-> return err; ?
-> 
+From: Mohan Kumar <mkumard@nvidia.com>
 
-The return 0 is intentional here because returned "err" implies that
-error happened and error code is returned, while 0 explicitly shows the
-success status. Hence it's always cleaner and more expressive to
-directly return 0 on success, IMO. I'd prefer to keep this part as-is.
+[ Upstream commit 23d63a31d9f44d7daeac0d1fb65c6a73c70e5216 ]
+
+The WAKEEN bits are used to indicate which bits in the
+STATESTS register may cause wake event during the codec
+state change request. Configure the WAKEEN register for
+the Tegra to detect the wake events.
+
+Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+Acked-by: Sameer Pujar <spujar@nvidia.com>
+Link: https://lore.kernel.org/r/20200825052415.20626-3-mkumard@nvidia.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/pci/hda/hda_tegra.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index e5191584638ab..e378cb33c69df 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -169,6 +169,10 @@ static int __maybe_unused hda_tegra_runtime_suspend(struct device *dev)
+ 	struct hdac_bus *bus = azx_bus(chip);
+ 
+ 	if (chip && chip->running) {
++		/* enable controller wake up event */
++		azx_writew(chip, WAKEEN, azx_readw(chip, WAKEEN) |
++			   STATESTS_INT_MASK);
++
+ 		azx_stop_chip(chip);
+ 		synchronize_irq(bus->irq);
+ 		azx_enter_link_reset(chip);
+@@ -191,6 +195,9 @@ static int __maybe_unused hda_tegra_runtime_resume(struct device *dev)
+ 	if (chip && chip->running) {
+ 		hda_tegra_init(hda);
+ 		azx_init_chip(chip, 1);
++		/* disable controller wake up event*/
++		azx_writew(chip, WAKEEN, azx_readw(chip, WAKEEN) &
++			   ~STATESTS_INT_MASK);
+ 	}
+ 
+ 	return 0;
+-- 
+2.25.1
+
