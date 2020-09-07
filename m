@@ -2,295 +2,342 @@ Return-Path: <SRS0=rvI8=CQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E100C433E2
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 10:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34263C43461
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 11:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C21221919
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 10:08:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8FB12166E
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 11:44:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O2L0eLGd"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z/zu1uo0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbgIGKIP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 06:08:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59184 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbgIGKII (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 06:08:08 -0400
-Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C999C061755
-        for <linux-tegra@vger.kernel.org>; Mon,  7 Sep 2020 03:08:08 -0700 (PDT)
-Received: by mail-vs1-xe44.google.com with SMTP id j185so7103631vsc.3
-        for <linux-tegra@vger.kernel.org>; Mon, 07 Sep 2020 03:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dZ0cXtIu18O1k22F/ZDQa/bXyptLZb81gkafcnjYNcM=;
-        b=O2L0eLGdR+6+ZhRzQIz42SKnDGT0lu7O6LKXrLLcRyWaY3A4BOwdgSFgeWg0bN/Efh
-         Fak+f85L/g4Qpl1UXC9ta/tPAic75s2ru0IsLhvDD2XT0lreXQnG2ksFAt+N7DJC4PPi
-         wFXZ9JNFr9qbD8MbzUBRhihO6wvFInG8xlAksZhYEBTIuKx37atFH1d1LsgK4GPU86nj
-         ntwGoA9ZTlttMtr4Shq+5qxC2Je3wJUNjtyK4S35317lToJbFRdKk5QfAkZfAFYxeGNP
-         dLMfjTTk1zo1FLQYxPqUOg6XydIgz4lUKW6utGB7GnMK2FNEU3y6QkiZCiXYZSJ4NHbq
-         cTkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dZ0cXtIu18O1k22F/ZDQa/bXyptLZb81gkafcnjYNcM=;
-        b=NdoJ0gVr0gmOKySfar8zXWgsGINfA9Pm6XRcIGXblcyFQMj1p9JfQC1NKZP9OV0E+2
-         T+GDYPdPQXtZ3O6n8MmkttgBVpD9MSHgH6Usm+uTer+ZrUeRcqP2pRY0239GjC23w28v
-         OVJ8rHNJFCRRsE/0DR71XecEIVJxUPM+bST+5afTNdTeiTBedZL7WKKL6wNegBrcdEpk
-         HI1rkwZ6VrMn1FSru/RFak2d8di/EOFYI1m1qwpv8g0Ozp/7mAZyP6Hl9ND6JBl8shRa
-         T3F3OhuwKxv1NL9D2u9R/t24DBLWNcxSzxM7pPGzxee2w9j6VnconQQt9o8D5S9tTS0i
-         4WcQ==
-X-Gm-Message-State: AOAM5325ZMmsCGhioRpxxSY2Otp1OI4K6nnhASr9oxW1iieXCaz7E9BJ
-        vYNT3OftYNvuwKR9CYpkhbnf/Ae2E8LQ8ZkPfDeg9w==
-X-Google-Smtp-Source: ABdhPJzK8imxVzFICBf5slUvnoT+nIGcFmxhDDZ+N5lgeyXxY/MWgnT4W+c7RvwPtr/PAV7TEjJg1KFBqInVadg+qOY=
-X-Received: by 2002:a67:308c:: with SMTP id w134mr10855802vsw.8.1599473287226;
- Mon, 07 Sep 2020 03:08:07 -0700 (PDT)
+        id S1729056AbgIGLns (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 07:43:48 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:30301 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728987AbgIGLYm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 07:24:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1599477880;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Helxr2TL3FWwvXuVr8Bc/R5+M7Jza/GFAwsBUbUC86o=;
+        b=Z/zu1uo0G+QKqEpLtrd30ykj8ok7/sS2tuwegAo0lrylgSXytHVWRaLG/NxddhzOKQSGEk
+        isHb2bqNPRPeuMIcTTrHEpTAcAjmwD3xOsonZTYSEyBiUvUkwhR46AS4B/ARi2LnvI+yM8
+        9cU1kJkPfumIW/YDfLMjD+sxVKy09kE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-294-epmww-bXOvabWxKWaU32Hw-1; Mon, 07 Sep 2020 07:24:35 -0400
+X-MC-Unique: epmww-bXOvabWxKWaU32Hw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 068D2873084;
+        Mon,  7 Sep 2020 11:24:31 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-112-56.ams2.redhat.com [10.36.112.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D6B015C1BB;
+        Mon,  7 Sep 2020 11:24:26 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 2CE7D9A83; Mon,  7 Sep 2020 13:24:26 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     christian.koenig@amd.com, Gerd Hoffmann <kraxel@redhat.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
+        linux-kernel@vger.kernel.org (open list),
+        etnaviv@lists.freedesktop.org (moderated list:DRM DRIVERS FOR VIVANTE
+        GPU IP),
+        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
+        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
+        GPU),
+        nouveau@lists.freedesktop.org (open list:DRM DRIVER FOR NVIDIA
+        GEFORCE/QUADRO GPUS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC
+        support),
+        linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
+        linux-tegra@vger.kernel.org (open list:DRM DRIVERS FOR NVIDIA TEGRA),
+        xen-devel@lists.xenproject.org (moderated list:DRM DRIVERS FOR XEN)
+Subject: [PATCH v4 1/1] drm: allow limiting the scatter list size.
+Date:   Mon,  7 Sep 2020 13:24:25 +0200
+Message-Id: <20200907112425.15610-2-kraxel@redhat.com>
+In-Reply-To: <20200907112425.15610-1-kraxel@redhat.com>
+References: <20200907112425.15610-1-kraxel@redhat.com>
 MIME-Version: 1.0
-References: <20200904164315.24618-1-krzk@kernel.org> <20200904164315.24618-2-krzk@kernel.org>
-In-Reply-To: <20200904164315.24618-2-krzk@kernel.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 7 Sep 2020 12:07:30 +0200
-Message-ID: <CAPDyKFo2Kqcpjb7QmsNgyD_kji2vXt3G2SqdDp9DUnvotKyojA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mmc: host: Enable compile testing of multiple drivers
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Manuel Lauss <manuel.lauss@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Prabu Thangamuthu <prabu.t@synopsys.com>,
-        Manjunath M B <manjumb@synopsys.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-arm-kernel@axis.com,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 4 Sep 2020 at 18:43, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Multiple MMC host controller driver can be compile tested as they do not
-> depend on architecture specific headers.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Add drm_device argument to drm_prime_pages_to_sg(), so we can
+call dma_max_mapping_size() to figure the segment size limit
+and call into __sg_alloc_table_from_pages() with the correct
+limit.
 
-I tried to apply this, but there was a conflict around the SDHCI_S3C.
-Can you please rebase.
+This fixes virtio-gpu with sev.  Possibly it'll fix other bugs
+too given that drm seems to totaly ignore segment size limits
+so far ...
 
-Kind regards
-Uffe
+v2: place max_segment in drm driver not gem object.
+v3: move max_segment next to the other gem fields.
+v4: just use dma_max_mapping_size().
 
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/drm/drm_prime.h                     |  3 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c |  3 ++-
+ drivers/gpu/drm/drm_gem_shmem_helper.c      |  2 +-
+ drivers/gpu/drm/drm_prime.c                 | 13 ++++++++++---
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c       |  3 ++-
+ drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c |  2 +-
+ drivers/gpu/drm/msm/msm_gem.c               |  2 +-
+ drivers/gpu/drm/msm/msm_gem_prime.c         |  2 +-
+ drivers/gpu/drm/nouveau/nouveau_prime.c     |  2 +-
+ drivers/gpu/drm/radeon/radeon_prime.c       |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c |  5 +++--
+ drivers/gpu/drm/tegra/gem.c                 |  2 +-
+ drivers/gpu/drm/vgem/vgem_drv.c             |  2 +-
+ drivers/gpu/drm/xen/xen_drm_front_gem.c     |  3 ++-
+ 14 files changed, 29 insertions(+), 17 deletions(-)
 
->
-> ---
->
-> Changes since v1:
-> 1. Add COMMON_CLK dependency to MESON_GX to fix errors like:
->    ERROR: modpost: "devm_clk_register" [drivers/mmc/host/meson-gx-mmc.ko] undefined!
-> ---
->  drivers/mmc/host/Kconfig | 41 +++++++++++++++++++++-------------------
->  1 file changed, 22 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index eea01fde0591..93db789cf8ec 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -178,7 +178,7 @@ config MMC_SDHCI_OF_AT91
->  config MMC_SDHCI_OF_ESDHC
->         tristate "SDHCI OF support for the Freescale eSDHC controller"
->         depends on MMC_SDHCI_PLTFM
-> -       depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE
-> +       depends on PPC || ARCH_MXC || ARCH_LAYERSCAPE || COMPILE_TEST
->         select MMC_SDHCI_IO_ACCESSORS
->         select FSL_GUTS
->         help
-> @@ -216,7 +216,7 @@ config MMC_SDHCI_OF_DWCMSHC
->  config MMC_SDHCI_OF_SPARX5
->         tristate "SDHCI OF support for the MCHP Sparx5 SoC"
->         depends on MMC_SDHCI_PLTFM
-> -       depends on ARCH_SPARX5
-> +       depends on ARCH_SPARX5 || COMPILE_TEST
->         help
->           This selects the Secure Digital Host Controller Interface (SDHCI)
->           found in the MCHP Sparx5 SoC.
-> @@ -238,7 +238,7 @@ config MMC_SDHCI_CADENCE
->
->  config MMC_SDHCI_CNS3XXX
->         tristate "SDHCI support on the Cavium Networks CNS3xxx SoC"
-> -       depends on ARCH_CNS3XXX
-> +       depends on ARCH_CNS3XXX || COMPILE_TEST
->         depends on MMC_SDHCI_PLTFM
->         help
->           This selects the SDHCI support for CNS3xxx System-on-Chip devices.
-> @@ -262,7 +262,7 @@ config MMC_SDHCI_ESDHC_MCF
->
->  config MMC_SDHCI_ESDHC_IMX
->         tristate "SDHCI support for the Freescale eSDHC/uSDHC i.MX controller"
-> -       depends on ARCH_MXC
-> +       depends on ARCH_MXC || COMPILE_TEST
->         depends on MMC_SDHCI_PLTFM
->         select MMC_SDHCI_IO_ACCESSORS
->         select MMC_CQHCI
-> @@ -276,7 +276,7 @@ config MMC_SDHCI_ESDHC_IMX
->
->  config MMC_SDHCI_DOVE
->         tristate "SDHCI support on Marvell's Dove SoC"
-> -       depends on ARCH_DOVE || MACH_DOVE
-> +       depends on ARCH_DOVE || MACH_DOVE || COMPILE_TEST
->         depends on MMC_SDHCI_PLTFM
->         select MMC_SDHCI_IO_ACCESSORS
->         help
-> @@ -289,7 +289,7 @@ config MMC_SDHCI_DOVE
->
->  config MMC_SDHCI_TEGRA
->         tristate "SDHCI platform support for the Tegra SD/MMC Controller"
-> -       depends on ARCH_TEGRA
-> +       depends on ARCH_TEGRA || COMPILE_TEST
->         depends on MMC_SDHCI_PLTFM
->         select MMC_SDHCI_IO_ACCESSORS
->         select MMC_CQHCI
-> @@ -301,7 +301,8 @@ config MMC_SDHCI_TEGRA
->
->  config MMC_SDHCI_S3C
->         tristate "SDHCI support on Samsung S3C SoC"
-> -       depends on MMC_SDHCI && (PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS)
-> +       depends on MMC_SDHCI
-> +       depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
->         help
->           This selects the Secure Digital Host Controller Interface (SDHCI)
->           often referrered to as the HSMMC block in some of the Samsung S3C
-> @@ -313,7 +314,7 @@ config MMC_SDHCI_S3C
->
->  config MMC_SDHCI_SIRF
->         tristate "SDHCI support on CSR SiRFprimaII and SiRFmarco SoCs"
-> -       depends on ARCH_SIRF
-> +       depends on ARCH_SIRF || COMPILE_TEST
->         depends on MMC_SDHCI_PLTFM
->         select MMC_SDHCI_IO_ACCESSORS
->         help
-> @@ -351,7 +352,8 @@ config MMC_SDHCI_PXAV2
->
->  config MMC_SDHCI_SPEAR
->         tristate "SDHCI support on ST SPEAr platform"
-> -       depends on MMC_SDHCI && PLAT_SPEAR
-> +       depends on MMC_SDHCI
-> +       depends on PLAT_SPEAR || COMPILE_TEST
->         depends on OF
->         help
->           This selects the Secure Digital Host Controller Interface (SDHCI)
-> @@ -374,7 +376,7 @@ config MMC_SDHCI_S3C_DMA
->
->  config MMC_SDHCI_BCM_KONA
->         tristate "SDHCI support on Broadcom KONA platform"
-> -       depends on ARCH_BCM_MOBILE
-> +       depends on ARCH_BCM_MOBILE || COMPILE_TEST
->         depends on MMC_SDHCI_PLTFM
->         help
->           This selects the Broadcom Kona Secure Digital Host Controller
-> @@ -422,7 +424,8 @@ config MMC_SDHCI_IPROC
->
->  config MMC_MESON_GX
->         tristate "Amlogic S905/GX*/AXG SD/MMC Host Controller support"
-> -       depends on ARCH_MESON
-> +       depends on ARCH_MESON || COMPILE_TEST
-> +       depends on COMMON_CLK
->         help
->           This selects support for the Amlogic SD/MMC Host Controller
->           found on the S905/GX*/AXG family of SoCs.  This controller is
-> @@ -458,7 +461,7 @@ config MMC_MESON_MX_SDIO
->
->  config MMC_MOXART
->         tristate "MOXART SD/MMC Host Controller support"
-> -       depends on ARCH_MOXART
-> +       depends on ARCH_MOXART || COMPILE_TEST
->         help
->           This selects support for the MOXART SD/MMC Host Controller.
->           MOXA provides one multi-functional card reader which can
-> @@ -467,7 +470,7 @@ config MMC_MOXART
->
->  config MMC_SDHCI_ST
->         tristate "SDHCI support on STMicroelectronics SoC"
-> -       depends on ARCH_STI || FSP2
-> +       depends on ARCH_STI || FSP2 || COMPILE_TEST
->         depends on MMC_SDHCI_PLTFM
->         select MMC_SDHCI_IO_ACCESSORS
->         help
-> @@ -587,7 +590,7 @@ config MMC_TIFM_SD
->
->  config MMC_MVSDIO
->         tristate "Marvell MMC/SD/SDIO host driver"
-> -       depends on PLAT_ORION
-> +       depends on PLAT_ORION || (COMPILE_TEST && ARM)
->         depends on OF
->         help
->           This selects the Marvell SDIO host driver.
-> @@ -599,7 +602,7 @@ config MMC_MVSDIO
->
->  config MMC_DAVINCI
->         tristate "TI DAVINCI Multimedia Card Interface support"
-> -       depends on ARCH_DAVINCI
-> +       depends on ARCH_DAVINCI || COMPILE_TEST
->         help
->           This selects the TI DAVINCI Multimedia card Interface.
->           If you have an DAVINCI board with a Multimedia Card slot,
-> @@ -628,7 +631,7 @@ config MMC_SPI
->
->  config MMC_S3C
->         tristate "Samsung S3C SD/MMC Card Interface support"
-> -       depends on ARCH_S3C24XX
-> +       depends on ARCH_S3C24XX || COMPILE_TEST
->         depends on S3C24XX_DMAC
->         help
->           This selects a driver for the MCI interface found in
-> @@ -681,7 +684,7 @@ config MMC_SDRICOH_CS
->
->  config MMC_SDHCI_SPRD
->         tristate "Spreadtrum SDIO host Controller"
-> -       depends on ARCH_SPRD
-> +       depends on ARCH_SPRD || COMPILE_TEST
->         depends on MMC_SDHCI_PLTFM
->         select MMC_SDHCI_IO_ACCESSORS
->         select MMC_HSQ
-> @@ -698,7 +701,7 @@ config MMC_TMIO_CORE
->
->  config MMC_TMIO
->         tristate "Toshiba Mobile IO Controller (TMIO) MMC/SD function support"
-> -       depends on MFD_TMIO || MFD_ASIC3
-> +       depends on MFD_TMIO || MFD_ASIC3 || COMPILE_TEST
->         select MMC_TMIO_CORE
->         help
->           This provides support for the SD/MMC cell found in TC6393XB,
-> @@ -971,7 +974,7 @@ config MMC_REALTEK_USB
->
->  config MMC_SUNXI
->         tristate "Allwinner sunxi SD/MMC Host Controller support"
-> -       depends on ARCH_SUNXI
-> +       depends on ARCH_SUNXI || COMPILE_TEST
->         help
->           This selects support for the SD/MMC Host Controller on
->           Allwinner sunxi SoCs.
-> --
-> 2.17.1
->
+diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
+index 9af7422b44cf..bf141e74a1c2 100644
+--- a/include/drm/drm_prime.h
++++ b/include/drm/drm_prime.h
+@@ -88,7 +88,8 @@ void drm_gem_dmabuf_vunmap(struct dma_buf *dma_buf, void *vaddr);
+ int drm_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
+ int drm_gem_dmabuf_mmap(struct dma_buf *dma_buf, struct vm_area_struct *vma);
+ 
+-struct sg_table *drm_prime_pages_to_sg(struct page **pages, unsigned int nr_pages);
++struct sg_table *drm_prime_pages_to_sg(struct drm_device *dev,
++				       struct page **pages, unsigned int nr_pages);
+ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
+ 				     int flags);
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+index 519ce4427fce..d7050ab95946 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+@@ -302,7 +302,8 @@ static struct sg_table *amdgpu_dma_buf_map(struct dma_buf_attachment *attach,
+ 
+ 	switch (bo->tbo.mem.mem_type) {
+ 	case TTM_PL_TT:
+-		sgt = drm_prime_pages_to_sg(bo->tbo.ttm->pages,
++		sgt = drm_prime_pages_to_sg(obj->dev,
++					    bo->tbo.ttm->pages,
+ 					    bo->tbo.num_pages);
+ 		if (IS_ERR(sgt))
+ 			return sgt;
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+index 4b7cfbac4daa..0a952f27c184 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -656,7 +656,7 @@ struct sg_table *drm_gem_shmem_get_sg_table(struct drm_gem_object *obj)
+ 
+ 	WARN_ON(shmem->base.import_attach);
+ 
+-	return drm_prime_pages_to_sg(shmem->pages, obj->size >> PAGE_SHIFT);
++	return drm_prime_pages_to_sg(obj->dev, shmem->pages, obj->size >> PAGE_SHIFT);
+ }
+ EXPORT_SYMBOL_GPL(drm_gem_shmem_get_sg_table);
+ 
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 1693aa7c14b5..8a6a3c99b7d8 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -802,9 +802,11 @@ static const struct dma_buf_ops drm_gem_prime_dmabuf_ops =  {
+  *
+  * This is useful for implementing &drm_gem_object_funcs.get_sg_table.
+  */
+-struct sg_table *drm_prime_pages_to_sg(struct page **pages, unsigned int nr_pages)
++struct sg_table *drm_prime_pages_to_sg(struct drm_device *dev,
++				       struct page **pages, unsigned int nr_pages)
+ {
+ 	struct sg_table *sg = NULL;
++	size_t max_segment = 0;
+ 	int ret;
+ 
+ 	sg = kmalloc(sizeof(struct sg_table), GFP_KERNEL);
+@@ -813,8 +815,13 @@ struct sg_table *drm_prime_pages_to_sg(struct page **pages, unsigned int nr_page
+ 		goto out;
+ 	}
+ 
+-	ret = sg_alloc_table_from_pages(sg, pages, nr_pages, 0,
+-				nr_pages << PAGE_SHIFT, GFP_KERNEL);
++	if (dev)
++		max_segment = dma_max_mapping_size(dev->dev);
++	if (max_segment == 0 || max_segment > SCATTERLIST_MAX_SEGMENT)
++		max_segment = SCATTERLIST_MAX_SEGMENT;
++	ret = __sg_alloc_table_from_pages(sg, pages, nr_pages, 0,
++					  nr_pages << PAGE_SHIFT,
++					  max_segment, GFP_KERNEL);
+ 	if (ret)
+ 		goto out;
+ 
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+index f06e19e7be04..ea19f1d27275 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+@@ -103,7 +103,8 @@ struct page **etnaviv_gem_get_pages(struct etnaviv_gem_object *etnaviv_obj)
+ 		int npages = etnaviv_obj->base.size >> PAGE_SHIFT;
+ 		struct sg_table *sgt;
+ 
+-		sgt = drm_prime_pages_to_sg(etnaviv_obj->pages, npages);
++		sgt = drm_prime_pages_to_sg(etnaviv_obj->base.dev,
++					    etnaviv_obj->pages, npages);
+ 		if (IS_ERR(sgt)) {
+ 			dev_err(dev->dev, "failed to allocate sgt: %ld\n",
+ 				PTR_ERR(sgt));
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+index 6d9e5c3c4dd5..4aa3426a9ba4 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+@@ -19,7 +19,7 @@ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 	if (WARN_ON(!etnaviv_obj->pages))  /* should have already pinned! */
+ 		return ERR_PTR(-EINVAL);
+ 
+-	return drm_prime_pages_to_sg(etnaviv_obj->pages, npages);
++	return drm_prime_pages_to_sg(obj->dev, etnaviv_obj->pages, npages);
+ }
+ 
+ void *etnaviv_gem_prime_vmap(struct drm_gem_object *obj)
+diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+index b2f49152b4d4..b4553caaa196 100644
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -126,7 +126,7 @@ static struct page **get_pages(struct drm_gem_object *obj)
+ 
+ 		msm_obj->pages = p;
+ 
+-		msm_obj->sgt = drm_prime_pages_to_sg(p, npages);
++		msm_obj->sgt = drm_prime_pages_to_sg(obj->dev, p, npages);
+ 		if (IS_ERR(msm_obj->sgt)) {
+ 			void *ptr = ERR_CAST(msm_obj->sgt);
+ 
+diff --git a/drivers/gpu/drm/msm/msm_gem_prime.c b/drivers/gpu/drm/msm/msm_gem_prime.c
+index d7c8948427fe..515ef80816a0 100644
+--- a/drivers/gpu/drm/msm/msm_gem_prime.c
++++ b/drivers/gpu/drm/msm/msm_gem_prime.c
+@@ -19,7 +19,7 @@ struct sg_table *msm_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 	if (WARN_ON(!msm_obj->pages))  /* should have already pinned! */
+ 		return NULL;
+ 
+-	return drm_prime_pages_to_sg(msm_obj->pages, npages);
++	return drm_prime_pages_to_sg(obj->dev, msm_obj->pages, npages);
+ }
+ 
+ void *msm_gem_prime_vmap(struct drm_gem_object *obj)
+diff --git a/drivers/gpu/drm/nouveau/nouveau_prime.c b/drivers/gpu/drm/nouveau/nouveau_prime.c
+index bae6a3eccee0..7766b810653f 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_prime.c
++++ b/drivers/gpu/drm/nouveau/nouveau_prime.c
+@@ -32,7 +32,7 @@ struct sg_table *nouveau_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 	struct nouveau_bo *nvbo = nouveau_gem_object(obj);
+ 	int npages = nvbo->bo.num_pages;
+ 
+-	return drm_prime_pages_to_sg(nvbo->bo.ttm->pages, npages);
++	return drm_prime_pages_to_sg(obj->dev, nvbo->bo.ttm->pages, npages);
+ }
+ 
+ void *nouveau_gem_prime_vmap(struct drm_gem_object *obj)
+diff --git a/drivers/gpu/drm/radeon/radeon_prime.c b/drivers/gpu/drm/radeon/radeon_prime.c
+index b906e8fbd5f3..ea4c900e7c41 100644
+--- a/drivers/gpu/drm/radeon/radeon_prime.c
++++ b/drivers/gpu/drm/radeon/radeon_prime.c
+@@ -36,7 +36,7 @@ struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 	struct radeon_bo *bo = gem_to_radeon_bo(obj);
+ 	int npages = bo->tbo.num_pages;
+ 
+-	return drm_prime_pages_to_sg(bo->tbo.ttm->pages, npages);
++	return drm_prime_pages_to_sg(obj->dev, bo->tbo.ttm->pages, npages);
+ }
+ 
+ void *radeon_gem_prime_vmap(struct drm_gem_object *obj)
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index b9275ba7c5a5..77eeaf3439f6 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -85,7 +85,8 @@ static int rockchip_gem_get_pages(struct rockchip_gem_object *rk_obj)
+ 
+ 	rk_obj->num_pages = rk_obj->base.size >> PAGE_SHIFT;
+ 
+-	rk_obj->sgt = drm_prime_pages_to_sg(rk_obj->pages, rk_obj->num_pages);
++	rk_obj->sgt = drm_prime_pages_to_sg(rk_obj->base.dev,
++					    rk_obj->pages, rk_obj->num_pages);
+ 	if (IS_ERR(rk_obj->sgt)) {
+ 		ret = PTR_ERR(rk_obj->sgt);
+ 		goto err_put_pages;
+@@ -442,7 +443,7 @@ struct sg_table *rockchip_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 	int ret;
+ 
+ 	if (rk_obj->pages)
+-		return drm_prime_pages_to_sg(rk_obj->pages, rk_obj->num_pages);
++		return drm_prime_pages_to_sg(obj->dev,rk_obj->pages, rk_obj->num_pages);
+ 
+ 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
+ 	if (!sgt)
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 723df142a981..47e2935b8c68 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -284,7 +284,7 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
+ 
+ 	bo->num_pages = bo->gem.size >> PAGE_SHIFT;
+ 
+-	bo->sgt = drm_prime_pages_to_sg(bo->pages, bo->num_pages);
++	bo->sgt = drm_prime_pages_to_sg(bo->gem.dev, bo->pages, bo->num_pages);
+ 	if (IS_ERR(bo->sgt)) {
+ 		err = PTR_ERR(bo->sgt);
+ 		goto put_pages;
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index 313339bbff90..15dd41e67de3 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -321,7 +321,7 @@ static struct sg_table *vgem_prime_get_sg_table(struct drm_gem_object *obj)
+ {
+ 	struct drm_vgem_gem_object *bo = to_vgem_bo(obj);
+ 
+-	return drm_prime_pages_to_sg(bo->pages, bo->base.size >> PAGE_SHIFT);
++	return drm_prime_pages_to_sg(obj->dev, bo->pages, bo->base.size >> PAGE_SHIFT);
+ }
+ 
+ static struct drm_gem_object* vgem_prime_import(struct drm_device *dev,
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+index 39ff95b75357..aed7510e2710 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+@@ -179,7 +179,8 @@ struct sg_table *xen_drm_front_gem_get_sg_table(struct drm_gem_object *gem_obj)
+ 	if (!xen_obj->pages)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
++	return drm_prime_pages_to_sg(gem_obj->dev,
++				     xen_obj->pages, xen_obj->num_pages);
+ }
+ 
+ struct drm_gem_object *
+-- 
+2.27.0
+
