@@ -2,202 +2,108 @@ Return-Path: <SRS0=rvI8=CQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CE9C2BC11
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 07:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B1BC433E2
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 07:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B48520732
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 07:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFE14208C7
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Sep 2020 07:57:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Euxtu+tr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EPfJlGfw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbgIGHOY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 03:14:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60596 "EHLO
+        id S1727851AbgIGH5K (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 03:57:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbgIGHOQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 03:14:16 -0400
-Received: from mail-oo1-xc43.google.com (mail-oo1-xc43.google.com [IPv6:2607:f8b0:4864:20::c43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68BACC061575
-        for <linux-tegra@vger.kernel.org>; Mon,  7 Sep 2020 00:14:16 -0700 (PDT)
-Received: by mail-oo1-xc43.google.com with SMTP id y25so3061199oog.4
-        for <linux-tegra@vger.kernel.org>; Mon, 07 Sep 2020 00:14:16 -0700 (PDT)
+        with ESMTP id S1727897AbgIGH5E (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 03:57:04 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B36D6C061573;
+        Mon,  7 Sep 2020 00:57:02 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id e33so7680131pgm.0;
+        Mon, 07 Sep 2020 00:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KVfAGFVhhH+3gKxWPx4EEt2i/99FDkLx011kDtsMF+I=;
-        b=Euxtu+trgjabIp7kfpqLzFQS+dE83z6NFR5B38p25hCsIskYQhJEXI8aDOFmjb9/rb
-         ajdQe4bmbBxWioDNhCAVb/QZqh3F00karTYzM2FazYTVvrVMLOroBXd2TBPPFA8thdy7
-         kAmoBHvDcK9wIivmZv2bC4v0rV5TvwkjuxeM4=
+        bh=AxtstXZMEtmP2FoIFNEu7REwh8FJCestW6F65kCxEwY=;
+        b=EPfJlGfwc4OpuebsbyoSQSC41WdaVtIlijTdxgZwe0fjsfcd0bop8h8i1L6Wp/fjQb
+         vTt7LNgQ/bNm1/UbRjaGF6jkq+Dc2TtMNj86pH/cvWVZOjo3TBINaBQWBw0yq8rqwAee
+         VMmLH7v6Vi33Nu7HdK2nx7QeS8P9T69gh0LhWVe2bLYBW5ZWC4MfDWAkwgEEJC1GIxhI
+         8kzjlG/wzzqp2dBXBchJiuw4IE9G5KfGyitEKdigeyYUCao9K4Jf+5hvMkRzn4m7X4nf
+         5+r/GYVsO/uhXQnWt9Hmws5kKOro3ZDDwOiK9sbsAAXRRBTgnh9b1NRK940W0yDX5vLm
+         gNxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KVfAGFVhhH+3gKxWPx4EEt2i/99FDkLx011kDtsMF+I=;
-        b=ocWsOSRk94fqLIJzweXc1kH+4zr5gSmJ3Kuj0wA7sRcUkfhmehKZxMepVyaAKCqnP6
-         djBubrhJe/DGTU17tTL4t6Lxiru6Z/Aw/Bxco1cW1N51hmNTnjF7fOXBjsM2hNkEuGGO
-         cAE3dBLyLGwEI+4HGADpTulCuyS0lmsihPfIP+NKC951RTEVxgqHZsqecO51JNXyamt8
-         rb2K9RsLNOIFoYCIEDdhmZMoeIA4RZq/mR+4BPWPYfqlSLbxW1hIgnqLg2ZuCnfv7leN
-         Xsjcx0k9jbRmXCfblaTVkpRmx/UpJzG3k1GBNcCrg86X71nH0SeHkBscj5GLiqK7F1yY
-         QLyQ==
-X-Gm-Message-State: AOAM5305IczihIZyJ/o7Jqqoqtp/815k8/YVBPbECrmHyjh1HC7yyEBz
-        PzuobxtK21POQZJDMOmjMoVYeR/r/UsS5L5OAkT2ig==
-X-Google-Smtp-Source: ABdhPJyDsSLWPXy8R9Ce8HIpecD+QM6t0+0yQYpXyChVzKDiPvzj0GbvH4ZECIfVS8TxI8k421NQRVJ+suYIajAm3/8=
-X-Received: by 2002:a4a:e98e:: with SMTP id s14mr13829467ood.28.1599462848946;
- Mon, 07 Sep 2020 00:14:08 -0700 (PDT)
+        bh=AxtstXZMEtmP2FoIFNEu7REwh8FJCestW6F65kCxEwY=;
+        b=rOrJRYLZHUzL/NmpIcsgHlfKtgjJa8UajqEIOVSXaiPn0P7U9ub7rgas6x1ury/98z
+         SPOHqQUMv7AaxL2+nkfFEZ67NEgkmTR/ddEPntNWt+HO16wZCa3F/Jp42y5lpdv6rVmN
+         fAZU7+R39HpCkpfCNfFsTuf/uZgqTl0B1N+cWASiyNLdTcl5lor/lrYLRKFahmGyZCkS
+         teFaLRhs+0McM2mzEvm4zQ/rrSIwntKEHA3kZG8Dv7kNcLWntTXnB4dSEp2hzZvwxLC2
+         u0MA2VfiJkbeekWMHfn46E9/BEqiCyPIQyleMbB7JAOXPGe+E0ZrIFogSSCtSWb/uj0b
+         DdQw==
+X-Gm-Message-State: AOAM533Vn8ZstV8bR3a+zJIYfTSl7zzNqf+/itJIkSE66MqDSOPi7Fb1
+        /02evYJRGFVnx05jwrh8F/CLxa5W4xclUpQ759E=
+X-Google-Smtp-Source: ABdhPJz2glZzyxpeK5cIRZp6SyRCtWiBVbwVgfAKhX9ioxkqcbck0nQVqKxFUubd4LeEIf9MVK2EmYJVW2mtN9XahhU=
+X-Received: by 2002:a63:d648:: with SMTP id d8mr15909898pgj.4.1599465422220;
+ Mon, 07 Sep 2020 00:57:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200818092017.26290-1-kraxel@redhat.com> <20200818092017.26290-2-kraxel@redhat.com>
- <20200901074043.GT2352366@phenom.ffwll.local> <20200907063901.atwjdxz7iqyra22h@sirius.home.kraxel.org>
-In-Reply-To: <20200907063901.atwjdxz7iqyra22h@sirius.home.kraxel.org>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Mon, 7 Sep 2020 09:13:58 +0200
-Message-ID: <CAKMK7uFixrbxVoaF4-1hXvQcPySaaYRooQ=LKoivPALH-UCgbw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] drm: allow limiting the scatter list size.
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
+References: <20200906185039.22700-1-digetx@gmail.com> <20200906185039.22700-2-digetx@gmail.com>
+In-Reply-To: <20200906185039.22700-2-digetx@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 7 Sep 2020 10:56:45 +0300
+Message-ID: <CAHp75VfGjk-91P5ENQ4=j0F99o7uVK10NxEqCS3tPEsM1o3NAQ@mail.gmail.com>
+Subject: Re: [PATCH v5 01/36] i2c: tegra: Make tegra_i2c_flush_fifos() usable
+ in atomic transfer
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        "open list:RADEON and AMDGPU DRM DRIVERS" 
-        <amd-gfx@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:DRM DRIVERS FOR VIVANTE GPU IP" 
-        <etnaviv@lists.freedesktop.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
-        <nouveau@lists.freedesktop.org>,
-        "moderated list:ARM/Rockchip SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC support" 
-        <linux-rockchip@lists.infradead.org>,
-        "open list:DRM DRIVERS FOR NVIDIA TEGRA" 
-        <linux-tegra@vger.kernel.org>,
-        "moderated list:DRM DRIVERS FOR XEN" <xen-devel@lists.xenproject.org>
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Sep 7, 2020 at 8:39 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+On Sun, Sep 6, 2020 at 9:51 PM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> > > +   /**
-> > > +    * @max_segment:
-> > > +    *
-> > > +    * Max size for scatter list segments.  When unset the default
-> > > +    * (SCATTERLIST_MAX_SEGMENT) is used.
-> > > +    */
-> > > +   size_t max_segment;
-> >
-> > Is there no better place for this then "at the bottom"? drm_device is a
-> > huge structure, piling stuff up randomly doesn't make it better :-)
+> The tegra_i2c_flush_fifos() shouldn't sleep in atomic transfer and jiffies
+> are not updating if interrupts are disabled. Let's switch to use iopoll
+> API helpers for register-polling. The iopoll API provides helpers for both
+> atomic and non-atomic cases.
 >
-> Moved next to the other gem fields for now (v3 posted).
->
-> > I think ideally we'd have a gem substruct like we have on the modeset side
-> > at least.
->
-> Phew, that'll be quite some churn in the tree.  And there aren't that many
-> gem-related fields in struct drm_device.
->
-> So you are looking for something like below (header changes only)?
+> Note that this patch doesn't fix any known problem because normally FIFO
+> is flushed at the time of starting a new transfer.
 
-Hm yeah it's a lot less than I thought. And yes I think that would be neat.
--Daniel
+...
 
->
-> take care,
->   Gerd
->
-> diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-> index c455ef404ca6..950167ede98a 100644
-> --- a/include/drm/drm_device.h
-> +++ b/include/drm/drm_device.h
-> @@ -299,22 +299,8 @@ struct drm_device {
->         /** @mode_config: Current mode config */
->         struct drm_mode_config mode_config;
->
-> -       /** @object_name_lock: GEM information */
-> -       struct mutex object_name_lock;
-> -
-> -       /** @object_name_idr: GEM information */
-> -       struct idr object_name_idr;
-> -
-> -       /** @vma_offset_manager: GEM information */
-> -       struct drm_vma_offset_manager *vma_offset_manager;
-> -
-> -       /**
-> -        * @max_segment:
-> -        *
-> -        * Max size for scatter list segments for GEM objects.  When
-> -        * unset the default (SCATTERLIST_MAX_SEGMENT) is used.
-> -        */
-> -       size_t max_segment;
-> +       /** @gem_config: Current GEM config */
-> +       struct drm_gem_config gem_config;
->
->         /** @vram_mm: VRAM MM memory manager */
->         struct drm_vram_mm *vram_mm;
-> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-> index 337a48321705..74129fb29fb8 100644
-> --- a/include/drm/drm_gem.h
-> +++ b/include/drm/drm_gem.h
-> @@ -39,6 +39,25 @@
->
->  #include <drm/drm_vma_manager.h>
->
-> +struct drm_gem_config {
-> +       /** @object_name_lock: GEM information */
-> +       struct mutex object_name_lock;
+> +       if (i2c_dev->is_curr_atomic_xfer)
+> +               err = readl_relaxed_poll_timeout_atomic(addr, val, !(val & mask),
+> +                                                       1000, 1000000);
+> +       else
+> +               err = readl_relaxed_poll_timeout(addr, val, !(val & mask),
+> +                                                1000, 1000000);
 > +
-> +       /** @object_name_idr: GEM information */
-> +       struct idr object_name_idr;
-> +
-> +       /** @vma_offset_manager: GEM information */
-> +       struct drm_vma_offset_manager *vma_offset_manager;
-> +
-> +       /**
-> +        * @max_segment:
-> +        *
-> +        * Max size for scatter list segments for GEM objects.  When
-> +        * unset the default (SCATTERLIST_MAX_SEGMENT) is used.
-> +        */
-> +       size_t max_segment;
-> +};
-> +
->  struct drm_gem_object;
->
->  /**
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> +       if (err) {
+> +               dev_err(i2c_dev->dev, "failed to flush FIFO\n");
 
+> +               return err;
+>         }
+>         return 0;
 
+return err; ?
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+With Best Regards,
+Andy Shevchenko
